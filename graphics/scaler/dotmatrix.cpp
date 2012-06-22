@@ -77,33 +77,33 @@ const char *DotMatrixPlugin::getPrettyName() const {
 	return "DotMatrix";
 }
 
-template<typename pixel>
-static inline pixel DOT(const pixel *dotmatrix, pixel c, int j, int i) {
+template<typename Pixel>
+static inline Pixel DOT(const Pixel *dotmatrix, Pixel c, int j, int i) {
 	return c - ((c >> 2) & dotmatrix[((j & 3) << 2) + (i & 3)]);
 }
 
-template<typename pixel>
+template<typename Pixel>
 void DotMatrixPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height, int x, int y) {
 
-	const pixel *dotmatrix = (pixel *)lookup;
+	const Pixel *dotmatrix = (Pixel *)lookup;
 
-	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
-	const pixel *p = (const pixel *)srcPtr;
+	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
+	const Pixel *p = (const Pixel *)srcPtr;
 
-	const uint32 nextlineDst = dstPitch / sizeof(pixel);
-	pixel *q = (pixel *)dstPtr;
+	const uint32 nextlineDst = dstPitch / sizeof(Pixel);
+	Pixel *q = (Pixel *)dstPtr;
 
 	int ja = (y * 2) & 3;
 	int ia = (x * 2) & 3;
 
 	for (int j = 0, jj = 0; j < height; ++j, jj += 2) {
 		for (int i = 0, ii = 0; i < width; ++i, ii += 2) {
-			pixel c = *(p + i);
-			*(q + ii) = DOT<pixel>(dotmatrix, c, jj + ja, ii + ia);
-			*(q + ii + 1) = DOT<pixel>(dotmatrix, c, jj + ja, ii + ia + 1);
-			*(q + ii + nextlineDst) = DOT<pixel>(dotmatrix, c, jj + ja + 1, ii + ia);
-			*(q + ii + nextlineDst + 1) = DOT<pixel>(dotmatrix, c, jj + ja + 1, ii + ia+ 1);
+			Pixel c = *(p + i);
+			*(q + ii) = DOT<Pixel>(dotmatrix, c, jj + ja, ii + ia);
+			*(q + ii + 1) = DOT<Pixel>(dotmatrix, c, jj + ja, ii + ia + 1);
+			*(q + ii + nextlineDst) = DOT<Pixel>(dotmatrix, c, jj + ja + 1, ii + ia);
+			*(q + ii + nextlineDst + 1) = DOT<Pixel>(dotmatrix, c, jj + ja + 1, ii + ia+ 1);
 		}
 		p += nextlineSrc;
 		q += nextlineDst << 1;

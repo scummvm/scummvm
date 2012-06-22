@@ -64,19 +64,19 @@ const char *TVPlugin::getPrettyName() const {
 	return "TV";
 }
 
-template<typename ColorMask, typename pixel>
+template<typename ColorMask, typename Pixel>
 void TVPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height) {
-	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
-	const pixel *p = (const pixel *)srcPtr;
+	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
+	const Pixel *p = (const Pixel *)srcPtr;
 
-	const uint32 nextlineDst = dstPitch / sizeof(pixel);
-	pixel *q = (pixel *)dstPtr;
+	const uint32 nextlineDst = dstPitch / sizeof(Pixel);
+	Pixel *q = (Pixel *)dstPtr;
 
 	while (height--) {
 		for (int i = 0, j = 0; i < width; ++i, j += 2) {
-			pixel p1 = *(p + i);
-			pixel pi;
+			Pixel p1 = *(p + i);
+			Pixel pi;
 
 			pi = (((p1 & ColorMask::kRedBlueMask) * 7) >> 3) & ColorMask::kRedBlueMask;
 			pi |= (((p1 & ColorMask::kGreenMask) * 7) >> 3) & ColorMask::kGreenMask;

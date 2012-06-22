@@ -41,15 +41,15 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 #define interpolate_6_1_1(a,b,c)     (ColorMask::kBytesPerPixel == 2 ? interpolate16_6_1_1<ColorMask>(a,b,c) : interpolate32_6_1_1<ColorMask>(a,b,c))
 #define interpolate_1_1_1_1(a,b,c,d) (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1_1_1<ColorMask>(a,b,c,d) : interpolate32_1_1_1_1<ColorMask>(a,b,c,d))
 
-template<typename ColorMask, typename pixel>
+template<typename ColorMask, typename Pixel>
 void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	const pixel *bP;
-	pixel *dP;
-	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
+	const Pixel *bP;
+	Pixel *dP;
+	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
 
 	while (height--) {
-		bP = (const pixel *)srcPtr;
-		dP = (pixel *)dstPtr;
+		bP = (const Pixel *)srcPtr;
+		dP = (Pixel *)dstPtr;
 
 		for (int i = 0; i < width; ++i) {
 			unsigned color4, color5, color6;
@@ -134,10 +134,10 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 			else
 				product1a = color5;
 
-			*(dP + 0) = (pixel) product1a;
-			*(dP + 1) = (pixel) product1b;
-			*(dP + dstPitch / sizeof(pixel) + 0) = (pixel) product2a;
-			*(dP + dstPitch / sizeof(pixel) + 1) = (pixel) product2b;
+			*(dP + 0) = (Pixel) product1a;
+			*(dP + 1) = (Pixel) product1b;
+			*(dP + dstPitch / sizeof(Pixel) + 0) = (Pixel) product2a;
+			*(dP + dstPitch / sizeof(Pixel) + 1) = (Pixel) product2b;
 
 			bP += 1;
 			dP += 2;
@@ -148,15 +148,15 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	}
 }
 
-template<typename ColorMask, typename pixel>
+template<typename ColorMask, typename Pixel>
 void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	const pixel *bP;
-	pixel *dP;
-	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
+	const Pixel *bP;
+	Pixel *dP;
+	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
 
 	while (height--) {
-		bP = (const pixel *)srcPtr;
-		dP = (pixel *)dstPtr;
+		bP = (const Pixel *)srcPtr;
+		dP = (Pixel *)dstPtr;
 		for (int i = 0; i < width; ++i) {
 			unsigned color4, color5, color6;
 			unsigned color1, color2, color3;
@@ -237,10 +237,10 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 				}
 			}
 
-			*(dP + 0) = (pixel) product1a;
-			*(dP + 1) = (pixel) product1b;
-			*(dP + dstPitch / sizeof(pixel) + 0) = (pixel) product2a;
-			*(dP + dstPitch / sizeof(pixel) + 1) = (pixel) product2b;
+			*(dP + 0) = (Pixel) product1a;
+			*(dP + 1) = (Pixel) product1b;
+			*(dP + dstPitch / sizeof(Pixel) + 0) = (Pixel) product2a;
+			*(dP + dstPitch / sizeof(Pixel) + 1) = (Pixel) product2b;
 
 			bP += 1;
 			dP += 2;
@@ -251,15 +251,15 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	}
 }
 
-template<typename ColorMask, typename pixel>
+template<typename ColorMask, typename Pixel>
 void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	const pixel *bP;
-	pixel *dP;
-	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
+	const Pixel *bP;
+	Pixel *dP;
+	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
 
 	while (height--) {
-		bP = (const pixel *)srcPtr;
-		dP = (pixel *)dstPtr;
+		bP = (const Pixel *)srcPtr;
+		dP = (Pixel *)dstPtr;
 
 		for (int i = 0; i < width; ++i) {
 
@@ -370,10 +370,10 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 				}
 			}
 
-			*(dP + 0) = (pixel) colorA;
-			*(dP + 1) = (pixel) product;
-			*(dP + dstPitch / sizeof(pixel) + 0) = (pixel) product1;
-			*(dP + dstPitch / sizeof(pixel) + 1) = (pixel) product2;
+			*(dP + 0) = (Pixel) colorA;
+			*(dP + 1) = (Pixel) product;
+			*(dP + dstPitch / sizeof(Pixel) + 0) = (Pixel) product1;
+			*(dP + dstPitch / sizeof(Pixel) + 1) = (Pixel) product2;
 
 			bP += 1;
 			dP += 2;

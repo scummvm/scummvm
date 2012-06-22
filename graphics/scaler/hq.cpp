@@ -194,7 +194,7 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 #define PIXEL11_100	*(q+1+nextlineDst) = interpolate_14_1_1(w5, w6, w8);
 
 extern "C" uint32   *RGBtoYUV;
-#define YUV(x)	(sizeof(pixel) == 2 ? RGBtoYUV[w ## x] : ConvertYUV<ColorMask>(w ## x)) 
+#define YUV(x)	(sizeof(Pixel) == 2 ? RGBtoYUV[w ## x] : ConvertYUV<ColorMask>(w ## x)) 
 
 /**
  * Convert 32 bit RGB values to Yuv
@@ -219,15 +219,15 @@ static inline uint32 ConvertYUV(uint32 x) {
  * Original author Maxim Stepin (see http://www.hiend3d.com/hq2x.html).
  * Adapted for ScummVM to 16 bit output and optimized by Max Horn.
  */
-template<typename ColorMask, typename pixel>
+template<typename ColorMask, typename Pixel>
 static void HQ2x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	register int w1, w2, w3, w4, w5, w6, w7, w8, w9;
 
-	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
-	const pixel *p = (const pixel *)srcPtr;
+	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
+	const Pixel *p = (const Pixel *)srcPtr;
 
-	const uint32 nextlineDst = dstPitch / sizeof(pixel);
-	pixel *q = (pixel *)dstPtr;
+	const uint32 nextlineDst = dstPitch / sizeof(Pixel);
+	Pixel *q = (Pixel *)dstPtr;
 
 	//	 +----+----+----+
 	//	 |    |    |    |
@@ -2154,16 +2154,16 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
  * Original author Maxim Stepin (see http://www.hiend3d.com/hq3x.html).
  * Adapted for ScummVM to 16 bit output and optimized by Max Horn.
  */
-template<typename ColorMask, typename pixel>
+template<typename ColorMask, typename Pixel>
 static void HQ3x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	register int  w1, w2, w3, w4, w5, w6, w7, w8, w9;
 
-	const uint32 nextlineSrc = srcPitch / sizeof(pixel);
-	const pixel *p = (const pixel *)srcPtr;
+	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
+	const Pixel *p = (const Pixel *)srcPtr;
 
-	const uint32 nextlineDst = dstPitch / sizeof(pixel);
+	const uint32 nextlineDst = dstPitch / sizeof(Pixel);
 	const uint32 nextlineDst2 = 2 * nextlineDst;
-	pixel *q = (pixel *)dstPtr;
+	Pixel *q = (Pixel *)dstPtr;
 
 	//	 +----+----+----+
 	//	 |    |    |    |
