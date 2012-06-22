@@ -47,7 +47,6 @@ MODULE_OBJS := \
 	Base/BBase.o \
 	Base/BDebugger.o \
 	Base/BDynBuffer.o \
-	Base/BEvent.o \
 	Base/BFader.o \
 	Base/BFileEntry.o \
 	Base/BFileManager.o \

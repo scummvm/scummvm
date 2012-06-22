@@ -52,7 +52,6 @@
 #include "engines/wintermute/Ad/AdTalkHolder.h"
 #include "engines/wintermute/Ad/AdTalkNode.h"
 #include "engines/wintermute/Ad/AdWaypointGroup.h"
-#include "engines/wintermute/Base/BEvent.h"
 #include "engines/wintermute/Base/BFader.h"
 #include "engines/wintermute/Base/BFontBitmap.h"
 #include "engines/wintermute/Base/BFontStorage.h"
@@ -122,7 +121,6 @@ void registerClasses() {
 	REGISTER_CLASS(CAdTalkNode, false)
 	REGISTER_CLASS(CAdWaypointGroup, false)
 
-	REGISTER_CLASS(CBEvent, false)
 	REGISTER_CLASS(CBFader, false)
 	REGISTER_CLASS(CBFont, false)
 	REGISTER_CLASS(CBFontBitmap, false)
