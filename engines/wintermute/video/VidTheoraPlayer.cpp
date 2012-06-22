@@ -130,7 +130,8 @@ void CVidTheoraPlayer::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Common::String &subtitleFile) {
 	cleanup();
-	
+
+	_filename = filename;
 	_file = Game->_fileManager->OpenFile(filename, true, false);
 	if (!_file) return E_FAIL;
 	
@@ -817,6 +818,10 @@ HRESULT CVidTheoraPlayer::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER_INT(_playbackType));
 	PersistMgr->Transfer(TMEMBER(_looping));
 	PersistMgr->Transfer(TMEMBER(_volume));
+
+	if (!PersistMgr->_saving && (_savedState != THEORA_STATE_NONE)) {
+		initializeSimple();
+	}
 
 	return S_OK;
 }
