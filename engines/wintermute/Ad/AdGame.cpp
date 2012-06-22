@@ -1457,7 +1457,7 @@ HRESULT CAdGame::LoadItemsBuffer(byte  *Buffer, bool Merge) {
 CAdSceneState *CAdGame::GetSceneState(const char *Filename, bool Saving) {
 	char *FilenameCor = new char[strlen(Filename) + 1];
 	strcpy(FilenameCor, Filename);
-	for (int i = 0; i < strlen(FilenameCor); i++) {
+	for (uint32 i = 0; i < strlen(FilenameCor); i++) {
 		if (FilenameCor[i] == '/') FilenameCor[i] = '\\';
 	}
 

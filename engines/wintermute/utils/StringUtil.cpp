@@ -177,7 +177,7 @@ Utf8String StringUtil::WideToUtf8(const WideString &WideStr) {
 }
 
 // Currently this only does Ansi->ISO 8859, and only for carets.
-char simpleAnsiToWide(const AnsiString &str, int &offset) {
+char simpleAnsiToWide(const AnsiString &str, uint32 &offset) {
 	char c = str[offset];
 
 	if (c == 92) {
@@ -198,7 +198,7 @@ WideString StringUtil::AnsiToWide(const AnsiString &str) {
 		warning("StringUtil::AnsiToWide - WideString not supported yet");
 	}
 	Common::String converted = "";
-	int index = 0;
+	uint32 index = 0;
 	while (index != str.size()) {
 		converted += simpleAnsiToWide(str, index);
 	}

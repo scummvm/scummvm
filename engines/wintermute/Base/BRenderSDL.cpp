@@ -120,11 +120,11 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 		ratio = (float)_realWidth / (float)_width;
 	}
 
-	_borderLeft = (_realWidth - (_width * ratio)) / 2;
-	_borderRight = _realWidth - (_width * ratio) - _borderLeft;
+	_borderLeft = (int)((_realWidth - (_width * ratio)) / 2);
+	_borderRight = (int)(_realWidth - (_width * ratio) - _borderLeft);
 
-	_borderTop = (_realHeight - (_height * ratio)) / 2;
-	_borderBottom = _realHeight - (_height * ratio) - _borderTop;
+	_borderTop = (int)((_realHeight - (_height * ratio)) / 2);
+	_borderBottom = (int)(_realHeight - (_height * ratio) - _borderTop);
 
 
 

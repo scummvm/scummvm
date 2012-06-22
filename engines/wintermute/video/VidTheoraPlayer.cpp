@@ -386,15 +386,15 @@ HRESULT CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGam
 		float ZoomX = (float)((float)Game->_renderer->_width / width * 100);
 		float ZoomY = (float)((float)Game->_renderer->_height / height * 100);
 		_playZoom = MIN(ZoomX, ZoomY);
-		_posX = (Game->_renderer->_width - width * (_playZoom / 100)) / 2;
-		_posY = (Game->_renderer->_height - height * (_playZoom / 100)) / 2;
+		_posX = (int)((Game->_renderer->_width - width * (_playZoom / 100)) / 2);
+		_posY = (int)((Game->_renderer->_height - height * (_playZoom / 100)) / 2);
 	}
 	break;
 
 	case VID_PLAY_CENTER:
 		_playZoom = 100.0f;
-		_posX = (Game->_renderer->_width - width) / 2;
-		_posY = (Game->_renderer->_height - height) / 2;
+		_posX = (int)((Game->_renderer->_width - width) / 2);
+		_posY = (int)((Game->_renderer->_height - height) / 2);
 		break;
 	}
 	return S_OK;
@@ -594,7 +594,7 @@ float CVidTheoraPlayer::getMovieTime() {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CVidTheoraPlayer::getMovieFrame() {
+uint32 CVidTheoraPlayer::getMovieFrame() {
 #if 0
 	if (!m_TheoraStreams) return 0;
 	float Time = GetMovieTime();

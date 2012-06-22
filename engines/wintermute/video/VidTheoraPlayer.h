@@ -85,7 +85,7 @@ public:
 	};
 
 	float getMovieTime();
-	int getMovieFrame();
+	uint32 getMovieFrame();
 
 	CBSurface *getTexture();
 

@@ -45,6 +45,7 @@ CBGame *CBPlatform::Game = NULL;
 #define CLASS_NAME "GF_FRAME"
 int CBPlatform::Initialize(CBGame *inGame, int argc, char *argv[]) {
 	Game = inGame;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

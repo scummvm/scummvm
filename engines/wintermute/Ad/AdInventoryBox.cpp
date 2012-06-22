@@ -103,8 +103,8 @@ HRESULT CAdInventoryBox::Display() {
 	if (!_visible) return S_OK;
 
 	int ItemsX, ItemsY;
-	ItemsX = floor((float)((_itemsArea.right - _itemsArea.left + _spacing) / (_itemWidth + _spacing)));
-	ItemsY = floor((float)((_itemsArea.bottom - _itemsArea.top + _spacing) / (_itemHeight + _spacing)));
+	ItemsX = (int)floor((float)((_itemsArea.right - _itemsArea.left + _spacing) / (_itemWidth + _spacing)));
+	ItemsY = (int)floor((float)((_itemsArea.bottom - _itemsArea.top + _spacing) / (_itemHeight + _spacing)));
 
 	if (_window) {
 		_window->EnableWidget("prev", _scrollOffset > 0);

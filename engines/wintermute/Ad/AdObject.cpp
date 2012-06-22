@@ -816,7 +816,7 @@ int CAdObject::GetHeight() {
 
 		if (_zoomable) {
 			float zoom = ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY);
-			ret = ret * zoom / 100;
+			ret = (int)(ret * zoom / 100);
 		}
 		return ret;
 	}

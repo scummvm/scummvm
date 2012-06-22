@@ -142,7 +142,7 @@ HRESULT CBImage::Resize(int NewWidth, int NewHeight) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
-	if (!_surface) return NULL;
+	if (!_surface) return false;
 
 	/* The following is just copied over and inverted to write-ops from the BMP-decoder */
 	stream->writeByte('B');
@@ -164,7 +164,7 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 	uint32 width = _surface->w;
 	int32 height = _surface->h;
 	stream->writeUint32LE(width);
-	stream->writeUint32LE(height);
+	stream->writeUint32LE((uint32)height);
 
 	if (width == 0 || height == 0)
 		return false;
@@ -240,7 +240,7 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 
 	return Buffer;
 #endif
-	return NULL;
+	return false;
 }
 
 

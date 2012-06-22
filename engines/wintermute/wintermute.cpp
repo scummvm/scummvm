@@ -136,8 +136,6 @@ Common::Error WinterMuteEngine::run() {
 }
 
 int WinterMuteEngine::init() {
-	char argv[1] = { ' ' };
-	int argc = 0;
 	registerClasses(); // Needs to be done before the first WME class is instantiated
 	_game = new CAdGame;
 	if (!_game) return 1;
@@ -147,7 +145,6 @@ int WinterMuteEngine::init() {
 	
 	// parse command line
 	char *SaveGame = NULL;
-	char param[MAX_PATH];
 /*	for (int i = 0; i < argc; i++) {
 		strcpy(param, argv[i]);
 		
