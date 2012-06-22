@@ -35,6 +35,7 @@ public:
 
 protected:
 	bool Cmd_Scene(int argc, const char **argv);
+	bool Cmd_DirtyRects(int argc, const char **argv);
 };
 
 } // End of namespace Tony
