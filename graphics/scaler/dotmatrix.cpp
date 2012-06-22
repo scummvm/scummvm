@@ -35,7 +35,7 @@ void DotMatrixPlugin::initialize(Graphics::PixelFormat format) {
 		lookup16[2] = lookup16[8] = format.RGBToColor(63, 0, 0);
 		lookup16[4] = lookup16[6] =
 			lookup16[12] = lookup16[14] = format.RGBToColor(63, 63, 63);
-		lookup16[5] = lookup16[7] =
+		lookup16[3] = lookup16[5] = lookup16[7] =
 			lookup16[9] = lookup16[13] =
 			lookup16[15] = lookup16[16] = format.RGBToColor(0, 0, 0);
 	} else {
@@ -45,7 +45,7 @@ void DotMatrixPlugin::initialize(Graphics::PixelFormat format) {
 		lookup32[2] = lookup32[8] = format.ARGBToColor(0, 63, 0, 0);
 		lookup32[4] = lookup32[6] =
 			lookup32[12] = lookup32[14] = format.ARGBToColor(0, 63, 63, 63);
-		lookup[3] = lookup32[5] = lookup32[7] =
+		lookup32[3] = lookup32[5] = lookup32[7] =
 			lookup32[9] = lookup32[13] =
 			lookup32[15] = lookup32[16] = format.ARGBToColor(0, 0, 0, 0);
 	}
