@@ -100,7 +100,6 @@ bool hasTransparency(Graphics::Surface *surf) {
 HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int lifeTime, bool keepLoaded) {
 /*	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer); */
 	Common::String strFileName(filename);
-	warning("CBSurfaceSDL::create(%s, %d, %d, %d, %d, %d, %d", filename, default_ck, ck_red, ck_green, ck_blue, lifeTime, keepLoaded);
 	CBImage *image = new CBImage(Game);
 	image->loadFile(strFileName);
 //	const Graphics::Surface *surface = image->getSurface();

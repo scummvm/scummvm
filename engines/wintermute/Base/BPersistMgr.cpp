@@ -467,7 +467,6 @@ char *CBPersistMgr::GetString() {
 	ret[len] = '\0';
 /*	char *ret = (char *)(_buffer + _offset);
 	_offset += len;*/
-	warning("Read string %s with len %d", ret, len);
 	if (!strcmp(ret, "(null)")) { 
 		delete[] ret;
 		return NULL;

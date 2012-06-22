@@ -122,7 +122,6 @@ int CSysClass::GetNumInstances() {
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::Dump(Common::WriteStream *stream) {
-	//fprintf(stream, "%03d %c %-20s instances: %d\n", _iD, _persistent ? 'p' : ' ', _name.c_str(), GetNumInstances());
 	Common::String str;
 	str = Common::String::format("%03d %c %-20s instances: %d\n", _iD, _persistent ? 'p' : ' ', _name.c_str(), GetNumInstances());
 	stream->write(str.c_str(), str.size());
@@ -130,7 +129,6 @@ void CSysClass::Dump(Common::WriteStream *stream) {
 
 //////////////////////////////////////////////////////////////////////////
 void CSysClass::SaveTable(CBGame *Game, CBPersistMgr *PersistMgr) {
-	warning("Saving %d:%s with %d instancces", _iD, _name.c_str(), _instances.size());
 	PersistMgr->PutString(_name.c_str());
 	PersistMgr->PutDWORD(_iD);
 	PersistMgr->PutDWORD(_instances.size());
@@ -145,10 +143,9 @@ void CSysClass::SaveTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 void CSysClass::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 	_savedID = PersistMgr->GetDWORD();
 	int numInstances = PersistMgr->GetDWORD();
-	warning("Loading table for %d:%s with %d instances", _savedID, _name.c_str(), numInstances);
+
 	for (int i = 0; i < numInstances; i++) {
 		int instID = PersistMgr->GetDWORD();
-		warning("Loaded instanceID: %d", instID);
 		if (_persistent) {
 
 			if (i > 0) {
