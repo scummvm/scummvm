@@ -682,9 +682,15 @@ HRESULT CBPersistMgr::transfer(const char *name, POINT *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);
+		if (_saveStream->err())
+			return E_FAIL;
+		return S_OK;
 	} else {
 		val->x = _loadStream->readSint32LE();
 		val->y = _loadStream->readSint32LE();
+		if (_loadStream->err())
+			return E_FAIL;
+		return S_OK;
 	}
 }
 
@@ -695,9 +701,15 @@ HRESULT CBPersistMgr::transfer(const char *name, Vector2 *val) {
 	if (_saving) {
 		putFloat(val->x);
 		putFloat(val->y);
+		if (_saveStream->err())
+			return E_FAIL;
+		return S_OK;
 	} else {
 		val->x = getFloat();
 		val->y = getFloat();
+		if (_loadStream->err())
+			return E_FAIL;
+		return S_OK;
 	}
 }
 
