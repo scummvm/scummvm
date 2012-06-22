@@ -71,7 +71,7 @@ namespace WinterMute {
 		return #class_name;\
 	}\
 	\
-	CSysClass Register##class_name(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);\
+	/*CSysClass Register##class_name(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);*/\
 	\
 	void* class_name::operator new (size_t size){\
 		void* ret = ::operator new(size);\
@@ -86,6 +86,8 @@ namespace WinterMute {
 	 
 #define TMEMBER(member_name) #member_name, &member_name
 #define TMEMBER_INT(member_name) #member_name, (int*)&member_name
+
+void registerClasses();
 
 } // end of namespace WinterMute
 

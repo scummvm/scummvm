@@ -138,6 +138,7 @@ Common::Error WinterMuteEngine::run() {
 int WinterMuteEngine::init() {
 	char argv[1] = { ' ' };
 	int argc = 0;
+	registerClasses(); // Needs to be done before the first WME class is instantiated
 	_game = new CAdGame;
 	if (!_game) return 1;
 	CBPlatform::Initialize(_game, 0, NULL);
