@@ -49,7 +49,7 @@ CAdResponseContext::~CAdResponseContext() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseContext::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdResponseContext::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(Game));
 	persistMgr->transfer(TMEMBER(_context));
 	persistMgr->transfer(TMEMBER(_iD));

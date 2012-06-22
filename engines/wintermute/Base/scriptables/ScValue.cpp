@@ -715,7 +715,7 @@ void CScValue::SetValue(CScValue *Val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::Persist(CBPersistMgr *persistMgr) {
+HRESULT CScValue::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(Game));
 
 	persistMgr->transfer(TMEMBER(_persistent));

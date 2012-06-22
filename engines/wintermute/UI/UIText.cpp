@@ -467,9 +467,9 @@ const char *CUIText::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::Persist(CBPersistMgr *persistMgr) {
+HRESULT CUIText::persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(persistMgr);
+	CUIObject::persist(persistMgr);
 	persistMgr->transfer(TMEMBER_INT(_textAlign));
 	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
 

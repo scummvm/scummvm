@@ -328,9 +328,9 @@ const char *CUIEntity::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::Persist(CBPersistMgr *persistMgr) {
+HRESULT CUIEntity::persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(persistMgr);
+	CUIObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_entity));
 	return S_OK;

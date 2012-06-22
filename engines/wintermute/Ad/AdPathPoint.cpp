@@ -61,9 +61,9 @@ CAdPathPoint::~CAdPathPoint() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdPathPoint::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdPathPoint::persist(CBPersistMgr *persistMgr) {
 
-	CBPoint::Persist(persistMgr);
+	CBPoint::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_distance));
 	persistMgr->transfer(TMEMBER(_marked));

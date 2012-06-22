@@ -472,8 +472,8 @@ HRESULT CBSprite::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::Persist(CBPersistMgr *persistMgr) {
-	CBScriptHolder::Persist(persistMgr);
+HRESULT CBSprite::persist(CBPersistMgr *persistMgr) {
+	CBScriptHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_canBreak));
 	persistMgr->transfer(TMEMBER(_changed));
@@ -488,7 +488,7 @@ HRESULT CBSprite::Persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_editorMuted));
 	persistMgr->transfer(TMEMBER(_finished));
 
-	_frames.Persist(persistMgr);
+	_frames.persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_lastFrameTime));
 	persistMgr->transfer(TMEMBER(_looping));

@@ -213,12 +213,12 @@ void CScStack::PushNative(CBScriptable *Val, bool Persistent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScStack::Persist(CBPersistMgr *persistMgr) {
+HRESULT CScStack::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 
 	persistMgr->transfer(TMEMBER(_sP));
-	_values.Persist(persistMgr);
+	_values.persist(persistMgr);
 
 	return S_OK;
 }

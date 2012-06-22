@@ -88,7 +88,7 @@ public:
 	// Clean up
 	void FreeExtra();
 	void RemoveAll();
-	HRESULT Persist(CBPersistMgr *persistMgr);
+	HRESULT persist(CBPersistMgr *persistMgr);
 
 	// Accessing elements
 	TYPE GetAt(int nIndex) const;
@@ -346,7 +346,7 @@ void CBArray<TYPE, ARG_TYPE>::InsertAt(int nStartIndex, CBArray *pNewArray) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-HRESULT CBArray<TYPE, ARG_TYPE>::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBArray<TYPE, ARG_TYPE>::persist(CBPersistMgr *persistMgr) {
 	int i, j;
 	if (persistMgr->_saving) {
 		j = GetSize();

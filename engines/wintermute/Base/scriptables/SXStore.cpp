@@ -278,10 +278,10 @@ CScValue *CSXStore::ScGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXStore::Persist(CBPersistMgr *persistMgr) {
+HRESULT CSXStore::persist(CBPersistMgr *persistMgr) {
 	if (!persistMgr->_saving) Cleanup();
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_eventsEnabled));
 	persistMgr->transfer(TMEMBER(_lastProductRequestOwner));
@@ -294,13 +294,13 @@ HRESULT CSXStore::Persist(CBPersistMgr *persistMgr) {
 	if (persistMgr->_saving) {
 		numProducts = _validProducts.GetSize();
 		persistMgr->transfer(TMEMBER(numProducts));
-		for (int i = 0; i < numProducts; i++) _validProducts[i]->Persist(persistMgr);
+		for (int i = 0; i < numProducts; i++) _validProducts[i]->persist(persistMgr);
 	} else {
 		numProducts = _validProducts.GetSize();
 		persistMgr->transfer(TMEMBER(numProducts));
 		for (int i = 0; i < numProducts; i++) {
 			CBStoreProduct *prod = new CBStoreProduct;
-			prod->Persist(persistMgr);
+			prod->persist(persistMgr);
 			_validProducts.Add(prod);
 		}
 	}

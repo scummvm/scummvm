@@ -199,8 +199,8 @@ HRESULT CSXArray::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXArray::Persist(CBPersistMgr *persistMgr) {
-	CBScriptable::Persist(persistMgr);
+HRESULT CSXArray::persist(CBPersistMgr *persistMgr) {
+	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_length));
 	persistMgr->transfer(TMEMBER(_values));

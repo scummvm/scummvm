@@ -206,7 +206,7 @@ HRESULT CBPersistMgr::initSave(const char *desc) {
 		putString(Game->_name);
 
 		// thumbnail data size
-		bool ThumbnailOK = false;
+		bool thumbnailOK = false;
 
 		if (Game->_cachedThumbnail) {
 			if (Game->_cachedThumbnail->_thumbnail) {
@@ -218,10 +218,10 @@ HRESULT CBPersistMgr::initSave(const char *desc) {
 					_saveStream->writeUint32LE(0);
 				}
 
-				ThumbnailOK = true;
+				thumbnailOK = true;
 			}
 		}
-		if (!ThumbnailOK) putDWORD(0);
+		if (!thumbnailOK) putDWORD(0);
 
 		// in any case, destroy the cached thumbnail once used
 		delete Game->_cachedThumbnail;
@@ -281,13 +281,13 @@ HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
 				}
 			} else _savedVerBuild = 35; // last build with ver1 savegames
 
-			uint32 DataOffset = getDWORD();
+			uint32 dataOffset = getDWORD();
 
 			_savedDescription = getString();
 			_savedTimestamp = getTimeDate();
 			_savedPlayTime = _loadStream->readUint32LE();
 
-			_offset = DataOffset;
+			_offset = dataOffset;
 
 			return S_OK;
 		}

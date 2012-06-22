@@ -729,9 +729,9 @@ const char *CAdItem::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdItem::persist(CBPersistMgr *persistMgr) {
 
-	CAdTalkHolder::Persist(persistMgr);
+	CAdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_cursorCombined));
 	persistMgr->transfer(TMEMBER(_cursorHover));

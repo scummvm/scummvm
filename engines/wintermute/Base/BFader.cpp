@@ -154,8 +154,8 @@ uint32 CBFader::GetCurrentColor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::Persist(CBPersistMgr *persistMgr) {
-	CBObject::Persist(persistMgr);
+HRESULT CBFader::persist(CBPersistMgr *persistMgr) {
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_blue));

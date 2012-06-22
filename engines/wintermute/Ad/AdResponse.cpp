@@ -124,9 +124,9 @@ HRESULT CAdResponse::SetIconPressed(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdResponse::persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_icon));
 	persistMgr->transfer(TMEMBER(_iconHover));

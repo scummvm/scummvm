@@ -797,8 +797,8 @@ HRESULT CVidTheoraPlayer::resume() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::Persist(CBPersistMgr *persistMgr) {
-	//CBBase::Persist(persistMgr);
+HRESULT CVidTheoraPlayer::persist(CBPersistMgr *persistMgr) {
+	//CBBase::persist(persistMgr);
 
 	if (persistMgr->_saving) {
 		_savedPos = getMovieTime() * 1000;

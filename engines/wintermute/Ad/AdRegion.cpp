@@ -378,8 +378,8 @@ HRESULT CAdRegion::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::Persist(CBPersistMgr *persistMgr) {
-	CBRegion::Persist(persistMgr);
+HRESULT CAdRegion::persist(CBPersistMgr *persistMgr) {
+	CBRegion::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_alpha));
 	persistMgr->transfer(TMEMBER(_blocked));

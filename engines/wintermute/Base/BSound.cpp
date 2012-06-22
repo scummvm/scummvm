@@ -147,7 +147,7 @@ HRESULT CBSound::Resume() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBSound::persist(CBPersistMgr *persistMgr) {
 	if (persistMgr->_saving && _sound) {
 		_soundPlaying = _sound->IsPlaying();
 		_soundLooping = _sound->_looping;

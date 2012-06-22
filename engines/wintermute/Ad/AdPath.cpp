@@ -98,12 +98,12 @@ bool CAdPath::SetReady(bool ready) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdPath::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdPath::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 
 	persistMgr->transfer(TMEMBER(_currIndex));
-	_points.Persist(persistMgr);
+	_points.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_ready));
 
 	return S_OK;

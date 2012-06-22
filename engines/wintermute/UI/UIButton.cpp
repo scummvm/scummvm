@@ -1008,9 +1008,9 @@ const char *CUIButton::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::Persist(CBPersistMgr *persistMgr) {
+HRESULT CUIButton::persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(persistMgr);
+	CUIObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_align));
 	persistMgr->transfer(TMEMBER(_backDisable));

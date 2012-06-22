@@ -142,12 +142,12 @@ HRESULT CBFontStorage::RemoveFont(CBFont *Font) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontStorage::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBFontStorage::persist(CBPersistMgr *persistMgr) {
 
 	if (!persistMgr->_saving) Cleanup(false);
 
 	persistMgr->transfer(TMEMBER(Game));
-	_fonts.Persist(persistMgr);
+	_fonts.persist(persistMgr);
 
 	if (!persistMgr->_saving) InitFreeType();
 

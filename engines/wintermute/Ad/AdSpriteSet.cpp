@@ -214,9 +214,9 @@ HRESULT CAdSpriteSet::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSp
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSpriteSet::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdSpriteSet::persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_owner));
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {

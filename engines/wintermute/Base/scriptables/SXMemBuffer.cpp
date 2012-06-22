@@ -454,9 +454,9 @@ HRESULT CSXMemBuffer::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::Persist(CBPersistMgr *persistMgr) {
+HRESULT CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(persistMgr);
+	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_size));
 

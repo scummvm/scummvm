@@ -92,7 +92,7 @@ void CAdNodeState::SetCursor(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdNodeState::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdNodeState::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(Game));
 
 	persistMgr->transfer(TMEMBER(_active));

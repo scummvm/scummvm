@@ -1153,7 +1153,7 @@ void CScScript::RuntimeError(LPCSTR fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Persist(CBPersistMgr *persistMgr) {
+HRESULT CScScript::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 

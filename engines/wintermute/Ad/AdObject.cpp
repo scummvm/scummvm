@@ -953,8 +953,8 @@ HRESULT CAdObject::Reset() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::Persist(CBPersistMgr *persistMgr) {
-	CBObject::Persist(persistMgr);
+HRESULT CAdObject::persist(CBPersistMgr *persistMgr) {
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_blockRegion));
@@ -985,8 +985,8 @@ HRESULT CAdObject::Persist(CBPersistMgr *persistMgr) {
 
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) persistMgr->transfer(TMEMBER(_currentRegions[i]));
 
-	_attachmentsPre.Persist(persistMgr);
-	_attachmentsPost.Persist(persistMgr);
+	_attachmentsPre.persist(persistMgr);
+	_attachmentsPost.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_registerAlias));
 
 	persistMgr->transfer(TMEMBER(_partFollowParent));

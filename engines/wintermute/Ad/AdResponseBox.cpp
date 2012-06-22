@@ -511,17 +511,17 @@ HRESULT CAdResponseBox::Listen(CBScriptHolder *param1, uint32 param2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::Persist(CBPersistMgr *persistMgr) {
-	CBObject::Persist(persistMgr);
+HRESULT CAdResponseBox::persist(CBPersistMgr *persistMgr) {
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_font));
 	persistMgr->transfer(TMEMBER(_fontHover));
 	persistMgr->transfer(TMEMBER(_horizontal));
 	persistMgr->transfer(TMEMBER(_lastResponseText));
 	persistMgr->transfer(TMEMBER(_lastResponseTextOrig));
-	_respButtons.Persist(persistMgr);
+	_respButtons.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_responseArea));
-	_responses.Persist(persistMgr);
+	_responses.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_scrollOffset));
 	persistMgr->transfer(TMEMBER(_shieldWindow));
 	persistMgr->transfer(TMEMBER(_spacing));

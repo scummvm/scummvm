@@ -350,8 +350,8 @@ void CUITiledImage::CorrectSize(int *Width, int *Height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::Persist(CBPersistMgr *persistMgr) {
-	CBObject::Persist(persistMgr);
+HRESULT CUITiledImage::persist(CBPersistMgr *persistMgr) {
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_downLeft));
 	persistMgr->transfer(TMEMBER(_downMiddle));

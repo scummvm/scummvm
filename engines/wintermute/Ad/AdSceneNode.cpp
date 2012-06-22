@@ -69,9 +69,9 @@ HRESULT CAdSceneNode::SetRegion(CAdRegion *Region) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSceneNode::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdSceneNode::persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_entity));
 	persistMgr->transfer(TMEMBER(_region));

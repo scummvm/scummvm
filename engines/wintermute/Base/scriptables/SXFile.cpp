@@ -689,9 +689,9 @@ uint32 CSXFile::GetLength() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXFile::Persist(CBPersistMgr *persistMgr) {
+HRESULT CSXFile::persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(persistMgr);
+	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_mode));

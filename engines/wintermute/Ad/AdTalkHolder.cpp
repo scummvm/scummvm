@@ -343,12 +343,12 @@ HRESULT CAdTalkHolder::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkHolder::Persist(CBPersistMgr *persistMgr) {
-	CAdObject::Persist(persistMgr);
+HRESULT CAdTalkHolder::persist(CBPersistMgr *persistMgr) {
+	CAdObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_sprite));
-	_talkSprites.Persist(persistMgr);
-	_talkSpritesEx.Persist(persistMgr);
+	_talkSprites.persist(persistMgr);
+	_talkSpritesEx.persist(persistMgr);
 
 	return S_OK;
 }

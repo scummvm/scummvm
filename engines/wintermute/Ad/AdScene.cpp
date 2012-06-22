@@ -2135,8 +2135,8 @@ float CAdScene::GetScaleAt(int Y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::Persist(CBPersistMgr *persistMgr) {
-	CBObject::Persist(persistMgr);
+HRESULT CAdScene::persist(CBPersistMgr *persistMgr) {
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_autoScroll));
 	persistMgr->transfer(TMEMBER(_editorColBlocked));
@@ -2163,23 +2163,23 @@ HRESULT CAdScene::Persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_initialized));
 	persistMgr->transfer(TMEMBER(_lastTimeH));
 	persistMgr->transfer(TMEMBER(_lastTimeV));
-	_layers.Persist(persistMgr);
+	_layers.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_mainLayer));
-	_objects.Persist(persistMgr);
+	_objects.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_offsetLeft));
 	persistMgr->transfer(TMEMBER(_offsetTop));
 	persistMgr->transfer(TMEMBER(_paralaxScrolling));
 	persistMgr->transfer(TMEMBER(_persistentState));
 	persistMgr->transfer(TMEMBER(_persistentStateSprites));
 	persistMgr->transfer(TMEMBER(_pFMaxTime));
-	_pFPath.Persist(persistMgr);
+	_pFPath.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_pFPointsNum));
 	persistMgr->transfer(TMEMBER(_pFReady));
 	persistMgr->transfer(TMEMBER(_pFRequester));
 	persistMgr->transfer(TMEMBER(_pFTarget));
 	persistMgr->transfer(TMEMBER(_pFTargetPath));
-	_rotLevels.Persist(persistMgr);
-	_scaleLevels.Persist(persistMgr);
+	_rotLevels.persist(persistMgr);
+	_scaleLevels.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_scrollPixelsH));
 	persistMgr->transfer(TMEMBER(_scrollPixelsV));
 	persistMgr->transfer(TMEMBER(_scrollTimeH));
@@ -2187,7 +2187,7 @@ HRESULT CAdScene::Persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_shieldWindow));
 	persistMgr->transfer(TMEMBER(_targetOffsetLeft));
 	persistMgr->transfer(TMEMBER(_targetOffsetTop));
-	_waypointGroups.Persist(persistMgr);
+	_waypointGroups.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_viewport));
 	persistMgr->transfer(TMEMBER(_width));
 

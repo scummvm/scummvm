@@ -456,9 +456,9 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBFontBitmap::persist(CBPersistMgr *persistMgr) {
 
-	CBFont::Persist(persistMgr);
+	CBFont::persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_numColumns));
 
 	persistMgr->transfer(TMEMBER(_subframe));

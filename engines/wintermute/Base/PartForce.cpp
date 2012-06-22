@@ -47,7 +47,7 @@ CPartForce::~CPartForce(void) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartForce::Persist(CBPersistMgr *persistMgr) {
+HRESULT CPartForce::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_name));
 	persistMgr->transfer(TMEMBER(_pos));
 	persistMgr->transfer(TMEMBER(_direction));

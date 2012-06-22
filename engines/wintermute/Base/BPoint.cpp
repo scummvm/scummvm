@@ -53,7 +53,7 @@ CBPoint::CBPoint(int initX, int initY) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPoint::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBPoint::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(x));
 	persistMgr->transfer(TMEMBER(y));

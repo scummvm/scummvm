@@ -144,9 +144,9 @@ int CBFont::GetLetterHeight() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFont::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBFont::persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 	return S_OK;
 }
 

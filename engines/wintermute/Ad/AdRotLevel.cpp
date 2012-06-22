@@ -147,9 +147,9 @@ HRESULT CAdRotLevel::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdRotLevel::persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_rotation));
 

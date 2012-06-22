@@ -864,8 +864,8 @@ HRESULT CBObject::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::Persist(CBPersistMgr *persistMgr) {
-	CBScriptHolder::Persist(persistMgr);
+HRESULT CBObject::persist(CBPersistMgr *persistMgr) {
+	CBScriptHolder::persist(persistMgr);
 
 	for (int i = 0; i < 7; i++) persistMgr->transfer(TMEMBER(_caption[i]));
 	persistMgr->transfer(TMEMBER(_activeCursor));

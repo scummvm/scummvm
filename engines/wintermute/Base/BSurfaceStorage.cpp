@@ -148,14 +148,14 @@ HRESULT CBSurfaceStorage::RestoreAll() {
 
 /*
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceStorage::Persist(CBPersistMgr *persistMgr)
+HRESULT CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
 {
 
     if(!persistMgr->_saving) Cleanup(false);
 
     persistMgr->transfer(TMEMBER(Game));
 
-    //_surfaces.Persist(persistMgr);
+    //_surfaces.persist(persistMgr);
 
     return S_OK;
 }

@@ -52,7 +52,7 @@ namespace WinterMute {
 	virtual const char* GetClassName();\
 	static HRESULT WINAPI PersistLoad(void* Instance, CBPersistMgr* PersistMgr);\
 	class_name(TDynamicConstructor p1, TDynamicConstructor p2):parent_class(p1, p2){ /*memset(this, 0, sizeof(class_name));*/ };\
-	virtual HRESULT Persist(CBPersistMgr* PersistMgr);\
+	virtual HRESULT persist(CBPersistMgr* PersistMgr);\
 	void* operator new (size_t size);\
 	void operator delete(void* p);\
 	 
@@ -64,7 +64,7 @@ namespace WinterMute {
 	}\
 	\
 	HRESULT class_name::PersistLoad(void* Instance, CBPersistMgr* PersistMgr){\
-		return ((class_name*)Instance)->Persist(PersistMgr);\
+		return ((class_name*)Instance)->persist(PersistMgr);\
 	}\
 	\
 	const char* class_name::GetClassName(){\

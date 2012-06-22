@@ -49,7 +49,7 @@ CBViewport::~CBViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBViewport::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBViewport::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 

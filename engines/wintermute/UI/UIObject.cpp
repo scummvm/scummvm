@@ -555,9 +555,9 @@ HRESULT CUIObject::GetTotalOffset(int *OffsetX, int *OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::Persist(CBPersistMgr *persistMgr) {
+HRESULT CUIObject::persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_back));
 	persistMgr->transfer(TMEMBER(_canFocus));

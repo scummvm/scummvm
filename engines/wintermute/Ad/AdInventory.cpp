@@ -106,11 +106,11 @@ HRESULT CAdInventory::RemoveItem(CAdItem *Item) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdInventory::persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 
-	_takenItems.Persist(persistMgr);
+	_takenItems.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_scrollOffset));
 
 	return S_OK;

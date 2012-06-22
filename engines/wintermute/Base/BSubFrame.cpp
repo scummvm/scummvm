@@ -310,9 +310,9 @@ void CBSubFrame::SetDefaultRect() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBSubFrame::persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(persistMgr);
+	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_2DOnly));
 	persistMgr->transfer(TMEMBER(_3DOnly));

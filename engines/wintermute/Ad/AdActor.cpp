@@ -1187,8 +1187,8 @@ CBSprite *CAdActor::GetTalkStanceOld(const char *Stance) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::Persist(CBPersistMgr *persistMgr) {
-	CAdTalkHolder::Persist(persistMgr);
+HRESULT CAdActor::persist(CBPersistMgr *persistMgr) {
+	CAdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_dir));
 	persistMgr->transfer(TMEMBER(_path));
@@ -1198,8 +1198,8 @@ HRESULT CAdActor::Persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_pFX));
 	persistMgr->transfer(TMEMBER(_pFY));
 	persistMgr->transfer(TMEMBER(_standSprite));
-	_talkSprites.Persist(persistMgr);
-	_talkSpritesEx.Persist(persistMgr);
+	_talkSprites.persist(persistMgr);
+	_talkSpritesEx.persist(persistMgr);
 	persistMgr->transfer(TMEMBER_INT(_targetDir));
 	persistMgr->transfer(TMEMBER_INT(_afterWalkDir));
 	persistMgr->transfer(TMEMBER(_targetPoint));
@@ -1214,7 +1214,7 @@ HRESULT CAdActor::Persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_turnLeftAnimName));
 	persistMgr->transfer(TMEMBER(_turnRightAnimName));
 
-	_anims.Persist(persistMgr);
+	_anims.persist(persistMgr);
 
 	return S_OK;
 }

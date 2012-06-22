@@ -80,7 +80,7 @@ public:
 			_color = 0x00000000;
 		}
 
-		HRESULT Persist(CBPersistMgr *persistMgr) {
+		HRESULT persist(CBPersistMgr *persistMgr) {
 			persistMgr->transfer(TMEMBER(_offsetX));
 			persistMgr->transfer(TMEMBER(_offsetY));
 			persistMgr->transfer(TMEMBER(_color));

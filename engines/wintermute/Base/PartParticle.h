@@ -76,7 +76,7 @@ public:
 	HRESULT FadeIn(uint32 CurrentTime, int FadeTime);
 	HRESULT FadeOut(uint32 CurrentTime, int FadeTime);
 
-	HRESULT Persist(CBPersistMgr *PersistMgr);
+	HRESULT persist(CBPersistMgr *PersistMgr);
 private:
 	uint32 _fadeStart;
 	int _fadeTime;

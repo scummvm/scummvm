@@ -1150,9 +1150,9 @@ HRESULT CUIWindow::HandleMouse(TMouseEvent Event, TMouseButton Button) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::Persist(CBPersistMgr *persistMgr) {
+HRESULT CUIWindow::persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(persistMgr);
+	CUIObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_backInactive));
 	persistMgr->transfer(TMEMBER(_clipContents));
@@ -1174,7 +1174,7 @@ HRESULT CUIWindow::Persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_viewport));
 	persistMgr->transfer(TMEMBER(_pauseMusic));
 
-	_widgets.Persist(persistMgr);
+	_widgets.persist(persistMgr);
 
 	return S_OK;
 }

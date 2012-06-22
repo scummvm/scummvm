@@ -836,9 +836,9 @@ int CUIEdit::InsertChars(int Pos, byte *Chars, int Num) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::Persist(CBPersistMgr *persistMgr) {
+HRESULT CUIEdit::persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(persistMgr);
+	CUIObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_cursorBlinkRate));
 	persistMgr->transfer(TMEMBER(_cursorChar));

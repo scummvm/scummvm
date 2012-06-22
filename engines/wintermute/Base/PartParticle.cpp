@@ -216,7 +216,7 @@ HRESULT CPartParticle::FadeOut(uint32 CurrentTime, int FadeTime) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::Persist(CBPersistMgr *persistMgr) {
+HRESULT CPartParticle::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha1));
 	persistMgr->transfer(TMEMBER(_alpha2));
 	persistMgr->transfer(TMEMBER(_border));

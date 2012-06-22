@@ -211,7 +211,7 @@ HRESULT CAdSentence::Finish() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdSentence::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 

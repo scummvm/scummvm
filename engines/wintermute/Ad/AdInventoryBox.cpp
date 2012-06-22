@@ -350,8 +350,8 @@ HRESULT CAdInventoryBox::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::Persist(CBPersistMgr *persistMgr) {
-	CBObject::Persist(persistMgr);
+HRESULT CAdInventoryBox::persist(CBPersistMgr *persistMgr) {
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_closeButton));
 	persistMgr->transfer(TMEMBER(_hideSelected));

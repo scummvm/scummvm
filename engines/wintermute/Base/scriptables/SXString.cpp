@@ -377,9 +377,9 @@ HRESULT CSXString::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::Persist(CBPersistMgr *persistMgr) {
+HRESULT CSXString::persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(persistMgr);
+	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_capacity));
 

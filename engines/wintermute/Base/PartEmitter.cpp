@@ -1098,8 +1098,8 @@ const char *CPartEmitter::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::Persist(CBPersistMgr *persistMgr) {
-	CBObject::Persist(persistMgr);
+HRESULT CPartEmitter::persist(CBPersistMgr *persistMgr) {
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_width));
 	persistMgr->transfer(TMEMBER(_height));
@@ -1159,20 +1159,20 @@ HRESULT CPartEmitter::Persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_owner));
 
 
-	_sprites.Persist(persistMgr);
+	_sprites.persist(persistMgr);
 
 	int NumForces;
 	if (persistMgr->_saving) {
 		NumForces = _forces.GetSize();
 		persistMgr->transfer(TMEMBER(NumForces));
 		for (int i = 0; i < _forces.GetSize(); i++) {
-			_forces[i]->Persist(persistMgr);
+			_forces[i]->persist(persistMgr);
 		}
 	} else {
 		persistMgr->transfer(TMEMBER(NumForces));
 		for (int i = 0; i < NumForces; i++) {
 			CPartForce *Force = new CPartForce(Game);
-			Force->Persist(persistMgr);
+			Force->persist(persistMgr);
 			_forces.Add(Force);
 		}
 	}
@@ -1182,13 +1182,13 @@ HRESULT CPartEmitter::Persist(CBPersistMgr *persistMgr) {
 		NumParticles = _particles.GetSize();
 		persistMgr->transfer(TMEMBER(NumParticles));
 		for (int i = 0; i < _particles.GetSize(); i++) {
-			_particles[i]->Persist(persistMgr);
+			_particles[i]->persist(persistMgr);
 		}
 	} else {
 		persistMgr->transfer(TMEMBER(NumParticles));
 		for (int i = 0; i < NumParticles; i++) {
 			CPartParticle *Particle = new CPartParticle(Game);
-			Particle->Persist(persistMgr);
+			Particle->persist(persistMgr);
 			_particles.Add(Particle);
 		}
 	}

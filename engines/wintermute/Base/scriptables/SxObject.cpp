@@ -58,8 +58,8 @@ CSXObject::~CSXObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXObject::Persist(CBPersistMgr *persistMgr) {
-	CBObject::Persist(persistMgr);
+HRESULT CSXObject::persist(CBPersistMgr *persistMgr) {
+	CBObject::persist(persistMgr);
 
 	return S_OK;
 }

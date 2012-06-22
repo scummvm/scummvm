@@ -215,9 +215,9 @@ HRESULT CBKeyboardState::ReadKey(Common::Event *event) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBKeyboardState::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBKeyboardState::persist(CBPersistMgr *persistMgr) {
 	//if(!persistMgr->_saving) Cleanup();
-	CBScriptable::Persist(persistMgr);
+	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_currentAlt));
 	persistMgr->transfer(TMEMBER(_currentCharCode));

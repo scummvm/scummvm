@@ -406,16 +406,16 @@ HRESULT CBRegion::SaveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOv
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBRegion::persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
 	persistMgr->transfer(TMEMBER(_lastMimicScale));
 	persistMgr->transfer(TMEMBER(_lastMimicX));
 	persistMgr->transfer(TMEMBER(_lastMimicY));
-	_points.Persist(persistMgr);
+	_points.persist(persistMgr);
 
 	return S_OK;
 }

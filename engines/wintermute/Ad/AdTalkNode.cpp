@@ -183,7 +183,7 @@ HRESULT CAdTalkNode::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkNode::Persist(CBPersistMgr *persistMgr) {
+HRESULT CAdTalkNode::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_comment));
 	persistMgr->transfer(TMEMBER(_startTime));
 	persistMgr->transfer(TMEMBER(_endTime));

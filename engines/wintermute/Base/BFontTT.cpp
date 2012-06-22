@@ -592,8 +592,8 @@ HRESULT CBFontTT::ParseLayer(CBTTFontLayer *Layer, byte *Buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::Persist(CBPersistMgr *persistMgr) {
-	CBFont::Persist(persistMgr);
+HRESULT CBFontTT::persist(CBPersistMgr *persistMgr) {
+	CBFont::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_isBold));
 	persistMgr->transfer(TMEMBER(_isItalic));
@@ -608,13 +608,13 @@ HRESULT CBFontTT::Persist(CBPersistMgr *persistMgr) {
 	if (persistMgr->_saving) {
 		NumLayers = _layers.GetSize();
 		persistMgr->transfer(TMEMBER(NumLayers));
-		for (int i = 0; i < NumLayers; i++) _layers[i]->Persist(persistMgr);
+		for (int i = 0; i < NumLayers; i++) _layers[i]->persist(persistMgr);
 	} else {
 		NumLayers = _layers.GetSize();
 		persistMgr->transfer(TMEMBER(NumLayers));
 		for (int i = 0; i < NumLayers; i++) {
 			CBTTFontLayer *Layer = new CBTTFontLayer;
-			Layer->Persist(persistMgr);
+			Layer->persist(persistMgr);
 			_layers.Add(Layer);
 		}
 	}

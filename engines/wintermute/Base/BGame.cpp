@@ -3629,10 +3629,10 @@ HRESULT CBGame::LoadSettings(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::Persist(CBPersistMgr *persistMgr) {
+HRESULT CBGame::persist(CBPersistMgr *persistMgr) {
 	if (!persistMgr->_saving) Cleanup();
 
-	CBObject::Persist(persistMgr);
+	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_activeObject));
 	persistMgr->transfer(TMEMBER(_capturedObject));
@@ -3662,7 +3662,7 @@ HRESULT CBGame::Persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_personalizedSave));
 	persistMgr->transfer(TMEMBER(_quitting));
 
-	_regObjects.Persist(persistMgr);
+	_regObjects.persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_scEngine));
 	//persistMgr->transfer(TMEMBER(_soundMgr));
@@ -3704,7 +3704,7 @@ HRESULT CBGame::Persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_mouseLockRect));
 
-	_windows.Persist(persistMgr);
+	_windows.persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_suppressScriptErrors));
 	persistMgr->transfer(TMEMBER(_autorunDisabled));
