@@ -38,7 +38,7 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
 private:
-	template<typename ColorMask, typename pixel>
+	template<typename ColorMask, typename Pixel>
 	void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 			uint32 dstPitch, int width, int height);
 };

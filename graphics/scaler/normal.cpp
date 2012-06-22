@@ -39,11 +39,11 @@ void NormalPlugin::initialize(Graphics::PixelFormat format) {
  * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
  * source to the destination.
  */
-template<typename pixel>
+template<typename Pixel>
 void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	// Spot the case when it can all be done in 1 hit
-	int BytesPerPixel = sizeof(pixel);
+	int BytesPerPixel = sizeof(Pixel);
 	if ((srcPitch == BytesPerPixel * (uint)width) && (dstPitch == BytesPerPixel * (uint)width)) {
 		memcpy(dstPtr, srcPtr, BytesPerPixel * width * height);
 		return;
@@ -60,22 +60,22 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 /**
  * Trivial nearest-neighbor 2x scaler.
  */
-template<typename pixel>
+template<typename Pixel>
 void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
-	int b = sizeof(pixel);
+	int b = sizeof(Pixel);
 
 	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += b * 2) {
-			pixel color = *(((const pixel*)srcPtr) + i);
+			Pixel color = *(((const Pixel*)srcPtr) + i);
 
-			*(pixel *)(r) = color;
-			*(pixel *)(r + b) = color;
-			*(pixel *)(r + dstPitch) = color;
-			*(pixel *)(r + b + dstPitch) = color;
+			*(Pixel *)(r) = color;
+			*(Pixel *)(r + b) = color;
+			*(Pixel *)(r + dstPitch) = color;
+			*(Pixel *)(r + b + dstPitch) = color;
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch << 1;
@@ -120,29 +120,29 @@ void Normal2x<uint16>(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 /**
  * Trivial nearest-neighbor 3x scaler.
  */
-template<typename pixel>
+template<typename Pixel>
 void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
 	const uint32 dstPitch2 = dstPitch * 2;
 	const uint32 dstPitch3 = dstPitch * 3;
-	int b = sizeof(pixel);
+	int b = sizeof(Pixel);
 
 	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += b * 3) {
-			pixel color = *(((const pixel *)srcPtr) + i);
+			Pixel color = *(((const Pixel *)srcPtr) + i);
 
-			*(pixel *)(r + b * 0) = color;
-			*(pixel *)(r + b * 1) = color;
-			*(pixel *)(r + b * 2) = color;
-			*(pixel *)(r + b * 0 + dstPitch) = color;
-			*(pixel *)(r + b * 1 + dstPitch) = color;
-			*(pixel *)(r + b * 2 + dstPitch) = color;
-			*(pixel *)(r + b * 0 + dstPitch2) = color;
-			*(pixel *)(r + b * 1 + dstPitch2) = color;
-			*(pixel *)(r + b * 2 + dstPitch2) = color;
+			*(Pixel *)(r + b * 0) = color;
+			*(Pixel *)(r + b * 1) = color;
+			*(Pixel *)(r + b * 2) = color;
+			*(Pixel *)(r + b * 0 + dstPitch) = color;
+			*(Pixel *)(r + b * 1 + dstPitch) = color;
+			*(Pixel *)(r + b * 2 + dstPitch) = color;
+			*(Pixel *)(r + b * 0 + dstPitch2) = color;
+			*(Pixel *)(r + b * 1 + dstPitch2) = color;
+			*(Pixel *)(r + b * 2 + dstPitch2) = color;
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch3;
@@ -152,37 +152,37 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 /**
  * Trivial nearest-neighbor 4x scaler.
  */
-template<typename pixel>
+template<typename Pixel>
 void Normal4x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
 	const uint32 dstPitch2 = dstPitch * 2;
 	const uint32 dstPitch3 = dstPitch * 3;
 	const uint32 dstPitch4 = dstPitch * 4;
-	int b = sizeof(pixel);
+	int b = sizeof(Pixel);
 
 	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += b * 4) {
-			pixel color = *(((const pixel *)srcPtr) + i);
+			Pixel color = *(((const Pixel *)srcPtr) + i);
 
-			*(pixel *)(r + b * 0) = color;
-			*(pixel *)(r + b * 1) = color;
-			*(pixel *)(r + b * 2) = color;
-			*(pixel *)(r + b * 3) = color;
-			*(pixel *)(r + b * 0 + dstPitch) = color;
-			*(pixel *)(r + b * 1 + dstPitch) = color;
-			*(pixel *)(r + b * 2 + dstPitch) = color;
-			*(pixel *)(r + b * 3 + dstPitch) = color;
-			*(pixel *)(r + b * 0 + dstPitch2) = color;
-			*(pixel *)(r + b * 1 + dstPitch2) = color;
-			*(pixel *)(r + b * 2 + dstPitch2) = color;
-			*(pixel *)(r + b * 3 + dstPitch2) = color;
-			*(pixel *)(r + b * 0 + dstPitch3) = color;
-			*(pixel *)(r + b * 1 + dstPitch3) = color;
-			*(pixel *)(r + b * 2 + dstPitch3) = color;
-			*(pixel *)(r + b * 3 + dstPitch3) = color;
+			*(Pixel *)(r + b * 0) = color;
+			*(Pixel *)(r + b * 1) = color;
+			*(Pixel *)(r + b * 2) = color;
+			*(Pixel *)(r + b * 3) = color;
+			*(Pixel *)(r + b * 0 + dstPitch) = color;
+			*(Pixel *)(r + b * 1 + dstPitch) = color;
+			*(Pixel *)(r + b * 2 + dstPitch) = color;
+			*(Pixel *)(r + b * 3 + dstPitch) = color;
+			*(Pixel *)(r + b * 0 + dstPitch2) = color;
+			*(Pixel *)(r + b * 1 + dstPitch2) = color;
+			*(Pixel *)(r + b * 2 + dstPitch2) = color;
+			*(Pixel *)(r + b * 3 + dstPitch2) = color;
+			*(Pixel *)(r + b * 0 + dstPitch3) = color;
+			*(Pixel *)(r + b * 1 + dstPitch3) = color;
+			*(Pixel *)(r + b * 2 + dstPitch3) = color;
+			*(Pixel *)(r + b * 3 + dstPitch3) = color;
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch4;
