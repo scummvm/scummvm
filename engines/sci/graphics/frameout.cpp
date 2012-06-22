@@ -648,15 +648,14 @@ void GfxFrameout::kernelFrameout() {
 					drawPicture(itemEntry, it->planeOffsetX, it->planeOffsetY, it->planePictureMirrored);
 			} else {
 				GfxView *view = (itemEntry->viewId != 0xFFFF) ? _cache->getView(itemEntry->viewId) : NULL;
-				
+				int16 dummyX = 0;
+
 				if (view && view->isSci2Hires()) {
-					int16 dummyX = 0;
 					view->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
 					view->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
 				} else if (getSciVersion() == SCI_VERSION_2_1) {
 					_coordAdjuster->fromScriptToDisplay(itemEntry->y, itemEntry->x);
-					int16 tmpVal = 0;
-					_coordAdjuster->fromScriptToDisplay(itemEntry->z, tmpVal);
+					_coordAdjuster->fromScriptToDisplay(itemEntry->z, dummyX);
 				}
 
 				// Adjust according to current scroll position
@@ -707,17 +706,9 @@ void GfxFrameout::kernelFrameout() {
 					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
 
-				int16 screenHeight = _screen->getHeight();
-				int16 screenWidth = _screen->getWidth();
-				if (view && view->isSci2Hires()) {
-					screenHeight = _screen->getDisplayHeight();
-					screenWidth = _screen->getDisplayWidth();
-				}
-
-				if (itemEntry->celRect.bottom < 0 || itemEntry->celRect.top >= screenHeight)
-					continue;
-
-				if (itemEntry->celRect.right < 0 || itemEntry->celRect.left >= screenWidth)
+				// FIXME: When does this happen, and why?
+				if (itemEntry->celRect.bottom < 0 || itemEntry->celRect.top  >= _screen->getDisplayHeight() ||
+				    itemEntry->celRect.right  < 0 || itemEntry->celRect.left >= _screen->getDisplayWidth())
 					continue;
 
 				Common::Rect clipRect, translatedClipRect;
