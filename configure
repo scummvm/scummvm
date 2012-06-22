@@ -2237,6 +2237,8 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -mips32"
 			_backend="dingux"
 			_mt32emu=no
+			# Disable alsa midi to get the port build on OpenDingux toolchain
+			_alsa=no 
 			_vkeybd=yes
 			_build_hq_scalers=no
 			_keymapper=no
