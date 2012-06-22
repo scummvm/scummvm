@@ -145,7 +145,7 @@ HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
 	g_system->beginGFXTransaction();
 	g_system->initSize(_width, _height, &format);
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
-	
+
 	if (gfxError != OSystem::kTransactionSuccess) {
 		warning("Couldn't setup GFX-backend for %dx%dx%d", _width, _height, format.bytesPerPixel * 8);
 		return E_FAIL;
@@ -275,7 +275,7 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, Common::Rect *rect) {
 		warning("Implement CBRenderSDL::FadeToColor"); // TODO.
 		hasWarned = true;
 	}
-	
+
 	Common::Rect fillRect;
 
 	if (rect) {
@@ -317,7 +317,7 @@ void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect
 		mirror |= TransparentSurface::FLIP_V;
 	if (mirrorY)
 		mirror |= TransparentSurface::FLIP_H;
-	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, srcRect, _colorMod, dstRect->width(), dstRect->height() );
+	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, srcRect, _colorMod, dstRect->width(), dstRect->height());
 }
 
 void CBRenderSDL::drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
@@ -332,31 +332,31 @@ void CBRenderSDL::drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *s
 		img = &src;
 	}
 
-	int posX = dstRect->left;	
+	int posX = dstRect->left;
 	int posY = dstRect->top;
-	
+
 	// Handle off-screen clipping
 	if (posY < 0) {
 		img->h = MAX(0, (int)img->h - -posY);
 		img->pixels = (byte *)img->pixels + img->pitch * -posY;
 		posY = 0;
 	}
-	
+
 	if (posX < 0) {
 		img->w = MAX(0, (int)img->w - -posX);
 		img->pixels = (byte *)img->pixels + (-posX * 4);
 		posX = 0;
 	}
-	
+
 	img->w = CLIP((int)img->w, 0, (int)MAX((int)_renderSurface->w - posX, 0));
 	img->h = CLIP((int)img->h, 0, (int)MAX((int)_renderSurface->h - posY, 0));
-	
+
 	for (int i = 0; i < img->h; i++) {
 		void *destPtr = _renderSurface->getBasePtr(posX, posY + i);
 		void *srcPtr = img->getBasePtr(0, i);
 		memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel * img->w);
 	}
-	
+
 	if (imgScaled) {
 		imgScaled->pixels = savedPixels;
 		imgScaled->free();

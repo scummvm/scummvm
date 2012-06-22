@@ -48,8 +48,12 @@ public:
 	~CBImage();
 
 	HRESULT loadFile(const Common::String &filename);
-	const Graphics::Surface *getSurface() const { return _surface; };
-	const byte *getPalette() const { return _palette; }
+	const Graphics::Surface *getSurface() const {
+		return _surface;
+	};
+	const byte *getPalette() const {
+		return _palette;
+	}
 	byte getAlphaAt(int x, int y);
 	bool writeBMPToStream(Common::WriteStream *stream);
 	HRESULT Resize(int NewWidth, int NewHeight);

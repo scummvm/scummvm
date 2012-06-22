@@ -1690,7 +1690,7 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 	// fill black
 	_renderer->Fill(0, 0, 0);
 	if (!_editorMode) _renderer->SetScreenViewport();
-	
+
 	// playing exclusive video?
 	if (_videoPlayer->isPlaying()) {
 		if (Update) _videoPlayer->update();

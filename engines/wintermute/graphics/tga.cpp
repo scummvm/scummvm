@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/* Based on code from eos https://github.com/DrMcCoy/xoreos/ 
+/* Based on code from eos https://github.com/DrMcCoy/xoreos/
  * relicensed under GPLv2+ with permission from DrMcCoy and clone2727
  */
 
@@ -33,7 +33,7 @@
 namespace WinterMute {
 
 TGA::TGA() {
-	
+
 }
 
 TGA::~TGA() {
@@ -45,10 +45,10 @@ void TGA::destroy() {
 }
 
 bool TGA::loadStream(Common::SeekableReadStream &tga) {
-		byte imageType, pixelDepth;
-		bool success;
-		success = readHeader(tga, imageType, pixelDepth);
-		success = readData  (tga, imageType, pixelDepth);
+	byte imageType, pixelDepth;
+	bool success;
+	success = readHeader(tga, imageType, pixelDepth);
+	success = readData(tga, imageType, pixelDepth);
 
 	if (tga.err() || !success) {
 		warning("Failed reading TGA-file");
@@ -93,10 +93,10 @@ bool TGA::readHeader(Common::SeekableReadStream &tga, byte &imageType, byte &pix
 	if (imageType == 2) {
 		if (pixelDepth == 24) {
 			_hasAlpha  = false;
-			_format = Graphics::PixelFormat(pixelDepth/8, 8, 8, 8, 0, 16, 8, 0, 0);
+			_format = Graphics::PixelFormat(pixelDepth / 8, 8, 8, 8, 0, 16, 8, 0, 0);
 		} else if (pixelDepth == 16 || pixelDepth == 32) {
 			_hasAlpha  = true;
-			_format = Graphics::PixelFormat(pixelDepth/8, 8, 8, 8, 8, 24, 16, 8, 0);
+			_format = Graphics::PixelFormat(pixelDepth / 8, 8, 8, 8, 8, 24, 16, 8, 0);
 		} else {
 			warning("Unsupported pixel depth: %d, %d", imageType, pixelDepth);
 			return false;
@@ -127,7 +127,7 @@ bool TGA::readData(Common::SeekableReadStream &tga, byte imageType, byte pixelDe
 			// Convert from 16bpp to 32bpp
 			// 16bpp TGA is ARGB1555
 			uint16 count = _surface.w * _surface.h;
-			byte *dst = (byte*)_surface.pixels;
+			byte *dst = (byte *)_surface.pixels;
 
 			while (count--) {
 				uint16 pixel = tga.readUint16LE();
@@ -145,7 +145,7 @@ bool TGA::readData(Common::SeekableReadStream &tga, byte imageType, byte pixelDe
 	} else if (imageType == 3) {
 		_surface.create(_surface.w, _surface.h, _surface.format);
 
-		byte  *data  = (byte*)_surface.pixels;
+		byte  *data  = (byte *)_surface.pixels;
 		uint32 count = _surface.w * _surface.h;
 
 		while (count-- > 0) {

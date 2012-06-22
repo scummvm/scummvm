@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -59,7 +59,7 @@ CBImage::CBImage(CBGame *inGame, FIBITMAP *bitmap): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 CBImage::~CBImage() {
-/*	delete _bitmap; */
+	/*  delete _bitmap; */
 	delete _decoder;
 	delete _deletableSurface;
 #if 0
@@ -83,21 +83,21 @@ HRESULT CBImage::loadFile(const Common::String &filename) {
 	} else {
 		error("CBImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
-	
+
 	Common::SeekableReadStream *file = Game->_fileManager->OpenFile(filename.c_str());
 	if (!file) return E_FAIL;
-	
+
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
 	_palette = _decoder->getPalette();
 	Game->_fileManager->CloseFile(file);
-	
+
 	return S_OK;
 }
 
 byte CBImage::getAlphaAt(int x, int y) {
 	if (!_surface) return 0xFF;
-	uint32 color = *(uint32*)_surface->getBasePtr(x, y);
+	uint32 color = *(uint32 *)_surface->getBasePtr(x, y);
 	byte r, g, b, a;
 	_surface->format.colorToARGB(color, a, r, g, b);
 	return a;
@@ -149,9 +149,12 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 	stream->writeByte('M');
 
 	/* Since we don't care during reads, we don't care during writes: */
-	/* uint32 fileSize = */ stream->writeUint32LE(0);
-	/* uint16 res1 = */ stream->writeUint16LE(0);
-	/* uint16 res2 = */ stream->writeUint16LE(0);
+	/* uint32 fileSize = */
+	stream->writeUint32LE(0);
+	/* uint16 res1 = */
+	stream->writeUint16LE(0);
+	/* uint16 res2 = */
+	stream->writeUint16LE(0);
 	const uint32 imageOffset = 54;
 	stream->writeUint32LE(imageOffset);
 
@@ -165,12 +168,12 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 
 	if (width == 0 || height == 0)
 		return false;
-	
+
 	if (height < 0) {
 		warning("Right-side up bitmaps not supported");
 		return false;
 	}
-	
+
 	/* uint16 planes = */ stream->writeUint16LE(0);
 	const uint16 bitsPerPixel = 24;
 	stream->writeUint16LE(bitsPerPixel);
@@ -178,12 +181,16 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 	const uint32 compression = 0;
 	stream->writeUint32LE(compression);
 
-	/* uint32 imageSize = */ stream->writeUint32LE(0);
-	/* uint32 pixelsPerMeterX = */ stream->writeUint32LE(0);
-	/* uint32 pixelsPerMeterY = */ stream->writeUint32LE(0);
+	/* uint32 imageSize = */
+	stream->writeUint32LE(0);
+	/* uint32 pixelsPerMeterX = */
+	stream->writeUint32LE(0);
+	/* uint32 pixelsPerMeterY = */
+	stream->writeUint32LE(0);
 	const uint32 paletteColorCount = 0;
 	stream->writeUint32LE(paletteColorCount);
-	/* uint32 colorsImportant = */ stream->writeUint32LE(0);
+	/* uint32 colorsImportant = */
+	stream->writeUint32LE(0);
 
 	// Start us at the beginning of the image (54 bytes in)
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
@@ -199,14 +206,14 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 
 	for (int32 i = height - 1; i >= 0; i--) {
 		for (uint32 j = 0; j < width; j++) {
-			byte b,g,r;
-			uint32 color = *(uint32*)surface->getBasePtr(j, i);
+			byte b, g, r;
+			uint32 color = *(uint32 *)surface->getBasePtr(j, i);
 			surface->format.colorToRGB(color, r, g, b);
 			stream->writeByte(b);
 			stream->writeByte(g);
 			stream->writeByte(r);
 		}
-		
+
 		for (int k = 0; k < extraDataLength; k++) {
 			stream->writeByte(0);
 		}

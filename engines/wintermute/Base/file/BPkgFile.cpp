@@ -45,12 +45,24 @@ class CBPkgFile : public Common::SeekableReadStream {
 	Common::SeekableReadStream *_stream;
 public:
 	CBPkgFile(Common::SeekableReadStream *stream, uint32 knownLength) : _size(knownLength), _stream(stream) {}
-	virtual ~CBPkgFile() { delete _stream; }
-	virtual uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
-	virtual bool eos() const { return _stream->eos(); }
-	virtual int32 pos() const { return _stream->pos(); }
-	virtual int32 size() const { return _size; }
-	virtual bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
+	virtual ~CBPkgFile() {
+		delete _stream;
+	}
+	virtual uint32 read(void *dataPtr, uint32 dataSize) {
+		return _stream->read(dataPtr, dataSize);
+	}
+	virtual bool eos() const {
+		return _stream->eos();
+	}
+	virtual int32 pos() const {
+		return _stream->pos();
+	}
+	virtual int32 size() const {
+		return _size;
+	}
+	virtual bool seek(int32 offset, int whence = SEEK_SET) {
+		return _stream->seek(offset, whence);
+	}
 };
 
 Common::SeekableReadStream *openPkgFile(const Common::String &Filename, CBFileManager *fileManager) {
@@ -66,14 +78,14 @@ Common::SeekableReadStream *openPkgFile(const Common::String &Filename, CBFileMa
 
 	fileEntry = fileManager->GetPackageEntry(fileName);
 	if (!fileEntry) return NULL;
-	
+
 	file = fileEntry->_package->GetFilePointer();
 	if (!file) return NULL;
-	
+
 	// TODO: Cleanup
 	bool compressed = (fileEntry->_compressedLength != 0);
 	/* _size = fileEntry->_length; */
-	
+
 	if (compressed) {
 		// TODO: Really, most of this logic might be doable directly in the fileEntry?
 		// But for now, this should get us rolling atleast.
@@ -86,7 +98,7 @@ Common::SeekableReadStream *openPkgFile(const Common::String &Filename, CBFileMa
 	}
 
 	file->seek(0);
-	
+
 	return file;
 }
 

@@ -115,7 +115,7 @@ HRESULT CBTransitionMgr::Update() {
 	}
 	break;
 	default:
-		error("CBTransitionMgr::Update - unhandled enum NUM_TRANSITION_TYPES");	
+		error("CBTransitionMgr::Update - unhandled enum NUM_TRANSITION_TYPES");
 	}
 
 	if (IsReady()) {

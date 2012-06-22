@@ -83,9 +83,9 @@ public:
 	int _playPosY;
 	float _playZoom;
 
-/*	LPBITMAPV4HEADER _targetFormat;
+	/*  LPBITMAPV4HEADER _targetFormat;
 
-	CBArray<CVidSubtitle *, CVidSubtitle *> _subtitles;*/
+	    CBArray<CVidSubtitle *, CVidSubtitle *> _subtitles;*/
 };
 
 } // end of namespace WinterMute

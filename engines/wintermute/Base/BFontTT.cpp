@@ -129,7 +129,7 @@ int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 	WideString text;
 
 	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	    else text = StringUtil::AnsiToWide((char *)Text);
+	else text = StringUtil::AnsiToWide((char *)Text);
 
 	if (MaxLength >= 0 && text.size() > MaxLength)
 		text = Common::String(text.c_str(), MaxLength);
@@ -146,7 +146,7 @@ int CBFontTT::GetTextHeight(byte  *Text, int Width) {
 	WideString text;
 
 	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	    else text = StringUtil::AnsiToWide((char *)Text);
+	else text = StringUtil::AnsiToWide((char *)Text);
 
 
 	int textWidth, textHeight;
@@ -160,11 +160,11 @@ int CBFontTT::GetTextHeight(byte  *Text, int Width) {
 void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, int MaxHeight, int MaxLength) {
 	if (Text == NULL || strcmp((char *)Text, "") == 0) return;
 
-	WideString text = (char*)Text;
+	WideString text = (char *)Text;
 
 	// TODO: Why do we still insist on Widestrings everywhere?
-/*	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	    else text = StringUtil::AnsiToWide((char *)Text);*/
+	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	        else text = StringUtil::AnsiToWide((char *)Text);*/
 
 	if (MaxLength >= 0 && text.size() > MaxLength)
 		text = Common::String(text.c_str(), MaxLength);
@@ -262,7 +262,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 		hasWarned = true;
 		warning("CBFontTT::RenderTextToTexture - Not fully ported yet");
 	}
-	warning("%s %d %d %d %d", text.c_str(), D3DCOLGetR(_layers[0]->_color), D3DCOLGetG(_layers[0]->_color),D3DCOLGetB(_layers[0]->_color),D3DCOLGetA(_layers[0]->_color));
+	warning("%s %d %d %d %d", text.c_str(), D3DCOLGetR(_layers[0]->_color), D3DCOLGetG(_layers[0]->_color), D3DCOLGetB(_layers[0]->_color), D3DCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(width, _lineHeight * lines.size(), Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
@@ -271,12 +271,12 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 	Common::Array<Common::String>::iterator it;
 	int heightOffset = 0;
 	for (it = lines.begin(); it != lines.end(); it++) {
-		_font->drawString(surface, *it, 0, heightOffset, width, useColor, alignment);	
+		_font->drawString(surface, *it, 0, heightOffset, width, useColor, alignment);
 		heightOffset += _lineHeight;
 	}
 
 	CBSurfaceSDL *retSurface = new CBSurfaceSDL(Game);
-	Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0));
+	Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 , 0));
 	retSurface->putSurface(*convertedSurface, true);
 	convertedSurface->free();
 	surface->free();
@@ -655,10 +655,10 @@ HRESULT CBFontTT::InitFont() {
 
 	if (file) {
 #ifdef USE_FREETYPE2
-		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight * 4/3); // Compensate for the difference in dpi (96 vs 72).
+		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight * 4 / 3); // Compensate for the difference in dpi (96 vs 72).
 		_font = _deletableFont;
 #endif
-	} 
+	}
 	if (!_font) {
 		_font = _fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		warning("BFontTT::InitFont - Couldn't load %s", _fontFile);
@@ -854,7 +854,7 @@ void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, 
 		for (it = lines.begin(); it != lines.end(); it++) {
 			textWidth = MAX(textWidth, _font->getStringWidth(*it));
 		}
-	
+
 		//WrapText(text, maxWidth, maxHeight, lines);
 
 		textHeight = (int)(lines.size() * GetLineHeight());
@@ -862,14 +862,14 @@ void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, 
 		textWidth = _font->getStringWidth(text);
 		textHeight = _fontHeight;
 	}
-/*
-	TextLineList::iterator it;
-	for (it = lines.begin(); it != lines.end(); ++it) {
-		TextLine *line = (*it);
-		textWidth = MAX(textWidth, line->GetWidth());
-		delete line;
-		line = NULL;
-	}*/
+	/*
+	    TextLineList::iterator it;
+	    for (it = lines.begin(); it != lines.end(); ++it) {
+	        TextLine *line = (*it);
+	        textWidth = MAX(textWidth, line->GetWidth());
+	        delete line;
+	        line = NULL;
+	    }*/
 }
 
 #if 0

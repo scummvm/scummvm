@@ -63,7 +63,9 @@ public:
 	virtual HRESULT restore();
 	virtual HRESULT create(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false) = 0;
 	virtual HRESULT create(int Width, int Height);
-	virtual HRESULT putSurface(const Graphics::Surface &surface, bool hasAlpha = false) { return E_FAIL; }
+	virtual HRESULT putSurface(const Graphics::Surface &surface, bool hasAlpha = false) {
+		return E_FAIL;
+	}
 	virtual HRESULT putPixel(int x, int y, byte r, byte g, byte b, int a = -1);
 	virtual HRESULT getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = NULL);
 	virtual bool comparePixel(int x, int y, byte r, byte g, byte b, int a = -1);

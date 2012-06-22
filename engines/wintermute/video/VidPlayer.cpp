@@ -48,14 +48,14 @@ CVidPlayer::CVidPlayer(CBGame *inGame): CBBase(inGame) {
 HRESULT CVidPlayer::SetDefaults() {
 	_playing = false;
 
-/*	_aviFile = NULL;
+	/*  _aviFile = NULL;
 
-	_audioStream = NULL;
-	_audioFormat = NULL;
+	    _audioStream = NULL;
+	    _audioFormat = NULL;
 
-	_videoStream = NULL;
-	_videoFormat = NULL;
-	_videoPGF = NULL;*/
+	    _videoStream = NULL;
+	    _videoFormat = NULL;
+	    _videoPGF = NULL;*/
 	_videoEndTime = 0;
 
 	//_sound = NULL;

@@ -1255,7 +1255,7 @@ int CAdActor::GetHeight() {
 //////////////////////////////////////////////////////////////////////////
 CAdSpriteSet *CAdActor::GetAnimByName(const Common::String &animName) {
 	for (int i = 0; i < _anims.GetSize(); i++) {
-		if (animName.compareToIgnoreCase(_anims[i]->_name) == 0) 
+		if (animName.compareToIgnoreCase(_anims[i]->_name) == 0)
 			return _anims[i];
 	}
 	return NULL;

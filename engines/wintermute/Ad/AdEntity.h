@@ -35,7 +35,7 @@ namespace WinterMute {
 class CVidTheoraPlayer;
 class CAdEntity : public CAdTalkHolder {
 public:
-	CVidTheoraPlayer* _theora;
+	CVidTheoraPlayer *_theora;
 	HRESULT SetSprite(const char *Filename);
 	int _walkToX;
 	int _walkToY;

@@ -446,9 +446,9 @@ HRESULT CBGame::Initialize1() {
 
 	_scEngine = new CScEngine(this);
 	if (_scEngine == NULL) goto init_fail;
-	
+
 	_videoPlayer = new CVidPlayer(this);
-	if (_videoPlayer==NULL) goto init_fail;
+	if (_videoPlayer == NULL) goto init_fail;
 
 	_transMgr = new CBTransitionMgr(this);
 	if (_transMgr == NULL) goto init_fail;
@@ -525,21 +525,21 @@ void CBGame::DEBUG_DebugEnable(const char *Filename) {
 	warning("BGame::DEBUG_DebugEnable - No logfile is currently created"); //TODO: Use a dumpfile?
 #endif
 
-/*	time_t timeNow;
-	time(&timeNow);
-	struct tm *tm = localtime(&timeNow);
+	/*  time_t timeNow;
+	    time(&timeNow);
+	    struct tm *tm = localtime(&timeNow);
 
-#ifdef _DEBUG
-	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%04d (Debug Build) *******************", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
-#else
-	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%04d (Release Build) *****************", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
-#endif*/
+	#ifdef _DEBUG
+	    LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%04d (Debug Build) *******************", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
+	#else
+	    LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%04d (Release Build) *****************", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
+	#endif*/
 	int secs = g_system->getMillis() / 1000;
 	int hours = secs / 3600;
 	secs = secs % 3600;
 	int mins = secs / 60;
 	secs = secs % 60;
-	
+
 #ifdef _DEBUG
 	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%02d (Debug Build) *******************", hours, mins, secs);
 #else
@@ -571,9 +571,9 @@ void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
 #ifndef __IPHONEOS__
 	if (!_dEBUG_DebugMode) return;
 #endif
-/*	time_t timeNow;
-	time(&timeNow);
-	struct tm *tm = localtime(&timeNow);*/
+	/*  time_t timeNow;
+	    time(&timeNow);
+	    struct tm *tm = localtime(&timeNow);*/
 	int secs = g_system->getMillis() / 1000;
 	int hours = secs / 3600;
 	secs = secs % 3600;
@@ -1395,42 +1395,40 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	// PlayVideo
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PlayVideo") == 0) {
-/*		Stack->CorrectParams(0);
-		Stack->PushBool(false);
+		/*      Stack->CorrectParams(0);
+		        Stack->PushBool(false);
 
-		return S_OK;
-		// TODO: ADDVIDEO
-		*/
-		
+		        return S_OK;
+		        // TODO: ADDVIDEO
+		        */
+
 		Game->LOG(0, "Warning: Game.PlayVideo() is now deprecated. Use Game.PlayTheora() instead.");
-		
+
 		Stack->CorrectParams(6);
-		const char* Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		warning("PlayVideo: %s - not implemented yet", Filename);
-		CScValue* valType = Stack->Pop();
+		CScValue *valType = Stack->Pop();
 		int Type;
 		if (valType->IsNULL()) Type = (int)VID_PLAY_STRETCH;
 		else Type = valType->GetInt();
-		
+
 		int X = Stack->Pop()->GetInt();
 		int Y = Stack->Pop()->GetInt();
 		bool FreezeMusic = Stack->Pop()->GetBool(true);
-		
-		CScValue* valSub = Stack->Pop();
-		const char* SubtitleFile = valSub->IsNULL()?NULL:valSub->GetString();
-		
-		if (Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) 
+
+		CScValue *valSub = Stack->Pop();
+		const char *SubtitleFile = valSub->IsNULL() ? NULL : valSub->GetString();
+
+		if (Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER)
 			Type = (int)VID_PLAY_STRETCH;
-		
+
 		if (SUCCEEDED(Game->_videoPlayer->initialize(Filename, SubtitleFile))) {
 			if (SUCCEEDED(Game->_videoPlayer->play((TVideoPlayback)Type, X, Y, FreezeMusic))) {
 				Stack->PushBool(true);
 				Script->Sleep(0);
-			}
-			else Stack->PushBool(false);
-		}
-		else Stack->PushBool(false);
-		
+			} else Stack->PushBool(false);
+		} else Stack->PushBool(false);
+
 		return S_OK;
 	}
 
@@ -1438,27 +1436,27 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	// PlayTheora
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PlayTheora") == 0) {
-/*		Stack->CorrectParams(0);
-		Stack->PushBool(false);
+		/*      Stack->CorrectParams(0);
+		        Stack->PushBool(false);
 
-		return S_OK;*/
+		        return S_OK;*/
 		// TODO: ADDVIDEO
 
 		Stack->CorrectParams(7);
-		const char* Filename = Stack->Pop()->GetString();
-		CScValue* valType = Stack->Pop();
+		const char *Filename = Stack->Pop()->GetString();
+		CScValue *valType = Stack->Pop();
 		int Type;
-		if (valType->IsNULL()) 
+		if (valType->IsNULL())
 			Type = (int)VID_PLAY_STRETCH;
 		else Type = valType->GetInt();
-		
+
 		int X = Stack->Pop()->GetInt();
 		int Y = Stack->Pop()->GetInt();
 		bool FreezeMusic = Stack->Pop()->GetBool(true);
 		bool DropFrames = Stack->Pop()->GetBool(true);
-		
-		CScValue* valSub = Stack->Pop();
-		const char* SubtitleFile = valSub->IsNULL()?NULL:valSub->GetString();
+
+		CScValue *valSub = Stack->Pop();
+		const char *SubtitleFile = valSub->IsNULL() ? NULL : valSub->GetString();
 
 		if (Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) Type = (int)VID_PLAY_STRETCH;
 
@@ -1469,15 +1467,13 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 			if (SUCCEEDED(_theoraPlayer->play((TVideoPlayback)Type, X, Y, true, FreezeMusic))) {
 				Stack->PushBool(true);
 				Script->Sleep(0);
-			}
-			else Stack->PushBool(false);
-		}
-		else {
+			} else Stack->PushBool(false);
+		} else {
 			Stack->PushBool(false);
 			delete _theoraPlayer;
 			_theoraPlayer = NULL;
 		}
-		
+
 		return S_OK;
 	}
 
@@ -1813,7 +1809,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 
 		warning("BGame::ScCallMethod - Screenshot not reimplemented"); //TODO
 		int FileNum = 0;
-		
+
 		while (true) {
 			sprintf(Filename, "%s%03d.bmp", Val->IsNULL() ? _name : Val->GetString(), FileNum);
 			if (!Common::File::exists(Filename))
@@ -2052,8 +2048,10 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "AccOutputText") == 0) {
 		Stack->CorrectParams(2);
-		/* const char *Str = */ Stack->Pop()->GetString();
-		/* int Type = */ Stack->Pop()->GetInt();
+		/* const char *Str = */
+		Stack->Pop()->GetString();
+		/* int Type = */
+		Stack->Pop()->GetInt();
 		// do nothing
 		Stack->PushNULL();
 
@@ -3388,7 +3386,7 @@ void CBGame::AfterLoadSound(void *Sound, void *Data) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::AfterLoadFont(void *Font, void *Data) {
-	((CBFont*)Font)->AfterLoad();
+	((CBFont *)Font)->AfterLoad();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -3783,8 +3781,8 @@ HRESULT CBGame::Unfreeze() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBGame::HandleKeypress(Common::Event *event, bool printable) {
-	if(IsVideoPlaying()) {
-		if(event->kbd.keycode == Common::KEYCODE_ESCAPE) 
+	if (IsVideoPlaying()) {
+		if (event->kbd.keycode == Common::KEYCODE_ESCAPE)
 			StopVideo();
 		return true;
 	}
@@ -3812,14 +3810,14 @@ bool CBGame::HandleKeypress(Common::Event *event, bool printable) {
 	if (_focusedWindow) {
 		if (!Game->_focusedWindow->HandleKeypress(event, _keyboardState->_currentPrintable)) {
 			/*if (event->type != SDL_TEXTINPUT) {*/
-				if (Game->_focusedWindow->CanHandleEvent("Keypress"))
-					Game->_focusedWindow->ApplyEvent("Keypress");
-				else
-					ApplyEvent("Keypress");
+			if (Game->_focusedWindow->CanHandleEvent("Keypress"))
+				Game->_focusedWindow->ApplyEvent("Keypress");
+			else
+				ApplyEvent("Keypress");
 			/*}*/
 		}
 		return true;
-	} else /*if (event->type != SDL_TEXTINPUT)*/ {
+	} else { /*if (event->type != SDL_TEXTINPUT)*/
 		ApplyEvent("Keypress");
 		return true;
 	} //else return true;
@@ -4192,7 +4190,7 @@ void CBGame::DEBUG_DumpClassRegistry() {
 	f->open("zz_class_reg_dump.log");
 
 	CSysClassRegistry::GetInstance()->DumpClasses(f);
-	
+
 	f->close();
 	delete f;
 	Game->QuickMessage("Classes dump completed.");
@@ -4230,16 +4228,14 @@ HRESULT CBGame::SetWaitCursor(const char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::IsVideoPlaying()
-{
+bool CBGame::IsVideoPlaying() {
 	if (_videoPlayer->isPlaying()) return true;
 	if (_theoraPlayer && _theoraPlayer->isPlaying()) return true;
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::StopVideo()
-{
+HRESULT CBGame::StopVideo() {
 	if (_videoPlayer->isPlaying()) _videoPlayer->stop();
 	if (_theoraPlayer && _theoraPlayer->isPlaying()) {
 		_theoraPlayer->stop();

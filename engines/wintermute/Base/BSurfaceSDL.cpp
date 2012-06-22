@@ -83,14 +83,14 @@ bool hasTransparency(Graphics::Surface *surf) {
 		warning("hasTransparency:: non 32 bpp surface passed as argument");
 		return false;
 	}
-	uint8 r,g,b,a;
+	uint8 r, g, b, a;
 	for (int i = 0; i < surf->h; i++) {
 		for (int j = 0; j < surf->w; j++) {
-			uint32 pix = *(uint32*)surf->getBasePtr(j, i);
+			uint32 pix = *(uint32 *)surf->getBasePtr(j, i);
 			surf->format.colorToARGB(pix, a, r, g, b);
 			if (a != 255) {
 				return true;
-			}	
+			}
 		}
 	}
 	return false;
@@ -98,7 +98,7 @@ bool hasTransparency(Graphics::Surface *surf) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int lifeTime, bool keepLoaded) {
-/*	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer); */
+	/*  CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer); */
 	Common::String strFileName(filename);
 	CBImage *image = new CBImage(Game);
 	image->loadFile(strFileName);
@@ -138,10 +138,10 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 	    FreeImage_FlipVertical(img);*/
 
 	//TODO: This is rather endian-specific, but should be replaced by non-SDL-code anyhow:
-/*	uint32 rmask = surface->format.rMax() << surface->format.rShift;
-	uint32 gmask = surface->format.gMax() << surface->format.gShift;
-	uint32 bmask = surface->format.bMax() << surface->format.bShift;
-	uint32 amask = surface->format.aMax();*/
+	/*  uint32 rmask = surface->format.rMax() << surface->format.rShift;
+	    uint32 gmask = surface->format.gMax() << surface->format.gShift;
+	    uint32 bmask = surface->format.bMax() << surface->format.bShift;
+	    uint32 amask = surface->format.aMax();*/
 
 //	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(surface->pixels, _width, _height, surface->format.bytesPerPixel * 8, surface->pitch, rmask, gmask, bmask, amask);
 
@@ -165,7 +165,7 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 		_surface = new Graphics::Surface();
 		_surface->copyFrom(*image->getSurface());
 	}
-	
+
 	_hasAlpha = hasTransparency(_surface);
 	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best"); //TODO
 	//_texture = SdlUtil::CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
@@ -210,7 +210,7 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 	_valid = true;
 
 	Game->AddMem(_width * _height * 4);
-	
+
 	delete image;
 
 	return S_OK;
@@ -280,11 +280,11 @@ uint32 CBSurfaceSDL::getPixel(Graphics::Surface *surface, int x, int y) {
 
 	case 3:
 #ifdef SCUMM_BIG_ENDIAN
-	//	if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			return p[0] << 16 | p[1] << 8 | p[2];
+		//  if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+		return p[0] << 16 | p[1] << 8 | p[2];
 #else
 		//else
-			return p[0] | p[1] << 8 | p[2] << 16;
+		return p[0] | p[1] << 8 | p[2] << 16;
 #endif
 		break;
 
@@ -377,8 +377,8 @@ bool CBSurfaceSDL::isTransparentAtLite(int x, int y) {
 		hasWarned = true;
 	}
 	if (_surface->format.bytesPerPixel == 4) {
-		uint32 pixel = *(uint32*)_surface->getBasePtr(x, y);
-		uint8 r,g,b,a;
+		uint32 pixel = *(uint32 *)_surface->getBasePtr(x, y);
+		uint8 r, g, b, a;
 		_surface->format.colorToARGB(pixel, a, r, g, b);
 		if (a <= 128) {
 			return true;
@@ -482,7 +482,7 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	byte g = D3DCOLGetG(Alpha);
 	byte b = D3DCOLGetB(Alpha);
 	byte a = D3DCOLGetA(Alpha);
-	
+
 	renderer->setAlphaMod(a);
 	renderer->setColorMod(r, g, b);
 #if 0
@@ -506,14 +506,14 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	position.left = x + offsetX;
 	position.top = y + offsetY;
 	// TODO: Scaling...
-	
+
 	position.setWidth((float)srcRect.width() * ZoomX / 100.f);
 	position.setHeight((float)srcRect.height() * ZoomX / 100.f);
 
 	renderer->ModTargetRect(&position);
 
-/*	position.left += offsetX;
-	position.top += offsetY;*/
+	/*  position.left += offsetX;
+	    position.top += offsetY;*/
 
 	// TODO: This actually requires us to have the SAME source-offsets every time,
 	// But no checking is in place for that yet.

@@ -36,7 +36,7 @@ namespace WinterMute {
 
 class CBResources {
 public:
-	static Common::SeekableReadStream *getFile(const Common::String& fileName);
+	static Common::SeekableReadStream *getFile(const Common::String &fileName);
 };
 
 } // end of namespace WinterMute

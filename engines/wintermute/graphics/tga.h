@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/* Based on code from eos https://github.com/DrMcCoy/xoreos/ 
+/* Based on code from eos https://github.com/DrMcCoy/xoreos/
  * relicensed under GPLv2+ with permission from DrMcCoy and clone2727
  */
 
@@ -30,7 +30,7 @@
 #include "graphics/decoders/image_decoder.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace WinterMute {
@@ -41,7 +41,9 @@ public:
 	TGA();
 	virtual ~TGA();
 	virtual void destroy();
-	virtual const Graphics::Surface *getSurface() const { return &_surface; };
+	virtual const Graphics::Surface *getSurface() const {
+		return &_surface;
+	};
 	virtual bool loadStream(Common::SeekableReadStream &stream);
 private:
 	Graphics::PixelFormat _format;

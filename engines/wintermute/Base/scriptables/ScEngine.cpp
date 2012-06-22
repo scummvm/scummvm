@@ -48,51 +48,51 @@ IMPLEMENT_PERSISTENT(CScEngine, true)
 CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 	Game->LOG(0, "Initializing scripting engine...");
 
-/*
-#ifdef __WIN32__
-	char CompilerPath[MAX_PATH];
-	strcpy(CompilerPath, COMPILER_DLL);
+	/*
+	#ifdef __WIN32__
+	    char CompilerPath[MAX_PATH];
+	    strcpy(CompilerPath, COMPILER_DLL);
 
-	_compilerDLL = ::LoadLibrary(CompilerPath);
-	if (_compilerDLL == NULL) {
-		char ModuleName[MAX_PATH];
-		::GetModuleFileName(NULL, ModuleName, MAX_PATH);
+	    _compilerDLL = ::LoadLibrary(CompilerPath);
+	    if (_compilerDLL == NULL) {
+	        char ModuleName[MAX_PATH];
+	        ::GetModuleFileName(NULL, ModuleName, MAX_PATH);
 
-		// switch to exe's dir
-		char *ExeDir = CBUtils::GetPath(ModuleName);
-		sprintf(CompilerPath, "%s%s", ExeDir, COMPILER_DLL);
-		_compilerDLL = ::LoadLibrary(CompilerPath);
+	        // switch to exe's dir
+	        char *ExeDir = CBUtils::GetPath(ModuleName);
+	        sprintf(CompilerPath, "%s%s", ExeDir, COMPILER_DLL);
+	        _compilerDLL = ::LoadLibrary(CompilerPath);
 
-		delete [] ExeDir;
-	}
-	if (_compilerDLL != NULL) {
-		// bind compiler's functionality
-		ExtCompileBuffer  = (DLL_COMPILE_BUFFER) ::GetProcAddress(_compilerDLL, "CompileBuffer");
-		ExtCompileFile    = (DLL_COMPILE_FILE)   ::GetProcAddress(_compilerDLL, "CompileFile");
-		ExtReleaseBuffer  = (DLL_RELEASE_BUFFER) ::GetProcAddress(_compilerDLL, "ReleaseBuffer");
-		ExtSetCallbacks   = (DLL_SET_CALLBACKS)  ::GetProcAddress(_compilerDLL, "SetCallbacks");
-		ExtDefineFunction = (DLL_DEFINE_FUNCTION)::GetProcAddress(_compilerDLL, "DefineFunction");
-		ExtDefineVariable = (DLL_DEFINE_VARIABLE)::GetProcAddress(_compilerDLL, "DefineVariable");
+	        delete [] ExeDir;
+	    }
+	    if (_compilerDLL != NULL) {
+	        // bind compiler's functionality
+	        ExtCompileBuffer  = (DLL_COMPILE_BUFFER) ::GetProcAddress(_compilerDLL, "CompileBuffer");
+	        ExtCompileFile    = (DLL_COMPILE_FILE)   ::GetProcAddress(_compilerDLL, "CompileFile");
+	        ExtReleaseBuffer  = (DLL_RELEASE_BUFFER) ::GetProcAddress(_compilerDLL, "ReleaseBuffer");
+	        ExtSetCallbacks   = (DLL_SET_CALLBACKS)  ::GetProcAddress(_compilerDLL, "SetCallbacks");
+	        ExtDefineFunction = (DLL_DEFINE_FUNCTION)::GetProcAddress(_compilerDLL, "DefineFunction");
+	        ExtDefineVariable = (DLL_DEFINE_VARIABLE)::GetProcAddress(_compilerDLL, "DefineVariable");
 
-		if (!ExtCompileBuffer || !ExtCompileFile || !ExtReleaseBuffer || !ExtSetCallbacks || !ExtDefineFunction || !ExtDefineVariable) {
-			_compilerAvailable = false;
-			::FreeLibrary(_compilerDLL);
-			_compilerDLL = NULL;
-		} else {
-		*/	/*
-			// publish external methods to the compiler
-			CALLBACKS c;
-			c.Dll_AddError = AddError;
-			c.Dll_CloseFile = CloseFile;
-			c.Dll_LoadFile = LoadFile;
-			ExtSetCallbacks(&c, Game);
-			*/
-/*
-			_compilerAvailable = true;
-		}
-	} else _compilerAvailable = false;
-#else
-*/
+	        if (!ExtCompileBuffer || !ExtCompileFile || !ExtReleaseBuffer || !ExtSetCallbacks || !ExtDefineFunction || !ExtDefineVariable) {
+	            _compilerAvailable = false;
+	            ::FreeLibrary(_compilerDLL);
+	            _compilerDLL = NULL;
+	        } else {
+	        */  /*
+            // publish external methods to the compiler
+            CALLBACKS c;
+            c.Dll_AddError = AddError;
+            c.Dll_CloseFile = CloseFile;
+            c.Dll_LoadFile = LoadFile;
+            ExtSetCallbacks(&c, Game);
+            */
+	/*
+	            _compilerAvailable = true;
+	        }
+	    } else _compilerAvailable = false;
+	#else
+	*/
 	_compilerAvailable = false;
 	_compilerDLL = NULL;
 //#endif
@@ -776,7 +776,7 @@ HRESULT CScEngine::LoadBreakpoints() {
 
 	int Count = Game->_registry->ReadInt("Debug", "NumBreakpoints", 0);
 	for (int i = 1; i <= Count; i++) {
-	/*	uint32 BufSize = 512; */
+		/*  uint32 BufSize = 512; */
 		sprintf(Key, "Breakpoint%d", i);
 		AnsiString breakpoint = Game->_registry->ReadString("Debug", Key, "");
 

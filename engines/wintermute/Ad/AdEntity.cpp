@@ -66,7 +66,7 @@ CAdEntity::CAdEntity(CBGame *inGame): CAdTalkHolder(inGame) {
 
 	_walkToX = _walkToY = 0;
 	_walkToDir = DI_NONE;
-	
+
 	_theora = NULL;
 }
 
@@ -606,7 +606,7 @@ HRESULT CAdEntity::Update() {
 		Game->GetOffset(&OffsetX, &OffsetY);
 		_theora->_posX = _posX - OffsetX;
 		_theora->_posY = _posY - OffsetY;
-		
+
 		_theora->update();
 		if (_theora->isFinished()) {
 			_theora->stop();
@@ -642,15 +642,15 @@ HRESULT CAdEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "PlayTheora") == 0) {
 		Stack->CorrectParams(4);
-		const char* Filename = Stack->Pop()->GetString();
+		const char *Filename = Stack->Pop()->GetString();
 		bool Looping = Stack->Pop()->GetBool(false);
-		CScValue* ValAlpha = Stack->Pop();
+		CScValue *ValAlpha = Stack->Pop();
 		int StartTime = Stack->Pop()->GetInt();
-		
+
 		delete _theora;
 		_theora = new CVidTheoraPlayer(Game);
 		if (_theora && SUCCEEDED(_theora->initialize(Filename))) {
-			if (!ValAlpha->IsNULL())	_theora->setAlphaImage(ValAlpha->GetString());
+			if (!ValAlpha->IsNULL())    _theora->setAlphaImage(ValAlpha->GetString());
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, Looping, StartTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if(m_Scale>=0) m_Theora->m_PlayZoom = m_Scale;
 			Stack->PushBool(true);

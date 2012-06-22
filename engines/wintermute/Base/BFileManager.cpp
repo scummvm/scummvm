@@ -168,7 +168,7 @@ Common::SeekableReadStream *CBFileManager::loadSaveGame(const Common::String &fi
 HRESULT CBFileManager::SaveFile(const Common::String &Filename, byte *Buffer, uint32 BufferSize, bool Compressed, byte *PrefixBuffer, uint32 PrefixSize) {
 	// TODO
 	warning("Implement SaveFile");
-	
+
 	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
 	Common::OutSaveFile *file = saveMan->openForSaving(Filename);
 	file->write(PrefixBuffer, PrefixSize);
@@ -770,15 +770,15 @@ CBFileEntry *CBFileManager::GetPackageEntry(const Common::String &Filename) {
 Common::SeekableReadStream *CBFileManager::OpenFile(const Common::String &filename, bool AbsPathWarning, bool keepTrackOf) {
 	if (strcmp(filename.c_str(), "") == 0) return NULL;
 	//Game->LOG(0, "open file: %s", Filename);
-/*#ifdef __WIN32__
-	if (Game->_dEBUG_DebugMode && Game->_dEBUG_AbsolutePathWarning && AbsPathWarning) {
-		char Drive[_MAX_DRIVE];
-		_splitpath(Filename, Drive, NULL, NULL, NULL);
-		if (Drive[0] != '\0') {
-			Game->LOG(0, "WARNING: Referencing absolute path '%s'. The game will NOT work on another computer.", Filename);
-		}
-	}
-#endif*/
+	/*#ifdef __WIN32__
+	    if (Game->_dEBUG_DebugMode && Game->_dEBUG_AbsolutePathWarning && AbsPathWarning) {
+	        char Drive[_MAX_DRIVE];
+	        _splitpath(Filename, Drive, NULL, NULL, NULL);
+	        if (Drive[0] != '\0') {
+	            Game->LOG(0, "WARNING: Referencing absolute path '%s'. The game will NOT work on another computer.", Filename);
+	        }
+	    }
+	#endif*/
 
 	Common::SeekableReadStream *File = OpenFileRaw(filename);
 	if (File && keepTrackOf) _openFiles.Add(File);
@@ -813,13 +813,13 @@ Common::SeekableReadStream *CBFileManager::OpenFileRaw(const Common::String &Fil
 	}
 
 	Common::SeekableReadStream *ret = NULL;
-	
+
 	ret = openDiskFile(Filename, this);
 	if (ret) return ret;
 
 	ret = openPkgFile(Filename, this);
 	if (ret) return ret;
-	
+
 	ret = CBResources::getFile(Filename);
 	if (ret) return ret;
 

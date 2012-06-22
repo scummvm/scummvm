@@ -42,7 +42,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(CSXMath, true)
 
 CBScriptable *makeSXMath(CBGame *inGame) {
-	return new CSXMath(inGame);	
+	return new CSXMath(inGame);
 }
 
 //////////////////////////////////////////////////////////////////////////

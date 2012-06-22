@@ -260,7 +260,7 @@ void CBSoundBuffer::SetType(TSoundType Type) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::SetVolume(int Volume) {
 	if (_stream && _handle) {
-		byte vol = Volume/100.f * Audio::Mixer::kMaxChannelVolume;
+		byte vol = Volume / 100.f * Audio::Mixer::kMaxChannelVolume;
 		g_system->getMixer()->setChannelVolume(*_handle, vol);
 	}
 	return S_OK;

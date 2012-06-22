@@ -773,7 +773,8 @@ bool CUIEdit::HandleKeypress(Common::Event *event, bool printable) {
 		if (_selStart != _selEnd) DeleteChars(_selStart, _selEnd);
 
 		//WideString wstr = StringUtil::Utf8ToWide(event->kbd.ascii);
-		WideString wstr; wstr += (char)event->kbd.ascii;
+		WideString wstr;
+		wstr += (char)event->kbd.ascii;
 		_selEnd += InsertChars(_selEnd, (byte *)StringUtil::WideToAnsi(wstr).c_str(), 1);
 
 		if (Game->_textRTL) _selEnd = _selStart;

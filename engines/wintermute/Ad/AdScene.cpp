@@ -2555,8 +2555,8 @@ float CAdScene::GetRotationAt(int X, int Y) {
 	CAdRotLevel *next = NULL;
 
 	for (int i = 0; i < _rotLevels.GetSize(); i++) {
-	/*	CAdRotLevel *xxx = _rotLevels[i];
-		int j = _rotLevels.GetSize();*/
+		/*  CAdRotLevel *xxx = _rotLevels[i];
+		    int j = _rotLevels.GetSize();*/
 		if (_rotLevels[i]->_posX < X) prev = _rotLevels[i];
 		else {
 			next = _rotLevels[i];

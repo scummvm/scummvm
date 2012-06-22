@@ -45,7 +45,7 @@ void correctSlashes(char *fileName) {
 	}
 }
 
-Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileManager *fileManager) {	
+Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileManager *fileManager) {
 	char FullPath[MAX_PATH];
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = NULL;
@@ -60,7 +60,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileM
 			delete tempFile;
 		}
 	}
-	
+
 	// if we didn't find it in search paths, try to open directly
 	if (!file) {
 		strcpy(FullPath, Filename.c_str());
@@ -73,28 +73,28 @@ Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileM
 			delete tempFile;
 		}
 	}
-	
+
 	if (file) {
 		uint32 magic1, magic2;
 		magic1 = file->readUint32LE();
 		magic2 = file->readUint32LE();
-		
+
 		bool compressed = false;
 		if (magic1 == DCGF_MAGIC && magic2 == COMPRESSED_FILE_MAGIC) compressed = true;
-		
+
 		if (compressed) {
 			uint32 DataOffset, CompSize, UncompSize;
 			DataOffset = file->readUint32LE();
 			CompSize = file->readUint32LE();
 			UncompSize = file->readUint32LE();
-			
+
 			byte *CompBuffer = new byte[CompSize];
 			if (!CompBuffer) {
 				error("Error allocating memory for compressed file '%s'", Filename.c_str());
 				delete file;
 				return NULL;
 			}
-			
+
 			byte *data = new byte[UncompSize];
 			if (!data) {
 				error("Error allocating buffer for file '%s'", Filename.c_str());
@@ -104,16 +104,16 @@ Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileM
 			}
 			file->seek(DataOffset + prefixSize, SEEK_SET);
 			file->read(CompBuffer, CompSize);
-			
+
 			if (Common::uncompress(data, (unsigned long *)&UncompSize, CompBuffer, CompSize) != true) {
 				error("Error uncompressing file '%s'", Filename.c_str());
 				delete [] CompBuffer;
 				delete file;
 				return NULL;
 			}
-			
+
 			delete [] CompBuffer;
-			
+
 			return new Common::MemoryReadStream(data, UncompSize, DisposeAfterUse::YES);
 			delete file;
 			file = NULL;
@@ -121,7 +121,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileM
 			file->seek(0, SEEK_SET);
 			return file;
 		}
-		
+
 		return file;
 
 	}

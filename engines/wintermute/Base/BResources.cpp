@@ -2806,7 +2806,7 @@ unsigned char systemfont[] = {
 	0x01, 0x01, 0x01, 0x01, 0x01, 0x01
 } ;
 
-Common::SeekableReadStream *CBResources::getFile(const Common::String& fileName) {
+Common::SeekableReadStream *CBResources::getFile(const Common::String &fileName) {
 	if (scumm_stricmp(fileName.c_str(), "invalid.bmp") == 0) {
 		return new Common::MemoryReadStream(invalid, sizeof(invalid), DisposeAfterUse::NO);
 	} else if (scumm_stricmp(fileName.c_str(), "invalid_debug.bmp") == 0) {

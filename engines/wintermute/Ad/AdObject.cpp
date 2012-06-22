@@ -834,7 +834,7 @@ void CAdObject::Talk(const char *Text, const char *Sound, uint32 Duration, const
 		_forcedTalkAnimUsed = false;
 	}
 
-	delete (_sentence->_sound);
+	delete(_sentence->_sound);
 	_sentence->_sound = NULL;
 
 	_sentence->SetText(Text);

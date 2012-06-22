@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -77,11 +77,11 @@ void CVidTheoraPlayer::SetDefaults() {
 
 	_seekingKeyframe = false;
 	_timeOffset = 0.0f;
-	
+
 	_posX = _posY = 0;
 	_playbackType = VID_PLAY_CENTER;
 	_playZoom = 0.0f;
-	
+
 	_savedState = THEORA_STATE_NONE;
 	_savedPos = 0;
 	_volume = 100;
@@ -99,10 +99,10 @@ void CVidTheoraPlayer::SetDefaults() {
 CVidTheoraPlayer::~CVidTheoraPlayer(void) {
 	cleanup();
 
-/*	SAFE_DELETE_ARRAY(_filename);
-	SAFE_DELETE_ARRAY(_alphaFilename);
-	SAFE_DELETE(_texture);
-	SAFE_DELETE(_alphaImage);*/
+	/*  SAFE_DELETE_ARRAY(_filename);
+	    SAFE_DELETE_ARRAY(_alphaFilename);
+	    SAFE_DELETE(_texture);
+	    SAFE_DELETE(_alphaImage);*/
 //	SAFE_DELETE(_subtitler);
 }
 
@@ -134,7 +134,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	_filename = filename;
 	_file = Game->_fileManager->OpenFile(filename, true, false);
 	if (!_file) return E_FAIL;
-	
+
 	//if (Filename != _filename) CBUtils::SetString(&_filename, Filename);
 #if defined (USE_THEORADEC)
 	_theoraDecoder = new TheoraDecoder();
@@ -142,10 +142,10 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	return E_FAIL;
 #endif
 	_theoraDecoder->loadStream(_file);
-	
+
 	if (!_theoraDecoder->isVideoLoaded())
 		return E_FAIL;
-	
+
 	_state = THEORA_STATE_PAUSED;
 
 	// Additional setup.
@@ -154,7 +154,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	_texture->create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight());
 	_state = THEORA_STATE_PLAYING;
 	_playZoom = 100;
-	
+
 	return S_OK;
 #if 0
 	Cleanup();
@@ -343,17 +343,17 @@ HRESULT CVidTheoraPlayer::resetStream() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame, bool freezeMusic, bool looping, uint32 startTime, float forceZoom, int volume) {
-	if (forceZoom < 0.0f) 
+	if (forceZoom < 0.0f)
 		forceZoom = 100.0f;
-	if (volume < 0) 
+	if (volume < 0)
 		_volume = Game->_soundMgr->getVolumePercent(SOUND_SFX);
 	else _volume = volume;
-	
+
 	_freezeGame = freezeGame;
-	
-	if (!_playbackStarted && _freezeGame) 
+
+	if (!_playbackStarted && _freezeGame)
 		Game->Freeze(freezeMusic);
-	
+
 	_playbackStarted = false;
 	float width, height;
 	if (_theoraDecoder) {
@@ -367,7 +367,7 @@ HRESULT CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGam
 		_posX = x;
 		_posY = y;
 		_playZoom = forceZoom;
-		
+
 		width = (float)_theoraDecoder->getWidth();
 		height = (float)_theoraDecoder->getHeight();
 	} else {
@@ -376,26 +376,26 @@ HRESULT CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGam
 	}
 
 	switch (type) {
-		case VID_PLAY_POS:
-			_playZoom = forceZoom;
-			_posX = x;
-			_posY = y;
-			break;
-			
-		case VID_PLAY_STRETCH: {
-			float ZoomX = (float)((float)Game->_renderer->_width / width * 100);
-			float ZoomY = (float)((float)Game->_renderer->_height / height * 100);
-			_playZoom = MIN(ZoomX, ZoomY);
-			_posX = (Game->_renderer->_width - width * (_playZoom / 100)) / 2;
-			_posY = (Game->_renderer->_height - height * (_playZoom / 100)) / 2;
-		}
-			break;
-			
-		case VID_PLAY_CENTER:
-			_playZoom = 100.0f;
-			_posX = (Game->_renderer->_width - width) / 2;
-			_posY = (Game->_renderer->_height - height) / 2;
-			break;
+	case VID_PLAY_POS:
+		_playZoom = forceZoom;
+		_posX = x;
+		_posY = y;
+		break;
+
+	case VID_PLAY_STRETCH: {
+		float ZoomX = (float)((float)Game->_renderer->_width / width * 100);
+		float ZoomY = (float)((float)Game->_renderer->_height / height * 100);
+		_playZoom = MIN(ZoomX, ZoomY);
+		_posX = (Game->_renderer->_width - width * (_playZoom / 100)) / 2;
+		_posY = (Game->_renderer->_height - height * (_playZoom / 100)) / 2;
+	}
+	break;
+
+	case VID_PLAY_CENTER:
+		_playZoom = 100.0f;
+		_posX = (Game->_renderer->_width - width) / 2;
+		_posY = (Game->_renderer->_height - height) / 2;
+		break;
 	}
 	return S_OK;
 #if 0
@@ -613,7 +613,7 @@ HRESULT CVidTheoraPlayer::WriteVideo() {
 	if (!_texture) return E_FAIL;
 
 	_texture->startPixelOp();
-	
+
 	writeAlpha();
 	if (_alphaImage) {
 		_texture->putSurface(_surface, true);
@@ -632,10 +632,10 @@ void CVidTheoraPlayer::writeAlpha() {
 	if (_alphaImage && _surface.w == _alphaImage->getSurface()->w && _surface.h == _alphaImage->getSurface()->h) {
 		assert(_alphaImage->getSurface()->format.bytesPerPixel == 4);
 		assert(_surface.format.bytesPerPixel == 4);
-		const byte *alphaData = (byte*)_alphaImage->getSurface()->getBasePtr(0, 0);
+		const byte *alphaData = (byte *)_alphaImage->getSurface()->getBasePtr(0, 0);
 		int alphaPlace = (_alphaImage->getSurface()->format.aShift / 8);
 		alphaData += alphaPlace;
-		byte *imgData = (byte*)_surface.getBasePtr(0,0);
+		byte *imgData = (byte *)_surface.getBasePtr(0, 0);
 		imgData += (_surface.format.aShift / 8);
 		for (int i = 0; i < _surface.w * _surface.h; i++) {
 			*imgData = *alphaData;
@@ -664,7 +664,7 @@ HRESULT CVidTheoraPlayer::display(uint32 alpha) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	warning("CVidTheoraPlayer::SetAlphaImage(%s) - Not implemented", filename.c_str());
-	
+
 	delete _alphaImage;
 	_alphaImage = new CBImage(Game);
 	if (!_alphaImage || FAILED(_alphaImage->loadFile(filename))) {
@@ -673,7 +673,7 @@ HRESULT CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
 		_alphaFilename = "";
 		return E_FAIL;
 	}
-	
+
 	if (_alphaFilename != filename) {
 		_alphaFilename = filename;
 	}

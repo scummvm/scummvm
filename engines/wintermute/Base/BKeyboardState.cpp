@@ -46,7 +46,7 @@ CBKeyboardState::CBKeyboardState(CBGame *inGame): CBScriptable(inGame) {
 	_currentShift = false;
 	_currentAlt = false;
 	_currentControl = false;
-	
+
 	_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
 	for (int i = 0; i < 323; i++) {
 		_keyStates[i] = false;
@@ -66,7 +66,7 @@ void CBKeyboardState::handleKeyPress(Common::Event *event) {
 
 void CBKeyboardState::handleKeyRelease(Common::Event *event) {
 	if (event->type == Common::EVENT_KEYUP) {
-		_keyStates[event->kbd.keycode] = false;	
+		_keyStates[event->kbd.keycode] = false;
 	}
 }
 
@@ -198,8 +198,8 @@ const char *CBKeyboardState::ScToString() {
 HRESULT CBKeyboardState::ReadKey(Common::Event *event) {
 	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
 	_currentCharCode = KeyCodeToVKey(event);
-	if ((_currentCharCode <= Common::KEYCODE_z && _currentCharCode >= Common::KEYCODE_a) || 
-		(_currentCharCode <= Common::KEYCODE_9 && _currentCharCode >= Common::KEYCODE_0)) {
+	if ((_currentCharCode <= Common::KEYCODE_z && _currentCharCode >= Common::KEYCODE_a) ||
+	        (_currentCharCode <= Common::KEYCODE_9 && _currentCharCode >= Common::KEYCODE_0)) {
 		_currentPrintable = true;
 	} else {
 		_currentPrintable = false;
@@ -225,7 +225,7 @@ HRESULT CBKeyboardState::Persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_currentKeyData));
 	persistMgr->transfer(TMEMBER(_currentPrintable));
 	persistMgr->transfer(TMEMBER(_currentShift));
-	
+
 	if (!persistMgr->_saving) {
 		_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
 		for (int i = 0; i < 323; i++) {
