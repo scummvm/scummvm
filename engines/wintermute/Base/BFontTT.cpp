@@ -29,7 +29,6 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/file/BFile.h"
 #include "engines/wintermute/Base/BFontTT.h"
-#include "engines/wintermute/FontGlyphCache.h"
 #include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/math/MathUtil.h"
@@ -64,7 +63,6 @@ CBFontTT::CBFontTT(CBGame *inGame): CBFont(inGame) {
 	_fTFace = NULL;
 	_fTStream = NULL;
 #endif
-	_glyphCache = NULL;
 
 	_ascender = _descender = _lineHeight = _pointSize = _underlinePos = 0;
 	_horDpi = _vertDpi = 0;
@@ -86,8 +84,6 @@ CBFontTT::~CBFontTT(void) {
 	delete _deletableFont;
 	_font = NULL;
 
-	delete _glyphCache;
-	_glyphCache = NULL;
 #if 0
 	if (_fTFace) {
 		FT_Done_Face(_fTFace);
@@ -625,7 +621,6 @@ HRESULT CBFontTT::Persist(CBPersistMgr *persistMgr) {
 
 	if (!persistMgr->_saving) {
 		for (int i = 0; i < NUM_CACHED_TEXTS; i++) _cachedTexts[i] = NULL;
-		_glyphCache = NULL;
 		_fallbackFont = _font = _deletableFont = NULL;
 	}
 

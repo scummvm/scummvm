@@ -40,8 +40,6 @@
 
 namespace WinterMute {
 
-class FontGlyphCache;
-
 class CBFontTT : public CBFont {
 private:
 	//////////////////////////////////////////////////////////////////////////
@@ -128,10 +126,6 @@ public:
 	HRESULT LoadBuffer(byte *buffer);
 	HRESULT LoadFile(const char *filename);
 
-	FontGlyphCache *GetGlyphCache() {
-		return _glyphCache;
-	}
-
 	float GetLineHeight() const {
 		return _lineHeight;
 	}
@@ -156,7 +150,6 @@ private:
 	Graphics::Font *_deletableFont;
 	const Graphics::Font *_font;
 	const Graphics::Font *_fallbackFont;
-	FontGlyphCache *_glyphCache;
 
 	float _ascender;
 	float _descender;

@@ -88,7 +88,6 @@ MODULE_OBJS := \
 	Base/PartEmitter.o \
 	Base/PartForce.o \
 	detection.o \
-	FontGlyphCache.o \
 	graphics/transparentSurface.o \
 	graphics/tga.o \
 	math/MathUtil.o \
