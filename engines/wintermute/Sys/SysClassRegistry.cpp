@@ -148,9 +148,20 @@ void *CSysClassRegistry::IDToPointer(int classID, int instanceID) {
 	else return (*it)._value->GetInstance();
 }
 
+bool checkHeader(const char* tag, CBPersistMgr *pm) {
+	char *test = pm->GetString();
+	Common::String verify = test;
+	delete[] test;
+	bool retVal = (verify == tag);
+	if (!retVal) {
+		error("Expected %s in Save-file not found", tag);
+	}
+	return retVal;
+}
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSysClassRegistry::SaveTable(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave) {
+	PersistMgr->PutString("<CLASS_REGISTRY_TABLE>");
 	PersistMgr->PutDWORD(_classes.size());
 
 	int counter = 0;
@@ -167,16 +178,17 @@ HRESULT CSysClassRegistry::SaveTable(CBGame *Game, CBPersistMgr *PersistMgr, boo
 
 		(it->_value)->SaveTable(Game, PersistMgr);
 	}
-
+	PersistMgr->PutString("</CLASS_REGISTRY_TABLE>");
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSysClassRegistry::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
-	Classes::iterator it;
+	checkHeader("<CLASS_REGISTRY_TABLE>", PersistMgr);	
 
 	// reset SavedID of current instances
+	Classes::iterator it;
 	for (it = _classes.begin(); it != _classes.end(); ++it) {
 		(it->_value)->ResetSavedIDs();
 	}
@@ -187,7 +199,6 @@ HRESULT CSysClassRegistry::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 	}
 
 	_instanceMap.clear();
-
 
 	int numClasses = PersistMgr->GetDWORD();
 
@@ -200,6 +211,8 @@ HRESULT CSysClassRegistry::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 		NameMap::iterator mapIt = _nameMap.find(className);
 		if (mapIt != _nameMap.end())(*mapIt)._value->LoadTable(Game, PersistMgr);
 	}
+
+	checkHeader("</CLASS_REGISTRY_TABLE>", PersistMgr);
 
 	return S_OK;
 }
@@ -237,7 +250,6 @@ HRESULT CSysClassRegistry::SaveInstances(CBGame *Game, CBPersistMgr *PersistMgr,
 	return S_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSysClassRegistry::LoadInstances(CBGame *Game, CBPersistMgr *PersistMgr) {
 	// get total instances
@@ -250,17 +262,22 @@ HRESULT CSysClassRegistry::LoadInstances(CBGame *Game, CBPersistMgr *PersistMgr)
 			Game->_renderer->Flip();
 		}
 
+		checkHeader("<INSTANCE_HEAD>", PersistMgr);
+
 		int classID = PersistMgr->GetDWORD();
 		int instanceID = PersistMgr->GetDWORD();
 		void *instance = IDToPointer(classID, instanceID);
 
+		checkHeader("</INSTANCE_HEAD>", PersistMgr);
 
 		Classes::iterator it;
 		for (it = _classes.begin(); it != _classes.end(); ++it) {
 			if ((it->_value)->GetSavedID() == classID) {
 				(it->_value)->LoadInstance(instance, PersistMgr);
+				break;
 			}
 		}
+		checkHeader("</INSTANCE>", PersistMgr);
 	}
 
 	_savedInstanceMap.clear();

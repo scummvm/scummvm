@@ -35,6 +35,14 @@
 #include "common/func.h"
 #include "common/stream.h"
 
+namespace WinterMute {
+class CSysInstance;
+class CBGame;
+class CBPersistMgr;
+class CSysClass;
+
+}
+
 namespace Common {
 template<typename T> struct Hash;
 
@@ -44,12 +52,17 @@ template<> struct Hash<void *> : public UnaryFunction<void *, uint> {
 	}
 };
 
+template<> struct Hash<WinterMute::CSysInstance*> : public UnaryFunction<WinterMute::CSysInstance*, uint> {
+	uint operator()(WinterMute::CSysInstance* val) const {
+		return (uint)((size_t)val);
+	}
+};
+
+
 }
 
 namespace WinterMute {
-class CSysInstance;
-class CBGame;
-class CBPersistMgr;
+
 class CSysClass {
 public:
 	CSysClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class);
@@ -105,7 +118,8 @@ private:
 	PERSISTLOAD _load;
 
 	//typedef std::set<CSysInstance *> Instances;
-	//Instances _instances;
+	typedef Common::HashMap<CSysInstance *, CSysInstance *> Instances;
+	Instances _instances;
 
 	typedef Common::HashMap<void *, CSysInstance *> InstanceMap;
 	InstanceMap _instanceMap;

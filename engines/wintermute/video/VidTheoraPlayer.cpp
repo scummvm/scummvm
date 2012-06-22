@@ -816,12 +816,8 @@ HRESULT CVidTheoraPlayer::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER(_playZoom));
 	PersistMgr->Transfer(TMEMBER_INT(_playbackType));
 	PersistMgr->Transfer(TMEMBER(_looping));
+	PersistMgr->Transfer(TMEMBER(_volume));
 
-	if (PersistMgr->CheckVersion(1, 7, 3)) {
-		PersistMgr->Transfer(TMEMBER(_volume));
-	} else {
-		_volume = 100;
-	}
 	return S_OK;
 }
 

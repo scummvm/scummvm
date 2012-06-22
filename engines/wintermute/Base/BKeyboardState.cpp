@@ -225,6 +225,13 @@ HRESULT CBKeyboardState::Persist(CBPersistMgr *PersistMgr) {
 	PersistMgr->Transfer(TMEMBER(_currentKeyData));
 	PersistMgr->Transfer(TMEMBER(_currentPrintable));
 	PersistMgr->Transfer(TMEMBER(_currentShift));
+	
+	if (!PersistMgr->_saving) {
+		_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
+		for (int i = 0; i < 323; i++) {
+			_keyStates[i] = false;
+		}
+	}
 
 	return S_OK;
 }
