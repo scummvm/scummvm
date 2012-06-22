@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	databases.o \
 	dbase.o \
 	decfile.o \
-	detection.o \
 	draw.o \
 	draw_v1.o \
 	draw_v2.o \
@@ -77,6 +76,7 @@ MODULE_OBJS := \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \
+	detection/detection.o \
 	minigames/geisha/evilfish.o \
 	minigames/geisha/oko.o \
 	minigames/geisha/meter.o \

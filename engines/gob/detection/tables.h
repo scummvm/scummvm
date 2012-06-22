@@ -20,11 +20,8 @@
  *
  */
 
-#include "base/plugins.h"
-#include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
-
-#include "gob/gob.h"
+#ifndef GOB_DETECTION_TABLES_H
+#define GOB_DETECTION_TABLES_H
 
 namespace Gob {
 
@@ -42,6 +39,7 @@ struct GOBGameDescription {
 
 using namespace Common;
 
+// Game IDs and proper names
 static const PlainGameDescriptor gobGames[] = {
 	{"gob", "Gob engine game"},
 	{"gob1", "Gobliiins"},
@@ -79,87 +77,41 @@ static const PlainGameDescriptor gobGames[] = {
 	{0, 0}
 };
 
+// Obsolete IDs we don't want anymore
 static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"gob1", "gob", kPlatformUnknown},
 	{"gob2", "gob", kPlatformUnknown},
 	{0, 0, kPlatformUnknown}
 };
 
-#include "gob/detection_tables.h"
-
-class GobMetaEngine : public AdvancedMetaEngine {
-public:
-	GobMetaEngine() : AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
-		_singleid = "gob";
-		_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
-	}
-
-	virtual GameDescriptor findGame(const char *gameid) const {
-		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
-	}
-
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		return detectGameFilebased(allFiles, Gob::fileBased);
-	}
-
-	virtual const char *getName() const {
-		return "Gob";
-	}
-
-	virtual const char *getOriginalCopyright() const {
-		return "Goblins Games (C) Coktel Vision";
-	}
-
-	virtual bool hasFeature(MetaEngineFeature f) const;
-
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-};
-
-bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
-}
-
-bool Gob::GobEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
-}
-bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)desc;
-	if (gd) {
-		*engine = new Gob::GobEngine(syst);
-		((Gob::GobEngine *)*engine)->initGame(gd);
-	}
-	return gd != 0;
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(GOB)
-	REGISTER_PLUGIN_DYNAMIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
-#endif
-
 namespace Gob {
 
-void GobEngine::initGame(const GOBGameDescription *gd) {
-	if (gd->startTotBase == 0)
-		_startTot = "intro.tot";
-	else
-		_startTot = gd->startTotBase;
+// Detection tables
+static const GOBGameDescription gameDescriptions[] = {
+	#include "gob/detection/tables_gob1.h"      // Gobliiins
+	#include "gob/detection/tables_gob2.h"      // Gobliins 2: The Prince Buffoon
+	#include "gob/detection/tables_gob3.h"      // Goblins 3 / Goblins Quest 3
+	#include "gob/detection/tables_ween.h"      // Ween: The Prophecy
+	#include "gob/detection/tables_bargon.h"    // Bargon Attack
+	#include "gob/detection/tables_littlered.h" // Once Upon A Time: Little Red Riding Hood
+	#include "gob/detection/tables_lit.h"       // Lost in Time
+	#include "gob/detection/tables_fascin.h"    // Fascination
+	#include "gob/detection/tables_geisha.h"    // Geisha
+	#include "gob/detection/tables_inca2.h"     // Inca II: Wiracocha
+	#include "gob/detection/tables_woodruff.h"  // (The Bizarre Adventures of) Woodruff and the Schnibble (of Azimuth)
+	#include "gob/detection/tables_dynasty.h"   // The Last Dynasty
+	#include "gob/detection/tables_urban.h"     // Urban Runner
+	#include "gob/detection/tables_playtoons.h" // The Playtoons series
+	#include "gob/detection/tables_adi2.h"      // The ADI / Addy 2 series
+	#include "gob/detection/tables_adi4.h"      // The ADI / Addy 4 series
+	#include "gob/detection/tables_adibou.h"    // The Adibou / Addy Junior series
+	#include "gob/detection/tables_ajworld.h"   // A.J.'s World of Discovery / ADI Jr.
 
-	if (gd->startStkBase == 0)
-		_startStk = "intro.stk";
-	else
-		_startStk = gd->startStkBase;
+	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0, 0}
+};
 
-	_demoIndex = gd->demoIndex;
-
-	_gameType = gd->gameType;
-	_features = gd->features;
-	_language = gd->desc.language;
-	_platform = gd->desc.platform;
+// File-based fallback tables
+#include "gob/detection/tables_fallback.h"
 }
-} // End of namespace Gob
+
+#endif // GOB_DETECTION_TABLES_H
