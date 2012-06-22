@@ -376,6 +376,7 @@ HRESULT CAdItem::Update() {
 			((CAdGame *)Game)->AddSentence(_sentence);
 		}
 	}
+	default:
 	break;
 	}
 	_ready = (_state == STATE_READY);
