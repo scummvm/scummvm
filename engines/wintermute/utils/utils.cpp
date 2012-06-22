@@ -34,7 +34,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "common/str.h"
 #include "common/textconsole.h"
-#include "wintermute.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace WinterMute {
 

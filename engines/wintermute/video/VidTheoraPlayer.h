@@ -50,7 +50,7 @@ private:
 	Video::RewindableVideoDecoder *_theoraDecoder;
 	Graphics::Surface _surface;
 public:
-	DECLARE_PERSISTENT(CVidTheoraPlayer, CBBase);
+	DECLARE_PERSISTENT(CVidTheoraPlayer, CBBase)
 
 	CVidTheoraPlayer(CBGame *inGame);
 	virtual ~CVidTheoraPlayer(void);

@@ -42,7 +42,7 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CVidTheoraPlayer, false);
+IMPLEMENT_PERSISTENT(CVidTheoraPlayer, false)
 
 //////////////////////////////////////////////////////////////////////////
 CVidTheoraPlayer::CVidTheoraPlayer(CBGame *inGame): CBBase(inGame) {

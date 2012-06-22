@@ -2,7 +2,6 @@ MODULE := engines/wintermute
  
 MODULE_OBJS := \
 	Ad/AdActor.o \
-	Ad/AdActorDir.o \
 	Ad/AdEntity.o \
 	Ad/AdGame.o \
 	Ad/AdInventory.o \
