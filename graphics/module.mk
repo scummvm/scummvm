@@ -33,6 +33,7 @@ ifdef USE_SCALERS
 MODULE_OBJS += \
 	scaler/dotmatrix.o \
 	scaler/sai.o \
+	scaler/pm.o \
 	scaler/aspect.o \
 	scaler/downscaler.o \
 	scaler/scale2x.o \
