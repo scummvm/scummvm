@@ -835,20 +835,20 @@ int CUIEdit::InsertChars(int Pos, byte *Chars, int Num) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CUIEdit::Persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(PersistMgr);
+	CUIObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_cursorBlinkRate));
-	PersistMgr->Transfer(TMEMBER(_cursorChar));
-	PersistMgr->Transfer(TMEMBER(_fontSelected));
-	PersistMgr->Transfer(TMEMBER(_frameWidth));
-	PersistMgr->Transfer(TMEMBER(_maxLength));
-	PersistMgr->Transfer(TMEMBER(_scrollOffset));
-	PersistMgr->Transfer(TMEMBER(_selEnd));
-	PersistMgr->Transfer(TMEMBER(_selStart));
+	persistMgr->transfer(TMEMBER(_cursorBlinkRate));
+	persistMgr->transfer(TMEMBER(_cursorChar));
+	persistMgr->transfer(TMEMBER(_fontSelected));
+	persistMgr->transfer(TMEMBER(_frameWidth));
+	persistMgr->transfer(TMEMBER(_maxLength));
+	persistMgr->transfer(TMEMBER(_scrollOffset));
+	persistMgr->transfer(TMEMBER(_selEnd));
+	persistMgr->transfer(TMEMBER(_selStart));
 
-	if (!PersistMgr->_saving) {
+	if (!persistMgr->_saving) {
 		_cursorVisible = false;
 		_lastBlinkTime = 0;
 	}

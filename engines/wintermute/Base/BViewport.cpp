@@ -49,14 +49,14 @@ CBViewport::~CBViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBViewport::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CBViewport::Persist(CBPersistMgr *persistMgr) {
 
-	PersistMgr->Transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(_mainObject));
-	PersistMgr->Transfer(TMEMBER(_offsetX));
-	PersistMgr->Transfer(TMEMBER(_offsetY));
-	PersistMgr->Transfer(TMEMBER(_rect));
+	persistMgr->transfer(TMEMBER(_mainObject));
+	persistMgr->transfer(TMEMBER(_offsetX));
+	persistMgr->transfer(TMEMBER(_offsetY));
+	persistMgr->transfer(TMEMBER(_rect));
 
 	return S_OK;
 }

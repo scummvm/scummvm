@@ -215,18 +215,18 @@ HRESULT CBKeyboardState::ReadKey(Common::Event *event) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBKeyboardState::Persist(CBPersistMgr *PersistMgr) {
-	//if(!PersistMgr->_saving) Cleanup();
-	CBScriptable::Persist(PersistMgr);
+HRESULT CBKeyboardState::Persist(CBPersistMgr *persistMgr) {
+	//if(!persistMgr->_saving) Cleanup();
+	CBScriptable::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_currentAlt));
-	PersistMgr->Transfer(TMEMBER(_currentCharCode));
-	PersistMgr->Transfer(TMEMBER(_currentControl));
-	PersistMgr->Transfer(TMEMBER(_currentKeyData));
-	PersistMgr->Transfer(TMEMBER(_currentPrintable));
-	PersistMgr->Transfer(TMEMBER(_currentShift));
+	persistMgr->transfer(TMEMBER(_currentAlt));
+	persistMgr->transfer(TMEMBER(_currentCharCode));
+	persistMgr->transfer(TMEMBER(_currentControl));
+	persistMgr->transfer(TMEMBER(_currentKeyData));
+	persistMgr->transfer(TMEMBER(_currentPrintable));
+	persistMgr->transfer(TMEMBER(_currentShift));
 	
-	if (!PersistMgr->_saving) {
+	if (!persistMgr->_saving) {
 		_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
 		for (int i = 0; i < 323; i++) {
 			_keyStates[i] = false;

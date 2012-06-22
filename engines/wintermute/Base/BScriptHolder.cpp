@@ -263,13 +263,13 @@ HRESULT CBScriptHolder::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::Persist(CBPersistMgr *PersistMgr) {
-	CBScriptable::Persist(PersistMgr);
+HRESULT CBScriptHolder::Persist(CBPersistMgr *persistMgr) {
+	CBScriptable::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_filename));
-	PersistMgr->Transfer(TMEMBER(_freezable));
-	PersistMgr->Transfer(TMEMBER(_name));
-	_scripts.Persist(PersistMgr);
+	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transfer(TMEMBER(_freezable));
+	persistMgr->transfer(TMEMBER(_name));
+	_scripts.Persist(persistMgr);
 
 	return S_OK;
 }

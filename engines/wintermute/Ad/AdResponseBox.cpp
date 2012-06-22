@@ -511,25 +511,25 @@ HRESULT CAdResponseBox::Listen(CBScriptHolder *param1, uint32 param2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::Persist(CBPersistMgr *PersistMgr) {
-	CBObject::Persist(PersistMgr);
+HRESULT CAdResponseBox::Persist(CBPersistMgr *persistMgr) {
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_font));
-	PersistMgr->Transfer(TMEMBER(_fontHover));
-	PersistMgr->Transfer(TMEMBER(_horizontal));
-	PersistMgr->Transfer(TMEMBER(_lastResponseText));
-	PersistMgr->Transfer(TMEMBER(_lastResponseTextOrig));
-	_respButtons.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_responseArea));
-	_responses.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_scrollOffset));
-	PersistMgr->Transfer(TMEMBER(_shieldWindow));
-	PersistMgr->Transfer(TMEMBER(_spacing));
-	PersistMgr->Transfer(TMEMBER(_waitingScript));
-	PersistMgr->Transfer(TMEMBER(_window));
+	persistMgr->transfer(TMEMBER(_font));
+	persistMgr->transfer(TMEMBER(_fontHover));
+	persistMgr->transfer(TMEMBER(_horizontal));
+	persistMgr->transfer(TMEMBER(_lastResponseText));
+	persistMgr->transfer(TMEMBER(_lastResponseTextOrig));
+	_respButtons.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_responseArea));
+	_responses.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_scrollOffset));
+	persistMgr->transfer(TMEMBER(_shieldWindow));
+	persistMgr->transfer(TMEMBER(_spacing));
+	persistMgr->transfer(TMEMBER(_waitingScript));
+	persistMgr->transfer(TMEMBER(_window));
 
-	PersistMgr->Transfer(TMEMBER_INT(_verticalAlign));
-	PersistMgr->Transfer(TMEMBER_INT(_align));
+	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
+	persistMgr->transfer(TMEMBER_INT(_align));
 
 	return S_OK;
 }

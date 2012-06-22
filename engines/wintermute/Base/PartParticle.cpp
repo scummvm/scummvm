@@ -216,32 +216,32 @@ HRESULT CPartParticle::FadeOut(uint32 CurrentTime, int FadeTime) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::Persist(CBPersistMgr *PersistMgr) {
-	PersistMgr->Transfer(TMEMBER(_alpha1));
-	PersistMgr->Transfer(TMEMBER(_alpha2));
-	PersistMgr->Transfer(TMEMBER(_border));
-	PersistMgr->Transfer(TMEMBER(_pos));
-	PersistMgr->Transfer(TMEMBER(_posZ));
-	PersistMgr->Transfer(TMEMBER(_velocity));
-	PersistMgr->Transfer(TMEMBER(_scale));
-	PersistMgr->Transfer(TMEMBER(_creationTime));
-	PersistMgr->Transfer(TMEMBER(_lifeTime));
-	PersistMgr->Transfer(TMEMBER(_isDead));
-	PersistMgr->Transfer(TMEMBER_INT(_state));
-	PersistMgr->Transfer(TMEMBER(_fadeStart));
-	PersistMgr->Transfer(TMEMBER(_fadeTime));
-	PersistMgr->Transfer(TMEMBER(_currentAlpha));
-	PersistMgr->Transfer(TMEMBER(_angVelocity));
-	PersistMgr->Transfer(TMEMBER(_rotation));
-	PersistMgr->Transfer(TMEMBER(_growthRate));
-	PersistMgr->Transfer(TMEMBER(_exponentialGrowth));
-	PersistMgr->Transfer(TMEMBER(_fadeStartAlpha));
+HRESULT CPartParticle::Persist(CBPersistMgr *persistMgr) {
+	persistMgr->transfer(TMEMBER(_alpha1));
+	persistMgr->transfer(TMEMBER(_alpha2));
+	persistMgr->transfer(TMEMBER(_border));
+	persistMgr->transfer(TMEMBER(_pos));
+	persistMgr->transfer(TMEMBER(_posZ));
+	persistMgr->transfer(TMEMBER(_velocity));
+	persistMgr->transfer(TMEMBER(_scale));
+	persistMgr->transfer(TMEMBER(_creationTime));
+	persistMgr->transfer(TMEMBER(_lifeTime));
+	persistMgr->transfer(TMEMBER(_isDead));
+	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transfer(TMEMBER(_fadeStart));
+	persistMgr->transfer(TMEMBER(_fadeTime));
+	persistMgr->transfer(TMEMBER(_currentAlpha));
+	persistMgr->transfer(TMEMBER(_angVelocity));
+	persistMgr->transfer(TMEMBER(_rotation));
+	persistMgr->transfer(TMEMBER(_growthRate));
+	persistMgr->transfer(TMEMBER(_exponentialGrowth));
+	persistMgr->transfer(TMEMBER(_fadeStartAlpha));
 
-	if (PersistMgr->_saving) {
-		PersistMgr->Transfer(TMEMBER(_sprite->_filename));
+	if (persistMgr->_saving) {
+		persistMgr->transfer(TMEMBER(_sprite->_filename));
 	} else {
 		char *Filename;
-		PersistMgr->Transfer(TMEMBER(Filename));
+		persistMgr->transfer(TMEMBER(Filename));
 		CSysClassRegistry::GetInstance()->_disabled = true;
 		SetSprite(Filename);
 		CSysClassRegistry::GetInstance()->_disabled = false;

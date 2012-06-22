@@ -977,21 +977,21 @@ void CAdEntity::UpdatePosition() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::Persist(CBPersistMgr *PersistMgr) {
-	CAdTalkHolder::Persist(PersistMgr);
+HRESULT CAdEntity::Persist(CBPersistMgr *persistMgr) {
+	CAdTalkHolder::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_item));
-	PersistMgr->Transfer(TMEMBER(_region));
-	//PersistMgr->Transfer(TMEMBER(_sprite));
-	PersistMgr->Transfer(TMEMBER_INT(_subtype));
-	_talkSprites.Persist(PersistMgr);
-	_talkSpritesEx.Persist(PersistMgr);
+	persistMgr->transfer(TMEMBER(_item));
+	persistMgr->transfer(TMEMBER(_region));
+	//persistMgr->transfer(TMEMBER(_sprite));
+	persistMgr->transfer(TMEMBER_INT(_subtype));
+	_talkSprites.Persist(persistMgr);
+	_talkSpritesEx.Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_walkToX));
-	PersistMgr->Transfer(TMEMBER(_walkToY));
-	PersistMgr->Transfer(TMEMBER_INT(_walkToDir));
+	persistMgr->transfer(TMEMBER(_walkToX));
+	persistMgr->transfer(TMEMBER(_walkToY));
+	persistMgr->transfer(TMEMBER_INT(_walkToDir));
 
-	PersistMgr->Transfer(TMEMBER(_theora));
+	persistMgr->transfer(TMEMBER(_theora));
 
 	return S_OK;
 }

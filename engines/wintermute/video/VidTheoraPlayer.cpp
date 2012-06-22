@@ -797,29 +797,29 @@ HRESULT CVidTheoraPlayer::resume() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidTheoraPlayer::Persist(CBPersistMgr *PersistMgr) {
-	//CBBase::Persist(PersistMgr);
+HRESULT CVidTheoraPlayer::Persist(CBPersistMgr *persistMgr) {
+	//CBBase::Persist(persistMgr);
 
-	if (PersistMgr->_saving) {
+	if (persistMgr->_saving) {
 		_savedPos = getMovieTime() * 1000;
 		_savedState = _state;
 	} else {
 		SetDefaults();
 	}
 
-	PersistMgr->Transfer(TMEMBER(Game));
-	PersistMgr->Transfer(TMEMBER(_savedPos));
-	PersistMgr->Transfer(TMEMBER(_savedState));
-	PersistMgr->Transfer(TMEMBER(_filename));
-	PersistMgr->Transfer(TMEMBER(_alphaFilename));
-	PersistMgr->Transfer(TMEMBER(_posX));
-	PersistMgr->Transfer(TMEMBER(_posY));
-	PersistMgr->Transfer(TMEMBER(_playZoom));
-	PersistMgr->Transfer(TMEMBER_INT(_playbackType));
-	PersistMgr->Transfer(TMEMBER(_looping));
-	PersistMgr->Transfer(TMEMBER(_volume));
+	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_savedPos));
+	persistMgr->transfer(TMEMBER(_savedState));
+	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transfer(TMEMBER(_alphaFilename));
+	persistMgr->transfer(TMEMBER(_posX));
+	persistMgr->transfer(TMEMBER(_posY));
+	persistMgr->transfer(TMEMBER(_playZoom));
+	persistMgr->transfer(TMEMBER_INT(_playbackType));
+	persistMgr->transfer(TMEMBER(_looping));
+	persistMgr->transfer(TMEMBER(_volume));
 
-	if (!PersistMgr->_saving && (_savedState != THEORA_STATE_NONE)) {
+	if (!persistMgr->_saving && (_savedState != THEORA_STATE_NONE)) {
 		initializeSimple();
 	}
 

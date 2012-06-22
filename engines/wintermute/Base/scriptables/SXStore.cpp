@@ -278,29 +278,29 @@ CScValue *CSXStore::ScGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXStore::Persist(CBPersistMgr *PersistMgr) {
-	if (!PersistMgr->_saving) Cleanup();
+HRESULT CSXStore::Persist(CBPersistMgr *persistMgr) {
+	if (!persistMgr->_saving) Cleanup();
 
-	CBObject::Persist(PersistMgr);
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_eventsEnabled));
-	PersistMgr->Transfer(TMEMBER(_lastProductRequestOwner));
-	PersistMgr->Transfer(TMEMBER(_lastPurchaseOwner));
-	PersistMgr->Transfer(TMEMBER(_lastRestoreOwner));
-	PersistMgr->Transfer(TMEMBER(_invalidProducts));
+	persistMgr->transfer(TMEMBER(_eventsEnabled));
+	persistMgr->transfer(TMEMBER(_lastProductRequestOwner));
+	persistMgr->transfer(TMEMBER(_lastPurchaseOwner));
+	persistMgr->transfer(TMEMBER(_lastRestoreOwner));
+	persistMgr->transfer(TMEMBER(_invalidProducts));
 
 	// persist valid products
 	int numProducts;
-	if (PersistMgr->_saving) {
+	if (persistMgr->_saving) {
 		numProducts = _validProducts.GetSize();
-		PersistMgr->Transfer(TMEMBER(numProducts));
-		for (int i = 0; i < numProducts; i++) _validProducts[i]->Persist(PersistMgr);
+		persistMgr->transfer(TMEMBER(numProducts));
+		for (int i = 0; i < numProducts; i++) _validProducts[i]->Persist(persistMgr);
 	} else {
 		numProducts = _validProducts.GetSize();
-		PersistMgr->Transfer(TMEMBER(numProducts));
+		persistMgr->transfer(TMEMBER(numProducts));
 		for (int i = 0; i < numProducts; i++) {
 			CBStoreProduct *prod = new CBStoreProduct;
-			prod->Persist(PersistMgr);
+			prod->Persist(persistMgr);
 			_validProducts.Add(prod);
 		}
 	}

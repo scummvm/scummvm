@@ -310,30 +310,30 @@ void CBSubFrame::SetDefaultRect() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CBSubFrame::Persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(PersistMgr);
+	CBScriptable::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_2DOnly));
-	PersistMgr->Transfer(TMEMBER(_3DOnly));
-	PersistMgr->Transfer(TMEMBER(_alpha));
-	PersistMgr->Transfer(TMEMBER(_decoration));
-	PersistMgr->Transfer(TMEMBER(_editorSelected));
-	PersistMgr->Transfer(TMEMBER(_hotspotX));
-	PersistMgr->Transfer(TMEMBER(_hotspotY));
-	PersistMgr->Transfer(TMEMBER(_rect));
+	persistMgr->transfer(TMEMBER(_2DOnly));
+	persistMgr->transfer(TMEMBER(_3DOnly));
+	persistMgr->transfer(TMEMBER(_alpha));
+	persistMgr->transfer(TMEMBER(_decoration));
+	persistMgr->transfer(TMEMBER(_editorSelected));
+	persistMgr->transfer(TMEMBER(_hotspotX));
+	persistMgr->transfer(TMEMBER(_hotspotY));
+	persistMgr->transfer(TMEMBER(_rect));
 
-	PersistMgr->Transfer(TMEMBER(_surfaceFilename));
-	PersistMgr->Transfer(TMEMBER(_cKDefault));
-	PersistMgr->Transfer(TMEMBER(_cKRed));
-	PersistMgr->Transfer(TMEMBER(_cKGreen));
-	PersistMgr->Transfer(TMEMBER(_cKBlue));
-	PersistMgr->Transfer(TMEMBER(_lifeTime));
+	persistMgr->transfer(TMEMBER(_surfaceFilename));
+	persistMgr->transfer(TMEMBER(_cKDefault));
+	persistMgr->transfer(TMEMBER(_cKRed));
+	persistMgr->transfer(TMEMBER(_cKGreen));
+	persistMgr->transfer(TMEMBER(_cKBlue));
+	persistMgr->transfer(TMEMBER(_lifeTime));
 
-	PersistMgr->Transfer(TMEMBER(_keepLoaded));
-	PersistMgr->Transfer(TMEMBER(_mirrorX));
-	PersistMgr->Transfer(TMEMBER(_mirrorY));
-	PersistMgr->Transfer(TMEMBER(_transparent));
+	persistMgr->transfer(TMEMBER(_keepLoaded));
+	persistMgr->transfer(TMEMBER(_mirrorX));
+	persistMgr->transfer(TMEMBER(_mirrorY));
+	persistMgr->transfer(TMEMBER(_transparent));
 
 	return S_OK;
 }

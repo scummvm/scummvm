@@ -864,55 +864,55 @@ HRESULT CBObject::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::Persist(CBPersistMgr *PersistMgr) {
-	CBScriptHolder::Persist(PersistMgr);
+HRESULT CBObject::Persist(CBPersistMgr *persistMgr) {
+	CBScriptHolder::Persist(persistMgr);
 
-	for (int i = 0; i < 7; i++) PersistMgr->Transfer(TMEMBER(_caption[i]));
-	PersistMgr->Transfer(TMEMBER(_activeCursor));
-	PersistMgr->Transfer(TMEMBER(_alphaColor));
-	PersistMgr->Transfer(TMEMBER(_autoSoundPanning));
-	PersistMgr->Transfer(TMEMBER(_cursor));
-	PersistMgr->Transfer(TMEMBER(_sharedCursors));
-	PersistMgr->Transfer(TMEMBER(_editorAlwaysRegister));
-	PersistMgr->Transfer(TMEMBER(_editorOnly));
-	PersistMgr->Transfer(TMEMBER(_editorSelected));
-	PersistMgr->Transfer(TMEMBER(_iD));
-	PersistMgr->Transfer(TMEMBER(_is3D));
-	PersistMgr->Transfer(TMEMBER(_movable));
-	PersistMgr->Transfer(TMEMBER(_posX));
-	PersistMgr->Transfer(TMEMBER(_posY));
-	PersistMgr->Transfer(TMEMBER(_relativeScale));
-	PersistMgr->Transfer(TMEMBER(_rotatable));
-	PersistMgr->Transfer(TMEMBER(_scale));
-	PersistMgr->Transfer(TMEMBER(_sFX));
-	PersistMgr->Transfer(TMEMBER(_sFXStart));
-	PersistMgr->Transfer(TMEMBER(_sFXVolume));
-	PersistMgr->Transfer(TMEMBER(_ready));
-	PersistMgr->Transfer(TMEMBER(_rect));
-	PersistMgr->Transfer(TMEMBER(_rectSet));
-	PersistMgr->Transfer(TMEMBER(_registrable));
-	PersistMgr->Transfer(TMEMBER(_shadowable));
-	PersistMgr->Transfer(TMEMBER(_soundEvent));
-	PersistMgr->Transfer(TMEMBER(_zoomable));
+	for (int i = 0; i < 7; i++) persistMgr->transfer(TMEMBER(_caption[i]));
+	persistMgr->transfer(TMEMBER(_activeCursor));
+	persistMgr->transfer(TMEMBER(_alphaColor));
+	persistMgr->transfer(TMEMBER(_autoSoundPanning));
+	persistMgr->transfer(TMEMBER(_cursor));
+	persistMgr->transfer(TMEMBER(_sharedCursors));
+	persistMgr->transfer(TMEMBER(_editorAlwaysRegister));
+	persistMgr->transfer(TMEMBER(_editorOnly));
+	persistMgr->transfer(TMEMBER(_editorSelected));
+	persistMgr->transfer(TMEMBER(_iD));
+	persistMgr->transfer(TMEMBER(_is3D));
+	persistMgr->transfer(TMEMBER(_movable));
+	persistMgr->transfer(TMEMBER(_posX));
+	persistMgr->transfer(TMEMBER(_posY));
+	persistMgr->transfer(TMEMBER(_relativeScale));
+	persistMgr->transfer(TMEMBER(_rotatable));
+	persistMgr->transfer(TMEMBER(_scale));
+	persistMgr->transfer(TMEMBER(_sFX));
+	persistMgr->transfer(TMEMBER(_sFXStart));
+	persistMgr->transfer(TMEMBER(_sFXVolume));
+	persistMgr->transfer(TMEMBER(_ready));
+	persistMgr->transfer(TMEMBER(_rect));
+	persistMgr->transfer(TMEMBER(_rectSet));
+	persistMgr->transfer(TMEMBER(_registrable));
+	persistMgr->transfer(TMEMBER(_shadowable));
+	persistMgr->transfer(TMEMBER(_soundEvent));
+	persistMgr->transfer(TMEMBER(_zoomable));
 
-	PersistMgr->Transfer(TMEMBER(_scaleX));
-	PersistMgr->Transfer(TMEMBER(_scaleY));
+	persistMgr->transfer(TMEMBER(_scaleX));
+	persistMgr->transfer(TMEMBER(_scaleY));
 
-	PersistMgr->Transfer(TMEMBER(_rotate));
-	PersistMgr->Transfer(TMEMBER(_rotateValid));
-	PersistMgr->Transfer(TMEMBER(_relativeRotate));
+	persistMgr->transfer(TMEMBER(_rotate));
+	persistMgr->transfer(TMEMBER(_rotateValid));
+	persistMgr->transfer(TMEMBER(_relativeRotate));
 
-	PersistMgr->Transfer(TMEMBER(_saveState));
-	PersistMgr->Transfer(TMEMBER(_nonIntMouseEvents));
+	persistMgr->transfer(TMEMBER(_saveState));
+	persistMgr->transfer(TMEMBER(_nonIntMouseEvents));
 
-	PersistMgr->Transfer(TMEMBER_INT(_sFXType));
-	PersistMgr->Transfer(TMEMBER(_sFXParam1));
-	PersistMgr->Transfer(TMEMBER(_sFXParam2));
-	PersistMgr->Transfer(TMEMBER(_sFXParam3));
-	PersistMgr->Transfer(TMEMBER(_sFXParam4));
+	persistMgr->transfer(TMEMBER_INT(_sFXType));
+	persistMgr->transfer(TMEMBER(_sFXParam1));
+	persistMgr->transfer(TMEMBER(_sFXParam2));
+	persistMgr->transfer(TMEMBER(_sFXParam3));
+	persistMgr->transfer(TMEMBER(_sFXParam4));
 
 
-	PersistMgr->Transfer(TMEMBER_INT(_blendMode));
+	persistMgr->transfer(TMEMBER_INT(_blendMode));
 
 	return S_OK;
 }

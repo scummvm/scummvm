@@ -381,18 +381,18 @@ HRESULT CBFrame::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::Persist(CBPersistMgr *PersistMgr) {
-	CBScriptable::Persist(PersistMgr);
+HRESULT CBFrame::Persist(CBPersistMgr *persistMgr) {
+	CBScriptable::Persist(persistMgr);
 
-	_applyEvent.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_delay));
-	PersistMgr->Transfer(TMEMBER(_editorExpanded));
-	PersistMgr->Transfer(TMEMBER(_keyframe));
-	PersistMgr->Transfer(TMEMBER(_killSound));
-	PersistMgr->Transfer(TMEMBER(_moveX));
-	PersistMgr->Transfer(TMEMBER(_moveY));
-	PersistMgr->Transfer(TMEMBER(_sound));
-	_subframes.Persist(PersistMgr);
+	_applyEvent.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_delay));
+	persistMgr->transfer(TMEMBER(_editorExpanded));
+	persistMgr->transfer(TMEMBER(_keyframe));
+	persistMgr->transfer(TMEMBER(_killSound));
+	persistMgr->transfer(TMEMBER(_moveX));
+	persistMgr->transfer(TMEMBER(_moveY));
+	persistMgr->transfer(TMEMBER(_sound));
+	_subframes.Persist(persistMgr);
 
 	return S_OK;
 }

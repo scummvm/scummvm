@@ -454,18 +454,18 @@ HRESULT CSXMemBuffer::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CSXMemBuffer::Persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(PersistMgr);
+	CBScriptable::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_size));
+	persistMgr->transfer(TMEMBER(_size));
 
-	if (PersistMgr->_saving) {
-		if (_size > 0) PersistMgr->PutBytes((byte *)_buffer, _size);
+	if (persistMgr->_saving) {
+		if (_size > 0) persistMgr->putBytes((byte *)_buffer, _size);
 	} else {
 		if (_size > 0) {
 			_buffer = malloc(_size);
-			PersistMgr->GetBytes((byte *)_buffer, _size);
+			persistMgr->getBytes((byte *)_buffer, _size);
 		} else _buffer = NULL;
 	}
 

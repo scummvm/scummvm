@@ -74,19 +74,19 @@ CBPersistMgr::CBPersistMgr(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBPersistMgr::~CBPersistMgr() {
-	Cleanup();
+	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBPersistMgr::Cleanup() {
-/*	if (_buffer) {
-		if (_saving) free(_buffer);
-		else delete [] _buffer; // allocated by file manager
-	}
-	_buffer = NULL;
+void CBPersistMgr::cleanup() {
+	/*  if (_buffer) {
+	        if (_saving) free(_buffer);
+	        else delete [] _buffer; // allocated by file manager
+	    }
+	    _buffer = NULL;
 
-	_bufferSize = 0;*/
+	    _bufferSize = 0;*/
 	_offset = 0;
 
 	delete[] _richBuffer;
@@ -103,18 +103,11 @@ void CBPersistMgr::Cleanup() {
 		delete [] _thumbnailData;
 		_thumbnailData = NULL;
 	}
-	
+
 	delete _loadStream;
 	delete _saveStream;
 	_loadStream = NULL;
 	_saveStream = NULL;
-}
-
-// TODO: This is not at all endian-safe
-uint32 makeUint32(byte first, byte second, byte third, byte fourth) {
-	uint32 retVal = first;
-	retVal = retVal & second << 8 & third << 16 & fourth << 24;
-	return retVal;
 }
 
 Common::String CBPersistMgr::getFilenameForSlot(int slot) {
@@ -122,7 +115,7 @@ Common::String CBPersistMgr::getFilenameForSlot(int slot) {
 	return Common::String::format("save%03d.DirtySplitSav", slot);
 }
 
-void CBPersistMgr::getSaveStateDesc(int slot, SaveStateDescriptor& desc) {
+void CBPersistMgr::getSaveStateDesc(int slot, SaveStateDescriptor &desc) {
 	Common::String filename = getFilenameForSlot(slot);
 	warning("Trying to list savegame %s in slot %d", filename.c_str(), slot);
 	if (FAILED(readHeader(filename))) {
@@ -133,7 +126,7 @@ void CBPersistMgr::getSaveStateDesc(int slot, SaveStateDescriptor& desc) {
 	desc.setDescription(_savedDescription);
 	desc.setDeletableFlag(true);
 	desc.setWriteProtectedFlag(false);
-	
+
 	if (_thumbnailDataSize > 0) {
 		Common::MemoryReadStream thumbStream(_thumbnailData, _thumbnailDataSize);
 		Graphics::BitmapDecoder bmpDecoder;
@@ -176,19 +169,12 @@ bool CBPersistMgr::getSaveExists(int slot) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::InitSave(const char *Desc) {
-	if (!Desc) return E_FAIL;
+HRESULT CBPersistMgr::initSave(const char *desc) {
+	if (!desc) return E_FAIL;
 
-	HRESULT res;
-
-	Cleanup();
+	cleanup();
 	_saving = true;
 
-/*	_buffer = (byte *)malloc(SAVE_BUFFER_INIT_SIZE);
-	if (_buffer) {
-		_bufferSize = SAVE_BUFFER_INIT_SIZE;
-		res = S_OK;
-	} else res = E_FAIL;*/
 	_saveStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	if (_saveStream) {
@@ -201,12 +187,11 @@ HRESULT CBPersistMgr::InitSave(const char *Desc) {
 			}
 		}
 
-
 		uint32 magic = DCGF_MAGIC;
-		PutDWORD(magic);
+		putDWORD(magic);
 
 		magic = SAVE_MAGIC_2;
-		PutDWORD(magic);
+		putDWORD(magic);
 
 		byte VerMajor, VerMinor, ExtMajor, ExtMinor;
 		Game->GetVersion(&VerMajor, &VerMinor, &ExtMajor, &ExtMinor);
@@ -217,15 +202,14 @@ HRESULT CBPersistMgr::InitSave(const char *Desc) {
 		_saveStream->writeByte(ExtMinor);
 
 		// new in ver 2
-		PutDWORD((uint32)DCGF_VER_BUILD);
-		PutString(Game->_name);
+		putDWORD((uint32)DCGF_VER_BUILD);
+		putString(Game->_name);
 
 		// thumbnail data size
 		bool ThumbnailOK = false;
 
 		if (Game->_cachedThumbnail) {
 			if (Game->_cachedThumbnail->_thumbnail) {
-				uint32 Size = 0;
 				Common::MemoryWriteStreamDynamic thumbStream(DisposeAfterUse::YES);
 				if (Game->_cachedThumbnail->_thumbnail->writeBMPToStream(&thumbStream)) {
 					_saveStream->writeUint32LE(thumbStream.size());
@@ -234,25 +218,22 @@ HRESULT CBPersistMgr::InitSave(const char *Desc) {
 					_saveStream->writeUint32LE(0);
 				}
 
-/*				PutDWORD(Size);
-				if (Size > 0) _saveStream->write(Buffer, Size);
-				delete [] Buffer;*/
 				ThumbnailOK = true;
 			}
 		}
-		if (!ThumbnailOK) PutDWORD(0);
+		if (!ThumbnailOK) putDWORD(0);
 
 		// in any case, destroy the cached thumbnail once used
 		delete Game->_cachedThumbnail;
 		Game->_cachedThumbnail = NULL;
 
-		uint32 DataOffset = _offset +
+		uint32 dataOffset = _offset +
 		                    sizeof(uint32) + // data offset
-		                    sizeof(uint32) + strlen(Desc) + 1 + // description
+		                    sizeof(uint32) + strlen(desc) + 1 + // description
 		                    sizeof(uint32); // timestamp
 
-		PutDWORD(DataOffset);
-		PutString(Desc);
+		putDWORD(dataOffset);
+		putString(desc);
 
 		g_system->getTimeAndDate(_savedTimestamp);
 		putTimeDate(_savedTimestamp);
@@ -261,117 +242,94 @@ HRESULT CBPersistMgr::InitSave(const char *Desc) {
 	}
 	return S_OK;
 }
-// TODO: Do this properly, this is just a quickfix, that probably doesnt even work.
-// The main point of which is ditching BASS completely.
-byte getLowByte(uint16 word) {
-	uint16 mask = 0xff;
-	return word & mask;
-}
-
-byte getHighByte(uint16 word) {
-	uint16 mask = 0xff << 8;
-	word = word & mask;
-	return word >> 8;
-}
-
-uint16 getLowWord(uint32 dword) {
-	uint32 mask = 0xffff;
-	return dword & mask;
-}
-
-uint16 getHighWord(uint32 dword) {
-	uint32 mask = 0xffff << 16;
-	dword = dword & mask;
-	return dword >> 16;
-}
 
 HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
-	Cleanup();
-	
+	cleanup();
+
 	_saving = false;
-	
+
 	_loadStream = g_system->getSavefileManager()->openForLoading(filename);
 	//_buffer = Game->_fileManager->ReadWholeFile(Filename, &_bufferSize);
 	if (_loadStream) {
 		uint32 Magic;
-		Magic = GetDWORD();
+		Magic = getDWORD();
 
 		if (Magic != DCGF_MAGIC) {
-			Cleanup();
+			cleanup();
 			return E_FAIL;
 		}
 
-		Magic = GetDWORD();
+		Magic = getDWORD();
 
 		if (Magic == SAVE_MAGIC || Magic == SAVE_MAGIC_2) {
 			_savedVerMajor = _loadStream->readByte();
 			_savedVerMinor = _loadStream->readByte();
 			_savedExtMajor = _loadStream->readByte();
 			_savedExtMinor = _loadStream->readByte();
-			
+
 			if (Magic == SAVE_MAGIC_2) {
-				_savedVerBuild = (byte)GetDWORD();
-				_savedName = GetString();
+				_savedVerBuild = (byte)getDWORD();
+				_savedName = getString();
 
 				// load thumbnail
-				_thumbnailDataSize = GetDWORD();
+				_thumbnailDataSize = getDWORD();
 				if (_thumbnailDataSize > 0) {
 					_thumbnailData = new byte[_thumbnailDataSize];
 					if (_thumbnailData) {
-						GetBytes(_thumbnailData, _thumbnailDataSize);
+						getBytes(_thumbnailData, _thumbnailDataSize);
 					} else _thumbnailDataSize = 0;
 				}
 			} else _savedVerBuild = 35; // last build with ver1 savegames
 
-			uint32 DataOffset = GetDWORD();
+			uint32 DataOffset = getDWORD();
 
-			_savedDescription = GetString();
+			_savedDescription = getString();
 			_savedTimestamp = getTimeDate();
 			_savedPlayTime = _loadStream->readUint32LE();
 
 			_offset = DataOffset;
-			
+
 			return S_OK;
 		}
 	}
 
-	Cleanup();
+	cleanup();
 	return E_FAIL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::InitLoad(const char *Filename) {
+HRESULT CBPersistMgr::initLoad(const char *filename) {
 
 
-	if (FAILED(readHeader(Filename))) {
-		Cleanup();
+	if (FAILED(readHeader(filename))) {
+		cleanup();
 		return E_FAIL;
 	}
 	_saving = false;
 
 	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), Game->_name) != 0) {
 		Game->LOG(0, "ERROR: Saved game name doesn't match current game");
-		Cleanup();
+		cleanup();
 		return E_FAIL;
 	}
 
 	// if save is newer version than we are, fail
 	if (_savedVerMajor >  DCGF_VER_MAJOR ||
-		(_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor >  DCGF_VER_MINOR) ||
-		(_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)
-		) {
+	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor >  DCGF_VER_MINOR) ||
+	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)
+	   ) {
 		Game->LOG(0, "ERROR: Saved game version is newer than current game");
-		Cleanup();
+		cleanup();
 		return E_FAIL;
 	}
 
 	// if save is older than the minimal version we support
 	if (_savedVerMajor <  SAVEGAME_VER_MAJOR ||
-		(_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor <  SAVEGAME_VER_MINOR) ||
-		(_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)
-		) {
+	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor <  SAVEGAME_VER_MINOR) ||
+	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)
+	   ) {
 		Game->LOG(0, "ERROR: Saved game is too old and cannot be used by this version of game engine");
-		Cleanup();
+		cleanup();
 		return E_FAIL;
 
 	}
@@ -389,85 +347,58 @@ HRESULT CBPersistMgr::InitLoad(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::SaveFile(const char *Filename) {
-	return Game->_fileManager->SaveFile(Filename, ((Common::MemoryWriteStreamDynamic*)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic*)_saveStream)->size(), Game->_compressedSavegames, _richBuffer, _richBufferSize);
+HRESULT CBPersistMgr::saveFile(const char *filename) {
+	return Game->_fileManager->SaveFile(filename, ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic *)_saveStream)->size(), Game->_compressedSavegames, _richBuffer, _richBufferSize);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::PutBytes(byte *buffer, uint32 size) {
+HRESULT CBPersistMgr::putBytes(byte *buffer, uint32 size) {
 	_saveStream->write(buffer, size);
 	if (_saveStream->err())
 		return E_FAIL;
 	return S_OK;
-/*	while (_offset + Size > _bufferSize) {
-		_bufferSize += SAVE_BUFFER_GROW_BY;
-		_buffer = (byte *)realloc(_buffer, _bufferSize);
-		if (!_buffer) {
-			Game->LOG(0, "Error reallocating save buffer to %d bytes", _bufferSize);
-			return E_FAIL;
-		}
-	}
-
-	memcpy(_buffer + _offset, Buffer, Size);
-	_offset += Size;
-
-	return S_OK;*/
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::GetBytes(byte *buffer, uint32 size) {
+HRESULT CBPersistMgr::getBytes(byte *buffer, uint32 size) {
 	_loadStream->read(buffer, size);
 	if (_loadStream->err())
 		return E_FAIL;
 	return S_OK;
-/*	if (_offset + Size > _bufferSize) {
-		Game->LOG(0, "Fatal: Save buffer underflow");
-		return E_FAIL;
-	}
-
-	memcpy(Buffer, _buffer + _offset, Size);
-	_offset += Size;
-
-	return S_OK;*/
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBPersistMgr::PutDWORD(uint32 Val) {
-	//PutBytes((byte *)&Val, sizeof(uint32));
-	_saveStream->writeUint32LE(Val);
+void CBPersistMgr::putDWORD(uint32 val) {
+	_saveStream->writeUint32LE(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBPersistMgr::GetDWORD() {
+uint32 CBPersistMgr::getDWORD() {
 	uint32 ret = _loadStream->readUint32LE();
-//	GetBytes((byte *)&ret, sizeof(uint32));
 	return ret;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBPersistMgr::PutString(const Common::String &Val) {
-	if (!Val.size()) PutString("(null)");
+void CBPersistMgr::putString(const Common::String &val) {
+	if (!val.size()) putString("(null)");
 	else {
-	/*	PutDWORD(strlen(Val) + 1);
-		PutBytes((byte *)Val, strlen(Val) + 1);*/
-		_saveStream->writeUint32LE(Val.size());
-		_saveStream->writeString(Val);
+		_saveStream->writeUint32LE(val.size());
+		_saveStream->writeString(val);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBPersistMgr::GetString() {
+char *CBPersistMgr::getString() {
 	uint32 len = _loadStream->readUint32LE();
 	char *ret = new char[len + 1];
 	_loadStream->read(ret, len);
 	ret[len] = '\0';
-/*	char *ret = (char *)(_buffer + _offset);
-	_offset += len;*/
-	if (!strcmp(ret, "(null)")) { 
+
+	if (!strcmp(ret, "(null)")) {
 		delete[] ret;
 		return NULL;
 	} else return ret;
@@ -481,7 +412,7 @@ HRESULT CBPersistMgr::putTimeDate(const TimeDate &t) {
 	_saveStream->writeSint32LE(t.tm_mon);
 	_saveStream->writeSint32LE(t.tm_year);
 	// _saveStream->writeSint32LE(t.tm_wday); //TODO: Add this in when merging next
-	
+
 	if (_saveStream->err()) {
 		return E_FAIL;
 	}
@@ -507,7 +438,7 @@ void CBPersistMgr::putFloat(float val) {
 }
 
 float CBPersistMgr::getFloat() {
-	char *str = GetString();
+	char *str = getString();
 	float value = 0.0f;
 	int ret = sscanf(str, "F%f", &value);
 	if (ret != 1) {
@@ -525,7 +456,7 @@ void CBPersistMgr::putDouble(double val) {
 }
 
 double CBPersistMgr::getDouble() {
-	char *str = GetString();
+	char *str = getString();
 	double value = 0.0f;
 	int ret = sscanf(str, "F%f", &value);
 	if (ret != 1) {
@@ -537,16 +468,14 @@ double CBPersistMgr::getDouble() {
 
 //////////////////////////////////////////////////////////////////////////
 // bool
-HRESULT CBPersistMgr::Transfer(const char *Name, bool *Val) {
-	if (_saving) { 
-		//return PutBytes((byte *)Val, sizeof(bool));
-		_saveStream->writeByte(*Val);
+HRESULT CBPersistMgr::transfer(const char *name, bool *val) {
+	if (_saving) {
+		_saveStream->writeByte(*val);
 		if (_saveStream->err())
 			return E_FAIL;
 		return S_OK;
 	} else {
-		//return GetBytes((byte *)Val, sizeof(bool));
-		*Val = _loadStream->readByte();
+		*val = _loadStream->readByte();
 		if (_loadStream->err())
 			return E_FAIL;
 		return S_OK;
@@ -556,16 +485,14 @@ HRESULT CBPersistMgr::Transfer(const char *Name, bool *Val) {
 
 //////////////////////////////////////////////////////////////////////////
 // int
-HRESULT CBPersistMgr::Transfer(const char *Name, int *Val) {
+HRESULT CBPersistMgr::transfer(const char *name, int *val) {
 	if (_saving) {
-		//return PutBytes((byte *)Val, sizeof(int));
-		_saveStream->writeSint32LE(*Val);
+		_saveStream->writeSint32LE(*val);
 		if (_saveStream->err())
 			return E_FAIL;
 		return S_OK;
 	} else {
-		// return GetBytes((byte *)Val, sizeof(int));
-		*Val = _loadStream->readSint32LE();
+		*val = _loadStream->readSint32LE();
 		if (_loadStream->err())
 			return E_FAIL;
 		return S_OK;
@@ -575,16 +502,14 @@ HRESULT CBPersistMgr::Transfer(const char *Name, int *Val) {
 
 //////////////////////////////////////////////////////////////////////////
 // DWORD
-HRESULT CBPersistMgr::Transfer(const char *Name, uint32 *Val) {
+HRESULT CBPersistMgr::transfer(const char *name, uint32 *val) {
 	if (_saving) {
-		//return PutBytes((byte *)Val, sizeof(uint32));
-		_saveStream->writeUint32LE(*Val);
+		_saveStream->writeUint32LE(*val);
 		if (_saveStream->err())
 			return E_FAIL;
 		return S_OK;
 	} else {
-		// return GetBytes((byte *)Val, sizeof(uint32)); 
-		*Val = _loadStream->readUint32LE();
+		*val = _loadStream->readUint32LE();
 		if (_loadStream->err())
 			return E_FAIL;
 		return S_OK;
@@ -594,16 +519,14 @@ HRESULT CBPersistMgr::Transfer(const char *Name, uint32 *Val) {
 
 //////////////////////////////////////////////////////////////////////////
 // float
-HRESULT CBPersistMgr::Transfer(const char *Name, float *Val) {
+HRESULT CBPersistMgr::transfer(const char *name, float *val) {
 	if (_saving) {
-		//return PutBytes((byte *)Val, sizeof(float));
-		putFloat(*Val);
+		putFloat(*val);
 		if (_saveStream->err())
 			return E_FAIL;
 		return S_OK;
 	} else {
-		//return GetBytes((byte *)Val, sizeof(float));
-		*Val = getFloat();
+		*val = getFloat();
 		if (_loadStream->err())
 			return E_FAIL;
 		return S_OK;
@@ -613,16 +536,14 @@ HRESULT CBPersistMgr::Transfer(const char *Name, float *Val) {
 
 //////////////////////////////////////////////////////////////////////////
 // double
-HRESULT CBPersistMgr::Transfer(const char *Name, double *Val) {
+HRESULT CBPersistMgr::transfer(const char *name, double *val) {
 	if (_saving) {
-		//return PutBytes((byte *)Val, sizeof(double));
-		putDouble(*Val);
+		putDouble(*val);
 		if (_saveStream->err())
 			return E_FAIL;
 		return S_OK;
 	} else {
-		// return GetBytes((byte *)Val, sizeof(double)); 
-		*Val = getDouble();
+		*val = getDouble();
 		if (_loadStream->err())
 			return E_FAIL;
 		return S_OK;
@@ -632,58 +553,46 @@ HRESULT CBPersistMgr::Transfer(const char *Name, double *Val) {
 
 //////////////////////////////////////////////////////////////////////////
 // char*
-HRESULT CBPersistMgr::Transfer(const char *Name, char **Val) {
+HRESULT CBPersistMgr::transfer(const char *name, char **val) {
 	if (_saving) {
-		PutString(*Val);
+		putString(*val);
 		return S_OK;
 	} else {
-		char *str = GetString();
+		char *str = getString();
 		if (_loadStream->err()) {
 			delete[] str;
 			return E_FAIL;
 		}
-		*Val = str;
-		/*		if (str) {
-		 
-		 char *ret = new char[strlen(str) + 1];
-		 strcpy(ret, str);
-		 delete[] str;
-		 } else *Val = NULL;*/
+		*val = str;
 		return S_OK;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // const char*
-HRESULT CBPersistMgr::Transfer(const char *Name, const char **Val) {
+HRESULT CBPersistMgr::transfer(const char *name, const char **val) {
 	if (_saving) {
-		PutString(*Val);
+		putString(*val);
 		return S_OK;
 	} else {
-		char *str = GetString();
+		char *str = getString();
 		if (_loadStream->err()) {
 			delete[] str;
 			return E_FAIL;
 		}
-		*Val = str;
-/*		if (str) {
-			
-			char *ret = new char[strlen(str) + 1];
-			strcpy(ret, str);
-			delete[] str;
-		} else *Val = NULL;*/
+		*val = str;
 		return S_OK;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Common::String
-HRESULT CBPersistMgr::Transfer(const char *Name, Common::String *val) {
+HRESULT CBPersistMgr::transfer(const char *name, Common::String *val) {
 	if (_saving) {
-		PutString(*val);
+		putString(*val);
 		return S_OK;
 	} else {
-		char *str = GetString();
+		char *str = getString();
 		if (_loadStream->err()) {
 			delete[] str;
 			return E_FAIL;
@@ -694,40 +603,32 @@ HRESULT CBPersistMgr::Transfer(const char *Name, Common::String *val) {
 		} else {
 			*val = "";
 		}
-		/*		if (str) {
-		 
-		 char *ret = new char[strlen(str) + 1];
-		 strcpy(ret, str);
-		 delete[] str;
-		 } else *Val = NULL;*/
 		return S_OK;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::Transfer(const char *Name, AnsiStringArray &Val) {
+HRESULT CBPersistMgr::transfer(const char *name, AnsiStringArray &val) {
 	size_t size;
 
 	if (_saving) {
-		size = Val.size();
+		size = val.size();
 		_saveStream->writeUint32LE(size);
-		//PutBytes((byte *)&size, sizeof(size_t));
 
-		for (AnsiStringArray::iterator it = Val.begin(); it != Val.end(); ++it) {
-			PutString((*it).c_str());
+		for (AnsiStringArray::iterator it = val.begin(); it != val.end(); ++it) {
+			putString((*it).c_str());
 		}
 	} else {
-		Val.clear();
+		val.clear();
 		size = _loadStream->readUint32LE();
-		//GetBytes((byte *)&size, sizeof(size_t));
 
 		for (size_t i = 0; i < size; i++) {
-			char *str = GetString();
+			char *str = getString();
 			if (_loadStream->err()) {
 				delete[] str;
 				return E_FAIL;
 			}
-			if (str) Val.push_back(str);
+			if (str) val.push_back(str);
 			delete[] str;
 		}
 	}
@@ -737,16 +638,14 @@ HRESULT CBPersistMgr::Transfer(const char *Name, AnsiStringArray &Val) {
 
 //////////////////////////////////////////////////////////////////////////
 // BYTE
-HRESULT CBPersistMgr::Transfer(const char *Name, byte *Val) {
+HRESULT CBPersistMgr::transfer(const char *name, byte *val) {
 	if (_saving) {
-		//return PutBytes((byte *)Val, sizeof(byte));
-		_saveStream->writeByte(*Val);
+		_saveStream->writeByte(*val);
 		if (_saveStream->err())
 			return E_FAIL;
 		return S_OK;
-	} else { 
-		//return GetBytes((byte *)Val, sizeof(byte)); 
-		*Val = _loadStream->readByte();
+	} else {
+		*val = _loadStream->readByte();
 		if (_loadStream->err())
 			return E_FAIL;
 		return S_OK;
@@ -756,23 +655,20 @@ HRESULT CBPersistMgr::Transfer(const char *Name, byte *Val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-HRESULT CBPersistMgr::Transfer(const char *Name, RECT *Val) {
+HRESULT CBPersistMgr::transfer(const char *name, RECT *val) {
 	if (_saving) {
-		// return PutBytes((byte *)Val, sizeof(RECT));
-		_saveStream->writeSint32LE(Val->left);
-		_saveStream->writeSint32LE(Val->top);
-		_saveStream->writeSint32LE(Val->right);
-		_saveStream->writeSint32LE(Val->bottom);
+		_saveStream->writeSint32LE(val->left);
+		_saveStream->writeSint32LE(val->top);
+		_saveStream->writeSint32LE(val->right);
+		_saveStream->writeSint32LE(val->bottom);
 		if (_saveStream->err())
 			return E_FAIL;
 		return S_OK;
-	}
-	else { 
-		// return GetBytes((byte *)Val, sizeof(RECT));
-		Val->left = _loadStream->readSint32LE();
-		Val->top = _loadStream->readSint32LE();
-		Val->right = _loadStream->readSint32LE();
-		Val->bottom = _loadStream->readSint32LE();
+	} else {
+		val->left = _loadStream->readSint32LE();
+		val->top = _loadStream->readSint32LE();
+		val->right = _loadStream->readSint32LE();
+		val->bottom = _loadStream->readSint32LE();
 		if (_loadStream->err())
 			return E_FAIL;
 		return S_OK;
@@ -782,56 +678,48 @@ HRESULT CBPersistMgr::Transfer(const char *Name, RECT *Val) {
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-HRESULT CBPersistMgr::Transfer(const char *Name, POINT *Val) {
+HRESULT CBPersistMgr::transfer(const char *name, POINT *val) {
 	if (_saving) {
-		//return PutBytes((byte *)Val, sizeof(POINT));
-		_saveStream->writeSint32LE(Val->x);
-		_saveStream->writeSint32LE(Val->y);
+		_saveStream->writeSint32LE(val->x);
+		_saveStream->writeSint32LE(val->y);
 	} else {
-		// return GetBytes((byte *)Val, sizeof(POINT));
-		Val->x = _loadStream->readSint32LE();
-		Val->y = _loadStream->readSint32LE();
+		val->x = _loadStream->readSint32LE();
+		val->y = _loadStream->readSint32LE();
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-HRESULT CBPersistMgr::Transfer(const char *Name, Vector2 *Val) {
+HRESULT CBPersistMgr::transfer(const char *name, Vector2 *val) {
 	if (_saving) {
-		//return PutBytes((byte *)Val, sizeof(Vector2));
-		putFloat(Val->x);
-		putFloat(Val->y);
+		putFloat(val->x);
+		putFloat(val->y);
 	} else {
-		// return GetBytes((byte *)Val, sizeof(Vector2));
-		Val->x = getFloat();
-		Val->y = getFloat();
+		val->x = getFloat();
+		val->y = getFloat();
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // generic pointer
-HRESULT CBPersistMgr::Transfer(const char *Name, void *Val) {
+HRESULT CBPersistMgr::transfer(const char *name, void *val) {
 	int ClassID = -1, InstanceID = -1;
 
 	if (_saving) {
-		CSysClassRegistry::GetInstance()->GetPointerID(*(void **)Val, &ClassID, &InstanceID);
-		if (*(void **)Val != NULL && (ClassID == -1 || InstanceID == -1)) {
-			Game->LOG(0, "Warning: invalid instance '%s'", Name);
+		CSysClassRegistry::GetInstance()->GetPointerID(*(void **)val, &ClassID, &InstanceID);
+		if (*(void **)val != NULL && (ClassID == -1 || InstanceID == -1)) {
+			Game->LOG(0, "Warning: invalid instance '%s'", name);
 		}
 
 		_saveStream->writeUint32LE(ClassID);
 		_saveStream->writeUint32LE(InstanceID);
-		// PutDWORD(ClassID);
-		// PutDWORD(InstanceID);
 	} else {
 		ClassID = _loadStream->readUint32LE();
 		InstanceID = _loadStream->readUint32LE();
-/*		ClassID = GetDWORD();
-		InstanceID = GetDWORD();*/
 
-		*(void **)Val = CSysClassRegistry::GetInstance()->IDToPointer(ClassID, InstanceID);
+		*(void **)val = CSysClassRegistry::GetInstance()->IDToPointer(ClassID, InstanceID);
 	}
 
 	return S_OK;
@@ -839,13 +727,13 @@ HRESULT CBPersistMgr::Transfer(const char *Name, void *Val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPersistMgr::CheckVersion(byte  VerMajor, byte VerMinor, byte VerBuild) {
+bool CBPersistMgr::checkVersion(byte verMajor, byte verMinor, byte verBuild) {
 	if (_saving) return true;
 
 	// it's ok if we are same or newer than the saved game
-	if (VerMajor >  _savedVerMajor ||
-	        (VerMajor == _savedVerMajor && VerMinor >  _savedVerMinor) ||
-	        (VerMajor == _savedVerMajor && VerMinor == _savedVerMinor && VerBuild > _savedVerBuild)
+	if (verMajor >  _savedVerMajor ||
+	        (verMajor == _savedVerMajor && verMinor >  _savedVerMinor) ||
+	        (verMajor == _savedVerMajor && verMinor == _savedVerMinor && verBuild > _savedVerBuild)
 	   ) return false;
 
 	return true;

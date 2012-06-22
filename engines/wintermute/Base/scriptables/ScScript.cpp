@@ -1153,58 +1153,58 @@ void CScScript::RuntimeError(LPCSTR fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CScScript::Persist(CBPersistMgr *persistMgr) {
 
-	PersistMgr->Transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(Game));
 
 	// buffer
-	if (PersistMgr->_saving) {
+	if (persistMgr->_saving) {
 		if (_state != SCRIPT_PERSISTENT && _state != SCRIPT_FINISHED && _state != SCRIPT_THREAD_FINISHED) {
-			PersistMgr->Transfer(TMEMBER(_bufferSize));
-			PersistMgr->PutBytes(_buffer, _bufferSize);
+			persistMgr->transfer(TMEMBER(_bufferSize));
+			persistMgr->putBytes(_buffer, _bufferSize);
 		} else {
 			// don't save idle/finished scripts
 			int bufferSize = 0;
-			PersistMgr->Transfer(TMEMBER(bufferSize));
+			persistMgr->transfer(TMEMBER(bufferSize));
 		}
 	} else {
-		PersistMgr->Transfer(TMEMBER(_bufferSize));
+		persistMgr->transfer(TMEMBER(_bufferSize));
 		if (_bufferSize > 0) {
 			_buffer = new byte[_bufferSize];
-			PersistMgr->GetBytes(_buffer, _bufferSize);
+			persistMgr->getBytes(_buffer, _bufferSize);
 			InitTables();
 		} else _buffer = NULL;
 	}
 
-	PersistMgr->Transfer(TMEMBER(_callStack));
-	PersistMgr->Transfer(TMEMBER(_currentLine));
-	PersistMgr->Transfer(TMEMBER(_engine));
-	PersistMgr->Transfer(TMEMBER(_filename));
-	PersistMgr->Transfer(TMEMBER(_freezable));
-	PersistMgr->Transfer(TMEMBER(_globals));
-	PersistMgr->Transfer(TMEMBER(_iP));
-	PersistMgr->Transfer(TMEMBER(_scopeStack));
-	PersistMgr->Transfer(TMEMBER(_stack));
-	PersistMgr->Transfer(TMEMBER_INT(_state));
-	PersistMgr->Transfer(TMEMBER(_operand));
-	PersistMgr->Transfer(TMEMBER_INT(_origState));
-	PersistMgr->Transfer(TMEMBER(_owner));
-	PersistMgr->Transfer(TMEMBER(_reg1));
-	PersistMgr->Transfer(TMEMBER(_thread));
-	PersistMgr->Transfer(TMEMBER(_threadEvent));
-	PersistMgr->Transfer(TMEMBER(_thisStack));
-	PersistMgr->Transfer(TMEMBER(_timeSlice));
-	PersistMgr->Transfer(TMEMBER(_waitObject));
-	PersistMgr->Transfer(TMEMBER(_waitScript));
-	PersistMgr->Transfer(TMEMBER(_waitTime));
-	PersistMgr->Transfer(TMEMBER(_waitFrozen));
+	persistMgr->transfer(TMEMBER(_callStack));
+	persistMgr->transfer(TMEMBER(_currentLine));
+	persistMgr->transfer(TMEMBER(_engine));
+	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transfer(TMEMBER(_freezable));
+	persistMgr->transfer(TMEMBER(_globals));
+	persistMgr->transfer(TMEMBER(_iP));
+	persistMgr->transfer(TMEMBER(_scopeStack));
+	persistMgr->transfer(TMEMBER(_stack));
+	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transfer(TMEMBER(_operand));
+	persistMgr->transfer(TMEMBER_INT(_origState));
+	persistMgr->transfer(TMEMBER(_owner));
+	persistMgr->transfer(TMEMBER(_reg1));
+	persistMgr->transfer(TMEMBER(_thread));
+	persistMgr->transfer(TMEMBER(_threadEvent));
+	persistMgr->transfer(TMEMBER(_thisStack));
+	persistMgr->transfer(TMEMBER(_timeSlice));
+	persistMgr->transfer(TMEMBER(_waitObject));
+	persistMgr->transfer(TMEMBER(_waitScript));
+	persistMgr->transfer(TMEMBER(_waitTime));
+	persistMgr->transfer(TMEMBER(_waitFrozen));
 
-	PersistMgr->Transfer(TMEMBER(_methodThread));
-	PersistMgr->Transfer(TMEMBER(_methodThread));
-	PersistMgr->Transfer(TMEMBER(_unbreakable));
-	PersistMgr->Transfer(TMEMBER(_parentScript));
+	persistMgr->transfer(TMEMBER(_methodThread));
+	persistMgr->transfer(TMEMBER(_methodThread));
+	persistMgr->transfer(TMEMBER(_unbreakable));
+	persistMgr->transfer(TMEMBER(_parentScript));
 
-	if (!PersistMgr->_saving) _tracingMode = false;
+	if (!persistMgr->_saving) _tracingMode = false;
 
 	return S_OK;
 }

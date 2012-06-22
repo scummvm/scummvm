@@ -183,15 +183,15 @@ HRESULT CAdTalkNode::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkNode::Persist(CBPersistMgr *PersistMgr) {
-	PersistMgr->Transfer(TMEMBER(_comment));
-	PersistMgr->Transfer(TMEMBER(_startTime));
-	PersistMgr->Transfer(TMEMBER(_endTime));
-	PersistMgr->Transfer(TMEMBER(_playToEnd));
-	PersistMgr->Transfer(TMEMBER(_sprite));
-	PersistMgr->Transfer(TMEMBER(_spriteFilename));
-	PersistMgr->Transfer(TMEMBER(_spriteSet));
-	PersistMgr->Transfer(TMEMBER(_spriteSetFilename));
+HRESULT CAdTalkNode::Persist(CBPersistMgr *persistMgr) {
+	persistMgr->transfer(TMEMBER(_comment));
+	persistMgr->transfer(TMEMBER(_startTime));
+	persistMgr->transfer(TMEMBER(_endTime));
+	persistMgr->transfer(TMEMBER(_playToEnd));
+	persistMgr->transfer(TMEMBER(_sprite));
+	persistMgr->transfer(TMEMBER(_spriteFilename));
+	persistMgr->transfer(TMEMBER(_spriteSet));
+	persistMgr->transfer(TMEMBER(_spriteSetFilename));
 
 	return S_OK;
 }

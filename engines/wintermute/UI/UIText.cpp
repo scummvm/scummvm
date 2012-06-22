@@ -467,11 +467,11 @@ const char *CUIText::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CUIText::Persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER_INT(_textAlign));
-	PersistMgr->Transfer(TMEMBER_INT(_verticalAlign));
+	CUIObject::Persist(persistMgr);
+	persistMgr->transfer(TMEMBER_INT(_textAlign));
+	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
 
 	return S_OK;
 }

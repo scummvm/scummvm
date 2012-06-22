@@ -564,14 +564,14 @@ HRESULT CScEngine::ResetScript(CScScript *Script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::Persist(CBPersistMgr *PersistMgr) {
-	if (!PersistMgr->_saving) Cleanup();
+HRESULT CScEngine::Persist(CBPersistMgr *persistMgr) {
+	if (!persistMgr->_saving) Cleanup();
 
-	PersistMgr->Transfer(TMEMBER(Game));
-	PersistMgr->Transfer(TMEMBER(_currentScript));
-	PersistMgr->Transfer(TMEMBER(_fileToCompile));
-	PersistMgr->Transfer(TMEMBER(_globals));
-	_scripts.Persist(PersistMgr);
+	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_currentScript));
+	persistMgr->transfer(TMEMBER(_fileToCompile));
+	persistMgr->transfer(TMEMBER(_globals));
+	_scripts.Persist(persistMgr);
 
 	return S_OK;
 }

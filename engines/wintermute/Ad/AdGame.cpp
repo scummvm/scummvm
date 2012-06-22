@@ -1263,50 +1263,50 @@ HRESULT CAdGame::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::Persist(CBPersistMgr *PersistMgr) {
-	if (!PersistMgr->_saving) Cleanup();
-	CBGame::Persist(PersistMgr);
+HRESULT CAdGame::Persist(CBPersistMgr *persistMgr) {
+	if (!persistMgr->_saving) Cleanup();
+	CBGame::Persist(persistMgr);
 
-	_dlgPendingBranches.Persist(PersistMgr);
+	_dlgPendingBranches.Persist(persistMgr);
 
-	_inventories.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_inventoryBox));
+	_inventories.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_inventoryBox));
 
-	_objects.Persist(PersistMgr);
+	_objects.Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_prevSceneName));
-	PersistMgr->Transfer(TMEMBER(_prevSceneFilename));
+	persistMgr->transfer(TMEMBER(_prevSceneName));
+	persistMgr->transfer(TMEMBER(_prevSceneFilename));
 
-	PersistMgr->Transfer(TMEMBER(_responseBox));
-	_responsesBranch.Persist(PersistMgr);
-	_responsesGame.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_scene));
-	_sceneStates.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_scheduledFadeIn));
-	PersistMgr->Transfer(TMEMBER(_scheduledScene));
-	PersistMgr->Transfer(TMEMBER(_selectedItem));
-	PersistMgr->Transfer(TMEMBER_INT(_talkSkipButton));
+	persistMgr->transfer(TMEMBER(_responseBox));
+	_responsesBranch.Persist(persistMgr);
+	_responsesGame.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_scene));
+	_sceneStates.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_scheduledFadeIn));
+	persistMgr->transfer(TMEMBER(_scheduledScene));
+	persistMgr->transfer(TMEMBER(_selectedItem));
+	persistMgr->transfer(TMEMBER_INT(_talkSkipButton));
 
-	_sentences.Persist(PersistMgr);
+	_sentences.Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_sceneViewport));
-	PersistMgr->Transfer(TMEMBER_INT(_stateEx));
-	PersistMgr->Transfer(TMEMBER(_initialScene));
-	PersistMgr->Transfer(TMEMBER(_debugStartupScene));
+	persistMgr->transfer(TMEMBER(_sceneViewport));
+	persistMgr->transfer(TMEMBER_INT(_stateEx));
+	persistMgr->transfer(TMEMBER(_initialScene));
+	persistMgr->transfer(TMEMBER(_debugStartupScene));
 
-	PersistMgr->Transfer(TMEMBER(_invObject));
-	PersistMgr->Transfer(TMEMBER(_inventoryOwner));
-	PersistMgr->Transfer(TMEMBER(_tempDisableSaveState));
-	_items.Persist(PersistMgr);
+	persistMgr->transfer(TMEMBER(_invObject));
+	persistMgr->transfer(TMEMBER(_inventoryOwner));
+	persistMgr->transfer(TMEMBER(_tempDisableSaveState));
+	_items.Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_itemsFile));
+	persistMgr->transfer(TMEMBER(_itemsFile));
 
-	_speechDirs.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_smartItemCursor));
+	_speechDirs.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_smartItemCursor));
 
-	if (!PersistMgr->_saving) _initialScene = false;
+	if (!persistMgr->_saving) _initialScene = false;
 
-	PersistMgr->Transfer(TMEMBER(_startupScene));
+	persistMgr->transfer(TMEMBER(_startupScene));
 
 
 	return S_OK;

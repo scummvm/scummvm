@@ -350,19 +350,19 @@ void CUITiledImage::CorrectSize(int *Width, int *Height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::Persist(CBPersistMgr *PersistMgr) {
-	CBObject::Persist(PersistMgr);
+HRESULT CUITiledImage::Persist(CBPersistMgr *persistMgr) {
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_downLeft));
-	PersistMgr->Transfer(TMEMBER(_downMiddle));
-	PersistMgr->Transfer(TMEMBER(_downRight));
-	PersistMgr->Transfer(TMEMBER(_image));
-	PersistMgr->Transfer(TMEMBER(_middleLeft));
-	PersistMgr->Transfer(TMEMBER(_middleMiddle));
-	PersistMgr->Transfer(TMEMBER(_middleRight));
-	PersistMgr->Transfer(TMEMBER(_upLeft));
-	PersistMgr->Transfer(TMEMBER(_upMiddle));
-	PersistMgr->Transfer(TMEMBER(_upRight));
+	persistMgr->transfer(TMEMBER(_downLeft));
+	persistMgr->transfer(TMEMBER(_downMiddle));
+	persistMgr->transfer(TMEMBER(_downRight));
+	persistMgr->transfer(TMEMBER(_image));
+	persistMgr->transfer(TMEMBER(_middleLeft));
+	persistMgr->transfer(TMEMBER(_middleMiddle));
+	persistMgr->transfer(TMEMBER(_middleRight));
+	persistMgr->transfer(TMEMBER(_upLeft));
+	persistMgr->transfer(TMEMBER(_upMiddle));
+	persistMgr->transfer(TMEMBER(_upRight));
 
 	return S_OK;
 }

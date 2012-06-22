@@ -328,11 +328,11 @@ const char *CUIEntity::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CUIEntity::Persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(PersistMgr);
+	CUIObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_entity));
+	persistMgr->transfer(TMEMBER(_entity));
 	return S_OK;
 }
 

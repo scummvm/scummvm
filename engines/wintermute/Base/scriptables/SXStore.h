@@ -60,11 +60,11 @@ public:
 			delete [] _price;
 		}
 
-		HRESULT Persist(CBPersistMgr *PersistMgr) {
-			PersistMgr->Transfer(TMEMBER(_id));
-			PersistMgr->Transfer(TMEMBER(_name));
-			PersistMgr->Transfer(TMEMBER(_desc));
-			PersistMgr->Transfer(TMEMBER(_price));
+		HRESULT Persist(CBPersistMgr *persistMgr) {
+			persistMgr->transfer(TMEMBER(_id));
+			persistMgr->transfer(TMEMBER(_name));
+			persistMgr->transfer(TMEMBER(_desc));
+			persistMgr->transfer(TMEMBER(_price));
 			return S_OK;
 		}
 

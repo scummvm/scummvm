@@ -211,27 +211,27 @@ HRESULT CAdSentence::Finish() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CAdSentence::Persist(CBPersistMgr *persistMgr) {
 
-	PersistMgr->Transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER_INT(_align));
-	PersistMgr->Transfer(TMEMBER(_currentStance));
-	PersistMgr->Transfer(TMEMBER(_currentSprite));
-	PersistMgr->Transfer(TMEMBER(_currentSkelAnim));
-	PersistMgr->Transfer(TMEMBER(_duration));
-	PersistMgr->Transfer(TMEMBER(_font));
-	PersistMgr->Transfer(TMEMBER(_pos));
-	PersistMgr->Transfer(TMEMBER(_sound));
-	PersistMgr->Transfer(TMEMBER(_soundStarted));
-	PersistMgr->Transfer(TMEMBER(_stances));
-	PersistMgr->Transfer(TMEMBER(_startTime));
-	PersistMgr->Transfer(TMEMBER(_talkDef));
-	PersistMgr->Transfer(TMEMBER(_tempStance));
-	PersistMgr->Transfer(TMEMBER(_text));
-	PersistMgr->Transfer(TMEMBER(_width));
-	PersistMgr->Transfer(TMEMBER(_fixedPos));
-	PersistMgr->Transfer(TMEMBER(_freezable));
+	persistMgr->transfer(TMEMBER_INT(_align));
+	persistMgr->transfer(TMEMBER(_currentStance));
+	persistMgr->transfer(TMEMBER(_currentSprite));
+	persistMgr->transfer(TMEMBER(_currentSkelAnim));
+	persistMgr->transfer(TMEMBER(_duration));
+	persistMgr->transfer(TMEMBER(_font));
+	persistMgr->transfer(TMEMBER(_pos));
+	persistMgr->transfer(TMEMBER(_sound));
+	persistMgr->transfer(TMEMBER(_soundStarted));
+	persistMgr->transfer(TMEMBER(_stances));
+	persistMgr->transfer(TMEMBER(_startTime));
+	persistMgr->transfer(TMEMBER(_talkDef));
+	persistMgr->transfer(TMEMBER(_tempStance));
+	persistMgr->transfer(TMEMBER(_text));
+	persistMgr->transfer(TMEMBER(_width));
+	persistMgr->transfer(TMEMBER(_fixedPos));
+	persistMgr->transfer(TMEMBER(_freezable));
 
 	return S_OK;
 }

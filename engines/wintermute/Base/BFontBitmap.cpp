@@ -456,25 +456,25 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CBFontBitmap::Persist(CBPersistMgr *persistMgr) {
 
-	CBFont::Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_numColumns));
+	CBFont::Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_numColumns));
 
-	PersistMgr->Transfer(TMEMBER(_subframe));
-	PersistMgr->Transfer(TMEMBER(_tileHeight));
-	PersistMgr->Transfer(TMEMBER(_tileWidth));
-	PersistMgr->Transfer(TMEMBER(_sprite));
-	PersistMgr->Transfer(TMEMBER(_widthsFrame));
+	persistMgr->transfer(TMEMBER(_subframe));
+	persistMgr->transfer(TMEMBER(_tileHeight));
+	persistMgr->transfer(TMEMBER(_tileWidth));
+	persistMgr->transfer(TMEMBER(_sprite));
+	persistMgr->transfer(TMEMBER(_widthsFrame));
 
-	if (PersistMgr->_saving)
-		PersistMgr->PutBytes(_widths, sizeof(_widths));
+	if (persistMgr->_saving)
+		persistMgr->putBytes(_widths, sizeof(_widths));
 	else
-		PersistMgr->GetBytes(_widths, sizeof(_widths));
+		persistMgr->getBytes(_widths, sizeof(_widths));
 
 
-	PersistMgr->Transfer(TMEMBER(_fontextFix));
-	PersistMgr->Transfer(TMEMBER(_wholeCell));
+	persistMgr->transfer(TMEMBER(_fontextFix));
+	persistMgr->transfer(TMEMBER(_wholeCell));
 
 
 	return S_OK;

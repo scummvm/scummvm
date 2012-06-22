@@ -3253,7 +3253,7 @@ HRESULT CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
 	CBPersistMgr *pm = new CBPersistMgr(Game);
-	if (FAILED(ret = pm->InitSave(desc))) goto save_finish;
+	if (FAILED(ret = pm->initSave(desc))) goto save_finish;
 
 	if (!quickSave) {
 		delete _saveLoadImage;
@@ -3270,7 +3270,7 @@ HRESULT CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 
 	if (FAILED(ret = CSysClassRegistry::GetInstance()->SaveTable(Game, pm, quickSave))) goto save_finish;
 	if (FAILED(ret = CSysClassRegistry::GetInstance()->SaveInstances(Game, pm, quickSave))) goto save_finish;
-	if (FAILED(ret = pm->SaveFile(Filename))) goto save_finish;
+	if (FAILED(ret = pm->saveFile(Filename))) goto save_finish;
 
 	_registry->WriteInt("System", "MostRecentSaveSlot", slot);
 
@@ -3323,7 +3323,7 @@ HRESULT CBGame::LoadGame(const char *Filename) {
 	_indicatorProgress = 0;
 	CBPersistMgr *pm = new CBPersistMgr(Game);
 	_dEBUG_AbsolutePathWarning = false;
-	if (FAILED(ret = pm->InitLoad(Filename))) goto load_finish;
+	if (FAILED(ret = pm->initLoad(Filename))) goto load_finish;
 
 	//if(FAILED(ret = Cleanup())) goto load_finish;
 	if (FAILED(ret = CSysClassRegistry::GetInstance()->LoadTable(Game, pm))) goto load_finish;
@@ -3631,96 +3631,96 @@ HRESULT CBGame::LoadSettings(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::Persist(CBPersistMgr *PersistMgr) {
-	if (!PersistMgr->_saving) Cleanup();
+HRESULT CBGame::Persist(CBPersistMgr *persistMgr) {
+	if (!persistMgr->_saving) Cleanup();
 
-	CBObject::Persist(PersistMgr);
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_activeObject));
-	PersistMgr->Transfer(TMEMBER(_capturedObject));
-	PersistMgr->Transfer(TMEMBER(_cursorNoninteractive));
-	PersistMgr->Transfer(TMEMBER(_doNotExpandStrings));
-	PersistMgr->Transfer(TMEMBER(_editorMode));
-	PersistMgr->Transfer(TMEMBER(_fader));
-	PersistMgr->Transfer(TMEMBER(_freezeLevel));
-	PersistMgr->Transfer(TMEMBER(_focusedWindow));
-	PersistMgr->Transfer(TMEMBER(_fontStorage));
-	PersistMgr->Transfer(TMEMBER(_interactive));
-	PersistMgr->Transfer(TMEMBER(_keyboardState));
-	PersistMgr->Transfer(TMEMBER(_lastTime));
-	PersistMgr->Transfer(TMEMBER(_mainObject));
+	persistMgr->transfer(TMEMBER(_activeObject));
+	persistMgr->transfer(TMEMBER(_capturedObject));
+	persistMgr->transfer(TMEMBER(_cursorNoninteractive));
+	persistMgr->transfer(TMEMBER(_doNotExpandStrings));
+	persistMgr->transfer(TMEMBER(_editorMode));
+	persistMgr->transfer(TMEMBER(_fader));
+	persistMgr->transfer(TMEMBER(_freezeLevel));
+	persistMgr->transfer(TMEMBER(_focusedWindow));
+	persistMgr->transfer(TMEMBER(_fontStorage));
+	persistMgr->transfer(TMEMBER(_interactive));
+	persistMgr->transfer(TMEMBER(_keyboardState));
+	persistMgr->transfer(TMEMBER(_lastTime));
+	persistMgr->transfer(TMEMBER(_mainObject));
 	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
-		PersistMgr->Transfer(TMEMBER(_music[i]));
-		PersistMgr->Transfer(TMEMBER(_musicStartTime[i]));
+		persistMgr->transfer(TMEMBER(_music[i]));
+		persistMgr->transfer(TMEMBER(_musicStartTime[i]));
 	}
 
-	PersistMgr->Transfer(TMEMBER(_offsetX));
-	PersistMgr->Transfer(TMEMBER(_offsetY));
-	PersistMgr->Transfer(TMEMBER(_offsetPercentX));
-	PersistMgr->Transfer(TMEMBER(_offsetPercentY));
+	persistMgr->transfer(TMEMBER(_offsetX));
+	persistMgr->transfer(TMEMBER(_offsetY));
+	persistMgr->transfer(TMEMBER(_offsetPercentX));
+	persistMgr->transfer(TMEMBER(_offsetPercentY));
 
-	PersistMgr->Transfer(TMEMBER(_origInteractive));
-	PersistMgr->Transfer(TMEMBER_INT(_origState));
-	PersistMgr->Transfer(TMEMBER(_personalizedSave));
-	PersistMgr->Transfer(TMEMBER(_quitting));
+	persistMgr->transfer(TMEMBER(_origInteractive));
+	persistMgr->transfer(TMEMBER_INT(_origState));
+	persistMgr->transfer(TMEMBER(_personalizedSave));
+	persistMgr->transfer(TMEMBER(_quitting));
 
-	_regObjects.Persist(PersistMgr);
+	_regObjects.Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_scEngine));
-	//PersistMgr->Transfer(TMEMBER(_soundMgr));
-	PersistMgr->Transfer(TMEMBER_INT(_state));
-	//PersistMgr->Transfer(TMEMBER(_surfaceStorage));
-	PersistMgr->Transfer(TMEMBER(_subtitles));
-	PersistMgr->Transfer(TMEMBER(_subtitlesSpeed));
-	PersistMgr->Transfer(TMEMBER(_systemFont));
-	PersistMgr->Transfer(TMEMBER(_videoFont));
-	PersistMgr->Transfer(TMEMBER(_videoSubtitles));
+	persistMgr->transfer(TMEMBER(_scEngine));
+	//persistMgr->transfer(TMEMBER(_soundMgr));
+	persistMgr->transfer(TMEMBER_INT(_state));
+	//persistMgr->transfer(TMEMBER(_surfaceStorage));
+	persistMgr->transfer(TMEMBER(_subtitles));
+	persistMgr->transfer(TMEMBER(_subtitlesSpeed));
+	persistMgr->transfer(TMEMBER(_systemFont));
+	persistMgr->transfer(TMEMBER(_videoFont));
+	persistMgr->transfer(TMEMBER(_videoSubtitles));
 
-	PersistMgr->Transfer(TMEMBER(_timer));
-	PersistMgr->Transfer(TMEMBER(_timerDelta));
-	PersistMgr->Transfer(TMEMBER(_timerLast));
+	persistMgr->transfer(TMEMBER(_timer));
+	persistMgr->transfer(TMEMBER(_timerDelta));
+	persistMgr->transfer(TMEMBER(_timerLast));
 
-	PersistMgr->Transfer(TMEMBER(_liveTimer));
-	PersistMgr->Transfer(TMEMBER(_liveTimerDelta));
-	PersistMgr->Transfer(TMEMBER(_liveTimerLast));
+	persistMgr->transfer(TMEMBER(_liveTimer));
+	persistMgr->transfer(TMEMBER(_liveTimerDelta));
+	persistMgr->transfer(TMEMBER(_liveTimerLast));
 
-	PersistMgr->Transfer(TMEMBER(_musicCrossfadeRunning));
-	PersistMgr->Transfer(TMEMBER(_musicCrossfadeStartTime));
-	PersistMgr->Transfer(TMEMBER(_musicCrossfadeLength));
-	PersistMgr->Transfer(TMEMBER(_musicCrossfadeChannel1));
-	PersistMgr->Transfer(TMEMBER(_musicCrossfadeChannel2));
-	PersistMgr->Transfer(TMEMBER(_musicCrossfadeSwap));
+	persistMgr->transfer(TMEMBER(_musicCrossfadeRunning));
+	persistMgr->transfer(TMEMBER(_musicCrossfadeStartTime));
+	persistMgr->transfer(TMEMBER(_musicCrossfadeLength));
+	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel1));
+	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel2));
+	persistMgr->transfer(TMEMBER(_musicCrossfadeSwap));
 
-	PersistMgr->Transfer(TMEMBER(_loadImageName));
-	PersistMgr->Transfer(TMEMBER(_saveImageName));
-	PersistMgr->Transfer(TMEMBER(_saveImageX));
-	PersistMgr->Transfer(TMEMBER(_saveImageY));
-	PersistMgr->Transfer(TMEMBER(_loadImageX));
-	PersistMgr->Transfer(TMEMBER(_loadImageY));
+	persistMgr->transfer(TMEMBER(_loadImageName));
+	persistMgr->transfer(TMEMBER(_saveImageName));
+	persistMgr->transfer(TMEMBER(_saveImageX));
+	persistMgr->transfer(TMEMBER(_saveImageY));
+	persistMgr->transfer(TMEMBER(_loadImageX));
+	persistMgr->transfer(TMEMBER(_loadImageY));
 
-	PersistMgr->Transfer(TMEMBER_INT(_textEncoding));
-	PersistMgr->Transfer(TMEMBER(_textRTL));
+	persistMgr->transfer(TMEMBER_INT(_textEncoding));
+	persistMgr->transfer(TMEMBER(_textRTL));
 
-	PersistMgr->Transfer(TMEMBER(_soundBufferSizeSec));
-	PersistMgr->Transfer(TMEMBER(_suspendedRendering));
+	persistMgr->transfer(TMEMBER(_soundBufferSizeSec));
+	persistMgr->transfer(TMEMBER(_suspendedRendering));
 
-	PersistMgr->Transfer(TMEMBER(_mouseLockRect));
+	persistMgr->transfer(TMEMBER(_mouseLockRect));
 
-	_windows.Persist(PersistMgr);
+	_windows.Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_suppressScriptErrors));
-	PersistMgr->Transfer(TMEMBER(_autorunDisabled));
+	persistMgr->transfer(TMEMBER(_suppressScriptErrors));
+	persistMgr->transfer(TMEMBER(_autorunDisabled));
 
-	PersistMgr->Transfer(TMEMBER(_autoSaveOnExit));
-	PersistMgr->Transfer(TMEMBER(_autoSaveSlot));
-	PersistMgr->Transfer(TMEMBER(_cursorHidden));
+	persistMgr->transfer(TMEMBER(_autoSaveOnExit));
+	persistMgr->transfer(TMEMBER(_autoSaveSlot));
+	persistMgr->transfer(TMEMBER(_cursorHidden));
 
-	if (PersistMgr->CheckVersion(1, 0, 1))
-		PersistMgr->Transfer(TMEMBER(_store));
+	if (persistMgr->checkVersion(1, 0, 1))
+		persistMgr->transfer(TMEMBER(_store));
 	else
 		_store = NULL;
 
-	if (!PersistMgr->_saving) _quitting = false;
+	if (!persistMgr->_saving) _quitting = false;
 
 	return S_OK;
 }
@@ -3933,7 +3933,7 @@ HRESULT CBGame::GetSaveSlotDescription(int Slot, char *Buffer) {
 	if (!pm) return E_FAIL;
 
 	_dEBUG_AbsolutePathWarning = false;
-	if (FAILED(pm->InitLoad(Filename))) {
+	if (FAILED(pm->initLoad(Filename))) {
 		_dEBUG_AbsolutePathWarning = true;
 		delete pm;
 		return E_FAIL;

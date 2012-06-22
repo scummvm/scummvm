@@ -194,16 +194,16 @@ HRESULT CAdTalkDef::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkDef::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CAdTalkDef::Persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(PersistMgr);
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_defaultSprite));
-	PersistMgr->Transfer(TMEMBER(_defaultSpriteFilename));
-	PersistMgr->Transfer(TMEMBER(_defaultSpriteSet));
-	PersistMgr->Transfer(TMEMBER(_defaultSpriteSetFilename));
+	persistMgr->transfer(TMEMBER(_defaultSprite));
+	persistMgr->transfer(TMEMBER(_defaultSpriteFilename));
+	persistMgr->transfer(TMEMBER(_defaultSpriteSet));
+	persistMgr->transfer(TMEMBER(_defaultSpriteSetFilename));
 
-	_nodes.Persist(PersistMgr);
+	_nodes.Persist(persistMgr);
 
 	return S_OK;
 }

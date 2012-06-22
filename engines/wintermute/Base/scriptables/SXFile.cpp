@@ -689,20 +689,20 @@ uint32 CSXFile::GetLength() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXFile::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CSXFile::Persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(PersistMgr);
+	CBScriptable::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_filename));
-	PersistMgr->Transfer(TMEMBER(_mode));
-	PersistMgr->Transfer(TMEMBER(_textMode));
+	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transfer(TMEMBER(_mode));
+	persistMgr->transfer(TMEMBER(_textMode));
 
 	uint32 Pos = 0;
-	if (PersistMgr->_saving) {
+	if (persistMgr->_saving) {
 		Pos = GetPos();
-		PersistMgr->Transfer(TMEMBER(Pos));
+		persistMgr->transfer(TMEMBER(Pos));
 	} else {
-		PersistMgr->Transfer(TMEMBER(Pos));
+		persistMgr->transfer(TMEMBER(Pos));
 
 		// try to re-open file if needed
 		_writeFile = NULL;

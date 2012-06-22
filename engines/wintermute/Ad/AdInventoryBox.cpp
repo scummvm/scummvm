@@ -350,20 +350,20 @@ HRESULT CAdInventoryBox::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::Persist(CBPersistMgr *PersistMgr) {
-	CBObject::Persist(PersistMgr);
+HRESULT CAdInventoryBox::Persist(CBPersistMgr *persistMgr) {
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_closeButton));
-	PersistMgr->Transfer(TMEMBER(_hideSelected));
-	PersistMgr->Transfer(TMEMBER(_itemHeight));
-	PersistMgr->Transfer(TMEMBER(_itemsArea));
-	PersistMgr->Transfer(TMEMBER(_itemWidth));
-	PersistMgr->Transfer(TMEMBER(_scrollBy));
-	PersistMgr->Transfer(TMEMBER(_scrollOffset));
-	PersistMgr->Transfer(TMEMBER(_spacing));
-	PersistMgr->Transfer(TMEMBER(_visible));
-	PersistMgr->Transfer(TMEMBER(_window));
-	PersistMgr->Transfer(TMEMBER(_exclusive));
+	persistMgr->transfer(TMEMBER(_closeButton));
+	persistMgr->transfer(TMEMBER(_hideSelected));
+	persistMgr->transfer(TMEMBER(_itemHeight));
+	persistMgr->transfer(TMEMBER(_itemsArea));
+	persistMgr->transfer(TMEMBER(_itemWidth));
+	persistMgr->transfer(TMEMBER(_scrollBy));
+	persistMgr->transfer(TMEMBER(_scrollOffset));
+	persistMgr->transfer(TMEMBER(_spacing));
+	persistMgr->transfer(TMEMBER(_visible));
+	persistMgr->transfer(TMEMBER(_window));
+	persistMgr->transfer(TMEMBER(_exclusive));
 
 	return S_OK;
 }

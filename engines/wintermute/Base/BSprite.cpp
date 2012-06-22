@@ -472,32 +472,32 @@ HRESULT CBSprite::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::Persist(CBPersistMgr *PersistMgr) {
-	CBScriptHolder::Persist(PersistMgr);
+HRESULT CBSprite::Persist(CBPersistMgr *persistMgr) {
+	CBScriptHolder::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_canBreak));
-	PersistMgr->Transfer(TMEMBER(_changed));
-	PersistMgr->Transfer(TMEMBER(_paused));
-	PersistMgr->Transfer(TMEMBER(_continuous));
-	PersistMgr->Transfer(TMEMBER(_currentFrame));
-	PersistMgr->Transfer(TMEMBER(_editorAllFrames));
-	PersistMgr->Transfer(TMEMBER(_editorBgAlpha));
-	PersistMgr->Transfer(TMEMBER(_editorBgFile));
-	PersistMgr->Transfer(TMEMBER(_editorBgOffsetX));
-	PersistMgr->Transfer(TMEMBER(_editorBgOffsetY));
-	PersistMgr->Transfer(TMEMBER(_editorMuted));
-	PersistMgr->Transfer(TMEMBER(_finished));
+	persistMgr->transfer(TMEMBER(_canBreak));
+	persistMgr->transfer(TMEMBER(_changed));
+	persistMgr->transfer(TMEMBER(_paused));
+	persistMgr->transfer(TMEMBER(_continuous));
+	persistMgr->transfer(TMEMBER(_currentFrame));
+	persistMgr->transfer(TMEMBER(_editorAllFrames));
+	persistMgr->transfer(TMEMBER(_editorBgAlpha));
+	persistMgr->transfer(TMEMBER(_editorBgFile));
+	persistMgr->transfer(TMEMBER(_editorBgOffsetX));
+	persistMgr->transfer(TMEMBER(_editorBgOffsetY));
+	persistMgr->transfer(TMEMBER(_editorMuted));
+	persistMgr->transfer(TMEMBER(_finished));
 
-	_frames.Persist(PersistMgr);
+	_frames.Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_lastFrameTime));
-	PersistMgr->Transfer(TMEMBER(_looping));
-	PersistMgr->Transfer(TMEMBER(_moveX));
-	PersistMgr->Transfer(TMEMBER(_moveY));
-	PersistMgr->Transfer(TMEMBER(_owner));
-	PersistMgr->Transfer(TMEMBER(_precise));
-	PersistMgr->Transfer(TMEMBER(_streamed));
-	PersistMgr->Transfer(TMEMBER(_streamedKeepLoaded));
+	persistMgr->transfer(TMEMBER(_lastFrameTime));
+	persistMgr->transfer(TMEMBER(_looping));
+	persistMgr->transfer(TMEMBER(_moveX));
+	persistMgr->transfer(TMEMBER(_moveY));
+	persistMgr->transfer(TMEMBER(_owner));
+	persistMgr->transfer(TMEMBER(_precise));
+	persistMgr->transfer(TMEMBER(_streamed));
+	persistMgr->transfer(TMEMBER(_streamedKeepLoaded));
 
 
 	return S_OK;

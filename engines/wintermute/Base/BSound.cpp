@@ -147,8 +147,8 @@ HRESULT CBSound::Resume() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::Persist(CBPersistMgr *PersistMgr) {
-	if (PersistMgr->_saving && _sound) {
+HRESULT CBSound::Persist(CBPersistMgr *persistMgr) {
+	if (persistMgr->_saving && _sound) {
 		_soundPlaying = _sound->IsPlaying();
 		_soundLooping = _sound->_looping;
 		_soundPrivateVolume = _sound->_privateVolume;
@@ -157,23 +157,23 @@ HRESULT CBSound::Persist(CBPersistMgr *PersistMgr) {
 		_soundFreezePaused = _sound->_freezePaused;
 	}
 
-	if (PersistMgr->_saving) {
+	if (persistMgr->_saving) {
 		_sFXType = SFX_NONE;
 		_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 	}
 
-	PersistMgr->Transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(_soundFilename));
-	PersistMgr->Transfer(TMEMBER(_soundLooping));
-	PersistMgr->Transfer(TMEMBER(_soundPaused));
-	PersistMgr->Transfer(TMEMBER(_soundFreezePaused));
-	PersistMgr->Transfer(TMEMBER(_soundPlaying));
-	PersistMgr->Transfer(TMEMBER(_soundPosition));
-	PersistMgr->Transfer(TMEMBER(_soundPrivateVolume));
-	PersistMgr->Transfer(TMEMBER(_soundStreamed));
-	PersistMgr->Transfer(TMEMBER_INT(_soundType));
-	PersistMgr->Transfer(TMEMBER(_soundLoopStart));
+	persistMgr->transfer(TMEMBER(_soundFilename));
+	persistMgr->transfer(TMEMBER(_soundLooping));
+	persistMgr->transfer(TMEMBER(_soundPaused));
+	persistMgr->transfer(TMEMBER(_soundFreezePaused));
+	persistMgr->transfer(TMEMBER(_soundPlaying));
+	persistMgr->transfer(TMEMBER(_soundPosition));
+	persistMgr->transfer(TMEMBER(_soundPrivateVolume));
+	persistMgr->transfer(TMEMBER(_soundStreamed));
+	persistMgr->transfer(TMEMBER_INT(_soundType));
+	persistMgr->transfer(TMEMBER(_soundLoopStart));
 
 	return S_OK;
 }

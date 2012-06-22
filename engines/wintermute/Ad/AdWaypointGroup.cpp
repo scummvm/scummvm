@@ -184,16 +184,16 @@ HRESULT CAdWaypointGroup::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CAdWaypointGroup::Persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(PersistMgr);
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_active));
-	PersistMgr->Transfer(TMEMBER(_editorSelectedPoint));
-	PersistMgr->Transfer(TMEMBER(_lastMimicScale));
-	PersistMgr->Transfer(TMEMBER(_lastMimicX));
-	PersistMgr->Transfer(TMEMBER(_lastMimicY));
-	_points.Persist(PersistMgr);
+	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
+	persistMgr->transfer(TMEMBER(_lastMimicScale));
+	persistMgr->transfer(TMEMBER(_lastMimicX));
+	persistMgr->transfer(TMEMBER(_lastMimicY));
+	_points.Persist(persistMgr);
 
 	return S_OK;
 }

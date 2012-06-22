@@ -54,9 +54,9 @@ CAdSceneState::~CAdSceneState() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSceneState::Persist(CBPersistMgr *PersistMgr) {
-	PersistMgr->Transfer(TMEMBER(_filename));
-	_nodeStates.Persist(PersistMgr);
+HRESULT CAdSceneState::Persist(CBPersistMgr *persistMgr) {
+	persistMgr->transfer(TMEMBER(_filename));
+	_nodeStates.Persist(persistMgr);
 
 	return S_OK;
 }

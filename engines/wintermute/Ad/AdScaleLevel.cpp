@@ -145,11 +145,11 @@ HRESULT CAdScaleLevel::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CAdScaleLevel::Persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(PersistMgr);
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_scale));
+	persistMgr->transfer(TMEMBER(_scale));
 
 	return S_OK;
 }

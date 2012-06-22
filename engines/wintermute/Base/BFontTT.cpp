@@ -596,34 +596,34 @@ HRESULT CBFontTT::ParseLayer(CBTTFontLayer *Layer, byte *Buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::Persist(CBPersistMgr *PersistMgr) {
-	CBFont::Persist(PersistMgr);
+HRESULT CBFontTT::Persist(CBPersistMgr *persistMgr) {
+	CBFont::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_isBold));
-	PersistMgr->Transfer(TMEMBER(_isItalic));
-	PersistMgr->Transfer(TMEMBER(_isUnderline));
-	PersistMgr->Transfer(TMEMBER(_isStriked));
-	PersistMgr->Transfer(TMEMBER(_fontHeight));
-	PersistMgr->Transfer(TMEMBER(_fontFile));
+	persistMgr->transfer(TMEMBER(_isBold));
+	persistMgr->transfer(TMEMBER(_isItalic));
+	persistMgr->transfer(TMEMBER(_isUnderline));
+	persistMgr->transfer(TMEMBER(_isStriked));
+	persistMgr->transfer(TMEMBER(_fontHeight));
+	persistMgr->transfer(TMEMBER(_fontFile));
 
 
 	// persist layers
 	int NumLayers;
-	if (PersistMgr->_saving) {
+	if (persistMgr->_saving) {
 		NumLayers = _layers.GetSize();
-		PersistMgr->Transfer(TMEMBER(NumLayers));
-		for (int i = 0; i < NumLayers; i++) _layers[i]->Persist(PersistMgr);
+		persistMgr->transfer(TMEMBER(NumLayers));
+		for (int i = 0; i < NumLayers; i++) _layers[i]->Persist(persistMgr);
 	} else {
 		NumLayers = _layers.GetSize();
-		PersistMgr->Transfer(TMEMBER(NumLayers));
+		persistMgr->transfer(TMEMBER(NumLayers));
 		for (int i = 0; i < NumLayers; i++) {
 			CBTTFontLayer *Layer = new CBTTFontLayer;
-			Layer->Persist(PersistMgr);
+			Layer->Persist(persistMgr);
 			_layers.Add(Layer);
 		}
 	}
 
-	if (!PersistMgr->_saving) {
+	if (!persistMgr->_saving) {
 		for (int i = 0; i < NUM_CACHED_TEXTS; i++) _cachedTexts[i] = NULL;
 		_glyphCache = NULL;
 		_fallbackFont = _font = _deletableFont = NULL;

@@ -953,45 +953,45 @@ HRESULT CAdObject::Reset() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::Persist(CBPersistMgr *PersistMgr) {
-	CBObject::Persist(PersistMgr);
+HRESULT CAdObject::Persist(CBPersistMgr *persistMgr) {
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_active));
-	PersistMgr->Transfer(TMEMBER(_blockRegion));
-	PersistMgr->Transfer(TMEMBER(_currentBlockRegion));
-	PersistMgr->Transfer(TMEMBER(_currentWptGroup));
-	PersistMgr->Transfer(TMEMBER(_currentSprite));
-	PersistMgr->Transfer(TMEMBER(_drawn));
-	PersistMgr->Transfer(TMEMBER(_font));
-	PersistMgr->Transfer(TMEMBER(_ignoreItems));
-	PersistMgr->Transfer(TMEMBER_INT(_nextState));
-	PersistMgr->Transfer(TMEMBER(_sentence));
-	PersistMgr->Transfer(TMEMBER_INT(_state));
-	PersistMgr->Transfer(TMEMBER(_animSprite));
-	PersistMgr->Transfer(TMEMBER(_sceneIndependent));
-	PersistMgr->Transfer(TMEMBER(_forcedTalkAnimName));
-	PersistMgr->Transfer(TMEMBER(_forcedTalkAnimUsed));
-	PersistMgr->Transfer(TMEMBER(_tempSprite2));
-	PersistMgr->Transfer(TMEMBER_INT(_type));
-	PersistMgr->Transfer(TMEMBER(_wptGroup));
-	PersistMgr->Transfer(TMEMBER(_stickRegion));
-	PersistMgr->Transfer(TMEMBER(_subtitlesModRelative));
-	PersistMgr->Transfer(TMEMBER(_subtitlesModX));
-	PersistMgr->Transfer(TMEMBER(_subtitlesModY));
-	PersistMgr->Transfer(TMEMBER(_subtitlesModXCenter));
-	PersistMgr->Transfer(TMEMBER(_subtitlesWidth));
-	PersistMgr->Transfer(TMEMBER(_inventory));
-	PersistMgr->Transfer(TMEMBER(_partEmitter));
+	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transfer(TMEMBER(_blockRegion));
+	persistMgr->transfer(TMEMBER(_currentBlockRegion));
+	persistMgr->transfer(TMEMBER(_currentWptGroup));
+	persistMgr->transfer(TMEMBER(_currentSprite));
+	persistMgr->transfer(TMEMBER(_drawn));
+	persistMgr->transfer(TMEMBER(_font));
+	persistMgr->transfer(TMEMBER(_ignoreItems));
+	persistMgr->transfer(TMEMBER_INT(_nextState));
+	persistMgr->transfer(TMEMBER(_sentence));
+	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transfer(TMEMBER(_animSprite));
+	persistMgr->transfer(TMEMBER(_sceneIndependent));
+	persistMgr->transfer(TMEMBER(_forcedTalkAnimName));
+	persistMgr->transfer(TMEMBER(_forcedTalkAnimUsed));
+	persistMgr->transfer(TMEMBER(_tempSprite2));
+	persistMgr->transfer(TMEMBER_INT(_type));
+	persistMgr->transfer(TMEMBER(_wptGroup));
+	persistMgr->transfer(TMEMBER(_stickRegion));
+	persistMgr->transfer(TMEMBER(_subtitlesModRelative));
+	persistMgr->transfer(TMEMBER(_subtitlesModX));
+	persistMgr->transfer(TMEMBER(_subtitlesModY));
+	persistMgr->transfer(TMEMBER(_subtitlesModXCenter));
+	persistMgr->transfer(TMEMBER(_subtitlesWidth));
+	persistMgr->transfer(TMEMBER(_inventory));
+	persistMgr->transfer(TMEMBER(_partEmitter));
 
-	for (int i = 0; i < MAX_NUM_REGIONS; i++) PersistMgr->Transfer(TMEMBER(_currentRegions[i]));
+	for (int i = 0; i < MAX_NUM_REGIONS; i++) persistMgr->transfer(TMEMBER(_currentRegions[i]));
 
-	_attachmentsPre.Persist(PersistMgr);
-	_attachmentsPost.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_registerAlias));
+	_attachmentsPre.Persist(persistMgr);
+	_attachmentsPost.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_registerAlias));
 
-	PersistMgr->Transfer(TMEMBER(_partFollowParent));
-	PersistMgr->Transfer(TMEMBER(_partOffsetX));
-	PersistMgr->Transfer(TMEMBER(_partOffsetY));
+	persistMgr->transfer(TMEMBER(_partFollowParent));
+	persistMgr->transfer(TMEMBER(_partOffsetX));
+	persistMgr->transfer(TMEMBER(_partOffsetY));
 
 	return S_OK;
 }

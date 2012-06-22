@@ -1008,31 +1008,31 @@ const char *CUIButton::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CUIButton::Persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(PersistMgr);
+	CUIObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER_INT(_align));
-	PersistMgr->Transfer(TMEMBER(_backDisable));
-	PersistMgr->Transfer(TMEMBER(_backFocus));
-	PersistMgr->Transfer(TMEMBER(_backHover));
-	PersistMgr->Transfer(TMEMBER(_backPress));
-	PersistMgr->Transfer(TMEMBER(_centerImage));
-	PersistMgr->Transfer(TMEMBER(_fontDisable));
-	PersistMgr->Transfer(TMEMBER(_fontFocus));
-	PersistMgr->Transfer(TMEMBER(_fontHover));
-	PersistMgr->Transfer(TMEMBER(_fontPress));
-	PersistMgr->Transfer(TMEMBER(_hover));
-	PersistMgr->Transfer(TMEMBER(_image));
-	PersistMgr->Transfer(TMEMBER(_imageDisable));
-	PersistMgr->Transfer(TMEMBER(_imageFocus));
-	PersistMgr->Transfer(TMEMBER(_imageHover));
-	PersistMgr->Transfer(TMEMBER(_imagePress));
-	PersistMgr->Transfer(TMEMBER(_pixelPerfect));
-	PersistMgr->Transfer(TMEMBER(_press));
-	PersistMgr->Transfer(TMEMBER(_stayPressed));
+	persistMgr->transfer(TMEMBER_INT(_align));
+	persistMgr->transfer(TMEMBER(_backDisable));
+	persistMgr->transfer(TMEMBER(_backFocus));
+	persistMgr->transfer(TMEMBER(_backHover));
+	persistMgr->transfer(TMEMBER(_backPress));
+	persistMgr->transfer(TMEMBER(_centerImage));
+	persistMgr->transfer(TMEMBER(_fontDisable));
+	persistMgr->transfer(TMEMBER(_fontFocus));
+	persistMgr->transfer(TMEMBER(_fontHover));
+	persistMgr->transfer(TMEMBER(_fontPress));
+	persistMgr->transfer(TMEMBER(_hover));
+	persistMgr->transfer(TMEMBER(_image));
+	persistMgr->transfer(TMEMBER(_imageDisable));
+	persistMgr->transfer(TMEMBER(_imageFocus));
+	persistMgr->transfer(TMEMBER(_imageHover));
+	persistMgr->transfer(TMEMBER(_imagePress));
+	persistMgr->transfer(TMEMBER(_pixelPerfect));
+	persistMgr->transfer(TMEMBER(_press));
+	persistMgr->transfer(TMEMBER(_stayPressed));
 
-	if (!PersistMgr->_saving) {
+	if (!persistMgr->_saving) {
 		_oneTimePress = false;
 		_oneTimePressTime = 0;
 	}

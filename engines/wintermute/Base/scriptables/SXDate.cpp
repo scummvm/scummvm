@@ -238,15 +238,15 @@ HRESULT CSXDate::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXDate::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CSXDate::Persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_tm.tm_year));
-	PersistMgr->Transfer(TMEMBER(_tm.tm_mon));
-	PersistMgr->Transfer(TMEMBER(_tm.tm_mday));
-	PersistMgr->Transfer(TMEMBER(_tm.tm_hour));
-	PersistMgr->Transfer(TMEMBER(_tm.tm_min));
-	PersistMgr->Transfer(TMEMBER(_tm.tm_sec));
+	CBScriptable::Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_tm.tm_year));
+	persistMgr->transfer(TMEMBER(_tm.tm_mon));
+	persistMgr->transfer(TMEMBER(_tm.tm_mday));
+	persistMgr->transfer(TMEMBER(_tm.tm_hour));
+	persistMgr->transfer(TMEMBER(_tm.tm_min));
+	persistMgr->transfer(TMEMBER(_tm.tm_sec));
 	return S_OK;
 }
 

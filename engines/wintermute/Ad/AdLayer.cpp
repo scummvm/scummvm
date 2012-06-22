@@ -521,16 +521,16 @@ HRESULT CAdLayer::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CAdLayer::Persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(PersistMgr);
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_active));
-	PersistMgr->Transfer(TMEMBER(_closeUp));
-	PersistMgr->Transfer(TMEMBER(_height));
-	PersistMgr->Transfer(TMEMBER(_main));
-	_nodes.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER(_width));
+	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transfer(TMEMBER(_closeUp));
+	persistMgr->transfer(TMEMBER(_height));
+	persistMgr->transfer(TMEMBER(_main));
+	_nodes.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER(_width));
 
 	return S_OK;
 }

@@ -715,44 +715,44 @@ void CScValue::SetValue(CScValue *Val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::Persist(CBPersistMgr *PersistMgr) {
-	PersistMgr->Transfer(TMEMBER(Game));
+HRESULT CScValue::Persist(CBPersistMgr *persistMgr) {
+	persistMgr->transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(_persistent));
-	PersistMgr->Transfer(TMEMBER(_isConstVar));
-	PersistMgr->Transfer(TMEMBER_INT(_type));
-	PersistMgr->Transfer(TMEMBER(_valBool));
-	PersistMgr->Transfer(TMEMBER(_valFloat));
-	PersistMgr->Transfer(TMEMBER(_valInt));
-	PersistMgr->Transfer(TMEMBER(_valNative));
+	persistMgr->transfer(TMEMBER(_persistent));
+	persistMgr->transfer(TMEMBER(_isConstVar));
+	persistMgr->transfer(TMEMBER_INT(_type));
+	persistMgr->transfer(TMEMBER(_valBool));
+	persistMgr->transfer(TMEMBER(_valFloat));
+	persistMgr->transfer(TMEMBER(_valInt));
+	persistMgr->transfer(TMEMBER(_valNative));
 
 	int size;
 	const char *str;
-	if (PersistMgr->_saving) {
+	if (persistMgr->_saving) {
 		size = _valObject.size();
-		PersistMgr->Transfer("", &size);
+		persistMgr->transfer("", &size);
 		_valIter = _valObject.begin();
 		while (_valIter != _valObject.end()) {
 			str = _valIter->_key.c_str();
-			PersistMgr->Transfer("", &str);
-			PersistMgr->Transfer("", &_valIter->_value);
+			persistMgr->transfer("", &str);
+			persistMgr->transfer("", &_valIter->_value);
 
 			_valIter++;
 		}
 	} else {
 		CScValue *val;
-		PersistMgr->Transfer("", &size);
+		persistMgr->transfer("", &size);
 		for (int i = 0; i < size; i++) {
-			PersistMgr->Transfer("", &str);
-			PersistMgr->Transfer("", &val);
+			persistMgr->transfer("", &str);
+			persistMgr->transfer("", &val);
 
 			_valObject[str] = val;
 			delete [] str;
 		}
 	}
 
-	PersistMgr->Transfer(TMEMBER(_valRef));
-	PersistMgr->Transfer(TMEMBER(_valString));
+	persistMgr->transfer(TMEMBER(_valRef));
+	persistMgr->transfer(TMEMBER(_valString));
 
 	/*
 	FILE* f = fopen("c:\\val.log", "a+");

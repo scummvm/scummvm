@@ -124,18 +124,18 @@ HRESULT CAdResponse::SetIconPressed(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CAdResponse::Persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(PersistMgr);
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_icon));
-	PersistMgr->Transfer(TMEMBER(_iconHover));
-	PersistMgr->Transfer(TMEMBER(_iconPressed));
-	PersistMgr->Transfer(TMEMBER(_iD));
-	PersistMgr->Transfer(TMEMBER(_text));
-	PersistMgr->Transfer(TMEMBER(_textOrig));
-	PersistMgr->Transfer(TMEMBER_INT(_responseType));
-	PersistMgr->Transfer(TMEMBER(_font));
+	persistMgr->transfer(TMEMBER(_icon));
+	persistMgr->transfer(TMEMBER(_iconHover));
+	persistMgr->transfer(TMEMBER(_iconPressed));
+	persistMgr->transfer(TMEMBER(_iD));
+	persistMgr->transfer(TMEMBER(_text));
+	persistMgr->transfer(TMEMBER(_textOrig));
+	persistMgr->transfer(TMEMBER_INT(_responseType));
+	persistMgr->transfer(TMEMBER(_font));
 
 	return S_OK;
 }

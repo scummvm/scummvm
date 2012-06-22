@@ -128,24 +128,24 @@ void CSysClass::Dump(Common::WriteStream *stream) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::SaveTable(CBGame *Game, CBPersistMgr *PersistMgr) {
-	PersistMgr->PutString(_name.c_str());
-	PersistMgr->PutDWORD(_iD);
-	PersistMgr->PutDWORD(_instances.size());
+void CSysClass::SaveTable(CBGame *Game, CBPersistMgr *persistMgr) {
+	persistMgr->putString(_name.c_str());
+	persistMgr->putDWORD(_iD);
+	persistMgr->putDWORD(_instances.size());
 
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
-		PersistMgr->PutDWORD((it->_value)->GetID());
+		persistMgr->putDWORD((it->_value)->GetID());
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
-	_savedID = PersistMgr->GetDWORD();
-	int numInstances = PersistMgr->GetDWORD();
+void CSysClass::LoadTable(CBGame *Game, CBPersistMgr *persistMgr) {
+	_savedID = persistMgr->getDWORD();
+	int numInstances = persistMgr->getDWORD();
 
 	for (int i = 0; i < numInstances; i++) {
-		int instID = PersistMgr->GetDWORD();
+		int instID = persistMgr->getDWORD();
 		if (_persistent) {
 
 			if (i > 0) {
@@ -173,22 +173,22 @@ void CSysClass::LoadTable(CBGame *Game, CBPersistMgr *PersistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::SaveInstances(CBGame *Game, CBPersistMgr *PersistMgr) {
+void CSysClass::SaveInstances(CBGame *Game, CBPersistMgr *persistMgr) {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
 		// write instace header
-		PersistMgr->PutString("<INSTANCE_HEAD>");
-		PersistMgr->PutDWORD(_iD);
-		PersistMgr->PutDWORD((it->_value)->GetID());
-		PersistMgr->PutString("</INSTANCE_HEAD>");
-		_load((it->_value)->GetInstance(), PersistMgr);
-		PersistMgr->PutString("</INSTANCE>");
+		persistMgr->putString("<INSTANCE_HEAD>");
+		persistMgr->putDWORD(_iD);
+		persistMgr->putDWORD((it->_value)->GetID());
+		persistMgr->putString("</INSTANCE_HEAD>");
+		_load((it->_value)->GetInstance(), persistMgr);
+		persistMgr->putString("</INSTANCE>");
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::LoadInstance(void *instance, CBPersistMgr *PersistMgr) {
-	_load(instance, PersistMgr);
+void CSysClass::LoadInstance(void *instance, CBPersistMgr *persistMgr) {
+	_load(instance, persistMgr);
 }
 
 

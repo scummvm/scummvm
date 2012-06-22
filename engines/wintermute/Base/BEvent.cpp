@@ -183,13 +183,13 @@ HRESULT CBEvent::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBEvent::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CBEvent::Persist(CBPersistMgr *persistMgr) {
 
-	PersistMgr->Transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(_script));
-	PersistMgr->Transfer(TMEMBER(_name));
-	PersistMgr->Transfer(TMEMBER_INT(_type));
+	persistMgr->transfer(TMEMBER(_script));
+	persistMgr->transfer(TMEMBER(_name));
+	persistMgr->transfer(TMEMBER_INT(_type));
 
 	return S_OK;
 }

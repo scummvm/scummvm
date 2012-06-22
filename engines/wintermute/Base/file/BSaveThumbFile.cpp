@@ -75,7 +75,7 @@ HRESULT CBSaveThumbFile::Open(const Common::String &filename) {
 	if (!pm) return E_FAIL;
 
 	Game->_dEBUG_AbsolutePathWarning = false;
-	if (FAILED(pm->InitLoad(slotFilename))) {
+	if (FAILED(pm->initLoad(slotFilename))) {
 		Game->_dEBUG_AbsolutePathWarning = true;
 		delete pm;
 		return E_FAIL;

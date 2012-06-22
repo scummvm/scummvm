@@ -1150,31 +1150,31 @@ HRESULT CUIWindow::HandleMouse(TMouseEvent Event, TMouseButton Button) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CUIWindow::Persist(CBPersistMgr *persistMgr) {
 
-	CUIObject::Persist(PersistMgr);
+	CUIObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_backInactive));
-	PersistMgr->Transfer(TMEMBER(_clipContents));
-	PersistMgr->Transfer(TMEMBER(_dragFrom));
-	PersistMgr->Transfer(TMEMBER(_dragging));
-	PersistMgr->Transfer(TMEMBER(_dragRect));
-	PersistMgr->Transfer(TMEMBER(_fadeBackground));
-	PersistMgr->Transfer(TMEMBER(_fadeColor));
-	PersistMgr->Transfer(TMEMBER(_fontInactive));
-	PersistMgr->Transfer(TMEMBER(_imageInactive));
-	PersistMgr->Transfer(TMEMBER(_inGame));
-	PersistMgr->Transfer(TMEMBER(_isMenu));
-	PersistMgr->Transfer(TMEMBER_INT(_mode));
-	PersistMgr->Transfer(TMEMBER(_shieldButton));
-	PersistMgr->Transfer(TMEMBER(_shieldWindow));
-	PersistMgr->Transfer(TMEMBER_INT(_titleAlign));
-	PersistMgr->Transfer(TMEMBER(_titleRect));
-	PersistMgr->Transfer(TMEMBER(_transparent));
-	PersistMgr->Transfer(TMEMBER(_viewport));
-	PersistMgr->Transfer(TMEMBER(_pauseMusic));
+	persistMgr->transfer(TMEMBER(_backInactive));
+	persistMgr->transfer(TMEMBER(_clipContents));
+	persistMgr->transfer(TMEMBER(_dragFrom));
+	persistMgr->transfer(TMEMBER(_dragging));
+	persistMgr->transfer(TMEMBER(_dragRect));
+	persistMgr->transfer(TMEMBER(_fadeBackground));
+	persistMgr->transfer(TMEMBER(_fadeColor));
+	persistMgr->transfer(TMEMBER(_fontInactive));
+	persistMgr->transfer(TMEMBER(_imageInactive));
+	persistMgr->transfer(TMEMBER(_inGame));
+	persistMgr->transfer(TMEMBER(_isMenu));
+	persistMgr->transfer(TMEMBER_INT(_mode));
+	persistMgr->transfer(TMEMBER(_shieldButton));
+	persistMgr->transfer(TMEMBER(_shieldWindow));
+	persistMgr->transfer(TMEMBER_INT(_titleAlign));
+	persistMgr->transfer(TMEMBER(_titleRect));
+	persistMgr->transfer(TMEMBER(_transparent));
+	persistMgr->transfer(TMEMBER(_viewport));
+	persistMgr->transfer(TMEMBER(_pauseMusic));
 
-	_widgets.Persist(PersistMgr);
+	_widgets.Persist(persistMgr);
 
 	return S_OK;
 }

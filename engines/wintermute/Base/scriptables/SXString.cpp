@@ -377,18 +377,18 @@ HRESULT CSXString::ScSetProperty(const char *Name, CScValue *Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CSXString::Persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(PersistMgr);
+	CBScriptable::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_capacity));
+	persistMgr->transfer(TMEMBER(_capacity));
 
-	if (PersistMgr->_saving) {
-		if (_capacity > 0) PersistMgr->PutBytes((byte *)_string, _capacity);
+	if (persistMgr->_saving) {
+		if (_capacity > 0) persistMgr->putBytes((byte *)_string, _capacity);
 	} else {
 		if (_capacity > 0) {
 			_string = new char[_capacity];
-			PersistMgr->GetBytes((byte *)_string, _capacity);
+			persistMgr->getBytes((byte *)_string, _capacity);
 		} else _string = NULL;
 	}
 

@@ -285,9 +285,9 @@ double CSXMath::RadianToDegree(double Value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMath::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CSXMath::Persist(CBPersistMgr *persistMgr) {
 
-	CBScriptable::Persist(PersistMgr);
+	CBScriptable::Persist(persistMgr);
 	return S_OK;
 }
 

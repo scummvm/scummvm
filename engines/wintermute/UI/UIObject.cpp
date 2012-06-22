@@ -555,28 +555,28 @@ HRESULT CUIObject::GetTotalOffset(int *OffsetX, int *OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CUIObject::Persist(CBPersistMgr *persistMgr) {
 
-	CBObject::Persist(PersistMgr);
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_back));
-	PersistMgr->Transfer(TMEMBER(_canFocus));
-	PersistMgr->Transfer(TMEMBER(_disable));
-	PersistMgr->Transfer(TMEMBER(_focusedWidget));
-	PersistMgr->Transfer(TMEMBER(_font));
-	PersistMgr->Transfer(TMEMBER(_height));
-	PersistMgr->Transfer(TMEMBER(_image));
-	PersistMgr->Transfer(TMEMBER(_listenerObject));
-	PersistMgr->Transfer(TMEMBER(_listenerParamObject));
-	PersistMgr->Transfer(TMEMBER(_listenerParamDWORD));
-	PersistMgr->Transfer(TMEMBER(_parent));
-	PersistMgr->Transfer(TMEMBER(_parentNotify));
-	PersistMgr->Transfer(TMEMBER(_sharedFonts));
-	PersistMgr->Transfer(TMEMBER(_sharedImages));
-	PersistMgr->Transfer(TMEMBER(_text));
-	PersistMgr->Transfer(TMEMBER_INT(_type));
-	PersistMgr->Transfer(TMEMBER(_visible));
-	PersistMgr->Transfer(TMEMBER(_width));
+	persistMgr->transfer(TMEMBER(_back));
+	persistMgr->transfer(TMEMBER(_canFocus));
+	persistMgr->transfer(TMEMBER(_disable));
+	persistMgr->transfer(TMEMBER(_focusedWidget));
+	persistMgr->transfer(TMEMBER(_font));
+	persistMgr->transfer(TMEMBER(_height));
+	persistMgr->transfer(TMEMBER(_image));
+	persistMgr->transfer(TMEMBER(_listenerObject));
+	persistMgr->transfer(TMEMBER(_listenerParamObject));
+	persistMgr->transfer(TMEMBER(_listenerParamDWORD));
+	persistMgr->transfer(TMEMBER(_parent));
+	persistMgr->transfer(TMEMBER(_parentNotify));
+	persistMgr->transfer(TMEMBER(_sharedFonts));
+	persistMgr->transfer(TMEMBER(_sharedImages));
+	persistMgr->transfer(TMEMBER(_text));
+	persistMgr->transfer(TMEMBER_INT(_type));
+	persistMgr->transfer(TMEMBER(_visible));
+	persistMgr->transfer(TMEMBER(_width));
 
 	return S_OK;
 }

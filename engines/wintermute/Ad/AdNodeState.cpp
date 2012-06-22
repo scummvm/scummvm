@@ -92,15 +92,15 @@ void CAdNodeState::SetCursor(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdNodeState::Persist(CBPersistMgr *PersistMgr) {
-	PersistMgr->Transfer(TMEMBER(Game));
+HRESULT CAdNodeState::Persist(CBPersistMgr *persistMgr) {
+	persistMgr->transfer(TMEMBER(Game));
 
-	PersistMgr->Transfer(TMEMBER(_active));
-	PersistMgr->Transfer(TMEMBER(_name));
-	PersistMgr->Transfer(TMEMBER(_filename));
-	PersistMgr->Transfer(TMEMBER(_cursor));
-	PersistMgr->Transfer(TMEMBER(_alphaColor));
-	for (int i = 0; i < 7; i++) PersistMgr->Transfer(TMEMBER(_caption[i]));
+	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transfer(TMEMBER(_name));
+	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transfer(TMEMBER(_cursor));
+	persistMgr->transfer(TMEMBER(_alphaColor));
+	for (int i = 0; i < 7; i++) persistMgr->transfer(TMEMBER(_caption[i]));
 
 	return S_OK;
 }

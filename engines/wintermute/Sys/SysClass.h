@@ -52,8 +52,8 @@ template<> struct Hash<void *> : public UnaryFunction<void *, uint> {
 	}
 };
 
-template<> struct Hash<WinterMute::CSysInstance*> : public UnaryFunction<WinterMute::CSysInstance*, uint> {
-	uint operator()(WinterMute::CSysInstance* val) const {
+template<> struct Hash<WinterMute::CSysInstance *> : public UnaryFunction<WinterMute::CSysInstance *, uint> {
+	uint operator()(WinterMute::CSysInstance *val) const {
 		return (uint)((size_t)val);
 	}
 };

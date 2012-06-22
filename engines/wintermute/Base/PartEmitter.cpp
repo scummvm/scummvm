@@ -1098,97 +1098,97 @@ const char *CPartEmitter::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::Persist(CBPersistMgr *PersistMgr) {
-	CBObject::Persist(PersistMgr);
+HRESULT CPartEmitter::Persist(CBPersistMgr *persistMgr) {
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_width));
-	PersistMgr->Transfer(TMEMBER(_height));
+	persistMgr->transfer(TMEMBER(_width));
+	persistMgr->transfer(TMEMBER(_height));
 
-	PersistMgr->Transfer(TMEMBER(_angle1));
-	PersistMgr->Transfer(TMEMBER(_angle2));
+	persistMgr->transfer(TMEMBER(_angle1));
+	persistMgr->transfer(TMEMBER(_angle2));
 
-	PersistMgr->Transfer(TMEMBER(_velocity1));
-	PersistMgr->Transfer(TMEMBER(_velocity2));
-	PersistMgr->Transfer(TMEMBER(_velocityZBased));
+	persistMgr->transfer(TMEMBER(_velocity1));
+	persistMgr->transfer(TMEMBER(_velocity2));
+	persistMgr->transfer(TMEMBER(_velocityZBased));
 
-	PersistMgr->Transfer(TMEMBER(_scale1));
-	PersistMgr->Transfer(TMEMBER(_scale2));
-	PersistMgr->Transfer(TMEMBER(_scaleZBased));
+	persistMgr->transfer(TMEMBER(_scale1));
+	persistMgr->transfer(TMEMBER(_scale2));
+	persistMgr->transfer(TMEMBER(_scaleZBased));
 
-	PersistMgr->Transfer(TMEMBER(_maxParticles));
+	persistMgr->transfer(TMEMBER(_maxParticles));
 
-	PersistMgr->Transfer(TMEMBER(_lifeTime1));
-	PersistMgr->Transfer(TMEMBER(_lifeTime2));
-	PersistMgr->Transfer(TMEMBER(_lifeTimeZBased));
+	persistMgr->transfer(TMEMBER(_lifeTime1));
+	persistMgr->transfer(TMEMBER(_lifeTime2));
+	persistMgr->transfer(TMEMBER(_lifeTimeZBased));
 
-	PersistMgr->Transfer(TMEMBER(_genInterval));
-	PersistMgr->Transfer(TMEMBER(_genAmount));
+	persistMgr->transfer(TMEMBER(_genInterval));
+	persistMgr->transfer(TMEMBER(_genAmount));
 
-	PersistMgr->Transfer(TMEMBER(_running));
-	PersistMgr->Transfer(TMEMBER(_overheadTime));
+	persistMgr->transfer(TMEMBER(_running));
+	persistMgr->transfer(TMEMBER(_overheadTime));
 
-	PersistMgr->Transfer(TMEMBER(_border));
-	PersistMgr->Transfer(TMEMBER(_borderThicknessLeft));
-	PersistMgr->Transfer(TMEMBER(_borderThicknessRight));
-	PersistMgr->Transfer(TMEMBER(_borderThicknessTop));
-	PersistMgr->Transfer(TMEMBER(_borderThicknessBottom));
+	persistMgr->transfer(TMEMBER(_border));
+	persistMgr->transfer(TMEMBER(_borderThicknessLeft));
+	persistMgr->transfer(TMEMBER(_borderThicknessRight));
+	persistMgr->transfer(TMEMBER(_borderThicknessTop));
+	persistMgr->transfer(TMEMBER(_borderThicknessBottom));
 
-	PersistMgr->Transfer(TMEMBER(_fadeInTime));
-	PersistMgr->Transfer(TMEMBER(_fadeOutTime));
+	persistMgr->transfer(TMEMBER(_fadeInTime));
+	persistMgr->transfer(TMEMBER(_fadeOutTime));
 
-	PersistMgr->Transfer(TMEMBER(_alpha1));
-	PersistMgr->Transfer(TMEMBER(_alpha2));
-	PersistMgr->Transfer(TMEMBER(_alphaTimeBased));
+	persistMgr->transfer(TMEMBER(_alpha1));
+	persistMgr->transfer(TMEMBER(_alpha2));
+	persistMgr->transfer(TMEMBER(_alphaTimeBased));
 
-	PersistMgr->Transfer(TMEMBER(_angVelocity1));
-	PersistMgr->Transfer(TMEMBER(_angVelocity2));
+	persistMgr->transfer(TMEMBER(_angVelocity1));
+	persistMgr->transfer(TMEMBER(_angVelocity2));
 
-	PersistMgr->Transfer(TMEMBER(_rotation1));
-	PersistMgr->Transfer(TMEMBER(_rotation2));
+	persistMgr->transfer(TMEMBER(_rotation1));
+	persistMgr->transfer(TMEMBER(_rotation2));
 
-	PersistMgr->Transfer(TMEMBER(_growthRate1));
-	PersistMgr->Transfer(TMEMBER(_growthRate2));
-	PersistMgr->Transfer(TMEMBER(_exponentialGrowth));
+	persistMgr->transfer(TMEMBER(_growthRate1));
+	persistMgr->transfer(TMEMBER(_growthRate2));
+	persistMgr->transfer(TMEMBER(_exponentialGrowth));
 
-	PersistMgr->Transfer(TMEMBER(_useRegion));
+	persistMgr->transfer(TMEMBER(_useRegion));
 
-	PersistMgr->Transfer(TMEMBER_INT(_maxBatches));
-	PersistMgr->Transfer(TMEMBER_INT(_batchesGenerated));
+	persistMgr->transfer(TMEMBER_INT(_maxBatches));
+	persistMgr->transfer(TMEMBER_INT(_batchesGenerated));
 
-	PersistMgr->Transfer(TMEMBER(_emitEvent));
-	PersistMgr->Transfer(TMEMBER(_owner));
+	persistMgr->transfer(TMEMBER(_emitEvent));
+	persistMgr->transfer(TMEMBER(_owner));
 
 
-	_sprites.Persist(PersistMgr);
+	_sprites.Persist(persistMgr);
 
 	int NumForces;
-	if (PersistMgr->_saving) {
+	if (persistMgr->_saving) {
 		NumForces = _forces.GetSize();
-		PersistMgr->Transfer(TMEMBER(NumForces));
+		persistMgr->transfer(TMEMBER(NumForces));
 		for (int i = 0; i < _forces.GetSize(); i++) {
-			_forces[i]->Persist(PersistMgr);
+			_forces[i]->Persist(persistMgr);
 		}
 	} else {
-		PersistMgr->Transfer(TMEMBER(NumForces));
+		persistMgr->transfer(TMEMBER(NumForces));
 		for (int i = 0; i < NumForces; i++) {
 			CPartForce *Force = new CPartForce(Game);
-			Force->Persist(PersistMgr);
+			Force->Persist(persistMgr);
 			_forces.Add(Force);
 		}
 	}
 
 	int NumParticles;
-	if (PersistMgr->_saving) {
+	if (persistMgr->_saving) {
 		NumParticles = _particles.GetSize();
-		PersistMgr->Transfer(TMEMBER(NumParticles));
+		persistMgr->transfer(TMEMBER(NumParticles));
 		for (int i = 0; i < _particles.GetSize(); i++) {
-			_particles[i]->Persist(PersistMgr);
+			_particles[i]->Persist(persistMgr);
 		}
 	} else {
-		PersistMgr->Transfer(TMEMBER(NumParticles));
+		persistMgr->transfer(TMEMBER(NumParticles));
 		for (int i = 0; i < NumParticles; i++) {
 			CPartParticle *Particle = new CPartParticle(Game);
-			Particle->Persist(PersistMgr);
+			Particle->Persist(persistMgr);
 			_particles.Add(Particle);
 		}
 	}

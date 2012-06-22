@@ -1187,34 +1187,34 @@ CBSprite *CAdActor::GetTalkStanceOld(const char *Stance) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::Persist(CBPersistMgr *PersistMgr) {
-	CAdTalkHolder::Persist(PersistMgr);
+HRESULT CAdActor::Persist(CBPersistMgr *persistMgr) {
+	CAdTalkHolder::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER_INT(_dir));
-	PersistMgr->Transfer(TMEMBER(_path));
-	PersistMgr->Transfer(TMEMBER(_pFCount));
-	PersistMgr->Transfer(TMEMBER(_pFStepX));
-	PersistMgr->Transfer(TMEMBER(_pFStepY));
-	PersistMgr->Transfer(TMEMBER(_pFX));
-	PersistMgr->Transfer(TMEMBER(_pFY));
-	PersistMgr->Transfer(TMEMBER(_standSprite));
-	_talkSprites.Persist(PersistMgr);
-	_talkSpritesEx.Persist(PersistMgr);
-	PersistMgr->Transfer(TMEMBER_INT(_targetDir));
-	PersistMgr->Transfer(TMEMBER_INT(_afterWalkDir));
-	PersistMgr->Transfer(TMEMBER(_targetPoint));
-	PersistMgr->Transfer(TMEMBER(_turnLeftSprite));
-	PersistMgr->Transfer(TMEMBER(_turnRightSprite));
-	PersistMgr->Transfer(TMEMBER(_walkSprite));
+	persistMgr->transfer(TMEMBER_INT(_dir));
+	persistMgr->transfer(TMEMBER(_path));
+	persistMgr->transfer(TMEMBER(_pFCount));
+	persistMgr->transfer(TMEMBER(_pFStepX));
+	persistMgr->transfer(TMEMBER(_pFStepY));
+	persistMgr->transfer(TMEMBER(_pFX));
+	persistMgr->transfer(TMEMBER(_pFY));
+	persistMgr->transfer(TMEMBER(_standSprite));
+	_talkSprites.Persist(persistMgr);
+	_talkSpritesEx.Persist(persistMgr);
+	persistMgr->transfer(TMEMBER_INT(_targetDir));
+	persistMgr->transfer(TMEMBER_INT(_afterWalkDir));
+	persistMgr->transfer(TMEMBER(_targetPoint));
+	persistMgr->transfer(TMEMBER(_turnLeftSprite));
+	persistMgr->transfer(TMEMBER(_turnRightSprite));
+	persistMgr->transfer(TMEMBER(_walkSprite));
 
-	PersistMgr->Transfer(TMEMBER(_animSprite2));
-	PersistMgr->Transfer(TMEMBER(_talkAnimName));
-	PersistMgr->Transfer(TMEMBER(_idleAnimName));
-	PersistMgr->Transfer(TMEMBER(_walkAnimName));
-	PersistMgr->Transfer(TMEMBER(_turnLeftAnimName));
-	PersistMgr->Transfer(TMEMBER(_turnRightAnimName));
+	persistMgr->transfer(TMEMBER(_animSprite2));
+	persistMgr->transfer(TMEMBER(_talkAnimName));
+	persistMgr->transfer(TMEMBER(_idleAnimName));
+	persistMgr->transfer(TMEMBER(_walkAnimName));
+	persistMgr->transfer(TMEMBER(_turnLeftAnimName));
+	persistMgr->transfer(TMEMBER(_turnRightAnimName));
 
-	_anims.Persist(PersistMgr);
+	_anims.Persist(persistMgr);
 
 	return S_OK;
 }

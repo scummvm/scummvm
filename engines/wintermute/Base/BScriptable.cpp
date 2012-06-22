@@ -139,11 +139,11 @@ void CBScriptable::ScSetBool(bool Val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptable::Persist(CBPersistMgr *PersistMgr) {
-	PersistMgr->Transfer(TMEMBER(Game));
-	PersistMgr->Transfer(TMEMBER(_refCount));
-	PersistMgr->Transfer(TMEMBER(_scProp));
-	PersistMgr->Transfer(TMEMBER(_scValue));
+HRESULT CBScriptable::Persist(CBPersistMgr *persistMgr) {
+	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_refCount));
+	persistMgr->transfer(TMEMBER(_scProp));
+	persistMgr->transfer(TMEMBER(_scValue));
 
 	return S_OK;
 }

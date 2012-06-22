@@ -154,21 +154,21 @@ uint32 CBFader::GetCurrentColor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::Persist(CBPersistMgr *PersistMgr) {
-	CBObject::Persist(PersistMgr);
+HRESULT CBFader::Persist(CBPersistMgr *persistMgr) {
+	CBObject::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_active));
-	PersistMgr->Transfer(TMEMBER(_blue));
-	PersistMgr->Transfer(TMEMBER(_currentAlpha));
-	PersistMgr->Transfer(TMEMBER(_duration));
-	PersistMgr->Transfer(TMEMBER(_green));
-	PersistMgr->Transfer(TMEMBER(_red));
-	PersistMgr->Transfer(TMEMBER(_sourceAlpha));
-	PersistMgr->Transfer(TMEMBER(_startTime));
-	PersistMgr->Transfer(TMEMBER(_targetAlpha));
-	PersistMgr->Transfer(TMEMBER(_system));
+	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transfer(TMEMBER(_blue));
+	persistMgr->transfer(TMEMBER(_currentAlpha));
+	persistMgr->transfer(TMEMBER(_duration));
+	persistMgr->transfer(TMEMBER(_green));
+	persistMgr->transfer(TMEMBER(_red));
+	persistMgr->transfer(TMEMBER(_sourceAlpha));
+	persistMgr->transfer(TMEMBER(_startTime));
+	persistMgr->transfer(TMEMBER(_targetAlpha));
+	persistMgr->transfer(TMEMBER(_system));
 
-	if (_system && !PersistMgr->_saving) _startTime = 0;
+	if (_system && !persistMgr->_saving) _startTime = 0;
 
 	return S_OK;
 }

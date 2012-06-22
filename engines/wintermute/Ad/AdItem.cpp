@@ -728,21 +728,21 @@ const char *CAdItem::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::Persist(CBPersistMgr *PersistMgr) {
+HRESULT CAdItem::Persist(CBPersistMgr *persistMgr) {
 
-	CAdTalkHolder::Persist(PersistMgr);
+	CAdTalkHolder::Persist(persistMgr);
 
-	PersistMgr->Transfer(TMEMBER(_cursorCombined));
-	PersistMgr->Transfer(TMEMBER(_cursorHover));
-	PersistMgr->Transfer(TMEMBER(_cursorNormal));
-	PersistMgr->Transfer(TMEMBER(_spriteHover));
-	PersistMgr->Transfer(TMEMBER(_inInventory));
-	PersistMgr->Transfer(TMEMBER(_displayAmount));
-	PersistMgr->Transfer(TMEMBER(_amount));
-	PersistMgr->Transfer(TMEMBER(_amountOffsetX));
-	PersistMgr->Transfer(TMEMBER(_amountOffsetY));
-	PersistMgr->Transfer(TMEMBER_INT(_amountAlign));
-	PersistMgr->Transfer(TMEMBER(_amountString));
+	persistMgr->transfer(TMEMBER(_cursorCombined));
+	persistMgr->transfer(TMEMBER(_cursorHover));
+	persistMgr->transfer(TMEMBER(_cursorNormal));
+	persistMgr->transfer(TMEMBER(_spriteHover));
+	persistMgr->transfer(TMEMBER(_inInventory));
+	persistMgr->transfer(TMEMBER(_displayAmount));
+	persistMgr->transfer(TMEMBER(_amount));
+	persistMgr->transfer(TMEMBER(_amountOffsetX));
+	persistMgr->transfer(TMEMBER(_amountOffsetY));
+	persistMgr->transfer(TMEMBER_INT(_amountAlign));
+	persistMgr->transfer(TMEMBER(_amountString));
 
 	return S_OK;
 }
