@@ -1945,6 +1945,9 @@ RMLocation::RMLocation() {
 	_buf = NULL;
 	TEMPNumLoc = 0;
 	_cmode = CM_256;
+
+	_prevScroll.set(-1, -1);
+	_prevFixedScroll.set(-1, -1);
 }
 
 
@@ -2135,6 +2138,8 @@ bool RMLocation::loadLOX(RMDataStream &ds) {
  */
 void RMLocation::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
+		bool priorTracking;
+		bool hasChanges;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2146,8 +2151,20 @@ void RMLocation::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 
 	prim->setDst(_fixedScroll);
 
+	// Check whether dirty rects are being tracked, and if there are changes, leave tracking
+	// turned on so a dirty rect will be added for the entire background
+	_ctx->priorTracking = bigBuf.getTrackDirtyRects();
+	_ctx->hasChanges = (_prevScroll != _curScroll) || (_prevFixedScroll != _fixedScroll);
+	bigBuf.setTrackDirtyRects(_ctx->priorTracking && _ctx->hasChanges);
+
 	// Invoke the drawing method fo the image class, which will draw the location background
 	CORO_INVOKE_2(_buf->draw, bigBuf, prim);
+
+	if (_ctx->hasChanges) {
+		_prevScroll = _curScroll;
+		_prevFixedScroll = _fixedScroll;
+	}
+	bigBuf.setTrackDirtyRects(_ctx->priorTracking);
 
 	CORO_END_CODE;
 }

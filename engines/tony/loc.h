@@ -539,6 +539,9 @@ private:
 	RMPoint _curScroll;            // Current scroll position
 	RMPoint _fixedScroll;
 
+	RMPoint _prevScroll;			// Previous scroll position
+	RMPoint _prevFixedScroll;
+
 public:
 	// @@@@@@@@@@@@@@@@@@@@@@@
 	RMPoint TEMPTonyStart;

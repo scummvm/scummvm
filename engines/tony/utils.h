@@ -279,6 +279,7 @@ public:
 	int height() const;
 	bool isEmpty() const;
 	int size() const;
+	operator Common::Rect() const;
 
 	// Set
 	void setRect(int x1, int y1, int x2, int y2);

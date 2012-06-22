@@ -251,6 +251,7 @@ RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw)
 RMGfxTargetBuffer::RMGfxTargetBuffer() {
 	_otlist = NULL;
 	_otSize = 0;
+	_trackDirtyRects = false;
 //	csModifyingOT = g_system->createMutex();
 }
 
@@ -369,6 +370,67 @@ void RMGfxTargetBuffer::addPrim(RMGfxPrimitive *prim) {
 	}
 
 //	g_system->unlockMutex(csModifyingOT);
+}
+
+void RMGfxTargetBuffer::addDirtyRect(const Common::Rect &r) {
+	assert(r.isValidRect());
+	if (_trackDirtyRects && r.width() > 0 && r.height() > 0)
+		_currentDirtyRects.push_back(r);	
+}
+
+Common::List<Common::Rect> &RMGfxTargetBuffer::getDirtyRects() {
+	// Copy rects from both the current and previous frame into the output dirty rects list
+	Common::List<Common::Rect>::iterator i;
+	_dirtyRects.clear();
+	for (i = _previousDirtyRects.begin(); i != _previousDirtyRects.end(); ++i)
+		_dirtyRects.push_back(*i);
+	for (i = _currentDirtyRects.begin(); i != _currentDirtyRects.end(); ++i)
+		_dirtyRects.push_back(*i);
+
+	mergeDirtyRects();
+	return _dirtyRects;
+}
+
+/**
+ * Move the set of dirty rects from the finished current frame into the previous frame list.
+ */
+void RMGfxTargetBuffer::clearDirtyRects() {
+	Common::List<Common::Rect>::iterator i;
+	_previousDirtyRects.clear();
+	for (i = _currentDirtyRects.begin(); i != _currentDirtyRects.end(); ++i)
+		_previousDirtyRects.push_back(*i);
+
+	_currentDirtyRects.clear();
+}
+
+/**
+ * Merges any clipping rectangles that overlap to try and reduce
+ * the total number of clip rectangles.
+ */
+void RMGfxTargetBuffer::mergeDirtyRects() {
+	if (_dirtyRects.size() <= 1)
+		return;
+
+	Common::List<Common::Rect>::iterator rOuter, rInner;
+
+	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
+		rInner = rOuter;
+		while (++rInner != _dirtyRects.end()) {
+
+			if ((*rOuter).intersects(*rInner)) {
+				// these two rectangles overlap or
+				// are next to each other - merge them
+
+				(*rOuter).extend(*rInner);
+
+				// remove the inner rect from the list
+				_dirtyRects.erase(rInner);
+
+				// move back to beginning of list
+				rInner = rOuter;
+			}
+		}
+	}
 }
 
 /****************************************************************************\
@@ -539,6 +601,9 @@ void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 			buf += bufx - width;
 		}
 	}
+
+	// Specify the drawn area
+	bigBuf.addDirtyRect(Common::Rect(dst._x1, dst._y1, dst._x1 + width, dst._y1 + height));
 }
 
 RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw)
@@ -650,7 +715,8 @@ void RMGfxSourceBuffer8AB::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 		}
 	}
 
-	return;
+	// Specify the drawn area
+	bigBuf.addDirtyRect(Common::Rect(dst._x1, dst._y1, dst._x1 + width, dst._y1 + height));
 }
 
 
@@ -826,6 +892,9 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 		u = _dimx - (width + u);
 		x1 = (prim->getDst()._x1 + _dimx - 1) - u;
 
+		// Specify the drawn area
+		bigBuf.addDirtyRect(Common::Rect(x1 - width, y1, x1, y1 + height));
+
 		for (y = 0; y < height; y++) {
 			// Decompression
 			RLEDecompressLineFlipped(buf + x1, src + 2, u, width);
@@ -837,6 +906,9 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 			buf += bigBuf.getDimx();
 		}
 	} else {
+		// Specify the drawn area
+		bigBuf.addDirtyRect(Common::Rect(x1, y1, x1 + width, y1 + height));
+
 		for (y = 0; y < height; y++) {
 			// Decompression
 			RLEDecompressLine(buf + x1, src + 2, u, width);
@@ -1697,6 +1769,9 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 		// Skip to the next line
 		buf += bigBuf.getDimx();
 	}
+
+	// Specify the drawn area
+	bigBuf.addDirtyRect(Common::Rect(x1, y1, x1 + width, y1 + height));
 }
 
 
@@ -1855,6 +1930,9 @@ void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 			raw += _dimx;
 		}
 	}
+
+	// Specify the drawn area
+	bigBuf.addDirtyRect(Common::Rect(x1, y1, x1 + dimx, y1 + dimy));
 }
 
 void RMGfxSourceBuffer16::prepareImage() {
@@ -1904,6 +1982,9 @@ void RMGfxBox::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 	int i, j;
 	uint16 *buf = bigBuf;
 	RMRect rcDst;
+
+	// Specify the drawn area
+	bigBuf.addDirtyRect(rcDst);
 
 	// It takes the destination rectangle
 	rcDst = prim->getDst();

@@ -27,6 +27,7 @@
  */
 
 #include "common/scummsys.h"
+#include "graphics/surface.h"
 #include "util.h"
 #include "tony/window.h"
 #include "tony/game.h"
@@ -40,7 +41,7 @@ namespace Tony {
 \****************************************************************************/
 
 RMWindow::RMWindow() {
-
+	_showDirtyRects = false;
 }
 
 RMWindow::~RMWindow() {
@@ -61,6 +62,7 @@ void RMWindow::init() {
 	_bGrabScreenshot = false;
 	_bGrabThumbnail = false;
 	_bGrabMovie = false;
+	_wiping = false;
 }
 
 /**
@@ -108,13 +110,43 @@ void RMWindow::wipeEffect(Common::Rect &rcBoundEllipse) {
 	}
 }
 
-void RMWindow::getNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse) {
+void RMWindow::getNewFrame(RMGfxTargetBuffer &bigBuf, Common::Rect *rcBoundEllipse) {
+	// Get a pointer to the bytes of the source buffer
+	byte *lpBuf = bigBuf;
+
 	if (rcBoundEllipse != NULL) {
 		// Circular wipe effect
 		getNewFrameWipe(lpBuf, *rcBoundEllipse);
-	} else {
-		// Standard screen copy
+		_wiping = true;
+	} else if (_wiping) {
+		// Just finished a wiping effect, so copy the full screen
 		g_system->copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
+		_wiping = false;
+
+	} else {
+		// Standard screen copy - iterate through the dirty rects
+		Common::List<Common::Rect> dirtyRects = bigBuf.getDirtyRects();
+		Common::List<Common::Rect>::iterator i;
+
+		// If showing dirty rects, copy the entire screen background and set up a surface pointer
+		Graphics::Surface *s = NULL;
+		if (_showDirtyRects) {
+			g_system->copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
+			s = g_system->lockScreen();
+		}
+
+		for (i = dirtyRects.begin(); i != dirtyRects.end(); ++i) {
+			Common::Rect &r = *i;
+			const byte *lpSrc = lpBuf + (RM_SX * 2) * r.top + (r.left * 2);
+			g_system->copyRectToScreen(lpSrc, RM_SX * 2, r.left, r.top, r.width(), r.height());
+
+			if (_showDirtyRects)
+				// Frame the copied area with a rectangle
+				s->frameRect(r, 0xffffff);
+		}
+
+		if (_showDirtyRects)
+			g_system->unlockScreen();
 	}
 
 	if (_bGrabThumbnail) {
@@ -124,6 +156,9 @@ void RMWindow::getNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse) {
 		s.grabScreenshot(lpBuf, 4, _wThumbBuf);
 		_bGrabThumbnail = false;
 	}
+
+	// Clear the dirty rect list
+	bigBuf.clearDirtyRects();
 }
 
 /**

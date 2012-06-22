@@ -59,13 +59,12 @@ private:
 	void plotLines(const byte *lpBuf, const Common::Point &center, int x, int y);
 
 protected:
-//	void * /*LPDIRECTDRAWCLIPPER*/ _MainClipper;
-//	void * /*LPDIRECTDRAWCLIPPER*/ _BackClipper;
-
 	int fps, fcount;
 	int lastsecond, lastfcount;
 
 	int mskRed, mskGreen, mskBlue;
+	bool _wiping;
+	bool _showDirtyRects;
 
 	bool _bGrabScreenshot;
 	bool _bGrabThumbnail;
@@ -100,7 +99,7 @@ public:
 	/**
 	 * Reads the next frame
 	 */
-	void getNewFrame(byte *lpBuf, Common::Rect *rcBoundEllipse);
+	void getNewFrame(RMGfxTargetBuffer &lpBuf, Common::Rect *rcBoundEllipse);
 
 	/**
 	 * Request a thumbnail be grabbed during the next frame
@@ -110,6 +109,7 @@ public:
 	int getFps() const {
 		return fps;
 	}
+	void showDirtyRects(bool v) { _showDirtyRects = v; }
 };
 
 } // End of namespace Tony

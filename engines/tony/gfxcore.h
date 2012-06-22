@@ -558,6 +558,10 @@ private:
 		}
 	};
 
+	bool _trackDirtyRects;
+	Common::List<Common::Rect> _currentDirtyRects, _previousDirtyRects, _dirtyRects;
+
+	void mergeDirtyRects();
 private:
 //	OSystem::MutexRef csModifyingOT;
 
@@ -588,6 +592,17 @@ public:
 	// Offseting buffer
 	void offsetY(int nLines) {
 		RMGfxBuffer::offsetY(nLines, 16);
+	}
+
+	// Dirty rect methods
+	void addDirtyRect(const Common::Rect &r);
+	Common::List<Common::Rect> &getDirtyRects();
+	void clearDirtyRects();
+	void setTrackDirtyRects(bool v) {
+		_trackDirtyRects = v;
+	}
+	bool getTrackDirtyRects() const {
+		return _trackDirtyRects;
 	}
 };
 

@@ -63,6 +63,7 @@ RMGfxEngine::RMGfxEngine() {
 	// Create big buffer where the frame will be rendered
 	_bigBuf.create(RM_BBX, RM_BBY, 16);
 	_bigBuf.offsetY(RM_SKIPY);
+	_bigBuf.setTrackDirtyRects(true);
 
 	_csMainLoop = NULL;
 	_nCurLoc = 0;
@@ -473,6 +474,7 @@ void RMGfxEngine::init() {
 	delete load;
 
 	// Display 'Loading' screen
+	_bigBuf.addDirtyRect(Common::Rect(0, 0, RM_SX, RM_SY));
 	_vm->_window.getNewFrame(*this, NULL);
 	_vm->_window.repaint();
 

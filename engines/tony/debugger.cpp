@@ -30,6 +30,7 @@ namespace Tony {
 Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
+	DCmd_Register("dirty_rects",	WRAP_METHOD(Debugger, Cmd_DirtyRects));
 }
 
 static int strToInt(const char *s) {
@@ -111,6 +112,19 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	CoroScheduler.createProcess(DebugChangeScene, &details, sizeof(ChangeSceneDetails));
 
 	return false;
+}
+
+/**
+ * Turns showing dirty rects on or off
+ */
+bool Debugger::Cmd_DirtyRects(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage; %s [on | off]\n", argv[0]);
+		return true;
+	} else {
+		_vm->_window.showDirtyRects(strcmp(argv[1], "on") == 0);
+		return false;
+	}
 }
 
 } // End of namespace Tony

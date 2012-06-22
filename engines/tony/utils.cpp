@@ -921,6 +921,10 @@ int RMRect::size() const {
 	return width() * height();
 }
 
+RMRect::operator Common::Rect() const {
+	return Common::Rect(_x1, _y1, _x2, _y2);
+}
+
 bool RMRect::isEmpty() const {
 	return (_x1 == 0 && _y1 == 0 && _x2 == 0 && _y2 == 0);
 }
