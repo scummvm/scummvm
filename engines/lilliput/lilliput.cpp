@@ -134,7 +134,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_soundHandler = new LilliputSound(this);
 
 	_byte1714E = 0;
-	_byte12FCE = false;
+	_bool12FCE = false;
 	_selectedCharacterId = -1;
 	_numCharactersToDisplay = 0;
 	_nextDisplayCharacterPos = Common::Point(0, 0);
@@ -154,17 +154,17 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_currentScriptCharacterPos = Common::Point(0, 0);
 	_word10804 = 0;
 	_nextCharacterIndex = 0;
-	_word16EFE = -1;
+	_word16EFEh = -1;
+	_word16EFEl_characterId = -1;
 	_word1817B = 0;
 	_savedSurfaceUnderMousePos = Common::Point(0, 0);
-	_word15AC2 = 0;
-	_word15AC2 = 0;
+	_bool15AC2 = false;
 	_displayStringIndex = 0;
 	_word1289D = 0;
 	_numCharacters = 0;
 
 	_saveFlag = true;
-	_byte16F07_menuId = 0;
+	_actionType = kActionNone;
 
 	_array16C54[0] = _array16C58[3] = 1;
 	_array16C54[1] = _array16C58[2] = 2;
@@ -172,7 +172,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_array16C54[3] = _array16C58[0] = 8;
 
 	for (int i = 0; i < 3; i++)
-		_array147D1[i] = 0;
+		_codeEntered[i] = 0;
 
 	for (int i = 0; i < 4; i++)
 		_array1692B[i] = 0;
@@ -404,7 +404,7 @@ void LilliputEngine::displayMousePointer() {
 
 		_savedSurfaceUnderMousePos = _mouseDisplayPos;
 		SaveSurfaceUnderMouseCursor(_savedSurfaceUnderMouse, _mouseDisplayPos);
-		display16x16IndexedBuf(_bufferIdeogram, _word15AC2 + 80, _mouseDisplayPos);
+		display16x16IndexedBuf(_bufferIdeogram, _bool15AC2 ? 81 : 80, _mouseDisplayPos);
 
 		_skipDisplayFlag1 = 1;
 		_skipDisplayFlag2 = 0;
@@ -821,7 +821,7 @@ void LilliputEngine::displayRefreshScreen() {
 		sub16CA0();
 		sub16EBC();
 		sub171CF();
-		sub130EE();
+		handleGameMouseClick();
 		sub12FE5();
 		displayHeroismIndicator();
 	}
@@ -984,7 +984,7 @@ void LilliputEngine::sub15F75() {
 		return;
 
 	_savedMousePosDivided = Common::Point(newX, newY);
-	_byte16F07_menuId = 5;
+	_actionType = kActionGoto;
 }
 
 void LilliputEngine::unselectInterfaceHotspots() {
@@ -1016,7 +1016,7 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 
 	_displayMap = false;
 	paletteFadeOut();
-	_word15AC2 = 0;
+	_bool15AC2 = false;
 	unselectInterfaceHotspots();
 	initGameAreaDisplay();
 	_scriptHandler->_heroismLevel = 0;
@@ -1933,7 +1933,7 @@ void LilliputEngine::sub147D7() {
 		} else if (oldEvent.type == Common::EVENT_KEYUP) {
 			altKeyFl = false;
 			if (keyCount == 3)
-				_byte16F07_menuId = 6;
+				_actionType = kCodeEntered;
 			return;
 		}
 	}
@@ -1963,7 +1963,7 @@ void LilliputEngine::sub147D7() {
 		case Common::KEYCODE_7:
 		case Common::KEYCODE_8:
 		case Common::KEYCODE_9:
-			_array147D1[keyCount] = oldEvent.kbd.keycode - Common::KEYCODE_0;
+			_codeEntered[keyCount] = oldEvent.kbd.keycode - Common::KEYCODE_0;
 			++keyCount;
 			break;
 		default:
@@ -1972,8 +1972,8 @@ void LilliputEngine::sub147D7() {
 	}
 }
 
-void LilliputEngine::sub130EE() {
-	debugC(2, kDebugEngine, "sub130EE()");
+void LilliputEngine::handleGameMouseClick() {
+	debugC(2, kDebugEngine, "handleGameMouseClick()");
 
 	sub147D7();
 
@@ -2013,26 +2013,27 @@ void LilliputEngine::sub130EE() {
 	if (forceReturnFl)
 		return;
 
-	sub131FC(pos);
+	checkClickOnGameArea(pos);
 }
 
-void LilliputEngine::sub131FC(Common::Point pos) {
-	debugC(2, kDebugEngine, "sub131FC(%d, %d)", pos.x, pos.y);
+void LilliputEngine::checkClickOnGameArea(Common::Point pos) {
+	debugC(2, kDebugEngine, "checkClickOnGameArea(%d, %d)", pos.x, pos.y);
 
 	int x = pos.x - 8;
 	int y = pos.y - 4;
 
-	x = (x >> 4) - 7;
-	y = (y >> 3) - 4;
+	x = (x / 16) - 7;
+	y = (y / 8) - 4;
 
-	int diff = (y - x) >> 1;
-	y = y - diff;
+	int arrowY = (y - x) >> 1;
+	int arrowX = y - arrowY;
 
-	if ((y >= 0) && (diff >= 0) && (y < 8) && (diff < 8)) {
-		y += _scriptHandler->_viewportPos.x;
-		diff += _scriptHandler->_viewportPos.y;
-		_savedMousePosDivided = Common::Point(y, diff);
-		_byte16F07_menuId = 5;
+	// Set the arrow coordinates 
+	if ((arrowX >= 0) && (arrowY >= 0) && (arrowX < 8) && (arrowY < 8)) {
+		arrowX += _scriptHandler->_viewportPos.x;
+		arrowY += _scriptHandler->_viewportPos.y;
+		_savedMousePosDivided = Common::Point(arrowX, arrowY);
+		_actionType = kActionGoto;
 	}
 }
 
@@ -2042,11 +2043,12 @@ void LilliputEngine::checkClickOnCharacter(Common::Point pos, bool &forceReturnF
 	forceReturnFl = false;
 
 	for (int8 i = 0; i < _numCharacters; i++) {
+		// check if position is over a character
 		if ((pos.x >= _characterDisplayX[i]) && (pos.x <= _characterDisplayX[i] + 17) && (pos.y >= _characterDisplayY[i]) && (pos.y <= _characterDisplayY[i] + 17) && (i != _word10804)) {
 			_selectedCharacterId = i;
-			_byte16F07_menuId = 4;
-			if (_byte12FCE)
-				_byte16F07_menuId = 3;
+			_actionType = 4;
+			if (_bool12FCE)
+				_actionType = 3;
 
 			forceReturnFl = true;
 			return;
@@ -2086,15 +2088,15 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	_lastInterfaceHotspotButton = button;
 
 	if (button == 2) {
-		if (!_byte12FCE) {
+		if (!_bool12FCE) {
 			_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
-			_byte16F07_menuId = 2;
+			_actionType = 2;
 			displayInterfaceHotspots();
 		}
 		return;
 	}
 
-	if (_byte12FCE) {
+	if (_bool12FCE) {
 		unselectInterfaceButton();
 		return;
 	}
@@ -2102,10 +2104,10 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	unselectInterfaceHotspots();
 	_scriptHandler->_interfaceHotspotStatus[index] = kHotspotSelected;
 	if (_rulesBuffer13_1[index] == 1) {
-		_byte12FCE = true;
-		_word15AC2 = 1;
+		_bool12FCE = true;
+		_bool15AC2 = true;
 	} else {
-		_byte16F07_menuId = 1;
+		_actionType = 1;
 	}
 
 	displayInterfaceHotspots();
@@ -2794,8 +2796,8 @@ void LilliputEngine::setCurrentCharacter(int index) {
 void LilliputEngine::unselectInterfaceButton() {
 	debugC(1, kDebugEngine, "unselectInterfaceButton()");
 
-	_byte12FCE = false;
-	_word15AC2 = 0;
+	_bool12FCE = false;
+	_bool15AC2 = false;
 	_lastInterfaceHotspotButton = 0;
 	unselectInterfaceHotspots();
 	displayInterfaceHotspots();
@@ -2804,10 +2806,10 @@ void LilliputEngine::unselectInterfaceButton() {
 void LilliputEngine::handleMenu() {
 	debugC(1, kDebugEngine, "handleMenu()");
 
-	if (_byte16F07_menuId == 0)
+	if (_actionType == kActionNone)
 		return;
 
-	if (_byte12FCE && (_byte16F07_menuId != 3))
+	if (_bool12FCE && (_actionType != 3))
 		return;
 
 	setCurrentCharacter(_word10804);
@@ -2817,10 +2819,10 @@ void LilliputEngine::handleMenu() {
 	_savedMousePosDivided = Common::Point(-1, -1);
 	_selectedCharacterId = -1;
 
-	if (_byte16F07_menuId == 3)
+	if (_actionType == 3)
 		unselectInterfaceButton();
 
-	_byte16F07_menuId = 0;
+	_actionType = kActionNone;
 }
 
 void LilliputEngine::handleGameScripts() {
@@ -2844,7 +2846,8 @@ void LilliputEngine::handleGameScripts() {
 	setCurrentCharacter(index);
 
 
-	_word16EFE = _array11D49[index];
+	_word16EFEh = _array11D49[index] >> 8;
+	_word16EFEl_characterId = _array11D49[index] & 0xFF;
 	_array11D49[index] = -1;
 	_word1817B = 0;
 
