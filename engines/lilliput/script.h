@@ -34,6 +34,12 @@ namespace Lilliput {
 
 class LilliputEngine;
 
+enum kActionType {
+	kActionNone = 0,
+	kActionGoto = 5,
+	kCodeEntered = 6
+};
+
 enum KValueType {
 	kNone,
 	kImmediateValue,
@@ -105,7 +111,7 @@ private:
 	byte _byte18823;
 	byte _speechDisplaySpeed;
 
-	int16 _word16F00;
+	int16 _word16F00_characterId;
 	int _currentSpeechId;
 	int _word18821;
 	int _word129A3;
@@ -190,7 +196,7 @@ private:
 	byte OC_sub179AE();
 	byte OC_sub179C2();
 	byte OC_checkFunctionKeyPressed();
-	byte OC_sub17A07();
+	byte OC_checkCodeEntered();
 	byte OC_checkViewPortCharacterTarget();
 
 	// Opcodes Type 2

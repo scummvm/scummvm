@@ -36,7 +36,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_byte18823 = 0;
 	_speechDisplaySpeed = 3;
 	_speechTimer = 0;
-	_word16F00 = -1;
+	_word16F00_characterId = -1;
 	_word129A3 = 0;
 	_viewportCharacterTarget = -1;
 	_heroismBarX = 0;
@@ -229,7 +229,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_checkFunctionKeyPressed();
 		break;
 	case 0x30:
-		return OC_sub17A07();
+		return OC_checkCodeEntered();
 		break;
 	case 0x31:
 		return OC_checkViewPortCharacterTarget();
@@ -604,7 +604,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_sub179AE", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179C2", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 	{ "OC_checkFunctionKeyPressed", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_sub17A07", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone },
+	{ "OC_checkCodeEntered", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone },
 	{ "OC_checkViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
 };
 
@@ -730,7 +730,7 @@ Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& 
 		} else if (val == 1001) {
 			str = Common::String("characterIndex");
 		} else if (val == 1002) {
-			str = Common::String("_word16F00");
+			str = Common::String("_word16F00_characterId");
 		} else if (val == 1003) {
 			str = Common::String("_currentCharacterVariables[6]");
 		} else if (val == 1004) {
@@ -759,7 +759,7 @@ Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& 
 		break;
 			   }
 	case 0xFB: {
-		str = "(characterPositionTileX[_word16F00], characterPositionTileY[_word16F00])";
+		str = "(characterPositionTileX[_word16F00_characterId], characterPositionTileY[_word16F00_characterId])";
 		break;
 			   }
 	case 0xFA:
@@ -1289,7 +1289,7 @@ int16 LilliputScript::getValue1() {
 	case 1001:
 		return _vm->_currentScriptCharacter;
 	case 1002:
-		return _word16F00;
+		return _word16F00_characterId;
 	case 1003:
 		return (int16)_vm->_currentCharacterVariables[6];
 	case 1004:
@@ -1325,7 +1325,7 @@ Common::Point LilliputScript::getPosFromScript() {
 		return Common::Point(x, y);
 		}
 	case 0xFB: {
-		int index = _word16F00;
+		int index = _word16F00_characterId;
 		assert((index >= 0) && (index < 40));
 		int16 x = _vm->_characterPositionX[index] >> 3;
 		int16 y = _vm->_characterPositionY[index] >> 3;
@@ -1499,7 +1499,7 @@ byte LilliputScript::OC_sub174D8() {
 	if (curWord == 3000) {
 		for (int index = 0; index < _vm->_numCharacters; index++) {
 			if (_vm->_rulesBuffer2_5[index] == tmpVal) {
-				_word16F00 = index;
+				_word16F00_characterId = index;
 				return 1;
 			}
 		}
@@ -1508,7 +1508,7 @@ byte LilliputScript::OC_sub174D8() {
 		int index = getValue1();
 		assert(index < 40);
 		if (_vm->_rulesBuffer2_5[index] == tmpVal) {
-			_word16F00 = index;
+			_word16F00_characterId = index;
 			return 1;
 		}
 	}
@@ -1617,7 +1617,7 @@ byte LilliputScript::OC_sub175C8() {
 		if ((var1 & 0xFF) < var4)
 			return 0;
 		
-		_word16F00 = index;
+		_word16F00_characterId = index;
 		return 1;
 	}
 
@@ -1625,7 +1625,7 @@ byte LilliputScript::OC_sub175C8() {
 		for (int i = 0; i < _vm->_numCharacters; i++) {
 			int var1 = _array10B51[(_vm->_currentScriptCharacter * 40) + i];
 			if ((var1 & 0xFF) >= var4) {
-				_word16F00 = i;
+				_word16F00_characterId = i;
 				return 1;
 			}
 		}
@@ -1637,7 +1637,7 @@ byte LilliputScript::OC_sub175C8() {
 	for (int i = 0; i < _vm->_numCharacters; i++) {
 		int var1 = _array10B51[(_vm->_currentScriptCharacter * 40) + i];
 		if (((var1 & 0xFF) >= var4) && (_vm->_rulesBuffer2_12[i] == var4b)) {
-			_word16F00 = i;
+			_word16F00_characterId = i;
 			return 1;
 		}
 	}	
@@ -1660,7 +1660,7 @@ byte LilliputScript::OC_sub17640() {
 		byte v2 = tmpVal >> 8;
 		if ((v1 < (var4 & 0xFF)) || (v2 >= (var4 & 0xFF)))
 			return 0;
-		_word16F00 = subIndex;
+		_word16F00_characterId = subIndex;
 		return 1;
 	}
 
@@ -1671,7 +1671,7 @@ byte LilliputScript::OC_sub17640() {
 			byte v1 = tmpVal & 0xFF;
 			byte v2 = tmpVal >> 8;
 			if ((v1 >= (var4 & 0xFF)) && (v2 < (var4 & 0xFF))) {
-				_word16F00 = i;
+				_word16F00_characterId = i;
 				return 1;
 			}
 		}
@@ -1685,7 +1685,7 @@ byte LilliputScript::OC_sub17640() {
 		byte v1 = tmpVal & 0xFF;
 		byte v2 = tmpVal >> 8;
 		if ((v1 >= (var4 & 0xFF)) && (v2 < (var4 & 0xFF)) && (_vm->_rulesBuffer2_12[i] == (var4 >> 8))) {
-			_word16F00 = i;
+			_word16F00_characterId = i;
 			return 1;
 		}
 	}
@@ -1706,7 +1706,7 @@ byte LilliputScript::OC_sub176C4() {
 		if (((var1 & 0xFF) >= var4) || ((var1 >> 8) < var4))
 			return 0;
 		
-		_word16F00 = index;
+		_word16F00_characterId = index;
 		return 1;
 	}
 
@@ -1714,7 +1714,7 @@ byte LilliputScript::OC_sub176C4() {
 		for (int i = 0; i < _vm->_numCharacters; i++) {
 			int var1 = _array10B51[(_vm->_currentScriptCharacter * 40) + i];
 			if (((var1 & 0xFF) < var4) && ((var1 >> 8) >= var4)) {
-				_word16F00 = i;
+				_word16F00_characterId = i;
 				return 1;
 			}
 		}
@@ -1727,7 +1727,7 @@ byte LilliputScript::OC_sub176C4() {
 		int var1 = _array10B51[(_vm->_currentScriptCharacter * 40) + i];
 		if (((var1 & 0xFF) < var4) && ((var1 >> 8) >= var4)) {
 			if (_vm->_rulesBuffer2_12[i] == var4b) {
-				_word16F00 = i;
+				_word16F00_characterId = i;
 				return 1;
 			}
 		}
@@ -1804,12 +1804,12 @@ byte LilliputScript::OC_compWord16EFE() {
 	debugC(1, kDebugScript, "OC_compWord16EFE()");
 
 	byte curByte = _currScript->readUint16LE() & 0xFF;
-	byte tmpVal = _vm->_word16EFE >> 8;
+	byte tmpVal = _vm->_word16EFEh;
 
 	if (curByte != tmpVal)
 		return 0;
 
-	_word16F00 = (_vm->_word16EFE & 0xFF);
+	_word16F00_characterId = _vm->_word16EFEl_characterId;
 	return 1;
 }
 
@@ -1842,7 +1842,7 @@ byte LilliputScript::OC_checkLastInterfaceHotspotIndexMenu13() {
 
 	byte tmpVal = (_currScript->readUint16LE() & 0xFF);
 	
-	if ((_vm->_byte16F07_menuId != 1) && (_vm->_byte16F07_menuId != 3))
+	if ((_vm->_actionType != 1) && (_vm->_actionType != 3))
 		return 0;
 
 	if (tmpVal == _vm->_lastInterfaceHotspotIndex)
@@ -1856,7 +1856,7 @@ byte LilliputScript::OC_checkLastInterfaceHotspotIndexMenu2() {
 
 	int8 hotspotIndex = (_currScript->readUint16LE() & 0xFF);
 
-	if ((_vm->_byte16F07_menuId == 2) || (hotspotIndex == _vm->_lastInterfaceHotspotIndex))
+	if ((_vm->_actionType == 2) && (hotspotIndex == _vm->_lastInterfaceHotspotIndex))
 		return 1;
 
 	return 0;
@@ -1963,7 +1963,7 @@ byte LilliputScript::OC_sub1790F() {
 	if (_vm->_rulesBuffer2_5[index] == -1)
 		return 0;
 
-	_word16F00 = _vm->_rulesBuffer2_5[index];
+	_word16F00_characterId = _vm->_rulesBuffer2_5[index];
 
 	return 1;
 }
@@ -2039,7 +2039,7 @@ byte LilliputScript::OC_checkSelectedCharacter() {
 byte LilliputScript::OC_sub179AE() {
 	debugC(1, kDebugScript, "OC_sub179AE()");
 
-	if (_vm->_byte12FCE || (_vm->_selectedCharacterId == -1))
+	if (_vm->_bool12FCE || (_vm->_selectedCharacterId == -1))
 		return 0;
 
 	return 1;
@@ -2070,18 +2070,18 @@ byte LilliputScript::OC_checkFunctionKeyPressed() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub17A07() {
-	debugC(1, kDebugScript, "OC_sub17A07()");
+byte LilliputScript::OC_checkCodeEntered() {
+	debugC(1, kDebugScript, "OC_checkCodeEntered()");
 
-	static const byte array179FD[10] = {11, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	static const byte solutionArr[10] = {11, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-	if (_vm->_byte16F07_menuId == 6) {
+	if (_vm->_actionType == kCodeEntered) {
 		uint16 index = _currScript->readUint16LE();
-		if (array179FD[index] == _vm->_array147D1[0]) {
+		if (solutionArr[index] == _vm->_codeEntered[0]) {
 			index = _currScript->readUint16LE();
-			if (array179FD[index] == _vm->_array147D1[1]) {
+			if (solutionArr[index] == _vm->_codeEntered[1]) {
 				index = _currScript->readUint16LE();
-				if (array179FD[index] == _vm->_array147D1[2]) {
+				if (solutionArr[index] == _vm->_codeEntered[2]) {
 					return 1;
 				}
 			} else
@@ -2537,9 +2537,10 @@ void LilliputScript::OC_sub17CD1() {
 }
 
 void LilliputScript::OC_resetWord16EFE() {
-	debugC(1, kDebugScriptTBC, "OC_resetWord16EFE()");
+	debugC(1, kDebugScript, "OC_resetWord16EFE()");
 
-	_vm->_word16EFE = -1;
+	_vm->_word16EFEh = -1;
+	_vm->_word16EFEl_characterId = -1;
 }
 
 void LilliputScript::OC_enableCurrentCharacterScript() {
@@ -3110,7 +3111,7 @@ void LilliputScript::OC_loadFileAerial() {
 	_vm->_refreshScreenFlag = true;
 	_talkingCharacter = -1;
 	OC_PaletteFadeOut();
-	_vm->_word15AC2 = 1;
+	_vm->_bool15AC2 = true;
 	_vm->displayVGAFile("AERIAL.GFX");
 	OC_PaletteFadeIn();
 

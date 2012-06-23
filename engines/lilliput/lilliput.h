@@ -122,7 +122,7 @@ public:
 	byte _debugFlag; // Mostly useless, as the associated functions are empty
 	byte _byte14837; // Unused byte, set by an opcode
 
-	byte _array147D1[3];
+	byte _codeEntered[3];
 	char _array1692B[4];
 	byte *_bufferIsoMap;
 	byte *_bufferCubegfx;
@@ -141,10 +141,11 @@ public:
 	byte _numCharacters;
 	Common::Point _currentScriptCharacterPos;
 	int _nextCharacterIndex;
-	int16 _word16EFE;
+	int8 _word16EFEh;
+	int8 _word16EFEl_characterId;
 	uint16 _word1817B;
 	Common::Point _savedSurfaceUnderMousePos;
-	int _word15AC2;
+	bool _bool15AC2;
 	int _currentDisplayCharacter;
 	int _displayStringIndex;
 	int _word1289D;
@@ -291,12 +292,12 @@ public:
 	void displayCharactersOnMap();
 	void restoreMapPoints();
 	void displayHeroismIndicator();
-	void sub130EE();
+	void handleGameMouseClick();
 	void sub1305C(byte index, byte var2);
 	void checkInterfaceHotspots(bool &forceReturnFl);
 	bool isMouseOverHotspot(Common::Point mousePos, Common::Point hotspotPos);
 	void checkClickOnCharacter(Common::Point pos, bool &forceReturnFl);
-	void sub131FC(Common::Point pos);
+	void checkClickOnGameArea(Common::Point pos);
 	void displaySpeechBubbleTail(Common::Point displayPos);
 	void displaySpeechBubbleTailLine(Common::Point pos, int var2);
 	void displaySpeechLine(int vgaIndex, byte *srcBuf, int &bufIndex);
@@ -346,8 +347,8 @@ public:
 	int _skipDisplayFlag1;
 	int _skipDisplayFlag2;
 
-	byte _byte16F07_menuId;
-	bool _byte12FCE;
+	byte _actionType;
+	bool _bool12FCE;
 	int8 _selectedCharacterId;
 	byte _numCharactersToDisplay;
 	int16 _word10804;
