@@ -226,11 +226,6 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (index > scr->getExportsNr()) {
-		error("Dispatch index too big: %d > %d", index, scr->getExportsNr());
-		return NULL_REG;
-	}
-
 	uint16 address = scr->validateExportFunc(index, true);
 
 	// Point to the heap for SCI1.1 - SCI2.1 games
