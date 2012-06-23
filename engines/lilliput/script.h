@@ -106,7 +106,7 @@ private:
 	byte _byte16F05_ScriptHandler;
 	byte _byte10806;
 	byte _lastRandomValue;
-	byte _byte16F04;
+	byte _scriptForVal;
 	byte _byte1881A;
 	byte _byte18823;
 	byte _speechDisplaySpeed;
@@ -157,7 +157,7 @@ private:
 	byte OC_for();
 	byte OC_compCurrentSpeechId();
 	byte OC_checkSaveFlag();
-	byte OC_compByte16F04();
+	byte OC_compScriptForVal();
 	byte OC_sub174D8();
 	byte OC_CompareCharacterVariables();
 	byte OC_compareCoords_1();
@@ -217,13 +217,13 @@ private:
 	void OC_startSpeech5();
 	void OC_resetByte1714E();
 	void OC_deleteSavegameAndQuit();
-	void OC_incByte16F04();
+	void OC_incScriptForVal();
 	void OC_sub17BA5();
 	void OC_setByte18823();
 	void OC_callScript();
 	void OC_callScriptAndReturn();
 	void OC_setCurrentScriptCharacterPos();
-	void OC_resetByte16F04();
+	void OC_initScriptFor();
 	void OC_sub17AE1();
 	void OC_sub17AEE();
 	void OC_setWord10804();
