@@ -166,7 +166,10 @@ Common::Error ComposerEngine::run() {
 		} else if (_needsUpdate) {
 			redraw();
 		}
-
+		if (ConfMan.hasKey("save_slot")) {
+			loadGameState(ConfMan.getInt("save_slot"));
+			ConfMan.removeKey("save_slot", Common::ConfigManager::kTransientDomain);
+		}
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:

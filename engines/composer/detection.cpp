@@ -417,7 +417,7 @@ bool ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 bool ComposerMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return (f == kSupportsListSaves);
+	return ((f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup));
 }
 
 Common::String getSaveName(Common::InSaveFile *in) {
