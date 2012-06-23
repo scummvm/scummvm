@@ -50,7 +50,7 @@ const char *opcodeNames[] = {
 		"lea",    "selfID",    "dummy",    "pprev",     "pToa",
 	   "aTop",      "pTos",     "sTop",    "ipToa",    "dpToa",
 	  "ipTos",     "dpTos",    "lofsa",    "lofss",    "push0",
-	  "push1",     "push2", "pushSelf",    "dummy",      "lag",
+	  "push1",     "push2", "pushSelf",     "line",      "lag",
 		"lal",       "lat",      "lap",      "lsg",      "lsl",
 		"lst",       "lsp",     "lagi",     "lali",     "lati",
 	   "lapi",      "lsgi",     "lsli",     "lsti",     "lspi",
@@ -97,9 +97,18 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 	uint bytecount = readPMachineInstruction(scr + pos.getOffset(), opsize, opparams);
 	const byte opcode = opsize >> 1;
 
-	opsize &= 1; // byte if true, word if false
-
 	debugN("%04x:%04x: ", PRINT_REG(pos));
+
+	if (opcode == op_pushSelf) { // 0x3e (62)
+		if ((opsize & 1) && g_sci->getGameId() != GID_FANMADE) {
+			// Debug opcode op_file
+			debugN("file \"%s\"\n", scr + pos.getOffset() + 1);	// +1: op_pushSelf size
+			retval.incOffset(bytecount - 1);
+			return retval;
+		}
+	}
+
+	opsize &= 1; // byte if true, word if false
 
 	if (printBytecode) {
 		if (pos.getOffset() + bytecount > scr_size) {
