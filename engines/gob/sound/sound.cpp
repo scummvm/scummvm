@@ -352,7 +352,7 @@ void Sound::adlibPlayBgMusic() {
 
 	const char *track = 0;
 	if (_vm->getPlatform() == Common::kPlatformWindows)
-		track = tracksWin[ARRAYSIZE(tracksWin)];
+		track = tracksWin[_vm->_util->getRandom(ARRAYSIZE(tracksWin))];
 	else
 		track = tracksMac[_vm->_util->getRandom(ARRAYSIZE(tracksMac))];
 
