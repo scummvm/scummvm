@@ -32,6 +32,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
@@ -86,9 +87,12 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	}
 
 	bool skipVideo = false;
+	EngineState *s = g_sci->getEngineState();
 
-	if (videoDecoder->hasDirtyPalette())
-		videoDecoder->setSystemPalette();
+	if (videoDecoder->hasDirtyPalette()) {
+		byte *palette = (byte *)videoDecoder->getPalette() + s->_vmdPalStart * 3;
+		g_system->getPaletteManager()->setPalette(palette, s->_vmdPalStart, s->_vmdPalEnd - s->_vmdPalStart);
+	}
 
 	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
@@ -103,8 +107,10 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 					g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, width, height);
 				}
 
-				if (videoDecoder->hasDirtyPalette())
-					videoDecoder->setSystemPalette();
+				if (videoDecoder->hasDirtyPalette()) {
+					byte *palette = (byte *)videoDecoder->getPalette() + s->_vmdPalStart * 3;
+					g_system->getPaletteManager()->setPalette(palette, s->_vmdPalStart, s->_vmdPalEnd - s->_vmdPalStart);
+				}
 
 				g_system->updateScreen();
 			}
@@ -360,6 +366,10 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelShow();
+		break;
+	case 23:	// set video palette range
+		s->_vmdPalStart = argv[1].toUint16();
+		s->_vmdPalEnd = argv[2].toUint16();
 		break;
 	case 14:
 		// Takes an additional integer parameter (e.g. 3)

@@ -196,6 +196,7 @@ public:
 	byte _memorySegment[kMemorySegmentMax];
 
 	VideoState _videoState;
+	uint16 _vmdPalStart, _vmdPalEnd;
 	bool _syncedAudioOptions;
 
 	/**
