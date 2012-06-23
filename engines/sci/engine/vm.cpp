@@ -225,30 +225,15 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		scr = s->_segMan->getScript(seg);
 	}
 
-	int temp = scr->validateExportFunc(pubfunct, false);
-
-	if (getSciVersion() == SCI_VERSION_3)
-		temp += scr->getCodeBlockOffset();
-
-	if (!temp) {
-#ifdef ENABLE_SCI32
-		if (g_sci->getGameId() == GID_TORIN && script == 64036) {
-			// Script 64036 in Torin's Passage is empty and contains an invalid
-			// (empty) export
-		} else if (g_sci->getGameId() == GID_RAMA && script == 64908) {
-			// Script 64908 in the demo of RAMA contains an invalid (empty)
-			// export
-		} else
-#endif
-			error("Request for invalid exported function 0x%x of script %d", pubfunct, script);
+	uint32 exportAddr = scr->validateExportFunc(pubfunct, false);
+	if (!exportAddr)
 		return NULL;
-	}
-
+	
 	// Check if a breakpoint is set on this method
 	g_sci->checkExportBreakpoint(script, pubfunct);
 
 	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
-						seg, make_reg(seg, temp), -1, pubfunct, -1,
+						seg, make_reg(seg, exportAddr), -1, pubfunct, -1,
 						s->_executionStack.size() - 1, EXEC_STACK_TYPE_CALL);
 	s->_executionStack.push_back(xstack);
 	return &(s->_executionStack.back());

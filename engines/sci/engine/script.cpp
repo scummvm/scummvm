@@ -385,7 +385,7 @@ void Script::setLockers(int lockers) {
 	_lockers = lockers;
 }
 
-uint16 Script::validateExportFunc(int pubfunct, bool relocate) {
+uint16 Script::validateExportFunc(int pubfunct, bool relocateSci3) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
 	if (_numExports <= pubfunct) {
@@ -398,14 +398,14 @@ uint16 Script::validateExportFunc(int pubfunct, bool relocate) {
 
 	uint16 offset;
 
-	if (getSciVersion() != SCI_VERSION_3 || !relocate) {
+	if (getSciVersion() != SCI_VERSION_3) {
 		offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
 	} else {
-		offset = relocateOffsetSci3(pubfunct * 2 + 22);
+		if (!relocateSci3)
+			offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct) + getCodeBlockOffsetSci3();
+		else
+			offset = relocateOffsetSci3(pubfunct * 2 + 22);
 	}
-
-	if (offset >= _bufSize)
-		error("Invalid export function pointer");
 
 	// Check if the offset found points to a second export table (e.g. script 912
 	// in Camelot and script 306 in KQ4). Such offsets are usually small (i.e. < 10),
@@ -419,10 +419,22 @@ uint16 Script::validateExportFunc(int pubfunct, bool relocate) {
 		if (secondExportTable) {
 			secondExportTable += 3;	// skip header plus 2 bytes (secondExportTable is a uint16 pointer)
 			offset = READ_SCI11ENDIAN_UINT16(secondExportTable + pubfunct);
-			if (offset >= _bufSize)
-				error("Invalid export function pointer");
 		}
 	}
+
+	if (!offset) {
+#ifdef ENABLE_SCI32
+		// WORKAROUNDS for invalid (empty) exports
+		if (g_sci->getGameId() == GID_TORIN && _nr == 64036) {
+		} else if (g_sci->getGameId() == GID_RAMA && _nr == 64908) {
+		} else
+#endif
+			error("Request for invalid exported function 0x%x of script %d", pubfunct, _nr);
+		return NULL;
+	}
+
+	if (offset >= _bufSize)
+		error("Invalid export function pointer");
 
 	return offset;
 }
@@ -551,7 +563,7 @@ void Script::initializeClasses(SegManager *segMan) {
 		if (getSciVersion() <= SCI_VERSION_1_LATE && !marker)
 			break;
 
-		if (getSciVersion() >= SCI_VERSION_1_1 && marker != 0x1234)
+		if (getSciVersion() >= SCI_VERSION_1_1 && marker != SCRIPT_OBJECT_MAGIC_NUMBER)
 			break;
 
 		if (getSciVersion() <= SCI_VERSION_1_LATE) {
