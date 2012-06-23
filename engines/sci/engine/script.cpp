@@ -385,7 +385,7 @@ void Script::setLockers(int lockers) {
 	_lockers = lockers;
 }
 
-uint16 Script::validateExportFunc(int pubfunct, bool relocateSci3) {
+uint32 Script::validateExportFunc(int pubfunct, bool relocateSci3) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
 	if (_numExports <= pubfunct) {
@@ -396,7 +396,7 @@ uint16 Script::validateExportFunc(int pubfunct, bool relocateSci3) {
 	if (exportsAreWide)
 		pubfunct *= 2;
 
-	uint16 offset;
+	uint32 offset;
 
 	if (getSciVersion() != SCI_VERSION_3) {
 		offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);

@@ -201,7 +201,7 @@ public:
 	 * @return				NULL if the public function is invalid, its
 	 * 						offset into the script's segment otherwise
 	 */
-	uint16 validateExportFunc(int pubfunct, bool relocateSci3);
+	uint32 validateExportFunc(int pubfunct, bool relocateSci3);
 
 	/**
 	 * Marks the script as deleted.

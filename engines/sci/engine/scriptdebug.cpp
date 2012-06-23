@@ -68,7 +68,7 @@ const char *opcodeNames[] = {
 #endif	// REDUCE_MEMORY_USAGE
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode) {
+reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	const byte *scr;
@@ -347,7 +347,7 @@ void SciEngine::scriptDebug() {
 		}
 
 		if (_debugState.seeking != kDebugSeekNothing) {
-			const reg_t pc = s->xs->addr.pc;
+			const reg32_t pc = s->xs->addr.pc;
 			SegmentObj *mobj = s->_segMan->getSegment(pc.getSegment(), SEG_TYPE_SCRIPT);
 
 			if (mobj) {

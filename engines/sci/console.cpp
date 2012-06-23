@@ -2913,7 +2913,8 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 			if (jumpTarget > farthestTarget)
 				farthestTarget = jumpTarget;
 		}
-		addr = disassemble(_engine->_gamestate, addr, printBWTag, printBytecode);
+		// TODO: Use a true 32-bit reg_t for the position (addr)
+		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), printBWTag, printBytecode);
 		if (addr.isNull() && prevAddr < farthestTarget)
 			addr = prevAddr + 1; // skip past the ret
 	} while (addr.getOffset() > 0);
@@ -2961,7 +2962,8 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	}
 
 	do {
-		vpc = disassemble(_engine->_gamestate, vpc, printBWTag, printBytes);
+		// TODO: Use a true 32-bit reg_t for the position (vpc)
+		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), printBWTag, printBytes);
 	} while ((vpc.getOffset() > 0) && (vpc.getOffset() + 6 < size) && (--opCount));
 
 	return true;
@@ -3652,10 +3654,14 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 		relativeOffset = true;
 
 		if (!scumm_strnicmp(str + 1, "PC", 2)) {
-			*dest = s->_executionStack.back().addr.pc;
+			// TODO: Handle 32-bit PC addresses
+			reg32_t pc = s->_executionStack.back().addr.pc;
+			*dest = make_reg(pc.getSegment(), (uint16)pc.getOffset());
 			offsetStr = str + 3;
 		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
-			*dest = s->_executionStack.back().addr.pc;
+			// TODO: Handle 32-bit PC addresses
+			reg32_t pc = s->_executionStack.back().addr.pc;
+			*dest = make_reg(pc.getSegment(), (uint16)pc.getOffset());
 			offsetStr = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;

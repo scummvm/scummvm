@@ -233,7 +233,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	g_sci->checkExportBreakpoint(script, pubfunct);
 
 	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
-						seg, make_reg(seg, exportAddr), -1, pubfunct, -1,
+						seg, make_reg32(seg, exportAddr), -1, pubfunct, -1,
 						s->_executionStack.size() - 1, EXEC_STACK_TYPE_CALL);
 	s->_executionStack.push_back(xstack);
 	return &(s->_executionStack.back());
@@ -289,11 +289,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		ExecStackType stackType = EXEC_STACK_TYPE_VARSELECTOR;
 		StackPtr curSP = NULL;
-		reg_t curFP = NULL_REG;
+		reg32_t curFP = make_reg32(0, 0);
 		if (selectorType == kSelectorMethod) {
 			stackType = EXEC_STACK_TYPE_CALL;
 			curSP = sp;
-			curFP = funcp;
+			// TODO: Will this offset suffice for large SCI3 scripts?
+			curFP = make_reg32(funcp.getSegment(), funcp.getOffset());
 			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
 		}
 
@@ -327,7 +328,7 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc,
 	// Add stack frame to indicate we're executing a callk.
 	// This is useful in debugger backtraces if this
 	// kernel function calls a script itself.
-	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, 0xFFFF, NULL_REG,
+	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, 0xFFFF, make_reg32(0, 0),
 						kernelCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
 	s->_executionStack.push_back(xstack);
 }
@@ -818,11 +819,11 @@ void run_vm(EngineState *s) {
 			StackPtr call_base = s->xs->sp - argc;
 			s->xs->sp[1].incOffset(s->r_rest);
 
-			uint16 localCallOffset = s->xs->addr.pc.getOffset() + opparams[0];
+			uint32 localCallOffset = s->xs->addr.pc.getOffset() + opparams[0];
 
 			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp,
 							(call_base->requireUint16()) + s->r_rest, call_base,
-							s->xs->local_segment, make_reg(s->xs->addr.pc.getSegment(), localCallOffset),
+							s->xs->local_segment, make_reg32(s->xs->addr.pc.getSegment(), localCallOffset),
 							NULL_SELECTOR, -1, localCallOffset, s->_executionStack.size() - 1,
 							EXEC_STACK_TYPE_CALL);
 
@@ -1117,7 +1118,7 @@ void run_vm(EngineState *s) {
 
 			switch (g_sci->_features->detectLofsType()) {
 			case SCI_VERSION_0_EARLY:
-				r_temp.setOffset(s->xs->addr.pc.getOffset() + opparams[0]);
+				r_temp.setOffset((uint16)s->xs->addr.pc.getOffset() + opparams[0]);
 				break;
 			case SCI_VERSION_1_MIDDLE:
 				r_temp.setOffset(opparams[0]);
