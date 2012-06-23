@@ -99,7 +99,7 @@ public:
 	SmallAnim _smallAnims[4];
 	int _smallAnimsFrameIndex;
 
-	byte _byte1714E;
+	byte _handleOpcodeReturnCode;
 	byte _byte184F4;
 	byte _lastAnimationTick;
 	byte _animationTick;
@@ -118,7 +118,6 @@ public:
 	byte _byte16552;
 	int8 _lastInterfaceHotspotIndex;
 	byte _lastInterfaceHotspotButton; // Unused: set by 2 functions, but never used elsewhere
-	byte _byte16F08;
 	byte _debugFlag; // Mostly useless, as the associated functions are empty
 	byte _byte14837; // Unused byte, set by an opcode
 

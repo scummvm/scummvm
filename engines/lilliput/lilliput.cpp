@@ -133,21 +133,20 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_scriptHandler = new LilliputScript(this);
 	_soundHandler = new LilliputSound(this);
 
-	_byte1714E = 0;
+	_handleOpcodeReturnCode = 0;
 	_bool12FCE = false;
 	_selectedCharacterId = -1;
 	_numCharactersToDisplay = 0;
 	_nextDisplayCharacterPos = Common::Point(0, 0);
 	_animationTick = 0;
-	_byte12A05 = 10;
-	_byte12A06 = 2;
-	_byte12A07 = 0;
-	_byte12A08 = 0;
+	_byte12A05 = 10; // Used to trigger sound and animations in int8, 1 time out of 10
+	_byte12A06 = 2;  // Used to switch _byte12A07 between true and false, 1 time our of 3
+	_byte12A07 = 0;  // Set but never used
+	_byte12A08 = 0;  // Used to avoid two executions of int8 at the same time. Useless in ScummVM
 	_refreshScreenFlag = false;
 	_byte16552 = 0;
 	_lastInterfaceHotspotIndex = -1;
 	_lastInterfaceHotspotButton = 0;
-	_byte16F08 = 0;
 	_lastAnimationTick = 0;
 
 	_currentScriptCharacter = 0;
