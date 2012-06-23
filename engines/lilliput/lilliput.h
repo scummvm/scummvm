@@ -347,7 +347,7 @@ public:
 	int _skipDisplayFlag2;
 
 	byte _actionType;
-	bool _bool12FCE;
+	bool _mouthSelected;
 	int8 _selectedCharacterId;
 	byte _numCharactersToDisplay;
 	int16 _word10804;

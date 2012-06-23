@@ -134,7 +134,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_soundHandler = new LilliputSound(this);
 
 	_handleOpcodeReturnCode = 0;
-	_bool12FCE = false;
+	_mouthSelected = false;
 	_selectedCharacterId = -1;
 	_numCharactersToDisplay = 0;
 	_nextDisplayCharacterPos = Common::Point(0, 0);
@@ -983,7 +983,7 @@ void LilliputEngine::sub15F75() {
 		return;
 
 	_savedMousePosDivided = Common::Point(newX, newY);
-	_actionType = kActionGoto;
+	_actionType = 5;
 }
 
 void LilliputEngine::unselectInterfaceHotspots() {
@@ -2027,12 +2027,11 @@ void LilliputEngine::checkClickOnGameArea(Common::Point pos) {
 	int arrowY = (y - x) >> 1;
 	int arrowX = y - arrowY;
 
-	// Set the arrow coordinates 
 	if ((arrowX >= 0) && (arrowY >= 0) && (arrowX < 8) && (arrowY < 8)) {
 		arrowX += _scriptHandler->_viewportPos.x;
 		arrowY += _scriptHandler->_viewportPos.y;
 		_savedMousePosDivided = Common::Point(arrowX, arrowY);
-		_actionType = kActionGoto;
+		_actionType = 5;
 	}
 }
 
@@ -2045,9 +2044,9 @@ void LilliputEngine::checkClickOnCharacter(Common::Point pos, bool &forceReturnF
 		// check if position is over a character
 		if ((pos.x >= _characterDisplayX[i]) && (pos.x <= _characterDisplayX[i] + 17) && (pos.y >= _characterDisplayY[i]) && (pos.y <= _characterDisplayY[i] + 17) && (i != _word10804)) {
 			_selectedCharacterId = i;
-			_actionType = 4;
-			if (_bool12FCE)
-				_actionType = 3;
+			_actionType = kActionGoto;
+			if (_mouthSelected)
+				_actionType = kActionTalk;
 
 			forceReturnFl = true;
 			return;
@@ -2087,7 +2086,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	_lastInterfaceHotspotButton = button;
 
 	if (button == 2) {
-		if (!_bool12FCE) {
+		if (!_mouthSelected) {
 			_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
 			_actionType = 2;
 			displayInterfaceHotspots();
@@ -2095,7 +2094,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 		return;
 	}
 
-	if (_bool12FCE) {
+	if (_mouthSelected) {
 		unselectInterfaceButton();
 		return;
 	}
@@ -2103,7 +2102,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	unselectInterfaceHotspots();
 	_scriptHandler->_interfaceHotspotStatus[index] = kHotspotSelected;
 	if (_rulesBuffer13_1[index] == 1) {
-		_bool12FCE = true;
+		_mouthSelected = true;
 		_bool15AC2 = true;
 	} else {
 		_actionType = 1;
@@ -2795,7 +2794,7 @@ void LilliputEngine::setCurrentCharacter(int index) {
 void LilliputEngine::unselectInterfaceButton() {
 	debugC(1, kDebugEngine, "unselectInterfaceButton()");
 
-	_bool12FCE = false;
+	_mouthSelected = false;
 	_bool15AC2 = false;
 	_lastInterfaceHotspotButton = 0;
 	unselectInterfaceHotspots();
@@ -2808,7 +2807,7 @@ void LilliputEngine::handleMenu() {
 	if (_actionType == kActionNone)
 		return;
 
-	if (_bool12FCE && (_actionType != 3))
+	if (_mouthSelected && (_actionType != kActionTalk))
 		return;
 
 	setCurrentCharacter(_word10804);
@@ -2818,7 +2817,7 @@ void LilliputEngine::handleMenu() {
 	_savedMousePosDivided = Common::Point(-1, -1);
 	_selectedCharacterId = -1;
 
-	if (_actionType == 3)
+	if (_actionType == kActionTalk)
 		unselectInterfaceButton();
 
 	_actionType = kActionNone;

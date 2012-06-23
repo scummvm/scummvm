@@ -1842,7 +1842,7 @@ byte LilliputScript::OC_checkLastInterfaceHotspotIndexMenu13() {
 
 	byte tmpVal = (_currScript->readUint16LE() & 0xFF);
 	
-	if ((_vm->_actionType != 1) && (_vm->_actionType != 3))
+	if ((_vm->_actionType != 1) && (_vm->_actionType != kActionTalk))
 		return 0;
 
 	if (tmpVal == _vm->_lastInterfaceHotspotIndex)
@@ -2039,7 +2039,7 @@ byte LilliputScript::OC_checkSelectedCharacter() {
 byte LilliputScript::OC_sub179AE() {
 	debugC(1, kDebugScript, "OC_sub179AE()");
 
-	if (_vm->_bool12FCE || (_vm->_selectedCharacterId == -1))
+	if (_vm->_mouthSelected || (_vm->_selectedCharacterId == -1))
 		return 0;
 
 	return 1;
