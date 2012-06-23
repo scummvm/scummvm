@@ -536,6 +536,8 @@ bool FPStream::unloadFile() {
 	/* Closes the file handle stream */
 	delete _loopStream;
 	delete _rewindableStream;
+	_loopStream = NULL;
+	_rewindableStream = NULL;
 	_file.close();
 
 	// Flag that the file is no longer in memory
