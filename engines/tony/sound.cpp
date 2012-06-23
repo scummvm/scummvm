@@ -486,8 +486,11 @@ bool FPStream::loadFile(const Common::String &fileName, uint32 dwCodType, int nB
 	_dwCodec = dwCodType;
 
 	// Open the file stream for reading
-	if (!_file.open(fileName))
-		return false;
+	if (!_file.open(fileName)) {
+		// Fallback: try with an extra '0' prefix
+		if (!_file.open("0" + fileName))
+			return false;
+	}
 
 	// Save the size of the stream
 	_dwSize = _file.size();
