@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.4.0git\n"
+"Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-05-20 22:39+0100\n"
-"PO-Revision-Date: 2012-01-29 21:11+0100\n"
+"PO-Revision-Date: 2012-06-07 13:48+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de> (Lead), Lothar Serra Mari "
 "<Lothar@Windowsbase.de> (Contributor)\n"
@@ -79,9 +79,8 @@ msgid "Remap keys"
 msgstr "Tasten neu zuweisen"
 
 #: gui/gui-manager.cpp:129 base/main.cpp:307
-#, fuzzy
 msgid "Toggle FullScreen"
-msgstr "Vollbild-/Fenster-Modus"
+msgstr "Vollbild EIN/AUS"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
@@ -195,9 +194,8 @@ msgid "Platform:"
 msgstr "Plattform:"
 
 #: gui/launcher.cpp:231
-#, fuzzy
 msgid "Engine"
-msgstr "Betrachte"
+msgstr "Engine"
 
 #: gui/launcher.cpp:239 gui/options.cpp:1062 gui/options.cpp:1079
 msgid "Graphics"
@@ -788,7 +786,7 @@ msgstr "Spr."
 
 #: gui/options.cpp:931
 msgid "Subs"
-msgstr "TXT"
+msgstr "Text"
 
 #: gui/options.cpp:932
 msgctxt "lowres"
@@ -1172,18 +1170,16 @@ msgid ""
 "further assistance."
 msgstr ""
 "Leider bietet diese Engine keine Spielhilfe. Bitte lesen Sie die Liesmich-"
-"Datei für grundlegende Informationen und Anweisungen dazu, wie man an "
-"weitere Hilfe gelangt."
+"Datei für grundlegende Informationen und Anweisungen zu weiterer Hilfe."
 
 #: engines/dialogs.cpp:243
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Leider bietet diese Engine keine Spielhilfe. Bitte lesen Sie die Liesmich-"
-"Datei für grundlegende Informationen und Anweisungen dazu, wie man an "
-"weitere Hilfe gelangt."
+"Speichern des Spielstands %s fehlgeschlagen! Bitte lesen Sie die Liesmich-"
+"Datei für grundlegende Informationen und Anweisungen zu weiterer Hilfe."
 
 #: engines/dialogs.cpp:321 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
@@ -1247,14 +1243,13 @@ msgstr ""
 "Liesmich-Datei für weitere Informationen."
 
 #: engines/engine.cpp:426
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Leider bietet diese Engine keine Spielhilfe. Bitte lesen Sie die Liesmich-"
-"Datei für grundlegende Informationen und Anweisungen dazu, wie man an "
-"weitere Hilfe gelangt."
+"Laden des Spielstands %s fehlgeschlagen! Bitte lesen Sie die Liesmich-"
+"Datei für grundlegende Informationen und Anweisungen zu weiterer Hilfe."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1274,12 +1269,12 @@ msgstr "Trotzdem starten"
 #: engines/agi/detection.cpp:145 engines/dreamweb/detection.cpp:47
 #: engines/sci/detection.cpp:390
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "Originale Spielstand-Menüs"
 
 #: engines/agi/detection.cpp:146 engines/dreamweb/detection.cpp:48
 #: engines/sci/detection.cpp:391
 msgid "Use the original save/load screens, instead of the ScummVM ones"
-msgstr ""
+msgstr "Verwendet die originalen Menüs zum Speichern und Laden statt der von ScummVM."
 
 #: engines/agi/saveload.cpp:827 engines/sci/engine/kfile.cpp:674
 msgid "Restore game:"
@@ -1290,70 +1285,70 @@ msgid "Restore"
 msgstr "Laden"
 
 #: engines/dreamweb/detection.cpp:57
-#, fuzzy
 msgid "Use bright palette mode"
-msgstr "Oberer rechter Gegenstand"
+msgstr "Modus für helle Palette verwenden"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "Zeigt Grafiken über helle Spielpalette an."
 
 #: engines/sci/detection.cpp:370
 msgid "EGA undithering"
 msgstr "Antifehlerdiffusion für EGA"
 
 #: engines/sci/detection.cpp:371
-#, fuzzy
 msgid "Enable undithering in EGA games"
-msgstr ""
-"Aktiviert die Aufhebung der Fehlerdiffusion in EGA-Spielen, die dies "
-"unterstützen."
+msgstr "Aktiviert die Aufhebung der Fehlerdiffusion in EGA-Spielen."
 
 #: engines/sci/detection.cpp:380
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "Lautstärke spezieller Soundeffekte"
+msgstr "Digitale Sound-Effekte bevorzugen"
 
 #: engines/sci/detection.cpp:381
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "Bevorzugt digitale Sound-Effekte statt synthethisierter."
 
 #: engines/sci/detection.cpp:400
 msgid "Use IMF/Yahama FB-01 for MIDI output"
-msgstr ""
+msgstr "IMF/Yahama FB-01 für MIDI-Ausgabe verwenden"
 
 #: engines/sci/detection.cpp:401
 msgid ""
 "Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
+"Verwendet eine Music-Feature-Karte von IBM oder ein "
+"Yahama-FB-01-FM-Synthetisierungsmodul für die MIDI-Ausgabe."
 
 #: engines/sci/detection.cpp:411
 msgid "Use CD audio"
-msgstr ""
+msgstr "CD-Ton verwenden"
 
 #: engines/sci/detection.cpp:412
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "Verwendet CD-Ton anstatt des Tons im Spiel, sofern verfügbar."
 
 #: engines/sci/detection.cpp:422
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "Windows-Mauszeiger verwenden"
 
 #: engines/sci/detection.cpp:423
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
+"Verwendet die Windows-Mauszeiger (kleiner und schwarz-weiß) anstatt der von "
+"DOS."
 
 #: engines/sci/detection.cpp:433
-#, fuzzy
 msgid "Use silver cursors"
-msgstr "Normaler Mauszeiger"
+msgstr "Silberne Mauszeiger verwenden"
 
 #: engines/sci/detection.cpp:434
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
+"Verwendet alternativen Satz silberner Mauszeiger anstatt der normalen "
+"goldenen."
 
 #: engines/scumm/dialogs.cpp:175
 #, c-format
@@ -2008,8 +2003,9 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
-"Systemeigene MIDI-Ünterstützung erfordert das Roland-Upgrade von LucasArts,\n"
-"aber %s fehlt. Stattdessen wird AdLib verwendet."
+"Systemeigene MIDI-Ünterstützung erfordert das\n"
+"Roland-Upgrade von LucasArts, aber %s\n"
+"fehlt. Stattdessen wird AdLib verwendet."
 
 #: engines/scumm/scumm.cpp:2271 engines/agos/saveload.cpp:202
 #, c-format
@@ -2107,61 +2103,59 @@ msgstr "Konnte Spielstand nicht speichern."
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr ""
+msgstr "Studio-Publikum"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr ""
+msgstr "Aktiviert Studio-Publikum."
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr ""
+msgstr "Überspring-Unterstützung"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "Erlaubt das Überspringen von Textteilen und Zwischensequenzen."
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr ""
+msgstr "Helium-Modus"
 
 #: engines/kyra/detection.cpp:85
-#, fuzzy
 msgid "Enable helium mode"
-msgstr "Roland-GS-Modus"
+msgstr "Aktiviert Helium-Modus."
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr ""
+msgstr "Gleichmäßiges Scrollen"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr ""
+msgstr "Aktiviert gleichmäßiges Scrollen beim Gehen."
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:112
-#, fuzzy
 msgid "Floating cursors"
-msgstr "Normaler Mauszeiger"
+msgstr "Richtungspfeil-Mauszeiger"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "Aktiviert Richtungspfeil-Mauszeiger."
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
 msgid "HP bar graphs"
-msgstr ""
+msgstr "Trefferpunkte-Balken"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "Aktiviert grafische Trefferpunkte-Balken."
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -2222,17 +2216,18 @@ msgstr ""
 "Sie scheinen ein General-MIDI-Gerät zu\n"
 "verwenden, aber das Spiel unterstützt nur\n"
 "Roland MT-32 MIDI. Es wird versucht, die\n"
-"Roland-MT-32-Instrumente denen von General MIDI\n"
-"zuzuordnen. Es kann jedoch vorkommen, dass ein\n"
-"paar Musikstücke nicht richtig abgespielt werden."
+"Roland-MT-32-Instrumente denen von\n"
+"General MIDI zuzuordnen. Es kann jedoch\n"
+"vorkommen, dass ein paar Musikstücke nicht\n"
+"richtig abgespielt werden."
 
 #: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr ""
+msgstr "Disketten-Vorspann"
 
 #: engines/queen/queen.cpp:60 engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "Verwendet den Vorspann der Diskettenversion (nur bei CD-Version)."
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2256,6 +2251,7 @@ msgstr ""
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr ""
+"PSX-Zwischensequenz \"%s\" kann in Palettenmodus nicht wiedergegeben werden."
 
 #: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:455
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
@@ -2282,13 +2278,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM hat erkannt, dass Sie alte Speicherstände von Baphomets Fluch 1 "
+"ScummVM hat erkannt, dass Sie alte Spielstände von Baphomets Fluch 1 "
 "haben, die umgewandelt werden sollten.\n"
-"Das alte Spielstandsformat wird nicht mehr unterstützt, also können Sie "
-"diese Speicherstände nicht laden, wenn Sie diese nicht konvertieren.\n"
+"Das alte Speicherformat wird nicht mehr unterstützt, also können Sie "
+"diese Spielstände unkonvertiert nicht laden.\n"
 "\n"
-"Klicken Sie auf OK, um diese jetzt umzuwandeln, ansonsten werden Sie erneut "
-"gefragt, wenn Sie das nächste Mal dieses Spiel starten.\n"
+"Klicken Sie auf OK, um diese jetzt umzuwandeln, sonst werden Sie erneut "
+"gefragt, wenn Sie nächstes Mal dieses Spiel starten.\n"
 
 #: engines/sword1/control.cpp:1232
 #, c-format
@@ -2312,20 +2308,19 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Das ist das Ende der Demo von Broken Sword 1 (Baphomets Fluch 1)."
 
 #: engines/sword2/animation.cpp:435
-#, fuzzy
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"DXA-Zwischensequenzen gefunden, aber ScummVM wurde ohne Zlib-Unterstützung "
-"erstellt."
+"PSX-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung "
+"für RGB-Farben erstellt."
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr ""
+msgstr "Objektnamen zeigen"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "Zeigt Objektbeschriftungen bei Mausberührung an."
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2353,13 +2348,13 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"ScummVM hat erkannt, dass Sie alte Speicherstände von Nippon Safes haben, "
+"ScummVM hat erkannt, dass Sie alte Spielstände von Nippon Safes haben, "
 "die umbenannt werden sollten.\n"
 "Die alten Dateinamen werden nicht mehr unterstützt, also können Sie diese "
-"Speicherstände nicht laden, wenn Sie diese nicht konvertieren.\n"
+"Spielstände unkonvertiert nicht laden.\n"
 "\n"
-"Klicken Sie auf OK, um diese jetzt umzuwandeln, ansonsten werden Sie erneut "
-"gefragt, wenn Sie das nächste Mal dieses Spiel starten.\n"
+"Klicken Sie auf OK, um diese jetzt umzuwandeln, sonst werden Sie erneut "
+"gefragt, wenn Sie nächstes Mal dieses Spiel starten.\n"
 
 #: engines/parallaction/saveload.cpp:326
 msgid "ScummVM successfully converted all your savefiles."
@@ -2467,9 +2462,8 @@ msgid "Keymap:"
 msgstr "Tasten-Layout:"
 
 #: backends/keymapper/remap-dialog.cpp:66
-#, fuzzy
 msgid " (Effective)"
-msgstr " (Aktiv)"
+msgstr " (Aktuell)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Active)"
@@ -2477,7 +2471,7 @@ msgstr " (Aktiv)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Blocked)"
-msgstr ""
+msgstr " (Blockiert)"
 
 #: backends/keymapper/remap-dialog.cpp:119
 msgid " (Global)"
@@ -2581,7 +2575,7 @@ msgstr "Touchpad-Modus ausgeschaltet."
 
 #: backends/platform/maemo/maemo.cpp:205
 msgid "Click Mode"
-msgstr ""
+msgstr "Klickmodus"
 
 #: backends/platform/maemo/maemo.cpp:211
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -2592,9 +2586,8 @@ msgid "Left Click"
 msgstr "Linksklick"
 
 #: backends/platform/maemo/maemo.cpp:214
-#, fuzzy
 msgid "Middle Click"
-msgstr "Mittlerer linker Gegenstand"
+msgstr "Mittelklick"
 
 #: backends/platform/maemo/maemo.cpp:217
 #: backends/platform/symbian/src/SymbianActions.cpp:43
