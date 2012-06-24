@@ -1,0 +1,4626 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001-2006 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
+/*
+ * Another edge-directed 2x/3x anti-aliasing scaler for ScummVM
+ *
+ * Author: Eric A. Welsh
+ *
+ * INTERPOLATE/Q_INTERPOLATE macros taken from HQ2x/HQ3x scalers
+ *  (Authors: Maxim Stepin and Max Horn)
+ * 
+ *
+ * Sharp, clean, anti-aliased image with very few artifacts.
+ * Detects and appropriately handles mouse overlays with transparent pixels.
+ * The Edge3x filter detects unchanged pixels and does not redraw them,
+ * resulting in a considerable gain in speed when there are even a moderate
+ * number of unchanged pixels.  Edge3x and Edge2x anti-alias using nearest-
+ * neighbor methods.  Edge2xi interpolates.
+ *
+ * The really slow speed is mainly due to the edge detection algorithm.  In
+ * order to accurately detect the edge direction (and thus avoid artifacts
+ * caused by mis-detection), the edge detection and refinement process is
+ * rather long and involved.  Speed must be sacrificed in order to avoid
+ * artifacts :(  If anyone is tempted to optimize using lower precision
+ * math, such as converting some of the double math to fixed-point integer,
+ * or lowering the number of significant bits used in the existing integer
+ * math to squeeze it into accelerated 16-bit vector instructions, please do
+ * not do this.  Any loss in precision results in visibly degraded image
+ * quality.  I've tried integer conversions of various double math, and tried
+ * reducing the number of significant digits I use in the integer math, and
+ * it always results in less accurate edge detection and lower image quality.
+ * If you're going to optimize, make sure you don't sacrifice any precision.
+ * There may be a few places I could change the variable types from
+ * int32 to int16 without introducing overflows, though.  I should also
+ * probably change some of the flags and arrays to bools or chars, rather
+ * than ints, since they are only 0 or 1.
+ *
+ * It's a bit slow... but ScummVM runs most things fine on my 1.53 GHz Athlon.
+ * Increasing the Win32 thread priority can help by forcing Windows not to
+ * twiddle its thumbs and idle as much during heavy CPU load.  The Dig
+ * cutscene when the asteroid is activated is a little jerky, pans/fades in
+ * Amazon Queen and Beneath a Steel Sky are slow.  Faster machines probably
+ * won't have a problem.  I remember a time when my home machine was too slow
+ * to run SNES emulators with 2xSaI filters, so I don't think speed is such a
+ * big issue here.  It won't be too long before the average home computer is
+ * plenty fast enough to run this filter.
+ *
+ */
+
+/*
+ * Notes on handling overlays, mouse, transparencies, etc.:
+ *
+ * As I write this, the SDL backend does not call different filters based on
+ * whether or not the bitmaps contain transparency.  Bitmaps with transparency
+ * need to be treated differently.  1) Interpolation needs to be disabled,
+ * since interpolating with transparent pixels produces ugly smears around the
+ * transparent areas.  2) Transparent pixels need to be treated differently
+ * during edge detection, so that they appear to be as if they were colors
+ * that would give maximal contrast in the current 3x3 window.
+ *
+ * Currently, the SDL backend calls anti-aliasing resize filters to either
+ * resize the game screen or resize the mouse.  The filter stores the src
+ * array bounds whenever the width and height of the area to be resized are
+ * equal to the width and height of the current game screen.  If the current
+ * src array is outside these bounds, then it is assumed that the mouse or
+ * menu overlay is being drawn.  This works perfectly for the current SDL
+ * backend, but it is still a hack.  If, in the future, the filter were to
+ * to be used to resize a transparent overlay with dimensions equal to those
+ * of the current game screen, that overlay would be resized without any
+ * special transparency consideration.  The same goes for a mouse pointer
+ * that is equal to the size of the screen, but I don't forsee this ever
+ * being a problem....  The correct solution would be to rewrite the backends
+ * to call filters differently depending on whether or not the bitmap contains
+ * transparent pixels, and whether or not the end result should be
+ * interpolated or resized using nearest-neighbor.  Until then, the array
+ * bounds checking hack will have to do.
+ *
+ */
+
+#include <math.h>
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "graphics/scaler/edge.h"
+
+/* Randomly XORs one of 2x2 or 3x3 resized pixels in order to indicate
+ * which pixels have been redrawn.  Useful for seeing which areas of
+ * the screen are being redrawn.  Good for seeing dirty rects, full screen
+ * refreshes, etc..  Also good for seeing if the unchanged pixel detection is
+ * working correctly or not :)
+ */
+#define DEBUG_REFRESH_RANDOM_XOR		0	/* debug redraws */
+
+/* Use with DEBUG_REFRESH_RANDOM_XOR.  Randomize the borders of the drawing
+ * area, whether they are unchanged or not.  Useful for visualizing the
+ * borders of the drawing area.  You might be surprised at which areas of the
+ * screen get redraw requests, even areas with absolutely nothing moving,
+ * or color cycling, or anything that would cause a dirty rect or require a
+ * redraw....
+ */
+#define DEBUG_DRAW_REFRESH_BORDERS		0	/* more redraw debug */
+
+#define INCREASE_WIN32_PRIORITY			0	/* 1 for slow CPUs */
+#define PARANOID_KNIGHTS			1	/* avoid artifacts */
+#define PARANOID_ARROWS				1	/* avoid artifacts */
+#define HANDLE_TRANSPARENT_OVERLAYS		1	/* as it says */
+
+#define SIN45 0.7071067811865		/* sin of 45 degrees */
+#define GREY_SHIFT 12			/* bit shift for greyscale precision */
+#define RGB_SHIFT 13			/* bit shift for RGB precision */
+
+const int16 one_sqrt2 = (int16) (((int16)1<<GREY_SHIFT) / sqrt(2.0) + 0.5);
+int16 rgb_table[65536][3] = {0};	/* table lookup for RGB */
+int16 greyscale_table[3][65536] = {0};	/* greyscale tables */
+int16 *chosen_greyscale;		/* pointer to chosen greyscale table */
+int16 *bptr_global;			/* too awkward to pass variables */
+int8 sim_sum;				/* sum of similarity matrix */
+
+uint16 div3[189];			/* tables for pixel interpolation */
+uint16 div9[567];
+
+int32 max_old_src_size = 0;		/* maximum observed rectangle size */
+int32 max_overlay_size = 0;		/* maximum observed overlay size */
+int32 max_old_dst_size = 0;
+int32 max_dst_overlay_size = 0;
+uint16 *old_src = NULL;			/* old src array */
+uint16 *old_overlay = NULL;		/* holds the old overlay */
+uint16 *old_dst = NULL;			/* old dst array */
+uint16 *old_dst_overlay = NULL;		/* old dst overlay array */
+
+int cur_screen_width = 0;		/* current game screen w and h */
+int cur_screen_height = 0;
+int old_screen_width = 0;		/* previous game screen w and h */
+int old_screen_height = 0;
+int cur_dst_screen_width = 0;		/* scaled dst w and h */
+int cur_dst_screen_height = 0;
+int old_dst_screen_width = 0;
+int old_dst_screen_height = 0;
+int cur_overlay_width = 0;
+int cur_overlay_height = 0;
+int old_overlay_width = 0;
+int old_overlay_height = 0;
+int cur_dst_overlay_width = 0;
+int cur_dst_overlay_height = 0;
+int old_dst_overlay_width = 0;
+int old_dst_overlay_height = 0;
+int max_scale = -1;			/* used for dst buffer arrays */
+
+int init_flag = 0;			/* have the tables been initialized? */
+const uint16 *src_addr_min = NULL;	/* start of src screen array */
+const uint16 *src_addr_max = NULL;	/* end of src screen array */
+
+const int16 int32_sqrt3 = (int16) (((int16)1<<GREY_SHIFT) * sqrt(3.0) + 0.5);
+
+
+
+#if DEBUG_REFRESH_RANDOM_XOR
+/* Random number generators with very good randomness properties, far better
+ * than the simple linear congruential generator in the ScummVM utils.
+ * The RNG algorithms were developed by George Marsaglia, as published in his
+ * "Xorshift RNGs" paper and various USENET postings.
+ *
+ * Marsaglia, George, 2003, "Xorshift RNGs", Journal of Statistical Software,
+ * Volume 7, Issue 14
+ *
+ * Note the comments in the code below about how many of the triplet and shift
+ * combinations published in his paper and various USENET postings don't quite
+ * work as expected (yes, I exhaustively tested all 648 of them with his test
+ * suite).  Only a few "magic" combinations actually produce good random
+ * numbers.  I suspect this is due to the numbers being shifted too far off
+ * the ends of the registers?
+ *
+ * While numbers this highly random are overkill for our purposes, I already
+ * had this code written for various scientific analysis programs, and I've
+ * tested the generators with Marsaglia's comprehensive randomness test
+ * suite, so I know that they have very good randomness.  The simple single
+ * seed algorithm does fail a few minor tests, but it is still LOADS better
+ * than a linear congruential generator.  The 4 seed RNG passes all tests
+ * with flying colors and has a pretty big period to boot.  I actually use
+ * a 4096 seed RNG for my scientific work, but that is MAJOR overkill for
+ * the simple purposes we require here, so I've not included it :)
+ */
+
+uint32 seed0, seed1, seed2, seed3;
+
+/* period 2^32 - 1 */
+/* fails Gorilla test, binary rank matrix */
+/* the ONLY good triplet and shift combinations out of the list of 648:
+ *
+ *    3  7 13     >> >> <<
+ *    3  7 13     << << >>
+ *    7  3 13     >> >> <<
+ *    7  3 13     << << >>
+ *
+ *    5  6 13     >> >> <<
+ *    5  6 13     << << >>
+ *    6  5 13     >> >> <<
+ *    6  5 13     << << >>	seems to be slightly "better" than the others?
+ *
+ * all others, including the "favorite" (13, 17, 5), fail some Monkey tests
+ */
+uint32 xorshift_32(void)
+{
+	seed0 ^= seed0 << 6;
+	seed0 ^= seed0 << 5;
+	seed0 ^= seed0 >> 13;
+
+	return(seed0);
+}
+
+/* period 2^128 - 1 */
+/* None of the other published 2^128-1 xorshift RNGs passed OPERM5 */
+uint32 xorshift_128(void)
+{
+	uint32 temp;
+
+	temp = (seed0 ^ (seed0 << 20)) ^ (seed1 ^ (seed1 >> 11)) ^
+		(seed2 ^ (seed2 << 27)) ^ (seed3 ^ (seed3 >> 6));
+	seed0 = seed1;
+	seed1 = seed2;
+	seed2 = seed3;
+	seed3 = temp;
+
+	return (temp);
+}
+
+/* return a random fraction over the range [0, 1) */
+double dxorshift_128(void)
+{
+	uint32 temp;
+
+	temp = (seed0 ^ (seed0 << 20)) ^ (seed1 ^ (seed1 >> 11)) ^
+		(seed2 ^ (seed2 << 27)) ^ (seed3 ^ (seed3 >> 6));
+	seed0 = seed1;
+	seed1 = seed2;
+	seed2 = seed3;
+	seed3 = temp;
+
+	return (temp / 4294967296.0);
+}
+
+void initialize_xorshift_128(uint32 seed)
+{
+	/* seed0 needs to be initialized prior to calling xorshift_32() */
+	seed0 = seed;
+
+	/* initialize with xorshift_32() */
+	seed0 = xorshift_32();
+	seed1 = xorshift_32();
+	seed2 = xorshift_32();
+	seed3 = xorshift_32();
+}
+#endif
+
+
+
+/*
+ * Faster than standard double atan(), |error| < 7E-6
+ *
+ * Original equation from Ranko Bojanic in StuChat37:
+ *
+ * |x| <= 1:
+ *
+ *    x + A*x3		A = 0.43157974, B = 0.76443945, C = 0.05831938
+ * ---------------
+ * 1 + B*x2 + C*x4
+ *
+ *
+ *
+ * After some optimizations:
+ *
+ * |x| <= 1:
+ *
+ *  x * (E + F*x2)	E = 1/C, F = A/C
+ * ----------------	G = (B/C + sqrt(B2/C2 - 4/C)) / 2
+ * (G + x2)(H + x2)	H = (B/C - sqrt(B2/C2 - 4/C)) / 2
+ *
+ *			E = 17.14695869537, F = 7.400279975541
+ *			G = 11.63393762882, H = 1.473874045440
+ *
+ * |x| > 1: pi/2 -
+ *
+ *   x * (I + x2)	I = A
+ * ----------------	J = (B + sqrt(B2 - 4C)) / 2
+ * (J + x2)(K + x2)	K = (B - sqrt(B2 - 4C)) / 2
+ *
+ *			I = 0.43157974
+ *			J = 0.6784840295980, K = 0.0859554204018
+ *
+ */
+double fast_atan(double x0)
+{
+	double x2;
+	double x;
+
+	x = fabs(x0);
+	x2 = x*x;
+	if (x > 1)
+	{
+		x2 = 1.570796326795 -
+			x * (0.43157974 + x2) /
+			((0.6784840295980 + x2) * (0.0859554204018 + x2));
+		if (x0 < 0) return -x2;
+		return x2;
+	}
+
+	return x0 * (17.14695869537 + 7.400279975541 * x2) /
+		((11.63393762882 + x2) * (1.473874045440 + x2));
+}
+
+
+
+/*
+ * Choose greyscale bitplane to use, return diff array.  Exit early and
+ * return NULL for a block of solid color (all diffs zero).
+ *
+ * No matter how you do it, mapping 3 bitplanes into a single greyscale
+ * bitplane will always result in colors which are very different mapping to
+ * the same greyscale value.  Inevitably, these pixels will appear next to 
+ * each other at some point in some image, and edge detection on a single 
+ * bitplane will behave quite strangely due to them having the same or nearly
+ * the same greyscale values.  Calculating distances between pixels using all 
+ * three RGB bitplanes is *way* too time consuming, so single bitplane 
+ * edge detection is used for speed's sake.  In order to try to avoid the 
+ * color mapping problems of using a single bitplane, 3 different greyscale 
+ * mappings are tested for each 3x3 grid, and the one with the most "signal" 
+ * (sum of squares difference from center pixel) is chosen.  This usually 
+ * results in useable contrast within the 3x3 grid.
+ *
+ * This results in a whopping 25% increase in overall runtime of the filter 
+ * over simply using luma or some other single greyscale bitplane, but it
+ * does greatly reduce the amount of errors due to greyscale mapping 
+ * problems.  I think this is the best compromise between accuracy and 
+ * speed, and is still a lot faster than edge detecting over all three RGB
+ * bitplanes.  The increase in image quality is well worth the speed hit.
+ *
+ */
+int16 * choose_greyscale(uint16 *pixels)
+{
+	static int16 greyscale_diffs[3][8];
+	static int16 bplanes[3][9];
+	int i, j;
+	int32 scores[3];
+
+	for (i = 0; i < 3; i++)
+	{
+		int16 *diff_ptr;
+		int16 *bptr;
+		uint16 *pptr;
+		int16 *grey_ptr;
+		int16 center;
+		int32 sum_diffs;
+
+		sum_diffs = 0;
+
+		grey_ptr = greyscale_table[i];
+
+		/* fill the 9 pixel window with greyscale values */
+		bptr = bplanes[i];
+		pptr = pixels;
+		for (j = 9; j; --j)
+			*bptr++ = grey_ptr[*pptr++];
+		bptr = bplanes[i];
+
+		center = grey_ptr[pixels[4]];
+		diff_ptr = greyscale_diffs[i];
+
+		/* calculate the delta from center pixel */
+		diff_ptr[0] = bptr[0] - center;
+		diff_ptr[1] = bptr[1] - center;
+		diff_ptr[2] = bptr[2] - center;
+		diff_ptr[3] = bptr[3] - center;
+		diff_ptr[4] = bptr[5] - center;
+		diff_ptr[5] = bptr[6] - center;
+		diff_ptr[6] = bptr[7] - center;
+		diff_ptr[7] = bptr[8] - center;
+
+		/* calculate sum of squares distance */
+		for (j = 8; j; --j) {
+			sum_diffs += *diff_ptr * *diff_ptr;
+			++diff_ptr;
+		}
+
+		scores[i] = sum_diffs;
+	}
+
+	/* choose greyscale with highest score, ties decided in GRB order */
+
+	if (scores[1] >= scores[0] && scores[1] >= scores[2])
+	{
+		if (!scores[1]) return NULL;
+
+		chosen_greyscale = greyscale_table[1];
+		bptr_global = bplanes[1];
+		return greyscale_diffs[1];
+	}
+
+	if (scores[0] >= scores[1] && scores[0] >= scores[2])
+	{
+		if (!scores[0]) return NULL;
+
+		chosen_greyscale = greyscale_table[0];
+		bptr_global = bplanes[0];
+		return greyscale_diffs[0];
+	}
+
+	if (!scores[2]) return NULL;
+
+	chosen_greyscale = greyscale_table[2];
+	bptr_global = bplanes[2];
+	return greyscale_diffs[2];
+}
+
+
+
+/*
+ * Calculate the distance between pixels in RGB space.  Greyscale isn't 
+ * accurate enough for choosing nearest-neighbors :(  Luma-like weighting 
+ * of the individual bitplane distances prior to squaring gives the most 
+ * useful results.
+ *
+ */
+int32 calc_pixel_diff_nosqrt(uint16 pixel1, uint16 pixel2)
+{
+
+#if 1	/* distance between pixels, weighted by roughly luma proportions */
+	int32 sum = 0;
+	int16 *rgb_ptr1 = rgb_table[pixel1];
+	int16 *rgb_ptr2 = rgb_table[pixel2];
+	int16 diff;
+
+	diff = (*rgb_ptr1++ - *rgb_ptr2++) << 1;
+	sum += diff * diff;
+	diff = (*rgb_ptr1++ - *rgb_ptr2++) << 2;
+	sum += diff * diff;
+	diff = (*rgb_ptr1 - *rgb_ptr2);
+	sum += diff * diff;
+
+	return sum;
+#endif
+
+#if 0	/* distance between pixels, weighted by chosen greyscale proportions */
+	int32 sum = 0;
+	int16 *rgb_ptr1 = rgb_table[pixel1];
+	int16 *rgb_ptr2 = rgb_table[pixel2];
+	int16 diff;
+	int r_shift, g_shift, b_shift;
+
+	if (chosen_greyscale == greyscale_table[1])
+	{
+		r_shift = 1;
+		g_shift = 2;
+		b_shift = 0;
+	}
+	else if (chosen_greyscale == greyscale_table[0])
+	{
+		r_shift = 2;
+		g_shift = 1;
+		b_shift = 0;
+	}
+	else
+	{
+		r_shift = 0;
+		g_shift = 1;
+		b_shift = 2;
+	}
+
+	diff = (*rgb_ptr1++ - *rgb_ptr2++) << r_shift;
+	sum += diff * diff;
+	diff = (*rgb_ptr1++ - *rgb_ptr2++) << g_shift;
+	sum += diff * diff;
+	diff = (*rgb_ptr1 - *rgb_ptr2) << b_shift;
+	sum += diff * diff;
+
+	return sum;
+#endif
+
+#if 0	/* distance between pixels, unweighted */
+	int32 sum = 0;
+	int16 *rgb_ptr1 = rgb_table[pixel1];
+	int16 *rgb_ptr2 = rgb_table[pixel2];
+	int16 diff;
+
+	diff = *rgb_ptr1++ - *rgb_ptr2++;
+	sum += diff * diff;
+	diff = *rgb_ptr1++ - *rgb_ptr2++;
+	sum += diff * diff;
+	diff = *rgb_ptr1 - *rgb_ptr2;
+	sum += diff * diff;
+
+	return sum;
+#endif
+
+#if 0	/* use the greyscale directly */
+	return labs(chosen_greyscale[pixel1] - chosen_greyscale[pixel2]);
+#endif
+}
+
+
+
+/*
+ * Create vectors of all delta grey values from center pixel, with magnitudes
+ * ranging from [1.0, 0.0] (zero difference, maximum difference).  Find
+ * the two principle axes of the grid by calculating the eigenvalues and
+ * eigenvectors of the inertia tensor.  Use the eigenvectors to calculate the 
+ * edge direction.  In other words, find the angle of the line that optimally
+ * passes through the 3x3 pattern of pixels.
+ *
+ * Return horizontal (-), vertical (|), diagonal (/,\), multi (*), or none '0'
+ *
+ * Don't replace any of the double math with integer-based approximations,
+ * since everything I have tried has lead to slight mis-detection errors.
+ *
+ */
+int find_principle_axis(uint16 *pixels, int16 *diffs, int16 *bplane,
+		int8 *sim,
+		int32 *return_angle)
+{
+	struct xy_point
+	{
+		int16 x, y;
+	};
+
+	int i;
+	int16 centx = 0, centy = 0;
+	struct xy_point xy_points[9];
+	int angle;
+	int reverse_flag = 1;
+	int16 cutoff;
+	int16 max_diff;
+
+	double x, y;
+	int32 half_matrix[3] = {0};
+
+	double eigenval1, eigenval2;
+	double best_val;
+	double a, b, c;
+	double ratio;
+	int32 scale;
+
+	/* absolute value of differences */
+	for (i = 0; i < 8; i++)
+		diffs[i] = labs(diffs[i]);
+
+	/* find the max difference */
+	max_diff = *diffs;
+	for (i = 1; i < 8; i++)
+		if (diffs[i] > max_diff) max_diff = diffs[i];
+
+	/* exit early on uniform window */
+	/* already taken care of earlier elsewhere after greyscale assignment */
+	/* if (max_diff == 0) return '0'; */
+
+	/* normalize the differences */
+	scale = (1L<<(GREY_SHIFT+GREY_SHIFT)) / max_diff;
+	for (i = 0; i < 8; i++)
+		diffs[i] = (diffs[i] * scale + ((int16)1<<(GREY_SHIFT-1))) >> GREY_SHIFT;
+
+	/*
+	 * Some pixel patterns need to NOT be reversed, since the pixels of 
+	 * interest that form the edge to be detected are off-center.
+	 * 
+	 */
+
+	/* calculate yes/no similarity matrix to center pixel */
+	/* store the number of similar pixels */
+	cutoff = ((int16)1<<(GREY_SHIFT-3));
+	for (i = 0, sim_sum = 0; i < 8; i++)
+		sim_sum += (sim[i] = (diffs[i] < cutoff));
+
+	/* don't reverse pattern for off-center knights and sharp corners */
+	if (sim_sum >= 3 && sim_sum <= 5)
+	{
+		/* |. */ /* '- */
+		if (sim[1] && sim[4] && sim[5] && !sim[3] && !sim[6] &&
+				(!sim[0] ^ !sim[7]))
+			reverse_flag = 0;
+
+		/* -. */ /* '| */
+		else if (sim[2] && sim[3] && sim[6] && !sim[1] && !sim[4] &&
+				(!sim[0] ^ !sim[7]))
+			reverse_flag = 0;
+
+		/* .- */ /* |' */
+		else if (sim[4] && sim[6] && sim[0] && !sim[1] && !sim[3] &&
+				(!sim[2] ^ !sim[5]))
+			reverse_flag = 0;
+
+		/* .| */ /* -' */
+		else if (sim[1] && sim[3] && sim[7] && !sim[4] && !sim[6] &&
+				(!sim[2] ^ !sim[5]))
+			reverse_flag = 0;
+
+		/* 90 degree corners */
+		else if (sim_sum == 3)
+		{
+			if ((sim[0] && sim[1] && sim[3]) ||
+					(sim[1] && sim[2] && sim[4]) ||
+					(sim[3] && sim[5] && sim[6]) ||
+					(sim[4] && sim[6] && sim[7]))
+				reverse_flag = 0;
+		}
+	}
+
+	/* redo similarity array, less stringent for later checks */
+	cutoff = ((int16)1<<(GREY_SHIFT-1));
+	for (i = 0, sim_sum = 0; i < 8; i++)
+		sim_sum += (sim[i] = (diffs[i] < cutoff));
+
+	/* center pixel is different from all the others, not an edge */
+	if (sim_sum == 0) return '0';
+
+	/* reverse the difference array, so most similar is closest to 1 */
+	if (reverse_flag)
+	{
+		diffs[0] = ((int16)1<<GREY_SHIFT) - diffs[0];
+		diffs[1] = ((int16)1<<GREY_SHIFT) - diffs[1];
+		diffs[2] = ((int16)1<<GREY_SHIFT) - diffs[2];
+		diffs[3] = ((int16)1<<GREY_SHIFT) - diffs[3];
+		diffs[4] = ((int16)1<<GREY_SHIFT) - diffs[4];
+		diffs[5] = ((int16)1<<GREY_SHIFT) - diffs[5];
+		diffs[6] = ((int16)1<<GREY_SHIFT) - diffs[6];
+		diffs[7] = ((int16)1<<GREY_SHIFT) - diffs[7];
+	}
+
+	/* scale diagonals for projection onto axes */
+	diffs[0] = (diffs[0] * one_sqrt2 + ((int16)1<<(GREY_SHIFT-1))) >> GREY_SHIFT;
+	diffs[2] = (diffs[2] * one_sqrt2 + ((int16)1<<(GREY_SHIFT-1))) >> GREY_SHIFT;
+	diffs[5] = (diffs[5] * one_sqrt2 + ((int16)1<<(GREY_SHIFT-1))) >> GREY_SHIFT;
+	diffs[7] = (diffs[7] * one_sqrt2 + ((int16)1<<(GREY_SHIFT-1))) >> GREY_SHIFT;
+
+	/* create the vectors, centered at 0,0 */
+	xy_points[0].x = -diffs[0];
+	xy_points[0].y = diffs[0];
+	xy_points[1].x = 0;
+	xy_points[1].y = diffs[1];
+	xy_points[2].x = xy_points[2].y = diffs[2];
+	xy_points[3].x = -diffs[3];
+	xy_points[3].y = 0;
+	xy_points[4].x = 0;
+	xy_points[4].y = 0;
+	xy_points[5].x = diffs[4];
+	xy_points[5].y = 0;
+	xy_points[6].x = xy_points[6].y = -diffs[5];
+	xy_points[7].x = 0;
+	xy_points[7].y = -diffs[6];
+	xy_points[8].x = diffs[7];
+	xy_points[8].y = -diffs[7];
+
+	/* calculate the centroid of the points */
+	for (i = 0; i < 9; i++)
+	{
+		centx += xy_points[i].x;
+		centy += xy_points[i].y;
+	}
+	centx /= 9;
+	centy /= 9;
+
+	/* translate centroid to 0,0 */
+	for (i = 0; i < 9; i++)
+	{
+		xy_points[i].x -= centx;
+		xy_points[i].y -= centy;
+	}
+
+	/* fill inertia tensor 3x3 matrix */
+	for (i = 0; i < 9; i++)
+	{
+		half_matrix[0] += xy_points[i].x * xy_points[i].x;
+		half_matrix[1] += xy_points[i].y * xy_points[i].x;
+		half_matrix[2] += xy_points[i].y * xy_points[i].y;
+	}
+
+	/* calculate eigenvalues */
+	a = half_matrix[0] - half_matrix[2];
+	b = half_matrix[1] << 1;
+	b = sqrt(b*b + a*a);
+	a = half_matrix[0] + half_matrix[2];
+	eigenval1 = (a + b);
+	eigenval2 = (a - b);
+
+	/* find largest eigenvalue */	
+	if (eigenval1 == eigenval2)	/* X and + shapes */
+		return '*';
+	else if (eigenval1 > eigenval2)
+		best_val = eigenval1;
+	else
+		best_val = eigenval2;
+
+	/* white center pixel, black background */
+	if (!best_val)
+		return '*';
+
+	/* divide eigenvalue by 2, postponed from when it should have been
+	   done during the eigenvalue calculation but was delayed for
+	   another early exit opportunity */
+	best_val *= 0.5;
+
+	/* calculate eigenvectors */
+	c = best_val + half_matrix[1];
+	a = c - half_matrix[0];
+	b = c - half_matrix[2];
+	if (b)
+	{
+		x = 1.0;
+		ratio = y = a / b;
+	}
+	else if (a)
+	{
+		y = 1.0;
+		x = b / a;
+		ratio = a / b;
+	}
+	else if (a == b)
+	{
+		*return_angle = 13500;
+		return '\\';
+	}
+	else
+		return '*';
+
+	/* calculate angle in degrees * 100 */
+	if (x)
+	{
+		angle = (int32) floor(5729.577951307 * fast_atan(ratio) + 0.5);
+		if (x < 0.0) angle += 18000;
+	}
+	else
+	{
+		if (y > 0.0) angle = 9000;
+		else if (y < 0.0) angle = -9000;
+		else return '0';
+	}
+
+	/* force angle to lie between 0 to 360 */
+	if (angle < 0) angle += 36000;
+	if (angle > 18000) angle -= 18000;
+	*return_angle = angle;
+
+	if (angle <= 2250)
+		return '-';
+
+	if (angle < 6750)
+		return '/';
+
+	if (angle <= 11250)
+		return '|';
+
+	if (angle < 15750)
+		return '\\';
+
+	return '-';
+}
+
+
+
+/* Check for mis-detected arrow patterns.  Return 1 (good), 0 (bad). */
+int check_arrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
+{
+	uint16 center = pixels[4];
+
+	if (center == pixels[0] && center == pixels[2] &&
+			center == pixels[6] && center == pixels[8])
+	{
+		switch(best_dir)
+		{
+			case 5:
+				if (center != pixels[5])	/* < */
+					return 0;
+				break;
+			case 6:
+				if (center != pixels[3])	/* > */
+					return 0;
+				break;
+			case 7:
+				if (center != pixels[7])	/* ^ */
+					return 0;
+				break;
+			case 8:
+				if (center != pixels[1])	/* v */
+					return 0;
+				break;
+		}
+	}
+
+	switch(best_dir)
+	{
+		case 5:		/* < */
+			if (center == pixels[2] && center == pixels[8] &&
+					pixels[1] == pixels[5] && pixels[5] == pixels[7] &&
+					(((center == pixels[0]) ^ (center == pixels[6])) ||
+					 (center == pixels[0] && center == pixels[6] &&
+					  pixels[1] != pixels[3])))
+				return 0;
+			break;
+
+		case 6:		/* > */
+			if (center == pixels[0] && center == pixels[6] &&
+					pixels[1] == pixels[3] && pixels[3] == pixels[7] &&
+					(((center == pixels[2]) ^ (center == pixels[8])) ||
+					 (center == pixels[2] && center == pixels[8] &&
+					  pixels[1] != pixels[5])))
+				return 0;
+			break;
+
+		case 7:		/* ^ */
+			if (center == pixels[6] && center == pixels[8] &&
+					pixels[3] == pixels[7] && pixels[7] == pixels[5] &&
+					(((center == pixels[0]) ^ (center == pixels[2])) ||
+					 (center == pixels[0] && center == pixels[2] &&
+					  pixels[3] != pixels[1])))
+				return 0;
+			break;
+
+		case 8:		/* v */
+			if (center == pixels[0] && center == pixels[2] &&
+					pixels[1] == pixels[3] && pixels[1] == pixels[5] &&
+					(((center == pixels[6]) ^ (center == pixels[8])) ||
+					 (center == pixels[6] && center == pixels[8] &&
+					  pixels[3] != pixels[7])))
+				return 0;
+			break;
+	}
+
+	switch(best_dir)
+	{
+		case 5:
+			if (sim[0] == sim[5] &&
+					sim[1] == sim[3] &&
+					sim[3] == sim[6] &&
+					((sim[2] && sim[7]) ||
+					 (half_flag && sim_sum == 2 && sim[4] &&
+					  (sim[2] || sim[7]))))	/* < */
+				return 1;
+			break;
+		case 6:
+			if (sim[2] == sim[7] &&
+					sim[1] == sim[4] &&
+					sim[4] == sim[6] &&
+					((sim[0] && sim[5]) ||
+					 (half_flag && sim_sum == 2 && sim[3] &&
+					  (sim[0] || sim[5]))))	/* > */
+				return 1;
+			break;
+		case 7:
+			if (sim[0] == sim[2] &&
+					sim[1] == sim[3] &&
+					sim[3] == sim[4] &&
+					((sim[5] && sim[7]) ||
+					 (half_flag && sim_sum == 2 && sim[6] &&
+					  (sim[5] || sim[7]))))	/* ^ */
+				return 1;
+			break;
+		case 8:
+			if (sim[5] == sim[7] &&
+					sim[3] == sim[6] &&
+					sim[4] == sim[6] &&
+					((sim[0] && sim[2]) ||
+					 (half_flag && sim_sum == 2 && sim[1] &&
+					  (sim[0] || sim[2]))))	/* v */
+				return 1;
+			break;
+	}
+
+	return 0;
+}
+
+
+
+/*
+ * Take original direction, refine it by testing different pixel difference 
+ * patterns based on the initial gross edge direction.
+ *
+ * The angle value is not currently used, but may be useful for future 
+ * refinement algorithms.
+ *
+ */
+int refine_direction(char edge_type, uint16 *pixels, int16 *bptr,
+		int8 *sim, double angle)
+{
+	int32 sums_dir[9] = { 0 };
+	int32 sum;
+	int32 best_sum;
+	int i, n, best_dir;
+	int16 diff_array[26];
+	int ok_arrow_flag = 1;
+
+	/*
+	 * -   '-  -.  \   '|  |.  |   |'  .|  /   -'  .-  <   >   ^   v
+	 *
+	 * 0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15
+	 *
+	 * \'  .\  '/  /.
+	 *
+	 * 16  17  18  19
+	 *
+	 */
+
+	switch(edge_type)
+	{
+		case '|':
+			diff_array[0]  = labs(bptr[4] - bptr[1]);
+			diff_array[1]  = labs(bptr[4] - bptr[7]);
+			diff_array[2]  = labs(bptr[3] - bptr[0]);
+			diff_array[3]  = labs(bptr[3] - bptr[6]);
+			diff_array[4]  = labs(bptr[5] - bptr[2]);
+			diff_array[5]  = labs(bptr[5] - bptr[8]);
+			diff_array[6]  = labs(bptr[4] - bptr[2]);
+			diff_array[7]  = labs(bptr[4] - bptr[8]);
+			diff_array[8]  = labs(bptr[3] - bptr[1]);
+			diff_array[9]  = labs(bptr[3] - bptr[7]);
+			diff_array[10] = labs(bptr[4] - bptr[0]);
+			diff_array[11] = labs(bptr[4] - bptr[6]);
+			diff_array[12] = labs(bptr[5] - bptr[1]);
+			diff_array[13] = labs(bptr[5] - bptr[7]);
+			diff_array[14] = labs(bptr[0] - bptr[6]);
+			diff_array[15] = labs(bptr[2] - bptr[8]);
+			diff_array[16] = labs(bptr[1] - bptr[7]);
+			diff_array[17] = labs(bptr[0] - bptr[1]);
+			diff_array[18] = labs(bptr[2] - bptr[1]);
+			diff_array[19] = labs(bptr[0] - bptr[2]);
+			diff_array[20] = labs(bptr[3] - bptr[5]);
+			diff_array[21] = labs(bptr[6] - bptr[8]);
+			diff_array[22] = labs(bptr[6] - bptr[7]);
+			diff_array[23] = labs(bptr[8] - bptr[7]);
+
+			/* | vertical */
+			sums_dir[0] = diff_array[0] + diff_array[1] + diff_array[2] +
+				diff_array[3] + diff_array[4] + diff_array[5];
+
+			/* << top */
+			sum = diff_array[8] + diff_array[9] +
+				((diff_array[6] + diff_array[7] +
+				  diff_array[12] + diff_array[13]) << 1) +
+				diff_array[14] + diff_array[16] + diff_array[15];
+			sum = (sum * 6) / 13;
+			sums_dir[5] = sum;
+
+			/* >> top */
+			sum = diff_array[12] + diff_array[13] +
+				((diff_array[10] + diff_array[11] +
+				  diff_array[8] + diff_array[9]) << 1) +
+				diff_array[15] + diff_array[16] + diff_array[14];
+			sum = (sum * 6) / 13;
+			sums_dir[6] = sum;
+
+			/* ^ bottom */
+			sum = diff_array[8] + diff_array[12] +
+				((diff_array[11] + diff_array[7]) << 1) +
+				(diff_array[1] << 2) +
+				diff_array[19] + diff_array[20] + diff_array[21];
+			sum = (sum * 6) / 13;
+			sums_dir[7] = sum;
+
+			/* v bottom */
+			sum = diff_array[9] + diff_array[13] +
+				((diff_array[10] + diff_array[6]) << 1) +
+				(diff_array[0] << 2) +
+				diff_array[21] + diff_array[20] + diff_array[19];
+			sum = (sum * 6) / 13;
+			sums_dir[8] = sum;
+
+			/* '| */
+			sums_dir[1] = diff_array[1] + diff_array[5] + diff_array[10] +
+				diff_array[12] + (diff_array[3] << 1);
+			/* '| alt */
+			sum = diff_array[10] + diff_array[1] + diff_array[18] +
+				diff_array[4] + diff_array[5] + diff_array[14];
+			if (sum < sums_dir[1])
+				sums_dir[1] = sum;
+
+			/* |. */
+			sums_dir[2] = diff_array[0] + diff_array[2] + diff_array[7] +
+				diff_array[9] + (diff_array[4] << 1);
+			/* |. alt */
+			sum = diff_array[0] + diff_array[7] + diff_array[22] +
+				diff_array[3] + diff_array[2] + diff_array[15];
+			if (sum < sums_dir[2])
+				sums_dir[2] = sum;
+
+			/* |' */
+			sums_dir[3] = diff_array[1] + diff_array[3] + diff_array[6] +
+				diff_array[8] + (diff_array[5] << 1);
+			/* |' alt */
+			sum = diff_array[6] + diff_array[1] + diff_array[17] +
+				diff_array[2] + diff_array[3] + diff_array[15];
+			if (sum < sums_dir[3])
+				sums_dir[3] = sum;
+
+			/* .| */
+			sums_dir[4] = diff_array[0] + diff_array[4] + diff_array[11] +
+				diff_array[13] + (diff_array[2] << 1);
+			/* .| alt */
+			sum = diff_array[11] + diff_array[0] + diff_array[23] +
+				diff_array[5] + diff_array[4] + diff_array[14];
+			if (sum < sums_dir[4])
+				sums_dir[4] = sum;
+
+			best_sum = sums_dir[0];
+			for (i = 1; i < 9; i++)
+				if (sums_dir[i] < best_sum) best_sum = sums_dir[i];
+			if (best_sum == sums_dir[0]) return 6;	/* | */
+
+			best_dir = 0;
+			for (i = 0, n = 0; i < 9; i++)
+			{
+				if (sums_dir[i] == best_sum)
+				{
+					best_dir = i;
+					n++;
+				}
+			}
+
+			/* best direction uncertain, return original direction */
+			if (n > 1) return 6;	/* | */
+
+			if (best_dir >= 5)
+				ok_arrow_flag = check_arrows(best_dir, pixels, sim, 1);
+
+			switch(best_dir)
+			{
+				case 1:
+					return 4;		/* '| */
+					break;
+				case 2:
+					return 5;		/* |. */
+					break;
+				case 3:
+					return 7;		/* |' */
+					break;
+				case 4:
+					return 8;		/* .| */
+					break;
+				case 5:
+					if (ok_arrow_flag)
+						return 12;		/* < */
+					break;
+				case 6:
+					if (ok_arrow_flag)
+						return 13;		/* > */
+					break;
+				case 7:
+					if (ok_arrow_flag)
+						return 14;		/* ^ */
+					break;
+				case 8:
+					if (ok_arrow_flag)
+						return 15;		/* V */
+					break;
+				case 0:
+				default:
+					return 6;		/* | */
+					break;
+			}
+
+			break;
+
+		case '-':
+			diff_array[0]  = labs(bptr[4] - bptr[3]);
+			diff_array[1]  = labs(bptr[4] - bptr[5]);
+			diff_array[2]  = labs(bptr[0] - bptr[1]);
+			diff_array[3]  = labs(bptr[1] - bptr[2]);
+			diff_array[4]  = labs(bptr[7] - bptr[6]);
+			diff_array[5]  = labs(bptr[7] - bptr[8]);
+			diff_array[6]  = labs(bptr[4] - bptr[6]);
+			diff_array[7]  = labs(bptr[4] - bptr[8]);
+			diff_array[8]  = labs(bptr[1] - bptr[3]);
+			diff_array[9]  = labs(bptr[1] - bptr[5]);
+			diff_array[10] = labs(bptr[4] - bptr[0]);
+			diff_array[11] = labs(bptr[4] - bptr[2]);
+			diff_array[12] = labs(bptr[7] - bptr[3]);
+			diff_array[13] = labs(bptr[7] - bptr[5]);
+			diff_array[14] = labs(bptr[0] - bptr[2]);
+			diff_array[15] = labs(bptr[6] - bptr[8]);
+			diff_array[16] = labs(bptr[3] - bptr[5]);
+			diff_array[17] = labs(bptr[0] - bptr[3]);
+			diff_array[18] = labs(bptr[6] - bptr[3]);
+			diff_array[19] = labs(bptr[0] - bptr[6]);
+			diff_array[20] = labs(bptr[1] - bptr[7]);
+			diff_array[21] = labs(bptr[2] - bptr[8]);
+			diff_array[22] = labs(bptr[2] - bptr[5]);
+			diff_array[23] = labs(bptr[8] - bptr[5]);
+
+			/* - horizontal */
+			sums_dir[0] = diff_array[0] + diff_array[1] + diff_array[2] +
+				diff_array[3] + diff_array[4] + diff_array[5];
+
+			/* << bottom */
+			sum = diff_array[8] + diff_array[12] +
+				((diff_array[11] + diff_array[7]) << 1) +
+				(diff_array[1] << 2) +
+				diff_array[19] + diff_array[20] + diff_array[21];
+			sum = (sum * 6) / 13;
+			sums_dir[5] = sum;
+
+			/* >> bottom */
+			sum = diff_array[9] + diff_array[13] +
+				((diff_array[10] + diff_array[6]) << 1) +
+				(diff_array[0] << 2) +
+				diff_array[21] + diff_array[20] + diff_array[19];
+			sum = (sum * 6) / 13;
+			sums_dir[6] = sum;
+
+			/* ^ top */
+			sum = diff_array[8] + diff_array[9] +
+				((diff_array[6] + diff_array[7] +
+				  diff_array[12] + diff_array[13]) << 1) +
+				diff_array[14] + diff_array[16] + diff_array[15];
+			sum = (sum * 6) / 13;
+			sums_dir[7] = sum;
+
+			/* v top */
+			sum = diff_array[12] + diff_array[13] +
+				((diff_array[10] + diff_array[11] +
+				  diff_array[8] + diff_array[9]) << 1) +
+				diff_array[15] + diff_array[16] + diff_array[14];
+			sum = (sum * 6) / 13;
+			sums_dir[8] = sum;
+
+			/* '- */
+			sums_dir[1] = diff_array[1] + diff_array[5] + diff_array[10] +
+				diff_array[12] + (diff_array[3] << 1);
+			/* '- alt */
+			sum = diff_array[10] + diff_array[1] + diff_array[18] +
+				diff_array[4] + diff_array[5] + diff_array[14];
+			if (sum < sums_dir[1])
+				sums_dir[1] = sum;
+
+			/* -. */
+			sums_dir[2] = diff_array[0] + diff_array[2] + diff_array[7] +
+				diff_array[9] + (diff_array[4] << 1);
+			/* -. alt */
+			sum = diff_array[0] + diff_array[7] + diff_array[22] +
+				diff_array[3] + diff_array[2] + diff_array[15];
+			if (sum < sums_dir[2])
+				sums_dir[2] = sum;
+
+			/* -' */
+			sums_dir[3] = diff_array[0] + diff_array[4] + diff_array[11] +
+				diff_array[13] + (diff_array[2] << 1);
+			/* -' alt */
+			sum = diff_array[11] + diff_array[0] + diff_array[23] +
+				diff_array[5] + diff_array[4] + diff_array[14];
+			if (sum < sums_dir[3])
+				sums_dir[3] = sum;
+
+			/* .- */
+			sums_dir[4] = diff_array[1] + diff_array[3] + diff_array[6] +
+				diff_array[8] + (diff_array[5] << 1);
+			/* .- alt */
+			sum = diff_array[6] + diff_array[1] + diff_array[17] +
+				diff_array[2] + diff_array[3] + diff_array[15];
+			if (sum < sums_dir[4])
+				sums_dir[4] = sum;
+
+			best_sum = sums_dir[0];
+			for (i = 1; i < 9; i++)
+				if (sums_dir[i] < best_sum) best_sum = sums_dir[i];
+			if (best_sum == sums_dir[0]) return 0;	/* - */
+
+			best_dir = 0;
+			for (i = 0, n = 0; i < 9; i++)
+			{
+				if (sums_dir[i] == best_sum)
+				{
+					best_dir = i;
+					n++;
+				}
+			}
+
+			/* best direction uncertain, return original direction */
+			if (n > 1) return 0;	/* - */
+
+			if (best_dir >= 5)
+				ok_arrow_flag = check_arrows(best_dir, pixels, sim, 1);
+
+			switch(best_dir)
+			{
+				case 1:
+					return 1;		/* '- */
+					break;
+				case 2:
+					return 2;		/* -. */
+					break;
+				case 3:
+					return 10;		/* -' */
+					break;
+				case 4:
+					return 11;		/* .- */
+					break;
+				case 5:
+					if (ok_arrow_flag)
+						return 12;		/* < */
+					break;
+				case 6:
+					if (ok_arrow_flag)
+						return 13;		/* > */
+					break;
+				case 7:
+					if (ok_arrow_flag)
+						return 14;		/* ^ */
+					break;
+				case 8:
+					if (ok_arrow_flag)
+						return 15;		/* V */
+					break;
+				case 0:
+				default:
+					return 0;		/* - */
+					break;
+			}
+
+			break;
+
+		case '\\':
+
+			/* CHECK -- handle noisy half-diags */
+			if (sim_sum == 1)
+			{
+				if (pixels[1] == pixels[3] && pixels[3] == pixels[5] &&
+						pixels[5] == pixels[7])
+				{
+					if (pixels[2] != pixels[1] && pixels[6] != pixels[1])
+					{
+						sum = labs(bptr[2] - bptr[4]) +
+							labs(bptr[6] - bptr[4]);
+
+						if (sim[0] && sum < (labs(bptr[8] - bptr[4]) << 1))
+						{
+							if (bptr[4] > bptr[8])
+							{
+								if (bptr[2] > bptr[4] &&
+										bptr[6] > bptr[4])
+									return 18;		/* '/ */
+							}
+							else
+							{
+								if (bptr[2] < bptr[4] &&
+										bptr[6] < bptr[4])
+									return 18;		/* '/ */
+							}
+						}
+
+						if (sim[7] && sum < (labs(bptr[0] - bptr[4]) << 1))
+						{
+							if (bptr[4] > bptr[0])
+							{
+								if (bptr[2] > bptr[4] &&
+										bptr[6] > bptr[4])
+									return 19;		/* /. */
+							}
+							else
+							{
+								if (bptr[2] < bptr[4] &&
+										bptr[6] < bptr[4])
+									return 19;		/* /. */
+							}
+						}
+					}
+				}
+
+				if (sim[0] &&
+						labs(bptr[4] - bptr[0]) < ((int16)1<<(GREY_SHIFT-3)))
+					return 3;	/* \ */
+				if (sim[7] &&
+						labs(bptr[4] - bptr[8]) < ((int16)1<<(GREY_SHIFT-3)))
+					return 3;	/* \ */
+			}
+
+			diff_array[0]  = labs(bptr[4] - bptr[0]);
+			diff_array[1]  = labs(bptr[4] - bptr[5]);
+			diff_array[2]  = labs(bptr[3] - bptr[7]);
+			diff_array[3]  = labs(bptr[7] - bptr[8]);
+			diff_array[4]  = labs(bptr[1] - bptr[2]);
+			diff_array[5]  = labs(bptr[4] - bptr[3]);
+			diff_array[6]  = labs(bptr[4] - bptr[8]);
+			diff_array[7]  = labs(bptr[0] - bptr[1]);
+			diff_array[8]  = labs(bptr[1] - bptr[5]);
+			diff_array[9]  = labs(bptr[6] - bptr[7]);
+			diff_array[10] = labs(bptr[4] - bptr[7]);
+			diff_array[11] = labs(bptr[5] - bptr[8]);
+			diff_array[12] = labs(bptr[3] - bptr[6]);
+			diff_array[13] = labs(bptr[4] - bptr[1]);
+			diff_array[14] = labs(bptr[0] - bptr[3]);
+			diff_array[15] = labs(bptr[2] - bptr[5]);
+			diff_array[20] = labs(bptr[0] - bptr[2]);
+			diff_array[21] = labs(bptr[6] - bptr[8]);
+			diff_array[22] = labs(bptr[0] - bptr[6]);
+			diff_array[23] = labs(bptr[2] - bptr[8]);
+			diff_array[16] = labs(bptr[4] - bptr[2]);
+			diff_array[18] = labs(bptr[4] - bptr[6]);
+
+			/* '- */
+			sums_dir[1] = diff_array[0] + diff_array[1] + diff_array[2] +
+				diff_array[3] + (diff_array[4] << 1);
+			/* '- alt */
+			sum = diff_array[0] + diff_array[1] + diff_array[12] +
+				diff_array[9] + diff_array[3] + diff_array[20];
+			if (sum < sums_dir[1])
+				sums_dir[1] = sum;
+
+			/* -. */
+			sums_dir[2] = diff_array[5] + diff_array[6] + diff_array[7] +
+				diff_array[8] + (diff_array[9] << 1);
+			/* -. alt */
+			sum = diff_array[6] + diff_array[5] + diff_array[15] +
+				diff_array[4] + diff_array[7] + diff_array[21];
+			if (sum < sums_dir[2])
+				sums_dir[2] = sum;
+
+			/* '| */
+			sums_dir[3] = diff_array[0] + diff_array[8] + diff_array[10] +
+				diff_array[11] + (diff_array[12] << 1);
+			/* '| alt */
+			sum = diff_array[0] + diff_array[10] + diff_array[4] +
+				diff_array[15] + diff_array[11] + diff_array[22];
+			if (sum < sums_dir[3])
+				sums_dir[3] = sum;
+
+			/* |. */
+			sums_dir[4] = diff_array[2] + diff_array[6] + diff_array[13] +
+				diff_array[14] + (diff_array[15] << 1);
+			/* |. alt */
+			sum = diff_array[13] + diff_array[6] + diff_array[9] +
+				diff_array[12] + diff_array[14] + diff_array[23];
+			if (sum < sums_dir[4])
+				sums_dir[4] = sum;
+
+			/* \ 45 */
+			sums_dir[0] = diff_array[0] + diff_array[6] +
+				(diff_array[2] << 1) + (diff_array[8] << 1);
+
+			/* << top */
+			sum = labs(bptr[3] - bptr[1]) + labs(bptr[3] - bptr[7]) +
+				((labs(bptr[4] - bptr[2]) + labs(bptr[4] - bptr[8]) +
+				  labs(bptr[5] - bptr[1]) + labs(bptr[5] - bptr[7])) << 1) +
+				labs(bptr[0] - bptr[6]) + labs(bptr[1] - bptr[7]) +
+				labs(bptr[2] - bptr[8]);
+			sum = (sum * 6) / 13;
+			sums_dir[5] = sum;
+
+			/* >> top */
+			sum = labs(bptr[5] - bptr[1]) + labs(bptr[5] - bptr[7]) +
+				((labs(bptr[4] - bptr[0]) + labs(bptr[4] - bptr[6]) +
+				  labs(bptr[3] - bptr[1]) + labs(bptr[3] - bptr[7])) << 1) +
+				labs(bptr[2] - bptr[8]) + labs(bptr[1] - bptr[7]) +
+				labs(bptr[0] - bptr[6]);
+			sum = (sum * 6) / 13;
+			sums_dir[6] = sum;
+
+			/* ^ top */
+			sum = labs(bptr[1] - bptr[3]) + labs(bptr[1] - bptr[5]) +
+				((labs(bptr[4] - bptr[6]) + labs(bptr[4] - bptr[8]) +
+				  labs(bptr[7] - bptr[3]) + labs(bptr[7] - bptr[5])) << 1) +
+				labs(bptr[0] - bptr[2]) + labs(bptr[3] - bptr[5]) +
+				labs(bptr[6] - bptr[8]);
+			sum = (sum * 6) / 13;
+			sums_dir[7] = sum;
+
+			/* v top */
+			sum = labs(bptr[7] - bptr[3]) + labs(bptr[7] - bptr[5]) +
+				((labs(bptr[4] - bptr[0]) + labs(bptr[4] - bptr[2]) +
+				  labs(bptr[1] - bptr[3]) + labs(bptr[1] - bptr[5])) << 1) +
+				labs(bptr[6] - bptr[8]) + labs(bptr[3] - bptr[5]) +
+				labs(bptr[0] - bptr[2]);
+			sum = (sum * 6) / 13;
+			sums_dir[8] = sum;
+
+			best_sum = sums_dir[0];
+			for (i = 1; i < 9; i++)
+				if (sums_dir[i] < best_sum) best_sum = sums_dir[i];
+
+			best_dir = 0;
+			for (i = 0, n = 0; i < 9; i++)
+			{
+				if (sums_dir[i] == best_sum)
+				{
+					best_dir = i;
+					n++;
+				}
+			}
+
+			/* CHECK -- handle zig-zags */
+			if (sim_sum == 3)
+			{
+				if ((best_dir == 0 || best_dir == 1) &&
+						sim[0] && sim[1] && sim[4])
+					return 1;				/* '- */
+				if ((best_dir == 0 || best_dir == 2) &&
+						sim[3] && sim[6] && sim[7])
+					return 2;				/* -. */
+				if ((best_dir == 0 || best_dir == 3) &&
+						sim[0] && sim[3] && sim[6])
+					return 4;				/* '| */
+				if ((best_dir == 0 || best_dir == 4) &&
+						sim[1] && sim[4] && sim[7])
+					return 5;				/* |. */
+			}
+
+			if (n > 1 && best_sum == sums_dir[0]) return 3;	/* \ */
+
+			/* best direction uncertain, return non-edge to avoid artifacts */
+			if (n > 1) return -1;
+
+			/* CHECK -- diagonal intersections */
+			if (best_dir == 0 &&
+					(sim[1] == sim[4] || sim[3] == sim[6]) &&
+					(sim[1] == sim[3] || sim[4] == sim[6]))
+			{
+				if ((pixels[1] == pixels[3] || pixels[5] == pixels[7]) ||
+						((pixels[0] == pixels[4]) ^ (pixels[8] == pixels[4])))
+				{
+					if (pixels[2] == pixels[4])
+						return 16;		/* \' */
+					if (pixels[6] == pixels[4])
+						return 17;		/* .\ */
+				}
+
+				if (sim_sum == 3 && sim[0] && sim[7] &&
+						pixels[1] == pixels[3] && pixels[3] == pixels[5] &&
+						pixels[5] == pixels[7])
+				{
+					if (sim[2])
+						return 16;		/* \' */
+					if (sim[5])
+						return 17;		/* .\ */
+				}
+
+				if (sim_sum == 3 && sim[2] && sim[5])
+				{
+					if (sim[0])
+						return 18;		/* '/ */
+					if (sim[7])
+						return 19;		/* /. */
+				}
+			}
+
+			if (best_dir >= 5)
+				ok_arrow_flag = check_arrows(best_dir, pixels, sim, 0);
+
+			switch(best_dir)
+			{
+				case 1:
+					return 1;		/* '- */
+					break;
+				case 2:
+					return 2;		/* -. */
+					break;
+				case 3:
+					return 4;		/* '| */
+					break;
+				case 4:
+					return 5;		/* |. */
+					break;
+				case 5:
+					if (ok_arrow_flag)
+						return 12;		/* < */
+					break;
+				case 6:
+					if (ok_arrow_flag)
+						return 13;		/* > */
+					break;
+				case 7:
+					if (ok_arrow_flag)
+						return 14;		/* ^ */
+					break;
+				case 8:
+					if (ok_arrow_flag)
+						return 15;		/* V */
+					break;
+				case 0:
+				default:
+					return 3;		/* \ */
+					break;
+			}
+
+			break;
+
+		case '/':
+
+			/* CHECK -- handle noisy half-diags */
+			if (sim_sum == 1)
+			{
+				if (pixels[1] == pixels[3] && pixels[3] == pixels[5] &&
+						pixels[5] == pixels[7])
+				{
+					if (pixels[0] != pixels[1] && pixels[8] != pixels[1])
+					{
+						sum = labs(bptr[0] - bptr[4]) +
+							labs(bptr[8] - bptr[4]);
+
+						if (sim[2] && sum < (labs(bptr[6] - bptr[4]) << 1))
+						{
+							if (bptr[4] > bptr[6])
+							{
+								if (bptr[0] > bptr[4] &&
+										bptr[8] > bptr[4])
+									return 16;		/* \' */
+							}
+							else
+							{
+								if (bptr[0] < bptr[4] &&
+										bptr[8] < bptr[4])
+									return 16;		/* \' */
+							}
+						}
+
+						if (sim[5] && sum < (labs(bptr[2] - bptr[4]) << 1))
+						{
+							if (bptr[4] > bptr[2])
+							{
+								if (bptr[0] > bptr[4] &&
+										bptr[8] > bptr[4])
+								{
+									if (pixels[6] == pixels[4])
+										return 17;		/* .\ */
+									return 3;			/* \ */
+								}
+							}
+							else
+							{
+								if (bptr[0] < bptr[4] &&
+										bptr[8] < bptr[4])
+								{
+									if (pixels[6] == pixels[4])
+										return 17;		/* .\ */
+									return 3;			/* \ */
+								}
+							}
+						}
+					}
+				}
+
+				if (sim[2] &&
+						labs(bptr[4] - bptr[2]) < ((int16)1<<(GREY_SHIFT-3)))
+					return 9;	/* / */
+				if (sim[5] &&
+						labs(bptr[4] - bptr[6]) < ((int16)1<<(GREY_SHIFT-3)))
+					return 9;	/* / */
+			}
+
+			diff_array[0]  = labs(bptr[4] - bptr[0]);
+			diff_array[1]  = labs(bptr[4] - bptr[5]);
+			diff_array[3]  = labs(bptr[7] - bptr[8]);
+			diff_array[4]  = labs(bptr[1] - bptr[2]);
+			diff_array[5]  = labs(bptr[4] - bptr[3]);
+			diff_array[6]  = labs(bptr[4] - bptr[8]);
+			diff_array[7]  = labs(bptr[0] - bptr[1]);
+			diff_array[9]  = labs(bptr[6] - bptr[7]);
+			diff_array[10] = labs(bptr[4] - bptr[7]);
+			diff_array[11] = labs(bptr[5] - bptr[8]);
+			diff_array[12] = labs(bptr[3] - bptr[6]);
+			diff_array[13] = labs(bptr[4] - bptr[1]);
+			diff_array[14] = labs(bptr[0] - bptr[3]);
+			diff_array[15] = labs(bptr[2] - bptr[5]);
+			diff_array[16] = labs(bptr[4] - bptr[2]);
+			diff_array[17] = labs(bptr[1] - bptr[3]);
+			diff_array[18] = labs(bptr[4] - bptr[6]);
+			diff_array[19] = labs(bptr[5] - bptr[7]);
+			diff_array[20] = labs(bptr[0] - bptr[2]);
+			diff_array[21] = labs(bptr[6] - bptr[8]);
+			diff_array[22] = labs(bptr[0] - bptr[6]);
+			diff_array[23] = labs(bptr[2] - bptr[8]);
+
+			/* |' */
+			sums_dir[1] = diff_array[10] + diff_array[12] + diff_array[16] +
+				diff_array[17] + (diff_array[11] << 1);
+			/* |' alt */
+			sum = diff_array[16] + diff_array[10] + diff_array[7] +
+				diff_array[14] + diff_array[12] + diff_array[23];
+			if (sum < sums_dir[1])
+				sums_dir[1] = sum;
+
+			/* .| */
+			sums_dir[2] = diff_array[13] + diff_array[15] + diff_array[18] +
+				diff_array[19] + (diff_array[14] << 1);
+			/* .| alt */
+			sum = diff_array[18] + diff_array[13] + diff_array[3] +
+				diff_array[11] + diff_array[15] + diff_array[22];
+			if (sum < sums_dir[2])
+				sums_dir[2] = sum;
+
+			/* -' */
+			sums_dir[3] = diff_array[5] + diff_array[9] + diff_array[16] +
+				diff_array[19] + (diff_array[7] << 1);
+			/* -' alt */
+			sum = diff_array[16] + diff_array[5] + diff_array[11] +
+				diff_array[3] + diff_array[9] + diff_array[20];
+			if (sum < sums_dir[3])
+				sums_dir[3] = sum;
+
+			/* .- */
+			sums_dir[4] = diff_array[1] + diff_array[4] + diff_array[17] +
+				diff_array[18] + (diff_array[3] << 1);
+			/* .- alt */
+			sum = diff_array[18] + diff_array[1] + diff_array[14] +
+				diff_array[7] + diff_array[4] + diff_array[21];
+			if (sum < sums_dir[4])
+				sums_dir[4] = sum;
+
+			/* / 135 */
+			sums_dir[0] = diff_array[16] + diff_array[18] +
+				(diff_array[17] << 1) + (diff_array[19] << 1);
+
+			/* << top */
+			sum = labs(bptr[3] - bptr[1]) + labs(bptr[3] - bptr[7]) +
+				((labs(bptr[4] - bptr[2]) + labs(bptr[4] - bptr[8]) +
+				  labs(bptr[5] - bptr[1]) + labs(bptr[5] - bptr[7])) << 1) +
+				labs(bptr[0] - bptr[6]) + labs(bptr[1] - bptr[7]) +
+				labs(bptr[2] - bptr[8]);
+			sum = (sum * 6) / 13;
+			sums_dir[5] = sum;
+
+			/* >> top */
+			sum = labs(bptr[5] - bptr[1]) + labs(bptr[5] - bptr[7]) +
+				((labs(bptr[4] - bptr[0]) + labs(bptr[4] - bptr[6]) +
+				  labs(bptr[3] - bptr[1]) + labs(bptr[3] - bptr[7])) << 1) +
+				labs(bptr[2] - bptr[8]) + labs(bptr[1] - bptr[7]) +
+				labs(bptr[0] - bptr[6]);
+			sum = (sum * 6) / 13;
+			sums_dir[6] = sum;
+
+			/* ^ top */
+			sum = labs(bptr[1] - bptr[3]) + labs(bptr[1] - bptr[5]) +
+				((labs(bptr[4] - bptr[6]) + labs(bptr[4] - bptr[8]) +
+				  labs(bptr[7] - bptr[3]) + labs(bptr[7] - bptr[5])) << 1) +
+				labs(bptr[0] - bptr[2]) + labs(bptr[3] - bptr[5]) +
+				labs(bptr[6] - bptr[8]);
+			sum = (sum * 6) / 13;
+			sums_dir[7] = sum;
+
+			/* v top */
+			sum = labs(bptr[7] - bptr[3]) + labs(bptr[7] - bptr[5]) +
+				((labs(bptr[4] - bptr[0]) + labs(bptr[4] - bptr[2]) +
+				  labs(bptr[1] - bptr[3]) + labs(bptr[1] - bptr[5])) << 1) +
+				labs(bptr[6] - bptr[8]) + labs(bptr[3] - bptr[5]) +
+				labs(bptr[0] - bptr[2]);
+			sum = (sum * 6) / 13;
+			sums_dir[8] = sum;
+
+			best_sum = sums_dir[0];
+			for (i = 1; i < 9; i++)
+				if (sums_dir[i] < best_sum) best_sum = sums_dir[i];
+
+			best_dir = 0;
+			for (i = 0, n = 0; i < 9; i++)
+			{
+				if (sums_dir[i] == best_sum)
+				{
+					best_dir = i;
+					n++;
+				}
+			}
+
+			/* CHECK -- handle zig-zags */
+			if (sim_sum == 3)
+			{
+				if ((best_dir == 0 || best_dir == 1) &&
+						sim[2] && sim[4] && sim[6])
+					return 7;				/* |' */
+				if ((best_dir == 0 || best_dir == 2) &&
+						sim[1] && sim[3] && sim[5])
+					return 8;				/* .| */
+				if ((best_dir == 0 || best_dir == 3) &&
+						sim[1] && sim[2] && sim[3])
+					return 10;				/* -' */
+				if ((best_dir == 0 || best_dir == 4) &&
+						sim[4] && sim[5] && sim[6])
+					return 11;				/* .- */
+			}
+
+			if (n > 1 && best_sum == sums_dir[0]) return 9;	/* / */
+
+			/* best direction uncertain, return non-edge to avoid artifacts */
+			if (n > 1) return -1;
+
+			/* CHECK -- diagonal intersections */
+			if (best_dir == 0 &&
+					(sim[1] == sim[3] || sim[4] == sim[6]) &&
+					(sim[1] == sim[4] || sim[3] == sim[6]))
+			{
+				if ((pixels[1] == pixels[5] || pixels[3] == pixels[7]) ||
+						((pixels[2] == pixels[4]) ^ (pixels[6] == pixels[4])))
+				{
+					if (pixels[0] == pixels[4])
+						return 18;		/* '/ */
+					if (pixels[8] == pixels[4])
+						return 19;		/* /. */
+				}
+
+				if (sim_sum == 3 && sim[2] && sim[5] &&
+						pixels[1] == pixels[3] && pixels[3] == pixels[5] &&
+						pixels[5] == pixels[7])
+				{
+					if (sim[0])
+						return 18;		/* '/ */
+					if (sim[7])
+						return 19;		/* /. */
+				}
+
+				if (sim_sum == 3 && sim[0] && sim[7])
+				{
+					if (sim[2])
+						return 16;		/* \' */
+					if (sim[5])
+						return 17;		/* .\ */
+				}
+			}
+
+			if (best_dir >= 5)
+				ok_arrow_flag = check_arrows(best_dir, pixels, sim, 0);
+
+			switch(best_dir)
+			{
+				case 1:
+					return 7;		/* |' */
+					break;
+				case 2:
+					return 8;		/* .| */
+					break;
+				case 3:
+					return 10;		/* -' */
+					break;
+				case 4:
+					return 11;		/* .- */
+					break;
+				case 5:
+					if (ok_arrow_flag)
+						return 12;		/* < */
+					break;
+				case 6:
+					if (ok_arrow_flag)
+						return 13;		/* > */
+					break;
+				case 7:
+					if (ok_arrow_flag)
+						return 14;		/* ^ */
+					break;
+				case 8:
+					if (ok_arrow_flag)
+						return 15;		/* V */
+					break;
+					break;
+				case 0:
+				default:
+					return 9;		/* / */
+					break;
+			}
+
+			break;
+
+		case '*':
+			return 127;
+			break;
+
+		case '0':
+		default:
+			return -1;
+			break;
+	}
+
+	return -1;
+}
+
+
+
+/* "Chess Knight" patterns can be mis-detected, fix easy cases. */
+int fix_knights(int sub_type, uint16 *pixels, int8 *sim)
+{
+	uint16 center = pixels[4];
+	int dir = sub_type;
+	int n = 0;
+	int flags[12] = {0};
+	int ok_orig_flag = 0;
+
+	/*
+	 * -   '-  -.  \   '|  |.  |   |'  .|  /   -'  .-
+	 *
+	 * 0   1   2   3   4   5   6   7   8   9   10  11
+	 *
+	 */
+
+	/* check to see if original knight is ok */
+	switch(sub_type)
+	{
+		case 1:		/* '- */
+			if (sim[0] && sim[4] &&
+					!(sim_sum == 3 && sim[5] &&
+						pixels[0] == pixels[4] && pixels[6] == pixels[4]))
+				ok_orig_flag = 1;
+			break;
+
+		case 2:		/* -. */
+			if (sim[3] && sim[7] &&
+					!(sim_sum == 3 && sim[2] &&
+						pixels[2] == pixels[4] && pixels[8] == pixels[4]))
+				ok_orig_flag = 1;
+			break;
+
+		case 4:		/* '| */
+			if (sim[0] && sim[6] &&
+					!(sim_sum == 3 && sim[2] &&
+						pixels[0] == pixels[4] && pixels[2] == pixels[4]))
+				ok_orig_flag = 1;
+			break;
+
+		case 5:		/* |. */
+			if (sim[1] && sim[7] &&
+					!(sim_sum == 3 && sim[5] &&
+						pixels[6] == pixels[4] && pixels[8] == pixels[4]))
+				ok_orig_flag = 1;
+			break;
+
+		case 7:		/* |' */
+			if (sim[2] && sim[6] &&
+					!(sim_sum == 3 && sim[0] &&
+						pixels[0] == pixels[4] && pixels[2] == pixels[4]))
+				ok_orig_flag = 1;
+			break;
+
+		case 8:		/* .| */
+			if (sim[1] && sim[5] &&
+					!(sim_sum == 3 && sim[7] &&
+						pixels[6] == pixels[4] && pixels[8] == pixels[4]))
+				ok_orig_flag = 1;
+			break;
+
+		case 10:	/* -' */
+			if (sim[2] && sim[3] &&
+					!(sim_sum == 3 && sim[7] &&
+						pixels[2] == pixels[4] && pixels[8] == pixels[4]))
+				ok_orig_flag = 1;
+			break;
+
+		case 11:	/* .- */
+			if (sim[4] && sim[5] &&
+					!(sim_sum == 3 && sim[0] &&
+						pixels[0] == pixels[4] && pixels[6] == pixels[4]))
+				ok_orig_flag = 1;
+			break;
+
+		default:	/* not a knight */
+			return sub_type;
+			break;
+	}
+
+	/* look for "better" knights */
+	if (center == pixels[0] && center == pixels[5])	/* '- */
+	{
+		dir = 1;
+		flags[dir] = 1;
+		n++;
+	}
+	if (center == pixels[3] && center == pixels[8])	/* -. */
+	{
+		dir = 2;
+		flags[dir] = 1;
+		n++;
+	}
+	if (center == pixels[0] && center == pixels[7])	/* '| */
+	{
+		dir = 4;
+		flags[dir] = 1;
+		n++;
+	}
+	if (center == pixels[1] && center == pixels[8])	/* |. */
+	{
+		dir = 5;
+		flags[dir] = 1;
+		n++;
+	}
+	if (center == pixels[2] && center == pixels[7])	/* |' */
+	{
+		dir = 7;
+		flags[dir] = 1;
+		n++;
+	}
+	if (center == pixels[1] && center == pixels[6])	/* .| */
+	{
+		dir = 8;
+		flags[dir] = 1;
+		n++;
+	}
+	if (center == pixels[3] && center == pixels[2])	/* -' */
+	{
+		dir = 10;
+		flags[dir] = 1;
+		n++;
+	}
+	if (center == pixels[6] && center == pixels[5])	/* .- */
+	{
+		dir = 11;
+		flags[dir] = 1;
+		n++;
+	}
+
+	if (n == 0)
+	{
+		if (ok_orig_flag) return sub_type;
+		return -1;
+	}
+	if (n == 1) return dir;
+	if (n == 2)
+	{
+		/* slanted W patterns */
+		if (flags[1] && flags[5]) return 3;	/* \ */
+		if (flags[2] && flags[4]) return 3;	/* \ */
+		if (flags[7] && flags[11]) return 9;	/* / */
+		if (flags[8] && flags[10]) return 9;	/* / */
+	}
+	if (flags[sub_type] && ok_orig_flag) return sub_type;
+
+	return -1;
+}
+
+
+
+/* From ScummVM HQ2x/HQ3x scalers (Maxim Stepin and Max Horn) */
+#define highBits	0xF7DEF7DE
+#define lowBits		0x08210821
+#define qhighBits	0xE79CE79C
+#define qlowBits	0x18631863
+#define redblueMask	0xF81F
+#define greenMask	0x07E0
+
+/* From ScummVM HQ2x/HQ3x scalers (Maxim Stepin and Max Horn) */
+/**
+ * Interpolate two 16 bit pixel pairs at once with equal weights 1.
+ * In particular, A and B can contain two pixels/each in the upper
+ * and lower halves.
+ */
+uint32 INTERPOLATE(uint32 A, uint32 B)
+{
+	return (((A & highBits) >> 1) + ((B & highBits) >> 1) + (A & B & lowBits));
+}
+
+/* From ScummVM HQ2x/HQ3x scalers (Maxim Stepin and Max Horn) */
+/**
+ * Interpolate four 16 bit pixel pairs at once with equal weights 1.
+ * In particular, A and B can contain two pixels/each in the upper
+ * and lower halves.
+ */
+uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D)
+{
+	uint32 x = ((A & qhighBits) >> 2) + ((B & qhighBits) >> 2) + ((C & qhighBits) >> 2) + ((D & qhighBits) >> 2);
+	uint32 y = ((A & qlowBits) + (B & qlowBits) + (C & qlowBits) + (D & qlowBits)) >> 2;
+
+	y &= qlowBits;
+	return x + y;
+}
+
+
+
+/* Average three pixels together */
+uint16 average_three_pixels(uint16 pixel1, uint16 pixel2, uint16 pixel3)
+{
+	uint32 rsum;
+	uint16 gsum, bsum;
+
+	rsum =  (pixel1 & 0xF800);
+	rsum += (pixel2 & 0xF800);
+	rsum += (pixel3 & 0xF800);
+	rsum = div3[rsum >> 11];
+
+	gsum =  (pixel1 & 0x07E0);
+	gsum += (pixel2 & 0x07E0);
+	gsum += (pixel3 & 0x07E0);
+	gsum = div3[gsum >> 5];
+
+	bsum =  (pixel1 & 0x001F);
+	bsum += (pixel2 & 0x001F);
+	bsum += (pixel3 & 0x001F);
+	bsum = div3[bsum];
+
+	return ((rsum << 11) | (gsum << 5) | bsum);
+}
+
+
+
+/* Interpolate 1/3rd of the way between two pixels */
+uint16 average_one_third(uint16 pixel1, uint16 pixel2)
+{
+	uint32 rsum;
+	uint16 gsum, bsum;
+
+	rsum =  (pixel1 & 0xF800) << 1;
+	rsum += (pixel2 & 0xF800);
+	rsum = div3[rsum >> 11];
+
+	gsum =  (pixel1 & 0x07E0) << 1;
+	gsum += (pixel2 & 0x07E0);
+	gsum = div3[gsum >> 5];
+
+	bsum =  (pixel1 & 0x001F) << 1;
+	bsum += (pixel2 & 0x001F);
+	bsum = div3[bsum];
+
+	return ((rsum << 11) | (gsum << 5) | bsum);
+}
+
+
+
+/* Fill pixel grid without interpolation, using the detected edge */
+void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
+		uint16 *pixels, int sub_type, int16 *bptr)
+{
+	uint16 *dptr2;
+	int16 tmp_grey;
+	uint16 center = pixels[4];
+	int32 diff1, diff2, diff3;
+	uint16 tmp[9];
+	uint16 *ptmp;
+	int i;
+
+	switch (sub_type)
+	{
+		case 1:		/* '- */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[6]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[3]);
+			diff2 = labs(bptr[4] - bptr[7]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[6] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[6] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[6] = pixels[7];
+				else
+					tmp[6] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[6]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[8]);
+				if (diff1 <= diff2)
+					tmp[7] = tmp[6];
+			}
+
+			break;
+
+		case 2:		/* -. */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp_grey = chosen_greyscale[tmp[2]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[5]);
+			diff2 = labs(bptr[4] - bptr[1]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[2] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[5];
+				else
+					tmp[2] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[2]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[0]);
+				if (diff1 <= diff2)
+					tmp[1] = tmp[2];
+			}
+
+			break;
+
+		case 3:		/* \ */
+		case 16:	/* \' */
+		case 17:	/* .\ */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			if (sub_type != 16)
+			{
+				tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[5];
+				else
+					tmp[2] = pixels[4];
+			}
+
+			if (sub_type != 17)
+			{
+				tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[6] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[6] = pixels[7];
+				else
+					tmp[6] = pixels[4];
+			}
+
+			break;
+
+		case 4:		/* '| */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp_grey = chosen_greyscale[tmp[2]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[1]);
+			diff2 = labs(bptr[4] - bptr[5]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[2] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[5];
+				else
+					tmp[2] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[2]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[8]);
+				if (diff1 <= diff2)
+					tmp[5] = tmp[2];
+			}
+
+			break;
+
+		case 5:		/* |. */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[6]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[7]);
+			diff2 = labs(bptr[4] - bptr[3]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[6] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[6] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[6] = pixels[7];
+				else
+					tmp[6] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[6]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[0]);
+				if (diff1 <= diff2)
+					tmp[3] = tmp[6];
+			}
+
+			break;
+
+		case 7:		/* |' */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp_grey = chosen_greyscale[tmp[0]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[1]);
+			diff2 = labs(bptr[4] - bptr[3]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[0] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[0]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[6]);
+				if (diff1 <= diff2)
+					tmp[3] = tmp[0];
+			}
+
+			break;
+
+		case 8:		/* .| */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[8]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[7]);
+			diff2 = labs(bptr[4] - bptr[5]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[8] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[8] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[8] = pixels[7];
+				else
+					tmp[8] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[8]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[2]);
+				if (diff1 <= diff2)
+					tmp[5] = tmp[8];
+			}
+
+			break;
+
+		case 9:		/* / */
+		case 18:	/* '/ */
+		case 19:	/* /. */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			if (sub_type != 18)
+			{
+				tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+			}
+
+			if (sub_type != 19)
+			{
+				tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[8] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[8] = pixels[7];
+				else
+					tmp[8] = pixels[4];
+			}
+
+			break;
+
+		case 10:	/* -' */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[8]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[5]);
+			diff2 = labs(bptr[4] - bptr[7]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[8] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[8] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[8] = pixels[7];
+				else
+					tmp[8] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[8]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[6]);
+				if (diff1 <= diff2)
+					tmp[7] = tmp[8];
+			}
+
+			break;
+
+		case 11:	/* .- */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp_grey = chosen_greyscale[tmp[0]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[3]);
+			diff2 = labs(bptr[4] - bptr[1]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[0] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[0]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[2]);
+				if (diff1 <= diff2)
+					tmp[1] = tmp[0];
+			}
+
+			break;
+
+		case 12:	/* < */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp_grey = chosen_greyscale[tmp[0]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[1]);
+			diff2 = labs(bptr[4] - bptr[3]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[0] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+			}
+
+			tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[6]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[3]);
+			diff2 = labs(bptr[4] - bptr[7]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[6] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[6] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[6] = pixels[7];
+				else
+					tmp[6] = pixels[4];
+			}
+
+			break;
+
+		case 13:	/* > */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp_grey = chosen_greyscale[tmp[2]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[5]);
+			diff2 = labs(bptr[4] - bptr[1]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[2] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[5];
+				else
+					tmp[2] = pixels[4];
+			}
+
+			tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[8]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[7]);
+			diff2 = labs(bptr[4] - bptr[5]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[8] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[8] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[8] = pixels[7];
+				else
+					tmp[8] = pixels[4];
+			}
+
+			break;
+
+		case 14:	/* ^ */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp_grey = chosen_greyscale[tmp[0]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[1]);
+			diff2 = labs(bptr[4] - bptr[3]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[0] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+			}
+
+			tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp_grey = chosen_greyscale[tmp[2]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[5]);
+			diff2 = labs(bptr[4] - bptr[1]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[2] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[5];
+				else
+					tmp[2] = pixels[4];
+			}
+
+			break;
+
+		case 15:	/* v */
+			for (i = 0; i < 9; i++)
+				tmp[i] = center;
+
+			tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[6]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[3]);
+			diff2 = labs(bptr[4] - bptr[7]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[6] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[6] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[6] = pixels[7];
+				else
+					tmp[6] = pixels[4];
+			}
+
+			tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[8]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[7]);
+			diff2 = labs(bptr[4] - bptr[5]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[8] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[8] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[8] = pixels[7];
+				else
+					tmp[8] = pixels[4];
+			}
+
+			break;
+
+		case 127:	/* * */
+		case -1:	/* no edge */
+		case 0:		/* - */
+		case 6:		/* | */
+		default:
+			dptr2 = ((uint16 *) (dptr - dstPitch)) - 1;
+			*dptr2++ = center;
+			*dptr2++ = center;
+			*dptr2 = center;
+			dptr2 = ((uint16 *) dptr) - 1;
+			*dptr2++ = center;
+			*dptr2++ = center;
+#if DEBUG_REFRESH_RANDOM_XOR
+			*dptr2 = center ^ (uint16) (dxorshift_128() * (1L<<16));
+#else
+			*dptr2 = center;
+#endif
+			dptr2 = ((uint16 *) (dptr + dstPitch)) - 1;
+			*dptr2++ = center;
+			*dptr2++ = center;
+			*dptr2 = center;
+
+			return;
+
+			break;
+	}
+
+	ptmp = tmp;
+	dptr2 = ((uint16 *) (dptr - dstPitch)) - 1;
+	*dptr2++ = *ptmp++;
+	*dptr2++ = *ptmp++;
+	*dptr2 = *ptmp++;
+	dptr2 = ((uint16 *) dptr) - 1;
+	*dptr2++ = *ptmp++;
+	*dptr2++ = *ptmp++;
+#if DEBUG_REFRESH_RANDOM_XOR
+	*dptr2 = *ptmp++ ^ (uint16) (dxorshift_128() * (1L<<16));
+#else
+	*dptr2 = *ptmp++;
+#endif
+	dptr2 = ((uint16 *) (dptr + dstPitch)) - 1;
+	*dptr2++ = *ptmp++;
+	*dptr2++ = *ptmp++;
+	*dptr2 = *ptmp;
+}
+
+
+
+/* Fill pixel grid with or without interpolation, using the detected edge */
+void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
+		uint16 *pixels, int sub_type, int16 *bptr,
+		int8 *sim,
+		int interpolate_2x)
+{
+	uint16 *dptr2;
+	uint16 center = pixels[4];
+	int32 diff1, diff2, diff3;
+	int16 tmp_grey;
+	uint16 tmp[4];
+	uint16 *ptmp;
+
+	switch (sub_type)
+	{
+		case 1:		/* '- */
+			tmp[0] = tmp[1] = tmp[3] = center;
+
+			tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[2]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[3]);
+			diff2 = labs(bptr[4] - bptr[7]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[2] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[7];
+				else
+					tmp[2] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[2]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[8]);
+				if (diff1 <= diff2)
+				{
+					if (interpolate_2x)
+					{
+						uint16 tmp_pixel = tmp[2];
+						tmp[2] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
+								tmp_pixel, center);
+						tmp[3] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+					}
+				}
+				else
+				{
+					if (interpolate_2x)
+					{
+						tmp[2] = INTERPOLATE(tmp[2], center);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[2]])
+							tmp[2] = center;
+					}
+				}
+			}
+
+			break;
+
+		case 2:		/* -. */
+			tmp[0] = tmp[2] = tmp[3] = center;
+
+			tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp_grey = chosen_greyscale[tmp[1]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[5]);
+			diff2 = labs(bptr[4] - bptr[1]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[1] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[1] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[1] = pixels[5];
+				else
+					tmp[1] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[1]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[0]);
+				if (diff1 <= diff2)
+				{
+					if (interpolate_2x)
+					{
+						uint16 tmp_pixel = tmp[1];
+						tmp[1] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
+								tmp_pixel, center);
+						tmp[0] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+					}
+				}
+				else
+				{
+					if (interpolate_2x)
+					{
+						tmp[1] = INTERPOLATE(tmp[1], center);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[1]])
+							tmp[1] = center;
+					}
+				}
+			}
+
+			break;
+
+		case 3:		/* \ */
+		case 16:	/* \' */
+		case 17:	/* .\ */
+			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
+
+			if (sub_type != 16)
+			{
+				tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[1] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[1] = pixels[5];
+				else
+					tmp[1] = pixels[4];
+
+				if (interpolate_2x)
+				{
+					tmp[1] = INTERPOLATE(tmp[1], center);
+				}
+				/* sim test is for hyper-cephalic kitten eyes and squeeze toy 
+				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
+				 * nearest-neighbor, so detect them and don't anti-alias them.
+				 */
+				else if (bptr[4] > chosen_greyscale[tmp[1]] ||
+						(sim_sum == 1 && (sim[0] || sim[7]) &&
+						 pixels[1] == pixels[3] && pixels[5] == pixels[7]))
+					tmp[1] = center;
+			}
+
+			if (sub_type != 17)
+			{
+				tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[7];
+				else
+					tmp[2] = pixels[4];
+
+				if (interpolate_2x)
+				{
+					tmp[2] = INTERPOLATE(tmp[2], center);
+				}
+				/* sim test is for hyper-cephalic kitten eyes and squeeze toy 
+				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
+				 * nearest-neighbor, so detect them and don't anti-alias them.
+				 */
+				else if (bptr[4] > chosen_greyscale[tmp[2]] ||
+						(sim_sum == 1 && (sim[0] || sim[7]) &&
+						 pixels[1] == pixels[3] && pixels[5] == pixels[7]))
+					tmp[2] = center;
+			}
+
+			break;
+
+		case 4:		/* '| */
+			tmp[0] = tmp[2] = tmp[3] = center;
+
+			tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp_grey = chosen_greyscale[tmp[1]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[1]);
+			diff2 = labs(bptr[4] - bptr[5]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[1] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[1] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[1] = pixels[5];
+				else
+					tmp[1] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[1]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[8]);
+				if (diff1 <= diff2)
+				{
+					if (interpolate_2x)
+					{
+						uint16 tmp_pixel = tmp[1];
+						tmp[1] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
+								tmp_pixel, center);
+						tmp[3] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+					}
+				}
+				else
+				{
+					if (interpolate_2x)
+					{
+						tmp[1] = INTERPOLATE(tmp[1], center);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[1]])
+							tmp[1] = center;
+					}
+				}
+			}
+
+			break;
+
+		case 5:		/* |. */
+			tmp[0] = tmp[1] = tmp[3] = center;
+
+			tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[2]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[7]);
+			diff2 = labs(bptr[4] - bptr[3]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[2] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[7];
+				else
+					tmp[2] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[2]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[0]);
+				if (diff1 <= diff2)
+				{
+					if (interpolate_2x)
+					{
+						uint16 tmp_pixel = tmp[2];
+						tmp[2] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
+								tmp_pixel, center);
+						tmp[0] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+					}
+				}
+				else
+				{
+					if (interpolate_2x)
+					{
+						tmp[2] = INTERPOLATE(tmp[2], center);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[2]])
+							tmp[2] = center;
+					}
+				}
+			}
+
+			break;
+
+		case 7:		/* |' */
+			tmp[1] = tmp[2] = tmp[3] = center;
+
+			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp_grey = chosen_greyscale[tmp[0]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[1]);
+			diff2 = labs(bptr[4] - bptr[3]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[0] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[0]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[6]);
+				if (diff1 <= diff2)
+				{
+					if (interpolate_2x)
+					{
+						uint16 tmp_pixel = tmp[0];
+						tmp[0] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
+								tmp_pixel, center);
+						tmp[2] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+					}
+				}
+				else
+				{
+					if (interpolate_2x)
+					{
+						tmp[0] = INTERPOLATE(tmp[0], center);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[0]])
+							tmp[0] = center;
+					}
+				}
+			}
+
+			break;
+
+		case 8:		/* .| */
+			tmp[0] = tmp[1] = tmp[2] = center;
+
+			tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[3]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[7]);
+			diff2 = labs(bptr[4] - bptr[5]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[3] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[3] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[3] = pixels[7];
+				else
+					tmp[3] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[3]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[2]);
+				if (diff1 <= diff2)
+				{
+					if (interpolate_2x)
+					{
+						uint16 tmp_pixel = tmp[3];
+						tmp[3] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
+								tmp_pixel, center);
+						tmp[1] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+					}
+				}
+				else
+				{
+					if (interpolate_2x)
+					{
+						tmp[3] = INTERPOLATE(tmp[3], center);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[3]])
+							tmp[3] = center;
+					}
+				}
+			}
+
+			break;
+
+		case 9:		/* / */
+		case 18:	/* '/ */
+		case 19:	/* /. */
+			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
+
+			if (sub_type != 18)
+			{
+				tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+
+				if (interpolate_2x)
+				{
+					tmp[0] = INTERPOLATE(tmp[0], center);
+				}
+				/* sim test is for hyper-cephalic kitten eyes and squeeze toy 
+				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
+				 * nearest-neighbor, so detect them and don't anti-alias them.
+				 */
+				else if (bptr[4] > chosen_greyscale[tmp[0]] ||
+						(sim_sum == 1 && (sim[2] || sim[5]) &&
+						 pixels[1] == pixels[5] && pixels[3] == pixels[7]))
+					tmp[0] = center;
+			}
+
+			if (sub_type != 19)
+			{
+				tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[3] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[3] = pixels[7];
+				else
+					tmp[3] = pixels[4];
+
+				if (interpolate_2x)
+				{
+					tmp[3] = INTERPOLATE(tmp[3], center);
+				}
+				/* sim test is for hyper-cephalic kitten eyes and squeeze toy 
+				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
+				 * nearest-neighbor, so detect them and don't anti-alias them.
+				 */
+				else if (bptr[4] > chosen_greyscale[tmp[3]] ||
+						(sim_sum == 1 && (sim[2] || sim[5]) &&
+						 pixels[1] == pixels[5] && pixels[3] == pixels[7]))
+					tmp[3] = center;
+			}
+
+			break;
+
+		case 10:	/* -' */
+			tmp[0] = tmp[1] = tmp[2] = center;
+
+			tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[3]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[5]);
+			diff2 = labs(bptr[4] - bptr[7]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[3] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[3] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[3] = pixels[7];
+				else
+					tmp[3] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[3]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[6]);
+				if (diff1 <= diff2)
+				{
+					if (interpolate_2x)
+					{
+						uint16 tmp_pixel = tmp[3];
+						tmp[3] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
+								tmp_pixel, center);
+						tmp[2] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+					}
+				}
+				else
+				{
+					if (interpolate_2x)
+					{
+						tmp[3] = INTERPOLATE(tmp[3], center);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[3]])
+							tmp[3] = center;
+					}
+				}
+			}
+
+			break;
+
+		case 11:	/* .- */
+			tmp[1] = tmp[2] = tmp[3] = center;
+
+			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp_grey = chosen_greyscale[tmp[0]];
+#if PARANOID_KNIGHTS
+			diff1 = labs(bptr[4] - bptr[3]);
+			diff2 = labs(bptr[4] - bptr[1]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[0] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+
+				tmp_grey = chosen_greyscale[tmp[0]];
+				diff1 = labs(bptr[4] - tmp_grey);
+				diff2 = labs(bptr[4] - bptr[2]);
+				if (diff1 <= diff2)
+				{
+					if (interpolate_2x)
+					{
+						uint16 tmp_pixel = tmp[0];
+						tmp[0] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
+								tmp_pixel, center);
+						tmp[1] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+					}
+				}
+				else
+				{
+					if (interpolate_2x)
+					{
+						tmp[0] = INTERPOLATE(tmp[0], center);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[0]])
+							tmp[0] = center;
+					}
+				}
+			}
+
+			break;
+
+		case 12:	/* < */
+			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
+
+			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp_grey = chosen_greyscale[tmp[0]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[1]);
+			diff2 = labs(bptr[4] - bptr[3]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[0] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+
+				/* check for half-arrow */
+				if (sim_sum == 2 && sim[4] && sim[2])
+				{
+					if (interpolate_2x)
+					{
+						tmp[0] = INTERPOLATE(center, tmp[0]);
+						tmp[2] = average_one_third(center, tmp[0]);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[0]])
+							tmp[0] = center;
+					}
+
+					break;
+				}
+
+				if (interpolate_2x)
+					tmp[0] = average_one_third(center, tmp[0]);
+				else
+					tmp[0] = center;
+			}
+
+			tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[2]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[3]);
+			diff2 = labs(bptr[4] - bptr[7]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[2] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[7];
+				else
+					tmp[2] = pixels[4];
+
+				/* check for half-arrow */
+				if (sim_sum == 2 && sim[4] && sim[7])
+				{
+					if (interpolate_2x)
+					{
+						tmp[2] = INTERPOLATE(center, tmp[2]);
+						tmp[0] = average_one_third(center, tmp[2]);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[2]])
+							tmp[2] = center;
+					}
+
+					break;
+				}
+
+				if (interpolate_2x)
+					tmp[2] = average_one_third(center, tmp[2]);
+				else
+					tmp[2] = center;
+			}
+
+			break;
+
+		case 13:	/* > */
+			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
+
+			tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp_grey = chosen_greyscale[tmp[1]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[5]);
+			diff2 = labs(bptr[4] - bptr[1]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[1] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[1] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[1] = pixels[5];
+				else
+					tmp[1] = pixels[4];
+
+				/* check for half-arrow */
+				if (sim_sum == 2 && sim[3] && sim[0])
+				{
+					if (interpolate_2x)
+					{
+						tmp[1] = INTERPOLATE(center, tmp[1]);
+						tmp[3] = average_one_third(center, tmp[1]);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[1]])
+							tmp[1] = center;
+					}
+
+					break;
+				}
+
+				if (interpolate_2x)
+					tmp[1] = average_one_third(center, tmp[1]);
+				else
+					tmp[1] = center;
+			}
+
+			tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[3]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[7]);
+			diff2 = labs(bptr[4] - bptr[5]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[3] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[3] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[3] = pixels[7];
+				else
+					tmp[3] = pixels[4];
+
+				/* check for half-arrow */
+				if (sim_sum == 2 && sim[3] && sim[5])
+				{
+					if (interpolate_2x)
+					{
+						tmp[3] = INTERPOLATE(center, tmp[3]);
+						tmp[1] = average_one_third(center, tmp[3]);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[3]])
+							tmp[3] = center;
+					}
+
+					break;
+				}
+
+				if (interpolate_2x)
+					tmp[3] = average_one_third(center, tmp[3]);
+				else
+					tmp[3] = center;
+			}
+
+			break;
+
+		case 14:	/* ^ */
+			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
+
+			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp_grey = chosen_greyscale[tmp[0]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[1]);
+			diff2 = labs(bptr[4] - bptr[3]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[0] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[0] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[0] = pixels[3];
+				else
+					tmp[0] = pixels[4];
+
+				/* check for half-arrow */
+				if (sim_sum == 2 && sim[6] && sim[5])
+				{
+					if (interpolate_2x)
+					{
+						tmp[0] = INTERPOLATE(center, tmp[0]);
+						tmp[1] = average_one_third(center, tmp[0]);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[0]])
+							tmp[0] = center;
+					}
+
+					break;
+				}
+
+				if (interpolate_2x)
+					tmp[0] = average_one_third(center, tmp[0]);
+				else
+					tmp[0] = center;
+			}
+
+			tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp_grey = chosen_greyscale[tmp[1]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[5]);
+			diff2 = labs(bptr[4] - bptr[1]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[1] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[1] = pixels[1];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[1] = pixels[5];
+				else
+					tmp[1] = pixels[4];
+
+				/* check for half-arrow */
+				if (sim_sum == 2 && sim[6] && sim[7])
+				{
+					if (interpolate_2x)
+					{
+						tmp[1] = INTERPOLATE(center, tmp[1]);
+						tmp[0] = average_one_third(center, tmp[1]);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[1]])
+							tmp[1] = center;
+					}
+
+					break;
+				}
+
+				if (interpolate_2x)
+					tmp[1] = average_one_third(center, tmp[1]);
+				else
+					tmp[1] = center;
+			}
+
+			break;
+
+		case 15:	/* v */
+			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
+
+			tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[2]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[3]);
+			diff2 = labs(bptr[4] - bptr[7]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[2] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[2] = pixels[3];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[2] = pixels[7];
+				else
+					tmp[2] = pixels[4];
+
+				/* check for half-arrow */
+				if (sim_sum == 2 && sim[1] && sim[0])
+				{
+					if (interpolate_2x)
+					{
+						tmp[2] = INTERPOLATE(center, tmp[2]);
+						tmp[3] = average_one_third(center, tmp[2]);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[2]])
+							tmp[2] = center;
+					}
+
+					break;
+				}
+
+				if (interpolate_2x)
+					tmp[2] = average_one_third(center, tmp[2]);
+				else
+					tmp[2] = center;
+			}
+
+			tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp_grey = chosen_greyscale[tmp[3]];
+#if PARANOID_ARROWS
+			diff1 = labs(bptr[4] - bptr[7]);
+			diff2 = labs(bptr[4] - bptr[5]);
+			diff3 = labs(bptr[4] - tmp_grey);
+			if (diff1 < diff3 || diff2 < diff3)
+				tmp[3] = center;
+			else	/* choose nearest pixel */
+#endif
+			{
+				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
+				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
+				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				if (diff1 <= diff2 && diff1 <= diff3)
+					tmp[3] = pixels[5];
+				else if (diff2 <= diff1 && diff2 <= diff3)
+					tmp[3] = pixels[7];
+				else
+					tmp[3] = pixels[4];
+
+				/* check for half-arrow */
+				if (sim_sum == 2 && sim[1] && sim[2])
+				{
+					if (interpolate_2x)
+					{
+						tmp[3] = INTERPOLATE(center, tmp[3]);
+						tmp[2] = average_one_third(center, tmp[3]);
+					}
+					else
+					{
+						if (bptr[4] > chosen_greyscale[tmp[3]])
+							tmp[3] = center;
+					}
+
+					break;
+				}
+
+				if (interpolate_2x)
+					tmp[3] = average_one_third(center, tmp[3]);
+				else
+					tmp[3] = center;
+			}
+
+			break;
+
+		case -1:	/* no edge */
+		case 0:		/* - */
+		case 6:		/* | */
+		case 127:	/* * */
+		default:	/* no edge */
+			dptr2 = (uint16 *) dptr;
+			*dptr2++ = center;
+#if DEBUG_REFRESH_RANDOM_XOR
+			*dptr2 = center ^ (uint16) (dxorshift_128() * (1L<<16));
+#else
+			*dptr2 = center;
+#endif
+			dptr2 = (uint16 *) (dptr + dstPitch);
+			*dptr2++ = center;
+			*dptr2 = center;
+
+			return;
+
+			break;
+	}
+
+	ptmp = tmp;
+	dptr2 = (uint16 *) dptr;
+	*dptr2++ = *ptmp++;
+#if DEBUG_REFRESH_RANDOM_XOR
+	*dptr2 = *ptmp++ ^ (uint16) (dxorshift_128() * (1L<<16));
+#else
+	*dptr2 = *ptmp++;
+#endif
+	dptr2 = (uint16 *) (dptr + dstPitch);
+	*dptr2++ = *ptmp++;
+	*dptr2 = *ptmp;
+}
+
+
+
+#if HANDLE_TRANSPARENT_OVERLAYS
+/* Deal with transparent pixels */
+void handle_transparent_overlay(uint16 transp, uint16 *pixels,
+		int16 *bplane, int16 *diffs)
+{
+	int16 tmp_grey;
+	int16 max_diff;
+	int16 min_grey = ((int16)1<<RGB_SHIFT);
+	int16 max_grey = 0;
+	int i;
+
+	/* find min and max grey values in window */
+	for (i = 0; i < 9; i++)
+	{
+		if (bplane[i] < min_grey) min_grey = bplane[i];
+		if (bplane[i] > max_grey) max_grey = bplane[i];
+	}
+
+	/* treat transparent pixels as the average of min_grey and max_grey */
+	/* set diff from center pixel to maximum difference within the window */
+	tmp_grey = (min_grey + max_grey + 1) >> 1;
+	max_diff = max_grey - min_grey;
+
+	if (pixels[4] == transp)	/* center pixel is transparent */
+	{
+		/* set all transparent pixels to middle grey */
+		if (pixels[0] == transp) bplane[0] = tmp_grey;
+		if (pixels[1] == transp) bplane[1] = tmp_grey;
+		if (pixels[2] == transp) bplane[2] = tmp_grey;
+		if (pixels[3] == transp) bplane[3] = tmp_grey;
+		if (pixels[4] == transp) bplane[4] = tmp_grey;
+		if (pixels[5] == transp) bplane[5] = tmp_grey;
+		if (pixels[6] == transp) bplane[6] = tmp_grey;
+		if (pixels[7] == transp) bplane[7] = tmp_grey;
+		if (pixels[8] == transp) bplane[8] = tmp_grey;
+
+		/* set all diffs to non-transparent pixels to max diff */
+		if (pixels[0] != transp) diffs[0] = max_diff;
+		if (pixels[1] != transp) diffs[1] = max_diff;
+		if (pixels[2] != transp) diffs[2] = max_diff;
+		if (pixels[3] != transp) diffs[3] = max_diff;
+		if (pixels[5] != transp) diffs[4] = max_diff;
+		if (pixels[6] != transp) diffs[5] = max_diff;
+		if (pixels[7] != transp) diffs[6] = max_diff;
+		if (pixels[8] != transp) diffs[7] = max_diff;
+	}
+	else			/* center pixel is non-transparent */
+	{
+		/* choose transparent grey value to give largest contrast */
+		tmp_grey = (bplane[4] >= tmp_grey) ? min_grey : max_grey;
+
+		/* set new transparent pixel values and diffs */
+		if (pixels[0] == transp)
+		{
+			bplane[0] = tmp_grey;
+			diffs[0] = max_diff;
+		}
+		if (pixels[1] == transp)
+		{
+			bplane[1] = tmp_grey;
+			diffs[1] = max_diff;
+		}
+		if (pixels[2] == transp)
+		{
+			bplane[2] = tmp_grey;
+			diffs[2] = max_diff;
+		}
+		if (pixels[3] == transp)
+		{
+			bplane[3] = tmp_grey;
+			diffs[3] = max_diff;
+		}
+		if (pixels[5] == transp)
+		{
+			bplane[5] = tmp_grey;
+			diffs[4] = max_diff;
+		}
+		if (pixels[6] == transp)
+		{
+			bplane[6] = tmp_grey;
+			diffs[5] = max_diff;
+		}
+		if (pixels[7] == transp)
+		{
+			bplane[7] = tmp_grey;
+			diffs[6] = max_diff;
+		}
+		if (pixels[8] == transp)
+		{
+			bplane[8] = tmp_grey;
+			diffs[7] = max_diff;
+		}
+	}
+}
+#endif
+
+
+
+/* Check for changed pixel grid, return 1 if unchanged. */
+int check_unchanged_pixels(uint16 *old_src_ptr, uint16 *pixels, int w)
+{
+	uint16 *dptr16;
+
+	dptr16 = old_src_ptr - w - 1;
+	if (*dptr16++ != pixels[0]) return 0;
+	if (*dptr16++ != pixels[1]) return 0;
+	if (*dptr16 != pixels[2]) return 0;
+
+	dptr16 += w - 2;
+	if (*dptr16 != pixels[3]) return 0;
+	dptr16 += 2;
+	if (*dptr16 != pixels[5]) return 0;
+
+	dptr16 += w - 2;
+	if (*dptr16++ != pixels[6]) return 0;
+	if (*dptr16++ != pixels[7]) return 0;
+	if (*dptr16 != pixels[8]) return 0;
+
+	return 1;
+}
+
+
+/* Draw unchanged pixel grid, 3x */
+/* old_dptr16 starts in top left of grid, dptr16 in center */
+void draw_unchanged_grid_3x(uint16 *dptr16, int dstPitch,
+		uint16 *old_dptr16, int old_dst_inc)
+{
+	uint16 *sptr;
+	uint16 *dptr;
+	uint8 *dptr8 = (uint8 *) dptr16;
+
+	sptr = old_dptr16;
+	dptr = (uint16 *) (dptr8 - dstPitch) - 1;
+	*dptr++ = *sptr++;
+	*dptr++ = *sptr++;
+	*dptr = *sptr;
+
+	sptr = old_dptr16 + old_dst_inc;
+	dptr = dptr16 - 1;
+	*dptr++ = *sptr++;
+	*dptr++ = *sptr++;
+	*dptr = *sptr;
+
+	sptr = old_dptr16 + old_dst_inc + old_dst_inc;
+	dptr = (uint16 *) (dptr8 + dstPitch) - 1;
+	*dptr++ = *sptr++;
+	*dptr++ = *sptr++;
+	*dptr = *sptr;
+}
+
+
+
+/* Draw unchanged pixel grid, 2x */
+void draw_unchanged_grid_2x(uint16 *dptr16, int dstPitch,
+		uint16 *old_dptr16, int old_dst_inc)
+{
+	uint16 *sptr;
+	uint16 *dptr;
+	uint8 *dptr8 = (uint8 *) dptr16;
+
+	sptr = old_dptr16;
+	dptr = dptr16;
+	*dptr++ = *sptr++;
+	*dptr = *sptr;
+
+	sptr = old_dptr16 + old_dst_inc;
+	dptr = (uint16 *) (dptr8 + dstPitch);
+	*dptr++ = *sptr++;
+	*dptr = *sptr;
+}
+
+
+/* Perform edge detection, draw the new 3x pixels */
+void anti_alias_pass_3x(const uint8 *src, uint8 *dst,
+		int w, int h, int w_new, int h_new,
+		int srcPitch, int dstPitch,
+		int overlay_flag)
+{
+	int x, y;
+	int w2 = w + 2;
+	const uint8 *sptr8 = src;
+	uint8 *dptr8 = dst + dstPitch + 2;
+	const uint16 *sptr16;
+	uint16 *dptr16;
+	int16 *bplane;
+	int8 sim[8];
+	int sub_type;
+	int32 angle;
+	int16 *diffs;
+	int dstPitch3 = dstPitch * 3;
+
+	uint16 *old_src_ptr, *old_dst_ptr;
+	uint16 *old_sptr16, *old_dptr16;
+	int32 dist, old_src_y, old_src_x;
+	int old_src_inc;
+	int old_dst_inc, old_dst_inc3;
+
+	if (overlay_flag)
+	{
+		old_src_ptr = old_overlay + w2 + 1;
+		old_src_inc = w2;
+
+		old_dst_ptr = old_dst_overlay;
+		old_dst_inc = w_new;
+	}
+	else
+	{
+		dist = src - (const uint8 *) src_addr_min;
+		old_src_y = dist / srcPitch;
+		old_src_x = (dist - old_src_y * srcPitch) >> 1;
+
+		old_src_inc = cur_screen_width + 2;
+		old_src_ptr = old_src + (old_src_y + 1) * old_src_inc + old_src_x + 1;
+
+		old_dst_inc = 3 * cur_screen_width;
+		old_dst_ptr = old_dst + 3 * (old_src_y * old_dst_inc + old_src_x);
+	}
+
+	old_dst_inc3 = 3 * old_dst_inc;
+
+#if 0
+#if HANDLE_TRANSPARENT_OVERLAYS
+	uint16 transp = 0;	/* transparent color */
+
+	/* assume bitmap is padded by a transparent border, take src-1 pixel */
+	if (overlay_flag) transp = *((const uint16 *) src - 1);
+#endif
+
+	/* The dirty rects optimizer in the SDL backend is helpful for frames
+	 * with few changes, but _REALLY_ bogs things down when the whole screen
+	 * changes.  Overall, the dirty rects optimizer isn't worth it, since
+	 * the Edge2x/3x unchanged pixel detection is far faster than full blown
+	 * dirty rects optimization.
+	 */
+	g_system->setFeatureState(g_system->kFeatureAutoComputeDirtyRects, 0);
+#endif
+
+	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch3,
+			old_src_ptr += old_src_inc, old_dst_ptr += old_dst_inc3)
+	{
+		for (x = 0,
+				sptr16 = (const uint16 *) sptr8,
+				dptr16 = (uint16 *) dptr8,
+				old_sptr16 = old_src_ptr,
+				old_dptr16 = old_dst_ptr;
+				x < w; x++, sptr16++, dptr16 += 3, old_sptr16++, old_dptr16 += 3)
+		{
+			const uint16 *sptr2, *addr3;
+			uint16 pixels[9];
+			char edge_type;
+
+			sptr2 = ((const uint16 *) ((const uint8 *) sptr16 - srcPitch)) - 1;
+			addr3 = ((const uint16 *) ((const uint8 *) sptr16 + srcPitch)) + 1;
+
+			/* fill the 3x3 grid */
+			memcpy(pixels, sptr2, 3*sizeof(uint16));
+			memcpy(pixels+3, sptr16 - 1, 3*sizeof(uint16));
+			memcpy(pixels+6, addr3 - 2, 3*sizeof(uint16));
+
+#if 0
+			/* skip interior unchanged 3x3 blocks */
+			if (*sptr16 == *old_sptr16 &&
+#if DEBUG_DRAW_REFRESH_BORDERS
+					x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
+#endif
+					check_unchanged_pixels(old_sptr16, pixels, old_src_inc))
+			{
+				draw_unchanged_grid_3x(dptr16, dstPitch, old_dptr16,
+						old_dst_inc);
+
+#if DEBUG_REFRESH_RANDOM_XOR
+				*(dptr16 + 1) = 0;
+#endif
+				continue;
+			}
+
+#endif
+			diffs = choose_greyscale(pixels);
+
+			/* block of solid color */
+			if (!diffs)
+			{
+				anti_alias_grid_clean_3x((uint8 *) dptr16, dstPitch, pixels,
+						0, NULL);
+				continue;
+			}
+
+#if 0
+#if HANDLE_TRANSPARENT_OVERLAYS
+			if (overlay_flag)
+				handle_transparent_overlay(transp, pixels, bplane, diffs);
+#endif
+#endif
+
+			bplane = bptr_global;
+
+			edge_type = find_principle_axis(pixels, diffs, bplane,
+					sim, &angle);
+			sub_type = refine_direction(edge_type, pixels, bplane,
+					sim, angle);
+			if (sub_type >= 0)
+				sub_type = fix_knights(sub_type, pixels, sim);
+
+			anti_alias_grid_clean_3x((uint8 *) dptr16, dstPitch, pixels,
+					sub_type, bplane);
+		}
+	}
+}
+
+
+
+/* Perform edge detection, draw the new 2x pixels */
+void anti_alias_pass_2x(const uint8 *src, uint8 *dst,
+		int w, int h, int w_new, int h_new,
+		int srcPitch, int dstPitch,
+		int overlay_flag,
+		int interpolate_2x)
+{
+	int x, y;
+	int w2 = w + 2;
+	const uint8 *sptr8 = src;
+	uint8 *dptr8 = dst;
+	const uint16 *sptr16;
+	uint16 *dptr16;
+	int16 *bplane;
+	int8 sim[8];
+	int sub_type;
+	int32 angle;
+	int16 *diffs;
+	int dstPitch2 = dstPitch << 1;
+
+	uint16 *old_src_ptr, *old_dst_ptr;
+	uint16 *old_sptr16, *old_dptr16;
+	int32 dist, old_src_y, old_src_x;
+	int old_src_inc;
+	int old_dst_inc, old_dst_inc2;
+
+	if (overlay_flag)
+	{
+		old_src_ptr = old_overlay + w2 + 1;
+		old_src_inc = w2;
+
+		old_dst_ptr = old_dst_overlay;
+		old_dst_inc = w_new;
+	}
+	else
+	{
+		dist = src - (const uint8 *) src_addr_min;
+		old_src_y = dist / srcPitch;
+		old_src_x = (dist - old_src_y * srcPitch) >> 1;
+
+		old_src_inc = cur_screen_width + 2;
+		old_src_ptr = old_src + (old_src_y + 1) * old_src_inc + old_src_x + 1;
+
+		old_dst_inc = 2 * cur_screen_width;
+		old_dst_ptr = old_dst + 2 * (old_src_y * old_dst_inc + old_src_x);
+	}
+
+	old_dst_inc2 = 2 * old_dst_inc;
+
+#if 0 
+#if HANDLE_TRANSPARENT_OVERLAYS
+	uint16 transp = 0;	/* transparent color */
+
+	/* assume bitmap is padded by a transparent border, take src-1 pixel */
+	if (overlay_flag) transp = *((const uint16 *) src - 1);
+#endif
+
+
+	/* The dirty rects optimizer in the SDL backend is helpful for frames
+	 * with few changes, but _REALLY_ bogs things down when the whole screen
+	 * changes.  Overall, the dirty rects optimizer isn't worth it, since
+	 * the Edge2x/3x unchanged pixel detection is far faster than full blown
+	 * dirty rects optimization.
+	 */
+	g_system->setFeatureState(g_system->kFeatureAutoComputeDirtyRects, 0);
+#endif
+
+	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch2,
+			old_src_ptr += old_src_inc, old_dst_ptr += old_dst_inc2)
+	{
+		for (x = 0,
+				sptr16 = (const uint16 *) sptr8,
+				dptr16 = (uint16 *) dptr8,
+				old_sptr16 = old_src_ptr,
+				old_dptr16 = old_dst_ptr;
+				x < w; x++, sptr16++, dptr16 += 2, old_sptr16++, old_dptr16 += 2)
+		{
+			const uint16 *sptr2, *addr3;
+			uint16 pixels[9];
+			char edge_type;
+
+			sptr2 = ((const uint16 *) ((const uint8 *) sptr16 - srcPitch)) - 1;
+			addr3 = ((const uint16 *) ((const uint8 *) sptr16 + srcPitch)) + 1;
+
+			/* fill the 3x3 grid */
+			memcpy(pixels, sptr2, 3*sizeof(uint16));
+			memcpy(pixels+3, sptr16 - 1, 3*sizeof(uint16));
+			memcpy(pixels+6, addr3 - 2, 3*sizeof(uint16));
+
+#if 0
+			/* skip interior unchanged 3x3 blocks */
+			if (*sptr16 == *old_sptr16 &&
+#if DEBUG_DRAW_REFRESH_BORDERS
+					x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
+#endif
+					check_unchanged_pixels(old_sptr16, pixels, old_src_inc))
+			{
+				draw_unchanged_grid_2x(dptr16, dstPitch, old_dptr16,
+						old_dst_inc);
+
+#if DEBUG_REFRESH_RANDOM_XOR
+				*(dptr16 + 1) = 0;
+#endif
+				continue;
+			}
+#endif
+
+			diffs = choose_greyscale(pixels);
+
+			/* block of solid color */
+			if (!diffs)
+			{
+				anti_alias_grid_2x((uint8 *) dptr16, dstPitch, pixels,
+						0, NULL, NULL, 0);
+				continue;
+			}
+
+#if 0
+#if HANDLE_TRANSPARENT_OVERLAYS
+			if (overlay_flag)
+				handle_transparent_overlay(transp, pixels, bplane, diffs);
+#endif
+#endif
+
+			bplane = bptr_global;
+
+			edge_type = find_principle_axis(pixels, diffs, bplane,
+					sim, &angle);
+			sub_type = refine_direction(edge_type, pixels, bplane,
+					sim, angle);
+			if (sub_type >= 0)
+				sub_type = fix_knights(sub_type, pixels, sim);
+
+			anti_alias_grid_2x((uint8 *) dptr16, dstPitch, pixels,
+					sub_type, bplane, sim,
+					interpolate_2x);
+		}
+	}
+}
+
+
+
+/* Initialize various lookup tables */
+void init_tables(const uint8 *srcPtr, uint32 srcPitch,
+		int width, int height)
+{
+	double r_float, g_float, b_float;
+	int r, g, b;
+	uint16 i;
+	double val[3];
+	double intensity;
+	int16 *rgb_ptr;
+
+#if DEBUG_REFRESH_RANDOM_XOR
+	/* seed the random number generator, we don't care if the seed is random */
+	initialize_xorshift_128(42);
+#endif
+
+	/* initialize greyscale table */
+	for (r = 0; r < 32; r++) {
+		r_float = r / 31.0;
+
+		for (g = 0; g < 64; g++) {
+			g_float = g / 63.0;
+
+			for (b = 0; b < 32; b++) {
+				b_float = b / 31.0;
+
+				intensity = (r_float + g_float + b_float) / 3;
+
+				i = (r << 11) | (g << 5) | b;
+
+				/* use luma-like weights for each color, 2x increments */
+				val[0] = 0.571 * r_float + 0.286 * g_float + 0.143 * b_float;
+				val[1] = 0.286 * r_float + 0.571 * g_float + 0.143 * b_float;
+				val[2] = 0.143 * r_float + 0.286 * g_float + 0.571 * b_float;
+
+				/* factor in a little intensity too, it helps */
+				val[0] = (intensity + 9*val[0]) / 10;
+				val[1] = (intensity + 9*val[1]) / 10;
+				val[2] = (intensity + 9*val[2]) / 10;
+
+				/* store the greyscale tables */
+				greyscale_table[0][i] = (int16) (val[0] * ((int16)1<<GREY_SHIFT) + 0.5);
+				greyscale_table[1][i] = (int16) (val[1] * ((int16)1<<GREY_SHIFT) + 0.5);
+				greyscale_table[2][i] = (int16) (val[2] * ((int16)1<<GREY_SHIFT) + 0.5);
+
+				/* normalized RGB channel lookups */
+				rgb_ptr = rgb_table[(r << 11) | (g << 5) | b];
+				rgb_ptr[0] = (int16) (r_float * ((int16)1<<RGB_SHIFT) + 0.5);
+				rgb_ptr[1] = (int16) (g_float * ((int16)1<<RGB_SHIFT) + 0.5);
+				rgb_ptr[2] = (int16) (b_float * ((int16)1<<RGB_SHIFT) + 0.5);
+			}
+		}
+	}
+
+	/* initialize interpolation division tables */
+	for (r = 0; r <= 189; r++)
+		div3[r] = ((r<<1)+3) / 6;
+	for (r = 0; r <= 567; r++)
+		div9[r] = ((r<<1)+9) / 18;
+
+#if 0
+#if INCREASE_WIN32_PRIORITY
+	/*
+	 * Greatly increase thread and process priority under Win32.
+	 *
+	 * -- WARNING -- WinXP has a rather poor priority system, it's basicly
+	 * "largely ignore me", "normal", or "interfere with some system processes".
+	 * At least Win9x/ME had "increased" and "decreased" modes, but now those API
+	 * functions aren't "supported" in WinNT/2K/XP, and we're stuck with the mess
+	 * we have now.  "Normal" is preempted by so much other unimportant stuff,
+	 * including the idle process, that ScummVM never gets above 75% CPU usage,
+	 * even when the filter is overworked and the frame rate is getting jerky.
+	 * Massively increasing BOTH the process and thread priorities (need to boost
+	 * the process priority to keep audio in sync with the increased thread
+	 * priority when the frame rate gets jerky) beats Windows into giving the
+	 * program the time it needs, however, doing things outside ScummVM may be
+	 * sluggish.  I recommend pausing ScummVM prior to shrinking from full-screen
+	 * to a window, or before switching from ScummVM to some other task.  Other
+	 * than the above mentioned sluggishness, I have not seen any other sort of
+	 * system instability while running with increased priorities.
+	 *
+	 */
+
+	/* Rather than check for all Win32 compiler flavors, just check for WIN32 and
+	 * PRIORITY defines.
+	 */
+#if defined WIN32 && defined(HIGH_PRIORITY_CLASS) && defined(THREAD_PRIORITY_TIME_CRITICAL)
+
+	/* Raise task and thread priority under Win32 */
+	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+#endif
+#endif
+#endif 
+}
+
+
+
+/*
+ * Resize old src and dst arrays. Also check for problems that require full
+ * redraws, rather than using the unchanged pixel buffering.  If the ScummVM
+ * backend evolves to draw even more things outside the filter than it
+ * currently does, some more checks may need to be added, or external flags
+ * set in the backend to tell the filter to redraw everything without using
+ * the unchanged pixel buffers.  The current checks seem to catch everything
+ * for now....
+ *
+ */
+void resize_old_arrays(const uint8 *src, uint8 *dst,
+		int w, int h, int scale)
+{
+	int w2, h2;
+	int32 size, max_scaled_size;
+	const uint16 *sptr16 = (const uint16 *) src;
+	int overlay_flag = 0;
+	int skip_unchanged_pixels_flag;
+
+	if (sptr16 < src_addr_min || sptr16 > src_addr_max)
+		overlay_flag = 1;
+
+	if (scale > max_scale) max_scale = scale;
+
+	/* Deal with overlays */
+	if (overlay_flag)
+	{
+		skip_unchanged_pixels_flag = 1;
+
+		w2 = w + 2;
+		h2 = h + 2;
+		size = w2 * h2;
+
+		if (size > max_overlay_size)
+		{
+			max_overlay_size = size;
+			old_overlay = (uint16 *) realloc(old_overlay,
+					size * sizeof(uint16));
+
+			skip_unchanged_pixels_flag = 0;
+		}
+
+		max_scaled_size = max_scale * max_scale * max_overlay_size;
+
+		if (max_scaled_size > max_dst_overlay_size)
+		{
+			max_dst_overlay_size = max_scaled_size;
+			old_dst_overlay = (uint16 *) realloc(old_dst_overlay,
+					max_scaled_size * sizeof(uint16));
+
+			skip_unchanged_pixels_flag = 0;
+		}
+
+		cur_overlay_width = w;
+		cur_overlay_height = h;
+		cur_dst_overlay_width = w * scale;
+		cur_dst_overlay_height = h * scale;
+		if (cur_overlay_width != old_overlay_width ||
+				cur_overlay_height != old_overlay_height ||
+				cur_dst_overlay_width != old_dst_overlay_width ||
+				cur_dst_overlay_height != old_dst_overlay_height)
+		{
+			skip_unchanged_pixels_flag = 0;
+		}
+		old_overlay_width = cur_overlay_width;
+		old_overlay_height = cur_overlay_height;
+		old_dst_overlay_width = cur_dst_overlay_width;
+		old_dst_overlay_height = cur_dst_overlay_height;
+
+		if (skip_unchanged_pixels_flag == 0)
+		{
+			memset(old_overlay, 0, max_overlay_size * sizeof(uint16));
+			memset(old_dst_overlay, 0, max_dst_overlay_size * sizeof(uint16));
+		}
+	}
+	else
+	{
+		w2 = cur_screen_width + 2;
+		h2 = cur_screen_height + 2;
+		size = w2 * h2;
+	}
+
+	skip_unchanged_pixels_flag = 1;
+
+	if (overlay_flag == 0 && size > max_old_src_size)
+	{
+		max_old_src_size = size;
+		old_src = (uint16 *) realloc(old_src, size * sizeof(uint16));
+
+		skip_unchanged_pixels_flag = 0;
+	}
+
+	max_scaled_size = max_scale * max_scale * max_old_src_size;
+
+	if (overlay_flag == 0 && max_scaled_size > max_old_dst_size)
+	{
+		max_old_dst_size = max_scaled_size;
+		old_dst = (uint16 *) realloc(old_dst,
+				max_scaled_size * sizeof(uint16));
+
+		skip_unchanged_pixels_flag = 0;
+	}
+
+	/* screen dimensions have changed */
+	if (cur_screen_width != old_screen_width ||
+			cur_screen_height != old_screen_height)
+	{
+		skip_unchanged_pixels_flag = 0;
+	}
+	old_screen_width = cur_screen_width;
+	old_screen_height = cur_screen_height;
+
+	cur_dst_screen_width = cur_screen_width * scale;
+	cur_dst_screen_height = cur_screen_height * scale;
+	if (cur_dst_screen_width != old_dst_screen_width ||
+			cur_dst_screen_height != old_dst_screen_height)
+	{
+		skip_unchanged_pixels_flag = 0;
+	}
+	old_dst_screen_width = cur_dst_screen_width;
+	old_dst_screen_height = cur_dst_screen_height;
+
+	/* set all the buffers to 0, so that everything gets redrawn */
+	if (skip_unchanged_pixels_flag == 0)
+	{
+		memset(old_src, 0, max_old_src_size * sizeof(uint16));
+		memset(old_dst, 0, max_old_dst_size * sizeof(uint16));
+		memset(old_overlay, 0, max_overlay_size * sizeof(uint16));
+		memset(old_dst_overlay, 0, max_dst_overlay_size * sizeof(uint16));
+	}
+}
+
+
+
+/* Fill old src array, which is used in checking for unchanged pixels */
+void fill_old_src(const uint8 *src, int srcPitch, int w, int h)
+{
+	int x, y;
+	int x2, y2;
+	const uint16 *sptr16 = (const uint16 *) src;
+	const uint16 *sptr2;
+	uint16 *optr16;
+	int32 screen_width2 = cur_screen_width + 2;
+	int32 dist = src - (const uint8 *) src_addr_min;
+	int32 x_fudge;
+	int32 src_fudge;
+
+	/* Deal with overlays */
+	if (sptr16 < src_addr_min || sptr16 > src_addr_max)
+	{
+		w += 2;
+		h += 2;
+
+		optr16 = old_overlay;
+		sptr2 = (const uint16 *) (src - srcPitch) - 1;
+
+		x_fudge = 0;
+		src_fudge = srcPitch - w - w;
+	}
+	else
+	{
+		y = dist / srcPitch;
+		x = (dist - y * srcPitch) >> 1;
+
+		optr16 = old_src + (y + 1) * screen_width2 + x + 1;
+		sptr2 = (const uint16 *) src;
+
+		x_fudge = screen_width2 - w;
+		src_fudge = srcPitch - w - w;
+	}
+
+	for (y2 = 0; y2 < h; y2++)
+	{
+		for (x2 = 0; x2 < w; x2++)
+			*optr16++ = *sptr2++;
+
+		optr16 += x_fudge;
+		sptr2 = (const uint16 *) ((const uint8 *) sptr2 + src_fudge);
+	}
+}
+
+
+
+/* Fill old dst array, which is used in drawing unchanged pixels */
+void fill_old_dst(const uint8 *src, uint8 *dst, int srcPitch, int dstPitch,
+		int w, int h, int scale)
+{
+	int x, y;
+	int x2, y2;
+
+	const uint16 *sptr16 = (const uint16 *) src;
+	uint16 *dptr2;
+	uint16 *optr16;
+	int32 screen_width_scaled = cur_screen_width * scale;
+	int32 dist;
+	int w_new = w * scale;
+	int h_new = h * scale;
+	int32 x_fudge;
+	int32 dst_fudge;
+
+	/* Deal with overlays */
+	if (sptr16 < src_addr_min || sptr16 > src_addr_max)
+	{
+		optr16 = old_dst_overlay;
+		dptr2 = (uint16 *) dst;
+		x_fudge = 0;
+		dst_fudge = dstPitch - w_new - w_new;
+	}
+	else
+	{
+		dist = src - (const uint8 *) src_addr_min;
+		y = dist / srcPitch;
+		x = (dist - y * srcPitch) >> 1;
+
+		optr16 = old_dst + scale * (y * screen_width_scaled + x);
+		dptr2 = (uint16 *) dst;
+
+		x_fudge = screen_width_scaled - w_new;
+		dst_fudge = dstPitch - w_new - w_new;
+	}
+
+	for (y2 = 0; y2 < h_new; y2++)
+	{
+		for (x2 = 0; x2 < w_new; x2++)
+			*optr16++ = *dptr2++;
+
+		optr16 += x_fudge;
+		dptr2 = (uint16 *) ((uint8 *) dptr2 + dst_fudge);
+	}
+}
+
+
+
+/* 3x anti-aliased resize filter, nearest-neighbor anti-aliasing */
+void Edge3x(const uint8 *srcPtr, uint32 srcPitch,
+		uint8 *dstPtr, uint32 dstPitch, int width, int height)
+{
+	/* Initialize stuff */
+	if (!init_flag)
+	{
+		cur_screen_width = g_system->getWidth();
+		cur_screen_height = g_system->getHeight();
+
+		/* set initial best guess on min/max screen addresses */
+		/* indent by 1 in case only the mouse is ever drawn */
+		src_addr_min = (const uint16 *) srcPtr + 1;
+		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) *
+					srcPitch)) + (width - 1) - 1;
+
+		init_tables(srcPtr, srcPitch, width, height);
+		init_flag = 1;
+	}
+
+	/* Uh oh, the screen size has changed */
+	if (cur_screen_width != g_system->getWidth() ||
+			cur_screen_height != g_system->getHeight())
+	{
+		cur_screen_width = g_system->getWidth();
+		cur_screen_height = g_system->getHeight();
+		src_addr_min = (const uint16 *) srcPtr;
+		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) * srcPitch)) +
+			(width - 1);
+	}
+
+	/* Ah ha, we're doing the whole screen, so we can save the bounds of the
+	   src array for later bounds checking */
+	if (width == g_system->getWidth() &&
+			height == g_system->getHeight())
+	{
+		src_addr_min = (const uint16 *) srcPtr;
+		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) * srcPitch)) +
+			(width - 1);
+	}
+
+	/* resize and/or blank the old src and dst array */
+	resize_old_arrays(srcPtr, dstPtr, width, height, 3);
+
+	/* Hmm, the src address isn't within the proper bounds.
+	 * We're probably drawing an overlay now.
+	 */
+	if ((const uint16 *) srcPtr < src_addr_min ||
+			(const uint16 *) srcPtr > src_addr_max)
+	{
+		anti_alias_pass_3x(srcPtr, dstPtr, width, height,
+				3*width, 3*height, srcPitch, dstPitch, 1);
+	}
+	else   /* Draw the regular screen, this isn't an overlay. */
+	{
+		anti_alias_pass_3x(srcPtr, dstPtr, width, height,
+				3*width, 3*height, srcPitch, dstPitch, 0);
+	}
+
+	/* fill old src array */
+	fill_old_src(srcPtr, srcPitch, width, height);
+	fill_old_dst(srcPtr, dstPtr, srcPitch, dstPitch, width, height, 3);
+}
+
+
+
+/* 2x anti-aliased resize filter, nearest-neighbor anti-aliasing */
+void Edge2x(const uint8 *srcPtr, uint32 srcPitch,
+		uint8 *dstPtr, uint32 dstPitch, int width, int height)
+{
+	/* Initialize stuff */
+	if (!init_flag)
+	{
+		cur_screen_width = g_system->getWidth();
+		cur_screen_height = g_system->getHeight();
+
+		/* set initial best guess on min/max screen addresses */
+		/* indent by 1 in case only the mouse is ever drawn */
+		src_addr_min = (const uint16 *) srcPtr + 1;
+		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) *
+					srcPitch)) + (width - 1) - 1;
+
+		init_tables(srcPtr, srcPitch, width, height);
+		init_flag = 1;
+	}
+
+	/* Uh oh, the screen size has changed */
+	if (cur_screen_width != g_system->getWidth() ||
+			cur_screen_height != g_system->getHeight())
+	{
+		cur_screen_width = g_system->getWidth();
+		cur_screen_height = g_system->getHeight();
+		src_addr_min = (const uint16 *) srcPtr;
+		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) * srcPitch)) +
+			(width - 1);
+	}
+
+	/* Ah ha, we're doing the whole screen, so we can save the bounds of the
+	   src array for later bounds checking */
+	if (width == g_system->getWidth() &&
+			height == g_system->getHeight())
+	{
+		src_addr_min = (const uint16 *) srcPtr;
+		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) * srcPitch)) +
+			(width - 1);
+	}
+
+	/* resize and/or blank the old src and dst array */
+	resize_old_arrays(srcPtr, dstPtr, width, height, 2);
+
+	/* Hmm, the src address isn't within the proper bounds.
+	 * We're probably drawing an overlay now.
+	 */
+	if ((const uint16 *) srcPtr < src_addr_min ||
+			(const uint16 *) srcPtr > src_addr_max)
+	{
+		anti_alias_pass_2x(srcPtr, dstPtr, width, height,
+				2*width, 2*height, srcPitch, dstPitch, 1, 0);
+	}
+	else   /* Draw the regular screen, this isn't an overlay. */
+	{
+		anti_alias_pass_2x(srcPtr, dstPtr, width, height,
+				2*width, 2*height, srcPitch, dstPitch, 0, 0);
+	}
+
+	/* fill old src array */
+	fill_old_src(srcPtr, srcPitch, width, height);
+	fill_old_dst(srcPtr, dstPtr, srcPitch, dstPitch, width, height, 2);
+}
+
+
+
+/*
+ * 2x anti-aliased resize filter, interpolation based anti-aliasing.
+ * This is useful prior to upsizing with the 1.5x filter for the menu
+ * overlay.  Nearest-neighbor looks bad with 1.5x resize.  Interpolated gives
+ * results that look good, like a somewhat blurry Edge3x.
+ *
+ */
+void Edge2x_Interp(const uint8 *srcPtr, uint32 srcPitch,
+		uint8 *dstPtr, uint32 dstPitch, int width, int height)
+{
+	/* Initialize stuff */
+	if (!init_flag)
+	{
+		cur_screen_width = g_system->getWidth();
+		cur_screen_height = g_system->getHeight();
+
+		/* set initial best guess on min/max screen addresses */
+		/* indent by 1 in case only the mouse is ever drawn */
+		src_addr_min = (const uint16 *) srcPtr + 1;
+		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) *
+					srcPitch)) + (width - 1) - 1;
+
+		init_tables(srcPtr, srcPitch, width, height);
+		init_flag = 1;
+	}
+
+	/* Uh oh, the screen size has changed */
+	if (cur_screen_width != g_system->getWidth() ||
+			cur_screen_height != g_system->getHeight())
+	{
+		cur_screen_width = g_system->getWidth();
+		cur_screen_height = g_system->getHeight();
+		src_addr_min = (const uint16 *) srcPtr;
+		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) * srcPitch)) +
+			(width - 1);
+	}
+
+	/* Ah ha, we're doing the whole screen, so we can save the bounds of the
+	   src array for later bounds checking */
+	if (width == g_system->getWidth() &&
+			height == g_system->getHeight())
+	{
+		src_addr_min = (const uint16 *) srcPtr;
+		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) * srcPitch)) +
+			(width - 1);
+	}
+
+	/* resize and/or blank the old src and dst array */
+	resize_old_arrays(srcPtr, dstPtr, width, height, 2);
+
+	/* Hmm, the src address isn't within the proper bounds.
+	 * We're probably drawing an overlay now.
+	 */
+	if ((const uint16 *) srcPtr < src_addr_min ||
+			(const uint16 *) srcPtr > src_addr_max)
+	{
+		anti_alias_pass_2x(srcPtr, dstPtr, width, height,
+				2*width, 2*height, srcPitch, dstPitch, 1, 0);
+	}
+	else   /* Draw the regular screen, this isn't an overlay. */
+	{
+		anti_alias_pass_2x(srcPtr, dstPtr, width, height,
+				2*width, 2*height, srcPitch, dstPitch, 0, 1);
+	}
+
+	/* fill old src array */
+	fill_old_src(srcPtr, srcPitch, width, height);
+	fill_old_dst(srcPtr, dstPtr, srcPitch, dstPitch, width, height, 2);
+}
+
+EdgePlugin::EdgePlugin() {
+	_factor = 2;
+	_factors.push_back(2);
+	_factors.push_back(3);
+}
+
+void EdgePlugin::initialize(Graphics::PixelFormat format) {
+	_format = format;
+	init_tables(0, 0, 0, 0);
+}
+
+void EdgePlugin::deinitialize() {
+}
+
+void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+		uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
+	if (_format.bytesPerPixel == 2) {
+		if (_factor == 2)
+			anti_alias_pass_2x(srcPtr, dstPtr, width, height, 2*width, 2*height, srcPitch, dstPitch, 0, 1);
+		else
+			anti_alias_pass_3x(srcPtr, dstPtr, width, height, 3*width, 3*height, srcPitch, dstPitch, 0);
+	} else {
+		warning("FIXME: EdgePlugin 32bpp format");
+	}
+}
+
+uint EdgePlugin::increaseFactor() {
+	if (_factor == 2)
+		++_factor;
+	return _factor;
+}
+
+uint EdgePlugin::decreaseFactor() {
+	if (_factor == 3)
+		--_factor;
+	return _factor;
+}
+
+const char *EdgePlugin::getName() const {
+	return "edge";
+}
+
+const char *EdgePlugin::getPrettyName() const {
+	return "Edge";
+}
+
+REGISTER_PLUGIN_STATIC(EDGE, PLUGIN_TYPE_SCALER, EdgePlugin);
