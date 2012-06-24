@@ -134,7 +134,6 @@ void CGEEngine::init() {
 	_soundOk = 1;
 	_sprTv = NULL;
 	_gameCase2Cpt = 0;
-	_offUseCount = 0;
 
 	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
