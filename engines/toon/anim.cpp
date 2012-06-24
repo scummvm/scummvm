@@ -146,6 +146,9 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int32 xx, int
 	if (_frames[frame]._ref != -1)
 		frame = _frames[frame]._ref;
 
+	if (!_frames[frame]._data)
+		return;
+
 	int32 rectX = _frames[frame]._x2 - _frames[frame]._x1;
 	int32 rectY = _frames[frame]._y2 - _frames[frame]._y1;
 	int32 offsX = 0;
