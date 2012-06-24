@@ -50,6 +50,7 @@ endif
 
 ifdef USE_HQ_SCALERS
 MODULE_OBJS += \
+	scaler/edge.o \
 	scaler/hq.o \
 
 ifdef USE_NASM
