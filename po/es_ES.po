@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-05-20 22:39+0100\n"
-"PO-Revision-Date: 2011-10-23 21:53+0100\n"
+"PO-Revision-Date: 2012-06-22 17:44+0100\n"
 "Last-Translator: Tomás Maidagan\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -77,7 +77,6 @@ msgid "Remap keys"
 msgstr "Asignar teclas"
 
 #: gui/gui-manager.cpp:129 base/main.cpp:307
-#, fuzzy
 msgid "Toggle FullScreen"
 msgstr "Activar pantalla completa"
 
@@ -193,9 +192,8 @@ msgid "Platform:"
 msgstr "Plat.:"
 
 #: gui/launcher.cpp:231
-#, fuzzy
 msgid "Engine"
-msgstr "Examinar"
+msgstr "Motor"
 
 #: gui/launcher.cpp:239 gui/options.cpp:1062 gui/options.cpp:1079
 msgid "Graphics"
@@ -604,7 +602,7 @@ msgstr "Renderizado:"
 
 #: gui/options.cpp:741 gui/options.cpp:742
 msgid "Special dithering modes supported by some games"
-msgstr "Modos especiales de expansión soportados por algunos juegos"
+msgstr "Modos especiales de expansión compatibles con algunos juegos"
 
 #: gui/options.cpp:753
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2248
@@ -692,8 +690,8 @@ msgstr "SoundFont:"
 #: gui/options.cpp:849 gui/options.cpp:851 gui/options.cpp:852
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr ""
-"SoundFont está soportado por algunas tarjetas de sonido, además de "
-"Fluidsynth y Timidity"
+"SoundFont es compatible con algunas tarjetas de sonido, con Fluidsynth y con "
+"Timidity"
 
 #: gui/options.cpp:851
 msgctxt "lowres"
@@ -895,7 +893,7 @@ msgstr "Idioma de la interfaz de ScummVM"
 
 #: gui/options.cpp:1347
 msgid "You have to restart ScummVM before your changes will take effect."
-msgstr "Tienes que reiniciar ScummVM para que los cambios surjan efecto."
+msgstr "Tienes que reiniciar ScummVM para aplicar los cambios."
 
 #: gui/options.cpp:1360
 msgid "Select directory for savegames"
@@ -998,7 +996,7 @@ msgstr "Eliminar valor"
 #: base/main.cpp:209
 #, c-format
 msgid "Engine does not support debug level '%s'"
-msgstr "El motor no soporta el nivel de debug '%s'"
+msgstr "El motor no es compatible con el nivel de debug '%s'"
 
 #: base/main.cpp:287
 msgid "Menu"
@@ -1037,11 +1035,11 @@ msgstr "No se han encontrado datos de juego"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr "ID del juego no soportada"
+msgstr "ID del juego no compatible"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
-msgstr "Modo de color no soportado"
+msgstr "Modo de color no compatible"
 
 #: common/error.cpp:47
 msgid "Read permission denied"
@@ -1164,14 +1162,14 @@ msgstr ""
 "para obtener más ayuda."
 
 #: engines/dialogs.cpp:243
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Lo sentimos, aún no hay ayuda disponible para este juego. Por favor, "
-"consulta el archivo README para encontrar información básica e instrucciones "
-"para obtener más ayuda."
+"Ha habido un fallo al guardar la partida (%s). Por favor, consulta el "
+"archivo README para encontrar información básica e instrucciones sobre cómo "
+"obtener más ayuda."
 
 #: engines/dialogs.cpp:321 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
@@ -1232,14 +1230,14 @@ msgstr ""
 "Consulta el archivo README para más detalles."
 
 #: engines/engine.cpp:426
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Lo sentimos, aún no hay ayuda disponible para este juego. Por favor, "
-"consulta el archivo README para encontrar información básica e instrucciones "
-"para obtener más ayuda."
+"Ha habido un fallo al cargar la partida (%s). Por favor, consulta el archivo "
+"README para encontrar información básica e instrucciones sobre cómo obtener "
+"más ayuda."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1253,17 +1251,18 @@ msgstr ""
 
 #: engines/engine.cpp:442
 msgid "Start anyway"
-msgstr "Jugar de todos modos"
+msgstr "Jugar aun así"
 
 #: engines/agi/detection.cpp:145 engines/dreamweb/detection.cpp:47
 #: engines/sci/detection.cpp:390
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "Usar pantallas de guardar/cargar originales"
 
 #: engines/agi/detection.cpp:146 engines/dreamweb/detection.cpp:48
 #: engines/sci/detection.cpp:391
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
+"Utilizar las pantallas de guardar/cargar originales, en vez de las de ScummVM"
 
 #: engines/agi/saveload.cpp:827 engines/sci/engine/kfile.cpp:674
 msgid "Restore game:"
@@ -1274,68 +1273,68 @@ msgid "Restore"
 msgstr "Cargar"
 
 #: engines/dreamweb/detection.cpp:57
-#, fuzzy
 msgid "Use bright palette mode"
-msgstr "Objeto superior derecho"
+msgstr "Usar paleta original"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "Utilizar los niveles de brillo originales del juego"
 
 #: engines/sci/detection.cpp:370
 msgid "EGA undithering"
 msgstr "Difuminado EGA"
 
 #: engines/sci/detection.cpp:371
-#, fuzzy
 msgid "Enable undithering in EGA games"
-msgstr "Activar difuminado en los juegos EGA compatibles"
+msgstr "Activar difuminado en los juegos EGA"
 
 #: engines/sci/detection.cpp:380
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "Volumen de los efectos de sonido"
+msgstr "Preferir efectos de sonido digitales"
 
 #: engines/sci/detection.cpp:381
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "Preferir efectos de sonido digitales en vez de los sintetizados"
 
 #: engines/sci/detection.cpp:400
 msgid "Use IMF/Yahama FB-01 for MIDI output"
-msgstr ""
+msgstr "Usar IMF/Yahama FB-01 para la salida MIDI"
 
 #: engines/sci/detection.cpp:401
 msgid ""
 "Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
+"Usa una tarjeta IBM Music o un módulo sintetizador Yahama FB-01 FM para la "
+"salida MIDI"
 
 #: engines/sci/detection.cpp:411
 msgid "Use CD audio"
-msgstr ""
+msgstr "Usar CD audio"
 
 #: engines/sci/detection.cpp:412
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "Usa CD audio en vez del sonido interno del juego, si está disponible"
 
 #: engines/sci/detection.cpp:422
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "Usar cursores de Windows"
 
 #: engines/sci/detection.cpp:423
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
+"Usar los cursores de Windows (más pequeños y monocromos) en vez de los de DOS"
 
 #: engines/sci/detection.cpp:433
-#, fuzzy
 msgid "Use silver cursors"
-msgstr "Cursor normal"
+msgstr "Usar cursores plateados"
 
 #: engines/sci/detection.cpp:434
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
+"Usar los cursores plateados alternativos, en vez de los dorados normales"
 
 #: engines/scumm/dialogs.cpp:175
 #, c-format
@@ -1457,7 +1456,7 @@ msgstr "Selecciona un nivel de dificultad."
 
 #: engines/scumm/dialogs.cpp:655
 msgid "Refer to your Loom(TM) manual for help."
-msgstr "Mira en el Manual para mayor información."
+msgstr "Consulta el manual para obtener más información."
 
 #: engines/scumm/dialogs.cpp:658
 msgid "Standard"
@@ -2088,115 +2087,107 @@ msgstr "Fallo al guardar la partida"
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr ""
+msgstr "Risas del público"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr ""
+msgstr "Activa las risas del público"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr ""
+msgstr "Permitir omisiones"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "Permite saltarse frases y vídeos"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr ""
+msgstr "Modo helio"
 
 #: engines/kyra/detection.cpp:85
-#, fuzzy
 msgid "Enable helium mode"
-msgstr "Activar modo Roland GS"
+msgstr "Activa el modo helio"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr ""
+msgstr "Desplazamiento suave"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr ""
+msgstr "Activa el desplazamiento de pantalla suave al caminar"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:112
-#, fuzzy
 msgid "Floating cursors"
-msgstr "Cursor normal"
+msgstr "Cursores flotantes"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "Activar cursores flotantes"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
 msgid "HP bar graphs"
-msgstr ""
+msgstr "Barras de energía"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "Activa las barras de energía"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
-msgstr ""
+msgstr "Ataque 1"
 
 #: engines/kyra/lol.cpp:479
 msgid "Attack 2"
-msgstr ""
+msgstr "Ataque 2"
 
 #: engines/kyra/lol.cpp:480
 msgid "Attack 3"
-msgstr ""
+msgstr "Ataque 3"
 
 #: engines/kyra/lol.cpp:481
 msgid "Move Forward"
-msgstr ""
+msgstr "Avanzar"
 
 #: engines/kyra/lol.cpp:482
 msgid "Move Back"
-msgstr ""
+msgstr "Retroceder"
 
 #: engines/kyra/lol.cpp:483
 msgid "Slide Left"
-msgstr ""
+msgstr "Deslizarse a la izquierda"
 
 #: engines/kyra/lol.cpp:484
-#, fuzzy
 msgid "Slide Right"
-msgstr "Derecha"
+msgstr "Deslizarse a la derecha"
 
 #: engines/kyra/lol.cpp:485
-#, fuzzy
 msgid "Turn Left"
-msgstr "Apagar"
+msgstr "Girar a la izquierda"
 
 #: engines/kyra/lol.cpp:486
-#, fuzzy
 msgid "Turn Right"
-msgstr "Derecha"
+msgstr "Girar a la derecha"
 
 #: engines/kyra/lol.cpp:487
-#, fuzzy
 msgid "Rest"
-msgstr "Cargar"
+msgstr "Descansar"
 
 #: engines/kyra/lol.cpp:488
-#, fuzzy
 msgid "Options"
-msgstr "~O~pciones"
+msgstr "Opciones"
 
 #: engines/kyra/lol.cpp:489
-#, fuzzy
 msgid "Choose Spell"
-msgstr "Aceptar"
+msgstr "Elegir hechizo"
 
 #: engines/kyra/sound_midi.cpp:475
 msgid ""
@@ -2206,19 +2197,20 @@ msgid ""
 "General MIDI ones. After all it might happen\n"
 "that a few tracks will not be correctly played."
 msgstr ""
-"Estás usando un dispositivo General Midi,\n"
-"pero el juego solo soporta MIDI Roland MT32.\n"
+"Estás usando un dispositivo General Midi, pero el\n"
+"juego solo es compatible con MIDI Roland MT32.\n"
 "Intentamos adaptar los instrumentos Roland MT32\n"
 "a los de General MIDI, pero es posible que algunas\n"
 "de las pistas no se reproduzcan correctamente."
 
 #: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr ""
+msgstr "Intro de disquete"
 
 #: engines/queen/queen.cpp:60 engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
 msgstr ""
+"Usa la introducción de la versión en disquete (solo para la versión CD)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2239,7 +2231,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:539
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "El vídeo de PSX '%s' no se puede reproducir en modo paleta"
 
 #: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:455
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
@@ -2295,19 +2287,19 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Este es el final de la demo de Broken Sword 1"
 
 #: engines/sword2/animation.cpp:435
-#, fuzzy
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"Se han encontrado vídeos DXA, pero se ha compilado ScummVM sin soporte zlib"
+"Se han encontrado vídeos PSX, pero se ha compilado ScummVM sin soporte de "
+"color RGB"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr ""
+msgstr "Mostrar etiquetas de objetos"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "Muestra las etiquetas de los objetos al pasar el ratón"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2449,7 +2441,6 @@ msgid "Keymap:"
 msgstr "Asignación de teclas:"
 
 #: backends/keymapper/remap-dialog.cpp:66
-#, fuzzy
 msgid " (Effective)"
 msgstr "(Activa)"
 
@@ -2459,7 +2450,7 @@ msgstr "(Activa)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Blocked)"
-msgstr ""
+msgstr "(Bloqueado)"
 
 #: backends/keymapper/remap-dialog.cpp:119
 msgid " (Global)"
@@ -2563,7 +2554,7 @@ msgstr "Modo Touchpad desactivado."
 
 #: backends/platform/maemo/maemo.cpp:205
 msgid "Click Mode"
-msgstr ""
+msgstr "Modo clic"
 
 #: backends/platform/maemo/maemo.cpp:211
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -2574,9 +2565,8 @@ msgid "Left Click"
 msgstr "Clic izquierdo"
 
 #: backends/platform/maemo/maemo.cpp:214
-#, fuzzy
 msgid "Middle Click"
-msgstr "Objeto izquierdo del medio"
+msgstr "Clic central"
 
 #: backends/platform/maemo/maemo.cpp:217
 #: backends/platform/symbian/src/SymbianActions.cpp:43
@@ -3019,7 +3009,7 @@ msgstr "Bajando el volumen"
 
 #: backends/updates/macosx/macosx-updates.mm:65
 msgid "Check for Updates..."
-msgstr "Comprobando las actualizaciones..."
+msgstr "Buscar actualizaciones..."
 
 #: backends/platform/bada/form.cpp:269
 msgid "Right Click Once"
