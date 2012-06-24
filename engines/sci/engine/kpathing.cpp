@@ -367,7 +367,7 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 	draw_point(s, start, 1, width, height);
 	draw_point(s, end, 0, width, height);
 
-	if (!poly_list.segment)
+	if (!poly_list.getSegment())
 		return;
 
 	list = s->_segMan->lookupList(poly_list);
@@ -423,7 +423,7 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	debug("End point: (%i, %i)", end.x, end.y);
 	debug("Optimization level: %i", opt);
 
-	if (!poly_list.segment)
+	if (!poly_list.getSegment())
 		return;
 
 	list = s->_segMan->lookupList(poly_list);
@@ -1180,7 +1180,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	PathfindingState *pf_s = new PathfindingState(width, height);
 
 	// Convert all polygons
-	if (poly_list.segment) {
+	if (poly_list.getSegment()) {
 		List *list = s->_segMan->lookupList(poly_list);
 		Node *node = s->_segMan->lookupNode(list->first);
 
@@ -1503,7 +1503,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			draw_point(s, start, 1, width, height);
 			draw_point(s, end, 0, width, height);
 
-			if (poly_list.segment) {
+			if (poly_list.getSegment()) {
 				print_input(s, poly_list, start, end, opt);
 				draw_input(s, poly_list, start, end, opt, width, height);
 			}

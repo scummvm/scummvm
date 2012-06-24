@@ -193,7 +193,7 @@ void RenderQueue::update() {
 
 	if (doFullRefresh) {
 		clear();
-		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, _vm->_cameraHeight);
+		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, 0, 640, _vm->_cameraHeight);
 	} else {
 		updateDirtyRects();
 	}
@@ -301,7 +301,7 @@ void RenderQueue::updateDirtyRects() {
 	int n_rects = 0;
 	Common::Rect *rects = _updateUta->getRectangles(&n_rects, 0, 0, 639, _vm->_cameraHeight - 1);
 	for (int i = 0; i < n_rects; i++) {
-		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen + rects[i].left + rects[i].top * 640,
+		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen + rects[i].left + rects[i].top * 640,
 			640, rects[i].left, rects[i].top, rects[i].width(), rects[i].height());
 	}
 	delete[] rects;

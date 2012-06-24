@@ -2590,7 +2590,7 @@ Common::String ResourceManager::findSierraGameId() {
 	if (!heap)
 		return "";
 
-	int16 gameObjectOffset = findGameObject(false).offset;
+	int16 gameObjectOffset = findGameObject(false).getOffset();
 
 	if (!gameObjectOffset)
 		return "";

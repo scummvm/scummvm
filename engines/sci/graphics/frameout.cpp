@@ -62,8 +62,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 
 	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
-	_scriptsRunningWidth = 320;
-	_scriptsRunningHeight = 200;
 	_curScrollText = -1;
 	_showScrollText = false;
 	_maxScrollTexts = 0;
@@ -129,12 +127,12 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 		uint16 tmpRunningHeight = readSelectorValue(_segMan, object, SELECTOR(resY));
 
 		// The above can be 0 in SCI3 (e.g. Phantasmagoria 2)
-		if (tmpRunningWidth > 0 && tmpRunningHeight > 0) {
-			_scriptsRunningWidth = tmpRunningWidth;
-			_scriptsRunningHeight = tmpRunningHeight;
+		if (tmpRunningWidth == 0 && tmpRunningHeight == 0) {
+			tmpRunningWidth = 320;
+			tmpRunningHeight = 200;
 		}
 
-		_coordAdjuster->setScriptsResolution(_scriptsRunningWidth, _scriptsRunningHeight);
+		_coordAdjuster->setScriptsResolution(tmpRunningWidth, tmpRunningHeight);
 	}
 
 	newPlane.object = object;
@@ -172,11 +170,8 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			it->planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom));
 			it->planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right));
 
-			Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
-			it->planeRect.top = (it->planeRect.top * screenRect.height()) / _scriptsRunningHeight;
-			it->planeRect.left = (it->planeRect.left * screenRect.width()) / _scriptsRunningWidth;
-			it->planeRect.bottom = (it->planeRect.bottom * screenRect.height()) / _scriptsRunningHeight;
-			it->planeRect.right = (it->planeRect.right * screenRect.width()) / _scriptsRunningWidth;
+			_coordAdjuster->fromScriptToDisplay(it->planeRect.top, it->planeRect.left);
+			_coordAdjuster->fromScriptToDisplay(it->planeRect.bottom, it->planeRect.right);
 
 			// We get negative left in kq7 in scrolling rooms
 			if (it->planeRect.left < 0) {
@@ -241,11 +236,9 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 			planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom));
 			planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right));
 
-			Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
-			planeRect.top = (planeRect.top * screenRect.height()) / _scriptsRunningHeight;
-			planeRect.left = (planeRect.left * screenRect.width()) / _scriptsRunningWidth;
-			planeRect.bottom = (planeRect.bottom * screenRect.height()) / _scriptsRunningHeight;
-			planeRect.right = (planeRect.right * screenRect.width()) / _scriptsRunningWidth;
+			_coordAdjuster->fromScriptToDisplay(planeRect.top, planeRect.left);
+			_coordAdjuster->fromScriptToDisplay(planeRect.bottom, planeRect.right);
+
 			// Blackout removed plane rect
 			_paint32->fillRect(planeRect, 0);
 			return;
@@ -466,23 +459,6 @@ void GfxFrameout::sortPlanes() {
 	Common::sort(_planes.begin(), _planes.end(), planeSortHelper);
 }
 
-int16 GfxFrameout::upscaleHorizontalCoordinate(int16 coordinate) {
-	return ((coordinate * _screen->getWidth()) / _scriptsRunningWidth);
-}
-
-int16 GfxFrameout::upscaleVerticalCoordinate(int16 coordinate) {
-	return ((coordinate * _screen->getHeight()) / _scriptsRunningHeight);
-}
-
-Common::Rect GfxFrameout::upscaleRect(Common::Rect &rect) {
-	rect.top = (rect.top * _scriptsRunningHeight) / _screen->getHeight();
-	rect.left = (rect.left * _scriptsRunningWidth) / _screen->getWidth();
-	rect.bottom = (rect.bottom * _scriptsRunningHeight) / _screen->getHeight();
-	rect.right = (rect.right * _scriptsRunningWidth) / _screen->getWidth();
-
-	return rect;
-}
-
 void GfxFrameout::showVideo() {
 	bool skipVideo = false;
 	RobotDecoder *videoDecoder = g_sci->_robotDecoder;
@@ -496,7 +472,7 @@ void GfxFrameout::showVideo() {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
-				g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+				g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 
 				if (videoDecoder->hasDirtyPalette())
 					videoDecoder->setSystemPalette();
@@ -665,24 +641,21 @@ void GfxFrameout::kernelFrameout() {
 			
 			if (itemEntry->object.isNull()) {
 				// Picture cel data
-				itemEntry->x = upscaleHorizontalCoordinate(itemEntry->x);
-				itemEntry->y = upscaleVerticalCoordinate(itemEntry->y);
-				itemEntry->picStartX = upscaleHorizontalCoordinate(itemEntry->picStartX);
-				itemEntry->picStartY = upscaleVerticalCoordinate(itemEntry->picStartY);
+				_coordAdjuster->fromScriptToDisplay(itemEntry->y, itemEntry->x);
+				_coordAdjuster->fromScriptToDisplay(itemEntry->picStartY, itemEntry->picStartX);
 
 				if (!isPictureOutOfView(itemEntry, it->planeRect, it->planeOffsetX, it->planeOffsetY))
 					drawPicture(itemEntry, it->planeOffsetX, it->planeOffsetY, it->planePictureMirrored);
 			} else {
 				GfxView *view = (itemEntry->viewId != 0xFFFF) ? _cache->getView(itemEntry->viewId) : NULL;
-				
+				int16 dummyX = 0;
+
 				if (view && view->isSci2Hires()) {
-					int16 dummyX = 0;
 					view->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
 					view->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
 				} else if (getSciVersion() == SCI_VERSION_2_1) {
-					itemEntry->x = upscaleHorizontalCoordinate(itemEntry->x);
-					itemEntry->y = upscaleVerticalCoordinate(itemEntry->y);
-					itemEntry->z = upscaleVerticalCoordinate(itemEntry->z);
+					_coordAdjuster->fromScriptToDisplay(itemEntry->y, itemEntry->x);
+					_coordAdjuster->fromScriptToDisplay(itemEntry->z, dummyX);
 				}
 
 				// Adjust according to current scroll position
@@ -719,7 +692,8 @@ void GfxFrameout::kernelFrameout() {
 						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
 						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
 					} else if (getSciVersion() == SCI_VERSION_2_1) {
-						nsRect = upscaleRect(nsRect);
+						_coordAdjuster->fromDisplayToScript(nsRect.top, nsRect.left);
+						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
 					}
 
 					if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
@@ -732,17 +706,9 @@ void GfxFrameout::kernelFrameout() {
 					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
 
-				int16 screenHeight = _screen->getHeight();
-				int16 screenWidth = _screen->getWidth();
-				if (view && view->isSci2Hires()) {
-					screenHeight = _screen->getDisplayHeight();
-					screenWidth = _screen->getDisplayWidth();
-				}
-
-				if (itemEntry->celRect.bottom < 0 || itemEntry->celRect.top >= screenHeight)
-					continue;
-
-				if (itemEntry->celRect.right < 0 || itemEntry->celRect.left >= screenWidth)
+				// FIXME: When does this happen, and why?
+				if (itemEntry->celRect.bottom < 0 || itemEntry->celRect.top  >= _screen->getDisplayHeight() ||
+				    itemEntry->celRect.right  < 0 || itemEntry->celRect.left >= _screen->getDisplayWidth())
 					continue;
 
 				Common::Rect clipRect, translatedClipRect;

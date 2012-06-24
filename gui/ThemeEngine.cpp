@@ -429,7 +429,7 @@ bool ThemeEngine::init() {
 void ThemeEngine::clearAll() {
 	if (_initOk) {
 		_system->clearOverlay();
-		_system->grabOverlay((OverlayColor *)_screen.pixels, _screen.w);
+		_system->grabOverlay(_screen.pixels, _screen.pitch);
 	}
 }
 

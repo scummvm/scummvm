@@ -1507,22 +1507,9 @@ bool CGEEngine::showTitle(const char *name) {
 		_vga->_showQ->clear();
 		_vga->copyPage(0, 2);
 
-		if (_mode == 0) {
-// The auto-load of savegame #0 is currently disabled
-#if 0
-			if (savegameExists(0)) {
-				// Load the savegame
-				loadGame(0, NULL, true); // only system vars
-				_vga->setColors(_vga->_sysPal, 64);
-				_vga->update();
-				if (_flag[3]) { //flag FINIS
-					_mode++;
-					_flag[3] = false;
-				}
-			} else
-#endif
-				_mode++;
-		}
+		// The original was automatically loading the savegame when available
+		if (_mode == 0)
+			_mode++;
 	}
 
 	if (_mode < 2)

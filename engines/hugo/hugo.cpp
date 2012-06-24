@@ -541,19 +541,6 @@ void HugoEngine::initStatus() {
 	// Initialize every start of new game
 	_status._tick            = 0;                    // Tick count
 	_status._viewState       = kViewIdle;            // View state
-
-// Strangerke - Suppress as related to playback
-//	_status._recordFl      = false;                  // Not record mode
-//	_status._playbackFl    = false;                  // Not playback mode
-// Strangerke - Not used ?
-//	_status._mmtime        = false;                  // Multimedia timer support
-//	_status._helpFl        = false;                  // Not calling WinHelp()
-//	_status._demoFl        = false;                  // Not demo mode
-//	_status._path[0]       = 0;                      // Path to write files
-//	_status._screenWidth   = 0;                      // Desktop screen width
-//	_status._saveTick      = 0;                      // Time of last save
-//	_status._saveSlot      = 0;                      // Slot to save/restore game
-//	_status._textBoxFl     = false;                  // Not processing a text box
 }
 
 /**
@@ -566,7 +553,7 @@ void HugoEngine::initConfig() {
 	_config._soundFl = true;                            // Sound state initially on
 	_config._turboFl = false;                           // Turbo state initially off
 	initPlaylist(_config._playlist);                    // Initialize default tune playlist
-	_file->readBootFile();                             // Read startup structure
+	_file->readBootFile();                              // Read startup structure
 }
 
 /**

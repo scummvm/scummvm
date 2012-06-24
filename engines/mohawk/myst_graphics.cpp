@@ -222,7 +222,7 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 
 	simulatePreviousDrawDelay(dest);
 
-	_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
+	_vm->_system->copyRectToScreen(surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
 }
 
 void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest) {
@@ -280,7 +280,7 @@ void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 
 	simulatePreviousDrawDelay(r);
 
-	_vm->_system->copyRectToScreen((byte *)_backBuffer->getBasePtr(r.left, r.top), _backBuffer->pitch, r.left, r.top, r.width(), r.height());
+	_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(r.left, r.top), _backBuffer->pitch, r.left, r.top, r.width(), r.height());
 }
 
 void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay) {

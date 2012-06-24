@@ -61,7 +61,7 @@ reg_t SoundCommandParser::kDoSoundInit(int argc, reg_t *argv, reg_t acc) {
 }
 
 int SoundCommandParser::getSoundResourceId(reg_t obj) {
-	int resourceId = obj.segment ? readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
+	int resourceId = obj.getSegment() ? readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
 	// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
 	if (g_sci && g_sci->_features->useAltWinGMSound()) {
 		// Check if the alternate MIDI song actually exists...
@@ -291,7 +291,7 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 
 	reg_t obj = argv[0];
 	uint16 value = argc > 1 ? argv[1].toUint16() : 0;
-	if (!obj.segment) {		// pause the whole playlist
+	if (!obj.getSegment()) {		// pause the whole playlist
 		_music->pauseAll(value);
 	} else {	// pause a playlist slot
 		MusicEntry *musicSlot = _music->getSlot(obj);
@@ -369,7 +369,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 	case 5: // SCI1+ (SCI1 late sound scheme), with fade and continue
 		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
 		// sometimes we get objects in that position, fix it up (ffs. workarounds)
-		if (!argv[1].segment)
+		if (!argv[1].getSegment())
 			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
 		else
 			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;

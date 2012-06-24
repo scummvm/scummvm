@@ -50,7 +50,7 @@ const char *opcodeNames[] = {
 		"lea",    "selfID",    "dummy",    "pprev",     "pToa",
 	   "aTop",      "pTos",     "sTop",    "ipToa",    "dpToa",
 	  "ipTos",     "dpTos",    "lofsa",    "lofss",    "push0",
-	  "push1",     "push2", "pushSelf",    "dummy",      "lag",
+	  "push1",     "push2", "pushSelf",     "line",      "lag",
 		"lal",       "lat",      "lap",      "lsg",      "lsl",
 		"lst",       "lsp",     "lagi",     "lali",     "lati",
 	   "lapi",      "lsgi",     "lsli",     "lsti",     "lspi",
@@ -68,18 +68,18 @@ const char *opcodeNames[] = {
 #endif	// REDUCE_MEMORY_USAGE
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode) {
-	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
+reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printBytecode) {
+	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	const byte *scr;
-	int scr_size;
-	reg_t retval = make_reg(pos.segment, pos.offset + 1);
+	uint32 scr_size;
+	reg_t retval = make_reg(pos.getSegment(), pos.getOffset() + 1);
 	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc.
-	int i = 0;
+	uint i = 0;
 	Kernel *kernel = g_sci->getKernel();
 
 	if (!mobj) {
-		warning("Disassembly failed: Segment %04x non-existant or not a script", pos.segment);
+		warning("Disassembly failed: Segment %04x non-existant or not a script", pos.getSegment());
 		return retval;
 	} else
 		script_entity = (Script *)mobj;
@@ -87,28 +87,37 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 	scr = script_entity->getBuf();
 	scr_size = script_entity->getBufSize();
 
-	if (pos.offset >= scr_size) {
+	if (pos.getOffset() >= scr_size) {
 		warning("Trying to disassemble beyond end of script");
 		return NULL_REG;
 	}
 
 	int16 opparams[4];
 	byte opsize;
-	int bytecount = readPMachineInstruction(scr + pos.offset, opsize, opparams);
+	uint bytecount = readPMachineInstruction(scr + pos.getOffset(), opsize, opparams);
 	const byte opcode = opsize >> 1;
-
-	opsize &= 1; // byte if true, word if false
 
 	debugN("%04x:%04x: ", PRINT_REG(pos));
 
+	if (opcode == op_pushSelf) { // 0x3e (62)
+		if ((opsize & 1) && g_sci->getGameId() != GID_FANMADE) {
+			// Debug opcode op_file
+			debugN("file \"%s\"\n", scr + pos.getOffset() + 1);	// +1: op_pushSelf size
+			retval.incOffset(bytecount - 1);
+			return retval;
+		}
+	}
+
+	opsize &= 1; // byte if true, word if false
+
 	if (printBytecode) {
-		if (pos.offset + bytecount > scr_size) {
+		if (pos.getOffset() + bytecount > scr_size) {
 			warning("Operation arguments extend beyond end of script");
 			return retval;
 		}
 
 		for (i = 0; i < bytecount; i++)
-			debugN("%02x ", scr[pos.offset + i]);
+			debugN("%02x ", scr[pos.getOffset() + i]);
 
 		for (i = bytecount; i < 5; i++)
 			debugN("   ");
@@ -130,16 +139,16 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 
 		case Script_SByte:
 		case Script_Byte:
-			param_value = scr[retval.offset];
-			debugN(" %02x", scr[retval.offset]);
-			retval.offset++;
+			param_value = scr[retval.getOffset()];
+			debugN(" %02x", scr[retval.getOffset()]);
+			retval.incOffset(1);
 			break;
 
 		case Script_Word:
 		case Script_SWord:
-			param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
-			debugN(" %04x", READ_SCI11ENDIAN_UINT16(&scr[retval.offset]));
-			retval.offset += 2;
+			param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
+			debugN(" %04x", READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]));
+			retval.incOffset(2);
 			break;
 
 		case Script_SVariable:
@@ -149,11 +158,12 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 		case Script_Local:
 		case Script_Temp:
 		case Script_Param:
-			if (opsize)
-				param_value = scr[retval.offset++];
-			else {
-				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
-				retval.offset += 2;
+			if (opsize) {
+				param_value = scr[retval.getOffset()];
+				retval.incOffset(1);
+			} else {
+				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
+				retval.incOffset(2);
 			}
 
 			if (opcode == op_callk)
@@ -166,24 +176,26 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 			break;
 
 		case Script_Offset:
-			if (opsize)
-				param_value = scr[retval.offset++];
-			else {
-				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
-				retval.offset += 2;
+			if (opsize) {
+				param_value = scr[retval.getOffset()];
+				retval.incOffset(1);
+			} else {
+				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
+				retval.incOffset(2);
 			}
 			debugN(opsize ? " %02x" : " %04x", param_value);
 			break;
 
 		case Script_SRelative:
 			if (opsize) {
-				int8 offset = (int8)scr[retval.offset++];
-				debugN(" %02x  [%04x]", 0xff & offset, 0xffff & (retval.offset + offset));
+				int8 offset = (int8)scr[retval.getOffset()];
+				retval.incOffset(1);
+				debugN(" %02x  [%04x]", 0xff & offset, 0xffff & (retval.getOffset() + offset));
 			}
 			else {
-				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
-				retval.offset += 2;
-				debugN(" %04x  [%04x]", 0xffff & offset, 0xffff & (retval.offset + offset));
+				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
+				retval.incOffset(2);
+				debugN(" %04x  [%04x]", 0xffff & offset, 0xffff & (retval.getOffset() + offset));
 			}
 			break;
 
@@ -216,8 +228,8 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 
 	if (pos == s->xs->addr.pc) { // Extra information if debugging the current opcode
 		if (opcode == op_callk) {
-			int stackframe = (scr[pos.offset + 2] >> 1) + (s->r_rest);
-			int argc = ((s->xs->sp)[- stackframe - 1]).offset;
+			int stackframe = (scr[pos.getOffset() + 2] >> 1) + (s->r_rest);
+			int argc = ((s->xs->sp)[- stackframe - 1]).getOffset();
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 			if (!oldScriptHeader)
@@ -233,13 +245,13 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 			debugN(")\n");
 		} else if ((opcode == op_send) || (opcode == op_self)) {
 			int restmod = s->r_rest;
-			int stackframe = (scr[pos.offset + 1] >> 1) + restmod;
+			int stackframe = (scr[pos.getOffset() + 1] >> 1) + restmod;
 			reg_t *sb = s->xs->sp;
 			uint16 selector;
 			reg_t fun_ref;
 
 			while (stackframe > 0) {
-				int argc = sb[- stackframe + 1].offset;
+				int argc = sb[- stackframe + 1].getOffset();
 				const char *name = NULL;
 				reg_t called_obj_addr = s->xs->objp;
 
@@ -248,7 +260,7 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 				else if (opcode == op_self)
 					called_obj_addr = s->xs->objp;
 
-				selector = sb[- stackframe].offset;
+				selector = sb[- stackframe].getOffset();
 
 				name = s->_segMan->getObjectName(called_obj_addr);
 
@@ -290,20 +302,20 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 }
 
 bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpTarget) {
-	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
+	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	if (!mobj)
 		return false;
 	Script *script_entity = (Script *)mobj;
 
 	const byte *scr = script_entity->getBuf();
-	int scr_size = script_entity->getScriptSize();
+	uint scr_size = script_entity->getScriptSize();
 
-	if (pos.offset >= scr_size)
+	if (pos.getOffset() >= scr_size)
 		return false;
 
 	int16 opparams[4];
 	byte opsize;
-	int bytecount = readPMachineInstruction(scr + pos.offset, opsize, opparams);
+	int bytecount = readPMachineInstruction(scr + pos.getOffset(), opsize, opparams);
 	const byte opcode = opsize >> 1;
 
 	switch (opcode) {
@@ -313,7 +325,7 @@ bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpTarget) {
 		{
 		reg_t jmpTarget = pos + bytecount + opparams[0];
 		// QFG2 has invalid jumps outside the script buffer in script 260
-		if (jmpTarget.offset >= scr_size)
+		if (jmpTarget.getOffset() >= scr_size)
 			return false;
 		jumpTarget = jmpTarget;
 		}
@@ -335,17 +347,17 @@ void SciEngine::scriptDebug() {
 		}
 
 		if (_debugState.seeking != kDebugSeekNothing) {
-			const reg_t pc = s->xs->addr.pc;
-			SegmentObj *mobj = s->_segMan->getSegment(pc.segment, SEG_TYPE_SCRIPT);
+			const reg32_t pc = s->xs->addr.pc;
+			SegmentObj *mobj = s->_segMan->getSegment(pc.getSegment(), SEG_TYPE_SCRIPT);
 
 			if (mobj) {
 				Script *scr = (Script *)mobj;
 				const byte *code_buf = scr->getBuf();
-				int code_buf_size = scr->getBufSize();
-				int opcode = pc.offset >= code_buf_size ? 0 : code_buf[pc.offset];
+				uint16 code_buf_size = scr->getBufSize();	// TODO: change to a 32-bit integer for large SCI3 scripts
+				int opcode = pc.getOffset() >= code_buf_size ? 0 : code_buf[pc.getOffset()];
 				int op = opcode >> 1;
-				int paramb1 = pc.offset + 1 >= code_buf_size ? 0 : code_buf[pc.offset + 1];
-				int paramf1 = (opcode & 1) ? paramb1 : (pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + pc.offset + 1));
+				uint16 paramb1 = pc.getOffset() + 1 >= code_buf_size ? 0 : code_buf[pc.getOffset() + 1];
+				uint16 paramf1 = (opcode & 1) ? paramb1 : (pc.getOffset() + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + pc.getOffset() + 1));
 
 				switch (_debugState.seeking) {
 				case kDebugSeekSpecialCallk:
@@ -714,7 +726,7 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 		else if (regType & SIG_IS_INVALID)
 			debugN("INVALID");
 		else if (regType & SIG_TYPE_INTEGER)
-			debugN("%d", argv[parmNr].offset);
+			debugN("%d", argv[parmNr].getOffset());
 		else {
 			debugN("%04x:%04x", PRINT_REG(argv[parmNr]));
 			switch (regType) {
@@ -723,12 +735,12 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 				break;
 			case SIG_TYPE_REFERENCE:
 			{
-				SegmentObj *mobj = s->_segMan->getSegmentObj(argv[parmNr].segment);
+				SegmentObj *mobj = s->_segMan->getSegmentObj(argv[parmNr].getSegment());
 				switch (mobj->getType()) {
 				case SEG_TYPE_HUNK:
 				{
 					HunkTable *ht = (HunkTable *)mobj;
-					int index = argv[parmNr].offset;
+					int index = argv[parmNr].getOffset();
 					if (ht->isValidEntry(index)) {
 						// NOTE: This ", deleted" isn't as useful as it could
 						// be because it prints the status _after_ the kernel
@@ -765,7 +777,7 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 	if (result.isPointer())
 		debugN(" = %04x:%04x\n", PRINT_REG(result));
 	else
-		debugN(" = %d\n", result.offset);
+		debugN(" = %d\n", result.getOffset());
 }
 
 } // End of namespace Sci

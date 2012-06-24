@@ -167,6 +167,13 @@ bool Environments::has(Resources *resources, uint8 startEnv, int16 except) const
 	return false;
 }
 
+void Environments::deleted(Variables *variables) {
+	for (uint i = 0; i < kEnvironmentCount; i++) {
+		if (_environments[i].variables == variables)
+			_environments[i].variables = 0;
+	}
+}
+
 bool Environments::clearMedia(uint8 env) {
 	if (env >= kEnvironmentCount)
 		return false;
@@ -945,6 +952,10 @@ void Game::switchTotSub(int16 index, int16 function) {
 	_curEnvironment = curBackupPos;
 	_numEnvironments = backupedCount;
 	_environments.get(_curEnvironment);
+}
+
+void Game::deletedVars(Variables *variables) {
+	_environments.deleted(variables);
 }
 
 void Game::clearUnusedEnvironment() {

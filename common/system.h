@@ -78,6 +78,7 @@ struct TimeDate {
 	int tm_mday;    ///< day of month (1 - 31)
 	int tm_mon;     ///< month of year (0 - 11)
 	int tm_year;    ///< year - 1900
+	int tm_wday;    ///< days since Sunday (0 - 6)
 };
 
 namespace LogMessageType {
@@ -657,7 +658,7 @@ public:
 	 * @see updateScreen
 	 * @see getScreenFormat
 	 */
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 
 	/**
 	 * Lock the active screen framebuffer and return a Graphics::Surface
@@ -790,20 +791,14 @@ public:
 	 * Copy the content of the overlay into a buffer provided by the caller.
 	 * This is only used to implement fake alpha blending.
 	 */
-	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
+	virtual void grabOverlay(void *buf, int pitch) = 0;
 
 	/**
 	 * Blit a graphics buffer to the overlay.
 	 * In a sense, this is the reverse of grabOverlay.
 	 *
-	 * @note The pitch parameter actually contains the 'pixel pitch', i.e.,
-	 * the number of pixels per scanline, and not as usual the number of bytes
-	 * per scanline.
-	 *
-	 * @todo Change 'pitch' to be byte and not pixel based
-	 *
 	 * @param buf		the buffer containing the graphics data source
-	 * @param pitch		the pixel pitch of the buffer (number of pixels in a scanline)
+	 * @param pitch		the pitch of the buffer (number of bytes in a scanline)
 	 * @param x			the x coordinate of the destination rectangle
 	 * @param y			the y coordinate of the destination rectangle
 	 * @param w			the width of the destination rectangle
@@ -812,7 +807,7 @@ public:
 	 * @see copyRectToScreen
 	 * @see grabOverlay
 	 */
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 
 	/**
 	 * Return the height of the overlay.
@@ -874,7 +869,7 @@ public:
 	 *                          would be too small to notice otherwise, these are allowed to scale the cursor anyway.
 	 * @param format			pointer to the pixel format which cursor graphic uses (0 means CLUT8)
 	 */
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
 	 * Replace the specified range of cursor the palette with new colors.

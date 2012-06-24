@@ -1227,9 +1227,9 @@ void SurfaceSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 	}
 }
 
-void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
+void SurfaceSdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
-	assert(src);
+	assert(buf);
 
 	if (_screen == NULL) {
 		warning("SurfaceSdlGraphicsManager::copyRectToScreen: _screen == NULL");
@@ -1252,8 +1252,9 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int
 #ifdef USE_RGB_COLOR
 	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x * _screenFormat.bytesPerPixel;
 	if (_videoMode.screenWidth == w && pitch == _screen->pitch) {
-		memcpy(dst, src, h*pitch);
+		memcpy(dst, buf, h*pitch);
 	} else {
+		const byte *src = (const byte *)buf;
 		do {
 			memcpy(dst, src, w * _screenFormat.bytesPerPixel);
 			src += pitch;
@@ -1263,8 +1264,9 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int
 #else
 	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x;
 	if (_screen->pitch == pitch && pitch == w) {
-		memcpy(dst, src, h*w);
+		memcpy(dst, buf, h*w);
 	} else {
+		const byte *src = (const byte *)buf;
 		do {
 			memcpy(dst, src, w);
 			src += pitch;
@@ -1595,7 +1597,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	_forceFull = true;
 }
 
-void SurfaceSdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
+void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
@@ -1605,31 +1607,35 @@ void SurfaceSdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	byte *src = (byte *)_overlayscreen->pixels;
+	byte *dst = (byte *)buf;
 	int h = _videoMode.overlayHeight;
 	do {
-		memcpy(buf, src, _videoMode.overlayWidth * 2);
+		memcpy(dst, src, _videoMode.overlayWidth * 2);
 		src += _overlayscreen->pitch;
-		buf += pitch;
+		dst += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-void SurfaceSdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
 		return;
 
+	const byte *src = (const byte *)buf;
+
 	// Clip the coordinates
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x * 2;
 		x = 0;
 	}
 
 	if (y < 0) {
-		h += y; buf -= y * pitch;
+		h += y;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -1652,9 +1658,9 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int p
 
 	byte *dst = (byte *)_overlayscreen->pixels + y * _overlayscreen->pitch + x * 2;
 	do {
-		memcpy(dst, buf, w * 2);
+		memcpy(dst, src, w * 2);
 		dst += _overlayscreen->pitch;
-		buf += pitch;
+		src += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_overlayscreen);
@@ -1713,7 +1719,7 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	}
 }
 
-void SurfaceSdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
 	if (!format)
 		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();

@@ -123,9 +123,6 @@ protected:
 private:
 	byte *convertPCC(byte *p, const uint16 y, const uint16 bpl, ImagePtr dataPtr) const;
 	UifHdr *getUIFHeader(const Uif id);
-
-//Strangerke : Not used?
-	void     printBootText();
 };
 
 class FileManager_v1d : public FileManager {

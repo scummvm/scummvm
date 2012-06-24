@@ -197,11 +197,11 @@ public:
 	 * Validate whether the specified public function is exported by
 	 * the script in the specified segment.
 	 * @param pubfunct		Index of the function to validate
-	 * @param relocate              Decide whether to relocate this public function or not
+	 * @param relocateSci3  Decide whether to relocate this SCI3 public function or not
 	 * @return				NULL if the public function is invalid, its
 	 * 						offset into the script's segment otherwise
 	 */
-	uint16 validateExportFunc(int pubfunct, bool relocate);
+	uint32 validateExportFunc(int pubfunct, bool relocateSci3);
 
 	/**
 	 * Marks the script as deleted.
@@ -249,7 +249,7 @@ public:
 	/**
 	 * Gets an offset to the beginning of the code block in a SCI3 script
 	 */
-	int getCodeBlockOffset() { return READ_SCI11ENDIAN_UINT32(_buf); }
+	int getCodeBlockOffsetSci3() { return READ_SCI11ENDIAN_UINT32(_buf); }
 
 private:
 	/**

@@ -148,9 +148,6 @@ private:
 	void createPlaneItemList(reg_t planeObject, FrameoutList &itemList);
 	bool isPictureOutOfView(FrameoutEntry *itemEntry, Common::Rect planeRect, int16 planeOffsetX, int16 planeOffsetY);
 	void drawPicture(FrameoutEntry *itemEntry, int16 planeOffsetX, int16 planeOffsetY, bool planePictureMirrored);
-	int16 upscaleHorizontalCoordinate(int16 coordinate);
-	int16 upscaleVerticalCoordinate(int16 coordinate);
-	Common::Rect upscaleRect(Common::Rect &rect);
 
 	SegManager *_segMan;
 	ResourceManager *_resMan;
@@ -169,9 +166,6 @@ private:
 	uint16 _maxScrollTexts;
 
 	void sortPlanes();
-
-	uint16 _scriptsRunningWidth;
-	uint16 _scriptsRunningHeight;
 };
 
 } // End of namespace Sci

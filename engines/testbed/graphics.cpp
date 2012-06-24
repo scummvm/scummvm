@@ -935,7 +935,7 @@ TestExitStatus GFXtests::overlayGraphics() {
 	}
 
 	g_system->showOverlay();
-	g_system->copyRectToOverlay(buffer, 100, 270, 175, 100, 50);
+	g_system->copyRectToOverlay(buffer, 200, 270, 175, 100, 50);
 	g_system->updateScreen();
 
 	g_system->delayMillis(1000);

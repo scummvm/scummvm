@@ -110,9 +110,9 @@ void Inter_LittleRed::oLittleRed_keyFunc(OpFuncParams &params) {
 }
 
 void Inter_LittleRed::oLittleRed_playComposition(OpFuncParams &params) {
-	_vm->_sound->blasterRepeatComposition(-1);
-
 	o1_playComposition(params);
+
+	_vm->_sound->blasterRepeatComposition(-1);
 }
 
 } // End of namespace Gob

@@ -348,7 +348,12 @@ int LogicHEfootball2002::translateScreenToWorld(int32 *args) {
 }
 
 int LogicHEfootball2002::getDayOfWeek() {
-	// TODO: Get day of week, store in var 108
+	// Get day of week, store in var 108
+
+	TimeDate time;
+	_vm->_system->getTimeAndDate(time);
+	writeScummVar(108, time.tm_wday);
+
 	return 1;
 }
 

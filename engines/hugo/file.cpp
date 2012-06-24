@@ -523,49 +523,6 @@ bool FileManager::restoreGame(const int16 slot) {
 }
 
 /**
- * Read the encrypted text from the boot file and print it
- */
-void FileManager::printBootText() {
-	debugC(1, kDebugFile, "printBootText()");
-
-	Common::File ofp;
-	if (!ofp.open(getBootFilename())) {
-		if (_vm->getPlatform() == Common::kPlatformPC) {
-			//TODO initialize properly _boot structure
-			warning("printBootText - Skipping as Dos versions may be a freeware or shareware");
-			return;
-		} else {
-			Utils::notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
-			_vm->getGameStatus()._doQuitFl = true;
-			return;
-		}
-	}
-
-	// Allocate space for the text and print it
-	char *buf = (char *)malloc(_vm->_boot._exitLen + 1);
-	if (buf) {
-		// Skip over the boot structure (already read) and read exit text
-		ofp.seek((long)sizeof(_vm->_boot), SEEK_SET);
-		if (ofp.read(buf, _vm->_boot._exitLen) != (size_t)_vm->_boot._exitLen) {
-			Utils::notifyBox(Common::String::format("Error while reading startup file '%s'", getBootFilename()));
-			_vm->getGameStatus()._doQuitFl = true;
-			return;
-		}
-
-		// Decrypt the exit text, using CRYPT substring
-		int i;
-		for (i = 0; i < _vm->_boot._exitLen; i++)
-			buf[i] ^= s_bootCypher[i % s_bootCypherLen];
-
-		buf[i] = '\0';
-		Utils::notifyBox(buf);
-	}
-
-	free(buf);
-	ofp.close();
-}
-
-/**
  * Reads boot file for program environment.  Fatal error if not there or
  * file checksum is bad.  De-crypts structure while checking checksum
  */

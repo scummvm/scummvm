@@ -168,7 +168,7 @@ public:
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
 		if (getSciVersion() == SCI_VERSION_3)
 			offset--;
-		return make_reg(_pos.segment, _baseMethod[offset]);
+		return make_reg(_pos.getSegment(), _baseMethod[offset]);
 	}
 
 	Selector getFuncSelector(uint16 i) const {
@@ -198,7 +198,7 @@ public:
 	 */
 	int locateVarSelector(SegManager *segMan, Selector slc) const;
 
-	bool isClass() const { return (getInfoSelector().offset & kInfoFlagClass); }
+	bool isClass() const { return (getInfoSelector().getOffset() & kInfoFlagClass); }
 	const Object *getClass(SegManager *segMan) const;
 
 	void markAsFreed() { _flags |= OBJECT_FLAG_FREED; }
