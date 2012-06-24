@@ -63,12 +63,61 @@ void RMWindow::init() {
 	_bGrabThumbnail = false;
 	_bGrabMovie = false;
 	_wiping = false;
+
+	_precalcTable = 0;
 }
+
+void RMWindow::createBWPrecalcTable() {
+	_precalcTable = new uint16[0x8000];
+
+	for (int i = 0; i < 0x8000; i++) {
+		int r = (i >> 10) & 0x1F;
+		int g = (i >> 5) & 0x1F;
+		int b = i & 0x1F;
+
+		int min = MIN(r, MIN(g, b));
+		int max = MAX(r, MAX(g, b));
+
+		min = (min + max) / 2;
+
+		r = CLIP(min + 8 - 8, 0, 31);
+		g = CLIP(min + 5 - 8, 0, 31);
+		b = CLIP(min + 0 - 8, 0, 31);
+
+		_precalcTable[i] = (r << 10) | (g << 5) | b;
+	}
+}
+
+void RMWindow::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+	if (GLOBALS._bCfgAnni30) {
+		if (!_precalcTable) {
+			createBWPrecalcTable();
+		}
+		Graphics::Surface *screen = g_system->lockScreen();
+		const uint16 *src = (const uint16 *)buf;
+		for (int i = 0; i < h; i++) {
+			uint16 *dst = (uint16 *)screen->getBasePtr(x, y + i);
+			for (int j = 0; j < w; j++) {
+				dst[j] = _precalcTable[src[j] & 0x7FFF];
+			}
+			src += (pitch / 2);
+		}
+		g_system->unlockScreen();
+	} else {
+		if (_precalcTable) {
+			delete[] _precalcTable;
+			_precalcTable = 0;
+		}
+		g_system->copyRectToScreen(buf, pitch, x, y, w, h);
+	}
+ }
 
 /**
  * Close the window
  */
 void RMWindow::close() {
+	delete[] _precalcTable;
+	_precalcTable = 0;
 }
 
 void RMWindow::grabThumbnail(uint16 *thumbmem) {
@@ -105,7 +154,7 @@ void RMWindow::wipeEffect(Common::Rect &rcBoundEllipse) {
 
 		// Loop through each line
 		for (int yp = rcBoundEllipse.top; yp < rcBoundEllipse.bottom; ++yp) {
-			g_system->copyRectToScreen((const byte *)&line[0], RM_SX * 2, rcBoundEllipse.left, yp, rcBoundEllipse.width(), 1);
+			copyRectToScreen((const byte *)&line[0], RM_SX * 2, rcBoundEllipse.left, yp, rcBoundEllipse.width(), 1);
 		}
 	}
 }
@@ -120,7 +169,7 @@ void RMWindow::getNewFrame(RMGfxTargetBuffer &bigBuf, Common::Rect *rcBoundEllip
 		_wiping = true;
 	} else if (_wiping) {
 		// Just finished a wiping effect, so copy the full screen
-		g_system->copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
+		copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
 		_wiping = false;
 
 	} else {
@@ -131,14 +180,14 @@ void RMWindow::getNewFrame(RMGfxTargetBuffer &bigBuf, Common::Rect *rcBoundEllip
 		// If showing dirty rects, copy the entire screen background and set up a surface pointer
 		Graphics::Surface *s = NULL;
 		if (_showDirtyRects) {
-			g_system->copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
+			copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
 			s = g_system->lockScreen();
 		}
 
 		for (i = dirtyRects.begin(); i != dirtyRects.end(); ++i) {
 			Common::Rect &r = *i;
 			const byte *lpSrc = lpBuf + (RM_SX * 2) * r.top + (r.left * 2);
-			g_system->copyRectToScreen(lpSrc, RM_SX * 2, r.left, r.top, r.width(), r.height());
+			copyRectToScreen(lpSrc, RM_SX * 2, r.left, r.top, r.width(), r.height());
 
 			if (_showDirtyRects)
 				// Frame the copied area with a rectangle
@@ -227,13 +276,13 @@ void RMWindow::plotLines(const byte *lpBuf, const Common::Point &center, int x, 
 	if ((center.y - y) >= 0) {
 		// Draw line in top half of circle
 		pSrc = lpBuf + ((center.y - y) * RM_SX * 2) + xs * 2;
-		g_system->copyRectToScreen(pSrc, RM_SX * 2, xs, center.y - y, width, 1);
+		copyRectToScreen(pSrc, RM_SX * 2, xs, center.y - y, width, 1);
 	}
 
 	if ((center.y + y) < RM_SY) {
 		// Draw line in bottom half of circle
 		pSrc = lpBuf + ((center.y + y) * RM_SX * 2) + xs * 2;
-		g_system->copyRectToScreen(pSrc, RM_SX * 2, xs, center.y + y, width, 1);
+		copyRectToScreen(pSrc, RM_SX * 2, xs, center.y + y, width, 1);
 	}
 }
 

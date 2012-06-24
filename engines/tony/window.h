@@ -70,8 +70,10 @@ protected:
 	bool _bGrabThumbnail;
 	bool _bGrabMovie;
 	uint16 *_wThumbBuf;
+	uint16 *_precalcTable;
 
 	void createBWPrecalcTable();
+	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	void wipeEffect(Common::Rect &rcBoundEllipse);
 	void getNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse);
 
