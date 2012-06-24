@@ -645,6 +645,20 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	if (paletteChanged)
 		g_sci->_gfxPalette->kernelAnimateSet();
 
+	// WORKAROUND: The game scripts in SQ4 floppy count the number of elapsed
+	// cycles in the intro from the number of successive kAnimate calls during
+	// the palette cycling effect, while showing the SQ4 logo. This worked in
+	// older computers because each animate call took awhile to complete.
+	// Normally, such scripts are handled automatically by our speed throttler,
+	// however in this case there are no calls to kGameIsRestarting (where the
+	// speed throttler gets called) between the different palette animation calls.
+	// Thus, we add a small delay between each animate call to make the whole
+	// palette animation effect slower and visible, and not have the logo screen
+	// get skipped because the scripts don't wait between animation steps. Fixes
+	// bug #3537232.
+	if (g_sci->getGameId() == GID_SQ4 && !g_sci->isCD() && s->currentRoomNumber() == 1)
+		g_sci->sleep(10);
+
 	return s->r_acc;
 }
 
