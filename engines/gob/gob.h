@@ -129,7 +129,10 @@ enum GameType {
 	kGameTypeAdi4,
 	kGameTypeAdibou2,
 	kGameTypeAdibou1,
+	kGameTypeAbracadabra,
+	kGameTypeBabaYaga,
 	kGameTypeLittleRed,
+	kGameTypeOnceUponATime, // Need more inspection to see if Baba Yaga or Abracadabra
 	kGameTypeAJWorld
 };
 

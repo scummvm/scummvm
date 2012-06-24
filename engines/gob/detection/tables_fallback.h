@@ -362,6 +362,20 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{ //24
 		{
+			"onceupon",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		},
+		kGameTypeOnceUponATime,
+		kFeaturesEGA,
+		0, 0, 0
+	},
+	{ //25
+		{
 			"adi2",
 			"",
 			AD_ENTRY1(0, 0),
@@ -374,7 +388,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640x480,
 		"adi2.stk", 0, 0
 	},
-	{ //25
+	{ //26
 		{
 			"adi4",
 			"",
@@ -388,7 +402,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640x480,
 		"adif41.stk", 0, 0
 	},
-	{ //26
+	{ //27
 		{
 			"coktelplayer",
 			"unknown",
@@ -430,9 +444,10 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[21].desc, { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
 	{ &fallbackDescs[22].desc, { "intro.stk", "stk2.stk", "stk3.stk", 0 } },
 	{ &fallbackDescs[23].desc, { "intro.stk", "stk2.stk", "stk3.stk", "mod.babayaga", 0 } },
-	{ &fallbackDescs[24].desc, { "adi2.stk", 0 } },
-	{ &fallbackDescs[25].desc, { "adif41.stk", "adim41.stk", 0 } },
-	{ &fallbackDescs[26].desc, { "coktelplayer.scn", 0 } },
+	{ &fallbackDescs[24].desc, { "stk1.stk", "stk2.stk", "stk3.stk", 0 } },
+	{ &fallbackDescs[25].desc, { "adi2.stk", 0 } },
+	{ &fallbackDescs[26].desc, { "adif41.stk", "adim41.stk", 0 } },
+	{ &fallbackDescs[27].desc, { "coktelplayer.scn", 0 } },
 	{ 0, { 0 } }
 };
 
