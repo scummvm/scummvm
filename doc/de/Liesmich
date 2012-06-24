@@ -56,6 +56,8 @@ Inhaltsverzeichnis:
  * 7.8 Komprimierte Audio-Dateien verwenden (MP3, Ogg Vorbis, FLAC)
  * 7.9 Ausgabefrequenzen
 8.0) Konfigurationsdatei
+ * 8.1 Verwendbare Konfigurationsschlüsselwörter
+ * 8.2 Spielspezifische Optionen bei der grafischen Benutzeroberfläche
 9.0) Kompilierung
 
 
@@ -273,11 +275,16 @@ AGOS-Spiele von Adventuresoft/Horrorsoft:
      Floyd - Es gibt noch Helden                 [feeble]
 
 GOB-Spiele von Coktel Vision:
+     Bambou le sauveur de la jungle              [bambou]
      Bargon Attack                               [bargon]
+     Fascination                                 [fascination]
+     Geisha                                      [geisha]
      Gobliiins                                   [gob1]
      Gobliins 2                                  [gob2]
      Goblins 3                                   [gob3]
      Lost in Time                                [lostintime]
+     Once Upon A Time: Little Red Riding Hood    [littlered]
+     Urban Runner                                [urban]
      Woodruff and the Schnibble of Azimuth       [woodruff]
      Ween: The Prophecy                          [ween]
 
@@ -310,6 +317,7 @@ Andere Spiele:
 SCUMM-Spiele von Humongous Entertainment:
      Backyard Baseball                           [baseball]
      Backyard Baseball 2001                      [baseball2001]
+     Backyard Baseball 2003                      [baseball2003]
      Backyard Football                           [football]
      Big Thinkers First Grade                    [thinker1]
      Big Thinkers Kindergarten                   [thinkerk]
@@ -378,7 +386,6 @@ Wenn Sie über den neusten Stand bezüglich der Kompatibilität des Spiels erfah
 möchten, besuchen Sie unsere Website und schauen Sie in der Kompatibilitätsliste
 nach.
 
-     Backyard Baseball 2003                      [baseball2003]
      Backyard Football 2002                      [football2002]
      Backyard Soccer                             [soccer]
      Backyard Soccer MLS                         [soccermls]
@@ -558,6 +565,15 @@ Zwischensequenzen, aber diese sind von niedrigerer Qualität.) Sie können sie
 auch in einem Unterverzeichnis namens „video“ ablegen, wenn Ihnen das lieber
 ist.
 
+Bei PlayStation-Versionen können Sie die Original-Videos von CD ausgeben lassen.
+Alle Dateien mit der Endung „STR“ sollten als Raw-Sektoren von der CD ausgelesen
+werden (alle 2352 Bytes pro Sektor). Sie können stattdessen auch die weiter
+unten erwähnten umgewandelten Zwischensequenzen verwenden, aber dies
+funktioniert nicht bei allen Videos in Baphomets Fluch II. Weitere Informationen
+finden Sie hier:
+
+  http://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos
+
 Einige Neuausgaben der Spiele, wie beispielsweise die PlayStation-Version, haben
 keine Smacker-Videos. Revolution Software hat uns freundlicherweise erlaubt, die
 Zwischensequenzen umgewandelt auf unserer Website als Download zur Verfügung zu
@@ -577,9 +593,11 @@ Ogg-Vorbis-Audio angeboten. Um diese Zwischensequenzen mit Ogg-Vorbis-Audio
 abspielen zu können, ist eine Version von ScummVM erforderlich, die sowohl mit
 Unterstützung von libVorbis als auch zlib kompiliert wurde.
 
-Für Baphomets Fluch bieten wir auch ein Untertitel-Paket an. Entpacken Sie es
-einfach und folgen Sie den Anweisungen in der liesmich.txt. (Baphomets Fluch II
-hat bereits Untertitel; für diese ist keine zusätzliche Arbeit notwendig.)
+Für Baphomets Fluch bieten wir außerdem ein Untertitelpaket an. Entpacken Sie es
+einfach und folgen Sie den Anweisungen in der liesmich.txt. Das Untertitelpaket
+funktioniert momentan nicht bei der Verwendung von PlayStation-Videos.
+(Baphomets Fluch II hat bereits Untertitel; für diese ist keine zusätzliche
+Arbeit notwendig.)
 
 
 3.7.2) Zwischensequenzen von Baphomets Fluch I und II im Rückblick:
@@ -800,11 +818,11 @@ originale EXE-Datei des Spiels (mickey.exe) sowie die Spieldateien.
 
 Für das Spiel gibt es unter ScummVM umfangreiche Mausunterstützung, obwohl es im
 Originalspiel überhaupt keine Mausunterstützung gab. Menüpunkte können mit der
-Maus ausgewählt werden und es ist auch möglich, mittels Maus an andere Orten zu
-wechseln. Wenn die Maus über die Kanten des Bildschirms bewegt wird, ändert sich
+Maus ausgewählt werden und es ist auch möglich, mittels Maus an andere Orte zu
+wechseln. Wenn die Maus über den Rand des Bildschirms bewegt wird, ändert sich
 die Farbe des Zeigers in Rot, wenn es möglich ist, in diese Richtung zu gehen.
-Der Spieler kann dann einfach auf die Kanten des Spielbildschirms klicken, um
-den Ort zu wechseln, ähnlich wie in vielen Adventures, was einfacher und viel
+Der Spieler kann dann einfach auf den Rand des Spielbildschirms klicken, um den
+Ort zu wechseln, ähnlich wie in vielen Adventures, was einfacher und viel
 unkomplizierter ist, als sich mit dem Menü umherzubewegen.
 
 
@@ -815,11 +833,11 @@ importieren.
 
 Für das Spiel gibt es unter ScummVM umfangreiche Mausunterstützung, obwohl es im
 Originalspiel überhaupt keine Mausunterstützung gab. Menüpunkte können mit der
-Maus ausgewählt werden und es ist auch möglich, mittels Maus an andere Orten zu
-wechseln. Wenn die Maus über die Kanten des Bildschirms bewegt wird, ändert sich
+Maus ausgewählt werden und es ist auch möglich, mittels Maus an andere Orte zu
+wechseln. Wenn die Maus über den Rand des Bildschirms bewegt wird, ändert sich
 die Farbe des Zeigers in Rot, wenn es möglich ist, in diese Richtung zu gehen.
-Der Spieler kann dann einfach auf die Kanten des Spielbildschirms klicken, um
-den Ort zu wechseln, ähnlich wie in vielen Adventures, was einfacher und viel
+Der Spieler kann dann einfach auf den Rand des Spielbildschirms klicken, um den
+Ort zu wechseln, ähnlich wie in vielen Adventures, was einfacher und viel
 unkomplizierter ist, als sich mit dem Menü umherzubewegen.
 
 
@@ -903,7 +921,7 @@ Kompatibilitätsseite der Website aufgeführt ist, sehen Sie bitte im Abschnitt
     - Sprache und Untertitel zusammen führen manchmal dazu, dass die
       Sprachausgabe vorzeitig abgeschnitten wird. Dies ist eine Beschränkung des
       Originalspiels.
-    - Nur die Standardsprache (Englisch) der Spieldaten wird bei den Amiga- und
+    - Nur die Standard-Sprache (Englisch) der Spieldaten wird bei den Amiga- und
       Macintosh-Versionen unterstützt.
 
   Simon the Sorcerer's Game Pack:
@@ -1044,7 +1062,7 @@ gestartet werden -- siehe nächster Abschnitt.
   --debugflags=FLAGGEN     Aktiviert für Engine spezifische Debug-Flaggen
                            (getrennt durch Kommas).
   -u, --dump-scripts       Aktiviert die Skriptausgabe, wenn ein Verzeichnis
-                           namens 'dumps' im aktuellen Verzeichnis existiert.
+                           namens „dumps“ im aktuellen Verzeichnis existiert.
 
   --cdrom=ZAHL             CD-Laufwerk, von dem CD-Titel wiedergegeben werden
                            sollen (Standard: 0 = erstes Laufwerk)
@@ -1436,7 +1454,7 @@ Spielstände werden bei einigen Plattformen standardmäßig im aktuellen
 Verzeichnis gespeichert und bei anderen in voreingestellten Verzeichnissen.
 Sehen Sie sich das Beispiel weiter unten in dieser Liesmich-Datei an.
 
-Die folgenden Plattformen haben ein anderes Standardverzeichnis:
+Die folgenden Plattformen haben ein anderes Standard-Verzeichnis:
     Mac OS X:
     $HOME/Documents/ScummVM Savegames/
 
@@ -1453,6 +1471,11 @@ Die folgenden Plattformen haben ein anderes Standardverzeichnis:
     Windows NT4:
     <Windows-Verzeichnis>\Profiles\Benutzername\
     Application Data\ScummVM\Saved games\
+
+Hinweis für Anwender von Windows NT4/2000/XP/Vista/7: Das Standard-Verzeichnis
+für Spielstände wurde bei ScummVM 1.5.0 geändert. Die Stapelverarbeitungsdatei
+migration.bat kann verwendet werden, um die Spielstände vom alten
+Standard-Verzeichnis in das neue zu kopieren.
 
 
 6.1) Automatische Spielstände:
@@ -1797,7 +1820,7 @@ SoundFonts):
   fluidsynth -m alsa_seq /Pfad/zu/8mbgmsfx.sf2
 
 Wenn einmal TiMidity oder FluidSynth laufen, verwenden Sie den Befehl
-„aconnect -o -l“, der bereits in diesem Abschnitt beschrieben wurde.
+„aconnect -o -l”, der bereits in diesem Abschnitt beschrieben wurde.
 
 
 7.6.2) Sound-Wiedergabe mittels IRIX-dmedia-Sequenzer:           [NUR IN UNIX]
@@ -1839,7 +1862,7 @@ Dienstprogramm):
 
 Nun können Sie ScummVM starten und TiMidity für Musikausgabe auswählen.
 Standardmäßig wird das Programm mit dem localhost:7777 verbunden, aber Sie
-können Host und Port über die Umgebungsvariable „TIMIDITY_HOST“ ändern. Sie
+können Host und Port über die Umgebungsvariable „TIMIDITY_HOST” ändern. Sie
 können auch eine „Gerätenummer“ über die Umgebungsvariable „SCUMMVM_MIDIPORT“
 festlegen.
 
@@ -2117,10 +2140,13 @@ Eine beispielhafte Konfigurationsdatei sieht wie folgt aus:
     path=C:\amiga_mi2\
     music_driver=windows
 
-Erklärung zu nachfolgender Liste: In der nachfolgenden Liste mit
-Schlüsselwörtern werden rechts das Schlüsselwort, in der Mitte der Typ der
-erwarteten Zuweisung und rechts die Erklärung angezeigt. Der Typ „Bool“ bedeutet
-Wahrheitswert. Er kann entweder „true“ (wahr) oder „false“ (falsch) sein.
+
+8.1) Verwendbare Konfigurationsschlüsselwörter
+---- -----------------------------------------
+In der nachfolgenden Liste mit Schlüsselwörtern für die Konfigurationsdatei
+werden rechts das Schlüsselwort, in der Mitte der Typ der erwarteten Zuweisung
+und rechts die Erklärung angezeigt. Der Typ „Bool“ bedeutet Wahrheitswert. Er
+kann entweder „true“ (wahr) oder „false“ (falsch) sein.
 
 Die folgenden Schlüsselwörter werden erkannt:
 
@@ -2149,8 +2175,6 @@ Die folgenden Schlüsselwörter werden erkannt:
 
     fullscreen         Bool     Vollbildmodus
     aspect_ratio       Bool     Seitenverhältniskorrektur
-    disable_dithering  Bool     Entfernung von Fehlerdiffusionsartefakten in
-                                EGA-Spielen
     gfx_mode           Text     Grafikmodus (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
                                 hq2x, hq3x, tv2x, dotmatrix)
@@ -2198,6 +2222,28 @@ Die folgenden Schlüsselwörter werden erkannt:
 
     boot_param         Zahl     Ruft Boot-Skript mit dieser Nummer auf.
 
+Sierra-Spiele, welche die AGI-Engine verwenden, verfügen zusätzlich über
+folgendes nicht standardmäßiges Schlüsselwort:
+
+    originalsaveload   Bool     Falls „true“, werden die originalen Menüs zum
+                                Speichern und Laden statt der
+                                erweiterten von ScummVM verwendet.
+
+Sierra-Spiele, welche die SCI-Engine verwenden, verfügen zusätzlich über
+folgende nicht standardmäßige Schlüsselwörter:
+
+    disable_dithering  Bool     Entfernung von Fehlerdiffusionsartefakten in
+                                EGA-Spielen
+    prefer_digitalsfx  Bool     Falls „true“, werden digitale Sound-Effekte
+                                statt synthetisierter bevorzugt.
+    originalsaveload   Bool     Falls „true“, werden die originalen Menüs zum
+                                Speichern und Laden statt der
+                                erweiterten von ScummVM verwendet.
+    native_fb01        Bool     Falls „true“, wird für die MIDI-Ausgabe
+                                der Musiktreiber für eine Music-Feature-Karte
+                                von IBM oder für ein Yahama-FB-01-FM-
+                                Synthetisierungsmodul verwendet.
+
 Baphomets Fluch II verfügt zusätzlich über folgende nicht standardmäßige
 Schlüsselwörter:
 
@@ -2213,6 +2259,12 @@ Schlüsselwörter:
     music_mute         Bool     Falls „true“, wird Musik unterdrückt.
     sfx_mute           Bool     Falls „true“, werden Geräusche unterdrückt.
 
+Jones in the Fast Lane verfügt zusätzlich über folgendes nicht standardmäßiges
+Schlüsselwort:
+
+    music_mute         Bool     Falls „true“, wird - sofern verfügbar - CD-Ton
+                                anstatt des Tons im Spiel verwendet.
+
 Die Windows-Version von King's Quest VI verfügt zusätzlich über folgendes nicht
 standardmäßiges Schlüsselwort:
 
@@ -2222,6 +2274,25 @@ standardmäßiges Schlüsselwort:
                                 werden die DOS-Zeiger in der Windows-Version
                                 verwendet - hochskaliert, um zum Rest der
                                 hochskalierten Grafiken zu passen.
+
+Lands of Lore: The Throne of Chaos verfügt zusätzlich über folgende nicht
+standardmäßige Schlüsselwörter:
+
+    smooth_scrolling   Bool     Falls „true“, ist das Scrollen gleichmäßiger,
+                                wenn man von einem Bildschirm zum anderen
+                                wechselt.
+    floating_cursors   Bool     Falls „true“, verwandelt sich der Mauszeiger in
+                                einen Richtungspfeil, wenn er über den
+                                Bildschirmrand bewegt wird. Durch einen
+                                Mausklick kann der Spieler dann in diese
+                                Richtung gehen.
+
+Die CD-Version von Space Quest IV verfügt zusätzlich über folgendes nicht
+standardmäßiges Schlüsselwort:
+
+     silver_cursors    Bool     Falls „true“, wird ein alternativer Satz
+                                silberner Mauszeiger verwendet anstatt der
+                                originalen goldenen.
 
 Simon the Sorcerer 1 und 2 verfügen zusätzlich über folgende nicht
 standardmäßige Schlüsselwörter:
@@ -2234,12 +2305,34 @@ Schlüsselwort:
 
     walkspeed          Zahl     Bewegungsgeschwindigkeit (0-4)
 
+The Legend of Kyrandia: Malcolm's Revenge verfügt zusätzlich über folgende nicht
+standardmäßige Schlüsselwörter:
+
+    studio_audience    Bool     Falls „true“, hört man stets Applaus- und
+                                Jubelgeräusche, wenn Malcolm einen Scherz macht.
+    skip_support       Bool     Falls „true“, kann der Spieler Textteile und
+                                Zwischensequenzen überspringen.
+    helium_mode        Bool     Falls „true“, klingen alle Spielfiguren so,
+                                als hätten sie Helium eingeatmet.
+
 The 7th Guest verfügt zusätzlich über folgendes nicht standardmäßiges
 Schlüsselwort:
 
     t7g_speed          Text     Videowiedergabe-Geschwindigkeit
                                 (normal, tweaked [optimiert],
                                 im_an_ios [ich bin ein iOS])
+
+
+8.2) Spielspezifische Optionen bei der grafischen Benutzeroberfläche
+---- ---------------------------------------------------------------
+Viele spielspezifische Optionen, die im vorigen Abschnitt aufgeführt wurden,
+können über die grafische Benutzeroberfläche angesprochen werden. Falls eine
+spielspezifische Option für ein bestimmtes Spiel verfügbar ist, erscheint ein
+neuer Reiter mit der Bezeichnung „Engine“, wenn man dieses Spiel hinzufügt oder
+dessen Spieloptionen bearbeitet. Falls die spielspezifischen Optionen nicht
+angezeigt werden, muss das betreffende Spiel einmal gestartet oder neu zur
+Spieleliste hinzugefügt werden. Dadurch wird die Konfiguration von jedem Eintrag
+aktualisiert, was die spielspezifischen Optionen zum Vorschein bringt.
 
 
 9.0) Kompilierung:
@@ -2341,7 +2434,3 @@ Viel Glück und viel Spaß beim Spielen wünscht
 das ScummVM-Team.
 http://www.scummvm.org/
 ------------------------------------------------------------------------
-
-
-(Deutscher Text basiert auf README mit SHA1-ID:
-d1de75a6ca828ab2fcdbce6352a12337f93fc21c)
