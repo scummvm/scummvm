@@ -55,7 +55,7 @@ Sprite *Keyboard::setClient(Sprite *spr) {
 bool Keyboard::getKey(Common::Event &event) {
 	Common::KeyCode keycode = event.kbd.keycode;
 
-	if ((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT))
+	if (((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT)) && event.type == Common::EVENT_KEYDOWN)
 		_keyAlt = true;
 	else
 		_keyAlt = false;
