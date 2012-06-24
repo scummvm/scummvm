@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-05-20 22:39+0100\n"
+"POT-Creation-Date: 2012-06-24 18:06+0100\n"
 "PO-Revision-Date: 2012-02-16 13:09+0200\n"
 "Last-Translator: Eugene Sandulenko\n"
 "Language-Team: Ukrainian\n"
@@ -46,9 +46,9 @@ msgstr "Вгору"
 
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:345 gui/massadd.cpp:94 gui/options.cpp:1228
-#: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
+#: gui/saveload.cpp:64 gui/saveload.cpp:173 gui/themebrowser.cpp:54
 #: engines/engine.cpp:442 engines/scumm/dialogs.cpp:190
-#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
+#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:274
 #: backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:191
 #: backends/events/default/default-events.cpp:213
@@ -93,14 +93,14 @@ msgstr "Призначити"
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:346 gui/launcher.cpp:1001
 #: gui/launcher.cpp:1005 gui/massadd.cpp:91 gui/options.cpp:1229
 #: engines/engine.cpp:361 engines/engine.cpp:372 engines/scumm/dialogs.cpp:192
-#: engines/scumm/scumm.cpp:1775 engines/agos/animation.cpp:551
+#: engines/scumm/scumm.cpp:1775 engines/agos/animation.cpp:561
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:539
 #: engines/sword1/animation.cpp:560 engines/sword1/animation.cpp:570
 #: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:865
 #: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:435
 #: engines/sword2/animation.cpp:455 engines/sword2/animation.cpp:465
-#: engines/sword2/animation.cpp:474 engines/parallaction/saveload.cpp:281
+#: engines/sword2/animation.cpp:474 engines/parallaction/saveload.cpp:274
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 msgid "OK"
@@ -441,13 +441,13 @@ msgid "Search:"
 msgstr "Пошук:"
 
 #: gui/launcher.cpp:680 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
-#: engines/mohawk/riven.cpp:716 engines/cruise/menu.cpp:216
+#: engines/mohawk/riven.cpp:716 engines/cruise/menu.cpp:214
 msgid "Load game:"
 msgstr "Завантажити гру:"
 
 #: gui/launcher.cpp:680 engines/dialogs.cpp:114 engines/scumm/dialogs.cpp:188
 #: engines/mohawk/myst.cpp:255 engines/mohawk/riven.cpp:716
-#: engines/cruise/menu.cpp:216 backends/platform/wince/CEActionsPocket.cpp:267
+#: engines/cruise/menu.cpp:214 backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Load"
 msgstr "Завантажити"
@@ -607,7 +607,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Спеціальні режими растрування, які підтримують деякі ігри"
 
 #: gui/options.cpp:753
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2248
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2236
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:472
 msgid "Fullscreen mode"
 msgstr "Повноекранний режим"
@@ -924,39 +924,39 @@ msgstr ""
 "Вибрана тема не підтримує поточну мову. Якщо ви хочете використовувати цю "
 "тему, потрібно в першу чергу змінити мову."
 
-#: gui/saveload.cpp:58 gui/saveload.cpp:239
+#: gui/saveload.cpp:59 gui/saveload.cpp:257
 msgid "No date saved"
 msgstr "Дату не записано"
 
-#: gui/saveload.cpp:59 gui/saveload.cpp:240
+#: gui/saveload.cpp:60 gui/saveload.cpp:258
 msgid "No time saved"
 msgstr "Час не записано"
 
-#: gui/saveload.cpp:60 gui/saveload.cpp:241
+#: gui/saveload.cpp:61 gui/saveload.cpp:259
 msgid "No playtime saved"
 msgstr "Час гри не записано"
 
-#: gui/saveload.cpp:67 gui/saveload.cpp:155
+#: gui/saveload.cpp:68 gui/saveload.cpp:173
 msgid "Delete"
 msgstr "Видалити"
 
-#: gui/saveload.cpp:154
+#: gui/saveload.cpp:172
 msgid "Do you really want to delete this savegame?"
 msgstr "Ви дійсно хочете видалити це збереження?"
 
-#: gui/saveload.cpp:264
+#: gui/saveload.cpp:282
 msgid "Date: "
 msgstr "Дата: "
 
-#: gui/saveload.cpp:268
+#: gui/saveload.cpp:286
 msgid "Time: "
 msgstr "Час: "
 
-#: gui/saveload.cpp:274
+#: gui/saveload.cpp:292
 msgid "Playtime: "
 msgstr "Час гри: "
 
-#: gui/saveload.cpp:287 gui/saveload.cpp:354
+#: gui/saveload.cpp:305 gui/saveload.cpp:372
 msgid "Untitled savestate"
 msgstr "Збереження без імені"
 
@@ -1126,23 +1126,23 @@ msgstr "~Д~опомога"
 msgid "~A~bout"
 msgstr "Про про~г~раму"
 
-#: engines/dialogs.cpp:104 engines/dialogs.cpp:182
+#: engines/dialogs.cpp:104 engines/dialogs.cpp:180
 msgid "~R~eturn to Launcher"
 msgstr "~П~овер. в головне меню"
 
-#: engines/dialogs.cpp:106 engines/dialogs.cpp:184
+#: engines/dialogs.cpp:106 engines/dialogs.cpp:182
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~П~овер.в головне меню"
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:805
-#: engines/cruise/menu.cpp:214 engines/sci/engine/kfile.cpp:567
+#: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
+#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:728
 msgid "Save game:"
 msgstr "Зберегти гру: "
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:805
-#: engines/scumm/dialogs.cpp:187 engines/cruise/menu.cpp:214
-#: engines/sci/engine/kfile.cpp:567
+#: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
+#: engines/scumm/dialogs.cpp:187 engines/cruise/menu.cpp:212
+#: engines/sci/engine/kfile.cpp:728
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1151,7 +1151,7 @@ msgstr "Зберегти гру: "
 msgid "Save"
 msgstr "Записати"
 
-#: engines/dialogs.cpp:146
+#: engines/dialogs.cpp:144
 msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
@@ -1161,7 +1161,7 @@ msgstr ""
 "README для основної інормації, а також інструкцій, як отримати подальшу "
 "допомогу."
 
-#: engines/dialogs.cpp:243
+#: engines/dialogs.cpp:228
 #, fuzzy, c-format
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
@@ -1171,17 +1171,17 @@ msgstr ""
 "README для основної інормації, а також інструкцій, як отримати подальшу "
 "допомогу."
 
-#: engines/dialogs.cpp:321 engines/mohawk/dialogs.cpp:109
+#: engines/dialogs.cpp:301 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:322 engines/mohawk/dialogs.cpp:110
+#: engines/dialogs.cpp:302 engines/mohawk/dialogs.cpp:110
 #: engines/mohawk/dialogs.cpp:175
 msgid "~C~ancel"
 msgstr "Ві~д~міна"
 
-#: engines/dialogs.cpp:325
+#: engines/dialogs.cpp:305
 msgid "~K~eys"
 msgstr "~К~лавіші"
 
@@ -1263,11 +1263,11 @@ msgstr ""
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 
-#: engines/agi/saveload.cpp:827 engines/sci/engine/kfile.cpp:674
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
 msgid "Restore game:"
 msgstr "Відновити гру:"
 
-#: engines/agi/saveload.cpp:827 engines/sci/engine/kfile.cpp:674
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
 msgid "Restore"
 msgstr "Відновити"
 
@@ -1991,7 +1991,7 @@ msgstr ""
 "Режим \"рідного\" MIDI потребує поновлення Roland Upgrade від\n"
 "LucasArts, проте %s відсутній. Перемикаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:2271 engines/agos/saveload.cpp:202
+#: engines/scumm/scumm.cpp:2278 engines/agos/saveload.cpp:202
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2002,7 +2002,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2278 engines/agos/saveload.cpp:167
+#: engines/scumm/scumm.cpp:2285 engines/agos/saveload.cpp:167
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2013,7 +2013,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2290 engines/agos/saveload.cpp:210
+#: engines/scumm/scumm.cpp:2297 engines/agos/saveload.cpp:210
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2024,7 +2024,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2505
+#: engines/scumm/scumm.cpp:2512
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -2060,17 +2060,17 @@ msgstr "Головне меню"
 msgid "~W~ater Effect Enabled"
 msgstr "Ефекти води увімкнено"
 
-#: engines/agos/animation.cpp:550
+#: engines/agos/animation.cpp:560
 #, c-format
 msgid "Cutscene file '%s' not found!"
 msgstr "Файл заставки '%s' не знайдено!"
 
-#: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
+#: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1287
 #: engines/tinsel/saveload.cpp:502
 msgid "Failed to load game state from file."
 msgstr "Не вдалося завантажити стан гри з файлу."
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:515
+#: engines/gob/inter_v2.cpp:1357 engines/tinsel/saveload.cpp:515
 msgid "Failed to save game state to file."
 msgstr "Не вдалося зберегти стан гри у файл."
 
@@ -2307,15 +2307,15 @@ msgstr ""
 "Не можу зберегти гру у слот %i\n"
 "\n"
 
-#: engines/parallaction/saveload.cpp:211
+#: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Завантажую гру..."
 
-#: engines/parallaction/saveload.cpp:226
+#: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
 msgstr "Збережую гру..."
 
-#: engines/parallaction/saveload.cpp:279
+#: engines/parallaction/saveload.cpp:272
 msgid ""
 "ScummVM found that you have old savefiles for Nippon Safes that should be "
 "renamed.\n"
@@ -2331,11 +2331,11 @@ msgstr ""
 "Натисніть ОК, щоб перевести їх зараз, інакше уе повідомлення з'явиться при "
 "наступному запуску гри.\n"
 
-#: engines/parallaction/saveload.cpp:326
+#: engines/parallaction/saveload.cpp:319
 msgid "ScummVM successfully converted all your savefiles."
 msgstr "ScummVM успішно перевів усі Ваші збереження."
 
-#: engines/parallaction/saveload.cpp:328
+#: engines/parallaction/saveload.cpp:321
 msgid ""
 "ScummVM printed some warnings in your console window and can't guarantee all "
 "your files have been converted.\n"
@@ -2601,21 +2601,21 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без збільшення"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2147
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2135
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:533
 msgid "Enabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін увімкнено"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2153
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2141
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:538
 msgid "Disabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін вимкнено"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2208
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2196
 msgid "Active graphics filter:"
 msgstr "Поточний графічний фільтр:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2250
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2238
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:477
 msgid "Windowed mode"
 msgstr "Віконний режим"
