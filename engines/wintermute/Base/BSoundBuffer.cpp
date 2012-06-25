@@ -69,7 +69,7 @@ CBSoundBuffer::CBSoundBuffer(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBSoundBuffer::~CBSoundBuffer() {
-	Stop();
+	stop();
 
 	if (_handle) {
 		delete _handle;
@@ -87,13 +87,13 @@ CBSoundBuffer::~CBSoundBuffer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSoundBuffer::SetStreaming(bool Streamed, uint32 NumBlocks, uint32 BlockSize) {
+void CBSoundBuffer::setStreaming(bool Streamed, uint32 NumBlocks, uint32 BlockSize) {
 	_streamed = Streamed;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
+HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 	warning("BSoundBuffer::LoadFromFile(%s,%d)", Filename, ForceReload);
 #if 0
 	if (_stream) {
@@ -187,7 +187,7 @@ HRESULT CBSoundBuffer::LoadFromFile(const char *Filename, bool ForceReload) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::Play(bool looping, uint32 startSample) {
+HRESULT CBSoundBuffer::play(bool looping, uint32 startSample) {
 	if (startSample != 0) {
 		warning("BSoundBuffer::Play - Should start playback at %d, but currently we don't", startSample);
 	}
@@ -203,7 +203,7 @@ HRESULT CBSoundBuffer::Play(bool looping, uint32 startSample) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBSoundBuffer::SetLooping(bool looping) {
+void CBSoundBuffer::setLooping(bool looping) {
 	warning("BSoundBuffer::SetLooping(%d) - not implemented yet", looping);
 #if 0
 	_looping = looping;
@@ -215,7 +215,7 @@ void CBSoundBuffer::SetLooping(bool looping) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::Resume() {
+HRESULT CBSoundBuffer::resume() {
 	if (_stream && _handle) {
 		g_system->getMixer()->pauseHandle(*_handle, false);
 	}
@@ -224,7 +224,7 @@ HRESULT CBSoundBuffer::Resume() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::Stop() {
+HRESULT CBSoundBuffer::stop() {
 	if (_stream && _handle) {
 		g_system->getMixer()->stopHandle(*_handle);
 	}
@@ -233,7 +233,7 @@ HRESULT CBSoundBuffer::Stop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::Pause() {
+HRESULT CBSoundBuffer::pause() {
 	if (_stream && _handle) {
 		g_system->getMixer()->pauseHandle(*_handle, true);
 	}
@@ -242,7 +242,7 @@ HRESULT CBSoundBuffer::Pause() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBSoundBuffer::GetLength() {
+uint32 CBSoundBuffer::getLength() {
 	if (_stream) {
 		uint32 len = _stream->getLength().msecs();
 		return len * 1000;
@@ -252,13 +252,13 @@ uint32 CBSoundBuffer::GetLength() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSoundBuffer::SetType(TSoundType Type) {
+void CBSoundBuffer::setType(TSoundType Type) {
 	_type = Type;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::SetVolume(int Volume) {
+HRESULT CBSoundBuffer::setVolume(int Volume) {
 	if (_stream && _handle) {
 		byte vol = (byte)(Volume / 100.f * Audio::Mixer::kMaxChannelVolume);
 		g_system->getMixer()->setChannelVolume(*_handle, vol);
@@ -268,7 +268,7 @@ HRESULT CBSoundBuffer::SetVolume(int Volume) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::SetPrivateVolume(int Volume) {
+HRESULT CBSoundBuffer::setPrivateVolume(int Volume) {
 #if 0
 	_privateVolume = Volume;
 
@@ -284,12 +284,12 @@ HRESULT CBSoundBuffer::SetPrivateVolume(int Volume) {
 		break;
 	}
 #endif
-	return SetVolume(Volume);
+	return setVolume(Volume);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundBuffer::IsPlaying() {
+bool CBSoundBuffer::isPlaying() {
 	if (_stream && _handle) {
 		return _freezePaused || g_system->getMixer()->isSoundHandleActive(*_handle);
 	} else {
@@ -299,7 +299,7 @@ bool CBSoundBuffer::IsPlaying() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBSoundBuffer::GetPosition() {
+uint32 CBSoundBuffer::getPosition() {
 	if (_stream && _handle) {
 		uint32 pos = g_system->getMixer()->getSoundElapsedTime(*_handle);
 		return pos;
@@ -309,7 +309,7 @@ uint32 CBSoundBuffer::GetPosition() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::SetPosition(uint32 Pos) {
+HRESULT CBSoundBuffer::setPosition(uint32 Pos) {
 	warning("CBSoundBuffer::SetPosition - not implemented yet");
 #if 0
 	if (_stream) {
@@ -321,7 +321,7 @@ HRESULT CBSoundBuffer::SetPosition(uint32 Pos) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::SetLoopStart(uint32 Pos) {
+HRESULT CBSoundBuffer::setLoopStart(uint32 Pos) {
 	_loopStart = Pos;
 #if 0
 	if (_stream) {
@@ -348,7 +348,7 @@ void CBSoundBuffer::LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void
 }
 #endif
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::SetPan(float pan) {
+HRESULT CBSoundBuffer::setPan(float pan) {
 	if (_stream) {
 		g_system->getMixer()->setChannelBalance(*_handle, pan * 127);
 	}
@@ -356,7 +356,7 @@ HRESULT CBSoundBuffer::SetPan(float pan) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::ApplyFX(TSFXType Type, float Param1, float Param2, float Param3, float Param4) {
+HRESULT CBSoundBuffer::applyFX(TSFXType Type, float Param1, float Param2, float Param3, float Param4) {
 	warning("CBSoundBuffer::ApplyFX - not implemented yet");
 #if 0
 	switch (Type) {

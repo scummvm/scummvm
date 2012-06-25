@@ -48,32 +48,32 @@ public:
 	virtual ~CBSoundBuffer();
 
 
-	HRESULT Pause();
-	HRESULT Play(bool Looping = false, uint32 StartSample = 0);
-	HRESULT Resume();
-	HRESULT Stop();
-	bool IsPlaying();
+	HRESULT pause();
+	HRESULT play(bool Looping = false, uint32 StartSample = 0);
+	HRESULT resume();
+	HRESULT stop();
+	bool isPlaying();
 
-	void SetLooping(bool looping);
+	void setLooping(bool looping);
 
-	uint32 GetPosition();
-	HRESULT SetPosition(uint32 Pos);
-	uint32 GetLength();
+	uint32 getPosition();
+	HRESULT setPosition(uint32 Pos);
+	uint32 getLength();
 
-	HRESULT SetLoopStart(uint32 Pos);
-	uint32 GetLoopStart() const {
+	HRESULT setLoopStart(uint32 Pos);
+	uint32 getLoopStart() const {
 		return _loopStart;
 	}
 
-	HRESULT SetPan(float Pan);
-	HRESULT SetPrivateVolume(int Volume);
-	HRESULT SetVolume(int Volume);
+	HRESULT setPan(float Pan);
+	HRESULT setPrivateVolume(int Volume);
+	HRESULT setVolume(int Volume);
 
-	void SetType(TSoundType Type);
+	void setType(TSoundType Type);
 
-	HRESULT LoadFromFile(const char *Filename, bool ForceReload = false);
-	void SetStreaming(bool Streamed, uint32 NumBlocks = 0, uint32 BlockSize = 0);
-	HRESULT ApplyFX(TSFXType Type, float Param1, float Param2, float Param3, float Param4);
+	HRESULT loadFromFile(const char *Filename, bool ForceReload = false);
+	void setStreaming(bool Streamed, uint32 NumBlocks = 0, uint32 BlockSize = 0);
+	HRESULT applyFX(TSFXType Type, float Param1, float Param2, float Param3, float Param4);
 
 	//HSTREAM _stream;
 	//HSYNC _sync;

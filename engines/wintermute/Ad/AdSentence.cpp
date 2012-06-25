@@ -169,7 +169,7 @@ HRESULT CAdSentence::display() {
 	if (!_font || !_text) return E_FAIL;
 
 	if (_sound && !_soundStarted) {
-		_sound->Play();
+		_sound->play();
 		_soundStarted = true;
 	}
 
@@ -205,7 +205,7 @@ void CAdSentence::SetSound(CBSound *Sound) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSentence::Finish() {
-	if (_sound) _sound->Stop();
+	if (_sound) _sound->stop();
 	return S_OK;
 }
 

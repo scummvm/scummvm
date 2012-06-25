@@ -148,11 +148,11 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *Filename, TSoundType Type, bool 
 	sound = new CBSoundBuffer(Game);
 	if (!sound) return NULL;
 
-	sound->SetStreaming(Streamed);
-	sound->SetType(Type);
+	sound->setStreaming(Streamed);
+	sound->setType(Type);
 
 
-	HRESULT res = sound->LoadFromFile(Filename);
+	HRESULT res = sound->loadFromFile(Filename);
 	if (FAILED(res)) {
 		Game->LOG(res, "Error loading sound '%s'", Filename);
 		delete sound;
@@ -162,13 +162,13 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *Filename, TSoundType Type, bool 
 	// set volume appropriately
 	switch (Type) {
 	case SOUND_SFX:
-		sound->SetVolume(_volumeSFX);
+		sound->setVolume(_volumeSFX);
 		break;
 	case SOUND_SPEECH:
-		sound->SetVolume(_volumeSpeech);
+		sound->setVolume(_volumeSpeech);
 		break;
 	case SOUND_MUSIC:
-		sound->SetVolume(_volumeMusic);
+		sound->setVolume(_volumeMusic);
 		break;
 	}
 
@@ -187,13 +187,13 @@ HRESULT CBSoundMgr::addSound(CBSoundBuffer *Sound, TSoundType Type) {
 	// set volume appropriately
 	switch (Type) {
 	case SOUND_SFX:
-		Sound->SetVolume(_volumeSFX);
+		Sound->setVolume(_volumeSFX);
 		break;
 	case SOUND_SPEECH:
-		Sound->SetVolume(_volumeSpeech);
+		Sound->setVolume(_volumeSpeech);
 		break;
 	case SOUND_MUSIC:
-		Sound->SetVolume(_volumeMusic);
+		Sound->setVolume(_volumeMusic);
 		break;
 	}
 
@@ -235,7 +235,7 @@ HRESULT CBSoundMgr::setVolume(TSoundType Type, int Volume) {
 	}
 
 	for (int i = 0; i < _sounds.GetSize(); i++) {
-		if (_sounds[i]->_type == Type) _sounds[i]->SetVolume(Volume);
+		if (_sounds[i]->_type == Type) _sounds[i]->setVolume(Volume);
 	}
 
 	return S_OK;
@@ -291,8 +291,8 @@ byte CBSoundMgr::getMasterVolumePercent() {
 HRESULT CBSoundMgr::pauseAll(bool IncludingMusic) {
 
 	for (int i = 0; i < _sounds.GetSize(); i++) {
-		if (_sounds[i]->IsPlaying() && (_sounds[i]->_type != SOUND_MUSIC || IncludingMusic)) {
-			_sounds[i]->Pause();
+		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != SOUND_MUSIC || IncludingMusic)) {
+			_sounds[i]->pause();
 			_sounds[i]->_freezePaused = true;
 		}
 	}
@@ -306,7 +306,7 @@ HRESULT CBSoundMgr::resumeAll() {
 
 	for (int i = 0; i < _sounds.GetSize(); i++) {
 		if (_sounds[i]->_freezePaused) {
-			_sounds[i]->Resume();
+			_sounds[i]->resume();
 			_sounds[i]->_freezePaused = false;
 		}
 	}

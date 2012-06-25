@@ -371,7 +371,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "IsSoundPlaying") == 0) {
 		Stack->CorrectParams(0);
 
-		if (_sFX && _sFX->IsPlaying()) Stack->PushBool(true);
+		if (_sFX && _sFX->isPlaying()) Stack->PushBool(true);
 		else Stack->PushBool(false);
 		return S_OK;
 	}
@@ -395,7 +395,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		Stack->CorrectParams(0);
 
 		if (!_sFX) Stack->PushInt(0);
-		else Stack->PushInt(_sFX->GetPositionTime());
+		else Stack->PushInt(_sFX->getPositionTime());
 		return S_OK;
 	}
 
@@ -418,7 +418,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		Stack->CorrectParams(0);
 
 		if (!_sFX) Stack->PushInt(_sFXVolume);
-		else Stack->PushInt(_sFX->GetVolume());
+		else Stack->PushInt(_sFX->getVolume());
 		return S_OK;
 	}
 
@@ -976,14 +976,14 @@ HRESULT CBObject::playSFX(const char *filename, bool looping, bool playNow, cons
 	// just play loaded sound
 	if (filename == NULL && _sFX) {
 		if (Game->_editorMode || _sFXStart) {
-			_sFX->SetVolume(_sFXVolume);
-			_sFX->SetPositionTime(_sFXStart);
+			_sFX->setVolume(_sFXVolume);
+			_sFX->setPositionTime(_sFXStart);
 			if (!Game->_editorMode) _sFXStart = 0;
 		}
 		if (playNow) {
 			setSoundEvent(eventName);
-			if (loopStart) _sFX->SetLoopStart(loopStart);
-			return _sFX->Play(looping);
+			if (loopStart) _sFX->setLoopStart(loopStart);
+			return _sFX->play(looping);
 		} else return S_OK;
 	}
 
@@ -993,17 +993,17 @@ HRESULT CBObject::playSFX(const char *filename, bool looping, bool playNow, cons
 	delete _sFX;
 
 	_sFX = new CBSound(Game);
-	if (_sFX && SUCCEEDED(_sFX->SetSound(filename, SOUND_SFX, true))) {
-		_sFX->SetVolume(_sFXVolume);
+	if (_sFX && SUCCEEDED(_sFX->setSound(filename, SOUND_SFX, true))) {
+		_sFX->setVolume(_sFXVolume);
 		if (_sFXStart) {
-			_sFX->SetPositionTime(_sFXStart);
+			_sFX->setPositionTime(_sFXStart);
 			_sFXStart = 0;
 		}
 		_sFX->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 		if (playNow) {
 			setSoundEvent(eventName);
-			if (loopStart) _sFX->SetLoopStart(loopStart);
-			return _sFX->Play(looping);
+			if (loopStart) _sFX->setLoopStart(loopStart);
+			return _sFX->play(looping);
 		} else return S_OK;
 	} else {
 		delete _sFX;
@@ -1016,7 +1016,7 @@ HRESULT CBObject::playSFX(const char *filename, bool looping, bool playNow, cons
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::stopSFX(bool deleteSound) {
 	if (_sFX) {
-		_sFX->Stop();
+		_sFX->stop();
 		if (deleteSound) {
 			delete _sFX;
 			_sFX = NULL;
@@ -1028,14 +1028,14 @@ HRESULT CBObject::stopSFX(bool deleteSound) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::pauseSFX() {
-	if (_sFX) return _sFX->Pause();
+	if (_sFX) return _sFX->pause();
 	else return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::resumeSFX() {
-	if (_sFX) return _sFX->Resume();
+	if (_sFX) return _sFX->resume();
 	else return E_FAIL;
 }
 
@@ -1043,7 +1043,7 @@ HRESULT CBObject::resumeSFX() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::setSFXTime(uint32 time) {
 	_sFXStart = time;
-	if (_sFX && _sFX->IsPlaying()) return _sFX->SetPositionTime(time);
+	if (_sFX && _sFX->isPlaying()) return _sFX->setPositionTime(time);
 	else return S_OK;
 }
 
@@ -1051,7 +1051,7 @@ HRESULT CBObject::setSFXTime(uint32 time) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::setSFXVolume(int Volume) {
 	_sFXVolume = Volume;
-	if (_sFX) return _sFX->SetVolume(Volume);
+	if (_sFX) return _sFX->setVolume(Volume);
 	else return S_OK;
 }
 
@@ -1059,7 +1059,7 @@ HRESULT CBObject::setSFXVolume(int Volume) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::updateSounds() {
 	if (_soundEvent) {
-		if (_sFX && !_sFX->IsPlaying()) {
+		if (_sFX && !_sFX->isPlaying()) {
 			applyEvent(_soundEvent);
 			setSoundEvent(NULL);
 		}
@@ -1076,7 +1076,7 @@ HRESULT CBObject::updateOneSound(CBSound *sound) {
 
 	if (sound) {
 		if (_autoSoundPanning)
-			Ret = sound->SetPan(Game->_soundMgr->posToPan(_posX  - Game->_offsetX, _posY - Game->_offsetY));
+			Ret = sound->setPan(Game->_soundMgr->posToPan(_posX  - Game->_offsetX, _posY - Game->_offsetY));
 
 		Ret = sound->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 	}
@@ -1087,7 +1087,7 @@ HRESULT CBObject::updateOneSound(CBSound *sound) {
 HRESULT CBObject::resetSoundPan() {
 	if (!_sFX) return S_OK;
 	else {
-		return _sFX->SetPan(0.0f);
+		return _sFX->setPan(0.0f);
 	}
 }
 

@@ -307,7 +307,7 @@ void CAdGame::FinishSentences() {
 	for (int i = 0; i < _sentences.GetSize(); i++) {
 		if (_sentences[i]->CanSkip()) {
 			_sentences[i]->_duration = 0;
-			if (_sentences[i]->_sound) _sentences[i]->_sound->Stop();
+			if (_sentences[i]->_sound) _sentences[i]->_sound->stop();
 		}
 	}
 }

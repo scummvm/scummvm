@@ -862,10 +862,10 @@ void CAdObject::Talk(const char *Text, const char *Sound, uint32 Duration, const
 	// load sound and set duration appropriately
 	if (Sound) {
 		CBSound *snd = new CBSound(Game);
-		if (snd && SUCCEEDED(snd->SetSound(Sound, SOUND_SPEECH, true))) {
+		if (snd && SUCCEEDED(snd->setSound(Sound, SOUND_SPEECH, true))) {
 			_sentence->SetSound(snd);
 			if (_sentence->_duration <= 0) {
-				uint32 Length = snd->GetLength();
+				uint32 Length = snd->getLength();
 				if (Length != 0) _sentence->_duration = Length;
 			}
 		} else delete snd;
@@ -1009,7 +1009,7 @@ HRESULT CAdObject::updateSounds() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::resetSoundPan() {
 	if (_sentence && _sentence->_sound) {
-		_sentence->_sound->SetPan(0.0f);
+		_sentence->_sound->setPan(0.0f);
 	}
 	return CBObject::resetSoundPan();
 }

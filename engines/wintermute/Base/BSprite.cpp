@@ -746,7 +746,7 @@ const char *CBSprite::scToString() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSprite::KillAllSounds() {
 	for (int i = 0; i < _frames.GetSize(); i++) {
-		if (_frames[i]->_sound) _frames[i]->_sound->Stop();
+		if (_frames[i]->_sound) _frames[i]->_sound->stop();
 	}
 	return S_OK;
 }

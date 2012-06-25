@@ -91,7 +91,7 @@ HRESULT CBFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY
 HRESULT CBFrame::OneTimeDisplay(CBObject *Owner, bool Muted) {
 	if (_sound && !Muted) {
 		if (Owner) Owner->updateOneSound(_sound);
-		_sound->Play();
+		_sound->play();
 		/*
 		if (Game->_state == GAME_FROZEN) {
 		    _sound->Pause(true);
@@ -252,7 +252,7 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 				_sound = NULL;
 			}
 			_sound = new CBSound(Game);
-			if (!_sound || FAILED(_sound->SetSound(params, SOUND_SFX, false))) {
+			if (!_sound || FAILED(_sound->setSound(params, SOUND_SFX, false))) {
 				if (Game->_soundMgr->_soundAvailable) Game->LOG(0, "Error loading sound '%s'.", params);
 				delete _sound;
 				_sound = NULL;
@@ -425,7 +425,7 @@ HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		if (!Val->IsNULL()) {
 			_sound = new CBSound(Game);
-			if (!_sound || FAILED(_sound->SetSound(Val->GetString(), SOUND_SFX, false))) {
+			if (!_sound || FAILED(_sound->setSound(Val->GetString(), SOUND_SFX, false))) {
 				Stack->PushBool(false);
 				delete _sound;
 				_sound = NULL;

@@ -1235,7 +1235,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		}
 
 		if (Channel < 0 || Channel >= NUM_MUSIC_CHANNELS || !_music[Channel]) Stack->PushInt(0);
-		else Stack->PushInt(_music[Channel]->GetPositionTime());
+		else Stack->PushInt(_music[Channel]->getPositionTime());
 		return S_OK;
 	}
 
@@ -1251,7 +1251,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		}
 
 		if (Channel < 0 || Channel >= NUM_MUSIC_CHANNELS || !_music[Channel]) Stack->PushBool(false);
-		else Stack->PushBool(_music[Channel]->IsPlaying());
+		else Stack->PushBool(_music[Channel]->isPlaying());
 		return S_OK;
 	}
 
@@ -1269,7 +1269,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		int Volume = Stack->Pop()->GetInt();
 		if (Channel < 0 || Channel >= NUM_MUSIC_CHANNELS || !_music[Channel]) Stack->PushBool(false);
 		else {
-			if (FAILED(_music[Channel]->SetVolume(Volume))) Stack->PushBool(false);
+			if (FAILED(_music[Channel]->setVolume(Volume))) Stack->PushBool(false);
 			else Stack->PushBool(true);
 		}
 		return S_OK;
@@ -1287,7 +1287,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		}
 
 		if (Channel < 0 || Channel >= NUM_MUSIC_CHANNELS || !_music[Channel]) Stack->PushInt(0);
-		else Stack->PushInt(_music[Channel]->GetVolume());
+		else Stack->PushInt(_music[Channel]->getVolume());
 
 		return S_OK;
 	}
@@ -1330,8 +1330,8 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		const char *Filename = Stack->Pop()->GetString();
 
 		CBSound *Sound = new CBSound(Game);
-		if (Sound && SUCCEEDED(Sound->SetSound(Filename, SOUND_MUSIC, true))) {
-			Length = Sound->GetLength();
+		if (Sound && SUCCEEDED(Sound->setSound(Filename, SOUND_MUSIC, true))) {
+			Length = Sound->getLength();
 			delete Sound;
 			Sound = NULL;
 		}
@@ -3369,7 +3369,7 @@ void CBGame::AfterLoadSubFrame(void *Subframe, void *Data) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::AfterLoadSound(void *Sound, void *Data) {
-	((CBSound *)Sound)->SetSoundSimple();
+	((CBSound *)Sound)->setSoundSimple();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -3424,13 +3424,13 @@ HRESULT CBGame::PlayMusic(int Channel, const char *Filename, bool Looping, uint3
 	_music[Channel] = NULL;
 
 	_music[Channel] = new CBSound(Game);
-	if (_music[Channel] && SUCCEEDED(_music[Channel]->SetSound(Filename, SOUND_MUSIC, true))) {
+	if (_music[Channel] && SUCCEEDED(_music[Channel]->setSound(Filename, SOUND_MUSIC, true))) {
 		if (_musicStartTime[Channel]) {
-			_music[Channel]->SetPositionTime(_musicStartTime[Channel]);
+			_music[Channel]->setPositionTime(_musicStartTime[Channel]);
 			_musicStartTime[Channel] = 0;
 		}
-		if (LoopStart) _music[Channel]->SetLoopStart(LoopStart);
-		return _music[Channel]->Play(Looping);
+		if (LoopStart) _music[Channel]->setLoopStart(LoopStart);
+		return _music[Channel]->play(Looping);
 	} else {
 		delete _music[Channel];
 		_music[Channel] = NULL;
@@ -3447,7 +3447,7 @@ HRESULT CBGame::StopMusic(int Channel) {
 	}
 
 	if (_music[Channel]) {
-		_music[Channel]->Stop();
+		_music[Channel]->stop();
 		delete _music[Channel];
 		_music[Channel] = NULL;
 		return S_OK;
@@ -3462,7 +3462,7 @@ HRESULT CBGame::PauseMusic(int Channel) {
 		return E_FAIL;
 	}
 
-	if (_music[Channel]) return _music[Channel]->Pause();
+	if (_music[Channel]) return _music[Channel]->pause();
 	else return E_FAIL;
 }
 
@@ -3474,7 +3474,7 @@ HRESULT CBGame::ResumeMusic(int Channel) {
 		return E_FAIL;
 	}
 
-	if (_music[Channel]) return _music[Channel]->Resume();
+	if (_music[Channel]) return _music[Channel]->resume();
 	else return E_FAIL;
 }
 
@@ -3488,7 +3488,7 @@ HRESULT CBGame::SetMusicStartTime(int Channel, uint32 Time) {
 	}
 
 	_musicStartTime[Channel] = Time;
-	if (_music[Channel] && _music[Channel]->IsPlaying()) return _music[Channel]->SetPositionTime(Time);
+	if (_music[Channel] && _music[Channel]->isPlaying()) return _music[Channel]->setPositionTime(Time);
 	else return S_OK;
 }
 
@@ -4123,19 +4123,19 @@ HRESULT CBGame::UpdateMusicCrossfade() {
 		return S_OK;
 	}
 
-	if (!_music[_musicCrossfadeChannel1]->IsPlaying()) _music[_musicCrossfadeChannel1]->Play();
-	if (!_music[_musicCrossfadeChannel2]->IsPlaying()) _music[_musicCrossfadeChannel2]->Play();
+	if (!_music[_musicCrossfadeChannel1]->isPlaying()) _music[_musicCrossfadeChannel1]->play();
+	if (!_music[_musicCrossfadeChannel2]->isPlaying()) _music[_musicCrossfadeChannel2]->play();
 
 	uint32 CurrentTime = Game->_liveTimer - _musicCrossfadeStartTime;
 
 	if (CurrentTime >= _musicCrossfadeLength) {
 		_musicCrossfadeRunning = false;
-		//_music[_musicCrossfadeChannel2]->SetVolume(GlobMusicVol);
-		_music[_musicCrossfadeChannel2]->SetVolume(100);
+		//_music[_musicCrossfadeChannel2]->setVolume(GlobMusicVol);
+		_music[_musicCrossfadeChannel2]->setVolume(100);
 
-		_music[_musicCrossfadeChannel1]->Stop();
-		//_music[_musicCrossfadeChannel1]->SetVolume(GlobMusicVol);
-		_music[_musicCrossfadeChannel1]->SetVolume(100);
+		_music[_musicCrossfadeChannel1]->stop();
+		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol);
+		_music[_musicCrossfadeChannel1]->setVolume(100);
 
 
 		if (_musicCrossfadeSwap) {
@@ -4150,10 +4150,10 @@ HRESULT CBGame::UpdateMusicCrossfade() {
 			_musicStartTime[_musicCrossfadeChannel2] = DummyInt;
 		}
 	} else {
-		//_music[_musicCrossfadeChannel1]->SetVolume(GlobMusicVol - (float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
-		//_music[_musicCrossfadeChannel2]->SetVolume((float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
-		_music[_musicCrossfadeChannel1]->SetVolume(100 - (float)CurrentTime / (float)_musicCrossfadeLength * 100);
-		_music[_musicCrossfadeChannel2]->SetVolume((float)CurrentTime / (float)_musicCrossfadeLength * 100);
+		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol - (float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
+		//_music[_musicCrossfadeChannel2]->setVolume((float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
+		_music[_musicCrossfadeChannel1]->setVolume(100 - (float)CurrentTime / (float)_musicCrossfadeLength * 100);
+		_music[_musicCrossfadeChannel2]->setVolume((float)CurrentTime / (float)_musicCrossfadeLength * 100);
 
 		//Game->QuickMessageForm("%d %d", _music[_musicCrossfadeChannel1]->GetVolume(), _music[_musicCrossfadeChannel2]->GetVolume());
 	}
