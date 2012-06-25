@@ -39,6 +39,7 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "common/str.h"
+#include "common/math.h"
 
 namespace WinterMute {
 
@@ -194,7 +195,7 @@ HRESULT CPartEmitter::InitParticle(CPartParticle *Particle, uint32 CurrentTime, 
 	Vector2 VecVel(0, Velocity);
 
 	Matrix4 MatRot;
-	MatRot.RotationZ(DegToRad(CBUtils::NormalizeAngle(Angle - 180)));
+	MatRot.RotationZ(Common::deg2rad(CBUtils::NormalizeAngle(Angle - 180)));
 	MatRot.TransformVector2(VecVel);
 
 	if (_alphaTimeBased) {
@@ -393,7 +394,7 @@ HRESULT CPartEmitter::AddForce(const char *Name, CPartForce::TForceType Type, in
 
 	Force->_direction = Vector2(0, Strength);
 	Matrix4 MatRot;
-	MatRot.RotationZ(DegToRad(CBUtils::NormalizeAngle(Angle - 180)));
+	MatRot.RotationZ(Common::deg2rad(CBUtils::NormalizeAngle(Angle - 180)));
 	MatRot.TransformVector2(Force->_direction);
 
 	return S_OK;
