@@ -58,8 +58,13 @@ class CBPersistMgr;
 class CSysInstance;
 
 class CSysClassRegistry {
+	void unregisterClasses();
 public:
+	void registerClasses(); // persistent.cpp
 	static CSysClassRegistry *GetInstance();
+
+	CSysClassRegistry();
+	virtual ~CSysClassRegistry();
 
 	HRESULT EnumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData);
 	HRESULT LoadTable(CBGame *Game, CBPersistMgr *PersistMgr);
@@ -75,9 +80,6 @@ public:
 	void DumpClasses(Common::WriteStream *stream);
 	int GetNextID();
 	void AddInstanceToTable(CSysInstance *instance, void *pointer);
-
-	CSysClassRegistry();
-	virtual ~CSysClassRegistry();
 
 	bool _disabled;
 	int _count;

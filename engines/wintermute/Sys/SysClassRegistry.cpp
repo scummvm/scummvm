@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/wintermute.h"
 #include "SysInstance.h"
 #include "SysClassRegistry.h"
 #include "common/stream.h"
@@ -41,15 +42,20 @@ CSysClassRegistry::CSysClassRegistry() {
 
 //////////////////////////////////////////////////////////////////////////
 CSysClassRegistry::~CSysClassRegistry() {
-
+	unregisterClasses();
 }
 
 //////////////////////////////////////////////////////////////////////////
 CSysClassRegistry *CSysClassRegistry::GetInstance() {
-	static CSysClassRegistry classReg;
-	return &classReg;
+	return g_wintermute->getClassRegistry();
 }
 
+void CSysClassRegistry::unregisterClasses() {
+	// CSysClass calls UnregisterClass upon destruction.
+	while (_classes.size() > 0) {
+		delete _classes.begin()->_value;
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool CSysClassRegistry::RegisterClass(CSysClass *classObj) {

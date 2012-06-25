@@ -66,6 +66,7 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst)
 	_game = NULL;
 	
 	g_wintermute = this;
+	_classReg = NULL;
 }
 
 WinterMuteEngine::~WinterMuteEngine() {
@@ -132,11 +133,14 @@ Common::Error WinterMuteEngine::run() {
 	if (ret == 0) {
 		ret = messageLoop();
 	}
+	deinit();
 	return Common::kNoError;
 }
 
 int WinterMuteEngine::init() {
-	registerClasses(); // Needs to be done before the first WME class is instantiated
+	_classReg = new CSysClassRegistry();
+	_classReg->registerClasses();
+
 	_game = new CAdGame;
 	if (!_game) return 1;
 	CBPlatform::Initialize(_game, 0, NULL);
@@ -304,6 +308,10 @@ int WinterMuteEngine::messageLoop() {
 		_game = NULL;
 	}
 	return 0;
+}
+
+void WinterMuteEngine::deinit() {
+	delete _classReg;
 }
 
 uint32 WinterMuteEngine::randInt(int from, int to) {

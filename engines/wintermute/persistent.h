@@ -87,8 +87,6 @@ namespace WinterMute {
 #define TMEMBER(member_name) #member_name, &member_name
 #define TMEMBER_INT(member_name) #member_name, (int*)&member_name
 
-void registerClasses();
-
 } // end of namespace WinterMute
 
 #endif // WINTERMUTE_PERSISTENT_H

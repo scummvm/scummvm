@@ -31,6 +31,7 @@ namespace WinterMute {
 
 class Console;
 class CBGame;
+class CSysClassRegistry;
 // our engine debug channels
 enum {
     kWinterMuteDebugExample = 1 << 0,
@@ -47,12 +48,15 @@ public:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
+	CSysClassRegistry *getClassRegistry(){ return _classReg; }
 	uint32 randInt(int from, int to);
 private:
 	int init();
+	void deinit();
 	int messageLoop();
 	Console *_console;
 	CBGame *_game;
+	CSysClassRegistry *_classReg;
 	// We need random numbers
 	Common::RandomSource *_rnd;
 };

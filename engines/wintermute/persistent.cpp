@@ -88,12 +88,14 @@
 #include "engines/wintermute/UI/UIWindow.h"
 #include "engines/wintermute/video/VidTheoraPlayer.h"
 
+// CSysClass adds these objects to the registry, thus they aren't as leaked as they look
 #define REGISTER_CLASS(class_name, persistent_class)\
 	new WinterMute::CSysClass(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);
 
 namespace WinterMute {
 
-void registerClasses() {
+// This is done in a separate file, to avoid including the kitchensink in CSysClassRegistry.
+void CSysClassRegistry::registerClasses() {
 	REGISTER_CLASS(CAdActor, false)
 	REGISTER_CLASS(CAdEntity, false)
 	REGISTER_CLASS(CAdGame, true)
