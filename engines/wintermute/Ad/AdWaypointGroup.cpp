@@ -200,7 +200,7 @@ HRESULT CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdWaypointGroup::ScGetProperty(const char *Name) {
+CScValue *CAdWaypointGroup::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -219,12 +219,12 @@ CScValue *CAdWaypointGroup::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBObject::ScGetProperty(Name);
+	else return CBObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdWaypointGroup::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
@@ -233,7 +233,7 @@ HRESULT CAdWaypointGroup::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::ScSetProperty(Name, Value);
+	else return CBObject::scSetProperty(Name, Value);
 }
 
 

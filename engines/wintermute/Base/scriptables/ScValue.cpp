@@ -178,7 +178,7 @@ CScValue *CScValue::GetProp(const char *Name) {
 
 	CScValue *ret = NULL;
 
-	if (_type == VAL_NATIVE && _valNative) ret = _valNative->ScGetProperty(Name);
+	if (_type == VAL_NATIVE && _valNative) ret = _valNative->scGetProperty(Name);
 
 	if (ret == NULL) {
 		_valIter = _valObject.find(Name);
@@ -208,7 +208,7 @@ HRESULT CScValue::SetProp(const char *Name, CScValue *Val, bool CopyWhole, bool 
 
 	HRESULT ret = E_FAIL;
 	if (_type == VAL_NATIVE && _valNative) {
-		ret = _valNative->ScSetProperty(Name, Val);
+		ret = _valNative->scSetProperty(Name, Val);
 	}
 
 	if (FAILED(ret)) {
@@ -347,7 +347,7 @@ void CScValue::SetBool(bool Val) {
 	}
 
 	if (_type == VAL_NATIVE) {
-		_valNative->ScSetBool(Val);
+		_valNative->scSetBool(Val);
 		return;
 	}
 
@@ -364,7 +364,7 @@ void CScValue::SetInt(int Val) {
 	}
 
 	if (_type == VAL_NATIVE) {
-		_valNative->ScSetInt(Val);
+		_valNative->scSetInt(Val);
 		return;
 	}
 
@@ -381,7 +381,7 @@ void CScValue::SetFloat(double Val) {
 	}
 
 	if (_type == VAL_NATIVE) {
-		_valNative->ScSetFloat(Val);
+		_valNative->scSetFloat(Val);
 		return;
 	}
 
@@ -398,7 +398,7 @@ void CScValue::SetString(const char *Val) {
 	}
 
 	if (_type == VAL_NATIVE) {
-		_valNative->ScSetString(Val);
+		_valNative->scSetString(Val);
 		return;
 	}
 
@@ -503,7 +503,7 @@ bool CScValue::GetBool(bool Default) {
 		return _valBool;
 
 	case VAL_NATIVE:
-		return _valNative->ScToBool();
+		return _valNative->scToBool();
 
 	case VAL_INT:
 		return (_valInt != 0);
@@ -529,7 +529,7 @@ int CScValue::GetInt(int Default) {
 		return _valBool ? 1 : 0;
 
 	case VAL_NATIVE:
-		return _valNative->ScToInt();
+		return _valNative->scToInt();
 
 	case VAL_INT:
 		return _valInt;
@@ -555,7 +555,7 @@ double CScValue::GetFloat(double Default) {
 		return _valBool ? 1.0f : 0.0f;
 
 	case VAL_NATIVE:
-		return _valNative->ScToFloat();
+		return _valNative->scToFloat();
 
 	case VAL_INT:
 		return (double)_valInt;
@@ -575,7 +575,7 @@ double CScValue::GetFloat(double Default) {
 void *CScValue::GetMemBuffer() {
 	if (_type == VAL_VARIABLE_REF) return _valRef->GetMemBuffer();
 
-	if (_type == VAL_NATIVE) return _valNative->ScToMemBuffer();
+	if (_type == VAL_NATIVE) return _valNative->scToMemBuffer();
 	else return (void *)NULL;
 }
 
@@ -594,7 +594,7 @@ const char *CScValue::GetString() {
 		break;
 
 	case VAL_NATIVE: {
-		const char *StrVal = _valNative->ScToString();
+		const char *StrVal = _valNative->scToString();
 		SetStringVal(StrVal);
 		return StrVal;
 		break;
@@ -696,16 +696,16 @@ void CScValue::SetValue(CScValue *Val) {
 	if (_type == VAL_NATIVE && (Val->_type == VAL_INT || Val->_type == VAL_STRING || Val->_type == VAL_BOOL)) {
 		switch (Val->_type) {
 		case VAL_INT:
-			_valNative->ScSetInt(Val->GetInt());
+			_valNative->scSetInt(Val->GetInt());
 			break;
 		case VAL_FLOAT:
-			_valNative->ScSetFloat(Val->GetFloat());
+			_valNative->scSetFloat(Val->GetFloat());
 			break;
 		case VAL_BOOL:
-			_valNative->ScSetBool(Val->GetBool());
+			_valNative->scSetBool(Val->GetBool());
 			break;
 		case VAL_STRING:
-			_valNative->ScSetString(Val->GetString());
+			_valNative->scSetString(Val->GetString());
 			break;
 		default:
 			warning("CScValue::SetValue - unhandled enum");
@@ -823,7 +823,7 @@ int CScValue::Compare(CScValue *Val1, CScValue *Val2) {
 	if (Val1->IsNative() && Val2->IsNative()) {
 		// same class?
 		if (strcmp(Val1->GetNative()->GetClassName(), Val2->GetNative()->GetClassName()) == 0) {
-			return Val1->GetNative()->ScCompare(Val2->GetNative());
+			return Val1->GetNative()->scCompare(Val2->GetNative());
 		} else return strcmp(Val1->GetString(), Val2->GetString());
 	}
 
@@ -1024,7 +1024,7 @@ bool CScValue::DbgGetDescription(char *Buf, int BufSize) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->DbgGetDescription(Buf, BufSize);
 
 	if (_type == VAL_NATIVE) {
-		_valNative->ScDebuggerDesc(Buf, BufSize);
+		_valNative->scDebuggerDesc(Buf, BufSize);
 	} else {
 		strncpy(Buf, GetString(), BufSize);
 	}

@@ -376,7 +376,7 @@ HRESULT CUIText::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CUIText::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SizeToFit
 	//////////////////////////////////////////////////////////////////////////
@@ -397,12 +397,12 @@ HRESULT CUIText::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		return S_OK;
 	}
 
-	else return CUIObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CUIObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIText::ScGetProperty(const char *Name) {
+CScValue *CUIText::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -429,12 +429,12 @@ CScValue *CUIText::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CUIObject::ScGetProperty(Name);
+	else return CUIObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CUIText::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
@@ -455,12 +455,12 @@ HRESULT CUIText::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CUIObject::ScSetProperty(Name, Value);
+	else return CUIObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIText::ScToString() {
+const char *CUIText::scToString() {
 	return "[static]";
 }
 

@@ -666,7 +666,7 @@ void CUIButton::Press() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetDisabledFont
 	//////////////////////////////////////////////////////////////////////////
@@ -916,12 +916,12 @@ HRESULT CUIButton::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	}
 
 
-	else return CUIObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CUIObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIButton::ScGetProperty(const char *Name) {
+CScValue *CUIButton::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -962,12 +962,12 @@ CScValue *CUIButton::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CUIObject::ScGetProperty(Name);
+	else return CUIObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CUIButton::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
@@ -1000,12 +1000,12 @@ HRESULT CUIButton::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CUIObject::ScSetProperty(Name, Value);
+	else return CUIObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIButton::ScToString() {
+const char *CUIButton::scToString() {
 	return "[button]";
 }
 

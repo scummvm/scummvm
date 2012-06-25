@@ -187,7 +187,7 @@ HRESULT CAdObject::Update() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// PlayAnim / PlayAnimAsync
@@ -603,12 +603,12 @@ HRESULT CAdObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		return S_OK;
 	}
 
-	else return CBObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdObject::ScGetProperty(const char *Name) {
+CScValue *CAdObject::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -710,12 +710,12 @@ CScValue *CAdObject::ScGetProperty(const char *Name) {
 	}
 
 
-	else return CBObject::ScGetProperty(Name);
+	else return CBObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdObject::scSetProperty(const char *Name, CScValue *Value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Active
@@ -781,12 +781,12 @@ HRESULT CAdObject::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::ScSetProperty(Name, Value);
+	else return CBObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdObject::ScToString() {
+const char *CAdObject::scToString() {
 	return "[ad object]";
 }
 

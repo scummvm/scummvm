@@ -42,28 +42,28 @@ class CScScript;
 
 class CBScriptable : public CBNamedObject, public IWmeDebugObject {
 public:
-	virtual CScScript *InvokeMethodThread(const char *MethodName);
+	virtual CScScript *invokeMethodThread(const char *methodName);
 	DECLARE_PERSISTENT(CBScriptable, CBNamedObject)
 
-	CBScriptable(CBGame *inGame, bool NoValue = false, bool Persistable = true);
+	CBScriptable(CBGame *inGame, bool noValue = false, bool persistable = true);
 	virtual ~CBScriptable();
 
 	// high level scripting interface
-	virtual bool CanHandleMethod(const char *EventMethod);
-	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
-	virtual CScValue *ScGetProperty(const char *Name);
-	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	virtual const char *ScToString();
-	virtual void *ScToMemBuffer();
-	virtual int ScToInt();
-	virtual double ScToFloat();
-	virtual bool ScToBool();
-	virtual void ScSetString(const char *Val);
-	virtual void ScSetInt(int Val);
-	virtual void ScSetFloat(double Val);
-	virtual void ScSetBool(bool Val);
-	virtual int ScCompare(CBScriptable *Val);
-	virtual void ScDebuggerDesc(char *Buf, int BufSize);
+	virtual bool canHandleMethod(const char *eventMethod);
+	virtual HRESULT scSetProperty(const char *name, CScValue *value);
+	virtual CScValue *scGetProperty(const char *name);
+	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual const char *scToString();
+	virtual void *scToMemBuffer();
+	virtual int scToInt();
+	virtual double scToFloat();
+	virtual bool scToBool();
+	virtual void scSetString(const char *val);
+	virtual void scSetInt(int val);
+	virtual void scSetFloat(double val);
+	virtual void scSetBool(bool val);
+	virtual int scCompare(CBScriptable *val);
+	virtual void scDebuggerDesc(char *buf, int bufSize);
 	int _refCount;
 	CScValue *_scValue;
 	CScValue *_scProp;

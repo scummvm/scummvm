@@ -342,7 +342,7 @@ HRESULT CBSubFrame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBSubFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetImage
@@ -378,12 +378,12 @@ HRESULT CBSubFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *T
 		return S_OK;
 	}
 
-	else return CBScriptable::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBScriptable::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBSubFrame::ScGetProperty(const char *Name) {
+CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	if (!_scValue) _scValue = new CScValue(Game);
 	_scValue->SetNULL();
 
@@ -468,12 +468,12 @@ CScValue *CBSubFrame::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::ScGetProperty(Name);
+	else return CBScriptable::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBSubFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
@@ -538,12 +538,12 @@ HRESULT CBSubFrame::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBScriptable::ScSetProperty(Name, Value);
+	else return CBScriptable::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBSubFrame::ScToString() {
+const char *CBSubFrame::scToString() {
 	return "[subframe]";
 }
 

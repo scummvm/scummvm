@@ -534,13 +534,13 @@ HRESULT CScScript::ExecuteInstruction() {
 		// we are already calling this method, try native
 		if (_thread && _methodThread && strcmp(MethodName, _threadEvent) == 0 && var->_type == VAL_NATIVE && _owner == var->GetNative()) {
 			TriedNative = true;
-			res = var->_valNative->ScCallMethod(this, _stack, _thisStack, MethodName);
+			res = var->_valNative->scCallMethod(this, _stack, _thisStack, MethodName);
 		}
 
 		if (FAILED(res)) {
-			if (var->IsNative() && var->GetNative()->CanHandleMethod(MethodName)) {
+			if (var->IsNative() && var->GetNative()->canHandleMethod(MethodName)) {
 				if (!_unbreakable) {
-					_waitScript = var->GetNative()->InvokeMethodThread(MethodName);
+					_waitScript = var->GetNative()->invokeMethodThread(MethodName);
 					if (!_waitScript) {
 						_stack->CorrectParams(0);
 						RuntimeError("Error invoking method '%s'.", MethodName);
@@ -581,7 +581,7 @@ HRESULT CScScript::ExecuteInstruction() {
 			*/
 			else {
 				res = E_FAIL;
-				if (var->_type == VAL_NATIVE && !TriedNative) res = var->_valNative->ScCallMethod(this, _stack, _thisStack, MethodName);
+				if (var->_type == VAL_NATIVE && !TriedNative) res = var->_valNative->scCallMethod(this, _stack, _thisStack, MethodName);
 
 				if (FAILED(res)) {
 					_stack->CorrectParams(0);
@@ -1250,7 +1250,7 @@ bool CScScript::CanHandleEvent(const char *EventName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScScript::CanHandleMethod(const char *MethodName) {
+bool CScScript::canHandleMethod(const char *MethodName) {
 	return GetMethodPos(MethodName) != 0;
 }
 

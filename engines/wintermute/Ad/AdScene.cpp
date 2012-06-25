@@ -1248,7 +1248,7 @@ void CAdScene::SkipTo(int OffsetX, int OffsetY) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LoadActor
 	//////////////////////////////////////////////////////////////////////////
@@ -1674,12 +1674,12 @@ HRESULT CAdScene::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		return S_OK;
 	}
 
-	else return CBObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdScene::ScGetProperty(const char *Name) {
+CScValue *CAdScene::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1837,12 +1837,12 @@ CScValue *CAdScene::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBObject::ScGetProperty(Name);
+	else return CBObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -1939,12 +1939,12 @@ HRESULT CAdScene::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::ScSetProperty(Name, Value);
+	else return CBObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdScene::ScToString() {
+const char *CAdScene::scToString() {
 	return "[scene object]";
 }
 

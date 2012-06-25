@@ -316,7 +316,7 @@ void CAdGame::FinishSentences() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ChangeScene
 	//////////////////////////////////////////////////////////////////////////
@@ -618,28 +618,28 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	// TakeItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "TakeItem") == 0) {
-		return _invObject->ScCallMethod(Script, Stack, ThisStack, Name);
+		return _invObject->scCallMethod(Script, Stack, ThisStack, Name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// DropItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "DropItem") == 0) {
-		return _invObject->ScCallMethod(Script, Stack, ThisStack, Name);
+		return _invObject->scCallMethod(Script, Stack, ThisStack, Name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetItem") == 0) {
-		return _invObject->ScCallMethod(Script, Stack, ThisStack, Name);
+		return _invObject->scCallMethod(Script, Stack, ThisStack, Name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// HasItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "HasItem") == 0) {
-		return _invObject->ScCallMethod(Script, Stack, ThisStack, Name);
+		return _invObject->scCallMethod(Script, Stack, ThisStack, Name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -793,12 +793,12 @@ HRESULT CAdGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	}
 
 
-	else return CBGame::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBGame::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdGame::ScGetProperty(const char *Name) {
+CScValue *CAdGame::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -831,7 +831,7 @@ CScValue *CAdGame::ScGetProperty(const char *Name) {
 	// NumItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "NumItems") == 0) {
-		return _invObject->ScGetProperty(Name);
+		return _invObject->scGetProperty(Name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -947,12 +947,12 @@ CScValue *CAdGame::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBGame::ScGetProperty(Name);
+	else return CBGame::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdGame::scSetProperty(const char *Name, CScValue *Value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// SelectedItem
@@ -1042,7 +1042,7 @@ HRESULT CAdGame::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBGame::ScSetProperty(Name, Value);
+	else return CBGame::scSetProperty(Name, Value);
 }
 
 

@@ -978,7 +978,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LOG
 	//////////////////////////////////////////////////////////////////////////
@@ -993,7 +993,7 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Caption") == 0) {
-		HRESULT res = CBObject::ScCallMethod(Script, Stack, ThisStack, Name);
+		HRESULT res = CBObject::scCallMethod(Script, Stack, ThisStack, Name);
 		SetWindowTitle();
 		return res;
 	}
@@ -2160,12 +2160,12 @@ HRESULT CBGame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		return S_OK;
 	}
 
-	else return CBObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBGame::ScGetProperty(const char *Name) {
+CScValue *CBGame::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2551,12 +2551,12 @@ CScValue *CBGame::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBObject::ScGetProperty(Name);
+	else return CBObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBGame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -2588,7 +2588,7 @@ HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Name") == 0) {
-		HRESULT res = CBObject::ScSetProperty(Name, Value);
+		HRESULT res = CBObject::scSetProperty(Name, Value);
 		SetWindowTitle();
 		return res;
 	}
@@ -2746,12 +2746,12 @@ HRESULT CBGame::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::ScSetProperty(Name, Value);
+	else return CBObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBGame::ScToString() {
+const char *CBGame::scToString() {
 	return "[game object]";
 }
 

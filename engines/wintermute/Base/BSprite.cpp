@@ -507,7 +507,7 @@ HRESULT CBSprite::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBSprite::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetFrame
 	//////////////////////////////////////////////////////////////////////////
@@ -626,12 +626,12 @@ HRESULT CBSprite::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		return S_OK;
 	}
 
-	else return CBScriptHolder::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBScriptHolder::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBSprite::ScGetProperty(const char *Name) {
+CScValue *CBSprite::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -699,12 +699,12 @@ CScValue *CBSprite::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBScriptHolder::ScGetProperty(Name);
+	else return CBScriptHolder::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBSprite::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
@@ -733,12 +733,12 @@ HRESULT CBSprite::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBScriptHolder::ScSetProperty(Name, Value);
+	else return CBScriptHolder::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBSprite::ScToString() {
+const char *CBSprite::scToString() {
 	return "[sprite]";
 }
 

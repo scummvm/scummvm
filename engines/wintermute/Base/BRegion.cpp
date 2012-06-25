@@ -210,7 +210,7 @@ HRESULT CBRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBRegion::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// AddPoint
@@ -305,12 +305,12 @@ HRESULT CBRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		return S_OK;
 	}
 
-	else return CBObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBRegion::ScGetProperty(const char *Name) {
+CScValue *CBRegion::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -345,12 +345,12 @@ CScValue *CBRegion::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBObject::ScGetProperty(Name);
+	else return CBObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBRegion::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -367,12 +367,12 @@ HRESULT CBRegion::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::ScSetProperty(Name, Value);
+	else return CBObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBRegion::ScToString() {
+const char *CBRegion::scToString() {
 	return "[region]";
 }
 

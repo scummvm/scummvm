@@ -401,7 +401,7 @@ HRESULT CBFrame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSound
@@ -566,14 +566,14 @@ HRESULT CBFrame::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->ScCallMethod(Script, Stack, ThisStack, Name);
-		else return CBScriptable::ScCallMethod(Script, Stack, ThisStack, Name);
+		if (_subframes.GetSize() == 1) return _subframes[0]->scCallMethod(Script, Stack, ThisStack, Name);
+		else return CBScriptable::scCallMethod(Script, Stack, ThisStack, Name);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBFrame::ScGetProperty(const char *Name) {
+CScValue *CBFrame::scGetProperty(const char *Name) {
 	if (!_scValue) _scValue = new CScValue(Game);
 	_scValue->SetNULL();
 
@@ -643,14 +643,14 @@ CScValue *CBFrame::ScGetProperty(const char *Name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->ScGetProperty(Name);
-		else return CBScriptable::ScGetProperty(Name);
+		if (_subframes.GetSize() == 1) return _subframes[0]->scGetProperty(Name);
+		else return CBScriptable::scGetProperty(Name);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
@@ -693,14 +693,14 @@ HRESULT CBFrame::ScSetProperty(const char *Name, CScValue *Value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->ScSetProperty(Name, Value);
-		else return CBScriptable::ScSetProperty(Name, Value);
+		if (_subframes.GetSize() == 1) return _subframes[0]->scSetProperty(Name, Value);
+		else return CBScriptable::scSetProperty(Name, Value);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBFrame::ScToString() {
+const char *CBFrame::scToString() {
 	return "[frame]";
 }
 

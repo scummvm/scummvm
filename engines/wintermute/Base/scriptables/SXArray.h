@@ -41,10 +41,10 @@ public:
 	CSXArray(CBGame *inGame, CScStack *Stack);
 	CSXArray(CBGame *inGame);
 	virtual ~CSXArray();
-	CScValue *ScGetProperty(const char *Name);
-	HRESULT ScSetProperty(const char *Name, CScValue *Value);
-	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	const char *ScToString();
+	CScValue *scGetProperty(const char *Name);
+	HRESULT scSetProperty(const char *Name, CScValue *Value);
+	HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	const char *scToString();
 	int _length;
 	CScValue *_values;
 };

@@ -227,7 +227,7 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
@@ -352,12 +352,12 @@ HRESULT CAdLayer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		return S_OK;
 	}
 
-	else return CBObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdLayer::ScGetProperty(const char *Name) {
+CScValue *CAdLayer::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -416,12 +416,12 @@ CScValue *CAdLayer::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBObject::ScGetProperty(Name);
+	else return CBObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdLayer::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -467,12 +467,12 @@ HRESULT CAdLayer::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::ScSetProperty(Name, Value);
+	else return CBObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdLayer::ScToString() {
+const char *CAdLayer::scToString() {
 	return "[layer]";
 }
 

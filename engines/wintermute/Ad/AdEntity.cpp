@@ -625,7 +625,7 @@ HRESULT CAdEntity::Update() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// StopSound
 	//////////////////////////////////////////////////////////////////////////
@@ -755,12 +755,12 @@ HRESULT CAdEntity::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CAdTalkHolder::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdEntity::ScGetProperty(const char *Name) {
+CScValue *CAdEntity::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -826,12 +826,12 @@ CScValue *CAdEntity::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CAdTalkHolder::ScGetProperty(Name);
+	else return CAdTalkHolder::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdEntity::scSetProperty(const char *Name, CScValue *Value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Item
@@ -866,12 +866,12 @@ HRESULT CAdEntity::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::ScSetProperty(Name, Value);
+	else return CAdTalkHolder::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdEntity::ScToString() {
+const char *CAdEntity::scToString() {
 	return "[entity object]";
 }
 

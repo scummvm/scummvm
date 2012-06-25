@@ -416,7 +416,7 @@ HRESULT CPartEmitter::RemoveForce(const char *Name) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetBorder
 	//////////////////////////////////////////////////////////////////////////
@@ -558,11 +558,11 @@ HRESULT CPartEmitter::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		return S_OK;
 	}
 
-	else return CBObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CPartEmitter::ScGetProperty(const char *Name) {
+CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -829,12 +829,12 @@ CScValue *CPartEmitter::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBObject::ScGetProperty(Name);
+	else return CBObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
@@ -1086,12 +1086,12 @@ HRESULT CPartEmitter::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::ScSetProperty(Name, Value);
+	else return CBObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CPartEmitter::ScToString() {
+const char *CPartEmitter::scToString() {
 	return "[particle emitter]";
 }
 

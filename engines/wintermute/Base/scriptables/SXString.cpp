@@ -86,20 +86,20 @@ void CSXString::SetStringVal(const char *Val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CSXString::ScToString() {
+const char *CSXString::scToString() {
 	if (_string) return _string;
 	else return "[null string]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSXString::ScSetString(const char *Val) {
+void CSXString::scSetString(const char *Val) {
 	SetStringVal(Val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Substring
 	//////////////////////////////////////////////////////////////////////////
@@ -317,7 +317,7 @@ HRESULT CSXString::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXString::ScGetProperty(const char *Name) {
+CScValue *CSXString::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -352,7 +352,7 @@ CScValue *CSXString::ScGetProperty(const char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CSXString::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
@@ -397,7 +397,7 @@ HRESULT CSXString::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CSXString::ScCompare(CBScriptable *Val) {
+int CSXString::scCompare(CBScriptable *Val) {
 	return strcmp(_string, ((CSXString *)Val)->_string);
 }
 

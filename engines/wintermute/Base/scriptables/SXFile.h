@@ -40,10 +40,10 @@ class CBFile;
 class CSXFile : public CBScriptable {
 public:
 	DECLARE_PERSISTENT(CSXFile, CBScriptable)
-	CScValue *ScGetProperty(const char *Name);
-	HRESULT ScSetProperty(const char *Name, CScValue *Value);
-	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	const char *ScToString();
+	CScValue *scGetProperty(const char *Name);
+	HRESULT scSetProperty(const char *Name, CScValue *Value);
+	HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	const char *scToString();
 	CSXFile(CBGame *inGame, CScStack *Stack);
 	virtual ~CSXFile();
 private:

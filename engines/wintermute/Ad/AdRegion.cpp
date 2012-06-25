@@ -219,7 +219,7 @@ HRESULT CAdRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdRegion::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	/*
 	    //////////////////////////////////////////////////////////////////////////
 	    // SkipTo
@@ -233,12 +233,12 @@ HRESULT CAdRegion::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	        return S_OK;
 	    }
 
-	    else*/ return CBRegion::ScCallMethod(Script, Stack, ThisStack, Name);
+	    else*/ return CBRegion::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdRegion::ScGetProperty(const char *Name) {
+CScValue *CAdRegion::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -289,12 +289,12 @@ CScValue *CAdRegion::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBRegion::ScGetProperty(Name);
+	else return CBRegion::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdRegion::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -335,12 +335,12 @@ HRESULT CAdRegion::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBRegion::ScSetProperty(Name, Value);
+	else return CBRegion::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdRegion::ScToString() {
+const char *CAdRegion::scToString() {
 	return "[ad region]";
 }
 

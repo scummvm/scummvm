@@ -98,14 +98,14 @@ void CSXFile::Close() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CSXFile::ScToString() {
+const char *CSXFile::scToString() {
 	if (_filename) return _filename;
 	else return "[file object]";
 }
 
 #define FILE_BUFFER_SIZE 32768
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CSXFile::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFilename
 	//////////////////////////////////////////////////////////////////////////
@@ -580,12 +580,12 @@ HRESULT CSXFile::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	}
 
 
-	else return CBScriptable::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBScriptable::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXFile::ScGetProperty(const char *Name) {
+CScValue *CSXFile::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -636,12 +636,12 @@ CScValue *CSXFile::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::ScGetProperty(Name);
+	else return CBScriptable::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXFile::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CSXFile::scSetProperty(const char *Name, CScValue *Value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
@@ -659,7 +659,7 @@ HRESULT CSXFile::ScSetProperty(const char *Name, CScValue *Value) {
 	    }
 	    return S_OK;
 	}
-	else*/ return CBScriptable::ScSetProperty(Name, Value);
+	else*/ return CBScriptable::scSetProperty(Name, Value);
 }
 
 //////////////////////////////////////////////////////////////////////////

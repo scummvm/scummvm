@@ -850,7 +850,7 @@ void CAdActor::InitLine(CBPoint StartPt, CBPoint EndPt) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GoTo / GoToAsync
 	//////////////////////////////////////////////////////////////////////////
@@ -968,12 +968,12 @@ HRESULT CAdActor::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CAdTalkHolder::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdActor::ScGetProperty(const char *Name) {
+CScValue *CAdActor::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1030,12 +1030,12 @@ CScValue *CAdActor::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CAdTalkHolder::ScGetProperty(Name);
+	else return CAdTalkHolder::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdActor::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
@@ -1090,12 +1090,12 @@ HRESULT CAdActor::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::ScSetProperty(Name, Value);
+	else return CAdTalkHolder::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdActor::ScToString() {
+const char *CAdActor::scToString() {
 	return "[actor object]";
 }
 

@@ -361,7 +361,7 @@ HRESULT CUIEdit::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CUIEdit::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSelectedFont
 	//////////////////////////////////////////////////////////////////////////
@@ -375,12 +375,12 @@ HRESULT CUIEdit::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		return S_OK;
 	}
 
-	else return CUIObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CUIObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIEdit::ScGetProperty(const char *Name) {
+CScValue *CUIEdit::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -452,12 +452,12 @@ CScValue *CUIEdit::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CUIObject::ScGetProperty(Name);
+	else return CUIObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
@@ -523,12 +523,12 @@ HRESULT CUIEdit::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CUIObject::ScSetProperty(Name, Value);
+	else return CUIObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIEdit::ScToString() {
+const char *CUIEdit::scToString() {
 	return "[edit]";
 }
 

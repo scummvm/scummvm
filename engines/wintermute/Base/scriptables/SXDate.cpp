@@ -64,7 +64,7 @@ CSXDate::~CSXDate() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CSXDate::ScToString() {
+const char *CSXDate::scToString() {
 	// TODO: Make this more stringy, and less ISO 8601-like
 	_strRep.format("%04d-%02d-%02d - %02d:%02d:%02d", _tm.tm_year, _tm.tm_mon, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec);
 	return _strRep.c_str();
@@ -75,7 +75,7 @@ const char *CSXDate::ScToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CSXDate::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetYear
 	//////////////////////////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ HRESULT CSXDate::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXDate::ScGetProperty(const char *Name) {
+CScValue *CSXDate::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -223,7 +223,7 @@ CScValue *CSXDate::ScGetProperty(const char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXDate::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CSXDate::scSetProperty(const char *Name, CScValue *Value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -251,7 +251,7 @@ HRESULT CSXDate::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CSXDate::ScCompare(CBScriptable *Value) {
+int CSXDate::scCompare(CBScriptable *Value) {
 	TimeDate time1 = _tm;
 	TimeDate time2 = ((CSXDate *)Value)->_tm;
 

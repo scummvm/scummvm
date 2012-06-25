@@ -36,14 +36,14 @@ namespace WinterMute {
 
 class CSXDate : public CBScriptable {
 public:
-	int ScCompare(CBScriptable *Value);
+	int scCompare(CBScriptable *Value);
 	DECLARE_PERSISTENT(CSXDate, CBScriptable)
 	CSXDate(CBGame *inGame, CScStack *Stack);
 	virtual ~CSXDate();
-	CScValue *ScGetProperty(const char *Name);
-	HRESULT ScSetProperty(const char *Name, CScValue *Value);
-	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	const char *ScToString();
+	CScValue *scGetProperty(const char *Name);
+	HRESULT scSetProperty(const char *Name, CScValue *Value);
+	HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	const char *scToString();
 	char *_string;
 	TimeDate _tm;
 private:

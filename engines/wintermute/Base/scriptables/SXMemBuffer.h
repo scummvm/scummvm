@@ -36,16 +36,16 @@ namespace WinterMute {
 
 class CSXMemBuffer : public CBScriptable {
 public:
-	virtual int ScCompare(CBScriptable *Val);
+	virtual int scCompare(CBScriptable *Val);
 	DECLARE_PERSISTENT(CSXMemBuffer, CBScriptable)
-	CScValue *ScGetProperty(const char *Name);
-	HRESULT ScSetProperty(const char *Name, CScValue *Value);
-	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	const char *ScToString();
+	CScValue *scGetProperty(const char *Name);
+	HRESULT scSetProperty(const char *Name, CScValue *Value);
+	HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	const char *scToString();
 	CSXMemBuffer(CBGame *inGame, CScStack *Stack);
 	CSXMemBuffer(CBGame *inGame, void *Buffer);
 	virtual ~CSXMemBuffer();
-	virtual void *ScToMemBuffer();
+	virtual void *scToMemBuffer();
 	int _size;
 private:
 	HRESULT Resize(int NewSize);

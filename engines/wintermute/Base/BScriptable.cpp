@@ -36,13 +36,13 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(CBScriptable, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBScriptable::CBScriptable(CBGame *inGame, bool NoValue, bool Persistable): CBNamedObject(inGame) {
+CBScriptable::CBScriptable(CBGame *inGame, bool noValue, bool persistable): CBNamedObject(inGame) {
 	_refCount = 0;
 
-	if (NoValue) _scValue = NULL;
+	if (noValue) _scValue = NULL;
 	else _scValue = new CScValue(Game);
 
-	_persistable = Persistable;
+	_persistable = persistable;
 
 	_scProp = NULL;
 }
@@ -61,7 +61,7 @@ CBScriptable::~CBScriptable() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptable::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	/*
 	Stack->CorrectParams(0);
 	Stack->PushNULL();
@@ -74,67 +74,67 @@ HRESULT CBScriptable::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBScriptable::ScGetProperty(const char *Name) {
+CScValue *CBScriptable::scGetProperty(const char *name) {
 	if (!_scProp) _scProp = new CScValue(Game);
-	if (_scProp) return _scProp->GetProp(Name);
+	if (_scProp) return _scProp->GetProp(name);
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptable::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBScriptable::scSetProperty(const char *name, CScValue *value) {
 	if (!_scProp) _scProp = new CScValue(Game);
-	if (_scProp) return _scProp->SetProp(Name, Value);
+	if (_scProp) return _scProp->SetProp(name, value);
 	else return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBScriptable::ScToString() {
+const char *CBScriptable::scToString() {
 	return "[native object]";
 }
 
 //////////////////////////////////////////////////////////////////////////
-void *CBScriptable::ScToMemBuffer() {
+void *CBScriptable::scToMemBuffer() {
 	return (void *)NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBScriptable::ScToInt() {
+int CBScriptable::scToInt() {
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-double CBScriptable::ScToFloat() {
+double CBScriptable::scToFloat() {
 	return 0.0f;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptable::ScToBool() {
+bool CBScriptable::scToBool() {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::ScSetString(const char *Val) {
+void CBScriptable::scSetString(const char *val) {
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::ScSetInt(int Val) {
+void CBScriptable::scSetInt(int val) {
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::ScSetFloat(double Val) {
+void CBScriptable::scSetFloat(double val) {
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::ScSetBool(bool Val) {
+void CBScriptable::scSetBool(bool val) {
 }
 
 
@@ -150,25 +150,25 @@ HRESULT CBScriptable::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBScriptable::ScCompare(CBScriptable *Val) {
+int CBScriptable::scCompare(CBScriptable *Val) {
 	if (this < Val) return -1;
 	else if (this > Val) return 1;
 	else return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::ScDebuggerDesc(char *Buf, int BufSize) {
-	strcpy(Buf, ScToString());
+void CBScriptable::scDebuggerDesc(char *buf, int bufSize) {
+	strcpy(buf, scToString());
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptable::CanHandleMethod(const char *EventMethod) {
+bool CBScriptable::canHandleMethod(const char *eventMethod) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CBScriptable::InvokeMethodThread(const char *MethodName) {
+CScScript *CBScriptable::invokeMethodThread(const char *methodName) {
 	return NULL;
 }
 
@@ -181,8 +181,8 @@ const char *CBScriptable::DbgGetNativeClass() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-IWmeDebugProp *CBScriptable::DbgGetProperty(const char *Name) {
-	return ScGetProperty(Name);
+IWmeDebugProp *CBScriptable::DbgGetProperty(const char *name) {
+	return scGetProperty(name);
 }
 
 } // end of namespace WinterMute

@@ -41,10 +41,10 @@ public:
 
 	CBScriptHolder(CBGame *inGame);
 	virtual ~CBScriptHolder();
-	virtual CScScript *InvokeMethodThread(const char *MethodName);
+	virtual CScScript *invokeMethodThread(const char *MethodName);
 	virtual void MakeFreezable(bool Freezable);
 	bool CanHandleEvent(const char *EventName);
-	virtual bool CanHandleMethod(const char *EventMethod);
+	virtual bool canHandleMethod(const char *EventMethod);
 	HRESULT Cleanup();
 	HRESULT RemoveScript(CScScript *Script);
 	HRESULT AddScript(const char *Filename);
@@ -59,11 +59,11 @@ public:
 
 	CBArray<CScScript *, CScScript *> _scripts;
 	// scripting interface
-	virtual CScValue *ScGetProperty(const char *Name);
-	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
-	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	virtual const char *ScToString();
-	virtual void ScDebuggerDesc(char *Buf, int BufSize);
+	virtual CScValue *scGetProperty(const char *Name);
+	virtual HRESULT scSetProperty(const char *Name, CScValue *Value);
+	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual const char *scToString();
+	virtual void scDebuggerDesc(char *Buf, int BufSize);
 	// IWmeObject
 public:
 	virtual bool SendEvent(const char *EventName);

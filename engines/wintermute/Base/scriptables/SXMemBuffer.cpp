@@ -64,7 +64,7 @@ CSXMemBuffer::~CSXMemBuffer() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void *CSXMemBuffer::ScToMemBuffer() {
+void *CSXMemBuffer::scToMemBuffer() {
 	return _buffer;
 }
 
@@ -116,13 +116,13 @@ bool CSXMemBuffer::CheckBounds(CScScript *Script, int Start, int Length) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CSXMemBuffer::ScToString() {
+const char *CSXMemBuffer::scToString() {
 	return "[membuffer object]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CSXMemBuffer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSize
 	//////////////////////////////////////////////////////////////////////////
@@ -407,7 +407,7 @@ HRESULT CSXMemBuffer::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXMemBuffer::ScGetProperty(const char *Name) {
+CScValue *CSXMemBuffer::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -426,12 +426,12 @@ CScValue *CSXMemBuffer::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::ScGetProperty(Name);
+	else return CBScriptable::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CSXMemBuffer::scSetProperty(const char *Name, CScValue *Value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
@@ -449,7 +449,7 @@ HRESULT CSXMemBuffer::ScSetProperty(const char *Name, CScValue *Value) {
 	    }
 	    return S_OK;
 	}
-	else*/ return CBScriptable::ScSetProperty(Name, Value);
+	else*/ return CBScriptable::scSetProperty(Name, Value);
 }
 
 
@@ -474,8 +474,8 @@ HRESULT CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CSXMemBuffer::ScCompare(CBScriptable *Val) {
-	if (_buffer == Val->ScToMemBuffer()) return 0;
+int CSXMemBuffer::scCompare(CBScriptable *Val) {
+	if (_buffer == Val->scToMemBuffer()) return 0;
 	else return 1;
 }
 

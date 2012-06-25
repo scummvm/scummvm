@@ -133,10 +133,10 @@ public:
 
 public:
 	// scripting interface
-	virtual CScValue *ScGetProperty(const char *Name);
-	virtual HRESULT ScSetProperty(const char *Name, CScValue *Value);
-	virtual HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	virtual const char *ScToString();
+	virtual CScValue *scGetProperty(const char *Name);
+	virtual HRESULT scSetProperty(const char *Name, CScValue *Value);
+	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual const char *scToString();
 };
 
 } // end of namespace WinterMute

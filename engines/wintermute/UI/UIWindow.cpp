@@ -690,7 +690,7 @@ HRESULT CUIWindow::ShowWidget(const char *Name, bool Visible) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetWidget / GetControl
 	//////////////////////////////////////////////////////////////////////////
@@ -912,12 +912,12 @@ HRESULT CUIWindow::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		return S_OK;
 	} else if SUCCEEDED(Game->WindowScriptMethodHook(this, Script, Stack, Name)) return S_OK;
 
-	else return CUIObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CUIObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIWindow::ScGetProperty(const char *Name) {
+CScValue *CUIWindow::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1000,12 +1000,12 @@ CScValue *CUIWindow::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CUIObject::ScGetProperty(Name);
+	else return CUIObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -1089,12 +1089,12 @@ HRESULT CUIWindow::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CUIObject::ScSetProperty(Name, Value);
+	else return CUIObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIWindow::ScToString() {
+const char *CUIWindow::scToString() {
 	return "[window]";
 }
 

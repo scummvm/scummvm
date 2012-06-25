@@ -118,7 +118,7 @@ CBSprite *CAdTalkHolder::GetTalkStance(const char *Stance) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdTalkHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSprite
 	//////////////////////////////////////////////////////////////////////////
@@ -284,12 +284,12 @@ HRESULT CAdTalkHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack
 		return S_OK;
 	}
 
-	else return CAdObject::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CAdObject::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdTalkHolder::ScGetProperty(const char *Name) {
+CScValue *CAdTalkHolder::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -300,12 +300,12 @@ CScValue *CAdTalkHolder::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CAdObject::ScGetProperty(Name);
+	else return CAdObject::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkHolder::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdTalkHolder::scSetProperty(const char *Name, CScValue *Value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Item
@@ -315,12 +315,12 @@ HRESULT CAdTalkHolder::ScSetProperty(const char *Name, CScValue *Value) {
 	    return S_OK;
 	}
 
-	else*/ return CAdObject::ScSetProperty(Name, Value);
+	else*/ return CAdObject::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdTalkHolder::ScToString() {
+const char *CAdTalkHolder::scToString() {
 	return "[talk-holder object]";
 }
 

@@ -36,13 +36,13 @@ namespace WinterMute {
 
 class CSXString : public CBScriptable {
 public:
-	virtual int ScCompare(CBScriptable *Val);
+	virtual int scCompare(CBScriptable *Val);
 	DECLARE_PERSISTENT(CSXString, CBScriptable)
-	CScValue *ScGetProperty(const char *Name);
-	HRESULT ScSetProperty(const char *Name, CScValue *Value);
-	HRESULT ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
-	void ScSetString(const char *Val);
-	const char *ScToString();
+	CScValue *scGetProperty(const char *Name);
+	HRESULT scSetProperty(const char *Name, CScValue *Value);
+	HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	void scSetString(const char *Val);
+	const char *scToString();
 	void SetStringVal(const char *Val);
 
 	CSXString(CBGame *inGame, CScStack *Stack);

@@ -165,7 +165,7 @@ HRESULT CBObject::Listen(CBScriptHolder *param1, uint32 param2) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// SkipTo
@@ -468,12 +468,12 @@ HRESULT CBObject::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		return S_OK;
 	}
 
-	else return CBScriptHolder::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBScriptHolder::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBObject::ScGetProperty(const char *Name) {
+CScValue *CBObject::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -661,12 +661,12 @@ CScValue *CBObject::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBScriptHolder::ScGetProperty(Name);
+	else return CBScriptHolder::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
@@ -840,12 +840,12 @@ HRESULT CBObject::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBScriptHolder::ScSetProperty(Name, Value);
+	else return CBScriptHolder::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBObject::ScToString() {
+const char *CBObject::scToString() {
 	return "[object]";
 }
 

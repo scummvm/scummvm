@@ -73,7 +73,7 @@ void CBKeyboardState::handleKeyRelease(Common::Event *event) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBKeyboardState::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBKeyboardState::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsKeyDown
 	//////////////////////////////////////////////////////////////////////////
@@ -98,12 +98,12 @@ HRESULT CBKeyboardState::ScCallMethod(CScScript *Script, CScStack *Stack, CScSta
 		return S_OK;
 	}
 
-	else return CBScriptable::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CBScriptable::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBKeyboardState::ScGetProperty(const char *Name) {
+CScValue *CBKeyboardState::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -168,12 +168,12 @@ CScValue *CBKeyboardState::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::ScGetProperty(Name);
+	else return CBScriptable::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBKeyboardState::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBKeyboardState::scSetProperty(const char *Name, CScValue *Value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -184,12 +184,12 @@ HRESULT CBKeyboardState::ScSetProperty(const char *Name, CScValue *Value) {
 	    return S_OK;
 	}
 
-	else*/ return CBScriptable::ScSetProperty(Name, Value);
+	else*/ return CBScriptable::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBKeyboardState::ScToString() {
+const char *CBKeyboardState::scToString() {
 	return "[keyboard state]";
 }
 

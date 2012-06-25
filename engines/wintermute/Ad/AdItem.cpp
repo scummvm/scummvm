@@ -429,7 +429,7 @@ HRESULT CAdItem::Display(int X, int Y) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdItem::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverSprite
 	//////////////////////////////////////////////////////////////////////////
@@ -562,12 +562,12 @@ HRESULT CAdItem::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::ScCallMethod(Script, Stack, ThisStack, Name);
+	else return CAdTalkHolder::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdItem::ScGetProperty(const char *Name) {
+CScValue *CAdItem::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -643,12 +643,12 @@ CScValue *CAdItem::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CAdTalkHolder::ScGetProperty(Name);
+	else return CAdTalkHolder::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdItem::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -718,12 +718,12 @@ HRESULT CAdItem::ScSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::ScSetProperty(Name, Value);
+	else return CAdTalkHolder::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdItem::ScToString() {
+const char *CAdItem::scToString() {
 	return "[item]";
 }
 

@@ -109,7 +109,7 @@ HRESULT CBScriptHolder::Listen(CBScriptHolder *param1, uint32 param2) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG_CrashMe
 	//////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ HRESULT CBScriptHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "CanHandleMethod") == 0) {
 		Stack->CorrectParams(1);
-		Stack->PushBool(CanHandleMethod(Stack->Pop()->GetString()));
+		Stack->PushBool(canHandleMethod(Stack->Pop()->GetString()));
 
 		return S_OK;
 	}
@@ -203,12 +203,12 @@ HRESULT CBScriptHolder::ScCallMethod(CScScript *Script, CScStack *Stack, CScStac
 		Stack->PushBool(ret);
 
 		return S_OK;
-	} else return CBScriptable::ScCallMethod(Script, Stack, ThisStack, Name);
+	} else return CBScriptable::scCallMethod(Script, Stack, ThisStack, Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBScriptHolder::ScGetProperty(const char *Name) {
+CScValue *CBScriptHolder::scGetProperty(const char *Name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -235,24 +235,24 @@ CScValue *CBScriptHolder::ScGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::ScGetProperty(Name);
+	else return CBScriptable::scGetProperty(Name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::ScSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBScriptHolder::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Name") == 0) {
 		SetName(Value->GetString());
 		return S_OK;
-	} else return CBScriptable::ScSetProperty(Name, Value);
+	} else return CBScriptable::scSetProperty(Name, Value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBScriptHolder::ScToString() {
+const char *CBScriptHolder::scToString() {
 	return "[script_holder]";
 }
 
@@ -331,9 +331,9 @@ bool CBScriptHolder::CanHandleEvent(const char *EventName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::CanHandleMethod(const char *MethodName) {
+bool CBScriptHolder::canHandleMethod(const char *MethodName) {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		if (!_scripts[i]->_thread && _scripts[i]->CanHandleMethod(MethodName)) return true;
+		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) return true;
 	}
 	return false;
 }
@@ -405,7 +405,7 @@ HRESULT CBScriptHolder::ParseProperty(byte  *Buffer, bool Complete) {
 
 	CScValue *val = new CScValue(Game);
 	val->SetString(PropValue);
-	ScSetProperty(PropName, val);
+	scSetProperty(PropName, val);
 
 	delete val;
 	delete[] PropName;
@@ -427,16 +427,16 @@ void CBScriptHolder::MakeFreezable(bool Freezable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CBScriptHolder::InvokeMethodThread(const char *MethodName) {
+CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
 	for (int i = _scripts.GetSize() - 1; i >= 0; i--) {
-		if (_scripts[i]->CanHandleMethod(MethodName)) {
+		if (_scripts[i]->canHandleMethod(methodName)) {
 
 			CScScript *thread = new CScScript(Game, _scripts[i]->_engine);
 			if (thread) {
-				HRESULT ret = thread->CreateMethodThread(_scripts[i], MethodName);
+				HRESULT ret = thread->CreateMethodThread(_scripts[i], methodName);
 				if (SUCCEEDED(ret)) {
 					_scripts[i]->_engine->_scripts.Add(thread);
-					Game->GetDebugMgr()->OnScriptMethodThreadInit(thread, _scripts[i], MethodName);
+					Game->GetDebugMgr()->OnScriptMethodThreadInit(thread, _scripts[i], methodName);
 
 					return thread;
 				} else {
@@ -450,8 +450,8 @@ CScScript *CBScriptHolder::InvokeMethodThread(const char *MethodName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptHolder::ScDebuggerDesc(char *Buf, int BufSize) {
-	strcpy(Buf, ScToString());
+void CBScriptHolder::scDebuggerDesc(char *Buf, int BufSize) {
+	strcpy(Buf, scToString());
 	if (_name && strcmp(_name, "<unnamed>") != 0) {
 		strcat(Buf, "  Name: ");
 		strcat(Buf, _name);

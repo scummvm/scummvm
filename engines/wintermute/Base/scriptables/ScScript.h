@@ -69,7 +69,7 @@ public:
 	HRESULT Resume();
 	HRESULT Pause();
 	bool CanHandleEvent(const char *EventName);
-	bool CanHandleMethod(const char *MethodName);
+	bool canHandleMethod(const char *MethodName);
 	HRESULT CreateThread(CScScript *Original, uint32 InitIP, const char *EventName);
 	HRESULT CreateMethodThread(CScScript *Original, const char *MethodName);
 	CScScript *InvokeEventHandler(const char *EventName, bool Unbreakable = false);
