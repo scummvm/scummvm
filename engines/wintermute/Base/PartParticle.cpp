@@ -72,7 +72,7 @@ CPartParticle::~CPartParticle(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::SetSprite(const char *Filename) {
+HRESULT CPartParticle::setSprite(const char *Filename) {
 	if (_sprite && _sprite->_filename && scumm_stricmp(Filename, _sprite->_filename) == 0) {
 		_sprite->Reset();
 		return S_OK;
@@ -116,7 +116,7 @@ HRESULT CPartParticle::update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 
 		if (_lifeTime > 0) {
 			if (CurrentTime - _creationTime >= _lifeTime) {
 				if (Emitter->_fadeOutTime > 0)
-					FadeOut(CurrentTime, Emitter->_fadeOutTime);
+					fadeOut(CurrentTime, Emitter->_fadeOutTime);
 				else
 					_isDead = true;
 			}
@@ -127,7 +127,7 @@ HRESULT CPartParticle::update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 
 			POINT p;
 			p.x = _pos.x;
 			p.y = _pos.y;
-			if (!CBPlatform::PtInRect(&_border, p)) FadeOut(CurrentTime, Emitter->_fadeOutTime);
+			if (!CBPlatform::PtInRect(&_border, p)) fadeOut(CurrentTime, Emitter->_fadeOutTime);
 		}
 		if (_state != PARTICLE_NORMAL) return S_OK;
 
@@ -195,7 +195,7 @@ HRESULT CPartParticle::display(CPartEmitter *Emitter) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::FadeIn(uint32 CurrentTime, int FadeTime) {
+HRESULT CPartParticle::fadeIn(uint32 CurrentTime, int FadeTime) {
 	_currentAlpha = 0;
 	_fadeStart = CurrentTime;
 	_fadeTime = FadeTime;
@@ -205,7 +205,7 @@ HRESULT CPartParticle::FadeIn(uint32 CurrentTime, int FadeTime) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::FadeOut(uint32 CurrentTime, int FadeTime) {
+HRESULT CPartParticle::fadeOut(uint32 CurrentTime, int FadeTime) {
 	//_currentAlpha = 255;
 	_fadeStartAlpha = _currentAlpha;
 	_fadeStart = CurrentTime;
@@ -243,7 +243,7 @@ HRESULT CPartParticle::persist(CBPersistMgr *persistMgr) {
 		char *Filename;
 		persistMgr->transfer(TMEMBER(Filename));
 		CSysClassRegistry::GetInstance()->_disabled = true;
-		SetSprite(Filename);
+		setSprite(Filename);
 		CSysClassRegistry::GetInstance()->_disabled = false;
 		delete[] Filename;
 		Filename = NULL;

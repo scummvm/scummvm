@@ -116,7 +116,7 @@ CPartEmitter::~CPartEmitter(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::AddSprite(const char *Filename) {
+HRESULT CPartEmitter::addSprite(const char *Filename) {
 	if (!Filename) return E_FAIL;
 
 	// do we already have the file?
@@ -139,7 +139,7 @@ HRESULT CPartEmitter::AddSprite(const char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::RemoveSprite(const char *Filename) {
+HRESULT CPartEmitter::removeSprite(const char *Filename) {
 	for (int i = 0; i < _sprites.GetSize(); i++) {
 		if (scumm_stricmp(Filename, _sprites[i]) == 0) {
 			delete [] _sprites[i];
@@ -151,7 +151,7 @@ HRESULT CPartEmitter::RemoveSprite(const char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::InitParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta) {
+HRESULT CPartEmitter::initParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta) {
 	if (!Particle) return E_FAIL;
 	if (_sprites.GetSize() == 0) return E_FAIL;
 
@@ -217,8 +217,8 @@ HRESULT CPartEmitter::InitParticle(CPartParticle *Particle, uint32 CurrentTime, 
 	Particle->_angVelocity = AngVelocity;
 	Particle->_growthRate = GrowthRate;
 	Particle->_exponentialGrowth = _exponentialGrowth;
-	Particle->_isDead = FAILED(Particle->SetSprite(_sprites[SpriteIndex]));
-	Particle->FadeIn(CurrentTime, _fadeInTime);
+	Particle->_isDead = FAILED(Particle->setSprite(_sprites[SpriteIndex]));
+	Particle->fadeIn(CurrentTime, _fadeInTime);
 
 
 	if (Particle->_isDead) return E_FAIL;
@@ -228,11 +228,11 @@ HRESULT CPartEmitter::InitParticle(CPartParticle *Particle, uint32 CurrentTime, 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::update() {
 	if (!_running) return S_OK;
-	else return UpdateInternal(Game->_timer, Game->_timerDelta);
+	else return updateInternal(Game->_timer, Game->_timerDelta);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::UpdateInternal(uint32 CurrentTime, uint32 TimerDelta) {
+HRESULT CPartEmitter::updateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 	int NumLive = 0;
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
@@ -269,14 +269,14 @@ HRESULT CPartEmitter::UpdateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 					Particle = new CPartParticle(Game);
 					_particles.Add(Particle);
 				}
-				InitParticle(Particle, CurrentTime, TimerDelta);
+				initParticle(Particle, CurrentTime, TimerDelta);
 				NeedsSort = true;
 
 				ToGen--;
 			}
 		}
 		if (NeedsSort && (_scaleZBased || _velocityZBased || _lifeTimeZBased))
-			SortParticlesByZ();
+			sortParticlesByZ();
 
 		// we actually generated some particles and we're not in fast-forward mode
 		if (NeedsSort && _overheadTime == 0) {
@@ -305,7 +305,7 @@ HRESULT CPartEmitter::display(CBRegion *Region) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::Start() {
+HRESULT CPartEmitter::start() {
 	for (int i = 0; i < _particles.GetSize(); i++) {
 		_particles[i]->_isDead = true;
 	}
@@ -319,7 +319,7 @@ HRESULT CPartEmitter::Start() {
 		uint32 CurrentTime = Game->_timer - _overheadTime;
 
 		for (int i = 0; i < Steps; i++) {
-			UpdateInternal(CurrentTime, Delta);
+			updateInternal(CurrentTime, Delta);
 			CurrentTime += Delta;
 		}
 		_overheadTime = 0;
@@ -330,14 +330,14 @@ HRESULT CPartEmitter::Start() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::SortParticlesByZ() {
+HRESULT CPartEmitter::sortParticlesByZ() {
 	// sort particles by _posY
-	qsort(_particles.GetData(), _particles.GetSize(), sizeof(CPartParticle *), CPartEmitter::CompareZ);
+	qsort(_particles.GetData(), _particles.GetSize(), sizeof(CPartParticle *), CPartEmitter::compareZ);
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CPartEmitter::CompareZ(const void *Obj1, const void *Obj2) {
+int CPartEmitter::compareZ(const void *Obj1, const void *Obj2) {
 	CPartParticle *P1 = *(CPartParticle **)Obj1;
 	CPartParticle *P2 = *(CPartParticle **)Obj2;
 
@@ -347,14 +347,14 @@ int CPartEmitter::CompareZ(const void *Obj1, const void *Obj2) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::SetBorder(int X, int Y, int Width, int Height) {
+HRESULT CPartEmitter::setBorder(int X, int Y, int Width, int Height) {
 	CBPlatform::SetRect(&_border, X, Y, X + Width, Y + Height);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::SetBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom) {
+HRESULT CPartEmitter::setBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom) {
 	_borderThicknessLeft = ThicknessLeft;
 	_borderThicknessRight = ThicknessRight;
 	_borderThicknessTop = ThicknessTop;
@@ -364,7 +364,7 @@ HRESULT CPartEmitter::SetBorderThickness(int ThicknessLeft, int ThicknessRight, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-CPartForce *CPartEmitter::AddForceByName(const char *Name) {
+CPartForce *CPartEmitter::addForceByName(const char *Name) {
 	CPartForce *Force = NULL;
 
 	for (int i = 0; i < _forces.GetSize(); i++) {
@@ -385,8 +385,8 @@ CPartForce *CPartEmitter::AddForceByName(const char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::AddForce(const char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength) {
-	CPartForce *Force = AddForceByName(Name);
+HRESULT CPartEmitter::addForce(const char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength) {
+	CPartForce *Force = addForceByName(Name);
 	if (!Force) return E_FAIL;
 
 	Force->_type = Type;
@@ -401,7 +401,7 @@ HRESULT CPartEmitter::AddForce(const char *Name, CPartForce::TForceType Type, in
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::RemoveForce(const char *Name) {
+HRESULT CPartEmitter::removeForce(const char *Name) {
 	for (int i = 0; i < _forces.GetSize(); i++) {
 		if (scumm_stricmp(Name, _forces[i]->_name) == 0) {
 			delete _forces[i];
@@ -427,7 +427,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		int BorderWidth  = Stack->Pop()->GetInt();
 		int BorderHeight = Stack->Pop()->GetInt();
 
-		Stack->PushBool(SUCCEEDED(SetBorder(BorderX, BorderY, BorderWidth, BorderHeight)));
+		Stack->PushBool(SUCCEEDED(setBorder(BorderX, BorderY, BorderWidth, BorderHeight)));
 
 		return S_OK;
 	}
@@ -441,7 +441,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		int Top    = Stack->Pop()->GetInt();
 		int Bottom = Stack->Pop()->GetInt();
 
-		Stack->PushBool(SUCCEEDED(SetBorderThickness(Left, Right, Top, Bottom)));
+		Stack->PushBool(SUCCEEDED(setBorderThickness(Left, Right, Top, Bottom)));
 
 		return S_OK;
 	}
@@ -451,7 +451,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	else if (strcmp(Name, "AddSprite") == 0) {
 		Stack->CorrectParams(1);
 		const char *SpriteFile = Stack->Pop()->GetString();
-		Stack->PushBool(SUCCEEDED(AddSprite(SpriteFile)));
+		Stack->PushBool(SUCCEEDED(addSprite(SpriteFile)));
 
 		return S_OK;
 	}
@@ -461,7 +461,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	else if (strcmp(Name, "RemoveSprite") == 0) {
 		Stack->CorrectParams(1);
 		const char *SpriteFile = Stack->Pop()->GetString();
-		Stack->PushBool(SUCCEEDED(RemoveSprite(SpriteFile)));
+		Stack->PushBool(SUCCEEDED(removeSprite(SpriteFile)));
 
 		return S_OK;
 	}
@@ -472,7 +472,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	else if (strcmp(Name, "Start") == 0) {
 		Stack->CorrectParams(1);
 		_overheadTime = Stack->Pop()->GetInt();
-		Stack->PushBool(SUCCEEDED(Start()));
+		Stack->PushBool(SUCCEEDED(start()));
 
 		return S_OK;
 	}
@@ -525,7 +525,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		float Angle = Stack->Pop()->GetFloat();
 		float Strength = Stack->Pop()->GetFloat();
 
-		Stack->PushBool(SUCCEEDED(AddForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, Angle, Strength)));
+		Stack->PushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, Angle, Strength)));
 
 		return S_OK;
 	}
@@ -541,7 +541,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		float Angle = Stack->Pop()->GetFloat();
 		float Strength = Stack->Pop()->GetFloat();
 
-		Stack->PushBool(SUCCEEDED(AddForce(forceName, CPartForce::FORCE_GLOBAL, PosX, PosY, Angle, Strength)));
+		Stack->PushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, PosX, PosY, Angle, Strength)));
 
 		return S_OK;
 	}
@@ -553,7 +553,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		Stack->CorrectParams(1);
 		const char *forceName = Stack->Pop()->GetString();
 
-		Stack->PushBool(SUCCEEDED(RemoveForce(forceName)));
+		Stack->PushBool(SUCCEEDED(removeForce(forceName)));
 
 		return S_OK;
 	}

@@ -100,19 +100,20 @@ public:
 	char *_emitEvent;
 	CBScriptHolder *_owner;
 
-	HRESULT Start();
+	HRESULT start();
 
 	HRESULT update();
-	HRESULT display(CBRegion *Region = NULL);
+	HRESULT display() { return display(NULL); } // To avoid shadowing the inherited display-function.
+	HRESULT display(CBRegion *Region);
 
-	HRESULT SortParticlesByZ();
-	HRESULT AddSprite(const char *Filename);
-	HRESULT RemoveSprite(const char *Filename);
-	HRESULT SetBorder(int X, int Y, int Width, int Height);
-	HRESULT SetBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom);
+	HRESULT sortParticlesByZ();
+	HRESULT addSprite(const char *Filename);
+	HRESULT removeSprite(const char *Filename);
+	HRESULT setBorder(int X, int Y, int Width, int Height);
+	HRESULT setBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom);
 
-	HRESULT AddForce(const char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength);
-	HRESULT RemoveForce(const char *Name);
+	HRESULT addForce(const char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength);
+	HRESULT removeForce(const char *Name);
 
 	CBArray<CPartForce *, CPartForce *> _forces;
 
@@ -124,10 +125,10 @@ public:
 
 
 private:
-	CPartForce *AddForceByName(const char *Name);
-	int static CompareZ(const void *Obj1, const void *Obj2);
-	HRESULT InitParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta);
-	HRESULT UpdateInternal(uint32 CurrentTime, uint32 TimerDelta);
+	CPartForce *addForceByName(const char *Name);
+	int static compareZ(const void *Obj1, const void *Obj2);
+	HRESULT initParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta);
+	HRESULT updateInternal(uint32 CurrentTime, uint32 TimerDelta);
 	uint32 _lastGenTime;
 	CBArray<CPartParticle *, CPartParticle *> _particles;
 	CBArray<char *, char *> _sprites;
