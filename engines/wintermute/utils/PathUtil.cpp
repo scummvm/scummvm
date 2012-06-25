@@ -37,7 +37,10 @@ namespace WinterMute {
 AnsiString PathUtil::UnifySeparators(const AnsiString &path) {
 	AnsiString newPath = path;
 
-	std::replace(newPath.begin(), newPath.end(), L'\\', L'/');
+	AnsiString::iterator it;
+	for (it = newPath.begin(); it != newPath.end(); it++) {
+		if (*it == '\\') *it = '/';
+	}
 	return newPath;
 }
 
