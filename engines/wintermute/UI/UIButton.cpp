@@ -214,7 +214,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -389,7 +389,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
@@ -655,9 +655,9 @@ HRESULT CUIButton::Display(int OffsetX, int OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 void CUIButton::Press() {
-	ApplyEvent("Press");
-	if (_listenerObject) _listenerObject->Listen(_listenerParamObject, _listenerParamDWORD);
-	if (_parentNotify && _parent) _parent->ApplyEvent(_name);
+	applyEvent("Press");
+	if (_listenerObject) _listenerObject->listen(_listenerParamObject, _listenerParamDWORD);
+	if (_parentNotify && _parent) _parent->applyEvent(_name);
 
 	_oneTimePress = false;
 }

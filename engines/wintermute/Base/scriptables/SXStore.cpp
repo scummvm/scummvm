@@ -61,11 +61,11 @@ CSXStore::CSXStore(CBGame *inGame) : CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CSXStore::~CSXStore() {
-	Cleanup();
+	cleanup();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::Cleanup() {
+void CSXStore::cleanup() {
 	SetEventsEnabled(NULL, false);
 
 	for (int i = 0; i < _validProducts.GetSize(); i++) {
@@ -279,7 +279,7 @@ CScValue *CSXStore::scGetProperty(const char *name) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSXStore::persist(CBPersistMgr *persistMgr) {
-	if (!persistMgr->_saving) Cleanup();
+	if (!persistMgr->_saving) cleanup();
 
 	CBObject::persist(persistMgr);
 
@@ -371,7 +371,7 @@ void CSXStore::ReceiveProductsStart() {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::ReceiveProductsEnd() {
-	if (_lastProductRequestOwner) _lastProductRequestOwner->ApplyEvent("ProductsValidated");
+	if (_lastProductRequestOwner) _lastProductRequestOwner->applyEvent("ProductsValidated");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -395,8 +395,8 @@ void CSXStore::ReceiveTransactionsStart() {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::ReceiveTransactionsEnd() {
-	if (_lastPurchaseOwner) _lastPurchaseOwner->ApplyEvent("TransactionsUpdated");
-	else Game->ApplyEvent("TransactionsUpdated");
+	if (_lastPurchaseOwner) _lastPurchaseOwner->applyEvent("TransactionsUpdated");
+	else Game->applyEvent("TransactionsUpdated");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -452,8 +452,8 @@ void CSXStore::RestoreTransactions(CScScript *script) {
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::OnRestoreFinished(bool error) {
 	if (_lastRestoreOwner) {
-		if (error) _lastRestoreOwner->ApplyEvent("TransactionsRestoreFailed");
-		else _lastRestoreOwner->ApplyEvent("TransactionsRestoreFinished");
+		if (error) _lastRestoreOwner->applyEvent("TransactionsRestoreFailed");
+		else _lastRestoreOwner->applyEvent("TransactionsRestoreFinished");
 	}
 }
 

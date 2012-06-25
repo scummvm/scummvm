@@ -157,7 +157,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 
 	return S_OK;
 #if 0
-	Cleanup();
+	cleanup();
 
 	_file = Game->_fileManager->OpenFile(Filename);
 	if (!_file) return E_FAIL;

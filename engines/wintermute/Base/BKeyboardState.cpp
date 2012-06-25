@@ -179,7 +179,7 @@ HRESULT CBKeyboardState::scSetProperty(const char *Name, CScValue *Value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Name") == 0) {
-	    SetName(Value->GetString());
+	    setName(Value->GetString());
 	    if (_renderer) SetWindowText(_renderer->_window, _name);
 	    return S_OK;
 	}
@@ -216,7 +216,7 @@ HRESULT CBKeyboardState::ReadKey(Common::Event *event) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBKeyboardState::persist(CBPersistMgr *persistMgr) {
-	//if(!persistMgr->_saving) Cleanup();
+	//if(!persistMgr->_saving) cleanup();
 	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_currentAlt));

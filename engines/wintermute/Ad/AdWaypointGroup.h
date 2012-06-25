@@ -38,7 +38,7 @@ public:
 	float _lastMimicScale;
 	int _lastMimicX;
 	int _lastMimicY;
-	void Cleanup();
+	void cleanup();
 	HRESULT Mimic(CAdWaypointGroup *Wpt, float Scale = 100.0f, int X = 0, int Y = 0);
 	DECLARE_PERSISTENT(CAdWaypointGroup, CBObject)
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);

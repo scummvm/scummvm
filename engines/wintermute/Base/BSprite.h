@@ -47,7 +47,7 @@ public:
 	int _editorBgAlpha;
 	bool _streamed;
 	bool _streamedKeepLoaded;
-	void Cleanup();
+	void cleanup();
 	void SetDefaults();
 	bool _precise;
 	DECLARE_PERSISTENT(CBSprite, CBScriptHolder)

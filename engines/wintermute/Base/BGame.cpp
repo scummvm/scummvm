@@ -288,7 +288,7 @@ CBGame::~CBGame() {
 
 	_registry->WriteBool("System", "LastRun", true);
 
-	Cleanup();
+	cleanup();
 
 	delete[] _localSaveDir;
 	delete[] _settingsGameFile;
@@ -343,7 +343,7 @@ CBGame::~CBGame() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::Cleanup() {
+HRESULT CBGame::cleanup() {
 	delete _loadingIcon;
 	_loadingIcon = NULL;
 
@@ -813,7 +813,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -867,7 +867,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_PERSONAL_SAVEGAMES:
@@ -887,7 +887,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_PROPERTY:
-			ParseProperty(params, false);
+			parseProperty(params, false);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -1014,7 +1014,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "RunScript") == 0) {
 		Game->LOG(0, "**Warning** The 'RunScript' method is now obsolete. Use 'AttachScript' instead (same syntax)");
 		Stack->CorrectParams(1);
-		if (FAILED(AddScript(Stack->Pop()->GetString())))
+		if (FAILED(addScript(Stack->Pop()->GetString())))
 			Stack->PushBool(false);
 		else
 			Stack->PushBool(true);
@@ -1847,7 +1847,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		CUIWindow *Win = new CUIWindow(Game);
 		_windows.Add(Win);
 		RegisterObject(Win);
-		if (!Val->IsNULL()) Win->SetName(Val->GetString());
+		if (!Val->IsNULL()) Win->setName(Val->GetString());
 		Stack->PushNative(Win, true);
 		return S_OK;
 	}
@@ -2561,7 +2561,7 @@ HRESULT CBGame::scSetProperty(const char *Name, CScValue *Value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Name") == 0) {
-		SetName(Value->GetString());
+		setName(Value->GetString());
 
 		return S_OK;
 	}
@@ -3232,7 +3232,7 @@ HRESULT CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 
 	LOG(0, "Saving game '%s'...", Filename);
 
-	Game->ApplyEvent("BeforeSave", true);
+	Game->applyEvent("BeforeSave", true);
 
 	HRESULT ret;
 
@@ -3311,14 +3311,14 @@ HRESULT CBGame::LoadGame(const char *Filename) {
 	_dEBUG_AbsolutePathWarning = false;
 	if (FAILED(ret = pm->initLoad(Filename))) goto load_finish;
 
-	//if(FAILED(ret = Cleanup())) goto load_finish;
+	//if(FAILED(ret = cleanup())) goto load_finish;
 	if (FAILED(ret = CSysClassRegistry::GetInstance()->LoadTable(Game, pm))) goto load_finish;
 	if (FAILED(ret = CSysClassRegistry::GetInstance()->LoadInstances(Game, pm))) goto load_finish;
 
 	// data initialization after load
 	InitAfterLoad();
 
-	Game->ApplyEvent("AfterLoad", true);
+	Game->applyEvent("AfterLoad", true);
 
 	DisplayContent(true, false);
 	//_renderer->Flip();
@@ -3618,7 +3618,7 @@ HRESULT CBGame::LoadSettings(const char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::persist(CBPersistMgr *persistMgr) {
-	if (!persistMgr->_saving) Cleanup();
+	if (!persistMgr->_saving) cleanup();
 
 	CBObject::persist(persistMgr);
 
@@ -3798,15 +3798,15 @@ bool CBGame::HandleKeypress(Common::Event *event, bool printable) {
 	if (_focusedWindow) {
 		if (!Game->_focusedWindow->HandleKeypress(event, _keyboardState->_currentPrintable)) {
 			/*if (event->type != SDL_TEXTINPUT) {*/
-			if (Game->_focusedWindow->CanHandleEvent("Keypress"))
-				Game->_focusedWindow->ApplyEvent("Keypress");
+			if (Game->_focusedWindow->canHandleEvent("Keypress"))
+				Game->_focusedWindow->applyEvent("Keypress");
 			else
-				ApplyEvent("Keypress");
+				applyEvent("Keypress");
 			/*}*/
 		}
 		return true;
 	} else { /*if (event->type != SDL_TEXTINPUT)*/
-		ApplyEvent("Keypress");
+		applyEvent("Keypress");
 		return true;
 	} //else return true;
 
@@ -3825,11 +3825,11 @@ bool CBGame::HandleMouseWheel(int Delta) {
 		Handled = Game->_focusedWindow->HandleMouseWheel(Delta);
 
 		if (!Handled) {
-			if (Delta < 0 && Game->_focusedWindow->CanHandleEvent("MouseWheelDown")) {
-				Game->_focusedWindow->ApplyEvent("MouseWheelDown");
+			if (Delta < 0 && Game->_focusedWindow->canHandleEvent("MouseWheelDown")) {
+				Game->_focusedWindow->applyEvent("MouseWheelDown");
 				Handled = true;
-			} else if (Game->_focusedWindow->CanHandleEvent("MouseWheelUp")) {
-				Game->_focusedWindow->ApplyEvent("MouseWheelUp");
+			} else if (Game->_focusedWindow->canHandleEvent("MouseWheelUp")) {
+				Game->_focusedWindow->applyEvent("MouseWheelUp");
 				Handled = true;
 			}
 
@@ -3838,9 +3838,9 @@ bool CBGame::HandleMouseWheel(int Delta) {
 
 	if (!Handled) {
 		if (Delta < 0) {
-			ApplyEvent("MouseWheelDown");
+			applyEvent("MouseWheelDown");
 		} else {
-			ApplyEvent("MouseWheelUp");
+			applyEvent("MouseWheelUp");
 		}
 	}
 
@@ -3966,11 +3966,11 @@ HRESULT CBGame::SetActiveObject(CBObject *Obj) {
 
 	if (Obj == _activeObject) return S_OK;
 
-	if (_activeObject) _activeObject->ApplyEvent("MouseLeave");
-	//if(ValidObject(_activeObject)) _activeObject->ApplyEvent("MouseLeave");
+	if (_activeObject) _activeObject->applyEvent("MouseLeave");
+	//if(ValidObject(_activeObject)) _activeObject->applyEvent("MouseLeave");
 	_activeObject = Obj;
 	if (_activeObject) {
-		_activeObject->ApplyEvent("MouseEntry");
+		_activeObject->applyEvent("MouseEntry");
 	}
 
 	return S_OK;
@@ -4268,10 +4268,10 @@ HRESULT CBGame::OnActivate(bool Activate, bool RefreshMouse) {
 HRESULT CBGame::OnMouseLeftDown() {
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("LeftClick"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftClick"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("LeftClick");
+			_activeObject->applyEvent("LeftClick");
 		}
 	}
 
@@ -4290,10 +4290,10 @@ HRESULT CBGame::OnMouseLeftUp() {
 	_capturedObject = NULL;
 	_mouseLeftDown = false;
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("LeftRelease"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftRelease"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("LeftRelease");
+			_activeObject->applyEvent("LeftRelease");
 		}
 	}
 	return S_OK;
@@ -4305,10 +4305,10 @@ HRESULT CBGame::OnMouseLeftDblClick() {
 
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_LEFT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("LeftDoubleClick"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftDoubleClick"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("LeftDoubleClick");
+			_activeObject->applyEvent("LeftDoubleClick");
 		}
 	}
 	return S_OK;
@@ -4320,10 +4320,10 @@ HRESULT CBGame::OnMouseRightDblClick() {
 
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_RIGHT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("RightDoubleClick"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightDoubleClick"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("RightDoubleClick");
+			_activeObject->applyEvent("RightDoubleClick");
 		}
 	}
 	return S_OK;
@@ -4333,10 +4333,10 @@ HRESULT CBGame::OnMouseRightDblClick() {
 HRESULT CBGame::OnMouseRightDown() {
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("RightClick"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightClick"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("RightClick");
+			_activeObject->applyEvent("RightClick");
 		}
 	}
 	return S_OK;
@@ -4346,10 +4346,10 @@ HRESULT CBGame::OnMouseRightDown() {
 HRESULT CBGame::OnMouseRightUp() {
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("RightRelease"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightRelease"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("RightRelease");
+			_activeObject->applyEvent("RightRelease");
 		}
 	}
 	return S_OK;
@@ -4361,10 +4361,10 @@ HRESULT CBGame::OnMouseMiddleDown() {
 
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_MIDDLE);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("MiddleClick"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("MiddleClick"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("MiddleClick");
+			_activeObject->applyEvent("MiddleClick");
 		}
 	}
 	return S_OK;
@@ -4374,10 +4374,10 @@ HRESULT CBGame::OnMouseMiddleDown() {
 HRESULT CBGame::OnMouseMiddleUp() {
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_RELEASE, MOUSE_BUTTON_MIDDLE);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("MiddleRelease"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("MiddleRelease"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("MiddleRelease");
+			_activeObject->applyEvent("MiddleRelease");
 		}
 	}
 	return S_OK;
@@ -4396,8 +4396,8 @@ HRESULT CBGame::OnPaint() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::OnWindowClose() {
-	if (CanHandleEvent("QuitGame")) {
-		if (_state != GAME_FROZEN) Game->ApplyEvent("QuitGame");
+	if (canHandleEvent("QuitGame")) {
+		if (_state != GAME_FROZEN) Game->applyEvent("QuitGame");
 		return S_OK;
 	} else return E_FAIL;
 }

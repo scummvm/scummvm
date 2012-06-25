@@ -63,7 +63,7 @@ HRESULT CAdSceneState::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSceneState::SetFilename(const char *Filename) {
+void CAdSceneState::setFilename(const char *Filename) {
 	delete[] _filename;
 	_filename = new char [strlen(Filename) + 1];
 	if (_filename) strcpy(_filename, Filename);
@@ -78,7 +78,7 @@ CAdNodeState *CAdSceneState::GetNodeState(char *Name, bool Saving) {
 
 	if (Saving) {
 		CAdNodeState *ret = new CAdNodeState(Game);
-		ret->SetName(Name);
+		ret->setName(Name);
 		_nodeStates.Add(ret);
 
 		return ret;

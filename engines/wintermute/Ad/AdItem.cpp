@@ -184,7 +184,7 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_FONT:
@@ -280,11 +280,11 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_PROPERTY:
-			ParseProperty(params, false);
+			parseProperty(params, false);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
@@ -653,7 +653,7 @@ HRESULT CAdItem::scSetProperty(const char *Name, CScValue *Value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Name") == 0) {
-		SetName(Value->GetString());
+		setName(Value->GetString());
 		return S_OK;
 	}
 

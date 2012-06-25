@@ -55,11 +55,11 @@ CBNamedObject::~CBNamedObject(void) {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBNamedObject::SetName(const char *Name) {
+void CBNamedObject::setName(const char *name) {
 	delete[] _name;
 
-	_name = new char [strlen(Name) + 1];
-	if (_name != NULL) strcpy(_name, Name);
+	_name = new char [strlen(name) + 1];
+	if (_name != NULL) strcpy(_name, name);
 }
 
 } // end of namespace WinterMute

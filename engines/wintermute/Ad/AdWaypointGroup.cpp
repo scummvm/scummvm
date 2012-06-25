@@ -50,12 +50,12 @@ CAdWaypointGroup::CAdWaypointGroup(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdWaypointGroup::~CAdWaypointGroup() {
-	Cleanup();
+	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdWaypointGroup::Cleanup() {
+void CAdWaypointGroup::cleanup() {
 	for (int i = 0; i < _points.GetSize(); i++)
 		delete _points[i];
 	_points.RemoveAll();
@@ -127,7 +127,7 @@ HRESULT CAdWaypointGroup::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_POINT: {
@@ -146,7 +146,7 @@ HRESULT CAdWaypointGroup::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_PROPERTY:
-			ParseProperty(params, false);
+			parseProperty(params, false);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -241,7 +241,7 @@ HRESULT CAdWaypointGroup::scSetProperty(const char *Name, CScValue *Value) {
 HRESULT CAdWaypointGroup::Mimic(CAdWaypointGroup *Wpt, float Scale, int X, int Y) {
 	if (Scale == _lastMimicScale && X == _lastMimicX && Y == _lastMimicY) return S_OK;
 
-	Cleanup();
+	cleanup();
 
 	for (int i = 0; i < Wpt->_points.GetSize(); i++) {
 		int x, y;

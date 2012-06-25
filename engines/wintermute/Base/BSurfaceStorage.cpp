@@ -46,12 +46,12 @@ CBSurfaceStorage::CBSurfaceStorage(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 CBSurfaceStorage::~CBSurfaceStorage() {
-	Cleanup(true);
+	cleanup(true);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceStorage::Cleanup(bool Warn) {
+HRESULT CBSurfaceStorage::cleanup(bool Warn) {
 	for (int i = 0; i < _surfaces.GetSize(); i++) {
 		if (Warn) Game->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->_filename, _surfaces[i]->_referenceCount);
 		delete _surfaces[i];
@@ -151,7 +151,7 @@ HRESULT CBSurfaceStorage::RestoreAll() {
 HRESULT CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
 {
 
-    if(!persistMgr->_saving) Cleanup(false);
+    if(!persistMgr->_saving) cleanup(false);
 
     persistMgr->transfer(TMEMBER(Game));
 

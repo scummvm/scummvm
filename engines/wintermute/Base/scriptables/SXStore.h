@@ -154,7 +154,7 @@ public:
 	void OnRestoreFinished(bool error);
 
 private:
-	void Cleanup();
+	void cleanup();
 	bool Purchase(CScScript *script, const char *productId);
 	bool FinishTransaction(CScScript *script, const char *transId);
 	void RestoreTransactions(CScScript *script);

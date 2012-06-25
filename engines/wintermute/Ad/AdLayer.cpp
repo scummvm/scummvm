@@ -138,7 +138,7 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -203,11 +203,11 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_PROPERTY:
-			ParseProperty(params, false);
+			parseProperty(params, false);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -273,12 +273,12 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		CAdSceneNode *Node = new CAdSceneNode(Game);
 		if (strcmp(Name, "AddRegion") == 0) {
 			CAdRegion *Region = new CAdRegion(Game);
-			if (!Val->IsNULL()) Region->SetName(Val->GetString());
+			if (!Val->IsNULL()) Region->setName(Val->GetString());
 			Node->SetRegion(Region);
 			Stack->PushNative(Region, true);
 		} else {
 			CAdEntity *Entity = new CAdEntity(Game);
-			if (!Val->IsNULL()) Entity->SetName(Val->GetString());
+			if (!Val->IsNULL()) Entity->setName(Val->GetString());
 			Node->SetEntity(Entity);
 			Stack->PushNative(Entity, true);
 		}
@@ -297,12 +297,12 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		CAdSceneNode *Node = new CAdSceneNode(Game);
 		if (strcmp(Name, "InsertRegion") == 0) {
 			CAdRegion *Region = new CAdRegion(Game);
-			if (!Val->IsNULL()) Region->SetName(Val->GetString());
+			if (!Val->IsNULL()) Region->setName(Val->GetString());
 			Node->SetRegion(Region);
 			Stack->PushNative(Region, true);
 		} else {
 			CAdEntity *Entity = new CAdEntity(Game);
-			if (!Val->IsNULL()) Entity->SetName(Val->GetString());
+			if (!Val->IsNULL()) Entity->setName(Val->GetString());
 			Node->SetEntity(Entity);
 			Stack->PushNative(Entity, true);
 		}
@@ -426,7 +426,7 @@ HRESULT CAdLayer::scSetProperty(const char *Name, CScValue *Value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Name") == 0) {
-		SetName(Value->GetString());
+		setName(Value->GetString());
 		return S_OK;
 	}
 

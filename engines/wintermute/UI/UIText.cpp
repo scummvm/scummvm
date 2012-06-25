@@ -181,7 +181,7 @@ HRESULT CUIText::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -258,7 +258,7 @@ HRESULT CUIText::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_PARENT_NOTIFY:

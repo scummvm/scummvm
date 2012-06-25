@@ -184,7 +184,7 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_BACK:
@@ -267,7 +267,7 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
@@ -803,7 +803,7 @@ int CUIEdit::DeleteChars(int Start, int End) {
 		delete[] _text;
 		_text = str;
 	}
-	if (_parentNotify && _parent) _parent->ApplyEvent(_name);
+	if (_parentNotify && _parent) _parent->applyEvent(_name);
 
 	return End - Start;
 }
@@ -828,7 +828,7 @@ int CUIEdit::InsertChars(int Pos, byte *Chars, int Num) {
 		delete[] _text;
 		_text = str;
 	}
-	if (_parentNotify && _parent) _parent->ApplyEvent(_name);
+	if (_parentNotify && _parent) _parent->applyEvent(_name);
 
 	return Num;
 }

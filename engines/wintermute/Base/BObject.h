@@ -85,7 +85,7 @@ public:
 	virtual int GetHeight();
 	HRESULT SetCursor(const char *Filename);
 	HRESULT SetActiveCursor(const char *Filename);
-	HRESULT Cleanup();
+	HRESULT cleanup();
 	char *GetCaption(int Case = 1);
 	void SetCaption(const char *Caption, int Case = 1);
 	bool _editorSelected;
@@ -98,7 +98,7 @@ public:
 	bool _sharedCursors;
 	CBSprite *_activeCursor;
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
-	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
+	virtual HRESULT listen(CBScriptHolder *param1, uint32 param2);
 	bool _ready;
 	bool _registrable;
 	bool _zoomable;

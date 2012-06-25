@@ -147,7 +147,7 @@ CScEngine::~CScEngine() {
 #ifdef __WIN32__
 	if (_compilerAvailable && _compilerDLL) ::FreeLibrary(_compilerDLL);
 #endif
-	Cleanup();
+	cleanup();
 
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
 		delete _breakpoints[i];
@@ -158,9 +158,9 @@ CScEngine::~CScEngine() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::Cleanup() {
+HRESULT CScEngine::cleanup() {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->RemoveScript(_scripts[i]);
+		if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
 		delete _scripts[i];
 		_scripts.RemoveAt(i);
 		i--;
@@ -489,7 +489,7 @@ HRESULT CScEngine::RemoveFinishedScripts() {
 	// remove finished scripts
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
-			if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->RemoveScript(_scripts[i]);
+			if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
 			Game->GetDebugMgr()->OnScriptShutdown(_scripts[i]);
 			delete _scripts[i];
 			_scripts.RemoveAt(i);
@@ -571,7 +571,7 @@ HRESULT CScEngine::ResetScript(CScScript *Script) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::persist(CBPersistMgr *persistMgr) {
-	if (!persistMgr->_saving) Cleanup();
+	if (!persistMgr->_saving) cleanup();
 
 	persistMgr->transfer(TMEMBER(Game));
 	persistMgr->transfer(TMEMBER(_currentScript));
@@ -584,7 +584,7 @@ HRESULT CScEngine::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScEngine::EditorCleanup() {
+void CScEngine::editorCleanup() {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_owner == NULL && (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR)) {
 			delete _scripts[i];

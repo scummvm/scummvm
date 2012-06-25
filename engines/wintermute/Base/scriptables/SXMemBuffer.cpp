@@ -60,7 +60,7 @@ CSXMemBuffer::CSXMemBuffer(CBGame *inGame, void *Buffer): CBScriptable(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CSXMemBuffer::~CSXMemBuffer() {
-	Cleanup();
+	cleanup();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ void *CSXMemBuffer::scToMemBuffer() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXMemBuffer::Cleanup() {
+void CSXMemBuffer::cleanup() {
 	if (_size) free(_buffer);
 	_buffer = NULL;
 	_size = 0;

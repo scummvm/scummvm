@@ -90,12 +90,12 @@ CUIWindow::CUIWindow(CBGame *inGame): CUIObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CUIWindow::~CUIWindow() {
 	Close();
-	Cleanup();
+	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIWindow::Cleanup() {
+void CUIWindow::cleanup() {
 	delete _shieldWindow;
 	delete _shieldButton;
 	delete _viewport;
@@ -127,7 +127,7 @@ HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
 	} else if (_isMenu) {
 		if (!_shieldButton) {
 			_shieldButton = new CUIButton(Game);
-			_shieldButton->SetName("close");
+			_shieldButton->setName("close");
 			_shieldButton->SetListener(this, _shieldButton, 0);
 			_shieldButton->_parent = this;
 		}
@@ -321,7 +321,7 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -483,7 +483,7 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
@@ -817,7 +817,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		Stack->CorrectParams(1);
 
 		CScValue *Val = Stack->Pop();
-		Cleanup();
+		cleanup();
 		if (!Val->IsNULL()) {
 			Stack->PushBool(SUCCEEDED(LoadFile(Val->GetString())));
 		} else Stack->PushBool(true);
@@ -833,7 +833,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		CScValue *Val = Stack->Pop();
 
 		CUIButton *Btn = new CUIButton(Game);
-		if (!Val->IsNULL()) Btn->SetName(Val->GetString());
+		if (!Val->IsNULL()) Btn->setName(Val->GetString());
 		Stack->PushNative(Btn, true);
 
 		Btn->_parent = this;
@@ -850,7 +850,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		CScValue *Val = Stack->Pop();
 
 		CUIText *Sta = new CUIText(Game);
-		if (!Val->IsNULL()) Sta->SetName(Val->GetString());
+		if (!Val->IsNULL()) Sta->setName(Val->GetString());
 		Stack->PushNative(Sta, true);
 
 		Sta->_parent = this;
@@ -867,7 +867,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		CScValue *Val = Stack->Pop();
 
 		CUIEdit *Edi = new CUIEdit(Game);
-		if (!Val->IsNULL()) Edi->SetName(Val->GetString());
+		if (!Val->IsNULL()) Edi->setName(Val->GetString());
 		Stack->PushNative(Edi, true);
 
 		Edi->_parent = this;
@@ -884,7 +884,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		CScValue *Val = Stack->Pop();
 
 		CUIWindow *Win = new CUIWindow(Game);
-		if (!Val->IsNULL()) Win->SetName(Val->GetString());
+		if (!Val->IsNULL()) Win->setName(Val->GetString());
 		Stack->PushNative(Win, true);
 
 		Win->_parent = this;
@@ -1010,7 +1010,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Name") == 0) {
-		SetName(Value->GetString());
+		setName(Value->GetString());
 		return S_OK;
 	}
 
@@ -1240,7 +1240,7 @@ HRESULT CUIWindow::GoExclusive() {
 HRESULT CUIWindow::GoSystemExclusive() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) return S_OK;
 
-	MakeFreezable(false);
+	makeFreezable(false);
 
 	_mode = WINDOW_SYSTEM_EXCLUSIVE;
 	_ready = false;
@@ -1268,16 +1268,16 @@ HRESULT CUIWindow::Close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::Listen(CBScriptHolder *param1, uint32 param2) {
+HRESULT CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
 	switch (obj->_type) {
 	case UI_BUTTON:
 		if (scumm_stricmp(obj->_name, "close") == 0) Close();
-		else return CBObject::Listen(param1, param2);
+		else return CBObject::listen(param1, param2);
 		break;
 	default:
-		return CBObject::Listen(param1, param2);
+		return CBObject::listen(param1, param2);
 	}
 
 	return S_OK;
@@ -1285,11 +1285,11 @@ HRESULT CUIWindow::Listen(CBScriptHolder *param1, uint32 param2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIWindow::MakeFreezable(bool Freezable) {
+void CUIWindow::makeFreezable(bool Freezable) {
 	for (int i = 0; i < _widgets.GetSize(); i++)
-		_widgets[i]->MakeFreezable(Freezable);
+		_widgets[i]->makeFreezable(Freezable);
 
-	CBObject::MakeFreezable(Freezable);
+	CBObject::makeFreezable(Freezable);
 }
 
 

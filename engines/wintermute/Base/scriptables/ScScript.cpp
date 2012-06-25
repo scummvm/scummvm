@@ -97,7 +97,7 @@ CScScript::CScScript(CBGame *inGame, CScEngine *Engine): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CScScript::~CScScript() {
-	Cleanup();
+	cleanup();
 }
 
 
@@ -107,13 +107,13 @@ HRESULT CScScript::InitScript() {
 	TScriptHeader *Header = (TScriptHeader *)_buffer;
 	if (Header->magic != SCRIPT_MAGIC) {
 		Game->LOG(0, "File '%s' is not a valid compiled script", _filename);
-		Cleanup();
+		cleanup();
 		return E_FAIL;
 	}
 
 	if (Header->version > SCRIPT_VERSION) {
 		Game->LOG(0, "Script '%s' has a wrong version %d.%d (expected %d.%d)", _filename, Header->version / 256, Header->version % 256, SCRIPT_VERSION / 256, SCRIPT_VERSION % 256);
-		Cleanup();
+		cleanup();
 		return E_FAIL;
 	}
 
@@ -224,7 +224,7 @@ HRESULT CScScript::InitTables() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScScript::Create(const char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner) {
-	Cleanup();
+	cleanup();
 
 	_thread = false;
 	_methodThread = false;
@@ -256,7 +256,7 @@ HRESULT CScScript::Create(const char *Filename, byte *Buffer, uint32 Size, CBScr
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScScript::CreateThread(CScScript *Original, uint32 InitIP, const char *EventName) {
-	Cleanup();
+	cleanup();
 
 	_thread = true;
 	_methodThread = false;
@@ -302,7 +302,7 @@ HRESULT CScScript::CreateMethodThread(CScScript *Original, const char *MethodNam
 	uint32 IP = Original->GetMethodPos(MethodName);
 	if (IP == 0) return E_FAIL;
 
-	Cleanup();
+	cleanup();
 
 	_thread = true;
 	_methodThread = true;
@@ -342,7 +342,7 @@ HRESULT CScScript::CreateMethodThread(CScScript *Original, const char *MethodNam
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScScript::Cleanup() {
+void CScScript::cleanup() {
 	if (_buffer) delete [] _buffer;
 	_buffer = NULL;
 
@@ -445,7 +445,7 @@ HRESULT CScScript::ExecuteInstruction() {
 	const char *str = NULL;
 
 	//CScValue* op = new CScValue(Game);
-	_operand->Cleanup();
+	_operand->cleanup();
 
 	CScValue *op1;
 	CScValue *op2;
@@ -1244,7 +1244,7 @@ uint32 CScScript::GetEventPos(const char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScScript::CanHandleEvent(const char *EventName) {
+bool CScScript::canHandleEvent(const char *EventName) {
 	return GetEventPos(EventName) != 0;
 }
 

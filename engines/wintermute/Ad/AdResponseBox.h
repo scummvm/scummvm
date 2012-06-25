@@ -50,7 +50,7 @@ public:
 	char *_lastResponseTextOrig;
 	DECLARE_PERSISTENT(CAdResponseBox, CBObject)
 	CScScript *_waitingScript;
-	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
+	virtual HRESULT listen(CBScriptHolder *param1, uint32 param2);
 	typedef enum {
 	    EVENT_PREV, EVENT_NEXT, EVENT_RESPONSE
 	} TResponseEvent;

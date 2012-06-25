@@ -71,7 +71,7 @@ CAdGame::CAdGame(): CBGame() {
 	_inventoryBox = NULL;
 
 	_scene = new CAdScene(Game);
-	_scene->SetName("");
+	_scene->setName("");
 	RegisterObject(_scene);
 
 	_prevSceneName = NULL;
@@ -112,12 +112,12 @@ CAdGame::CAdGame(): CBGame() {
 
 //////////////////////////////////////////////////////////////////////////
 CAdGame::~CAdGame() {
-	Cleanup();
+	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::Cleanup() {
+HRESULT CAdGame::cleanup() {
 	int i;
 
 	for (i = 0; i < _objects.GetSize(); i++) {
@@ -190,7 +190,7 @@ HRESULT CAdGame::Cleanup() {
 	for (i = 0; i < _responsesGame.GetSize(); i++) delete _responsesGame[i];
 	_responsesGame.RemoveAll();
 
-	return CBGame::Cleanup();
+	return CBGame::cleanup();
 }
 
 
@@ -248,7 +248,7 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 		_scene = new CAdScene(Game);
 		RegisterObject(_scene);
 	} else {
-		_scene->ApplyEvent("SceneShutdown", true);
+		_scene->applyEvent("SceneShutdown", true);
 
 		SetPrevSceneName(_scene->_name);
 		SetPrevSceneFilename(_scene->_filename);
@@ -263,7 +263,7 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 
 		// reset scene properties
 		_scene->_sFXVolume = 100;
-		if (_scene->_scProp) _scene->_scProp->Cleanup();
+		if (_scene->_scProp) _scene->_scProp->cleanup();
 
 		HRESULT ret;
 		if (_initialScene && _dEBUG_DebugMode && _debugStartupScene) {
@@ -398,7 +398,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		CAdEntity *Ent = new CAdEntity(Game);
 		AddObject(Ent);
-		if (!Val->IsNULL()) Ent->SetName(Val->GetString());
+		if (!Val->IsNULL()) Ent->setName(Val->GetString());
 		Stack->PushNative(Ent, true);
 		return S_OK;
 	}
@@ -412,7 +412,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		CAdItem *Item = new CAdItem(Game);
 		AddItem(Item);
-		if (!Val->IsNULL()) Item->SetName(Val->GetString());
+		if (!Val->IsNULL()) Item->setName(Val->GetString());
 		Stack->PushNative(Item, true);
 		return S_OK;
 	}
@@ -1104,7 +1104,7 @@ HRESULT CAdGame::ShowCursor() {
 			_lastCursor = OrigLastCursor;
 		}
 		if (_activeObject && _selectedItem->_cursorHover && _activeObject->GetExtendedFlag("usable")) {
-			if (!_smartItemCursor || _activeObject->CanHandleEvent(_selectedItem->_name))
+			if (!_smartItemCursor || _activeObject->canHandleEvent(_selectedItem->_name))
 				return DrawCursor(_selectedItem->_cursorHover);
 			else
 				return DrawCursor(_selectedItem->_cursorNormal);
@@ -1264,7 +1264,7 @@ HRESULT CAdGame::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::persist(CBPersistMgr *persistMgr) {
-	if (!persistMgr->_saving) Cleanup();
+	if (!persistMgr->_saving) cleanup();
 	CBGame::persist(persistMgr);
 
 	_dlgPendingBranches.persist(persistMgr);
@@ -1470,7 +1470,7 @@ CAdSceneState *CAdGame::GetSceneState(const char *Filename, bool Saving) {
 
 	if (Saving) {
 		CAdSceneState *ret = new CAdSceneState(Game);
-		ret->SetFilename(FilenameCor);
+		ret->setFilename(FilenameCor);
 
 		_sceneStates.Add(ret);
 
@@ -1524,7 +1524,7 @@ HRESULT CAdGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScSt
 		CScValue *Val = Stack->Pop();
 
 		CUIEntity *Ent = new CUIEntity(Game);
-		if (!Val->IsNULL()) Ent->SetName(Val->GetString());
+		if (!Val->IsNULL()) Ent->setName(Val->GetString());
 		Stack->PushNative(Ent, true);
 
 		Ent->_parent = Win;
@@ -1957,12 +1957,12 @@ HRESULT CAdGame::OnMouseLeftDown() {
 
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("LeftClick"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftClick"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("LeftClick");
+			_activeObject->applyEvent("LeftClick");
 		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
-			_scene->ApplyEvent("LeftClick");
+			_scene->applyEvent("LeftClick");
 		}
 	}
 
@@ -1981,12 +1981,12 @@ HRESULT CAdGame::OnMouseLeftUp() {
 	_capturedObject = NULL;
 	_mouseLeftDown = false;
 
-	bool Handled = /*_state==GAME_RUNNING &&*/ SUCCEEDED(ApplyEvent("LeftRelease"));
+	bool Handled = /*_state==GAME_RUNNING &&*/ SUCCEEDED(applyEvent("LeftRelease"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("LeftRelease");
+			_activeObject->applyEvent("LeftRelease");
 		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
-			_scene->ApplyEvent("LeftRelease");
+			_scene->applyEvent("LeftRelease");
 		}
 	}
 	return S_OK;
@@ -2000,12 +2000,12 @@ HRESULT CAdGame::OnMouseLeftDblClick() {
 
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_LEFT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("LeftDoubleClick"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftDoubleClick"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("LeftDoubleClick");
+			_activeObject->applyEvent("LeftDoubleClick");
 		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
-			_scene->ApplyEvent("LeftDoubleClick");
+			_scene->applyEvent("LeftDoubleClick");
 		}
 	}
 	return S_OK;
@@ -2025,12 +2025,12 @@ HRESULT CAdGame::OnMouseRightDown() {
 
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("RightClick"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightClick"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("RightClick");
+			_activeObject->applyEvent("RightClick");
 		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
-			_scene->ApplyEvent("RightClick");
+			_scene->applyEvent("RightClick");
 		}
 	}
 	return S_OK;
@@ -2040,12 +2040,12 @@ HRESULT CAdGame::OnMouseRightDown() {
 HRESULT CAdGame::OnMouseRightUp() {
 	if (_activeObject) _activeObject->HandleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(ApplyEvent("RightRelease"));
+	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightRelease"));
 	if (!Handled) {
 		if (_activeObject != NULL) {
-			_activeObject->ApplyEvent("RightRelease");
+			_activeObject->applyEvent("RightRelease");
 		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
-			_scene->ApplyEvent("RightRelease");
+			_scene->applyEvent("RightRelease");
 		}
 	}
 	return S_OK;

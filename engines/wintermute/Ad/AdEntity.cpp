@@ -249,7 +249,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_ITEM:
@@ -372,7 +372,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_SUBTYPE: {
@@ -415,7 +415,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_PROPERTY:
-			ParseProperty(params, false);
+			parseProperty(params, false);
 			break;
 
 		case TOKEN_IGNORE_ITEMS:

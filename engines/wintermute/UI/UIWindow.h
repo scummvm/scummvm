@@ -42,8 +42,8 @@ public:
 	HRESULT GetWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
 
 	bool _pauseMusic;
-	void Cleanup();
-	virtual void MakeFreezable(bool Freezable);
+	void cleanup();
+	virtual void makeFreezable(bool Freezable);
 	CBViewport *_viewport;
 	bool _clipContents;
 	bool _inGame;
@@ -78,7 +78,7 @@ public:
 	CUITiledImage *_backInactive;
 	CBFont *_fontInactive;
 	CBSprite *_imageInactive;
-	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
+	virtual HRESULT listen(CBScriptHolder *param1, uint32 param2);
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 
 	// scripting interface

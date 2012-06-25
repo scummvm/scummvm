@@ -72,11 +72,11 @@ CSXFile::CSXFile(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CSXFile::~CSXFile() {
-	Cleanup();
+	cleanup();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXFile::Cleanup() {
+void CSXFile::cleanup() {
 	delete[] _filename;
 	_filename = NULL;
 	Close();
@@ -112,7 +112,7 @@ HRESULT CSXFile::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	if (strcmp(Name, "SetFilename") == 0) {
 		Stack->CorrectParams(1);
 		const char *Filename = Stack->Pop()->GetString();
-		Cleanup();
+		cleanup();
 		CBUtils::SetString(&_filename, Filename);
 		Stack->PushNULL();
 		return S_OK;

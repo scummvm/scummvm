@@ -57,7 +57,7 @@ CBSprite::CBSprite(CBGame *inGame, CBObject *Owner): CBScriptHolder(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 CBSprite::~CBSprite() {
-	Cleanup();
+	cleanup();
 }
 
 
@@ -80,15 +80,15 @@ void CBSprite::SetDefaults() {
 	_streamed = false;
 	_streamedKeepLoaded = false;
 
-	SetName("");
+	setName("");
 
 	_precise = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSprite::Cleanup() {
-	CBScriptHolder::Cleanup();
+void CBSprite::cleanup() {
+	CBScriptHolder::cleanup();
 
 	for (int i = 0; i < _frames.GetSize(); i++)
 		delete _frames[i];
@@ -210,7 +210,7 @@ HRESULT CBSprite::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 	int cmd;
 	CBParser parser(Game);
 
-	Cleanup();
+	cleanup();
 
 
 	if (Complete) {
@@ -234,7 +234,7 @@ HRESULT CBSprite::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_LOOPING:
@@ -258,7 +258,7 @@ HRESULT CBSprite::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_EDITOR_BG_FILE:
@@ -391,7 +391,7 @@ HRESULT CBSprite::Display(int X, int Y, CBObject *Register, float ZoomX, float Z
 		if (_frames[_currentFrame]->_killSound) {
 			KillAllSounds();
 		}
-		ApplyEvent("FrameChanged");
+		applyEvent("FrameChanged");
 		_frames[_currentFrame]->OneTimeDisplay(_owner, Game->_editorMode && _editorMuted);
 	}
 

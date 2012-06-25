@@ -70,12 +70,12 @@ CBFileManager::CBFileManager(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 CBFileManager::~CBFileManager() {
-	Cleanup();
+	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::Cleanup() {
+HRESULT CBFileManager::cleanup() {
 	int i;
 
 	// delete registered paths
@@ -842,7 +842,7 @@ HRESULT CBFileManager::RestoreCurrentDir() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFileManager::SetBasePath(const Common::String &Path) {
-	Cleanup();
+	cleanup();
 
 	if (Path.c_str()) {
 		_basePath = new char[Path.size() + 1];

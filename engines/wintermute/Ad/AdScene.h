@@ -92,7 +92,7 @@ public:
 	bool _paralaxScrolling;
 	void SkipTo(int OffsetX, int OffsetY);
 	void SetDefaults();
-	void Cleanup();
+	void cleanup();
 	void SkipToObject(CBObject *Object);
 	void ScrollToObject(CBObject *Object);
 	void ScrollTo(int OffsetX, int OffsetY);

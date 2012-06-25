@@ -39,7 +39,7 @@ public:
 	float _lastMimicScale;
 	int _lastMimicX;
 	int _lastMimicY;
-	void Cleanup();
+	void cleanup();
 	HRESULT Mimic(CBRegion *Region, float Scale = 100.0f, int X = 0, int Y = 0);
 	HRESULT GetBoundingRect(RECT *Rect);
 	bool PtInPolygon(int X, int Y);

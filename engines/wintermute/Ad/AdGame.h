@@ -114,7 +114,7 @@ public:
 	char *_prevSceneFilename;
 	virtual HRESULT LoadGame(const char *Filename);
 	CAdItem *_selectedItem;
-	HRESULT Cleanup();
+	HRESULT cleanup();
 	DECLARE_PERSISTENT(CAdGame, CBGame)
 
 	void FinishSentences();

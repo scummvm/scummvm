@@ -1073,12 +1073,12 @@ HRESULT CAdObject::AfterMove() {
 				break;
 			}
 		}
-		if (!RegFound) NewRegions[i]->ApplyEvent("ActorEntry");
+		if (!RegFound) NewRegions[i]->applyEvent("ActorEntry");
 	}
 
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
 		if (_currentRegions[i] && Game->ValidObject(_currentRegions[i])) {
-			_currentRegions[i]->ApplyEvent("ActorLeave");
+			_currentRegions[i]->applyEvent("ActorLeave");
 		}
 		_currentRegions[i] = NewRegions[i];
 	}

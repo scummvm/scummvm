@@ -68,7 +68,7 @@ CAdNodeState::~CAdNodeState() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::SetName(const char *Name) {
+void CAdNodeState::setName(const char *Name) {
 	delete[] _name;
 	_name = NULL;
 	CBUtils::SetString(&_name, Name);
@@ -76,7 +76,7 @@ void CAdNodeState::SetName(const char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::SetFilename(const char *Filename) {
+void CAdNodeState::setFilename(const char *Filename) {
 	delete[] _filename;
 	_filename = NULL;
 	CBUtils::SetString(&_filename, Filename);
@@ -140,8 +140,8 @@ HRESULT CAdNodeState::TransferEntity(CAdEntity *Entity, bool IncludingSprites, b
 			if (Entity->_caption[i]) SetCaption(Entity->_caption[i], i);
 		}
 		if (!Entity->_region && Entity->_sprite && Entity->_sprite->_filename) {
-			if (IncludingSprites) SetFilename(Entity->_sprite->_filename);
-			else SetFilename("");
+			if (IncludingSprites) setFilename(Entity->_sprite->_filename);
+			else setFilename("");
 		}
 		if (Entity->_cursor && Entity->_cursor->_filename) SetCursor(Entity->_cursor->_filename);
 		_alphaColor = Entity->_alphaColor;

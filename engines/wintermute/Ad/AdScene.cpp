@@ -73,7 +73,7 @@ CAdScene::CAdScene(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdScene::~CAdScene() {
-	Cleanup();
+	cleanup();
 	Game->UnregisterObject(_fader);
 	delete _pFTarget;
 	_pFTarget = NULL;
@@ -136,8 +136,8 @@ void CAdScene::SetDefaults() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::Cleanup() {
-	CBObject::Cleanup();
+void CAdScene::cleanup() {
+	CBObject::cleanup();
 
 	_mainLayer = NULL; // reference only
 
@@ -609,7 +609,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	Cleanup();
+	cleanup();
 
 	byte *params;
 	int cmd;
@@ -634,7 +634,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -813,11 +813,11 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_PROPERTY:
-			ParseProperty(params, false);
+			parseProperty(params, false);
 			break;
 
 		case TOKEN_VIEWPORT: {
@@ -1292,7 +1292,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 
 		CAdEntity *Ent = new CAdEntity(Game);
 		AddObject(Ent);
-		if (!Val->IsNULL()) Ent->SetName(Val->GetString());
+		if (!Val->IsNULL()) Ent->setName(Val->GetString());
 		Stack->PushNative(Ent, true);
 		return S_OK;
 	}
@@ -1594,7 +1594,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		CScValue *Val = Stack->Pop();
 
 		CAdLayer *Layer = new CAdLayer(Game);
-		if (!Val->IsNULL()) Layer->SetName(Val->GetString());
+		if (!Val->IsNULL()) Layer->setName(Val->GetString());
 		if (_mainLayer) {
 			Layer->_width = _mainLayer->_width;
 			Layer->_height = _mainLayer->_height;
@@ -1615,7 +1615,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		CScValue *Val = Stack->Pop();
 
 		CAdLayer *Layer = new CAdLayer(Game);
-		if (!Val->IsNULL()) Layer->SetName(Val->GetString());
+		if (!Val->IsNULL()) Layer->setName(Val->GetString());
 		if (_mainLayer) {
 			Layer->_width = _mainLayer->_width;
 			Layer->_height = _mainLayer->_height;
@@ -1847,7 +1847,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Name") == 0) {
-		SetName(Value->GetString());
+		setName(Value->GetString());
 		return S_OK;
 	}
 

@@ -41,32 +41,32 @@ public:
 
 	CBScriptHolder(CBGame *inGame);
 	virtual ~CBScriptHolder();
-	virtual CScScript *invokeMethodThread(const char *MethodName);
-	virtual void MakeFreezable(bool Freezable);
-	bool CanHandleEvent(const char *EventName);
-	virtual bool canHandleMethod(const char *EventMethod);
-	HRESULT Cleanup();
-	HRESULT RemoveScript(CScScript *Script);
-	HRESULT AddScript(const char *Filename);
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
-	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
-	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
-	void SetFilename(const char *Filename);
-	HRESULT ParseProperty(byte  *Buffer, bool Complete = true);
+	virtual CScScript *invokeMethodThread(const char *methodName);
+	virtual void makeFreezable(bool freezable);
+	bool canHandleEvent(const char *eventName);
+	virtual bool canHandleMethod(const char *eventMethod);
+	HRESULT cleanup();
+	HRESULT removeScript(CScScript *script);
+	HRESULT addScript(const char *filename);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
+	virtual HRESULT listen(CBScriptHolder *param1, uint32 param2);
+	HRESULT applyEvent(const char *eventName, bool unbreakable = false);
+	void setFilename(const char *filename);
+	HRESULT parseProperty(byte  *buffer, bool complete = true);
 	char *_filename;
 	bool _freezable;
 	bool _ready;
 
 	CBArray<CScScript *, CScScript *> _scripts;
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *Name);
-	virtual HRESULT scSetProperty(const char *Name, CScValue *Value);
-	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual CScValue *scGetProperty(const char *name);
+	virtual HRESULT scSetProperty(const char *name, CScValue *value);
+	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
-	virtual void scDebuggerDesc(char *Buf, int BufSize);
+	virtual void scDebuggerDesc(char *buf, int bufSize);
 	// IWmeObject
 public:
-	virtual bool SendEvent(const char *EventName);
+	virtual bool sendEvent(const char *eventName);
 };
 
 } // end of namespace WinterMute

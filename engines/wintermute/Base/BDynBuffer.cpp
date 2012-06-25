@@ -47,12 +47,12 @@ CBDynBuffer::CBDynBuffer(CBGame *inGame, uint32 InitSize, uint32 GrowBy): CBBase
 
 //////////////////////////////////////////////////////////////////////////
 CBDynBuffer::~CBDynBuffer() {
-	Cleanup();
+	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::Cleanup() {
+void CBDynBuffer::cleanup() {
 	if (_buffer) free(_buffer);
 	_buffer = NULL;
 	_size = 0;
@@ -70,7 +70,7 @@ uint32 CBDynBuffer::GetSize() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBDynBuffer::Init(uint32 InitSize) {
-	Cleanup();
+	cleanup();
 
 	if (InitSize == 0) InitSize = _initSize;
 

@@ -50,7 +50,7 @@ public:
 private:
 	HRESULT Resize(int NewSize);
 	void *_buffer;
-	void Cleanup();
+	void cleanup();
 	bool CheckBounds(CScScript *Script, int Start, int Length);
 };
 

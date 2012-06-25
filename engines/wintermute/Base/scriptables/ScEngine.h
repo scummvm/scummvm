@@ -121,13 +121,13 @@ public:
 	CScScript *_currentScript;
 	HRESULT ResumeAll();
 	HRESULT PauseAll();
-	void EditorCleanup();
+	void editorCleanup();
 	HRESULT ResetObject(CBObject *Object);
 	HRESULT ResetScript(CScScript *Script);
 	HRESULT EmptyScriptCache();
 	byte *GetCompiledScript(const char *Filename, uint32 *OutSize, bool IgnoreCache = false);
 	DECLARE_PERSISTENT(CScEngine, CBBase)
-	HRESULT Cleanup();
+	HRESULT cleanup();
 	int GetNumScripts(int *Running = NULL, int *Waiting = NULL, int *Persistent = NULL);
 	HRESULT Tick();
 	CScValue *_globals;

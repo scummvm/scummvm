@@ -68,7 +68,7 @@ public:
 	bool _freezable;
 	HRESULT Resume();
 	HRESULT Pause();
-	bool CanHandleEvent(const char *EventName);
+	bool canHandleEvent(const char *EventName);
 	bool canHandleMethod(const char *MethodName);
 	HRESULT CreateThread(CScScript *Original, uint32 InitIP, const char *EventName);
 	HRESULT CreateMethodThread(CScScript *Original, const char *MethodName);
@@ -139,7 +139,7 @@ public:
 	char *GetString();
 	uint32 GetDWORD();
 	double GetFloat();
-	void Cleanup();
+	void cleanup();
 	HRESULT Create(const char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner);
 	uint32 _iP;
 	uint32 _bufferSize;

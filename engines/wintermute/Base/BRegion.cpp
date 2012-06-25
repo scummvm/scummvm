@@ -55,12 +55,12 @@ CBRegion::CBRegion(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBRegion::~CBRegion() {
-	Cleanup();
+	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegion::Cleanup() {
+void CBRegion::cleanup() {
 	for (int i = 0; i < _points.GetSize(); i++) delete _points[i];
 	_points.RemoveAll();
 
@@ -165,7 +165,7 @@ HRESULT CBRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -184,7 +184,7 @@ HRESULT CBRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
@@ -192,7 +192,7 @@ HRESULT CBRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_PROPERTY:
-			ParseProperty(params, false);
+			parseProperty(params, false);
 			break;
 		}
 	}
@@ -355,7 +355,7 @@ HRESULT CBRegion::scSetProperty(const char *Name, CScValue *Value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Name") == 0) {
-		SetName(Value->GetString());
+		setName(Value->GetString());
 		return S_OK;
 	}
 
@@ -488,7 +488,7 @@ HRESULT CBRegion::GetBoundingRect(RECT *Rect) {
 HRESULT CBRegion::Mimic(CBRegion *Region, float Scale, int X, int Y) {
 	if (Scale == _lastMimicScale && X == _lastMimicX && Y == _lastMimicY) return S_OK;
 
-	Cleanup();
+	cleanup();
 
 	for (int i = 0; i < Region->_points.GetSize(); i++) {
 		int x, y;

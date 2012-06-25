@@ -291,7 +291,7 @@ public:
 	HRESULT DisplayWindows(bool InGame = false);
 	CBRegistry *_registry;
 	bool _useD3D;
-	virtual HRESULT Cleanup();
+	virtual HRESULT cleanup();
 	virtual HRESULT LoadGame(int Slot);
 	virtual HRESULT LoadGame(const char *Filename);
 	virtual HRESULT SaveGame(int slot, const char *desc, bool quickSave = false);

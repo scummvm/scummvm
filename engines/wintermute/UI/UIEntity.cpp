@@ -122,7 +122,7 @@ HRESULT CUIEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_X:
@@ -146,7 +146,7 @@ HRESULT CUIEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			AddScript((char *)params);
+			addScript((char *)params);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -218,7 +218,7 @@ HRESULT CUIEntity::SetEntity(const char *Filename) {
 	} else {
 		_entity->_nonIntMouseEvents = true;
 		_entity->_sceneIndependent = true;
-		_entity->MakeFreezable(false);
+		_entity->makeFreezable(false);
 		Game->RegisterObject(_entity);
 	}
 	return S_OK;
@@ -315,7 +315,7 @@ HRESULT CUIEntity::scSetProperty(const char *Name, CScValue *Value) {
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Freezable") == 0) {
-		if (_entity) _entity->MakeFreezable(Value->GetBool());
+		if (_entity) _entity->makeFreezable(Value->GetBool());
 		return S_OK;
 	} else return CUIObject::scSetProperty(Name, Value);
 }

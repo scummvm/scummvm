@@ -41,7 +41,7 @@ public:
 	HRESULT InitLoop();
 	HRESULT SortSurfaces();
 	static int SurfaceSortCB(const void *arg1, const void *arg2);
-	HRESULT Cleanup(bool Warn = false);
+	HRESULT cleanup(bool Warn = false);
 	//DECLARE_PERSISTENT(CBSurfaceStorage, CBBase);
 
 	HRESULT RestoreAll();

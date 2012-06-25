@@ -70,7 +70,7 @@ void CScStack::Push(CScValue *Val) {
 	_sP++;
 
 	if (_sP < _values.GetSize()) {
-		_values[_sP]->Cleanup();
+		_values[_sP]->cleanup();
 		_values[_sP]->Copy(Val);
 	} else {
 		CScValue *val = new CScValue(Game);
@@ -88,7 +88,7 @@ CScValue *CScStack::GetPushValue() {
 		CScValue *val = new CScValue(Game);
 		_values.Add(val);
 	}
-	_values[_sP]->Cleanup();
+	_values[_sP]->cleanup();
 	return _values[_sP];
 }
 

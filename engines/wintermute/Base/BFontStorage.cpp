@@ -50,7 +50,7 @@ CBFontStorage::CBFontStorage(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBFontStorage::~CBFontStorage() {
-	Cleanup(true);
+	cleanup(true);
 }
 
 
@@ -65,7 +65,7 @@ void CBFontStorage::InitFreeType() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontStorage::Cleanup(bool Warn) {
+HRESULT CBFontStorage::cleanup(bool Warn) {
 	int i;
 
 	for (i = 0; i < _fonts.GetSize(); i++) {
@@ -144,7 +144,7 @@ HRESULT CBFontStorage::RemoveFont(CBFont *Font) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFontStorage::persist(CBPersistMgr *persistMgr) {
 
-	if (!persistMgr->_saving) Cleanup(false);
+	if (!persistMgr->_saving) cleanup(false);
 
 	persistMgr->transfer(TMEMBER(Game));
 	_fonts.persist(persistMgr);

@@ -43,7 +43,7 @@ class CBFile;
 class CBFileManager: CBBase {
 public:
 	bool FindPackageSignature(Common::File *f, uint32 *Offset);
-	HRESULT Cleanup();
+	HRESULT cleanup();
 	HRESULT SetBasePath(const Common::String &path);
 	HRESULT RestoreCurrentDir();
 	char *_basePath;

@@ -52,7 +52,7 @@ private:
 	int _mode; // 0..none, 1..read, 2..write, 3..append
 	bool _textMode;
 	void Close();
-	void Cleanup();
+	void cleanup();
 	uint32 GetPos();
 	uint32 GetLength();
 	bool SetPos(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);

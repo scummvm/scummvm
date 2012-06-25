@@ -47,7 +47,7 @@ public:
 	HRESULT PutBytes(byte  *Buffer, uint32 Size);
 	uint32 GetSize();
 	HRESULT Init(uint32 InitSize = 0);
-	void Cleanup();
+	void cleanup();
 	uint32 _size;
 	byte *_buffer;
 	CBDynBuffer(CBGame *inGame, uint32 InitSize = 1000, uint32 GrowBy = 1000);

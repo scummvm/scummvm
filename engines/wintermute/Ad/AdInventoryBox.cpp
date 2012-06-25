@@ -73,7 +73,7 @@ CAdInventoryBox::~CAdInventoryBox() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::Listen(CBScriptHolder *param1, uint32 param2) {
+HRESULT CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
 	switch (obj->_type) {
@@ -85,7 +85,7 @@ HRESULT CAdInventoryBox::Listen(CBScriptHolder *param1, uint32 param2) {
 			_scrollOffset = MAX(_scrollOffset, 0);
 		} else if (scumm_stricmp(obj->_name, "next") == 0) {
 			_scrollOffset += _scrollBy;
-		} else return CBObject::Listen(param1, param2);
+		} else return CBObject::listen(param1, param2);
 		break;
 	default:
 		error("CAdInventoryBox::Listen - Unhandled enum");
@@ -231,7 +231,7 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_NAME:
-			SetName((char *)params);
+			setName((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -298,7 +298,7 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 		delete _closeButton;
 		_closeButton = new CUIButton(Game);
 		if (_closeButton) {
-			_closeButton->SetName("close");
+			_closeButton->setName("close");
 			_closeButton->SetListener(this, _closeButton, 0);
 			_closeButton->_parent = _window;
 		}

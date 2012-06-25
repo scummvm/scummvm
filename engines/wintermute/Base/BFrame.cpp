@@ -100,7 +100,7 @@ HRESULT CBFrame::OneTimeDisplay(CBObject *Owner, bool Muted) {
 	}
 	if (Owner) {
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
-			Owner->ApplyEvent(_applyEvent[i]);
+			Owner->applyEvent(_applyEvent[i]);
 		}
 	}
 	return S_OK;

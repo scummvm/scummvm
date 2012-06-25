@@ -119,7 +119,7 @@ CScValue::CScValue(CBGame *inGame, const char *Val): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::Cleanup(bool IgnoreNatives) {
+void CScValue::cleanup(bool IgnoreNatives) {
 	DeleteProps();
 
 	if (_valString) delete [] _valString;
@@ -151,7 +151,7 @@ void CScValue::Cleanup(bool IgnoreNatives) {
 
 //////////////////////////////////////////////////////////////////////////
 CScValue::~CScValue() {
-	Cleanup();
+	cleanup();
 }
 
 
@@ -219,7 +219,7 @@ HRESULT CScValue::SetProp(const char *Name, CScValue *Val, bool CopyWhole, bool 
 			val = _valIter->_value;
 		}
 		if (!val) val = new CScValue(Game);
-		else val->Cleanup();
+		else val->cleanup();
 
 		val->Copy(Val, CopyWhole);
 		val->_isConstVar = SetAsConst;
@@ -658,7 +658,7 @@ void CScValue::Copy(CScValue *orig, bool CopyWhole) {
 
 	if (orig->_type == VAL_VARIABLE_REF && orig->_valRef && CopyWhole) orig = orig->_valRef;
 
-	Cleanup(true);
+	cleanup(true);
 
 	_type = orig->_type;
 	_valBool = orig->_valBool;

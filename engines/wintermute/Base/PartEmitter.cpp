@@ -280,7 +280,7 @@ HRESULT CPartEmitter::UpdateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 
 		// we actually generated some particles and we're not in fast-forward mode
 		if (NeedsSort && _overheadTime == 0) {
-			if (_owner && _emitEvent) _owner->ApplyEvent(_emitEvent);
+			if (_owner && _emitEvent) _owner->applyEvent(_emitEvent);
 		}
 	}
 
@@ -376,7 +376,7 @@ CPartForce *CPartEmitter::AddForceByName(const char *Name) {
 	if (!Force) {
 		Force = new CPartForce(Game);
 		if (Force) {
-			Force->SetName(Name);
+			Force->setName(Name);
 			_forces.Add(Force);
 		}
 	}

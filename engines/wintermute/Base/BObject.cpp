@@ -101,15 +101,15 @@ CBObject::CBObject(CBGame *inGame): CBScriptHolder(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 CBObject::~CBObject() {
-	Cleanup();
+	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::Cleanup() {
+HRESULT CBObject::cleanup() {
 	if (Game && Game->_activeObject == this) Game->_activeObject = NULL;
 
-	CBScriptHolder::Cleanup();
+	CBScriptHolder::cleanup();
 	delete[] _soundEvent;
 	_soundEvent = NULL;
 
@@ -157,7 +157,7 @@ char *CBObject::GetCaption(int Case) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::Listen(CBScriptHolder *param1, uint32 param2) {
+HRESULT CBObject::listen(CBScriptHolder *param1, uint32 param2) {
 	return E_FAIL;
 }
 
@@ -1060,7 +1060,7 @@ HRESULT CBObject::SetSFXVolume(int Volume) {
 HRESULT CBObject::UpdateSounds() {
 	if (_soundEvent) {
 		if (_sFX && !_sFX->IsPlaying()) {
-			ApplyEvent(_soundEvent);
+			applyEvent(_soundEvent);
 			SetSoundEvent(NULL);
 		}
 	}

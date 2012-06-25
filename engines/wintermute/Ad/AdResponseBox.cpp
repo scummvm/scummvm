@@ -162,7 +162,7 @@ HRESULT CAdResponseBox::CreateButtons() {
 				btn->_width = _responseArea.right - _responseArea.left;
 				if (btn->_width <= 0) btn->_width = Game->_renderer->_width;
 			}
-			btn->SetName("response");
+			btn->setName("response");
 			btn->CorrectSize();
 
 			// make the responses touchable
@@ -482,7 +482,7 @@ HRESULT CAdResponseBox::Display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::Listen(CBScriptHolder *param1, uint32 param2) {
+HRESULT CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
 	switch (obj->_type) {
@@ -500,7 +500,7 @@ HRESULT CAdResponseBox::Listen(CBScriptHolder *param1, uint32 param2) {
 			_ready = true;
 			InvalidateButtons();
 			ClearResponses();
-		} else return CBObject::Listen(param1, param2);
+		} else return CBObject::listen(param1, param2);
 		break;
 	default:
 		error("AdResponseBox::Listen - Unhandled enum");

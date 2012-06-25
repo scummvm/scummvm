@@ -126,7 +126,7 @@ HRESULT CVidPlayer::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 #if 0
-	Cleanup();
+	cleanup();
 
 	char Filename[MAX_PATH];
 	Game->_fileManager->GetFullPath(inFilename, Filename);
@@ -334,7 +334,7 @@ HRESULT CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 		_videoPGF = AVIStreamGetFrameOpen(_videoStream, NULL);
 		if (!_videoPGF) {
 			Game->LOG(0, "Error: Unsupported AVI format (file '%s')", m_Filename);
-			Cleanup();
+			cleanup();
 			return E_FAIL;
 		} else {
 			Game->LOG(0, "Performance warning: non-optimal AVI format, using generic (i.e. slow) rendering routines (file '%s')", m_Filename);
@@ -363,7 +363,7 @@ HRESULT CVidPlayer::stop() {
 #if 0
 	if (!_playing) return S_OK;
 
-	Cleanup();
+	cleanup();
 
 	Game->Unfreeze();
 #endif
