@@ -81,7 +81,7 @@ typedef int32 HRESULT;
 //#define S_FALSE   ((HRESULT)1)
 #define E_FAIL   ((HRESULT)-1)
 
-#endif __WIN32__
+#endif // __WIN32__
 
 //} // end of namespace WinterMute
 
