@@ -568,12 +568,6 @@ void CBGame::DEBUG_DebugDisable() {
 
 //////////////////////////////////////////////////////////////////////
 void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
-#ifndef __IPHONEOS__
-	if (!_dEBUG_DebugMode) return;
-#endif
-	/*  time_t timeNow;
-	    time(&timeNow);
-	    struct tm *tm = localtime(&timeNow);*/
 	int secs = g_system->getMillis() / 1000;
 	int hours = secs / 3600;
 	secs = secs % 3600;
@@ -587,22 +581,16 @@ void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
 	vsprintf(buff, fmt, va);
 	va_end(va);
 
-#ifdef __IPHONEOS__
-	printf("%02d:%02d:%02d: %s\n", tm->tm_hour, tm->tm_min, tm->tm_sec, buff);
-	fflush(stdout);
-#else
-	if (_dEBUG_LogFile == NULL) return;
-
 	// redirect to an engine's own callback
 	if (_engineLogCallback) {
 		_engineLogCallback(buff, res, _engineLogCallbackData);
 	}
 	if (_debugMgr) _debugMgr->OnLog(res, buff);
 
-	warning("%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
+	debugCN(kWinterMuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
+
 	//fprintf((FILE *)_dEBUG_LogFile, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
 	//fflush((FILE *)_dEBUG_LogFile);
-#endif
 
 	//QuickMessage(buff);
 }

@@ -56,8 +56,8 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst)
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
 	// Here is the right place to set up the engine specific debug channels
-	DebugMan.addDebugChannel(kWinterMuteDebugExample, "example", "this is just an example for a engine specific debug channel");
-	DebugMan.addDebugChannel(kWinterMuteDebugExample2, "example2", "also an example");
+	DebugMan.addDebugChannel(kWinterMuteDebugLog, "enginelog", "Covers the same output as the log-file in WME");
+	DebugMan.addDebugChannel(kWinterMuteDebugSaveGame, "savegame", "Savegames");
 
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("WinterMute");
@@ -120,11 +120,10 @@ Common::Error WinterMuteEngine::run() {
 	// Your main even loop should be (invoked from) here.
 	debug("WinterMuteEngine::go: Hello, World!");
 
+	DebugMan.enableDebugChannel("enginelog");
 	// This test will show up if -d1 and --debugflags=example are specified on the commandline
-	debugC(1, kWinterMuteDebugExample, "Example debug call");
-
-	// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
-	debugC(3, kWinterMuteDebugExample | kWinterMuteDebugExample2, "Example debug call two");
+	debugC(1, kWinterMuteDebugLog, "Engine Debug-LOG enabled");
+	debugC(2, kWinterMuteDebugSaveGame , "Savegame debugging-enabled");
 
 	int ret = 1;
 	
