@@ -584,9 +584,9 @@ HRESULT CVidTheoraPlayer::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-float CVidTheoraPlayer::getMovieTime() {
+uint32 CVidTheoraPlayer::getMovieTime() {
 	if (!_playbackStarted) {
-		return 0.0f;
+		return 0;
 	} else {
 		return _theoraDecoder->getTime();
 	}

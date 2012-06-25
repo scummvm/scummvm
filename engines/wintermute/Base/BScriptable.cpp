@@ -182,7 +182,7 @@ const char *CBScriptable::DbgGetNativeClass() {
 
 //////////////////////////////////////////////////////////////////////////
 IWmeDebugProp *CBScriptable::DbgGetProperty(const char *Name) {
-	return ScGetProperty((char *)Name);
+	return ScGetProperty(Name);
 }
 
 } // end of namespace WinterMute

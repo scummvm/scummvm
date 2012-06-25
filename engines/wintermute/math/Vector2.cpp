@@ -37,9 +37,9 @@ Vector2::Vector2() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Vector2::Vector2(float x, float y) {
-	this->x = x;
-	this->y = y;
+Vector2::Vector2(float xVal, float yVal) {
+	this->x = xVal;
+	this->y = yVal;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ Vector2::~Vector2() {
 
 //////////////////////////////////////////////////////////////////////////
 float Vector2::Length() const {
-	return sqrt(x * x + y * y);
+	return (float)sqrt(x * x + y * y);
 }
 
 } // end of namespace WinterMute

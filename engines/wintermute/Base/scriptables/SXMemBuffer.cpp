@@ -53,7 +53,7 @@ CSXMemBuffer::CSXMemBuffer(CBGame *inGame, CScStack *Stack): CBScriptable(inGame
 
 //////////////////////////////////////////////////////////////////////////
 CSXMemBuffer::CSXMemBuffer(CBGame *inGame, void *Buffer): CBScriptable(inGame) {
-	_size = NULL;
+	_size = 0;
 	_buffer = Buffer;
 }
 

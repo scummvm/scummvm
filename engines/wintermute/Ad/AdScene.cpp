@@ -2519,6 +2519,9 @@ HRESULT CAdScene::PersistState(bool Saving) {
 					else node->_region->_active = NodeState->_active;
 				}
 				break;
+			default:
+				warning("CAdScene::PersistState - unhandled enum");
+				break;
 			}
 		}
 	}
@@ -2703,6 +2706,9 @@ HRESULT CAdScene::GetSceneObjects(CBArray<CAdObject *, CAdObject *> &Objects, bo
 				//if(RegionObj.GetSize() > 0) Objects.Append(RegionObj);
 			}
 			break;
+			default:
+				warning("CAdScene::GetSceneObjects - Unhandled enum");
+				break;
 			}
 		}
 	}

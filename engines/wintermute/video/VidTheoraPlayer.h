@@ -84,7 +84,7 @@ public:
 		return _state == THEORA_STATE_PAUSED;
 	};
 
-	float getMovieTime();
+	uint32 getMovieTime();
 	uint32 getMovieFrame();
 
 	CBSurface *getTexture();

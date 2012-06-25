@@ -302,7 +302,7 @@ HRESULT CAdSpriteSet::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CAdSpriteSet::ContainsSprite(CBSprite *Sprite) {
-	if (!Sprite) return NULL;
+	if (!Sprite) return false;
 
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
 		if (_sprites[i] == Sprite) return true;

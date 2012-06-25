@@ -707,6 +707,9 @@ void CScValue::SetValue(CScValue *Val) {
 		case VAL_STRING:
 			_valNative->ScSetString(Val->GetString());
 			break;
+		default:
+			warning("CScValue::SetValue - unhandled enum");
+			break;
 		}
 	}
 	// otherwise just copy everything

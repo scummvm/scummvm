@@ -421,6 +421,9 @@ HRESULT CScEngine::Tick() {
 			}
 			break;
 		}
+		default:
+			warning("CScEngine::Tick - Unhandled enum");
+			break;
 		} // switch
 	} // for each script
 
@@ -514,6 +517,9 @@ int CScEngine::GetNumScripts(int *Running, int *Waiting, int *Persistent) {
 			break;
 		case SCRIPT_PERSISTENT:
 			persistent++;
+			break;
+		default:
+			warning("CScEngine::GetNumScripts - unhandled enum");
 			break;
 		}
 		total++;

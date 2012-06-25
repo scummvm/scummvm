@@ -586,6 +586,8 @@ HRESULT CAdResponseBox::HandleResponse(CAdResponse *Response) {
 	case RESPONSE_ONCE_GAME:
 		AdGame->AddGameResponse(Response->_iD);
 		break;
+	default:
+		warning("CAdResponseBox::HandleResponse - Unhandled enum");
 	}
 
 	return S_OK;
