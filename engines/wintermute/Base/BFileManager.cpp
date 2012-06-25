@@ -231,7 +231,7 @@ HRESULT CBFileManager::SaveFile(const Common::String &Filename, byte *Buffer, ui
 HRESULT CBFileManager::RequestCD(int CD, char *PackageFile, char *Filename) {
 	// unmount all non-local packages
 	for (int i = 0; i < _packages.GetSize(); i++) {
-		if (_packages[i]->_cD > 0) _packages[i]->Close();
+		if (_packages[i]->_cD > 0) _packages[i]->close();
 	}
 
 
@@ -805,7 +805,7 @@ Common::SeekableReadStream *CBFileManager::OpenFileRaw(const Common::String &Fil
 
 	if (scumm_strnicmp(Filename.c_str(), "savegame:", 9) == 0) {
 		CBSaveThumbFile *SaveThumbFile = new CBSaveThumbFile(Game);
-		if (SUCCEEDED(SaveThumbFile->Open(Filename))) return SaveThumbFile->getMemStream();
+		if (SUCCEEDED(SaveThumbFile->open(Filename))) return SaveThumbFile->getMemStream();
 		else {
 			delete SaveThumbFile;
 			return NULL;

@@ -51,11 +51,11 @@ public:
 	virtual uint32 getPos() {
 		return _pos;
 	};
-	virtual HRESULT Seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN) = 0;
-	virtual HRESULT Read(void *buffer, uint32 size) = 0;
-	virtual HRESULT Close() = 0;
-	virtual HRESULT Open(const Common::String &filename) = 0;
-	virtual bool IsEOF();
+	virtual HRESULT seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN) = 0;
+	virtual HRESULT read(void *buffer, uint32 size) = 0;
+	virtual HRESULT close() = 0;
+	virtual HRESULT open(const Common::String &filename) = 0;
+	virtual bool isEOF();
 	CBFile(CBGame *inGame);
 	virtual ~CBFile();
 	// Temporary solution to allow usage in ScummVM-code:

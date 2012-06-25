@@ -53,7 +53,7 @@ public:
 	virtual bool handleMouseWheel(int Delta);
 	CUIWindow *_shieldWindow;
 	CUIButton *_shieldButton;
-	HRESULT Close();
+	HRESULT close();
 	HRESULT GoSystemExclusive();
 	HRESULT GoExclusive();
 	TWindowMode _mode;

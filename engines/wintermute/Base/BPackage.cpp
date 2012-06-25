@@ -57,7 +57,7 @@ CBPackage::~CBPackage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPackage::Open() {
+HRESULT CBPackage::open() {
 	if (_file) return S_OK;
 	else {
 		_file = GetFilePointer();
@@ -67,7 +67,7 @@ HRESULT CBPackage::Open() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPackage::Close() {
+HRESULT CBPackage::close() {
 	delete _file;
 	_file = NULL;
 	return S_OK;
@@ -75,9 +75,9 @@ HRESULT CBPackage::Close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPackage::Read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size) {
+HRESULT CBPackage::read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size) {
 	HRESULT ret;
-	if (FAILED(ret = Open())) return ret;
+	if (FAILED(ret = open())) return ret;
 	else {
 		if (file->seek(offset, SEEK_SET)) return E_FAIL;
 		if (file->read(buffer, size) != 1) return E_FAIL;

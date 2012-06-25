@@ -46,13 +46,13 @@ CBSaveThumbFile::CBSaveThumbFile(CBGame *inGame): CBFile(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBSaveThumbFile::~CBSaveThumbFile() {
-	Close();
+	close();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbFile::Open(const Common::String &filename) {
-	Close();
+HRESULT CBSaveThumbFile::open(const Common::String &filename) {
+	close();
 
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) != 0) return E_FAIL;
 
@@ -97,7 +97,7 @@ HRESULT CBSaveThumbFile::Open(const Common::String &filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbFile::Close() {
+HRESULT CBSaveThumbFile::close() {
 	delete[] _data;
 	_data = NULL;
 
@@ -109,7 +109,7 @@ HRESULT CBSaveThumbFile::Close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbFile::Read(void *buffer, uint32 size) {
+HRESULT CBSaveThumbFile::read(void *buffer, uint32 size) {
 	if (!_data || _pos + size > _size) return E_FAIL;
 
 	memcpy(buffer, (byte *)_data + _pos, size);
@@ -120,7 +120,7 @@ HRESULT CBSaveThumbFile::Read(void *buffer, uint32 size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbFile::Seek(uint32 pos, TSeek origin) {
+HRESULT CBSaveThumbFile::seek(uint32 pos, TSeek origin) {
 	if (!_data) return E_FAIL;
 
 	uint32 newPos = 0;

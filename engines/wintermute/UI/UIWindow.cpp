@@ -89,7 +89,7 @@ CUIWindow::CUIWindow(CBGame *inGame): CUIObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CUIWindow::~CUIWindow() {
-	Close();
+	close();
 	cleanup();
 }
 
@@ -773,7 +773,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Close") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushBool(SUCCEEDED(Close()));
+		Stack->PushBool(SUCCEEDED(close()));
 		return S_OK;
 	}
 
@@ -1070,7 +1070,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 		if (Value->GetBool())
 			GoExclusive();
 		else {
-			Close();
+			close();
 			_visible = true;
 		}
 		return S_OK;
@@ -1083,7 +1083,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 		if (Value->GetBool())
 			GoSystemExclusive();
 		else {
-			Close();
+			close();
 			_visible = true;
 		}
 		return S_OK;
@@ -1254,7 +1254,7 @@ HRESULT CUIWindow::GoSystemExclusive() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::Close() {
+HRESULT CUIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		Game->Unfreeze();
 	}
@@ -1273,7 +1273,7 @@ HRESULT CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
 
 	switch (obj->_type) {
 	case UI_BUTTON:
-		if (scumm_stricmp(obj->_name, "close") == 0) Close();
+		if (scumm_stricmp(obj->_name, "close") == 0) close();
 		else return CBObject::listen(param1, param2);
 		break;
 	default:

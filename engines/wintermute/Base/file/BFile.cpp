@@ -51,16 +51,16 @@ CBFile::~CBFile() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFile::IsEOF() {
+bool CBFile::isEOF() {
 	return _pos == _size;
 }
 
 Common::SeekableReadStream *CBFile::getMemStream() {
 	uint32 oldPos = getPos();
-	Seek(0);
+	seek(0);
 	byte *data = new byte[getSize()];
-	Read(data, getSize());
-	Seek(oldPos);
+	read(data, getSize());
+	seek(oldPos);
 	Common::MemoryReadStream *memStream = new Common::MemoryReadStream(data, getSize(), DisposeAfterUse::YES);
 	return memStream;
 }
