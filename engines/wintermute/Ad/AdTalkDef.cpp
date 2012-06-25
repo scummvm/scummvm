@@ -159,7 +159,7 @@ HRESULT CAdTalkDef::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -210,18 +210,18 @@ HRESULT CAdTalkDef::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkDef::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdTalkDef::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "TALK {\n");
 	if (_defaultSpriteFilename) Buffer->PutTextIndent(Indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
 
 	if (_defaultSpriteSetFilename) Buffer->PutTextIndent(Indent + 2, "DEFAULT_SPRITESET_FILE=\"%s\"\n", _defaultSpriteSetFilename);
-	else if (_defaultSpriteSet) _defaultSpriteSet->SaveAsText(Buffer, Indent + 2);
+	else if (_defaultSpriteSet) _defaultSpriteSet->saveAsText(Buffer, Indent + 2);
 
 	for (int i = 0; i < _nodes.GetSize(); i++) {
-		_nodes[i]->SaveAsText(Buffer, Indent + 2);
+		_nodes[i]->saveAsText(Buffer, Indent + 2);
 		Buffer->PutTextIndent(Indent, "\n");
 	}
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n");
 

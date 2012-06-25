@@ -119,7 +119,7 @@ HRESULT CAdScaleLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -133,11 +133,11 @@ HRESULT CAdScaleLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdScaleLevel::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "SCALE_LEVEL {\n");
 	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
 	Buffer->PutTextIndent(Indent + 2, "SCALE=%d\n", (int)_scale);
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 	Buffer->PutTextIndent(Indent, "}\n");
 
 	return S_OK;

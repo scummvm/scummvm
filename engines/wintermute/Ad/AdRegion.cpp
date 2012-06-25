@@ -199,7 +199,7 @@ HRESULT CAdRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -346,7 +346,7 @@ const char *CAdRegion::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdRegion::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "REGION {\n");
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
@@ -363,13 +363,13 @@ HRESULT CAdRegion::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (_scProp) _scProp->SaveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
 
 	for (i = 0; i < _points.GetSize(); i++) {
 		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n\n");
 

@@ -40,7 +40,7 @@ public:
 	virtual ~CUIEntity();
 	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 
 	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
 	CAdEntity *_entity;

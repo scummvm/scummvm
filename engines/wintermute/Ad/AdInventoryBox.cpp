@@ -281,7 +281,7 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -317,7 +317,7 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdInventoryBox::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "INVENTORY_BOX\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
@@ -337,12 +337,12 @@ HRESULT CAdInventoryBox::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// window
-	if (_window) _window->SaveAsText(Buffer, Indent + 2);
+	if (_window) _window->saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// editor properties
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n");
 	return S_OK;

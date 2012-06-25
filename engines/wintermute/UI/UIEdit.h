@@ -58,7 +58,7 @@ public:
 
 	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *Name);

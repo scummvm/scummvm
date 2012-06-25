@@ -52,7 +52,7 @@ public:
 	DECLARE_PERSISTENT(CScValue, CBBase)
 
 	bool _isConstVar;
-	HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	void SetValue(CScValue *Val);
 	bool _persistent;
 	bool PropExists(const char *Name);

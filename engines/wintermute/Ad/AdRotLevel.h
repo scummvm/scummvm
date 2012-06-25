@@ -39,7 +39,7 @@ public:
 	CAdRotLevel(CBGame *inGame);
 	virtual ~CAdRotLevel();
 	float _rotation;
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 };

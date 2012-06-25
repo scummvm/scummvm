@@ -391,7 +391,7 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty((byte *)params, false);
+			parseEditorProperty((byte *)params, false);
 			break;
 		}
 

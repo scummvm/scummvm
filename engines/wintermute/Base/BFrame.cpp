@@ -276,7 +276,7 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty((byte *)params, false);
+			parseEditorProperty((byte *)params, false);
 			break;
 		}
 	}
@@ -342,7 +342,7 @@ bool CBFrame::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sca
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CBFrame::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "FRAME {\n");
 	Buffer->PutTextIndent(Indent + 2, "DELAY = %d\n", _delay);
 
@@ -360,18 +360,18 @@ HRESULT CBFrame::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	if (_editorExpanded)
 		Buffer->PutTextIndent(Indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
 
-	if (_subframes.GetSize() > 0) _subframes[0]->SaveAsText(Buffer, Indent, false);
+	if (_subframes.GetSize() > 0) _subframes[0]->saveAsText(Buffer, Indent, false);
 
 	int i;
 	for (i = 1; i < _subframes.GetSize(); i++) {
-		_subframes[i]->SaveAsText(Buffer, Indent + 2);
+		_subframes[i]->saveAsText(Buffer, Indent + 2);
 	}
 
 	for (i = 0; i < _applyEvent.GetSize(); i++) {
 		Buffer->PutTextIndent(Indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
 	}
 
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 
 	Buffer->PutTextIndent(Indent, "}\n\n");

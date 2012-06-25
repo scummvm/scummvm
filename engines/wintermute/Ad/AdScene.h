@@ -87,7 +87,7 @@ public:
 	float GetScaleAt(int Y);
 	HRESULT SortScaleLevels();
 	HRESULT SortRotLevels();
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	uint32 GetAlphaAt(int X, int Y, bool ColorCheck = false);
 	bool _paralaxScrolling;
 	void SkipTo(int OffsetX, int OffsetY);

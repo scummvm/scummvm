@@ -172,7 +172,7 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty((byte *)params, false);
+			parseEditorProperty((byte *)params, false);
 			break;
 		}
 	}
@@ -249,7 +249,7 @@ bool CBSubFrame::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float 
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::SaveAsText(CBDynBuffer *Buffer, int Indent, bool Complete) {
+HRESULT CBSubFrame::saveAsText(CBDynBuffer *Buffer, int Indent, bool Complete) {
 	if (Complete)
 		Buffer->PutTextIndent(Indent, "SUBFRAME {\n");
 
@@ -291,7 +291,7 @@ HRESULT CBSubFrame::SaveAsText(CBDynBuffer *Buffer, int Indent, bool Complete) {
 	if (_editorSelected)
 		Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 
 	if (Complete)

@@ -41,7 +41,7 @@ public:
 	void Cleanup();
 	HRESULT Mimic(CAdWaypointGroup *Wpt, float Scale = 100.0f, int X = 0, int Y = 0);
 	DECLARE_PERSISTENT(CAdWaypointGroup, CBObject)
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	bool _active;
 	CAdWaypointGroup(CBGame *inGame);
 	HRESULT LoadFile(const char *Filename);

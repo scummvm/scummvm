@@ -1025,11 +1025,11 @@ bool CAdObject::GetExtendedFlag(const char *FlagName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::SaveAsText(CBDynBuffer *Buffer, int Indent) {
-	if (_blockRegion) _blockRegion->SaveAsText(Buffer, Indent + 2, "BLOCKED_REGION");
-	if (_wptGroup) _wptGroup->SaveAsText(Buffer, Indent + 2);
+HRESULT CAdObject::saveAsText(CBDynBuffer *Buffer, int Indent) {
+	if (_blockRegion) _blockRegion->saveAsText(Buffer, Indent + 2, "BLOCKED_REGION");
+	if (_wptGroup) _wptGroup->saveAsText(Buffer, Indent + 2);
 
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	return S_OK;
 }

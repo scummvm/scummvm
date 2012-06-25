@@ -891,7 +891,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 
 		case TOKEN_THUMBNAIL_WIDTH:

@@ -302,7 +302,7 @@ HRESULT CBSprite::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 		break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -428,7 +428,7 @@ bool CBSprite::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sc
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CBSprite::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "SPRITE {\n");
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "LOOPING=%s\n", _looping ? "TRUE" : "FALSE");
@@ -451,7 +451,7 @@ HRESULT CBSprite::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		Buffer->PutTextIndent(Indent + 2, "EDITOR_BG_ALPHA=%d\n", _editorBgAlpha);
 	}
 
-	CBScriptHolder::SaveAsText(Buffer, Indent + 2);
+	CBScriptHolder::saveAsText(Buffer, Indent + 2);
 
 	int i;
 
@@ -462,7 +462,7 @@ HRESULT CBSprite::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 	for (i = 0; i < _frames.GetSize(); i++) {
-		_frames[i]->SaveAsText(Buffer, Indent + 2);
+		_frames[i]->saveAsText(Buffer, Indent + 2);
 	}
 
 	Buffer->PutTextIndent(Indent, "}\n\n");

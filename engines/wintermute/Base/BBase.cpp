@@ -55,7 +55,7 @@ CBBase::~CBBase() {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBBase::GetEditorProp(const char *PropName, const char *InitVal) {
+const char *CBBase::getEditorProp(const char *PropName, const char *InitVal) {
 	_editorPropsIter = _editorProps.find(PropName);
 	if (_editorPropsIter != _editorProps.end())
 		return _editorPropsIter->_value.c_str();
@@ -65,7 +65,7 @@ const char *CBBase::GetEditorProp(const char *PropName, const char *InitVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBBase::SetEditorProp(const char *PropName, const char *PropValue) {
+HRESULT CBBase::setEditorProp(const char *PropName, const char *PropValue) {
 	if (PropName == NULL) return E_FAIL;
 
 	if (PropValue == NULL) {
@@ -84,7 +84,7 @@ TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBBase::ParseEditorProperty(byte  *Buffer, bool Complete) {
+HRESULT CBBase::parseEditorProperty(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE(NAME)
@@ -146,7 +146,7 @@ HRESULT CBBase::ParseEditorProperty(byte  *Buffer, bool Complete) {
 	}
 
 
-	SetEditorProp(PropName, PropValue);
+	setEditorProp(PropName, PropValue);
 
 	delete[] PropName;
 	delete[] PropValue;
@@ -158,7 +158,7 @@ HRESULT CBBase::ParseEditorProperty(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBBase::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CBBase::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	_editorPropsIter = _editorProps.begin();
 	while (_editorPropsIter != _editorProps.end()) {
 		Buffer->PutTextIndent(Indent, "EDITOR_PROPERTY\n");

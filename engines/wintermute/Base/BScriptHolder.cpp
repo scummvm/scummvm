@@ -257,8 +257,8 @@ const char *CBScriptHolder::scToString() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::SaveAsText(CBDynBuffer *Buffer, int Indent) {
-	return CBBase::SaveAsText(Buffer, Indent);
+HRESULT CBScriptHolder::saveAsText(CBDynBuffer *Buffer, int Indent) {
+	return CBBase::saveAsText(Buffer, Indent);
 }
 
 

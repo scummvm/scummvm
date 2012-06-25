@@ -582,7 +582,7 @@ HRESULT CUIObject::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CUIObject::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	return E_FAIL;
 }
 

@@ -69,7 +69,7 @@ public:
 	uint32 _listenerParamDWORD;
 	CBScriptHolder *_listenerObject;
 	CUIObject *_focusedWidget;
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *Name);

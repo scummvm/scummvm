@@ -38,7 +38,7 @@ namespace WinterMute {
 class CAdSpriteSet : public CBObject {
 public:
 	bool ContainsSprite(CBSprite *Sprite);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent = 0);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent = 0);
 	CBSprite *GetSprite(TDirection Direction);
 	DECLARE_PERSISTENT(CAdSpriteSet, CBObject)
 	CBObject *_owner;

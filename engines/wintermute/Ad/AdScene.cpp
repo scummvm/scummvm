@@ -836,7 +836,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 
 		}
@@ -1969,7 +1969,7 @@ HRESULT CAdScene::RemoveObject(CAdObject *Object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdScene::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	int i;
 
 	Buffer->PutTextIndent(Indent, "SCENE {\n");
@@ -1992,7 +1992,7 @@ HRESULT CAdScene::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// properties
-	if (_scProp) _scProp->SaveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
 
 	// viewport
 	if (_viewport) {
@@ -2027,25 +2027,25 @@ HRESULT CAdScene::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	// waypoints
 	Buffer->PutTextIndent(Indent + 2, "; ----- waypoints\n");
-	for (i = 0; i < _waypointGroups.GetSize(); i++) _waypointGroups[i]->SaveAsText(Buffer, Indent + 2);
+	for (i = 0; i < _waypointGroups.GetSize(); i++) _waypointGroups[i]->saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// layers
 	Buffer->PutTextIndent(Indent + 2, "; ----- layers\n");
-	for (i = 0; i < _layers.GetSize(); i++) _layers[i]->SaveAsText(Buffer, Indent + 2);
+	for (i = 0; i < _layers.GetSize(); i++) _layers[i]->saveAsText(Buffer, Indent + 2);
 
 	// scale levels
 	Buffer->PutTextIndent(Indent + 2, "; ----- scale levels\n");
-	for (i = 0; i < _scaleLevels.GetSize(); i++) _scaleLevels[i]->SaveAsText(Buffer, Indent + 2);
+	for (i = 0; i < _scaleLevels.GetSize(); i++) _scaleLevels[i]->saveAsText(Buffer, Indent + 2);
 
 	// rotation levels
 	Buffer->PutTextIndent(Indent + 2, "; ----- rotation levels\n");
-	for (i = 0; i < _rotLevels.GetSize(); i++) _rotLevels[i]->SaveAsText(Buffer, Indent + 2);
+	for (i = 0; i < _rotLevels.GetSize(); i++) _rotLevels[i]->saveAsText(Buffer, Indent + 2);
 
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
@@ -2054,7 +2054,7 @@ HRESULT CAdScene::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent + 2, "; ----- free entities\n");
 	for (i = 0; i < _objects.GetSize(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
-			_objects[i]->SaveAsText(Buffer, Indent + 2);
+			_objects[i]->saveAsText(Buffer, Indent + 2);
 
 		}
 	}

@@ -40,7 +40,7 @@ public:
 	void CorrectSize(int *Width, int *Height);
 	HRESULT LoadFile(const char *Filename);
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 
 	HRESULT Display(int X, int Y, int Width, int Height);
 	CUITiledImage(CBGame *inGame = NULL);

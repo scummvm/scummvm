@@ -47,7 +47,7 @@ public:
 	CAdTalkNode(CBGame *inGame);
 	virtual ~CAdTalkNode();
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent = 0);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent = 0);
 	char *_spriteFilename;
 	CBSprite *_sprite;
 	uint32 _startTime;

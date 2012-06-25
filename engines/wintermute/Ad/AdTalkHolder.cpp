@@ -326,7 +326,7 @@ const char *CAdTalkHolder::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkHolder::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdTalkHolder::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	int i;
 	for (i = 0; i < _talkSprites.GetSize(); i++) {
 		if (_talkSprites[i]->_filename)

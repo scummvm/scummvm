@@ -378,7 +378,7 @@ const char *CBRegion::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::SaveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOverride) {
+HRESULT CBRegion::saveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOverride) {
 	if (!NameOverride) Buffer->PutTextIndent(Indent, "REGION {\n");
 	else Buffer->PutTextIndent(Indent, "%s {\n", NameOverride);
 
@@ -397,7 +397,7 @@ HRESULT CBRegion::SaveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOv
 		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
-	if (_scProp) _scProp->SaveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n\n");
 

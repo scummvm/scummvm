@@ -525,7 +525,7 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
@@ -567,7 +567,7 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CUIWindow::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "WINDOW\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
@@ -658,11 +658,11 @@ HRESULT CUIWindow::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// editor properties
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	// controls
 	for (int i = 0; i < _widgets.GetSize(); i++)
-		_widgets[i]->SaveAsText(Buffer, Indent + 2);
+		_widgets[i]->saveAsText(Buffer, Indent + 2);
 
 
 	Buffer->PutTextIndent(Indent, "}\n");

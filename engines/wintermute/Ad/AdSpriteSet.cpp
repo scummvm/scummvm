@@ -194,7 +194,7 @@ HRESULT CAdSpriteSet::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSp
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -259,7 +259,7 @@ CBSprite *CAdSpriteSet::GetSprite(TDirection Direction) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSpriteSet::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdSpriteSet::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "SPRITESET {\n");
 	if (_name) Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
@@ -293,7 +293,7 @@ HRESULT CAdSpriteSet::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		}
 	}
 
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n");
 

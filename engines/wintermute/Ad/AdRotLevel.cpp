@@ -121,7 +121,7 @@ HRESULT CAdRotLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -135,11 +135,11 @@ HRESULT CAdRotLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdRotLevel::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "ROTATION_LEVEL {\n");
 	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
 	Buffer->PutTextIndent(Indent + 2, "ROTATION=%d\n", (int)_rotation);
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 	Buffer->PutTextIndent(Indent, "}\n");
 
 	return S_OK;

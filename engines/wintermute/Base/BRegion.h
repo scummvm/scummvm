@@ -54,7 +54,7 @@ public:
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
 	RECT _rect;
 	CBArray<CBPoint *, CBPoint *> _points;
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOverride = NULL);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOverride = NULL);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *Name);

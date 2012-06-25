@@ -48,7 +48,7 @@ public:
 	HRESULT Cleanup();
 	HRESULT RemoveScript(CScScript *Script);
 	HRESULT AddScript(const char *Filename);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
 	HRESULT ApplyEvent(const char *EventName, bool Unbreakable = false);
 	void SetFilename(const char *Filename);

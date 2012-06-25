@@ -802,7 +802,7 @@ HRESULT CScValue::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CScValue::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		Buffer->PutTextIndent(Indent, "PROPERTY {\n");

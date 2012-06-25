@@ -255,7 +255,7 @@ HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -307,7 +307,7 @@ HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CUITiledImage::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "TILED_IMAGE\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
@@ -330,7 +330,7 @@ HRESULT CUITiledImage::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent + 2, "HORIZONTAL_TILES { %d, %d, %d }\n", H1, H2, H3);
 
 	// editor properties
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n");
 	return S_OK;

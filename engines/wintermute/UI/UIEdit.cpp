@@ -283,7 +283,7 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -302,7 +302,7 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CUIEdit::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "EDIT\n");
 	Buffer->PutTextIndent(Indent, "{\n");
 
@@ -352,7 +352,7 @@ HRESULT CUIEdit::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
 	// editor properties
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n");
 	return S_OK;

@@ -211,7 +211,7 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -478,7 +478,7 @@ const char *CAdLayer::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdLayer::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "LAYER {\n");
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
@@ -496,15 +496,15 @@ HRESULT CAdLayer::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (_scProp) _scProp->SaveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
 
 	for (i = 0; i < _nodes.GetSize(); i++) {
 		switch (_nodes[i]->_type) {
 		case OBJECT_ENTITY:
-			_nodes[i]->_entity->SaveAsText(Buffer, Indent + 2);
+			_nodes[i]->_entity->saveAsText(Buffer, Indent + 2);
 			break;
 		case OBJECT_REGION:
-			_nodes[i]->_region->SaveAsText(Buffer, Indent + 2);
+			_nodes[i]->_region->saveAsText(Buffer, Indent + 2);
 			break;
 		default:
 			error("CAdLayer::SaveAsText - Unhandled enum");
@@ -512,7 +512,7 @@ HRESULT CAdLayer::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 		}
 	}
 
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n\n");
 

@@ -50,7 +50,7 @@ public:
 	CBArray<CAdTalkNode *, CAdTalkNode *> _nodes;
 	char *_defaultSpriteFilename;
 	CBSprite *_defaultSprite;
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent = 0);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent = 0);
 };
 
 } // end of namespace WinterMute

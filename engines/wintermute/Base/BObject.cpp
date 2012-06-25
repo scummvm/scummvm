@@ -858,7 +858,7 @@ HRESULT CBObject::ShowCursor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CBObject::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	return S_OK;
 }
 

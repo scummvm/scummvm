@@ -46,7 +46,7 @@ public:
 	DECLARE_PERSISTENT(CBSubFrame, CBScriptable)
 	void SetDefaultRect();
 	uint32 _transparent;
-	HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent, bool Complete = true);
+	HRESULT saveAsText(CBDynBuffer *Buffer, int Indent, bool Complete = true);
 	bool _editorSelected;
 	CBSubFrame(CBGame *inGame);
 	virtual ~CBSubFrame();

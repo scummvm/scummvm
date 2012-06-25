@@ -79,7 +79,7 @@ public:
 	CBFont *_fontInactive;
 	CBSprite *_imageInactive;
 	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *Name);

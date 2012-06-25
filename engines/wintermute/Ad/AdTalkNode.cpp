@@ -147,7 +147,7 @@ HRESULT CAdTalkNode::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -198,17 +198,17 @@ HRESULT CAdTalkNode::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkNode::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdTalkNode::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "ACTION {\n");
 	if (_comment) Buffer->PutTextIndent(Indent + 2, "COMMENT=\"%s\"\n", _comment);
 	Buffer->PutTextIndent(Indent + 2, "START_TIME=%d\n", _startTime);
 	if (!_playToEnd) Buffer->PutTextIndent(Indent + 2, "END_TIME=%d\n", _endTime);
 	if (_spriteFilename) Buffer->PutTextIndent(Indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
 	if (_spriteSetFilename) Buffer->PutTextIndent(Indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
-	else if (_spriteSet) _spriteSet->SaveAsText(Buffer, Indent + 2);
+	else if (_spriteSet) _spriteSet->saveAsText(Buffer, Indent + 2);
 	if (_preCache) Buffer->PutTextIndent(Indent + 2, "PRECACHE=\"%s\"\n", _preCache ? "TRUE" : "FALSE");
 
-	CBBase::SaveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n");
 

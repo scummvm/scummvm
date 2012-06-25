@@ -97,7 +97,7 @@ public:
 	CBSprite *_cursor;
 	bool _sharedCursors;
 	CBSprite *_activeCursor;
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	virtual HRESULT Listen(CBScriptHolder *param1, uint32 param2);
 	bool _ready;
 	bool _registrable;

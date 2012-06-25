@@ -93,7 +93,7 @@ public:
 	CAdWaypointGroup *_currentWptGroup;
 	CAdInventory *GetInventory();
 
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 
 	virtual HRESULT AfterMove();
 	CAdRegion *_currentRegions[MAX_NUM_REGIONS];

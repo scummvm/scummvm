@@ -37,7 +37,7 @@ class CAdTalkHolder : public CAdObject {
 public:
 	DECLARE_PERSISTENT(CAdTalkHolder, CAdObject)
 	virtual CBSprite *GetTalkStance(const char *Stance);
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	CBSprite *_sprite;
 	CBArray<CBSprite *, CBSprite *> _talkSprites;
 	CBArray<CBSprite *, CBSprite *> _talkSpritesEx;

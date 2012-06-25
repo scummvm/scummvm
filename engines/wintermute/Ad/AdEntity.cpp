@@ -431,7 +431,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			ParseEditorProperty(params, false);
+			parseEditorProperty(params, false);
 			break;
 
 		case TOKEN_WALK_TO_X:
@@ -877,7 +877,7 @@ const char *CAdEntity::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::SaveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "ENTITY {\n");
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	if (_subtype == ENTITY_SOUND)
@@ -942,13 +942,13 @@ HRESULT CAdEntity::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	if (_cursor && _cursor->_filename)
 		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
-	CAdTalkHolder::SaveAsText(Buffer, Indent + 2);
+	CAdTalkHolder::saveAsText(Buffer, Indent + 2);
 
-	if (_region) _region->SaveAsText(Buffer, Indent + 2);
+	if (_region) _region->saveAsText(Buffer, Indent + 2);
 
-	if (_scProp) _scProp->SaveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
 
-	CAdObject::SaveAsText(Buffer, Indent + 2);
+	CAdObject::saveAsText(Buffer, Indent + 2);
 
 	Buffer->PutTextIndent(Indent, "}\n\n");
 

@@ -46,7 +46,7 @@ public:
 	void UpdatePosition();
 	virtual int GetHeight();
 	CBRegion *_region;
-	virtual HRESULT SaveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	virtual HRESULT Update();
 	virtual HRESULT Display();
 	CAdEntity(CBGame *inGame);

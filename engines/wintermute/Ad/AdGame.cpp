@@ -1229,7 +1229,7 @@ HRESULT CAdGame::LoadBuffer(byte  *Buffer, bool Complete) {
 				break;
 
 				case TOKEN_EDITOR_PROPERTY:
-					ParseEditorProperty(params2, false);
+					parseEditorProperty(params2, false);
 					break;
 
 				case TOKEN_STARTUP_SCENE:
