@@ -501,6 +501,9 @@ HRESULT CUIButton::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	case TAL_CENTER:
 		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
+	default:
+		warning("CUIButton::SaveAsText - unhandled enum");
+		break;
 	}
 
 	Buffer->PutTextIndent(Indent + 2, "\n");

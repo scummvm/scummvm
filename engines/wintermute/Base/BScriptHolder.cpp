@@ -467,7 +467,7 @@ void CBScriptHolder::ScDebuggerDesc(char *Buf, int BufSize) {
 // IWmeObject
 //////////////////////////////////////////////////////////////////////////
 bool CBScriptHolder::SendEvent(const char *EventName) {
-	return SUCCEEDED(ApplyEvent((char *)EventName));
+	return SUCCEEDED(ApplyEvent(EventName));
 }
 
 } // end of namespace WinterMute

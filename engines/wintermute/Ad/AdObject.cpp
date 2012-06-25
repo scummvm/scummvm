@@ -1143,8 +1143,8 @@ HRESULT CAdObject::DisplaySpriteAttachment(CAdObject *Attachment) {
 	int OrigY = Attachment->_posY;
 
 	// inherit position from owner
-	Attachment->_posX = this->_posX + Attachment->_posX * ScaleX / 100.0f;
-	Attachment->_posY = this->_posY + Attachment->_posY * ScaleY / 100.0f;
+	Attachment->_posX = (int)(this->_posX + Attachment->_posX * ScaleX / 100.0f);
+	Attachment->_posY = (int)(this->_posY + Attachment->_posY * ScaleY / 100.0f);
 
 	// inherit other props
 	Attachment->_alphaColor = this->_alphaColor;
@@ -1194,8 +1194,8 @@ HRESULT CAdObject::UpdatePartEmitter() {
 		float ScaleX, ScaleY;
 		GetScale(&ScaleX, &ScaleY);
 
-		_partEmitter->_posX = _posX + (ScaleX / 100.0f) * _partOffsetX;
-		_partEmitter->_posY = _posY + (ScaleY / 100.0f) * _partOffsetY;
+		_partEmitter->_posX = (int)(_posX + (ScaleX / 100.0f) * _partOffsetX);
+		_partEmitter->_posY = (int)(_posY + (ScaleY / 100.0f) * _partOffsetY);
 	}
 	return _partEmitter->Update();
 }

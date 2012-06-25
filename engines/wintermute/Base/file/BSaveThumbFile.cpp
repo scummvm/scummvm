@@ -137,7 +137,7 @@ HRESULT CBSaveThumbFile::Seek(uint32 pos, TSeek origin) {
 		break;
 	}
 
-	if (newPos < 0 || newPos > _size) return E_FAIL;
+	if (newPos > _size) return E_FAIL;
 	else _pos = newPos;
 
 	return S_OK;

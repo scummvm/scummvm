@@ -94,7 +94,7 @@ CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 	#else
 	*/
 	_compilerAvailable = false;
-	_compilerDLL = NULL;
+	_compilerDLL = 0;
 //#endif
 
 

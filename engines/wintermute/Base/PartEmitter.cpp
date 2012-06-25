@@ -178,10 +178,10 @@ HRESULT CPartEmitter::InitParticle(CPartParticle *Particle, uint32 CurrentTime, 
 	float GrowthRate = CBUtils::RandomFloat(_growthRate1, _growthRate2);
 
 	if (!CBPlatform::IsRectEmpty(&_border)) {
-		int ThicknessLeft   = _borderThicknessLeft   - (float)_borderThicknessLeft   * PosZ / 100.0f;
-		int ThicknessRight  = _borderThicknessRight  - (float)_borderThicknessRight  * PosZ / 100.0f;
-		int ThicknessTop    = _borderThicknessTop    - (float)_borderThicknessTop    * PosZ / 100.0f;
-		int ThicknessBottom = _borderThicknessBottom - (float)_borderThicknessBottom * PosZ / 100.0f;
+		int ThicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * PosZ / 100.0f);
+		int ThicknessRight  = (int)(_borderThicknessRight  - (float)_borderThicknessRight  * PosZ / 100.0f);
+		int ThicknessTop    = (int)(_borderThicknessTop    - (float)_borderThicknessTop    * PosZ / 100.0f);
+		int ThicknessBottom = (int)(_borderThicknessBottom - (float)_borderThicknessBottom * PosZ / 100.0f);
 
 		Particle->_border = _border;
 		Particle->_border.left += ThicknessLeft;

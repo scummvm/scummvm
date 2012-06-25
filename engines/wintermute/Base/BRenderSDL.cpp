@@ -286,10 +286,10 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, Common::Rect *rect) {
 	} else {
 		RECT rc;
 		Game->GetCurrentViewportRect(&rc);
-		fillRect.left = rc.left;
-		fillRect.top = rc.top;
-		fillRect.setWidth(rc.right - rc.left);
-		fillRect.setHeight(rc.bottom - rc.top);
+		fillRect.left = (int16)rc.left;
+		fillRect.top = (int16)rc.top;
+		fillRect.setWidth((int16)(rc.right - rc.left));
+		fillRect.setHeight((int16)(rc.bottom - rc.top));
 	}
 	ModTargetRect(&fillRect);
 
@@ -337,19 +337,19 @@ void CBRenderSDL::drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *s
 
 	// Handle off-screen clipping
 	if (posY < 0) {
-		img->h = MAX(0, (int)img->h - -posY);
+		img->h = (uint16)(MAX(0, (int)img->h - -posY));
 		img->pixels = (byte *)img->pixels + img->pitch * -posY;
 		posY = 0;
 	}
 
 	if (posX < 0) {
-		img->w = MAX(0, (int)img->w - -posX);
+		img->w = (uint16)(MAX(0, (int)img->w - -posX));
 		img->pixels = (byte *)img->pixels + (-posX * 4);
 		posX = 0;
 	}
 
-	img->w = CLIP((int)img->w, 0, (int)MAX((int)_renderSurface->w - posX, 0));
-	img->h = CLIP((int)img->h, 0, (int)MAX((int)_renderSurface->h - posY, 0));
+	img->w = (uint16)(CLIP((int)img->w, 0, (int)MAX((int)_renderSurface->w - posX, 0)));
+	img->h = (uint16)(CLIP((int)img->h, 0, (int)MAX((int)_renderSurface->h - posY, 0)));
 
 	for (int i = 0; i < img->h; i++) {
 		void *destPtr = _renderSurface->getBasePtr(posX, posY + i);
@@ -457,10 +457,10 @@ const char *CBRenderSDL::GetName() {
 HRESULT CBRenderSDL::SetViewport(int left, int top, int right, int bottom) {
 	Common::Rect rect;
 	// TODO: Hopefully this is the same logic that ScummVM uses.
-	rect.left = left + _borderLeft;
-	rect.top = top + _borderTop;
-	rect.right = (right - left) * _ratioX;
-	rect.bottom = (bottom - top) * _ratioY;
+	rect.left = (int16)(left + _borderLeft);
+	rect.top = (int16)(top + _borderTop);
+	rect.right = (int16)((right - left) * _ratioX);
+	rect.bottom = (int16)((bottom - top) * _ratioY);
 
 	// TODO fix this once viewports work correctly in SDL/landscape
 #ifndef __IPHONEOS__

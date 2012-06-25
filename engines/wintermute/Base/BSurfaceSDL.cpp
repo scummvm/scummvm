@@ -518,8 +518,8 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	// TODO: This actually requires us to have the SAME source-offsets every time,
 	// But no checking is in place for that yet.
 	Graphics::Surface drawSrc;
-	drawSrc.w = position.width();
-	drawSrc.h = position.height();
+	drawSrc.w = (uint16)position.width();
+	drawSrc.h = (uint16)position.height();
 	drawSrc.format = _surface->format;
 
 	if (position.width() != srcRect.width() || position.height() != srcRect.height()) {

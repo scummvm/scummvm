@@ -72,7 +72,7 @@ HRESULT CBFader::Update() {
 
 	if (time >= _duration) _currentAlpha = _targetAlpha;
 	else {
-		_currentAlpha = _sourceAlpha + (float)time / (float)_duration * AlphaDelta;
+		_currentAlpha = (byte)(_sourceAlpha + (float)time / (float)_duration * AlphaDelta);
 	}
 	_currentAlpha = MIN((unsigned char)255, MAX(_currentAlpha, (byte)0));  // TODO: clean
 

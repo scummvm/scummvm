@@ -261,14 +261,14 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 	warning("%s %d %d %d %d", text.c_str(), D3DCOLGetR(_layers[0]->_color), D3DCOLGetG(_layers[0]->_color), D3DCOLGetB(_layers[0]->_color), D3DCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(width, _lineHeight * lines.size(), Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
+	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
 
 	uint16 useColor = 0xffff;
 	Common::Array<Common::String>::iterator it;
 	int heightOffset = 0;
 	for (it = lines.begin(); it != lines.end(); it++) {
 		_font->drawString(surface, *it, 0, heightOffset, width, useColor, alignment);
-		heightOffset += _lineHeight;
+		heightOffset += (int)_lineHeight;
 	}
 
 	CBSurfaceSDL *retSurface = new CBSurfaceSDL(Game);
@@ -399,7 +399,7 @@ void CBFontTT::BlitSurface(Graphics::Surface *src, Graphics::Surface *target, Co
 
 //////////////////////////////////////////////////////////////////////////
 int CBFontTT::GetLetterHeight() {
-	return GetLineHeight();
+	return (int)GetLineHeight();
 }
 
 
@@ -641,7 +641,7 @@ HRESULT CBFontTT::InitFont() {
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
 		AnsiString fontFileName = PathUtil::Combine(CBPlatform::GetSystemFontPath(), PathUtil::GetFileName(_fontFile));
-		file = Game->_fileManager->OpenFile((char *)fontFileName.c_str(), false);
+		file = Game->_fileManager->OpenFile(fontFileName.c_str(), false);
 		if (!file) {
 			Game->LOG(0, "Error loading TrueType font '%s'", _fontFile);
 			//return E_FAIL;

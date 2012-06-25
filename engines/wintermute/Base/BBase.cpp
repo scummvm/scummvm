@@ -163,7 +163,7 @@ HRESULT CBBase::SaveAsText(CBDynBuffer *Buffer, int Indent) {
 	while (_editorPropsIter != _editorProps.end()) {
 		Buffer->PutTextIndent(Indent, "EDITOR_PROPERTY\n");
 		Buffer->PutTextIndent(Indent, "{\n");
-		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)_editorPropsIter->_key.c_str());
+		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _editorPropsIter->_key.c_str());
 		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->_value.c_str());
 		//Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)_editorPropsIter->first.c_str()); // <- TODO, remove
 		//Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->second.c_str()); // <- TODO, remove

@@ -167,7 +167,7 @@ int CBPlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
 // Win32 API bindings
 //////////////////////////////////////////////////////////////////////////
 HINSTANCE CBPlatform::ShellExecute(HWND hwnd, LPCSTR lpOperation, LPCSTR lpFile, LPCSTR lpParameters, LPCSTR lpDirectory, int nShowCmd) {
-	return NULL;
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ bool CBPlatform::CopyFile(const char *from, const char *to, bool failIfExists) {
 
 //////////////////////////////////////////////////////////////////////////
 HWND CBPlatform::SetCapture(HWND hWnd) {
-	return NULL;
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////

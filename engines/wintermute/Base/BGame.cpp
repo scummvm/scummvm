@@ -197,7 +197,7 @@ CBGame::CBGame(): CBObject(this) {
 
 	_subtitlesSpeed = 70;
 
-	_resourceModule = NULL;
+	_resourceModule = 0;
 
 	_forceNonStreamedSounds = false;
 
@@ -568,10 +568,10 @@ void CBGame::DEBUG_DebugDisable() {
 
 //////////////////////////////////////////////////////////////////////
 void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
-	int secs = g_system->getMillis() / 1000;
-	int hours = secs / 3600;
+	uint32 secs = g_system->getMillis() / 1000;
+	uint32 hours = secs / 3600;
 	secs = secs % 3600;
-	int mins = secs / 60;
+	uint32 mins = secs / 60;
 	secs = secs % 60;
 
 	char buff[512];
