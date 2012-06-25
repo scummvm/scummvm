@@ -192,7 +192,7 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_IMAGE:
@@ -319,7 +319,7 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::Update() {
+HRESULT CAdItem::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY && _animSprite) {
@@ -354,7 +354,7 @@ HRESULT CAdItem::Update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TALKING: {
-		_sentence->Update();
+		_sentence->update();
 		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
 
 		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->IsPlaying() && !_sentence->_sound->IsPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
@@ -386,7 +386,7 @@ HRESULT CAdItem::Update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::Display(int X, int Y) {
+HRESULT CAdItem::display(int X, int Y) {
 	int Width = 0;
 	if (_currentSprite) {
 		RECT rc;
@@ -750,10 +750,10 @@ HRESULT CAdItem::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::GetExtendedFlag(const char *FlagName) {
+bool CAdItem::getExtendedFlag(const char *FlagName) {
 	if (!FlagName) return false;
 	else if (strcmp(FlagName, "usable") == 0) return true;
-	else return CAdObject::GetExtendedFlag(FlagName);
+	else return CAdObject::getExtendedFlag(FlagName);
 }
 
 } // end of namespace WinterMute

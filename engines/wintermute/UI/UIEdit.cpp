@@ -245,7 +245,7 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_CURSOR:
@@ -307,7 +307,7 @@ HRESULT CUIEdit::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "{\n");
 
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
@@ -543,7 +543,7 @@ void CUIEdit::SetCursorChar(const char *Char) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
+HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 	if (!_visible) return S_OK;
 
 
@@ -551,7 +551,7 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 	TTextEncoding OrigEncoding = Game->_textEncoding;
 	Game->_textEncoding = TEXT_ANSI;
 
-	if (_back) _back->Display(OffsetX + _posX, OffsetY + _posY, _width, _height);
+	if (_back) _back->display(OffsetX + _posX, OffsetY + _posY, _width, _height);
 	if (_image) _image->Draw(OffsetX + _posX, OffsetY + _posY, NULL);
 
 	// prepare fonts
@@ -686,7 +686,7 @@ HRESULT CUIEdit::Display(int OffsetX, int OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::HandleKeypress(Common::Event *event, bool printable) {
+bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 	bool Handled = false;
 
 	if (event->type == Common::EVENT_KEYDOWN && !printable) {

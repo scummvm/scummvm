@@ -142,7 +142,7 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_MAIN:
@@ -481,7 +481,7 @@ const char *CAdLayer::scToString() {
 HRESULT CAdLayer::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "LAYER {\n");
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 	Buffer->PutTextIndent(Indent + 2, "MAIN=%s\n", _main ? "TRUE" : "FALSE");
 	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", _width);
 	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", _height);

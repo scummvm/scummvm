@@ -90,7 +90,7 @@ HRESULT CBFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFrame::OneTimeDisplay(CBObject *Owner, bool Muted) {
 	if (_sound && !Muted) {
-		if (Owner) Owner->UpdateOneSound(_sound);
+		if (Owner) Owner->updateOneSound(_sound);
 		_sound->Play();
 		/*
 		if (Game->_state == GAME_FROZEN) {

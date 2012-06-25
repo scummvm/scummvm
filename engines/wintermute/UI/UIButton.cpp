@@ -218,7 +218,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_BACK:
@@ -445,7 +445,7 @@ HRESULT CUIButton::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "{\n");
 
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
@@ -578,7 +578,7 @@ void CUIButton::CorrectSize() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::Display(int OffsetX, int OffsetY) {
+HRESULT CUIButton::display(int OffsetX, int OffsetY) {
 	if (!_visible) return S_OK;
 
 	CUITiledImage *back = NULL;
@@ -629,7 +629,7 @@ HRESULT CUIButton::Display(int OffsetX, int OffsetY) {
 		ImageY += (_height - (rc.bottom - rc.top)) / 2;
 	}
 
-	if (back) back->Display(OffsetX + _posX, OffsetY + _posY, _width, _height);
+	if (back) back->display(OffsetX + _posX, OffsetY + _posY, _width, _height);
 	//if(image) image->Draw(ImageX +((_press||_oneTimePress)&&back?1:0), ImageY +((_press||_oneTimePress)&&back?1:0), NULL);
 	if (image) image->Draw(ImageX + ((_press || _oneTimePress) && back ? 1 : 0), ImageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : NULL);
 

@@ -169,7 +169,7 @@ HRESULT CBRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_ACTIVE:
@@ -383,7 +383,7 @@ HRESULT CBRegion::saveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOv
 	else Buffer->PutTextIndent(Indent, "%s {\n", NameOverride);
 
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
 	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 

@@ -52,7 +52,7 @@ CBTransitionMgr::~CBTransitionMgr() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBTransitionMgr::IsReady() {
+bool CBTransitionMgr::isReady() {
 	return (_state == TRANS_MGR_READY);
 }
 
@@ -82,8 +82,8 @@ HRESULT CBTransitionMgr::Start(TTransitionType Type, bool NonInteractive) {
 #define FADE_DURATION 200
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBTransitionMgr::Update() {
-	if (IsReady()) return S_OK;
+HRESULT CBTransitionMgr::update() {
+	if (isReady()) return S_OK;
 
 	if (!_started) {
 		_started = true;
@@ -118,7 +118,7 @@ HRESULT CBTransitionMgr::Update() {
 		error("CBTransitionMgr::Update - unhandled enum NUM_TRANSITION_TYPES");
 	}
 
-	if (IsReady()) {
+	if (isReady()) {
 		if (_preserveInteractive) Game->_interactive = _origInteractive;
 	}
 	return S_OK;

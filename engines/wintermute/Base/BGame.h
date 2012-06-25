@@ -219,8 +219,8 @@ public:
 	CBFader *_fader;
 	bool _suppressScriptErrors;
 
-	virtual HRESULT InvalidateDeviceObjects();
-	virtual HRESULT RestoreDeviceObjects();
+	virtual HRESULT invalidateDeviceObjects();
+	virtual HRESULT restoreDeviceObjects();
 
 	virtual void PublishNatives();
 	virtual HRESULT ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
@@ -253,11 +253,11 @@ public:
 	HRESULT GetSaveSlotDescription(int Slot, char *Buffer);
 	HRESULT GetSaveSlotFilename(int Slot, char *Buffer);
 	void SetWindowTitle();
-	virtual bool HandleMouseWheel(int Delta);
+	virtual bool handleMouseWheel(int Delta);
 	bool _quitting;
 	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
 
-	virtual bool HandleKeypress(Common::Event *event, bool printable = false);
+	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual void handleKeyRelease(Common::Event *event);
 	int _freezeLevel;
 	HRESULT Unfreeze();
@@ -295,7 +295,7 @@ public:
 	virtual HRESULT LoadGame(int Slot);
 	virtual HRESULT LoadGame(const char *Filename);
 	virtual HRESULT SaveGame(int slot, const char *desc, bool quickSave = false);
-	virtual HRESULT ShowCursor();
+	virtual HRESULT showCursor();
 
 	CBSprite *_cursorNoninteractive;
 	CBObject *_activeObject;

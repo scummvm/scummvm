@@ -36,7 +36,7 @@ namespace WinterMute {
 class CBObject;
 class CBViewport : public CBBase {
 public:
-	int GetHeight();
+	int getHeight();
 	int GetWidth();
 	RECT *GetRect();
 	HRESULT SetRect(int left, int top, int right, int bottom, bool NoCheck = false);

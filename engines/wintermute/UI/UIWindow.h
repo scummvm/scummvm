@@ -50,7 +50,7 @@ public:
 	bool _isMenu;
 	bool _fadeBackground;
 	uint32 _fadeColor;
-	virtual bool HandleMouseWheel(int Delta);
+	virtual bool handleMouseWheel(int Delta);
 	CUIWindow *_shieldWindow;
 	CUIButton *_shieldButton;
 	HRESULT Close();
@@ -58,7 +58,7 @@ public:
 	HRESULT GoExclusive();
 	TWindowMode _mode;
 	HRESULT MoveFocus(bool Forward = true);
-	virtual HRESULT HandleMouse(TMouseEvent Event, TMouseButton Button);
+	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
 	POINT _dragFrom;
 	bool _dragging;
 	DECLARE_PERSISTENT(CUIWindow, CUIObject)
@@ -67,10 +67,10 @@ public:
 	HRESULT EnableWidget(const char *Name, bool Enable = true);
 	RECT _titleRect;
 	RECT _dragRect;
-	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
+	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);
 	CUIWindow(CBGame *inGame);
 	virtual ~CUIWindow();
-	virtual bool HandleKeypress(Common::Event *event, bool printable = false);
+	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	CBArray<CUIObject *, CUIObject *> _widgets;
 	TTextAlign _titleAlign;
 	HRESULT LoadFile(const char *Filename);

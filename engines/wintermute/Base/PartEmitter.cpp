@@ -226,7 +226,7 @@ HRESULT CPartEmitter::InitParticle(CPartParticle *Particle, uint32 CurrentTime, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::Update() {
+HRESULT CPartEmitter::update() {
 	if (!_running) return S_OK;
 	else return UpdateInternal(Game->_timer, Game->_timerDelta);
 }
@@ -236,7 +236,7 @@ HRESULT CPartEmitter::UpdateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 	int NumLive = 0;
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
-		_particles[i]->Update(this, CurrentTime, TimerDelta);
+		_particles[i]->update(this, CurrentTime, TimerDelta);
 
 		if (!_particles[i]->_isDead) NumLive++;
 	}
@@ -288,7 +288,7 @@ HRESULT CPartEmitter::UpdateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::Display(CBRegion *Region) {
+HRESULT CPartEmitter::display(CBRegion *Region) {
 	if (_sprites.GetSize() <= 1) Game->_renderer->StartSpriteBatch();
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
@@ -296,7 +296,7 @@ HRESULT CPartEmitter::Display(CBRegion *Region) {
 			if (!Region->PointInRegion(_particles[i]->_pos.x, _particles[i]->_pos.y)) continue;
 		}
 
-		_particles[i]->Display(this);
+		_particles[i]->display(this);
 	}
 
 	if (_sprites.GetSize() <= 1) Game->_renderer->EndSpriteBatch();

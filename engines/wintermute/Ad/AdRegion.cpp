@@ -144,7 +144,7 @@ HRESULT CAdRegion::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_ACTIVE:
@@ -349,7 +349,7 @@ const char *CAdRegion::scToString() {
 HRESULT CAdRegion::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "REGION {\n");
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 	Buffer->PutTextIndent(Indent + 2, "BLOCKED=%s\n", _blocked ? "TRUE" : "FALSE");
 	Buffer->PutTextIndent(Indent + 2, "DECORATION=%s\n", _decoration ? "TRUE" : "FALSE");
 	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");

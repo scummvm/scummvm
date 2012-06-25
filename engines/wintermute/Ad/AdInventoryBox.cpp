@@ -97,7 +97,7 @@ HRESULT CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::Display() {
+HRESULT CAdInventoryBox::display() {
 	CAdGame *AdGame = (CAdGame *)Game;
 
 	if (!_visible) return S_OK;
@@ -117,7 +117,7 @@ HRESULT CAdInventoryBox::Display() {
 		_closeButton->_width = Game->_renderer->_width;
 		_closeButton->_height = Game->_renderer->_height;
 
-		_closeButton->Display();
+		_closeButton->display();
 	}
 
 
@@ -125,7 +125,7 @@ HRESULT CAdInventoryBox::Display() {
 	RECT rect = _itemsArea;
 	if (_window) {
 		CBPlatform::OffsetRect(&rect, _window->_posX, _window->_posY);
-		_window->Display();
+		_window->display();
 	}
 
 	// display items
@@ -138,8 +138,8 @@ HRESULT CAdInventoryBox::Display() {
 			if (ItemIndex >= 0 && ItemIndex < AdGame->_inventoryOwner->GetInventory()->_takenItems.GetSize()) {
 				CAdItem *item = AdGame->_inventoryOwner->GetInventory()->_takenItems[ItemIndex];
 				if (item != ((CAdGame *)Game)->_selectedItem || !_hideSelected) {
-					item->Update();
-					item->Display(xxx, yyy);
+					item->update();
+					item->display(xxx, yyy);
 				}
 			}
 
@@ -235,7 +235,7 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_WINDOW:
@@ -322,7 +322,7 @@ HRESULT CAdInventoryBox::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "{\n");
 
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	Buffer->PutTextIndent(Indent + 2, "AREA { %d, %d, %d, %d }\n", _itemsArea.left, _itemsArea.top, _itemsArea.right, _itemsArea.bottom);
 

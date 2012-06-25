@@ -60,7 +60,7 @@ CBFader::~CBFader() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::Update() {
+HRESULT CBFader::update() {
 	if (!_active) return S_OK;
 
 	int AlphaDelta = _targetAlpha - _sourceAlpha;
@@ -84,7 +84,7 @@ HRESULT CBFader::Update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::Display() {
+HRESULT CBFader::display() {
 	if (!_active) return S_OK;
 
 	if (_currentAlpha > 0x00) return Game->_renderer->FadeToColor(DRGBA(_red, _green, _blue, _currentAlpha));

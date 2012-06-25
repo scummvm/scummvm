@@ -62,14 +62,14 @@ CUIText::~CUIText() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::Display(int OffsetX, int OffsetY) {
+HRESULT CUIText::display(int OffsetX, int OffsetY) {
 	if (!_visible) return S_OK;
 
 
 	CBFont *font = _font;
 	if (!font) font = Game->_systemFont;
 
-	if (_back) _back->Display(OffsetX + _posX, OffsetY + _posY, _width, _height);
+	if (_back) _back->display(OffsetX + _posX, OffsetY + _posY, _width, _height);
 	if (_image) _image->Draw(OffsetX + _posX, OffsetY + _posY, NULL);
 
 	if (font && _text) {
@@ -185,7 +185,7 @@ HRESULT CUIText::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_BACK:
@@ -298,7 +298,7 @@ HRESULT CUIText::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "{\n");
 
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 

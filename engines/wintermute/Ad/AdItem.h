@@ -44,10 +44,10 @@ public:
 	char *_amountString;
 
 
-	HRESULT Update();
+	HRESULT update();
 	DECLARE_PERSISTENT(CAdItem, CAdTalkHolder)
-	HRESULT Display(int X, int Y);
-	bool GetExtendedFlag(const char *FlagName);
+	HRESULT display(int X, int Y);
+	bool getExtendedFlag(const char *FlagName);
 	bool _inInventory;
 	bool _cursorCombined;
 	CBSprite *_spriteHover;

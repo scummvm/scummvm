@@ -117,7 +117,7 @@ HRESULT CBSprite::Draw(int X, int Y, CBObject *Register, float ZoomX, float Zoom
 	}
 
 	// draw frame
-	return Display(X, Y, Register, ZoomX, ZoomY, Alpha);
+	return display(X, Y, Register, ZoomX, ZoomY, Alpha);
 }
 
 
@@ -383,7 +383,7 @@ bool CBSprite::GetCurrentFrame(float ZoomX, float ZoomY) {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::Display(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
+HRESULT CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
 	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return S_OK;
 
 	// on change...

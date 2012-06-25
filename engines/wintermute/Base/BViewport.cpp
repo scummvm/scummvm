@@ -91,7 +91,7 @@ int CBViewport::GetWidth() {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBViewport::GetHeight() {
+int CBViewport::getHeight() {
 	return _rect.bottom - _rect.top;
 }
 

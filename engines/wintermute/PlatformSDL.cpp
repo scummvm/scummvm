@@ -77,14 +77,14 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 		if (Game) Game->OnMouseMiddleUp();
 		break;
 	case Common::EVENT_KEYDOWN:
-		if (Game) Game->HandleKeypress(event);
+		if (Game) Game->handleKeypress(event);
 		break;
 	case Common::EVENT_KEYUP:
 		if (Game) Game->handleKeyRelease(event);
 		break;
 	case Common::EVENT_WHEELUP:
 	case Common::EVENT_WHEELDOWN:
-		if (Game) Game->HandleMouseWheel(event->mouse.y);
+		if (Game) Game->handleMouseWheel(event->mouse.y);
 		break;
 		/*#ifdef __IPHONEOS__
 		        {
@@ -102,12 +102,12 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 
 //TODO
 		/*  case SDL_MOUSEWHEEL:
-		        if (Game) Game->HandleMouseWheel(event->wheel.y);
+		        if (Game) Game->handleMouseWheel(event->wheel.y);
 		        break;
 
 		    case SDL_KEYDOWN:
 		    case SDL_TEXTINPUT:
-		        if (Game) Game->HandleKeypress(event);
+		        if (Game) Game->handleKeypress(event);
 		        break;
 
 		    case SDL_WINDOWEVENT:

@@ -102,8 +102,8 @@ public:
 
 	HRESULT Start();
 
-	HRESULT Update();
-	HRESULT Display(CBRegion *Region = NULL);
+	HRESULT update();
+	HRESULT display(CBRegion *Region = NULL);
 
 	HRESULT SortParticlesByZ();
 	HRESULT AddSprite(const char *Filename);

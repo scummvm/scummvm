@@ -141,7 +141,7 @@ HRESULT CAdResponseBox::CreateButtons() {
 				if (_responses[i]->_iconHover)   btn->_imageHover = _responses[i]->_iconHover;
 				if (_responses[i]->_iconPressed) btn->_imagePress = _responses[i]->_iconPressed;
 
-				btn->SetCaption(_responses[i]->_text);
+				btn->setCaption(_responses[i]->_text);
 				if (_cursor) btn->_cursor = _cursor;
 				else if (Game->_activeCursor) btn->_cursor = Game->_activeCursor;
 			}
@@ -396,11 +396,11 @@ HRESULT CAdResponseBox::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::Display() {
+HRESULT CAdResponseBox::display() {
 	RECT rect = _responseArea;
 	if (_window) {
 		CBPlatform::OffsetRect(&rect, _window->_posX, _window->_posY);
-		//_window->Display();
+		//_window->display();
 	}
 
 	int xxx, yyy, i;
@@ -465,16 +465,16 @@ HRESULT CAdResponseBox::Display() {
 		_shieldWindow->_width = Game->_renderer->_width;
 		_shieldWindow->_height = Game->_renderer->_height;
 
-		_shieldWindow->Display();
+		_shieldWindow->display();
 	}
 
 	// display window
-	if (_window) _window->Display();
+	if (_window) _window->display();
 
 
 	// display response buttons
 	for (i = _scrollOffset; i < _respButtons.GetSize(); i++) {
-		_respButtons[i]->Display();
+		_respButtons[i]->display();
 	}
 
 	return S_OK;

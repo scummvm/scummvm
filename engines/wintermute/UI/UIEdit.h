@@ -43,8 +43,8 @@ public:
 	int DeleteChars(int Start, int End);
 	bool _cursorVisible;
 	uint32 _lastBlinkTime;
-	virtual HRESULT Display(int OffsetX, int OffsetY);
-	virtual bool HandleKeypress(Common::Event *event, bool printable = false);
+	virtual HRESULT display(int OffsetX, int OffsetY);
+	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	int _scrollOffset;
 	int _frameWidth;
 	uint32 _cursorBlinkRate;

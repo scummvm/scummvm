@@ -42,7 +42,7 @@ public:
 	HRESULT LoadBuffer(byte  *Buffer, bool Complete);
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 
-	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
+	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);
 	CAdEntity *_entity;
 	HRESULT SetEntity(const char *Filename);
 

@@ -118,7 +118,7 @@ public:
 	DECLARE_PERSISTENT(CAdGame, CBGame)
 
 	void FinishSentences();
-	HRESULT ShowCursor();
+	HRESULT showCursor();
 	TGameStateEx _stateEx;
 	CAdResponseBox *_responseBox;
 	CAdInventoryBox *_inventoryBox;

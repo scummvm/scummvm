@@ -45,7 +45,7 @@ public:
 	bool _fixedPos;
 	CBSprite *_currentSprite;
 	char *_currentSkelAnim;
-	HRESULT Update(TDirection Dir = DI_DOWN);
+	HRESULT update(TDirection Dir = DI_DOWN);
 	HRESULT SetupTalkFile(const char *SoundFilename);
 	DECLARE_PERSISTENT(CAdSentence, CBBase)
 	HRESULT Finish();
@@ -53,7 +53,7 @@ public:
 	bool _soundStarted;
 	CBSound *_sound;
 	TTextAlign _align;
-	HRESULT Display();
+	HRESULT display();
 	int _width;
 	POINT _pos;
 	CBFont *_font;

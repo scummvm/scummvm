@@ -64,17 +64,17 @@ public:
 	HRESULT UpdateBlockRegion();
 	bool _forcedTalkAnimUsed;
 	char *_forcedTalkAnimName;
-	virtual bool GetExtendedFlag(const char *FlagName);
-	virtual HRESULT ResetSoundPan();
-	virtual HRESULT UpdateSounds();
+	virtual bool getExtendedFlag(const char *FlagName);
+	virtual HRESULT resetSoundPan();
+	virtual HRESULT updateSounds();
 	HRESULT Reset();
 	DECLARE_PERSISTENT(CAdObject, CBObject)
 	virtual void Talk(const char *Text, const char *Sound = NULL, uint32 Duration = 0, const char *Stances = NULL, TTextAlign Align = TAL_CENTER);
-	virtual int GetHeight();
+	virtual int getHeight();
 	CAdSentence *_sentence;
 	HRESULT SetFont(const char *Filename);
-	virtual HRESULT Update();
-	virtual HRESULT Display();
+	virtual HRESULT update();
+	virtual HRESULT display();
 	bool _drawn;
 	bool _active;
 	virtual HRESULT PlayAnim(const char *Filename);

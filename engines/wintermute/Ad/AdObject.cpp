@@ -173,13 +173,13 @@ HRESULT CAdObject::PlayAnim(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::Display() {
+HRESULT CAdObject::display() {
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::Update() {
+HRESULT CAdObject::update() {
 	return S_OK;
 }
 
@@ -805,7 +805,7 @@ HRESULT CAdObject::SetFont(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CAdObject::GetHeight() {
+int CAdObject::getHeight() {
 	if (!_currentSprite) return 0;
 	else {
 		CBFrame *frame = _currentSprite->_frames[_currentSprite->_currentFrame];
@@ -897,7 +897,7 @@ void CAdObject::Talk(const char *Text, const char *Sound, uint32 Duration, const
 
 	height = _sentence->_font->GetTextHeight((byte *)_sentence->_text, width);
 
-	y = y - height - GetHeight() - 5;
+	y = y - height - getHeight() - 5;
 	if (_subtitlesModRelative) {
 		x += _subtitlesModX;
 		y += _subtitlesModY;
@@ -998,29 +998,29 @@ HRESULT CAdObject::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::UpdateSounds() {
+HRESULT CAdObject::updateSounds() {
 	if (_sentence && _sentence->_sound)
-		UpdateOneSound(_sentence->_sound);
+		updateOneSound(_sentence->_sound);
 
-	return CBObject::UpdateSounds();
+	return CBObject::updateSounds();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::ResetSoundPan() {
+HRESULT CAdObject::resetSoundPan() {
 	if (_sentence && _sentence->_sound) {
 		_sentence->_sound->SetPan(0.0f);
 	}
-	return CBObject::ResetSoundPan();
+	return CBObject::resetSoundPan();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdObject::GetExtendedFlag(const char *FlagName) {
+bool CAdObject::getExtendedFlag(const char *FlagName) {
 	if (!FlagName) return false;
 	else if (strcmp(FlagName, "usable") == 0) return true;
 
-	else return CBObject::GetExtendedFlag(FlagName);
+	else return CBObject::getExtendedFlag(FlagName);
 }
 
 
@@ -1110,10 +1110,10 @@ HRESULT CAdObject::GetScale(float *ScaleX, float *ScaleY) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::UpdateSpriteAttachments() {
 	for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
-		_attachmentsPre[i]->Update();
+		_attachmentsPre[i]->update();
 	}
 	for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
-		_attachmentsPost[i]->Update();
+		_attachmentsPost[i]->update();
 	}
 	return S_OK;
 }
@@ -1162,7 +1162,7 @@ HRESULT CAdObject::DisplaySpriteAttachment(CAdObject *Attachment) {
 	Attachment->_registerAlias = this;
 	Attachment->_registrable = this->_registrable;
 
-	HRESULT ret = Attachment->Display();
+	HRESULT ret = Attachment->display();
 
 	Attachment->_posX = OrigX;
 	Attachment->_posY = OrigY;
@@ -1197,7 +1197,7 @@ HRESULT CAdObject::UpdatePartEmitter() {
 		_partEmitter->_posX = (int)(_posX + (ScaleX / 100.0f) * _partOffsetX);
 		_partEmitter->_posY = (int)(_posY + (ScaleY / 100.0f) * _partOffsetY);
 	}
-	return _partEmitter->Update();
+	return _partEmitter->update();
 }
 
 } // end of namespace WinterMute

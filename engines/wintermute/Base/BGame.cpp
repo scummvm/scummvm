@@ -653,9 +653,9 @@ HRESULT CBGame::InitLoop() {
 		}
 	}
 
-	UpdateSounds();
+	updateSounds();
 
-	if (_fader) _fader->Update();
+	if (_fader) _fader->update();
 
 	return S_OK;
 }
@@ -817,7 +817,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_SYSTEM_FONT:
@@ -1669,7 +1669,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetActiveCursor") == 0) {
 		Stack->CorrectParams(1);
-		if (SUCCEEDED(SetActiveCursor(Stack->Pop()->GetString()))) Stack->PushBool(true);
+		if (SUCCEEDED(setActiveCursor(Stack->Pop()->GetString()))) Stack->PushBool(true);
 		else Stack->PushBool(false);
 
 		return S_OK;
@@ -3209,15 +3209,15 @@ HRESULT CBGame::ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisS
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::ShowCursor() {
+HRESULT CBGame::showCursor() {
 	if (_cursorHidden) return S_OK;
 
 	if (!_interactive && Game->_state == GAME_RUNNING) {
 		if (_cursorNoninteractive) return DrawCursor(_cursorNoninteractive);
 	} else {
-		if (_activeObject && !FAILED(_activeObject->ShowCursor())) return S_OK;
+		if (_activeObject && !FAILED(_activeObject->showCursor())) return S_OK;
 		else {
-			if (_activeObject && _activeCursor && _activeObject->GetExtendedFlag("usable")) return DrawCursor(_activeCursor);
+			if (_activeObject && _activeCursor && _activeObject->getExtendedFlag("usable")) return DrawCursor(_activeCursor);
 			else if (_cursor) return DrawCursor(_cursor);
 		}
 	}
@@ -3404,7 +3404,7 @@ HRESULT CBGame::DisplayWindows(bool InGame) {
 	for (i = 0; i < _windows.GetSize(); i++) {
 		if (_windows[i]->_visible && _windows[i]->_inGame == InGame) {
 
-			res = _windows[i]->Display();
+			res = _windows[i]->display();
 			if (FAILED(res)) return res;
 		}
 	}
@@ -3768,7 +3768,7 @@ HRESULT CBGame::Unfreeze() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::HandleKeypress(Common::Event *event, bool printable) {
+bool CBGame::handleKeypress(Common::Event *event, bool printable) {
 	if (IsVideoPlaying()) {
 		if (event->kbd.keycode == Common::KEYCODE_ESCAPE)
 			StopVideo();
@@ -3796,7 +3796,7 @@ bool CBGame::HandleKeypress(Common::Event *event, bool printable) {
 // TODO
 
 	if (_focusedWindow) {
-		if (!Game->_focusedWindow->HandleKeypress(event, _keyboardState->_currentPrintable)) {
+		if (!Game->_focusedWindow->handleKeypress(event, _keyboardState->_currentPrintable)) {
 			/*if (event->type != SDL_TEXTINPUT) {*/
 			if (Game->_focusedWindow->canHandleEvent("Keypress"))
 				Game->_focusedWindow->applyEvent("Keypress");
@@ -3819,10 +3819,10 @@ void CBGame::handleKeyRelease(Common::Event *event) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::HandleMouseWheel(int Delta) {
+bool CBGame::handleMouseWheel(int Delta) {
 	bool Handled = false;
 	if (_focusedWindow) {
-		Handled = Game->_focusedWindow->HandleMouseWheel(Delta);
+		Handled = Game->_focusedWindow->handleMouseWheel(Delta);
 
 		if (!Handled) {
 			if (Delta < 0 && Game->_focusedWindow->canHandleEvent("MouseWheelDown")) {
@@ -4186,18 +4186,18 @@ void CBGame::DEBUG_DumpClassRegistry() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::InvalidateDeviceObjects() {
+HRESULT CBGame::invalidateDeviceObjects() {
 	for (int i = 0; i < _regObjects.GetSize(); i++) {
-		_regObjects[i]->InvalidateDeviceObjects();
+		_regObjects[i]->invalidateDeviceObjects();
 	}
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::RestoreDeviceObjects() {
+HRESULT CBGame::restoreDeviceObjects() {
 	for (int i = 0; i < _regObjects.GetSize(); i++) {
-		_regObjects[i]->RestoreDeviceObjects();
+		_regObjects[i]->restoreDeviceObjects();
 	}
 	return S_OK;
 }
@@ -4266,7 +4266,7 @@ HRESULT CBGame::OnActivate(bool Activate, bool RefreshMouse) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::OnMouseLeftDown() {
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftClick"));
 	if (!Handled) {
@@ -4284,7 +4284,7 @@ HRESULT CBGame::OnMouseLeftDown() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::OnMouseLeftUp() {
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 
 	CBPlatform::ReleaseCapture();
 	_capturedObject = NULL;
@@ -4303,7 +4303,7 @@ HRESULT CBGame::OnMouseLeftUp() {
 HRESULT CBGame::OnMouseLeftDblClick() {
 	if (_state == GAME_RUNNING && !_interactive) return S_OK;
 
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_LEFT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_LEFT);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftDoubleClick"));
 	if (!Handled) {
@@ -4318,7 +4318,7 @@ HRESULT CBGame::OnMouseLeftDblClick() {
 HRESULT CBGame::OnMouseRightDblClick() {
 	if (_state == GAME_RUNNING && !_interactive) return S_OK;
 
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_RIGHT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_RIGHT);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightDoubleClick"));
 	if (!Handled) {
@@ -4331,7 +4331,7 @@ HRESULT CBGame::OnMouseRightDblClick() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::OnMouseRightDown() {
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightClick"));
 	if (!Handled) {
@@ -4344,7 +4344,7 @@ HRESULT CBGame::OnMouseRightDown() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::OnMouseRightUp() {
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightRelease"));
 	if (!Handled) {
@@ -4359,7 +4359,7 @@ HRESULT CBGame::OnMouseRightUp() {
 HRESULT CBGame::OnMouseMiddleDown() {
 	if (_state == GAME_RUNNING && !_interactive) return S_OK;
 
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_MIDDLE);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_MIDDLE);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("MiddleClick"));
 	if (!Handled) {
@@ -4372,7 +4372,7 @@ HRESULT CBGame::OnMouseMiddleDown() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::OnMouseMiddleUp() {
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_RELEASE, MOUSE_BUTTON_MIDDLE);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_MIDDLE);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("MiddleRelease"));
 	if (!Handled) {

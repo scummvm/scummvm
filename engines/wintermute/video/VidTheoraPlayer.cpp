@@ -578,7 +578,7 @@ HRESULT CVidTheoraPlayer::update() {
 		m_PlaybackStarted = true;
 	}
 
-	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->Update(GetMovieFrame());
+	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->update(GetMovieFrame());
 #endif
 	return S_OK;
 }
@@ -656,7 +656,7 @@ HRESULT CVidTheoraPlayer::display(uint32 alpha) {
 		else res = _texture->displayTransZoom(_posX, _posY, rc, _playZoom, _playZoom, alpha);
 	} else res = E_FAIL;
 #if 0
-	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->Display();
+	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->display();
 #endif
 	return res;
 }

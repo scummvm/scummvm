@@ -225,7 +225,7 @@ HRESULT CUIEntity::SetEntity(const char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::Display(int OffsetX, int OffsetY) {
+HRESULT CUIEntity::display(int OffsetX, int OffsetY) {
 	if (!_visible) return S_OK;
 
 	if (_entity) {
@@ -234,13 +234,13 @@ HRESULT CUIEntity::Display(int OffsetX, int OffsetY) {
 		if (_entity->_scale < 0) _entity->_zoomable = false;
 		_entity->_shadowable = false;
 
-		_entity->Update();
+		_entity->update();
 
 		bool OrigReg = _entity->_registrable;
 
 		if (_entity->_registrable && _disable) _entity->_registrable = false;
 
-		_entity->Display();
+		_entity->display();
 		_entity->_registrable = OrigReg;
 	}
 

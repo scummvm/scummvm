@@ -113,7 +113,7 @@ void CUIWindow::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
+HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 	// go exclusive
 	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		if (!_shieldWindow) _shieldWindow = new CUIWindow(Game);
@@ -122,7 +122,7 @@ HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
 			_shieldWindow->_width = Game->_renderer->_width;
 			_shieldWindow->_height = Game->_renderer->_height;
 
-			_shieldWindow->Display();
+			_shieldWindow->display();
 		}
 	} else if (_isMenu) {
 		if (!_shieldButton) {
@@ -136,7 +136,7 @@ HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
 			_shieldButton->_width = Game->_renderer->_width;
 			_shieldButton->_height = Game->_renderer->_height;
 
-			_shieldButton->Display();
+			_shieldButton->display();
 		}
 	}
 
@@ -178,7 +178,7 @@ HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
 	}
 
 	if (_alphaColor != 0) Game->_renderer->_forceAlphaColor = _alphaColor;
-	if (back) back->Display(_posX + OffsetX, _posY + OffsetY, _width, _height);
+	if (back) back->display(_posX + OffsetX, _posY + OffsetY, _width, _height);
 	if (image) image->Draw(_posX + OffsetX, _posY + OffsetY, _transparent ? NULL : this);
 
 	if (!CBPlatform::IsRectEmpty(&_titleRect) && font && _text) {
@@ -188,7 +188,7 @@ HRESULT CUIWindow::Display(int OffsetX, int OffsetY) {
 	if (!_transparent && !image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, _posX + OffsetX, _posY + OffsetY, _width, _height, 100, 100, false));
 
 	for (int i = 0; i < _widgets.GetSize(); i++) {
-		_widgets[i]->Display(_posX + OffsetX, _posY + OffsetY);
+		_widgets[i]->display(_posX + OffsetX, _posY + OffsetY);
 	}
 
 	if (_alphaColor != 0) Game->_renderer->_forceAlphaColor = 0;
@@ -325,7 +325,7 @@ HRESULT CUIWindow::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_BACK:
@@ -572,7 +572,7 @@ HRESULT CUIWindow::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "{\n");
 
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	Buffer->PutTextIndent(Indent + 2, "\n");
 
@@ -1100,12 +1100,12 @@ const char *CUIWindow::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::HandleKeypress(Common::Event *event, bool printable) {
+bool CUIWindow::handleKeypress(Common::Event *event, bool printable) {
 //TODO
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
 		return SUCCEEDED(MoveFocus(!CBKeyboardState::IsShiftDown()));
 	} else {
-		if (_focusedWidget) return _focusedWidget->HandleKeypress(event, printable);
+		if (_focusedWidget) return _focusedWidget->handleKeypress(event, printable);
 		else return false;
 	}
 	return false;
@@ -1113,15 +1113,15 @@ bool CUIWindow::HandleKeypress(Common::Event *event, bool printable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::HandleMouseWheel(int Delta) {
-	if (_focusedWidget) return _focusedWidget->HandleMouseWheel(Delta);
+bool CUIWindow::handleMouseWheel(int Delta) {
+	if (_focusedWidget) return _focusedWidget->handleMouseWheel(Delta);
 	else return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::HandleMouse(TMouseEvent Event, TMouseButton Button) {
-	HRESULT res = CUIObject::HandleMouse(Event, Button);
+HRESULT CUIWindow::handleMouse(TMouseEvent Event, TMouseButton Button) {
+	HRESULT res = CUIObject::handleMouse(Event, Button);
 
 	// handle window dragging
 	if (!CBPlatform::IsRectEmpty(&_dragRect)) {

@@ -48,12 +48,12 @@ class CAdActor : public CAdTalkHolder {
 public:
 	TDirection AngleToDirection(int Angle);
 	DECLARE_PERSISTENT(CAdActor, CAdTalkHolder)
-	virtual int GetHeight();
+	virtual int getHeight();
 	CBSprite *GetTalkStance(const char *Stance);
 	virtual void GoTo(int X, int Y, TDirection AfterWalkDir = DI_NONE);
 	CBPoint *_targetPoint;
-	virtual HRESULT Update();
-	virtual HRESULT Display();
+	virtual HRESULT update();
+	virtual HRESULT display();
 	TDirection _targetDir;
 	TDirection _afterWalkDir;
 	virtual void TurnTo(TDirection dir);

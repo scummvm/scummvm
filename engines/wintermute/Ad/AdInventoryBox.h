@@ -44,7 +44,7 @@ public:
 	int _itemHeight;
 	int _itemWidth;
 	bool _visible;
-	virtual HRESULT Display();
+	virtual HRESULT display();
 	CUIButton *_closeButton;
 	int _spacing;
 	int _scrollOffset;

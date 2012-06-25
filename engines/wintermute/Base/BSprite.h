@@ -56,7 +56,7 @@ public:
 	bool GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX = 100, float ScaleY = 100);
 	int _moveY;
 	int _moveX;
-	HRESULT Display(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, uint32 Alpha = 0xFFFFFFFF, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
+	HRESULT display(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, uint32 Alpha = 0xFFFFFFFF, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
 	bool GetCurrentFrame(float ZoomX = 100, float ZoomY = 100);
 	bool _canBreak;
 	bool _editorMuted;

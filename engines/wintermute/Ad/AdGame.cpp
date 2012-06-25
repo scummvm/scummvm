@@ -196,7 +196,7 @@ HRESULT CAdGame::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::InitLoop() {
-	if (_scheduledScene && _transMgr->IsReady()) {
+	if (_scheduledScene && _transMgr->isReady()) {
 		ChangeScene(_scheduledScene, _scheduledFadeIn);
 		delete[] _scheduledScene;
 		_scheduledScene = NULL;
@@ -296,7 +296,7 @@ void CAdGame::AddSentence(CAdSentence *Sentence) {
 HRESULT CAdGame::DisplaySentences(bool Frozen) {
 	for (int i = 0; i < _sentences.GetSize(); i++) {
 		if (Frozen && _sentences[i]->_freezable) continue;
-		else _sentences[i]->Display();
+		else _sentences[i]->display();
 	}
 	return S_OK;
 }
@@ -1094,22 +1094,22 @@ HRESULT CAdGame::ExternalCall(CScScript *Script, CScStack *Stack, CScStack *This
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ShowCursor() {
+HRESULT CAdGame::showCursor() {
 	if (_cursorHidden) return S_OK;
 
 	if (_selectedItem && Game->_state == GAME_RUNNING && _stateEx == GAME_NORMAL && _interactive) {
 		if (_selectedItem->_cursorCombined) {
 			CBSprite *OrigLastCursor = _lastCursor;
-			CBGame::ShowCursor();
+			CBGame::showCursor();
 			_lastCursor = OrigLastCursor;
 		}
-		if (_activeObject && _selectedItem->_cursorHover && _activeObject->GetExtendedFlag("usable")) {
+		if (_activeObject && _selectedItem->_cursorHover && _activeObject->getExtendedFlag("usable")) {
 			if (!_smartItemCursor || _activeObject->canHandleEvent(_selectedItem->_name))
 				return DrawCursor(_selectedItem->_cursorHover);
 			else
 				return DrawCursor(_selectedItem->_cursorNormal);
 		} else return DrawCursor(_selectedItem->_cursorNormal);
-	} else return CBGame::ShowCursor();
+	} else return CBGame::showCursor();
 }
 
 
@@ -1712,14 +1712,14 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 		POINT p;
 		GetMousePos(&p);
 
-		_scene->Update();
-		_scene->Display();
+		_scene->update();
+		_scene->display();
 
 
 		// display in-game windows
 		DisplayWindows(true);
-		if (_inventoryBox) _inventoryBox->Display();
-		if (_stateEx == GAME_WAITING_RESPONSE) _responseBox->Display();
+		if (_inventoryBox) _inventoryBox->display();
+		if (_stateEx == GAME_WAITING_RESPONSE) _responseBox->display();
 		if (_indicatorDisplay) DisplayIndicator();
 
 
@@ -1732,15 +1732,15 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 			// textual info
 			DisplaySentences(_state == GAME_FROZEN);
 
-			ShowCursor();
+			showCursor();
 
-			if (_fader) _fader->Display();
-			_transMgr->Update();
+			if (_fader) _fader->display();
+			_transMgr->update();
 		}
 
 	}
 	if (_loadingIcon) {
-		_loadingIcon->Display(_loadingIconX, _loadingIconY);
+		_loadingIcon->display(_loadingIconX, _loadingIconY);
 		if (!_loadingIconPersistent) {
 			delete _loadingIcon;
 			_loadingIcon = NULL;
@@ -1955,7 +1955,7 @@ HRESULT CAdGame::OnMouseLeftDown() {
 		return S_OK;
 	}
 
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftClick"));
 	if (!Handled) {
@@ -1975,7 +1975,7 @@ HRESULT CAdGame::OnMouseLeftDown() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::OnMouseLeftUp() {
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 
 	CBPlatform::ReleaseCapture();
 	_capturedObject = NULL;
@@ -1998,7 +1998,7 @@ HRESULT CAdGame::OnMouseLeftDblClick() {
 
 	if (_state == GAME_RUNNING && !_interactive) return S_OK;
 
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_LEFT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_LEFT);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftDoubleClick"));
 	if (!Handled) {
@@ -2023,7 +2023,7 @@ HRESULT CAdGame::OnMouseRightDown() {
 
 	if ((_state == GAME_RUNNING && !_interactive) || _stateEx == GAME_WAITING_RESPONSE) return S_OK;
 
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightClick"));
 	if (!Handled) {
@@ -2038,7 +2038,7 @@ HRESULT CAdGame::OnMouseRightDown() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::OnMouseRightUp() {
-	if (_activeObject) _activeObject->HandleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
+	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
 
 	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightRelease"));
 	if (!Handled) {

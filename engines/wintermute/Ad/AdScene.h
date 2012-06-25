@@ -96,7 +96,7 @@ public:
 	void SkipToObject(CBObject *Object);
 	void ScrollToObject(CBObject *Object);
 	void ScrollTo(int OffsetX, int OffsetY);
-	virtual HRESULT Update();
+	virtual HRESULT update();
 	bool _autoScroll;
 	int _targetOffsetTop;
 	int _targetOffsetLeft;
@@ -109,7 +109,7 @@ public:
 	uint32 _scrollTimeH;
 	uint32 _lastTimeH;
 
-	virtual HRESULT Display();
+	virtual HRESULT display();
 	uint32 _pFMaxTime;
 	HRESULT InitLoop();
 	void PathFinderStep();
@@ -152,7 +152,7 @@ public:
 	CBArray<CAdScaleLevel *, CAdScaleLevel *> _scaleLevels;
 	CBArray<CAdRotLevel *, CAdRotLevel *> _rotLevels;
 
-	virtual HRESULT RestoreDeviceObjects();
+	virtual HRESULT restoreDeviceObjects();
 	int GetPointsDist(CBPoint p1, CBPoint p2, CBObject *requester = NULL);
 
 	// scripting interface

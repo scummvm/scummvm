@@ -211,7 +211,7 @@ HRESULT CVidPlayer::update() {
 	HRESULT res;
 
 	if (_soundAvailable && m_Sound) {
-		res = _sound->Update();
+		res = _sound->update();
 		if (FAILED(res)) return res;
 	}
 
@@ -279,7 +279,7 @@ HRESULT CVidPlayer::display() {
 	if (!m_Playing) return S_OK;
 
 	HRESULT res;
-	if (_vidRenderer) res = _vidRenderer->Display(m_PlayPosX, m_PlayPosY, m_PlayZoom);
+	if (_vidRenderer) res = _vidRenderer->display(m_PlayPosX, m_PlayPosY, m_PlayZoom);
 	else res = E_FAIL;
 
 	// display subtitle

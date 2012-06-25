@@ -638,7 +638,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_LAYER: {
@@ -957,7 +957,7 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 					_shieldWindow->_posX = _shieldWindow->_posY = 0;
 					_shieldWindow->_width = Game->_renderer->_width;
 					_shieldWindow->_height = Game->_renderer->_height;
-					_shieldWindow->Display();
+					_shieldWindow->display();
 				}
 			}
 		}
@@ -987,8 +987,8 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 				if (Node->_entity->_active && (Game->_editorMode || !Node->_entity->_editorOnly)) {
 					Game->_renderer->Setup2D();
 
-					if (Update) Node->_entity->Update();
-					else Node->_entity->Display();
+					if (Update) Node->_entity->update();
+					else Node->_entity->display();
 				}
 				break;
 
@@ -1022,8 +1022,8 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 
 	// display/update fader
 	if (_fader) {
-		if (Update) _fader->Update();
-		else _fader->Display();
+		if (Update) _fader->update();
+		else _fader->display();
 	}
 
 	if (PopViewport) Game->PopViewport();
@@ -1033,7 +1033,7 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::Display() {
+HRESULT CAdScene::display() {
 	return TraverseNodes(false);
 }
 
@@ -1049,7 +1049,7 @@ HRESULT CAdScene::UpdateFreeObjects() {
 	for (i = 0; i < AdGame->_objects.GetSize(); i++) {
 		if (!AdGame->_objects[i]->_active) continue;
 
-		AdGame->_objects[i]->Update();
+		AdGame->_objects[i]->update();
 		AdGame->_objects[i]->_drawn = false;
 	}
 
@@ -1057,7 +1057,7 @@ HRESULT CAdScene::UpdateFreeObjects() {
 	for (i = 0; i < _objects.GetSize(); i++) {
 		if (!_objects[i]->_active) continue;
 
-		_objects[i]->Update();
+		_objects[i]->update();
 		_objects[i]->_drawn = false;
 	}
 
@@ -1106,7 +1106,7 @@ HRESULT CAdScene::DisplayRegionContent(CAdRegion *Region, bool Display3DOnly) {
 
 		Game->_renderer->Setup2D();
 
-		if (Game->_editorMode || !Obj->_editorOnly) Obj->Display();
+		if (Game->_editorMode || !Obj->_editorOnly) Obj->display();
 		Obj->_drawn = true;
 	}
 
@@ -1116,7 +1116,7 @@ HRESULT CAdScene::DisplayRegionContent(CAdRegion *Region, bool Display3DOnly) {
 		if (Game->_editorMode && Region == NULL) {
 			for (i = 0; i < _objects.GetSize(); i++) {
 				if (_objects[i]->_active && _objects[i]->_editorOnly) {
-					_objects[i]->Display();
+					_objects[i]->display();
 					_objects[i]->_drawn = true;
 				}
 			}
@@ -1167,7 +1167,7 @@ HRESULT CAdScene::DisplayRegionContentOld(CAdRegion *Region) {
 		if (obj != NULL) {
 			Game->_renderer->Setup2D();
 
-			if (Game->_editorMode || !obj->_editorOnly) obj->Display();
+			if (Game->_editorMode || !obj->_editorOnly) obj->display();
 			obj->_drawn = true;
 		}
 	} while (obj != NULL);
@@ -1177,7 +1177,7 @@ HRESULT CAdScene::DisplayRegionContentOld(CAdRegion *Region) {
 	if (Game->_editorMode && Region == NULL) {
 		for (i = 0; i < _objects.GetSize(); i++) {
 			if (_objects[i]->_active && _objects[i]->_editorOnly) {
-				_objects[i]->Display();
+				_objects[i]->display();
 				_objects[i]->_drawn = true;
 			}
 		}
@@ -1188,7 +1188,7 @@ HRESULT CAdScene::DisplayRegionContentOld(CAdRegion *Region) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::Update() {
+HRESULT CAdScene::update() {
 	return TraverseNodes(true);
 }
 
@@ -1219,13 +1219,13 @@ void CAdScene::ScrollTo(int OffsetX, int OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdScene::ScrollToObject(CBObject *Object) {
-	if (Object) ScrollTo(Object->_posX, Object->_posY - Object->GetHeight() / 2);
+	if (Object) ScrollTo(Object->_posX, Object->_posY - Object->getHeight() / 2);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdScene::SkipToObject(CBObject *Object) {
-	if (Object) SkipTo(Object->_posX, Object->_posY - Object->GetHeight() / 2);
+	if (Object) SkipTo(Object->_posX, Object->_posY - Object->getHeight() / 2);
 }
 
 
@@ -1975,7 +1975,7 @@ HRESULT CAdScene::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent, "SCENE {\n");
 
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	if (_persistentState)
 		Buffer->PutTextIndent(Indent + 2, "PERSISTENT_STATE=%s\n", _persistentState ? "TRUE" : "FALSE");
@@ -2379,10 +2379,10 @@ HRESULT CAdScene::GetViewportSize(int *Width, int *Height) {
 	CAdGame *AdGame = (CAdGame *)Game;
 	if (_viewport && !Game->_editorMode) {
 		if (Width)  *Width  = _viewport->GetWidth();
-		if (Height) *Height = _viewport->GetHeight();
+		if (Height) *Height = _viewport->getHeight();
 	} else if (AdGame->_sceneViewport && !Game->_editorMode) {
 		if (Width)  *Width  = AdGame->_sceneViewport->GetWidth();
-		if (Height) *Height = AdGame->_sceneViewport->GetHeight();
+		if (Height) *Height = AdGame->_sceneViewport->getHeight();
 	} else {
 		if (Width)  *Width  = Game->_renderer->_width;
 		if (Height) *Height = Game->_renderer->_height;
@@ -2627,7 +2627,7 @@ HRESULT CAdScene::GetRegionsAt(int X, int Y, CAdRegion **RegionList, int NumRegi
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::RestoreDeviceObjects() {
+HRESULT CAdScene::restoreDeviceObjects() {
 	return S_OK;
 }
 

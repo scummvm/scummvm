@@ -98,7 +98,7 @@ void CUIObject::SetText(const char *Text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::Display(int OffsetX, int OffsetY) {
+HRESULT CUIObject::display(int OffsetX, int OffsetY) {
 	return S_OK;
 }
 
@@ -500,12 +500,12 @@ bool CUIObject::IsFocused() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::HandleMouse(TMouseEvent Event, TMouseButton Button) {
+HRESULT CUIObject::handleMouse(TMouseEvent Event, TMouseButton Button) {
 	// handle focus change
 	if (Event == MOUSE_CLICK && Button == MOUSE_BUTTON_LEFT) {
 		Focus();
 	}
-	return CBObject::HandleMouse(Event, Button);
+	return CBObject::handleMouse(Event, Button);
 }
 
 

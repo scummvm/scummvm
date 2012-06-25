@@ -44,11 +44,11 @@ public:
 	char *_item;
 	DECLARE_PERSISTENT(CAdEntity, CAdTalkHolder)
 	void UpdatePosition();
-	virtual int GetHeight();
+	virtual int getHeight();
 	CBRegion *_region;
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
-	virtual HRESULT Update();
-	virtual HRESULT Display();
+	virtual HRESULT update();
+	virtual HRESULT display();
 	CAdEntity(CBGame *inGame);
 	virtual ~CAdEntity();
 	HRESULT LoadFile(const char *Filename);

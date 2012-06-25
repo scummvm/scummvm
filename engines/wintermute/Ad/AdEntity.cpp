@@ -257,7 +257,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_FONT:
@@ -395,7 +395,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_SOUND:
-			PlaySFX((char *)params, false, false);
+			playSFX((char *)params, false, false);
 			break;
 
 		case TOKEN_SOUND_START_TIME:
@@ -481,9 +481,9 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::Display() {
+HRESULT CAdEntity::display() {
 	if (_active) {
-		UpdateSounds();
+		updateSounds();
 
 		uint32 Alpha;
 		if (_alphaColor != 0) Alpha = _alphaColor;
@@ -510,7 +510,7 @@ HRESULT CAdEntity::Display() {
 		if (_theora && (_theora->isPlaying() || _theora->isPaused())) {
 			_theora->display(Alpha);
 		} else if (_currentSprite) {
-			_currentSprite->Display(_posX,
+			_currentSprite->display(_posX,
 			                        _posY,
 			                        (Reg || _editorAlwaysRegister) ? _registerAlias : NULL,
 			                        ScaleX,
@@ -521,7 +521,7 @@ HRESULT CAdEntity::Display() {
 		}
 		DisplaySpriteAttachments(false);
 
-		if (_partEmitter) _partEmitter->Display(_region);
+		if (_partEmitter) _partEmitter->display(_region);
 
 	}
 	return S_OK;
@@ -529,7 +529,7 @@ HRESULT CAdEntity::Display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::Update() {
+HRESULT CAdEntity::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY && _animSprite) {
@@ -562,7 +562,7 @@ HRESULT CAdEntity::Update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TALKING: {
-		_sentence->Update();
+		_sentence->update();
 		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
 
 		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->IsPlaying() && !_sentence->_sound->IsPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
@@ -632,7 +632,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	if (strcmp(Name, "StopSound") == 0 && _subtype == ENTITY_SOUND) {
 		Stack->CorrectParams(0);
 
-		if (FAILED(StopSFX(false))) Stack->PushBool(false);
+		if (FAILED(stopSFX(false))) Stack->PushBool(false);
 		else Stack->PushBool(true);
 		return S_OK;
 	}
@@ -882,7 +882,7 @@ HRESULT CAdEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	if (_subtype == ENTITY_SOUND)
 		Buffer->PutTextIndent(Indent + 2, "SUBTYPE=\"SOUND\"\n");
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", GetCaption());
+	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
 	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
 	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
@@ -957,12 +957,12 @@ HRESULT CAdEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CAdEntity::GetHeight() {
+int CAdEntity::getHeight() {
 	if (_region && !_sprite) {
 		return _region->_rect.bottom - _region->_rect.top;
 	} else {
 		if (_currentSprite == NULL) _currentSprite = _sprite;
-		return CAdObject::GetHeight();
+		return CAdObject::getHeight();
 	}
 }
 

@@ -390,7 +390,7 @@ HRESULT CScEngine::Tick() {
 			if(!obj_found) _scripts[i]->Finish(); // _waitObject no longer exists
 			*/
 			if (Game->ValidObject(_scripts[i]->_waitObject)) {
-				if (_scripts[i]->_waitObject->IsReady()) _scripts[i]->Run();
+				if (_scripts[i]->_waitObject->isReady()) _scripts[i]->Run();
 			} else _scripts[i]->Finish();
 			break;
 		}

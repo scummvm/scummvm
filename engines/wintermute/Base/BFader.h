@@ -41,8 +41,8 @@ public:
 	HRESULT FadeOut(uint32 TargetColor, uint32 Duration, bool System = false);
 	HRESULT FadeIn(uint32 SourceColor, uint32 Duration, bool System = false);
 	HRESULT Deactivate();
-	HRESULT Display();
-	HRESULT Update();
+	HRESULT display();
+	HRESULT update();
 	DECLARE_PERSISTENT(CBFader, CBObject)
 	CBFader(CBGame *inGame);
 	virtual ~CBFader();

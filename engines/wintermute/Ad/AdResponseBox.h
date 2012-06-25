@@ -56,7 +56,7 @@ public:
 	} TResponseEvent;
 
 	HRESULT WeedResponses();
-	HRESULT Display();
+	HRESULT display();
 	int _spacing;
 	int _scrollOffset;
 	CBFont *_fontHover;

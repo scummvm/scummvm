@@ -50,27 +50,27 @@ public:
 	float _relativeRotate;
 	bool _rotateValid;
 	float _rotate;
-	void SetSoundEvent(const char *EventName);
+	void setSoundEvent(const char *EventName);
 	bool _rotatable;
 	uint32 _alphaColor;
 	float _scale;
 	float _scaleX;
 	float _scaleY;
 	float _relativeScale;
-	virtual bool IsReady();
-	virtual bool GetExtendedFlag(const char *FlagName);
-	virtual HRESULT ResetSoundPan();
-	virtual HRESULT UpdateSounds();
-	HRESULT UpdateOneSound(CBSound *Sound);
+	virtual bool isReady();
+	virtual bool getExtendedFlag(const char *FlagName);
+	virtual HRESULT resetSoundPan();
+	virtual HRESULT updateSounds();
+	HRESULT updateOneSound(CBSound *Sound);
 	bool _autoSoundPanning;
 	uint32 _sFXStart;
 	int _sFXVolume;
-	HRESULT SetSFXTime(uint32 Time);
-	HRESULT SetSFXVolume(int Volume);
-	HRESULT ResumeSFX();
-	HRESULT PauseSFX();
-	HRESULT StopSFX(bool DeleteSound = true);
-	HRESULT PlaySFX(const char *Filename, bool Looping = false, bool PlayNow = true, const char *EventName = NULL, uint32 LoopStart = 0);
+	HRESULT setSFXTime(uint32 Time);
+	HRESULT setSFXVolume(int Volume);
+	HRESULT resumeSFX();
+	HRESULT pauseSFX();
+	HRESULT stopSFX(bool DeleteSound = true);
+	HRESULT playSFX(const char *Filename, bool Looping = false, bool PlayNow = true, const char *EventName = NULL, uint32 LoopStart = 0);
 	CBSound *_sFX;
 
 	TSFXType _sFXType;
@@ -79,21 +79,21 @@ public:
 	float _sFXParam3;
 	float _sFXParam4;
 
-	virtual bool HandleMouseWheel(int Delta);
-	virtual HRESULT HandleMouse(TMouseEvent Event, TMouseButton Button);
-	virtual bool HandleKeypress(Common::Event *event, bool printable = false);
-	virtual int GetHeight();
-	HRESULT SetCursor(const char *Filename);
-	HRESULT SetActiveCursor(const char *Filename);
+	virtual bool handleMouseWheel(int Delta);
+	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
+	virtual bool handleKeypress(Common::Event *event, bool printable = false);
+	virtual int getHeight();
+	HRESULT setCursor(const char *Filename);
+	HRESULT setActiveCursor(const char *Filename);
 	HRESULT cleanup();
-	char *GetCaption(int Case = 1);
-	void SetCaption(const char *Caption, int Case = 1);
+	char *getCaption(int Case = 1);
+	void setCaption(const char *Caption, int Case = 1);
 	bool _editorSelected;
 	bool _editorAlwaysRegister;
 	bool _editorOnly;
 	bool _is3D;
 	DECLARE_PERSISTENT(CBObject, CBScriptHolder)
-	virtual HRESULT ShowCursor();
+	virtual HRESULT showCursor();
 	CBSprite *_cursor;
 	bool _sharedCursors;
 	CBSprite *_activeCursor;
@@ -116,16 +116,16 @@ public:
 	bool _saveState;
 
 	// base
-	virtual HRESULT Update()  {
+	virtual HRESULT update()  {
 		return E_FAIL;
 	};
-	virtual HRESULT Display() {
+	virtual HRESULT display() {
 		return E_FAIL;
 	};
-	virtual HRESULT InvalidateDeviceObjects()  {
+	virtual HRESULT invalidateDeviceObjects()  {
 		return S_OK;
 	};
-	virtual HRESULT RestoreDeviceObjects()     {
+	virtual HRESULT restoreDeviceObjects()     {
 		return S_OK;
 	};
 	bool _nonIntMouseEvents;

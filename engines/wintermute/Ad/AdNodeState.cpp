@@ -107,7 +107,7 @@ HRESULT CAdNodeState::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::SetCaption(const char *Caption, int Case) {
+void CAdNodeState::setCaption(const char *Caption, int Case) {
 	if (Case == 0) Case = 1;
 	if (Case < 1 || Case > 7) return;
 
@@ -121,7 +121,7 @@ void CAdNodeState::SetCaption(const char *Caption, int Case) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdNodeState::GetCaption(int Case) {
+char *CAdNodeState::getCaption(int Case) {
 	if (Case == 0) Case = 1;
 	if (Case < 1 || Case > 7 || _caption[Case - 1] == NULL) return "";
 	else return _caption[Case - 1];
@@ -137,7 +137,7 @@ HRESULT CAdNodeState::TransferEntity(CAdEntity *Entity, bool IncludingSprites, b
 
 	if (Saving) {
 		for (int i = 0; i < 7; i++) {
-			if (Entity->_caption[i]) SetCaption(Entity->_caption[i], i);
+			if (Entity->_caption[i]) setCaption(Entity->_caption[i], i);
 		}
 		if (!Entity->_region && Entity->_sprite && Entity->_sprite->_filename) {
 			if (IncludingSprites) setFilename(Entity->_sprite->_filename);
@@ -148,7 +148,7 @@ HRESULT CAdNodeState::TransferEntity(CAdEntity *Entity, bool IncludingSprites, b
 		_active = Entity->_active;
 	} else {
 		for (int i = 0; i < 7; i++) {
-			if (_caption[i]) Entity->SetCaption(_caption[i], i);
+			if (_caption[i]) Entity->setCaption(_caption[i], i);
 		}
 		if (_filename && !Entity->_region && IncludingSprites && strcmp(_filename, "") != 0) {
 			if (!Entity->_sprite || !Entity->_sprite->_filename || scumm_stricmp(Entity->_sprite->_filename, _filename) != 0)
@@ -156,7 +156,7 @@ HRESULT CAdNodeState::TransferEntity(CAdEntity *Entity, bool IncludingSprites, b
 		}
 		if (_cursor) {
 			if (!Entity->_cursor || !Entity->_cursor->_filename || scumm_stricmp(Entity->_cursor->_filename, _cursor) != 0)
-				Entity->SetCursor(_cursor);
+				Entity->setCursor(_cursor);
 		}
 
 		Entity->_active = _active;

@@ -257,7 +257,7 @@ HRESULT CAdActor::LoadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_CAPTION:
-			SetCaption((char *)params);
+			setCaption((char *)params);
 			break;
 
 		case TOKEN_FONT:
@@ -504,8 +504,8 @@ void CAdActor::GoTo(int X, int Y, TDirection AfterWalkDir) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::Display() {
-	if (_active) UpdateSounds();
+HRESULT CAdActor::display() {
+	if (_active) updateSounds();
 
 	uint32 Alpha;
 	if (_alphaColor != 0) Alpha = _alphaColor;
@@ -527,7 +527,7 @@ HRESULT CAdActor::Display() {
 		bool Reg = _registrable;
 		if (_ignoreItems && ((CAdGame *)Game)->_selectedItem) Reg = false;
 
-		_currentSprite->Display(_posX,
+		_currentSprite->display(_posX,
 		                        _posY,
 		                        Reg ? _registerAlias : NULL,
 		                        ScaleX,
@@ -539,7 +539,7 @@ HRESULT CAdActor::Display() {
 	}
 
 	if (_active) DisplaySpriteAttachments(false);
-	if (_active && _partEmitter) _partEmitter->Display();
+	if (_active && _partEmitter) _partEmitter->display();
 
 
 	return S_OK;
@@ -547,7 +547,7 @@ HRESULT CAdActor::Display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::Update() {
+HRESULT CAdActor::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY) {
@@ -681,7 +681,7 @@ HRESULT CAdActor::Update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TALKING: {
-		_sentence->Update(_dir);
+		_sentence->update(_dir);
 		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
 
 		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->IsPlaying() && !_sentence->_sound->IsPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
@@ -1238,7 +1238,7 @@ TDirection CAdActor::AngleToDirection(int Angle) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CAdActor::GetHeight() {
+int CAdActor::getHeight() {
 	// if no current sprite is set, set some
 	if (_currentSprite == NULL) {
 		if (_standSprite) _currentSprite = _standSprite->GetSprite(_dir);
@@ -1248,7 +1248,7 @@ int CAdActor::GetHeight() {
 		}
 	}
 	// and get height
-	return CAdTalkHolder::GetHeight();
+	return CAdTalkHolder::getHeight();
 }
 
 

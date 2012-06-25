@@ -96,7 +96,7 @@ HRESULT CPartParticle::SetSprite(const char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::Update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 TimerDelta) {
+HRESULT CPartParticle::update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 TimerDelta) {
 	if (_state == PARTICLE_FADEIN) {
 		if (CurrentTime - _fadeStart >= _fadeTime) {
 			_state = PARTICLE_NORMAL;
@@ -180,12 +180,12 @@ HRESULT CPartParticle::Update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::Display(CPartEmitter *Emitter) {
+HRESULT CPartParticle::display(CPartEmitter *Emitter) {
 	if (!_sprite) return E_FAIL;
 	if (_isDead) return S_OK;
 
 	_sprite->GetCurrentFrame();
-	return _sprite->Display(_pos.x, _pos.y,
+	return _sprite->display(_pos.x, _pos.y,
 	                        NULL,
 	                        _scale, _scale,
 	                        DRGBA(255, 255, 255, _currentAlpha),

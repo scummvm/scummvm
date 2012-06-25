@@ -43,12 +43,12 @@ public:
 	HRESULT GetTotalOffset(int *OffsetX, int *OffsetY);
 	bool _canFocus;
 	HRESULT Focus();
-	virtual HRESULT HandleMouse(TMouseEvent Event, TMouseButton Button);
+	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
 	bool IsFocused();
 	bool _parentNotify;
 	DECLARE_PERSISTENT(CUIObject, CBObject)
 	CUIObject *_parent;
-	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
+	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);
 	virtual void CorrectSize();
 	bool _sharedFonts;
 	bool _sharedImages;

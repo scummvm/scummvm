@@ -44,7 +44,7 @@ public:
 	uint32 _oneTimePressTime;
 	DECLARE_PERSISTENT(CUIButton, CUIObject)
 	void Press();
-	virtual HRESULT Display(int OffsetX = 0, int OffsetY = 0);
+	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);
 	bool _press;
 	bool _hover;
 	void CorrectSize();

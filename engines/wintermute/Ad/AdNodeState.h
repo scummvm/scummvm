@@ -45,8 +45,8 @@ public:
 	char *_name;
 	bool _active;
 	char *_caption[7];
-	void SetCaption(const char *Caption, int Case);
-	char *GetCaption(int Case);
+	void setCaption(const char *Caption, int Case);
+	char *getCaption(int Case);
 	uint32 _alphaColor;
 	char *_filename;
 	char *_cursor;

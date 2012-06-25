@@ -135,21 +135,21 @@ HRESULT CBObject::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBObject::SetCaption(const char *Caption, int Case) {
+void CBObject::setCaption(const char *caption, int Case) { // TODO: rename Case to something usefull
 	if (Case == 0) Case = 1;
 	if (Case < 1 || Case > 7) return;
 
 	delete[] _caption[Case - 1];
-	_caption[Case - 1] = new char[strlen(Caption) + 1];
+	_caption[Case - 1] = new char[strlen(caption) + 1];
 	if (_caption[Case - 1]) {
-		strcpy(_caption[Case - 1], Caption);
+		strcpy(_caption[Case - 1], caption);
 		Game->_stringTable->Expand(&_caption[Case - 1]);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBObject::GetCaption(int Case) {
+char *CBObject::getCaption(int Case) {
 	if (Case == 0) Case = 1;
 	if (Case < 1 || Case > 7 || _caption[Case - 1] == NULL) return "";
 	else return _caption[Case - 1];
@@ -185,7 +185,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Caption") == 0) {
 		Stack->CorrectParams(1);
-		Stack->PushString(GetCaption(Stack->Pop()->GetInt()));
+		Stack->PushString(getCaption(Stack->Pop()->GetInt()));
 
 		return S_OK;
 	}
@@ -195,7 +195,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetCursor") == 0) {
 		Stack->CorrectParams(1);
-		if (SUCCEEDED(SetCursor(Stack->Pop()->GetString()))) Stack->PushBool(true);
+		if (SUCCEEDED(setCursor(Stack->Pop()->GetString()))) Stack->PushBool(true);
 		else Stack->PushBool(false);
 
 		return S_OK;
@@ -257,7 +257,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SetCaption") == 0) {
 		Stack->CorrectParams(2);
-		SetCaption(Stack->Pop()->GetString(), Stack->Pop()->GetInt());
+		setCaption(Stack->Pop()->GetString(), Stack->Pop()->GetInt());
 		Stack->PushNULL();
 
 		return S_OK;
@@ -269,7 +269,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "LoadSound") == 0) {
 		Stack->CorrectParams(1);
 		const char *Filename = Stack->Pop()->GetString();
-		if (SUCCEEDED(PlaySFX(Filename, false, false)))
+		if (SUCCEEDED(playSFX(Filename, false, false)))
 			Stack->PushBool(true);
 		else
 			Stack->PushBool(false);
@@ -302,7 +302,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			LoopStart = val3->GetInt();
 		}
 
-		if (FAILED(PlaySFX(Filename, Looping, true, NULL, LoopStart))) Stack->PushBool(false);
+		if (FAILED(playSFX(Filename, Looping, true, NULL, LoopStart))) Stack->PushBool(false);
 		else Stack->PushBool(true);
 		return S_OK;
 	}
@@ -327,7 +327,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			EventName = val2->GetString();
 		}
 
-		if (FAILED(PlaySFX(Filename, false, true, EventName))) Stack->PushBool(false);
+		if (FAILED(playSFX(Filename, false, true, EventName))) Stack->PushBool(false);
 		else Stack->PushBool(true);
 		return S_OK;
 	}
@@ -338,7 +338,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "StopSound") == 0) {
 		Stack->CorrectParams(0);
 
-		if (FAILED(StopSFX())) Stack->PushBool(false);
+		if (FAILED(stopSFX())) Stack->PushBool(false);
 		else Stack->PushBool(true);
 		return S_OK;
 	}
@@ -349,7 +349,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "PauseSound") == 0) {
 		Stack->CorrectParams(0);
 
-		if (FAILED(PauseSFX())) Stack->PushBool(false);
+		if (FAILED(pauseSFX())) Stack->PushBool(false);
 		else Stack->PushBool(true);
 		return S_OK;
 	}
@@ -360,7 +360,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "ResumeSound") == 0) {
 		Stack->CorrectParams(0);
 
-		if (FAILED(ResumeSFX())) Stack->PushBool(false);
+		if (FAILED(resumeSFX())) Stack->PushBool(false);
 		else Stack->PushBool(true);
 		return S_OK;
 	}
@@ -383,7 +383,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		Stack->CorrectParams(1);
 
 		uint32 Time = Stack->Pop()->GetInt();
-		if (FAILED(SetSFXTime(Time))) Stack->PushBool(false);
+		if (FAILED(setSFXTime(Time))) Stack->PushBool(false);
 		else Stack->PushBool(true);
 		return S_OK;
 	}
@@ -406,7 +406,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		Stack->CorrectParams(1);
 
 		int Volume = Stack->Pop()->GetInt();
-		if (FAILED(SetSFXVolume(Volume))) Stack->PushBool(false);
+		if (FAILED(setSFXVolume(Volume))) Stack->PushBool(false);
 		else Stack->PushBool(true);
 		return S_OK;
 	}
@@ -488,7 +488,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Caption") == 0) {
-		_scValue->SetString(GetCaption(1));
+		_scValue->SetString(getCaption(1));
 		return _scValue;
 	}
 
@@ -512,7 +512,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	// Height (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Height") == 0) {
-		_scValue->SetInt(GetHeight());
+		_scValue->SetInt(getHeight());
 		return _scValue;
 	}
 
@@ -671,7 +671,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(Name, "Caption") == 0) {
-		SetCaption(Value->GetString());
+		setCaption(Value->GetString());
 		return S_OK;
 	}
 
@@ -813,7 +813,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SoundPanning") == 0) {
 		_autoSoundPanning = Value->GetBool();
-		if (!_autoSoundPanning) ResetSoundPan();
+		if (!_autoSoundPanning) resetSoundPan();
 		return S_OK;
 	}
 
@@ -851,14 +851,14 @@ const char *CBObject::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::ShowCursor() {
+HRESULT CBObject::showCursor() {
 	if (_cursor) return Game->DrawCursor(_cursor);
 	else return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::saveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CBObject::saveAsText(CBDynBuffer *buffer, int indent) {
 	return S_OK;
 }
 
@@ -919,7 +919,7 @@ HRESULT CBObject::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::SetCursor(const char *Filename) {
+HRESULT CBObject::setCursor(const char *filename) {
 	if (!_sharedCursors) {
 		delete _cursor;
 		_cursor = NULL;
@@ -927,7 +927,7 @@ HRESULT CBObject::SetCursor(const char *Filename) {
 
 	_sharedCursors = false;
 	_cursor = new CBSprite(Game);
-	if (!_cursor || FAILED(_cursor->LoadFile(Filename))) {
+	if (!_cursor || FAILED(_cursor->LoadFile(filename))) {
 		delete _cursor;
 		_cursor = NULL;
 		return E_FAIL;
@@ -936,10 +936,10 @@ HRESULT CBObject::SetCursor(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::SetActiveCursor(const char *Filename) {
+HRESULT CBObject::setActiveCursor(const char *filename) {
 	delete _activeCursor;
 	_activeCursor = new CBSprite(Game);
-	if (!_activeCursor || FAILED(_activeCursor->LoadFile(Filename))) {
+	if (!_activeCursor || FAILED(_activeCursor->LoadFile(filename))) {
 		delete _activeCursor;
 		_activeCursor = NULL;
 		return E_FAIL;
@@ -948,62 +948,62 @@ HRESULT CBObject::SetActiveCursor(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBObject::GetHeight() {
+int CBObject::getHeight() {
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::HandleMouse(TMouseEvent Event, TMouseButton Button) {
+HRESULT CBObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::HandleKeypress(Common::Event *event, bool printable) {
+bool CBObject::handleKeypress(Common::Event *event, bool printable) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::HandleMouseWheel(int Delta) {
+bool CBObject::handleMouseWheel(int delta) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::PlaySFX(const char *Filename, bool Looping, bool PlayNow, const char *EventName, uint32 LoopStart) {
+HRESULT CBObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
 	// just play loaded sound
-	if (Filename == NULL && _sFX) {
+	if (filename == NULL && _sFX) {
 		if (Game->_editorMode || _sFXStart) {
 			_sFX->SetVolume(_sFXVolume);
 			_sFX->SetPositionTime(_sFXStart);
 			if (!Game->_editorMode) _sFXStart = 0;
 		}
-		if (PlayNow) {
-			SetSoundEvent(EventName);
-			if (LoopStart) _sFX->SetLoopStart(LoopStart);
-			return _sFX->Play(Looping);
+		if (playNow) {
+			setSoundEvent(eventName);
+			if (loopStart) _sFX->SetLoopStart(loopStart);
+			return _sFX->Play(looping);
 		} else return S_OK;
 	}
 
-	if (Filename == NULL) return E_FAIL;
+	if (filename == NULL) return E_FAIL;
 
 	// create new sound
 	delete _sFX;
 
 	_sFX = new CBSound(Game);
-	if (_sFX && SUCCEEDED(_sFX->SetSound(Filename, SOUND_SFX, true))) {
+	if (_sFX && SUCCEEDED(_sFX->SetSound(filename, SOUND_SFX, true))) {
 		_sFX->SetVolume(_sFXVolume);
 		if (_sFXStart) {
 			_sFX->SetPositionTime(_sFXStart);
 			_sFXStart = 0;
 		}
 		_sFX->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
-		if (PlayNow) {
-			SetSoundEvent(EventName);
-			if (LoopStart) _sFX->SetLoopStart(LoopStart);
-			return _sFX->Play(Looping);
+		if (playNow) {
+			setSoundEvent(eventName);
+			if (loopStart) _sFX->SetLoopStart(loopStart);
+			return _sFX->Play(looping);
 		} else return S_OK;
 	} else {
 		delete _sFX;
@@ -1014,10 +1014,10 @@ HRESULT CBObject::PlaySFX(const char *Filename, bool Looping, bool PlayNow, cons
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::StopSFX(bool DeleteSound) {
+HRESULT CBObject::stopSFX(bool deleteSound) {
 	if (_sFX) {
 		_sFX->Stop();
-		if (DeleteSound) {
+		if (deleteSound) {
 			delete _sFX;
 			_sFX = NULL;
 		}
@@ -1027,29 +1027,29 @@ HRESULT CBObject::StopSFX(bool DeleteSound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::PauseSFX() {
+HRESULT CBObject::pauseSFX() {
 	if (_sFX) return _sFX->Pause();
 	else return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::ResumeSFX() {
+HRESULT CBObject::resumeSFX() {
 	if (_sFX) return _sFX->Resume();
 	else return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::SetSFXTime(uint32 Time) {
-	_sFXStart = Time;
-	if (_sFX && _sFX->IsPlaying()) return _sFX->SetPositionTime(Time);
+HRESULT CBObject::setSFXTime(uint32 time) {
+	_sFXStart = time;
+	if (_sFX && _sFX->IsPlaying()) return _sFX->SetPositionTime(time);
 	else return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::SetSFXVolume(int Volume) {
+HRESULT CBObject::setSFXVolume(int Volume) {
 	_sFXVolume = Volume;
 	if (_sFX) return _sFX->SetVolume(Volume);
 	else return S_OK;
@@ -1057,34 +1057,34 @@ HRESULT CBObject::SetSFXVolume(int Volume) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::UpdateSounds() {
+HRESULT CBObject::updateSounds() {
 	if (_soundEvent) {
 		if (_sFX && !_sFX->IsPlaying()) {
 			applyEvent(_soundEvent);
-			SetSoundEvent(NULL);
+			setSoundEvent(NULL);
 		}
 	}
 
-	if (_sFX) UpdateOneSound(_sFX);
+	if (_sFX) updateOneSound(_sFX);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::UpdateOneSound(CBSound *Sound) {
+HRESULT CBObject::updateOneSound(CBSound *sound) {
 	HRESULT Ret = S_OK;
 
-	if (Sound) {
+	if (sound) {
 		if (_autoSoundPanning)
-			Ret = Sound->SetPan(Game->_soundMgr->posToPan(_posX  - Game->_offsetX, _posY - Game->_offsetY));
+			Ret = sound->SetPan(Game->_soundMgr->posToPan(_posX  - Game->_offsetX, _posY - Game->_offsetY));
 
-		Ret = Sound->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
+		Ret = sound->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 	}
 	return Ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::ResetSoundPan() {
+HRESULT CBObject::resetSoundPan() {
 	if (!_sFX) return S_OK;
 	else {
 		return _sFX->SetPan(0.0f);
@@ -1093,24 +1093,24 @@ HRESULT CBObject::ResetSoundPan() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::GetExtendedFlag(const char *FlagName) {
+bool CBObject::getExtendedFlag(const char *flagName) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::IsReady() {
+bool CBObject::isReady() {
 	return _ready;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBObject::SetSoundEvent(const char *EventName) {
+void CBObject::setSoundEvent(const char *eventName) {
 	delete[] _soundEvent;
 	_soundEvent = NULL;
-	if (EventName) {
-		_soundEvent = new char[strlen(EventName) + 1];
-		if (_soundEvent) strcpy(_soundEvent, EventName);
+	if (eventName) {
+		_soundEvent = new char[strlen(eventName) + 1];
+		if (_soundEvent) strcpy(_soundEvent, eventName);
 	}
 }
 

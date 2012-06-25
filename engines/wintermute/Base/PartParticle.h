@@ -68,8 +68,8 @@ public:
 	bool _isDead;
 	TParticleState _state;
 
-	HRESULT Update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 TimerDelta);
-	HRESULT Display(CPartEmitter *Emitter);
+	HRESULT update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 TimerDelta);
+	HRESULT display(CPartEmitter *Emitter);
 
 	HRESULT SetSprite(const char *Filename);
 

@@ -165,7 +165,7 @@ char *CAdSentence::GetStance(int Stance) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::Display() {
+HRESULT CAdSentence::display() {
 	if (!_font || !_text) return E_FAIL;
 
 	if (_sound && !_soundStarted) {
@@ -270,7 +270,7 @@ HRESULT CAdSentence::SetupTalkFile(const char *SoundFilename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::Update(TDirection Dir) {
+HRESULT CAdSentence::update(TDirection Dir) {
 	if (!_talkDef) return S_OK;
 
 	uint32 CurrentTime;

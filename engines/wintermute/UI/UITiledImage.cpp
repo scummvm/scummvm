@@ -64,7 +64,7 @@ CUITiledImage::~CUITiledImage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::Display(int X, int Y, int Width, int Height) {
+HRESULT CUITiledImage::display(int X, int Y, int Width, int Height) {
 	if (!_image) return E_FAIL;
 
 	int tile_width = _middleMiddle.right - _middleMiddle.left;
