@@ -62,7 +62,7 @@ HRESULT CBScriptHolder::cleanup() {
 	int i;
 
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		_scripts[i]->Finish(true);
+		_scripts[i]->finish(true);
 		_scripts[i]->_owner = NULL;
 	}
 	_scripts.RemoveAll();
@@ -177,7 +177,7 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStac
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0) {
-				_scripts[i]->Finish(KillThreads);
+				_scripts[i]->finish(KillThreads);
 				ret = true;
 				break;
 			}

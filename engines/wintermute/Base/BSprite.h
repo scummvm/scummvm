@@ -66,8 +66,8 @@ public:
 	bool _changed;
 	bool _paused;
 	bool _finished;
-	HRESULT LoadBuffer(byte  *Buffer, bool Compete = true, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
-	HRESULT LoadFile(const char *Filename, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
+	HRESULT loadBuffer(byte  *Buffer, bool Compete = true, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
+	HRESULT loadFile(const char *Filename, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
 	uint32 _lastFrameTime;
 	HRESULT Draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, uint32 Alpha = 0xFFFFFFFF);
 	bool _looping;

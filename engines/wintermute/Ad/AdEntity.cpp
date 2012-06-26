@@ -84,7 +84,7 @@ CAdEntity::~CAdEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::LoadFile(const char *Filename) {
+HRESULT CAdEntity::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdEntity::LoadFile failed for file '%s'", Filename);
@@ -96,7 +96,7 @@ HRESULT CAdEntity::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ENTITY file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ENTITY file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -150,7 +150,7 @@ TOKEN_DEF(WALK_TO_DIR)
 TOKEN_DEF(SAVE_STATE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdEntity::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY)
 	TOKEN_TABLE(SPRITE)
@@ -214,7 +214,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_X:
@@ -229,21 +229,21 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			delete _sprite;
 			_sprite = NULL;
 			spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			else _sprite = spr;
 		}
 		break;
 
 		case TOKEN_TALK: {
 			spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->LoadFile((char *)params, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.Add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->LoadFile((char *)params, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.Add(spr);
 		}
 		break;
@@ -306,7 +306,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -321,7 +321,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			if (_region) Game->UnregisterObject(_region);
 			_region = NULL;
 			CBRegion *rgn = new CBRegion(Game);
-			if (!rgn || FAILED(rgn->LoadBuffer(params, false))) cmd = PARSERR_GENERIC;
+			if (!rgn || FAILED(rgn->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
 			else {
 				_region = rgn;
 				Game->RegisterObject(_region);
@@ -336,7 +336,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			_currentBlockRegion = NULL;
 			CBRegion *rgn = new CBRegion(Game);
 			CBRegion *crgn = new CBRegion(Game);
-			if (!rgn || !crgn || FAILED(rgn->LoadBuffer(params, false))) {
+			if (!rgn || !crgn || FAILED(rgn->loadBuffer(params, false))) {
 				delete _blockRegion;
 				_blockRegion = NULL;
 				delete _currentBlockRegion;
@@ -357,7 +357,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 			_currentWptGroup = NULL;
 			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
 			CAdWaypointGroup *cwpt = new CAdWaypointGroup(Game);
-			if (!wpt || !cwpt || FAILED(wpt->LoadBuffer(params, false))) {
+			if (!wpt || !cwpt || FAILED(wpt->loadBuffer(params, false))) {
 				delete _wptGroup;
 				_wptGroup = NULL;
 				delete _currentWptGroup;
@@ -381,7 +381,7 @@ HRESULT CAdEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 				_sprite = NULL;
 				if (Game->_editorMode) {
 					spr = new CBSprite(Game, this);
-					if (!spr || FAILED(spr->LoadFile("entity_sound.sprite"))) cmd = PARSERR_GENERIC;
+					if (!spr || FAILED(spr->loadFile("entity_sound.sprite"))) cmd = PARSERR_GENERIC;
 					else _sprite = spr;
 				}
 				if (Game->_editorMode) _editorOnly = true;
@@ -543,7 +543,7 @@ HRESULT CAdEntity::update() {
 		_currentSprite = _animSprite;
 	}
 
-	if (_sentence && _state != STATE_TALKING) _sentence->Finish();
+	if (_sentence && _state != STATE_TALKING) _sentence->finish();
 
 	// default: stand animation
 	if (!_currentSprite) _currentSprite = _sprite;
@@ -568,11 +568,11 @@ HRESULT CAdEntity::update() {
 		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
 		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
 			if (TimeIsUp) {
-				_sentence->Finish();
+				_sentence->finish();
 				_tempSprite2 = NULL;
 				_state = STATE_READY;
 			} else {
-				_tempSprite2 = GetTalkStance(_sentence->GetNextStance());
+				_tempSprite2 = getTalkStance(_sentence->getNextStance());
 				if (_tempSprite2) {
 					_tempSprite2->Reset();
 					_currentSprite = _tempSprite2;
@@ -1013,7 +1013,7 @@ HRESULT CAdEntity::SetSprite(const char *Filename) {
 	delete _sprite;
 	_sprite = NULL;
 	CBSprite *spr = new CBSprite(Game, this);
-	if (!spr || FAILED(spr->LoadFile(Filename))) {
+	if (!spr || FAILED(spr->loadFile(Filename))) {
 		delete _sprite;
 		_sprite = NULL;
 		return E_FAIL;

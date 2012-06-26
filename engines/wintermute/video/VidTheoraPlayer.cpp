@@ -681,7 +681,7 @@ HRESULT CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
 #if 0
 	SAFE_DELETE(m_AlphaImage);
 	m_AlphaImage = new CBImage(Game);
-	if (!m_AlphaImage || FAILED(m_AlphaImage->LoadFile(Filename))) {
+	if (!m_AlphaImage || FAILED(m_AlphaImage->loadFile(Filename))) {
 		SAFE_DELETE(m_AlphaImage);
 		SAFE_DELETE_ARRAY(m_AlphaFilename);
 		return E_FAIL;

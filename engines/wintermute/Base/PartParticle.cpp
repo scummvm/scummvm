@@ -83,7 +83,7 @@ HRESULT CPartParticle::setSprite(const char *Filename) {
 
 	CSysClassRegistry::GetInstance()->_disabled = true;
 	_sprite = new CBSprite(Game, Game);
-	if (_sprite && SUCCEEDED(_sprite->LoadFile(Filename))) {
+	if (_sprite && SUCCEEDED(_sprite->loadFile(Filename))) {
 		CSysClassRegistry::GetInstance()->_disabled = false;
 		return S_OK;
 	} else {

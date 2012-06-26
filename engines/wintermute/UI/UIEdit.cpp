@@ -94,7 +94,7 @@ CUIEdit::~CUIEdit() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::LoadFile(const char *Filename) {
+HRESULT CUIEdit::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIEdit::LoadFile failed for file '%s'", Filename);
@@ -106,7 +106,7 @@ HRESULT CUIEdit::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing EDIT file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing EDIT file '%s'", Filename);
 
 	delete [] Buffer;
 
@@ -139,7 +139,7 @@ TOKEN_DEF(EDIT)
 TOKEN_DEF(CAPTION)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CUIEdit::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TEMPLATE)
 	TOKEN_TABLE(DISABLED)
@@ -180,7 +180,7 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -190,7 +190,7 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_BACK:
 			delete _back;
 			_back = new CUITiledImage(Game);
-			if (!_back || FAILED(_back->LoadFile((char *)params))) {
+			if (!_back || FAILED(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
 				cmd = PARSERR_GENERIC;
@@ -200,7 +200,7 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new CBSprite(Game);
-			if (!_image || FAILED(_image->LoadFile((char *)params))) {
+			if (!_image || FAILED(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
 				cmd = PARSERR_GENERIC;
@@ -251,7 +251,7 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;

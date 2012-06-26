@@ -1117,7 +1117,7 @@ HRESULT CScScript::Sleep(uint32 Duration) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Finish(bool IncludingThreads) {
+HRESULT CScScript::finish(bool IncludingThreads) {
 	if (_state != SCRIPT_FINISHED && IncludingThreads) {
 		_state = SCRIPT_FINISHED;
 		FinishThreads();
@@ -1508,7 +1508,7 @@ HRESULT CScScript::FinishThreads() {
 	for (int i = 0; i < _engine->_scripts.GetSize(); i++) {
 		CScScript *Scr = _engine->_scripts[i];
 		if (Scr->_thread && Scr->_state != SCRIPT_FINISHED && Scr->_owner == _owner && scumm_stricmp(Scr->_filename, _filename) == 0)
-			Scr->Finish(true);
+			Scr->finish(true);
 	}
 	return S_OK;
 }

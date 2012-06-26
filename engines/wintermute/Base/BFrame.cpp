@@ -132,7 +132,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(KILL_SOUND)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
+HRESULT CBFrame::loadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(DELAY)
 	TOKEN_TABLE(IMAGE)

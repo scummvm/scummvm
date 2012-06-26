@@ -37,8 +37,8 @@ namespace WinterMute {
 class CAdNodeState;
 class CAdSceneState : public CBBase {
 public:
-	CAdNodeState *GetNodeState(char *Name, bool Saving);
-	void setFilename(const char *Filename);
+	CAdNodeState *getNodeState(char *name, bool saving);
+	void setFilename(const char *filename);
 	DECLARE_PERSISTENT(CAdSceneState, CBBase)
 	CAdSceneState(CBGame *inGame);
 	virtual ~CAdSceneState();

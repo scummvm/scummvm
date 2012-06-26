@@ -404,7 +404,7 @@ int CBFontTT::GetLetterHeight() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::LoadFile(const char *Filename) {
+HRESULT CBFontTT::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBFontTT::LoadFile failed for file '%s'", Filename);
@@ -416,7 +416,7 @@ HRESULT CBFontTT::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer))) Game->LOG(0, "Error parsing TTFONT file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer))) Game->LOG(0, "Error parsing TTFONT file '%s'", Filename);
 
 	delete [] Buffer;
 
@@ -441,7 +441,7 @@ TOKEN_DEF(OFFSET_X)
 TOKEN_DEF(OFFSET_Y)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::LoadBuffer(byte  *Buffer) {
+HRESULT CBFontTT::loadBuffer(byte  *Buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TTFONT)
 	TOKEN_TABLE(SIZE)

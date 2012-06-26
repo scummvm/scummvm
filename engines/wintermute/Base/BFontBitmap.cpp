@@ -245,7 +245,7 @@ void CBFontBitmap::DrawChar(byte  c, int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::LoadFile(const char *Filename) {
+HRESULT CBFontBitmap::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBFontBitmap::LoadFile failed for file '%s'", Filename);
@@ -257,7 +257,7 @@ HRESULT CBFontBitmap::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer))) Game->LOG(0, "Error parsing FONT file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer))) Game->LOG(0, "Error parsing FONT file '%s'", Filename);
 
 	delete [] Buffer;
 
@@ -284,7 +284,7 @@ TOKEN_DEF(WIDTHS_FRAME)
 TOKEN_DEF(PAINT_WHOLE_CELL)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
+HRESULT CBFontBitmap::loadBuffer(byte  *Buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONTEXT_FIX)
 	TOKEN_TABLE(FONT)
@@ -404,7 +404,7 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 	if (sprite_file != NULL) {
 		delete _sprite;
 		_sprite = new CBSprite(Game, this);
-		if (!_sprite || FAILED(_sprite->LoadFile(sprite_file))) {
+		if (!_sprite || FAILED(_sprite->loadFile(sprite_file))) {
 			delete _sprite;
 			_sprite = NULL;
 		}

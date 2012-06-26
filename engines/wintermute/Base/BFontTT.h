@@ -123,8 +123,8 @@ public:
 	virtual void DrawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLenght = -1);
 	virtual int GetLetterHeight();
 
-	HRESULT LoadBuffer(byte *buffer);
-	HRESULT LoadFile(const char *filename);
+	HRESULT loadBuffer(byte *buffer);
+	HRESULT loadFile(const char *filename);
 
 	float GetLineHeight() const {
 		return _lineHeight;

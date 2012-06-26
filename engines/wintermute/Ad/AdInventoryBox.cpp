@@ -154,7 +154,7 @@ HRESULT CAdInventoryBox::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::LoadFile(const char *Filename) {
+HRESULT CAdInventoryBox::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdInventoryBox::LoadFile failed for file '%s'", Filename);
@@ -166,7 +166,7 @@ HRESULT CAdInventoryBox::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing INVENTORY_BOX file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing INVENTORY_BOX file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -192,7 +192,7 @@ TOKEN_DEF(HIDE_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdInventoryBox::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(INVENTORY_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -227,7 +227,7 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -241,7 +241,7 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_WINDOW:
 			delete _window;
 			_window = new CUIWindow(Game);
-			if (!_window || FAILED(_window->LoadBuffer(params, false))) {
+			if (!_window || FAILED(_window->loadBuffer(params, false))) {
 				delete _window;
 				_window = NULL;
 				cmd = PARSERR_GENERIC;

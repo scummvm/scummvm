@@ -55,7 +55,7 @@ CUIEntity::~CUIEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::LoadFile(const char *Filename) {
+HRESULT CUIEntity::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIEntity::LoadFile failed for file '%s'", Filename);
@@ -67,7 +67,7 @@ HRESULT CUIEntity::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ENTITY container file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ENTITY container file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -89,7 +89,7 @@ TOKEN_DEF(SCRIPT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CUIEntity::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY_CONTAINER)
 	TOKEN_TABLE(TEMPLATE)
@@ -118,7 +118,7 @@ HRESULT CUIEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -211,7 +211,7 @@ HRESULT CUIEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
 HRESULT CUIEntity::SetEntity(const char *Filename) {
 	if (_entity) Game->UnregisterObject(_entity);
 	_entity = new CAdEntity(Game);
-	if (!_entity || FAILED(_entity->LoadFile(Filename))) {
+	if (!_entity || FAILED(_entity->loadFile(Filename))) {
 		delete _entity;
 		_entity = NULL;
 		return E_FAIL;

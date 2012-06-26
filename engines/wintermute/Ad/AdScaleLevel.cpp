@@ -51,7 +51,7 @@ CAdScaleLevel::~CAdScaleLevel() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::LoadFile(const char *Filename) {
+HRESULT CAdScaleLevel::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdScaleLevel::LoadFile failed for file '%s'", Filename);
@@ -63,7 +63,7 @@ HRESULT CAdScaleLevel::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SCALE_LEVEL file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SCALE_LEVEL file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -80,7 +80,7 @@ TOKEN_DEF(SCALE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdScaleLevel::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCALE_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -104,7 +104,7 @@ HRESULT CAdScaleLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_Y:

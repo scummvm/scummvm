@@ -173,7 +173,7 @@ HRESULT CUIObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		}
 
 		_image = new CBSprite(Game);
-		if (!_image || FAILED(_image->LoadFile(Val->GetString()))) {
+		if (!_image || FAILED(_image->loadFile(Val->GetString()))) {
 			delete _image;
 			_image = NULL;
 			Stack->PushBool(false);

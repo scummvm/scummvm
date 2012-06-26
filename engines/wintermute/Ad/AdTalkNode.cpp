@@ -80,7 +80,7 @@ TOKEN_DEF(PRECACHE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkNode::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdTalkNode::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTION)
 	TOKEN_TABLE(SPRITESET_FILE)
@@ -122,7 +122,7 @@ HRESULT CAdTalkNode::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_SPRITESET: {
 			delete _spriteSet;
 			_spriteSet = new CAdSpriteSet(Game);
-			if (!_spriteSet || FAILED(_spriteSet->LoadBuffer(params, false))) {
+			if (!_spriteSet || FAILED(_spriteSet->loadBuffer(params, false))) {
 				delete _spriteSet;
 				_spriteSet = NULL;
 				cmd = PARSERR_GENERIC;
@@ -167,13 +167,13 @@ HRESULT CAdTalkNode::LoadBuffer(byte  *Buffer, bool Complete) {
 	if (_preCache && _spriteFilename) {
 		delete _sprite;
 		_sprite = new CBSprite(Game);
-		if (!_sprite || FAILED(_sprite->LoadFile(_spriteFilename))) return E_FAIL;
+		if (!_sprite || FAILED(_sprite->loadFile(_spriteFilename))) return E_FAIL;
 	}
 
 	if (_preCache && _spriteSetFilename) {
 		delete _spriteSet;
 		_spriteSet = new CAdSpriteSet(Game);
-		if (!_spriteSet || FAILED(_spriteSet->LoadFile(_spriteSetFilename))) return E_FAIL;
+		if (!_spriteSet || FAILED(_spriteSet->loadFile(_spriteSetFilename))) return E_FAIL;
 	}
 
 
@@ -217,10 +217,10 @@ HRESULT CAdTalkNode::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkNode::LoadSprite() {
+HRESULT CAdTalkNode::loadSprite() {
 	if (_spriteFilename && !_sprite) {
 		_sprite = new CBSprite(Game);
-		if (!_sprite || FAILED(_sprite->LoadFile(_spriteFilename))) {
+		if (!_sprite || FAILED(_sprite->loadFile(_spriteFilename))) {
 			delete _sprite;
 			_sprite = NULL;
 			return E_FAIL;
@@ -229,7 +229,7 @@ HRESULT CAdTalkNode::LoadSprite() {
 
 	else if (_spriteSetFilename && !_spriteSet) {
 		_spriteSet = new CAdSpriteSet(Game);
-		if (!_spriteSet || FAILED(_spriteSet->LoadFile(_spriteSetFilename))) {
+		if (!_spriteSet || FAILED(_spriteSet->loadFile(_spriteSetFilename))) {
 			delete _spriteSet;
 			_spriteSet = NULL;
 			return E_FAIL;
@@ -241,11 +241,11 @@ HRESULT CAdTalkNode::LoadSprite() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkNode::IsInTimeInterval(uint32 Time, TDirection Dir) {
+bool CAdTalkNode::isInTimeInterval(uint32 Time, TDirection Dir) {
 	if (Time >= _startTime) {
 		if (_playToEnd) {
 			if ((_spriteFilename && _sprite == NULL) || (_sprite && _sprite->_finished == false)) return true;
-			else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->GetSprite(Dir) && _spriteSet->GetSprite(Dir)->_finished == false)) return true;
+			else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->getSprite(Dir) && _spriteSet->getSprite(Dir)->_finished == false)) return true;
 			else return false;
 		} else return _endTime >= Time;
 	} else return false;
@@ -253,10 +253,10 @@ bool CAdTalkNode::IsInTimeInterval(uint32 Time, TDirection Dir) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSprite *CAdTalkNode::GetSprite(TDirection Dir) {
-	LoadSprite();
+CBSprite *CAdTalkNode::getSprite(TDirection Dir) {
+	loadSprite();
 	if (_sprite) return _sprite;
-	else if (_spriteSet) return _spriteSet->GetSprite(Dir);
+	else if (_spriteSet) return _spriteSet->getSprite(Dir);
 	else return NULL;
 }
 

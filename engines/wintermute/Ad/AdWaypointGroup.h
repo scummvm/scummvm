@@ -44,8 +44,8 @@ public:
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	bool _active;
 	CAdWaypointGroup(CBGame *inGame);
-	HRESULT LoadFile(const char *Filename);
-	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadFile(const char *Filename);
+	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 	virtual ~CAdWaypointGroup();
 	CBArray<CBPoint *, CBPoint *> _points;
 	int _editorSelectedPoint;

@@ -53,8 +53,8 @@ public:
 	CUIWindow *_window;
 	CAdInventoryBox(CBGame *inGame);
 	virtual ~CAdInventoryBox();
-	HRESULT LoadFile(const char *Filename);
-	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadFile(const char *Filename);
+	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 };
 

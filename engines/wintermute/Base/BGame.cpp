@@ -390,7 +390,7 @@ HRESULT CBGame::cleanup() {
 
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		_scripts[i]->_owner = NULL;
-		_scripts[i]->Finish();
+		_scripts[i]->finish();
 	}
 	_scripts.RemoveAll();
 
@@ -687,7 +687,7 @@ void CBGame::GetOffset(int *OffsetX, int *OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::LoadFile(const char *Filename) {
+HRESULT CBGame::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBGame::LoadFile failed for file '%s'", Filename);
@@ -699,7 +699,7 @@ HRESULT CBGame::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing GAME file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing GAME file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -758,7 +758,7 @@ TOKEN_DEF(GUID)
 TOKEN_DEF(COMPAT_KILL_METHOD_THREADS)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CBGame::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(GAME)
 	TOKEN_TABLE(TEMPLATE)
@@ -809,7 +809,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -838,7 +838,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -849,7 +849,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 			delete _activeCursor;
 			_activeCursor = NULL;
 			_activeCursor = new CBSprite(Game);
-			if (!_activeCursor || FAILED(_activeCursor->LoadFile((char *)params))) {
+			if (!_activeCursor || FAILED(_activeCursor->loadFile((char *)params))) {
 				delete _activeCursor;
 				_activeCursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -859,7 +859,7 @@ HRESULT CBGame::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_NONINTERACTIVE_CURSOR:
 			delete _cursorNoninteractive;
 			_cursorNoninteractive = new CBSprite(Game);
-			if (!_cursorNoninteractive || FAILED(_cursorNoninteractive->LoadFile((char *)params))) {
+			if (!_cursorNoninteractive || FAILED(_cursorNoninteractive->loadFile((char *)params))) {
 				delete _cursorNoninteractive;
 				_cursorNoninteractive = NULL;
 				cmd = PARSERR_GENERIC;
@@ -1034,7 +1034,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		if (Val->IsNULL()) ClearOld = true;
 		else ClearOld = Val->GetBool();
 
-		if (FAILED(_stringTable->LoadFile(Filename, ClearOld)))
+		if (FAILED(_stringTable->loadFile(Filename, ClearOld)))
 			Stack->PushBool(false);
 		else
 			Stack->PushBool(true);
@@ -1086,7 +1086,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	else if (strcmp(Name, "LoadWindow") == 0) {
 		Stack->CorrectParams(1);
 		CUIWindow *win = new CUIWindow(Game);
-		if (win && SUCCEEDED(win->LoadFile(Stack->Pop()->GetString()))) {
+		if (win && SUCCEEDED(win->loadFile(Stack->Pop()->GetString()))) {
 			_windows.Add(win);
 			RegisterObject(win);
 			Stack->PushNative(win, true);
@@ -1994,7 +1994,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 
 		delete _loadingIcon;
 		_loadingIcon = new CBSprite(this);
-		if (!_loadingIcon || FAILED(_loadingIcon->LoadFile(Filename))) {
+		if (!_loadingIcon || FAILED(_loadingIcon->loadFile(Filename))) {
 			delete _loadingIcon;
 			_loadingIcon = NULL;
 		} else {
@@ -3542,7 +3542,7 @@ HRESULT CBGame::LoadSettings(const char *Filename) {
 			break;
 
 		case TOKEN_STRING_TABLE:
-			if (FAILED(_stringTable->LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(_stringTable->loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_RESOLUTION:
@@ -4208,7 +4208,7 @@ HRESULT CBGame::SetWaitCursor(const char *Filename) {
 	_cursorNoninteractive = NULL;
 
 	_cursorNoninteractive = new CBSprite(Game);
-	if (!_cursorNoninteractive || FAILED(_cursorNoninteractive->LoadFile(Filename))) {
+	if (!_cursorNoninteractive || FAILED(_cursorNoninteractive->loadFile(Filename))) {
 		delete _cursorNoninteractive;
 		_cursorNoninteractive = NULL;
 		return E_FAIL;

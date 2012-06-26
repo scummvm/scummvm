@@ -61,7 +61,7 @@ CAdLayer::~CAdLayer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::LoadFile(const char *Filename) {
+HRESULT CAdLayer::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdLayer::LoadFile failed for file '%s'", Filename);
@@ -73,7 +73,7 @@ HRESULT CAdLayer::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing LAYER file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing LAYER file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -100,7 +100,7 @@ TOKEN_DEF(CLOSE_UP)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdLayer::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(LAYER)
 	TOKEN_TABLE(TEMPLATE)
@@ -134,7 +134,7 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -168,7 +168,7 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_REGION: {
 			CAdRegion *region = new CAdRegion(Game);
 			CAdSceneNode *node = new CAdSceneNode(Game);
-			if (!region || !node || FAILED(region->LoadBuffer(params, false))) {
+			if (!region || !node || FAILED(region->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete region;
 				delete node;
@@ -185,7 +185,7 @@ HRESULT CAdLayer::LoadBuffer(byte  *Buffer, bool Complete) {
 			CAdEntity *entity = new CAdEntity(Game);
 			CAdSceneNode *node = new CAdSceneNode(Game);
 			if (entity) entity->_zoomable = false; // scene entites default to NOT zoom
-			if (!entity || !node || FAILED(entity->LoadBuffer(params, false))) {
+			if (!entity || !node || FAILED(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
 				delete node;

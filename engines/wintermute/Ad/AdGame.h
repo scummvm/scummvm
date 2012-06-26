@@ -140,8 +140,8 @@ public:
 	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesBranch;
 	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesGame;
 
-	virtual HRESULT LoadFile(const char *Filename);
-	virtual HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
+	virtual HRESULT loadFile(const char *Filename);
+	virtual HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 
 	HRESULT LoadItemsFile(const char *Filename, bool Merge = false);
 	HRESULT LoadItemsBuffer(byte  *Buffer, bool Merge = false);

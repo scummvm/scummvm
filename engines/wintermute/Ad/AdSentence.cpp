@@ -91,38 +91,38 @@ CAdSentence::~CAdSentence() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSentence::SetText(const char *Text) {
+void CAdSentence::setText(const char *text) {
 	if (_text) delete [] _text;
-	_text = new char[strlen(Text) + 1];
-	if (_text) strcpy(_text, Text);
+	_text = new char[strlen(text) + 1];
+	if (_text) strcpy(_text, text);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSentence::SetStances(const char *Stances) {
+void CAdSentence::setStances(const char *stances) {
 	if (_stances) delete [] _stances;
-	if (Stances) {
-		_stances = new char[strlen(Stances) + 1];
-		if (_stances) strcpy(_stances, Stances);
+	if (stances) {
+		_stances = new char[strlen(stances) + 1];
+		if (_stances) strcpy(_stances, stances);
 	} else _stances = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdSentence::GetCurrentStance() {
-	return GetStance(_currentStance);
+char *CAdSentence::getCurrentStance() {
+	return getStance(_currentStance);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdSentence::GetNextStance() {
+char *CAdSentence::getNextStance() {
 	_currentStance++;
-	return GetStance(_currentStance);
+	return getStance(_currentStance);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdSentence::GetStance(int Stance) {
+char *CAdSentence::getStance(int Stance) {
 	if (_stances == NULL) return NULL;
 
 	if (_tempStance) delete [] _tempStance;
@@ -195,16 +195,16 @@ HRESULT CAdSentence::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSentence::SetSound(CBSound *Sound) {
-	if (!Sound) return;
+void CAdSentence::setSound(CBSound *sound) {
+	if (!sound) return;
 	delete _sound;
-	_sound = Sound;
+	_sound = sound;
 	_soundStarted = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::Finish() {
+HRESULT CAdSentence::finish() {
 	if (_sound) _sound->stop();
 	return S_OK;
 }
@@ -238,16 +238,16 @@ HRESULT CAdSentence::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::SetupTalkFile(const char *SoundFilename) {
+HRESULT CAdSentence::setupTalkFile(const char *soundFilename) {
 	delete _talkDef;
 	_talkDef = NULL;
 	_currentSprite = NULL;
 
-	if (!SoundFilename) return S_OK;
+	if (!soundFilename) return S_OK;
 
 
-	AnsiString path = PathUtil::GetDirectoryName(SoundFilename);
-	AnsiString name = PathUtil::GetFileNameWithoutExtension(SoundFilename);
+	AnsiString path = PathUtil::GetDirectoryName(soundFilename);
+	AnsiString name = PathUtil::GetFileNameWithoutExtension(soundFilename);
 
 	AnsiString talkDefFileName = PathUtil::Combine(path, name + ".talk");
 
@@ -258,7 +258,7 @@ HRESULT CAdSentence::SetupTalkFile(const char *SoundFilename) {
 
 
 	_talkDef = new CAdTalkDef(Game);
-	if (!_talkDef || FAILED(_talkDef->LoadFile(talkDefFileName.c_str()))) {
+	if (!_talkDef || FAILED(_talkDef->loadFile(talkDefFileName.c_str()))) {
 		delete _talkDef;
 		_talkDef = NULL;
 		return E_FAIL;
@@ -270,7 +270,7 @@ HRESULT CAdSentence::SetupTalkFile(const char *SoundFilename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::update(TDirection Dir) {
+HRESULT CAdSentence::update(TDirection dir) {
 	if (!_talkDef) return S_OK;
 
 	uint32 CurrentTime;
@@ -284,10 +284,10 @@ HRESULT CAdSentence::update(TDirection Dir) {
 
 	bool TalkNodeFound = false;
 	for (int i = 0; i < _talkDef->_nodes.GetSize(); i++) {
-		if (_talkDef->_nodes[i]->IsInTimeInterval(CurrentTime, Dir)) {
+		if (_talkDef->_nodes[i]->isInTimeInterval(CurrentTime, dir)) {
 			TalkNodeFound = true;
 
-			CBSprite *NewSprite = _talkDef->_nodes[i]->GetSprite(Dir);
+			CBSprite *NewSprite = _talkDef->_nodes[i]->getSprite(dir);
 			if (NewSprite != _currentSprite) NewSprite->Reset();
 			_currentSprite = NewSprite;
 
@@ -298,7 +298,7 @@ HRESULT CAdSentence::update(TDirection Dir) {
 
 	// no talk node, try to use default sprite instead (if any)
 	if (!TalkNodeFound) {
-		CBSprite *NewSprite = _talkDef->GetDefaultSprite(Dir);
+		CBSprite *NewSprite = _talkDef->getDefaultSprite(dir);
 		if (NewSprite) {
 			if (NewSprite != _currentSprite) NewSprite->Reset();
 			_currentSprite = NewSprite;

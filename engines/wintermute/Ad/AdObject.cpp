@@ -159,7 +159,7 @@ HRESULT CAdObject::playAnim(const char *Filename) {
 		Game->LOG(0, "CAdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, Filename);
 		return E_FAIL;
 	}
-	HRESULT res = _animSprite->LoadFile(Filename);
+	HRESULT res = _animSprite->loadFile(Filename);
 	if (FAILED(res)) {
 		Game->LOG(res, "CAdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, Filename);
 		delete _animSprite;
@@ -226,7 +226,7 @@ HRESULT CAdObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "StopTalk") == 0 || strcmp(Name, "StopTalking") == 0) {
 		Stack->CorrectParams(0);
-		if (_sentence) _sentence->Finish();
+		if (_sentence) _sentence->finish();
 		if (_state == STATE_TALKING) {
 			_state = _nextState;
 			_nextState = STATE_READY;
@@ -490,7 +490,7 @@ HRESULT CAdObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		HRESULT res;
 		CAdEntity *Ent = new CAdEntity(Game);
-		if (FAILED(res = Ent->LoadFile(Filename))) {
+		if (FAILED(res = Ent->loadFile(Filename))) {
 			delete Ent;
 			Ent = NULL;
 			Script->RuntimeError("AddAttachment() failed loading entity '%s'", Filename);
@@ -837,9 +837,9 @@ void CAdObject::talk(const char *Text, const char *Sound, uint32 Duration, const
 	delete(_sentence->_sound);
 	_sentence->_sound = NULL;
 
-	_sentence->SetText(Text);
+	_sentence->setText(Text);
 	Game->_stringTable->Expand(&_sentence->_text);
-	_sentence->SetStances(Stances);
+	_sentence->setStances(Stances);
 	_sentence->_duration = Duration;
 	_sentence->_align = Align;
 	_sentence->_startTime = Game->_timer;
@@ -863,7 +863,7 @@ void CAdObject::talk(const char *Text, const char *Sound, uint32 Duration, const
 	if (Sound) {
 		CBSound *snd = new CBSound(Game);
 		if (snd && SUCCEEDED(snd->setSound(Sound, SOUND_SPEECH, true))) {
-			_sentence->SetSound(snd);
+			_sentence->setSound(snd);
 			if (_sentence->_duration <= 0) {
 				uint32 Length = snd->getLength();
 				if (Length != 0) _sentence->_duration = Length;
@@ -927,7 +927,7 @@ void CAdObject::talk(const char *Text, const char *Sound, uint32 Duration, const
 	_sentence->_fixedPos = !_subtitlesModRelative;
 
 
-	_sentence->SetupTalkFile(Sound);
+	_sentence->setupTalkFile(Sound);
 
 	_state = STATE_TALKING;
 
@@ -941,7 +941,7 @@ HRESULT CAdObject::reset() {
 		delete _animSprite;
 		_animSprite = NULL;
 	} else if (_state == STATE_TALKING && _sentence) {
-		_sentence->Finish();
+		_sentence->finish();
 	}
 
 	_state = _nextState = STATE_READY;

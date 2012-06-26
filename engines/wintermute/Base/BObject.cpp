@@ -927,7 +927,7 @@ HRESULT CBObject::setCursor(const char *filename) {
 
 	_sharedCursors = false;
 	_cursor = new CBSprite(Game);
-	if (!_cursor || FAILED(_cursor->LoadFile(filename))) {
+	if (!_cursor || FAILED(_cursor->loadFile(filename))) {
 		delete _cursor;
 		_cursor = NULL;
 		return E_FAIL;
@@ -939,7 +939,7 @@ HRESULT CBObject::setCursor(const char *filename) {
 HRESULT CBObject::setActiveCursor(const char *filename) {
 	delete _activeCursor;
 	_activeCursor = new CBSprite(Game);
-	if (!_activeCursor || FAILED(_activeCursor->LoadFile(filename))) {
+	if (!_activeCursor || FAILED(_activeCursor->loadFile(filename))) {
 		delete _activeCursor;
 		_activeCursor = NULL;
 		return E_FAIL;

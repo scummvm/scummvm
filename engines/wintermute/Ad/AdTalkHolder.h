@@ -36,8 +36,8 @@ namespace WinterMute {
 class CAdTalkHolder : public CAdObject {
 public:
 	DECLARE_PERSISTENT(CAdTalkHolder, CAdObject)
-	virtual CBSprite *GetTalkStance(const char *Stance);
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual CBSprite *getTalkStance(const char *stance);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 	CBSprite *_sprite;
 	CBArray<CBSprite *, CBSprite *> _talkSprites;
 	CBArray<CBSprite *, CBSprite *> _talkSpritesEx;
@@ -45,9 +45,9 @@ public:
 	virtual ~CAdTalkHolder();
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *Name);
-	virtual HRESULT scSetProperty(const char *Name, CScValue *Value);
-	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual CScValue *scGetProperty(const char *name);
+	virtual HRESULT scSetProperty(const char *name, CScValue *value);
+	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 };

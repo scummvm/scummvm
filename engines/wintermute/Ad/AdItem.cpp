@@ -84,7 +84,7 @@ CAdItem::~CAdItem() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::LoadFile(const char *Filename) {
+HRESULT CAdItem::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdItem::LoadFile failed for file '%s'", Filename);
@@ -96,7 +96,7 @@ HRESULT CAdItem::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -134,7 +134,7 @@ TOKEN_DEF(AMOUNT_STRING)
 TOKEN_DEF(AMOUNT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdItem::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
 	TOKEN_TABLE(TEMPLATE)
@@ -180,7 +180,7 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -199,7 +199,7 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_SPRITE:
 			delete _sprite;
 			_sprite = new CBSprite(Game, this);
-			if (!_sprite || FAILED(_sprite->LoadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			if (!_sprite || FAILED(_sprite->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
 				delete _sprite;
 				cmd = PARSERR_GENERIC;
 			}
@@ -209,7 +209,7 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_SPRITE_HOVER:
 			delete _spriteHover;
 			_spriteHover = new CBSprite(Game, this);
-			if (!_spriteHover || FAILED(_spriteHover->LoadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			if (!_spriteHover || FAILED(_spriteHover->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
 				delete _spriteHover;
 				cmd = PARSERR_GENERIC;
 			}
@@ -243,14 +243,14 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_TALK: {
 			CBSprite *spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->LoadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.Add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			CBSprite *spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->LoadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.Add(spr);
 		}
 		break;
@@ -258,7 +258,7 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_CURSOR:
 			delete _cursorNormal;
 			_cursorNormal = new CBSprite(Game);
-			if (!_cursorNormal || FAILED(_cursorNormal->LoadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			if (!_cursorNormal || FAILED(_cursorNormal->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
 				delete _cursorNormal;
 				_cursorNormal = NULL;
 				cmd = PARSERR_GENERIC;
@@ -268,7 +268,7 @@ HRESULT CAdItem::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_CURSOR_HOVER:
 			delete _cursorHover;
 			_cursorHover = new CBSprite(Game);
-			if (!_cursorHover || FAILED(_cursorHover->LoadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			if (!_cursorHover || FAILED(_cursorHover->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
 				delete _cursorHover;
 				_cursorHover = NULL;
 				cmd = PARSERR_GENERIC;
@@ -333,7 +333,7 @@ HRESULT CAdItem::update() {
 		_currentSprite = _animSprite;
 	}
 
-	if (_sentence && _state != STATE_TALKING) _sentence->Finish();
+	if (_sentence && _state != STATE_TALKING) _sentence->finish();
 
 	// default: stand animation
 	if (!_currentSprite) _currentSprite = _sprite;
@@ -360,11 +360,11 @@ HRESULT CAdItem::update() {
 		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
 		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
 			if (TimeIsUp) {
-				_sentence->Finish();
+				_sentence->finish();
 				_tempSprite2 = NULL;
 				_state = STATE_READY;
 			} else {
-				_tempSprite2 = GetTalkStance(_sentence->GetNextStance());
+				_tempSprite2 = getTalkStance(_sentence->getNextStance());
 				if (_tempSprite2) {
 					_tempSprite2->Reset();
 					_currentSprite = _tempSprite2;
@@ -444,7 +444,7 @@ HRESULT CAdItem::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		delete _spriteHover;
 		_spriteHover = NULL;
 		CBSprite *spr = new CBSprite(Game, this);
-		if (!spr || FAILED(spr->LoadFile(Filename))) {
+		if (!spr || FAILED(spr->loadFile(Filename))) {
 			Stack->PushBool(false);
 			Script->RuntimeError("Item.SetHoverSprite failed for file '%s'", Filename);
 		} else {
@@ -487,7 +487,7 @@ HRESULT CAdItem::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		delete _cursorNormal;
 		_cursorNormal = NULL;
 		CBSprite *spr = new CBSprite(Game);
-		if (!spr || FAILED(spr->LoadFile(Filename))) {
+		if (!spr || FAILED(spr->loadFile(Filename))) {
 			Stack->PushBool(false);
 			Script->RuntimeError("Item.SetNormalCursor failed for file '%s'", Filename);
 		} else {
@@ -530,7 +530,7 @@ HRESULT CAdItem::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		delete _cursorHover;
 		_cursorHover = NULL;
 		CBSprite *spr = new CBSprite(Game);
-		if (!spr || FAILED(spr->LoadFile(Filename))) {
+		if (!spr || FAILED(spr->loadFile(Filename))) {
 			Stack->PushBool(false);
 			Script->RuntimeError("Item.SetHoverCursor failed for file '%s'", Filename);
 		} else {

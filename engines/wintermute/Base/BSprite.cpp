@@ -122,12 +122,12 @@ HRESULT CBSprite::Draw(int X, int Y, CBObject *Register, float ZoomX, float Zoom
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::LoadFile(const char *Filename, int LifeTime, TSpriteCacheType CacheType) {
+HRESULT CBSprite::loadFile(const char *Filename, int LifeTime, TSpriteCacheType CacheType) {
 	Common::SeekableReadStream *File = Game->_fileManager->openFile(Filename);
 	if (!File) {
 		Game->LOG(0, "CBSprite::LoadFile failed for file '%s'", Filename);
-		if (Game->_dEBUG_DebugMode) return LoadFile("invalid_debug.bmp", LifeTime, CacheType);
-		else return LoadFile("invalid.bmp", LifeTime, CacheType);
+		if (Game->_dEBUG_DebugMode) return loadFile("invalid_debug.bmp", LifeTime, CacheType);
+		else return loadFile("invalid.bmp", LifeTime, CacheType);
 	} else {
 		Game->_fileManager->closeFile(File);
 		File = NULL;
@@ -155,7 +155,7 @@ HRESULT CBSprite::LoadFile(const char *Filename, int LifeTime, TSpriteCacheType 
 	} else {
 		byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 		if (Buffer) {
-			if (FAILED(ret = LoadBuffer(Buffer, true, LifeTime, CacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", Filename);
+			if (FAILED(ret = loadBuffer(Buffer, true, LifeTime, CacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", Filename);
 			delete [] Buffer;
 		}
 	}
@@ -187,7 +187,7 @@ TOKEN_DEF(EDITOR_BG_ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSpriteCacheType CacheType) {
+HRESULT CBSprite::loadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSpriteCacheType CacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(CONTINUOUS)
 	TOKEN_TABLE(SPRITE)
@@ -289,7 +289,7 @@ HRESULT CBSprite::LoadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 
 			frame = new CBFrame(Game);
 
-			if (FAILED(frame->LoadBuffer(params, FrameLifeTime, _streamedKeepLoaded))) {
+			if (FAILED(frame->loadBuffer(params, FrameLifeTime, _streamedKeepLoaded))) {
 				delete frame;
 				Game->LOG(0, "Error parsing frame %d", frame_count);
 				return E_FAIL;

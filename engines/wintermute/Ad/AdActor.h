@@ -49,7 +49,7 @@ public:
 	TDirection AngleToDirection(int Angle);
 	DECLARE_PERSISTENT(CAdActor, CAdTalkHolder)
 	virtual int getHeight();
-	CBSprite *GetTalkStance(const char *Stance);
+	CBSprite *getTalkStance(const char *Stance);
 	virtual void GoTo(int X, int Y, TDirection AfterWalkDir = DI_NONE);
 	CBPoint *_targetPoint;
 	virtual HRESULT update();
@@ -67,8 +67,8 @@ public:
 	TDirection _dir;
 	CAdActor(CBGame *inGame/*=NULL*/);
 	virtual ~CAdActor();
-	HRESULT LoadFile(const char *Filename);
-	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadFile(const char *Filename);
+	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 
 	// new anim system
 	Common::String _talkAnimName;

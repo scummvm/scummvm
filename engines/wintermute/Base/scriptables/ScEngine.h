@@ -137,7 +137,7 @@ public:
 	CScEngine(CBGame *inGame);
 	virtual ~CScEngine();
 	static void WINAPI AddError(void *Data, int Line, char *Text);
-	static byte *WINAPI LoadFile(void *Data, char *Filename, uint32 *Size);
+	static byte *WINAPI loadFile(void *Data, char *Filename, uint32 *Size);
 	static void  WINAPI CloseFile(void *Data, byte *Buffer);
 	static void WINAPI ParseElement(void *Data, int Line, int Type, void *ElementData);
 	DLL_COMPILE_BUFFER  ExtCompileBuffer;

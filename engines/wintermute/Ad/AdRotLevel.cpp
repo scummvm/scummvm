@@ -53,7 +53,7 @@ CAdRotLevel::~CAdRotLevel() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::LoadFile(const char *Filename) {
+HRESULT CAdRotLevel::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdRotLevel::LoadFile failed for file '%s'", Filename);
@@ -65,7 +65,7 @@ HRESULT CAdRotLevel::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ROTATION_LEVEL file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ROTATION_LEVEL file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -82,7 +82,7 @@ TOKEN_DEF(ROTATION)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdRotLevel::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ROTATION_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -106,7 +106,7 @@ HRESULT CAdRotLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_X:

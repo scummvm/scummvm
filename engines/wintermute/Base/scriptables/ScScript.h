@@ -77,7 +77,7 @@ public:
 	DECLARE_PERSISTENT(CScScript, CBBase)
 	void RuntimeError(LPCSTR fmt, ...);
 	HRESULT Run();
-	HRESULT Finish(bool IncludingThreads = false);
+	HRESULT finish(bool IncludingThreads = false);
 	HRESULT Sleep(uint32 Duration);
 	HRESULT WaitForExclusive(CBObject *Object);
 	HRESULT WaitFor(CBObject *Object);

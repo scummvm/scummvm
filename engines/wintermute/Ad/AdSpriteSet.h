@@ -37,15 +37,15 @@ namespace WinterMute {
 
 class CAdSpriteSet : public CBObject {
 public:
-	bool ContainsSprite(CBSprite *Sprite);
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent = 0);
-	CBSprite *GetSprite(TDirection Direction);
+	bool containsSprite(CBSprite *sprite);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent = 0);
+	CBSprite *getSprite(TDirection direction);
 	DECLARE_PERSISTENT(CAdSpriteSet, CBObject)
 	CBObject *_owner;
-	CAdSpriteSet(CBGame *inGame, CBObject *Owner = NULL);
+	CAdSpriteSet(CBGame *inGame, CBObject *owner = NULL);
 	virtual ~CAdSpriteSet();
-	HRESULT LoadFile(const char *Filename, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
-	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
+	HRESULT loadFile(const char *filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	HRESULT loadBuffer(byte  *buffer, bool complete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	CBSprite *_sprites[NUM_DIRECTIONS];
 };
 

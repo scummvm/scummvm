@@ -40,8 +40,8 @@ public:
 	virtual ~CAdRotLevel();
 	float _rotation;
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
-	HRESULT LoadFile(const char *Filename);
-	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadFile(const char *Filename);
+	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 };
 
 } // end of namespace WinterMute

@@ -95,7 +95,7 @@ CUIButton::~CUIButton() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::LoadFile(const char *Filename) {
+HRESULT CUIButton::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIButton::LoadFile failed for file '%s'", Filename);
@@ -107,7 +107,7 @@ HRESULT CUIButton::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing BUTTON file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing BUTTON file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -155,7 +155,7 @@ TOKEN_DEF(PIXEL_PERFECT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CUIButton::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(BUTTON)
 	TOKEN_TABLE(TEMPLATE)
@@ -210,7 +210,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -224,7 +224,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_BACK:
 			delete _back;
 			_back = new CUITiledImage(Game);
-			if (!_back || FAILED(_back->LoadFile((char *)params))) {
+			if (!_back || FAILED(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
 				cmd = PARSERR_GENERIC;
@@ -234,7 +234,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_BACK_HOVER:
 			delete _backHover;
 			_backHover = new CUITiledImage(Game);
-			if (!_backHover || FAILED(_backHover->LoadFile((char *)params))) {
+			if (!_backHover || FAILED(_backHover->loadFile((char *)params))) {
 				delete _backHover;
 				_backHover = NULL;
 				cmd = PARSERR_GENERIC;
@@ -244,7 +244,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_BACK_PRESS:
 			delete _backPress;
 			_backPress = new CUITiledImage(Game);
-			if (!_backPress || FAILED(_backPress->LoadFile((char *)params))) {
+			if (!_backPress || FAILED(_backPress->loadFile((char *)params))) {
 				delete _backPress;
 				_backPress = NULL;
 				cmd = PARSERR_GENERIC;
@@ -254,7 +254,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_BACK_DISABLE:
 			delete _backDisable;
 			_backDisable = new CUITiledImage(Game);
-			if (!_backDisable || FAILED(_backDisable->LoadFile((char *)params))) {
+			if (!_backDisable || FAILED(_backDisable->loadFile((char *)params))) {
 				delete _backDisable;
 				_backDisable = NULL;
 				cmd = PARSERR_GENERIC;
@@ -264,7 +264,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_BACK_FOCUS:
 			delete _backFocus;
 			_backFocus = new CUITiledImage(Game);
-			if (!_backFocus || FAILED(_backFocus->LoadFile((char *)params))) {
+			if (!_backFocus || FAILED(_backFocus->loadFile((char *)params))) {
 				delete _backFocus;
 				_backFocus = NULL;
 				cmd = PARSERR_GENERIC;
@@ -274,7 +274,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new CBSprite(Game);
-			if (!_image || FAILED(_image->LoadFile((char *)params))) {
+			if (!_image || FAILED(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
 				cmd = PARSERR_GENERIC;
@@ -284,7 +284,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_IMAGE_HOVER:
 			delete _imageHover;
 			_imageHover = new CBSprite(Game);
-			if (!_imageHover || FAILED(_imageHover->LoadFile((char *)params))) {
+			if (!_imageHover || FAILED(_imageHover->loadFile((char *)params))) {
 				delete _imageHover;
 				_imageHover = NULL;
 				cmd = PARSERR_GENERIC;
@@ -294,7 +294,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_IMAGE_PRESS:
 			delete _imagePress;
 			_imagePress = new CBSprite(Game);
-			if (!_imagePress || FAILED(_imagePress->LoadFile((char *)params))) {
+			if (!_imagePress || FAILED(_imagePress->loadFile((char *)params))) {
 				delete _imagePress;
 				_imagePress = NULL;
 				cmd = PARSERR_GENERIC;
@@ -304,7 +304,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_IMAGE_DISABLE:
 			delete _imageDisable;
 			_imageDisable = new CBSprite(Game);
-			if (!_imageDisable || FAILED(_imageDisable->LoadFile((char *)params))) {
+			if (!_imageDisable || FAILED(_imageDisable->loadFile((char *)params))) {
 				delete _imageDisable;
 				_imageDisable = NULL;
 				cmd = PARSERR_GENERIC;
@@ -314,7 +314,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_IMAGE_FOCUS:
 			delete _imageFocus;
 			_imageFocus = new CBSprite(Game);
-			if (!_imageFocus || FAILED(_imageFocus->LoadFile((char *)params))) {
+			if (!_imageFocus || FAILED(_imageFocus->loadFile((char *)params))) {
 				delete _imageFocus;
 				_imageFocus = NULL;
 				cmd = PARSERR_GENERIC;
@@ -381,7 +381,7 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -748,7 +748,7 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		delete _imageDisable;
 		_imageDisable = new CBSprite(Game);
 		const char *Filename = Stack->Pop()->GetString();
-		if (!_imageDisable || FAILED(_imageDisable->LoadFile(Filename))) {
+		if (!_imageDisable || FAILED(_imageDisable->loadFile(Filename))) {
 			delete _imageDisable;
 			_imageDisable = NULL;
 			Stack->PushBool(false);
@@ -789,7 +789,7 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		delete _imageHover;
 		_imageHover = new CBSprite(Game);
 		const char *Filename = Stack->Pop()->GetString();
-		if (!_imageHover || FAILED(_imageHover->LoadFile(Filename))) {
+		if (!_imageHover || FAILED(_imageHover->loadFile(Filename))) {
 			delete _imageHover;
 			_imageHover = NULL;
 			Stack->PushBool(false);
@@ -829,7 +829,7 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		delete _imagePress;
 		_imagePress = new CBSprite(Game);
 		const char *Filename = Stack->Pop()->GetString();
-		if (!_imagePress || FAILED(_imagePress->LoadFile(Filename))) {
+		if (!_imagePress || FAILED(_imagePress->loadFile(Filename))) {
 			delete _imagePress;
 			_imagePress = NULL;
 			Stack->PushBool(false);
@@ -869,7 +869,7 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		delete _imageFocus;
 		_imageFocus = new CBSprite(Game);
 		const char *Filename = Stack->Pop()->GetString();
-		if (!_imageFocus || FAILED(_imageFocus->LoadFile(Filename))) {
+		if (!_imageFocus || FAILED(_imageFocus->loadFile(Filename))) {
 			delete _imageFocus;
 			_imageFocus = NULL;
 			Stack->PushBool(false);

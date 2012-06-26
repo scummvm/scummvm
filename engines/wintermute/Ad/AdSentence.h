@@ -45,11 +45,11 @@ public:
 	bool _fixedPos;
 	CBSprite *_currentSprite;
 	char *_currentSkelAnim;
-	HRESULT update(TDirection Dir = DI_DOWN);
-	HRESULT SetupTalkFile(const char *SoundFilename);
+	HRESULT update(TDirection dir = DI_DOWN);
+	HRESULT setupTalkFile(const char *soundFilename);
 	DECLARE_PERSISTENT(CAdSentence, CBBase)
-	HRESULT Finish();
-	void SetSound(CBSound *Sound);
+	HRESULT finish();
+	void setSound(CBSound *Sound);
 	bool _soundStarted;
 	CBSound *_sound;
 	TTextAlign _align;
@@ -57,10 +57,10 @@ public:
 	int _width;
 	POINT _pos;
 	CBFont *_font;
-	char *GetNextStance();
-	char *GetCurrentStance();
-	void SetStances(const char *Stances);
-	void SetText(const char *Text);
+	char *getNextStance();
+	char *getCurrentStance();
+	void setStances(const char *stances);
+	void setText(const char *text);
 	int _currentStance;
 	uint32 _startTime;
 	char *_stances;
@@ -74,7 +74,7 @@ public:
 
 private:
 	char *_tempStance;
-	char *GetStance(int Stance);
+	char *getStance(int Stance);
 
 };
 

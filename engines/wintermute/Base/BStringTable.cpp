@@ -169,7 +169,7 @@ const char *CBStringTable::ExpandStatic(const char *String, bool ForceExpand) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBStringTable::LoadFile(const char *Filename, bool ClearOld) {
+HRESULT CBStringTable::loadFile(const char *Filename, bool ClearOld) {
 	Game->LOG(0, "Loading string table...");
 
 	if (ClearOld) _strings.clear();

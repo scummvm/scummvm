@@ -39,18 +39,18 @@ class CAdTalkDef : public CBObject {
 public:
 	char *_defaultSpriteSetFilename;
 	CAdSpriteSet *_defaultSpriteSet;
-	CBSprite *GetDefaultSprite(TDirection Dir);
-	HRESULT LoadDefaultSprite();
+	CBSprite *getDefaultSprite(TDirection Dir);
+	HRESULT loadDefaultSprite();
 	DECLARE_PERSISTENT(CAdTalkDef, CBObject)
 
 	CAdTalkDef(CBGame *inGame);
 	virtual ~CAdTalkDef();
-	HRESULT LoadFile(const char *Filename);
-	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadFile(const char *filename);
+	HRESULT loadBuffer(byte  *buffer, bool complete = true);
 	CBArray<CAdTalkNode *, CAdTalkNode *> _nodes;
 	char *_defaultSpriteFilename;
 	CBSprite *_defaultSprite;
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent = 0);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent = 0);
 };
 
 } // end of namespace WinterMute

@@ -75,7 +75,7 @@ void CAdResponse::SetText(const char *Text) {
 HRESULT CAdResponse::SetIcon(const char *Filename) {
 	delete _icon;
 	_icon = new CBSprite(Game);
-	if (!_icon || FAILED(_icon->LoadFile(Filename))) {
+	if (!_icon || FAILED(_icon->loadFile(Filename))) {
 		Game->LOG(0, "CAdResponse::SetIcon failed for file '%s'", Filename);
 		delete _icon;
 		_icon = NULL;
@@ -99,7 +99,7 @@ HRESULT CAdResponse::SetFont(const char *Filename) {
 HRESULT CAdResponse::SetIconHover(const char *Filename) {
 	delete _iconHover;
 	_iconHover = new CBSprite(Game);
-	if (!_iconHover || FAILED(_iconHover->LoadFile(Filename))) {
+	if (!_iconHover || FAILED(_iconHover->loadFile(Filename))) {
 		Game->LOG(0, "CAdResponse::SetIconHover failed for file '%s'", Filename);
 		delete _iconHover;
 		_iconHover = NULL;
@@ -113,7 +113,7 @@ HRESULT CAdResponse::SetIconHover(const char *Filename) {
 HRESULT CAdResponse::SetIconPressed(const char *Filename) {
 	delete _iconPressed;
 	_iconPressed = new CBSprite(Game);
-	if (!_iconPressed || FAILED(_iconPressed->LoadFile(Filename))) {
+	if (!_iconPressed || FAILED(_iconPressed->loadFile(Filename))) {
 		Game->LOG(0, "CAdResponse::SetIconPressed failed for file '%s'", Filename);
 		delete _iconPressed;
 		_iconPressed = NULL;

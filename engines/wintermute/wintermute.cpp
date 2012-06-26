@@ -233,7 +233,7 @@ int WinterMuteEngine::init() {
 	// load game
 	uint32 DataInitStart = CBPlatform::GetTime();
 	
-	if (FAILED(_game->LoadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
+	if (FAILED(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
 		delete _game;
 		_game = NULL;

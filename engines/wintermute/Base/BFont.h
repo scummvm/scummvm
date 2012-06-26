@@ -51,8 +51,8 @@ public:
 	static CBFont *CreateFromFile(CBGame *Game, const char *Filename);
 
 private:
-	//HRESULT LoadBuffer(byte * Buffer);
-	//HRESULT LoadFile(const char* Filename);
+	//HRESULT loadBuffer(byte * Buffer);
+	//HRESULT loadFile(const char* Filename);
 	static bool IsTrueType(CBGame *Game, const char *Filename);
 };
 

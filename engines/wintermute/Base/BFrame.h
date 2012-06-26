@@ -53,7 +53,7 @@ public:
 	uint32 _delay;
 	CBArray<CBSubFrame *, CBSubFrame *> _subframes;
 	HRESULT Draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, bool Precise = true, uint32 Alpha = 0xFFFFFFFF, bool AllFrames = false, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
-	HRESULT LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded);
+	HRESULT loadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded);
 
 	CBFrame(CBGame *inGame);
 	virtual ~CBFrame();

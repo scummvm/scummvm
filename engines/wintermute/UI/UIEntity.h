@@ -38,8 +38,8 @@ public:
 	DECLARE_PERSISTENT(CUIEntity, CUIObject)
 	CUIEntity(CBGame *inGame);
 	virtual ~CUIEntity();
-	HRESULT LoadFile(const char *Filename);
-	HRESULT LoadBuffer(byte  *Buffer, bool Complete);
+	HRESULT loadFile(const char *Filename);
+	HRESULT loadBuffer(byte  *Buffer, bool Complete);
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 
 	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);

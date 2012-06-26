@@ -503,7 +503,7 @@ HRESULT CAdScene::InitLoop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::LoadFile(const char *Filename) {
+HRESULT CAdScene::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdScene::LoadFile failed for file '%s'", Filename);
@@ -516,7 +516,7 @@ HRESULT CAdScene::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SCENE file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SCENE file '%s'", Filename);
 
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
@@ -568,7 +568,7 @@ TOKEN_DEF(PERSISTENT_STATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdScene::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCENE)
 	TOKEN_TABLE(TEMPLATE)
@@ -630,7 +630,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -643,7 +643,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_LAYER: {
 			CAdLayer *layer = new CAdLayer(Game);
-			if (!layer || FAILED(layer->LoadBuffer(params, false))) {
+			if (!layer || FAILED(layer->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete layer;
 				layer = NULL;
@@ -661,7 +661,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_WAYPOINTS: {
 			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
-			if (!wpt || FAILED(wpt->LoadBuffer(params, false))) {
+			if (!wpt || FAILED(wpt->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete wpt;
 				wpt = NULL;
@@ -674,7 +674,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_SCALE_LEVEL: {
 			CAdScaleLevel *sl = new CAdScaleLevel(Game);
-			if (!sl || FAILED(sl->LoadBuffer(params, false))) {
+			if (!sl || FAILED(sl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete sl;
 				sl = NULL;
@@ -687,7 +687,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_ROTATION_LEVEL: {
 			CAdRotLevel *rl = new CAdRotLevel(Game);
-			if (!rl || FAILED(rl->LoadBuffer(params, false))) {
+			if (!rl || FAILED(rl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete rl;
 				rl = NULL;
@@ -700,7 +700,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_ENTITY: {
 			CAdEntity *entity = new CAdEntity(Game);
-			if (!entity || FAILED(entity->LoadBuffer(params, false))) {
+			if (!entity || FAILED(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
 				entity = NULL;
@@ -713,7 +713,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->LoadFile((char *)params))) {
+			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -1255,7 +1255,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	if (strcmp(Name, "LoadActor") == 0) {
 		Stack->CorrectParams(1);
 		CAdActor *act = new CAdActor(Game);
-		if (act && SUCCEEDED(act->LoadFile(Stack->Pop()->GetString()))) {
+		if (act && SUCCEEDED(act->loadFile(Stack->Pop()->GetString()))) {
 			AddObject(act);
 			Stack->PushNative(act, true);
 		} else {
@@ -1272,7 +1272,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	else if (strcmp(Name, "LoadEntity") == 0) {
 		Stack->CorrectParams(1);
 		CAdEntity *ent = new CAdEntity(Game);
-		if (ent && SUCCEEDED(ent->LoadFile(Stack->Pop()->GetString()))) {
+		if (ent && SUCCEEDED(ent->loadFile(Stack->Pop()->GetString()))) {
 			AddObject(ent);
 			Stack->PushNative(ent, true);
 		} else {
@@ -2504,7 +2504,7 @@ HRESULT CAdScene::PersistState(bool Saving) {
 			switch (node->_type) {
 			case OBJECT_ENTITY:
 				if (!node->_entity->_saveState) continue;
-				NodeState = State->GetNodeState(node->_entity->_name, Saving);
+				NodeState = State->getNodeState(node->_entity->_name, Saving);
 				if (NodeState) {
 					NodeState->TransferEntity(node->_entity, _persistentStateSprites, Saving);
 					//if(Saving) NodeState->_active = node->_entity->_active;
@@ -2513,7 +2513,7 @@ HRESULT CAdScene::PersistState(bool Saving) {
 				break;
 			case OBJECT_REGION:
 				if (!node->_region->_saveState) continue;
-				NodeState = State->GetNodeState(node->_region->_name, Saving);
+				NodeState = State->getNodeState(node->_region->_name, Saving);
 				if (NodeState) {
 					if (Saving) NodeState->_active = node->_region->_active;
 					else node->_region->_active = NodeState->_active;
@@ -2530,7 +2530,7 @@ HRESULT CAdScene::PersistState(bool Saving) {
 	for (i = 0; i < _objects.GetSize(); i++) {
 		if (!_objects[i]->_saveState) continue;
 		if (_objects[i]->_type == OBJECT_ENTITY) {
-			NodeState = State->GetNodeState(_objects[i]->_name, Saving);
+			NodeState = State->getNodeState(_objects[i]->_name, Saving);
 			if (NodeState) {
 				NodeState->TransferEntity((CAdEntity *)_objects[i], _persistentStateSprites, Saving);
 				//if(Saving) NodeState->_active = _objects[i]->_active;
@@ -2541,7 +2541,7 @@ HRESULT CAdScene::PersistState(bool Saving) {
 
 	// waypoint groups
 	for (i = 0; i < _waypointGroups.GetSize(); i++) {
-		NodeState = State->GetNodeState(_waypointGroups[i]->_name, Saving);
+		NodeState = State->getNodeState(_waypointGroups[i]->_name, Saving);
 		if (NodeState) {
 			if (Saving) NodeState->_active = _waypointGroups[i]->_active;
 			else _waypointGroups[i]->_active = NodeState->_active;

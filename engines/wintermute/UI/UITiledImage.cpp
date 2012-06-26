@@ -119,7 +119,7 @@ HRESULT CUITiledImage::display(int X, int Y, int Width, int Height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::LoadFile(const char *Filename) {
+HRESULT CUITiledImage::loadFile(const char *Filename) {
 	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", Filename);
@@ -131,7 +131,7 @@ HRESULT CUITiledImage::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -158,7 +158,7 @@ TOKEN_DEF(HORIZONTAL_TILES)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CUITiledImage::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TILED_IMAGE)
 	TOKEN_TABLE(TEMPLATE)
@@ -195,7 +195,7 @@ HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(LoadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_IMAGE:

@@ -268,8 +268,8 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 		HRESULT ret;
 		if (_initialScene && _dEBUG_DebugMode && _debugStartupScene) {
 			_initialScene = false;
-			ret = _scene->LoadFile(_debugStartupScene);
-		} else ret = _scene->LoadFile(Filename);
+			ret = _scene->loadFile(_debugStartupScene);
+		} else ret = _scene->loadFile(Filename);
 
 		if (SUCCEEDED(ret)) {
 			// invalidate references to the original scene
@@ -347,7 +347,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "LoadActor") == 0) {
 		Stack->CorrectParams(1);
 		CAdActor *act = new CAdActor(Game);
-		if (act && SUCCEEDED(act->LoadFile(Stack->Pop()->GetString()))) {
+		if (act && SUCCEEDED(act->loadFile(Stack->Pop()->GetString()))) {
 			AddObject(act);
 			Stack->PushNative(act, true);
 		} else {
@@ -364,7 +364,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "LoadEntity") == 0) {
 		Stack->CorrectParams(1);
 		CAdEntity *ent = new CAdEntity(Game);
-		if (ent && SUCCEEDED(ent->LoadFile(Stack->Pop()->GetString()))) {
+		if (ent && SUCCEEDED(ent->loadFile(Stack->Pop()->GetString()))) {
 			AddObject(ent);
 			Stack->PushNative(ent, true);
 		} else {
@@ -704,7 +704,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		Game->UnregisterObject(_responseBox);
 		_responseBox = new CAdResponseBox(Game);
-		if (_responseBox && !FAILED(_responseBox->LoadFile(Filename))) {
+		if (_responseBox && !FAILED(_responseBox->loadFile(Filename))) {
 			RegisterObject(_responseBox);
 			Stack->PushBool(true);
 		} else {
@@ -724,7 +724,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		Game->UnregisterObject(_inventoryBox);
 		_inventoryBox = new CAdInventoryBox(Game);
-		if (_inventoryBox && !FAILED(_inventoryBox->LoadFile(Filename))) {
+		if (_inventoryBox && !FAILED(_inventoryBox->loadFile(Filename))) {
 			RegisterObject(_inventoryBox);
 			Stack->PushBool(true);
 		} else {
@@ -1114,7 +1114,7 @@ HRESULT CAdGame::showCursor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::LoadFile(const char *Filename) {
+HRESULT CAdGame::loadFile(const char *Filename) {
 	byte *Buffer = _fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdGame::LoadFile failed for file '%s'", Filename);
@@ -1126,7 +1126,7 @@ HRESULT CAdGame::LoadFile(const char *Filename) {
 	_filename = new char [strlen(Filename) + 1];
 	strcpy(_filename, Filename);
 
-	if (FAILED(ret = LoadBuffer(Buffer, true))) Game->LOG(0, "Error parsing GAME file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing GAME file '%s'", Filename);
 
 
 	delete [] Buffer;
@@ -1150,7 +1150,7 @@ TOKEN_DEF(STARTUP_SCENE)
 TOKEN_DEF(DEBUG_STARTUP_SCENE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::LoadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdGame::loadBuffer(byte  *Buffer, bool Complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(GAME)
 	TOKEN_TABLE(AD_GAME)
@@ -1174,7 +1174,7 @@ HRESULT CAdGame::LoadBuffer(byte  *Buffer, bool Complete) {
 	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_GAME:
-			if (FAILED(CBGame::LoadBuffer(params, false))) cmd = PARSERR_GENERIC;
+			if (FAILED(CBGame::loadBuffer(params, false))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_AD_GAME:
@@ -1183,7 +1183,7 @@ HRESULT CAdGame::LoadBuffer(byte  *Buffer, bool Complete) {
 				case TOKEN_RESPONSE_BOX:
 					delete _responseBox;
 					_responseBox = new CAdResponseBox(Game);
-					if (_responseBox && !FAILED(_responseBox->LoadFile((char *)params2)))
+					if (_responseBox && !FAILED(_responseBox->loadFile((char *)params2)))
 						RegisterObject(_responseBox);
 					else {
 						delete _responseBox;
@@ -1195,7 +1195,7 @@ HRESULT CAdGame::LoadBuffer(byte  *Buffer, bool Complete) {
 				case TOKEN_INVENTORY_BOX:
 					delete _inventoryBox;
 					_inventoryBox = new CAdInventoryBox(Game);
-					if (_inventoryBox && !FAILED(_inventoryBox->LoadFile((char *)params2)))
+					if (_inventoryBox && !FAILED(_inventoryBox->loadFile((char *)params2)))
 						RegisterObject(_inventoryBox);
 					else {
 						delete _inventoryBox;
@@ -1423,7 +1423,7 @@ HRESULT CAdGame::LoadItemsBuffer(byte  *Buffer, bool Merge) {
 		switch (cmd) {
 		case TOKEN_ITEM: {
 			CAdItem *item = new CAdItem(Game);
-			if (item && !FAILED(item->LoadBuffer(params, false))) {
+			if (item && !FAILED(item->loadBuffer(params, false))) {
 				// delete item with the same name, if exists
 				if (Merge) {
 					CAdItem *PrevItem = GetItemByName(item->_name);
@@ -1496,7 +1496,7 @@ HRESULT CAdGame::WindowLoadHook(CUIWindow *Win, char **Buffer, char **params) {
 	switch (cmd) {
 	case TOKEN_ENTITY_CONTAINER: {
 		CUIEntity *ent = new CUIEntity(Game);
-		if (!ent || FAILED(ent->LoadBuffer((byte *)*params, false))) {
+		if (!ent || FAILED(ent->loadBuffer((byte *)*params, false))) {
 			delete ent;
 			ent = NULL;
 			cmd = PARSERR_GENERIC;

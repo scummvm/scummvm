@@ -39,15 +39,15 @@ class CAdTalkNode : public CBBase {
 public:
 	char *_spriteSetFilename;
 	CAdSpriteSet *_spriteSet;
-	CBSprite *GetSprite(TDirection Dir);
-	bool IsInTimeInterval(uint32 Time, TDirection Dir);
-	HRESULT LoadSprite();
+	CBSprite *getSprite(TDirection dir);
+	bool isInTimeInterval(uint32 time, TDirection dir);
+	HRESULT loadSprite();
 	DECLARE_PERSISTENT(CAdTalkNode, CBBase)
 
 	CAdTalkNode(CBGame *inGame);
 	virtual ~CAdTalkNode();
-	HRESULT LoadBuffer(byte  *Buffer, bool Complete = true);
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent = 0);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent = 0);
 	char *_spriteFilename;
 	CBSprite *_sprite;
 	uint32 _startTime;

@@ -189,7 +189,7 @@ HRESULT CScEngine::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-byte *WINAPI CScEngine::LoadFile(void *Data, char *Filename, uint32 *Size) {
+byte *WINAPI CScEngine::loadFile(void *Data, char *Filename, uint32 *Size) {
 	CBGame *Game = (CBGame *)Data;
 	return Game->_fileManager->readWholeFile(Filename, Size);
 }
@@ -309,7 +309,7 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 		CALLBACKS c;
 		c.Dll_AddError = AddError;
 		c.Dll_CloseFile = CloseFile;
-		c.Dll_LoadFile = LoadFile;
+		c.Dll_LoadFile = loadFile;
 		c.Dll_ParseElement = ParseElement;
 		ExtSetCallbacks(&c, Game);
 
@@ -387,11 +387,11 @@ HRESULT CScEngine::Tick() {
 			        break;
 			    }
 			}
-			if(!obj_found) _scripts[i]->Finish(); // _waitObject no longer exists
+			if(!obj_found) _scripts[i]->finish(); // _waitObject no longer exists
 			*/
 			if (Game->ValidObject(_scripts[i]->_waitObject)) {
 				if (_scripts[i]->_waitObject->isReady()) _scripts[i]->Run();
-			} else _scripts[i]->Finish();
+			} else _scripts[i]->finish();
 			break;
 		}
 
@@ -415,7 +415,7 @@ HRESULT CScEngine::Tick() {
 					// copy return value
 					_scripts[i]->_stack->Push(_scripts[i]->_waitScript->_stack->Pop());
 					_scripts[i]->Run();
-					_scripts[i]->_waitScript->Finish();
+					_scripts[i]->_waitScript->finish();
 					_scripts[i]->_waitScript = NULL;
 				}
 			}
@@ -475,7 +475,7 @@ HRESULT CScEngine::TickUnbreakable() {
 			_currentScript = _scripts[i];
 			_scripts[i]->ExecuteInstruction();
 		}
-		_scripts[i]->Finish();
+		_scripts[i]->finish();
 		_currentScript = NULL;
 	}
 	RemoveFinishedScripts();
@@ -552,7 +552,7 @@ HRESULT CScEngine::ResetObject(CBObject *Object) {
 			if (!Game->_compatKillMethodThreads) ResetScript(_scripts[i]);
 
 			bool IsThread = _scripts[i]->_methodThread || _scripts[i]->_thread;
-			_scripts[i]->Finish(!IsThread); // 1.9b1 - top-level script kills its threads as well
+			_scripts[i]->finish(!IsThread); // 1.9b1 - top-level script kills its threads as well
 		}
 	}
 	return S_OK;
@@ -563,7 +563,7 @@ HRESULT CScEngine::ResetScript(CScScript *Script) {
 	// terminate all scripts waiting for this script
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING_SCRIPT && _scripts[i]->_waitScript == Script) {
-			_scripts[i]->Finish();
+			_scripts[i]->finish();
 		}
 	}
 	return S_OK;
