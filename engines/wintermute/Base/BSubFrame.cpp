@@ -68,7 +68,7 @@ CBSubFrame::CBSubFrame(CBGame *inGame): CBScriptable(inGame, true) {
 
 //////////////////////////////////////////////////////////////////////////
 CBSubFrame::~CBSubFrame() {
-	if (_surface) Game->_surfaceStorage->RemoveSurface(_surface);
+	if (_surface) Game->_surfaceStorage->removeSurface(_surface);
 	delete[] _surfaceFilename;
 	_surfaceFilename = NULL;
 }
@@ -90,7 +90,7 @@ TOKEN_DEF(EDITOR_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
+HRESULT CBSubFrame::loadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(IMAGE)
 	TOKEN_TABLE(TRANSPARENT)
@@ -182,8 +182,8 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 	}
 
 	if (surface_file != NULL) {
-		if (custo_trans) SetSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
-		else SetSurface(surface_file, true, 0, 0, 0, LifeTime, KeepLoaded);
+		if (custo_trans) setSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
+		else setSurface(surface_file, true, 0, 0, 0, LifeTime, KeepLoaded);
 	}
 
 	_alpha = DRGBA(ar, ag, ab, alpha);
@@ -196,7 +196,7 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 	    return E_FAIL;
 	}
 	*/
-	if (CBPlatform::IsRectEmpty(&rect)) SetDefaultRect();
+	if (CBPlatform::IsRectEmpty(&rect)) setDefaultRect();
 	else _rect = rect;
 
 	return S_OK;
@@ -204,7 +204,7 @@ HRESULT CBSubFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, bool Precise, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
+HRESULT CBSubFrame::draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, bool Precise, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
 	if (!_surface) return S_OK;
 
 	if (Register != NULL && !_decoration) {
@@ -233,7 +233,7 @@ HRESULT CBSubFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float Zo
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float ScaleY) {
+bool CBSubFrame::getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float ScaleY) {
 	if (!Rect) return false;
 
 	float RatioX = ScaleX / 100.0f;
@@ -302,7 +302,7 @@ HRESULT CBSubFrame::saveAsText(CBDynBuffer *Buffer, int Indent, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSubFrame::SetDefaultRect() {
+void CBSubFrame::setDefaultRect() {
 	if (_surface) {
 		CBPlatform::SetRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 	} else CBPlatform::SetRectEmpty(&_rect);
@@ -363,14 +363,14 @@ HRESULT CBSubFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *T
 		CScValue *Val = Stack->Pop();
 
 		if (Val->IsNULL()) {
-			if (_surface) Game->_surfaceStorage->RemoveSurface(_surface);
+			if (_surface) Game->_surfaceStorage->removeSurface(_surface);
 			delete[] _surfaceFilename;
 			_surfaceFilename = NULL;
 			Stack->PushBool(true);
 		} else {
 			const char *Filename = Val->GetString();
-			if (SUCCEEDED(SetSurface(Filename))) {
-				SetDefaultRect();
+			if (SUCCEEDED(setSurface(Filename))) {
+				setDefaultRect();
 				Stack->PushBool(true);
 			} else Stack->PushBool(false);
 		}
@@ -549,16 +549,16 @@ const char *CBSubFrame::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::SetSurface(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+HRESULT CBSubFrame::setSurface(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
 	if (_surface) {
-		Game->_surfaceStorage->RemoveSurface(_surface);
+		Game->_surfaceStorage->removeSurface(_surface);
 		_surface = NULL;
 	}
 
 	delete[] _surfaceFilename;
 	_surfaceFilename = NULL;
 
-	_surface = Game->_surfaceStorage->AddSurface(Filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
+	_surface = Game->_surfaceStorage->addSurface(Filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
 	if (_surface) {
 		_surfaceFilename = new char[strlen(Filename) + 1];
 		strcpy(_surfaceFilename, Filename);
@@ -576,12 +576,12 @@ HRESULT CBSubFrame::SetSurface(const char *Filename, bool default_ck, byte ck_re
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::SetSurfaceSimple() {
+HRESULT CBSubFrame::setSurfaceSimple() {
 	if (!_surfaceFilename) {
 		_surface = NULL;
 		return S_OK;
 	}
-	_surface = Game->_surfaceStorage->AddSurface(_surfaceFilename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
+	_surface = Game->_surfaceStorage->addSurface(_surfaceFilename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
 	if (_surface) return S_OK;
 	else return E_FAIL;
 }

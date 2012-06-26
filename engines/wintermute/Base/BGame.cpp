@@ -614,7 +614,7 @@ HRESULT CBGame::InitLoop() {
 	_soundMgr->initLoop();
 	UpdateMusicCrossfade();
 
-	_surfaceStorage->InitLoop();
+	_surfaceStorage->initLoop();
 	_fontStorage->InitLoop();
 
 
@@ -3363,7 +3363,7 @@ void CBGame::AfterLoadRegion(void *Region, void *Data) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::AfterLoadSubFrame(void *Subframe, void *Data) {
-	((CBSubFrame *)Subframe)->SetSurfaceSimple();
+	((CBSubFrame *)Subframe)->setSurfaceSimple();
 }
 
 
@@ -3983,7 +3983,7 @@ HRESULT CBGame::PushViewport(CBViewport *Viewport) {
 	if (_viewportSP >= _viewportStack.GetSize()) _viewportStack.Add(Viewport);
 	else _viewportStack[_viewportSP] = Viewport;
 
-	_renderer->SetViewport(Viewport->GetRect());
+	_renderer->SetViewport(Viewport->getRect());
 
 	return S_OK;
 }
@@ -3994,7 +3994,7 @@ HRESULT CBGame::PopViewport() {
 	_viewportSP--;
 	if (_viewportSP < -1) Game->LOG(0, "Fatal: Viewport stack underflow!");
 
-	if (_viewportSP >= 0 && _viewportSP < _viewportStack.GetSize()) _renderer->SetViewport(_viewportStack[_viewportSP]->GetRect());
+	if (_viewportSP >= 0 && _viewportSP < _viewportStack.GetSize()) _renderer->SetViewport(_viewportStack[_viewportSP]->getRect());
 	else _renderer->SetViewport(_renderer->_drawOffsetX,
 		                            _renderer->_drawOffsetY,
 		                            _renderer->_width + _renderer->_drawOffsetX,
@@ -4009,7 +4009,7 @@ HRESULT CBGame::GetCurrentViewportRect(RECT *Rect, bool *Custom) {
 	if (Rect == NULL) return E_FAIL;
 	else {
 		if (_viewportSP >= 0) {
-			CBPlatform::CopyRect(Rect, _viewportStack[_viewportSP]->GetRect());
+			CBPlatform::CopyRect(Rect, _viewportStack[_viewportSP]->getRect());
 			if (Custom) *Custom = true;
 		} else {
 			CBPlatform::SetRect(Rect,   _renderer->_drawOffsetX,

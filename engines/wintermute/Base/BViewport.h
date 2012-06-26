@@ -37,9 +37,9 @@ class CBObject;
 class CBViewport : public CBBase {
 public:
 	int getHeight();
-	int GetWidth();
-	RECT *GetRect();
-	HRESULT SetRect(int left, int top, int right, int bottom, bool NoCheck = false);
+	int getWidth();
+	RECT *getRect();
+	HRESULT setRect(int left, int top, int right, int bottom, bool NoCheck = false);
 	DECLARE_PERSISTENT(CBViewport, CBBase)
 	int _offsetY;
 	int _offsetX;

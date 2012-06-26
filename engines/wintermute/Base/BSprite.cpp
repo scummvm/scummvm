@@ -139,7 +139,7 @@ HRESULT CBSprite::LoadFile(const char *Filename, int LifeTime, TSpriteCacheType 
 	if (StringUtil::StartsWith(Filename, "savegame:", true) || StringUtil::CompareNoCase(ext, "bmp") || StringUtil::CompareNoCase(ext, "tga") || StringUtil::CompareNoCase(ext, "png") || StringUtil::CompareNoCase(ext, "jpg")) {
 		CBFrame *frame = new CBFrame(Game);
 		CBSubFrame *subframe = new CBSubFrame(Game);
-		subframe->SetSurface(Filename, true, 0, 0, 0, LifeTime, true);
+		subframe->setSurface(Filename, true, 0, 0, 0, LifeTime, true);
 		if (subframe->_surface == NULL) {
 			Game->LOG(0, "Error loading simple sprite '%s'", Filename);
 			ret = E_FAIL;
@@ -569,8 +569,8 @@ HRESULT CBSprite::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		CBFrame *Frame = new CBFrame(Game);
 		if (Filename != NULL) {
 			CBSubFrame *Sub = new CBSubFrame(Game);
-			if (SUCCEEDED(Sub->SetSurface(Filename))) {
-				Sub->SetDefaultRect();
+			if (SUCCEEDED(Sub->setSurface(Filename))) {
+				Sub->setDefaultRect();
 				Frame->_subframes.Add(Sub);
 			} else delete Sub;
 		}
@@ -595,7 +595,7 @@ HRESULT CBSprite::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		CBFrame *Frame = new CBFrame(Game);
 		if (Filename != NULL) {
 			CBSubFrame *Sub = new CBSubFrame(Game);
-			if (SUCCEEDED(Sub->SetSurface(Filename))) Frame->_subframes.Add(Sub);
+			if (SUCCEEDED(Sub->setSurface(Filename))) Frame->_subframes.Add(Sub);
 			else delete Sub;
 		}
 

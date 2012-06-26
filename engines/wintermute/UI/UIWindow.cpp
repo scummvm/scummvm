@@ -160,7 +160,7 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 	if (_clipContents) {
 		if (!_viewport) _viewport = new CBViewport(Game);
 		if (_viewport) {
-			_viewport->SetRect(_posX + OffsetX, _posY + OffsetY, _posX + _width + OffsetX, _posY + _height + OffsetY);
+			_viewport->setRect(_posX + OffsetX, _posY + OffsetY, _posX + _width + OffsetX, _posY + _height + OffsetY);
 			Game->PushViewport(_viewport);
 			PopViewport = true;
 		}

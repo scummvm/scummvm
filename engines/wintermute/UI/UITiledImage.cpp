@@ -201,7 +201,7 @@ HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new CBSubFrame(Game);
-			if (!_image || FAILED(_image->SetSurface((char *)params))) {
+			if (!_image || FAILED(_image->setSurface((char *)params))) {
 				delete _image;
 				_image = NULL;
 				cmd = PARSERR_GENERIC;

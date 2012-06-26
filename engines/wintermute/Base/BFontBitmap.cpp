@@ -412,8 +412,8 @@ HRESULT CBFontBitmap::LoadBuffer(byte  *Buffer) {
 
 	if (surface_file != NULL && !_sprite) {
 		_subframe = new CBSubFrame(Game);
-		if (custo_trans) _subframe->SetSurface(surface_file, false, r, g, b);
-		else _subframe->SetSurface(surface_file);
+		if (custo_trans) _subframe->setSurface(surface_file, false, r, g, b);
+		else _subframe->setSurface(surface_file);
 	}
 
 

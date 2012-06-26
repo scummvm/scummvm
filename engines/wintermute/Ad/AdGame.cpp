@@ -280,7 +280,7 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 
 			_scene->LoadState();
 		}
-		if (FadeIn) Game->_transMgr->Start(TRANSITION_FADE_IN);
+		if (FadeIn) Game->_transMgr->start(TRANSITION_FADE_IN);
 		return ret;
 	} else return E_FAIL;
 }
@@ -330,7 +330,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		bool TransIn  = valFadeIn->IsNULL() ? true : valFadeIn->GetBool();
 
 		ScheduleChangeScene(Filename, TransIn);
-		if (TransOut) _transMgr->Start(TRANSITION_FADE_OUT, true);
+		if (TransOut) _transMgr->start(TRANSITION_FADE_OUT, true);
 		Stack->PushNULL();
 
 
@@ -785,7 +785,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		if (Height <= 0) Height = _renderer->_height;
 
 		if (!_sceneViewport) _sceneViewport = new CBViewport(Game);
-		if (_sceneViewport) _sceneViewport->SetRect(X, Y, X + Width, Y + Height);
+		if (_sceneViewport) _sceneViewport->setRect(X, Y, X + Width, Y + Height);
 
 		Stack->PushBool(true);
 
@@ -1224,7 +1224,7 @@ HRESULT CAdGame::LoadBuffer(byte  *Buffer, bool Complete) {
 					RECT rc;
 					parser.ScanStr((char *)params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 					if (!_sceneViewport) _sceneViewport = new CBViewport(Game);
-					if (_sceneViewport) _sceneViewport->SetRect(rc.left, rc.top, rc.right, rc.bottom);
+					if (_sceneViewport) _sceneViewport->setRect(rc.left, rc.top, rc.right, rc.bottom);
 				}
 				break;
 

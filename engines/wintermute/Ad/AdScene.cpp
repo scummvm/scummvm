@@ -824,7 +824,7 @@ HRESULT CAdScene::LoadBuffer(byte  *Buffer, bool Complete) {
 			RECT rc;
 			parser.ScanStr((char *)params, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 			if (!_viewport) _viewport = new CBViewport(Game);
-			if (_viewport) _viewport->SetRect(rc.left, rc.top, rc.right, rc.bottom, true);
+			if (_viewport) _viewport->setRect(rc.left, rc.top, rc.right, rc.bottom, true);
 		}
 
 		case TOKEN_PERSISTENT_STATE:
@@ -1579,7 +1579,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		if (Height <= 0) Height = Game->_renderer->_height;
 
 		if (!_viewport) _viewport = new CBViewport(Game);
-		if (_viewport) _viewport->SetRect(X, Y, X + Width, Y + Height);
+		if (_viewport) _viewport->setRect(X, Y, X + Width, Y + Height);
 
 		Stack->PushBool(true);
 
@@ -1996,7 +1996,7 @@ HRESULT CAdScene::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	// viewport
 	if (_viewport) {
-		RECT *rc = _viewport->GetRect();
+		RECT *rc = _viewport->getRect();
 		Buffer->PutTextIndent(Indent + 2, "VIEWPORT { %d, %d, %d, %d }\n", rc->left, rc->top, rc->right, rc->bottom);
 	}
 
@@ -2378,10 +2378,10 @@ HRESULT CAdScene::GetViewportOffset(int *OffsetX, int *OffsetY) {
 HRESULT CAdScene::GetViewportSize(int *Width, int *Height) {
 	CAdGame *AdGame = (CAdGame *)Game;
 	if (_viewport && !Game->_editorMode) {
-		if (Width)  *Width  = _viewport->GetWidth();
+		if (Width)  *Width  = _viewport->getWidth();
 		if (Height) *Height = _viewport->getHeight();
 	} else if (AdGame->_sceneViewport && !Game->_editorMode) {
-		if (Width)  *Width  = AdGame->_sceneViewport->GetWidth();
+		if (Width)  *Width  = AdGame->_sceneViewport->getWidth();
 		if (Height) *Height = AdGame->_sceneViewport->getHeight();
 	} else {
 		if (Width)  *Width  = Game->_renderer->_width;

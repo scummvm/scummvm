@@ -63,7 +63,7 @@ HRESULT CBViewport::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBViewport::SetRect(int left, int top, int right, int bottom, bool NoCheck) {
+HRESULT CBViewport::setRect(int left, int top, int right, int bottom, bool NoCheck) {
 	if (!NoCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);
@@ -79,13 +79,13 @@ HRESULT CBViewport::SetRect(int left, int top, int right, int bottom, bool NoChe
 
 
 //////////////////////////////////////////////////////////////////////////
-RECT *CBViewport::GetRect() {
+RECT *CBViewport::getRect() {
 	return &_rect;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBViewport::GetWidth() {
+int CBViewport::getWidth() {
 	return _rect.right - _rect.left;
 }
 

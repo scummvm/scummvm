@@ -58,21 +58,21 @@ bool CBTransitionMgr::isReady() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBTransitionMgr::Start(TTransitionType Type, bool NonInteractive) {
+HRESULT CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 	if (_state != TRANS_MGR_READY) return S_OK;
 
-	if (Type == TRANSITION_NONE || Type >= NUM_TRANSITION_TYPES) {
+	if (type == TRANSITION_NONE || type >= NUM_TRANSITION_TYPES) {
 		_state = TRANS_MGR_READY;
 		return S_OK;
 	}
 
-	if (NonInteractive) {
+	if (nonInteractive) {
 		_preserveInteractive = true;
 		_origInteractive = Game->_interactive;
 		Game->_interactive = false;
 	} else _preserveInteractive;
 
-	_type = Type;
+	_type = type;
 	_state = TRANS_MGR_RUNNING;
 	_started = false;
 

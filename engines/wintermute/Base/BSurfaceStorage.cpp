@@ -63,10 +63,10 @@ HRESULT CBSurfaceStorage::cleanup(bool Warn) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceStorage::InitLoop() {
+HRESULT CBSurfaceStorage::initLoop() {
 	if (Game->_smartCache && Game->_liveTimer - _lastCleanupTime >= Game->_surfaceGCCycleTime) {
 		_lastCleanupTime = Game->_liveTimer;
-		SortSurfaces();
+		sortSurfaces();
 		for (int i = 0; i < _surfaces.GetSize(); i++) {
 			if (_surfaces[i]->_lifeTime <= 0) break;
 
@@ -81,7 +81,7 @@ HRESULT CBSurfaceStorage::InitLoop() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceStorage::RemoveSurface(CBSurface *surface) {
+HRESULT CBSurfaceStorage::removeSurface(CBSurface *surface) {
 	for (int i = 0; i < _surfaces.GetSize(); i++) {
 		if (_surfaces[i] == surface) {
 			_surfaces[i]->_referenceCount--;
@@ -97,7 +97,7 @@ HRESULT CBSurfaceStorage::RemoveSurface(CBSurface *surface) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBSurface *CBSurfaceStorage::AddSurface(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+CBSurface *CBSurfaceStorage::addSurface(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
 	for (int i = 0; i < _surfaces.GetSize(); i++) {
 		if (scumm_stricmp(_surfaces[i]->_filename, Filename) == 0) {
 			_surfaces[i]->_referenceCount++;
@@ -109,9 +109,9 @@ CBSurface *CBSurfaceStorage::AddSurface(const char *Filename, bool default_ck, b
 	if (!File) {
 		if (Filename) Game->LOG(0, "Missing image: '%s'", Filename);
 		if (Game->_dEBUG_DebugMode)
-			return AddSurface("invalid_debug.bmp", default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
+			return addSurface("invalid_debug.bmp", default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
 		else
-			return AddSurface("invalid.bmp", default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
+			return addSurface("invalid.bmp", default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
 	} else Game->_fileManager->CloseFile(File);
 
 
@@ -133,7 +133,7 @@ CBSurface *CBSurfaceStorage::AddSurface(const char *Filename, bool default_ck, b
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceStorage::RestoreAll() {
+HRESULT CBSurfaceStorage::restoreAll() {
 	HRESULT ret;
 	for (int i = 0; i < _surfaces.GetSize(); i++) {
 		ret = _surfaces[i]->restore();
@@ -163,14 +163,14 @@ HRESULT CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceStorage::SortSurfaces() {
-	qsort(_surfaces.GetData(), _surfaces.GetSize(), sizeof(CBSurface *), SurfaceSortCB);
+HRESULT CBSurfaceStorage::sortSurfaces() {
+	qsort(_surfaces.GetData(), _surfaces.GetSize(), sizeof(CBSurface *), surfaceSortCB);
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBSurfaceStorage::SurfaceSortCB(const void *arg1, const void *arg2) {
+int CBSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
 	CBSurface *s1 = *((CBSurface **)arg1);
 	CBSurface *s2 = *((CBSurface **)arg2);
 

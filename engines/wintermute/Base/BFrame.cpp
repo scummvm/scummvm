@@ -80,7 +80,7 @@ HRESULT CBFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY
 	HRESULT res;
 
 	for (int i = 0; i < _subframes.GetSize(); i++) {
-		res = _subframes[i]->Draw(X, Y, Register, ZoomX, ZoomY, Precise, Alpha, Rotate, BlendMode);
+		res = _subframes[i]->draw(X, Y, Register, ZoomX, ZoomY, Precise, Alpha, Rotate, BlendMode);
 		if (FAILED(res)) return res;
 	}
 	return S_OK;
@@ -239,7 +239,7 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 
 		case TOKEN_SUBFRAME: {
 			CBSubFrame *subframe = new CBSubFrame(Game);
-			if (!subframe || FAILED(subframe->LoadBuffer((byte *)params, LifeTime, KeepLoaded))) {
+			if (!subframe || FAILED(subframe->loadBuffer((byte *)params, LifeTime, KeepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
 			} else _subframes.Add(subframe);
@@ -293,8 +293,8 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 
 	CBSubFrame *sub = new CBSubFrame(Game);
 	if (surface_file != NULL) {
-		if (custo_trans) sub->SetSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
-		else sub->SetSurface(surface_file, true, 0, 0, 0, LifeTime, KeepLoaded);
+		if (custo_trans) sub->setSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
+		else sub->setSurface(surface_file, true, 0, 0, 0, LifeTime, KeepLoaded);
 
 		if (!sub->_surface) {
 			delete sub;
@@ -306,7 +306,7 @@ HRESULT CBFrame::LoadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 		if (custo_trans) sub->_transparent = DRGBA(r, g, b, 0xFF);
 	}
 
-	if (CBPlatform::IsRectEmpty(&rect)) sub->SetDefaultRect();
+	if (CBPlatform::IsRectEmpty(&rect)) sub->setDefaultRect();
 	else sub->_rect = rect;
 
 	sub->_hotspotX = HotspotX;
@@ -333,7 +333,7 @@ bool CBFrame::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sca
 	RECT SubRect;
 
 	for (int i = 0; i < _subframes.GetSize(); i++) {
-		_subframes[i]->GetBoundingRect(&SubRect, X, Y, ScaleX, ScaleY);
+		_subframes[i]->getBoundingRect(&SubRect, X, Y, ScaleX, ScaleY);
 		CBPlatform::UnionRect(Rect, Rect, &SubRect);
 	}
 	return true;
@@ -484,8 +484,8 @@ HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		CBSubFrame *Sub = new CBSubFrame(Game);
 		if (Filename != NULL) {
-			Sub->SetSurface(Filename);
-			Sub->SetDefaultRect();
+			Sub->setSurface(Filename);
+			Sub->setDefaultRect();
 		}
 		_subframes.Add(Sub);
 
@@ -507,7 +507,7 @@ HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 		CBSubFrame *Sub = new CBSubFrame(Game);
 		if (Filename != NULL) {
-			Sub->SetSurface(Filename);
+			Sub->setSurface(Filename);
 		}
 
 		if (Index >= _subframes.GetSize()) _subframes.Add(Sub);
