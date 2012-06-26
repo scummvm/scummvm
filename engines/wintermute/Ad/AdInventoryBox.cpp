@@ -318,33 +318,33 @@ HRESULT CAdInventoryBox::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdInventoryBox::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "INVENTORY_BOX\n");
-	Buffer->PutTextIndent(Indent, "{\n");
+	Buffer->putTextIndent(Indent, "INVENTORY_BOX\n");
+	Buffer->putTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
-	Buffer->PutTextIndent(Indent + 2, "AREA { %d, %d, %d, %d }\n", _itemsArea.left, _itemsArea.top, _itemsArea.right, _itemsArea.bottom);
+	Buffer->putTextIndent(Indent + 2, "AREA { %d, %d, %d, %d }\n", _itemsArea.left, _itemsArea.top, _itemsArea.right, _itemsArea.bottom);
 
-	Buffer->PutTextIndent(Indent + 2, "EXCLUSIVE=%s\n", _exclusive ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "HIDE_SELECTED=%s\n", _hideSelected ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "ALWAYS_VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "SPACING=%d\n", _spacing);
-	Buffer->PutTextIndent(Indent + 2, "ITEM_WIDTH=%d\n", _itemWidth);
-	Buffer->PutTextIndent(Indent + 2, "ITEM_HEIGHT=%d\n", _itemHeight);
-	Buffer->PutTextIndent(Indent + 2, "SCROLL_BY=%d\n", _scrollBy);
+	Buffer->putTextIndent(Indent + 2, "EXCLUSIVE=%s\n", _exclusive ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "HIDE_SELECTED=%s\n", _hideSelected ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "ALWAYS_VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "SPACING=%d\n", _spacing);
+	Buffer->putTextIndent(Indent + 2, "ITEM_WIDTH=%d\n", _itemWidth);
+	Buffer->putTextIndent(Indent + 2, "ITEM_HEIGHT=%d\n", _itemHeight);
+	Buffer->putTextIndent(Indent + 2, "SCROLL_BY=%d\n", _scrollBy);
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	// window
 	if (_window) _window->saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	// editor properties
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 	return S_OK;
 }
 

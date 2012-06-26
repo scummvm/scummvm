@@ -165,19 +165,19 @@ HRESULT CAdWaypointGroup::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdWaypointGroup::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "WAYPOINTS {\n");
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
+	Buffer->putTextIndent(Indent, "WAYPOINTS {\n");
+	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
 	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
 	CBBase::saveAsText(Buffer, Indent + 2);
 
 	for (int i = 0; i < _points.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
+		Buffer->putTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 
 	return S_OK;
 }

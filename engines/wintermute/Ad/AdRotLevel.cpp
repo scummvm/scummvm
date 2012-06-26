@@ -136,11 +136,11 @@ HRESULT CAdRotLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdRotLevel::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "ROTATION_LEVEL {\n");
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
-	Buffer->PutTextIndent(Indent + 2, "ROTATION=%d\n", (int)_rotation);
+	Buffer->putTextIndent(Indent, "ROTATION_LEVEL {\n");
+	Buffer->putTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->putTextIndent(Indent + 2, "ROTATION=%d\n", (int)_rotation);
 	CBBase::saveAsText(Buffer, Indent + 2);
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 
 	return S_OK;
 }

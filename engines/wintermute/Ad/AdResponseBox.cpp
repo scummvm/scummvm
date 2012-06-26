@@ -336,30 +336,30 @@ HRESULT CAdResponseBox::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponseBox::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "RESPONSE_BOX\n");
-	Buffer->PutTextIndent(Indent, "{\n");
+	Buffer->putTextIndent(Indent, "RESPONSE_BOX\n");
+	Buffer->putTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "AREA { %d, %d, %d, %d }\n", _responseArea.left, _responseArea.top, _responseArea.right, _responseArea.bottom);
+	Buffer->putTextIndent(Indent + 2, "AREA { %d, %d, %d, %d }\n", _responseArea.left, _responseArea.top, _responseArea.right, _responseArea.bottom);
 
 	if (_font && _font->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	if (_fontHover && _fontHover->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
 
 	if (_cursor && _cursor->_filename)
-		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+		Buffer->putTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
-	Buffer->PutTextIndent(Indent + 2, "HORIZONTAL=%s\n", _horizontal ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "HORIZONTAL=%s\n", _horizontal ? "TRUE" : "FALSE");
 
 	switch (_align) {
 	case TAL_LEFT:
-		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
+		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
 		break;
 	case TAL_RIGHT:
-		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "right");
+		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "right");
 		break;
 	case TAL_CENTER:
-		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
+		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
 		error("CAdResponseBox::SaveAsText - Unhandled enum");
@@ -368,29 +368,29 @@ HRESULT CAdResponseBox::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	switch (_verticalAlign) {
 	case VAL_TOP:
-		Buffer->PutTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
+		Buffer->putTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
 		break;
 	case VAL_BOTTOM:
-		Buffer->PutTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "bottom");
+		Buffer->putTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "bottom");
 		break;
 	case VAL_CENTER:
-		Buffer->PutTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
+		Buffer->putTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
 		break;
 	}
 
-	Buffer->PutTextIndent(Indent + 2, "SPACING=%d\n", _spacing);
+	Buffer->putTextIndent(Indent + 2, "SPACING=%d\n", _spacing);
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	// window
 	if (_window) _window->saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	// editor properties
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 	return S_OK;
 }
 

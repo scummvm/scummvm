@@ -878,69 +878,69 @@ const char *CAdEntity::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "ENTITY {\n");
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent, "ENTITY {\n");
+	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	if (_subtype == ENTITY_SOUND)
-		Buffer->PutTextIndent(Indent + 2, "SUBTYPE=\"SOUND\"\n");
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
-	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
-	Buffer->PutTextIndent(Indent + 2, "SCALABLE=%s\n", _zoomable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "INTERACTIVE=%s\n", _registrable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "COLORABLE=%s\n", _shadowable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "SUBTYPE=\"SOUND\"\n");
+	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	Buffer->putTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->putTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->putTextIndent(Indent + 2, "SCALABLE=%s\n", _zoomable ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "INTERACTIVE=%s\n", _registrable ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "COLORABLE=%s\n", _shadowable ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 	if (_ignoreItems)
-		Buffer->PutTextIndent(Indent + 2, "IGNORE_ITEMS=%s\n", _ignoreItems ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "IGNORE_ITEMS=%s\n", _ignoreItems ? "TRUE" : "FALSE");
 	if (_rotatable)
-		Buffer->PutTextIndent(Indent + 2, "ROTATABLE=%s\n", _rotatable ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "ROTATABLE=%s\n", _rotatable ? "TRUE" : "FALSE");
 
 	if (!_autoSoundPanning)
-		Buffer->PutTextIndent(Indent + 2, "SOUND_PANNING=%s\n", _autoSoundPanning ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "SOUND_PANNING=%s\n", _autoSoundPanning ? "TRUE" : "FALSE");
 
 	if (!_saveState)
-		Buffer->PutTextIndent(Indent + 2, "SAVE_STATE=%s\n", _saveState ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "SAVE_STATE=%s\n", _saveState ? "TRUE" : "FALSE");
 
-	if (_item && _item[0] != '\0') Buffer->PutTextIndent(Indent + 2, "ITEM=\"%s\"\n", _item);
+	if (_item && _item[0] != '\0') Buffer->putTextIndent(Indent + 2, "ITEM=\"%s\"\n", _item);
 
-	Buffer->PutTextIndent(Indent + 2, "WALK_TO_X=%d\n", _walkToX);
-	Buffer->PutTextIndent(Indent + 2, "WALK_TO_Y=%d\n", _walkToY);
+	Buffer->putTextIndent(Indent + 2, "WALK_TO_X=%d\n", _walkToX);
+	Buffer->putTextIndent(Indent + 2, "WALK_TO_Y=%d\n", _walkToY);
 	if (_walkToDir != DI_NONE)
-		Buffer->PutTextIndent(Indent + 2, "WALK_TO_DIR=%d\n", (int)_walkToDir);
+		Buffer->putTextIndent(Indent + 2, "WALK_TO_DIR=%d\n", (int)_walkToDir);
 
 	int i;
 
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	if (_subtype == ENTITY_NORMAL && _sprite && _sprite->_filename)
-		Buffer->PutTextIndent(Indent + 2, "SPRITE=\"%s\"\n", _sprite->_filename);
+		Buffer->putTextIndent(Indent + 2, "SPRITE=\"%s\"\n", _sprite->_filename);
 
 	if (_subtype == ENTITY_SOUND && _sFX && _sFX->_soundFilename) {
-		Buffer->PutTextIndent(Indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename);
-		Buffer->PutTextIndent(Indent + 2, "SOUND_START_TIME=%d\n", _sFXStart);
-		Buffer->PutTextIndent(Indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
+		Buffer->putTextIndent(Indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename);
+		Buffer->putTextIndent(Indent + 2, "SOUND_START_TIME=%d\n", _sFXStart);
+		Buffer->putTextIndent(Indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
 	}
 
 
 	if (D3DCOLGetR(_alphaColor) != 0 || D3DCOLGetG(_alphaColor) != 0 ||  D3DCOLGetB(_alphaColor) != 0)
-		Buffer->PutTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alphaColor), D3DCOLGetG(_alphaColor), D3DCOLGetB(_alphaColor));
+		Buffer->putTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alphaColor), D3DCOLGetG(_alphaColor), D3DCOLGetB(_alphaColor));
 
 	if (D3DCOLGetA(_alphaColor) != 0)
-		Buffer->PutTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alphaColor));
+		Buffer->putTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alphaColor));
 
 	if (_scale >= 0)
-		Buffer->PutTextIndent(Indent + 2, "SCALE = %d\n", (int)_scale);
+		Buffer->putTextIndent(Indent + 2, "SCALE = %d\n", (int)_scale);
 
 	if (_relativeScale != 0)
-		Buffer->PutTextIndent(Indent + 2, "RELATIVE_SCALE = %d\n", (int)_relativeScale);
+		Buffer->putTextIndent(Indent + 2, "RELATIVE_SCALE = %d\n", (int)_relativeScale);
 
 	if (_font && _font->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
 
 	if (_cursor && _cursor->_filename)
-		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+		Buffer->putTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
 	CAdTalkHolder::saveAsText(Buffer, Indent + 2);
 
@@ -950,7 +950,7 @@ HRESULT CAdEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	CAdObject::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n\n");
+	Buffer->putTextIndent(Indent, "}\n\n");
 
 	return S_OK;
 }

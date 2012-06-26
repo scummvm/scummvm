@@ -429,26 +429,26 @@ bool CBSprite::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sc
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSprite::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "SPRITE {\n");
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "LOOPING=%s\n", _looping ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "CONTINUOUS=%s\n", _continuous ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PRECISE=%s\n", _precise ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent, "SPRITE {\n");
+	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent + 2, "LOOPING=%s\n", _looping ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "CONTINUOUS=%s\n", _continuous ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "PRECISE=%s\n", _precise ? "TRUE" : "FALSE");
 	if (_streamed) {
-		Buffer->PutTextIndent(Indent + 2, "STREAMED=%s\n", _streamed ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "STREAMED=%s\n", _streamed ? "TRUE" : "FALSE");
 
 		if (_streamedKeepLoaded)
-			Buffer->PutTextIndent(Indent + 2, "STREAMED_KEEP_LOADED=%s\n", _streamedKeepLoaded ? "TRUE" : "FALSE");
+			Buffer->putTextIndent(Indent + 2, "STREAMED_KEEP_LOADED=%s\n", _streamedKeepLoaded ? "TRUE" : "FALSE");
 	}
 
 	if (_editorMuted)
-		Buffer->PutTextIndent(Indent + 2, "EDITOR_MUTED=%s\n", _editorMuted ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "EDITOR_MUTED=%s\n", _editorMuted ? "TRUE" : "FALSE");
 
 	if (_editorBgFile) {
-		Buffer->PutTextIndent(Indent + 2, "EDITOR_BG_FILE=\"%s\"\n", _editorBgFile);
-		Buffer->PutTextIndent(Indent + 2, "EDITOR_BG_OFFSET_X=%d\n", _editorBgOffsetX);
-		Buffer->PutTextIndent(Indent + 2, "EDITOR_BG_OFFSET_Y=%d\n", _editorBgOffsetY);
-		Buffer->PutTextIndent(Indent + 2, "EDITOR_BG_ALPHA=%d\n", _editorBgAlpha);
+		Buffer->putTextIndent(Indent + 2, "EDITOR_BG_FILE=\"%s\"\n", _editorBgFile);
+		Buffer->putTextIndent(Indent + 2, "EDITOR_BG_OFFSET_X=%d\n", _editorBgOffsetX);
+		Buffer->putTextIndent(Indent + 2, "EDITOR_BG_OFFSET_Y=%d\n", _editorBgOffsetY);
+		Buffer->putTextIndent(Indent + 2, "EDITOR_BG_ALPHA=%d\n", _editorBgAlpha);
 	}
 
 	CBScriptHolder::saveAsText(Buffer, Indent + 2);
@@ -457,7 +457,7 @@ HRESULT CBSprite::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	// scripts
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 
@@ -465,7 +465,7 @@ HRESULT CBSprite::saveAsText(CBDynBuffer *Buffer, int Indent) {
 		_frames[i]->saveAsText(Buffer, Indent + 2);
 	}
 
-	Buffer->PutTextIndent(Indent, "}\n\n");
+	Buffer->putTextIndent(Indent, "}\n\n");
 
 	return S_OK;
 }

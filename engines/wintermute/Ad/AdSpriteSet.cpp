@@ -260,34 +260,34 @@ CBSprite *CAdSpriteSet::GetSprite(TDirection Direction) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSpriteSet::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "SPRITESET {\n");
-	if (_name) Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent, "SPRITESET {\n");
+	if (_name) Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
 		if (_sprites[i]) {
 			switch (i) {
 			case DI_UP:
-				Buffer->PutTextIndent(Indent + 2, "UP=\"%s\"\n",         _sprites[i]->_filename);
+				Buffer->putTextIndent(Indent + 2, "UP=\"%s\"\n",         _sprites[i]->_filename);
 				break;
 			case DI_UPRIGHT:
-				Buffer->PutTextIndent(Indent + 2, "UP_RIGHT=\"%s\"\n",   _sprites[i]->_filename);
+				Buffer->putTextIndent(Indent + 2, "UP_RIGHT=\"%s\"\n",   _sprites[i]->_filename);
 				break;
 			case DI_RIGHT:
-				Buffer->PutTextIndent(Indent + 2, "RIGHT=\"%s\"\n",      _sprites[i]->_filename);
+				Buffer->putTextIndent(Indent + 2, "RIGHT=\"%s\"\n",      _sprites[i]->_filename);
 				break;
 			case DI_DOWNRIGHT:
-				Buffer->PutTextIndent(Indent + 2, "DOWN_RIGHT=\"%s\"\n", _sprites[i]->_filename);
+				Buffer->putTextIndent(Indent + 2, "DOWN_RIGHT=\"%s\"\n", _sprites[i]->_filename);
 				break;
 			case DI_DOWN:
-				Buffer->PutTextIndent(Indent + 2, "DOWN=\"%s\"\n",       _sprites[i]->_filename);
+				Buffer->putTextIndent(Indent + 2, "DOWN=\"%s\"\n",       _sprites[i]->_filename);
 				break;
 			case DI_DOWNLEFT:
-				Buffer->PutTextIndent(Indent + 2, "DOWN_LEFT=\"%s\"\n",  _sprites[i]->_filename);
+				Buffer->putTextIndent(Indent + 2, "DOWN_LEFT=\"%s\"\n",  _sprites[i]->_filename);
 				break;
 			case DI_LEFT:
-				Buffer->PutTextIndent(Indent + 2, "LEFT=\"%s\"\n",       _sprites[i]->_filename);
+				Buffer->putTextIndent(Indent + 2, "LEFT=\"%s\"\n",       _sprites[i]->_filename);
 				break;
 			case DI_UPLEFT:
-				Buffer->PutTextIndent(Indent + 2, "UP_LEFT=\"%s\"\n",    _sprites[i]->_filename);
+				Buffer->putTextIndent(Indent + 2, "UP_LEFT=\"%s\"\n",    _sprites[i]->_filename);
 				break;
 			}
 		}
@@ -295,7 +295,7 @@ HRESULT CAdSpriteSet::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 
 	return S_OK;
 }

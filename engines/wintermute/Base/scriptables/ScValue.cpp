@@ -805,10 +805,10 @@ HRESULT CScValue::persist(CBPersistMgr *persistMgr) {
 HRESULT CScValue::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
-		Buffer->PutTextIndent(Indent, "PROPERTY {\n");
-		Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _valIter->_key.c_str());
-		Buffer->PutTextIndent(Indent + 2, "VALUE=\"%s\"\n", _valIter->_value->GetString());
-		Buffer->PutTextIndent(Indent, "}\n\n");
+		Buffer->putTextIndent(Indent, "PROPERTY {\n");
+		Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _valIter->_key.c_str());
+		Buffer->putTextIndent(Indent + 2, "VALUE=\"%s\"\n", _valIter->_value->GetString());
+		Buffer->putTextIndent(Indent, "}\n\n");
 
 		_valIter++;
 	}

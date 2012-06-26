@@ -379,27 +379,27 @@ const char *CBRegion::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRegion::saveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOverride) {
-	if (!NameOverride) Buffer->PutTextIndent(Indent, "REGION {\n");
-	else Buffer->PutTextIndent(Indent, "%s {\n", NameOverride);
+	if (!NameOverride) Buffer->putTextIndent(Indent, "REGION {\n");
+	else Buffer->putTextIndent(Indent, "%s {\n", NameOverride);
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
-	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
+	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	Buffer->putTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
 	int i;
 
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	for (i = 0; i < _points.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
+		Buffer->putTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
 	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n\n");
+	Buffer->putTextIndent(Indent, "}\n\n");
 
 	return S_OK;
 }

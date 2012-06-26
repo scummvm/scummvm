@@ -251,51 +251,51 @@ bool CBSubFrame::getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSubFrame::saveAsText(CBDynBuffer *Buffer, int Indent, bool Complete) {
 	if (Complete)
-		Buffer->PutTextIndent(Indent, "SUBFRAME {\n");
+		Buffer->putTextIndent(Indent, "SUBFRAME {\n");
 
 	if (_surface && _surface->_filename != NULL)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE = \"%s\"\n", _surface->_filename);
+		Buffer->putTextIndent(Indent + 2, "IMAGE = \"%s\"\n", _surface->_filename);
 
 	if (_transparent != 0xFFFF00FF)
-		Buffer->PutTextIndent(Indent + 2, "TRANSPARENT { %d,%d,%d }\n", D3DCOLGetR(_transparent), D3DCOLGetG(_transparent), D3DCOLGetB(_transparent));
+		Buffer->putTextIndent(Indent + 2, "TRANSPARENT { %d,%d,%d }\n", D3DCOLGetR(_transparent), D3DCOLGetG(_transparent), D3DCOLGetB(_transparent));
 
 	RECT rect;
 	CBPlatform::SetRectEmpty(&rect);
 	if (_surface) CBPlatform::SetRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 	if (!CBPlatform::EqualRect(&rect, &_rect))
-		Buffer->PutTextIndent(Indent + 2, "RECT { %d,%d,%d,%d }\n", _rect.left, _rect.top, _rect.right, _rect.bottom);
+		Buffer->putTextIndent(Indent + 2, "RECT { %d,%d,%d,%d }\n", _rect.left, _rect.top, _rect.right, _rect.bottom);
 
 	if (_hotspotX != 0 || _hotspotY != 0)
-		Buffer->PutTextIndent(Indent + 2, "HOTSPOT {%d, %d}\n", _hotspotX, _hotspotY);
+		Buffer->putTextIndent(Indent + 2, "HOTSPOT {%d, %d}\n", _hotspotX, _hotspotY);
 
 	if (_alpha != 0xFFFFFFFF) {
-		Buffer->PutTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alpha), D3DCOLGetG(_alpha), D3DCOLGetB(_alpha));
-		Buffer->PutTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alpha));
+		Buffer->putTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alpha), D3DCOLGetG(_alpha), D3DCOLGetB(_alpha));
+		Buffer->putTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alpha));
 	}
 
 	if (_mirrorX)
-		Buffer->PutTextIndent(Indent + 2, "MIRROR_X=%s\n", _mirrorX ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "MIRROR_X=%s\n", _mirrorX ? "TRUE" : "FALSE");
 
 	if (_mirrorY)
-		Buffer->PutTextIndent(Indent + 2, "MIRROR_Y=%s\n", _mirrorY ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "MIRROR_Y=%s\n", _mirrorY ? "TRUE" : "FALSE");
 
 	if (_2DOnly)
-		Buffer->PutTextIndent(Indent + 2, "2D_ONLY=%s\n", _2DOnly ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "2D_ONLY=%s\n", _2DOnly ? "TRUE" : "FALSE");
 
 	if (_3DOnly)
-		Buffer->PutTextIndent(Indent + 2, "3D_ONLY=%s\n", _3DOnly ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "3D_ONLY=%s\n", _3DOnly ? "TRUE" : "FALSE");
 
 	if (_decoration)
-		Buffer->PutTextIndent(Indent + 2, "DECORATION=%s\n", _decoration ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "DECORATION=%s\n", _decoration ? "TRUE" : "FALSE");
 
 	if (_editorSelected)
-		Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 
 	CBBase::saveAsText(Buffer, Indent + 2);
 
 
 	if (Complete)
-		Buffer->PutTextIndent(Indent, "}\n\n");
+		Buffer->putTextIndent(Indent, "}\n\n");
 
 	return S_OK;
 }

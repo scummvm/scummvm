@@ -308,11 +308,11 @@ HRESULT CUITiledImage::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUITiledImage::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "TILED_IMAGE\n");
-	Buffer->PutTextIndent(Indent, "{\n");
+	Buffer->putTextIndent(Indent, "TILED_IMAGE\n");
+	Buffer->putTextIndent(Indent, "{\n");
 
 	if (_image && _image->_surfaceFilename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
+		Buffer->putTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
 
 	int H1, H2, H3;
 	int V1, V2, V3;
@@ -326,13 +326,13 @@ HRESULT CUITiledImage::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	V3 = _downLeft.bottom - _downLeft.top;
 
 
-	Buffer->PutTextIndent(Indent + 2, "VERTICAL_TILES { %d, %d, %d }\n", V1, V2, V3);
-	Buffer->PutTextIndent(Indent + 2, "HORIZONTAL_TILES { %d, %d, %d }\n", H1, H2, H3);
+	Buffer->putTextIndent(Indent + 2, "VERTICAL_TILES { %d, %d, %d }\n", V1, V2, V3);
+	Buffer->putTextIndent(Indent + 2, "HORIZONTAL_TILES { %d, %d, %d }\n", H1, H2, H3);
 
 	// editor properties
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 	return S_OK;
 }
 

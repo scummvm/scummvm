@@ -330,12 +330,12 @@ HRESULT CAdTalkHolder::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	int i;
 	for (i = 0; i < _talkSprites.GetSize(); i++) {
 		if (_talkSprites[i]->_filename)
-			Buffer->PutTextIndent(Indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->_filename);
+			Buffer->putTextIndent(Indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->_filename);
 	}
 
 	for (i = 0; i < _talkSpritesEx.GetSize(); i++) {
 		if (_talkSpritesEx[i]->_filename)
-			Buffer->PutTextIndent(Indent + 2, "TALK_SPECIAL=\"%s\"\n", _talkSpritesEx[i]->_filename);
+			Buffer->putTextIndent(Indent + 2, "TALK_SPECIAL=\"%s\"\n", _talkSpritesEx[i]->_filename);
 	}
 
 	return S_OK;

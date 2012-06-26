@@ -175,35 +175,35 @@ HRESULT CUIEntity::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "ENTITY_CONTAINER\n");
-	Buffer->PutTextIndent(Indent, "{\n");
+	Buffer->putTextIndent(Indent, "ENTITY_CONTAINER\n");
+	Buffer->putTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->putTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->putTextIndent(Indent + 2, "Y=%d\n", _posY);
 
-	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
 
 	if (_entity && _entity->_filename)
-		Buffer->PutTextIndent(Indent + 2, "ENTITY=\"%s\"\n", _entity->_filename);
+		Buffer->putTextIndent(Indent + 2, "ENTITY=\"%s\"\n", _entity->_filename);
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	// scripts
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	// editor properties
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 	return S_OK;
 }
 

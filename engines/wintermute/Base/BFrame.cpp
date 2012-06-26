@@ -343,22 +343,22 @@ bool CBFrame::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sca
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFrame::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "FRAME {\n");
-	Buffer->PutTextIndent(Indent + 2, "DELAY = %d\n", _delay);
+	Buffer->putTextIndent(Indent, "FRAME {\n");
+	Buffer->putTextIndent(Indent + 2, "DELAY = %d\n", _delay);
 
 	if (_moveX != 0 || _moveY != 0)
-		Buffer->PutTextIndent(Indent + 2, "MOVE {%d, %d}\n", _moveX, _moveY);
+		Buffer->putTextIndent(Indent + 2, "MOVE {%d, %d}\n", _moveX, _moveY);
 
 	if (_sound && _sound->_soundFilename)
-		Buffer->PutTextIndent(Indent + 2, "SOUND=\"%s\"\n", _sound->_soundFilename);
+		Buffer->putTextIndent(Indent + 2, "SOUND=\"%s\"\n", _sound->_soundFilename);
 
-	Buffer->PutTextIndent(Indent + 2, "KEYFRAME=%s\n", _keyframe ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "KEYFRAME=%s\n", _keyframe ? "TRUE" : "FALSE");
 
 	if (_killSound)
-		Buffer->PutTextIndent(Indent + 2, "KILL_SOUND=%s\n", _killSound ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "KILL_SOUND=%s\n", _killSound ? "TRUE" : "FALSE");
 
 	if (_editorExpanded)
-		Buffer->PutTextIndent(Indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
 
 	if (_subframes.GetSize() > 0) _subframes[0]->saveAsText(Buffer, Indent, false);
 
@@ -368,13 +368,13 @@ HRESULT CBFrame::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	}
 
 	for (i = 0; i < _applyEvent.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
+		Buffer->putTextIndent(Indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
 	}
 
 	CBBase::saveAsText(Buffer, Indent + 2);
 
 
-	Buffer->PutTextIndent(Indent, "}\n\n");
+	Buffer->putTextIndent(Indent, "}\n\n");
 
 	return S_OK;
 }

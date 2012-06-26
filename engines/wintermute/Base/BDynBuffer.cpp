@@ -32,14 +32,14 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBDynBuffer::CBDynBuffer(CBGame *inGame, uint32 InitSize, uint32 GrowBy): CBBase(inGame) {
+CBDynBuffer::CBDynBuffer(CBGame *inGame, uint32 initSize, uint32 growBy): CBBase(inGame) {
 	_buffer = NULL;
 	_size = 0;
 	_realSize = 0;
 
 	_offset = 0;
-	_initSize = InitSize;
-	_growBy = GrowBy;
+	_initSize = initSize;
+	_growBy = growBy;
 
 	_initialized = false;
 }
@@ -63,24 +63,24 @@ void CBDynBuffer::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBDynBuffer::GetSize() {
+uint32 CBDynBuffer::getSize() {
 	return _size;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDynBuffer::Init(uint32 InitSize) {
+HRESULT CBDynBuffer::init(uint32 initSize) {
 	cleanup();
 
-	if (InitSize == 0) InitSize = _initSize;
+	if (initSize == 0) initSize = _initSize;
 
-	_buffer = (byte *)malloc(InitSize);
+	_buffer = (byte *)malloc(initSize);
 	if (!_buffer) {
-		Game->LOG(0, "CBDynBuffer::Init - Error allocating %d bytes", InitSize);
+		Game->LOG(0, "CBDynBuffer::Init - Error allocating %d bytes", initSize);
 		return E_FAIL;
 	}
 
-	_realSize = InitSize;
+	_realSize = initSize;
 	_initialized = true;
 
 	return S_OK;
@@ -88,10 +88,10 @@ HRESULT CBDynBuffer::Init(uint32 InitSize) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDynBuffer::PutBytes(byte  *Buffer, uint32 Size) {
-	if (!_initialized) Init();
+HRESULT CBDynBuffer::putBytes(byte *buffer, uint32 size) {
+	if (!_initialized) init();
 
-	while (_offset + Size > _realSize) {
+	while (_offset + size > _realSize) {
 		_realSize += _growBy;
 		_buffer = (byte *)realloc(_buffer, _realSize);
 		if (!_buffer) {
@@ -100,57 +100,57 @@ HRESULT CBDynBuffer::PutBytes(byte  *Buffer, uint32 Size) {
 		}
 	}
 
-	memcpy(_buffer + _offset, Buffer, Size);
-	_offset += Size;
-	_size += Size;
+	memcpy(_buffer + _offset, buffer, size);
+	_offset += size;
+	_size += size;
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDynBuffer::GetBytes(byte  *Buffer, uint32 Size) {
-	if (!_initialized) Init();
+HRESULT CBDynBuffer::getBytes(byte *buffer, uint32 size) {
+	if (!_initialized) init();
 
-	if (_offset + Size > _size) {
+	if (_offset + size > _size) {
 		Game->LOG(0, "CBDynBuffer::GetBytes - Buffer underflow");
 		return E_FAIL;
 	}
 
-	memcpy(Buffer, _buffer + _offset, Size);
-	_offset += Size;
+	memcpy(buffer, _buffer + _offset, size);
+	_offset += size;
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::PutDWORD(uint32 Val) {
-	PutBytes((byte *)&Val, sizeof(uint32));
+void CBDynBuffer::putDWORD(uint32 val) {
+	putBytes((byte *)&val, sizeof(uint32));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBDynBuffer::GetDWORD() {
+uint32 CBDynBuffer::getDWORD() {
 	uint32 ret;
-	GetBytes((byte *)&ret, sizeof(uint32));
+	getBytes((byte *)&ret, sizeof(uint32));
 	return ret;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::PutString(const char *Val) {
-	if (!Val) PutString("(null)");
+void CBDynBuffer::putString(const char *val) {
+	if (!val) putString("(null)");
 	else {
-		PutDWORD(strlen(Val) + 1);
-		PutBytes((byte *)Val, strlen(Val) + 1);
+		putDWORD(strlen(val) + 1);
+		putBytes((byte *)val, strlen(val) + 1);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBDynBuffer::GetString() {
-	uint32 len = GetDWORD();
+char *CBDynBuffer::getString() {
+	uint32 len = getDWORD();
 	char *ret = (char *)(_buffer + _offset);
 	_offset += len;
 
@@ -160,7 +160,7 @@ char *CBDynBuffer::GetString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::PutText(LPCSTR fmt, ...) {
+void CBDynBuffer::putText(LPCSTR fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
@@ -171,10 +171,10 @@ void CBDynBuffer::PutText(LPCSTR fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::PutTextIndent(int Indent, LPCSTR fmt, ...) {
+void CBDynBuffer::putTextIndent(int indent, LPCSTR fmt, ...) {
 	va_list va;
 
-	PutText("%*s", Indent, "");
+	putText("%*s", indent, "");
 
 	va_start(va, fmt);
 	PutTextForm(fmt, va);
@@ -186,7 +186,7 @@ void CBDynBuffer::PutTextIndent(int Indent, LPCSTR fmt, ...) {
 void CBDynBuffer::PutTextForm(const char *format, va_list argptr) {
 	char buff[32768];
 	vsprintf(buff, format, argptr);
-	PutBytes((byte *)buff, strlen(buff));
+	putBytes((byte *)buff, strlen(buff));
 }
 
 } // end of namespace WinterMute

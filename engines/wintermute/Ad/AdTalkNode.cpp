@@ -199,18 +199,18 @@ HRESULT CAdTalkNode::persist(CBPersistMgr *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkNode::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "ACTION {\n");
-	if (_comment) Buffer->PutTextIndent(Indent + 2, "COMMENT=\"%s\"\n", _comment);
-	Buffer->PutTextIndent(Indent + 2, "START_TIME=%d\n", _startTime);
-	if (!_playToEnd) Buffer->PutTextIndent(Indent + 2, "END_TIME=%d\n", _endTime);
-	if (_spriteFilename) Buffer->PutTextIndent(Indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
-	if (_spriteSetFilename) Buffer->PutTextIndent(Indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
+	Buffer->putTextIndent(Indent, "ACTION {\n");
+	if (_comment) Buffer->putTextIndent(Indent + 2, "COMMENT=\"%s\"\n", _comment);
+	Buffer->putTextIndent(Indent + 2, "START_TIME=%d\n", _startTime);
+	if (!_playToEnd) Buffer->putTextIndent(Indent + 2, "END_TIME=%d\n", _endTime);
+	if (_spriteFilename) Buffer->putTextIndent(Indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
+	if (_spriteSetFilename) Buffer->putTextIndent(Indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
 	else if (_spriteSet) _spriteSet->saveAsText(Buffer, Indent + 2);
-	if (_preCache) Buffer->PutTextIndent(Indent + 2, "PRECACHE=\"%s\"\n", _preCache ? "TRUE" : "FALSE");
+	if (_preCache) Buffer->putTextIndent(Indent + 2, "PRECACHE=\"%s\"\n", _preCache ? "TRUE" : "FALSE");
 
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 
 	return S_OK;
 }

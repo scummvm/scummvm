@@ -134,11 +134,11 @@ HRESULT CAdScaleLevel::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScaleLevel::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "SCALE_LEVEL {\n");
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
-	Buffer->PutTextIndent(Indent + 2, "SCALE=%d\n", (int)_scale);
+	Buffer->putTextIndent(Indent, "SCALE_LEVEL {\n");
+	Buffer->putTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->putTextIndent(Indent + 2, "SCALE=%d\n", (int)_scale);
 	CBBase::saveAsText(Buffer, Indent + 2);
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 
 	return S_OK;
 }

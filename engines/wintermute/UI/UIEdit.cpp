@@ -303,58 +303,58 @@ HRESULT CUIEdit::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIEdit::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "EDIT\n");
-	Buffer->PutTextIndent(Indent, "{\n");
+	Buffer->putTextIndent(Indent, "EDIT\n");
+	Buffer->putTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	if (_back && _back->_filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
+		Buffer->putTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
 
 	if (_image && _image->_filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
+		Buffer->putTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 
 	if (_font && _font->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	if (_fontSelected && _fontSelected->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_SELECTED=\"%s\"\n", _fontSelected->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT_SELECTED=\"%s\"\n", _fontSelected->_filename);
 
 	if (_cursor && _cursor->_filename)
-		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+		Buffer->putTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	if (_text)
-		Buffer->PutTextIndent(Indent + 2, "TEXT=\"%s\"\n", _text);
+		Buffer->putTextIndent(Indent + 2, "TEXT=\"%s\"\n", _text);
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
-	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", _width);
-	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
-	Buffer->PutTextIndent(Indent + 2, "MAX_LENGTH=%d\n", _maxLength);
-	Buffer->PutTextIndent(Indent + 2, "CURSOR_BLINK_RATE=%d\n", _cursorBlinkRate);
-	Buffer->PutTextIndent(Indent + 2, "FRAME_WIDTH=%d\n", _frameWidth);
+	Buffer->putTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->putTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->putTextIndent(Indent + 2, "WIDTH=%d\n", _width);
+	Buffer->putTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
+	Buffer->putTextIndent(Indent + 2, "MAX_LENGTH=%d\n", _maxLength);
+	Buffer->putTextIndent(Indent + 2, "CURSOR_BLINK_RATE=%d\n", _cursorBlinkRate);
+	Buffer->putTextIndent(Indent + 2, "FRAME_WIDTH=%d\n", _frameWidth);
 
-	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
 
 	// scripts
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	// editor properties
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 	return S_OK;
 }
 

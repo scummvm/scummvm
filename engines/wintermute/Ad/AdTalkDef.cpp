@@ -211,19 +211,19 @@ HRESULT CAdTalkDef::persist(CBPersistMgr *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkDef::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "TALK {\n");
-	if (_defaultSpriteFilename) Buffer->PutTextIndent(Indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
+	Buffer->putTextIndent(Indent, "TALK {\n");
+	if (_defaultSpriteFilename) Buffer->putTextIndent(Indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
 
-	if (_defaultSpriteSetFilename) Buffer->PutTextIndent(Indent + 2, "DEFAULT_SPRITESET_FILE=\"%s\"\n", _defaultSpriteSetFilename);
+	if (_defaultSpriteSetFilename) Buffer->putTextIndent(Indent + 2, "DEFAULT_SPRITESET_FILE=\"%s\"\n", _defaultSpriteSetFilename);
 	else if (_defaultSpriteSet) _defaultSpriteSet->saveAsText(Buffer, Indent + 2);
 
 	for (int i = 0; i < _nodes.GetSize(); i++) {
 		_nodes[i]->saveAsText(Buffer, Indent + 2);
-		Buffer->PutTextIndent(Indent, "\n");
+		Buffer->putTextIndent(Indent, "\n");
 	}
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 
 	return S_OK;
 }

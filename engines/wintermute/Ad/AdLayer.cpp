@@ -479,21 +479,21 @@ const char *CAdLayer::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdLayer::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "LAYER {\n");
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
-	Buffer->PutTextIndent(Indent + 2, "MAIN=%s\n", _main ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", _width);
-	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
-	Buffer->PutTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent, "LAYER {\n");
+	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	Buffer->putTextIndent(Indent + 2, "MAIN=%s\n", _main ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "WIDTH=%d\n", _width);
+	Buffer->putTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
+	Buffer->putTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 	if (_closeUp)
-		Buffer->PutTextIndent(Indent + 2, "CLOSE_UP=%s\n", _closeUp ? "TRUE" : "FALSE");
+		Buffer->putTextIndent(Indent + 2, "CLOSE_UP=%s\n", _closeUp ? "TRUE" : "FALSE");
 
 	int i;
 
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
@@ -514,7 +514,7 @@ HRESULT CAdLayer::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n\n");
+	Buffer->putTextIndent(Indent, "}\n\n");
 
 	return S_OK;
 }

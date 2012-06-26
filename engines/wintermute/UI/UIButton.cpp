@@ -441,100 +441,100 @@ HRESULT CUIButton::LoadBuffer(byte  *Buffer, bool Complete) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIButton::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->PutTextIndent(Indent, "BUTTON\n");
-	Buffer->PutTextIndent(Indent, "{\n");
+	Buffer->putTextIndent(Indent, "BUTTON\n");
+	Buffer->putTextIndent(Indent, "{\n");
 
-	Buffer->PutTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->PutTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	if (_back && _back->_filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
+		Buffer->putTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
 	if (_backHover && _backHover->_filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK_HOVER=\"%s\"\n", _backHover->_filename);
+		Buffer->putTextIndent(Indent + 2, "BACK_HOVER=\"%s\"\n", _backHover->_filename);
 	if (_backPress && _backPress->_filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK_PRESS=\"%s\"\n", _backPress->_filename);
+		Buffer->putTextIndent(Indent + 2, "BACK_PRESS=\"%s\"\n", _backPress->_filename);
 	if (_backDisable && _backDisable->_filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK_DISABLE=\"%s\"\n", _backDisable->_filename);
+		Buffer->putTextIndent(Indent + 2, "BACK_DISABLE=\"%s\"\n", _backDisable->_filename);
 	if (_backFocus && _backFocus->_filename)
-		Buffer->PutTextIndent(Indent + 2, "BACK_FOCUS=\"%s\"\n", _backFocus->_filename);
+		Buffer->putTextIndent(Indent + 2, "BACK_FOCUS=\"%s\"\n", _backFocus->_filename);
 
 	if (_image && _image->_filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
+		Buffer->putTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 	if (_imageHover && _imageHover->_filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE_HOVER=\"%s\"\n", _imageHover->_filename);
+		Buffer->putTextIndent(Indent + 2, "IMAGE_HOVER=\"%s\"\n", _imageHover->_filename);
 	if (_imagePress && _imagePress->_filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE_PRESS=\"%s\"\n", _imagePress->_filename);
+		Buffer->putTextIndent(Indent + 2, "IMAGE_PRESS=\"%s\"\n", _imagePress->_filename);
 	if (_imageDisable && _imageDisable->_filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE_DISABLE=\"%s\"\n", _imageDisable->_filename);
+		Buffer->putTextIndent(Indent + 2, "IMAGE_DISABLE=\"%s\"\n", _imageDisable->_filename);
 	if (_imageFocus && _imageFocus->_filename)
-		Buffer->PutTextIndent(Indent + 2, "IMAGE_FOCUS=\"%s\"\n", _imageFocus->_filename);
+		Buffer->putTextIndent(Indent + 2, "IMAGE_FOCUS=\"%s\"\n", _imageFocus->_filename);
 
 	if (_font && _font->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	if (_fontHover && _fontHover->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
 	if (_fontPress && _fontPress->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_PRESS=\"%s\"\n", _fontPress->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT_PRESS=\"%s\"\n", _fontPress->_filename);
 	if (_fontDisable && _fontDisable->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_DISABLE=\"%s\"\n", _fontDisable->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT_DISABLE=\"%s\"\n", _fontDisable->_filename);
 	if (_fontFocus && _fontFocus->_filename)
-		Buffer->PutTextIndent(Indent + 2, "FONT_FOCUS=\"%s\"\n", _fontFocus->_filename);
+		Buffer->putTextIndent(Indent + 2, "FONT_FOCUS=\"%s\"\n", _fontFocus->_filename);
 
 	if (_cursor && _cursor->_filename)
-		Buffer->PutTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+		Buffer->putTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	if (_text)
-		Buffer->PutTextIndent(Indent + 2, "TEXT=\"%s\"\n", _text);
+		Buffer->putTextIndent(Indent + 2, "TEXT=\"%s\"\n", _text);
 
 	switch (_align) {
 	case TAL_LEFT:
-		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
+		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
 		break;
 	case TAL_RIGHT:
-		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "right");
+		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "right");
 		break;
 	case TAL_CENTER:
-		Buffer->PutTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
+		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
 		warning("CUIButton::SaveAsText - unhandled enum");
 		break;
 	}
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
-	Buffer->PutTextIndent(Indent + 2, "X=%d\n", _posX);
-	Buffer->PutTextIndent(Indent + 2, "Y=%d\n", _posY);
-	Buffer->PutTextIndent(Indent + 2, "WIDTH=%d\n", _width);
-	Buffer->PutTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
+	Buffer->putTextIndent(Indent + 2, "X=%d\n", _posX);
+	Buffer->putTextIndent(Indent + 2, "Y=%d\n", _posY);
+	Buffer->putTextIndent(Indent + 2, "WIDTH=%d\n", _width);
+	Buffer->putTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
 
 
-	Buffer->PutTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "FOCUSABLE=%s\n", _canFocus ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "CENTER_IMAGE=%s\n", _centerImage ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PRESSED=%s\n", _stayPressed ? "TRUE" : "FALSE");
-	Buffer->PutTextIndent(Indent + 2, "PIXEL_PERFECT=%s\n", _pixelPerfect ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "FOCUSABLE=%s\n", _canFocus ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "CENTER_IMAGE=%s\n", _centerImage ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "PRESSED=%s\n", _stayPressed ? "TRUE" : "FALSE");
+	Buffer->putTextIndent(Indent + 2, "PIXEL_PERFECT=%s\n", _pixelPerfect ? "TRUE" : "FALSE");
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	// scripts
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->PutTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	Buffer->PutTextIndent(Indent + 2, "\n");
+	Buffer->putTextIndent(Indent + 2, "\n");
 
 	// editor properties
 	CBBase::saveAsText(Buffer, Indent + 2);
 
-	Buffer->PutTextIndent(Indent, "}\n");
+	Buffer->putTextIndent(Indent, "}\n");
 	return S_OK;
 }
 
