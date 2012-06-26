@@ -38,9 +38,9 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
 CBRenderer::CBRenderer(CBGame *inGame): CBBase(inGame) {
-	_instance = NULL;
-	_window = NULL;
-	_clipperWindow = NULL;
+	_instance = 0;
+	_window = 0;
+	_clipperWindow = 0;
 	_active = false;
 	_ready = false;
 	_windowed = true;

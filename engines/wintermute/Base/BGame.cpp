@@ -1518,7 +1518,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		const char *Key = Stack->Pop()->GetString();
 		const char *InitVal = Stack->Pop()->GetString();
 		AnsiString val = _registry->ReadString("PrivateSettings", Key, InitVal);
-		Stack->PushString((char *)val.c_str());
+		Stack->PushString(val.c_str());
 		return S_OK;
 	}
 
@@ -2489,7 +2489,7 @@ CScValue *CBGame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SaveDirectory") == 0) {
 		AnsiString dataDir = GetDataDir();
-		_scValue->SetString((char *)dataDir.c_str());
+		_scValue->SetString(dataDir.c_str());
 		return _scValue;
 	}
 

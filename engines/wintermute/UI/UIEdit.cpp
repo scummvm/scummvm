@@ -581,7 +581,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 	if (_selStart >= _selEnd) {
 		while (font->GetTextWidth((byte *)_text + _scrollOffset, MAX(0, _selEnd - _scrollOffset)) > _width - CursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
-			if (_scrollOffset >= strlen(_text)) break;
+			if (_scrollOffset >= (int)strlen(_text)) break;
 		}
 
 		_scrollOffset = MIN(_scrollOffset, _selEnd);
@@ -595,7 +595,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 
 		        > _width - CursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
-			if (_scrollOffset >= strlen(_text)) break;
+			if (_scrollOffset >= (int)strlen(_text)) break;
 		}
 
 		_scrollOffset = MIN(_scrollOffset, _selEnd);
@@ -811,7 +811,7 @@ int CUIEdit::DeleteChars(int Start, int End) {
 
 //////////////////////////////////////////////////////////////////////////
 int CUIEdit::InsertChars(int Pos, byte *Chars, int Num) {
-	if (strlen(_text) + Num > _maxLength) {
+	if ((int)strlen(_text) + Num > _maxLength) {
 		Num -= (strlen(_text) + Num - _maxLength);
 	}
 

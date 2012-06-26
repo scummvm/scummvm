@@ -73,7 +73,7 @@ HRESULT CBStringTable::AddString(const char *Key, const char *Val, bool ReportDu
 char *CBStringTable::GetKey(const char *Str) {
 	if (Str == NULL || Str[0] != '/') return NULL;
 
-	char *value = strchr((char *)Str + 1, '/');
+	const char *value = strchr(Str + 1, '/');
 	if (value == NULL) return NULL;
 
 	char *key = new char[value - Str];
