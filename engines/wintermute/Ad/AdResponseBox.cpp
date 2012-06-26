@@ -85,15 +85,15 @@ CAdResponseBox::~CAdResponseBox() {
 	if (_font) Game->_fontStorage->RemoveFont(_font);
 	if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
 
-	ClearResponses();
-	ClearButtons();
+	clearResponses();
+	clearButtons();
 
 	_waitingScript = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseBox::ClearResponses() {
+void CAdResponseBox::clearResponses() {
 	for (int i = 0; i < _responses.GetSize(); i++) {
 		delete _responses[i];
 	}
@@ -102,7 +102,7 @@ void CAdResponseBox::ClearResponses() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseBox::ClearButtons() {
+void CAdResponseBox::clearButtons() {
 	for (int i = 0; i < _respButtons.GetSize(); i++) {
 		delete _respButtons[i];
 	}
@@ -111,7 +111,7 @@ void CAdResponseBox::ClearButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::InvalidateButtons() {
+HRESULT CAdResponseBox::invalidateButtons() {
 	for (int i = 0; i < _respButtons.GetSize(); i++) {
 		_respButtons[i]->_image = NULL;
 		_respButtons[i]->_cursor = NULL;
@@ -125,8 +125,8 @@ HRESULT CAdResponseBox::InvalidateButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::CreateButtons() {
-	ClearButtons();
+HRESULT CAdResponseBox::createButtons() {
+	clearButtons();
 
 	_scrollOffset = 0;
 	for (int i = 0; i < _responses.GetSize(); i++) {
@@ -493,13 +493,13 @@ HRESULT CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 			_scrollOffset++;
 		} else if (scumm_stricmp(obj->_name, "response") == 0) {
 			if (_waitingScript) _waitingScript->_stack->PushInt(_responses[param2]->_iD);
-			HandleResponse(_responses[param2]);
+			handleResponse(_responses[param2]);
 			_waitingScript = NULL;
 			Game->_state = GAME_RUNNING;
 			((CAdGame *)Game)->_stateEx = GAME_NORMAL;
 			_ready = true;
-			InvalidateButtons();
-			ClearResponses();
+			invalidateButtons();
+			clearResponses();
 		} else return CBObject::listen(param1, param2);
 		break;
 	default:
@@ -536,7 +536,7 @@ HRESULT CAdResponseBox::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::WeedResponses() {
+HRESULT CAdResponseBox::weedResponses() {
 	CAdGame *AdGame = (CAdGame *)Game;
 
 	for (int i = 0; i < _responses.GetSize(); i++) {
@@ -566,15 +566,15 @@ HRESULT CAdResponseBox::WeedResponses() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseBox::SetLastResponseText(const char *Text, const char *TextOrig) {
+void CAdResponseBox::setLastResponseText(const char *Text, const char *TextOrig) {
 	CBUtils::SetString(&_lastResponseText, Text);
 	CBUtils::SetString(&_lastResponseTextOrig, TextOrig);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::HandleResponse(CAdResponse *Response) {
-	SetLastResponseText(Response->_text, Response->_textOrig);
+HRESULT CAdResponseBox::handleResponse(CAdResponse *Response) {
+	setLastResponseText(Response->_text, Response->_textOrig);
 
 	CAdGame *AdGame = (CAdGame *)Game;
 
@@ -595,9 +595,9 @@ HRESULT CAdResponseBox::HandleResponse(CAdResponse *Response) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdResponseBox::GetNextAccessObject(CBObject *CurrObject) {
+CBObject *CAdResponseBox::getNextAccessObject(CBObject *CurrObject) {
 	CBArray<CUIObject *, CUIObject *> Objects;
-	GetObjects(Objects, true);
+	getObjects(Objects, true);
 
 	if (Objects.GetSize() == 0) return NULL;
 	else {
@@ -615,9 +615,9 @@ CBObject *CAdResponseBox::GetNextAccessObject(CBObject *CurrObject) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdResponseBox::GetPrevAccessObject(CBObject *CurrObject) {
+CBObject *CAdResponseBox::getPrevAccessObject(CBObject *CurrObject) {
 	CBArray<CUIObject *, CUIObject *> Objects;
-	GetObjects(Objects, true);
+	getObjects(Objects, true);
 
 	if (Objects.GetSize() == 0) return NULL;
 	else {
@@ -635,7 +635,7 @@ CBObject *CAdResponseBox::GetPrevAccessObject(CBObject *CurrObject) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::GetObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly) {
+HRESULT CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly) {
 	for (int i = 0; i < _respButtons.GetSize(); i++) {
 		Objects.Add(_respButtons[i]);
 	}

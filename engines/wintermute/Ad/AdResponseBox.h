@@ -40,12 +40,12 @@ class CUIObject;
 class CAdResponse;
 class CAdResponseBox : public CBObject {
 public:
-	CBObject *GetNextAccessObject(CBObject *CurrObject);
-	CBObject *GetPrevAccessObject(CBObject *CurrObject);
-	HRESULT GetObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
+	CBObject *getNextAccessObject(CBObject *CurrObject);
+	CBObject *getPrevAccessObject(CBObject *CurrObject);
+	HRESULT getObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
 
-	HRESULT HandleResponse(CAdResponse *Response);
-	void SetLastResponseText(const char *Text, const char *TextOrig);
+	HRESULT handleResponse(CAdResponse *Response);
+	void setLastResponseText(const char *Text, const char *TextOrig);
 	char *_lastResponseText;
 	char *_lastResponseTextOrig;
 	DECLARE_PERSISTENT(CAdResponseBox, CBObject)
@@ -55,16 +55,16 @@ public:
 	    EVENT_PREV, EVENT_NEXT, EVENT_RESPONSE
 	} TResponseEvent;
 
-	HRESULT WeedResponses();
+	HRESULT weedResponses();
 	HRESULT display();
 	int _spacing;
 	int _scrollOffset;
 	CBFont *_fontHover;
 	CBFont *_font;
-	HRESULT CreateButtons();
-	HRESULT InvalidateButtons();
-	void ClearButtons();
-	void ClearResponses();
+	HRESULT createButtons();
+	HRESULT invalidateButtons();
+	void clearButtons();
+	void clearResponses();
 	CAdResponseBox(CBGame *inGame);
 	virtual ~CAdResponseBox();
 	CBArray<CAdResponse *, CAdResponse *> _responses;

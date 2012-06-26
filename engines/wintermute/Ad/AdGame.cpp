@@ -510,8 +510,8 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "ClearResponses") == 0) {
 		Stack->CorrectParams(0);
-		_responseBox->ClearResponses();
-		_responseBox->ClearButtons();
+		_responseBox->clearResponses();
+		_responseBox->clearButtons();
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -524,7 +524,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		bool AutoSelectLast = Stack->Pop()->GetBool();
 
 		if (_responseBox) {
-			_responseBox->WeedResponses();
+			_responseBox->weedResponses();
 
 			if (_responseBox->_responses.GetSize() == 0) {
 				Stack->PushNULL();
@@ -534,12 +534,12 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 			if (_responseBox->_responses.GetSize() == 1 && AutoSelectLast) {
 				Stack->PushInt(_responseBox->_responses[0]->_iD);
-				_responseBox->HandleResponse(_responseBox->_responses[0]);
-				_responseBox->ClearResponses();
+				_responseBox->handleResponse(_responseBox->_responses[0]);
+				_responseBox->clearResponses();
 				return S_OK;
 			}
 
-			_responseBox->CreateButtons();
+			_responseBox->createButtons();
 			_responseBox->_waitingScript = Script;
 			Script->WaitForExclusive(_responseBox);
 			_state = GAME_SEMI_FROZEN;
@@ -558,7 +558,7 @@ HRESULT CAdGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	else if (strcmp(Name, "GetNumResponses") == 0) {
 		Stack->CorrectParams(0);
 		if (_responseBox) {
-			_responseBox->WeedResponses();
+			_responseBox->weedResponses();
 			Stack->PushInt(_responseBox->_responses.GetSize());
 		} else {
 			Script->RuntimeError("Game.GetNumResponses: response box is not defined");
@@ -1611,7 +1611,7 @@ HRESULT CAdGame::AddBranchResponse(int ID) {
 	if (BranchResponseUsed(ID)) return S_OK;
 	CAdResponseContext *r = new CAdResponseContext(Game);
 	r->_iD = ID;
-	r->SetContext(_dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL);
+	r->setContext(_dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL);
 	_responsesBranch.Add(r);
 	return S_OK;
 }
@@ -1634,7 +1634,7 @@ HRESULT CAdGame::AddGameResponse(int ID) {
 	if (GameResponseUsed(ID)) return S_OK;
 	CAdResponseContext *r = new CAdResponseContext(Game);
 	r->_iD = ID;
-	r->SetContext(_dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL);
+	r->setContext(_dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL);
 	_responsesGame.Add(r);
 	return S_OK;
 }
