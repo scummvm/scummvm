@@ -46,13 +46,13 @@ class CAdInventory;
 class CAdObject : public CBObject {
 public:
 	CPartEmitter *_partEmitter;
-	virtual CPartEmitter *CreateParticleEmitter(bool FollowParent = false, int OffsetX = 0, int OffsetY = 0);
-	virtual HRESULT UpdatePartEmitter();
+	virtual CPartEmitter *createParticleEmitter(bool followParent = false, int offsetX = 0, int offsetY = 0);
+	virtual HRESULT updatePartEmitter();
 	bool _partFollowParent;
 	int _partOffsetX;
 	int _partOffsetY;
 
-	HRESULT InvalidateCurrRegions();
+	HRESULT invalidateCurrRegions();
 	bool _subtitlesModRelative;
 	bool _subtitlesModXCenter;
 	int _subtitlesModX;
@@ -61,23 +61,23 @@ public:
 	CAdRegion *_stickRegion;
 	bool _sceneIndependent;
 	bool _ignoreItems;
-	HRESULT UpdateBlockRegion();
+	HRESULT updateBlockRegion();
 	bool _forcedTalkAnimUsed;
 	char *_forcedTalkAnimName;
-	virtual bool getExtendedFlag(const char *FlagName);
+	virtual bool getExtendedFlag(const char *flagName);
 	virtual HRESULT resetSoundPan();
 	virtual HRESULT updateSounds();
-	HRESULT Reset();
+	HRESULT reset();
 	DECLARE_PERSISTENT(CAdObject, CBObject)
-	virtual void Talk(const char *Text, const char *Sound = NULL, uint32 Duration = 0, const char *Stances = NULL, TTextAlign Align = TAL_CENTER);
+	virtual void talk(const char *text, const char *sound = NULL, uint32 duration = 0, const char *stances = NULL, TTextAlign align = TAL_CENTER);
 	virtual int getHeight();
 	CAdSentence *_sentence;
-	HRESULT SetFont(const char *Filename);
+	HRESULT SetFont(const char *filename);
 	virtual HRESULT update();
 	virtual HRESULT display();
 	bool _drawn;
 	bool _active;
-	virtual HRESULT PlayAnim(const char *Filename);
+	virtual HRESULT playAnim(const char *filename);
 	CBSprite *_animSprite;
 	CBSprite *_currentSprite;
 	TObjectState _state;
@@ -91,27 +91,27 @@ public:
 	CAdWaypointGroup *_wptGroup;
 	CBRegion *_currentBlockRegion;
 	CAdWaypointGroup *_currentWptGroup;
-	CAdInventory *GetInventory();
+	CAdInventory *getInventory();
 
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 
-	virtual HRESULT AfterMove();
+	virtual HRESULT afterMove();
 	CAdRegion *_currentRegions[MAX_NUM_REGIONS];
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *Name);
-	virtual HRESULT scSetProperty(const char *Name, CScValue *Value);
-	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual CScValue *scGetProperty(const char *name);
+	virtual HRESULT scSetProperty(const char *name, CScValue *value);
+	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 	CBArray<CAdObject *, CAdObject *> _attachmentsPre;
 	CBArray<CAdObject *, CAdObject *> _attachmentsPost;
 
-	HRESULT UpdateSpriteAttachments();
-	HRESULT DisplaySpriteAttachments(bool PreDisplay);
+	HRESULT updateSpriteAttachments();
+	HRESULT displaySpriteAttachments(bool preDisplay);
 	CAdObject *_registerAlias;
 private:
-	HRESULT DisplaySpriteAttachment(CAdObject *Attachment);
+	HRESULT displaySpriteAttachment(CAdObject *Attachment);
 	CAdInventory *_inventory;
 
 protected:

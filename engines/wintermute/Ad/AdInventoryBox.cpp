@@ -108,7 +108,7 @@ HRESULT CAdInventoryBox::display() {
 
 	if (_window) {
 		_window->EnableWidget("prev", _scrollOffset > 0);
-		_window->EnableWidget("next", _scrollOffset + ItemsX * ItemsY < AdGame->_inventoryOwner->GetInventory()->_takenItems.GetSize());
+		_window->EnableWidget("next", _scrollOffset + ItemsX * ItemsY < AdGame->_inventoryOwner->getInventory()->_takenItems.GetSize());
 	}
 
 
@@ -135,8 +135,8 @@ HRESULT CAdInventoryBox::display() {
 		int xxx = rect.left;
 		for (int i = 0; i < ItemsX; i++) {
 			int ItemIndex = _scrollOffset + j * ItemsX + i;
-			if (ItemIndex >= 0 && ItemIndex < AdGame->_inventoryOwner->GetInventory()->_takenItems.GetSize()) {
-				CAdItem *item = AdGame->_inventoryOwner->GetInventory()->_takenItems[ItemIndex];
+			if (ItemIndex >= 0 && ItemIndex < AdGame->_inventoryOwner->getInventory()->_takenItems.GetSize()) {
+				CAdItem *item = AdGame->_inventoryOwner->getInventory()->_takenItems[ItemIndex];
 				if (item != ((CAdGame *)Game)->_selectedItem || !_hideSelected) {
 					item->update();
 					item->display(xxx, yyy);

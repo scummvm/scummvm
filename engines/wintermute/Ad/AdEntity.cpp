@@ -506,7 +506,7 @@ HRESULT CAdEntity::display() {
 			Game->_renderer->_rectList.Add(new CBActiveRect(Game, _registerAlias, _region, Game->_offsetX, Game->_offsetY));
 		}
 
-		DisplaySpriteAttachments(true);
+		displaySpriteAttachments(true);
 		if (_theora && (_theora->isPlaying() || _theora->isPaused())) {
 			_theora->display(Alpha);
 		} else if (_currentSprite) {
@@ -519,7 +519,7 @@ HRESULT CAdEntity::display() {
 			                        Rotate,
 			                        _blendMode);
 		}
-		DisplaySpriteAttachments(false);
+		displaySpriteAttachments(false);
 
 		if (_partEmitter) _partEmitter->display(_region);
 
@@ -598,7 +598,7 @@ HRESULT CAdEntity::update() {
 		}
 	}
 
-	UpdateBlockRegion();
+	updateBlockRegion();
 	_ready = (_state == STATE_READY);
 
 	if (_theora) {
@@ -615,8 +615,8 @@ HRESULT CAdEntity::update() {
 		}
 	}
 
-	UpdatePartEmitter();
-	UpdateSpriteAttachments();
+	updatePartEmitter();
+	updateSpriteAttachments();
 
 	return S_OK;
 }

@@ -46,7 +46,7 @@ class CScScript;
 class CBObject : public CBScriptHolder {
 public:
 	TSpriteBlendMode _blendMode;
-	virtual HRESULT AfterMove();
+	virtual HRESULT afterMove();
 	float _relativeRotate;
 	bool _rotateValid;
 	float _rotate;

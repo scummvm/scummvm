@@ -521,7 +521,7 @@ HRESULT CAdActor::display() {
 		else Rotate = ((CAdGame *)Game)->_scene->GetRotationAt(_posX, _posY) + _relativeRotate;
 	} else Rotate = 0.0f;
 
-	if (_active) DisplaySpriteAttachments(true);
+	if (_active) displaySpriteAttachments(true);
 
 	if (_currentSprite && _active) {
 		bool Reg = _registrable;
@@ -538,7 +538,7 @@ HRESULT CAdActor::display() {
 
 	}
 
-	if (_active) DisplaySpriteAttachments(false);
+	if (_active) displaySpriteAttachments(false);
 	if (_active && _partEmitter) _partEmitter->display();
 
 
@@ -730,17 +730,17 @@ HRESULT CAdActor::update() {
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
-			AfterMove();
+			afterMove();
 		}
 	}
 
 	//Game->QuickMessageForm("%s", _currentSprite->_filename);
 
-	UpdateBlockRegion();
+	updateBlockRegion();
 	_ready = (_state == STATE_READY);
 
-	UpdatePartEmitter();
-	UpdateSpriteAttachments();
+	updatePartEmitter();
+	updateSpriteAttachments();
 
 	return S_OK;
 }
@@ -810,7 +810,7 @@ void CAdActor::GetNextStep() {
 	_posX = (int)_pFX;
 	_posY = (int)_pFY;
 
-	AfterMove();
+	afterMove();
 
 
 	if (_pFCount == 0) {
@@ -1310,7 +1310,7 @@ HRESULT CAdActor::PlayAnim(const char *Filename) {
 		}
 	}
 	// otherwise call the standard handler
-	return CAdTalkHolder::PlayAnim(Filename);
+	return CAdTalkHolder::playAnim(Filename);
 }
 
 } // end of namespace WinterMute

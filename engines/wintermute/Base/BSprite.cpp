@@ -110,7 +110,7 @@ HRESULT CBSprite::Draw(int X, int Y, CBObject *Register, float ZoomX, float Zoom
 	if (_changed && _owner && _owner->_movable) {
 		_owner->_posX += _moveX;
 		_owner->_posY += _moveY;
-		_owner->AfterMove();
+		_owner->afterMove();
 
 		X = _owner->_posX;
 		Y = _owner->_posY;

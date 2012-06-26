@@ -259,7 +259,7 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 
 	if (_scene) {
 		// reset objects
-		for (int i = 0; i < _objects.GetSize(); i++) _objects[i]->Reset();
+		for (int i = 0; i < _objects.GetSize(); i++) _objects[i]->reset();
 
 		// reset scene properties
 		_scene->_sFXVolume = 100;
@@ -274,7 +274,7 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 		if (SUCCEEDED(ret)) {
 			// invalidate references to the original scene
 			for (int i = 0; i < _objects.GetSize(); i++) {
-				_objects[i]->InvalidateCurrRegions();
+				_objects[i]->invalidateCurrRegions();
 				_objects[i]->_stickRegion = NULL;
 			}
 
@@ -997,7 +997,7 @@ HRESULT CAdGame::scSetProperty(const char *Name, CScValue *Value) {
 	// InventoryObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "InventoryObject") == 0) {
-		if (_inventoryOwner && _inventoryBox) _inventoryOwner->GetInventory()->_scrollOffset = _inventoryBox->_scrollOffset;
+		if (_inventoryOwner && _inventoryBox) _inventoryOwner->getInventory()->_scrollOffset = _inventoryBox->_scrollOffset;
 
 		if (Value->IsNULL()) _inventoryOwner = _invObject;
 		else {
@@ -1006,7 +1006,7 @@ HRESULT CAdGame::scSetProperty(const char *Name, CScValue *Value) {
 			else if (Game->ValidObject(Obj)) _inventoryOwner = (CAdObject *)Obj;
 		}
 
-		if (_inventoryOwner && _inventoryBox) _inventoryBox->_scrollOffset = _inventoryOwner->GetInventory()->_scrollOffset;
+		if (_inventoryOwner && _inventoryBox) _inventoryBox->_scrollOffset = _inventoryOwner->getInventory()->_scrollOffset;
 
 		return S_OK;
 	}

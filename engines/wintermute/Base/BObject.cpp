@@ -174,7 +174,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		Stack->CorrectParams(2);
 		_posX = Stack->Pop()->GetInt();
 		_posY = Stack->Pop()->GetInt();
-		AfterMove();
+		afterMove();
 		Stack->PushNULL();
 
 		return S_OK;
@@ -680,7 +680,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "X") == 0) {
 		_posX = Value->GetInt();
-		AfterMove();
+		afterMove();
 		return S_OK;
 	}
 
@@ -689,7 +689,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Y") == 0) {
 		_posY = Value->GetInt();
-		AfterMove();
+		afterMove();
 		return S_OK;
 	}
 
@@ -1115,7 +1115,7 @@ void CBObject::setSoundEvent(const char *eventName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::AfterMove() {
+HRESULT CBObject::afterMove() {
 	return S_OK;
 }
 
