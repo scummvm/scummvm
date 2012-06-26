@@ -26,8 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/utils/StringUtil.h"
