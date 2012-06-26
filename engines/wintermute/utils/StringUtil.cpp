@@ -27,9 +27,6 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include <algorithm>
-#include <string>
-#include <sstream>
 #include "common/tokenizer.h"
 #include "StringUtil.h"
 #include "ConvertUTF.h"
@@ -38,7 +35,7 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 void StringUtil::ToLowerCase(AnsiString &str) {
-	std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+	return str.toUppercase();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,7 +45,7 @@ void StringUtil::ToLowerCase(AnsiString &str) {
 
 //////////////////////////////////////////////////////////////////////////
 void StringUtil::ToUpperCase(AnsiString &str) {
-	std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+	return str.toUppercase();
 }
 
 //////////////////////////////////////////////////////////////////////////

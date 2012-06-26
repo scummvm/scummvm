@@ -335,7 +335,7 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 	// add script to cache
 	CScCachedScript *CachedScript = new CScCachedScript(Filename, CompBuffer, CompSize);
 	if (CachedScript) {
-		int index;
+		int index = 0;
 		uint32 MinTime = CBPlatform::GetTime();
 		for (i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 			if (_cachedScripts[i] == NULL) {
@@ -446,7 +446,7 @@ HRESULT CScEngine::Tick() {
 
 		// normal script
 		else {
-			uint32 StartTime;
+			uint32 StartTime = 0;
 			bool isProfiling = _isProfiling;
 			if (isProfiling) StartTime = CBPlatform::GetTime();
 

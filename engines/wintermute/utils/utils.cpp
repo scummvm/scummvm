@@ -271,7 +271,7 @@ void CBUtils::RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL) {
 	//Delta RGB value
 	float del_Max = var_Max - var_Min;
 
-	float H, S, L;
+	float H = 0.0f, S = 0.0f, L = 0.0f;
 
 	L = (var_Max + var_Min) / 2.0f;
 

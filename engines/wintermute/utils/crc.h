@@ -74,7 +74,7 @@ crc   crcSlow(unsigned char const message[], int nBytes);
 crc   crcFast(unsigned char const message[], int nBytes);
 
 extern "C" crc crc_initialize(void);
-extern "C" crc crc_process_byte(unsigned char byte, crc remainder);
+extern "C" crc crc_process_byte(unsigned char byteVal, crc remainder);
 extern "C" crc crc_finalize(crc remainder);
 
 

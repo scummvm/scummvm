@@ -25,9 +25,9 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-#define FORBIDDEN_SYMBOL_EXCEPTION_ifstream
+
 #include "engines/wintermute/dcgf.h"
-#include <fstream>
+#include "common/file.h"
 #include "PathUtil.h"
 #include "StringUtil.h"
 
@@ -146,10 +146,10 @@ bool PathUtil::MatchesMask(const AnsiString &fileName, const AnsiString &mask) {
 bool PathUtil::FileExists(const AnsiString &fileName) {
 	warning("PathUtil::FileExists(%s)", fileName.c_str());
 
-	std::ifstream stream;
+	Common::File stream;
 
 	stream.open(fileName.c_str());
-	bool ret = stream.is_open();
+	bool ret = stream.isOpen();
 	stream.close();
 
 	return ret;

@@ -33,7 +33,7 @@
 #include "engines/wintermute/Base/BSurface.h"
 
 namespace WinterMute {
-class TransparentSurface;
+struct TransparentSurface;
 class CBSurfaceSDL : public CBSurface {
 public:
 	CBSurfaceSDL(CBGame *inGame);

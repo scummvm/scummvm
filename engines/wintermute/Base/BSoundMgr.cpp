@@ -249,7 +249,7 @@ HRESULT CBSoundMgr::setVolumePercent(TSoundType Type, byte Percent) {
 
 //////////////////////////////////////////////////////////////////////////
 byte CBSoundMgr::getVolumePercent(TSoundType Type) {
-	int Volume;
+	int Volume = 0;
 	switch (Type) {
 	case SOUND_SFX:
 		Volume = _volumeSFX;
@@ -259,6 +259,9 @@ byte CBSoundMgr::getVolumePercent(TSoundType Type) {
 		break;
 	case SOUND_MUSIC:
 		Volume = _volumeMusic;
+		break;
+	default:
+		error("Sound-type not set");
 		break;
 	}
 
