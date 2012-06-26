@@ -395,7 +395,7 @@ HRESULT CVidPlayer::loadSubtitles(const char *Filename, const char *SubtitleFile
 	}
 
 	DWORD Size;
-	BYTE *Buffer = Game->m_FileManager->ReadWholeFile(NewFile, &Size, false);
+	BYTE *Buffer = Game->m_FileManager->readWholeFile(NewFile, &Size, false);
 	if (Buffer == NULL) return S_OK; // no subtitles
 
 

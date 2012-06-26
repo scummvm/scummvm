@@ -70,7 +70,7 @@ CAdTalkDef::~CAdTalkDef() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkDef::LoadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdTalkDef::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;

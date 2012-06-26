@@ -175,7 +175,7 @@ HRESULT CBStringTable::LoadFile(const char *Filename, bool ClearOld) {
 	if (ClearOld) _strings.clear();
 
 	uint32 Size;
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename, &Size);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename, &Size);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBStringTable::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;

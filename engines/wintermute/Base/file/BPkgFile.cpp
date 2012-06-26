@@ -76,7 +76,7 @@ Common::SeekableReadStream *openPkgFile(const Common::String &Filename, CBFileMa
 		if (fileName[i] == '/') fileName[i] = '\\';
 	}
 
-	fileEntry = fileManager->GetPackageEntry(fileName);
+	fileEntry = fileManager->getPackageEntry(fileName);
 	if (!fileEntry) return NULL;
 
 	file = fileEntry->_package->GetFilePointer();

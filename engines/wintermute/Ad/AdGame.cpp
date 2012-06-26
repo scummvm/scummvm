@@ -1115,7 +1115,7 @@ HRESULT CAdGame::showCursor() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::LoadFile(const char *Filename) {
-	byte *Buffer = _fileManager->ReadWholeFile(Filename);
+	byte *Buffer = _fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdGame::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -1385,7 +1385,7 @@ HRESULT CAdGame::GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byt
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::LoadItemsFile(const char *Filename, bool Merge) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdGame::LoadItemsFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -1919,16 +1919,16 @@ char *CAdGame::FindSpeechFile(char *StringID) {
 
 	for (int i = 0; i < _speechDirs.GetSize(); i++) {
 		sprintf(Ret, "%s%s.ogg", _speechDirs[i], StringID);
-		Common::SeekableReadStream *File = _fileManager->OpenFile(Ret);
+		Common::SeekableReadStream *File = _fileManager->openFile(Ret);
 		if (File) {
-			_fileManager->CloseFile(File);
+			_fileManager->closeFile(File);
 			return Ret;
 		}
 
 		sprintf(Ret, "%s%s.wav", _speechDirs[i], StringID);
-		File = _fileManager->OpenFile(Ret);
+		File = _fileManager->openFile(Ret);
 		if (File) {
-			_fileManager->CloseFile(File);
+			_fileManager->closeFile(File);
 			return Ret;
 		}
 	}

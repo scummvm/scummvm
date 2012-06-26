@@ -405,7 +405,7 @@ int CBFontTT::GetLetterHeight() {
 
 //////////////////////////////////////////////////////////////////////
 HRESULT CBFontTT::LoadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBFontTT::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -637,11 +637,11 @@ void CBFontTT::AfterLoad() {
 HRESULT CBFontTT::InitFont() {
 	if (!_fontFile) return E_FAIL;
 
-	Common::SeekableReadStream *file = Game->_fileManager->OpenFile(_fontFile);
+	Common::SeekableReadStream *file = Game->_fileManager->openFile(_fontFile);
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
 		AnsiString fontFileName = PathUtil::Combine(CBPlatform::GetSystemFontPath(), PathUtil::GetFileName(_fontFile));
-		file = Game->_fileManager->OpenFile(fontFileName.c_str(), false);
+		file = Game->_fileManager->openFile(fontFileName.c_str(), false);
 		if (!file) {
 			Game->LOG(0, "Error loading TrueType font '%s'", _fontFile);
 			//return E_FAIL;
@@ -682,7 +682,7 @@ HRESULT CBFontTT::InitFont() {
 	error = FT_Open_Face(Game->_fontStorage->GetFTLibrary(), &args, 0, &_fTFace);
 	if (error) {
 		SAFE_DELETE_ARRAY(_fTStream);
-		Game->_fileManager->CloseFile(file);
+		Game->_fileManager->closeFile(file);
 		return E_FAIL;
 	}
 
@@ -745,7 +745,7 @@ void CBFontTT::FTCloseProc(FT_Stream stream) {
 
     CBGame *Game = f->Game;
 
-    Game->_fileManager->CloseFile(f);
+    Game->_fileManager->closeFile(f);
     stream->descriptor.pointer = NULL;
 }*/
 

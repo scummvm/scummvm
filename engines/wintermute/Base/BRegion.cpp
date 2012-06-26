@@ -96,7 +96,7 @@ bool CBRegion::PointInRegion(int X, int Y) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRegion::LoadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBRegion::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;

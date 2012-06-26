@@ -84,13 +84,13 @@ HRESULT CBImage::loadFile(const Common::String &filename) {
 		error("CBImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 
-	Common::SeekableReadStream *file = Game->_fileManager->OpenFile(filename.c_str());
+	Common::SeekableReadStream *file = Game->_fileManager->openFile(filename.c_str());
 	if (!file) return E_FAIL;
 
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
 	_palette = _decoder->getPalette();
-	Game->_fileManager->CloseFile(file);
+	Game->_fileManager->closeFile(file);
 
 	return S_OK;
 }

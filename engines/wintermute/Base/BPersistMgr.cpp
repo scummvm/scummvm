@@ -249,7 +249,7 @@ HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
 	_saving = false;
 
 	_loadStream = g_system->getSavefileManager()->openForLoading(filename);
-	//_buffer = Game->_fileManager->ReadWholeFile(Filename, &_bufferSize);
+	//_buffer = Game->_fileManager->readWholeFile(Filename, &_bufferSize);
 	if (_loadStream) {
 		uint32 Magic;
 		Magic = getDWORD();
@@ -348,7 +348,7 @@ HRESULT CBPersistMgr::initLoad(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBPersistMgr::saveFile(const char *filename) {
-	return Game->_fileManager->SaveFile(filename, ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic *)_saveStream)->size(), Game->_compressedSavegames, _richBuffer, _richBufferSize);
+	return Game->_fileManager->saveFile(filename, ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic *)_saveStream)->size(), Game->_compressedSavegames, _richBuffer, _richBufferSize);
 }
 
 

@@ -96,7 +96,7 @@ CUIButton::~CUIButton() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIButton::LoadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUIButton::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;

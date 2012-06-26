@@ -120,7 +120,7 @@ HRESULT CUITiledImage::display(int X, int Y, int Width, int Height) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUITiledImage::LoadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;

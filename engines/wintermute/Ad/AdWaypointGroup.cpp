@@ -65,7 +65,7 @@ void CAdWaypointGroup::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdWaypointGroup::LoadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdWaypointGroup::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;

@@ -124,7 +124,7 @@ CAdActor::~CAdActor() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdActor::LoadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdActor::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -1268,7 +1268,7 @@ HRESULT CAdActor::MergeAnims(const char *AnimsFilename) {
 	TOKEN_TABLE_END
 
 
-	byte *FileBuffer = Game->_fileManager->ReadWholeFile(AnimsFilename);
+	byte *FileBuffer = Game->_fileManager->readWholeFile(AnimsFilename);
 	if (FileBuffer == NULL) {
 		Game->LOG(0, "CAdActor::MergeAnims failed for file '%s'", AnimsFilename);
 		return E_FAIL;

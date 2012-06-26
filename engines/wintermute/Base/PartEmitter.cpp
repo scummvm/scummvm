@@ -125,11 +125,11 @@ HRESULT CPartEmitter::addSprite(const char *Filename) {
 	}
 
 	// check if file exists
-	Common::SeekableReadStream *File = Game->_fileManager->OpenFile(Filename);
+	Common::SeekableReadStream *File = Game->_fileManager->openFile(Filename);
 	if (!File) {
 		Game->LOG(0, "Sprite '%s' not found", Filename);
 		return E_FAIL;
-	} else Game->_fileManager->CloseFile(File);
+	} else Game->_fileManager->closeFile(File);
 
 	char *Str = new char[strlen(Filename) + 1];
 	strcpy(Str, Filename);

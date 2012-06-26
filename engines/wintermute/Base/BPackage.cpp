@@ -87,10 +87,10 @@ HRESULT CBPackage::read(Common::SeekableReadStream *file, uint32 offset, byte *b
 
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *CBPackage::GetFilePointer() {
-	Common::File *file = Game->_fileManager->OpenPackage(_name);
+	Common::File *file = Game->_fileManager->openPackage(_name);
 	if (!file) {
-		Game->_fileManager->RequestCD(_cD, _name, "");
-		file = Game->_fileManager->OpenPackage(_name);
+		Game->_fileManager->requestCD(_cD, _name, "");
+		file = Game->_fileManager->openPackage(_name);
 	}
 	return file;
 }

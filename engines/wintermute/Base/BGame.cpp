@@ -688,7 +688,7 @@ void CBGame::GetOffset(int *OffsetX, int *OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::LoadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CBGame::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
@@ -1728,10 +1728,10 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		Stack->CorrectParams(1);
 		const char *Filename = Stack->Pop()->GetString();
 
-		Common::SeekableReadStream *File = _fileManager->OpenFile(Filename, false);
+		Common::SeekableReadStream *File = _fileManager->openFile(Filename, false);
 		if (!File) Stack->PushBool(false);
 		else {
-			_fileManager->CloseFile(File);
+			_fileManager->closeFile(File);
 			Stack->PushBool(true);
 		}
 		return S_OK;
@@ -2082,7 +2082,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		const char *Filename = Stack->Pop()->GetString();
 		bool AsHex = Stack->Pop()->GetBool(false);
 
-		Common::SeekableReadStream *File = _fileManager->OpenFile(Filename, false);
+		Common::SeekableReadStream *File = _fileManager->openFile(Filename, false);
 		if (File) {
 			crc remainder = crc_initialize();
 			byte Buf[1024];
@@ -2105,7 +2105,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 			} else
 				Stack->PushInt(checksum);
 
-			_fileManager->CloseFile(File);
+			_fileManager->closeFile(File);
 			File = NULL;
 		} else Stack->PushNULL();
 
@@ -3515,7 +3515,7 @@ HRESULT CBGame::LoadSettings(const char *Filename) {
 	TOKEN_TABLE_END
 
 
-	byte *OrigBuffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *OrigBuffer = Game->_fileManager->readWholeFile(Filename);
 	if (OrigBuffer == NULL) {
 		Game->LOG(0, "CBGame::LoadSettings failed for file '%s'", Filename);
 		return E_FAIL;

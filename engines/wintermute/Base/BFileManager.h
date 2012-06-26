@@ -42,29 +42,29 @@ namespace WinterMute {
 class CBFile;
 class CBFileManager: CBBase {
 public:
-	bool FindPackageSignature(Common::File *f, uint32 *Offset);
+	bool findPackageSignature(Common::File *f, uint32 *Offset);
 	HRESULT cleanup();
-	HRESULT SetBasePath(const Common::String &path);
-	HRESULT RestoreCurrentDir();
+	HRESULT setBasePath(const Common::String &path);
+	HRESULT restoreCurrentDir();
 	char *_basePath;
-	bool GetFullPath(const Common::String &filename, char *fullname);
-	Common::SeekableReadStream *OpenFileRaw(const Common::String &filename);
-	HRESULT CloseFile(Common::SeekableReadStream *File);
-	Common::SeekableReadStream *OpenFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
-	CBFileEntry *GetPackageEntry(const Common::String &filename);
-	Common::File *OpenSingleFile(const Common::String &name);
-	Common::File *OpenPackage(const Common::String &name);
-	HRESULT RegisterPackages();
-	HRESULT InitPaths();
-	HRESULT ReloadPaths();
+	bool getFullPath(const Common::String &filename, char *fullname);
+	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
+	HRESULT closeFile(Common::SeekableReadStream *File);
+	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
+	CBFileEntry *getPackageEntry(const Common::String &filename);
+	Common::File *openSingleFile(const Common::String &name);
+	Common::File *openPackage(const Common::String &name);
+	HRESULT registerPackages();
+	HRESULT initPaths();
+	HRESULT reloadPaths();
 	typedef enum {
 	    PATH_PACKAGE, PATH_SINGLE
 	} TPathType;
-	HRESULT AddPath(TPathType Type, const Common::String &path);
-	HRESULT RequestCD(int CD, char *PackageFile, char *Filename);
+	HRESULT addPath(TPathType Type, const Common::String &path);
+	HRESULT requestCD(int CD, char *PackageFile, char *Filename);
 	Common::SeekableReadStream *loadSaveGame(const Common::String &filename);
-	HRESULT SaveFile(const Common::String &filename, byte *Buffer, uint32 BufferSize, bool Compressed = false, byte *PrefixBuffer = NULL, uint32 PrefixSize = 0);
-	byte *ReadWholeFile(const Common::String &filename, uint32 *Size = NULL, bool MustExist = true);
+	HRESULT saveFile(const Common::String &filename, byte *Buffer, uint32 BufferSize, bool Compressed = false, byte *PrefixBuffer = NULL, uint32 PrefixSize = 0);
+	byte *readWholeFile(const Common::String &filename, uint32 *Size = NULL, bool MustExist = true);
 	CBFileManager(CBGame *inGame = NULL);
 	virtual ~CBFileManager();
 	CBArray<char *, char *> _singlePaths;
@@ -74,10 +74,10 @@ public:
 
 	Common::HashMap<Common::String, CBFileEntry *> _files;
 private:
-	HRESULT RegisterPackage(const char *Path, const char *Name, bool SearchSignature = false);
-	HRESULT RegisterPackage(const Common::String &filename, bool SearchSignature = false);
+	HRESULT registerPackage(const char *Path, const char *Name, bool SearchSignature = false);
+	HRESULT registerPackage(const Common::String &filename, bool SearchSignature = false);
 	Common::HashMap<Common::String, CBFileEntry *>::iterator _filesIter;
-	bool IsValidPackage(const AnsiString &fileName) const;
+	bool isValidPackage(const AnsiString &fileName) const;
 
 };
 

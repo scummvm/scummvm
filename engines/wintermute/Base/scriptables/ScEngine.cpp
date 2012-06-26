@@ -191,7 +191,7 @@ HRESULT CScEngine::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 byte *WINAPI CScEngine::LoadFile(void *Data, char *Filename, uint32 *Size) {
 	CBGame *Game = (CBGame *)Data;
-	return Game->_fileManager->ReadWholeFile(Filename, Size);
+	return Game->_fileManager->readWholeFile(Filename, Size);
 }
 
 
@@ -286,7 +286,7 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 
 	uint32 Size;
 
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename, &Size);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename, &Size);
 	if (!Buffer) {
 		Game->LOG(0, "CScEngine::GetCompiledScript - error opening script '%s'", Filename);
 		return NULL;

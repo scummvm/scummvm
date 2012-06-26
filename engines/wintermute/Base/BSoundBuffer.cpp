@@ -77,7 +77,7 @@ CBSoundBuffer::~CBSoundBuffer() {
 	}
 
 	if (_file) {
-		Game->_fileManager->CloseFile(_file);
+		Game->_fileManager->closeFile(_file);
 		_file = NULL;
 	}
 
@@ -104,9 +104,9 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 	delete _stream;
 	_stream = NULL;
 
-	if (_file) Game->_fileManager->CloseFile(_file);
+	if (_file) Game->_fileManager->closeFile(_file);
 
-	_file = Game->_fileManager->OpenFile(Filename);
+	_file = Game->_fileManager->openFile(Filename);
 	if (!_file) {
 		Game->LOG(0, "Error opening sound file '%s'", Filename);
 		return E_FAIL;
@@ -146,7 +146,7 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 	bool NewlyCreated = false;
 
 	if(!_soundBuffer || ForceReload || _streamed){
-	    if(!_file) _file = Game->_fileManager->OpenFile(Filename);
+	    if(!_file) _file = Game->_fileManager->openFile(Filename);
 	    if(!_file){
 	        Game->LOG(0, "Error opening sound file '%s'", Filename);
 	        return E_FAIL;
@@ -176,7 +176,7 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 
 	// close file (if not streaming)
 	if(!_streamed && _file){
-	    Game->_fileManager->CloseFile(_file);
+	    Game->_fileManager->closeFile(_file);
 	    _file = NULL;
 	}
 	*/

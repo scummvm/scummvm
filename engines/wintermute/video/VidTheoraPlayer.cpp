@@ -132,7 +132,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	cleanup();
 
 	_filename = filename;
-	_file = Game->_fileManager->OpenFile(filename, true, false);
+	_file = Game->_fileManager->openFile(filename, true, false);
 	if (!_file) return E_FAIL;
 
 	//if (Filename != _filename) CBUtils::SetString(&_filename, Filename);
@@ -159,7 +159,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 #if 0
 	cleanup();
 
-	_file = Game->_fileManager->OpenFile(Filename);
+	_file = Game->_fileManager->openFile(Filename);
 	if (!_file) return E_FAIL;
 
 	if (Filename != _filename) CBUtils::SetString(&_filename, Filename);

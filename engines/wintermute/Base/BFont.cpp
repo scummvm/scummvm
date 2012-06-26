@@ -73,7 +73,7 @@ int CBFont::GetTextWidth(byte  *text, int MaxLenght) {
 //////////////////////////////////////////////////////////////////////
 HRESULT CBFont::LoadFile(const char * Filename)
 {
-    BYTE* Buffer = Game->_fileManager->ReadWholeFile(Filename);
+    BYTE* Buffer = Game->_fileManager->readWholeFile(Filename);
     if(Buffer==NULL){
         Game->LOG(0, "CBFont::LoadFile failed for file '%s'", Filename);
         return E_FAIL;
@@ -187,7 +187,7 @@ bool CBFont::IsTrueType(CBGame *Game, const char *Filename) {
 	TOKEN_TABLE_END
 
 
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) return false;
 
 	byte *WorkBuffer = Buffer;

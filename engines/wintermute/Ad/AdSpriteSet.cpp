@@ -59,7 +59,7 @@ CAdSpriteSet::~CAdSpriteSet() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSpriteSet::LoadFile(const char *Filename, int LifeTime, TSpriteCacheType CacheType) {
-	byte *Buffer = Game->_fileManager->ReadWholeFile(Filename);
+	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
 	if (Buffer == NULL) {
 		Game->LOG(0, "CAdSpriteSet::LoadFile failed for file '%s'", Filename);
 		return E_FAIL;
