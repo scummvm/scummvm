@@ -240,10 +240,10 @@ bool CBSubFrame::getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float 
 	float RatioY = ScaleY / 100.0f;
 
 	CBPlatform::SetRect(Rect,
-	                    X - _hotspotX * RatioX,
-	                    Y - _hotspotY * RatioY,
-	                    X - _hotspotX * RatioX + (_rect.right - _rect.left)*RatioX,
-	                    Y - _hotspotY * RatioY + (_rect.bottom - _rect.top)*RatioY);
+	                    (int)(X - _hotspotX * RatioX),
+	                    (int)(Y - _hotspotY * RatioY),
+	                    (int)(X - _hotspotX * RatioX + (_rect.right - _rect.left)*RatioX),
+	                    (int)(Y - _hotspotY * RatioY + (_rect.bottom - _rect.top)*RatioY));
 	return true;
 }
 

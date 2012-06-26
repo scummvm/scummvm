@@ -125,16 +125,16 @@ HRESULT CPartParticle::update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 
 		// particle hit the border
 		if (!_isDead && !CBPlatform::IsRectEmpty(&_border)) {
 			POINT p;
-			p.x = _pos.x;
-			p.y = _pos.y;
+			p.x = (int32)_pos.x;
+			p.y = (int32)_pos.y;
 			if (!CBPlatform::PtInRect(&_border, p)) fadeOut(CurrentTime, Emitter->_fadeOutTime);
 		}
 		if (_state != PARTICLE_NORMAL) return S_OK;
 
 		// update alpha
 		if (_lifeTime > 0) {
-			int Age = CurrentTime - _creationTime;
-			int AlphaDelta = _alpha2 - _alpha1;
+			int Age = (int)(CurrentTime - _creationTime);
+			int AlphaDelta = (int)(_alpha2 - _alpha1);
 
 			_currentAlpha = _alpha1 + ((float)AlphaDelta / (float)_lifeTime * (float)Age);
 		}

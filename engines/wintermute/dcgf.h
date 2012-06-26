@@ -42,8 +42,8 @@
 
 // minimal saved game version we support
 #define SAVEGAME_VER_MAJOR 1
-#define SAVEGAME_VER_MINOR 0
-#define SAVEGAME_VER_BUILD 0
+#define SAVEGAME_VER_MINOR 1
+#define SAVEGAME_VER_BUILD 1
 //////////////////////////////////////////////////////////////////////////
 
 #define COMPRESSED_FILE_MAGIC 0x504D435A // ZCMP
