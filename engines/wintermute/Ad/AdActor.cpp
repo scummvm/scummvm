@@ -496,7 +496,7 @@ void CAdActor::GoTo(int X, int Y, TDirection AfterWalkDir) {
 	_targetPoint->x = X;
 	_targetPoint->y = Y;
 
-	((CAdGame *)Game)->_scene->CorrectTargetPoint(_posX, _posY, &_targetPoint->x, &_targetPoint->y, true, this);
+	((CAdGame *)Game)->_scene->correctTargetPoint(_posX, _posY, &_targetPoint->x, &_targetPoint->y, true, this);
 
 	_state = STATE_SEARCHING_PATH;
 
@@ -509,7 +509,7 @@ HRESULT CAdActor::display() {
 
 	uint32 Alpha;
 	if (_alphaColor != 0) Alpha = _alphaColor;
-	else Alpha = _shadowable ? ((CAdGame *)Game)->_scene->GetAlphaAt(_posX, _posY, true) : 0xFFFFFFFF;
+	else Alpha = _shadowable ? ((CAdGame *)Game)->_scene->getAlphaAt(_posX, _posY, true) : 0xFFFFFFFF;
 
 	float ScaleX, ScaleY;
 	GetScale(&ScaleX, &ScaleY);
@@ -518,7 +518,7 @@ HRESULT CAdActor::display() {
 	float Rotate;
 	if (_rotatable) {
 		if (_rotateValid) Rotate = _rotate;
-		else Rotate = ((CAdGame *)Game)->_scene->GetRotationAt(_posX, _posY) + _relativeRotate;
+		else Rotate = ((CAdGame *)Game)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
 	} else Rotate = 0.0f;
 
 	if (_active) displaySpriteAttachments(true);
@@ -661,7 +661,7 @@ HRESULT CAdActor::update() {
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_SEARCHING_PATH:
 		// keep asking scene for the path
-		if (((CAdGame *)Game)->_scene->GetPath(CBPoint(_posX, _posY), *_targetPoint, _path, this))
+		if (((CAdGame *)Game)->_scene->getPath(CBPoint(_posX, _posY), *_targetPoint, _path, this))
 			_state = STATE_WAITING_PATH;
 		break;
 
@@ -726,7 +726,7 @@ HRESULT CAdActor::update() {
 
 
 	if (_currentSprite && !already_moved) {
-		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) : 100);
+		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
@@ -777,7 +777,7 @@ void CAdActor::GetNextStep() {
 
 	if (!_currentSprite) return;
 
-	_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) : 100);
+	_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100);
 	if (!_currentSprite->_changed) return;
 
 
@@ -796,7 +796,7 @@ void CAdActor::GetNextStep() {
 		MaxStepX--;
 	}
 
-	if (((CAdGame *)Game)->_scene->IsBlockedAt(_pFX, _pFY, true, this)) {
+	if (((CAdGame *)Game)->_scene->isBlockedAt(_pFX, _pFY, true, this)) {
 		if (_pFCount == 0) {
 			_state = _nextState;
 			_nextState = STATE_READY;

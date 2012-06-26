@@ -209,7 +209,7 @@ HRESULT CAdGame::InitLoop() {
 	res = CBGame::InitLoop();
 	if (FAILED(res)) return res;
 
-	if (_scene) res = _scene->InitLoop();
+	if (_scene) res = _scene->initLoop();
 
 	_sentences.RemoveAll();
 
@@ -228,7 +228,7 @@ HRESULT CAdGame::AddObject(CAdObject *Object) {
 HRESULT CAdGame::RemoveObject(CAdObject *Object) {
 	// in case the user called Scene.CreateXXX() and Game.DeleteXXX()
 	if (_scene) {
-		HRESULT Res = _scene->RemoveObject(Object);
+		HRESULT Res = _scene->removeObject(Object);
 		if (SUCCEEDED(Res)) return Res;
 	}
 
@@ -253,7 +253,7 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 		SetPrevSceneName(_scene->_name);
 		SetPrevSceneFilename(_scene->_filename);
 
-		if (!_tempDisableSaveState) _scene->SaveState();
+		if (!_tempDisableSaveState) _scene->saveState();
 		_tempDisableSaveState = false;
 	}
 
@@ -278,7 +278,7 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 				_objects[i]->_stickRegion = NULL;
 			}
 
-			_scene->LoadState();
+			_scene->loadState();
 		}
 		if (FadeIn) Game->_transMgr->start(TRANSITION_FADE_IN);
 		return ret;
@@ -1329,7 +1329,7 @@ HRESULT CAdGame::InitAfterLoad() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdGame::AfterLoadScene(void *Scene, void *Data) {
-	((CAdScene *)Scene)->AfterLoad();
+	((CAdScene *)Scene)->afterLoad();
 }
 
 
@@ -1847,7 +1847,7 @@ HRESULT CAdGame::DeleteItem(CAdItem *Item) {
 	if (!Item) return E_FAIL;
 
 	if (_selectedItem == Item) _selectedItem = NULL;
-	_scene->HandleItemAssociations(Item->_name, false);
+	_scene->handleItemAssociations(Item->_name, false);
 
 	// remove from all inventories
 	for (int i = 0; i < _inventories.GetSize(); i++) {
@@ -1961,7 +1961,7 @@ HRESULT CAdGame::OnMouseLeftDown() {
 	if (!Handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("LeftClick");
-		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
+		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
 			_scene->applyEvent("LeftClick");
 		}
 	}
@@ -1985,7 +1985,7 @@ HRESULT CAdGame::OnMouseLeftUp() {
 	if (!Handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("LeftRelease");
-		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
+		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
 			_scene->applyEvent("LeftRelease");
 		}
 	}
@@ -2004,7 +2004,7 @@ HRESULT CAdGame::OnMouseLeftDblClick() {
 	if (!Handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("LeftDoubleClick");
-		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
+		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
 			_scene->applyEvent("LeftDoubleClick");
 		}
 	}
@@ -2029,7 +2029,7 @@ HRESULT CAdGame::OnMouseRightDown() {
 	if (!Handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("RightClick");
-		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
+		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
 			_scene->applyEvent("RightClick");
 		}
 	}
@@ -2044,7 +2044,7 @@ HRESULT CAdGame::OnMouseRightUp() {
 	if (!Handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("RightRelease");
-		} else if (_state == GAME_RUNNING && _scene && _scene->PointInViewport(_mousePos.x, _mousePos.y)) {
+		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
 			_scene->applyEvent("RightRelease");
 		}
 	}
@@ -2055,7 +2055,7 @@ HRESULT CAdGame::OnMouseRightUp() {
 HRESULT CAdGame::DisplayDebugInfo() {
 	char str[100];
 	if (Game->_dEBUG_DebugMode) {
-		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + _scene->GetOffsetLeft(), _mousePos.y + _scene->GetOffsetTop());
+		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + _scene->getOffsetLeft(), _mousePos.y + _scene->getOffsetTop());
 		_systemFont->DrawText((byte *)str, 0, 90, _renderer->_width, TAL_RIGHT);
 
 		sprintf(str, "Scene: %s (prev: %s)", (_scene && _scene->_name) ? _scene->_name : "???", _prevSceneName ? _prevSceneName : "???");

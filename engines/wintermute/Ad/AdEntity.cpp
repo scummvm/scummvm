@@ -487,7 +487,7 @@ HRESULT CAdEntity::display() {
 
 		uint32 Alpha;
 		if (_alphaColor != 0) Alpha = _alphaColor;
-		else Alpha = _shadowable ? ((CAdGame *)Game)->_scene->GetAlphaAt(_posX, _posY) : 0xFFFFFFFF;
+		else Alpha = _shadowable ? ((CAdGame *)Game)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
 
 		float ScaleX, ScaleY;
 		GetScale(&ScaleX, &ScaleY);
@@ -495,7 +495,7 @@ HRESULT CAdEntity::display() {
 		float Rotate;
 		if (_rotatable) {
 			if (_rotateValid) Rotate = _rotate;
-			else Rotate = ((CAdGame *)Game)->_scene->GetRotationAt(_posX, _posY) + _relativeRotate;
+			else Rotate = ((CAdGame *)Game)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
 		} else Rotate = 0.0f;
 
 
@@ -591,7 +591,7 @@ HRESULT CAdEntity::update() {
 
 
 	if (_currentSprite) {
-		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) : 100);
+		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;

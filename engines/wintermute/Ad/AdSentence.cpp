@@ -178,8 +178,8 @@ HRESULT CAdSentence::display() {
 		int y = _pos.y;
 
 		if (!_fixedPos) {
-			x = x - ((CAdGame *)Game)->_scene->GetOffsetLeft();
-			y = y - ((CAdGame *)Game)->_scene->GetOffsetTop();
+			x = x - ((CAdGame *)Game)->_scene->getOffsetLeft();
+			y = y - ((CAdGame *)Game)->_scene->getOffsetTop();
 		}
 
 

@@ -363,7 +363,7 @@ HRESULT CAdObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			if (FAILED(_inventory->InsertItem(ItemName, InsertAfter))) Script->RuntimeError("Cannot add item '%s' to inventory", ItemName);
 			else {
 				// hide associated entities
-				((CAdGame *)Game)->_scene->HandleItemAssociations(ItemName, false);
+				((CAdGame *)Game)->_scene->handleItemAssociations(ItemName, false);
 			}
 
 		} else Script->RuntimeError("TakeItem: item name expected");
@@ -388,7 +388,7 @@ HRESULT CAdObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			if (FAILED(_inventory->RemoveItem(val->GetString()))) Script->RuntimeError("Cannot remove item '%s' from inventory", val->GetString());
 			else {
 				// show associated entities
-				((CAdGame *)Game)->_scene->HandleItemAssociations(val->GetString(), true);
+				((CAdGame *)Game)->_scene->handleItemAssociations(val->GetString(), true);
 			}
 		} else Script->RuntimeError("DropItem: item name expected");
 
@@ -815,7 +815,7 @@ int CAdObject::getHeight() {
 		}
 
 		if (_zoomable) {
-			float zoom = ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY);
+			float zoom = ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY);
 			ret = (int)(ret * zoom / 100);
 		}
 		return ret;
@@ -883,8 +883,8 @@ void CAdObject::talk(const char *Text, const char *Sound, uint32 Duration, const
 	y = _posY;
 
 	if (!_sceneIndependent && _subtitlesModRelative) {
-		x -= ((CAdGame *)Game)->_scene->GetOffsetLeft();
-		y -= ((CAdGame *)Game)->_scene->GetOffsetTop();
+		x -= ((CAdGame *)Game)->_scene->getOffsetLeft();
+		y -= ((CAdGame *)Game)->_scene->getOffsetTop();
 	}
 
 
@@ -920,8 +920,8 @@ void CAdObject::talk(const char *Text, const char *Sound, uint32 Duration, const
 
 
 	if (_subtitlesModRelative) {
-		_sentence->_pos.x += ((CAdGame *)Game)->_scene->GetOffsetLeft();
-		_sentence->_pos.y += ((CAdGame *)Game)->_scene->GetOffsetTop();
+		_sentence->_pos.x += ((CAdGame *)Game)->_scene->getOffsetLeft();
+		_sentence->_pos.y += ((CAdGame *)Game)->_scene->getOffsetTop();
 	}
 
 	_sentence->_fixedPos = !_subtitlesModRelative;
@@ -1040,10 +1040,10 @@ HRESULT CAdObject::updateBlockRegion() {
 	CAdGame *AdGame = (CAdGame *)Game;
 	if (AdGame->_scene) {
 		if (_blockRegion && _currentBlockRegion)
-			_currentBlockRegion->Mimic(_blockRegion, _zoomable ? AdGame->_scene->GetScaleAt(_posY) : 100.0f, _posX, _posY);
+			_currentBlockRegion->Mimic(_blockRegion, _zoomable ? AdGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
 
 		if (_wptGroup && _currentWptGroup)
-			_currentWptGroup->Mimic(_wptGroup, _zoomable ? AdGame->_scene->GetScaleAt(_posY) : 100.0f, _posX, _posY);
+			_currentWptGroup->Mimic(_wptGroup, _zoomable ? AdGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
 	}
 	return S_OK;
 }
@@ -1062,7 +1062,7 @@ CAdInventory *CAdObject::getInventory() {
 HRESULT CAdObject::afterMove() {
 	CAdRegion *NewRegions[MAX_NUM_REGIONS];
 
-	((CAdGame *)Game)->_scene->GetRegionsAt(_posX, _posY, NewRegions, MAX_NUM_REGIONS);
+	((CAdGame *)Game)->_scene->getRegionsAt(_posX, _posY, NewRegions, MAX_NUM_REGIONS);
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
 		if (!NewRegions[i]) break;
 		bool RegFound = false;
@@ -1100,7 +1100,7 @@ HRESULT CAdObject::GetScale(float *ScaleX, float *ScaleY) {
 			*ScaleX = _scaleX < 0 ? 100 : _scaleX;
 			*ScaleY = _scaleY < 0 ? 100 : _scaleY;
 		} else if (_scale >= 0) *ScaleX = *ScaleY = _scale;
-		else *ScaleX = *ScaleY = ((CAdGame *)Game)->_scene->GetZoomAt(_posX, _posY) + _relativeScale;
+		else *ScaleX = *ScaleY = ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) + _relativeScale;
 	} else {
 		*ScaleX = *ScaleY = 100;
 	}

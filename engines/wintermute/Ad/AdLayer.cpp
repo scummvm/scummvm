@@ -175,7 +175,7 @@ HRESULT CAdLayer::loadBuffer(byte  *Buffer, bool Complete) {
 				region = NULL;
 				node = NULL;
 			} else {
-				node->SetRegion(region);
+				node->setRegion(region);
 				_nodes.Add(node);
 			}
 		}
@@ -192,7 +192,7 @@ HRESULT CAdLayer::loadBuffer(byte  *Buffer, bool Complete) {
 				entity = NULL;
 				node = NULL;
 			} else {
-				node->SetEntity(entity);
+				node->setEntity(entity);
 				_nodes.Add(node);
 			}
 		}
@@ -274,12 +274,12 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		if (strcmp(Name, "AddRegion") == 0) {
 			CAdRegion *Region = new CAdRegion(Game);
 			if (!Val->IsNULL()) Region->setName(Val->GetString());
-			Node->SetRegion(Region);
+			Node->setRegion(Region);
 			Stack->PushNative(Region, true);
 		} else {
 			CAdEntity *Entity = new CAdEntity(Game);
 			if (!Val->IsNULL()) Entity->setName(Val->GetString());
-			Node->SetEntity(Entity);
+			Node->setEntity(Entity);
 			Stack->PushNative(Entity, true);
 		}
 		_nodes.Add(Node);
@@ -298,12 +298,12 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		if (strcmp(Name, "InsertRegion") == 0) {
 			CAdRegion *Region = new CAdRegion(Game);
 			if (!Val->IsNULL()) Region->setName(Val->GetString());
-			Node->SetRegion(Region);
+			Node->setRegion(Region);
 			Stack->PushNative(Region, true);
 		} else {
 			CAdEntity *Entity = new CAdEntity(Game);
 			if (!Val->IsNULL()) Entity->setName(Val->GetString());
-			Node->SetEntity(Entity);
+			Node->setEntity(Entity);
 			Stack->PushNative(Entity, true);
 		}
 		if (Index < 0) Index = 0;
