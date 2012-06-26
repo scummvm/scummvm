@@ -43,7 +43,7 @@ CBActiveRect::CBActiveRect(CBGame *inGame): CBBase(inGame) {
 	_zoomX = 100;
 	_zoomY = 100;
 	_offsetX = _offsetY = 0;
-	ClipRect();
+	clipRect();
 }
 
 
@@ -57,7 +57,7 @@ CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *Owner, CBSubFrame *Frame, i
 	_precise = Precise;
 	_region = NULL;
 	_offsetX = _offsetY = 0;
-	ClipRect();
+	clipRect();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *Owner, CBRegion *Region, in
 	_zoomY = 100;
 	_precise = true;
 	_frame = NULL;
-	ClipRect();
+	clipRect();
 	_offsetX = OffsetX;
 	_offsetY = OffsetY;
 }
@@ -85,7 +85,7 @@ CBActiveRect::~CBActiveRect() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBActiveRect::ClipRect() {
+void CBActiveRect::clipRect() {
 	RECT rc;
 	bool CustomViewport;
 	Game->GetCurrentViewportRect(&rc, &CustomViewport);

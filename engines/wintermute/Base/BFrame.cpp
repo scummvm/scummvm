@@ -76,7 +76,7 @@ CBFrame::~CBFrame() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, bool Precise, uint32 Alpha, bool AllFrames, float Rotate, TSpriteBlendMode BlendMode) {
+HRESULT CBFrame::draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, bool Precise, uint32 Alpha, bool AllFrames, float Rotate, TSpriteBlendMode BlendMode) {
 	HRESULT res;
 
 	for (int i = 0; i < _subframes.GetSize(); i++) {
@@ -88,7 +88,7 @@ HRESULT CBFrame::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::OneTimeDisplay(CBObject *Owner, bool Muted) {
+HRESULT CBFrame::oneTimeDisplay(CBObject *Owner, bool Muted) {
 	if (_sound && !Muted) {
 		if (Owner) Owner->updateOneSound(_sound);
 		_sound->play();
@@ -326,7 +326,7 @@ HRESULT CBFrame::loadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFrame::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float ScaleY) {
+bool CBFrame::getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float ScaleY) {
 	if (!Rect) return false;
 	CBPlatform::SetRectEmpty(Rect);
 

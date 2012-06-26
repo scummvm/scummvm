@@ -392,11 +392,11 @@ HRESULT CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float Z
 			KillAllSounds();
 		}
 		applyEvent("FrameChanged");
-		_frames[_currentFrame]->OneTimeDisplay(_owner, Game->_editorMode && _editorMuted);
+		_frames[_currentFrame]->oneTimeDisplay(_owner, Game->_editorMode && _editorMuted);
 	}
 
 	// draw frame
-	return _frames[_currentFrame]->Draw(X - Game->_offsetX, Y - Game->_offsetY, Register, ZoomX, ZoomY, _precise, Alpha, _editorAllFrames, Rotate, BlendMode);
+	return _frames[_currentFrame]->draw(X - Game->_offsetX, Y - Game->_offsetY, Register, ZoomX, ZoomY, _precise, Alpha, _editorAllFrames, Rotate, BlendMode);
 }
 
 
@@ -421,7 +421,7 @@ bool CBSprite::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sc
 		RECT frame;
 		RECT temp;
 		CBPlatform::CopyRect(&temp, Rect);
-		_frames[i]->GetBoundingRect(&frame, X, Y, ScaleX, ScaleY);
+		_frames[i]->getBoundingRect(&frame, X, Y, ScaleX, ScaleY);
 		CBPlatform::UnionRect(Rect, &temp, &frame);
 	}
 	return true;

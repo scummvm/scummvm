@@ -37,7 +37,7 @@ class CBSubFrame;
 class CBObject;
 class CBActiveRect: CBBase {
 public:
-	void ClipRect();
+	void clipRect();
 	bool _precise;
 	float _zoomX;
 	float _zoomY;

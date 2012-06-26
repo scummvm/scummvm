@@ -42,17 +42,17 @@ class CBFrame: public CBScriptable {
 public:
 	bool _killSound;
 	bool _keyframe;
-	HRESULT OneTimeDisplay(CBObject *Owner, bool Muted = false);
+	HRESULT oneTimeDisplay(CBObject *Owner, bool Muted = false);
 	DECLARE_PERSISTENT(CBFrame, CBScriptable)
 	CBSound *_sound;
 	bool _editorExpanded;
-	bool GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX = 100, float ScaleY = 100);
+	bool getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX = 100, float ScaleY = 100);
 	HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	int _moveY;
 	int _moveX;
 	uint32 _delay;
 	CBArray<CBSubFrame *, CBSubFrame *> _subframes;
-	HRESULT Draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, bool Precise = true, uint32 Alpha = 0xFFFFFFFF, bool AllFrames = false, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
+	HRESULT draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, bool Precise = true, uint32 Alpha = 0xFFFFFFFF, bool AllFrames = false, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
 	HRESULT loadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded);
 
 	CBFrame(CBGame *inGame);
