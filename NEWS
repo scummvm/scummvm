@@ -39,12 +39,17 @@ For a more comprehensive changelog of the latest experimental code, see:
  Broken Sword 1:
    - Fixed incorrect sound effects in the DOS/Windows demo.
    - Added support for PlayStation videos.
+   - Fixed missing subtitles in the demo.
 
  Broken Sword 2:
    - Added support for PlayStation videos.
 
  Cine:
    - Implemented Roland MT-32 output driver.
+
+ Drascula:
+   - Added Spanish subtitles in the Von Braun cutscene (#3069981: no subtitles
+     in scene with "von Braun").
 
  Gob:
    - Fixed a crash in Lost in Time
