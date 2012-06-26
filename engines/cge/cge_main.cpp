@@ -1312,7 +1312,7 @@ void CGEEngine::runGame() {
 
 	_sceneLight->_flags._tran = true;
 	_vga->_showQ->append(_sceneLight);
-	_sceneLight->_flags._hide = true;
+	_sceneLight->_flags._hide = false;
 
 	const Seq pocSeq[] = {
 		{ 0, 0, 0, 0, 20 },
