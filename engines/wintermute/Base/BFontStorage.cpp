@@ -84,7 +84,7 @@ HRESULT CBFontStorage::cleanup(bool Warn) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFontStorage::InitLoop() {
 	for (int i = 0; i < _fonts.GetSize(); i++) {
-		_fonts[i]->InitLoop();
+		_fonts[i]->initLoop();
 	}
 	return S_OK;
 }
@@ -114,7 +114,7 @@ CBFont *CBFontStorage::AddFont(const char *Filename) {
 	    return font;
 	}
 	*/
-	CBFont *font = CBFont::CreateFromFile(Game, Filename);
+	CBFont *font = CBFont::createFromFile(Game, Filename);
 	if (font) {
 		font->_refCount = 1;
 		_fonts.Add(font);

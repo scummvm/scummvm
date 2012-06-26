@@ -565,8 +565,8 @@ void CUIButton::CorrectSize() {
 
 	if (_text) {
 		int text_height;
-		if (_font) text_height = _font->GetTextHeight((byte *)_text, _width);
-		else text_height = Game->_systemFont->GetTextHeight((byte *)_text, _width);
+		if (_font) text_height = _font->getTextHeight((byte *)_text, _width);
+		else text_height = Game->_systemFont->getTextHeight((byte *)_text, _width);
 
 		if (text_height > _height) _height = text_height;
 	}
@@ -634,8 +634,8 @@ HRESULT CUIButton::display(int OffsetX, int OffsetY) {
 	if (image) image->Draw(ImageX + ((_press || _oneTimePress) && back ? 1 : 0), ImageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : NULL);
 
 	if (font && _text) {
-		int text_offset = (_height - font->GetTextHeight((byte *)_text, _width)) / 2;
-		font->DrawText((byte *)_text, OffsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), OffsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
+		int text_offset = (_height - font->getTextHeight((byte *)_text, _width)) / 2;
+		font->drawText((byte *)_text, OffsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), OffsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
 	}
 
 	if (!_pixelPerfect || !_image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));

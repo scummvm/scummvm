@@ -54,18 +54,18 @@ CBFont::~CBFont() {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBFont::DrawText(byte  *text, int x, int y, int width, TTextAlign align, int max_height, int MaxLenght) {
+void CBFont::drawText(byte  *text, int x, int y, int width, TTextAlign align, int max_height, int MaxLenght) {
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFont::GetTextHeight(byte  *text, int width) {
+int CBFont::getTextHeight(byte  *text, int width) {
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFont::GetTextWidth(byte  *text, int MaxLenght) {
+int CBFont::getTextWidth(byte  *text, int MaxLenght) {
 	return 0;
 }
 
@@ -138,7 +138,7 @@ HRESULT CBFont::loadBuffer(byte  * Buffer)
 */
 
 //////////////////////////////////////////////////////////////////////////
-int CBFont::GetLetterHeight() {
+int CBFont::getLetterHeight() {
 	return 0;
 }
 
@@ -152,8 +152,8 @@ HRESULT CBFont::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFont *CBFont::CreateFromFile(CBGame *Game, const char *Filename) {
-	if (IsTrueType(Game, Filename)) {
+CBFont *CBFont::createFromFile(CBGame *Game, const char *Filename) {
+	if (isTrueType(Game, Filename)) {
 		CBFontTT *Font = new CBFontTT(Game);
 		if (Font) {
 			if (FAILED(Font->loadFile(Filename))) {
@@ -180,7 +180,7 @@ TOKEN_DEF(FONT)
 TOKEN_DEF(TTFONT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CBFont::IsTrueType(CBGame *Game, const char *Filename) {
+bool CBFont::isTrueType(CBGame *Game, const char *Filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONT)
 	TOKEN_TABLE(TTFONT)

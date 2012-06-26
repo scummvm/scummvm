@@ -895,7 +895,7 @@ void CAdObject::talk(const char *Text, const char *Sound, uint32 Duration, const
 		} else width = Game->_renderer->_width / 2;
 	}
 
-	height = _sentence->_font->GetTextHeight((byte *)_sentence->_text, width);
+	height = _sentence->_font->getTextHeight((byte *)_sentence->_text, width);
 
 	y = y - height - getHeight() - 5;
 	if (_subtitlesModRelative) {

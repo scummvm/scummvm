@@ -70,19 +70,19 @@ CBFontBitmap::~CBFontBitmap() {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBFontBitmap::DrawText(byte  *text, int x, int y, int width, TTextAlign align, int max_height, int MaxLenght) {
-	TextHeightDraw(text, x, y, width, align, true, max_height, MaxLenght);
+void CBFontBitmap::drawText(byte  *text, int x, int y, int width, TTextAlign align, int max_height, int MaxLenght) {
+	textHeightDraw(text, x, y, width, align, true, max_height, MaxLenght);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFontBitmap::GetTextHeight(byte  *text, int width) {
-	return TextHeightDraw(text, 0, 0, width, TAL_LEFT, false);
+int CBFontBitmap::getTextHeight(byte  *text, int width) {
+	return textHeightDraw(text, 0, 0, width, TAL_LEFT, false);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFontBitmap::GetTextWidth(byte  *text, int MaxLength) {
+int CBFontBitmap::getTextWidth(byte  *text, int MaxLength) {
 	AnsiString str;
 
 	if (Game->_textEncoding == TEXT_UTF8) {
@@ -98,7 +98,7 @@ int CBFontBitmap::GetTextWidth(byte  *text, int MaxLength) {
 
 	int TextWidth = 0;
 	for (size_t i = 0; i < str.size(); i++) {
-		TextWidth += GetCharWidth(str[i]);
+		TextWidth += getCharWidth(str[i]);
 	}
 
 	return TextWidth;
@@ -106,7 +106,7 @@ int CBFontBitmap::GetTextWidth(byte  *text, int MaxLength) {
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFontBitmap::TextHeightDraw(byte  *text, int x, int y, int width, TTextAlign align, bool draw, int max_height, int MaxLenght) {
+int CBFontBitmap::textHeightDraw(byte  *text, int x, int y, int width, TTextAlign align, bool draw, int max_height, int MaxLenght) {
 	if (MaxLenght == 0) return 0;
 
 	if (text == NULL || text[0] == '\0') return _tileHeight;
@@ -159,7 +159,7 @@ int CBFontBitmap::TextHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 			new_line = true;
 		}
 
-		if (LineLength + GetCharWidth(str[index]) > width && last_end == end) {
+		if (LineLength + getCharWidth(str[index]) > width && last_end == end) {
 			end = index - 1;
 			RealLength = LineLength;
 			new_line = true;
@@ -170,10 +170,10 @@ int CBFontBitmap::TextHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 			done = true;
 			if (!new_line) {
 				end = index;
-				LineLength += GetCharWidth(str[index]);
+				LineLength += getCharWidth(str[index]);
 				RealLength = LineLength;
 			}
-		} else LineLength += GetCharWidth(str[index]);
+		} else LineLength += getCharWidth(str[index]);
 
 		if ((LineLength > width) || done || new_line) {
 			if (end < 0) done = true;
@@ -193,8 +193,8 @@ int CBFontBitmap::TextHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 				break;
 			}
 			for (i = start; i < end + 1; i++) {
-				if (draw) DrawChar(str[i], StartX, y);
-				StartX += GetCharWidth(str[i]);
+				if (draw) drawChar(str[i], StartX, y);
+				StartX += getCharWidth(str[i]);
 			}
 			y += _tileHeight;
 			last_end = end;
@@ -215,7 +215,7 @@ int CBFontBitmap::TextHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 
 
 //////////////////////////////////////////////////////////////////////
-void CBFontBitmap::DrawChar(byte  c, int x, int y) {
+void CBFontBitmap::drawChar(byte  c, int x, int y) {
 	if (_fontextFix) c--;
 
 	int row, col;
@@ -424,7 +424,7 @@ HRESULT CBFontBitmap::loadBuffer(byte  *Buffer) {
 
 	if (AutoWidth) {
 		// calculate characters width
-		GetWidths();
+		getWidths();
 
 		// do we need to modify widths?
 		if (ExpandWidth != 0) {
@@ -482,14 +482,14 @@ HRESULT CBFontBitmap::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontBitmap::GetCharWidth(byte  Index) {
+int CBFontBitmap::getCharWidth(byte  Index) {
 	if (_fontextFix) Index--;
 	return _widths[Index];
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::GetWidths() {
+HRESULT CBFontBitmap::getWidths() {
 	CBSurface *surf = NULL;
 
 	if (_sprite) {
@@ -535,7 +535,7 @@ HRESULT CBFontBitmap::GetWidths() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontBitmap::GetLetterHeight() {
+int CBFontBitmap::getLetterHeight() {
 	return _tileHeight;
 }
 

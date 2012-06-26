@@ -1581,7 +1581,7 @@ bool CScScript::DbgGetTracingMode() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScScript::AfterLoad() {
+void CScScript::afterLoad() {
 	if (_buffer == NULL) {
 		byte *buffer = _engine->GetCompiledScript(_filename, &_bufferSize);
 		if (!buffer) {

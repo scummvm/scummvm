@@ -187,7 +187,7 @@ HRESULT CAdSentence::display() {
 		x = MIN(x, Game->_renderer->_width - _width);
 		y = MAX(y, 0);
 
-		_font->DrawText((byte *)_text, x, y, _width, _align);
+		_font->drawText((byte *)_text, x, y, _width, _align);
 	}
 
 	return S_OK;

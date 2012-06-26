@@ -182,7 +182,7 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 	if (image) image->Draw(_posX + OffsetX, _posY + OffsetY, _transparent ? NULL : this);
 
 	if (!CBPlatform::IsRectEmpty(&_titleRect) && font && _text) {
-		font->DrawText((byte *)_text, _posX + OffsetX + _titleRect.left, _posY + OffsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
+		font->drawText((byte *)_text, _posX + OffsetX + _titleRect.left, _posY + OffsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
 	if (!_transparent && !image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, _posX + OffsetX, _posY + OffsetY, _width, _height, 100, 100, false));

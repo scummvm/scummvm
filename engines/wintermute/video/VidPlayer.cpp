@@ -286,7 +286,7 @@ HRESULT CVidPlayer::display() {
 	if (m_ShowSubtitle) {
 		CBFont *font = Game->_videoFont ? Game->_videoFont : Game->_systemFont;
 		int Height = font->GetTextHeight((BYTE *)m_Subtitles[_currentSubtitle]->_text, Game->_renderer->_width);
-		font->DrawText((byte *)_subtitles[m_CurrentSubtitle]->_text, 0, Game->_renderer->_height - Height - 5, Game->_renderer->_width, TAL_CENTER);
+		font->drawText((byte *)_subtitles[m_CurrentSubtitle]->_text, 0, Game->_renderer->_height - Height - 5, Game->_renderer->_width, TAL_CENTER);
 	}
 
 	return res;

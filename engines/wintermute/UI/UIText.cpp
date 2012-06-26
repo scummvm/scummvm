@@ -79,12 +79,12 @@ HRESULT CUIText::display(int OffsetX, int OffsetY) {
 			text_offset = 0;
 			break;
 		case VAL_BOTTOM:
-			text_offset = _height - font->GetTextHeight((byte *)_text, _width);
+			text_offset = _height - font->getTextHeight((byte *)_text, _width);
 			break;
 		default:
-			text_offset = (_height - font->GetTextHeight((byte *)_text, _width)) / 2;
+			text_offset = (_height - font->getTextHeight((byte *)_text, _width)) / 2;
 		}
-		font->DrawText((byte *)_text, OffsetX + _posX, OffsetY + _posY + text_offset, _width, _textAlign, _height);
+		font->drawText((byte *)_text, OffsetX + _posX, OffsetY + _posY + text_offset, _width, _textAlign, _height);
 	}
 
 	//Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
@@ -392,7 +392,7 @@ HRESULT CUIText::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "HeightToFit") == 0) {
 		Stack->CorrectParams(0);
-		if (_font && _text) _height = _font->GetTextHeight((byte *)_text, _width);
+		if (_font && _text) _height = _font->getTextHeight((byte *)_text, _width);
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -480,8 +480,8 @@ HRESULT CUIText::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIText::SizeToFit() {
 	if (_font && _text) {
-		_width = _font->GetTextWidth((byte *)_text);
-		_height = _font->GetTextHeight((byte *)_text, _width);
+		_width = _font->getTextWidth((byte *)_text);
+		_height = _font->getTextHeight((byte *)_text, _width);
 	}
 	return S_OK;
 }

@@ -310,7 +310,7 @@ HRESULT CSXStore::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::AfterLoad() {
+void CSXStore::afterLoad() {
 	if (_eventsEnabled) {
 		SetEventsEnabled(NULL, true);
 	}

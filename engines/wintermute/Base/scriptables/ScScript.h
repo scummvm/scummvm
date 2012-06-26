@@ -54,7 +54,7 @@ public:
 	HRESULT FinishThreads();
 	HRESULT CopyParameters(CScStack *Stack);
 
-	void AfterLoad();
+	void afterLoad();
 
 #ifdef __WIN32__
 	static uint32 Call_cdecl(const void *args, size_t sz, uint32 func, bool *StackCorrupt);

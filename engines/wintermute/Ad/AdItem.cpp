@@ -413,11 +413,11 @@ HRESULT CAdItem::display(int X, int Y) {
 
 		CBFont *Font = _font ? _font : Game->_systemFont;
 		if (Font) {
-			if (_amountString) Font->DrawText((byte *)_amountString, AmountX, AmountY, Width, _amountAlign);
+			if (_amountString) Font->drawText((byte *)_amountString, AmountX, AmountY, Width, _amountAlign);
 			else {
 				char Str[256];
 				sprintf(Str, "%d", _amount);
-				Font->DrawText((byte *)Str, AmountX, AmountY, Width, _amountAlign);
+				Font->drawText((byte *)Str, AmountX, AmountY, Width, _amountAlign);
 			}
 		}
 	}

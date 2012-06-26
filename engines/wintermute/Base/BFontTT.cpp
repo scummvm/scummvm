@@ -71,7 +71,7 @@ CBFontTT::CBFontTT(CBGame *inGame): CBFont(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBFontTT::~CBFontTT(void) {
-	ClearCache();
+	clearCache();
 
 	for (int i = 0; i < _layers.GetSize(); i++) {
 		delete _layers[i];
@@ -96,7 +96,7 @@ CBFontTT::~CBFontTT(void) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::ClearCache() {
+void CBFontTT::clearCache() {
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
 		if (_cachedTexts[i]) delete _cachedTexts[i];
 		_cachedTexts[i] = NULL;
@@ -105,7 +105,7 @@ void CBFontTT::ClearCache() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::InitLoop() {
+void CBFontTT::initLoop() {
 	// we need more aggressive cache management on iOS not to waste too much memory on fonts
 	if (Game->_constrainedMemory) {
 		// purge all cached images not used in the last frame
@@ -121,7 +121,7 @@ void CBFontTT::InitLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
+int CBFontTT::getTextWidth(byte  *Text, int MaxLength) {
 	WideString text;
 
 	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
@@ -132,13 +132,13 @@ int CBFontTT::GetTextWidth(byte  *Text, int MaxLength) {
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
 	int textWidth, textHeight;
-	MeasureText(text, -1, -1, textWidth, textHeight);
+	measureText(text, -1, -1, textWidth, textHeight);
 
 	return textWidth;
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::GetTextHeight(byte  *Text, int Width) {
+int CBFontTT::getTextHeight(byte  *Text, int Width) {
 	WideString text;
 
 	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
@@ -146,14 +146,14 @@ int CBFontTT::GetTextHeight(byte  *Text, int Width) {
 
 
 	int textWidth, textHeight;
-	MeasureText(text, Width, -1, textWidth, textHeight);
+	measureText(text, Width, -1, textWidth, textHeight);
 
 	return textHeight;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, int MaxHeight, int MaxLength) {
+void CBFontTT::drawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, int MaxHeight, int MaxLength) {
 	if (Text == NULL || strcmp((char *)Text, "") == 0) return;
 
 	WideString text = (char *)Text;
@@ -197,7 +197,7 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 	// not found, create one
 	if (!Surface) {
 		warning("Draw text: %s", Text);
-		Surface = RenderTextToTexture(text, Width, Align, MaxHeight, textOffset);
+		Surface = renderTextToTexture(text, Width, Align, MaxHeight, textOffset);
 		if (Surface) {
 			// write surface to cache
 			if (_cachedTexts[MinIndex] != NULL) delete _cachedTexts[MinIndex];
@@ -237,7 +237,7 @@ void CBFontTT::DrawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset) {
+CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset) {
 	//TextLineList lines;
 	// TODO
 	//WrapText(text, width, maxHeight, lines);
@@ -374,7 +374,7 @@ CBSurface *CBFontTT::RenderTextToTexture(const WideString &text, int width, TTex
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::BlitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect) {
+void CBFontTT::blitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect) {
 	//SDL_BlitSurface(src, NULL, target, targetRect);
 	warning("CBFontTT::BlitSurface - not ported yet");
 #if 0
@@ -398,8 +398,8 @@ void CBFontTT::BlitSurface(Graphics::Surface *src, Graphics::Surface *target, Co
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::GetLetterHeight() {
-	return (int)GetLineHeight();
+int CBFontTT::getLetterHeight() {
+	return (int)getLineHeight();
 }
 
 
@@ -519,7 +519,7 @@ HRESULT CBFontTT::loadBuffer(byte  *Buffer) {
 
 		case TOKEN_LAYER: {
 			CBTTFontLayer *Layer = new CBTTFontLayer;
-			if (Layer && SUCCEEDED(ParseLayer(Layer, (byte *)params))) _layers.Add(Layer);
+			if (Layer && SUCCEEDED(parseLayer(Layer, (byte *)params))) _layers.Add(Layer);
 			else {
 				delete Layer;
 				Layer = NULL;
@@ -544,12 +544,12 @@ HRESULT CBFontTT::loadBuffer(byte  *Buffer) {
 
 	if (!_fontFile) CBUtils::SetString(&_fontFile, "arial.ttf");
 
-	return InitFont();
+	return initFont();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::ParseLayer(CBTTFontLayer *Layer, byte *Buffer) {
+HRESULT CBFontTT::parseLayer(CBTTFontLayer *Layer, byte *Buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(OFFSET_X)
 	TOKEN_TABLE(OFFSET_Y)
@@ -629,12 +629,12 @@ HRESULT CBFontTT::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::AfterLoad() {
-	InitFont();
+void CBFontTT::afterLoad() {
+	initFont();
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::InitFont() {
+HRESULT CBFontTT::initFont() {
 	if (!_fontFile) return E_FAIL;
 
 	Common::SeekableReadStream *file = Game->_fileManager->openFile(_fontFile);
@@ -833,7 +833,7 @@ void CBFontTT::WrapText(const WideString &text, int maxWidth, int maxHeight, Tex
 }
 #endif
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
+void CBFontTT::measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
 	//TextLineList lines;
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
 	static bool hasWarned = false;
@@ -852,7 +852,7 @@ void CBFontTT::MeasureText(const WideString &text, int maxWidth, int maxHeight, 
 
 		//WrapText(text, maxWidth, maxHeight, lines);
 
-		textHeight = (int)(lines.size() * GetLineHeight());
+		textHeight = (int)(lines.size() * getLineHeight());
 	} else {
 		textWidth = _font->getStringWidth(text);
 		textHeight = _fontHeight;

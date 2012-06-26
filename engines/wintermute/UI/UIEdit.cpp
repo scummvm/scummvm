@@ -573,13 +573,13 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 	_selEnd   = MIN((size_t)_selEnd,   strlen(_text));
 
 	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
-	int CursorWidth = font->GetTextWidth((byte *)_cursorChar);
+	int CursorWidth = font->getTextWidth((byte *)_cursorChar);
 
 	int s1, s2;
 	bool CurFirst;
 	// modify scroll offset
 	if (_selStart >= _selEnd) {
-		while (font->GetTextWidth((byte *)_text + _scrollOffset, MAX(0, _selEnd - _scrollOffset)) > _width - CursorWidth - 2 * _frameWidth) {
+		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selEnd - _scrollOffset)) > _width - CursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= (int)strlen(_text)) break;
 		}
@@ -590,8 +590,8 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 		s2 = _selStart;
 		CurFirst = true;
 	} else {
-		while (font->GetTextWidth((byte *)_text + _scrollOffset, MAX(0, _selStart - _scrollOffset)) +
-		        sfont->GetTextWidth((byte *)(_text + MAX(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
+		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selStart - _scrollOffset)) +
+		        sfont->getTextWidth((byte *)(_text + MAX(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
 
 		        > _width - CursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
@@ -616,7 +616,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 		yyy = _posY + _frameWidth + OffsetY;
 
 		width = _posX + _width + OffsetX - _frameWidth;
-		height = MAX(font->GetLetterHeight(), sfont->GetLetterHeight());
+		height = MAX(font->getLetterHeight(), sfont->getLetterHeight());
 
 		if (Game->_textRTL) xxx += AlignOffset;
 
@@ -625,9 +625,9 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 
 		// unselected 1
 		if (s1 > _scrollOffset) {
-			if (Count) font->DrawText((byte *)_text + _scrollOffset, xxx, yyy, width - xxx, Align, height, s1 - _scrollOffset);
-			xxx += font->GetTextWidth((byte *)_text + _scrollOffset, s1 - _scrollOffset);
-			AlignOffset += font->GetTextWidth((byte *)_text + _scrollOffset, s1 - _scrollOffset);
+			if (Count) font->drawText((byte *)_text + _scrollOffset, xxx, yyy, width - xxx, Align, height, s1 - _scrollOffset);
+			xxx += font->getTextWidth((byte *)_text + _scrollOffset, s1 - _scrollOffset);
+			AlignOffset += font->getTextWidth((byte *)_text + _scrollOffset, s1 - _scrollOffset);
 		}
 
 		// cursor
@@ -638,7 +638,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)
-					font->DrawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
+					font->drawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
 			}
 			xxx += CursorWidth;
 			AlignOffset += CursorWidth;
@@ -648,9 +648,9 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 		int s3 = MAX(s1, _scrollOffset);
 
 		if (s2 - s3 > 0) {
-			if (Count) sfont->DrawText((byte *)_text + s3, xxx, yyy, width - xxx, Align, height, s2 - s3);
-			xxx += sfont->GetTextWidth((byte *)_text + s3, s2 - s3);
-			AlignOffset += sfont->GetTextWidth((byte *)_text + s3, s2 - s3);
+			if (Count) sfont->drawText((byte *)_text + s3, xxx, yyy, width - xxx, Align, height, s2 - s3);
+			xxx += sfont->getTextWidth((byte *)_text + s3, s2 - s3);
+			AlignOffset += sfont->getTextWidth((byte *)_text + s3, s2 - s3);
 		}
 
 		// cursor
@@ -661,15 +661,15 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)
-					font->DrawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
+					font->drawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
 			}
 			xxx += CursorWidth;
 			AlignOffset += CursorWidth;
 		}
 
 		// unselected 2
-		if (Count) font->DrawText((byte *)_text + s2, xxx, yyy, width - xxx, Align, height);
-		AlignOffset += font->GetTextWidth((byte *)_text + s2);
+		if (Count) font->drawText((byte *)_text + s2, xxx, yyy, width - xxx, Align, height);
+		AlignOffset += font->getTextWidth((byte *)_text + s2);
 
 		AlignOffset = (_width - 2 * _frameWidth) - AlignOffset;
 		if (AlignOffset < 0) AlignOffset = 0;

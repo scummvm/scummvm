@@ -132,7 +132,7 @@ public:
 	virtual CScValue *scGetProperty(const char *Name);
 	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
 
-	void AfterLoad();
+	void afterLoad();
 	void OnObjectDestroyed(CBScriptHolder *obj);
 
 	bool IsAvailable();

@@ -39,16 +39,16 @@ public:
 	DECLARE_PERSISTENT(CBFontBitmap, CBFont)
 	HRESULT loadBuffer(byte  *Buffer);
 	HRESULT loadFile(const char *Filename);
-	virtual int GetTextWidth(byte  *text, int MaxLength = -1);
-	virtual int GetTextHeight(byte  *text, int width);
-	virtual void DrawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int MaxLenght = -1);
-	virtual int GetLetterHeight();
+	virtual int getTextWidth(byte  *text, int MaxLength = -1);
+	virtual int getTextHeight(byte  *text, int width);
+	virtual void drawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int MaxLenght = -1);
+	virtual int getLetterHeight();
 
 	CBFontBitmap(CBGame *inGame);
 	virtual ~CBFontBitmap();
 
 
-	HRESULT GetWidths();
+	HRESULT getWidths();
 	CBSprite *_sprite;
 	int _widthsFrame;
 	bool _fontextFix;
@@ -60,10 +60,10 @@ public:
 	bool _wholeCell;
 
 private:
-	int GetCharWidth(byte  Index);
-	void DrawChar(byte  c, int x, int y);
+	int getCharWidth(byte  Index);
+	void drawChar(byte  c, int x, int y);
 
-	int TextHeightDraw(byte  *text, int x, int y, int width, TTextAlign align, bool draw, int max_height = -1, int MaxLenght = -1);
+	int textHeightDraw(byte  *text, int x, int y, int width, TTextAlign align, bool draw, int max_height = -1, int MaxLenght = -1);
 
 };
 

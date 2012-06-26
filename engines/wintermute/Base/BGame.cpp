@@ -2777,8 +2777,8 @@ HRESULT CBGame::DisplayQuickMsg() {
 
 	// display
 	for (i = 0; i < _quickMessages.GetSize(); i++) {
-		_systemFont->DrawText((byte *)_quickMessages[i]->GetText(), 0, PosY, _renderer->_width);
-		PosY += _systemFont->GetTextHeight((byte *)_quickMessages[i]->GetText(), _renderer->_width);
+		_systemFont->drawText((byte *)_quickMessages[i]->GetText(), 0, PosY, _renderer->_width);
+		PosY += _systemFont->getTextHeight((byte *)_quickMessages[i]->GetText(), _renderer->_width);
 	}
 	return S_OK;
 }
@@ -3350,7 +3350,7 @@ HRESULT CBGame::InitAfterLoad() {
 	CSysClassRegistry::GetInstance()->EnumInstances(AfterLoadScript,   "CScScript",  NULL);
 
 	_scEngine->RefreshScriptBreakpoints();
-	if (_store) _store->AfterLoad();
+	if (_store) _store->afterLoad();
 
 	return S_OK;
 }
@@ -3374,12 +3374,12 @@ void CBGame::AfterLoadSound(void *Sound, void *Data) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::AfterLoadFont(void *Font, void *Data) {
-	((CBFont *)Font)->AfterLoad();
+	((CBFont *)Font)->afterLoad();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::AfterLoadScript(void *script, void *data) {
-	((CScScript *)script)->AfterLoad();
+	((CScScript *)script)->afterLoad();
 }
 
 
@@ -4408,7 +4408,7 @@ HRESULT CBGame::DisplayDebugInfo() {
 
 	if (_dEBUG_ShowFPS) {
 		sprintf(str, "FPS: %d", Game->_fps);
-		_systemFont->DrawText((byte *)str, 0, 0, 100, TAL_LEFT);
+		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);
 	}
 
 	if (Game->_dEBUG_DebugMode) {
@@ -4420,23 +4420,23 @@ HRESULT CBGame::DisplayDebugInfo() {
 		strcat(str, " (");
 		strcat(str, _renderer->getName());
 		strcat(str, ")");
-		_systemFont->DrawText((byte *)str, 0, 0, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 0, _renderer->_width, TAL_RIGHT);
 
 		_renderer->displayDebugInfo();
 
 		int ScrTotal, ScrRunning, ScrWaiting, ScrPersistent;
 		ScrTotal = _scEngine->GetNumScripts(&ScrRunning, &ScrWaiting, &ScrPersistent);
 		sprintf(str, "Running scripts: %d (r:%d w:%d p:%d)", ScrTotal, ScrRunning, ScrWaiting, ScrPersistent);
-		_systemFont->DrawText((byte *)str, 0, 70, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 70, _renderer->_width, TAL_RIGHT);
 
 
 		sprintf(str, "Timer: %d", _timer);
-		Game->_systemFont->DrawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
+		Game->_systemFont->drawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
 
-		if (_activeObject != NULL) _systemFont->DrawText((byte *)_activeObject->_name, 0, 150, _renderer->_width, TAL_RIGHT);
+		if (_activeObject != NULL) _systemFont->drawText((byte *)_activeObject->_name, 0, 150, _renderer->_width, TAL_RIGHT);
 
 		sprintf(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
-		_systemFont->DrawText((byte *)str, 0, 170, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 170, _renderer->_width, TAL_RIGHT);
 
 	}
 

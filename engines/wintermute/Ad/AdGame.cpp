@@ -2056,10 +2056,10 @@ HRESULT CAdGame::DisplayDebugInfo() {
 	char str[100];
 	if (Game->_dEBUG_DebugMode) {
 		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + _scene->getOffsetLeft(), _mousePos.y + _scene->getOffsetTop());
-		_systemFont->DrawText((byte *)str, 0, 90, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 90, _renderer->_width, TAL_RIGHT);
 
 		sprintf(str, "Scene: %s (prev: %s)", (_scene && _scene->_name) ? _scene->_name : "???", _prevSceneName ? _prevSceneName : "???");
-		_systemFont->DrawText((byte *)str, 0, 110, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 110, _renderer->_width, TAL_RIGHT);
 	}
 	return CBGame::DisplayDebugInfo();
 }

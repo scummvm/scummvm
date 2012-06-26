@@ -118,34 +118,34 @@ public:
 	CBFontTT(CBGame *inGame);
 	virtual ~CBFontTT(void);
 
-	virtual int GetTextWidth(byte  *text, int maxLenght = -1);
-	virtual int GetTextHeight(byte  *text, int width);
-	virtual void DrawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLenght = -1);
-	virtual int GetLetterHeight();
+	virtual int getTextWidth(byte  *text, int maxLenght = -1);
+	virtual int getTextHeight(byte  *text, int width);
+	virtual void drawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLenght = -1);
+	virtual int getLetterHeight();
 
 	HRESULT loadBuffer(byte *buffer);
 	HRESULT loadFile(const char *filename);
 
-	float GetLineHeight() const {
+	float getLineHeight() const {
 		return _lineHeight;
 	}
 
-	void AfterLoad();
-	void InitLoop();
+	void afterLoad();
+	void initLoop();
 
 private:
-	HRESULT ParseLayer(CBTTFontLayer *layer, byte *buffer);
+	HRESULT parseLayer(CBTTFontLayer *layer, byte *buffer);
 
-	void WrapText(const WideString &text, int maxWidth, int maxHeight, TextLineList &lines);
-	void MeasureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight);
+	void wrapText(const WideString &text, int maxWidth, int maxHeight, TextLineList &lines);
+	void measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight);
 
-	CBSurface *RenderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset);
-	void BlitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect);
+	CBSurface *renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset);
+	void blitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect);
 
 
 	CBCachedTTFontText *_cachedTexts[NUM_CACHED_TEXTS];
 
-	HRESULT InitFont();
+	HRESULT initFont();
 
 	Graphics::Font *_deletableFont;
 	const Graphics::Font *_font;
@@ -171,7 +171,7 @@ public:
 	char *_fontFile;
 
 	CBArray<CBTTFontLayer *, CBTTFontLayer *> _layers;
-	void ClearCache();
+	void clearCache();
 
 };
 
