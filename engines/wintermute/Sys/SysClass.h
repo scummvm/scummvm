@@ -68,44 +68,44 @@ public:
 	CSysClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class);
 	~CSysClass();
 
-	int GetNumInstances();
-	bool RemoveInstance(void *instance);
-	CSysInstance *AddInstance(void *instance, int id, int savedId = -1);
-	bool RemoveAllInstances();
+	int getNumInstances();
+	bool removeInstance(void *instance);
+	CSysInstance *addInstance(void *instance, int id, int savedId = -1);
+	bool removeAllInstances();
 
-	int GetInstanceID(void *pointer);
-	void *IDToPointer(int savedID);
+	int getInstanceID(void *pointer);
+	void *idToPointer(int savedID);
 
-	void SetID(int id) {
+	void setID(int id) {
 		_iD = id;
 	}
-	int GetID() const {
+	int getID() const {
 		return _iD;
 	}
 
-	int GetSavedID() const {
+	int getSavedID() const {
 		return _savedID;
 	}
 
-	bool IsPersistent() const {
+	bool isPersistent() const {
 		return _persistent;
 	}
 
-	AnsiString GetName() const {
+	AnsiString getName() const {
 		return _name;
 	}
 
-	void SaveTable(CBGame *Game, CBPersistMgr *PersistMgr);
-	void LoadTable(CBGame *Game, CBPersistMgr *PersistMgr);
+	void saveTable(CBGame *Game, CBPersistMgr *PersistMgr);
+	void loadTable(CBGame *Game, CBPersistMgr *PersistMgr);
 
-	void SaveInstances(CBGame *Game, CBPersistMgr *PersistMgr);
-	void LoadInstance(void *instance, CBPersistMgr *PersistMgr);
+	void saveInstances(CBGame *Game, CBPersistMgr *PersistMgr);
+	void loadInstance(void *instance, CBPersistMgr *PersistMgr);
 
-	void InstanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpData);
+	void instanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpData);
 
-	void ResetSavedIDs();
+	void resetSavedIDs();
 
-	void Dump(Common::WriteStream *stream);
+	void dump(Common::WriteStream *stream);
 
 private:
 	int _numInst;

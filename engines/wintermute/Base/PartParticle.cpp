@@ -81,15 +81,15 @@ HRESULT CPartParticle::setSprite(const char *Filename) {
 	delete _sprite;
 	_sprite = NULL;
 
-	CSysClassRegistry::GetInstance()->_disabled = true;
+	CSysClassRegistry::getInstance()->_disabled = true;
 	_sprite = new CBSprite(Game, Game);
 	if (_sprite && SUCCEEDED(_sprite->loadFile(Filename))) {
-		CSysClassRegistry::GetInstance()->_disabled = false;
+		CSysClassRegistry::getInstance()->_disabled = false;
 		return S_OK;
 	} else {
 		delete _sprite;
 		_sprite = NULL;
-		CSysClassRegistry::GetInstance()->_disabled = false;
+		CSysClassRegistry::getInstance()->_disabled = false;
 		return E_FAIL;
 	}
 
@@ -242,9 +242,9 @@ HRESULT CPartParticle::persist(CBPersistMgr *persistMgr) {
 	} else {
 		char *Filename;
 		persistMgr->transfer(TMEMBER(Filename));
-		CSysClassRegistry::GetInstance()->_disabled = true;
+		CSysClassRegistry::getInstance()->_disabled = true;
 		setSprite(Filename);
-		CSysClassRegistry::GetInstance()->_disabled = false;
+		CSysClassRegistry::getInstance()->_disabled = false;
 		delete[] Filename;
 		Filename = NULL;
 	}

@@ -822,7 +822,7 @@ int CScValue::Compare(CScValue *Val1, CScValue *Val2) {
 	// both natives?
 	if (Val1->IsNative() && Val2->IsNative()) {
 		// same class?
-		if (strcmp(Val1->GetNative()->GetClassName(), Val2->GetNative()->GetClassName()) == 0) {
+		if (strcmp(Val1->GetNative()->getClassName(), Val2->GetNative()->getClassName()) == 0) {
 			return Val1->GetNative()->scCompare(Val2->GetNative());
 		} else return strcmp(Val1->GetString(), Val2->GetString());
 	}

@@ -2845,7 +2845,7 @@ HRESULT CBGame::UnregisterObject(CBObject *Object) {
 	for (i = 0; i < _regObjects.GetSize(); i++) {
 		if (_regObjects[i] == Object) {
 			_regObjects.RemoveAt(i);
-			if (!_loadInProgress) CSysClassRegistry::GetInstance()->EnumInstances(InvalidateValues, "CScValue", (void *)Object);
+			if (!_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(InvalidateValues, "CScValue", (void *)Object);
 			delete Object;
 			return S_OK;
 		}
@@ -3254,8 +3254,8 @@ HRESULT CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 		}
 	}
 
-	if (FAILED(ret = CSysClassRegistry::GetInstance()->SaveTable(Game, pm, quickSave))) goto save_finish;
-	if (FAILED(ret = CSysClassRegistry::GetInstance()->SaveInstances(Game, pm, quickSave))) goto save_finish;
+	if (FAILED(ret = CSysClassRegistry::getInstance()->saveTable(Game, pm, quickSave))) goto save_finish;
+	if (FAILED(ret = CSysClassRegistry::getInstance()->saveInstances(Game, pm, quickSave))) goto save_finish;
 	if (FAILED(ret = pm->saveFile(Filename))) goto save_finish;
 
 	_registry->WriteInt("System", "MostRecentSaveSlot", slot);
@@ -3312,8 +3312,8 @@ HRESULT CBGame::LoadGame(const char *Filename) {
 	if (FAILED(ret = pm->initLoad(Filename))) goto load_finish;
 
 	//if(FAILED(ret = cleanup())) goto load_finish;
-	if (FAILED(ret = CSysClassRegistry::GetInstance()->LoadTable(Game, pm))) goto load_finish;
-	if (FAILED(ret = CSysClassRegistry::GetInstance()->LoadInstances(Game, pm))) goto load_finish;
+	if (FAILED(ret = CSysClassRegistry::getInstance()->loadTable(Game, pm))) goto load_finish;
+	if (FAILED(ret = CSysClassRegistry::getInstance()->loadInstances(Game, pm))) goto load_finish;
 
 	// data initialization after load
 	InitAfterLoad();
@@ -3343,11 +3343,11 @@ load_finish:
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::InitAfterLoad() {
-	CSysClassRegistry::GetInstance()->EnumInstances(AfterLoadRegion,   "CBRegion",   NULL);
-	CSysClassRegistry::GetInstance()->EnumInstances(AfterLoadSubFrame, "CBSubFrame", NULL);
-	CSysClassRegistry::GetInstance()->EnumInstances(AfterLoadSound,    "CBSound",    NULL);
-	CSysClassRegistry::GetInstance()->EnumInstances(AfterLoadFont,     "CBFontTT",   NULL);
-	CSysClassRegistry::GetInstance()->EnumInstances(AfterLoadScript,   "CScScript",  NULL);
+	CSysClassRegistry::getInstance()->enumInstances(AfterLoadRegion,   "CBRegion",   NULL);
+	CSysClassRegistry::getInstance()->enumInstances(AfterLoadSubFrame, "CBSubFrame", NULL);
+	CSysClassRegistry::getInstance()->enumInstances(AfterLoadSound,    "CBSound",    NULL);
+	CSysClassRegistry::getInstance()->enumInstances(AfterLoadFont,     "CBFontTT",   NULL);
+	CSysClassRegistry::getInstance()->enumInstances(AfterLoadScript,   "CScScript",  NULL);
 
 	_scEngine->RefreshScriptBreakpoints();
 	if (_store) _store->afterLoad();
@@ -4177,7 +4177,7 @@ void CBGame::DEBUG_DumpClassRegistry() {
 	Common::DumpFile *f = new Common::DumpFile;
 	f->open("zz_class_reg_dump.log");
 
-	CSysClassRegistry::GetInstance()->DumpClasses(f);
+	CSysClassRegistry::getInstance()->dumpClasses(f);
 
 	f->close();
 	delete f;

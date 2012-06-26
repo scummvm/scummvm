@@ -1316,14 +1316,14 @@ HRESULT CAdGame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::LoadGame(const char *Filename) {
 	HRESULT ret = CBGame::LoadGame(Filename);
-	if (SUCCEEDED(ret)) CSysClassRegistry::GetInstance()->EnumInstances(AfterLoadRegion, "CAdRegion", NULL);
+	if (SUCCEEDED(ret)) CSysClassRegistry::getInstance()->enumInstances(AfterLoadRegion, "CAdRegion", NULL);
 	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::InitAfterLoad() {
 	CBGame::InitAfterLoad();
-	CSysClassRegistry::GetInstance()->EnumInstances(AfterLoadScene,   "CAdScene",   NULL);
+	CSysClassRegistry::getInstance()->enumInstances(AfterLoadScene,   "CAdScene",   NULL);
 	return S_OK;
 }
 

@@ -38,26 +38,26 @@ public:
 	CSysInstance(void *Instance, int ID, CSysClass *sysClass);
 	virtual ~CSysInstance();
 
-	int GetID() const {
-		return _iD;
+	int getID() const {
+		return _id;
 	}
-	int GetSavedID() const {
+	int getSavedID() const {
 		return _savedID;
 	}
-	void *GetInstance() const {
+	void *getInstance() const {
 		return _instance;
 	}
-	CSysClass *GetClass() const {
+	CSysClass *getClass() const {
 		return _class;
 	}
 
-	void SetSavedID(int id) {
+	void setSavedID(int id) {
 		_savedID = id;
 	}
 
 private:
 	bool _used;
-	int _iD;
+	int _id;
 	int _savedID;
 	void *_instance;
 	CSysClass *_class;

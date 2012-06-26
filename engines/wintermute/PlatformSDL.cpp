@@ -93,7 +93,7 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 		            GetCursorPos(&p);
 		            Game->SetActiveObject(renderer->GetObjectAt(p.x, p.y));
 
-		            if (Game->_activeObject != NULL && strcmp(Game->_activeObject->GetClassName(), "CUIButton") == 0) {
+		            if (Game->_activeObject != NULL && strcmp(Game->_activeObject->getClassName(), "CUIButton") == 0) {
 		                CUIButton *btn = static_cast<CUIButton *>(Game->_activeObject);
 		                if (btn->_visible && !btn->_disable) btn->_press = true;
 		            }

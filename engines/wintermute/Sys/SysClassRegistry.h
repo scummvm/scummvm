@@ -61,25 +61,25 @@ class CSysClassRegistry {
 	void unregisterClasses();
 public:
 	void registerClasses(); // persistent.cpp
-	static CSysClassRegistry *GetInstance();
+	static CSysClassRegistry *getInstance();
 
 	CSysClassRegistry();
 	virtual ~CSysClassRegistry();
 
-	HRESULT EnumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData);
-	HRESULT LoadTable(CBGame *Game, CBPersistMgr *PersistMgr);
-	HRESULT SaveTable(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
-	HRESULT LoadInstances(CBGame *Game, CBPersistMgr *PersistMgr);
-	HRESULT SaveInstances(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
-	void *IDToPointer(int classID, int instanceID);
-	bool GetPointerID(void *pointer, int *classID, int *instanceID);
-	bool RegisterClass(CSysClass *classObj);
-	bool UnregisterClass(CSysClass *classObj);
-	bool RegisterInstance(const char *className, void *instance);
-	bool UnregisterInstance(const char *className, void *instance);
-	void DumpClasses(Common::WriteStream *stream);
-	int GetNextID();
-	void AddInstanceToTable(CSysInstance *instance, void *pointer);
+	HRESULT enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData);
+	HRESULT loadTable(CBGame *Game, CBPersistMgr *PersistMgr);
+	HRESULT saveTable(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
+	HRESULT loadInstances(CBGame *Game, CBPersistMgr *PersistMgr);
+	HRESULT saveInstances(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
+	void *idToPointer(int classID, int instanceID);
+	bool getPointerID(void *pointer, int *classID, int *instanceID);
+	bool registerClass(CSysClass *classObj);
+	bool unregisterClass(CSysClass *classObj);
+	bool registerInstance(const char *className, void *instance);
+	bool unregisterInstance(const char *className, void *instance);
+	void dumpClasses(Common::WriteStream *stream);
+	int getNextID();
+	void addInstanceToTable(CSysInstance *instance, void *pointer);
 
 	bool _disabled;
 	int _count;

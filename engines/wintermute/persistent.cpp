@@ -90,7 +90,7 @@
 
 // CSysClass adds these objects to the registry, thus they aren't as leaked as they look
 #define REGISTER_CLASS(class_name, persistent_class)\
-	new WinterMute::CSysClass(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);
+	new WinterMute::CSysClass(class_name::_className, class_name::persistBuild, class_name::persistLoad, persistent_class);
 
 namespace WinterMute {
 

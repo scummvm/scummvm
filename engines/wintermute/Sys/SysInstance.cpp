@@ -33,9 +33,9 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CSysInstance::CSysInstance(void *Instance, int ID, CSysClass *sysClass) {
-	_instance = Instance;
-	_iD = ID;
+CSysInstance::CSysInstance(void *instance, int id, CSysClass *sysClass) {
+	_instance = instance;
+	_id = id;
 	_savedID = -1;
 	_class = sysClass;
 
