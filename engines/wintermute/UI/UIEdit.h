@@ -39,8 +39,8 @@ class CUIEdit : public CUIObject {
 public:
 	DECLARE_PERSISTENT(CUIEdit, CUIObject)
 	int _maxLength;
-	int InsertChars(int Pos, byte *Chars, int Num);
-	int DeleteChars(int Start, int End);
+	int insertChars(int Pos, byte *Chars, int Num);
+	int deleteChars(int Start, int End);
 	bool _cursorVisible;
 	uint32 _lastBlinkTime;
 	virtual HRESULT display(int OffsetX, int OffsetY);
@@ -48,7 +48,7 @@ public:
 	int _scrollOffset;
 	int _frameWidth;
 	uint32 _cursorBlinkRate;
-	void SetCursorChar(const char *Char);
+	void setCursorChar(const char *Char);
 	char *_cursorChar;
 	int _selEnd;
 	int _selStart;

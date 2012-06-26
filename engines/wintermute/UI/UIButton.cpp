@@ -352,7 +352,7 @@ HRESULT CUIButton::loadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_TEXT:
-			SetText((char *)params);
+			setText((char *)params);
 			Game->_stringTable->Expand(&_text);
 			break;
 
@@ -434,7 +434,7 @@ HRESULT CUIButton::loadBuffer(byte  *Buffer, bool Complete) {
 		return E_FAIL;
 	}
 
-	CorrectSize();
+	correctSize();
 
 	return S_OK;
 }
@@ -539,7 +539,7 @@ HRESULT CUIButton::saveAsText(CBDynBuffer *Buffer, int Indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CUIButton::CorrectSize() {
+void CUIButton::correctSize() {
 	RECT rect;
 
 	CBSprite *img = NULL;
@@ -573,7 +573,7 @@ void CUIButton::CorrectSize() {
 
 	if (_height <= 0) _height = 100;
 
-	if (_back) _back->CorrectSize(&_width, &_height);
+	if (_back) _back->correctSize(&_width, &_height);
 }
 
 
@@ -591,7 +591,7 @@ HRESULT CUIButton::display(int OffsetX, int OffsetY) {
 	_hover = (!_disable && Game->_activeObject == this && (Game->_interactive || Game->_state == GAME_SEMI_FROZEN));
 
 	if ((_press && _hover && !Game->_mouseLeftDown) ||
-	        (_oneTimePress && CBPlatform::GetTime() - _oneTimePressTime >= 100)) Press();
+	        (_oneTimePress && CBPlatform::GetTime() - _oneTimePressTime >= 100)) press();
 
 
 	if (_disable) {
@@ -606,7 +606,7 @@ HRESULT CUIButton::display(int OffsetX, int OffsetY) {
 		if (_backHover) back = _backHover;
 		if (_imageHover) image = _imageHover;
 		if (_text && _fontHover) font = _fontHover;
-	} else if (_canFocus && IsFocused()) {
+	} else if (_canFocus && isFocused()) {
 		if (_backFocus) back = _backFocus;
 		if (_imageFocus) image = _imageFocus;
 		if (_text && _fontFocus) font = _fontFocus;
@@ -654,7 +654,7 @@ HRESULT CUIButton::display(int OffsetX, int OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIButton::Press() {
+void CUIButton::press() {
 	applyEvent("Press");
 	if (_listenerObject) _listenerObject->listen(_listenerParamObject, _listenerParamDWORD);
 	if (_parentNotify && _parent) _parent->applyEvent(_name);

@@ -128,7 +128,7 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 		if (!_shieldButton) {
 			_shieldButton = new CUIButton(Game);
 			_shieldButton->setName("close");
-			_shieldButton->SetListener(this, _shieldButton, 0);
+			_shieldButton->setListener(this, _shieldButton, 0);
 			_shieldButton->_parent = this;
 		}
 		if (_shieldButton) {
@@ -153,7 +153,7 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 	}
 
 	if (!_focusedWidget || (!_focusedWidget->_canFocus || _focusedWidget->_disable || !_focusedWidget->_visible)) {
-		MoveFocus();
+		moveFocus();
 	}
 
 	bool PopViewport = false;
@@ -171,7 +171,7 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 	CBSprite *image = _image;
 	CBFont *font = _font;
 
-	if (!IsFocused()) {
+	if (!isFocused()) {
 		if (_backInactive) back = _backInactive;
 		if (_imageInactive) image = _imageInactive;
 		if (_fontInactive) font = _fontInactive;
@@ -381,7 +381,7 @@ HRESULT CUIWindow::loadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_TITLE:
-			SetText((char *)params);
+			setText((char *)params);
 			Game->_stringTable->Expand(&_text);
 			break;
 
@@ -552,7 +552,7 @@ HRESULT CUIWindow::loadBuffer(byte  *Buffer, bool Complete) {
 		return E_FAIL;
 	}
 
-	CorrectSize();
+	correctSize();
 
 	if (alpha != 0 && ar == 0 && ag == 0 && ab == 0) {
 		ar = ag = ab = 255;
@@ -670,7 +670,7 @@ HRESULT CUIWindow::saveAsText(CBDynBuffer *Buffer, int Indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::EnableWidget(const char *Name, bool Enable) {
+HRESULT CUIWindow::enableWidget(const char *Name, bool Enable) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, Name) == 0) _widgets[i]->_disable = !Enable;
 	}
@@ -679,7 +679,7 @@ HRESULT CUIWindow::EnableWidget(const char *Name, bool Enable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::ShowWidget(const char *Name, bool Visible) {
+HRESULT CUIWindow::showWidget(const char *Name, bool Visible) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, Name) == 0) _widgets[i]->_visible = Visible;
 	}
@@ -782,7 +782,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GoExclusive") == 0) {
 		Stack->CorrectParams(0);
-		GoExclusive();
+		goExclusive();
 		Script->WaitFor(this);
 		Stack->PushNULL();
 		return S_OK;
@@ -793,7 +793,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GoSystemExclusive") == 0) {
 		Stack->CorrectParams(0);
-		GoSystemExclusive();
+		goSystemExclusive();
 		Script->WaitFor(this);
 		Stack->PushNULL();
 		return S_OK;
@@ -1068,7 +1068,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Exclusive") == 0) {
 		if (Value->GetBool())
-			GoExclusive();
+			goExclusive();
 		else {
 			close();
 			_visible = true;
@@ -1081,7 +1081,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "SystemExclusive") == 0) {
 		if (Value->GetBool())
-			GoSystemExclusive();
+			goSystemExclusive();
 		else {
 			close();
 			_visible = true;
@@ -1103,7 +1103,7 @@ const char *CUIWindow::scToString() {
 bool CUIWindow::handleKeypress(Common::Event *event, bool printable) {
 //TODO
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
-		return SUCCEEDED(MoveFocus(!CBKeyboardState::IsShiftDown()));
+		return SUCCEEDED(moveFocus(!CBKeyboardState::IsShiftDown()));
 	} else {
 		if (_focusedWidget) return _focusedWidget->handleKeypress(event, printable);
 		else return false;
@@ -1129,7 +1129,7 @@ HRESULT CUIWindow::handleMouse(TMouseEvent Event, TMouseButton Button) {
 		if (Event == MOUSE_CLICK && Button == MOUSE_BUTTON_LEFT) {
 			RECT DragRect = _dragRect;
 			int OffsetX, OffsetY;
-			GetTotalOffset(&OffsetX, &OffsetY);
+			getTotalOffset(&OffsetX, &OffsetY);
 			CBPlatform::OffsetRect(&DragRect, _posX + OffsetX, _posY + OffsetY);
 
 			if (CBPlatform::PtInRect(&DragRect, Game->_mousePos)) {
@@ -1181,7 +1181,7 @@ HRESULT CUIWindow::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::MoveFocus(bool Forward) {
+HRESULT CUIWindow::moveFocus(bool Forward) {
 	int i;
 	bool found = false;
 	for (i = 0; i < _widgets.GetSize(); i++) {
@@ -1222,7 +1222,7 @@ HRESULT CUIWindow::MoveFocus(bool Forward) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::GoExclusive() {
+HRESULT CUIWindow::goExclusive() {
 	if (_mode == WINDOW_EXCLUSIVE) return S_OK;
 
 	if (_mode == WINDOW_NORMAL) {
@@ -1237,7 +1237,7 @@ HRESULT CUIWindow::GoExclusive() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::GoSystemExclusive() {
+HRESULT CUIWindow::goSystemExclusive() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) return S_OK;
 
 	makeFreezable(false);
@@ -1294,14 +1294,14 @@ void CUIWindow::makeFreezable(bool Freezable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::GetWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly) {
+HRESULT CUIWindow::getWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
 		CUIObject *Control = _widgets[i];
 		if (Control->_disable && InteractiveOnly) continue;
 
 		switch (Control->_type) {
 		case UI_WINDOW:
-			((CUIWindow *)Control)->GetWindowObjects(Objects, InteractiveOnly);
+			((CUIWindow *)Control)->getWindowObjects(Objects, InteractiveOnly);
 			break;
 
 		case UI_BUTTON:

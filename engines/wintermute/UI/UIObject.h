@@ -40,19 +40,19 @@ class CBFont;
 class CUIObject : public CBObject {
 public:
 
-	HRESULT GetTotalOffset(int *OffsetX, int *OffsetY);
+	HRESULT getTotalOffset(int *offsetX, int *offsetY);
 	bool _canFocus;
-	HRESULT Focus();
+	HRESULT focus();
 	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
-	bool IsFocused();
+	bool isFocused();
 	bool _parentNotify;
 	DECLARE_PERSISTENT(CUIObject, CBObject)
 	CUIObject *_parent;
-	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);
-	virtual void CorrectSize();
+	virtual HRESULT display(int offsetX = 0, int offsetY = 0);
+	virtual void correctSize();
 	bool _sharedFonts;
 	bool _sharedImages;
-	void SetText(const char *Text);
+	void setText(const char *text);
 	char *_text;
 	CBFont *_font;
 	bool _visible;
@@ -64,7 +64,7 @@ public:
 	int _height;
 	TUIObjectType _type;
 	CBSprite *_image;
-	void SetListener(CBScriptHolder *Object, CBScriptHolder *ListenerObject, uint32 ListenerParam);
+	void setListener(CBScriptHolder *Object, CBScriptHolder *ListenerObject, uint32 ListenerParam);
 	CBScriptHolder *_listenerParamObject;
 	uint32 _listenerParamDWORD;
 	CBScriptHolder *_listenerObject;

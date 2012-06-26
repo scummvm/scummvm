@@ -337,7 +337,7 @@ HRESULT CUITiledImage::saveAsText(CBDynBuffer *Buffer, int Indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CUITiledImage::CorrectSize(int *Width, int *Height) {
+void CUITiledImage::correctSize(int *Width, int *Height) {
 	int tile_width = _middleMiddle.right - _middleMiddle.left;
 	int tile_height = _middleMiddle.bottom - _middleMiddle.top;
 

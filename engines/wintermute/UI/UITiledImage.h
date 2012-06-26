@@ -37,7 +37,7 @@ class CBSubFrame;
 class CUITiledImage : public CBObject {
 public:
 	DECLARE_PERSISTENT(CUITiledImage, CBObject)
-	void CorrectSize(int *Width, int *Height);
+	void correctSize(int *Width, int *Height);
 	HRESULT loadFile(const char *Filename);
 	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);

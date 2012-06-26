@@ -215,7 +215,7 @@ HRESULT CUIText::loadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_TEXT:
-			SetText((char *)params);
+			setText((char *)params);
 			Game->_stringTable->Expand(&_text);
 			break;
 
@@ -287,7 +287,7 @@ HRESULT CUIText::loadBuffer(byte  *Buffer, bool Complete) {
 		return E_FAIL;
 	}
 
-	CorrectSize();
+	correctSize();
 
 	return S_OK;
 }

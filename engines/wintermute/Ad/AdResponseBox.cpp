@@ -118,7 +118,7 @@ HRESULT CAdResponseBox::invalidateButtons() {
 		_respButtons[i]->_font = NULL;
 		_respButtons[i]->_fontHover = NULL;
 		_respButtons[i]->_fontPress = NULL;
-		_respButtons[i]->SetText("");
+		_respButtons[i]->setText("");
 	}
 	return S_OK;
 }
@@ -147,7 +147,7 @@ HRESULT CAdResponseBox::createButtons() {
 			}
 			// textual
 			else {
-				btn->SetText(_responses[i]->_text);
+				btn->setText(_responses[i]->_text);
 				btn->_font = (_font == NULL) ? Game->_systemFont : _font;
 				btn->_fontHover = (_fontHover == NULL) ? Game->_systemFont : _fontHover;
 				btn->_fontPress = btn->_fontHover;
@@ -163,14 +163,14 @@ HRESULT CAdResponseBox::createButtons() {
 				if (btn->_width <= 0) btn->_width = Game->_renderer->_width;
 			}
 			btn->setName("response");
-			btn->CorrectSize();
+			btn->correctSize();
 
 			// make the responses touchable
 			if (Game->_touchInterface)
 				btn->_height = MAX(btn->_height, 50);
 
 			//btn->SetListener(this, btn, _responses[i]->_iD);
-			btn->SetListener(this, btn, i);
+			btn->setListener(this, btn, i);
 			btn->_visible = false;
 			_respButtons.Add(btn);
 
@@ -327,7 +327,7 @@ HRESULT CAdResponseBox::loadBuffer(byte  *Buffer, bool Complete) {
 	if (_window) {
 		for (int i = 0; i < _window->_widgets.GetSize(); i++) {
 			if (!_window->_widgets[i]->_listenerObject)
-				_window->_widgets[i]->SetListener(this, _window->_widgets[i], 0);
+				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 		}
 	}
 
@@ -455,8 +455,8 @@ HRESULT CAdResponseBox::display() {
 
 	// show appropriate scroll buttons
 	if (_window) {
-		_window->ShowWidget("prev", _scrollOffset > 0);
-		_window->ShowWidget("next", scroll_needed);
+		_window->showWidget("prev", _scrollOffset > 0);
+		_window->showWidget("next", scroll_needed);
 	}
 
 	// go exclusive
@@ -639,7 +639,7 @@ HRESULT CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &Objects, b
 	for (int i = 0; i < _respButtons.GetSize(); i++) {
 		Objects.Add(_respButtons[i]);
 	}
-	if (_window) _window->GetWindowObjects(Objects, InteractiveOnly);
+	if (_window) _window->getWindowObjects(Objects, InteractiveOnly);
 
 	return S_OK;
 }

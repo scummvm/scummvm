@@ -62,7 +62,7 @@ CUIEdit::CUIEdit(CBGame *inGame): CUIObject(inGame) {
 	_scrollOffset = 0;
 
 	_cursorChar = NULL;
-	SetCursorChar("|");
+	setCursorChar("|");
 
 #ifdef __WIN32__
 	_cursorBlinkRate = GetCaretBlinkTime();
@@ -71,7 +71,7 @@ CUIEdit::CUIEdit(CBGame *inGame): CUIObject(inGame) {
 #endif
 	_frameWidth = 0;
 
-	SetText("");
+	setText("");
 
 	_lastBlinkTime = 0;
 	_cursorVisible = true;
@@ -220,7 +220,7 @@ HRESULT CUIEdit::loadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_TEXT:
-			SetText((char *)params);
+			setText((char *)params);
 			Game->_stringTable->Expand(&_text);
 			break;
 
@@ -296,7 +296,7 @@ HRESULT CUIEdit::loadBuffer(byte  *Buffer, bool Complete) {
 		return E_FAIL;
 	}
 
-	CorrectSize();
+	correctSize();
 
 	return S_OK;
 }
@@ -490,7 +490,7 @@ HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 	// CursorChar
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "CursorChar") == 0) {
-		SetCursorChar(Value->GetString());
+		setCursorChar(Value->GetString());
 		return S_OK;
 	}
 
@@ -516,9 +516,9 @@ HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 	else if (strcmp(Name, "Text") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::Utf8ToWide(Value->GetString());
-			SetText(StringUtil::WideToAnsi(wstr).c_str());
+			setText(StringUtil::WideToAnsi(wstr).c_str());
 		} else {
-			SetText(Value->GetString());
+			setText(Value->GetString());
 		}
 		return S_OK;
 	}
@@ -534,7 +534,7 @@ const char *CUIEdit::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIEdit::SetCursorChar(const char *Char) {
+void CUIEdit::setCursorChar(const char *Char) {
 	if (!Char) return;
 	delete[] _cursorChar;
 	_cursorChar = new char [strlen(Char) + 1];
@@ -564,7 +564,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 	if (_fontSelected) sfont = _fontSelected;
 	else sfont = font;
 
-	bool focused = IsFocused();
+	bool focused = isFocused();
 
 	_selStart = MAX(_selStart, 0);
 	_selEnd   = MAX(_selEnd, 0);
@@ -707,9 +707,9 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 		case Common::KEYCODE_BACKSPACE:
 			if (_selStart == _selEnd) {
-				if (Game->_textRTL) DeleteChars(_selStart, _selStart + 1);
-				else DeleteChars(_selStart - 1, _selStart);
-			} else DeleteChars(_selStart, _selEnd);
+				if (Game->_textRTL) deleteChars(_selStart, _selStart + 1);
+				else deleteChars(_selStart - 1, _selStart);
+			} else deleteChars(_selStart, _selEnd);
 			if (_selEnd >= _selStart) _selEnd -= MAX(1, _selEnd - _selStart);
 			_selStart = _selEnd;
 
@@ -755,11 +755,11 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 		case Common::KEYCODE_DELETE:
 			if (_selStart == _selEnd) {
 				if (Game->_textRTL) {
-					DeleteChars(_selStart - 1, _selStart);
+					deleteChars(_selStart - 1, _selStart);
 					_selEnd--;
 					if (_selEnd < 0) _selEnd = 0;
-				} else DeleteChars(_selStart, _selStart + 1);
-			} else DeleteChars(_selStart, _selEnd);
+				} else deleteChars(_selStart, _selStart + 1);
+			} else deleteChars(_selStart, _selEnd);
 			if (_selEnd > _selStart) _selEnd -= (_selEnd - _selStart);
 
 			_selStart = _selEnd;
@@ -770,12 +770,12 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 		}
 		return Handled;
 	} else if (event->type == Common::EVENT_KEYDOWN && printable) {
-		if (_selStart != _selEnd) DeleteChars(_selStart, _selEnd);
+		if (_selStart != _selEnd) deleteChars(_selStart, _selEnd);
 
 		//WideString wstr = StringUtil::Utf8ToWide(event->kbd.ascii);
 		WideString wstr;
 		wstr += (char)event->kbd.ascii;
-		_selEnd += InsertChars(_selEnd, (byte *)StringUtil::WideToAnsi(wstr).c_str(), 1);
+		_selEnd += insertChars(_selEnd, (byte *)StringUtil::WideToAnsi(wstr).c_str(), 1);
 
 		if (Game->_textRTL) _selEnd = _selStart;
 		else _selStart = _selEnd;
@@ -789,7 +789,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CUIEdit::DeleteChars(int Start, int End) {
+int CUIEdit::deleteChars(int Start, int End) {
 	if (Start > End) CBUtils::Swap(&Start, &End);
 
 	Start = MAX(Start, (int)0);
@@ -810,7 +810,7 @@ int CUIEdit::DeleteChars(int Start, int End) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CUIEdit::InsertChars(int Pos, byte *Chars, int Num) {
+int CUIEdit::insertChars(int Pos, byte *Chars, int Num) {
 	if ((int)strlen(_text) + Num > _maxLength) {
 		Num -= (strlen(_text) + Num - _maxLength);
 	}

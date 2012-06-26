@@ -142,7 +142,7 @@ HRESULT CUIEntity::loadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_ENTITY:
-			if (FAILED(SetEntity((char *)params))) cmd = PARSERR_GENERIC;
+			if (FAILED(setEntity((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_SCRIPT:
@@ -163,7 +163,7 @@ HRESULT CUIEntity::loadBuffer(byte  *Buffer, bool Complete) {
 		return E_FAIL;
 	}
 
-	CorrectSize();
+	correctSize();
 
 	if (Game->_editorMode) {
 		_width = 50;
@@ -208,10 +208,10 @@ HRESULT CUIEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::SetEntity(const char *Filename) {
+HRESULT CUIEntity::setEntity(const char *filename) {
 	if (_entity) Game->UnregisterObject(_entity);
 	_entity = new CAdEntity(Game);
-	if (!_entity || FAILED(_entity->loadFile(Filename))) {
+	if (!_entity || FAILED(_entity->loadFile(filename))) {
 		delete _entity;
 		_entity = NULL;
 		return E_FAIL;
@@ -272,7 +272,7 @@ HRESULT CUIEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 		const char *Filename = Stack->Pop()->GetString();
 
-		if (SUCCEEDED(SetEntity(Filename)))
+		if (SUCCEEDED(setEntity(Filename)))
 			Stack->PushBool(true);
 		else
 			Stack->PushBool(false);

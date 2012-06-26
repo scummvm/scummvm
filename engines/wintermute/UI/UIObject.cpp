@@ -85,7 +85,7 @@ CUIObject::~CUIObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIObject::SetText(const char *Text) {
+void CUIObject::setText(const char *Text) {
 	if (_text) delete [] _text;
 	_text = new char [strlen(Text) + 1];
 	if (_text) {
@@ -104,7 +104,7 @@ HRESULT CUIObject::display(int OffsetX, int OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIObject::SetListener(CBScriptHolder *Object, CBScriptHolder *ListenerObject, uint32 ListenerParam) {
+void CUIObject::setListener(CBScriptHolder *Object, CBScriptHolder *ListenerObject, uint32 ListenerParam) {
 	_listenerObject = Object;
 	_listenerParamObject = ListenerObject;
 	_listenerParamDWORD = ListenerParam;
@@ -112,7 +112,7 @@ void CUIObject::SetListener(CBScriptHolder *Object, CBScriptHolder *ListenerObje
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIObject::CorrectSize() {
+void CUIObject::correctSize() {
 	RECT rect;
 
 	if (_width <= 0) {
@@ -129,7 +129,7 @@ void CUIObject::CorrectSize() {
 		}
 	}
 
-	if (_back) _back->CorrectSize(&_width, &_height);
+	if (_back) _back->correctSize(&_width, &_height);
 }
 
 
@@ -209,7 +209,7 @@ HRESULT CUIObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Focus") == 0) {
 		Stack->CorrectParams(0);
-		Focus();
+		focus();
 		Stack->PushNULL();
 		return S_OK;
 	}
@@ -471,7 +471,7 @@ HRESULT CUIObject::scSetProperty(const char *Name, CScValue *Value) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "Text") == 0) {
-		SetText(Value->GetString());
+		setText(Value->GetString());
 		return S_OK;
 	}
 
@@ -486,7 +486,7 @@ const char *CUIObject::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::IsFocused() {
+bool CUIObject::isFocused() {
 	if (!Game->_focusedWindow) return false;
 	if (Game->_focusedWindow == this) return true;
 
@@ -503,14 +503,14 @@ bool CUIObject::IsFocused() {
 HRESULT CUIObject::handleMouse(TMouseEvent Event, TMouseButton Button) {
 	// handle focus change
 	if (Event == MOUSE_CLICK && Button == MOUSE_BUTTON_LEFT) {
-		Focus();
+		focus();
 	}
 	return CBObject::handleMouse(Event, Button);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::Focus() {
+HRESULT CUIObject::focus() {
 	CUIObject *obj = this;
 	bool disabled = false;
 	while (obj) {
@@ -537,7 +537,7 @@ HRESULT CUIObject::Focus() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::GetTotalOffset(int *OffsetX, int *OffsetY) {
+HRESULT CUIObject::getTotalOffset(int *OffsetX, int *OffsetY) {
 	int OffX = 0, OffY = 0;
 
 	CUIObject *obj = _parent;

@@ -39,7 +39,7 @@ class CUIButton;
 class CBViewport;
 class CUIWindow : public CUIObject {
 public:
-	HRESULT GetWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
+	HRESULT getWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
 
 	bool _pauseMusic;
 	void cleanup();
@@ -54,17 +54,17 @@ public:
 	CUIWindow *_shieldWindow;
 	CUIButton *_shieldButton;
 	HRESULT close();
-	HRESULT GoSystemExclusive();
-	HRESULT GoExclusive();
+	HRESULT goSystemExclusive();
+	HRESULT goExclusive();
 	TWindowMode _mode;
-	HRESULT MoveFocus(bool Forward = true);
+	HRESULT moveFocus(bool Forward = true);
 	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
 	POINT _dragFrom;
 	bool _dragging;
 	DECLARE_PERSISTENT(CUIWindow, CUIObject)
 	bool _transparent;
-	HRESULT ShowWidget(const char *Name, bool Visible = true);
-	HRESULT EnableWidget(const char *Name, bool Enable = true);
+	HRESULT showWidget(const char *Name, bool Visible = true);
+	HRESULT enableWidget(const char *Name, bool Enable = true);
 	RECT _titleRect;
 	RECT _dragRect;
 	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);

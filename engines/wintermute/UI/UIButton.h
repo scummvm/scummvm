@@ -43,11 +43,11 @@ public:
 	bool _oneTimePress;
 	uint32 _oneTimePressTime;
 	DECLARE_PERSISTENT(CUIButton, CUIObject)
-	void Press();
+	void press();
 	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);
 	bool _press;
 	bool _hover;
-	void CorrectSize();
+	void correctSize();
 	TTextAlign _align;
 	CBSprite *_imageHover;
 	CBSprite *_imagePress;

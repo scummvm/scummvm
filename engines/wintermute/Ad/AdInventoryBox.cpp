@@ -107,8 +107,8 @@ HRESULT CAdInventoryBox::display() {
 	ItemsY = (int)floor((float)((_itemsArea.bottom - _itemsArea.top + _spacing) / (_itemHeight + _spacing)));
 
 	if (_window) {
-		_window->EnableWidget("prev", _scrollOffset > 0);
-		_window->EnableWidget("next", _scrollOffset + ItemsX * ItemsY < AdGame->_inventoryOwner->getInventory()->_takenItems.GetSize());
+		_window->enableWidget("prev", _scrollOffset > 0);
+		_window->enableWidget("next", _scrollOffset + ItemsX * ItemsY < AdGame->_inventoryOwner->getInventory()->_takenItems.GetSize());
 	}
 
 
@@ -299,7 +299,7 @@ HRESULT CAdInventoryBox::loadBuffer(byte  *Buffer, bool Complete) {
 		_closeButton = new CUIButton(Game);
 		if (_closeButton) {
 			_closeButton->setName("close");
-			_closeButton->SetListener(this, _closeButton, 0);
+			_closeButton->setListener(this, _closeButton, 0);
 			_closeButton->_parent = _window;
 		}
 	}
@@ -309,7 +309,7 @@ HRESULT CAdInventoryBox::loadBuffer(byte  *Buffer, bool Complete) {
 	if (_window) {
 		for (int i = 0; i < _window->_widgets.GetSize(); i++) {
 			if (!_window->_widgets[i]->_listenerObject)
-				_window->_widgets[i]->SetListener(this, _window->_widgets[i], 0);
+				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 		}
 	}
 
