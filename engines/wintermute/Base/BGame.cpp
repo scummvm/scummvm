@@ -1750,7 +1750,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 
 		bool System = (strcmp(Name, "SystemFadeOut") == 0 || strcmp(Name, "SystemFadeOutAsync") == 0);
 
-		_fader->FadeOut(DRGBA(Red, Green, Blue, Alpha), Duration, System);
+		_fader->fadeOut(DRGBA(Red, Green, Blue, Alpha), Duration, System);
 		if (strcmp(Name, "FadeOutAsync") != 0 && strcmp(Name, "SystemFadeOutAsync") != 0) Script->WaitFor(_fader);
 
 		Stack->PushNULL();
@@ -1770,7 +1770,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 
 		bool System = (strcmp(Name, "SystemFadeIn") == 0 || strcmp(Name, "SystemFadeInAsync") == 0);
 
-		_fader->FadeIn(DRGBA(Red, Green, Blue, Alpha), Duration, System);
+		_fader->fadeIn(DRGBA(Red, Green, Blue, Alpha), Duration, System);
 		if (strcmp(Name, "FadeInAsync") != 0 && strcmp(Name, "SystemFadeInAsync") != 0) Script->WaitFor(_fader);
 
 		Stack->PushNULL();
@@ -1782,7 +1782,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetFadeColor") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_fader->GetCurrentColor());
+		Stack->PushInt(_fader->getCurrentColor());
 		return S_OK;
 	}
 

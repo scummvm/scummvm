@@ -37,10 +37,10 @@ namespace WinterMute {
 class CBFader : public CBObject {
 public:
 	bool _system;
-	uint32 GetCurrentColor();
-	HRESULT FadeOut(uint32 TargetColor, uint32 Duration, bool System = false);
-	HRESULT FadeIn(uint32 SourceColor, uint32 Duration, bool System = false);
-	HRESULT Deactivate();
+	uint32 getCurrentColor();
+	HRESULT fadeOut(uint32 TargetColor, uint32 Duration, bool System = false);
+	HRESULT fadeIn(uint32 SourceColor, uint32 Duration, bool System = false);
+	HRESULT deactivate();
 	HRESULT display();
 	HRESULT update();
 	DECLARE_PERSISTENT(CBFader, CBObject)

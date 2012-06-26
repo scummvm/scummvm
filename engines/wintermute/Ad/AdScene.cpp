@@ -1520,7 +1520,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		byte Blue = Stack->Pop()->GetInt(0);
 		byte Alpha = Stack->Pop()->GetInt(0xFF);
 
-		_fader->FadeOut(DRGBA(Red, Green, Blue, Alpha), Duration);
+		_fader->fadeOut(DRGBA(Red, Green, Blue, Alpha), Duration);
 		if (strcmp(Name, "FadeOutAsync") != 0) Script->WaitFor(_fader);
 
 		Stack->PushNULL();
@@ -1538,7 +1538,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		byte Blue = Stack->Pop()->GetInt(0);
 		byte Alpha = Stack->Pop()->GetInt(0xFF);
 
-		_fader->FadeIn(DRGBA(Red, Green, Blue, Alpha), Duration);
+		_fader->fadeIn(DRGBA(Red, Green, Blue, Alpha), Duration);
 		if (strcmp(Name, "FadeInAsync") != 0) Script->WaitFor(_fader);
 
 		Stack->PushNULL();
@@ -1550,7 +1550,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(Name, "GetFadeColor") == 0) {
 		Stack->CorrectParams(0);
-		Stack->PushInt(_fader->GetCurrentColor());
+		Stack->PushInt(_fader->getCurrentColor());
 		return S_OK;
 	}
 

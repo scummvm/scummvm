@@ -93,7 +93,7 @@ HRESULT CBFader::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::Deactivate() {
+HRESULT CBFader::deactivate() {
 	_active = false;
 	_ready = true;
 	return S_OK;
@@ -101,7 +101,7 @@ HRESULT CBFader::Deactivate() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::FadeIn(uint32 SourceColor, uint32 Duration, bool System) {
+HRESULT CBFader::fadeIn(uint32 SourceColor, uint32 Duration, bool System) {
 	_ready = false;
 	_active = true;
 
@@ -123,7 +123,7 @@ HRESULT CBFader::FadeIn(uint32 SourceColor, uint32 Duration, bool System) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::FadeOut(uint32 TargetColor, uint32 Duration, bool System) {
+HRESULT CBFader::fadeOut(uint32 TargetColor, uint32 Duration, bool System) {
 	_ready = false;
 	_active = true;
 
@@ -147,7 +147,7 @@ HRESULT CBFader::FadeOut(uint32 TargetColor, uint32 Duration, bool System) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBFader::GetCurrentColor() {
+uint32 CBFader::getCurrentColor() {
 	return DRGBA(_red, _green, _blue, _currentAlpha);
 }
 
