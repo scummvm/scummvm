@@ -244,6 +244,9 @@ const char *const ObjectMan::_translationId2950145[7] = {
 	NULL       // Portuguese
 };
 
+// The translations for the next texts are missing in the demo but are present
+// in the full game. The translations were therefore extracted from the full game.
+
 // Missing translation for textId 8455194 (in the demo).
 const char *const ObjectMan::_translationId8455194[7] = {
 	NULL, // "Who was the guy you were supposed to meet?",              // English (not needed)
@@ -386,6 +389,13 @@ const char *const ObjectMan::_translationId6488080[7] = {
 	NULL,                                                                                   // Czech
 	NULL                                                                                    // Portuguese
 };
+
+// The next three sentences are specific to the demo and only the english text is present.
+// The translations were provided by:
+// French: Thierry Crozat
+// German: Simon Sawatzki
+// Italian: Matteo Angelino
+// Spanish: Tomás Maidagan
 
 // Missing translation for textId 6488081 (in the demo).
 const char *const ObjectMan::_translationId6488081[7] = {
