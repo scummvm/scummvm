@@ -368,6 +368,11 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 	case 4: // SCI01+
 	case 5: // SCI1+ (SCI1 late sound scheme), with fade and continue
 		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
+		// Check if the song is already at the requested volume. If it is, don't
+		// perform any fading. Happens for example during the intro of Longbow.
+		if (musicSlot->fadeTo == musicSlot->volume)
+			return acc;
+
 		// sometimes we get objects in that position, fix it up (ffs. workarounds)
 		if (!argv[1].getSegment())
 			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
@@ -497,12 +502,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// fireworks).
 		// It is also needed in other games, e.g. LSL6 when talking to the
 		// receptionist (bug #3192166).
-		if (g_sci->getGameId() == GID_LONGBOW && g_sci->getEngineState()->currentRoomNumber() == 95) {
-			// HACK: Don't set a signal here in the intro of Longbow, as that makes some dialog
-			// boxes disappear too soon (bug #3044844).
-		} else {
-			writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-		}
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			processStopSound(obj, false);
 		} else {
