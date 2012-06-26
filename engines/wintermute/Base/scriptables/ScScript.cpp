@@ -32,6 +32,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/scriptables/ScEngine.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
+#include "common/memstream.h"
 
 namespace WinterMute {
 
@@ -41,6 +42,7 @@ IMPLEMENT_PERSISTENT(CScScript, false)
 CScScript::CScScript(CBGame *inGame, CScEngine *Engine): CBBase(inGame) {
 	_buffer = NULL;
 	_bufferSize = _iP = 0;
+	_scriptStream = NULL;
 	_filename = NULL;
 	_currentLine = 0;
 
@@ -104,15 +106,26 @@ CScScript::~CScScript() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScScript::InitScript() {
-	TScriptHeader *Header = (TScriptHeader *)_buffer;
-	if (Header->magic != SCRIPT_MAGIC) {
+	if (!_scriptStream) {
+		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
+	}
+	_header.magic = _scriptStream->readUint32LE();
+	_header.version = _scriptStream->readUint32LE();
+	_header.code_start = _scriptStream->readUint32LE();
+	_header.func_table = _scriptStream->readUint32LE();
+	_header.symbol_table = _scriptStream->readUint32LE();
+	_header.event_table = _scriptStream->readUint32LE();
+	_header.externals_table = _scriptStream->readUint32LE();
+	_header.method_table = _scriptStream->readUint32LE();
+
+	if (_header.magic != SCRIPT_MAGIC) {
 		Game->LOG(0, "File '%s' is not a valid compiled script", _filename);
 		cleanup();
 		return E_FAIL;
 	}
 
-	if (Header->version > SCRIPT_VERSION) {
-		Game->LOG(0, "Script '%s' has a wrong version %d.%d (expected %d.%d)", _filename, Header->version / 256, Header->version % 256, SCRIPT_VERSION / 256, SCRIPT_VERSION % 256);
+	if (_header.version > SCRIPT_VERSION) {
+		Game->LOG(0, "Script '%s' has a wrong version %d.%d (expected %d.%d)", _filename, _header.version / 256, _header.version % 256, SCRIPT_VERSION / 256, SCRIPT_VERSION % 256);
 		cleanup();
 		return E_FAIL;
 	}
@@ -130,7 +143,8 @@ HRESULT CScScript::InitScript() {
 
 
 	// skip to the beginning
-	_iP = Header->code_start;
+	_iP = _header.code_start;
+	_scriptStream->seek(_iP);
 	_currentLine = 0;
 
 	// init breakpoints
@@ -148,49 +162,45 @@ HRESULT CScScript::InitScript() {
 HRESULT CScScript::InitTables() {
 	uint32 OrigIP = _iP;
 
-	TScriptHeader *Header = (TScriptHeader *)_buffer;
-
-	int32 i;
-
 	// load symbol table
-	_iP = Header->symbol_table;
+	_iP = _header.symbol_table;
 
 	_numSymbols = GetDWORD();
 	_symbols = new char*[_numSymbols];
-	for (i = 0; i < _numSymbols; i++) {
+	for (uint32 i = 0; i < _numSymbols; i++) {
 		uint32 index = GetDWORD();
 		_symbols[index] = GetString();
 	}
 
 	// load functions table
-	_iP = Header->func_table;
+	_iP = _header.func_table;
 
 	_numFunctions = GetDWORD();
 	_functions = new TFunctionPos[_numFunctions];
-	for (i = 0; i < _numFunctions; i++) {
+	for (uint32 i = 0; i < _numFunctions; i++) {
 		_functions[i].pos = GetDWORD();
 		_functions[i].name = GetString();
 	}
 
 
 	// load events table
-	_iP = Header->event_table;
+	_iP = _header.event_table;
 
 	_numEvents = GetDWORD();
 	_events = new TEventPos[_numEvents];
-	for (i = 0; i < _numEvents; i++) {
+	for (uint32 i = 0; i < _numEvents; i++) {
 		_events[i].pos = GetDWORD();
 		_events[i].name = GetString();
 	}
 
 
 	// load externals
-	if (Header->version >= 0x0101) {
-		_iP = Header->externals_table;
+	if (_header.version >= 0x0101) {
+		_iP = _header.externals_table;
 
 		_numExternals = GetDWORD();
 		_externals = new TExternalFunction[_numExternals];
-		for (i = 0; i < _numExternals; i++) {
+		for (uint32 i = 0; i < _numExternals; i++) {
 			_externals[i].dll_name = GetString();
 			_externals[i].name = GetString();
 			_externals[i].call_type = (TCallType)GetDWORD();
@@ -206,11 +216,11 @@ HRESULT CScScript::InitTables() {
 	}
 
 	// load method table
-	_iP = Header->method_table;
+	_iP = _header.method_table;
 
 	_numMethods = GetDWORD();
 	_methods = new TMethodPos[_numMethods];
-	for (i = 0; i < _numMethods; i++) {
+	for (uint32 i = 0; i < _numMethods; i++) {
 		_methods[i].pos = GetDWORD();
 		_methods[i].name = GetString();
 	}
@@ -283,6 +293,7 @@ HRESULT CScScript::CreateThread(CScScript *Original, uint32 InitIP, const char *
 
 	// skip to the beginning of the event
 	_iP = InitIP;
+	_scriptStream->seek(_iP);
 
 	_timeSlice = Original->_timeSlice;
 	_freezable = Original->_freezable;
@@ -411,18 +422,29 @@ void CScScript::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CScScript::GetDWORD() {
-	uint32 ret = *(uint32 *)(_buffer + _iP);
+	_scriptStream->seek(_iP);
+	uint32 ret = _scriptStream->readUint32LE();
 	_iP += sizeof(uint32);
-
+//	assert(oldRet == ret);
 	return ret;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 double CScScript::GetFloat() {
-	double ret = *(double *)(_buffer + _iP);
-	_iP += sizeof(double);
+	_scriptStream->seek((int32)_iP);
+	byte buffer[8];
+	_scriptStream->read(buffer, 8);
 
+#ifdef SCUMM_BIG_ENDIAN
+	// TODO: For lack of a READ_LE_UINT64
+	SWAP(buffer[0], buffer[7]);
+	SWAP(buffer[1], buffer[6]);
+	SWAP(buffer[2], buffer[5]);
+	SWAP(buffer[3], buffer[4]);
+#endif
+
+	double ret = *(double *)(buffer);
+	_iP += 8; // Hardcode the double-size used originally.
 	return ret;
 }
 
@@ -432,6 +454,7 @@ char *CScScript::GetString() {
 	char *ret = (char *)(_buffer + _iP);
 	while (*(char *)(_buffer + _iP) != '\0') _iP++;
 	_iP++; // string terminator
+	_scriptStream->seek(_iP);
 
 	return ret;
 }
@@ -1172,6 +1195,7 @@ HRESULT CScScript::persist(CBPersistMgr *persistMgr) {
 		if (_bufferSize > 0) {
 			_buffer = new byte[_bufferSize];
 			persistMgr->getBytes(_buffer, _bufferSize);
+			_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 			InitTables();
 		} else _buffer = NULL;
 	}

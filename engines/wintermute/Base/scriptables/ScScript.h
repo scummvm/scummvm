@@ -102,6 +102,7 @@ public:
 		uint32 method_table;
 	} TScriptHeader;
 
+	TScriptHeader _header;
 
 	typedef struct {
 		char *name;
@@ -142,8 +143,11 @@ public:
 	void cleanup();
 	HRESULT Create(const char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner);
 	uint32 _iP;
+private:
 	uint32 _bufferSize;
 	byte *_buffer;
+public:
+	Common::SeekableReadStream *_scriptStream;
 	CScScript(CBGame *inGame, CScEngine *Engine);
 	virtual ~CScScript();
 	char *_filename;
@@ -154,9 +158,9 @@ public:
 	TEventPos *_events;
 	int _numExternals;
 	TExternalFunction *_externals;
-	int _numFunctions;
-	int _numMethods;
-	int _numEvents;
+	uint32 _numFunctions;
+	uint32 _numMethods;
+	uint32 _numEvents;
 	bool _thread;
 	bool _methodThread;
 	char *_threadEvent;

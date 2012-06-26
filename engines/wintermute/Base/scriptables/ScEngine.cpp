@@ -293,7 +293,7 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 	}
 
 	// needs to be compiled?
-	if (*(uint32 *)Buffer == SCRIPT_MAGIC) {
+	if (FROM_LE_32(*(uint32 *)Buffer) == SCRIPT_MAGIC) {
 		CompBuffer = Buffer;
 		CompSize = Size;
 	} else {
