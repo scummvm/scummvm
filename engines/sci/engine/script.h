@@ -197,11 +197,11 @@ public:
 	 * Validate whether the specified public function is exported by
 	 * the script in the specified segment.
 	 * @param pubfunct		Index of the function to validate
-	 * @param relocateSci3  Decide whether to relocate this SCI3 public function or not
+	 * @param relocSci3     Decide whether to relocate this SCI3 public function or not
 	 * @return				NULL if the public function is invalid, its
 	 * 						offset into the script's segment otherwise
 	 */
-	uint32 validateExportFunc(int pubfunct, bool relocateSci3);
+	uint32 validateExportFunc(int pubfunct, bool relocSci3);
 
 	/**
 	 * Marks the script as deleted.
