@@ -193,7 +193,7 @@ bool CBPlatform::GetCursorPos(LPPOINT lpPoint) {
 	lpPoint->x = p.x;
 	lpPoint->y = p.y;
 
-	renderer->PointFromScreen(lpPoint);
+	renderer->pointFromScreen(lpPoint);
 
 	return true;
 }
@@ -205,7 +205,7 @@ bool CBPlatform::SetCursorPos(int X, int Y) {
 	POINT p;
 	p.x = X;
 	p.y = Y;
-	renderer->PointToScreen(&p);
+	renderer->pointToScreen(&p);
 // TODO
 	//SDL_WarpMouseInWindow(renderer->GetSdlWindow(), p.x, p.y);
 	return true;

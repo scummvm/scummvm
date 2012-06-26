@@ -610,7 +610,7 @@ HRESULT CBGame::InitLoop() {
 	_currentTime = CBPlatform::GetTime();
 
 	GetDebugMgr()->OnGameTick();
-	_renderer->InitLoop();
+	_renderer->initLoop();
 	_soundMgr->initLoop();
 	UpdateMusicCrossfade();
 
@@ -1806,7 +1806,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		}
 
 		bool ret = false;
-		CBImage *Image = Game->_renderer->TakeScreenshot();
+		CBImage *Image = Game->_renderer->takeScreenshot();
 		if (Image) {
 			ret = SUCCEEDED(Image->SaveBMPFile(Filename));
 			delete Image;
@@ -1826,7 +1826,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		int SizeY = Stack->Pop()->GetInt(_renderer->_height);
 
 		bool ret = false;
-		CBImage *Image = Game->_renderer->TakeScreenshot();
+		CBImage *Image = Game->_renderer->takeScreenshot();
 		if (Image) {
 			ret = SUCCEEDED(Image->Resize(SizeX, SizeY));
 			if (ret) ret = SUCCEEDED(Image->SaveBMPFile(Filename));
@@ -1999,8 +1999,8 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 			_loadingIcon = NULL;
 		} else {
 			DisplayContent(false, true);
-			Game->_renderer->Flip();
-			Game->_renderer->InitLoop();
+			Game->_renderer->flip();
+			Game->_renderer->initLoop();
 		}
 		Stack->PushNULL();
 
@@ -2025,7 +2025,7 @@ HRESULT CBGame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisS
 		Stack->CorrectParams(1);
 		const char *Filename = Stack->Pop()->GetString();
 
-		_renderer->DumpData(Filename);
+		_renderer->dumpData(Filename);
 
 		Stack->PushNULL();
 		return S_OK;
@@ -3321,7 +3321,7 @@ HRESULT CBGame::LoadGame(const char *Filename) {
 	Game->applyEvent("AfterLoad", true);
 
 	DisplayContent(true, false);
-	//_renderer->Flip();
+	//_renderer->flip();
 
 	GetDebugMgr()->OnGameInit();
 
@@ -3786,7 +3786,7 @@ bool CBGame::handleKeypress(Common::Event *event, bool printable) {
 
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_RETURN && (event->kbd.flags == Common::KBD_ALT)) {
 		// TODO: Handle alt-enter as well as alt-return.
-		_renderer->SwitchFullscreen();
+		_renderer->switchFullscreen();
 		return true;
 	}
 
@@ -3983,7 +3983,7 @@ HRESULT CBGame::PushViewport(CBViewport *Viewport) {
 	if (_viewportSP >= _viewportStack.GetSize()) _viewportStack.Add(Viewport);
 	else _viewportStack[_viewportSP] = Viewport;
 
-	_renderer->SetViewport(Viewport->getRect());
+	_renderer->setViewport(Viewport->getRect());
 
 	return S_OK;
 }
@@ -3994,8 +3994,8 @@ HRESULT CBGame::PopViewport() {
 	_viewportSP--;
 	if (_viewportSP < -1) Game->LOG(0, "Fatal: Viewport stack underflow!");
 
-	if (_viewportSP >= 0 && _viewportSP < _viewportStack.GetSize()) _renderer->SetViewport(_viewportStack[_viewportSP]->getRect());
-	else _renderer->SetViewport(_renderer->_drawOffsetX,
+	if (_viewportSP >= 0 && _viewportSP < _viewportStack.GetSize()) _renderer->setViewport(_viewportStack[_viewportSP]->getRect());
+	else _renderer->setViewport(_renderer->_drawOffsetX,
 		                            _renderer->_drawOffsetY,
 		                            _renderer->_width + _renderer->_drawOffsetX,
 		                            _renderer->_height + _renderer->_drawOffsetY);
@@ -4082,7 +4082,7 @@ HRESULT CBGame::DisplayContent(bool update, bool displayAll) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::DisplayContentSimple() {
 	// fill black
-	_renderer->Fill(0, 0, 0);
+	_renderer->fill(0, 0, 0);
 	if (_indicatorDisplay) DisplayIndicator();
 
 	return S_OK;
@@ -4099,11 +4099,11 @@ HRESULT CBGame::DisplayIndicator() {
 	}
 
 	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) return S_OK;
-	_renderer->SetupLines();
+	_renderer->setupLines();
 	for (int i = 0; i < _indicatorHeight; i++)
-		_renderer->DrawLine(_indicatorX, _indicatorY + i, _indicatorX + (int)(_indicatorWidth * (float)((float)_indicatorProgress / 100.0f)), _indicatorY + i, _indicatorColor);
+		_renderer->drawLine(_indicatorX, _indicatorY + i, _indicatorX + (int)(_indicatorWidth * (float)((float)_indicatorProgress / 100.0f)), _indicatorY + i, _indicatorColor);
 
-	_renderer->Setup2D();
+	_renderer->setup2D();
 	return S_OK;
 }
 
@@ -4255,7 +4255,7 @@ HRESULT CBGame::OnActivate(bool Activate, bool RefreshMouse) {
 	if (RefreshMouse) {
 		POINT p;
 		GetMousePos(&p);
-		SetActiveObject(_renderer->GetObjectAt(p.x, p.y));
+		SetActiveObject(_renderer->getObjectAt(p.x, p.y));
 	}
 
 	if (Activate) _soundMgr->resumeAll();
@@ -4386,10 +4386,10 @@ HRESULT CBGame::OnMouseMiddleUp() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::OnPaint() {
 	if (_renderer && _renderer->_windowed && _renderer->_ready) {
-		_renderer->InitLoop();
+		_renderer->initLoop();
 		DisplayContent(false, true);
 		DisplayDebugInfo();
-		_renderer->WindowedBlt();
+		_renderer->windowedBlt();
 	}
 	return S_OK;
 }
@@ -4418,11 +4418,11 @@ HRESULT CBGame::DisplayDebugInfo() {
 			sprintf(str, "Mode: %dx%d windowed", _renderer->_width, _renderer->_height);
 
 		strcat(str, " (");
-		strcat(str, _renderer->GetName());
+		strcat(str, _renderer->getName());
 		strcat(str, ")");
 		_systemFont->DrawText((byte *)str, 0, 0, _renderer->_width, TAL_RIGHT);
 
-		_renderer->DisplayDebugInfo();
+		_renderer->displayDebugInfo();
 
 		int ScrTotal, ScrRunning, ScrWaiting, ScrPersistent;
 		ScrTotal = _scEngine->GetNumScripts(&ScrRunning, &ScrWaiting, &ScrPersistent);

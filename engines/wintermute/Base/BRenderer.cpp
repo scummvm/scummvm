@@ -56,19 +56,19 @@ CBRenderer::CBRenderer(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 CBRenderer::~CBRenderer() {
-	DeleteRectList();
-	UnclipCursor();
+	deleteRectList();
+	unclipCursor();
 }
 
 
 //////////////////////////////////////////////////////////////////////
-void CBRenderer::InitLoop() {
-	DeleteRectList();
+void CBRenderer::initLoop() {
+	deleteRectList();
 }
 
 
 //////////////////////////////////////////////////////////////////////
-CBObject *CBRenderer::GetObjectAt(int X, int Y) {
+CBObject *CBRenderer::getObjectAt(int X, int Y) {
 	POINT point;
 	point.x = X;
 	point.y = Y;
@@ -106,7 +106,7 @@ CBObject *CBRenderer::GetObjectAt(int X, int Y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderer::DeleteRectList() {
+void CBRenderer::deleteRectList() {
 	for (int i = 0; i < _rectList.GetSize(); i++) {
 		delete _rectList[i];
 	}
@@ -116,96 +116,96 @@ void CBRenderer::DeleteRectList() {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::SwitchFullscreen() {
+HRESULT CBRenderer::switchFullscreen() {
 	return E_FAIL;
 }
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::Flip() {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::InitRenderer(int width, int height, bool windowed) {
+HRESULT CBRenderer::flip() {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-void CBRenderer::OnWindowChange() {
+HRESULT CBRenderer::initRenderer(int width, int height, bool windowed) {
+	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::Fill(byte  r, byte g, byte b, Common::Rect *rect) {
+void CBRenderer::onWindowChange() {
+}
+
+
+//////////////////////////////////////////////////////////////////////
+HRESULT CBRenderer::fill(byte  r, byte g, byte b, Common::Rect *rect) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::WindowedBlt() {
+HRESULT CBRenderer::windowedBlt() {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::Setup2D(bool Force) {
+HRESULT CBRenderer::setup2D(bool Force) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::SetupLines() {
+HRESULT CBRenderer::setupLines() {
 	return E_FAIL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
+HRESULT CBRenderer::drawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::DrawRect(int X1, int Y1, int X2, int Y2, uint32 Color, int Width) {
+HRESULT CBRenderer::drawRect(int X1, int Y1, int X2, int Y2, uint32 Color, int Width) {
 	for (int i = 0; i < Width; i++) {
-		DrawLine(X1 + i, Y1 + i, X2 - i,   Y1 + i,   Color); // up
-		DrawLine(X1 + i, Y2 - i, X2 - i + 1, Y2 - i, Color); // down
+		drawLine(X1 + i, Y1 + i, X2 - i,   Y1 + i,   Color); // up
+		drawLine(X1 + i, Y2 - i, X2 - i + 1, Y2 - i, Color); // down
 
-		DrawLine(X1 + i, Y1 + i, X1 + i, Y2 - i,   Color); // left
-		DrawLine(X2 - i, Y1 + i, X2 - i, Y2 - i + 1, Color); // right
+		drawLine(X1 + i, Y1 + i, X1 + i, Y2 - i,   Color); // left
+		drawLine(X2 - i, Y1 + i, X2 - i, Y2 - i + 1, Color); // right
 	}
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::Fade(uint16 Alpha) {
+HRESULT CBRenderer::fade(uint16 Alpha) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::FadeToColor(uint32 Color, Common::Rect *rect) {
+HRESULT CBRenderer::fadeToColor(uint32 Color, Common::Rect *rect) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::SetViewport(int left, int top, int right, int bottom) {
+HRESULT CBRenderer::setViewport(int left, int top, int right, int bottom) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::SetScreenViewport() {
-	return SetViewport(_drawOffsetX, _drawOffsetY, _width + _drawOffsetX, _height + _drawOffsetY);
+HRESULT CBRenderer::setScreenViewport() {
+	return setViewport(_drawOffsetX, _drawOffsetY, _width + _drawOffsetX, _height + _drawOffsetY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::SetViewport(RECT *Rect) {
-	return SetViewport(Rect->left + _drawOffsetX,
+HRESULT CBRenderer::setViewport(RECT *Rect) {
+	return setViewport(Rect->left + _drawOffsetX,
 	                   Rect->top + _drawOffsetY,
 	                   Rect->right + _drawOffsetX,
 	                   Rect->bottom + _drawOffsetY);
@@ -213,13 +213,13 @@ HRESULT CBRenderer::SetViewport(RECT *Rect) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBImage *CBRenderer::TakeScreenshot() {
+CBImage *CBRenderer::takeScreenshot() {
 	return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::ClipCursor() {
+HRESULT CBRenderer::clipCursor() {
 	/*
 	if (!_windowed) {
 	    RECT rc;
@@ -238,7 +238,7 @@ HRESULT CBRenderer::ClipCursor() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::UnclipCursor() {
+HRESULT CBRenderer::unclipCursor() {
 	/*
 	if (!_windowed) ::ClipCursor(NULL);
 	*/
@@ -246,7 +246,7 @@ HRESULT CBRenderer::UnclipCursor() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::PointInViewport(POINT *P) {
+bool CBRenderer::pointInViewport(POINT *P) {
 	if (P->x < _drawOffsetX) return false;
 	if (P->y < _drawOffsetY) return false;
 	if (P->x > _drawOffsetX + _width) return false;

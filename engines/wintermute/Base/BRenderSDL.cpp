@@ -66,7 +66,7 @@ CBRenderSDL::~CBRenderSDL() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::InitRenderer(int width, int height, bool windowed) {
+HRESULT CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 	//if (SDL_Init(SDL_INIT_VIDEO) < 0) return E_FAIL;
 
 #if 0
@@ -193,7 +193,7 @@ void CBRenderSDL::setColorMod(byte r, byte g, byte b) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::Flip() {
+HRESULT CBRenderSDL::flip() {
 
 #ifdef __IPHONEOS__
 	// hack: until viewports work correctly, we just paint black bars instead
@@ -242,7 +242,7 @@ HRESULT CBRenderSDL::Flip() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::Fill(byte r, byte g, byte b, Common::Rect *rect) {
+HRESULT CBRenderSDL::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, 0xFF);
 	//SDL_RenderClear(_renderer);
 	uint32 color = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
@@ -260,14 +260,14 @@ HRESULT CBRenderSDL::Fill(byte r, byte g, byte b, Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::Fade(uint16 Alpha) {
+HRESULT CBRenderSDL::fade(uint16 Alpha) {
 	uint32 dwAlpha = 255 - Alpha;
-	return FadeToColor(dwAlpha << 24);
+	return fadeToColor(dwAlpha << 24);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::FadeToColor(uint32 Color, Common::Rect *rect) {
+HRESULT CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
@@ -291,7 +291,7 @@ HRESULT CBRenderSDL::FadeToColor(uint32 Color, Common::Rect *rect) {
 		fillRect.setWidth((int16)(rc.right - rc.left));
 		fillRect.setHeight((int16)(rc.bottom - rc.top));
 	}
-	ModTargetRect(&fillRect);
+	modTargetRect(&fillRect);
 
 	byte r = D3DCOLGetR(Color);
 	byte g = D3DCOLGetG(Color);
@@ -365,7 +365,7 @@ void CBRenderSDL::drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *s
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
+HRESULT CBRenderSDL::drawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 	static bool hasWarned = false;
 	if (!hasWarned) {
 		warning("CBRenderSDL::DrawLine - not fully ported yet");
@@ -382,11 +382,11 @@ HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 	POINT point1, point2;
 	point1.x = X1;
 	point1.y = Y1;
-	PointToScreen(&point1);
+	pointToScreen(&point1);
 
 	point2.x = X2;
 	point2.y = Y2;
-	PointToScreen(&point2);
+	pointToScreen(&point2);
 
 	// TODO: This thing is mostly here until I'm sure about the final color-format.
 	uint32 color = _renderSurface->format.ARGBToColor(a, r, g, b);
@@ -396,7 +396,7 @@ HRESULT CBRenderSDL::DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBImage *CBRenderSDL::TakeScreenshot() {
+CBImage *CBRenderSDL::takeScreenshot() {
 // TODO: Fix this
 	warning("CBRenderSDL::TakeScreenshot() - not ported yet");
 	CBImage *screenshot = new CBImage(Game);
@@ -428,7 +428,7 @@ CBImage *CBRenderSDL::TakeScreenshot() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::SwitchFullscreen() {
+HRESULT CBRenderSDL::switchFullscreen() {
 	/*if (_windowed) SDL_SetWindowFullscreen(_win, SDL_TRUE);
 	else SDL_SetWindowFullscreen(_win, SDL_FALSE);
 
@@ -440,7 +440,7 @@ HRESULT CBRenderSDL::SwitchFullscreen() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBRenderSDL::GetName() {
+const char *CBRenderSDL::getName() {
 	if (_name.empty()) {
 #if 0
 		if (_renderer) {
@@ -454,7 +454,7 @@ const char *CBRenderSDL::GetName() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::SetViewport(int left, int top, int right, int bottom) {
+HRESULT CBRenderSDL::setViewport(int left, int top, int right, int bottom) {
 	Common::Rect rect;
 	// TODO: Hopefully this is the same logic that ScummVM uses.
 	rect.left = (int16)(left + _borderLeft);
@@ -470,7 +470,7 @@ HRESULT CBRenderSDL::SetViewport(int left, int top, int right, int bottom) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderSDL::ModTargetRect(Common::Rect *rect) {
+void CBRenderSDL::modTargetRect(Common::Rect *rect) {
 #if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
@@ -483,7 +483,7 @@ void CBRenderSDL::ModTargetRect(Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderSDL::PointFromScreen(POINT *point) {
+void CBRenderSDL::pointFromScreen(POINT *point) {
 #if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
@@ -495,7 +495,7 @@ void CBRenderSDL::PointFromScreen(POINT *point) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderSDL::PointToScreen(POINT *point) {
+void CBRenderSDL::pointToScreen(POINT *point) {
 #if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
@@ -506,7 +506,7 @@ void CBRenderSDL::PointToScreen(POINT *point) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderSDL::DumpData(const char *Filename) {
+void CBRenderSDL::dumpData(const char *Filename) {
 	warning("CBRenderSDL::DumpData(%s) - not reimplemented yet", Filename); // TODO
 #if 0
 	FILE *f = fopen(Filename, "wt");

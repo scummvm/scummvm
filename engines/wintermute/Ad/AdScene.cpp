@@ -940,7 +940,7 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// *** display/update everything
-	Game->_renderer->Setup2D();
+	Game->_renderer->setup2D();
 
 	// for each layer
 	/* int MainOffsetX = 0; */
@@ -985,7 +985,7 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 			switch (Node->_type) {
 			case OBJECT_ENTITY:
 				if (Node->_entity->_active && (Game->_editorMode || !Node->_entity->_editorOnly)) {
-					Game->_renderer->Setup2D();
+					Game->_renderer->setup2D();
 
 					if (Update) Node->_entity->update();
 					else Node->_entity->display();
@@ -1018,7 +1018,7 @@ HRESULT CAdScene::TraverseNodes(bool Update) {
 
 	// restore state
 	Game->SetOffset(OrigX, OrigY);
-	Game->_renderer->Setup2D();
+	Game->_renderer->setup2D();
 
 	// display/update fader
 	if (_fader) {
@@ -1104,7 +1104,7 @@ HRESULT CAdScene::DisplayRegionContent(CAdRegion *Region, bool Display3DOnly) {
 
 		if (Display3DOnly && !Obj->_is3D) continue;
 
-		Game->_renderer->Setup2D();
+		Game->_renderer->setup2D();
 
 		if (Game->_editorMode || !Obj->_editorOnly) Obj->display();
 		Obj->_drawn = true;
@@ -1165,7 +1165,7 @@ HRESULT CAdScene::DisplayRegionContentOld(CAdRegion *Region) {
 
 
 		if (obj != NULL) {
-			Game->_renderer->Setup2D();
+			Game->_renderer->setup2D();
 
 			if (Game->_editorMode || !obj->_editorOnly) obj->display();
 			obj->_drawn = true;

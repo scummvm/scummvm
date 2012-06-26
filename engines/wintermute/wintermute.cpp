@@ -208,7 +208,7 @@ int WinterMuteEngine::init() {
 	HRESULT ret;
 	
 	// initialize the renderer
-	ret = _game->_renderer->InitRenderer(_game->_settingsResWidth, _game->_settingsResHeight, windowedMode);
+	ret = _game->_renderer->initRenderer(_game->_settingsResWidth, _game->_settingsResHeight, windowedMode);
 	if (FAILED(ret)) {
 		_game->LOG(ret, "Error initializing renderer. Exiting.");
 		
@@ -278,7 +278,7 @@ int WinterMuteEngine::messageLoop() {
 			_game->DisplayDebugInfo();
 			
 			// ***** flip
-			if (!_game->_suspendedRendering) _game->_renderer->Flip();
+			if (!_game->_suspendedRendering) _game->_renderer->flip();
 			if (_game->_loading) _game->LoadGame(_game->_scheduledLoadSlot);
 		}
 		if (_game->_quitting) break;

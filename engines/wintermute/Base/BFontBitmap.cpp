@@ -138,11 +138,11 @@ int CBFontBitmap::TextHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 	bool new_line = false;
 	bool long_line = false;
 
-	if (draw) Game->_renderer->StartSpriteBatch();
+	if (draw) Game->_renderer->startSpriteBatch();
 
 	while (!done) {
 		if (max_height > 0 && (NumLines + 1)*_tileHeight > max_height) {
-			if (draw) Game->_renderer->EndSpriteBatch();
+			if (draw) Game->_renderer->endSpriteBatch();
 			return NumLines * _tileHeight;
 		}
 
@@ -208,7 +208,7 @@ int CBFontBitmap::TextHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 		}
 	}
 
-	if (draw) Game->_renderer->EndSpriteBatch();
+	if (draw) Game->_renderer->endSpriteBatch();
 
 	return NumLines * _tileHeight;
 }

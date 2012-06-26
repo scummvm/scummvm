@@ -75,7 +75,7 @@ HRESULT CUITiledImage::display(int X, int Y, int Width, int Height) {
 
 	int col, row;
 
-	Game->_renderer->StartSpriteBatch();
+	Game->_renderer->startSpriteBatch();
 
 	// top left/right
 	_image->_surface->displayTrans(X,                                                       Y, _upLeft);
@@ -112,7 +112,7 @@ HRESULT CUITiledImage::display(int X, int Y, int Width, int Height) {
 		yyy += tile_width;
 	}
 
-	Game->_renderer->EndSpriteBatch();
+	Game->_renderer->endSpriteBatch();
 
 	return S_OK;
 }

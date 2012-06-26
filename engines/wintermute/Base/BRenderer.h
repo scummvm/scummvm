@@ -47,61 +47,61 @@ public:
 	int _drawOffsetX;
 	int _drawOffsetY;
 
-	virtual void DumpData(const char *Filename) {};
-	virtual CBImage *TakeScreenshot();
-	virtual HRESULT SetViewport(int left, int top, int right, int bottom);
-	virtual HRESULT SetViewport(RECT *Rect);
-	virtual HRESULT SetScreenViewport();
-	virtual HRESULT Fade(uint16 Alpha);
-	virtual HRESULT FadeToColor(uint32 Color, Common::Rect *rect = NULL);
-	virtual HRESULT DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color);
-	virtual HRESULT DrawRect(int X1, int Y1, int X2, int Y2, uint32 Color, int Width = 1);
+	virtual void dumpData(const char *Filename) {};
+	virtual CBImage *takeScreenshot();
+	virtual HRESULT setViewport(int left, int top, int right, int bottom);
+	virtual HRESULT setViewport(RECT *Rect);
+	virtual HRESULT setScreenViewport();
+	virtual HRESULT fade(uint16 Alpha);
+	virtual HRESULT fadeToColor(uint32 Color, Common::Rect *rect = NULL);
+	virtual HRESULT drawLine(int X1, int Y1, int X2, int Y2, uint32 Color);
+	virtual HRESULT drawRect(int X1, int Y1, int X2, int Y2, uint32 Color, int Width = 1);
 	CBRenderer(CBGame *inGame = NULL);
 	virtual ~CBRenderer();
-	virtual HRESULT SetProjection() {
+	virtual HRESULT setProjection() {
 		return S_OK;
 	};
 
-	virtual HRESULT WindowedBlt();
-	virtual HRESULT Fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
-	virtual void OnWindowChange();
-	virtual HRESULT InitRenderer(int width, int height, bool windowed);
-	virtual HRESULT Flip();
-	virtual void InitLoop();
-	virtual HRESULT SwitchFullscreen();
-	virtual HRESULT Setup2D(bool Force = false);
-	virtual HRESULT SetupLines();
+	virtual HRESULT windowedBlt();
+	virtual HRESULT fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
+	virtual void onWindowChange();
+	virtual HRESULT initRenderer(int width, int height, bool windowed);
+	virtual HRESULT flip();
+	virtual void initLoop();
+	virtual HRESULT switchFullscreen();
+	virtual HRESULT setup2D(bool Force = false);
+	virtual HRESULT setupLines();
 
-	virtual const char *GetName() {
+	virtual const char *getName() {
 		return "";
 	};
-	virtual HRESULT DisplayDebugInfo() {
+	virtual HRESULT displayDebugInfo() {
 		return E_FAIL;
 	};
-	virtual HRESULT DrawShaderQuad() {
+	virtual HRESULT drawShaderQuad() {
 		return E_FAIL;
 	}
 
-	virtual float GetScaleRatioX() const {
+	virtual float getScaleRatioX() const {
 		return 1.0f;
 	}
-	virtual float GetScaleRatioY() const {
+	virtual float getScaleRatioY() const {
 		return 1.0f;
 	}
 
-	HRESULT ClipCursor();
-	HRESULT UnclipCursor();
+	HRESULT clipCursor();
+	HRESULT unclipCursor();
 
-	CBObject *GetObjectAt(int X, int Y);
-	void DeleteRectList();
+	CBObject *getObjectAt(int X, int Y);
+	void deleteRectList();
 
-	virtual HRESULT StartSpriteBatch() {
+	virtual HRESULT startSpriteBatch() {
 		return S_OK;
 	};
-	virtual HRESULT EndSpriteBatch() {
+	virtual HRESULT endSpriteBatch() {
 		return S_OK;
 	};
-	bool PointInViewport(POINT *P);
+	bool pointInViewport(POINT *P);
 	uint32 _forceAlphaColor;
 	HINSTANCE _instance;
 	HWND _window;

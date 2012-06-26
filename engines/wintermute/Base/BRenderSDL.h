@@ -43,38 +43,38 @@ public:
 	CBRenderSDL(CBGame *inGame);
 	~CBRenderSDL();
 
-	const char *GetName();
+	const char *getName();
 
-	HRESULT InitRenderer(int width, int height, bool windowed);
-	HRESULT Flip();
-	HRESULT Fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
+	HRESULT initRenderer(int width, int height, bool windowed);
+	HRESULT flip();
+	HRESULT fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
 
-	HRESULT Fade(uint16 Alpha);
-	HRESULT FadeToColor(uint32 Color, Common::Rect *rect = NULL);
+	HRESULT fade(uint16 Alpha);
+	HRESULT fadeToColor(uint32 Color, Common::Rect *rect = NULL);
 
-	HRESULT SwitchFullscreen();
+	HRESULT switchFullscreen();
 
-	HRESULT DrawLine(int X1, int Y1, int X2, int Y2, uint32 Color);
+	HRESULT drawLine(int X1, int Y1, int X2, int Y2, uint32 Color);
 
-	CBImage *TakeScreenshot();
+	CBImage *takeScreenshot();
 
 	void setAlphaMod(byte alpha);
 	void setColorMod(byte r, byte g, byte b);
 	void drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
 	void drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
 
-	HRESULT SetViewport(int left, int top, int right, int bottom);
+	HRESULT setViewport(int left, int top, int right, int bottom);
 
-	void ModTargetRect(Common::Rect *rect);
-	void PointFromScreen(POINT *point);
-	void PointToScreen(POINT *point);
+	void modTargetRect(Common::Rect *rect);
+	void pointFromScreen(POINT *point);
+	void pointToScreen(POINT *point);
 
-	void DumpData(const char *Filename);
+	void dumpData(const char *Filename);
 
-	float GetScaleRatioX() const {
+	float getScaleRatioX() const {
 		return _ratioX;
 	}
-	float GetScaleRatioY() const {
+	float getScaleRatioY() const {
 		return _ratioY;
 	}
 

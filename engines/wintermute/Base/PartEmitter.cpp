@@ -289,7 +289,7 @@ HRESULT CPartEmitter::updateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::display(CBRegion *Region) {
-	if (_sprites.GetSize() <= 1) Game->_renderer->StartSpriteBatch();
+	if (_sprites.GetSize() <= 1) Game->_renderer->startSpriteBatch();
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
 		if (Region != NULL && _useRegion) {
@@ -299,7 +299,7 @@ HRESULT CPartEmitter::display(CBRegion *Region) {
 		_particles[i]->display(this);
 	}
 
-	if (_sprites.GetSize() <= 1) Game->_renderer->EndSpriteBatch();
+	if (_sprites.GetSize() <= 1) Game->_renderer->endSpriteBatch();
 
 	return S_OK;
 }

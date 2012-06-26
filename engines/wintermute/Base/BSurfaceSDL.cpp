@@ -510,7 +510,7 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	position.setWidth((float)srcRect.width() * ZoomX / 100.f);
 	position.setHeight((float)srcRect.height() * ZoomX / 100.f);
 
-	renderer->ModTargetRect(&position);
+	renderer->modTargetRect(&position);
 
 	/*  position.left += offsetX;
 	    position.top += offsetY;*/

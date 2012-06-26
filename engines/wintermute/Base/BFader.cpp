@@ -87,7 +87,7 @@ HRESULT CBFader::update() {
 HRESULT CBFader::display() {
 	if (!_active) return S_OK;
 
-	if (_currentAlpha > 0x00) return Game->_renderer->FadeToColor(DRGBA(_red, _green, _blue, _currentAlpha));
+	if (_currentAlpha > 0x00) return Game->_renderer->fadeToColor(DRGBA(_red, _green, _blue, _currentAlpha));
 	else return S_OK;
 }
 

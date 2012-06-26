@@ -142,7 +142,7 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 
 	if (!_visible) return S_OK;
 
-	if (_fadeBackground) Game->_renderer->FadeToColor(_fadeColor);
+	if (_fadeBackground) Game->_renderer->fadeToColor(_fadeColor);
 
 	if (_dragging) {
 		_posX += (Game->_mousePos.x - _dragFrom.x);

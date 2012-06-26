@@ -1688,8 +1688,8 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 	if (Update) InitLoop();
 
 	// fill black
-	_renderer->Fill(0, 0, 0);
-	if (!_editorMode) _renderer->SetScreenViewport();
+	_renderer->fill(0, 0, 0);
+	if (!_editorMode) _renderer->setScreenViewport();
 
 	// playing exclusive video?
 	if (_videoPlayer->isPlaying()) {
@@ -1727,7 +1727,7 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 			// display normal windows
 			DisplayWindows(false);
 
-			SetActiveObject(Game->_renderer->GetObjectAt(p.x, p.y));
+			SetActiveObject(Game->_renderer->getObjectAt(p.x, p.y));
 
 			// textual info
 			DisplaySentences(_state == GAME_FROZEN);
@@ -1942,7 +1942,7 @@ bool CAdGame::ValidMouse() {
 	POINT Pos;
 	CBPlatform::GetCursorPos(&Pos);
 
-	return _renderer->PointInViewport(&Pos);
+	return _renderer->pointInViewport(&Pos);
 }
 
 //////////////////////////////////////////////////////////////////////////

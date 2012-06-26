@@ -54,13 +54,13 @@ HRESULT CBSaveThumbHelper::StoreThumbnail(bool DoFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
 			// works normally for direct3d
 			Game->DisplayContent(false);
-			Game->_renderer->Flip();
+			Game->_renderer->flip();
 
 			Game->DisplayContent(false);
-			Game->_renderer->Flip();
+			Game->_renderer->flip();
 		}
 
-		CBImage *Screenshot = Game->_renderer->TakeScreenshot();
+		CBImage *Screenshot = Game->_renderer->takeScreenshot();
 		if (!Screenshot) return E_FAIL;
 
 		// normal thumbnail
