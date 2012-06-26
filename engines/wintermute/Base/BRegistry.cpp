@@ -26,16 +26,14 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include <fstream>
 #include "engines/wintermute/tinyxml/tinyxml.h"
-#undef FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BRegistry.h"
 #include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/utils/StringUtil.h"
-#include "engines/wintermute/tinyxml/tinyxml.h"
 #include "engines/wintermute/utils/utils.h"
+
+#include "common/file.h"
 
 namespace WinterMute {
 
@@ -218,12 +216,12 @@ void CBRegistry::SaveXml(const AnsiString fileName, PathValueMap &values) {
 	TiXmlPrinter printer;
 	doc.Accept(&printer);
 
-	std::ofstream stream;
+	Common::DumpFile stream;
 	stream.open(fileName.c_str());
 
-	if (!stream.is_open()) return;
+	if (!stream.isOpen()) return;
 	else {
-		stream << printer.CStr();
+		stream.write(printer.CStr(), printer.Size());
 		stream.close();
 	}
 }
