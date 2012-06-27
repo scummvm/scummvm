@@ -332,6 +332,10 @@ void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 void Video::drawPackedSprite(const char *path, Surface &dest, int width) {
 	int32 size;
 	byte *data = _vm->_dataIO->getFile(path, size);
+	if (!data) {
+		warning("Video::drawPackedSprite(): Failed to open sprite \"%s\"", path);
+		return;
+	}
 
 	drawPackedSprite(data, width, dest.getHeight(), 0, 0, 0, dest);
 	delete[] data;
