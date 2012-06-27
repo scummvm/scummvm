@@ -308,6 +308,12 @@ protected:
 	 */
 	const ADGameDescription *detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback, ADFilePropertiesMap *filesProps = 0) const;
 
+	/**
+	 * Log and print a report that we found an unknown game variant, together with the file
+	 * names, sizes and MD5 sums.
+	 */
+	void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const;
+
 	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;
 
