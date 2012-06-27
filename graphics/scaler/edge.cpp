@@ -126,47 +126,8 @@
 #define RGB_SHIFT 13			/* bit shift for RGB precision */
 
 const int16 one_sqrt2 = (int16) (((int16)1<<GREY_SHIFT) / sqrt(2.0) + 0.5);
-int16 rgb_table[65536][3] = {0};	/* table lookup for RGB */
-int16 greyscale_table[3][65536] = {0};	/* greyscale tables */
-int16 *chosen_greyscale;		/* pointer to chosen greyscale table */
-int16 *bptr_global;			/* too awkward to pass variables */
-int8 sim_sum;				/* sum of similarity matrix */
-
-uint16 div3[189];			/* tables for pixel interpolation */
-uint16 div9[567];
-
-int32 max_old_src_size = 0;		/* maximum observed rectangle size */
-int32 max_overlay_size = 0;		/* maximum observed overlay size */
-int32 max_old_dst_size = 0;
-int32 max_dst_overlay_size = 0;
-uint16 *old_src = NULL;			/* old src array */
-uint16 *old_overlay = NULL;		/* holds the old overlay */
-uint16 *old_dst = NULL;			/* old dst array */
-uint16 *old_dst_overlay = NULL;		/* old dst overlay array */
-
-int cur_screen_width = 0;		/* current game screen w and h */
-int cur_screen_height = 0;
-int old_screen_width = 0;		/* previous game screen w and h */
-int old_screen_height = 0;
-int cur_dst_screen_width = 0;		/* scaled dst w and h */
-int cur_dst_screen_height = 0;
-int old_dst_screen_width = 0;
-int old_dst_screen_height = 0;
-int cur_overlay_width = 0;
-int cur_overlay_height = 0;
-int old_overlay_width = 0;
-int old_overlay_height = 0;
-int cur_dst_overlay_width = 0;
-int cur_dst_overlay_height = 0;
-int old_dst_overlay_width = 0;
-int old_dst_overlay_height = 0;
-int max_scale = -1;			/* used for dst buffer arrays */
-
-int init_flag = 0;			/* have the tables been initialized? */
-const uint16 *src_addr_min = NULL;	/* start of src screen array */
-const uint16 *src_addr_max = NULL;	/* end of src screen array */
-
 const int16 int32_sqrt3 = (int16) (((int16)1<<GREY_SHIFT) * sqrt(3.0) + 0.5);
+
 
 #define interpolate_1_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1<ColorMask>(a,b) : interpolate32_1_1<ColorMask>(a,b))
 #define interpolate_3_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_3_1<ColorMask>(a,b) : interpolate32_3_1<ColorMask>(a,b))
@@ -354,7 +315,7 @@ double fast_atan(double x0)
  * bitplanes.  The increase in image quality is well worth the speed hit.
  *
  */
-int16 * chooseGreyscale(uint16 *pixels)
+int16 * EdgePlugin::chooseGreyscale(uint16 *pixels)
 {
 	static int16 greyscale_diffs[3][8];
 	static int16 bplanes[3][9];
@@ -372,7 +333,7 @@ int16 * chooseGreyscale(uint16 *pixels)
 
 		sum_diffs = 0;
 
-		grey_ptr = greyscale_table[i];
+		grey_ptr = _greyscaleTable[i];
 
 		/* fill the 9 pixel window with greyscale values */
 		bptr = bplanes[i];
@@ -409,8 +370,8 @@ int16 * chooseGreyscale(uint16 *pixels)
 	{
 		if (!scores[1]) return NULL;
 
-		chosen_greyscale = greyscale_table[1];
-		bptr_global = bplanes[1];
+		_chosenGreyscale = _greyscaleTable[1];
+		_bptr = bplanes[1];
 		return greyscale_diffs[1];
 	}
 
@@ -418,15 +379,15 @@ int16 * chooseGreyscale(uint16 *pixels)
 	{
 		if (!scores[0]) return NULL;
 
-		chosen_greyscale = greyscale_table[0];
-		bptr_global = bplanes[0];
+		_chosenGreyscale = _greyscaleTable[0];
+		_bptr = bplanes[0];
 		return greyscale_diffs[0];
 	}
 
 	if (!scores[2]) return NULL;
 
-	chosen_greyscale = greyscale_table[2];
-	bptr_global = bplanes[2];
+	_chosenGreyscale = _greyscaleTable[2];
+	_bptr = bplanes[2];
 	return greyscale_diffs[2];
 }
 
@@ -439,13 +400,12 @@ int16 * chooseGreyscale(uint16 *pixels)
  * useful results.
  *
  */
-int32 calcPixelDiffNosqrt(uint16 pixel1, uint16 pixel2)
-{
+int32 EdgePlugin::calcPixelDiffNosqrt(uint16 pixel1, uint16 pixel2) {
 
 #if 1	/* distance between pixels, weighted by roughly luma proportions */
 	int32 sum = 0;
-	int16 *rgb_ptr1 = rgb_table[pixel1];
-	int16 *rgb_ptr2 = rgb_table[pixel2];
+	int16 *rgb_ptr1 = _rgbTable[pixel1];
+	int16 *rgb_ptr2 = _rgbTable[pixel2];
 	int16 diff;
 
 	diff = (*rgb_ptr1++ - *rgb_ptr2++) << 1;
@@ -460,18 +420,18 @@ int32 calcPixelDiffNosqrt(uint16 pixel1, uint16 pixel2)
 
 #if 0	/* distance between pixels, weighted by chosen greyscale proportions */
 	int32 sum = 0;
-	int16 *rgb_ptr1 = rgb_table[pixel1];
-	int16 *rgb_ptr2 = rgb_table[pixel2];
+	int16 *rgb_ptr1 = _rgbTable[pixel1];
+	int16 *rgb_ptr2 = _rgbTable[pixel2];
 	int16 diff;
 	int r_shift, g_shift, b_shift;
 
-	if (chosen_greyscale == greyscale_table[1])
+	if (_chosenGreyscale == _greyscaleTable[1])
 	{
 		r_shift = 1;
 		g_shift = 2;
 		b_shift = 0;
 	}
-	else if (chosen_greyscale == greyscale_table[0])
+	else if (_chosenGreyscale == _greyscaleTable[0])
 	{
 		r_shift = 2;
 		g_shift = 1;
@@ -496,8 +456,8 @@ int32 calcPixelDiffNosqrt(uint16 pixel1, uint16 pixel2)
 
 #if 0	/* distance between pixels, unweighted */
 	int32 sum = 0;
-	int16 *rgb_ptr1 = rgb_table[pixel1];
-	int16 *rgb_ptr2 = rgb_table[pixel2];
+	int16 *rgb_ptr1 = _rgbTable[pixel1];
+	int16 *rgb_ptr2 = _rgbTable[pixel2];
 	int16 diff;
 
 	diff = *rgb_ptr1++ - *rgb_ptr2++;
@@ -511,7 +471,7 @@ int32 calcPixelDiffNosqrt(uint16 pixel1, uint16 pixel2)
 #endif
 
 #if 0	/* use the greyscale directly */
-	return labs(chosen_greyscale[pixel1] - chosen_greyscale[pixel2]);
+	return labs(_chosenGreyscale[pixel1] - _chosenGreyscale[pixel2]);
 #endif
 }
 
@@ -531,10 +491,9 @@ int32 calcPixelDiffNosqrt(uint16 pixel1, uint16 pixel2)
  * since everything I have tried has lead to slight mis-detection errors.
  *
  */
-int findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
+int EdgePlugin::findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
 		int8 *sim,
-		int32 *return_angle)
-{
+		int32 *return_angle) {
 	struct xy_point
 	{
 		int16 x, y;
@@ -584,11 +543,11 @@ int findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
 	/* calculate yes/no similarity matrix to center pixel */
 	/* store the number of similar pixels */
 	cutoff = ((int16)1<<(GREY_SHIFT-3));
-	for (i = 0, sim_sum = 0; i < 8; i++)
-		sim_sum += (sim[i] = (diffs[i] < cutoff));
+	for (i = 0, _simSum = 0; i < 8; i++)
+		_simSum += (sim[i] = (diffs[i] < cutoff));
 
 	/* don't reverse pattern for off-center knights and sharp corners */
-	if (sim_sum >= 3 && sim_sum <= 5)
+	if (_simSum >= 3 && _simSum <= 5)
 	{
 		/* |. */ /* '- */
 		if (sim[1] && sim[4] && sim[5] && !sim[3] && !sim[6] &&
@@ -611,7 +570,7 @@ int findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
 			reverse_flag = 0;
 
 		/* 90 degree corners */
-		else if (sim_sum == 3)
+		else if (_simSum == 3)
 		{
 			if ((sim[0] && sim[1] && sim[3]) ||
 					(sim[1] && sim[2] && sim[4]) ||
@@ -623,11 +582,11 @@ int findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
 
 	/* redo similarity array, less stringent for later checks */
 	cutoff = ((int16)1<<(GREY_SHIFT-1));
-	for (i = 0, sim_sum = 0; i < 8; i++)
-		sim_sum += (sim[i] = (diffs[i] < cutoff));
+	for (i = 0, _simSum = 0; i < 8; i++)
+		_simSum += (sim[i] = (diffs[i] < cutoff));
 
 	/* center pixel is different from all the others, not an edge */
-	if (sim_sum == 0) return '0';
+	if (_simSum == 0) return '0';
 
 	/* reverse the difference array, so most similar is closest to 1 */
 	if (reverse_flag)
@@ -774,8 +733,7 @@ int findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
 
 
 /* Check for mis-detected arrow patterns.  Return 1 (good), 0 (bad). */
-int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
-{
+int EdgePlugin::checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag) {
 	uint16 center = pixels[4];
 
 	if (center == pixels[0] && center == pixels[2] &&
@@ -848,7 +806,7 @@ int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
 					sim[1] == sim[3] &&
 					sim[3] == sim[6] &&
 					((sim[2] && sim[7]) ||
-					 (half_flag && sim_sum == 2 && sim[4] &&
+					 (half_flag && _simSum == 2 && sim[4] &&
 					  (sim[2] || sim[7]))))	/* < */
 				return 1;
 			break;
@@ -857,7 +815,7 @@ int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
 					sim[1] == sim[4] &&
 					sim[4] == sim[6] &&
 					((sim[0] && sim[5]) ||
-					 (half_flag && sim_sum == 2 && sim[3] &&
+					 (half_flag && _simSum == 2 && sim[3] &&
 					  (sim[0] || sim[5]))))	/* > */
 				return 1;
 			break;
@@ -866,7 +824,7 @@ int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
 					sim[1] == sim[3] &&
 					sim[3] == sim[4] &&
 					((sim[5] && sim[7]) ||
-					 (half_flag && sim_sum == 2 && sim[6] &&
+					 (half_flag && _simSum == 2 && sim[6] &&
 					  (sim[5] || sim[7]))))	/* ^ */
 				return 1;
 			break;
@@ -875,7 +833,7 @@ int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
 					sim[3] == sim[6] &&
 					sim[4] == sim[6] &&
 					((sim[0] && sim[2]) ||
-					 (half_flag && sim_sum == 2 && sim[1] &&
+					 (half_flag && _simSum == 2 && sim[1] &&
 					  (sim[0] || sim[2]))))	/* v */
 				return 1;
 			break;
@@ -894,9 +852,8 @@ int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
  * refinement algorithms.
  *
  */
-int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
-		int8 *sim, double angle)
-{
+int EdgePlugin::refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
+		int8 *sim, double angle) {
 	int32 sums_dir[9] = { 0 };
 	int32 sum;
 	int32 best_sum;
@@ -1234,7 +1191,7 @@ int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 		case '\\':
 
 			/* CHECK -- handle noisy half-diags */
-			if (sim_sum == 1)
+			if (_simSum == 1)
 			{
 				if (pixels[1] == pixels[3] && pixels[3] == pixels[5] &&
 						pixels[5] == pixels[7])
@@ -1400,7 +1357,7 @@ int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 			}
 
 			/* CHECK -- handle zig-zags */
-			if (sim_sum == 3)
+			if (_simSum == 3)
 			{
 				if ((best_dir == 0 || best_dir == 1) &&
 						sim[0] && sim[1] && sim[4])
@@ -1435,7 +1392,7 @@ int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 						return 17;		/* .\ */
 				}
 
-				if (sim_sum == 3 && sim[0] && sim[7] &&
+				if (_simSum == 3 && sim[0] && sim[7] &&
 						pixels[1] == pixels[3] && pixels[3] == pixels[5] &&
 						pixels[5] == pixels[7])
 				{
@@ -1445,7 +1402,7 @@ int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 						return 17;		/* .\ */
 				}
 
-				if (sim_sum == 3 && sim[2] && sim[5])
+				if (_simSum == 3 && sim[2] && sim[5])
 				{
 					if (sim[0])
 						return 18;		/* '/ */
@@ -1498,7 +1455,7 @@ int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 		case '/':
 
 			/* CHECK -- handle noisy half-diags */
-			if (sim_sum == 1)
+			if (_simSum == 1)
 			{
 				if (pixels[1] == pixels[3] && pixels[3] == pixels[5] &&
 						pixels[5] == pixels[7])
@@ -1672,7 +1629,7 @@ int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 			}
 
 			/* CHECK -- handle zig-zags */
-			if (sim_sum == 3)
+			if (_simSum == 3)
 			{
 				if ((best_dir == 0 || best_dir == 1) &&
 						sim[2] && sim[4] && sim[6])
@@ -1707,7 +1664,7 @@ int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 						return 19;		/* /. */
 				}
 
-				if (sim_sum == 3 && sim[2] && sim[5] &&
+				if (_simSum == 3 && sim[2] && sim[5] &&
 						pixels[1] == pixels[3] && pixels[3] == pixels[5] &&
 						pixels[5] == pixels[7])
 				{
@@ -1717,7 +1674,7 @@ int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 						return 19;		/* /. */
 				}
 
-				if (sim_sum == 3 && sim[0] && sim[7])
+				if (_simSum == 3 && sim[0] && sim[7])
 				{
 					if (sim[2])
 						return 16;		/* \' */
@@ -1784,8 +1741,7 @@ int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 
 
 /* "Chess Knight" patterns can be mis-detected, fix easy cases. */
-int fix_knights(int sub_type, uint16 *pixels, int8 *sim)
-{
+int EdgePlugin::fixKnights(int sub_type, uint16 *pixels, int8 *sim) {
 	uint16 center = pixels[4];
 	int dir = sub_type;
 	int n = 0;
@@ -1804,56 +1760,56 @@ int fix_knights(int sub_type, uint16 *pixels, int8 *sim)
 	{
 		case 1:		/* '- */
 			if (sim[0] && sim[4] &&
-					!(sim_sum == 3 && sim[5] &&
+					!(_simSum == 3 && sim[5] &&
 						pixels[0] == pixels[4] && pixels[6] == pixels[4]))
 				ok_orig_flag = 1;
 			break;
 
 		case 2:		/* -. */
 			if (sim[3] && sim[7] &&
-					!(sim_sum == 3 && sim[2] &&
+					!(_simSum == 3 && sim[2] &&
 						pixels[2] == pixels[4] && pixels[8] == pixels[4]))
 				ok_orig_flag = 1;
 			break;
 
 		case 4:		/* '| */
 			if (sim[0] && sim[6] &&
-					!(sim_sum == 3 && sim[2] &&
+					!(_simSum == 3 && sim[2] &&
 						pixels[0] == pixels[4] && pixels[2] == pixels[4]))
 				ok_orig_flag = 1;
 			break;
 
 		case 5:		/* |. */
 			if (sim[1] && sim[7] &&
-					!(sim_sum == 3 && sim[5] &&
+					!(_simSum == 3 && sim[5] &&
 						pixels[6] == pixels[4] && pixels[8] == pixels[4]))
 				ok_orig_flag = 1;
 			break;
 
 		case 7:		/* |' */
 			if (sim[2] && sim[6] &&
-					!(sim_sum == 3 && sim[0] &&
+					!(_simSum == 3 && sim[0] &&
 						pixels[0] == pixels[4] && pixels[2] == pixels[4]))
 				ok_orig_flag = 1;
 			break;
 
 		case 8:		/* .| */
 			if (sim[1] && sim[5] &&
-					!(sim_sum == 3 && sim[7] &&
+					!(_simSum == 3 && sim[7] &&
 						pixels[6] == pixels[4] && pixels[8] == pixels[4]))
 				ok_orig_flag = 1;
 			break;
 
 		case 10:	/* -' */
 			if (sim[2] && sim[3] &&
-					!(sim_sum == 3 && sim[7] &&
+					!(_simSum == 3 && sim[7] &&
 						pixels[2] == pixels[4] && pixels[8] == pixels[4]))
 				ok_orig_flag = 1;
 			break;
 
 		case 11:	/* .- */
 			if (sim[4] && sim[5] &&
-					!(sim_sum == 3 && sim[0] &&
+					!(_simSum == 3 && sim[0] &&
 						pixels[0] == pixels[4] && pixels[6] == pixels[4]))
 				ok_orig_flag = 1;
 			break;
@@ -1944,9 +1900,8 @@ int fix_knights(int sub_type, uint16 *pixels, int8 *sim)
 
 /* Fill pixel grid without interpolation, using the detected edge */
 template<typename ColorMask>
-void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
-		uint16 *pixels, int sub_type, int16 *bptr)
-{
+void EdgePlugin::anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
+		uint16 *pixels, int sub_type, int16 *bptr) {
 	uint16 *dptr2;
 	int16 tmp_grey;
 	uint16 center = pixels[4];
@@ -1962,7 +1917,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[6]];
+			tmp_grey = _chosenGreyscale[tmp[6]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[3]);
 			diff2 = labs(bptr[4] - bptr[7]);
@@ -1982,7 +1937,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				else
 					tmp[6] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[6]];
+				tmp_grey = _chosenGreyscale[tmp[6]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[8]);
 				if (diff1 <= diff2)
@@ -1996,7 +1951,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			tmp_grey = chosen_greyscale[tmp[2]];
+			tmp_grey = _chosenGreyscale[tmp[2]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[5]);
 			diff2 = labs(bptr[4] - bptr[1]);
@@ -2016,7 +1971,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				else
 					tmp[2] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[2]];
+				tmp_grey = _chosenGreyscale[tmp[2]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[0]);
 				if (diff1 <= diff2)
@@ -2066,7 +2021,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			tmp_grey = chosen_greyscale[tmp[2]];
+			tmp_grey = _chosenGreyscale[tmp[2]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[1]);
 			diff2 = labs(bptr[4] - bptr[5]);
@@ -2086,7 +2041,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				else
 					tmp[2] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[2]];
+				tmp_grey = _chosenGreyscale[tmp[2]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[8]);
 				if (diff1 <= diff2)
@@ -2100,7 +2055,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[6]];
+			tmp_grey = _chosenGreyscale[tmp[6]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[7]);
 			diff2 = labs(bptr[4] - bptr[3]);
@@ -2120,7 +2075,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				else
 					tmp[6] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[6]];
+				tmp_grey = _chosenGreyscale[tmp[6]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[0]);
 				if (diff1 <= diff2)
@@ -2134,7 +2089,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			tmp_grey = chosen_greyscale[tmp[0]];
+			tmp_grey = _chosenGreyscale[tmp[0]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[1]);
 			diff2 = labs(bptr[4] - bptr[3]);
@@ -2154,7 +2109,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				else
 					tmp[0] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[0]];
+				tmp_grey = _chosenGreyscale[tmp[0]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[6]);
 				if (diff1 <= diff2)
@@ -2168,7 +2123,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[8]];
+			tmp_grey = _chosenGreyscale[tmp[8]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[7]);
 			diff2 = labs(bptr[4] - bptr[5]);
@@ -2188,7 +2143,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				else
 					tmp[8] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[8]];
+				tmp_grey = _chosenGreyscale[tmp[8]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[2]);
 				if (diff1 <= diff2)
@@ -2238,7 +2193,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[8]];
+			tmp_grey = _chosenGreyscale[tmp[8]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[5]);
 			diff2 = labs(bptr[4] - bptr[7]);
@@ -2258,7 +2213,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				else
 					tmp[8] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[8]];
+				tmp_grey = _chosenGreyscale[tmp[8]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[6]);
 				if (diff1 <= diff2)
@@ -2272,7 +2227,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			tmp_grey = chosen_greyscale[tmp[0]];
+			tmp_grey = _chosenGreyscale[tmp[0]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[3]);
 			diff2 = labs(bptr[4] - bptr[1]);
@@ -2292,7 +2247,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				else
 					tmp[0] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[0]];
+				tmp_grey = _chosenGreyscale[tmp[0]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[2]);
 				if (diff1 <= diff2)
@@ -2306,7 +2261,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			tmp_grey = chosen_greyscale[tmp[0]];
+			tmp_grey = _chosenGreyscale[tmp[0]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[1]);
 			diff2 = labs(bptr[4] - bptr[3]);
@@ -2328,7 +2283,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			}
 
 			tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[6]];
+			tmp_grey = _chosenGreyscale[tmp[6]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[3]);
 			diff2 = labs(bptr[4] - bptr[7]);
@@ -2356,7 +2311,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			tmp_grey = chosen_greyscale[tmp[2]];
+			tmp_grey = _chosenGreyscale[tmp[2]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[5]);
 			diff2 = labs(bptr[4] - bptr[1]);
@@ -2378,7 +2333,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			}
 
 			tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[8]];
+			tmp_grey = _chosenGreyscale[tmp[8]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[7]);
 			diff2 = labs(bptr[4] - bptr[5]);
@@ -2406,7 +2361,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			tmp_grey = chosen_greyscale[tmp[0]];
+			tmp_grey = _chosenGreyscale[tmp[0]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[1]);
 			diff2 = labs(bptr[4] - bptr[3]);
@@ -2428,7 +2383,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			}
 
 			tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			tmp_grey = chosen_greyscale[tmp[2]];
+			tmp_grey = _chosenGreyscale[tmp[2]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[5]);
 			diff2 = labs(bptr[4] - bptr[1]);
@@ -2456,7 +2411,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 				tmp[i] = center;
 
 			tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[6]];
+			tmp_grey = _chosenGreyscale[tmp[6]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[3]);
 			diff2 = labs(bptr[4] - bptr[7]);
@@ -2478,7 +2433,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			}
 
 			tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[8]];
+			tmp_grey = _chosenGreyscale[tmp[8]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[7]);
 			diff2 = labs(bptr[4] - bptr[5]);
@@ -2551,11 +2506,10 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 
 /* Fill pixel grid with or without interpolation, using the detected edge */
 template<typename ColorMask>
-void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
+void EdgePlugin::anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		uint16 *pixels, int sub_type, int16 *bptr,
 		int8 *sim,
-		int interpolate_2x)
-{
+		int interpolate_2x) {
 	uint16 *dptr2;
 	uint16 center = pixels[4];
 	int32 diff1, diff2, diff3;
@@ -2569,7 +2523,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[1] = tmp[3] = center;
 
 			tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[2]];
+			tmp_grey = _chosenGreyscale[tmp[2]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[3]);
 			diff2 = labs(bptr[4] - bptr[7]);
@@ -2589,7 +2543,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				else
 					tmp[2] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[2]];
+				tmp_grey = _chosenGreyscale[tmp[2]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[8]);
 				if (diff1 <= diff2)
@@ -2609,7 +2563,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[2]])
+						if (bptr[4] > _chosenGreyscale[tmp[2]])
 							tmp[2] = center;
 					}
 				}
@@ -2621,7 +2575,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[2] = tmp[3] = center;
 
 			tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			tmp_grey = chosen_greyscale[tmp[1]];
+			tmp_grey = _chosenGreyscale[tmp[1]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[5]);
 			diff2 = labs(bptr[4] - bptr[1]);
@@ -2641,7 +2595,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				else
 					tmp[1] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[1]];
+				tmp_grey = _chosenGreyscale[tmp[1]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[0]);
 				if (diff1 <= diff2)
@@ -2661,7 +2615,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[1]])
+						if (bptr[4] > _chosenGreyscale[tmp[1]])
 							tmp[1] = center;
 					}
 				}
@@ -2695,8 +2649,8 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
 				 * nearest-neighbor, so detect them and don't anti-alias them.
 				 */
-				else if (bptr[4] > chosen_greyscale[tmp[1]] ||
-						(sim_sum == 1 && (sim[0] || sim[7]) &&
+				else if (bptr[4] > _chosenGreyscale[tmp[1]] ||
+						(_simSum == 1 && (sim[0] || sim[7]) &&
 						 pixels[1] == pixels[3] && pixels[5] == pixels[7]))
 					tmp[1] = center;
 			}
@@ -2722,8 +2676,8 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
 				 * nearest-neighbor, so detect them and don't anti-alias them.
 				 */
-				else if (bptr[4] > chosen_greyscale[tmp[2]] ||
-						(sim_sum == 1 && (sim[0] || sim[7]) &&
+				else if (bptr[4] > _chosenGreyscale[tmp[2]] ||
+						(_simSum == 1 && (sim[0] || sim[7]) &&
 						 pixels[1] == pixels[3] && pixels[5] == pixels[7]))
 					tmp[2] = center;
 			}
@@ -2734,7 +2688,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[2] = tmp[3] = center;
 
 			tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			tmp_grey = chosen_greyscale[tmp[1]];
+			tmp_grey = _chosenGreyscale[tmp[1]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[1]);
 			diff2 = labs(bptr[4] - bptr[5]);
@@ -2754,7 +2708,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				else
 					tmp[1] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[1]];
+				tmp_grey = _chosenGreyscale[tmp[1]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[8]);
 				if (diff1 <= diff2)
@@ -2774,7 +2728,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[1]])
+						if (bptr[4] > _chosenGreyscale[tmp[1]])
 							tmp[1] = center;
 					}
 				}
@@ -2786,7 +2740,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[1] = tmp[3] = center;
 
 			tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[2]];
+			tmp_grey = _chosenGreyscale[tmp[2]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[7]);
 			diff2 = labs(bptr[4] - bptr[3]);
@@ -2806,7 +2760,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				else
 					tmp[2] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[2]];
+				tmp_grey = _chosenGreyscale[tmp[2]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[0]);
 				if (diff1 <= diff2)
@@ -2826,7 +2780,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[2]])
+						if (bptr[4] > _chosenGreyscale[tmp[2]])
 							tmp[2] = center;
 					}
 				}
@@ -2838,7 +2792,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[1] = tmp[2] = tmp[3] = center;
 
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			tmp_grey = chosen_greyscale[tmp[0]];
+			tmp_grey = _chosenGreyscale[tmp[0]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[1]);
 			diff2 = labs(bptr[4] - bptr[3]);
@@ -2858,7 +2812,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				else
 					tmp[0] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[0]];
+				tmp_grey = _chosenGreyscale[tmp[0]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[6]);
 				if (diff1 <= diff2)
@@ -2878,7 +2832,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[0]])
+						if (bptr[4] > _chosenGreyscale[tmp[0]])
 							tmp[0] = center;
 					}
 				}
@@ -2890,7 +2844,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[1] = tmp[2] = center;
 
 			tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[3]];
+			tmp_grey = _chosenGreyscale[tmp[3]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[7]);
 			diff2 = labs(bptr[4] - bptr[5]);
@@ -2910,7 +2864,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				else
 					tmp[3] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[3]];
+				tmp_grey = _chosenGreyscale[tmp[3]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[2]);
 				if (diff1 <= diff2)
@@ -2930,7 +2884,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[3]])
+						if (bptr[4] > _chosenGreyscale[tmp[3]])
 							tmp[3] = center;
 					}
 				}
@@ -2964,8 +2918,8 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
 				 * nearest-neighbor, so detect them and don't anti-alias them.
 				 */
-				else if (bptr[4] > chosen_greyscale[tmp[0]] ||
-						(sim_sum == 1 && (sim[2] || sim[5]) &&
+				else if (bptr[4] > _chosenGreyscale[tmp[0]] ||
+						(_simSum == 1 && (sim[2] || sim[5]) &&
 						 pixels[1] == pixels[5] && pixels[3] == pixels[7]))
 					tmp[0] = center;
 			}
@@ -2991,8 +2945,8 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
 				 * nearest-neighbor, so detect them and don't anti-alias them.
 				 */
-				else if (bptr[4] > chosen_greyscale[tmp[3]] ||
-						(sim_sum == 1 && (sim[2] || sim[5]) &&
+				else if (bptr[4] > _chosenGreyscale[tmp[3]] ||
+						(_simSum == 1 && (sim[2] || sim[5]) &&
 						 pixels[1] == pixels[5] && pixels[3] == pixels[7]))
 					tmp[3] = center;
 			}
@@ -3003,7 +2957,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[1] = tmp[2] = center;
 
 			tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[3]];
+			tmp_grey = _chosenGreyscale[tmp[3]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[5]);
 			diff2 = labs(bptr[4] - bptr[7]);
@@ -3023,7 +2977,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				else
 					tmp[3] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[3]];
+				tmp_grey = _chosenGreyscale[tmp[3]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[6]);
 				if (diff1 <= diff2)
@@ -3043,7 +2997,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[3]])
+						if (bptr[4] > _chosenGreyscale[tmp[3]])
 							tmp[3] = center;
 					}
 				}
@@ -3055,7 +3009,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[1] = tmp[2] = tmp[3] = center;
 
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			tmp_grey = chosen_greyscale[tmp[0]];
+			tmp_grey = _chosenGreyscale[tmp[0]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[3]);
 			diff2 = labs(bptr[4] - bptr[1]);
@@ -3075,7 +3029,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				else
 					tmp[0] = pixels[4];
 
-				tmp_grey = chosen_greyscale[tmp[0]];
+				tmp_grey = _chosenGreyscale[tmp[0]];
 				diff1 = labs(bptr[4] - tmp_grey);
 				diff2 = labs(bptr[4] - bptr[2]);
 				if (diff1 <= diff2)
@@ -3095,7 +3049,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[0]])
+						if (bptr[4] > _chosenGreyscale[tmp[0]])
 							tmp[0] = center;
 					}
 				}
@@ -3107,7 +3061,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			tmp_grey = chosen_greyscale[tmp[0]];
+			tmp_grey = _chosenGreyscale[tmp[0]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[1]);
 			diff2 = labs(bptr[4] - bptr[3]);
@@ -3128,7 +3082,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[0] = pixels[4];
 
 				/* check for half-arrow */
-				if (sim_sum == 2 && sim[4] && sim[2])
+				if (_simSum == 2 && sim[4] && sim[2])
 				{
 					if (interpolate_2x)
 					{
@@ -3137,7 +3091,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[0]])
+						if (bptr[4] > _chosenGreyscale[tmp[0]])
 							tmp[0] = center;
 					}
 
@@ -3151,7 +3105,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			}
 
 			tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[2]];
+			tmp_grey = _chosenGreyscale[tmp[2]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[3]);
 			diff2 = labs(bptr[4] - bptr[7]);
@@ -3172,7 +3126,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[2] = pixels[4];
 
 				/* check for half-arrow */
-				if (sim_sum == 2 && sim[4] && sim[7])
+				if (_simSum == 2 && sim[4] && sim[7])
 				{
 					if (interpolate_2x)
 					{
@@ -3181,7 +3135,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[2]])
+						if (bptr[4] > _chosenGreyscale[tmp[2]])
 							tmp[2] = center;
 					}
 
@@ -3200,7 +3154,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
 			tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			tmp_grey = chosen_greyscale[tmp[1]];
+			tmp_grey = _chosenGreyscale[tmp[1]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[5]);
 			diff2 = labs(bptr[4] - bptr[1]);
@@ -3221,7 +3175,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[1] = pixels[4];
 
 				/* check for half-arrow */
-				if (sim_sum == 2 && sim[3] && sim[0])
+				if (_simSum == 2 && sim[3] && sim[0])
 				{
 					if (interpolate_2x)
 					{
@@ -3230,7 +3184,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[1]])
+						if (bptr[4] > _chosenGreyscale[tmp[1]])
 							tmp[1] = center;
 					}
 
@@ -3244,7 +3198,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			}
 
 			tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[3]];
+			tmp_grey = _chosenGreyscale[tmp[3]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[7]);
 			diff2 = labs(bptr[4] - bptr[5]);
@@ -3265,7 +3219,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[3] = pixels[4];
 
 				/* check for half-arrow */
-				if (sim_sum == 2 && sim[3] && sim[5])
+				if (_simSum == 2 && sim[3] && sim[5])
 				{
 					if (interpolate_2x)
 					{
@@ -3274,7 +3228,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[3]])
+						if (bptr[4] > _chosenGreyscale[tmp[3]])
 							tmp[3] = center;
 					}
 
@@ -3293,7 +3247,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			tmp_grey = chosen_greyscale[tmp[0]];
+			tmp_grey = _chosenGreyscale[tmp[0]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[1]);
 			diff2 = labs(bptr[4] - bptr[3]);
@@ -3314,7 +3268,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[0] = pixels[4];
 
 				/* check for half-arrow */
-				if (sim_sum == 2 && sim[6] && sim[5])
+				if (_simSum == 2 && sim[6] && sim[5])
 				{
 					if (interpolate_2x)
 					{
@@ -3323,7 +3277,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[0]])
+						if (bptr[4] > _chosenGreyscale[tmp[0]])
 							tmp[0] = center;
 					}
 
@@ -3337,7 +3291,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			}
 
 			tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			tmp_grey = chosen_greyscale[tmp[1]];
+			tmp_grey = _chosenGreyscale[tmp[1]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[5]);
 			diff2 = labs(bptr[4] - bptr[1]);
@@ -3358,7 +3312,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[1] = pixels[4];
 
 				/* check for half-arrow */
-				if (sim_sum == 2 && sim[6] && sim[7])
+				if (_simSum == 2 && sim[6] && sim[7])
 				{
 					if (interpolate_2x)
 					{
@@ -3367,7 +3321,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[1]])
+						if (bptr[4] > _chosenGreyscale[tmp[1]])
 							tmp[1] = center;
 					}
 
@@ -3386,7 +3340,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
 			tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[2]];
+			tmp_grey = _chosenGreyscale[tmp[2]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[3]);
 			diff2 = labs(bptr[4] - bptr[7]);
@@ -3407,7 +3361,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[2] = pixels[4];
 
 				/* check for half-arrow */
-				if (sim_sum == 2 && sim[1] && sim[0])
+				if (_simSum == 2 && sim[1] && sim[0])
 				{
 					if (interpolate_2x)
 					{
@@ -3416,7 +3370,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[2]])
+						if (bptr[4] > _chosenGreyscale[tmp[2]])
 							tmp[2] = center;
 					}
 
@@ -3430,7 +3384,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			}
 
 			tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			tmp_grey = chosen_greyscale[tmp[3]];
+			tmp_grey = _chosenGreyscale[tmp[3]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[7]);
 			diff2 = labs(bptr[4] - bptr[5]);
@@ -3451,7 +3405,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[3] = pixels[4];
 
 				/* check for half-arrow */
-				if (sim_sum == 2 && sim[1] && sim[2])
+				if (_simSum == 2 && sim[1] && sim[2])
 				{
 					if (interpolate_2x)
 					{
@@ -3460,7 +3414,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					}
 					else
 					{
-						if (bptr[4] > chosen_greyscale[tmp[3]])
+						if (bptr[4] > _chosenGreyscale[tmp[3]])
 							tmp[3] = center;
 					}
 
@@ -3685,11 +3639,10 @@ void draw_unchanged_grid_2x(uint16 *dptr16, int dstPitch,
 
 /* Perform edge detection, draw the new 3x pixels */
 template<typename ColorMask>
-void antiAliasPass3x(const uint8 *src, uint8 *dst,
+void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
-		int overlay_flag)
-{
+		int overlay_flag) {
 	int x, y;
 	int w2 = w + 2;
 	const uint8 *sptr8 = src;
@@ -3702,35 +3655,6 @@ void antiAliasPass3x(const uint8 *src, uint8 *dst,
 	int32 angle;
 	int16 *diffs;
 	int dstPitch3 = dstPitch * 3;
-
-	uint16 *old_src_ptr, *old_dst_ptr;
-	uint16 *old_sptr16, *old_dptr16;
-	int32 dist, old_src_y, old_src_x;
-	int old_src_inc;
-	int old_dst_inc, old_dst_inc3;
-
-	if (overlay_flag)
-	{
-		old_src_ptr = old_overlay + w2 + 1;
-		old_src_inc = w2;
-
-		old_dst_ptr = old_dst_overlay;
-		old_dst_inc = w_new;
-	}
-	else
-	{
-		dist = src - (const uint8 *) src_addr_min;
-		old_src_y = dist / srcPitch;
-		old_src_x = (dist - old_src_y * srcPitch) >> 1;
-
-		old_src_inc = cur_screen_width + 2;
-		old_src_ptr = old_src + (old_src_y + 1) * old_src_inc + old_src_x + 1;
-
-		old_dst_inc = 3 * cur_screen_width;
-		old_dst_ptr = old_dst + 3 * (old_src_y * old_dst_inc + old_src_x);
-	}
-
-	old_dst_inc3 = 3 * old_dst_inc;
 
 #if 0
 #if HANDLE_TRANSPARENT_OVERLAYS
@@ -3749,16 +3673,11 @@ void antiAliasPass3x(const uint8 *src, uint8 *dst,
 	g_system->setFeatureState(g_system->kFeatureAutoComputeDirtyRects, 0);
 #endif
 
-	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch3,
-			old_src_ptr += old_src_inc, old_dst_ptr += old_dst_inc3)
-	{
+	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch3) {
 		for (x = 0,
 				sptr16 = (const uint16 *) sptr8,
-				dptr16 = (uint16 *) dptr8,
-				old_sptr16 = old_src_ptr,
-				old_dptr16 = old_dst_ptr;
-				x < w; x++, sptr16++, dptr16 += 3, old_sptr16++, old_dptr16 += 3)
-		{
+				dptr16 = (uint16 *) dptr8;
+				x < w; x++, sptr16++, dptr16 += 3) {
 			const uint16 *sptr2, *addr3;
 			uint16 pixels[9];
 			char edge_type;
@@ -3806,14 +3725,14 @@ void antiAliasPass3x(const uint8 *src, uint8 *dst,
 #endif
 #endif
 
-			bplane = bptr_global;
+			bplane = _bptr;
 
 			edge_type = findPrincipleAxis(pixels, diffs, bplane,
 					sim, &angle);
 			sub_type = refineDirection(edge_type, pixels, bplane,
 					sim, angle);
 			if (sub_type >= 0)
-				sub_type = fix_knights(sub_type, pixels, sim);
+				sub_type = fixKnights(sub_type, pixels, sim);
 
 			anti_alias_grid_clean_3x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 					sub_type, bplane);
@@ -3825,12 +3744,11 @@ void antiAliasPass3x(const uint8 *src, uint8 *dst,
 
 /* Perform edge detection, draw the new 2x pixels */
 template<typename ColorMask>
-void antiAliasPass2x(const uint8 *src, uint8 *dst,
+void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
 		int overlay_flag,
-		int interpolate_2x)
-{
+		int interpolate_2x) {
 	int x, y;
 	int w2 = w + 2;
 	const uint8 *sptr8 = src;
@@ -3843,35 +3761,6 @@ void antiAliasPass2x(const uint8 *src, uint8 *dst,
 	int32 angle;
 	int16 *diffs;
 	int dstPitch2 = dstPitch << 1;
-
-	uint16 *old_src_ptr, *old_dst_ptr;
-	uint16 *old_sptr16, *old_dptr16;
-	int32 dist, old_src_y, old_src_x;
-	int old_src_inc;
-	int old_dst_inc, old_dst_inc2;
-
-	if (overlay_flag)
-	{
-		old_src_ptr = old_overlay + w2 + 1;
-		old_src_inc = w2;
-
-		old_dst_ptr = old_dst_overlay;
-		old_dst_inc = w_new;
-	}
-	else
-	{
-		dist = src - (const uint8 *) src_addr_min;
-		old_src_y = dist / srcPitch;
-		old_src_x = (dist - old_src_y * srcPitch) >> 1;
-
-		old_src_inc = cur_screen_width + 2;
-		old_src_ptr = old_src + (old_src_y + 1) * old_src_inc + old_src_x + 1;
-
-		old_dst_inc = 2 * cur_screen_width;
-		old_dst_ptr = old_dst + 2 * (old_src_y * old_dst_inc + old_src_x);
-	}
-
-	old_dst_inc2 = 2 * old_dst_inc;
 
 #if 0 
 #if HANDLE_TRANSPARENT_OVERLAYS
@@ -3891,16 +3780,11 @@ void antiAliasPass2x(const uint8 *src, uint8 *dst,
 	g_system->setFeatureState(g_system->kFeatureAutoComputeDirtyRects, 0);
 #endif
 
-	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch2,
-			old_src_ptr += old_src_inc, old_dst_ptr += old_dst_inc2)
-	{
+	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch2) {
 		for (x = 0,
 				sptr16 = (const uint16 *) sptr8,
-				dptr16 = (uint16 *) dptr8,
-				old_sptr16 = old_src_ptr,
-				old_dptr16 = old_dst_ptr;
-				x < w; x++, sptr16++, dptr16 += 2, old_sptr16++, old_dptr16 += 2)
-		{
+				dptr16 = (uint16 *) dptr8;
+				x < w; x++, sptr16++, dptr16 += 2) {
 			const uint16 *sptr2, *addr3;
 			uint16 pixels[9];
 			char edge_type;
@@ -3948,14 +3832,14 @@ void antiAliasPass2x(const uint8 *src, uint8 *dst,
 #endif
 #endif
 
-			bplane = bptr_global;
+			bplane = _bptr;
 
 			edge_type = findPrincipleAxis(pixels, diffs, bplane,
 					sim, &angle);
 			sub_type = refineDirection(edge_type, pixels, bplane,
 					sim, angle);
 			if (sub_type >= 0)
-				sub_type = fix_knights(sub_type, pixels, sim);
+				sub_type = fixKnights(sub_type, pixels, sim);
 
 			anti_alias_grid_2x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 					sub_type, bplane, sim,
@@ -3967,9 +3851,8 @@ void antiAliasPass2x(const uint8 *src, uint8 *dst,
 
 
 /* Initialize various lookup tables */
-void initTables(const uint8 *srcPtr, uint32 srcPitch,
-		int width, int height)
-{
+void EdgePlugin::initTables(const uint8 *srcPtr, uint32 srcPitch,
+		int width, int height) {
 	double r_float, g_float, b_float;
 	int r, g, b;
 	uint16 i;
@@ -4007,24 +3890,18 @@ void initTables(const uint8 *srcPtr, uint32 srcPitch,
 				val[2] = (intensity + 9*val[2]) / 10;
 
 				/* store the greyscale tables */
-				greyscale_table[0][i] = (int16) (val[0] * ((int16)1<<GREY_SHIFT) + 0.5);
-				greyscale_table[1][i] = (int16) (val[1] * ((int16)1<<GREY_SHIFT) + 0.5);
-				greyscale_table[2][i] = (int16) (val[2] * ((int16)1<<GREY_SHIFT) + 0.5);
+				_greyscaleTable[0][i] = (int16) (val[0] * ((int16)1<<GREY_SHIFT) + 0.5);
+				_greyscaleTable[1][i] = (int16) (val[1] * ((int16)1<<GREY_SHIFT) + 0.5);
+				_greyscaleTable[2][i] = (int16) (val[2] * ((int16)1<<GREY_SHIFT) + 0.5);
 
 				/* normalized RGB channel lookups */
-				rgb_ptr = rgb_table[(r << 11) | (g << 5) | b];
+				rgb_ptr = _rgbTable[(r << 11) | (g << 5) | b];
 				rgb_ptr[0] = (int16) (r_float * ((int16)1<<RGB_SHIFT) + 0.5);
 				rgb_ptr[1] = (int16) (g_float * ((int16)1<<RGB_SHIFT) + 0.5);
 				rgb_ptr[2] = (int16) (b_float * ((int16)1<<RGB_SHIFT) + 0.5);
 			}
 		}
 	}
-
-	/* initialize interpolation division tables */
-	for (r = 0; r <= 189; r++)
-		div3[r] = ((r<<1)+3) / 6;
-	for (r = 0; r <= 567; r++)
-		div9[r] = ((r<<1)+9) / 18;
 
 #if 0
 #if INCREASE_WIN32_PRIORITY
@@ -4074,6 +3951,7 @@ void initTables(const uint8 *srcPtr, uint32 srcPitch,
  * for now....
  *
  */
+#if 0
 void resize_old_arrays(const uint8 *src, uint8 *dst,
 		int w, int h, int scale)
 {
@@ -4294,7 +4172,7 @@ void fill_old_dst(const uint8 *src, uint8 *dst, int srcPitch, int dstPitch,
 		dptr2 = (uint16 *) ((uint8 *) dptr2 + dst_fudge);
 	}
 }
-
+#endif
 
 
 /* 3x anti-aliased resize filter, nearest-neighbor anti-aliasing */
