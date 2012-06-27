@@ -30,6 +30,8 @@
 #include "common/fs.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
+#include "gui/message.h"
+
 #include "cge/cge.h"
 #include "cge/vga13h.h"
 #include "cge/cge_main.h"
@@ -194,6 +196,16 @@ Common::Error CGEEngine::run() {
 	init();
 	// Run the game
 	cge_main();
+
+	// If game is finished, display ending message
+	if (_flag[3]) {
+		Common::String msg = Common::String(_text->getText(kSayTheEnd));
+		if (msg.size() != 0) {
+			g_system->delayMillis(10);
+			GUI::MessageDialog dialog(msg, "OK");
+			dialog.runModal();
+		}
+	}
 
 	// Remove game objects
 	deinit();

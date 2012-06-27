@@ -78,6 +78,8 @@ class Talk;
 #define kMapZCnt    20
 #define kMapTop     80
 
+#define kSayTheEnd  41
+
 // our engine debug channels
 enum {
 	kCGEDebugBitmap = 1 << 0,
