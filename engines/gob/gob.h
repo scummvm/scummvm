@@ -176,10 +176,10 @@ private:
 	virtual void pauseEngineIntern(bool pause);
 	virtual void syncSoundSettings();
 
-	bool initGameParts();
-	void deinitGameParts();
+	Common::Error initGameParts();
+	Common::Error initGraphics();
 
-	bool initGraphics();
+	void deinitGameParts();
 
 public:
 	static const Common::Language _gobToScummVMLang[];

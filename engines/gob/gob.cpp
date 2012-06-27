@@ -274,15 +274,15 @@ void GobEngine::setTrueColor(bool trueColor) {
 }
 
 Common::Error GobEngine::run() {
-	if (!initGameParts()) {
-		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");
-		return Common::kUnknownError;
-	}
+	Common::Error err;
 
-	if (!initGraphics()) {
-		GUIErrorMessage("GobEngine::init(): Failed to set up graphics");
-		return Common::kUnknownError;
-	}
+	err = initGameParts();
+	if (err.getCode() != Common::kNoError)
+		return err;
+
+	err = initGraphics();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (isCD())
@@ -392,7 +392,7 @@ void GobEngine::pauseGame() {
 	pauseEngineIntern(false);
 }
 
-bool GobEngine::initGameParts() {
+Common::Error GobEngine::initGameParts() {
 	_resourceSizeWorkaround = false;
 
 	// just detect some devices some of which will be always there if the music is not disabled
@@ -605,9 +605,10 @@ bool GobEngine::initGameParts() {
 		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
 		break;
+
 	default:
 		deinitGameParts();
-		return false;
+		return Common::kUnsupportedGameidError;
 	}
 
 	// Setup mixer
@@ -615,7 +616,7 @@ bool GobEngine::initGameParts() {
 
 	_inter->setupOpcodes();
 
-	return true;
+	return Common::kNoError;
 }
 
 void GobEngine::deinitGameParts() {
@@ -637,10 +638,10 @@ void GobEngine::deinitGameParts() {
 	delete _dataIO;    _dataIO = 0;
 }
 
-bool GobEngine::initGraphics() {
+Common::Error GobEngine::initGraphics() {
 	if        (is800x600()) {
 		warning("GobEngine::initGraphics(): 800x600 games currently unsupported");
-		return false;
+		return Common::kUnsupportedGameidError;
 	} else if (is640x480()) {
 		_width  = 640;
 		_height = 480;
@@ -664,7 +665,7 @@ bool GobEngine::initGraphics() {
 
 	_global->_primarySurfDesc = SurfacePtr(new Surface(_width, _height, _pixelFormat.bytesPerPixel));
 
-	return true;
+	return Common::kNoError;
 }
 
 } // End of namespace Gob
