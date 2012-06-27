@@ -64,7 +64,7 @@ void Environments::clear() {
 	// Deleting unique variables, script and resources
 
 	for (uint i = 0; i < kEnvironmentCount; i++) {
-		if (_environments[i].variables == _vm->_inter->_variables)
+		if (_vm->_inter && (_environments[i].variables == _vm->_inter->_variables))
 			continue;
 
 		if (!has(_environments[i].variables, i + 1))
