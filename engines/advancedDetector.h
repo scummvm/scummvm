@@ -302,9 +302,11 @@ protected:
 	 * In case of a tie, the entry coming first in the list is chosen.
 	 *
 	 * @param allFiles	a map describing all present files
+	 * @param fslist	a list of nodes for all present files
 	 * @param fileBasedFallback	a list of ADFileBasedFallback records, zero-terminated
+	 * @param filesProps	if not 0, return a map of properties for all detected files here
 	 */
-	const ADGameDescription *detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const;
+	const ADGameDescription *detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback, ADFilePropertiesMap *filesProps = 0) const;
 
 	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;

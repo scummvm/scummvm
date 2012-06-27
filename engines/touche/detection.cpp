@@ -135,7 +135,7 @@ public:
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		const ADGameDescription *matchedDesc = detectGameFilebased(allFiles, Touche::fileBasedFallback);
+		const ADGameDescription *matchedDesc = detectGameFilebased(allFiles, fslist, Touche::fileBasedFallback);
 
 		if (matchedDesc) { // We got a match
 			Common::String report = Common::String::format(_("Your game version has been detected using "

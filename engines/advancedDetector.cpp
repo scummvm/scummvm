@@ -519,7 +519,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 	return matched;
 }
 
-const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const {
+const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback, ADFilePropertiesMap *filesProps) const {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
 
@@ -549,6 +549,16 @@ const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &
 				maxNumMatchedFiles = numMatchedFiles;
 
 				debug(4, "and overridden");
+
+				if (filesProps) {
+					for (filenames = ptr->filenames; *filenames; ++filenames) {
+						ADFileProperties tmp;
+
+						if (getFileProperties(fslist.begin()->getParent(), allFiles, *agdesc, *filenames, tmp))
+							(*filesProps)[*filenames] = tmp;
+					}
+				}
+
 			}
 		}
 	}

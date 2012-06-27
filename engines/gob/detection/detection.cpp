@@ -40,7 +40,7 @@ public:
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		return detectGameFilebased(allFiles, Gob::fileBased);
+		return detectGameFilebased(allFiles, fslist, Gob::fileBased);
 	}
 
 	virtual const char *getName() const {

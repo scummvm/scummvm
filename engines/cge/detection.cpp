@@ -108,7 +108,7 @@ public:
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		return detectGameFilebased(allFiles, CGE::fileBasedFallback);
+		return detectGameFilebased(allFiles, fslist, CGE::fileBasedFallback);
 	}
 
 	virtual const char *getName() const {
