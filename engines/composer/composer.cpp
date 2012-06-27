@@ -118,6 +118,7 @@ Common::Error ComposerEngine::run() {
 	uint fps = atoi(getStringFromConfig("Common", "FPS").c_str());
 	uint frameTime = 1000 / fps;
 	uint32 lastDrawTime = 0;
+	_lastSaveTime = _system->getMillis();
 
 	while (!shouldQuit()) {
 		for (uint i = 0; i < _pendingPageChanges.size(); i++) {
@@ -170,6 +171,8 @@ Common::Error ComposerEngine::run() {
 			loadGameState(ConfMan.getInt("save_slot"));
 			ConfMan.removeKey("save_slot", Common::ConfigManager::kTransientDomain);
 		}
+		if (shouldPerformAutoSave(_lastSaveTime))
+			saveGameState(0, "Autosave");
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:

@@ -181,7 +181,7 @@ private:
 	Audio::QueuingAudioStream *_audioStream;
 	uint16 _currSoundPriority;
 
-	uint32 _currentTime, _lastTime, _timeDelta;
+	uint32 _currentTime, _lastTime, _timeDelta, _lastSaveTime;
 
 	bool _needsUpdate;
 	Common::Array<Common::Rect> _dirtyRects;

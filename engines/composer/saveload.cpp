@@ -372,6 +372,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc) {
 	Common::String filename = makeSaveGameName(slot);
 	Common::OutSaveFile *out;
+	_lastSaveTime = _system->getMillis();
 	if (!(out = _saveFileMan->openForSaving(filename)))
 		return Common::kWritingFailed;
 
