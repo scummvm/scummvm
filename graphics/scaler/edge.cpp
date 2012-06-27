@@ -23,9 +23,6 @@
  *
  * Author: Eric A. Welsh
  *
- * INTERPOLATE/Q_INTERPOLATE macros taken from HQ2x/HQ3x scalers
- *  (Authors: Maxim Stepin and Max Horn)
- * 
  *
  * Sharp, clean, anti-aliased image with very few artifacts.
  * Detects and appropriately handles mouse overlays with transparent pixels.
@@ -97,6 +94,7 @@
 #include <math.h>
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "graphics/scaler/intern.h"
 #include "graphics/scaler/edge.h"
 
 /* Randomly XORs one of 2x2 or 3x3 resized pixels in order to indicate
@@ -168,7 +166,9 @@ const uint16 *src_addr_max = NULL;	/* end of src screen array */
 
 const int16 int32_sqrt3 = (int16) (((int16)1<<GREY_SHIFT) * sqrt(3.0) + 0.5);
 
-
+#define interpolate_1_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1<ColorMask>(a,b) : interpolate32_1_1<ColorMask>(a,b))
+#define interpolate_3_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_3_1<ColorMask>(a,b) : interpolate32_3_1<ColorMask>(a,b))
+#define interpolate_1_1_1(a,b,c)     (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1_1<ColorMask>(a,b,c) : interpolate32_1_1_1<ColorMask>(a,b,c))
 
 #if DEBUG_REFRESH_RANDOM_XOR
 /* Random number generators with very good randomness properties, far better
@@ -1939,59 +1939,6 @@ int fix_knights(int sub_type, uint16 *pixels, int8 *sim)
 #define redblueMask	0xF81F
 #define greenMask	0x07E0
 
-/* From ScummVM HQ2x/HQ3x scalers (Maxim Stepin and Max Horn) */
-/**
- * Interpolate two 16 bit pixel pairs at once with equal weights 1.
- * In particular, A and B can contain two pixels/each in the upper
- * and lower halves.
- */
-uint32 INTERPOLATE(uint32 A, uint32 B)
-{
-	return (((A & highBits) >> 1) + ((B & highBits) >> 1) + (A & B & lowBits));
-}
-
-/* From ScummVM HQ2x/HQ3x scalers (Maxim Stepin and Max Horn) */
-/**
- * Interpolate four 16 bit pixel pairs at once with equal weights 1.
- * In particular, A and B can contain two pixels/each in the upper
- * and lower halves.
- */
-uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D)
-{
-	uint32 x = ((A & qhighBits) >> 2) + ((B & qhighBits) >> 2) + ((C & qhighBits) >> 2) + ((D & qhighBits) >> 2);
-	uint32 y = ((A & qlowBits) + (B & qlowBits) + (C & qlowBits) + (D & qlowBits)) >> 2;
-
-	y &= qlowBits;
-	return x + y;
-}
-
-
-
-/* Average three pixels together */
-uint16 average_three_pixels(uint16 pixel1, uint16 pixel2, uint16 pixel3)
-{
-	uint32 rsum;
-	uint16 gsum, bsum;
-
-	rsum =  (pixel1 & 0xF800);
-	rsum += (pixel2 & 0xF800);
-	rsum += (pixel3 & 0xF800);
-	rsum = div3[rsum >> 11];
-
-	gsum =  (pixel1 & 0x07E0);
-	gsum += (pixel2 & 0x07E0);
-	gsum += (pixel3 & 0x07E0);
-	gsum = div3[gsum >> 5];
-
-	bsum =  (pixel1 & 0x001F);
-	bsum += (pixel2 & 0x001F);
-	bsum += (pixel3 & 0x001F);
-	bsum = div3[bsum];
-
-	return ((rsum << 11) | (gsum << 5) | bsum);
-}
-
-
 
 /* Interpolate 1/3rd of the way between two pixels */
 uint16 average_one_third(uint16 pixel1, uint16 pixel2)
@@ -2017,6 +1964,7 @@ uint16 average_one_third(uint16 pixel1, uint16 pixel2)
 
 
 /* Fill pixel grid without interpolation, using the detected edge */
+template<typename ColorMask>
 void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 		uint16 *pixels, int sub_type, int16 *bptr)
 {
@@ -2034,7 +1982,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[6]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[3]);
@@ -2068,7 +2016,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
 			tmp_grey = chosen_greyscale[tmp[2]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[5]);
@@ -2106,7 +2054,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 
 			if (sub_type != 16)
 			{
-				tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+				tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
 				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
 				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
 				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
@@ -2120,7 +2068,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 
 			if (sub_type != 17)
 			{
-				tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+				tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
 				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
 				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
 				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
@@ -2138,7 +2086,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
 			tmp_grey = chosen_greyscale[tmp[2]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[1]);
@@ -2172,7 +2120,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[6]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[7]);
@@ -2206,7 +2154,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 			tmp_grey = chosen_greyscale[tmp[0]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[1]);
@@ -2240,7 +2188,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[8]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[7]);
@@ -2278,7 +2226,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 
 			if (sub_type != 18)
 			{
-				tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+				tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
 				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
 				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
@@ -2292,7 +2240,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 
 			if (sub_type != 19)
 			{
-				tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+				tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
 				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
 				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
 				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
@@ -2310,7 +2258,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[8]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[5]);
@@ -2344,7 +2292,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 			tmp_grey = chosen_greyscale[tmp[0]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[3]);
@@ -2378,7 +2326,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 			tmp_grey = chosen_greyscale[tmp[0]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[1]);
@@ -2400,7 +2348,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 					tmp[0] = pixels[4];
 			}
 
-			tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[6]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[3]);
@@ -2428,7 +2376,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
 			tmp_grey = chosen_greyscale[tmp[2]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[5]);
@@ -2450,7 +2398,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 					tmp[2] = pixels[4];
 			}
 
-			tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[8]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[7]);
@@ -2478,7 +2426,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 			tmp_grey = chosen_greyscale[tmp[0]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[1]);
@@ -2500,7 +2448,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 					tmp[0] = pixels[4];
 			}
 
-			tmp[2] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
 			tmp_grey = chosen_greyscale[tmp[2]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[5]);
@@ -2528,7 +2476,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			for (i = 0; i < 9; i++)
 				tmp[i] = center;
 
-			tmp[6] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[6]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[3]);
@@ -2550,7 +2498,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 					tmp[6] = pixels[4];
 			}
 
-			tmp[8] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[8]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[7]);
@@ -2623,6 +2571,7 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 
 
 /* Fill pixel grid with or without interpolation, using the detected edge */
+template<typename ColorMask>
 void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		uint16 *pixels, int sub_type, int16 *bptr,
 		int8 *sim,
@@ -2640,7 +2589,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 1:		/* '- */
 			tmp[0] = tmp[1] = tmp[3] = center;
 
-			tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[2]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[3]);
@@ -2669,16 +2618,15 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						uint16 tmp_pixel = tmp[2];
-						tmp[2] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
-								tmp_pixel, center);
-						tmp[3] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+						tmp[2] = interpolate_3_1(tmp_pixel, center);
+						tmp[3] = interpolate_3_1(center, tmp_pixel);
 					}
 				}
 				else
 				{
 					if (interpolate_2x)
 					{
-						tmp[2] = INTERPOLATE(tmp[2], center);
+						tmp[2] = interpolate_1_1(tmp[2], center);
 					}
 					else
 					{
@@ -2693,7 +2641,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 2:		/* -. */
 			tmp[0] = tmp[2] = tmp[3] = center;
 
-			tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
 			tmp_grey = chosen_greyscale[tmp[1]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[5]);
@@ -2722,16 +2670,15 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						uint16 tmp_pixel = tmp[1];
-						tmp[1] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
-								tmp_pixel, center);
-						tmp[0] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+						tmp[1] = interpolate_3_1(tmp_pixel, center);
+						tmp[0] = interpolate_3_1(center, tmp_pixel);
 					}
 				}
 				else
 				{
 					if (interpolate_2x)
 					{
-						tmp[1] = INTERPOLATE(tmp[1], center);
+						tmp[1] = interpolate_1_1(tmp[1], center);
 					}
 					else
 					{
@@ -2750,7 +2697,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 
 			if (sub_type != 16)
 			{
-				tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+				tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
 				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
 				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
 				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
@@ -2763,7 +2710,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 
 				if (interpolate_2x)
 				{
-					tmp[1] = INTERPOLATE(tmp[1], center);
+					tmp[1] = interpolate_1_1(tmp[1], center);
 				}
 				/* sim test is for hyper-cephalic kitten eyes and squeeze toy 
 				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
@@ -2777,7 +2724,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 
 			if (sub_type != 17)
 			{
-				tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+				tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
 				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
 				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
 				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
@@ -2790,7 +2737,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 
 				if (interpolate_2x)
 				{
-					tmp[2] = INTERPOLATE(tmp[2], center);
+					tmp[2] = interpolate_1_1(tmp[2], center);
 				}
 				/* sim test is for hyper-cephalic kitten eyes and squeeze toy 
 				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
@@ -2807,7 +2754,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 4:		/* '| */
 			tmp[0] = tmp[2] = tmp[3] = center;
 
-			tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
 			tmp_grey = chosen_greyscale[tmp[1]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[1]);
@@ -2836,16 +2783,15 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						uint16 tmp_pixel = tmp[1];
-						tmp[1] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
-								tmp_pixel, center);
-						tmp[3] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+						tmp[1] = interpolate_3_1(tmp_pixel, center);
+						tmp[3] = interpolate_3_1(center, tmp_pixel);
 					}
 				}
 				else
 				{
 					if (interpolate_2x)
 					{
-						tmp[1] = INTERPOLATE(tmp[1], center);
+						tmp[1] = interpolate_1_1(tmp[1], center);
 					}
 					else
 					{
@@ -2860,7 +2806,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 5:		/* |. */
 			tmp[0] = tmp[1] = tmp[3] = center;
 
-			tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[2]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[7]);
@@ -2889,16 +2835,15 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						uint16 tmp_pixel = tmp[2];
-						tmp[2] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
-								tmp_pixel, center);
-						tmp[0] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+						tmp[2] = interpolate_3_1(tmp_pixel, center);
+						tmp[0] = interpolate_3_1(center, tmp_pixel);
 					}
 				}
 				else
 				{
 					if (interpolate_2x)
 					{
-						tmp[2] = INTERPOLATE(tmp[2], center);
+						tmp[2] = interpolate_1_1(tmp[2], center);
 					}
 					else
 					{
@@ -2913,7 +2858,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 7:		/* |' */
 			tmp[1] = tmp[2] = tmp[3] = center;
 
-			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 			tmp_grey = chosen_greyscale[tmp[0]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[1]);
@@ -2942,16 +2887,15 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						uint16 tmp_pixel = tmp[0];
-						tmp[0] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
-								tmp_pixel, center);
-						tmp[2] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+						tmp[0] = interpolate_3_1(tmp_pixel, center);
+						tmp[2] = interpolate_3_1(center, tmp_pixel);
 					}
 				}
 				else
 				{
 					if (interpolate_2x)
 					{
-						tmp[0] = INTERPOLATE(tmp[0], center);
+						tmp[0] = interpolate_1_1(tmp[0], center);
 					}
 					else
 					{
@@ -2966,7 +2910,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 8:		/* .| */
 			tmp[0] = tmp[1] = tmp[2] = center;
 
-			tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[3]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[7]);
@@ -2995,16 +2939,15 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						uint16 tmp_pixel = tmp[3];
-						tmp[3] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
-								tmp_pixel, center);
-						tmp[1] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+						tmp[3] = interpolate_3_1(tmp_pixel, center);
+						tmp[1] = interpolate_3_1(center, tmp_pixel);
 					}
 				}
 				else
 				{
 					if (interpolate_2x)
 					{
-						tmp[3] = INTERPOLATE(tmp[3], center);
+						tmp[3] = interpolate_1_1(tmp[3], center);
 					}
 					else
 					{
@@ -3023,7 +2966,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 
 			if (sub_type != 18)
 			{
-				tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+				tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
 				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
 				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
@@ -3036,7 +2979,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 
 				if (interpolate_2x)
 				{
-					tmp[0] = INTERPOLATE(tmp[0], center);
+					tmp[0] = interpolate_1_1(tmp[0], center);
 				}
 				/* sim test is for hyper-cephalic kitten eyes and squeeze toy 
 				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
@@ -3050,7 +2993,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 
 			if (sub_type != 19)
 			{
-				tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+				tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
 				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
 				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
 				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
@@ -3063,7 +3006,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 
 				if (interpolate_2x)
 				{
-					tmp[3] = INTERPOLATE(tmp[3], center);
+					tmp[3] = interpolate_1_1(tmp[3], center);
 				}
 				/* sim test is for hyper-cephalic kitten eyes and squeeze toy 
 				 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
@@ -3080,7 +3023,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 10:	/* -' */
 			tmp[0] = tmp[1] = tmp[2] = center;
 
-			tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[3]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[5]);
@@ -3109,16 +3052,15 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						uint16 tmp_pixel = tmp[3];
-						tmp[3] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
-								tmp_pixel, center);
-						tmp[2] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+						tmp[3] = interpolate_3_1(tmp_pixel, center);
+						tmp[2] = interpolate_3_1(center, tmp_pixel);
 					}
 				}
 				else
 				{
 					if (interpolate_2x)
 					{
-						tmp[3] = INTERPOLATE(tmp[3], center);
+						tmp[3] = interpolate_1_1(tmp[3], center);
 					}
 					else
 					{
@@ -3133,7 +3075,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 11:	/* .- */
 			tmp[1] = tmp[2] = tmp[3] = center;
 
-			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 			tmp_grey = chosen_greyscale[tmp[0]];
 #if PARANOID_KNIGHTS
 			diff1 = labs(bptr[4] - bptr[3]);
@@ -3162,16 +3104,15 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						uint16 tmp_pixel = tmp[0];
-						tmp[0] = Q_INTERPOLATE(tmp_pixel, tmp_pixel,
-								tmp_pixel, center);
-						tmp[1] = Q_INTERPOLATE(center, center, center, tmp_pixel);
+						tmp[0] = interpolate_3_1(tmp_pixel, center);
+						tmp[1] = interpolate_3_1(center, tmp_pixel);
 					}
 				}
 				else
 				{
 					if (interpolate_2x)
 					{
-						tmp[0] = INTERPOLATE(tmp[0], center);
+						tmp[0] = interpolate_1_1(tmp[0], center);
 					}
 					else
 					{
@@ -3186,7 +3127,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 12:	/* < */
 			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
-			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 			tmp_grey = chosen_greyscale[tmp[0]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[1]);
@@ -3212,7 +3153,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				{
 					if (interpolate_2x)
 					{
-						tmp[0] = INTERPOLATE(center, tmp[0]);
+						tmp[0] = interpolate_1_1(center, tmp[0]);
 						tmp[2] = average_one_third(center, tmp[0]);
 					}
 					else
@@ -3230,7 +3171,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[0] = center;
 			}
 
-			tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[2]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[3]);
@@ -3256,7 +3197,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				{
 					if (interpolate_2x)
 					{
-						tmp[2] = INTERPOLATE(center, tmp[2]);
+						tmp[2] = interpolate_1_1(center, tmp[2]);
 						tmp[0] = average_one_third(center, tmp[2]);
 					}
 					else
@@ -3279,7 +3220,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 13:	/* > */
 			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
-			tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
 			tmp_grey = chosen_greyscale[tmp[1]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[5]);
@@ -3305,7 +3246,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				{
 					if (interpolate_2x)
 					{
-						tmp[1] = INTERPOLATE(center, tmp[1]);
+						tmp[1] = interpolate_1_1(center, tmp[1]);
 						tmp[3] = average_one_third(center, tmp[1]);
 					}
 					else
@@ -3323,7 +3264,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[1] = center;
 			}
 
-			tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[3]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[7]);
@@ -3349,7 +3290,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				{
 					if (interpolate_2x)
 					{
-						tmp[3] = INTERPOLATE(center, tmp[3]);
+						tmp[3] = interpolate_1_1(center, tmp[3]);
 						tmp[1] = average_one_third(center, tmp[3]);
 					}
 					else
@@ -3372,7 +3313,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 14:	/* ^ */
 			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
-			tmp[0] = average_three_pixels(pixels[1], pixels[3], center);
+			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
 			tmp_grey = chosen_greyscale[tmp[0]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[1]);
@@ -3398,7 +3339,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				{
 					if (interpolate_2x)
 					{
-						tmp[0] = INTERPOLATE(center, tmp[0]);
+						tmp[0] = interpolate_1_1(center, tmp[0]);
 						tmp[1] = average_one_third(center, tmp[0]);
 					}
 					else
@@ -3416,7 +3357,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[0] = center;
 			}
 
-			tmp[1] = average_three_pixels(pixels[1], pixels[5], center);
+			tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
 			tmp_grey = chosen_greyscale[tmp[1]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[5]);
@@ -3442,7 +3383,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				{
 					if (interpolate_2x)
 					{
-						tmp[1] = INTERPOLATE(center, tmp[1]);
+						tmp[1] = interpolate_1_1(center, tmp[1]);
 						tmp[0] = average_one_third(center, tmp[1]);
 					}
 					else
@@ -3465,7 +3406,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		case 15:	/* v */
 			tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
-			tmp[2] = average_three_pixels(pixels[3], pixels[7], center);
+			tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[2]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[3]);
@@ -3491,7 +3432,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				{
 					if (interpolate_2x)
 					{
-						tmp[2] = INTERPOLATE(center, tmp[2]);
+						tmp[2] = interpolate_1_1(center, tmp[2]);
 						tmp[3] = average_one_third(center, tmp[2]);
 					}
 					else
@@ -3509,7 +3450,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					tmp[2] = center;
 			}
 
-			tmp[3] = average_three_pixels(pixels[5], pixels[7], center);
+			tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
 			tmp_grey = chosen_greyscale[tmp[3]];
 #if PARANOID_ARROWS
 			diff1 = labs(bptr[4] - bptr[7]);
@@ -3535,7 +3476,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				{
 					if (interpolate_2x)
 					{
-						tmp[3] = INTERPOLATE(center, tmp[3]);
+						tmp[3] = interpolate_1_1(center, tmp[3]);
 						tmp[2] = average_one_third(center, tmp[3]);
 					}
 					else
@@ -3764,6 +3705,7 @@ void draw_unchanged_grid_2x(uint16 *dptr16, int dstPitch,
 
 
 /* Perform edge detection, draw the new 3x pixels */
+template<typename ColorMask>
 void anti_alias_pass_3x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
@@ -3873,7 +3815,7 @@ void anti_alias_pass_3x(const uint8 *src, uint8 *dst,
 			/* block of solid color */
 			if (!diffs)
 			{
-				anti_alias_grid_clean_3x((uint8 *) dptr16, dstPitch, pixels,
+				anti_alias_grid_clean_3x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 						0, NULL);
 				continue;
 			}
@@ -3894,7 +3836,7 @@ void anti_alias_pass_3x(const uint8 *src, uint8 *dst,
 			if (sub_type >= 0)
 				sub_type = fix_knights(sub_type, pixels, sim);
 
-			anti_alias_grid_clean_3x((uint8 *) dptr16, dstPitch, pixels,
+			anti_alias_grid_clean_3x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 					sub_type, bplane);
 		}
 	}
@@ -3903,6 +3845,7 @@ void anti_alias_pass_3x(const uint8 *src, uint8 *dst,
 
 
 /* Perform edge detection, draw the new 2x pixels */
+template<typename ColorMask>
 void anti_alias_pass_2x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
@@ -4014,7 +3957,7 @@ void anti_alias_pass_2x(const uint8 *src, uint8 *dst,
 			/* block of solid color */
 			if (!diffs)
 			{
-				anti_alias_grid_2x((uint8 *) dptr16, dstPitch, pixels,
+				anti_alias_grid_2x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 						0, NULL, NULL, 0);
 				continue;
 			}
@@ -4035,7 +3978,7 @@ void anti_alias_pass_2x(const uint8 *src, uint8 *dst,
 			if (sub_type >= 0)
 				sub_type = fix_knights(sub_type, pixels, sim);
 
-			anti_alias_grid_2x((uint8 *) dptr16, dstPitch, pixels,
+			anti_alias_grid_2x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 					sub_type, bplane, sim,
 					interpolate_2x);
 		}
@@ -4376,6 +4319,7 @@ void fill_old_dst(const uint8 *src, uint8 *dst, int srcPitch, int dstPitch,
 
 
 /* 3x anti-aliased resize filter, nearest-neighbor anti-aliasing */
+#if 0
 void Edge3x(const uint8 *srcPtr, uint32 srcPitch,
 		uint8 *dstPtr, uint32 dstPitch, int width, int height)
 {
@@ -4438,10 +4382,12 @@ void Edge3x(const uint8 *srcPtr, uint32 srcPitch,
 	fill_old_src(srcPtr, srcPitch, width, height);
 	fill_old_dst(srcPtr, dstPtr, srcPitch, dstPitch, width, height, 3);
 }
+#endif
 
 
 
 /* 2x anti-aliased resize filter, nearest-neighbor anti-aliasing */
+#if 0
 void Edge2x(const uint8 *srcPtr, uint32 srcPitch,
 		uint8 *dstPtr, uint32 dstPitch, int width, int height)
 {
@@ -4504,6 +4450,7 @@ void Edge2x(const uint8 *srcPtr, uint32 srcPitch,
 	fill_old_src(srcPtr, srcPitch, width, height);
 	fill_old_dst(srcPtr, dstPtr, srcPitch, dstPitch, width, height, 2);
 }
+#endif
 
 
 
@@ -4514,6 +4461,7 @@ void Edge2x(const uint8 *srcPtr, uint32 srcPitch,
  * results that look good, like a somewhat blurry Edge3x.
  *
  */
+#if 0
 void Edge2x_Interp(const uint8 *srcPtr, uint32 srcPitch,
 		uint8 *dstPtr, uint32 dstPitch, int width, int height)
 {
@@ -4576,6 +4524,7 @@ void Edge2x_Interp(const uint8 *srcPtr, uint32 srcPitch,
 	fill_old_src(srcPtr, srcPitch, width, height);
 	fill_old_dst(srcPtr, dstPtr, srcPitch, dstPitch, width, height, 2);
 }
+#endif
 
 EdgePlugin::EdgePlugin() {
 	_factor = 2;
@@ -4594,10 +4543,17 @@ void EdgePlugin::deinitialize() {
 void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 		uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
-		if (_factor == 2)
-			anti_alias_pass_2x(srcPtr, dstPtr, width, height, 2*width, 2*height, srcPitch, dstPitch, 0, 1);
-		else
-			anti_alias_pass_3x(srcPtr, dstPtr, width, height, 3*width, 3*height, srcPitch, dstPitch, 0);
+		if (_factor == 2) {
+			if (_format.gLoss == 2)
+				anti_alias_pass_2x<Graphics::ColorMasks<565> >(srcPtr, dstPtr, width, height, 2*width, 2*height, srcPitch, dstPitch, 0, 1);
+			else
+				anti_alias_pass_2x<Graphics::ColorMasks<555> >(srcPtr, dstPtr, width, height, 2*width, 2*height, srcPitch, dstPitch, 0, 1);
+		} else {
+			if (_format.gLoss == 2)
+				anti_alias_pass_3x<Graphics::ColorMasks<565> >(srcPtr, dstPtr, width, height, 3*width, 3*height, srcPitch, dstPitch, 0);
+			else
+				anti_alias_pass_3x<Graphics::ColorMasks<555> >(srcPtr, dstPtr, width, height, 3*width, 3*height, srcPitch, dstPitch, 0);
+		}
 	} else {
 		warning("FIXME: EdgePlugin 32bpp format");
 	}
