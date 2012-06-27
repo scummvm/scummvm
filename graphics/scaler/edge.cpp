@@ -170,6 +170,7 @@ const int16 int32_sqrt3 = (int16) (((int16)1<<GREY_SHIFT) * sqrt(3.0) + 0.5);
 
 #define interpolate_1_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1<ColorMask>(a,b) : interpolate32_1_1<ColorMask>(a,b))
 #define interpolate_3_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_3_1<ColorMask>(a,b) : interpolate32_3_1<ColorMask>(a,b))
+#define interpolate_2_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_2_1<ColorMask>(a,b) : interpolate32_2_1<ColorMask>(a,b))
 #define interpolate_1_1_1(a,b,c)     (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1_1<ColorMask>(a,b,c) : interpolate32_1_1_1<ColorMask>(a,b,c))
 
 #if DEBUG_REFRESH_RANDOM_XOR
@@ -1941,30 +1942,6 @@ int fix_knights(int sub_type, uint16 *pixels, int8 *sim)
 #define redblueMask	0xF81F
 #define greenMask	0x07E0
 
-
-/* Interpolate 1/3rd of the way between two pixels */
-uint16 average_one_third(uint16 pixel1, uint16 pixel2)
-{
-	uint32 rsum;
-	uint16 gsum, bsum;
-
-	rsum =  (pixel1 & 0xF800) << 1;
-	rsum += (pixel2 & 0xF800);
-	rsum = div3[rsum >> 11];
-
-	gsum =  (pixel1 & 0x07E0) << 1;
-	gsum += (pixel2 & 0x07E0);
-	gsum = div3[gsum >> 5];
-
-	bsum =  (pixel1 & 0x001F) << 1;
-	bsum += (pixel2 & 0x001F);
-	bsum = div3[bsum];
-
-	return ((rsum << 11) | (gsum << 5) | bsum);
-}
-
-
-
 /* Fill pixel grid without interpolation, using the detected edge */
 template<typename ColorMask>
 void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
@@ -3156,7 +3133,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						tmp[0] = interpolate_1_1(center, tmp[0]);
-						tmp[2] = average_one_third(center, tmp[0]);
+						tmp[2] = interpolate_2_1(center, tmp[0]);
 					}
 					else
 					{
@@ -3168,7 +3145,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				}
 
 				if (interpolate_2x)
-					tmp[0] = average_one_third(center, tmp[0]);
+					tmp[0] = interpolate_2_1(center, tmp[0]);
 				else
 					tmp[0] = center;
 			}
@@ -3200,7 +3177,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						tmp[2] = interpolate_1_1(center, tmp[2]);
-						tmp[0] = average_one_third(center, tmp[2]);
+						tmp[0] = interpolate_2_1(center, tmp[2]);
 					}
 					else
 					{
@@ -3212,7 +3189,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				}
 
 				if (interpolate_2x)
-					tmp[2] = average_one_third(center, tmp[2]);
+					tmp[2] = interpolate_2_1(center, tmp[2]);
 				else
 					tmp[2] = center;
 			}
@@ -3249,7 +3226,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						tmp[1] = interpolate_1_1(center, tmp[1]);
-						tmp[3] = average_one_third(center, tmp[1]);
+						tmp[3] = interpolate_2_1(center, tmp[1]);
 					}
 					else
 					{
@@ -3261,7 +3238,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				}
 
 				if (interpolate_2x)
-					tmp[1] = average_one_third(center, tmp[1]);
+					tmp[1] = interpolate_2_1(center, tmp[1]);
 				else
 					tmp[1] = center;
 			}
@@ -3293,7 +3270,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						tmp[3] = interpolate_1_1(center, tmp[3]);
-						tmp[1] = average_one_third(center, tmp[3]);
+						tmp[1] = interpolate_2_1(center, tmp[3]);
 					}
 					else
 					{
@@ -3305,7 +3282,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				}
 
 				if (interpolate_2x)
-					tmp[3] = average_one_third(center, tmp[3]);
+					tmp[3] = interpolate_2_1(center, tmp[3]);
 				else
 					tmp[3] = center;
 			}
@@ -3342,7 +3319,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						tmp[0] = interpolate_1_1(center, tmp[0]);
-						tmp[1] = average_one_third(center, tmp[0]);
+						tmp[1] = interpolate_2_1(center, tmp[0]);
 					}
 					else
 					{
@@ -3354,7 +3331,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				}
 
 				if (interpolate_2x)
-					tmp[0] = average_one_third(center, tmp[0]);
+					tmp[0] = interpolate_2_1(center, tmp[0]);
 				else
 					tmp[0] = center;
 			}
@@ -3386,7 +3363,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						tmp[1] = interpolate_1_1(center, tmp[1]);
-						tmp[0] = average_one_third(center, tmp[1]);
+						tmp[0] = interpolate_2_1(center, tmp[1]);
 					}
 					else
 					{
@@ -3398,7 +3375,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				}
 
 				if (interpolate_2x)
-					tmp[1] = average_one_third(center, tmp[1]);
+					tmp[1] = interpolate_2_1(center, tmp[1]);
 				else
 					tmp[1] = center;
 			}
@@ -3435,7 +3412,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						tmp[2] = interpolate_1_1(center, tmp[2]);
-						tmp[3] = average_one_third(center, tmp[2]);
+						tmp[3] = interpolate_2_1(center, tmp[2]);
 					}
 					else
 					{
@@ -3447,7 +3424,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				}
 
 				if (interpolate_2x)
-					tmp[2] = average_one_third(center, tmp[2]);
+					tmp[2] = interpolate_2_1(center, tmp[2]);
 				else
 					tmp[2] = center;
 			}
@@ -3479,7 +3456,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 					if (interpolate_2x)
 					{
 						tmp[3] = interpolate_1_1(center, tmp[3]);
-						tmp[2] = average_one_third(center, tmp[3]);
+						tmp[2] = interpolate_2_1(center, tmp[3]);
 					}
 					else
 					{
@@ -3491,7 +3468,7 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 				}
 
 				if (interpolate_2x)
-					tmp[3] = average_one_third(center, tmp[3]);
+					tmp[3] = interpolate_2_1(center, tmp[3]);
 				else
 					tmp[3] = center;
 			}
