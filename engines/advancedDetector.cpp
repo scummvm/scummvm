@@ -367,6 +367,34 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 	}
 }
 
+bool AdvancedMetaEngine::getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, ADFileProperties &fileProps) const {
+	// FIXME/TODO: We don't handle the case that a file is listed as a regular
+	// file and as one with resource fork.
+
+	if (game.flags & ADGF_MACRESFORK) {
+		Common::MacResManager macResMan;
+
+		if (!macResMan.open(parent, fname))
+			return false;
+
+		fileProps.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
+		fileProps.size = macResMan.getResForkDataSize();
+		return true;
+	}
+
+	if (!allFiles.contains(fname))
+		return false;
+
+	Common::File testFile;
+
+	if (!testFile.open(allFiles[fname]))
+		return false;
+
+	fileProps.size = (int32)testFile.size();
+	fileProps.md5 = Common::computeStreamMD5AsString(testFile, _md5Bytes);
+	return true;
+}
+
 ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
 	ADFilePropertiesMap filesProps;
 
@@ -388,34 +416,9 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 			if (filesProps.contains(fname))
 				continue;
 
-			// FIXME/TODO: We don't handle the case that a file is listed as a regular
-			// file and as one with resource fork.
-
-			if (g->flags & ADGF_MACRESFORK) {
-				Common::MacResManager macResMan;
-
-				if (macResMan.open(parent, fname)) {
-					tmp.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
-					tmp.size = macResMan.getResForkDataSize();
-					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
-					filesProps[fname] = tmp;
-				}
-			} else {
-				if (allFiles.contains(fname)) {
-					debug(3, "+ %s", fname.c_str());
-
-					Common::File testFile;
-
-					if (testFile.open(allFiles[fname])) {
-						tmp.size = (int32)testFile.size();
-						tmp.md5 = Common::computeStreamMD5AsString(testFile, _md5Bytes);
-					} else {
-						tmp.size = -1;
-					}
-
-					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
-					filesProps[fname] = tmp;
-				}
+			if (getFileProperties(parent, allFiles, *g, fname, tmp)) {
+				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
+				filesProps[fname] = tmp;
 			}
 		}
 	}
