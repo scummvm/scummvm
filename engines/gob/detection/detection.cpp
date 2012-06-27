@@ -30,42 +30,50 @@
 
 class GobMetaEngine : public AdvancedMetaEngine {
 public:
-	GobMetaEngine() : AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
-		_singleid = "gob";
-		_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
-	}
+	GobMetaEngine();
 
-	virtual GameDescriptor findGame(const char *gameid) const {
-		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
-	}
+	virtual GameDescriptor findGame(const char *gameid) const;
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		ADFilePropertiesMap filesProps;
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 
-		const ADGameDescription *game = detectGameFilebased(allFiles, fslist, Gob::fileBased, &filesProps);
-		if (!game)
-			return 0;
-
-		reportUnknown(fslist.begin()->getParent(), filesProps);
-		return game;
-	}
-
-	virtual const char *getName() const {
-		return "Gob";
-	}
-
-	virtual const char *getOriginalCopyright() const {
-		return "Goblins Games (C) Coktel Vision";
-	}
+	virtual const char *getName() const;
+	virtual const char *getOriginalCopyright() const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
+
+GobMetaEngine::GobMetaEngine() :
+	AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
+
+	_singleid   = "gob";
+	_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
+}
+
+GameDescriptor GobMetaEngine::findGame(const char *gameid) const {
+	return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+}
+
+const ADGameDescription *GobMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADFilePropertiesMap filesProps;
+
+	const ADGameDescription *game = detectGameFilebased(allFiles, fslist, Gob::fileBased, &filesProps);
+	if (!game)
+		return 0;
+
+	reportUnknown(fslist.begin()->getParent(), filesProps);
+	return game;
+}
+
+const char *GobMetaEngine::getName() const {
+	return "Gob";
+}
+
+const char *GobMetaEngine::getOriginalCopyright() const {
+	return "Goblins Games (C) Coktel Vision";
+}
 
 bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return false;
@@ -75,6 +83,12 @@ bool Gob::GobEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL);
 }
+
+Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+	Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+	return AdvancedMetaEngine::createInstance(syst, engine);
+}
+
 bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)desc;
 	if (gd) {
@@ -83,6 +97,7 @@ bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	}
 	return gd != 0;
 }
+
 
 #if PLUGIN_ENABLED_DYNAMIC(GOB)
 	REGISTER_PLUGIN_DYNAMIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
