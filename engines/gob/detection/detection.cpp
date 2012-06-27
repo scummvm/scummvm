@@ -25,6 +25,7 @@
 #include "engines/obsolete.h"
 
 #include "gob/gob.h"
+#include "gob/dataio.h"
 
 #include "gob/detection/tables.h"
 
@@ -43,6 +44,12 @@ public:
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+
+private:
+	/**
+	 * Inspect the game archives to detect which Once Upon A Time game this is.
+	 */
+	static const Gob::GOBGameDescription *detectOnceUponATime(const Common::FSList &fslist);
 };
 
 GobMetaEngine::GobMetaEngine() :
@@ -59,12 +66,96 @@ GameDescriptor GobMetaEngine::findGame(const char *gameid) const {
 const ADGameDescription *GobMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	ADFilePropertiesMap filesProps;
 
-	const ADGameDescription *game = detectGameFilebased(allFiles, fslist, Gob::fileBased, &filesProps);
+	const Gob::GOBGameDescription *game;
+	game = (const Gob::GOBGameDescription *)detectGameFilebased(allFiles, fslist, Gob::fileBased, &filesProps);
 	if (!game)
 		return 0;
 
+	if (game->gameType == Gob::kGameTypeOnceUponATime) {
+		game = detectOnceUponATime(fslist);
+		if (!game)
+			return 0;
+	}
+
 	reportUnknown(fslist.begin()->getParent(), filesProps);
-	return game;
+	return (const ADGameDescription *)game;
+}
+
+const Gob::GOBGameDescription *GobMetaEngine::detectOnceUponATime(const Common::FSList &fslist) {
+	// Add the game path to the search manager
+	SearchMan.clear();
+	SearchMan.addDirectory(fslist.begin()->getParent().getPath(), fslist.begin()->getParent());
+
+	// Open the archives
+	Gob::DataIO dataIO;
+	if (!dataIO.openArchive("stk1.stk", true) ||
+	    !dataIO.openArchive("stk2.stk", true) ||
+	    !dataIO.openArchive("stk3.stk", true)) {
+
+		SearchMan.clear();
+		return 0;
+	}
+
+	Gob::OnceUponATime gameType         = Gob::kOnceUponATimeInvalid;
+	Gob::OnceUponATimePlatform platform = Gob::kOnceUponATimePlatformInvalid;
+
+	// If these animal files are present, it's Abracadabra
+	if (dataIO.hasFile("arai.anm") &&
+	    dataIO.hasFile("crab.anm") &&
+	    dataIO.hasFile("crap.anm") &&
+	    dataIO.hasFile("drag.anm") &&
+	    dataIO.hasFile("guep.anm") &&
+	    dataIO.hasFile("loup.anm") &&
+	    dataIO.hasFile("mous.anm") &&
+	    dataIO.hasFile("rhin.anm") &&
+	    dataIO.hasFile("saut.anm") &&
+	    dataIO.hasFile("scor.anm"))
+		gameType = Gob::kOnceUponATimeAbracadabra;
+
+	// If these animal files are present, it's Baba Yaga
+	if (dataIO.hasFile("abei.anm") &&
+	    dataIO.hasFile("arai.anm") &&
+	    dataIO.hasFile("drag.anm") &&
+	    dataIO.hasFile("fauc.anm") &&
+	    dataIO.hasFile("gren.anm") &&
+	    dataIO.hasFile("rena.anm") &&
+	    dataIO.hasFile("sang.anm") &&
+	    dataIO.hasFile("serp.anm") &&
+	    dataIO.hasFile("tort.anm") &&
+	    dataIO.hasFile("vaut.anm"))
+		gameType = Gob::kOnceUponATimeBabaYaga;
+
+	// Detect the platform by endianness and existence of a MOD file
+	Common::SeekableReadStream *villeDEC = dataIO.getFile("ville.dec");
+	if (villeDEC && (villeDEC->size() > 6)) {
+		byte data[6];
+
+		if (villeDEC->read(data, 6) == 6) {
+			if        (!memcmp(data, "\000\000\000\001\000\007", 6)) {
+				// Big endian -> Amiga or Atari ST
+
+				if (dataIO.hasFile("mod.babayaga"))
+					platform = Gob::kOnceUponATimePlatformAmiga;
+				else
+					platform = Gob::kOnceUponATimePlatformAtariST;
+
+			} else if (!memcmp(data, "\000\000\001\000\007\000", 6))
+				// Little endian -> DOS
+				platform = Gob::kOnceUponATimePlatformDOS;
+		}
+
+		delete villeDEC;
+	}
+
+	SearchMan.clear();
+
+	if ((gameType == Gob::kOnceUponATimeInvalid) || (platform == Gob::kOnceUponATimePlatformInvalid)) {
+		warning("GobMetaEngine::detectOnceUponATime(): Detection failed (%d, %d)",
+		        (int) gameType, (int) platform);
+		return 0;
+	}
+
+	return &Gob::fallbackOnceUpon[gameType][platform];
 }
 
 const char *GobMetaEngine::getName() const {

@@ -23,6 +23,8 @@
 #ifndef GOB_DETECTION_TABLES_FALLBACK_H
 #define GOB_DETECTION_TABLES_FALLBACK_H
 
+// -- Tables for the filename-based fallback --
+
 static const GOBGameDescription fallbackDescs[] = {
 	{ //0
 		{
@@ -449,6 +451,114 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[26].desc, { "adif41.stk", "adim41.stk", 0 } },
 	{ &fallbackDescs[27].desc, { "coktelplayer.scn", 0 } },
 	{ 0, { 0 } }
+};
+
+// -- Tables for detecting the specific Once Upon A Time game --
+
+enum OnceUponATime {
+	kOnceUponATimeInvalid     = -1,
+	kOnceUponATimeAbracadabra =  0,
+	kOnceUponATimeBabaYaga    =  1,
+	kOnceUponATimeMAX
+};
+
+enum OnceUponATimePlatform {
+	kOnceUponATimePlatformInvalid = -1,
+	kOnceUponATimePlatformDOS     =  0,
+	kOnceUponATimePlatformAmiga   =  1,
+	kOnceUponATimePlatformAtariST =  2,
+	kOnceUponATimePlatformMAX
+};
+
+static const GOBGameDescription fallbackOnceUpon[kOnceUponATimeMAX][kOnceUponATimePlatformMAX] = {
+	{ // kOnceUponATimeAbracadabra
+		{ // kOnceUponATimePlatformDOS
+			{
+				"abracadabra",
+				"",
+				AD_ENTRY1(0, 0),
+				UNK_LANG,
+				kPlatformPC,
+				ADGF_NO_FLAGS,
+				GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+			},
+			kGameTypeAbracadabra,
+			kFeaturesAdLib | kFeaturesEGA,
+			0, 0, 0
+		},
+		{ // kOnceUponATimePlatformAmiga
+			{
+				"abracadabra",
+				"",
+				AD_ENTRY1(0, 0),
+				UNK_LANG,
+				kPlatformAmiga,
+				ADGF_NO_FLAGS,
+				GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+			},
+			kGameTypeAbracadabra,
+			kFeaturesEGA,
+			0, 0, 0
+		},
+		{ // kOnceUponATimePlatformAtariST
+			{
+				"abracadabra",
+				"",
+				AD_ENTRY1(0, 0),
+				UNK_LANG,
+				kPlatformAtariST,
+				ADGF_NO_FLAGS,
+				GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+			},
+			kGameTypeAbracadabra,
+			kFeaturesEGA,
+			0, 0, 0
+		}
+	},
+	{ // kOnceUponATimeBabaYaga
+		{ // kOnceUponATimePlatformDOS
+			{
+				"babayaga",
+				"",
+				AD_ENTRY1(0, 0),
+				UNK_LANG,
+				kPlatformPC,
+				ADGF_NO_FLAGS,
+				GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+			},
+			kGameTypeBabaYaga,
+			kFeaturesAdLib | kFeaturesEGA,
+			0, 0, 0
+		},
+		{ // kOnceUponATimePlatformAmiga
+			{
+				"babayaga",
+				"",
+				AD_ENTRY1(0, 0),
+				UNK_LANG,
+				kPlatformAmiga,
+				ADGF_NO_FLAGS,
+				GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+			},
+			kGameTypeBabaYaga,
+			kFeaturesEGA,
+			0, 0, 0
+		},
+		{ // kOnceUponATimePlatformAtariST
+			{
+				"babayaga",
+				"",
+				AD_ENTRY1(0, 0),
+				UNK_LANG,
+				kPlatformAtariST,
+				ADGF_NO_FLAGS,
+				GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+			},
+			kGameTypeBabaYaga,
+			kFeaturesEGA,
+			0, 0, 0
+		}
+	}
 };
 
 #endif // GOB_DETECTION_TABLES_FALLBACK_H
