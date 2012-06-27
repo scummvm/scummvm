@@ -368,11 +368,12 @@ void GobEngine::pauseEngineIntern(bool pause) {
 
 		_game->_startTimeKey += duration;
 		_draw->_cursorTimeKey += duration;
-		if (_inter->_soundEndTimeKey != 0)
+		if (_inter && (_inter->_soundEndTimeKey != 0))
 			_inter->_soundEndTimeKey += duration;
 	}
 
-	_vidPlayer->pauseAll(pause);
+	if (_vidPlayer)
+		_vidPlayer->pauseAll(pause);
 	_mixer->pauseAll(pause);
 }
 

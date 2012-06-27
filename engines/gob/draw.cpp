@@ -256,7 +256,7 @@ void Draw::blitInvalidated() {
 	if (_cursorIndex == 4)
 		blitCursor();
 
-	if (_vm->_inter->_terminate)
+	if (_vm->_inter && _vm->_inter->_terminate)
 		return;
 
 	if (_noInvalidated && !_applyPal)
@@ -446,7 +446,7 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right, &bottom);
 
-	uint16 centerOffset = _vm->_game->_script->getFunctionOffset(TOTFile::kFunctionCenter);
+	uint16 centerOffset = _vm->_game->_script ? _vm->_game->_script->getFunctionOffset(TOTFile::kFunctionCenter) : 0;
 	if (centerOffset != 0) {
 		_vm->_game->_script->call(centerOffset);
 
@@ -505,7 +505,7 @@ void Draw::oPlaytoons_sub_F_1B(uint16 id, int16 left, int16 top, int16 right, in
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right,  &bottom);
 
-	uint16 centerOffset = _vm->_game->_script->getFunctionOffset(TOTFile::kFunctionCenter);
+	uint16 centerOffset = _vm->_game->_script ? _vm->_game->_script->getFunctionOffset(TOTFile::kFunctionCenter) : 0;
 	if (centerOffset != 0) {
 		_vm->_game->_script->call(centerOffset);
 
