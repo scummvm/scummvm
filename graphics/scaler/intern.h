@@ -226,6 +226,33 @@ inline uint32 interpolate32_14_1_1<Graphics::ColorMasks<565> >(uint32 p1, uint32
 }
 
 /**
+ * Interpolate three 32 bit pixels with weights 1, 1, and 1, i.e., (p1+p2+p3)/3.
+ */
+
+template<typename ColorMask>
+uint32 interpolate32_1_1_1(uint32 pixel1, uint32 pixel2, uint32 pixel3)
+{
+	uint32 rsum, gsum, bsum;
+
+	rsum =  (pixel1 & ColorMask::kRedMask);
+	rsum += (pixel2 & ColorMask::kRedMask);
+	rsum += (pixel3 & ColorMask::kRedMask);
+	rsum /= 3;
+
+	gsum =  (pixel1 & ColorMask::kGreenMask);
+	gsum += (pixel2 & ColorMask::kGreenMask);
+	gsum += (pixel3 & ColorMask::kGreenMask);
+	gsum /= 3;
+
+	bsum =  (pixel1 & ColorMask::kBlueMask);
+	bsum += (pixel2 & ColorMask::kBlueMask);
+	bsum += (pixel3 & ColorMask::kBlueMask);
+	bsum /= 3;
+
+	return (rsum & ColorMask::kRedMask) | (gsum & ColorMask::kGreenMask) | (bsum & ColorMask::kBlueMask);
+}
+
+/**
  * Interpolate four 32 bit pixels with weights 1, 1, 1, and 1, i.e., (p1+p2+p3+p4)/4.
  *
  * @see interpolate32_3_1 for similar method
@@ -358,6 +385,33 @@ static inline unsigned interpolate16_14_1_1(unsigned p1, unsigned p2, unsigned p
 	const unsigned  g = (p1&ColorMask::kGreenMask)*14
 	                  + (p2&ColorMask::kGreenMask) + (p3&ColorMask::kGreenMask);
 	return ((rb&(ColorMask::kRedBlueMask<<4)) | (g&(ColorMask::kGreenMask<<4))) >> 4;
+}
+
+/**
+ * Interpolate three 16 bit pixels with weights 1, 1, and 1, i.e., (p1+p2+p3)/3.
+ */
+template<typename ColorMask>
+uint16 interpolate16_1_1_1(uint16 pixel1, uint16 pixel2, uint16 pixel3)
+{
+	uint32 rsum;
+	uint16 gsum, bsum;
+
+	rsum =  (pixel1 & ColorMask::kRedMask);
+	rsum += (pixel2 & ColorMask::kRedMask);
+	rsum += (pixel3 & ColorMask::kRedMask);
+	rsum /= 3;
+
+	gsum =  (pixel1 & ColorMask::kGreenMask);
+	gsum += (pixel2 & ColorMask::kGreenMask);
+	gsum += (pixel3 & ColorMask::kGreenMask);
+	gsum /= 3;
+
+	bsum =  (pixel1 & ColorMask::kBlueMask);
+	bsum += (pixel2 & ColorMask::kBlueMask);
+	bsum += (pixel3 & ColorMask::kBlueMask);
+	bsum /= 3;
+
+	return (rsum & ColorMask::kRedMask) | (gsum & ColorMask::kGreenMask) | (bsum & ColorMask::kBlueMask);
 }
 
 /**
