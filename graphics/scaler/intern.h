@@ -68,6 +68,29 @@ static inline uint32 interpolate32_3_1(uint32 p1, uint32 p2) {
 }
 
 /**
+ * Interpolate two 32 bit pixels with weights 2 and 1 and 1, i.e., (2*p1+p2)/3.
+ */
+template<typename ColorMask>
+uint32 interpolate32_2_1(uint32 pixel1, uint32 pixel2)
+{
+	uint32 rsum, gsum, bsum;
+
+	rsum =  (pixel1 & ColorMask::kRedMask) << 1;
+	rsum += (pixel2 & ColorMask::kRedMask);
+	rsum /= 3;
+
+	gsum =  (pixel1 & ColorMask::kGreenMask) << 1;
+	gsum += (pixel2 & ColorMask::kGreenMask);
+	gsum /= 3;
+
+	bsum =  (pixel1 & ColorMask::kBlueMask) << 1;
+	bsum += (pixel2 & ColorMask::kBlueMask);
+	bsum /= 3;
+
+	return (rsum & ColorMask::kRedMask) | (gsum & ColorMask::kGreenMask) | (bsum & ColorMask::kBlueMask);
+}
+
+/**
  * Interpolate two 32 bit pixels with weights 5 and 3 and 1, i.e., (5*p1+3*p2)/8.
  * @see interpolate_32_3_1 for similar method
  */
@@ -291,6 +314,30 @@ static inline unsigned interpolate16_3_1(unsigned p1, unsigned p2) {
 	const unsigned lowbits = (((p1 & ColorMask::kLowBits) << 1) + (p1 & ColorMask::kLow2Bits)
 		                   + (p2 & ColorMask::kLow2Bits)) & ColorMask::kLow2Bits;
 	return ((p1*3 + p2) - lowbits) >> 2;
+}
+
+/**
+ * Interpolate two 16 bit pixels with weights 2 and 1, i.e., (2*p1+p2)/3.
+ */
+template<typename ColorMask>
+uint16 interpolate16_2_1(uint16 pixel1, uint16 pixel2)
+{
+	uint32 rsum;
+	uint16 gsum, bsum;
+
+	rsum =  (pixel1 & ColorMask::kRedMask) << 1;
+	rsum += (pixel2 & ColorMask::kRedMask);
+	rsum /= 3;
+
+	gsum =  (pixel1 & ColorMask::kGreenMask) << 1;
+	gsum += (pixel2 & ColorMask::kGreenMask);
+	gsum /= 3;
+
+	bsum =  (pixel1 & ColorMask::kBlueMask) << 1;
+	bsum += (pixel2 & ColorMask::kBlueMask);
+	bsum /= 3;
+
+	return (rsum & ColorMask::kRedMask) | (gsum & ColorMask::kGreenMask) | (bsum & ColorMask::kBlueMask);
 }
 
 /**
