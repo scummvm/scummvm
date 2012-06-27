@@ -93,6 +93,7 @@ void CBPersistMgr::cleanup() {
 	_richBuffer = NULL;
 	_richBufferSize = 0;
 
+	delete[] _savedDescription;
 	_savedDescription = NULL; // ref to buffer
 //	_savedTimestamp = 0;
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;

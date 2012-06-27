@@ -61,6 +61,9 @@ CBImage::CBImage(CBGame *inGame, FIBITMAP *bitmap): CBBase(inGame) {
 CBImage::~CBImage() {
 	/*  delete _bitmap; */
 	delete _decoder;
+	if (_deletableSurface) {
+		_deletableSurface->free();
+	}
 	delete _deletableSurface;
 #if 0
 	if (_bitmap) FreeImage_Unload(_bitmap);
