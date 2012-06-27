@@ -26,6 +26,8 @@
 #include "engines/metaengine.h"
 #include "engines/engine.h"
 
+#include "common/hash-str.h"
+
 #include "common/gui_options.h" // FIXME: Temporary hack?
 
 namespace Common {
@@ -44,6 +46,20 @@ struct ADGameFileDescription {
 	const char *md5; ///< MD5 of (the beginning of) the described file. Optional. Set to NULL to ignore.
 	int32 fileSize;  ///< Size of the described file. Set to -1 to ignore.
 };
+
+/**
+ * A record describing the properties of a file. Used on the existing
+ * files while detecting a game.
+ */
+struct ADFileProperties {
+	int32 size;
+	Common::String md5;
+};
+
+/**
+ * A map of all relevant existing files in a game directory while detecting.
+ */
+typedef Common::HashMap<Common::String, ADFileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ADFilePropertiesMap;
 
 /**
  * A shortcut to produce an empty ADGameFileDescription record. Used to mark

@@ -22,7 +22,6 @@
 
 #include "common/debug.h"
 #include "common/util.h"
-#include "common/hash-str.h"
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/md5.h"
@@ -307,20 +306,6 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	else
 		return Common::kNoError;
 }
-
-/**
- * A record describing the properties of a file. Used on the existing
- * files while detecting a game.
- */
-struct ADFileProperties {
-	int32 size;
-	Common::String md5;
-};
-
-/**
- * A map of all relevant existing files in a game directory while detecting.
- */
-typedef Common::HashMap<Common::String, ADFileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ADFilePropertiesMap;
 
 static void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) {
 	// TODO: This message should be cleaned up / made more specific.
