@@ -308,14 +308,21 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		return Common::kNoError;
 }
 
-struct SizeMD5 {
-	int size;
+/**
+ * A record describing the properties of a file. Used on the existing
+ * files while detecting a game.
+ */
+struct ADFileProperties {
+	int32 size;
 	Common::String md5;
 };
 
-typedef Common::HashMap<Common::String, SizeMD5, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeMD5Map;
+/**
+ * A map of all relevant existing files in a game directory while detecting.
+ */
+typedef Common::HashMap<Common::String, ADFileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ADFilePropertiesMap;
 
-static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSizeMD5) {
+static void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) {
 	// TODO: This message should be cleaned up / made more specific.
 	// For example, we should specify at least which engine triggered this.
 	//
@@ -327,7 +334,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	report += _("of the game you tried to add and its version/language/etc.:");
 	report += "\n";
 
-	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
+	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file)
 		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
 
 	report += "\n";
@@ -376,7 +383,7 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 }
 
 ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
-	SizeMD5Map filesSizeMD5;
+	ADFilePropertiesMap filesProps;
 
 	const ADGameFileDescription *fileDesc;
 	const ADGameDescription *g;
@@ -391,9 +398,9 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = fileDesc->fileName;
-			SizeMD5 tmp;
+			ADFileProperties tmp;
 
-			if (filesSizeMD5.contains(fname))
+			if (filesProps.contains(fname))
 				continue;
 
 			// FIXME/TODO: We don't handle the case that a file is listed as a regular
@@ -406,7 +413,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 					tmp.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
 					tmp.size = macResMan.getResForkDataSize();
 					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
-					filesSizeMD5[fname] = tmp;
+					filesProps[fname] = tmp;
 				}
 			} else {
 				if (allFiles.contains(fname)) {
@@ -422,7 +429,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 					}
 
 					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
-					filesSizeMD5[fname] = tmp;
+					filesProps[fname] = tmp;
 				}
 			}
 		}
@@ -456,19 +463,19 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String tstr = fileDesc->fileName;
 
-			if (!filesSizeMD5.contains(tstr)) {
+			if (!filesProps.contains(tstr)) {
 				fileMissing = true;
 				allFilesPresent = false;
 				break;
 			}
 
-			if (fileDesc->md5 != NULL && fileDesc->md5 != filesSizeMD5[tstr].md5) {
-				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesSizeMD5[tstr].md5.c_str());
+			if (fileDesc->md5 != NULL && fileDesc->md5 != filesProps[tstr].md5) {
+				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[tstr].md5.c_str());
 				fileMissing = true;
 				break;
 			}
 
-			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesSizeMD5[tstr].size) {
+			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[tstr].size) {
 				debug(3, "Size Mismatch. Skipping");
 				fileMissing = true;
 				break;
@@ -514,8 +521,8 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 	// We didn't find a match
 	if (matched.empty()) {
-		if (!filesSizeMD5.empty() && gotAnyMatchesWithAllFiles) {
-			reportUnknown(parent, filesSizeMD5);
+		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
+			reportUnknown(parent, filesProps);
 		}
 
 		// Filename based fallback
