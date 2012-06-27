@@ -77,6 +77,10 @@ MODULE_OBJS := \
 	demos/scnplayer.o \
 	demos/batplayer.o \
 	detection/detection.o \
+	pregob/pregob.o \
+	pregob/onceupon/onceupon.o \
+	pregob/onceupon/abracadabra.o \
+	pregob/onceupon/babayaga.o \
 	minigames/geisha/evilfish.o \
 	minigames/geisha/oko.o \
 	minigames/geisha/meter.o \

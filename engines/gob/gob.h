@@ -75,6 +75,7 @@ class Scenery;
 class Util;
 class SaveLoad;
 class GobConsole;
+class PreGob;
 
 #define WRITE_VAR_UINT32(var, val)  _vm->_inter->_variables->writeVar32(var, val)
 #define WRITE_VAR_UINT16(var, val)  _vm->_inter->_variables->writeVar16(var, val)
@@ -223,6 +224,7 @@ public:
 	Inter *_inter;
 	SaveLoad *_saveLoad;
 	VideoPlayer *_vidPlayer;
+	PreGob *_preGob;
 
 	const char *getLangDesc(int16 language) const;
 	void validateLanguage();

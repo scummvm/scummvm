@@ -48,6 +48,10 @@
 #include "gob/videoplayer.h"
 #include "gob/save/saveload.h"
 
+#include "gob/pregob/pregob.h"
+#include "gob/pregob/onceupon/abracadabra.h"
+#include "gob/pregob/onceupon/babayaga.h"
+
 namespace Gob {
 
 #define MAX_TIME_DELTA 100
@@ -115,7 +119,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst), _rnd("gob") {
 	_vidPlayer = 0; _init     = 0; _inter   = 0;
 	_map       = 0; _palAnim  = 0; _scenery = 0;
 	_draw      = 0; _util     = 0; _video   = 0;
-	_saveLoad  = 0;
+	_saveLoad  = 0; _preGob   = 0;
 
 	_pauseStart = 0;
 
@@ -398,7 +402,6 @@ Common::Error GobEngine::initGameParts() {
 
 	// just detect some devices some of which will be always there if the music is not disabled
 	_noMusic = MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB)) == MT_NULL ? true : false;
-	_saveLoad = 0;
 
 	_global    = new Global(this);
 	_util      = new Util(this);
@@ -607,6 +610,28 @@ Common::Error GobEngine::initGameParts() {
 		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
 		break;
 
+	case kGameTypeAbracadabra:
+		_init     = new Init_v2(this);
+		_video    = new Video_v2(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v2(this);
+		_scenery  = new Scenery_v2(this);
+		_preGob   = new OnceUpon::Abracadabra(this);
+		break;
+
+	case kGameTypeBabaYaga:
+		_init     = new Init_v2(this);
+		_video    = new Video_v2(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v2(this);
+		_scenery  = new Scenery_v2(this);
+		_preGob   = new OnceUpon::BabaYaga(this);
+		break;
+
 	default:
 		deinitGameParts();
 		return Common::kUnsupportedGameidError;
@@ -615,12 +640,14 @@ Common::Error GobEngine::initGameParts() {
 	// Setup mixer
 	syncSoundSettings();
 
-	_inter->setupOpcodes();
+	if (_inter)
+		_inter->setupOpcodes();
 
 	return Common::kNoError;
 }
 
 void GobEngine::deinitGameParts() {
+	delete _preGob;    _preGob = 0;
 	delete _saveLoad;  _saveLoad = 0;
 	delete _mult;      _mult = 0;
 	delete _vidPlayer; _vidPlayer = 0;
