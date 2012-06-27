@@ -270,7 +270,7 @@ HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
 
 			if (Magic == SAVE_MAGIC_2) {
 				_savedVerBuild = (byte)getDWORD();
-				_savedName = getString();
+				_savedName = getStringObj();
 
 				// load thumbnail
 				_thumbnailDataSize = getDWORD();
@@ -393,6 +393,21 @@ void CBPersistMgr::putString(const Common::String &val) {
 	}
 }
 
+Common::String CBPersistMgr::getStringObj() {
+	uint32 len = _loadStream->readUint32LE();
+	char *ret = new char[len + 1];
+	_loadStream->read(ret, len);
+	ret[len] = '\0';
+	delete[] ret;
+
+	Common::String retString = ret; 
+
+	if (ret == "(null)") {
+		retString = "";
+	} 
+
+	return retString;
+}
 
 //////////////////////////////////////////////////////////////////////////
 char *CBPersistMgr::getString() {

@@ -456,7 +456,7 @@ bool TheoraDecoder::queueAudio() {
 #ifdef SCUMM_LITTLE_ENDIAN
 				flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
-				_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::NO, flags);
+				_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::YES, flags);
 
 				// The audio mixer is now responsible for the old audio buffer.
 				// We need to create a new one.

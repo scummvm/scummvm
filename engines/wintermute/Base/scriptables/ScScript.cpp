@@ -424,6 +424,8 @@ void CScScript::cleanup() {
 	_waitScript = NULL;
 
 	_parentScript = NULL; // ref only
+	
+	delete _scriptStream;
 }
 
 

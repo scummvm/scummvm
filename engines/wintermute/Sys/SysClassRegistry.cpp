@@ -214,7 +214,7 @@ HRESULT CSysClassRegistry::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
 		Game->DisplayContentSimple();
 		Game->_renderer->flip();
 
-		char *className = persistMgr->getString();
+		Common::String className = persistMgr->getStringObj();
 		NameMap::iterator mapIt = _nameMap.find(className);
 		if (mapIt != _nameMap.end())(*mapIt)._value->loadTable(Game, persistMgr);
 	}

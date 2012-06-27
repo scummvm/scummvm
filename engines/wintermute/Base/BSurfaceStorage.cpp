@@ -105,19 +105,16 @@ CBSurface *CBSurfaceStorage::addSurface(const char *Filename, bool default_ck, b
 		}
 	}
 
-	Common::SeekableReadStream *File = Game->_fileManager->openFile(Filename);
-	if (!File) {
+	if (!Game->_fileManager->hasFile(Filename)) {
 		if (Filename) Game->LOG(0, "Missing image: '%s'", Filename);
 		if (Game->_dEBUG_DebugMode)
 			return addSurface("invalid_debug.bmp", default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
 		else
 			return addSurface("invalid.bmp", default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
-	} else Game->_fileManager->closeFile(File);
-
+	}
 
 	CBSurface *surface;
 	surface = new CBSurfaceSDL(Game);
-
 
 	if (!surface) return NULL;
 

@@ -138,10 +138,8 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *Filename, TSoundType Type, bool 
 		AnsiString name = PathUtil::GetFileNameWithoutExtension(Filename);
 
 		AnsiString newFile = PathUtil::Combine(path, name + "ogg");
-		Common::SeekableReadStream *file = Game->_fileManager->openFile(newFile.c_str());
-		if (file) {
+		if (Game->_fileManager->hasFile(newFile)) {
 			Filename = newFile.c_str();
-			Game->_fileManager->closeFile(file);
 		}
 	}
 

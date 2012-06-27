@@ -108,6 +108,11 @@ CVidTheoraPlayer::~CVidTheoraPlayer(void) {
 
 //////////////////////////////////////////////////////////////////////////
 void CVidTheoraPlayer::cleanup() {
+	if (_file) {
+		Game->_fileManager->closeFile(_file);
+		_file = NULL;
+	}
+
 	_surface.free();
 	delete _theoraDecoder;
 	_theoraDecoder = NULL;

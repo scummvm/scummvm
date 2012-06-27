@@ -50,6 +50,7 @@ public:
 	bool getFullPath(const Common::String &filename, char *fullname);
 	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
 	HRESULT closeFile(Common::SeekableReadStream *File);
+	bool hasFile(const Common::String &filename);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
 	CBFileEntry *getPackageEntry(const Common::String &filename);
 	Common::File *openSingleFile(const Common::String &name);

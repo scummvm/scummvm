@@ -70,11 +70,10 @@ CBSurfaceSDL::~CBSurfaceSDL() {
 		delete _scaledSurface;
 		_scaledSurface = NULL;
 	}
-#if 0
-	if (_texture) SDL_DestroyTexture(_texture);
+
 	delete[] _alphaMask;
 	_alphaMask = NULL;
-#endif
+
 	Game->AddMem(-_width * _height * 4);
 }
 
@@ -151,6 +150,7 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 
 	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
 	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
+	delete _surface;
 	if (strFileName.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		TransparentSurface trans(*_surface);

@@ -55,6 +55,7 @@ public:
 	uint32 getDWORD();
 	void putDWORD(uint32 val);
 	char *getString();
+	Common::String getStringObj();
 	void putString(const Common::String &val);
 	float getFloat();
 	void putFloat(float val);

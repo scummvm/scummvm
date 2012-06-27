@@ -763,6 +763,15 @@ CBFileEntry *CBFileManager::getPackageEntry(const Common::String &Filename) {
 	return ret;
 }
 
+bool CBFileManager::hasFile(const Common::String &filename) {
+	//TODO: Do this in a much simpler fashion
+	Common::SeekableReadStream *stream = openFile(filename, true, false);
+	if (!stream) {
+		return false;
+	}
+	delete stream;
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filename, bool AbsPathWarning, bool keepTrackOf) {
@@ -801,16 +810,18 @@ HRESULT CBFileManager::closeFile(Common::SeekableReadStream *File) {
 Common::SeekableReadStream *CBFileManager::openFileRaw(const Common::String &Filename) {
 	restoreCurrentDir();
 
+	Common::SeekableReadStream *ret = NULL;
+
 	if (scumm_strnicmp(Filename.c_str(), "savegame:", 9) == 0) {
 		CBSaveThumbFile *SaveThumbFile = new CBSaveThumbFile(Game);
-		if (SUCCEEDED(SaveThumbFile->open(Filename))) return SaveThumbFile->getMemStream();
-		else {
-			delete SaveThumbFile;
-			return NULL;
-		}
+		if (SUCCEEDED(SaveThumbFile->open(Filename))) {
+			ret = SaveThumbFile->getMemStream();
+		} 
+		delete SaveThumbFile;
+		return ret;
 	}
 
-	Common::SeekableReadStream *ret = NULL;
+
 
 	ret = openDiskFile(Filename, this);
 	if (ret) return ret;

@@ -101,19 +101,18 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 		_stream = NULL;
 	}
 #endif
-	delete _stream;
-	_stream = NULL;
+	// If we already had a file, delete it.
+	delete _file;
 
-	if (_file) Game->_fileManager->closeFile(_file);
-
-	_file = Game->_fileManager->openFile(Filename);
+	// Load a file, but avoid having the File-manager handle the disposal of it.
+	_file = Game->_fileManager->openFile(Filename, true, false);
 	if (!_file) {
 		Game->LOG(0, "Error opening sound file '%s'", Filename);
 		return E_FAIL;
 	}
 	Common::String strFilename(Filename);
 	if (strFilename.hasSuffix(".ogg")) {
-		_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::NO);
+		_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::YES);
 	} else if (strFilename.hasSuffix(".wav")) {
 		warning("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s", Filename);
 		//_stream = Audio::makeWAVStream(_file, DisposeAfterUse::NO);
@@ -193,10 +192,10 @@ HRESULT CBSoundBuffer::play(bool looping, uint32 startSample) {
 	}
 	if (_stream) {
 		if (looping) {
-			Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
+			Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::YES);
 			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, loopStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 		} else {
-			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 		}
 	}
 	return S_OK;
