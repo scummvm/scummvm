@@ -44,15 +44,6 @@ struct RecorderEvent : Common::Event {
 
 class PlaybackFile {
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> RandomSeedsDictionary;
-	struct PlaybackFileHeader {
-		Common::String author;
-		Common::String name;
-		Common::String notes;
-		Common::String description;
-		Common::StringMap hashRecords;
-		Common::StringMap settingsRecords;
-		RandomSeedsDictionary randomSourceRecords;
-	} _header;
 	enum fileMode {
 		kRead = 0,
 		kWrite = 1
@@ -92,6 +83,16 @@ class PlaybackFile {
 		uint32 len;
 	};
 public:
+	struct PlaybackFileHeader {
+		Common::String fileName;
+		Common::String author;
+		Common::String name;
+		Common::String notes;
+		Common::String description;
+		Common::StringMap hashRecords;
+		Common::StringMap settingsRecords;
+		RandomSeedsDictionary randomSourceRecords;
+	};
 	PlaybackFile();
 	~PlaybackFile();
 	bool openWrite(Common::String fileName);
@@ -106,6 +107,7 @@ public:
 	Graphics::Surface *getScreenShot(int number);
 	void updateHeader();
 private:
+	PlaybackFileHeader _header;
 	int _recordCount;
 	int _headerDumped;
 	uint32 _eventsSize;
@@ -116,7 +118,6 @@ private:
 	fileMode _mode;
 	SeekableReadStream *_readStream;
 	WriteStream *_writeStream;
-	String _fileName;
 	PlaybackFileState _playbackParseState;
 	void skipHeader();
 	void writeGameSettings();

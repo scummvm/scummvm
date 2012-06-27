@@ -126,7 +126,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				_("Delete"), _("Cancel"));
 			if (alert.runModal() == GUI::kMessageOK) {
 				_playbackFile.close();
-				g_eventRec.deleteRecord(_list->getSelectedString());
+				g_eventRec.deleteRecord(_fileHeaders[_list->getSelected()].fileName);
 				_list->setSelected(-1);
 				updateList();
 			}
@@ -155,7 +155,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kPlaybackCmd:
 		if (_list->getSelected() >= 0) {
-			_filename = _list->getSelectedString();
+			_filename = _fileHeaders[_list->getSelected()].fileName;
 			setResult(kRecordDialogPlayback);
 			close();
 		}
@@ -171,7 +171,17 @@ void RecorderDialog::updateList() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String pattern(_target+".r??");
 	Common::StringArray files = saveFileMan->listSavefiles(pattern);
-	_list->setList(files);
+	Common::PlaybackFile file;
+	Common::StringArray namesList;
+	_fileHeaders.clear();
+	for (Common::StringArray::iterator i = files.begin(); i != files.end(); ++i) {
+		if (file.openRead(*i)) {
+			namesList.push_back(file.getHeader().name);
+			_fileHeaders.push_back(file.getHeader());
+		}
+		file.close();
+	}
+	_list->setList(namesList);
 	_list->draw();
 }
 
@@ -190,7 +200,7 @@ void RecorderDialog::updateSelection(bool redraw) {
 	_currentScreenshot = 0;
 	updateScreenShotsText();
 	if (_list->getSelected() >= 0) {
-		_playbackFile.openRead(_list->getSelectedString());
+		_playbackFile.openRead(_fileHeaders[_list->getSelected()].fileName);
 		_screenShotsCount = _playbackFile.getScreensCount();
 		if ((_screenShotsCount) > 0) {
 			_currentScreenshot = 1;
@@ -199,12 +209,23 @@ void RecorderDialog::updateSelection(bool redraw) {
 	}
 }
 
+
+bool RecorderDialog::isFileNameExists(Common::String &filename) {
+	for (Common::Array<Common::PlaybackFile::PlaybackFileHeader>::iterator ii = _fileHeaders.begin(); ii != _fileHeaders.end(); ++ii) {
+		if (ii->fileName == filename) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
 Common::String RecorderDialog::generateRecordFileName() {
 	ConfMan.getActiveDomainName();
 	GUI::ListWidget::StringArray recordsList = _list->getList();
 	for (int i = 0; i < MAX_RECORDS_NAMES; ++i) {
 		Common::String recordName = Common::String::format("%s.r%02x", _target.c_str(), i);
-		if (Common::find(_list->getList().begin(), _list->getList().end(), recordName) != _list->getList().end()) {
+		if (isFileNameExists(recordName)) {
 			continue;
 		}
 		return recordName;
