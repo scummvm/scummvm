@@ -319,6 +319,7 @@ HRESULT CBPersistMgr::initLoad(const char *filename) {
 	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)
 	   ) {
 		Game->LOG(0, "ERROR: Saved game version is newer than current game");
+		Game->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
 		return E_FAIL;
 	}
@@ -329,6 +330,7 @@ HRESULT CBPersistMgr::initLoad(const char *filename) {
 	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)
 	   ) {
 		Game->LOG(0, "ERROR: Saved game is too old and cannot be used by this version of game engine");
+		Game->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
 		return E_FAIL;
 

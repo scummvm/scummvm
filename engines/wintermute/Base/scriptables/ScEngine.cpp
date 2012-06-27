@@ -422,7 +422,7 @@ HRESULT CScEngine::Tick() {
 			break;
 		}
 		default:
-			warning("CScEngine::Tick - Unhandled enum");
+			//warning("CScEngine::Tick - Unhandled enum");
 			break;
 		} // switch
 	} // for each script

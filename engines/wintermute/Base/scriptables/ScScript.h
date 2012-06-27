@@ -144,6 +144,7 @@ public:
 	HRESULT Create(const char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner);
 	uint32 _iP;
 private:
+	void readHeader();
 	uint32 _bufferSize;
 	byte *_buffer;
 public:

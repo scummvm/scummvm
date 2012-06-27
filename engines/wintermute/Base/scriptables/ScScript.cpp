@@ -102,13 +102,9 @@ CScScript::~CScScript() {
 	cleanup();
 }
 
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::InitScript() {
-	if (!_scriptStream) {
-		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
-	}
+void CScScript::readHeader() {
+	uint32 oldPos = _scriptStream->pos();
+	_scriptStream->seek(0);
 	_header.magic = _scriptStream->readUint32LE();
 	_header.version = _scriptStream->readUint32LE();
 	_header.code_start = _scriptStream->readUint32LE();
@@ -117,6 +113,16 @@ HRESULT CScScript::InitScript() {
 	_header.event_table = _scriptStream->readUint32LE();
 	_header.externals_table = _scriptStream->readUint32LE();
 	_header.method_table = _scriptStream->readUint32LE();
+	_scriptStream->seek(oldPos);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CScScript::InitScript() {
+	if (!_scriptStream) {
+		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
+	}
+	readHeader();
 
 	if (_header.magic != SCRIPT_MAGIC) {
 		Game->LOG(0, "File '%s' is not a valid compiled script", _filename);
@@ -162,6 +168,7 @@ HRESULT CScScript::InitScript() {
 HRESULT CScScript::InitTables() {
 	uint32 OrigIP = _iP;
 
+	readHeader();
 	// load symbol table
 	_iP = _header.symbol_table;
 
@@ -1197,7 +1204,10 @@ HRESULT CScScript::persist(CBPersistMgr *persistMgr) {
 			persistMgr->getBytes(_buffer, _bufferSize);
 			_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 			InitTables();
-		} else _buffer = NULL;
+		} else {
+			_buffer = NULL;
+			_scriptStream = NULL;	
+		}	
 	}
 
 	persistMgr->transfer(TMEMBER(_callStack));
@@ -1616,6 +1626,9 @@ void CScScript::afterLoad() {
 
 		_buffer = new byte [_bufferSize];
 		memcpy(_buffer, buffer, _bufferSize);
+
+		delete _scriptStream;
+		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 
 		InitTables();
 	}

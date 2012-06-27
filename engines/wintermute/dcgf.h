@@ -32,7 +32,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 #define DCGF_VER_MAJOR 1
-#define DCGF_VER_MINOR 0
+#define DCGF_VER_MINOR 1
 #define DCGF_VER_BUILD 1
 #define DCGF_VER_SUFFIX "beta"
 #define DCGF_VER_BETA true
