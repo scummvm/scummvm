@@ -354,7 +354,7 @@ double fast_atan(double x0)
  * bitplanes.  The increase in image quality is well worth the speed hit.
  *
  */
-int16 * choose_greyscale(uint16 *pixels)
+int16 * chooseGreyscale(uint16 *pixels)
 {
 	static int16 greyscale_diffs[3][8];
 	static int16 bplanes[3][9];
@@ -439,7 +439,7 @@ int16 * choose_greyscale(uint16 *pixels)
  * useful results.
  *
  */
-int32 calc_pixel_diff_nosqrt(uint16 pixel1, uint16 pixel2)
+int32 calcPixelDiffNosqrt(uint16 pixel1, uint16 pixel2)
 {
 
 #if 1	/* distance between pixels, weighted by roughly luma proportions */
@@ -531,7 +531,7 @@ int32 calc_pixel_diff_nosqrt(uint16 pixel1, uint16 pixel2)
  * since everything I have tried has lead to slight mis-detection errors.
  *
  */
-int find_principle_axis(uint16 *pixels, int16 *diffs, int16 *bplane,
+int findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
 		int8 *sim,
 		int32 *return_angle)
 {
@@ -774,7 +774,7 @@ int find_principle_axis(uint16 *pixels, int16 *diffs, int16 *bplane,
 
 
 /* Check for mis-detected arrow patterns.  Return 1 (good), 0 (bad). */
-int check_arrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
+int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
 {
 	uint16 center = pixels[4];
 
@@ -894,7 +894,7 @@ int check_arrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag)
  * refinement algorithms.
  *
  */
-int refine_direction(char edge_type, uint16 *pixels, int16 *bptr,
+int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 		int8 *sim, double angle)
 {
 	int32 sums_dir[9] = { 0 };
@@ -1034,7 +1034,7 @@ int refine_direction(char edge_type, uint16 *pixels, int16 *bptr,
 			if (n > 1) return 6;	/* | */
 
 			if (best_dir >= 5)
-				ok_arrow_flag = check_arrows(best_dir, pixels, sim, 1);
+				ok_arrow_flag = checkArrows(best_dir, pixels, sim, 1);
 
 			switch(best_dir)
 			{
@@ -1191,7 +1191,7 @@ int refine_direction(char edge_type, uint16 *pixels, int16 *bptr,
 			if (n > 1) return 0;	/* - */
 
 			if (best_dir >= 5)
-				ok_arrow_flag = check_arrows(best_dir, pixels, sim, 1);
+				ok_arrow_flag = checkArrows(best_dir, pixels, sim, 1);
 
 			switch(best_dir)
 			{
@@ -1455,7 +1455,7 @@ int refine_direction(char edge_type, uint16 *pixels, int16 *bptr,
 			}
 
 			if (best_dir >= 5)
-				ok_arrow_flag = check_arrows(best_dir, pixels, sim, 0);
+				ok_arrow_flag = checkArrows(best_dir, pixels, sim, 0);
 
 			switch(best_dir)
 			{
@@ -1727,7 +1727,7 @@ int refine_direction(char edge_type, uint16 *pixels, int16 *bptr,
 			}
 
 			if (best_dir >= 5)
-				ok_arrow_flag = check_arrows(best_dir, pixels, sim, 0);
+				ok_arrow_flag = checkArrows(best_dir, pixels, sim, 0);
 
 			switch(best_dir)
 			{
@@ -1972,9 +1972,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[6], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[6], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[6], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[6] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2006,9 +2006,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2034,9 +2034,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			if (sub_type != 16)
 			{
 				tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2048,9 +2048,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			if (sub_type != 17)
 			{
 				tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[6], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[6], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[6], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[6] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2076,9 +2076,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2110,9 +2110,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[6], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[6], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[6], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[6] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2144,9 +2144,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2178,9 +2178,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[8], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[8], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[8], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[8] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2206,9 +2206,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			if (sub_type != 18)
 			{
 				tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2220,9 +2220,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			if (sub_type != 19)
 			{
 				tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[8], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[8], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[8], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[8] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2248,9 +2248,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[8], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[8], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[8], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[8] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2282,9 +2282,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2316,9 +2316,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2338,9 +2338,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[6], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[6], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[6], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[6] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2366,9 +2366,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2388,9 +2388,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[8], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[8], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[8], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[8] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2416,9 +2416,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2438,9 +2438,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2466,9 +2466,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[6], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[6], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[6], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[6], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[6], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[6], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[6] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2488,9 +2488,9 @@ void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[8], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[8], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[8], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[8], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[8], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[8], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[8] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2579,9 +2579,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2631,9 +2631,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[1], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[1], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[1], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[1] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2677,9 +2677,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			if (sub_type != 16)
 			{
 				tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[1], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[1], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[1], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[1] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2704,9 +2704,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			if (sub_type != 17)
 			{
 				tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2744,9 +2744,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[1], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[1], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[1], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[1] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2796,9 +2796,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2848,9 +2848,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2900,9 +2900,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[3], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[3], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[3], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[3] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2946,9 +2946,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			if (sub_type != 18)
 			{
 				tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2973,9 +2973,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			if (sub_type != 19)
 			{
 				tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[3], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[3], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[3], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[3] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3013,9 +3013,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[3], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[3], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[3], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[3] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3065,9 +3065,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3117,9 +3117,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3161,9 +3161,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3210,9 +3210,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[1], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[1], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[1], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[1] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3254,9 +3254,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[3], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[3], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[3], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[3] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3303,9 +3303,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[0], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[0], pixels[3]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[0], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[0], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[0], pixels[3]);
+				diff3 = calcPixelDiffNosqrt(tmp[0], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[0] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3347,9 +3347,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[1], pixels[1]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[1], pixels[5]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[1], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[1], pixels[1]);
+				diff2 = calcPixelDiffNosqrt(tmp[1], pixels[5]);
+				diff3 = calcPixelDiffNosqrt(tmp[1], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[1] = pixels[1];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3396,9 +3396,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[2], pixels[3]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[2], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[2], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[2], pixels[3]);
+				diff2 = calcPixelDiffNosqrt(tmp[2], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[2], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[2] = pixels[3];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3440,9 +3440,9 @@ void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 			else	/* choose nearest pixel */
 #endif
 			{
-				diff1 = calc_pixel_diff_nosqrt(tmp[3], pixels[5]);
-				diff2 = calc_pixel_diff_nosqrt(tmp[3], pixels[7]);
-				diff3 = calc_pixel_diff_nosqrt(tmp[3], pixels[4]);
+				diff1 = calcPixelDiffNosqrt(tmp[3], pixels[5]);
+				diff2 = calcPixelDiffNosqrt(tmp[3], pixels[7]);
+				diff3 = calcPixelDiffNosqrt(tmp[3], pixels[4]);
 				if (diff1 <= diff2 && diff1 <= diff3)
 					tmp[3] = pixels[5];
 				else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3685,7 +3685,7 @@ void draw_unchanged_grid_2x(uint16 *dptr16, int dstPitch,
 
 /* Perform edge detection, draw the new 3x pixels */
 template<typename ColorMask>
-void anti_alias_pass_3x(const uint8 *src, uint8 *dst,
+void antiAliasPass3x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
 		int overlay_flag)
@@ -3789,7 +3789,7 @@ void anti_alias_pass_3x(const uint8 *src, uint8 *dst,
 			}
 
 #endif
-			diffs = choose_greyscale(pixels);
+			diffs = chooseGreyscale(pixels);
 
 			/* block of solid color */
 			if (!diffs)
@@ -3808,9 +3808,9 @@ void anti_alias_pass_3x(const uint8 *src, uint8 *dst,
 
 			bplane = bptr_global;
 
-			edge_type = find_principle_axis(pixels, diffs, bplane,
+			edge_type = findPrincipleAxis(pixels, diffs, bplane,
 					sim, &angle);
-			sub_type = refine_direction(edge_type, pixels, bplane,
+			sub_type = refineDirection(edge_type, pixels, bplane,
 					sim, angle);
 			if (sub_type >= 0)
 				sub_type = fix_knights(sub_type, pixels, sim);
@@ -3825,7 +3825,7 @@ void anti_alias_pass_3x(const uint8 *src, uint8 *dst,
 
 /* Perform edge detection, draw the new 2x pixels */
 template<typename ColorMask>
-void anti_alias_pass_2x(const uint8 *src, uint8 *dst,
+void antiAliasPass2x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
 		int overlay_flag,
@@ -3931,7 +3931,7 @@ void anti_alias_pass_2x(const uint8 *src, uint8 *dst,
 			}
 #endif
 
-			diffs = choose_greyscale(pixels);
+			diffs = chooseGreyscale(pixels);
 
 			/* block of solid color */
 			if (!diffs)
@@ -3950,9 +3950,9 @@ void anti_alias_pass_2x(const uint8 *src, uint8 *dst,
 
 			bplane = bptr_global;
 
-			edge_type = find_principle_axis(pixels, diffs, bplane,
+			edge_type = findPrincipleAxis(pixels, diffs, bplane,
 					sim, &angle);
-			sub_type = refine_direction(edge_type, pixels, bplane,
+			sub_type = refineDirection(edge_type, pixels, bplane,
 					sim, angle);
 			if (sub_type >= 0)
 				sub_type = fix_knights(sub_type, pixels, sim);
@@ -3967,7 +3967,7 @@ void anti_alias_pass_2x(const uint8 *src, uint8 *dst,
 
 
 /* Initialize various lookup tables */
-void init_tables(const uint8 *srcPtr, uint32 srcPitch,
+void initTables(const uint8 *srcPtr, uint32 srcPitch,
 		int width, int height)
 {
 	double r_float, g_float, b_float;
@@ -4314,7 +4314,7 @@ void Edge3x(const uint8 *srcPtr, uint32 srcPitch,
 		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) *
 					srcPitch)) + (width - 1) - 1;
 
-		init_tables(srcPtr, srcPitch, width, height);
+		initTables(srcPtr, srcPitch, width, height);
 		init_flag = 1;
 	}
 
@@ -4348,12 +4348,12 @@ void Edge3x(const uint8 *srcPtr, uint32 srcPitch,
 	if ((const uint16 *) srcPtr < src_addr_min ||
 			(const uint16 *) srcPtr > src_addr_max)
 	{
-		anti_alias_pass_3x(srcPtr, dstPtr, width, height,
+		antiAliasPass3x(srcPtr, dstPtr, width, height,
 				3*width, 3*height, srcPitch, dstPitch, 1);
 	}
 	else   /* Draw the regular screen, this isn't an overlay. */
 	{
-		anti_alias_pass_3x(srcPtr, dstPtr, width, height,
+		antiAliasPass3x(srcPtr, dstPtr, width, height,
 				3*width, 3*height, srcPitch, dstPitch, 0);
 	}
 
@@ -4382,7 +4382,7 @@ void Edge2x(const uint8 *srcPtr, uint32 srcPitch,
 		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) *
 					srcPitch)) + (width - 1) - 1;
 
-		init_tables(srcPtr, srcPitch, width, height);
+		initTables(srcPtr, srcPitch, width, height);
 		init_flag = 1;
 	}
 
@@ -4416,12 +4416,12 @@ void Edge2x(const uint8 *srcPtr, uint32 srcPitch,
 	if ((const uint16 *) srcPtr < src_addr_min ||
 			(const uint16 *) srcPtr > src_addr_max)
 	{
-		anti_alias_pass_2x(srcPtr, dstPtr, width, height,
+		antiAliasPass2x(srcPtr, dstPtr, width, height,
 				2*width, 2*height, srcPitch, dstPitch, 1, 0);
 	}
 	else   /* Draw the regular screen, this isn't an overlay. */
 	{
-		anti_alias_pass_2x(srcPtr, dstPtr, width, height,
+		antiAliasPass2x(srcPtr, dstPtr, width, height,
 				2*width, 2*height, srcPitch, dstPitch, 0, 0);
 	}
 
@@ -4456,7 +4456,7 @@ void Edge2x_Interp(const uint8 *srcPtr, uint32 srcPitch,
 		src_addr_max = ((const uint16 *) (srcPtr + (height - 1) *
 					srcPitch)) + (width - 1) - 1;
 
-		init_tables(srcPtr, srcPitch, width, height);
+		initTables(srcPtr, srcPitch, width, height);
 		init_flag = 1;
 	}
 
@@ -4490,12 +4490,12 @@ void Edge2x_Interp(const uint8 *srcPtr, uint32 srcPitch,
 	if ((const uint16 *) srcPtr < src_addr_min ||
 			(const uint16 *) srcPtr > src_addr_max)
 	{
-		anti_alias_pass_2x(srcPtr, dstPtr, width, height,
+		antiAliasPass2x(srcPtr, dstPtr, width, height,
 				2*width, 2*height, srcPitch, dstPitch, 1, 0);
 	}
 	else   /* Draw the regular screen, this isn't an overlay. */
 	{
-		anti_alias_pass_2x(srcPtr, dstPtr, width, height,
+		antiAliasPass2x(srcPtr, dstPtr, width, height,
 				2*width, 2*height, srcPitch, dstPitch, 0, 1);
 	}
 
@@ -4513,7 +4513,7 @@ EdgePlugin::EdgePlugin() {
 
 void EdgePlugin::initialize(Graphics::PixelFormat format) {
 	_format = format;
-	init_tables(0, 0, 0, 0);
+	initTables(0, 0, 0, 0);
 }
 
 void EdgePlugin::deinitialize() {
@@ -4524,14 +4524,14 @@ void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 	if (_format.bytesPerPixel == 2) {
 		if (_factor == 2) {
 			if (_format.gLoss == 2)
-				anti_alias_pass_2x<Graphics::ColorMasks<565> >(srcPtr, dstPtr, width, height, 2*width, 2*height, srcPitch, dstPitch, 0, 1);
+				antiAliasPass2x<Graphics::ColorMasks<565> >(srcPtr, dstPtr, width, height, 2*width, 2*height, srcPitch, dstPitch, 0, 1);
 			else
-				anti_alias_pass_2x<Graphics::ColorMasks<555> >(srcPtr, dstPtr, width, height, 2*width, 2*height, srcPitch, dstPitch, 0, 1);
+				antiAliasPass2x<Graphics::ColorMasks<555> >(srcPtr, dstPtr, width, height, 2*width, 2*height, srcPitch, dstPitch, 0, 1);
 		} else {
 			if (_format.gLoss == 2)
-				anti_alias_pass_3x<Graphics::ColorMasks<565> >(srcPtr, dstPtr, width, height, 3*width, 3*height, srcPitch, dstPitch, 0);
+				antiAliasPass3x<Graphics::ColorMasks<565> >(srcPtr, dstPtr, width, height, 3*width, 3*height, srcPitch, dstPitch, 0);
 			else
-				anti_alias_pass_3x<Graphics::ColorMasks<555> >(srcPtr, dstPtr, width, height, 3*width, 3*height, srcPitch, dstPitch, 0);
+				antiAliasPass3x<Graphics::ColorMasks<555> >(srcPtr, dstPtr, width, height, 3*width, 3*height, srcPitch, dstPitch, 0);
 		}
 	} else {
 		warning("FIXME: EdgePlugin 32bpp format");
