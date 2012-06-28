@@ -116,7 +116,6 @@
  */
 #define DEBUG_DRAW_REFRESH_BORDERS      0   /* more redraw debug */
 
-#define INCREASE_WIN32_PRIORITY         0   /* 1 for slow CPUs */
 #define PARANOID_KNIGHTS            1   /* avoid artifacts */
 #define PARANOID_ARROWS             1   /* avoid artifacts */
 
