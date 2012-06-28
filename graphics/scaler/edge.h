@@ -40,7 +40,8 @@ public:
 	virtual const char *getPrettyName() const;
 private:
 	int16* chooseGreyscale(uint16 *pixels);
-	int32 calcPixelDiffNosqrt(uint16 pixel1, uint16 pixel2);
+	template<typename ColorMask, typename Pixel>
+	int32 calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2);
 	int findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
 		int8 *sim,
 		int32 *return_angle);
@@ -51,21 +52,21 @@ private:
 	void initTables(const uint8 *srcPtr, uint32 srcPitch,
 		int width, int height);
 
-	template<typename ColorMask>
+	template<typename ColorMask, typename Pixel>
 	void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		uint16 *pixels, int sub_type, int16 *bptr,
 		int8 *sim,
 		int interpolate_2x);
-	template<typename ColorMask>
+	template<typename ColorMask, typename Pixel>
 	void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 		uint16 *pixels, int sub_type, int16 *bptr);
-	template<typename ColorMask>
+	template<typename ColorMask, typename Pixel>
 	void antiAliasPass2x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
 		int overlay_flag,
 		int interpolate_2x);
-	template<typename ColorMask>
+	template<typename ColorMask, typename Pixel>
 	void antiAliasPass3x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
