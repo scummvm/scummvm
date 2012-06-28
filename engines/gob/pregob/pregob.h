@@ -35,7 +35,24 @@ public:
 	virtual void run() = 0;
 
 protected:
+	void initScreen(); ///< Initialize the game screen.
+
+	void fadeOut(); ///< Fade to black.
+	void fadeIn();  ///< Fade to the current palette.
+
+	void clearScreen();
+
+	/** Change the palette.
+	 *
+	 *  @param palette The palette to change to.
+	 *  @param size Size of the palette in colors.
+	 */
+	void setPalette(const byte *palette, uint16 size); ///< Change the palette
+
 	GobEngine *_vm;
+
+private:
+	bool _fadedOut; ///< Did we fade out?
 };
 
 } // End of namespace Gob
