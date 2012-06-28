@@ -124,7 +124,7 @@ public:
 	int16 getFrameRate();
 	void setFrameRate(int16 rate);
 	void notifyNewAnim();
-	void waitEndFrame();
+	void waitEndFrame(bool handleInput = true);
 	void setScrollOffset(int16 x = -1, int16 y = -1);
 
 	static void insertStr(const char *str1, char *str2, int16 pos);

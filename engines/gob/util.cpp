@@ -367,21 +367,29 @@ void Util::notifyNewAnim() {
 	_startFrameTime = getTimeKey();
 }
 
-void Util::waitEndFrame() {
+void Util::waitEndFrame(bool handleInput) {
 	int32 time;
-
-	_vm->_video->waitRetrace();
 
 	time = getTimeKey() - _startFrameTime;
 	if ((time > 1000) || (time < 0)) {
+		_vm->_video->retrace();
 		_startFrameTime = getTimeKey();
 		return;
 	}
 
-	int32 toWait = _frameWaitTime - time;
+	int32 toWait = 0;
+	do {
+		if (toWait > 0)
+			delay(MIN<int>(toWait, 10));
 
-	if (toWait > 0)
-		delay(toWait);
+		if (handleInput)
+			processInput();
+
+		_vm->_video->retrace();
+
+		time   = getTimeKey() - _startFrameTime;
+		toWait = _frameWaitTime - time;
+	} while (toWait > 0);
 
 	_startFrameTime = getTimeKey();
 }

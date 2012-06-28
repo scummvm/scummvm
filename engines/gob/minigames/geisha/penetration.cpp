@@ -505,7 +505,7 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 		// Draw, fade in if necessary and wait for the end of the frame
 		_vm->_draw->blitInvalidated();
 		fadeIn();
-		_vm->_util->waitEndFrame();
+		_vm->_util->waitEndFrame(false);
 
 		// Handle the input
 		checkInput();
