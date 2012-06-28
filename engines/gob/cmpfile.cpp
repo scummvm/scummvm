@@ -21,6 +21,7 @@
  */
 
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/str.h"
 
 #include "gob/gob.h"
@@ -143,7 +144,13 @@ void CMPFile::loadCMP(Common::SeekableReadStream &cmp) {
 }
 
 void CMPFile::loadRXY(Common::SeekableReadStream &rxy) {
-	_coordinates = new RXYFile(rxy);
+	bool bigEndian = (_vm->getEndiannessMethod() == kEndiannessMethodBE) ||
+	                 ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) &&
+	                  (_vm->getEndianness() == kEndiannessBE));
+
+	Common::SeekableSubReadStreamEndian sub(&rxy, 0, rxy.size(), bigEndian, DisposeAfterUse::NO);
+
+	_coordinates = new RXYFile(sub);
 
 	for (uint i = 0; i < _coordinates->size(); i++) {
 		const RXYFile::Coordinates &c = (*_coordinates)[i];

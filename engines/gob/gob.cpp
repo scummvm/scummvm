@@ -184,6 +184,10 @@ void GobEngine::validateVideoMode(int16 videoMode) {
 		error("Video mode 0x%X is not supported", videoMode);
 }
 
+EndiannessMethod GobEngine::getEndiannessMethod() const {
+	return _endiannessMethod;
+}
+
 Endianness GobEngine::getEndianness() const {
 	if ((getPlatform() == Common::kPlatformAmiga) ||
 	    (getPlatform() == Common::kPlatformMacintosh) ||
@@ -403,6 +407,8 @@ Common::Error GobEngine::initGameParts() {
 	// just detect some devices some of which will be always there if the music is not disabled
 	_noMusic = MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB)) == MT_NULL ? true : false;
 
+	_endiannessMethod = kEndiannessMethodSystem;
+
 	_global    = new Global(this);
 	_util      = new Util(this);
 	_dataIO    = new DataIO();
@@ -433,6 +439,8 @@ Common::Error GobEngine::initGameParts() {
 		_goblin   = new Goblin_v1(this);
 		_scenery  = new Scenery_v1(this);
 		_saveLoad = new SaveLoad_Geisha(this, _targetName.c_str());
+
+		_endiannessMethod = kEndiannessMethodAltFile;
 		break;
 
 	case kGameTypeFascination:

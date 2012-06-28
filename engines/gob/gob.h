@@ -149,6 +149,13 @@ enum Features {
 	kFeaturesTrueColor = 1 << 7
 };
 
+enum EndiannessMethod {
+	kEndiannessMethodLE,     ///< Always little endian.
+	kEndiannessMethodBE,     ///< Always big endian.
+	kEndiannessMethodSystem, ///< Follows system endianness.
+	kEndiannessMethodAltFile ///< Different endianness in alternate file.
+};
+
 enum {
 	kDebugFuncOp     = 1 <<  0,
 	kDebugDrawOp     = 1 <<  1,
@@ -171,6 +178,8 @@ private:
 	GameType _gameType;
 	int32 _features;
 	Common::Platform _platform;
+
+	EndiannessMethod _endiannessMethod;
 
 	uint32 _pauseStart;
 
@@ -232,6 +241,7 @@ public:
 
 	void pauseGame();
 
+	EndiannessMethod getEndiannessMethod() const;
 	Endianness getEndianness() const;
 	Common::Platform getPlatform() const;
 	GameType getGameType() const;
