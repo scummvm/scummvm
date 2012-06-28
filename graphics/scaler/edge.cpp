@@ -3374,73 +3374,76 @@ void handle_transparent_overlay(uint16 transp, uint16 *pixels,
 
 
 /* Check for changed pixel grid, return 1 if unchanged. */
-int check_unchanged_pixels(uint16 *old_src_ptr, uint16 *pixels, int w) {
-	uint16 *dptr16;
+template<typename Pixel>
+int check_unchanged_pixels(Pixel *old_src_ptr, Pixel *pixels, int w) {
+	Pixel *dptr;
 
-	dptr16 = old_src_ptr - w - 1;
-	if (*dptr16++ != pixels[0]) return 0;
-	if (*dptr16++ != pixels[1]) return 0;
-	if (*dptr16 != pixels[2]) return 0;
+	dptr = old_src_ptr - w - 1;
+	if (*dptr++ != pixels[0]) return 0;
+	if (*dptr++ != pixels[1]) return 0;
+	if (*dptr != pixels[2]) return 0;
 
-	dptr16 += w - 2;
-	if (*dptr16 != pixels[3]) return 0;
-	dptr16 += 2;
-	if (*dptr16 != pixels[5]) return 0;
+	dptr += w - 2;
+	if (*dptr != pixels[3]) return 0;
+	dptr += 2;
+	if (*dptr != pixels[5]) return 0;
 
-	dptr16 += w - 2;
-	if (*dptr16++ != pixels[6]) return 0;
-	if (*dptr16++ != pixels[7]) return 0;
-	if (*dptr16 != pixels[8]) return 0;
+	dptr += w - 2;
+	if (*dptr++ != pixels[6]) return 0;
+	if (*dptr++ != pixels[7]) return 0;
+	if (*dptr != pixels[8]) return 0;
 
 	return 1;
 }
 
 
 /* Draw unchanged pixel grid, 3x */
-/* old_dptr16 starts in top left of grid, dptr16 in center */
-void draw_unchanged_grid_3x(uint16 *dptr16, int dstPitch,
-                            uint16 *old_dptr16, int old_dst_inc) {
-	uint16 *sptr;
-	uint16 *dptr;
-	uint8 *dptr8 = (uint8 *) dptr16;
+/* old_dptr starts in top left of grid, dptr in center */
+template<typename Pixel>
+void draw_unchanged_grid_3x(Pixel *dptr, int dstPitch,
+                            Pixel *old_dptr, int old_dst_inc) {
+	Pixel *sp;
+	Pixel *dp;
+	uint8 *dptr8 = (uint8 *) dptr;
 
-	sptr = old_dptr16;
-	dptr = (uint16 *)(dptr8 - dstPitch) - 1;
-	*dptr++ = *sptr++;
-	*dptr++ = *sptr++;
-	*dptr = *sptr;
+	sp = old_dptr;
+	dp = (Pixel *)(dptr8 - dstPitch) - 1;
+	*dp++ = *sp++;
+	*dp++ = *sp++;
+	*dp = *sp;
 
-	sptr = old_dptr16 + old_dst_inc;
-	dptr = dptr16 - 1;
-	*dptr++ = *sptr++;
-	*dptr++ = *sptr++;
-	*dptr = *sptr;
+	sp = old_dptr + old_dst_inc;
+	dp = dptr - 1;
+	*dp++ = *sp++;
+	*dp++ = *sp++;
+	*dp = *sp;
 
-	sptr = old_dptr16 + old_dst_inc + old_dst_inc;
-	dptr = (uint16 *)(dptr8 + dstPitch) - 1;
-	*dptr++ = *sptr++;
-	*dptr++ = *sptr++;
-	*dptr = *sptr;
+	sp = old_dptr + old_dst_inc + old_dst_inc;
+	dp = (Pixel *)(dptr8 + dstPitch) - 1;
+	*dp++ = *sp++;
+	*dp++ = *sp++;
+	*dp = *sp;
 }
 
 
 
 /* Draw unchanged pixel grid, 2x */
-void draw_unchanged_grid_2x(uint16 *dptr16, int dstPitch,
-                            uint16 *old_dptr16, int old_dst_inc) {
-	uint16 *sptr;
-	uint16 *dptr;
-	uint8 *dptr8 = (uint8 *) dptr16;
+template<typename Pixel>
+void draw_unchanged_grid_2x(Pixel *dptr, int dstPitch,
+                            Pixel *old_dptr, int old_dst_inc) {
+	Pixel *sp;
+	Pixel *dp;
+	uint8 *dptr8 = (uint8 *) dptr;
 
-	sptr = old_dptr16;
-	dptr = dptr16;
-	*dptr++ = *sptr++;
-	*dptr = *sptr;
+	sp = old_dptr;
+	dp = dptr;
+	*dp++ = *sp++;
+	*dp = *sp;
 
-	sptr = old_dptr16 + old_dst_inc;
-	dptr = (uint16 *)(dptr8 + dstPitch);
-	*dptr++ = *sptr++;
-	*dptr = *sptr;
+	sp = old_dptr + old_dst_inc;
+	dp = (Pixel *)(dptr8 + dstPitch);
+	*dp++ = *sp++;
+	*dp = *sp;
 }
 
 
