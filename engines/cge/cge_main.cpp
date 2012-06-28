@@ -706,7 +706,7 @@ void CGEEngine::qGame() {
 	saveGame(0, Common::String("Automatic Savegame"));
 
 	_vga->sunset();
-	_finis = true;
+	_endGame = true;
 }
 
 void CGEEngine::switchScene(int newScene) {
@@ -1403,14 +1403,14 @@ void CGEEngine::runGame() {
 
 	_keyboard->setClient(_sys);
 	// main loop
-	while (!_finis && !_quitFlag) {
-		if (_flag[3])
+	while (!_endGame && !_quitFlag) {
+		if (_flag[3]) // Flag FINIS
 			_commandHandler->addCallback(kCmdExec,  -1, 0, kQGame);
 		mainLoop();
 	}
 
 	// If finishing game due to closing ScummVM window, explicitly save the game
-	if (!_finis && canSaveGameStateCurrently())
+	if (!_endGame && canSaveGameStateCurrently())
 		qGame();
 
 	_keyboard->setClient(NULL);

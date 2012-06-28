@@ -159,7 +159,7 @@ public:
 	bool   _flag[4];
 	bool   _dark;
 	bool   _game;
-	bool   _finis;
+	bool   _endGame;
 	int    _now;
 	int    _lev;
 	int    _mode;

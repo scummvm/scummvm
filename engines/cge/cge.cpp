@@ -124,7 +124,7 @@ void CGEEngine::init() {
 	_maxScene   =  0;
 	_dark       = false;
 	_game       = false;
-	_finis      = false;
+	_endGame    = false;
 	_now        =  1;
 	_lev        = -1;
 	_recentStep = -2;
