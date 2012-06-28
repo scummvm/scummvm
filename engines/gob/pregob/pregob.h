@@ -23,6 +23,8 @@
 #ifndef GOB_PREGOB_PREGOB_H
 #define GOB_PREGOB_PREGOB_H
 
+#include "gob/util.h"
+
 namespace Gob {
 
 class GobEngine;
@@ -61,6 +63,13 @@ protected:
 	void hideCursor();
 
 	bool isCursorVisible() const;
+
+	void endFrame(bool doInput);
+
+	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
+	int16 waitInput (int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
+	int16 waitInput();
+	bool  hasInput();
 
 
 	GobEngine *_vm;

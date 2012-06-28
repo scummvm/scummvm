@@ -137,4 +137,48 @@ bool PreGob::isCursorVisible() const {
 	return CursorMan.isVisible();
 }
 
+void PreGob::endFrame(bool doInput) {
+	_vm->_draw->blitInvalidated();
+	_vm->_util->waitEndFrame();
+
+	if (doInput)
+		_vm->_util->processInput();
+}
+
+int16 PreGob::checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons) {
+	_vm->_util->getMouseState(&mouseX, &mouseY, &mouseButtons);
+	_vm->_util->forceMouseUp();
+
+	return _vm->_util->checkKey();
+}
+
+int16 PreGob::waitInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons) {
+	bool finished = false;
+
+	int16 key = 0;
+	while (!_vm->shouldQuit() && !finished) {
+		endFrame(true);
+
+		key = checkInput(mouseX, mouseY, mouseButtons);
+
+		finished = (mouseButtons != kMouseButtonsNone) || (key != 0);
+	}
+
+	return key;
+}
+
+int16 PreGob::waitInput() {
+	int16 mouseX, mouseY;
+	MouseButtons mouseButtons;
+
+	return waitInput(mouseX, mouseY, mouseButtons);
+}
+
+bool PreGob::hasInput() {
+	int16 mouseX, mouseY;
+	MouseButtons mouseButtons;
+
+	return checkInput(mouseX, mouseY, mouseButtons) || (mouseButtons != kMouseButtonsNone);
+}
+
 } // End of namespace Gob
