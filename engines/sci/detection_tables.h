@@ -1447,6 +1447,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::DE_DEU, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 6 - Spanish DOS Floppy (from jvprat)
+	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.000, July 5, 1994"
+	// SCI interpreter version 1.001.055
+	{"kq6", "", {
+		{"resource.map", 0, "a73a5ab04b8f60c4b75b946a4dccea5a", 8953},
+		{"resource.000", 0, "4da3ad5868a775549a7cc4f72770a58e", 8537260},
+		{"resource.msg", 0, "41eed2d3893e1ca6c3695deba4e9d2e8", 267102},
+		AD_LISTEND},
+	 	Common::ES_ESP, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest 6 - English DOS CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
 	// SCI interpreter version 1.001.054
@@ -1464,16 +1474,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_NOASPECT, GAMEOPTION_KQ6_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
-
-	// King's Quest 6 - Spanish DOS CD (from jvprat)
-	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.000, July 5, 1994"
-	// SCI interpreter version 1.001.055
-	{"kq6", "CD", {
-		{"resource.map", 0, "a73a5ab04b8f60c4b75b946a4dccea5a", 8953},
-		{"resource.000", 0, "4da3ad5868a775549a7cc4f72770a58e", 8537260},
-		{"resource.msg", 0, "41eed2d3893e1ca6c3695deba4e9d2e8", 267102},
-		AD_LISTEND},
-	 	Common::ES_ESP, Common::kPlatformPC, ADGF_CD, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"
