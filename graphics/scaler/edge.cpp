@@ -119,7 +119,6 @@
 #define INCREASE_WIN32_PRIORITY         0   /* 1 for slow CPUs */
 #define PARANOID_KNIGHTS            1   /* avoid artifacts */
 #define PARANOID_ARROWS             1   /* avoid artifacts */
-#define HANDLE_TRANSPARENT_OVERLAYS     1   /* as it says */
 
 #define SIN45 0.7071067811865       /* sin of 45 degrees */
 #define GREY_SHIFT 12           /* bit shift for greyscale precision */
@@ -3287,92 +3286,6 @@ void EdgePlugin::anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 }
 
 
-
-#if HANDLE_TRANSPARENT_OVERLAYS
-/* Deal with transparent pixels */
-void handle_transparent_overlay(uint16 transp, uint16 *pixels,
-                                int16 *bplane, int16 *diffs) {
-	int16 tmp_grey;
-	int16 max_diff;
-	int16 min_grey = ((int16)1 << RGB_SHIFT);
-	int16 max_grey = 0;
-	int i;
-
-	/* find min and max grey values in window */
-	for (i = 0; i < 9; i++) {
-		if (bplane[i] < min_grey) min_grey = bplane[i];
-		if (bplane[i] > max_grey) max_grey = bplane[i];
-	}
-
-	/* treat transparent pixels as the average of min_grey and max_grey */
-	/* set diff from center pixel to maximum difference within the window */
-	tmp_grey = (min_grey + max_grey + 1) >> 1;
-	max_diff = max_grey - min_grey;
-
-	if (pixels[4] == transp) {  /* center pixel is transparent */
-		/* set all transparent pixels to middle grey */
-		if (pixels[0] == transp) bplane[0] = tmp_grey;
-		if (pixels[1] == transp) bplane[1] = tmp_grey;
-		if (pixels[2] == transp) bplane[2] = tmp_grey;
-		if (pixels[3] == transp) bplane[3] = tmp_grey;
-		if (pixels[4] == transp) bplane[4] = tmp_grey;
-		if (pixels[5] == transp) bplane[5] = tmp_grey;
-		if (pixels[6] == transp) bplane[6] = tmp_grey;
-		if (pixels[7] == transp) bplane[7] = tmp_grey;
-		if (pixels[8] == transp) bplane[8] = tmp_grey;
-
-		/* set all diffs to non-transparent pixels to max diff */
-		if (pixels[0] != transp) diffs[0] = max_diff;
-		if (pixels[1] != transp) diffs[1] = max_diff;
-		if (pixels[2] != transp) diffs[2] = max_diff;
-		if (pixels[3] != transp) diffs[3] = max_diff;
-		if (pixels[5] != transp) diffs[4] = max_diff;
-		if (pixels[6] != transp) diffs[5] = max_diff;
-		if (pixels[7] != transp) diffs[6] = max_diff;
-		if (pixels[8] != transp) diffs[7] = max_diff;
-	} else {        /* center pixel is non-transparent */
-		/* choose transparent grey value to give largest contrast */
-		tmp_grey = (bplane[4] >= tmp_grey) ? min_grey : max_grey;
-
-		/* set new transparent pixel values and diffs */
-		if (pixels[0] == transp) {
-			bplane[0] = tmp_grey;
-			diffs[0] = max_diff;
-		}
-		if (pixels[1] == transp) {
-			bplane[1] = tmp_grey;
-			diffs[1] = max_diff;
-		}
-		if (pixels[2] == transp) {
-			bplane[2] = tmp_grey;
-			diffs[2] = max_diff;
-		}
-		if (pixels[3] == transp) {
-			bplane[3] = tmp_grey;
-			diffs[3] = max_diff;
-		}
-		if (pixels[5] == transp) {
-			bplane[5] = tmp_grey;
-			diffs[4] = max_diff;
-		}
-		if (pixels[6] == transp) {
-			bplane[6] = tmp_grey;
-			diffs[5] = max_diff;
-		}
-		if (pixels[7] == transp) {
-			bplane[7] = tmp_grey;
-			diffs[6] = max_diff;
-		}
-		if (pixels[8] == transp) {
-			bplane[8] = tmp_grey;
-			diffs[7] = max_diff;
-		}
-	}
-}
-#endif
-
-
-
 /* Check for changed pixel grid, return 1 if unchanged. */
 template<typename Pixel>
 int check_unchanged_pixels(Pixel *old_src_ptr, Pixel *pixels, int w) {
@@ -3465,23 +3378,6 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 	int16 *diffs;
 	int dstPitch3 = dstPitch * 3;
 
-#if 0
-#if HANDLE_TRANSPARENT_OVERLAYS
-	uint16 transp = 0;  /* transparent color */
-
-	/* assume bitmap is padded by a transparent border, take src-1 pixel */
-	if (overlay_flag) transp = *((const uint16 *) src - 1);
-#endif
-
-	/* The dirty rects optimizer in the SDL backend is helpful for frames
-	 * with few changes, but _REALLY_ bogs things down when the whole screen
-	 * changes.  Overall, the dirty rects optimizer isn't worth it, since
-	 * the Edge2x/3x unchanged pixel detection is far faster than full blown
-	 * dirty rects optimization.
-	 */
-	g_system->setFeatureState(g_system->kFeatureAutoComputeDirtyRects, 0);
-#endif
-
 	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch3) {
 		for (x = 0,
 		        sptr16 = (const uint16 *) sptr8,
@@ -3525,13 +3421,6 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 				continue;
 			}
 
-#if 0
-#if HANDLE_TRANSPARENT_OVERLAYS
-			if (overlay_flag)
-				handle_transparent_overlay(transp, pixels, bplane, diffs);
-#endif
-#endif
-
 			bplane = _bptr;
 
 			edge_type = findPrincipleAxis(pixels, diffs, bplane,
@@ -3567,24 +3456,6 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 	int32 angle;
 	int16 *diffs;
 	int dstPitch2 = dstPitch << 1;
-
-#if 0
-#if HANDLE_TRANSPARENT_OVERLAYS
-	uint16 transp = 0;  /* transparent color */
-
-	/* assume bitmap is padded by a transparent border, take src-1 pixel */
-	if (overlay_flag) transp = *((const uint16 *) src - 1);
-#endif
-
-
-	/* The dirty rects optimizer in the SDL backend is helpful for frames
-	 * with few changes, but _REALLY_ bogs things down when the whole screen
-	 * changes.  Overall, the dirty rects optimizer isn't worth it, since
-	 * the Edge2x/3x unchanged pixel detection is far faster than full blown
-	 * dirty rects optimization.
-	 */
-	g_system->setFeatureState(g_system->kFeatureAutoComputeDirtyRects, 0);
-#endif
 
 	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch2) {
 		for (x = 0,
@@ -3628,13 +3499,6 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 				                              0, NULL, NULL, 0);
 				continue;
 			}
-
-#if 0
-#if HANDLE_TRANSPARENT_OVERLAYS
-			if (overlay_flag)
-				handle_transparent_overlay(transp, pixels, bplane, diffs);
-#endif
-#endif
 
 			bplane = _bptr;
 
