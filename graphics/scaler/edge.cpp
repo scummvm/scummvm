@@ -317,8 +317,6 @@ double fast_atan(double x0)
  */
 int16 * EdgePlugin::chooseGreyscale(uint16 *pixels)
 {
-	static int16 greyscale_diffs[3][8];
-	static int16 bplanes[3][9];
 	int i, j;
 	int32 scores[3];
 
@@ -336,14 +334,14 @@ int16 * EdgePlugin::chooseGreyscale(uint16 *pixels)
 		grey_ptr = _greyscaleTable[i];
 
 		/* fill the 9 pixel window with greyscale values */
-		bptr = bplanes[i];
+		bptr = _bplanes[i];
 		pptr = pixels;
 		for (j = 9; j; --j)
 			*bptr++ = grey_ptr[*pptr++];
-		bptr = bplanes[i];
+		bptr = _bplanes[i];
 
 		center = grey_ptr[pixels[4]];
-		diff_ptr = greyscale_diffs[i];
+		diff_ptr = _greyscaleDiffs[i];
 
 		/* calculate the delta from center pixel */
 		diff_ptr[0] = bptr[0] - center;
@@ -371,8 +369,8 @@ int16 * EdgePlugin::chooseGreyscale(uint16 *pixels)
 		if (!scores[1]) return NULL;
 
 		_chosenGreyscale = _greyscaleTable[1];
-		_bptr = bplanes[1];
-		return greyscale_diffs[1];
+		_bptr = _bplanes[1];
+		return _greyscaleDiffs[1];
 	}
 
 	if (scores[0] >= scores[1] && scores[0] >= scores[2])
@@ -380,15 +378,15 @@ int16 * EdgePlugin::chooseGreyscale(uint16 *pixels)
 		if (!scores[0]) return NULL;
 
 		_chosenGreyscale = _greyscaleTable[0];
-		_bptr = bplanes[0];
-		return greyscale_diffs[0];
+		_bptr = _bplanes[0];
+		return _greyscaleDiffs[0];
 	}
 
 	if (!scores[2]) return NULL;
 
 	_chosenGreyscale = _greyscaleTable[2];
-	_bptr = bplanes[2];
-	return greyscale_diffs[2];
+	_bptr = _bplanes[2];
+	return _greyscaleDiffs[2];
 }
 
 
