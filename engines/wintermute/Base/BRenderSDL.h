@@ -81,6 +81,7 @@ public:
 private:
 	/*  SDL_Renderer *_renderer;
 	    SDL_Window *_win;*/
+	Common::Rect _renderRect;
 	Graphics::Surface *_renderSurface;
 	AnsiString _name;
 

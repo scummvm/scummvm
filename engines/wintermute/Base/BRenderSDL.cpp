@@ -73,9 +73,10 @@ HRESULT CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 	SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 1);
 #endif
-
 	_width = width;
 	_height = height;
+	_renderRect.setWidth(_width);
+	_renderRect.setHeight(_height);
 
 	_realWidth = width;
 	_realHeight = height;
@@ -247,14 +248,9 @@ HRESULT CBRenderSDL::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	//SDL_RenderClear(_renderer);
 	uint32 color = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
 	if (!rect) {
-		rect = new Common::Rect();
-		rect->setWidth(_renderSurface->w);
-		rect->setHeight(_renderSurface->h);
-		_renderSurface->fillRect(*rect, color);
-		delete rect;
-	} else {
-		_renderSurface->fillRect(*rect, color);
+		rect = &_renderRect;
 	}
+	_renderSurface->fillRect(*rect, color);
 
 	return S_OK;
 }
