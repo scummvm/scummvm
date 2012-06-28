@@ -3451,7 +3451,6 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
                                  int srcPitch, int dstPitch,
                                  int overlay_flag) {
 	int x, y;
-	int w2 = w + 2;
 	const uint8 *sptr8 = src;
 	uint8 *dptr8 = dst + dstPitch + 2;
 	const uint16 *sptr16;
@@ -3555,7 +3554,6 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
                                  int overlay_flag,
                                  int interpolate_2x) {
 	int x, y;
-	int w2 = w + 2;
 	const uint8 *sptr8 = src;
 	uint8 *dptr8 = dst;
 	const uint16 *sptr16;
