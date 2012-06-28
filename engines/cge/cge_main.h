@@ -78,7 +78,7 @@ namespace CGE {
 #define kScrHeight     200
 #define kWorldHeight   (kScrHeight - kPanHeight)
 #define kStackSize     2048
-#define kSavegameCheckSum   (1956 + _now + _oldLev + _game + _music + _demoText)
+#define kSavegameCheckSum   (1956 + _now + _oldLev + _game + _music + kDemo)
 #define kSavegame0Name ("{{INIT}}" kSvgExt)
 #define kSavegameStrSize 11
 #define kGameFrameDelay (1000 / 50)

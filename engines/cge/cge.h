@@ -149,7 +149,6 @@ public:
 
 	const   ADGameDescription *_gameDescription;
 	int    _startupMode;
-	int    _demoText;
 	int    _oldLev;
 	int    _pocPtr;
 	bool   _music;

@@ -150,11 +150,11 @@ void CGEEngine::sndSetVolume() {
 void CGEEngine::syncHeader(Common::Serializer &s) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::syncHeader(s)");
 
-	int i;
+	int i = kDemo;
 
 	s.syncAsUint16LE(_now);
 	s.syncAsUint16LE(_oldLev);
-	s.syncAsUint16LE(_demoText);
+	s.syncAsUint16LE(i);        // unused Demo string id
 	for (i = 0; i < 5; i++)
 		s.syncAsUint16LE(_game);
 	s.syncAsSint16LE(i);		// unused VGA::Mono variable

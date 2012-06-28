@@ -52,7 +52,6 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	DebugMan.addDebugChannel(kCGEDebugEngine, "engine", "CGE Engine debug channel");
 
 	_startupMode = 1;
-	_demoText    = kDemo;
 	_oldLev      = 0;
 	_pocPtr      = 0;
 	_bitmapPalette = NULL;
