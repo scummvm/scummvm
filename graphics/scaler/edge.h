@@ -76,6 +76,8 @@ private:
 	int16 *_chosenGreyscale;               ///< pointer to chosen greyscale table
 	int16 *_bptr;                          ///< too awkward to pass variables
 	int8 _simSum;                          ///< sum of similarity matrix
+	int16 _greyscaleDiffs[3][8];
+	int16 _bplanes[3][9];
 };
 
 
