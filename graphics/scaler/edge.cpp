@@ -516,7 +516,7 @@ int EdgePlugin::findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
 	double best_val;
 	double a, b, c;
 	double ratio;
-	int32 scale;
+	int32 colorScale;
 
 	/* absolute value of differences */
 	for (i = 0; i < 8; i++)
@@ -532,9 +532,9 @@ int EdgePlugin::findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
 	/* if (max_diff == 0) return '0'; */
 
 	/* normalize the differences */
-	scale = (1L << (GREY_SHIFT + GREY_SHIFT)) / max_diff;
+	colorScale = (1L << (GREY_SHIFT + GREY_SHIFT)) / max_diff;
 	for (i = 0; i < 8; i++)
-		diffs[i] = (diffs[i] * scale + ((int16)1 << (GREY_SHIFT - 1))) >> GREY_SHIFT;
+		diffs[i] = (diffs[i] * colorScale + ((int16)1 << (GREY_SHIFT - 1))) >> GREY_SHIFT;
 
 	/*
 	 * Some pixel patterns need to NOT be reversed, since the pixels of
