@@ -36,6 +36,8 @@ Abracadabra::~Abracadabra() {
 
 void Abracadabra::run() {
 	warning("TODO: Abracadabra::run()");
+
+	initScreen();
 }
 
 } // End of namespace OnceUpon

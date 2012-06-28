@@ -23,6 +23,8 @@
 #ifndef GOB_PREGOB_ONCEUPON_ONCEUPON_H
 #define GOB_PREGOB_ONCEUPON_ONCEUPON_H
 
+#include "common/system.h"
+
 #include "gob/pregob/pregob.h"
 
 namespace Gob {
@@ -33,6 +35,12 @@ class OnceUpon : public PreGob {
 public:
 	OnceUpon(GobEngine *vm);
 	~OnceUpon();
+
+protected:
+	void setGamePalette(uint palette);
+
+private:
+	void setCopyProtectionPalette();
 };
 
 } // End of namespace OnceUpon
