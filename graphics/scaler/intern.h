@@ -71,8 +71,7 @@ static inline uint32 interpolate32_3_1(uint32 p1, uint32 p2) {
  * Interpolate two 32 bit pixels with weights 2 and 1 and 1, i.e., (2*p1+p2)/3.
  */
 template<typename ColorMask>
-uint32 interpolate32_2_1(uint32 pixel1, uint32 pixel2)
-{
+uint32 interpolate32_2_1(uint32 pixel1, uint32 pixel2) {
 	uint32 rsum, gsum, bsum;
 
 	rsum =  (pixel1 & ColorMask::kRedMask) << 1;
@@ -320,8 +319,7 @@ static inline unsigned interpolate16_3_1(unsigned p1, unsigned p2) {
  * Interpolate two 16 bit pixels with weights 2 and 1, i.e., (2*p1+p2)/3.
  */
 template<typename ColorMask>
-uint16 interpolate16_2_1(uint16 pixel1, uint16 pixel2)
-{
+uint16 interpolate16_2_1(uint16 pixel1, uint16 pixel2) {
 	uint32 rsum;
 	uint16 gsum, bsum;
 
