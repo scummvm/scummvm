@@ -263,7 +263,13 @@ int WinterMuteEngine::init() {
 
 int WinterMuteEngine::messageLoop() {
 	bool done = false;
-	
+
+	uint32 prevTime = _system->getMillis();
+	uint32 time = _system->getMillis();
+	uint32 diff = 0;
+
+	const uint32 maxFPS = 25;
+	const uint32 frameTime = (1.0/maxFPS) * 1000;
 	while (!done) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -271,18 +277,22 @@ int WinterMuteEngine::messageLoop() {
 		}
 		
 		if (_game && _game->_renderer->_active && _game->_renderer->_ready) {
-			
 			_game->DisplayContent();
 			_game->DisplayQuickMsg();
-			
+
 			_game->DisplayDebugInfo();
-			
+
+			time = _system->getMillis();
+			diff = time - prevTime;
+			if (frameTime > diff) // Avoid overflows
+				_system->delayMillis(frameTime - diff);
+
 			// ***** flip
 			if (!_game->_suspendedRendering) _game->_renderer->flip();
 			if (_game->_loading) _game->LoadGame(_game->_scheduledLoadSlot);
+			prevTime = time;
 		}
 		if (_game->_quitting) break;
-		
 	}
 	
 	if (_game) {
