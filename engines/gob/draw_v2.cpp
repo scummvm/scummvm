@@ -74,13 +74,16 @@ void Draw_v2::closeScreen() {
 }
 
 void Draw_v2::blitCursor() {
-	if (_cursorIndex == -1)
+	if (!_cursorSprites || (_cursorIndex == -1))
 		return;
 
 	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
 }
 
 void Draw_v2::animateCursor(int16 cursor) {
+	if (!_cursorSprites)
+		return;
+
 	int16 cursorIndex = cursor;
 	int16 newX = 0, newY = 0;
 	uint16 hotspotX, hotspotY;

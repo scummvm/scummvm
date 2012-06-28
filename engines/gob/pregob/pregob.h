@@ -26,6 +26,7 @@
 namespace Gob {
 
 class GobEngine;
+class Surface;
 
 class PreGob {
 public:
@@ -48,6 +49,19 @@ protected:
 	 *  @param size Size of the palette in colors.
 	 */
 	void setPalette(const byte *palette, uint16 size); ///< Change the palette
+
+	void addCursor();
+	void removeCursor();
+
+	void setCursor(Surface &sprite, int16 hotspotX, int16 hotspotY);
+	void setCursor(Surface &sprite, int16 left, int16 top, int16 right, int16 bottom,
+	               int16 hotspotX, int16 hotspotY);
+
+	void showCursor();
+	void hideCursor();
+
+	bool isCursorVisible() const;
+
 
 	GobEngine *_vm;
 

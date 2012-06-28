@@ -271,7 +271,9 @@ void Draw::blitInvalidated() {
 		return;
 	}
 
-	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
+	if (_cursorSprites)
+		_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
+
 	if (_applyPal) {
 		clearPalette();
 		forceBlit();

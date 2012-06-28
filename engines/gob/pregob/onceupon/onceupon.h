@@ -29,6 +29,8 @@
 
 namespace Gob {
 
+class Surface;
+
 namespace OnceUpon {
 
 class OnceUpon : public PreGob {

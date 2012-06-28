@@ -20,9 +20,12 @@
  *
  */
 
+#include "graphics/cursorman.h"
+
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/util.h"
+#include "gob/surface.h"
 #include "gob/palanim.h"
 #include "gob/draw.h"
 #include "gob/video.h"
@@ -88,6 +91,50 @@ void PreGob::setPalette(const byte *palette, uint16 size) {
 	// If we didn't fade out prior, immediately set the palette
 	if (!_fadedOut)
 		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+}
+
+void PreGob::addCursor() {
+	CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
+}
+
+void PreGob::removeCursor() {
+	CursorMan.popCursor();
+}
+
+void PreGob::setCursor(Surface &sprite, int16 hotspotX, int16 hotspotY) {
+	CursorMan.replaceCursor(sprite.getData(), sprite.getWidth(), sprite.getHeight(), hotspotX, hotspotY, 0);
+}
+
+void PreGob::setCursor(Surface &sprite, int16 left, int16 top, int16 right, int16 bottom,
+                       int16 hotspotX, int16 hotspotY) {
+
+	const int width  = right  - left + 1;
+	const int height = bottom - top  + 1;
+
+	if ((width <= 0) || (height <= 0))
+		return;
+
+	Surface cursor(width, height, 1);
+
+	cursor.blit(sprite, left, top, right, bottom, 0, 0);
+
+	setCursor(cursor, hotspotX, hotspotX);
+}
+
+void PreGob::showCursor() {
+	CursorMan.showMouse(true);
+
+	_vm->_draw->_showCursor = 4;
+}
+
+void PreGob::hideCursor() {
+	CursorMan.showMouse(false);
+
+	_vm->_draw->_showCursor = 0;
+}
+
+bool PreGob::isCursorVisible() const {
+	return CursorMan.isVisible();
 }
 
 } // End of namespace Gob

@@ -23,6 +23,7 @@
 #include "gob/gob.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
+#include "gob/surface.h"
 #include "gob/draw.h"
 #include "gob/video.h"
 
