@@ -489,11 +489,11 @@ void LoadChooserThumbnailed::reflowLayout() {
 	}
 
 	const uint addX = _columns > 1 ? (availableWidth % slotAreaWidth) / (_columns - 1) : 0;
-	const uint addY = _lines > 1 ? (availableHeight % slotAreaHeight) / (_lines - 1) : 0;
+	//const uint addY = _lines > 1 ? (availableHeight % slotAreaHeight) / (_lines - 1) : 0;
 
 	_buttons.reserve(_lines * _columns);
 	y += defaultSpacingVertical / 2;
-	for (uint curLine = 0; curLine < _lines; ++curLine, y += slotAreaHeight + addY) {
+	for (uint curLine = 0; curLine < _lines; ++curLine, y += slotAreaHeight/* + addY*/) {
 		for (uint curColumn = 0, curX = x + defaultSpacingHorizontal / 2; curColumn < _columns; ++curColumn, curX += slotAreaWidth + addX) {
 			ContainerWidget *container = new ContainerWidget(this, curX, y, containerWidth, containerHeight);
 			container->setVisible(false);
