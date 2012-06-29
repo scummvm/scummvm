@@ -622,7 +622,12 @@ void LoadChooserThumbnailed::updateSaves() {
 		SaveStateDescriptor desc = _metaEngine->querySaveMetaInfos(_target.c_str(), saveSlot);
 		SlotButton &curButton = _buttons[curNum];
 		curButton.setVisible(true);
-		curButton.button->setGfx(desc.getThumbnail());
+		const Graphics::Surface *thumbnail = desc.getThumbnail();
+		if (thumbnail) {
+			curButton.button->setGfx(desc.getThumbnail());
+		} else {
+			curButton.button->setGfx(kThumbnailWidth, kThumbnailHeight2, 0, 0, 0);
+		}
 		curButton.description->setLabel(Common::String::format("%d. %s", saveSlot, desc.getDescription().c_str()));
 
 		Common::String tooltip(_("Name: "));

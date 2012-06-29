@@ -414,6 +414,19 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
 	_gfx->copyFrom(*gfx);
 }
 
+void PicButtonWidget::setGfx(int w, int h, int r, int g, int b) {
+	if (w == -1)
+		w = _w;
+	if (h == -1)
+		h = _h;
+
+	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
+
+	_gfx->free();
+	_gfx->create(w, h, requiredFormat);
+	_gfx->fillRect(Common::Rect(0, 0, w, h), _gfx->format.RGBToColor(r, g, b));
+}
+
 void PicButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), "", _state, getFlags());
 
