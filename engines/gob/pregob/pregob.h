@@ -25,6 +25,8 @@
 
 #include "gob/util.h"
 
+#include "gob/pregob/txtfile.h"
+
 namespace Gob {
 
 class GobEngine;
@@ -76,6 +78,8 @@ protected:
 	void clearAnim(ANIObject &ani);
 	void drawAnim(ANIObject &ani);
 	void redrawAnim(ANIObject &ani);
+
+	TXTFile *loadTXT(const Common::String &txtFile, TXTFile::Format format) const;
 
 
 	GobEngine *_vm;

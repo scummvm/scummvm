@@ -79,6 +79,7 @@ MODULE_OBJS := \
 	demos/batplayer.o \
 	detection/detection.o \
 	pregob/pregob.o \
+	pregob/txtfile.o \
 	pregob/onceupon/onceupon.o \
 	pregob/onceupon/abracadabra.o \
 	pregob/onceupon/babayaga.o \

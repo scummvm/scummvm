@@ -26,6 +26,7 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/surface.h"
+#include "gob/dataio.h"
 #include "gob/palanim.h"
 #include "gob/draw.h"
 #include "gob/video.h"
@@ -200,6 +201,18 @@ void PreGob::drawAnim(ANIObject &ani) {
 void PreGob::redrawAnim(ANIObject &ani) {
 	clearAnim(ani);
 	drawAnim(ani);
+}
+
+TXTFile *PreGob::loadTXT(const Common::String &txtFile, TXTFile::Format format) const {
+	Common::SeekableReadStream *txtStream = _vm->_dataIO->getFile(txtFile);
+	if (!txtStream)
+		error("PreGob::loadTXT(): Failed to open \"%s\"", txtFile.c_str());
+
+	TXTFile *txt = new TXTFile(*txtStream, format);
+
+	delete txtStream;
+
+	return txt;
 }
 
 } // End of namespace Gob
