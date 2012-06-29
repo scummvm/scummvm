@@ -43,7 +43,7 @@ private:
 	int16* chooseGreyscale(Pixel *pixels);
 	template<typename ColorMask, typename Pixel>
 	int32 calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2);
-	int findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
+	int findPrincipleAxis(int16 *diffs, int16 *bplane,
 		int8 *sim,
 		int32 *return_angle);
 	int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag);
