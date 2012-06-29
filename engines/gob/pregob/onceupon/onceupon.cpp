@@ -21,6 +21,7 @@
  */
 
 #include "gob/gob.h"
+#include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/surface.h"
@@ -195,6 +196,15 @@ void OnceUpon::init() {
 	if (!_jeudak || !_lettre || !_plettre || !_glettre)
 		error("OnceUpon::OnceUpon(): Failed to fonts (%d, %d, %d, %d)",
 		      _jeudak != 0, _lettre != 0, _plettre != 0, _glettre != 0);
+
+	if (_vm->_global->_language == kLanguageAmerican)
+		_vm->_global->_language = kLanguageBritish;
+
+	if ((_vm->_global->_language >= kLanguageCount))
+		error("We do not support the language \"%s\".\n"
+		      "If you are certain that your game copy includes this language,\n"
+		      "please contact the ScummVM team with details about this version.\n"
+		      "Thanks", _vm->getLangDesc(_vm->_global->_language));
 
 	initScreen();
 }
