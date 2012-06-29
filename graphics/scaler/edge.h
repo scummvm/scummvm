@@ -26,6 +26,7 @@
 
 class EdgePlugin : public ScalerPluginObject {
 public:
+
 	EdgePlugin();
 	virtual void initialize(Graphics::PixelFormat format);
 	virtual void deinitialize();
@@ -38,35 +39,117 @@ public:
 	virtual uint extraPixels() const { return 1; }
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
+
 private:
+
+	/**
+	 * Choose greyscale bitplane to use, return diff array.  Exit early and
+	 * return NULL for a block of solid color (all diffs zero).
+	 *
+	 * No matter how you do it, mapping 3 bitplanes into a single greyscale
+	 * bitplane will always result in colors which are very different mapping to
+	 * the same greyscale value.  Inevitably, these pixels will appear next to
+	 * each other at some point in some image, and edge detection on a single
+	 * bitplane will behave quite strangely due to them having the same or nearly
+	 * the same greyscale values.  Calculating distances between pixels using all
+	 * three RGB bitplanes is *way* too time consuming, so single bitplane
+	 * edge detection is used for speed's sake.  In order to try to avoid the
+	 * color mapping problems of using a single bitplane, 3 different greyscale
+	 * mappings are tested for each 3x3 grid, and the one with the most "signal"
+	 * (sum of squares difference from center pixel) is chosen.  This usually
+	 * results in useable contrast within the 3x3 grid.
+	 *
+	 * This results in a whopping 25% increase in overall runtime of the filter
+	 * over simply using luma or some other single greyscale bitplane, but it
+	 * does greatly reduce the amount of errors due to greyscale mapping
+	 * problems.  I think this is the best compromise between accuracy and
+	 * speed, and is still a lot faster than edge detecting over all three RGB
+	 * bitplanes.  The increase in image quality is well worth the speed hit.
+	 */
 	template<typename ColorMask, typename Pixel>
 	int16* chooseGreyscale(Pixel *pixels);
+
+	/**
+	 * Calculate the distance between pixels in RGB space.  Greyscale isn't
+	 * accurate enough for choosing nearest-neighbors :(  Luma-like weighting
+	 * of the individual bitplane distances prior to squaring gives the most
+	 * useful results.
+	 */
 	template<typename ColorMask, typename Pixel>
 	int32 calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2);
+
+	/**
+	 * Create vectors of all delta grey values from center pixel, with magnitudes
+	 * ranging from [1.0, 0.0] (zero difference, maximum difference).  Find
+	 * the two principle axes of the grid by calculating the eigenvalues and
+	 * eigenvectors of the inertia tensor.  Use the eigenvectors to calculate the
+	 * edge direction.  In other words, find the angle of the line that optimally
+	 * passes through the 3x3 pattern of pixels.
+	 *
+	 * Return horizontal (-), vertical (|), diagonal (/,\), multi (*), or none '0'
+	 *
+	 * Don't replace any of the double math with integer-based approximations,
+	 * since everything I have tried has lead to slight mis-detection errors.
+	 */
 	int findPrincipleAxis(int16 *diffs, int16 *bplane,
 		int8 *sim,
 		int32 *return_angle);
+
+	/**
+	 * Check for mis-detected arrow patterns.  Return 1 (good), 0 (bad).
+	 */
 	int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag);
+
+	/**
+	 * Take original direction, refine it by testing different pixel difference
+	 * patterns based on the initial gross edge direction.
+	 *
+	 * The angle value is not currently used, but may be useful for future
+	 * refinement algorithms.
+	 */
 	int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 		int8 *sim, double angle);
+
+	/**
+	 * "Chess Knight" patterns can be mis-detected, fix easy cases.
+	 */
 	int fixKnights(int sub_type, uint16 *pixels, int8 *sim);
+
+	/**
+	 * Initialize various lookup tables
+	 */
 	void initTables(const uint8 *srcPtr, uint32 srcPitch,
 		int width, int height);
 
+	/**
+	 * Fill pixel grid with or without interpolation, using the detected edge
+	 */
 	template<typename ColorMask, typename Pixel>
 	void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 		uint16 *pixels, int sub_type, int16 *bptr,
 		int8 *sim,
 		int interpolate_2x);
+
+	/**
+	 * Fill pixel grid without interpolation, using the detected edge
+	 */
 	template<typename ColorMask, typename Pixel>
 	void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 		uint16 *pixels, int sub_type, int16 *bptr);
+
+	/**
+	 * Perform edge detection, draw the new 2x pixels
+	 */
 	template<typename ColorMask, typename Pixel>
 	void antiAliasPass2x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
 		int overlay_flag,
 		int interpolate_2x);
+
+	/**
+	 * Perform edge detection, draw the new 3x pixels
+	 */
 	template<typename ColorMask, typename Pixel>
 	void antiAliasPass3x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
