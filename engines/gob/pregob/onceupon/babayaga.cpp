@@ -61,7 +61,7 @@ void BabaYaga::run() {
 	if (_vm->shouldQuit() || !correctCP)
 		return;
 
-	warning("TODO: BabaYaga::run()");
+	showTitle();
 }
 
 } // End of namespace OnceUpon

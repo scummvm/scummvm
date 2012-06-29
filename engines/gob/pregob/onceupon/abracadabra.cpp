@@ -61,7 +61,7 @@ void Abracadabra::run() {
 	if (_vm->shouldQuit() || !correctCP)
 		return;
 
-	warning("TODO: Abracadabra::run()");
+	showTitle();
 }
 
 } // End of namespace OnceUpon

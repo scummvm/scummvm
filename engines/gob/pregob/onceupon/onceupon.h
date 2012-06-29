@@ -49,6 +49,8 @@ protected:
 
 	bool doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4]);
 
+	void showTitle();
+
 
 	Font *_jeudak;
 	Font *_lettre;
@@ -65,6 +67,11 @@ private:
 	int8 cpFindShape(int16 x, int16 y) const;
 	void cpWrong();
 
+	void playTitleMusic();
+	void playTitleMusicDOS();
+	void playTitleMusicAmiga();
+	void playTitleMusicAtariST();
+	void stopTitleMusic();
 
 	bool _openedArchives;
 };
