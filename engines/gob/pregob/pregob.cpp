@@ -34,6 +34,8 @@
 
 #include "gob/pregob/pregob.h"
 
+static char kLanguageSuffix[5] = { 't', 'g', 'a', 'e', 'i' };
+
 namespace Gob {
 
 PreGob::PreGob(GobEngine *vm) : _vm(vm), _fadedOut(false) {
@@ -201,6 +203,13 @@ void PreGob::drawAnim(ANIObject &ani) {
 void PreGob::redrawAnim(ANIObject &ani) {
 	clearAnim(ani);
 	drawAnim(ani);
+}
+
+Common::String PreGob::getLocFile(const Common::String &file) const {
+	if (_vm->_global->_language >= ARRAYSIZE(kLanguageSuffix))
+		return file;
+
+	return file + kLanguageSuffix[_vm->_global->_language];
 }
 
 TXTFile *PreGob::loadTXT(const Common::String &txtFile, TXTFile::Format format) const {

@@ -23,6 +23,8 @@
 #ifndef GOB_PREGOB_PREGOB_H
 #define GOB_PREGOB_PREGOB_H
 
+#include "common/str.h"
+
 #include "gob/util.h"
 
 #include "gob/pregob/txtfile.h"
@@ -79,6 +81,7 @@ protected:
 	void drawAnim(ANIObject &ani);
 	void redrawAnim(ANIObject &ani);
 
+	Common::String getLocFile(const Common::String &file) const;
 	TXTFile *loadTXT(const Common::String &txtFile, TXTFile::Format format) const;
 
 
