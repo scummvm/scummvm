@@ -166,10 +166,37 @@ namespace Gob {
 
 namespace OnceUpon {
 
-OnceUpon::OnceUpon(GobEngine *vm) : PreGob(vm) {
+OnceUpon::OnceUpon(GobEngine *vm) : PreGob(vm), _openedArchives(false) {
+
 }
 
 OnceUpon::~OnceUpon() {
+	deinit();
+}
+
+void OnceUpon::init() {
+	deinit();
+
+	bool hasSTK1 = _vm->_dataIO->openArchive("stk1.stk", true);
+	bool hasSTK2 = _vm->_dataIO->openArchive("stk2.stk", true);
+	bool hasSTK3 = _vm->_dataIO->openArchive("stk3.stk", true);
+
+	if (!hasSTK1 || !hasSTK2 || !hasSTK3)
+		error("OnceUpon::OnceUpon(): Failed to open archives");
+
+	_openedArchives = true;
+
+	initScreen();
+}
+
+void OnceUpon::deinit() {
+	if (_openedArchives) {
+		_vm->_dataIO->closeArchive(true);
+		_vm->_dataIO->closeArchive(true);
+		_vm->_dataIO->closeArchive(true);
+	}
+
+	_openedArchives = false;
 }
 
 void OnceUpon::setCopyProtectionPalette() {

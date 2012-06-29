@@ -35,9 +35,9 @@ BabaYaga::~BabaYaga() {
 }
 
 void BabaYaga::run() {
-	warning("TODO: BabaYaga::run()");
+	init();
 
-	initScreen();
+	warning("TODO: BabaYaga::run()");
 }
 
 } // End of namespace OnceUpon

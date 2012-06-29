@@ -39,10 +39,16 @@ public:
 	~OnceUpon();
 
 protected:
+	void init();
+	void deinit();
+
 	void setGamePalette(uint palette);
 
 private:
 	void setCopyProtectionPalette();
+
+
+	bool _openedArchives;
 };
 
 } // End of namespace OnceUpon
