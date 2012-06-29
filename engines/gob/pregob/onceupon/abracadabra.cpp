@@ -22,7 +22,27 @@
 
 #include "common/textconsole.h"
 
+#include "gob/gob.h"
+
 #include "gob/pregob/onceupon/abracadabra.h"
+
+static const uint8 kCopyProtectionColors[7] = {
+	14, 11, 13,  1,  7, 12,  2
+};
+
+static const uint8 kCopyProtectionShapes[7 * 20] = {
+	3, 4, 3, 0, 1, 2, 0, 2, 2, 0, 2, 4, 0, 3, 4, 1, 1, 4, 1, 3,
+	0, 2, 0, 4, 2, 4, 4, 2, 3, 0, 1, 1, 1, 1, 3, 0, 4, 2, 3, 4,
+	0, 0, 1, 2, 1, 1, 2, 4, 3, 1, 4, 2, 4, 4, 2, 4, 1, 2, 3, 3,
+	1, 0, 2, 3, 4, 2, 3, 2, 2, 0, 0, 0, 4, 2, 3, 4, 4, 0, 4, 1,
+	4, 2, 1, 1, 1, 1, 4, 3, 4, 2, 3, 0, 0, 3, 0, 2, 3, 0, 2, 4,
+	4, 2, 4, 3, 0, 4, 0, 2, 3, 1, 4, 1, 3, 1, 0, 0, 2, 1, 3, 2,
+	3, 1, 0, 3, 1, 3, 4, 2, 4, 4, 3, 2, 0, 2, 0, 1, 2, 0, 1, 4
+};
+
+static const uint8 kCopyProtectionObfuscate[4] = {
+	1, 0, 2, 3
+};
 
 namespace Gob {
 
@@ -36,6 +56,10 @@ Abracadabra::~Abracadabra() {
 
 void Abracadabra::run() {
 	init();
+
+	bool correctCP = doCopyProtection(kCopyProtectionColors, kCopyProtectionShapes, kCopyProtectionObfuscate);
+	if (_vm->shouldQuit() || !correctCP)
+		return;
 
 	warning("TODO: Abracadabra::run()");
 }

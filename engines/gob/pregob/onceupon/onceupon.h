@@ -32,6 +32,8 @@ namespace Gob {
 class Surface;
 class Font;
 
+class ANIObject;
+
 namespace OnceUpon {
 
 class OnceUpon : public PreGob {
@@ -45,6 +47,8 @@ protected:
 
 	void setGamePalette(uint palette);
 
+	bool doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4]);
+
 
 	Font *_jeudak;
 	Font *_lettre;
@@ -53,6 +57,13 @@ protected:
 
 private:
 	void setCopyProtectionPalette();
+
+	void setAnimState(ANIObject &ani, uint16 state, bool once, bool pause) const;
+
+	// Copy protection helpers
+	int8 cpSetup(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4], const Surface sprites[2]);
+	int8 cpFindShape(int16 x, int16 y) const;
+	void cpWrong();
 
 
 	bool _openedArchives;
