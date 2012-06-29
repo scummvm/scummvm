@@ -43,9 +43,12 @@ void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
 	delete _impl;
 	_impl = 0;
 
+	Common::String userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
+
 	if (!_saveMode && g_gui.getWidth() > 320 && g_gui.getHeight() > 200
 	    && engine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
-	    && engine.hasFeature(MetaEngine::kSavesSupportThumbnail)) {
+	    && engine.hasFeature(MetaEngine::kSavesSupportThumbnail)
+	    && userConfig.equalsIgnoreCase("grid")) {
 		_impl = new LoadChooserThumbnailed(_title);
 	} else {
 		_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);
@@ -90,9 +93,11 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 		if (ret == kSwitchToList) {
 			delete _impl;
 			_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);
+			ConfMan.set("gui_saveload_chooser", "list", Common::ConfigManager::kApplicationDomain);
 		} else if (ret == kSwitchToGrid) {
 			delete _impl;
 			_impl = new LoadChooserThumbnailed(_title);
+			ConfMan.set("gui_saveload_chooser", "grid", Common::ConfigManager::kApplicationDomain);
 		}
 	} while (ret < -1);
 
