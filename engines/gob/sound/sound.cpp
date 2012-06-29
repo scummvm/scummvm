@@ -458,7 +458,7 @@ void Sound::blasterStop(int16 fadeLength, SoundDesc *sndDesc) {
 	_blaster->stopSound(fadeLength, sndDesc);
 }
 
-void Sound::blasterPlayComposition(int16 *composition, int16 freqVal,
+void Sound::blasterPlayComposition(const int16 *composition, int16 freqVal,
 		SoundDesc *sndDescs, int8 sndCount) {
 	if (!_blaster)
 		return;

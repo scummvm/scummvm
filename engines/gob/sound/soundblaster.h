@@ -41,7 +41,7 @@ public:
 			int16 frequency, int16 fadeLength = 0);
 	void stopSound(int16 fadeLength, SoundDesc *sndDesc = 0);
 
-	void playComposition(int16 *composition, int16 freqVal,
+	void playComposition(const int16 *composition, int16 freqVal,
 			SoundDesc *sndDescs = 0, int8 sndCount = 60);
 	void stopComposition();
 	void endComposition();
