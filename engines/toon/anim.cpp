@@ -501,7 +501,7 @@ void AnimationInstance::setAnimation(Animation *animation, bool setRange) {
 	}
 }
 
-void AnimationInstance::setAnimationRange(int32 rangeStart, int rangeEnd) {
+void AnimationInstance::setAnimationRange(int32 rangeStart, int32 rangeEnd) {
 	debugC(5, kDebugAnim, "setAnimationRange(%d, %d)", rangeStart, rangeEnd);
 	_rangeStart = rangeStart;
 	_rangeEnd = rangeEnd;
