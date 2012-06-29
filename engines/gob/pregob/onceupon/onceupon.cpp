@@ -166,7 +166,8 @@ namespace Gob {
 
 namespace OnceUpon {
 
-OnceUpon::OnceUpon(GobEngine *vm) : PreGob(vm), _openedArchives(false) {
+OnceUpon::OnceUpon(GobEngine *vm) : PreGob(vm), _jeudak(0), _lettre(0), _plettre(0), _glettre(0),
+	_openedArchives(false) {
 
 }
 
@@ -186,10 +187,29 @@ void OnceUpon::init() {
 
 	_openedArchives = true;
 
+	_jeudak  = _vm->_draw->loadFont("jeudak.let");
+	_lettre  = _vm->_draw->loadFont("lettre.let");
+	_plettre = _vm->_draw->loadFont("plettre.let");
+	_glettre = _vm->_draw->loadFont("glettre.let");
+
+	if (!_jeudak || !_lettre || !_plettre || !_glettre)
+		error("OnceUpon::OnceUpon(): Failed to fonts (%d, %d, %d, %d)",
+		      _jeudak != 0, _lettre != 0, _plettre != 0, _glettre != 0);
+
 	initScreen();
 }
 
 void OnceUpon::deinit() {
+	delete _jeudak;
+	delete _lettre;
+	delete _plettre;
+	delete _glettre;
+
+	_jeudak  = 0;
+	_lettre  = 0;
+	_plettre = 0;
+	_glettre = 0;
+
 	if (_openedArchives) {
 		_vm->_dataIO->closeArchive(true);
 		_vm->_dataIO->closeArchive(true);

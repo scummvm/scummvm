@@ -30,6 +30,7 @@
 namespace Gob {
 
 class Surface;
+class Font;
 
 namespace OnceUpon {
 
@@ -43,6 +44,12 @@ protected:
 	void deinit();
 
 	void setGamePalette(uint palette);
+
+
+	Font *_jeudak;
+	Font *_lettre;
+	Font *_plettre;
+	Font *_glettre;
 
 private:
 	void setCopyProtectionPalette();
