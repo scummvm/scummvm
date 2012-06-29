@@ -29,6 +29,7 @@
 #include "gob/palanim.h"
 #include "gob/draw.h"
 #include "gob/video.h"
+#include "gob/aniobject.h"
 
 #include "gob/pregob/pregob.h"
 
@@ -179,6 +180,26 @@ bool PreGob::hasInput() {
 	MouseButtons mouseButtons;
 
 	return checkInput(mouseX, mouseY, mouseButtons) || (mouseButtons != kMouseButtonsNone);
+}
+
+void PreGob::clearAnim(ANIObject &ani) {
+	int16 left, top, right, bottom;
+
+	if (ani.clear(*_vm->_draw->_backSurface, left, top, right, bottom))
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+}
+
+void PreGob::drawAnim(ANIObject &ani) {
+	int16 left, top, right, bottom;
+
+	if (ani.draw(*_vm->_draw->_backSurface, left, top, right, bottom))
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+	ani.advance();
+}
+
+void PreGob::redrawAnim(ANIObject &ani) {
+	clearAnim(ani);
+	drawAnim(ani);
 }
 
 } // End of namespace Gob

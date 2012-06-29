@@ -30,6 +30,8 @@ namespace Gob {
 class GobEngine;
 class Surface;
 
+class ANIObject;
+
 class PreGob {
 public:
 	PreGob(GobEngine *vm);
@@ -70,6 +72,10 @@ protected:
 	int16 waitInput (int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
 	int16 waitInput();
 	bool  hasInput();
+
+	void clearAnim(ANIObject &ani);
+	void drawAnim(ANIObject &ani);
+	void redrawAnim(ANIObject &ani);
 
 
 	GobEngine *_vm;
