@@ -39,7 +39,8 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
 private:
-	int16* chooseGreyscale(uint16 *pixels);
+	template<typename ColorMask, typename Pixel>
+	int16* chooseGreyscale(Pixel *pixels);
 	template<typename ColorMask, typename Pixel>
 	int32 calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2);
 	int findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
