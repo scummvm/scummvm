@@ -542,7 +542,7 @@ void LoadChooserThumbnailed::reflowLayout() {
 	const int16 containerHeight = buttonHeight + kLineHeight + containerFrameHeightAdd;
 
 	const int16 defaultSpacingHorizontal = 4;
-	const int16 defaultSpacingVertical = 4;
+	const int16 defaultSpacingVertical = 8;
 	const int16 slotAreaWidth = containerWidth + defaultSpacingHorizontal;
 	const int16 slotAreaHeight = containerHeight + defaultSpacingVertical;
 
