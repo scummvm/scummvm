@@ -329,14 +329,15 @@ uint16 convertTo16Bit(Pixel p) {
  * bitplanes.  The increase in image quality is well worth the speed hit.
  *
  */
-int16 *EdgePlugin::chooseGreyscale(uint16 *pixels) {
+template<typename ColorMask, typename Pixel>
+int16 *EdgePlugin::chooseGreyscale(Pixel *pixels) {
 	int i, j;
 	int32 scores[3];
 
 	for (i = 0; i < 3; i++) {
 		int16 *diff_ptr;
 		int16 *bptr;
-		uint16 *pptr;
+		Pixel *pptr;
 		int16 *grey_ptr;
 		int16 center;
 		int32 sum_diffs;
@@ -349,10 +350,10 @@ int16 *EdgePlugin::chooseGreyscale(uint16 *pixels) {
 		bptr = _bplanes[i];
 		pptr = pixels;
 		for (j = 9; j; --j)
-			*bptr++ = grey_ptr[*pptr++];
+			*bptr++ = grey_ptr[convertTo16Bit<ColorMask, Pixel>(*pptr++)];
 		bptr = _bplanes[i];
 
-		center = grey_ptr[pixels[4]];
+		center = grey_ptr[convertTo16Bit<ColorMask, Pixel>(pixels[4])];
 		diff_ptr = _greyscaleDiffs[i];
 
 		/* calculate the delta from center pixel */
@@ -3416,7 +3417,7 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 			}
 
 #endif
-			diffs = chooseGreyscale(pixels);
+			diffs = chooseGreyscale<ColorMask, Pixel>(pixels);
 
 			/* block of solid color */
 			if (!diffs) {
@@ -3495,7 +3496,7 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 			}
 #endif
 
-			diffs = chooseGreyscale(pixels);
+			diffs = chooseGreyscale<ColorMask, Pixel>(pixels);
 
 			/* block of solid color */
 			if (!diffs) {
