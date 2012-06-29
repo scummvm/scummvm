@@ -1349,7 +1349,7 @@ bool CopyProtectionDialog::show() {
 
 		while (!engine.shouldQuit()) {
 			while (events.pollEvent() && (_charIndex < 4)) {
-				if (events.type() == Common::EVENT_KEYDOWN) {
+				if (events.type() == Common::EVENT_KEYDOWN && !(events.event().kbd.flags & Common::KBD_NON_STICKY)) {
 					if ((events.event().kbd.keycode == Common::KEYCODE_BACKSPACE) && (_charIndex > 0)) {
 						// Remove the last number typed
 						--_charIndex;
