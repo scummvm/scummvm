@@ -452,6 +452,7 @@ void LoadChooserThumbnailed::open() {
 	SaveLoadChooserDialog::open();
 
 	_curPage = 0;
+	_saveList = _metaEngine->listSaves(_target.c_str());
 	updateSaves();
 }
 
@@ -545,8 +546,6 @@ void LoadChooserThumbnailed::hideButtons() {
 
 void LoadChooserThumbnailed::updateSaves() {
 	hideButtons();
-
-	_saveList = _metaEngine->listSaves(_target.c_str());
 
 	for (uint i = _curPage * _entriesPerPage, curNum = 0; i < _saveList.size() && curNum < _entriesPerPage; ++i, ++curNum) {
 		const uint saveSlot = _saveList[i].getSaveSlot();
