@@ -281,6 +281,28 @@ double fast_atan(double x0) {
 }
 
 
+/**
+ * Convert a pixel to a 16bpp format. If called on
+ * a 16bpp pixel, nothing happens and the call should
+ * be removed at compile time by an optimizing compiler.
+ * This allows 16 and 32 bit functions to easily share
+ * the same code.
+ */
+template<typename ColorMask, typename Pixel>
+uint16 convertTo16Bit(Pixel p) {
+	if (sizeof(Pixel) == 2)
+		return p;
+
+	uint16 r, g, b;
+	r = (ColorMask::kRedMask & (ColorMask::kRedMask << (8 - Graphics::ColorMasks<565>::kRedBits)) & p)
+		>> (ColorMask::kRedShift + (8 - Graphics::ColorMasks<565>::kRedBits) - Graphics::ColorMasks<565>::kRedShift);
+	g = (ColorMask::kGreenMask & (ColorMask::kGreenMask << (8 - Graphics::ColorMasks<565>::kGreenBits)) & p)
+		>> (ColorMask::kGreenShift + (8 - Graphics::ColorMasks<565>::kGreenBits) - Graphics::ColorMasks<565>::kGreenShift);
+	b = (ColorMask::kBlueMask & (ColorMask::kBlueMask << (8 - Graphics::ColorMasks<565>::kBlueBits)) & p);
+
+	return r | g | b;
+}
+
 
 /*
  * Choose greyscale bitplane to use, return diff array.  Exit early and
@@ -388,25 +410,8 @@ int16 *EdgePlugin::chooseGreyscale(uint16 *pixels) {
  */
 template<typename ColorMask, typename Pixel>
 int32 EdgePlugin::calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2) {
-	if (sizeof(Pixel) == 4) {
-		int r1, g1, b1, r2, g2, b2;
-
-		// Convert to 16 bit
-		r1 = (ColorMask::kRedMask & (ColorMask::kRedMask << (8 - Graphics::ColorMasks<565>::kRedBits)) & pixel1)
-			>> (ColorMask::kRedShift + (8 - Graphics::ColorMasks<565>::kRedBits) - Graphics::ColorMasks<565>::kRedShift);
-		g1 = (ColorMask::kGreenMask & (ColorMask::kGreenMask << (8 - Graphics::ColorMasks<565>::kGreenBits)) & pixel1)
-			>> (ColorMask::kGreenShift + (8 - Graphics::ColorMasks<565>::kGreenBits) - Graphics::ColorMasks<565>::kGreenShift);
-		b1 = (ColorMask::kBlueMask & (ColorMask::kBlueMask << (8 - Graphics::ColorMasks<565>::kBlueBits)) & pixel1);
-
-		r2 = (ColorMask::kRedMask & (ColorMask::kRedMask << (8 - Graphics::ColorMasks<565>::kRedBits)) & pixel2)
-			>> (ColorMask::kRedShift + (8 - Graphics::ColorMasks<565>::kRedBits) - Graphics::ColorMasks<565>::kRedShift);
-		g2 = (ColorMask::kGreenMask & (ColorMask::kGreenMask << (8 - Graphics::ColorMasks<565>::kGreenBits)) & pixel2)
-			>> (ColorMask::kGreenShift + (8 - Graphics::ColorMasks<565>::kGreenBits) - Graphics::ColorMasks<565>::kGreenShift);
-		b2 = (ColorMask::kBlueMask & (ColorMask::kBlueMask << (8 - Graphics::ColorMasks<565>::kBlueBits)) & pixel2);
-
-		pixel1 = r1 | g1 | b1;
-		pixel2 = r2 | g2 | b2;
-	}
+	pixel1 = convertTo16Bit<ColorMask, Pixel>(pixel1);
+	pixel2 = convertTo16Bit<ColorMask, Pixel>(pixel2);
 
 #if 1   /* distance between pixels, weighted by roughly luma proportions */
 	int32 sum = 0;
