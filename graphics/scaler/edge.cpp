@@ -498,7 +498,7 @@ int32 EdgePlugin::calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2) {
  * since everything I have tried has lead to slight mis-detection errors.
  *
  */
-int EdgePlugin::findPrincipleAxis(uint16 *pixels, int16 *diffs, int16 *bplane,
+int EdgePlugin::findPrincipleAxis(int16 *diffs, int16 *bplane,
                                   int8 *sim,
                                   int32 *return_angle) {
 	struct xy_point {
@@ -3428,7 +3428,7 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 
 			bplane = _bptr;
 
-			edge_type = findPrincipleAxis(pixels, diffs, bplane,
+			edge_type = findPrincipleAxis(diffs, bplane,
 			                              sim, &angle);
 			sub_type = refineDirection(edge_type, pixels, bplane,
 			                           sim, angle);
@@ -3507,7 +3507,7 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 
 			bplane = _bptr;
 
-			edge_type = findPrincipleAxis(pixels, diffs, bplane,
+			edge_type = findPrincipleAxis(diffs, bplane,
 			                              sim, &angle);
 			sub_type = refineDirection(edge_type, pixels, bplane,
 			                           sim, angle);
