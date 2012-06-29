@@ -425,21 +425,6 @@ int Draw::stringLength(const char *str, uint16 fontIndex) {
 	return len;
 }
 
-void Draw::drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-		int16 transp, Surface &dest, const Font &font) {
-
-	while (*str != '\0') {
-		const int16 charRight  = x + font.getCharWidth(*str);
-		const int16 charBottom = y + font.getCharHeight();
-
-		if ((charRight <= dest.getWidth()) && (charBottom <= dest.getHeight()))
-			font.drawLetter(dest, *str, x, y, color1, color2, transp);
-
-		x += font.getCharWidth(*str);
-		str++;
-	}
-}
-
 void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 		int16 bottom, const char *str, int16 fontIndex, int16 color) {
 

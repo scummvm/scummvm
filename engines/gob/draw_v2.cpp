@@ -831,8 +831,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 								getColor(_backColor), _transparency);
 					}
 				} else {
-					drawString(_textToPrint, _destSpriteX, _destSpriteY, getColor(_frontColor),
-							getColor(_backColor), _transparency, *_spritesArray[_destSurface], *font);
+					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, getColor(_frontColor),
+							getColor(_backColor), _transparency, *_spritesArray[_destSurface]);
 					_destSpriteX += len * font->getCharWidth();
 				}
 			} else {

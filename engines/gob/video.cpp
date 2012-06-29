@@ -134,6 +134,23 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 	}
 }
 
+void Font::drawString(const Common::String &str, int16 x, int16 y, int16 color1, int16 color2,
+                      bool transp, Surface &dest) const {
+
+	const char *s = str.c_str();
+
+	while (*s != '\0') {
+		const int16 charRight  = x + getCharWidth(*s);
+		const int16 charBottom = y + getCharHeight();
+
+		if ((x >= 0) && (y >= 0) && (charRight <= dest.getWidth()) && (charBottom <= dest.getHeight()))
+			drawLetter(dest, *s, x, y, color1, color2, transp);
+
+		x += getCharWidth(*s);
+		s++;
+	}
+}
+
 const byte *Font::getCharData(uint8 c) const {
 	if (_endItem == 0) {
 		warning("Font::getCharData(): _endItem == 0");
