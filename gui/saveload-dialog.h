@@ -29,12 +29,19 @@
 
 namespace GUI {
 
+#define kSwitchToList -2
+#define kSwitchToGrid -3
+
 class SaveLoadChooserDialog : protected Dialog {
 public:
-	SaveLoadChooserDialog(const Common::String &dialogName);
-	SaveLoadChooserDialog(int x, int y, int w, int h);
+	SaveLoadChooserDialog(const Common::String &dialogName, const bool saveMode);
+	SaveLoadChooserDialog(int x, int y, int w, int h, const bool saveMode);
 
 	virtual void open();
+
+	virtual void reflowLayout();
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 	int run(const Common::String &target, const MetaEngine *metaEngine);
 	virtual const Common::String &getResultString() const = 0;
@@ -42,6 +49,7 @@ public:
 protected:
 	virtual int runIntern() = 0;
 
+	const bool				_saveMode;
 	const MetaEngine		*_metaEngine;
 	bool					_delSupport;
 	bool					_metaInfoSupport;
@@ -49,6 +57,12 @@ protected:
 	bool					_saveDateSupport;
 	bool					_playTimeSupport;
 	Common::String			_target;
+
+	GUI::ButtonWidget *_listButton;
+	GUI::ButtonWidget *_gridButton;
+
+	void addChooserButtons();
+	GUI::ButtonWidget *createSwitchButton(const Common::String &name, const char *desc, const char *tooltip, const char *image, uint32 cmd = 0);
 };
 
 class SaveLoadChooserSimple : public SaveLoadChooserDialog {

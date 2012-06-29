@@ -83,7 +83,18 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 	String oldDomain = ConfMan.getActiveDomainName();
 	ConfMan.setActiveDomain(target);
 
-	int ret = _impl->run(target, &(**plugin));
+	int ret;
+	do {
+		ret = _impl->run(target, &(**plugin));
+
+		if (ret == kSwitchToList) {
+			delete _impl;
+			_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);
+		} else if (ret == kSwitchToGrid) {
+			delete _impl;
+			_impl = new LoadChooserThumbnailed(_title);
+		}
+	} while (ret < -1);
 
 	// Revert to the old active domain
 	ConfMan.setActiveDomain(oldDomain);

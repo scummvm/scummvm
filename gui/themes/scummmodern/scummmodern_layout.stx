@@ -38,6 +38,7 @@
 		<def var = 'ShowLauncherLogo' value = '1'/>
 		<def var = 'ShowGlobalMenuLogo' value = '1'/>
 		<def var = 'ShowSearchPic' value = '1'/>
+		<def var = 'ShowChooserPics' value = '1'/>
 
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '1'/>
 
@@ -818,6 +819,14 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'ListSwitch'
+						height = '20'
+						width = '20'
+				/>
+				<widget name = 'GridSwitch'
+						height = '20'
+						width = '20'
+				/>
 				<space/>
 				<widget name = 'Delete'
 						type = 'Button'

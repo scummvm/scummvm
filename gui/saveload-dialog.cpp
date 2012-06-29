@@ -30,14 +30,23 @@
 
 namespace GUI {
 
-SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName)
+enum {
+	kListSwitchCmd = 'LIST',
+	kGridSwitchCmd = 'GRID'
+};
+
+SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName, const bool saveMode)
 	: Dialog(dialogName), _metaEngine(0), _delSupport(false), _metaInfoSupport(false),
-	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false) {
+	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode),
+	_listButton(0), _gridButton(0) {
+	addChooserButtons();
 }
 
-SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h)
+SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const bool saveMode)
 	: Dialog(x, y, w, h), _metaEngine(0), _delSupport(false), _metaInfoSupport(false),
-	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false) {
+	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode),
+	_listButton(0), _gridButton(0) {
+	addChooserButtons();
 }
 
 void SaveLoadChooserDialog::open() {
@@ -60,6 +69,63 @@ int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngine *m
 	return runIntern();
 }
 
+void SaveLoadChooserDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kListSwitchCmd:
+		setResult(kSwitchToList);
+		close();
+		break;
+
+	case kGridSwitchCmd:
+		setResult(kSwitchToGrid);
+		close();
+		break;
+
+	default:
+		break;
+	}
+
+	return Dialog::handleCommand(sender, cmd, data);
+}
+
+void SaveLoadChooserDialog::addChooserButtons() {
+	if (_listButton) {
+		removeWidget(_listButton);
+		delete _listButton;
+	}
+
+	if (_gridButton) {
+		removeWidget(_gridButton);
+		delete _gridButton;
+	}
+
+	_listButton = createSwitchButton("SaveLoadChooser.ListSwitch", "L", _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
+	_gridButton = createSwitchButton("SaveLoadChooser.GridSwitch", "G", _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
+	if (!_metaInfoSupport || !_thumbnailSupport || _saveMode)
+		_gridButton->setEnabled(false);
+}
+
+void SaveLoadChooserDialog::reflowLayout() {
+	addChooserButtons();
+
+	Dialog::reflowLayout();
+}
+
+GUI::ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &name, const char *desc, const char *tooltip, const char *image, uint32 cmd) {
+	ButtonWidget *button;
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
+		button = new PicButtonWidget(this, name, tooltip, cmd);
+		((PicButtonWidget *)button)->useThemeTransparency(true);
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(image));
+	} else
+#endif
+		button = new ButtonWidget(this, name, desc, tooltip, cmd);
+
+	return button;
+}
+
 // SaveLoadChooserSimple implementation
 
 enum {
@@ -68,7 +134,7 @@ enum {
 };
 
 SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode)
-	: SaveLoadChooserDialog("SaveLoadChooser"), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
@@ -385,7 +451,7 @@ enum {
 };
 
 LoadChooserThumbnailed::LoadChooserThumbnailed(const Common::String &title)
-	: SaveLoadChooserDialog("SaveLoadChooser"), _lines(0), _columns(0), _entriesPerPage(0),
+	: SaveLoadChooserDialog("SaveLoadChooser", false), _lines(0), _columns(0), _entriesPerPage(0),
 	_curPage(0), _buttons() {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
