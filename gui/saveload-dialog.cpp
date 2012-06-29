@@ -477,7 +477,7 @@ void LoadChooserThumbnailed::reflowLayout() {
 	const int16 defaultSpacingHorizontal = 4;
 	const int16 defaultSpacingVertical = 4;
 	const int16 slotAreaWidth = containerWidth + defaultSpacingHorizontal;
-	const int16 slotAreaHeight = containerHeight + defaultSpacingHorizontal;
+	const int16 slotAreaHeight = containerHeight + defaultSpacingVertical;
 
 	const uint oldEntriesPerPage = _entriesPerPage;
 	_columns = MAX<uint>(1, availableWidth / slotAreaWidth);
