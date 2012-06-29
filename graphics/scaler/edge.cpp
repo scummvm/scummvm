@@ -304,31 +304,6 @@ uint16 convertTo16Bit(Pixel p) {
 }
 
 
-/*
- * Choose greyscale bitplane to use, return diff array.  Exit early and
- * return NULL for a block of solid color (all diffs zero).
- *
- * No matter how you do it, mapping 3 bitplanes into a single greyscale
- * bitplane will always result in colors which are very different mapping to
- * the same greyscale value.  Inevitably, these pixels will appear next to
- * each other at some point in some image, and edge detection on a single
- * bitplane will behave quite strangely due to them having the same or nearly
- * the same greyscale values.  Calculating distances between pixels using all
- * three RGB bitplanes is *way* too time consuming, so single bitplane
- * edge detection is used for speed's sake.  In order to try to avoid the
- * color mapping problems of using a single bitplane, 3 different greyscale
- * mappings are tested for each 3x3 grid, and the one with the most "signal"
- * (sum of squares difference from center pixel) is chosen.  This usually
- * results in useable contrast within the 3x3 grid.
- *
- * This results in a whopping 25% increase in overall runtime of the filter
- * over simply using luma or some other single greyscale bitplane, but it
- * does greatly reduce the amount of errors due to greyscale mapping
- * problems.  I think this is the best compromise between accuracy and
- * speed, and is still a lot faster than edge detecting over all three RGB
- * bitplanes.  The increase in image quality is well worth the speed hit.
- *
- */
 template<typename ColorMask, typename Pixel>
 int16 *EdgePlugin::chooseGreyscale(Pixel *pixels) {
 	int i, j;
@@ -401,14 +376,6 @@ int16 *EdgePlugin::chooseGreyscale(Pixel *pixels) {
 }
 
 
-
-/*
- * Calculate the distance between pixels in RGB space.  Greyscale isn't
- * accurate enough for choosing nearest-neighbors :(  Luma-like weighting
- * of the individual bitplane distances prior to squaring gives the most
- * useful results.
- *
- */
 template<typename ColorMask, typename Pixel>
 int32 EdgePlugin::calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2) {
 	pixel1 = convertTo16Bit<ColorMask, Pixel>(pixel1);
@@ -483,21 +450,6 @@ int32 EdgePlugin::calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2) {
 }
 
 
-
-/*
- * Create vectors of all delta grey values from center pixel, with magnitudes
- * ranging from [1.0, 0.0] (zero difference, maximum difference).  Find
- * the two principle axes of the grid by calculating the eigenvalues and
- * eigenvectors of the inertia tensor.  Use the eigenvectors to calculate the
- * edge direction.  In other words, find the angle of the line that optimally
- * passes through the 3x3 pattern of pixels.
- *
- * Return horizontal (-), vertical (|), diagonal (/,\), multi (*), or none '0'
- *
- * Don't replace any of the double math with integer-based approximations,
- * since everything I have tried has lead to slight mis-detection errors.
- *
- */
 int EdgePlugin::findPrincipleAxis(int16 *diffs, int16 *bplane,
                                   int8 *sim,
                                   int32 *return_angle) {
@@ -722,8 +674,6 @@ int EdgePlugin::findPrincipleAxis(int16 *diffs, int16 *bplane,
 }
 
 
-
-/* Check for mis-detected arrow patterns.  Return 1 (good), 0 (bad). */
 int EdgePlugin::checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag) {
 	uint16 center = pixels[4];
 
@@ -830,15 +780,6 @@ int EdgePlugin::checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_fl
 }
 
 
-
-/*
- * Take original direction, refine it by testing different pixel difference
- * patterns based on the initial gross edge direction.
- *
- * The angle value is not currently used, but may be useful for future
- * refinement algorithms.
- *
- */
 int EdgePlugin::refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
                                 int8 *sim, double angle) {
 	int32 sums_dir[9] = { 0 };
@@ -1679,8 +1620,6 @@ int EdgePlugin::refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
 }
 
 
-
-/* "Chess Knight" patterns can be mis-detected, fix easy cases. */
 int EdgePlugin::fixKnights(int sub_type, uint16 *pixels, int8 *sim) {
 	uint16 center = pixels[4];
 	int dir = sub_type;
@@ -1827,7 +1766,6 @@ int EdgePlugin::fixKnights(int sub_type, uint16 *pixels, int8 *sim) {
 #define redblueMask 0xF81F
 #define greenMask   0x07E0
 
-/* Fill pixel grid without interpolation, using the detected edge */
 template<typename ColorMask, typename Pixel>
 void EdgePlugin::anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
         uint16 *pixels, int sub_type, int16 *bptr) {
@@ -2427,8 +2365,6 @@ void EdgePlugin::anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 }
 
 
-
-/* Fill pixel grid with or without interpolation, using the detected edge */
 template<typename ColorMask, typename Pixel>
 void EdgePlugin::anti_alias_grid_2x(uint8 *dptr, int dstPitch,
                                     uint16 *pixels, int sub_type, int16 *bptr,
@@ -3365,7 +3301,6 @@ void draw_unchanged_grid_2x(Pixel *dptr, int dstPitch,
 }
 
 
-/* Perform edge detection, draw the new 3x pixels */
 template<typename ColorMask, typename Pixel>
 void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
                                  int w, int h, int w_new, int h_new,
@@ -3442,8 +3377,6 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 }
 
 
-
-/* Perform edge detection, draw the new 2x pixels */
 template<typename ColorMask, typename Pixel>
 void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
                                  int w, int h, int w_new, int h_new,
@@ -3522,8 +3455,6 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 }
 
 
-
-/* Initialize various lookup tables */
 void EdgePlugin::initTables(const uint8 *srcPtr, uint32 srcPitch,
                             int width, int height) {
 	double r_float, g_float, b_float;
