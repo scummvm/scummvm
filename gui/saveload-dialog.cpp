@@ -595,8 +595,11 @@ int LoadChooserThumbnailed::runIntern() {
 void LoadChooserThumbnailed::destroyButtons() {
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
 		removeWidget(i->container);
+		delete i->container;
 		removeWidget(i->button);
+		delete i->button;
 		removeWidget(i->description);
+		delete i->description;
 	}
 
 	_buttons.clear();
