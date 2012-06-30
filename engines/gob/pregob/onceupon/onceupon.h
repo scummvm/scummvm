@@ -49,12 +49,13 @@ protected:
 
 	bool doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4]);
 
-	void showWait();
-	void showQuote();
-	void showTitle();
-	void showChapter(int chapter);
+	void showWait();  ///< Show the wait / loading screen.
+	void showIntro(); ///< Show the whole intro.
+
+	void showChapter(int chapter); ///< Show a chapter intro text.
 
 
+	// Fonts
 	Font *_jeudak;
 	Font *_lettre;
 	Font *_plettre;
@@ -70,11 +71,17 @@ private:
 	int8 cpFindShape(int16 x, int16 y) const;
 	void cpWrong();
 
+	// Intro parts
+	void showQuote();
+	void showTitle();
+
+	// Title music
 	void playTitleMusic();
 	void playTitleMusicDOS();
 	void playTitleMusicAmiga();
 	void playTitleMusicAtariST();
 	void stopTitleMusic();
+
 
 	bool _openedArchives;
 };

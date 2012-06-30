@@ -62,28 +62,8 @@ void BabaYaga::run() {
 	if (_vm->shouldQuit() || !correctCP)
 		return;
 
-	// "Loading"
-	showWait();
-	if (_vm->shouldQuit())
-		return;
-
-	// Quote about fairy tales
-	showQuote();
-	if (_vm->shouldQuit())
-		return;
-
-	// Once Upon A Time title
-	showTitle();
-	if (_vm->shouldQuit())
-		return;
-
-	// Game title screen
-	showChapter(0);
-	if (_vm->shouldQuit())
-		return;
-
-	// "Loading"
-	showWait();
+	// Show the intro
+	showIntro();
 }
 
 } // End of namespace OnceUpon

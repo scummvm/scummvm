@@ -506,6 +506,33 @@ void OnceUpon::showWait() {
 	fadeIn();
 }
 
+void OnceUpon::showIntro() {
+	// Show all intro parts
+
+	// "Loading"
+	showWait();
+	if (_vm->shouldQuit())
+		return;
+
+	// Quote about fairy tales
+	showQuote();
+	if (_vm->shouldQuit())
+		return;
+
+	// Once Upon A Time title
+	showTitle();
+	if (_vm->shouldQuit())
+		return;
+
+	// Game title screen
+	showChapter(0);
+	if (_vm->shouldQuit())
+		return;
+
+	// "Loading"
+	showWait();
+}
+
 void OnceUpon::showQuote() {
 	// Show the quote about fairytales
 
