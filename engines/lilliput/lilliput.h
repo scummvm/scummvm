@@ -273,7 +273,7 @@ public:
 
 	void renderCharacters(byte *buf, Common::Point pos);
 
-	void sub147D7();
+	void checkNumericCode();
 	void sub13156(bool &forceReturnFl);
 	byte sub16799(int index, Common::Point param1);
 	byte getDirection(Common::Point param1, Common::Point param2);
@@ -347,7 +347,7 @@ public:
 	int _skipDisplayFlag2;
 
 	byte _actionType;
-	bool _mouthSelected;
+	bool _delayedReactivationAction;
 	int8 _selectedCharacterId;
 	byte _numCharactersToDisplay;
 	int16 _word10804;

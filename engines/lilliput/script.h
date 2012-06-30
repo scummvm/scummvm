@@ -194,7 +194,7 @@ private:
 	byte OC_checkCharacterDirection();
 	byte OC_checkLastInterfaceHotspotIndex();
 	byte OC_checkSelectedCharacter();
-	byte OC_sub179AE();
+	byte OC_checkDelayedReactivation();
 	byte OC_sub179C2();
 	byte OC_checkFunctionKeyPressed();
 	byte OC_checkCodeEntered();
