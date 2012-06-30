@@ -32,11 +32,30 @@
 #include "engines/wintermute/Base/BRenderer.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
-
-class SDL_Window;
-class SDL_Renderer;
+#include "common/list.h"
 
 namespace WinterMute {
+class CBSurfaceSDL;
+class RenderTicket {
+public:
+	RenderTicket(CBSurfaceSDL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
+	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0) {}
+	~RenderTicket();
+	Graphics::Surface *_surface;
+	Common::Rect _srcRect;
+	Common::Rect _dstRect;
+	bool _mirrorX;
+	bool _mirrorY;
+	bool _hasAlpha;
+
+	bool _isValid;
+	bool _wantsDraw;
+	uint32 _drawNum;
+	uint32 _colorMod;
+
+	CBSurfaceSDL *_owner;
+	bool operator==(RenderTicket &a);
+};
 
 class CBRenderSDL : public CBRenderer {
 public:
@@ -60,8 +79,9 @@ public:
 
 	void setAlphaMod(byte alpha);
 	void setColorMod(byte r, byte g, byte b);
-	void drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
-	void drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
+	void invalidateTicket(RenderTicket *renderTicket);
+	void invalidateTicketsFromSurface(CBSurfaceSDL *surf);
+	void drawFromTicket(RenderTicket *renderTicket);
 
 	HRESULT setViewport(int left, int top, int right, int bottom);
 
@@ -78,9 +98,16 @@ public:
 		return _ratioY;
 	}
 
+	void drawSurface(CBSurfaceSDL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY);
 private:
-	/*  SDL_Renderer *_renderer;
-	    SDL_Window *_win;*/
+	void addDirtyRect(const Common::Rect &rect);
+	void drawTickets();
+	void drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, bool mirrorX = false, bool mirrorY = false);
+	typedef Common::List<RenderTicket*>::iterator RenderQueueIterator;
+	Common::Rect *_dirtyRect;
+	Common::List<RenderTicket*> _renderQueue;
+	bool _needsFlip;
+	uint32 _drawNum;
 	Common::Rect _renderRect;
 	Graphics::Surface *_renderSurface;
 	AnsiString _name;
@@ -90,9 +117,11 @@ private:
 	int _borderRight;
 	int _borderBottom;
 
+	bool _disableDirtyRects;
 	float _ratioX;
 	float _ratioY;
 	uint32 _colorMod;
+	uint32 _clearColor;
 };
 
 } // end of namespace WinterMute

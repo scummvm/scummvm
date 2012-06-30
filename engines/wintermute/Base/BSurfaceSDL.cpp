@@ -48,10 +48,8 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////////
 CBSurfaceSDL::CBSurfaceSDL(CBGame *inGame) : CBSurface(inGame) {
 	_surface = new Graphics::Surface();
-	_scaledSurface = NULL;
 	_alphaMask = NULL;
 	_hasAlpha = true;
-
 	_lockPixels = NULL;
 	_lockPitch = 0;
 }
@@ -65,16 +63,12 @@ CBSurfaceSDL::~CBSurfaceSDL() {
 		_surface = NULL;
 	}
 
-	if (_scaledSurface) {
-		_scaledSurface->free();
-		delete _scaledSurface;
-		_scaledSurface = NULL;
-	}
-
 	delete[] _alphaMask;
 	_alphaMask = NULL;
 
 	Game->AddMem(-_width * _height * 4);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	renderer->invalidateTicketsFromSurface(this);
 }
 
 bool hasTransparency(Graphics::Surface *surf) {
@@ -416,11 +410,8 @@ bool CBSurfaceSDL::isTransparentAtLite(int x, int y) {
 HRESULT CBSurfaceSDL::startPixelOp() {
 	//SDL_LockTexture(_texture, NULL, &_lockPixels, &_lockPitch);
 	// Any pixel-op makes the caching useless:
-	if (_scaledSurface) {
-		_scaledSurface->free();
-		delete _scaledSurface;
-		_scaledSurface = NULL;
-	}
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	renderer->invalidateTicketsFromSurface(this);
 	return S_OK;
 }
 
@@ -507,6 +498,13 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	position.top = y + offsetY;
 	// TODO: Scaling...
 
+	if (position.left == -1) {
+		position.left = 0; // TODO: Something is wrong
+	}
+	if (position.top == -1) {
+		position.top = 0; // TODO: Something is wrong
+	}
+
 	position.setWidth((float)srcRect.width() * ZoomX / 100.f);
 	position.setHeight((float)srcRect.height() * ZoomX / 100.f);
 
@@ -517,40 +515,18 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 
 	// TODO: This actually requires us to have the SAME source-offsets every time,
 	// But no checking is in place for that yet.
-	Graphics::Surface drawSrc;
-	drawSrc.w = (uint16)position.width();
-	drawSrc.h = (uint16)position.height();
-	drawSrc.format = _surface->format;
 
-	if (position.width() != srcRect.width() || position.height() != srcRect.height()) {
-		if (_scaledSurface && position.width() == _scaledSurface->w && position.height() == _scaledSurface->h) {
-			drawSrc.pixels = _scaledSurface->pixels;
-			drawSrc.pitch = _scaledSurface->pitch;
-		} else {
-			if (_scaledSurface) {
-				_scaledSurface->free();
-				delete _scaledSurface;
-				_scaledSurface = NULL;
-			}
-			TransparentSurface src(*_surface, false);
-			_scaledSurface = src.scale(position.width(), position.height());
-			drawSrc.pixels = _scaledSurface->pixels;
-			drawSrc.pitch = _scaledSurface->pitch;
-		}
-	} else { // No scaling
-		drawSrc.pitch = _surface->pitch;
-		drawSrc.pixels = &((char *)_surface->pixels)[srcRect.top * _surface->pitch + srcRect.left * 4];
-	}
-	srcRect.left = 0;
-	srcRect.top = 0;
-	srcRect.setWidth(drawSrc.w);
-	srcRect.setHeight(drawSrc.h);
-
+	bool hasAlpha;
 	if (_hasAlpha && !AlphaDisable) {
-		renderer->drawFromSurface(&drawSrc, &srcRect, &position, mirrorX, mirrorY);
+		hasAlpha = true;
 	} else {
-		renderer->drawOpaqueFromSurface(&drawSrc, &srcRect, &position, mirrorX, mirrorY);
+		hasAlpha = false;
 	}
+	if (AlphaDisable) {
+		warning("CBSurfaceSDL::drawSprite - AlphaDisable ignored");
+	}
+
+	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY);
 #if 0
 	SDL_RenderCopy(renderer->GetSdlRenderer(), _texture, &srcRect, &position);
 #endif
@@ -561,6 +537,9 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 HRESULT CBSurfaceSDL::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_surface->copyFrom(surface);
 	_hasAlpha = hasAlpha;
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	renderer->invalidateTicketsFromSurface(this);
+		
 	return S_OK;
 }
 

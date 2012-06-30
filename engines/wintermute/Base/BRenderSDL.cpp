@@ -37,21 +37,66 @@
 #include "engines/wintermute/Base/BSprite.h"
 #include "common/system.h"
 #include "engines/wintermute/graphics/transparentSurface.h"
+#include "common/queue.h"
 
 namespace WinterMute {
+
+RenderTicket::RenderTicket(CBSurfaceSDL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) : _owner(owner),
+	_srcRect(*srcRect), _dstRect(*dstRect), _mirrorX(mirrorX), _mirrorY(mirrorY), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(true) {
+	_colorMod = 0;
+	if (surf) {
+		_surface = new Graphics::Surface();
+		_surface->create(srcRect->width(), srcRect->height(), surf->format);
+		assert(_surface->format.bytesPerPixel == 4);
+		// Get a clipped copy of the surface
+		for (int i = 0; i < _surface->h; i++) {
+			memcpy(_surface->getBasePtr(0, i), surf->getBasePtr(srcRect->left, srcRect->top + i), srcRect->width() * _surface->format.bytesPerPixel);
+		}
+		// Then scale it if necessary
+		if (dstRect->width() != srcRect->width() || dstRect->height() != srcRect->height()) {
+			TransparentSurface src(*_surface, false);
+			Graphics::Surface *temp = src.scale(dstRect->width(), dstRect->height());
+			_surface->free();
+			delete _surface;
+			_surface = temp;
+		}
+	} else {
+		_surface = NULL;
+	}
+}
+
+RenderTicket::~RenderTicket() {
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+}
+
+bool RenderTicket::operator==(RenderTicket &t) {
+	if ((t._srcRect != _srcRect) ||
+		(t._dstRect != _dstRect) ||
+		(t._mirrorX != _mirrorX) ||
+		(t._mirrorY != _mirrorY) ||
+		(t._hasAlpha != _hasAlpha)) {
+			return false;
+		}
+	return true;
+}
 
 // TODO: Redo everything here.
 
 //////////////////////////////////////////////////////////////////////////
 CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
-	/*  _renderer = NULL;
-	    _win = NULL;*/
 	_renderSurface = new Graphics::Surface();
+	_drawNum = 1;
+	_needsFlip = true;
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
 	setAlphaMod(255);
 	setColorMod(255, 255, 255);
+	_dirtyRect = NULL;
+	_disableDirtyRects = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -177,6 +222,7 @@ HRESULT CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	_active = true;
 
+	_clearColor = _renderSurface->format.ARGBToColor(255, 0, 0, 0);
 
 	return S_OK;
 }
@@ -195,49 +241,18 @@ void CBRenderSDL::setColorMod(byte r, byte g, byte b) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::flip() {
-
-#ifdef __IPHONEOS__
-	// hack: until viewports work correctly, we just paint black bars instead
-	SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xFF);
-
-	static bool firstRefresh = true; // prevents a weird color glitch
-	if (firstRefresh) {
-		firstRefresh = false;
-	} else {
-		SDL_Rect rect;
-		if (_borderLeft > 0) {
-			rect.x = 0;
-			rect.y = 0;
-			rect.w = _borderLeft;
-			rect.h = _realHeight;
-			SDL_RenderFillRect(_renderer, &rect);
-		}
-		if (_borderRight > 0) {
-			rect.x = (_realWidth - _borderRight);
-			rect.y = 0;
-			rect.w = _borderRight;
-			rect.h = _realHeight;
-			SDL_RenderFillRect(_renderer, &rect);
-		}
-		if (_borderTop > 0) {
-			rect.x = 0;
-			rect.y = 0;
-			rect.w = _realWidth;
-			rect.h = _borderTop;
-			SDL_RenderFillRect(_renderer, &rect);
-		}
-		if (_borderBottom > 0) {
-			rect.x = 0;
-			rect.y = _realHeight - _borderBottom;
-			rect.w = _realWidth;
-			rect.h = _borderBottom;
-			SDL_RenderFillRect(_renderer, &rect);
-		}
+	if (!_disableDirtyRects) {
+		drawTickets();
 	}
-#endif
-	g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
-	g_system->updateScreen();
-	//SDL_RenderPresent(_renderer);
+	if (_needsFlip || _disableDirtyRects) {
+		g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+	//	g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+		delete _dirtyRect;
+		_dirtyRect = NULL;
+		g_system->updateScreen();
+		_needsFlip = false;
+	}
+	_drawNum = 1;
 
 	return S_OK;
 }
@@ -246,11 +261,13 @@ HRESULT CBRenderSDL::flip() {
 HRESULT CBRenderSDL::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, 0xFF);
 	//SDL_RenderClear(_renderer);
-	uint32 color = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
+	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
+	if (!_disableDirtyRects)
+		return S_OK;
 	if (!rect) {
 		rect = &_renderRect;
 	}
-	_renderSurface->fillRect(*rect, color);
+	_renderSurface->fillRect(*rect, _clearColor);
 
 	return S_OK;
 }
@@ -268,6 +285,7 @@ HRESULT CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
 	if (!hasWarned) {
+		warning("CBRenderSDL::FadeToColor - Breaks when using dirty rects");
 		warning("Implement CBRenderSDL::FadeToColor"); // TODO.
 		hasWarned = true;
 	}
@@ -305,61 +323,162 @@ HRESULT CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 	return S_OK;
 }
 
+void CBRenderSDL::drawSurface(CBSurfaceSDL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
+	if (_disableDirtyRects) {
+		RenderTicket renderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY);
+		// HINT: The surface-data contains other info than it should.
+	//	drawFromSurface(renderTicket._surface, srcRect, dstRect, NULL, mirrorX, mirrorY);
+		drawFromSurface(renderTicket._surface, &renderTicket._srcRect, &renderTicket._dstRect, NULL);
+		return;
+	}
+	RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY); 
+	RenderQueueIterator it;
+	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
+		if ((*it)->_owner == owner && *(*it) == compare && (*it)->_isValid) {
+			(*it)->_colorMod = _colorMod;
+			drawFromTicket(*it);
+			return;
+		}
+	}
+	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY);
+	ticket->_colorMod = _colorMod;
+	drawFromTicket(ticket);
+}
+
+void CBRenderSDL::invalidateTicket(RenderTicket *renderTicket) {
+	addDirtyRect(renderTicket->_dstRect);
+	renderTicket->_isValid = false;
+//	renderTicket->_canDelete = true; // TODO: Maybe readd this, to avoid even more duplicates.
+}
+
+void CBRenderSDL::invalidateTicketsFromSurface(CBSurfaceSDL *surf) {
+	RenderQueueIterator it;
+	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
+		if ((*it)->_owner == surf) {
+			invalidateTicket(*it);
+		}
+	}
+}
+
+void CBRenderSDL::drawFromTicket(RenderTicket *renderTicket) {
+	renderTicket->_wantsDraw = true;
+	// New item
+	uint32 size = _renderQueue.size();
+	// A new item always has _drawNum == 0
+	if (renderTicket->_drawNum == 0) {
+		// In-order
+		if (_renderQueue.empty() || _drawNum > (_renderQueue.back())->_drawNum) {
+			renderTicket->_drawNum = _drawNum++;
+			_renderQueue.push_back(renderTicket);
+			addDirtyRect(renderTicket->_dstRect);
+		} else {
+			// Before something
+			Common::List<RenderTicket*>::iterator pos;
+			for (pos = _renderQueue.begin(); pos != _renderQueue.end(); pos++) {
+				if ((*pos)->_drawNum > _drawNum) {
+					break;
+				}
+			}
+			_renderQueue.insert(pos, renderTicket);
+			Common::List<RenderTicket*>::iterator it;
+			renderTicket->_drawNum = _drawNum++;
+
+			// Increment the following tickets, so they still are in line
+			for (it = pos; it != _renderQueue.end(); it++) {
+				(*it)->_drawNum++;
+			}
+			addDirtyRect(renderTicket->_dstRect);
+		}
+	} else {
+		// Was drawn last round, still in the same order
+		if (_drawNum == renderTicket->_drawNum) {
+			_drawNum++;
+		} else {
+			// Is not in order
+			renderTicket->_drawNum = _drawNum++;
+			addDirtyRect(renderTicket->_dstRect);
+		}
+	}
+}
+
+void CBRenderSDL::addDirtyRect(const Common::Rect &rect) {
+	if (!_dirtyRect) {
+		_dirtyRect = new Common::Rect(rect);
+	} else {
+		_dirtyRect->extend(rect);
+	}
+	_dirtyRect->clip(_renderRect);
+//	warning("AddDirtyRect: %d %d %d %d", rect.left, rect.top, rect.right, rect.bottom);
+}
+
+void CBRenderSDL::drawTickets() {
+	if (!_dirtyRect)
+		return;
+	RenderQueueIterator it = _renderQueue.begin();
+	uint32 size = _renderQueue.size();
+	// Clean out the old tickets
+	while (it != _renderQueue.end()) {
+		if ((*it)->_wantsDraw == false) {
+			RenderTicket* ticket = *it;
+			addDirtyRect((*it)->_dstRect);
+			it = _renderQueue.erase(it);
+			delete ticket;
+		} else {
+			it++;
+		}
+	}
+	// The color-mods are stored in the RenderTickets on add, since we set that state again during
+	// draw, we need to keep track of what it was prior to draw.
+	uint32 oldColorMod = _colorMod;
+//	warning("DirtyRect: %d %d %d %d", _dirtyRect->left, _dirtyRect->top, _dirtyRect->right, _dirtyRect->bottom);
+	
+	// Apply the clear-color to the dirty rect.
+	_renderSurface->fillRect(*_dirtyRect, _clearColor);
+	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
+		RenderTicket *ticket = *it;
+		if (ticket->_isValid && ticket->_dstRect.intersects(*_dirtyRect)) {
+			// dstClip is the area we want redrawn.
+			Common::Rect dstClip(ticket->_dstRect);
+			// reduce it to the dirty rect
+			dstClip.clip(*_dirtyRect);
+			// we need to keep track of the position to redraw the dirty rect
+			Common::Rect pos(dstClip);
+			int offsetX = ticket->_dstRect.left;
+			int offsetY = ticket->_dstRect.top;
+			// convert from screen-coords to surface-coords.
+			dstClip.translate(-offsetX, -offsetY);
+
+			_colorMod = ticket->_colorMod;
+			drawFromSurface(ticket->_surface, &ticket->_srcRect, &pos, &dstClip, ticket->_mirrorX, ticket->_mirrorX);
+			ticket->_wantsDraw = false;
+			_needsFlip = true;
+		}
+	}
+	// Revert the colorMod-state.
+	_colorMod = oldColorMod;
+}
+
 // Replacement for SDL2's SDL_RenderCopy
-void CBRenderSDL::drawFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
+void CBRenderSDL::drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, bool mirrorX, bool mirrorY) {
 	TransparentSurface src(*surf, false);
 	int mirror = TransparentSurface::FLIP_NONE;
 	if (mirrorX)
 		mirror |= TransparentSurface::FLIP_V;
 	if (mirrorY)
 		mirror |= TransparentSurface::FLIP_H;
-	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, srcRect, _colorMod, dstRect->width(), dstRect->height());
+	bool doDelete = false;
+	if (!clipRect) {
+		doDelete = true;
+		clipRect = new Common::Rect();
+		clipRect->setWidth(surf->w);
+		clipRect->setHeight(surf->h);
+	}
+
+	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
+	if (doDelete)
+		delete clipRect;
 }
 
-void CBRenderSDL::drawOpaqueFromSurface(Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
-	TransparentSurface src(*surf, false);
-	TransparentSurface *img = NULL;
-	TransparentSurface *imgScaled = NULL;
-	byte *savedPixels = NULL;
-	if ((dstRect->width() != surf->w) || (dstRect->height() != surf->h)) {
-		img = imgScaled = src.scale(dstRect->width(), dstRect->height());
-		savedPixels = (byte *)img->pixels;
-	} else {
-		img = &src;
-	}
-
-	int posX = dstRect->left;
-	int posY = dstRect->top;
-
-	// Handle off-screen clipping
-	if (posY < 0) {
-		img->h = (uint16)(MAX(0, (int)img->h - -posY));
-		img->pixels = (byte *)img->pixels + img->pitch * -posY;
-		posY = 0;
-	}
-
-	if (posX < 0) {
-		img->w = (uint16)(MAX(0, (int)img->w - -posX));
-		img->pixels = (byte *)img->pixels + (-posX * 4);
-		posX = 0;
-	}
-
-	img->w = (uint16)(CLIP((int)img->w, 0, (int)MAX((int)_renderSurface->w - posX, 0)));
-	img->h = (uint16)(CLIP((int)img->h, 0, (int)MAX((int)_renderSurface->h - posY, 0)));
-
-	for (int i = 0; i < img->h; i++) {
-		void *destPtr = _renderSurface->getBasePtr(posX, posY + i);
-		void *srcPtr = img->getBasePtr(0, i);
-		memcpy(destPtr, srcPtr, _renderSurface->format.bytesPerPixel * img->w);
-	}
-
-	if (imgScaled) {
-		imgScaled->pixels = savedPixels;
-		imgScaled->free();
-		delete imgScaled;
-		imgScaled = NULL;
-	}
-}
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRenderSDL::drawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
 	static bool hasWarned = false;

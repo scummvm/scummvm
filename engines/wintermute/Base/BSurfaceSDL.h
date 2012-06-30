@@ -31,6 +31,7 @@
 
 #include "graphics/surface.h"
 #include "engines/wintermute/Base/BSurface.h"
+#include "common/list.h"
 
 namespace WinterMute {
 struct TransparentSurface;
@@ -75,9 +76,7 @@ public:
 	}
 
 private:
-//	SDL_Texture *_texture;
 	Graphics::Surface *_surface;
-	TransparentSurface *_scaledSurface;
 
 	HRESULT drawSprite(int x, int y, RECT *Rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX = 0, int offsetY = 0);
 	void genAlphaMask(Graphics::Surface *surface);
