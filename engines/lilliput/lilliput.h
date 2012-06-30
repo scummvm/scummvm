@@ -286,7 +286,7 @@ public:
 	void sub16CA0();
 	byte sub166DD(int index, Common::Point var1);
 	void sub171CF();
-	void sub12FE5();
+	void checkInterfaceActivationDelay();
 	int16 sub16DD5(int x1, int y1, int x2, int y2);
 	void displayCharactersOnMap();
 	void restoreMapPoints();

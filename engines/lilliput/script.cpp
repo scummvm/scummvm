@@ -53,7 +53,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 
 	for (int i = 0; i < 20; i++) {
 		_interfaceHotspotStatus[i] = kHotspotOff;
-		_array122FD[i] = 0;
+		_interfaceButtonActivationDelay[i] = 0;
 	}
 
 	for (int i = 0; i < 32; i++)
@@ -2803,9 +2803,7 @@ void LilliputScript::OC_setInterfaceHotspot() {
 
 	uint16 curWord = _currScript->readUint16LE();
 	_interfaceHotspotStatus[index] = (curWord & 0xFF);
-	_array122FD[index] = (curWord >> 8);
-	if (_array122FD[index] != 0)
-		warning("debug - OC_setInterfaceHotspot - _array122FD[index] = %d", _array122FD[index]);
+	_interfaceButtonActivationDelay[index] = (curWord >> 8);
 
 	_vm->displayInterfaceHotspots();
 }
@@ -3095,7 +3093,7 @@ void LilliputScript::OC_disableInterfaceHotspot() {
 	debugC(1, kDebugScript, "OC_disableInterfaceHotspot()");
 
 	int index = _currScript->readUint16LE();
-	_array122FD[index] = (_currScript->readUint16LE() & 0xFF);
+	_interfaceButtonActivationDelay[index] = (_currScript->readUint16LE() & 0xFF);
 	_interfaceHotspotStatus[index] = kHotspotDisabled;
 
 	_vm->displayInterfaceHotspots();
