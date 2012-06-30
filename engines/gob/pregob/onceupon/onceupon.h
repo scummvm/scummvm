@@ -50,6 +50,7 @@ protected:
 	bool doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4]);
 
 	void showWait();
+	void showQuote();
 	void showTitle();
 
 

@@ -506,6 +506,28 @@ void OnceUpon::showWait() {
 	fadeIn();
 }
 
+void OnceUpon::showQuote() {
+	// Show the quote about fairytales
+
+	fadeOut();
+	clearScreen();
+	setGamePalette(11);
+
+	static const Font *fonts[3] = { _plettre, _glettre, _plettre };
+
+	TXTFile *quote = loadTXT(getLocFile("gene.tx"), TXTFile::kFormatStringPositionColorFont);
+	quote->draw(*_vm->_draw->_backSurface, fonts, ARRAYSIZE(fonts));
+	delete quote;
+
+	_vm->_draw->forceBlit();
+
+	fadeIn();
+
+	waitInput();
+
+	fadeOut();
+}
+
 void OnceUpon::showTitle() {
 	// Show the Once Upon A Time title animation
 	// NOTE: This is currently only a mock-up. The real animation is in "ville.seq".

@@ -65,6 +65,10 @@ void BabaYaga::run() {
 	if (_vm->shouldQuit())
 		return;
 
+	showQuote();
+	if (_vm->shouldQuit())
+		return;
+
 	showTitle();
 }
 
