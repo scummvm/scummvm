@@ -613,6 +613,33 @@ void OnceUpon::stopTitleMusic() {
 		_vm->_sound->sampleFree(_vm->_sound->sampleGetBySlot(i));
 }
 
+void OnceUpon::showChapter(int chapter) {
+	// Display the intro text to a chapter
+
+	fadeOut();
+	clearScreen();
+	setGamePalette(11);
+
+	// Parchment background
+	_vm->_video->drawPackedSprite("parch.cmp", *_vm->_draw->_backSurface);
+
+	static const Font *fonts[3] = { _plettre, _glettre, _plettre };
+
+	const Common::String chapterFile = getLocFile(Common::String::format("gene%d.tx", chapter));
+
+	TXTFile *gameTitle = loadTXT(chapterFile, TXTFile::kFormatStringPositionColorFont);
+	gameTitle->draw(*_vm->_draw->_backSurface, fonts, ARRAYSIZE(fonts));
+	delete gameTitle;
+
+	_vm->_draw->forceBlit();
+
+	fadeIn();
+
+	waitInput();
+
+	fadeOut();
+}
+
 } // End of namespace OnceUpon
 
 } // End of namespace Gob

@@ -52,6 +52,7 @@ protected:
 	void showWait();
 	void showQuote();
 	void showTitle();
+	void showChapter(int chapter);
 
 
 	Font *_jeudak;
