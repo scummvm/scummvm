@@ -35,6 +35,12 @@ public:
 	~Abracadabra();
 
 	void run();
+
+private:
+	static const MenuButton kAnimalsButtons;
+
+
+	void mainLoop();
 };
 
 } // End of namespace OnceUpon

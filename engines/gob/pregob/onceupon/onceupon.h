@@ -42,17 +42,58 @@ public:
 	~OnceUpon();
 
 protected:
+	enum MenuType {
+		kMenuTypeMainStart  = 0, ///< The big main menu at game start.
+		kMenuTypeMainIngame,     ///< The big main menu during the game.
+		kMenuTypeIngame          ///< The small popup menu during the game.
+	};
+
+	enum MenuAction {
+		kMenuActionNone = 0, ///< No action.
+		kMenuActionAnimals , ///< Do the animal names.
+		kMenuActionPlay    , ///< Play the game.
+		kMenuActionRestart , ///< Restart the section.
+		kMenuActionMainMenu, ///< Go to the main menu.
+		kMenuActionQuit      ///< Quit the game.
+	};
+
+	enum Difficulty {
+		kDifficultyBeginner     = 0,
+		kDifficultyIntermediate = 1,
+		kDifficultyAdvanced     = 2,
+		kDifficultyMAX
+	};
+
+	struct MenuButton {
+		bool needDraw;
+		int16 left, top, right, bottom;
+		int16 srcLeft, srcTop, srcRight, srcBottom;
+		int16 dstX, dstY;
+		int id;
+	};
+
+	static const uint kSectionCount = 15;
+
+
 	void init();
 	void deinit();
 
+	void setAnimalsButton(const MenuButton *animalsButton);
+
 	void setGamePalette(uint palette);
+	void setGameCursor();
 
 	bool doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4]);
 
-	void showWait();  ///< Show the wait / loading screen.
-	void showIntro(); ///< Show the whole intro.
+	void showWait(uint palette = 0xFFFF);  ///< Show the wait / loading screen.
+	void showIntro();                      ///< Show the whole intro.
 
 	void showChapter(int chapter); ///< Show a chapter intro text.
+
+	MenuAction doMenu(MenuType type);
+
+	void drawLineByLine(const Surface &src, int16 left, int16 top, int16 right, int16 bottom,
+	                    int16 x, int16 y) const;
 
 
 	// Fonts
@@ -61,7 +102,14 @@ protected:
 	Font *_plettre;
 	Font *_glettre;
 
+	Difficulty _difficulty;
+	uint8      _section;
+
 private:
+	static const MenuButton kMainMenuDifficultyButton[3];
+	static const MenuButton kSectionButtons[4];
+	static const MenuButton kIngameButtons[3];
+
 	void setCopyProtectionPalette();
 
 	void setAnimState(ANIObject &ani, uint16 state, bool once, bool pause) const;
@@ -82,8 +130,27 @@ private:
 	void playTitleMusicAtariST();
 	void stopTitleMusic();
 
+	// Menu helpers
+	MenuAction doMenuMainStart();
+	MenuAction doMenuMainIngame();
+	MenuAction doMenuIngame();
+
+	void drawMenuMainStart();
+	void drawMenuMainIngame();
+	void drawMenuIngame();
+	void drawMenuDifficulty();
+
+	void clearMenuIngame(const Surface &background);
+
+	Difficulty checkDifficultyButton(int16 x, int16 y) const;
+	bool       checkAnimalsButton   (int16 x, int16 y) const;
+	int8       checkSectionButton   (int16 x, int16 y) const;
+	int8       checkIngameButton    (int16 x, int16 y) const;
+
 
 	bool _openedArchives;
+
+	const MenuButton *_animalsButton;
 };
 
 } // End of namespace OnceUpon

@@ -48,7 +48,13 @@ namespace Gob {
 
 namespace OnceUpon {
 
+const OnceUpon::MenuButton Abracadabra::kAnimalsButtons = {
+	true, 131, 127, 183, 164, 193, 0, 243, 35, 132, 128, 0
+};
+
+
 Abracadabra::Abracadabra(GobEngine *vm) : OnceUpon(vm) {
+	setAnimalsButton(&kAnimalsButtons);
 }
 
 Abracadabra::~Abracadabra() {
@@ -64,6 +70,31 @@ void Abracadabra::run() {
 
 	// Show the intro
 	showIntro();
+	if (_vm->shouldQuit())
+		return;
+
+	mainLoop();
+
+	if (!_vm->shouldQuit())
+		warning("Abracadabra::run(): TODO: Show \"Bye Bye\"");
+}
+
+void Abracadabra::mainLoop() {
+	clearScreen();
+
+	MenuType mainMenu = kMenuTypeMainStart;
+
+	while (!_vm->shouldQuit()) {
+		MenuAction action = doMenu(mainMenu);
+		if      (action == kMenuActionPlay)
+			warning("Abracadabra::mainLoop(): TODO: Play");
+		else if (action == kMenuActionRestart)
+			warning("Abracadabra::mainLoop(): TODO: Restart");
+		else if (action == kMenuActionAnimals)
+			warning("Abracadabra::mainLoop(): TODO: Animals");
+		else if (action == kMenuActionQuit)
+			break;
+	}
 }
 
 } // End of namespace OnceUpon

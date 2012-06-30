@@ -48,7 +48,13 @@ namespace Gob {
 
 namespace OnceUpon {
 
+const OnceUpon::MenuButton BabaYaga::kAnimalsButtons = {
+	true, 131, 127, 183, 164, 193, 0, 245, 37, 131, 127, 0
+};
+
+
 BabaYaga::BabaYaga(GobEngine *vm) : OnceUpon(vm) {
+	setAnimalsButton(&kAnimalsButtons);
 }
 
 BabaYaga::~BabaYaga() {
@@ -64,6 +70,31 @@ void BabaYaga::run() {
 
 	// Show the intro
 	showIntro();
+	if (_vm->shouldQuit())
+		return;
+
+	mainLoop();
+
+	if (!_vm->shouldQuit())
+		warning("BabaYaga::run(): TODO: Show \"Bye Bye\"");
+}
+
+void BabaYaga::mainLoop() {
+	clearScreen();
+
+	MenuType mainMenu = kMenuTypeMainStart;
+
+	while (!_vm->shouldQuit()) {
+		MenuAction action = doMenu(mainMenu);
+		if      (action == kMenuActionPlay)
+			warning("BabaYaga::mainLoop(): TODO: Play");
+		else if (action == kMenuActionRestart)
+			warning("BabaYaga::mainLoop(): TODO: Restart");
+		else if (action == kMenuActionAnimals)
+			warning("BabaYaga::mainLoop(): TODO: Animals");
+		else if (action == kMenuActionQuit)
+			break;
+	}
 }
 
 } // End of namespace OnceUpon
