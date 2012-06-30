@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.3.0svn\n"
+"Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-06-24 18:06+0100\n"
-"PO-Revision-Date: 2011-11-27 19:00+0100\n"
+"PO-Revision-Date: 2012-06-28 15:47+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -81,7 +81,6 @@ msgid "Remap keys"
 msgstr "Ställ in tangenter"
 
 #: gui/gui-manager.cpp:129 base/main.cpp:307
-#, fuzzy
 msgid "Toggle FullScreen"
 msgstr "Fullskärmsläge"
 
@@ -197,9 +196,8 @@ msgid "Platform:"
 msgstr "Plattform:"
 
 #: gui/launcher.cpp:231
-#, fuzzy
 msgid "Engine"
-msgstr "Undersök"
+msgstr "Motor"
 
 #: gui/launcher.cpp:239 gui/options.cpp:1062 gui/options.cpp:1079
 msgid "Graphics"
@@ -1165,14 +1163,11 @@ msgstr ""
 "ytterligare assistens."
 
 #: engines/dialogs.cpp:228
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
-msgstr ""
-"Tyvärr stöder för tillfället inte den här motorn hjälp-funktionen. Var god "
-"hänvisa till README-filen för information och instruktioner för att få "
-"ytterligare assistens."
+msgstr "Spar"
 
 #: engines/dialogs.cpp:301 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
@@ -1233,14 +1228,13 @@ msgstr ""
 "Se README-filen för detaljer."
 
 #: engines/engine.cpp:426
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Tyvärr stöder för tillfället inte den här motorn hjälp-funktionen. Var god "
-"hänvisa till README-filen för information och instruktioner för att få "
-"ytterligare assistens."
+"Kunde inte ladda spardata (%s)! Hänvisa till README-filen för grundläggande "
+"information och instruktioner för ytterligare assistans."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1259,12 +1253,12 @@ msgstr "Starta ändå"
 #: engines/agi/detection.cpp:145 engines/dreamweb/detection.cpp:47
 #: engines/sci/detection.cpp:390
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "Använd originalskärmar för spara/ladda"
 
 #: engines/agi/detection.cpp:146 engines/dreamweb/detection.cpp:48
 #: engines/sci/detection.cpp:391
 msgid "Use the original save/load screens, instead of the ScummVM ones"
-msgstr ""
+msgstr "Använder originalskärmarna för spara/ladda istället för ScummVM:s"
 
 #: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
 msgid "Restore game:"
@@ -1275,68 +1269,68 @@ msgid "Restore"
 msgstr "Återställ"
 
 #: engines/dreamweb/detection.cpp:57
-#, fuzzy
 msgid "Use bright palette mode"
-msgstr "Övre högra föremålet"
+msgstr "Använd ljus palett-läge"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "Visa grafik med spelets ljusa palett"
 
 #: engines/sci/detection.cpp:370
 msgid "EGA undithering"
 msgstr "EGA anti-gitter"
 
 #: engines/sci/detection.cpp:371
-#, fuzzy
 msgid "Enable undithering in EGA games"
-msgstr "Aktiverar anti-gitter i EGA spel som stöder det"
+msgstr "Aktivera anti-gitter i EGA-spel"
 
 #: engines/sci/detection.cpp:380
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "Volym för specialeffekter"
+msgstr "Föredra digitala ljudeffekter"
 
 #: engines/sci/detection.cpp:381
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "Föredra digitala ljudeffekter istället för syntetiserade"
 
 #: engines/sci/detection.cpp:400
 msgid "Use IMF/Yahama FB-01 for MIDI output"
-msgstr ""
+msgstr "Använd IMF/Yahama FB-01 för MIDI-uppspelning"
 
 #: engines/sci/detection.cpp:401
 msgid ""
 "Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
+"Använd ett IMB Music Feature-kort eller en Yamaha FB-01 FM synthmodul för "
+"MIDI-uppspelning"
 
 #: engines/sci/detection.cpp:411
 msgid "Use CD audio"
-msgstr ""
+msgstr "Använd CD-ljud"
 
 #: engines/sci/detection.cpp:412
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "Använd CD-ljud istället för spelets ljud, om tillgängligt"
 
 #: engines/sci/detection.cpp:422
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "Använd Windows muspekare"
 
 #: engines/sci/detection.cpp:423
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
+"Använd Windows muspekare (mindre och svartvit) istället för DOS-pekaren"
 
 #: engines/sci/detection.cpp:433
-#, fuzzy
 msgid "Use silver cursors"
-msgstr "Vanlig pekare"
+msgstr "Använd silverpekare"
 
 #: engines/sci/detection.cpp:434
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
+"Använd de alternativa silverpekarna istället för de normala guldpekarna"
 
 #: engines/scumm/dialogs.cpp:175
 #, c-format
@@ -1454,24 +1448,23 @@ msgstr "Tal & text"
 
 #: engines/scumm/dialogs.cpp:653
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "Välj en skicklighetsnivå."
 
 #: engines/scumm/dialogs.cpp:655
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "Hänvisa till din Loom(TM)-manual för hjälp."
 
 #: engines/scumm/dialogs.cpp:658
-#, fuzzy
 msgid "Standard"
-msgstr "Standard (16 bpp)"
+msgstr "Standard"
 
 #: engines/scumm/dialogs.cpp:659
 msgid "Practice"
-msgstr ""
+msgstr "Övning"
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Expert"
-msgstr ""
+msgstr "Expert"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
@@ -2002,7 +1995,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Kunde inte skriva spardata till file:\n"
+"Kunde inte skriva spardata till filen:\n"
 "\n"
 "%s"
 
@@ -2013,7 +2006,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Kunde inte läsa spardata från file:\n"
+"Kunde inte läsa spardata från filen:\n"
 "\n"
 "%s"
 
@@ -2024,7 +2017,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Sparade framgångsrikt spardata i file\n"
+"Sparade framgångsrikt spardata i filen:\n"
 "\n"
 "%s"
 
@@ -2090,61 +2083,59 @@ msgstr "Kunde inte spara spelet."
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr ""
+msgstr "Studiopublik"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr ""
+msgstr "Aktivera studiopublik"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr ""
+msgstr "Skipp-stöd"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "Tillåter skippning av text och filmscener"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr ""
+msgstr "Helium-läge"
 
 #: engines/kyra/detection.cpp:85
-#, fuzzy
 msgid "Enable helium mode"
-msgstr "Aktivera Roland GS-läge"
+msgstr "Aktivera heliumläge"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr ""
+msgstr "Mjuk rullning"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr ""
+msgstr "Aktivera mjuk skärmrullning vid gångfart"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:112
-#, fuzzy
 msgid "Floating cursors"
-msgstr "Vanlig pekare"
+msgstr "Flytande pekare"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "Aktivera flytande pekare"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
 msgid "HP bar graphs"
-msgstr ""
+msgstr "Livmätare"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "Aktivera livmätare"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -2210,11 +2201,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr ""
+msgstr "Diskettintro"
 
 #: engines/queen/queen.cpp:60 engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "Använd diskettversionens intro (endast CD-version)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2235,7 +2226,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:539
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "PSX-filmscenen '%s' kan inte visas i palettläget"
 
 #: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:455
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
@@ -2290,18 +2281,17 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Här slutar Broken Sword 1 demon"
 
 #: engines/sword2/animation.cpp:435
-#, fuzzy
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "DXA filmscener hittades men ScummVM har byggts utan stöd för zlib"
+msgstr "PSX-filmscener hittades men ScummVM har byggts utan stöd för RGB-färg"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr ""
+msgstr "Visa etiketter"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "Visar etiketter för objekten som musen pekar på"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2443,9 +2433,8 @@ msgid "Keymap:"
 msgstr "Tangenter:"
 
 #: backends/keymapper/remap-dialog.cpp:66
-#, fuzzy
 msgid " (Effective)"
-msgstr "(Aktiv)"
+msgstr "(Effektiv)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Active)"
@@ -2453,7 +2442,7 @@ msgstr "(Aktiv)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Blocked)"
-msgstr ""
+msgstr "(Blockerad)"
 
 #: backends/keymapper/remap-dialog.cpp:119
 msgid " (Global)"
@@ -2557,7 +2546,7 @@ msgstr "Touchpad-läge inaktiverat."
 
 #: backends/platform/maemo/maemo.cpp:205
 msgid "Click Mode"
-msgstr ""
+msgstr "Klickläge"
 
 #: backends/platform/maemo/maemo.cpp:211
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -2568,9 +2557,8 @@ msgid "Left Click"
 msgstr "Vänsterklick"
 
 #: backends/platform/maemo/maemo.cpp:214
-#, fuzzy
 msgid "Middle Click"
-msgstr "Mellersta vänstra föremålet"
+msgstr "Mittenklick"
 
 #: backends/platform/maemo/maemo.cpp:217
 #: backends/platform/symbian/src/SymbianActions.cpp:43
