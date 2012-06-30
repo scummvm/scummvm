@@ -931,6 +931,8 @@ msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
 msgstr ""
+"Das ausgewählte Thema unterstützt nicht die aktuelle Sprache. Wenn Sie dieses "
+"Thema benutzen wollen, müssen Sie erst zu einer anderen Sprache wechseln."
 
 #: gui/saveload.cpp:59 gui/saveload.cpp:257
 msgid "No date saved"
