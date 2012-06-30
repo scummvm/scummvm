@@ -61,6 +61,10 @@ void Abracadabra::run() {
 	if (_vm->shouldQuit() || !correctCP)
 		return;
 
+	showWait();
+	if (_vm->shouldQuit())
+		return;
+
 	showTitle();
 }
 

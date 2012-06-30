@@ -489,6 +489,23 @@ void OnceUpon::setAnimState(ANIObject &ani, uint16 state, bool once, bool pause)
 	ani.setPosition();
 }
 
+void OnceUpon::showWait() {
+	// Show the loading floppy
+
+	fadeOut();
+	clearScreen();
+	setGamePalette(10);
+
+	Surface wait(320, 43, 1);
+
+	_vm->_video->drawPackedSprite("wait.cmp", wait);
+	_vm->_draw->_backSurface->blit(wait, 0, 0, 72, 33, 122, 84);
+
+	_vm->_draw->forceBlit();
+
+	fadeIn();
+}
+
 void OnceUpon::showTitle() {
 	// Show the Once Upon A Time title animation
 	// NOTE: This is currently only a mock-up. The real animation is in "ville.seq".
