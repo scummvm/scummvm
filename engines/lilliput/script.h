@@ -72,7 +72,7 @@ public:
 	int8 _characterTilePosY[40];
 	int8 _array12811[40];
 	int8 _array10AB1[40];
-	byte _array122FD[20];
+	byte _interfaceButtonActivationDelay[20];
 	byte _array122C1[40];
 	byte _array10A39[40];
 	int16 _array10B51[40 * 40];

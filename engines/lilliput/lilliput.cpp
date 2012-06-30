@@ -821,7 +821,7 @@ void LilliputEngine::displayRefreshScreen() {
 		sub16EBC();
 		sub171CF();
 		handleGameMouseClick();
-		sub12FE5();
+		checkInterfaceActivationDelay();
 		displayHeroismIndicator();
 	}
 }
@@ -2344,24 +2344,24 @@ void LilliputEngine::sub171CF() {
 	}
 }
 
-void LilliputEngine::sub12FE5() {
-	debugC(2, kDebugEngine, "sub12FE5()");
+void LilliputEngine::checkInterfaceActivationDelay() {
+	debugC(2, kDebugEngine, "checkInterfaceActivationDelay()");
 
 	if (_animationTick != 1)
 		return;
 
-	int count = 0;
+	bool needRedraw = false;
 	for (int i = 0; i < _interfaceHotspotNumb; i++) {
-		if (_scriptHandler->_array122FD[i] != 0) {
-			--_scriptHandler->_array122FD[i];
-			if (_scriptHandler->_array122FD[i] == 0) {
+		if (_scriptHandler->_interfaceButtonActivationDelay[i] != 0) {
+			--_scriptHandler->_interfaceButtonActivationDelay[i];
+			if (_scriptHandler->_interfaceButtonActivationDelay[i] == 0) {
 				_scriptHandler->_interfaceHotspotStatus[i] = kHotspotEnabled;
-				++count;
+				needRedraw = true;
 			}
 		}
 	}
 
-	if (count != 0)
+	if (needRedraw)
 		displayInterfaceHotspots();
 }
 
