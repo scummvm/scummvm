@@ -2350,13 +2350,12 @@ void LilliputEngine::sub12FE5() {
 	if (_animationTick != 1)
 		return;
 
-	int index = 0;
 	int count = 0;
 	for (int i = 0; i < _interfaceHotspotNumb; i++) {
-		if (_scriptHandler->_array122FD[index] != 0) {
-			--_scriptHandler->_array122FD[index];
-			if (_scriptHandler->_array122FD[index] == 0) {
-				_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
+		if (_scriptHandler->_array122FD[i] != 0) {
+			--_scriptHandler->_array122FD[i];
+			if (_scriptHandler->_array122FD[i] == 0) {
+				_scriptHandler->_interfaceHotspotStatus[i] = kHotspotEnabled;
 				++count;
 			}
 		}
