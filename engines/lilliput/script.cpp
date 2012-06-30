@@ -220,7 +220,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_checkSelectedCharacter();
 		break;
 	case 0x2D:
-		return OC_sub179AE();
+		return OC_checkDelayedReactivation();
 		break;
 	case 0x2E:
 		return OC_sub179C2();
@@ -601,7 +601,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_sub1796E", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_checkLastInterfaceHotspotIndex", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_checkSelectedCharacter", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_sub179AE", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_checkDelayedReactivation", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub179C2", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 	{ "OC_checkFunctionKeyPressed", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_checkCodeEntered", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone },
@@ -2036,10 +2036,10 @@ byte LilliputScript::OC_checkSelectedCharacter() {
 	return 1;
 }
 
-byte LilliputScript::OC_sub179AE() {
-	debugC(1, kDebugScript, "OC_sub179AE()");
+byte LilliputScript::OC_checkDelayedReactivation() {
+	debugC(1, kDebugScript, "OC_checkDelayedReactivation()");
 
-	if (_vm->_mouthSelected || (_vm->_selectedCharacterId == -1))
+	if (_vm->_delayedReactivationAction || (_vm->_selectedCharacterId == -1))
 		return 0;
 
 	return 1;

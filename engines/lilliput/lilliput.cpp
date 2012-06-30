@@ -134,7 +134,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_soundHandler = new LilliputSound(this);
 
 	_handleOpcodeReturnCode = 0;
-	_mouthSelected = false;
+	_delayedReactivationAction = false;
 	_selectedCharacterId = -1;
 	_numCharactersToDisplay = 0;
 	_nextDisplayCharacterPos = Common::Point(0, 0);
@@ -1914,8 +1914,8 @@ void LilliputEngine::sub13156(bool &forceReturnFl) {
 	}
 }
 
-void LilliputEngine::sub147D7() {
-	debugC(2, kDebugEngine, "sub147D7()");
+void LilliputEngine::checkNumericCode() {
+	debugC(2, kDebugEngine, "checkNumericCode()");
 
 	static bool altKeyFl = false;
 	static int16 keyCount = 0;
@@ -1974,7 +1974,7 @@ void LilliputEngine::sub147D7() {
 void LilliputEngine::handleGameMouseClick() {
 	debugC(2, kDebugEngine, "handleGameMouseClick()");
 
-	sub147D7();
+	checkNumericCode();
 
 	bool forceReturnFl = false;
 	sub13156(forceReturnFl);
@@ -2045,7 +2045,7 @@ void LilliputEngine::checkClickOnCharacter(Common::Point pos, bool &forceReturnF
 		if ((pos.x >= _characterDisplayX[i]) && (pos.x <= _characterDisplayX[i] + 17) && (pos.y >= _characterDisplayY[i]) && (pos.y <= _characterDisplayY[i] + 17) && (i != _word10804)) {
 			_selectedCharacterId = i;
 			_actionType = kActionGoto;
-			if (_mouthSelected)
+			if (_delayedReactivationAction)
 				_actionType = kActionTalk;
 
 			forceReturnFl = true;
@@ -2086,7 +2086,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	_lastInterfaceHotspotButton = button;
 
 	if (button == 2) {
-		if (!_mouthSelected) {
+		if (!_delayedReactivationAction) {
 			_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
 			_actionType = 2;
 			displayInterfaceHotspots();
@@ -2094,7 +2094,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 		return;
 	}
 
-	if (_mouthSelected) {
+	if (_delayedReactivationAction) {
 		unselectInterfaceButton();
 		return;
 	}
@@ -2102,7 +2102,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	unselectInterfaceHotspots();
 	_scriptHandler->_interfaceHotspotStatus[index] = kHotspotSelected;
 	if (_rulesBuffer13_1[index] == 1) {
-		_mouthSelected = true;
+		_delayedReactivationAction = true;
 		_bool15AC2 = true;
 	} else {
 		_actionType = 1;
@@ -2555,7 +2555,7 @@ byte *LilliputEngine::loadRaw(Common::String filename, int filesize) {
 void LilliputEngine::loadRules() {
 	debugC(1, kDebugEngine, "loadRules()");
 
-	static const Common::KeyCode _rulesXlatArray[26] = {
+	static const Common::KeyCode keybMappingArray[26] = {
 		Common::KEYCODE_a, Common::KEYCODE_b, Common::KEYCODE_c, Common::KEYCODE_d, Common::KEYCODE_e,
 		Common::KEYCODE_f, Common::KEYCODE_g, Common::KEYCODE_h, Common::KEYCODE_i, Common::KEYCODE_j,
 		Common::KEYCODE_k, Common::KEYCODE_l, Common::KEYCODE_m, Common::KEYCODE_n, Common::KEYCODE_o, 
@@ -2732,7 +2732,7 @@ void LilliputEngine::loadRules() {
 			_keyboardMapping[i] = Common::KEYCODE_INVALID; // 0xB4; ?
 		else {
 			assert((curByte > 0x40) && (curByte <= 0x41 + 26));
-			_keyboardMapping[i] = _rulesXlatArray[curByte - 0x41];
+			_keyboardMapping[i] = keybMappingArray[curByte - 0x41];
 		}
 	}
 	f.close();
@@ -2794,7 +2794,7 @@ void LilliputEngine::setCurrentCharacter(int index) {
 void LilliputEngine::unselectInterfaceButton() {
 	debugC(1, kDebugEngine, "unselectInterfaceButton()");
 
-	_mouthSelected = false;
+	_delayedReactivationAction = false;
 	_bool15AC2 = false;
 	_lastInterfaceHotspotButton = 0;
 	unselectInterfaceHotspots();
@@ -2807,7 +2807,7 @@ void LilliputEngine::handleMenu() {
 	if (_actionType == kActionNone)
 		return;
 
-	if (_mouthSelected && (_actionType != kActionTalk))
+	if (_delayedReactivationAction && (_actionType != kActionTalk))
 		return;
 
 	setCurrentCharacter(_word10804);
