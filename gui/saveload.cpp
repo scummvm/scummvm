@@ -45,7 +45,7 @@ void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
 
 	Common::String userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
 
-	if (!_saveMode && g_gui.getWidth() > 320 && g_gui.getHeight() > 200
+	if (!_saveMode && g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
 	    && engine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
 	    && engine.hasFeature(MetaEngine::kSavesSupportThumbnail)
 	    && userConfig.equalsIgnoreCase("grid")) {
