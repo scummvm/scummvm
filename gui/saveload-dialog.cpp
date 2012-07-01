@@ -502,6 +502,11 @@ LoadChooserThumbnailed::LoadChooserThumbnailed(const Common::String &title)
 	_pageDisplay->setAlign(Graphics::kTextAlignRight);
 }
 
+LoadChooserThumbnailed::~LoadChooserThumbnailed() {
+	removeWidget(_pageDisplay);
+	delete _pageDisplay;
+}
+
 const Common::String &LoadChooserThumbnailed::getResultString() const {
 	// FIXME: This chooser is only for loading, thus the result is never used
 	// anyway. But this is still an ugly hack.

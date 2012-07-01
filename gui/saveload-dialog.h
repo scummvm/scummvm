@@ -112,6 +112,7 @@ private:
 class LoadChooserThumbnailed : public SaveLoadChooserDialog {
 public:
 	LoadChooserThumbnailed(const Common::String &title);
+	~LoadChooserThumbnailed();
 
 	virtual const Common::String &getResultString() const;
 
