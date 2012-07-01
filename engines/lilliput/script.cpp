@@ -3111,7 +3111,7 @@ void LilliputScript::OC_loadFileAerial() {
 	_vm->_refreshScreenFlag = true;
 	_talkingCharacter = -1;
 	OC_PaletteFadeOut();
-	_vm->_bool15AC2 = true;
+	_vm->_displayGreenHand = true;
 	_vm->displayVGAFile("AERIAL.GFX");
 	OC_PaletteFadeIn();
 
