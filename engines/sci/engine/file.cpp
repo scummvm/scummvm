@@ -57,10 +57,23 @@ namespace Sci {
 
 reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool unwrapFilename) {
 	Common::String englishName = g_sci->getSciLanguageString(filename, K_LANG_ENGLISH);
+	englishName.toLowercase();
+
 	Common::String wrappedName = unwrapFilename ? g_sci->wrapFilename(englishName) : englishName;
 	Common::SeekableReadStream *inFile = 0;
 	Common::WriteStream *outFile = 0;
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+
+	bool isCompressed = true;
+	const SciGameId gameId = g_sci->getGameId();
+	if ((gameId == GID_QFG1 || gameId == GID_QFG1VGA || gameId == GID_QFG2 || gameId == GID_QFG3)
+		&& englishName.hasSuffix(".sav")) {
+		// QFG Characters are saved via the CharSave object.
+		// We leave them uncompressed so that they can be imported in later QFG
+		// games.
+		// Rooms/Scripts: QFG1: 601, QFG2: 840, QFG3/4: 52
+		isCompressed = false;
+	}
 
 	if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
 		// Try to open file, abort if not possible
@@ -74,12 +87,12 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_CREATE) {
 		// Create the file, destroying any content it might have had
-		outFile = saveFileMan->openForSaving(wrappedName);
+		outFile = saveFileMan->openForSaving(wrappedName, isCompressed);
 		if (!outFile)
 			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
 		// Try to open file, create it if it doesn't exist
-		outFile = saveFileMan->openForSaving(wrappedName);
+		outFile = saveFileMan->openForSaving(wrappedName, isCompressed);
 		if (!outFile)
 			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
 		
