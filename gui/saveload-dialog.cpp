@@ -31,6 +31,22 @@
 
 namespace GUI {
 
+SaveLoadChooserType getRequestedSaveLoadDialog(const bool saveMode, const MetaEngine &metaEngine) {
+	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
+	if (!saveMode && g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
+	    && metaEngine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
+	    && metaEngine.hasFeature(MetaEngine::kSavesSupportThumbnail)
+	    && userConfig.equalsIgnoreCase("grid")) {
+		// In case we are 640x400 or higher, this dialog is not in save mode,
+		// the user requested the grid dialog and the engines supports it we
+		// try to set it up.
+		return kSaveLoadDialogGrid;
+	} else {
+		// In all other cases we want to use the list dialog.
+		return kSaveLoadDialogList;
+	}
+}
+
 enum {
 	kListSwitchCmd = 'LIST',
 	kGridSwitchCmd = 'GRID'
@@ -73,7 +89,7 @@ int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngine *m
 void SaveLoadChooserDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kListSwitchCmd:
-		setResult(kSwitchToList);
+		setResult(kSwitchSaveLoadDialog);
 		// We save the requested dialog type here to avoid the setting to be
 		// overwritten when our reflowLayout logic selects a different dialog
 		// type.
@@ -82,7 +98,7 @@ void SaveLoadChooserDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd
 		break;
 
 	case kGridSwitchCmd:
-		setResult(kSwitchToGrid);
+		setResult(kSwitchSaveLoadDialog);
 		// See above.
 		ConfMan.set("gui_saveload_chooser", "grid", Common::ConfigManager::kApplicationDomain);
 		close();
@@ -116,34 +132,11 @@ void SaveLoadChooserDialog::reflowLayout() {
 	addChooserButtons();
 
 	const SaveLoadChooserType currentType = getType();
-	SaveLoadChooserType requestedType;
-
-	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
-	if (!_saveMode && g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
-	    && _metaEngine->hasFeature(MetaEngine::kSavesSupportMetaInfo)
-	    && _metaEngine->hasFeature(MetaEngine::kSavesSupportThumbnail)
-	    && userConfig.equalsIgnoreCase("grid")) {
-		// In case we are 640x400 or higher, this dialog is not in save mode,
-		// the user requested the grid dialog and the engines supports it we
-		// try to set it up.
-		requestedType = kSaveLoadDialogGrid;
-	} else {
-		// In all other cases we want to use the list dialog.
-		requestedType = kSaveLoadDialogList;
-	}
+	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(_saveMode, *_metaEngine);
 
 	// Change the dialog type if there is any need for it.
 	if (requestedType != currentType) {
-		switch (requestedType) {
-		case kSaveLoadDialogGrid:
-			setResult(kSwitchToGrid);
-			break;
-
-		case kSaveLoadDialogList:
-			setResult(kSwitchToList);
-			break;
-		}
-
+		setResult(kSwitchSaveLoadDialog);
 		close();
 	}
 

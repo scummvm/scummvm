@@ -29,13 +29,14 @@
 
 namespace GUI {
 
-#define kSwitchToList -2
-#define kSwitchToGrid -3
+#define kSwitchSaveLoadDialog -2
 
 enum SaveLoadChooserType {
 	kSaveLoadDialogList = 0,
 	kSaveLoadDialogGrid = 1
 };
+
+SaveLoadChooserType getRequestedSaveLoadDialog(const bool saveMode, const MetaEngine &metaEngine);
 
 class SaveLoadChooserDialog : protected Dialog {
 public:

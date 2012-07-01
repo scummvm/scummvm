@@ -40,18 +40,20 @@ SaveLoadChooser::~SaveLoadChooser() {
 }
 
 void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
-	delete _impl;
-	_impl = 0;
+	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(_saveMode, engine);
+	if (!_impl || _impl->getType() != requestedType) {
+		delete _impl;
+		_impl = 0;
 
-	Common::String userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
+		switch (requestedType) {
+		case kSaveLoadDialogGrid:
+			_impl = new LoadChooserThumbnailed(_title);
+			break;
 
-	if (!_saveMode && g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
-	    && engine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
-	    && engine.hasFeature(MetaEngine::kSavesSupportThumbnail)
-	    && userConfig.equalsIgnoreCase("grid")) {
-		_impl = new LoadChooserThumbnailed(_title);
-	} else {
-		_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);
+		case kSaveLoadDialogList:
+			_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);
+			break;
+		}
 	}
 }
 
@@ -90,12 +92,8 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 	do {
 		ret = _impl->run(target, &(**plugin));
 
-		if (ret == kSwitchToList) {
-			delete _impl;
-			_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);
-		} else if (ret == kSwitchToGrid) {
-			delete _impl;
-			_impl = new LoadChooserThumbnailed(_title);
+		if (ret == kSwitchSaveLoadDialog) {
+			selectChooser(**plugin);
 		}
 	} while (ret < -1);
 
