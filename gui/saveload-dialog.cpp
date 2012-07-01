@@ -496,6 +496,10 @@ LoadChooserThumbnailed::LoadChooserThumbnailed(const Common::String &title)
 
 	_prevButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", _("Prev"), 0, kPrevCmd);
 	_prevButton->setEnabled(false);
+
+	// Page display
+	_pageDisplay = new GUI::StaticTextWidget(this, "SaveLoadChooser.PageDisplay", Common::String());
+	_pageDisplay->setAlign(Graphics::kTextAlignRight);
 }
 
 const Common::String &LoadChooserThumbnailed::getResultString() const {
@@ -555,6 +559,11 @@ void LoadChooserThumbnailed::open() {
 }
 
 void LoadChooserThumbnailed::reflowLayout() {
+	removeWidget(_pageDisplay);
+	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPageDisplay") == 1) {
+		_pageDisplay->init();
+	} 
+
 	SaveLoadChooserDialog::reflowLayout();
 	destroyButtons();
 
@@ -689,6 +698,9 @@ void LoadChooserThumbnailed::updateSaves() {
 
 		curButton.button->setTooltip(tooltip);
 	}
+
+	const uint numPages = _saveList.size() / _entriesPerPage + 1;
+	_pageDisplay->setLabel(Common::String::format("%u/%u", _curPage + 1, numPages));
 
 	if (_curPage > 0)
 		_prevButton->setEnabled(true);

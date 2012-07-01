@@ -30,7 +30,9 @@
 		<def var = 'ShowLauncherLogo' value = '0'/>
 		<def var = 'ShowGlobalMenuLogo' value = '0'/>
 		<def var = 'ShowSearchPic' value = '0'/>
+
 		<def var = 'ShowChooserPics' value = '0'/>
+		<def var = 'ShowChooserPageDisplay' value = '0'/>
 
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '0'/>
 

@@ -31,7 +31,9 @@
 		<def var = 'ShowLauncherLogo' value = '0'/>
 		<def var = 'ShowGlobalMenuLogo' value = '0'/>
 		<def var = 'ShowSearchPic' value = '0'/>
+
 		<def var = 'ShowChooserPics' value = '0'/>
+		<def var = 'ShowChooserPageDisplay' value = '1'/>
 
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '1'/>
 
@@ -794,9 +796,16 @@
 
 	<dialog name = 'SaveLoadChooser' overlays = 'screen' inset = '8' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 32' center = 'true'>
-			<widget name = 'Title'
-					height = 'Globals.Line.Height'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'Title'
+						height = 'Globals.Line.Height'
+				/>
+				<space/>
+				<widget name = 'PageDisplay'
+						width = '200'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 16' spacing = '16'>
 				<widget name = 'List' />
 				<widget name = 'Thumbnail'
