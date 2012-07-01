@@ -778,6 +778,8 @@ OnceUpon::MenuAction OnceUpon::doMenuMainStart() {
 		if (mouseButtons != kMouseButtonsLeft)
 			continue;
 
+		playSound(kSoundClick);
+
 		// If we clicked on a difficulty button, show the selected difficulty and start the game
 		Difficulty difficulty = checkDifficultyButton(mouseX, mouseY);
 		if (difficulty < kDifficultyMAX) {
@@ -818,6 +820,8 @@ OnceUpon::MenuAction OnceUpon::doMenuMainIngame() {
 
 		if (mouseButtons != kMouseButtonsLeft)
 			continue;
+
+		playSound(kSoundClick);
 
 		// If we clicked on a difficulty button, change the current difficulty level
 		Difficulty difficulty = checkDifficultyButton(mouseX, mouseY);
