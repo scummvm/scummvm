@@ -276,7 +276,7 @@ private:
 	void OC_setArray122C1();
 	void OC_sub18367();
 	void OC_enableCharacterScript();
-	void OC_sub18387();
+	void OC_setRulesBuffer2Element();
 	void OC_setDebugFlag();
 	void OC_setByte14837();
 	void OC_waitForEvent();

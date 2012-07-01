@@ -82,6 +82,11 @@ struct SmallAnim {
 	int16 _frameIndex[8];
 };
 
+struct MinMax {
+	int16 min;
+	int16 max;
+};
+
 class LilliputEngine : public Engine {
 public:
 	LilliputEngine(OSystem *syst, const LilliputGameDescription *gd);
@@ -190,8 +195,8 @@ public:
 	int16 *_rulesChunk10;
 	byte *_rulesChunk11;
 	int16 _rectNumb;
-	int16 _rectXMinMax[40];
-	int16 _rectYMinMax[40];
+	MinMax _rectXMinMax[40];
+	MinMax _rectYMinMax[40];
 	Common::Point _rulesBuffer12Pos3[40];
 	Common::Point _rulesBuffer12Pos4[40];
 	int _interfaceHotspotNumb;

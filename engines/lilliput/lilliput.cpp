@@ -1476,10 +1476,10 @@ void LilliputEngine::sub167EF(int index) {
 	}
 
 	if ((word167ED != -1) &&
-	        (_array10999PosX[index] >= (_rectXMinMax[word167EB] >> 8)) &&
-	        (_array10999PosX[index] <= (_rectXMinMax[word167EB] & 0xFF)) &&
-	        (_array109C1PosY[index] >= (_rectYMinMax[word167EB] >> 8)) &&
-	        (_array109C1PosY[index] <= (_rectYMinMax[word167EB] & 0xFF))) {
+		(_array10999PosX[index] >= _rectXMinMax[word167EB].min) &&
+		(_array10999PosX[index] <= _rectXMinMax[word167EB].max) &&
+		(_array109C1PosY[index] >= _rectYMinMax[word167EB].min) &&
+		(_array109C1PosY[index] <= _rectYMinMax[word167EB].max)) {
 		_array109E9PosX[index] = _rulesBuffer12Pos4[word167ED].x;
 		_array10A11PosY[index] = _rulesBuffer12Pos4[word167ED].y;
 		return;
@@ -1487,8 +1487,8 @@ void LilliputEngine::sub167EF(int index) {
 
 	_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
 	_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
-	int var4h = (_rectXMinMax[word167EB] >> 8);
-	int var4l = (_rectXMinMax[word167EB] & 0xFF);
+	int var4h = _rectXMinMax[word167EB].min;
+	int var4l = _rectXMinMax[word167EB].max;
 
 	if (var4h != var4l) {
 		if (_rulesBuffer12Pos4[word167EB].x == var4h) {
@@ -1503,8 +1503,8 @@ void LilliputEngine::sub167EF(int index) {
 			return;
 		}
 
-		var4h = (_rectYMinMax[word167EB] >> 8);
-		var4l = (_rectYMinMax[word167EB] & 0xFF);
+		var4h = (_rectYMinMax[word167EB].min);
+		var4l = (_rectYMinMax[word167EB].max);
 
 		if (var4h != var4l) {
 			if (_rulesBuffer12Pos4[word167EB].y == var4h) {
@@ -1606,13 +1606,13 @@ byte LilliputEngine::sub16A76(int indexb, int indexs) {
 	var1h = _word16937Pos.x;
 	var1l = _word16937Pos.y;
 
-	if ((var1h >= (_rectXMinMax[var2] >> 8)) && (var1h <= (_rectXMinMax[var2] & 0xFF)) && (var1l >= (_rectYMinMax[var2] >> 8)) && (var1l <= (_rectYMinMax[var2] & 0xFF)))
+	if ((var1h >= _rectXMinMax[var2].min) && (var1h <= _rectXMinMax[var2].max) && (var1l >= _rectYMinMax[var2].min) && (var1l <= _rectYMinMax[var2].max))
 		return 0;
 
 	var1h = _array109E9PosX[indexs];
 	var1l = _array10A11PosY[indexs];
 
-	if ((var1h >= (_rectXMinMax[var2] >> 8)) && (var1h <= (_rectXMinMax[var2] & 0xFF)) && (var1l >= (_rectYMinMax[var2] >> 8)) && (var1l <= (_rectYMinMax[var2] & 0xFF)))
+	if ((var1h >= _rectXMinMax[var2].min) && (var1h <= _rectXMinMax[var2].max) && (var1l >= _rectYMinMax[var2].min) && (var1l <= _rectYMinMax[var2].max))
 		return 0;
 
 	return 1;
@@ -1622,7 +1622,7 @@ int16 LilliputEngine::findHotspot(Common::Point pos) {
 	debugC(2, kDebugEngine, "findHotspot(%d, %d)", pos.x, pos.y);
 
 	for (int i = 0; i < _rectNumb; i++) {
-		if ((pos.x >= (_rectXMinMax[i] >> 8)) && (pos.x <= (_rectXMinMax[i] & 0xFF)) && (pos.y >= (_rectYMinMax[i] >> 8)) && (pos.y <= (_rectYMinMax[i] & 0xFF)))
+		if ((pos.x >= _rectXMinMax[i].min) && (pos.x <= _rectXMinMax[i].max) && (pos.y >= _rectYMinMax[i].min) && (pos.y <= _rectYMinMax[i].max))
 			return i;
 	}
 	return -1;
@@ -1632,7 +1632,7 @@ int16 LilliputEngine::reverseFindHotspot(Common::Point pos) {
 	debugC(2, kDebugEngine, "reverseFindHotspot(%d, %d)", pos.x, pos.y);
 
 	for (int i = _rectNumb - 1; i >= 0 ; i--) {
-		if ((pos.x >= (_rectXMinMax[i] >> 8)) && (pos.x <= (_rectXMinMax[i] & 0xFF)) && (pos.y >= (_rectYMinMax[i] >> 8)) && (pos.y <= (_rectYMinMax[i] & 0xFF)))
+		if ((pos.x >= _rectXMinMax[i].min) && (pos.x <= _rectXMinMax[i].max) && (pos.y >= _rectYMinMax[i].min) && (pos.y <= _rectYMinMax[i].max))
 			return i;
 	}
 	return -1;
@@ -1658,10 +1658,10 @@ void LilliputEngine::sub16A08(int index) {
 
 	int8 tmpIndex = 0;
 	for (int i = 3; i > 0; i--) {
-		int16 tmpVal = 0x7FFF;
+		int16 smallestDistance = 0x7FFF;
 		for (int j = 0; j < 4; j++) {
-			if (tmpVal > arrayDistance[j]) {
-				tmpVal = arrayDistance[j];
+			if (smallestDistance > arrayDistance[j]) {
+				smallestDistance = arrayDistance[j];
 				tmpIndex = j;
 			}
 		}
@@ -2697,8 +2697,10 @@ void LilliputEngine::loadRules() {
 	uint16 tmpVal;
 
 	for (int i = 0; i < _rectNumb; i++) {
-		_rectXMinMax[i] = f.readUint16LE();
-		_rectYMinMax[i] = f.readUint16LE();
+		_rectXMinMax[i].min = (int16)f.readByte();
+		_rectXMinMax[i].max = (int16)f.readByte();
+		_rectYMinMax[i].min = (int16)f.readByte();
+		_rectYMinMax[i].max = (int16)f.readByte();
 		tmpVal = f.readUint16LE();
 		_rulesBuffer12Pos3[i] = Common::Point(tmpVal >> 8, tmpVal & 0xFF);
 		tmpVal = f.readUint16LE();

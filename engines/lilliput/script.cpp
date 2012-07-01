@@ -25,6 +25,7 @@
 #include "common/debug.h"
 
 #include "common/system.h"
+#include <climits>
 
 namespace Lilliput {
 
@@ -466,7 +467,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_enableCharacterScript();
 		break;
 	case 0x4A:
-		OC_sub18387();
+		OC_setRulesBuffer2Element();
 		break;
 	case 0x4B:
 		OC_setDebugFlag();
@@ -684,7 +685,7 @@ static const OpCode opCodes2[] = {
 /* 0x47 */	{ "OC_setArray122C1", 1, kImmediateValue, kNone, kNone, kNone, kNone }, 
 /* 0x48 */	{ "OC_sub18367", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x49 */	{ "OC_enableCharacterScript", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
-/* 0x4a */	{ "OC_sub18387", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
+/* 0x4a */	{ "OC_setRulesBuffer2Element", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone }, 
 /* 0x4b */	{ "OC_setDebugFlag", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4c */	{ "OC_setByte14837", 0, kNone, kNone, kNone, kNone, kNone }, 
 /* 0x4d */	{ "OC_waitForEvent", 0, kNone, kNone, kNone, kNone, kNone }, 
@@ -1537,11 +1538,11 @@ byte LilliputScript::OC_compareCoords_1() {
 	int index = _currScript->readUint16LE();
 	assert(index < 40);
 
-	int16 var3 = _vm->_rectXMinMax[index];
-	int16 var4 = _vm->_rectYMinMax[index];
+	MinMax xMinMax = _vm->_rectXMinMax[index];
+	MinMax yMinMax = _vm->_rectYMinMax[index];
 	Common::Point var1 = _vm->_currentScriptCharacterPos;
 
-	if ((var1.x < (var3 >> 8)) || (var1.x > (var3 & 0xFF)) || (var1.y < (var4 >> 8)) || (var1.y > (var4 & 0xFF)))
+	if ((var1.x < xMinMax.min) || (var1.x > xMinMax.max) || (var1.y < yMinMax.min) || (var1.y > yMinMax.max))
 		return 0;
 
 	return 1;
@@ -1554,10 +1555,10 @@ byte LilliputScript::OC_compareCoords_2() {
 	int16 index = getValue1();
 	Common::Point var1 = Common::Point(_characterTilePosX[index], _characterTilePosY[index]);
 	index = _currScript->readUint16LE();
-	uint16 var3 = _vm->_rectXMinMax[index];
-	uint16 var4 = _vm->_rectYMinMax[index];
+	MinMax xMinMax = _vm->_rectXMinMax[index];
+	MinMax yMinMax = _vm->_rectYMinMax[index];
 
-	if ((var1.x < (var3 >> 8)) || (var1.x > (var3 & 0xFF)) || (var1.y < (var4 >> 8)) || (var1.y > (var4 & 0xFF)))
+	if ((var1.x < xMinMax.min) || (var1.x > xMinMax.max) || (var1.y < yMinMax.min) || (var1.y > yMinMax.max))
 		return 0;
 	return 1;
 }
@@ -2947,7 +2948,7 @@ void LilliputScript::OC_sub18260() {
 	byte *isoMapBuf = getMapPtr(pt);
 
 	if (isoMapBuf[1] != 0xFF) {
-		int byte1825D = 255;
+        int minVal = INT_MAX;
 		for (int var2 = 7; var2 >= 0; var2--) {
 			for (int var3 = 7; var3 >= 0; var3--) {
 				Common::Point(_viewportPos.x + var2, _viewportPos.y + var3);
@@ -2956,8 +2957,8 @@ void LilliputScript::OC_sub18260() {
 				if (isoMapBuf[1] == 0xFF) {
 					int x = abs(var2 - var4.x);
 					int y = abs(var3 - var4.y);
-					if (x + y < byte1825D) {
-						byte1825D = x + y;
+					if (x + y < minVal) {
+						minVal = x + y;
 						_word1825E = Common::Point(var2, var3);
 					}
 				}
@@ -3048,13 +3049,13 @@ void LilliputScript::OC_enableCharacterScript() {
 	enableCharacterScript(index, var2, _vm->getCharacterVariablesPtr(index * 32));
 }
 
-void LilliputScript::OC_sub18387() {
-	debugC(1, kDebugScriptTBC, "OC_sub18387()");
+void LilliputScript::OC_setRulesBuffer2Element() {
+	debugC(1, kDebugScript, "OC_setRulesBuffer2Element()");
 
 	int index = getValue1();
 	byte var1 = _currScript->readUint16LE() & 0xFF;
 
-	assert(index < 40);
+	assert((index >= 0) && (index < 40));
 	_vm->_rulesBuffer2_10[index] = var1;
 }
 
