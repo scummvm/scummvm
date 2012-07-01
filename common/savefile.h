@@ -104,11 +104,23 @@ public:
 	virtual String popErrorDesc();
 
 	/**
-	 * Open the savefile with the specified name in the given directory for saving.
-	 * @param name	the name of the savefile
+	 * Open the savefile with the specified name in the given directory for
+	 * saving.
+	 *
+	 * Saved games are compressed by default, and engines are expected to
+	 * always write compressed saves.
+	 * 
+	 * A notable exception is if uncompressed files are needed for
+	 * compatibility with games not supported by ScummVM, such as character
+	 * exports from the Quest for Glory series. QfG5 is a 3D game and won't be
+	 * supported by ScummVM.
+	 * 
+	 * @param name		the name of the savefile
+	 * @param compress	toggles whether to compress the resulting save file
+	 * 					(default) or not.
 	 * @return pointer to an OutSaveFile, or NULL if an error occurred.
 	 */
-	virtual OutSaveFile *openForSaving(const String &name) = 0;
+	virtual OutSaveFile *openForSaving(const String &name, bool compress = true) = 0;
 
 	/**
 	 * Open the file with the specified name in the given directory for loading.
