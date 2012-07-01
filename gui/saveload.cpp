@@ -93,11 +93,9 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 		if (ret == kSwitchToList) {
 			delete _impl;
 			_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);
-			ConfMan.set("gui_saveload_chooser", "list", Common::ConfigManager::kApplicationDomain);
 		} else if (ret == kSwitchToGrid) {
 			delete _impl;
 			_impl = new LoadChooserThumbnailed(_title);
-			ConfMan.set("gui_saveload_chooser", "grid", Common::ConfigManager::kApplicationDomain);
 		}
 	} while (ret < -1);
 

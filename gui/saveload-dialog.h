@@ -32,6 +32,11 @@ namespace GUI {
 #define kSwitchToList -2
 #define kSwitchToGrid -3
 
+enum SaveLoadChooserType {
+	kSaveLoadDialogList = 0,
+	kSaveLoadDialogGrid = 1
+};
+
 class SaveLoadChooserDialog : protected Dialog {
 public:
 	SaveLoadChooserDialog(const Common::String &dialogName, const bool saveMode);
@@ -42,6 +47,8 @@ public:
 	virtual void reflowLayout();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+
+	virtual SaveLoadChooserType getType() const = 0;
 
 	int run(const Common::String &target, const MetaEngine *metaEngine);
 	virtual const Common::String &getResultString() const = 0;
@@ -77,6 +84,8 @@ public:
 
 	virtual void reflowLayout();
 
+	virtual SaveLoadChooserType getType() const { return kSaveLoadDialogList; }
+
 	virtual void close();
 private:
 	virtual int runIntern();
@@ -108,6 +117,8 @@ public:
 	virtual void open();
 
 	virtual void reflowLayout();
+
+	virtual SaveLoadChooserType getType() const { return kSaveLoadDialogGrid; }
 
 	virtual void close();
 protected:

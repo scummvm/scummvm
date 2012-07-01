@@ -21,6 +21,7 @@
 
 #include "gui/saveload-dialog.h"
 #include "common/translation.h"
+#include "common/config-manager.h"
 
 #include "gui/message.h"
 #include "gui/gui-manager.h"
@@ -73,11 +74,17 @@ void SaveLoadChooserDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd
 	switch (cmd) {
 	case kListSwitchCmd:
 		setResult(kSwitchToList);
+		// We save the requested dialog type here to avoid the setting to be
+		// overwritten when our reflowLayout logic selects a different dialog
+		// type.
+		ConfMan.set("gui_saveload_chooser", "list", Common::ConfigManager::kApplicationDomain);
 		close();
 		break;
 
 	case kGridSwitchCmd:
 		setResult(kSwitchToGrid);
+		// See above.
+		ConfMan.set("gui_saveload_chooser", "grid", Common::ConfigManager::kApplicationDomain);
 		close();
 		break;
 
@@ -101,12 +108,44 @@ void SaveLoadChooserDialog::addChooserButtons() {
 
 	_listButton = createSwitchButton("SaveLoadChooser.ListSwitch", "L", _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
 	_gridButton = createSwitchButton("SaveLoadChooser.GridSwitch", "G", _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
-	if (!_metaInfoSupport || !_thumbnailSupport || _saveMode)
+	if (!_metaInfoSupport || !_thumbnailSupport || _saveMode || !(g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400))
 		_gridButton->setEnabled(false);
 }
 
 void SaveLoadChooserDialog::reflowLayout() {
 	addChooserButtons();
+
+	const SaveLoadChooserType currentType = getType();
+	SaveLoadChooserType requestedType;
+
+	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
+	if (!_saveMode && g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
+	    && _metaEngine->hasFeature(MetaEngine::kSavesSupportMetaInfo)
+	    && _metaEngine->hasFeature(MetaEngine::kSavesSupportThumbnail)
+	    && userConfig.equalsIgnoreCase("grid")) {
+		// In case we are 640x400 or higher, this dialog is not in save mode,
+		// the user requested the grid dialog and the engines supports it we
+		// try to set it up.
+		requestedType = kSaveLoadDialogGrid;
+	} else {
+		// In all other cases we want to use the list dialog.
+		requestedType = kSaveLoadDialogList;
+	}
+
+	// Change the dialog type if there is any need for it.
+	if (requestedType != currentType) {
+		switch (requestedType) {
+		case kSaveLoadDialogGrid:
+			setResult(kSwitchToGrid);
+			break;
+
+		case kSaveLoadDialogList:
+			setResult(kSwitchToList);
+			break;
+		}
+
+		close();
+	}
 
 	Dialog::reflowLayout();
 }
