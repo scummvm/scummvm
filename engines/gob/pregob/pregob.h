@@ -47,6 +47,10 @@ public:
 	virtual void run() = 0;
 
 protected:
+	static const char  kLanguageSuffixShort[5];
+	static const char *kLanguageSuffixLong [5];
+
+
 	void initScreen(); ///< Initialize the game screen.
 
 	void fadeOut(); ///< Fade to black.
