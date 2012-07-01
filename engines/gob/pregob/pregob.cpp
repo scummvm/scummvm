@@ -256,7 +256,12 @@ TXTFile *PreGob::loadTXT(const Common::String &txtFile, TXTFile::Format format) 
 
 	delete txtStream;
 
+	fixTXTStrings(*txt);
+
 	return txt;
+}
+
+void PreGob::fixTXTStrings(TXTFile &txt) const {
 }
 
 } // End of namespace Gob

@@ -93,6 +93,8 @@ protected:
 	Common::String getLocFile(const Common::String &file) const;
 	TXTFile *loadTXT(const Common::String &txtFile, TXTFile::Format format) const;
 
+	virtual void fixTXTStrings(TXTFile &txt) const;
+
 
 	GobEngine *_vm;
 

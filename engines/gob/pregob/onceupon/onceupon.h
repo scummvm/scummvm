@@ -88,6 +88,9 @@ protected:
 	void setGamePalette(uint palette);
 	void setGameCursor();
 
+	Common::String fixString(const Common::String &str) const;
+	void fixTXTStrings(TXTFile &txt) const;
+
 	bool doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4]);
 
 	void showWait(uint palette = 0xFFFF);  ///< Show the wait / loading screen.

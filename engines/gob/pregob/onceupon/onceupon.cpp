@@ -211,6 +211,24 @@ void OnceUpon::setGameCursor() {
 	setCursor(cursor, 105, 0, 120, 15, 0, 0);
 }
 
+void OnceUpon::fixTXTStrings(TXTFile &txt) const {
+	TXTFile::LineArray &lines = txt.getLines();
+	for (uint i = 0; i < lines.size(); i++)
+		lines[i].text = fixString(lines[i].text);
+}
+
+#include "gob/pregob/onceupon/brokenstrings.h"
+Common::String OnceUpon::fixString(const Common::String &str) const {
+	const BrokenStringLanguage &broken = kBrokenStrings[_vm->_global->_language];
+
+	for (uint i = 0; i < broken.count; i++) {
+		if (str == broken.strings[i].wrong)
+			return broken.strings[i].correct;
+	}
+
+	return str;
+}
+
 enum CopyProtectionState {
 	kCPStateSetup,     // Set up the screen
 	kCPStateWaitUser,  // Waiting for the user to pick a shape
