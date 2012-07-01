@@ -149,7 +149,7 @@ public:
 	int8 _word16EFEl_characterId;
 	uint16 _word1817B;
 	Common::Point _savedSurfaceUnderMousePos;
-	bool _bool15AC2;
+	bool _displayGreenHand;
 	int _currentDisplayCharacter;
 	int _displayStringIndex;
 	int _word1289D;

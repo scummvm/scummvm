@@ -157,7 +157,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_word16EFEl_characterId = -1;
 	_word1817B = 0;
 	_savedSurfaceUnderMousePos = Common::Point(0, 0);
-	_bool15AC2 = false;
+	_displayGreenHand = false;
 	_displayStringIndex = 0;
 	_word1289D = 0;
 	_numCharacters = 0;
@@ -403,7 +403,7 @@ void LilliputEngine::displayMousePointer() {
 
 		_savedSurfaceUnderMousePos = _mouseDisplayPos;
 		SaveSurfaceUnderMouseCursor(_savedSurfaceUnderMouse, _mouseDisplayPos);
-		display16x16IndexedBuf(_bufferIdeogram, _bool15AC2 ? 81 : 80, _mouseDisplayPos);
+		display16x16IndexedBuf(_bufferIdeogram, _displayGreenHand ? 81 : 80, _mouseDisplayPos);
 
 		_skipDisplayFlag1 = 1;
 		_skipDisplayFlag2 = 0;
@@ -1015,7 +1015,7 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 
 	_displayMap = false;
 	paletteFadeOut();
-	_bool15AC2 = false;
+	_displayGreenHand = false;
 	unselectInterfaceHotspots();
 	initGameAreaDisplay();
 	_scriptHandler->_heroismLevel = 0;
@@ -2103,7 +2103,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 	_scriptHandler->_interfaceHotspotStatus[index] = kHotspotSelected;
 	if (_rulesBuffer13_1[index] == 1) {
 		_delayedReactivationAction = true;
-		_bool15AC2 = true;
+		_displayGreenHand = true;
 	} else {
 		_actionType = 1;
 	}
@@ -2693,18 +2693,19 @@ void LilliputEngine::loadRules() {
 
 	// Chunk 12
 	_rectNumb = f.readUint16LE();
-	assert(_rectNumb <= 40);
-	uint16 tmpVal;
+	assert((_rectNumb >= 0) && (_rectNumb <= 40));
 
 	for (int i = 0; i < _rectNumb; i++) {
 		_rectXMinMax[i].min = (int16)f.readByte();
 		_rectXMinMax[i].max = (int16)f.readByte();
 		_rectYMinMax[i].min = (int16)f.readByte();
 		_rectYMinMax[i].max = (int16)f.readByte();
-		tmpVal = f.readUint16LE();
-		_rulesBuffer12Pos3[i] = Common::Point(tmpVal >> 8, tmpVal & 0xFF);
-		tmpVal = f.readUint16LE();
-		_rulesBuffer12Pos4[i] = Common::Point(tmpVal >> 8, tmpVal & 0xFF);
+		int16 tmpValX = (int16)f.readByte();
+		int16 tmpValY = (int16)f.readByte();
+		_rulesBuffer12Pos3[i] = Common::Point(tmpValX, tmpValY);
+		tmpValX = (int16)f.readByte();
+		tmpValY = (int16)f.readByte();
+		_rulesBuffer12Pos4[i] = Common::Point(tmpValX, tmpValY);
 	}
 
 	// Chunk 13
@@ -2796,7 +2797,7 @@ void LilliputEngine::unselectInterfaceButton() {
 	debugC(1, kDebugEngine, "unselectInterfaceButton()");
 
 	_delayedReactivationAction = false;
-	_bool15AC2 = false;
+	_displayGreenHand = false;
 	_lastInterfaceHotspotButton = 0;
 	unselectInterfaceHotspots();
 	displayInterfaceHotspots();
