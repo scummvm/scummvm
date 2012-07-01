@@ -151,21 +151,26 @@ void PreGob::loadSounds(const char * const *sounds, uint soundCount) {
 
 	_sounds.resize(soundCount);
 
-	for (uint i = 0; i < soundCount; i++) {
-		int32 size;
-		byte *data = _vm->_dataIO->getFile(sounds[i], size);
-
-		if (!data || !_sounds[i].load(SOUND_SND, data, size)) {
-			delete data;
-
-			warning("PreGob::loadSounds(): Failed to load sound \"%s\"", sounds[i]);
-			continue;
-		}
-	}
+	for (uint i = 0; i < soundCount; i++)
+		loadSound(_sounds[i], sounds[i]);
 }
 
 void PreGob::freeSounds() {
 	_sounds.clear();
+}
+
+bool PreGob::loadSound(SoundDesc &sound, const Common::String &file) const {
+	int32 size;
+	byte *data = _vm->_dataIO->getFile(file, size);
+
+	if (!data || !sound.load(SOUND_SND, data, size)) {
+		delete data;
+
+		warning("PreGob::loadSound(): Failed to load sound \"%s\"", file.c_str());
+		return false;
+	}
+
+	return true;
 }
 
 void PreGob::playSound(uint sound, int16 frequency, int16 repCount) {
@@ -177,6 +182,29 @@ void PreGob::playSound(uint sound, int16 frequency, int16 repCount) {
 
 void PreGob::stopSound() {
 	_vm->_sound->blasterStop(0);
+}
+
+void PreGob::playSoundFile(const Common::String &file, int16 frequency, int16 repCount, bool interruptible) {
+	stopSound();
+
+	SoundDesc sound;
+	if (!loadSound(sound, file))
+		return;
+
+	_vm->_sound->blasterPlay(&sound, repCount, frequency);
+
+	_vm->_util->forceMouseUp();
+
+	bool finished = false;
+	while (!_vm->shouldQuit() && !finished && _vm->_sound->blasterPlayingSound()) {
+		endFrame(true);
+
+		finished = hasInput();
+	}
+
+	_vm->_util->forceMouseUp();
+
+	stopSound();
 }
 
 void PreGob::endFrame(bool doInput) {

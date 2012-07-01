@@ -52,6 +52,32 @@ const OnceUpon::MenuButton Abracadabra::kAnimalsButtons = {
 	true, 131, 127, 183, 164, 193, 0, 243, 35, 132, 128, 0
 };
 
+const OnceUpon::MenuButton Abracadabra::kAnimalButtons[] = {
+	{false,  37,  89,  95, 127,  37,  89,  95, 127, 131, 25, 0},
+	{false, 114,  65, 172, 111, 114,  65, 172, 111, 131, 25, 1},
+	{false, 186,  72, 227,  96, 186,  72, 227,  96, 139, 25, 2},
+	{false, 249,  87, 282, 112, 249,  87, 282, 112, 143, 25, 3},
+	{false, 180, 102, 234, 138, 180, 102, 234, 138, 133, 25, 4},
+	{false, 197, 145, 242, 173, 197, 145, 242, 173, 137, 25, 5},
+	{false, 113, 151, 171, 176, 113, 151, 171, 176, 131, 25, 6},
+	{false, 114, 122, 151, 150, 114, 122, 151, 150, 141, 25, 7},
+	{false,  36, 136,  94, 176,  36, 136,  94, 176, 131, 25, 8},
+	{false, 243, 123, 295, 155, 243, 123, 295, 155, 136, 25, 9}
+};
+
+const char *Abracadabra::kAnimalNames[] = {
+	"loup",
+	"drag",
+	"arai",
+	"crap",
+	"crab",
+	"mous",
+	"saut",
+	"guep",
+	"rhin",
+	"scor"
+};
+
 
 Abracadabra::Abracadabra(GobEngine *vm) : OnceUpon(vm) {
 	setAnimalsButton(&kAnimalsButtons);
@@ -91,7 +117,7 @@ void Abracadabra::mainLoop() {
 		else if (action == kMenuActionRestart)
 			warning("Abracadabra::mainLoop(): TODO: Restart");
 		else if (action == kMenuActionAnimals)
-			warning("Abracadabra::mainLoop(): TODO: Animals");
+			doAnimalNames(ARRAYSIZE(kAnimalButtons), kAnimalButtons, kAnimalNames);
 		else if (action == kMenuActionQuit)
 			break;
 	}

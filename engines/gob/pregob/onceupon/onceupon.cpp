@@ -39,7 +39,7 @@ static const uint kLanguageCount = 5;
 
 static const uint kCopyProtectionHelpStringCount = 3;
 
-static const char *kCopyProtectionHelpStrings[kLanguageCount][kCopyProtectionHelpStringCount] = {
+static const char *kCopyProtectionHelpStrings[Gob::OnceUpon::OnceUpon::kLanguageCount][kCopyProtectionHelpStringCount] = {
 	{ // French
 		"Consulte le livret des animaux, rep\212re la",
 		"page correspondant \205 la couleur de l\'\202cran",
@@ -67,7 +67,7 @@ static const char *kCopyProtectionHelpStrings[kLanguageCount][kCopyProtectionHel
 	}
 };
 
-static const char *kCopyProtectionWrongStrings[kLanguageCount] = {
+static const char *kCopyProtectionWrongStrings[Gob::OnceUpon::OnceUpon::kLanguageCount] = {
 	"Tu t\'es tromp\202, dommage...", // French
 	"Schade, du hast dich geirrt."  , // German
 	"You are wrong, what a pity!"   , // English
@@ -95,23 +95,36 @@ namespace Gob {
 
 namespace OnceUpon {
 
-const OnceUpon::MenuButton OnceUpon::kMainMenuDifficultyButton[3] = {
-	{false,  29, 18,  77, 57, 0, 0, 0, 0, 0, 0, 0},
-	{false, 133, 18, 181, 57, 0, 0, 0, 0, 0, 0, 1},
-	{false, 241, 18, 289, 57, 0, 0, 0, 0, 0, 0, 2},
+const OnceUpon::MenuButton OnceUpon::kMainMenuDifficultyButton[] = {
+	{false,  29, 18,  77, 57, 0, 0, 0, 0, 0, 0, (int)kDifficultyBeginner},
+	{false, 133, 18, 181, 57, 0, 0, 0, 0, 0, 0, (int)kDifficultyIntermediate},
+	{false, 241, 18, 289, 57, 0, 0, 0, 0, 0, 0, (int)kDifficultyAdvanced},
 };
 
-const OnceUpon::MenuButton OnceUpon::kSectionButtons[4] = {
+const OnceUpon::MenuButton OnceUpon::kSectionButtons[] = {
 	{false,  27, 121,  91, 179,   0, 0,   0,  0,   0,   0,  0},
 	{ true,  95, 121, 159, 179,   4, 1,  56, 49, 100, 126,  2},
 	{ true, 163, 121, 227, 179,  64, 1, 120, 49, 168, 126,  6},
 	{ true, 231, 121, 295, 179, 128, 1, 184, 49, 236, 126, 10}
 };
 
-const OnceUpon::MenuButton OnceUpon::kIngameButtons[3] = {
+const OnceUpon::MenuButton OnceUpon::kIngameButtons[] = {
 	{true, 108, 83, 139, 116,   0,   0,  31,  34, 108,  83, 0},
 	{true, 144, 83, 175, 116,  36,   0,  67,  34, 144,  83, 1},
 	{true, 180, 83, 211, 116,  72,   0, 103,  34, 180,  83, 2}
+};
+
+const OnceUpon::MenuButton OnceUpon::kAnimalNamesBack = {
+	true, 19, 13, 50, 46, 36, 0, 67, 34, 19, 13, 1
+};
+
+const OnceUpon::MenuButton OnceUpon::kLanguageButtons[] = {
+	{true,  43,  80,  93, 115,   0, 55,  50, 90,  43,  80, 0},
+	{true, 132,  80, 182, 115,  53, 55, 103, 90, 132,  80, 1},
+	{true, 234,  80, 284, 115, 106, 55, 156, 90, 234,  80, 2},
+	{true,  43, 138,  93, 173, 159, 55, 209, 90,  43, 138, 3},
+	{true, 132, 138, 182, 173, 212, 55, 262, 90, 132, 138, 4},
+	{true, 234, 138, 284, 173, 265, 55, 315, 90, 234, 138, 2}
 };
 
 const char *OnceUpon::kSound[kSoundMAX] = {
@@ -643,6 +656,7 @@ OnceUpon::MenuAction OnceUpon::doMenu(MenuType type) {
 
 OnceUpon::MenuAction OnceUpon::doMenuMainStart() {
 	fadeOut();
+	setGamePalette(17);
 	drawMenuMainStart();
 	showCursor();
 	fadeIn();
@@ -667,16 +681,16 @@ OnceUpon::MenuAction OnceUpon::doMenuMainStart() {
 		playSound(kSoundClick);
 
 		// If we clicked on a difficulty button, show the selected difficulty and start the game
-		Difficulty difficulty = checkDifficultyButton(mouseX, mouseY);
-		if (difficulty < kDifficultyMAX) {
-			_difficulty = difficulty;
+		int diff = checkButton(kMainMenuDifficultyButton, ARRAYSIZE(kMainMenuDifficultyButton), mouseX, mouseY);
+		if (diff >= 0) {
+			_difficulty = (Difficulty)diff;
 			action      = kMenuActionPlay;
 
 			drawMenuMainStart();
 			_vm->_util->longDelay(1000);
 		}
 
-		if (checkAnimalsButton(mouseX, mouseY))
+		if (_animalsButton && (checkButton(_animalsButton, 1, mouseX, mouseY) != -1))
 			action = kMenuActionAnimals;
 
 	}
@@ -686,6 +700,7 @@ OnceUpon::MenuAction OnceUpon::doMenuMainStart() {
 
 OnceUpon::MenuAction OnceUpon::doMenuMainIngame() {
 	fadeOut();
+	setGamePalette(17);
 	drawMenuMainIngame();
 	showCursor();
 	fadeIn();
@@ -710,16 +725,16 @@ OnceUpon::MenuAction OnceUpon::doMenuMainIngame() {
 		playSound(kSoundClick);
 
 		// If we clicked on a difficulty button, change the current difficulty level
-		Difficulty difficulty = checkDifficultyButton(mouseX, mouseY);
-		if ((difficulty < kDifficultyMAX) && (_difficulty != difficulty)) {
-			_difficulty = difficulty;
+		int diff = checkButton(kMainMenuDifficultyButton, ARRAYSIZE(kMainMenuDifficultyButton), mouseX, mouseY);
+		if ((diff >= 0) && (diff != (int)_difficulty)) {
+			_difficulty = (Difficulty)diff;
 
 			drawMenuMainIngame();
 		}
 
 		// If we clicked on a section button, restart the game from this section
-		int8 section = checkSectionButton(mouseX, mouseY);
-		if (section >= 0) {
+		int section = checkButton(kSectionButtons, ARRAYSIZE(kSectionButtons), mouseX, mouseY);
+		if ((section >= 0) && (section <= _section)) {
 			_section = section;
 			action   = kMenuActionRestart;
 		}
@@ -750,8 +765,7 @@ OnceUpon::MenuAction OnceUpon::doMenuIngame() {
 		if (mouseButtons != kMouseButtonsLeft)
 			continue;
 
-		// Check if we've pressed one of the buttons
-		int8 button = checkIngameButton(mouseX, mouseY);
+		int button = checkButton(kIngameButtons, ARRAYSIZE(kIngameButtons), mouseX, mouseY);
 		if      (button == 0)
 			action = kMenuActionQuit;
 		else if (button == 1)
@@ -774,10 +788,7 @@ void OnceUpon::drawMenuMainStart() {
 		_vm->_video->drawPackedSprite("elemenu.cmp", elements);
 		_vm->_draw->_backSurface->fillRect(_animalsButton->left , _animalsButton->top,
 		                                   _animalsButton->right, _animalsButton->bottom, 0);
-		_vm->_draw->_backSurface->blit(elements,
-		                               _animalsButton->srcLeft , _animalsButton->srcTop,
-		                               _animalsButton->srcRight, _animalsButton->srcBottom,
-		                               _animalsButton->dstX    , _animalsButton->dstY);
+		drawButton(*_vm->_draw->_backSurface, elements, *_animalsButton);
 	}
 
 	// Highlight the current difficulty
@@ -804,8 +815,7 @@ void OnceUpon::drawMenuMainIngame() {
 			continue;
 
 		if (_section >= (uint)button.id)
-			_vm->_draw->_backSurface->blit(elements, button.srcLeft, button.srcTop, button.srcRight, button.srcBottom,
-			                               button.dstX, button.dstY);
+			drawButton(*_vm->_draw->_backSurface, elements, button);
 	}
 
 	_vm->_draw->forceBlit();
@@ -873,48 +883,205 @@ void OnceUpon::clearMenuIngame(const Surface &background) {
 	drawLineByLine(background, left, top, right, bottom, left, top);
 }
 
-OnceUpon::Difficulty OnceUpon::checkDifficultyButton(int16 x, int16 y) const {
-	for (uint i = 0; i < ARRAYSIZE(kMainMenuDifficultyButton); i++) {
-		const MenuButton &button = kMainMenuDifficultyButton[i];
+int OnceUpon::checkButton(const MenuButton *buttons, uint count, int16 x, int16 y, int failValue) const {
+	for (uint i = 0; i < count; i++) {
+		const MenuButton &button = buttons[i];
 
 		if ((x >= button.left) && (x <= button.right) && (y >= button.top) && (y <= button.bottom))
-			return (Difficulty) button.id;
+			return (int)button.id;
 	}
 
-	return kDifficultyMAX;
+	return failValue;
 }
 
-bool OnceUpon::checkAnimalsButton(int16 x, int16 y) const {
-	if (!_animalsButton)
-		return false;
-
-	return (x >= _animalsButton->left) && (x <= _animalsButton->right) &&
-	       (y >= _animalsButton->top)  && (y <= _animalsButton->bottom);
+void OnceUpon::drawButton(Surface &dest, const Surface &src, const MenuButton &button) const {
+	dest.blit(src, button.srcLeft, button.srcTop, button.srcRight, button.srcBottom, button.dstX, button.dstY);
 }
 
-int8 OnceUpon::checkSectionButton(int16 x, int16 y) const {
-	for (uint i = 0; i < ARRAYSIZE(kSectionButtons); i++) {
-		const MenuButton &button = kSectionButtons[i];
+void OnceUpon::drawButtons(Surface &dest, const Surface &src, const MenuButton *buttons, uint count) const {
+	for (uint i = 0; i < count; i++) {
+		const MenuButton &button = buttons[i];
 
-		if ((uint)button.id > _section)
+		if (!button.needDraw)
 			continue;
 
-		if ((x >= button.left) && (x <= button.right) && (y >= button.top) && (y <= button.bottom))
-			return (int8)button.id;
+		drawButton(dest, src, button);
 	}
-
-	return -1;
 }
 
-int8 OnceUpon::checkIngameButton(int16 x, int16 y) const {
-	for (uint i = 0; i < ARRAYSIZE(kIngameButtons); i++) {
-		const MenuButton &button = kIngameButtons[i];
+void OnceUpon::drawButtonBorder(const MenuButton &button, uint8 color) {
+	_vm->_draw->_backSurface->drawRect(button.left, button.top, button.right, button.bottom, color);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, button.left, button.top, button.right, button.bottom);
+}
 
-		if ((x >= button.left) && (x <= button.right) && (y >= button.top) && (y <= button.bottom))
-			return (int8)button.id;
+enum AnimalNamesState {
+	kANStateChoose,
+	kANStateNames,
+	kANStateFinish
+};
+
+void OnceUpon::doAnimalNames(uint count, const MenuButton *buttons, const char * const *names) {
+	fadeOut();
+	clearScreen();
+	setGamePalette(19);
+
+	bool cursorVisible = isCursorVisible();
+
+	// Set the cursor
+	addCursor();
+	setGameCursor();
+
+	anSetupChooser();
+
+	int8 _animal = -1;
+
+	AnimalNamesState state = kANStateChoose;
+	while (!_vm->shouldQuit() && (state != kANStateFinish)) {
+		showCursor();
+		fadeIn();
+
+		endFrame(true);
+
+		// Check user input
+
+		int16 mouseX, mouseY;
+		MouseButtons mouseButtons;
+
+		checkInput(mouseX, mouseY, mouseButtons);
+
+		// If we moused over an animal button, draw a border around it
+		int animal = checkButton(buttons, count, mouseX, mouseY);
+		if ((state == kANStateChoose) && (animal != _animal)) {
+			// Erase the old border
+			if (_animal >= 0)
+				drawButtonBorder(buttons[_animal], 15);
+
+			_animal = animal;
+
+			// Draw the new border
+			if (_animal >= 0)
+				drawButtonBorder(buttons[_animal], 10);
+		}
+
+		if (mouseButtons != kMouseButtonsLeft)
+			continue;
+
+		playSound(kSoundClick);
+
+		// We clicked on a language button, play the animal name
+		int language = checkButton(kLanguageButtons, ARRAYSIZE(kLanguageButtons), mouseX, mouseY);
+		if ((state == kANStateNames) && (language >= 0))
+			anPlayAnimalName(names[_animal], language);
+
+		// We clicked on an animal
+		if ((state == kANStateChoose) && (_animal >= 0)) {
+			anSetupNames(buttons[_animal]);
+
+			state = kANStateNames;
+		}
+
+		// If we clicked on the back button, go back
+		if (checkButton(&kAnimalNamesBack, 1, mouseX, mouseY) != -1) {
+			if        (state == kANStateNames) {
+				anSetupChooser();
+
+				state = kANStateChoose;
+			} else if (state == kANStateChoose)
+				state = kANStateFinish;
+		}
 	}
 
-	return -1;
+	fadeOut();
+
+	// Restore the cursor
+	if (!cursorVisible)
+		hideCursor();
+	removeCursor();
+}
+
+void OnceUpon::anSetupChooser() {
+	fadeOut();
+
+	_vm->_video->drawPackedSprite("dico.cmp", *_vm->_draw->_backSurface);
+
+	// Draw the back button
+	Surface menu(320, 34, 1);
+	_vm->_video->drawPackedSprite("icon.cmp", menu);
+	drawButton(*_vm->_draw->_backSurface, menu, kAnimalNamesBack);
+
+	// "Choose an animal"
+	TXTFile *choose = loadTXT(getLocFile("choisi.tx"), TXTFile::kFormatStringPosition);
+	choose->draw(*_vm->_draw->_backSurface, &_plettre, 1, 14);
+	delete choose;
+
+	_vm->_draw->forceBlit();
+}
+
+void OnceUpon::anSetupNames(const MenuButton &animal) {
+	fadeOut();
+
+	Surface background(320, 200, 1);
+
+	_vm->_video->drawPackedSprite("dico.cmp", background);
+
+	// Draw the background and clear what we don't need
+	_vm->_draw->_backSurface->blit(background);
+	_vm->_draw->_backSurface->fillRect(19, 19, 302, 186, 15);
+
+	// Draw the back button
+	Surface menu(320, 34, 1);
+	_vm->_video->drawPackedSprite("icon.cmp", menu);
+	drawButton(*_vm->_draw->_backSurface, menu, kAnimalNamesBack);
+
+	// Draw the animal
+	drawButton(*_vm->_draw->_backSurface, background, animal);
+
+	// Draw the language buttons
+	Surface elements(320, 200, 1);
+	_vm->_video->drawPackedSprite("elemenu.cmp", elements);
+	drawButtons(*_vm->_draw->_backSurface, elements, kLanguageButtons, ARRAYSIZE(kLanguageButtons));
+
+	// Draw the language names
+	_plettre->drawString("Fran\207ais",  43,  70, 10, 15, true, *_vm->_draw->_backSurface);
+	_plettre->drawString("Deutsch"    , 136,  70, 10, 15, true, *_vm->_draw->_backSurface);
+	_plettre->drawString("English"    , 238,  70, 10, 15, true, *_vm->_draw->_backSurface);
+	_plettre->drawString("Italiano"   ,  43, 128, 10, 15, true, *_vm->_draw->_backSurface);
+	_plettre->drawString("Espa\244ol" , 136, 128, 10, 15, true, *_vm->_draw->_backSurface);
+	_plettre->drawString("English"    , 238, 128, 10, 15, true, *_vm->_draw->_backSurface);
+
+	_vm->_draw->forceBlit();
+}
+
+void OnceUpon::anPlayAnimalName(const Common::String &animal, uint language) {
+	// Sound file to play
+	Common::String soundFile = animal + "_" + kLanguageSuffixLong[language] + ".snd";
+
+	// Get the name of the animal
+	TXTFile *names = loadTXT(animal + ".anm", TXTFile::kFormatString);
+	Common::String name = names->getLines()[language].text;
+	delete names;
+
+	// It should be centered on the screen
+	const int nameX = 160 - (name.size() * _plettre->getCharWidth()) / 2;
+
+	// Backup the screen surface
+	Surface backup(162, 23, 1);
+	backup.blit(*_vm->_draw->_backSurface, 78, 123, 239, 145, 0, 0);
+
+	// Draw the name border
+	Surface nameBorder(162, 23, 1);
+	_vm->_video->drawPackedSprite("mot.cmp", nameBorder);
+	_vm->_draw->_backSurface->blit(nameBorder, 0, 0, 161, 22, 78, 123);
+
+	// Print the animal name
+	_plettre->drawString(name, nameX, 129, 10, 0, true, *_vm->_draw->_backSurface);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 78, 123, 239, 145);
+
+	playSoundFile(soundFile);
+
+	// Restore the screen
+	_vm->_draw->_backSurface->blit(backup, 0, 0, 161, 22, 78, 123);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 78, 123, 239, 145);
 }
 
 void OnceUpon::drawLineByLine(const Surface &src, int16 left, int16 top, int16 right, int16 bottom,

@@ -83,6 +83,8 @@ protected:
 	void playSound(uint sound, int16 frequency = 0, int16 repCount = 0);
 	void stopSound();
 
+	void playSoundFile(const Common::String &file, int16 frequency = 0, int16 repCount = 0, bool interruptible = true);
+
 	void endFrame(bool doInput);
 
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
@@ -103,6 +105,9 @@ protected:
 	GobEngine *_vm;
 
 private:
+	bool loadSound(SoundDesc &sound, const Common::String &file) const;
+
+
 	bool _fadedOut; ///< Did we fade out?
 
 	Common::Array<SoundDesc> _sounds;

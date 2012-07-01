@@ -52,6 +52,32 @@ const OnceUpon::MenuButton BabaYaga::kAnimalsButtons = {
 	true, 131, 127, 183, 164, 193, 0, 245, 37, 131, 127, 0
 };
 
+const OnceUpon::MenuButton BabaYaga::kAnimalButtons[] = {
+	{false,  34,  84,  92, 127,  34,  84,  92, 127, 131, 25, 0},
+	{false, 114,  65, 172, 111, 114,  65, 172, 111, 131, 25, 1},
+	{false, 186,  72, 227,  96, 186,  72, 227,  96, 139, 25, 2},
+	{false, 249,  87, 282, 112, 249,  87, 282, 112, 143, 25, 3},
+	{false, 180,  97, 234, 138, 180,  97, 234, 138, 133, 25, 4},
+	{false, 197, 145, 242, 173, 197, 145, 242, 173, 137, 25, 5},
+	{false, 113, 156, 171, 176, 113, 156, 171, 176, 131, 25, 6},
+	{false, 114, 127, 151, 150, 114, 127, 151, 150, 141, 25, 7},
+	{false,  36, 136,  94, 176,  36, 136,  94, 176, 131, 25, 8},
+	{false, 245, 123, 293, 155, 245, 123, 293, 155, 136, 25, 9}
+};
+
+const char *BabaYaga::kAnimalNames[] = {
+	"vaut",
+	"drag",
+	"arai",
+	"gren",
+	"fauc",
+	"abei",
+	"serp",
+	"tort",
+	"sang",
+	"rena"
+};
+
 
 BabaYaga::BabaYaga(GobEngine *vm) : OnceUpon(vm) {
 	setAnimalsButton(&kAnimalsButtons);
@@ -91,7 +117,7 @@ void BabaYaga::mainLoop() {
 		else if (action == kMenuActionRestart)
 			warning("BabaYaga::mainLoop(): TODO: Restart");
 		else if (action == kMenuActionAnimals)
-			warning("BabaYaga::mainLoop(): TODO: Animals");
+			doAnimalNames(ARRAYSIZE(kAnimalButtons), kAnimalButtons, kAnimalNames);
 		else if (action == kMenuActionQuit)
 			break;
 	}

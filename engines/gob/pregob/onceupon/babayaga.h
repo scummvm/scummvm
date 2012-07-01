@@ -39,6 +39,9 @@ public:
 private:
 	static const MenuButton kAnimalsButtons;
 
+	static const MenuButton kAnimalButtons[];
+	static const char *kAnimalNames[];
+
 
 	void mainLoop();
 };

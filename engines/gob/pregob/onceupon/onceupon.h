@@ -38,6 +38,8 @@ namespace OnceUpon {
 
 class OnceUpon : public PreGob {
 public:
+	static const uint kLanguageCount = 5;
+
 	OnceUpon(GobEngine *vm);
 	~OnceUpon();
 
@@ -74,7 +76,7 @@ protected:
 		int16 left, top, right, bottom;
 		int16 srcLeft, srcTop, srcRight, srcBottom;
 		int16 dstX, dstY;
-		int id;
+		uint id;
 	};
 
 	static const uint kSectionCount = 15;
@@ -100,6 +102,8 @@ protected:
 
 	MenuAction doMenu(MenuType type);
 
+	void doAnimalNames(uint count, const MenuButton *buttons, const char * const *names);
+
 	void drawLineByLine(const Surface &src, int16 left, int16 top, int16 right, int16 bottom,
 	                    int16 x, int16 y) const;
 
@@ -114,9 +118,12 @@ protected:
 	uint8      _section;
 
 private:
-	static const MenuButton kMainMenuDifficultyButton[3];
-	static const MenuButton kSectionButtons[4];
-	static const MenuButton kIngameButtons[3];
+	static const MenuButton kMainMenuDifficultyButton[];
+	static const MenuButton kSectionButtons[];
+	static const MenuButton kIngameButtons[];
+
+	static const MenuButton kAnimalNamesBack;
+	static const MenuButton kLanguageButtons[];
 
 	static const char *kSound[kSoundMAX];
 
@@ -153,11 +160,15 @@ private:
 
 	void clearMenuIngame(const Surface &background);
 
-	Difficulty checkDifficultyButton(int16 x, int16 y) const;
-	bool       checkAnimalsButton   (int16 x, int16 y) const;
-	int8       checkSectionButton   (int16 x, int16 y) const;
-	int8       checkIngameButton    (int16 x, int16 y) const;
+	int checkButton(const MenuButton *buttons, uint count, int16 x, int16 y, int failValue = -1) const;
+	void drawButton(Surface &dest, const Surface &src, const MenuButton &button) const;
+	void drawButtons(Surface &dest, const Surface &src, const MenuButton *buttons, uint count) const;
+	void drawButtonBorder(const MenuButton &button, uint8 color);
 
+	// Animal names helpers
+	void anSetupChooser();
+	void anSetupNames(const MenuButton &animal);
+	void anPlayAnimalName(const Common::String &animal, uint language);
 
 	bool _openedArchives;
 
