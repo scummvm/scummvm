@@ -32,6 +32,8 @@
 #include "gob/video.h"
 #include "gob/aniobject.h"
 
+#include "gob/sound/sound.h"
+
 #include "gob/pregob/pregob.h"
 
 static char kLanguageSuffix[5] = { 't', 'g', 'a', 'e', 'i' };
@@ -139,6 +141,39 @@ void PreGob::hideCursor() {
 
 bool PreGob::isCursorVisible() const {
 	return CursorMan.isVisible();
+}
+
+void PreGob::loadSounds(const char * const *sounds, uint soundCount) {
+	freeSounds();
+
+	_sounds.resize(soundCount);
+
+	for (uint i = 0; i < soundCount; i++) {
+		int32 size;
+		byte *data = _vm->_dataIO->getFile(sounds[i], size);
+
+		if (!data || !_sounds[i].load(SOUND_SND, data, size)) {
+			delete data;
+
+			warning("PreGob::loadSounds(): Failed to load sound \"%s\"", sounds[i]);
+			continue;
+		}
+	}
+}
+
+void PreGob::freeSounds() {
+	_sounds.clear();
+}
+
+void PreGob::playSound(uint sound, int16 frequency, int16 repCount) {
+	if (sound >= _sounds.size())
+		return;
+
+	_vm->_sound->blasterPlay(&_sounds[sound], repCount, frequency);
+}
+
+void PreGob::stopSound() {
+	_vm->_sound->blasterStop(0);
 }
 
 void PreGob::endFrame(bool doInput) {

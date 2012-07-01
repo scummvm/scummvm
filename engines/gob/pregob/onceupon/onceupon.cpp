@@ -246,6 +246,10 @@ const OnceUpon::MenuButton OnceUpon::kIngameButtons[3] = {
 	{true, 180, 83, 211, 116,  72,   0, 103,  34, 180,  83, 2}
 };
 
+const char *OnceUpon::kSound[kSoundMAX] = {
+	"diamant.snd"
+};
+
 
 OnceUpon::OnceUpon(GobEngine *vm) : PreGob(vm), _jeudak(0), _lettre(0), _plettre(0), _glettre(0),
 	_openedArchives(false), _animalsButton(0) {
@@ -286,6 +290,8 @@ void OnceUpon::init() {
 		      "please contact the ScummVM team with details about this version.\n"
 		      "Thanks", _vm->getLangDesc(_vm->_global->_language));
 
+	loadSounds(kSound, kSoundMAX);
+
 	initScreen();
 
 	_difficulty = kDifficultyMAX;
@@ -293,6 +299,8 @@ void OnceUpon::init() {
 }
 
 void OnceUpon::deinit() {
+	freeSounds();
+
 	delete _jeudak;
 	delete _lettre;
 	delete _plettre;
@@ -671,7 +679,7 @@ void OnceUpon::stopTitleMusic() {
 	_vm->_sound->blasterStopComposition();
 	_vm->_sound->protrackerStop();
 
-	for (int i = 0; i < Sound::kSoundsCount; i++)
+	for (int i = 0; i < ::Gob::Sound::kSoundsCount; i++)
 		_vm->_sound->sampleFree(_vm->_sound->sampleGetBySlot(i));
 }
 

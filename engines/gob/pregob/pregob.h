@@ -24,8 +24,11 @@
 #define GOB_PREGOB_PREGOB_H
 
 #include "common/str.h"
+#include "common/array.h"
 
 #include "gob/util.h"
+
+#include "gob/sound/sounddesc.h"
 
 #include "gob/pregob/txtfile.h"
 
@@ -70,6 +73,12 @@ protected:
 
 	bool isCursorVisible() const;
 
+	void loadSounds(const char * const *sounds, uint soundCount);
+	void freeSounds();
+
+	void playSound(uint sound, int16 frequency = 0, int16 repCount = 0);
+	void stopSound();
+
 	void endFrame(bool doInput);
 
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
@@ -89,6 +98,8 @@ protected:
 
 private:
 	bool _fadedOut; ///< Did we fade out?
+
+	Common::Array<SoundDesc> _sounds;
 };
 
 } // End of namespace Gob

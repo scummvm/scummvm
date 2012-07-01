@@ -64,6 +64,11 @@ protected:
 		kDifficultyMAX
 	};
 
+	enum Sound {
+		kSoundClick = 0,
+		kSoundMAX
+	};
+
 	struct MenuButton {
 		bool needDraw;
 		int16 left, top, right, bottom;
@@ -109,6 +114,9 @@ private:
 	static const MenuButton kMainMenuDifficultyButton[3];
 	static const MenuButton kSectionButtons[4];
 	static const MenuButton kIngameButtons[3];
+
+	static const char *kSound[kSoundMAX];
+
 
 	void setCopyProtectionPalette();
 
