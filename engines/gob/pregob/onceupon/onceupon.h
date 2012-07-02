@@ -100,6 +100,8 @@ protected:
 
 	void showChapter(int chapter); ///< Show a chapter intro text.
 
+	void showByeBye(); ///< Show the "bye bye" screen
+
 	MenuAction doMenu(MenuType type);
 
 	void doAnimalNames(uint count, const MenuButton *buttons, const char * const *names);

@@ -609,6 +609,22 @@ void OnceUpon::showChapter(int chapter) {
 	fadeOut();
 }
 
+void OnceUpon::showByeBye() {
+	fadeOut();
+	hideCursor();
+	clearScreen();
+	setGamePalette(1);
+
+	_plettre->drawString("Bye Bye....", 140, 80, 2, 0, true, *_vm->_draw->_backSurface);
+	_vm->_draw->forceBlit();
+
+	fadeIn();
+
+	_vm->_util->longDelay(1000);
+
+	fadeOut();
+}
+
 OnceUpon::MenuAction OnceUpon::doMenu(MenuType type) {
 	bool cursorVisible = isCursorVisible();
 

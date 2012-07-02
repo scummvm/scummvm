@@ -102,7 +102,7 @@ void Abracadabra::run() {
 	mainLoop();
 
 	if (!_vm->shouldQuit())
-		warning("Abracadabra::run(): TODO: Show \"Bye Bye\"");
+		showByeBye();
 }
 
 void Abracadabra::mainLoop() {

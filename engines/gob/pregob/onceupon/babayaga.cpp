@@ -102,7 +102,7 @@ void BabaYaga::run() {
 	mainLoop();
 
 	if (!_vm->shouldQuit())
-		warning("BabaYaga::run(): TODO: Show \"Bye Bye\"");
+		showByeBye();
 }
 
 void BabaYaga::mainLoop() {
