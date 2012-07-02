@@ -89,6 +89,29 @@ public:
 	 */
 	virtual const char *getPrettyName() const = 0;
 
+	/**
+	 * Computationally intense scalers can benefit from comparing new and old
+	 * source images and updating only the pixels necessary. If the function
+	 * returns true, this scaler prefers this method and the backend can
+	 * optionally call it.
+	 *
+	 * @see oldSourceScale
+	 */
+	virtual bool useOldSrc() const { return false; }
+
+	/**
+	 * Secondary scaling method for computationally intense scalers.
+	 *
+	 * @see useOldSource
+	 */
+	virtual void oldSrcScale(const uint8 *srcPtr, uint32 srcPitch,
+	                         uint8 *dstPtr, uint32 dstPitch,
+	                         const uint8 *oldSrcPtr, uint32 oldSrcPitch,
+	                         int width, int height, int x, int y) {
+		// Should not be called unless overriden
+		assert(0);
+	}
+
 protected:
 	uint _factor;
 	Common::Array<uint> _factors;
