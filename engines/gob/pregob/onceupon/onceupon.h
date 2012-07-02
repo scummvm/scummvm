@@ -136,7 +136,7 @@ private:
 
 
 	/** The number of game sections. */
-	static const uint kSectionCount = 15;
+	static const int kSectionCount = 15;
 
 	static const MenuButton kMainMenuDifficultyButton[]; ///< Difficulty buttons.
 	static const MenuButton kSectionButtons[];           ///< Section buttons.
@@ -149,6 +149,10 @@ private:
 	/** All general game sounds we know about. */
 	static const char *kSound[kSoundMAX];
 
+	/** Function pointer type for a section handler. */
+	typedef bool (OnceUpon::*SectionFunc)();
+	/** Section handler function. */
+	static const SectionFunc kSectionFuncs[kSectionCount];
 
 	// -- General helpers --
 
@@ -219,6 +223,11 @@ private:
 	/** Clear the ingame menu in an animated way. */
 	void clearIngameMenu(const Surface &background);
 
+	/** Handle the whole ingame menu. */
+	MenuAction doIngameMenu();
+	/** Handle the whole ingame menu if ESC or right mouse button was pressed. */
+	MenuAction doIngameMenu(int16 key, MouseButtons mouseButtons);
+
 
 	// -- Menu button helpers --
 
@@ -243,6 +252,26 @@ private:
 	/** Play / Display the name of an animal in one language. */
 	void anPlayAnimalName(const Common::String &animal, uint language);
 
+	// -- Game sections --
+
+	bool playSection();
+
+	bool sectionStork();
+	bool sectionChapter1();
+	bool section02();
+	bool sectionChapter2();
+	bool section04();
+	bool sectionChapter3();
+	bool section06();
+	bool sectionChapter4();
+	bool section08();
+	bool sectionChapter5();
+	bool section10();
+	bool sectionChapter6();
+	bool section12();
+	bool sectionChapter7();
+	bool sectionEnd();
+
 
 	/** Did we open the game archives? */
 	bool _openedArchives;
@@ -256,8 +285,10 @@ private:
 	/** The current palette. */
 	int _palette;
 
+	bool _quit; ///< Did the user request a normal game quit?
+
 	Difficulty _difficulty; ///< The current difficulty.
-	uint8      _section;    ///< The current game section.
+	int        _section;    ///< The current game section.
 };
 
 } // End of namespace OnceUpon

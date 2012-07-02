@@ -131,6 +131,24 @@ const char *OnceUpon::kSound[kSoundMAX] = {
 	"diamant.snd"
 };
 
+const OnceUpon::SectionFunc OnceUpon::kSectionFuncs[kSectionCount] = {
+	&OnceUpon::sectionStork,
+	&OnceUpon::sectionChapter1,
+	&OnceUpon::section02,
+	&OnceUpon::sectionChapter2,
+	&OnceUpon::section04,
+	&OnceUpon::sectionChapter3,
+	&OnceUpon::section06,
+	&OnceUpon::sectionChapter4,
+	&OnceUpon::section08,
+	&OnceUpon::sectionChapter5,
+	&OnceUpon::section10,
+	&OnceUpon::sectionChapter6,
+	&OnceUpon::section12,
+	&OnceUpon::sectionChapter7,
+	&OnceUpon::sectionEnd
+};
+
 
 OnceUpon::ScreenBackup::ScreenBackup() : palette(-1), changedCursor(false), cursorVisible(false) {
 	screen = new Surface(320, 200, 1);
@@ -193,6 +211,9 @@ void OnceUpon::init() {
 
 	// We start with an invalid palette
 	_palette = -1;
+
+	// No quit requested at start
+	_quit = false;
 
 	// We start with no selected difficulty and at section 0
 	_difficulty = kDifficultyMAX;
@@ -930,7 +951,7 @@ void OnceUpon::drawMainMenu() {
 		if (!button.needDraw)
 			continue;
 
-		if (_section >= (uint)button.id)
+		if (_section >= (int)button.id)
 			drawButton(*_vm->_draw->_backSurface, elements, button);
 	}
 
@@ -996,6 +1017,41 @@ void OnceUpon::clearIngameMenu(const Surface &background) {
 
 	// Clear it line by line
 	drawLineByLine(background, left, top, right, bottom, left, top);
+}
+
+OnceUpon::MenuAction OnceUpon::doIngameMenu() {
+	// Show the ingame menu
+	MenuAction action = handleIngameMenu();
+
+	if ((action == kMenuActionQuit) || _vm->shouldQuit()) {
+
+		// User pressed the quit button, or quit ScummVM
+		_quit = true;
+		return kMenuActionQuit;
+
+	} else if (action == kMenuActionPlay) {
+
+		// User pressed the return to game button
+		return kMenuActionPlay;
+
+	} else if (kMenuActionMainMenu) {
+
+		// User pressed the return to main menu button
+		return handleMainMenu();
+	}
+
+	return action;
+}
+
+OnceUpon::MenuAction OnceUpon::doIngameMenu(int16 key, MouseButtons mouseButtons) {
+	if ((key != kKeyEscape) && (mouseButtons != kMouseButtonsRight))
+		return kMenuActionNone;
+
+	MenuAction action = doIngameMenu();
+	if (action == kMenuActionPlay)
+		return kMenuActionNone;
+
+	return action;
 }
 
 int OnceUpon::checkButton(const MenuButton *buttons, uint count, int16 x, int16 y, int failValue) const {
@@ -1203,7 +1259,101 @@ void OnceUpon::anPlayAnimalName(const Common::String &animal, uint language) {
 }
 
 void OnceUpon::playGame() {
-	warning("OnceUpon::playGame(): TODO");
+	while (!_vm->shouldQuit() && !_quit) {
+		// Play a section and advance to the next section if we finished it
+		if (playSection())
+			_section = MIN(_section + 1, kSectionCount - 1);
+	}
+
+	// If we quit through the game and not through ScummVM, show the "Bye Bye" screen
+	if (!_vm->shouldQuit())
+		showByeBye();
+}
+
+bool OnceUpon::playSection() {
+	if ((_section < 0) || (_section >= ARRAYSIZE(kSectionFuncs))) {
+		_quit = true;
+		return false;
+	}
+
+	return (this->*kSectionFuncs[_section])();
+}
+
+bool OnceUpon::sectionStork() {
+	warning("OnceUpon::sectionStork(): TODO");
+	return true;
+}
+
+bool OnceUpon::sectionChapter1() {
+	showChapter(1);
+	return true;
+}
+
+bool OnceUpon::section02() {
+	warning("OnceUpon::section02(): TODO");
+	return true;
+}
+
+bool OnceUpon::sectionChapter2() {
+	showChapter(2);
+	return true;
+}
+
+bool OnceUpon::section04() {
+	warning("OnceUpon::section04(): TODO");
+	return true;
+}
+
+bool OnceUpon::sectionChapter3() {
+	showChapter(3);
+	return true;
+}
+
+bool OnceUpon::section06() {
+	warning("OnceUpon::section06(): TODO");
+	return true;
+}
+
+bool OnceUpon::sectionChapter4() {
+	showChapter(4);
+	return true;
+}
+
+bool OnceUpon::section08() {
+	warning("OnceUpon::section08(): TODO");
+	return true;
+}
+
+bool OnceUpon::sectionChapter5() {
+	showChapter(5);
+	return true;
+}
+
+bool OnceUpon::section10() {
+	warning("OnceUpon::section10(): TODO");
+	return true;
+}
+
+bool OnceUpon::sectionChapter6() {
+	showChapter(6);
+	return true;
+}
+
+bool OnceUpon::section12() {
+	warning("OnceUpon::section12(): TODO");
+	return true;
+}
+
+bool OnceUpon::sectionChapter7() {
+	showChapter(7);
+	return true;
+}
+
+bool OnceUpon::sectionEnd() {
+	warning("OnceUpon::sectionEnd(): TODO");
+
+	_quit = true;
+	return false;
 }
 
 } // End of namespace OnceUpon

@@ -40,7 +40,12 @@ static const BrokenString kBrokenStringsGerman[] = {
 	{ "  Fortgeschrittene"           , "  Fortgeschritten"            },
 	{ "die Vespe"                    , "die Wespe"                    },
 	{ "das Rhinoceros"               , "das Rhinozeros"               },
-	{ "die Heusschrecke"             , "die Heuschrecke"              }
+	{ "die Heusschrecke"             , "die Heuschrecke"              },
+	{ "Das, von Drachen gebrachte"   , "Das vom Drachen gebrachte"    },
+	{ "Am Waldesrand es sieht"       , "Am Waldesrand sieht es"       },
+	{ " das Kind den Palast."        , "das Kind den Palast."         },
+	{ "Am Waldessaum sieht"          , "Am Waldesrand sieht"          },
+	{ "tipp auf ESC!"                , "dr\201cke ESC!"               }
 };
 
 static const BrokenStringLanguage kBrokenStrings[kLanguageCount] = {
