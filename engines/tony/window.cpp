@@ -47,6 +47,7 @@ RMWindow::RMWindow() {
 RMWindow::~RMWindow() {
 	close();
 	RMText::unload();
+	RMGfxTargetBuffer::freeBWPrecalcTable();
 }
 
 /**
@@ -63,50 +64,28 @@ void RMWindow::init() {
 	_bGrabThumbnail = false;
 	_bGrabMovie = false;
 	_wiping = false;
-
-	_precalcTable = 0;
-}
-
-void RMWindow::createBWPrecalcTable() {
-	_precalcTable = new uint16[0x8000];
-
-	for (int i = 0; i < 0x8000; i++) {
-		int r = (i >> 10) & 0x1F;
-		int g = (i >> 5) & 0x1F;
-		int b = i & 0x1F;
-
-		int min = MIN(r, MIN(g, b));
-		int max = MAX(r, MAX(g, b));
-
-		min = (min + max) / 2;
-
-		r = CLIP(min + 8 - 8, 0, 31);
-		g = CLIP(min + 5 - 8, 0, 31);
-		b = CLIP(min + 0 - 8, 0, 31);
-
-		_precalcTable[i] = (r << 10) | (g << 5) | b;
-	}
 }
 
 void RMWindow::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 	if (GLOBALS._bCfgAnni30) {
-		if (!_precalcTable) {
-			createBWPrecalcTable();
+		if (!RMGfxTargetBuffer::_precalcTable) {
+			RMGfxTargetBuffer::createBWPrecalcTable();
+			_vm->getEngine()->getPointer().updateCursor();
 		}
 		Graphics::Surface *screen = g_system->lockScreen();
 		const uint16 *src = (const uint16 *)buf;
 		for (int i = 0; i < h; i++) {
 			uint16 *dst = (uint16 *)screen->getBasePtr(x, y + i);
 			for (int j = 0; j < w; j++) {
-				dst[j] = _precalcTable[src[j] & 0x7FFF];
+				dst[j] = RMGfxTargetBuffer::_precalcTable[src[j] & 0x7FFF];
 			}
 			src += (pitch / 2);
 		}
 		g_system->unlockScreen();
 	} else {
-		if (_precalcTable) {
-			delete[] _precalcTable;
-			_precalcTable = 0;
+		if (RMGfxTargetBuffer::_precalcTable) {
+			RMGfxTargetBuffer::freeBWPrecalcTable();
+			_vm->getEngine()->getPointer().updateCursor();
 		}
 		g_system->copyRectToScreen(buf, pitch, x, y, w, h);
 	}
@@ -116,8 +95,6 @@ void RMWindow::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w,
  * Close the window
  */
 void RMWindow::close() {
-	delete[] _precalcTable;
-	_precalcTable = 0;
 }
 
 void RMWindow::grabThumbnail(uint16 *thumbmem) {

@@ -1596,8 +1596,22 @@ void RMPointer::updateCursor() {
 	
 	draw(Common::nullContext, buf, &prim);
 
+	// Get a pointer to the cursor data
+	byte *cursorData = buf;
+
+	// If in black & white mode, convert the cursor
+	if (GLOBALS._bCfgAnni30) {
+		uint16 *src = (uint16 *)cursorData;
+		for (int i = 0; i < 64; i++) {
+			uint16 *lineP = src;
+			for (int j = 0; j < 64; j++, lineP) {
+				lineP[j] = RMGfxTargetBuffer::_precalcTable[lineP[j] & 0x7FFF];
+			}
+			src += 64;
+		}
+	}
+
 	// Get the raw pixel data and set the cursor to it
-	const byte *cursorData = buf;
 	Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	CursorMan.replaceCursor(cursorData, 64, 64, _cursorHotspot._x, _cursorHotspot._y, 0, 1, &pixelFormat);
 }

@@ -433,6 +433,41 @@ void RMGfxTargetBuffer::mergeDirtyRects() {
 	}
 }
 
+uint16 *RMGfxTargetBuffer::_precalcTable = NULL;
+
+/**
+ * Set up the black & white precalculated mapping table. This is only
+ * called if the user selects the black & white option.
+ */
+void RMGfxTargetBuffer::createBWPrecalcTable() {
+	_precalcTable = new uint16[0x8000];
+
+	for (int i = 0; i < 0x8000; i++) {
+		int r = (i >> 10) & 0x1F;
+		int g = (i >> 5) & 0x1F;
+		int b = i & 0x1F;
+
+		int min = MIN(r, MIN(g, b));
+		int max = MAX(r, MAX(g, b));
+
+		min = (min + max) / 2;
+
+		r = CLIP(min + 8 - 8, 0, 31);
+		g = CLIP(min + 5 - 8, 0, 31);
+		b = CLIP(min + 0 - 8, 0, 31);
+
+		_precalcTable[i] = (r << 10) | (g << 5) | b;
+	}
+}
+
+/**
+ * Frees the black & white precalculated mapping table.
+ */
+void RMGfxTargetBuffer::freeBWPrecalcTable() {
+	delete[] _precalcTable;
+	_precalcTable = NULL;
+}
+
 /****************************************************************************\
 *               RMGfxSourceBufferPal Methods
 \****************************************************************************/

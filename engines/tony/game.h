@@ -67,8 +67,6 @@ private:
 
 	RMGfxSourceBuffer8 *_nCurCustomPointer;
 
-	void updateCursor();
-
 public:
 	enum PointerType {
 		PTR_NONE = 0,
@@ -146,6 +144,11 @@ public:
 	 * Return the current action to be applied according to the pointer
 	 */
 	int curAction();
+
+	/**
+	 * Update the cursor
+	 */
+	void updateCursor();
 
 	/**
 	 * Show the cursor

@@ -562,6 +562,7 @@ private:
 	Common::List<Common::Rect> _currentDirtyRects, _previousDirtyRects, _dirtyRects;
 
 	void mergeDirtyRects();
+
 private:
 //	OSystem::MutexRef csModifyingOT;
 
@@ -572,6 +573,10 @@ protected:
 public:
 	RMGfxTargetBuffer();
 	virtual ~RMGfxTargetBuffer();
+
+	static uint16 *_precalcTable;
+	static void createBWPrecalcTable();
+	static void freeBWPrecalcTable();
 
 	// management of the OT list
 	void clearOT();

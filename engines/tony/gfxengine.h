@@ -115,6 +115,9 @@ public:
 	RMInput &getInput() {
 		return _input;
 	}
+	RMPointer &getPointer() {
+		return _point;
+	}
 
 	// Link to the custom function list
 	void initCustomDll();
