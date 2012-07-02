@@ -24,6 +24,7 @@
 #define GRIM_GFX_TINYGL_H
 
 #include "engines/grim/gfx_base.h"
+#include "math/quat.h"
 
 #include "graphics/tinygl/zgl.h"
 
@@ -130,6 +131,9 @@ private:
 	int _smushHeight;
 	Graphics::PixelBuffer _storedDisplay;
 	float _alpha;
+
+	Math::Vector3d _currentPos;
+	Math::Quaternion _currentQuat;
 
 	void readPixels(int x, int y, int width, int height, uint8 *buffer);
 	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans);

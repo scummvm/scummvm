@@ -281,28 +281,24 @@ void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
-	tglRotatef(roll, 0, 0, -1);
 }
 
 void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
-	Math::Vector3d up_vec(0, 0, 1);
-
-	// EMI only: transform XYZ to YXZ
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		static const float EMI_MATRIX[] = {
-			0,1,0,0,
-			1,0,0,0,
-			0,0,1,0,
-			0,0,0,1
-		};
+		tglScalef(1.0,1.0,-1.0);
 
-		tglMultMatrixf(EMI_MATRIX);
+		_currentPos = pos;
+		_currentQuat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
+	} else {
+		Math::Vector3d up_vec(0, 0, 1);
+
+		tglRotatef(roll, 0, 0, -1);
+
+		if (pos.x() == interest.x() && pos.y() == interest.y())
+			up_vec = Math::Vector3d(0, 1, 0);
+
+		lookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 	}
-
-	if (pos.x() == interest.x() && pos.y() == interest.y())
-		up_vec = Math::Vector3d(0, 1, 0);
-
-	lookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
 
 void GfxTinyGL::clearScreen() {
@@ -509,19 +505,25 @@ void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		tglLoadIdentity();
 		tglScalef(1.0, 1.0, -1.0);
 		tglTranslatef(pos.x(), pos.y(), pos.z());
+	} else if (g_grim->getGameType() == GType_MONKEY4) {
+		// NOTE: this could be merged with the Grim case below if you set
+		// _currentPos = (0,0,0) and _currentQuat = (0,0,0,1).
+		Math::Vector3d relPos = (pos - _currentPos);
+
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		worldRot.inverseRotate(&relPos);
+		tglTranslatef(relPos.x(), relPos.y(), relPos.z());
+		tglMultMatrixf(worldRot.getData());
+
+		tglScalef(scale, scale, scale);
+		Math::Matrix4 charRot = Math::Quaternion::fromEuler(yaw, pitch, roll).toMatrix();
+		tglMultMatrixf(charRot.getData());
 	} else {
 		tglTranslatef(pos.x(), pos.y(), pos.z());
 		tglScalef(scale, scale, scale);
-		// EMI uses Y axis as down-up, so we need to rotate differently.
-		if (g_grim->getGameType() == GType_MONKEY4) {
-			tglRotatef(yaw.getDegrees(), 0, -1, 0);
-			tglRotatef(pitch.getDegrees(), 1, 0, 0);
-			tglRotatef(roll.getDegrees(), 0, 0, 1);
-		} else {
-			tglRotatef(yaw.getDegrees(), 0, 0, 1);
-			tglRotatef(pitch.getDegrees(), 1, 0, 0);
-			tglRotatef(roll.getDegrees(), 0, 1, 0);
-		}
+		tglRotatef(yaw.getDegrees(), 0, 0, 1);
+		tglRotatef(pitch.getDegrees(), 1, 0, 0);
+		tglRotatef(roll.getDegrees(), 0, 1, 0);
 	}
 }
 
