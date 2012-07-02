@@ -90,7 +90,7 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	EngineState *s = g_sci->getEngineState();
 
 	if (videoDecoder->hasDirtyPalette()) {
-		byte *palette = (byte *)videoDecoder->getPalette() + s->_vmdPalStart * 3;
+		const byte *palette = videoDecoder->getPalette() + s->_vmdPalStart * 3;
 		g_system->getPaletteManager()->setPalette(palette, s->_vmdPalStart, s->_vmdPalEnd - s->_vmdPalStart);
 	}
 
@@ -108,7 +108,7 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 				}
 
 				if (videoDecoder->hasDirtyPalette()) {
-					byte *palette = (byte *)videoDecoder->getPalette() + s->_vmdPalStart * 3;
+					const byte *palette = videoDecoder->getPalette() + s->_vmdPalStart * 3;
 					g_system->getPaletteManager()->setPalette(palette, s->_vmdPalStart, s->_vmdPalEnd - s->_vmdPalStart);
 				}
 
