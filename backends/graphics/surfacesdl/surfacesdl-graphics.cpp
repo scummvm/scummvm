@@ -89,11 +89,12 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #ifdef USE_OSD
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
-	_hwscreen(0), _screen(0), _tmpscreen(0),
+	_hwscreen(0), _screen(0), _tmpscreen(0), _oldscreen(0),
 #ifdef USE_RGB_COLOR
 	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
 #endif
+	_useOldSrc(false),
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
 	_screenChangeCount(0),
@@ -554,6 +555,7 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 		convertSDLPixelFormat(_hwscreen->format, &format);
 		(*_scalerPlugin)->initialize(format);
 		_extraPixels = (*_scalerPlugin)->extraPixels();
+		_useOldSrc = (*_scalerPlugin)->useOldSrc();
 	}
 
 	(*_scalerPlugin)->setFactor(_videoMode.scaleFactor);
@@ -738,6 +740,19 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_tmpscreen == NULL)
 		error("allocating _tmpscreen failed");
 
+	// Create surface containing previous frame's data to pass to scaler
+	if (_useOldSrc) {
+		_oldscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth + _maxExtraPixels * 2,
+							_videoMode.screenHeight + _maxExtraPixels * 2,
+							16,
+							_hwscreen->format->Rmask,
+							_hwscreen->format->Gmask,
+							_hwscreen->format->Bmask,
+							_hwscreen->format->Amask);
+		if (_oldscreen == NULL)
+			error("allocating _oldscreen failed");
+	}
+
 	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.overlayWidth, _videoMode.overlayHeight,
 						16,
 						_hwscreen->format->Rmask,
@@ -808,6 +823,11 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 		_tmpscreen = NULL;
 	}
 
+	if (_oldscreen != NULL) {
+		SDL_FreeSurface(_oldscreen);
+		_oldscreen = NULL;
+	}
+
 	if (_tmpscreen2) {
 		SDL_FreeSurface(_tmpscreen2);
 		_tmpscreen2 = NULL;
@@ -841,6 +861,7 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 	SDL_FreeSurface(_hwscreen); _hwscreen = NULL;
 
 	SDL_FreeSurface(_tmpscreen); _tmpscreen = NULL;
+	SDL_FreeSurface(_oldscreen); _oldscreen = NULL;
 	SDL_FreeSurface(_tmpscreen2); _tmpscreen2 = NULL;
 
 #ifdef USE_OSD
@@ -964,7 +985,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		undrawMouse();
 
 	// Force a full redraw if requested
-	if (_forceFull) {
+	if (_forceFull || (_useOldSrc && !_overlayVisible)) {
 		_numDirtyRects = 1;
 		_dirtyRectList[0].x = 0;
 		_dirtyRectList[0].y = 0;
@@ -1020,8 +1041,14 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 					// Revert state in case the normal plugin is used elsewhere
 					(*_normalPlugin)->setFactor(tmpFactor);
 				} else {
-					(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-						(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
+					if (_useOldSrc)
+						(*_scalerPlugin)->oldSrcScale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+							(byte *)_oldscreen->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * _oldscreen->pitch, _oldscreen->pitch,
+							(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch,
+							r->w, dst_h, r->x, r->y);
+					else
+						(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+							(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
 				}
 			}
 
