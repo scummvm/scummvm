@@ -471,14 +471,6 @@ private:
 	void createClassTable();
 
 	SegmentId findFreeSegment() const;
-
-	/**
-	 * Check segment validity
-	 * @param[in] seg	The segment to validate
-	 * @return 			false if 'seg' is an invalid segment, true if
-	 * 					'seg' is a valid segment
-	 */
-	bool check(SegmentId seg);
 };
 
 } // End of namespace Sci

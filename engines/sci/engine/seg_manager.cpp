@@ -143,16 +143,34 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 }
 
 void SegManager::deallocate(SegmentId seg) {
-	if (!check(seg))
-		error("SegManager::deallocate(): invalid segment ID");
+	if (seg < 1 || (uint)seg >= _heap.size())
+		error("Attempt to deallocate an invalid segment ID");
 
 	SegmentObj *mobj = _heap[seg];
+	if (!mobj)
+		error("Attempt to deallocate an already freed segment");
 
 	if (mobj->getType() == SEG_TYPE_SCRIPT) {
 		Script *scr = (Script *)mobj;
 		_scriptSegMap.erase(scr->getScriptNumber());
-		if (scr->getLocalsSegment())
-			deallocate(scr->getLocalsSegment());
+		if (scr->getLocalsSegment()) {
+			// HACK: Check if the locals segment has already been deallocated.
+			// This happens sometimes in SQ4CD when resetting the segment
+			// manager: the locals for script 808 are somehow stored in a
+			// smaller segment than the script itself, so by the time the script
+			// is about to be freed, the locals block has already been freed.
+			// This isn't fatal, but it shouldn't be happening at all.
+			// FIXME: Check why this happens. Perhaps there's a bug in the
+			// script handling code?
+			if (!_heap[scr->getLocalsSegment()]) {
+				warning("SegManager::deallocate(): The locals block of script "
+						"%d has already been deallocated. Script segment: %d, "
+						"locals segment: %d", scr->getScriptNumber(), seg,
+						scr->getLocalsSegment());
+			} else {
+				deallocate(scr->getLocalsSegment());
+			}
+		}
 	}
 
 	delete mobj;
@@ -305,21 +323,6 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 	else if (result.size() <= (uint)index)
 		return NULL_REG; // Not found
 	return result[index];
-}
-
-// validate the seg
-// return:
-//	false - invalid seg
-//	true  - valid seg
-bool SegManager::check(SegmentId seg) {
-	if (seg < 1 || (uint)seg >= _heap.size()) {
-		return false;
-	}
-	if (!_heap[seg]) {
-		warning("SegManager: seg %x is removed from memory, but not removed from hash_map", seg);
-		return false;
-	}
-	return true;
 }
 
 // return the seg if script_id is valid and in the map, else 0
