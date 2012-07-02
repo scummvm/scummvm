@@ -149,18 +149,22 @@ private:
 	/** All general game sounds we know about. */
 	static const char *kSound[kSoundMAX];
 
+
+	static const AnimProperties kClownAnimations[];
+	static const AnimProperties kTitleAnimation;
+	static const AnimProperties kSectionEndAnimations[];
+
+
 	/** Function pointer type for a section handler. */
 	typedef bool (OnceUpon::*SectionFunc)();
 	/** Section handler function. */
 	static const SectionFunc kSectionFuncs[kSectionCount];
 
+
 	// -- General helpers --
 
 	void setGamePalette(uint palette); ///< Set a game palette.
 	void setGameCursor();              ///< Set the default game cursor.
-
-	/** Set the state of an ANIObject. */
-	void setAnimState(ANIObject &ani, uint16 state, bool once, bool pause) const;
 
 	/** Draw this sprite in a fancy, animated line-by-line way. */
 	void drawLineByLine(const Surface &src, int16 left, int16 top, int16 right, int16 bottom,

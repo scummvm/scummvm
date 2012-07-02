@@ -27,6 +27,7 @@
 #include "common/array.h"
 
 #include "gob/util.h"
+#include "gob/aniobject.h"
 
 #include "gob/sound/sounddesc.h"
 
@@ -37,8 +38,6 @@ namespace Gob {
 class GobEngine;
 class Surface;
 
-class ANIObject;
-
 class PreGob {
 public:
 	PreGob(GobEngine *vm);
@@ -46,7 +45,23 @@ public:
 
 	virtual void run() = 0;
 
+	struct AnimProperties {
+		uint16 animation;
+		uint16 frame;
+
+		ANIObject::Mode mode;
+
+		bool visible;
+		bool paused;
+
+		bool hasPosition;
+		int16 x;
+		int16 y;
+	};
+
 protected:
+	typedef Common::Array<ANIObject *> ANIList;
+
 	static const char  kLanguageSuffixShort[5];
 	static const char *kLanguageSuffixLong [5];
 
@@ -88,11 +103,23 @@ protected:
 	bool isCursorVisible() const;
 
 	/** Remove an animation from the screen. */
-	void clearAnim(ANIObject &ani);
+	void clearAnim(ANIObject &anim);
 	/** Draw an animation to the screen, advancing it. */
-	void drawAnim(ANIObject &ani);
+	void drawAnim(ANIObject &anim);
 	/** Clear and draw an animation to the screen, advancing it. */
-	void redrawAnim(ANIObject &ani);
+	void redrawAnim(ANIObject &anim);
+
+	/** Remove animations from the screen. */
+	void clearAnim(const ANIList &anims);
+	/** Draw animations to the screen, advancing them. */
+	void drawAnim(const ANIList &anims);
+	/** Clear and draw animations to the screen, advancing them. */
+	void redrawAnim(const ANIList &anims);
+
+	void loadAnims(ANIList &anims, ANIFile &ani, uint count, const AnimProperties *props) const;
+	void freeAnims(ANIList &anims) const;
+
+	void setAnim(ANIObject &anim, const AnimProperties &props) const;
 
 	/** Wait for the frame to end, handling screen updates and optionally update input. */
 	void endFrame(bool doInput);

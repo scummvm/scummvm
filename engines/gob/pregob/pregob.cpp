@@ -251,24 +251,70 @@ bool PreGob::hasInput() {
 	return checkInput(mouseX, mouseY, mouseButtons) || (mouseButtons != kMouseButtonsNone);
 }
 
-void PreGob::clearAnim(ANIObject &ani) {
+void PreGob::clearAnim(ANIObject &anim) {
 	int16 left, top, right, bottom;
 
-	if (ani.clear(*_vm->_draw->_backSurface, left, top, right, bottom))
+	if (anim.clear(*_vm->_draw->_backSurface, left, top, right, bottom))
 		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 }
 
-void PreGob::drawAnim(ANIObject &ani) {
+void PreGob::drawAnim(ANIObject &anim) {
 	int16 left, top, right, bottom;
 
-	if (ani.draw(*_vm->_draw->_backSurface, left, top, right, bottom))
+	if (anim.draw(*_vm->_draw->_backSurface, left, top, right, bottom))
 		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
-	ani.advance();
+	anim.advance();
 }
 
-void PreGob::redrawAnim(ANIObject &ani) {
-	clearAnim(ani);
-	drawAnim(ani);
+void PreGob::redrawAnim(ANIObject &anim) {
+	clearAnim(anim);
+	drawAnim(anim);
+}
+
+void PreGob::clearAnim(const ANIList &anims) {
+	for (int i = (anims.size() - 1); i >= 0; i--)
+		clearAnim(*anims[i]);
+}
+
+void PreGob::drawAnim(const ANIList &anims) {
+	for (ANIList::const_iterator a = anims.begin(); a != anims.end(); ++a)
+		drawAnim(**a);
+}
+
+void PreGob::redrawAnim(const ANIList &anims) {
+	clearAnim(anims);
+	drawAnim(anims);
+}
+
+void PreGob::loadAnims(ANIList &anims, ANIFile &ani, uint count, const AnimProperties *props) const {
+	freeAnims(anims);
+
+	anims.resize(count);
+	for (uint i = 0; i < count; i++) {
+		anims[i] = new ANIObject(ani);
+
+		setAnim(*anims[i], props[i]);
+	}
+}
+
+void PreGob::freeAnims(ANIList &anims) const {
+	for (ANIList::iterator a = anims.begin(); a != anims.end(); ++a)
+		delete *a;
+
+	anims.clear();
+}
+
+void PreGob::setAnim(ANIObject &anim, const AnimProperties &props) const {
+	anim.setAnimation(props.animation);
+	anim.setFrame(props.frame);
+	anim.setMode(props.mode);
+	anim.setPause(props.paused);
+	anim.setVisible(props.visible);
+
+	if (props.hasPosition)
+		anim.setPosition(props.x, props.y);
+	else
+		anim.setPosition();
 }
 
 Common::String PreGob::getLocFile(const Common::String &file) const {

@@ -264,14 +264,6 @@ void OnceUpon::setGameCursor() {
 	setCursor(cursor, 105, 0, 120, 15, 0, 0);
 }
 
-void OnceUpon::setAnimState(ANIObject &ani, uint16 state, bool once, bool pause) const {
-	ani.setAnimation(state);
-	ani.setMode(once ? ANIObject::kModeOnce : ANIObject::kModeContinuous);
-	ani.setPause(pause);
-	ani.setVisible(true);
-	ani.setPosition();
-}
-
 void OnceUpon::drawLineByLine(const Surface &src, int16 left, int16 top, int16 right, int16 bottom,
                               int16 x, int16 y) const {
 
@@ -374,6 +366,18 @@ Common::String OnceUpon::fixString(const Common::String &str) const {
 	return str;
 }
 
+enum ClownAnimation {
+	kClownAnimationStand = 0,
+	kClownAnimationCheer = 1,
+	kClownAnimationCry   = 2
+};
+
+const PreGob::AnimProperties OnceUpon::kClownAnimations[] = {
+	{ 1, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 0, 0, ANIObject::kModeOnce      , true, false, false, 0, 0},
+	{ 6, 0, ANIObject::kModeOnce      , true, false, false, 0, 0}
+};
+
 enum CopyProtectionState {
 	kCPStateSetup,     // Set up the screen
 	kCPStateWaitUser,  // Waiting for the user to pick a shape
@@ -392,8 +396,10 @@ bool OnceUpon::doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20
 	_vm->_video->drawPackedSprite("grille2.cmp", sprites[1]);
 
 	// Load the clown animation
-	ANIFile   ani  (_vm, "grille.ani", 320);
-	ANIObject clown(ani);
+	ANIFile ani  (_vm, "grille.ani", 320);
+	ANIList anims;
+
+	loadAnims(anims, ani, 1, &kClownAnimations[kClownAnimationStand]);
 
 	// Set the copy protection cursor
 	setCursor(sprites[1], 5, 110, 20, 134, 3, 0);
@@ -406,20 +412,20 @@ bool OnceUpon::doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20
 	bool  hasCorrect  = false;
 
 	while (!_vm->shouldQuit() && (state != kCPStateFinish)) {
-		clearAnim(clown);
+		clearAnim(anims);
 
 		// Set up the screen
 		if (state == kCPStateSetup) {
 			animalShape = cpSetup(colors, shapes, obfuscate, sprites);
 
-			setAnimState(clown, kClownAnimationClownStand, false, false);
+			setAnim(*anims[0], kClownAnimations[kClownAnimationStand]);
 			state = kCPStateWaitUser;
 		}
 
-		drawAnim(clown);
+		drawAnim(anims);
 
 		// If we're waiting for the clown and he finished, evaluate if we're finished
-		if (!clown.isVisible() && (state == kCPStateWaitClown))
+		if (!anims[0]->isVisible() && (state == kCPStateWaitClown))
 			state = (hasCorrect || (--triesLeft == 0)) ? kCPStateFinish : kCPStateSetup;
 
 		showCursor();
@@ -443,11 +449,13 @@ bool OnceUpon::doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20
 				hasCorrect  = guessedShape == animalShape;
 				animalShape = -1;
 
-				setAnimState(clown, hasCorrect ? kClownAnimationClownCheer : kClownAnimationClownCry, true, false);
+				setAnim(*anims[0], kClownAnimations[hasCorrect ? kClownAnimationCheer : kClownAnimationCry]);
 				state = kCPStateWaitClown;
 			}
 		}
 	}
+
+	freeAnims(anims);
 
 	fadeOut();
 	hideCursor();
@@ -625,6 +633,10 @@ void OnceUpon::showQuote() {
 	fadeOut();
 }
 
+const PreGob::AnimProperties OnceUpon::kTitleAnimation = {
+	8, 0, ANIObject::kModeContinuous, true, false, false, 0, 0
+};
+
 void OnceUpon::showTitle() {
 	// Show the Once Upon A Time title animation
 	// NOTE: This is currently only a mock-up. The real animation is in "ville.seq".
@@ -639,15 +651,15 @@ void OnceUpon::showTitle() {
 	_vm->_video->drawPackedSprite("ville.cmp", *_vm->_draw->_backSurface);
 	_vm->_draw->forceBlit();
 
-	ANIFile   ani  (_vm, "pres.ani", 320);
-	ANIObject title(ani);
+	ANIFile ani  (_vm, "pres.ani", 320);
+	ANIList anims;
 
-	setAnimState(title, 8, false, false);
+	loadAnims(anims, ani, 1, &kTitleAnimation);
 
 	playTitleMusic();
 
 	while (!_vm->shouldQuit()) {
-		redrawAnim(title);
+		redrawAnim(anims);
 
 		fadeIn();
 
@@ -656,6 +668,8 @@ void OnceUpon::showTitle() {
 		if (hasInput())
 			break;
 	}
+
+	freeAnims(anims);
 
 	fadeOut();
 	stopTitleMusic();
@@ -1349,9 +1363,58 @@ bool OnceUpon::sectionChapter7() {
 	return true;
 }
 
-bool OnceUpon::sectionEnd() {
-	warning("OnceUpon::sectionEnd(): TODO");
+const PreGob::AnimProperties OnceUpon::kSectionEndAnimations[] = {
+	{ 0, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 6, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 9, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{11, 0, ANIObject::kModeContinuous, true, false, false, 0, 0}
+};
 
+bool OnceUpon::sectionEnd() {
+	fadeOut();
+	setGamePalette(9);
+
+	_vm->_video->drawPackedSprite("cadre.cmp", *_vm->_draw->_backSurface);
+
+	Surface endBackground(320, 200, 1);
+	_vm->_video->drawPackedSprite("fin.cmp", endBackground);
+
+	_vm->_draw->_backSurface->blit(endBackground, 0, 0, 288, 137, 16, 50);
+
+	ANIFile ani(_vm, "fin.ani", 320);
+	ANIList anims;
+
+	loadAnims(anims, ani, ARRAYSIZE(kSectionEndAnimations), kSectionEndAnimations);
+	drawAnim(anims);
+
+	_vm->_draw->forceBlit();
+
+	MenuAction action = kMenuActionNone;
+	while (!_vm->shouldQuit() && (action == kMenuActionNone)) {
+		redrawAnim(anims);
+
+		fadeIn();
+
+		endFrame(true);
+
+		int16 mouseX, mouseY;
+		MouseButtons mouseButtons;
+
+		int16 key = checkInput(mouseX, mouseY, mouseButtons);
+		if ((key != 0) && (key != kKeyEscape))
+			// Any key pressed => Quit
+			action = kMenuActionQuit;
+
+		action = doIngameMenu(key, mouseButtons);
+	}
+
+	freeAnims(anims);
+
+	// Restart requested
+	if (action == kMenuActionRestart)
+		return false;
+
+	// Last scene. Even if we didn't explicitly request a quit, the game ends here
 	_quit = true;
 	return false;
 }
