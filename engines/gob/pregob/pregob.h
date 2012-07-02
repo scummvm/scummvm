@@ -51,7 +51,10 @@ protected:
 	static const char *kLanguageSuffixLong [5];
 
 
-	void initScreen(); ///< Initialize the game screen.
+	// -- Graphics --
+
+	/** Initialize the game screen. */
+	void initScreen();
 
 	void fadeOut(); ///< Fade to black.
 	void fadeIn();  ///< Fade to the current palette.
@@ -65,51 +68,86 @@ protected:
 	 */
 	void setPalette(const byte *palette, uint16 size); ///< Change the palette
 
+	/** Add a new cursor that can be manipulated to the stack. */
 	void addCursor();
+	/** Remove the top-most cursor from the stack. */
 	void removeCursor();
 
+	/** Set the current cursor. */
 	void setCursor(Surface &sprite, int16 hotspotX, int16 hotspotY);
+	/** Set the current cursor. */
 	void setCursor(Surface &sprite, int16 left, int16 top, int16 right, int16 bottom,
 	               int16 hotspotX, int16 hotspotY);
 
+	/** Show the cursor. */
 	void showCursor();
+	/** Hide the cursor. */
 	void hideCursor();
 
+	/** Is the cursor currently visible? */
 	bool isCursorVisible() const;
 
-	void loadSounds(const char * const *sounds, uint soundCount);
-	void freeSounds();
-
-	void playSound(uint sound, int16 frequency = 0, int16 repCount = 0);
-	void stopSound();
-
-	void playSoundFile(const Common::String &file, int16 frequency = 0, int16 repCount = 0, bool interruptible = true);
-
-	void endFrame(bool doInput);
-
-	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
-	int16 waitInput (int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
-	int16 waitInput();
-	bool  hasInput();
-
+	/** Remove an animation from the screen. */
 	void clearAnim(ANIObject &ani);
+	/** Draw an animation to the screen, advancing it. */
 	void drawAnim(ANIObject &ani);
+	/** Clear and draw an animation to the screen, advancing it. */
 	void redrawAnim(ANIObject &ani);
 
+	/** Wait for the frame to end, handling screen updates and optionally update input. */
+	void endFrame(bool doInput);
+
+
+	// -- Sound --
+
+	/** Load all sounds that can be played interactively in the game. */
+	void loadSounds(const char * const *sounds, uint soundCount);
+	/** Free all loaded sound. */
+	void freeSounds();
+
+	/** Play a loaded sound. */
+	void playSound(uint sound, int16 frequency = 0, int16 repCount = 0);
+	/** Stop all sound playback. */
+	void stopSound();
+
+	/** Play a sound until it ends or is interrupted by a keypress. */
+	void playSoundFile(const Common::String &file, int16 frequency = 0, int16 repCount = 0, bool interruptible = true);
+
+
+	// -- Input --
+
+	/** Check mouse and keyboard input. */
+	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
+	/** Wait for mouse or keyboard input. */
+	int16 waitInput (int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
+	/** Wait for mouse or keyboard input, but don't care about what was done with the mouse. */
+	int16 waitInput();
+	/** Did we have mouse or keyboard input? */
+	bool  hasInput();
+
+
+	// -- TXT helpers --
+
+	/** Get the name of a localized file. */
 	Common::String getLocFile(const Common::String &file) const;
+	/** Open a TXT file. */
 	TXTFile *loadTXT(const Common::String &txtFile, TXTFile::Format format) const;
 
+	/** Called by loadTXT() to fix strings within the TXT file. */
 	virtual void fixTXTStrings(TXTFile &txt) const;
 
 
 	GobEngine *_vm;
 
 private:
+	/** Load a sound file. */
 	bool loadSound(SoundDesc &sound, const Common::String &file) const;
 
 
-	bool _fadedOut; ///< Did we fade out?
+	/** Did we fade out? */
+	bool _fadedOut;
 
+	/** All loaded sounds. */
 	Common::Array<SoundDesc> _sounds;
 };
 

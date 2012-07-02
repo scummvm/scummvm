@@ -132,8 +132,17 @@ const char *OnceUpon::kSound[kSoundMAX] = {
 };
 
 
-OnceUpon::OnceUpon(GobEngine *vm) : PreGob(vm), _jeudak(0), _lettre(0), _plettre(0), _glettre(0),
-	_openedArchives(false), _animalsButton(0) {
+OnceUpon::ScreenBackup::ScreenBackup() : palette(-1), changedCursor(false), cursorVisible(false) {
+	screen = new Surface(320, 200, 1);
+}
+
+OnceUpon::ScreenBackup::~ScreenBackup() {
+	delete screen;
+}
+
+
+OnceUpon::OnceUpon(GobEngine *vm) : PreGob(vm), _openedArchives(false),
+	_jeudak(0), _lettre(0), _plettre(0), _glettre(0) {
 
 }
 
@@ -144,6 +153,8 @@ OnceUpon::~OnceUpon() {
 void OnceUpon::init() {
 	deinit();
 
+	// Open data files
+
 	bool hasSTK1 = _vm->_dataIO->openArchive("stk1.stk", true);
 	bool hasSTK2 = _vm->_dataIO->openArchive("stk2.stk", true);
 	bool hasSTK3 = _vm->_dataIO->openArchive("stk3.stk", true);
@@ -152,6 +163,8 @@ void OnceUpon::init() {
 		error("OnceUpon::OnceUpon(): Failed to open archives");
 
 	_openedArchives = true;
+
+	// Open fonts
 
 	_jeudak  = _vm->_draw->loadFont("jeudak.let");
 	_lettre  = _vm->_draw->loadFont("lettre.let");
@@ -162,6 +175,8 @@ void OnceUpon::init() {
 		error("OnceUpon::OnceUpon(): Failed to fonts (%d, %d, %d, %d)",
 		      _jeudak != 0, _lettre != 0, _plettre != 0, _glettre != 0);
 
+	// Verify the language
+
 	if (_vm->_global->_language == kLanguageAmerican)
 		_vm->_global->_language = kLanguageBritish;
 
@@ -171,16 +186,24 @@ void OnceUpon::init() {
 		      "please contact the ScummVM team with details about this version.\n"
 		      "Thanks", _vm->getLangDesc(_vm->_global->_language));
 
-	loadSounds(kSound, kSoundMAX);
+	// Load all our sounds and init the screen
 
+	loadSounds(kSound, kSoundMAX);
 	initScreen();
 
+	// We start with an invalid palette
+	_palette = -1;
+
+	// We start with no selected difficulty and at section 0
 	_difficulty = kDifficultyMAX;
 	_section    = 0;
 }
 
 void OnceUpon::deinit() {
+	// Free sounds
 	freeSounds();
+
+	// Free fonts
 
 	delete _jeudak;
 	delete _lettre;
@@ -192,6 +215,8 @@ void OnceUpon::deinit() {
 	_plettre = 0;
 	_glettre = 0;
 
+	// Close archives
+
 	if (_openedArchives) {
 		_vm->_dataIO->closeArchive(true);
 		_vm->_dataIO->closeArchive(true);
@@ -201,17 +226,11 @@ void OnceUpon::deinit() {
 	_openedArchives = false;
 }
 
-void OnceUpon::setAnimalsButton(const MenuButton *animalsButton) {
-	_animalsButton = animalsButton;
-}
-
-void OnceUpon::setCopyProtectionPalette() {
-	setPalette(kCopyProtectionPalette, kPaletteSize);
-}
-
 void OnceUpon::setGamePalette(uint palette) {
 	if (palette >= kPaletteCount)
 		return;
+
+	_palette = palette;
 
 	setPalette(kGamePalettes[palette], kPaletteSize);
 }
@@ -219,9 +238,101 @@ void OnceUpon::setGamePalette(uint palette) {
 void OnceUpon::setGameCursor() {
 	Surface cursor(320, 16, 1);
 
+	// Set the default game cursor
 	_vm->_video->drawPackedSprite("icon.cmp", cursor);
-
 	setCursor(cursor, 105, 0, 120, 15, 0, 0);
+}
+
+void OnceUpon::setAnimState(ANIObject &ani, uint16 state, bool once, bool pause) const {
+	ani.setAnimation(state);
+	ani.setMode(once ? ANIObject::kModeOnce : ANIObject::kModeContinuous);
+	ani.setPause(pause);
+	ani.setVisible(true);
+	ani.setPosition();
+}
+
+void OnceUpon::drawLineByLine(const Surface &src, int16 left, int16 top, int16 right, int16 bottom,
+                              int16 x, int16 y) const {
+
+	// A special way of drawing something:
+	// Draw every other line "downwards", wait a bit after each line
+	// Then, draw the remaining lines "upwards" and again wait a bit after each line.
+
+	if (_vm->shouldQuit())
+		return;
+
+	const int16 width  = right  - left + 1;
+	const int16 height = bottom - top  + 1;
+
+	if ((width <= 0) || (height <= 0))
+		return;
+
+	// Draw the even lines downwards
+	for (int16 i = 0; i < height; i += 2) {
+		if (_vm->shouldQuit())
+			return;
+
+		_vm->_draw->_backSurface->blit(src, left, top + i, right, top + i, x, y + i);
+
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, x, y + i, x + width - 1, y + 1);
+		_vm->_draw->blitInvalidated();
+
+		_vm->_util->longDelay(1);
+	}
+
+	// Draw the odd lines upwards
+	for (int16 i = (height & 1) ? height : (height - 1); i >= 0; i -= 2) {
+		if (_vm->shouldQuit())
+			return;
+
+		_vm->_draw->_backSurface->blit(src, left, top + i, right, top + i, x, y + i);
+
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, x, y + i, x + width - 1, y + 1);
+		_vm->_draw->blitInvalidated();
+
+		_vm->_util->longDelay(1);
+	}
+}
+
+void OnceUpon::backupScreen(ScreenBackup &backup, bool setDefaultCursor) {
+	// Backup the screen and palette
+	backup.screen->blit(*_vm->_draw->_backSurface);
+	backup.palette = _palette;
+
+	// Backup the cursor
+
+	backup.cursorVisible = isCursorVisible();
+
+	backup.changedCursor = false;
+	if (setDefaultCursor) {
+		backup.changedCursor = true;
+
+		addCursor();
+		setGameCursor();
+	}
+}
+
+void OnceUpon::restoreScreen(ScreenBackup &backup) {
+	if (_vm->shouldQuit())
+		return;
+
+	// Restore the screen
+	_vm->_draw->_backSurface->blit(*backup.screen);
+	_vm->_draw->forceBlit();
+
+	// Restore the palette
+	if (backup.palette >= 0)
+		setGamePalette(backup.palette);
+
+	// Restore the cursor
+
+	if (!backup.cursorVisible)
+		hideCursor();
+
+	if (backup.changedCursor)
+		removeCursor();
+
+	backup.changedCursor = false;
 }
 
 void OnceUpon::fixTXTStrings(TXTFile &txt) const {
@@ -251,18 +362,22 @@ enum CopyProtectionState {
 
 bool OnceUpon::doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4]) {
 	fadeOut();
-	setCopyProtectionPalette();
+	setPalette(kCopyProtectionPalette, kPaletteSize);
 
+	// Load the copy protection sprites
 	Surface sprites[2] = {Surface(320, 200, 1), Surface(320, 200, 1)};
 
 	_vm->_video->drawPackedSprite("grille1.cmp", sprites[0]);
 	_vm->_video->drawPackedSprite("grille2.cmp", sprites[1]);
 
+	// Load the clown animation
 	ANIFile   ani  (_vm, "grille.ani", 320);
 	ANIObject clown(ani);
 
+	// Set the copy protection cursor
 	setCursor(sprites[1], 5, 110, 20, 134, 3, 0);
 
+	// We start with 2 tries left, not having a correct answer and the copy protection not set up yet
 	CopyProtectionState state = kCPStateSetup;
 
 	uint8 triesLeft   =  2;
@@ -423,31 +538,6 @@ void OnceUpon::cpWrong() {
 	clearScreen();
 }
 
-void OnceUpon::setAnimState(ANIObject &ani, uint16 state, bool once, bool pause) const {
-	ani.setAnimation(state);
-	ani.setMode(once ? ANIObject::kModeOnce : ANIObject::kModeContinuous);
-	ani.setPause(pause);
-	ani.setVisible(true);
-	ani.setPosition();
-}
-
-void OnceUpon::showWait(uint palette) {
-	// Show the loading floppy
-
-	fadeOut();
-	clearScreen();
-	setGamePalette(palette);
-
-	Surface wait(320, 43, 1);
-
-	_vm->_video->drawPackedSprite("wait.cmp", wait);
-	_vm->_draw->_backSurface->blit(wait, 0, 0, 72, 33, 122, 84);
-
-	_vm->_draw->forceBlit();
-
-	fadeIn();
-}
-
 void OnceUpon::showIntro() {
 	// Show all intro parts
 
@@ -473,6 +563,23 @@ void OnceUpon::showIntro() {
 
 	// "Loading"
 	showWait(17);
+}
+
+void OnceUpon::showWait(uint palette) {
+	// Show the loading floppy
+
+	fadeOut();
+	clearScreen();
+	setGamePalette(palette);
+
+	Surface wait(320, 43, 1);
+
+	_vm->_video->drawPackedSprite("wait.cmp", wait);
+	_vm->_draw->_backSurface->blit(wait, 0, 0, 72, 33, 122, 84);
+
+	_vm->_draw->forceBlit();
+
+	fadeIn();
 }
 
 void OnceUpon::showQuote() {
@@ -534,6 +641,8 @@ void OnceUpon::showTitle() {
 }
 
 void OnceUpon::playTitleMusic() {
+	// Look at what platform this is and play the appropriate music type
+
 	if      (_vm->getPlatform() == Common::kPlatformPC)
 		playTitleMusicDOS();
 	else if (_vm->getPlatform() == Common::kPlatformAmiga)
@@ -571,6 +680,8 @@ void OnceUpon::playTitleMusicAtariST() {
 }
 
 void OnceUpon::stopTitleMusic() {
+	// Just stop everything
+
 	_vm->_sound->adlibSetRepeating(0);
 	_vm->_sound->blasterRepeatComposition(0);
 
@@ -625,55 +736,29 @@ void OnceUpon::showByeBye() {
 	fadeOut();
 }
 
-OnceUpon::MenuAction OnceUpon::doMenu(MenuType type) {
-	bool cursorVisible = isCursorVisible();
+void OnceUpon::doStartMenu(const MenuButton *animalsButton, uint animalCount,
+                           const MenuButton *animalButtons, const char * const *animalNames) {
+	clearScreen();
 
-	// Set the cursor
-	addCursor();
-	setGameCursor();
+	// Wait until we clicked on of the difficulty buttons and are ready to start playing
+	while (!_vm->shouldQuit()) {
+		MenuAction action = handleStartMenu(animalsButton);
+		if (action == kMenuActionPlay)
+			break;
 
-	// Backup the screen
-	Surface screenBackup(320, 200, 1);
-	screenBackup.blit(*_vm->_draw->_backSurface);
-
-	// Handle the specific menu
-	MenuAction action;
-	if      (type == kMenuTypeMainStart)
-		action = doMenuMainStart();
-	else if (type == kMenuTypeMainIngame)
-		action = doMenuMainIngame();
-	else if (type == kMenuTypeIngame)
-		action = doMenuIngame();
-	else
-		error("OnceUpon::doMenu(): No such menu %d", type);
-
-	if (_vm->shouldQuit())
-		return action;
-
-	// The ingame menu cleans itself up in a special way
-	if (type == kMenuTypeIngame)
-		clearMenuIngame(screenBackup);
-
-	// The main menus fade out
-	if ((type == kMenuTypeMainStart) || (type == kMenuTypeMainIngame))
-		fadeOut();
-
-	// Restore the screen
-	_vm->_draw->_backSurface->blit(screenBackup);
-	_vm->_draw->forceBlit();
-
-	// Restore the cursor
-	if (!cursorVisible)
-		hideCursor();
-	removeCursor();
-
-	return action;
+		// If we pressed the "listen to animal names" button, handle that screen
+		if (action == kMenuActionAnimals)
+			handleAnimalNames(animalCount, animalButtons, animalNames);
+	}
 }
 
-OnceUpon::MenuAction OnceUpon::doMenuMainStart() {
+OnceUpon::MenuAction OnceUpon::handleStartMenu(const MenuButton *animalsButton) {
+	ScreenBackup screenBackup;
+	backupScreen(screenBackup, true);
+
 	fadeOut();
 	setGamePalette(17);
-	drawMenuMainStart();
+	drawStartMenu(animalsButton);
 	showCursor();
 	fadeIn();
 
@@ -702,22 +787,28 @@ OnceUpon::MenuAction OnceUpon::doMenuMainStart() {
 			_difficulty = (Difficulty)diff;
 			action      = kMenuActionPlay;
 
-			drawMenuMainStart();
+			drawStartMenu(animalsButton);
 			_vm->_util->longDelay(1000);
 		}
 
-		if (_animalsButton && (checkButton(_animalsButton, 1, mouseX, mouseY) != -1))
+		if (animalsButton && (checkButton(animalsButton, 1, mouseX, mouseY) != -1))
 			action = kMenuActionAnimals;
 
 	}
 
+	fadeOut();
+	restoreScreen(screenBackup);
+
 	return action;
 }
 
-OnceUpon::MenuAction OnceUpon::doMenuMainIngame() {
+OnceUpon::MenuAction OnceUpon::handleMainMenu() {
+	ScreenBackup screenBackup;
+	backupScreen(screenBackup, true);
+
 	fadeOut();
 	setGamePalette(17);
-	drawMenuMainIngame();
+	drawMainMenu();
 	showCursor();
 	fadeIn();
 
@@ -745,7 +836,7 @@ OnceUpon::MenuAction OnceUpon::doMenuMainIngame() {
 		if ((diff >= 0) && (diff != (int)_difficulty)) {
 			_difficulty = (Difficulty)diff;
 
-			drawMenuMainIngame();
+			drawMainMenu();
 		}
 
 		// If we clicked on a section button, restart the game from this section
@@ -757,11 +848,17 @@ OnceUpon::MenuAction OnceUpon::doMenuMainIngame() {
 
 	}
 
+	fadeOut();
+	restoreScreen(screenBackup);
+
 	return action;
 }
 
-OnceUpon::MenuAction OnceUpon::doMenuIngame() {
-	drawMenuIngame();
+OnceUpon::MenuAction OnceUpon::handleIngameMenu() {
+	ScreenBackup screenBackup;
+	backupScreen(screenBackup, true);
+
+	drawIngameMenu();
 	showCursor();
 
 	MenuAction action = kMenuActionNone;
@@ -791,20 +888,23 @@ OnceUpon::MenuAction OnceUpon::doMenuIngame() {
 
 	}
 
+	clearIngameMenu(*screenBackup.screen);
+	restoreScreen(screenBackup);
+
 	return action;
 }
 
-void OnceUpon::drawMenuMainStart() {
+void OnceUpon::drawStartMenu(const MenuButton *animalsButton) {
 	// Draw the background
 	_vm->_video->drawPackedSprite("menu2.cmp", *_vm->_draw->_backSurface);
 
 	// Draw the "Listen to animal names" button
-	if (_animalsButton) {
+	if (animalsButton) {
 		Surface elements(320, 38, 1);
 		_vm->_video->drawPackedSprite("elemenu.cmp", elements);
-		_vm->_draw->_backSurface->fillRect(_animalsButton->left , _animalsButton->top,
-		                                   _animalsButton->right, _animalsButton->bottom, 0);
-		drawButton(*_vm->_draw->_backSurface, elements, *_animalsButton);
+		_vm->_draw->_backSurface->fillRect(animalsButton->left , animalsButton->top,
+		                                   animalsButton->right, animalsButton->bottom, 0);
+		drawButton(*_vm->_draw->_backSurface, elements, *animalsButton);
 	}
 
 	// Highlight the current difficulty
@@ -813,7 +913,7 @@ void OnceUpon::drawMenuMainStart() {
 	_vm->_draw->forceBlit();
 }
 
-void OnceUpon::drawMenuMainIngame() {
+void OnceUpon::drawMainMenu() {
 	// Draw the background
 	_vm->_video->drawPackedSprite("menu.cmp", *_vm->_draw->_backSurface);
 
@@ -837,11 +937,11 @@ void OnceUpon::drawMenuMainIngame() {
 	_vm->_draw->forceBlit();
 }
 
-void OnceUpon::drawMenuIngame() {
+void OnceUpon::drawIngameMenu() {
 	Surface menu(320, 34, 1);
 	_vm->_video->drawPackedSprite("icon.cmp", menu);
 
-	// Draw the menu in a special way
+	// Draw the menu in a special way, button by button
 	for (uint i = 0; i < ARRAYSIZE(kIngameButtons); i++) {
 		const MenuButton &button = kIngameButtons[i];
 
@@ -863,16 +963,15 @@ void OnceUpon::drawMenuDifficulty() {
 	difficulties->draw((uint) _difficulty, *_vm->_draw->_backSurface, &_plettre, 1);
 
 	// Draw a border around the current difficulty
-	_vm->_draw->_backSurface->drawRect(kMainMenuDifficultyButton[_difficulty].left,
-	                                   kMainMenuDifficultyButton[_difficulty].top,
-	                                   kMainMenuDifficultyButton[_difficulty].right,
-	                                   kMainMenuDifficultyButton[_difficulty].bottom,
-	                                   difficulties->getLines()[_difficulty].color);
+	drawButtonBorder(kMainMenuDifficultyButton[_difficulty], difficulties->getLines()[_difficulty].color);
 
 	delete difficulties;
 }
 
-void OnceUpon::clearMenuIngame(const Surface &background) {
+void OnceUpon::clearIngameMenu(const Surface &background) {
+	if (_vm->shouldQuit())
+		return;
+
 	// Find the area encompassing the whole ingame menu
 
 	int16 left   = 0x7FFF;
@@ -900,6 +999,8 @@ void OnceUpon::clearMenuIngame(const Surface &background) {
 }
 
 int OnceUpon::checkButton(const MenuButton *buttons, uint count, int16 x, int16 y, int failValue) const {
+	// Look through all buttons, and return the ID of the button we're in
+
 	for (uint i = 0; i < count; i++) {
 		const MenuButton &button = buttons[i];
 
@@ -907,6 +1008,7 @@ int OnceUpon::checkButton(const MenuButton *buttons, uint count, int16 x, int16 
 			return (int)button.id;
 	}
 
+	// We're in none of these buttons, return the fail value
 	return failValue;
 }
 
@@ -931,12 +1033,12 @@ void OnceUpon::drawButtonBorder(const MenuButton &button, uint8 color) {
 }
 
 enum AnimalNamesState {
-	kANStateChoose,
-	kANStateNames,
-	kANStateFinish
+	kANStateChoose, // We're in the animal chooser
+	kANStateNames,  // We're in the language chooser
+	kANStateFinish  // We're finished
 };
 
-void OnceUpon::doAnimalNames(uint count, const MenuButton *buttons, const char * const *names) {
+void OnceUpon::handleAnimalNames(uint count, const MenuButton *buttons, const char * const *names) {
 	fadeOut();
 	clearScreen();
 	setGamePalette(19);
@@ -1100,45 +1202,8 @@ void OnceUpon::anPlayAnimalName(const Common::String &animal, uint language) {
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 78, 123, 239, 145);
 }
 
-void OnceUpon::drawLineByLine(const Surface &src, int16 left, int16 top, int16 right, int16 bottom,
-                              int16 x, int16 y) const {
-
-	// A special way of drawing something:
-	// Draw every other line "downwards", wait a bit after each line
-	// Then, draw the remaining lines "upwards" and again wait a bit after each line.
-
-	if (_vm->shouldQuit())
-		return;
-
-	const int16 width  = right  - left + 1;
-	const int16 height = bottom - top  + 1;
-
-	if ((width <= 0) || (height <= 0))
-		return;
-
-	for (int16 i = 0; i < height; i += 2) {
-		if (_vm->shouldQuit())
-			return;
-
-		_vm->_draw->_backSurface->blit(src, left, top + i, right, top + i, x, y + i);
-
-		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, x, y + i, x + width - 1, y + 1);
-		_vm->_draw->blitInvalidated();
-
-		_vm->_util->longDelay(1);
-	}
-
-	for (int16 i = (height & 1) ? height : (height - 1); i >= 0; i -= 2) {
-		if (_vm->shouldQuit())
-			return;
-
-		_vm->_draw->_backSurface->blit(src, left, top + i, right, top + i, x, y + i);
-
-		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, x, y + i, x + width - 1, y + 1);
-		_vm->_draw->blitInvalidated();
-
-		_vm->_util->longDelay(1);
-	}
+void OnceUpon::playGame() {
+	warning("OnceUpon::playGame(): TODO");
 }
 
 } // End of namespace OnceUpon

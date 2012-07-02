@@ -80,7 +80,6 @@ const char *Abracadabra::kAnimalNames[] = {
 
 
 Abracadabra::Abracadabra(GobEngine *vm) : OnceUpon(vm) {
-	setAnimalsButton(&kAnimalsButtons);
 }
 
 Abracadabra::~Abracadabra() {
@@ -99,28 +98,13 @@ void Abracadabra::run() {
 	if (_vm->shouldQuit())
 		return;
 
-	mainLoop();
+	// Handle the start menu
+	doStartMenu(&kAnimalsButtons, ARRAYSIZE(kAnimalButtons), kAnimalButtons, kAnimalNames);
+	if (_vm->shouldQuit())
+		return;
 
-	if (!_vm->shouldQuit())
-		showByeBye();
-}
-
-void Abracadabra::mainLoop() {
-	clearScreen();
-
-	MenuType mainMenu = kMenuTypeMainStart;
-
-	while (!_vm->shouldQuit()) {
-		MenuAction action = doMenu(mainMenu);
-		if      (action == kMenuActionPlay)
-			warning("Abracadabra::mainLoop(): TODO: Play");
-		else if (action == kMenuActionRestart)
-			warning("Abracadabra::mainLoop(): TODO: Restart");
-		else if (action == kMenuActionAnimals)
-			doAnimalNames(ARRAYSIZE(kAnimalButtons), kAnimalButtons, kAnimalNames);
-		else if (action == kMenuActionQuit)
-			break;
-	}
+	// Play the actual game
+	playGame();
 }
 
 } // End of namespace OnceUpon

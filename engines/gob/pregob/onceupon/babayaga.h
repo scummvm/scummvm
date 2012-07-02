@@ -37,13 +37,13 @@ public:
 	void run();
 
 private:
+	/** Definition of the menu button that leads to the animal names screen. */
 	static const MenuButton kAnimalsButtons;
 
+	/** Definition of the buttons that make up the animals in the animal names screen. */
 	static const MenuButton kAnimalButtons[];
+	/** File prefixes for the name of each animal. */
 	static const char *kAnimalNames[];
-
-
-	void mainLoop();
 };
 
 } // End of namespace OnceUpon

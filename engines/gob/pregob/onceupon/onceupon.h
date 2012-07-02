@@ -38,18 +38,67 @@ namespace OnceUpon {
 
 class OnceUpon : public PreGob {
 public:
+	/** Number of languages we support. */
 	static const uint kLanguageCount = 5;
+
 
 	OnceUpon(GobEngine *vm);
 	~OnceUpon();
 
+
 protected:
-	enum MenuType {
-		kMenuTypeMainStart  = 0, ///< The big main menu at game start.
-		kMenuTypeMainIngame,     ///< The big main menu during the game.
-		kMenuTypeIngame          ///< The small popup menu during the game.
+	/** A description of a menu button. */
+	struct MenuButton {
+		bool needDraw; ///< Does the button need drawing?
+
+		int16 left;   ///< Left   coordinate of the button.
+		int16 top;    ///< Top    coordinate of the button.
+		int16 right;  ///< Right  coordinate of the button.
+		int16 bottom; ///< Bottom coordinate of the button.
+
+		int16 srcLeft;   ///< Left  coordinate of the button's sprite.
+		int16 srcTop;    ///< Top   coordinate of the button's sprite.
+		int16 srcRight;  ///< Right coordinate of the button's sprite.
+		int16 srcBottom; ///< Right coordinate of the button's sprite.
+
+		int16 dstX; ///< Destination X coordinate of the button's sprite.
+		int16 dstY; ///< Destination Y coordinate of the button's sprite.
+
+		uint id; ///< The button's ID.
 	};
 
+
+	void init();
+	void deinit();
+
+	/** Handle the copy protection.
+	 *
+	 *  @param  colors    Colors the copy protection animals can be.
+	 *  @param  shapes    The shape that's the correct answer for each animal in each color.
+	 *  @param  obfuscate Extra obfuscate table. correctShape = shapes[colors][obfuscate[animal]].
+	 *  @return true if the user guessed the correct shape, false otherwise.
+	 */
+	bool doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4]);
+
+	/** Show the intro. */
+	void showIntro();
+
+	/** Handle the start menu.
+	 *
+	 *  @param animalsButton Definition of the menu button that leads to the animal names screen. Can be 0.
+	 *  @param animalCount   Number of animals in the animal names screen.
+	 *  @param animalButtons Definition of the buttons that make up the animals in the animal names screen.
+	 *  @param animalNames   File prefixes for the name of each animal.
+	 */
+	void doStartMenu(const MenuButton *animalsButton, uint animalCount,
+	                 const MenuButton *animalButtons, const char * const *animalNames);
+
+	/** Play the game proper. */
+	void playGame();
+
+
+private:
+	/** All actions a user can request in a menu. */
 	enum MenuAction {
 		kMenuActionNone = 0, ///< No action.
 		kMenuActionAnimals , ///< Do the animal names.
@@ -59,6 +108,7 @@ protected:
 		kMenuActionQuit      ///< Quit the game.
 	};
 
+	/** Difficulty levels. */
 	enum Difficulty {
 		kDifficultyBeginner     = 0,
 		kDifficultyIntermediate = 1,
@@ -66,49 +116,136 @@ protected:
 		kDifficultyMAX
 	};
 
+	/** The different sounds common in the game. */
 	enum Sound {
 		kSoundClick = 0,
 		kSoundMAX
 	};
 
-	struct MenuButton {
-		bool needDraw;
-		int16 left, top, right, bottom;
-		int16 srcLeft, srcTop, srcRight, srcBottom;
-		int16 dstX, dstY;
-		uint id;
+	/** A complete screen backup. */
+	struct ScreenBackup {
+		Surface *screen; ///< Screen contents.
+		int palette;     ///< Screen palette.
+
+		bool changedCursor; ///< Did we change the cursor?
+		bool cursorVisible; ///< Was the cursor visible?
+
+		ScreenBackup();
+		~ScreenBackup();
 	};
 
+
+	/** The number of game sections. */
 	static const uint kSectionCount = 15;
 
+	static const MenuButton kMainMenuDifficultyButton[]; ///< Difficulty buttons.
+	static const MenuButton kSectionButtons[];           ///< Section buttons.
 
-	void init();
-	void deinit();
+	static const MenuButton kIngameButtons[];            ///< Ingame menu buttons.
 
-	void setAnimalsButton(const MenuButton *animalsButton);
+	static const MenuButton kAnimalNamesBack;   ///< "Back" button in the animal names screens.
+	static const MenuButton kLanguageButtons[]; ///< Language buttons in the animal names screen.
 
-	void setGamePalette(uint palette);
-	void setGameCursor();
+	/** All general game sounds we know about. */
+	static const char *kSound[kSoundMAX];
 
-	Common::String fixString(const Common::String &str) const;
-	void fixTXTStrings(TXTFile &txt) const;
 
-	bool doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4]);
+	// -- General helpers --
 
-	void showWait(uint palette = 0xFFFF);  ///< Show the wait / loading screen.
-	void showIntro();                      ///< Show the whole intro.
+	void setGamePalette(uint palette); ///< Set a game palette.
+	void setGameCursor();              ///< Set the default game cursor.
 
-	void showChapter(int chapter); ///< Show a chapter intro text.
+	/** Set the state of an ANIObject. */
+	void setAnimState(ANIObject &ani, uint16 state, bool once, bool pause) const;
 
-	void showByeBye(); ///< Show the "bye bye" screen
-
-	MenuAction doMenu(MenuType type);
-
-	void doAnimalNames(uint count, const MenuButton *buttons, const char * const *names);
-
+	/** Draw this sprite in a fancy, animated line-by-line way. */
 	void drawLineByLine(const Surface &src, int16 left, int16 top, int16 right, int16 bottom,
 	                    int16 x, int16 y) const;
 
+	/** Backup the screen contents. */
+	void backupScreen(ScreenBackup &backup, bool setDefaultCursor = false);
+	/** Restore the screen contents with a previously made backup. */
+	void restoreScreen(ScreenBackup &backup);
+
+	Common::String fixString(const Common::String &str) const; ///< Fix a string if necessary.
+	void fixTXTStrings(TXTFile &txt) const;                    ///< Fix all strings in a TXT.
+
+
+	// -- Copy protection helpers --
+
+	/** Set up the copy protection. */
+	int8 cpSetup(const uint8 colors[7], const uint8 shapes[7 * 20],
+	             const uint8 obfuscate[4], const Surface sprites[2]);
+	/** Find the shape under these coordinates. */
+	int8 cpFindShape(int16 x, int16 y) const;
+	/** Display the "You are wrong" screen. */
+	void cpWrong();
+
+
+	// -- Show different game screens --
+
+	void showWait(uint palette = 0xFFFF); ///< Show the wait / loading screen.
+	void showQuote();                     ///< Show the quote about fairytales.
+	void showTitle();                     ///< Show the Once Upon A Time title.
+	void showChapter(int chapter);        ///< Show a chapter intro text.
+	void showByeBye();                    ///< Show the "bye bye" screen.
+
+	/** Handle the "listen to animal names" part. */
+	void handleAnimalNames(uint count, const MenuButton *buttons, const char * const *names);
+
+
+	// -- Title music helpers --
+
+	void playTitleMusic();        ///< Play the title music.
+	void playTitleMusicDOS();     ///< Play the title music of the DOS      version.
+	void playTitleMusicAmiga();   ///< Play the title music of the Amiga    version.
+	void playTitleMusicAtariST(); ///< Play the title music of the Atari ST version.
+	void stopTitleMusic();        ///< Stop the title music.
+
+
+	// -- Menu helpers --
+
+	MenuAction handleStartMenu(const MenuButton *animalsButton); ///< Handle the start  menu.
+	MenuAction handleMainMenu();                                 ///< Handle the main   menu.
+	MenuAction handleIngameMenu();                               ///< Handle the ingame menu.
+
+	void drawStartMenu(const MenuButton *animalsButton); ///< Draw the start  menu.
+	void drawMainMenu();                                 ///< Draw the main   menu.
+	void drawIngameMenu();                               ///< Draw the ingame menu.
+
+	/** Draw the difficulty label. */
+	void drawMenuDifficulty();
+
+	/** Clear the ingame menu in an animated way. */
+	void clearIngameMenu(const Surface &background);
+
+
+	// -- Menu button helpers --
+
+	/** Find the button under these coordinates. */
+	int checkButton(const MenuButton *buttons, uint count, int16 x, int16 y, int failValue = -1) const;
+
+	/** Draw a menu button. */
+	void drawButton (Surface &dest, const Surface &src, const MenuButton &button) const;
+	/** Draw multiple menu buttons. */
+	void drawButtons(Surface &dest, const Surface &src, const MenuButton *buttons, uint count) const;
+
+	/** Draw a border around a button. */
+	void drawButtonBorder(const MenuButton &button, uint8 color);
+
+
+	// -- Animal names helpers --
+
+	/** Set up the animal chooser. */
+	void anSetupChooser();
+	/** Set up the language chooser for one animal. */
+	void anSetupNames(const MenuButton &animal);
+	/** Play / Display the name of an animal in one language. */
+	void anPlayAnimalName(const Common::String &animal, uint language);
+
+
+	/** Did we open the game archives? */
+	bool _openedArchives;
 
 	// Fonts
 	Font *_jeudak;
@@ -116,65 +253,11 @@ protected:
 	Font *_plettre;
 	Font *_glettre;
 
-	Difficulty _difficulty;
-	uint8      _section;
+	/** The current palette. */
+	int _palette;
 
-private:
-	static const MenuButton kMainMenuDifficultyButton[];
-	static const MenuButton kSectionButtons[];
-	static const MenuButton kIngameButtons[];
-
-	static const MenuButton kAnimalNamesBack;
-	static const MenuButton kLanguageButtons[];
-
-	static const char *kSound[kSoundMAX];
-
-
-	void setCopyProtectionPalette();
-
-	void setAnimState(ANIObject &ani, uint16 state, bool once, bool pause) const;
-
-	// Copy protection helpers
-	int8 cpSetup(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4], const Surface sprites[2]);
-	int8 cpFindShape(int16 x, int16 y) const;
-	void cpWrong();
-
-	// Intro parts
-	void showQuote();
-	void showTitle();
-
-	// Title music
-	void playTitleMusic();
-	void playTitleMusicDOS();
-	void playTitleMusicAmiga();
-	void playTitleMusicAtariST();
-	void stopTitleMusic();
-
-	// Menu helpers
-	MenuAction doMenuMainStart();
-	MenuAction doMenuMainIngame();
-	MenuAction doMenuIngame();
-
-	void drawMenuMainStart();
-	void drawMenuMainIngame();
-	void drawMenuIngame();
-	void drawMenuDifficulty();
-
-	void clearMenuIngame(const Surface &background);
-
-	int checkButton(const MenuButton *buttons, uint count, int16 x, int16 y, int failValue = -1) const;
-	void drawButton(Surface &dest, const Surface &src, const MenuButton &button) const;
-	void drawButtons(Surface &dest, const Surface &src, const MenuButton *buttons, uint count) const;
-	void drawButtonBorder(const MenuButton &button, uint8 color);
-
-	// Animal names helpers
-	void anSetupChooser();
-	void anSetupNames(const MenuButton &animal);
-	void anPlayAnimalName(const Common::String &animal, uint language);
-
-	bool _openedArchives;
-
-	const MenuButton *_animalsButton;
+	Difficulty _difficulty; ///< The current difficulty.
+	uint8      _section;    ///< The current game section.
 };
 
 } // End of namespace OnceUpon
