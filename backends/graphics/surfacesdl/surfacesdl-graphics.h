@@ -216,10 +216,13 @@ protected:
 
 	/** Temporary screen (for scalers) */
 	SDL_Surface *_tmpscreen;
+	/** Previous frame's screen (for scalers) */
+	SDL_Surface *_oldscreen;
 	/** Temporary screen (for scalers) */
 	SDL_Surface *_tmpscreen2;
 
 	SDL_Surface *_overlayscreen;
+	bool _useOldSrc;
 	Graphics::PixelFormat _overlayFormat;
 
 	enum {
