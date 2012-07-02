@@ -1601,6 +1601,9 @@ void RMPointer::updateCursor() {
 
 	// If in black & white mode, convert the cursor
 	if (GLOBALS._bCfgAnni30) {
+		if (!RMGfxTargetBuffer::_precalcTable) {
+			RMGfxTargetBuffer::createBWPrecalcTable();
+		}
 		uint16 *src = (uint16 *)cursorData;
 		for (int i = 0; i < 64; i++) {
 			uint16 *lineP = src;
