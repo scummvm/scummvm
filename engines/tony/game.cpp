@@ -1604,7 +1604,7 @@ void RMPointer::updateCursor() {
 		uint16 *src = (uint16 *)cursorData;
 		for (int i = 0; i < 64; i++) {
 			uint16 *lineP = src;
-			for (int j = 0; j < 64; j++, lineP) {
+			for (int j = 0; j < 64; j++) {
 				lineP[j] = RMGfxTargetBuffer::_precalcTable[lineP[j] & 0x7FFF];
 			}
 			src += 64;
