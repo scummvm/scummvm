@@ -757,13 +757,26 @@ bool Kernel::debugSetFunction(const char *kernelName, int logging, int breakpoin
 	return true;
 }
 
-void Kernel::setDefaultKernelNames(GameFeatures *features) {
-	_kernelNames = Common::StringArray(s_defaultKernelNames, ARRAYSIZE(s_defaultKernelNames));
+#ifdef ENABLE_SCI32
+enum {
+	kKernelEntriesSci2 = 0x8b,
+	kKernelEntriesGk2Demo = 0xa0,
+	kKernelEntriesSci21 = 0x9d,
+	kKernelEntriesSci3 = 0xa1
+};
+#endif
 
-	// Some (later) SCI versions replaced CanBeHere by CantBeHere
-	// If vocab.999 exists, the kernel function is still named CanBeHere
-	if (_selectorCache.cantBeHere != -1)
-		_kernelNames[0x4d] = "CantBeHere";
+void Kernel::loadKernelNames(GameFeatures *features) {
+	_kernelNames.clear();
+
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		_kernelNames = Common::StringArray(s_defaultKernelNames, ARRAYSIZE(s_defaultKernelNames));
+
+		// Some (later) SCI versions replaced CanBeHere by CantBeHere
+		// If vocab.999 exists, the kernel function is still named CanBeHere
+		if (_selectorCache.cantBeHere != -1)
+			_kernelNames[0x4d] = "CantBeHere";
+	}
 
 	switch (getSciVersion()) {
 	case SCI_VERSION_0_EARLY:
@@ -817,66 +830,60 @@ void Kernel::setDefaultKernelNames(GameFeatures *features) {
 			_kernelNames[0x7c] = "Message";
 		break;
 
+#ifdef ENABLE_SCI32
+	case SCI_VERSION_2:
+		_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesSci2);
+		break;
+
+	case SCI_VERSION_2_1:
+		if (features->detectSci21KernelType() == SCI_VERSION_2) {
+			// Some late SCI2.1 games use a modified SCI2 kernel table instead of
+			// the SCI2.1 kernel table. We detect which version to use based on
+			// how kDoSound is called from Sound::play().
+			// Known games that use this:
+			// GK2 demo
+			// KQ7 1.4
+			// PQ4 SWAT demo
+			// LSL6
+			// PQ4CD
+			// QFG4CD
+
+			// This is interesting because they all have the same interpreter
+			// version (2.100.002), yet they would not be compatible with other
+			// games of the same interpreter.
+
+			_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesGk2Demo);
+			// OnMe is IsOnMe here, but they should be compatible
+			_kernelNames[0x23] = "Robot"; // Graph in SCI2
+			_kernelNames[0x2e] = "Priority"; // DisposeTextBitmap in SCI2
+		} else {
+			// Normal SCI2.1 kernel table
+			_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci21);
+		}
+		break;
+
+	case SCI_VERSION_3:
+		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci3);
+
+		// In SCI3, some kernel functions have been removed, and others have been added
+		_kernelNames[0x18] = "Dummy";	// AddMagnify in SCI2.1
+		_kernelNames[0x19] = "Dummy";	// DeleteMagnify in SCI2.1
+		_kernelNames[0x30] = "Dummy";	// SetScroll in SCI2.1
+		_kernelNames[0x39] = "Dummy";	// ShowMovie in SCI2.1
+		_kernelNames[0x4c] = "Dummy";	// ScrollWindow in SCI2.1
+		_kernelNames[0x56] = "Dummy";	// VibrateMouse in SCI2.1 (only used in QFG4 floppy)
+		_kernelNames[0x64] = "Dummy";	// AvoidPath in SCI2.1
+		_kernelNames[0x66] = "Dummy";	// MergePoly in SCI2.1
+		_kernelNames[0x8d] = "MessageBox";	// Dummy in SCI2.1
+		_kernelNames[0x9b] = "Minimize";	// Dummy in SCI2.1
+
+		break;
+#endif
+
 	default:
 		// Use default table for the other versions
 		break;
 	}
-}
-
-#ifdef ENABLE_SCI32
-
-enum {
-	kKernelEntriesSci2 = 0x8b,
-	kKernelEntriesGk2Demo = 0xa0,
-	kKernelEntriesSci21 = 0x9d,
-	kKernelEntriesSci3 = 0xa1
-};
-
-void Kernel::setKernelNamesSci2() {
-	_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesSci2);
-}
-
-void Kernel::setKernelNamesSci21(GameFeatures *features) {
-	// Some SCI games use a modified SCI2 kernel table instead of the
-	// SCI2.1 kernel table. We detect which version to use based on
-	// how kDoSound is called from Sound::play().
-	// Known games that use this:
-	// GK2 demo
-	// KQ7 1.4
-	// PQ4 SWAT demo
-	// LSL6
-	// PQ4CD
-	// QFG4CD
-
-	// This is interesting because they all have the same interpreter
-	// version (2.100.002), yet they would not be compatible with other
-	// games of the same interpreter.
-
-	if (getSciVersion() != SCI_VERSION_3 && features->detectSci21KernelType() == SCI_VERSION_2) {
-		_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesGk2Demo);
-		// OnMe is IsOnMe here, but they should be compatible
-		_kernelNames[0x23] = "Robot"; // Graph in SCI2
-		_kernelNames[0x2e] = "Priority"; // DisposeTextBitmap in SCI2
-	} else if (getSciVersion() != SCI_VERSION_3) {
-		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci21);
-	} else if (getSciVersion() == SCI_VERSION_3) {
-		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci3);
-	}
-}
-
-#endif
-
-void Kernel::loadKernelNames(GameFeatures *features) {
-	_kernelNames.clear();
-
-#ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1)
-		setKernelNamesSci21(features);
-	else if (getSciVersion() == SCI_VERSION_2)
-		setKernelNamesSci2();
-	else
-#endif
-		setDefaultKernelNames(features);
 
 	mapFunctions();
 }

@@ -1099,7 +1099,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x8a*/ "LoadChunk",
 	/*0x8b*/ "SetPalStyleRange",
 	/*0x8c*/ "AddPicAt",
-	/*0x8d*/ "MessageBox",	// SCI3, was Dummy in SCI2.1
+	/*0x8d*/ "Dummy",	// MessageBox in SCI3
 	/*0x8e*/ "NewRoom",		// debug function
 	/*0x8f*/ "Dummy",
 	/*0x90*/ "Priority",
@@ -1113,7 +1113,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x98*/ "GetWindowsOption", // Windows only
 	/*0x99*/ "WinDLL", // Windows only
 	/*0x9a*/ "Dummy",
-	/*0x9b*/ "Minimize",	// SCI3, was Dummy in SCI2.1
+	/*0x9b*/ "Dummy",	// Minimize in SCI3
 	/*0x9c*/ "DeletePic",
 	// == SCI3 only ===============
 	/*0x9d*/ "Dummy",
