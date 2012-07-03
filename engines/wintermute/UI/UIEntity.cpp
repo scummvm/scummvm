@@ -256,10 +256,10 @@ HRESULT CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetEntity
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetEntity") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (_entity) stack->PushNative(_entity, true);
-		else stack->PushNULL();
+		if (_entity) stack->pushNative(_entity, true);
+		else stack->pushNULL();
 
 		return S_OK;
 	}
@@ -268,14 +268,14 @@ HRESULT CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetEntity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetEntity") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
-		const char *Filename = stack->Pop()->GetString();
+		const char *Filename = stack->pop()->GetString();
 
 		if (SUCCEEDED(setEntity(Filename)))
-			stack->PushBool(true);
+			stack->pushBool(true);
 		else
-			stack->PushBool(false);
+			stack->pushBool(false);
 
 		return S_OK;
 	}

@@ -381,9 +381,9 @@ HRESULT CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// SizeToFit
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SizeToFit") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		SizeToFit();
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -391,9 +391,9 @@ HRESULT CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// HeightToFit
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HeightToFit") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (_font && _text) _height = _font->getTextHeight((byte *)_text, _width);
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 

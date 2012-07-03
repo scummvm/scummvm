@@ -512,12 +512,12 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetFrame
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetFrame") == 0) {
-		stack->CorrectParams(1);
-		int Index = stack->Pop()->GetInt(-1);
+		stack->correctParams(1);
+		int Index = stack->pop()->GetInt(-1);
 		if (Index < 0 || Index >= _frames.GetSize()) {
 			script->RuntimeError("Sprite.GetFrame: Frame index %d is out of range.", Index);
-			stack->PushNULL();
-		} else stack->PushNative(_frames[Index], true);
+			stack->pushNULL();
+		} else stack->pushNative(_frames[Index], true);
 		return S_OK;
 	}
 
@@ -525,8 +525,8 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// DeleteFrame
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteFrame") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 		if (Val->IsInt()) {
 			int Index = Val->GetInt(-1);
 			if (Index < 0 || Index >= _frames.GetSize()) {
@@ -543,7 +543,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 				}
 			}
 		}
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -551,9 +551,9 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// Reset
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Reset") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		Reset();
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -561,8 +561,8 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// AddFrame
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddFrame") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
@@ -576,7 +576,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		}
 		_frames.Add(Frame);
 
-		stack->PushNative(Frame, true);
+		stack->pushNative(Frame, true);
 		return S_OK;
 	}
 
@@ -584,11 +584,11 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// InsertFrame
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertFrame") == 0) {
-		stack->CorrectParams(2);
-		int Index = stack->Pop()->GetInt();
+		stack->correctParams(2);
+		int Index = stack->pop()->GetInt();
 		if (Index < 0) Index = 0;
 
-		CScValue *Val = stack->Pop();
+		CScValue *Val = stack->pop();
 		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
@@ -602,7 +602,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (Index >= _frames.GetSize()) _frames.Add(Frame);
 		else _frames.InsertAt(Index, Frame);
 
-		stack->PushNative(Frame, true);
+		stack->pushNative(Frame, true);
 		return S_OK;
 	}
 
@@ -610,9 +610,9 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// Pause
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Pause") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		_paused = true;
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -620,9 +620,9 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// Play
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Play") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		_paused = false;
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 

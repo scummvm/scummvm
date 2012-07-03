@@ -671,16 +671,16 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetDisabledFont
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetDisabledFont") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		if (_fontDisable) Game->_fontStorage->RemoveFont(_fontDisable);
 		if (Val->IsNULL()) {
 			_fontDisable = NULL;
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			_fontDisable = Game->_fontStorage->AddFont(Val->GetString());
-			stack->PushBool(_fontDisable != NULL);
+			stack->pushBool(_fontDisable != NULL);
 		}
 		return S_OK;
 	}
@@ -689,16 +689,16 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetHoverFont
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetHoverFont") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
 		if (Val->IsNULL()) {
 			_fontHover = NULL;
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			_fontHover = Game->_fontStorage->AddFont(Val->GetString());
-			stack->PushBool(_fontHover != NULL);
+			stack->pushBool(_fontHover != NULL);
 		}
 		return S_OK;
 	}
@@ -707,16 +707,16 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetPressedFont
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetPressedFont") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		if (_fontPress) Game->_fontStorage->RemoveFont(_fontPress);
 		if (Val->IsNULL()) {
 			_fontPress = NULL;
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			_fontPress = Game->_fontStorage->AddFont(Val->GetString());
-			stack->PushBool(_fontPress != NULL);
+			stack->pushBool(_fontPress != NULL);
 		}
 		return S_OK;
 	}
@@ -725,16 +725,16 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetFocusedFont
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetFocusedFont") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		if (_fontFocus) Game->_fontStorage->RemoveFont(_fontFocus);
 		if (Val->IsNULL()) {
 			_fontFocus = NULL;
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			_fontFocus = Game->_fontStorage->AddFont(Val->GetString());
-			stack->PushBool(_fontFocus != NULL);
+			stack->pushBool(_fontFocus != NULL);
 		}
 		return S_OK;
 	}
@@ -743,16 +743,16 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetDisabledImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetDisabledImage") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
 		delete _imageDisable;
 		_imageDisable = new CBSprite(Game);
-		const char *Filename = stack->Pop()->GetString();
+		const char *Filename = stack->pop()->GetString();
 		if (!_imageDisable || FAILED(_imageDisable->loadFile(Filename))) {
 			delete _imageDisable;
 			_imageDisable = NULL;
-			stack->PushBool(false);
-		} else stack->PushBool(true);
+			stack->pushBool(false);
+		} else stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -761,9 +761,9 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetDisabledImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetDisabledImage") == 0) {
-		stack->CorrectParams(0);
-		if (!_imageDisable || !_imageDisable->_filename) stack->PushNULL();
-		else stack->PushString(_imageDisable->_filename);
+		stack->correctParams(0);
+		if (!_imageDisable || !_imageDisable->_filename) stack->pushNULL();
+		else stack->pushString(_imageDisable->_filename);
 
 		return S_OK;
 	}
@@ -772,9 +772,9 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetDisabledImageObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetDisabledImageObject") == 0) {
-		stack->CorrectParams(0);
-		if (!_imageDisable) stack->PushNULL();
-		else stack->PushNative(_imageDisable, true);
+		stack->correctParams(0);
+		if (!_imageDisable) stack->pushNULL();
+		else stack->pushNative(_imageDisable, true);
 
 		return S_OK;
 	}
@@ -784,16 +784,16 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetHoverImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetHoverImage") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
 		delete _imageHover;
 		_imageHover = new CBSprite(Game);
-		const char *Filename = stack->Pop()->GetString();
+		const char *Filename = stack->pop()->GetString();
 		if (!_imageHover || FAILED(_imageHover->loadFile(Filename))) {
 			delete _imageHover;
 			_imageHover = NULL;
-			stack->PushBool(false);
-		} else stack->PushBool(true);
+			stack->pushBool(false);
+		} else stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -802,9 +802,9 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetHoverImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetHoverImage") == 0) {
-		stack->CorrectParams(0);
-		if (!_imageHover || !_imageHover->_filename) stack->PushNULL();
-		else stack->PushString(_imageHover->_filename);
+		stack->correctParams(0);
+		if (!_imageHover || !_imageHover->_filename) stack->pushNULL();
+		else stack->pushString(_imageHover->_filename);
 
 		return S_OK;
 	}
@@ -813,9 +813,9 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetHoverImageObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetHoverImageObject") == 0) {
-		stack->CorrectParams(0);
-		if (!_imageHover) stack->PushNULL();
-		else stack->PushNative(_imageHover, true);
+		stack->correctParams(0);
+		if (!_imageHover) stack->pushNULL();
+		else stack->pushNative(_imageHover, true);
 
 		return S_OK;
 	}
@@ -824,16 +824,16 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetPressedImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetPressedImage") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
 		delete _imagePress;
 		_imagePress = new CBSprite(Game);
-		const char *Filename = stack->Pop()->GetString();
+		const char *Filename = stack->pop()->GetString();
 		if (!_imagePress || FAILED(_imagePress->loadFile(Filename))) {
 			delete _imagePress;
 			_imagePress = NULL;
-			stack->PushBool(false);
-		} else stack->PushBool(true);
+			stack->pushBool(false);
+		} else stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -842,9 +842,9 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetPressedImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetPressedImage") == 0) {
-		stack->CorrectParams(0);
-		if (!_imagePress || !_imagePress->_filename) stack->PushNULL();
-		else stack->PushString(_imagePress->_filename);
+		stack->correctParams(0);
+		if (!_imagePress || !_imagePress->_filename) stack->pushNULL();
+		else stack->pushString(_imagePress->_filename);
 
 		return S_OK;
 	}
@@ -853,9 +853,9 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetPressedImageObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetPressedImageObject") == 0) {
-		stack->CorrectParams(0);
-		if (!_imagePress) stack->PushNULL();
-		else stack->PushNative(_imagePress, true);
+		stack->correctParams(0);
+		if (!_imagePress) stack->pushNULL();
+		else stack->pushNative(_imagePress, true);
 
 		return S_OK;
 	}
@@ -864,16 +864,16 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetFocusedImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetFocusedImage") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
 		delete _imageFocus;
 		_imageFocus = new CBSprite(Game);
-		const char *Filename = stack->Pop()->GetString();
+		const char *Filename = stack->pop()->GetString();
 		if (!_imageFocus || FAILED(_imageFocus->loadFile(Filename))) {
 			delete _imageFocus;
 			_imageFocus = NULL;
-			stack->PushBool(false);
-		} else stack->PushBool(true);
+			stack->pushBool(false);
+		} else stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -882,9 +882,9 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetFocusedImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFocusedImage") == 0) {
-		stack->CorrectParams(0);
-		if (!_imageFocus || !_imageFocus->_filename) stack->PushNULL();
-		else stack->PushString(_imageFocus->_filename);
+		stack->correctParams(0);
+		if (!_imageFocus || !_imageFocus->_filename) stack->pushNULL();
+		else stack->pushString(_imageFocus->_filename);
 
 		return S_OK;
 	}
@@ -893,9 +893,9 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetFocusedImageObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFocusedImageObject") == 0) {
-		stack->CorrectParams(0);
-		if (!_imageFocus) stack->PushNULL();
-		else stack->PushNative(_imageFocus, true);
+		stack->correctParams(0);
+		if (!_imageFocus) stack->pushNULL();
+		else stack->pushNative(_imageFocus, true);
 
 		return S_OK;
 	}
@@ -904,13 +904,13 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// Press
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Press") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
 		if (_visible && !_disable) {
 			_oneTimePress = true;
 			_oneTimePressTime = CBPlatform::GetTime();
 		}
-		stack->PushNULL();
+		stack->pushNULL();
 
 		return S_OK;
 	}

@@ -216,14 +216,14 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// AddPoint
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "AddPoint") == 0) {
-		stack->CorrectParams(2);
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
+		stack->correctParams(2);
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
 
 		_points.Add(new CBPoint(X, Y));
 		CreateRegion();
 
-		stack->PushBool(true);
+		stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -232,17 +232,17 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// InsertPoint
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertPoint") == 0) {
-		stack->CorrectParams(3);
-		int Index = stack->Pop()->GetInt();
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
+		stack->correctParams(3);
+		int Index = stack->pop()->GetInt();
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
 
 		if (Index >= 0 && Index < _points.GetSize()) {
 			_points.InsertAt(Index, new CBPoint(X, Y));
 			CreateRegion();
 
-			stack->PushBool(true);
-		} else stack->PushBool(false);
+			stack->pushBool(true);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -251,18 +251,18 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SetPoint
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetPoint") == 0) {
-		stack->CorrectParams(3);
-		int Index = stack->Pop()->GetInt();
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
+		stack->correctParams(3);
+		int Index = stack->pop()->GetInt();
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
 
 		if (Index >= 0 && Index < _points.GetSize()) {
 			_points[Index]->x = X;
 			_points[Index]->y = Y;
 			CreateRegion();
 
-			stack->PushBool(true);
-		} else stack->PushBool(false);
+			stack->pushBool(true);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -271,8 +271,8 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// RemovePoint
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemovePoint") == 0) {
-		stack->CorrectParams(1);
-		int Index = stack->Pop()->GetInt();
+		stack->correctParams(1);
+		int Index = stack->pop()->GetInt();
 
 		if (Index >= 0 && Index < _points.GetSize()) {
 			delete _points[Index];
@@ -281,8 +281,8 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			_points.RemoveAt(Index);
 			CreateRegion();
 
-			stack->PushBool(true);
-		} else stack->PushBool(false);
+			stack->pushBool(true);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -291,16 +291,16 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetPoint
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetPoint") == 0) {
-		stack->CorrectParams(1);
-		int Index = stack->Pop()->GetInt();
+		stack->correctParams(1);
+		int Index = stack->pop()->GetInt();
 
 		if (Index >= 0 && Index < _points.GetSize()) {
-			CScValue *Val = stack->GetPushValue();
+			CScValue *Val = stack->getPushValue();
 			if (Val) {
 				Val->SetProperty("X", _points[Index]->x);
 				Val->SetProperty("Y", _points[Index]->y);
 			}
-		} else stack->PushNULL();
+		} else stack->pushNULL();
 
 		return S_OK;
 	}

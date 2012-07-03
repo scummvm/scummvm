@@ -348,10 +348,10 @@ HRESULT CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 	// GetImage
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetImage") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (!_surfaceFilename) stack->PushNULL();
-		else stack->PushString(_surfaceFilename);
+		if (!_surfaceFilename) stack->pushNULL();
+		else stack->pushString(_surfaceFilename);
 		return S_OK;
 	}
 
@@ -359,20 +359,20 @@ HRESULT CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 	// SetImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetImage") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		if (Val->IsNULL()) {
 			if (_surface) Game->_surfaceStorage->removeSurface(_surface);
 			delete[] _surfaceFilename;
 			_surfaceFilename = NULL;
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			const char *Filename = Val->GetString();
 			if (SUCCEEDED(setSurface(Filename))) {
 				setDefaultRect();
-				stack->PushBool(true);
-			} else stack->PushBool(false);
+				stack->pushBool(true);
+			} else stack->pushBool(false);
 		}
 
 		return S_OK;

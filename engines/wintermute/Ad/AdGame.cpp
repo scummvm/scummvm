@@ -321,22 +321,22 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// ChangeScene
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "ChangeScene") == 0) {
-		stack->CorrectParams(3);
-		const char *Filename = stack->Pop()->GetString();
-		CScValue *valFadeOut = stack->Pop();
-		CScValue *valFadeIn = stack->Pop();
+		stack->correctParams(3);
+		const char *Filename = stack->pop()->GetString();
+		CScValue *valFadeOut = stack->pop();
+		CScValue *valFadeIn = stack->pop();
 
 		bool TransOut = valFadeOut->IsNULL() ? true : valFadeOut->GetBool();
 		bool TransIn  = valFadeIn->IsNULL() ? true : valFadeIn->GetBool();
 
 		ScheduleChangeScene(Filename, TransIn);
 		if (TransOut) _transMgr->start(TRANSITION_FADE_OUT, true);
-		stack->PushNULL();
+		stack->pushNULL();
 
 
-		//HRESULT ret = ChangeScene(stack->Pop()->GetString());
-		//if(FAILED(ret)) stack->PushBool(false);
-		//else stack->PushBool(true);
+		//HRESULT ret = ChangeScene(stack->pop()->GetString());
+		//if(FAILED(ret)) stack->pushBool(false);
+		//else stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -345,15 +345,15 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// LoadActor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadActor") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 		CAdActor *act = new CAdActor(Game);
-		if (act && SUCCEEDED(act->loadFile(stack->Pop()->GetString()))) {
+		if (act && SUCCEEDED(act->loadFile(stack->pop()->GetString()))) {
 			AddObject(act);
-			stack->PushNative(act, true);
+			stack->pushNative(act, true);
 		} else {
 			delete act;
 			act = NULL;
-			stack->PushNULL();
+			stack->pushNULL();
 		}
 		return S_OK;
 	}
@@ -362,15 +362,15 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// LoadEntity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadEntity") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 		CAdEntity *ent = new CAdEntity(Game);
-		if (ent && SUCCEEDED(ent->loadFile(stack->Pop()->GetString()))) {
+		if (ent && SUCCEEDED(ent->loadFile(stack->pop()->GetString()))) {
 			AddObject(ent);
-			stack->PushNative(ent, true);
+			stack->pushNative(ent, true);
 		} else {
 			delete ent;
 			ent = NULL;
-			stack->PushNULL();
+			stack->pushNULL();
 		}
 		return S_OK;
 	}
@@ -379,13 +379,13 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// UnloadObject / UnloadActor / UnloadEntity / DeleteEntity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "DeleteEntity") == 0) {
-		stack->CorrectParams(1);
-		CScValue *val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *val = stack->pop();
 		CAdObject *obj = (CAdObject *)val->GetNative();
 		RemoveObject(obj);
 		if (val->GetType() == VAL_VARIABLE_REF) val->SetNULL();
 
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -393,13 +393,13 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// CreateEntity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateEntity") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdEntity *Ent = new CAdEntity(Game);
 		AddObject(Ent);
 		if (!Val->IsNULL()) Ent->setName(Val->GetString());
-		stack->PushNative(Ent, true);
+		stack->pushNative(Ent, true);
 		return S_OK;
 	}
 
@@ -407,13 +407,13 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// CreateItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateItem") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdItem *Item = new CAdItem(Game);
 		AddItem(Item);
 		if (!Val->IsNULL()) Item->setName(Val->GetString());
-		stack->PushNative(Item, true);
+		stack->pushNative(Item, true);
 		return S_OK;
 	}
 
@@ -421,8 +421,8 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// DeleteItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteItem") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdItem *Item = NULL;
 		if (Val->IsNative()) Item = (CAdItem *)Val->GetNative();
@@ -432,7 +432,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			DeleteItem(Item);
 		}
 
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -440,8 +440,8 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// QueryItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "QueryItem") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdItem *Item = NULL;
 		if (Val->IsInt()) {
@@ -451,8 +451,8 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			Item = GetItemByName(Val->GetString());
 		}
 
-		if (Item) stack->PushNative(Item, true);
-		else stack->PushNULL();
+		if (Item) stack->pushNative(Item, true);
+		else stack->pushNULL();
 
 		return S_OK;
 	}
@@ -462,13 +462,13 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// AddResponse/AddResponseOnce/AddResponseOnceGame
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddResponse") == 0 || strcmp(name, "AddResponseOnce") == 0 || strcmp(name, "AddResponseOnceGame") == 0) {
-		stack->CorrectParams(6);
-		int id = stack->Pop()->GetInt();
-		const char *text = stack->Pop()->GetString();
-		CScValue *val1 = stack->Pop();
-		CScValue *val2 = stack->Pop();
-		CScValue *val3 = stack->Pop();
-		CScValue *val4 = stack->Pop();
+		stack->correctParams(6);
+		int id = stack->pop()->GetInt();
+		const char *text = stack->pop()->GetString();
+		CScValue *val1 = stack->pop();
+		CScValue *val2 = stack->pop();
+		CScValue *val3 = stack->pop();
+		CScValue *val4 = stack->pop();
 
 		if (_responseBox) {
 			CAdResponse *res = new CAdResponse(Game);
@@ -489,7 +489,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		} else {
 			script->RuntimeError("Game.AddResponse: response box is not defined");
 		}
-		stack->PushNULL();
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -498,10 +498,10 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// ResetResponse
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ResetResponse") == 0) {
-		stack->CorrectParams(1);
-		int ID = stack->Pop()->GetInt(-1);
+		stack->correctParams(1);
+		int ID = stack->pop()->GetInt(-1);
 		ResetResponse(ID);
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -509,10 +509,10 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// ClearResponses
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ClearResponses") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		_responseBox->clearResponses();
 		_responseBox->clearButtons();
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -520,20 +520,20 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// GetResponse
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetResponse") == 0) {
-		stack->CorrectParams(1);
-		bool AutoSelectLast = stack->Pop()->GetBool();
+		stack->correctParams(1);
+		bool AutoSelectLast = stack->pop()->GetBool();
 
 		if (_responseBox) {
 			_responseBox->weedResponses();
 
 			if (_responseBox->_responses.GetSize() == 0) {
-				stack->PushNULL();
+				stack->pushNULL();
 				return S_OK;
 			}
 
 
 			if (_responseBox->_responses.GetSize() == 1 && AutoSelectLast) {
-				stack->PushInt(_responseBox->_responses[0]->_iD);
+				stack->pushInt(_responseBox->_responses[0]->_iD);
 				_responseBox->handleResponse(_responseBox->_responses[0]);
 				_responseBox->clearResponses();
 				return S_OK;
@@ -546,7 +546,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			_stateEx = GAME_WAITING_RESPONSE;
 		} else {
 			script->RuntimeError("Game.GetResponse: response box is not defined");
-			stack->PushNULL();
+			stack->pushNULL();
 		}
 		return S_OK;
 	}
@@ -556,13 +556,13 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// GetNumResponses
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetNumResponses") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (_responseBox) {
 			_responseBox->weedResponses();
-			stack->PushInt(_responseBox->_responses.GetSize());
+			stack->pushInt(_responseBox->_responses.GetSize());
 		} else {
 			script->RuntimeError("Game.GetNumResponses: response box is not defined");
-			stack->PushNULL();
+			stack->pushNULL();
 		}
 		return S_OK;
 	}
@@ -572,15 +572,15 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// StartDlgBranch
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StartDlgBranch") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 		Common::String BranchName;
 		if (Val->IsNULL()) {
 			BranchName.format("line%d", script->_currentLine);
 		} else BranchName = Val->GetString();
 
 		StartDlgBranch(BranchName.c_str(), script->_filename == NULL ? "" : script->_filename, script->_threadEvent == NULL ? "" : script->_threadEvent);
-		stack->PushNULL();
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -589,14 +589,14 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// EndDlgBranch
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EndDlgBranch") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
 		const char *BranchName = NULL;
-		CScValue *Val = stack->Pop();
+		CScValue *Val = stack->pop();
 		if (!Val->IsNULL()) BranchName = Val->GetString();
 		EndDlgBranch(BranchName, script->_filename == NULL ? "" : script->_filename, script->_threadEvent == NULL ? "" : script->_threadEvent);
 
-		stack->PushNULL();
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -605,11 +605,11 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// GetCurrentDlgBranch
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetCurrentDlgBranch") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
 		if (_dlgPendingBranches.GetSize() > 0) {
-			stack->PushString(_dlgPendingBranches[_dlgPendingBranches.GetSize() - 1]);
-		} else stack->PushNULL();
+			stack->pushString(_dlgPendingBranches[_dlgPendingBranches.GetSize() - 1]);
+		} else stack->pushNULL();
 
 		return S_OK;
 	}
@@ -646,26 +646,26 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// IsItemTaken
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsItemTaken") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
-		CScValue *val = stack->Pop();
+		CScValue *val = stack->pop();
 		if (!val->IsNULL()) {
 			for (int i = 0; i < _inventories.GetSize(); i++) {
 				CAdInventory *Inv = _inventories[i];
 
 				for (int j = 0; j < Inv->_takenItems.GetSize(); j++) {
 					if (val->GetNative() == Inv->_takenItems[j]) {
-						stack->PushBool(true);
+						stack->pushBool(true);
 						return S_OK;
 					} else if (scumm_stricmp(val->GetString(), Inv->_takenItems[j]->_name) == 0) {
-						stack->PushBool(true);
+						stack->pushBool(true);
 						return S_OK;
 					}
 				}
 			}
 		} else script->RuntimeError("Game.IsItemTaken: item name expected");
 
-		stack->PushBool(false);
+		stack->pushBool(false);
 		return S_OK;
 	}
 
@@ -673,11 +673,11 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// GetInventoryWindow
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetInventoryWindow") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (_inventoryBox && _inventoryBox->_window)
-			stack->PushNative(_inventoryBox->_window, true);
+			stack->pushNative(_inventoryBox->_window, true);
 		else
-			stack->PushNULL();
+			stack->pushNULL();
 
 		return S_OK;
 	}
@@ -686,11 +686,11 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// GetResponsesWindow
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetResponsesWindow") == 0 || strcmp(name, "GetResponseWindow") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (_responseBox && _responseBox->_window)
-			stack->PushNative(_responseBox->_window, true);
+			stack->pushNative(_responseBox->_window, true);
 		else
-			stack->PushNULL();
+			stack->pushNULL();
 
 		return S_OK;
 	}
@@ -699,18 +699,18 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// LoadResponseBox
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadResponseBox") == 0) {
-		stack->CorrectParams(1);
-		const char *Filename = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *Filename = stack->pop()->GetString();
 
 		Game->UnregisterObject(_responseBox);
 		_responseBox = new CAdResponseBox(Game);
 		if (_responseBox && !FAILED(_responseBox->loadFile(Filename))) {
 			RegisterObject(_responseBox);
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			delete _responseBox;
 			_responseBox = NULL;
-			stack->PushBool(false);
+			stack->pushBool(false);
 		}
 		return S_OK;
 	}
@@ -719,18 +719,18 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// LoadInventoryBox
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadInventoryBox") == 0) {
-		stack->CorrectParams(1);
-		const char *Filename = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *Filename = stack->pop()->GetString();
 
 		Game->UnregisterObject(_inventoryBox);
 		_inventoryBox = new CAdInventoryBox(Game);
 		if (_inventoryBox && !FAILED(_inventoryBox->loadFile(Filename))) {
 			RegisterObject(_inventoryBox);
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			delete _inventoryBox;
 			_inventoryBox = NULL;
-			stack->PushBool(false);
+			stack->pushBool(false);
 		}
 		return S_OK;
 	}
@@ -739,12 +739,12 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// LoadItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadItems") == 0) {
-		stack->CorrectParams(2);
-		const char *Filename = stack->Pop()->GetString();
-		bool Merge = stack->Pop()->GetBool(false);
+		stack->correctParams(2);
+		const char *Filename = stack->pop()->GetString();
+		bool Merge = stack->pop()->GetBool(false);
 
 		HRESULT Ret = LoadItemsFile(Filename, Merge);
-		stack->PushBool(SUCCEEDED(Ret));
+		stack->pushBool(SUCCEEDED(Ret));
 
 		return S_OK;
 	}
@@ -753,9 +753,9 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// AddSpeechDir
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddSpeechDir") == 0) {
-		stack->CorrectParams(1);
-		const char *Dir = stack->Pop()->GetString();
-		stack->PushBool(SUCCEEDED(AddSpeechDir(Dir)));
+		stack->correctParams(1);
+		const char *Dir = stack->pop()->GetString();
+		stack->pushBool(SUCCEEDED(AddSpeechDir(Dir)));
 
 		return S_OK;
 	}
@@ -764,9 +764,9 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// RemoveSpeechDir
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveSpeechDir") == 0) {
-		stack->CorrectParams(1);
-		const char *Dir = stack->Pop()->GetString();
-		stack->PushBool(SUCCEEDED(RemoveSpeechDir(Dir)));
+		stack->correctParams(1);
+		const char *Dir = stack->pop()->GetString();
+		stack->pushBool(SUCCEEDED(RemoveSpeechDir(Dir)));
 
 		return S_OK;
 	}
@@ -775,11 +775,11 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// SetSceneViewport
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetSceneViewport") == 0) {
-		stack->CorrectParams(4);
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
-		int Width = stack->Pop()->GetInt();
-		int Height = stack->Pop()->GetInt();
+		stack->correctParams(4);
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
+		int Width = stack->pop()->GetInt();
+		int Height = stack->pop()->GetInt();
 
 		if (Width <= 0) Width = _renderer->_width;
 		if (Height <= 0) Height = _renderer->_height;
@@ -787,7 +787,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (!_sceneViewport) _sceneViewport = new CBViewport(Game);
 		if (_sceneViewport) _sceneViewport->setRect(X, Y, X + Width, Y + Height);
 
-		stack->PushBool(true);
+		stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -1065,22 +1065,22 @@ HRESULT CAdGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *this
 	// Actor
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Actor") == 0) {
-		stack->CorrectParams(0);
-		this_obj = thisStack->GetTop();
+		stack->correctParams(0);
+		this_obj = thisStack->getTop();
 
 		this_obj->SetNative(new CAdActor(Game));
-		stack->PushNULL();
+		stack->pushNULL();
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Entity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Entity") == 0) {
-		stack->CorrectParams(0);
-		this_obj = thisStack->GetTop();
+		stack->correctParams(0);
+		this_obj = thisStack->getTop();
 
 		this_obj->SetNative(new CAdEntity(Game));
-		stack->PushNULL();
+		stack->pushNULL();
 	}
 
 
@@ -1520,12 +1520,12 @@ HRESULT CAdGame::WindowLoadHook(CUIWindow *Win, char **Buffer, char **params) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *script, CScStack *stack, const char *name) {
 	if (strcmp(name, "CreateEntityContainer") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CUIEntity *Ent = new CUIEntity(Game);
 		if (!Val->IsNULL()) Ent->setName(Val->GetString());
-		stack->PushNative(Ent, true);
+		stack->pushNative(Ent, true);
 
 		Ent->_parent = Win;
 		Win->_widgets.Add(Ent);

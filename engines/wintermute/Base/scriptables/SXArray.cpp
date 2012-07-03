@@ -45,15 +45,15 @@ CSXArray::CSXArray(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 	_length = 0;
 	_values = new CScValue(Game);
 
-	int NumParams = stack->Pop()->GetInt(0);
+	int NumParams = stack->pop()->GetInt(0);
 
-	if (NumParams == 1) _length = stack->Pop()->GetInt(0);
+	if (NumParams == 1) _length = stack->pop()->GetInt(0);
 	else if (NumParams > 1) {
 		_length = NumParams;
 		char ParamName[20];
 		for (int i = 0; i < NumParams; i++) {
 			sprintf(ParamName, "%d", i);
-			_values->SetProp(ParamName, stack->Pop());
+			_values->SetProp(ParamName, stack->pop());
 		}
 	}
 }
@@ -98,15 +98,15 @@ HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// Push
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Push") == 0) {
-		int NumParams = stack->Pop()->GetInt(0);
+		int NumParams = stack->pop()->GetInt(0);
 		char ParamName[20];
 
 		for (int i = 0; i < NumParams; i++) {
 			_length++;
 			sprintf(ParamName, "%d", _length - 1);
-			_values->SetProp(ParamName, stack->Pop(), true);
+			_values->SetProp(ParamName, stack->pop(), true);
 		}
-		stack->PushInt(_length);
+		stack->pushInt(_length);
 
 		return S_OK;
 	}
@@ -116,15 +116,15 @@ HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Pop") == 0) {
 
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
 		if (_length > 0) {
 			char ParamName[20];
 			sprintf(ParamName, "%d", _length - 1);
-			stack->Push(_values->GetProp(ParamName));
+			stack->push(_values->GetProp(ParamName));
 			_values->DeleteProp(ParamName);
 			_length--;
-		} else stack->PushNULL();
+		} else stack->pushNULL();
 
 		return S_OK;
 	}

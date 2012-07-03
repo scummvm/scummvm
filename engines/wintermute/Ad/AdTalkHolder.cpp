@@ -123,9 +123,9 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	// SetSprite
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetSprite") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
-		CScValue *Val = stack->Pop();
+		CScValue *Val = stack->pop();
 
 		bool SetCurrent = false;
 		if (_currentSprite && _currentSprite == _sprite) SetCurrent = true;
@@ -136,17 +136,17 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		if (Val->IsNULL()) {
 			_sprite = NULL;
 			if (SetCurrent) _currentSprite = NULL;
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			const char *Filename = Val->GetString();
 			CBSprite *spr = new CBSprite(Game, this);
 			if (!spr || FAILED(spr->loadFile(Filename))) {
 				script->RuntimeError("SetSprite method failed for file '%s'", Filename);
-				stack->PushBool(false);
+				stack->pushBool(false);
 			} else {
 				_sprite = spr;
 				if (SetCurrent) _currentSprite = _sprite;
-				stack->PushBool(true);
+				stack->pushBool(true);
 			}
 		}
 		return S_OK;
@@ -156,10 +156,10 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	// GetSprite
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSprite") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (!_sprite || !_sprite->_filename) stack->PushNULL();
-		else stack->PushString(_sprite->_filename);
+		if (!_sprite || !_sprite->_filename) stack->pushNULL();
+		else stack->pushString(_sprite->_filename);
 		return S_OK;
 	}
 
@@ -167,10 +167,10 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	// GetSpriteObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSpriteObject") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (!_sprite) stack->PushNULL();
-		else stack->PushNative(_sprite, true);
+		if (!_sprite) stack->pushNULL();
+		else stack->pushNative(_sprite, true);
 		return S_OK;
 	}
 
@@ -178,19 +178,19 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	// AddTalkSprite
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddTalkSprite") == 0) {
-		stack->CorrectParams(2);
+		stack->correctParams(2);
 
-		const char *Filename = stack->Pop()->GetString();
-		bool Ex = stack->Pop()->GetBool();
+		const char *Filename = stack->pop()->GetString();
+		bool Ex = stack->pop()->GetBool();
 
 		CBSprite *spr = new CBSprite(Game, this);
 		if (!spr || FAILED(spr->loadFile(Filename))) {
-			stack->PushBool(false);
+			stack->pushBool(false);
 			script->RuntimeError("AddTalkSprite method failed for file '%s'", Filename);
 		} else {
 			if (Ex) _talkSpritesEx.Add(spr);
 			else _talkSprites.Add(spr);
-			stack->PushBool(true);
+			stack->pushBool(true);
 		}
 		return S_OK;
 	}
@@ -199,10 +199,10 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	// RemoveTalkSprite
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveTalkSprite") == 0) {
-		stack->CorrectParams(2);
+		stack->correctParams(2);
 
-		const char *Filename = stack->Pop()->GetString();
-		bool Ex = stack->Pop()->GetBool();
+		const char *Filename = stack->pop()->GetString();
+		bool Ex = stack->pop()->GetBool();
 		int i;
 
 		bool SetCurrent = false;
@@ -231,7 +231,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 
 		}
 
-		stack->PushBool(true);
+		stack->pushBool(true);
 		if (SetCurrent) _currentSprite = _sprite;
 		if (SetTemp2) _tempSprite2 = _sprite;
 
@@ -242,16 +242,16 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	// SetTalkSprite
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetTalkSprite") == 0) {
-		stack->CorrectParams(2);
+		stack->correctParams(2);
 
-		const char *Filename = stack->Pop()->GetString();
-		bool Ex = stack->Pop()->GetBool();
+		const char *Filename = stack->pop()->GetString();
+		bool Ex = stack->pop()->GetBool();
 		bool SetCurrent = false;
 		bool SetTemp2 = false;
 
 		CBSprite *spr = new CBSprite(Game, this);
 		if (!spr || FAILED(spr->loadFile(Filename))) {
-			stack->PushBool(false);
+			stack->pushBool(false);
 			script->RuntimeError("SetTalkSprite method failed for file '%s'", Filename);
 		} else {
 
@@ -276,7 +276,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 			// set new
 			if (Ex) _talkSpritesEx.Add(spr);
 			else _talkSprites.Add(spr);
-			stack->PushBool(true);
+			stack->pushBool(true);
 
 			if (SetCurrent) _currentSprite = spr;
 			if (SetTemp2) _tempSprite2 = spr;

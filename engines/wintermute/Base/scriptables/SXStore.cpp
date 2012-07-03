@@ -89,39 +89,39 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// EnableEvents
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "EnableEvents") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		SetEventsEnabled(script, true);
-		stack->PushBool(GetEventsEnabled() == true);
+		stack->pushBool(GetEventsEnabled() == true);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// DisableEvents
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisableEvents") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		SetEventsEnabled(script, false);
-		stack->PushBool(GetEventsEnabled() == false);
+		stack->pushBool(GetEventsEnabled() == false);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ValidateProducts
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ValidateProducts") == 0) {
-		stack->CorrectParams(1);
-		const char *prodIdList = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *prodIdList = stack->pop()->GetString();
 		_lastProductRequestOwner = script->_owner;
 		ValidateProducts(prodIdList);
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetValidProduct
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetValidProduct") == 0) {
-		stack->CorrectParams(1);
-		int index = stack->Pop()->GetInt();
+		stack->correctParams(1);
+		int index = stack->pop()->GetInt();
 		if (index >= 0 && index < _validProducts.GetSize()) {
-			CScValue *prod = stack->GetPushValue();
+			CScValue *prod = stack->getPushValue();
 			if (prod) {
 				prod->SetProperty("Id", _validProducts[index]->GetId());
 				prod->SetProperty("Name", _validProducts[index]->GetName());
@@ -129,7 +129,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 				prod->SetProperty("Price", _validProducts[index]->GetPrice());
 			}
 		} else
-			stack->PushNULL();
+			stack->pushNULL();
 
 		return S_OK;
 	}
@@ -137,12 +137,12 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetInvalidProduct
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetInvalidProduct") == 0) {
-		stack->CorrectParams(1);
-		int index = stack->Pop()->GetInt();
+		stack->correctParams(1);
+		int index = stack->pop()->GetInt();
 		if (index >= 0 && index < _invalidProducts.size())
-			stack->PushString(_invalidProducts[index].c_str());
+			stack->pushString(_invalidProducts[index].c_str());
 		else
-			stack->PushNULL();
+			stack->pushNULL();
 
 		return S_OK;
 	}
@@ -150,17 +150,17 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetTransaction
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetTransaction") == 0) {
-		stack->CorrectParams(1);
-		int index = stack->Pop()->GetInt();
+		stack->correctParams(1);
+		int index = stack->pop()->GetInt();
 		if (index >= 0 && index < _transactions.GetSize()) {
-			CScValue *trans = stack->GetPushValue();
+			CScValue *trans = stack->getPushValue();
 			if (trans) {
 				trans->SetProperty("Id", _transactions[index]->GetId());
 				trans->SetProperty("ProductId", _transactions[index]->GetProductId());
 				trans->SetProperty("State", _transactions[index]->GetState());
 			}
 		} else
-			stack->PushNULL();
+			stack->pushNULL();
 
 		return S_OK;
 	}
@@ -168,9 +168,9 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// Purchase
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Purchase") == 0) {
-		stack->CorrectParams(1);
-		const char *prodId = stack->Pop()->GetString();
-		stack->PushBool(Purchase(script, prodId));
+		stack->correctParams(1);
+		const char *prodId = stack->pop()->GetString();
+		stack->pushBool(Purchase(script, prodId));
 
 		return S_OK;
 	}
@@ -178,9 +178,9 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// FinishTransaction
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FinishTransaction") == 0) {
-		stack->CorrectParams(1);
-		const char *transId = stack->Pop()->GetString();
-		stack->PushBool(FinishTransaction(script, transId));
+		stack->correctParams(1);
+		const char *transId = stack->pop()->GetString();
+		stack->pushBool(FinishTransaction(script, transId));
 
 		return S_OK;
 	}
@@ -188,9 +188,9 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// RestoreTransactions
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RestoreTransactions") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		RestoreTransactions(script);
-		stack->PushNULL();
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -199,13 +199,13 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// UnlockProduct
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UnlockProduct") == 0) {
-		stack->CorrectParams(1);
-		const char *prodId = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *prodId = stack->pop()->GetString();
 
 		Game->_registry->WriteBool("Purchases", prodId, true);
 		Game->_registry->SaveValues();
 
-		stack->PushBool(true);
+		stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -214,10 +214,10 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// IsProductUnlocked
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsProductUnlocked") == 0) {
-		stack->CorrectParams(1);
-		const char *prodId = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *prodId = stack->pop()->GetString();
 
-		stack->PushBool(Game->_registry->ReadBool("Purchases", prodId, false));
+		stack->pushBool(Game->_registry->ReadBool("Purchases", prodId, false));
 
 		return S_OK;
 	}

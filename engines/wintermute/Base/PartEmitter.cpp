@@ -421,13 +421,13 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// SetBorder
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetBorder") == 0) {
-		stack->CorrectParams(4);
-		int BorderX      = stack->Pop()->GetInt();
-		int BorderY      = stack->Pop()->GetInt();
-		int BorderWidth  = stack->Pop()->GetInt();
-		int BorderHeight = stack->Pop()->GetInt();
+		stack->correctParams(4);
+		int BorderX      = stack->pop()->GetInt();
+		int BorderY      = stack->pop()->GetInt();
+		int BorderWidth  = stack->pop()->GetInt();
+		int BorderHeight = stack->pop()->GetInt();
 
-		stack->PushBool(SUCCEEDED(setBorder(BorderX, BorderY, BorderWidth, BorderHeight)));
+		stack->pushBool(SUCCEEDED(setBorder(BorderX, BorderY, BorderWidth, BorderHeight)));
 
 		return S_OK;
 	}
@@ -435,13 +435,13 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// SetBorderThickness
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetBorderThickness") == 0) {
-		stack->CorrectParams(4);
-		int Left   = stack->Pop()->GetInt();
-		int Right  = stack->Pop()->GetInt();
-		int Top    = stack->Pop()->GetInt();
-		int Bottom = stack->Pop()->GetInt();
+		stack->correctParams(4);
+		int Left   = stack->pop()->GetInt();
+		int Right  = stack->pop()->GetInt();
+		int Top    = stack->pop()->GetInt();
+		int Bottom = stack->pop()->GetInt();
 
-		stack->PushBool(SUCCEEDED(setBorderThickness(Left, Right, Top, Bottom)));
+		stack->pushBool(SUCCEEDED(setBorderThickness(Left, Right, Top, Bottom)));
 
 		return S_OK;
 	}
@@ -449,9 +449,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// AddSprite
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddSprite") == 0) {
-		stack->CorrectParams(1);
-		const char *SpriteFile = stack->Pop()->GetString();
-		stack->PushBool(SUCCEEDED(addSprite(SpriteFile)));
+		stack->correctParams(1);
+		const char *SpriteFile = stack->pop()->GetString();
+		stack->pushBool(SUCCEEDED(addSprite(SpriteFile)));
 
 		return S_OK;
 	}
@@ -459,9 +459,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// RemoveSprite
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveSprite") == 0) {
-		stack->CorrectParams(1);
-		const char *SpriteFile = stack->Pop()->GetString();
-		stack->PushBool(SUCCEEDED(removeSprite(SpriteFile)));
+		stack->correctParams(1);
+		const char *SpriteFile = stack->pop()->GetString();
+		stack->pushBool(SUCCEEDED(removeSprite(SpriteFile)));
 
 		return S_OK;
 	}
@@ -470,9 +470,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// Start
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Start") == 0) {
-		stack->CorrectParams(1);
-		_overheadTime = stack->Pop()->GetInt();
-		stack->PushBool(SUCCEEDED(start()));
+		stack->correctParams(1);
+		_overheadTime = stack->pop()->GetInt();
+		stack->pushBool(SUCCEEDED(start()));
 
 		return S_OK;
 	}
@@ -481,7 +481,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// Stop
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Stop") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
 		for (int i = 0; i < _particles.GetSize(); i++) {
 			delete _particles[i];
@@ -489,7 +489,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		_particles.RemoveAll();
 
 		_running = false;
-		stack->PushBool(true);
+		stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -498,9 +498,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// Pause
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Pause") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		_running = false;
-		stack->PushBool(true);
+		stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -509,9 +509,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// Resume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Resume") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		_running = true;
-		stack->PushBool(true);
+		stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -520,12 +520,12 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// AddGlobalForce
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddGlobalForce") == 0) {
-		stack->CorrectParams(3);
-		const char *forceName = stack->Pop()->GetString();
-		float Angle = stack->Pop()->GetFloat();
-		float Strength = stack->Pop()->GetFloat();
+		stack->correctParams(3);
+		const char *forceName = stack->pop()->GetString();
+		float Angle = stack->pop()->GetFloat();
+		float Strength = stack->pop()->GetFloat();
 
-		stack->PushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, Angle, Strength)));
+		stack->pushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, Angle, Strength)));
 
 		return S_OK;
 	}
@@ -534,14 +534,14 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// AddPointForce
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddPointForce") == 0) {
-		stack->CorrectParams(5);
-		const char *forceName = stack->Pop()->GetString();
-		int PosX = stack->Pop()->GetInt();
-		int PosY = stack->Pop()->GetInt();
-		float Angle = stack->Pop()->GetFloat();
-		float Strength = stack->Pop()->GetFloat();
+		stack->correctParams(5);
+		const char *forceName = stack->pop()->GetString();
+		int PosX = stack->pop()->GetInt();
+		int PosY = stack->pop()->GetInt();
+		float Angle = stack->pop()->GetFloat();
+		float Strength = stack->pop()->GetFloat();
 
-		stack->PushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, PosX, PosY, Angle, Strength)));
+		stack->pushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, PosX, PosY, Angle, Strength)));
 
 		return S_OK;
 	}
@@ -550,10 +550,10 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	// RemoveForce
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveForce") == 0) {
-		stack->CorrectParams(1);
-		const char *forceName = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *forceName = stack->pop()->GetString();
 
-		stack->PushBool(SUCCEEDED(removeForce(forceName)));
+		stack->pushBool(SUCCEEDED(removeForce(forceName)));
 
 		return S_OK;
 	}

@@ -407,10 +407,10 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// GetSound
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetSound") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (_sound && _sound->_soundFilename) stack->PushString(_sound->_soundFilename);
-		else stack->PushNULL();
+		if (_sound && _sound->_soundFilename) stack->pushString(_sound->_soundFilename);
+		else stack->pushNULL();
 		return S_OK;
 	}
 
@@ -418,19 +418,19 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// SetSound
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetSound") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 		delete _sound;
 		_sound = NULL;
 
 		if (!Val->IsNULL()) {
 			_sound = new CBSound(Game);
 			if (!_sound || FAILED(_sound->setSound(Val->GetString(), SOUND_SFX, false))) {
-				stack->PushBool(false);
+				stack->pushBool(false);
 				delete _sound;
 				_sound = NULL;
-			} else stack->PushBool(true);
-		} else stack->PushBool(true);
+			} else stack->pushBool(true);
+		} else stack->pushBool(true);
 		return S_OK;
 	}
 
@@ -438,12 +438,12 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// GetSubframe
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetSubframe") == 0) {
-		stack->CorrectParams(1);
-		int Index = stack->Pop()->GetInt(-1);
+		stack->correctParams(1);
+		int Index = stack->pop()->GetInt(-1);
 		if (Index < 0 || Index >= _subframes.GetSize()) {
 			script->RuntimeError("Frame.GetSubframe: Subframe index %d is out of range.", Index);
-			stack->PushNULL();
-		} else stack->PushNative(_subframes[Index], true);
+			stack->pushNULL();
+		} else stack->pushNative(_subframes[Index], true);
 
 		return S_OK;
 	}
@@ -452,8 +452,8 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// DeleteSubframe
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteSubframe") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 		if (Val->IsInt()) {
 			int Index = Val->GetInt(-1);
 			if (Index < 0 || Index >= _subframes.GetSize()) {
@@ -469,7 +469,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 				}
 			}
 		}
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -477,8 +477,8 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// AddSubframe
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddSubframe") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
@@ -489,7 +489,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		}
 		_subframes.Add(Sub);
 
-		stack->PushNative(Sub, true);
+		stack->pushNative(Sub, true);
 		return S_OK;
 	}
 
@@ -497,11 +497,11 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// InsertSubframe
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertSubframe") == 0) {
-		stack->CorrectParams(2);
-		int Index = stack->Pop()->GetInt();
+		stack->correctParams(2);
+		int Index = stack->pop()->GetInt();
 		if (Index < 0) Index = 0;
 
-		CScValue *Val = stack->Pop();
+		CScValue *Val = stack->pop();
 		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
@@ -513,7 +513,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (Index >= _subframes.GetSize()) _subframes.Add(Sub);
 		else _subframes.InsertAt(Index, Sub);
 
-		stack->PushNative(Sub, true);
+		stack->pushNative(Sub, true);
 		return S_OK;
 	}
 
@@ -521,12 +521,12 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// GetEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSubframe") == 0) {
-		stack->CorrectParams(1);
-		int Index = stack->Pop()->GetInt(-1);
+		stack->correctParams(1);
+		int Index = stack->pop()->GetInt(-1);
 		if (Index < 0 || Index >= _applyEvent.GetSize()) {
 			script->RuntimeError("Frame.GetEvent: Event index %d is out of range.", Index);
-			stack->PushNULL();
-		} else stack->PushString(_applyEvent[Index]);
+			stack->pushNULL();
+		} else stack->pushString(_applyEvent[Index]);
 		return S_OK;
 	}
 
@@ -534,16 +534,16 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// AddEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddEvent") == 0) {
-		stack->CorrectParams(1);
-		const char *Event = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *Event = stack->pop()->GetString();
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
-				stack->PushNULL();
+				stack->pushNULL();
 				return S_OK;
 			}
 		}
 		_applyEvent.Add(Event);
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -551,8 +551,8 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// DeleteEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteEvent") == 0) {
-		stack->CorrectParams(1);
-		const char *Event = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *Event = stack->pop()->GetString();
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
 				delete [] _applyEvent[i];
@@ -560,7 +560,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 				break;
 			}
 		}
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 

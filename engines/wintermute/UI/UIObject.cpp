@@ -142,16 +142,16 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetFont
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetFont") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		if (_font) Game->_fontStorage->RemoveFont(_font);
 		if (Val->IsNULL()) {
 			_font = NULL;
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			_font = Game->_fontStorage->AddFont(Val->GetString());
-			stack->PushBool(_font != NULL);
+			stack->pushBool(_font != NULL);
 		}
 		return S_OK;
 	}
@@ -160,15 +160,15 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetImage") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		/* const char *Filename = */ Val->GetString();
 
 		delete _image;
 		_image = NULL;
 		if (Val->IsNULL()) {
-			stack->PushBool(true);
+			stack->pushBool(true);
 			return S_OK;
 		}
 
@@ -176,8 +176,8 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_image || FAILED(_image->loadFile(Val->GetString()))) {
 			delete _image;
 			_image = NULL;
-			stack->PushBool(false);
-		} else stack->PushBool(true);
+			stack->pushBool(false);
+		} else stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -186,9 +186,9 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetImage") == 0) {
-		stack->CorrectParams(0);
-		if (!_image || !_image->_filename) stack->PushNULL();
-		else stack->PushString(_image->_filename);
+		stack->correctParams(0);
+		if (!_image || !_image->_filename) stack->pushNULL();
+		else stack->pushString(_image->_filename);
 
 		return S_OK;
 	}
@@ -197,9 +197,9 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetImageObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetImageObject") == 0) {
-		stack->CorrectParams(0);
-		if (!_image) stack->PushNULL();
-		else stack->PushNative(_image, true);
+		stack->correctParams(0);
+		if (!_image) stack->pushNULL();
+		else stack->pushNative(_image, true);
 
 		return S_OK;
 	}
@@ -208,9 +208,9 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// Focus
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Focus") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		focus();
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -218,14 +218,14 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// MoveAfter / MoveBefore
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MoveAfter") == 0 || strcmp(name, "MoveBefore") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			CUIWindow *win = (CUIWindow *)_parent;
 
 			int i;
 			bool found = false;
-			CScValue *val = stack->Pop();
+			CScValue *val = stack->pop();
 			// find directly
 			if (val->IsNative()) {
 				CUIObject *widget = (CUIObject *)val->GetNative();
@@ -258,14 +258,14 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 						win->_widgets.RemoveAt(j);
 
 						done = true;
-						stack->PushBool(true);
+						stack->pushBool(true);
 						break;
 					}
 				}
-				if (!done) stack->PushBool(false);
-			} else stack->PushBool(false);
+				if (!done) stack->pushBool(false);
+			} else stack->pushBool(false);
 
-		} else stack->PushBool(false);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -274,7 +274,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// MoveToBottom
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MoveToBottom") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			CUIWindow *win = (CUIWindow *)_parent;
@@ -285,8 +285,8 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 					break;
 				}
 			}
-			stack->PushBool(true);
-		} else stack->PushBool(false);
+			stack->pushBool(true);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -295,7 +295,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// MoveToTop
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MoveToTop") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			CUIWindow *win = (CUIWindow *)_parent;
@@ -306,8 +306,8 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 					break;
 				}
 			}
-			stack->PushBool(true);
-		} else stack->PushBool(false);
+			stack->pushBool(true);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}

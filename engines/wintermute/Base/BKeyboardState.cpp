@@ -78,8 +78,8 @@ HRESULT CBKeyboardState::scCallMethod(CScScript *script, CScStack *stack, CScSta
 	// IsKeyDown
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "IsKeyDown") == 0) {
-		stack->CorrectParams(1);
-		CScValue *val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *val = stack->pop();
 		int vKey;
 
 		if (val->_type == VAL_STRING && strlen(val->GetString()) > 0) {
@@ -94,7 +94,7 @@ HRESULT CBKeyboardState::scCallMethod(CScScript *script, CScStack *stack, CScSta
 //		SDL_Scancode scanCode = SDL_GetScancodeFromKey(VKeyToKeyCode(vKey));
 		bool isDown = _keyStates[VKeyToKeyCode(vKey)];
 
-		stack->PushBool(isDown);
+		stack->pushBool(isDown);
 		return S_OK;
 	}
 

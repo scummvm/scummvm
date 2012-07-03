@@ -695,20 +695,20 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetWidget / GetControl
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetWidget") == 0 || strcmp(name, "GetControl") == 0) {
-		stack->CorrectParams(1);
-		CScValue *val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *val = stack->pop();
 		if (val->GetType() == VAL_INT) {
 			int widget = val->GetInt();
-			if (widget < 0 || widget >= _widgets.GetSize()) stack->PushNULL();
-			else stack->PushNative(_widgets[widget], true);
+			if (widget < 0 || widget >= _widgets.GetSize()) stack->pushNULL();
+			else stack->pushNative(_widgets[widget], true);
 		} else {
 			for (int i = 0; i < _widgets.GetSize(); i++) {
 				if (scumm_stricmp(_widgets[i]->_name, val->GetString()) == 0) {
-					stack->PushNative(_widgets[i], true);
+					stack->pushNative(_widgets[i], true);
 					return S_OK;
 				}
 			}
-			stack->PushNULL();
+			stack->pushNULL();
 		}
 
 		return S_OK;
@@ -718,11 +718,11 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetInactiveFont
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetInactiveFont") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
 		if (_fontInactive) Game->_fontStorage->RemoveFont(_fontInactive);
-		_fontInactive = Game->_fontStorage->AddFont(stack->Pop()->GetString());
-		stack->PushBool(_fontInactive != NULL);
+		_fontInactive = Game->_fontStorage->AddFont(stack->pop()->GetString());
+		stack->pushBool(_fontInactive != NULL);
 
 		return S_OK;
 	}
@@ -731,16 +731,16 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// SetInactiveImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetInactiveImage") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
 		delete _imageInactive;
 		_imageInactive = new CBSprite(Game);
-		const char *Filename = stack->Pop()->GetString();
+		const char *Filename = stack->pop()->GetString();
 		if (!_imageInactive || FAILED(_imageInactive->loadFile(Filename))) {
 			delete _imageInactive;
 			_imageInactive = NULL;
-			stack->PushBool(false);
-		} else stack->PushBool(true);
+			stack->pushBool(false);
+		} else stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -749,9 +749,9 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetInactiveImage
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetInactiveImage") == 0) {
-		stack->CorrectParams(0);
-		if (!_imageInactive || !_imageInactive->_filename) stack->PushNULL();
-		else stack->PushString(_imageInactive->_filename);
+		stack->correctParams(0);
+		if (!_imageInactive || !_imageInactive->_filename) stack->pushNULL();
+		else stack->pushString(_imageInactive->_filename);
 
 		return S_OK;
 	}
@@ -760,9 +760,9 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GetInactiveImageObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetInactiveImageObject") == 0) {
-		stack->CorrectParams(0);
-		if (!_imageInactive) stack->PushNULL();
-		else stack->PushNative(_imageInactive, true);
+		stack->correctParams(0);
+		if (!_imageInactive) stack->pushNULL();
+		else stack->pushNative(_imageInactive, true);
 
 		return S_OK;
 	}
@@ -772,8 +772,8 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// Close
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Close") == 0) {
-		stack->CorrectParams(0);
-		stack->PushBool(SUCCEEDED(close()));
+		stack->correctParams(0);
+		stack->pushBool(SUCCEEDED(close()));
 		return S_OK;
 	}
 
@@ -781,10 +781,10 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GoExclusive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GoExclusive") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		goExclusive();
 		script->WaitFor(this);
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -792,10 +792,10 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// GoSystemExclusive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GoSystemExclusive") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		goSystemExclusive();
 		script->WaitFor(this);
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -803,10 +803,10 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// Center
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Center") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		_posX = (Game->_renderer->_width - _width) / 2;
 		_posY = (Game->_renderer->_height - _height) / 2;
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -814,13 +814,13 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// LoadFromFile
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadFromFile") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
-		CScValue *Val = stack->Pop();
+		CScValue *Val = stack->pop();
 		cleanup();
 		if (!Val->IsNULL()) {
-			stack->PushBool(SUCCEEDED(loadFile(Val->GetString())));
-		} else stack->PushBool(true);
+			stack->pushBool(SUCCEEDED(loadFile(Val->GetString())));
+		} else stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -829,12 +829,12 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// CreateButton
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateButton") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CUIButton *Btn = new CUIButton(Game);
 		if (!Val->IsNULL()) Btn->setName(Val->GetString());
-		stack->PushNative(Btn, true);
+		stack->pushNative(Btn, true);
 
 		Btn->_parent = this;
 		_widgets.Add(Btn);
@@ -846,12 +846,12 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// CreateStatic
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateStatic") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CUIText *Sta = new CUIText(Game);
 		if (!Val->IsNULL()) Sta->setName(Val->GetString());
-		stack->PushNative(Sta, true);
+		stack->pushNative(Sta, true);
 
 		Sta->_parent = this;
 		_widgets.Add(Sta);
@@ -863,12 +863,12 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// CreateEditor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateEditor") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CUIEdit *Edi = new CUIEdit(Game);
 		if (!Val->IsNULL()) Edi->setName(Val->GetString());
-		stack->PushNative(Edi, true);
+		stack->pushNative(Edi, true);
 
 		Edi->_parent = this;
 		_widgets.Add(Edi);
@@ -880,12 +880,12 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// CreateWindow
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateWindow") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CUIWindow *Win = new CUIWindow(Game);
 		if (!Val->IsNULL()) Win->setName(Val->GetString());
-		stack->PushNative(Win, true);
+		stack->pushNative(Win, true);
 
 		Win->_parent = this;
 		_widgets.Add(Win);
@@ -897,8 +897,8 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// DeleteControl / DeleteButton / DeleteStatic / DeleteEditor / DeleteWindow
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteControl") == 0 || strcmp(name, "DeleteButton") == 0 || strcmp(name, "DeleteStatic") == 0 || strcmp(name, "DeleteEditor") == 0 || strcmp(name, "DeleteWindow") == 0) {
-		stack->CorrectParams(1);
-		CScValue *val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *val = stack->pop();
 		CUIObject *obj = (CUIObject *)val->GetNative();
 
 		for (int i = 0; i < _widgets.GetSize(); i++) {
@@ -908,7 +908,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 				if (val->GetType() == VAL_VARIABLE_REF) val->SetNULL();
 			}
 		}
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	} else if SUCCEEDED(Game->WindowScriptMethodHook(this, script, stack, name)) return S_OK;
 

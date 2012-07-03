@@ -407,13 +407,13 @@ HRESULT CScEngine::Tick() {
 		case SCRIPT_WAITING_SCRIPT: {
 			if (!IsValidScript(_scripts[i]->_waitScript) || _scripts[i]->_waitScript->_state == SCRIPT_ERROR) {
 				// fake return value
-				_scripts[i]->_stack->PushNULL();
+				_scripts[i]->_stack->pushNULL();
 				_scripts[i]->_waitScript = NULL;
 				_scripts[i]->Run();
 			} else {
 				if (_scripts[i]->_waitScript->_state == SCRIPT_THREAD_FINISHED) {
 					// copy return value
-					_scripts[i]->_stack->Push(_scripts[i]->_waitScript->_stack->Pop());
+					_scripts[i]->_stack->push(_scripts[i]->_waitScript->_stack->pop());
 					_scripts[i]->Run();
 					_scripts[i]->_waitScript->finish();
 					_scripts[i]->_waitScript = NULL;

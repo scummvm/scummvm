@@ -63,8 +63,8 @@ CBScriptable::~CBScriptable() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	/*
-	stack->CorrectParams(0);
-	stack->PushNULL();
+	stack->correctParams(0);
+	stack->pushNULL();
 	script->RuntimeError("Call to undefined method '%s'.", name);
 
 	return S_OK;

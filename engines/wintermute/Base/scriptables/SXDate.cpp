@@ -40,17 +40,17 @@ CBScriptable *makeSXDate(CBGame *inGame, CScStack *stack) {
 
 //////////////////////////////////////////////////////////////////////////
 CSXDate::CSXDate(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
-	stack->CorrectParams(6);
+	stack->correctParams(6);
 
 	memset(&_tm, 0, sizeof(_tm));
 
-	CScValue *valYear = stack->Pop();
+	CScValue *valYear = stack->pop();
 	_tm.tm_year = valYear->GetInt() - 1900;
-	_tm.tm_mon = stack->Pop()->GetInt() - 1;
-	_tm.tm_mday = stack->Pop()->GetInt();
-	_tm.tm_hour = stack->Pop()->GetInt();
-	_tm.tm_min = stack->Pop()->GetInt();
-	_tm.tm_sec = stack->Pop()->GetInt();
+	_tm.tm_mon = stack->pop()->GetInt() - 1;
+	_tm.tm_mday = stack->pop()->GetInt();
+	_tm.tm_hour = stack->pop()->GetInt();
+	_tm.tm_min = stack->pop()->GetInt();
+	_tm.tm_sec = stack->pop()->GetInt();
 
 	if (valYear->IsNULL()) {
 		g_system->getTimeAndDate(_tm);
@@ -80,57 +80,57 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// GetYear
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetYear") == 0) {
-		stack->CorrectParams(0);
-		stack->PushInt(_tm.tm_year + 1900);
+		stack->correctParams(0);
+		stack->pushInt(_tm.tm_year + 1900);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetMonth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetMonth") == 0) {
-		stack->CorrectParams(0);
-		stack->PushInt(_tm.tm_mon + 1);
+		stack->correctParams(0);
+		stack->pushInt(_tm.tm_mon + 1);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetDate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetDate") == 0) {
-		stack->CorrectParams(0);
-		stack->PushInt(_tm.tm_mday);
+		stack->correctParams(0);
+		stack->pushInt(_tm.tm_mday);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetHours
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetHours") == 0) {
-		stack->CorrectParams(0);
-		stack->PushInt(_tm.tm_hour);
+		stack->correctParams(0);
+		stack->pushInt(_tm.tm_hour);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetMinutes
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetMinutes") == 0) {
-		stack->CorrectParams(0);
-		stack->PushInt(_tm.tm_min);
+		stack->correctParams(0);
+		stack->pushInt(_tm.tm_min);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetSeconds
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSeconds") == 0) {
-		stack->CorrectParams(0);
-		stack->PushInt(_tm.tm_sec);
+		stack->correctParams(0);
+		stack->pushInt(_tm.tm_sec);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetWeekday
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetWeekday") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		warning("GetWeekday returns a wrong value on purpose");
-		stack->PushInt(_tm.tm_mday % 7);
+		stack->pushInt(_tm.tm_mday % 7);
 		return S_OK;
 	}
 
@@ -139,54 +139,54 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// SetYear
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetYear") == 0) {
-		stack->CorrectParams(1);
-		_tm.tm_year = stack->Pop()->GetInt() - 1900;
-		stack->PushNULL();
+		stack->correctParams(1);
+		_tm.tm_year = stack->pop()->GetInt() - 1900;
+		stack->pushNULL();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SetMonth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetMonth") == 0) {
-		stack->CorrectParams(1);
-		_tm.tm_mon = stack->Pop()->GetInt() - 1;
-		stack->PushNULL();
+		stack->correctParams(1);
+		_tm.tm_mon = stack->pop()->GetInt() - 1;
+		stack->pushNULL();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SetDate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetDate") == 0) {
-		stack->CorrectParams(1);
-		_tm.tm_mday = stack->Pop()->GetInt();
-		stack->PushNULL();
+		stack->correctParams(1);
+		_tm.tm_mday = stack->pop()->GetInt();
+		stack->pushNULL();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SetHours
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetHours") == 0) {
-		stack->CorrectParams(1);
-		_tm.tm_hour = stack->Pop()->GetInt();
-		stack->PushNULL();
+		stack->correctParams(1);
+		_tm.tm_hour = stack->pop()->GetInt();
+		stack->pushNULL();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SetMinutes
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetMinutes") == 0) {
-		stack->CorrectParams(1);
-		_tm.tm_min = stack->Pop()->GetInt();
-		stack->PushNULL();
+		stack->correctParams(1);
+		_tm.tm_min = stack->pop()->GetInt();
+		stack->pushNULL();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SetSeconds
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetSeconds") == 0) {
-		stack->CorrectParams(1);
-		_tm.tm_sec = stack->Pop()->GetInt();
-		stack->PushNULL();
+		stack->correctParams(1);
+		_tm.tm_sec = stack->pop()->GetInt();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -195,9 +195,9 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// SetCurrentTime
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetCurrentTime") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		g_system->getTimeAndDate(_tm);
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 

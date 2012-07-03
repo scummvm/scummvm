@@ -366,11 +366,11 @@ HRESULT CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	// SetSelectedFont
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetSelectedFont") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
 		if (_fontSelected) Game->_fontStorage->RemoveFont(_fontSelected);
-		_fontSelected = Game->_fontStorage->AddFont(stack->Pop()->GetString());
-		stack->PushBool(_fontSelected != NULL);
+		_fontSelected = Game->_fontStorage->AddFont(stack->pop()->GetString());
+		stack->pushBool(_fontSelected != NULL);
 
 		return S_OK;
 	}

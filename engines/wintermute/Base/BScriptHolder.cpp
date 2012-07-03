@@ -114,10 +114,10 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	// DEBUG_CrashMe
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "DEBUG_CrashMe") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		byte *p = 0;
 		*p = 10;
-		stack->PushNULL();
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -126,13 +126,13 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	// ApplyEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ApplyEvent") == 0) {
-		stack->CorrectParams(1);
-		CScValue *val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *val = stack->pop();
 		HRESULT ret;
 		ret = applyEvent(val->GetString());
 
-		if (SUCCEEDED(ret)) stack->PushBool(true);
-		else stack->PushBool(false);
+		if (SUCCEEDED(ret)) stack->pushBool(true);
+		else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -141,8 +141,8 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	// CanHandleEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CanHandleEvent") == 0) {
-		stack->CorrectParams(1);
-		stack->PushBool(canHandleEvent(stack->Pop()->GetString()));
+		stack->correctParams(1);
+		stack->pushBool(canHandleEvent(stack->pop()->GetString()));
 
 		return S_OK;
 	}
@@ -151,8 +151,8 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	// CanHandleMethod
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CanHandleMethod") == 0) {
-		stack->CorrectParams(1);
-		stack->PushBool(canHandleMethod(stack->Pop()->GetString()));
+		stack->correctParams(1);
+		stack->pushBool(canHandleMethod(stack->pop()->GetString()));
 
 		return S_OK;
 	}
@@ -161,8 +161,8 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	// AttachScript
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AttachScript") == 0) {
-		stack->CorrectParams(1);
-		stack->PushBool(SUCCEEDED(addScript(stack->Pop()->GetString())));
+		stack->correctParams(1);
+		stack->pushBool(SUCCEEDED(addScript(stack->pop()->GetString())));
 
 		return S_OK;
 	}
@@ -171,9 +171,9 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	// DetachScript
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DetachScript") == 0) {
-		stack->CorrectParams(2);
-		const char *Filename = stack->Pop()->GetString();
-		bool KillThreads = stack->Pop()->GetBool(false);
+		stack->correctParams(2);
+		const char *Filename = stack->pop()->GetString();
+		bool KillThreads = stack->pop()->GetBool(false);
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0) {
@@ -182,7 +182,7 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 				break;
 			}
 		}
-		stack->PushBool(ret);
+		stack->pushBool(ret);
 
 		return S_OK;
 	}
@@ -191,8 +191,8 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	// IsScriptRunning
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsScriptRunning") == 0) {
-		stack->CorrectParams(1);
-		const char *Filename = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *Filename = stack->pop()->GetString();
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0 && _scripts[i]->_state != SCRIPT_FINISHED && _scripts[i]->_state != SCRIPT_ERROR) {
@@ -200,7 +200,7 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 				break;
 			}
 		}
-		stack->PushBool(ret);
+		stack->pushBool(ret);
 
 		return S_OK;
 	} else return CBScriptable::scCallMethod(script, stack, thisStack, name);

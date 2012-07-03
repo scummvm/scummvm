@@ -630,10 +630,10 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// StopSound
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "StopSound") == 0 && _subtype == ENTITY_SOUND) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (FAILED(stopSFX(false))) stack->PushBool(false);
-		else stack->PushBool(true);
+		if (FAILED(stopSFX(false))) stack->pushBool(false);
+		else stack->pushBool(true);
 		return S_OK;
 	}
 
@@ -641,11 +641,11 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// PlayTheora
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PlayTheora") == 0) {
-		stack->CorrectParams(4);
-		const char *filename = stack->Pop()->GetString();
-		bool looping = stack->Pop()->GetBool(false);
-		CScValue *valAlpha = stack->Pop();
-		int startTime = stack->Pop()->GetInt();
+		stack->correctParams(4);
+		const char *filename = stack->pop()->GetString();
+		bool looping = stack->pop()->GetBool(false);
+		CScValue *valAlpha = stack->pop();
+		int startTime = stack->pop()->GetInt();
 
 		delete _theora;
 		_theora = new CVidTheoraPlayer(Game);
@@ -653,10 +653,10 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			if (!valAlpha->IsNULL())    _theora->setAlphaImage(valAlpha->GetString());
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if(m_Scale>=0) m_Theora->m_PlayZoom = m_Scale;
-			stack->PushBool(true);
+			stack->pushBool(true);
 		} else {
 			script->RuntimeError("Entity.PlayTheora - error playing video '%s'", filename);
-			stack->PushBool(false);
+			stack->pushBool(false);
 		}
 
 		return S_OK;
@@ -666,13 +666,13 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// StopTheora
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StopTheora") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (_theora) {
 			_theora->stop();
 			delete _theora;
 			_theora = NULL;
-			stack->PushBool(true);
-		} else stack->PushBool(false);
+			stack->pushBool(true);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -681,9 +681,9 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// IsTheoraPlaying
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsTheoraPlaying") == 0) {
-		stack->CorrectParams(0);
-		if (_theora && _theora->isPlaying()) stack->PushBool(true);
-		else stack->PushBool(false);
+		stack->correctParams(0);
+		if (_theora && _theora->isPlaying()) stack->pushBool(true);
+		else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -692,11 +692,11 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// PauseTheora
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PauseTheora") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (_theora && _theora->isPlaying()) {
 			_theora->pause();
-			stack->PushBool(true);
-		} else stack->PushBool(false);
+			stack->pushBool(true);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -705,11 +705,11 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// ResumeTheora
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ResumeTheora") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (_theora && _theora->isPaused()) {
 			_theora->resume();
-			stack->PushBool(true);
-		} else stack->PushBool(false);
+			stack->pushBool(true);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -718,9 +718,9 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// IsTheoraPaused
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsTheoraPaused") == 0) {
-		stack->CorrectParams(0);
-		if (_theora && _theora->isPaused()) stack->PushBool(true);
-		else stack->PushBool(false);
+		stack->correctParams(0);
+		if (_theora && _theora->isPaused()) stack->pushBool(true);
+		else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -730,13 +730,13 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// CreateRegion
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateRegion") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (!_region) {
 			_region = new CBRegion(Game);
 			Game->RegisterObject(_region);
 		}
-		if (_region) stack->PushNative(_region, true);
-		else stack->PushNULL();
+		if (_region) stack->pushNative(_region, true);
+		else stack->pushNULL();
 
 		return S_OK;
 	}
@@ -745,12 +745,12 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// DeleteRegion
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteRegion") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (_region) {
 			Game->UnregisterObject(_region);
 			_region = NULL;
-			stack->PushBool(true);
-		} else stack->PushBool(false);
+			stack->pushBool(true);
+		} else stack->pushBool(false);
 
 		return S_OK;
 	}

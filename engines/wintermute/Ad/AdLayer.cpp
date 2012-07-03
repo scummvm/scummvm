@@ -232,8 +232,8 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetNode") == 0) {
-		stack->CorrectParams(1);
-		CScValue *val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *val = stack->pop();
 		int node = -1;
 
 		if (val->_type == VAL_INT) node = val->GetInt();
@@ -247,17 +247,17 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			}
 		}
 
-		if (node < 0 || node >= _nodes.GetSize()) stack->PushNULL();
+		if (node < 0 || node >= _nodes.GetSize()) stack->pushNULL();
 		else {
 			switch (_nodes[node]->_type) {
 			case OBJECT_ENTITY:
-				stack->PushNative(_nodes[node]->_entity, true);
+				stack->pushNative(_nodes[node]->_entity, true);
 				break;
 			case OBJECT_REGION:
-				stack->PushNative(_nodes[node]->_region, true);
+				stack->pushNative(_nodes[node]->_region, true);
 				break;
 			default:
-				stack->PushNULL();
+				stack->pushNULL();
 			}
 		}
 		return S_OK;
@@ -267,20 +267,20 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// AddRegion / AddEntity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddRegion") == 0 || strcmp(name, "AddEntity") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdSceneNode *Node = new CAdSceneNode(Game);
 		if (strcmp(name, "AddRegion") == 0) {
 			CAdRegion *Region = new CAdRegion(Game);
 			if (!Val->IsNULL()) Region->setName(Val->GetString());
 			Node->setRegion(Region);
-			stack->PushNative(Region, true);
+			stack->pushNative(Region, true);
 		} else {
 			CAdEntity *Entity = new CAdEntity(Game);
 			if (!Val->IsNULL()) Entity->setName(Val->GetString());
 			Node->setEntity(Entity);
-			stack->PushNative(Entity, true);
+			stack->pushNative(Entity, true);
 		}
 		_nodes.Add(Node);
 		return S_OK;
@@ -290,21 +290,21 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// InsertRegion / InsertEntity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertRegion") == 0 || strcmp(name, "InsertEntity") == 0) {
-		stack->CorrectParams(2);
-		int Index = stack->Pop()->GetInt();
-		CScValue *Val = stack->Pop();
+		stack->correctParams(2);
+		int Index = stack->pop()->GetInt();
+		CScValue *Val = stack->pop();
 
 		CAdSceneNode *Node = new CAdSceneNode(Game);
 		if (strcmp(name, "InsertRegion") == 0) {
 			CAdRegion *Region = new CAdRegion(Game);
 			if (!Val->IsNULL()) Region->setName(Val->GetString());
 			Node->setRegion(Region);
-			stack->PushNative(Region, true);
+			stack->pushNative(Region, true);
 		} else {
 			CAdEntity *Entity = new CAdEntity(Game);
 			if (!Val->IsNULL()) Entity->setName(Val->GetString());
 			Node->setEntity(Entity);
-			stack->PushNative(Entity, true);
+			stack->pushNative(Entity, true);
 		}
 		if (Index < 0) Index = 0;
 		if (Index <= _nodes.GetSize() - 1) _nodes.InsertAt(Index, Node);
@@ -317,8 +317,8 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// DeleteNode
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteNode") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdSceneNode *ToDelete = NULL;
 		if (Val->IsNative()) {
@@ -336,7 +336,7 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			}
 		}
 		if (ToDelete == NULL) {
-			stack->PushBool(false);
+			stack->pushBool(false);
 			return S_OK;
 		}
 
@@ -348,7 +348,7 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 				break;
 			}
 		}
-		stack->PushBool(true);
+		stack->pushBool(true);
 		return S_OK;
 	}
 

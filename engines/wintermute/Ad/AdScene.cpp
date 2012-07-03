@@ -1253,15 +1253,15 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// LoadActor
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "LoadActor") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 		CAdActor *act = new CAdActor(Game);
-		if (act && SUCCEEDED(act->loadFile(stack->Pop()->GetString()))) {
+		if (act && SUCCEEDED(act->loadFile(stack->pop()->GetString()))) {
 			addObject(act);
-			stack->PushNative(act, true);
+			stack->pushNative(act, true);
 		} else {
 			delete act;
 			act = NULL;
-			stack->PushNULL();
+			stack->pushNULL();
 		}
 		return S_OK;
 	}
@@ -1270,15 +1270,15 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// LoadEntity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadEntity") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 		CAdEntity *ent = new CAdEntity(Game);
-		if (ent && SUCCEEDED(ent->loadFile(stack->Pop()->GetString()))) {
+		if (ent && SUCCEEDED(ent->loadFile(stack->pop()->GetString()))) {
 			addObject(ent);
-			stack->PushNative(ent, true);
+			stack->pushNative(ent, true);
 		} else {
 			delete ent;
 			ent = NULL;
-			stack->PushNULL();
+			stack->pushNULL();
 		}
 		return S_OK;
 	}
@@ -1287,13 +1287,13 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// CreateEntity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateEntity") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdEntity *Ent = new CAdEntity(Game);
 		addObject(Ent);
 		if (!Val->IsNULL()) Ent->setName(Val->GetString());
-		stack->PushNative(Ent, true);
+		stack->pushNative(Ent, true);
 		return S_OK;
 	}
 
@@ -1301,13 +1301,13 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// UnloadObject / UnloadActor / UnloadEntity / UnloadActor3D / DeleteEntity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "UnloadActor3D") == 0 || strcmp(name, "DeleteEntity") == 0) {
-		stack->CorrectParams(1);
-		CScValue *val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *val = stack->pop();
 		CAdObject *obj = (CAdObject *)val->GetNative();
 		removeObject(obj);
 		if (val->GetType() == VAL_VARIABLE_REF) val->SetNULL();
 
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -1315,15 +1315,15 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SkipTo
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SkipTo") == 0) {
-		stack->CorrectParams(2);
-		CScValue *val1 = stack->Pop();
-		CScValue *val2 = stack->Pop();
+		stack->correctParams(2);
+		CScValue *val1 = stack->pop();
+		CScValue *val2 = stack->pop();
 		if (val1->IsNative()) {
 			skipToObject((CBObject *)val1->GetNative());
 		} else {
 			skipTo(val1->GetInt(), val2->GetInt());
 		}
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -1331,16 +1331,16 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// ScrollTo / ScrollToAsync
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollTo") == 0 || strcmp(name, "ScrollToAsync") == 0) {
-		stack->CorrectParams(2);
-		CScValue *val1 = stack->Pop();
-		CScValue *val2 = stack->Pop();
+		stack->correctParams(2);
+		CScValue *val1 = stack->pop();
+		CScValue *val2 = stack->pop();
 		if (val1->IsNative()) {
 			scrollToObject((CBObject *)val1->GetNative());
 		} else {
 			scrollTo(val1->GetInt(), val2->GetInt());
 		}
 		if (strcmp(name, "ScrollTo") == 0) script->WaitForExclusive(this);
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -1348,23 +1348,23 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetLayer
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLayer") == 0) {
-		stack->CorrectParams(1);
-		CScValue *val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *val = stack->pop();
 		if (val->IsInt()) {
 			int layer = val->GetInt();
-			if (layer < 0 || layer >= _layers.GetSize()) stack->PushNULL();
-			else stack->PushNative(_layers[layer], true);
+			if (layer < 0 || layer >= _layers.GetSize()) stack->pushNULL();
+			else stack->pushNative(_layers[layer], true);
 		} else {
 			const char *LayerName = val->GetString();
 			bool LayerFound = false;
 			for (int i = 0; i < _layers.GetSize(); i++) {
 				if (scumm_stricmp(LayerName, _layers[i]->_name) == 0) {
-					stack->PushNative(_layers[i], true);
+					stack->pushNative(_layers[i], true);
 					LayerFound = true;
 					break;
 				}
 			}
-			if (!LayerFound) stack->PushNULL();
+			if (!LayerFound) stack->pushNULL();
 		}
 		return S_OK;
 	}
@@ -1373,10 +1373,10 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetWaypointGroup
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetWaypointGroup") == 0) {
-		stack->CorrectParams(1);
-		int group = stack->Pop()->GetInt();
-		if (group < 0 || group >= _waypointGroups.GetSize()) stack->PushNULL();
-		else stack->PushNative(_waypointGroups[group], true);
+		stack->correctParams(1);
+		int group = stack->pop()->GetInt();
+		if (group < 0 || group >= _waypointGroups.GetSize()) stack->pushNULL();
+		else stack->pushNative(_waypointGroups[group], true);
 		return S_OK;
 	}
 
@@ -1384,12 +1384,12 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetNode") == 0) {
-		stack->CorrectParams(1);
-		const char *nodeName = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *nodeName = stack->pop()->GetString();
 
 		CBObject *node = getNodeByName(nodeName);
-		if (node) stack->PushNative((CBScriptable *)node, true);
-		else stack->PushNULL();
+		if (node) stack->pushNative((CBScriptable *)node, true);
+		else stack->pushNULL();
 
 		return S_OK;
 	}
@@ -1398,8 +1398,8 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetFreeNode
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFreeNode") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdObject *Ret = NULL;
 		if (Val->IsInt()) {
@@ -1414,8 +1414,8 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 				}
 			}
 		}
-		if (Ret) stack->PushNative(Ret, true);
-		else stack->PushNULL();
+		if (Ret) stack->pushNative(Ret, true);
+		else stack->pushNULL();
 
 		return S_OK;
 	}
@@ -1424,10 +1424,10 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetRegionAt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetRegionAt") == 0) {
-		stack->CorrectParams(3);
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
-		CScValue *Val = stack->Pop();
+		stack->correctParams(3);
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
+		CScValue *Val = stack->pop();
 
 		bool IncludeDecors = false;
 		if (!Val->IsNULL()) IncludeDecors = Val->GetBool();
@@ -1438,12 +1438,12 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 				if (Node->_type == OBJECT_REGION && Node->_region->_active && Node->_region->PointInRegion(X, Y)) {
 					if (Node->_region->_decoration && !IncludeDecors) continue;
 
-					stack->PushNative(Node->_region, true);
+					stack->pushNative(Node->_region, true);
 					return S_OK;
 				}
 			}
 		}
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -1451,11 +1451,11 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// IsBlockedAt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsBlockedAt") == 0) {
-		stack->CorrectParams(2);
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
+		stack->correctParams(2);
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
 
-		stack->PushBool(isBlockedAt(X, Y));
+		stack->pushBool(isBlockedAt(X, Y));
 		return S_OK;
 	}
 
@@ -1463,11 +1463,11 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// IsWalkableAt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsWalkableAt") == 0) {
-		stack->CorrectParams(2);
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
+		stack->correctParams(2);
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
 
-		stack->PushBool(isWalkableAt(X, Y));
+		stack->pushBool(isWalkableAt(X, Y));
 		return S_OK;
 	}
 
@@ -1475,11 +1475,11 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetScaleAt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetScaleAt") == 0) {
-		stack->CorrectParams(2);
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
+		stack->correctParams(2);
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
 
-		stack->PushFloat(getZoomAt(X, Y));
+		stack->pushFloat(getZoomAt(X, Y));
 		return S_OK;
 	}
 
@@ -1487,11 +1487,11 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetRotationAt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetRotationAt") == 0) {
-		stack->CorrectParams(2);
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
+		stack->correctParams(2);
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
 
-		stack->PushFloat(getRotationAt(X, Y));
+		stack->pushFloat(getRotationAt(X, Y));
 		return S_OK;
 	}
 
@@ -1499,13 +1499,13 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// IsScrolling
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsScrolling") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		bool Ret = false;
 		if (_autoScroll) {
 			if (_targetOffsetLeft != _offsetLeft || _targetOffsetTop != _offsetTop) Ret = true;
 		}
 
-		stack->PushBool(Ret);
+		stack->pushBool(Ret);
 		return S_OK;
 	}
 
@@ -1513,17 +1513,17 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// FadeOut / FadeOutAsync
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FadeOut") == 0 || strcmp(name, "FadeOutAsync") == 0) {
-		stack->CorrectParams(5);
-		uint32 Duration = stack->Pop()->GetInt(500);
-		byte Red = stack->Pop()->GetInt(0);
-		byte Green = stack->Pop()->GetInt(0);
-		byte Blue = stack->Pop()->GetInt(0);
-		byte Alpha = stack->Pop()->GetInt(0xFF);
+		stack->correctParams(5);
+		uint32 Duration = stack->pop()->GetInt(500);
+		byte Red = stack->pop()->GetInt(0);
+		byte Green = stack->pop()->GetInt(0);
+		byte Blue = stack->pop()->GetInt(0);
+		byte Alpha = stack->pop()->GetInt(0xFF);
 
 		_fader->fadeOut(DRGBA(Red, Green, Blue, Alpha), Duration);
 		if (strcmp(name, "FadeOutAsync") != 0) script->WaitFor(_fader);
 
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -1531,17 +1531,17 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// FadeIn / FadeInAsync
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FadeIn") == 0 || strcmp(name, "FadeInAsync") == 0) {
-		stack->CorrectParams(5);
-		uint32 Duration = stack->Pop()->GetInt(500);
-		byte Red = stack->Pop()->GetInt(0);
-		byte Green = stack->Pop()->GetInt(0);
-		byte Blue = stack->Pop()->GetInt(0);
-		byte Alpha = stack->Pop()->GetInt(0xFF);
+		stack->correctParams(5);
+		uint32 Duration = stack->pop()->GetInt(500);
+		byte Red = stack->pop()->GetInt(0);
+		byte Green = stack->pop()->GetInt(0);
+		byte Blue = stack->pop()->GetInt(0);
+		byte Alpha = stack->pop()->GetInt(0xFF);
 
 		_fader->fadeIn(DRGBA(Red, Green, Blue, Alpha), Duration);
 		if (strcmp(name, "FadeInAsync") != 0) script->WaitFor(_fader);
 
-		stack->PushNULL();
+		stack->pushNULL();
 		return S_OK;
 	}
 
@@ -1549,8 +1549,8 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetFadeColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFadeColor") == 0) {
-		stack->CorrectParams(0);
-		stack->PushInt(_fader->getCurrentColor());
+		stack->correctParams(0);
+		stack->pushInt(_fader->getCurrentColor());
 		return S_OK;
 	}
 
@@ -1558,10 +1558,10 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// IsPointInViewport
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsPointInViewport") == 0) {
-		stack->CorrectParams(2);
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
-		stack->PushBool(pointInViewport(X, Y));
+		stack->correctParams(2);
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
+		stack->pushBool(pointInViewport(X, Y));
 		return S_OK;
 	}
 
@@ -1569,11 +1569,11 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SetViewport
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetViewport") == 0) {
-		stack->CorrectParams(4);
-		int X = stack->Pop()->GetInt();
-		int Y = stack->Pop()->GetInt();
-		int Width = stack->Pop()->GetInt();
-		int Height = stack->Pop()->GetInt();
+		stack->correctParams(4);
+		int X = stack->pop()->GetInt();
+		int Y = stack->pop()->GetInt();
+		int Width = stack->pop()->GetInt();
+		int Height = stack->pop()->GetInt();
 
 		if (Width <= 0) Width = Game->_renderer->_width;
 		if (Height <= 0) Height = Game->_renderer->_height;
@@ -1581,7 +1581,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (!_viewport) _viewport = new CBViewport(Game);
 		if (_viewport) _viewport->setRect(X, Y, X + Width, Y + Height);
 
-		stack->PushBool(true);
+		stack->pushBool(true);
 
 		return S_OK;
 	}
@@ -1590,8 +1590,8 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// AddLayer
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddLayer") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdLayer *Layer = new CAdLayer(Game);
 		if (!Val->IsNULL()) Layer->setName(Val->GetString());
@@ -1602,7 +1602,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		_layers.Add(Layer);
 		Game->RegisterObject(Layer);
 
-		stack->PushNative(Layer, true);
+		stack->pushNative(Layer, true);
 		return S_OK;
 	}
 
@@ -1610,9 +1610,9 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// InsertLayer
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertLayer") == 0) {
-		stack->CorrectParams(2);
-		int Index = stack->Pop()->GetInt();
-		CScValue *Val = stack->Pop();
+		stack->correctParams(2);
+		int Index = stack->pop()->GetInt();
+		CScValue *Val = stack->pop();
 
 		CAdLayer *Layer = new CAdLayer(Game);
 		if (!Val->IsNULL()) Layer->setName(Val->GetString());
@@ -1626,7 +1626,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 		Game->RegisterObject(Layer);
 
-		stack->PushNative(Layer, true);
+		stack->pushNative(Layer, true);
 		return S_OK;
 	}
 
@@ -1634,8 +1634,8 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// DeleteLayer
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteLayer") == 0) {
-		stack->CorrectParams(1);
-		CScValue *Val = stack->Pop();
+		stack->correctParams(1);
+		CScValue *Val = stack->pop();
 
 		CAdLayer *ToDelete = NULL;
 		if (Val->IsNative()) {
@@ -1653,13 +1653,13 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			}
 		}
 		if (ToDelete == NULL) {
-			stack->PushBool(false);
+			stack->pushBool(false);
 			return S_OK;
 		}
 
 		if (ToDelete->_main) {
 			script->RuntimeError("Scene.DeleteLayer - cannot delete main scene layer");
-			stack->PushBool(false);
+			stack->pushBool(false);
 			return S_OK;
 		}
 
@@ -1670,7 +1670,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 				break;
 			}
 		}
-		stack->PushBool(true);
+		stack->pushBool(true);
 		return S_OK;
 	}
 

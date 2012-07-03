@@ -41,19 +41,19 @@ class CBScriptable;
 
 class CScStack : public CBBase {
 public:
-	CScValue *GetAt(int Index);
-	CScValue *GetPushValue();
+	CScValue *getAt(int Index);
+	CScValue *getPushValue();
 	DECLARE_PERSISTENT(CScStack, CBBase)
-	void PushNative(CBScriptable *Val, bool Persistent);
-	void PushString(const char *Val);
-	void PushBool(bool Val);
-	void PushInt(int Val);
-	void PushFloat(double Val);
-	void PushNULL();
-	void CorrectParams(uint32 expected_params);
-	CScValue *GetTop();
-	void Push(CScValue *Val);
-	CScValue *Pop();
+	void pushNative(CBScriptable *Val, bool Persistent);
+	void pushString(const char *Val);
+	void pushBool(bool Val);
+	void pushInt(int Val);
+	void pushFloat(double Val);
+	void pushNULL();
+	void correctParams(uint32 expected_params);
+	CScValue *getTop();
+	void push(CScValue *Val);
+	CScValue *pop();
 	CScStack(CBGame *inGame);
 	virtual ~CScStack();
 	CBArray<CScValue *, CScValue *> _values;

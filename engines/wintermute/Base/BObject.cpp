@@ -171,11 +171,11 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SkipTo
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SkipTo") == 0) {
-		stack->CorrectParams(2);
-		_posX = stack->Pop()->GetInt();
-		_posY = stack->Pop()->GetInt();
+		stack->correctParams(2);
+		_posX = stack->pop()->GetInt();
+		_posY = stack->pop()->GetInt();
 		afterMove();
-		stack->PushNULL();
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -184,8 +184,8 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Caption") == 0) {
-		stack->CorrectParams(1);
-		stack->PushString(getCaption(stack->Pop()->GetInt()));
+		stack->correctParams(1);
+		stack->pushString(getCaption(stack->pop()->GetInt()));
 
 		return S_OK;
 	}
@@ -194,9 +194,9 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SetCursor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetCursor") == 0) {
-		stack->CorrectParams(1);
-		if (SUCCEEDED(setCursor(stack->Pop()->GetString()))) stack->PushBool(true);
-		else stack->PushBool(false);
+		stack->correctParams(1);
+		if (SUCCEEDED(setCursor(stack->pop()->GetString()))) stack->pushBool(true);
+		else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -205,7 +205,7 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// RemoveCursor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveCursor") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		if (!_sharedCursors) {
 			delete _cursor;
 			_cursor = NULL;
@@ -213,7 +213,7 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			_cursor = NULL;
 
 		}
-		stack->PushNULL();
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -222,9 +222,9 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetCursor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetCursor") == 0) {
-		stack->CorrectParams(0);
-		if (!_cursor || !_cursor->_filename) stack->PushNULL();
-		else stack->PushString(_cursor->_filename);
+		stack->correctParams(0);
+		if (!_cursor || !_cursor->_filename) stack->pushNULL();
+		else stack->pushString(_cursor->_filename);
 
 		return S_OK;
 	}
@@ -233,9 +233,9 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetCursorObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetCursorObject") == 0) {
-		stack->CorrectParams(0);
-		if (!_cursor) stack->PushNULL();
-		else stack->PushNative(_cursor, true);
+		stack->correctParams(0);
+		if (!_cursor) stack->pushNULL();
+		else stack->pushNative(_cursor, true);
 
 		return S_OK;
 	}
@@ -244,10 +244,10 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// HasCursor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HasCursor") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (_cursor) stack->PushBool(true);
-		else stack->PushBool(false);
+		if (_cursor) stack->pushBool(true);
+		else stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -256,9 +256,9 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SetCaption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetCaption") == 0) {
-		stack->CorrectParams(2);
-		setCaption(stack->Pop()->GetString(), stack->Pop()->GetInt());
-		stack->PushNULL();
+		stack->correctParams(2);
+		setCaption(stack->pop()->GetString(), stack->pop()->GetInt());
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -267,12 +267,12 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// LoadSound
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadSound") == 0) {
-		stack->CorrectParams(1);
-		const char *Filename = stack->Pop()->GetString();
+		stack->correctParams(1);
+		const char *Filename = stack->pop()->GetString();
 		if (SUCCEEDED(playSFX(Filename, false, false)))
-			stack->PushBool(true);
+			stack->pushBool(true);
 		else
-			stack->PushBool(false);
+			stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -281,15 +281,15 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// PlaySound
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PlaySound") == 0) {
-		stack->CorrectParams(3);
+		stack->correctParams(3);
 
 		const char *Filename;
 		bool Looping;
 		uint32 LoopStart;
 
-		CScValue *val1 = stack->Pop();
-		CScValue *val2 = stack->Pop();
-		CScValue *val3 = stack->Pop();
+		CScValue *val1 = stack->pop();
+		CScValue *val2 = stack->pop();
+		CScValue *val3 = stack->pop();
 
 		if (val1->_type == VAL_BOOL) {
 			Filename = NULL;
@@ -302,8 +302,8 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			LoopStart = val3->GetInt();
 		}
 
-		if (FAILED(playSFX(Filename, Looping, true, NULL, LoopStart))) stack->PushBool(false);
-		else stack->PushBool(true);
+		if (FAILED(playSFX(Filename, Looping, true, NULL, LoopStart))) stack->pushBool(false);
+		else stack->pushBool(true);
 		return S_OK;
 	}
 
@@ -311,13 +311,13 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// PlaySoundEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PlaySoundEvent") == 0) {
-		stack->CorrectParams(2);
+		stack->correctParams(2);
 
 		const char *Filename;
 		const char *EventName;
 
-		CScValue *val1 = stack->Pop();
-		CScValue *val2 = stack->Pop();
+		CScValue *val1 = stack->pop();
+		CScValue *val2 = stack->pop();
 
 		if (val2->IsNULL()) {
 			Filename = NULL;
@@ -327,8 +327,8 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			EventName = val2->GetString();
 		}
 
-		if (FAILED(playSFX(Filename, false, true, EventName))) stack->PushBool(false);
-		else stack->PushBool(true);
+		if (FAILED(playSFX(Filename, false, true, EventName))) stack->pushBool(false);
+		else stack->pushBool(true);
 		return S_OK;
 	}
 
@@ -336,10 +336,10 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// StopSound
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StopSound") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (FAILED(stopSFX())) stack->PushBool(false);
-		else stack->PushBool(true);
+		if (FAILED(stopSFX())) stack->pushBool(false);
+		else stack->pushBool(true);
 		return S_OK;
 	}
 
@@ -347,10 +347,10 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// PauseSound
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PauseSound") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (FAILED(pauseSFX())) stack->PushBool(false);
-		else stack->PushBool(true);
+		if (FAILED(pauseSFX())) stack->pushBool(false);
+		else stack->pushBool(true);
 		return S_OK;
 	}
 
@@ -358,10 +358,10 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// ResumeSound
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ResumeSound") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (FAILED(resumeSFX())) stack->PushBool(false);
-		else stack->PushBool(true);
+		if (FAILED(resumeSFX())) stack->pushBool(false);
+		else stack->pushBool(true);
 		return S_OK;
 	}
 
@@ -369,10 +369,10 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// IsSoundPlaying
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsSoundPlaying") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (_sFX && _sFX->isPlaying()) stack->PushBool(true);
-		else stack->PushBool(false);
+		if (_sFX && _sFX->isPlaying()) stack->pushBool(true);
+		else stack->pushBool(false);
 		return S_OK;
 	}
 
@@ -380,11 +380,11 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SetSoundPosition
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetSoundPosition") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
-		uint32 Time = stack->Pop()->GetInt();
-		if (FAILED(setSFXTime(Time))) stack->PushBool(false);
-		else stack->PushBool(true);
+		uint32 Time = stack->pop()->GetInt();
+		if (FAILED(setSFXTime(Time))) stack->pushBool(false);
+		else stack->pushBool(true);
 		return S_OK;
 	}
 
@@ -392,10 +392,10 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetSoundPosition
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSoundPosition") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (!_sFX) stack->PushInt(0);
-		else stack->PushInt(_sFX->getPositionTime());
+		if (!_sFX) stack->pushInt(0);
+		else stack->pushInt(_sFX->getPositionTime());
 		return S_OK;
 	}
 
@@ -403,11 +403,11 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SetSoundVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetSoundVolume") == 0) {
-		stack->CorrectParams(1);
+		stack->correctParams(1);
 
-		int Volume = stack->Pop()->GetInt();
-		if (FAILED(setSFXVolume(Volume))) stack->PushBool(false);
-		else stack->PushBool(true);
+		int Volume = stack->pop()->GetInt();
+		if (FAILED(setSFXVolume(Volume))) stack->pushBool(false);
+		else stack->pushBool(true);
 		return S_OK;
 	}
 
@@ -415,10 +415,10 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// GetSoundVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSoundVolume") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 
-		if (!_sFX) stack->PushInt(_sFXVolume);
-		else stack->PushInt(_sFX->getVolume());
+		if (!_sFX) stack->pushInt(_sFXVolume);
+		else stack->pushInt(_sFX->getVolume());
 		return S_OK;
 	}
 
@@ -427,13 +427,13 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SoundFXNone
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SoundFXNone") == 0) {
-		stack->CorrectParams(0);
+		stack->correctParams(0);
 		_sFXType = SFX_NONE;
 		_sFXParam1 = 0;
 		_sFXParam2 = 0;
 		_sFXParam3 = 0;
 		_sFXParam4 = 0;
-		stack->PushNULL();
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -442,13 +442,13 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SoundFXEcho
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SoundFXEcho") == 0) {
-		stack->CorrectParams(4);
+		stack->correctParams(4);
 		_sFXType = SFX_ECHO;
-		_sFXParam1 = (float)stack->Pop()->GetFloat(0); // Wet/Dry Mix [%] (0-100)
-		_sFXParam2 = (float)stack->Pop()->GetFloat(0); // Feedback [%] (0-100)
-		_sFXParam3 = (float)stack->Pop()->GetFloat(333.0f); // Left Delay [ms] (1-2000)
-		_sFXParam4 = (float)stack->Pop()->GetFloat(333.0f); // Right Delay [ms] (1-2000)
-		stack->PushNULL();
+		_sFXParam1 = (float)stack->pop()->GetFloat(0); // Wet/Dry Mix [%] (0-100)
+		_sFXParam2 = (float)stack->pop()->GetFloat(0); // Feedback [%] (0-100)
+		_sFXParam3 = (float)stack->pop()->GetFloat(333.0f); // Left Delay [ms] (1-2000)
+		_sFXParam4 = (float)stack->pop()->GetFloat(333.0f); // Right Delay [ms] (1-2000)
+		stack->pushNULL();
 
 		return S_OK;
 	}
@@ -457,13 +457,13 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// SoundFXReverb
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SoundFXReverb") == 0) {
-		stack->CorrectParams(4);
+		stack->correctParams(4);
 		_sFXType = SFX_REVERB;
-		_sFXParam1 = (float)stack->Pop()->GetFloat(0); // In Gain [dB] (-96 - 0)
-		_sFXParam2 = (float)stack->Pop()->GetFloat(0); // Reverb Mix [dB] (-96 - 0)
-		_sFXParam3 = (float)stack->Pop()->GetFloat(1000.0f); // Reverb Time [ms] (0.001 - 3000)
-		_sFXParam4 = (float)stack->Pop()->GetFloat(0.001f); // HighFreq RT Ratio (0.001 - 0.999)
-		stack->PushNULL();
+		_sFXParam1 = (float)stack->pop()->GetFloat(0); // In Gain [dB] (-96 - 0)
+		_sFXParam2 = (float)stack->pop()->GetFloat(0); // Reverb Mix [dB] (-96 - 0)
+		_sFXParam3 = (float)stack->pop()->GetFloat(1000.0f); // Reverb Time [ms] (0.001 - 3000)
+		_sFXParam4 = (float)stack->pop()->GetFloat(0.001f); // HighFreq RT Ratio (0.001 - 0.999)
+		stack->pushNULL();
 
 		return S_OK;
 	}

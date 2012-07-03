@@ -492,7 +492,7 @@ HRESULT CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 		} else if (scumm_stricmp(obj->_name, "next") == 0) {
 			_scrollOffset++;
 		} else if (scumm_stricmp(obj->_name, "response") == 0) {
-			if (_waitingScript) _waitingScript->_stack->PushInt(_responses[param2]->_iD);
+			if (_waitingScript) _waitingScript->_stack->pushInt(_responses[param2]->_iD);
 			handleResponse(_responses[param2]);
 			_waitingScript = NULL;
 			Game->_state = GAME_RUNNING;
