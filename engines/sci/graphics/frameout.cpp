@@ -326,8 +326,10 @@ void GfxFrameout::deletePlaneLine(reg_t object, reg_t hunkId) {
 
 void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	// Ignore invalid items
-	if (!_segMan->isObject(object))
+	if (!_segMan->isObject(object)) {
+		warning("kernelAddScreenItem: Attempt to add an invalid object (%04x:%04x)", PRINT_REG(object));
 		return;
+	}
 
 	FrameoutEntry *itemEntry = new FrameoutEntry();
 	memset(itemEntry, 0, sizeof(FrameoutEntry));
@@ -341,8 +343,10 @@ void GfxFrameout::kernelAddScreenItem(reg_t object) {
 
 void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
 	// Ignore invalid items
-	if (!_segMan->isObject(object))
+	if (!_segMan->isObject(object)) {
+		warning("kernelUpdateScreenItem: Attempt to update an invalid object (%04x:%04x)", PRINT_REG(object));
 		return;
+	}
 
 	FrameoutEntry *itemEntry = findScreenItem(object);
 	if (!itemEntry) {
@@ -372,10 +376,9 @@ void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
 
 void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
 	FrameoutEntry *itemEntry = findScreenItem(object);
-	if (!itemEntry) {
-		warning("kernelDeleteScreenItem: invalid object %04x:%04x", PRINT_REG(object));
+	// If the item could not be found, it may already have been deleted
+	if (!itemEntry)
 		return;
-	}
 
 	_screenItems.remove(itemEntry);
 	delete itemEntry;
