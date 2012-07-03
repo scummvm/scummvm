@@ -152,7 +152,7 @@ HRESULT CAdNodeState::TransferEntity(CAdEntity *Entity, bool IncludingSprites, b
 		}
 		if (_filename && !Entity->_region && IncludingSprites && strcmp(_filename, "") != 0) {
 			if (!Entity->_sprite || !Entity->_sprite->_filename || scumm_stricmp(Entity->_sprite->_filename, _filename) != 0)
-				Entity->SetSprite(_filename);
+				Entity->setSprite(_filename);
 		}
 		if (_cursor) {
 			if (!Entity->_cursor || !Entity->_cursor->_filename || scumm_stricmp(Entity->_cursor->_filename, _cursor) != 0)

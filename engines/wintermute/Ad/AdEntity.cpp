@@ -84,22 +84,22 @@ CAdEntity::~CAdEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::loadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
-	if (Buffer == NULL) {
-		Game->LOG(0, "CAdEntity::LoadFile failed for file '%s'", Filename);
+HRESULT CAdEntity::loadFile(const char *filename) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
+		Game->LOG(0, "CAdEntity::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ENTITY file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ENTITY file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -150,7 +150,7 @@ TOKEN_DEF(WALK_TO_DIR)
 TOKEN_DEF(SAVE_STATE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY)
 	TOKEN_TABLE(SPRITE)
@@ -200,18 +200,18 @@ HRESULT CAdEntity::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_ENTITY) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY) {
 			Game->LOG(0, "'ENTITY' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 	CBSprite *spr = NULL;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -236,14 +236,14 @@ HRESULT CAdEntity::loadBuffer(byte  *Buffer, bool Complete) {
 
 		case TOKEN_TALK: {
 			spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->loadFile((char *)params, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.Add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->loadFile((char *)params, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.Add(spr);
 		}
 		break;
@@ -253,7 +253,7 @@ HRESULT CAdEntity::loadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_ITEM:
-			SetItem((char *)params);
+			setItem((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -466,7 +466,7 @@ HRESULT CAdEntity::loadBuffer(byte  *Buffer, bool Complete) {
 		Game->LOG(0, "Warning: Entity '%s' has both sprite and region.", _name);
 	}
 
-	UpdatePosition();
+	updatePosition();
 
 	if (alpha != 0 && ar == 0 && ag == 0 && ab == 0) {
 		ar = ag = ab = 255;
@@ -642,20 +642,20 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PlayTheora") == 0) {
 		stack->CorrectParams(4);
-		const char *Filename = stack->Pop()->GetString();
-		bool Looping = stack->Pop()->GetBool(false);
-		CScValue *ValAlpha = stack->Pop();
-		int StartTime = stack->Pop()->GetInt();
+		const char *filename = stack->Pop()->GetString();
+		bool looping = stack->Pop()->GetBool(false);
+		CScValue *valAlpha = stack->Pop();
+		int startTime = stack->Pop()->GetInt();
 
 		delete _theora;
 		_theora = new CVidTheoraPlayer(Game);
-		if (_theora && SUCCEEDED(_theora->initialize(Filename))) {
-			if (!ValAlpha->IsNULL())    _theora->setAlphaImage(ValAlpha->GetString());
-			_theora->play(VID_PLAY_POS, 0, 0, false, false, Looping, StartTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
+		if (_theora && SUCCEEDED(_theora->initialize(filename))) {
+			if (!valAlpha->IsNULL())    _theora->setAlphaImage(valAlpha->GetString());
+			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if(m_Scale>=0) m_Theora->m_PlayZoom = m_Scale;
 			stack->PushBool(true);
 		} else {
-			script->RuntimeError("Entity.PlayTheora - error playing video '%s'", Filename);
+			script->RuntimeError("Entity.PlayTheora - error playing video '%s'", filename);
 			stack->PushBool(false);
 		}
 
@@ -831,13 +831,13 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CAdEntity::scSetProperty(const char *name, CScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Item") == 0) {
-		SetItem(Value->GetString());
+		setItem(value->GetString());
 		return S_OK;
 	}
 
@@ -845,7 +845,7 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *Value) {
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToX") == 0) {
-		_walkToX = Value->GetInt();
+		_walkToX = value->GetInt();
 		return S_OK;
 	}
 
@@ -853,7 +853,7 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *Value) {
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToY") == 0) {
-		_walkToY = Value->GetInt();
+		_walkToY = value->GetInt();
 		return S_OK;
 	}
 
@@ -861,12 +861,12 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *Value) {
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToDirection") == 0) {
-		int Dir = Value->GetInt();
-		if (Dir >= 0 && Dir < NUM_DIRECTIONS) _walkToDir = (TDirection)Dir;
+		int dir = value->GetInt();
+		if (dir >= 0 && dir < NUM_DIRECTIONS) _walkToDir = (TDirection)dir;
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::scSetProperty(name, Value);
+	else return CAdTalkHolder::scSetProperty(name, value);
 }
 
 
@@ -877,80 +877,80 @@ const char *CAdEntity::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "ENTITY {\n");
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
+HRESULT CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "ENTITY {\n");
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	if (_subtype == ENTITY_SOUND)
-		Buffer->putTextIndent(Indent + 2, "SUBTYPE=\"SOUND\"\n");
-	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
-	Buffer->putTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "X=%d\n", _posX);
-	Buffer->putTextIndent(Indent + 2, "Y=%d\n", _posY);
-	Buffer->putTextIndent(Indent + 2, "SCALABLE=%s\n", _zoomable ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "INTERACTIVE=%s\n", _registrable ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "COLORABLE=%s\n", _shadowable ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "SUBTYPE=\"SOUND\"\n");
+	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "X=%d\n", _posX);
+	buffer->putTextIndent(indent + 2, "Y=%d\n", _posY);
+	buffer->putTextIndent(indent + 2, "SCALABLE=%s\n", _zoomable ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "INTERACTIVE=%s\n", _registrable ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "COLORABLE=%s\n", _shadowable ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 	if (_ignoreItems)
-		Buffer->putTextIndent(Indent + 2, "IGNORE_ITEMS=%s\n", _ignoreItems ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "IGNORE_ITEMS=%s\n", _ignoreItems ? "TRUE" : "FALSE");
 	if (_rotatable)
-		Buffer->putTextIndent(Indent + 2, "ROTATABLE=%s\n", _rotatable ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "ROTATABLE=%s\n", _rotatable ? "TRUE" : "FALSE");
 
 	if (!_autoSoundPanning)
-		Buffer->putTextIndent(Indent + 2, "SOUND_PANNING=%s\n", _autoSoundPanning ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "SOUND_PANNING=%s\n", _autoSoundPanning ? "TRUE" : "FALSE");
 
 	if (!_saveState)
-		Buffer->putTextIndent(Indent + 2, "SAVE_STATE=%s\n", _saveState ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "SAVE_STATE=%s\n", _saveState ? "TRUE" : "FALSE");
 
-	if (_item && _item[0] != '\0') Buffer->putTextIndent(Indent + 2, "ITEM=\"%s\"\n", _item);
+	if (_item && _item[0] != '\0') buffer->putTextIndent(indent + 2, "ITEM=\"%s\"\n", _item);
 
-	Buffer->putTextIndent(Indent + 2, "WALK_TO_X=%d\n", _walkToX);
-	Buffer->putTextIndent(Indent + 2, "WALK_TO_Y=%d\n", _walkToY);
+	buffer->putTextIndent(indent + 2, "WALK_TO_X=%d\n", _walkToX);
+	buffer->putTextIndent(indent + 2, "WALK_TO_Y=%d\n", _walkToY);
 	if (_walkToDir != DI_NONE)
-		Buffer->putTextIndent(Indent + 2, "WALK_TO_DIR=%d\n", (int)_walkToDir);
+		buffer->putTextIndent(indent + 2, "WALK_TO_DIR=%d\n", (int)_walkToDir);
 
 	int i;
 
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	if (_subtype == ENTITY_NORMAL && _sprite && _sprite->_filename)
-		Buffer->putTextIndent(Indent + 2, "SPRITE=\"%s\"\n", _sprite->_filename);
+		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _sprite->_filename);
 
 	if (_subtype == ENTITY_SOUND && _sFX && _sFX->_soundFilename) {
-		Buffer->putTextIndent(Indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename);
-		Buffer->putTextIndent(Indent + 2, "SOUND_START_TIME=%d\n", _sFXStart);
-		Buffer->putTextIndent(Indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
+		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename);
+		buffer->putTextIndent(indent + 2, "SOUND_START_TIME=%d\n", _sFXStart);
+		buffer->putTextIndent(indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
 	}
 
 
 	if (D3DCOLGetR(_alphaColor) != 0 || D3DCOLGetG(_alphaColor) != 0 ||  D3DCOLGetB(_alphaColor) != 0)
-		Buffer->putTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alphaColor), D3DCOLGetG(_alphaColor), D3DCOLGetB(_alphaColor));
+		buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alphaColor), D3DCOLGetG(_alphaColor), D3DCOLGetB(_alphaColor));
 
 	if (D3DCOLGetA(_alphaColor) != 0)
-		Buffer->putTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alphaColor));
+		buffer->putTextIndent(indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alphaColor));
 
 	if (_scale >= 0)
-		Buffer->putTextIndent(Indent + 2, "SCALE = %d\n", (int)_scale);
+		buffer->putTextIndent(indent + 2, "SCALE = %d\n", (int)_scale);
 
 	if (_relativeScale != 0)
-		Buffer->putTextIndent(Indent + 2, "RELATIVE_SCALE = %d\n", (int)_relativeScale);
+		buffer->putTextIndent(indent + 2, "RELATIVE_SCALE = %d\n", (int)_relativeScale);
 
 	if (_font && _font->_filename)
-		Buffer->putTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 
 	if (_cursor && _cursor->_filename)
-		Buffer->putTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
-	CAdTalkHolder::saveAsText(Buffer, Indent + 2);
+	CAdTalkHolder::saveAsText(buffer, indent + 2);
 
-	if (_region) _region->saveAsText(Buffer, Indent + 2);
+	if (_region) _region->saveAsText(buffer, indent + 2);
 
-	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
 
-	CAdObject::saveAsText(Buffer, Indent + 2);
+	CAdObject::saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent, "}\n\n");
+	buffer->putTextIndent(indent, "}\n\n");
 
 	return S_OK;
 }
@@ -968,7 +968,7 @@ int CAdEntity::getHeight() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdEntity::UpdatePosition() {
+void CAdEntity::updatePosition() {
 	if (_region && !_sprite) {
 		_posX = _region->_rect.left + (_region->_rect.right - _region->_rect.left) / 2;
 		_posY = _region->_rect.bottom;
@@ -998,22 +998,22 @@ HRESULT CAdEntity::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdEntity::SetItem(const char *ItemName) {
-	CBUtils::SetString(&_item, ItemName);
+void CAdEntity::setItem(const char *itemName) {
+	CBUtils::SetString(&_item, itemName);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::SetSprite(const char *Filename) {
-	bool SetCurrent = false;
+HRESULT CAdEntity::setSprite(const char *filename) {
+	bool setCurrent = false;
 	if (_currentSprite == _sprite) {
 		_currentSprite = NULL;
-		SetCurrent = true;
+		setCurrent = true;
 	}
 
 	delete _sprite;
 	_sprite = NULL;
 	CBSprite *spr = new CBSprite(Game, this);
-	if (!spr || FAILED(spr->loadFile(Filename))) {
+	if (!spr || FAILED(spr->loadFile(filename))) {
 		delete _sprite;
 		_sprite = NULL;
 		return E_FAIL;

@@ -36,23 +36,23 @@ class CVidTheoraPlayer;
 class CAdEntity : public CAdTalkHolder {
 public:
 	CVidTheoraPlayer *_theora;
-	HRESULT SetSprite(const char *Filename);
+	HRESULT setSprite(const char *filename);
 	int _walkToX;
 	int _walkToY;
 	TDirection _walkToDir;
-	void SetItem(const char *ItemName);
+	void setItem(const char *itemName);
 	char *_item;
 	DECLARE_PERSISTENT(CAdEntity, CAdTalkHolder)
-	void UpdatePosition();
+	void updatePosition();
 	virtual int getHeight();
 	CBRegion *_region;
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 	virtual HRESULT update();
 	virtual HRESULT display();
 	CAdEntity(CBGame *inGame);
 	virtual ~CAdEntity();
-	HRESULT loadFile(const char *Filename);
-	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadFile(const char *filename);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
 	TEntityType _subtype;
 
 	// scripting interface
