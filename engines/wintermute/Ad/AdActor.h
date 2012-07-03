@@ -46,17 +46,17 @@ class CAdSpriteSet;
 class CAdPath;
 class CAdActor : public CAdTalkHolder {
 public:
-	TDirection AngleToDirection(int Angle);
+	TDirection angleToDirection(int angle);
 	DECLARE_PERSISTENT(CAdActor, CAdTalkHolder)
 	virtual int getHeight();
-	CBSprite *getTalkStance(const char *Stance);
-	virtual void GoTo(int X, int Y, TDirection AfterWalkDir = DI_NONE);
+	CBSprite *getTalkStance(const char *stance);
+	virtual void goTo(int x, int y, TDirection afterWalkDir = DI_NONE);
 	CBPoint *_targetPoint;
 	virtual HRESULT update();
 	virtual HRESULT display();
 	TDirection _targetDir;
 	TDirection _afterWalkDir;
-	virtual void TurnTo(TDirection dir);
+	virtual void turnTo(TDirection dir);
 	CAdPath *_path;
 	CAdSpriteSet *_walkSprite;
 	CAdSpriteSet *_standSprite;
@@ -67,8 +67,8 @@ public:
 	TDirection _dir;
 	CAdActor(CBGame *inGame/*=NULL*/);
 	virtual ~CAdActor();
-	HRESULT loadFile(const char *Filename);
-	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadFile(const char *filename);
+	HRESULT loadBuffer(byte  *buffer, bool complete = true);
 
 	// new anim system
 	Common::String _talkAnimName;
@@ -77,24 +77,24 @@ public:
 	Common::String _turnLeftAnimName;
 	Common::String _turnRightAnimName;
 	CBArray<CAdSpriteSet *, CAdSpriteSet *> _anims;
-	virtual HRESULT PlayAnim(const char *Filename);
-	CAdSpriteSet *GetAnimByName(const Common::String &animName);
+	virtual HRESULT playAnim(const char *filename);
+	CAdSpriteSet *getAnimByName(const Common::String &animName);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *Name);
-	virtual HRESULT scSetProperty(const char *Name, CScValue *Value);
-	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual CScValue *scGetProperty(const char *name);
+	virtual HRESULT scSetProperty(const char *name, CScValue *value);
+	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 private:
-	HRESULT SetDefaultAnimNames();
-	CBSprite *GetTalkStanceOld(const char *Stance);
-	HRESULT MergeAnims(const char *AnimsFilename);
+	HRESULT setDefaultAnimNames();
+	CBSprite *getTalkStanceOld(const char *stance);
+	HRESULT mergeAnims(const char *animsFilename);
 	CBSprite *_animSprite2;
 
-	void InitLine(CBPoint StartPt, CBPoint EndPt);
-	void GetNextStep();
-	void FollowPath();
+	void initLine(CBPoint startPt, CBPoint endPt);
+	void getNextStep();
+	void followPath();
 	double _pFStepX;
 	double _pFStepY;
 	double _pFX;
