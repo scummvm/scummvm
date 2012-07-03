@@ -224,12 +224,12 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// tables inside graphics/transitions.cpp
 	uint16 showStyle = argv[0].toUint16();	// 0 - 15
 	reg_t planeObj = argv[1];	// the affected plane
-	//uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
-	//uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
-	//int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
-	//uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
-	//uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
-#if 0
+	Common::String planeObjName = s->_segMan->getObjectName(planeObj);
+	uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
+	uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
+	int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
+	uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
+	uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
 	int16 divisions;
 
 	// If the game has the pFadeArray selector, another parameter is used here,
@@ -241,7 +241,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	} else {
 		divisions = (argc >= 8) ? argv[7].toSint16() : -1;	// divisions (transition steps?)
 	}
-#endif
+
 	if (showStyle > 15) {
 		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
 		return s->r_acc;
@@ -257,18 +257,29 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 
 	// TODO: Check if the plane is in the list of planes to draw
 
+	Common::String effectName = "unknown";
+
 	switch (showStyle) {
-	//case 0:	// no transition, perhaps? (like in the previous SCI versions)
+	case 0:		// no transition / show
+		effectName = "show";
+		break;
 	case 13:	// fade out
+		effectName = "fade out";
 		// TODO
+		break;
 	case 14:	// fade in
+		effectName = "fade in";
 		// TODO
+		break;
 	default:
-		// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
-		kStub(s, argc, argv);
+		// TODO
 		break;
 	}
 
+	warning("kSetShowStyle: effect %d (%s) - plane: %04x:%04x (%s), sec: %d, "
+			"back: %d, prio: %d, animate: %d, ref frame: %d, divisions: %d",
+			showStyle, effectName.c_str(), PRINT_REG(planeObj), planeObjName.c_str(),
+			seconds, backColor, priority, animate, refFrame, divisions);
 	return s->r_acc;
 }
 
