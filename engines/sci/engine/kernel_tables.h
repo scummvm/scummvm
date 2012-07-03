@@ -520,7 +520,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// SCI2 unmapped functions - TODO!
 
-	// SetScroll - called by script 64909, Styler::doit()
 	// PalCycle - called by Game::newRoom. Related to RemapColors.
 
 	// SCI2 Empty functions
@@ -561,6 +560,11 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	// SetScroll is called by script 64909, Styler::doit(), but it doesn't seem to
+	// be used at all (plus, it was then changed to a dummy function in SCI3).
+	// Since this is most likely unused, and we got no test case, error out when
+	// it is called in order to find an actual call to it.
+	{ MAP_DUMMY(SetScroll),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
 	{ MAP_CALL(CD),                SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -620,6 +624,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(WinDLL),            SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(DeletePic),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,      "(.*)",                 NULL,            NULL },
+	// SetHotRectangles is used by Phantasmagoria 1, script 64981 (a debug script)
+	{ MAP_DUMMY(SetHotRectangles),  SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// Unused / debug functions in the in-between SCI2.1 interpreters
 	{ MAP_DUMMY(PreloadResource),   SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
@@ -633,7 +639,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
 	//   (inclusive) are set to 0
 	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
-	// SetHotRectangles - used by Phantasmagoria 1
 
 	// SCI3 Kernel Functions
 	{ MAP_CALL(PlayDuck),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
