@@ -1306,7 +1306,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 	// Force a full redraw if requested.
 	// If _useOldSrc, the scaler will do its own partial updates.
-	if (_forceRedraw || (_useOldSrc && !_overlayVisible)) {
+	if (_forceRedraw || (_useOldSrc && !_overlayVisible && _numDirtyRects > 0)) {
 		_numDirtyRects = 1;
 		_dirtyRectList[0].x = 0;
 		_dirtyRectList[0].y = 0;
