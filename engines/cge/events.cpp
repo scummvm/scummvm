@@ -109,7 +109,7 @@ bool Keyboard::getKey(Common::Event &event) {
 	case Common::KEYCODE_3:
 	case Common::KEYCODE_4:
 		if (event.kbd.flags & Common::KBD_ALT) {
-			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - '0', NULL);
+			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - Common::KEYCODE_0, NULL);
 			return false;
 		}
 		// Fallthrough intended
@@ -117,8 +117,8 @@ bool Keyboard::getKey(Common::Event &event) {
 	case Common::KEYCODE_6:
 	case Common::KEYCODE_7:
 	case Common::KEYCODE_8:
-		if (event.type == Common::EVENT_KEYDOWN && !(event.kbd.flags & Common::KBD_ALT) && keycode != '0') {
-			_vm->selectPocket(keycode - '1');
+		if (event.type == Common::EVENT_KEYDOWN && !(event.kbd.flags & Common::KBD_ALT) && keycode != Common::KEYCODE_0) {
+			_vm->selectPocket(keycode - Common::KEYCODE_1);
 			return false;
 		}
 		break;
