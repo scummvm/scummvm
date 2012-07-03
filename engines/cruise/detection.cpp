@@ -303,8 +303,6 @@ SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int
 
 		// Create the return descriptor
 		SaveStateDescriptor desc(slot, header.saveName);
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
 		desc.setThumbnail(header.thumbnail);
 
 		return desc;
