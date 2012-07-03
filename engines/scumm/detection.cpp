@@ -1266,7 +1266,6 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	Graphics::Surface *thumbnail = ScummEngine::loadThumbnailFromSlot(target, slot);
 
 	SaveStateDescriptor desc(slot, saveDesc);
-	desc.setDeletableFlag(true);
 	desc.setThumbnail(thumbnail);
 
 	SaveStateMetaInfos infos;
