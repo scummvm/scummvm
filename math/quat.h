@@ -59,7 +59,7 @@ public:
 	 * @return		the resulting quaternion.
 	 */
 	Quaternion slerpQuat(const Quaternion& to, const float t);
-	static Quaternion fromEuler(const Angle & yaw, const Angle & pitch, const Angle & roll);
+	static Quaternion fromEuler(const Angle &yaw, const Angle &pitch, const Angle &roll);
 	
 	inline static Quaternion get_quaternion(const char *data) {
 		return Quaternion(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));

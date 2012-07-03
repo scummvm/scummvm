@@ -102,7 +102,7 @@ Matrix4 Quaternion::toMatrix() {
 	return dst;
 }
 
-	Quaternion Quaternion::fromEuler(const Angle & yaw, const Angle & pitch, const Angle & roll) {
+	Quaternion Quaternion::fromEuler(const Angle &yaw, const Angle &pitch, const Angle &roll) {
 		float cr, cp, cy, sr, sp, sy, cpcy, spsy;
 
 		cy = (yaw / 2).getCosine();
