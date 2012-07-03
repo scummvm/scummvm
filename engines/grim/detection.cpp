@@ -99,6 +99,19 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_GRIM
 	},
 	{
+		// Grim Fandango Portuguese version
+		{
+			"grim",
+			"",
+			AD_ENTRY1s("VOX0001.LAB", "89da4d4f4f90a8ea390450ed5a617f08", 57875710),
+			Common::PT_BRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
+		},
+		GType_GRIM
+	},
+	{
 		// Grim Fandango Italian version
 		{
 			"grim",
