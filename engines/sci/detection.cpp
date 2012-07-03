@@ -762,9 +762,6 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
 		desc.setThumbnail(thumbnail);
 
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
-
 		int day = (meta.saveDate >> 24) & 0xFF;
 		int month = (meta.saveDate >> 16) & 0xFF;
 		int year = meta.saveDate & 0xFFFF;
