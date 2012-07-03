@@ -350,12 +350,12 @@ CScValue *CBRegion::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CBRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(Value->GetString());
+		setName(value->GetString());
 		return S_OK;
 	}
 
@@ -363,11 +363,11 @@ HRESULT CBRegion::scSetProperty(const char *name, CScValue *Value) {
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Active") == 0) {
-		_active = Value->GetBool();
+		_active = value->GetBool();
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(name, Value);
+	else return CBObject::scSetProperty(name, value);
 }
 
 

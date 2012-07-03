@@ -224,16 +224,16 @@ CScValue *CAdWaypointGroup::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Active") == 0) {
-		_active = Value->GetBool();
+		_active = value->GetBool();
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(name, Value);
+	else return CBObject::scSetProperty(name, value);
 }
 
 

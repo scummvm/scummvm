@@ -421,12 +421,12 @@ CScValue *CAdLayer::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CAdLayer::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(Value->GetString());
+		setName(value->GetString());
 		return S_OK;
 	}
 
@@ -434,7 +434,7 @@ HRESULT CAdLayer::scSetProperty(const char *name, CScValue *Value) {
 	// CloseUp
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CloseUp") == 0) {
-		_closeUp = Value->GetBool();
+		_closeUp = value->GetBool();
 		return S_OK;
 	}
 
@@ -442,7 +442,7 @@ HRESULT CAdLayer::scSetProperty(const char *name, CScValue *Value) {
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Width") == 0) {
-		_width = Value->GetInt();
+		_width = value->GetInt();
 		if (_width < 0) _width = 0;
 		return S_OK;
 	}
@@ -451,7 +451,7 @@ HRESULT CAdLayer::scSetProperty(const char *name, CScValue *Value) {
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Height") == 0) {
-		_height = Value->GetInt();
+		_height = value->GetInt();
 		if (_height < 0) _height = 0;
 		return S_OK;
 	}
@@ -460,14 +460,14 @@ HRESULT CAdLayer::scSetProperty(const char *name, CScValue *Value) {
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Active") == 0) {
-		bool b = Value->GetBool();
+		bool b = value->GetBool();
 		if (b == false && _main) {
 			Game->LOG(0, "Warning: cannot deactivate scene's main layer");
 		} else _active = b;
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(name, Value);
+	else return CBObject::scSetProperty(name, value);
 }
 
 

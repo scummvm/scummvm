@@ -1842,12 +1842,12 @@ CScValue *CAdScene::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(Value->GetString());
+		setName(value->GetString());
 		return S_OK;
 	}
 
@@ -1855,7 +1855,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	// AutoScroll
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AutoScroll") == 0) {
-		_autoScroll = Value->GetBool();
+		_autoScroll = value->GetBool();
 		return S_OK;
 	}
 
@@ -1863,7 +1863,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	// PersistentState
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PersistentState") == 0) {
-		_persistentState = Value->GetBool();
+		_persistentState = value->GetBool();
 		return S_OK;
 	}
 
@@ -1871,7 +1871,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	// PersistentStateSprites
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PersistentStateSprites") == 0) {
-		_persistentStateSprites = Value->GetBool();
+		_persistentStateSprites = value->GetBool();
 		return S_OK;
 	}
 
@@ -1879,7 +1879,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	// ScrollPixelsX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollPixelsX") == 0) {
-		_scrollPixelsH = Value->GetInt();
+		_scrollPixelsH = value->GetInt();
 		return S_OK;
 	}
 
@@ -1887,7 +1887,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	// ScrollPixelsY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollPixelsY") == 0) {
-		_scrollPixelsV = Value->GetInt();
+		_scrollPixelsV = value->GetInt();
 		return S_OK;
 	}
 
@@ -1895,7 +1895,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	// ScrollSpeedX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedX") == 0) {
-		_scrollTimeH = Value->GetInt();
+		_scrollTimeH = value->GetInt();
 		return S_OK;
 	}
 
@@ -1903,7 +1903,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	// ScrollSpeedY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedY") == 0) {
-		_scrollTimeV = Value->GetInt();
+		_scrollTimeV = value->GetInt();
 		return S_OK;
 	}
 
@@ -1911,7 +1911,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	// OffsetX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "OffsetX") == 0) {
-		_offsetLeft = Value->GetInt();
+		_offsetLeft = value->GetInt();
 
 		int ViewportWidth, ViewportHeight;
 		getViewportSize(&ViewportWidth, &ViewportHeight);
@@ -1927,7 +1927,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	// OffsetY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "OffsetY") == 0) {
-		_offsetTop = Value->GetInt();
+		_offsetTop = value->GetInt();
 
 		int ViewportWidth, ViewportHeight;
 		getViewportSize(&ViewportWidth, &ViewportHeight);
@@ -1939,7 +1939,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(name, Value);
+	else return CBObject::scSetProperty(name, value);
 }
 
 

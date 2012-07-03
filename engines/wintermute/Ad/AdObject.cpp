@@ -715,13 +715,13 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CAdObject::scSetProperty(const char *name, CScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Active") == 0) {
-		_active = Value->GetBool();
+		_active = value->GetBool();
 		return S_OK;
 	}
 
@@ -729,7 +729,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *Value) {
 	// IgnoreItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IgnoreItems") == 0) {
-		_ignoreItems = Value->GetBool();
+		_ignoreItems = value->GetBool();
 		return S_OK;
 	}
 
@@ -737,7 +737,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *Value) {
 	// SceneIndependent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SceneIndependent") == 0) {
-		_sceneIndependent = Value->GetBool();
+		_sceneIndependent = value->GetBool();
 		return S_OK;
 	}
 
@@ -745,7 +745,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *Value) {
 	// SubtitlesWidth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesWidth") == 0) {
-		_subtitlesWidth = Value->GetInt();
+		_subtitlesWidth = value->GetInt();
 		return S_OK;
 	}
 
@@ -753,7 +753,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *Value) {
 	// SubtitlesPosRelative
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosRelative") == 0) {
-		_subtitlesModRelative = Value->GetBool();
+		_subtitlesModRelative = value->GetBool();
 		return S_OK;
 	}
 
@@ -761,7 +761,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *Value) {
 	// SubtitlesPosX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosX") == 0) {
-		_subtitlesModX = Value->GetInt();
+		_subtitlesModX = value->GetInt();
 		return S_OK;
 	}
 
@@ -769,7 +769,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *Value) {
 	// SubtitlesPosY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosY") == 0) {
-		_subtitlesModY = Value->GetInt();
+		_subtitlesModY = value->GetInt();
 		return S_OK;
 	}
 
@@ -777,11 +777,11 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *Value) {
 	// SubtitlesPosXCenter
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosXCenter") == 0) {
-		_subtitlesModXCenter = Value->GetBool();
+		_subtitlesModXCenter = value->GetBool();
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(name, Value);
+	else return CBObject::scSetProperty(name, value);
 }
 
 

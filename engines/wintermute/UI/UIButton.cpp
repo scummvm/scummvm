@@ -967,12 +967,12 @@ CScValue *CUIButton::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CUIButton::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "TextAlign") == 0) {
-		int i = Value->GetInt();
+		int i = value->GetInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
 		_align = (TTextAlign)i;
 		return S_OK;
@@ -982,25 +982,25 @@ HRESULT CUIButton::scSetProperty(const char *name, CScValue *Value) {
 	// Focusable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Focusable") == 0) {
-		_canFocus = Value->GetBool();
+		_canFocus = value->GetBool();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Pressed
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Pressed") == 0) {
-		_stayPressed = Value->GetBool();
+		_stayPressed = value->GetBool();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PixelPerfect") == 0) {
-		_pixelPerfect = Value->GetBool();
+		_pixelPerfect = value->GetBool();
 		return S_OK;
 	}
 
-	else return CUIObject::scSetProperty(name, Value);
+	else return CUIObject::scSetProperty(name, value);
 }
 
 

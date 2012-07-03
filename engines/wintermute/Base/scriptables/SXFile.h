@@ -41,7 +41,7 @@ class CSXFile : public CBScriptable {
 public:
 	DECLARE_PERSISTENT(CSXFile, CBScriptable)
 	CScValue *scGetProperty(const char *name);
-	HRESULT scSetProperty(const char *name, CScValue *Value);
+	HRESULT scSetProperty(const char *name, CScValue *value);
 	HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	const char *scToString();
 	CSXFile(CBGame *inGame, CScStack *Stack);

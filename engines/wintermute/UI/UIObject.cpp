@@ -418,12 +418,12 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(Value->GetString());
+		setName(value->GetString());
 		return S_OK;
 	}
 
@@ -431,7 +431,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *Value) {
 	// ParentNotify
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ParentNotify") == 0) {
-		_parentNotify = Value->GetBool();
+		_parentNotify = value->GetBool();
 		return S_OK;
 	}
 
@@ -439,7 +439,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *Value) {
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Width") == 0) {
-		_width = Value->GetInt();
+		_width = value->GetInt();
 		return S_OK;
 	}
 
@@ -447,7 +447,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *Value) {
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Height") == 0) {
-		_height = Value->GetInt();
+		_height = value->GetInt();
 		return S_OK;
 	}
 
@@ -455,7 +455,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *Value) {
 	// Visible
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Visible") == 0) {
-		_visible = Value->GetBool();
+		_visible = value->GetBool();
 		return S_OK;
 	}
 
@@ -463,7 +463,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *Value) {
 	// Disabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Disabled") == 0) {
-		_disable = Value->GetBool();
+		_disable = value->GetBool();
 		return S_OK;
 	}
 
@@ -471,11 +471,11 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *Value) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
-		setText(Value->GetString());
+		setText(value->GetString());
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(name, Value);
+	else return CBObject::scSetProperty(name, value);
 }
 
 

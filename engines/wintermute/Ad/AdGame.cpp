@@ -952,25 +952,25 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// SelectedItem
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SelectedItem") == 0) {
-		if (Value->IsNULL()) _selectedItem = NULL;
+		if (value->IsNULL()) _selectedItem = NULL;
 		else {
-			if (Value->IsNative()) {
+			if (value->IsNative()) {
 				_selectedItem = NULL;
 				for (int i = 0; i < _items.GetSize(); i++) {
-					if (_items[i] == Value->GetNative()) {
-						_selectedItem = (CAdItem *)Value->GetNative();
+					if (_items[i] == value->GetNative()) {
+						_selectedItem = (CAdItem *)value->GetNative();
 						break;
 					}
 				}
 			} else {
 				// try to get by name
-				_selectedItem = GetItemByName(Value->GetString());
+				_selectedItem = GetItemByName(value->GetString());
 			}
 		}
 
@@ -981,7 +981,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *Value) {
 	// SmartItemCursor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SmartItemCursor") == 0) {
-		_smartItemCursor = Value->GetBool();
+		_smartItemCursor = value->GetBool();
 		return S_OK;
 	}
 
@@ -989,7 +989,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *Value) {
 	// InventoryVisible
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InventoryVisible") == 0) {
-		if (_inventoryBox) _inventoryBox->_visible = Value->GetBool();
+		if (_inventoryBox) _inventoryBox->_visible = value->GetBool();
 		return S_OK;
 	}
 
@@ -999,9 +999,9 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *Value) {
 	else if (strcmp(name, "InventoryObject") == 0) {
 		if (_inventoryOwner && _inventoryBox) _inventoryOwner->getInventory()->_scrollOffset = _inventoryBox->_scrollOffset;
 
-		if (Value->IsNULL()) _inventoryOwner = _invObject;
+		if (value->IsNULL()) _inventoryOwner = _invObject;
 		else {
-			CBObject *Obj = (CBObject *)Value->GetNative();
+			CBObject *Obj = (CBObject *)value->GetNative();
 			if (Obj == this) _inventoryOwner = _invObject;
 			else if (Game->ValidObject(Obj)) _inventoryOwner = (CAdObject *)Obj;
 		}
@@ -1015,7 +1015,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *Value) {
 	// InventoryScrollOffset
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InventoryScrollOffset") == 0) {
-		if (_inventoryBox) _inventoryBox->_scrollOffset = Value->GetInt();
+		if (_inventoryBox) _inventoryBox->_scrollOffset = value->GetInt();
 		return S_OK;
 	}
 
@@ -1023,7 +1023,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *Value) {
 	// TalkSkipButton
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TalkSkipButton") == 0) {
-		int Val = Value->GetInt();
+		int Val = value->GetInt();
 		if (Val < 0) Val = 0;
 		if (Val > TALK_SKIP_NONE) Val = TALK_SKIP_NONE;
 		_talkSkipButton = (TTalkSkipButton)Val;
@@ -1034,15 +1034,15 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *Value) {
 	// StartupScene
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StartupScene") == 0) {
-		if (Value == NULL) {
+		if (value == NULL) {
 			delete[] _startupScene;
 			_startupScene = NULL;
-		} else CBUtils::SetString(&_startupScene, Value->GetString());
+		} else CBUtils::SetString(&_startupScene, value->GetString());
 
 		return S_OK;
 	}
 
-	else return CBGame::scSetProperty(name, Value);
+	else return CBGame::scSetProperty(name, value);
 }
 
 

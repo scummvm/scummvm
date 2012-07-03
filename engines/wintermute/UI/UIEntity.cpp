@@ -310,14 +310,14 @@ CScValue *CUIEntity::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CUIEntity::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Freezable") == 0) {
-		if (_entity) _entity->makeFreezable(Value->GetBool());
+		if (_entity) _entity->makeFreezable(value->GetBool());
 		return S_OK;
-	} else return CUIObject::scSetProperty(name, Value);
+	} else return CUIObject::scSetProperty(name, value);
 }
 
 

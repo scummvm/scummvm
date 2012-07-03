@@ -66,16 +66,16 @@ CScValue *CScStack::Pop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScStack::Push(CScValue *Val) {
+void CScStack::Push(CScValue *val) {
 	_sP++;
 
 	if (_sP < _values.GetSize()) {
 		_values[_sP]->cleanup();
-		_values[_sP]->Copy(Val);
+		_values[_sP]->Copy(val);
 	} else {
-		CScValue *val = new CScValue(Game);
-		val->Copy(Val);
-		_values.Add(val);
+		CScValue *copyVal = new CScValue(Game);
+		copyVal->Copy(val);
+		_values.Add(copyVal);
 	}
 }
 
@@ -102,10 +102,10 @@ CScValue *CScStack::GetTop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CScStack::GetAt(int Index) {
-	Index = _sP - Index;
-	if (Index < 0 || Index >= _values.GetSize()) return NULL;
-	else return _values[Index];
+CScValue *CScStack::GetAt(int index) {
+	index = _sP - index;
+	if (index < 0 || index >= _values.GetSize()) return NULL;
+	else return _values[index];
 }
 
 
@@ -152,55 +152,55 @@ void CScStack::PushNULL() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScStack::PushInt(int Val) {
+void CScStack::PushInt(int val) {
 	/*
 	CScValue* val = new CScValue(Game);
 	val->SetInt(Val);
 	Push(val);
 	delete val;
 	*/
-	GetPushValue()->SetInt(Val);
+	GetPushValue()->SetInt(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScStack::PushFloat(double Val) {
+void CScStack::PushFloat(double val) {
 	/*
 	CScValue* val = new CScValue(Game);
 	val->SetFloat(Val);
 	Push(val);
 	delete val;
 	*/
-	GetPushValue()->SetFloat(Val);
+	GetPushValue()->SetFloat(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScStack::PushBool(bool Val) {
+void CScStack::PushBool(bool val) {
 	/*
 	CScValue* val = new CScValue(Game);
 	val->SetBool(Val);
 	Push(val);
 	delete val;
 	*/
-	GetPushValue()->SetBool(Val);
+	GetPushValue()->SetBool(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScStack::PushString(const char *Val) {
+void CScStack::PushString(const char *val) {
 	/*
 	CScValue* val = new CScValue(Game);
 	val->SetString(Val);
 	Push(val);
 	delete val;
 	*/
-	GetPushValue()->SetString(Val);
+	GetPushValue()->SetString(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScStack::PushNative(CBScriptable *Val, bool Persistent) {
+void CScStack::PushNative(CBScriptable *val, bool persistent) {
 	/*
 	CScValue* val = new CScValue(Game);
 	val->SetNative(Val, Persistent);
@@ -208,7 +208,7 @@ void CScStack::PushNative(CBScriptable *Val, bool Persistent) {
 	delete val;
 	*/
 
-	GetPushValue()->SetNative(Val, Persistent);
+	GetPushValue()->SetNative(val, persistent);
 }
 
 

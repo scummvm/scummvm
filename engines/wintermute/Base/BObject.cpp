@@ -666,12 +666,12 @@ CScValue *CBObject::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CBObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Caption") == 0) {
-		setCaption(Value->GetString());
+		setCaption(value->GetString());
 		return S_OK;
 	}
 
@@ -679,7 +679,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// X
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "X") == 0) {
-		_posX = Value->GetInt();
+		_posX = value->GetInt();
 		afterMove();
 		return S_OK;
 	}
@@ -688,7 +688,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// Y
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Y") == 0) {
-		_posY = Value->GetInt();
+		_posY = value->GetInt();
 		afterMove();
 		return S_OK;
 	}
@@ -697,7 +697,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// Movable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Movable") == 0) {
-		_movable = Value->GetBool();
+		_movable = value->GetBool();
 		return S_OK;
 	}
 
@@ -705,7 +705,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// Registrable/Interactive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Registrable") == 0 || strcmp(name, "Interactive") == 0) {
-		_registrable = Value->GetBool();
+		_registrable = value->GetBool();
 		return S_OK;
 	}
 
@@ -713,7 +713,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// Zoomable/Scalable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Zoomable") == 0 || strcmp(name, "Scalable") == 0) {
-		_zoomable = Value->GetBool();
+		_zoomable = value->GetBool();
 		return S_OK;
 	}
 
@@ -721,7 +721,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// Rotatable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Rotatable") == 0) {
-		_rotatable = Value->GetBool();
+		_rotatable = value->GetBool();
 		return S_OK;
 	}
 
@@ -729,7 +729,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AlphaColor") == 0) {
-		_alphaColor = (uint32)Value->GetInt();
+		_alphaColor = (uint32)value->GetInt();
 		return S_OK;
 	}
 
@@ -737,7 +737,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// BlendMode
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "BlendMode") == 0) {
-		int i = Value->GetInt();
+		int i = value->GetInt();
 		if (i < BLEND_NORMAL || i >= NUM_BLEND_MODES) i = BLEND_NORMAL;
 		_blendMode = (TSpriteBlendMode)i;
 		return S_OK;
@@ -747,8 +747,8 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Scale") == 0) {
-		if (Value->IsNULL()) _scale = -1;
-		else _scale = (float)Value->GetFloat();
+		if (value->IsNULL()) _scale = -1;
+		else _scale = (float)value->GetFloat();
 		return S_OK;
 	}
 
@@ -756,8 +756,8 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// ScaleX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScaleX") == 0) {
-		if (Value->IsNULL()) _scaleX = -1;
-		else _scaleX = (float)Value->GetFloat();
+		if (value->IsNULL()) _scaleX = -1;
+		else _scaleX = (float)value->GetFloat();
 		return S_OK;
 	}
 
@@ -765,8 +765,8 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// ScaleY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScaleY") == 0) {
-		if (Value->IsNULL()) _scaleY = -1;
-		else _scaleY = (float)Value->GetFloat();
+		if (value->IsNULL()) _scaleY = -1;
+		else _scaleY = (float)value->GetFloat();
 		return S_OK;
 	}
 
@@ -774,7 +774,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// RelativeScale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RelativeScale") == 0) {
-		_relativeScale = (float)Value->GetFloat();
+		_relativeScale = (float)value->GetFloat();
 		return S_OK;
 	}
 
@@ -782,11 +782,11 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// Rotate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Rotate") == 0) {
-		if (Value->IsNULL()) {
+		if (value->IsNULL()) {
 			_rotate = 0.0f;
 			_rotateValid = false;
 		} else {
-			_rotate = (float)Value->GetFloat();
+			_rotate = (float)value->GetFloat();
 			_rotateValid = true;
 		}
 		return S_OK;
@@ -796,7 +796,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// RelativeRotate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RelativeRotate") == 0) {
-		_relativeRotate = (float)Value->GetFloat();
+		_relativeRotate = (float)value->GetFloat();
 		return S_OK;
 	}
 
@@ -804,7 +804,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// Colorable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Colorable") == 0) {
-		_shadowable = Value->GetBool();
+		_shadowable = value->GetBool();
 		return S_OK;
 	}
 
@@ -812,7 +812,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// SoundPanning
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SoundPanning") == 0) {
-		_autoSoundPanning = Value->GetBool();
+		_autoSoundPanning = value->GetBool();
 		if (!_autoSoundPanning) resetSoundPan();
 		return S_OK;
 	}
@@ -821,7 +821,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// SaveState
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SaveState") == 0) {
-		_saveState = Value->GetBool();
+		_saveState = value->GetBool();
 		return S_OK;
 	}
 
@@ -829,7 +829,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	// NonIntMouseEvents
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NonIntMouseEvents") == 0) {
-		_nonIntMouseEvents = Value->GetBool();
+		_nonIntMouseEvents = value->GetBool();
 		return S_OK;
 	}
 
@@ -840,7 +840,7 @@ HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBScriptHolder::scSetProperty(name, Value);
+	else return CBScriptHolder::scSetProperty(name, value);
 }
 
 

@@ -352,12 +352,12 @@ CScValue *CSXString::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CSXString::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Capacity") == 0) {
-		int NewCap = Value->GetInt();
+		int NewCap = value->GetInt();
 		if (NewCap < strlen(_string) + 1) Game->LOG(0, "Warning: cannot lower string capacity");
 		else if (NewCap != _capacity) {
 			char *NewStr = new char[NewCap];

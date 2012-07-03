@@ -1005,12 +1005,12 @@ CScValue *CUIWindow::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(Value->GetString());
+		setName(value->GetString());
 		return S_OK;
 	}
 
@@ -1018,7 +1018,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Menu") == 0) {
-		_isMenu = Value->GetBool();
+		_isMenu = value->GetBool();
 		return S_OK;
 	}
 
@@ -1026,7 +1026,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 	// InGame
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InGame") == 0) {
-		_inGame = Value->GetBool();
+		_inGame = value->GetBool();
 		return S_OK;
 	}
 
@@ -1034,7 +1034,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 	// PauseMusic
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PauseMusic") == 0) {
-		_pauseMusic = Value->GetBool();
+		_pauseMusic = value->GetBool();
 		return S_OK;
 	}
 
@@ -1042,7 +1042,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 	// ClipContents
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ClipContents") == 0) {
-		_clipContents = Value->GetBool();
+		_clipContents = value->GetBool();
 		return S_OK;
 	}
 
@@ -1050,7 +1050,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 	// Transparent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Transparent") == 0) {
-		_transparent = Value->GetBool();
+		_transparent = value->GetBool();
 		return S_OK;
 	}
 
@@ -1058,7 +1058,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 	// FadeColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FadeColor") == 0) {
-		_fadeColor = (uint32)Value->GetInt();
+		_fadeColor = (uint32)value->GetInt();
 		_fadeBackground = (_fadeColor != 0);
 		return S_OK;
 	}
@@ -1067,7 +1067,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 	// Exclusive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Exclusive") == 0) {
-		if (Value->GetBool())
+		if (value->GetBool())
 			goExclusive();
 		else {
 			close();
@@ -1080,7 +1080,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 	// SystemExclusive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SystemExclusive") == 0) {
-		if (Value->GetBool())
+		if (value->GetBool())
 			goSystemExclusive();
 		else {
 			close();
@@ -1089,7 +1089,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CUIObject::scSetProperty(name, Value);
+	else return CUIObject::scSetProperty(name, value);
 }
 
 

@@ -120,11 +120,11 @@ void CBUtils::DebugMessage(HWND hWnd, const char *Text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBUtils::SetString(char **String, const char *Value) {
-	delete[] *String;
-	*String = new char[strlen(Value) + 1];
-	if (*String) strcpy(*String, Value);
-	return *String;
+char *CBUtils::SetString(char **string, const char *value) {
+	delete[] *string;
+	*string = new char[strlen(value) + 1];
+	if (*string) strcpy(*string, value);
+	return *string;
 }
 
 //////////////////////////////////////////////////////////////////////////

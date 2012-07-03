@@ -60,7 +60,7 @@ public:
 	HRESULT OnScriptChangeScope(CScScript *Script, CScValue *Scope);
 	HRESULT OnScriptShutdownScope(CScScript *Script, CScValue *Scope);
 	HRESULT OnVariableInit(EWmeDebuggerVariableType Type, CScScript *script, CScValue *Scope, CScValue *Var, const char *VariableName);
-	HRESULT OnVariableChangeValue(CScValue *Var, CScValue *Value);
+	HRESULT OnVariableChangeValue(CScValue *Var, CScValue *value);
 
 	HRESULT OnScriptHitBreakpoint(CScScript *script);
 

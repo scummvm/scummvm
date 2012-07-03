@@ -173,18 +173,18 @@ CScValue *CBKeyboardState::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBKeyboardState::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CBKeyboardState::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-	    setName(Value->GetString());
+	    setName(value->GetString());
 	    if (_renderer) SetWindowText(_renderer->_window, _name);
 	    return S_OK;
 	}
 
-	else*/ return CBScriptable::scSetProperty(name, Value);
+	else*/ return CBScriptable::scSetProperty(name, value);
 }
 
 

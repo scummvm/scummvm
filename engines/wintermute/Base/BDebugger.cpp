@@ -113,7 +113,7 @@ HRESULT CBDebugger::OnVariableInit(EWmeDebuggerVariableType Type, CScScript *scr
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnVariableChangeValue(CScValue *Var, CScValue *Value) {
+HRESULT CBDebugger::OnVariableChangeValue(CScValue *Var, CScValue *value) {
 	return S_OK;
 }
 

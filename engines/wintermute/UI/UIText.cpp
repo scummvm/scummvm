@@ -434,12 +434,12 @@ CScValue *CUIText::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CUIText::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "TextAlign") == 0) {
-		int i = Value->GetInt();
+		int i = value->GetInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
 		_textAlign = (TTextAlign)i;
 		return S_OK;
@@ -449,13 +449,13 @@ HRESULT CUIText::scSetProperty(const char *name, CScValue *Value) {
 	// VerticalAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "VerticalAlign") == 0) {
-		int i = Value->GetInt();
+		int i = value->GetInt();
 		if (i < 0 || i >= NUM_VERTICAL_ALIGN) i = 0;
 		_verticalAlign = (TVerticalAlign)i;
 		return S_OK;
 	}
 
-	else return CUIObject::scSetProperty(name, Value);
+	else return CUIObject::scSetProperty(name, value);
 }
 
 

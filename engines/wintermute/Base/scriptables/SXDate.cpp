@@ -223,13 +223,13 @@ CScValue *CSXDate::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXDate::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CSXDate::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if(strcmp(name, "Name")==0){
-	    setName(Value->GetString());
+	    setName(value->GetString());
 	    return S_OK;
 	}
 

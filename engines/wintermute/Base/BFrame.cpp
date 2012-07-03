@@ -650,12 +650,12 @@ CScValue *CBFrame::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CBFrame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Delay") == 0) {
-		_delay = MAX(0, Value->GetInt());
+		_delay = MAX(0, value->GetInt());
 		return S_OK;
 	}
 
@@ -663,7 +663,7 @@ HRESULT CBFrame::scSetProperty(const char *name, CScValue *Value) {
 	// Keyframe
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Keyframe") == 0) {
-		_keyframe = Value->GetBool();
+		_keyframe = value->GetBool();
 		return S_OK;
 	}
 
@@ -671,7 +671,7 @@ HRESULT CBFrame::scSetProperty(const char *name, CScValue *Value) {
 	// KillSounds
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "KillSounds") == 0) {
-		_killSound = Value->GetBool();
+		_killSound = value->GetBool();
 		return S_OK;
 	}
 
@@ -679,7 +679,7 @@ HRESULT CBFrame::scSetProperty(const char *name, CScValue *Value) {
 	// MoveX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MoveX") == 0) {
-		_moveX = Value->GetInt();
+		_moveX = value->GetInt();
 		return S_OK;
 	}
 
@@ -687,14 +687,14 @@ HRESULT CBFrame::scSetProperty(const char *name, CScValue *Value) {
 	// MoveY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MoveY") == 0) {
-		_moveY = Value->GetInt();
+		_moveY = value->GetInt();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->scSetProperty(name, Value);
-		else return CBScriptable::scSetProperty(name, Value);
+		if (_subframes.GetSize() == 1) return _subframes[0]->scSetProperty(name, value);
+		else return CBScriptable::scSetProperty(name, value);
 	}
 }
 

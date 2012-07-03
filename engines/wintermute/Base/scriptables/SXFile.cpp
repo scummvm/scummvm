@@ -641,14 +641,14 @@ CScValue *CSXFile::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXFile::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CSXFile::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
 	if(strcmp(name, "Length")==0){
 	    int OrigLength = _length;
-	    _length = max(Value->GetInt(0), 0);
+	    _length = max(value->GetInt(0), 0);
 
 	    char PropName[20];
 	    if(_length < OrigLength){
@@ -659,7 +659,7 @@ HRESULT CSXFile::scSetProperty(const char *name, CScValue *Value) {
 	    }
 	    return S_OK;
 	}
-	else*/ return CBScriptable::scSetProperty(name, Value);
+	else*/ return CBScriptable::scSetProperty(name, value);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -704,12 +704,12 @@ CScValue *CBSprite::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CBSprite::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "CurrentFrame") == 0) {
-		_currentFrame = Value->GetInt(0);
+		_currentFrame = value->GetInt(0);
 		if (_currentFrame >= _frames.GetSize() || _currentFrame < 0) {
 			_currentFrame = -1;
 		}
@@ -721,7 +721,7 @@ HRESULT CBSprite::scSetProperty(const char *name, CScValue *Value) {
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PixelPerfect") == 0) {
-		_precise = Value->GetBool();
+		_precise = value->GetBool();
 		return S_OK;
 	}
 
@@ -729,11 +729,11 @@ HRESULT CBSprite::scSetProperty(const char *name, CScValue *Value) {
 	// Looping
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Looping") == 0) {
-		_looping = Value->GetBool();
+		_looping = value->GetBool();
 		return S_OK;
 	}
 
-	else return CBScriptHolder::scSetProperty(name, Value);
+	else return CBScriptHolder::scSetProperty(name, value);
 }
 
 

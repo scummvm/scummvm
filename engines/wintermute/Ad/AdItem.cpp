@@ -648,12 +648,12 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(Value->GetString());
+		setName(value->GetString());
 		return S_OK;
 	}
 
@@ -661,7 +661,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *Value) {
 	// DisplayAmount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisplayAmount") == 0) {
-		_displayAmount = Value->GetBool();
+		_displayAmount = value->GetBool();
 		return S_OK;
 	}
 
@@ -669,7 +669,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *Value) {
 	// Amount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Amount") == 0) {
-		_amount = Value->GetInt();
+		_amount = value->GetInt();
 		return S_OK;
 	}
 
@@ -677,7 +677,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *Value) {
 	// AmountOffsetX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountOffsetX") == 0) {
-		_amountOffsetX = Value->GetInt();
+		_amountOffsetX = value->GetInt();
 		return S_OK;
 	}
 
@@ -685,7 +685,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *Value) {
 	// AmountOffsetY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountOffsetY") == 0) {
-		_amountOffsetY = Value->GetInt();
+		_amountOffsetY = value->GetInt();
 		return S_OK;
 	}
 
@@ -693,7 +693,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *Value) {
 	// AmountAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountAlign") == 0) {
-		_amountAlign = (TTextAlign)Value->GetInt();
+		_amountAlign = (TTextAlign)value->GetInt();
 		return S_OK;
 	}
 
@@ -701,11 +701,11 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *Value) {
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountString") == 0) {
-		if (Value->IsNULL()) {
+		if (value->IsNULL()) {
 			delete[] _amountString;
 			_amountString = NULL;
 		} else {
-			CBUtils::SetString(&_amountString, Value->GetString());
+			CBUtils::SetString(&_amountString, value->GetString());
 		}
 		return S_OK;
 	}
@@ -714,11 +714,11 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *Value) {
 	// CursorCombined
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorCombined") == 0) {
-		_cursorCombined = Value->GetBool();
+		_cursorCombined = value->GetBool();
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::scSetProperty(name, Value);
+	else return CAdTalkHolder::scSetProperty(name, value);
 }
 
 

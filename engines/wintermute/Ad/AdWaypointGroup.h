@@ -50,7 +50,7 @@ public:
 	CBArray<CBPoint *, CBPoint *> _points;
 	int _editorSelectedPoint;
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *Value);
+	virtual HRESULT scSetProperty(const char *name, CScValue *value);
 };
 
 } // end of namespace WinterMute

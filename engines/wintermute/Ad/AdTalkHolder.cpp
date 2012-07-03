@@ -311,7 +311,7 @@ HRESULT CAdTalkHolder::scSetProperty(const char *name, CScValue *value) {
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	if(strcmp(name, "Item")==0){
-	    SetItem(Value->GetString());
+	    SetItem(value->GetString());
 	    return S_OK;
 	}
 

@@ -119,7 +119,7 @@ public:
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *Value);
+	virtual HRESULT scSetProperty(const char *name, CScValue *value);
 	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 

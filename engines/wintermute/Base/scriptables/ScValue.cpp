@@ -872,43 +872,43 @@ HRESULT CScValue::DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariable
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::SetProperty(const char *PropName, int Value) {
-	CScValue *Val = new CScValue(Game, Value);
-	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
+bool CScValue::SetProperty(const char *propName, int value) {
+	CScValue *Val = new CScValue(Game, value);
+	bool Ret =  SUCCEEDED(SetProp(propName, Val));
 	delete Val;
 	return Ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::SetProperty(const char *PropName, const char *Value) {
-	CScValue *Val = new CScValue(Game, Value);
-	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
+bool CScValue::SetProperty(const char *propName, const char *value) {
+	CScValue *Val = new CScValue(Game, value);
+	bool Ret =  SUCCEEDED(SetProp(propName, Val));
 	delete Val;
 	return Ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::SetProperty(const char *PropName, double Value) {
-	CScValue *Val = new CScValue(Game, Value);
-	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
-	delete Val;
-	return Ret;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool CScValue::SetProperty(const char *PropName, bool Value) {
-	CScValue *Val = new CScValue(Game, Value);
-	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
+bool CScValue::SetProperty(const char *propName, double value) {
+	CScValue *Val = new CScValue(Game, value);
+	bool Ret =  SUCCEEDED(SetProp(propName, Val));
 	delete Val;
 	return Ret;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::SetProperty(const char *PropName) {
+bool CScValue::SetProperty(const char *propName, bool value) {
+	CScValue *Val = new CScValue(Game, value);
+	bool Ret =  SUCCEEDED(SetProp(propName, Val));
+	delete Val;
+	return Ret;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CScValue::SetProperty(const char *propName) {
 	CScValue *Val = new CScValue(Game);
-	bool Ret =  SUCCEEDED(SetProp(PropName, Val));
+	bool Ret =  SUCCEEDED(SetProp(propName, Val));
 	delete Val;
 	return Ret;
 }
@@ -1001,19 +1001,19 @@ int CScValue::DbgGetNumProperties() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::DbgGetProperty(int Index, const char **Name, IWmeDebugProp **Value) {
-	if (_valNative && _valNative->_scProp) return _valNative->_scProp->DbgGetProperty(Index, Name, Value);
+bool CScValue::DbgGetProperty(int index, const char **name, IWmeDebugProp **value) {
+	if (_valNative && _valNative->_scProp) return _valNative->_scProp->DbgGetProperty(index, name, value);
 	else {
-		int Count = 0;
+		int count = 0;
 		_valIter = _valObject.begin();
 		while (_valIter != _valObject.end()) {
-			if (Count == Index) {
-				*Name = _valIter->_key.c_str();
-				*Value = _valIter->_value;
+			if (count == index) {
+				*name = _valIter->_key.c_str();
+				*value = _valIter->_value;
 				return true;
 			}
 			_valIter++;
-			Count++;
+			count++;
 		}
 		return false;
 	}

@@ -166,13 +166,13 @@ CScValue *CSXArray::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXArray::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CSXArray::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Length") == 0) {
 		int OrigLength = _length;
-		_length = MAX(Value->GetInt(0), 0);
+		_length = MAX(value->GetInt(0), 0);
 
 		char PropName[20];
 		if (_length < OrigLength) {
@@ -192,7 +192,7 @@ HRESULT CSXArray::scSetProperty(const char *name, CScValue *Value) {
 		if (ValidNumber(name, ParamName)) {
 			int Index = atoi(ParamName);
 			if (Index >= _length) _length = Index + 1;
-			return _values->SetProp(ParamName, Value);
+			return _values->SetProp(ParamName, value);
 		} else return E_FAIL;
 	}
 }

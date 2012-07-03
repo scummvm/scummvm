@@ -1035,12 +1035,12 @@ CScValue *CAdActor::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::scSetProperty(const char *name, CScValue *Value) {
+HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Direction") == 0) {
-		int dir = Value->GetInt();
+		int dir = value->GetInt();
 		if (dir >= 0 && dir < NUM_DIRECTIONS) _dir = (TDirection)dir;
 		return S_OK;
 	}
@@ -1049,8 +1049,8 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *Value) {
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TalkAnimName") == 0) {
-		if (Value->IsNULL()) _talkAnimName = "talk";
-		else _talkAnimName = Value->GetString();
+		if (value->IsNULL()) _talkAnimName = "talk";
+		else _talkAnimName = value->GetString();
 		return S_OK;
 	}
 
@@ -1058,8 +1058,8 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *Value) {
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkAnimName") == 0) {
-		if (Value->IsNULL()) _walkAnimName = "walk";
-		else _walkAnimName = Value->GetString();
+		if (value->IsNULL()) _walkAnimName = "walk";
+		else _walkAnimName = value->GetString();
 		return S_OK;
 	}
 
@@ -1067,8 +1067,8 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *Value) {
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IdleAnimName") == 0) {
-		if (Value->IsNULL()) _idleAnimName = "idle";
-		else _idleAnimName = Value->GetString();
+		if (value->IsNULL()) _idleAnimName = "idle";
+		else _idleAnimName = value->GetString();
 		return S_OK;
 	}
 
@@ -1076,8 +1076,8 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *Value) {
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnLeftAnimName") == 0) {
-		if (Value->IsNULL()) _turnLeftAnimName = "turnleft";
-		else _turnLeftAnimName = Value->GetString();
+		if (value->IsNULL()) _turnLeftAnimName = "turnleft";
+		else _turnLeftAnimName = value->GetString();
 		return S_OK;
 	}
 
@@ -1085,12 +1085,12 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *Value) {
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnRightAnimName") == 0) {
-		if (Value->IsNULL()) _turnRightAnimName = "turnright";
-		else _turnRightAnimName = Value->GetString();
+		if (value->IsNULL()) _turnRightAnimName = "turnright";
+		else _turnRightAnimName = value->GetString();
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::scSetProperty(name, Value);
+	else return CAdTalkHolder::scSetProperty(name, value);
 }
 
 
