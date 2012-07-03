@@ -58,10 +58,10 @@ CSXString::CSXString(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 			memset(_string, 0, _capacity);
 		}
 	} else {
-		SetStringVal(Val->getString());
+		setStringVal(Val->getString());
 	}
 
-	if (_capacity == 0) SetStringVal("");
+	if (_capacity == 0) setStringVal("");
 }
 
 
@@ -72,16 +72,16 @@ CSXString::~CSXString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSXString::SetStringVal(const char *Val) {
-	int Len = strlen(Val);
-	if (Len >= _capacity) {
-		_capacity = Len + 1;
+void CSXString::setStringVal(const char *val) {
+	int len = strlen(val);
+	if (len >= _capacity) {
+		_capacity = len + 1;
 		delete[] _string;
 		_string = NULL;
 		_string = new char[_capacity];
 		memset(_string, 0, _capacity);
 	}
-	strcpy(_string, Val);
+	strcpy(_string, val);
 }
 
 
@@ -93,8 +93,8 @@ const char *CSXString::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSXString::scSetString(const char *Val) {
-	SetStringVal(Val);
+void CSXString::scSetString(const char *val) {
+	setStringVal(val);
 }
 
 
@@ -357,16 +357,16 @@ HRESULT CSXString::scSetProperty(const char *name, CScValue *value) {
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Capacity") == 0) {
-		int NewCap = value->getInt();
-		if (NewCap < strlen(_string) + 1) Game->LOG(0, "Warning: cannot lower string capacity");
-		else if (NewCap != _capacity) {
-			char *NewStr = new char[NewCap];
-			if (NewStr) {
-				memset(NewStr, 0, NewCap);
-				strcpy(NewStr, _string);
+		int newCap = value->getInt();
+		if (newCap < strlen(_string) + 1) Game->LOG(0, "Warning: cannot lower string capacity");
+		else if (newCap != _capacity) {
+			char *newStr = new char[newCap];
+			if (newStr) {
+				memset(newStr, 0, newCap);
+				strcpy(newStr, _string);
 				delete[] _string;
-				_string = NewStr;
-				_capacity = NewCap;
+				_string = newStr;
+				_capacity = newCap;
 			}
 		}
 		return S_OK;
@@ -397,8 +397,8 @@ HRESULT CSXString::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CSXString::scCompare(CBScriptable *Val) {
-	return strcmp(_string, ((CSXString *)Val)->_string);
+int CSXString::scCompare(CBScriptable *val) {
+	return strcmp(_string, ((CSXString *)val)->_string);
 }
 
 } // end of namespace WinterMute

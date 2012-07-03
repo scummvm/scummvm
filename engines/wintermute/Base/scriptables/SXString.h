@@ -43,7 +43,7 @@ public:
 	HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	void scSetString(const char *Val);
 	const char *scToString();
-	void SetStringVal(const char *Val);
+	void setStringVal(const char *Val);
 
 	CSXString(CBGame *inGame, CScStack *Stack);
 	virtual ~CSXString();
