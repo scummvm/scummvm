@@ -112,6 +112,16 @@ bool Keyboard::getKey(Common::Event &event) {
 			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - '0', NULL);
 			return false;
 		}
+		// Fallthrough intended
+	case Common::KEYCODE_5:
+	case Common::KEYCODE_6:
+	case Common::KEYCODE_7:
+	case Common::KEYCODE_8:
+		if (event.type == Common::EVENT_KEYDOWN && !(event.kbd.flags & Common::KBD_ALT) && keycode != '0') {
+			_vm->selectPocket(keycode - '1');
+			return false;
+		}
+		break;
 	default:
 		break;
 	}
