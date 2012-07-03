@@ -240,7 +240,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SCI32,          16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
 	{ SIG_SCI32,          17, MAP_CALL(FileIOCreateSaveSlot),      "ir",                   NULL },
 	{ SIG_SCI32,          18, MAP_EMPTY(FileIOChangeDirectory),    "r",                    NULL }, // for SQ6, when changing the savegame directory in the save/load dialog
-	{ SIG_SCI32,          19, MAP_CALL(Stub),                      "r",                    NULL }, // for Torin / Torin demo
+	{ SIG_SCI32,          19, MAP_CALL(FileIOIsValidDirectory),    "r",                    NULL }, // for Torin / Torin demo
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };

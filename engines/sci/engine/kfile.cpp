@@ -688,6 +688,13 @@ reg_t kFileIOCreateSaveSlot(EngineState *s, int argc, reg_t *argv) {
 	return TRUE_REG;	// slot creation was successful
 }
 
+reg_t kFileIOIsValidDirectory(EngineState *s, int argc, reg_t *argv) {
+	// Used in Torin's Passage and LSL7 to determine if the directory passed as
+	// a parameter (usually the save directory) is valid. We always return true
+	// here.
+	return TRUE_REG;
+}
+
 #endif
 
 // ---- Save operations -------------------------------------------------------
@@ -1002,7 +1009,7 @@ reg_t kAutoSave(EngineState *s, int argc, reg_t *argv) {
 	// the elapsed time from the timer object)
 
 	// This function has to return something other than 0 to proceed
-	return s->r_acc;
+	return TRUE_REG;
 }
 
 #endif
