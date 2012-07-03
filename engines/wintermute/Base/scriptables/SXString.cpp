@@ -303,7 +303,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			else
 				Val = new CScValue(Game, StringUtil::WideToAnsi(part).c_str());
 
-			Array->Push(Val);
+			Array->push(Val);
 			delete Val;
 			Val = NULL;
 		}

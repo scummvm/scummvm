@@ -45,15 +45,15 @@ CSXArray::CSXArray(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 	_length = 0;
 	_values = new CScValue(Game);
 
-	int NumParams = stack->pop()->getInt(0);
+	int numParams = stack->pop()->getInt(0);
 
-	if (NumParams == 1) _length = stack->pop()->getInt(0);
-	else if (NumParams > 1) {
-		_length = NumParams;
-		char ParamName[20];
-		for (int i = 0; i < NumParams; i++) {
-			sprintf(ParamName, "%d", i);
-			_values->setProp(ParamName, stack->pop());
+	if (numParams == 1) _length = stack->pop()->getInt(0);
+	else if (numParams > 1) {
+		_length = numParams;
+		char paramName[20];
+		for (int i = 0; i < numParams; i++) {
+			sprintf(paramName, "%d", i);
+			_values->setProp(paramName, stack->pop());
 		}
 	}
 }
@@ -74,21 +74,21 @@ CSXArray::~CSXArray() {
 
 //////////////////////////////////////////////////////////////////////////
 const char *CSXArray::scToString() {
-	static char Dummy[32768];
-	strcpy(Dummy, "");
-	char PropName[20];
+	static char dummy[32768]; // TODO: Get rid of static.
+	strcpy(dummy, "");
+	char propName[20];
 	for (int i = 0; i < _length; i++) {
-		sprintf(PropName, "%d", i);
-		CScValue *val = _values->getProp(PropName);
+		sprintf(propName, "%d", i);
+		CScValue *val = _values->getProp(propName);
 		if (val) {
-			if (strlen(Dummy) + strlen(val->getString()) < 32768) {
-				strcat(Dummy, val->getString());
+			if (strlen(dummy) + strlen(val->getString()) < 32768) {
+				strcat(dummy, val->getString());
 			}
 		}
 
-		if (i < _length - 1 && strlen(Dummy) + 1 < 32768) strcat(Dummy, ",");
+		if (i < _length - 1 && strlen(dummy) + 1 < 32768) strcat(dummy, ",");
 	}
-	return Dummy;
+	return dummy;
 }
 
 
@@ -98,13 +98,13 @@ HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// Push
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Push") == 0) {
-		int NumParams = stack->pop()->getInt(0);
-		char ParamName[20];
+		int numParams = stack->pop()->getInt(0);
+		char paramName[20];
 
-		for (int i = 0; i < NumParams; i++) {
+		for (int i = 0; i < numParams; i++) {
 			_length++;
-			sprintf(ParamName, "%d", _length - 1);
-			_values->setProp(ParamName, stack->pop(), true);
+			sprintf(paramName, "%d", _length - 1);
+			_values->setProp(paramName, stack->pop(), true);
 		}
 		stack->pushInt(_length);
 
@@ -119,10 +119,10 @@ HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(0);
 
 		if (_length > 0) {
-			char ParamName[20];
-			sprintf(ParamName, "%d", _length - 1);
-			stack->push(_values->getProp(ParamName));
-			_values->deleteProp(ParamName);
+			char paramName[20];
+			sprintf(paramName, "%d", _length - 1);
+			stack->push(_values->getProp(paramName));
+			_values->deleteProp(paramName);
 			_length--;
 		} else stack->pushNULL();
 
@@ -158,7 +158,7 @@ CScValue *CSXArray::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else {
 		char ParamName[20];
-		if (ValidNumber(name, ParamName)) {
+		if (validNumber(name, ParamName)) {
 			return _values->getProp(ParamName);
 		} else return _scValue;
 	}
@@ -188,11 +188,11 @@ HRESULT CSXArray::scSetProperty(const char *name, CScValue *value) {
 	// [number]
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		char ParamName[20];
-		if (ValidNumber(name, ParamName)) {
-			int Index = atoi(ParamName);
+		char paramName[20];
+		if (validNumber(name, paramName)) {
+			int Index = atoi(paramName);
 			if (Index >= _length) _length = Index + 1;
-			return _values->setProp(ParamName, value);
+			return _values->setProp(paramName, value);
 		} else return E_FAIL;
 	}
 }
@@ -210,28 +210,28 @@ HRESULT CSXArray::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXArray::ValidNumber(const char *OrigStr, char *OutStr) {
+bool CSXArray::validNumber(const char *origStr, char *outStr) {
 	bool IsNumber = true;
-	for (int i = 0; i < strlen(OrigStr); i++) {
-		if (!(OrigStr[i] >= '0' && OrigStr[i] <= '9')) {
+	for (int i = 0; i < strlen(origStr); i++) {
+		if (!(origStr[i] >= '0' && origStr[i] <= '9')) {
 			IsNumber = false;
 			break;
 		}
 	}
 
 	if (IsNumber) {
-		int Index = atoi(OrigStr);
-		sprintf(OutStr, "%d", Index);
+		int Index = atoi(origStr);
+		sprintf(outStr, "%d", Index);
 		return true;
 	} else return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXArray::Push(CScValue *Val) {
-	char ParamName[20];
+HRESULT CSXArray::push(CScValue *val) {
+	char paramName[20];
 	_length++;
-	sprintf(ParamName, "%d", _length - 1);
-	_values->setProp(ParamName, Val, true);
+	sprintf(paramName, "%d", _length - 1);
+	_values->setProp(paramName, val, true);
 	return S_OK;
 }
 

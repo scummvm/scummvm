@@ -35,10 +35,10 @@ namespace WinterMute {
 
 class CSXArray : public CBScriptable {
 public:
-	HRESULT Push(CScValue *Val);
-	bool ValidNumber(const char *OrigStr, char *OutStr);
+	HRESULT push(CScValue *Val);
+	bool validNumber(const char *origStr, char *outStr);
 	DECLARE_PERSISTENT(CSXArray, CBScriptable)
-	CSXArray(CBGame *inGame, CScStack *Stack);
+	CSXArray(CBGame *inGame, CScStack *stack);
 	CSXArray(CBGame *inGame);
 	virtual ~CSXArray();
 	CScValue *scGetProperty(const char *name);
