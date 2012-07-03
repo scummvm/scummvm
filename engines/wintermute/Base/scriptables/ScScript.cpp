@@ -486,16 +486,16 @@ HRESULT CScScript::ExecuteInstruction() {
 	switch (inst) {
 
 	case II_DEF_VAR:
-		_operand->SetNULL();
+		_operand->setNULL();
 		dw = GetDWORD();
 		if (_scopeStack->_sP < 0) {
-			_globals->SetProp(_symbols[dw], _operand);
+			_globals->setProp(_symbols[dw], _operand);
 			if (Game->GetDebugMgr()->_enabled)
-				Game->GetDebugMgr()->OnVariableInit(WME_DBGVAR_SCRIPT, this, NULL, _globals->GetProp(_symbols[dw]), _symbols[dw]);
+				Game->GetDebugMgr()->OnVariableInit(WME_DBGVAR_SCRIPT, this, NULL, _globals->getProp(_symbols[dw]), _symbols[dw]);
 		} else {
-			_scopeStack->getTop()->SetProp(_symbols[dw], _operand);
+			_scopeStack->getTop()->setProp(_symbols[dw], _operand);
 			if (Game->GetDebugMgr()->_enabled)
-				Game->GetDebugMgr()->OnVariableInit(WME_DBGVAR_SCOPE, this, _scopeStack->getTop(), _scopeStack->getTop()->GetProp(_symbols[dw]), _symbols[dw]);
+				Game->GetDebugMgr()->OnVariableInit(WME_DBGVAR_SCOPE, this, _scopeStack->getTop(), _scopeStack->getTop()->getProp(_symbols[dw]), _symbols[dw]);
 		}
 
 		break;
@@ -505,12 +505,12 @@ HRESULT CScScript::ExecuteInstruction() {
 		dw = GetDWORD();
 		/*      char *Temp = _symbols[dw]; // TODO delete */
 		// only create global var if it doesn't exist
-		if (!_engine->_globals->PropExists(_symbols[dw])) {
-			_operand->SetNULL();
-			_engine->_globals->SetProp(_symbols[dw], _operand, false, inst == II_DEF_CONST_VAR);
+		if (!_engine->_globals->propExists(_symbols[dw])) {
+			_operand->setNULL();
+			_engine->_globals->setProp(_symbols[dw], _operand, false, inst == II_DEF_CONST_VAR);
 
 			if (Game->GetDebugMgr()->_enabled)
-				Game->GetDebugMgr()->OnVariableInit(WME_DBGVAR_GLOBAL, this, NULL, _engine->_globals->GetProp(_symbols[dw]), _symbols[dw]);
+				Game->GetDebugMgr()->OnVariableInit(WME_DBGVAR_GLOBAL, this, NULL, _engine->_globals->getProp(_symbols[dw]), _symbols[dw]);
 		}
 		break;
 	}
@@ -520,7 +520,7 @@ HRESULT CScScript::ExecuteInstruction() {
 			Game->GetDebugMgr()->OnScriptShutdownScope(this, _scopeStack->getTop());
 
 			_scopeStack->pop();
-			_iP = (uint32)_callStack->pop()->GetInt();
+			_iP = (uint32)_callStack->pop()->getInt();
 
 			if (_scopeStack->_sP < 0) Game->GetDebugMgr()->OnScriptChangeScope(this, NULL);
 			else Game->GetDebugMgr()->OnScriptChangeScope(this, _scopeStack->getTop());
@@ -543,7 +543,7 @@ HRESULT CScScript::ExecuteInstruction() {
 	case II_CALL:
 		dw = GetDWORD();
 
-		_operand->SetInt(_iP);
+		_operand->setInt(_iP);
 		_callStack->push(_operand);
 
 		_iP = dw;
@@ -553,7 +553,7 @@ HRESULT CScScript::ExecuteInstruction() {
 	case II_CALL_BY_EXP: {
 		// push var
 		// push string
-		str = _stack->pop()->GetString();
+		str = _stack->pop()->getString();
 		char *MethodName = new char[strlen(str) + 1];
 		strcpy(MethodName, str);
 
@@ -564,15 +564,15 @@ HRESULT CScScript::ExecuteInstruction() {
 		bool TriedNative = false;
 
 		// we are already calling this method, try native
-		if (_thread && _methodThread && strcmp(MethodName, _threadEvent) == 0 && var->_type == VAL_NATIVE && _owner == var->GetNative()) {
+		if (_thread && _methodThread && strcmp(MethodName, _threadEvent) == 0 && var->_type == VAL_NATIVE && _owner == var->getNative()) {
 			TriedNative = true;
 			res = var->_valNative->scCallMethod(this, _stack, _thisStack, MethodName);
 		}
 
 		if (FAILED(res)) {
-			if (var->IsNative() && var->GetNative()->canHandleMethod(MethodName)) {
+			if (var->isNative() && var->getNative()->canHandleMethod(MethodName)) {
 				if (!_unbreakable) {
-					_waitScript = var->GetNative()->invokeMethodThread(MethodName);
+					_waitScript = var->getNative()->invokeMethodThread(MethodName);
 					if (!_waitScript) {
 						_stack->correctParams(0);
 						RuntimeError("Error invoking method '%s'.", MethodName);
@@ -591,21 +591,21 @@ HRESULT CScScript::ExecuteInstruction() {
 				break;
 			}
 			/*
-			CScValue* val = var->GetProp(MethodName);
+			CScValue* val = var->getProp(MethodName);
 			if(val){
-			    dw = GetFuncPos(val->GetString());
+			    dw = GetFuncPos(val->getString());
 			    if(dw==0){
-			        TExternalFunction* f = GetExternal(val->GetString());
+			        TExternalFunction* f = GetExternal(val->getString());
 			        if(f){
 			            ExternalCall(_stack, _thisStack, f);
 			        }
 			        else{
 			            // not an internal nor external, try for native function
-			            Game->ExternalCall(this, _stack, _thisStack, val->GetString());
+			            Game->ExternalCall(this, _stack, _thisStack, val->getString());
 			        }
 			    }
 			    else{
-			        _operand->SetInt(_iP);
+			        _operand->setInt(_iP);
 			        _callStack->Push(_operand);
 			        _iP = dw;
 			    }
@@ -637,7 +637,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 	}
 	case II_SCOPE:
-		_operand->SetNULL();
+		_operand->setNULL();
 		_scopeStack->push(_operand);
 
 		if (_scopeStack->_sP < 0) Game->GetDebugMgr()->OnScriptChangeScope(this, NULL);
@@ -651,7 +651,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_CREATE_OBJECT:
-		_operand->SetObject();
+		_operand->setObject();
 		_stack->push(_operand);
 		break;
 
@@ -662,7 +662,7 @@ HRESULT CScScript::ExecuteInstruction() {
 	case II_PUSH_VAR: {
 		CScValue *var = GetVar(_symbols[GetDWORD()]);
 		if (false && /*var->_type==VAL_OBJECT ||*/ var->_type == VAL_NATIVE) {
-			_operand->SetReference(var);
+			_operand->setReference(var);
 			_stack->push(_operand);
 		} else _stack->push(var);
 		break;
@@ -670,7 +670,7 @@ HRESULT CScScript::ExecuteInstruction() {
 
 	case II_PUSH_VAR_REF: {
 		CScValue *var = GetVar(_symbols[GetDWORD()]);
-		_operand->SetReference(var);
+		_operand->setReference(var);
 		_stack->push(_operand);
 		break;
 	}
@@ -682,12 +682,12 @@ HRESULT CScScript::ExecuteInstruction() {
 			CScValue *val = _stack->pop();
 			if (!val) {
 				RuntimeError("Script stack corruption detected. Please report this script at WME bug reports forum.");
-				var->SetNULL();
+				var->setNULL();
 			} else {
-				if (val->GetType() == VAL_VARIABLE_REF) val = val->_valRef;
-				if (val->_type == VAL_NATIVE) var->SetValue(val);
+				if (val->getType() == VAL_VARIABLE_REF) val = val->_valRef;
+				if (val->_type == VAL_NATIVE) var->setValue(val);
 				else {
-					var->Copy(val);
+					var->copy(val);
 				}
 			}
 
@@ -725,12 +725,12 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_PUSH_THIS_FROM_STACK:
-		_operand->SetReference(_stack->getTop());
+		_operand->setReference(_stack->getTop());
 		_thisStack->push(_operand);
 		break;
 
 	case II_PUSH_THIS:
-		_operand->SetReference(GetVar(_symbols[GetDWORD()]));
+		_operand->setReference(GetVar(_symbols[GetDWORD()]));
 		_thisStack->push(_operand);
 		break;
 
@@ -739,8 +739,8 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_PUSH_BY_EXP: {
-		str = _stack->pop()->GetString();
-		CScValue *val = _stack->pop()->GetProp(str);
+		str = _stack->pop()->getString();
+		CScValue *val = _stack->pop()->getProp(str);
 		if (val) _stack->push(val);
 		else _stack->pushNULL();
 
@@ -748,14 +748,14 @@ HRESULT CScScript::ExecuteInstruction() {
 	}
 
 	case II_POP_BY_EXP: {
-		str = _stack->pop()->GetString();
+		str = _stack->pop()->getString();
 		CScValue *var = _stack->pop();
 		CScValue *val = _stack->pop();
 
 		if (val == NULL) {
 			RuntimeError("Script stack corruption detected. Please report this script at WME bug reports forum.");
-			var->SetNULL();
-		} else var->SetProp(str, val);
+			var->setNULL();
+		} else var->setProp(str, val);
 
 		if (Game->GetDebugMgr()->_enabled)
 			Game->GetDebugMgr()->OnVariableChangeValue(var, NULL);
@@ -768,7 +768,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_POP_REG1:
-		_reg1->Copy(_stack->pop());
+		_reg1->copy(_stack->pop());
 		break;
 
 	case II_JMP:
@@ -777,12 +777,12 @@ HRESULT CScScript::ExecuteInstruction() {
 
 	case II_JMP_FALSE: {
 		dw = GetDWORD();
-		//if(!_stack->pop()->GetBool()) _iP = dw;
+		//if(!_stack->pop()->getBool()) _iP = dw;
 		CScValue *Val = _stack->pop();
 		if (!Val) {
 			RuntimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
 		} else {
-			if (!Val->GetBool()) _iP = dw;
+			if (!Val->getBool()) _iP = dw;
 		}
 		break;
 	}
@@ -791,16 +791,16 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		if (op1->IsNULL() || op2->IsNULL()) _operand->SetNULL();
-		else if (op1->GetType() == VAL_STRING || op2->GetType() == VAL_STRING) {
-			char *tempStr = new char [strlen(op1->GetString()) + strlen(op2->GetString()) + 1];
-			strcpy(tempStr, op1->GetString());
-			strcat(tempStr, op2->GetString());
-			_operand->SetString(tempStr);
+		if (op1->isNULL() || op2->isNULL()) _operand->setNULL();
+		else if (op1->getType() == VAL_STRING || op2->getType() == VAL_STRING) {
+			char *tempStr = new char [strlen(op1->getString()) + strlen(op2->getString()) + 1];
+			strcpy(tempStr, op1->getString());
+			strcat(tempStr, op2->getString());
+			_operand->setString(tempStr);
 			delete [] tempStr;
-		} else if (op1->GetType() == VAL_INT && op2->GetType() == VAL_INT)
-			_operand->SetInt(op1->GetInt() + op2->GetInt());
-		else _operand->SetFloat(op1->GetFloat() + op2->GetFloat());
+		} else if (op1->getType() == VAL_INT && op2->getType() == VAL_INT)
+			_operand->setInt(op1->getInt() + op2->getInt());
+		else _operand->setFloat(op1->getFloat() + op2->getFloat());
 
 		_stack->push(_operand);
 
@@ -810,10 +810,10 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		if (op1->IsNULL() || op2->IsNULL()) _operand->SetNULL();
-		else if (op1->GetType() == VAL_INT && op2->GetType() == VAL_INT)
-			_operand->SetInt(op1->GetInt() - op2->GetInt());
-		else _operand->SetFloat(op1->GetFloat() - op2->GetFloat());
+		if (op1->isNULL() || op2->isNULL()) _operand->setNULL();
+		else if (op1->getType() == VAL_INT && op2->getType() == VAL_INT)
+			_operand->setInt(op1->getInt() - op2->getInt());
+		else _operand->setFloat(op1->getFloat() - op2->getFloat());
 
 		_stack->push(_operand);
 
@@ -823,10 +823,10 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		if (op1->IsNULL() || op2->IsNULL()) _operand->SetNULL();
-		else if (op1->GetType() == VAL_INT && op2->GetType() == VAL_INT)
-			_operand->SetInt(op1->GetInt() * op2->GetInt());
-		else _operand->SetFloat(op1->GetFloat() * op2->GetFloat());
+		if (op1->isNULL() || op2->isNULL()) _operand->setNULL();
+		else if (op1->getType() == VAL_INT && op2->getType() == VAL_INT)
+			_operand->setInt(op1->getInt() * op2->getInt());
+		else _operand->setFloat(op1->getFloat() * op2->getFloat());
 
 		_stack->push(_operand);
 
@@ -836,10 +836,10 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		if (op2->GetFloat() == 0.0f) RuntimeError("Division by zero.");
+		if (op2->getFloat() == 0.0f) RuntimeError("Division by zero.");
 
-		if (op1->IsNULL() || op2->IsNULL() || op2->GetFloat() == 0.0f) _operand->SetNULL();
-		else _operand->SetFloat(op1->GetFloat() / op2->GetFloat());
+		if (op1->isNULL() || op2->isNULL() || op2->getFloat() == 0.0f) _operand->setNULL();
+		else _operand->setFloat(op1->getFloat() / op2->getFloat());
 
 		_stack->push(_operand);
 
@@ -849,10 +849,10 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		if (op2->GetInt() == 0) RuntimeError("Division by zero.");
+		if (op2->getInt() == 0) RuntimeError("Division by zero.");
 
-		if (op1->IsNULL() || op2->IsNULL() || op2->GetInt() == 0) _operand->SetNULL();
-		else _operand->SetInt(op1->GetInt() % op2->GetInt());
+		if (op1->isNULL() || op2->isNULL() || op2->getInt() == 0) _operand->setNULL();
+		else _operand->setInt(op1->getInt() % op2->getInt());
 
 		_stack->push(_operand);
 
@@ -860,9 +860,9 @@ HRESULT CScScript::ExecuteInstruction() {
 
 	case II_NOT:
 		op1 = _stack->pop();
-		//if(op1->IsNULL()) _operand->SetNULL();
-		if (op1->IsNULL()) _operand->SetBool(true);
-		else _operand->SetBool(!op1->GetBool());
+		//if(op1->isNULL()) _operand->setNULL();
+		if (op1->isNULL()) _operand->setBool(true);
+		else _operand->setBool(!op1->getBool());
 		_stack->push(_operand);
 
 		break;
@@ -872,9 +872,9 @@ HRESULT CScScript::ExecuteInstruction() {
 		op1 = _stack->pop();
 		if (op1 == NULL || op2 == NULL) {
 			RuntimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
-			_operand->SetBool(false);
+			_operand->setBool(false);
 		} else {
-			_operand->SetBool(op1->GetBool() && op2->GetBool());
+			_operand->setBool(op1->getBool() && op2->getBool());
 		}
 		_stack->push(_operand);
 		break;
@@ -884,9 +884,9 @@ HRESULT CScScript::ExecuteInstruction() {
 		op1 = _stack->pop();
 		if (op1 == NULL || op2 == NULL) {
 			RuntimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
-			_operand->SetBool(false);
+			_operand->setBool(false);
 		} else {
-			_operand->SetBool(op1->GetBool() || op2->GetBool());
+			_operand->setBool(op1->getBool() || op2->getBool());
 		}
 		_stack->push(_operand);
 		break;
@@ -896,22 +896,22 @@ HRESULT CScScript::ExecuteInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if((op1->IsNULL() && !op2->IsNULL()) || (!op1->IsNULL() && op2->IsNULL())) _operand->SetBool(false);
-		else if(op1->IsNative() && op2->IsNative()){
-		    _operand->SetBool(op1->GetNative() == op2->GetNative());
+		if((op1->isNULL() && !op2->isNULL()) || (!op1->isNULL() && op2->isNULL())) _operand->setBool(false);
+		else if(op1->isNative() && op2->isNative()){
+		    _operand->setBool(op1->getNative() == op2->getNative());
 		}
-		else if(op1->GetType()==VAL_STRING || op2->GetType()==VAL_STRING){
-		    _operand->SetBool(scumm_stricmp(op1->GetString(), op2->GetString())==0);
+		else if(op1->getType()==VAL_STRING || op2->getType()==VAL_STRING){
+		    _operand->setBool(scumm_stricmp(op1->getString(), op2->getString())==0);
 		}
-		else if(op1->GetType()==VAL_FLOAT && op2->GetType()==VAL_FLOAT){
-		    _operand->SetBool(op1->GetFloat() == op2->GetFloat());
+		else if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		    _operand->setBool(op1->getFloat() == op2->getFloat());
 		}
 		else{
-		    _operand->SetBool(op1->GetInt() == op2->GetInt());
+		    _operand->setBool(op1->getInt() == op2->getInt());
 		}
 		*/
 
-		_operand->SetBool(CScValue::Compare(op1, op2) == 0);
+		_operand->setBool(CScValue::compare(op1, op2) == 0);
 		_stack->push(_operand);
 		break;
 
@@ -920,22 +920,22 @@ HRESULT CScScript::ExecuteInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if((op1->IsNULL() && !op2->IsNULL()) || (!op1->IsNULL() && op2->IsNULL())) _operand->SetBool(true);
-		else if(op1->IsNative() && op2->IsNative()){
-		    _operand->SetBool(op1->GetNative() != op2->GetNative());
+		if((op1->isNULL() && !op2->isNULL()) || (!op1->isNULL() && op2->isNULL())) _operand->setBool(true);
+		else if(op1->isNative() && op2->isNative()){
+		    _operand->setBool(op1->getNative() != op2->getNative());
 		}
-		else if(op1->GetType()==VAL_STRING || op2->GetType()==VAL_STRING){
-		    _operand->SetBool(scumm_stricmp(op1->GetString(), op2->GetString())!=0);
+		else if(op1->getType()==VAL_STRING || op2->getType()==VAL_STRING){
+		    _operand->setBool(scumm_stricmp(op1->getString(), op2->getString())!=0);
 		}
-		else if(op1->GetType()==VAL_FLOAT && op2->GetType()==VAL_FLOAT){
-		    _operand->SetBool(op1->GetFloat() != op2->GetFloat());
+		else if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		    _operand->setBool(op1->getFloat() != op2->getFloat());
 		}
 		else{
-		    _operand->SetBool(op1->GetInt() != op2->GetInt());
+		    _operand->setBool(op1->getInt() != op2->getInt());
 		}
 		*/
 
-		_operand->SetBool(CScValue::Compare(op1, op2) != 0);
+		_operand->setBool(CScValue::compare(op1, op2) != 0);
 		_stack->push(_operand);
 		break;
 
@@ -944,13 +944,13 @@ HRESULT CScScript::ExecuteInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if(op1->GetType()==VAL_FLOAT && op2->GetType()==VAL_FLOAT){
-		    _operand->SetBool(op1->GetFloat() < op2->GetFloat());
+		if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		    _operand->setBool(op1->getFloat() < op2->getFloat());
 		}
-		else _operand->SetBool(op1->GetInt() < op2->GetInt());
+		else _operand->setBool(op1->getInt() < op2->getInt());
 		*/
 
-		_operand->SetBool(CScValue::Compare(op1, op2) < 0);
+		_operand->setBool(CScValue::compare(op1, op2) < 0);
 		_stack->push(_operand);
 		break;
 
@@ -959,13 +959,13 @@ HRESULT CScScript::ExecuteInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if(op1->GetType()==VAL_FLOAT && op2->GetType()==VAL_FLOAT){
-		    _operand->SetBool(op1->GetFloat() > op2->GetFloat());
+		if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		    _operand->setBool(op1->getFloat() > op2->getFloat());
 		}
-		else _operand->SetBool(op1->GetInt() > op2->GetInt());
+		else _operand->setBool(op1->getInt() > op2->getInt());
 		*/
 
-		_operand->SetBool(CScValue::Compare(op1, op2) > 0);
+		_operand->setBool(CScValue::compare(op1, op2) > 0);
 		_stack->push(_operand);
 		break;
 
@@ -974,13 +974,13 @@ HRESULT CScScript::ExecuteInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if(op1->GetType()==VAL_FLOAT && op2->GetType()==VAL_FLOAT){
-		    _operand->SetBool(op1->GetFloat() <= op2->GetFloat());
+		if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		    _operand->setBool(op1->getFloat() <= op2->getFloat());
 		}
-		else _operand->SetBool(op1->GetInt() <= op2->GetInt());
+		else _operand->setBool(op1->getInt() <= op2->getInt());
 		*/
 
-		_operand->SetBool(CScValue::Compare(op1, op2) <= 0);
+		_operand->setBool(CScValue::compare(op1, op2) <= 0);
 		_stack->push(_operand);
 		break;
 
@@ -989,13 +989,13 @@ HRESULT CScScript::ExecuteInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if(op1->GetType()==VAL_FLOAT && op2->GetType()==VAL_FLOAT){
-		    _operand->SetBool(op1->GetFloat() >= op2->GetFloat());
+		if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		    _operand->setBool(op1->getFloat() >= op2->getFloat());
 		}
-		else _operand->SetBool(op1->GetInt() >= op2->GetInt());
+		else _operand->setBool(op1->getInt() >= op2->getInt());
 		*/
 
-		_operand->SetBool(CScValue::Compare(op1, op2) >= 0);
+		_operand->setBool(CScValue::compare(op1, op2) >= 0);
 		_stack->push(_operand);
 		break;
 
@@ -1003,8 +1003,8 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		//_operand->SetBool(op1->GetType()==op2->GetType() && op1->GetFloat()==op2->GetFloat());
-		_operand->SetBool(CScValue::CompareStrict(op1, op2) == 0);
+		//_operand->setBool(op1->getType()==op2->getType() && op1->getFloat()==op2->getFloat());
+		_operand->setBool(CScValue::compareStrict(op1, op2) == 0);
 		_stack->push(_operand);
 
 		break;
@@ -1013,8 +1013,8 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		//_operand->SetBool(op1->GetType()!=op2->GetType() || op1->GetFloat()!=op2->GetFloat());
-		_operand->SetBool(CScValue::CompareStrict(op1, op2) != 0);
+		//_operand->setBool(op1->getType()!=op2->getType() || op1->getFloat()!=op2->getFloat());
+		_operand->setBool(CScValue::compareStrict(op1, op2) != 0);
 		_stack->push(_operand);
 		break;
 
@@ -1077,17 +1077,17 @@ CScValue *CScScript::GetVar(char *name) {
 
 	// scope locals
 	if (_scopeStack->_sP >= 0) {
-		if (_scopeStack->getTop()->PropExists(name)) ret = _scopeStack->getTop()->GetProp(name);
+		if (_scopeStack->getTop()->propExists(name)) ret = _scopeStack->getTop()->getProp(name);
 	}
 
 	// script globals
 	if (ret == NULL) {
-		if (_globals->PropExists(name)) ret = _globals->GetProp(name);
+		if (_globals->propExists(name)) ret = _globals->getProp(name);
 	}
 
 	// engine globals
 	if (ret == NULL) {
-		if (_engine->_globals->PropExists(name)) ret = _engine->_globals->GetProp(name);
+		if (_engine->_globals->propExists(name)) ret = _engine->_globals->getProp(name);
 	}
 
 	if (ret == NULL) {
@@ -1096,11 +1096,11 @@ CScValue *CScScript::GetVar(char *name) {
 		CScValue *Val = new CScValue(Game);
 		CScValue *Scope = _scopeStack->getTop();
 		if (Scope) {
-			Scope->SetProp(name, Val);
-			ret = _scopeStack->getTop()->GetProp(name);
+			Scope->setProp(name, Val);
+			ret = _scopeStack->getTop()->getProp(name);
 		} else {
-			_globals->SetProp(name, Val);
-			ret = _globals->GetProp(name);
+			_globals->setProp(name, Val);
+			ret = _globals->getProp(name);
 		}
 		delete Val;
 	}
@@ -1352,29 +1352,29 @@ HRESULT CScScript::ExternalCall(CScStack *stack, CScStack *thisStack, CScScript:
 				CScValue *Val = stack->pop();
 				switch (Function->params[i]) {
 				case TYPE_BOOL:
-					Buffer->PutDWORD((uint32)Val->GetBool());
+					Buffer->PutDWORD((uint32)Val->getBool());
 					break;
 				case TYPE_LONG:
-					Buffer->PutDWORD(Val->GetInt());
+					Buffer->PutDWORD(Val->getInt());
 					break;
 				case TYPE_BYTE:
-					Buffer->PutDWORD((byte)Val->GetInt());
+					Buffer->PutDWORD((byte)Val->getInt());
 					break;
 				case TYPE_STRING:
-					if (Val->IsNULL()) Buffer->PutDWORD(0);
-					else Buffer->PutDWORD((uint32)Val->GetString());
+					if (Val->isNULL()) Buffer->PutDWORD(0);
+					else Buffer->PutDWORD((uint32)Val->getString());
 					break;
 				case TYPE_MEMBUFFER:
-					if (Val->IsNULL()) Buffer->PutDWORD(0);
-					else Buffer->PutDWORD((uint32)Val->GetMemBuffer());
+					if (Val->isNULL()) Buffer->PutDWORD(0);
+					else Buffer->PutDWORD((uint32)Val->getMemBuffer());
 					break;
 				case TYPE_FLOAT: {
-					float f = Val->GetFloat();
+					float f = Val->getFloat();
 					Buffer->PutDWORD(*((uint32 *)&f));
 					break;
 				}
 				case TYPE_DOUBLE: {
-					double d = Val->GetFloat();
+					double d = Val->getFloat();
 					uint32 *pd = (uint32 *)&d;
 
 					Buffer->PutDWORD(pd[0]);
@@ -1527,7 +1527,7 @@ double CScScript::GetST0Double(void) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScScript::CopyParameters(CScStack *stack) {
 	int i;
-	int NumParams = stack->pop()->GetInt();
+	int NumParams = stack->pop()->getInt();
 	for (i = NumParams - 1; i >= 0; i--) {
 		_stack->push(stack->getAt(i));
 	}

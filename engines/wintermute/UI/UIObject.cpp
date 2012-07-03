@@ -146,11 +146,11 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CScValue *Val = stack->pop();
 
 		if (_font) Game->_fontStorage->RemoveFont(_font);
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			_font = NULL;
 			stack->pushBool(true);
 		} else {
-			_font = Game->_fontStorage->AddFont(Val->GetString());
+			_font = Game->_fontStorage->AddFont(Val->getString());
 			stack->pushBool(_font != NULL);
 		}
 		return S_OK;
@@ -163,17 +163,17 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		/* const char *Filename = */ Val->GetString();
+		/* const char *Filename = */ Val->getString();
 
 		delete _image;
 		_image = NULL;
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			stack->pushBool(true);
 			return S_OK;
 		}
 
 		_image = new CBSprite(Game);
-		if (!_image || FAILED(_image->loadFile(Val->GetString()))) {
+		if (!_image || FAILED(_image->loadFile(Val->getString()))) {
 			delete _image;
 			_image = NULL;
 			stack->pushBool(false);
@@ -227,8 +227,8 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			bool found = false;
 			CScValue *val = stack->pop();
 			// find directly
-			if (val->IsNative()) {
-				CUIObject *widget = (CUIObject *)val->GetNative();
+			if (val->isNative()) {
+				CUIObject *widget = (CUIObject *)val->getNative();
 				for (i = 0; i < win->_widgets.GetSize(); i++) {
 					if (win->_widgets[i] == widget) {
 						found = true;
@@ -238,7 +238,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			}
 			// find by name
 			else {
-				const char *name = val->GetString();
+				const char *name = val->getString();
 				for (i = 0; i < win->_widgets.GetSize(); i++) {
 					if (scumm_stricmp(win->_widgets[i]->_name, name) == 0) {
 						found = true;
@@ -318,13 +318,13 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIObject::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("ui_object");
+		_scValue->setString("ui_object");
 		return _scValue;
 	}
 
@@ -332,7 +332,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Name") == 0) {
-		_scValue->SetString(_name);
+		_scValue->setString(_name);
 		return _scValue;
 	}
 
@@ -340,7 +340,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	// Parent (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Parent") == 0) {
-		_scValue->SetNative(_parent, true);
+		_scValue->setNative(_parent, true);
 		return _scValue;
 	}
 
@@ -348,7 +348,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	// ParentNotify
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ParentNotify") == 0) {
-		_scValue->SetBool(_parentNotify);
+		_scValue->setBool(_parentNotify);
 		return _scValue;
 	}
 
@@ -356,7 +356,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Width") == 0) {
-		_scValue->SetInt(_width);
+		_scValue->setInt(_width);
 		return _scValue;
 	}
 
@@ -364,7 +364,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Height") == 0) {
-		_scValue->SetInt(_height);
+		_scValue->setInt(_height);
 		return _scValue;
 	}
 
@@ -372,7 +372,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	// Visible
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Visible") == 0) {
-		_scValue->SetBool(_visible);
+		_scValue->setBool(_visible);
 		return _scValue;
 	}
 
@@ -380,7 +380,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	// Disabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Disabled") == 0) {
-		_scValue->SetBool(_disable);
+		_scValue->setBool(_disable);
 		return _scValue;
 	}
 
@@ -388,7 +388,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
-		_scValue->SetString(_text);
+		_scValue->setString(_text);
 		return _scValue;
 	}
 
@@ -396,15 +396,15 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	// NextSibling (RO) / PrevSibling (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NextSibling") == 0 || strcmp(name, "PrevSibling") == 0) {
-		_scValue->SetNULL();
+		_scValue->setNULL();
 		if (_parent && _parent->_type == UI_WINDOW) {
 			CUIWindow *win = (CUIWindow *)_parent;
 			for (int i = 0; i < win->_widgets.GetSize(); i++) {
 				if (win->_widgets[i] == this) {
 					if (strcmp(name, "NextSibling") == 0) {
-						if (i < win->_widgets.GetSize() - 1) _scValue->SetNative(win->_widgets[i + 1], true);
+						if (i < win->_widgets.GetSize() - 1) _scValue->setNative(win->_widgets[i + 1], true);
 					} else {
-						if (i > 0) _scValue->SetNative(win->_widgets[i - 1], true);
+						if (i > 0) _scValue->setNative(win->_widgets[i - 1], true);
 					}
 					break;
 				}
@@ -423,7 +423,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(value->GetString());
+		setName(value->getString());
 		return S_OK;
 	}
 
@@ -431,7 +431,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	// ParentNotify
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ParentNotify") == 0) {
-		_parentNotify = value->GetBool();
+		_parentNotify = value->getBool();
 		return S_OK;
 	}
 
@@ -439,7 +439,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Width") == 0) {
-		_width = value->GetInt();
+		_width = value->getInt();
 		return S_OK;
 	}
 
@@ -447,7 +447,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Height") == 0) {
-		_height = value->GetInt();
+		_height = value->getInt();
 		return S_OK;
 	}
 
@@ -455,7 +455,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	// Visible
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Visible") == 0) {
-		_visible = value->GetBool();
+		_visible = value->getBool();
 		return S_OK;
 	}
 
@@ -463,7 +463,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	// Disabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Disabled") == 0) {
-		_disable = value->GetBool();
+		_disable = value->getBool();
 		return S_OK;
 	}
 
@@ -471,7 +471,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
-		setText(value->GetString());
+		setText(value->getString());
 		return S_OK;
 	}
 

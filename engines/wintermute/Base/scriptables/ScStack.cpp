@@ -71,10 +71,10 @@ void CScStack::push(CScValue *val) {
 
 	if (_sP < _values.GetSize()) {
 		_values[_sP]->cleanup();
-		_values[_sP]->Copy(val);
+		_values[_sP]->copy(val);
 	} else {
 		CScValue *copyVal = new CScValue(Game);
-		copyVal->Copy(val);
+		copyVal->copy(val);
 		_values.Add(copyVal);
 	}
 }
@@ -111,7 +111,7 @@ CScValue *CScStack::getAt(int index) {
 
 //////////////////////////////////////////////////////////////////////////
 void CScStack::correctParams(uint32 expected_params) {
-	int nu_params = pop()->GetInt();
+	int nu_params = pop()->getInt();
 
 	if (expected_params < nu_params) { // too many params
 		while (expected_params < nu_params) {
@@ -125,7 +125,7 @@ void CScStack::correctParams(uint32 expected_params) {
 		while (expected_params > nu_params) {
 			//Push(null_val);
 			CScValue *null_val = new CScValue(Game);
-			null_val->SetNULL();
+			null_val->setNULL();
 			_values.InsertAt(_sP - nu_params + 1, null_val);
 			nu_params++;
 			_sP++;
@@ -143,11 +143,11 @@ void CScStack::correctParams(uint32 expected_params) {
 void CScStack::pushNULL() {
 	/*
 	CScValue* val = new CScValue(Game);
-	val->SetNULL();
+	val->setNULL();
 	Push(val);
 	delete val;
 	*/
-	getPushValue()->SetNULL();
+	getPushValue()->setNULL();
 }
 
 
@@ -155,11 +155,11 @@ void CScStack::pushNULL() {
 void CScStack::pushInt(int val) {
 	/*
 	CScValue* val = new CScValue(Game);
-	val->SetInt(Val);
+	val->setInt(Val);
 	Push(val);
 	delete val;
 	*/
-	getPushValue()->SetInt(val);
+	getPushValue()->setInt(val);
 }
 
 
@@ -167,11 +167,11 @@ void CScStack::pushInt(int val) {
 void CScStack::pushFloat(double val) {
 	/*
 	CScValue* val = new CScValue(Game);
-	val->SetFloat(Val);
+	val->setFloat(Val);
 	Push(val);
 	delete val;
 	*/
-	getPushValue()->SetFloat(val);
+	getPushValue()->setFloat(val);
 }
 
 
@@ -179,11 +179,11 @@ void CScStack::pushFloat(double val) {
 void CScStack::pushBool(bool val) {
 	/*
 	CScValue* val = new CScValue(Game);
-	val->SetBool(Val);
+	val->setBool(Val);
 	Push(val);
 	delete val;
 	*/
-	getPushValue()->SetBool(val);
+	getPushValue()->setBool(val);
 }
 
 
@@ -191,11 +191,11 @@ void CScStack::pushBool(bool val) {
 void CScStack::pushString(const char *val) {
 	/*
 	CScValue* val = new CScValue(Game);
-	val->SetString(Val);
+	val->setString(Val);
 	Push(val);
 	delete val;
 	*/
-	getPushValue()->SetString(val);
+	getPushValue()->setString(val);
 }
 
 
@@ -203,12 +203,12 @@ void CScStack::pushString(const char *val) {
 void CScStack::pushNative(CBScriptable *val, bool persistent) {
 	/*
 	CScValue* val = new CScValue(Game);
-	val->SetNative(Val, Persistent);
+	val->setNative(Val, Persistent);
 	Push(val);
 	delete val;
 	*/
 
-	getPushValue()->SetNative(val, persistent);
+	getPushValue()->setNative(val, persistent);
 }
 
 

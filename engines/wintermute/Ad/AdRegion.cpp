@@ -226,8 +226,8 @@ HRESULT CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	    //////////////////////////////////////////////////////////////////////////
 	    if (strcmp(name, "SkipTo")==0) {
 	        stack->correctParams(2);
-	        _posX = stack->pop()->GetInt();
-	        _posY = stack->pop()->GetInt();
+	        _posX = stack->pop()->getInt();
+	        _posY = stack->pop()->getInt();
 	        stack->pushNULL();
 
 	        return S_OK;
@@ -239,13 +239,13 @@ HRESULT CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdRegion::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("ad region");
+		_scValue->setString("ad region");
 		return _scValue;
 	}
 
@@ -253,7 +253,7 @@ CScValue *CAdRegion::scGetProperty(const char *name) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Name") == 0) {
-		_scValue->SetString(_name);
+		_scValue->setString(_name);
 		return _scValue;
 	}
 
@@ -261,7 +261,7 @@ CScValue *CAdRegion::scGetProperty(const char *name) {
 	// Blocked
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Blocked") == 0) {
-		_scValue->SetBool(_blocked);
+		_scValue->setBool(_blocked);
 		return _scValue;
 	}
 
@@ -269,7 +269,7 @@ CScValue *CAdRegion::scGetProperty(const char *name) {
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Decoration") == 0) {
-		_scValue->SetBool(_decoration);
+		_scValue->setBool(_decoration);
 		return _scValue;
 	}
 
@@ -277,7 +277,7 @@ CScValue *CAdRegion::scGetProperty(const char *name) {
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Scale") == 0) {
-		_scValue->SetFloat(_zoom);
+		_scValue->setFloat(_zoom);
 		return _scValue;
 	}
 
@@ -285,7 +285,7 @@ CScValue *CAdRegion::scGetProperty(const char *name) {
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AlphaColor") == 0) {
-		_scValue->SetInt((int)_alpha);
+		_scValue->setInt((int)_alpha);
 		return _scValue;
 	}
 
@@ -299,7 +299,7 @@ HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(value->GetString());
+		setName(value->getString());
 		return S_OK;
 	}
 
@@ -307,7 +307,7 @@ HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	// Blocked
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Blocked") == 0) {
-		_blocked = value->GetBool();
+		_blocked = value->getBool();
 		return S_OK;
 	}
 
@@ -315,7 +315,7 @@ HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Decoration") == 0) {
-		_decoration = value->GetBool();
+		_decoration = value->getBool();
 		return S_OK;
 	}
 
@@ -323,7 +323,7 @@ HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Scale") == 0) {
-		_zoom = value->GetFloat();
+		_zoom = value->getFloat();
 		return S_OK;
 	}
 
@@ -331,7 +331,7 @@ HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AlphaColor") == 0) {
-		_alpha = (uint32)value->GetInt();
+		_alpha = (uint32)value->getInt();
 		return S_OK;
 	}
 

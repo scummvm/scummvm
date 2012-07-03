@@ -194,7 +194,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "PlayAnim") == 0 || strcmp(name, "PlayAnimAsync") == 0) {
 		stack->correctParams(1);
-		if (FAILED(playAnim(stack->pop()->GetString()))) stack->pushBool(false);
+		if (FAILED(playAnim(stack->pop()->getString()))) stack->pushBool(false);
 		else {
 			if (strcmp(name, "PlayAnimAsync") != 0) script->WaitFor(this);
 			stack->pushBool(true);
@@ -240,7 +240,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ForceTalkAnim") == 0) {
 		stack->correctParams(1);
-		const char *AnimName = stack->pop()->GetString();
+		const char *AnimName = stack->pop()->getString();
 		delete[] _forcedTalkAnimName;
 		_forcedTalkAnimName = new char[strlen(AnimName) + 1];
 		strcpy(_forcedTalkAnimName, AnimName);
@@ -256,21 +256,21 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "Talk") == 0 || strcmp(name, "TalkAsync") == 0) {
 		stack->correctParams(5);
 
-		const char *Text    = stack->pop()->GetString();
+		const char *Text    = stack->pop()->getString();
 		CScValue *SoundVal = stack->pop();
-		int Duration  = stack->pop()->GetInt();
+		int Duration  = stack->pop()->getInt();
 		CScValue *ValStances = stack->pop();
 
-		const char *Stances = ValStances->IsNULL() ? NULL : ValStances->GetString();
+		const char *Stances = ValStances->isNULL() ? NULL : ValStances->getString();
 
 		int Align;
 		CScValue *val = stack->pop();
-		if (val->IsNULL()) Align = TAL_CENTER;
-		else Align = val->GetInt();
+		if (val->isNULL()) Align = TAL_CENTER;
+		else Align = val->getInt();
 
 		Align = MIN(MAX(0, Align), NUM_TEXT_ALIGN - 1);
 
-		const char *Sound = SoundVal->IsNULL() ? NULL : SoundVal->GetString();
+		const char *Sound = SoundVal->isNULL() ? NULL : SoundVal->getString();
 
 		talk(Text, Sound, Duration, Stances, (TTextAlign)Align);
 		if (strcmp(name, "TalkAsync") != 0) script->WaitForExclusive(this);
@@ -290,11 +290,11 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		int i;
 		CScValue *Val = stack->pop();
-		if (Val->IsNULL() || !Main) {
+		if (Val->isNULL() || !Main) {
 			_stickRegion = NULL;
 			RegFound = true;
-		} else if (Val->IsString()) {
-			const char *RegionName = Val->GetString();
+		} else if (Val->isString()) {
+			const char *RegionName = Val->getString();
 			for (i = 0; i < Main->_nodes.GetSize(); i++) {
 				if (Main->_nodes[i]->_type == OBJECT_REGION && Main->_nodes[i]->_region->_name && scumm_stricmp(Main->_nodes[i]->_region->_name, RegionName) == 0) {
 					_stickRegion = Main->_nodes[i]->_region;
@@ -302,8 +302,8 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 					break;
 				}
 			}
-		} else if (Val->IsNative()) {
-			CBScriptable *Obj = Val->GetNative();
+		} else if (Val->isNative()) {
+			CBScriptable *Obj = Val->getNative();
 
 			for (i = 0; i < Main->_nodes.GetSize(); i++) {
 				if (Main->_nodes[i]->_type == OBJECT_REGION && Main->_nodes[i]->_region == Obj) {
@@ -327,8 +327,8 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (Val->IsNULL()) SetFont(NULL);
-		else SetFont(Val->GetString());
+		if (Val->isNULL()) SetFont(NULL);
+		else SetFont(Val->getString());
 
 		stack->pushNULL();
 		return S_OK;
@@ -356,10 +356,10 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		}
 
 		CScValue *val = stack->pop();
-		if (!val->IsNULL()) {
-			const char *ItemName = val->GetString();
+		if (!val->isNULL()) {
+			const char *ItemName = val->getString();
 			val = stack->pop();
-			const char *InsertAfter = val->IsNULL() ? NULL : val->GetString();
+			const char *InsertAfter = val->isNULL() ? NULL : val->getString();
 			if (FAILED(_inventory->InsertItem(ItemName, InsertAfter))) script->RuntimeError("Cannot add item '%s' to inventory", ItemName);
 			else {
 				// hide associated entities
@@ -384,11 +384,11 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		}
 
 		CScValue *val = stack->pop();
-		if (!val->IsNULL()) {
-			if (FAILED(_inventory->RemoveItem(val->GetString()))) script->RuntimeError("Cannot remove item '%s' from inventory", val->GetString());
+		if (!val->isNULL()) {
+			if (FAILED(_inventory->RemoveItem(val->getString()))) script->RuntimeError("Cannot remove item '%s' from inventory", val->getString());
 			else {
 				// show associated entities
-				((CAdGame *)Game)->_scene->handleItemAssociations(val->GetString(), true);
+				((CAdGame *)Game)->_scene->handleItemAssociations(val->getString(), true);
 			}
 		} else script->RuntimeError("DropItem: item name expected");
 
@@ -409,13 +409,13 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		CScValue *val = stack->pop();
 		if (val->_type == VAL_STRING) {
-			CAdItem *item = ((CAdGame *)Game)->GetItemByName(val->GetString());
+			CAdItem *item = ((CAdGame *)Game)->GetItemByName(val->getString());
 			if (item) stack->pushNative(item, true);
 			else stack->pushNULL();
-		} else if (val->IsNULL() || val->GetInt() < 0 || val->GetInt() >= _inventory->_takenItems.GetSize())
+		} else if (val->isNULL() || val->getInt() < 0 || val->getInt() >= _inventory->_takenItems.GetSize())
 			stack->pushNULL();
 		else
-			stack->pushNative(_inventory->_takenItems[val->GetInt()], true);
+			stack->pushNative(_inventory->_takenItems[val->getInt()], true);
 
 		return S_OK;
 	}
@@ -432,12 +432,12 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		}
 
 		CScValue *val = stack->pop();
-		if (!val->IsNULL()) {
+		if (!val->isNULL()) {
 			for (int i = 0; i < _inventory->_takenItems.GetSize(); i++) {
-				if (val->GetNative() == _inventory->_takenItems[i]) {
+				if (val->getNative() == _inventory->_takenItems[i]) {
 					stack->pushBool(true);
 					return S_OK;
-				} else if (scumm_stricmp(val->GetString(), _inventory->_takenItems[i]->_name) == 0) {
+				} else if (scumm_stricmp(val->getString(), _inventory->_takenItems[i]->_name) == 0) {
 					stack->pushBool(true);
 					return S_OK;
 				}
@@ -453,9 +453,9 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateParticleEmitter") == 0) {
 		stack->correctParams(3);
-		bool FollowParent = stack->pop()->GetBool();
-		int OffsetX = stack->pop()->GetInt();
-		int OffsetY = stack->pop()->GetInt();
+		bool FollowParent = stack->pop()->getBool();
+		int OffsetX = stack->pop()->getInt();
+		int OffsetY = stack->pop()->getInt();
 
 		CPartEmitter *Emitter = createParticleEmitter(FollowParent, OffsetX, OffsetY);
 		if (Emitter) stack->pushNative(_partEmitter, true);
@@ -483,10 +483,10 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddAttachment") == 0) {
 		stack->correctParams(4);
-		const char *Filename = stack->pop()->GetString();
-		bool PreDisplay = stack->pop()->GetBool(true);
-		int OffsetX = stack->pop()->GetInt();
-		int OffsetY = stack->pop()->GetInt();
+		const char *Filename = stack->pop()->getString();
+		bool PreDisplay = stack->pop()->getBool(true);
+		int OffsetX = stack->pop()->getInt();
+		int OffsetY = stack->pop()->getInt();
 
 		HRESULT res;
 		CAdEntity *Ent = new CAdEntity(Game);
@@ -518,8 +518,8 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 		bool Found = false;
-		if (Val->IsNative()) {
-			CBScriptable *Obj = Val->GetNative();
+		if (Val->isNative()) {
+			CBScriptable *Obj = Val->getNative();
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
 				if (_attachmentsPre[i] == Obj) {
 					Found = true;
@@ -537,7 +537,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 				}
 			}
 		} else {
-			const char *attachmentName = Val->GetString();
+			const char *attachmentName = Val->getString();
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
 				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
 					Found = true;
@@ -568,8 +568,8 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CScValue *Val = stack->pop();
 
 		CAdObject *Ret = NULL;
-		if (Val->IsInt()) {
-			int Index = Val->GetInt();
+		if (Val->isInt()) {
+			int Index = Val->getInt();
 			int CurrIndex = 0;
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
 				if (CurrIndex == Index) Ret = _attachmentsPre[i];
@@ -580,7 +580,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 				CurrIndex++;
 			}
 		} else {
-			const char *attachmentName = Val->GetString();
+			const char *attachmentName = Val->getString();
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
 				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
 					Ret = _attachmentsPre[i];
@@ -609,13 +609,13 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdObject::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("object");
+		_scValue->setString("object");
 		return _scValue;
 	}
 
@@ -623,7 +623,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Active") == 0) {
-		_scValue->SetBool(_active);
+		_scValue->setBool(_active);
 		return _scValue;
 	}
 
@@ -631,7 +631,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// IgnoreItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IgnoreItems") == 0) {
-		_scValue->SetBool(_ignoreItems);
+		_scValue->setBool(_ignoreItems);
 		return _scValue;
 	}
 
@@ -639,7 +639,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// SceneIndependent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SceneIndependent") == 0) {
-		_scValue->SetBool(_sceneIndependent);
+		_scValue->setBool(_sceneIndependent);
 		return _scValue;
 	}
 
@@ -647,7 +647,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// SubtitlesWidth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesWidth") == 0) {
-		_scValue->SetInt(_subtitlesWidth);
+		_scValue->setInt(_subtitlesWidth);
 		return _scValue;
 	}
 
@@ -655,7 +655,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// SubtitlesPosRelative
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosRelative") == 0) {
-		_scValue->SetBool(_subtitlesModRelative);
+		_scValue->setBool(_subtitlesModRelative);
 		return _scValue;
 	}
 
@@ -663,7 +663,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// SubtitlesPosX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosX") == 0) {
-		_scValue->SetInt(_subtitlesModX);
+		_scValue->setInt(_subtitlesModX);
 		return _scValue;
 	}
 
@@ -671,7 +671,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// SubtitlesPosY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosY") == 0) {
-		_scValue->SetInt(_subtitlesModY);
+		_scValue->setInt(_subtitlesModY);
 		return _scValue;
 	}
 
@@ -679,7 +679,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// SubtitlesPosXCenter
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosXCenter") == 0) {
-		_scValue->SetBool(_subtitlesModXCenter);
+		_scValue->setBool(_subtitlesModXCenter);
 		return _scValue;
 	}
 
@@ -687,7 +687,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// NumItems (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumItems") == 0) {
-		_scValue->SetInt(getInventory()->_takenItems.GetSize());
+		_scValue->setInt(getInventory()->_takenItems.GetSize());
 		return _scValue;
 	}
 
@@ -695,8 +695,8 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// ParticleEmitter (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ParticleEmitter") == 0) {
-		if (_partEmitter) _scValue->SetNative(_partEmitter, true);
-		else _scValue->SetNULL();
+		if (_partEmitter) _scValue->setNative(_partEmitter, true);
+		else _scValue->setNULL();
 
 		return _scValue;
 	}
@@ -705,7 +705,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// NumAttachments (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumAttachments") == 0) {
-		_scValue->SetInt(_attachmentsPre.GetSize() + _attachmentsPost.GetSize());
+		_scValue->setInt(_attachmentsPre.GetSize() + _attachmentsPost.GetSize());
 		return _scValue;
 	}
 
@@ -721,7 +721,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *value) {
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Active") == 0) {
-		_active = value->GetBool();
+		_active = value->getBool();
 		return S_OK;
 	}
 
@@ -729,7 +729,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *value) {
 	// IgnoreItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IgnoreItems") == 0) {
-		_ignoreItems = value->GetBool();
+		_ignoreItems = value->getBool();
 		return S_OK;
 	}
 
@@ -737,7 +737,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *value) {
 	// SceneIndependent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SceneIndependent") == 0) {
-		_sceneIndependent = value->GetBool();
+		_sceneIndependent = value->getBool();
 		return S_OK;
 	}
 
@@ -745,7 +745,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *value) {
 	// SubtitlesWidth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesWidth") == 0) {
-		_subtitlesWidth = value->GetInt();
+		_subtitlesWidth = value->getInt();
 		return S_OK;
 	}
 
@@ -753,7 +753,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *value) {
 	// SubtitlesPosRelative
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosRelative") == 0) {
-		_subtitlesModRelative = value->GetBool();
+		_subtitlesModRelative = value->getBool();
 		return S_OK;
 	}
 
@@ -761,7 +761,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *value) {
 	// SubtitlesPosX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosX") == 0) {
-		_subtitlesModX = value->GetInt();
+		_subtitlesModX = value->getInt();
 		return S_OK;
 	}
 
@@ -769,7 +769,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *value) {
 	// SubtitlesPosY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosY") == 0) {
-		_subtitlesModY = value->GetInt();
+		_subtitlesModY = value->getInt();
 		return S_OK;
 	}
 
@@ -777,7 +777,7 @@ HRESULT CAdObject::scSetProperty(const char *name, CScValue *value) {
 	// SubtitlesPosXCenter
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesPosXCenter") == 0) {
-		_subtitlesModXCenter = value->GetBool();
+		_subtitlesModXCenter = value->getBool();
 		return S_OK;
 	}
 

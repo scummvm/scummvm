@@ -45,15 +45,15 @@ CSXArray::CSXArray(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 	_length = 0;
 	_values = new CScValue(Game);
 
-	int NumParams = stack->pop()->GetInt(0);
+	int NumParams = stack->pop()->getInt(0);
 
-	if (NumParams == 1) _length = stack->pop()->GetInt(0);
+	if (NumParams == 1) _length = stack->pop()->getInt(0);
 	else if (NumParams > 1) {
 		_length = NumParams;
 		char ParamName[20];
 		for (int i = 0; i < NumParams; i++) {
 			sprintf(ParamName, "%d", i);
-			_values->SetProp(ParamName, stack->pop());
+			_values->setProp(ParamName, stack->pop());
 		}
 	}
 }
@@ -79,10 +79,10 @@ const char *CSXArray::scToString() {
 	char PropName[20];
 	for (int i = 0; i < _length; i++) {
 		sprintf(PropName, "%d", i);
-		CScValue *val = _values->GetProp(PropName);
+		CScValue *val = _values->getProp(PropName);
 		if (val) {
-			if (strlen(Dummy) + strlen(val->GetString()) < 32768) {
-				strcat(Dummy, val->GetString());
+			if (strlen(Dummy) + strlen(val->getString()) < 32768) {
+				strcat(Dummy, val->getString());
 			}
 		}
 
@@ -98,13 +98,13 @@ HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// Push
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Push") == 0) {
-		int NumParams = stack->pop()->GetInt(0);
+		int NumParams = stack->pop()->getInt(0);
 		char ParamName[20];
 
 		for (int i = 0; i < NumParams; i++) {
 			_length++;
 			sprintf(ParamName, "%d", _length - 1);
-			_values->SetProp(ParamName, stack->pop(), true);
+			_values->setProp(ParamName, stack->pop(), true);
 		}
 		stack->pushInt(_length);
 
@@ -121,8 +121,8 @@ HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (_length > 0) {
 			char ParamName[20];
 			sprintf(ParamName, "%d", _length - 1);
-			stack->push(_values->GetProp(ParamName));
-			_values->DeleteProp(ParamName);
+			stack->push(_values->getProp(ParamName));
+			_values->deleteProp(ParamName);
 			_length--;
 		} else stack->pushNULL();
 
@@ -135,13 +135,13 @@ HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CSXArray::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("array");
+		_scValue->setString("array");
 		return _scValue;
 	}
 
@@ -149,7 +149,7 @@ CScValue *CSXArray::scGetProperty(const char *name) {
 	// Length
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Length") == 0) {
-		_scValue->SetInt(_length);
+		_scValue->setInt(_length);
 		return _scValue;
 	}
 
@@ -159,7 +159,7 @@ CScValue *CSXArray::scGetProperty(const char *name) {
 	else {
 		char ParamName[20];
 		if (ValidNumber(name, ParamName)) {
-			return _values->GetProp(ParamName);
+			return _values->getProp(ParamName);
 		} else return _scValue;
 	}
 }
@@ -172,13 +172,13 @@ HRESULT CSXArray::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Length") == 0) {
 		int OrigLength = _length;
-		_length = MAX(value->GetInt(0), 0);
+		_length = MAX(value->getInt(0), 0);
 
 		char PropName[20];
 		if (_length < OrigLength) {
 			for (int i = _length; i < OrigLength; i++) {
 				sprintf(PropName, "%d", i);
-				_values->DeleteProp(PropName);
+				_values->deleteProp(PropName);
 			}
 		}
 		return S_OK;
@@ -192,7 +192,7 @@ HRESULT CSXArray::scSetProperty(const char *name, CScValue *value) {
 		if (ValidNumber(name, ParamName)) {
 			int Index = atoi(ParamName);
 			if (Index >= _length) _length = Index + 1;
-			return _values->SetProp(ParamName, value);
+			return _values->setProp(ParamName, value);
 		} else return E_FAIL;
 	}
 }
@@ -231,7 +231,7 @@ HRESULT CSXArray::Push(CScValue *Val) {
 	char ParamName[20];
 	_length++;
 	sprintf(ParamName, "%d", _length - 1);
-	_values->SetProp(ParamName, Val, true);
+	_values->setProp(ParamName, Val, true);
 	return S_OK;
 }
 

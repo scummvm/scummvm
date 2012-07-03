@@ -983,7 +983,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "LOG") == 0) {
 		stack->correctParams(1);
-		LOG(0, stack->pop()->GetString());
+		LOG(0, stack->pop()->getString());
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1002,7 +1002,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Msg") == 0) {
 		stack->correctParams(1);
-		QuickMessage(stack->pop()->GetString());
+		QuickMessage(stack->pop()->getString());
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1013,7 +1013,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "RunScript") == 0) {
 		Game->LOG(0, "**Warning** The 'RunScript' method is now obsolete. Use 'AttachScript' instead (same syntax)");
 		stack->correctParams(1);
-		if (FAILED(addScript(stack->pop()->GetString())))
+		if (FAILED(addScript(stack->pop()->getString())))
 			stack->pushBool(false);
 		else
 			stack->pushBool(true);
@@ -1026,12 +1026,12 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadStringTable") == 0) {
 		stack->correctParams(2);
-		const char *filename = stack->pop()->GetString();
+		const char *filename = stack->pop()->getString();
 		CScValue *Val = stack->pop();
 
 		bool ClearOld;
-		if (Val->IsNULL()) ClearOld = true;
-		else ClearOld = Val->GetBool();
+		if (Val->isNULL()) ClearOld = true;
+		else ClearOld = Val->getBool();
 
 		if (FAILED(_stringTable->loadFile(filename, ClearOld)))
 			stack->pushBool(false);
@@ -1046,7 +1046,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ValidObject") == 0) {
 		stack->correctParams(1);
-		CBScriptable *obj = stack->pop()->GetNative();
+		CBScriptable *obj = stack->pop()->getNative();
 		if (ValidObject((CBObject *) obj)) stack->pushBool(true);
 		else stack->pushBool(false);
 
@@ -1071,9 +1071,9 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "UnloadObject") == 0) {
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
-		CBObject *obj = (CBObject *)val->GetNative();
+		CBObject *obj = (CBObject *)val->getNative();
 		UnregisterObject(obj);
-		if (val->GetType() == VAL_VARIABLE_REF) val->SetNULL();
+		if (val->getType() == VAL_VARIABLE_REF) val->setNULL();
 
 		stack->pushNULL();
 		return S_OK;
@@ -1085,7 +1085,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "LoadWindow") == 0) {
 		stack->correctParams(1);
 		CUIWindow *win = new CUIWindow(Game);
-		if (win && SUCCEEDED(win->loadFile(stack->pop()->GetString()))) {
+		if (win && SUCCEEDED(win->loadFile(stack->pop()->getString()))) {
 			_windows.Add(win);
 			RegisterObject(win);
 			stack->pushNative(win, true);
@@ -1103,8 +1103,8 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "ExpandString") == 0) {
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
-		char *str = new char[strlen(val->GetString()) + 1];
-		strcpy(str, val->GetString());
+		char *str = new char[strlen(val->getString()) + 1];
+		strcpy(str, val->getString());
 		_stringTable->Expand(&str);
 		stack->pushString(str);
 		delete [] str;
@@ -1119,15 +1119,15 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "PlayMusic") == 0) stack->correctParams(3);
 		else {
 			stack->correctParams(4);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 
-		const char *filename = stack->pop()->GetString();
+		const char *filename = stack->pop()->getString();
 		CScValue *ValLooping = stack->pop();
-		bool Looping = ValLooping->IsNULL() ? true : ValLooping->GetBool();
+		bool Looping = ValLooping->isNULL() ? true : ValLooping->getBool();
 
 		CScValue *ValLoopStart = stack->pop();
-		uint32 LoopStart = (uint32)(ValLoopStart->IsNULL() ? 0 : ValLoopStart->GetInt());
+		uint32 LoopStart = (uint32)(ValLoopStart->isNULL() ? 0 : ValLoopStart->getInt());
 
 
 		if (FAILED(PlayMusic(channel, filename, Looping, LoopStart))) stack->pushBool(false);
@@ -1144,7 +1144,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "StopMusic") == 0) stack->correctParams(0);
 		else {
 			stack->correctParams(1);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 
 		if (FAILED(StopMusic(channel))) stack->pushBool(false);
@@ -1161,7 +1161,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "PauseMusic") == 0) stack->correctParams(0);
 		else {
 			stack->correctParams(1);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 
 		if (FAILED(PauseMusic(channel))) stack->pushBool(false);
@@ -1177,7 +1177,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "ResumeMusic") == 0) stack->correctParams(0);
 		else {
 			stack->correctParams(1);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 
 		if (FAILED(ResumeMusic(channel))) stack->pushBool(false);
@@ -1193,7 +1193,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "GetMusic") == 0) stack->correctParams(0);
 		else {
 			stack->correctParams(1);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS) stack->pushNULL();
 		else {
@@ -1211,10 +1211,10 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "SetMusicPosition") == 0) stack->correctParams(1);
 		else {
 			stack->correctParams(2);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 
-		uint32 Time = stack->pop()->GetInt();
+		uint32 Time = stack->pop()->getInt();
 
 		if (FAILED(SetMusicStartTime(channel, Time))) stack->pushBool(false);
 		else stack->pushBool(true);
@@ -1230,7 +1230,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "GetMusicPosition") == 0) stack->correctParams(0);
 		else {
 			stack->correctParams(1);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) stack->pushInt(0);
@@ -1246,7 +1246,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "IsMusicPlaying") == 0) stack->correctParams(0);
 		else {
 			stack->correctParams(1);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) stack->pushBool(false);
@@ -1262,10 +1262,10 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "SetMusicVolume") == 0) stack->correctParams(1);
 		else {
 			stack->correctParams(2);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 
-		int Volume = stack->pop()->GetInt();
+		int Volume = stack->pop()->getInt();
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) stack->pushBool(false);
 		else {
 			if (FAILED(_music[channel]->setVolume(Volume))) stack->pushBool(false);
@@ -1282,7 +1282,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (strcmp(name, "GetMusicVolume") == 0) stack->correctParams(0);
 		else {
 			stack->correctParams(1);
-			channel = stack->pop()->GetInt();
+			channel = stack->pop()->getInt();
 		}
 
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) stack->pushInt(0);
@@ -1296,10 +1296,10 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MusicCrossfade") == 0) {
 		stack->correctParams(4);
-		int channel1 = stack->pop()->GetInt(0);
-		int channel2 = stack->pop()->GetInt(0);
-		uint32 FadeLength = (uint32)stack->pop()->GetInt(0);
-		bool Swap = stack->pop()->GetBool(true);
+		int channel1 = stack->pop()->getInt(0);
+		int channel2 = stack->pop()->getInt(0);
+		uint32 FadeLength = (uint32)stack->pop()->getInt(0);
+		bool Swap = stack->pop()->getBool(true);
 
 		if (_musicCrossfadeRunning) {
 			script->RuntimeError("Game.MusicCrossfade: Music crossfade is already in progress.");
@@ -1326,7 +1326,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(1);
 
 		int Length = 0;
-		const char *filename = stack->pop()->GetString();
+		const char *filename = stack->pop()->getString();
 
 		CBSound *Sound = new CBSound(Game);
 		if (Sound && SUCCEEDED(Sound->setSound(filename, SOUND_MUSIC, true))) {
@@ -1343,8 +1343,8 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetMousePos") == 0) {
 		stack->correctParams(2);
-		int x = stack->pop()->GetInt();
-		int y = stack->pop()->GetInt();
+		int x = stack->pop()->getInt();
+		int y = stack->pop()->getInt();
 		x = MAX(x, 0);
 		x = MIN(x, _renderer->_width);
 		y = MAX(y, 0);
@@ -1364,10 +1364,10 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LockMouseRect") == 0) {
 		stack->correctParams(4);
-		int left = stack->pop()->GetInt();
-		int top = stack->pop()->GetInt();
-		int right = stack->pop()->GetInt();
-		int bottom = stack->pop()->GetInt();
+		int left = stack->pop()->getInt();
+		int top = stack->pop()->getInt();
+		int right = stack->pop()->getInt();
+		int bottom = stack->pop()->getInt();
 
 		if (right < left) CBUtils::Swap(&left, &right);
 		if (bottom < top) CBUtils::Swap(&top, &bottom);
@@ -1392,19 +1392,19 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		Game->LOG(0, "Warning: Game.PlayVideo() is now deprecated. Use Game.PlayTheora() instead.");
 
 		stack->correctParams(6);
-		const char *filename = stack->pop()->GetString();
+		const char *filename = stack->pop()->getString();
 		warning("PlayVideo: %s - not implemented yet", filename);
 		CScValue *valType = stack->pop();
 		int Type;
-		if (valType->IsNULL()) Type = (int)VID_PLAY_STRETCH;
-		else Type = valType->GetInt();
+		if (valType->isNULL()) Type = (int)VID_PLAY_STRETCH;
+		else Type = valType->getInt();
 
-		int X = stack->pop()->GetInt();
-		int Y = stack->pop()->GetInt();
-		bool FreezeMusic = stack->pop()->GetBool(true);
+		int X = stack->pop()->getInt();
+		int Y = stack->pop()->getInt();
+		bool FreezeMusic = stack->pop()->getBool(true);
 
 		CScValue *valSub = stack->pop();
-		const char *SubtitleFile = valSub->IsNULL() ? NULL : valSub->GetString();
+		const char *SubtitleFile = valSub->isNULL() ? NULL : valSub->getString();
 
 		if (Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER)
 			Type = (int)VID_PLAY_STRETCH;
@@ -1430,20 +1430,20 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		// TODO: ADDVIDEO
 
 		stack->correctParams(7);
-		const char *filename = stack->pop()->GetString();
+		const char *filename = stack->pop()->getString();
 		CScValue *valType = stack->pop();
 		int Type;
-		if (valType->IsNULL())
+		if (valType->isNULL())
 			Type = (int)VID_PLAY_STRETCH;
-		else Type = valType->GetInt();
+		else Type = valType->getInt();
 
-		int X = stack->pop()->GetInt();
-		int Y = stack->pop()->GetInt();
-		bool FreezeMusic = stack->pop()->GetBool(true);
-		bool DropFrames = stack->pop()->GetBool(true);
+		int X = stack->pop()->getInt();
+		int Y = stack->pop()->getInt();
+		bool FreezeMusic = stack->pop()->getBool(true);
+		bool DropFrames = stack->pop()->getBool(true);
 
 		CScValue *valSub = stack->pop();
-		const char *SubtitleFile = valSub->IsNULL() ? NULL : valSub->GetString();
+		const char *SubtitleFile = valSub->isNULL() ? NULL : valSub->getString();
 
 		if (Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER) Type = (int)VID_PLAY_STRETCH;
 
@@ -1479,8 +1479,8 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RegWriteNumber") == 0) {
 		stack->correctParams(2);
-		const char *Key = stack->pop()->GetString();
-		int Val = stack->pop()->GetInt();
+		const char *Key = stack->pop()->getString();
+		int Val = stack->pop()->getInt();
 		_registry->WriteInt("PrivateSettings", Key, Val);
 		stack->pushNULL();
 		return S_OK;
@@ -1491,8 +1491,8 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RegReadNumber") == 0) {
 		stack->correctParams(2);
-		const char *Key = stack->pop()->GetString();
-		int InitVal = stack->pop()->GetInt();
+		const char *Key = stack->pop()->getString();
+		int InitVal = stack->pop()->getInt();
 		stack->pushInt(_registry->ReadInt("PrivateSettings", Key, InitVal));
 		return S_OK;
 	}
@@ -1502,8 +1502,8 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RegWriteString") == 0) {
 		stack->correctParams(2);
-		const char *Key = stack->pop()->GetString();
-		const char *Val = stack->pop()->GetString();
+		const char *Key = stack->pop()->getString();
+		const char *Val = stack->pop()->getString();
 		_registry->WriteString("PrivateSettings", Key, Val);
 		stack->pushNULL();
 		return S_OK;
@@ -1514,8 +1514,8 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RegReadString") == 0) {
 		stack->correctParams(2);
-		const char *Key = stack->pop()->GetString();
-		const char *InitVal = stack->pop()->GetString();
+		const char *Key = stack->pop()->getString();
+		const char *InitVal = stack->pop()->getString();
 		AnsiString val = _registry->ReadString("PrivateSettings", Key, InitVal);
 		stack->pushString(val.c_str());
 		return S_OK;
@@ -1526,9 +1526,9 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SaveGame") == 0) {
 		stack->correctParams(3);
-		int Slot = stack->pop()->GetInt();
-		const char *xdesc = stack->pop()->GetString();
-		bool quick = stack->pop()->GetBool(false);
+		int Slot = stack->pop()->getInt();
+		const char *xdesc = stack->pop()->getString();
+		bool quick = stack->pop()->getBool(false);
 
 		char *Desc = new char[strlen(xdesc) + 1];
 		strcpy(Desc, xdesc);
@@ -1546,7 +1546,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadGame") == 0) {
 		stack->correctParams(1);
-		_scheduledLoadSlot = stack->pop()->GetInt();
+		_scheduledLoadSlot = stack->pop()->getInt();
 		_loading = true;
 		stack->pushBool(false);
 		script->Sleep(0);
@@ -1558,7 +1558,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsSaveSlotUsed") == 0) {
 		stack->correctParams(1);
-		int Slot = stack->pop()->GetInt();
+		int Slot = stack->pop()->getInt();
 		stack->pushBool(IsSaveSlotUsed(Slot));
 		return S_OK;
 	}
@@ -1568,7 +1568,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSaveSlotDescription") == 0) {
 		stack->correctParams(1);
-		int Slot = stack->pop()->GetInt();
+		int Slot = stack->pop()->getInt();
 		char Desc[512];
 		Desc[0] = '\0';
 		GetSaveSlotDescription(Slot, Desc);
@@ -1581,7 +1581,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EmptySaveSlot") == 0) {
 		stack->correctParams(1);
-		int Slot = stack->pop()->GetInt();
+		int Slot = stack->pop()->getInt();
 		EmptySaveSlot(Slot);
 		stack->pushNULL();
 		return S_OK;
@@ -1592,7 +1592,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalSFXVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte)stack->pop()->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1602,7 +1602,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalSpeechVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte)stack->pop()->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1612,7 +1612,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalMusicVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte)stack->pop()->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1622,7 +1622,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalMasterVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setMasterVolumePercent((byte)stack->pop()->GetInt());
+		Game->_soundMgr->setMasterVolumePercent((byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1668,7 +1668,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetActiveCursor") == 0) {
 		stack->correctParams(1);
-		if (SUCCEEDED(setActiveCursor(stack->pop()->GetString()))) stack->pushBool(true);
+		if (SUCCEEDED(setActiveCursor(stack->pop()->getString()))) stack->pushBool(true);
 		else stack->pushBool(false);
 
 		return S_OK;
@@ -1725,7 +1725,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FileExists") == 0) {
 		stack->correctParams(1);
-		const char *filename = stack->pop()->GetString();
+		const char *filename = stack->pop()->getString();
 
 		Common::SeekableReadStream *File = _fileManager->openFile(filename, false);
 		if (!File) stack->pushBool(false);
@@ -1741,11 +1741,11 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FadeOut") == 0 || strcmp(name, "FadeOutAsync") == 0 || strcmp(name, "SystemFadeOut") == 0 || strcmp(name, "SystemFadeOutAsync") == 0) {
 		stack->correctParams(5);
-		uint32 Duration = stack->pop()->GetInt(500);
-		byte Red = stack->pop()->GetInt(0);
-		byte Green = stack->pop()->GetInt(0);
-		byte Blue = stack->pop()->GetInt(0);
-		byte Alpha = stack->pop()->GetInt(0xFF);
+		uint32 Duration = stack->pop()->getInt(500);
+		byte Red = stack->pop()->getInt(0);
+		byte Green = stack->pop()->getInt(0);
+		byte Blue = stack->pop()->getInt(0);
+		byte Alpha = stack->pop()->getInt(0xFF);
 
 		bool System = (strcmp(name, "SystemFadeOut") == 0 || strcmp(name, "SystemFadeOutAsync") == 0);
 
@@ -1761,11 +1761,11 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FadeIn") == 0 || strcmp(name, "FadeInAsync") == 0 || strcmp(name, "SystemFadeIn") == 0 || strcmp(name, "SystemFadeInAsync") == 0) {
 		stack->correctParams(5);
-		uint32 Duration = stack->pop()->GetInt(500);
-		byte Red = stack->pop()->GetInt(0);
-		byte Green = stack->pop()->GetInt(0);
-		byte Blue = stack->pop()->GetInt(0);
-		byte Alpha = stack->pop()->GetInt(0xFF);
+		uint32 Duration = stack->pop()->getInt(500);
+		byte Red = stack->pop()->getInt(0);
+		byte Green = stack->pop()->getInt(0);
+		byte Blue = stack->pop()->getInt(0);
+		byte Alpha = stack->pop()->getInt(0xFF);
 
 		bool System = (strcmp(name, "SystemFadeIn") == 0 || strcmp(name, "SystemFadeInAsync") == 0);
 
@@ -1798,7 +1798,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		int FileNum = 0;
 
 		while (true) {
-			sprintf(filename, "%s%03d.bmp", Val->IsNULL() ? _name : Val->GetString(), FileNum);
+			sprintf(filename, "%s%03d.bmp", Val->isNULL() ? _name : Val->getString(), FileNum);
 			if (!Common::File::exists(filename))
 				break;
 			FileNum++;
@@ -1820,9 +1820,9 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScreenshotEx") == 0) {
 		stack->correctParams(3);
-		const char *filename = stack->pop()->GetString();
-		int SizeX = stack->pop()->GetInt(_renderer->_width);
-		int SizeY = stack->pop()->GetInt(_renderer->_height);
+		const char *filename = stack->pop()->getString();
+		int SizeX = stack->pop()->getInt(_renderer->_width);
+		int SizeY = stack->pop()->getInt(_renderer->_height);
 
 		bool ret = false;
 		CBImage *Image = Game->_renderer->takeScreenshot();
@@ -1846,7 +1846,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		CUIWindow *Win = new CUIWindow(Game);
 		_windows.Add(Win);
 		RegisterObject(Win);
-		if (!Val->IsNULL()) Win->setName(Val->GetString());
+		if (!Val->isNULL()) Win->setName(Val->getString());
 		stack->pushNative(Win, true);
 		return S_OK;
 	}
@@ -1856,7 +1856,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteWindow") == 0) {
 		stack->correctParams(1);
-		CBObject *Obj = (CBObject *)stack->pop()->GetNative();
+		CBObject *Obj = (CBObject *)stack->pop()->getNative();
 		for (int i = 0; i < _windows.GetSize(); i++) {
 			if (_windows[i] == Obj) {
 				UnregisterObject(_windows[i]);
@@ -1893,14 +1893,14 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "SetLoadingScreen") == 0) {
 		stack->correctParams(3);
 		CScValue *Val = stack->pop();
-		_loadImageX = stack->pop()->GetInt();
-		_loadImageY = stack->pop()->GetInt();
+		_loadImageX = stack->pop()->getInt();
+		_loadImageY = stack->pop()->getInt();
 
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			delete[] _loadImageName;
 			_loadImageName = NULL;
 		} else {
-			CBUtils::SetString(&_loadImageName, Val->GetString());
+			CBUtils::SetString(&_loadImageName, Val->getString());
 		}
 		stack->pushNULL();
 		return S_OK;
@@ -1912,14 +1912,14 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "SetSavingScreen") == 0) {
 		stack->correctParams(3);
 		CScValue *Val = stack->pop();
-		_saveImageX = stack->pop()->GetInt();
-		_saveImageY = stack->pop()->GetInt();
+		_saveImageX = stack->pop()->getInt();
+		_saveImageY = stack->pop()->getInt();
 
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			delete[] _saveImageName;
 			_saveImageName = NULL;
 		} else {
-			CBUtils::SetString(&_saveImageName, Val->GetString());
+			CBUtils::SetString(&_saveImageName, Val->getString());
 		}
 		stack->pushNULL();
 		return S_OK;
@@ -1930,7 +1930,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetWaitCursor") == 0) {
 		stack->correctParams(1);
-		if (SUCCEEDED(SetWaitCursor(stack->pop()->GetString()))) stack->pushBool(true);
+		if (SUCCEEDED(SetWaitCursor(stack->pop()->getString()))) stack->pushBool(true);
 		else stack->pushBool(false);
 
 		return S_OK;
@@ -1986,10 +1986,10 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "DisplayLoadingIcon") == 0) {
 		stack->correctParams(4);
 
-		const char *filename = stack->pop()->GetString();
-		_loadingIconX = stack->pop()->GetInt();
-		_loadingIconY = stack->pop()->GetInt();
-		_loadingIconPersistent = stack->pop()->GetBool();
+		const char *filename = stack->pop()->getString();
+		_loadingIconX = stack->pop()->getInt();
+		_loadingIconY = stack->pop()->getInt();
+		_loadingIconPersistent = stack->pop()->getBool();
 
 		delete _loadingIcon;
 		_loadingIcon = new CBSprite(this);
@@ -2022,7 +2022,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DumpTextureStats") == 0) {
 		stack->correctParams(1);
-		const char *filename = stack->pop()->GetString();
+		const char *filename = stack->pop()->getString();
 
 		_renderer->dumpData(filename);
 
@@ -2036,9 +2036,9 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "AccOutputText") == 0) {
 		stack->correctParams(2);
 		/* const char *Str = */
-		stack->pop()->GetString();
+		stack->pop()->getString();
 		/* int Type = */
-		stack->pop()->GetInt();
+		stack->pop()->getInt();
 		// do nothing
 		stack->pushNULL();
 
@@ -2078,8 +2078,8 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFileChecksum") == 0) {
 		stack->correctParams(2);
-		const char *filename = stack->pop()->GetString();
-		bool AsHex = stack->pop()->GetBool(false);
+		const char *filename = stack->pop()->getString();
+		bool AsHex = stack->pop()->getBool(false);
 
 		Common::SeekableReadStream *File = _fileManager->openFile(filename, false);
 		if (File) {
@@ -2165,27 +2165,27 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBGame::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("game");
+		_scValue->setString("game");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Name") == 0) {
-		_scValue->SetString(_name);
+		_scValue->setString(_name);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Hwnd (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Hwnd") == 0) {
-		_scValue->SetInt((int)_renderer->_window);
+		_scValue->setInt((int)_renderer->_window);
 		return _scValue;
 	}
 
@@ -2193,7 +2193,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// CurrentTime (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CurrentTime") == 0) {
-		_scValue->SetInt((int)_timer);
+		_scValue->setInt((int)_timer);
 		return _scValue;
 	}
 
@@ -2201,7 +2201,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// WindowsTime (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WindowsTime") == 0) {
-		_scValue->SetInt((int)CBPlatform::GetTime());
+		_scValue->setInt((int)CBPlatform::GetTime());
 		return _scValue;
 	}
 
@@ -2209,7 +2209,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// WindowedMode (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WindowedMode") == 0) {
-		_scValue->SetBool(_renderer->_windowed);
+		_scValue->setBool(_renderer->_windowed);
 		return _scValue;
 	}
 
@@ -2217,7 +2217,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// MouseX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MouseX") == 0) {
-		_scValue->SetInt(_mousePos.x);
+		_scValue->setInt(_mousePos.x);
 		return _scValue;
 	}
 
@@ -2225,7 +2225,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// MouseY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MouseY") == 0) {
-		_scValue->SetInt(_mousePos.y);
+		_scValue->setInt(_mousePos.y);
 		return _scValue;
 	}
 
@@ -2233,7 +2233,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// MainObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MainObject") == 0) {
-		_scValue->SetNative(_mainObject, true);
+		_scValue->setNative(_mainObject, true);
 		return _scValue;
 	}
 
@@ -2241,7 +2241,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// ActiveObject (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ActiveObject") == 0) {
-		_scValue->SetNative(_activeObject, true);
+		_scValue->setNative(_activeObject, true);
 		return _scValue;
 	}
 
@@ -2249,7 +2249,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// ScreenWidth (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScreenWidth") == 0) {
-		_scValue->SetInt(_renderer->_width);
+		_scValue->setInt(_renderer->_width);
 		return _scValue;
 	}
 
@@ -2257,7 +2257,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// ScreenHeight (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScreenHeight") == 0) {
-		_scValue->SetInt(_renderer->_height);
+		_scValue->setInt(_renderer->_height);
 		return _scValue;
 	}
 
@@ -2265,7 +2265,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// Interactive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Interactive") == 0) {
-		_scValue->SetBool(_interactive);
+		_scValue->setBool(_interactive);
 		return _scValue;
 	}
 
@@ -2273,7 +2273,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// DebugMode (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DebugMode") == 0) {
-		_scValue->SetBool(_dEBUG_DebugMode);
+		_scValue->setBool(_dEBUG_DebugMode);
 		return _scValue;
 	}
 
@@ -2281,7 +2281,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// SoundAvailable (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SoundAvailable") == 0) {
-		_scValue->SetBool(_soundMgr->_soundAvailable);
+		_scValue->setBool(_soundMgr->_soundAvailable);
 		return _scValue;
 	}
 
@@ -2290,7 +2290,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SFXVolume") == 0) {
 		Game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		_scValue->SetInt(_soundMgr->getVolumePercent(SOUND_SFX));
+		_scValue->setInt(_soundMgr->getVolumePercent(SOUND_SFX));
 		return _scValue;
 	}
 
@@ -2299,7 +2299,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SpeechVolume") == 0) {
 		Game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		_scValue->SetInt(_soundMgr->getVolumePercent(SOUND_SPEECH));
+		_scValue->setInt(_soundMgr->getVolumePercent(SOUND_SPEECH));
 		return _scValue;
 	}
 
@@ -2308,7 +2308,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MusicVolume") == 0) {
 		Game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		_scValue->SetInt(_soundMgr->getVolumePercent(SOUND_MUSIC));
+		_scValue->setInt(_soundMgr->getVolumePercent(SOUND_MUSIC));
 		return _scValue;
 	}
 
@@ -2317,7 +2317,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MasterVolume") == 0) {
 		Game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
-		_scValue->SetInt(_soundMgr->getMasterVolumePercent());
+		_scValue->setInt(_soundMgr->getMasterVolumePercent());
 		return _scValue;
 	}
 
@@ -2325,8 +2325,8 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// Keyboard (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Keyboard") == 0) {
-		if (_keyboardState) _scValue->SetNative(_keyboardState, true);
-		else _scValue->SetNULL();
+		if (_keyboardState) _scValue->setNative(_keyboardState, true);
+		else _scValue->setNULL();
 
 		return _scValue;
 	}
@@ -2335,7 +2335,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// Subtitles
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Subtitles") == 0) {
-		_scValue->SetBool(_subtitles);
+		_scValue->setBool(_subtitles);
 		return _scValue;
 	}
 
@@ -2343,14 +2343,14 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// SubtitlesSpeed
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesSpeed") == 0) {
-		_scValue->SetInt(_subtitlesSpeed);
+		_scValue->setInt(_subtitlesSpeed);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// VideoSubtitles
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "VideoSubtitles") == 0) {
-		_scValue->SetBool(_videoSubtitles);
+		_scValue->setBool(_videoSubtitles);
 		return _scValue;
 	}
 
@@ -2358,7 +2358,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// FPS (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FPS") == 0) {
-		_scValue->SetInt(_fps);
+		_scValue->setInt(_fps);
 		return _scValue;
 	}
 
@@ -2366,7 +2366,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AcceleratedMode / Accelerated (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AcceleratedMode") == 0 || strcmp(name, "Accelerated") == 0) {
-		_scValue->SetBool(_useD3D);
+		_scValue->setBool(_useD3D);
 		return _scValue;
 	}
 
@@ -2374,7 +2374,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// TextEncoding
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TextEncoding") == 0) {
-		_scValue->SetInt(_textEncoding);
+		_scValue->setInt(_textEncoding);
 		return _scValue;
 	}
 
@@ -2382,7 +2382,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// TextRTL
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TextRTL") == 0) {
-		_scValue->SetBool(_textRTL);
+		_scValue->setBool(_textRTL);
 		return _scValue;
 	}
 
@@ -2390,7 +2390,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// SoundBufferSize
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SoundBufferSize") == 0) {
-		_scValue->SetInt(_soundBufferSizeSec);
+		_scValue->setInt(_soundBufferSizeSec);
 		return _scValue;
 	}
 
@@ -2398,7 +2398,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// SuspendedRendering
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SuspendedRendering") == 0) {
-		_scValue->SetBool(_suspendedRendering);
+		_scValue->setBool(_suspendedRendering);
 		return _scValue;
 	}
 
@@ -2406,7 +2406,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// SuppressScriptErrors
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SuppressScriptErrors") == 0) {
-		_scValue->SetBool(_suppressScriptErrors);
+		_scValue->setBool(_suppressScriptErrors);
 		return _scValue;
 	}
 
@@ -2415,7 +2415,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// Frozen
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Frozen") == 0) {
-		_scValue->SetBool(_state == GAME_FROZEN);
+		_scValue->setBool(_state == GAME_FROZEN);
 		return _scValue;
 	}
 
@@ -2423,7 +2423,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AccTTSEnabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccTTSEnabled") == 0) {
-		_scValue->SetBool(false);
+		_scValue->setBool(false);
 		return _scValue;
 	}
 
@@ -2431,7 +2431,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AccTTSTalk
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccTTSTalk") == 0) {
-		_scValue->SetBool(false);
+		_scValue->setBool(false);
 		return _scValue;
 	}
 
@@ -2439,7 +2439,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AccTTSCaptions
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccTTSCaptions") == 0) {
-		_scValue->SetBool(false);
+		_scValue->setBool(false);
 		return _scValue;
 	}
 
@@ -2447,7 +2447,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AccTTSKeypress
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccTTSKeypress") == 0) {
-		_scValue->SetBool(false);
+		_scValue->setBool(false);
 		return _scValue;
 	}
 
@@ -2455,7 +2455,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AccKeyboardEnabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccKeyboardEnabled") == 0) {
-		_scValue->SetBool(false);
+		_scValue->setBool(false);
 		return _scValue;
 	}
 
@@ -2463,7 +2463,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AccKeyboardCursorSkip
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccKeyboardCursorSkip") == 0) {
-		_scValue->SetBool(false);
+		_scValue->setBool(false);
 		return _scValue;
 	}
 
@@ -2471,7 +2471,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AccKeyboardPause
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccKeyboardPause") == 0) {
-		_scValue->SetBool(false);
+		_scValue->setBool(false);
 		return _scValue;
 	}
 
@@ -2479,7 +2479,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AutorunDisabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AutorunDisabled") == 0) {
-		_scValue->SetBool(_autorunDisabled);
+		_scValue->setBool(_autorunDisabled);
 		return _scValue;
 	}
 
@@ -2488,7 +2488,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SaveDirectory") == 0) {
 		AnsiString dataDir = GetDataDir();
-		_scValue->SetString(dataDir.c_str());
+		_scValue->setString(dataDir.c_str());
 		return _scValue;
 	}
 
@@ -2496,7 +2496,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AutoSaveOnExit
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AutoSaveOnExit") == 0) {
-		_scValue->SetBool(_autoSaveOnExit);
+		_scValue->setBool(_autoSaveOnExit);
 		return _scValue;
 	}
 
@@ -2504,7 +2504,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// AutoSaveSlot
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AutoSaveSlot") == 0) {
-		_scValue->SetInt(_autoSaveSlot);
+		_scValue->setInt(_autoSaveSlot);
 		return _scValue;
 	}
 
@@ -2512,7 +2512,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// CursorHidden
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorHidden") == 0) {
-		_scValue->SetBool(_cursorHidden);
+		_scValue->setBool(_cursorHidden);
 		return _scValue;
 	}
 
@@ -2520,7 +2520,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// Platform (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Platform") == 0) {
-		_scValue->SetString(CBPlatform::GetPlatformName().c_str());
+		_scValue->setString(CBPlatform::GetPlatformName().c_str());
 		return _scValue;
 	}
 
@@ -2528,7 +2528,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// DeviceType (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeviceType") == 0) {
-		_scValue->SetString(GetDeviceType().c_str());
+		_scValue->setString(GetDeviceType().c_str());
 		return _scValue;
 	}
 
@@ -2536,7 +2536,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// MostRecentSaveSlot (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MostRecentSaveSlot") == 0) {
-		_scValue->SetInt(_registry->ReadInt("System", "MostRecentSaveSlot", -1));
+		_scValue->setInt(_registry->ReadInt("System", "MostRecentSaveSlot", -1));
 		return _scValue;
 	}
 
@@ -2544,8 +2544,8 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// Store (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Store") == 0) {
-		if (_store) _scValue->SetNative(_store, true);
-		else _scValue->SetNULL();
+		if (_store) _scValue->setNative(_store, true);
+		else _scValue->setNULL();
 
 		return _scValue;
 	}
@@ -2560,7 +2560,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(value->GetString());
+		setName(value->getString());
 
 		return S_OK;
 	}
@@ -2569,7 +2569,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// MouseX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MouseX") == 0) {
-		_mousePos.x = value->GetInt();
+		_mousePos.x = value->getInt();
 		ResetMousePos();
 		return S_OK;
 	}
@@ -2578,7 +2578,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// MouseY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MouseY") == 0) {
-		_mousePos.y = value->GetInt();
+		_mousePos.y = value->getInt();
 		ResetMousePos();
 		return S_OK;
 	}
@@ -2596,7 +2596,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// MainObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MainObject") == 0) {
-		CBScriptable *obj = value->GetNative();
+		CBScriptable *obj = value->getNative();
 		if (obj == NULL || ValidObject((CBObject *)obj)) _mainObject = (CBObject *)obj;
 		return S_OK;
 	}
@@ -2605,7 +2605,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// Interactive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Interactive") == 0) {
-		SetInteractive(value->GetBool());
+		SetInteractive(value->getBool());
 		return S_OK;
 	}
 
@@ -2614,7 +2614,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SFXVolume") == 0) {
 		Game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte)value->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte)value->getInt());
 		return S_OK;
 	}
 
@@ -2623,7 +2623,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SpeechVolume") == 0) {
 		Game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte)value->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte)value->getInt());
 		return S_OK;
 	}
 
@@ -2632,7 +2632,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MusicVolume") == 0) {
 		Game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte)value->GetInt());
+		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte)value->getInt());
 		return S_OK;
 	}
 
@@ -2641,7 +2641,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MasterVolume") == 0) {
 		Game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
-		Game->_soundMgr->setMasterVolumePercent((byte)value->GetInt());
+		Game->_soundMgr->setMasterVolumePercent((byte)value->getInt());
 		return S_OK;
 	}
 
@@ -2649,7 +2649,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// Subtitles
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Subtitles") == 0) {
-		_subtitles = value->GetBool();
+		_subtitles = value->getBool();
 		return S_OK;
 	}
 
@@ -2657,7 +2657,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// SubtitlesSpeed
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SubtitlesSpeed") == 0) {
-		_subtitlesSpeed = value->GetInt();
+		_subtitlesSpeed = value->getInt();
 		return S_OK;
 	}
 
@@ -2665,7 +2665,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// VideoSubtitles
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "VideoSubtitles") == 0) {
-		_videoSubtitles = value->GetBool();
+		_videoSubtitles = value->getBool();
 		return S_OK;
 	}
 
@@ -2673,7 +2673,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// TextEncoding
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TextEncoding") == 0) {
-		int Enc = value->GetInt();
+		int Enc = value->getInt();
 		if (Enc < 0) Enc = 0;
 		if (Enc >= NUM_TEXT_ENCODINGS) Enc = NUM_TEXT_ENCODINGS - 1;
 		_textEncoding = (TTextEncoding)Enc;
@@ -2684,7 +2684,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// TextRTL
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TextRTL") == 0) {
-		_textRTL = value->GetBool();
+		_textRTL = value->getBool();
 		return S_OK;
 	}
 
@@ -2692,7 +2692,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// SoundBufferSize
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SoundBufferSize") == 0) {
-		_soundBufferSizeSec = value->GetInt();
+		_soundBufferSizeSec = value->getInt();
 		_soundBufferSizeSec = MAX(3, _soundBufferSizeSec);
 		return S_OK;
 	}
@@ -2701,7 +2701,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// SuspendedRendering
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SuspendedRendering") == 0) {
-		_suspendedRendering = value->GetBool();
+		_suspendedRendering = value->getBool();
 		return S_OK;
 	}
 
@@ -2709,7 +2709,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// SuppressScriptErrors
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SuppressScriptErrors") == 0) {
-		_suppressScriptErrors = value->GetBool();
+		_suppressScriptErrors = value->getBool();
 		return S_OK;
 	}
 
@@ -2717,7 +2717,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// AutorunDisabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AutorunDisabled") == 0) {
-		_autorunDisabled = value->GetBool();
+		_autorunDisabled = value->getBool();
 		return S_OK;
 	}
 
@@ -2725,7 +2725,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// AutoSaveOnExit
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AutoSaveOnExit") == 0) {
-		_autoSaveOnExit = value->GetBool();
+		_autoSaveOnExit = value->getBool();
 		return S_OK;
 	}
 
@@ -2733,7 +2733,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// AutoSaveSlot
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AutoSaveSlot") == 0) {
-		_autoSaveSlot = value->GetInt();
+		_autoSaveSlot = value->getInt();
 		return S_OK;
 	}
 
@@ -2741,7 +2741,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	// CursorHidden
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorHidden") == 0) {
-		_cursorHidden = value->GetBool();
+		_cursorHidden = value->getBool();
 		return S_OK;
 	}
 
@@ -2857,12 +2857,12 @@ HRESULT CBGame::UnregisterObject(CBObject *object) {
 //////////////////////////////////////////////////////////////////////////
 void CBGame::InvalidateValues(void *value, void *data) {
 	CScValue *val = (CScValue *)value;
-	if (val->IsNative() && val->GetNative() == data) {
+	if (val->isNative() && val->getNative() == data) {
 		if (!val->_persistent && ((CBScriptable *)data)->_refCount == 1) {
 			((CBScriptable *)data)->_refCount++;
 		}
-		val->SetNative(NULL);
-		val->SetNULL();
+		val->setNative(NULL);
+		val->setNULL();
 	}
 }
 
@@ -2932,7 +2932,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "LOG") == 0) {
 		stack->correctParams(1);
-		Game->LOG(0, "sc: %s", stack->pop()->GetString());
+		Game->LOG(0, "sc: %s", stack->pop()->getString());
 		stack->pushNULL();
 	}
 
@@ -2942,7 +2942,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "String") == 0) {
 		this_obj = thisStack->getTop();
 
-		this_obj->SetNative(makeSXString(Game, stack));
+		this_obj->setNative(makeSXString(Game, stack));
 		stack->pushNULL();
 	}
 
@@ -2952,7 +2952,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "MemBuffer") == 0) {
 		this_obj = thisStack->getTop();
 
-		this_obj->SetNative(makeSXMemBuffer(Game, stack));
+		this_obj->setNative(makeSXMemBuffer(Game, stack));
 		stack->pushNULL();
 	}
 
@@ -2962,7 +2962,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "File") == 0) {
 		this_obj = thisStack->getTop();
 
-		this_obj->SetNative(makeSXFile(Game, stack));
+		this_obj->setNative(makeSXFile(Game, stack));
 		stack->pushNULL();
 	}
 
@@ -2972,7 +2972,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "Date") == 0) {
 		this_obj = thisStack->getTop();
 
-		this_obj->SetNative(makeSXDate(Game, stack));
+		this_obj->setNative(makeSXDate(Game, stack));
 		stack->pushNULL();
 	}
 
@@ -2982,7 +2982,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "Array") == 0) {
 		this_obj = thisStack->getTop();
 
-		this_obj->SetNative(makeSXArray(Game, stack));
+		this_obj->setNative(makeSXArray(Game, stack));
 		stack->pushNULL();
 	}
 
@@ -2992,7 +2992,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "Object") == 0) {
 		this_obj = thisStack->getTop();
 
-		this_obj->SetNative(makeSXObject(Game, stack));
+		this_obj->setNative(makeSXObject(Game, stack));
 		stack->pushNULL();
 	}
 
@@ -3002,7 +3002,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "Sleep") == 0) {
 		stack->correctParams(1);
 
-		script->Sleep((uint32)stack->pop()->GetInt());
+		script->Sleep((uint32)stack->pop()->getInt());
 		stack->pushNULL();
 	}
 
@@ -3012,7 +3012,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "WaitFor") == 0) {
 		stack->correctParams(1);
 
-		CBScriptable *obj = stack->pop()->GetNative();
+		CBScriptable *obj = stack->pop()->getNative();
 		if (ValidObject((CBObject *)obj)) script->WaitForExclusive((CBObject *)obj);
 		stack->pushNULL();
 	}
@@ -3023,8 +3023,8 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "Random") == 0) {
 		stack->correctParams(2);
 
-		int from = stack->pop()->GetInt();
-		int to   = stack->pop()->GetInt();
+		int from = stack->pop()->getInt();
+		int to   = stack->pop()->getInt();
 
 		stack->pushInt(CBUtils::RandomInt(from, to));
 	}
@@ -3035,7 +3035,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "SetScriptTimeSlice") == 0) {
 		stack->correctParams(1);
 
-		script->_timeSlice = (uint32)stack->pop()->GetInt();
+		script->_timeSlice = (uint32)stack->pop()->getInt();
 		stack->pushNULL();
 	}
 
@@ -3044,13 +3044,13 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MakeRGBA") == 0 || strcmp(name, "MakeRGB") == 0 || strcmp(name, "RGB") == 0) {
 		stack->correctParams(4);
-		int r = stack->pop()->GetInt();
-		int g = stack->pop()->GetInt();
-		int b = stack->pop()->GetInt();
+		int r = stack->pop()->getInt();
+		int g = stack->pop()->getInt();
+		int b = stack->pop()->getInt();
 		int a;
 		CScValue *val = stack->pop();
-		if (val->IsNULL()) a = 255;
-		else a = val->GetInt();
+		if (val->isNULL()) a = 255;
+		else a = val->getInt();
 
 		stack->pushInt(DRGBA(r, g, b, a));
 	}
@@ -3060,9 +3060,9 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MakeHSL") == 0) {
 		stack->correctParams(3);
-		int h = stack->pop()->GetInt();
-		int s = stack->pop()->GetInt();
-		int l = stack->pop()->GetInt();
+		int h = stack->pop()->getInt();
+		int s = stack->pop()->getInt();
+		int l = stack->pop()->getInt();
 
 		stack->pushInt(CBUtils::HSLtoRGB(h, s, l));
 	}
@@ -3073,7 +3073,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "GetRValue") == 0) {
 		stack->correctParams(1);
 
-		uint32 rgba = (uint32)stack->pop()->GetInt();
+		uint32 rgba = (uint32)stack->pop()->getInt();
 		stack->pushInt(D3DCOLGetR(rgba));
 	}
 
@@ -3083,7 +3083,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "GetGValue") == 0) {
 		stack->correctParams(1);
 
-		uint32 rgba = (uint32)stack->pop()->GetInt();
+		uint32 rgba = (uint32)stack->pop()->getInt();
 		stack->pushInt(D3DCOLGetG(rgba));
 	}
 
@@ -3093,7 +3093,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "GetBValue") == 0) {
 		stack->correctParams(1);
 
-		uint32 rgba = (uint32)stack->pop()->GetInt();
+		uint32 rgba = (uint32)stack->pop()->getInt();
 		stack->pushInt(D3DCOLGetB(rgba));
 	}
 
@@ -3103,7 +3103,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "GetAValue") == 0) {
 		stack->correctParams(1);
 
-		uint32 rgba = (uint32)stack->pop()->GetInt();
+		uint32 rgba = (uint32)stack->pop()->getInt();
 		stack->pushInt(D3DCOLGetA(rgba));
 	}
 
@@ -3112,7 +3112,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetHValue") == 0) {
 		stack->correctParams(1);
-		uint32 rgb = (uint32)stack->pop()->GetInt();
+		uint32 rgb = (uint32)stack->pop()->getInt();
 
 		byte H, S, L;
 		CBUtils::RGBtoHSL(rgb, &H, &S, &L);
@@ -3124,7 +3124,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSValue") == 0) {
 		stack->correctParams(1);
-		uint32 rgb = (uint32)stack->pop()->GetInt();
+		uint32 rgb = (uint32)stack->pop()->getInt();
 
 		byte H, S, L;
 		CBUtils::RGBtoHSL(rgb, &H, &S, &L);
@@ -3136,7 +3136,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLValue") == 0) {
 		stack->correctParams(1);
-		uint32 rgb = (uint32)stack->pop()->GetInt();
+		uint32 rgb = (uint32)stack->pop()->getInt();
 
 		byte H, S, L;
 		CBUtils::RGBtoHSL(rgb, &H, &S, &L);
@@ -3161,7 +3161,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ToString") == 0) {
 		stack->correctParams(1);
-		const char *Str = stack->pop()->GetString();
+		const char *Str = stack->pop()->getString();
 		char *Str2 = new char[strlen(Str) + 1];
 		strcpy(Str2, Str);
 		stack->pushString(Str2);
@@ -3173,7 +3173,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ToInt") == 0) {
 		stack->correctParams(1);
-		int Val = stack->pop()->GetInt();
+		int Val = stack->pop()->getInt();
 		stack->pushInt(Val);
 	}
 
@@ -3182,7 +3182,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ToFloat") == 0) {
 		stack->correctParams(1);
-		double Val = stack->pop()->GetFloat();
+		double Val = stack->pop()->getFloat();
 		stack->pushFloat(Val);
 	}
 
@@ -3191,7 +3191,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ToBool") == 0) {
 		stack->correctParams(1);
-		bool Val = stack->pop()->GetBool();
+		bool Val = stack->pop()->getBool();
 		stack->pushBool(Val);
 	}
 

@@ -439,7 +439,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		bool SetCurrent = false;
 		if (_currentSprite && _currentSprite == _spriteHover) SetCurrent = true;
 
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 
 		delete _spriteHover;
 		_spriteHover = NULL;
@@ -482,7 +482,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	if (strcmp(name, "SetNormalCursor") == 0) {
 		stack->correctParams(1);
 
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 
 		delete _cursorNormal;
 		_cursorNormal = NULL;
@@ -525,7 +525,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	if (strcmp(name, "SetHoverCursor") == 0) {
 		stack->correctParams(1);
 
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 
 		delete _cursorHover;
 		_cursorHover = NULL;
@@ -568,13 +568,13 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdItem::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("item");
+		_scValue->setString("item");
 		return _scValue;
 	}
 
@@ -582,7 +582,7 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Name") == 0) {
-		_scValue->SetString(_name);
+		_scValue->setString(_name);
 		return _scValue;
 	}
 
@@ -590,7 +590,7 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 	// DisplayAmount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisplayAmount") == 0) {
-		_scValue->SetBool(_displayAmount);
+		_scValue->setBool(_displayAmount);
 		return _scValue;
 	}
 
@@ -598,7 +598,7 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 	// Amount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Amount") == 0) {
-		_scValue->SetInt(_amount);
+		_scValue->setInt(_amount);
 		return _scValue;
 	}
 
@@ -606,7 +606,7 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 	// AmountOffsetX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountOffsetX") == 0) {
-		_scValue->SetInt(_amountOffsetX);
+		_scValue->setInt(_amountOffsetX);
 		return _scValue;
 	}
 
@@ -614,7 +614,7 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 	// AmountOffsetY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountOffsetY") == 0) {
-		_scValue->SetInt(_amountOffsetY);
+		_scValue->setInt(_amountOffsetY);
 		return _scValue;
 	}
 
@@ -622,7 +622,7 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 	// AmountAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountAlign") == 0) {
-		_scValue->SetInt(_amountAlign);
+		_scValue->setInt(_amountAlign);
 		return _scValue;
 	}
 
@@ -630,8 +630,8 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountString") == 0) {
-		if (!_amountString) _scValue->SetNULL();
-		else _scValue->SetString(_amountString);
+		if (!_amountString) _scValue->setNULL();
+		else _scValue->setString(_amountString);
 		return _scValue;
 	}
 
@@ -639,7 +639,7 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 	// CursorCombined
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorCombined") == 0) {
-		_scValue->SetBool(_cursorCombined);
+		_scValue->setBool(_cursorCombined);
 		return _scValue;
 	}
 
@@ -653,7 +653,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
-		setName(value->GetString());
+		setName(value->getString());
 		return S_OK;
 	}
 
@@ -661,7 +661,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	// DisplayAmount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisplayAmount") == 0) {
-		_displayAmount = value->GetBool();
+		_displayAmount = value->getBool();
 		return S_OK;
 	}
 
@@ -669,7 +669,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	// Amount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Amount") == 0) {
-		_amount = value->GetInt();
+		_amount = value->getInt();
 		return S_OK;
 	}
 
@@ -677,7 +677,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	// AmountOffsetX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountOffsetX") == 0) {
-		_amountOffsetX = value->GetInt();
+		_amountOffsetX = value->getInt();
 		return S_OK;
 	}
 
@@ -685,7 +685,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	// AmountOffsetY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountOffsetY") == 0) {
-		_amountOffsetY = value->GetInt();
+		_amountOffsetY = value->getInt();
 		return S_OK;
 	}
 
@@ -693,7 +693,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	// AmountAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountAlign") == 0) {
-		_amountAlign = (TTextAlign)value->GetInt();
+		_amountAlign = (TTextAlign)value->getInt();
 		return S_OK;
 	}
 
@@ -701,11 +701,11 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountString") == 0) {
-		if (value->IsNULL()) {
+		if (value->isNULL()) {
 			delete[] _amountString;
 			_amountString = NULL;
 		} else {
-			CBUtils::SetString(&_amountString, value->GetString());
+			CBUtils::SetString(&_amountString, value->getString());
 		}
 		return S_OK;
 	}
@@ -714,7 +714,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	// CursorCombined
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorCombined") == 0) {
-		_cursorCombined = value->GetBool();
+		_cursorCombined = value->getBool();
 		return S_OK;
 	}
 

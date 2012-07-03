@@ -201,13 +201,13 @@ HRESULT CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdWaypointGroup::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("waypoint-group");
+		_scValue->setString("waypoint-group");
 		return _scValue;
 	}
 
@@ -215,7 +215,7 @@ CScValue *CAdWaypointGroup::scGetProperty(const char *name) {
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Active") == 0) {
-		_scValue->SetBool(_active);
+		_scValue->setBool(_active);
 		return _scValue;
 	}
 
@@ -229,7 +229,7 @@ HRESULT CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Active") == 0) {
-		_active = value->GetBool();
+		_active = value->getBool();
 		return S_OK;
 	}
 

@@ -403,13 +403,13 @@ HRESULT CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIText::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("static");
+		_scValue->setString("static");
 		return _scValue;
 	}
 
@@ -417,7 +417,7 @@ CScValue *CUIText::scGetProperty(const char *name) {
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TextAlign") == 0) {
-		_scValue->SetInt(_textAlign);
+		_scValue->setInt(_textAlign);
 		return _scValue;
 	}
 
@@ -425,7 +425,7 @@ CScValue *CUIText::scGetProperty(const char *name) {
 	// VerticalAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "VerticalAlign") == 0) {
-		_scValue->SetInt(_verticalAlign);
+		_scValue->setInt(_verticalAlign);
 		return _scValue;
 	}
 
@@ -439,7 +439,7 @@ HRESULT CUIText::scSetProperty(const char *name, CScValue *value) {
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "TextAlign") == 0) {
-		int i = value->GetInt();
+		int i = value->getInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
 		_textAlign = (TTextAlign)i;
 		return S_OK;
@@ -449,7 +449,7 @@ HRESULT CUIText::scSetProperty(const char *name, CScValue *value) {
 	// VerticalAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "VerticalAlign") == 0) {
-		int i = value->GetInt();
+		int i = value->getInt();
 		if (i < 0 || i >= NUM_VERTICAL_ALIGN) i = 0;
 		_verticalAlign = (TVerticalAlign)i;
 		return S_OK;

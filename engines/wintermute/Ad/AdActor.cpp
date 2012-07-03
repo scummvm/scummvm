@@ -856,8 +856,8 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GoTo") == 0 || strcmp(name, "GoToAsync") == 0) {
 		stack->correctParams(2);
-		int X = stack->pop()->GetInt();
-		int Y = stack->pop()->GetInt();
+		int X = stack->pop()->getInt();
+		int Y = stack->pop()->getInt();
 		goTo(X, Y);
 		if (strcmp(name, "GoToAsync") != 0) script->WaitForExclusive(this);
 		stack->pushNULL();
@@ -870,12 +870,12 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "GoToObject") == 0 || strcmp(name, "GoToObjectAsync") == 0) {
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
-		if (!Val->IsNative()) {
+		if (!Val->isNative()) {
 			script->RuntimeError("actor.%s method accepts an entity refrence only", name);
 			stack->pushNULL();
 			return S_OK;
 		}
-		CAdObject *Obj = (CAdObject *)Val->GetNative();
+		CAdObject *Obj = (CAdObject *)Val->getNative();
 		if (!Obj || Obj->_type != OBJECT_ENTITY) {
 			script->RuntimeError("actor.%s method accepts an entity refrence only", name);
 			stack->pushNULL();
@@ -898,13 +898,13 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		CScValue *val = stack->pop();
 
 		// turn to object?
-		if (val->IsNative() && Game->ValidObject((CBObject *)val->GetNative())) {
-			CBObject *obj = (CBObject *)val->GetNative();
+		if (val->isNative() && Game->ValidObject((CBObject *)val->getNative())) {
+			CBObject *obj = (CBObject *)val->getNative();
 			int angle = (int)(atan2((double)(obj->_posY - _posY), (double)(obj->_posX - _posX)) * (180 / 3.14));
 			dir = (int)angleToDirection(angle);
 		}
 		// otherwise turn to direction
-		else dir = val->GetInt();
+		else dir = val->getInt();
 
 		if (dir >= 0 && dir < NUM_DIRECTIONS) {
 			turnTo((TDirection)dir);
@@ -928,7 +928,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MergeAnims") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(SUCCEEDED(mergeAnims(stack->pop()->GetString())));
+		stack->pushBool(SUCCEEDED(mergeAnims(stack->pop()->getString())));
 		return S_OK;
 	}
 
@@ -937,7 +937,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UnloadAnim") == 0) {
 		stack->correctParams(1);
-		const char *AnimName = stack->pop()->GetString();
+		const char *AnimName = stack->pop()->getString();
 
 		bool Found = false;
 		for (int i = 0; i < _anims.GetSize(); i++) {
@@ -963,7 +963,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HasAnim") == 0) {
 		stack->correctParams(1);
-		const char *AnimName = stack->pop()->GetString();
+		const char *AnimName = stack->pop()->getString();
 		stack->pushBool(getAnimByName(AnimName) != NULL);
 		return S_OK;
 	}
@@ -974,27 +974,27 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdActor::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Direction") == 0) {
-		_scValue->SetInt(_dir);
+		_scValue->setInt(_dir);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("actor");
+		_scValue->setString("actor");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TalkAnimName") == 0) {
-		_scValue->SetString(_talkAnimName);
+		_scValue->setString(_talkAnimName);
 		return _scValue;
 	}
 
@@ -1002,7 +1002,7 @@ CScValue *CAdActor::scGetProperty(const char *name) {
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkAnimName") == 0) {
-		_scValue->SetString(_walkAnimName);
+		_scValue->setString(_walkAnimName);
 		return _scValue;
 	}
 
@@ -1010,7 +1010,7 @@ CScValue *CAdActor::scGetProperty(const char *name) {
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IdleAnimName") == 0) {
-		_scValue->SetString(_idleAnimName);
+		_scValue->setString(_idleAnimName);
 		return _scValue;
 	}
 
@@ -1018,7 +1018,7 @@ CScValue *CAdActor::scGetProperty(const char *name) {
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnLeftAnimName") == 0) {
-		_scValue->SetString(_turnLeftAnimName);
+		_scValue->setString(_turnLeftAnimName);
 		return _scValue;
 	}
 
@@ -1026,7 +1026,7 @@ CScValue *CAdActor::scGetProperty(const char *name) {
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnRightAnimName") == 0) {
-		_scValue->SetString(_turnRightAnimName);
+		_scValue->setString(_turnRightAnimName);
 		return _scValue;
 	}
 
@@ -1040,7 +1040,7 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Direction") == 0) {
-		int dir = value->GetInt();
+		int dir = value->getInt();
 		if (dir >= 0 && dir < NUM_DIRECTIONS) _dir = (TDirection)dir;
 		return S_OK;
 	}
@@ -1049,8 +1049,8 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TalkAnimName") == 0) {
-		if (value->IsNULL()) _talkAnimName = "talk";
-		else _talkAnimName = value->GetString();
+		if (value->isNULL()) _talkAnimName = "talk";
+		else _talkAnimName = value->getString();
 		return S_OK;
 	}
 
@@ -1058,8 +1058,8 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkAnimName") == 0) {
-		if (value->IsNULL()) _walkAnimName = "walk";
-		else _walkAnimName = value->GetString();
+		if (value->isNULL()) _walkAnimName = "walk";
+		else _walkAnimName = value->getString();
 		return S_OK;
 	}
 
@@ -1067,8 +1067,8 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IdleAnimName") == 0) {
-		if (value->IsNULL()) _idleAnimName = "idle";
-		else _idleAnimName = value->GetString();
+		if (value->isNULL()) _idleAnimName = "idle";
+		else _idleAnimName = value->getString();
 		return S_OK;
 	}
 
@@ -1076,8 +1076,8 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnLeftAnimName") == 0) {
-		if (value->IsNULL()) _turnLeftAnimName = "turnleft";
-		else _turnLeftAnimName = value->GetString();
+		if (value->isNULL()) _turnLeftAnimName = "turnleft";
+		else _turnLeftAnimName = value->getString();
 		return S_OK;
 	}
 
@@ -1085,8 +1085,8 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnRightAnimName") == 0) {
-		if (value->IsNULL()) _turnRightAnimName = "turnright";
-		else _turnRightAnimName = value->GetString();
+		if (value->isNULL()) _turnRightAnimName = "turnright";
+		else _turnRightAnimName = value->getString();
 		return S_OK;
 	}
 

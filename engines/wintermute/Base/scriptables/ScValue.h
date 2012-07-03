@@ -43,49 +43,49 @@ class CBScriptable;
 
 class CScValue : public CBBase, public IWmeDebugProp {
 public:
-	HRESULT DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariableType Type, CScScript *script, unsigned int ScopeID);
+	HRESULT DbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, CScScript *script, unsigned int scopeID);
 
-	static int Compare(CScValue *Val1, CScValue *Val2);
-	static int CompareStrict(CScValue *Val1, CScValue *Val2);
-	TValType GetTypeTolerant();
+	static int compare(CScValue *Val1, CScValue *Val2);
+	static int compareStrict(CScValue *Val1, CScValue *Val2);
+	TValType getTypeTolerant();
 	void cleanup(bool IgnoreNatives = false);
 	DECLARE_PERSISTENT(CScValue, CBBase)
 
 	bool _isConstVar;
 	HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
-	void SetValue(CScValue *Val);
+	void setValue(CScValue *Val);
 	bool _persistent;
-	bool PropExists(const char *name);
-	void Copy(CScValue *orig, bool CopyWhole = false);
-	void SetStringVal(const char *Val);
-	TValType GetType();
-	bool GetBool(bool Default = false);
-	int GetInt(int Default = 0);
-	double GetFloat(double Default = 0.0f);
-	const char *GetString();
-	void *GetMemBuffer();
-	CBScriptable *GetNative();
-	HRESULT DeleteProp(const char *name);
-	void DeleteProps();
-	void CleanProps(bool IncludingNatives);
-	void SetBool(bool Val);
-	void SetInt(int Val);
-	void SetFloat(double Val);
-	void SetString(const char *Val);
-	void SetString(const Common::String &Val);
-	void SetNULL();
-	void SetNative(CBScriptable *Val, bool Persistent = false);
-	void SetObject();
-	void SetReference(CScValue *Val);
-	bool IsNULL();
-	bool IsNative();
-	bool IsString();
-	bool IsBool();
-	bool IsFloat();
-	bool IsInt();
-	bool IsObject();
-	HRESULT SetProp(const char *name, CScValue *Val, bool CopyWhole = false, bool SetAsConst = false);
-	CScValue *GetProp(const char *name);
+	bool propExists(const char *name);
+	void copy(CScValue *orig, bool copyWhole = false);
+	void setStringVal(const char *val);
+	TValType getType();
+	bool getBool(bool Default = false);
+	int getInt(int Default = 0);
+	double getFloat(double Default = 0.0f);
+	const char *getString();
+	void *getMemBuffer();
+	CBScriptable *getNative();
+	HRESULT deleteProp(const char *name);
+	void deleteProps();
+	void CleanProps(bool includingNatives);
+	void setBool(bool val);
+	void setInt(int val);
+	void setFloat(double val);
+	void setString(const char *val);
+	void setString(const Common::String &val);
+	void setNULL();
+	void setNative(CBScriptable *val, bool persistent = false);
+	void setObject();
+	void setReference(CScValue *val);
+	bool isNULL();
+	bool isNative();
+	bool isString();
+	bool isBool();
+	bool isFloat();
+	bool isInt();
+	bool isObject();
+	HRESULT setProp(const char *name, CScValue *val, bool copyWhole = false, bool setAsConst = false);
+	CScValue *getProp(const char *name);
 	CBScriptable *_valNative;
 	CScValue *_valRef;
 protected:
@@ -104,11 +104,11 @@ public:
 	Common::HashMap<Common::String, CScValue *> _valObject;
 	Common::HashMap<Common::String, CScValue *>::iterator _valIter;
 
-	bool SetProperty(const char *PropName, int Value);
-	bool SetProperty(const char *PropName, const char *Value);
-	bool SetProperty(const char *PropName, double Value);
-	bool SetProperty(const char *PropName, bool Value);
-	bool SetProperty(const char *PropName);
+	bool setProperty(const char *PropName, int Value);
+	bool setProperty(const char *PropName, const char *Value);
+	bool setProperty(const char *PropName, double Value);
+	bool setProperty(const char *PropName, bool Value);
+	bool setProperty(const char *PropName);
 
 
 // IWmeDebugProp interface implementation

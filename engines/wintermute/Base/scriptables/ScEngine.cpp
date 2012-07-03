@@ -105,17 +105,17 @@ CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 
 
 	// register 'Game' as global variable
-	if (!_globals->PropExists("Game")) {
+	if (!_globals->propExists("Game")) {
 		CScValue val(Game);
-		val.SetNative(Game, true);
-		_globals->SetProp("Game", &val);
+		val.setNative(Game, true);
+		_globals->setProp("Game", &val);
 	}
 
 	// register 'Math' as global variable
-	if (!_globals->PropExists("Math")) {
+	if (!_globals->propExists("Math")) {
 		CScValue val(Game);
-		val.SetNative(Game->_mathClass, true);
-		_globals->SetProp("Math", &val);
+		val.setNative(Game->_mathClass, true);
+		_globals->setProp("Math", &val);
 	}
 
 	// prepare script cache
@@ -250,11 +250,11 @@ CScScript *CScEngine::RunScript(const char *Filename, CBScriptHolder *Owner) {
 	} else {
 		// publish the "self" pseudo-variable
 		CScValue val(Game);
-		if (Owner)val.SetNative(Owner, true);
-		else val.SetNULL();
+		if (Owner)val.setNative(Owner, true);
+		else val.setNULL();
 
-		script->_globals->SetProp("self", &val);
-		script->_globals->SetProp("this", &val);
+		script->_globals->setProp("self", &val);
+		script->_globals->setProp("this", &val);
 
 		_scripts.Add(script);
 		Game->GetDebugMgr()->OnScriptInit(script);

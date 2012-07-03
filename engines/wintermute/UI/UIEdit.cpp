@@ -369,7 +369,7 @@ HRESULT CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(1);
 
 		if (_fontSelected) Game->_fontStorage->RemoveFont(_fontSelected);
-		_fontSelected = Game->_fontStorage->AddFont(stack->pop()->GetString());
+		_fontSelected = Game->_fontStorage->AddFont(stack->pop()->getString());
 		stack->pushBool(_fontSelected != NULL);
 
 		return S_OK;
@@ -381,13 +381,13 @@ HRESULT CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIEdit::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("editor");
+		_scValue->setString("editor");
 		return _scValue;
 	}
 
@@ -395,7 +395,7 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SelStart") == 0) {
-		_scValue->SetInt(_selStart);
+		_scValue->setInt(_selStart);
 		return _scValue;
 	}
 
@@ -403,7 +403,7 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 	// SelEnd
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SelEnd") == 0) {
-		_scValue->SetInt(_selEnd);
+		_scValue->setInt(_selEnd);
 		return _scValue;
 	}
 
@@ -411,7 +411,7 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorBlinkRate") == 0) {
-		_scValue->SetInt(_cursorBlinkRate);
+		_scValue->setInt(_cursorBlinkRate);
 		return _scValue;
 	}
 
@@ -419,7 +419,7 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 	// CursorChar
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorChar") == 0) {
-		_scValue->SetString(_cursorChar);
+		_scValue->setString(_cursorChar);
 		return _scValue;
 	}
 
@@ -427,7 +427,7 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 	// FrameWidth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FrameWidth") == 0) {
-		_scValue->SetInt(_frameWidth);
+		_scValue->setInt(_frameWidth);
 		return _scValue;
 	}
 
@@ -435,7 +435,7 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 	// MaxLength
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MaxLength") == 0) {
-		_scValue->SetInt(_maxLength);
+		_scValue->setInt(_maxLength);
 		return _scValue;
 	}
 
@@ -445,9 +445,9 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 	else if (strcmp(name, "Text") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::AnsiToWide(_text);
-			_scValue->SetString(StringUtil::WideToUtf8(wstr).c_str());
+			_scValue->setString(StringUtil::WideToUtf8(wstr).c_str());
 		} else {
-			_scValue->SetString(_text);
+			_scValue->setString(_text);
 		}
 		return _scValue;
 	}
@@ -462,7 +462,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SelStart") == 0) {
-		_selStart = value->GetInt();
+		_selStart = value->getInt();
 		_selStart = MAX(_selStart, 0);
 		_selStart = MIN((size_t)_selStart, strlen(_text));
 		return S_OK;
@@ -472,7 +472,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	// SelEnd
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SelEnd") == 0) {
-		_selEnd = value->GetInt();
+		_selEnd = value->getInt();
 		_selEnd = MAX(_selEnd, 0);
 		_selEnd = MIN((size_t)_selEnd, strlen(_text));
 		return S_OK;
@@ -482,7 +482,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorBlinkRate") == 0) {
-		_cursorBlinkRate = value->GetInt();
+		_cursorBlinkRate = value->getInt();
 		return S_OK;
 	}
 
@@ -490,7 +490,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	// CursorChar
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorChar") == 0) {
-		setCursorChar(value->GetString());
+		setCursorChar(value->getString());
 		return S_OK;
 	}
 
@@ -498,7 +498,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	// FrameWidth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FrameWidth") == 0) {
-		_frameWidth = value->GetInt();
+		_frameWidth = value->getInt();
 		return S_OK;
 	}
 
@@ -506,7 +506,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	// MaxLength
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MaxLength") == 0) {
-		_maxLength = value->GetInt();
+		_maxLength = value->getInt();
 		return S_OK;
 	}
 
@@ -515,10 +515,10 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
-			WideString wstr = StringUtil::Utf8ToWide(value->GetString());
+			WideString wstr = StringUtil::Utf8ToWide(value->getString());
 			setText(StringUtil::WideToAnsi(wstr).c_str());
 		} else {
-			setText(value->GetString());
+			setText(value->getString());
 		}
 		return S_OK;
 	}

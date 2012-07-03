@@ -133,12 +133,12 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		delete _sprite;
 		_sprite = NULL;
 
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			_sprite = NULL;
 			if (SetCurrent) _currentSprite = NULL;
 			stack->pushBool(true);
 		} else {
-			const char *Filename = Val->GetString();
+			const char *Filename = Val->getString();
 			CBSprite *spr = new CBSprite(Game, this);
 			if (!spr || FAILED(spr->loadFile(Filename))) {
 				script->RuntimeError("SetSprite method failed for file '%s'", Filename);
@@ -180,8 +180,8 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	else if (strcmp(name, "AddTalkSprite") == 0) {
 		stack->correctParams(2);
 
-		const char *Filename = stack->pop()->GetString();
-		bool Ex = stack->pop()->GetBool();
+		const char *Filename = stack->pop()->getString();
+		bool Ex = stack->pop()->getBool();
 
 		CBSprite *spr = new CBSprite(Game, this);
 		if (!spr || FAILED(spr->loadFile(Filename))) {
@@ -201,8 +201,8 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	else if (strcmp(name, "RemoveTalkSprite") == 0) {
 		stack->correctParams(2);
 
-		const char *Filename = stack->pop()->GetString();
-		bool Ex = stack->pop()->GetBool();
+		const char *Filename = stack->pop()->getString();
+		bool Ex = stack->pop()->getBool();
 		int i;
 
 		bool SetCurrent = false;
@@ -244,8 +244,8 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	else if (strcmp(name, "SetTalkSprite") == 0) {
 		stack->correctParams(2);
 
-		const char *Filename = stack->pop()->GetString();
-		bool Ex = stack->pop()->GetBool();
+		const char *Filename = stack->pop()->getString();
+		bool Ex = stack->pop()->getBool();
 		bool SetCurrent = false;
 		bool SetTemp2 = false;
 
@@ -290,13 +290,13 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdTalkHolder::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("talk-holder");
+		_scValue->setString("talk-holder");
 		return _scValue;
 	}
 
@@ -311,7 +311,7 @@ HRESULT CAdTalkHolder::scSetProperty(const char *name, CScValue *value) {
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	if(strcmp(name, "Item")==0){
-	    SetItem(value->GetString());
+	    SetItem(value->getString());
 	    return S_OK;
 	}
 

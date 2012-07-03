@@ -675,11 +675,11 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CScValue *Val = stack->pop();
 
 		if (_fontDisable) Game->_fontStorage->RemoveFont(_fontDisable);
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			_fontDisable = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontDisable = Game->_fontStorage->AddFont(Val->GetString());
+			_fontDisable = Game->_fontStorage->AddFont(Val->getString());
 			stack->pushBool(_fontDisable != NULL);
 		}
 		return S_OK;
@@ -693,11 +693,11 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CScValue *Val = stack->pop();
 
 		if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			_fontHover = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontHover = Game->_fontStorage->AddFont(Val->GetString());
+			_fontHover = Game->_fontStorage->AddFont(Val->getString());
 			stack->pushBool(_fontHover != NULL);
 		}
 		return S_OK;
@@ -711,11 +711,11 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CScValue *Val = stack->pop();
 
 		if (_fontPress) Game->_fontStorage->RemoveFont(_fontPress);
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			_fontPress = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontPress = Game->_fontStorage->AddFont(Val->GetString());
+			_fontPress = Game->_fontStorage->AddFont(Val->getString());
 			stack->pushBool(_fontPress != NULL);
 		}
 		return S_OK;
@@ -729,11 +729,11 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CScValue *Val = stack->pop();
 
 		if (_fontFocus) Game->_fontStorage->RemoveFont(_fontFocus);
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			_fontFocus = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontFocus = Game->_fontStorage->AddFont(Val->GetString());
+			_fontFocus = Game->_fontStorage->AddFont(Val->getString());
 			stack->pushBool(_fontFocus != NULL);
 		}
 		return S_OK;
@@ -747,7 +747,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _imageDisable;
 		_imageDisable = new CBSprite(Game);
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 		if (!_imageDisable || FAILED(_imageDisable->loadFile(Filename))) {
 			delete _imageDisable;
 			_imageDisable = NULL;
@@ -788,7 +788,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _imageHover;
 		_imageHover = new CBSprite(Game);
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 		if (!_imageHover || FAILED(_imageHover->loadFile(Filename))) {
 			delete _imageHover;
 			_imageHover = NULL;
@@ -828,7 +828,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _imagePress;
 		_imagePress = new CBSprite(Game);
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 		if (!_imagePress || FAILED(_imagePress->loadFile(Filename))) {
 			delete _imagePress;
 			_imagePress = NULL;
@@ -868,7 +868,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _imageFocus;
 		_imageFocus = new CBSprite(Game);
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 		if (!_imageFocus || FAILED(_imageFocus->loadFile(Filename))) {
 			delete _imageFocus;
 			_imageFocus = NULL;
@@ -922,13 +922,13 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CUIButton::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("button");
+		_scValue->setString("button");
 		return _scValue;
 	}
 
@@ -936,7 +936,7 @@ CScValue *CUIButton::scGetProperty(const char *name) {
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TextAlign") == 0) {
-		_scValue->SetInt(_align);
+		_scValue->setInt(_align);
 		return _scValue;
 	}
 
@@ -944,21 +944,21 @@ CScValue *CUIButton::scGetProperty(const char *name) {
 	// Focusable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Focusable") == 0) {
-		_scValue->SetBool(_canFocus);
+		_scValue->setBool(_canFocus);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Pressed
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Pressed") == 0) {
-		_scValue->SetBool(_stayPressed);
+		_scValue->setBool(_stayPressed);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PixelPerfect") == 0) {
-		_scValue->SetBool(_pixelPerfect);
+		_scValue->setBool(_pixelPerfect);
 		return _scValue;
 	}
 
@@ -972,7 +972,7 @@ HRESULT CUIButton::scSetProperty(const char *name, CScValue *value) {
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "TextAlign") == 0) {
-		int i = value->GetInt();
+		int i = value->getInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
 		_align = (TTextAlign)i;
 		return S_OK;
@@ -982,21 +982,21 @@ HRESULT CUIButton::scSetProperty(const char *name, CScValue *value) {
 	// Focusable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Focusable") == 0) {
-		_canFocus = value->GetBool();
+		_canFocus = value->getBool();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Pressed
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Pressed") == 0) {
-		_stayPressed = value->GetBool();
+		_stayPressed = value->getBool();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PixelPerfect") == 0) {
-		_pixelPerfect = value->GetBool();
+		_pixelPerfect = value->getBool();
 		return S_OK;
 	}
 

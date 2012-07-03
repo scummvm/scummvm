@@ -362,13 +362,13 @@ HRESULT CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			if (_surface) Game->_surfaceStorage->removeSurface(_surface);
 			delete[] _surfaceFilename;
 			_surfaceFilename = NULL;
 			stack->pushBool(true);
 		} else {
-			const char *Filename = Val->GetString();
+			const char *Filename = Val->getString();
 			if (SUCCEEDED(setSurface(Filename))) {
 				setDefaultRect();
 				stack->pushBool(true);
@@ -385,13 +385,13 @@ HRESULT CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBSubFrame::scGetProperty(const char *name) {
 	if (!_scValue) _scValue = new CScValue(Game);
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("subframe");
+		_scValue->setString("subframe");
 		return _scValue;
 	}
 
@@ -400,7 +400,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AlphaColor") == 0) {
 
-		_scValue->SetInt((int)_alpha);
+		_scValue->setInt((int)_alpha);
 		return _scValue;
 	}
 
@@ -408,7 +408,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 	// TransparentColor (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TransparentColor") == 0) {
-		_scValue->SetInt((int)_transparent);
+		_scValue->setInt((int)_transparent);
 		return _scValue;
 	}
 
@@ -416,7 +416,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Is2DOnly") == 0) {
-		_scValue->SetBool(_2DOnly);
+		_scValue->setBool(_2DOnly);
 		return _scValue;
 	}
 
@@ -424,7 +424,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Is3DOnly") == 0) {
-		_scValue->SetBool(_3DOnly);
+		_scValue->setBool(_3DOnly);
 		return _scValue;
 	}
 
@@ -432,7 +432,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MirrorX") == 0) {
-		_scValue->SetBool(_mirrorX);
+		_scValue->setBool(_mirrorX);
 		return _scValue;
 	}
 
@@ -440,7 +440,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MirrorY") == 0) {
-		_scValue->SetBool(_mirrorY);
+		_scValue->setBool(_mirrorY);
 		return _scValue;
 	}
 
@@ -448,7 +448,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Decoration") == 0) {
-		_scValue->SetBool(_decoration);
+		_scValue->setBool(_decoration);
 		return _scValue;
 	}
 
@@ -456,7 +456,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HotspotX") == 0) {
-		_scValue->SetInt(_hotspotX);
+		_scValue->setInt(_hotspotX);
 		return _scValue;
 	}
 
@@ -464,7 +464,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HotspotY") == 0) {
-		_scValue->SetInt(_hotspotY);
+		_scValue->setInt(_hotspotY);
 		return _scValue;
 	}
 
@@ -478,7 +478,7 @@ HRESULT CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "AlphaColor") == 0) {
-		_alpha = (uint32)value->GetInt();
+		_alpha = (uint32)value->getInt();
 		return S_OK;
 	}
 
@@ -486,7 +486,7 @@ HRESULT CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Is2DOnly") == 0) {
-		_2DOnly = value->GetBool();
+		_2DOnly = value->getBool();
 		return S_OK;
 	}
 
@@ -494,7 +494,7 @@ HRESULT CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Is3DOnly") == 0) {
-		_3DOnly = value->GetBool();
+		_3DOnly = value->getBool();
 		return S_OK;
 	}
 
@@ -502,7 +502,7 @@ HRESULT CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MirrorX") == 0) {
-		_mirrorX = value->GetBool();
+		_mirrorX = value->getBool();
 		return S_OK;
 	}
 
@@ -510,7 +510,7 @@ HRESULT CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MirrorY") == 0) {
-		_mirrorY = value->GetBool();
+		_mirrorY = value->getBool();
 		return S_OK;
 	}
 
@@ -518,7 +518,7 @@ HRESULT CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Decoration") == 0) {
-		_decoration = value->GetBool();
+		_decoration = value->getBool();
 		return S_OK;
 	}
 
@@ -526,7 +526,7 @@ HRESULT CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HotspotX") == 0) {
-		_hotspotX = value->GetInt();
+		_hotspotX = value->getInt();
 		return S_OK;
 	}
 
@@ -534,7 +534,7 @@ HRESULT CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HotspotY") == 0) {
-		_hotspotY = value->GetInt();
+		_hotspotY = value->getInt();
 		return S_OK;
 	}
 

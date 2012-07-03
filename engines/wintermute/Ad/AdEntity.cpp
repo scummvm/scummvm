@@ -642,15 +642,15 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PlayTheora") == 0) {
 		stack->correctParams(4);
-		const char *filename = stack->pop()->GetString();
-		bool looping = stack->pop()->GetBool(false);
+		const char *filename = stack->pop()->getString();
+		bool looping = stack->pop()->getBool(false);
 		CScValue *valAlpha = stack->pop();
-		int startTime = stack->pop()->GetInt();
+		int startTime = stack->pop()->getInt();
 
 		delete _theora;
 		_theora = new CVidTheoraPlayer(Game);
 		if (_theora && SUCCEEDED(_theora->initialize(filename))) {
-			if (!valAlpha->IsNULL())    _theora->setAlphaImage(valAlpha->GetString());
+			if (!valAlpha->isNULL())    _theora->setAlphaImage(valAlpha->getString());
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if(m_Scale>=0) m_Theora->m_PlayZoom = m_Scale;
 			stack->pushBool(true);
@@ -761,13 +761,13 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdEntity::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("entity");
+		_scValue->setString("entity");
 		return _scValue;
 	}
 
@@ -775,8 +775,8 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Item") == 0) {
-		if (_item) _scValue->SetString(_item);
-		else _scValue->SetNULL();
+		if (_item) _scValue->setString(_item);
+		else _scValue->setNULL();
 
 		return _scValue;
 	}
@@ -786,9 +786,9 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Subtype") == 0) {
 		if (_subtype == ENTITY_SOUND)
-			_scValue->SetString("sound");
+			_scValue->setString("sound");
 		else
-			_scValue->SetString("normal");
+			_scValue->setString("normal");
 
 		return _scValue;
 	}
@@ -797,7 +797,7 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToX") == 0) {
-		_scValue->SetInt(_walkToX);
+		_scValue->setInt(_walkToX);
 		return _scValue;
 	}
 
@@ -805,7 +805,7 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToY") == 0) {
-		_scValue->SetInt(_walkToY);
+		_scValue->setInt(_walkToY);
 		return _scValue;
 	}
 
@@ -813,7 +813,7 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToDirection") == 0) {
-		_scValue->SetInt((int)_walkToDir);
+		_scValue->setInt((int)_walkToDir);
 		return _scValue;
 	}
 
@@ -821,8 +821,8 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 	// Region (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Region") == 0) {
-		if (_region) _scValue->SetNative(_region, true);
-		else _scValue->SetNULL();
+		if (_region) _scValue->setNative(_region, true);
+		else _scValue->setNULL();
 		return _scValue;
 	}
 
@@ -837,7 +837,7 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *value) {
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Item") == 0) {
-		setItem(value->GetString());
+		setItem(value->getString());
 		return S_OK;
 	}
 
@@ -845,7 +845,7 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *value) {
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToX") == 0) {
-		_walkToX = value->GetInt();
+		_walkToX = value->getInt();
 		return S_OK;
 	}
 
@@ -853,7 +853,7 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *value) {
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToY") == 0) {
-		_walkToY = value->GetInt();
+		_walkToY = value->getInt();
 		return S_OK;
 	}
 
@@ -861,7 +861,7 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *value) {
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToDirection") == 0) {
-		int dir = value->GetInt();
+		int dir = value->getInt();
 		if (dir >= 0 && dir < NUM_DIRECTIONS) _walkToDir = (TDirection)dir;
 		return S_OK;
 	}

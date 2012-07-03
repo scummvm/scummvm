@@ -322,19 +322,19 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "ChangeScene") == 0) {
 		stack->correctParams(3);
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 		CScValue *valFadeOut = stack->pop();
 		CScValue *valFadeIn = stack->pop();
 
-		bool TransOut = valFadeOut->IsNULL() ? true : valFadeOut->GetBool();
-		bool TransIn  = valFadeIn->IsNULL() ? true : valFadeIn->GetBool();
+		bool TransOut = valFadeOut->isNULL() ? true : valFadeOut->getBool();
+		bool TransIn  = valFadeIn->isNULL() ? true : valFadeIn->getBool();
 
 		ScheduleChangeScene(Filename, TransIn);
 		if (TransOut) _transMgr->start(TRANSITION_FADE_OUT, true);
 		stack->pushNULL();
 
 
-		//HRESULT ret = ChangeScene(stack->pop()->GetString());
+		//HRESULT ret = ChangeScene(stack->pop()->getString());
 		//if(FAILED(ret)) stack->pushBool(false);
 		//else stack->pushBool(true);
 
@@ -347,7 +347,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "LoadActor") == 0) {
 		stack->correctParams(1);
 		CAdActor *act = new CAdActor(Game);
-		if (act && SUCCEEDED(act->loadFile(stack->pop()->GetString()))) {
+		if (act && SUCCEEDED(act->loadFile(stack->pop()->getString()))) {
 			AddObject(act);
 			stack->pushNative(act, true);
 		} else {
@@ -364,7 +364,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "LoadEntity") == 0) {
 		stack->correctParams(1);
 		CAdEntity *ent = new CAdEntity(Game);
-		if (ent && SUCCEEDED(ent->loadFile(stack->pop()->GetString()))) {
+		if (ent && SUCCEEDED(ent->loadFile(stack->pop()->getString()))) {
 			AddObject(ent);
 			stack->pushNative(ent, true);
 		} else {
@@ -381,9 +381,9 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "DeleteEntity") == 0) {
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
-		CAdObject *obj = (CAdObject *)val->GetNative();
+		CAdObject *obj = (CAdObject *)val->getNative();
 		RemoveObject(obj);
-		if (val->GetType() == VAL_VARIABLE_REF) val->SetNULL();
+		if (val->getType() == VAL_VARIABLE_REF) val->setNULL();
 
 		stack->pushNULL();
 		return S_OK;
@@ -398,7 +398,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		CAdEntity *Ent = new CAdEntity(Game);
 		AddObject(Ent);
-		if (!Val->IsNULL()) Ent->setName(Val->GetString());
+		if (!Val->isNULL()) Ent->setName(Val->getString());
 		stack->pushNative(Ent, true);
 		return S_OK;
 	}
@@ -412,7 +412,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		CAdItem *Item = new CAdItem(Game);
 		AddItem(Item);
-		if (!Val->IsNULL()) Item->setName(Val->GetString());
+		if (!Val->isNULL()) Item->setName(Val->getString());
 		stack->pushNative(Item, true);
 		return S_OK;
 	}
@@ -425,8 +425,8 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		CScValue *Val = stack->pop();
 
 		CAdItem *Item = NULL;
-		if (Val->IsNative()) Item = (CAdItem *)Val->GetNative();
-		else Item = GetItemByName(Val->GetString());
+		if (Val->isNative()) Item = (CAdItem *)Val->getNative();
+		else Item = GetItemByName(Val->getString());
 
 		if (Item) {
 			DeleteItem(Item);
@@ -444,11 +444,11 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		CScValue *Val = stack->pop();
 
 		CAdItem *Item = NULL;
-		if (Val->IsInt()) {
-			int Index = Val->GetInt();
+		if (Val->isInt()) {
+			int Index = Val->getInt();
 			if (Index >= 0 && Index < _items.GetSize()) Item = _items[Index];
 		} else {
-			Item = GetItemByName(Val->GetString());
+			Item = GetItemByName(Val->getString());
 		}
 
 		if (Item) stack->pushNative(Item, true);
@@ -463,8 +463,8 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddResponse") == 0 || strcmp(name, "AddResponseOnce") == 0 || strcmp(name, "AddResponseOnceGame") == 0) {
 		stack->correctParams(6);
-		int id = stack->pop()->GetInt();
-		const char *text = stack->pop()->GetString();
+		int id = stack->pop()->getInt();
+		const char *text = stack->pop()->getString();
 		CScValue *val1 = stack->pop();
 		CScValue *val2 = stack->pop();
 		CScValue *val3 = stack->pop();
@@ -476,10 +476,10 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 				res->_iD = id;
 				res->SetText(text);
 				_stringTable->Expand(&res->_text);
-				if (!val1->IsNULL()) res->SetIcon(val1->GetString());
-				if (!val2->IsNULL()) res->SetIconHover(val2->GetString());
-				if (!val3->IsNULL()) res->SetIconPressed(val3->GetString());
-				if (!val4->IsNULL()) res->SetFont(val4->GetString());
+				if (!val1->isNULL()) res->SetIcon(val1->getString());
+				if (!val2->isNULL()) res->SetIconHover(val2->getString());
+				if (!val3->isNULL()) res->SetIconPressed(val3->getString());
+				if (!val4->isNULL()) res->SetFont(val4->getString());
 
 				if (strcmp(name, "AddResponseOnce") == 0) res->_responseType = RESPONSE_ONCE;
 				else if (strcmp(name, "AddResponseOnceGame") == 0) res->_responseType = RESPONSE_ONCE_GAME;
@@ -499,7 +499,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ResetResponse") == 0) {
 		stack->correctParams(1);
-		int ID = stack->pop()->GetInt(-1);
+		int ID = stack->pop()->getInt(-1);
 		ResetResponse(ID);
 		stack->pushNULL();
 		return S_OK;
@@ -521,7 +521,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetResponse") == 0) {
 		stack->correctParams(1);
-		bool AutoSelectLast = stack->pop()->GetBool();
+		bool AutoSelectLast = stack->pop()->getBool();
 
 		if (_responseBox) {
 			_responseBox->weedResponses();
@@ -575,9 +575,9 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 		Common::String BranchName;
-		if (Val->IsNULL()) {
+		if (Val->isNULL()) {
 			BranchName.format("line%d", script->_currentLine);
-		} else BranchName = Val->GetString();
+		} else BranchName = Val->getString();
 
 		StartDlgBranch(BranchName.c_str(), script->_filename == NULL ? "" : script->_filename, script->_threadEvent == NULL ? "" : script->_threadEvent);
 		stack->pushNULL();
@@ -593,7 +593,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		const char *BranchName = NULL;
 		CScValue *Val = stack->pop();
-		if (!Val->IsNULL()) BranchName = Val->GetString();
+		if (!Val->isNULL()) BranchName = Val->getString();
 		EndDlgBranch(BranchName, script->_filename == NULL ? "" : script->_filename, script->_threadEvent == NULL ? "" : script->_threadEvent);
 
 		stack->pushNULL();
@@ -649,15 +649,15 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(1);
 
 		CScValue *val = stack->pop();
-		if (!val->IsNULL()) {
+		if (!val->isNULL()) {
 			for (int i = 0; i < _inventories.GetSize(); i++) {
 				CAdInventory *Inv = _inventories[i];
 
 				for (int j = 0; j < Inv->_takenItems.GetSize(); j++) {
-					if (val->GetNative() == Inv->_takenItems[j]) {
+					if (val->getNative() == Inv->_takenItems[j]) {
 						stack->pushBool(true);
 						return S_OK;
-					} else if (scumm_stricmp(val->GetString(), Inv->_takenItems[j]->_name) == 0) {
+					} else if (scumm_stricmp(val->getString(), Inv->_takenItems[j]->_name) == 0) {
 						stack->pushBool(true);
 						return S_OK;
 					}
@@ -700,7 +700,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadResponseBox") == 0) {
 		stack->correctParams(1);
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 
 		Game->UnregisterObject(_responseBox);
 		_responseBox = new CAdResponseBox(Game);
@@ -720,7 +720,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadInventoryBox") == 0) {
 		stack->correctParams(1);
-		const char *Filename = stack->pop()->GetString();
+		const char *Filename = stack->pop()->getString();
 
 		Game->UnregisterObject(_inventoryBox);
 		_inventoryBox = new CAdInventoryBox(Game);
@@ -740,8 +740,8 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadItems") == 0) {
 		stack->correctParams(2);
-		const char *Filename = stack->pop()->GetString();
-		bool Merge = stack->pop()->GetBool(false);
+		const char *Filename = stack->pop()->getString();
+		bool Merge = stack->pop()->getBool(false);
 
 		HRESULT Ret = LoadItemsFile(Filename, Merge);
 		stack->pushBool(SUCCEEDED(Ret));
@@ -754,7 +754,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddSpeechDir") == 0) {
 		stack->correctParams(1);
-		const char *Dir = stack->pop()->GetString();
+		const char *Dir = stack->pop()->getString();
 		stack->pushBool(SUCCEEDED(AddSpeechDir(Dir)));
 
 		return S_OK;
@@ -765,7 +765,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveSpeechDir") == 0) {
 		stack->correctParams(1);
-		const char *Dir = stack->pop()->GetString();
+		const char *Dir = stack->pop()->getString();
 		stack->pushBool(SUCCEEDED(RemoveSpeechDir(Dir)));
 
 		return S_OK;
@@ -776,10 +776,10 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetSceneViewport") == 0) {
 		stack->correctParams(4);
-		int X = stack->pop()->GetInt();
-		int Y = stack->pop()->GetInt();
-		int Width = stack->pop()->GetInt();
-		int Height = stack->pop()->GetInt();
+		int X = stack->pop()->getInt();
+		int Y = stack->pop()->getInt();
+		int Width = stack->pop()->getInt();
+		int Height = stack->pop()->getInt();
 
 		if (Width <= 0) Width = _renderer->_width;
 		if (Height <= 0) Height = _renderer->_height;
@@ -799,21 +799,21 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CAdGame::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("game");
+		_scValue->setString("game");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Scene
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Scene") == 0) {
-		if (_scene) _scValue->SetNative(_scene, true);
-		else _scValue->SetNULL();
+		if (_scene) _scValue->setNative(_scene, true);
+		else _scValue->setNULL();
 
 		return _scValue;
 	}
@@ -821,9 +821,9 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// SelectedItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SelectedItem") == 0) {
-		//if(_selectedItem) _scValue->SetString(_selectedItem->_name);
-		if (_selectedItem) _scValue->SetNative(_selectedItem, true);
-		else _scValue->SetNULL();
+		//if(_selectedItem) _scValue->setString(_selectedItem->_name);
+		if (_selectedItem) _scValue->setNative(_selectedItem, true);
+		else _scValue->setNULL();
 
 		return _scValue;
 	}
@@ -838,7 +838,7 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// SmartItemCursor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SmartItemCursor") == 0) {
-		_scValue->SetBool(_smartItemCursor);
+		_scValue->setBool(_smartItemCursor);
 		return _scValue;
 	}
 
@@ -846,7 +846,7 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// InventoryVisible
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InventoryVisible") == 0) {
-		_scValue->SetBool(_inventoryBox && _inventoryBox->_visible);
+		_scValue->setBool(_inventoryBox && _inventoryBox->_visible);
 		return _scValue;
 	}
 
@@ -854,8 +854,8 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// InventoryScrollOffset
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InventoryScrollOffset") == 0) {
-		if (_inventoryBox) _scValue->SetInt(_inventoryBox->_scrollOffset);
-		else _scValue->SetInt(0);
+		if (_inventoryBox) _scValue->setInt(_inventoryBox->_scrollOffset);
+		else _scValue->setInt(0);
 
 		return _scValue;
 	}
@@ -864,7 +864,7 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// ResponsesVisible (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ResponsesVisible") == 0) {
-		_scValue->SetBool(_stateEx == GAME_WAITING_RESPONSE);
+		_scValue->setBool(_stateEx == GAME_WAITING_RESPONSE);
 		return _scValue;
 	}
 
@@ -872,8 +872,8 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// PrevScene / PreviousScene (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PrevScene") == 0 || strcmp(name, "PreviousScene") == 0) {
-		if (!_prevSceneName) _scValue->SetString("");
-		else _scValue->SetString(_prevSceneName);
+		if (!_prevSceneName) _scValue->setString("");
+		else _scValue->setString(_prevSceneName);
 		return _scValue;
 	}
 
@@ -881,8 +881,8 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// PrevSceneFilename / PreviousSceneFilename (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PrevSceneFilename") == 0 || strcmp(name, "PreviousSceneFilename") == 0) {
-		if (!_prevSceneFilename) _scValue->SetString("");
-		else _scValue->SetString(_prevSceneFilename);
+		if (!_prevSceneFilename) _scValue->setString("");
+		else _scValue->setString(_prevSceneFilename);
 		return _scValue;
 	}
 
@@ -890,8 +890,8 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// LastResponse (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LastResponse") == 0) {
-		if (!_responseBox || !_responseBox->_lastResponseText) _scValue->SetString("");
-		else _scValue->SetString(_responseBox->_lastResponseText);
+		if (!_responseBox || !_responseBox->_lastResponseText) _scValue->setString("");
+		else _scValue->setString(_responseBox->_lastResponseText);
 		return _scValue;
 	}
 
@@ -899,8 +899,8 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// LastResponseOrig (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LastResponseOrig") == 0) {
-		if (!_responseBox || !_responseBox->_lastResponseTextOrig) _scValue->SetString("");
-		else _scValue->SetString(_responseBox->_lastResponseTextOrig);
+		if (!_responseBox || !_responseBox->_lastResponseTextOrig) _scValue->setString("");
+		else _scValue->setString(_responseBox->_lastResponseTextOrig);
 		return _scValue;
 	}
 
@@ -908,8 +908,8 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// InventoryObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InventoryObject") == 0) {
-		if (_inventoryOwner == _invObject) _scValue->SetNative(this, true);
-		else _scValue->SetNative(_inventoryOwner, true);
+		if (_inventoryOwner == _invObject) _scValue->setNative(this, true);
+		else _scValue->setNative(_inventoryOwner, true);
 
 		return _scValue;
 	}
@@ -918,7 +918,7 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// TotalNumItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TotalNumItems") == 0) {
-		_scValue->SetInt(_items.GetSize());
+		_scValue->setInt(_items.GetSize());
 		return _scValue;
 	}
 
@@ -926,7 +926,7 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// TalkSkipButton
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TalkSkipButton") == 0) {
-		_scValue->SetInt(_talkSkipButton);
+		_scValue->setInt(_talkSkipButton);
 		return _scValue;
 	}
 
@@ -934,7 +934,7 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// ChangingScene
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ChangingScene") == 0) {
-		_scValue->SetBool(_scheduledScene != NULL);
+		_scValue->setBool(_scheduledScene != NULL);
 		return _scValue;
 	}
 
@@ -942,8 +942,8 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// StartupScene
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StartupScene") == 0) {
-		if (!_startupScene) _scValue->SetNULL();
-		else _scValue->SetString(_startupScene);
+		if (!_startupScene) _scValue->setNULL();
+		else _scValue->setString(_startupScene);
 		return _scValue;
 	}
 
@@ -958,19 +958,19 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 	// SelectedItem
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SelectedItem") == 0) {
-		if (value->IsNULL()) _selectedItem = NULL;
+		if (value->isNULL()) _selectedItem = NULL;
 		else {
-			if (value->IsNative()) {
+			if (value->isNative()) {
 				_selectedItem = NULL;
 				for (int i = 0; i < _items.GetSize(); i++) {
-					if (_items[i] == value->GetNative()) {
-						_selectedItem = (CAdItem *)value->GetNative();
+					if (_items[i] == value->getNative()) {
+						_selectedItem = (CAdItem *)value->getNative();
 						break;
 					}
 				}
 			} else {
 				// try to get by name
-				_selectedItem = GetItemByName(value->GetString());
+				_selectedItem = GetItemByName(value->getString());
 			}
 		}
 
@@ -981,7 +981,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 	// SmartItemCursor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SmartItemCursor") == 0) {
-		_smartItemCursor = value->GetBool();
+		_smartItemCursor = value->getBool();
 		return S_OK;
 	}
 
@@ -989,7 +989,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 	// InventoryVisible
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InventoryVisible") == 0) {
-		if (_inventoryBox) _inventoryBox->_visible = value->GetBool();
+		if (_inventoryBox) _inventoryBox->_visible = value->getBool();
 		return S_OK;
 	}
 
@@ -999,9 +999,9 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "InventoryObject") == 0) {
 		if (_inventoryOwner && _inventoryBox) _inventoryOwner->getInventory()->_scrollOffset = _inventoryBox->_scrollOffset;
 
-		if (value->IsNULL()) _inventoryOwner = _invObject;
+		if (value->isNULL()) _inventoryOwner = _invObject;
 		else {
-			CBObject *Obj = (CBObject *)value->GetNative();
+			CBObject *Obj = (CBObject *)value->getNative();
 			if (Obj == this) _inventoryOwner = _invObject;
 			else if (Game->ValidObject(Obj)) _inventoryOwner = (CAdObject *)Obj;
 		}
@@ -1015,7 +1015,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 	// InventoryScrollOffset
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InventoryScrollOffset") == 0) {
-		if (_inventoryBox) _inventoryBox->_scrollOffset = value->GetInt();
+		if (_inventoryBox) _inventoryBox->_scrollOffset = value->getInt();
 		return S_OK;
 	}
 
@@ -1023,7 +1023,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 	// TalkSkipButton
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TalkSkipButton") == 0) {
-		int Val = value->GetInt();
+		int Val = value->getInt();
 		if (Val < 0) Val = 0;
 		if (Val > TALK_SKIP_NONE) Val = TALK_SKIP_NONE;
 		_talkSkipButton = (TTalkSkipButton)Val;
@@ -1037,7 +1037,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 		if (value == NULL) {
 			delete[] _startupScene;
 			_startupScene = NULL;
-		} else CBUtils::SetString(&_startupScene, value->GetString());
+		} else CBUtils::SetString(&_startupScene, value->getString());
 
 		return S_OK;
 	}
@@ -1068,7 +1068,7 @@ HRESULT CAdGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(0);
 		this_obj = thisStack->getTop();
 
-		this_obj->SetNative(new CAdActor(Game));
+		this_obj->setNative(new CAdActor(Game));
 		stack->pushNULL();
 	}
 
@@ -1079,7 +1079,7 @@ HRESULT CAdGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(0);
 		this_obj = thisStack->getTop();
 
-		this_obj->SetNative(new CAdEntity(Game));
+		this_obj->setNative(new CAdEntity(Game));
 		stack->pushNULL();
 	}
 
@@ -1524,7 +1524,7 @@ HRESULT CAdGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *script, CScSt
 		CScValue *Val = stack->pop();
 
 		CUIEntity *Ent = new CUIEntity(Game);
-		if (!Val->IsNULL()) Ent->setName(Val->GetString());
+		if (!Val->isNULL()) Ent->setName(Val->getString());
 		stack->pushNative(Ent, true);
 
 		Ent->_parent = Win;

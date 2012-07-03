@@ -51,14 +51,14 @@ CSXString::CSXString(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 	stack->correctParams(1);
 	CScValue *Val = stack->pop();
 
-	if (Val->IsInt()) {
-		_capacity = MAX(0, Val->GetInt());
+	if (Val->isInt()) {
+		_capacity = MAX(0, Val->getInt());
 		if (_capacity > 0) {
 			_string = new char[_capacity];
 			memset(_string, 0, _capacity);
 		}
 	} else {
-		SetStringVal(Val->GetString());
+		SetStringVal(Val->getString());
 	}
 
 	if (_capacity == 0) SetStringVal("");
@@ -105,8 +105,8 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Substring") == 0) {
 		stack->correctParams(2);
-		int start = stack->pop()->GetInt();
-		int end   = stack->pop()->GetInt();
+		int start = stack->pop()->getInt();
+		int end   = stack->pop()->getInt();
 
 		if (end < start) CBUtils::Swap(&start, &end);
 
@@ -136,17 +136,17 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Substr") == 0) {
 		stack->correctParams(2);
-		int start = stack->pop()->GetInt();
+		int start = stack->pop()->getInt();
 
 		CScValue *val = stack->pop();
-		int len = val->GetInt();
+		int len = val->getInt();
 
-		if (!val->IsNULL() && len <= 0) {
+		if (!val->isNULL() && len <= 0) {
 			stack->pushString("");
 			return S_OK;
 		}
 
-		if (val->IsNULL()) len = strlen(_string) - start;
+		if (val->isNULL()) len = strlen(_string) - start;
 
 //		try {
 		WideString str;
@@ -219,8 +219,8 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "IndexOf") == 0) {
 		stack->correctParams(2);
 
-		const char *strToFind = stack->pop()->GetString();
-		int index = stack->pop()->GetInt();
+		const char *strToFind = stack->pop()->getString();
+		int index = stack->pop()->getInt();
 
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
@@ -247,7 +247,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 		char Separators[MAX_PATH] = ",";
-		if (!Val->IsNULL()) strcpy(Separators, Val->GetString());
+		if (!Val->isNULL()) strcpy(Separators, Val->getString());
 
 		CSXArray *Array = new CSXArray(Game);
 		if (!Array) {
@@ -318,13 +318,13 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CSXString::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("string");
+		_scValue->setString("string");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -333,9 +333,9 @@ CScValue *CSXString::scGetProperty(const char *name) {
 	else if (strcmp(name, "Length") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::Utf8ToWide(_string);
-			_scValue->SetInt(wstr.size());
+			_scValue->setInt(wstr.size());
 		} else
-			_scValue->SetInt(strlen(_string));
+			_scValue->setInt(strlen(_string));
 
 		return _scValue;
 	}
@@ -343,7 +343,7 @@ CScValue *CSXString::scGetProperty(const char *name) {
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Capacity") == 0) {
-		_scValue->SetInt(_capacity);
+		_scValue->setInt(_capacity);
 		return _scValue;
 	}
 
@@ -357,7 +357,7 @@ HRESULT CSXString::scSetProperty(const char *name, CScValue *value) {
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Capacity") == 0) {
-		int NewCap = value->GetInt();
+		int NewCap = value->getInt();
 		if (NewCap < strlen(_string) + 1) Game->LOG(0, "Warning: cannot lower string capacity");
 		else if (NewCap != _capacity) {
 			char *NewStr = new char[NewCap];

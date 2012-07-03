@@ -45,14 +45,14 @@ CSXDate::CSXDate(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 	memset(&_tm, 0, sizeof(_tm));
 
 	CScValue *valYear = stack->pop();
-	_tm.tm_year = valYear->GetInt() - 1900;
-	_tm.tm_mon = stack->pop()->GetInt() - 1;
-	_tm.tm_mday = stack->pop()->GetInt();
-	_tm.tm_hour = stack->pop()->GetInt();
-	_tm.tm_min = stack->pop()->GetInt();
-	_tm.tm_sec = stack->pop()->GetInt();
+	_tm.tm_year = valYear->getInt() - 1900;
+	_tm.tm_mon = stack->pop()->getInt() - 1;
+	_tm.tm_mday = stack->pop()->getInt();
+	_tm.tm_hour = stack->pop()->getInt();
+	_tm.tm_min = stack->pop()->getInt();
+	_tm.tm_sec = stack->pop()->getInt();
 
-	if (valYear->IsNULL()) {
+	if (valYear->isNULL()) {
 		g_system->getTimeAndDate(_tm);
 	}
 }
@@ -140,7 +140,7 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetYear") == 0) {
 		stack->correctParams(1);
-		_tm.tm_year = stack->pop()->GetInt() - 1900;
+		_tm.tm_year = stack->pop()->getInt() - 1900;
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -149,7 +149,7 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetMonth") == 0) {
 		stack->correctParams(1);
-		_tm.tm_mon = stack->pop()->GetInt() - 1;
+		_tm.tm_mon = stack->pop()->getInt() - 1;
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -158,7 +158,7 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetDate") == 0) {
 		stack->correctParams(1);
-		_tm.tm_mday = stack->pop()->GetInt();
+		_tm.tm_mday = stack->pop()->getInt();
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -167,7 +167,7 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetHours") == 0) {
 		stack->correctParams(1);
-		_tm.tm_hour = stack->pop()->GetInt();
+		_tm.tm_hour = stack->pop()->getInt();
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -176,7 +176,7 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetMinutes") == 0) {
 		stack->correctParams(1);
-		_tm.tm_min = stack->pop()->GetInt();
+		_tm.tm_min = stack->pop()->getInt();
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -185,7 +185,7 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetSeconds") == 0) {
 		stack->correctParams(1);
-		_tm.tm_sec = stack->pop()->GetInt();
+		_tm.tm_sec = stack->pop()->getInt();
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -208,13 +208,13 @@ HRESULT CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CSXDate::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("date");
+		_scValue->setString("date");
 		return _scValue;
 	}
 
@@ -229,7 +229,7 @@ HRESULT CSXDate::scSetProperty(const char *name, CScValue *value) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if(strcmp(name, "Name")==0){
-	    setName(value->GetString());
+	    setName(value->getString());
 	    return S_OK;
 	}
 

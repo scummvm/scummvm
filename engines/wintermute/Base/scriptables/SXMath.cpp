@@ -64,7 +64,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Abs") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(fabs(stack->pop()->GetFloat()));
+		stack->pushFloat(fabs(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -73,7 +73,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Acos") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(acos(stack->pop()->GetFloat()));
+		stack->pushFloat(acos(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -82,7 +82,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Asin") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(asin(stack->pop()->GetFloat()));
+		stack->pushFloat(asin(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -91,7 +91,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Atan") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(atan(stack->pop()->GetFloat()));
+		stack->pushFloat(atan(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -100,8 +100,8 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Atan2") == 0) {
 		stack->correctParams(2);
-		double y = stack->pop()->GetFloat();
-		double x = stack->pop()->GetFloat();
+		double y = stack->pop()->getFloat();
+		double x = stack->pop()->getFloat();
 		stack->pushFloat(atan2(y, x));
 		return S_OK;
 	}
@@ -111,7 +111,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Ceil") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(ceil(stack->pop()->GetFloat()));
+		stack->pushFloat(ceil(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -120,7 +120,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Cos") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(cos(DegreeToRadian(stack->pop()->GetFloat())));
+		stack->pushFloat(cos(DegreeToRadian(stack->pop()->getFloat())));
 		return S_OK;
 	}
 
@@ -129,7 +129,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Cosh") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(cosh(DegreeToRadian(stack->pop()->GetFloat())));
+		stack->pushFloat(cosh(DegreeToRadian(stack->pop()->getFloat())));
 		return S_OK;
 	}
 
@@ -138,7 +138,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Exp") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(exp(stack->pop()->GetFloat()));
+		stack->pushFloat(exp(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -147,7 +147,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Floor") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(floor(stack->pop()->GetFloat()));
+		stack->pushFloat(floor(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -156,7 +156,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Log") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(log(stack->pop()->GetFloat()));
+		stack->pushFloat(log(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -165,7 +165,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Log10") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(log10(stack->pop()->GetFloat()));
+		stack->pushFloat(log10(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -174,8 +174,8 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Pow") == 0) {
 		stack->correctParams(2);
-		double x = stack->pop()->GetFloat();
-		double y = stack->pop()->GetFloat();
+		double x = stack->pop()->getFloat();
+		double y = stack->pop()->getFloat();
 
 		stack->pushFloat(pow(x, y));
 		return S_OK;
@@ -186,7 +186,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Sin") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(sin(DegreeToRadian(stack->pop()->GetFloat())));
+		stack->pushFloat(sin(DegreeToRadian(stack->pop()->getFloat())));
 		return S_OK;
 	}
 
@@ -195,7 +195,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Sinh") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(sinh(DegreeToRadian(stack->pop()->GetFloat())));
+		stack->pushFloat(sinh(DegreeToRadian(stack->pop()->getFloat())));
 		return S_OK;
 	}
 
@@ -204,7 +204,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Tan") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(tan(DegreeToRadian(stack->pop()->GetFloat())));
+		stack->pushFloat(tan(DegreeToRadian(stack->pop()->getFloat())));
 		return S_OK;
 	}
 
@@ -213,7 +213,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Tanh") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(tanh(DegreeToRadian(stack->pop()->GetFloat())));
+		stack->pushFloat(tanh(DegreeToRadian(stack->pop()->getFloat())));
 		return S_OK;
 	}
 
@@ -222,7 +222,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Sqrt") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(sqrt(stack->pop()->GetFloat()));
+		stack->pushFloat(sqrt(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -231,7 +231,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DegToRad") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(DegreeToRadian(stack->pop()->GetFloat()));
+		stack->pushFloat(DegreeToRadian(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -240,7 +240,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RadToDeg") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(RadianToDegree(stack->pop()->GetFloat()));
+		stack->pushFloat(RadianToDegree(stack->pop()->getFloat()));
 		return S_OK;
 	}
 
@@ -250,13 +250,13 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CSXMath::scGetProperty(const char *name) {
-	_scValue->SetNULL();
+	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Type") == 0) {
-		_scValue->SetString("math");
+		_scValue->setString("math");
 		return _scValue;
 	}
 
@@ -264,7 +264,7 @@ CScValue *CSXMath::scGetProperty(const char *name) {
 	// PI
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PI") == 0) {
-		_scValue->SetFloat(PI);
+		_scValue->setFloat(PI);
 		return _scValue;
 	}
 
