@@ -257,7 +257,7 @@ CScScript *CScEngine::RunScript(const char *Filename, CBScriptHolder *Owner) {
 		script->_globals->setProp("this", &val);
 
 		_scripts.Add(script);
-		Game->GetDebugMgr()->OnScriptInit(script);
+		Game->getDebugMgr()->OnScriptInit(script);
 
 		return script;
 	}
@@ -324,7 +324,7 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 		CompBuffer = ExtCompileFile(tempFileName, &CompSize);
 		delete[] tempFileName;
 		if (!CompBuffer) {
-			Game->QuickMessage("Script compiler error. View log for details.");
+			Game->quickMessage("Script compiler error. View log for details.");
 			delete [] Buffer;
 			return NULL;
 		}
@@ -490,7 +490,7 @@ HRESULT CScEngine::RemoveFinishedScripts() {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
 			if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
-			Game->GetDebugMgr()->OnScriptShutdown(_scripts[i]);
+			Game->getDebugMgr()->OnScriptShutdown(_scripts[i]);
 			delete _scripts[i];
 			_scripts.RemoveAt(i);
 			i--;
@@ -674,7 +674,7 @@ HRESULT CScEngine::DbgSendScripts(IWmeDebugClient *Client) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::AddBreakpoint(const char *ScriptFilename, int Line) {
-	if (!Game->GetDebugMgr()->_enabled) return S_OK;
+	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	CScBreakpoint *Bp = NULL;
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
@@ -701,7 +701,7 @@ HRESULT CScEngine::AddBreakpoint(const char *ScriptFilename, int Line) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::RemoveBreakpoint(const char *ScriptFilename, int Line) {
-	if (!Game->GetDebugMgr()->_enabled) return S_OK;
+	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
 		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), ScriptFilename) == 0) {
@@ -726,7 +726,7 @@ HRESULT CScEngine::RemoveBreakpoint(const char *ScriptFilename, int Line) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::RefreshScriptBreakpoints() {
-	if (!Game->GetDebugMgr()->_enabled) return S_OK;
+	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		RefreshScriptBreakpoints(_scripts[i]);
@@ -736,7 +736,7 @@ HRESULT CScEngine::RefreshScriptBreakpoints() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::RefreshScriptBreakpoints(CScScript *script) {
-	if (!Game->GetDebugMgr()->_enabled) return S_OK;
+	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	if (!script || !script->_filename) return E_FAIL;
 
@@ -753,7 +753,7 @@ HRESULT CScEngine::RefreshScriptBreakpoints(CScScript *script) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::SaveBreakpoints() {
-	if (!Game->GetDebugMgr()->_enabled) return S_OK;
+	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 
 	char Text[512];
@@ -776,7 +776,7 @@ HRESULT CScEngine::SaveBreakpoints() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::LoadBreakpoints() {
-	if (!Game->GetDebugMgr()->_enabled) return S_OK;
+	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	char Key[100];
 

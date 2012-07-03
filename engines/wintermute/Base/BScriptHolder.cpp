@@ -297,7 +297,7 @@ HRESULT CBScriptHolder::addScript(const char *Filename) {
 			scr->_owner = this;
 			_scripts.Add(scr);
 			Game->_scEngine->_scripts.Add(scr);
-			Game->GetDebugMgr()->OnScriptInit(scr);
+			Game->getDebugMgr()->OnScriptInit(scr);
 
 			return S_OK;
 		}
@@ -436,7 +436,7 @@ CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
 				HRESULT ret = thread->CreateMethodThread(_scripts[i], methodName);
 				if (SUCCEEDED(ret)) {
 					_scripts[i]->_engine->_scripts.Add(thread);
-					Game->GetDebugMgr()->OnScriptMethodThreadInit(thread, _scripts[i], methodName);
+					Game->getDebugMgr()->OnScriptMethodThreadInit(thread, _scripts[i], methodName);
 
 					return thread;
 				} else {

@@ -206,7 +206,7 @@ HRESULT CAdGame::InitLoop() {
 
 
 	HRESULT res;
-	res = CBGame::InitLoop();
+	res = CBGame::initLoop();
 	if (FAILED(res)) return res;
 
 	if (_scene) res = _scene->initLoop();
@@ -1105,10 +1105,10 @@ HRESULT CAdGame::showCursor() {
 		}
 		if (_activeObject && _selectedItem->_cursorHover && _activeObject->getExtendedFlag("usable")) {
 			if (!_smartItemCursor || _activeObject->canHandleEvent(_selectedItem->_name))
-				return DrawCursor(_selectedItem->_cursorHover);
+				return drawCursor(_selectedItem->_cursorHover);
 			else
-				return DrawCursor(_selectedItem->_cursorNormal);
-		} else return DrawCursor(_selectedItem->_cursorNormal);
+				return drawCursor(_selectedItem->_cursorNormal);
+		} else return drawCursor(_selectedItem->_cursorNormal);
 	} else return CBGame::showCursor();
 }
 
@@ -1316,7 +1316,7 @@ HRESULT CAdGame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::LoadGame(const char *Filename) {
 	HRESULT ret = CBGame::LoadGame(Filename);
-	if (SUCCEEDED(ret)) CSysClassRegistry::getInstance()->enumInstances(AfterLoadRegion, "CAdRegion", NULL);
+	if (SUCCEEDED(ret)) CSysClassRegistry::getInstance()->enumInstances(afterLoadRegion, "CAdRegion", NULL);
 	return ret;
 }
 
@@ -1710,7 +1710,7 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 		if (Update) _scEngine->Tick();
 
 		POINT p;
-		GetMousePos(&p);
+		getMousePos(&p);
 
 		_scene->update();
 		_scene->display();
@@ -1720,14 +1720,14 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 		DisplayWindows(true);
 		if (_inventoryBox) _inventoryBox->display();
 		if (_stateEx == GAME_WAITING_RESPONSE) _responseBox->display();
-		if (_indicatorDisplay) DisplayIndicator();
+		if (_indicatorDisplay) displayIndicator();
 
 
 		if (Update || DisplayAll) {
 			// display normal windows
 			DisplayWindows(false);
 
-			SetActiveObject(Game->_renderer->getObjectAt(p.x, p.y));
+			setActiveObject(Game->_renderer->getObjectAt(p.x, p.y));
 
 			// textual info
 			DisplaySentences(_state == GAME_FROZEN);

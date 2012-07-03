@@ -54,13 +54,13 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 
 	case Common::EVENT_LBUTTONDOWN:
 		if (Game) {
-			if (Game->IsLeftDoubleClick()) Game->OnMouseLeftDblClick();
+			if (Game->isLeftDoubleClick()) Game->OnMouseLeftDblClick();
 			else Game->OnMouseLeftDown();
 		}
 		break;
 	case Common::EVENT_RBUTTONDOWN:
 		if (Game) {
-			if (Game->IsRightDoubleClick()) Game->OnMouseRightDblClick();
+			if (Game->isRightDoubleClick()) Game->OnMouseRightDblClick();
 			else Game->OnMouseRightDown();
 		}
 		break;

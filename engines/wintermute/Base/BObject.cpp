@@ -63,7 +63,7 @@ CBObject::CBObject(CBGame *inGame): CBScriptHolder(inGame) {
 
 	_soundEvent = NULL;
 
-	_iD = Game->GetSequence();
+	_iD = Game->getSequence();
 
 	CBPlatform::SetRectEmpty(&_rect);
 	_rectSet = false;
@@ -852,7 +852,7 @@ const char *CBObject::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::showCursor() {
-	if (_cursor) return Game->DrawCursor(_cursor);
+	if (_cursor) return Game->drawCursor(_cursor);
 	else return E_FAIL;
 }
 

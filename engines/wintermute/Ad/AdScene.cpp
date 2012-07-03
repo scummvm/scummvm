@@ -870,10 +870,10 @@ HRESULT CAdScene::traverseNodes(bool Update) {
 	// prepare viewport
 	bool PopViewport = false;
 	if (_viewport && !Game->_editorMode) {
-		Game->PushViewport(_viewport);
+		Game->pushViewport(_viewport);
 		PopViewport = true;
 	} else if (AdGame->_sceneViewport && !Game->_editorMode) {
-		Game->PushViewport(AdGame->_sceneViewport);
+		Game->pushViewport(AdGame->_sceneViewport);
 		PopViewport = true;
 	}
 
@@ -934,7 +934,7 @@ HRESULT CAdScene::traverseNodes(bool Update) {
 	double HeightRatio = ScrollableY <= 0 ? 0 : ((double)(_offsetTop)  / (double)ScrollableY);
 
 	int OrigX, OrigY;
-	Game->GetOffset(&OrigX, &OrigY);
+	Game->getOffset(&OrigX, &OrigY);
 
 
 
@@ -965,14 +965,14 @@ HRESULT CAdScene::traverseNodes(bool Update) {
 		if (_paralaxScrolling) {
 			int OffsetX = (int)(WidthRatio  * (_layers[j]->_width  - ViewportWidth) - ViewportX);
 			int OffsetY = (int)(HeightRatio * (_layers[j]->_height - ViewportHeight) - ViewportY);
-			Game->SetOffset(OffsetX, OffsetY);
+			Game->setOffset(OffsetX, OffsetY);
 
 			Game->_offsetPercentX = (float)OffsetX / ((float)_layers[j]->_width - ViewportWidth) * 100.0f;
 			Game->_offsetPercentY = (float)OffsetY / ((float)_layers[j]->_height - ViewportHeight) * 100.0f;
 
 			//Game->QuickMessageForm("%d %f", OffsetX+ViewportX, Game->_offsetPercentX);
 		} else {
-			Game->SetOffset(_offsetLeft - ViewportX, _offsetTop - ViewportY);
+			Game->setOffset(_offsetLeft - ViewportX, _offsetTop - ViewportY);
 
 			Game->_offsetPercentX = (float)(_offsetLeft - ViewportX) / ((float)_layers[j]->_width - ViewportWidth) * 100.0f;
 			Game->_offsetPercentY = (float)(_offsetTop - ViewportY) / ((float)_layers[j]->_height - ViewportHeight) * 100.0f;
@@ -1017,7 +1017,7 @@ HRESULT CAdScene::traverseNodes(bool Update) {
 
 
 	// restore state
-	Game->SetOffset(OrigX, OrigY);
+	Game->setOffset(OrigX, OrigY);
 	Game->_renderer->setup2D();
 
 	// display/update fader
@@ -1026,7 +1026,7 @@ HRESULT CAdScene::traverseNodes(bool Update) {
 		else _fader->display();
 	}
 
-	if (PopViewport) Game->PopViewport();
+	if (PopViewport) Game->popViewport();
 
 	return S_OK;
 }

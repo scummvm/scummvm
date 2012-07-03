@@ -603,7 +603,7 @@ HRESULT CAdEntity::update() {
 
 	if (_theora) {
 		int OffsetX, OffsetY;
-		Game->GetOffset(&OffsetX, &OffsetY);
+		Game->getOffset(&OffsetX, &OffsetY);
 		_theora->_posX = _posX - OffsetX;
 		_theora->_posY = _posY - OffsetY;
 

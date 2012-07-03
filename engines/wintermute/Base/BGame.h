@@ -81,8 +81,8 @@ public:
 	virtual HRESULT OnPaint();
 	virtual HRESULT OnWindowClose();
 
-	bool IsLeftDoubleClick();
-	bool IsRightDoubleClick();
+	bool isLeftDoubleClick();
+	bool isRightDoubleClick();
 
 	bool _autorunDisabled;
 
@@ -91,7 +91,7 @@ public:
 
 	virtual HRESULT MiniUpdate();
 
-	void GetMousePos(POINT *Pos);
+	void getMousePos(POINT *Pos);
 	RECT _mouseLockRect;
 
 	bool _shuttingDown;
@@ -113,7 +113,7 @@ public:
 	virtual HRESULT ResetContent();
 
 	void DEBUG_DumpClassRegistry();
-	HRESULT SetWaitCursor(const char *Filename);
+	HRESULT setWaitCursor(const char *Filename);
 	char *_localSaveDir;
 	bool _saveDirChecked;
 
@@ -137,32 +137,32 @@ public:
 	int _loadImageY;
 	CBSurface *_saveLoadImage;
 
-	HRESULT DisplayIndicator();
+	HRESULT displayIndicator();
 
 	int _thumbnailWidth;
 	int _thumbnailHeight;
 
 	bool _reportTextureFormat;
 	HMODULE _resourceModule;
-	void SetResourceModule(HMODULE ResModule);
+	void setResourceModule(HMODULE ResModule);
 
-	void SetEngineLogCallback(ENGINE_LOG_CALLBACK Callback = NULL, void *Data = NULL);
+	void setEngineLogCallback(ENGINE_LOG_CALLBACK Callback = NULL, void *Data = NULL);
 	ENGINE_LOG_CALLBACK _engineLogCallback;
 	void *_engineLogCallbackData;
 	bool _editorMode;
 
 	bool _doNotExpandStrings;
-	void GetOffset(int *OffsetX, int *OffsetY);
-	void SetOffset(int OffsetX, int OffsetY);
-	int GetSequence();
+	void getOffset(int *offsetX, int *offsetY);
+	void setOffset(int offsetX, int offsetY);
+	int getSequence();
 	int _offsetY;
 	int _offsetX;
 	float _offsetPercentX;
 	float _offsetPercentY;
 	CBObject *_mainObject;
 
-	HRESULT InitInput(HINSTANCE hInst, HWND hWnd);
-	HRESULT InitLoop();
+	HRESULT initInput(HINSTANCE hInst, HWND hWnd);
+	HRESULT initLoop();
 	uint32 _currentTime;
 	uint32 _deltaTime;
 	CBFont *_systemFont;
@@ -172,7 +172,7 @@ public:
 	HRESULT initialize3();
 	CBFileManager *_fileManager;
 	CBTransitionMgr *_transMgr;
-	CBDebugger *GetDebugMgr();
+	CBDebugger *getDebugMgr();
 
 	void LOG(HRESULT res, LPCSTR fmt, ...);
 
@@ -187,13 +187,13 @@ public:
 
 	virtual ~CBGame();
 	void DEBUG_DebugDisable();
-	void DEBUG_DebugEnable(const char *Filename = NULL);
+	void DEBUG_DebugEnable(const char *filename = NULL);
 	bool _dEBUG_DebugMode;
 	bool _dEBUG_AbsolutePathWarning;
 
 	void *_dEBUG_LogFile;
 	int _sequence;
-	virtual HRESULT loadFile(const char *Filename);
+	virtual HRESULT loadFile(const char *filename);
 	virtual HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 	CBArray<CBQuickMsg *, CBQuickMsg *> _quickMessages;
 	CBArray<CUIWindow *, CUIWindow *> _windows;
@@ -260,27 +260,27 @@ public:
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual void handleKeyRelease(Common::Event *event);
 	int _freezeLevel;
-	HRESULT Unfreeze();
-	HRESULT Freeze(bool IncludingMusic = true);
-	HRESULT FocusWindow(CUIWindow *Window);
+	HRESULT unfreeze();
+	HRESULT freeze(bool IncludingMusic = true);
+	HRESULT focusWindow(CUIWindow *Window);
 	CVidPlayer *_videoPlayer;
 	CVidTheoraPlayer *_theoraPlayer;
 	bool _loadInProgress;
 	CUIWindow *_focusedWindow;
 	bool _editorForceScripts;
-	static void AfterLoadRegion(void *Region, void *Data);
-	static void AfterLoadSubFrame(void *Subframe, void *Data);
-	static void AfterLoadSound(void *Sound, void *Data);
-	static void AfterLoadFont(void *Font, void *Data);
-	static void AfterLoadScript(void *script, void *data);
-	static void InvalidateValues(void *Value, void *Data);
+	static void afterLoadRegion(void *Region, void *Data);
+	static void afterLoadSubFrame(void *Subframe, void *Data);
+	static void afterLoadSound(void *Sound, void *Data);
+	static void afterLoadFont(void *Font, void *Data);
+	static void afterLoadScript(void *script, void *data);
+	static void invalidateValues(void *Value, void *Data);
 
-	HRESULT LoadSettings(const char *Filename);
-	HRESULT ResumeMusic(int Channel);
-	HRESULT SetMusicStartTime(int Channel, uint32 Time);
-	HRESULT PauseMusic(int Channel);
-	HRESULT StopMusic(int Channel);
-	HRESULT PlayMusic(int Channel, const char *Filename, bool Looping = true, uint32 LoopStart = 0);
+	HRESULT loadSettings(const char *Filename);
+	HRESULT resumeMusic(int Channel);
+	HRESULT setMusicStartTime(int Channel, uint32 Time);
+	HRESULT pauseMusic(int Channel);
+	HRESULT stopMusic(int Channel);
+	HRESULT playMusic(int Channel, const char *Filename, bool Looping = true, uint32 LoopStart = 0);
 	CBSound *_music[NUM_MUSIC_CHANNELS];
 	bool _musicCrossfadeRunning;
 	bool _musicCrossfadeSwap;
@@ -314,11 +314,11 @@ public:
 
 	CBObject *_capturedObject;
 	POINT _mousePos;
-	bool ValidObject(CBObject *Object);
-	HRESULT UnregisterObject(CBObject *Object);
-	HRESULT RegisterObject(CBObject *Object);
-	void QuickMessage(const char *Text);
-	void QuickMessageForm(LPSTR fmt, ...);
+	bool ValidObject(CBObject *object);
+	HRESULT UnregisterObject(CBObject *object);
+	HRESULT RegisterObject(CBObject *object);
+	void quickMessage(const char *text);
+	void quickMessageForm(LPSTR fmt, ...);
 	HRESULT DisplayQuickMsg();
 	uint32 _fps;
 	HRESULT UpdateMusicCrossfade();
@@ -331,23 +331,23 @@ public:
 	virtual HRESULT DisplayContent(bool Update = true, bool DisplayAll = false);
 	virtual HRESULT DisplayContentSimple();
 	bool _forceNonStreamedSounds;
-	void ResetMousePos();
+	void resetMousePos();
 	int _subtitlesSpeed;
 	void SetInteractive(bool State);
 	virtual HRESULT WindowLoadHook(CUIWindow *Win, char **Buf, char **Params);
 	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *script, CScStack *stack, const char *name);
-	HRESULT GetCurrentViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
-	HRESULT GetCurrentViewportRect(RECT *Rect, bool *Custom = NULL);
-	HRESULT PopViewport();
-	HRESULT PushViewport(CBViewport *Viewport);
-	HRESULT SetActiveObject(CBObject *Obj);
+	HRESULT getCurrentViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
+	HRESULT getCurrentViewportRect(RECT *Rect, bool *Custom = NULL);
+	HRESULT popViewport();
+	HRESULT pushViewport(CBViewport *Viewport);
+	HRESULT setActiveObject(CBObject *Obj);
 	CBSprite *_lastCursor;
-	HRESULT DrawCursor(CBSprite *Cursor);
+	HRESULT drawCursor(CBSprite *Cursor);
 
 	virtual HRESULT InitAfterLoad();
 	CBSaveThumbHelper *_cachedThumbnail;
 	AnsiString GetDataDir();
-	void AddMem(int bytes);
+	void addMem(int bytes);
 
 	bool _touchInterface;
 	bool _constrainedMemory;
@@ -380,7 +380,7 @@ protected:
 	bool _cursorHidden;
 
 public:
-	void AutoSaveOnExit();
+	void autoSaveOnExit();
 
 };
 

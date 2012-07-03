@@ -71,7 +71,7 @@ CUIObject::CUIObject(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CUIObject::~CUIObject() {
-	if (!Game->_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(CBGame::InvalidateValues, "CScValue", (void *)this);
+	if (!Game->_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(CBGame::invalidateValues, "CScValue", (void *)this);
 
 	if (_back) delete _back;
 	if (_font && !_sharedFonts) Game->_fontStorage->RemoveFont(_font);
@@ -526,7 +526,7 @@ HRESULT CUIObject::focus() {
 			if (obj->_parent) {
 				if (!obj->_disable && obj->_canFocus) obj->_parent->_focusedWidget = obj;
 			} else {
-				if (obj->_type == UI_WINDOW) Game->FocusWindow((CUIWindow *)obj);
+				if (obj->_type == UI_WINDOW) Game->focusWindow((CUIWindow *)obj);
 			}
 
 			obj = obj->_parent;

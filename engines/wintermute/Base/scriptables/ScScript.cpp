@@ -490,12 +490,12 @@ HRESULT CScScript::ExecuteInstruction() {
 		dw = GetDWORD();
 		if (_scopeStack->_sP < 0) {
 			_globals->setProp(_symbols[dw], _operand);
-			if (Game->GetDebugMgr()->_enabled)
-				Game->GetDebugMgr()->OnVariableInit(WME_DBGVAR_SCRIPT, this, NULL, _globals->getProp(_symbols[dw]), _symbols[dw]);
+			if (Game->getDebugMgr()->_enabled)
+				Game->getDebugMgr()->OnVariableInit(WME_DBGVAR_SCRIPT, this, NULL, _globals->getProp(_symbols[dw]), _symbols[dw]);
 		} else {
 			_scopeStack->getTop()->setProp(_symbols[dw], _operand);
-			if (Game->GetDebugMgr()->_enabled)
-				Game->GetDebugMgr()->OnVariableInit(WME_DBGVAR_SCOPE, this, _scopeStack->getTop(), _scopeStack->getTop()->getProp(_symbols[dw]), _symbols[dw]);
+			if (Game->getDebugMgr()->_enabled)
+				Game->getDebugMgr()->OnVariableInit(WME_DBGVAR_SCOPE, this, _scopeStack->getTop(), _scopeStack->getTop()->getProp(_symbols[dw]), _symbols[dw]);
 		}
 
 		break;
@@ -509,21 +509,21 @@ HRESULT CScScript::ExecuteInstruction() {
 			_operand->setNULL();
 			_engine->_globals->setProp(_symbols[dw], _operand, false, inst == II_DEF_CONST_VAR);
 
-			if (Game->GetDebugMgr()->_enabled)
-				Game->GetDebugMgr()->OnVariableInit(WME_DBGVAR_GLOBAL, this, NULL, _engine->_globals->getProp(_symbols[dw]), _symbols[dw]);
+			if (Game->getDebugMgr()->_enabled)
+				Game->getDebugMgr()->OnVariableInit(WME_DBGVAR_GLOBAL, this, NULL, _engine->_globals->getProp(_symbols[dw]), _symbols[dw]);
 		}
 		break;
 	}
 
 	case II_RET:
 		if (_scopeStack->_sP >= 0 && _callStack->_sP >= 0) {
-			Game->GetDebugMgr()->OnScriptShutdownScope(this, _scopeStack->getTop());
+			Game->getDebugMgr()->OnScriptShutdownScope(this, _scopeStack->getTop());
 
 			_scopeStack->pop();
 			_iP = (uint32)_callStack->pop()->getInt();
 
-			if (_scopeStack->_sP < 0) Game->GetDebugMgr()->OnScriptChangeScope(this, NULL);
-			else Game->GetDebugMgr()->OnScriptChangeScope(this, _scopeStack->getTop());
+			if (_scopeStack->_sP < 0) Game->getDebugMgr()->OnScriptChangeScope(this, NULL);
+			else Game->getDebugMgr()->OnScriptChangeScope(this, _scopeStack->getTop());
 		} else {
 			if (_thread) {
 				_state = SCRIPT_THREAD_FINISHED;
@@ -640,8 +640,8 @@ HRESULT CScScript::ExecuteInstruction() {
 		_operand->setNULL();
 		_scopeStack->push(_operand);
 
-		if (_scopeStack->_sP < 0) Game->GetDebugMgr()->OnScriptChangeScope(this, NULL);
-		else Game->GetDebugMgr()->OnScriptChangeScope(this, _scopeStack->getTop());
+		if (_scopeStack->_sP < 0) Game->getDebugMgr()->OnScriptChangeScope(this, NULL);
+		else Game->getDebugMgr()->OnScriptChangeScope(this, _scopeStack->getTop());
 
 		break;
 
@@ -691,8 +691,8 @@ HRESULT CScScript::ExecuteInstruction() {
 				}
 			}
 
-			if (Game->GetDebugMgr()->_enabled)
-				Game->GetDebugMgr()->OnVariableChangeValue(var, val);
+			if (Game->getDebugMgr()->_enabled)
+				Game->getDebugMgr()->OnVariableChangeValue(var, val);
 		}
 
 		break;
@@ -757,8 +757,8 @@ HRESULT CScScript::ExecuteInstruction() {
 			var->setNULL();
 		} else var->setProp(str, val);
 
-		if (Game->GetDebugMgr()->_enabled)
-			Game->GetDebugMgr()->OnVariableChangeValue(var, NULL);
+		if (Game->getDebugMgr()->_enabled)
+			Game->getDebugMgr()->OnVariableChangeValue(var, NULL);
 
 		break;
 	}
@@ -1022,17 +1022,17 @@ HRESULT CScScript::ExecuteInstruction() {
 		int NewLine = GetDWORD();
 		if (NewLine != _currentLine) {
 			_currentLine = NewLine;
-			if (Game->GetDebugMgr()->_enabled) {
-				Game->GetDebugMgr()->OnScriptChangeLine(this, _currentLine);
+			if (Game->getDebugMgr()->_enabled) {
+				Game->getDebugMgr()->OnScriptChangeLine(this, _currentLine);
 				for (int i = 0; i < _breakpoints.GetSize(); i++) {
 					if (_breakpoints[i] == _currentLine) {
-						Game->GetDebugMgr()->OnScriptHitBreakpoint(this);
+						Game->getDebugMgr()->OnScriptHitBreakpoint(this);
 						Sleep(0);
 						break;
 					}
 				}
 				if (_tracingMode) {
-					Game->GetDebugMgr()->OnScriptHitBreakpoint(this);
+					Game->getDebugMgr()->OnScriptHitBreakpoint(this);
 					Sleep(0);
 					break;
 				}
@@ -1180,7 +1180,7 @@ void CScScript::RuntimeError(LPCSTR fmt, ...) {
 	Game->LOG(0, "  %s", buff);
 
 	if (!Game->_suppressScriptErrors)
-		Game->QuickMessage("Script runtime error. View log for details.");
+		Game->quickMessage("Script runtime error. View log for details.");
 }
 
 
@@ -1259,7 +1259,7 @@ CScScript *CScScript::InvokeEventHandler(const char *EventName, bool Unbreakable
 		if (SUCCEEDED(ret)) {
 			thread->_unbreakable = Unbreakable;
 			_engine->_scripts.Add(thread);
-			Game->GetDebugMgr()->OnScriptEventThreadInit(thread, this, EventName);
+			Game->getDebugMgr()->OnScriptEventThreadInit(thread, this, EventName);
 			return thread;
 		} else {
 			delete thread;

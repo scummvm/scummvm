@@ -299,7 +299,7 @@ HRESULT CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 		fillRect.setHeight(rect->height());
 	} else {
 		RECT rc;
-		Game->GetCurrentViewportRect(&rc);
+		Game->getCurrentViewportRect(&rc);
 		fillRect.left = (int16)rc.left;
 		fillRect.top = (int16)rc.top;
 		fillRect.setWidth((int16)(rc.right - rc.left));

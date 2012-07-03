@@ -66,7 +66,7 @@ CBSurfaceSDL::~CBSurfaceSDL() {
 	delete[] _alphaMask;
 	_alphaMask = NULL;
 
-	Game->AddMem(-_width * _height * 4);
+	Game->addMem(-_width * _height * 4);
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 }
@@ -203,7 +203,7 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 
 	_valid = true;
 
-	Game->AddMem(_width * _height * 4);
+	Game->addMem(_width * _height * 4);
 
 	delete image;
 
@@ -302,7 +302,7 @@ HRESULT CBSurfaceSDL::create(int width, int height) {
 	_width = width;
 	_height = height;
 
-	Game->AddMem(_width * _height * 4);
+	Game->addMem(_width * _height * 4);
 
 	_valid = true;
 

@@ -284,7 +284,7 @@ CBGame::~CBGame() {
 	LOG(0, "");
 	LOG(0, "Shutting down...");
 
-	GetDebugMgr()->OnGameShutdown();
+	getDebugMgr()->OnGameShutdown();
 
 	_registry->WriteBool("System", "LastRun", true);
 
@@ -597,19 +597,19 @@ void CBGame::LOG(HRESULT res, LPCSTR fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::SetEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
+void CBGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
 	_engineLogCallback = callback;
 	_engineLogCallbackData = data;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBGame::InitLoop() {
+HRESULT CBGame::initLoop() {
 	_viewportSP = -1;
 
 	_currentTime = CBPlatform::GetTime();
 
-	GetDebugMgr()->OnGameTick();
+	getDebugMgr()->OnGameTick();
 	_renderer->initLoop();
 	_soundMgr->initLoop();
 	UpdateMusicCrossfade();
@@ -643,7 +643,7 @@ HRESULT CBGame::InitLoop() {
 	}
 	//Game->LOG(0, "%d", _fps);
 
-	GetMousePos(&_mousePos);
+	getMousePos(&_mousePos);
 
 	_focusedWindow = NULL;
 	for (int i = _windows.GetSize() - 1; i >= 0; i--) {
@@ -662,25 +662,25 @@ HRESULT CBGame::InitLoop() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBGame::InitInput(HINSTANCE hInst, HWND hWnd) {
+HRESULT CBGame::initInput(HINSTANCE hInst, HWND hWnd) {
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBGame::GetSequence() {
+int CBGame::getSequence() {
 	return ++_sequence;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::SetOffset(int offsetX, int offsetY) {
+void CBGame::setOffset(int offsetX, int offsetY) {
 	_offsetX = offsetX;
 	_offsetY = offsetY;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::GetOffset(int *offsetX, int *offsetY) {
+void CBGame::getOffset(int *offsetX, int *offsetY) {
 	if (offsetX != NULL) *offsetX = _offsetX;
 	if (offsetY != NULL) *offsetY = _offsetY;
 }
@@ -1002,7 +1002,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Msg") == 0) {
 		stack->correctParams(1);
-		QuickMessage(stack->pop()->getString());
+		quickMessage(stack->pop()->getString());
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1130,7 +1130,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		uint32 LoopStart = (uint32)(ValLoopStart->isNULL() ? 0 : ValLoopStart->getInt());
 
 
-		if (FAILED(PlayMusic(channel, filename, Looping, LoopStart))) stack->pushBool(false);
+		if (FAILED(playMusic(channel, filename, Looping, LoopStart))) stack->pushBool(false);
 		else stack->pushBool(true);
 		return S_OK;
 	}
@@ -1147,7 +1147,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 			channel = stack->pop()->getInt();
 		}
 
-		if (FAILED(StopMusic(channel))) stack->pushBool(false);
+		if (FAILED(stopMusic(channel))) stack->pushBool(false);
 		else stack->pushBool(true);
 		return S_OK;
 	}
@@ -1164,7 +1164,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 			channel = stack->pop()->getInt();
 		}
 
-		if (FAILED(PauseMusic(channel))) stack->pushBool(false);
+		if (FAILED(pauseMusic(channel))) stack->pushBool(false);
 		else stack->pushBool(true);
 		return S_OK;
 	}
@@ -1180,7 +1180,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 			channel = stack->pop()->getInt();
 		}
 
-		if (FAILED(ResumeMusic(channel))) stack->pushBool(false);
+		if (FAILED(resumeMusic(channel))) stack->pushBool(false);
 		else stack->pushBool(true);
 		return S_OK;
 	}
@@ -1214,9 +1214,9 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 			channel = stack->pop()->getInt();
 		}
 
-		uint32 Time = stack->pop()->getInt();
+		uint32 time = stack->pop()->getInt();
 
-		if (FAILED(SetMusicStartTime(channel, Time))) stack->pushBool(false);
+		if (FAILED(setMusicStartTime(channel, time))) stack->pushBool(false);
 		else stack->pushBool(true);
 
 		return S_OK;
@@ -1930,7 +1930,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetWaitCursor") == 0) {
 		stack->correctParams(1);
-		if (SUCCEEDED(SetWaitCursor(stack->pop()->getString()))) stack->pushBool(true);
+		if (SUCCEEDED(setWaitCursor(stack->pop()->getString()))) stack->pushBool(true);
 		else stack->pushBool(false);
 
 		return S_OK;
@@ -2570,7 +2570,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MouseX") == 0) {
 		_mousePos.x = value->getInt();
-		ResetMousePos();
+		resetMousePos();
 		return S_OK;
 	}
 
@@ -2579,7 +2579,7 @@ HRESULT CBGame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MouseY") == 0) {
 		_mousePos.y = value->getInt();
-		ResetMousePos();
+		resetMousePos();
 		return S_OK;
 	}
 
@@ -2785,7 +2785,7 @@ HRESULT CBGame::DisplayQuickMsg() {
 
 #define MAX_QUICK_MSG 5
 //////////////////////////////////////////////////////////////////////////
-void CBGame::QuickMessage(const char *text) {
+void CBGame::quickMessage(const char *text) {
 	if (_quickMessages.GetSize() >= MAX_QUICK_MSG) {
 		delete _quickMessages[0];
 		_quickMessages.RemoveAt(0);
@@ -2795,7 +2795,7 @@ void CBGame::QuickMessage(const char *text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::QuickMessageForm(LPSTR fmt, ...) {
+void CBGame::quickMessageForm(LPSTR fmt, ...) {
 	char buff[256];
 	va_list va;
 
@@ -2803,7 +2803,7 @@ void CBGame::QuickMessageForm(LPSTR fmt, ...) {
 	vsprintf(buff, fmt, va);
 	va_end(va);
 
-	QuickMessage(buff);
+	quickMessage(buff);
 }
 
 
@@ -2844,7 +2844,7 @@ HRESULT CBGame::UnregisterObject(CBObject *object) {
 	for (i = 0; i < _regObjects.GetSize(); i++) {
 		if (_regObjects[i] == object) {
 			_regObjects.RemoveAt(i);
-			if (!_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(InvalidateValues, "CScValue", (void *)object);
+			if (!_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(invalidateValues, "CScValue", (void *)object);
 			delete object;
 			return S_OK;
 		}
@@ -2855,7 +2855,7 @@ HRESULT CBGame::UnregisterObject(CBObject *object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::InvalidateValues(void *value, void *data) {
+void CBGame::invalidateValues(void *value, void *data) {
 	CScValue *val = (CScValue *)value;
 	if (val->isNative() && val->getNative() == data) {
 		if (!val->_persistent && ((CBScriptable *)data)->_refCount == 1) {
@@ -3149,8 +3149,8 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "Debug") == 0) {
 		stack->correctParams(0);
 
-		if (Game->GetDebugMgr()->_enabled) {
-			Game->GetDebugMgr()->OnScriptHitBreakpoint(script);
+		if (Game->getDebugMgr()->_enabled) {
+			Game->getDebugMgr()->OnScriptHitBreakpoint(script);
 			script->Sleep(0);
 		}
 		stack->pushNULL();
@@ -3212,12 +3212,12 @@ HRESULT CBGame::showCursor() {
 	if (_cursorHidden) return S_OK;
 
 	if (!_interactive && Game->_state == GAME_RUNNING) {
-		if (_cursorNoninteractive) return DrawCursor(_cursorNoninteractive);
+		if (_cursorNoninteractive) return drawCursor(_cursorNoninteractive);
 	} else {
 		if (_activeObject && !FAILED(_activeObject->showCursor())) return S_OK;
 		else {
-			if (_activeObject && _activeCursor && _activeObject->getExtendedFlag("usable")) return DrawCursor(_activeCursor);
-			else if (_cursor) return DrawCursor(_cursor);
+			if (_activeObject && _activeCursor && _activeObject->getExtendedFlag("usable")) return drawCursor(_activeCursor);
+			else if (_cursor) return drawCursor(_cursor);
 		}
 	}
 	return E_FAIL;
@@ -3287,7 +3287,7 @@ HRESULT CBGame::LoadGame(int slot) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::LoadGame(const char *filename) {
 	LOG(0, "Loading game '%s'...", filename);
-	GetDebugMgr()->OnGameShutdown();
+	getDebugMgr()->OnGameShutdown();
 
 	HRESULT ret;
 
@@ -3322,7 +3322,7 @@ HRESULT CBGame::LoadGame(const char *filename) {
 	DisplayContent(true, false);
 	//_renderer->flip();
 
-	GetDebugMgr()->OnGameInit();
+	getDebugMgr()->OnGameInit();
 
 load_finish:
 	_dEBUG_AbsolutePathWarning = true;
@@ -3342,11 +3342,11 @@ load_finish:
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::InitAfterLoad() {
-	CSysClassRegistry::getInstance()->enumInstances(AfterLoadRegion,   "CBRegion",   NULL);
-	CSysClassRegistry::getInstance()->enumInstances(AfterLoadSubFrame, "CBSubFrame", NULL);
-	CSysClassRegistry::getInstance()->enumInstances(AfterLoadSound,    "CBSound",    NULL);
-	CSysClassRegistry::getInstance()->enumInstances(AfterLoadFont,     "CBFontTT",   NULL);
-	CSysClassRegistry::getInstance()->enumInstances(AfterLoadScript,   "CScScript",  NULL);
+	CSysClassRegistry::getInstance()->enumInstances(afterLoadRegion,   "CBRegion",   NULL);
+	CSysClassRegistry::getInstance()->enumInstances(afterLoadSubFrame, "CBSubFrame", NULL);
+	CSysClassRegistry::getInstance()->enumInstances(afterLoadSound,    "CBSound",    NULL);
+	CSysClassRegistry::getInstance()->enumInstances(afterLoadFont,     "CBFontTT",   NULL);
+	CSysClassRegistry::getInstance()->enumInstances(afterLoadScript,   "CScScript",  NULL);
 
 	_scEngine->RefreshScriptBreakpoints();
 	if (_store) _store->afterLoad();
@@ -3355,35 +3355,35 @@ HRESULT CBGame::InitAfterLoad() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::AfterLoadRegion(void *Region, void *Data) {
-	((CBRegion *)Region)->CreateRegion();
+void CBGame::afterLoadRegion(void *region, void *data) {
+	((CBRegion *)region)->CreateRegion();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::AfterLoadSubFrame(void *Subframe, void *Data) {
-	((CBSubFrame *)Subframe)->setSurfaceSimple();
+void CBGame::afterLoadSubFrame(void *subframe, void *data) {
+	((CBSubFrame *)subframe)->setSurfaceSimple();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::AfterLoadSound(void *Sound, void *Data) {
-	((CBSound *)Sound)->setSoundSimple();
+void CBGame::afterLoadSound(void *sound, void *data) {
+	((CBSound *)sound)->setSoundSimple();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::AfterLoadFont(void *Font, void *Data) {
-	((CBFont *)Font)->afterLoad();
+void CBGame::afterLoadFont(void *font, void *data) {
+	((CBFont *)font)->afterLoad();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::AfterLoadScript(void *script, void *data) {
+void CBGame::afterLoadScript(void *script, void *data) {
 	((CScScript *)script)->afterLoad();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::DisplayWindows(bool InGame) {
+HRESULT CBGame::DisplayWindows(bool inGame) {
 	HRESULT res;
 
 	int i;
@@ -3401,7 +3401,7 @@ HRESULT CBGame::DisplayWindows(bool InGame) {
 
 	// display all windows
 	for (i = 0; i < _windows.GetSize(); i++) {
-		if (_windows[i]->_visible && _windows[i]->_inGame == InGame) {
+		if (_windows[i]->_visible && _windows[i]->_inGame == inGame) {
 
 			res = _windows[i]->display();
 			if (FAILED(res)) return res;
@@ -3413,7 +3413,7 @@ HRESULT CBGame::DisplayWindows(bool InGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::PlayMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
+HRESULT CBGame::playMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return E_FAIL;
@@ -3439,7 +3439,7 @@ HRESULT CBGame::PlayMusic(int channel, const char *filename, bool looping, uint3
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::StopMusic(int channel) {
+HRESULT CBGame::stopMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return E_FAIL;
@@ -3455,7 +3455,7 @@ HRESULT CBGame::StopMusic(int channel) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::PauseMusic(int channel) {
+HRESULT CBGame::pauseMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return E_FAIL;
@@ -3467,7 +3467,7 @@ HRESULT CBGame::PauseMusic(int channel) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::ResumeMusic(int channel) {
+HRESULT CBGame::resumeMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return E_FAIL;
@@ -3479,21 +3479,21 @@ HRESULT CBGame::ResumeMusic(int channel) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::SetMusicStartTime(int channel, uint32 Time) {
+HRESULT CBGame::setMusicStartTime(int channel, uint32 time) {
 
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return E_FAIL;
 	}
 
-	_musicStartTime[channel] = Time;
-	if (_music[channel] && _music[channel]->isPlaying()) return _music[channel]->setPositionTime(Time);
+	_musicStartTime[channel] = time;
+	if (_music[channel] && _music[channel]->isPlaying()) return _music[channel]->setPositionTime(time);
 	else return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::LoadSettings(const char *filename) {
+HRESULT CBGame::loadSettings(const char *filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SETTINGS)
 	TOKEN_TABLE(GAME)
@@ -3712,7 +3712,7 @@ HRESULT CBGame::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::FocusWindow(CUIWindow *Window) {
+HRESULT CBGame::focusWindow(CUIWindow *Window) {
 	CUIWindow *Prev = _focusedWindow;
 
 	int i;
@@ -3726,7 +3726,7 @@ HRESULT CBGame::FocusWindow(CUIWindow *Window) {
 			}
 
 			if (Window->_mode == WINDOW_NORMAL && Prev != Window && Game->ValidObject(Prev) && (Prev->_mode == WINDOW_EXCLUSIVE || Prev->_mode == WINDOW_SYSTEM_EXCLUSIVE))
-				return FocusWindow(Prev);
+				return focusWindow(Prev);
 			else return S_OK;
 		}
 	}
@@ -3735,10 +3735,10 @@ HRESULT CBGame::FocusWindow(CUIWindow *Window) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::Freeze(bool IncludingMusic) {
+HRESULT CBGame::freeze(bool includingMusic) {
 	if (_freezeLevel == 0) {
 		_scEngine->PauseAll();
-		_soundMgr->pauseAll(IncludingMusic);
+		_soundMgr->pauseAll(includingMusic);
 		_origState = _state;
 		_origInteractive = _interactive;
 		_interactive = true;
@@ -3751,7 +3751,7 @@ HRESULT CBGame::Freeze(bool IncludingMusic) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::Unfreeze() {
+HRESULT CBGame::unfreeze() {
 	if (_freezeLevel == 0) return S_OK;
 
 	_freezeLevel--;
@@ -3957,17 +3957,17 @@ HRESULT CBGame::EmptySaveSlot(int Slot) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::SetActiveObject(CBObject *Obj) {
+HRESULT CBGame::setActiveObject(CBObject *obj) {
 	// not-active when game is frozen
-	if (Obj && !Game->_interactive && !Obj->_nonIntMouseEvents) {
-		Obj = NULL;
+	if (obj && !Game->_interactive && !obj->_nonIntMouseEvents) {
+		obj = NULL;
 	}
 
-	if (Obj == _activeObject) return S_OK;
+	if (obj == _activeObject) return S_OK;
 
 	if (_activeObject) _activeObject->applyEvent("MouseLeave");
 	//if(ValidObject(_activeObject)) _activeObject->applyEvent("MouseLeave");
-	_activeObject = Obj;
+	_activeObject = obj;
 	if (_activeObject) {
 		_activeObject->applyEvent("MouseEntry");
 	}
@@ -3977,19 +3977,19 @@ HRESULT CBGame::SetActiveObject(CBObject *Obj) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::PushViewport(CBViewport *Viewport) {
+HRESULT CBGame::pushViewport(CBViewport *viewport) {
 	_viewportSP++;
-	if (_viewportSP >= _viewportStack.GetSize()) _viewportStack.Add(Viewport);
-	else _viewportStack[_viewportSP] = Viewport;
+	if (_viewportSP >= _viewportStack.GetSize()) _viewportStack.Add(viewport);
+	else _viewportStack[_viewportSP] = viewport;
 
-	_renderer->setViewport(Viewport->getRect());
+	_renderer->setViewport(viewport->getRect());
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::PopViewport() {
+HRESULT CBGame::popViewport() {
 	_viewportSP--;
 	if (_viewportSP < -1) Game->LOG(0, "Fatal: Viewport stack underflow!");
 
@@ -4004,18 +4004,18 @@ HRESULT CBGame::PopViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::GetCurrentViewportRect(RECT *Rect, bool *Custom) {
-	if (Rect == NULL) return E_FAIL;
+HRESULT CBGame::getCurrentViewportRect(RECT *rect, bool *custom) {
+	if (rect == NULL) return E_FAIL;
 	else {
 		if (_viewportSP >= 0) {
-			CBPlatform::CopyRect(Rect, _viewportStack[_viewportSP]->getRect());
-			if (Custom) *Custom = true;
+			CBPlatform::CopyRect(rect, _viewportStack[_viewportSP]->getRect());
+			if (custom) *custom = true;
 		} else {
-			CBPlatform::SetRect(Rect,   _renderer->_drawOffsetX,
+			CBPlatform::SetRect(rect,   _renderer->_drawOffsetX,
 			                    _renderer->_drawOffsetY,
 			                    _renderer->_width + _renderer->_drawOffsetX,
 			                    _renderer->_height + _renderer->_drawOffsetY);
-			if (Custom) *Custom = false;
+			if (custom) *custom = false;
 		}
 
 		return S_OK;
@@ -4024,13 +4024,13 @@ HRESULT CBGame::GetCurrentViewportRect(RECT *Rect, bool *Custom) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::GetCurrentViewportOffset(int *OffsetX, int *OffsetY) {
+HRESULT CBGame::getCurrentViewportOffset(int *offsetX, int *offsetY) {
 	if (_viewportSP >= 0) {
-		if (OffsetX) *OffsetX = _viewportStack[_viewportSP]->_offsetX;
-		if (OffsetY) *OffsetY = _viewportStack[_viewportSP]->_offsetY;
+		if (offsetX) *offsetX = _viewportStack[_viewportSP]->_offsetX;
+		if (offsetY) *offsetY = _viewportStack[_viewportSP]->_offsetY;
 	} else {
-		if (OffsetX) *OffsetX = 0;
-		if (OffsetY) *OffsetY = 0;
+		if (offsetX) *offsetX = 0;
+		if (offsetY) *offsetY = 0;
 	}
 
 	return S_OK;
@@ -4038,26 +4038,26 @@ HRESULT CBGame::GetCurrentViewportOffset(int *OffsetX, int *OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::WindowLoadHook(CUIWindow *Win, char **Buf, char **Params) {
+HRESULT CBGame::WindowLoadHook(CUIWindow *win, char **Buf, char **Params) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *script, CScStack *stack, const char *name) {
+HRESULT CBGame::WindowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::SetInteractive(bool State) {
-	_interactive = State;
-	if (_transMgr) _transMgr->_origInteractive = State;
+void CBGame::SetInteractive(bool state) {
+	_interactive = state;
+	if (_transMgr) _transMgr->_origInteractive = state;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::ResetMousePos() {
+void CBGame::resetMousePos() {
 	POINT p;
 	p.x = _mousePos.x + _renderer->_drawOffsetX;
 	p.y = _mousePos.y + _renderer->_drawOffsetY;
@@ -4067,8 +4067,8 @@ void CBGame::ResetMousePos() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::SetResourceModule(HMODULE ResModule) {
-	_resourceModule = ResModule;
+void CBGame::setResourceModule(HMODULE resModule) {
+	_resourceModule = resModule;
 }
 
 
@@ -4082,14 +4082,14 @@ HRESULT CBGame::DisplayContent(bool update, bool displayAll) {
 HRESULT CBGame::DisplayContentSimple() {
 	// fill black
 	_renderer->fill(0, 0, 0);
-	if (_indicatorDisplay) DisplayIndicator();
+	if (_indicatorDisplay) displayIndicator();
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::DisplayIndicator() {
+HRESULT CBGame::displayIndicator() {
 	if (_saveLoadImage) {
 		RECT rc;
 		CBPlatform::SetRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
@@ -4180,7 +4180,7 @@ void CBGame::DEBUG_DumpClassRegistry() {
 
 	f->close();
 	delete f;
-	Game->QuickMessage("Classes dump completed.");
+	Game->quickMessage("Classes dump completed.");
 }
 
 
@@ -4202,7 +4202,7 @@ HRESULT CBGame::restoreDeviceObjects() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::SetWaitCursor(const char *filename) {
+HRESULT CBGame::setWaitCursor(const char *filename) {
 	delete _cursorNoninteractive;
 	_cursorNoninteractive = NULL;
 
@@ -4234,7 +4234,7 @@ HRESULT CBGame::StopVideo() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::DrawCursor(CBSprite *Cursor) {
+HRESULT CBGame::drawCursor(CBSprite *Cursor) {
 	if (!Cursor) return E_FAIL;
 	if (Cursor != _lastCursor) {
 		Cursor->Reset();
@@ -4253,8 +4253,8 @@ HRESULT CBGame::OnActivate(bool Activate, bool RefreshMouse) {
 
 	if (RefreshMouse) {
 		POINT p;
-		GetMousePos(&p);
-		SetActiveObject(_renderer->getObjectAt(p.x, p.y));
+		getMousePos(&p);
+		setActiveObject(_renderer->getObjectAt(p.x, p.y));
 	}
 
 	if (Activate) _soundMgr->resumeAll();
@@ -4443,18 +4443,18 @@ HRESULT CBGame::DisplayDebugInfo() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBDebugger *CBGame::GetDebugMgr() {
+CBDebugger *CBGame::getDebugMgr() {
 	if (!_debugMgr) _debugMgr = new CBDebugger(this);
 	return _debugMgr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::GetMousePos(POINT *Pos) {
-	CBPlatform::GetCursorPos(Pos);
+void CBGame::getMousePos(POINT *pos) {
+	CBPlatform::GetCursorPos(pos);
 
-	Pos->x -= _renderer->_drawOffsetX;
-	Pos->y -= _renderer->_drawOffsetY;
+	pos->x -= _renderer->_drawOffsetX;
+	pos->y -= _renderer->_drawOffsetY;
 
 	/*
 	// Windows can squish maximized window if it's larger than desktop
@@ -4470,19 +4470,19 @@ void CBGame::GetMousePos(POINT *Pos) {
 	*/
 
 	if (_mouseLockRect.left != 0 && _mouseLockRect.right != 0 && _mouseLockRect.top != 0 && _mouseLockRect.bottom != 0) {
-		if (!CBPlatform::PtInRect(&_mouseLockRect, *Pos)) {
-			Pos->x = MAX(_mouseLockRect.left, Pos->x);
-			Pos->y = MAX(_mouseLockRect.top, Pos->y);
+		if (!CBPlatform::PtInRect(&_mouseLockRect, *pos)) {
+			pos->x = MAX(_mouseLockRect.left, pos->x);
+			pos->y = MAX(_mouseLockRect.top, pos->y);
 
-			Pos->x = MIN(_mouseLockRect.right, Pos->x);
-			Pos->y = MIN(_mouseLockRect.bottom, Pos->y);
+			pos->x = MIN(_mouseLockRect.right, pos->x);
+			pos->y = MIN(_mouseLockRect.bottom, pos->y);
 
-			POINT NewPos = *Pos;
+			POINT newPos = *pos;
 
-			NewPos.x += _renderer->_drawOffsetX;
-			NewPos.y += _renderer->_drawOffsetY;
+			newPos.x += _renderer->_drawOffsetX;
+			newPos.y += _renderer->_drawOffsetY;
 
-			CBPlatform::SetCursorPos(NewPos.x, NewPos.y);
+			CBPlatform::SetCursorPos(newPos.x, newPos.y);
 		}
 	}
 }
@@ -4504,12 +4504,12 @@ HRESULT CBGame::OnScriptShutdown(CScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::IsLeftDoubleClick() {
+bool CBGame::isLeftDoubleClick() {
 	return IsDoubleClick(0);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::IsRightDoubleClick() {
+bool CBGame::isRightDoubleClick() {
 	return IsDoubleClick(1);
 }
 
@@ -4543,7 +4543,7 @@ bool CBGame::IsDoubleClick(int buttonIndex) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::AutoSaveOnExit() {
+void CBGame::autoSaveOnExit() {
 	_soundMgr->saveSettings();
 	_registry->SaveValues();
 
@@ -4554,7 +4554,7 @@ void CBGame::AutoSaveOnExit() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::AddMem(int bytes) {
+void CBGame::addMem(int bytes) {
 	_usedMem += bytes;
 }
 

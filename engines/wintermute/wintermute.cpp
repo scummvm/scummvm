@@ -189,7 +189,7 @@ int WinterMuteEngine::init() {
 	_game->initialize1();
 	
 	
-	if (FAILED(_game->LoadSettings("startup.settings"))) {
+	if (FAILED(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");
 		delete _game;
 		_game = NULL;
@@ -200,7 +200,7 @@ int WinterMuteEngine::init() {
 	
 	_game->initialize2();
 	
-	_game->GetDebugMgr()->OnGameInit();
+	_game->getDebugMgr()->OnGameInit();
 	_game->_scEngine->LoadBreakpoints();
 	
 	

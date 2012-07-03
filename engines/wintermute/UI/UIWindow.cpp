@@ -161,7 +161,7 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 		if (!_viewport) _viewport = new CBViewport(Game);
 		if (_viewport) {
 			_viewport->setRect(_posX + OffsetX, _posY + OffsetY, _posX + _width + OffsetX, _posY + _height + OffsetY);
-			Game->PushViewport(_viewport);
+			Game->pushViewport(_viewport);
 			PopViewport = true;
 		}
 	}
@@ -193,7 +193,7 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 
 	if (_alphaColor != 0) Game->_renderer->_forceAlphaColor = 0;
 
-	if (PopViewport) Game->PopViewport();
+	if (PopViewport) Game->popViewport();
 
 	return S_OK;
 }
@@ -1230,7 +1230,7 @@ HRESULT CUIWindow::goExclusive() {
 		_mode = WINDOW_EXCLUSIVE;
 		_visible = true;
 		_disable = false;
-		Game->FocusWindow(this);
+		Game->focusWindow(this);
 		return S_OK;
 	} else return E_FAIL;
 }
@@ -1246,9 +1246,9 @@ HRESULT CUIWindow::goSystemExclusive() {
 	_ready = false;
 	_visible = true;
 	_disable = false;
-	Game->FocusWindow(this);
+	Game->focusWindow(this);
 
-	Game->Freeze(_pauseMusic);
+	Game->freeze(_pauseMusic);
 	return S_OK;
 }
 
@@ -1256,7 +1256,7 @@ HRESULT CUIWindow::goSystemExclusive() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
-		Game->Unfreeze();
+		Game->unfreeze();
 	}
 
 	_mode = WINDOW_NORMAL;

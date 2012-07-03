@@ -357,7 +357,7 @@ HRESULT CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGam
 	_freezeGame = freezeGame;
 
 	if (!_playbackStarted && _freezeGame)
-		Game->Freeze(freezeMusic);
+		Game->freeze(freezeMusic);
 
 	_playbackStarted = false;
 	float width, height;
@@ -455,7 +455,7 @@ HRESULT CVidTheoraPlayer::stop() {
 	_theoraDecoder->close();
 	_state = THEORA_STATE_FINISHED;
 	if (_freezeGame) {
-		Game->Unfreeze();
+		Game->unfreeze();
 	}
 #if 0
 	if (m_Sound) m_Sound->Stop();
@@ -483,7 +483,7 @@ HRESULT CVidTheoraPlayer::update() {
 			warning("Finished movie");
 			_state = THEORA_STATE_FINISHED;
 			_playbackStarted = false;
-			if (_freezeGame) Game->Unfreeze();
+			if (_freezeGame) Game->unfreeze();
 		}
 		if (_state == THEORA_STATE_PLAYING) {
 			if (_theoraDecoder->getTimeToNextFrame() == 0) {
@@ -500,7 +500,7 @@ HRESULT CVidTheoraPlayer::update() {
 		// end playback
 		if (!_looping) {
 			_state = THEORA_STATE_FINISHED;
-			if (_freezeGame) Game->Unfreeze();
+			if (_freezeGame) Game->unfreeze();
 			return S_OK;
 		} else {
 			resetStream();
