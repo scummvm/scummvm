@@ -653,7 +653,7 @@ void GfxFrameout::kernelFrameout() {
 				if (view && view->isSci2Hires()) {
 					view->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
 					view->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
-				} else if (getSciVersion() == SCI_VERSION_2_1) {
+				} else if (getSciVersion() >= SCI_VERSION_2_1) {
 					_coordAdjuster->fromScriptToDisplay(itemEntry->y, itemEntry->x);
 					_coordAdjuster->fromScriptToDisplay(itemEntry->z, dummyX);
 				}
@@ -691,7 +691,7 @@ void GfxFrameout::kernelFrameout() {
 					if (view && view->isSci2Hires()) {
 						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
 						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
-					} else if (getSciVersion() == SCI_VERSION_2_1) {
+					} else if (getSciVersion() >= SCI_VERSION_2_1) {
 						_coordAdjuster->fromDisplayToScript(nsRect.top, nsRect.left);
 						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
 					}
