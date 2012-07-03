@@ -263,7 +263,7 @@ protected:
 
 	// Main Menu, Intro, Finale
 	virtual int mainMenu() = 0;
-	virtual void seq_xdeath() {};
+	virtual void seq_xdeath() {}
 	virtual void seq_playFinale() = 0;
 	bool _playFinale;
 
@@ -921,8 +921,8 @@ protected:
 	void usePotion(int charIndex, int weaponSlot);
 	void useWand(int charIndex, int weaponSlot);
 
-	virtual void turnUndeadAuto() {};
-	virtual void turnUndeadAutoHit() {};
+	virtual void turnUndeadAuto() {}
+	virtual void turnUndeadAutoHit() {}
 
 	void castSpell(int spell, int weaponSlot);
 	void removeCharacterEffect(int spell, int charIndex, int showWarning);
