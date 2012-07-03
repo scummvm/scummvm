@@ -154,22 +154,15 @@ void SegManager::deallocate(SegmentId seg) {
 		Script *scr = (Script *)mobj;
 		_scriptSegMap.erase(scr->getScriptNumber());
 		if (scr->getLocalsSegment()) {
-			// HACK: Check if the locals segment has already been deallocated.
-			// This happens sometimes in SQ4CD when resetting the segment
-			// manager: the locals for script 808 are somehow stored in a
-			// smaller segment than the script itself, so by the time the script
-			// is about to be freed, the locals block has already been freed.
-			// This isn't fatal, but it shouldn't be happening at all.
-			// FIXME: Check why this happens. Perhaps there's a bug in the
-			// script handling code?
-			if (!_heap[scr->getLocalsSegment()]) {
-				warning("SegManager::deallocate(): The locals block of script "
-						"%d has already been deallocated. Script segment: %d, "
-						"locals segment: %d", scr->getScriptNumber(), seg,
-						scr->getLocalsSegment());
-			} else {
+			// Check if the locals segment has already been deallocated.
+			// If the locals block has been stored in a segment with an ID
+			// smaller than the segment ID of the script itself, it will be
+			// already freed at this point. This can happen when scripts are
+			// uninstantiated and instantiated again: they retain their own
+			// segment ID, but are allocated a new locals segment, which can
+			// have an ID smaller than the segment of the script itself.
+			if (_heap[scr->getLocalsSegment()])
 				deallocate(scr->getLocalsSegment());
-			}
 		}
 	}
 
