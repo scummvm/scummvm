@@ -24,6 +24,7 @@
 #define GRIM_GFX_BASE_H
 
 #include "math/vector3d.h"
+#include "math/quat.h"
 
 #include "graphics/pixelformat.h"
 
@@ -269,6 +270,8 @@ protected:
 	bool _shadowModeActive;
 	Graphics::PixelFormat _pixelFormat;
 	SpecialtyMaterial _specialty[8];
+	Math::Vector3d _currentPos;
+	Math::Quaternion _currentQuat;
 };
 
 // Factory-like functions:

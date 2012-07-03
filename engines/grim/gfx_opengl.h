@@ -24,7 +24,6 @@
 #define GRIM_GFX_OPENGL_H
 
 #include "engines/grim/gfx_base.h"
-#include "math/quat.h"
 
 #ifdef USE_OPENGL
 
@@ -139,9 +138,6 @@ private:
 	GLuint _dimFragProgram;
 	GLint _maxLights;
 	float _alpha;
-
-	Math::Vector3d _currentPos;
-	Math::Quaternion _currentQuat;
 };
 
 } // end of namespace Grim
