@@ -186,7 +186,7 @@ int WinterMuteEngine::init() {
 	/*	bool AllowDirectDraw = _game->_registry->ReadBool("Debug", "AllowDirectDraw", false);*/
 	
 	// load general game settings
-	_game->Initialize1();
+	_game->initialize1();
 	
 	
 	if (FAILED(_game->LoadSettings("startup.settings"))) {
@@ -198,7 +198,7 @@ int WinterMuteEngine::init() {
 		return 2;
 	}
 	
-	_game->Initialize2();
+	_game->initialize2();
 	
 	_game->GetDebugMgr()->OnGameInit();
 	_game->_scEngine->LoadBreakpoints();
@@ -217,7 +217,7 @@ int WinterMuteEngine::init() {
 		return 3;
 	}
 	
-	_game->Initialize3();
+	_game->initialize3();
 	
 #ifdef __IPHONEOS__
 	SDL_AddEventWatch(CBPlatform::SDLEventWatcher, NULL);

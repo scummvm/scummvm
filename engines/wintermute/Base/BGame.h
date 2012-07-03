@@ -167,9 +167,9 @@ public:
 	uint32 _deltaTime;
 	CBFont *_systemFont;
 	CBFont *_videoFont;
-	HRESULT Initialize1();
-	HRESULT Initialize2();
-	HRESULT Initialize3();
+	HRESULT initialize1();
+	HRESULT initialize2();
+	HRESULT initialize3();
 	CBFileManager *_fileManager;
 	CBTransitionMgr *_transMgr;
 	CBDebugger *GetDebugMgr();
