@@ -174,7 +174,6 @@ public:
 			return SaveStateDescriptor(slot, desc);
 
 		SaveStateDescriptor ssd(slot, desc);
-		ssd.setDeletableFlag(true);
 
 		//checking for the thumbnail
 		if (Graphics::Surface *const thumb = Graphics::loadThumbnail(*in))
