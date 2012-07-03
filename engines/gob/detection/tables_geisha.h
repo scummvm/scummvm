@@ -32,7 +32,21 @@
 		"geisha",
 		"",
 		AD_ENTRY1s("disk1.stk", "6eebbb98ad90cd3c44549fc2ab30f632", 212153),
-		UNK_LANG,
+		EN_ANY,
+		kPlatformPC,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGeisha,
+	kFeaturesEGA | kFeaturesAdLib,
+	"disk1.stk", "intro.tot", 0
+},
+{
+	{
+		"geisha",
+		"",
+		AD_ENTRY1s("disk1.stk", "6eebbb98ad90cd3c44549fc2ab30f632", 212153),
+		DE_DEU,
 		kPlatformPC,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
@@ -63,7 +77,7 @@
 		"geisha",
 		"",
 		AD_ENTRY1s("disk1.stk", "e5892f00917c62423e93f5fd9920cf47", 208120),
-		UNK_LANG,
+		EN_ANY,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
