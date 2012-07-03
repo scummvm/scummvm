@@ -248,7 +248,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 #ifdef ENABLE_SCI32
 
 static const SciKernelMapSubEntry kSave_subops[] = {
-	{ SIG_SCI32,           0, MAP_CALL(SaveGame),                  "[r0]i[r0](r)",         NULL },
+	{ SIG_SCI32,           0, MAP_CALL(SaveGame),                  "[r0]i[r0](r0)",        NULL },
 	{ SIG_SCI32,           1, MAP_CALL(RestoreGame),               "[r0]i[r0]",            NULL },
 	{ SIG_SCI32,           2, MAP_CALL(GetSaveDir),                "(r*)",                 NULL },
 	{ SIG_SCI32,           3, MAP_CALL(CheckSaveGame),             ".*",                   NULL },
