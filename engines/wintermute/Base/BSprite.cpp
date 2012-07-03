@@ -507,30 +507,30 @@ HRESULT CBSprite::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetFrame
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "GetFrame") == 0) {
-		Stack->CorrectParams(1);
-		int Index = Stack->Pop()->GetInt(-1);
+	if (strcmp(name, "GetFrame") == 0) {
+		stack->CorrectParams(1);
+		int Index = stack->Pop()->GetInt(-1);
 		if (Index < 0 || Index >= _frames.GetSize()) {
-			Script->RuntimeError("Sprite.GetFrame: Frame index %d is out of range.", Index);
-			Stack->PushNULL();
-		} else Stack->PushNative(_frames[Index], true);
+			script->RuntimeError("Sprite.GetFrame: Frame index %d is out of range.", Index);
+			stack->PushNULL();
+		} else stack->PushNative(_frames[Index], true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "DeleteFrame") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "DeleteFrame") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 		if (Val->IsInt()) {
 			int Index = Val->GetInt(-1);
 			if (Index < 0 || Index >= _frames.GetSize()) {
-				Script->RuntimeError("Sprite.DeleteFrame: Frame index %d is out of range.", Index);
+				script->RuntimeError("Sprite.DeleteFrame: Frame index %d is out of range.", Index);
 			}
 		} else {
 			CBFrame *Frame = (CBFrame *)Val->GetNative();
@@ -543,26 +543,26 @@ HRESULT CBSprite::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 				}
 			}
 		}
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Reset
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Reset") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "Reset") == 0) {
+		stack->CorrectParams(0);
 		Reset();
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AddFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AddFrame") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "AddFrame") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
@@ -576,19 +576,19 @@ HRESULT CBSprite::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		}
 		_frames.Add(Frame);
 
-		Stack->PushNative(Frame, true);
+		stack->PushNative(Frame, true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// InsertFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "InsertFrame") == 0) {
-		Stack->CorrectParams(2);
-		int Index = Stack->Pop()->GetInt();
+	else if (strcmp(name, "InsertFrame") == 0) {
+		stack->CorrectParams(2);
+		int Index = stack->Pop()->GetInt();
 		if (Index < 0) Index = 0;
 
-		CScValue *Val = Stack->Pop();
+		CScValue *Val = stack->Pop();
 		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
@@ -602,42 +602,42 @@ HRESULT CBSprite::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		if (Index >= _frames.GetSize()) _frames.Add(Frame);
 		else _frames.InsertAt(Index, Frame);
 
-		Stack->PushNative(Frame, true);
+		stack->PushNative(Frame, true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Pause
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Pause") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "Pause") == 0) {
+		stack->CorrectParams(0);
 		_paused = true;
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Play
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Play") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "Play") == 0) {
+		stack->CorrectParams(0);
 		_paused = false;
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
-	else return CBScriptHolder::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CBScriptHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBSprite::scGetProperty(const char *Name) {
+CScValue *CBSprite::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("sprite");
 		return _scValue;
 	}
@@ -645,7 +645,7 @@ CScValue *CBSprite::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumFrames (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumFrames") == 0) {
+	else if (strcmp(name, "NumFrames") == 0) {
 		_scValue->SetInt(_frames.GetSize());
 		return _scValue;
 	}
@@ -653,7 +653,7 @@ CScValue *CBSprite::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CurrentFrame") == 0) {
+	else if (strcmp(name, "CurrentFrame") == 0) {
 		_scValue->SetInt(_currentFrame);
 		return _scValue;
 	}
@@ -661,7 +661,7 @@ CScValue *CBSprite::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PixelPerfect") == 0) {
+	else if (strcmp(name, "PixelPerfect") == 0) {
 		_scValue->SetBool(_precise);
 		return _scValue;
 	}
@@ -669,7 +669,7 @@ CScValue *CBSprite::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Looping
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Looping") == 0) {
+	else if (strcmp(name, "Looping") == 0) {
 		_scValue->SetBool(_looping);
 		return _scValue;
 	}
@@ -677,7 +677,7 @@ CScValue *CBSprite::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Owner (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Owner") == 0) {
+	else if (strcmp(name, "Owner") == 0) {
 		if (_owner == NULL) _scValue->SetNULL();
 		else _scValue->SetNative(_owner, true);
 		return _scValue;
@@ -686,7 +686,7 @@ CScValue *CBSprite::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Finished (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Finished") == 0) {
+	else if (strcmp(name, "Finished") == 0) {
 		_scValue->SetBool(_finished);
 		return _scValue;
 	}
@@ -694,21 +694,21 @@ CScValue *CBSprite::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Paused (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Paused") == 0) {
+	else if (strcmp(name, "Paused") == 0) {
 		_scValue->SetBool(_paused);
 		return _scValue;
 	}
 
-	else return CBScriptHolder::scGetProperty(Name);
+	else return CBScriptHolder::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBSprite::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "CurrentFrame") == 0) {
+	if (strcmp(name, "CurrentFrame") == 0) {
 		_currentFrame = Value->GetInt(0);
 		if (_currentFrame >= _frames.GetSize() || _currentFrame < 0) {
 			_currentFrame = -1;
@@ -720,7 +720,7 @@ HRESULT CBSprite::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PixelPerfect") == 0) {
+	else if (strcmp(name, "PixelPerfect") == 0) {
 		_precise = Value->GetBool();
 		return S_OK;
 	}
@@ -728,12 +728,12 @@ HRESULT CBSprite::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Looping
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Looping") == 0) {
+	else if (strcmp(name, "Looping") == 0) {
 		_looping = Value->GetBool();
 		return S_OK;
 	}
 
-	else return CBScriptHolder::scSetProperty(Name, Value);
+	else return CBScriptHolder::scSetProperty(name, Value);
 }
 
 

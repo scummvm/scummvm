@@ -210,20 +210,20 @@ HRESULT CBRegion::loadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// AddPoint
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "AddPoint") == 0) {
-		Stack->CorrectParams(2);
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
+	if (strcmp(name, "AddPoint") == 0) {
+		stack->CorrectParams(2);
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
 
 		_points.Add(new CBPoint(X, Y));
 		CreateRegion();
 
-		Stack->PushBool(true);
+		stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -231,18 +231,18 @@ HRESULT CBRegion::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// InsertPoint
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "InsertPoint") == 0) {
-		Stack->CorrectParams(3);
-		int Index = Stack->Pop()->GetInt();
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
+	else if (strcmp(name, "InsertPoint") == 0) {
+		stack->CorrectParams(3);
+		int Index = stack->Pop()->GetInt();
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
 
 		if (Index >= 0 && Index < _points.GetSize()) {
 			_points.InsertAt(Index, new CBPoint(X, Y));
 			CreateRegion();
 
-			Stack->PushBool(true);
-		} else Stack->PushBool(false);
+			stack->PushBool(true);
+		} else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -250,19 +250,19 @@ HRESULT CBRegion::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// SetPoint
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetPoint") == 0) {
-		Stack->CorrectParams(3);
-		int Index = Stack->Pop()->GetInt();
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
+	else if (strcmp(name, "SetPoint") == 0) {
+		stack->CorrectParams(3);
+		int Index = stack->Pop()->GetInt();
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
 
 		if (Index >= 0 && Index < _points.GetSize()) {
 			_points[Index]->x = X;
 			_points[Index]->y = Y;
 			CreateRegion();
 
-			Stack->PushBool(true);
-		} else Stack->PushBool(false);
+			stack->PushBool(true);
+		} else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -270,9 +270,9 @@ HRESULT CBRegion::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// RemovePoint
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "RemovePoint") == 0) {
-		Stack->CorrectParams(1);
-		int Index = Stack->Pop()->GetInt();
+	else if (strcmp(name, "RemovePoint") == 0) {
+		stack->CorrectParams(1);
+		int Index = stack->Pop()->GetInt();
 
 		if (Index >= 0 && Index < _points.GetSize()) {
 			delete _points[Index];
@@ -281,8 +281,8 @@ HRESULT CBRegion::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			_points.RemoveAt(Index);
 			CreateRegion();
 
-			Stack->PushBool(true);
-		} else Stack->PushBool(false);
+			stack->PushBool(true);
+		} else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -290,33 +290,33 @@ HRESULT CBRegion::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// GetPoint
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetPoint") == 0) {
-		Stack->CorrectParams(1);
-		int Index = Stack->Pop()->GetInt();
+	else if (strcmp(name, "GetPoint") == 0) {
+		stack->CorrectParams(1);
+		int Index = stack->Pop()->GetInt();
 
 		if (Index >= 0 && Index < _points.GetSize()) {
-			CScValue *Val = Stack->GetPushValue();
+			CScValue *Val = stack->GetPushValue();
 			if (Val) {
 				Val->SetProperty("X", _points[Index]->x);
 				Val->SetProperty("Y", _points[Index]->y);
 			}
-		} else Stack->PushNULL();
+		} else stack->PushNULL();
 
 		return S_OK;
 	}
 
-	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBRegion::scGetProperty(const char *Name) {
+CScValue *CBRegion::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("region");
 		return _scValue;
 	}
@@ -324,7 +324,7 @@ CScValue *CBRegion::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Name") == 0) {
+	else if (strcmp(name, "Name") == 0) {
 		_scValue->SetString(_name);
 		return _scValue;
 	}
@@ -332,7 +332,7 @@ CScValue *CBRegion::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Active") == 0) {
+	else if (strcmp(name, "Active") == 0) {
 		_scValue->SetBool(_active);
 		return _scValue;
 	}
@@ -340,21 +340,21 @@ CScValue *CBRegion::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumPoints
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumPoints") == 0) {
+	else if (strcmp(name, "NumPoints") == 0) {
 		_scValue->SetInt(_points.GetSize());
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(Name);
+	else return CBObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBRegion::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Name") == 0) {
+	if (strcmp(name, "Name") == 0) {
 		setName(Value->GetString());
 		return S_OK;
 	}
@@ -362,12 +362,12 @@ HRESULT CBRegion::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Active") == 0) {
+	else if (strcmp(name, "Active") == 0) {
 		_active = Value->GetBool();
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(Name, Value);
+	else return CBObject::scSetProperty(name, Value);
 }
 
 

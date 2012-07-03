@@ -38,9 +38,9 @@ class CSXString : public CBScriptable {
 public:
 	virtual int scCompare(CBScriptable *Val);
 	DECLARE_PERSISTENT(CSXString, CBScriptable)
-	CScValue *scGetProperty(const char *Name);
-	HRESULT scSetProperty(const char *Name, CScValue *Value);
-	HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	CScValue *scGetProperty(const char *name);
+	HRESULT scSetProperty(const char *name, CScValue *Value);
+	HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	void scSetString(const char *Val);
 	const char *scToString();
 	void SetStringVal(const char *Val);

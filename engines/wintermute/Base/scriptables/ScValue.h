@@ -43,7 +43,7 @@ class CBScriptable;
 
 class CScValue : public CBBase, public IWmeDebugProp {
 public:
-	HRESULT DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariableType Type, CScScript *Script, unsigned int ScopeID);
+	HRESULT DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariableType Type, CScScript *script, unsigned int ScopeID);
 
 	static int Compare(CScValue *Val1, CScValue *Val2);
 	static int CompareStrict(CScValue *Val1, CScValue *Val2);
@@ -55,7 +55,7 @@ public:
 	HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 	void SetValue(CScValue *Val);
 	bool _persistent;
-	bool PropExists(const char *Name);
+	bool PropExists(const char *name);
 	void Copy(CScValue *orig, bool CopyWhole = false);
 	void SetStringVal(const char *Val);
 	TValType GetType();
@@ -65,7 +65,7 @@ public:
 	const char *GetString();
 	void *GetMemBuffer();
 	CBScriptable *GetNative();
-	HRESULT DeleteProp(const char *Name);
+	HRESULT DeleteProp(const char *name);
 	void DeleteProps();
 	void CleanProps(bool IncludingNatives);
 	void SetBool(bool Val);
@@ -84,8 +84,8 @@ public:
 	bool IsFloat();
 	bool IsInt();
 	bool IsObject();
-	HRESULT SetProp(const char *Name, CScValue *Val, bool CopyWhole = false, bool SetAsConst = false);
-	CScValue *GetProp(const char *Name);
+	HRESULT SetProp(const char *name, CScValue *Val, bool CopyWhole = false, bool SetAsConst = false);
+	CScValue *GetProp(const char *name);
 	CBScriptable *_valNative;
 	CScValue *_valRef;
 protected:

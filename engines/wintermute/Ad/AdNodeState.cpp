@@ -68,10 +68,10 @@ CAdNodeState::~CAdNodeState() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::setName(const char *Name) {
+void CAdNodeState::setName(const char *name) {
 	delete[] _name;
 	_name = NULL;
-	CBUtils::SetString(&_name, Name);
+	CBUtils::SetString(&_name, name);
 }
 
 

@@ -129,8 +129,8 @@ public:
 	DECLARE_PERSISTENT(CSXStore, CBObject)
 	CSXStore(CBGame *inGame);
 	virtual ~CSXStore();
-	virtual CScValue *scGetProperty(const char *Name);
-	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual CScValue *scGetProperty(const char *name);
+	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 
 	void afterLoad();
 	void OnObjectDestroyed(CBScriptHolder *obj);

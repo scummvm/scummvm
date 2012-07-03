@@ -251,15 +251,15 @@ HRESULT CUIEntity::display(int OffsetX, int OffsetY) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetEntity
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "GetEntity") == 0) {
-		Stack->CorrectParams(0);
+	if (strcmp(name, "GetEntity") == 0) {
+		stack->CorrectParams(0);
 
-		if (_entity) Stack->PushNative(_entity, true);
-		else Stack->PushNULL();
+		if (_entity) stack->PushNative(_entity, true);
+		else stack->PushNULL();
 
 		return S_OK;
 	}
@@ -267,31 +267,31 @@ HRESULT CUIEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetEntity") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "SetEntity") == 0) {
+		stack->CorrectParams(1);
 
-		const char *Filename = Stack->Pop()->GetString();
+		const char *Filename = stack->Pop()->GetString();
 
 		if (SUCCEEDED(setEntity(Filename)))
-			Stack->PushBool(true);
+			stack->PushBool(true);
 		else
-			Stack->PushBool(false);
+			stack->PushBool(false);
 
 		return S_OK;
 	}
 
-	else return CUIObject::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CUIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIEntity::scGetProperty(const char *Name) {
+CScValue *CUIEntity::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("entity container");
 		return _scValue;
 	}
@@ -299,25 +299,25 @@ CScValue *CUIEntity::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Freezable") == 0) {
+	else if (strcmp(name, "Freezable") == 0) {
 		if (_entity) _scValue->SetBool(_entity->_freezable);
 		else _scValue->SetBool(false);
 		return _scValue;
 	}
 
-	else return CUIObject::scGetProperty(Name);
+	else return CUIObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CUIEntity::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Freezable") == 0) {
+	if (strcmp(name, "Freezable") == 0) {
 		if (_entity) _entity->makeFreezable(Value->GetBool());
 		return S_OK;
-	} else return CUIObject::scSetProperty(Name, Value);
+	} else return CUIObject::scSetProperty(name, Value);
 }
 
 

@@ -200,13 +200,13 @@ HRESULT CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdWaypointGroup::scGetProperty(const char *Name) {
+CScValue *CAdWaypointGroup::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("waypoint-group");
 		return _scValue;
 	}
@@ -214,26 +214,26 @@ CScValue *CAdWaypointGroup::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Active") == 0) {
+	else if (strcmp(name, "Active") == 0) {
 		_scValue->SetBool(_active);
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(Name);
+	else return CBObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdWaypointGroup::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Active") == 0) {
+	if (strcmp(name, "Active") == 0) {
 		_active = Value->GetBool();
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(Name, Value);
+	else return CBObject::scSetProperty(name, Value);
 }
 
 

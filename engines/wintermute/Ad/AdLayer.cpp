@@ -227,13 +227,13 @@ HRESULT CAdLayer::loadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "GetNode") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *val = Stack->Pop();
+	if (strcmp(name, "GetNode") == 0) {
+		stack->CorrectParams(1);
+		CScValue *val = stack->Pop();
 		int node = -1;
 
 		if (val->_type == VAL_INT) node = val->GetInt();
@@ -247,17 +247,17 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			}
 		}
 
-		if (node < 0 || node >= _nodes.GetSize()) Stack->PushNULL();
+		if (node < 0 || node >= _nodes.GetSize()) stack->PushNULL();
 		else {
 			switch (_nodes[node]->_type) {
 			case OBJECT_ENTITY:
-				Stack->PushNative(_nodes[node]->_entity, true);
+				stack->PushNative(_nodes[node]->_entity, true);
 				break;
 			case OBJECT_REGION:
-				Stack->PushNative(_nodes[node]->_region, true);
+				stack->PushNative(_nodes[node]->_region, true);
 				break;
 			default:
-				Stack->PushNULL();
+				stack->PushNULL();
 			}
 		}
 		return S_OK;
@@ -266,21 +266,21 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// AddRegion / AddEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AddRegion") == 0 || strcmp(Name, "AddEntity") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "AddRegion") == 0 || strcmp(name, "AddEntity") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CAdSceneNode *Node = new CAdSceneNode(Game);
-		if (strcmp(Name, "AddRegion") == 0) {
+		if (strcmp(name, "AddRegion") == 0) {
 			CAdRegion *Region = new CAdRegion(Game);
 			if (!Val->IsNULL()) Region->setName(Val->GetString());
 			Node->setRegion(Region);
-			Stack->PushNative(Region, true);
+			stack->PushNative(Region, true);
 		} else {
 			CAdEntity *Entity = new CAdEntity(Game);
 			if (!Val->IsNULL()) Entity->setName(Val->GetString());
 			Node->setEntity(Entity);
-			Stack->PushNative(Entity, true);
+			stack->PushNative(Entity, true);
 		}
 		_nodes.Add(Node);
 		return S_OK;
@@ -289,22 +289,22 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// InsertRegion / InsertEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "InsertRegion") == 0 || strcmp(Name, "InsertEntity") == 0) {
-		Stack->CorrectParams(2);
-		int Index = Stack->Pop()->GetInt();
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "InsertRegion") == 0 || strcmp(name, "InsertEntity") == 0) {
+		stack->CorrectParams(2);
+		int Index = stack->Pop()->GetInt();
+		CScValue *Val = stack->Pop();
 
 		CAdSceneNode *Node = new CAdSceneNode(Game);
-		if (strcmp(Name, "InsertRegion") == 0) {
+		if (strcmp(name, "InsertRegion") == 0) {
 			CAdRegion *Region = new CAdRegion(Game);
 			if (!Val->IsNULL()) Region->setName(Val->GetString());
 			Node->setRegion(Region);
-			Stack->PushNative(Region, true);
+			stack->PushNative(Region, true);
 		} else {
 			CAdEntity *Entity = new CAdEntity(Game);
 			if (!Val->IsNULL()) Entity->setName(Val->GetString());
 			Node->setEntity(Entity);
-			Stack->PushNative(Entity, true);
+			stack->PushNative(Entity, true);
 		}
 		if (Index < 0) Index = 0;
 		if (Index <= _nodes.GetSize() - 1) _nodes.InsertAt(Index, Node);
@@ -316,9 +316,9 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteNode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "DeleteNode") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "DeleteNode") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CAdSceneNode *ToDelete = NULL;
 		if (Val->IsNative()) {
@@ -336,7 +336,7 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			}
 		}
 		if (ToDelete == NULL) {
-			Stack->PushBool(false);
+			stack->PushBool(false);
 			return S_OK;
 		}
 
@@ -348,22 +348,22 @@ HRESULT CAdLayer::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 				break;
 			}
 		}
-		Stack->PushBool(true);
+		stack->PushBool(true);
 		return S_OK;
 	}
 
-	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdLayer::scGetProperty(const char *Name) {
+CScValue *CAdLayer::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("layer");
 		return _scValue;
 	}
@@ -371,7 +371,7 @@ CScValue *CAdLayer::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumNodes (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumNodes") == 0) {
+	else if (strcmp(name, "NumNodes") == 0) {
 		_scValue->SetInt(_nodes.GetSize());
 		return _scValue;
 	}
@@ -379,7 +379,7 @@ CScValue *CAdLayer::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Width") == 0) {
+	else if (strcmp(name, "Width") == 0) {
 		_scValue->SetInt(_width);
 		return _scValue;
 	}
@@ -387,7 +387,7 @@ CScValue *CAdLayer::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Height") == 0) {
+	else if (strcmp(name, "Height") == 0) {
 		_scValue->SetInt(_height);
 		return _scValue;
 	}
@@ -395,7 +395,7 @@ CScValue *CAdLayer::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Main (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Main") == 0) {
+	else if (strcmp(name, "Main") == 0) {
 		_scValue->SetBool(_main);
 		return _scValue;
 	}
@@ -403,7 +403,7 @@ CScValue *CAdLayer::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CloseUp
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CloseUp") == 0) {
+	else if (strcmp(name, "CloseUp") == 0) {
 		_scValue->SetBool(_closeUp);
 		return _scValue;
 	}
@@ -411,21 +411,21 @@ CScValue *CAdLayer::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Active") == 0) {
+	else if (strcmp(name, "Active") == 0) {
 		_scValue->SetBool(_active);
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(Name);
+	else return CBObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdLayer::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Name") == 0) {
+	if (strcmp(name, "Name") == 0) {
 		setName(Value->GetString());
 		return S_OK;
 	}
@@ -433,7 +433,7 @@ HRESULT CAdLayer::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CloseUp
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CloseUp") == 0) {
+	else if (strcmp(name, "CloseUp") == 0) {
 		_closeUp = Value->GetBool();
 		return S_OK;
 	}
@@ -441,7 +441,7 @@ HRESULT CAdLayer::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Width") == 0) {
+	else if (strcmp(name, "Width") == 0) {
 		_width = Value->GetInt();
 		if (_width < 0) _width = 0;
 		return S_OK;
@@ -450,7 +450,7 @@ HRESULT CAdLayer::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Height") == 0) {
+	else if (strcmp(name, "Height") == 0) {
 		_height = Value->GetInt();
 		if (_height < 0) _height = 0;
 		return S_OK;
@@ -459,7 +459,7 @@ HRESULT CAdLayer::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Active") == 0) {
+	else if (strcmp(name, "Active") == 0) {
 		bool b = Value->GetBool();
 		if (b == false && _main) {
 			Game->LOG(0, "Warning: cannot deactivate scene's main layer");
@@ -467,7 +467,7 @@ HRESULT CAdLayer::scSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(Name, Value);
+	else return CBObject::scSetProperty(name, Value);
 }
 
 

@@ -58,189 +58,189 @@ CSXMath::~CSXMath() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMath::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Abs
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Abs") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(fabs(Stack->Pop()->GetFloat()));
+	if (strcmp(name, "Abs") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(fabs(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Acos
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Acos") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(acos(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "Acos") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(acos(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Asin
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Asin") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(asin(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "Asin") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(asin(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Atan
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Atan") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(atan(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "Atan") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(atan(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Atan2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Atan2") == 0) {
-		Stack->CorrectParams(2);
-		double y = Stack->Pop()->GetFloat();
-		double x = Stack->Pop()->GetFloat();
-		Stack->PushFloat(atan2(y, x));
+	else if (strcmp(name, "Atan2") == 0) {
+		stack->CorrectParams(2);
+		double y = stack->Pop()->GetFloat();
+		double x = stack->Pop()->GetFloat();
+		stack->PushFloat(atan2(y, x));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Ceil
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Ceil") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(ceil(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "Ceil") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(ceil(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Cos
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Cos") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(cos(DegreeToRadian(Stack->Pop()->GetFloat())));
+	else if (strcmp(name, "Cos") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(cos(DegreeToRadian(stack->Pop()->GetFloat())));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Cosh
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Cosh") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(cosh(DegreeToRadian(Stack->Pop()->GetFloat())));
+	else if (strcmp(name, "Cosh") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(cosh(DegreeToRadian(stack->Pop()->GetFloat())));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Exp
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Exp") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(exp(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "Exp") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(exp(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Floor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Floor") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(floor(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "Floor") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(floor(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Log
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Log") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(log(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "Log") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(log(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Log10
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Log10") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(log10(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "Log10") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(log10(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Pow
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Pow") == 0) {
-		Stack->CorrectParams(2);
-		double x = Stack->Pop()->GetFloat();
-		double y = Stack->Pop()->GetFloat();
+	else if (strcmp(name, "Pow") == 0) {
+		stack->CorrectParams(2);
+		double x = stack->Pop()->GetFloat();
+		double y = stack->Pop()->GetFloat();
 
-		Stack->PushFloat(pow(x, y));
+		stack->PushFloat(pow(x, y));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Sin
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Sin") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(sin(DegreeToRadian(Stack->Pop()->GetFloat())));
+	else if (strcmp(name, "Sin") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(sin(DegreeToRadian(stack->Pop()->GetFloat())));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Sinh
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Sinh") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(sinh(DegreeToRadian(Stack->Pop()->GetFloat())));
+	else if (strcmp(name, "Sinh") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(sinh(DegreeToRadian(stack->Pop()->GetFloat())));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Tan
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Tan") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(tan(DegreeToRadian(Stack->Pop()->GetFloat())));
+	else if (strcmp(name, "Tan") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(tan(DegreeToRadian(stack->Pop()->GetFloat())));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Tanh
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Tanh") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(tanh(DegreeToRadian(Stack->Pop()->GetFloat())));
+	else if (strcmp(name, "Tanh") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(tanh(DegreeToRadian(stack->Pop()->GetFloat())));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Sqrt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Sqrt") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(sqrt(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "Sqrt") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(sqrt(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// DegToRad
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "DegToRad") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(DegreeToRadian(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "DegToRad") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(DegreeToRadian(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// RadToDeg
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "RadToDeg") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushFloat(RadianToDegree(Stack->Pop()->GetFloat()));
+	else if (strcmp(name, "RadToDeg") == 0) {
+		stack->CorrectParams(1);
+		stack->PushFloat(RadianToDegree(stack->Pop()->GetFloat()));
 		return S_OK;
 	}
 
@@ -249,13 +249,13 @@ HRESULT CSXMath::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXMath::scGetProperty(const char *Name) {
+CScValue *CSXMath::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("math");
 		return _scValue;
 	}
@@ -263,7 +263,7 @@ CScValue *CSXMath::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PI
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PI") == 0) {
+	else if (strcmp(name, "PI") == 0) {
 		_scValue->SetFloat(PI);
 		return _scValue;
 	}

@@ -448,9 +448,9 @@ HRESULT CBFileManager::registerPackage(const Common::String &Filename , bool Sea
 		pkg->_boundToExe = BoundToExe;
 
 		// read package info
-		byte NameLength = package->readByte();
-		pkg->_name = new char[NameLength];
-		package->read(pkg->_name, NameLength);
+		byte nameLength = package->readByte();
+		pkg->_name = new char[nameLength];
+		package->read(pkg->_name, nameLength);
 		pkg->_cD = package->readByte();
 		pkg->_priority = hdr.Priority;
 
@@ -462,26 +462,26 @@ HRESULT CBFileManager::registerPackage(const Common::String &Filename , bool Sea
 		uint32 NumFiles = package->readUint32LE();
 
 		for (uint32 j = 0; j < NumFiles; j++) {
-			char *Name;
+			char *name;
 			uint32 Offset, Length, CompLength, Flags, TimeDate1, TimeDate2;
 
-			NameLength = package->readByte();
-			Name = new char[NameLength];
-			package->read(Name, NameLength);
+			nameLength = package->readByte();
+			name = new char[nameLength];
+			package->read(name, nameLength);
 
 			// v2 - xor name
 			if (hdr.PackageVersion == PACKAGE_VERSION) {
-				for (int k = 0; k < NameLength; k++) {
-					((byte *)Name)[k] ^= 'D';
+				for (int k = 0; k < nameLength; k++) {
+					((byte *)name)[k] ^= 'D';
 				}
 			}
 
 			// some old version of ProjectMan writes invalid directory entries
 			// so at least prevent strupr from corrupting memory
-			Name[NameLength - 1] = '\0';
+			name[nameLength - 1] = '\0';
 
 
-			CBPlatform::strupr(Name);
+			CBPlatform::strupr(name);
 
 			Offset = package->readUint32LE();
 			Offset += AbsoluteOffset;
@@ -493,7 +493,7 @@ HRESULT CBFileManager::registerPackage(const Common::String &Filename , bool Sea
 				TimeDate1 = package->readUint32LE();
 				TimeDate2 = package->readUint32LE();
 			}
-			_filesIter = _files.find(Name);
+			_filesIter = _files.find(name);
 			if (_filesIter == _files.end()) {
 				CBFileEntry *file = new CBFileEntry(Game);
 				file->_package = pkg;
@@ -502,7 +502,7 @@ HRESULT CBFileManager::registerPackage(const Common::String &Filename , bool Sea
 				file->_compressedLength = CompLength;
 				file->_flags = Flags;
 
-				_files[Name] = file;
+				_files[name] = file;
 			} else {
 				// current package has lower CD number or higher priority, than the registered
 				if (pkg->_cD < _filesIter->_value->_package->_cD || pkg->_priority > _filesIter->_value->_package->_priority) {
@@ -513,7 +513,7 @@ HRESULT CBFileManager::registerPackage(const Common::String &Filename , bool Sea
 					_filesIter->_value->_flags = Flags;
 				}
 			}
-			delete [] Name;
+			delete [] name;
 		}
 	}
 
@@ -522,12 +522,12 @@ HRESULT CBFileManager::registerPackage(const Common::String &Filename , bool Sea
 	return S_OK;
 }
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::registerPackage(const char *Path, const char *Name, bool SearchSignature) {
+HRESULT CBFileManager::registerPackage(const char *Path, const char *name, bool SearchSignature) {
 // TODO
 	error("Implement RegisterPackage, this is the old one");
 #if 0
 	char Filename[MAX_PATH];
-	sprintf(Filename, "%s%s", Path, Name);
+	sprintf(Filename, "%s%s", Path, name);
 
 	FILE *f = fopen(Filename, "rb");
 	if (!f) {
@@ -577,10 +577,10 @@ HRESULT CBFileManager::registerPackage(const char *Path, const char *Name, bool 
 		pkg->_boundToExe = BoundToExe;
 
 		// read package info
-		byte NameLength;
-		fread(&NameLength, sizeof(byte), 1, f);
-		pkg->_name = new char[NameLength];
-		fread(pkg->_name, NameLength, 1, f);
+		byte nameLength;
+		fread(&nameLength, sizeof(byte), 1, f);
+		pkg->_name = new char[nameLength];
+		fread(pkg->_name, nameLength, 1, f);
 		fread(&pkg->_cD, sizeof(byte), 1, f);
 		pkg->_priority = hdr.Priority;
 
@@ -593,26 +593,26 @@ HRESULT CBFileManager::registerPackage(const char *Path, const char *Name, bool 
 		fread(&NumFiles, sizeof(uint32), 1, f);
 
 		for (int j = 0; j < NumFiles; j++) {
-			char *Name;
+			char *name;
 			uint32 Offset, Length, CompLength, Flags, TimeDate1, TimeDate2;
 
-			fread(&NameLength, sizeof(byte), 1, f);
-			Name = new char[NameLength];
-			fread(Name, NameLength, 1, f);
+			fread(&nameLength, sizeof(byte), 1, f);
+			name = new char[nameLength];
+			fread(name, nameLength, 1, f);
 
 			// v2 - xor name
 			if (hdr.PackageVersion == PACKAGE_VERSION) {
-				for (int k = 0; k < NameLength; k++) {
-					((byte *)Name)[k] ^= 'D';
+				for (int k = 0; k < nameLength; k++) {
+					((byte *)name)[k] ^= 'D';
 				}
 			}
 
 			// some old version of ProjectMan writes invalid directory entries
 			// so at least prevent strupr from corrupting memory
-			Name[NameLength - 1] = '\0';
+			name[nameLength - 1] = '\0';
 
 
-			CBPlatform::strupr(Name);
+			CBPlatform::strupr(name);
 
 			fread(&Offset, sizeof(uint32), 1, f);
 			Offset += AbsoluteOffset;
@@ -624,7 +624,7 @@ HRESULT CBFileManager::registerPackage(const char *Path, const char *Name, bool 
 				fread(&TimeDate1, sizeof(uint32), 1, f);
 				fread(&TimeDate2, sizeof(uint32), 1, f);
 			}
-			_filesIter = _files.find(Name);
+			_filesIter = _files.find(name);
 			if (_filesIter == _files.end()) {
 				CBFileEntry *file = new CBFileEntry(Game);
 				file->_package = pkg;
@@ -633,7 +633,7 @@ HRESULT CBFileManager::registerPackage(const char *Path, const char *Name, bool 
 				file->_compressedLength = CompLength;
 				file->_flags = Flags;
 
-				_files[Name] = file;
+				_files[name] = file;
 			} else {
 				// current package has lower CD number or higher priority, than the registered
 				if (pkg->_cD < _filesIter->_value->_package->_cD || pkg->_priority > _filesIter->_value->_package->_priority) {
@@ -644,7 +644,7 @@ HRESULT CBFileManager::registerPackage(const char *Path, const char *Name, bool 
 					_filesIter->_value->_flags = Flags;
 				}
 			}
-			delete [] Name;
+			delete [] name;
 		}
 	}
 
@@ -666,7 +666,7 @@ bool CBFileManager::isValidPackage(const AnsiString &fileName) const {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::File *CBFileManager::openPackage(const Common::String &Name) {
+Common::File *CBFileManager::openPackage(const Common::String &name) {
 	//TODO: Is it really necessary to do this when we have the ScummVM-system?
 
 	//RestoreCurrentDir();
@@ -675,40 +675,40 @@ Common::File *CBFileManager::openPackage(const Common::String &Name) {
 	char Filename[MAX_PATH];
 
 	for (int i = 0; i < _packagePaths.GetSize(); i++) {
-		sprintf(Filename, "%s%s.%s", _packagePaths[i], Name.c_str(), PACKAGE_EXTENSION);
+		sprintf(Filename, "%s%s.%s", _packagePaths[i], name.c_str(), PACKAGE_EXTENSION);
 		ret->open(Filename);
 		if (ret->isOpen()) {
 			return ret;
 		}
 	}
 
-	sprintf(Filename, "%s.%s", Name.c_str(), PACKAGE_EXTENSION);
+	sprintf(Filename, "%s.%s", name.c_str(), PACKAGE_EXTENSION);
 	ret->open(Filename);
 	if (ret->isOpen()) {
 		return ret;
 	}
-	warning("CBFileManager::OpenPackage - Couldn't load file %s", Name.c_str());
+	warning("CBFileManager::OpenPackage - Couldn't load file %s", name.c_str());
 	delete ret;
 	return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-Common::File *CBFileManager::openSingleFile(const Common::String &Name) {
+Common::File *CBFileManager::openSingleFile(const Common::String &name) {
 	restoreCurrentDir();
 
 	Common::File *ret = NULL;
 	char Filename[MAX_PATH];
 
 	for (int i = 0; i < _singlePaths.GetSize(); i++) {
-		sprintf(Filename, "%s%s", _singlePaths[i], Name.c_str());
+		sprintf(Filename, "%s%s", _singlePaths[i], name.c_str());
 		ret->open(Filename);
 		if (ret->isOpen())
 			return ret;
 	}
 
 	// didn't find in search paths, try to open directly
-	ret->open(Name);
+	ret->open(name);
 	if (ret->isOpen()) {
 		return ret;
 	} else {

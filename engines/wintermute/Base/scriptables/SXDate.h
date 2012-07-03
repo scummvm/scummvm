@@ -40,9 +40,9 @@ public:
 	DECLARE_PERSISTENT(CSXDate, CBScriptable)
 	CSXDate(CBGame *inGame, CScStack *Stack);
 	virtual ~CSXDate();
-	CScValue *scGetProperty(const char *Name);
-	HRESULT scSetProperty(const char *Name, CScValue *Value);
-	HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	CScValue *scGetProperty(const char *name);
+	HRESULT scSetProperty(const char *name, CScValue *Value);
+	HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	const char *scToString();
 	char *_string;
 	TimeDate _tm;

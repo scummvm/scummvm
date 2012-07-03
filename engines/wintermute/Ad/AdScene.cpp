@@ -1248,20 +1248,20 @@ void CAdScene::skipTo(int OffsetX, int OffsetY) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LoadActor
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "LoadActor") == 0) {
-		Stack->CorrectParams(1);
+	if (strcmp(name, "LoadActor") == 0) {
+		stack->CorrectParams(1);
 		CAdActor *act = new CAdActor(Game);
-		if (act && SUCCEEDED(act->loadFile(Stack->Pop()->GetString()))) {
+		if (act && SUCCEEDED(act->loadFile(stack->Pop()->GetString()))) {
 			addObject(act);
-			Stack->PushNative(act, true);
+			stack->PushNative(act, true);
 		} else {
 			delete act;
 			act = NULL;
-			Stack->PushNULL();
+			stack->PushNULL();
 		}
 		return S_OK;
 	}
@@ -1269,16 +1269,16 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// LoadEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "LoadEntity") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "LoadEntity") == 0) {
+		stack->CorrectParams(1);
 		CAdEntity *ent = new CAdEntity(Game);
-		if (ent && SUCCEEDED(ent->loadFile(Stack->Pop()->GetString()))) {
+		if (ent && SUCCEEDED(ent->loadFile(stack->Pop()->GetString()))) {
 			addObject(ent);
-			Stack->PushNative(ent, true);
+			stack->PushNative(ent, true);
 		} else {
 			delete ent;
 			ent = NULL;
-			Stack->PushNULL();
+			stack->PushNULL();
 		}
 		return S_OK;
 	}
@@ -1286,85 +1286,85 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// CreateEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CreateEntity") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "CreateEntity") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CAdEntity *Ent = new CAdEntity(Game);
 		addObject(Ent);
 		if (!Val->IsNULL()) Ent->setName(Val->GetString());
-		Stack->PushNative(Ent, true);
+		stack->PushNative(Ent, true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// UnloadObject / UnloadActor / UnloadEntity / UnloadActor3D / DeleteEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "UnloadObject") == 0 || strcmp(Name, "UnloadActor") == 0 || strcmp(Name, "UnloadEntity") == 0 || strcmp(Name, "UnloadActor3D") == 0 || strcmp(Name, "DeleteEntity") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *val = Stack->Pop();
+	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "UnloadActor3D") == 0 || strcmp(name, "DeleteEntity") == 0) {
+		stack->CorrectParams(1);
+		CScValue *val = stack->Pop();
 		CAdObject *obj = (CAdObject *)val->GetNative();
 		removeObject(obj);
 		if (val->GetType() == VAL_VARIABLE_REF) val->SetNULL();
 
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SkipTo
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SkipTo") == 0) {
-		Stack->CorrectParams(2);
-		CScValue *val1 = Stack->Pop();
-		CScValue *val2 = Stack->Pop();
+	else if (strcmp(name, "SkipTo") == 0) {
+		stack->CorrectParams(2);
+		CScValue *val1 = stack->Pop();
+		CScValue *val2 = stack->Pop();
 		if (val1->IsNative()) {
 			skipToObject((CBObject *)val1->GetNative());
 		} else {
 			skipTo(val1->GetInt(), val2->GetInt());
 		}
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollTo / ScrollToAsync
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScrollTo") == 0 || strcmp(Name, "ScrollToAsync") == 0) {
-		Stack->CorrectParams(2);
-		CScValue *val1 = Stack->Pop();
-		CScValue *val2 = Stack->Pop();
+	else if (strcmp(name, "ScrollTo") == 0 || strcmp(name, "ScrollToAsync") == 0) {
+		stack->CorrectParams(2);
+		CScValue *val1 = stack->Pop();
+		CScValue *val2 = stack->Pop();
 		if (val1->IsNative()) {
 			scrollToObject((CBObject *)val1->GetNative());
 		} else {
 			scrollTo(val1->GetInt(), val2->GetInt());
 		}
-		if (strcmp(Name, "ScrollTo") == 0) Script->WaitForExclusive(this);
-		Stack->PushNULL();
+		if (strcmp(name, "ScrollTo") == 0) script->WaitForExclusive(this);
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetLayer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetLayer") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *val = Stack->Pop();
+	else if (strcmp(name, "GetLayer") == 0) {
+		stack->CorrectParams(1);
+		CScValue *val = stack->Pop();
 		if (val->IsInt()) {
 			int layer = val->GetInt();
-			if (layer < 0 || layer >= _layers.GetSize()) Stack->PushNULL();
-			else Stack->PushNative(_layers[layer], true);
+			if (layer < 0 || layer >= _layers.GetSize()) stack->PushNULL();
+			else stack->PushNative(_layers[layer], true);
 		} else {
 			const char *LayerName = val->GetString();
 			bool LayerFound = false;
 			for (int i = 0; i < _layers.GetSize(); i++) {
 				if (scumm_stricmp(LayerName, _layers[i]->_name) == 0) {
-					Stack->PushNative(_layers[i], true);
+					stack->PushNative(_layers[i], true);
 					LayerFound = true;
 					break;
 				}
 			}
-			if (!LayerFound) Stack->PushNULL();
+			if (!LayerFound) stack->PushNULL();
 		}
 		return S_OK;
 	}
@@ -1372,24 +1372,24 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// GetWaypointGroup
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetWaypointGroup") == 0) {
-		Stack->CorrectParams(1);
-		int group = Stack->Pop()->GetInt();
-		if (group < 0 || group >= _waypointGroups.GetSize()) Stack->PushNULL();
-		else Stack->PushNative(_waypointGroups[group], true);
+	else if (strcmp(name, "GetWaypointGroup") == 0) {
+		stack->CorrectParams(1);
+		int group = stack->Pop()->GetInt();
+		if (group < 0 || group >= _waypointGroups.GetSize()) stack->PushNULL();
+		else stack->PushNative(_waypointGroups[group], true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetNode") == 0) {
-		Stack->CorrectParams(1);
-		const char *nodeName = Stack->Pop()->GetString();
+	else if (strcmp(name, "GetNode") == 0) {
+		stack->CorrectParams(1);
+		const char *nodeName = stack->Pop()->GetString();
 
 		CBObject *node = getNodeByName(nodeName);
-		if (node) Stack->PushNative((CBScriptable *)node, true);
-		else Stack->PushNULL();
+		if (node) stack->PushNative((CBScriptable *)node, true);
+		else stack->PushNULL();
 
 		return S_OK;
 	}
@@ -1397,9 +1397,9 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// GetFreeNode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetFreeNode") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "GetFreeNode") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CAdObject *Ret = NULL;
 		if (Val->IsInt()) {
@@ -1414,8 +1414,8 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 				}
 			}
 		}
-		if (Ret) Stack->PushNative(Ret, true);
-		else Stack->PushNULL();
+		if (Ret) stack->PushNative(Ret, true);
+		else stack->PushNULL();
 
 		return S_OK;
 	}
@@ -1423,11 +1423,11 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// GetRegionAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetRegionAt") == 0) {
-		Stack->CorrectParams(3);
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "GetRegionAt") == 0) {
+		stack->CorrectParams(3);
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
+		CScValue *Val = stack->Pop();
 
 		bool IncludeDecors = false;
 		if (!Val->IsNULL()) IncludeDecors = Val->GetBool();
@@ -1438,142 +1438,142 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 				if (Node->_type == OBJECT_REGION && Node->_region->_active && Node->_region->PointInRegion(X, Y)) {
 					if (Node->_region->_decoration && !IncludeDecors) continue;
 
-					Stack->PushNative(Node->_region, true);
+					stack->PushNative(Node->_region, true);
 					return S_OK;
 				}
 			}
 		}
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IsBlockedAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsBlockedAt") == 0) {
-		Stack->CorrectParams(2);
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
+	else if (strcmp(name, "IsBlockedAt") == 0) {
+		stack->CorrectParams(2);
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
 
-		Stack->PushBool(isBlockedAt(X, Y));
+		stack->PushBool(isBlockedAt(X, Y));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IsWalkableAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsWalkableAt") == 0) {
-		Stack->CorrectParams(2);
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
+	else if (strcmp(name, "IsWalkableAt") == 0) {
+		stack->CorrectParams(2);
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
 
-		Stack->PushBool(isWalkableAt(X, Y));
+		stack->PushBool(isWalkableAt(X, Y));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetScaleAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetScaleAt") == 0) {
-		Stack->CorrectParams(2);
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
+	else if (strcmp(name, "GetScaleAt") == 0) {
+		stack->CorrectParams(2);
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
 
-		Stack->PushFloat(getZoomAt(X, Y));
+		stack->PushFloat(getZoomAt(X, Y));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetRotationAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetRotationAt") == 0) {
-		Stack->CorrectParams(2);
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
+	else if (strcmp(name, "GetRotationAt") == 0) {
+		stack->CorrectParams(2);
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
 
-		Stack->PushFloat(getRotationAt(X, Y));
+		stack->PushFloat(getRotationAt(X, Y));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IsScrolling
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsScrolling") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "IsScrolling") == 0) {
+		stack->CorrectParams(0);
 		bool Ret = false;
 		if (_autoScroll) {
 			if (_targetOffsetLeft != _offsetLeft || _targetOffsetTop != _offsetTop) Ret = true;
 		}
 
-		Stack->PushBool(Ret);
+		stack->PushBool(Ret);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// FadeOut / FadeOutAsync
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FadeOut") == 0 || strcmp(Name, "FadeOutAsync") == 0) {
-		Stack->CorrectParams(5);
-		uint32 Duration = Stack->Pop()->GetInt(500);
-		byte Red = Stack->Pop()->GetInt(0);
-		byte Green = Stack->Pop()->GetInt(0);
-		byte Blue = Stack->Pop()->GetInt(0);
-		byte Alpha = Stack->Pop()->GetInt(0xFF);
+	else if (strcmp(name, "FadeOut") == 0 || strcmp(name, "FadeOutAsync") == 0) {
+		stack->CorrectParams(5);
+		uint32 Duration = stack->Pop()->GetInt(500);
+		byte Red = stack->Pop()->GetInt(0);
+		byte Green = stack->Pop()->GetInt(0);
+		byte Blue = stack->Pop()->GetInt(0);
+		byte Alpha = stack->Pop()->GetInt(0xFF);
 
 		_fader->fadeOut(DRGBA(Red, Green, Blue, Alpha), Duration);
-		if (strcmp(Name, "FadeOutAsync") != 0) Script->WaitFor(_fader);
+		if (strcmp(name, "FadeOutAsync") != 0) script->WaitFor(_fader);
 
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// FadeIn / FadeInAsync
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FadeIn") == 0 || strcmp(Name, "FadeInAsync") == 0) {
-		Stack->CorrectParams(5);
-		uint32 Duration = Stack->Pop()->GetInt(500);
-		byte Red = Stack->Pop()->GetInt(0);
-		byte Green = Stack->Pop()->GetInt(0);
-		byte Blue = Stack->Pop()->GetInt(0);
-		byte Alpha = Stack->Pop()->GetInt(0xFF);
+	else if (strcmp(name, "FadeIn") == 0 || strcmp(name, "FadeInAsync") == 0) {
+		stack->CorrectParams(5);
+		uint32 Duration = stack->Pop()->GetInt(500);
+		byte Red = stack->Pop()->GetInt(0);
+		byte Green = stack->Pop()->GetInt(0);
+		byte Blue = stack->Pop()->GetInt(0);
+		byte Alpha = stack->Pop()->GetInt(0xFF);
 
 		_fader->fadeIn(DRGBA(Red, Green, Blue, Alpha), Duration);
-		if (strcmp(Name, "FadeInAsync") != 0) Script->WaitFor(_fader);
+		if (strcmp(name, "FadeInAsync") != 0) script->WaitFor(_fader);
 
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetFadeColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetFadeColor") == 0) {
-		Stack->CorrectParams(0);
-		Stack->PushInt(_fader->getCurrentColor());
+	else if (strcmp(name, "GetFadeColor") == 0) {
+		stack->CorrectParams(0);
+		stack->PushInt(_fader->getCurrentColor());
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IsPointInViewport
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsPointInViewport") == 0) {
-		Stack->CorrectParams(2);
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
-		Stack->PushBool(pointInViewport(X, Y));
+	else if (strcmp(name, "IsPointInViewport") == 0) {
+		stack->CorrectParams(2);
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
+		stack->PushBool(pointInViewport(X, Y));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SetViewport
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetViewport") == 0) {
-		Stack->CorrectParams(4);
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
-		int Width = Stack->Pop()->GetInt();
-		int Height = Stack->Pop()->GetInt();
+	else if (strcmp(name, "SetViewport") == 0) {
+		stack->CorrectParams(4);
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
+		int Width = stack->Pop()->GetInt();
+		int Height = stack->Pop()->GetInt();
 
 		if (Width <= 0) Width = Game->_renderer->_width;
 		if (Height <= 0) Height = Game->_renderer->_height;
@@ -1581,7 +1581,7 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		if (!_viewport) _viewport = new CBViewport(Game);
 		if (_viewport) _viewport->setRect(X, Y, X + Width, Y + Height);
 
-		Stack->PushBool(true);
+		stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -1589,9 +1589,9 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// AddLayer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AddLayer") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "AddLayer") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CAdLayer *Layer = new CAdLayer(Game);
 		if (!Val->IsNULL()) Layer->setName(Val->GetString());
@@ -1602,17 +1602,17 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 		_layers.Add(Layer);
 		Game->RegisterObject(Layer);
 
-		Stack->PushNative(Layer, true);
+		stack->PushNative(Layer, true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// InsertLayer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "InsertLayer") == 0) {
-		Stack->CorrectParams(2);
-		int Index = Stack->Pop()->GetInt();
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "InsertLayer") == 0) {
+		stack->CorrectParams(2);
+		int Index = stack->Pop()->GetInt();
+		CScValue *Val = stack->Pop();
 
 		CAdLayer *Layer = new CAdLayer(Game);
 		if (!Val->IsNULL()) Layer->setName(Val->GetString());
@@ -1626,16 +1626,16 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 
 		Game->RegisterObject(Layer);
 
-		Stack->PushNative(Layer, true);
+		stack->PushNative(Layer, true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteLayer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "DeleteLayer") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "DeleteLayer") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CAdLayer *ToDelete = NULL;
 		if (Val->IsNative()) {
@@ -1653,13 +1653,13 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			}
 		}
 		if (ToDelete == NULL) {
-			Stack->PushBool(false);
+			stack->PushBool(false);
 			return S_OK;
 		}
 
 		if (ToDelete->_main) {
-			Script->RuntimeError("Scene.DeleteLayer - cannot delete main scene layer");
-			Stack->PushBool(false);
+			script->RuntimeError("Scene.DeleteLayer - cannot delete main scene layer");
+			stack->PushBool(false);
 			return S_OK;
 		}
 
@@ -1670,22 +1670,22 @@ HRESULT CAdScene::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 				break;
 			}
 		}
-		Stack->PushBool(true);
+		stack->PushBool(true);
 		return S_OK;
 	}
 
-	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdScene::scGetProperty(const char *Name) {
+CScValue *CAdScene::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("scene");
 		return _scValue;
 	}
@@ -1693,7 +1693,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumLayers (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumLayers") == 0) {
+	else if (strcmp(name, "NumLayers") == 0) {
 		_scValue->SetInt(_layers.GetSize());
 		return _scValue;
 	}
@@ -1701,7 +1701,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumWaypointGroups (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumWaypointGroups") == 0) {
+	else if (strcmp(name, "NumWaypointGroups") == 0) {
 		_scValue->SetInt(_waypointGroups.GetSize());
 		return _scValue;
 	}
@@ -1709,7 +1709,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MainLayer (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MainLayer") == 0) {
+	else if (strcmp(name, "MainLayer") == 0) {
 		if (_mainLayer) _scValue->SetNative(_mainLayer, true);
 		else _scValue->SetNULL();
 
@@ -1719,7 +1719,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumFreeNodes (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumFreeNodes") == 0) {
+	else if (strcmp(name, "NumFreeNodes") == 0) {
 		_scValue->SetInt(_objects.GetSize());
 		return _scValue;
 	}
@@ -1727,7 +1727,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MouseX (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MouseX") == 0) {
+	else if (strcmp(name, "MouseX") == 0) {
 		int ViewportX;
 		getViewportOffset(&ViewportX);
 
@@ -1738,7 +1738,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MouseY (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MouseY") == 0) {
+	else if (strcmp(name, "MouseY") == 0) {
 		int ViewportY;
 		getViewportOffset(NULL, &ViewportY);
 
@@ -1749,7 +1749,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AutoScroll
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AutoScroll") == 0) {
+	else if (strcmp(name, "AutoScroll") == 0) {
 		_scValue->SetBool(_autoScroll);
 		return _scValue;
 	}
@@ -1757,7 +1757,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentState
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PersistentState") == 0) {
+	else if (strcmp(name, "PersistentState") == 0) {
 		_scValue->SetBool(_persistentState);
 		return _scValue;
 	}
@@ -1765,7 +1765,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentStateSprites
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PersistentStateSprites") == 0) {
+	else if (strcmp(name, "PersistentStateSprites") == 0) {
 		_scValue->SetBool(_persistentStateSprites);
 		return _scValue;
 	}
@@ -1773,7 +1773,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScrollPixelsX") == 0) {
+	else if (strcmp(name, "ScrollPixelsX") == 0) {
 		_scValue->SetInt(_scrollPixelsH);
 		return _scValue;
 	}
@@ -1781,7 +1781,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScrollPixelsY") == 0) {
+	else if (strcmp(name, "ScrollPixelsY") == 0) {
 		_scValue->SetInt(_scrollPixelsV);
 		return _scValue;
 	}
@@ -1790,7 +1790,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScrollSpeedX") == 0) {
+	else if (strcmp(name, "ScrollSpeedX") == 0) {
 		_scValue->SetInt(_scrollTimeH);
 		return _scValue;
 	}
@@ -1798,7 +1798,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScrollSpeedY") == 0) {
+	else if (strcmp(name, "ScrollSpeedY") == 0) {
 		_scValue->SetInt(_scrollTimeV);
 		return _scValue;
 	}
@@ -1806,7 +1806,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "OffsetX") == 0) {
+	else if (strcmp(name, "OffsetX") == 0) {
 		_scValue->SetInt(_offsetLeft);
 		return _scValue;
 	}
@@ -1814,7 +1814,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "OffsetY") == 0) {
+	else if (strcmp(name, "OffsetY") == 0) {
 		_scValue->SetInt(_offsetTop);
 		return _scValue;
 	}
@@ -1822,7 +1822,7 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Width") == 0) {
+	else if (strcmp(name, "Width") == 0) {
 		if (_mainLayer) _scValue->SetInt(_mainLayer->_width);
 		else _scValue->SetInt(0);
 		return _scValue;
@@ -1831,22 +1831,22 @@ CScValue *CAdScene::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Height") == 0) {
+	else if (strcmp(name, "Height") == 0) {
 		if (_mainLayer) _scValue->SetInt(_mainLayer->_height);
 		else _scValue->SetInt(0);
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(Name);
+	else return CBObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdScene::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Name") == 0) {
+	if (strcmp(name, "Name") == 0) {
 		setName(Value->GetString());
 		return S_OK;
 	}
@@ -1854,7 +1854,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AutoScroll
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AutoScroll") == 0) {
+	else if (strcmp(name, "AutoScroll") == 0) {
 		_autoScroll = Value->GetBool();
 		return S_OK;
 	}
@@ -1862,7 +1862,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentState
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PersistentState") == 0) {
+	else if (strcmp(name, "PersistentState") == 0) {
 		_persistentState = Value->GetBool();
 		return S_OK;
 	}
@@ -1870,7 +1870,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentStateSprites
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PersistentStateSprites") == 0) {
+	else if (strcmp(name, "PersistentStateSprites") == 0) {
 		_persistentStateSprites = Value->GetBool();
 		return S_OK;
 	}
@@ -1878,7 +1878,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScrollPixelsX") == 0) {
+	else if (strcmp(name, "ScrollPixelsX") == 0) {
 		_scrollPixelsH = Value->GetInt();
 		return S_OK;
 	}
@@ -1886,7 +1886,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScrollPixelsY") == 0) {
+	else if (strcmp(name, "ScrollPixelsY") == 0) {
 		_scrollPixelsV = Value->GetInt();
 		return S_OK;
 	}
@@ -1894,7 +1894,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScrollSpeedX") == 0) {
+	else if (strcmp(name, "ScrollSpeedX") == 0) {
 		_scrollTimeH = Value->GetInt();
 		return S_OK;
 	}
@@ -1902,7 +1902,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScrollSpeedY") == 0) {
+	else if (strcmp(name, "ScrollSpeedY") == 0) {
 		_scrollTimeV = Value->GetInt();
 		return S_OK;
 	}
@@ -1910,7 +1910,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "OffsetX") == 0) {
+	else if (strcmp(name, "OffsetX") == 0) {
 		_offsetLeft = Value->GetInt();
 
 		int ViewportWidth, ViewportHeight;
@@ -1926,7 +1926,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "OffsetY") == 0) {
+	else if (strcmp(name, "OffsetY") == 0) {
 		_offsetTop = Value->GetInt();
 
 		int ViewportWidth, ViewportHeight;
@@ -1939,7 +1939,7 @@ HRESULT CAdScene::scSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(Name, Value);
+	else return CBObject::scSetProperty(name, Value);
 }
 
 
@@ -2428,7 +2428,7 @@ void CAdScene::setOffset(int OffsetLeft, int OffsetTop) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdScene::getNodeByName(const char *Name) {
+CBObject *CAdScene::getNodeByName(const char *name) {
 	int i;
 	CBObject *ret = NULL;
 
@@ -2437,8 +2437,8 @@ CBObject *CAdScene::getNodeByName(const char *Name) {
 		CAdLayer *layer = _layers[i];
 		for (int j = 0; j < layer->_nodes.GetSize(); j++) {
 			CAdSceneNode *node = layer->_nodes[j];
-			if ((node->_type == OBJECT_ENTITY && !scumm_stricmp(Name, node->_entity->_name)) ||
-			        (node->_type == OBJECT_REGION && !scumm_stricmp(Name, node->_region->_name))) {
+			if ((node->_type == OBJECT_ENTITY && !scumm_stricmp(name, node->_entity->_name)) ||
+			        (node->_type == OBJECT_REGION && !scumm_stricmp(name, node->_region->_name))) {
 				switch (node->_type) {
 				case OBJECT_ENTITY:
 					ret = node->_entity;
@@ -2456,14 +2456,14 @@ CBObject *CAdScene::getNodeByName(const char *Name) {
 
 	// free entities
 	for (i = 0; i < _objects.GetSize(); i++) {
-		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(Name, _objects[i]->_name)) {
+		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->_name)) {
 			return _objects[i];
 		}
 	}
 
 	// waypoint groups
 	for (i = 0; i < _waypointGroups.GetSize(); i++) {
-		if (!scumm_stricmp(Name, _waypointGroups[i]->_name)) {
+		if (!scumm_stricmp(name, _waypointGroups[i]->_name)) {
 			return _waypointGroups[i];
 		}
 	}

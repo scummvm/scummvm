@@ -117,16 +117,16 @@ bool CBRegistry::WriteBool(const AnsiString &subKey, const AnsiString &key, bool
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::SetIniName(const char *Name) {
+void CBRegistry::SetIniName(const char *name) {
 	delete[] _iniName;
 	_iniName = NULL;
 
-	if (strchr(Name, '\\') == NULL && strchr(Name, '/') == NULL) {
-		_iniName = new char [strlen(Name) + 3];
-		sprintf(_iniName, "./%s", Name);
+	if (strchr(name, '\\') == NULL && strchr(name, '/') == NULL) {
+		_iniName = new char [strlen(name) + 3];
+		sprintf(_iniName, "./%s", name);
 	} else {
-		_iniName = new char [strlen(Name) + 1];
-		strcpy(_iniName, Name);
+		_iniName = new char [strlen(name) + 1];
+		strcpy(_iniName, name);
 	}
 }
 

@@ -401,49 +401,49 @@ HRESULT CBFrame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSound
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "GetSound") == 0) {
-		Stack->CorrectParams(0);
+	if (strcmp(name, "GetSound") == 0) {
+		stack->CorrectParams(0);
 
-		if (_sound && _sound->_soundFilename) Stack->PushString(_sound->_soundFilename);
-		else Stack->PushNULL();
+		if (_sound && _sound->_soundFilename) stack->PushString(_sound->_soundFilename);
+		else stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SetSound
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "SetSound") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	if (strcmp(name, "SetSound") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 		delete _sound;
 		_sound = NULL;
 
 		if (!Val->IsNULL()) {
 			_sound = new CBSound(Game);
 			if (!_sound || FAILED(_sound->setSound(Val->GetString(), SOUND_SFX, false))) {
-				Stack->PushBool(false);
+				stack->PushBool(false);
 				delete _sound;
 				_sound = NULL;
-			} else Stack->PushBool(true);
-		} else Stack->PushBool(true);
+			} else stack->PushBool(true);
+		} else stack->PushBool(true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSubframe
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "GetSubframe") == 0) {
-		Stack->CorrectParams(1);
-		int Index = Stack->Pop()->GetInt(-1);
+	if (strcmp(name, "GetSubframe") == 0) {
+		stack->CorrectParams(1);
+		int Index = stack->Pop()->GetInt(-1);
 		if (Index < 0 || Index >= _subframes.GetSize()) {
-			Script->RuntimeError("Frame.GetSubframe: Subframe index %d is out of range.", Index);
-			Stack->PushNULL();
-		} else Stack->PushNative(_subframes[Index], true);
+			script->RuntimeError("Frame.GetSubframe: Subframe index %d is out of range.", Index);
+			stack->PushNULL();
+		} else stack->PushNative(_subframes[Index], true);
 
 		return S_OK;
 	}
@@ -451,13 +451,13 @@ HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteSubframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "DeleteSubframe") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "DeleteSubframe") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 		if (Val->IsInt()) {
 			int Index = Val->GetInt(-1);
 			if (Index < 0 || Index >= _subframes.GetSize()) {
-				Script->RuntimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", Index);
+				script->RuntimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", Index);
 			}
 		} else {
 			CBSubFrame *Sub = (CBSubFrame *)Val->GetNative();
@@ -469,16 +469,16 @@ HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 				}
 			}
 		}
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AddSubframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AddSubframe") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "AddSubframe") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
@@ -489,19 +489,19 @@ HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		}
 		_subframes.Add(Sub);
 
-		Stack->PushNative(Sub, true);
+		stack->PushNative(Sub, true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// InsertSubframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "InsertSubframe") == 0) {
-		Stack->CorrectParams(2);
-		int Index = Stack->Pop()->GetInt();
+	else if (strcmp(name, "InsertSubframe") == 0) {
+		stack->CorrectParams(2);
+		int Index = stack->Pop()->GetInt();
 		if (Index < 0) Index = 0;
 
-		CScValue *Val = Stack->Pop();
+		CScValue *Val = stack->Pop();
 		const char *Filename = NULL;
 		if (!Val->IsNULL()) Filename = Val->GetString();
 
@@ -513,46 +513,46 @@ HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 		if (Index >= _subframes.GetSize()) _subframes.Add(Sub);
 		else _subframes.InsertAt(Index, Sub);
 
-		Stack->PushNative(Sub, true);
+		stack->PushNative(Sub, true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetSubframe") == 0) {
-		Stack->CorrectParams(1);
-		int Index = Stack->Pop()->GetInt(-1);
+	else if (strcmp(name, "GetSubframe") == 0) {
+		stack->CorrectParams(1);
+		int Index = stack->Pop()->GetInt(-1);
 		if (Index < 0 || Index >= _applyEvent.GetSize()) {
-			Script->RuntimeError("Frame.GetEvent: Event index %d is out of range.", Index);
-			Stack->PushNULL();
-		} else Stack->PushString(_applyEvent[Index]);
+			script->RuntimeError("Frame.GetEvent: Event index %d is out of range.", Index);
+			stack->PushNULL();
+		} else stack->PushString(_applyEvent[Index]);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AddEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AddEvent") == 0) {
-		Stack->CorrectParams(1);
-		const char *Event = Stack->Pop()->GetString();
+	else if (strcmp(name, "AddEvent") == 0) {
+		stack->CorrectParams(1);
+		const char *Event = stack->Pop()->GetString();
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
-				Stack->PushNULL();
+				stack->PushNULL();
 				return S_OK;
 			}
 		}
 		_applyEvent.Add(Event);
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "DeleteEvent") == 0) {
-		Stack->CorrectParams(1);
-		const char *Event = Stack->Pop()->GetString();
+	else if (strcmp(name, "DeleteEvent") == 0) {
+		stack->CorrectParams(1);
+		const char *Event = stack->Pop()->GetString();
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
 				delete [] _applyEvent[i];
@@ -560,27 +560,27 @@ HRESULT CBFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *This
 				break;
 			}
 		}
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->scCallMethod(Script, Stack, ThisStack, Name);
-		else return CBScriptable::scCallMethod(Script, Stack, ThisStack, Name);
+		if (_subframes.GetSize() == 1) return _subframes[0]->scCallMethod(script, stack, thisStack, name);
+		else return CBScriptable::scCallMethod(script, stack, thisStack, name);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBFrame::scGetProperty(const char *Name) {
+CScValue *CBFrame::scGetProperty(const char *name) {
 	if (!_scValue) _scValue = new CScValue(Game);
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("frame");
 		return _scValue;
 	}
@@ -588,7 +588,7 @@ CScValue *CBFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Delay") == 0) {
+	else if (strcmp(name, "Delay") == 0) {
 		_scValue->SetInt(_delay);
 		return _scValue;
 	}
@@ -596,7 +596,7 @@ CScValue *CBFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Keyframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Keyframe") == 0) {
+	else if (strcmp(name, "Keyframe") == 0) {
 		_scValue->SetBool(_keyframe);
 		return _scValue;
 	}
@@ -604,7 +604,7 @@ CScValue *CBFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// KillSounds
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "KillSounds") == 0) {
+	else if (strcmp(name, "KillSounds") == 0) {
 		_scValue->SetBool(_killSound);
 		return _scValue;
 	}
@@ -612,7 +612,7 @@ CScValue *CBFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MoveX") == 0) {
+	else if (strcmp(name, "MoveX") == 0) {
 		_scValue->SetInt(_moveX);
 		return _scValue;
 	}
@@ -620,7 +620,7 @@ CScValue *CBFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MoveY") == 0) {
+	else if (strcmp(name, "MoveY") == 0) {
 		_scValue->SetInt(_moveY);
 		return _scValue;
 	}
@@ -628,7 +628,7 @@ CScValue *CBFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumSubframes (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumSubframes") == 0) {
+	else if (strcmp(name, "NumSubframes") == 0) {
 		_scValue->SetInt(_subframes.GetSize());
 		return _scValue;
 	}
@@ -636,25 +636,25 @@ CScValue *CBFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumEvents (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumEvents") == 0) {
+	else if (strcmp(name, "NumEvents") == 0) {
 		_scValue->SetInt(_applyEvent.GetSize());
 		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->scGetProperty(Name);
-		else return CBScriptable::scGetProperty(Name);
+		if (_subframes.GetSize() == 1) return _subframes[0]->scGetProperty(name);
+		else return CBScriptable::scGetProperty(name);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBFrame::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Delay") == 0) {
+	if (strcmp(name, "Delay") == 0) {
 		_delay = MAX(0, Value->GetInt());
 		return S_OK;
 	}
@@ -662,7 +662,7 @@ HRESULT CBFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Keyframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Keyframe") == 0) {
+	else if (strcmp(name, "Keyframe") == 0) {
 		_keyframe = Value->GetBool();
 		return S_OK;
 	}
@@ -670,7 +670,7 @@ HRESULT CBFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// KillSounds
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "KillSounds") == 0) {
+	else if (strcmp(name, "KillSounds") == 0) {
 		_killSound = Value->GetBool();
 		return S_OK;
 	}
@@ -678,7 +678,7 @@ HRESULT CBFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MoveX") == 0) {
+	else if (strcmp(name, "MoveX") == 0) {
 		_moveX = Value->GetInt();
 		return S_OK;
 	}
@@ -686,15 +686,15 @@ HRESULT CBFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MoveY") == 0) {
+	else if (strcmp(name, "MoveY") == 0) {
 		_moveY = Value->GetInt();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->scSetProperty(Name, Value);
-		else return CBScriptable::scSetProperty(Name, Value);
+		if (_subframes.GetSize() == 1) return _subframes[0]->scSetProperty(name, Value);
+		else return CBScriptable::scSetProperty(name, Value);
 	}
 }
 

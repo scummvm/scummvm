@@ -44,12 +44,12 @@ CBScriptable *makeSXString(CBGame *inGame, CScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXString::CSXString(CBGame *inGame, CScStack *Stack): CBScriptable(inGame) {
+CSXString::CSXString(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 	_string = NULL;
 	_capacity = 0;
 
-	Stack->CorrectParams(1);
-	CScValue *Val = Stack->Pop();
+	stack->CorrectParams(1);
+	CScValue *Val = stack->Pop();
 
 	if (Val->IsInt()) {
 		_capacity = MAX(0, Val->GetInt());
@@ -99,14 +99,14 @@ void CSXString::scSetString(const char *Val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Substring
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Substring") == 0) {
-		Stack->CorrectParams(2);
-		int start = Stack->Pop()->GetInt();
-		int end   = Stack->Pop()->GetInt();
+	if (strcmp(name, "Substring") == 0) {
+		stack->CorrectParams(2);
+		int start = stack->Pop()->GetInt();
+		int end   = stack->Pop()->GetInt();
 
 		if (end < start) CBUtils::Swap(&start, &end);
 
@@ -121,11 +121,11 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		WideString subStr(str.c_str() + start, end - start + 1);
 
 		if (Game->_textEncoding == TEXT_UTF8)
-			Stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
+			stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
 		else
-			Stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
+			stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
 		//  } catch (std::exception &) {
-		//      Stack->PushNULL();
+		//      stack->PushNULL();
 		//  }
 
 		return S_OK;
@@ -134,15 +134,15 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// Substr
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Substr") == 0) {
-		Stack->CorrectParams(2);
-		int start = Stack->Pop()->GetInt();
+	else if (strcmp(name, "Substr") == 0) {
+		stack->CorrectParams(2);
+		int start = stack->Pop()->GetInt();
 
-		CScValue *val = Stack->Pop();
+		CScValue *val = stack->Pop();
 		int len = val->GetInt();
 
 		if (!val->IsNULL() && len <= 0) {
-			Stack->PushString("");
+			stack->PushString("");
 			return S_OK;
 		}
 
@@ -159,11 +159,11 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		WideString subStr(str.c_str() + start, len);
 
 		if (Game->_textEncoding == TEXT_UTF8)
-			Stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
+			stack->PushString(StringUtil::WideToUtf8(subStr).c_str());
 		else
-			Stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
+			stack->PushString(StringUtil::WideToAnsi(subStr).c_str());
 //		} catch (std::exception &) {
-//			Stack->PushNULL();
+//			stack->PushNULL();
 //		}
 
 		return S_OK;
@@ -172,8 +172,8 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// ToUpperCase
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ToUpperCase") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "ToUpperCase") == 0) {
+		stack->CorrectParams(0);
 
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
@@ -184,9 +184,9 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		StringUtil::ToUpperCase(str);
 
 		if (Game->_textEncoding == TEXT_UTF8)
-			Stack->PushString(StringUtil::WideToUtf8(str).c_str());
+			stack->PushString(StringUtil::WideToUtf8(str).c_str());
 		else
-			Stack->PushString(StringUtil::WideToAnsi(str).c_str());
+			stack->PushString(StringUtil::WideToAnsi(str).c_str());
 
 		return S_OK;
 	}
@@ -194,8 +194,8 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// ToLowerCase
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ToLowerCase") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "ToLowerCase") == 0) {
+		stack->CorrectParams(0);
 
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
@@ -206,9 +206,9 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 		StringUtil::ToLowerCase(str);
 
 		if (Game->_textEncoding == TEXT_UTF8)
-			Stack->PushString(StringUtil::WideToUtf8(str).c_str());
+			stack->PushString(StringUtil::WideToUtf8(str).c_str());
 		else
-			Stack->PushString(StringUtil::WideToAnsi(str).c_str());
+			stack->PushString(StringUtil::WideToAnsi(str).c_str());
 
 		return S_OK;
 	}
@@ -216,11 +216,11 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// IndexOf
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IndexOf") == 0) {
-		Stack->CorrectParams(2);
+	else if (strcmp(name, "IndexOf") == 0) {
+		stack->CorrectParams(2);
 
-		const char *strToFind = Stack->Pop()->GetString();
-		int index = Stack->Pop()->GetInt();
+		const char *strToFind = stack->Pop()->GetString();
+		int index = stack->Pop()->GetInt();
 
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
@@ -235,7 +235,7 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			toFind = StringUtil::AnsiToWide(strToFind);
 
 		int indexOf = StringUtil::IndexOf(str, toFind, index);
-		Stack->PushInt(indexOf);
+		stack->PushInt(indexOf);
 
 		return S_OK;
 	}
@@ -243,15 +243,15 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// Split
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Split") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "Split") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 		char Separators[MAX_PATH] = ",";
 		if (!Val->IsNULL()) strcpy(Separators, Val->GetString());
 
 		CSXArray *Array = new CSXArray(Game);
 		if (!Array) {
-			Stack->PushNULL();
+			stack->PushNULL();
 			return S_OK;
 		}
 
@@ -308,7 +308,7 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			Val = NULL;
 		}
 
-		Stack->PushNative(Array, false);
+		stack->PushNative(Array, false);
 		return S_OK;
 	}
 
@@ -317,20 +317,20 @@ HRESULT CSXString::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXString::scGetProperty(const char *Name) {
+CScValue *CSXString::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("string");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Length (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Length") == 0) {
+	else if (strcmp(name, "Length") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::Utf8ToWide(_string);
 			_scValue->SetInt(wstr.size());
@@ -342,7 +342,7 @@ CScValue *CSXString::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Capacity") == 0) {
+	else if (strcmp(name, "Capacity") == 0) {
 		_scValue->SetInt(_capacity);
 		return _scValue;
 	}
@@ -352,11 +352,11 @@ CScValue *CSXString::scGetProperty(const char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CSXString::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Capacity") == 0) {
+	if (strcmp(name, "Capacity") == 0) {
 		int NewCap = Value->GetInt();
 		if (NewCap < strlen(_string) + 1) Game->LOG(0, "Warning: cannot lower string capacity");
 		else if (NewCap != _capacity) {

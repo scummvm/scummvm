@@ -559,10 +559,10 @@ HRESULT CScEngine::ResetObject(CBObject *Object) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::ResetScript(CScScript *Script) {
+HRESULT CScEngine::ResetScript(CScScript *script) {
 	// terminate all scripts waiting for this script
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		if (_scripts[i]->_state == SCRIPT_WAITING_SCRIPT && _scripts[i]->_waitScript == Script) {
+		if (_scripts[i]->_state == SCRIPT_WAITING_SCRIPT && _scripts[i]->_waitScript == script) {
 			_scripts[i]->finish();
 		}
 	}
@@ -639,9 +639,9 @@ void CScEngine::SetParseElementCallback(PARSE_ELEMENT_CALLBACK Callback, void *D
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScEngine::IsValidScript(CScScript *Script) {
+bool CScEngine::IsValidScript(CScScript *script) {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		if (_scripts[i] == Script) return true;
+		if (_scripts[i] == script) return true;
 	}
 	return false;
 }
@@ -735,18 +735,18 @@ HRESULT CScEngine::RefreshScriptBreakpoints() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::RefreshScriptBreakpoints(CScScript *Script) {
+HRESULT CScEngine::RefreshScriptBreakpoints(CScScript *script) {
 	if (!Game->GetDebugMgr()->_enabled) return S_OK;
 
-	if (!Script || !Script->_filename) return E_FAIL;
+	if (!script || !script->_filename) return E_FAIL;
 
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
-		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), Script->_filename) == 0) {
-			Script->_breakpoints.Copy(_breakpoints[i]->_lines);
+		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), script->_filename) == 0) {
+			script->_breakpoints.Copy(_breakpoints[i]->_lines);
 			return S_OK;
 		}
 	}
-	if (Script->_breakpoints.GetSize() > 0) Script->_breakpoints.RemoveAll();
+	if (script->_breakpoints.GetSize() > 0) script->_breakpoints.RemoveAll();
 
 	return S_OK;
 }

@@ -35,7 +35,7 @@ namespace WinterMute {
 
 class CBRegistry : public CBBase {
 public:
-	void SetIniName(const char *Name);
+	void SetIniName(const char *name);
 	char *GetIniName();
 	bool WriteBool(const AnsiString &subKey, const AnsiString &key, bool Value);
 	bool ReadBool(const AnsiString &subKey, const AnsiString &key, bool init = false);

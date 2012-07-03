@@ -1054,53 +1054,53 @@ HRESULT CScScript::ExecuteInstruction() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CScScript::GetFuncPos(const char *Name) {
+uint32 CScScript::GetFuncPos(const char *name) {
 	for (int i = 0; i < _numFunctions; i++) {
-		if (strcmp(Name, _functions[i].name) == 0) return _functions[i].pos;
+		if (strcmp(name, _functions[i].name) == 0) return _functions[i].pos;
 	}
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CScScript::GetMethodPos(const char *Name) {
+uint32 CScScript::GetMethodPos(const char *name) {
 	for (int i = 0; i < _numMethods; i++) {
-		if (strcmp(Name, _methods[i].name) == 0) return _methods[i].pos;
+		if (strcmp(name, _methods[i].name) == 0) return _methods[i].pos;
 	}
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CScScript::GetVar(char *Name) {
+CScValue *CScScript::GetVar(char *name) {
 	CScValue *ret = NULL;
 
 	// scope locals
 	if (_scopeStack->_sP >= 0) {
-		if (_scopeStack->GetTop()->PropExists(Name)) ret = _scopeStack->GetTop()->GetProp(Name);
+		if (_scopeStack->GetTop()->PropExists(name)) ret = _scopeStack->GetTop()->GetProp(name);
 	}
 
 	// script globals
 	if (ret == NULL) {
-		if (_globals->PropExists(Name)) ret = _globals->GetProp(Name);
+		if (_globals->PropExists(name)) ret = _globals->GetProp(name);
 	}
 
 	// engine globals
 	if (ret == NULL) {
-		if (_engine->_globals->PropExists(Name)) ret = _engine->_globals->GetProp(Name);
+		if (_engine->_globals->PropExists(name)) ret = _engine->_globals->GetProp(name);
 	}
 
 	if (ret == NULL) {
-		//RuntimeError("Variable '%s' is inaccessible in the current block. Consider changing the script.", Name);
-		Game->LOG(0, "Warning: variable '%s' is inaccessible in the current block. Consider changing the script (script:%s, line:%d)", Name, _filename, _currentLine);
+		//RuntimeError("Variable '%s' is inaccessible in the current block. Consider changing the script.", name);
+		Game->LOG(0, "Warning: variable '%s' is inaccessible in the current block. Consider changing the script (script:%s, line:%d)", name, _filename, _currentLine);
 		CScValue *Val = new CScValue(Game);
 		CScValue *Scope = _scopeStack->GetTop();
 		if (Scope) {
-			Scope->SetProp(Name, Val);
-			ret = _scopeStack->GetTop()->GetProp(Name);
+			Scope->SetProp(name, Val);
+			ret = _scopeStack->GetTop()->GetProp(name);
 		} else {
-			_globals->SetProp(Name, Val);
-			ret = _globals->GetProp(Name);
+			_globals->SetProp(name, Val);
+			ret = _globals->GetProp(name);
 		}
 		delete Val;
 	}
@@ -1271,9 +1271,9 @@ CScScript *CScScript::InvokeEventHandler(const char *EventName, bool Unbreakable
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CScScript::GetEventPos(const char *Name) {
+uint32 CScScript::GetEventPos(const char *name) {
 	for (int i = _numEvents - 1; i >= 0; i--) {
-		if (scumm_stricmp(Name, _events[i].name) == 0) return _events[i].pos;
+		if (scumm_stricmp(name, _events[i].name) == 0) return _events[i].pos;
 	}
 	return 0;
 }
@@ -1317,22 +1317,22 @@ HRESULT CScScript::Resume() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript::TExternalFunction *CScScript::GetExternal(char *Name) {
+CScScript::TExternalFunction *CScScript::GetExternal(char *name) {
 	for (int i = 0; i < _numExternals; i++) {
-		if (strcmp(Name, _externals[i].name) == 0) return &_externals[i];
+		if (strcmp(name, _externals[i].name) == 0) return &_externals[i];
 	}
 	return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::ExternalCall(CScStack *Stack, CScStack *ThisStack, CScScript::TExternalFunction *Function) {
+HRESULT CScScript::ExternalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *Function) {
 
 #ifndef __WIN32__
 
 	Game->LOG(0, "External functions are not supported on this platform.");
-	Stack->CorrectParams(0);
-	Stack->PushNULL();
+	stack->CorrectParams(0);
+	stack->PushNULL();
 	return E_FAIL;
 
 #else
@@ -1345,11 +1345,11 @@ HRESULT CScScript::ExternalCall(CScStack *Stack, CScStack *ThisStack, CScScript:
 		if (pFunc) {
 			int i;
 			Success = true;
-			Stack->CorrectParams(Function->nu_params);
+			stack->CorrectParams(Function->nu_params);
 			CBDynBuffer *Buffer = new CBDynBuffer(Game, 20 * sizeof(uint32));
 
 			for (i = 0; i < Function->nu_params; i++) {
-				CScValue *Val = Stack->Pop();
+				CScValue *Val = stack->Pop();
 				switch (Function->params[i]) {
 				case TYPE_BOOL:
 					Buffer->PutDWORD((uint32)Val->GetBool());
@@ -1399,34 +1399,34 @@ HRESULT CScScript::ExternalCall(CScStack *Stack, CScStack *ThisStack, CScScript:
 			// return
 			switch (Function->returns) {
 			case TYPE_BOOL:
-				Stack->PushBool((byte)ret != 0);
+				stack->PushBool((byte)ret != 0);
 				break;
 			case TYPE_LONG:
-				Stack->PushInt(ret);
+				stack->PushInt(ret);
 				break;
 			case TYPE_BYTE:
-				Stack->PushInt((byte)ret);
+				stack->PushInt((byte)ret);
 				break;
 				break;
 			case TYPE_STRING:
-				Stack->PushString((char *)ret);
+				stack->PushString((char *)ret);
 				break;
 			case TYPE_MEMBUFFER: {
 				CSXMemBuffer *Buf = new CSXMemBuffer(Game, (void *)ret);
-				Stack->PushNative(Buf, false);
+				stack->PushNative(Buf, false);
 			}
 			break;
 			case TYPE_FLOAT: {
 				uint32 dw = GetST0();
-				Stack->PushFloat(*((float *)&dw));
+				stack->PushFloat(*((float *)&dw));
 				break;
 			}
 			case TYPE_DOUBLE:
-				Stack->PushFloat(GetST0Double());
+				stack->PushFloat(GetST0Double());
 				break;
 
 			default:
-				Stack->PushNULL();
+				stack->PushNULL();
 			}
 
 			if (StackCorrupted) RuntimeError("Warning: Stack corrupted after calling '%s' in '%s'\n         Check parameters and/or calling convention.", Function->name, Function->dll_name);
@@ -1434,8 +1434,8 @@ HRESULT CScScript::ExternalCall(CScStack *Stack, CScStack *ThisStack, CScScript:
 	} else RuntimeError("Error loading DLL '%s'", Function->dll_name);
 
 	if (!Success) {
-		Stack->CorrectParams(0);
-		Stack->PushNULL();
+		stack->CorrectParams(0);
+		stack->PushNULL();
 	}
 
 	if (hDll) FreeLibrary(hDll);
@@ -1525,15 +1525,15 @@ double CScScript::GetST0Double(void) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::CopyParameters(CScStack *Stack) {
+HRESULT CScScript::CopyParameters(CScStack *stack) {
 	int i;
-	int NumParams = Stack->Pop()->GetInt();
+	int NumParams = stack->Pop()->GetInt();
 	for (i = NumParams - 1; i >= 0; i--) {
-		_stack->Push(Stack->GetAt(i));
+		_stack->Push(stack->GetAt(i));
 	}
 	_stack->PushInt(NumParams);
 
-	for (i = 0; i < NumParams; i++) Stack->Pop();
+	for (i = 0; i < NumParams; i++) stack->Pop();
 
 	return S_OK;
 }

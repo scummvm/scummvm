@@ -666,21 +666,21 @@ void CUIButton::press() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetDisabledFont
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "SetDisabledFont") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	if (strcmp(name, "SetDisabledFont") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		if (_fontDisable) Game->_fontStorage->RemoveFont(_fontDisable);
 		if (Val->IsNULL()) {
 			_fontDisable = NULL;
-			Stack->PushBool(true);
+			stack->PushBool(true);
 		} else {
 			_fontDisable = Game->_fontStorage->AddFont(Val->GetString());
-			Stack->PushBool(_fontDisable != NULL);
+			stack->PushBool(_fontDisable != NULL);
 		}
 		return S_OK;
 	}
@@ -688,17 +688,17 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverFont
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetHoverFont") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "SetHoverFont") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
 		if (Val->IsNULL()) {
 			_fontHover = NULL;
-			Stack->PushBool(true);
+			stack->PushBool(true);
 		} else {
 			_fontHover = Game->_fontStorage->AddFont(Val->GetString());
-			Stack->PushBool(_fontHover != NULL);
+			stack->PushBool(_fontHover != NULL);
 		}
 		return S_OK;
 	}
@@ -706,17 +706,17 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetPressedFont
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetPressedFont") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "SetPressedFont") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		if (_fontPress) Game->_fontStorage->RemoveFont(_fontPress);
 		if (Val->IsNULL()) {
 			_fontPress = NULL;
-			Stack->PushBool(true);
+			stack->PushBool(true);
 		} else {
 			_fontPress = Game->_fontStorage->AddFont(Val->GetString());
-			Stack->PushBool(_fontPress != NULL);
+			stack->PushBool(_fontPress != NULL);
 		}
 		return S_OK;
 	}
@@ -724,17 +724,17 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetFocusedFont
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetFocusedFont") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "SetFocusedFont") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		if (_fontFocus) Game->_fontStorage->RemoveFont(_fontFocus);
 		if (Val->IsNULL()) {
 			_fontFocus = NULL;
-			Stack->PushBool(true);
+			stack->PushBool(true);
 		} else {
 			_fontFocus = Game->_fontStorage->AddFont(Val->GetString());
-			Stack->PushBool(_fontFocus != NULL);
+			stack->PushBool(_fontFocus != NULL);
 		}
 		return S_OK;
 	}
@@ -742,17 +742,17 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetDisabledImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetDisabledImage") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "SetDisabledImage") == 0) {
+		stack->CorrectParams(1);
 
 		delete _imageDisable;
 		_imageDisable = new CBSprite(Game);
-		const char *Filename = Stack->Pop()->GetString();
+		const char *Filename = stack->Pop()->GetString();
 		if (!_imageDisable || FAILED(_imageDisable->loadFile(Filename))) {
 			delete _imageDisable;
 			_imageDisable = NULL;
-			Stack->PushBool(false);
-		} else Stack->PushBool(true);
+			stack->PushBool(false);
+		} else stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -760,10 +760,10 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetDisabledImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetDisabledImage") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imageDisable || !_imageDisable->_filename) Stack->PushNULL();
-		else Stack->PushString(_imageDisable->_filename);
+	else if (strcmp(name, "GetDisabledImage") == 0) {
+		stack->CorrectParams(0);
+		if (!_imageDisable || !_imageDisable->_filename) stack->PushNULL();
+		else stack->PushString(_imageDisable->_filename);
 
 		return S_OK;
 	}
@@ -771,10 +771,10 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetDisabledImageObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetDisabledImageObject") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imageDisable) Stack->PushNULL();
-		else Stack->PushNative(_imageDisable, true);
+	else if (strcmp(name, "GetDisabledImageObject") == 0) {
+		stack->CorrectParams(0);
+		if (!_imageDisable) stack->PushNULL();
+		else stack->PushNative(_imageDisable, true);
 
 		return S_OK;
 	}
@@ -783,17 +783,17 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetHoverImage") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "SetHoverImage") == 0) {
+		stack->CorrectParams(1);
 
 		delete _imageHover;
 		_imageHover = new CBSprite(Game);
-		const char *Filename = Stack->Pop()->GetString();
+		const char *Filename = stack->Pop()->GetString();
 		if (!_imageHover || FAILED(_imageHover->loadFile(Filename))) {
 			delete _imageHover;
 			_imageHover = NULL;
-			Stack->PushBool(false);
-		} else Stack->PushBool(true);
+			stack->PushBool(false);
+		} else stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -801,10 +801,10 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetHoverImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetHoverImage") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imageHover || !_imageHover->_filename) Stack->PushNULL();
-		else Stack->PushString(_imageHover->_filename);
+	else if (strcmp(name, "GetHoverImage") == 0) {
+		stack->CorrectParams(0);
+		if (!_imageHover || !_imageHover->_filename) stack->PushNULL();
+		else stack->PushString(_imageHover->_filename);
 
 		return S_OK;
 	}
@@ -812,10 +812,10 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetHoverImageObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetHoverImageObject") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imageHover) Stack->PushNULL();
-		else Stack->PushNative(_imageHover, true);
+	else if (strcmp(name, "GetHoverImageObject") == 0) {
+		stack->CorrectParams(0);
+		if (!_imageHover) stack->PushNULL();
+		else stack->PushNative(_imageHover, true);
 
 		return S_OK;
 	}
@@ -823,17 +823,17 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetPressedImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetPressedImage") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "SetPressedImage") == 0) {
+		stack->CorrectParams(1);
 
 		delete _imagePress;
 		_imagePress = new CBSprite(Game);
-		const char *Filename = Stack->Pop()->GetString();
+		const char *Filename = stack->Pop()->GetString();
 		if (!_imagePress || FAILED(_imagePress->loadFile(Filename))) {
 			delete _imagePress;
 			_imagePress = NULL;
-			Stack->PushBool(false);
-		} else Stack->PushBool(true);
+			stack->PushBool(false);
+		} else stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -841,10 +841,10 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetPressedImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetPressedImage") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imagePress || !_imagePress->_filename) Stack->PushNULL();
-		else Stack->PushString(_imagePress->_filename);
+	else if (strcmp(name, "GetPressedImage") == 0) {
+		stack->CorrectParams(0);
+		if (!_imagePress || !_imagePress->_filename) stack->PushNULL();
+		else stack->PushString(_imagePress->_filename);
 
 		return S_OK;
 	}
@@ -852,10 +852,10 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetPressedImageObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetPressedImageObject") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imagePress) Stack->PushNULL();
-		else Stack->PushNative(_imagePress, true);
+	else if (strcmp(name, "GetPressedImageObject") == 0) {
+		stack->CorrectParams(0);
+		if (!_imagePress) stack->PushNULL();
+		else stack->PushNative(_imagePress, true);
 
 		return S_OK;
 	}
@@ -863,17 +863,17 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetFocusedImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetFocusedImage") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "SetFocusedImage") == 0) {
+		stack->CorrectParams(1);
 
 		delete _imageFocus;
 		_imageFocus = new CBSprite(Game);
-		const char *Filename = Stack->Pop()->GetString();
+		const char *Filename = stack->Pop()->GetString();
 		if (!_imageFocus || FAILED(_imageFocus->loadFile(Filename))) {
 			delete _imageFocus;
 			_imageFocus = NULL;
-			Stack->PushBool(false);
-		} else Stack->PushBool(true);
+			stack->PushBool(false);
+		} else stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -881,10 +881,10 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetFocusedImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetFocusedImage") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imageFocus || !_imageFocus->_filename) Stack->PushNULL();
-		else Stack->PushString(_imageFocus->_filename);
+	else if (strcmp(name, "GetFocusedImage") == 0) {
+		stack->CorrectParams(0);
+		if (!_imageFocus || !_imageFocus->_filename) stack->PushNULL();
+		else stack->PushString(_imageFocus->_filename);
 
 		return S_OK;
 	}
@@ -892,10 +892,10 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetFocusedImageObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetFocusedImageObject") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imageFocus) Stack->PushNULL();
-		else Stack->PushNative(_imageFocus, true);
+	else if (strcmp(name, "GetFocusedImageObject") == 0) {
+		stack->CorrectParams(0);
+		if (!_imageFocus) stack->PushNULL();
+		else stack->PushNative(_imageFocus, true);
 
 		return S_OK;
 	}
@@ -903,31 +903,31 @@ HRESULT CUIButton::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// Press
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Press") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "Press") == 0) {
+		stack->CorrectParams(0);
 
 		if (_visible && !_disable) {
 			_oneTimePress = true;
 			_oneTimePressTime = CBPlatform::GetTime();
 		}
-		Stack->PushNULL();
+		stack->PushNULL();
 
 		return S_OK;
 	}
 
 
-	else return CUIObject::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CUIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIButton::scGetProperty(const char *Name) {
+CScValue *CUIButton::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("button");
 		return _scValue;
 	}
@@ -935,7 +935,7 @@ CScValue *CUIButton::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "TextAlign") == 0) {
+	else if (strcmp(name, "TextAlign") == 0) {
 		_scValue->SetInt(_align);
 		return _scValue;
 	}
@@ -943,35 +943,35 @@ CScValue *CUIButton::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Focusable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Focusable") == 0) {
+	else if (strcmp(name, "Focusable") == 0) {
 		_scValue->SetBool(_canFocus);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Pressed
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Pressed") == 0) {
+	else if (strcmp(name, "Pressed") == 0) {
 		_scValue->SetBool(_stayPressed);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PixelPerfect") == 0) {
+	else if (strcmp(name, "PixelPerfect") == 0) {
 		_scValue->SetBool(_pixelPerfect);
 		return _scValue;
 	}
 
-	else return CUIObject::scGetProperty(Name);
+	else return CUIObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CUIButton::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "TextAlign") == 0) {
+	if (strcmp(name, "TextAlign") == 0) {
 		int i = Value->GetInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
 		_align = (TTextAlign)i;
@@ -981,26 +981,26 @@ HRESULT CUIButton::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Focusable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Focusable") == 0) {
+	else if (strcmp(name, "Focusable") == 0) {
 		_canFocus = Value->GetBool();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Pressed
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Pressed") == 0) {
+	else if (strcmp(name, "Pressed") == 0) {
 		_stayPressed = Value->GetBool();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PixelPerfect") == 0) {
+	else if (strcmp(name, "PixelPerfect") == 0) {
 		_pixelPerfect = Value->GetBool();
 		return S_OK;
 	}
 
-	else return CUIObject::scSetProperty(Name, Value);
+	else return CUIObject::scSetProperty(name, Value);
 }
 
 

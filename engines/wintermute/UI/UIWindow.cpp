@@ -670,18 +670,18 @@ HRESULT CUIWindow::saveAsText(CBDynBuffer *Buffer, int Indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::enableWidget(const char *Name, bool Enable) {
+HRESULT CUIWindow::enableWidget(const char *name, bool Enable) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
-		if (scumm_stricmp(_widgets[i]->_name, Name) == 0) _widgets[i]->_disable = !Enable;
+		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_disable = !Enable;
 	}
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::showWidget(const char *Name, bool Visible) {
+HRESULT CUIWindow::showWidget(const char *name, bool Visible) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
-		if (scumm_stricmp(_widgets[i]->_name, Name) == 0) _widgets[i]->_visible = Visible;
+		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_visible = Visible;
 	}
 	return S_OK;
 }
@@ -690,25 +690,25 @@ HRESULT CUIWindow::showWidget(const char *Name, bool Visible) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetWidget / GetControl
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "GetWidget") == 0 || strcmp(Name, "GetControl") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *val = Stack->Pop();
+	if (strcmp(name, "GetWidget") == 0 || strcmp(name, "GetControl") == 0) {
+		stack->CorrectParams(1);
+		CScValue *val = stack->Pop();
 		if (val->GetType() == VAL_INT) {
 			int widget = val->GetInt();
-			if (widget < 0 || widget >= _widgets.GetSize()) Stack->PushNULL();
-			else Stack->PushNative(_widgets[widget], true);
+			if (widget < 0 || widget >= _widgets.GetSize()) stack->PushNULL();
+			else stack->PushNative(_widgets[widget], true);
 		} else {
 			for (int i = 0; i < _widgets.GetSize(); i++) {
 				if (scumm_stricmp(_widgets[i]->_name, val->GetString()) == 0) {
-					Stack->PushNative(_widgets[i], true);
+					stack->PushNative(_widgets[i], true);
 					return S_OK;
 				}
 			}
-			Stack->PushNULL();
+			stack->PushNULL();
 		}
 
 		return S_OK;
@@ -717,12 +717,12 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetInactiveFont
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetInactiveFont") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "SetInactiveFont") == 0) {
+		stack->CorrectParams(1);
 
 		if (_fontInactive) Game->_fontStorage->RemoveFont(_fontInactive);
-		_fontInactive = Game->_fontStorage->AddFont(Stack->Pop()->GetString());
-		Stack->PushBool(_fontInactive != NULL);
+		_fontInactive = Game->_fontStorage->AddFont(stack->Pop()->GetString());
+		stack->PushBool(_fontInactive != NULL);
 
 		return S_OK;
 	}
@@ -730,17 +730,17 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// SetInactiveImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetInactiveImage") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "SetInactiveImage") == 0) {
+		stack->CorrectParams(1);
 
 		delete _imageInactive;
 		_imageInactive = new CBSprite(Game);
-		const char *Filename = Stack->Pop()->GetString();
+		const char *Filename = stack->Pop()->GetString();
 		if (!_imageInactive || FAILED(_imageInactive->loadFile(Filename))) {
 			delete _imageInactive;
 			_imageInactive = NULL;
-			Stack->PushBool(false);
-		} else Stack->PushBool(true);
+			stack->PushBool(false);
+		} else stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -748,10 +748,10 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetInactiveImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetInactiveImage") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imageInactive || !_imageInactive->_filename) Stack->PushNULL();
-		else Stack->PushString(_imageInactive->_filename);
+	else if (strcmp(name, "GetInactiveImage") == 0) {
+		stack->CorrectParams(0);
+		if (!_imageInactive || !_imageInactive->_filename) stack->PushNULL();
+		else stack->PushString(_imageInactive->_filename);
 
 		return S_OK;
 	}
@@ -759,10 +759,10 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// GetInactiveImageObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetInactiveImageObject") == 0) {
-		Stack->CorrectParams(0);
-		if (!_imageInactive) Stack->PushNULL();
-		else Stack->PushNative(_imageInactive, true);
+	else if (strcmp(name, "GetInactiveImageObject") == 0) {
+		stack->CorrectParams(0);
+		if (!_imageInactive) stack->PushNULL();
+		else stack->PushNative(_imageInactive, true);
 
 		return S_OK;
 	}
@@ -771,56 +771,56 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// Close
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Close") == 0) {
-		Stack->CorrectParams(0);
-		Stack->PushBool(SUCCEEDED(close()));
+	else if (strcmp(name, "Close") == 0) {
+		stack->CorrectParams(0);
+		stack->PushBool(SUCCEEDED(close()));
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GoExclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GoExclusive") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "GoExclusive") == 0) {
+		stack->CorrectParams(0);
 		goExclusive();
-		Script->WaitFor(this);
-		Stack->PushNULL();
+		script->WaitFor(this);
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GoSystemExclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GoSystemExclusive") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "GoSystemExclusive") == 0) {
+		stack->CorrectParams(0);
 		goSystemExclusive();
-		Script->WaitFor(this);
-		Stack->PushNULL();
+		script->WaitFor(this);
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Center
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Center") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "Center") == 0) {
+		stack->CorrectParams(0);
 		_posX = (Game->_renderer->_width - _width) / 2;
 		_posY = (Game->_renderer->_height - _height) / 2;
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// LoadFromFile
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "LoadFromFile") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "LoadFromFile") == 0) {
+		stack->CorrectParams(1);
 
-		CScValue *Val = Stack->Pop();
+		CScValue *Val = stack->Pop();
 		cleanup();
 		if (!Val->IsNULL()) {
-			Stack->PushBool(SUCCEEDED(loadFile(Val->GetString())));
-		} else Stack->PushBool(true);
+			stack->PushBool(SUCCEEDED(loadFile(Val->GetString())));
+		} else stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -828,13 +828,13 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// CreateButton
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CreateButton") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "CreateButton") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CUIButton *Btn = new CUIButton(Game);
 		if (!Val->IsNULL()) Btn->setName(Val->GetString());
-		Stack->PushNative(Btn, true);
+		stack->PushNative(Btn, true);
 
 		Btn->_parent = this;
 		_widgets.Add(Btn);
@@ -845,13 +845,13 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// CreateStatic
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CreateStatic") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "CreateStatic") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CUIText *Sta = new CUIText(Game);
 		if (!Val->IsNULL()) Sta->setName(Val->GetString());
-		Stack->PushNative(Sta, true);
+		stack->PushNative(Sta, true);
 
 		Sta->_parent = this;
 		_widgets.Add(Sta);
@@ -862,13 +862,13 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// CreateEditor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CreateEditor") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "CreateEditor") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CUIEdit *Edi = new CUIEdit(Game);
 		if (!Val->IsNULL()) Edi->setName(Val->GetString());
-		Stack->PushNative(Edi, true);
+		stack->PushNative(Edi, true);
 
 		Edi->_parent = this;
 		_widgets.Add(Edi);
@@ -879,13 +879,13 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// CreateWindow
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CreateWindow") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "CreateWindow") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		CUIWindow *Win = new CUIWindow(Game);
 		if (!Val->IsNULL()) Win->setName(Val->GetString());
-		Stack->PushNative(Win, true);
+		stack->PushNative(Win, true);
 
 		Win->_parent = this;
 		_widgets.Add(Win);
@@ -896,9 +896,9 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteControl / DeleteButton / DeleteStatic / DeleteEditor / DeleteWindow
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "DeleteControl") == 0 || strcmp(Name, "DeleteButton") == 0 || strcmp(Name, "DeleteStatic") == 0 || strcmp(Name, "DeleteEditor") == 0 || strcmp(Name, "DeleteWindow") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *val = Stack->Pop();
+	else if (strcmp(name, "DeleteControl") == 0 || strcmp(name, "DeleteButton") == 0 || strcmp(name, "DeleteStatic") == 0 || strcmp(name, "DeleteEditor") == 0 || strcmp(name, "DeleteWindow") == 0) {
+		stack->CorrectParams(1);
+		CScValue *val = stack->Pop();
 		CUIObject *obj = (CUIObject *)val->GetNative();
 
 		for (int i = 0; i < _widgets.GetSize(); i++) {
@@ -908,22 +908,22 @@ HRESULT CUIWindow::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 				if (val->GetType() == VAL_VARIABLE_REF) val->SetNULL();
 			}
 		}
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
-	} else if SUCCEEDED(Game->WindowScriptMethodHook(this, Script, Stack, Name)) return S_OK;
+	} else if SUCCEEDED(Game->WindowScriptMethodHook(this, script, stack, name)) return S_OK;
 
-	else return CUIObject::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CUIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIWindow::scGetProperty(const char *Name) {
+CScValue *CUIWindow::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("window");
 		return _scValue;
 	}
@@ -931,7 +931,7 @@ CScValue *CUIWindow::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumWidgets / NumControls (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumWidgets") == 0 || strcmp(Name, "NumControls") == 0) {
+	else if (strcmp(name, "NumWidgets") == 0 || strcmp(name, "NumControls") == 0) {
 		_scValue->SetInt(_widgets.GetSize());
 		return _scValue;
 	}
@@ -939,7 +939,7 @@ CScValue *CUIWindow::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Exclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Exclusive") == 0) {
+	else if (strcmp(name, "Exclusive") == 0) {
 		_scValue->SetBool(_mode == WINDOW_EXCLUSIVE);
 		return _scValue;
 	}
@@ -947,7 +947,7 @@ CScValue *CUIWindow::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SystemExclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SystemExclusive") == 0) {
+	else if (strcmp(name, "SystemExclusive") == 0) {
 		_scValue->SetBool(_mode == WINDOW_SYSTEM_EXCLUSIVE);
 		return _scValue;
 	}
@@ -955,7 +955,7 @@ CScValue *CUIWindow::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Menu") == 0) {
+	else if (strcmp(name, "Menu") == 0) {
 		_scValue->SetBool(_isMenu);
 		return _scValue;
 	}
@@ -963,7 +963,7 @@ CScValue *CUIWindow::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// InGame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "InGame") == 0) {
+	else if (strcmp(name, "InGame") == 0) {
 		_scValue->SetBool(_inGame);
 		return _scValue;
 	}
@@ -971,7 +971,7 @@ CScValue *CUIWindow::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PauseMusic
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PauseMusic") == 0) {
+	else if (strcmp(name, "PauseMusic") == 0) {
 		_scValue->SetBool(_pauseMusic);
 		return _scValue;
 	}
@@ -979,7 +979,7 @@ CScValue *CUIWindow::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ClipContents
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ClipContents") == 0) {
+	else if (strcmp(name, "ClipContents") == 0) {
 		_scValue->SetBool(_clipContents);
 		return _scValue;
 	}
@@ -987,7 +987,7 @@ CScValue *CUIWindow::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Transparent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Transparent") == 0) {
+	else if (strcmp(name, "Transparent") == 0) {
 		_scValue->SetBool(_transparent);
 		return _scValue;
 	}
@@ -995,21 +995,21 @@ CScValue *CUIWindow::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// FadeColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FadeColor") == 0) {
+	else if (strcmp(name, "FadeColor") == 0) {
 		_scValue->SetInt((int)_fadeColor);
 		return _scValue;
 	}
 
-	else return CUIObject::scGetProperty(Name);
+	else return CUIObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CUIWindow::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Name") == 0) {
+	if (strcmp(name, "Name") == 0) {
 		setName(Value->GetString());
 		return S_OK;
 	}
@@ -1017,7 +1017,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Menu") == 0) {
+	else if (strcmp(name, "Menu") == 0) {
 		_isMenu = Value->GetBool();
 		return S_OK;
 	}
@@ -1025,7 +1025,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// InGame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "InGame") == 0) {
+	else if (strcmp(name, "InGame") == 0) {
 		_inGame = Value->GetBool();
 		return S_OK;
 	}
@@ -1033,7 +1033,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// PauseMusic
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PauseMusic") == 0) {
+	else if (strcmp(name, "PauseMusic") == 0) {
 		_pauseMusic = Value->GetBool();
 		return S_OK;
 	}
@@ -1041,7 +1041,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ClipContents
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ClipContents") == 0) {
+	else if (strcmp(name, "ClipContents") == 0) {
 		_clipContents = Value->GetBool();
 		return S_OK;
 	}
@@ -1049,7 +1049,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Transparent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Transparent") == 0) {
+	else if (strcmp(name, "Transparent") == 0) {
 		_transparent = Value->GetBool();
 		return S_OK;
 	}
@@ -1057,7 +1057,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// FadeColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FadeColor") == 0) {
+	else if (strcmp(name, "FadeColor") == 0) {
 		_fadeColor = (uint32)Value->GetInt();
 		_fadeBackground = (_fadeColor != 0);
 		return S_OK;
@@ -1066,7 +1066,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Exclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Exclusive") == 0) {
+	else if (strcmp(name, "Exclusive") == 0) {
 		if (Value->GetBool())
 			goExclusive();
 		else {
@@ -1079,7 +1079,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SystemExclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SystemExclusive") == 0) {
+	else if (strcmp(name, "SystemExclusive") == 0) {
 		if (Value->GetBool())
 			goSystemExclusive();
 		else {
@@ -1089,7 +1089,7 @@ HRESULT CUIWindow::scSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CUIObject::scSetProperty(Name, Value);
+	else return CUIObject::scSetProperty(name, Value);
 }
 
 

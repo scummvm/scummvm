@@ -52,7 +52,7 @@ public:
 	CScScript *_parentScript;
 	bool _unbreakable;
 	HRESULT FinishThreads();
-	HRESULT CopyParameters(CScStack *Stack);
+	HRESULT CopyParameters(CScStack *stack);
 
 	void afterLoad();
 
@@ -87,10 +87,10 @@ public:
 	CScScript *_waitScript;
 	TScriptState _state;
 	TScriptState _origState;
-	CScValue *GetVar(char *Name);
-	uint32 GetFuncPos(const char *Name);
-	uint32 GetEventPos(const char *Name);
-	uint32 GetMethodPos(const char *Name);
+	CScValue *GetVar(char *name);
+	uint32 GetFuncPos(const char *name);
+	uint32 GetEventPos(const char *name);
+	uint32 GetMethodPos(const char *name);
 	typedef struct {
 		uint32 magic;
 		uint32 version;
@@ -166,7 +166,7 @@ public:
 	bool _methodThread;
 	char *_threadEvent;
 	CBScriptHolder *_owner;
-	CScScript::TExternalFunction *GetExternal(char *Name);
+	CScScript::TExternalFunction *GetExternal(char *name);
 	HRESULT ExternalCall(CScStack *Stack, CScStack *ThisStack, CScScript::TExternalFunction *Function);
 private:
 	HRESULT InitScript();

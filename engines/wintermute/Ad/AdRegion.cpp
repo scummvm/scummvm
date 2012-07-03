@@ -219,32 +219,32 @@ HRESULT CAdRegion::loadBuffer(byte  *Buffer, bool Complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	/*
 	    //////////////////////////////////////////////////////////////////////////
 	    // SkipTo
 	    //////////////////////////////////////////////////////////////////////////
-	    if (strcmp(Name, "SkipTo")==0) {
-	        Stack->CorrectParams(2);
-	        _posX = Stack->Pop()->GetInt();
-	        _posY = Stack->Pop()->GetInt();
-	        Stack->PushNULL();
+	    if (strcmp(name, "SkipTo")==0) {
+	        stack->CorrectParams(2);
+	        _posX = stack->Pop()->GetInt();
+	        _posY = stack->Pop()->GetInt();
+	        stack->PushNULL();
 
 	        return S_OK;
 	    }
 
-	    else*/ return CBRegion::scCallMethod(Script, Stack, ThisStack, Name);
+	    else*/ return CBRegion::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdRegion::scGetProperty(const char *Name) {
+CScValue *CAdRegion::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("ad region");
 		return _scValue;
 	}
@@ -252,7 +252,7 @@ CScValue *CAdRegion::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Name") == 0) {
+	else if (strcmp(name, "Name") == 0) {
 		_scValue->SetString(_name);
 		return _scValue;
 	}
@@ -260,7 +260,7 @@ CScValue *CAdRegion::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Blocked
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Blocked") == 0) {
+	else if (strcmp(name, "Blocked") == 0) {
 		_scValue->SetBool(_blocked);
 		return _scValue;
 	}
@@ -268,7 +268,7 @@ CScValue *CAdRegion::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Decoration") == 0) {
+	else if (strcmp(name, "Decoration") == 0) {
 		_scValue->SetBool(_decoration);
 		return _scValue;
 	}
@@ -276,7 +276,7 @@ CScValue *CAdRegion::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Scale") == 0) {
+	else if (strcmp(name, "Scale") == 0) {
 		_scValue->SetFloat(_zoom);
 		return _scValue;
 	}
@@ -284,21 +284,21 @@ CScValue *CAdRegion::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AlphaColor") == 0) {
+	else if (strcmp(name, "AlphaColor") == 0) {
 		_scValue->SetInt((int)_alpha);
 		return _scValue;
 	}
 
-	else return CBRegion::scGetProperty(Name);
+	else return CBRegion::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdRegion::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Name") == 0) {
+	if (strcmp(name, "Name") == 0) {
 		setName(Value->GetString());
 		return S_OK;
 	}
@@ -306,7 +306,7 @@ HRESULT CAdRegion::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Blocked
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Blocked") == 0) {
+	else if (strcmp(name, "Blocked") == 0) {
 		_blocked = Value->GetBool();
 		return S_OK;
 	}
@@ -314,7 +314,7 @@ HRESULT CAdRegion::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Decoration") == 0) {
+	else if (strcmp(name, "Decoration") == 0) {
 		_decoration = Value->GetBool();
 		return S_OK;
 	}
@@ -322,7 +322,7 @@ HRESULT CAdRegion::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Scale") == 0) {
+	else if (strcmp(name, "Scale") == 0) {
 		_zoom = Value->GetFloat();
 		return S_OK;
 	}
@@ -330,12 +330,12 @@ HRESULT CAdRegion::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AlphaColor") == 0) {
+	else if (strcmp(name, "AlphaColor") == 0) {
 		_alpha = (uint32)Value->GetInt();
 		return S_OK;
 	}
 
-	else return CBRegion::scSetProperty(Name, Value);
+	else return CBRegion::scSetProperty(name, Value);
 }
 
 

@@ -36,7 +36,7 @@ class CAdEntity;
 class CAdNodeState : public CBBase {
 public:
 	HRESULT TransferEntity(CAdEntity *Entity, bool IncludingSprites, bool Saving);
-	void setName(const char *Name);
+	void setName(const char *name);
 	void setFilename(const char *Filename);
 	void SetCursor(const char *Filename);
 	DECLARE_PERSISTENT(CAdNodeState, CBBase)

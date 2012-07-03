@@ -109,15 +109,15 @@ HRESULT CBScriptHolder::listen(CBScriptHolder *param1, uint32 param2) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG_CrashMe
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "DEBUG_CrashMe") == 0) {
-		Stack->CorrectParams(0);
+	if (strcmp(name, "DEBUG_CrashMe") == 0) {
+		stack->CorrectParams(0);
 		byte *p = 0;
 		*p = 10;
-		Stack->PushNULL();
+		stack->PushNULL();
 
 		return S_OK;
 	}
@@ -125,14 +125,14 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	// ApplyEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ApplyEvent") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *val = Stack->Pop();
+	else if (strcmp(name, "ApplyEvent") == 0) {
+		stack->CorrectParams(1);
+		CScValue *val = stack->Pop();
 		HRESULT ret;
 		ret = applyEvent(val->GetString());
 
-		if (SUCCEEDED(ret)) Stack->PushBool(true);
-		else Stack->PushBool(false);
+		if (SUCCEEDED(ret)) stack->PushBool(true);
+		else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -140,9 +140,9 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	// CanHandleEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CanHandleEvent") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushBool(canHandleEvent(Stack->Pop()->GetString()));
+	else if (strcmp(name, "CanHandleEvent") == 0) {
+		stack->CorrectParams(1);
+		stack->PushBool(canHandleEvent(stack->Pop()->GetString()));
 
 		return S_OK;
 	}
@@ -150,9 +150,9 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	// CanHandleMethod
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CanHandleMethod") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushBool(canHandleMethod(Stack->Pop()->GetString()));
+	else if (strcmp(name, "CanHandleMethod") == 0) {
+		stack->CorrectParams(1);
+		stack->PushBool(canHandleMethod(stack->Pop()->GetString()));
 
 		return S_OK;
 	}
@@ -160,9 +160,9 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	// AttachScript
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AttachScript") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushBool(SUCCEEDED(addScript(Stack->Pop()->GetString())));
+	else if (strcmp(name, "AttachScript") == 0) {
+		stack->CorrectParams(1);
+		stack->PushBool(SUCCEEDED(addScript(stack->Pop()->GetString())));
 
 		return S_OK;
 	}
@@ -170,10 +170,10 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	// DetachScript
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "DetachScript") == 0) {
-		Stack->CorrectParams(2);
-		const char *Filename = Stack->Pop()->GetString();
-		bool KillThreads = Stack->Pop()->GetBool(false);
+	else if (strcmp(name, "DetachScript") == 0) {
+		stack->CorrectParams(2);
+		const char *Filename = stack->Pop()->GetString();
+		bool KillThreads = stack->Pop()->GetBool(false);
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0) {
@@ -182,7 +182,7 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStac
 				break;
 			}
 		}
-		Stack->PushBool(ret);
+		stack->PushBool(ret);
 
 		return S_OK;
 	}
@@ -190,9 +190,9 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	// IsScriptRunning
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsScriptRunning") == 0) {
-		Stack->CorrectParams(1);
-		const char *Filename = Stack->Pop()->GetString();
+	else if (strcmp(name, "IsScriptRunning") == 0) {
+		stack->CorrectParams(1);
+		const char *Filename = stack->Pop()->GetString();
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0 && _scripts[i]->_state != SCRIPT_FINISHED && _scripts[i]->_state != SCRIPT_ERROR) {
@@ -200,21 +200,21 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *Script, CScStack *Stack, CScStac
 				break;
 			}
 		}
-		Stack->PushBool(ret);
+		stack->PushBool(ret);
 
 		return S_OK;
-	} else return CBScriptable::scCallMethod(Script, Stack, ThisStack, Name);
+	} else return CBScriptable::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBScriptHolder::scGetProperty(const char *Name) {
+CScValue *CBScriptHolder::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("script_holder");
 		return _scValue;
 	}
@@ -222,7 +222,7 @@ CScValue *CBScriptHolder::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Name") == 0) {
+	else if (strcmp(name, "Name") == 0) {
 		_scValue->SetString(_name);
 		return _scValue;
 	}
@@ -230,24 +230,24 @@ CScValue *CBScriptHolder::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Filename (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Filename") == 0) {
+	else if (strcmp(name, "Filename") == 0) {
 		_scValue->SetString(_filename);
 		return _scValue;
 	}
 
-	else return CBScriptable::scGetProperty(Name);
+	else return CBScriptable::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBScriptHolder::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Name") == 0) {
+	if (strcmp(name, "Name") == 0) {
 		setName(Value->GetString());
 		return S_OK;
-	} else return CBScriptable::scSetProperty(Name, Value);
+	} else return CBScriptable::scSetProperty(name, Value);
 }
 
 
@@ -311,9 +311,9 @@ HRESULT CBScriptHolder::addScript(const char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::removeScript(CScScript *Script) {
+HRESULT CBScriptHolder::removeScript(CScScript *script) {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		if (_scripts[i] == Script) {
+		if (_scripts[i] == script) {
 			_scripts.RemoveAt(i);
 			break;
 		}

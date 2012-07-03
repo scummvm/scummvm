@@ -49,15 +49,15 @@ CAdInventory::~CAdInventory() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::InsertItem(const char *Name, const char *InsertAfter) {
-	if (Name == NULL) return E_FAIL;
+HRESULT CAdInventory::InsertItem(const char *name, const char *InsertAfter) {
+	if (name == NULL) return E_FAIL;
 
-	CAdItem *item = ((CAdGame *)Game)->GetItemByName(Name);
+	CAdItem *item = ((CAdGame *)Game)->GetItemByName(name);
 	if (item == NULL) return E_FAIL;
 
 	int InsertIndex = -1;
 	for (int i = 0; i < _takenItems.GetSize(); i++) {
-		if (scumm_stricmp(_takenItems[i]->_name, Name) == 0) {
+		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
 			_takenItems.RemoveAt(i);
 			i--;
 			continue;
@@ -74,11 +74,11 @@ HRESULT CAdInventory::InsertItem(const char *Name, const char *InsertAfter) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::RemoveItem(const char *Name) {
-	if (Name == NULL) return E_FAIL;
+HRESULT CAdInventory::RemoveItem(const char *name) {
+	if (name == NULL) return E_FAIL;
 
 	for (int i = 0; i < _takenItems.GetSize(); i++) {
-		if (scumm_stricmp(_takenItems[i]->_name, Name) == 0) {
+		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
 			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
 			_takenItems.RemoveAt(i);
 			return S_OK;

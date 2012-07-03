@@ -165,17 +165,17 @@ HRESULT CBObject::listen(CBScriptHolder *param1, uint32 param2) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// SkipTo
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "SkipTo") == 0) {
-		Stack->CorrectParams(2);
-		_posX = Stack->Pop()->GetInt();
-		_posY = Stack->Pop()->GetInt();
+	if (strcmp(name, "SkipTo") == 0) {
+		stack->CorrectParams(2);
+		_posX = stack->Pop()->GetInt();
+		_posY = stack->Pop()->GetInt();
 		afterMove();
-		Stack->PushNULL();
+		stack->PushNULL();
 
 		return S_OK;
 	}
@@ -183,9 +183,9 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Caption") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushString(getCaption(Stack->Pop()->GetInt()));
+	else if (strcmp(name, "Caption") == 0) {
+		stack->CorrectParams(1);
+		stack->PushString(getCaption(stack->Pop()->GetInt()));
 
 		return S_OK;
 	}
@@ -193,10 +193,10 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// SetCursor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetCursor") == 0) {
-		Stack->CorrectParams(1);
-		if (SUCCEEDED(setCursor(Stack->Pop()->GetString()))) Stack->PushBool(true);
-		else Stack->PushBool(false);
+	else if (strcmp(name, "SetCursor") == 0) {
+		stack->CorrectParams(1);
+		if (SUCCEEDED(setCursor(stack->Pop()->GetString()))) stack->PushBool(true);
+		else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -204,8 +204,8 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// RemoveCursor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "RemoveCursor") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "RemoveCursor") == 0) {
+		stack->CorrectParams(0);
 		if (!_sharedCursors) {
 			delete _cursor;
 			_cursor = NULL;
@@ -213,7 +213,7 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			_cursor = NULL;
 
 		}
-		Stack->PushNULL();
+		stack->PushNULL();
 
 		return S_OK;
 	}
@@ -221,10 +221,10 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// GetCursor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetCursor") == 0) {
-		Stack->CorrectParams(0);
-		if (!_cursor || !_cursor->_filename) Stack->PushNULL();
-		else Stack->PushString(_cursor->_filename);
+	else if (strcmp(name, "GetCursor") == 0) {
+		stack->CorrectParams(0);
+		if (!_cursor || !_cursor->_filename) stack->PushNULL();
+		else stack->PushString(_cursor->_filename);
 
 		return S_OK;
 	}
@@ -232,10 +232,10 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// GetCursorObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetCursorObject") == 0) {
-		Stack->CorrectParams(0);
-		if (!_cursor) Stack->PushNULL();
-		else Stack->PushNative(_cursor, true);
+	else if (strcmp(name, "GetCursorObject") == 0) {
+		stack->CorrectParams(0);
+		if (!_cursor) stack->PushNULL();
+		else stack->PushNative(_cursor, true);
 
 		return S_OK;
 	}
@@ -243,11 +243,11 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// HasCursor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "HasCursor") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "HasCursor") == 0) {
+		stack->CorrectParams(0);
 
-		if (_cursor) Stack->PushBool(true);
-		else Stack->PushBool(false);
+		if (_cursor) stack->PushBool(true);
+		else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -255,10 +255,10 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// SetCaption
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetCaption") == 0) {
-		Stack->CorrectParams(2);
-		setCaption(Stack->Pop()->GetString(), Stack->Pop()->GetInt());
-		Stack->PushNULL();
+	else if (strcmp(name, "SetCaption") == 0) {
+		stack->CorrectParams(2);
+		setCaption(stack->Pop()->GetString(), stack->Pop()->GetInt());
+		stack->PushNULL();
 
 		return S_OK;
 	}
@@ -266,13 +266,13 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// LoadSound
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "LoadSound") == 0) {
-		Stack->CorrectParams(1);
-		const char *Filename = Stack->Pop()->GetString();
+	else if (strcmp(name, "LoadSound") == 0) {
+		stack->CorrectParams(1);
+		const char *Filename = stack->Pop()->GetString();
 		if (SUCCEEDED(playSFX(Filename, false, false)))
-			Stack->PushBool(true);
+			stack->PushBool(true);
 		else
-			Stack->PushBool(false);
+			stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -280,16 +280,16 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// PlaySound
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PlaySound") == 0) {
-		Stack->CorrectParams(3);
+	else if (strcmp(name, "PlaySound") == 0) {
+		stack->CorrectParams(3);
 
 		const char *Filename;
 		bool Looping;
 		uint32 LoopStart;
 
-		CScValue *val1 = Stack->Pop();
-		CScValue *val2 = Stack->Pop();
-		CScValue *val3 = Stack->Pop();
+		CScValue *val1 = stack->Pop();
+		CScValue *val2 = stack->Pop();
+		CScValue *val3 = stack->Pop();
 
 		if (val1->_type == VAL_BOOL) {
 			Filename = NULL;
@@ -302,22 +302,22 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			LoopStart = val3->GetInt();
 		}
 
-		if (FAILED(playSFX(Filename, Looping, true, NULL, LoopStart))) Stack->PushBool(false);
-		else Stack->PushBool(true);
+		if (FAILED(playSFX(Filename, Looping, true, NULL, LoopStart))) stack->PushBool(false);
+		else stack->PushBool(true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// PlaySoundEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PlaySoundEvent") == 0) {
-		Stack->CorrectParams(2);
+	else if (strcmp(name, "PlaySoundEvent") == 0) {
+		stack->CorrectParams(2);
 
 		const char *Filename;
 		const char *EventName;
 
-		CScValue *val1 = Stack->Pop();
-		CScValue *val2 = Stack->Pop();
+		CScValue *val1 = stack->Pop();
+		CScValue *val2 = stack->Pop();
 
 		if (val2->IsNULL()) {
 			Filename = NULL;
@@ -327,98 +327,98 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 			EventName = val2->GetString();
 		}
 
-		if (FAILED(playSFX(Filename, false, true, EventName))) Stack->PushBool(false);
-		else Stack->PushBool(true);
+		if (FAILED(playSFX(Filename, false, true, EventName))) stack->PushBool(false);
+		else stack->PushBool(true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// StopSound
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "StopSound") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "StopSound") == 0) {
+		stack->CorrectParams(0);
 
-		if (FAILED(stopSFX())) Stack->PushBool(false);
-		else Stack->PushBool(true);
+		if (FAILED(stopSFX())) stack->PushBool(false);
+		else stack->PushBool(true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// PauseSound
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PauseSound") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "PauseSound") == 0) {
+		stack->CorrectParams(0);
 
-		if (FAILED(pauseSFX())) Stack->PushBool(false);
-		else Stack->PushBool(true);
+		if (FAILED(pauseSFX())) stack->PushBool(false);
+		else stack->PushBool(true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// ResumeSound
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ResumeSound") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "ResumeSound") == 0) {
+		stack->CorrectParams(0);
 
-		if (FAILED(resumeSFX())) Stack->PushBool(false);
-		else Stack->PushBool(true);
+		if (FAILED(resumeSFX())) stack->PushBool(false);
+		else stack->PushBool(true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IsSoundPlaying
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsSoundPlaying") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "IsSoundPlaying") == 0) {
+		stack->CorrectParams(0);
 
-		if (_sFX && _sFX->isPlaying()) Stack->PushBool(true);
-		else Stack->PushBool(false);
+		if (_sFX && _sFX->isPlaying()) stack->PushBool(true);
+		else stack->PushBool(false);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SetSoundPosition
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetSoundPosition") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "SetSoundPosition") == 0) {
+		stack->CorrectParams(1);
 
-		uint32 Time = Stack->Pop()->GetInt();
-		if (FAILED(setSFXTime(Time))) Stack->PushBool(false);
-		else Stack->PushBool(true);
+		uint32 Time = stack->Pop()->GetInt();
+		if (FAILED(setSFXTime(Time))) stack->PushBool(false);
+		else stack->PushBool(true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSoundPosition
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetSoundPosition") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "GetSoundPosition") == 0) {
+		stack->CorrectParams(0);
 
-		if (!_sFX) Stack->PushInt(0);
-		else Stack->PushInt(_sFX->getPositionTime());
+		if (!_sFX) stack->PushInt(0);
+		else stack->PushInt(_sFX->getPositionTime());
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SetSoundVolume
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetSoundVolume") == 0) {
-		Stack->CorrectParams(1);
+	else if (strcmp(name, "SetSoundVolume") == 0) {
+		stack->CorrectParams(1);
 
-		int Volume = Stack->Pop()->GetInt();
-		if (FAILED(setSFXVolume(Volume))) Stack->PushBool(false);
-		else Stack->PushBool(true);
+		int Volume = stack->Pop()->GetInt();
+		if (FAILED(setSFXVolume(Volume))) stack->PushBool(false);
+		else stack->PushBool(true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSoundVolume
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GetSoundVolume") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "GetSoundVolume") == 0) {
+		stack->CorrectParams(0);
 
-		if (!_sFX) Stack->PushInt(_sFXVolume);
-		else Stack->PushInt(_sFX->getVolume());
+		if (!_sFX) stack->PushInt(_sFXVolume);
+		else stack->PushInt(_sFX->getVolume());
 		return S_OK;
 	}
 
@@ -426,14 +426,14 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// SoundFXNone
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SoundFXNone") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "SoundFXNone") == 0) {
+		stack->CorrectParams(0);
 		_sFXType = SFX_NONE;
 		_sFXParam1 = 0;
 		_sFXParam2 = 0;
 		_sFXParam3 = 0;
 		_sFXParam4 = 0;
-		Stack->PushNULL();
+		stack->PushNULL();
 
 		return S_OK;
 	}
@@ -441,14 +441,14 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// SoundFXEcho
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SoundFXEcho") == 0) {
-		Stack->CorrectParams(4);
+	else if (strcmp(name, "SoundFXEcho") == 0) {
+		stack->CorrectParams(4);
 		_sFXType = SFX_ECHO;
-		_sFXParam1 = (float)Stack->Pop()->GetFloat(0); // Wet/Dry Mix [%] (0-100)
-		_sFXParam2 = (float)Stack->Pop()->GetFloat(0); // Feedback [%] (0-100)
-		_sFXParam3 = (float)Stack->Pop()->GetFloat(333.0f); // Left Delay [ms] (1-2000)
-		_sFXParam4 = (float)Stack->Pop()->GetFloat(333.0f); // Right Delay [ms] (1-2000)
-		Stack->PushNULL();
+		_sFXParam1 = (float)stack->Pop()->GetFloat(0); // Wet/Dry Mix [%] (0-100)
+		_sFXParam2 = (float)stack->Pop()->GetFloat(0); // Feedback [%] (0-100)
+		_sFXParam3 = (float)stack->Pop()->GetFloat(333.0f); // Left Delay [ms] (1-2000)
+		_sFXParam4 = (float)stack->Pop()->GetFloat(333.0f); // Right Delay [ms] (1-2000)
+		stack->PushNULL();
 
 		return S_OK;
 	}
@@ -456,30 +456,30 @@ HRESULT CBObject::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	//////////////////////////////////////////////////////////////////////////
 	// SoundFXReverb
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SoundFXReverb") == 0) {
-		Stack->CorrectParams(4);
+	else if (strcmp(name, "SoundFXReverb") == 0) {
+		stack->CorrectParams(4);
 		_sFXType = SFX_REVERB;
-		_sFXParam1 = (float)Stack->Pop()->GetFloat(0); // In Gain [dB] (-96 - 0)
-		_sFXParam2 = (float)Stack->Pop()->GetFloat(0); // Reverb Mix [dB] (-96 - 0)
-		_sFXParam3 = (float)Stack->Pop()->GetFloat(1000.0f); // Reverb Time [ms] (0.001 - 3000)
-		_sFXParam4 = (float)Stack->Pop()->GetFloat(0.001f); // HighFreq RT Ratio (0.001 - 0.999)
-		Stack->PushNULL();
+		_sFXParam1 = (float)stack->Pop()->GetFloat(0); // In Gain [dB] (-96 - 0)
+		_sFXParam2 = (float)stack->Pop()->GetFloat(0); // Reverb Mix [dB] (-96 - 0)
+		_sFXParam3 = (float)stack->Pop()->GetFloat(1000.0f); // Reverb Time [ms] (0.001 - 3000)
+		_sFXParam4 = (float)stack->Pop()->GetFloat(0.001f); // HighFreq RT Ratio (0.001 - 0.999)
+		stack->PushNULL();
 
 		return S_OK;
 	}
 
-	else return CBScriptHolder::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CBScriptHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBObject::scGetProperty(const char *Name) {
+CScValue *CBObject::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("object");
 		return _scValue;
 	}
@@ -487,7 +487,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Caption") == 0) {
+	else if (strcmp(name, "Caption") == 0) {
 		_scValue->SetString(getCaption(1));
 		return _scValue;
 	}
@@ -495,7 +495,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "X") == 0) {
+	else if (strcmp(name, "X") == 0) {
 		_scValue->SetInt(_posX);
 		return _scValue;
 	}
@@ -503,7 +503,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Y") == 0) {
+	else if (strcmp(name, "Y") == 0) {
 		_scValue->SetInt(_posY);
 		return _scValue;
 	}
@@ -511,7 +511,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Height") == 0) {
+	else if (strcmp(name, "Height") == 0) {
 		_scValue->SetInt(getHeight());
 		return _scValue;
 	}
@@ -519,7 +519,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Ready (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Ready") == 0) {
+	else if (strcmp(name, "Ready") == 0) {
 		_scValue->SetBool(_ready);
 		return _scValue;
 	}
@@ -527,7 +527,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Movable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Movable") == 0) {
+	else if (strcmp(name, "Movable") == 0) {
 		_scValue->SetBool(_movable);
 		return _scValue;
 	}
@@ -535,7 +535,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Registrable/Interactive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Registrable") == 0 || strcmp(Name, "Interactive") == 0) {
+	else if (strcmp(name, "Registrable") == 0 || strcmp(name, "Interactive") == 0) {
 		_scValue->SetBool(_registrable);
 		return _scValue;
 	}
@@ -543,21 +543,21 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Zoomable/Scalable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Zoomable") == 0 || strcmp(Name, "Scalable") == 0) {
+	else if (strcmp(name, "Zoomable") == 0 || strcmp(name, "Scalable") == 0) {
 		_scValue->SetBool(_zoomable);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Rotatable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Rotatable") == 0) {
+	else if (strcmp(name, "Rotatable") == 0) {
 		_scValue->SetBool(_rotatable);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AlphaColor") == 0) {
+	else if (strcmp(name, "AlphaColor") == 0) {
 		_scValue->SetInt((int)_alphaColor);
 		return _scValue;
 	}
@@ -565,7 +565,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// BlendMode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "BlendMode") == 0) {
+	else if (strcmp(name, "BlendMode") == 0) {
 		_scValue->SetInt((int)_blendMode);
 		return _scValue;
 	}
@@ -573,7 +573,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Scale") == 0) {
+	else if (strcmp(name, "Scale") == 0) {
 		if (_scale < 0) _scValue->SetNULL();
 		else _scValue->SetFloat((double)_scale);
 		return _scValue;
@@ -582,7 +582,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScaleX") == 0) {
+	else if (strcmp(name, "ScaleX") == 0) {
 		if (_scaleX < 0) _scValue->SetNULL();
 		else _scValue->SetFloat((double)_scaleX);
 		return _scValue;
@@ -591,7 +591,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScaleY") == 0) {
+	else if (strcmp(name, "ScaleY") == 0) {
 		if (_scaleY < 0) _scValue->SetNULL();
 		else _scValue->SetFloat((double)_scaleY);
 		return _scValue;
@@ -600,7 +600,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeScale
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "RelativeScale") == 0) {
+	else if (strcmp(name, "RelativeScale") == 0) {
 		_scValue->SetFloat((double)_relativeScale);
 		return _scValue;
 	}
@@ -608,7 +608,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Rotate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Rotate") == 0) {
+	else if (strcmp(name, "Rotate") == 0) {
 		if (!_rotateValid) _scValue->SetNULL();
 		else _scValue->SetFloat((double)_rotate);
 		return _scValue;
@@ -617,7 +617,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeRotate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "RelativeRotate") == 0) {
+	else if (strcmp(name, "RelativeRotate") == 0) {
 		_scValue->SetFloat((double)_relativeRotate);
 		return _scValue;
 	}
@@ -625,14 +625,14 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Colorable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Colorable") == 0) {
+	else if (strcmp(name, "Colorable") == 0) {
 		_scValue->SetBool(_shadowable);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SoundPanning
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SoundPanning") == 0) {
+	else if (strcmp(name, "SoundPanning") == 0) {
 		_scValue->SetBool(_autoSoundPanning);
 		return _scValue;
 	}
@@ -640,7 +640,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SaveState
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SaveState") == 0) {
+	else if (strcmp(name, "SaveState") == 0) {
 		_scValue->SetBool(_saveState);
 		return _scValue;
 	}
@@ -648,7 +648,7 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NonIntMouseEvents
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NonIntMouseEvents") == 0) {
+	else if (strcmp(name, "NonIntMouseEvents") == 0) {
 		_scValue->SetBool(_nonIntMouseEvents);
 		return _scValue;
 	}
@@ -656,21 +656,21 @@ CScValue *CBObject::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccCaption
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AccCaption") == 0) {
+	else if (strcmp(name, "AccCaption") == 0) {
 		_scValue->SetNULL();
 		return _scValue;
 	}
 
-	else return CBScriptHolder::scGetProperty(Name);
+	else return CBScriptHolder::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBObject::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Caption") == 0) {
+	if (strcmp(name, "Caption") == 0) {
 		setCaption(Value->GetString());
 		return S_OK;
 	}
@@ -678,7 +678,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "X") == 0) {
+	else if (strcmp(name, "X") == 0) {
 		_posX = Value->GetInt();
 		afterMove();
 		return S_OK;
@@ -687,7 +687,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Y") == 0) {
+	else if (strcmp(name, "Y") == 0) {
 		_posY = Value->GetInt();
 		afterMove();
 		return S_OK;
@@ -696,7 +696,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Movable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Movable") == 0) {
+	else if (strcmp(name, "Movable") == 0) {
 		_movable = Value->GetBool();
 		return S_OK;
 	}
@@ -704,7 +704,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Registrable/Interactive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Registrable") == 0 || strcmp(Name, "Interactive") == 0) {
+	else if (strcmp(name, "Registrable") == 0 || strcmp(name, "Interactive") == 0) {
 		_registrable = Value->GetBool();
 		return S_OK;
 	}
@@ -712,7 +712,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Zoomable/Scalable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Zoomable") == 0 || strcmp(Name, "Scalable") == 0) {
+	else if (strcmp(name, "Zoomable") == 0 || strcmp(name, "Scalable") == 0) {
 		_zoomable = Value->GetBool();
 		return S_OK;
 	}
@@ -720,7 +720,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Rotatable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Rotatable") == 0) {
+	else if (strcmp(name, "Rotatable") == 0) {
 		_rotatable = Value->GetBool();
 		return S_OK;
 	}
@@ -728,7 +728,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AlphaColor") == 0) {
+	else if (strcmp(name, "AlphaColor") == 0) {
 		_alphaColor = (uint32)Value->GetInt();
 		return S_OK;
 	}
@@ -736,7 +736,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// BlendMode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "BlendMode") == 0) {
+	else if (strcmp(name, "BlendMode") == 0) {
 		int i = Value->GetInt();
 		if (i < BLEND_NORMAL || i >= NUM_BLEND_MODES) i = BLEND_NORMAL;
 		_blendMode = (TSpriteBlendMode)i;
@@ -746,7 +746,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Scale") == 0) {
+	else if (strcmp(name, "Scale") == 0) {
 		if (Value->IsNULL()) _scale = -1;
 		else _scale = (float)Value->GetFloat();
 		return S_OK;
@@ -755,7 +755,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScaleX") == 0) {
+	else if (strcmp(name, "ScaleX") == 0) {
 		if (Value->IsNULL()) _scaleX = -1;
 		else _scaleX = (float)Value->GetFloat();
 		return S_OK;
@@ -764,7 +764,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScaleY") == 0) {
+	else if (strcmp(name, "ScaleY") == 0) {
 		if (Value->IsNULL()) _scaleY = -1;
 		else _scaleY = (float)Value->GetFloat();
 		return S_OK;
@@ -773,7 +773,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeScale
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "RelativeScale") == 0) {
+	else if (strcmp(name, "RelativeScale") == 0) {
 		_relativeScale = (float)Value->GetFloat();
 		return S_OK;
 	}
@@ -781,7 +781,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Rotate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Rotate") == 0) {
+	else if (strcmp(name, "Rotate") == 0) {
 		if (Value->IsNULL()) {
 			_rotate = 0.0f;
 			_rotateValid = false;
@@ -795,7 +795,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeRotate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "RelativeRotate") == 0) {
+	else if (strcmp(name, "RelativeRotate") == 0) {
 		_relativeRotate = (float)Value->GetFloat();
 		return S_OK;
 	}
@@ -803,7 +803,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Colorable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Colorable") == 0) {
+	else if (strcmp(name, "Colorable") == 0) {
 		_shadowable = Value->GetBool();
 		return S_OK;
 	}
@@ -811,7 +811,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SoundPanning
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SoundPanning") == 0) {
+	else if (strcmp(name, "SoundPanning") == 0) {
 		_autoSoundPanning = Value->GetBool();
 		if (!_autoSoundPanning) resetSoundPan();
 		return S_OK;
@@ -820,7 +820,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SaveState
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SaveState") == 0) {
+	else if (strcmp(name, "SaveState") == 0) {
 		_saveState = Value->GetBool();
 		return S_OK;
 	}
@@ -828,7 +828,7 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// NonIntMouseEvents
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NonIntMouseEvents") == 0) {
+	else if (strcmp(name, "NonIntMouseEvents") == 0) {
 		_nonIntMouseEvents = Value->GetBool();
 		return S_OK;
 	}
@@ -836,11 +836,11 @@ HRESULT CBObject::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccCaption
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AccCaption") == 0) {
+	else if (strcmp(name, "AccCaption") == 0) {
 		return S_OK;
 	}
 
-	else return CBScriptHolder::scSetProperty(Name, Value);
+	else return CBScriptHolder::scSetProperty(name, Value);
 }
 
 

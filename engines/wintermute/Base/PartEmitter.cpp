@@ -364,11 +364,11 @@ HRESULT CPartEmitter::setBorderThickness(int ThicknessLeft, int ThicknessRight, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-CPartForce *CPartEmitter::addForceByName(const char *Name) {
+CPartForce *CPartEmitter::addForceByName(const char *name) {
 	CPartForce *Force = NULL;
 
 	for (int i = 0; i < _forces.GetSize(); i++) {
-		if (scumm_stricmp(Name, _forces[i]->_name) == 0) {
+		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
 			Force = _forces[i];
 			break;
 		}
@@ -376,7 +376,7 @@ CPartForce *CPartEmitter::addForceByName(const char *Name) {
 	if (!Force) {
 		Force = new CPartForce(Game);
 		if (Force) {
-			Force->setName(Name);
+			Force->setName(name);
 			_forces.Add(Force);
 		}
 	}
@@ -385,8 +385,8 @@ CPartForce *CPartEmitter::addForceByName(const char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::addForce(const char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength) {
-	CPartForce *Force = addForceByName(Name);
+HRESULT CPartEmitter::addForce(const char *name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength) {
+	CPartForce *Force = addForceByName(name);
 	if (!Force) return E_FAIL;
 
 	Force->_type = Type;
@@ -401,9 +401,9 @@ HRESULT CPartEmitter::addForce(const char *Name, CPartForce::TForceType Type, in
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::removeForce(const char *Name) {
+HRESULT CPartEmitter::removeForce(const char *name) {
 	for (int i = 0; i < _forces.GetSize(); i++) {
-		if (scumm_stricmp(Name, _forces[i]->_name) == 0) {
+		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
 			delete _forces[i];
 			_forces.RemoveAt(i);
 			return S_OK;
@@ -416,52 +416,52 @@ HRESULT CPartEmitter::removeForce(const char *Name) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetBorder
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "SetBorder") == 0) {
-		Stack->CorrectParams(4);
-		int BorderX      = Stack->Pop()->GetInt();
-		int BorderY      = Stack->Pop()->GetInt();
-		int BorderWidth  = Stack->Pop()->GetInt();
-		int BorderHeight = Stack->Pop()->GetInt();
+	if (strcmp(name, "SetBorder") == 0) {
+		stack->CorrectParams(4);
+		int BorderX      = stack->Pop()->GetInt();
+		int BorderY      = stack->Pop()->GetInt();
+		int BorderWidth  = stack->Pop()->GetInt();
+		int BorderHeight = stack->Pop()->GetInt();
 
-		Stack->PushBool(SUCCEEDED(setBorder(BorderX, BorderY, BorderWidth, BorderHeight)));
+		stack->PushBool(SUCCEEDED(setBorder(BorderX, BorderY, BorderWidth, BorderHeight)));
 
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SetBorderThickness
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetBorderThickness") == 0) {
-		Stack->CorrectParams(4);
-		int Left   = Stack->Pop()->GetInt();
-		int Right  = Stack->Pop()->GetInt();
-		int Top    = Stack->Pop()->GetInt();
-		int Bottom = Stack->Pop()->GetInt();
+	else if (strcmp(name, "SetBorderThickness") == 0) {
+		stack->CorrectParams(4);
+		int Left   = stack->Pop()->GetInt();
+		int Right  = stack->Pop()->GetInt();
+		int Top    = stack->Pop()->GetInt();
+		int Bottom = stack->Pop()->GetInt();
 
-		Stack->PushBool(SUCCEEDED(setBorderThickness(Left, Right, Top, Bottom)));
+		stack->PushBool(SUCCEEDED(setBorderThickness(Left, Right, Top, Bottom)));
 
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AddSprite
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AddSprite") == 0) {
-		Stack->CorrectParams(1);
-		const char *SpriteFile = Stack->Pop()->GetString();
-		Stack->PushBool(SUCCEEDED(addSprite(SpriteFile)));
+	else if (strcmp(name, "AddSprite") == 0) {
+		stack->CorrectParams(1);
+		const char *SpriteFile = stack->Pop()->GetString();
+		stack->PushBool(SUCCEEDED(addSprite(SpriteFile)));
 
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// RemoveSprite
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "RemoveSprite") == 0) {
-		Stack->CorrectParams(1);
-		const char *SpriteFile = Stack->Pop()->GetString();
-		Stack->PushBool(SUCCEEDED(removeSprite(SpriteFile)));
+	else if (strcmp(name, "RemoveSprite") == 0) {
+		stack->CorrectParams(1);
+		const char *SpriteFile = stack->Pop()->GetString();
+		stack->PushBool(SUCCEEDED(removeSprite(SpriteFile)));
 
 		return S_OK;
 	}
@@ -469,10 +469,10 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	// Start
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Start") == 0) {
-		Stack->CorrectParams(1);
-		_overheadTime = Stack->Pop()->GetInt();
-		Stack->PushBool(SUCCEEDED(start()));
+	else if (strcmp(name, "Start") == 0) {
+		stack->CorrectParams(1);
+		_overheadTime = stack->Pop()->GetInt();
+		stack->PushBool(SUCCEEDED(start()));
 
 		return S_OK;
 	}
@@ -480,8 +480,8 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	// Stop
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Stop") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "Stop") == 0) {
+		stack->CorrectParams(0);
 
 		for (int i = 0; i < _particles.GetSize(); i++) {
 			delete _particles[i];
@@ -489,7 +489,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 		_particles.RemoveAll();
 
 		_running = false;
-		Stack->PushBool(true);
+		stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -497,10 +497,10 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	// Pause
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Pause") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "Pause") == 0) {
+		stack->CorrectParams(0);
 		_running = false;
-		Stack->PushBool(true);
+		stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -508,10 +508,10 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	// Resume
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Resume") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "Resume") == 0) {
+		stack->CorrectParams(0);
 		_running = true;
-		Stack->PushBool(true);
+		stack->PushBool(true);
 
 		return S_OK;
 	}
@@ -519,13 +519,13 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	// AddGlobalForce
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AddGlobalForce") == 0) {
-		Stack->CorrectParams(3);
-		const char *forceName = Stack->Pop()->GetString();
-		float Angle = Stack->Pop()->GetFloat();
-		float Strength = Stack->Pop()->GetFloat();
+	else if (strcmp(name, "AddGlobalForce") == 0) {
+		stack->CorrectParams(3);
+		const char *forceName = stack->Pop()->GetString();
+		float Angle = stack->Pop()->GetFloat();
+		float Strength = stack->Pop()->GetFloat();
 
-		Stack->PushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, Angle, Strength)));
+		stack->PushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, Angle, Strength)));
 
 		return S_OK;
 	}
@@ -533,15 +533,15 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	// AddPointForce
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AddPointForce") == 0) {
-		Stack->CorrectParams(5);
-		const char *forceName = Stack->Pop()->GetString();
-		int PosX = Stack->Pop()->GetInt();
-		int PosY = Stack->Pop()->GetInt();
-		float Angle = Stack->Pop()->GetFloat();
-		float Strength = Stack->Pop()->GetFloat();
+	else if (strcmp(name, "AddPointForce") == 0) {
+		stack->CorrectParams(5);
+		const char *forceName = stack->Pop()->GetString();
+		int PosX = stack->Pop()->GetInt();
+		int PosY = stack->Pop()->GetInt();
+		float Angle = stack->Pop()->GetFloat();
+		float Strength = stack->Pop()->GetFloat();
 
-		Stack->PushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, PosX, PosY, Angle, Strength)));
+		stack->PushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, PosX, PosY, Angle, Strength)));
 
 		return S_OK;
 	}
@@ -549,54 +549,54 @@ HRESULT CPartEmitter::scCallMethod(CScScript *Script, CScStack *Stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	// RemoveForce
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "RemoveForce") == 0) {
-		Stack->CorrectParams(1);
-		const char *forceName = Stack->Pop()->GetString();
+	else if (strcmp(name, "RemoveForce") == 0) {
+		stack->CorrectParams(1);
+		const char *forceName = stack->Pop()->GetString();
 
-		Stack->PushBool(SUCCEEDED(removeForce(forceName)));
+		stack->PushBool(SUCCEEDED(removeForce(forceName)));
 
 		return S_OK;
 	}
 
-	else return CBObject::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CBObject::scCallMethod(script, stack, thisStack, name);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CPartEmitter::scGetProperty(const char *Name) {
+CScValue *CPartEmitter::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("particle-emitter");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "X") == 0) {
+	else if (strcmp(name, "X") == 0) {
 		_scValue->SetInt(_posX);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Y") == 0) {
+	else if (strcmp(name, "Y") == 0) {
 		_scValue->SetInt(_posY);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Width") == 0) {
+	else if (strcmp(name, "Width") == 0) {
 		_scValue->SetInt(_width);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Height") == 0) {
+	else if (strcmp(name, "Height") == 0) {
 		_scValue->SetInt(_height);
 		return _scValue;
 	}
@@ -604,21 +604,21 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Scale1") == 0) {
+	else if (strcmp(name, "Scale1") == 0) {
 		_scValue->SetFloat(_scale1);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Scale2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Scale2") == 0) {
+	else if (strcmp(name, "Scale2") == 0) {
 		_scValue->SetFloat(_scale2);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleZBased
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScaleZBased") == 0) {
+	else if (strcmp(name, "ScaleZBased") == 0) {
 		_scValue->SetBool(_scaleZBased);
 		return _scValue;
 	}
@@ -626,21 +626,21 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Velocity1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Velocity1") == 0) {
+	else if (strcmp(name, "Velocity1") == 0) {
 		_scValue->SetFloat(_velocity1);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Velocity2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Velocity2") == 0) {
+	else if (strcmp(name, "Velocity2") == 0) {
 		_scValue->SetFloat(_velocity2);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// VelocityZBased
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "VelocityZBased") == 0) {
+	else if (strcmp(name, "VelocityZBased") == 0) {
 		_scValue->SetBool(_velocityZBased);
 		return _scValue;
 	}
@@ -648,21 +648,21 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTime1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "LifeTime1") == 0) {
+	else if (strcmp(name, "LifeTime1") == 0) {
 		_scValue->SetInt(_lifeTime1);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTime2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "LifeTime2") == 0) {
+	else if (strcmp(name, "LifeTime2") == 0) {
 		_scValue->SetInt(_lifeTime2);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTimeZBased
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "LifeTimeZBased") == 0) {
+	else if (strcmp(name, "LifeTimeZBased") == 0) {
 		_scValue->SetBool(_lifeTimeZBased);
 		return _scValue;
 	}
@@ -670,14 +670,14 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Angle1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Angle1") == 0) {
+	else if (strcmp(name, "Angle1") == 0) {
 		_scValue->SetInt(_angle1);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Angle2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Angle2") == 0) {
+	else if (strcmp(name, "Angle2") == 0) {
 		_scValue->SetInt(_angle2);
 		return _scValue;
 	}
@@ -685,14 +685,14 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AngVelocity1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AngVelocity1") == 0) {
+	else if (strcmp(name, "AngVelocity1") == 0) {
 		_scValue->SetFloat(_angVelocity1);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AngVelocity2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AngVelocity2") == 0) {
+	else if (strcmp(name, "AngVelocity2") == 0) {
 		_scValue->SetFloat(_angVelocity2);
 		return _scValue;
 	}
@@ -700,14 +700,14 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Rotation1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Rotation1") == 0) {
+	else if (strcmp(name, "Rotation1") == 0) {
 		_scValue->SetFloat(_rotation1);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Rotation2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Rotation2") == 0) {
+	else if (strcmp(name, "Rotation2") == 0) {
 		_scValue->SetFloat(_rotation2);
 		return _scValue;
 	}
@@ -715,21 +715,21 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Alpha1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Alpha1") == 0) {
+	else if (strcmp(name, "Alpha1") == 0) {
 		_scValue->SetInt(_alpha1);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Alpha2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Alpha2") == 0) {
+	else if (strcmp(name, "Alpha2") == 0) {
 		_scValue->SetInt(_alpha2);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaTimeBased
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AlphaTimeBased") == 0) {
+	else if (strcmp(name, "AlphaTimeBased") == 0) {
 		_scValue->SetBool(_alphaTimeBased);
 		return _scValue;
 	}
@@ -737,14 +737,14 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MaxParticles
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MaxParticles") == 0) {
+	else if (strcmp(name, "MaxParticles") == 0) {
 		_scValue->SetInt(_maxParticles);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// NumLiveParticles (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "NumLiveParticles") == 0) {
+	else if (strcmp(name, "NumLiveParticles") == 0) {
 		int NumAlive = 0;
 		for (int i = 0; i < _particles.GetSize(); i++) {
 			if (_particles[i] && !_particles[i]->_isDead) NumAlive++;
@@ -756,21 +756,21 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GenerationInterval
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GenerationInterval") == 0) {
+	else if (strcmp(name, "GenerationInterval") == 0) {
 		_scValue->SetInt(_genInterval);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GenerationAmount
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GenerationAmount") == 0) {
+	else if (strcmp(name, "GenerationAmount") == 0) {
 		_scValue->SetInt(_genAmount);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// MaxBatches
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MaxBatches") == 0) {
+	else if (strcmp(name, "MaxBatches") == 0) {
 		_scValue->SetInt(_maxBatches);
 		return _scValue;
 	}
@@ -778,14 +778,14 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// FadeInTime
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FadeInTime") == 0) {
+	else if (strcmp(name, "FadeInTime") == 0) {
 		_scValue->SetInt(_fadeInTime);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// FadeOutTime
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FadeOutTime") == 0) {
+	else if (strcmp(name, "FadeOutTime") == 0) {
 		_scValue->SetInt(_fadeOutTime);
 		return _scValue;
 	}
@@ -793,21 +793,21 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GrowthRate1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GrowthRate1") == 0) {
+	else if (strcmp(name, "GrowthRate1") == 0) {
 		_scValue->SetFloat(_growthRate1);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GrowthRate2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GrowthRate2") == 0) {
+	else if (strcmp(name, "GrowthRate2") == 0) {
 		_scValue->SetFloat(_growthRate2);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ExponentialGrowth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ExponentialGrowth") == 0) {
+	else if (strcmp(name, "ExponentialGrowth") == 0) {
 		_scValue->SetBool(_exponentialGrowth);
 		return _scValue;
 	}
@@ -815,7 +815,7 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// UseRegion
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "UseRegion") == 0) {
+	else if (strcmp(name, "UseRegion") == 0) {
 		_scValue->SetBool(_useRegion);
 		return _scValue;
 	}
@@ -823,43 +823,43 @@ CScValue *CPartEmitter::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// EmitEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "EmitEvent") == 0) {
+	else if (strcmp(name, "EmitEvent") == 0) {
 		if (!_emitEvent) _scValue->SetNULL();
 		else _scValue->SetString(_emitEvent);
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(Name);
+	else return CBObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "X") == 0) {
+	if (strcmp(name, "X") == 0) {
 		_posX = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Y") == 0) {
+	else if (strcmp(name, "Y") == 0) {
 		_posY = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Width") == 0) {
+	else if (strcmp(name, "Width") == 0) {
 		_width = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Height") == 0) {
+	else if (strcmp(name, "Height") == 0) {
 		_height = Value->GetInt();
 		return S_OK;
 	}
@@ -867,21 +867,21 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Scale1") == 0) {
+	else if (strcmp(name, "Scale1") == 0) {
 		_scale1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Scale2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Scale2") == 0) {
+	else if (strcmp(name, "Scale2") == 0) {
 		_scale2 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleZBased
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ScaleZBased") == 0) {
+	else if (strcmp(name, "ScaleZBased") == 0) {
 		_scaleZBased = Value->GetBool();
 		return S_OK;
 	}
@@ -889,21 +889,21 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Velocity1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Velocity1") == 0) {
+	else if (strcmp(name, "Velocity1") == 0) {
 		_velocity1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Velocity2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Velocity2") == 0) {
+	else if (strcmp(name, "Velocity2") == 0) {
 		_velocity2 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// VelocityZBased
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "VelocityZBased") == 0) {
+	else if (strcmp(name, "VelocityZBased") == 0) {
 		_velocityZBased = Value->GetBool();
 		return S_OK;
 	}
@@ -911,21 +911,21 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTime1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "LifeTime1") == 0) {
+	else if (strcmp(name, "LifeTime1") == 0) {
 		_lifeTime1 = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTime2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "LifeTime2") == 0) {
+	else if (strcmp(name, "LifeTime2") == 0) {
 		_lifeTime2 = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTimeZBased
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "LifeTimeZBased") == 0) {
+	else if (strcmp(name, "LifeTimeZBased") == 0) {
 		_lifeTimeZBased = Value->GetBool();
 		return S_OK;
 	}
@@ -933,14 +933,14 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Angle1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Angle1") == 0) {
+	else if (strcmp(name, "Angle1") == 0) {
 		_angle1 = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Angle2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Angle2") == 0) {
+	else if (strcmp(name, "Angle2") == 0) {
 		_angle2 = Value->GetInt();
 		return S_OK;
 	}
@@ -948,14 +948,14 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AngVelocity1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AngVelocity1") == 0) {
+	else if (strcmp(name, "AngVelocity1") == 0) {
 		_angVelocity1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AngVelocity2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AngVelocity2") == 0) {
+	else if (strcmp(name, "AngVelocity2") == 0) {
 		_angVelocity2 = Value->GetFloat();
 		return S_OK;
 	}
@@ -963,14 +963,14 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Rotation1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Rotation1") == 0) {
+	else if (strcmp(name, "Rotation1") == 0) {
 		_rotation1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Rotation2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Rotation2") == 0) {
+	else if (strcmp(name, "Rotation2") == 0) {
 		_rotation2 = Value->GetFloat();
 		return S_OK;
 	}
@@ -978,7 +978,7 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Alpha1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Alpha1") == 0) {
+	else if (strcmp(name, "Alpha1") == 0) {
 		_alpha1 = Value->GetInt();
 		if (_alpha1 < 0) _alpha1 = 0;
 		if (_alpha1 > 255) _alpha1 = 255;
@@ -987,7 +987,7 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Alpha2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Alpha2") == 0) {
+	else if (strcmp(name, "Alpha2") == 0) {
 		_alpha2 = Value->GetInt();
 		if (_alpha2 < 0) _alpha2 = 0;
 		if (_alpha2 > 255) _alpha2 = 255;
@@ -996,7 +996,7 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaTimeBased
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AlphaTimeBased") == 0) {
+	else if (strcmp(name, "AlphaTimeBased") == 0) {
 		_alphaTimeBased = Value->GetBool();
 		return S_OK;
 	}
@@ -1004,7 +1004,7 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MaxParticles
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MaxParticles") == 0) {
+	else if (strcmp(name, "MaxParticles") == 0) {
 		_maxParticles = Value->GetInt();
 		return S_OK;
 	}
@@ -1012,21 +1012,21 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// GenerationInterval
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GenerationInterval") == 0) {
+	else if (strcmp(name, "GenerationInterval") == 0) {
 		_genInterval = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GenerationAmount
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GenerationAmount") == 0) {
+	else if (strcmp(name, "GenerationAmount") == 0) {
 		_genAmount = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// MaxBatches
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MaxBatches") == 0) {
+	else if (strcmp(name, "MaxBatches") == 0) {
 		_maxBatches = Value->GetInt();
 		return S_OK;
 	}
@@ -1034,14 +1034,14 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// FadeInTime
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FadeInTime") == 0) {
+	else if (strcmp(name, "FadeInTime") == 0) {
 		_fadeInTime = Value->GetInt();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// FadeOutTime
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FadeOutTime") == 0) {
+	else if (strcmp(name, "FadeOutTime") == 0) {
 		_fadeOutTime = Value->GetInt();
 		return S_OK;
 	}
@@ -1049,21 +1049,21 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// GrowthRate1
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GrowthRate1") == 0) {
+	else if (strcmp(name, "GrowthRate1") == 0) {
 		_growthRate1 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GrowthRate2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "GrowthRate2") == 0) {
+	else if (strcmp(name, "GrowthRate2") == 0) {
 		_growthRate2 = Value->GetFloat();
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ExponentialGrowth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ExponentialGrowth") == 0) {
+	else if (strcmp(name, "ExponentialGrowth") == 0) {
 		_exponentialGrowth = Value->GetBool();
 		return S_OK;
 	}
@@ -1071,7 +1071,7 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// UseRegion
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "UseRegion") == 0) {
+	else if (strcmp(name, "UseRegion") == 0) {
 		_useRegion = Value->GetBool();
 		return S_OK;
 	}
@@ -1079,14 +1079,14 @@ HRESULT CPartEmitter::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// EmitEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "EmitEvent") == 0) {
+	else if (strcmp(name, "EmitEvent") == 0) {
 		delete[] _emitEvent;
 		_emitEvent = NULL;
 		if (!Value->IsNULL()) CBUtils::SetString(&_emitEvent, Value->GetString());
 		return S_OK;
 	}
 
-	else return CBObject::scSetProperty(Name, Value);
+	else return CBObject::scSetProperty(name, Value);
 }
 
 

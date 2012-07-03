@@ -112,20 +112,20 @@ public:
 	HRESULT setBorder(int X, int Y, int Width, int Height);
 	HRESULT setBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom);
 
-	HRESULT addForce(const char *Name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength);
-	HRESULT removeForce(const char *Name);
+	HRESULT addForce(const char *name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength);
+	HRESULT removeForce(const char *name);
 
 	CBArray<CPartForce *, CPartForce *> _forces;
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *Name);
-	virtual HRESULT scSetProperty(const char *Name, CScValue *Value);
-	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual CScValue *scGetProperty(const char *name);
+	virtual HRESULT scSetProperty(const char *name, CScValue *Value);
+	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 
 private:
-	CPartForce *addForceByName(const char *Name);
+	CPartForce *addForceByName(const char *name);
 	int static compareZ(const void *Obj1, const void *Obj2);
 	HRESULT initParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta);
 	HRESULT updateInternal(uint32 CurrentTime, uint32 TimerDelta);

@@ -156,10 +156,10 @@ CScValue::~CScValue() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CScValue::GetProp(const char *Name) {
-	if (_type == VAL_VARIABLE_REF) return _valRef->GetProp(Name);
+CScValue *CScValue::GetProp(const char *name) {
+	if (_type == VAL_VARIABLE_REF) return _valRef->GetProp(name);
 
-	if (_type == VAL_STRING && strcmp(Name, "Length") == 0) {
+	if (_type == VAL_STRING && strcmp(name, "Length") == 0) {
 		Game->_scValue->_type = VAL_INT;
 
 #if 0 // TODO: Remove FreeType-dependency
@@ -178,20 +178,20 @@ CScValue *CScValue::GetProp(const char *Name) {
 
 	CScValue *ret = NULL;
 
-	if (_type == VAL_NATIVE && _valNative) ret = _valNative->scGetProperty(Name);
+	if (_type == VAL_NATIVE && _valNative) ret = _valNative->scGetProperty(name);
 
 	if (ret == NULL) {
-		_valIter = _valObject.find(Name);
+		_valIter = _valObject.find(name);
 		if (_valIter != _valObject.end()) ret = _valIter->_value;
 	}
 	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::DeleteProp(const char *Name) {
-	if (_type == VAL_VARIABLE_REF) return _valRef->DeleteProp(Name);
+HRESULT CScValue::DeleteProp(const char *name) {
+	if (_type == VAL_VARIABLE_REF) return _valRef->DeleteProp(name);
 
-	_valIter = _valObject.find(Name);
+	_valIter = _valObject.find(name);
 	if (_valIter != _valObject.end()) {
 		delete _valIter->_value;
 		_valIter->_value = NULL;
@@ -203,18 +203,18 @@ HRESULT CScValue::DeleteProp(const char *Name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::SetProp(const char *Name, CScValue *Val, bool CopyWhole, bool SetAsConst) {
-	if (_type == VAL_VARIABLE_REF) return _valRef->SetProp(Name, Val);
+HRESULT CScValue::SetProp(const char *name, CScValue *Val, bool CopyWhole, bool SetAsConst) {
+	if (_type == VAL_VARIABLE_REF) return _valRef->SetProp(name, Val);
 
 	HRESULT ret = E_FAIL;
 	if (_type == VAL_NATIVE && _valNative) {
-		ret = _valNative->scSetProperty(Name, Val);
+		ret = _valNative->scSetProperty(name, Val);
 	}
 
 	if (FAILED(ret)) {
 		CScValue *val = NULL;
 
-		_valIter = _valObject.find(Name);
+		_valIter = _valObject.find(name);
 		if (_valIter != _valObject.end()) {
 			val = _valIter->_value;
 		}
@@ -223,7 +223,7 @@ HRESULT CScValue::SetProp(const char *Name, CScValue *Val, bool CopyWhole, bool 
 
 		val->Copy(Val, CopyWhole);
 		val->_isConstVar = SetAsConst;
-		_valObject[Name] = val;
+		_valObject[name] = val;
 
 		if (_type != VAL_NATIVE) _type = VAL_OBJECT;
 
@@ -247,9 +247,9 @@ HRESULT CScValue::SetProp(const char *Name, CScValue *Val, bool CopyWhole, bool 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::PropExists(const char *Name) {
-	if (_type == VAL_VARIABLE_REF) return _valRef->PropExists(Name);
-	_valIter = _valObject.find(Name);
+bool CScValue::PropExists(const char *name) {
+	if (_type == VAL_VARIABLE_REF) return _valRef->PropExists(name);
+	_valIter = _valObject.find(name);
 
 	return (_valIter != _valObject.end());
 }
@@ -861,10 +861,10 @@ int CScValue::CompareStrict(CScValue *Val1, CScValue *Val2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariableType Type, CScScript *Script, unsigned int ScopeID) {
+HRESULT CScValue::DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariableType Type, CScScript *script, unsigned int ScopeID) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
-		Client->OnVariableInit(Type, Script, ScopeID, _valIter->_value, _valIter->_key.c_str());
+		Client->OnVariableInit(Type, script, ScopeID, _valIter->_value, _valIter->_key.c_str());
 		_valIter++;
 	}
 	return S_OK;

@@ -850,17 +850,17 @@ void CAdActor::initLine(CBPoint startPt, CBPoint endPt) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *name) {
+HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GoTo / GoToAsync
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GoTo") == 0 || strcmp(name, "GoToAsync") == 0) {
-		Stack->CorrectParams(2);
-		int X = Stack->Pop()->GetInt();
-		int Y = Stack->Pop()->GetInt();
+		stack->CorrectParams(2);
+		int X = stack->Pop()->GetInt();
+		int Y = stack->Pop()->GetInt();
 		goTo(X, Y);
-		if (strcmp(name, "GoToAsync") != 0) Script->WaitForExclusive(this);
-		Stack->PushNULL();
+		if (strcmp(name, "GoToAsync") != 0) script->WaitForExclusive(this);
+		stack->PushNULL();
 		return S_OK;
 	}
 
@@ -868,24 +868,24 @@ HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	// GoToObject / GoToObjectAsync
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GoToObject") == 0 || strcmp(name, "GoToObjectAsync") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 		if (!Val->IsNative()) {
-			Script->RuntimeError("actor.%s method accepts an entity refrence only", name);
-			Stack->PushNULL();
+			script->RuntimeError("actor.%s method accepts an entity refrence only", name);
+			stack->PushNULL();
 			return S_OK;
 		}
 		CAdObject *Obj = (CAdObject *)Val->GetNative();
 		if (!Obj || Obj->_type != OBJECT_ENTITY) {
-			Script->RuntimeError("actor.%s method accepts an entity refrence only", name);
-			Stack->PushNULL();
+			script->RuntimeError("actor.%s method accepts an entity refrence only", name);
+			stack->PushNULL();
 			return S_OK;
 		}
 		CAdEntity *Ent = (CAdEntity *)Obj;
 		if (Ent->_walkToX == 0 && Ent->_walkToY == 0) goTo(Ent->_posX, Ent->_posY);
 		else goTo(Ent->_walkToX, Ent->_walkToY, Ent->_walkToDir);
-		if (strcmp(name, "GoToObjectAsync") != 0) Script->WaitForExclusive(this);
-		Stack->PushNULL();
+		if (strcmp(name, "GoToObjectAsync") != 0) script->WaitForExclusive(this);
+		stack->PushNULL();
 		return S_OK;
 	}
 
@@ -893,9 +893,9 @@ HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	// TurnTo / TurnToAsync
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnTo") == 0 || strcmp(name, "TurnToAsync") == 0) {
-		Stack->CorrectParams(1);
+		stack->CorrectParams(1);
 		int dir;
-		CScValue *val = Stack->Pop();
+		CScValue *val = stack->Pop();
 
 		// turn to object?
 		if (val->IsNative() && Game->ValidObject((CBObject *)val->GetNative())) {
@@ -908,9 +908,9 @@ HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 
 		if (dir >= 0 && dir < NUM_DIRECTIONS) {
 			turnTo((TDirection)dir);
-			if (strcmp(name, "TurnToAsync") != 0) Script->WaitForExclusive(this);
+			if (strcmp(name, "TurnToAsync") != 0) script->WaitForExclusive(this);
 		}
-		Stack->PushNULL();
+		stack->PushNULL();
 		return S_OK;
 	}
 
@@ -918,8 +918,8 @@ HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	// IsWalking
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsWalking") == 0) {
-		Stack->CorrectParams(0);
-		Stack->PushBool(_state == STATE_FOLLOWING_PATH);
+		stack->CorrectParams(0);
+		stack->PushBool(_state == STATE_FOLLOWING_PATH);
 		return S_OK;
 	}
 
@@ -927,8 +927,8 @@ HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	// MergeAnims
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MergeAnims") == 0) {
-		Stack->CorrectParams(1);
-		Stack->PushBool(SUCCEEDED(mergeAnims(Stack->Pop()->GetString())));
+		stack->CorrectParams(1);
+		stack->PushBool(SUCCEEDED(mergeAnims(stack->Pop()->GetString())));
 		return S_OK;
 	}
 
@@ -936,8 +936,8 @@ HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	// UnloadAnim
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UnloadAnim") == 0) {
-		Stack->CorrectParams(1);
-		const char *AnimName = Stack->Pop()->GetString();
+		stack->CorrectParams(1);
+		const char *AnimName = stack->Pop()->GetString();
 
 		bool Found = false;
 		for (int i = 0; i < _anims.GetSize(); i++) {
@@ -954,7 +954,7 @@ HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 				Found = true;
 			}
 		}
-		Stack->PushBool(Found);
+		stack->PushBool(Found);
 		return S_OK;
 	}
 
@@ -962,13 +962,13 @@ HRESULT CAdActor::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Thi
 	// HasAnim
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HasAnim") == 0) {
-		Stack->CorrectParams(1);
-		const char *AnimName = Stack->Pop()->GetString();
-		Stack->PushBool(getAnimByName(AnimName) != NULL);
+		stack->CorrectParams(1);
+		const char *AnimName = stack->Pop()->GetString();
+		stack->PushBool(getAnimByName(AnimName) != NULL);
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::scCallMethod(Script, Stack, ThisStack, name);
+	else return CAdTalkHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 

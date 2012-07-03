@@ -71,23 +71,23 @@ HRESULT CBDebugger::OnLog(unsigned int ErrorCode, const char *Text) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptInit(CScScript *Script) {
+HRESULT CBDebugger::OnScriptInit(CScScript *script) {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptEventThreadInit(CScScript *Script, CScScript *ParentScript, const char *Name) {
+HRESULT CBDebugger::OnScriptEventThreadInit(CScScript *Script, CScScript *ParentScript, const char *name) {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptMethodThreadInit(CScScript *Script, CScScript *ParentScript, const char *Name) {
+HRESULT CBDebugger::OnScriptMethodThreadInit(CScScript *Script, CScScript *ParentScript, const char *name) {
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptShutdown(CScScript *Script) {
+HRESULT CBDebugger::OnScriptShutdown(CScScript *script) {
 	return S_OK;
 }
 
@@ -108,7 +108,7 @@ HRESULT CBDebugger::OnScriptShutdownScope(CScScript *Script, CScValue *Scope) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnVariableInit(EWmeDebuggerVariableType Type, CScScript *Script, CScValue *Scope, CScValue *Var, const char *VariableName) {
+HRESULT CBDebugger::OnVariableInit(EWmeDebuggerVariableType Type, CScScript *script, CScValue *Scope, CScValue *Var, const char *VariableName) {
 	return S_OK;
 }
 
@@ -118,7 +118,7 @@ HRESULT CBDebugger::OnVariableChangeValue(CScValue *Var, CScValue *Value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptHitBreakpoint(CScScript *Script) {
+HRESULT CBDebugger::OnScriptHitBreakpoint(CScScript *script) {
 	return S_OK;
 }
 

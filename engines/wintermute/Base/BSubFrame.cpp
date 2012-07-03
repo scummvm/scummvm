@@ -342,55 +342,55 @@ HRESULT CBSubFrame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetImage
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "GetImage") == 0) {
-		Stack->CorrectParams(0);
+	if (strcmp(name, "GetImage") == 0) {
+		stack->CorrectParams(0);
 
-		if (!_surfaceFilename) Stack->PushNULL();
-		else Stack->PushString(_surfaceFilename);
+		if (!_surfaceFilename) stack->PushNULL();
+		else stack->PushString(_surfaceFilename);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SetImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SetImage") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *Val = Stack->Pop();
+	else if (strcmp(name, "SetImage") == 0) {
+		stack->CorrectParams(1);
+		CScValue *Val = stack->Pop();
 
 		if (Val->IsNULL()) {
 			if (_surface) Game->_surfaceStorage->removeSurface(_surface);
 			delete[] _surfaceFilename;
 			_surfaceFilename = NULL;
-			Stack->PushBool(true);
+			stack->PushBool(true);
 		} else {
 			const char *Filename = Val->GetString();
 			if (SUCCEEDED(setSurface(Filename))) {
 				setDefaultRect();
-				Stack->PushBool(true);
-			} else Stack->PushBool(false);
+				stack->PushBool(true);
+			} else stack->PushBool(false);
 		}
 
 		return S_OK;
 	}
 
-	else return CBScriptable::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CBScriptable::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBSubFrame::scGetProperty(const char *Name) {
+CScValue *CBSubFrame::scGetProperty(const char *name) {
 	if (!_scValue) _scValue = new CScValue(Game);
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("subframe");
 		return _scValue;
 	}
@@ -398,7 +398,7 @@ CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "AlphaColor") == 0) {
+	else if (strcmp(name, "AlphaColor") == 0) {
 
 		_scValue->SetInt((int)_alpha);
 		return _scValue;
@@ -407,7 +407,7 @@ CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TransparentColor (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "TransparentColor") == 0) {
+	else if (strcmp(name, "TransparentColor") == 0) {
 		_scValue->SetInt((int)_transparent);
 		return _scValue;
 	}
@@ -415,7 +415,7 @@ CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Is2DOnly") == 0) {
+	else if (strcmp(name, "Is2DOnly") == 0) {
 		_scValue->SetBool(_2DOnly);
 		return _scValue;
 	}
@@ -423,7 +423,7 @@ CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Is3DOnly") == 0) {
+	else if (strcmp(name, "Is3DOnly") == 0) {
 		_scValue->SetBool(_3DOnly);
 		return _scValue;
 	}
@@ -431,7 +431,7 @@ CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MirrorX") == 0) {
+	else if (strcmp(name, "MirrorX") == 0) {
 		_scValue->SetBool(_mirrorX);
 		return _scValue;
 	}
@@ -439,7 +439,7 @@ CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MirrorY") == 0) {
+	else if (strcmp(name, "MirrorY") == 0) {
 		_scValue->SetBool(_mirrorY);
 		return _scValue;
 	}
@@ -447,7 +447,7 @@ CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Decoration") == 0) {
+	else if (strcmp(name, "Decoration") == 0) {
 		_scValue->SetBool(_decoration);
 		return _scValue;
 	}
@@ -455,7 +455,7 @@ CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "HotspotX") == 0) {
+	else if (strcmp(name, "HotspotX") == 0) {
 		_scValue->SetInt(_hotspotX);
 		return _scValue;
 	}
@@ -463,21 +463,21 @@ CScValue *CBSubFrame::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "HotspotY") == 0) {
+	else if (strcmp(name, "HotspotY") == 0) {
 		_scValue->SetInt(_hotspotY);
 		return _scValue;
 	}
 
-	else return CBScriptable::scGetProperty(Name);
+	else return CBScriptable::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBSubFrame::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "AlphaColor") == 0) {
+	if (strcmp(name, "AlphaColor") == 0) {
 		_alpha = (uint32)Value->GetInt();
 		return S_OK;
 	}
@@ -485,7 +485,7 @@ HRESULT CBSubFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Is2DOnly") == 0) {
+	else if (strcmp(name, "Is2DOnly") == 0) {
 		_2DOnly = Value->GetBool();
 		return S_OK;
 	}
@@ -493,7 +493,7 @@ HRESULT CBSubFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Is3DOnly") == 0) {
+	else if (strcmp(name, "Is3DOnly") == 0) {
 		_3DOnly = Value->GetBool();
 		return S_OK;
 	}
@@ -501,7 +501,7 @@ HRESULT CBSubFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MirrorX") == 0) {
+	else if (strcmp(name, "MirrorX") == 0) {
 		_mirrorX = Value->GetBool();
 		return S_OK;
 	}
@@ -509,7 +509,7 @@ HRESULT CBSubFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MirrorY") == 0) {
+	else if (strcmp(name, "MirrorY") == 0) {
 		_mirrorY = Value->GetBool();
 		return S_OK;
 	}
@@ -517,7 +517,7 @@ HRESULT CBSubFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Decoration") == 0) {
+	else if (strcmp(name, "Decoration") == 0) {
 		_decoration = Value->GetBool();
 		return S_OK;
 	}
@@ -525,7 +525,7 @@ HRESULT CBSubFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "HotspotX") == 0) {
+	else if (strcmp(name, "HotspotX") == 0) {
 		_hotspotX = Value->GetInt();
 		return S_OK;
 	}
@@ -533,12 +533,12 @@ HRESULT CBSubFrame::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "HotspotY") == 0) {
+	else if (strcmp(name, "HotspotY") == 0) {
 		_hotspotY = Value->GetInt();
 		return S_OK;
 	}
 
-	else return CBScriptable::scSetProperty(Name, Value);
+	else return CBScriptable::scSetProperty(name, Value);
 }
 
 

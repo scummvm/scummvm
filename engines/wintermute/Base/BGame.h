@@ -67,7 +67,7 @@ class CBGame: public CBObject {
 public:
 	DECLARE_PERSISTENT(CBGame, CBObject)
 
-	virtual HRESULT OnScriptShutdown(CScScript *Script);
+	virtual HRESULT OnScriptShutdown(CScScript *script);
 
 	virtual HRESULT OnActivate(bool Activate, bool RefreshMouse);
 	virtual HRESULT OnMouseLeftDown();
@@ -223,11 +223,11 @@ public:
 	virtual HRESULT restoreDeviceObjects();
 
 	virtual void PublishNatives();
-	virtual HRESULT ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
+	virtual HRESULT ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *Name);
-	virtual HRESULT scSetProperty(const char *Name, CScValue *Value);
-	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual CScValue *scGetProperty(const char *name);
+	virtual HRESULT scSetProperty(const char *name, CScValue *Value);
+	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	// compatibility bits
 	bool _compatKillMethodThreads;
@@ -335,7 +335,7 @@ public:
 	int _subtitlesSpeed;
 	void SetInteractive(bool State);
 	virtual HRESULT WindowLoadHook(CUIWindow *Win, char **Buf, char **Params);
-	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, const char *Name);
+	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *script, CScStack *stack, const char *name);
 	HRESULT GetCurrentViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
 	HRESULT GetCurrentViewportRect(RECT *Rect, bool *Custom = NULL);
 	HRESULT PopViewport();

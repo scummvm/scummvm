@@ -44,7 +44,7 @@ class CAdResponseContext;
 class CAdResponseBox;
 class CAdGame : public CBGame {
 public:
-	virtual HRESULT OnScriptShutdown(CScScript *Script);
+	virtual HRESULT OnScriptShutdown(CScScript *script);
 
 	virtual HRESULT OnMouseLeftDown();
 	virtual HRESULT OnMouseLeftUp();
@@ -70,7 +70,7 @@ public:
 	bool _tempDisableSaveState;
 	virtual HRESULT ResetContent();
 	HRESULT AddItem(CAdItem *Item);
-	CAdItem *GetItemByName(const char *Name);
+	CAdItem *GetItemByName(const char *name);
 	CBArray<CAdItem *, CAdItem *> _items;
 	CAdObject *_inventoryOwner;
 	bool IsItemTaken(char *ItemName);
@@ -89,11 +89,11 @@ public:
 
 	bool BranchResponseUsed(int ID);
 	HRESULT AddBranchResponse(int ID);
-	HRESULT ClearBranchResponses(char *Name);
+	HRESULT ClearBranchResponses(char *name);
 	HRESULT StartDlgBranch(const char *BranchName, const char *ScriptName, const char *EventName);
 	HRESULT EndDlgBranch(const char *BranchName, const char *ScriptName, const char *EventName);
 	virtual HRESULT WindowLoadHook(CUIWindow *Win, char **Buf, char **Params);
-	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *Script, CScStack *Stack, const char *Name);
+	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *script, CScStack *stack, const char *name);
 
 	CAdSceneState *GetSceneState(const char *Filename, bool Saving);
 	CBViewport *_sceneViewport;
@@ -108,8 +108,8 @@ public:
 	HRESULT ScheduleChangeScene(const char *Filename, bool FadeIn);
 	char *_scheduledScene;
 	bool _scheduledFadeIn;
-	void SetPrevSceneName(const char *Name);
-	void SetPrevSceneFilename(const char *Name);
+	void SetPrevSceneName(const char *name);
+	void SetPrevSceneFilename(const char *name);
 	char *_prevSceneName;
 	char *_prevSceneFilename;
 	virtual HRESULT LoadGame(const char *Filename);
@@ -148,12 +148,12 @@ public:
 
 
 	virtual void PublishNatives();
-	virtual HRESULT ExternalCall(CScScript *Script, CScStack *Stack, CScStack *ThisStack, char *Name);
+	virtual HRESULT ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *Name);
-	virtual HRESULT scSetProperty(const char *Name, CScValue *Value);
-	virtual HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	virtual CScValue *scGetProperty(const char *name);
+	virtual HRESULT scSetProperty(const char *name, CScValue *Value);
+	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	bool ValidMouse();
 };
 

@@ -38,9 +38,9 @@ class CSXMemBuffer : public CBScriptable {
 public:
 	virtual int scCompare(CBScriptable *Val);
 	DECLARE_PERSISTENT(CSXMemBuffer, CBScriptable)
-	CScValue *scGetProperty(const char *Name);
-	HRESULT scSetProperty(const char *Name, CScValue *Value);
-	HRESULT scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name);
+	CScValue *scGetProperty(const char *name);
+	HRESULT scSetProperty(const char *name, CScValue *Value);
+	HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	const char *scToString();
 	CSXMemBuffer(CBGame *inGame, CScStack *Stack);
 	CSXMemBuffer(CBGame *inGame, void *Buffer);

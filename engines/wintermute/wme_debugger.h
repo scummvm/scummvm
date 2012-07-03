@@ -108,7 +108,7 @@ class IWmeDebugObject {
 public:
 	virtual ~IWmeDebugObject() {}
 	virtual const char *DbgGetNativeClass() = 0;
-	virtual IWmeDebugProp *DbgGetProperty(const char *Name) = 0;
+	virtual IWmeDebugProp *DbgGetProperty(const char *name) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////

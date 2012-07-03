@@ -625,27 +625,27 @@ HRESULT CAdEntity::update() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// StopSound
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "StopSound") == 0 && _subtype == ENTITY_SOUND) {
-		Stack->CorrectParams(0);
+	if (strcmp(name, "StopSound") == 0 && _subtype == ENTITY_SOUND) {
+		stack->CorrectParams(0);
 
-		if (FAILED(stopSFX(false))) Stack->PushBool(false);
-		else Stack->PushBool(true);
+		if (FAILED(stopSFX(false))) stack->PushBool(false);
+		else stack->PushBool(true);
 		return S_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// PlayTheora
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PlayTheora") == 0) {
-		Stack->CorrectParams(4);
-		const char *Filename = Stack->Pop()->GetString();
-		bool Looping = Stack->Pop()->GetBool(false);
-		CScValue *ValAlpha = Stack->Pop();
-		int StartTime = Stack->Pop()->GetInt();
+	else if (strcmp(name, "PlayTheora") == 0) {
+		stack->CorrectParams(4);
+		const char *Filename = stack->Pop()->GetString();
+		bool Looping = stack->Pop()->GetBool(false);
+		CScValue *ValAlpha = stack->Pop();
+		int StartTime = stack->Pop()->GetInt();
 
 		delete _theora;
 		_theora = new CVidTheoraPlayer(Game);
@@ -653,10 +653,10 @@ HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 			if (!ValAlpha->IsNULL())    _theora->setAlphaImage(ValAlpha->GetString());
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, Looping, StartTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if(m_Scale>=0) m_Theora->m_PlayZoom = m_Scale;
-			Stack->PushBool(true);
+			stack->PushBool(true);
 		} else {
-			Script->RuntimeError("Entity.PlayTheora - error playing video '%s'", Filename);
-			Stack->PushBool(false);
+			script->RuntimeError("Entity.PlayTheora - error playing video '%s'", Filename);
+			stack->PushBool(false);
 		}
 
 		return S_OK;
@@ -665,14 +665,14 @@ HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// StopTheora
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "StopTheora") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "StopTheora") == 0) {
+		stack->CorrectParams(0);
 		if (_theora) {
 			_theora->stop();
 			delete _theora;
 			_theora = NULL;
-			Stack->PushBool(true);
-		} else Stack->PushBool(false);
+			stack->PushBool(true);
+		} else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -680,10 +680,10 @@ HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// IsTheoraPlaying
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsTheoraPlaying") == 0) {
-		Stack->CorrectParams(0);
-		if (_theora && _theora->isPlaying()) Stack->PushBool(true);
-		else Stack->PushBool(false);
+	else if (strcmp(name, "IsTheoraPlaying") == 0) {
+		stack->CorrectParams(0);
+		if (_theora && _theora->isPlaying()) stack->PushBool(true);
+		else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -691,12 +691,12 @@ HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// PauseTheora
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "PauseTheora") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "PauseTheora") == 0) {
+		stack->CorrectParams(0);
 		if (_theora && _theora->isPlaying()) {
 			_theora->pause();
-			Stack->PushBool(true);
-		} else Stack->PushBool(false);
+			stack->PushBool(true);
+		} else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -704,12 +704,12 @@ HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// ResumeTheora
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "ResumeTheora") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "ResumeTheora") == 0) {
+		stack->CorrectParams(0);
 		if (_theora && _theora->isPaused()) {
 			_theora->resume();
-			Stack->PushBool(true);
-		} else Stack->PushBool(false);
+			stack->PushBool(true);
+		} else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -717,10 +717,10 @@ HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// IsTheoraPaused
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsTheoraPaused") == 0) {
-		Stack->CorrectParams(0);
-		if (_theora && _theora->isPaused()) Stack->PushBool(true);
-		else Stack->PushBool(false);
+	else if (strcmp(name, "IsTheoraPaused") == 0) {
+		stack->CorrectParams(0);
+		if (_theora && _theora->isPaused()) stack->PushBool(true);
+		else stack->PushBool(false);
 
 		return S_OK;
 	}
@@ -729,14 +729,14 @@ HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// CreateRegion
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CreateRegion") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "CreateRegion") == 0) {
+		stack->CorrectParams(0);
 		if (!_region) {
 			_region = new CBRegion(Game);
 			Game->RegisterObject(_region);
 		}
-		if (_region) Stack->PushNative(_region, true);
-		else Stack->PushNULL();
+		if (_region) stack->PushNative(_region, true);
+		else stack->PushNULL();
 
 		return S_OK;
 	}
@@ -744,29 +744,29 @@ HRESULT CAdEntity::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *Th
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteRegion
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "DeleteRegion") == 0) {
-		Stack->CorrectParams(0);
+	else if (strcmp(name, "DeleteRegion") == 0) {
+		stack->CorrectParams(0);
 		if (_region) {
 			Game->UnregisterObject(_region);
 			_region = NULL;
-			Stack->PushBool(true);
-		} else Stack->PushBool(false);
+			stack->PushBool(true);
+		} else stack->PushBool(false);
 
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CAdTalkHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdEntity::scGetProperty(const char *Name) {
+CScValue *CAdEntity::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("entity");
 		return _scValue;
 	}
@@ -774,7 +774,7 @@ CScValue *CAdEntity::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Item") == 0) {
+	else if (strcmp(name, "Item") == 0) {
 		if (_item) _scValue->SetString(_item);
 		else _scValue->SetNULL();
 
@@ -784,7 +784,7 @@ CScValue *CAdEntity::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Subtype (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Subtype") == 0) {
+	else if (strcmp(name, "Subtype") == 0) {
 		if (_subtype == ENTITY_SOUND)
 			_scValue->SetString("sound");
 		else
@@ -796,7 +796,7 @@ CScValue *CAdEntity::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "WalkToX") == 0) {
+	else if (strcmp(name, "WalkToX") == 0) {
 		_scValue->SetInt(_walkToX);
 		return _scValue;
 	}
@@ -804,7 +804,7 @@ CScValue *CAdEntity::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "WalkToY") == 0) {
+	else if (strcmp(name, "WalkToY") == 0) {
 		_scValue->SetInt(_walkToY);
 		return _scValue;
 	}
@@ -812,7 +812,7 @@ CScValue *CAdEntity::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "WalkToDirection") == 0) {
+	else if (strcmp(name, "WalkToDirection") == 0) {
 		_scValue->SetInt((int)_walkToDir);
 		return _scValue;
 	}
@@ -820,23 +820,23 @@ CScValue *CAdEntity::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Region (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Region") == 0) {
+	else if (strcmp(name, "Region") == 0) {
 		if (_region) _scValue->SetNative(_region, true);
 		else _scValue->SetNULL();
 		return _scValue;
 	}
 
-	else return CAdTalkHolder::scGetProperty(Name);
+	else return CAdTalkHolder::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CAdEntity::scSetProperty(const char *name, CScValue *Value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Item") == 0) {
+	if (strcmp(name, "Item") == 0) {
 		SetItem(Value->GetString());
 		return S_OK;
 	}
@@ -844,7 +844,7 @@ HRESULT CAdEntity::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "WalkToX") == 0) {
+	else if (strcmp(name, "WalkToX") == 0) {
 		_walkToX = Value->GetInt();
 		return S_OK;
 	}
@@ -852,7 +852,7 @@ HRESULT CAdEntity::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "WalkToY") == 0) {
+	else if (strcmp(name, "WalkToY") == 0) {
 		_walkToY = Value->GetInt();
 		return S_OK;
 	}
@@ -860,13 +860,13 @@ HRESULT CAdEntity::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "WalkToDirection") == 0) {
+	else if (strcmp(name, "WalkToDirection") == 0) {
 		int Dir = Value->GetInt();
 		if (Dir >= 0 && Dir < NUM_DIRECTIONS) _walkToDir = (TDirection)Dir;
 		return S_OK;
 	}
 
-	else return CAdTalkHolder::scSetProperty(Name, Value);
+	else return CAdTalkHolder::scSetProperty(name, Value);
 }
 
 

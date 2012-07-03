@@ -73,13 +73,13 @@ void CBKeyboardState::handleKeyRelease(Common::Event *event) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBKeyboardState::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CBKeyboardState::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsKeyDown
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "IsKeyDown") == 0) {
-		Stack->CorrectParams(1);
-		CScValue *val = Stack->Pop();
+	if (strcmp(name, "IsKeyDown") == 0) {
+		stack->CorrectParams(1);
+		CScValue *val = stack->Pop();
 		int vKey;
 
 		if (val->_type == VAL_STRING && strlen(val->GetString()) > 0) {
@@ -94,22 +94,22 @@ HRESULT CBKeyboardState::scCallMethod(CScScript *Script, CScStack *Stack, CScSta
 //		SDL_Scancode scanCode = SDL_GetScancodeFromKey(VKeyToKeyCode(vKey));
 		bool isDown = _keyStates[VKeyToKeyCode(vKey)];
 
-		Stack->PushBool(isDown);
+		stack->PushBool(isDown);
 		return S_OK;
 	}
 
-	else return CBScriptable::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CBScriptable::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBKeyboardState::scGetProperty(const char *Name) {
+CScValue *CBKeyboardState::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("keyboard");
 		return _scValue;
 	}
@@ -117,7 +117,7 @@ CScValue *CBKeyboardState::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Key
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Key") == 0) {
+	else if (strcmp(name, "Key") == 0) {
 		if (_currentPrintable) {
 			char key[2];
 			key[0] = (char)_currentCharCode;
@@ -131,7 +131,7 @@ CScValue *CBKeyboardState::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Printable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Printable") == 0) {
+	else if (strcmp(name, "Printable") == 0) {
 		_scValue->SetBool(_currentPrintable);
 		return _scValue;
 	}
@@ -139,7 +139,7 @@ CScValue *CBKeyboardState::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// KeyCode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "KeyCode") == 0) {
+	else if (strcmp(name, "KeyCode") == 0) {
 		_scValue->SetInt(_currentCharCode);
 		return _scValue;
 	}
@@ -147,7 +147,7 @@ CScValue *CBKeyboardState::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsShift
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsShift") == 0) {
+	else if (strcmp(name, "IsShift") == 0) {
 		_scValue->SetBool(_currentShift);
 		return _scValue;
 	}
@@ -155,7 +155,7 @@ CScValue *CBKeyboardState::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsAlt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsAlt") == 0) {
+	else if (strcmp(name, "IsAlt") == 0) {
 		_scValue->SetBool(_currentAlt);
 		return _scValue;
 	}
@@ -163,28 +163,28 @@ CScValue *CBKeyboardState::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsControl
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "IsControl") == 0) {
+	else if (strcmp(name, "IsControl") == 0) {
 		_scValue->SetBool(_currentControl);
 		return _scValue;
 	}
 
-	else return CBScriptable::scGetProperty(Name);
+	else return CBScriptable::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBKeyboardState::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CBKeyboardState::scSetProperty(const char *name, CScValue *Value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Name") == 0) {
+	if (strcmp(name, "Name") == 0) {
 	    setName(Value->GetString());
 	    if (_renderer) SetWindowText(_renderer->_window, _name);
 	    return S_OK;
 	}
 
-	else*/ return CBScriptable::scSetProperty(Name, Value);
+	else*/ return CBScriptable::scSetProperty(name, Value);
 }
 
 

@@ -361,32 +361,32 @@ HRESULT CUIEdit::saveAsText(CBDynBuffer *Buffer, int Indent) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::scCallMethod(CScScript *Script, CScStack *Stack, CScStack *ThisStack, const char *Name) {
+HRESULT CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSelectedFont
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "SetSelectedFont") == 0) {
-		Stack->CorrectParams(1);
+	if (strcmp(name, "SetSelectedFont") == 0) {
+		stack->CorrectParams(1);
 
 		if (_fontSelected) Game->_fontStorage->RemoveFont(_fontSelected);
-		_fontSelected = Game->_fontStorage->AddFont(Stack->Pop()->GetString());
-		Stack->PushBool(_fontSelected != NULL);
+		_fontSelected = Game->_fontStorage->AddFont(stack->Pop()->GetString());
+		stack->PushBool(_fontSelected != NULL);
 
 		return S_OK;
 	}
 
-	else return CUIObject::scCallMethod(Script, Stack, ThisStack, Name);
+	else return CUIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIEdit::scGetProperty(const char *Name) {
+CScValue *CUIEdit::scGetProperty(const char *name) {
 	_scValue->SetNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "Type") == 0) {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->SetString("editor");
 		return _scValue;
 	}
@@ -394,7 +394,7 @@ CScValue *CUIEdit::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SelStart") == 0) {
+	else if (strcmp(name, "SelStart") == 0) {
 		_scValue->SetInt(_selStart);
 		return _scValue;
 	}
@@ -402,7 +402,7 @@ CScValue *CUIEdit::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelEnd
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SelEnd") == 0) {
+	else if (strcmp(name, "SelEnd") == 0) {
 		_scValue->SetInt(_selEnd);
 		return _scValue;
 	}
@@ -410,7 +410,7 @@ CScValue *CUIEdit::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CursorBlinkRate") == 0) {
+	else if (strcmp(name, "CursorBlinkRate") == 0) {
 		_scValue->SetInt(_cursorBlinkRate);
 		return _scValue;
 	}
@@ -418,7 +418,7 @@ CScValue *CUIEdit::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorChar
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CursorChar") == 0) {
+	else if (strcmp(name, "CursorChar") == 0) {
 		_scValue->SetString(_cursorChar);
 		return _scValue;
 	}
@@ -426,7 +426,7 @@ CScValue *CUIEdit::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// FrameWidth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FrameWidth") == 0) {
+	else if (strcmp(name, "FrameWidth") == 0) {
 		_scValue->SetInt(_frameWidth);
 		return _scValue;
 	}
@@ -434,7 +434,7 @@ CScValue *CUIEdit::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MaxLength
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MaxLength") == 0) {
+	else if (strcmp(name, "MaxLength") == 0) {
 		_scValue->SetInt(_maxLength);
 		return _scValue;
 	}
@@ -442,7 +442,7 @@ CScValue *CUIEdit::scGetProperty(const char *Name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Text") == 0) {
+	else if (strcmp(name, "Text") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::AnsiToWide(_text);
 			_scValue->SetString(StringUtil::WideToUtf8(wstr).c_str());
@@ -452,16 +452,16 @@ CScValue *CUIEdit::scGetProperty(const char *Name) {
 		return _scValue;
 	}
 
-	else return CUIObject::scGetProperty(Name);
+	else return CUIObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
+HRESULT CUIEdit::scSetProperty(const char *name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(Name, "SelStart") == 0) {
+	if (strcmp(name, "SelStart") == 0) {
 		_selStart = Value->GetInt();
 		_selStart = MAX(_selStart, 0);
 		_selStart = MIN((size_t)_selStart, strlen(_text));
@@ -471,7 +471,7 @@ HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelEnd
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "SelEnd") == 0) {
+	else if (strcmp(name, "SelEnd") == 0) {
 		_selEnd = Value->GetInt();
 		_selEnd = MAX(_selEnd, 0);
 		_selEnd = MIN((size_t)_selEnd, strlen(_text));
@@ -481,7 +481,7 @@ HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CursorBlinkRate") == 0) {
+	else if (strcmp(name, "CursorBlinkRate") == 0) {
 		_cursorBlinkRate = Value->GetInt();
 		return S_OK;
 	}
@@ -489,7 +489,7 @@ HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorChar
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "CursorChar") == 0) {
+	else if (strcmp(name, "CursorChar") == 0) {
 		setCursorChar(Value->GetString());
 		return S_OK;
 	}
@@ -497,7 +497,7 @@ HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// FrameWidth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "FrameWidth") == 0) {
+	else if (strcmp(name, "FrameWidth") == 0) {
 		_frameWidth = Value->GetInt();
 		return S_OK;
 	}
@@ -505,7 +505,7 @@ HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MaxLength
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "MaxLength") == 0) {
+	else if (strcmp(name, "MaxLength") == 0) {
 		_maxLength = Value->GetInt();
 		return S_OK;
 	}
@@ -513,7 +513,7 @@ HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(Name, "Text") == 0) {
+	else if (strcmp(name, "Text") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::Utf8ToWide(Value->GetString());
 			setText(StringUtil::WideToAnsi(wstr).c_str());
@@ -523,7 +523,7 @@ HRESULT CUIEdit::scSetProperty(const char *Name, CScValue *Value) {
 		return S_OK;
 	}
 
-	else return CUIObject::scSetProperty(Name, Value);
+	else return CUIObject::scSetProperty(name, Value);
 }
 
 
