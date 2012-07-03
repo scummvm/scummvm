@@ -246,10 +246,10 @@ HRESULT CAdSentence::setupTalkFile(const char *soundFilename) {
 	if (!soundFilename) return S_OK;
 
 
-	AnsiString path = PathUtil::GetDirectoryName(soundFilename);
-	AnsiString name = PathUtil::GetFileNameWithoutExtension(soundFilename);
+	AnsiString path = PathUtil::getDirectoryName(soundFilename);
+	AnsiString name = PathUtil::getFileNameWithoutExtension(soundFilename);
 
-	AnsiString talkDefFileName = PathUtil::Combine(path, name + ".talk");
+	AnsiString talkDefFileName = PathUtil::combine(path, name + ".talk");
 
 	Common::SeekableReadStream *file = Game->_fileManager->openFile(talkDefFileName.c_str());
 	if (file) {

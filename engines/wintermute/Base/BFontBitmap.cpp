@@ -86,8 +86,8 @@ int CBFontBitmap::getTextWidth(byte  *text, int MaxLength) {
 	AnsiString str;
 
 	if (Game->_textEncoding == TEXT_UTF8) {
-		WideString wstr = StringUtil::Utf8ToWide(Utf8String((char *)text));
-		str = StringUtil::WideToAnsi(wstr);
+		WideString wstr = StringUtil::utf8ToWide(Utf8String((char *)text));
+		str = StringUtil::wideToAnsi(wstr);
 	} else {
 		str = AnsiString((char *)text);
 	}
@@ -116,8 +116,8 @@ int CBFontBitmap::textHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 	AnsiString str;
 
 	if (Game->_textEncoding == TEXT_UTF8) {
-		WideString wstr = StringUtil::Utf8ToWide(Utf8String((char *)text));
-		str = StringUtil::WideToAnsi(wstr);
+		WideString wstr = StringUtil::utf8ToWide(Utf8String((char *)text));
+		str = StringUtil::wideToAnsi(wstr);
 	} else {
 		str = AnsiString((char *)text);
 	}

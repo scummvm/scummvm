@@ -113,17 +113,17 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		//try {
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
-			str = StringUtil::Utf8ToWide(_string);
+			str = StringUtil::utf8ToWide(_string);
 		else
-			str = StringUtil::AnsiToWide(_string);
+			str = StringUtil::ansiToWide(_string);
 
 		//WideString subStr = str.substr(start, end - start + 1);
 		WideString subStr(str.c_str() + start, end - start + 1);
 
 		if (Game->_textEncoding == TEXT_UTF8)
-			stack->pushString(StringUtil::WideToUtf8(subStr).c_str());
+			stack->pushString(StringUtil::wideToUtf8(subStr).c_str());
 		else
-			stack->pushString(StringUtil::WideToAnsi(subStr).c_str());
+			stack->pushString(StringUtil::wideToAnsi(subStr).c_str());
 		//  } catch (std::exception &) {
 		//      stack->pushNULL();
 		//  }
@@ -151,17 +151,17 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 //		try {
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
-			str = StringUtil::Utf8ToWide(_string);
+			str = StringUtil::utf8ToWide(_string);
 		else
-			str = StringUtil::AnsiToWide(_string);
+			str = StringUtil::ansiToWide(_string);
 
 //			WideString subStr = str.substr(start, len);
 		WideString subStr(str.c_str() + start, len);
 
 		if (Game->_textEncoding == TEXT_UTF8)
-			stack->pushString(StringUtil::WideToUtf8(subStr).c_str());
+			stack->pushString(StringUtil::wideToUtf8(subStr).c_str());
 		else
-			stack->pushString(StringUtil::WideToAnsi(subStr).c_str());
+			stack->pushString(StringUtil::wideToAnsi(subStr).c_str());
 //		} catch (std::exception &) {
 //			stack->pushNULL();
 //		}
@@ -177,16 +177,16 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
-			str = StringUtil::Utf8ToWide(_string);
+			str = StringUtil::utf8ToWide(_string);
 		else
-			str = StringUtil::AnsiToWide(_string);
+			str = StringUtil::ansiToWide(_string);
 
-		StringUtil::ToUpperCase(str);
+		StringUtil::toUpperCase(str);
 
 		if (Game->_textEncoding == TEXT_UTF8)
-			stack->pushString(StringUtil::WideToUtf8(str).c_str());
+			stack->pushString(StringUtil::wideToUtf8(str).c_str());
 		else
-			stack->pushString(StringUtil::WideToAnsi(str).c_str());
+			stack->pushString(StringUtil::wideToAnsi(str).c_str());
 
 		return S_OK;
 	}
@@ -199,16 +199,16 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
-			str = StringUtil::Utf8ToWide(_string);
+			str = StringUtil::utf8ToWide(_string);
 		else
-			str = StringUtil::AnsiToWide(_string);
+			str = StringUtil::ansiToWide(_string);
 
-		StringUtil::ToLowerCase(str);
+		StringUtil::toLowerCase(str);
 
 		if (Game->_textEncoding == TEXT_UTF8)
-			stack->pushString(StringUtil::WideToUtf8(str).c_str());
+			stack->pushString(StringUtil::wideToUtf8(str).c_str());
 		else
-			stack->pushString(StringUtil::WideToAnsi(str).c_str());
+			stack->pushString(StringUtil::wideToAnsi(str).c_str());
 
 		return S_OK;
 	}
@@ -224,17 +224,17 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
-			str = StringUtil::Utf8ToWide(_string);
+			str = StringUtil::utf8ToWide(_string);
 		else
-			str = StringUtil::AnsiToWide(_string);
+			str = StringUtil::ansiToWide(_string);
 
 		WideString toFind;
 		if (Game->_textEncoding == TEXT_UTF8)
-			toFind = StringUtil::Utf8ToWide(strToFind);
+			toFind = StringUtil::utf8ToWide(strToFind);
 		else
-			toFind = StringUtil::AnsiToWide(strToFind);
+			toFind = StringUtil::ansiToWide(strToFind);
 
-		int indexOf = StringUtil::IndexOf(str, toFind, index);
+		int indexOf = StringUtil::indexOf(str, toFind, index);
 		stack->pushInt(indexOf);
 
 		return S_OK;
@@ -258,15 +258,15 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		WideString str;
 		if (Game->_textEncoding == TEXT_UTF8)
-			str = StringUtil::Utf8ToWide(_string);
+			str = StringUtil::utf8ToWide(_string);
 		else
-			str = StringUtil::AnsiToWide(_string);
+			str = StringUtil::ansiToWide(_string);
 
 		WideString delims;
 		if (Game->_textEncoding == TEXT_UTF8)
-			delims = StringUtil::Utf8ToWide(Separators);
+			delims = StringUtil::utf8ToWide(Separators);
 		else
-			delims = StringUtil::AnsiToWide(Separators);
+			delims = StringUtil::ansiToWide(Separators);
 
 		Common::Array<WideString> parts;
 
@@ -299,9 +299,9 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			WideString &part = (*it);
 
 			if (Game->_textEncoding == TEXT_UTF8)
-				Val = new CScValue(Game, StringUtil::WideToUtf8(part).c_str());
+				Val = new CScValue(Game, StringUtil::wideToUtf8(part).c_str());
 			else
-				Val = new CScValue(Game, StringUtil::WideToAnsi(part).c_str());
+				Val = new CScValue(Game, StringUtil::wideToAnsi(part).c_str());
 
 			Array->push(Val);
 			delete Val;
@@ -332,7 +332,7 @@ CScValue *CSXString::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Length") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
-			WideString wstr = StringUtil::Utf8ToWide(_string);
+			WideString wstr = StringUtil::utf8ToWide(_string);
 			_scValue->setInt(wstr.size());
 		} else
 			_scValue->setInt(strlen(_string));

@@ -101,7 +101,7 @@ float CBUtils::NormalizeAngle(float Angle) {
 void CBUtils::CreatePath(const char *Path, bool PathOnly) {
 	AnsiString path;
 
-	if (!PathOnly) path = PathUtil::GetDirectoryName(Path);
+	if (!PathOnly) path = PathUtil::getDirectoryName(Path);
 	else path = Path;
 
 //	try {
@@ -237,7 +237,7 @@ bool CBUtils::MatchesPattern(const char *Pattern, const char *String) {
 
 //////////////////////////////////////////////////////////////////////////
 char *CBUtils::GetPath(const char *Filename) {
-	AnsiString path = PathUtil::GetDirectoryName(Filename);
+	AnsiString path = PathUtil::getDirectoryName(Filename);
 	//path = boost::filesystem::syste_complete(path).string();
 	warning("CBUtils::GetPath: (%s), not implemented", Filename);
 	char *ret = new char[path.size() + 1];
@@ -248,7 +248,7 @@ char *CBUtils::GetPath(const char *Filename) {
 
 //////////////////////////////////////////////////////////////////////////
 char *CBUtils::GetFilename(const char *Filename) {
-	AnsiString path = PathUtil::GetFileName(Filename);
+	AnsiString path = PathUtil::getFileName(Filename);
 	char *ret = new char[path.size() + 1];
 	strcpy(ret, path.c_str());
 	return ret;

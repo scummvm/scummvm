@@ -35,34 +35,34 @@ namespace WinterMute {
 
 class StringUtil {
 public:
-	static void ToLowerCase(AnsiString &str);
-	//static void ToLowerCase(WideString &str);
-	static void ToUpperCase(AnsiString &str);
-	//static void ToUpperCase(WideString &str);
-	static bool CompareNoCase(const AnsiString &str1, const AnsiString &str2);
-	//static bool CompareNoCase(const WideString &str1, const WideString &str2);
-	static WideString Utf8ToWide(const Utf8String &Utf8Str);
-	static Utf8String WideToUtf8(const WideString &WideStr);
-	static WideString AnsiToWide(const AnsiString &str);
-	static AnsiString WideToAnsi(const WideString &str);
+	static void toLowerCase(AnsiString &str);
+	//static void toLowerCase(WideString &str);
+	static void toUpperCase(AnsiString &str);
+	//static void toUpperCase(WideString &str);
+	static bool compareNoCase(const AnsiString &str1, const AnsiString &str2);
+	//static bool compareNoCase(const WideString &str1, const WideString &str2);
+	static WideString utf8ToWide(const Utf8String &Utf8Str);
+	static Utf8String wideToUtf8(const WideString &WideStr);
+	static WideString ansiToWide(const AnsiString &str);
+	static AnsiString wideToAnsi(const WideString &str);
 
-	static bool StartsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase = false);
-	static bool EndsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase = false);
+	static bool startsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase = false);
+	static bool endsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase = false);
 
-	static bool IsUtf8BOM(const byte *buffer, uint32 bufferSize);
+	static bool isUtf8BOM(const byte *buffer, uint32 bufferSize);
 
-	static AnsiString Replace(const AnsiString &str, const AnsiString &from, const AnsiString &to);
-	static AnsiString Trim(const AnsiString &str, bool fromLeft = true, bool fromRight = true, const AnsiString &chars = " \n\r\t");
+	static AnsiString replace(const AnsiString &str, const AnsiString &from, const AnsiString &to);
+	static AnsiString trim(const AnsiString &str, bool fromLeft = true, bool fromRight = true, const AnsiString &chars = " \n\r\t");
 
-	static int IndexOf(const WideString &str, const WideString &toFind, size_t startFrom);
-	static int LastIndexOf(const WideString &str, const WideString &toFind, size_t startFrom);
+	static int indexOf(const WideString &str, const WideString &toFind, size_t startFrom);
+	static int lastIndexOf(const WideString &str, const WideString &toFind, size_t startFrom);
 
-	static AnsiString ToString(size_t val);
-	static AnsiString ToString(int val);
-	static AnsiString ToString(float val);
-	static AnsiString ToString(double val);
+	static AnsiString toString(size_t val);
+	static AnsiString toString(int val);
+	static AnsiString toString(float val);
+	static AnsiString toString(double val);
 
-	static void Split(const AnsiString &list, const AnsiString &delimiters, AnsiStringArray &result, bool keepEmptyItems = false);
+	static void split(const AnsiString &list, const AnsiString &delimiters, AnsiStringArray &result, bool keepEmptyItems = false);
 };
 
 } // end of namespace WinterMute

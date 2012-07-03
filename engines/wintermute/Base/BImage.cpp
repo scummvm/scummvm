@@ -73,7 +73,7 @@ CBImage::~CBImage() {
 HRESULT CBImage::loadFile(const Common::String &filename) {
 	_filename = filename;
 
-	if (StringUtil::StartsWith(filename, "savegame:", true)) {
+	if (StringUtil::startsWith(filename, "savegame:", true)) {
 		_decoder = new Graphics::BitmapDecoder();
 	} else if (filename.hasSuffix(".png")) {
 		_decoder = new Graphics::PNGDecoder();

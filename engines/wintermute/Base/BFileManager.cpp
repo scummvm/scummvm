@@ -656,11 +656,11 @@ HRESULT CBFileManager::registerPackage(const char *Path, const char *name, bool 
 
 //////////////////////////////////////////////////////////////////////////
 bool CBFileManager::isValidPackage(const AnsiString &fileName) const {
-	AnsiString plainName = PathUtil::GetFileNameWithoutExtension(fileName);
+	AnsiString plainName = PathUtil::getFileNameWithoutExtension(fileName);
 
 	// check for device-type specific packages
-	if (StringUtil::StartsWith(plainName, "xdevice_", true)) {
-		return StringUtil::CompareNoCase(plainName, "xdevice_" + Game->GetDeviceType());
+	if (StringUtil::startsWith(plainName, "xdevice_", true)) {
+		return StringUtil::compareNoCase(plainName, "xdevice_" + Game->GetDeviceType());
 	}
 	return true;
 }

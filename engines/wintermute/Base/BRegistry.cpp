@@ -99,7 +99,7 @@ int CBRegistry::ReadInt(const AnsiString &subKey, const AnsiString &key, int ini
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRegistry::WriteInt(const AnsiString &subKey, const AnsiString &key, int value) {
-	WriteString(subKey, key, StringUtil::ToString(value));
+	WriteString(subKey, key, StringUtil::toString(value));
 	return true;
 }
 
@@ -139,17 +139,17 @@ char *CBRegistry::GetIniName() {
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::LoadValues(bool local) {
 	if (local) LoadXml("settings.xml", _localValues);
-	else LoadXml(PathUtil::Combine(Game->GetDataDir(), "settings.xml"), _values);
+	else LoadXml(PathUtil::combine(Game->GetDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::SaveValues() {
-	SaveXml(PathUtil::Combine(Game->GetDataDir(), "settings.xml"), _values);
+	SaveXml(PathUtil::combine(Game->GetDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::SetBasePath(const char *basePath) {
-	_basePath = PathUtil::GetFileNameWithoutExtension(basePath);
+	_basePath = PathUtil::getFileNameWithoutExtension(basePath);
 
 	LoadValues(false);
 }

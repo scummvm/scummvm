@@ -34,7 +34,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::UnifySeparators(const AnsiString &path) {
+AnsiString PathUtil::unifySeparators(const AnsiString &path) {
 	AnsiString newPath = path;
 
 	AnsiString::iterator it;
@@ -45,37 +45,37 @@ AnsiString PathUtil::UnifySeparators(const AnsiString &path) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::NormalizeFileName(const AnsiString &path) {
-	AnsiString newPath = UnifySeparators(path);
-	StringUtil::ToLowerCase(newPath);
+AnsiString PathUtil::normalizeFileName(const AnsiString &path) {
+	AnsiString newPath = unifySeparators(path);
+	StringUtil::toLowerCase(newPath);
 	return newPath;
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::Combine(const AnsiString &path1, const AnsiString &path2) {
-	AnsiString newPath1 = UnifySeparators(path1);
-	AnsiString newPath2 = UnifySeparators(path2);
+AnsiString PathUtil::combine(const AnsiString &path1, const AnsiString &path2) {
+	AnsiString newPath1 = unifySeparators(path1);
+	AnsiString newPath2 = unifySeparators(path2);
 
-	if (!StringUtil::EndsWith(newPath1, "/", true) && !StringUtil::StartsWith(newPath2, "/", true))
+	if (!StringUtil::endsWith(newPath1, "/", true) && !StringUtil::startsWith(newPath2, "/", true))
 		newPath1 += "/";
 
 	return newPath1 + newPath2;
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::GetDirectoryName(const AnsiString &path) {
-	AnsiString newPath = UnifySeparators(path);
+AnsiString PathUtil::getDirectoryName(const AnsiString &path) {
+	AnsiString newPath = unifySeparators(path);
 
 	//size_t pos = newPath.find_last_of(L'/');
-	Common::String filename = GetFileName(path);
+	Common::String filename = getFileName(path);
 	return Common::String(path.c_str(), path.size() - filename.size());
 	//if (pos == AnsiString::npos) return "";
 	//else return newPath.substr(0, pos + 1);
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::GetFileName(const AnsiString &path) {
-	AnsiString newPath = UnifySeparators(path);
+AnsiString PathUtil::getFileName(const AnsiString &path) {
+	AnsiString newPath = unifySeparators(path);
 
 	//size_t pos = newPath.find_last_of(L'/'); TODO REMOVE.
 	Common::String lastPart = Common::lastPathComponent(path, '/');
@@ -88,8 +88,8 @@ AnsiString PathUtil::GetFileName(const AnsiString &path) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::GetFileNameWithoutExtension(const AnsiString &path) {
-	AnsiString fileName = GetFileName(path);
+AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
+	AnsiString fileName = getFileName(path);
 
 	//size_t pos = fileName.find_last_of('.'); //TODO REMOVE!
 	// TODO: Prettify this.
@@ -101,8 +101,8 @@ AnsiString PathUtil::GetFileNameWithoutExtension(const AnsiString &path) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::GetExtension(const AnsiString &path) {
-	AnsiString fileName = GetFileName(path);
+AnsiString PathUtil::getExtension(const AnsiString &path) {
+	AnsiString fileName = getFileName(path);
 
 	//size_t pos = fileName.find_last_of('.');
 	return Common::lastPathComponent(path, '.');
@@ -112,8 +112,8 @@ AnsiString PathUtil::GetExtension(const AnsiString &path) {
 
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::GetSafeLogFileName() {
-	AnsiString logFileName = GetUserDirectory();
+AnsiString PathUtil::getSafeLogFileName() {
+	AnsiString logFileName = getUserDirectory();
 
 #ifdef __WIN32__
 	char moduleName[MAX_PATH];
@@ -125,25 +125,25 @@ AnsiString PathUtil::GetSafeLogFileName() {
 
 #else
 	// !PORTME
-	logFileName = Combine(logFileName, "/Wintermute Engine/wme.log");
+	logFileName = combine(logFileName, "/Wintermute Engine/wme.log");
 #endif
 
-	CreateDirectory(GetDirectoryName(logFileName));
+	createDirectory(getDirectoryName(logFileName));
 	return logFileName;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool PathUtil::CreateDirectory(const AnsiString &path) {
+bool PathUtil::createDirectory(const AnsiString &path) {
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool PathUtil::MatchesMask(const AnsiString &fileName, const AnsiString &mask) {
+bool PathUtil::matchesMask(const AnsiString &fileName, const AnsiString &mask) {
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool PathUtil::FileExists(const AnsiString &fileName) {
+bool PathUtil::fileExists(const AnsiString &fileName) {
 	warning("PathUtil::FileExists(%s)", fileName.c_str());
 
 	Common::File stream;
@@ -157,7 +157,7 @@ bool PathUtil::FileExists(const AnsiString &fileName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::GetUserDirectory() {
+AnsiString PathUtil::getUserDirectory() {
 	warning("PathUtil::GetUserDirectory - stubbed");
 	AnsiString userDir = "./";
 #if 0

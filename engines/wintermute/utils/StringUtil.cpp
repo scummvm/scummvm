@@ -34,32 +34,32 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-void StringUtil::ToLowerCase(AnsiString &str) {
+void StringUtil::toLowerCase(AnsiString &str) {
 	str.toLowercase();
 }
 
 //////////////////////////////////////////////////////////////////////////
-/*void StringUtil::ToLowerCase(WideString &str) {
+/*void StringUtil::toLowerCase(WideString &str) {
     std::transform(str.begin(), str.end(), str.begin(), ::towlower);
 }*/
 
 //////////////////////////////////////////////////////////////////////////
-void StringUtil::ToUpperCase(AnsiString &str) {
+void StringUtil::toUpperCase(AnsiString &str) {
 	str.toUppercase();
 }
 
 //////////////////////////////////////////////////////////////////////////
-/*void StringUtil::ToUpperCase(WideString &str) {
+/*void StringUtil::toUpperCase(WideString &str) {
     std::transform(str.begin(), str.end(), str.begin(), ::towupper);
 }*/
 
 //////////////////////////////////////////////////////////////////////////
-bool StringUtil::CompareNoCase(const AnsiString &str1, const AnsiString &str2) {
+bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
 	AnsiString str1lc = str1;
 	AnsiString str2lc = str2;
 
-	ToLowerCase(str1lc);
-	ToLowerCase(str2lc);
+	toLowerCase(str1lc);
+	toLowerCase(str2lc);
 
 	return (str1lc == str2lc);
 }
@@ -76,7 +76,7 @@ bool StringUtil::CompareNoCase(const AnsiString &str1, const AnsiString &str2) {
 }*/
 
 //////////////////////////////////////////////////////////////////////////
-WideString StringUtil::Utf8ToWide(const Utf8String &Utf8Str) {
+WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
 	error("StringUtil::Utf8ToWide - WideString not supported yet");
 	/*  size_t WideSize = Utf8Str.size();
 
@@ -125,8 +125,8 @@ WideString StringUtil::Utf8ToWide(const Utf8String &Utf8Str) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Utf8String StringUtil::WideToUtf8(const WideString &WideStr) {
-	error("StringUtil::WideToUtf8 - Widestring not supported yet");
+Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
+	error("StringUtil::wideToUtf8 - Widestring not supported yet");
 	/*  size_t WideSize = WideStr.length();
 
 	    if (sizeof(wchar_t) == 2) {
@@ -187,7 +187,7 @@ char simpleAnsiToWide(const AnsiString &str, uint32 &offset) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-WideString StringUtil::AnsiToWide(const AnsiString &str) {
+WideString StringUtil::ansiToWide(const AnsiString &str) {
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
 	static bool hasWarned = false;
 	if (!hasWarned) {
@@ -212,7 +212,7 @@ WideString StringUtil::AnsiToWide(const AnsiString &str) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::WideToAnsi(const WideString &wstr) {
+AnsiString StringUtil::wideToAnsi(const WideString &wstr) {
 	// using default os locale!
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
 	static bool hasWarned = false;
@@ -231,7 +231,7 @@ AnsiString StringUtil::WideToAnsi(const WideString &wstr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool StringUtil::StartsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase) {
+bool StringUtil::startsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase) {
 	/*  size_t strLength = str.size();
 	    size_t patternLength = pattern.size();
 
@@ -258,7 +258,7 @@ bool StringUtil::StartsWith(const AnsiString &str, const AnsiString &pattern, bo
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool StringUtil::EndsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase) {
+bool StringUtil::endsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase) {
 	/*  size_t strLength = str.size(); // TODO: Remove
 	    size_t patternLength = pattern.size();
 
@@ -285,13 +285,13 @@ bool StringUtil::EndsWith(const AnsiString &str, const AnsiString &pattern, bool
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool StringUtil::IsUtf8BOM(const byte *Buffer, uint32 BufferSize) {
+bool StringUtil::isUtf8BOM(const byte *Buffer, uint32 BufferSize) {
 	if (BufferSize > 3 && Buffer[0] == 0xEF && Buffer[1] == 0xBB && Buffer[2] == 0xBF) return true;
 	else return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::Replace(const AnsiString &str, const AnsiString &from, const AnsiString &to) {
+AnsiString StringUtil::replace(const AnsiString &str, const AnsiString &from, const AnsiString &to) {
 	if (from.empty() || from == to) return str;
 
 	AnsiString result = str;
@@ -317,7 +317,7 @@ AnsiString StringUtil::Replace(const AnsiString &str, const AnsiString &from, co
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::Trim(const AnsiString &str, bool fromLeft, bool fromRight, const AnsiString &chars) {
+AnsiString StringUtil::trim(const AnsiString &str, bool fromLeft, bool fromRight, const AnsiString &chars) {
 	AnsiString trimmedStr = str;
 
 	if (fromRight) {
@@ -325,7 +325,7 @@ AnsiString StringUtil::Trim(const AnsiString &str, bool fromLeft, bool fromRight
 		warning("fromRight-trim not implemented yet, %s", chars.c_str());
 	}
 	if (fromLeft) {
-		uint32 lastOf = LastIndexOf(str, chars, 0);
+		uint32 lastOf = lastIndexOf(str, chars, 0);
 		trimmedStr = Common::String(trimmedStr.c_str() + lastOf);
 		//trimmedStr.erase(0, trimmedStr.find_first_not_of(chars));
 	}
@@ -333,7 +333,7 @@ AnsiString StringUtil::Trim(const AnsiString &str, bool fromLeft, bool fromRight
 }
 
 //////////////////////////////////////////////////////////////////////////
-int StringUtil::IndexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
+int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
 	/*size_t pos = str.find(toFind, startFrom);
 	if (pos == str.npos) return -1;
 	else return pos;*/
@@ -345,7 +345,7 @@ int StringUtil::IndexOf(const WideString &str, const WideString &toFind, size_t 
 }
 
 //////////////////////////////////////////////////////////////////////////
-int StringUtil::LastIndexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
+int StringUtil::lastIndexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
 	/*size_t pos = str.rfind(toFind, startFrom);
 	if (pos == str.npos) return -1;
 	else return pos;*/
@@ -368,7 +368,7 @@ int StringUtil::LastIndexOf(const WideString &str, const WideString &toFind, siz
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::ToString(size_t val) {
+AnsiString StringUtil::toString(size_t val) {
 	/*  std::ostringstream str;
 	    str << val;
 	    return str.str();*/
@@ -376,7 +376,7 @@ AnsiString StringUtil::ToString(size_t val) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::ToString(int val) {
+AnsiString StringUtil::toString(int val) {
 	/*  std::ostringstream str;
 	    str << val;
 	    return str.str();*/
@@ -384,7 +384,7 @@ AnsiString StringUtil::ToString(int val) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::ToString(float val) {
+AnsiString StringUtil::toString(float val) {
 	/*  std::ostringstream str;
 	    str << val;
 	    return str.str();*/
@@ -392,7 +392,7 @@ AnsiString StringUtil::ToString(float val) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::ToString(double val) {
+AnsiString StringUtil::toString(double val) {
 	/*  std::ostringstream str;
 	    str << val;
 	    return str.str();*/
@@ -401,7 +401,7 @@ AnsiString StringUtil::ToString(double val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void StringUtil::Split(const AnsiString &list, const AnsiString &delimiters, AnsiStringArray &result, bool keepEmptyItems) {
+void StringUtil::split(const AnsiString &list, const AnsiString &delimiters, AnsiStringArray &result, bool keepEmptyItems) {
 	result.clear();
 //TODO: Verify this, wrt keepEmptyItems.
 	Common::StringTokenizer tokenizer(list.c_str(), delimiters.c_str());

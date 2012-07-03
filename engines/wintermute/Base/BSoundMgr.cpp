@@ -132,12 +132,12 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *Filename, TSoundType Type, bool 
 	CBSoundBuffer *sound;
 
 	// try to switch WAV to OGG file (if available)
-	AnsiString ext = PathUtil::GetExtension(Filename);
-	if (StringUtil::CompareNoCase(ext, "wav")) {
-		AnsiString path = PathUtil::GetDirectoryName(Filename);
-		AnsiString name = PathUtil::GetFileNameWithoutExtension(Filename);
+	AnsiString ext = PathUtil::getExtension(Filename);
+	if (StringUtil::compareNoCase(ext, "wav")) {
+		AnsiString path = PathUtil::getDirectoryName(Filename);
+		AnsiString name = PathUtil::getFileNameWithoutExtension(Filename);
 
-		AnsiString newFile = PathUtil::Combine(path, name + "ogg");
+		AnsiString newFile = PathUtil::combine(path, name + "ogg");
 		if (Game->_fileManager->hasFile(newFile)) {
 			Filename = newFile.c_str();
 		}

@@ -59,7 +59,7 @@ HRESULT CBStringTable::AddString(const char *Key, const char *Val, bool ReportDu
 	}
 
 	Common::String final_key = Key;
-	StringUtil::ToLowerCase(final_key);
+	StringUtil::toLowerCase(final_key);
 
 	_stringsIter = _strings.find(final_key);
 	if (_stringsIter != _strings.end() && ReportDuplicities) Game->LOG(0, "  Warning: Duplicate definition of string '%s'.", final_key.c_str());

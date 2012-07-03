@@ -517,7 +517,7 @@ void CBGame::DEBUG_DebugEnable(const char *filename) {
 	//else _dEBUG_LogFile = fopen("./zz_debug.log", "a+");
 
 	if (!_dEBUG_LogFile) {
-		AnsiString safeLogFileName = PathUtil::GetSafeLogFileName();
+		AnsiString safeLogFileName = PathUtil::getSafeLogFileName();
 		//_dEBUG_LogFile = fopen(safeLogFileName.c_str(), "a+");
 	}
 
@@ -3898,12 +3898,12 @@ HRESULT CBGame::GetSaveSlotFilename(int Slot, char *Buffer) {
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString CBGame::GetDataDir() {
-	AnsiString userDir = PathUtil::GetUserDirectory();
+	AnsiString userDir = PathUtil::getUserDirectory();
 #ifdef __IPHONEOS__
 	return userDir;
 #else
 	AnsiString baseDir = _registry->GetBasePath();
-	return PathUtil::Combine(userDir, baseDir);
+	return PathUtil::combine(userDir, baseDir);
 #endif
 }
 

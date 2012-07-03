@@ -35,20 +35,20 @@ namespace WinterMute {
 
 class PathUtil {
 public:
-	static AnsiString UnifySeparators(const AnsiString &path);
-	static AnsiString NormalizeFileName(const AnsiString &path);
-	static AnsiString Combine(const AnsiString &path1, const AnsiString &path2);
-	static AnsiString GetDirectoryName(const AnsiString &path);
-	static AnsiString GetFileName(const AnsiString &path);
-	static AnsiString GetFileNameWithoutExtension(const AnsiString &path);
-	static AnsiString GetExtension(const AnsiString &path);
-	static bool CreateDirectory(const AnsiString &path);
-	static bool MatchesMask(const AnsiString &fileName, const AnsiString &mask);
+	static AnsiString unifySeparators(const AnsiString &path);
+	static AnsiString normalizeFileName(const AnsiString &path);
+	static AnsiString combine(const AnsiString &path1, const AnsiString &path2);
+	static AnsiString getDirectoryName(const AnsiString &path);
+	static AnsiString getFileName(const AnsiString &path);
+	static AnsiString getFileNameWithoutExtension(const AnsiString &path);
+	static AnsiString getExtension(const AnsiString &path);
+	static bool createDirectory(const AnsiString &path);
+	static bool matchesMask(const AnsiString &fileName, const AnsiString &mask);
 
-	static bool FileExists(const AnsiString &fileName);
+	static bool fileExists(const AnsiString &fileName);
 
-	static AnsiString GetSafeLogFileName();
-	static AnsiString GetUserDirectory();
+	static AnsiString getSafeLogFileName();
+	static AnsiString getUserDirectory();
 };
 
 } // end of namespace WinterMute

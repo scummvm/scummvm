@@ -124,8 +124,8 @@ void CBFontTT::initLoop() {
 int CBFontTT::getTextWidth(byte  *Text, int MaxLength) {
 	WideString text;
 
-	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	else text = StringUtil::AnsiToWide((char *)Text);
+	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::utf8ToWide((char *)Text);
+	else text = StringUtil::ansiToWide((char *)Text);
 
 	if (MaxLength >= 0 && text.size() > MaxLength)
 		text = Common::String(text.c_str(), MaxLength);
@@ -141,8 +141,8 @@ int CBFontTT::getTextWidth(byte  *Text, int MaxLength) {
 int CBFontTT::getTextHeight(byte  *Text, int Width) {
 	WideString text;
 
-	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	else text = StringUtil::AnsiToWide((char *)Text);
+	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::utf8ToWide((char *)Text);
+	else text = StringUtil::ansiToWide((char *)Text);
 
 
 	int textWidth, textHeight;
@@ -640,7 +640,7 @@ HRESULT CBFontTT::initFont() {
 	Common::SeekableReadStream *file = Game->_fileManager->openFile(_fontFile);
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
-		AnsiString fontFileName = PathUtil::Combine(CBPlatform::GetSystemFontPath(), PathUtil::GetFileName(_fontFile));
+		AnsiString fontFileName = PathUtil::combine(CBPlatform::GetSystemFontPath(), PathUtil::getFileName(_fontFile));
 		file = Game->_fileManager->openFile(fontFileName.c_str(), false);
 		if (!file) {
 			Game->LOG(0, "Error loading TrueType font '%s'", _fontFile);

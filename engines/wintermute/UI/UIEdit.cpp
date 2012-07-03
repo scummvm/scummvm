@@ -444,8 +444,8 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
-			WideString wstr = StringUtil::AnsiToWide(_text);
-			_scValue->setString(StringUtil::WideToUtf8(wstr).c_str());
+			WideString wstr = StringUtil::ansiToWide(_text);
+			_scValue->setString(StringUtil::wideToUtf8(wstr).c_str());
 		} else {
 			_scValue->setString(_text);
 		}
@@ -515,8 +515,8 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
 		if (Game->_textEncoding == TEXT_UTF8) {
-			WideString wstr = StringUtil::Utf8ToWide(value->getString());
-			setText(StringUtil::WideToAnsi(wstr).c_str());
+			WideString wstr = StringUtil::utf8ToWide(value->getString());
+			setText(StringUtil::wideToAnsi(wstr).c_str());
 		} else {
 			setText(value->getString());
 		}
@@ -775,7 +775,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 		//WideString wstr = StringUtil::Utf8ToWide(event->kbd.ascii);
 		WideString wstr;
 		wstr += (char)event->kbd.ascii;
-		_selEnd += insertChars(_selEnd, (byte *)StringUtil::WideToAnsi(wstr).c_str(), 1);
+		_selEnd += insertChars(_selEnd, (byte *)StringUtil::wideToAnsi(wstr).c_str(), 1);
 
 		if (Game->_textRTL) _selEnd = _selStart;
 		else _selStart = _selEnd;
