@@ -505,9 +505,7 @@ void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		tglLoadIdentity();
 		tglScalef(1.0, 1.0, -1.0);
 		tglTranslatef(pos.x(), pos.y(), pos.z());
-	} else if (g_grim->getGameType() == GType_MONKEY4) {
-		// NOTE: this could be merged with the Grim case below if you set
-		// _currentPos = (0,0,0) and _currentQuat = (0,0,0,1).
+	} else {
 		Math::Vector3d relPos = (pos - _currentPos);
 
 		Math::Matrix4 worldRot = _currentQuat.toMatrix();
@@ -516,14 +514,14 @@ void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		tglMultMatrixf(worldRot.getData());
 
 		tglScalef(scale, scale, scale);
-		Math::Matrix4 charRot = Math::Quaternion::fromEuler(yaw, pitch, roll).toMatrix();
-		tglMultMatrixf(charRot.getData());
-	} else {
-		tglTranslatef(pos.x(), pos.y(), pos.z());
-		tglScalef(scale, scale, scale);
-		tglRotatef(yaw.getDegrees(), 0, 0, 1);
-		tglRotatef(pitch.getDegrees(), 1, 0, 0);
-		tglRotatef(roll.getDegrees(), 0, 1, 0);
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			Math::Matrix4 charRot = Math::Quaternion::fromEuler(yaw, pitch, roll).toMatrix();
+			tglMultMatrixf(charRot.getData());
+		} else {
+			tglRotatef(yaw.getDegrees(), 0, 0, 1);
+			tglRotatef(pitch.getDegrees(), 1, 0, 0);
+			tglRotatef(roll.getDegrees(), 0, 1, 0);
+		}
 	}
 }
 
