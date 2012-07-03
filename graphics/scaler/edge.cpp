@@ -3229,8 +3229,8 @@ void EdgePlugin::anti_alias_grid_2x(uint8 *dptr, int dstPitch,
 
 /* Check for changed pixel grid, return 1 if unchanged. */
 template<typename Pixel>
-int check_unchanged_pixels(Pixel *old_src_ptr, Pixel *pixels, int w) {
-	Pixel *dptr;
+int check_unchanged_pixels(const Pixel *old_src_ptr, const Pixel *pixels, int w) {
+	const Pixel *dptr;
 
 	dptr = old_src_ptr - w - 1;
 	if (*dptr++ != pixels[0]) return 0;
@@ -3305,11 +3305,13 @@ template<typename ColorMask, typename Pixel>
 void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
                                  int w, int h, int w_new, int h_new,
                                  int srcPitch, int dstPitch,
-                                 int overlay_flag) {
+                                 bool haveOldSrc,
+								 const uint8* oldSrc, int oldPitch) {
 	int x, y;
 	const uint8 *sptr8 = src;
 	uint8 *dptr8 = dst + dstPitch + 2;
 	const uint16 *sptr16;
+	const uint16 *oldSptr;
 	uint16 *dptr16;
 	int16 *bplane;
 	int8 sim[8];
@@ -3318,11 +3320,12 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 	int16 *diffs;
 	int dstPitch3 = dstPitch * 3;
 
-	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch3) {
+	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch3, oldSrc += oldPitch) {
 		for (x = 0,
 		        sptr16 = (const uint16 *) sptr8,
+		        oldSptr = (const uint16 *) oldSrc,
 		        dptr16 = (uint16 *) dptr8;
-		        x < w; x++, sptr16++, dptr16 += 3) {
+		        x < w; x++, sptr16++, dptr16 += 3, oldSptr++) {
 			const uint16 *sptr2, *addr3;
 			uint16 pixels[9];
 			char edge_type;
@@ -3335,23 +3338,23 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 			memcpy(pixels + 3, sptr16 - 1, 3 * sizeof(uint16));
 			memcpy(pixels + 6, addr3 - 2, 3 * sizeof(uint16));
 
-#if 0
-			/* skip interior unchanged 3x3 blocks */
-			if (*sptr16 == *old_sptr16 &&
+			if (haveOldSrc) {
+				/* skip interior unchanged 3x3 blocks */
+				if (*sptr16 == *oldSptr &&
 #if DEBUG_DRAW_REFRESH_BORDERS
-			        x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
+						x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
 #endif
-			        check_unchanged_pixels(old_sptr16, pixels, old_src_inc)) {
-				draw_unchanged_grid_3x(dptr16, dstPitch, old_dptr16,
-				                       old_dst_inc);
+						check_unchanged_pixels(oldSptr, pixels, oldPitch / sizeof(Pixel))) {
+					//draw_unchanged_grid_3x(dptr16, dstPitch, old_dptr16,
+					//					   old_dst_inc);
 
 #if DEBUG_REFRESH_RANDOM_XOR
-				*(dptr16 + 1) = 0;
+					*(dptr16 + 1) = 0;
 #endif
-				continue;
+					continue;
+				}
 			}
 
-#endif
 			diffs = chooseGreyscale<ColorMask, Pixel>(pixels);
 
 			/* block of solid color */
@@ -3381,12 +3384,14 @@ template<typename ColorMask, typename Pixel>
 void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
                                  int w, int h, int w_new, int h_new,
                                  int srcPitch, int dstPitch,
-                                 int overlay_flag,
-                                 int interpolate_2x) {
+                                 int interpolate_2x,
+                                 bool haveOldSrc,
+								 const uint8 *oldSrc, int oldSrcPitch) {
 	int x, y;
 	const uint8 *sptr8 = src;
 	uint8 *dptr8 = dst;
 	const uint16 *sptr16;
+	const uint16 *oldSptr;
 	uint16 *dptr16;
 	int16 *bplane;
 	int8 sim[8];
@@ -3395,11 +3400,12 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 	int16 *diffs;
 	int dstPitch2 = dstPitch << 1;
 
-	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch2) {
+	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch2, oldSrc += oldSrcPitch) {
 		for (x = 0,
 		        sptr16 = (const uint16 *) sptr8,
-		        dptr16 = (uint16 *) dptr8;
-		        x < w; x++, sptr16++, dptr16 += 2) {
+		        dptr16 = (uint16 *) dptr8,
+				oldSptr = (const uint16 *) oldSrc;
+		        x < w; x++, sptr16++, dptr16 += 2, oldSptr++) {
 			const uint16 *sptr2, *addr3;
 			uint16 pixels[9];
 			char edge_type;
@@ -3412,22 +3418,22 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 			memcpy(pixels + 3, sptr16 - 1, 3 * sizeof(uint16));
 			memcpy(pixels + 6, addr3 - 2, 3 * sizeof(uint16));
 
-#if 0
-			/* skip interior unchanged 3x3 blocks */
-			if (*sptr16 == *old_sptr16 &&
+			if (haveOldSrc) {
+				/* skip interior unchanged 3x3 blocks */
+				if (*sptr16 == *oldSptr &&
 #if DEBUG_DRAW_REFRESH_BORDERS
-			        x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
+						x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
 #endif
-			        check_unchanged_pixels(old_sptr16, pixels, old_src_inc)) {
-				draw_unchanged_grid_2x(dptr16, dstPitch, old_dptr16,
-				                       old_dst_inc);
+						check_unchanged_pixels<Pixel>(oldSptr, pixels, oldSrcPitch / sizeof(Pixel))) {
+					//draw_unchanged_grid_2x(dptr16, dstPitch, old_dptr16,
+					//					   old_dst_inc);
 
 #if DEBUG_REFRESH_RANDOM_XOR
-				*(dptr16 + 1) = 0;
+					*(dptr16 + 1) = 0;
 #endif
-				continue;
+					continue;
+				}
 			}
-#endif
 
 			diffs = chooseGreyscale<ColorMask, Pixel>(pixels);
 
@@ -3527,14 +3533,33 @@ void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 	if (_format.bytesPerPixel == 2) {
 		if (_factor == 2) {
 			if (_format.gLoss == 2)
-				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 0, 1);
+				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, false, NULL, 0);
 			else
-				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 0, 1);
+				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, false, NULL, 0);
 		} else {
 			if (_format.gLoss == 2)
-				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, 0);
+				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, false, NULL, 0);
 			else
-				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, 0);
+				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, false, NULL, 0);
+		}
+	} else {
+		warning("FIXME: EdgePlugin 32bpp format");
+	}
+}
+
+void EdgePlugin::oldSrcScale(const uint8 *srcPtr, uint32 srcPitch,
+                       uint8 *dstPtr, uint32 dstPitch, const uint8 *oldSrcPtr, uint32 oldSrcPitch, int width, int height, int x, int y) {
+	if (_format.bytesPerPixel == 2) {
+		if (_factor == 2) {
+			if (_format.gLoss == 2)
+				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, true, oldSrcPtr, oldSrcPitch);
+			else
+				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, true, oldSrcPtr, oldSrcPitch);
+		} else {
+			if (_format.gLoss == 2)
+				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, true, oldSrcPtr, oldSrcPitch);
+			else
+				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, true, oldSrcPtr, oldSrcPitch);
 		}
 	} else {
 		warning("FIXME: EdgePlugin 32bpp format");

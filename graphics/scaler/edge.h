@@ -32,10 +32,15 @@ public:
 	virtual void deinitialize();
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
+	virtual void oldSrcScale(const uint8 *srcPtr, uint32 srcPitch,
+						   uint8 *dstPtr, uint32 dstPitch,
+						   const uint8 *oldSrcPtr, uint32 oldSrcPitch,
+						   int width, int height, int x, int y);
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
 	virtual uint getFactor() const { return _factor; }
 	virtual bool canDrawCursor() const { return false; }
+	virtual bool useOldSrc() const { return true; }
 	virtual uint extraPixels() const { return 1; }
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
@@ -144,8 +149,9 @@ private:
 	void antiAliasPass2x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
-		int overlay_flag,
-		int interpolate_2x);
+		int interpolate_2x,
+		bool haveOldSrc,
+		const uint8 *oldSrc, int oldSrcPitch);
 
 	/**
 	 * Perform edge detection, draw the new 3x pixels
@@ -154,7 +160,8 @@ private:
 	void antiAliasPass3x(const uint8 *src, uint8 *dst,
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
-		int overlay_flag);
+		bool haveOldSrc,
+		const uint8* oldSrc, int oldPitch);
 
 	int16 _rgbTable[65536][3];       ///< table lookup for RGB
 	int16 _greyscaleTable[3][65536]; ///< greyscale tables
