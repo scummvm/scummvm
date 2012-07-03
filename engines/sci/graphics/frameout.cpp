@@ -722,6 +722,9 @@ void GfxFrameout::kernelFrameout() {
 					translatedClipRect = clipRect;
 					translatedClipRect.translate(it->upscaledPlaneRect.left, it->upscaledPlaneRect.top);
 				} else {
+					// QFG4 passes invalid rectangles when a battle is starting
+					if (!clipRect.isValidRect())
+						continue;
 					clipRect.clip(it->planeClipRect);
 					translatedClipRect = clipRect;
 					translatedClipRect.translate(it->planeRect.left, it->planeRect.top);
