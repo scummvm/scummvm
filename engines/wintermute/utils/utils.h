@@ -37,27 +37,27 @@ class CBGame;
 
 class CBUtils {
 public:
-	static void Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
-	static void Swap(int *a, int *b);
-	static bool StrBeginsI(const char *String, const char *Fragment);
-	static float NormalizeAngle(float Angle);
+	static void clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
+	static void swap(int *a, int *b);
+	static bool strBeginsI(const char *String, const char *Fragment);
+	static float normalizeAngle(float Angle);
 
-	static void CreatePath(const char *Path, bool PathOnly = false);
+	static void createPath(const char *Path, bool PathOnly = false);
 
-	static void DebugMessage(HWND hWnd, const char *Text);
-	static char *SetString(char **String, const char *Value);
+	static void debugMessage(HWND hWnd, const char *Text);
+	static char *setString(char **String, const char *Value);
 
-	static int StrNumEntries(const char *Str, const char Delim = ',');
-	static char *StrEntry(int Entry, const char *Str, const char Delim = ',');
+	static int strNumEntries(const char *Str, const char Delim = ',');
+	static char *strEntry(int Entry, const char *Str, const char Delim = ',');
 
-	static int RandomInt(int From, int To);
-	static float RandomFloat(float From, float To);
-	static float RandomAngle(float From, float To);
+	static int randomInt(int From, int To);
+	static float randomFloat(float From, float To);
+	static float randomAngle(float From, float To);
 
-	static bool MatchesPattern(const char *pattern, const char *string);
+	static bool matchesPattern(const char *pattern, const char *string);
 
-	static char *GetPath(const char *Filename);
-	static char *GetFilename(const char *Filename);
+	static char *getPath(const char *Filename);
+	static char *getFilename(const char *Filename);
 
 	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
 	static uint32 HSLtoRGB(byte  H, byte S, byte L);

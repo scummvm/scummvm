@@ -238,7 +238,7 @@ HRESULT CAdItem::loadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_AMOUNT_STRING:
-			CBUtils::SetString(&_amountString, (char *)params);
+			CBUtils::setString(&_amountString, (char *)params);
 			break;
 
 		case TOKEN_TALK: {
@@ -705,7 +705,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 			delete[] _amountString;
 			_amountString = NULL;
 		} else {
-			CBUtils::SetString(&_amountString, value->getString());
+			CBUtils::setString(&_amountString, value->getString());
 		}
 		return S_OK;
 	}

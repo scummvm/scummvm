@@ -164,7 +164,7 @@ HRESULT CPartParticle::update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 
 
 		// update rotation
 		_rotation += _angVelocity * ElapsedTime;
-		_rotation = CBUtils::NormalizeAngle(_rotation);
+		_rotation = CBUtils::normalizeAngle(_rotation);
 
 		// update scale
 		if (_exponentialGrowth)

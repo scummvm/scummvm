@@ -409,8 +409,8 @@ int CAdScene::getPointsDist(CBPoint p1, CBPoint p2, CBObject *requester) {
 
 	if (xLength > yLength) {
 		if (X1 > X2) {
-			CBUtils::Swap(&X1, &X2);
-			CBUtils::Swap(&Y1, &Y2);
+			CBUtils::swap(&X1, &X2);
+			CBUtils::swap(&Y1, &Y2);
 		}
 
 		yStep = (double)(Y2 - Y1) / (double)(X2 - X1);
@@ -422,8 +422,8 @@ int CAdScene::getPointsDist(CBPoint p1, CBPoint p2, CBObject *requester) {
 		}
 	} else {
 		if (Y1 > Y2) {
-			CBUtils::Swap(&X1, &X2);
-			CBUtils::Swap(&Y1, &Y2);
+			CBUtils::swap(&X1, &X2);
+			CBUtils::swap(&Y1, &Y2);
 		}
 
 		xStep = (double)(X2 - X1) / (double)(Y2 - Y1);

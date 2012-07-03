@@ -140,7 +140,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	_file = Game->_fileManager->openFile(filename, true, false);
 	if (!_file) return E_FAIL;
 
-	//if (Filename != _filename) CBUtils::SetString(&_filename, Filename);
+	//if (Filename != _filename) CBUtils::setString(&_filename, Filename);
 #if defined (USE_THEORADEC)
 	_theoraDecoder = new TheoraDecoder();
 #else
@@ -167,7 +167,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	_file = Game->_fileManager->openFile(Filename);
 	if (!_file) return E_FAIL;
 
-	if (Filename != _filename) CBUtils::SetString(&_filename, Filename);
+	if (Filename != _filename) CBUtils::setString(&_filename, Filename);
 
 	// start up Ogg stream synchronization layer
 	ogg_sync_init(&m_OggSyncState);
@@ -691,7 +691,7 @@ HRESULT CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
 		SAFE_DELETE_ARRAY(m_AlphaFilename);
 		return E_FAIL;
 	}
-	if (m_AlphaFilename != Filename) CBUtils::SetString(&m_AlphaFilename, Filename);
+	if (m_AlphaFilename != Filename) CBUtils::setString(&m_AlphaFilename, Filename);
 	m_AlphaImage->Convert(IMG_TRUECOLOR);
 #endif
 	return S_OK;

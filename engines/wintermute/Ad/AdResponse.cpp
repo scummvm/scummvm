@@ -66,8 +66,8 @@ CAdResponse::~CAdResponse() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdResponse::SetText(const char *Text) {
-	CBUtils::SetString(&_text, Text);
-	CBUtils::SetString(&_textOrig, Text);
+	CBUtils::setString(&_text, Text);
+	CBUtils::setString(&_textOrig, Text);
 }
 
 

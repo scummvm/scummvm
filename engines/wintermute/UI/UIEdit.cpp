@@ -790,7 +790,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 //////////////////////////////////////////////////////////////////////////
 int CUIEdit::deleteChars(int Start, int End) {
-	if (Start > End) CBUtils::Swap(&Start, &End);
+	if (Start > End) CBUtils::swap(&Start, &End);
 
 	Start = MAX(Start, (int)0);
 	End = MIN((size_t)End, strlen(_text));

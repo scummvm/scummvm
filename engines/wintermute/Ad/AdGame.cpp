@@ -1037,7 +1037,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 		if (value == NULL) {
 			delete[] _startupScene;
 			_startupScene = NULL;
-		} else CBUtils::SetString(&_startupScene, value->getString());
+		} else CBUtils::setString(&_startupScene, value->getString());
 
 		return S_OK;
 	}
@@ -1206,7 +1206,7 @@ HRESULT CAdGame::loadBuffer(byte  *Buffer, bool Complete) {
 
 				case TOKEN_ITEMS:
 					ItemsFound = true;
-					CBUtils::SetString(&_itemsFile, (char *)params2);
+					CBUtils::setString(&_itemsFile, (char *)params2);
 					if (FAILED(LoadItemsFile(_itemsFile))) {
 						delete[] _itemsFile;
 						_itemsFile = NULL;
@@ -1233,11 +1233,11 @@ HRESULT CAdGame::loadBuffer(byte  *Buffer, bool Complete) {
 					break;
 
 				case TOKEN_STARTUP_SCENE:
-					CBUtils::SetString(&_startupScene, (char *)params2);
+					CBUtils::setString(&_startupScene, (char *)params2);
 					break;
 
 				case TOKEN_DEBUG_STARTUP_SCENE:
-					CBUtils::SetString(&_debugStartupScene, (char *)params2);
+					CBUtils::setString(&_debugStartupScene, (char *)params2);
 					break;
 				}
 			}

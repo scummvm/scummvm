@@ -212,7 +212,7 @@ CBGame::CBGame(): CBObject(this) {
 	_indicatorHeight = 8;
 	_richSavedGames = false;
 	_savedGameExt = NULL;
-	CBUtils::SetString(&_savedGameExt, "dsv");
+	CBUtils::setString(&_savedGameExt, "dsv");
 
 	_musicCrossfadeRunning = false;
 	_musicCrossfadeStartTime = 0;
@@ -229,7 +229,7 @@ CBGame::CBGame(): CBObject(this) {
 	_loadImageX = _loadImageY = 0;
 
 	_localSaveDir = NULL;
-	CBUtils::SetString(&_localSaveDir, "saves");
+	CBUtils::setString(&_localSaveDir, "saves");
 	_saveDirChecked = false;
 
 	_loadingIcon = NULL;
@@ -925,7 +925,7 @@ HRESULT CBGame::loadBuffer(byte  *buffer, bool complete) {
 			break;
 
 		case TOKEN_SAVE_IMAGE:
-			CBUtils::SetString(&_saveImageName, (char *)params);
+			CBUtils::setString(&_saveImageName, (char *)params);
 			break;
 
 		case TOKEN_SAVE_IMAGE_X:
@@ -937,7 +937,7 @@ HRESULT CBGame::loadBuffer(byte  *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOAD_IMAGE:
-			CBUtils::SetString(&_loadImageName, (char *)params);
+			CBUtils::setString(&_loadImageName, (char *)params);
 			break;
 
 		case TOKEN_LOAD_IMAGE_X:
@@ -949,7 +949,7 @@ HRESULT CBGame::loadBuffer(byte  *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOCAL_SAVE_DIR:
-			CBUtils::SetString(&_localSaveDir, (char *)params);
+			CBUtils::setString(&_localSaveDir, (char *)params);
 			break;
 
 		case TOKEN_COMPAT_KILL_METHOD_THREADS:
@@ -1369,8 +1369,8 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		int right = stack->pop()->getInt();
 		int bottom = stack->pop()->getInt();
 
-		if (right < left) CBUtils::Swap(&left, &right);
-		if (bottom < top) CBUtils::Swap(&top, &bottom);
+		if (right < left) CBUtils::swap(&left, &right);
+		if (bottom < top) CBUtils::swap(&top, &bottom);
 
 		CBPlatform::SetRect(&_mouseLockRect, left, top, right, bottom);
 
@@ -1900,7 +1900,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 			delete[] _loadImageName;
 			_loadImageName = NULL;
 		} else {
-			CBUtils::SetString(&_loadImageName, Val->getString());
+			CBUtils::setString(&_loadImageName, Val->getString());
 		}
 		stack->pushNULL();
 		return S_OK;
@@ -1919,7 +1919,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 			delete[] _saveImageName;
 			_saveImageName = NULL;
 		} else {
-			CBUtils::SetString(&_saveImageName, Val->getString());
+			CBUtils::setString(&_saveImageName, Val->getString());
 		}
 		stack->pushNULL();
 		return S_OK;
@@ -3026,7 +3026,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 		int from = stack->pop()->getInt();
 		int to   = stack->pop()->getInt();
 
-		stack->pushInt(CBUtils::RandomInt(from, to));
+		stack->pushInt(CBUtils::randomInt(from, to));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -3589,7 +3589,7 @@ HRESULT CBGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_SAVED_GAME_EXT:
-			CBUtils::SetString(&_savedGameExt, (char *)params);
+			CBUtils::setString(&_savedGameExt, (char *)params);
 			break;
 
 		case TOKEN_GUID:

@@ -786,8 +786,8 @@ HRESULT CScEngine::LoadBreakpoints() {
 		sprintf(Key, "Breakpoint%d", i);
 		AnsiString breakpoint = Game->_registry->ReadString("Debug", Key, "");
 
-		char *Path = CBUtils::StrEntry(0, breakpoint.c_str(), ':');
-		char *Line = CBUtils::StrEntry(1, breakpoint.c_str(), ':');
+		char *Path = CBUtils::strEntry(0, breakpoint.c_str(), ':');
+		char *Line = CBUtils::strEntry(1, breakpoint.c_str(), ':');
 
 		if (Path != NULL && Line != NULL) AddBreakpoint(Path, atoi(Line));
 		delete[] Path;

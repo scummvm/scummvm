@@ -188,7 +188,7 @@ void CBRegistry::LoadXml(const AnsiString fileName, PathValueMap &values) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::SaveXml(const AnsiString fileName, PathValueMap &values) {
-	CBUtils::CreatePath(fileName.c_str());
+	CBUtils::createPath(fileName.c_str());
 
 	TiXmlDocument doc;
 	doc.LinkEndChild(new TiXmlDeclaration("1.0", "utf-8", ""));

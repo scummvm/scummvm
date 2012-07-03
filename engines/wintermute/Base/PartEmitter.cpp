@@ -155,28 +155,28 @@ HRESULT CPartEmitter::initParticle(CPartParticle *Particle, uint32 CurrentTime, 
 	if (!Particle) return E_FAIL;
 	if (_sprites.GetSize() == 0) return E_FAIL;
 
-	int PosX = CBUtils::RandomInt(_posX, _posX + _width);
-	int PosY = CBUtils::RandomInt(_posY, _posY + _height);
-	float PosZ = CBUtils::RandomFloat(0.0f, 100.0f);
+	int PosX = CBUtils::randomInt(_posX, _posX + _width);
+	int PosY = CBUtils::randomInt(_posY, _posY + _height);
+	float PosZ = CBUtils::randomFloat(0.0f, 100.0f);
 
 	float Velocity;
 	if (_velocityZBased) Velocity = _velocity1 + PosZ * (_velocity2 - _velocity1) / 100;
-	else Velocity = CBUtils::RandomFloat(_velocity1, _velocity2);
+	else Velocity = CBUtils::randomFloat(_velocity1, _velocity2);
 
 	float Scale;
 	if (_scaleZBased) Scale = _scale1 + PosZ * (_scale2 - _scale1) / 100;
-	else Scale = CBUtils::RandomFloat(_scale1, _scale2);
+	else Scale = CBUtils::randomFloat(_scale1, _scale2);
 
 	int LifeTime;
 	if (_lifeTimeZBased) LifeTime = _lifeTime2 - PosZ * (_lifeTime2 - _lifeTime1) / 100;
-	else LifeTime = CBUtils::RandomInt(_lifeTime1, _lifeTime2);
+	else LifeTime = CBUtils::randomInt(_lifeTime1, _lifeTime2);
 
-	float Angle = CBUtils::RandomAngle(_angle1, _angle2);
-	int SpriteIndex = CBUtils::RandomInt(0, _sprites.GetSize() - 1);
+	float Angle = CBUtils::randomAngle(_angle1, _angle2);
+	int SpriteIndex = CBUtils::randomInt(0, _sprites.GetSize() - 1);
 
-	float Rotation = CBUtils::RandomAngle(_rotation1, _rotation2);
-	float AngVelocity = CBUtils::RandomFloat(_angVelocity1, _angVelocity2);
-	float GrowthRate = CBUtils::RandomFloat(_growthRate1, _growthRate2);
+	float Rotation = CBUtils::randomAngle(_rotation1, _rotation2);
+	float AngVelocity = CBUtils::randomFloat(_angVelocity1, _angVelocity2);
+	float GrowthRate = CBUtils::randomFloat(_growthRate1, _growthRate2);
 
 	if (!CBPlatform::IsRectEmpty(&_border)) {
 		int ThicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * PosZ / 100.0f);
@@ -195,14 +195,14 @@ HRESULT CPartEmitter::initParticle(CPartParticle *Particle, uint32 CurrentTime, 
 	Vector2 VecVel(0, Velocity);
 
 	Matrix4 MatRot;
-	MatRot.RotationZ(Common::deg2rad(CBUtils::NormalizeAngle(Angle - 180)));
+	MatRot.RotationZ(Common::deg2rad(CBUtils::normalizeAngle(Angle - 180)));
 	MatRot.TransformVector2(VecVel);
 
 	if (_alphaTimeBased) {
 		Particle->_alpha1 = _alpha1;
 		Particle->_alpha2 = _alpha2;
 	} else {
-		int Alpha = CBUtils::RandomInt(_alpha1, _alpha2);
+		int Alpha = CBUtils::randomInt(_alpha1, _alpha2);
 		Particle->_alpha1 = Alpha;
 		Particle->_alpha2 = Alpha;
 	}
@@ -394,7 +394,7 @@ HRESULT CPartEmitter::addForce(const char *name, CPartForce::TForceType Type, in
 
 	Force->_direction = Vector2(0, Strength);
 	Matrix4 MatRot;
-	MatRot.RotationZ(Common::deg2rad(CBUtils::NormalizeAngle(Angle - 180)));
+	MatRot.RotationZ(Common::deg2rad(CBUtils::normalizeAngle(Angle - 180)));
 	MatRot.TransformVector2(Force->_direction);
 
 	return S_OK;
@@ -1082,7 +1082,7 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "EmitEvent") == 0) {
 		delete[] _emitEvent;
 		_emitEvent = NULL;
-		if (!value->isNULL()) CBUtils::SetString(&_emitEvent, value->getString());
+		if (!value->isNULL()) CBUtils::setString(&_emitEvent, value->getString());
 		return S_OK;
 	}
 

@@ -78,7 +78,7 @@ HRESULT CAdTalkDef::loadFile(const char *Filename) {
 
 	HRESULT ret;
 
-	CBUtils::SetString(&_filename, Filename);
+	CBUtils::setString(&_filename, Filename);
 
 	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TALK file '%s'", Filename);
 
@@ -139,11 +139,11 @@ HRESULT CAdTalkDef::loadBuffer(byte  *Buffer, bool Complete) {
 		break;
 
 		case TOKEN_DEFAULT_SPRITE:
-			CBUtils::SetString(&_defaultSpriteFilename, (char *)params);
+			CBUtils::setString(&_defaultSpriteFilename, (char *)params);
 			break;
 
 		case TOKEN_DEFAULT_SPRITESET_FILE:
-			CBUtils::SetString(&_defaultSpriteSetFilename, (char *)params);
+			CBUtils::setString(&_defaultSpriteSetFilename, (char *)params);
 			break;
 
 		case TOKEN_DEFAULT_SPRITESET: {

@@ -567,8 +567,8 @@ HRESULT CAdResponseBox::weedResponses() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdResponseBox::setLastResponseText(const char *Text, const char *TextOrig) {
-	CBUtils::SetString(&_lastResponseText, Text);
-	CBUtils::SetString(&_lastResponseTextOrig, TextOrig);
+	CBUtils::setString(&_lastResponseText, Text);
+	CBUtils::setString(&_lastResponseTextOrig, TextOrig);
 }
 
 

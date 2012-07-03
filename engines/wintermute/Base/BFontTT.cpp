@@ -480,7 +480,7 @@ HRESULT CBFontTT::loadBuffer(byte  *Buffer) {
 			break;
 
 		case TOKEN_FILENAME:
-			CBUtils::SetString(&_fontFile, params);
+			CBUtils::setString(&_fontFile, params);
 			break;
 
 		case TOKEN_BOLD:
@@ -542,7 +542,7 @@ HRESULT CBFontTT::loadBuffer(byte  *Buffer) {
 		_layers.Add(Layer);
 	}
 
-	if (!_fontFile) CBUtils::SetString(&_fontFile, "arial.ttf");
+	if (!_fontFile) CBUtils::setString(&_fontFile, "arial.ttf");
 
 	return initFont();
 }

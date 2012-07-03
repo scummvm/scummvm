@@ -122,7 +122,7 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 	if (!_stream) {
 		return E_FAIL;
 	}
-	CBUtils::SetString(&_filename, Filename);
+	CBUtils::setString(&_filename, Filename);
 
 	return S_OK;
 #if 0
@@ -138,7 +138,7 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 		return E_FAIL;
 	}
 
-	CBUtils::SetString(&_filename, Filename);
+	CBUtils::setString(&_filename, Filename);
 
 	/*
 	HRESULT res;

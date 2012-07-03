@@ -47,10 +47,10 @@ public:
 		CBStoreProduct(const char *id, const char *name, const char *desc, const char *price) {
 			_id = _name = _desc = _price = NULL;
 
-			CBUtils::SetString(&_id, id);
-			CBUtils::SetString(&_name, name);
-			CBUtils::SetString(&_desc, desc);
-			CBUtils::SetString(&_price, price);
+			CBUtils::setString(&_id, id);
+			CBUtils::setString(&_name, name);
+			CBUtils::setString(&_desc, desc);
+			CBUtils::setString(&_price, price);
 		}
 
 		~CBStoreProduct() {
@@ -98,9 +98,9 @@ public:
 		CBStoreTransaction(const char *id, const char *productId, const char *state) {
 			_id = _productId = _state = NULL;
 
-			CBUtils::SetString(&_id, id);
-			CBUtils::SetString(&_productId, productId);
-			CBUtils::SetString(&_state, state);
+			CBUtils::setString(&_id, id);
+			CBUtils::setString(&_productId, productId);
+			CBUtils::setString(&_state, state);
 		}
 
 		~CBStoreTransaction() {

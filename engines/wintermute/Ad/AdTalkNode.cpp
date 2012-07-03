@@ -112,11 +112,11 @@ HRESULT CAdTalkNode::loadBuffer(byte  *Buffer, bool Complete) {
 	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SPRITE:
-			CBUtils::SetString(&_spriteFilename, (char *)params);
+			CBUtils::setString(&_spriteFilename, (char *)params);
 			break;
 
 		case TOKEN_SPRITESET_FILE:
-			CBUtils::SetString(&_spriteSetFilename, (char *)params);
+			CBUtils::setString(&_spriteSetFilename, (char *)params);
 			break;
 
 		case TOKEN_SPRITESET: {
@@ -143,7 +143,7 @@ HRESULT CAdTalkNode::loadBuffer(byte  *Buffer, bool Complete) {
 			break;
 
 		case TOKEN_COMMENT:
-			if (Game->_editorMode) CBUtils::SetString(&_comment, (char *)params);
+			if (Game->_editorMode) CBUtils::setString(&_comment, (char *)params);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

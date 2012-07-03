@@ -45,30 +45,30 @@ static inline unsigned Sqr(int x) {
 
 
 //////////////////////////////////////////////////////////////////////////////////
-void CBUtils::Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect) {
+void CBUtils::clip(int *destX, int *destY, RECT *srcRect, RECT *destRect) {
 	// If it's partly off the right side of the screen
-	if (*DestX + (SrcRect->right - SrcRect->left) > DestRect->right)
-		SrcRect->right -= *DestX + (SrcRect->right - SrcRect->left) - DestRect->right;
+	if (*destX + (srcRect->right - srcRect->left) > destRect->right)
+		srcRect->right -= *destX + (srcRect->right - srcRect->left) - destRect->right;
 
-	if (SrcRect->right < 0) SrcRect->right = 0;
+	if (srcRect->right < 0) srcRect->right = 0;
 
 	// Partly off the left side of the screen
-	if (*DestX < DestRect->left) {
-		SrcRect->left += DestRect->left - *DestX;
-		*DestX = DestRect->left;
+	if (*destX < destRect->left) {
+		srcRect->left += destRect->left - *destX;
+		*destX = destRect->left;
 	}
 
 	// Partly off the top of the screen
-	if (*DestY < DestRect->top) {
-		SrcRect->top += DestRect->top - *DestY;
-		*DestY = DestRect->top;
+	if (*destY < destRect->top) {
+		srcRect->top += destRect->top - *destY;
+		*destY = destRect->top;
 	}
 
 	// If it's partly off the bottom side of the screen
-	if (*DestY + (SrcRect->bottom - SrcRect->top) > DestRect->bottom)
-		SrcRect->bottom -= ((SrcRect->bottom - SrcRect->top) + *DestY) - DestRect->bottom;
+	if (*destY + (srcRect->bottom - srcRect->top) > destRect->bottom)
+		srcRect->bottom -= ((srcRect->bottom - srcRect->top) + *destY) - destRect->bottom;
 
-	if (SrcRect->bottom < 0) SrcRect->bottom = 0;
+	if (srcRect->bottom < 0) srcRect->bottom = 0;
 
 	return;
 }
@@ -76,36 +76,36 @@ void CBUtils::Clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect) {
 //////////////////////////////////////////////////////////////////////////////////
 // Swap - swaps two integers
 //////////////////////////////////////////////////////////////////////////////////
-void CBUtils::Swap(int *a, int *b) {
+void CBUtils::swap(int *a, int *b) {
 	int Temp = *a;
 	*a = *b;
 	*b = Temp;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBUtils::StrBeginsI(const char *String, const char *Fragment) {
-	return (scumm_strnicmp(String, Fragment, strlen(Fragment)) == 0);
+bool CBUtils::strBeginsI(const char *string, const char *fragment) {
+	return (scumm_strnicmp(string, fragment, strlen(fragment)) == 0);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-float CBUtils::NormalizeAngle(float Angle) {
-	while (Angle > 360) Angle -= 360;
-	while (Angle < 0) Angle += 360;
+float CBUtils::normalizeAngle(float angle) {
+	while (angle > 360) angle -= 360;
+	while (angle < 0) angle += 360;
 
-	return Angle;
+	return angle;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void CBUtils::CreatePath(const char *Path, bool PathOnly) {
-	AnsiString path;
+void CBUtils::createPath(const char *path, bool pathOnly) {
+	AnsiString pathStr;
 
-	if (!PathOnly) path = PathUtil::getDirectoryName(Path);
-	else path = Path;
+	if (!pathOnly) pathStr = PathUtil::getDirectoryName(path);
+	else pathStr = path;
 
 //	try {
-	warning("CBUtils::CreatePath - not implemented: %s", Path);
+	warning("CBUtils::CreatePath - not implemented: %s", path);
 //		boost::filesystem::create_directories(path);
 //	} catch (...) {
 	return;
@@ -114,13 +114,13 @@ void CBUtils::CreatePath(const char *Path, bool PathOnly) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBUtils::DebugMessage(HWND hWnd, const char *Text) {
+void CBUtils::debugMessage(HWND hWnd, const char *text) {
 	//MessageBox(hWnd, Text, "WME", MB_OK|MB_ICONINFORMATION);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBUtils::SetString(char **string, const char *value) {
+char *CBUtils::setString(char **string, const char *value) {
 	delete[] *string;
 	*string = new char[strlen(value) + 1];
 	if (*string) strcpy(*string, value);
@@ -128,34 +128,34 @@ char *CBUtils::SetString(char **string, const char *value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBUtils::StrNumEntries(const char *Str, const char Delim) {
-	int NumEntries = 1;
-	for (uint32 i = 0; i < strlen(Str); i++) {
-		if (Str[i] == Delim) NumEntries++;
+int CBUtils::strNumEntries(const char *str, const char delim) {
+	int numEntries = 1;
+	for (uint32 i = 0; i < strlen(str); i++) {
+		if (str[i] == delim) numEntries++;
 	}
-	return NumEntries;
+	return numEntries;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBUtils::StrEntry(int Entry, const char *Str, const char Delim) {
-	int NumEntries = 0;
+char *CBUtils::strEntry(int entry, const char *str, const char delim) {
+	int numEntries = 0;
 
-	const char *Start = NULL;
-	int Len = 0;
+	const char *start = NULL;
+	int len = 0;
 
-	for (uint32 i = 0; i <= strlen(Str); i++) {
-		if (NumEntries == Entry) {
-			if (!Start) Start = Str + i;
-			else Len++;
+	for (uint32 i = 0; i <= strlen(str); i++) {
+		if (numEntries == entry) {
+			if (!start) start = str + i;
+			else len++;
 		}
-		if (Str[i] == Delim || Str[i] == '\0') {
-			NumEntries++;
-			if (Start) {
-				char *Ret = new char[Len + 1];
-				memset(Ret, 0, Len + 1);
-				strncpy(Ret, Start, Len);
-				return Ret;
+		if (str[i] == delim || str[i] == '\0') {
+			numEntries++;
+			if (start) {
+				char *ret = new char[len + 1];
+				memset(ret, 0, len + 1);
+				strncpy(ret, start, len);
+				return ret;
 			}
 		}
 	}
@@ -163,7 +163,7 @@ char *CBUtils::StrEntry(int Entry, const char *Str, const char Delim) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBUtils::RandomInt(int from, int to) {
+int CBUtils::randomInt(int from, int to) {
 	if (to < from) {
 		int i = to;
 		to = from;
@@ -174,27 +174,27 @@ int CBUtils::RandomInt(int from, int to) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-float CBUtils::RandomFloat(float from, float to) {
+float CBUtils::randomFloat(float from, float to) {
 	const uint32 randMax = RAND_MAX;
 	float randNum = (float)g_wintermute->randInt(0, randMax) / (float)randMax;
 	return from + (to - from) * randNum;
 }
 
 //////////////////////////////////////////////////////////////////////////
-float CBUtils::RandomAngle(float From, float To) {
+float CBUtils::randomAngle(float From, float To) {
 	while (To < From) {
 		To += 360;
 	}
-	return NormalizeAngle(RandomFloat(From, To));
+	return normalizeAngle(randomFloat(From, To));
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBUtils::MatchesPattern(const char *Pattern, const char *String) {
+bool CBUtils::matchesPattern(const char *pattern, const char *string) {
 	char stringc, patternc;
 
-	for (;; ++String) {
-		stringc = toupper(*String);
-		patternc = toupper(*Pattern++);
+	for (;; ++string) {
+		stringc = toupper(*string);
+		patternc = toupper(*pattern++);
 
 		switch (patternc) {
 		case 0:
@@ -205,29 +205,29 @@ bool CBUtils::MatchesPattern(const char *Pattern, const char *String) {
 			break;
 
 		case '*':
-			if (!*Pattern) return true;
+			if (!*pattern) return true;
 
-			if (*Pattern == '.') {
+			if (*pattern == '.') {
 				char *dot;
-				if (Pattern[1] == '*' && Pattern[2] == 0) return true;
-				dot = (char *)strchr(String, '.');
-				if (Pattern[1] == 0) return (dot == NULL || dot[1] == 0);
+				if (pattern[1] == '*' && pattern[2] == 0) return true;
+				dot = (char *)strchr(string, '.');
+				if (pattern[1] == 0) return (dot == NULL || dot[1] == 0);
 				if (dot != NULL) {
-					String = dot;
-					if (strpbrk(Pattern, "*?[") == NULL && strchr(String + 1, '.') == NULL)
-						return(scumm_stricmp(Pattern + 1, String + 1) == 0);
+					string = dot;
+					if (strpbrk(pattern, "*?[") == NULL && strchr(string + 1, '.') == NULL)
+						return(scumm_stricmp(pattern + 1, string + 1) == 0);
 				}
 			}
 
-			while (*String)
-				if (CBUtils::MatchesPattern(Pattern, String++))
+			while (*string)
+				if (CBUtils::matchesPattern(pattern, string++))
 					return true;
 			return false;
 
 		default:
 			if (patternc != stringc)
 				if (patternc == '.' && stringc == 0)
-					return(CBUtils::MatchesPattern(Pattern, String));
+					return(CBUtils::matchesPattern(pattern, string));
 				else
 					return false;
 			break;
@@ -236,10 +236,10 @@ bool CBUtils::MatchesPattern(const char *Pattern, const char *String) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CBUtils::GetPath(const char *Filename) {
-	AnsiString path = PathUtil::getDirectoryName(Filename);
+char *CBUtils::getPath(const char *filename) {
+	AnsiString path = PathUtil::getDirectoryName(filename);
 	//path = boost::filesystem::syste_complete(path).string();
-	warning("CBUtils::GetPath: (%s), not implemented", Filename);
+	warning("CBUtils::GetPath: (%s), not implemented", filename);
 	char *ret = new char[path.size() + 1];
 	strcpy(ret, path.c_str());
 
@@ -247,8 +247,8 @@ char *CBUtils::GetPath(const char *Filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CBUtils::GetFilename(const char *Filename) {
-	AnsiString path = PathUtil::getFileName(Filename);
+char *CBUtils::getFilename(const char *filename) {
+	AnsiString path = PathUtil::getFileName(filename);
 	char *ret = new char[path.size() + 1];
 	strcpy(ret, path.c_str());
 	return ret;

@@ -60,7 +60,7 @@ CSXFile::CSXFile(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 	CScValue *Val = stack->pop();
 
 	_filename = NULL;
-	if (!Val->isNULL()) CBUtils::SetString(&_filename, Val->getString());
+	if (!Val->isNULL()) CBUtils::setString(&_filename, Val->getString());
 
 	_readFile = NULL;
 	_writeFile = NULL;
@@ -113,7 +113,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(1);
 		const char *Filename = stack->pop()->getString();
 		cleanup();
-		CBUtils::SetString(&_filename, Filename);
+		CBUtils::setString(&_filename, Filename);
 		stack->pushNULL();
 		return S_OK;
 	}

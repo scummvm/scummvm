@@ -108,7 +108,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		int start = stack->pop()->getInt();
 		int end   = stack->pop()->getInt();
 
-		if (end < start) CBUtils::Swap(&start, &end);
+		if (end < start) CBUtils::swap(&start, &end);
 
 		//try {
 		WideString str;
