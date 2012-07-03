@@ -252,9 +252,6 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 			debug(0, "Save is for: %s", title);
 		}
 
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
-
 		if (version >= 6) {
 			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
 			desc.setThumbnail(thumbnail);
