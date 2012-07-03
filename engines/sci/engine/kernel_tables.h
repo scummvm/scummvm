@@ -828,7 +828,7 @@ static const char *const sci2_default_knames[] = {
 	/*0x20*/ "AddMagnify",
 	/*0x21*/ "DeleteMagnify",
 	/*0x22*/ "IsHiRes",
-	/*0x23*/ "Graph",
+	/*0x23*/ "Graph",		// Robot in early SCI2.1 games with a SCI2 kernel table
 	/*0x24*/ "InvertRect",	// only in SCI2, not used in any SCI2 game
 	/*0x25*/ "TextSize",
 	/*0x26*/ "Message",
@@ -839,7 +839,7 @@ static const char *const sci2_default_knames[] = {
 	/*0x2b*/ "EditText",
 	/*0x2c*/ "InputText",			// unused function
 	/*0x2d*/ "CreateTextBitmap",
-	/*0x2e*/ "DisposeTextBitmap",
+	/*0x2e*/ "DisposeTextBitmap",	// Priority in early SCI2.1 games with a SCI2 kernel table
 	/*0x2f*/ "GetEvent",
 	/*0x30*/ "GlobalToLocal",
 	/*0x31*/ "LocalToGlobal",

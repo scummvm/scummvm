@@ -837,7 +837,7 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 
 	case SCI_VERSION_2_1:
 		if (features->detectSci21KernelType() == SCI_VERSION_2) {
-			// Some late SCI2.1 games use a modified SCI2 kernel table instead of
+			// Some early SCI2.1 games use a modified SCI2 kernel table instead of
 			// the SCI2.1 kernel table. We detect which version to use based on
 			// how kDoSound is called from Sound::play().
 			// Known games that use this:
