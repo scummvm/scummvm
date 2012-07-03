@@ -38,9 +38,9 @@ public:
 	Matrix4();
 	~Matrix4();
 
-	void Identity();
-	void RotationZ(float angle);
-	void TransformVector2(Vector2 &vec);
+	void identity();
+	void rotationZ(float angle);
+	void transformVector2(Vector2 &vec);
 
 	/*  union {
 	        struct {

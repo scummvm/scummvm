@@ -47,7 +47,7 @@ Matrix4::~Matrix4() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void Matrix4::Identity() {
+void Matrix4::identity() {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			m[i][j] = 0.0f;
@@ -61,8 +61,8 @@ void Matrix4::Identity() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Matrix4::RotationZ(float angle) {
-	Identity();
+void Matrix4::rotationZ(float angle) {
+	identity();
 
 	m[0][0] = cos(angle);
 	m[1][1] = cos(angle);
@@ -71,7 +71,7 @@ void Matrix4::RotationZ(float angle) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Matrix4::TransformVector2(Vector2 &vec) {
+void Matrix4::transformVector2(Vector2 &vec) {
 	float norm;
 
 	norm = m[0][3] * vec.x + m[1][3] * vec.y + m[3][3];

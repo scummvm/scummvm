@@ -33,8 +33,8 @@ namespace WinterMute {
 
 class MathUtil {
 public:
-	static float Round(float val);
-	static float RoundUp(float val);
+	static float round(float val);
+	static float roundUp(float val);
 };
 
 } // end of namespace WinterMute

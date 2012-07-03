@@ -195,8 +195,8 @@ HRESULT CPartEmitter::initParticle(CPartParticle *Particle, uint32 CurrentTime, 
 	Vector2 VecVel(0, Velocity);
 
 	Matrix4 MatRot;
-	MatRot.RotationZ(Common::deg2rad(CBUtils::normalizeAngle(Angle - 180)));
-	MatRot.TransformVector2(VecVel);
+	MatRot.rotationZ(Common::deg2rad(CBUtils::normalizeAngle(Angle - 180)));
+	MatRot.transformVector2(VecVel);
 
 	if (_alphaTimeBased) {
 		Particle->_alpha1 = _alpha1;
@@ -394,8 +394,8 @@ HRESULT CPartEmitter::addForce(const char *name, CPartForce::TForceType Type, in
 
 	Force->_direction = Vector2(0, Strength);
 	Matrix4 MatRot;
-	MatRot.RotationZ(Common::deg2rad(CBUtils::normalizeAngle(Angle - 180)));
-	MatRot.TransformVector2(Force->_direction);
+	MatRot.rotationZ(Common::deg2rad(CBUtils::normalizeAngle(Angle - 180)));
+	MatRot.transformVector2(Force->_direction);
 
 	return S_OK;
 }

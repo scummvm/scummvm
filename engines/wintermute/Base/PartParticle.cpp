@@ -151,7 +151,7 @@ HRESULT CPartParticle::update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 
 
 			case CPartForce::FORCE_POINT: {
 				Vector2 VecDist = Force->_pos - _pos;
-				float Dist = fabs(VecDist.Length());
+				float Dist = fabs(VecDist.length());
 
 				Dist = 100.0f / Dist;
 

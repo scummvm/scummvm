@@ -48,7 +48,7 @@ Vector2::~Vector2() {
 
 
 //////////////////////////////////////////////////////////////////////////
-float Vector2::Length() const {
+float Vector2::length() const {
 	return (float)sqrt(x * x + y * y);
 }
 
