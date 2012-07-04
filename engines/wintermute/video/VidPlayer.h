@@ -46,7 +46,7 @@ class CVidPlayer : public CBBase {
 public:
 	bool _showSubtitle;
 	int _currentSubtitle;
-	HRESULT loadSubtitles(const char *Filename, const char *SubtitleFile);
+	HRESULT loadSubtitles(const char *filename, const char *SubtitleFile);
 	bool _slowRendering;
 	bool isPlaying();
 	char *_filename;

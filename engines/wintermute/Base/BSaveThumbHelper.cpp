@@ -53,10 +53,10 @@ HRESULT CBSaveThumbHelper::StoreThumbnail(bool DoFlip) {
 		if (DoFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
 			// works normally for direct3d
-			Game->DisplayContent(false);
+			Game->displayContent(false);
 			Game->_renderer->flip();
 
-			Game->DisplayContent(false);
+			Game->displayContent(false);
 			Game->_renderer->flip();
 		}
 

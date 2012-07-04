@@ -44,10 +44,10 @@ CAdSceneNode::CAdSceneNode(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdSceneNode::~CAdSceneNode() {
-	Game->UnregisterObject(_region);
+	Game->unregisterObject(_region);
 	_region = NULL;
 
-	Game->UnregisterObject(_entity);
+	Game->unregisterObject(_entity);
 	_entity = NULL;
 }
 
@@ -56,7 +56,7 @@ CAdSceneNode::~CAdSceneNode() {
 HRESULT CAdSceneNode::setEntity(CAdEntity *Entity) {
 	_type = OBJECT_ENTITY;
 	_entity = Entity;
-	return Game->RegisterObject(Entity);
+	return Game->registerObject(Entity);
 }
 
 
@@ -64,7 +64,7 @@ HRESULT CAdSceneNode::setEntity(CAdEntity *Entity) {
 HRESULT CAdSceneNode::setRegion(CAdRegion *Region) {
 	_type = OBJECT_REGION;
 	_region = Region;
-	return Game->RegisterObject(Region);
+	return Game->registerObject(Region);
 }
 
 

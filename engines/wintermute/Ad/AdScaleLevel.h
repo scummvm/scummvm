@@ -41,7 +41,7 @@ public:
 	CAdScaleLevel(CBGame *inGame);
 	virtual ~CAdScaleLevel();
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
-	HRESULT loadFile(const char *Filename);
+	HRESULT loadFile(const char *filename);
 	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 };
 

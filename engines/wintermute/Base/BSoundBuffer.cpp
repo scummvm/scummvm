@@ -93,8 +93,8 @@ void CBSoundBuffer::setStreaming(bool Streamed, uint32 NumBlocks, uint32 BlockSi
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
-	warning("BSoundBuffer::LoadFromFile(%s,%d)", Filename, ForceReload);
+HRESULT CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
+	warning("BSoundBuffer::LoadFromFile(%s,%d)", filename, forceReload);
 #if 0
 	if (_stream) {
 		BASS_StreamFree(_stream);
@@ -105,24 +105,24 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 	delete _file;
 
 	// Load a file, but avoid having the File-manager handle the disposal of it.
-	_file = Game->_fileManager->openFile(Filename, true, false);
+	_file = Game->_fileManager->openFile(filename, true, false);
 	if (!_file) {
-		Game->LOG(0, "Error opening sound file '%s'", Filename);
+		Game->LOG(0, "Error opening sound file '%s'", filename);
 		return E_FAIL;
 	}
-	Common::String strFilename(Filename);
+	Common::String strFilename(filename);
 	if (strFilename.hasSuffix(".ogg")) {
 		_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::YES);
 	} else if (strFilename.hasSuffix(".wav")) {
-		warning("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s", Filename);
+		warning("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s", filename);
 		//_stream = Audio::makeWAVStream(_file, DisposeAfterUse::NO);
 	} else {
-		warning("BSoundBuffer::LoadFromFile - Unknown filetype for %s", Filename);
+		warning("BSoundBuffer::LoadFromFile - Unknown filetype for %s", filename);
 	}
 	if (!_stream) {
 		return E_FAIL;
 	}
-	CBUtils::setString(&_filename, Filename);
+	CBUtils::setString(&_filename, filename);
 
 	return S_OK;
 #if 0
@@ -134,20 +134,20 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 
 	_stream = BASS_StreamCreateFileUser(STREAMFILE_NOBUFFER, 0, &fileProc, (void *)_file);
 	if (!_stream) {
-		Game->LOG(0, "BASS error: %d while loading '%s'", BASS_ErrorGetCode(), Filename);
+		Game->LOG(0, "BASS error: %d while loading '%s'", BASS_ErrorGetCode(), filename);
 		return E_FAIL;
 	}
 
-	CBUtils::setString(&_filename, Filename);
+	CBUtils::setString(&_filename, filename);
 
 	/*
 	HRESULT res;
 	bool NewlyCreated = false;
 
 	if(!_soundBuffer || ForceReload || _streamed){
-	    if(!_file) _file = Game->_fileManager->openFile(Filename);
+	    if(!_file) _file = Game->_fileManager->openFile(filename);
 	    if(!_file){
-	        Game->LOG(0, "Error opening sound file '%s'", Filename);
+	        Game->LOG(0, "Error opening sound file '%s'", filename);
 	        return E_FAIL;
 	    }
 	    // switch to streamed for big files
@@ -160,7 +160,7 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 
 	    res = InitializeBuffer(_file);
 	    if(FAILED(res)){
-	        Game->LOG(res, "Error creating sound buffer for file '%s'", Filename);
+	        Game->LOG(res, "Error creating sound buffer for file '%s'", filename);
 	        return res;
 	    }
 	}
@@ -169,8 +169,8 @@ HRESULT CBSoundBuffer::loadFromFile(const char *Filename, bool ForceReload) {
 
 	// store filename
 	if(!_filename){
-	    _filename = new char[strlen(Filename)+1];
-	    strcpy(_filename, Filename);
+	    _filename = new char[strlen(filename)+1];
+	    strcpy(_filename, filename);
 	}
 
 	// close file (if not streaming)

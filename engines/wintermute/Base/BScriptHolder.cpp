@@ -71,11 +71,11 @@ HRESULT CBScriptHolder::cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////
-void CBScriptHolder::setFilename(const char *Filename) {
+void CBScriptHolder::setFilename(const char *filename) {
 	if (_filename != NULL) delete [] _filename;
 
-	_filename = new char [strlen(Filename) + 1];
-	if (_filename != NULL) strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	if (_filename != NULL) strcpy(_filename, filename);
 }
 
 
@@ -172,11 +172,11 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DetachScript") == 0) {
 		stack->correctParams(2);
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 		bool KillThreads = stack->pop()->getBool(false);
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
-			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0) {
+			if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 				_scripts[i]->finish(KillThreads);
 				ret = true;
 				break;
@@ -192,10 +192,10 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsScriptRunning") == 0) {
 		stack->correctParams(1);
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
-			if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0 && _scripts[i]->_state != SCRIPT_FINISHED && _scripts[i]->_state != SCRIPT_ERROR) {
+			if (scumm_stricmp(_scripts[i]->_filename, filename) == 0 && _scripts[i]->_state != SCRIPT_FINISHED && _scripts[i]->_state != SCRIPT_ERROR) {
 				ret = true;
 				break;
 			}
@@ -276,28 +276,28 @@ HRESULT CBScriptHolder::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::addScript(const char *Filename) {
+HRESULT CBScriptHolder::addScript(const char *filename) {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		if (scumm_stricmp(_scripts[i]->_filename, Filename) == 0) {
+		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
-				Game->LOG(0, "CBScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", Filename, _name);
+				Game->LOG(0, "CBScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, _name);
 				return S_OK;
 			}
 		}
 	}
 
-	CScScript *scr =  Game->_scEngine->RunScript(Filename, this);
+	CScScript *scr =  Game->_scEngine->RunScript(filename, this);
 	if (!scr) {
 		if (Game->_editorForceScripts) {
 			// editor hack
 			scr = new CScScript(Game, Game->_scEngine);
-			scr->_filename = new char[strlen(Filename) + 1];
-			strcpy(scr->_filename, Filename);
+			scr->_filename = new char[strlen(filename) + 1];
+			strcpy(scr->_filename, filename);
 			scr->_state = SCRIPT_ERROR;
 			scr->_owner = this;
 			_scripts.Add(scr);
 			Game->_scEngine->_scripts.Add(scr);
-			Game->getDebugMgr()->OnScriptInit(scr);
+			Game->getDebugMgr()->onScriptInit(scr);
 
 			return S_OK;
 		}
@@ -436,7 +436,7 @@ CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
 				HRESULT ret = thread->CreateMethodThread(_scripts[i], methodName);
 				if (SUCCEEDED(ret)) {
 					_scripts[i]->_engine->_scripts.Add(thread);
-					Game->getDebugMgr()->OnScriptMethodThreadInit(thread, _scripts[i], methodName);
+					Game->getDebugMgr()->onScriptMethodThreadInit(thread, _scripts[i], methodName);
 
 					return thread;
 				} else {

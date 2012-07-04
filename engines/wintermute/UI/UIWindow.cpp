@@ -200,19 +200,19 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::loadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
+HRESULT CUIWindow::loadFile(const char *filename) {
+	byte *Buffer = Game->_fileManager->readWholeFile(filename);
 	if (Buffer == NULL) {
-		Game->LOG(0, "CUIWindow::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CUIWindow::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing WINDOW file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing WINDOW file '%s'", filename);
 
 	delete [] Buffer;
 
@@ -538,7 +538,7 @@ HRESULT CUIWindow::loadBuffer(byte  *Buffer, bool Complete) {
 
 
 		default:
-			if (FAILED(Game->WindowLoadHook(this, (char **)&Buffer, (char **)params))) {
+			if (FAILED(Game->windowLoadHook(this, (char **)&Buffer, (char **)params))) {
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -735,8 +735,8 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _imageInactive;
 		_imageInactive = new CBSprite(Game);
-		const char *Filename = stack->pop()->getString();
-		if (!_imageInactive || FAILED(_imageInactive->loadFile(Filename))) {
+		const char *filename = stack->pop()->getString();
+		if (!_imageInactive || FAILED(_imageInactive->loadFile(filename))) {
 			delete _imageInactive;
 			_imageInactive = NULL;
 			stack->pushBool(false);
@@ -910,7 +910,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		}
 		stack->pushNULL();
 		return S_OK;
-	} else if SUCCEEDED(Game->WindowScriptMethodHook(this, script, stack, name)) return S_OK;
+	} else if SUCCEEDED(Game->windowScriptMethodHook(this, script, stack, name)) return S_OK;
 
 	else return CUIObject::scCallMethod(script, stack, thisStack, name);
 }

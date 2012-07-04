@@ -48,12 +48,12 @@ public:
 	CBFont(CBGame *inGame);
 	virtual ~CBFont();
 
-	static CBFont *createFromFile(CBGame *Game, const char *Filename);
+	static CBFont *createFromFile(CBGame *Game, const char *filename);
 
 private:
 	//HRESULT loadBuffer(byte * Buffer);
 	//HRESULT loadFile(const char* Filename);
-	static bool isTrueType(CBGame *Game, const char *Filename);
+	static bool isTrueType(CBGame *Game, const char *filename);
 };
 
 } // end of namespace WinterMute

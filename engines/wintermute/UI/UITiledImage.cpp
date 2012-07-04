@@ -119,19 +119,19 @@ HRESULT CUITiledImage::display(int X, int Y, int Width, int Height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::loadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
+HRESULT CUITiledImage::loadFile(const char *filename) {
+	byte *Buffer = Game->_fileManager->readWholeFile(filename);
 	if (Buffer == NULL) {
-		Game->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
 
 
 	delete [] Buffer;

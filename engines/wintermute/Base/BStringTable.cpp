@@ -169,15 +169,15 @@ const char *CBStringTable::ExpandStatic(const char *String, bool ForceExpand) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBStringTable::loadFile(const char *Filename, bool ClearOld) {
+HRESULT CBStringTable::loadFile(const char *filename, bool ClearOld) {
 	Game->LOG(0, "Loading string table...");
 
 	if (ClearOld) _strings.clear();
 
 	uint32 Size;
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename, &Size);
+	byte *Buffer = Game->_fileManager->readWholeFile(filename, &Size);
 	if (Buffer == NULL) {
-		Game->LOG(0, "CBStringTable::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CBStringTable::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 

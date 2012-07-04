@@ -89,7 +89,7 @@ public:
 	void pointFromScreen(POINT *point);
 	void pointToScreen(POINT *point);
 
-	void dumpData(const char *Filename);
+	void dumpData(const char *filename);
 
 	float getScaleRatioX() const {
 		return _ratioX;

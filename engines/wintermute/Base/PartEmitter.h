@@ -107,8 +107,8 @@ public:
 	HRESULT display(CBRegion *Region);
 
 	HRESULT sortParticlesByZ();
-	HRESULT addSprite(const char *Filename);
-	HRESULT removeSprite(const char *Filename);
+	HRESULT addSprite(const char *filename);
+	HRESULT removeSprite(const char *filename);
 	HRESULT setBorder(int X, int Y, int Width, int Height);
 	HRESULT setBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom);
 

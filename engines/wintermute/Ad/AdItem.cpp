@@ -84,19 +84,19 @@ CAdItem::~CAdItem() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::loadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
+HRESULT CAdItem::loadFile(const char *filename) {
+	byte *Buffer = Game->_fileManager->readWholeFile(filename);
 	if (Buffer == NULL) {
-		Game->LOG(0, "CAdItem::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CAdItem::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", filename);
 
 
 	delete [] Buffer;
@@ -369,11 +369,11 @@ HRESULT CAdItem::update() {
 					_tempSprite2->Reset();
 					_currentSprite = _tempSprite2;
 				}
-				((CAdGame *)Game)->AddSentence(_sentence);
+				((CAdGame *)Game)->addSentence(_sentence);
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((CAdGame *)Game)->AddSentence(_sentence);
+			((CAdGame *)Game)->addSentence(_sentence);
 		}
 	}
 	default:
@@ -439,14 +439,14 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		bool SetCurrent = false;
 		if (_currentSprite && _currentSprite == _spriteHover) SetCurrent = true;
 
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 
 		delete _spriteHover;
 		_spriteHover = NULL;
 		CBSprite *spr = new CBSprite(Game, this);
-		if (!spr || FAILED(spr->loadFile(Filename))) {
+		if (!spr || FAILED(spr->loadFile(filename))) {
 			stack->pushBool(false);
-			script->RuntimeError("Item.SetHoverSprite failed for file '%s'", Filename);
+			script->RuntimeError("Item.SetHoverSprite failed for file '%s'", filename);
 		} else {
 			_spriteHover = spr;
 			if (SetCurrent) _currentSprite = _spriteHover;
@@ -482,14 +482,14 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	if (strcmp(name, "SetNormalCursor") == 0) {
 		stack->correctParams(1);
 
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 
 		delete _cursorNormal;
 		_cursorNormal = NULL;
 		CBSprite *spr = new CBSprite(Game);
-		if (!spr || FAILED(spr->loadFile(Filename))) {
+		if (!spr || FAILED(spr->loadFile(filename))) {
 			stack->pushBool(false);
-			script->RuntimeError("Item.SetNormalCursor failed for file '%s'", Filename);
+			script->RuntimeError("Item.SetNormalCursor failed for file '%s'", filename);
 		} else {
 			_cursorNormal = spr;
 			stack->pushBool(true);
@@ -525,14 +525,14 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	if (strcmp(name, "SetHoverCursor") == 0) {
 		stack->correctParams(1);
 
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 
 		delete _cursorHover;
 		_cursorHover = NULL;
 		CBSprite *spr = new CBSprite(Game);
-		if (!spr || FAILED(spr->loadFile(Filename))) {
+		if (!spr || FAILED(spr->loadFile(filename))) {
 			stack->pushBool(false);
-			script->RuntimeError("Item.SetHoverCursor failed for file '%s'", Filename);
+			script->RuntimeError("Item.SetHoverCursor failed for file '%s'", filename);
 		} else {
 			_cursorHover = spr;
 			stack->pushBool(true);

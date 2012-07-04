@@ -52,7 +52,7 @@ public:
 	int _volumeSpeech;
 	int _volumeSFX;
 	HRESULT removeSound(CBSoundBuffer *Sound);
-	CBSoundBuffer *addSound(const char *Filename, TSoundType Type = SOUND_SFX, bool Streamed = false);
+	CBSoundBuffer *addSound(const char *filename, TSoundType Type = SOUND_SFX, bool Streamed = false);
 	HRESULT addSound(CBSoundBuffer *Sound, TSoundType Type = SOUND_SFX);
 	HRESULT initLoop();
 	HRESULT initialize();

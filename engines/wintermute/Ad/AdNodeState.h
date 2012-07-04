@@ -37,8 +37,8 @@ class CAdNodeState : public CBBase {
 public:
 	HRESULT TransferEntity(CAdEntity *Entity, bool IncludingSprites, bool Saving);
 	void setName(const char *name);
-	void setFilename(const char *Filename);
-	void SetCursor(const char *Filename);
+	void setFilename(const char *filename);
+	void SetCursor(const char *filename);
 	DECLARE_PERSISTENT(CAdNodeState, CBBase)
 	CAdNodeState(CBGame *inGame);
 	virtual ~CAdNodeState();

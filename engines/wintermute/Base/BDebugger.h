@@ -47,22 +47,22 @@ public:
 	HRESULT Shutdown();
 
 	// internal interface
-	HRESULT OnGameInit();
-	HRESULT OnGameShutdown();
-	HRESULT OnGameTick();
-	HRESULT OnLog(unsigned int ErrorCode, const char *Text);
-	HRESULT OnScriptInit(CScScript *script);
-	HRESULT OnScriptEventThreadInit(CScScript *Script, CScScript *ParentScript, const char *name);
-	HRESULT OnScriptMethodThreadInit(CScScript *Script, CScScript *ParentScript, const char *name);
+	HRESULT onGameInit();
+	HRESULT onGameShutdown();
+	HRESULT onGameTick();
+	HRESULT onLog(unsigned int ErrorCode, const char *Text);
+	HRESULT onScriptInit(CScScript *script);
+	HRESULT onScriptEventThreadInit(CScScript *Script, CScScript *ParentScript, const char *name);
+	HRESULT onScriptMethodThreadInit(CScScript *Script, CScScript *ParentScript, const char *name);
 
-	HRESULT OnScriptShutdown(CScScript *script);
-	HRESULT OnScriptChangeLine(CScScript *Script, int Line);
-	HRESULT OnScriptChangeScope(CScScript *Script, CScValue *Scope);
-	HRESULT OnScriptShutdownScope(CScScript *Script, CScValue *Scope);
-	HRESULT OnVariableInit(EWmeDebuggerVariableType Type, CScScript *script, CScValue *Scope, CScValue *Var, const char *VariableName);
-	HRESULT OnVariableChangeValue(CScValue *Var, CScValue *value);
+	HRESULT onScriptShutdown(CScScript *script);
+	HRESULT onScriptChangeLine(CScScript *Script, int Line);
+	HRESULT onScriptChangeScope(CScScript *Script, CScValue *Scope);
+	HRESULT onScriptShutdownScope(CScScript *Script, CScValue *Scope);
+	HRESULT onVariableInit(EWmeDebuggerVariableType Type, CScScript *script, CScValue *Scope, CScValue *Var, const char *VariableName);
+	HRESULT onVariableChangeValue(CScValue *Var, CScValue *value);
 
-	HRESULT OnScriptHitBreakpoint(CScScript *script);
+	HRESULT onScriptHitBreakpoint(CScScript *script);
 
 	// IWmeDebugServer interface
 	virtual bool AttachClient(IWmeDebugClient *Client);

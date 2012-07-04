@@ -95,19 +95,19 @@ CUIButton::~CUIButton() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::loadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
+HRESULT CUIButton::loadFile(const char *filename) {
+	byte *Buffer = Game->_fileManager->readWholeFile(filename);
 	if (Buffer == NULL) {
-		Game->LOG(0, "CUIButton::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CUIButton::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing BUTTON file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing BUTTON file '%s'", filename);
 
 
 	delete [] Buffer;
@@ -747,8 +747,8 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _imageDisable;
 		_imageDisable = new CBSprite(Game);
-		const char *Filename = stack->pop()->getString();
-		if (!_imageDisable || FAILED(_imageDisable->loadFile(Filename))) {
+		const char *filename = stack->pop()->getString();
+		if (!_imageDisable || FAILED(_imageDisable->loadFile(filename))) {
 			delete _imageDisable;
 			_imageDisable = NULL;
 			stack->pushBool(false);
@@ -788,8 +788,8 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _imageHover;
 		_imageHover = new CBSprite(Game);
-		const char *Filename = stack->pop()->getString();
-		if (!_imageHover || FAILED(_imageHover->loadFile(Filename))) {
+		const char *filename = stack->pop()->getString();
+		if (!_imageHover || FAILED(_imageHover->loadFile(filename))) {
 			delete _imageHover;
 			_imageHover = NULL;
 			stack->pushBool(false);
@@ -828,8 +828,8 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _imagePress;
 		_imagePress = new CBSprite(Game);
-		const char *Filename = stack->pop()->getString();
-		if (!_imagePress || FAILED(_imagePress->loadFile(Filename))) {
+		const char *filename = stack->pop()->getString();
+		if (!_imagePress || FAILED(_imagePress->loadFile(filename))) {
 			delete _imagePress;
 			_imagePress = NULL;
 			stack->pushBool(false);
@@ -868,8 +868,8 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _imageFocus;
 		_imageFocus = new CBSprite(Game);
-		const char *Filename = stack->pop()->getString();
-		if (!_imageFocus || FAILED(_imageFocus->loadFile(Filename))) {
+		const char *filename = stack->pop()->getString();
+		if (!_imageFocus || FAILED(_imageFocus->loadFile(filename))) {
 			delete _imageFocus;
 			_imageFocus = NULL;
 			stack->pushBool(false);

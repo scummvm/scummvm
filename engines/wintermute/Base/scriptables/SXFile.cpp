@@ -111,9 +111,9 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetFilename") == 0) {
 		stack->correctParams(1);
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 		cleanup();
-		CBUtils::setString(&_filename, Filename);
+		CBUtils::setString(&_filename, filename);
 		stack->pushNULL();
 		return S_OK;
 	}

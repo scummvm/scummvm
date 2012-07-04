@@ -140,7 +140,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 	_file = Game->_fileManager->openFile(filename, true, false);
 	if (!_file) return E_FAIL;
 
-	//if (Filename != _filename) CBUtils::setString(&_filename, Filename);
+	//if (Filename != _filename) CBUtils::setString(&_filename, filename);
 #if defined (USE_THEORADEC)
 	_theoraDecoder = new TheoraDecoder();
 #else
@@ -164,10 +164,10 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 #if 0
 	cleanup();
 
-	_file = Game->_fileManager->openFile(Filename);
+	_file = Game->_fileManager->openFile(filename);
 	if (!_file) return E_FAIL;
 
-	if (Filename != _filename) CBUtils::setString(&_filename, Filename);
+	if (Filename != _filename) CBUtils::setString(&_filename, filename);
 
 	// start up Ogg stream synchronization layer
 	ogg_sync_init(&m_OggSyncState);
@@ -303,7 +303,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 		if (FAILED(Res = m_Sound->InitializeBuffer(this))) {
 			Game->m_SoundMgr->RemoveSound(m_Sound);
 			m_Sound = NULL;
-			Game->LOG(Res, "Error initializing sound buffer for Theora file '%s'", Filename);
+			Game->LOG(Res, "Error initializing sound buffer for Theora file '%s'", filename);
 		} else {
 			SAFE_DELETE_ARRAY(m_AudioBuf);
 			m_AudioBufSize = m_Sound->m_StreamBlockSize;
@@ -325,7 +325,7 @@ HRESULT CVidTheoraPlayer::initialize(const Common::String &filename, const Commo
 
 
 	if (!m_Subtitler) m_Subtitler = new CVidSubtitler(Game);
-	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->LoadSubtitles(Filename, SubtitleFile);
+	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->LoadSubtitles(filename, SubtitleFile);
 
 	return Res;
 #endif
@@ -686,12 +686,12 @@ HRESULT CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
 #if 0
 	SAFE_DELETE(m_AlphaImage);
 	m_AlphaImage = new CBImage(Game);
-	if (!m_AlphaImage || FAILED(m_AlphaImage->loadFile(Filename))) {
+	if (!m_AlphaImage || FAILED(m_AlphaImage->loadFile(filename))) {
 		SAFE_DELETE(m_AlphaImage);
 		SAFE_DELETE_ARRAY(m_AlphaFilename);
 		return E_FAIL;
 	}
-	if (m_AlphaFilename != Filename) CBUtils::setString(&m_AlphaFilename, Filename);
+	if (m_AlphaFilename != Filename) CBUtils::setString(&m_AlphaFilename, filename);
 	m_AlphaImage->Convert(IMG_TRUECOLOR);
 #endif
 	return S_OK;

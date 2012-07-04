@@ -38,7 +38,7 @@ class CUITiledImage : public CBObject {
 public:
 	DECLARE_PERSISTENT(CUITiledImage, CBObject)
 	void correctSize(int *Width, int *Height);
-	HRESULT loadFile(const char *Filename);
+	HRESULT loadFile(const char *filename);
 	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 

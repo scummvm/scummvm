@@ -123,7 +123,7 @@ public:
 	CBArray<CAdLayer *, CAdLayer *> _layers;
 	CBArray<CAdObject *, CAdObject *> _objects;
 	CBArray<CAdWaypointGroup *, CAdWaypointGroup *> _waypointGroups;
-	HRESULT loadFile(const char *Filename);
+	HRESULT loadFile(const char *filename);
 	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 	int _width;
 	int _height;

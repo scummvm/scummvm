@@ -70,7 +70,7 @@ HRESULT CBSaveThumbFile::open(const Common::String &filename) {
 	delete [] tempFilename;
 
 	char slotFilename[MAX_PATH + 1];
-	Game->GetSaveSlotFilename(slot, slotFilename);
+	Game->getSaveSlotFilename(slot, slotFilename);
 	CBPersistMgr *pm = new CBPersistMgr(Game);
 	if (!pm) return E_FAIL;
 

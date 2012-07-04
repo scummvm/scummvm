@@ -72,8 +72,8 @@ CPartParticle::~CPartParticle(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::setSprite(const char *Filename) {
-	if (_sprite && _sprite->_filename && scumm_stricmp(Filename, _sprite->_filename) == 0) {
+HRESULT CPartParticle::setSprite(const char *filename) {
+	if (_sprite && _sprite->_filename && scumm_stricmp(filename, _sprite->_filename) == 0) {
 		_sprite->Reset();
 		return S_OK;
 	}
@@ -83,7 +83,7 @@ HRESULT CPartParticle::setSprite(const char *Filename) {
 
 	CSysClassRegistry::getInstance()->_disabled = true;
 	_sprite = new CBSprite(Game, Game);
-	if (_sprite && SUCCEEDED(_sprite->loadFile(Filename))) {
+	if (_sprite && SUCCEEDED(_sprite->loadFile(filename))) {
 		CSysClassRegistry::getInstance()->_disabled = false;
 		return S_OK;
 	} else {
@@ -240,13 +240,13 @@ HRESULT CPartParticle::persist(CBPersistMgr *persistMgr) {
 	if (persistMgr->_saving) {
 		persistMgr->transfer(TMEMBER(_sprite->_filename));
 	} else {
-		char *Filename;
-		persistMgr->transfer(TMEMBER(Filename));
+		char *filename;
+		persistMgr->transfer(TMEMBER(filename));
 		CSysClassRegistry::getInstance()->_disabled = true;
-		setSprite(Filename);
+		setSprite(filename);
 		CSysClassRegistry::getInstance()->_disabled = false;
-		delete[] Filename;
-		Filename = NULL;
+		delete[] filename;
+		filename = NULL;
 	}
 
 	return S_OK;

@@ -49,25 +49,25 @@ CUIEntity::CUIEntity(CBGame *inGame): CUIObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CUIEntity::~CUIEntity() {
-	if (_entity) Game->UnregisterObject(_entity);
+	if (_entity) Game->unregisterObject(_entity);
 	_entity = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::loadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
+HRESULT CUIEntity::loadFile(const char *filename) {
+	byte *Buffer = Game->_fileManager->readWholeFile(filename);
 	if (Buffer == NULL) {
-		Game->LOG(0, "CUIEntity::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CUIEntity::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ENTITY container file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ENTITY container file '%s'", filename);
 
 
 	delete [] Buffer;
@@ -209,7 +209,7 @@ HRESULT CUIEntity::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIEntity::setEntity(const char *filename) {
-	if (_entity) Game->UnregisterObject(_entity);
+	if (_entity) Game->unregisterObject(_entity);
 	_entity = new CAdEntity(Game);
 	if (!_entity || FAILED(_entity->loadFile(filename))) {
 		delete _entity;
@@ -219,7 +219,7 @@ HRESULT CUIEntity::setEntity(const char *filename) {
 		_entity->_nonIntMouseEvents = true;
 		_entity->_sceneIndependent = true;
 		_entity->makeFreezable(false);
-		Game->RegisterObject(_entity);
+		Game->registerObject(_entity);
 	}
 	return S_OK;
 }
@@ -270,9 +270,9 @@ HRESULT CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "SetEntity") == 0) {
 		stack->correctParams(1);
 
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 
-		if (SUCCEEDED(setEntity(Filename)))
+		if (SUCCEEDED(setEntity(filename)))
 			stack->pushBool(true);
 		else
 			stack->pushBool(false);

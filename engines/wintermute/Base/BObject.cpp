@@ -268,8 +268,8 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadSound") == 0) {
 		stack->correctParams(1);
-		const char *Filename = stack->pop()->getString();
-		if (SUCCEEDED(playSFX(Filename, false, false)))
+		const char *filename = stack->pop()->getString();
+		if (SUCCEEDED(playSFX(filename, false, false)))
 			stack->pushBool(true);
 		else
 			stack->pushBool(false);
@@ -283,7 +283,7 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "PlaySound") == 0) {
 		stack->correctParams(3);
 
-		const char *Filename;
+		const char *filename;
 		bool Looping;
 		uint32 LoopStart;
 
@@ -292,17 +292,17 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		CScValue *val3 = stack->pop();
 
 		if (val1->_type == VAL_BOOL) {
-			Filename = NULL;
+			filename = NULL;
 			Looping = val1->getBool();
 			LoopStart = val2->getInt();
 		} else {
-			if (val1->isNULL()) Filename = NULL;
-			else Filename = val1->getString();
+			if (val1->isNULL()) filename = NULL;
+			else filename = val1->getString();
 			Looping = val2->isNULL() ? false : val2->getBool();
 			LoopStart = val3->getInt();
 		}
 
-		if (FAILED(playSFX(Filename, Looping, true, NULL, LoopStart))) stack->pushBool(false);
+		if (FAILED(playSFX(filename, Looping, true, NULL, LoopStart))) stack->pushBool(false);
 		else stack->pushBool(true);
 		return S_OK;
 	}
@@ -313,21 +313,21 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "PlaySoundEvent") == 0) {
 		stack->correctParams(2);
 
-		const char *Filename;
+		const char *filename;
 		const char *EventName;
 
 		CScValue *val1 = stack->pop();
 		CScValue *val2 = stack->pop();
 
 		if (val2->isNULL()) {
-			Filename = NULL;
+			filename = NULL;
 			EventName = val1->getString();
 		} else {
-			Filename = val1->getString();
+			filename = val1->getString();
 			EventName = val2->getString();
 		}
 
-		if (FAILED(playSFX(Filename, false, true, EventName))) stack->pushBool(false);
+		if (FAILED(playSFX(filename, false, true, EventName))) stack->pushBool(false);
 		else stack->pushBool(true);
 		return S_OK;
 	}

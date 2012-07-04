@@ -187,19 +187,19 @@ HRESULT CAdResponseBox::createButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::loadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
+HRESULT CAdResponseBox::loadFile(const char *filename) {
+	byte *Buffer = Game->_fileManager->readWholeFile(filename);
 	if (Buffer == NULL) {
-		Game->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing RESPONSE_BOX file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
 
 
 	delete [] Buffer;
@@ -542,7 +542,7 @@ HRESULT CAdResponseBox::weedResponses() {
 	for (int i = 0; i < _responses.GetSize(); i++) {
 		switch (_responses[i]->_responseType) {
 		case RESPONSE_ONCE:
-			if (AdGame->BranchResponseUsed(_responses[i]->_iD)) {
+			if (AdGame->branchResponseUsed(_responses[i]->_iD)) {
 				delete _responses[i];
 				_responses.RemoveAt(i);
 				i--;
@@ -550,7 +550,7 @@ HRESULT CAdResponseBox::weedResponses() {
 			break;
 
 		case RESPONSE_ONCE_GAME:
-			if (AdGame->GameResponseUsed(_responses[i]->_iD)) {
+			if (AdGame->gameResponseUsed(_responses[i]->_iD)) {
 				delete _responses[i];
 				_responses.RemoveAt(i);
 				i--;
@@ -580,11 +580,11 @@ HRESULT CAdResponseBox::handleResponse(CAdResponse *Response) {
 
 	switch (Response->_responseType) {
 	case RESPONSE_ONCE:
-		AdGame->AddBranchResponse(Response->_iD);
+		AdGame->addBranchResponse(Response->_iD);
 		break;
 
 	case RESPONSE_ONCE_GAME:
-		AdGame->AddGameResponse(Response->_iD);
+		AdGame->addGameResponse(Response->_iD);
 		break;
 	default:
 		warning("CAdResponseBox::HandleResponse - Unhandled enum");

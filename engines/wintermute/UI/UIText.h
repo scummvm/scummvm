@@ -43,7 +43,7 @@ public:
 	virtual ~CUIText();
 	TTextAlign _textAlign;
 	TVerticalAlign _verticalAlign;
-	HRESULT loadFile(const char *Filename);
+	HRESULT loadFile(const char *filename);
 	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
 

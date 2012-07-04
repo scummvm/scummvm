@@ -116,13 +116,13 @@ HRESULT CBFileManager::cleanup() {
 
 #define MAX_FILE_SIZE 10000000
 //////////////////////////////////////////////////////////////////////
-byte *CBFileManager::readWholeFile(const Common::String &Filename, uint32 *Size, bool MustExist) {
+byte *CBFileManager::readWholeFile(const Common::String &filename, uint32 *Size, bool MustExist) {
 
 	byte *buffer = NULL;
 
-	Common::SeekableReadStream *File = openFile(Filename);
+	Common::SeekableReadStream *File = openFile(filename);
 	if (!File) {
-		if (MustExist) Game->LOG(0, "Error opening file '%s'", Filename.c_str());
+		if (MustExist) Game->LOG(0, "Error opening file '%s'", filename.c_str());
 		return NULL;
 	}
 
@@ -137,13 +137,13 @@ byte *CBFileManager::readWholeFile(const Common::String &Filename, uint32 *Size,
 
 	buffer = new byte[File->size() + 1];
 	if (buffer == NULL) {
-		Game->LOG(0, "Error allocating buffer for file '%s' (%d bytes)", Filename.c_str(), File->size() + 1);
+		Game->LOG(0, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), File->size() + 1);
 		closeFile(File);
 		return NULL;
 	}
 
 	if (File->read(buffer, File->size()) != File->size()) {
-		Game->LOG(0, "Error reading file '%s'", Filename.c_str());
+		Game->LOG(0, "Error reading file '%s'", filename.c_str());
 		closeFile(File);
 		delete [] buffer;
 		return NULL;
@@ -163,12 +163,12 @@ Common::SeekableReadStream *CBFileManager::loadSaveGame(const Common::String &fi
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::saveFile(const Common::String &Filename, byte *Buffer, uint32 BufferSize, bool Compressed, byte *PrefixBuffer, uint32 PrefixSize) {
+HRESULT CBFileManager::saveFile(const Common::String &filename, byte *Buffer, uint32 BufferSize, bool Compressed, byte *PrefixBuffer, uint32 PrefixSize) {
 	// TODO
 	warning("Implement SaveFile");
 
 	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
-	Common::OutSaveFile *file = saveMan->openForSaving(Filename);
+	Common::OutSaveFile *file = saveMan->openForSaving(filename);
 	file->write(PrefixBuffer, PrefixSize);
 	file->write(Buffer, BufferSize);
 	file->finalize();
@@ -176,11 +176,11 @@ HRESULT CBFileManager::saveFile(const Common::String &Filename, byte *Buffer, ui
 #if 0
 	RestoreCurrentDir();
 
-	CBUtils::CreatePath(Filename, false);
+	CBUtils::CreatePath(filename, false);
 
-	FILE *f = fopen(Filename, "wb");
+	FILE *f = fopen(filename, "wb");
 	if (!f) {
-		Game->LOG(0, "Error opening file '%s' for writing.", Filename);
+		Game->LOG(0, "Error opening file '%s' for writing.", filename);
 		return E_FAIL;
 	}
 
@@ -192,7 +192,7 @@ HRESULT CBFileManager::saveFile(const Common::String &Filename, byte *Buffer, ui
 		uint32 CompSize = BufferSize + (BufferSize / 100) + 12; // 1% extra space
 		byte *CompBuffer = new byte[CompSize];
 		if (!CompBuffer) {
-			Game->LOG(0, "Error allocating compression buffer while saving '%s'", Filename);
+			Game->LOG(0, "Error allocating compression buffer while saving '%s'", filename);
 			Compressed = false;
 		} else {
 			if (compress(CompBuffer, (uLongf *)&CompSize, Buffer, BufferSize) == Z_OK) {
@@ -209,7 +209,7 @@ HRESULT CBFileManager::saveFile(const Common::String &Filename, byte *Buffer, ui
 
 				fwrite(CompBuffer, CompSize, 1, f);
 			} else {
-				Game->LOG(0, "Error compressing data while saving '%s'", Filename);
+				Game->LOG(0, "Error compressing data while saving '%s'", filename);
 				Compressed = false;
 			}
 
@@ -396,19 +396,19 @@ HRESULT CBFileManager::registerPackages() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::registerPackage(const Common::String &Filename , bool SearchSignature) {
-//	FILE *f = fopen(Filename, "rb");
+HRESULT CBFileManager::registerPackage(const Common::String &filename , bool searchSignature) {
+//	FILE *f = fopen(filename, "rb");
 	Common::File *package = new Common::File();
-	package->open(Filename);
+	package->open(filename);
 	if (!package->isOpen()) {
-		Game->LOG(0, "  Error opening package file '%s'. Ignoring.", Filename.c_str());
+		Game->LOG(0, "  Error opening package file '%s'. Ignoring.", filename.c_str());
 		return S_OK;
 	}
 
 	uint32 AbsoluteOffset = 0;
 	bool BoundToExe = false;
 
-	if (SearchSignature) {
+	if (searchSignature) {
 		uint32 Offset;
 		if (!findPackageSignature(package, &Offset)) {
 			delete package;
@@ -424,13 +424,13 @@ HRESULT CBFileManager::registerPackage(const Common::String &Filename , bool Sea
 	hdr.readFromStream(package);
 //	package->read(&hdr, sizeof(TPackageHeader), 1, f);
 	if (hdr.Magic1 != PACKAGE_MAGIC_1 || hdr.Magic2 != PACKAGE_MAGIC_2 || hdr.PackageVersion > PACKAGE_VERSION) {
-		Game->LOG(0, "  Invalid header in package file '%s'. Ignoring.", Filename.c_str());
+		Game->LOG(0, "  Invalid header in package file '%s'. Ignoring.", filename.c_str());
 		delete package;
 		return S_OK;
 	}
 
 	if (hdr.PackageVersion != PACKAGE_VERSION) {
-		Game->LOG(0, "  Warning: package file '%s' is outdated.", Filename.c_str());
+		Game->LOG(0, "  Warning: package file '%s' is outdated.", filename.c_str());
 	}
 
 	// new in v2
@@ -527,11 +527,11 @@ HRESULT CBFileManager::registerPackage(const char *Path, const char *name, bool 
 	error("Implement RegisterPackage, this is the old one");
 #if 0
 	char Filename[MAX_PATH];
-	sprintf(Filename, "%s%s", Path, name);
+	sprintf(filename, "%s%s", Path, name);
 
-	FILE *f = fopen(Filename, "rb");
+	FILE *f = fopen(filename, "rb");
 	if (!f) {
-		Game->LOG(0, "  Error opening package file '%s'. Ignoring.", Filename);
+		Game->LOG(0, "  Error opening package file '%s'. Ignoring.", filename);
 		return S_OK;
 	}
 
@@ -553,13 +553,13 @@ HRESULT CBFileManager::registerPackage(const char *Path, const char *name, bool 
 	TPackageHeader hdr;
 	fread(&hdr, sizeof(TPackageHeader), 1, f);
 	if (hdr.Magic1 != PACKAGE_MAGIC_1 || hdr.Magic2 != PACKAGE_MAGIC_2 || hdr.PackageVersion > PACKAGE_VERSION) {
-		Game->LOG(0, "  Invalid header in package file '%s'. Ignoring.", Filename);
+		Game->LOG(0, "  Invalid header in package file '%s'. Ignoring.", filename);
 		fclose(f);
 		return S_OK;
 	}
 
 	if (hdr.PackageVersion != PACKAGE_VERSION) {
-		Game->LOG(0, "  Warning: package file '%s' is outdated.", Filename);
+		Game->LOG(0, "  Warning: package file '%s' is outdated.", filename);
 	}
 
 	// new in v2
@@ -672,18 +672,18 @@ Common::File *CBFileManager::openPackage(const Common::String &name) {
 	//RestoreCurrentDir();
 
 	Common::File *ret = new Common::File();
-	char Filename[MAX_PATH];
+	char filename[MAX_PATH];
 
 	for (int i = 0; i < _packagePaths.GetSize(); i++) {
-		sprintf(Filename, "%s%s.%s", _packagePaths[i], name.c_str(), PACKAGE_EXTENSION);
-		ret->open(Filename);
+		sprintf(filename, "%s%s.%s", _packagePaths[i], name.c_str(), PACKAGE_EXTENSION);
+		ret->open(filename);
 		if (ret->isOpen()) {
 			return ret;
 		}
 	}
 
-	sprintf(Filename, "%s.%s", name.c_str(), PACKAGE_EXTENSION);
-	ret->open(Filename);
+	sprintf(filename, "%s.%s", name.c_str(), PACKAGE_EXTENSION);
+	ret->open(filename);
 	if (ret->isOpen()) {
 		return ret;
 	}
@@ -698,11 +698,11 @@ Common::File *CBFileManager::openSingleFile(const Common::String &name) {
 	restoreCurrentDir();
 
 	Common::File *ret = NULL;
-	char Filename[MAX_PATH];
+	char filename[MAX_PATH];
 
 	for (int i = 0; i < _singlePaths.GetSize(); i++) {
-		sprintf(Filename, "%s%s", _singlePaths[i], name.c_str());
-		ret->open(Filename);
+		sprintf(filename, "%s%s", _singlePaths[i], name.c_str());
+		ret->open(filename);
 		if (ret->isOpen())
 			return ret;
 	}
@@ -776,13 +776,13 @@ bool CBFileManager::hasFile(const Common::String &filename) {
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filename, bool AbsPathWarning, bool keepTrackOf) {
 	if (strcmp(filename.c_str(), "") == 0) return NULL;
-	//Game->LOG(0, "open file: %s", Filename);
+	//Game->LOG(0, "open file: %s", filename);
 	/*#ifdef __WIN32__
 	    if (Game->_dEBUG_DebugMode && Game->_dEBUG_AbsolutePathWarning && AbsPathWarning) {
 	        char Drive[_MAX_DRIVE];
-	        _splitpath(Filename, Drive, NULL, NULL, NULL);
+	        _splitpath(filename, Drive, NULL, NULL, NULL);
 	        if (Drive[0] != '\0') {
-	            Game->LOG(0, "WARNING: Referencing absolute path '%s'. The game will NOT work on another computer.", Filename);
+	            Game->LOG(0, "WARNING: Referencing absolute path '%s'. The game will NOT work on another computer.", filename);
 	        }
 	    }
 	#endif*/
@@ -807,14 +807,14 @@ HRESULT CBFileManager::closeFile(Common::SeekableReadStream *File) {
 
 
 //////////////////////////////////////////////////////////////////////////
-Common::SeekableReadStream *CBFileManager::openFileRaw(const Common::String &Filename) {
+Common::SeekableReadStream *CBFileManager::openFileRaw(const Common::String &filename) {
 	restoreCurrentDir();
 
 	Common::SeekableReadStream *ret = NULL;
 
-	if (scumm_strnicmp(Filename.c_str(), "savegame:", 9) == 0) {
+	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
 		CBSaveThumbFile *SaveThumbFile = new CBSaveThumbFile(Game);
-		if (SUCCEEDED(SaveThumbFile->open(Filename))) {
+		if (SUCCEEDED(SaveThumbFile->open(filename))) {
 			ret = SaveThumbFile->getMemStream();
 		} 
 		delete SaveThumbFile;
@@ -823,16 +823,16 @@ Common::SeekableReadStream *CBFileManager::openFileRaw(const Common::String &Fil
 
 
 
-	ret = openDiskFile(Filename, this);
+	ret = openDiskFile(filename, this);
 	if (ret) return ret;
 
-	ret = openPkgFile(Filename, this);
+	ret = openPkgFile(filename, this);
 	if (ret) return ret;
 
-	ret = CBResources::getFile(Filename);
+	ret = CBResources::getFile(filename);
 	if (ret) return ret;
 
-	warning("BFileManager::OpenFileRaw - Failed to open %s", Filename.c_str());
+	warning("BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
 	return NULL;
 }
 

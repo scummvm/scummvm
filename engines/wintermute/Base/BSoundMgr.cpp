@@ -126,20 +126,20 @@ HRESULT CBSoundMgr::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSoundBuffer *CBSoundMgr::addSound(const char *Filename, TSoundType Type, bool Streamed) {
+CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType Type, bool Streamed) {
 	if (!_soundAvailable) return NULL;
 
 	CBSoundBuffer *sound;
 
 	// try to switch WAV to OGG file (if available)
-	AnsiString ext = PathUtil::getExtension(Filename);
+	AnsiString ext = PathUtil::getExtension(filename);
 	if (StringUtil::compareNoCase(ext, "wav")) {
-		AnsiString path = PathUtil::getDirectoryName(Filename);
-		AnsiString name = PathUtil::getFileNameWithoutExtension(Filename);
+		AnsiString path = PathUtil::getDirectoryName(filename);
+		AnsiString name = PathUtil::getFileNameWithoutExtension(filename);
 
 		AnsiString newFile = PathUtil::combine(path, name + "ogg");
 		if (Game->_fileManager->hasFile(newFile)) {
-			Filename = newFile.c_str();
+			filename = newFile.c_str();
 		}
 	}
 
@@ -150,9 +150,9 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *Filename, TSoundType Type, bool 
 	sound->setType(Type);
 
 
-	HRESULT res = sound->loadFromFile(Filename);
+	HRESULT res = sound->loadFromFile(filename);
 	if (FAILED(res)) {
-		Game->LOG(res, "Error loading sound '%s'", Filename);
+		Game->LOG(res, "Error loading sound '%s'", filename);
 		delete sound;
 		return NULL;
 	}

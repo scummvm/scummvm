@@ -38,7 +38,7 @@ class CBFontBitmap : public CBFont {
 public:
 	DECLARE_PERSISTENT(CBFontBitmap, CBFont)
 	HRESULT loadBuffer(byte  *Buffer);
-	HRESULT loadFile(const char *Filename);
+	HRESULT loadFile(const char *filename);
 	virtual int getTextWidth(byte  *text, int MaxLength = -1);
 	virtual int getTextHeight(byte  *text, int width);
 	virtual void drawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int MaxLenght = -1);

@@ -54,27 +54,27 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 
 	case Common::EVENT_LBUTTONDOWN:
 		if (Game) {
-			if (Game->isLeftDoubleClick()) Game->OnMouseLeftDblClick();
-			else Game->OnMouseLeftDown();
+			if (Game->isLeftDoubleClick()) Game->onMouseLeftDblClick();
+			else Game->onMouseLeftDown();
 		}
 		break;
 	case Common::EVENT_RBUTTONDOWN:
 		if (Game) {
-			if (Game->isRightDoubleClick()) Game->OnMouseRightDblClick();
-			else Game->OnMouseRightDown();
+			if (Game->isRightDoubleClick()) Game->onMouseRightDblClick();
+			else Game->onMouseRightDown();
 		}
 		break;
 	case Common::EVENT_MBUTTONDOWN:
-		if (Game) Game->OnMouseMiddleDown();
+		if (Game) Game->onMouseMiddleDown();
 		break;
 	case Common::EVENT_LBUTTONUP:
-		if (Game) Game->OnMouseLeftUp();
+		if (Game) Game->onMouseLeftUp();
 		break;
 	case Common::EVENT_RBUTTONUP:
-		if (Game) Game->OnMouseRightUp();
+		if (Game) Game->onMouseRightUp();
 		break;
 	case Common::EVENT_MBUTTONUP:
-		if (Game) Game->OnMouseMiddleUp();
+		if (Game) Game->onMouseMiddleUp();
 		break;
 	case Common::EVENT_KEYDOWN:
 		if (Game) Game->handleKeypress(event);
@@ -139,7 +139,7 @@ void CBPlatform::HandleEvent(Common::Event *event) {
 			Game->_quitting = true;
 		}
 #else
-		if (Game) Game->OnWindowClose();
+		if (Game) Game->onWindowClose();
 #endif
 
 		break;

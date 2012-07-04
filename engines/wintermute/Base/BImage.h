@@ -57,7 +57,7 @@ public:
 	byte getAlphaAt(int x, int y);
 	bool writeBMPToStream(Common::WriteStream *stream);
 	HRESULT Resize(int NewWidth, int NewHeight);
-	HRESULT SaveBMPFile(const char *Filename);
+	HRESULT SaveBMPFile(const char *filename);
 	HRESULT CopyFrom(CBImage *OrigImage, int NewWidth = 0, int NewHeight = 0);
 	void copyFrom(Graphics::Surface *surface);
 private:

@@ -67,12 +67,12 @@ public:
 	bool _paused;
 	bool _finished;
 	HRESULT loadBuffer(byte  *Buffer, bool Compete = true, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
-	HRESULT loadFile(const char *Filename, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
+	HRESULT loadFile(const char *filename, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
 	uint32 _lastFrameTime;
 	HRESULT Draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, uint32 Alpha = 0xFFFFFFFF);
 	bool _looping;
 	int _currentFrame;
-	HRESULT AddFrame(const char *Filename, uint32 Delay = 0, int HotspotX = 0, int HotspotY = 0, RECT *Rect = NULL);
+	HRESULT AddFrame(const char *filename, uint32 Delay = 0, int HotspotX = 0, int HotspotY = 0, RECT *Rect = NULL);
 	CBSprite(CBGame *inGame, CBObject *Owner = NULL);
 	virtual ~CBSprite();
 	CBArray<CBFrame *, CBFrame *> _frames;

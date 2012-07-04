@@ -51,74 +51,74 @@ HRESULT CBDebugger::Shutdown() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnGameInit() {
+HRESULT CBDebugger::onGameInit() {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnGameShutdown() {
+HRESULT CBDebugger::onGameShutdown() {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnGameTick() {
+HRESULT CBDebugger::onGameTick() {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnLog(unsigned int ErrorCode, const char *Text) {
+HRESULT CBDebugger::onLog(unsigned int errorCode, const char *text) {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptInit(CScScript *script) {
+HRESULT CBDebugger::onScriptInit(CScScript *script) {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptEventThreadInit(CScScript *Script, CScScript *ParentScript, const char *name) {
+HRESULT CBDebugger::onScriptEventThreadInit(CScScript *script, CScScript *parentScript, const char *name) {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptMethodThreadInit(CScScript *Script, CScScript *ParentScript, const char *name) {
-	return S_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptShutdown(CScScript *script) {
-	return S_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptChangeLine(CScScript *Script, int Line) {
-	return S_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptChangeScope(CScScript *Script, CScValue *Scope) {
+HRESULT CBDebugger::onScriptMethodThreadInit(CScScript *script, CScScript *parentScript, const char *name) {
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptShutdownScope(CScScript *Script, CScValue *Scope) {
+HRESULT CBDebugger::onScriptShutdown(CScScript *script) {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnVariableInit(EWmeDebuggerVariableType Type, CScScript *script, CScValue *Scope, CScValue *Var, const char *VariableName) {
+HRESULT CBDebugger::onScriptChangeLine(CScScript *Script, int Line) {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnVariableChangeValue(CScValue *Var, CScValue *value) {
+HRESULT CBDebugger::onScriptChangeScope(CScScript *Script, CScValue *Scope) {
+	return S_OK;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBDebugger::onScriptShutdownScope(CScScript *Script, CScValue *Scope) {
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::OnScriptHitBreakpoint(CScScript *script) {
+HRESULT CBDebugger::onVariableInit(EWmeDebuggerVariableType type, CScScript *script, CScValue *scope, CScValue *var, const char *variableName) {
+	return S_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBDebugger::onVariableChangeValue(CScValue *Var, CScValue *value) {
+	return S_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBDebugger::onScriptHitBreakpoint(CScScript *script) {
 	return S_OK;
 }
 

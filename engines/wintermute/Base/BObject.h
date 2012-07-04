@@ -70,7 +70,7 @@ public:
 	HRESULT resumeSFX();
 	HRESULT pauseSFX();
 	HRESULT stopSFX(bool DeleteSound = true);
-	HRESULT playSFX(const char *Filename, bool Looping = false, bool PlayNow = true, const char *EventName = NULL, uint32 LoopStart = 0);
+	HRESULT playSFX(const char *filename, bool Looping = false, bool PlayNow = true, const char *EventName = NULL, uint32 LoopStart = 0);
 	CBSound *_sFX;
 
 	TSFXType _sFXType;
@@ -83,8 +83,8 @@ public:
 	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual int getHeight();
-	HRESULT setCursor(const char *Filename);
-	HRESULT setActiveCursor(const char *Filename);
+	HRESULT setCursor(const char *filename);
+	HRESULT setActiveCursor(const char *filename);
 	HRESULT cleanup();
 	char *getCaption(int Case = 1);
 	void setCaption(const char *Caption, int Case = 1);

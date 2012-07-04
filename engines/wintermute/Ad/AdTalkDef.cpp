@@ -69,18 +69,18 @@ CAdTalkDef::~CAdTalkDef() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkDef::loadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
+HRESULT CAdTalkDef::loadFile(const char *filename) {
+	byte *Buffer = Game->_fileManager->readWholeFile(filename);
 	if (Buffer == NULL) {
-		Game->LOG(0, "CAdTalkDef::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CAdTalkDef::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	CBUtils::setString(&_filename, Filename);
+	CBUtils::setString(&_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TALK file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TALK file '%s'", filename);
 
 	delete [] Buffer;
 

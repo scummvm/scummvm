@@ -72,7 +72,7 @@ CAdGame::CAdGame(): CBGame() {
 
 	_scene = new CAdScene(Game);
 	_scene->setName("");
-	RegisterObject(_scene);
+	registerObject(_scene);
 
 	_prevSceneName = NULL;
 	_prevSceneFilename = NULL;
@@ -106,7 +106,7 @@ CAdGame::CAdGame(): CBGame() {
 
 	_smartItemCursor = false;
 
-	AddSpeechDir("speech");
+	addSpeechDir("speech");
 }
 
 
@@ -121,7 +121,7 @@ HRESULT CAdGame::cleanup() {
 	int i;
 
 	for (i = 0; i < _objects.GetSize(); i++) {
-		UnregisterObject(_objects[i]);
+		unregisterObject(_objects[i]);
 		_objects[i] = NULL;
 	}
 	_objects.RemoveAll();
@@ -138,11 +138,11 @@ HRESULT CAdGame::cleanup() {
 	_speechDirs.RemoveAll();
 
 
-	UnregisterObject(_scene);
+	unregisterObject(_scene);
 	_scene = NULL;
 
 	// remove items
-	for (i = 0; i < _items.GetSize(); i++) Game->UnregisterObject(_items[i]);
+	for (i = 0; i < _items.GetSize(); i++) Game->unregisterObject(_items[i]);
 	_items.RemoveAll();
 
 
@@ -157,12 +157,12 @@ HRESULT CAdGame::cleanup() {
 
 
 	if (_responseBox) {
-		Game->UnregisterObject(_responseBox);
+		Game->unregisterObject(_responseBox);
 		_responseBox = NULL;
 	}
 
 	if (_inventoryBox) {
-		Game->UnregisterObject(_inventoryBox);
+		Game->unregisterObject(_inventoryBox);
 		_inventoryBox = NULL;
 	}
 
@@ -195,9 +195,9 @@ HRESULT CAdGame::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::InitLoop() {
+HRESULT CAdGame::initLoop() {
 	if (_scheduledScene && _transMgr->isReady()) {
-		ChangeScene(_scheduledScene, _scheduledFadeIn);
+		changeScene(_scheduledScene, _scheduledFadeIn);
 		delete[] _scheduledScene;
 		_scheduledScene = NULL;
 
@@ -218,40 +218,40 @@ HRESULT CAdGame::InitLoop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::AddObject(CAdObject *Object) {
-	_objects.Add(Object);
-	return RegisterObject(Object);
+HRESULT CAdGame::addObject(CAdObject *object) {
+	_objects.Add(object);
+	return registerObject(object);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::RemoveObject(CAdObject *Object) {
+HRESULT CAdGame::removeObject(CAdObject *object) {
 	// in case the user called Scene.CreateXXX() and Game.DeleteXXX()
 	if (_scene) {
-		HRESULT Res = _scene->removeObject(Object);
+		HRESULT Res = _scene->removeObject(object);
 		if (SUCCEEDED(Res)) return Res;
 	}
 
 	for (int i = 0; i < _objects.GetSize(); i++) {
-		if (_objects[i] == Object) {
+		if (_objects[i] == object) {
 			_objects.RemoveAt(i);
 			break;
 		}
 	}
-	return UnregisterObject(Object);
+	return unregisterObject(object);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
+HRESULT CAdGame::changeScene(const char *filename, bool fadeIn) {
 	if (_scene == NULL) {
 		_scene = new CAdScene(Game);
-		RegisterObject(_scene);
+		registerObject(_scene);
 	} else {
 		_scene->applyEvent("SceneShutdown", true);
 
-		SetPrevSceneName(_scene->_name);
-		SetPrevSceneFilename(_scene->_filename);
+		setPrevSceneName(_scene->_name);
+		setPrevSceneFilename(_scene->_filename);
 
 		if (!_tempDisableSaveState) _scene->saveState();
 		_tempDisableSaveState = false;
@@ -269,7 +269,7 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 		if (_initialScene && _dEBUG_DebugMode && _debugStartupScene) {
 			_initialScene = false;
 			ret = _scene->loadFile(_debugStartupScene);
-		} else ret = _scene->loadFile(Filename);
+		} else ret = _scene->loadFile(filename);
 
 		if (SUCCEEDED(ret)) {
 			// invalidate references to the original scene
@@ -280,22 +280,22 @@ HRESULT CAdGame::ChangeScene(const char *Filename, bool FadeIn) {
 
 			_scene->loadState();
 		}
-		if (FadeIn) Game->_transMgr->start(TRANSITION_FADE_IN);
+		if (fadeIn) Game->_transMgr->start(TRANSITION_FADE_IN);
 		return ret;
 	} else return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdGame::AddSentence(CAdSentence *Sentence) {
-	_sentences.Add(Sentence);
+void CAdGame::addSentence(CAdSentence *sentence) {
+	_sentences.Add(sentence);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::DisplaySentences(bool Frozen) {
+HRESULT CAdGame::displaySentences(bool frozen) {
 	for (int i = 0; i < _sentences.GetSize(); i++) {
-		if (Frozen && _sentences[i]->_freezable) continue;
+		if (frozen && _sentences[i]->_freezable) continue;
 		else _sentences[i]->display();
 	}
 	return S_OK;
@@ -303,7 +303,7 @@ HRESULT CAdGame::DisplaySentences(bool Frozen) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdGame::FinishSentences() {
+void CAdGame::finishSentences() {
 	for (int i = 0; i < _sentences.GetSize(); i++) {
 		if (_sentences[i]->CanSkip()) {
 			_sentences[i]->_duration = 0;
@@ -322,15 +322,15 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "ChangeScene") == 0) {
 		stack->correctParams(3);
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 		CScValue *valFadeOut = stack->pop();
 		CScValue *valFadeIn = stack->pop();
 
-		bool TransOut = valFadeOut->isNULL() ? true : valFadeOut->getBool();
-		bool TransIn  = valFadeIn->isNULL() ? true : valFadeIn->getBool();
+		bool transOut = valFadeOut->isNULL() ? true : valFadeOut->getBool();
+		bool transIn  = valFadeIn->isNULL() ? true : valFadeIn->getBool();
 
-		ScheduleChangeScene(Filename, TransIn);
-		if (TransOut) _transMgr->start(TRANSITION_FADE_OUT, true);
+		scheduleChangeScene(filename, transIn);
+		if (transOut) _transMgr->start(TRANSITION_FADE_OUT, true);
 		stack->pushNULL();
 
 
@@ -348,7 +348,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(1);
 		CAdActor *act = new CAdActor(Game);
 		if (act && SUCCEEDED(act->loadFile(stack->pop()->getString()))) {
-			AddObject(act);
+			addObject(act);
 			stack->pushNative(act, true);
 		} else {
 			delete act;
@@ -365,7 +365,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(1);
 		CAdEntity *ent = new CAdEntity(Game);
 		if (ent && SUCCEEDED(ent->loadFile(stack->pop()->getString()))) {
-			AddObject(ent);
+			addObject(ent);
 			stack->pushNative(ent, true);
 		} else {
 			delete ent;
@@ -382,7 +382,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 		CAdObject *obj = (CAdObject *)val->getNative();
-		RemoveObject(obj);
+		removeObject(obj);
 		if (val->getType() == VAL_VARIABLE_REF) val->setNULL();
 
 		stack->pushNULL();
@@ -394,12 +394,12 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateEntity") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
-		CAdEntity *Ent = new CAdEntity(Game);
-		AddObject(Ent);
-		if (!Val->isNULL()) Ent->setName(Val->getString());
-		stack->pushNative(Ent, true);
+		CAdEntity *ent = new CAdEntity(Game);
+		addObject(ent);
+		if (!val->isNULL()) ent->setName(val->getString());
+		stack->pushNative(ent, true);
 		return S_OK;
 	}
 
@@ -408,12 +408,12 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateItem") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
-		CAdItem *Item = new CAdItem(Game);
-		AddItem(Item);
-		if (!Val->isNULL()) Item->setName(Val->getString());
-		stack->pushNative(Item, true);
+		CAdItem *item = new CAdItem(Game);
+		addItem(item);
+		if (!val->isNULL()) item->setName(val->getString());
+		stack->pushNative(item, true);
 		return S_OK;
 	}
 
@@ -422,14 +422,14 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteItem") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
-		CAdItem *Item = NULL;
-		if (Val->isNative()) Item = (CAdItem *)Val->getNative();
-		else Item = GetItemByName(Val->getString());
+		CAdItem *item = NULL;
+		if (val->isNative()) item = (CAdItem *)val->getNative();
+		else item = getItemByName(val->getString());
 
-		if (Item) {
-			DeleteItem(Item);
+		if (item) {
+			deleteItem(item);
 		}
 
 		stack->pushNULL();
@@ -441,17 +441,17 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "QueryItem") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
-		CAdItem *Item = NULL;
-		if (Val->isInt()) {
-			int Index = Val->getInt();
-			if (Index >= 0 && Index < _items.GetSize()) Item = _items[Index];
+		CAdItem *item = NULL;
+		if (val->isInt()) {
+			int index = val->getInt();
+			if (index >= 0 && index < _items.GetSize()) item = _items[index];
 		} else {
-			Item = GetItemByName(Val->getString());
+			item = getItemByName(val->getString());
 		}
 
-		if (Item) stack->pushNative(Item, true);
+		if (item) stack->pushNative(item, true);
 		else stack->pushNULL();
 
 		return S_OK;
@@ -500,7 +500,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "ResetResponse") == 0) {
 		stack->correctParams(1);
 		int ID = stack->pop()->getInt(-1);
-		ResetResponse(ID);
+		resetResponse(ID);
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -521,7 +521,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetResponse") == 0) {
 		stack->correctParams(1);
-		bool AutoSelectLast = stack->pop()->getBool();
+		bool autoSelectLast = stack->pop()->getBool();
 
 		if (_responseBox) {
 			_responseBox->weedResponses();
@@ -532,7 +532,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			}
 
 
-			if (_responseBox->_responses.GetSize() == 1 && AutoSelectLast) {
+			if (_responseBox->_responses.GetSize() == 1 && autoSelectLast) {
 				stack->pushInt(_responseBox->_responses[0]->_iD);
 				_responseBox->handleResponse(_responseBox->_responses[0]);
 				_responseBox->clearResponses();
@@ -573,13 +573,13 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StartDlgBranch") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
-		Common::String BranchName;
-		if (Val->isNULL()) {
-			BranchName.format("line%d", script->_currentLine);
-		} else BranchName = Val->getString();
+		CScValue *val = stack->pop();
+		Common::String branchName;
+		if (val->isNULL()) {
+			branchName.format("line%d", script->_currentLine);
+		} else branchName = val->getString();
 
-		StartDlgBranch(BranchName.c_str(), script->_filename == NULL ? "" : script->_filename, script->_threadEvent == NULL ? "" : script->_threadEvent);
+		startDlgBranch(branchName.c_str(), script->_filename == NULL ? "" : script->_filename, script->_threadEvent == NULL ? "" : script->_threadEvent);
 		stack->pushNULL();
 
 		return S_OK;
@@ -591,10 +591,10 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "EndDlgBranch") == 0) {
 		stack->correctParams(1);
 
-		const char *BranchName = NULL;
-		CScValue *Val = stack->pop();
-		if (!Val->isNULL()) BranchName = Val->getString();
-		EndDlgBranch(BranchName, script->_filename == NULL ? "" : script->_filename, script->_threadEvent == NULL ? "" : script->_threadEvent);
+		const char *branchName = NULL;
+		CScValue *val = stack->pop();
+		if (!val->isNULL()) branchName = val->getString();
+		endDlgBranch(branchName, script->_filename == NULL ? "" : script->_filename, script->_threadEvent == NULL ? "" : script->_threadEvent);
 
 		stack->pushNULL();
 
@@ -700,12 +700,12 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadResponseBox") == 0) {
 		stack->correctParams(1);
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 
-		Game->UnregisterObject(_responseBox);
+		Game->unregisterObject(_responseBox);
 		_responseBox = new CAdResponseBox(Game);
-		if (_responseBox && !FAILED(_responseBox->loadFile(Filename))) {
-			RegisterObject(_responseBox);
+		if (_responseBox && !FAILED(_responseBox->loadFile(filename))) {
+			registerObject(_responseBox);
 			stack->pushBool(true);
 		} else {
 			delete _responseBox;
@@ -720,12 +720,12 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadInventoryBox") == 0) {
 		stack->correctParams(1);
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 
-		Game->UnregisterObject(_inventoryBox);
+		Game->unregisterObject(_inventoryBox);
 		_inventoryBox = new CAdInventoryBox(Game);
-		if (_inventoryBox && !FAILED(_inventoryBox->loadFile(Filename))) {
-			RegisterObject(_inventoryBox);
+		if (_inventoryBox && !FAILED(_inventoryBox->loadFile(filename))) {
+			registerObject(_inventoryBox);
 			stack->pushBool(true);
 		} else {
 			delete _inventoryBox;
@@ -740,11 +740,11 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadItems") == 0) {
 		stack->correctParams(2);
-		const char *Filename = stack->pop()->getString();
-		bool Merge = stack->pop()->getBool(false);
+		const char *filename = stack->pop()->getString();
+		bool merge = stack->pop()->getBool(false);
 
-		HRESULT Ret = LoadItemsFile(Filename, Merge);
-		stack->pushBool(SUCCEEDED(Ret));
+		HRESULT ret = loadItemsFile(filename, merge);
+		stack->pushBool(SUCCEEDED(ret));
 
 		return S_OK;
 	}
@@ -754,8 +754,8 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddSpeechDir") == 0) {
 		stack->correctParams(1);
-		const char *Dir = stack->pop()->getString();
-		stack->pushBool(SUCCEEDED(AddSpeechDir(Dir)));
+		const char *dir = stack->pop()->getString();
+		stack->pushBool(SUCCEEDED(addSpeechDir(dir)));
 
 		return S_OK;
 	}
@@ -765,8 +765,8 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveSpeechDir") == 0) {
 		stack->correctParams(1);
-		const char *Dir = stack->pop()->getString();
-		stack->pushBool(SUCCEEDED(RemoveSpeechDir(Dir)));
+		const char *dir = stack->pop()->getString();
+		stack->pushBool(SUCCEEDED(removeSpeechDir(dir)));
 
 		return S_OK;
 	}
@@ -776,16 +776,16 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetSceneViewport") == 0) {
 		stack->correctParams(4);
-		int X = stack->pop()->getInt();
-		int Y = stack->pop()->getInt();
-		int Width = stack->pop()->getInt();
-		int Height = stack->pop()->getInt();
+		int x = stack->pop()->getInt();
+		int y = stack->pop()->getInt();
+		int width = stack->pop()->getInt();
+		int height = stack->pop()->getInt();
 
-		if (Width <= 0) Width = _renderer->_width;
-		if (Height <= 0) Height = _renderer->_height;
+		if (width <= 0) width = _renderer->_width;
+		if (height <= 0) height = _renderer->_height;
 
 		if (!_sceneViewport) _sceneViewport = new CBViewport(Game);
-		if (_sceneViewport) _sceneViewport->setRect(X, Y, X + Width, Y + Height);
+		if (_sceneViewport) _sceneViewport->setRect(x, y, x + width, y + height);
 
 		stack->pushBool(true);
 
@@ -970,7 +970,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 				}
 			} else {
 				// try to get by name
-				_selectedItem = GetItemByName(value->getString());
+				_selectedItem = getItemByName(value->getString());
 			}
 		}
 
@@ -1003,7 +1003,7 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 		else {
 			CBObject *Obj = (CBObject *)value->getNative();
 			if (Obj == this) _inventoryOwner = _invObject;
-			else if (Game->ValidObject(Obj)) _inventoryOwner = (CAdObject *)Obj;
+			else if (Game->validObject(Obj)) _inventoryOwner = (CAdObject *)Obj;
 		}
 
 		if (_inventoryOwner && _inventoryBox) _inventoryBox->_scrollOffset = _inventoryOwner->getInventory()->_scrollOffset;
@@ -1099,9 +1099,9 @@ HRESULT CAdGame::showCursor() {
 
 	if (_selectedItem && Game->_state == GAME_RUNNING && _stateEx == GAME_NORMAL && _interactive) {
 		if (_selectedItem->_cursorCombined) {
-			CBSprite *OrigLastCursor = _lastCursor;
+			CBSprite *origLastCursor = _lastCursor;
 			CBGame::showCursor();
-			_lastCursor = OrigLastCursor;
+			_lastCursor = origLastCursor;
 		}
 		if (_activeObject && _selectedItem->_cursorHover && _activeObject->getExtendedFlag("usable")) {
 			if (!_smartItemCursor || _activeObject->canHandleEvent(_selectedItem->_name))
@@ -1114,22 +1114,22 @@ HRESULT CAdGame::showCursor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::loadFile(const char *Filename) {
-	byte *Buffer = _fileManager->readWholeFile(Filename);
-	if (Buffer == NULL) {
-		Game->LOG(0, "CAdGame::LoadFile failed for file '%s'", Filename);
+HRESULT CAdGame::loadFile(const char *filename) {
+	byte *buffer = _fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
+		Game->LOG(0, "CAdGame::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing GAME file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing GAME file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -1150,7 +1150,7 @@ TOKEN_DEF(STARTUP_SCENE)
 TOKEN_DEF(DEBUG_STARTUP_SCENE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdGame::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(GAME)
 	TOKEN_TABLE(AD_GAME)
@@ -1169,9 +1169,9 @@ HRESULT CAdGame::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd = 1;
 	CBParser parser(Game);
 
-	bool ItemFound = false, ItemsFound = false;
+	bool itemFound = false, itemsFound = false;
 
-	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_GAME:
 			if (FAILED(CBGame::loadBuffer(params, false))) cmd = PARSERR_GENERIC;
@@ -1184,7 +1184,7 @@ HRESULT CAdGame::loadBuffer(byte  *Buffer, bool Complete) {
 					delete _responseBox;
 					_responseBox = new CAdResponseBox(Game);
 					if (_responseBox && !FAILED(_responseBox->loadFile((char *)params2)))
-						RegisterObject(_responseBox);
+						registerObject(_responseBox);
 					else {
 						delete _responseBox;
 						_responseBox = NULL;
@@ -1196,7 +1196,7 @@ HRESULT CAdGame::loadBuffer(byte  *Buffer, bool Complete) {
 					delete _inventoryBox;
 					_inventoryBox = new CAdInventoryBox(Game);
 					if (_inventoryBox && !FAILED(_inventoryBox->loadFile((char *)params2)))
-						RegisterObject(_inventoryBox);
+						registerObject(_inventoryBox);
 					else {
 						delete _inventoryBox;
 						_inventoryBox = NULL;
@@ -1205,9 +1205,9 @@ HRESULT CAdGame::loadBuffer(byte  *Buffer, bool Complete) {
 					break;
 
 				case TOKEN_ITEMS:
-					ItemsFound = true;
+					itemsFound = true;
 					CBUtils::setString(&_itemsFile, (char *)params2);
-					if (FAILED(LoadItemsFile(_itemsFile))) {
+					if (FAILED(loadItemsFile(_itemsFile))) {
 						delete[] _itemsFile;
 						_itemsFile = NULL;
 						cmd = PARSERR_GENERIC;
@@ -1254,7 +1254,7 @@ HRESULT CAdGame::loadBuffer(byte  *Buffer, bool Complete) {
 		return E_FAIL;
 	}
 
-	if (ItemFound && !ItemsFound) {
+	if (itemFound && !itemsFound) {
 		Game->LOG(0, "**Warning** Please put the items definition to a separate file.");
 	}
 
@@ -1314,27 +1314,27 @@ HRESULT CAdGame::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::LoadGame(const char *Filename) {
-	HRESULT ret = CBGame::LoadGame(Filename);
+HRESULT CAdGame::loadGame(const char *filename) {
+	HRESULT ret = CBGame::loadGame(filename);
 	if (SUCCEEDED(ret)) CSysClassRegistry::getInstance()->enumInstances(afterLoadRegion, "CAdRegion", NULL);
 	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::InitAfterLoad() {
-	CBGame::InitAfterLoad();
-	CSysClassRegistry::getInstance()->enumInstances(AfterLoadScene,   "CAdScene",   NULL);
+HRESULT CAdGame::initAfterLoad() {
+	CBGame::initAfterLoad();
+	CSysClassRegistry::getInstance()->enumInstances(afterLoadScene,   "CAdScene",   NULL);
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CAdGame::AfterLoadScene(void *Scene, void *Data) {
-	((CAdScene *)Scene)->afterLoad();
+void CAdGame::afterLoadScene(void *scene, void *data) {
+	((CAdScene *)scene)->afterLoad();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdGame::SetPrevSceneName(const char *name) {
+void CAdGame::setPrevSceneName(const char *name) {
 	delete[] _prevSceneName;
 	_prevSceneName = NULL;
 	if (name) {
@@ -1345,7 +1345,7 @@ void CAdGame::SetPrevSceneName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdGame::SetPrevSceneFilename(const char *name) {
+void CAdGame::setPrevSceneFilename(const char *name) {
 	delete[] _prevSceneFilename;
 	_prevSceneFilename = NULL;
 	if (name) {
@@ -1356,16 +1356,16 @@ void CAdGame::SetPrevSceneFilename(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ScheduleChangeScene(const char *Filename, bool FadeIn) {
+HRESULT CAdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 	delete[] _scheduledScene;
 	_scheduledScene = NULL;
 
-	if (_scene && !_scene->_initialized) return ChangeScene(Filename, FadeIn);
+	if (_scene && !_scene->_initialized) return changeScene(filename, fadeIn);
 	else {
-		_scheduledScene = new char [strlen(Filename) + 1];
-		strcpy(_scheduledScene, Filename);
+		_scheduledScene = new char [strlen(filename) + 1];
+		strcpy(_scheduledScene, filename);
 
-		_scheduledFadeIn = FadeIn;
+		_scheduledFadeIn = fadeIn;
 
 		return S_OK;
 	}
@@ -1373,40 +1373,40 @@ HRESULT CAdGame::ScheduleChangeScene(const char *Filename, bool FadeIn) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor) {
-	CBGame::GetVersion(VerMajor, VerMinor, NULL, NULL);
+HRESULT CAdGame::getVersion(byte  *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
+	CBGame::getVersion(verMajor, verMinor, NULL, NULL);
 
-	if (ExtMajor) *ExtMajor = 0;
-	if (ExtMinor) *ExtMinor = 0;
+	if (extMajor) *extMajor = 0;
+	if (extMinor) *extMinor = 0;
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::LoadItemsFile(const char *Filename, bool Merge) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
-	if (Buffer == NULL) {
-		Game->LOG(0, "CAdGame::LoadItemsFile failed for file '%s'", Filename);
+HRESULT CAdGame::loadItemsFile(const char *filename, bool merge) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
+		Game->LOG(0, "CAdGame::LoadItemsFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	//_filename = new char [strlen(Filename)+1];
-	//strcpy(_filename, Filename);
+	//_filename = new char [strlen(filename)+1];
+	//strcpy(_filename, filename);
 
-	if (FAILED(ret = LoadItemsBuffer(Buffer, Merge))) Game->LOG(0, "Error parsing ITEMS file '%s'", Filename);
+	if (FAILED(ret = loadItemsBuffer(buffer, merge))) Game->LOG(0, "Error parsing ITEMS file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::LoadItemsBuffer(byte  *Buffer, bool Merge) {
+HRESULT CAdGame::loadItemsBuffer(byte *buffer, bool merge) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
 	TOKEN_TABLE_END
@@ -1415,21 +1415,21 @@ HRESULT CAdGame::LoadItemsBuffer(byte  *Buffer, bool Merge) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (!Merge) {
-		while (_items.GetSize() > 0) DeleteItem(_items[0]);
+	if (!merge) {
+		while (_items.GetSize() > 0) deleteItem(_items[0]);
 	}
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ITEM: {
 			CAdItem *item = new CAdItem(Game);
 			if (item && !FAILED(item->loadBuffer(params, false))) {
 				// delete item with the same name, if exists
-				if (Merge) {
-					CAdItem *PrevItem = GetItemByName(item->_name);
-					if (PrevItem) DeleteItem(PrevItem);
+				if (merge) {
+					CAdItem *PrevItem = getItemByName(item->_name);
+					if (PrevItem) deleteItem(PrevItem);
 				}
-				AddItem(item);
+				addItem(item);
 			} else {
 				delete item;
 				item = NULL;
@@ -1454,37 +1454,37 @@ HRESULT CAdGame::LoadItemsBuffer(byte  *Buffer, bool Merge) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdSceneState *CAdGame::GetSceneState(const char *Filename, bool Saving) {
-	char *FilenameCor = new char[strlen(Filename) + 1];
-	strcpy(FilenameCor, Filename);
-	for (uint32 i = 0; i < strlen(FilenameCor); i++) {
-		if (FilenameCor[i] == '/') FilenameCor[i] = '\\';
+CAdSceneState *CAdGame::getSceneState(const char *filename, bool saving) {
+	char *filenameCor = new char[strlen(filename) + 1];
+	strcpy(filenameCor, filename);
+	for (uint32 i = 0; i < strlen(filenameCor); i++) {
+		if (filenameCor[i] == '/') filenameCor[i] = '\\';
 	}
 
 	for (int i = 0; i < _sceneStates.GetSize(); i++) {
-		if (scumm_stricmp(_sceneStates[i]->_filename, FilenameCor) == 0) {
-			delete [] FilenameCor;
+		if (scumm_stricmp(_sceneStates[i]->_filename, filenameCor) == 0) {
+			delete [] filenameCor;
 			return _sceneStates[i];
 		}
 	}
 
-	if (Saving) {
+	if (saving) {
 		CAdSceneState *ret = new CAdSceneState(Game);
-		ret->setFilename(FilenameCor);
+		ret->setFilename(filenameCor);
 
 		_sceneStates.Add(ret);
 
-		delete [] FilenameCor;
+		delete [] filenameCor;
 		return ret;
 	} else {
-		delete [] FilenameCor;
+		delete [] filenameCor;
 		return NULL;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::WindowLoadHook(CUIWindow *Win, char **Buffer, char **params) {
+HRESULT CAdGame::windowLoadHook(CUIWindow *win, char **buffer, char **params) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY_CONTAINER)
 	TOKEN_TABLE_END
@@ -1492,7 +1492,7 @@ HRESULT CAdGame::WindowLoadHook(CUIWindow *Win, char **Buffer, char **params) {
 	int cmd = PARSERR_GENERIC;
 	CBParser parser(Game);
 
-	cmd = parser.GetCommand(Buffer, commands, params);
+	cmd = parser.GetCommand(buffer, commands, params);
 	switch (cmd) {
 	case TOKEN_ENTITY_CONTAINER: {
 		CUIEntity *ent = new CUIEntity(Game);
@@ -1501,8 +1501,8 @@ HRESULT CAdGame::WindowLoadHook(CUIWindow *Win, char **Buffer, char **params) {
 			ent = NULL;
 			cmd = PARSERR_GENERIC;
 		} else {
-			ent->_parent = Win;
-			Win->_widgets.Add(ent);
+			ent->_parent = win;
+			win->_widgets.Add(ent);
 		}
 	}
 	break;
@@ -1518,17 +1518,17 @@ HRESULT CAdGame::WindowLoadHook(CUIWindow *Win, char **Buffer, char **params) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *script, CScStack *stack, const char *name) {
+HRESULT CAdGame::windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name) {
 	if (strcmp(name, "CreateEntityContainer") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
-		CUIEntity *Ent = new CUIEntity(Game);
-		if (!Val->isNULL()) Ent->setName(Val->getString());
-		stack->pushNative(Ent, true);
+		CUIEntity *ent = new CUIEntity(Game);
+		if (!val->isNULL()) ent->setName(val->getString());
+		stack->pushNative(ent, true);
 
-		Ent->_parent = Win;
-		Win->_widgets.Add(Ent);
+		ent->_parent = win;
+		win->_widgets.Add(ent);
 
 		return S_OK;
 	} else return E_FAIL;
@@ -1536,10 +1536,10 @@ HRESULT CAdGame::WindowScriptMethodHook(CUIWindow *Win, CScScript *script, CScSt
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::StartDlgBranch(const char *BranchName, const char *ScriptName, const char *EventName) {
-	char *name = new char[strlen(BranchName) + 1 + strlen(ScriptName) + 1 + strlen(EventName) + 1];
+HRESULT CAdGame::startDlgBranch(const char *branchName, const char *scriptName, const char *eventName) {
+	char *name = new char[strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1];
 	if (name) {
-		sprintf(name, "%s.%s.%s", BranchName, ScriptName, EventName);
+		sprintf(name, "%s.%s.%s", branchName, scriptName, eventName);
 		_dlgPendingBranches.Add(name);
 	}
 	return S_OK;
@@ -1547,17 +1547,17 @@ HRESULT CAdGame::StartDlgBranch(const char *BranchName, const char *ScriptName, 
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::EndDlgBranch(const char *BranchName, const char *ScriptName, const char *EventName) {
+HRESULT CAdGame::endDlgBranch(const char *branchName, const char *scriptName, const char *eventName) {
 	char *name = NULL;
-	bool DeleteName = false;
-	if (BranchName == NULL && _dlgPendingBranches.GetSize() > 0) {
+	bool deleteName = false;
+	if (branchName == NULL && _dlgPendingBranches.GetSize() > 0) {
 		name = _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1];
 	} else {
-		if (BranchName != NULL) {
-			name = new char[strlen(BranchName) + 1 + strlen(ScriptName) + 1 + strlen(EventName) + 1];
+		if (branchName != NULL) {
+			name = new char[strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1];
 			if (name) {
-				sprintf(name, "%s.%s.%s", BranchName, ScriptName, EventName);
-				DeleteName = true;
+				sprintf(name, "%s.%s.%s", branchName, scriptName, eventName);
+				deleteName = true;
 			}
 		}
 	}
@@ -1565,20 +1565,20 @@ HRESULT CAdGame::EndDlgBranch(const char *BranchName, const char *ScriptName, co
 	if (name == NULL) return S_OK;
 
 
-	int StartIndex = -1;
+	int startIndex = -1;
 	for (int i = _dlgPendingBranches.GetSize() - 1; i >= 0; i--) {
 		if (scumm_stricmp(name, _dlgPendingBranches[i]) == 0) {
-			StartIndex = i;
+			startIndex = i;
 			break;
 		}
 	}
-	if (StartIndex >= 0) {
-		for (int i = StartIndex; i < _dlgPendingBranches.GetSize(); i++) {
+	if (startIndex >= 0) {
+		for (int i = startIndex; i < _dlgPendingBranches.GetSize(); i++) {
 			//ClearBranchResponses(_dlgPendingBranches[i]);
 			delete [] _dlgPendingBranches[i];
 			_dlgPendingBranches[i] = NULL;
 		}
-		_dlgPendingBranches.RemoveAt(StartIndex, _dlgPendingBranches.GetSize() - StartIndex);
+		_dlgPendingBranches.RemoveAt(startIndex, _dlgPendingBranches.GetSize() - startIndex);
 	}
 
 	// dialogue is over, forget selected responses
@@ -1587,14 +1587,14 @@ HRESULT CAdGame::EndDlgBranch(const char *BranchName, const char *ScriptName, co
 		_responsesBranch.RemoveAll();
 	}
 
-	if (DeleteName) delete [] name;
+	if (deleteName) delete [] name;
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ClearBranchResponses(char *name) {
+HRESULT CAdGame::clearBranchResponses(char *name) {
 	for (int i = 0; i < _responsesBranch.GetSize(); i++) {
 		if (scumm_stricmp(name, _responsesBranch[i]->_context) == 0) {
 			delete _responsesBranch[i];
@@ -1607,8 +1607,8 @@ HRESULT CAdGame::ClearBranchResponses(char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::AddBranchResponse(int ID) {
-	if (BranchResponseUsed(ID)) return S_OK;
+HRESULT CAdGame::addBranchResponse(int ID) {
+	if (branchResponseUsed(ID)) return S_OK;
 	CAdResponseContext *r = new CAdResponseContext(Game);
 	r->_iD = ID;
 	r->setContext(_dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL);
@@ -1618,7 +1618,7 @@ HRESULT CAdGame::AddBranchResponse(int ID) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdGame::BranchResponseUsed(int ID) {
+bool CAdGame::branchResponseUsed(int ID) {
 	char *Context = _dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL;
 	for (int i = 0; i < _responsesBranch.GetSize(); i++) {
 		if (_responsesBranch[i]->_iD == ID) {
@@ -1630,8 +1630,8 @@ bool CAdGame::BranchResponseUsed(int ID) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::AddGameResponse(int ID) {
-	if (GameResponseUsed(ID)) return S_OK;
+HRESULT CAdGame::addGameResponse(int ID) {
+	if (gameResponseUsed(ID)) return S_OK;
 	CAdResponseContext *r = new CAdResponseContext(Game);
 	r->_iD = ID;
 	r->setContext(_dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL);
@@ -1641,7 +1641,7 @@ HRESULT CAdGame::AddGameResponse(int ID) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdGame::GameResponseUsed(int ID) {
+bool CAdGame::gameResponseUsed(int ID) {
 	char *Context = _dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL;
 	for (int i = 0; i < _responsesGame.GetSize(); i++) {
 		CAdResponseContext *RespContext = _responsesGame[i];
@@ -1654,7 +1654,7 @@ bool CAdGame::GameResponseUsed(int ID) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ResetResponse(int ID) {
+HRESULT CAdGame::resetResponse(int ID) {
 	char *Context = _dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL;
 
 	int i;
@@ -1683,9 +1683,9 @@ HRESULT CAdGame::ResetResponse(int ID) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
+HRESULT CAdGame::displayContent(bool update, bool displayAll) {
 	// init
-	if (Update) InitLoop();
+	if (update) initLoop();
 
 	// fill black
 	_renderer->fill(0, 0, 0);
@@ -1693,11 +1693,11 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 
 	// playing exclusive video?
 	if (_videoPlayer->isPlaying()) {
-		if (Update) _videoPlayer->update();
+		if (update) _videoPlayer->update();
 		_videoPlayer->display();
 	} else if (_theoraPlayer) {
 		if (_theoraPlayer->isPlaying()) {
-			if (Update) _theoraPlayer->update();
+			if (update) _theoraPlayer->update();
 			_theoraPlayer->display();
 		}
 		if (_theoraPlayer->isFinished()) {
@@ -1707,7 +1707,7 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 	} else {
 
 		// process scripts
-		if (Update) _scEngine->Tick();
+		if (update) _scEngine->Tick();
 
 		POINT p;
 		getMousePos(&p);
@@ -1717,20 +1717,20 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 
 
 		// display in-game windows
-		DisplayWindows(true);
+		displayWindows(true);
 		if (_inventoryBox) _inventoryBox->display();
 		if (_stateEx == GAME_WAITING_RESPONSE) _responseBox->display();
 		if (_indicatorDisplay) displayIndicator();
 
 
-		if (Update || DisplayAll) {
+		if (update || displayAll) {
 			// display normal windows
-			DisplayWindows(false);
+			displayWindows(false);
 
 			setActiveObject(Game->_renderer->getObjectAt(p.x, p.y));
 
 			// textual info
-			DisplaySentences(_state == GAME_FROZEN);
+			displaySentences(_state == GAME_FROZEN);
 
 			showCursor();
 
@@ -1751,21 +1751,21 @@ HRESULT CAdGame::DisplayContent(bool Update, bool DisplayAll) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::RegisterInventory(CAdInventory *Inv) {
+HRESULT CAdGame::registerInventory(CAdInventory *inv) {
 	for (int i = 0; i < _inventories.GetSize(); i++) {
-		if (_inventories[i] == Inv) return S_OK;
+		if (_inventories[i] == inv) return S_OK;
 	}
-	RegisterObject(Inv);
-	_inventories.Add(Inv);
+	registerObject(inv);
+	_inventories.Add(inv);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::UnregisterInventory(CAdInventory *Inv) {
+HRESULT CAdGame::unregisterInventory(CAdInventory *inv) {
 	for (int i = 0; i < _inventories.GetSize(); i++) {
-		if (_inventories[i] == Inv) {
-			UnregisterObject(_inventories[i]);
+		if (_inventories[i] == inv) {
+			unregisterObject(_inventories[i]);
 			_inventories.RemoveAt(i);
 			return S_OK;
 		}
@@ -1774,14 +1774,12 @@ HRESULT CAdGame::UnregisterInventory(CAdInventory *Inv) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdGame::IsItemTaken(char *ItemName) {
-	int i;
-
-	for (i = 0; i < _inventories.GetSize(); i++) {
+bool CAdGame::isItemTaken(char *itemName) {
+	for (int i = 0; i < _inventories.GetSize(); i++) {
 		CAdInventory *Inv = _inventories[i];
 
 		for (int j = 0; j < Inv->_takenItems.GetSize(); j++) {
-			if (scumm_stricmp(ItemName, Inv->_takenItems[j]->_name) == 0) {
+			if (scumm_stricmp(itemName, Inv->_takenItems[j]->_name) == 0) {
 				return true;
 			}
 		}
@@ -1790,7 +1788,7 @@ bool CAdGame::IsItemTaken(char *ItemName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CAdItem *CAdGame::GetItemByName(const char *name) {
+CAdItem *CAdGame::getItemByName(const char *name) {
 	for (int i = 0; i < _items.GetSize(); i++) {
 		if (scumm_stricmp(_items[i]->_name, name) == 0) return _items[i];
 	}
@@ -1799,65 +1797,63 @@ CAdItem *CAdGame::GetItemByName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::AddItem(CAdItem *Item) {
-	_items.Add(Item);
-	return Game->RegisterObject(Item);
+HRESULT CAdGame::addItem(CAdItem *item) {
+	_items.Add(item);
+	return Game->registerObject(item);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::ResetContent() {
-	int i;
-
+HRESULT CAdGame::resetContent() {
 	// clear pending dialogs
-	for (i = 0; i < _dlgPendingBranches.GetSize(); i++) {
+	for (int i = 0; i < _dlgPendingBranches.GetSize(); i++) {
 		delete [] _dlgPendingBranches[i];
 	}
 	_dlgPendingBranches.RemoveAll();
 
 
 	// clear inventories
-	for (i = 0; i < _inventories.GetSize(); i++) {
+	for (int i = 0; i < _inventories.GetSize(); i++) {
 		_inventories[i]->_takenItems.RemoveAll();
 	}
 
 	// clear scene states
-	for (i = 0; i < _sceneStates.GetSize(); i++) delete _sceneStates[i];
+	for (int i = 0; i < _sceneStates.GetSize(); i++) delete _sceneStates[i];
 	_sceneStates.RemoveAll();
 
 	// clear once responses
-	for (i = 0; i < _responsesBranch.GetSize(); i++) delete _responsesBranch[i];
+	for (int i = 0; i < _responsesBranch.GetSize(); i++) delete _responsesBranch[i];
 	_responsesBranch.RemoveAll();
 
 	// clear once game responses
-	for (i = 0; i < _responsesGame.GetSize(); i++) delete _responsesGame[i];
+	for (int i = 0; i < _responsesGame.GetSize(); i++) delete _responsesGame[i];
 	_responsesGame.RemoveAll();
 
 	// reload inventory items
-	if (_itemsFile) LoadItemsFile(_itemsFile);
+	if (_itemsFile) loadItemsFile(_itemsFile);
 
 	_tempDisableSaveState = true;
 
-	return CBGame::ResetContent();
+	return CBGame::resetContent();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::DeleteItem(CAdItem *Item) {
-	if (!Item) return E_FAIL;
+HRESULT CAdGame::deleteItem(CAdItem *item) {
+	if (!item) return E_FAIL;
 
-	if (_selectedItem == Item) _selectedItem = NULL;
-	_scene->handleItemAssociations(Item->_name, false);
+	if (_selectedItem == item) _selectedItem = NULL;
+	_scene->handleItemAssociations(item->_name, false);
 
 	// remove from all inventories
 	for (int i = 0; i < _inventories.GetSize(); i++) {
-		_inventories[i]->RemoveItem(Item);
+		_inventories[i]->RemoveItem(item);
 	}
 
 	// remove object
 	for (int i = 0; i < _items.GetSize(); i++) {
-		if (_items[i] == Item) {
-			UnregisterObject(_items[i]);
+		if (_items[i] == item) {
+			unregisterObject(_items[i]);
 			_items.RemoveAt(i);
 			break;
 		}
@@ -1868,45 +1864,45 @@ HRESULT CAdGame::DeleteItem(CAdItem *Item) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::AddSpeechDir(const char *Dir) {
-	if (!Dir || Dir[0] == '\0') return E_FAIL;
+HRESULT CAdGame::addSpeechDir(const char *dir) {
+	if (!dir || dir[0] == '\0') return E_FAIL;
 
-	char *Temp = new char[strlen(Dir) + 2];
-	strcpy(Temp, Dir);
-	if (Temp[strlen(Temp) - 1] != '\\' && Temp[strlen(Temp) - 1] != '/')
-		strcat(Temp, "\\");
+	char *temp = new char[strlen(dir) + 2];
+	strcpy(temp, dir);
+	if (temp[strlen(temp) - 1] != '\\' && temp[strlen(temp) - 1] != '/')
+		strcat(temp, "\\");
 
 	for (int i = 0; i < _speechDirs.GetSize(); i++) {
-		if (scumm_stricmp(_speechDirs[i], Temp) == 0) {
-			delete [] Temp;
+		if (scumm_stricmp(_speechDirs[i], temp) == 0) {
+			delete [] temp;
 			return S_OK;
 		}
 	}
-	_speechDirs.Add(Temp);
+	_speechDirs.Add(temp);
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::RemoveSpeechDir(const char *Dir) {
-	if (!Dir || Dir[0] == '\0') return E_FAIL;
+HRESULT CAdGame::removeSpeechDir(const char *dir) {
+	if (!dir || dir[0] == '\0') return E_FAIL;
 
-	char *Temp = new char[strlen(Dir) + 2];
-	strcpy(Temp, Dir);
-	if (Temp[strlen(Temp) - 1] != '\\' && Temp[strlen(Temp) - 1] != '/')
-		strcat(Temp, "\\");
+	char *temp = new char[strlen(dir) + 2];
+	strcpy(temp, dir);
+	if (temp[strlen(temp) - 1] != '\\' && temp[strlen(temp) - 1] != '/')
+		strcat(temp, "\\");
 
 	bool Found = false;
 	for (int i = 0; i < _speechDirs.GetSize(); i++) {
-		if (scumm_stricmp(_speechDirs[i], Temp) == 0) {
+		if (scumm_stricmp(_speechDirs[i], temp) == 0) {
 			delete [] _speechDirs[i];
 			_speechDirs.RemoveAt(i);
 			Found = true;
 			break;
 		}
 	}
-	delete [] Temp;
+	delete [] temp;
 
 	if (Found) return S_OK;
 	else return E_FAIL;
@@ -1914,51 +1910,51 @@ HRESULT CAdGame::RemoveSpeechDir(const char *Dir) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdGame::FindSpeechFile(char *StringID) {
-	char *Ret = new char[MAX_PATH];
+char *CAdGame::findSpeechFile(char *stringID) {
+	char *ret = new char[MAX_PATH];
 
 	for (int i = 0; i < _speechDirs.GetSize(); i++) {
-		sprintf(Ret, "%s%s.ogg", _speechDirs[i], StringID);
-		Common::SeekableReadStream *File = _fileManager->openFile(Ret);
-		if (File) {
-			_fileManager->closeFile(File);
-			return Ret;
+		sprintf(ret, "%s%s.ogg", _speechDirs[i], stringID);
+		Common::SeekableReadStream *file = _fileManager->openFile(ret); // TODO: Replace with hasFile
+		if (file) {
+			_fileManager->closeFile(file);
+			return ret;
 		}
 
-		sprintf(Ret, "%s%s.wav", _speechDirs[i], StringID);
-		File = _fileManager->openFile(Ret);
-		if (File) {
-			_fileManager->closeFile(File);
-			return Ret;
+		sprintf(ret, "%s%s.wav", _speechDirs[i], stringID);
+		file = _fileManager->openFile(ret);
+		if (file) {
+			_fileManager->closeFile(file);
+			return ret;
 		}
 	}
-	delete [] Ret;
+	delete [] ret;
 	return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdGame::ValidMouse() {
-	POINT Pos;
-	CBPlatform::GetCursorPos(&Pos);
+bool CAdGame::validMouse() {
+	POINT pos;
+	CBPlatform::GetCursorPos(&pos);
 
-	return _renderer->pointInViewport(&Pos);
+	return _renderer->pointInViewport(&pos);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::OnMouseLeftDown() {
-	if (!ValidMouse()) return S_OK;
+HRESULT CAdGame::onMouseLeftDown() {
+	if (!validMouse()) return S_OK;
 	if (_state == GAME_RUNNING && !_interactive) {
 		if (_talkSkipButton == TALK_SKIP_LEFT || _talkSkipButton == TALK_SKIP_BOTH) {
-			FinishSentences();
+			finishSentences();
 		}
 		return S_OK;
 	}
 
 	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftClick"));
-	if (!Handled) {
+	bool handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftClick"));
+	if (!handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("LeftClick");
 		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
@@ -1974,15 +1970,15 @@ HRESULT CAdGame::OnMouseLeftDown() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::OnMouseLeftUp() {
+HRESULT CAdGame::onMouseLeftUp() {
 	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 
 	CBPlatform::ReleaseCapture();
 	_capturedObject = NULL;
 	_mouseLeftDown = false;
 
-	bool Handled = /*_state==GAME_RUNNING &&*/ SUCCEEDED(applyEvent("LeftRelease"));
-	if (!Handled) {
+	bool handled = /*_state==GAME_RUNNING &&*/ SUCCEEDED(applyEvent("LeftRelease"));
+	if (!handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("LeftRelease");
 		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
@@ -1993,15 +1989,15 @@ HRESULT CAdGame::OnMouseLeftUp() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::OnMouseLeftDblClick() {
-	if (!ValidMouse()) return S_OK;
+HRESULT CAdGame::onMouseLeftDblClick() {
+	if (!validMouse()) return S_OK;
 
 	if (_state == GAME_RUNNING && !_interactive) return S_OK;
 
 	if (_activeObject) _activeObject->handleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_LEFT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftDoubleClick"));
-	if (!Handled) {
+	bool handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("LeftDoubleClick"));
+	if (!handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("LeftDoubleClick");
 		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
@@ -2012,11 +2008,11 @@ HRESULT CAdGame::OnMouseLeftDblClick() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::OnMouseRightDown() {
-	if (!ValidMouse()) return S_OK;
+HRESULT CAdGame::onMouseRightDown() {
+	if (!validMouse()) return S_OK;
 	if (_state == GAME_RUNNING && !_interactive) {
 		if (_talkSkipButton == TALK_SKIP_RIGHT || _talkSkipButton == TALK_SKIP_BOTH) {
-			FinishSentences();
+			finishSentences();
 		}
 		return S_OK;
 	}
@@ -2025,8 +2021,8 @@ HRESULT CAdGame::OnMouseRightDown() {
 
 	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightClick"));
-	if (!Handled) {
+	bool handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightClick"));
+	if (!handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("RightClick");
 		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
@@ -2037,11 +2033,11 @@ HRESULT CAdGame::OnMouseRightDown() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::OnMouseRightUp() {
+HRESULT CAdGame::onMouseRightUp() {
 	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
 
-	bool Handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightRelease"));
-	if (!Handled) {
+	bool handled = _state == GAME_RUNNING && SUCCEEDED(applyEvent("RightRelease"));
+	if (!handled) {
 		if (_activeObject != NULL) {
 			_activeObject->applyEvent("RightRelease");
 		} else if (_state == GAME_RUNNING && _scene && _scene->pointInViewport(_mousePos.x, _mousePos.y)) {
@@ -2052,7 +2048,7 @@ HRESULT CAdGame::OnMouseRightUp() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::DisplayDebugInfo() {
+HRESULT CAdGame::displayDebugInfo() {
 	char str[100];
 	if (Game->_dEBUG_DebugMode) {
 		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + _scene->getOffsetLeft(), _mousePos.y + _scene->getOffsetTop());
@@ -2061,12 +2057,12 @@ HRESULT CAdGame::DisplayDebugInfo() {
 		sprintf(str, "Scene: %s (prev: %s)", (_scene && _scene->_name) ? _scene->_name : "???", _prevSceneName ? _prevSceneName : "???");
 		_systemFont->drawText((byte *)str, 0, 110, _renderer->_width, TAL_RIGHT);
 	}
-	return CBGame::DisplayDebugInfo();
+	return CBGame::displayDebugInfo();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::OnScriptShutdown(CScScript *script) {
+HRESULT CAdGame::onScriptShutdown(CScScript *script) {
 	if (_responseBox && _responseBox->_waitingScript == script)
 		_responseBox->_waitingScript = NULL;
 

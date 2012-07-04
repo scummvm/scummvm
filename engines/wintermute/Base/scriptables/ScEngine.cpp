@@ -189,9 +189,9 @@ HRESULT CScEngine::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-byte *WINAPI CScEngine::loadFile(void *Data, char *Filename, uint32 *Size) {
-	CBGame *Game = (CBGame *)Data;
-	return Game->_fileManager->readWholeFile(Filename, Size);
+byte *WINAPI CScEngine::loadFile(void *data, char *filename, uint32 *size) {
+	CBGame *Game = (CBGame *)data;
+	return Game->_fileManager->readWholeFile(filename, size);
 }
 
 
@@ -232,32 +232,32 @@ void WINAPI CScEngine::ParseElement(void *Data, int Line, int Type, void *Elemen
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CScEngine::RunScript(const char *Filename, CBScriptHolder *Owner) {
-	byte *CompBuffer;
-	uint32 CompSize;
+CScScript *CScEngine::RunScript(const char *filename, CBScriptHolder *owner) {
+	byte *compBuffer;
+	uint32 compSize;
 
 	// get script from cache
-	CompBuffer = GetCompiledScript(Filename, &CompSize);
-	if (!CompBuffer) return NULL;
+	compBuffer = GetCompiledScript(filename, &compSize);
+	if (!compBuffer) return NULL;
 
 	// add new script
 	CScScript *script = new CScScript(Game, this);
-	HRESULT ret = script->Create(Filename, CompBuffer, CompSize, Owner);
+	HRESULT ret = script->Create(filename, compBuffer, compSize, owner);
 	if (FAILED(ret)) {
-		Game->LOG(ret, "Error running script '%s'...", Filename);
+		Game->LOG(ret, "Error running script '%s'...", filename);
 		delete script;
 		return NULL;
 	} else {
 		// publish the "self" pseudo-variable
 		CScValue val(Game);
-		if (Owner)val.setNative(Owner, true);
+		if (owner)val.setNative(owner, true);
 		else val.setNULL();
 
 		script->_globals->setProp("self", &val);
 		script->_globals->setProp("this", &val);
 
 		_scripts.Add(script);
-		Game->getDebugMgr()->OnScriptInit(script);
+		Game->getDebugMgr()->onScriptInit(script);
 
 		return script;
 	}
@@ -265,13 +265,13 @@ CScScript *CScEngine::RunScript(const char *Filename, CBScriptHolder *Owner) {
 
 
 //////////////////////////////////////////////////////////////////////////
-byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool IgnoreCache) {
+byte *CScEngine::GetCompiledScript(const char *filename, uint32 *OutSize, bool IgnoreCache) {
 	int i;
 
 	// is script in cache?
 	if (!IgnoreCache) {
 		for (i = 0; i < MAX_CACHED_SCRIPTS; i++) {
-			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename.c_str(), Filename) == 0) {
+			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename.c_str(), filename) == 0) {
 				_cachedScripts[i]->_timestamp = CBPlatform::GetTime();
 				*OutSize = _cachedScripts[i]->_size;
 				return _cachedScripts[i]->_buffer;
@@ -286,9 +286,9 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 
 	uint32 Size;
 
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename, &Size);
+	byte *Buffer = Game->_fileManager->readWholeFile(filename, &Size);
 	if (!Buffer) {
-		Game->LOG(0, "CScEngine::GetCompiledScript - error opening script '%s'", Filename);
+		Game->LOG(0, "CScEngine::GetCompiledScript - error opening script '%s'", filename);
 		return NULL;
 	}
 
@@ -298,7 +298,7 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 		CompSize = Size;
 	} else {
 		if (!_compilerAvailable) {
-			Game->LOG(0, "CScEngine::GetCompiledScript - script '%s' needs to be compiled but compiler is not available", Filename);
+			Game->LOG(0, "CScEngine::GetCompiledScript - script '%s' needs to be compiled but compiler is not available", filename);
 			delete [] Buffer;
 			return NULL;
 		}
@@ -317,10 +317,10 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 		Game->PublishNatives();
 
 		// We have const char* everywhere but in the DLL-interfaces...
-		char *tempFileName = new char[strlen(Filename) + 1];
-		memcpy(tempFileName, Filename, strlen(Filename) + 1);
+		char *tempFileName = new char[strlen(filename) + 1];
+		memcpy(tempFileName, filename, strlen(filename) + 1);
 
-		SetFileToCompile(Filename);
+		SetFileToCompile(filename);
 		CompBuffer = ExtCompileFile(tempFileName, &CompSize);
 		delete[] tempFileName;
 		if (!CompBuffer) {
@@ -333,7 +333,7 @@ byte *CScEngine::GetCompiledScript(const char *Filename, uint32 *OutSize, bool I
 	byte *ret = NULL;
 
 	// add script to cache
-	CScCachedScript *CachedScript = new CScCachedScript(Filename, CompBuffer, CompSize);
+	CScCachedScript *CachedScript = new CScCachedScript(filename, CompBuffer, CompSize);
 	if (CachedScript) {
 		int index = 0;
 		uint32 MinTime = CBPlatform::GetTime();
@@ -389,7 +389,7 @@ HRESULT CScEngine::Tick() {
 			}
 			if(!obj_found) _scripts[i]->finish(); // _waitObject no longer exists
 			*/
-			if (Game->ValidObject(_scripts[i]->_waitObject)) {
+			if (Game->validObject(_scripts[i]->_waitObject)) {
 				if (_scripts[i]->_waitObject->isReady()) _scripts[i]->Run();
 			} else _scripts[i]->finish();
 			break;
@@ -490,7 +490,7 @@ HRESULT CScEngine::RemoveFinishedScripts() {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
 			if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
-			Game->getDebugMgr()->OnScriptShutdown(_scripts[i]);
+			Game->getDebugMgr()->onScriptShutdown(_scripts[i]);
 			delete _scripts[i];
 			_scripts.RemoveAt(i);
 			i--;
@@ -615,11 +615,11 @@ HRESULT CScEngine::ResumeAll() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::SetFileToCompile(const char *Filename) {
+HRESULT CScEngine::SetFileToCompile(const char *filename) {
 	delete[] _fileToCompile;
-	_fileToCompile = new char[strlen(Filename) + 1];
+	_fileToCompile = new char[strlen(filename) + 1];
 	if (_fileToCompile) {
-		strcpy(_fileToCompile, Filename);
+		strcpy(_fileToCompile, filename);
 		return S_OK;
 	} else return E_FAIL;
 }
@@ -801,10 +801,10 @@ HRESULT CScEngine::LoadBreakpoints() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScEngine::AddScriptTime(const char *Filename, uint32 Time) {
+void CScEngine::AddScriptTime(const char *filename, uint32 Time) {
 	if (!_isProfiling) return;
 
-	AnsiString fileName = Filename;
+	AnsiString fileName = filename;
 	StringUtil::toLowerCase(fileName);
 	_scriptTimes[fileName] += Time;
 }

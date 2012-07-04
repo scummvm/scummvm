@@ -116,32 +116,32 @@ CPartEmitter::~CPartEmitter(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::addSprite(const char *Filename) {
-	if (!Filename) return E_FAIL;
+HRESULT CPartEmitter::addSprite(const char *filename) {
+	if (!filename) return E_FAIL;
 
 	// do we already have the file?
 	for (int i = 0; i < _sprites.GetSize(); i++) {
-		if (scumm_stricmp(Filename, _sprites[i]) == 0) return S_OK;
+		if (scumm_stricmp(filename, _sprites[i]) == 0) return S_OK;
 	}
 
 	// check if file exists
-	Common::SeekableReadStream *File = Game->_fileManager->openFile(Filename);
+	Common::SeekableReadStream *File = Game->_fileManager->openFile(filename);
 	if (!File) {
-		Game->LOG(0, "Sprite '%s' not found", Filename);
+		Game->LOG(0, "Sprite '%s' not found", filename);
 		return E_FAIL;
 	} else Game->_fileManager->closeFile(File);
 
-	char *Str = new char[strlen(Filename) + 1];
-	strcpy(Str, Filename);
+	char *Str = new char[strlen(filename) + 1];
+	strcpy(Str, filename);
 	_sprites.Add(Str);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::removeSprite(const char *Filename) {
+HRESULT CPartEmitter::removeSprite(const char *filename) {
 	for (int i = 0; i < _sprites.GetSize(); i++) {
-		if (scumm_stricmp(Filename, _sprites[i]) == 0) {
+		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			delete [] _sprites[i];
 			_sprites.RemoveAt(i);
 			return S_OK;

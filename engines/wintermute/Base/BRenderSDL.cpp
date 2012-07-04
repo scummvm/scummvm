@@ -621,10 +621,10 @@ void CBRenderSDL::pointToScreen(POINT *point) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderSDL::dumpData(const char *Filename) {
-	warning("CBRenderSDL::DumpData(%s) - not reimplemented yet", Filename); // TODO
+void CBRenderSDL::dumpData(const char *filename) {
+	warning("CBRenderSDL::DumpData(%s) - not reimplemented yet", filename); // TODO
 #if 0
-	FILE *f = fopen(Filename, "wt");
+	FILE *f = fopen(filename, "wt");
 	if (!f) return;
 
 	CBSurfaceStorage *Mgr = Game->_surfaceStorage;

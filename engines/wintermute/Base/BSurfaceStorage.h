@@ -45,7 +45,7 @@ public:
 	//DECLARE_PERSISTENT(CBSurfaceStorage, CBBase);
 
 	HRESULT restoreAll();
-	CBSurface *addSurface(const char *Filename, bool default_ck = true, byte ck_red = 0, byte ck_green = 0, byte ck_blue = 0, int LifeTime = -1, bool keepLoaded = false);
+	CBSurface *addSurface(const char *filename, bool default_ck = true, byte ck_red = 0, byte ck_green = 0, byte ck_blue = 0, int LifeTime = -1, bool keepLoaded = false);
 	HRESULT removeSurface(CBSurface *surface);
 	CBSurfaceStorage(CBGame *inGame);
 	virtual ~CBSurfaceStorage();

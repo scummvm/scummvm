@@ -74,7 +74,7 @@ CAdScene::CAdScene(CBGame *inGame): CBObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CAdScene::~CAdScene() {
 	cleanup();
-	Game->UnregisterObject(_fader);
+	Game->unregisterObject(_fader);
 	delete _pfTarget;
 	_pfTarget = NULL;
 }
@@ -129,7 +129,7 @@ void CAdScene::setDefaults() {
 	_shieldWindow = NULL;
 
 	_fader = new CBFader(Game);
-	Game->RegisterObject(_fader);
+	Game->registerObject(_fader);
 
 	_viewport = NULL;
 }
@@ -146,24 +146,24 @@ void CAdScene::cleanup() {
 	delete _shieldWindow;
 	_shieldWindow = NULL;
 
-	Game->UnregisterObject(_fader);
+	Game->unregisterObject(_fader);
 	_fader = NULL;
 
 	for (i = 0; i < _layers.GetSize(); i++)
-		Game->UnregisterObject(_layers[i]);
+		Game->unregisterObject(_layers[i]);
 	_layers.RemoveAll();
 
 
 	for (i = 0; i < _waypointGroups.GetSize(); i++)
-		Game->UnregisterObject(_waypointGroups[i]);
+		Game->unregisterObject(_waypointGroups[i]);
 	_waypointGroups.RemoveAll();
 
 	for (i = 0; i < _scaleLevels.GetSize(); i++)
-		Game->UnregisterObject(_scaleLevels[i]);
+		Game->unregisterObject(_scaleLevels[i]);
 	_scaleLevels.RemoveAll();
 
 	for (i = 0; i < _rotLevels.GetSize(); i++)
-		Game->UnregisterObject(_rotLevels[i]);
+		Game->unregisterObject(_rotLevels[i]);
 	_rotLevels.RemoveAll();
 
 
@@ -173,7 +173,7 @@ void CAdScene::cleanup() {
 	_pfPointsNum = 0;
 
 	for (i = 0; i < _objects.GetSize(); i++)
-		Game->UnregisterObject(_objects[i]);
+		Game->unregisterObject(_objects[i]);
 	_objects.RemoveAll();
 
 	delete _viewport;
@@ -503,23 +503,23 @@ HRESULT CAdScene::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::loadFile(const char *Filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(Filename);
+HRESULT CAdScene::loadFile(const char *filename) {
+	byte *Buffer = Game->_fileManager->readWholeFile(filename);
 	if (Buffer == NULL) {
-		Game->LOG(0, "CAdScene::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CAdScene::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
 	delete[] _filename;
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SCENE file '%s'", Filename);
+	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SCENE file '%s'", filename);
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
 
 	delete [] Buffer;
@@ -648,7 +648,7 @@ HRESULT CAdScene::loadBuffer(byte  *Buffer, bool Complete) {
 				delete layer;
 				layer = NULL;
 			} else {
-				Game->RegisterObject(layer);
+				Game->registerObject(layer);
 				_layers.Add(layer);
 				if (layer->_main) {
 					_mainLayer = layer;
@@ -666,7 +666,7 @@ HRESULT CAdScene::loadBuffer(byte  *Buffer, bool Complete) {
 				delete wpt;
 				wpt = NULL;
 			} else {
-				Game->RegisterObject(wpt);
+				Game->registerObject(wpt);
 				_waypointGroups.Add(wpt);
 			}
 		}
@@ -679,7 +679,7 @@ HRESULT CAdScene::loadBuffer(byte  *Buffer, bool Complete) {
 				delete sl;
 				sl = NULL;
 			} else {
-				Game->RegisterObject(sl);
+				Game->registerObject(sl);
 				_scaleLevels.Add(sl);
 			}
 		}
@@ -692,7 +692,7 @@ HRESULT CAdScene::loadBuffer(byte  *Buffer, bool Complete) {
 				delete rl;
 				rl = NULL;
 			} else {
-				Game->RegisterObject(rl);
+				Game->registerObject(rl);
 				_rotLevels.Add(rl);
 			}
 		}
@@ -1600,7 +1600,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			Layer->_height = _mainLayer->_height;
 		}
 		_layers.Add(Layer);
-		Game->RegisterObject(Layer);
+		Game->registerObject(Layer);
 
 		stack->pushNative(Layer, true);
 		return S_OK;
@@ -1624,7 +1624,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (Index <= _layers.GetSize() - 1) _layers.InsertAt(Index, Layer);
 		else _layers.Add(Layer);
 
-		Game->RegisterObject(Layer);
+		Game->registerObject(Layer);
 
 		stack->pushNative(Layer, true);
 		return S_OK;
@@ -1666,7 +1666,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		for (int i = 0; i < _layers.GetSize(); i++) {
 			if (_layers[i] == ToDelete) {
 				_layers.RemoveAt(i);
-				Game->UnregisterObject(ToDelete);
+				Game->unregisterObject(ToDelete);
 				break;
 			}
 		}
@@ -1952,7 +1952,7 @@ const char *CAdScene::scToString() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScene::addObject(CAdObject *Object) {
 	_objects.Add(Object);
-	return Game->RegisterObject(Object);
+	return Game->registerObject(Object);
 }
 
 
@@ -1961,7 +1961,7 @@ HRESULT CAdScene::removeObject(CAdObject *Object) {
 	for (int i = 0; i < _objects.GetSize(); i++) {
 		if (_objects[i] == Object) {
 			_objects.RemoveAt(i);
-			return Game->UnregisterObject(Object);
+			return Game->unregisterObject(Object);
 		}
 	}
 	return E_FAIL;
@@ -2489,7 +2489,7 @@ HRESULT CAdScene::persistState(bool Saving) {
 	if (!_persistentState) return S_OK;
 
 	CAdGame *AdGame = (CAdGame *)Game;
-	CAdSceneState *State = AdGame->GetSceneState(_filename, Saving);
+	CAdSceneState *State = AdGame->getSceneState(_filename, Saving);
 	if (!State) return S_OK;
 
 

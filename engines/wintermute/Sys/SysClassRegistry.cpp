@@ -179,7 +179,7 @@ HRESULT CSysClassRegistry::saveTable(CBGame *Game, CBPersistMgr *persistMgr, boo
 
 		if (!quickSave) {
 			Game->_indicatorProgress = (int)(50.0f / (float)((float)_classes.size() / (float)counter));
-			Game->DisplayContent(false);
+			Game->displayContent(false);
 			Game->_renderer->flip();
 		}
 
@@ -211,7 +211,7 @@ HRESULT CSysClassRegistry::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
 
 	for (uint32 i = 0; i < numClasses; i++) {
 		Game->_indicatorProgress = (int)(50.0f / (float)((float)numClasses / (float)i));
-		Game->DisplayContentSimple();
+		Game->displayContentSimple();
 		Game->_renderer->flip();
 
 		Common::String className = persistMgr->getStringObj();
@@ -245,7 +245,7 @@ HRESULT CSysClassRegistry::saveInstances(CBGame *Game, CBPersistMgr *persistMgr,
 		if (!quickSave) {
 			if (counter % 20 == 0) {
 				Game->_indicatorProgress = 50 + 50.0f / (float)((float)_classes.size() / (float)counter);
-				Game->DisplayContent(false);
+				Game->displayContent(false);
 				Game->_renderer->flip();
 			}
 		}
@@ -265,7 +265,7 @@ HRESULT CSysClassRegistry::loadInstances(CBGame *Game, CBPersistMgr *persistMgr)
 	for (int i = 0; i < numInstances; i++) {
 		if (i % 20 == 0) {
 			Game->_indicatorProgress = 50 + 50.0f / (float)((float)numInstances / (float)i);
-			Game->DisplayContentSimple();
+			Game->displayContentSimple();
 			Game->_renderer->flip();
 		}
 

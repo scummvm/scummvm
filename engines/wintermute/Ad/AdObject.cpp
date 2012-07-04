@@ -130,38 +130,38 @@ CAdObject::~CAdObject() {
 	if (_font) Game->_fontStorage->RemoveFont(_font);
 
 	if (_inventory) {
-		((CAdGame *)Game)->UnregisterInventory(_inventory);
+		((CAdGame *)Game)->unregisterInventory(_inventory);
 		_inventory = NULL;
 	}
 
 	if (_partEmitter)
-		Game->UnregisterObject(_partEmitter);
+		Game->unregisterObject(_partEmitter);
 
 
 	for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
-		Game->UnregisterObject(_attachmentsPre[i]);
+		Game->unregisterObject(_attachmentsPre[i]);
 	}
 	_attachmentsPre.RemoveAll();
 
 	for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
-		Game->UnregisterObject(_attachmentsPost[i]);
+		Game->unregisterObject(_attachmentsPost[i]);
 	}
 	_attachmentsPost.RemoveAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::playAnim(const char *Filename) {
+HRESULT CAdObject::playAnim(const char *filename) {
 	delete _animSprite;
 	_animSprite = NULL;
 	_animSprite = new CBSprite(Game, this);
 	if (!_animSprite) {
-		Game->LOG(0, "CAdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, Filename);
+		Game->LOG(0, "CAdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
 		return E_FAIL;
 	}
-	HRESULT res = _animSprite->loadFile(Filename);
+	HRESULT res = _animSprite->loadFile(filename);
 	if (FAILED(res)) {
-		Game->LOG(res, "CAdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, Filename);
+		Game->LOG(res, "CAdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
 		delete _animSprite;
 		_animSprite = NULL;
 		return res;
@@ -352,7 +352,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		if (!_inventory) {
 			_inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->RegisterInventory(_inventory);
+			((CAdGame *)Game)->registerInventory(_inventory);
 		}
 
 		CScValue *val = stack->pop();
@@ -380,7 +380,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		if (!_inventory) {
 			_inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->RegisterInventory(_inventory);
+			((CAdGame *)Game)->registerInventory(_inventory);
 		}
 
 		CScValue *val = stack->pop();
@@ -404,12 +404,12 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		if (!_inventory) {
 			_inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->RegisterInventory(_inventory);
+			((CAdGame *)Game)->registerInventory(_inventory);
 		}
 
 		CScValue *val = stack->pop();
 		if (val->_type == VAL_STRING) {
-			CAdItem *item = ((CAdGame *)Game)->GetItemByName(val->getString());
+			CAdItem *item = ((CAdGame *)Game)->getItemByName(val->getString());
 			if (item) stack->pushNative(item, true);
 			else stack->pushNULL();
 		} else if (val->isNULL() || val->getInt() < 0 || val->getInt() >= _inventory->_takenItems.GetSize())
@@ -428,7 +428,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		if (!_inventory) {
 			_inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->RegisterInventory(_inventory);
+			((CAdGame *)Game)->registerInventory(_inventory);
 		}
 
 		CScValue *val = stack->pop();
@@ -470,7 +470,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "DeleteParticleEmitter") == 0) {
 		stack->correctParams(0);
 		if (_partEmitter) {
-			Game->UnregisterObject(_partEmitter);
+			Game->unregisterObject(_partEmitter);
 			_partEmitter = NULL;
 		}
 		stack->pushNULL();
@@ -483,20 +483,20 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddAttachment") == 0) {
 		stack->correctParams(4);
-		const char *Filename = stack->pop()->getString();
+		const char *filename = stack->pop()->getString();
 		bool PreDisplay = stack->pop()->getBool(true);
 		int OffsetX = stack->pop()->getInt();
 		int OffsetY = stack->pop()->getInt();
 
 		HRESULT res;
 		CAdEntity *Ent = new CAdEntity(Game);
-		if (FAILED(res = Ent->loadFile(Filename))) {
+		if (FAILED(res = Ent->loadFile(filename))) {
 			delete Ent;
 			Ent = NULL;
-			script->RuntimeError("AddAttachment() failed loading entity '%s'", Filename);
+			script->RuntimeError("AddAttachment() failed loading entity '%s'", filename);
 			stack->pushBool(false);
 		} else {
-			Game->RegisterObject(Ent);
+			Game->registerObject(Ent);
 
 			Ent->_posX = OffsetX;
 			Ent->_posY = OffsetY;
@@ -523,7 +523,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
 				if (_attachmentsPre[i] == Obj) {
 					Found = true;
-					Game->UnregisterObject(_attachmentsPre[i]);
+					Game->unregisterObject(_attachmentsPre[i]);
 					_attachmentsPre.RemoveAt(i);
 					i--;
 				}
@@ -531,7 +531,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
 				if (_attachmentsPost[i] == Obj) {
 					Found = true;
-					Game->UnregisterObject(_attachmentsPost[i]);
+					Game->unregisterObject(_attachmentsPost[i]);
 					_attachmentsPost.RemoveAt(i);
 					i--;
 				}
@@ -541,7 +541,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
 				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
 					Found = true;
-					Game->UnregisterObject(_attachmentsPre[i]);
+					Game->unregisterObject(_attachmentsPre[i]);
 					_attachmentsPre.RemoveAt(i);
 					i--;
 				}
@@ -549,7 +549,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
 				if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, attachmentName) == 0) {
 					Found = true;
-					Game->UnregisterObject(_attachmentsPost[i]);
+					Game->unregisterObject(_attachmentsPost[i]);
 					_attachmentsPost.RemoveAt(i);
 					i--;
 				}
@@ -792,10 +792,10 @@ const char *CAdObject::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdObject::SetFont(const char *Filename) {
+HRESULT CAdObject::SetFont(const char *filename) {
 	if (_font) Game->_fontStorage->RemoveFont(_font);
-	if (Filename) {
-		_font = Game->_fontStorage->AddFont(Filename);
+	if (filename) {
+		_font = Game->_fontStorage->AddFont(filename);
 		return _font == NULL ? E_FAIL : S_OK;
 	} else {
 		_font = NULL;
@@ -852,7 +852,7 @@ void CAdObject::talk(const char *Text, const char *Sound, uint32 Duration, const
 	if (!Sound) {
 		char *Key = Game->_stringTable->GetKey(Text);
 		if (Key) {
-			Sound = ((CAdGame *)Game)->FindSpeechFile(Key);
+			Sound = ((CAdGame *)Game)->findSpeechFile(Key);
 			delete [] Key;
 
 			if (Sound) DeleteSound = true;
@@ -1052,7 +1052,7 @@ HRESULT CAdObject::updateBlockRegion() {
 CAdInventory *CAdObject::getInventory() {
 	if (!_inventory) {
 		_inventory = new CAdInventory(Game);
-		((CAdGame *)Game)->RegisterInventory(_inventory);
+		((CAdGame *)Game)->registerInventory(_inventory);
 	}
 	return _inventory;
 }
@@ -1077,7 +1077,7 @@ HRESULT CAdObject::afterMove() {
 	}
 
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
-		if (_currentRegions[i] && Game->ValidObject(_currentRegions[i])) {
+		if (_currentRegions[i] && Game->validObject(_currentRegions[i])) {
 			_currentRegions[i]->applyEvent("ActorLeave");
 		}
 		_currentRegions[i] = NewRegions[i];
@@ -1179,7 +1179,7 @@ CPartEmitter *CAdObject::createParticleEmitter(bool FollowParent, int OffsetX, i
 	if (!_partEmitter) {
 		_partEmitter = new CPartEmitter(Game, this);
 		if (_partEmitter) {
-			Game->RegisterObject(_partEmitter);
+			Game->registerObject(_partEmitter);
 		}
 	}
 	updatePartEmitter();

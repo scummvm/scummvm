@@ -122,10 +122,10 @@ HRESULT CBSprite::Draw(int X, int Y, CBObject *Register, float ZoomX, float Zoom
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::loadFile(const char *Filename, int LifeTime, TSpriteCacheType CacheType) {
-	Common::SeekableReadStream *File = Game->_fileManager->openFile(Filename);
+HRESULT CBSprite::loadFile(const char *filename, int LifeTime, TSpriteCacheType CacheType) {
+	Common::SeekableReadStream *File = Game->_fileManager->openFile(filename);
 	if (!File) {
-		Game->LOG(0, "CBSprite::LoadFile failed for file '%s'", Filename);
+		Game->LOG(0, "CBSprite::LoadFile failed for file '%s'", filename);
 		if (Game->_dEBUG_DebugMode) return loadFile("invalid_debug.bmp", LifeTime, CacheType);
 		else return loadFile("invalid.bmp", LifeTime, CacheType);
 	} else {
@@ -135,13 +135,13 @@ HRESULT CBSprite::loadFile(const char *Filename, int LifeTime, TSpriteCacheType 
 
 	HRESULT ret;
 
-	AnsiString ext = PathUtil::getExtension(Filename);
-	if (StringUtil::startsWith(Filename, "savegame:", true) || StringUtil::compareNoCase(ext, "bmp") || StringUtil::compareNoCase(ext, "tga") || StringUtil::compareNoCase(ext, "png") || StringUtil::compareNoCase(ext, "jpg")) {
+	AnsiString ext = PathUtil::getExtension(filename);
+	if (StringUtil::startsWith(filename, "savegame:", true) || StringUtil::compareNoCase(ext, "bmp") || StringUtil::compareNoCase(ext, "tga") || StringUtil::compareNoCase(ext, "png") || StringUtil::compareNoCase(ext, "jpg")) {
 		CBFrame *frame = new CBFrame(Game);
 		CBSubFrame *subframe = new CBSubFrame(Game);
-		subframe->setSurface(Filename, true, 0, 0, 0, LifeTime, true);
+		subframe->setSurface(filename, true, 0, 0, 0, LifeTime, true);
 		if (subframe->_surface == NULL) {
-			Game->LOG(0, "Error loading simple sprite '%s'", Filename);
+			Game->LOG(0, "Error loading simple sprite '%s'", filename);
 			ret = E_FAIL;
 			delete frame;
 			delete subframe;
@@ -153,15 +153,15 @@ HRESULT CBSprite::loadFile(const char *Filename, int LifeTime, TSpriteCacheType 
 			ret = S_OK;
 		}
 	} else {
-		byte *Buffer = Game->_fileManager->readWholeFile(Filename);
+		byte *Buffer = Game->_fileManager->readWholeFile(filename);
 		if (Buffer) {
-			if (FAILED(ret = loadBuffer(Buffer, true, LifeTime, CacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", Filename);
+			if (FAILED(ret = loadBuffer(Buffer, true, LifeTime, CacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", filename);
 			delete [] Buffer;
 		}
 	}
 
-	_filename = new char [strlen(Filename) + 1];
-	strcpy(_filename, Filename);
+	_filename = new char [strlen(filename) + 1];
+	strcpy(_filename, filename);
 
 
 	return ret;
@@ -563,13 +563,13 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "AddFrame") == 0) {
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
-		const char *Filename = NULL;
-		if (!Val->isNULL()) Filename = Val->getString();
+		const char *filename = NULL;
+		if (!Val->isNULL()) filename = Val->getString();
 
 		CBFrame *Frame = new CBFrame(Game);
-		if (Filename != NULL) {
+		if (filename != NULL) {
 			CBSubFrame *Sub = new CBSubFrame(Game);
-			if (SUCCEEDED(Sub->setSurface(Filename))) {
+			if (SUCCEEDED(Sub->setSurface(filename))) {
 				Sub->setDefaultRect();
 				Frame->_subframes.Add(Sub);
 			} else delete Sub;
@@ -589,13 +589,13 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (Index < 0) Index = 0;
 
 		CScValue *Val = stack->pop();
-		const char *Filename = NULL;
-		if (!Val->isNULL()) Filename = Val->getString();
+		const char *filename = NULL;
+		if (!Val->isNULL()) filename = Val->getString();
 
 		CBFrame *Frame = new CBFrame(Game);
-		if (Filename != NULL) {
+		if (filename != NULL) {
 			CBSubFrame *Sub = new CBSubFrame(Game);
-			if (SUCCEEDED(Sub->setSurface(Filename))) Frame->_subframes.Add(Sub);
+			if (SUCCEEDED(Sub->setSurface(filename))) Frame->_subframes.Add(Sub);
 			else delete Sub;
 		}
 

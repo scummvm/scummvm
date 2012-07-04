@@ -129,17 +129,17 @@ HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile)
 	cleanup();
 
 	char Filename[MAX_PATH];
-	Game->_fileManager->GetFullPath(inFilename, Filename);
+	Game->_fileManager->GetFullPath(inFilename, filename);
 
 	// open file
 	if (AVIFileOpen(&_aviFile, Filename, OF_READ, NULL) != 0) {
-		Game->LOG(0, "Error opening AVI file '%s'", Filename);
+		Game->LOG(0, "Error opening AVI file '%s'", filename);
 		return E_FAIL;
 	}
 
 	// get video stream
 	if (AVIFileGetStream(_aviFile, &_videoStream, streamtypeVIDEO, 0) != 0) {
-		Game->LOG(0, "Error finding video stream in AVI file '%s'", Filename);
+		Game->LOG(0, "Error finding video stream in AVI file '%s'", filename);
 		return E_FAIL;
 	}
 	_totalVideoTime = AVIStreamEndTime(_videoStream);
@@ -155,7 +155,7 @@ HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile)
 
 	// get video format
 	if (AVIStreamReadFormat(m_VideoStream, 0, NULL, &Size)) {
-		Game->LOG(0, "Error obtaining video stream format in AVI file '%s'", Filename);
+		Game->LOG(0, "Error obtaining video stream format in AVI file '%s'", filename);
 		return E_FAIL;
 	}
 	_videoFormat = (LPBITMAPINFO)new BYTE[Size];
@@ -176,7 +176,7 @@ HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile)
 		m_VidRenderer = new CVidRendererDD(Game);
 
 	if (!m_VidRenderer || FAILED(m_VidRenderer->Initialize(m_VideoFormat, m_TargetFormat))) {
-		Game->LOG(0, "Error initializing video renderer for AVI file '%s'", Filename);
+		Game->LOG(0, "Error initializing video renderer for AVI file '%s'", filename);
 		SAFE_DELETE(m_VidRenderer);
 		return E_FAIL;
 	}
@@ -190,14 +190,14 @@ HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile)
 		if (FAILED(res = _sound->InitializeBuffer(_audioStream))) {
 			SAFE_DELETE(_sound);
 			_soundAvailable = false;
-			Game->LOG(res, "Error initializing sound buffer for AVI file '%s'", Filename);
+			Game->LOG(res, "Error initializing sound buffer for AVI file '%s'", filename);
 		}
 	}
 
 	if (Game->_videoSubtitles) LoadSubtitles(inFilename, SubtitleFile);
 
-	_filename = new char[strlen(Filename) + 1];
-	if (_filename) strcpy(_filename, Filename);
+	_filename = new char[strlen(filename) + 1];
+	if (_filename) strcpy(_filename, filename);
 #endif
 	return S_OK;
 }
@@ -378,7 +378,7 @@ bool CVidPlayer::isPlaying() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::loadSubtitles(const char *Filename, const char *SubtitleFile) {
+HRESULT CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) {
 #if 0
 	if (!Filename) return S_OK;
 
@@ -390,7 +390,7 @@ HRESULT CVidPlayer::loadSubtitles(const char *Filename, const char *SubtitleFile
 	if (SubtitleFile) {
 		strcpy(NewFile, SubtitleFile);
 	} else {
-		_splitpath(Filename, drive, dir, fname, NULL);
+		_splitpath(filename, drive, dir, fname, NULL);
 		_makepath(NewFile, drive, dir, fname, ".SUB");
 	}
 

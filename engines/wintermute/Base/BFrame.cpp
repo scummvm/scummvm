@@ -479,12 +479,12 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "AddSubframe") == 0) {
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
-		const char *Filename = NULL;
-		if (!Val->isNULL()) Filename = Val->getString();
+		const char *filename = NULL;
+		if (!Val->isNULL()) filename = Val->getString();
 
 		CBSubFrame *Sub = new CBSubFrame(Game);
-		if (Filename != NULL) {
-			Sub->setSurface(Filename);
+		if (filename != NULL) {
+			Sub->setSurface(filename);
 			Sub->setDefaultRect();
 		}
 		_subframes.Add(Sub);
@@ -502,12 +502,12 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (Index < 0) Index = 0;
 
 		CScValue *Val = stack->pop();
-		const char *Filename = NULL;
-		if (!Val->isNULL()) Filename = Val->getString();
+		const char *filename = NULL;
+		if (!Val->isNULL()) filename = Val->getString();
 
 		CBSubFrame *Sub = new CBSubFrame(Game);
-		if (Filename != NULL) {
-			Sub->setSurface(Filename);
+		if (filename != NULL) {
+			Sub->setSurface(filename);
 		}
 
 		if (Index >= _subframes.GetSize()) _subframes.Add(Sub);

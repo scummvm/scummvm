@@ -368,8 +368,8 @@ HRESULT CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			_surfaceFilename = NULL;
 			stack->pushBool(true);
 		} else {
-			const char *Filename = Val->getString();
-			if (SUCCEEDED(setSurface(Filename))) {
+			const char *filename = Val->getString();
+			if (SUCCEEDED(setSurface(filename))) {
 				setDefaultRect();
 				stack->pushBool(true);
 			} else stack->pushBool(false);
@@ -549,7 +549,7 @@ const char *CBSubFrame::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::setSurface(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+HRESULT CBSubFrame::setSurface(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
 	if (_surface) {
 		Game->_surfaceStorage->removeSurface(_surface);
 		_surface = NULL;
@@ -558,10 +558,10 @@ HRESULT CBSubFrame::setSurface(const char *Filename, bool default_ck, byte ck_re
 	delete[] _surfaceFilename;
 	_surfaceFilename = NULL;
 
-	_surface = Game->_surfaceStorage->addSurface(Filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
+	_surface = Game->_surfaceStorage->addSurface(filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
 	if (_surface) {
-		_surfaceFilename = new char[strlen(Filename) + 1];
-		strcpy(_surfaceFilename, Filename);
+		_surfaceFilename = new char[strlen(filename) + 1];
+		strcpy(_surfaceFilename, filename);
 
 		_cKDefault = default_ck;
 		_cKRed = ck_red;

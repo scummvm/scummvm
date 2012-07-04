@@ -73,7 +73,7 @@ CAdEntity::CAdEntity(CBGame *inGame): CAdTalkHolder(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdEntity::~CAdEntity() {
-	Game->UnregisterObject(_region);
+	Game->unregisterObject(_region);
 
 	delete _theora;
 	_theora = NULL;
@@ -318,13 +318,13 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_REGION: {
-			if (_region) Game->UnregisterObject(_region);
+			if (_region) Game->unregisterObject(_region);
 			_region = NULL;
 			CBRegion *rgn = new CBRegion(Game);
 			if (!rgn || FAILED(rgn->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
 			else {
 				_region = rgn;
-				Game->RegisterObject(_region);
+				Game->registerObject(_region);
 			}
 		}
 		break;
@@ -474,7 +474,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	_alphaColor = DRGBA(ar, ag, ab, alpha);
 	_state = STATE_READY;
 
-	if (_item && ((CAdGame *)Game)->IsItemTaken(_item)) _active = false;
+	if (_item && ((CAdGame *)Game)->isItemTaken(_item)) _active = false;
 
 	return S_OK;
 }
@@ -577,11 +577,11 @@ HRESULT CAdEntity::update() {
 					_tempSprite2->Reset();
 					_currentSprite = _tempSprite2;
 				}
-				((CAdGame *)Game)->AddSentence(_sentence);
+				((CAdGame *)Game)->addSentence(_sentence);
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((CAdGame *)Game)->AddSentence(_sentence);
+			((CAdGame *)Game)->addSentence(_sentence);
 		}
 	}
 	break;
@@ -733,7 +733,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(0);
 		if (!_region) {
 			_region = new CBRegion(Game);
-			Game->RegisterObject(_region);
+			Game->registerObject(_region);
 		}
 		if (_region) stack->pushNative(_region, true);
 		else stack->pushNULL();
@@ -747,7 +747,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "DeleteRegion") == 0) {
 		stack->correctParams(0);
 		if (_region) {
-			Game->UnregisterObject(_region);
+			Game->unregisterObject(_region);
 			_region = NULL;
 			stack->pushBool(true);
 		} else stack->pushBool(false);

@@ -44,58 +44,58 @@ class CAdResponseContext;
 class CAdResponseBox;
 class CAdGame : public CBGame {
 public:
-	virtual HRESULT OnScriptShutdown(CScScript *script);
+	virtual HRESULT onScriptShutdown(CScScript *script);
 
-	virtual HRESULT OnMouseLeftDown();
-	virtual HRESULT OnMouseLeftUp();
-	virtual HRESULT OnMouseLeftDblClick();
-	virtual HRESULT OnMouseRightDown();
-	virtual HRESULT OnMouseRightUp();
+	virtual HRESULT onMouseLeftDown();
+	virtual HRESULT onMouseLeftUp();
+	virtual HRESULT onMouseLeftDblClick();
+	virtual HRESULT onMouseRightDown();
+	virtual HRESULT onMouseRightUp();
 
-	virtual HRESULT DisplayDebugInfo();
+	virtual HRESULT displayDebugInfo();
 
 
-	virtual HRESULT InitAfterLoad();
-	static void AfterLoadScene(void *Scene, void *Data);
+	virtual HRESULT initAfterLoad();
+	static void afterLoadScene(void *scene, void *data);
 
 	bool _smartItemCursor;
 
 	CBArray<char *, char *> _speechDirs;
-	HRESULT AddSpeechDir(const char *Dir);
-	HRESULT RemoveSpeechDir(const char *Dir);
-	char *FindSpeechFile(char *StringID);
+	HRESULT addSpeechDir(const char *dir);
+	HRESULT removeSpeechDir(const char *dir);
+	char *findSpeechFile(char *StringID);
 
-	HRESULT DeleteItem(CAdItem *Item);
+	HRESULT deleteItem(CAdItem *Item);
 	char *_itemsFile;
 	bool _tempDisableSaveState;
-	virtual HRESULT ResetContent();
-	HRESULT AddItem(CAdItem *Item);
-	CAdItem *GetItemByName(const char *name);
+	virtual HRESULT resetContent();
+	HRESULT addItem(CAdItem *item);
+	CAdItem *getItemByName(const char *name);
 	CBArray<CAdItem *, CAdItem *> _items;
 	CAdObject *_inventoryOwner;
-	bool IsItemTaken(char *ItemName);
-	HRESULT RegisterInventory(CAdInventory *Inv);
-	HRESULT UnregisterInventory(CAdInventory *Inv);
+	bool isItemTaken(char *itemName);
+	HRESULT registerInventory(CAdInventory *inv);
+	HRESULT unregisterInventory(CAdInventory *inv);
 
 	CAdObject *_invObject;
 	CBArray<CAdInventory *, CAdInventory *> _inventories;
-	virtual HRESULT DisplayContent(bool Update = true, bool DisplayAll = false);
+	virtual HRESULT displayContent(bool update = true, bool displayAll = false);
 	char *_debugStartupScene;
 	char *_startupScene;
 	bool _initialScene;
-	bool GameResponseUsed(int ID);
-	HRESULT AddGameResponse(int ID);
-	HRESULT ResetResponse(int ID);
+	bool gameResponseUsed(int ID);
+	HRESULT addGameResponse(int ID);
+	HRESULT resetResponse(int ID);
 
-	bool BranchResponseUsed(int ID);
-	HRESULT AddBranchResponse(int ID);
-	HRESULT ClearBranchResponses(char *name);
-	HRESULT StartDlgBranch(const char *BranchName, const char *ScriptName, const char *EventName);
-	HRESULT EndDlgBranch(const char *BranchName, const char *ScriptName, const char *EventName);
-	virtual HRESULT WindowLoadHook(CUIWindow *Win, char **Buf, char **Params);
-	virtual HRESULT WindowScriptMethodHook(CUIWindow *Win, CScScript *script, CScStack *stack, const char *name);
+	bool branchResponseUsed(int ID);
+	HRESULT addBranchResponse(int ID);
+	HRESULT clearBranchResponses(char *name);
+	HRESULT startDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
+	HRESULT endDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
+	virtual HRESULT windowLoadHook(CUIWindow *win, char **buf, char **params);
+	virtual HRESULT windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
 
-	CAdSceneState *GetSceneState(const char *Filename, bool Saving);
+	CAdSceneState *getSceneState(const char *filename, bool saving);
 	CBViewport *_sceneViewport;
 	int _texItemLifeTime;
 	int _texWalkLifeTime;
@@ -104,31 +104,31 @@ public:
 
 	TTalkSkipButton _talkSkipButton;
 
-	virtual HRESULT GetVersion(byte  *VerMajor, byte *VerMinor, byte *ExtMajor, byte *ExtMinor);
-	HRESULT ScheduleChangeScene(const char *Filename, bool FadeIn);
+	virtual HRESULT getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
+	HRESULT scheduleChangeScene(const char *filename, bool fadeIn);
 	char *_scheduledScene;
 	bool _scheduledFadeIn;
-	void SetPrevSceneName(const char *name);
-	void SetPrevSceneFilename(const char *name);
+	void setPrevSceneName(const char *name);
+	void setPrevSceneFilename(const char *name);
 	char *_prevSceneName;
 	char *_prevSceneFilename;
-	virtual HRESULT LoadGame(const char *Filename);
+	virtual HRESULT loadGame(const char *filename);
 	CAdItem *_selectedItem;
 	HRESULT cleanup();
 	DECLARE_PERSISTENT(CAdGame, CBGame)
 
-	void FinishSentences();
+	void finishSentences();
 	HRESULT showCursor();
 	TGameStateEx _stateEx;
 	CAdResponseBox *_responseBox;
 	CAdInventoryBox *_inventoryBox;
-	HRESULT DisplaySentences(bool Frozen);
-	void AddSentence(CAdSentence *Sentence);
-	HRESULT ChangeScene(const char *Filename, bool FadeIn);
-	HRESULT RemoveObject(CAdObject *Object);
-	HRESULT AddObject(CAdObject *Object);
+	HRESULT displaySentences(bool frozen);
+	void addSentence(CAdSentence *sentence);
+	HRESULT changeScene(const char *filename, bool fadeIn);
+	HRESULT removeObject(CAdObject *object);
+	HRESULT addObject(CAdObject *object);
 	CAdScene *_scene;
-	HRESULT InitLoop();
+	HRESULT initLoop();
 	CAdGame();
 	virtual ~CAdGame();
 	CBArray<CAdObject *, CAdObject *> _objects;
@@ -140,11 +140,11 @@ public:
 	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesBranch;
 	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesGame;
 
-	virtual HRESULT loadFile(const char *Filename);
-	virtual HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
+	virtual HRESULT loadFile(const char *filename);
+	virtual HRESULT loadBuffer(byte *buffer, bool complete = true);
 
-	HRESULT LoadItemsFile(const char *Filename, bool Merge = false);
-	HRESULT LoadItemsBuffer(byte  *Buffer, bool Merge = false);
+	HRESULT loadItemsFile(const char *filename, bool merge = false);
+	HRESULT loadItemsBuffer(byte  *buffer, bool merge = false);
 
 
 	virtual void PublishNatives();
@@ -154,7 +154,7 @@ public:
 	virtual CScValue *scGetProperty(const char *name);
 	virtual HRESULT scSetProperty(const char *name, CScValue *value);
 	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
-	bool ValidMouse();
+	bool validMouse();
 };
 
 } // end of namespace WinterMute

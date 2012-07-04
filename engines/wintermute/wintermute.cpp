@@ -200,7 +200,7 @@ int WinterMuteEngine::init() {
 	
 	_game->initialize2();
 	
-	_game->getDebugMgr()->OnGameInit();
+	_game->getDebugMgr()->onGameInit();
 	_game->_scEngine->LoadBreakpoints();
 	
 	
@@ -239,7 +239,7 @@ int WinterMuteEngine::init() {
 		_game = NULL;
 		return false;
 	}
-	_game->SetWindowTitle();
+	_game->setWindowTitle();
 	_game->_renderer->_ready = true;
 	_game->_miniUpdateEnabled = true;
 	
@@ -249,11 +249,11 @@ int WinterMuteEngine::init() {
 	if (ConfMan.hasKey("save_slot")) {
 		int slot = ConfMan.getInt("save_slot");
 		Common::String str = Common::String::format("save00%d.DirtySplitSav", slot);
-		_game->LoadGame(str.c_str());
+		_game->loadGame(str.c_str());
 	}
 	
 	if (SaveGame) {
-		_game->LoadGame(SaveGame);
+		_game->loadGame(SaveGame);
 		delete [] SaveGame;
 	}
 	
@@ -277,10 +277,10 @@ int WinterMuteEngine::messageLoop() {
 		}
 		
 		if (_game && _game->_renderer->_active && _game->_renderer->_ready) {
-			_game->DisplayContent();
-			_game->DisplayQuickMsg();
+			_game->displayContent();
+			_game->displayQuickMsg();
 
-			_game->DisplayDebugInfo();
+			_game->displayDebugInfo();
 
 			time = _system->getMillis();
 			diff = time - prevTime;
@@ -289,7 +289,7 @@ int WinterMuteEngine::messageLoop() {
 
 			// ***** flip
 			if (!_game->_suspendedRendering) _game->_renderer->flip();
-			if (_game->_loading) _game->LoadGame(_game->_scheduledLoadSlot);
+			if (_game->_loading) _game->loadGame(_game->_scheduledLoadSlot);
 			prevTime = time;
 		}
 		if (_game->_quitting) break;

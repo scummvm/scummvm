@@ -696,12 +696,12 @@ HRESULT CAdActor::update() {
 				if (_tempSprite2) {
 					_tempSprite2->Reset();
 					_currentSprite = _tempSprite2;
-					((CAdGame *)Game)->AddSentence(_sentence);
+					((CAdGame *)Game)->addSentence(_sentence);
 				}
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((CAdGame *)Game)->AddSentence(_sentence);
+			((CAdGame *)Game)->addSentence(_sentence);
 		}
 	}
 	break;
@@ -898,7 +898,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		CScValue *val = stack->pop();
 
 		// turn to object?
-		if (val->isNative() && Game->ValidObject((CBObject *)val->getNative())) {
+		if (val->isNative() && Game->validObject((CBObject *)val->getNative())) {
 			CBObject *obj = (CBObject *)val->getNative();
 			int angle = (int)(atan2((double)(obj->_posY - _posY), (double)(obj->_posX - _posX)) * (180 / 3.14));
 			dir = (int)angleToDirection(angle);

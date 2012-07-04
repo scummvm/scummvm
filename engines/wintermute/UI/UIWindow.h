@@ -73,7 +73,7 @@ public:
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	CBArray<CUIObject *, CUIObject *> _widgets;
 	TTextAlign _titleAlign;
-	HRESULT loadFile(const char *Filename);
+	HRESULT loadFile(const char *filename);
 	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
 	CUITiledImage *_backInactive;
 	CBFont *_fontInactive;

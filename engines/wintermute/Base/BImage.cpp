@@ -112,11 +112,11 @@ void CBImage::copyFrom(Graphics::Surface *surface) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBImage::SaveBMPFile(const char *Filename) {
+HRESULT CBImage::SaveBMPFile(const char *filename) {
 #if 0
 	if (!_bitmap) return E_FAIL;
 
-	if (FreeImage_Save(FIF_BMP, _bitmap, Filename)) return S_OK;
+	if (FreeImage_Save(FIF_BMP, _bitmap, filename)) return S_OK;
 	else return E_FAIL;
 #endif
 	return E_FAIL;

@@ -240,7 +240,7 @@ HRESULT CScScript::InitTables() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Create(const char *Filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner) {
+HRESULT CScScript::Create(const char *filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner) {
 	cleanup();
 
 	_thread = false;
@@ -249,8 +249,8 @@ HRESULT CScScript::Create(const char *Filename, byte *Buffer, uint32 Size, CBScr
 	delete[] _threadEvent;
 	_threadEvent = NULL;
 
-	_filename = new char[strlen(Filename) + 1];
-	if (_filename) strcpy(_filename, Filename);
+	_filename = new char[strlen(filename) + 1];
+	if (_filename) strcpy(_filename, filename);
 
 	_buffer = new byte [Size];
 	if (!_buffer) return E_FAIL;
@@ -491,11 +491,11 @@ HRESULT CScScript::ExecuteInstruction() {
 		if (_scopeStack->_sP < 0) {
 			_globals->setProp(_symbols[dw], _operand);
 			if (Game->getDebugMgr()->_enabled)
-				Game->getDebugMgr()->OnVariableInit(WME_DBGVAR_SCRIPT, this, NULL, _globals->getProp(_symbols[dw]), _symbols[dw]);
+				Game->getDebugMgr()->onVariableInit(WME_DBGVAR_SCRIPT, this, NULL, _globals->getProp(_symbols[dw]), _symbols[dw]);
 		} else {
 			_scopeStack->getTop()->setProp(_symbols[dw], _operand);
 			if (Game->getDebugMgr()->_enabled)
-				Game->getDebugMgr()->OnVariableInit(WME_DBGVAR_SCOPE, this, _scopeStack->getTop(), _scopeStack->getTop()->getProp(_symbols[dw]), _symbols[dw]);
+				Game->getDebugMgr()->onVariableInit(WME_DBGVAR_SCOPE, this, _scopeStack->getTop(), _scopeStack->getTop()->getProp(_symbols[dw]), _symbols[dw]);
 		}
 
 		break;
@@ -510,20 +510,20 @@ HRESULT CScScript::ExecuteInstruction() {
 			_engine->_globals->setProp(_symbols[dw], _operand, false, inst == II_DEF_CONST_VAR);
 
 			if (Game->getDebugMgr()->_enabled)
-				Game->getDebugMgr()->OnVariableInit(WME_DBGVAR_GLOBAL, this, NULL, _engine->_globals->getProp(_symbols[dw]), _symbols[dw]);
+				Game->getDebugMgr()->onVariableInit(WME_DBGVAR_GLOBAL, this, NULL, _engine->_globals->getProp(_symbols[dw]), _symbols[dw]);
 		}
 		break;
 	}
 
 	case II_RET:
 		if (_scopeStack->_sP >= 0 && _callStack->_sP >= 0) {
-			Game->getDebugMgr()->OnScriptShutdownScope(this, _scopeStack->getTop());
+			Game->getDebugMgr()->onScriptShutdownScope(this, _scopeStack->getTop());
 
 			_scopeStack->pop();
 			_iP = (uint32)_callStack->pop()->getInt();
 
-			if (_scopeStack->_sP < 0) Game->getDebugMgr()->OnScriptChangeScope(this, NULL);
-			else Game->getDebugMgr()->OnScriptChangeScope(this, _scopeStack->getTop());
+			if (_scopeStack->_sP < 0) Game->getDebugMgr()->onScriptChangeScope(this, NULL);
+			else Game->getDebugMgr()->onScriptChangeScope(this, _scopeStack->getTop());
 		} else {
 			if (_thread) {
 				_state = SCRIPT_THREAD_FINISHED;
@@ -640,8 +640,8 @@ HRESULT CScScript::ExecuteInstruction() {
 		_operand->setNULL();
 		_scopeStack->push(_operand);
 
-		if (_scopeStack->_sP < 0) Game->getDebugMgr()->OnScriptChangeScope(this, NULL);
-		else Game->getDebugMgr()->OnScriptChangeScope(this, _scopeStack->getTop());
+		if (_scopeStack->_sP < 0) Game->getDebugMgr()->onScriptChangeScope(this, NULL);
+		else Game->getDebugMgr()->onScriptChangeScope(this, _scopeStack->getTop());
 
 		break;
 
@@ -692,7 +692,7 @@ HRESULT CScScript::ExecuteInstruction() {
 			}
 
 			if (Game->getDebugMgr()->_enabled)
-				Game->getDebugMgr()->OnVariableChangeValue(var, val);
+				Game->getDebugMgr()->onVariableChangeValue(var, val);
 		}
 
 		break;
@@ -758,7 +758,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		} else var->setProp(str, val);
 
 		if (Game->getDebugMgr()->_enabled)
-			Game->getDebugMgr()->OnVariableChangeValue(var, NULL);
+			Game->getDebugMgr()->onVariableChangeValue(var, NULL);
 
 		break;
 	}
@@ -1023,16 +1023,16 @@ HRESULT CScScript::ExecuteInstruction() {
 		if (NewLine != _currentLine) {
 			_currentLine = NewLine;
 			if (Game->getDebugMgr()->_enabled) {
-				Game->getDebugMgr()->OnScriptChangeLine(this, _currentLine);
+				Game->getDebugMgr()->onScriptChangeLine(this, _currentLine);
 				for (int i = 0; i < _breakpoints.GetSize(); i++) {
 					if (_breakpoints[i] == _currentLine) {
-						Game->getDebugMgr()->OnScriptHitBreakpoint(this);
+						Game->getDebugMgr()->onScriptHitBreakpoint(this);
 						Sleep(0);
 						break;
 					}
 				}
 				if (_tracingMode) {
-					Game->getDebugMgr()->OnScriptHitBreakpoint(this);
+					Game->getDebugMgr()->onScriptHitBreakpoint(this);
 					Sleep(0);
 					break;
 				}
@@ -1259,7 +1259,7 @@ CScScript *CScScript::InvokeEventHandler(const char *EventName, bool Unbreakable
 		if (SUCCEEDED(ret)) {
 			thread->_unbreakable = Unbreakable;
 			_engine->_scripts.Add(thread);
-			Game->getDebugMgr()->OnScriptEventThreadInit(thread, this, EventName);
+			Game->getDebugMgr()->onScriptEventThreadInit(thread, this, EventName);
 			return thread;
 		} else {
 			delete thread;

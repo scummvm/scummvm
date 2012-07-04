@@ -195,7 +195,7 @@ HRESULT CBPersistMgr::initSave(const char *desc) {
 		putDWORD(magic);
 
 		byte VerMajor, VerMinor, ExtMajor, ExtMinor;
-		Game->GetVersion(&VerMajor, &VerMinor, &ExtMajor, &ExtMinor);
+		Game->getVersion(&VerMajor, &VerMinor, &ExtMajor, &ExtMinor);
 		//uint32 Version = MAKELONG(MAKEWORD(VerMajor, VerMinor), MAKEWORD(ExtMajor, ExtMinor));
 		_saveStream->writeByte(VerMajor);
 		_saveStream->writeByte(VerMinor);
@@ -250,7 +250,7 @@ HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
 	_saving = false;
 
 	_loadStream = g_system->getSavefileManager()->openForLoading(filename);
-	//_buffer = Game->_fileManager->readWholeFile(Filename, &_bufferSize);
+	//_buffer = Game->_fileManager->readWholeFile(filename, &_bufferSize);
 	if (_loadStream) {
 		uint32 Magic;
 		Magic = getDWORD();

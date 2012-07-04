@@ -52,7 +52,7 @@ CAdInventory::~CAdInventory() {
 HRESULT CAdInventory::InsertItem(const char *name, const char *InsertAfter) {
 	if (name == NULL) return E_FAIL;
 
-	CAdItem *item = ((CAdGame *)Game)->GetItemByName(name);
+	CAdItem *item = ((CAdGame *)Game)->getItemByName(name);
 	if (item == NULL) return E_FAIL;
 
 	int InsertIndex = -1;

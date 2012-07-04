@@ -97,16 +97,16 @@ HRESULT CBSurfaceStorage::removeSurface(CBSurface *surface) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBSurface *CBSurfaceStorage::addSurface(const char *Filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
 	for (int i = 0; i < _surfaces.GetSize(); i++) {
-		if (scumm_stricmp(_surfaces[i]->_filename, Filename) == 0) {
+		if (scumm_stricmp(_surfaces[i]->_filename, filename) == 0) {
 			_surfaces[i]->_referenceCount++;
 			return _surfaces[i];
 		}
 	}
 
-	if (!Game->_fileManager->hasFile(Filename)) {
-		if (Filename) Game->LOG(0, "Missing image: '%s'", Filename);
+	if (!Game->_fileManager->hasFile(filename)) {
+		if (filename) Game->LOG(0, "Missing image: '%s'", filename);
 		if (Game->_dEBUG_DebugMode)
 			return addSurface("invalid_debug.bmp", default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
 		else
@@ -118,7 +118,7 @@ CBSurface *CBSurfaceStorage::addSurface(const char *Filename, bool default_ck, b
 
 	if (!surface) return NULL;
 
-	if (FAILED(surface->create(Filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded))) {
+	if (FAILED(surface->create(filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded))) {
 		delete surface;
 		return NULL;
 	} else {

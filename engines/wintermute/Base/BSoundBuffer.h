@@ -71,7 +71,7 @@ public:
 
 	void setType(TSoundType Type);
 
-	HRESULT loadFromFile(const char *Filename, bool ForceReload = false);
+	HRESULT loadFromFile(const char *filename, bool ForceReload = false);
 	void setStreaming(bool Streamed, uint32 NumBlocks = 0, uint32 BlockSize = 0);
 	HRESULT applyFX(TSFXType Type, float Param1, float Param2, float Param3, float Param4);
 
