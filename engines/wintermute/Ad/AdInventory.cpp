@@ -49,32 +49,32 @@ CAdInventory::~CAdInventory() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::InsertItem(const char *name, const char *InsertAfter) {
+HRESULT CAdInventory::insertItem(const char *name, const char *insertAfter) {
 	if (name == NULL) return E_FAIL;
 
 	CAdItem *item = ((CAdGame *)Game)->getItemByName(name);
 	if (item == NULL) return E_FAIL;
 
-	int InsertIndex = -1;
+	int insertIndex = -1;
 	for (int i = 0; i < _takenItems.GetSize(); i++) {
 		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
 			_takenItems.RemoveAt(i);
 			i--;
 			continue;
 		}
-		if (InsertAfter && scumm_stricmp(_takenItems[i]->_name, InsertAfter) == 0) InsertIndex = i + 1;
+		if (insertAfter && scumm_stricmp(_takenItems[i]->_name, insertAfter) == 0) insertIndex = i + 1;
 	}
 
 
-	if (InsertIndex == -1) _takenItems.Add(item);
-	else _takenItems.InsertAt(InsertIndex, item);
+	if (insertIndex == -1) _takenItems.Add(item);
+	else _takenItems.InsertAt(insertIndex, item);
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::RemoveItem(const char *name) {
+HRESULT CAdInventory::removeItem(const char *name) {
 	if (name == NULL) return E_FAIL;
 
 	for (int i = 0; i < _takenItems.GetSize(); i++) {
@@ -91,11 +91,11 @@ HRESULT CAdInventory::RemoveItem(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::RemoveItem(CAdItem *Item) {
-	if (Item == NULL) return E_FAIL;
+HRESULT CAdInventory::removeItem(CAdItem *item) {
+	if (item == NULL) return E_FAIL;
 
 	for (int i = 0; i < _takenItems.GetSize(); i++) {
-		if (_takenItems[i] == Item) {
+		if (_takenItems[i] == item) {
 			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
 			_takenItems.RemoveAt(i);
 			return S_OK;

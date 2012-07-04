@@ -360,7 +360,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			const char *ItemName = val->getString();
 			val = stack->pop();
 			const char *InsertAfter = val->isNULL() ? NULL : val->getString();
-			if (FAILED(_inventory->InsertItem(ItemName, InsertAfter))) script->RuntimeError("Cannot add item '%s' to inventory", ItemName);
+			if (FAILED(_inventory->insertItem(ItemName, InsertAfter))) script->RuntimeError("Cannot add item '%s' to inventory", ItemName);
 			else {
 				// hide associated entities
 				((CAdGame *)Game)->_scene->handleItemAssociations(ItemName, false);
@@ -385,7 +385,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		CScValue *val = stack->pop();
 		if (!val->isNULL()) {
-			if (FAILED(_inventory->RemoveItem(val->getString()))) script->RuntimeError("Cannot remove item '%s' from inventory", val->getString());
+			if (FAILED(_inventory->removeItem(val->getString()))) script->RuntimeError("Cannot remove item '%s' from inventory", val->getString());
 			else {
 				// show associated entities
 				((CAdGame *)Game)->_scene->handleItemAssociations(val->getString(), true);

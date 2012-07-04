@@ -1847,7 +1847,7 @@ HRESULT CAdGame::deleteItem(CAdItem *item) {
 
 	// remove from all inventories
 	for (int i = 0; i < _inventories.GetSize(); i++) {
-		_inventories[i]->RemoveItem(item);
+		_inventories[i]->removeItem(item);
 	}
 
 	// remove object

@@ -38,9 +38,9 @@ class CAdItem;
 class CAdInventory : public CBObject {
 public:
 	DECLARE_PERSISTENT(CAdInventory, CBObject)
-	HRESULT RemoveItem(const char *name);
-	HRESULT RemoveItem(CAdItem *Item);
-	HRESULT InsertItem(const char *name, const char *InsertAfter = NULL);
+	HRESULT removeItem(const char *name);
+	HRESULT removeItem(CAdItem *Item);
+	HRESULT insertItem(const char *name, const char *insertAfter = NULL);
 	CAdInventory(CBGame *inGame);
 	virtual ~CAdInventory();
 	CBArray<CAdItem *, CAdItem *> _takenItems;
