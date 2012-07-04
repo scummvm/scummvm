@@ -1132,57 +1132,73 @@ static const char *const sci21_default_knames[] = {
 // Base set of opcode formats. They're copied and adjusted slightly in
 // script_adjust_opcode_format depending on SCI version.
 static const opcode_format g_base_opcode_formats[128][4] = {
-	/*00*/
+	// 00 - 03 / bnot, add, sub, mul
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*04*/
+	// 04 - 07 / div, mod, shr, shl
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*08*/
+	// 08 - 0B / xor, and, or, neg
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*0C*/
+	// 0C - 0F / not, eq, ne, gt
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*10*/
+	// 10 - 13 / ge, lt, le, ugt
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*14*/
+	// 14 - 17 / uge, ult, ule, bt
 	{Script_None}, {Script_None}, {Script_None}, {Script_SRelative},
-	/*18*/
+	// 18 - 1B / bnt, jmp, ldi, push
 	{Script_SRelative}, {Script_SRelative}, {Script_SVariable}, {Script_None},
-	/*1C*/
+	// 1C - 1F / pushi, toss, dup, link
 	{Script_SVariable}, {Script_None}, {Script_None}, {Script_Variable},
-	/*20*/
+	// 20 - 23 / call, callk, callb, calle
 	{Script_SRelative, Script_Byte}, {Script_Variable, Script_Byte}, {Script_Variable, Script_Byte}, {Script_Variable, Script_SVariable, Script_Byte},
-	/*24 (24=ret)*/
+	// 24 - 27 / ret, send, dummy, dummy
 	{Script_End}, {Script_Byte}, {Script_Invalid}, {Script_Invalid},
-	/*28*/
+	// 28 - 2B / class, dummy, self, super
 	{Script_Variable}, {Script_Invalid}, {Script_Byte}, {Script_Variable, Script_Byte},
-	/*2C*/
+	// 2C - 2F / rest, lea, selfID, dummy
 	{Script_SVariable}, {Script_SVariable, Script_Variable}, {Script_None}, {Script_Invalid},
-	/*30*/
+	// 30 - 33 / pprev, pToa, aTop, pTos
 	{Script_None}, {Script_Property}, {Script_Property}, {Script_Property},
-	/*34*/
+	// 34 - 37 / sTop, ipToa, dpToa, ipTos
 	{Script_Property}, {Script_Property}, {Script_Property}, {Script_Property},
-	/*38*/
+	// 38 - 3B / dpTos, lofsa, lofss, push0
 	{Script_Property}, {Script_SRelative}, {Script_SRelative}, {Script_None},
-	/*3C*/
+	// 3C - 3F / push1, push2, pushSelf, line
 	{Script_None}, {Script_None}, {Script_None}, {Script_Word},
-	/*40-4F*/
+	// ------------------------------------------------------------------------
+	// 40 - 43 / lag, lal, lat, lap
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 44 - 47 / lsg, lsl, lst, lsp
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 48 - 4B / lagi, lali, lati, lapi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 4C - 4F / lsgi, lsli, lsti, lspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
-	/*50-5F*/
+	// ------------------------------------------------------------------------
+	// 50 - 53 / sag, sal, sat, sap
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 54 - 57 / ssg, ssl, sst, ssp
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 58 - 5B / sagi, sali, sati, sapi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 5C - 5F / ssgi, ssli, ssti, sspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
-	/*60-6F*/
+	// ------------------------------------------------------------------------
+	// 60 - 63 / plusag, plusal, plusat, plusap
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 64 - 67 / plussg, plussl, plusst, plussp
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 68 - 6B / plusagi, plusali, plusati, plusapi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 6C - 6F / plussgi, plussli, plussti, plusspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
-	/*70-7F*/
+	// ------------------------------------------------------------------------
+	// 70 - 73 / minusag, minusal, minusat, minusap
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 74 - 77 / minussg, minussl, minusst, minussp
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 78 - 7B / minusagi, minusali, minusati, minusapi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 7C - 7F / minussgi, minussli, minussti, minusspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param}
 };
 #undef END
