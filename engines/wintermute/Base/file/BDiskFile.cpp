@@ -45,16 +45,16 @@ void correctSlashes(char *fileName) {
 	}
 }
 
-Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileManager *fileManager) {
-	char FullPath[MAX_PATH];
+Common::SeekableReadStream *openDiskFile(const Common::String &filename, CBFileManager *fileManager) {
+	char fullPath[MAX_PATH];
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = NULL;
 
 	for (int i = 0; i < fileManager->_singlePaths.GetSize(); i++) {
-		sprintf(FullPath, "%s%s", fileManager->_singlePaths[i], Filename.c_str());
-		correctSlashes(FullPath);
+		sprintf(fullPath, "%s%s", fileManager->_singlePaths[i], filename.c_str());
+		correctSlashes(fullPath);
 		Common::File *tempFile = new Common::File();
-		if (tempFile->open(FullPath)) {
+		if (tempFile->open(fullPath)) {
 			file = tempFile;
 		} else {
 			delete tempFile;
@@ -63,11 +63,11 @@ Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileM
 
 	// if we didn't find it in search paths, try to open directly
 	if (!file) {
-		strcpy(FullPath, Filename.c_str());
-		correctSlashes(FullPath);
+		strcpy(fullPath, filename.c_str());
+		correctSlashes(fullPath);
 
 		Common::File *tempFile = new Common::File();
-		if (tempFile->open(FullPath)) {
+		if (tempFile->open(fullPath)) {
 			file = tempFile;
 		} else {
 			delete tempFile;
@@ -90,14 +90,14 @@ Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileM
 
 			byte *CompBuffer = new byte[CompSize];
 			if (!CompBuffer) {
-				error("Error allocating memory for compressed file '%s'", Filename.c_str());
+				error("Error allocating memory for compressed file '%s'", filename.c_str());
 				delete file;
 				return NULL;
 			}
 
 			byte *data = new byte[UncompSize];
 			if (!data) {
-				error("Error allocating buffer for file '%s'", Filename.c_str());
+				error("Error allocating buffer for file '%s'", filename.c_str());
 				delete [] CompBuffer;
 				delete file;
 				return NULL;
@@ -106,7 +106,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &Filename, CBFileM
 			file->read(CompBuffer, CompSize);
 
 			if (Common::uncompress(data, (unsigned long *)&UncompSize, CompBuffer, CompSize) != true) {
-				error("Error uncompressing file '%s'", Filename.c_str());
+				error("Error uncompressing file '%s'", filename.c_str());
 				delete [] CompBuffer;
 				delete file;
 				return NULL;

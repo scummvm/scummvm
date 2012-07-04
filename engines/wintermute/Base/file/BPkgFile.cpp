@@ -65,11 +65,11 @@ public:
 	}
 };
 
-Common::SeekableReadStream *openPkgFile(const Common::String &Filename, CBFileManager *fileManager) {
+Common::SeekableReadStream *openPkgFile(const Common::String &filename, CBFileManager *fileManager) {
 	CBFileEntry *fileEntry;
 	Common::SeekableReadStream *file = NULL;
 	char fileName[MAX_PATH];
-	strcpy(fileName, Filename.c_str());
+	strcpy(fileName, filename.c_str());
 
 	// correct slashes
 	for (uint32 i = 0; i < strlen(fileName); i++) {

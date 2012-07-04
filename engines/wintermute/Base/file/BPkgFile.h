@@ -39,7 +39,7 @@ class File;
 namespace WinterMute {
 
 class CBFileManager;
-Common::SeekableReadStream *openPkgFile(const Common::String &Filename, CBFileManager *fileManager);
+Common::SeekableReadStream *openPkgFile(const Common::String &filename, CBFileManager *fileManager);
 
 } // end of namespace WinterMute
 
