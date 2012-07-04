@@ -106,40 +106,38 @@ void EventRecorder::deinit() {
 
 
 void EventRecorder::processMillis(uint32 &millis) {
-	if (_recordMode == kPassthrough) {
-		return;
-	}
 	if (!_initialized) {
 		return;
 	}
-	updateSubsystems();
-	if (_recordMode == kRecorderRecord) {
-		uint32 _millisDelay;
-		_millisDelay = millis - _lastMillis;
+	uint32 millisDelay;
+	RecorderEvent timerEvent;
+	switch (_recordMode) {
+	case kRecorderRecord:
+		updateSubsystems();
+		millisDelay = millis - _lastMillis;
 		_lastMillis = millis;
-		_fakeTimer += _millisDelay;
-		RecorderEvent timerEvent;
+		_fakeTimer += millisDelay;
 		timerEvent.type = EVENT_TIMER;
 		timerEvent.time = _fakeTimer;
 		_playbackFile.writeEvent(timerEvent);
-		if ((_fakeTimer - _lastScreenshotTime) > _screenshotPeriod) {
-			Graphics::Surface screen;
-			uint8 md5[16];
-			if (grabScreenAndComputeMD5(screen, md5)) {
-				_lastScreenshotTime = _fakeTimer;
-				_playbackFile.saveScreenShot(screen, md5);
-				screen.free();
-			}
-		}
-	}
-	if (_recordMode == kRecorderPlayback) {
+		takeScreenshot();
+		_timerManager->handler();
+		break;
+	case kRecorderPlayback:
+		updateSubsystems();
 		if (_nextEvent.type == EVENT_TIMER) {
 			_fakeTimer = _nextEvent.time;
 			_nextEvent = _playbackFile.getNextEvent();
 		}
+		_timerManager->handler();
 		millis = _fakeTimer;
+		break;
+	case kRecorderPlaybackPause:
+		millis = _fakeTimer;
+		break;
+	default:
+		break;
 	}
-	_timerManager->handler();
 }
 
 bool EventRecorder::processDelayMillis() {
@@ -156,7 +154,6 @@ void EventRecorder::checkForKeyCode(const Event &event) {
 
 bool EventRecorder::notifyEvent(const Event &ev) {
 	StackLock lock(_recorderMutex);
-	checkForKeyCode(ev);
 	if (_recordMode != kRecorderRecord)
 		return false;
 	if (!_initialized) {
@@ -435,6 +432,7 @@ void EventRecorder::updateSubsystems() {
 }
 
 List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
+	checkForKeyCode(ev);
 	if ((_recordMode == kRecorderPlayback) && (ev.synthetic != true)) {
 		return List<Event>();
 	} else {
@@ -473,6 +471,18 @@ void EventRecorder::setNotes(const Common::String &desc) {
 
 void EventRecorder::setName(const Common::String &name) {
 	_playbackFile.getHeader().name = name;
+}
+
+void EventRecorder::takeScreenshot() {
+	if ((_fakeTimer - _lastScreenshotTime) > _screenshotPeriod) {
+		Graphics::Surface screen;
+		uint8 md5[16];
+		if (grabScreenAndComputeMD5(screen, md5)) {
+			_lastScreenshotTime = _fakeTimer;
+			_playbackFile.saveScreenShot(screen, md5);
+			screen.free();
+		}
+	}
 }
 
 } // End of namespace Common

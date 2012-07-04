@@ -75,6 +75,9 @@ public:
 	bool processDelayMillis();
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
+
+	void takeScreenshot();
+
 	SdlMixerManager *getMixerManager();
 	DefaultTimerManager *getTimerManager();
 	void setAuthor(const Common::String &author);
