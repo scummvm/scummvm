@@ -55,23 +55,23 @@ CBBase::~CBBase() {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBBase::getEditorProp(const char *PropName, const char *InitVal) {
-	_editorPropsIter = _editorProps.find(PropName);
+const char *CBBase::getEditorProp(const char *propName, const char *initVal) {
+	_editorPropsIter = _editorProps.find(propName);
 	if (_editorPropsIter != _editorProps.end())
 		return _editorPropsIter->_value.c_str();
 	//return _editorPropsIter->second.c_str(); // <- TODO Clean
-	else return InitVal;
+	else return initVal;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBBase::setEditorProp(const char *PropName, const char *PropValue) {
-	if (PropName == NULL) return E_FAIL;
+HRESULT CBBase::setEditorProp(const char *propName, const char *propValue) {
+	if (propName == NULL) return E_FAIL;
 
-	if (PropValue == NULL) {
-		_editorProps.erase(PropName);
+	if (propValue == NULL) {
+		_editorProps.erase(propName);
 	} else {
-		_editorProps[PropName] = PropValue;
+		_editorProps[propName] = propValue;
 	}
 	return S_OK;
 }
@@ -92,7 +92,8 @@ HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_END
 
 
-	if (!Game->_editorMode) return S_OK;
+	if (!Game->_editorMode)
+		return S_OK;
 
 
 	byte *params;
@@ -107,51 +108,51 @@ HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	char *PropName = NULL;
-	char *PropValue = NULL;
+	char *propName = NULL;
+	char *propValue = NULL;
 
 	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME:
-			delete[] PropName;
-			PropName = new char[strlen((char *)params) + 1];
-			if (PropName) strcpy(PropName, (char *)params);
+			delete[] propName;
+			propName = new char[strlen((char *)params) + 1];
+			if (propName) strcpy(propName, (char *)params);
 			else cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_VALUE:
-			delete[] PropValue;
-			PropValue = new char[strlen((char *)params) + 1];
-			if (PropValue) strcpy(PropValue, (char *)params);
+			delete[] propValue;
+			propValue = new char[strlen((char *)params) + 1];
+			if (propValue) strcpy(propValue, (char *)params);
 			else cmd = PARSERR_GENERIC;
 			break;
 		}
 
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		delete[] PropName;
-		delete[] PropValue;
-		PropName = NULL;
-		PropValue = NULL;
+		delete[] propName;
+		delete[] propValue;
+		propName = NULL;
+		propValue = NULL;
 		Game->LOG(0, "Syntax error in EDITOR_PROPERTY definition");
 		return E_FAIL;
 	}
-	if (cmd == PARSERR_GENERIC || PropName == NULL || PropValue == NULL) {
-		delete[] PropName;
-		delete[] PropValue;
-		PropName = NULL;
-		PropValue = NULL;
+	if (cmd == PARSERR_GENERIC || propName == NULL || propValue == NULL) {
+		delete[] propName;
+		delete[] propValue;
+		propName = NULL;
+		propValue = NULL;
 		Game->LOG(0, "Error loading EDITOR_PROPERTY definition");
 		return E_FAIL;
 	}
 
 
-	setEditorProp(PropName, PropValue);
+	setEditorProp(propName, propValue);
 
-	delete[] PropName;
-	delete[] PropValue;
-	PropName = NULL;
-	PropValue = NULL;
+	delete[] propName;
+	delete[] propValue;
+	propName = NULL;
+	propValue = NULL;
 
 	return S_OK;
 }

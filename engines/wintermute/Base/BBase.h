@@ -43,11 +43,11 @@ class CBDynBuffer;
 class CBBase {
 public:
 	bool _persistable;
-	HRESULT setEditorProp(const char *PropName, const char *PropValue);
-	const char *getEditorProp(const char *PropName, const char *InitVal = NULL);
+	HRESULT setEditorProp(const char *propName, const char *propValue);
+	const char *getEditorProp(const char *propName, const char *initVal = NULL);
 	CBBase(TDynamicConstructor, TDynamicConstructor) {};
-	HRESULT parseEditorProperty(byte  *Buffer, bool Complete = true);
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent = 0);
+	HRESULT parseEditorProperty(byte *buffer, bool complete = true);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent = 0);
 	CBBase();
 	CBGame *Game;
 	CBBase(CBGame *GameOwner);
