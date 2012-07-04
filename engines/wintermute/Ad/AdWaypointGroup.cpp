@@ -170,7 +170,8 @@ HRESULT CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
-	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
+	if (_scProp)
+		_scProp->saveAsText(buffer, indent + 2);
 	CBBase::saveAsText(buffer, indent + 2);
 
 	for (int i = 0; i < _points.GetSize(); i++) {
@@ -238,23 +239,21 @@ HRESULT CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::Mimic(CAdWaypointGroup *Wpt, float Scale, int X, int Y) {
-	if (Scale == _lastMimicScale && X == _lastMimicX && Y == _lastMimicY) return S_OK;
+HRESULT CAdWaypointGroup::mimic(CAdWaypointGroup *wpt, float scale, int argX, int argY) {
+	if (scale == _lastMimicScale && argX == _lastMimicX && argY == _lastMimicY) return S_OK;
 
 	cleanup();
 
-	for (int i = 0; i < Wpt->_points.GetSize(); i++) {
-		int x, y;
+	for (int i = 0; i < wpt->_points.GetSize(); i++) {
+		int x = (int)((float)wpt->_points[i]->x * scale / 100.0f);
+		int y = (int)((float)wpt->_points[i]->y * scale / 100.0f);
 
-		x = (int)((float)Wpt->_points[i]->x * Scale / 100.0f);
-		y = (int)((float)Wpt->_points[i]->y * Scale / 100.0f);
-
-		_points.Add(new CBPoint(x + X, y + Y));
+		_points.Add(new CBPoint(x + argX, y + argY));
 	}
 
-	_lastMimicScale = Scale;
-	_lastMimicX = X;
-	_lastMimicY = Y;
+	_lastMimicScale = scale;
+	_lastMimicX = argX;
+	_lastMimicY = argY;
 
 	return S_OK;
 }

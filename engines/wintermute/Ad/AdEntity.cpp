@@ -366,7 +366,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			} else {
 				_wptGroup = wpt;
 				_currentWptGroup = cwpt;
-				_currentWptGroup->Mimic(_wptGroup);
+				_currentWptGroup->mimic(_wptGroup);
 			}
 		}
 		break;

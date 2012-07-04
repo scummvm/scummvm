@@ -32,19 +32,21 @@
 namespace WinterMute {
 
 typedef enum {
-    GAME_NORMAL, GAME_WAITING_RESPONSE
+    GAME_NORMAL,
+	GAME_WAITING_RESPONSE
 } TGameStateEx;
 
-
 typedef enum {
-    OBJECT_ENTITY, OBJECT_REGION, OBJECT_ACTOR, OBJECT_NONE
+    OBJECT_ENTITY,
+	OBJECT_REGION,
+	OBJECT_ACTOR,
+	OBJECT_NONE
 } TObjectType;
 
-
 typedef enum {
-    ENTITY_NORMAL, ENTITY_SOUND
+    ENTITY_NORMAL,
+	ENTITY_SOUND
 } TEntityType;
-
 
 typedef enum {
     STATE_NONE,
@@ -63,29 +65,41 @@ typedef enum {
 } TObjectState;
 
 typedef enum {
-    DIRECT_WALK_NONE, DIRECT_WALK_FW, DIRECT_WALK_BK
+    DIRECT_WALK_NONE,
+	DIRECT_WALK_FW,
+	DIRECT_WALK_BK
 } TDirectWalkMode;
 
 typedef enum {
-    DIRECT_TURN_NONE, DIRECT_TURN_CW, DIRECT_TURN_CCW
+    DIRECT_TURN_NONE,
+	DIRECT_TURN_CW,
+	DIRECT_TURN_CCW
 } TDirectTurnMode;
 
 typedef enum {
-    RESPONSE_TEXT, RESPONSE_ICON
+    RESPONSE_TEXT,
+	RESPONSE_ICON
 } TResponseStyle;
 
 typedef enum {
-    RESPONSE_ALWAYS, RESPONSE_ONCE, RESPONSE_ONCE_GAME
+    RESPONSE_ALWAYS,
+	RESPONSE_ONCE,
+	RESPONSE_ONCE_GAME
 } TResponseType;
 
 
 typedef enum {
-    TALK_SKIP_LEFT = 0, TALK_SKIP_RIGHT = 1, TALK_SKIP_BOTH = 2, TALK_SKIP_NONE = 3
+    TALK_SKIP_LEFT = 0,
+	TALK_SKIP_RIGHT = 1,
+	TALK_SKIP_BOTH = 2,
+	TALK_SKIP_NONE = 3
 } TTalkSkipButton;
 
-
 typedef enum {
-    GEOM_WAYPOINT, GEOM_WALKPLANE, GEOM_BLOCKED, GEOM_GENERIC
+    GEOM_WAYPOINT,
+	GEOM_WALKPLANE,
+	GEOM_BLOCKED,
+	GEOM_GENERIC
 } TGeomNodeType;
 
 } // end of namespace WinterMute

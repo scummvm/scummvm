@@ -161,21 +161,24 @@ HRESULT CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 		return E_FAIL;
 	}
 
-	if (_endTime == 0) _playToEnd = true;
-	else _playToEnd = false;
+	if (_endTime == 0)
+		_playToEnd = true;
+	else
+		_playToEnd = false;
 
 	if (_preCache && _spriteFilename) {
 		delete _sprite;
 		_sprite = new CBSprite(Game);
-		if (!_sprite || FAILED(_sprite->loadFile(_spriteFilename))) return E_FAIL;
+		if (!_sprite || FAILED(_sprite->loadFile(_spriteFilename)))
+			return E_FAIL;
 	}
 
 	if (_preCache && _spriteSetFilename) {
 		delete _spriteSet;
 		_spriteSet = new CAdSpriteSet(Game);
-		if (!_spriteSet || FAILED(_spriteSet->loadFile(_spriteSetFilename))) return E_FAIL;
+		if (!_spriteSet || FAILED(_spriteSet->loadFile(_spriteSetFilename)))
+			return E_FAIL;
 	}
-
 
 	return S_OK;
 }
@@ -241,22 +244,22 @@ HRESULT CAdTalkNode::loadSprite() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkNode::isInTimeInterval(uint32 Time, TDirection Dir) {
-	if (Time >= _startTime) {
+bool CAdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
+	if (time >= _startTime) {
 		if (_playToEnd) {
 			if ((_spriteFilename && _sprite == NULL) || (_sprite && _sprite->_finished == false)) return true;
-			else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->getSprite(Dir) && _spriteSet->getSprite(Dir)->_finished == false)) return true;
+			else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->_finished == false)) return true;
 			else return false;
-		} else return _endTime >= Time;
+		} else return _endTime >= time;
 	} else return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSprite *CAdTalkNode::getSprite(TDirection Dir) {
+CBSprite *CAdTalkNode::getSprite(TDirection dir) {
 	loadSprite();
 	if (_sprite) return _sprite;
-	else if (_spriteSet) return _spriteSet->getSprite(Dir);
+	else if (_spriteSet) return _spriteSet->getSprite(dir);
 	else return NULL;
 }
 

@@ -74,7 +74,7 @@ public:
 
 private:
 	char *_tempStance;
-	char *getStance(int Stance);
+	char *getStance(int stance);
 
 };
 

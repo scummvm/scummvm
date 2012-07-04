@@ -122,7 +122,7 @@ char *CAdSentence::getNextStance() {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdSentence::getStance(int Stance) {
+char *CAdSentence::getStance(int stance) {
 	if (_stances == NULL) return NULL;
 
 	if (_tempStance) delete [] _tempStance;
@@ -132,17 +132,17 @@ char *CAdSentence::getStance(int Stance) {
 	char *curr;
 	int pos;
 
-	if (Stance == 0) start = _stances;
+	if (stance == 0) start = _stances;
 	else {
 		pos = 0;
 		start = NULL;
 		curr = _stances;
-		while (pos < Stance) {
+		while (pos < stance) {
 			if (*curr == '\0') break;
 			if (*curr == ',') pos++;
 			curr++;
 		}
-		if (pos == Stance) start = curr;
+		if (pos == stance) start = curr;
 	}
 
 	if (start == NULL) return NULL;
@@ -273,23 +273,23 @@ HRESULT CAdSentence::setupTalkFile(const char *soundFilename) {
 HRESULT CAdSentence::update(TDirection dir) {
 	if (!_talkDef) return S_OK;
 
-	uint32 CurrentTime;
+	uint32 currentTime;
 	// if sound is available, synchronize with sound, otherwise use timer
 
 	/*
 	if (_sound) CurrentTime = _sound->GetPositionTime();
 	else CurrentTime = Game->_timer - _startTime;
 	*/
-	CurrentTime = Game->_timer - _startTime;
+	currentTime = Game->_timer - _startTime;
 
-	bool TalkNodeFound = false;
+	bool talkNodeFound = false;
 	for (int i = 0; i < _talkDef->_nodes.GetSize(); i++) {
-		if (_talkDef->_nodes[i]->isInTimeInterval(CurrentTime, dir)) {
-			TalkNodeFound = true;
+		if (_talkDef->_nodes[i]->isInTimeInterval(currentTime, dir)) {
+			talkNodeFound = true;
 
-			CBSprite *NewSprite = _talkDef->_nodes[i]->getSprite(dir);
-			if (NewSprite != _currentSprite) NewSprite->Reset();
-			_currentSprite = NewSprite;
+			CBSprite *newSprite = _talkDef->_nodes[i]->getSprite(dir);
+			if (newSprite != _currentSprite) newSprite->Reset();
+			_currentSprite = newSprite;
 
 			if (!_talkDef->_nodes[i]->_playToEnd) break;
 		}
@@ -297,11 +297,11 @@ HRESULT CAdSentence::update(TDirection dir) {
 
 
 	// no talk node, try to use default sprite instead (if any)
-	if (!TalkNodeFound) {
-		CBSprite *NewSprite = _talkDef->getDefaultSprite(dir);
-		if (NewSprite) {
-			if (NewSprite != _currentSprite) NewSprite->Reset();
-			_currentSprite = NewSprite;
+	if (!talkNodeFound) {
+		CBSprite *newSprite = _talkDef->getDefaultSprite(dir);
+		if (newSprite) {
+			if (newSprite != _currentSprite) newSprite->Reset();
+			_currentSprite = newSprite;
 		} else _currentSprite = NULL;
 	}
 

@@ -53,18 +53,18 @@ CAdSceneNode::~CAdSceneNode() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSceneNode::setEntity(CAdEntity *Entity) {
+HRESULT CAdSceneNode::setEntity(CAdEntity *entity) {
 	_type = OBJECT_ENTITY;
-	_entity = Entity;
-	return Game->registerObject(Entity);
+	_entity = entity;
+	return Game->registerObject(entity);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSceneNode::setRegion(CAdRegion *Region) {
+HRESULT CAdSceneNode::setRegion(CAdRegion *region) {
 	_type = OBJECT_REGION;
-	_region = Region;
-	return Game->registerObject(Region);
+	_region = region;
+	return Game->registerObject(region);
 }
 
 

@@ -1043,7 +1043,7 @@ HRESULT CAdObject::updateBlockRegion() {
 			_currentBlockRegion->Mimic(_blockRegion, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
 
 		if (_wptGroup && _currentWptGroup)
-			_currentWptGroup->Mimic(_wptGroup, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
+			_currentWptGroup->mimic(_wptGroup, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
 	}
 	return S_OK;
 }

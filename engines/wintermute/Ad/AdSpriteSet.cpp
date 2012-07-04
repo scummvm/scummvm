@@ -38,8 +38,8 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(CAdSpriteSet, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdSpriteSet::CAdSpriteSet(CBGame *inGame, CBObject *Owner): CBObject(inGame) {
-	_owner = Owner;
+CAdSpriteSet::CAdSpriteSet(CBGame *inGame, CBObject *owner): CBObject(inGame) {
+	_owner = owner;
 
 	for (int i = 0; i < NUM_DIRECTIONS; i++)
 		_sprites[i] = NULL;
@@ -90,7 +90,7 @@ TOKEN_DEF(TEMPLATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpriteCacheType CacheType) {
+HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType CacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SPRITESET)
 	TOKEN_TABLE(NAME)
@@ -122,7 +122,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpr
 	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params, LifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (FAILED(loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -133,7 +133,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpr
 			delete _sprites[DI_LEFT];
 			_sprites[DI_LEFT] = NULL;
 			spr = new CBSprite(Game, _owner);
-			if (!spr || FAILED(spr->loadFile((char *)params, LifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_LEFT] = spr;
 			break;
 
@@ -141,7 +141,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpr
 			delete _sprites[DI_RIGHT];
 			_sprites[DI_RIGHT] = NULL;
 			spr = new CBSprite(Game, _owner);
-			if (!spr || FAILED(spr->loadFile((char *)params, LifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_RIGHT] = spr;
 			break;
 
@@ -149,7 +149,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpr
 			delete _sprites[DI_UP];
 			_sprites[DI_UP] = NULL;
 			spr = new CBSprite(Game, _owner);
-			if (!spr || FAILED(spr->loadFile((char *)params, LifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_UP] = spr;
 			break;
 
@@ -157,7 +157,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpr
 			delete _sprites[DI_DOWN];
 			_sprites[DI_DOWN] = NULL;
 			spr = new CBSprite(Game, _owner);
-			if (!spr || FAILED(spr->loadFile((char *)params, LifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_DOWN] = spr;
 			break;
 
@@ -165,7 +165,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpr
 			delete _sprites[DI_UPLEFT];
 			_sprites[DI_UPLEFT] = NULL;
 			spr = new CBSprite(Game, _owner);
-			if (!spr || FAILED(spr->loadFile((char *)params, LifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_UPLEFT] = spr;
 			break;
 
@@ -173,7 +173,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpr
 			delete _sprites[DI_UPRIGHT];
 			_sprites[DI_UPRIGHT] = NULL;
 			spr = new CBSprite(Game, _owner);
-			if (!spr || FAILED(spr->loadFile((char *)params, LifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_UPRIGHT] = spr;
 			break;
 
@@ -181,7 +181,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpr
 			delete _sprites[DI_DOWNLEFT];
 			_sprites[DI_DOWNLEFT] = NULL;
 			spr = new CBSprite(Game, _owner);
-			if (!spr || FAILED(spr->loadFile((char *)params, LifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_DOWNLEFT] = spr;
 			break;
 
@@ -189,7 +189,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int LifeTime, TSpr
 			delete _sprites[DI_DOWNRIGHT];
 			_sprites[DI_DOWNRIGHT] = NULL;
 			spr = new CBSprite(Game, _owner);
-			if (!spr || FAILED(spr->loadFile((char *)params, LifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_DOWNRIGHT] = spr;
 			break;
 
@@ -229,26 +229,25 @@ HRESULT CAdSpriteSet::persist(CBPersistMgr *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 CBSprite *CAdSpriteSet::getSprite(TDirection direction) {
-	int Dir = (int)direction;
-	if (Dir < 0) Dir = 0;
-	if (Dir >= NUM_DIRECTIONS) Dir = NUM_DIRECTIONS - 1;
+	int dir = (int)direction;
+	if (dir < 0) dir = 0;
+	if (dir >= NUM_DIRECTIONS) dir = NUM_DIRECTIONS - 1;
 
 	CBSprite *ret = NULL;
 
 	// find nearest set sprite
-	int i;
-	int NumSteps = 0;
-	for (i = Dir, NumSteps = 0; i >= 0; i--) {
+	int numSteps = 0;
+	for (int i = dir, NumSteps = 0; i >= 0; i--) {
 		if (_sprites[i] != NULL) {
 			ret = _sprites[i];
-			NumSteps = Dir - i;
+			numSteps = dir - i;
 			break;
 		}
 	}
 
-	for (i = Dir; i < NUM_DIRECTIONS; i++) {
+	for (int i = dir; i < NUM_DIRECTIONS; i++) {
 		if (_sprites[i] != NULL) {
-			if (ret == NULL || NumSteps > i - Dir) return _sprites[i];
+			if (ret == NULL || numSteps > i - dir) return _sprites[i];
 			else return ret;
 		}
 	}
@@ -301,11 +300,11 @@ HRESULT CAdSpriteSet::saveAsText(CBDynBuffer *buffer, int indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSpriteSet::containsSprite(CBSprite *Sprite) {
-	if (!Sprite) return false;
+bool CAdSpriteSet::containsSprite(CBSprite *sprite) {
+	if (!sprite) return false;
 
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
-		if (_sprites[i] == Sprite) return true;
+		if (_sprites[i] == sprite) return true;
 	}
 	return false;
 }

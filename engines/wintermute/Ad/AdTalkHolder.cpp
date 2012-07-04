@@ -53,11 +53,12 @@ CAdTalkHolder::~CAdTalkHolder() {
 	delete _sprite;
 	_sprite = NULL;
 
-	int i;
-	for (i = 0; i < _talkSprites.GetSize(); i++) delete _talkSprites[i];
+	for (int i = 0; i < _talkSprites.GetSize(); i++)
+		delete _talkSprites[i];
 	_talkSprites.RemoveAll();
 
-	for (i = 0; i < _talkSpritesEx.GetSize(); i++) delete _talkSpritesEx[i];
+	for (int i = 0; i < _talkSpritesEx.GetSize(); i++)
+		delete _talkSpritesEx[i];
 	_talkSpritesEx.RemoveAll();
 }
 
@@ -125,27 +126,27 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 	if (strcmp(name, "SetSprite") == 0) {
 		stack->correctParams(1);
 
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
-		bool SetCurrent = false;
-		if (_currentSprite && _currentSprite == _sprite) SetCurrent = true;
+		bool setCurrent = false;
+		if (_currentSprite && _currentSprite == _sprite) setCurrent = true;
 
 		delete _sprite;
 		_sprite = NULL;
 
-		if (Val->isNULL()) {
+		if (val->isNULL()) {
 			_sprite = NULL;
-			if (SetCurrent) _currentSprite = NULL;
+			if (setCurrent) _currentSprite = NULL;
 			stack->pushBool(true);
 		} else {
-			const char *filename = Val->getString();
+			const char *filename = val->getString();
 			CBSprite *spr = new CBSprite(Game, this);
 			if (!spr || FAILED(spr->loadFile(filename))) {
 				script->RuntimeError("SetSprite method failed for file '%s'", filename);
 				stack->pushBool(false);
 			} else {
 				_sprite = spr;
-				if (SetCurrent) _currentSprite = _sprite;
+				if (setCurrent) _currentSprite = _sprite;
 				stack->pushBool(true);
 			}
 		}
@@ -202,27 +203,30 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		stack->correctParams(2);
 
 		const char *filename = stack->pop()->getString();
-		bool Ex = stack->pop()->getBool();
-		int i;
+		bool ex = stack->pop()->getBool();
 
-		bool SetCurrent = false;
-		bool SetTemp2 = false;
+		bool setCurrent = false;
+		bool setTemp2 = false;
 
-		if (Ex) {
-			for (i = 0; i < _talkSpritesEx.GetSize(); i++) {
+		if (ex) {
+			for (int i = 0; i < _talkSpritesEx.GetSize(); i++) {
 				if (scumm_stricmp(_talkSpritesEx[i]->_filename, filename) == 0) {
-					if (_currentSprite == _talkSpritesEx[i]) SetCurrent = true;
-					if (_tempSprite2 == _talkSpritesEx[i]) SetTemp2 = true;
+					if (_currentSprite == _talkSpritesEx[i])
+						setCurrent = true;
+					if (_tempSprite2 == _talkSpritesEx[i])
+						setTemp2 = true;
 					delete _talkSpritesEx[i];
 					_talkSpritesEx.RemoveAt(i);
 					break;
 				}
 			}
 		} else {
-			for (i = 0; i < _talkSprites.GetSize(); i++) {
+			for (int i = 0; i < _talkSprites.GetSize(); i++) {
 				if (scumm_stricmp(_talkSprites[i]->_filename, filename) == 0) {
-					if (_currentSprite == _talkSprites[i]) SetCurrent = true;
-					if (_tempSprite2 == _talkSprites[i]) SetTemp2 = true;
+					if (_currentSprite == _talkSprites[i]) 
+						setCurrent = true;
+					if (_tempSprite2 == _talkSprites[i])
+						setTemp2 = true;
 					delete _talkSprites[i];
 					_talkSprites.RemoveAt(i);
 					break;
@@ -232,8 +236,10 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		}
 
 		stack->pushBool(true);
-		if (SetCurrent) _currentSprite = _sprite;
-		if (SetTemp2) _tempSprite2 = _sprite;
+		if (setCurrent)
+			_currentSprite = _sprite;
+		if (setTemp2)
+			_tempSprite2 = _sprite;
 
 		return S_OK;
 	}
@@ -245,9 +251,9 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		stack->correctParams(2);
 
 		const char *filename = stack->pop()->getString();
-		bool Ex = stack->pop()->getBool();
-		bool SetCurrent = false;
-		bool SetTemp2 = false;
+		bool ex = stack->pop()->getBool();
+		bool setCurrent = false;
+		bool setTemp2 = false;
 
 		CBSprite *spr = new CBSprite(Game, this);
 		if (!spr || FAILED(spr->loadFile(filename))) {
@@ -256,30 +262,35 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		} else {
 
 			// delete current
-			int i;
-			if (Ex) {
-				for (i = 0; i < _talkSpritesEx.GetSize(); i++) {
-					if (_talkSpritesEx[i] == _currentSprite) SetCurrent = true;
-					if (_talkSpritesEx[i] == _tempSprite2) SetTemp2 = true;
+			if (ex) {
+				for (int i = 0; i < _talkSpritesEx.GetSize(); i++) {
+					if (_talkSpritesEx[i] == _currentSprite)
+						setCurrent = true;
+					if (_talkSpritesEx[i] == _tempSprite2)
+						setTemp2 = true;
 					delete _talkSpritesEx[i];
 				}
 				_talkSpritesEx.RemoveAll();
 			} else {
-				for (i = 0; i < _talkSprites.GetSize(); i++) {
-					if (_talkSprites[i] == _currentSprite) SetCurrent = true;
-					if (_talkSprites[i] == _tempSprite2) SetTemp2 = true;
+				for (int i = 0; i < _talkSprites.GetSize(); i++) {
+					if (_talkSprites[i] == _currentSprite) setCurrent = true;
+					if (_talkSprites[i] == _tempSprite2) setTemp2 = true;
 					delete _talkSprites[i];
 				}
 				_talkSprites.RemoveAll();
 			}
 
 			// set new
-			if (Ex) _talkSpritesEx.Add(spr);
-			else _talkSprites.Add(spr);
+			if (ex)
+				_talkSpritesEx.Add(spr);
+			else 
+				_talkSprites.Add(spr);
 			stack->pushBool(true);
 
-			if (SetCurrent) _currentSprite = spr;
-			if (SetTemp2) _tempSprite2 = spr;
+			if (setCurrent)
+				_currentSprite = spr;
+			if (setTemp2)
+				_tempSprite2 = spr;
 		}
 		return S_OK;
 	}
