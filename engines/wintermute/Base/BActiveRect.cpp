@@ -48,31 +48,31 @@ CBActiveRect::CBActiveRect(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *Owner, CBSubFrame *Frame, int X, int Y, int Width, int Height, float ZoomX, float ZoomY, bool Precise): CBBase(inGame) {
-	_owner = Owner;
-	_frame = Frame;
-	CBPlatform::SetRect(&_rect, X, Y, X + Width, Y + Height);
-	_zoomX = ZoomX;
-	_zoomY = ZoomY;
-	_precise = Precise;
+CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *owner, CBSubFrame *frame, int x, int y, int width, int height, float zoomX, float zoomY, bool precise): CBBase(inGame) {
+	_owner = owner;
+	_frame = frame;
+	CBPlatform::SetRect(&_rect, x, y, x + width, y + height);
+	_zoomX = zoomX;
+	_zoomY = zoomY;
+	_precise = precise;
 	_region = NULL;
 	_offsetX = _offsetY = 0;
 	clipRect();
 }
 
 //////////////////////////////////////////////////////////////////////
-CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *Owner, CBRegion *Region, int OffsetX, int OffsetY): CBBase(inGame) {
-	_owner = Owner;
-	_region = Region;
-	CBPlatform::CopyRect(&_rect, &Region->_rect);
-	CBPlatform::OffsetRect(&_rect, -OffsetX, -OffsetY);
+CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *owner, CBRegion *region, int offsetX, int offsetY): CBBase(inGame) {
+	_owner = owner;
+	_region = region;
+	CBPlatform::CopyRect(&_rect, &region->_rect);
+	CBPlatform::OffsetRect(&_rect, -offsetX, -offsetY);
 	_zoomX = 100;
 	_zoomY = 100;
 	_precise = true;
 	_frame = NULL;
 	clipRect();
-	_offsetX = OffsetX;
-	_offsetY = OffsetY;
+	_offsetX = offsetX;
+	_offsetY = offsetY;
 }
 
 
@@ -87,11 +87,11 @@ CBActiveRect::~CBActiveRect() {
 //////////////////////////////////////////////////////////////////////////
 void CBActiveRect::clipRect() {
 	RECT rc;
-	bool CustomViewport;
-	Game->getCurrentViewportRect(&rc, &CustomViewport);
+	bool customViewport;
+	Game->getCurrentViewportRect(&rc, &customViewport);
 	CBRenderer *Rend = Game->_renderer;
 
-	if (!CustomViewport) {
+	if (!customViewport) {
 		rc.left -= Rend->_drawOffsetX;
 		rc.right -= Rend->_drawOffsetX;
 		rc.top -= Rend->_drawOffsetY;

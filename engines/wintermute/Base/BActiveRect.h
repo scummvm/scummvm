@@ -48,8 +48,8 @@ public:
 	int _offsetY;
 	RECT _rect;
 	CBActiveRect(CBGame *inGameOwner = NULL);
-	CBActiveRect(CBGame *inGameOwner, CBObject *Owner, CBSubFrame *Frame, int X, int Y, int Width, int Height, float ZoomX = 100, float ZoomY = 100, bool Precise = true);
-	CBActiveRect(CBGame *inGame, CBObject *Owner, CBRegion *Region, int OffsetX, int OffsetY);
+	CBActiveRect(CBGame *inGameOwner, CBObject *owner, CBSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
+	CBActiveRect(CBGame *inGame, CBObject *owner, CBRegion *region, int offsetX, int offsetY);
 	virtual ~CBActiveRect();
 
 };
