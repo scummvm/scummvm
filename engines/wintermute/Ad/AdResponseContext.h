@@ -36,7 +36,7 @@ namespace WinterMute {
 
 class CAdResponseContext : public CBBase {
 public:
-	void setContext(const char *Context);
+	void setContext(const char *context);
 	int _iD;
 	char *_context;
 	DECLARE_PERSISTENT(CAdResponseContext, CBBase)

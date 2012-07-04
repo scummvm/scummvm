@@ -47,7 +47,7 @@ public:
 	CBSound *_sound;
 	bool _editorExpanded;
 	bool getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX = 100, float ScaleY = 100);
-	HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 	int _moveY;
 	int _moveX;
 	uint32 _delay;

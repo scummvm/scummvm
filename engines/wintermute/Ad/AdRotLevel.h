@@ -39,9 +39,9 @@ public:
 	CAdRotLevel(CBGame *inGame);
 	virtual ~CAdRotLevel();
 	float _rotation;
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
 };
 
 } // end of namespace WinterMute

@@ -111,11 +111,11 @@ public:
 	HRESULT displaySpriteAttachments(bool preDisplay);
 	CAdObject *_registerAlias;
 private:
-	HRESULT displaySpriteAttachment(CAdObject *Attachment);
+	HRESULT displaySpriteAttachment(CAdObject *attachment);
 	CAdInventory *_inventory;
 
 protected:
-	HRESULT GetScale(float *ScaleX, float *ScaleY);
+	HRESULT getScale(float *scaleX, float *scaleY);
 };
 
 } // end of namespace WinterMute

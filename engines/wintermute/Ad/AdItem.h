@@ -46,8 +46,8 @@ public:
 
 	HRESULT update();
 	DECLARE_PERSISTENT(CAdItem, CAdTalkHolder)
-	HRESULT display(int X, int Y);
-	bool getExtendedFlag(const char *FlagName);
+	HRESULT display(int x, int y);
+	bool getExtendedFlag(const char *flagName);
 	bool _inInventory;
 	bool _cursorCombined;
 	CBSprite *_spriteHover;
@@ -56,7 +56,7 @@ public:
 	CAdItem(CBGame *inGame);
 	virtual ~CAdItem();
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);

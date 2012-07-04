@@ -201,8 +201,8 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIWindow::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CUIWindow::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -212,9 +212,9 @@ HRESULT CUIWindow::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing WINDOW file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing WINDOW file '%s'", filename);
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -259,7 +259,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(EDIT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WINDOW)
 	TOKEN_TABLE(ALPHA_COLOR)
@@ -306,15 +306,15 @@ HRESULT CUIWindow::loadBuffer(byte  *Buffer, bool Complete) {
 	int FadeR = 0, FadeG = 0, FadeB = 0, FadeA = 0;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_WINDOW) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WINDOW) {
 			Game->LOG(0, "'WINDOW' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while (cmd >= PARSERR_TOKENNOTFOUND && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) >= PARSERR_TOKENNOTFOUND) {
+	while (cmd >= PARSERR_TOKENNOTFOUND && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) >= PARSERR_TOKENNOTFOUND) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -538,7 +538,7 @@ HRESULT CUIWindow::loadBuffer(byte  *Buffer, bool Complete) {
 
 
 		default:
-			if (FAILED(Game->windowLoadHook(this, (char **)&Buffer, (char **)params))) {
+			if (FAILED(Game->windowLoadHook(this, (char **)&buffer, (char **)params))) {
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -567,105 +567,105 @@ HRESULT CUIWindow::loadBuffer(byte  *Buffer, bool Complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "WINDOW\n");
-	Buffer->putTextIndent(Indent, "{\n");
+HRESULT CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "WINDOW\n");
+	buffer->putTextIndent(indent, "{\n");
 
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	if (_back && _back->_filename)
-		Buffer->putTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
+		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
 	if (_backInactive && _backInactive->_filename)
-		Buffer->putTextIndent(Indent + 2, "BACK_INACTIVE=\"%s\"\n", _backInactive->_filename);
+		buffer->putTextIndent(indent + 2, "BACK_INACTIVE=\"%s\"\n", _backInactive->_filename);
 
 	if (_image && _image->_filename)
-		Buffer->putTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 	if (_imageInactive && _imageInactive->_filename)
-		Buffer->putTextIndent(Indent + 2, "IMAGE_INACTIVE=\"%s\"\n", _imageInactive->_filename);
+		buffer->putTextIndent(indent + 2, "IMAGE_INACTIVE=\"%s\"\n", _imageInactive->_filename);
 
 	if (_font && _font->_filename)
-		Buffer->putTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	if (_fontInactive && _fontInactive->_filename)
-		Buffer->putTextIndent(Indent + 2, "FONT_INACTIVE=\"%s\"\n", _fontInactive->_filename);
+		buffer->putTextIndent(indent + 2, "FONT_INACTIVE=\"%s\"\n", _fontInactive->_filename);
 
 	if (_cursor && _cursor->_filename)
-		Buffer->putTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	if (_text)
-		Buffer->putTextIndent(Indent + 2, "TITLE=\"%s\"\n", _text);
+		buffer->putTextIndent(indent + 2, "TITLE=\"%s\"\n", _text);
 
 	switch (_titleAlign) {
 	case TAL_LEFT:
-		Buffer->putTextIndent(Indent + 2, "TITLE_ALIGN=\"%s\"\n", "left");
+		buffer->putTextIndent(indent + 2, "TITLE_ALIGN=\"%s\"\n", "left");
 		break;
 	case TAL_RIGHT:
-		Buffer->putTextIndent(Indent + 2, "TITLE_ALIGN=\"%s\"\n", "right");
+		buffer->putTextIndent(indent + 2, "TITLE_ALIGN=\"%s\"\n", "right");
 		break;
 	case TAL_CENTER:
-		Buffer->putTextIndent(Indent + 2, "TITLE_ALIGN=\"%s\"\n", "center");
+		buffer->putTextIndent(indent + 2, "TITLE_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
 		error("UIWindow::SaveAsText - Unhandled enum-value NUM_TEXT_ALIGN");
 	}
 
 	if (!CBPlatform::IsRectEmpty(&_titleRect)) {
-		Buffer->putTextIndent(Indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", _titleRect.left, _titleRect.top, _titleRect.right, _titleRect.bottom);
+		buffer->putTextIndent(indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", _titleRect.left, _titleRect.top, _titleRect.right, _titleRect.bottom);
 	}
 
 	if (!CBPlatform::IsRectEmpty(&_dragRect)) {
-		Buffer->putTextIndent(Indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", _dragRect.left, _dragRect.top, _dragRect.right, _dragRect.bottom);
+		buffer->putTextIndent(indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", _dragRect.left, _dragRect.top, _dragRect.right, _dragRect.bottom);
 	}
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
-	Buffer->putTextIndent(Indent + 2, "X=%d\n", _posX);
-	Buffer->putTextIndent(Indent + 2, "Y=%d\n", _posY);
-	Buffer->putTextIndent(Indent + 2, "WIDTH=%d\n", _width);
-	Buffer->putTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
+	buffer->putTextIndent(indent + 2, "X=%d\n", _posX);
+	buffer->putTextIndent(indent + 2, "Y=%d\n", _posY);
+	buffer->putTextIndent(indent + 2, "WIDTH=%d\n", _width);
+	buffer->putTextIndent(indent + 2, "HEIGHT=%d\n", _height);
 
-	Buffer->putTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
 
-	Buffer->putTextIndent(Indent + 2, "TRANSPARENT=%s\n", _transparent ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "PAUSE_MUSIC=%s\n", _pauseMusic ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "MENU=%s\n", _isMenu ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "IN_GAME=%s\n", _inGame ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "CLIP_CONTENTS=%s\n", _clipContents ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "TRANSPARENT=%s\n", _transparent ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "PAUSE_MUSIC=%s\n", _pauseMusic ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "MENU=%s\n", _isMenu ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "IN_GAME=%s\n", _inGame ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "CLIP_CONTENTS=%s\n", _clipContents ? "TRUE" : "FALSE");
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	if (_fadeBackground) {
-		Buffer->putTextIndent(Indent + 2, "FADE_COLOR { %d, %d, %d }\n", D3DCOLGetR(_fadeColor), D3DCOLGetG(_fadeColor), D3DCOLGetB(_fadeColor));
-		Buffer->putTextIndent(Indent + 2, "FADE_ALPHA=%d\n", D3DCOLGetA(_fadeColor));
+		buffer->putTextIndent(indent + 2, "FADE_COLOR { %d, %d, %d }\n", D3DCOLGetR(_fadeColor), D3DCOLGetG(_fadeColor), D3DCOLGetB(_fadeColor));
+		buffer->putTextIndent(indent + 2, "FADE_ALPHA=%d\n", D3DCOLGetA(_fadeColor));
 	}
 
-	Buffer->putTextIndent(Indent + 2, "ALPHA_COLOR { %d, %d, %d }\n", D3DCOLGetR(_alphaColor), D3DCOLGetG(_alphaColor), D3DCOLGetB(_alphaColor));
-	Buffer->putTextIndent(Indent + 2, "ALPHA=%d\n", D3DCOLGetA(_alphaColor));
+	buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d, %d, %d }\n", D3DCOLGetR(_alphaColor), D3DCOLGetG(_alphaColor), D3DCOLGetB(_alphaColor));
+	buffer->putTextIndent(indent + 2, "ALPHA=%d\n", D3DCOLGetA(_alphaColor));
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// scripts
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
 	// controls
 	for (int i = 0; i < _widgets.GetSize(); i++)
-		_widgets[i]->saveAsText(Buffer, Indent + 2);
+		_widgets[i]->saveAsText(buffer, indent + 2);
 
 
-	Buffer->putTextIndent(Indent, "}\n");
+	buffer->putTextIndent(indent, "}\n");
 	return S_OK;
 }
 

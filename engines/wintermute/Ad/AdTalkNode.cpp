@@ -80,7 +80,7 @@ TOKEN_DEF(PRECACHE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkNode::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTION)
 	TOKEN_TABLE(SPRITESET_FILE)
@@ -97,19 +97,19 @@ HRESULT CAdTalkNode::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_ACTION) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTION) {
 			Game->LOG(0, "'ACTION' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
 	_endTime = 0;
 	_playToEnd = false;
 	_preCache = false;
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SPRITE:
 			CBUtils::setString(&_spriteFilename, (char *)params);
@@ -198,19 +198,19 @@ HRESULT CAdTalkNode::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkNode::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "ACTION {\n");
-	if (_comment) Buffer->putTextIndent(Indent + 2, "COMMENT=\"%s\"\n", _comment);
-	Buffer->putTextIndent(Indent + 2, "START_TIME=%d\n", _startTime);
-	if (!_playToEnd) Buffer->putTextIndent(Indent + 2, "END_TIME=%d\n", _endTime);
-	if (_spriteFilename) Buffer->putTextIndent(Indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
-	if (_spriteSetFilename) Buffer->putTextIndent(Indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
-	else if (_spriteSet) _spriteSet->saveAsText(Buffer, Indent + 2);
-	if (_preCache) Buffer->putTextIndent(Indent + 2, "PRECACHE=\"%s\"\n", _preCache ? "TRUE" : "FALSE");
+HRESULT CAdTalkNode::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "ACTION {\n");
+	if (_comment) buffer->putTextIndent(indent + 2, "COMMENT=\"%s\"\n", _comment);
+	buffer->putTextIndent(indent + 2, "START_TIME=%d\n", _startTime);
+	if (!_playToEnd) buffer->putTextIndent(indent + 2, "END_TIME=%d\n", _endTime);
+	if (_spriteFilename) buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
+	if (_spriteSetFilename) buffer->putTextIndent(indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
+	else if (_spriteSet) _spriteSet->saveAsText(buffer, indent + 2);
+	if (_preCache) buffer->putTextIndent(indent + 2, "PRECACHE=\"%s\"\n", _preCache ? "TRUE" : "FALSE");
 
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent, "}\n");
+	buffer->putTextIndent(indent, "}\n");
 
 	return S_OK;
 }

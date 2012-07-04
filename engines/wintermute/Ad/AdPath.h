@@ -38,12 +38,12 @@ class CBPoint;
 class CAdPath : public CBBase {
 public:
 	DECLARE_PERSISTENT(CAdPath, CBBase)
-	CBPoint *GetCurrent();
-	bool SetReady(bool ready = true);
-	void AddPoint(CBPoint *point);
-	CBPoint *GetNext();
-	CBPoint *GetFirst();
-	void Reset();
+	CBPoint *getCurrent();
+	bool setReady(bool ready = true);
+	void addPoint(CBPoint *point);
+	CBPoint *getNext();
+	CBPoint *getFirst();
+	void reset();
 	CAdPath(CBGame *inGame);
 	virtual ~CAdPath();
 	CBArray <CBPoint *, CBPoint *> _points;

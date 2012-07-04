@@ -342,39 +342,39 @@ bool CBFrame::getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sca
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "FRAME {\n");
-	Buffer->putTextIndent(Indent + 2, "DELAY = %d\n", _delay);
+HRESULT CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "FRAME {\n");
+	buffer->putTextIndent(indent + 2, "DELAY = %d\n", _delay);
 
 	if (_moveX != 0 || _moveY != 0)
-		Buffer->putTextIndent(Indent + 2, "MOVE {%d, %d}\n", _moveX, _moveY);
+		buffer->putTextIndent(indent + 2, "MOVE {%d, %d}\n", _moveX, _moveY);
 
 	if (_sound && _sound->_soundFilename)
-		Buffer->putTextIndent(Indent + 2, "SOUND=\"%s\"\n", _sound->_soundFilename);
+		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sound->_soundFilename);
 
-	Buffer->putTextIndent(Indent + 2, "KEYFRAME=%s\n", _keyframe ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "KEYFRAME=%s\n", _keyframe ? "TRUE" : "FALSE");
 
 	if (_killSound)
-		Buffer->putTextIndent(Indent + 2, "KILL_SOUND=%s\n", _killSound ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "KILL_SOUND=%s\n", _killSound ? "TRUE" : "FALSE");
 
 	if (_editorExpanded)
-		Buffer->putTextIndent(Indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
 
-	if (_subframes.GetSize() > 0) _subframes[0]->saveAsText(Buffer, Indent, false);
+	if (_subframes.GetSize() > 0) _subframes[0]->saveAsText(buffer, indent, false);
 
 	int i;
 	for (i = 1; i < _subframes.GetSize(); i++) {
-		_subframes[i]->saveAsText(Buffer, Indent + 2);
+		_subframes[i]->saveAsText(buffer, indent + 2);
 	}
 
 	for (i = 0; i < _applyEvent.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
+		buffer->putTextIndent(indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
 	}
 
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
 
-	Buffer->putTextIndent(Indent, "}\n\n");
+	buffer->putTextIndent(indent, "}\n\n");
 
 	return S_OK;
 }

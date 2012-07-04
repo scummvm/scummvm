@@ -76,7 +76,7 @@ public:
 	CBSprite(CBGame *inGame, CBObject *Owner = NULL);
 	virtual ~CBSprite();
 	CBArray<CBFrame *, CBFrame *> _frames;
-	HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);

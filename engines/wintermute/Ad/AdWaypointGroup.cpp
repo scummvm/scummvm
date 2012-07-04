@@ -65,8 +65,8 @@ void CAdWaypointGroup::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdWaypointGroup::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdWaypointGroup::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -76,10 +76,10 @@ HRESULT CAdWaypointGroup::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -96,7 +96,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WAYPOINTS)
 	TOKEN_TABLE(TEMPLATE)
@@ -112,15 +112,15 @@ HRESULT CAdWaypointGroup::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_WAYPOINTS) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WAYPOINTS) {
 			Game->LOG(0, "'WAYPOINTS' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -164,20 +164,20 @@ HRESULT CAdWaypointGroup::loadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "WAYPOINTS {\n");
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
+HRESULT CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "WAYPOINTS {\n");
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
-	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
-	CBBase::saveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
 	for (int i = 0; i < _points.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
+		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
-	Buffer->putTextIndent(Indent, "}\n");
+	buffer->putTextIndent(indent, "}\n");
 
 	return S_OK;
 }

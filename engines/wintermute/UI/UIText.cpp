@@ -96,8 +96,8 @@ HRESULT CUIText::display(int OffsetX, int OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUIText::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CUIText::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -107,9 +107,9 @@ HRESULT CUIText::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing STATIC file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing STATIC file '%s'", filename);
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -138,7 +138,7 @@ TOKEN_DEF(PARENT_NOTIFY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CUIText::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(STATIC)
 	TOKEN_TABLE(TEMPLATE)
@@ -166,15 +166,15 @@ HRESULT CUIText::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd = 2;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_STATIC) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_STATIC) {
 			Game->LOG(0, "'STATIC' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -293,39 +293,39 @@ HRESULT CUIText::loadBuffer(byte  *Buffer, bool Complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "STATIC\n");
-	Buffer->putTextIndent(Indent, "{\n");
+HRESULT CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "STATIC\n");
+	buffer->putTextIndent(indent, "{\n");
 
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	if (_back && _back->_filename)
-		Buffer->putTextIndent(Indent + 2, "BACK=\"%s\"\n", _back->_filename);
+		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
 
 	if (_image && _image->_filename)
-		Buffer->putTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 
 	if (_font && _font->_filename)
-		Buffer->putTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 
 	if (_cursor && _cursor->_filename)
-		Buffer->putTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
 	if (_text)
-		Buffer->putTextIndent(Indent + 2, "TEXT=\"%s\"\n", _text);
+		buffer->putTextIndent(indent + 2, "TEXT=\"%s\"\n", _text);
 
 	switch (_textAlign) {
 	case TAL_LEFT:
-		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
+		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
 		break;
 	case TAL_RIGHT:
-		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "right");
+		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "right");
 		break;
 	case TAL_CENTER:
-		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
+		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
 		error("CUIText::SaveAsText - Unhandled enum");
@@ -334,42 +334,42 @@ HRESULT CUIText::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	switch (_verticalAlign) {
 	case VAL_TOP:
-		Buffer->putTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
+		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
 		break;
 	case VAL_BOTTOM:
-		Buffer->putTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "bottom");
+		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "bottom");
 		break;
 	case VAL_CENTER:
-		Buffer->putTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
+		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
 		error("UIText::SaveAsText - Unhandled enum value: NUM_VERTICAL_ALIGN");
 	}
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
-	Buffer->putTextIndent(Indent + 2, "X=%d\n", _posX);
-	Buffer->putTextIndent(Indent + 2, "Y=%d\n", _posY);
-	Buffer->putTextIndent(Indent + 2, "WIDTH=%d\n", _width);
-	Buffer->putTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
+	buffer->putTextIndent(indent + 2, "X=%d\n", _posX);
+	buffer->putTextIndent(indent + 2, "Y=%d\n", _posY);
+	buffer->putTextIndent(indent + 2, "WIDTH=%d\n", _width);
+	buffer->putTextIndent(indent + 2, "HEIGHT=%d\n", _height);
 
-	Buffer->putTextIndent(Indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// scripts
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent, "}\n");
+	buffer->putTextIndent(indent, "}\n");
 	return S_OK;
 }
 

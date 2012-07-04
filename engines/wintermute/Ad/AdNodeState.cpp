@@ -84,7 +84,7 @@ void CAdNodeState::setFilename(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::SetCursor(const char *filename) {
+void CAdNodeState::setCursor(const char *filename) {
 	delete[] _cursor;
 	_cursor = NULL;
 	CBUtils::setString(&_cursor, filename);
@@ -107,60 +107,60 @@ HRESULT CAdNodeState::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::setCaption(const char *Caption, int Case) {
-	if (Case == 0) Case = 1;
-	if (Case < 1 || Case > 7) return;
+void CAdNodeState::setCaption(const char *caption, int caseVal) {
+	if (caseVal== 0) caseVal= 1;
+	if (caseVal< 1 || caseVal> 7) return;
 
-	delete[] _caption[Case - 1];
-	_caption[Case - 1] = new char[strlen(Caption) + 1];
-	if (_caption[Case - 1]) {
-		strcpy(_caption[Case - 1], Caption);
-		Game->_stringTable->Expand(&_caption[Case - 1]);
+	delete[] _caption[caseVal- 1];
+	_caption[caseVal- 1] = new char[strlen(caption) + 1];
+	if (_caption[caseVal- 1]) {
+		strcpy(_caption[caseVal- 1], caption);
+		Game->_stringTable->Expand(&_caption[caseVal- 1]);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdNodeState::getCaption(int Case) {
-	if (Case == 0) Case = 1;
-	if (Case < 1 || Case > 7 || _caption[Case - 1] == NULL) return "";
-	else return _caption[Case - 1];
+char *CAdNodeState::getCaption(int caseVal) {
+	if (caseVal== 0) caseVal= 1;
+	if (caseVal< 1 || caseVal> 7 || _caption[caseVal- 1] == NULL) return "";
+	else return _caption[caseVal- 1];
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdNodeState::TransferEntity(CAdEntity *Entity, bool IncludingSprites, bool Saving) {
-	if (!Entity) return E_FAIL;
+HRESULT CAdNodeState::transferEntity(CAdEntity *entity, bool includingSprites, bool saving) {
+	if (!entity) return E_FAIL;
 
 	// hack!
-	if (this->Game != Entity->Game) this->Game = Entity->Game;
+	if (this->Game != entity->Game) this->Game = entity->Game;
 
-	if (Saving) {
+	if (saving) {
 		for (int i = 0; i < 7; i++) {
-			if (Entity->_caption[i]) setCaption(Entity->_caption[i], i);
+			if (entity->_caption[i]) setCaption(entity->_caption[i], i);
 		}
-		if (!Entity->_region && Entity->_sprite && Entity->_sprite->_filename) {
-			if (IncludingSprites) setFilename(Entity->_sprite->_filename);
+		if (!entity->_region && entity->_sprite && entity->_sprite->_filename) {
+			if (includingSprites) setFilename(entity->_sprite->_filename);
 			else setFilename("");
 		}
-		if (Entity->_cursor && Entity->_cursor->_filename) SetCursor(Entity->_cursor->_filename);
-		_alphaColor = Entity->_alphaColor;
-		_active = Entity->_active;
+		if (entity->_cursor && entity->_cursor->_filename) setCursor(entity->_cursor->_filename);
+		_alphaColor = entity->_alphaColor;
+		_active = entity->_active;
 	} else {
 		for (int i = 0; i < 7; i++) {
-			if (_caption[i]) Entity->setCaption(_caption[i], i);
+			if (_caption[i]) entity->setCaption(_caption[i], i);
 		}
-		if (_filename && !Entity->_region && IncludingSprites && strcmp(_filename, "") != 0) {
-			if (!Entity->_sprite || !Entity->_sprite->_filename || scumm_stricmp(Entity->_sprite->_filename, _filename) != 0)
-				Entity->setSprite(_filename);
+		if (_filename && !entity->_region && includingSprites && strcmp(_filename, "") != 0) {
+			if (!entity->_sprite || !entity->_sprite->_filename || scumm_stricmp(entity->_sprite->_filename, _filename) != 0)
+				entity->setSprite(_filename);
 		}
 		if (_cursor) {
-			if (!Entity->_cursor || !Entity->_cursor->_filename || scumm_stricmp(Entity->_cursor->_filename, _cursor) != 0)
-				Entity->setCursor(_cursor);
+			if (!entity->_cursor || !entity->_cursor->_filename || scumm_stricmp(entity->_cursor->_filename, _cursor) != 0)
+				entity->setCursor(_cursor);
 		}
 
-		Entity->_active = _active;
-		Entity->_alphaColor = _alphaColor;
+		entity->_active = _active;
+		entity->_alphaColor = _alphaColor;
 	}
 
 	return S_OK;

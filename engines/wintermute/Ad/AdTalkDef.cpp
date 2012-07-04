@@ -70,8 +70,8 @@ CAdTalkDef::~CAdTalkDef() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdTalkDef::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdTalkDef::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -80,9 +80,9 @@ HRESULT CAdTalkDef::loadFile(const char *filename) {
 
 	CBUtils::setString(&_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TALK file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing TALK file '%s'", filename);
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -98,7 +98,7 @@ TOKEN_DEF(DEFAULT_SPRITE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkDef::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TALK)
 	TOKEN_TABLE(TEMPLATE)
@@ -113,15 +113,15 @@ HRESULT CAdTalkDef::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_TALK) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TALK) {
 			Game->LOG(0, "'TALK' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;

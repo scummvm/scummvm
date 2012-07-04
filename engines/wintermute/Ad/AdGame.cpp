@@ -474,12 +474,12 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			CAdResponse *res = new CAdResponse(Game);
 			if (res) {
 				res->_iD = id;
-				res->SetText(text);
+				res->setText(text);
 				_stringTable->Expand(&res->_text);
-				if (!val1->isNULL()) res->SetIcon(val1->getString());
-				if (!val2->isNULL()) res->SetIconHover(val2->getString());
-				if (!val3->isNULL()) res->SetIconPressed(val3->getString());
-				if (!val4->isNULL()) res->SetFont(val4->getString());
+				if (!val1->isNULL()) res->setIcon(val1->getString());
+				if (!val2->isNULL()) res->setIconHover(val2->getString());
+				if (!val3->isNULL()) res->setIconPressed(val3->getString());
+				if (!val4->isNULL()) res->setFont(val4->getString());
 
 				if (strcmp(name, "AddResponseOnce") == 0) res->_responseType = RESPONSE_ONCE;
 				else if (strcmp(name, "AddResponseOnceGame") == 0) res->_responseType = RESPONSE_ONCE_GAME;

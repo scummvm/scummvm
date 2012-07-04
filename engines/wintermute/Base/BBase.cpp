@@ -84,7 +84,7 @@ TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBBase::parseEditorProperty(byte  *Buffer, bool Complete) {
+HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE(NAME)
@@ -99,18 +99,18 @@ HRESULT CBBase::parseEditorProperty(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_EDITOR_PROPERTY) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDITOR_PROPERTY) {
 			Game->LOG(0, "'EDITOR_PROPERTY' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
 	char *PropName = NULL;
 	char *PropValue = NULL;
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME:
 			delete[] PropName;
@@ -158,16 +158,16 @@ HRESULT CBBase::parseEditorProperty(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBBase::saveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CBBase::saveAsText(CBDynBuffer *buffer, int indent) {
 	_editorPropsIter = _editorProps.begin();
 	while (_editorPropsIter != _editorProps.end()) {
-		Buffer->putTextIndent(Indent, "EDITOR_PROPERTY\n");
-		Buffer->putTextIndent(Indent, "{\n");
-		Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _editorPropsIter->_key.c_str());
-		Buffer->putTextIndent(Indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->_value.c_str());
-		//Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", (char *)_editorPropsIter->first.c_str()); // <- TODO, remove
-		//Buffer->putTextIndent(Indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->second.c_str()); // <- TODO, remove
-		Buffer->putTextIndent(Indent, "}\n\n");
+		buffer->putTextIndent(indent, "EDITOR_PROPERTY\n");
+		buffer->putTextIndent(indent, "{\n");
+		buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _editorPropsIter->_key.c_str());
+		buffer->putTextIndent(indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->_value.c_str());
+		//buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", (char *)_editorPropsIter->first.c_str()); // <- TODO, remove
+		//buffer->putTextIndent(indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->second.c_str()); // <- TODO, remove
+		buffer->putTextIndent(indent, "}\n\n");
 
 		_editorPropsIter++;
 	}

@@ -175,15 +175,15 @@ HRESULT CBStringTable::loadFile(const char *filename, bool ClearOld) {
 	if (ClearOld) _strings.clear();
 
 	uint32 Size;
-	byte *Buffer = Game->_fileManager->readWholeFile(filename, &Size);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename, &Size);
+	if (buffer == NULL) {
 		Game->LOG(0, "CBStringTable::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	int Pos = 0;
 
-	if (Size > 3 && Buffer[0] == 0xEF && Buffer[1] == 0xBB && Buffer[2] == 0xBF) {
+	if (Size > 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF) {
 		Pos += 3;
 		if (Game->_textEncoding != TEXT_UTF8) {
 			Game->_textEncoding = TEXT_UTF8;
@@ -195,11 +195,11 @@ HRESULT CBStringTable::loadFile(const char *filename, bool ClearOld) {
 	int LineLength = 0;
 	while (Pos < Size) {
 		LineLength = 0;
-		while (Pos + LineLength < Size && Buffer[Pos + LineLength] != '\n' && Buffer[Pos + LineLength] != '\0') LineLength++;
+		while (Pos + LineLength < Size && buffer[Pos + LineLength] != '\n' && buffer[Pos + LineLength] != '\0') LineLength++;
 
 		int RealLength = LineLength - (Pos + LineLength >= Size ? 0 : 1);
 		char *line = new char[RealLength + 1];
-		strncpy(line, (char *)&Buffer[Pos], RealLength);
+		strncpy(line, (char *)&buffer[Pos], RealLength);
 		line[RealLength] = '\0';
 		char *value = strchr(line, '\t');
 		if (value == NULL) value = strchr(line, ' ');
@@ -219,7 +219,7 @@ HRESULT CBStringTable::loadFile(const char *filename, bool ClearOld) {
 		Pos += LineLength + 1;
 	}
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	Game->LOG(0, "  %d strings loaded", _strings.size());
 

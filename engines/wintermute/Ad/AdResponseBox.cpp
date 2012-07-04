@@ -188,8 +188,8 @@ HRESULT CAdResponseBox::createButtons() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponseBox::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -199,10 +199,10 @@ HRESULT CAdResponseBox::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -223,7 +223,7 @@ TOKEN_DEF(VERTICAL_ALIGN)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(RESPONSE_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -244,15 +244,15 @@ HRESULT CAdResponseBox::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_RESPONSE_BOX) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_RESPONSE_BOX) {
 			Game->LOG(0, "'RESPONSE_BOX' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -335,31 +335,31 @@ HRESULT CAdResponseBox::loadBuffer(byte  *Buffer, bool Complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "RESPONSE_BOX\n");
-	Buffer->putTextIndent(Indent, "{\n");
+HRESULT CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "RESPONSE_BOX\n");
+	buffer->putTextIndent(indent, "{\n");
 
-	Buffer->putTextIndent(Indent + 2, "AREA { %d, %d, %d, %d }\n", _responseArea.left, _responseArea.top, _responseArea.right, _responseArea.bottom);
+	buffer->putTextIndent(indent + 2, "AREA { %d, %d, %d, %d }\n", _responseArea.left, _responseArea.top, _responseArea.right, _responseArea.bottom);
 
 	if (_font && _font->_filename)
-		Buffer->putTextIndent(Indent + 2, "FONT=\"%s\"\n", _font->_filename);
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	if (_fontHover && _fontHover->_filename)
-		Buffer->putTextIndent(Indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
+		buffer->putTextIndent(indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
 
 	if (_cursor && _cursor->_filename)
-		Buffer->putTextIndent(Indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
-	Buffer->putTextIndent(Indent + 2, "HORIZONTAL=%s\n", _horizontal ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "HORIZONTAL=%s\n", _horizontal ? "TRUE" : "FALSE");
 
 	switch (_align) {
 	case TAL_LEFT:
-		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
+		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "left");
 		break;
 	case TAL_RIGHT:
-		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "right");
+		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "right");
 		break;
 	case TAL_CENTER:
-		Buffer->putTextIndent(Indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
+		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
 		error("CAdResponseBox::SaveAsText - Unhandled enum");
@@ -368,29 +368,29 @@ HRESULT CAdResponseBox::saveAsText(CBDynBuffer *Buffer, int Indent) {
 
 	switch (_verticalAlign) {
 	case VAL_TOP:
-		Buffer->putTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
+		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
 		break;
 	case VAL_BOTTOM:
-		Buffer->putTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "bottom");
+		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "bottom");
 		break;
 	case VAL_CENTER:
-		Buffer->putTextIndent(Indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
+		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
 		break;
 	}
 
-	Buffer->putTextIndent(Indent + 2, "SPACING=%d\n", _spacing);
+	buffer->putTextIndent(indent + 2, "SPACING=%d\n", _spacing);
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// window
-	if (_window) _window->saveAsText(Buffer, Indent + 2);
+	if (_window) _window->saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent, "}\n");
+	buffer->putTextIndent(indent, "}\n");
 	return S_OK;
 }
 
@@ -432,12 +432,12 @@ HRESULT CAdResponseBox::display() {
 	}
 
 	// prepare response buttons
-	bool scroll_needed = false;
+	bool scrollNeeded = false;
 	for (i = _scrollOffset; i < _respButtons.GetSize(); i++) {
 		if ((_horizontal && xxx + _respButtons[i]->_width > rect.right)
 		        || (!_horizontal && yyy + _respButtons[i]->_height > rect.bottom)) {
 
-			scroll_needed = true;
+			scrollNeeded = true;
 			_respButtons[i]->_visible = false;
 			break;
 		}
@@ -456,7 +456,7 @@ HRESULT CAdResponseBox::display() {
 	// show appropriate scroll buttons
 	if (_window) {
 		_window->showWidget("prev", _scrollOffset > 0);
-		_window->showWidget("next", scroll_needed);
+		_window->showWidget("next", scrollNeeded);
 	}
 
 	// go exclusive
@@ -537,12 +537,12 @@ HRESULT CAdResponseBox::persist(CBPersistMgr *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponseBox::weedResponses() {
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 
 	for (int i = 0; i < _responses.GetSize(); i++) {
 		switch (_responses[i]->_responseType) {
 		case RESPONSE_ONCE:
-			if (AdGame->branchResponseUsed(_responses[i]->_iD)) {
+			if (adGame->branchResponseUsed(_responses[i]->_iD)) {
 				delete _responses[i];
 				_responses.RemoveAt(i);
 				i--;
@@ -550,7 +550,7 @@ HRESULT CAdResponseBox::weedResponses() {
 			break;
 
 		case RESPONSE_ONCE_GAME:
-			if (AdGame->gameResponseUsed(_responses[i]->_iD)) {
+			if (adGame->gameResponseUsed(_responses[i]->_iD)) {
 				delete _responses[i];
 				_responses.RemoveAt(i);
 				i--;
@@ -566,25 +566,25 @@ HRESULT CAdResponseBox::weedResponses() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseBox::setLastResponseText(const char *Text, const char *TextOrig) {
-	CBUtils::setString(&_lastResponseText, Text);
-	CBUtils::setString(&_lastResponseTextOrig, TextOrig);
+void CAdResponseBox::setLastResponseText(const char *text, const char *textOrig) {
+	CBUtils::setString(&_lastResponseText, text);
+	CBUtils::setString(&_lastResponseTextOrig, textOrig);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::handleResponse(CAdResponse *Response) {
-	setLastResponseText(Response->_text, Response->_textOrig);
+HRESULT CAdResponseBox::handleResponse(CAdResponse *response) {
+	setLastResponseText(response->_text, response->_textOrig);
 
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 
-	switch (Response->_responseType) {
+	switch (response->_responseType) {
 	case RESPONSE_ONCE:
-		AdGame->addBranchResponse(Response->_iD);
+		adGame->addBranchResponse(response->_iD);
 		break;
 
 	case RESPONSE_ONCE_GAME:
-		AdGame->addGameResponse(Response->_iD);
+		adGame->addGameResponse(response->_iD);
 		break;
 	default:
 		warning("CAdResponseBox::HandleResponse - Unhandled enum");
@@ -595,51 +595,51 @@ HRESULT CAdResponseBox::handleResponse(CAdResponse *Response) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdResponseBox::getNextAccessObject(CBObject *CurrObject) {
-	CBArray<CUIObject *, CUIObject *> Objects;
-	getObjects(Objects, true);
+CBObject *CAdResponseBox::getNextAccessObject(CBObject *currObject) {
+	CBArray<CUIObject *, CUIObject *> objects;
+	getObjects(objects, true);
 
-	if (Objects.GetSize() == 0) return NULL;
+	if (objects.GetSize() == 0) return NULL;
 	else {
-		if (CurrObject != NULL) {
-			for (int i = 0; i < Objects.GetSize(); i++) {
-				if (Objects[i] == CurrObject) {
-					if (i < Objects.GetSize() - 1) return Objects[i + 1];
+		if (currObject != NULL) {
+			for (int i = 0; i < objects.GetSize(); i++) {
+				if (objects[i] == currObject) {
+					if (i < objects.GetSize() - 1) return objects[i + 1];
 					else break;
 				}
 			}
 		}
-		return Objects[0];
+		return objects[0];
 	}
 	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdResponseBox::getPrevAccessObject(CBObject *CurrObject) {
-	CBArray<CUIObject *, CUIObject *> Objects;
-	getObjects(Objects, true);
+CBObject *CAdResponseBox::getPrevAccessObject(CBObject *currObject) {
+	CBArray<CUIObject *, CUIObject *> objects;
+	getObjects(objects, true);
 
-	if (Objects.GetSize() == 0) return NULL;
+	if (objects.GetSize() == 0) return NULL;
 	else {
-		if (CurrObject != NULL) {
-			for (int i = Objects.GetSize() - 1; i >= 0; i--) {
-				if (Objects[i] == CurrObject) {
-					if (i > 0) return Objects[i - 1];
+		if (currObject != NULL) {
+			for (int i = objects.GetSize() - 1; i >= 0; i--) {
+				if (objects[i] == currObject) {
+					if (i > 0) return objects[i - 1];
 					else break;
 				}
 			}
 		}
-		return Objects[Objects.GetSize() - 1];
+		return objects[objects.GetSize() - 1];
 	}
 	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly) {
+HRESULT CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _respButtons.GetSize(); i++) {
-		Objects.Add(_respButtons[i]);
+		objects.Add(_respButtons[i]);
 	}
-	if (_window) _window->getWindowObjects(Objects, InteractiveOnly);
+	if (_window) _window->getWindowObjects(objects, interactiveOnly);
 
 	return S_OK;
 }

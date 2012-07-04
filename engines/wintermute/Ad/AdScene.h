@@ -87,7 +87,7 @@ public:
 	float getScaleAt(int Y);
 	HRESULT sortScaleLevels();
 	HRESULT sortRotLevels();
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 	uint32 getAlphaAt(int X, int Y, bool ColorCheck = false);
 	bool _paralaxScrolling;
 	void skipTo(int OffsetX, int OffsetY);
@@ -124,7 +124,7 @@ public:
 	CBArray<CAdObject *, CAdObject *> _objects;
 	CBArray<CAdWaypointGroup *, CAdWaypointGroup *> _waypointGroups;
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
 	int _width;
 	int _height;
 	HRESULT addObject(CAdObject *Object);

@@ -192,8 +192,8 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 		_pfTargetPath = path;
 		_pfRequester = requester;
 
-		_pfTargetPath->Reset();
-		_pfTargetPath->SetReady(false);
+		_pfTargetPath->reset();
+		_pfTargetPath->setReady(false);
 
 		// prepare working path
 		int i;
@@ -453,7 +453,7 @@ void CAdScene::pathFinderStep() {
 
 	if (lowest_pt == NULL) { // no path -> terminate PathFinder
 		_pfReady = true;
-		_pfTargetPath->SetReady(true);
+		_pfTargetPath->setReady(true);
 		return;
 	}
 
@@ -467,7 +467,7 @@ void CAdScene::pathFinderStep() {
 		}
 
 		_pfReady = true;
-		_pfTargetPath->SetReady(true);
+		_pfTargetPath->setReady(true);
 		return;
 	}
 
@@ -504,8 +504,8 @@ HRESULT CAdScene::initLoop() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScene::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdScene::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -516,13 +516,13 @@ HRESULT CAdScene::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SCENE file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing SCENE file '%s'", filename);
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -568,7 +568,7 @@ TOKEN_DEF(PERSISTENT_STATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCENE)
 	TOKEN_TABLE(TEMPLATE)
@@ -615,19 +615,19 @@ HRESULT CAdScene::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_SCENE) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCENE) {
 			Game->LOG(0, "'SCENE' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
 	int ar, ag, ab, aa;
 	char camera[MAX_PATH] = "";
 	/* float WaypointHeight = -1.0f; */
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -863,7 +863,7 @@ HRESULT CAdScene::traverseNodes(bool Update) {
 	if (!_initialized) return S_OK;
 
 	int j, k;
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -872,8 +872,8 @@ HRESULT CAdScene::traverseNodes(bool Update) {
 	if (_viewport && !Game->_editorMode) {
 		Game->pushViewport(_viewport);
 		PopViewport = true;
-	} else if (AdGame->_sceneViewport && !Game->_editorMode) {
-		Game->pushViewport(AdGame->_sceneViewport);
+	} else if (adGame->_sceneViewport && !Game->_editorMode) {
+		Game->pushViewport(adGame->_sceneViewport);
 		PopViewport = true;
 	}
 
@@ -1039,18 +1039,18 @@ HRESULT CAdScene::display() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScene::updateFreeObjects() {
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 	int i;
 
 	bool Is3DSet;
 
 	// *** update all active objects
 	Is3DSet = false;
-	for (i = 0; i < AdGame->_objects.GetSize(); i++) {
-		if (!AdGame->_objects[i]->_active) continue;
+	for (i = 0; i < adGame->_objects.GetSize(); i++) {
+		if (!adGame->_objects[i]->_active) continue;
 
-		AdGame->_objects[i]->update();
-		AdGame->_objects[i]->_drawn = false;
+		adGame->_objects[i]->update();
+		adGame->_objects[i]->_drawn = false;
 	}
 
 
@@ -1073,15 +1073,15 @@ HRESULT CAdScene::updateFreeObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScene::displayRegionContent(CAdRegion *Region, bool Display3DOnly) {
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 	CBArray<CAdObject *, CAdObject *> Objects;
 	CAdObject *Obj;
 
 	int i;
 
 	// global objects
-	for (i = 0; i < AdGame->_objects.GetSize(); i++) {
-		Obj = AdGame->_objects[i];
+	for (i = 0; i < adGame->_objects.GetSize(); i++) {
+		Obj = adGame->_objects[i];
 		if (Obj->_active && !Obj->_drawn && (Obj->_stickRegion == Region || Region == NULL || (Obj->_stickRegion == NULL && Region->PointInRegion(Obj->_posX, Obj->_posY)))) {
 			Objects.Add(Obj);
 		}
@@ -1138,7 +1138,7 @@ int CAdScene::compareObjs(const void *Obj1, const void *Obj2) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScene::displayRegionContentOld(CAdRegion *Region) {
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 	CAdObject *obj;
 	int i;
 
@@ -1148,10 +1148,10 @@ HRESULT CAdScene::displayRegionContentOld(CAdRegion *Region) {
 		int minY = INT_MAX;
 
 		// global objects
-		for (i = 0; i < AdGame->_objects.GetSize(); i++) {
-			if (AdGame->_objects[i]->_active && !AdGame->_objects[i]->_drawn && AdGame->_objects[i]->_posY < minY && (AdGame->_objects[i]->_stickRegion == Region || Region == NULL || (AdGame->_objects[i]->_stickRegion == NULL && Region->PointInRegion(AdGame->_objects[i]->_posX, AdGame->_objects[i]->_posY)))) {
-				obj = AdGame->_objects[i];
-				minY = AdGame->_objects[i]->_posY;
+		for (i = 0; i < adGame->_objects.GetSize(); i++) {
+			if (adGame->_objects[i]->_active && !adGame->_objects[i]->_drawn && adGame->_objects[i]->_posY < minY && (adGame->_objects[i]->_stickRegion == Region || Region == NULL || (adGame->_objects[i]->_stickRegion == NULL && Region->PointInRegion(adGame->_objects[i]->_posX, adGame->_objects[i]->_posY)))) {
+				obj = adGame->_objects[i];
+				minY = adGame->_objects[i]->_posY;
 			}
 		}
 
@@ -1969,99 +1969,99 @@ HRESULT CAdScene::removeObject(CAdObject *Object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::saveAsText(CBDynBuffer *Buffer, int Indent) {
+HRESULT CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
 	int i;
 
-	Buffer->putTextIndent(Indent, "SCENE {\n");
+	buffer->putTextIndent(indent, "SCENE {\n");
 
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	if (_persistentState)
-		Buffer->putTextIndent(Indent + 2, "PERSISTENT_STATE=%s\n", _persistentState ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "PERSISTENT_STATE=%s\n", _persistentState ? "TRUE" : "FALSE");
 
 	if (!_persistentStateSprites)
-		Buffer->putTextIndent(Indent + 2, "PERSISTENT_STATE_SPRITES=%s\n", _persistentStateSprites ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "PERSISTENT_STATE_SPRITES=%s\n", _persistentStateSprites ? "TRUE" : "FALSE");
 
 
 	// scripts
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// properties
-	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
 
 	// viewport
 	if (_viewport) {
 		RECT *rc = _viewport->getRect();
-		Buffer->putTextIndent(Indent + 2, "VIEWPORT { %d, %d, %d, %d }\n", rc->left, rc->top, rc->right, rc->bottom);
+		buffer->putTextIndent(indent + 2, "VIEWPORT { %d, %d, %d, %d }\n", rc->left, rc->top, rc->right, rc->bottom);
 	}
 
 
 
 	// editor settings
-	Buffer->putTextIndent(Indent + 2, "; ----- editor settings\n");
-	Buffer->putTextIndent(Indent + 2, "EDITOR_MARGIN_H=%d\n", _editorMarginH);
-	Buffer->putTextIndent(Indent + 2, "EDITOR_MARGIN_V=%d\n", _editorMarginV);
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_FRAME { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColFrame), D3DCOLGetG(_editorColFrame), D3DCOLGetB(_editorColFrame), D3DCOLGetA(_editorColFrame));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_ENTITY_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColEntitySel), D3DCOLGetG(_editorColEntitySel), D3DCOLGetB(_editorColEntitySel), D3DCOLGetA(_editorColEntitySel));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_REGION_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColRegionSel), D3DCOLGetG(_editorColRegionSel), D3DCOLGetB(_editorColRegionSel), D3DCOLGetA(_editorColRegionSel));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_BLOCKED_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColBlockedSel), D3DCOLGetG(_editorColBlockedSel), D3DCOLGetB(_editorColBlockedSel), D3DCOLGetA(_editorColBlockedSel));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_DECORATION_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColDecorSel), D3DCOLGetG(_editorColDecorSel), D3DCOLGetB(_editorColDecorSel), D3DCOLGetA(_editorColDecorSel));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_WAYPOINTS_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColWaypointsSel), D3DCOLGetG(_editorColWaypointsSel), D3DCOLGetB(_editorColWaypointsSel), D3DCOLGetA(_editorColWaypointsSel));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_ENTITY { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColEntity), D3DCOLGetG(_editorColEntity), D3DCOLGetB(_editorColEntity), D3DCOLGetA(_editorColEntity));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_REGION { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColRegion), D3DCOLGetG(_editorColRegion), D3DCOLGetB(_editorColRegion), D3DCOLGetA(_editorColRegion));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_DECORATION { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColDecor), D3DCOLGetG(_editorColDecor), D3DCOLGetB(_editorColDecor), D3DCOLGetA(_editorColDecor));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_BLOCKED { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColBlocked), D3DCOLGetG(_editorColBlocked), D3DCOLGetB(_editorColBlocked), D3DCOLGetA(_editorColBlocked));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_WAYPOINTS { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColWaypoints), D3DCOLGetG(_editorColWaypoints), D3DCOLGetB(_editorColWaypoints), D3DCOLGetA(_editorColWaypoints));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_COLOR_SCALE { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColScale), D3DCOLGetG(_editorColScale), D3DCOLGetB(_editorColScale), D3DCOLGetA(_editorColScale));
+	buffer->putTextIndent(indent + 2, "; ----- editor settings\n");
+	buffer->putTextIndent(indent + 2, "EDITOR_MARGIN_H=%d\n", _editorMarginH);
+	buffer->putTextIndent(indent + 2, "EDITOR_MARGIN_V=%d\n", _editorMarginV);
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_FRAME { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColFrame), D3DCOLGetG(_editorColFrame), D3DCOLGetB(_editorColFrame), D3DCOLGetA(_editorColFrame));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_ENTITY_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColEntitySel), D3DCOLGetG(_editorColEntitySel), D3DCOLGetB(_editorColEntitySel), D3DCOLGetA(_editorColEntitySel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_REGION_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColRegionSel), D3DCOLGetG(_editorColRegionSel), D3DCOLGetB(_editorColRegionSel), D3DCOLGetA(_editorColRegionSel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_BLOCKED_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColBlockedSel), D3DCOLGetG(_editorColBlockedSel), D3DCOLGetB(_editorColBlockedSel), D3DCOLGetA(_editorColBlockedSel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_DECORATION_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColDecorSel), D3DCOLGetG(_editorColDecorSel), D3DCOLGetB(_editorColDecorSel), D3DCOLGetA(_editorColDecorSel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_WAYPOINTS_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColWaypointsSel), D3DCOLGetG(_editorColWaypointsSel), D3DCOLGetB(_editorColWaypointsSel), D3DCOLGetA(_editorColWaypointsSel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_ENTITY { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColEntity), D3DCOLGetG(_editorColEntity), D3DCOLGetB(_editorColEntity), D3DCOLGetA(_editorColEntity));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_REGION { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColRegion), D3DCOLGetG(_editorColRegion), D3DCOLGetB(_editorColRegion), D3DCOLGetA(_editorColRegion));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_DECORATION { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColDecor), D3DCOLGetG(_editorColDecor), D3DCOLGetB(_editorColDecor), D3DCOLGetA(_editorColDecor));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_BLOCKED { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColBlocked), D3DCOLGetG(_editorColBlocked), D3DCOLGetB(_editorColBlocked), D3DCOLGetA(_editorColBlocked));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_WAYPOINTS { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColWaypoints), D3DCOLGetG(_editorColWaypoints), D3DCOLGetB(_editorColWaypoints), D3DCOLGetA(_editorColWaypoints));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_SCALE { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColScale), D3DCOLGetG(_editorColScale), D3DCOLGetB(_editorColScale), D3DCOLGetA(_editorColScale));
 
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SHOW_REGIONS=%s\n", _editorShowRegions ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SHOW_BLOCKED=%s\n", _editorShowBlocked ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SHOW_DECORATION=%s\n", _editorShowDecor ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SHOW_ENTITIES=%s\n", _editorShowEntities ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SHOW_SCALE=%s\n", _editorShowScale ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "EDITOR_SHOW_REGIONS=%s\n", _editorShowRegions ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "EDITOR_SHOW_BLOCKED=%s\n", _editorShowBlocked ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "EDITOR_SHOW_DECORATION=%s\n", _editorShowDecor ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "EDITOR_SHOW_ENTITIES=%s\n", _editorShowEntities ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "EDITOR_SHOW_SCALE=%s\n", _editorShowScale ? "TRUE" : "FALSE");
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
 	// waypoints
-	Buffer->putTextIndent(Indent + 2, "; ----- waypoints\n");
-	for (i = 0; i < _waypointGroups.GetSize(); i++) _waypointGroups[i]->saveAsText(Buffer, Indent + 2);
+	buffer->putTextIndent(indent + 2, "; ----- waypoints\n");
+	for (i = 0; i < _waypointGroups.GetSize(); i++) _waypointGroups[i]->saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// layers
-	Buffer->putTextIndent(Indent + 2, "; ----- layers\n");
-	for (i = 0; i < _layers.GetSize(); i++) _layers[i]->saveAsText(Buffer, Indent + 2);
+	buffer->putTextIndent(indent + 2, "; ----- layers\n");
+	for (i = 0; i < _layers.GetSize(); i++) _layers[i]->saveAsText(buffer, indent + 2);
 
 	// scale levels
-	Buffer->putTextIndent(Indent + 2, "; ----- scale levels\n");
-	for (i = 0; i < _scaleLevels.GetSize(); i++) _scaleLevels[i]->saveAsText(Buffer, Indent + 2);
+	buffer->putTextIndent(indent + 2, "; ----- scale levels\n");
+	for (i = 0; i < _scaleLevels.GetSize(); i++) _scaleLevels[i]->saveAsText(buffer, indent + 2);
 
 	// rotation levels
-	Buffer->putTextIndent(Indent + 2, "; ----- rotation levels\n");
-	for (i = 0; i < _rotLevels.GetSize(); i++) _rotLevels[i]->saveAsText(Buffer, Indent + 2);
+	buffer->putTextIndent(indent + 2, "; ----- rotation levels\n");
+	for (i = 0; i < _rotLevels.GetSize(); i++) _rotLevels[i]->saveAsText(buffer, indent + 2);
 
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// free entities
-	Buffer->putTextIndent(Indent + 2, "; ----- free entities\n");
+	buffer->putTextIndent(indent + 2, "; ----- free entities\n");
 	for (i = 0; i < _objects.GetSize(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
-			_objects[i]->saveAsText(Buffer, Indent + 2);
+			_objects[i]->saveAsText(buffer, indent + 2);
 
 		}
 	}
 
 
 
-	Buffer->putTextIndent(Indent, "}\n");
+	buffer->putTextIndent(indent, "}\n");
 	return S_OK;
 }
 
@@ -2359,13 +2359,13 @@ void CAdScene::pfPointsAdd(int X, int Y, int Distance) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScene::getViewportOffset(int *OffsetX, int *OffsetY) {
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 	if (_viewport && !Game->_editorMode) {
 		if (OffsetX) *OffsetX = _viewport->_offsetX;
 		if (OffsetY) *OffsetY = _viewport->_offsetY;
-	} else if (AdGame->_sceneViewport && !Game->_editorMode) {
-		if (OffsetX) *OffsetX = AdGame->_sceneViewport->_offsetX;
-		if (OffsetY) *OffsetY = AdGame->_sceneViewport->_offsetY;
+	} else if (adGame->_sceneViewport && !Game->_editorMode) {
+		if (OffsetX) *OffsetX = adGame->_sceneViewport->_offsetX;
+		if (OffsetY) *OffsetY = adGame->_sceneViewport->_offsetY;
 	} else {
 		if (OffsetX) *OffsetX = 0;
 		if (OffsetY) *OffsetY = 0;
@@ -2376,13 +2376,13 @@ HRESULT CAdScene::getViewportOffset(int *OffsetX, int *OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScene::getViewportSize(int *Width, int *Height) {
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 	if (_viewport && !Game->_editorMode) {
 		if (Width)  *Width  = _viewport->getWidth();
 		if (Height) *Height = _viewport->getHeight();
-	} else if (AdGame->_sceneViewport && !Game->_editorMode) {
-		if (Width)  *Width  = AdGame->_sceneViewport->getWidth();
-		if (Height) *Height = AdGame->_sceneViewport->getHeight();
+	} else if (adGame->_sceneViewport && !Game->_editorMode) {
+		if (Width)  *Width  = adGame->_sceneViewport->getWidth();
+		if (Height) *Height = adGame->_sceneViewport->getHeight();
 	} else {
 		if (Width)  *Width  = Game->_renderer->_width;
 		if (Height) *Height = Game->_renderer->_height;
@@ -2485,38 +2485,36 @@ HRESULT CAdScene::loadState() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::persistState(bool Saving) {
+HRESULT CAdScene::persistState(bool saving) {
 	if (!_persistentState) return S_OK;
 
-	CAdGame *AdGame = (CAdGame *)Game;
-	CAdSceneState *State = AdGame->getSceneState(_filename, Saving);
-	if (!State) return S_OK;
+	CAdGame *adGame = (CAdGame *)Game;
+	CAdSceneState *state = adGame->getSceneState(_filename, saving);
+	if (!state) return S_OK;
 
-
-	int i;
-	CAdNodeState *NodeState;
+	CAdNodeState *nodeState;
 
 	// dependent objects
-	for (i = 0; i < _layers.GetSize(); i++) {
+	for (int i = 0; i < _layers.GetSize(); i++) {
 		CAdLayer *layer = _layers[i];
 		for (int j = 0; j < layer->_nodes.GetSize(); j++) {
 			CAdSceneNode *node = layer->_nodes[j];
 			switch (node->_type) {
 			case OBJECT_ENTITY:
 				if (!node->_entity->_saveState) continue;
-				NodeState = State->getNodeState(node->_entity->_name, Saving);
-				if (NodeState) {
-					NodeState->TransferEntity(node->_entity, _persistentStateSprites, Saving);
+				nodeState = state->getNodeState(node->_entity->_name, saving);
+				if (nodeState) {
+					nodeState->transferEntity(node->_entity, _persistentStateSprites, saving);
 					//if(Saving) NodeState->_active = node->_entity->_active;
 					//else node->_entity->_active = NodeState->_active;
 				}
 				break;
 			case OBJECT_REGION:
 				if (!node->_region->_saveState) continue;
-				NodeState = State->getNodeState(node->_region->_name, Saving);
-				if (NodeState) {
-					if (Saving) NodeState->_active = node->_region->_active;
-					else node->_region->_active = NodeState->_active;
+				nodeState = state->getNodeState(node->_region->_name, saving);
+				if (nodeState) {
+					if (saving) nodeState->_active = node->_region->_active;
+					else node->_region->_active = nodeState->_active;
 				}
 				break;
 			default:
@@ -2527,12 +2525,12 @@ HRESULT CAdScene::persistState(bool Saving) {
 	}
 
 	// free entities
-	for (i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.GetSize(); i++) {
 		if (!_objects[i]->_saveState) continue;
 		if (_objects[i]->_type == OBJECT_ENTITY) {
-			NodeState = State->getNodeState(_objects[i]->_name, Saving);
-			if (NodeState) {
-				NodeState->TransferEntity((CAdEntity *)_objects[i], _persistentStateSprites, Saving);
+			nodeState = state->getNodeState(_objects[i]->_name, saving);
+			if (nodeState) {
+				nodeState->transferEntity((CAdEntity *)_objects[i], _persistentStateSprites, saving);
 				//if(Saving) NodeState->_active = _objects[i]->_active;
 				//else _objects[i]->_active = NodeState->_active;
 			}
@@ -2540,11 +2538,11 @@ HRESULT CAdScene::persistState(bool Saving) {
 	}
 
 	// waypoint groups
-	for (i = 0; i < _waypointGroups.GetSize(); i++) {
-		NodeState = State->getNodeState(_waypointGroups[i]->_name, Saving);
-		if (NodeState) {
-			if (Saving) NodeState->_active = _waypointGroups[i]->_active;
-			else _waypointGroups[i]->_active = NodeState->_active;
+	for (int i = 0; i < _waypointGroups.GetSize(); i++) {
+		nodeState = state->getNodeState(_waypointGroups[i]->_name, saving);
+		if (nodeState) {
+			if (saving) nodeState->_active = _waypointGroups[i]->_active;
+			else _waypointGroups[i]->_active = nodeState->_active;
 		}
 	}
 
@@ -2553,14 +2551,14 @@ HRESULT CAdScene::persistState(bool Saving) {
 
 
 //////////////////////////////////////////////////////////////////////////
-float CAdScene::getRotationAt(int X, int Y) {
+float CAdScene::getRotationAt(int x, int y) {
 	CAdRotLevel *prev = NULL;
 	CAdRotLevel *next = NULL;
 
 	for (int i = 0; i < _rotLevels.GetSize(); i++) {
 		/*  CAdRotLevel *xxx = _rotLevels[i];
 		    int j = _rotLevels.GetSize();*/
-		if (_rotLevels[i]->_posX < X) prev = _rotLevels[i];
+		if (_rotLevels[i]->_posX < x) prev = _rotLevels[i];
 		else {
 			next = _rotLevels[i];
 			break;
@@ -2571,32 +2569,30 @@ float CAdScene::getRotationAt(int X, int Y) {
 
 	int delta_x = next->_posX - prev->_posX;
 	float delta_rot = next->_rotation - prev->_rotation;
-	X -= prev->_posX;
+	x -= prev->_posX;
 
-	float percent = (float)X / ((float)delta_x / 100.0f);
+	float percent = (float)x / ((float)delta_x / 100.0f);
 	return prev->_rotation + delta_rot / 100 * percent;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::handleItemAssociations(const char *ItemName, bool Show) {
-	int i;
-
-	for (i = 0; i < _layers.GetSize(); i++) {
+HRESULT CAdScene::handleItemAssociations(const char *itemName, bool show) {
+	for (int i = 0; i < _layers.GetSize(); i++) {
 		CAdLayer *Layer = _layers[i];
 		for (int j = 0; j < Layer->_nodes.GetSize(); j++) {
 			if (Layer->_nodes[j]->_type == OBJECT_ENTITY) {
 				CAdEntity *Ent = Layer->_nodes[j]->_entity;
 
-				if (Ent->_item && strcmp(Ent->_item, ItemName) == 0) Ent->_active = Show;
+				if (Ent->_item && strcmp(Ent->_item, itemName) == 0) Ent->_active = show;
 			}
 		}
 	}
 
-	for (i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.GetSize(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
-			CAdEntity *Ent = (CAdEntity *)_objects[i];
-			if (Ent->_item && strcmp(Ent->_item, ItemName) == 0) Ent->_active = Show;
+			CAdEntity *ent = (CAdEntity *)_objects[i];
+			if (ent->_item && strcmp(ent->_item, itemName) == 0) ent->_active = show;
 		}
 	}
 
@@ -2634,20 +2630,20 @@ HRESULT CAdScene::restoreDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 CBObject *CAdScene::getNextAccessObject(CBObject *CurrObject) {
-	CBArray<CAdObject *, CAdObject *> Objects;
-	getSceneObjects(Objects, true);
+	CBArray<CAdObject *, CAdObject *> objects;
+	getSceneObjects(objects, true);
 
-	if (Objects.GetSize() == 0) return NULL;
+	if (objects.GetSize() == 0) return NULL;
 	else {
 		if (CurrObject != NULL) {
-			for (int i = 0; i < Objects.GetSize(); i++) {
-				if (Objects[i] == CurrObject) {
-					if (i < Objects.GetSize() - 1) return Objects[i + 1];
+			for (int i = 0; i < objects.GetSize(); i++) {
+				if (objects[i] == CurrObject) {
+					if (i < objects.GetSize() - 1) return objects[i + 1];
 					else break;
 				}
 			}
 		}
-		return Objects[0];
+		return objects[0];
 	}
 	return NULL;
 }
@@ -2734,14 +2730,14 @@ HRESULT CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &Objects, bo
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScene::getRegionObjects(CAdRegion *Region, CBArray<CAdObject *, CAdObject *> &Objects, bool InteractiveOnly) {
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 	CAdObject *Obj;
 
 	int i;
 
 	// global objects
-	for (i = 0; i < AdGame->_objects.GetSize(); i++) {
-		Obj = AdGame->_objects[i];
+	for (i = 0; i < adGame->_objects.GetSize(); i++) {
+		Obj = adGame->_objects[i];
 		if (Obj->_active && (Obj->_stickRegion == Region || Region == NULL || (Obj->_stickRegion == NULL && Region->PointInRegion(Obj->_posX, Obj->_posY)))) {
 			if (InteractiveOnly && !Obj->_registrable) continue;
 

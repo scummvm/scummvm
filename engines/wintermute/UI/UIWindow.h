@@ -74,12 +74,12 @@ public:
 	CBArray<CUIObject *, CUIObject *> _widgets;
 	TTextAlign _titleAlign;
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
 	CUITiledImage *_backInactive;
 	CBFont *_fontInactive;
 	CBSprite *_imageInactive;
 	virtual HRESULT listen(CBScriptHolder *param1, uint32 param2);
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);

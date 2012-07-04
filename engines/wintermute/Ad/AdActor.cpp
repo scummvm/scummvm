@@ -124,8 +124,8 @@ CAdActor::~CAdActor() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdActor::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdActor::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -135,10 +135,10 @@ HRESULT CAdActor::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ACTOR file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ACTOR file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -235,7 +235,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 	CAdSpriteSet *spr = NULL;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
@@ -291,19 +291,19 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			delete _walkSprite;
 			_walkSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true, AdGame->_texWalkLifeTime, CACHE_HALF))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadBuffer(params, true, adGame->_texWalkLifeTime, CACHE_HALF))) cmd = PARSERR_GENERIC;
 			else _walkSprite = spr;
 			break;
 
 		case TOKEN_TALK:
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.Add(spr);
 			break;
 
 		case TOKEN_TALK_SPECIAL:
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true, AdGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.Add(spr);
 			break;
 
@@ -311,7 +311,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			delete _standSprite;
 			_standSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true, AdGame->_texStandLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || FAILED(spr->loadBuffer(params, true, adGame->_texStandLifeTime))) cmd = PARSERR_GENERIC;
 			else _standSprite = spr;
 			break;
 
@@ -490,8 +490,8 @@ void CAdActor::goTo(int x, int y, TDirection afterWalkDir) {
 	_afterWalkDir = afterWalkDir;
 	if (x == _targetPoint->x && y == _targetPoint->y && _state == STATE_FOLLOWING_PATH) return;
 
-	_path->Reset();
-	_path->SetReady(false);
+	_path->reset();
+	_path->setReady(false);
 
 	_targetPoint->x = x;
 	_targetPoint->y = y;
@@ -512,7 +512,7 @@ HRESULT CAdActor::display() {
 	else alpha = _shadowable ? ((CAdGame *)Game)->_scene->getAlphaAt(_posX, _posY, true) : 0xFFFFFFFF;
 
 	float scaleX, scaleY;
-	GetScale(&scaleX, &scaleY);
+	getScale(&scaleX, &scaleY);
 
 
 	float rotate;
@@ -749,16 +749,16 @@ HRESULT CAdActor::update() {
 //////////////////////////////////////////////////////////////////////////
 void CAdActor::followPath() {
 	// skip current position
-	_path->GetFirst();
-	while (_path->GetCurrent() != NULL) {
-		if (_path->GetCurrent()->x != _posX || _path->GetCurrent()->y != _posY) break;
-		_path->GetNext();
+	_path->getFirst();
+	while (_path->getCurrent() != NULL) {
+		if (_path->getCurrent()->x != _posX || _path->getCurrent()->y != _posY) break;
+		_path->getNext();
 	}
 
 	// are there points to follow?
-	if (_path->GetCurrent() != NULL) {
+	if (_path->getCurrent() != NULL) {
 		_state = STATE_FOLLOWING_PATH;;
-		initLine(CBPoint(_posX, _posY), *_path->GetCurrent());
+		initLine(CBPoint(_posX, _posY), *_path->getCurrent());
 	} else {
 		if (_afterWalkDir != DI_NONE) turnTo(_afterWalkDir);
 		else _state = STATE_READY;
@@ -814,17 +814,17 @@ void CAdActor::getNextStep() {
 
 
 	if (_pFCount == 0) {
-		if (_path->GetNext() == NULL) {
+		if (_path->getNext() == NULL) {
 			_posX = _targetPoint->x;
 			_posY = _targetPoint->y;
 
-			_path->Reset();
+			_path->reset();
 			if (_afterWalkDir != DI_NONE) turnTo(_afterWalkDir);
 			else {
 				_state = _nextState;
 				_nextState = STATE_READY;
 			}
-		} else initLine(CBPoint(_posX, _posY), *_path->GetCurrent());
+		} else initLine(CBPoint(_posX, _posY), *_path->getCurrent());
 	}
 }
 

@@ -54,8 +54,8 @@ CAdRotLevel::~CAdRotLevel() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdRotLevel::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdRotLevel::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -65,10 +65,10 @@ HRESULT CAdRotLevel::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ROTATION_LEVEL file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ROTATION_LEVEL file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -82,7 +82,7 @@ TOKEN_DEF(ROTATION)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ROTATION_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -95,15 +95,15 @@ HRESULT CAdRotLevel::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_ROTATION_LEVEL) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ROTATION_LEVEL) {
 			Game->LOG(0, "'ROTATION_LEVEL' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -135,12 +135,12 @@ HRESULT CAdRotLevel::loadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "ROTATION_LEVEL {\n");
-	Buffer->putTextIndent(Indent + 2, "X=%d\n", _posX);
-	Buffer->putTextIndent(Indent + 2, "ROTATION=%d\n", (int)_rotation);
-	CBBase::saveAsText(Buffer, Indent + 2);
-	Buffer->putTextIndent(Indent, "}\n");
+HRESULT CAdRotLevel::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "ROTATION_LEVEL {\n");
+	buffer->putTextIndent(indent + 2, "X=%d\n", _posX);
+	buffer->putTextIndent(indent + 2, "ROTATION=%d\n", (int)_rotation);
+	CBBase::saveAsText(buffer, indent + 2);
+	buffer->putTextIndent(indent, "}\n");
 
 	return S_OK;
 }

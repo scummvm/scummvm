@@ -120,8 +120,8 @@ HRESULT CUITiledImage::display(int X, int Y, int Width, int Height) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CUITiledImage::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -131,10 +131,10 @@ HRESULT CUITiledImage::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -158,7 +158,7 @@ TOKEN_DEF(HORIZONTAL_TILES)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TILED_IMAGE)
 	TOKEN_TABLE(TEMPLATE)
@@ -184,15 +184,15 @@ HRESULT CUITiledImage::loadBuffer(byte  *Buffer, bool Complete) {
 	int H1 = 0, H2 = 0, H3 = 0;
 	int V1 = 0, V2 = 0, V3 = 0;
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_TILED_IMAGE) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TILED_IMAGE) {
 			Game->LOG(0, "'TILED_IMAGE' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -307,12 +307,12 @@ HRESULT CUITiledImage::loadBuffer(byte  *Buffer, bool Complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "TILED_IMAGE\n");
-	Buffer->putTextIndent(Indent, "{\n");
+HRESULT CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "TILED_IMAGE\n");
+	buffer->putTextIndent(indent, "{\n");
 
 	if (_image && _image->_surfaceFilename)
-		Buffer->putTextIndent(Indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
 
 	int H1, H2, H3;
 	int V1, V2, V3;
@@ -326,13 +326,13 @@ HRESULT CUITiledImage::saveAsText(CBDynBuffer *Buffer, int Indent) {
 	V3 = _downLeft.bottom - _downLeft.top;
 
 
-	Buffer->putTextIndent(Indent + 2, "VERTICAL_TILES { %d, %d, %d }\n", V1, V2, V3);
-	Buffer->putTextIndent(Indent + 2, "HORIZONTAL_TILES { %d, %d, %d }\n", H1, H2, H3);
+	buffer->putTextIndent(indent + 2, "VERTICAL_TILES { %d, %d, %d }\n", V1, V2, V3);
+	buffer->putTextIndent(indent + 2, "HORIZONTAL_TILES { %d, %d, %d }\n", H1, H2, H3);
 
 	// editor properties
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent, "}\n");
+	buffer->putTextIndent(indent, "}\n");
 	return S_OK;
 }
 

@@ -39,8 +39,8 @@ public:
 	DECLARE_PERSISTENT(CUITiledImage, CBObject)
 	void correctSize(int *Width, int *Height);
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 
 	HRESULT display(int X, int Y, int Width, int Height);
 	CUITiledImage(CBGame *inGame = NULL);

@@ -52,8 +52,8 @@ CAdScaleLevel::~CAdScaleLevel() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdScaleLevel::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdScaleLevel::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -63,10 +63,10 @@ HRESULT CAdScaleLevel::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SCALE_LEVEL file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing SCALE_LEVEL file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -80,7 +80,7 @@ TOKEN_DEF(SCALE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCALE_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -93,15 +93,15 @@ HRESULT CAdScaleLevel::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_SCALE_LEVEL) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCALE_LEVEL) {
 			Game->LOG(0, "'SCALE_LEVEL' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -133,12 +133,12 @@ HRESULT CAdScaleLevel::loadBuffer(byte  *Buffer, bool Complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "SCALE_LEVEL {\n");
-	Buffer->putTextIndent(Indent + 2, "Y=%d\n", _posY);
-	Buffer->putTextIndent(Indent + 2, "SCALE=%d\n", (int)_scale);
-	CBBase::saveAsText(Buffer, Indent + 2);
-	Buffer->putTextIndent(Indent, "}\n");
+HRESULT CAdScaleLevel::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "SCALE_LEVEL {\n");
+	buffer->putTextIndent(indent + 2, "Y=%d\n", _posY);
+	buffer->putTextIndent(indent + 2, "SCALE=%d\n", (int)_scale);
+	CBBase::saveAsText(buffer, indent + 2);
+	buffer->putTextIndent(indent, "}\n");
 
 	return S_OK;
 }

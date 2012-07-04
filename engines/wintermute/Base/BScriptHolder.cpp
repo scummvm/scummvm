@@ -257,8 +257,8 @@ const char *CBScriptHolder::scToString() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	return CBBase::saveAsText(Buffer, Indent);
+HRESULT CBScriptHolder::saveAsText(CBDynBuffer *buffer, int indent) {
+	return CBBase::saveAsText(buffer, indent);
 }
 
 
@@ -345,7 +345,7 @@ TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::parseProperty(byte  *Buffer, bool Complete) {
+HRESULT CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(PROPERTY)
 	TOKEN_TABLE(NAME)
@@ -356,18 +356,18 @@ HRESULT CBScriptHolder::parseProperty(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_PROPERTY) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_PROPERTY) {
 			Game->LOG(0, "'PROPERTY' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
 	char *PropName = NULL;
 	char *PropValue = NULL;
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME:
 			delete[] PropName;

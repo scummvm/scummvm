@@ -58,12 +58,12 @@ HRESULT CAdResponseContext::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseContext::setContext(const char *Context) {
+void CAdResponseContext::setContext(const char *context) {
 	delete[] _context;
 	_context = NULL;
-	if (Context) {
-		_context = new char [strlen(Context) + 1];
-		if (_context) strcpy(_context, Context);
+	if (context) {
+		_context = new char [strlen(context) + 1];
+		if (_context) strcpy(_context, context);
 	}
 }
 

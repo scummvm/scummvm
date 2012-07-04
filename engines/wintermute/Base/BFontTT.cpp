@@ -405,8 +405,8 @@ int CBFontTT::getLetterHeight() {
 
 //////////////////////////////////////////////////////////////////////
 HRESULT CBFontTT::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CBFontTT::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -416,9 +416,9 @@ HRESULT CBFontTT::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer))) Game->LOG(0, "Error parsing TTFONT file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer))) Game->LOG(0, "Error parsing TTFONT file '%s'", filename);
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -441,7 +441,7 @@ TOKEN_DEF(OFFSET_X)
 TOKEN_DEF(OFFSET_Y)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::loadBuffer(byte  *Buffer) {
+HRESULT CBFontTT::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TTFONT)
 	TOKEN_TABLE(SIZE)
@@ -461,15 +461,15 @@ HRESULT CBFontTT::loadBuffer(byte  *Buffer) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_TTFONT) {
+	if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TTFONT) {
 		Game->LOG(0, "'TTFONT' keyword expected.");
 		return E_FAIL;
 	}
-	Buffer = (byte *)params;
+	buffer = (byte *)params;
 
 	uint32 BaseColor = 0x00000000;
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SIZE:
 			parser.ScanStr(params, "%d", &_fontHeight);
@@ -549,7 +549,7 @@ HRESULT CBFontTT::loadBuffer(byte  *Buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::parseLayer(CBTTFontLayer *Layer, byte *Buffer) {
+HRESULT CBFontTT::parseLayer(CBTTFontLayer *Layer, byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(OFFSET_X)
 	TOKEN_TABLE(OFFSET_Y)
@@ -561,7 +561,7 @@ HRESULT CBFontTT::parseLayer(CBTTFontLayer *Layer, byte *Buffer) {
 	int cmd;
 	CBParser parser(Game);
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_OFFSET_X:
 			parser.ScanStr(params, "%d", &Layer->_offsetX);

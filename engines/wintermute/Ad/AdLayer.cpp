@@ -62,8 +62,8 @@ CAdLayer::~CAdLayer() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdLayer::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdLayer::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -73,10 +73,9 @@ HRESULT CAdLayer::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing LAYER file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing LAYER file '%s'", filename);
 
-
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -100,7 +99,7 @@ TOKEN_DEF(CLOSE_UP)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(LAYER)
 	TOKEN_TABLE(TEMPLATE)
@@ -123,15 +122,15 @@ HRESULT CAdLayer::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_LAYER) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_LAYER) {
 			Game->LOG(0, "'LAYER' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -268,21 +267,21 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddRegion") == 0 || strcmp(name, "AddEntity") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
-		CAdSceneNode *Node = new CAdSceneNode(Game);
+		CAdSceneNode *node = new CAdSceneNode(Game);
 		if (strcmp(name, "AddRegion") == 0) {
-			CAdRegion *Region = new CAdRegion(Game);
-			if (!Val->isNULL()) Region->setName(Val->getString());
-			Node->setRegion(Region);
-			stack->pushNative(Region, true);
+			CAdRegion *region = new CAdRegion(Game);
+			if (!val->isNULL()) region->setName(val->getString());
+			node->setRegion(region);
+			stack->pushNative(region, true);
 		} else {
-			CAdEntity *Entity = new CAdEntity(Game);
-			if (!Val->isNULL()) Entity->setName(Val->getString());
-			Node->setEntity(Entity);
-			stack->pushNative(Entity, true);
+			CAdEntity *entity = new CAdEntity(Game);
+			if (!val->isNULL()) entity->setName(val->getString());
+			node->setEntity(entity);
+			stack->pushNative(entity, true);
 		}
-		_nodes.Add(Node);
+		_nodes.Add(node);
 		return S_OK;
 	}
 
@@ -291,24 +290,24 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertRegion") == 0 || strcmp(name, "InsertEntity") == 0) {
 		stack->correctParams(2);
-		int Index = stack->pop()->getInt();
-		CScValue *Val = stack->pop();
+		int index = stack->pop()->getInt();
+		CScValue *val = stack->pop();
 
-		CAdSceneNode *Node = new CAdSceneNode(Game);
+		CAdSceneNode *node = new CAdSceneNode(Game);
 		if (strcmp(name, "InsertRegion") == 0) {
-			CAdRegion *Region = new CAdRegion(Game);
-			if (!Val->isNULL()) Region->setName(Val->getString());
-			Node->setRegion(Region);
-			stack->pushNative(Region, true);
+			CAdRegion *region = new CAdRegion(Game);
+			if (!val->isNULL()) region->setName(val->getString());
+			node->setRegion(region);
+			stack->pushNative(region, true);
 		} else {
-			CAdEntity *Entity = new CAdEntity(Game);
-			if (!Val->isNULL()) Entity->setName(Val->getString());
-			Node->setEntity(Entity);
-			stack->pushNative(Entity, true);
+			CAdEntity *entity = new CAdEntity(Game);
+			if (!val->isNULL()) entity->setName(val->getString());
+			node->setEntity(entity);
+			stack->pushNative(entity, true);
 		}
-		if (Index < 0) Index = 0;
-		if (Index <= _nodes.GetSize() - 1) _nodes.InsertAt(Index, Node);
-		else _nodes.Add(Node);
+		if (index < 0) index = 0;
+		if (index <= _nodes.GetSize() - 1) _nodes.InsertAt(index, node);
+		else _nodes.Add(node);
 
 		return S_OK;
 	}
@@ -318,30 +317,30 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteNode") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
-		CAdSceneNode *ToDelete = NULL;
-		if (Val->isNative()) {
-			CBScriptable *Temp = Val->getNative();
+		CAdSceneNode *toDelete = NULL;
+		if (val->isNative()) {
+			CBScriptable *temp = val->getNative();
 			for (int i = 0; i < _nodes.GetSize(); i++) {
-				if (_nodes[i]->_region == Temp || _nodes[i]->_entity == Temp) {
-					ToDelete = _nodes[i];
+				if (_nodes[i]->_region == temp || _nodes[i]->_entity == temp) {
+					toDelete = _nodes[i];
 					break;
 				}
 			}
 		} else {
-			int Index = Val->getInt();
-			if (Index >= 0 && Index < _nodes.GetSize()) {
-				ToDelete = _nodes[Index];
+			int index = val->getInt();
+			if (index >= 0 && index < _nodes.GetSize()) {
+				toDelete = _nodes[index];
 			}
 		}
-		if (ToDelete == NULL) {
+		if (toDelete == NULL) {
 			stack->pushBool(false);
 			return S_OK;
 		}
 
 		for (int i = 0; i < _nodes.GetSize(); i++) {
-			if (_nodes[i] == ToDelete) {
+			if (_nodes[i] == toDelete) {
 				delete _nodes[i];
 				_nodes[i] = NULL;
 				_nodes.RemoveAt(i);
@@ -478,33 +477,33 @@ const char *CAdLayer::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "LAYER {\n");
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
-	Buffer->putTextIndent(Indent + 2, "MAIN=%s\n", _main ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "WIDTH=%d\n", _width);
-	Buffer->putTextIndent(Indent + 2, "HEIGHT=%d\n", _height);
-	Buffer->putTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+HRESULT CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "LAYER {\n");
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	buffer->putTextIndent(indent + 2, "MAIN=%s\n", _main ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "WIDTH=%d\n", _width);
+	buffer->putTextIndent(indent + 2, "HEIGHT=%d\n", _height);
+	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 	if (_closeUp)
-		Buffer->putTextIndent(Indent + 2, "CLOSE_UP=%s\n", _closeUp ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "CLOSE_UP=%s\n", _closeUp ? "TRUE" : "FALSE");
 
 	int i;
 
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
 
 	for (i = 0; i < _nodes.GetSize(); i++) {
 		switch (_nodes[i]->_type) {
 		case OBJECT_ENTITY:
-			_nodes[i]->_entity->saveAsText(Buffer, Indent + 2);
+			_nodes[i]->_entity->saveAsText(buffer, indent + 2);
 			break;
 		case OBJECT_REGION:
-			_nodes[i]->_region->saveAsText(Buffer, Indent + 2);
+			_nodes[i]->_region->saveAsText(buffer, indent + 2);
 			break;
 		default:
 			error("CAdLayer::SaveAsText - Unhandled enum");
@@ -512,9 +511,9 @@ HRESULT CAdLayer::saveAsText(CBDynBuffer *Buffer, int Indent) {
 		}
 	}
 
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent, "}\n\n");
+	buffer->putTextIndent(indent, "}\n\n");
 
 	return S_OK;
 }

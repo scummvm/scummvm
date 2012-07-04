@@ -35,18 +35,18 @@ class CAdEntity;
 
 class CAdNodeState : public CBBase {
 public:
-	HRESULT TransferEntity(CAdEntity *Entity, bool IncludingSprites, bool Saving);
+	HRESULT transferEntity(CAdEntity *entity, bool includingSprites, bool saving);
 	void setName(const char *name);
 	void setFilename(const char *filename);
-	void SetCursor(const char *filename);
+	void setCursor(const char *filename);
 	DECLARE_PERSISTENT(CAdNodeState, CBBase)
 	CAdNodeState(CBGame *inGame);
 	virtual ~CAdNodeState();
 	char *_name;
 	bool _active;
 	char *_caption[7];
-	void setCaption(const char *Caption, int Case);
-	char *getCaption(int Case);
+	void setCaption(const char *caption, int caseVal);
+	char *getCaption(int caseVal);
 	uint32 _alphaColor;
 	char *_filename;
 	char *_cursor;

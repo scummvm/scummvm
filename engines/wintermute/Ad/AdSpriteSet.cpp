@@ -59,17 +59,17 @@ CAdSpriteSet::~CAdSpriteSet() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdSpriteSet::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
 	HRESULT ret;
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing SPRITESET file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing SPRITESET file '%s'", filename);
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }

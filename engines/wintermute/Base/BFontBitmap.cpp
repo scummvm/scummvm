@@ -246,8 +246,8 @@ void CBFontBitmap::drawChar(byte  c, int x, int y) {
 
 //////////////////////////////////////////////////////////////////////
 HRESULT CBFontBitmap::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CBFontBitmap::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -257,9 +257,9 @@ HRESULT CBFontBitmap::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer))) Game->LOG(0, "Error parsing FONT file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer))) Game->LOG(0, "Error parsing FONT file '%s'", filename);
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -284,7 +284,7 @@ TOKEN_DEF(WIDTHS_FRAME)
 TOKEN_DEF(PAINT_WHOLE_CELL)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::loadBuffer(byte  *Buffer) {
+HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONTEXT_FIX)
 	TOKEN_TABLE(FONT)
@@ -308,11 +308,11 @@ HRESULT CBFontBitmap::loadBuffer(byte  *Buffer) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_FONT) {
+	if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_FONT) {
 		Game->LOG(0, "'FONT' keyword expected.");
 		return E_FAIL;
 	}
-	Buffer = (byte *)params;
+	buffer = (byte *)params;
 
 	int widths[300];
 	int num = 0, default_width = 8;
@@ -327,7 +327,7 @@ HRESULT CBFontBitmap::loadBuffer(byte  *Buffer) {
 	int SpaceWidth = 0;
 	int ExpandWidth = 0;
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 
 		switch (cmd) {
 		case TOKEN_IMAGE:

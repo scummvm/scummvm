@@ -43,12 +43,12 @@ CAdPath::CAdPath(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdPath::~CAdPath() {
-	Reset();
+	reset();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdPath::Reset() {
+void CAdPath::reset() {
 	for (int i = 0; i < _points.GetSize(); i++)
 		delete _points[i];
 
@@ -59,7 +59,7 @@ void CAdPath::Reset() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPoint *CAdPath::GetFirst() {
+CBPoint *CAdPath::getFirst() {
 	if (_points.GetSize() > 0) {
 		_currIndex = 0;
 		return _points[_currIndex];
@@ -68,7 +68,7 @@ CBPoint *CAdPath::GetFirst() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPoint *CAdPath::GetNext() {
+CBPoint *CAdPath::getNext() {
 	_currIndex++;
 	if (_currIndex < _points.GetSize()) return _points[_currIndex];
 	else return NULL;
@@ -76,20 +76,20 @@ CBPoint *CAdPath::GetNext() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPoint *CAdPath::GetCurrent() {
+CBPoint *CAdPath::getCurrent() {
 	if (_currIndex >= 0 && _currIndex < _points.GetSize()) return _points[_currIndex];
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdPath::AddPoint(CBPoint *point) {
+void CAdPath::addPoint(CBPoint *point) {
 	_points.Add(point);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdPath::SetReady(bool ready) {
+bool CAdPath::setReady(bool ready) {
 	bool orig = _ready;
 	_ready = ready;
 

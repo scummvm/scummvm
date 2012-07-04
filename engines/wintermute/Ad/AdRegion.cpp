@@ -55,8 +55,8 @@ CAdRegion::~CAdRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdRegion::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdRegion::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -66,10 +66,10 @@ HRESULT CAdRegion::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -95,7 +95,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -120,12 +120,12 @@ HRESULT CAdRegion::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_REGION) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
 			Game->LOG(0, "'REGION' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
 	for (int i = 0; i < _points.GetSize(); i++) delete _points[i];
@@ -133,7 +133,7 @@ HRESULT CAdRegion::loadBuffer(byte  *Buffer, bool Complete) {
 
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -346,32 +346,32 @@ const char *CAdRegion::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "REGION {\n");
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
-	Buffer->putTextIndent(Indent + 2, "BLOCKED=%s\n", _blocked ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "DECORATION=%s\n", _decoration ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "SCALE=%d\n", (int)_zoom);
-	Buffer->putTextIndent(Indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alpha), D3DCOLGetG(_alpha), D3DCOLGetB(_alpha));
-	Buffer->putTextIndent(Indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alpha));
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
+HRESULT CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "REGION {\n");
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	buffer->putTextIndent(indent + 2, "BLOCKED=%s\n", _blocked ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "DECORATION=%s\n", _decoration ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "SCALE=%d\n", (int)_zoom);
+	buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alpha), D3DCOLGetG(_alpha), D3DCOLGetB(_alpha));
+	buffer->putTextIndent(indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alpha));
+	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 
 	int i;
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
 
 	for (i = 0; i < _points.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
+		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent, "}\n\n");
+	buffer->putTextIndent(indent, "}\n\n");
 
 	return S_OK;
 }

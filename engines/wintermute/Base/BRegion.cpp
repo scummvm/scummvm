@@ -96,8 +96,8 @@ bool CBRegion::PointInRegion(int X, int Y) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRegion::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CBRegion::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -107,10 +107,10 @@ HRESULT CBRegion::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -128,7 +128,7 @@ TOKEN_DEF(EDITOR_SELECTED_POINT)
 TOKEN_DEF(PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CBRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -145,12 +145,12 @@ HRESULT CBRegion::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_REGION) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
 			Game->LOG(0, "'REGION' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
 	int i;
@@ -158,7 +158,7 @@ HRESULT CBRegion::loadBuffer(byte  *Buffer, bool Complete) {
 	for (i = 0; i < _points.GetSize(); i++) delete _points[i];
 	_points.RemoveAll();
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -378,28 +378,28 @@ const char *CBRegion::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::saveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOverride) {
-	if (!NameOverride) Buffer->putTextIndent(Indent, "REGION {\n");
-	else Buffer->putTextIndent(Indent, "%s {\n", NameOverride);
+HRESULT CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *NameOverride) {
+	if (!NameOverride) buffer->putTextIndent(indent, "REGION {\n");
+	else buffer->putTextIndent(indent, "%s {\n", NameOverride);
 
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
-	Buffer->putTextIndent(Indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
 	int i;
 
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	for (i = 0; i < _points.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
+		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
-	if (_scProp) _scProp->saveAsText(Buffer, Indent + 2);
+	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent, "}\n\n");
+	buffer->putTextIndent(indent, "}\n\n");
 
 	return S_OK;
 }

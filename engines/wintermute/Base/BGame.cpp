@@ -3522,17 +3522,17 @@ HRESULT CBGame::loadSettings(const char *filename) {
 
 	HRESULT ret = S_OK;
 
-	byte *Buffer = OrigBuffer;
+	byte *buffer = OrigBuffer;
 	byte *params;
 	int cmd;
 	CBParser parser(Game);
 
-	if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
+	if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
 		Game->LOG(0, "'SETTINGS' keyword expected in game settings file.");
 		return E_FAIL;
 	}
-	Buffer = params;
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	buffer = params;
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_GAME:
 			delete[] _settingsGameFile;

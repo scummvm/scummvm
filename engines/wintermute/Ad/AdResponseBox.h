@@ -42,17 +42,19 @@ class CAdResponseBox : public CBObject {
 public:
 	CBObject *getNextAccessObject(CBObject *CurrObject);
 	CBObject *getPrevAccessObject(CBObject *CurrObject);
-	HRESULT getObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
+	HRESULT getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly);
 
-	HRESULT handleResponse(CAdResponse *Response);
-	void setLastResponseText(const char *Text, const char *TextOrig);
+	HRESULT handleResponse(CAdResponse *response);
+	void setLastResponseText(const char *text, const char *textOrig);
 	char *_lastResponseText;
 	char *_lastResponseTextOrig;
 	DECLARE_PERSISTENT(CAdResponseBox, CBObject)
 	CScScript *_waitingScript;
 	virtual HRESULT listen(CBScriptHolder *param1, uint32 param2);
 	typedef enum {
-	    EVENT_PREV, EVENT_NEXT, EVENT_RESPONSE
+	    EVENT_PREV, 
+		EVENT_NEXT, 
+		EVENT_RESPONSE
 	} TResponseEvent;
 
 	HRESULT weedResponses();
@@ -76,8 +78,8 @@ public:
 	int _verticalAlign;
 	TTextAlign _align;
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 };
 
 } // end of namespace WinterMute

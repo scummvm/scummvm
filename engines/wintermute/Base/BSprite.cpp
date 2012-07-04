@@ -153,10 +153,10 @@ HRESULT CBSprite::loadFile(const char *filename, int LifeTime, TSpriteCacheType 
 			ret = S_OK;
 		}
 	} else {
-		byte *Buffer = Game->_fileManager->readWholeFile(filename);
-		if (Buffer) {
-			if (FAILED(ret = loadBuffer(Buffer, true, LifeTime, CacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", filename);
-			delete [] Buffer;
+		byte *buffer = Game->_fileManager->readWholeFile(filename);
+		if (buffer) {
+			if (FAILED(ret = loadBuffer(buffer, true, LifeTime, CacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", filename);
+			delete [] buffer;
 		}
 	}
 
@@ -187,7 +187,7 @@ TOKEN_DEF(EDITOR_BG_ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::loadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSpriteCacheType CacheType) {
+HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(CONTINUOUS)
 	TOKEN_TABLE(SPRITE)
@@ -213,17 +213,17 @@ HRESULT CBSprite::loadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 	cleanup();
 
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_SPRITE) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITE) {
 			Game->LOG(0, "'SPRITE' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
 	int frame_count = 1;
 	CBFrame *frame;
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_CONTINUOUS:
 			parser.ScanStr((char *)params, "%b", &_continuous);
@@ -247,9 +247,9 @@ HRESULT CBSprite::loadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 
 		case TOKEN_STREAMED:
 			parser.ScanStr((char *)params, "%b", &_streamed);
-			if (_streamed && LifeTime == -1) {
-				LifeTime = 500;
-				CacheType = CACHE_ALL;
+			if (_streamed && lifeTime == -1) {
+				lifeTime = 500;
+				cacheType = CACHE_ALL;
 			}
 			break;
 
@@ -284,8 +284,8 @@ HRESULT CBSprite::loadBuffer(byte  *Buffer, bool Complete, int LifeTime, TSprite
 			break;
 
 		case TOKEN_FRAME: {
-			int FrameLifeTime = LifeTime;
-			if (CacheType == CACHE_HALF && frame_count % 2 != 1) FrameLifeTime = -1;
+			int FrameLifeTime = lifeTime;
+			if (cacheType == CACHE_HALF && frame_count % 2 != 1) FrameLifeTime = -1;
 
 			frame = new CBFrame(Game);
 
@@ -428,44 +428,44 @@ bool CBSprite::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float Sc
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "SPRITE {\n");
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->putTextIndent(Indent + 2, "LOOPING=%s\n", _looping ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "CONTINUOUS=%s\n", _continuous ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "PRECISE=%s\n", _precise ? "TRUE" : "FALSE");
+HRESULT CBSprite::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "SPRITE {\n");
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "LOOPING=%s\n", _looping ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "CONTINUOUS=%s\n", _continuous ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "PRECISE=%s\n", _precise ? "TRUE" : "FALSE");
 	if (_streamed) {
-		Buffer->putTextIndent(Indent + 2, "STREAMED=%s\n", _streamed ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "STREAMED=%s\n", _streamed ? "TRUE" : "FALSE");
 
 		if (_streamedKeepLoaded)
-			Buffer->putTextIndent(Indent + 2, "STREAMED_KEEP_LOADED=%s\n", _streamedKeepLoaded ? "TRUE" : "FALSE");
+			buffer->putTextIndent(indent + 2, "STREAMED_KEEP_LOADED=%s\n", _streamedKeepLoaded ? "TRUE" : "FALSE");
 	}
 
 	if (_editorMuted)
-		Buffer->putTextIndent(Indent + 2, "EDITOR_MUTED=%s\n", _editorMuted ? "TRUE" : "FALSE");
+		buffer->putTextIndent(indent + 2, "EDITOR_MUTED=%s\n", _editorMuted ? "TRUE" : "FALSE");
 
 	if (_editorBgFile) {
-		Buffer->putTextIndent(Indent + 2, "EDITOR_BG_FILE=\"%s\"\n", _editorBgFile);
-		Buffer->putTextIndent(Indent + 2, "EDITOR_BG_OFFSET_X=%d\n", _editorBgOffsetX);
-		Buffer->putTextIndent(Indent + 2, "EDITOR_BG_OFFSET_Y=%d\n", _editorBgOffsetY);
-		Buffer->putTextIndent(Indent + 2, "EDITOR_BG_ALPHA=%d\n", _editorBgAlpha);
+		buffer->putTextIndent(indent + 2, "EDITOR_BG_FILE=\"%s\"\n", _editorBgFile);
+		buffer->putTextIndent(indent + 2, "EDITOR_BG_OFFSET_X=%d\n", _editorBgOffsetX);
+		buffer->putTextIndent(indent + 2, "EDITOR_BG_OFFSET_Y=%d\n", _editorBgOffsetY);
+		buffer->putTextIndent(indent + 2, "EDITOR_BG_ALPHA=%d\n", _editorBgAlpha);
 	}
 
-	CBScriptHolder::saveAsText(Buffer, Indent + 2);
+	CBScriptHolder::saveAsText(buffer, indent + 2);
 
 	int i;
 
 	// scripts
 	for (i = 0; i < _scripts.GetSize(); i++) {
-		Buffer->putTextIndent(Indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
+		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 
 	for (i = 0; i < _frames.GetSize(); i++) {
-		_frames[i]->saveAsText(Buffer, Indent + 2);
+		_frames[i]->saveAsText(buffer, indent + 2);
 	}
 
-	Buffer->putTextIndent(Indent, "}\n\n");
+	buffer->putTextIndent(indent, "}\n\n");
 
 	return S_OK;
 }

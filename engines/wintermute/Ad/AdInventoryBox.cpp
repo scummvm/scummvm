@@ -98,7 +98,7 @@ HRESULT CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdInventoryBox::display() {
-	CAdGame *AdGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)Game;
 
 	if (!_visible) return S_OK;
 
@@ -108,7 +108,7 @@ HRESULT CAdInventoryBox::display() {
 
 	if (_window) {
 		_window->enableWidget("prev", _scrollOffset > 0);
-		_window->enableWidget("next", _scrollOffset + ItemsX * ItemsY < AdGame->_inventoryOwner->getInventory()->_takenItems.GetSize());
+		_window->enableWidget("next", _scrollOffset + ItemsX * ItemsY < adGame->_inventoryOwner->getInventory()->_takenItems.GetSize());
 	}
 
 
@@ -135,8 +135,8 @@ HRESULT CAdInventoryBox::display() {
 		int xxx = rect.left;
 		for (int i = 0; i < ItemsX; i++) {
 			int ItemIndex = _scrollOffset + j * ItemsX + i;
-			if (ItemIndex >= 0 && ItemIndex < AdGame->_inventoryOwner->getInventory()->_takenItems.GetSize()) {
-				CAdItem *item = AdGame->_inventoryOwner->getInventory()->_takenItems[ItemIndex];
+			if (ItemIndex >= 0 && ItemIndex < adGame->_inventoryOwner->getInventory()->_takenItems.GetSize()) {
+				CAdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[ItemIndex];
 				if (item != ((CAdGame *)Game)->_selectedItem || !_hideSelected) {
 					item->update();
 					item->display(xxx, yyy);
@@ -155,8 +155,8 @@ HRESULT CAdInventoryBox::display() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdInventoryBox::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdInventoryBox::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -166,10 +166,10 @@ HRESULT CAdInventoryBox::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -192,7 +192,7 @@ TOKEN_DEF(HIDE_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(INVENTORY_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -216,15 +216,15 @@ HRESULT CAdInventoryBox::loadBuffer(byte  *Buffer, bool Complete) {
 	bool always_visible = false;
 
 	_exclusive = false;
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_INVENTORY_BOX) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_INVENTORY_BOX) {
 			Game->LOG(0, "'INVENTORY_BOX' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -317,34 +317,34 @@ HRESULT CAdInventoryBox::loadBuffer(byte  *Buffer, bool Complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::saveAsText(CBDynBuffer *Buffer, int Indent) {
-	Buffer->putTextIndent(Indent, "INVENTORY_BOX\n");
-	Buffer->putTextIndent(Indent, "{\n");
+HRESULT CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
+	buffer->putTextIndent(indent, "INVENTORY_BOX\n");
+	buffer->putTextIndent(indent, "{\n");
 
-	Buffer->putTextIndent(Indent + 2, "NAME=\"%s\"\n", _name);
-	Buffer->putTextIndent(Indent + 2, "CAPTION=\"%s\"\n", getCaption());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
-	Buffer->putTextIndent(Indent + 2, "AREA { %d, %d, %d, %d }\n", _itemsArea.left, _itemsArea.top, _itemsArea.right, _itemsArea.bottom);
+	buffer->putTextIndent(indent + 2, "AREA { %d, %d, %d, %d }\n", _itemsArea.left, _itemsArea.top, _itemsArea.right, _itemsArea.bottom);
 
-	Buffer->putTextIndent(Indent + 2, "EXCLUSIVE=%s\n", _exclusive ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "HIDE_SELECTED=%s\n", _hideSelected ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "ALWAYS_VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
-	Buffer->putTextIndent(Indent + 2, "SPACING=%d\n", _spacing);
-	Buffer->putTextIndent(Indent + 2, "ITEM_WIDTH=%d\n", _itemWidth);
-	Buffer->putTextIndent(Indent + 2, "ITEM_HEIGHT=%d\n", _itemHeight);
-	Buffer->putTextIndent(Indent + 2, "SCROLL_BY=%d\n", _scrollBy);
+	buffer->putTextIndent(indent + 2, "EXCLUSIVE=%s\n", _exclusive ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "HIDE_SELECTED=%s\n", _hideSelected ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "ALWAYS_VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
+	buffer->putTextIndent(indent + 2, "SPACING=%d\n", _spacing);
+	buffer->putTextIndent(indent + 2, "ITEM_WIDTH=%d\n", _itemWidth);
+	buffer->putTextIndent(indent + 2, "ITEM_HEIGHT=%d\n", _itemHeight);
+	buffer->putTextIndent(indent + 2, "SCROLL_BY=%d\n", _scrollBy);
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// window
-	if (_window) _window->saveAsText(Buffer, Indent + 2);
+	if (_window) _window->saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent + 2, "\n");
+	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(Buffer, Indent + 2);
+	CBBase::saveAsText(buffer, indent + 2);
 
-	Buffer->putTextIndent(Indent, "}\n");
+	buffer->putTextIndent(indent, "}\n");
 	return S_OK;
 }
 

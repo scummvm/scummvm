@@ -64,8 +64,8 @@ public:
 	CUIButton(CBGame *inGame = NULL);
 	virtual ~CUIButton();
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);

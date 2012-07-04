@@ -490,7 +490,7 @@ HRESULT CAdEntity::display() {
 		else Alpha = _shadowable ? ((CAdGame *)Game)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
 
 		float ScaleX, ScaleY;
-		GetScale(&ScaleX, &ScaleY);
+		getScale(&ScaleX, &ScaleY);
 
 		float Rotate;
 		if (_rotatable) {

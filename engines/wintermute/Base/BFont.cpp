@@ -187,10 +187,10 @@ bool CBFont::isTrueType(CBGame *Game, const char *filename) {
 	TOKEN_TABLE_END
 
 
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) return false;
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) return false;
 
-	byte *WorkBuffer = Buffer;
+	byte *WorkBuffer = buffer;
 
 	char *params;
 	CBParser parser(Game);
@@ -199,7 +199,7 @@ bool CBFont::isTrueType(CBGame *Game, const char *filename) {
 	if (parser.GetCommand((char **)&WorkBuffer, commands, (char **)&params) == TOKEN_TTFONT)
 		Ret = true;
 
-	delete [] Buffer;
+	delete [] buffer;
 	return Ret;
 }
 

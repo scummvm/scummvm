@@ -85,8 +85,8 @@ CAdItem::~CAdItem() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdItem::loadFile(const char *filename) {
-	byte *Buffer = Game->_fileManager->readWholeFile(filename);
-	if (Buffer == NULL) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	if (buffer == NULL) {
 		Game->LOG(0, "CAdItem::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
@@ -96,10 +96,10 @@ HRESULT CAdItem::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(Buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", filename);
+	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", filename);
 
 
-	delete [] Buffer;
+	delete [] buffer;
 
 	return ret;
 }
@@ -134,7 +134,7 @@ TOKEN_DEF(AMOUNT_STRING)
 TOKEN_DEF(AMOUNT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::loadBuffer(byte  *Buffer, bool Complete) {
+HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
 	TOKEN_TABLE(TEMPLATE)
@@ -168,16 +168,16 @@ HRESULT CAdItem::loadBuffer(byte  *Buffer, bool Complete) {
 	int cmd = 2;
 	CBParser parser(Game);
 
-	if (Complete) {
-		if (parser.GetCommand((char **)&Buffer, commands, (char **)&params) != TOKEN_ITEM) {
+	if (complete) {
+		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ITEM) {
 			Game->LOG(0, "'ITEM' keyword expected.");
 			return E_FAIL;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
 	int ar = 0, ag = 0, ab = 0, alpha = 255;
-	while (cmd > 0 && (cmd = parser.GetCommand((char **)&Buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -386,38 +386,38 @@ HRESULT CAdItem::update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::display(int X, int Y) {
-	int Width = 0;
+HRESULT CAdItem::display(int x, int y) {
+	int width = 0;
 	if (_currentSprite) {
 		RECT rc;
 		_currentSprite->GetBoundingRect(&rc, 0, 0);
-		Width = rc.right - rc.left;
+		width = rc.right - rc.left;
 	}
 
-	_posX = X + Width / 2;
-	_posY = Y;
+	_posX = x + width / 2;
+	_posY = y;
 
 	HRESULT ret;
-	if (_currentSprite) ret = _currentSprite->Draw(X, Y, this, 100, 100, _alphaColor);
+	if (_currentSprite) ret = _currentSprite->Draw(x, y, this, 100, 100, _alphaColor);
 	else ret = S_OK;
 
 	if (_displayAmount) {
-		int AmountX = X;
-		int AmountY = Y + _amountOffsetY;
+		int amountX = x;
+		int amountY = y + _amountOffsetY;
 
 		if (_amountAlign == TAL_RIGHT) {
-			Width -= _amountOffsetX;
-			AmountX -= _amountOffsetX;
+			width -= _amountOffsetX;
+			amountX -= _amountOffsetX;
 		}
-		AmountX += _amountOffsetX;
+		amountX += _amountOffsetX;
 
-		CBFont *Font = _font ? _font : Game->_systemFont;
-		if (Font) {
-			if (_amountString) Font->drawText((byte *)_amountString, AmountX, AmountY, Width, _amountAlign);
+		CBFont *font = _font ? _font : Game->_systemFont;
+		if (font) {
+			if (_amountString) font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
 			else {
 				char Str[256];
 				sprintf(Str, "%d", _amount);
-				Font->drawText((byte *)Str, AmountX, AmountY, Width, _amountAlign);
+				font->drawText((byte *)Str, amountX, amountY, width, _amountAlign);
 			}
 		}
 	}
@@ -436,8 +436,8 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	if (strcmp(name, "SetHoverSprite") == 0) {
 		stack->correctParams(1);
 
-		bool SetCurrent = false;
-		if (_currentSprite && _currentSprite == _spriteHover) SetCurrent = true;
+		bool setCurrent = false;
+		if (_currentSprite && _currentSprite == _spriteHover) setCurrent = true;
 
 		const char *filename = stack->pop()->getString();
 
@@ -449,7 +449,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			script->RuntimeError("Item.SetHoverSprite failed for file '%s'", filename);
 		} else {
 			_spriteHover = spr;
-			if (SetCurrent) _currentSprite = _spriteHover;
+			if (setCurrent) _currentSprite = _spriteHover;
 			stack->pushBool(true);
 		}
 		return S_OK;
@@ -750,10 +750,10 @@ HRESULT CAdItem::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::getExtendedFlag(const char *FlagName) {
-	if (!FlagName) return false;
-	else if (strcmp(FlagName, "usable") == 0) return true;
-	else return CAdObject::getExtendedFlag(FlagName);
+bool CAdItem::getExtendedFlag(const char *flagName) {
+	if (!flagName) return false;
+	else if (strcmp(flagName, "usable") == 0) return true;
+	else return CAdObject::getExtendedFlag(flagName);
 }
 
 } // end of namespace WinterMute

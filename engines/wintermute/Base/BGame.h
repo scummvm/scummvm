@@ -194,7 +194,7 @@ public:
 	void *_dEBUG_LogFile;
 	int _sequence;
 	virtual HRESULT loadFile(const char *filename);
-	virtual HRESULT loadBuffer(byte  *Buffer, bool Complete = true);
+	virtual HRESULT loadBuffer(byte *buffer, bool complete = true);
 	CBArray<CBQuickMsg *, CBQuickMsg *> _quickMessages;
 	CBArray<CUIWindow *, CUIWindow *> _windows;
 	CBArray<CBViewport *, CBViewport *> _viewportStack;

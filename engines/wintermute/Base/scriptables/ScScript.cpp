@@ -1352,33 +1352,33 @@ HRESULT CScScript::ExternalCall(CScStack *stack, CScStack *thisStack, CScScript:
 				CScValue *Val = stack->pop();
 				switch (Function->params[i]) {
 				case TYPE_BOOL:
-					Buffer->PutDWORD((uint32)Val->getBool());
+					buffer->PutDWORD((uint32)Val->getBool());
 					break;
 				case TYPE_LONG:
-					Buffer->PutDWORD(Val->getInt());
+					buffer->PutDWORD(Val->getInt());
 					break;
 				case TYPE_BYTE:
-					Buffer->PutDWORD((byte)Val->getInt());
+					buffer->PutDWORD((byte)Val->getInt());
 					break;
 				case TYPE_STRING:
-					if (Val->isNULL()) Buffer->PutDWORD(0);
-					else Buffer->PutDWORD((uint32)Val->getString());
+					if (Val->isNULL()) buffer->PutDWORD(0);
+					else buffer->PutDWORD((uint32)Val->getString());
 					break;
 				case TYPE_MEMBUFFER:
-					if (Val->isNULL()) Buffer->PutDWORD(0);
-					else Buffer->PutDWORD((uint32)Val->getMemBuffer());
+					if (Val->isNULL()) buffer->PutDWORD(0);
+					else buffer->PutDWORD((uint32)Val->getMemBuffer());
 					break;
 				case TYPE_FLOAT: {
 					float f = Val->getFloat();
-					Buffer->PutDWORD(*((uint32 *)&f));
+					buffer->PutDWORD(*((uint32 *)&f));
 					break;
 				}
 				case TYPE_DOUBLE: {
 					double d = Val->getFloat();
 					uint32 *pd = (uint32 *)&d;
 
-					Buffer->PutDWORD(pd[0]);
-					Buffer->PutDWORD(pd[1]);
+					buffer->PutDWORD(pd[0]);
+					buffer->PutDWORD(pd[1]);
 					break;
 				}
 				}
@@ -1389,10 +1389,10 @@ HRESULT CScScript::ExternalCall(CScStack *stack, CScStack *thisStack, CScScript:
 			bool StackCorrupted = false;
 			switch (Function->call_type) {
 			case CALL_CDECL:
-				ret = Call_cdecl(Buffer->_buffer, Buffer->GetSize(), (uint32)pFunc, &StackCorrupted);
+				ret = Call_cdecl(buffer->_buffer, buffer->GetSize(), (uint32)pFunc, &StackCorrupted);
 				break;
 			default:
-				ret = Call_stdcall(Buffer->_buffer, Buffer->GetSize(), (uint32)pFunc, &StackCorrupted);
+				ret = Call_stdcall(buffer->_buffer, buffer->GetSize(), (uint32)pFunc, &StackCorrupted);
 			}
 			delete Buffer;
 
