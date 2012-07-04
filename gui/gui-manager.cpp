@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/EventRecorder.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -259,6 +260,9 @@ void GuiManager::runLoop() {
 	if (activeDialog == 0)
 		return;
 
+	//suspend recording while gui is showed
+	g_eventRec.suspendRecording();
+
 	if (!_stateIsSaved) {
 		saveState();
 		_theme->enable();
@@ -409,6 +413,9 @@ void GuiManager::runLoop() {
 		restoreState();
 		_useStdCursor = false;
 	}
+
+	//resume recording after gui showed
+	g_eventRec.resumeRecording();
 }
 
 #pragma mark -

@@ -89,13 +89,21 @@ public:
 	void deleteRecord(const String& fileName);
 	void updateSubsystems();
 	bool isRecording() {
-		return initialized;
+		return _initialized;
+	}
+	bool _savedState;
+	void suspendRecording() {
+		_savedState = _initialized;
+		_initialized = false;
+	}
+	void resumeRecording() {
+		_initialized = _savedState;
 	}
 	void RegisterEventSource();
 	Common::String generateRecordFileName(const String &target);
 private:	
 	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
-	bool initialized;
+	bool _initialized;
 	void setGameMd5(const ADGameDescription *gameDesc);
 	void getConfig();
 	void applyPlaybackSettings();
