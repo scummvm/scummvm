@@ -295,7 +295,7 @@ reg_t GfxFrameout::addPlaneLine(reg_t object, Common::Point startPoint, Common::
 
 void GfxFrameout::updatePlaneLine(reg_t object, reg_t hunkId, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
 	// Check if we're asked to update a line that was never added
-	if (object.isNull())
+	if (hunkId.isNull())
 		return;
 
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
@@ -316,7 +316,7 @@ void GfxFrameout::updatePlaneLine(reg_t object, reg_t hunkId, Common::Point star
 
 void GfxFrameout::deletePlaneLine(reg_t object, reg_t hunkId) {
 	// Check if we're asked to delete a line that was never added (happens during the intro of LSL6)
-	if (object.isNull())
+	if (hunkId.isNull())
 		return;
 
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
