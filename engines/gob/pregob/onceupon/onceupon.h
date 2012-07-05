@@ -27,6 +27,8 @@
 
 #include "gob/pregob/pregob.h"
 
+#include "gob/pregob/onceupon/stork.h"
+
 namespace Gob {
 
 class Surface;
@@ -67,6 +69,15 @@ protected:
 		uint id; ///< The button's ID.
 	};
 
+	/** Parameters for the stork section. */
+	struct StorkParam {
+		const char *backdrop; ///< Backdrop image file.
+
+		uint  houseCount;         ///< Number of houses.
+		const MenuButton *houses; ///< House button definitions.
+
+		const Stork::BundleDrop *drops; ///< The bundle drop parameters.
+	};
 
 	void init();
 	void deinit();
@@ -97,6 +108,10 @@ protected:
 	void playGame();
 
 
+	/** Return the parameters for the stork section. */
+	virtual const StorkParam &getStorkParameters() const = 0;
+
+
 private:
 	/** All actions a user can request in a menu. */
 	enum MenuAction {
@@ -119,6 +134,7 @@ private:
 	/** The different sounds common in the game. */
 	enum Sound {
 		kSoundClick = 0,
+		kSoundStork    ,
 		kSoundMAX
 	};
 
@@ -146,12 +162,15 @@ private:
 	static const MenuButton kAnimalNamesBack;   ///< "Back" button in the animal names screens.
 	static const MenuButton kLanguageButtons[]; ///< Language buttons in the animal names screen.
 
+	static const MenuButton kSectionStorkHouses[];
+
 	/** All general game sounds we know about. */
 	static const char *kSound[kSoundMAX];
 
 
 	static const AnimProperties kClownAnimations[];
 	static const AnimProperties kTitleAnimation;
+	static const AnimProperties kSectionStorkAnimations[];
 	static const AnimProperties kSectionEndAnimations[];
 
 

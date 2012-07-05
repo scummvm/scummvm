@@ -78,6 +78,27 @@ const char *BabaYaga::kAnimalNames[] = {
 	"rena"
 };
 
+// The houses where the stork can drop a bundle
+const OnceUpon::MenuButton BabaYaga::kStorkHouses[] = {
+	{false,  16,  80,  87, 125, 0, 0, 0, 0, 0, 0, 0},
+	{false,  61, 123,  96, 149, 0, 0, 0, 0, 0, 0, 1},
+	{false, 199, 118, 226, 137, 0, 0, 0, 0, 0, 0, 2},
+	{false, 229,  91, 304, 188, 0, 0, 0, 0, 0, 0, 3}
+};
+
+// The stork bundle drop parameters
+const Stork::BundleDrop BabaYaga::kStorkBundleDrops[] = {
+	{ 14,  35, 129,  true },
+	{ 14,  70, 148,  true },
+	{ 14, 206, 136,  true },
+	{ 11, 260, 225, false }
+};
+
+// Parameters for the stork section.
+const OnceUpon::StorkParam BabaYaga::kStorkParam = {
+	"present2.cmp", ARRAYSIZE(kStorkHouses), kStorkHouses, kStorkBundleDrops
+};
+
 
 BabaYaga::BabaYaga(GobEngine *vm) : OnceUpon(vm) {
 }
@@ -105,6 +126,10 @@ void BabaYaga::run() {
 
 	// Play the actual game
 	playGame();
+}
+
+const OnceUpon::StorkParam &BabaYaga::getStorkParameters() const {
+	return kStorkParam;
 }
 
 } // End of namespace OnceUpon

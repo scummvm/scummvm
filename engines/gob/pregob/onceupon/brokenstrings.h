@@ -45,7 +45,8 @@ static const BrokenString kBrokenStringsGerman[] = {
 	{ "Am Waldesrand es sieht"       , "Am Waldesrand sieht es"       },
 	{ " das Kind den Palast."        , "das Kind den Palast."         },
 	{ "Am Waldessaum sieht"          , "Am Waldesrand sieht"          },
-	{ "tipp auf ESC!"                , "dr\201cke ESC!"               }
+	{ "tipp auf ESC!"                , "dr\201cke ESC!"               },
+	{ "Wohin fliegt der Drachen?"    , "Wohin fliegt der Drache?"     }
 };
 
 static const BrokenStringLanguage kBrokenStrings[kLanguageCount] = {

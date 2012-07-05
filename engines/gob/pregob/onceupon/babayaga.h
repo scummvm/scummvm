@@ -36,6 +36,9 @@ public:
 
 	void run();
 
+protected:
+	const StorkParam &getStorkParameters() const;
+
 private:
 	/** Definition of the menu button that leads to the animal names screen. */
 	static const MenuButton kAnimalsButtons;
@@ -44,6 +47,11 @@ private:
 	static const MenuButton kAnimalButtons[];
 	/** File prefixes for the name of each animal. */
 	static const char *kAnimalNames[];
+
+	// Parameters for the stork section.
+	static const MenuButton kStorkHouses[];
+	static const Stork::BundleDrop kStorkBundleDrops[];
+	static const struct StorkParam kStorkParam;
 };
 
 } // End of namespace OnceUpon

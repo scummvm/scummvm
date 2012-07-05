@@ -78,6 +78,27 @@ const char *Abracadabra::kAnimalNames[] = {
 	"scor"
 };
 
+// The houses where the stork can drop a bundle
+const OnceUpon::MenuButton Abracadabra::kStorkHouses[] = {
+	{false,  16,  80,  87, 125, 0, 0, 0, 0, 0, 0, 0},
+	{false,  61, 123,  96, 149, 0, 0, 0, 0, 0, 0, 1},
+	{false, 199, 118, 226, 137, 0, 0, 0, 0, 0, 0, 2},
+	{false, 229,  91, 304, 188, 0, 0, 0, 0, 0, 0, 3}
+};
+
+// The stork bundle drop parameters
+const Stork::BundleDrop Abracadabra::kStorkBundleDrops[] = {
+	{ 14,  65, 127,  true },
+	{ 14,  76, 152,  true },
+	{ 14, 204, 137,  true },
+	{ 11, 275, 179, false }
+};
+
+// Parameters for the stork section.
+const OnceUpon::StorkParam Abracadabra::kStorkParam = {
+	"present.cmp", ARRAYSIZE(kStorkHouses), kStorkHouses, kStorkBundleDrops
+};
+
 
 Abracadabra::Abracadabra(GobEngine *vm) : OnceUpon(vm) {
 }
@@ -105,6 +126,10 @@ void Abracadabra::run() {
 
 	// Play the actual game
 	playGame();
+}
+
+const OnceUpon::StorkParam &Abracadabra::getStorkParameters() const {
+	return kStorkParam;
 }
 
 } // End of namespace OnceUpon

@@ -128,7 +128,8 @@ const OnceUpon::MenuButton OnceUpon::kLanguageButtons[] = {
 };
 
 const char *OnceUpon::kSound[kSoundMAX] = {
-	"diamant.snd"
+	"diamant.snd", // kSoundClick
+	"cigogne.snd"  // kSoundStork
 };
 
 const OnceUpon::SectionFunc OnceUpon::kSectionFuncs[kSectionCount] = {
@@ -1293,9 +1294,128 @@ bool OnceUpon::playSection() {
 	return (this->*kSectionFuncs[_section])();
 }
 
+const PreGob::AnimProperties OnceUpon::kSectionStorkAnimations[] = {
+	{ 0, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 1, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 2, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 3, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 4, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 5, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 6, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 7, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{ 8, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{17, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{16, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
+	{15, 0, ANIObject::kModeContinuous, true, false, false, 0, 0}
+};
+
+enum StorkState {
+	kStorkStateWaitUser,
+	kStorkStateWaitBundle,
+	kStorkStateFinish
+};
+
 bool OnceUpon::sectionStork() {
 	warning("OnceUpon::sectionStork(): TODO");
-	return true;
+
+	fadeOut();
+	hideCursor();
+	setGamePalette(0);
+	setGameCursor();
+
+	const StorkParam &param = getStorkParameters();
+
+	Surface backdrop(320, 200, 1);
+
+	// Draw the frame
+	_vm->_video->drawPackedSprite("cadre.cmp", *_vm->_draw->_backSurface);
+
+	// Draw the backdrop
+	_vm->_video->drawPackedSprite(param.backdrop, backdrop);
+	_vm->_draw->_backSurface->blit(backdrop, 0, 0, 288, 175, 16, 12);
+
+	// "Where does the stork go?"
+	TXTFile *whereStork = loadTXT(getLocFile("ouva.tx"), TXTFile::kFormatStringPositionColor);
+	whereStork->draw(*_vm->_draw->_backSurface, &_plettre, 1);
+
+	ANIFile ani(_vm, "present.ani", 320);
+	ANIList anims;
+
+	Stork *stork = new Stork(_vm, ani);
+
+	loadAnims(anims, ani, ARRAYSIZE(kSectionStorkAnimations), kSectionStorkAnimations);
+	anims.push_back(stork);
+
+	drawAnim(anims);
+
+	_vm->_draw->forceBlit();
+
+	int8 storkSoundWait = 0;
+
+	StorkState state  = kStorkStateWaitUser;
+	MenuAction action = kMenuActionNone;
+	while (!_vm->shouldQuit() && (state != kStorkStateFinish)) {
+		clearAnim(anims);
+
+		// Play the stork sound
+		if (--storkSoundWait == 0)
+			playSound(kSoundStork);
+		if (storkSoundWait <= 0)
+			storkSoundWait = 50 - _vm->_util->getRandom(30);
+
+		// Check if the bundle landed
+		if ((state == kStorkStateWaitBundle) && stork->hasBundleLanded())
+			state = kStorkStateFinish;
+
+		// Check user input
+
+		int16 mouseX, mouseY;
+		MouseButtons mouseButtons;
+
+		int16 key = checkInput(mouseX, mouseY, mouseButtons);
+
+		action = doIngameMenu(key, mouseButtons);
+		if (action != kMenuActionNone) {
+			state = kStorkStateFinish;
+			break;
+		}
+
+		if (mouseButtons == kMouseButtonsLeft) {
+			stopSound();
+			playSound(kSoundClick);
+
+			int house = checkButton(param.houses, param.houseCount, mouseX, mouseY);
+			if ((state == kStorkStateWaitUser) && (house >= 0)) {
+
+				stork->dropBundle(param.drops[house]);
+				state = kStorkStateWaitBundle;
+
+				// Remove the "Where does the stork go?" text
+				int16 left, top, right, bottom;
+				if (whereStork->clear(*_vm->_draw->_backSurface, left, top, right, bottom))
+					_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+			}
+		}
+
+		drawAnim(anims);
+		showCursor();
+		fadeIn();
+
+		endFrame(true);
+	}
+
+	freeAnims(anims);
+	delete whereStork;
+
+	fadeOut();
+	hideCursor();
+
+	// Completed the section => move one
+	if (action == kMenuActionNone)
+		return true;
+
+	// Didn't complete the section
+	return false;
 }
 
 bool OnceUpon::sectionChapter1() {
