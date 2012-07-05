@@ -60,6 +60,10 @@ quick note on varia resources:
 11: quit shareware
 */
 
+#define CSEG_SIZE 46000 // 0xb3b0
+#define DSEG_SIZE 59280 // 0xe790
+#define ESEG_SIZE 35810 // 0x8be2
+
 bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File *dat_file = new Common::File();
 	if (!dat_file->open("teenagent.dat")) {
@@ -70,9 +74,9 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 		return false;
 	}
 	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(dat_file);
-	cseg.read(dat, 0xb3b0);
-	dseg.read(dat, 0xe790);
-	eseg.read(dat, 0x8be2);
+	cseg.read(dat, CSEG_SIZE);
+	dseg.read(dat, DSEG_SIZE);
+	eseg.read(dat, ESEG_SIZE);
 
 	delete dat;
 
