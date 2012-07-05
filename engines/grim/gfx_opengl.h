@@ -52,7 +52,7 @@ public:
 	const char *getVideoDeviceName();
 
 	void setupCamera(float fov, float nclip, float fclip, float roll);
-	void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest);
+	void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll);
 
 	void clearScreen();
 	void flipBuffer();

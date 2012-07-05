@@ -473,8 +473,15 @@ void Set::Setup::setupCamera() const {
 	// are important at some point, we'll need to modify the
 	// zbuffer transformation in bitmap.cpp to take nclip_ and
 	// fclip_ into account.
-	g_driver->setupCamera(_fov, 0.01f, 3276.8f, _roll);
-	g_driver->positionCamera(_pos, _interest);
+	float nclip = this->_nclip;
+	float fclip = this->_fclip;
+	if (g_grim->getGameType() != GType_MONKEY4) {
+		nclip = 0.01f;
+		fclip = 3276.8f;
+	}
+
+	g_driver->setupCamera(_fov, nclip, fclip, _roll);
+	g_driver->positionCamera(_pos, _interest, _roll);
 }
 
 class Sorter {
