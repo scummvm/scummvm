@@ -2,8 +2,7 @@
 MODULE := devtools/create_teenagent
 
 MODULE_OBJS := \
-	create_teenagent.o \
-	md5.o
+	create_teenagent.o
 
 # Set the name of the executable
 TOOL_EXECUTABLE := create_teenagent

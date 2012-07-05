@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "md5.h"
+#include "util.h"
 
 static void print_hex(FILE * f, const uint8 * data, size_t len) {
 	for (size_t i = 0; i < len; ++i) {
@@ -67,25 +67,6 @@ int main(int argc, char *argv[]) {
 	}
 	const char * fname = argv[1];
 
-	uint8 digest[16];
-	if (!md5_file(fname, digest, 0)) {
-		fprintf(stderr, "cannot calculate md5 for %s", fname);
-		exit(1);
-	}
-
-	const uint8 ethalon[16] = {
-		0x51, 0xb6, 0xd6, 0x47, 0x21, 0xf7, 0xc4, 0xb4,
-		0x98, 0xbf, 0xc0, 0xf3, 0x23, 0x01, 0x3e, 0x36,
-	};
-
-	if (memcmp(digest, ethalon, 16) != 0) {
-		fprintf(stderr, "cannot extract data, your md5: ");
-		print_hex(stderr, digest, 16);
-		fprintf(stderr, ", need md5: ");
-		print_hex(stderr, ethalon, 16);
-		fprintf(stderr, ", sorry\n");
-		exit(1);
-	}
 	FILE *fin = fopen(fname, "rb");
 	if (fin == NULL) {
 		perror("opening input file");
