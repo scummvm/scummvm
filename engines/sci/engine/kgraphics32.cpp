@@ -637,6 +637,96 @@ reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
+	// Called in the intro of LSL6 hires (room 110)
+	// The end effect of this is the same as the old screen scroll transition
+
+	// 7 parameters
+	reg_t planeObject = argv[0];
+	//int16 x = argv[1].toSint16();
+	//int16 y = argv[2].toSint16();
+	uint16 pictureId = argv[3].toUint16();
+	// param 4: int (0 in LSL6, probably scroll direction? The picture in LSL6 scrolls down)
+	// param 5: int (first call is 1, then the subsequent one is 0 in LSL6)
+	// param 6: optional int (0 in LSL6)
+
+	// Set the new picture directly for now
+	//writeSelectorValue(s->_segMan, planeObject, SELECTOR(left), x);
+	//writeSelectorValue(s->_segMan, planeObject, SELECTOR(top), y);
+	writeSelectorValue(s->_segMan, planeObject, SELECTOR(picture), pictureId);
+	// and update our draw list
+	g_sci->_gfxFrameout->kernelUpdatePlane(planeObject);
+
+	// TODO
+	return kStub(s, argc, argv);
+}
+
+reg_t kPalCycle(EngineState *s, int argc, reg_t *argv) {
+	// Examples: GK1 room 480 (Bayou ritual), LSL6 room 100 (title screen)
+
+	switch (argv[0].toUint16()) {
+	case 0: {	// Palette animation initialization
+		// 3 or 4 extra params
+		// Case 1 sends fromColor and speed again, so we don't need them here.
+		// Only toColor is stored
+		//uint16 fromColor = argv[1].toUint16();
+		s->_palCycleToColor = argv[2].toUint16();
+		//uint16 speed = argv[3].toUint16();
+
+		// Invalidate the picture, so that the palette steps calls (case 1
+		// below) can update its palette without it being overwritten by the
+		// view/picture palettes.
+		g_sci->_gfxScreen->_picNotValid = 1;
+
+		// TODO: The fourth optional parameter is an unknown integer, and is 0 by default
+		if (argc == 5) {
+			// When this variant is used, picNotValid doesn't seem to be set
+			// (e.g. GK1 room 480). In this case, the animation step calls are
+			// not made, so perhaps this signifies the palette cycling steps
+			// to make.
+			// GK1 sets this to 6 (6 palette steps?)
+			g_sci->_gfxScreen->_picNotValid = 0;
+		}
+		kStub(s, argc, argv);
+		}
+		break;
+	case 1:	{ // Palette animation step
+		// This is the same as the old kPaletteAnimate call, with 1 set of colors.
+		// The end color is set up during initialization in case 0 above.
+
+		// 1 or 2 extra params
+		uint16 fromColor = argv[1].toUint16();
+		uint16 speed = (argc == 2) ? 1 : argv[2].toUint16();
+		// TODO: For some reason, this doesn't set the color correctly
+		// (e.g. LSL6 intro, room 100, Sierra logo)
+		if (g_sci->_gfxPalette->kernelAnimate(fromColor, s->_palCycleToColor, speed))
+			g_sci->_gfxPalette->kernelAnimateSet();
+		}
+		// No kStub() call here, as this gets called loads of times, like kPaletteAnimate
+		break;
+	// case 2 hasn't been encountered
+	// case 3 hasn't been encountered
+	case 4:	// reset any palette cycling and make the picture valid again
+		// Gets called when changing rooms and after palette cycling animations finish
+		// 0 or 1 extra params
+		if (argc == 1) {
+			g_sci->_gfxScreen->_picNotValid = 0;
+			// TODO: This also seems to perform more steps
+		} else {
+			// The variant with the 1 extra param resets remapping to base
+			// TODO
+		}
+		kStub(s, argc, argv);
+		break;
+	default:
+		// TODO
+		kStub(s, argc, argv);
+		break;
+	}
+
+	return s->r_acc;
+}
+
 #endif
 
 } // End of namespace Sci
