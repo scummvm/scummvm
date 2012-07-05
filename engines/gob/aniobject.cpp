@@ -101,7 +101,7 @@ void ANIObject::getPosition(int16 &x, int16 &y) const {
 	y = _y;
 }
 
-void ANIObject::getFramePosition(int16 &x, int16 &y) const {
+void ANIObject::getFramePosition(int16 &x, int16 &y, uint16 n) const {
 	// CMP "animations" have no specific frame positions
 	if (_cmp) {
 		getPosition(x, y);
@@ -115,11 +115,24 @@ void ANIObject::getFramePosition(int16 &x, int16 &y) const {
 	if (_frame >= animation.frameCount)
 		return;
 
-	x = _x + animation.frameAreas[_frame].left;
-	y = _y + animation.frameAreas[_frame].top;
+	// If we're paused, we don't advance any frames
+	if (_paused)
+		n = 0;
+
+	// Number of cycles run through after n frames
+	uint16 cycles = (_frame + n) / animation.frameCount;
+	// Frame position after n frames
+	uint16 frame  = (_frame + n) % animation.frameCount;
+
+	// Only doing one cycle?
+	if (_mode == kModeOnce)
+		cycles = MAX<uint16>(cycles, 1);
+
+	x = _x + animation.frameAreas[frame].left + cycles * animation.deltaX;
+	y = _y + animation.frameAreas[frame].top  + cycles * animation.deltaY;
 }
 
-void ANIObject::getFrameSize(int16 &width, int16 &height) const {
+void ANIObject::getFrameSize(int16 &width, int16 &height, uint16 n) const {
 	if (_cmp) {
 		width  = _cmp->getWidth (_animation);
 		height = _cmp->getHeight(_animation);
@@ -134,8 +147,15 @@ void ANIObject::getFrameSize(int16 &width, int16 &height) const {
 	if (_frame >= animation.frameCount)
 		return;
 
-	width  = animation.frameAreas[_frame].right  - animation.frameAreas[_frame].left + 1;
-	height = animation.frameAreas[_frame].bottom - animation.frameAreas[_frame].top  + 1;
+	// If we're paused, we don't advance any frames
+	if (_paused)
+		n = 0;
+
+	// Frame position after n frames
+	uint16 frame = (_frame + n) % animation.frameCount;
+
+	width  = animation.frameAreas[frame].right  - animation.frameAreas[frame].left + 1;
+	height = animation.frameAreas[frame].bottom - animation.frameAreas[frame].top  + 1;
 }
 
 bool ANIObject::isIn(int16 x, int16 y) const {

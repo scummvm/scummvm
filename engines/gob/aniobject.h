@@ -70,10 +70,10 @@ public:
 	/** Return the current position. */
 	void getPosition(int16 &x, int16 &y) const;
 
-	/** Return the current frame position. */
-	void getFramePosition(int16 &x, int16 &y) const;
-	/** Return the current frame size. */
-	void getFrameSize(int16 &width, int16 &height) const;
+	/** Return the frame position after another n frames. */
+	void getFramePosition(int16 &x, int16 &y, uint16 n = 0) const;
+	/** Return the current frame size after another n frames. */
+	void getFrameSize(int16 &width, int16 &height, uint16 n = 0) const;
 
 	/** Are there coordinates within the animation sprite? */
 	bool isIn(int16 x, int16 y) const;
