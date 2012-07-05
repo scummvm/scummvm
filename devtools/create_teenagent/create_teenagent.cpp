@@ -33,58 +33,32 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "util.h"
-
-static void print_hex(FILE * f, const uint8 * data, size_t len) {
-	for (size_t i = 0; i < len; ++i) {
-		fprintf(f, "%02x", data[i]);
-	}
-}
-
-static void extract(FILE * fout, FILE *fin, size_t pos, size_t size, const char *what) {
-	char buf[0x10000];
-	assert(size < sizeof(buf));
-
-	if (fseek(fin, pos, SEEK_SET) != 0) {
-		perror(what);
-		exit(1);
-	}
-
-	if (fread(buf, size, 1, fin) != 1) {
-		perror(what);
-		exit(1);
-	}
-
-	if (fwrite(buf, size, 1, fout) != 1) {
-		perror(what);
-		exit(1);
-	}
-}
+#include "static_tables.h"
 
 int main(int argc, char *argv[]) {
-	if (argc < 2) {
-		fprintf(stderr, "usage: %s: Teenagnt.exe (unpacked one)\n", argv[0]);
-		exit(1);
-	}
-	const char * fname = argv[1];
+	const char *dat_name = "teenagent.dat";
 
-	FILE *fin = fopen(fname, "rb");
-	if (fin == NULL) {
-		perror("opening input file");
-		exit(1);
-	}
-
-	const char * dat_name = "teenagent.dat";
 	FILE *fout = fopen(dat_name, "wb");
 	if (fout == NULL) {
 		perror("opening output file");
 		exit(1);
 	}
-	//0x0200, 0xb5b0, 0x1c890
-	extract(fout, fin, 0x00200, 0xb3b0, "extracting code segment");
-	extract(fout, fin, 0x0b5b0, 0xe790, "extracting data segment");
-	extract(fout, fin, 0x1c890, 0x8be2, "extracting second data segment");
 
-	fclose(fin);
+	if (fwrite(cseg, CSEG_SIZE, 1, fout) != 1) {
+		perror("Writing code segment");
+		exit(1);
+	}
+
+	if (fwrite(dseg, DSEG_SIZE, 1, fout) != 1) {
+		perror("Writing data segment");
+		exit(1);
+	}
+
+	if (fwrite(eseg, ESEG_SIZE, 1, fout) != 1) {
+		perror("Writing second data segment");
+		exit(1);
+	}
+
 	fclose(fout);
 
 	fprintf(stderr, "please run \"gzip -n %s\"\n", dat_name);
