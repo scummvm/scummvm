@@ -1338,7 +1338,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			r->h = dst_h * scale1;
 
 #ifdef USE_SCALERS
-			if (_useOldSrc) {
+			if (_useOldSrc && !_overlayVisible) {
 				// Copy _destbuffer back into _hwscreen to be AR corrected
 				int y = orig_dst_y * scale1;
 				int h = r->h;
