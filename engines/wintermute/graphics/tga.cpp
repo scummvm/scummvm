@@ -145,7 +145,7 @@ bool TGA::readData(Common::SeekableReadStream &tga, byte imageType, byte pixelDe
 	} else if (imageType == 3) {
 		_surface.create(_surface.w, _surface.h, _surface.format);
 
-		byte  *data  = (byte *)_surface.pixels;
+		byte *data  = (byte *)_surface.pixels;
 		uint32 count = _surface.w * _surface.h;
 
 		while (count-- > 0) {

@@ -90,7 +90,7 @@ TOKEN_DEF(EDITOR_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::loadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded) {
+HRESULT CBSubFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(IMAGE)
 	TOKEN_TABLE(TRANSPARENT)

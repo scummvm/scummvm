@@ -37,11 +37,11 @@ class CBSubFrame;
 class CBFontBitmap : public CBFont {
 public:
 	DECLARE_PERSISTENT(CBFontBitmap, CBFont)
-	HRESULT loadBuffer(byte  *Buffer);
+	HRESULT loadBuffer(byte *Buffer);
 	HRESULT loadFile(const char *filename);
-	virtual int getTextWidth(byte  *text, int MaxLength = -1);
-	virtual int getTextHeight(byte  *text, int width);
-	virtual void drawText(byte  *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int MaxLenght = -1);
+	virtual int getTextWidth(byte *text, int maxLength = -1);
+	virtual int getTextHeight(byte *text, int width);
+	virtual void drawText(byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1);
 	virtual int getLetterHeight();
 
 	CBFontBitmap(CBGame *inGame);
@@ -60,10 +60,10 @@ public:
 	bool _wholeCell;
 
 private:
-	int getCharWidth(byte  Index);
+	int getCharWidth(byte index);
 	void drawChar(byte  c, int x, int y);
 
-	int textHeightDraw(byte  *text, int x, int y, int width, TTextAlign align, bool draw, int max_height = -1, int MaxLenght = -1);
+	int textHeightDraw(byte *text, int x, int y, int width, TTextAlign align, bool draw, int max_height = -1, int MaxLength = -1);
 
 };
 

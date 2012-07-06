@@ -38,7 +38,7 @@
 
 namespace WinterMute {
 
-typedef byte *(*DLL_COMPILE_BUFFER)(byte  *Buffer, char *Source, uint32 BufferSize, uint32 *CompiledSize);
+typedef byte *(*DLL_COMPILE_BUFFER)(byte *Buffer, char *Source, uint32 BufferSize, uint32 *CompiledSize);
 typedef byte *(*DLL_COMPILE_FILE)(char *Filename, uint32 *CompiledSize);
 typedef void (*DLL_RELEASE_BUFFER)(unsigned char *Buffer);
 typedef void (*DLL_SET_CALLBACKS)(CALLBACKS *callbacks, void *Data);

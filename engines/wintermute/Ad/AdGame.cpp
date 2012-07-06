@@ -1373,7 +1373,7 @@ HRESULT CAdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::getVersion(byte  *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
+HRESULT CAdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
 	CBGame::getVersion(verMajor, verMinor, NULL, NULL);
 
 	if (extMajor) *extMajor = 0;

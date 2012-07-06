@@ -51,7 +51,7 @@ public:
 	bool _editorSelected;
 	CBSubFrame(CBGame *inGame);
 	virtual ~CBSubFrame();
-	HRESULT loadBuffer(byte  *Buffer, int LifeTime, bool KeepLoaded);
+	HRESULT loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded);
 	HRESULT draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, bool Precise = true, uint32 Alpha = 0xFFFFFFFF, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
 	bool getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX = 100, float ScaleY = 100);
 

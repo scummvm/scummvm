@@ -121,7 +121,7 @@ void CBFontTT::initLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::getTextWidth(byte  *Text, int MaxLength) {
+int CBFontTT::getTextWidth(byte *Text, int MaxLength) {
 	WideString text;
 
 	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::utf8ToWide((char *)Text);
@@ -138,7 +138,7 @@ int CBFontTT::getTextWidth(byte  *Text, int MaxLength) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::getTextHeight(byte  *Text, int Width) {
+int CBFontTT::getTextHeight(byte *Text, int Width) {
 	WideString text;
 
 	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::utf8ToWide((char *)Text);
@@ -153,7 +153,7 @@ int CBFontTT::getTextHeight(byte  *Text, int Width) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::drawText(byte  *Text, int X, int Y, int Width, TTextAlign Align, int MaxHeight, int MaxLength) {
+void CBFontTT::drawText(byte *Text, int X, int Y, int Width, TTextAlign Align, int MaxHeight, int MaxLength) {
 	if (Text == NULL || strcmp((char *)Text, "") == 0) return;
 
 	WideString text = (char *)Text;

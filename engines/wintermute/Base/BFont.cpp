@@ -54,18 +54,18 @@ CBFont::~CBFont() {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBFont::drawText(byte  *text, int x, int y, int width, TTextAlign align, int max_height, int MaxLenght) {
+void CBFont::drawText(byte *text, int x, int y, int width, TTextAlign align, int max_height, int maxLength) {
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFont::getTextHeight(byte  *text, int width) {
+int CBFont::getTextHeight(byte *text, int width) {
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFont::getTextWidth(byte  *text, int MaxLenght) {
+int CBFont::getTextWidth(byte *text, int maxLength) {
 	return 0;
 }
 
@@ -96,7 +96,7 @@ TOKEN_DEF_START
   TOKEN_DEF (FONT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFont::loadBuffer(byte  * Buffer)
+HRESULT CBFont::loadBuffer(byte * Buffer)
 {
     TOKEN_TABLE_START(commands)
         TOKEN_TABLE (FONT)
@@ -154,23 +154,23 @@ HRESULT CBFont::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 CBFont *CBFont::createFromFile(CBGame *Game, const char *filename) {
 	if (isTrueType(Game, filename)) {
-		CBFontTT *Font = new CBFontTT(Game);
-		if (Font) {
-			if (FAILED(Font->loadFile(filename))) {
-				delete Font;
+		CBFontTT *font = new CBFontTT(Game);
+		if (font) {
+			if (FAILED(font->loadFile(filename))) {
+				delete font;
 				return NULL;
 			}
 		}
-		return Font;
+		return font;
 	} else {
-		CBFontBitmap *Font = new CBFontBitmap(Game);
-		if (Font) {
-			if (FAILED(Font->loadFile(filename))) {
-				delete Font;
+		CBFontBitmap *font = new CBFontBitmap(Game);
+		if (font) {
+			if (FAILED(font->loadFile(filename))) {
+				delete font;
 				return NULL;
 			}
 		}
-		return Font;
+		return font;
 	}
 }
 
@@ -195,12 +195,12 @@ bool CBFont::isTrueType(CBGame *Game, const char *filename) {
 	char *params;
 	CBParser parser(Game);
 
-	bool Ret = false;
+	bool ret = false;
 	if (parser.GetCommand((char **)&WorkBuffer, commands, (char **)&params) == TOKEN_TTFONT)
-		Ret = true;
+		ret = true;
 
 	delete [] buffer;
-	return Ret;
+	return ret;
 }
 
 } // end of namespace WinterMute

@@ -46,7 +46,7 @@ public:
 	CAdTalkDef(CBGame *inGame);
 	virtual ~CAdTalkDef();
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte  *buffer, bool complete = true);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
 	CBArray<CAdTalkNode *, CAdTalkNode *> _nodes;
 	char *_defaultSpriteFilename;
 	CBSprite *_defaultSprite;

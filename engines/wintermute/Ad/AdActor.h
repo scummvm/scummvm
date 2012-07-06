@@ -68,7 +68,7 @@ public:
 	CAdActor(CBGame *inGame/*=NULL*/);
 	virtual ~CAdActor();
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte  *buffer, bool complete = true);
+	HRESULT loadBuffer(byte *buffer, bool complete = true);
 
 	// new anim system
 	Common::String _talkAnimName;

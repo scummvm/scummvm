@@ -70,19 +70,19 @@ CBFontBitmap::~CBFontBitmap() {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBFontBitmap::drawText(byte  *text, int x, int y, int width, TTextAlign align, int max_height, int MaxLenght) {
-	textHeightDraw(text, x, y, width, align, true, max_height, MaxLenght);
+void CBFontBitmap::drawText(byte *text, int x, int y, int width, TTextAlign align, int max_height, int maxLength) {
+	textHeightDraw(text, x, y, width, align, true, max_height, maxLength);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFontBitmap::getTextHeight(byte  *text, int width) {
+int CBFontBitmap::getTextHeight(byte *text, int width) {
 	return textHeightDraw(text, 0, 0, width, TAL_LEFT, false);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFontBitmap::getTextWidth(byte  *text, int MaxLength) {
+int CBFontBitmap::getTextWidth(byte *text, int maxLength) {
 	AnsiString str;
 
 	if (Game->_textEncoding == TEXT_UTF8) {
@@ -92,22 +92,22 @@ int CBFontBitmap::getTextWidth(byte  *text, int MaxLength) {
 		str = AnsiString((char *)text);
 	}
 
-	if (MaxLength >= 0 && str.size() > MaxLength)
-		str = Common::String(str.c_str(), MaxLength);
-	//str.substr(0, MaxLength); // TODO: Remove
+	if (maxLength >= 0 && str.size() > maxLength)
+		str = Common::String(str.c_str(), maxLength);
+	//str.substr(0, maxLength); // TODO: Remove
 
-	int TextWidth = 0;
+	int textWidth = 0;
 	for (size_t i = 0; i < str.size(); i++) {
-		TextWidth += getCharWidth(str[i]);
+		textWidth += getCharWidth(str[i]);
 	}
 
-	return TextWidth;
+	return textWidth;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFontBitmap::textHeightDraw(byte  *text, int x, int y, int width, TTextAlign align, bool draw, int max_height, int MaxLenght) {
-	if (MaxLenght == 0) return 0;
+int CBFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign align, bool draw, int maxHeight, int maxLength) {
+	if (maxLength == 0) return 0;
 
 	if (text == NULL || text[0] == '\0') return _tileHeight;
 
@@ -141,14 +141,14 @@ int CBFontBitmap::textHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 	if (draw) Game->_renderer->startSpriteBatch();
 
 	while (!done) {
-		if (max_height > 0 && (NumLines + 1)*_tileHeight > max_height) {
+		if (maxHeight > 0 && (NumLines + 1)*_tileHeight > maxHeight) {
 			if (draw) Game->_renderer->endSpriteBatch();
 			return NumLines * _tileHeight;
 		}
 
 		index++;
 
-		if (str[index] == ' ' && (max_height < 0 || max_height / _tileHeight > 1)) {
+		if (str[index] == ' ' && (maxHeight < 0 || maxHeight / _tileHeight > 1)) {
 			end = index - 1;
 			RealLength = LineLength;
 		}
@@ -166,7 +166,7 @@ int CBFontBitmap::textHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 			long_line = true;
 		}
 
-		if (str.size() == (index + 1) || (MaxLenght >= 0 && index == MaxLenght - 1)) {
+		if (str.size() == (index + 1) || (maxLength >= 0 && index == maxLength - 1)) {
 			done = true;
 			if (!new_line) {
 				end = index;
@@ -215,7 +215,7 @@ int CBFontBitmap::textHeightDraw(byte  *text, int x, int y, int width, TTextAlig
 
 
 //////////////////////////////////////////////////////////////////////
-void CBFontBitmap::drawChar(byte  c, int x, int y) {
+void CBFontBitmap::drawChar(byte c, int x, int y) {
 	if (_fontextFix) c--;
 
 	int row, col;
@@ -225,22 +225,22 @@ void CBFontBitmap::drawChar(byte  c, int x, int y) {
 
 	RECT rect;
 	/* l t r b */
-	int TileWidth;
-	if (_wholeCell) TileWidth = _tileWidth;
-	else TileWidth = _widths[c];
+	int tileWidth;
+	if (_wholeCell) tileWidth = _tileWidth;
+	else tileWidth = _widths[c];
 
-	CBPlatform::SetRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + TileWidth, (row + 1)*_tileHeight);
-	bool Handled = false;
+	CBPlatform::SetRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1)*_tileHeight);
+	bool handled = false;
 	if (_sprite) {
 		_sprite->GetCurrentFrame();
 		if (_sprite->_currentFrame >= 0 && _sprite->_currentFrame < _sprite->_frames.GetSize() && _sprite->_frames[_sprite->_currentFrame]) {
 			if (_sprite->_frames[_sprite->_currentFrame]->_subframes.GetSize() > 0) {
 				_sprite->_frames[_sprite->_currentFrame]->_subframes[0]->_surface->displayTrans(x, y, rect);
 			}
-			Handled = true;
+			handled = true;
 		}
 	}
-	if (!Handled && _subframe) _subframe->_surface->displayTrans(x, y, rect);
+	if (!handled && _subframe) _subframe->_surface->displayTrans(x, y, rect);
 }
 
 
@@ -316,37 +316,37 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 
 	int widths[300];
 	int num = 0, default_width = 8;
-	int last_width = 0;
+	int lastWidth = 0;
 	int i;
 	int r = 255, g = 255, b = 255;
-	bool custo_trans = false;
-	char *surface_file = NULL;
-	char *sprite_file = NULL;
+	bool custoTrans = false;
+	char *surfaceFile = NULL;
+	char *spriteFile = NULL;
 
-	bool AutoWidth = false;
-	int SpaceWidth = 0;
-	int ExpandWidth = 0;
+	bool autoWidth = false;
+	int spaceWidth = 0;
+	int expandWidth = 0;
 
 	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 
 		switch (cmd) {
 		case TOKEN_IMAGE:
-			surface_file = (char *)params;
+			surfaceFile = (char *)params;
 			break;
 
 		case TOKEN_SPRITE:
-			sprite_file = (char *)params;
+			spriteFile = (char *)params;
 			break;
 
 		case TOKEN_TRANSPARENT:
 			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
-			custo_trans = true;
+			custoTrans = true;
 			break;
 
 		case TOKEN_WIDTHS:
 			parser.ScanStr(params, "%D", widths, &num);
-			for (i = 0; last_width < NUM_CHARACTERS, num > 0; last_width++, num--, i++) {
-				_widths[last_width] = (byte)widths[i];
+			for (i = 0; lastWidth < NUM_CHARACTERS, num > 0; lastWidth++, num--, i++) {
+				_widths[lastWidth] = (byte)widths[i];
 			}
 			break;
 
@@ -371,7 +371,7 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 			break;
 
 		case TOKEN_AUTO_WIDTH:
-			parser.ScanStr(params, "%b", &AutoWidth);
+			parser.ScanStr(params, "%b", &autoWidth);
 			break;
 
 		case TOKEN_FONTEXT_FIX:
@@ -383,11 +383,11 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 			break;
 
 		case TOKEN_SPACE_WIDTH:
-			parser.ScanStr(params, "%d", &SpaceWidth);
+			parser.ScanStr(params, "%d", &spaceWidth);
 			break;
 
 		case TOKEN_EXPAND_WIDTH:
-			parser.ScanStr(params, "%d", &ExpandWidth);
+			parser.ScanStr(params, "%d", &expandWidth);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -401,19 +401,19 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 		return E_FAIL;
 	}
 
-	if (sprite_file != NULL) {
+	if (spriteFile != NULL) {
 		delete _sprite;
 		_sprite = new CBSprite(Game, this);
-		if (!_sprite || FAILED(_sprite->loadFile(sprite_file))) {
+		if (!_sprite || FAILED(_sprite->loadFile(spriteFile))) {
 			delete _sprite;
 			_sprite = NULL;
 		}
 	}
 
-	if (surface_file != NULL && !_sprite) {
+	if (surfaceFile != NULL && !_sprite) {
 		_subframe = new CBSubFrame(Game);
-		if (custo_trans) _subframe->setSurface(surface_file, false, r, g, b);
-		else _subframe->setSurface(surface_file);
+		if (custoTrans) _subframe->setSurface(surfaceFile, false, r, g, b);
+		else _subframe->setSurface(surfaceFile);
 	}
 
 
@@ -422,14 +422,14 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 		return E_FAIL;
 	}
 
-	if (AutoWidth) {
+	if (autoWidth) {
 		// calculate characters width
 		getWidths();
 
 		// do we need to modify widths?
-		if (ExpandWidth != 0) {
+		if (expandWidth != 0) {
 			for (i = 0; i < NUM_CHARACTERS; i++) {
-				int NewWidth = (int)_widths[i] + ExpandWidth;
+				int NewWidth = (int)_widths[i] + expandWidth;
 				if (NewWidth < 0) NewWidth = 0;
 
 				_widths[i] = (byte)NewWidth;
@@ -437,17 +437,17 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 		}
 
 		// handle space character
-		char SpaceChar = ' ';
-		if (_fontextFix) SpaceChar--;
+		uint32 spaceChar = ' ';
+		if (_fontextFix) spaceChar--;
 
-		if (SpaceWidth != 0) _widths[SpaceChar] = SpaceWidth;
+		if (spaceWidth != 0) _widths[spaceChar] = spaceWidth;
 		else {
-			if (_widths[SpaceChar] == ExpandWidth || _widths[SpaceChar] == 0) {
-				_widths[SpaceChar] = (_widths['m'] + _widths['i']) / 2;
+			if (_widths[spaceChar] == expandWidth || _widths[spaceChar] == 0) {
+				_widths[spaceChar] = (_widths['m'] + _widths['i']) / 2;
 			}
 		}
 	} else {
-		for (i = last_width; i < NUM_CHARACTERS; i++) _widths[i] = default_width;
+		for (i = lastWidth; i < NUM_CHARACTERS; i++) _widths[i] = default_width;
 	}
 
 
@@ -482,9 +482,9 @@ HRESULT CBFontBitmap::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontBitmap::getCharWidth(byte  Index) {
-	if (_fontextFix) Index--;
-	return _widths[Index];
+int CBFontBitmap::getCharWidth(byte index) {
+	if (_fontextFix) index--;
+	return _widths[index];
 }
 
 
@@ -508,20 +508,20 @@ HRESULT CBFontBitmap::getWidths() {
 		int yyy = (i / _numColumns) * _tileHeight;
 
 
-		int min_col = -1;
+		int minCol = -1;
 		for (int row = 0; row < _tileHeight; row++) {
-			for (int col = _tileWidth - 1; col >= min_col + 1; col--) {
+			for (int col = _tileWidth - 1; col >= minCol + 1; col--) {
 				if (xxx + col < 0 || xxx + col >= surf->getWidth() || yyy + row < 0 || yyy + row >= surf->getHeight()) continue;
 				if (!surf->isTransparentAtLite(xxx + col, yyy + row)) {
 					//min_col = col;
-					min_col = MAX(col, min_col);
+					minCol = MAX(col, minCol);
 					break;
 				}
 			}
-			if (min_col == _tileWidth - 1) break;
+			if (minCol == _tileWidth - 1) break;
 		}
 
-		_widths[i] = min_col + 1;
+		_widths[i] = minCol + 1;
 	}
 	surf->endPixelOp();
 	/*

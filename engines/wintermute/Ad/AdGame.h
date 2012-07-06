@@ -144,7 +144,7 @@ public:
 	virtual HRESULT loadBuffer(byte *buffer, bool complete = true);
 
 	HRESULT loadItemsFile(const char *filename, bool merge = false);
-	HRESULT loadItemsBuffer(byte  *buffer, bool merge = false);
+	HRESULT loadItemsBuffer(byte *buffer, bool merge = false);
 
 
 	virtual void PublishNatives();

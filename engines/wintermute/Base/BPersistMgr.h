@@ -68,8 +68,8 @@ public:
 	bool getSaveExists(int slot);
 	HRESULT initLoad(const char *filename);
 	HRESULT initSave(const char *desc);
-	HRESULT getBytes(byte  *buffer, uint32 size);
-	HRESULT putBytes(byte  *buffer, uint32 size);
+	HRESULT getBytes(byte *buffer, uint32 size);
+	HRESULT putBytes(byte *buffer, uint32 size);
 	uint32 _offset;
 
 	bool _saving;
