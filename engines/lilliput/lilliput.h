@@ -200,7 +200,7 @@ public:
 	Common::Point _rulesBuffer12Pos3[40];
 	Common::Point _rulesBuffer12Pos4[40];
 	int _interfaceHotspotNumb;
-	byte _rulesBuffer13_1[20];
+	byte _interfaceTwoStepAction[20];
 	int16 _interfaceHotspotsX[20];
 	int16 _interfaceHotspotsY[20];
 	Common::KeyCode _keyboardMapping[20];
@@ -297,7 +297,7 @@ public:
 	void restoreMapPoints();
 	void displayHeroismIndicator();
 	void handleGameMouseClick();
-	void sub1305C(byte index, byte var2);
+	void handleInterfaceHotspot(byte index, byte button);
 	void checkInterfaceHotspots(bool &forceReturnFl);
 	bool isMouseOverHotspot(Common::Point mousePos, Common::Point hotspotPos);
 	void checkClickOnCharacter(Common::Point pos, bool &forceReturnFl);
