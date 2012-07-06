@@ -131,6 +131,20 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 			tmpRunningWidth = 320;
 			tmpRunningHeight = 200;
 		}
+		
+		// HACK: Game scripts in Phantasmagoria 1 seem to use a very odd internal
+		// resolution, or some other extra calculation is taking place.
+		// Changing the internal script dimensions to these odd values fixes
+		// object positioning, but makes the interface picture slightly bigger,
+		// thus there is a small gap between the room picture and the interface
+		// edges, plus a couple of pixels of the picture are cut off in the
+		// bottom.
+		// FIXME: Find how to properly handle the script dimensions in
+		// Phantasmagoria. This can't be right.
+		if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
+			tmpRunningWidth = 325;
+			tmpRunningHeight = 213;
+		}
 
 		_coordAdjuster->setScriptsResolution(tmpRunningWidth, tmpRunningHeight);
 	}
