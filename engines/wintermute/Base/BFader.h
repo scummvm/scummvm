@@ -38,8 +38,8 @@ class CBFader : public CBObject {
 public:
 	bool _system;
 	uint32 getCurrentColor();
-	HRESULT fadeOut(uint32 TargetColor, uint32 Duration, bool System = false);
-	HRESULT fadeIn(uint32 SourceColor, uint32 Duration, bool System = false);
+	HRESULT fadeOut(uint32 targetColor, uint32 duration, bool system = false);
+	HRESULT fadeIn(uint32 sourceColor, uint32 duration, bool system = false);
 	HRESULT deactivate();
 	HRESULT display();
 	HRESULT update();

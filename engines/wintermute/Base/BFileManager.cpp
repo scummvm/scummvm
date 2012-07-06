@@ -74,14 +74,12 @@ CBFileManager::~CBFileManager() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBFileManager::cleanup() {
-	int i;
-
 	// delete registered paths
-	for (i = 0; i < _singlePaths.GetSize(); i++)
+	for (int i = 0; i < _singlePaths.GetSize(); i++)
 		delete [] _singlePaths[i];
 	_singlePaths.RemoveAll();
 
-	for (i = 0; i < _packagePaths.GetSize(); i++)
+	for (int i = 0; i < _packagePaths.GetSize(); i++)
 		delete [] _packagePaths[i];
 	_packagePaths.RemoveAll();
 
@@ -95,14 +93,14 @@ HRESULT CBFileManager::cleanup() {
 	_files.clear();
 
 	// close open files
-	for (i = 0; i < _openFiles.GetSize(); i++) {
+	for (int i = 0; i < _openFiles.GetSize(); i++) {
 		delete _openFiles[i];
 	}
 	_openFiles.RemoveAll();
 
 
 	// delete packages
-	for (i = 0; i < _packages.GetSize(); i++)
+	for (int i = 0; i < _packages.GetSize(); i++)
 		delete _packages[i];
 	_packages.RemoveAll();
 
@@ -116,13 +114,13 @@ HRESULT CBFileManager::cleanup() {
 
 #define MAX_FILE_SIZE 10000000
 //////////////////////////////////////////////////////////////////////
-byte *CBFileManager::readWholeFile(const Common::String &filename, uint32 *Size, bool MustExist) {
+byte *CBFileManager::readWholeFile(const Common::String &filename, uint32 *size, bool mustExist) {
 
 	byte *buffer = NULL;
 
-	Common::SeekableReadStream *File = openFile(filename);
-	if (!File) {
-		if (MustExist) Game->LOG(0, "Error opening file '%s'", filename.c_str());
+	Common::SeekableReadStream *file = openFile(filename);
+	if (!file) {
+		if (mustExist) Game->LOG(0, "Error opening file '%s'", filename.c_str());
 		return NULL;
 	}
 
@@ -135,23 +133,23 @@ byte *CBFileManager::readWholeFile(const Common::String &filename, uint32 *Size,
 	*/
 
 
-	buffer = new byte[File->size() + 1];
+	buffer = new byte[file->size() + 1];
 	if (buffer == NULL) {
-		Game->LOG(0, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), File->size() + 1);
-		closeFile(File);
+		Game->LOG(0, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), file->size() + 1);
+		closeFile(file);
 		return NULL;
 	}
 
-	if (File->read(buffer, File->size()) != File->size()) {
+	if (file->read(buffer, file->size()) != file->size()) {
 		Game->LOG(0, "Error reading file '%s'", filename.c_str());
-		closeFile(File);
+		closeFile(file);
 		delete [] buffer;
 		return NULL;
 	};
 
-	buffer[File->size()] = '\0';
-	if (Size != NULL) *Size = File->size();
-	closeFile(File);
+	buffer[file->size()] = '\0';
+	if (size != NULL) *size = file->size();
+	closeFile(file);
 
 	return buffer;
 }
@@ -226,7 +224,7 @@ HRESULT CBFileManager::saveFile(const Common::String &filename, byte *Buffer, ui
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::requestCD(int CD, char *PackageFile, char *Filename) {
+HRESULT CBFileManager::requestCD(int cd, char *packageFile, char *filename) {
 	// unmount all non-local packages
 	for (int i = 0; i < _packages.GetSize(); i++) {
 		if (_packages[i]->_cD > 0) _packages[i]->close();
@@ -238,19 +236,19 @@ HRESULT CBFileManager::requestCD(int CD, char *PackageFile, char *Filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::addPath(TPathType Type, const Common::String &Path) {
-	if (Path.c_str() == NULL || strlen(Path.c_str()) < 1) return E_FAIL;
+HRESULT CBFileManager::addPath(TPathType type, const Common::String &path) {
+	if (path.c_str() == NULL || strlen(path.c_str()) < 1) return E_FAIL;
 
-	bool slashed = (Path[Path.size() - 1] == '\\' || Path[Path.size() - 1] == '/');
+	bool slashed = (path[path.size() - 1] == '\\' || path[path.size() - 1] == '/');
 
-	char *buffer = new char [strlen(Path.c_str()) + 1 + (slashed ? 0 : 1)];
+	char *buffer = new char [strlen(path.c_str()) + 1 + (slashed ? 0 : 1)];
 	if (buffer == NULL) return E_FAIL;
 
-	strcpy(buffer, Path.c_str());
+	strcpy(buffer, path.c_str());
 	if (!slashed) strcat(buffer, "\\");
 	//CBPlatform::strlwr(buffer);
 
-	switch (Type) {
+	switch (type) {
 	case PATH_SINGLE:
 		_singlePaths.Add(buffer);
 		break;
@@ -405,8 +403,8 @@ HRESULT CBFileManager::registerPackage(const Common::String &filename , bool sea
 		return S_OK;
 	}
 
-	uint32 AbsoluteOffset = 0;
-	bool BoundToExe = false;
+	uint32 absoluteOffset = 0;
+	bool boundToExe = false;
 
 	if (searchSignature) {
 		uint32 Offset;
@@ -415,8 +413,8 @@ HRESULT CBFileManager::registerPackage(const Common::String &filename , bool sea
 			return S_OK;
 		} else {
 			package->seek(Offset, SEEK_SET);
-			AbsoluteOffset = Offset;
-			BoundToExe = true;
+			absoluteOffset = Offset;
+			boundToExe = true;
 		}
 	}
 
@@ -435,17 +433,17 @@ HRESULT CBFileManager::registerPackage(const Common::String &filename , bool sea
 
 	// new in v2
 	if (hdr.PackageVersion == PACKAGE_VERSION) {
-		uint32 DirOffset;
-		DirOffset = package->readUint32LE();
-		DirOffset += AbsoluteOffset;
-		package->seek(DirOffset, SEEK_SET);
+		uint32 dirOffset;
+		dirOffset = package->readUint32LE();
+		dirOffset += absoluteOffset;
+		package->seek(dirOffset, SEEK_SET);
 	}
 
 	for (uint32 i = 0; i < hdr.NumDirs; i++) {
 		CBPackage *pkg = new CBPackage(Game);
 		if (!pkg) return E_FAIL;
 
-		pkg->_boundToExe = BoundToExe;
+		pkg->_boundToExe = boundToExe;
 
 		// read package info
 		byte nameLength = package->readByte();
@@ -463,7 +461,7 @@ HRESULT CBFileManager::registerPackage(const Common::String &filename , bool sea
 
 		for (uint32 j = 0; j < NumFiles; j++) {
 			char *name;
-			uint32 Offset, Length, CompLength, Flags, TimeDate1, TimeDate2;
+			uint32 offset, length, compLength, flags, timeDate1, timeDate2;
 
 			nameLength = package->readByte();
 			name = new char[nameLength];
@@ -483,34 +481,34 @@ HRESULT CBFileManager::registerPackage(const Common::String &filename , bool sea
 
 			CBPlatform::strupr(name);
 
-			Offset = package->readUint32LE();
-			Offset += AbsoluteOffset;
-			Length = package->readUint32LE();
-			CompLength = package->readUint32LE();
-			Flags = package->readUint32LE();
+			offset = package->readUint32LE();
+			offset += absoluteOffset;
+			length = package->readUint32LE();
+			compLength = package->readUint32LE();
+			flags = package->readUint32LE();
 
 			if (hdr.PackageVersion == PACKAGE_VERSION) {
-				TimeDate1 = package->readUint32LE();
-				TimeDate2 = package->readUint32LE();
+				timeDate1 = package->readUint32LE();
+				timeDate2 = package->readUint32LE();
 			}
 			_filesIter = _files.find(name);
 			if (_filesIter == _files.end()) {
 				CBFileEntry *file = new CBFileEntry(Game);
 				file->_package = pkg;
-				file->_offset = Offset;
-				file->_length = Length;
-				file->_compressedLength = CompLength;
-				file->_flags = Flags;
+				file->_offset = offset;
+				file->_length = length;
+				file->_compressedLength = compLength;
+				file->_flags = flags;
 
 				_files[name] = file;
 			} else {
 				// current package has lower CD number or higher priority, than the registered
 				if (pkg->_cD < _filesIter->_value->_package->_cD || pkg->_priority > _filesIter->_value->_package->_priority) {
 					_filesIter->_value->_package = pkg;
-					_filesIter->_value->_offset = Offset;
-					_filesIter->_value->_length = Length;
-					_filesIter->_value->_compressedLength = CompLength;
-					_filesIter->_value->_flags = Flags;
+					_filesIter->_value->_offset = offset;
+					_filesIter->_value->_length = length;
+					_filesIter->_value->_compressedLength = compLength;
+					_filesIter->_value->_flags = flags;
 				}
 			}
 			delete [] name;
@@ -719,15 +717,15 @@ Common::File *CBFileManager::openSingleFile(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::getFullPath(const Common::String &filename, char *Fullname) {
+bool CBFileManager::getFullPath(const Common::String &filename, char *fullname) {
 	restoreCurrentDir();
 
 	Common::File f;
 	bool found = false;
 
 	for (int i = 0; i < _singlePaths.GetSize(); i++) {
-		sprintf(Fullname, "%s%s", _singlePaths[i], filename.c_str());
-		f.open(Fullname);
+		sprintf(fullname, "%s%s", _singlePaths[i], filename.c_str());
+		f.open(fullname);
 		if (f.isOpen()) {
 			f.close();
 			found = true;
@@ -740,7 +738,7 @@ bool CBFileManager::getFullPath(const Common::String &filename, char *Fullname) 
 		if (f.isOpen()) {
 			f.close();
 			found = true;
-			strcpy(Fullname, filename.c_str());
+			strcpy(fullname, filename.c_str());
 		}
 	}
 
@@ -749,9 +747,9 @@ bool CBFileManager::getFullPath(const Common::String &filename, char *Fullname) 
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFileEntry *CBFileManager::getPackageEntry(const Common::String &Filename) {
-	char *upc_name = new char[strlen(Filename.c_str()) + 1];
-	strcpy(upc_name, Filename.c_str());
+CBFileEntry *CBFileManager::getPackageEntry(const Common::String &filename) {
+	char *upc_name = new char[strlen(filename.c_str()) + 1];
+	strcpy(upc_name, filename.c_str());
 	CBPlatform::strupr(upc_name);
 
 	CBFileEntry *ret = NULL;
@@ -774,7 +772,7 @@ bool CBFileManager::hasFile(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filename, bool AbsPathWarning, bool keepTrackOf) {
+Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filename, bool absPathWarning, bool keepTrackOf) {
 	if (strcmp(filename.c_str(), "") == 0) return NULL;
 	//Game->LOG(0, "open file: %s", filename);
 	/*#ifdef __WIN32__
@@ -850,12 +848,12 @@ HRESULT CBFileManager::restoreCurrentDir() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::setBasePath(const Common::String &Path) {
+HRESULT CBFileManager::setBasePath(const Common::String &path) {
 	cleanup();
 
-	if (Path.c_str()) {
-		_basePath = new char[Path.size() + 1];
-		strcpy(_basePath, Path.c_str());
+	if (path.c_str()) {
+		_basePath = new char[path.size() + 1];
+		strcpy(_basePath, path.c_str());
 	}
 
 	initPaths();
@@ -866,33 +864,33 @@ HRESULT CBFileManager::setBasePath(const Common::String &Path) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::findPackageSignature(Common::File *f, uint32 *Offset) {
+bool CBFileManager::findPackageSignature(Common::File *f, uint32 *offset) {
 	byte buf[32768];
 
-	byte Signature[8];
-	((uint32 *)Signature)[0] = PACKAGE_MAGIC_1;
-	((uint32 *)Signature)[1] = PACKAGE_MAGIC_2;
+	byte signature[8];
+	((uint32 *)signature)[0] = PACKAGE_MAGIC_1;
+	((uint32 *)signature)[1] = PACKAGE_MAGIC_2;
 
-	uint32 FileSize = f->size();
+	uint32 fileSize = f->size();
 
-	int StartPos = 1024 * 1024;
+	int startPos = 1024 * 1024;
 
-	uint32 BytesRead = StartPos;
+	uint32 bytesRead = startPos;
 
-	while (BytesRead < FileSize - 16) {
-		int ToRead = MIN((unsigned int)32768, FileSize - BytesRead);
-		f->seek(StartPos, SEEK_SET);
+	while (bytesRead < fileSize - 16) {
+		int ToRead = MIN((unsigned int)32768, fileSize - bytesRead);
+		f->seek(startPos, SEEK_SET);
 		int ActuallyRead = f->read(buf, ToRead);
 		if (ActuallyRead != ToRead) return false;
 
 		for (int i = 0; i < ToRead - 8; i++)
-			if (!memcmp(buf + i, Signature, 8)) {
-				*Offset =  StartPos + i;
+			if (!memcmp(buf + i, signature, 8)) {
+				*offset =  startPos + i;
 				return true;
 			}
 
-		BytesRead = BytesRead + ToRead - 16;
-		StartPos = StartPos + ToRead - 16;
+		bytesRead = bytesRead + ToRead - 16;
+		startPos = startPos + ToRead - 16;
 
 	}
 	return false;

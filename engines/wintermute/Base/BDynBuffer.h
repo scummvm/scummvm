@@ -58,7 +58,7 @@ private:
 	uint32 _growBy;
 	uint32 _initSize;
 	uint32 _offset;
-	void PutTextForm(const char *format, va_list argptr);
+	void putTextForm(const char *format, va_list argptr);
 };
 
 } // end of namespace WinterMute

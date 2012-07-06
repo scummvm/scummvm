@@ -42,7 +42,7 @@ namespace WinterMute {
 class CBFile;
 class CBFileManager: CBBase {
 public:
-	bool findPackageSignature(Common::File *f, uint32 *Offset);
+	bool findPackageSignature(Common::File *f, uint32 *offset);
 	HRESULT cleanup();
 	HRESULT setBasePath(const Common::String &path);
 	HRESULT restoreCurrentDir();
@@ -61,11 +61,11 @@ public:
 	typedef enum {
 	    PATH_PACKAGE, PATH_SINGLE
 	} TPathType;
-	HRESULT addPath(TPathType Type, const Common::String &path);
-	HRESULT requestCD(int CD, char *PackageFile, char *Filename);
+	HRESULT addPath(TPathType type, const Common::String &path);
+	HRESULT requestCD(int cd, char *packageFile, char *filename);
 	Common::SeekableReadStream *loadSaveGame(const Common::String &filename);
-	HRESULT saveFile(const Common::String &filename, byte *Buffer, uint32 BufferSize, bool Compressed = false, byte *PrefixBuffer = NULL, uint32 PrefixSize = 0);
-	byte *readWholeFile(const Common::String &filename, uint32 *Size = NULL, bool MustExist = true);
+	HRESULT saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
+	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
 	CBFileManager(CBGame *inGame = NULL);
 	virtual ~CBFileManager();
 	CBArray<char *, char *> _singlePaths;
@@ -75,8 +75,8 @@ public:
 
 	Common::HashMap<Common::String, CBFileEntry *> _files;
 private:
-	HRESULT registerPackage(const char *Path, const char *Name, bool SearchSignature = false);
-	HRESULT registerPackage(const Common::String &filename, bool SearchSignature = false);
+	HRESULT registerPackage(const char *path, const char *name, bool searchSignature = false);
+	HRESULT registerPackage(const Common::String &filename, bool searchSignature = false);
 	Common::HashMap<Common::String, CBFileEntry *>::iterator _filesIter;
 	bool isValidPackage(const AnsiString &fileName) const;
 

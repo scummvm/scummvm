@@ -164,7 +164,7 @@ void CBDynBuffer::putText(LPCSTR fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
-	PutTextForm(fmt, va);
+	putTextForm(fmt, va);
 	va_end(va);
 
 }
@@ -177,13 +177,13 @@ void CBDynBuffer::putTextIndent(int indent, LPCSTR fmt, ...) {
 	putText("%*s", indent, "");
 
 	va_start(va, fmt);
-	PutTextForm(fmt, va);
+	putTextForm(fmt, va);
 	va_end(va);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::PutTextForm(const char *format, va_list argptr) {
+void CBDynBuffer::putTextForm(const char *format, va_list argptr) {
 	char buff[32768];
 	vsprintf(buff, format, argptr);
 	putBytes((byte *)buff, strlen(buff));

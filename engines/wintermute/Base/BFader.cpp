@@ -63,7 +63,7 @@ CBFader::~CBFader() {
 HRESULT CBFader::update() {
 	if (!_active) return S_OK;
 
-	int AlphaDelta = _targetAlpha - _sourceAlpha;
+	int alphaDelta = _targetAlpha - _sourceAlpha;
 
 	uint32 time;
 
@@ -72,7 +72,7 @@ HRESULT CBFader::update() {
 
 	if (time >= _duration) _currentAlpha = _targetAlpha;
 	else {
-		_currentAlpha = (byte)(_sourceAlpha + (float)time / (float)_duration * AlphaDelta);
+		_currentAlpha = (byte)(_sourceAlpha + (float)time / (float)_duration * alphaDelta);
 	}
 	_currentAlpha = MIN((unsigned char)255, MAX(_currentAlpha, (byte)0));  // TODO: clean
 
@@ -101,19 +101,19 @@ HRESULT CBFader::deactivate() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::fadeIn(uint32 SourceColor, uint32 Duration, bool System) {
+HRESULT CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
-	_red   = D3DCOLGetR(SourceColor);
-	_green = D3DCOLGetG(SourceColor);
-	_blue  = D3DCOLGetB(SourceColor);
+	_red   = D3DCOLGetR(sourceColor);
+	_green = D3DCOLGetG(sourceColor);
+	_blue  = D3DCOLGetB(sourceColor);
 
-	_sourceAlpha = D3DCOLGetA(SourceColor);
+	_sourceAlpha = D3DCOLGetA(sourceColor);
 	_targetAlpha = 0;
 
-	_duration = Duration;
-	_system = System;
+	_duration = duration;
+	_system = system;
 
 	if (_system) _startTime = CBPlatform::GetTime();
 	else _startTime = Game->_timer;
@@ -123,20 +123,20 @@ HRESULT CBFader::fadeIn(uint32 SourceColor, uint32 Duration, bool System) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::fadeOut(uint32 TargetColor, uint32 Duration, bool System) {
+HRESULT CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
-	_red   = D3DCOLGetR(TargetColor);
-	_green = D3DCOLGetG(TargetColor);
-	_blue  = D3DCOLGetB(TargetColor);
+	_red   = D3DCOLGetR(targetColor);
+	_green = D3DCOLGetG(targetColor);
+	_blue  = D3DCOLGetB(targetColor);
 
 	//_sourceAlpha = 0;
 	_sourceAlpha = _currentAlpha;
-	_targetAlpha = D3DCOLGetA(TargetColor);
+	_targetAlpha = D3DCOLGetA(targetColor);
 
-	_duration = Duration;
-	_system = System;
+	_duration = duration;
+	_system = system;
 
 	if (_system) _startTime = CBPlatform::GetTime();
 	else _startTime = Game->_timer;
