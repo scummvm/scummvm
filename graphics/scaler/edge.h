@@ -103,7 +103,8 @@ private:
 	/**
 	 * Check for mis-detected arrow patterns.  Return 1 (good), 0 (bad).
 	 */
-	int checkArrows(int best_dir, uint16 *pixels, int8 *sim, int half_flag);
+	template<typename Pixel>
+	int checkArrows(int best_dir, Pixel *pixels, int8 *sim, int half_flag);
 
 	/**
 	 * Take original direction, refine it by testing different pixel difference
@@ -112,13 +113,15 @@ private:
 	 * The angle value is not currently used, but may be useful for future
 	 * refinement algorithms.
 	 */
-	int refineDirection(char edge_type, uint16 *pixels, int16 *bptr,
+	template<typename Pixel>
+	int refineDirection(char edge_type, Pixel *pixels, int16 *bptr,
 		int8 *sim, double angle);
 
 	/**
 	 * "Chess Knight" patterns can be mis-detected, fix easy cases.
 	 */
-	int fixKnights(int sub_type, uint16 *pixels, int8 *sim);
+	template<typename Pixel>
+	int fixKnights(int sub_type, Pixel *pixels, int8 *sim);
 
 	/**
 	 * Initialize various lookup tables
@@ -131,7 +134,7 @@ private:
 	 */
 	template<typename ColorMask, typename Pixel>
 	void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
-		uint16 *pixels, int sub_type, int16 *bptr,
+		Pixel *pixels, int sub_type, int16 *bptr,
 		int8 *sim,
 		int interpolate_2x);
 
@@ -140,7 +143,7 @@ private:
 	 */
 	template<typename ColorMask, typename Pixel>
 	void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
-		uint16 *pixels, int sub_type, int16 *bptr);
+		Pixel *pixels, int sub_type, int16 *bptr);
 
 	/**
 	 * Perform edge detection, draw the new 2x pixels
