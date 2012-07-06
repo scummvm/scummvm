@@ -72,21 +72,29 @@ static inline uint32 interpolate32_3_1(uint32 p1, uint32 p2) {
  */
 template<typename ColorMask>
 uint32 interpolate32_2_1(uint32 pixel1, uint32 pixel2) {
-	uint32 rsum, gsum, bsum;
+	uint32 rsum, gsum, bsum, asum;
 
-	rsum =  (pixel1 & ColorMask::kRedMask) << 1;
-	rsum += (pixel2 & ColorMask::kRedMask);
+	rsum =  ((pixel1 & ColorMask::kRedMask) >> ColorMask::kRedShift) << 1;
+	rsum += ((pixel2 & ColorMask::kRedMask) >> ColorMask::kRedShift);
 	rsum /= 3;
+	rsum <<= ColorMask::kRedShift;
 
-	gsum =  (pixel1 & ColorMask::kGreenMask) << 1;
-	gsum += (pixel2 & ColorMask::kGreenMask);
+	gsum =  ((pixel1 & ColorMask::kGreenMask) >> ColorMask::kGreenShift) << 1;
+	gsum += ((pixel2 & ColorMask::kGreenMask) >> ColorMask::kGreenShift);
 	gsum /= 3;
+	gsum <<= ColorMask::kGreenShift;
 
-	bsum =  (pixel1 & ColorMask::kBlueMask) << 1;
-	bsum += (pixel2 & ColorMask::kBlueMask);
+	bsum =  ((pixel1 & ColorMask::kBlueMask) >> ColorMask::kBlueShift) << 1;
+	bsum += ((pixel2 & ColorMask::kBlueMask) >> ColorMask::kBlueShift);
 	bsum /= 3;
+	bsum <<= ColorMask::kBlueShift;
 
-	return (rsum & ColorMask::kRedMask) | (gsum & ColorMask::kGreenMask) | (bsum & ColorMask::kBlueMask);
+	asum =  ((pixel1 & ColorMask::kAlphaMask) >> ColorMask::kAlphaShift) << 1;
+	asum += ((pixel2 & ColorMask::kAlphaMask) >> ColorMask::kAlphaShift);
+	asum /= 3;
+	asum <<= ColorMask::kAlphaShift;
+
+	return (rsum & ColorMask::kRedMask) | (gsum & ColorMask::kGreenMask) | (bsum & ColorMask::kBlueMask) | (asum & ColorMask::kAlphaMask);
 }
 
 /**
@@ -252,24 +260,26 @@ inline uint32 interpolate32_14_1_1<Graphics::ColorMasks<565> >(uint32 p1, uint32
  */
 
 template<typename ColorMask>
-uint32 interpolate32_1_1_1(uint32 pixel1, uint32 pixel2, uint32 pixel3)
-{
+uint32 interpolate32_1_1_1(uint32 pixel1, uint32 pixel2, uint32 pixel3) {
 	uint32 rsum, gsum, bsum;
 
-	rsum =  (pixel1 & ColorMask::kRedMask);
-	rsum += (pixel2 & ColorMask::kRedMask);
-	rsum += (pixel3 & ColorMask::kRedMask);
+	rsum =  ((pixel1 & ColorMask::kRedMask) >> ColorMask::kRedShift);
+	rsum += ((pixel2 & ColorMask::kRedMask) >> ColorMask::kRedShift);
+	rsum += ((pixel3 & ColorMask::kRedMask) >> ColorMask::kRedShift);
 	rsum /= 3;
+	rsum <<= ColorMask::kRedShift;
 
-	gsum =  (pixel1 & ColorMask::kGreenMask);
-	gsum += (pixel2 & ColorMask::kGreenMask);
-	gsum += (pixel3 & ColorMask::kGreenMask);
+	gsum =  ((pixel1 & ColorMask::kGreenMask) >> ColorMask::kGreenShift);
+	gsum += ((pixel2 & ColorMask::kGreenMask) >> ColorMask::kGreenShift);
+	gsum += ((pixel3 & ColorMask::kGreenMask) >> ColorMask::kGreenShift);
 	gsum /= 3;
+	gsum <<= ColorMask::kGreenShift;
 
-	bsum =  (pixel1 & ColorMask::kBlueMask);
-	bsum += (pixel2 & ColorMask::kBlueMask);
-	bsum += (pixel3 & ColorMask::kBlueMask);
+	bsum =  ((pixel1 & ColorMask::kBlueMask) >> ColorMask::kBlueShift);
+	bsum += ((pixel2 & ColorMask::kBlueMask) >> ColorMask::kBlueShift);
+	bsum += ((pixel3 & ColorMask::kBlueMask) >> ColorMask::kBlueShift);
 	bsum /= 3;
+	bsum <<= ColorMask::kBlueShift;
 
 	return (rsum & ColorMask::kRedMask) | (gsum & ColorMask::kGreenMask) | (bsum & ColorMask::kBlueMask);
 }
