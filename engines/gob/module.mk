@@ -3,6 +3,7 @@ MODULE := engines/gob
 MODULE_OBJS := \
 	anifile.o \
 	aniobject.o \
+	backbuffer.o \
 	cheater.o \
 	cheater_geisha.o \
 	cmpfile.o \
