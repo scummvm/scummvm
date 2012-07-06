@@ -3312,7 +3312,7 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 								 const uint8* oldSrc, int oldPitch) {
 	int x, y;
 	const uint8 *sptr8 = src;
-	uint8 *dptr8 = dst + dstPitch + 2;
+	uint8 *dptr8 = dst + dstPitch + sizeof(Pixel);
 	const Pixel *sptr16;
 	const Pixel *oldSptr;
 	Pixel *dptr16;
