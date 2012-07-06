@@ -1479,6 +1479,7 @@ void PegasusEngine::startNewGame() {
 	_gfx->doFadeOutSync();
 	useMenu(0);
 	_gfx->updateDisplay();
+	_gfx->enableUpdates();
 
 	createInterface();
 

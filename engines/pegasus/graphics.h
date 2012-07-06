@@ -40,6 +40,7 @@ namespace Pegasus {
 class Cursor;
 class DisplayElement;
 class PegasusEngine;
+class ScreenFader;
 
 class GraphicsManager {
 friend class Cursor;
@@ -61,6 +62,8 @@ public:
 	void shakeTheWorld(TimeValue time, TimeScale scale);
 	void enableErase();
 	void disableErase();
+	void enableUpdates();
+	void disableUpdates();
 
 	// These default to black
 	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, uint32 color = 0);
@@ -82,6 +85,9 @@ private:
 	static const int kMaxShakeOffsets = 17;
 	Common::Point _shakeOffsets[kMaxShakeOffsets];
 	void newShakePoint(int32 index1, int32 index2, int32 maxRadius);
+
+	bool _updatesEnabled;
+	ScreenFader *_screenFader;
 };
 
 } // End of namespace Pegasus

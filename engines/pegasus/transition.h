@@ -28,23 +28,26 @@
 
 #include "pegasus/fader.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Pegasus {
 
 class ScreenFader : public Fader {
 public:
 	ScreenFader();
-	virtual ~ScreenFader() {}
+	virtual ~ScreenFader();
 	
-	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, const uint32 = getBlack());
-	void doFadeInSync(const TimeValue = kHalfSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, const uint32 = getBlack());
+	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
+	void doFadeInSync(const TimeValue = kHalfSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 
-	void setFaderValue(const int32);	
-
-protected:
-	uint32 _fadeTarget;
+	void setFaderValue(const int32);
 
 private:
-	static uint32 getBlack();
+	bool _isBlack;
+	uint32 fadePixel(uint32 color, int32 percent) const;
+	Graphics::Surface *_screen;
 };
 
 // Transitions are faders that range over [0,1000], which makes their

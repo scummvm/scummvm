@@ -204,17 +204,24 @@ void Caldoria::start() {
 		if (!pullbackMovie->loadFile("Images/Caldoria/Pullback.movie"))
 			error("Could not load pullback movie");
 
-		bool skipped = false;
-		Input input;
-
+		// Draw the first frame so we can fade to it
+		pullbackMovie->pauseVideo(true);
+		const Graphics::Surface *frame = pullbackMovie->decodeNextFrame();
+		assert(frame);
+		assert(frame->format == g_system->getScreenFormat());
+		g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 64, 112, frame->w, frame->h);
 		_vm->_gfx->doFadeInSync(kTwoSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond);
+		pullbackMovie->pauseVideo(false);
 
 		bool saveAllowed = _vm->swapSaveAllowed(false);
 		bool openAllowed = _vm->swapLoadAllowed(false);
 
+		bool skipped = false;
+		Input input;
+
 		while (!_vm->shouldQuit() && !pullbackMovie->endOfVideo()) {
 			if (pullbackMovie->needsUpdate()) {
-				const Graphics::Surface *frame = pullbackMovie->decodeNextFrame();
+				frame = pullbackMovie->decodeNextFrame();
 
 				if (frame) {
 					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 64, 112, frame->w, frame->h);
@@ -233,6 +240,9 @@ void Caldoria::start() {
 
 		delete pullbackMovie;
 
+		if (_vm->shouldQuit())
+			return;
+
 		_vm->swapSaveAllowed(saveAllowed);
 		_vm->swapLoadAllowed(openAllowed);
 
@@ -240,11 +250,8 @@ void Caldoria::start() {
 
 		if (!skipped) {
 			uint32 white = g_system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff);
-
 			_vm->_gfx->doFadeOutSync(kThreeSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond, white);
-
 			g_system->delayMillis(3 * 1000 / 2);
-
 			getExtraEntry(kCaldoria00WakeUp1, entry);
 			_navMovie.setTime(entry.movieStart);
 			_navMovie.redrawMovieWorld();

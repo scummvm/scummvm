@@ -24,43 +24,92 @@
  */
 
 #include "common/system.h"
+#include "graphics/surface.h"
 
 #include "pegasus/transition.h"
 
 namespace Pegasus {
 
 ScreenFader::ScreenFader() {
-	_fadeTarget = getBlack();
+	_isBlack = true;
 	// Initially, assume screens are on at full brightness.
 	Fader::setFaderValue(100);
+	_screen = new Graphics::Surface();
 }
 
-void ScreenFader::doFadeOutSync(const TimeValue duration, const TimeValue scale, const uint32 fadeTarget) {
-	_fadeTarget = fadeTarget;
+ScreenFader::~ScreenFader() {
+	_screen->free();
+	delete _screen;
+}
+
+void ScreenFader::doFadeOutSync(const TimeValue duration, const TimeValue scale, bool isBlack) {
+	_isBlack = isBlack;
+	_screen->copyFrom(*g_system->lockScreen());
+	g_system->unlockScreen();
 
 	FaderMoveSpec spec;
 	spec.makeTwoKnotFaderSpec(scale, 0, getFaderValue(), duration, 0);
 	startFaderSync(spec);
+
+	_screen->free();
 }
 
-void ScreenFader::doFadeInSync(const TimeValue duration, const TimeValue scale, const uint32 fadeTarget) {
-	_fadeTarget = fadeTarget;
+void ScreenFader::doFadeInSync(const TimeValue duration, const TimeValue scale, bool isBlack) {
+	_isBlack = isBlack;
+	_screen->copyFrom(*g_system->lockScreen());
+	g_system->unlockScreen();
 
 	FaderMoveSpec spec;
 	spec.makeTwoKnotFaderSpec(scale, 0, getFaderValue(), duration, 100);
 	startFaderSync(spec);
+
+	_screen->free();
 }
 
 void ScreenFader::setFaderValue(const int32 value) {
 	if (value != getFaderValue()) {
 		Fader::setFaderValue(value);
 
-		// TODO: Gamma fading
+		if (_screen->pixels) {
+			// The original game does a gamma fade here using the Mac API. In order to do
+			// that, it would require an immense amount of CPU processing. This does a
+			// linear fade instead, which looks fairly well, IMO.
+			Graphics::Surface *screen = g_system->lockScreen();
+
+			for (uint y = 0; y < _screen->h; y++) {
+				for (uint x = 0; x < _screen->w; x++) {
+					if (_screen->format.bytesPerPixel == 2)
+						WRITE_UINT16(screen->getBasePtr(x, y), fadePixel(READ_UINT16(_screen->getBasePtr(x, y)), value));
+					else
+						WRITE_UINT32(screen->getBasePtr(x, y), fadePixel(READ_UINT32(_screen->getBasePtr(x, y)), value));
+				}
+			}
+
+			g_system->unlockScreen();
+			g_system->updateScreen();
+		}
 	}
 }
 
-uint32 ScreenFader::getBlack() {
-	return g_system->getScreenFormat().RGBToColor(0, 0, 0);
+static inline byte fadeComponent(byte comp, int32 percent) {
+	return comp * percent / 100;
+}
+
+uint32 ScreenFader::fadePixel(uint32 color, int32 percent) const {
+	byte r, g, b;
+	g_system->getScreenFormat().colorToRGB(color, r, g, b);
+
+	if (_isBlack) {
+		r = fadeComponent(r, percent);
+		g = fadeComponent(g, percent);
+		b = fadeComponent(b, percent);
+	} else {
+		r = 0xFF - fadeComponent(0xFF - r, percent);
+		g = 0xFF - fadeComponent(0xFF - g, percent);
+		b = 0xFF - fadeComponent(0xFF - b, percent);
+	}
+
+	return g_system->getScreenFormat().RGBToColor(r, g, b);
 }
 
 Transition::Transition(const DisplayElementID id) : FaderAnimation(id) {

@@ -30,6 +30,7 @@
 
 #include "pegasus/elements.h"
 #include "pegasus/graphics.h"
+#include "pegasus/transition.h"
 
 namespace Pegasus {
 
@@ -46,10 +47,13 @@ GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	_modifiedScreen = false;
 	_curSurface = &_workArea;
 	_erase = false;
+	_updatesEnabled = true;
+	_screenFader = new ScreenFader();
 }
 	
 GraphicsManager::~GraphicsManager() {
 	_workArea.free();
+	delete _screenFader;
 }
 
 void GraphicsManager::invalRect(const Common::Rect &rect) {
@@ -175,7 +179,7 @@ void GraphicsManager::updateDisplay() {
 		_dirtyRect = Common::Rect();
 	}
 
-	if (screenDirty || _modifiedScreen)
+	if (_updatesEnabled && (screenDirty || _modifiedScreen))
 		g_system->updateScreen();
 
 	_modifiedScreen = false;
@@ -200,19 +204,14 @@ DisplayElement *GraphicsManager::findDisplayElement(const DisplayElementID id) {
 	return 0;
 }
 
-void GraphicsManager::doFadeOutSync(const TimeValue, const TimeValue, uint32 color) {
-	if (color == 0)
-		color = g_system->getScreenFormat().RGBToColor(0, 0, 0);
-
-	// HACK: Until fading out is done, white-out the screen here
-	Graphics::Surface *screen = g_system->lockScreen();
-	screen->fillRect(Common::Rect(0, 0, 640, 480), color);
-	g_system->unlockScreen();
-	g_system->updateScreen();
+void GraphicsManager::doFadeOutSync(const TimeValue time, const TimeScale scale, uint32 color) {
+	_updatesEnabled = false;
+	_screenFader->doFadeOutSync(time, scale, color == 0);
 }
 
-void GraphicsManager::doFadeInSync(const TimeValue, const TimeValue, uint32) {
-	// TODO
+void GraphicsManager::doFadeInSync(const TimeValue time, const TimeScale scale, uint32 color) {
+	_screenFader->doFadeInSync(time, scale, color == 0);
+	_updatesEnabled = true;
 }
 
 void GraphicsManager::markCursorAsDirty() {
@@ -333,5 +332,15 @@ void GraphicsManager::enableErase() {
 void GraphicsManager::disableErase() {
 	_erase = false;
 }
-	
+
+void GraphicsManager::enableUpdates() {
+	_updatesEnabled = true;
+	_screenFader->setFaderValue(100);
+}
+
+void GraphicsManager::disableUpdates() {
+	_updatesEnabled = false;
+	_screenFader->setFaderValue(0);
+}
+
 } // End of namespace Pegasus

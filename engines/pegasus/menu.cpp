@@ -237,10 +237,7 @@ void MainMenu::startMainMenuLoop() {
 
 	_menuLoop.loopSound();
 	spec.makeTwoKnotFaderSpec(30, 0, 0, 30, 255);
-
-	// FIXME: Should be sync, but it's a pain to use the main menu right now
-	// with this one.
-	_menuFader.startFader(spec);
+	_menuFader.startFaderSync(spec);
 }
 
 void MainMenu::stopMainMenuLoop() {
