@@ -175,14 +175,14 @@ private:
 
 // IWmeDebugScript interface implementation
 public:
-	virtual int DbgGetLine();
-	virtual const char *DbgGetFilename();
-	virtual TScriptState DbgGetState();
-	virtual int DbgGetNumBreakpoints();
-	virtual int DbgGetBreakpoint(int Index);
+	virtual int dbgGetLine();
+	virtual const char *dbgGetFilename();
+	virtual TScriptState dbgGetState();
+	virtual int dbgGetNumBreakpoints();
+	virtual int dbgGetBreakpoint(int Index);
 
-	virtual bool DbgSetTracingMode(bool IsTracing);
-	virtual bool DbgGetTracingMode();
+	virtual bool dbgSetTracingMode(bool IsTracing);
+	virtual bool dbgGetTracingMode();
 };
 
 } // end of namespace WinterMute

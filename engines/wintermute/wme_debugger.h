@@ -65,102 +65,102 @@ EWmeDebuggerVariableType;
 class IWmeDebugScript {
 public:
 	virtual ~IWmeDebugScript() {}
-	virtual int DbgGetLine() = 0;
-	virtual const char *DbgGetFilename() = 0;
-	virtual TScriptState DbgGetState() = 0;
+	virtual int dbgGetLine() = 0;
+	virtual const char *dbgGetFilename() = 0;
+	virtual TScriptState dbgGetState() = 0;
 
-	virtual int DbgGetNumBreakpoints() = 0;
-	virtual int DbgGetBreakpoint(int Index) = 0;
+	virtual int dbgGetNumBreakpoints() = 0;
+	virtual int dbgGetBreakpoint(int index) = 0;
 
-	virtual bool DbgSetTracingMode(bool IsTracing) = 0;
-	virtual bool DbgGetTracingMode() = 0;
+	virtual bool dbgSetTracingMode(bool isTracing) = 0;
+	virtual bool dbgGetTracingMode() = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
 class IWmeDebugProp {
 public:
-	virtual EWmeDebuggerPropType DbgGetType() = 0;
+	virtual EWmeDebuggerPropType dbgGetType() = 0;
 
 	virtual ~IWmeDebugProp() {}
 	// getters
-	virtual int DbgGetValInt() = 0;
-	virtual double DbgGetValFloat() = 0;
-	virtual bool DbgGetValBool() = 0;
-	virtual const char *DbgGetValString() = 0;
-	virtual IWmeDebugObject *DbgGetValNative() = 0;
+	virtual int dbgGetValInt() = 0;
+	virtual double dbgGetValFloat() = 0;
+	virtual bool dbgGetValBool() = 0;
+	virtual const char *dbgGetValString() = 0;
+	virtual IWmeDebugObject *dbgGetValNative() = 0;
 
 	// setters
-	virtual bool DbgSetVal(int Value) = 0;
-	virtual bool DbgSetVal(double Value) = 0;
-	virtual bool DbgSetVal(bool Value) = 0;
-	virtual bool DbgSetVal(const char *Value) = 0;
-	virtual bool DbgSetVal() = 0;
+	virtual bool dbgSetVal(int value) = 0;
+	virtual bool dbgSetVal(double value) = 0;
+	virtual bool dbgSetVal(bool value) = 0;
+	virtual bool dbgSetVal(const char *value) = 0;
+	virtual bool dbgSetVal() = 0;
 
 	// properties
-	virtual int DbgGetNumProperties() = 0;
-	virtual bool DbgGetProperty(int Index, const char **Name, IWmeDebugProp **Value) = 0;
+	virtual int dbgGetNumProperties() = 0;
+	virtual bool dbgGetProperty(int index, const char **name, IWmeDebugProp **value) = 0;
 
-	virtual bool DbgGetDescription(char *Buf, int BufSize) = 0;
+	virtual bool dbgGetDescription(char *buf, int bufSize) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
 class IWmeDebugObject {
 public:
 	virtual ~IWmeDebugObject() {}
-	virtual const char *DbgGetNativeClass() = 0;
-	virtual IWmeDebugProp *DbgGetProperty(const char *name) = 0;
+	virtual const char *dbgGetNativeClass() = 0;
+	virtual IWmeDebugProp *dbgGetProperty(const char *name) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
 class IWmeDebugClient {
 public:
 	virtual ~IWmeDebugClient() {}
-	virtual bool OnGameInit() = 0;
-	virtual bool OnGameShutdown() = 0;
+	virtual bool onGameInit() = 0;
+	virtual bool onGameShutdown() = 0;
 
-	virtual bool OnGameTick() = 0;
+	virtual bool onGameTick() = 0;
 
-	virtual bool OnLog(unsigned int ErrorCode, const char *Text) = 0;
+	virtual bool onLog(unsigned int errorCode, const char *text) = 0;
 
-	virtual bool OnScriptInit(IWmeDebugScript *Script) = 0;
-	virtual bool OnScriptEventThreadInit(IWmeDebugScript *Script, IWmeDebugScript *ParentScript, const char *EventName) = 0;
-	virtual bool OnScriptMethodThreadInit(IWmeDebugScript *Script, IWmeDebugScript *ParentScript, const char *MethodName) = 0;
-	virtual bool OnScriptShutdown(IWmeDebugScript *Script) = 0;
-	virtual bool OnScriptChangeLine(IWmeDebugScript *Script, int Line) = 0;
-	virtual bool OnScriptChangeScope(IWmeDebugScript *Script, unsigned int ScopeID) = 0;
-	virtual bool OnScriptShutdownScope(IWmeDebugScript *Script, unsigned int ScopeID) = 0;
+	virtual bool onScriptInit(IWmeDebugScript *script) = 0;
+	virtual bool onScriptEventThreadInit(IWmeDebugScript *script, IWmeDebugScript *ParentScript, const char *EventName) = 0;
+	virtual bool onScriptMethodThreadInit(IWmeDebugScript *script, IWmeDebugScript *ParentScript, const char *MethodName) = 0;
+	virtual bool onScriptShutdown(IWmeDebugScript *script) = 0;
+	virtual bool onScriptChangeLine(IWmeDebugScript *script, int Line) = 0;
+	virtual bool onScriptChangeScope(IWmeDebugScript *script, unsigned int scopeID) = 0;
+	virtual bool onScriptShutdownScope(IWmeDebugScript *script, unsigned int scopeID) = 0;
 
-	virtual bool OnVariableInit(EWmeDebuggerVariableType Type, IWmeDebugScript *Script, unsigned int ScopeID, IWmeDebugProp *Variable, const char *VariableName) = 0;
-	virtual bool OnVariableChangeValue(IWmeDebugProp *Variable, IWmeDebugProp *Value) = 0;
+	virtual bool onVariableInit(EWmeDebuggerVariableType Type, IWmeDebugScript *script, unsigned int scopeID, IWmeDebugProp *variable, const char *variableName) = 0;
+	virtual bool onVariableChangeValue(IWmeDebugProp *variable, IWmeDebugProp *value) = 0;
 
-	virtual bool OnScriptHitBreakpoint(IWmeDebugScript *Script, int Line) = 0;
+	virtual bool onScriptHitBreakpoint(IWmeDebugScript *script, int line) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
 class IWmeDebugServer {
 public:
 	virtual ~IWmeDebugServer() {}
-	virtual bool AttachClient(IWmeDebugClient *Client) = 0;
-	virtual bool DetachClient(IWmeDebugClient *Client) = 0;
+	virtual bool attachClient(IWmeDebugClient *client) = 0;
+	virtual bool detachClient(IWmeDebugClient *client) = 0;
 
-	virtual bool QueryData(IWmeDebugClient *Client) = 0;
+	virtual bool queryData(IWmeDebugClient *client) = 0;
 
-	virtual int GetPropInt(const char *PropName) = 0;
-	virtual double GetPropFloat(const char *PropName) = 0;
-	virtual const char *GetPropString(const char *PropName) = 0;
-	virtual bool GetPropBool(const char *PropName) = 0;
+	virtual int getPropInt(const char *propName) = 0;
+	virtual double getPropFloat(const char *propName) = 0;
+	virtual const char *getPropString(const char *propName) = 0;
+	virtual bool getPropBool(const char *propName) = 0;
 
-	virtual bool SetProp(const char *PropName, int PropValue) = 0;
-	virtual bool SetProp(const char *PropName, double PropValue) = 0;
-	virtual bool SetProp(const char *PropName, const char *PropValue) = 0;
-	virtual bool SetProp(const char *PropName, bool PropValue) = 0;
+	virtual bool setProp(const char *propName, int propValue) = 0;
+	virtual bool setProp(const char *propName, double propValue) = 0;
+	virtual bool setProp(const char *propName, const char *propValue) = 0;
+	virtual bool setProp(const char *propName, bool propValue) = 0;
 
-	virtual bool ResolveFilename(const char *RelativeFilename, char *AbsFilenameBuf, int AbsBufSize) = 0;
+	virtual bool resolveFilename(const char *relativeFilename, char *absFilenameBuf, int absBufSize) = 0;
 
-	virtual bool AddBreakpoint(const char *ScriptFilename, int Line) = 0;
-	virtual bool RemoveBreakpoint(const char *ScriptFilename, int Line) = 0;
+	virtual bool addBreakpoint(const char *scriptFilename, int line) = 0;
+	virtual bool removeBreakpoint(const char *scriptFilename, int line) = 0;
 
-	virtual bool ContinueExecution() = 0;
+	virtual bool continueExecution() = 0;
 };
 
 

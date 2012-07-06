@@ -70,8 +70,8 @@ public:
 
 public:
 	// IWmeDebugObject
-	const char *DbgGetNativeClass();
-	IWmeDebugProp *DbgGetProperty(const char *name);
+	const char *dbgGetNativeClass();
+	IWmeDebugProp *dbgGetProperty(const char *name);
 
 };
 

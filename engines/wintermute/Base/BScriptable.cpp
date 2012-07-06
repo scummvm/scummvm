@@ -176,12 +176,12 @@ CScScript *CBScriptable::invokeMethodThread(const char *methodName) {
 //////////////////////////////////////////////////////////////////////////
 // IWmeDebugObject
 //////////////////////////////////////////////////////////////////////////
-const char *CBScriptable::DbgGetNativeClass() {
+const char *CBScriptable::dbgGetNativeClass() {
 	return getClassName();
 }
 
 //////////////////////////////////////////////////////////////////////////
-IWmeDebugProp *CBScriptable::DbgGetProperty(const char *name) {
+IWmeDebugProp *CBScriptable::dbgGetProperty(const char *name) {
 	return scGetProperty(name);
 }
 

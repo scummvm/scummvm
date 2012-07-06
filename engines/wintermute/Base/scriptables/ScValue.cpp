@@ -864,7 +864,7 @@ int CScValue::compareStrict(CScValue *val1, CScValue *val2) {
 HRESULT CScValue::DbgSendVariables(IWmeDebugClient *Client, EWmeDebuggerVariableType Type, CScScript *script, unsigned int ScopeID) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
-		Client->OnVariableInit(Type, script, ScopeID, _valIter->_value, _valIter->_key.c_str());
+		Client->onVariableInit(Type, script, ScopeID, _valIter->_value, _valIter->_key.c_str());
 		_valIter++;
 	}
 	return S_OK;
@@ -917,7 +917,7 @@ bool CScValue::setProperty(const char *propName) {
 //////////////////////////////////////////////////////////////////////////
 // IWmeDebugProp
 //////////////////////////////////////////////////////////////////////////
-EWmeDebuggerPropType CScValue::DbgGetType() {
+EWmeDebuggerPropType CScValue::dbgGetType() {
 	switch (getType()) {
 	case VAL_NULL:
 		return WME_DBGPROP_NULL;
@@ -939,70 +939,70 @@ EWmeDebuggerPropType CScValue::DbgGetType() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CScValue::DbgGetValInt() {
+int CScValue::dbgGetValInt() {
 	return getInt();
 }
 
 //////////////////////////////////////////////////////////////////////////
-double CScValue::DbgGetValFloat() {
+double CScValue::dbgGetValFloat() {
 	return getFloat();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::DbgGetValBool() {
+bool CScValue::dbgGetValBool() {
 	return getBool();
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CScValue::DbgGetValString() {
+const char *CScValue::dbgGetValString() {
 	return getString();
 }
 
 //////////////////////////////////////////////////////////////////////////
-IWmeDebugObject *CScValue::DbgGetValNative() {
+IWmeDebugObject *CScValue::dbgGetValNative() {
 	return getNative();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::DbgSetVal(int value) {
+bool CScValue::dbgSetVal(int value) {
 	setInt(value);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::DbgSetVal(double value) {
+bool CScValue::dbgSetVal(double value) {
 	setFloat(value);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::DbgSetVal(bool value) {
+bool CScValue::dbgSetVal(bool value) {
 	setBool(value);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::DbgSetVal(const char *value) {
+bool CScValue::dbgSetVal(const char *value) {
 	setString(value);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::DbgSetVal() {
+bool CScValue::dbgSetVal() {
 	setNULL();
 	return true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CScValue::DbgGetNumProperties() {
-	if (_valNative && _valNative->_scProp) return _valNative->_scProp->DbgGetNumProperties();
+int CScValue::dbgGetNumProperties() {
+	if (_valNative && _valNative->_scProp) return _valNative->_scProp->dbgGetNumProperties();
 	else return _valObject.size();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::DbgGetProperty(int index, const char **name, IWmeDebugProp **value) {
-	if (_valNative && _valNative->_scProp) return _valNative->_scProp->DbgGetProperty(index, name, value);
+bool CScValue::dbgGetProperty(int index, const char **name, IWmeDebugProp **value) {
+	if (_valNative && _valNative->_scProp) return _valNative->_scProp->dbgGetProperty(index, name, value);
 	else {
 		int count = 0;
 		_valIter = _valObject.begin();
@@ -1020,8 +1020,8 @@ bool CScValue::DbgGetProperty(int index, const char **name, IWmeDebugProp **valu
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::DbgGetDescription(char *buf, int bufSize) {
-	if (_type == VAL_VARIABLE_REF) return _valRef->DbgGetDescription(buf, bufSize);
+bool CScValue::dbgGetDescription(char *buf, int bufSize) {
+	if (_type == VAL_VARIABLE_REF) return _valRef->dbgGetDescription(buf, bufSize);
 
 	if (_type == VAL_NATIVE) {
 		_valNative->scDebuggerDesc(buf, bufSize);

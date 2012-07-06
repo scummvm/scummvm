@@ -673,7 +673,7 @@ HRESULT CScEngine::DbgSendScripts(IWmeDebugClient *Client) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::AddBreakpoint(const char *ScriptFilename, int Line) {
+HRESULT CScEngine::addBreakpoint(const char *ScriptFilename, int Line) {
 	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	CScBreakpoint *Bp = NULL;
@@ -700,7 +700,7 @@ HRESULT CScEngine::AddBreakpoint(const char *ScriptFilename, int Line) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::RemoveBreakpoint(const char *ScriptFilename, int Line) {
+HRESULT CScEngine::removeBreakpoint(const char *ScriptFilename, int Line) {
 	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
@@ -789,7 +789,7 @@ HRESULT CScEngine::LoadBreakpoints() {
 		char *Path = CBUtils::strEntry(0, breakpoint.c_str(), ':');
 		char *Line = CBUtils::strEntry(1, breakpoint.c_str(), ':');
 
-		if (Path != NULL && Line != NULL) AddBreakpoint(Path, atoi(Line));
+		if (Path != NULL && Line != NULL) addBreakpoint(Path, atoi(Line));
 		delete[] Path;
 		delete[] Line;
 		Path = NULL;

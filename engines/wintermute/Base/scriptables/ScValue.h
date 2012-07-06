@@ -113,27 +113,27 @@ public:
 
 // IWmeDebugProp interface implementation
 public:
-	virtual EWmeDebuggerPropType DbgGetType();
+	virtual EWmeDebuggerPropType dbgGetType();
 
 	// getters
-	virtual int DbgGetValInt();
-	virtual double DbgGetValFloat();
-	virtual bool DbgGetValBool();
-	virtual const char *DbgGetValString();
-	virtual IWmeDebugObject *DbgGetValNative();
+	virtual int dbgGetValInt();
+	virtual double dbgGetValFloat();
+	virtual bool dbgGetValBool();
+	virtual const char *dbgGetValString();
+	virtual IWmeDebugObject *dbgGetValNative();
 
 	// setters
-	virtual bool DbgSetVal(int Value);
-	virtual bool DbgSetVal(double Value);
-	virtual bool DbgSetVal(bool Value);
-	virtual bool DbgSetVal(const char *Value);
-	virtual bool DbgSetVal();
+	virtual bool dbgSetVal(int Value);
+	virtual bool dbgSetVal(double Value);
+	virtual bool dbgSetVal(bool Value);
+	virtual bool dbgSetVal(const char *Value);
+	virtual bool dbgSetVal();
 
 	// properties
-	virtual int DbgGetNumProperties();
-	virtual bool DbgGetProperty(int Index, const char **Name, IWmeDebugProp **Value);
+	virtual int dbgGetNumProperties();
+	virtual bool dbgGetProperty(int Index, const char **Name, IWmeDebugProp **Value);
 
-	virtual bool DbgGetDescription(char *Buf, int BufSize);
+	virtual bool dbgGetDescription(char *Buf, int BufSize);
 };
 
 } // end of namespace WinterMute

@@ -96,8 +96,8 @@ public:
 	HRESULT DbgSendScripts(IWmeDebugClient *Client);
 
 	CBArray<CScBreakpoint *, CScBreakpoint *> _breakpoints;
-	HRESULT AddBreakpoint(const char *ScriptFilename, int Line);
-	HRESULT RemoveBreakpoint(const char *ScriptFilename, int Line);
+	HRESULT addBreakpoint(const char *ScriptFilename, int Line);
+	HRESULT removeBreakpoint(const char *ScriptFilename, int Line);
 	HRESULT RefreshScriptBreakpoints();
 	HRESULT RefreshScriptBreakpoints(CScScript *script);
 	HRESULT SaveBreakpoints();

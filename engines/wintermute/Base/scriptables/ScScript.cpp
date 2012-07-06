@@ -1552,21 +1552,21 @@ HRESULT CScScript::FinishThreads() {
 
 //////////////////////////////////////////////////////////////////////////
 // IWmeDebugScript interface implementation
-int CScScript::DbgGetLine() {
+int CScScript::dbgGetLine() {
 	return _currentLine;
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CScScript::DbgGetFilename() {
+const char *CScScript::dbgGetFilename() {
 	return _filename;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScScript::DbgSendScript(IWmeDebugClient *Client) {
-	if (_methodThread) Client->OnScriptMethodThreadInit(this, _parentScript, _threadEvent);
-	else if (_thread) Client->OnScriptEventThreadInit(this, _parentScript, _threadEvent);
-	else Client->OnScriptInit(this);
+	if (_methodThread) Client->onScriptMethodThreadInit(this, _parentScript, _threadEvent);
+	else if (_thread) Client->onScriptEventThreadInit(this, _parentScript, _threadEvent);
+	else Client->onScriptInit(this);
 
 	return DbgSendVariables(Client);
 	return S_OK;
@@ -1589,29 +1589,29 @@ HRESULT CScScript::DbgSendVariables(IWmeDebugClient *Client) {
 
 
 //////////////////////////////////////////////////////////////////////////
-TScriptState CScScript::DbgGetState() {
+TScriptState CScScript::dbgGetState() {
 	return _state;
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CScScript::DbgGetNumBreakpoints() {
+int CScScript::dbgGetNumBreakpoints() {
 	return _breakpoints.GetSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CScScript::DbgGetBreakpoint(int Index) {
+int CScScript::dbgGetBreakpoint(int Index) {
 	if (Index >= 0 && Index < _breakpoints.GetSize()) return _breakpoints[Index];
 	else return -1;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScScript::DbgSetTracingMode(bool IsTracing) {
+bool CScScript::dbgSetTracingMode(bool IsTracing) {
 	_tracingMode = IsTracing;
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScScript::DbgGetTracingMode() {
+bool CScScript::dbgGetTracingMode() {
 	return _tracingMode;
 }
 

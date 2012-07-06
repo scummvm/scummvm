@@ -33,6 +33,8 @@
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/wme_debugger.h"
 
+// TODO: The entire debugger should possibly be removed
+
 namespace WinterMute {
 class CScScript;
 class CScValue;
@@ -43,48 +45,48 @@ public:
 
 	// initialization
 	bool _enabled;
-	HRESULT Initialize();
-	HRESULT Shutdown();
+	HRESULT initialize();
+	HRESULT shutdown();
 
 	// internal interface
 	HRESULT onGameInit();
 	HRESULT onGameShutdown();
 	HRESULT onGameTick();
-	HRESULT onLog(unsigned int ErrorCode, const char *Text);
+	HRESULT onLog(unsigned int errorCode, const char *text);
 	HRESULT onScriptInit(CScScript *script);
-	HRESULT onScriptEventThreadInit(CScScript *Script, CScScript *ParentScript, const char *name);
-	HRESULT onScriptMethodThreadInit(CScScript *Script, CScScript *ParentScript, const char *name);
+	HRESULT onScriptEventThreadInit(CScScript *script, CScScript *parentScript, const char *name);
+	HRESULT onScriptMethodThreadInit(CScScript *script, CScScript *parentScript, const char *name);
 
 	HRESULT onScriptShutdown(CScScript *script);
-	HRESULT onScriptChangeLine(CScScript *Script, int Line);
-	HRESULT onScriptChangeScope(CScScript *Script, CScValue *Scope);
-	HRESULT onScriptShutdownScope(CScScript *Script, CScValue *Scope);
-	HRESULT onVariableInit(EWmeDebuggerVariableType Type, CScScript *script, CScValue *Scope, CScValue *Var, const char *VariableName);
-	HRESULT onVariableChangeValue(CScValue *Var, CScValue *value);
+	HRESULT onScriptChangeLine(CScScript *script, int line);
+	HRESULT onScriptChangeScope(CScScript *script, CScValue *scope);
+	HRESULT onScriptShutdownScope(CScScript *script, CScValue *scope);
+	HRESULT onVariableInit(EWmeDebuggerVariableType type, CScScript *script, CScValue *scope, CScValue *var, const char *variableName);
+	HRESULT onVariableChangeValue(CScValue *var, CScValue *value);
 
 	HRESULT onScriptHitBreakpoint(CScScript *script);
 
 	// IWmeDebugServer interface
-	virtual bool AttachClient(IWmeDebugClient *Client);
-	virtual bool DetachClient(IWmeDebugClient *Client);
-	virtual bool QueryData(IWmeDebugClient *Client);
+	virtual bool attachClient(IWmeDebugClient *client);
+	virtual bool detachClient(IWmeDebugClient *client);
+	virtual bool queryData(IWmeDebugClient *client);
 
-	virtual int GetPropInt(const char *PropName);
-	virtual double GetPropFloat(const char *PropName);
-	virtual const char *GetPropString(const char *PropName);
-	virtual bool GetPropBool(const char *PropName);
+	virtual int getPropInt(const char *propName);
+	virtual double getPropFloat(const char *propName);
+	virtual const char *getPropString(const char *propName);
+	virtual bool getPropBool(const char *propName);
 
-	virtual bool SetProp(const char *PropName, int PropValue);
-	virtual bool SetProp(const char *PropName, double PropValue);
-	virtual bool SetProp(const char *PropName, const char *PropValue);
-	virtual bool SetProp(const char *PropName, bool PropValue);
+	virtual bool setProp(const char *propName, int propValue);
+	virtual bool setProp(const char *propName, double propValue);
+	virtual bool setProp(const char *propName, const char *propValue);
+	virtual bool setProp(const char *propName, bool propValue);
 
-	virtual bool ResolveFilename(const char *RelativeFilename, char *AbsFilenameBuf, int AbsBufSize);
+	virtual bool resolveFilename(const char *relativeFilename, char *absFilenameBuf, int absBufSize);
 
-	virtual bool AddBreakpoint(const char *ScriptFilename, int Line);
-	virtual bool RemoveBreakpoint(const char *ScriptFilename, int Line);
+	virtual bool addBreakpoint(const char *scriptFilename, int line);
+	virtual bool removeBreakpoint(const char *scriptFilename, int line);
 
-	virtual bool ContinueExecution();
+	virtual bool continueExecution();
 private:
 };
 
