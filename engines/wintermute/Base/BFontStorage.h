@@ -48,14 +48,6 @@ public:
 	virtual ~CBFontStorage();
 	CBArray<CBFont *, CBFont *> _fonts;
 	HRESULT initLoop();
-
-	/*  FT_Library GetFTLibrary() const {
-	        return _fTLibrary;
-	    }*/
-
-private:
-	void initFreeType();
-	//FT_Library _fTLibrary;
 };
 
 } // end of namespace WinterMute
