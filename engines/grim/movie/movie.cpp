@@ -105,7 +105,7 @@ bool MoviePlayer::prepareFrame() {
 	_internalSurface = _videoDecoder->decodeNextFrame();
 	_updateNeeded = true;
 
-	_movieTime = _videoDecoder->getElapsedTime();
+	_movieTime = _videoDecoder->getTime();
 	_frame = _videoDecoder->getCurFrame();
 
 	return true;

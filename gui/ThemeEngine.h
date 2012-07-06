@@ -35,7 +35,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.11"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.13"
 
 class OSystem;
 
@@ -81,6 +81,7 @@ enum DrawData {
 	kDDButtonIdle,
 	kDDButtonHover,
 	kDDButtonDisabled,
+	kDDButtonPressed,
 
 	kDDSliderFull,
 	kDDSliderHover,
@@ -178,7 +179,8 @@ public:
 	enum State {
 		kStateDisabled,     ///< Indicates that the widget is disabled, that does NOT include that it is invisible
 		kStateEnabled,      ///< Indicates that the widget is enabled
-		kStateHighlight     ///< Indicates that the widget is highlighted by the user
+		kStateHighlight,    ///< Indicates that the widget is highlighted by the user
+		kStatePressed       ///< Indicates that the widget is pressed, currently works for buttons
 	};
 
 	typedef State WidgetStateInfo;
@@ -272,6 +274,11 @@ public:
 	void refresh();
 	void enable();
 	void disable();
+
+	/**
+	 * Query the set up pixel format.
+	 */
+	const Graphics::PixelFormat getPixelFormat() const { return _overlayFormat; }
 
 	/**
 	 * Implementation of the GUI::Theme API. Called when a
@@ -493,9 +500,8 @@ public:
 	 * @param filename File name of the bitmap to load.
 	 * @param hotspotX X Coordinate of the bitmap which does the cursor click.
 	 * @param hotspotY Y Coordinate of the bitmap which does the cursor click.
-	 * @param scale    Scale at which the bitmap is supposed to be used.
 	 */
-	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale);
+	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY);
 
 	/**
 	 * Wrapper for restoring data from the Back Buffer to the screen.
@@ -667,7 +673,6 @@ protected:
 
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
-	int _cursorTargetScale;
 	enum {
 		MAX_CURS_COLORS = 255
 	};

@@ -65,7 +65,7 @@ public:
 	virtual int16 getWidth() = 0;
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual Graphics::Surface *lockScreen() = 0;
 	virtual void unlockScreen() = 0;
 	virtual void fillScreen(uint32 col) = 0;
@@ -78,14 +78,14 @@ public:
 	virtual void hideOverlay() = 0;
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
 	virtual void clearOverlay() = 0;
-	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h)= 0;
+	virtual void grabOverlay(void *buf, int pitch) = 0;
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h)= 0;
 	virtual int16 getOverlayHeight() = 0;
 	virtual int16 getOverlayWidth() = 0;
 
 	virtual bool showMouse(bool visible) = 0;
 	virtual void warpMouse(int x, int y) = 0;
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) = 0;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) = 0;
 
 	// ResidualVM specific method

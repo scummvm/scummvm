@@ -112,7 +112,7 @@ void SeekableBinkDecoder::seekToFrame(uint32 frame) {
 	startAudio();
 }
 
-void SeekableBinkDecoder::seekToTime(Audio::Timestamp time) {
+void SeekableBinkDecoder::seekToTime(const Audio::Timestamp &time) {
 	// Try to find the last frame that should have been decoded
 	Common::Rational frame = time.msecs() * getFrameRate() / 1000;
 	seekToFrame(frame.toInt());

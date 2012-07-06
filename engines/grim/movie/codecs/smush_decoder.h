@@ -89,7 +89,7 @@ public:
 	void close();
 
 	// Seekable
-	void seekToTime(Audio::Timestamp time);
+	void seekToTime(const Audio::Timestamp &time);
 	uint32 getDuration() const;
 
 	uint32 getTimeToNextFrame() const;

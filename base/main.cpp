@@ -55,6 +55,12 @@
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"  /* for music manager */
 
+#include "graphics/cursorman.h"
+#include "graphics/fontman.h"
+#ifdef USE_FREETYPE2
+#include "graphics/fonts/ttf.h"
+#endif
+
 #include "backends/keymapper/keymapper.h"
 
 #if defined(_WIN32_WCE)
@@ -494,9 +500,17 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
+	Common::DebugManager::destroy();
+	Common::EventRecorder::destroy();
 	Common::SearchManager::destroy();
 #ifdef USE_TRANSLATION
 	Common::TranslationManager::destroy();
+#endif
+	MusicManager::destroy();
+	Graphics::CursorManager::destroy();
+	Graphics::FontManager::destroy();
+#ifdef USE_FREETYPE2
+	Graphics::shutdownTTF();
 #endif
 
 	return 0;

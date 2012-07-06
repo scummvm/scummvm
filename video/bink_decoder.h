@@ -70,7 +70,7 @@ public:
 	uint16 getHeight() const { return _surface.h; }
 	Graphics::PixelFormat getPixelFormat() const { return _surface.format; }
 	uint32 getFrameCount() const { return _frames.size(); }
-	uint32 getElapsedTime() const;
+	uint32 getTime() const;
 	const Graphics::Surface *decodeNextFrame();
 
 	// FixedRateVideoDecoder
@@ -78,7 +78,12 @@ public:
 
 	// Bink specific
 	bool loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format);
+
 protected:
+	// VideoDecoder API
+	void updateVolume();
+	void updateBalance();
+
 	static const int kAudioChannelsMax  = 2;
 	static const int kAudioBlockSizeMax = (kAudioChannelsMax << 11);
 

@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	midi/alsa.o \
 	midi/dmedia.o \
 	midi/seq.o \
+	midi/sndio.o \
 	midi/stmidi.o \
 	midi/timidity.o \
 	saves/savefile.o \

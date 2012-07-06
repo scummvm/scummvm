@@ -62,16 +62,37 @@ protected:
 	void updateSaveList();
 	void updateSelection(bool redraw);
 public:
-	SaveLoadChooser(const String &title, const String &buttonLabel);
+	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	void setList(const StringArray& list);
+
+	/**
+	 * Runs the save/load chooser with the currently active config manager
+	 * domain as target.
+	 *
+	 * @return The selcted save slot. -1 in case none is selected.
+	 */
+	int runModalWithCurrentTarget();
 	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
 	void open();
 
 	const Common::String &getResultString() const;
-	void setSaveMode(bool saveMode);
+
+	/**
+	 * Creates a default save description for the specified slot. Depending
+	 * on the ScummVM configuration this might be a simple "Slot #" description
+	 * or the current date and time.
+	 *
+	 * TODO: This might not be the best place to put this, since engines not
+	 * using this class might want to mimic the same behavior. Check whether
+	 * moving this to a better place makes sense and find what this place would
+	 * be.
+	 *
+	 * @param slot The slot number (must be >= 0).
+	 * @return The slot description.
+	 */
+	Common::String createDefaultSaveDescription(const int slot) const;
 
 	virtual void reflowLayout();
 

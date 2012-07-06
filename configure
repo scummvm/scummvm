@@ -816,8 +816,8 @@ Optional Libraries:
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (MacOSX only - optional)
-  --disable-sparkle        disable sparkle automatic update support [MacOSX only - autodetect]
+  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (Mac OS X only - optional)
+  --disable-sparkle        disable sparkle automatic update support [Mac OS X only - autodetect]
 
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
@@ -833,6 +833,9 @@ Optional Libraries:
 
   --with-libunity-prefix=DIR   Prefix where libunity is installed (optional)
   --disable-libunity           disable Unity launcher integration [autodetect]
+
+  --with-sndio-prefix=DIR  Prefix where sndio is installed (optional)
+  --disable-sndio          disable sndio MIDI driver [autodetect]
 
 Some influential environment variables:
   LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -856,6 +859,8 @@ for ac_option in $@; do
 	--disable-alsa)           _alsa=no        ;;
 	--enable-seq-midi)        _seq_midi=yes   ;;
 	--disable-seq-midi)       _seq_midi=no    ;;
+	--enable-sndio)           _sndio=yes      ;;
+	--disable-sndio)          _sndio=no       ;;
 	--enable-timidity)        _timidity=yes   ;;
 	--disable-timidity)       _timidity=no    ;;
 	--enable-vorbis)          _vorbis=yes     ;;
@@ -924,6 +929,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		ALSA_CFLAGS="-I$arg/include"
 		ALSA_LIBS="-L$arg/lib"
+		;;
+	--with-sndio-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		SNDIO_CFLAGS="-I$arg/include"
+		SNDIO_LIBS="-L$arg/lib"
 		;;
 	--with-ogg-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2211,6 +2221,9 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -mips32"
 			_backend="dingux"
 			_mt32emu=no
+			_optimization_level=-O3
+			# Disable alsa midi to get the port build on OpenDingux toolchain
+			_alsa=no 
 			_vkeybd=yes
 			_build_hq_scalers=no
 			_keymapper=no
@@ -3241,6 +3254,25 @@ if test "$_seq_midi" = auto ; then
 fi
 define_in_config_h_if_yes "$_seq_midi" 'USE_SEQ_MIDI'
 echo "$_seq_midi"
+
+#
+# Check for sndio
+#
+echocheck "sndio"
+if test "$_sndio" = auto ; then
+	_sndio=no
+	cat > $TMPC << EOF
+#include <sndio.h>
+int main(void) { struct sio_par par; sio_initpar(&par); return 0; }
+EOF
+	cc_check $SNDIO_CFLAGS $SNDIO_LIBS -lsndio && _sndio=yes
+fi
+if test "$_sndio" = yes ; then
+	LIBS="$LIBS $SNDIO_LIBS -lsndio"
+	INCLUDES="$INCLUDES $SNDIO_CFLAGS"
+fi
+define_in_config_h_if_yes "$_sndio" 'USE_SNDIO'
+echo "$_sndio"
 
 #
 # Check for TiMidity(++)

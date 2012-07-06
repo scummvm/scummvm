@@ -136,7 +136,7 @@ PaletteManager *ModularBackend::getPaletteManager() {
 	return _graphicsManager;
 }
 
-void ModularBackend::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void ModularBackend::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	_graphicsManager->copyRectToScreen(buf, pitch, x, y, w, h);
 }
 
@@ -183,11 +183,11 @@ void ModularBackend::clearOverlay() {
 	_graphicsManager->clearOverlay();
 }
 
-void ModularBackend::grabOverlay(OverlayColor *buf, int pitch) {
+void ModularBackend::grabOverlay(void *buf, int pitch) {
 	_graphicsManager->grabOverlay(buf, pitch);
 }
 
-void ModularBackend::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void ModularBackend::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	_graphicsManager->copyRectToOverlay(buf, pitch, x, y, w, h);
 }
 
@@ -212,8 +212,8 @@ void ModularBackend::warpMouse(int x, int y) {
 	_graphicsManager->warpMouse(x, y);
 }
 
-void ModularBackend::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
-	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, cursorTargetScale, format);
+void ModularBackend::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format);
 }
 
 void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) {

@@ -871,7 +871,9 @@ std::string XCodeProvider::writeProperty(const std::string &variable, Property &
 std::string XCodeProvider::writeSetting(const std::string &variable, std::string value, std::string comment, int flags, int indent) const {
 	return writeSetting(variable, Setting(value, comment, flags, indent));
 }
-// Heavily modified (not in a good way) function, imported from QMake XCode project generator (licensed under the QT license)
+
+// Heavily modified (not in a good way) function, imported from the QMake
+// XCode project generator pbuilder_pbx.cpp, writeSettings() (under LGPL 2.1)
 std::string XCodeProvider::writeSetting(const std::string &variable, const Setting &setting) const {
 	std::string output;
 	const std::string quote = (setting.flags & SettingsNoQuote) ? "" : "\"";

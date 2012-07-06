@@ -560,6 +560,7 @@ void OSystem_Android::getTimeAndDate(TimeDate &td) const {
 	td.tm_mday = tm.tm_mday;
 	td.tm_mon = tm.tm_mon;
 	td.tm_year = tm.tm_year;
+	td.tm_wday = tm.tm_wday;
 }
 
 void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,

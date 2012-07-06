@@ -250,7 +250,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	if (setup.devTools || name == setup.projectName || name == "sword25" || name == "grim" || name == "myst3") {
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 	} else {
-		if (name == "tinsel" && !isRelease)
+		if (name == "residualvm" && !isRelease)
 			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
 
 		if (warningsIterator != _projectWarnings.end())

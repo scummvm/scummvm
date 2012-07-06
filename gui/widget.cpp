@@ -30,6 +30,8 @@
 
 #include "gui/ThemeEval.h"
 
+#include "gui/dialog.h"
+
 namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
@@ -77,6 +79,8 @@ void Widget::updateState(int oldFlags, int newFlags) {
 		_state = ThemeEngine::kStateEnabled;
 		if (newFlags & WIDGET_HILITED)
 			_state = ThemeEngine::kStateHighlight;
+		if (newFlags & WIDGET_PRESSED)
+			_state = ThemeEngine::kStatePressed;
 	} else {
 		_state = ThemeEngine::kStateDisabled;
 	}
@@ -272,7 +276,7 @@ void StaticTextWidget::drawWidget() {
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey) {
+	  _cmd(cmd), _hotkey(hotkey), _lastTime(0) {
 
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
@@ -283,7 +287,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
-	  _cmd(cmd) {
+	  _cmd(cmd), _lastTime(0) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
@@ -291,8 +295,14 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 }
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h)
+	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
 		sendCommand(_cmd, 0);
+		startAnimatePressedState();
+	}
+}
+
+void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	setPressedState();
 }
 
 void ButtonWidget::drawWidget() {
@@ -324,11 +334,49 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 	return button;
 }
 
+void ButtonWidget::setHighLighted(bool enable) {
+	(enable) ? setFlags(WIDGET_HILITED) : clearFlags(WIDGET_HILITED);
+	draw();
+}
+
+void ButtonWidget::handleTickle() {
+	if (_lastTime) {
+		uint32 curTime = g_system->getMillis();
+		if (curTime - _lastTime > kPressedButtonTime) {
+			stopAnimatePressedState();
+		}
+	}
+}
+
+void ButtonWidget::setPressedState() {
+	wantTickle(true);
+	setFlags(WIDGET_PRESSED);
+	draw();
+}
+
+void ButtonWidget::stopAnimatePressedState() {
+	wantTickle(false);
+	_lastTime = 0;
+	clearFlags(WIDGET_PRESSED);
+	draw();
+}
+
+void ButtonWidget::startAnimatePressedState() {
+	_lastTime = g_system->getMillis();
+}
+
+void ButtonWidget::wantTickle(bool tickled) {
+	if (tickled) 
+		((GUI::Dialog *)_boss)->setTickleWidget(this);
+	else
+		((GUI::Dialog *)_boss)->unSetTickleWidget();
+}
+
 #pragma mark -
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, "", tooltip, cmd, hotkey),
-	  _gfx(), _alpha(256), _transparency(false) {
+	  _gfx(new Graphics::Surface()), _alpha(256), _transparency(false) {
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
@@ -336,38 +384,54 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, co
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, name, "", tooltip, cmd, hotkey),
-	  _alpha(256), _transparency(false) {
+	  _gfx(new Graphics::Surface()), _alpha(256), _transparency(false) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 PicButtonWidget::~PicButtonWidget() {
-	_gfx.free();
+	_gfx->free();
+	delete _gfx;
 }
 
 void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
-	_gfx.free();
+	_gfx->free();
 
 	if (!gfx || !gfx->pixels)
 		return;
+
+	if (gfx->format.bytesPerPixel == 1) {
+		warning("PicButtonWidget::setGfx got paletted surface passed");
+		return;
+	}
+
 
 	if (gfx->w > _w || gfx->h > _h) {
 		warning("PicButtonWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
 		return;
 	}
 
-	// TODO: add conversion to OverlayColor
-	_gfx.copyFrom(*gfx);
+	_gfx->copyFrom(*gfx);
 }
 
 void PicButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), "", _state, getFlags());
 
-	if (sizeof(OverlayColor) == _gfx.format.bytesPerPixel && _gfx.pixels) {
-		const int x = _x + (_w - _gfx.w) / 2;
-		const int y = _y + (_h - _gfx.h) / 2;
+	if (_gfx->pixels) {
+		// Check whether the set up surface needs to be converted to the GUI
+		// color format.
+		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
+		if (_gfx->format != requiredFormat) {
+			Graphics::Surface *converted = _gfx->convertTo(requiredFormat);
+			_gfx->free();
+			delete _gfx;
+			_gfx = converted;
+		}
 
-		g_gui.theme()->drawSurface(Common::Rect(x, y, x + _gfx.w,  y + _gfx.h), _gfx, _state, _alpha, _transparency);
+		const int x = _x + (_w - _gfx->w) / 2;
+		const int y = _y + (_h - _gfx->h) / 2;
+
+		g_gui.theme()->drawSurface(Common::Rect(x, y, x + _gfx->w,  y + _gfx->h), *_gfx, _state, _alpha, _transparency);
 	}
 }
 
@@ -555,34 +619,39 @@ int SliderWidget::posToValue(int pos) {
 #pragma mark -
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
-	: Widget(boss, x, y, w, h, tooltip), _gfx(), _alpha(256), _transparency(false) {
+	: Widget(boss, x, y, w, h, tooltip), _gfx(new Graphics::Surface()), _alpha(256), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name, const char *tooltip)
-	: Widget(boss, name, tooltip), _gfx(), _alpha(256), _transparency(false) {
+	: Widget(boss, name, tooltip), _gfx(new Graphics::Surface()), _alpha(256), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
 
 GraphicsWidget::~GraphicsWidget() {
-	_gfx.free();
+	_gfx->free();
+	delete _gfx;
 }
 
 void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
-	_gfx.free();
+	_gfx->free();
 
 	if (!gfx || !gfx->pixels)
 		return;
+
+	if (gfx->format.bytesPerPixel == 1) {
+		warning("GraphicsWidget::setGfx got paletted surface passed");
+		return;
+	}
 
 	if (gfx->w > _w || gfx->h > _h) {
 		warning("GraphicsWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
 		return;
 	}
 
-	// TODO: add conversion to OverlayColor
-	_gfx.copyFrom(*gfx);
+	_gfx->copyFrom(*gfx);
 }
 
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
@@ -591,26 +660,29 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 	if (h == -1)
 		h = _h;
 
-	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
+	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
 
-	_gfx.free();
-	_gfx.create(w, h, overlayFormat);
-
-	OverlayColor *dst = (OverlayColor *)_gfx.pixels;
-	OverlayColor fillCol = overlayFormat.RGBToColor(r, g, b);
-	while (h--) {
-		for (int i = 0; i < w; ++i) {
-			*dst++ = fillCol;
-		}
-	}
+	_gfx->free();
+	_gfx->create(w, h, requiredFormat);
+	_gfx->fillRect(Common::Rect(0, 0, w, h), _gfx->format.RGBToColor(r, g, b));
 }
 
 void GraphicsWidget::drawWidget() {
-	if (sizeof(OverlayColor) == _gfx.format.bytesPerPixel && _gfx.pixels) {
-		const int x = _x + (_w - _gfx.w) / 2;
-		const int y = _y + (_h - _gfx.h) / 2;
+	if (_gfx->pixels) {
+		// Check whether the set up surface needs to be converted to the GUI
+		// color format.
+		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
+		if (_gfx->format != requiredFormat) {
+			Graphics::Surface *converted = _gfx->convertTo(requiredFormat);
+			_gfx->free();
+			delete _gfx;
+			_gfx = converted;
+		}
 
-		g_gui.theme()->drawSurface(Common::Rect(x, y, x + _gfx.w,  y + _gfx.h), _gfx, _state, _alpha, _transparency);
+		const int x = _x + (_w - _gfx->w) / 2;
+		const int y = _y + (_h - _gfx->h) / 2;
+
+		g_gui.theme()->drawSurface(Common::Rect(x, y, x + _gfx->w,  y + _gfx->h), *_gfx, _state, _alpha, _transparency);
 	}
 }
 

@@ -449,7 +449,7 @@ void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 		pf.colorToRGB(READ_UINT16(p), colors[0], colors[1], colors[2]);
 }
 
-void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
+void OSystem_Android::copyRectToScreen(const void *buf, int pitch,
 										int x, int y, int w, int h) {
 	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
 
@@ -694,33 +694,32 @@ void OSystem_Android::clearOverlay() {
 	_overlay_texture->fillBuffer(0);
 }
 
-void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
+void OSystem_Android::grabOverlay(void *buf, int pitch) {
 	ENTER("%p, %d", buf, pitch);
 
 	GLTHREADCHECK;
 
 	const Graphics::Surface *surface = _overlay_texture->surface_const();
-	assert(surface->format.bytesPerPixel == sizeof(buf[0]));
+	assert(surface->format.bytesPerPixel == sizeof(uint16));
 
+	byte *dst = (byte *)buf;
 	const byte *src = (const byte *)surface->pixels;
 	uint h = surface->h;
 
 	do {
-		memcpy(buf, src, surface->w * surface->format.bytesPerPixel);
+		memcpy(dst, src, surface->w * surface->format.bytesPerPixel);
 		src += surface->pitch;
-		// This 'pitch' is pixels not bytes
-		buf += pitch;
+		dst += pitch;
 	} while (--h);
 }
 
-void OSystem_Android::copyRectToOverlay(const OverlayColor *buf, int pitch,
+void OSystem_Android::copyRectToOverlay(const void *buf, int pitch,
 										int x, int y, int w, int h) {
 	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
 
 	GLTHREADCHECK;
 
-	// This 'pitch' is pixels not bytes
-	_overlay_texture->updateBuffer(x, y, w, h, buf, pitch * sizeof(buf[0]));
+	_overlay_texture->updateBuffer(x, y, w, h, buf, pitch);
 }
 
 int16 OSystem_Android::getOverlayHeight() {
@@ -743,12 +742,12 @@ bool OSystem_Android::showMouse(bool visible) {
 	return true;
 }
 
-void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
+void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
 										int hotspotX, int hotspotY,
-										uint32 keycolor, int cursorTargetScale,
+										uint32 keycolor, bool dontScale,
 										const Graphics::PixelFormat *format) {
 	ENTER("%p, %u, %u, %d, %d, %u, %d, %p", buf, w, h, hotspotX, hotspotY,
-			keycolor, cursorTargetScale, format);
+			keycolor, dontScale, format);
 
 	GLTHREADCHECK;
 
@@ -799,7 +798,7 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 		byte *tmp = new byte[pitch * h];
 
 		// meh, a 16bit cursor without alpha bits... this is so silly
-		if (!crossBlit(tmp, buf, pitch, w * 2, w, h,
+		if (!crossBlit(tmp, (const byte *)buf, pitch, w * 2, w, h,
 						_mouse_texture->getPixelFormat(),
 						*format)) {
 			LOGE("crossblit failed");
@@ -824,7 +823,8 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 	}
 
 	_mouse_hotspot = Common::Point(hotspotX, hotspotY);
-	_mouse_targetscale = cursorTargetScale;
+	// TODO: Adapt to the new "do not scale" cursor logic.
+	_mouse_targetscale = 1;
 }
 
 void OSystem_Android::setCursorPaletteInternal(const byte *colors,
