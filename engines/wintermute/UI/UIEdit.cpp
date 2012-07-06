@@ -85,7 +85,7 @@ CUIEdit::CUIEdit(CBGame *inGame): CUIObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CUIEdit::~CUIEdit() {
 	if (!_sharedFonts) {
-		if (_fontSelected)   Game->_fontStorage->RemoveFont(_fontSelected);
+		if (_fontSelected)   Game->_fontStorage->removeFont(_fontSelected);
 	}
 
 	delete[] _cursorChar;
@@ -208,14 +208,14 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->RemoveFont(_font);
-			_font = Game->_fontStorage->AddFont((char *)params);
+			if (_font) Game->_fontStorage->removeFont(_font);
+			_font = Game->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_SELECTED:
-			if (_fontSelected) Game->_fontStorage->RemoveFont(_fontSelected);
-			_fontSelected = Game->_fontStorage->AddFont((char *)params);
+			if (_fontSelected) Game->_fontStorage->removeFont(_fontSelected);
+			_fontSelected = Game->_fontStorage->addFont((char *)params);
 			if (!_fontSelected) cmd = PARSERR_GENERIC;
 			break;
 
@@ -368,8 +368,8 @@ HRESULT CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	if (strcmp(name, "SetSelectedFont") == 0) {
 		stack->correctParams(1);
 
-		if (_fontSelected) Game->_fontStorage->RemoveFont(_fontSelected);
-		_fontSelected = Game->_fontStorage->AddFont(stack->pop()->getString());
+		if (_fontSelected) Game->_fontStorage->removeFont(_fontSelected);
+		_fontSelected = Game->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontSelected != NULL);
 
 		return S_OK;

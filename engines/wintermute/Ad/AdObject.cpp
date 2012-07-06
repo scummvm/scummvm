@@ -127,7 +127,7 @@ CAdObject::~CAdObject() {
 	_tempSprite2 = NULL; // reference only
 	_stickRegion = NULL;
 
-	if (_font) Game->_fontStorage->RemoveFont(_font);
+	if (_font) Game->_fontStorage->removeFont(_font);
 
 	if (_inventory) {
 		((CAdGame *)Game)->unregisterInventory(_inventory);
@@ -793,9 +793,9 @@ const char *CAdObject::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdObject::SetFont(const char *filename) {
-	if (_font) Game->_fontStorage->RemoveFont(_font);
+	if (_font) Game->_fontStorage->removeFont(_font);
 	if (filename) {
-		_font = Game->_fontStorage->AddFont(filename);
+		_font = Game->_fontStorage->addFont(filename);
 		return _font == NULL ? E_FAIL : S_OK;
 	} else {
 		_font = NULL;

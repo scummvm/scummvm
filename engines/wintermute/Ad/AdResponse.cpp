@@ -60,7 +60,7 @@ CAdResponse::~CAdResponse() {
 	_icon = NULL;
 	_iconHover = NULL;
 	_iconPressed = NULL;
-	if (_font) Game->_fontStorage->RemoveFont(_font);
+	if (_font) Game->_fontStorage->removeFont(_font);
 }
 
 
@@ -86,8 +86,8 @@ HRESULT CAdResponse::setIcon(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CAdResponse::setFont(const char *filename) {
-	if (_font) Game->_fontStorage->RemoveFont(_font);
-	_font = Game->_fontStorage->AddFont(filename);
+	if (_font) Game->_fontStorage->removeFont(_font);
+	_font = Game->_fontStorage->addFont(filename);
 	if (!_font) {
 		Game->LOG(0, "CAdResponse::setFont failed for file '%s'", filename);
 		return E_FAIL;

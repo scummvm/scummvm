@@ -209,8 +209,8 @@ HRESULT CUIText::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->RemoveFont(_font);
-			_font = Game->_fontStorage->AddFont((char *)params);
+			if (_font) Game->_fontStorage->removeFont(_font);
+			_font = Game->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 

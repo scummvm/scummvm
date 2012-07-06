@@ -394,10 +394,10 @@ HRESULT CBGame::cleanup() {
 	}
 	_scripts.RemoveAll();
 
-	_fontStorage->RemoveFont(_systemFont);
+	_fontStorage->removeFont(_systemFont);
 	_systemFont = NULL;
 
-	_fontStorage->RemoveFont(_videoFont);
+	_fontStorage->removeFont(_videoFont);
 	_videoFont = NULL;
 
 	for (int i = 0; i < _quickMessages.GetSize(); i++) delete _quickMessages[i];
@@ -615,7 +615,7 @@ HRESULT CBGame::initLoop() {
 	updateMusicCrossfade();
 
 	_surfaceStorage->initLoop();
-	_fontStorage->InitLoop();
+	_fontStorage->initLoop();
 
 
 	//_activeObject = NULL;
@@ -820,17 +820,17 @@ HRESULT CBGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SYSTEM_FONT:
-			if (_systemFont) _fontStorage->RemoveFont(_systemFont);
+			if (_systemFont) _fontStorage->removeFont(_systemFont);
 			_systemFont = NULL;
 
-			_systemFont = Game->_fontStorage->AddFont((char *)params);
+			_systemFont = Game->_fontStorage->addFont((char *)params);
 			break;
 
 		case TOKEN_VIDEO_FONT:
-			if (_videoFont) _fontStorage->RemoveFont(_videoFont);
+			if (_videoFont) _fontStorage->removeFont(_videoFont);
 			_videoFont = NULL;
 
-			_videoFont = Game->_fontStorage->AddFont((char *)params);
+			_videoFont = Game->_fontStorage->addFont((char *)params);
 			break;
 
 
@@ -958,7 +958,7 @@ HRESULT CBGame::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 
-	if (!_systemFont) _systemFont = Game->_fontStorage->AddFont("system_font.fnt");
+	if (!_systemFont) _systemFont = Game->_fontStorage->addFont("system_font.fnt");
 
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {

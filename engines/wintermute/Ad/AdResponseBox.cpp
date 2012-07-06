@@ -82,8 +82,8 @@ CAdResponseBox::~CAdResponseBox() {
 	delete[] _lastResponseTextOrig;
 	_lastResponseTextOrig = NULL;
 
-	if (_font) Game->_fontStorage->RemoveFont(_font);
-	if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
+	if (_font) Game->_fontStorage->removeFont(_font);
+	if (_fontHover) Game->_fontStorage->removeFont(_fontHover);
 
 	clearResponses();
 	clearButtons();
@@ -269,14 +269,14 @@ HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->RemoveFont(_font);
-			_font = Game->_fontStorage->AddFont((char *)params);
+			if (_font) Game->_fontStorage->removeFont(_font);
+			_font = Game->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_HOVER:
-			if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
-			_fontHover = Game->_fontStorage->AddFont((char *)params);
+			if (_fontHover) Game->_fontStorage->removeFont(_fontHover);
+			_fontHover = Game->_fontStorage->addFont((char *)params);
 			if (!_fontHover) cmd = PARSERR_GENERIC;
 			break;
 

@@ -104,7 +104,7 @@ void CUIWindow::cleanup() {
 	_viewport = NULL;
 
 	if (_backInactive) delete _backInactive;
-	if (!_sharedFonts && _fontInactive) Game->_fontStorage->RemoveFont(_fontInactive);
+	if (!_sharedFonts && _fontInactive) Game->_fontStorage->removeFont(_fontInactive);
 	if (!_sharedImages && _imageInactive) delete _imageInactive;
 
 	for (int i = 0; i < _widgets.GetSize(); i++) delete _widgets[i];
@@ -369,14 +369,14 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->RemoveFont(_font);
-			_font = Game->_fontStorage->AddFont((char *)params);
+			if (_font) Game->_fontStorage->removeFont(_font);
+			_font = Game->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_INACTIVE:
-			if (_fontInactive) Game->_fontStorage->RemoveFont(_fontInactive);
-			_fontInactive = Game->_fontStorage->AddFont((char *)params);
+			if (_fontInactive) Game->_fontStorage->removeFont(_fontInactive);
+			_fontInactive = Game->_fontStorage->addFont((char *)params);
 			if (!_fontInactive) cmd = PARSERR_GENERIC;
 			break;
 
@@ -720,8 +720,8 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "SetInactiveFont") == 0) {
 		stack->correctParams(1);
 
-		if (_fontInactive) Game->_fontStorage->RemoveFont(_fontInactive);
-		_fontInactive = Game->_fontStorage->AddFont(stack->pop()->getString());
+		if (_fontInactive) Game->_fontStorage->removeFont(_fontInactive);
+		_fontInactive = Game->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontInactive != NULL);
 
 		return S_OK;

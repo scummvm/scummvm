@@ -79,10 +79,10 @@ CUIButton::~CUIButton() {
 	if (_backFocus) delete _backFocus;
 
 	if (!_sharedFonts) {
-		if (_fontHover)   Game->_fontStorage->RemoveFont(_fontHover);
-		if (_fontPress)   Game->_fontStorage->RemoveFont(_fontPress);
-		if (_fontDisable) Game->_fontStorage->RemoveFont(_fontDisable);
-		if (_fontFocus)   Game->_fontStorage->RemoveFont(_fontFocus);
+		if (_fontHover)   Game->_fontStorage->removeFont(_fontHover);
+		if (_fontPress)   Game->_fontStorage->removeFont(_fontPress);
+		if (_fontDisable) Game->_fontStorage->removeFont(_fontDisable);
+		if (_fontFocus)   Game->_fontStorage->removeFont(_fontFocus);
 	}
 
 	if (!_sharedImages) {
@@ -322,32 +322,32 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->RemoveFont(_font);
-			_font = Game->_fontStorage->AddFont((char *)params);
+			if (_font) Game->_fontStorage->removeFont(_font);
+			_font = Game->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_HOVER:
-			if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
-			_fontHover = Game->_fontStorage->AddFont((char *)params);
+			if (_fontHover) Game->_fontStorage->removeFont(_fontHover);
+			_fontHover = Game->_fontStorage->addFont((char *)params);
 			if (!_fontHover) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_PRESS:
-			if (_fontPress) Game->_fontStorage->RemoveFont(_fontPress);
-			_fontPress = Game->_fontStorage->AddFont((char *)params);
+			if (_fontPress) Game->_fontStorage->removeFont(_fontPress);
+			_fontPress = Game->_fontStorage->addFont((char *)params);
 			if (!_fontPress) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_DISABLE:
-			if (_fontDisable) Game->_fontStorage->RemoveFont(_fontDisable);
-			_fontDisable = Game->_fontStorage->AddFont((char *)params);
+			if (_fontDisable) Game->_fontStorage->removeFont(_fontDisable);
+			_fontDisable = Game->_fontStorage->addFont((char *)params);
 			if (!_fontDisable) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_FOCUS:
-			if (_fontFocus) Game->_fontStorage->RemoveFont(_fontFocus);
-			_fontFocus = Game->_fontStorage->AddFont((char *)params);
+			if (_fontFocus) Game->_fontStorage->removeFont(_fontFocus);
+			_fontFocus = Game->_fontStorage->addFont((char *)params);
 			if (!_fontFocus) cmd = PARSERR_GENERIC;
 			break;
 
@@ -674,12 +674,12 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (_fontDisable) Game->_fontStorage->RemoveFont(_fontDisable);
+		if (_fontDisable) Game->_fontStorage->removeFont(_fontDisable);
 		if (Val->isNULL()) {
 			_fontDisable = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontDisable = Game->_fontStorage->AddFont(Val->getString());
+			_fontDisable = Game->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_fontDisable != NULL);
 		}
 		return S_OK;
@@ -692,12 +692,12 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (_fontHover) Game->_fontStorage->RemoveFont(_fontHover);
+		if (_fontHover) Game->_fontStorage->removeFont(_fontHover);
 		if (Val->isNULL()) {
 			_fontHover = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontHover = Game->_fontStorage->AddFont(Val->getString());
+			_fontHover = Game->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_fontHover != NULL);
 		}
 		return S_OK;
@@ -710,12 +710,12 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (_fontPress) Game->_fontStorage->RemoveFont(_fontPress);
+		if (_fontPress) Game->_fontStorage->removeFont(_fontPress);
 		if (Val->isNULL()) {
 			_fontPress = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontPress = Game->_fontStorage->AddFont(Val->getString());
+			_fontPress = Game->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_fontPress != NULL);
 		}
 		return S_OK;
@@ -728,12 +728,12 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (_fontFocus) Game->_fontStorage->RemoveFont(_fontFocus);
+		if (_fontFocus) Game->_fontStorage->removeFont(_fontFocus);
 		if (Val->isNULL()) {
 			_fontFocus = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontFocus = Game->_fontStorage->AddFont(Val->getString());
+			_fontFocus = Game->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_fontFocus != NULL);
 		}
 		return S_OK;

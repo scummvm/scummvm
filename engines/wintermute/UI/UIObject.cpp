@@ -74,7 +74,7 @@ CUIObject::~CUIObject() {
 	if (!Game->_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(CBGame::invalidateValues, "CScValue", (void *)this);
 
 	if (_back) delete _back;
-	if (_font && !_sharedFonts) Game->_fontStorage->RemoveFont(_font);
+	if (_font && !_sharedFonts) Game->_fontStorage->removeFont(_font);
 
 	if (_image && !_sharedImages) delete _image;
 
@@ -145,12 +145,12 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (_font) Game->_fontStorage->RemoveFont(_font);
+		if (_font) Game->_fontStorage->removeFont(_font);
 		if (Val->isNULL()) {
 			_font = NULL;
 			stack->pushBool(true);
 		} else {
-			_font = Game->_fontStorage->AddFont(Val->getString());
+			_font = Game->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_font != NULL);
 		}
 		return S_OK;

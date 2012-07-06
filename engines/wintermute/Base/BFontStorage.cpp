@@ -44,7 +44,7 @@ IMPLEMENT_PERSISTENT(CBFontStorage, true)
 //////////////////////////////////////////////////////////////////////////
 CBFontStorage::CBFontStorage(CBGame *inGame): CBBase(inGame) {
 //	_fTLibrary = NULL;
-	InitFreeType();
+	initFreeType();
 }
 
 
@@ -55,7 +55,7 @@ CBFontStorage::~CBFontStorage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontStorage::InitFreeType() {
+void CBFontStorage::initFreeType() {
 #if 0
 	FT_Error error = FT_Init_FreeType(&_fTLibrary);
 	if (error) {
@@ -65,11 +65,9 @@ void CBFontStorage::InitFreeType() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontStorage::cleanup(bool Warn) {
-	int i;
-
-	for (i = 0; i < _fonts.GetSize(); i++) {
-		if (Warn) Game->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
+HRESULT CBFontStorage::cleanup(bool warn) {
+	for (int i = 0; i < _fonts.GetSize(); i++) {
+		if (warn) Game->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
 		delete _fonts[i];
 	}
 	_fonts.RemoveAll();
@@ -82,7 +80,7 @@ HRESULT CBFontStorage::cleanup(bool Warn) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontStorage::InitLoop() {
+HRESULT CBFontStorage::initLoop() {
 	for (int i = 0; i < _fonts.GetSize(); i++) {
 		_fonts[i]->initLoop();
 	}
@@ -90,7 +88,7 @@ HRESULT CBFontStorage::InitLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBFont *CBFontStorage::AddFont(const char *filename) {
+CBFont *CBFontStorage::addFont(const char *filename) {
 	if (!filename) return NULL;
 
 	for (int i = 0; i < _fonts.GetSize(); i++) {
@@ -124,11 +122,11 @@ CBFont *CBFontStorage::AddFont(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontStorage::RemoveFont(CBFont *Font) {
-	if (!Font) return E_FAIL;
+HRESULT CBFontStorage::removeFont(CBFont *font) {
+	if (!font) return E_FAIL;
 
 	for (int i = 0; i < _fonts.GetSize(); i++) {
-		if (_fonts[i] == Font) {
+		if (_fonts[i] == font) {
 			_fonts[i]->_refCount--;
 			if (_fonts[i]->_refCount <= 0) {
 				delete _fonts[i];
@@ -149,7 +147,7 @@ HRESULT CBFontStorage::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(Game));
 	_fonts.persist(persistMgr);
 
-	if (!persistMgr->_saving) InitFreeType();
+	if (!persistMgr->_saving) initFreeType();
 
 	return S_OK;
 }

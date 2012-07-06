@@ -41,20 +41,20 @@ class CBFont;
 class CBFontStorage : public CBBase {
 public:
 	DECLARE_PERSISTENT(CBFontStorage, CBBase)
-	HRESULT cleanup(bool Warn = false);
-	HRESULT RemoveFont(CBFont *Font);
-	CBFont *AddFont(const char *filename);
+	HRESULT cleanup(bool warn = false);
+	HRESULT removeFont(CBFont *font);
+	CBFont *addFont(const char *filename);
 	CBFontStorage(CBGame *inGame);
 	virtual ~CBFontStorage();
 	CBArray<CBFont *, CBFont *> _fonts;
-	HRESULT InitLoop();
+	HRESULT initLoop();
 
 	/*  FT_Library GetFTLibrary() const {
 	        return _fTLibrary;
 	    }*/
 
 private:
-	void InitFreeType();
+	void initFreeType();
 	//FT_Library _fTLibrary;
 };
 
