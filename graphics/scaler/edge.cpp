@@ -298,7 +298,8 @@ uint16 convertTo16Bit(Pixel p) {
 		>> (ColorMask::kRedShift + (8 - Graphics::ColorMasks<565>::kRedBits) - Graphics::ColorMasks<565>::kRedShift);
 	g = (ColorMask::kGreenMask & (ColorMask::kGreenMask << (8 - Graphics::ColorMasks<565>::kGreenBits)) & p)
 		>> (ColorMask::kGreenShift + (8 - Graphics::ColorMasks<565>::kGreenBits) - Graphics::ColorMasks<565>::kGreenShift);
-	b = (ColorMask::kBlueMask & (ColorMask::kBlueMask << (8 - Graphics::ColorMasks<565>::kBlueBits)) & p);
+	b = (ColorMask::kBlueMask & (ColorMask::kBlueMask << (8 - Graphics::ColorMasks<565>::kBlueBits)) & p)
+		>> (ColorMask::kBlueShift + (8 - Graphics::ColorMasks<565>::kBlueBits) - Graphics::ColorMasks<565>::kBlueShift);
 
 	return r | g | b;
 }
