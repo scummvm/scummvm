@@ -69,7 +69,7 @@ struct LegacyGraphicsMode {
 
 // Table for using old names for scalers in the configuration
 // to keep compatibiblity with old config files.
-static const LegacyGraphicsMode s_legacyGraphicsModes[] {
+static const LegacyGraphicsMode s_legacyGraphicsModes[] = {
 	{ "supereagle2x", "supereagle" },
 	{ "dotmatrix2x", "dotmatrix" },
 	{ "sai2x", "2xsai" },
