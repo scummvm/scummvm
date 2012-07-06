@@ -541,7 +541,7 @@ void LilliputEngine::displaySpeechLine(int vgaIndex, byte *srcBuf, int &bufIndex
 		++var3;
 	}
 
-	var1 = (0x3D - var3) << 1;
+	var1 = (0x3D - var3) * 2;
 	vgaIndex += var1;
 
 	bufIndex = bckIndex;
@@ -1909,7 +1909,7 @@ void LilliputEngine::sub13156(bool &forceReturnFl) {
 		byte button = 1;
 		if (event.type == Common::EVENT_KEYUP)
 			button = 2;
-		sub1305C(index, button);
+		handleInterfaceHotspot(index, button);
 		forceReturnFl = true;
 	}
 }
@@ -1993,7 +1993,7 @@ void LilliputEngine::handleGameMouseClick() {
 
 	if (button == 2) {
 		if (_lastInterfaceHotspotIndex != -1)
-			sub1305C(_lastInterfaceHotspotIndex, button);
+			handleInterfaceHotspot(_lastInterfaceHotspotIndex, button);
 		return;
 	}
 
@@ -2060,7 +2060,7 @@ void LilliputEngine::checkInterfaceHotspots(bool &forceReturnFl) {
 	forceReturnFl = false;
 	for (int index = _interfaceHotspotNumb - 1; index >= 0; index--) {
 		if (isMouseOverHotspot(_mousePos, Common::Point(_interfaceHotspotsX[index], _interfaceHotspotsY[index]))) {
-			sub1305C(index, 1);
+			handleInterfaceHotspot(index, 1);
 			forceReturnFl = true;
 			return;
 		}
@@ -2076,8 +2076,8 @@ bool LilliputEngine::isMouseOverHotspot(Common::Point mousePos, Common::Point ho
 	return true;
 }
 
-void LilliputEngine::sub1305C(byte index, byte button) {
-	debugC(2, kDebugEngine, "sub1305C(%d, %d)", index, button);
+void LilliputEngine::handleInterfaceHotspot(byte index, byte button) {
+	debugC(2, kDebugEngine, "handleInterfaceHotspot(%d, %d)", index, button);
 
 	if (_scriptHandler->_interfaceHotspotStatus[index] < kHotspotEnabled)
 		return;
@@ -2101,7 +2101,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 
 	unselectInterfaceHotspots();
 	_scriptHandler->_interfaceHotspotStatus[index] = kHotspotSelected;
-	if (_rulesBuffer13_1[index] == 1) {
+	if (_interfaceTwoStepAction[index] == 1) {
 		_delayedReactivationAction = true;
 		_displayGreenHand = true;
 	} else {
@@ -2114,7 +2114,7 @@ void LilliputEngine::sub1305C(byte index, byte button) {
 void LilliputEngine::sub16685(int idx, Common::Point var1) {
 	debugC(2, kDebugEngine, "sub16685(%d, %d - %d)", idx, var1.x, var1.y);
 
-	int index = (idx << 5) + var1.y;
+	int index = (idx * 32) + var1.y;
 	_scriptHandler->_array10AB1[idx] = _rulesBuffer2_16[index];
 }
 
@@ -2696,22 +2696,23 @@ void LilliputEngine::loadRules() {
 	assert((_rectNumb >= 0) && (_rectNumb <= 40));
 
 	for (int i = 0; i < _rectNumb; i++) {
-		_rectXMinMax[i].min = (int16)f.readByte();
 		_rectXMinMax[i].max = (int16)f.readByte();
-		_rectYMinMax[i].min = (int16)f.readByte();
+		_rectXMinMax[i].min = (int16)f.readByte();
 		_rectYMinMax[i].max = (int16)f.readByte();
-		int16 tmpValX = (int16)f.readByte();
+		_rectYMinMax[i].min = (int16)f.readByte();
 		int16 tmpValY = (int16)f.readByte();
+		int16 tmpValX = (int16)f.readByte();
 		_rulesBuffer12Pos3[i] = Common::Point(tmpValX, tmpValY);
-		tmpValX = (int16)f.readByte();
 		tmpValY = (int16)f.readByte();
+		tmpValX = (int16)f.readByte();
+		// _rulesBuffer12Pos4 is used by the into
 		_rulesBuffer12Pos4[i] = Common::Point(tmpValX, tmpValY);
 	}
 
 	// Chunk 13
 	_interfaceHotspotNumb = f.readUint16LE();
 	for (int i = 0 ; i < 20; i++)
-		_rulesBuffer13_1[i] = f.readByte();
+		_interfaceTwoStepAction[i] = f.readByte();
 
 	for (int i = 0 ; i < 20; i++)
 		_interfaceHotspotsX[i] = f.readSint16LE();
