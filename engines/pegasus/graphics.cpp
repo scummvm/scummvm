@@ -204,13 +204,13 @@ DisplayElement *GraphicsManager::findDisplayElement(const DisplayElementID id) {
 	return 0;
 }
 
-void GraphicsManager::doFadeOutSync(const TimeValue time, const TimeScale scale, uint32 color) {
+void GraphicsManager::doFadeOutSync(const TimeValue time, const TimeScale scale, bool isBlack) {
 	_updatesEnabled = false;
-	_screenFader->doFadeOutSync(time, scale, color == 0);
+	_screenFader->doFadeOutSync(time, scale, isBlack);
 }
 
-void GraphicsManager::doFadeInSync(const TimeValue time, const TimeScale scale, uint32 color) {
-	_screenFader->doFadeInSync(time, scale, color == 0);
+void GraphicsManager::doFadeInSync(const TimeValue time, const TimeScale scale, bool isBlack) {
+	_screenFader->doFadeInSync(time, scale, isBlack);
 	_updatesEnabled = true;
 }
 

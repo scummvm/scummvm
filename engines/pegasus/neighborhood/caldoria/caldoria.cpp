@@ -249,15 +249,14 @@ void Caldoria::start() {
 		ExtraTable::Entry entry;
 
 		if (!skipped) {
-			uint32 white = g_system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff);
-			_vm->_gfx->doFadeOutSync(kThreeSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond, white);
+			_vm->_gfx->doFadeOutSync(kThreeSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond, false);
 			g_system->delayMillis(3 * 1000 / 2);
 			getExtraEntry(kCaldoria00WakeUp1, entry);
 			_navMovie.setTime(entry.movieStart);
 			_navMovie.redrawMovieWorld();
 			_navMovie.show();
 			_vm->refreshDisplay();
-			_vm->_gfx->doFadeInSync(kOneSecond * kFifteenTicksPerSecond, kFifteenTicksPerSecond, white);
+			_vm->_gfx->doFadeInSync(kOneSecond * kFifteenTicksPerSecond, kFifteenTicksPerSecond, false);
 		} else {
 			getExtraEntry(kCaldoria00WakeUp1, entry);
 			_navMovie.setTime(entry.movieStart);

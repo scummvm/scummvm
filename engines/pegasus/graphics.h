@@ -66,8 +66,8 @@ public:
 	void disableUpdates();
 
 	// These default to black
-	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, uint32 color = 0);
-	void doFadeInSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, uint32 color = 0);
+	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
+	void doFadeInSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 
 protected:
 	void markCursorAsDirty();
