@@ -2228,7 +2228,7 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		needSwitch = true;
 	}
 
-	if (sdlKey == SDLK_LEFTBRACKET) {
+	if (sdlKey == SDLK_9) {
 		if (_scalerIndex == 0) {
 			_scalerIndex = _scalerPlugins.size();
 		}
@@ -2237,7 +2237,7 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		factor = (*_scalerPlugins[_scalerIndex])->getFactor();
 	}
 
-	if (sdlKey == SDLK_RIGHTBRACKET) {
+	if (sdlKey == SDLK_0) {
 		_scalerIndex++;
 		if (_scalerIndex >= _scalerPlugins.size()) {
 			_scalerIndex = 0;
@@ -2283,8 +2283,8 @@ bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 				event.kbd.keycode == Common::KEYCODE_MINUS ||
 				event.kbd.keycode == Common::KEYCODE_KP_PLUS ||
 				event.kbd.keycode == Common::KEYCODE_KP_MINUS ||
-				event.kbd.keycode == Common::KEYCODE_LEFTBRACKET ||
-				event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET);
+				event.kbd.keycode == Common::KEYCODE_9 ||
+				event.kbd.keycode == Common::KEYCODE_0);
 
 		return (isScaleKey || event.kbd.keycode == 'a');
 	}
