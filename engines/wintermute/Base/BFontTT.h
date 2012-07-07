@@ -100,10 +100,10 @@ public:
 			_width = width;
 		}
 
-		const WideString &GetText() const {
+		const WideString getText() const {
 			return _text;
 		}
-		int GetWidth() const {
+		int getWidth() const {
 			return _width;
 		}
 	private:

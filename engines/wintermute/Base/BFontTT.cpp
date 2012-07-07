@@ -101,7 +101,6 @@ void CBFontTT::clearCache() {
 		if (_cachedTexts[i]) delete _cachedTexts[i];
 		_cachedTexts[i] = NULL;
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -121,115 +120,115 @@ void CBFontTT::initLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::getTextWidth(byte *Text, int MaxLength) {
-	WideString text;
+int CBFontTT::getTextWidth(byte *text, int maxLength) {
+	WideString textStr;
 
-	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::utf8ToWide((char *)Text);
-	else text = StringUtil::ansiToWide((char *)Text);
+	if (Game->_textEncoding == TEXT_UTF8) textStr = StringUtil::utf8ToWide((char *)text);
+	else textStr = StringUtil::ansiToWide((char *)text);
 
-	if (MaxLength >= 0 && text.size() > MaxLength)
-		text = Common::String(text.c_str(), MaxLength);
+	if (maxLength >= 0 && textStr.size() > maxLength)
+		textStr = Common::String(textStr.c_str(), maxLength);
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
 	int textWidth, textHeight;
-	measureText(text, -1, -1, textWidth, textHeight);
+	measureText(textStr, -1, -1, textWidth, textHeight);
 
 	return textWidth;
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::getTextHeight(byte *Text, int Width) {
-	WideString text;
+int CBFontTT::getTextHeight(byte *text, int width) {
+	WideString textStr;
 
-	if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::utf8ToWide((char *)Text);
-	else text = StringUtil::ansiToWide((char *)Text);
+	if (Game->_textEncoding == TEXT_UTF8) textStr = StringUtil::utf8ToWide((char *)text);
+	else textStr = StringUtil::ansiToWide((char *)text);
 
 
 	int textWidth, textHeight;
-	measureText(text, Width, -1, textWidth, textHeight);
+	measureText(textStr, width, -1, textWidth, textHeight);
 
 	return textHeight;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::drawText(byte *Text, int X, int Y, int Width, TTextAlign Align, int MaxHeight, int MaxLength) {
-	if (Text == NULL || strcmp((char *)Text, "") == 0) return;
+void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
+	if (text == NULL || strcmp((char *)text, "") == 0) return;
 
-	WideString text = (char *)Text;
+	WideString textStr = (char *)text;
 
 	// TODO: Why do we still insist on Widestrings everywhere?
 	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	        else text = StringUtil::AnsiToWide((char *)Text);*/
 
-	if (MaxLength >= 0 && text.size() > MaxLength)
-		text = Common::String(text.c_str(), MaxLength);
+	if (maxLength >= 0 && textStr.size() > maxLength)
+		textStr = Common::String(textStr.c_str(), maxLength);
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
 	CBRenderSDL *_renderer = (CBRenderSDL *)Game->_renderer;
 
 	// find cached surface, if exists
-	int MinPriority = INT_MAX;
-	int MinIndex = -1;
-	CBSurface *Surface = NULL;
+	int minPriority = INT_MAX;
+	int minIndex = -1;
+	CBSurface *surface = NULL;
 	int textOffset = 0;
 
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
 		if (_cachedTexts[i] == NULL) {
-			MinPriority = 0;
-			MinIndex = i;
+			minPriority = 0;
+			minIndex = i;
 		} else {
-			if (_cachedTexts[i]->_text == text && _cachedTexts[i]->_align == Align && _cachedTexts[i]->_width == Width && _cachedTexts[i]->_maxHeight == MaxHeight && _cachedTexts[i]->_maxLength == MaxLength) {
-				Surface = _cachedTexts[i]->_surface;
+			if (_cachedTexts[i]->_text == textStr && _cachedTexts[i]->_align == align && _cachedTexts[i]->_width == width && _cachedTexts[i]->_maxHeight == maxHeight && _cachedTexts[i]->_maxLength == maxLength) {
+				surface = _cachedTexts[i]->_surface;
 				textOffset = _cachedTexts[i]->_textOffset;
 				_cachedTexts[i]->_priority++;
 				_cachedTexts[i]->_marked = true;
 				break;
 			} else {
-				if (_cachedTexts[i]->_priority < MinPriority) {
-					MinPriority = _cachedTexts[i]->_priority;
-					MinIndex = i;
+				if (_cachedTexts[i]->_priority < minPriority) {
+					minPriority = _cachedTexts[i]->_priority;
+					minIndex = i;
 				}
 			}
 		}
 	}
 
 	// not found, create one
-	if (!Surface) {
-		warning("Draw text: %s", Text);
-		Surface = renderTextToTexture(text, Width, Align, MaxHeight, textOffset);
-		if (Surface) {
+	if (!surface) {
+		warning("Draw text: %s", text);
+		surface = renderTextToTexture(textStr, width, align, maxHeight, textOffset);
+		if (surface) {
 			// write surface to cache
-			if (_cachedTexts[MinIndex] != NULL) delete _cachedTexts[MinIndex];
-			_cachedTexts[MinIndex] = new CBCachedTTFontText;
+			if (_cachedTexts[minIndex] != NULL) delete _cachedTexts[minIndex];
+			_cachedTexts[minIndex] = new CBCachedTTFontText;
 
-			_cachedTexts[MinIndex]->_surface = Surface;
-			_cachedTexts[MinIndex]->_align = Align;
-			_cachedTexts[MinIndex]->_width = Width;
-			_cachedTexts[MinIndex]->_maxHeight = MaxHeight;
-			_cachedTexts[MinIndex]->_maxLength = MaxLength;
-			_cachedTexts[MinIndex]->_priority = 1;
-			_cachedTexts[MinIndex]->_text = text;
-			_cachedTexts[MinIndex]->_textOffset = textOffset;
-			_cachedTexts[MinIndex]->_marked = true;
+			_cachedTexts[minIndex]->_surface = surface;
+			_cachedTexts[minIndex]->_align = align;
+			_cachedTexts[minIndex]->_width = width;
+			_cachedTexts[minIndex]->_maxHeight = maxHeight;
+			_cachedTexts[minIndex]->_maxLength = maxLength;
+			_cachedTexts[minIndex]->_priority = 1;
+			_cachedTexts[minIndex]->_text = textStr;
+			_cachedTexts[minIndex]->_textOffset = textOffset;
+			_cachedTexts[minIndex]->_marked = true;
 		}
 	}
 
 
 	// and paint it
-	if (Surface) {
+	if (surface) {
 		RECT rc;
-		CBPlatform::SetRect(&rc, 0, 0, Surface->getWidth(), Surface->getHeight());
+		CBPlatform::SetRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
 		for (int i = 0; i < _layers.GetSize(); i++) {
-			uint32 Color = _layers[i]->_color;
-			uint32 OrigForceAlpha = _renderer->_forceAlphaColor;
+			uint32 color = _layers[i]->_color;
+			uint32 origForceAlpha = _renderer->_forceAlphaColor;
 			if (_renderer->_forceAlphaColor != 0) {
-				Color = DRGBA(D3DCOLGetR(Color), D3DCOLGetG(Color), D3DCOLGetB(Color), D3DCOLGetA(_renderer->_forceAlphaColor));
+				color = DRGBA(D3DCOLGetR(color), D3DCOLGetG(color), D3DCOLGetB(color), D3DCOLGetA(_renderer->_forceAlphaColor));
 				_renderer->_forceAlphaColor = 0;
 			}
-			Surface->displayTransOffset(X, Y - textOffset, rc, Color, BLEND_NORMAL, false, false, _layers[i]->_offsetX, _layers[i]->_offsetY);
+			surface->displayTransOffset(x, y - textOffset, rc, color, BLEND_NORMAL, false, false, _layers[i]->_offsetX, _layers[i]->_offsetY);
 
-			_renderer->_forceAlphaColor = OrigForceAlpha;
+			_renderer->_forceAlphaColor = origForceAlpha;
 		}
 	}
 
@@ -549,7 +548,7 @@ HRESULT CBFontTT::loadBuffer(byte *buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::parseLayer(CBTTFontLayer *Layer, byte *buffer) {
+HRESULT CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(OFFSET_X)
 	TOKEN_TABLE(OFFSET_Y)
@@ -564,24 +563,24 @@ HRESULT CBFontTT::parseLayer(CBTTFontLayer *Layer, byte *buffer) {
 	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_OFFSET_X:
-			parser.ScanStr(params, "%d", &Layer->_offsetX);
+			parser.ScanStr(params, "%d", &layer->_offsetX);
 			break;
 
 		case TOKEN_OFFSET_Y:
-			parser.ScanStr(params, "%d", &Layer->_offsetY);
+			parser.ScanStr(params, "%d", &layer->_offsetY);
 			break;
 
 		case TOKEN_COLOR: {
 			int r, g, b;
 			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
-			Layer->_color = DRGBA(r, g, b, D3DCOLGetA(Layer->_color));
+			layer->_color = DRGBA(r, g, b, D3DCOLGetA(layer->_color));
 		}
 		break;
 
 		case TOKEN_ALPHA: {
 			int a;
 			parser.ScanStr(params, "%d", &a);
-			Layer->_color = DRGBA(D3DCOLGetR(Layer->_color), D3DCOLGetG(Layer->_color), D3DCOLGetB(Layer->_color), a);
+			layer->_color = DRGBA(D3DCOLGetR(layer->_color), D3DCOLGetG(layer->_color), D3DCOLGetB(layer->_color), a);
 		}
 		break;
 		}
@@ -604,18 +603,18 @@ HRESULT CBFontTT::persist(CBPersistMgr *persistMgr) {
 
 
 	// persist layers
-	int NumLayers;
+	int numLayers;
 	if (persistMgr->_saving) {
-		NumLayers = _layers.GetSize();
-		persistMgr->transfer(TMEMBER(NumLayers));
-		for (int i = 0; i < NumLayers; i++) _layers[i]->persist(persistMgr);
+		numLayers = _layers.GetSize();
+		persistMgr->transfer(TMEMBER(numLayers));
+		for (int i = 0; i < numLayers; i++) _layers[i]->persist(persistMgr);
 	} else {
-		NumLayers = _layers.GetSize();
-		persistMgr->transfer(TMEMBER(NumLayers));
-		for (int i = 0; i < NumLayers; i++) {
-			CBTTFontLayer *Layer = new CBTTFontLayer;
-			Layer->persist(persistMgr);
-			_layers.Add(Layer);
+		numLayers = _layers.GetSize();
+		persistMgr->transfer(TMEMBER(numLayers));
+		for (int i = 0; i < numLayers; i++) {
+			CBTTFontLayer *layer = new CBTTFontLayer;
+			layer->persist(persistMgr);
+			_layers.Add(layer);
 		}
 	}
 
