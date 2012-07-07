@@ -37,6 +37,7 @@
 
 #include "gob/pregob/onceupon/onceupon.h"
 #include "gob/pregob/onceupon/palettes.h"
+#include "gob/pregob/onceupon/chargenchild.h"
 
 static const uint kLanguageCount = 5;
 
@@ -1646,6 +1647,15 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 	CharGenState state = kCharGenStateHead;
 	charGenSetup(state);
 
+	ANIFile ani(_vm, "ba.ani", 320);
+	ANIList anims;
+
+	anims.push_back(new CharGenChild(ani));
+
+	ani.recolor(0x0F, 0x0C);
+	ani.recolor(0x0E, 0x0A);
+	ani.recolor(0x08, 0x09);
+
 	fadeOut();
 	_vm->_draw->forceBlit();
 
@@ -1665,7 +1675,7 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 			break;
 		}
 
-		// clearAnim(anims);
+		clearAnim(anims);
 
 		if (state == kCharGenStateStoryName) {
 			if ((mouseButtons != kMouseButtonsNone) || (key != 0)) {
@@ -1727,6 +1737,8 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 			if ((state == kCharGenStateTrousers) && (trousers >= 0)) {
 				_colorTrousers = trousers;
 
+				ani.recolor(0x09, _colorTrousers);
+
 				state = kCharGenStateName;
 				charGenSetup(state);
 				_vm->_draw->forceBlit();
@@ -1736,6 +1748,8 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 			if ((state == kCharGenStateJacket) && (jacket >= 0)) {
 				_colorJacket = jacket;
 
+				ani.recolor(0x0A, _colorJacket);
+
 				state = kCharGenStateTrousers;
 				charGenSetup(state);
 				_vm->_draw->forceBlit();
@@ -1744,6 +1758,8 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 			int hair = checkButton(kCharGenHairButtons, ARRAYSIZE(kCharGenHairButtons), mouseX, mouseY);
 			if ((state == kCharGenStateHair) && (hair >= 0)) {
 				_colorHair = hair;
+
+				ani.recolor(0x0C, _colorHair);
 
 				state = kCharGenStateJacket;
 				charGenSetup(state);
@@ -1760,7 +1776,7 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 			}
 		}
 
-		//drawAnim(anims);
+		drawAnim(anims);
 		showCursor();
 		fadeIn();
 
@@ -1769,6 +1785,8 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 
 	fadeOut();
 	hideCursor();
+
+	freeAnims(anims);
 
 	if (_vm->shouldQuit())
 		return kCharGenAbort;
