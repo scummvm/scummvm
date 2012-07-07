@@ -535,7 +535,7 @@ Common::Error TeenAgentEngine::run() {
 	setMusic(1);
 	music->start();
 
-	int load_slot = Common::ConfigManager::instance().getInt("save_slot");
+	int load_slot = ConfMan.getInt("save_slot");
 	if (load_slot >= 0) {
 		loadGameState(load_slot);
 	} else {

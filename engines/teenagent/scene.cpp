@@ -1219,7 +1219,7 @@ uint Scene::messageDuration(const Common::String &str) {
 	//total delay = total message length * delay / 8 + 60.
 	uint total_width = str.size();
 
-	int speed = Common::ConfigManager::instance().getInt("talkspeed");
+	int speed = ConfMan.getInt("talkspeed");
 	if (speed < 0)
 		speed = 60;
 	uint delay_delta = 1 + (255 - speed) * 99 / 255;
