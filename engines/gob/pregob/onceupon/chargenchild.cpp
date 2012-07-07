@@ -99,6 +99,19 @@ void CharGenChild::advance() {
 	}
 }
 
+CharGenChild::Sound CharGenChild::shouldPlaySound() const {
+	const uint16 anim  = getAnimation();
+	const uint16 frame = getFrame();
+
+	if (((anim == kAnimWalkLeft) || (anim == kAnimWalkRight)) && ((frame == 1) || (frame == 6)))
+		return kSoundWalk;
+
+	if (((anim == kAnimJumpLeft) || (anim == kAnimJumpRight)) &&  (frame == 0))
+		return kSoundJump;
+
+	return kSoundNone;
+}
+
 } // End of namespace OnceUpon
 
 } // End of namespace Gob

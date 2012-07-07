@@ -136,7 +136,8 @@ const OnceUpon::MenuButton OnceUpon::kLanguageButtons[] = {
 
 const char *OnceUpon::kSound[kSoundMAX] = {
 	"diamant.snd", // kSoundClick
-	"cigogne.snd"  // kSoundStork
+	"cigogne.snd", // kSoundStork
+	"saute.snd"    // kSoundJump
 };
 
 const OnceUpon::SectionFunc OnceUpon::kSectionFuncs[kSectionCount] = {
@@ -1648,13 +1649,15 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 	charGenSetup(state);
 
 	ANIFile ani(_vm, "ba.ani", 320);
-	ANIList anims;
-
-	anims.push_back(new CharGenChild(ani));
 
 	ani.recolor(0x0F, 0x0C);
 	ani.recolor(0x0E, 0x0A);
 	ani.recolor(0x08, 0x09);
+
+	CharGenChild *child = new CharGenChild(ani);
+
+	ANIList anims;
+	anims.push_back(child);
 
 	fadeOut();
 	_vm->_draw->forceBlit();
@@ -1733,6 +1736,9 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 		}
 
 		if (mouseButtons == kMouseButtonsLeft) {
+			stopSound();
+			playSound(kSoundClick);
+
 			int trousers = checkButton(kCharGenTrousersButtons, ARRAYSIZE(kCharGenTrousersButtons), mouseX, mouseY);
 			if ((state == kCharGenStateTrousers) && (trousers >= 0)) {
 				_colorTrousers = trousers;
@@ -1777,6 +1783,16 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 		}
 
 		drawAnim(anims);
+
+		// Play the child sounds
+		CharGenChild::Sound childSound = child->shouldPlaySound();
+		if        (childSound == CharGenChild::kSoundWalk) {
+			beep(50, 10);
+		} else if (childSound == CharGenChild::kSoundJump) {
+			stopSound();
+			playSound(kSoundJump);
+		}
+
 		showCursor();
 		fadeIn();
 

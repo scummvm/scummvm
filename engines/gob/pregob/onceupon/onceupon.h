@@ -136,6 +136,7 @@ private:
 	enum Sound {
 		kSoundClick = 0,
 		kSoundStork    ,
+		kSoundJump     ,
 		kSoundMAX
 	};
 
