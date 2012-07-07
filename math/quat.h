@@ -50,8 +50,8 @@ public:
 	Quaternion(const Quaternion &q) : Vector4d(q.x(), q.y(), q.z(), q.w()) {} 
 	Quaternion(const Vector4d &vec) : Vector4d(vec.x(), vec.y(), vec.z(), vec.w()) {}
 	
-	Matrix4 toMatrix();
-	void toMatrix(Matrix4 &dst);
+	Matrix4 toMatrix() const;
+	void toMatrix(Matrix4 &dst) const;
 	/**
 	 * Slerps between this quaternion and to by factor t
 	 * @param to	the quaternion to slerp between

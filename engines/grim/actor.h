@@ -28,6 +28,7 @@
 #include "engines/grim/color.h"
 #include "math/vector3d.h"
 #include "math/angle.h"
+#include "math/quat.h"
 
 namespace Grim {
 
@@ -469,6 +470,7 @@ public:
 	Math::Vector3d getWorldPos() const;
 	void attachToActor(Actor *other, const char *joint);
 	void detach();
+	Math::Quaternion getRotationQuat() const;
 
 	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
 	bool isInOverworld() { return _inOverworld; }

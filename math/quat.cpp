@@ -73,7 +73,7 @@ Quaternion Quaternion::slerpQuat(const Quaternion& to, const float t) {
 	return dst;
 }
 
-void Quaternion::toMatrix(Matrix4 &dst) {
+void Quaternion::toMatrix(Matrix4 &dst) const {
 	float two_xx = x() * (x() + x());
 	float two_xy = x() * (y() + y());
 	float two_xz = x() * (z() + z());
@@ -96,7 +96,7 @@ void Quaternion::toMatrix(Matrix4 &dst) {
 	dst.setData(newMat);
 }
 
-Matrix4 Quaternion::toMatrix() {
+Matrix4 Quaternion::toMatrix() const {
 	Matrix4 dst;
 	toMatrix(dst);
 	return dst;

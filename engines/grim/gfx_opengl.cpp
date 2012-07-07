@@ -371,9 +371,8 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	*y2 = (int)bottom;
 }
 
-void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Angle &yaw,
-		const Math::Angle &pitch, const Math::Angle &roll, const bool inOverworld,
-		const float alpha) {
+void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
+	                             const bool inOverworld, const float alpha) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -421,14 +420,7 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		glMultMatrixf(worldRot.getData());
 
 		glScalef(scale, scale, scale);
-		if (g_grim->getGameType() == GType_MONKEY4) {
-			Math::Matrix4 charRot = Math::Quaternion::fromEuler(yaw, pitch, roll).toMatrix();
-			glMultMatrixf(charRot.getData());
-		} else {
-			glRotatef(yaw.getDegrees(), 0, 0, 1);
-			glRotatef(pitch.getDegrees(), 1, 0, 0);
-			glRotatef(roll.getDegrees(), 0, 1, 0);
-		}
+		glMultMatrixf(quat.toMatrix().getData());
 	}
 }
 
