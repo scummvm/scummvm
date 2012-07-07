@@ -208,6 +208,10 @@ void PreGob::playSoundFile(const Common::String &file, int16 frequency, int16 re
 	stopSound();
 }
 
+void PreGob::beep(int16 frequency, int32 length) {
+	_vm->_sound->speakerOn(frequency, length);
+}
+
 void PreGob::endFrame(bool doInput) {
 	_vm->_draw->blitInvalidated();
 	_vm->_util->waitEndFrame();

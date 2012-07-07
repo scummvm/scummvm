@@ -142,6 +142,9 @@ protected:
 	/** Play a sound until it ends or is interrupted by a keypress. */
 	void playSoundFile(const Common::String &file, int16 frequency = 0, int16 repCount = 0, bool interruptible = true);
 
+	/** Beep the PC speaker. */
+	void beep(int16 frequency, int32 length);
+
 
 	// -- Input --
 
