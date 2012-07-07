@@ -36,11 +36,10 @@
 
 namespace TeenAgent {
 
-Scene::Scene(TeenAgentEngine *vm, OSystem *system) : _vm(vm), intro(false), _id(0), ons(0),
+Scene::Scene(TeenAgentEngine *vm) : _vm(vm), intro(false), _id(0), ons(0),
 	orientation(kActorRight), actor_talking(false), teenagent(vm), teenagent_idle(vm),
 	message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL),
 	current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0), _idle_timer(0) {
-	_system = system;
 
 	_fade_timer = 0;
 	on_enabled = true;
@@ -414,7 +413,7 @@ void Scene::init(int id, const Common::Point &pos) {
 	if (now_playing != _vm->res->dseg.get_byte(0xDB90))
 		_vm->music->load(_vm->res->dseg.get_byte(0xDB90));
 
-	_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
+	_vm->_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
 	setPalette(0);
 }
 
@@ -605,11 +604,11 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 
 		switch (current_event.type) {
 		case SceneEvent::kCredits: {
-			_system->fillScreen(0);
+			_vm->_system->fillScreen(0);
 			///\todo: optimize me
-			Graphics::Surface *surface = _system->lockScreen();
+			Graphics::Surface *surface = _vm->_system->lockScreen();
 			_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y -= game_delta, current_event.message, current_event.color);
-			_system->unlockScreen();
+			_vm->_system->unlockScreen();
 
 			if (current_event.dst.y < -(int)current_event.timer)
 				current_event.clear();
@@ -629,24 +628,24 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		}
 
 		if (current_event.type == SceneEvent::kCreditsMessage) {
-			_system->fillScreen(0);
-			Graphics::Surface *surface = _system->lockScreen();
+			_vm->_system->fillScreen(0);
+			Graphics::Surface *surface = _vm->_system->lockScreen();
 			if (current_event.lan == 8) {
 				_vm->res->font8.shadow_color = current_event.orientation;
 				_vm->res->font8.render(surface, current_event.dst.x, current_event.dst.y, message, current_event.color);
 			} else {
 				_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, 0xd1);
 			}
-			_system->unlockScreen();
+			_vm->_system->unlockScreen();
 			return true;
 		}
 
 		if (background.pixels && debug_features.feature[DebugFeatures::kShowBack]) {
-			_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
+			_vm->_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
 		} else
-			_system->fillScreen(0);
+			_vm->_system->fillScreen(0);
 
-		Graphics::Surface *surface = _system->lockScreen();
+		Graphics::Surface *surface = _vm->_system->lockScreen();
 
 		bool got_any_animation = false;
 
@@ -796,7 +795,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		}
 
 		if (restart) {
-			_system->unlockScreen();
+			_vm->_system->unlockScreen();
 			continue;
 		}
 		//removed mark == null. In final scene of chapter 2 mark rendered above table.
@@ -860,7 +859,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			}
 		}
 
-		_system->unlockScreen();
+		_vm->_system->unlockScreen();
 
 		if (current_event.type == SceneEvent::kWait) {
 			if (current_event.timer > delta) {
@@ -1108,21 +1107,21 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kEffect:
-			_system->delayMillis(80); //2 vsyncs
-			_system->setShakePos(8);
-			_system->updateScreen();
+			_vm->_system->delayMillis(80); //2 vsyncs
+			_vm->_system->setShakePos(8);
+			_vm->_system->updateScreen();
 
-			_system->delayMillis(80); //2 vsyncs
-			_system->setShakePos(0);
-			_system->updateScreen();
+			_vm->_system->delayMillis(80); //2 vsyncs
+			_vm->_system->setShakePos(0);
+			_vm->_system->updateScreen();
 
-			_system->delayMillis(80); //2 vsyncs
-			_system->setShakePos(4);
-			_system->updateScreen();
+			_vm->_system->delayMillis(80); //2 vsyncs
+			_vm->_system->setShakePos(4);
+			_vm->_system->updateScreen();
 
-			_system->delayMillis(80); //2 vsyncs
-			_system->setShakePos(0);
-			_system->updateScreen();
+			_vm->_system->delayMillis(80); //2 vsyncs
+			_vm->_system->setShakePos(0);
+			_vm->_system->updateScreen();
 
 			current_event.clear();
 			break;
@@ -1170,7 +1169,7 @@ void Scene::setPalette(unsigned mul) {
 		p[i] = (unsigned)palette[i] * mul;
 	}
 
-	_system->getPaletteManager()->setPalette(p, 0, 256);
+	_vm->_system->getPaletteManager()->setPalette(p, 0, 256);
 }
 
 Object *Scene::getObject(int id, int scene_id) {

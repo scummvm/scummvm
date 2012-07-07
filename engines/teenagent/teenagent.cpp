@@ -522,7 +522,7 @@ Common::Error TeenAgentEngine::run() {
 	initGraphics(320, 200, false);
 	console = new Console(this);
 
-	scene = new Scene(this, _system);
+	scene = new Scene(this);
 	inventory = new Inventory(this);
 
 	init();

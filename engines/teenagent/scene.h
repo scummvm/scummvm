@@ -125,7 +125,7 @@ struct SceneEvent {
 
 class Scene {
 public:
-	Scene(TeenAgentEngine *engine, OSystem *system);
+	Scene(TeenAgentEngine *engine);
 	~Scene();
 
 	bool intro;
@@ -187,7 +187,6 @@ private:
 	void clearMessage();
 
 	TeenAgentEngine *_vm;
-	OSystem *_system;
 
 	int _id;
 	Graphics::Surface background;
