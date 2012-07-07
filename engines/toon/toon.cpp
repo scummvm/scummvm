@@ -820,7 +820,6 @@ Common::Error ToonEngine::run() {
 ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription),
 	_language(gameDescription->language), _rnd("toon") {
-	_system = syst;
 	_tickLength = 16;
 	_currentPicture = NULL;
 	_inventoryPicture = NULL;
@@ -1224,7 +1223,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 		_script->init(&_sceneAnimationScripts[i]._state, _sceneAnimationScripts[i]._data);
 		if (!forGameLoad) {
 			_script->start(&_sceneAnimationScripts[i]._state, 9 + i);
-			_sceneAnimationScripts[i]._lastTimer = getSystem()->getMillis();
+			_sceneAnimationScripts[i]._lastTimer = _system->getMillis();
 			_sceneAnimationScripts[i]._frozen = false;
 			_sceneAnimationScripts[i]._frozenForConversation = false;
 		}
