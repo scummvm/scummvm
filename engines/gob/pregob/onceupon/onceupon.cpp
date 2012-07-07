@@ -1599,6 +1599,9 @@ bool OnceUpon::enterString(Common::String &name, int16 key, uint maxLength, cons
 		return true;
 	}
 
+	if (key == kKeySpace)
+		key = ' ';
+
 	if ((key >= ' ') && (key <= 0xFF)) {
 		if (name.size() >= maxLength)
 			return false;
@@ -1727,6 +1730,7 @@ OnceUpon::CharGenAction OnceUpon::characterGenerator() {
 			}
 
 			if ((key == kKeyReturn) && !_name.empty()) {
+				_name.trim();
 				_name.setChar(Util::toCP850Upper(_name[0]), 0);
 
 				state = kCharGenStateSure;
