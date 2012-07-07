@@ -95,7 +95,7 @@ CBObject *CBRenderer::getObjectAt(int X, int Y) {
 				}
 				// region
 				else if (_rectList[i]->_region) {
-					if (_rectList[i]->_region->PointInRegion(X + _rectList[i]->_offsetX, Y + _rectList[i]->_offsetY)) return _rectList[i]->_owner;
+					if (_rectList[i]->_region->pointInRegion(X + _rectList[i]->_offsetX, Y + _rectList[i]->_offsetY)) return _rectList[i]->_owner;
 				}
 			} else return _rectList[i]->_owner;
 		}

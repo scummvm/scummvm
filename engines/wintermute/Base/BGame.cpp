@@ -3356,7 +3356,7 @@ HRESULT CBGame::initAfterLoad() {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::afterLoadRegion(void *region, void *data) {
-	((CBRegion *)region)->CreateRegion();
+	((CBRegion *)region)->createRegion();
 }
 
 

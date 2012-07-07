@@ -389,7 +389,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			} else {
 				_blockRegion = rgn;
 				_currentBlockRegion = crgn;
-				_currentBlockRegion->Mimic(_blockRegion);
+				_currentBlockRegion->mimic(_blockRegion);
 			}
 		}
 		break;

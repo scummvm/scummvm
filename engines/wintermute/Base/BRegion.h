@@ -40,21 +40,21 @@ public:
 	int _lastMimicX;
 	int _lastMimicY;
 	void cleanup();
-	HRESULT Mimic(CBRegion *Region, float Scale = 100.0f, int X = 0, int Y = 0);
-	HRESULT GetBoundingRect(RECT *Rect);
-	bool PtInPolygon(int X, int Y);
+	HRESULT mimic(CBRegion *region, float scale = 100.0f, int x = 0, int y = 0);
+	HRESULT getBoundingRect(RECT *rect);
+	bool ptInPolygon(int x, int y);
 	DECLARE_PERSISTENT(CBRegion, CBObject)
 	bool _active;
 	int _editorSelectedPoint;
 	CBRegion(CBGame *inGame);
 	virtual ~CBRegion();
-	bool PointInRegion(int X, int Y);
-	bool CreateRegion();
+	bool pointInRegion(int x, int y);
+	bool createRegion();
 	HRESULT loadFile(const char *filename);
 	HRESULT loadBuffer(byte *buffer, bool complete = true);
 	RECT _rect;
 	CBArray<CBPoint *, CBPoint *> _points;
-	virtual HRESULT saveAsText(CBDynBuffer *Buffer, int Indent, const char *NameOverride = NULL);
+	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride = NULL);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);

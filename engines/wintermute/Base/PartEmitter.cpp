@@ -293,7 +293,7 @@ HRESULT CPartEmitter::display(CBRegion *Region) {
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
 		if (Region != NULL && _useRegion) {
-			if (!Region->PointInRegion(_particles[i]->_pos.x, _particles[i]->_pos.y)) continue;
+			if (!Region->pointInRegion(_particles[i]->_pos.x, _particles[i]->_pos.y)) continue;
 		}
 
 		_particles[i]->display(this);

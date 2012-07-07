@@ -278,7 +278,7 @@ float CAdScene::getZoomAt(int x, int y) {
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.GetSize() - 1; i >= 0; i--) {
 			CAdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_blocked && node->_region->PointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_blocked && node->_region->pointInRegion(x, y)) {
 				if (node->_region->_zoom != 0) {
 					ret = node->_region->_zoom;
 					found = true;
@@ -304,7 +304,7 @@ uint32 CAdScene::getAlphaAt(int x, int y, bool colorCheck) {
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.GetSize() - 1; i >= 0; i--) {
 			CAdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->_blocked) && node->_region->PointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->_blocked) && node->_region->pointInRegion(x, y)) {
 				if (!node->_region->_blocked) ret = node->_region->_alpha;
 				break;
 			}
@@ -322,13 +322,13 @@ bool CAdScene::isBlockedAt(int x, int y, bool checkFreeObjects, CBObject *reques
 	if (checkFreeObjects) {
 		for (int i = 0; i < _objects.GetSize(); i++) {
 			if (_objects[i]->_active && _objects[i] != requester && _objects[i]->_currentBlockRegion) {
-				if (_objects[i]->_currentBlockRegion->PointInRegion(x, y)) return true;
+				if (_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return true;
 			}
 		}
 		CAdGame *adGame = (CAdGame *)Game;
 		for (int i = 0; i < adGame->_objects.GetSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentBlockRegion) {
-				if (adGame->_objects[i]->_currentBlockRegion->PointInRegion(x, y)) return true;
+				if (adGame->_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return true;
 			}
 		}
 	}
@@ -344,7 +344,7 @@ bool CAdScene::isBlockedAt(int x, int y, bool checkFreeObjects, CBObject *reques
 			    break;
 			}
 			*/
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->PointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->pointInRegion(x, y)) {
 				if (node->_region->_blocked) {
 					ret = true;
 					break;
@@ -363,13 +363,13 @@ bool CAdScene::isWalkableAt(int x, int y, bool checkFreeObjects, CBObject *reque
 	if (checkFreeObjects) {
 		for (int i = 0; i < _objects.GetSize(); i++) {
 			if (_objects[i]->_active && _objects[i] != requester && _objects[i]->_currentBlockRegion) {
-				if (_objects[i]->_currentBlockRegion->PointInRegion(x, y)) return false;
+				if (_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return false;
 			}
 		}
 		CAdGame *adGame = (CAdGame *)Game;
 		for (int i = 0; i < adGame->_objects.GetSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentBlockRegion) {
-				if (adGame->_objects[i]->_currentBlockRegion->PointInRegion(x, y)) return false;
+				if (adGame->_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return false;
 			}
 		}
 	}
@@ -378,7 +378,7 @@ bool CAdScene::isWalkableAt(int x, int y, bool checkFreeObjects, CBObject *reque
 	if (_mainLayer) {
 		for (int i = 0; i < _mainLayer->_nodes.GetSize(); i++) {
 			CAdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->PointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->pointInRegion(x, y)) {
 				if (node->_region->_blocked) {
 					ret = false;
 					break;
@@ -1075,7 +1075,7 @@ HRESULT CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) {
 	// global objects
 	for (int i = 0; i < adGame->_objects.GetSize(); i++) {
 		obj = adGame->_objects[i];
-		if (obj->_active && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->PointInRegion(obj->_posX, obj->_posY)))) {
+		if (obj->_active && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
 			objects.Add(obj);
 		}
 	}
@@ -1083,7 +1083,7 @@ HRESULT CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) {
 	// scene objects
 	for (int i = 0; i < _objects.GetSize(); i++) {
 		obj = _objects[i];
-		if (obj->_active && !obj->_editorOnly && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->PointInRegion(obj->_posX, obj->_posY)))) {
+		if (obj->_active && !obj->_editorOnly && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
 			objects.Add(obj);
 		}
 	}
@@ -1141,7 +1141,7 @@ HRESULT CAdScene::displayRegionContentOld(CAdRegion *region) {
 
 		// global objects
 		for (int i = 0; i < adGame->_objects.GetSize(); i++) {
-			if (adGame->_objects[i]->_active && !adGame->_objects[i]->_drawn && adGame->_objects[i]->_posY < minY && (adGame->_objects[i]->_stickRegion == region || region == NULL || (adGame->_objects[i]->_stickRegion == NULL && region->PointInRegion(adGame->_objects[i]->_posX, adGame->_objects[i]->_posY)))) {
+			if (adGame->_objects[i]->_active && !adGame->_objects[i]->_drawn && adGame->_objects[i]->_posY < minY && (adGame->_objects[i]->_stickRegion == region || region == NULL || (adGame->_objects[i]->_stickRegion == NULL && region->pointInRegion(adGame->_objects[i]->_posX, adGame->_objects[i]->_posY)))) {
 				obj = adGame->_objects[i];
 				minY = adGame->_objects[i]->_posY;
 			}
@@ -1149,7 +1149,7 @@ HRESULT CAdScene::displayRegionContentOld(CAdRegion *region) {
 
 		// scene objects
 		for (int i = 0; i < _objects.GetSize(); i++) {
-			if (_objects[i]->_active && !_objects[i]->_editorOnly && !_objects[i]->_drawn && _objects[i]->_posY < minY && (_objects[i]->_stickRegion == region || region == NULL || (_objects[i]->_stickRegion == NULL && region->PointInRegion(_objects[i]->_posX, _objects[i]->_posY)))) {
+			if (_objects[i]->_active && !_objects[i]->_editorOnly && !_objects[i]->_drawn && _objects[i]->_posY < minY && (_objects[i]->_stickRegion == region || region == NULL || (_objects[i]->_stickRegion == NULL && region->pointInRegion(_objects[i]->_posX, _objects[i]->_posY)))) {
 				obj = _objects[i];
 				minY = _objects[i]->_posY;
 			}
@@ -1427,7 +1427,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (_mainLayer) {
 			for (int i = _mainLayer->_nodes.GetSize() - 1; i >= 0; i--) {
 				CAdSceneNode *node = _mainLayer->_nodes[i];
-				if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->PointInRegion(x, y)) {
+				if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
 					if (node->_region->_decoration && !includeDecors) continue;
 
 					stack->pushNative(node->_region, true);
@@ -2597,7 +2597,7 @@ HRESULT CAdScene::getRegionsAt(int x, int y, CAdRegion **regionList, int numRegi
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.GetSize() - 1; i >= 0; i--) {
 			CAdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->PointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
 				if (numUsed < numRegions - 1) {
 					regionList[numUsed] = node->_region;
 					numUsed++;
@@ -2726,7 +2726,7 @@ HRESULT CAdScene::getRegionObjects(CAdRegion *region, CBArray<CAdObject *, CAdOb
 	// global objects
 	for (int i = 0; i < adGame->_objects.GetSize(); i++) {
 		obj = adGame->_objects[i];
-		if (obj->_active && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->PointInRegion(obj->_posX, obj->_posY)))) {
+		if (obj->_active && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
 			if (interactiveOnly && !obj->_registrable) continue;
 
 			objects.Add(obj);
@@ -2736,7 +2736,7 @@ HRESULT CAdScene::getRegionObjects(CAdRegion *region, CBArray<CAdObject *, CAdOb
 	// scene objects
 	for (int i = 0; i < _objects.GetSize(); i++) {
 		obj = _objects[i];
-		if (obj->_active && !obj->_editorOnly && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->PointInRegion(obj->_posX, obj->_posY)))) {
+		if (obj->_active && !obj->_editorOnly && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
 			if (interactiveOnly && !obj->_registrable) continue;
 
 			objects.Add(obj);

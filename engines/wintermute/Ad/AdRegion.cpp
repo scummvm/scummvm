@@ -208,7 +208,7 @@ HRESULT CAdRegion::loadBuffer(byte *buffer, bool complete) {
 		return E_FAIL;
 	}
 
-	CreateRegion();
+	createRegion();
 
 	_alpha = DRGBA(ar, ag, ab, alpha);
 

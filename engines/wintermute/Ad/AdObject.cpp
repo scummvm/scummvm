@@ -1040,7 +1040,7 @@ HRESULT CAdObject::updateBlockRegion() {
 	CAdGame *adGame = (CAdGame *)Game;
 	if (adGame->_scene) {
 		if (_blockRegion && _currentBlockRegion)
-			_currentBlockRegion->Mimic(_blockRegion, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
+			_currentBlockRegion->mimic(_blockRegion, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
 
 		if (_wptGroup && _currentWptGroup)
 			_currentWptGroup->mimic(_wptGroup, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
