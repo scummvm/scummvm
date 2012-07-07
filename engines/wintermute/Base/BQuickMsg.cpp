@@ -33,9 +33,9 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBQuickMsg::CBQuickMsg(CBGame *inGame, const char *Text): CBBase(inGame) {
-	_text = new char [strlen(Text) + 1];
-	if (_text) strcpy(_text, Text);
+CBQuickMsg::CBQuickMsg(CBGame *inGame, const char *text): CBBase(inGame) {
+	_text = new char [strlen(text) + 1];
+	if (_text) strcpy(_text, text);
 	_startTime = Game->_currentTime;
 }
 
@@ -47,7 +47,7 @@ CBQuickMsg::~CBQuickMsg() {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBQuickMsg::GetText() {
+char *CBQuickMsg::getText() {
 	return _text;
 }
 

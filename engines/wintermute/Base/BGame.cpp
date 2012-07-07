@@ -2776,8 +2776,8 @@ HRESULT CBGame::displayQuickMsg() {
 
 	// display
 	for (i = 0; i < _quickMessages.GetSize(); i++) {
-		_systemFont->drawText((byte *)_quickMessages[i]->GetText(), 0, posY, _renderer->_width);
-		posY += _systemFont->getTextHeight((byte *)_quickMessages[i]->GetText(), _renderer->_width);
+		_systemFont->drawText((byte *)_quickMessages[i]->getText(), 0, posY, _renderer->_width);
+		posY += _systemFont->getTextHeight((byte *)_quickMessages[i]->getText(), _renderer->_width);
 	}
 	return S_OK;
 }
