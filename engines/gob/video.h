@@ -41,6 +41,8 @@ public:
 	uint8  getCharWidth ()        const;
 	uint8  getCharHeight()        const;
 
+	bool hasChar(uint8 c) const;
+
 	bool isMonospaced() const;
 
 	void drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,

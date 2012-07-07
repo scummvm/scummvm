@@ -84,6 +84,10 @@ uint16 Font::getCharCount() const {
 	return _endItem - _startItem + 1;
 }
 
+bool Font::hasChar(uint8 c) const {
+	return (c >= _startItem) && (c <= _endItem);
+}
+
 bool Font::isMonospaced() const {
 	return _charWidths == 0;
 }
