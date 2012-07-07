@@ -122,4 +122,12 @@ Matrix4 Quaternion::toMatrix() const {
 			sr * cpcy - cr * spsy,
 			cr * cpcy + sr * spsy);
 	}
+	Quaternion Quaternion::operator*(const Quaternion &o) const {
+		return Quaternion(
+			w() * o.x() + x() * o.w() + y() * o.z() - z() * o.y(),
+			w() * o.y() - x() * o.z() + y() * o.w() + z() * o.x(),
+			w() * o.z() + x() * o.y() - y() * o.x() + z() * o.w(),
+			w() * o.w() - x() * o.x() - y() * o.y() - z() * o.z()
+			);
+	}
 }

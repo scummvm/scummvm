@@ -65,6 +65,7 @@ public:
 		return Quaternion(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
 	}
 	Quaternion& operator=(Vector4d &vec);
+	Quaternion operator*(const Quaternion &quat) const;
 };
 
 } // end of namespace Math
