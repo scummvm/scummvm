@@ -32,6 +32,9 @@
 
 #include "gob/sound/sound.h"
 
+#include "gob/pregob/txtfile.h"
+#include "gob/pregob/gctfile.h"
+
 #include "gob/pregob/onceupon/onceupon.h"
 #include "gob/pregob/onceupon/palettes.h"
 
@@ -1041,30 +1044,33 @@ OnceUpon::MenuAction OnceUpon::doIngameMenu() {
 	if ((action == kMenuActionQuit) || _vm->shouldQuit()) {
 
 		// User pressed the quit button, or quit ScummVM
-		_quit = true;
-		return kMenuActionQuit;
+		_quit  = true;
+		action = kMenuActionQuit;
 
 	} else if (action == kMenuActionPlay) {
 
 		// User pressed the return to game button
-		return kMenuActionPlay;
+		action = kMenuActionPlay;
 
 	} else if (kMenuActionMainMenu) {
 
 		// User pressed the return to main menu button
-		return handleMainMenu();
+		action = handleMainMenu();
 	}
 
 	return action;
 }
 
-OnceUpon::MenuAction OnceUpon::doIngameMenu(int16 key, MouseButtons mouseButtons) {
+OnceUpon::MenuAction OnceUpon::doIngameMenu(int16 &key, MouseButtons &mouseButtons) {
 	if ((key != kKeyEscape) && (mouseButtons != kMouseButtonsRight))
 		return kMenuActionNone;
 
+	key = 0;
+	mouseButtons = kMouseButtonsNone;
+
 	MenuAction action = doIngameMenu();
 	if (action == kMenuActionPlay)
-		return kMenuActionNone;
+		action = kMenuActionNone;
 
 	return action;
 }
@@ -1316,8 +1322,6 @@ enum StorkState {
 };
 
 bool OnceUpon::sectionStork() {
-	warning("OnceUpon::sectionStork(): TODO");
-
 	fadeOut();
 	hideCursor();
 	setGamePalette(0);
@@ -1338,6 +1342,10 @@ bool OnceUpon::sectionStork() {
 	TXTFile *whereStork = loadTXT(getLocFile("ouva.tx"), TXTFile::kFormatStringPositionColor);
 	whereStork->draw(*_vm->_draw->_backSurface, &_plettre, 1);
 
+	// Where the stork actually goes
+	GCTFile *thereStork = loadGCT(getLocFile("choix.gc"));
+	thereStork->setArea(17, 18, 303, 41);
+
 	ANIFile ani(_vm, "present.ani", 320);
 	ANIList anims;
 
@@ -1355,8 +1363,6 @@ bool OnceUpon::sectionStork() {
 	StorkState state  = kStorkStateWaitUser;
 	MenuAction action = kMenuActionNone;
 	while (!_vm->shouldQuit() && (state != kStorkStateFinish)) {
-		clearAnim(anims);
-
 		// Play the stork sound
 		if (--storkSoundWait == 0)
 			playSound(kSoundStork);
@@ -1380,6 +1386,8 @@ bool OnceUpon::sectionStork() {
 			break;
 		}
 
+		clearAnim(anims);
+
 		if (mouseButtons == kMouseButtonsLeft) {
 			stopSound();
 			playSound(kSoundClick);
@@ -1394,6 +1402,12 @@ bool OnceUpon::sectionStork() {
 				int16 left, top, right, bottom;
 				if (whereStork->clear(*_vm->_draw->_backSurface, left, top, right, bottom))
 					_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+
+				// Print the text where the stork actually goes
+				thereStork->selectLine(3, house); // The house
+				thereStork->selectLine(4, house); // The house's inhabitants
+				if (thereStork->draw(*_vm->_draw->_backSurface, 2, *_plettre, 10, left, top, right, bottom))
+					_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 			}
 		}
 
@@ -1405,14 +1419,17 @@ bool OnceUpon::sectionStork() {
 	}
 
 	freeAnims(anims);
+	delete thereStork;
 	delete whereStork;
 
 	fadeOut();
 	hideCursor();
 
 	// Completed the section => move one
-	if (action == kMenuActionNone)
+	if (action == kMenuActionNone) {
+		warning("OnceUpon::sectionStork(): TODO: Character creator");
 		return true;
+	}
 
 	// Didn't complete the section
 	return false;

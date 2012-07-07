@@ -249,7 +249,7 @@ private:
 	/** Handle the whole ingame menu. */
 	MenuAction doIngameMenu();
 	/** Handle the whole ingame menu if ESC or right mouse button was pressed. */
-	MenuAction doIngameMenu(int16 key, MouseButtons mouseButtons);
+	MenuAction doIngameMenu(int16 &key, MouseButtons &mouseButtons);
 
 
 	// -- Menu button helpers --
