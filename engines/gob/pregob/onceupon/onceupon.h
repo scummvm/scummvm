@@ -139,6 +139,13 @@ private:
 		kSoundMAX
 	};
 
+	/** Action the character generation wants us to take. */
+	enum CharGenAction {
+		kCharGenDone    = 0, ///< Created a character, move on.
+		kCharGenAbort      , ///< Aborted the character generation.
+		kCharGenRestart      ///< Restart the character generation.
+	};
+
 	/** A complete screen backup. */
 	struct ScreenBackup {
 		Surface *screen; ///< Screen contents.
@@ -164,6 +171,13 @@ private:
 	static const MenuButton kLanguageButtons[]; ///< Language buttons in the animal names screen.
 
 	static const MenuButton kSectionStorkHouses[];
+
+	static const MenuButton kCharGenHeadButtons[];
+	static const MenuButton kCharGenHeads[];
+	static const MenuButton kCharGenHairButtons[];
+	static const MenuButton kCharGenJacketButtons[];
+	static const MenuButton kCharGenTrousersButtons[];
+	static const MenuButton kCharGenNameEntry[];
 
 	/** All general game sounds we know about. */
 	static const char *kSound[kSoundMAX];
@@ -259,9 +273,9 @@ private:
 	int checkButton(const MenuButton *buttons, uint count, int16 x, int16 y, int failValue = -1) const;
 
 	/** Draw a menu button. */
-	void drawButton (Surface &dest, const Surface &src, const MenuButton &button) const;
+	void drawButton (Surface &dest, const Surface &src, const MenuButton &button, int transp = -1) const;
 	/** Draw multiple menu buttons. */
-	void drawButtons(Surface &dest, const Surface &src, const MenuButton *buttons, uint count) const;
+	void drawButtons(Surface &dest, const Surface &src, const MenuButton *buttons, uint count, int transp = -1) const;
 
 	/** Draw a border around a button. */
 	void drawButtonBorder(const MenuButton &button, uint8 color);
@@ -296,6 +310,13 @@ private:
 	bool sectionChapter7();
 	bool sectionEnd();
 
+	CharGenAction characterGenerator();
+	void charGenSetup(uint stage);
+	void charGenDrawName();
+
+	static void recolor(Surface &surface, uint8 from, uint8 to);
+	static bool enterString(Common::String &name, int16 key, uint maxLength, const Font &font);
+
 
 	/** Did we open the game archives? */
 	bool _openedArchives;
@@ -315,6 +336,11 @@ private:
 	int        _section;    ///< The current game section.
 
 	Common::String _name; ///< The name of the child.
+
+	uint8 _head;
+	uint8 _colorHair;
+	uint8 _colorJacket;
+	uint8 _colorTrousers;
 };
 
 } // End of namespace OnceUpon

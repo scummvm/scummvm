@@ -1095,18 +1095,18 @@ int OnceUpon::checkButton(const MenuButton *buttons, uint count, int16 x, int16 
 	return failValue;
 }
 
-void OnceUpon::drawButton(Surface &dest, const Surface &src, const MenuButton &button) const {
-	dest.blit(src, button.srcLeft, button.srcTop, button.srcRight, button.srcBottom, button.dstX, button.dstY);
+void OnceUpon::drawButton(Surface &dest, const Surface &src, const MenuButton &button, int transp) const {
+	dest.blit(src, button.srcLeft, button.srcTop, button.srcRight, button.srcBottom, button.dstX, button.dstY, transp);
 }
 
-void OnceUpon::drawButtons(Surface &dest, const Surface &src, const MenuButton *buttons, uint count) const {
+void OnceUpon::drawButtons(Surface &dest, const Surface &src, const MenuButton *buttons, uint count, int transp) const {
 	for (uint i = 0; i < count; i++) {
 		const MenuButton &button = buttons[i];
 
 		if (!button.needDraw)
 			continue;
 
-		drawButton(dest, src, button);
+		drawButton(dest, src, button, transp);
 	}
 }
 
@@ -1431,14 +1431,353 @@ bool OnceUpon::sectionStork() {
 	fadeOut();
 	hideCursor();
 
-	// Completed the section => move one
-	if (action == kMenuActionNone) {
-		warning("OnceUpon::sectionStork(): TODO: Character creator");
+	// Didn't complete the section
+	if (action != kMenuActionNone)
+		return false;
+
+	// Move on to the character generator
+
+	CharGenAction charGenAction = kCharGenRestart;
+	while (charGenAction == kCharGenRestart)
+		charGenAction = characterGenerator();
+
+	// Did we successfully create a character?
+	return charGenAction == kCharGenDone;
+}
+
+const OnceUpon::MenuButton OnceUpon::kCharGenHeadButtons[] = {
+	{true, 106, 146, 152, 180,   0,  0,  47, 34, 106, 146, 0},
+	{true, 155, 146, 201, 180,  49,  0,  96, 34, 155, 146, 1},
+	{true, 204, 146, 250, 180,  98,  0, 145, 34, 204, 146, 2},
+	{true, 253, 146, 299, 180, 147,  0, 194, 34, 253, 146, 3}
+};
+
+const OnceUpon::MenuButton OnceUpon::kCharGenHeads[] = {
+	{true,   0,   0,   0,   0,  29,  4,  68, 31,  40,  51, 0},
+	{true,   0,   0,   0,   0,  83,  4, 113, 31,  45,  51, 1},
+	{true,   0,   0,   0,   0, 132,  4, 162, 31,  45,  51, 2},
+	{true,   0,   0,   0,   0, 182,  4, 211, 31,  45,  51, 3}
+};
+
+const OnceUpon::MenuButton OnceUpon::kCharGenHairButtons[] = {
+	{true, 105,  55, 124,  70, 271,  1, 289, 15, 105,  55, 0x04},
+	{true, 105,  74, 124,  89, 271, 20, 289, 34, 105,  74, 0x07}
+};
+
+const OnceUpon::MenuButton OnceUpon::kCharGenJacketButtons[] = {
+	{true, 105,  90, 124, 105, 271, 39, 289, 53, 105,  90, 0x06},
+	{true, 105, 109, 124, 124, 271, 58, 289, 72, 105, 109, 0x02}
+};
+
+const OnceUpon::MenuButton OnceUpon::kCharGenTrousersButtons[] = {
+	{true, 105, 140, 124, 155, 271, 77, 289,  91, 105, 140, 0x01},
+	{true, 105, 159, 124, 174, 271, 96, 289, 110, 105, 159, 0x03}
+};
+
+const OnceUpon::MenuButton OnceUpon::kCharGenNameEntry[] = {
+	{true, 0, 0, 0, 0,   0,  38,  54,  48, 140, 145, 0},
+	{true, 0, 0, 0, 0, 106,  38, 159,  48, 195, 145, 0},
+	{true, 0, 0, 0, 0,   0, 105,  54, 121, 140, 156, 0},
+	{true, 0, 0, 0, 0, 106, 105, 159, 121, 195, 156, 0}
+};
+
+enum CharGenState {
+	kCharGenStateHead     = 0, // Choose a head
+	kCharGenStateHair        , // Choose hair color
+	kCharGenStateJacket      , // Choose jacket color
+	kCharGenStateTrousers    , // Choose trousers color
+	kCharGenStateName        , // Choose name
+	kCharGenStateSure        , // "Are you sure?"
+	kCharGenStateStoryName   , // "We're going to tell the story of $NAME"
+	kCharGenStateFinish        // Finished
+};
+
+void OnceUpon::recolor(Surface &surface, uint8 from, uint8 to) {
+	for (Pixel p = surface.get(); p.isValid(); ++p)
+		if (p.get() == from)
+			p.set(to);
+}
+
+void OnceUpon::charGenSetup(uint stage) {
+	Surface choix(320, 200, 1), elchoix(320, 200, 1), paperDoll(65, 137, 1);
+
+	_vm->_video->drawPackedSprite("choix.cmp"  , choix);
+	_vm->_video->drawPackedSprite("elchoix.cmp", elchoix);
+
+	paperDoll.blit(choix, 200, 0, 264, 136, 0, 0);
+
+	GCTFile *text = loadGCT(getLocFile("choix.gc"));
+	text->setArea(17, 18, 303, 41);
+	text->setText(9, _name);
+
+	// Background
+	_vm->_video->drawPackedSprite("cadre.cmp", *_vm->_draw->_backSurface);
+	_vm->_draw->_backSurface->fillRect(16, 50, 303, 187, 5);
+
+	// Character sprite frame
+	_vm->_draw->_backSurface->blit(choix, 0, 38, 159, 121, 140, 54);
+
+	// Recolor the paper doll parts
+	if (_colorHair     != 0xFF)
+		recolor(elchoix  , 0x0C, _colorHair);
+	if (_colorJacket   != 0xFF)
+		recolor(paperDoll, 0x0A, _colorJacket);
+	if (_colorTrousers != 0xFF)
+		recolor(paperDoll, 0x09, _colorTrousers);
+
+	_vm->_draw->_backSurface->blit(paperDoll, 32, 51);
+
+	// Paper doll head
+	if (_head != 0xFF)
+		drawButton(*_vm->_draw->_backSurface, elchoix, kCharGenHeads[_head], 0);
+
+	if (stage == kCharGenStateHead) {
+		// Head buttons
+		drawButtons(*_vm->_draw->_backSurface, choix, kCharGenHeadButtons, ARRAYSIZE(kCharGenHeadButtons));
+
+		// "Choose a head"
+		int16 left, top, right, bottom;
+		text->draw(*_vm->_draw->_backSurface, 5, *_plettre, 10, left, top, right, bottom);
+
+	} else if (stage == kCharGenStateHair) {
+		// Hair color buttons
+		drawButtons(*_vm->_draw->_backSurface, choix, kCharGenHairButtons, ARRAYSIZE(kCharGenHairButtons));
+
+		// "What color is the hair?"
+		int16 left, top, right, bottom;
+		text->draw(*_vm->_draw->_backSurface, 6, *_plettre, 10, left, top, right, bottom);
+
+	} else if (stage == kCharGenStateJacket) {
+		// Jacket color buttons
+		drawButtons(*_vm->_draw->_backSurface, choix, kCharGenJacketButtons, ARRAYSIZE(kCharGenJacketButtons));
+
+		// "What color is the jacket?"
+		int16 left, top, right, bottom;
+		text->draw(*_vm->_draw->_backSurface, 7, *_plettre, 10, left, top, right, bottom);
+
+	} else if (stage == kCharGenStateTrousers) {
+		// Trousers color buttons
+		drawButtons(*_vm->_draw->_backSurface, choix, kCharGenTrousersButtons, ARRAYSIZE(kCharGenTrousersButtons));
+
+		// "What color are the trousers?"
+		int16 left, top, right, bottom;
+		text->draw(*_vm->_draw->_backSurface, 8, *_plettre, 10, left, top, right, bottom);
+
+	} else if (stage == kCharGenStateName) {
+		// Name entry field
+		drawButtons(*_vm->_draw->_backSurface, choix, kCharGenNameEntry, ARRAYSIZE(kCharGenNameEntry));
+
+		// "Enter name"
+		int16 left, top, right, bottom;
+		text->draw(*_vm->_draw->_backSurface, 10, *_plettre, 10, left, top, right, bottom);
+
+		charGenDrawName();
+	} else if (stage == kCharGenStateSure) {
+		// Name entry field
+		drawButtons(*_vm->_draw->_backSurface, choix, kCharGenNameEntry, ARRAYSIZE(kCharGenNameEntry));
+
+		// "Are you sure?"
+		TXTFile *sure = loadTXT(getLocFile("estu.tx"), TXTFile::kFormatStringPositionColor);
+		sure->draw(*_vm->_draw->_backSurface, &_plettre, 1);
+		delete sure;
+
+		charGenDrawName();
+	} else if (stage == kCharGenStateStoryName) {
+
+		// "We're going to tell the story of $NAME"
+		int16 left, top, right, bottom;
+		text->draw(*_vm->_draw->_backSurface, 11, *_plettre, 10, left, top, right, bottom);
+	}
+
+	delete text;
+}
+
+bool OnceUpon::enterString(Common::String &name, int16 key, uint maxLength, const Font &font) {
+	if (key == 0)
+		return true;
+
+	if (key == kKeyBackspace) {
+		name.deleteLastChar();
 		return true;
 	}
 
-	// Didn't complete the section
+	if ((key >= ' ') && (key <= 0xFF)) {
+		if (name.size() >= maxLength)
+			return false;
+
+		if (!font.hasChar(key))
+			return false;
+
+		name += (char) key;
+		return true;
+	}
+
 	return false;
+}
+
+void OnceUpon::charGenDrawName() {
+	_vm->_draw->_backSurface->fillRect(147, 151, 243, 166, 1);
+
+	const int16 nameY = 151 + ((166 - 151 + 1 -       _plettre->getCharHeight())  / 2);
+	const int16 nameX = 147 + ((243 - 147 + 1 - (15 * _plettre->getCharWidth ())) / 2);
+
+	_plettre->drawString(_name, nameX, nameY, 10, 0, true, *_vm->_draw->_backSurface);
+
+	const int16 cursorLeft   = nameX + _name.size() * _plettre->getCharWidth();
+	const int16 cursorTop    = nameY;
+	const int16 cursorRight  = cursorLeft + _plettre->getCharWidth() - 1;
+	const int16 cursorBottom = cursorTop + _plettre->getCharHeight() - 1;
+
+	_vm->_draw->_backSurface->fillRect(cursorLeft, cursorTop, cursorRight, cursorBottom, 10);
+
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 147, 151, 243, 166);
+}
+
+OnceUpon::CharGenAction OnceUpon::characterGenerator() {
+	fadeOut();
+	hideCursor();
+	setGameCursor();
+
+	showWait(1);
+
+	_name.clear();
+
+	_head          = 0xFF;
+	_colorHair     = 0xFF;
+	_colorJacket   = 0xFF;
+	_colorTrousers = 0xFF;
+
+	CharGenState state = kCharGenStateHead;
+	charGenSetup(state);
+
+	fadeOut();
+	_vm->_draw->forceBlit();
+
+	CharGenAction action = kCharGenRestart;
+	while (!_vm->shouldQuit() && (state != kCharGenStateFinish)) {
+		// Check user input
+
+		int16 mouseX, mouseY;
+		MouseButtons mouseButtons;
+
+		int16 key = checkInput(mouseX, mouseY, mouseButtons);
+
+		MenuAction menuAction = doIngameMenu(key, mouseButtons);
+		if (menuAction != kMenuActionNone) {
+			state  = kCharGenStateFinish;
+			action = kCharGenAbort;
+			break;
+		}
+
+		// clearAnim(anims);
+
+		if (state == kCharGenStateStoryName) {
+			if ((mouseButtons != kMouseButtonsNone) || (key != 0)) {
+				state = kCharGenStateFinish;
+				action = kCharGenDone;
+				break;
+			}
+		}
+
+		if (state == kCharGenStateSure) {
+			// Not sure => restart
+			if ((key == 'N') || (key == 'n')) { // No / Nein / Non
+				state = kCharGenStateFinish;
+				action = kCharGenRestart;
+				break;
+			}
+
+			if ((key == 'Y') || (key == 'y') || // Yes
+			    (key == 'J') || (key == 'j') || // Ja
+			    (key == 'S') || (key == 's') || // Si
+			    (key == 'O') || (key == 'o')) { // Oui
+
+				state = kCharGenStateStoryName;
+				charGenSetup(state);
+				_vm->_draw->forceBlit();
+			}
+		}
+
+		if (state == kCharGenStateName) {
+			if (enterString(_name, key, 14, *_plettre)) {
+				_vm->_draw->_backSurface->fillRect(147, 151, 243, 166, 1);
+
+				const int16 nameY = 151 + ((166 - 151 + 1 -       _plettre->getCharHeight())  / 2);
+				const int16 nameX = 147 + ((243 - 147 + 1 - (15 * _plettre->getCharWidth ())) / 2);
+
+				_plettre->drawString(_name, nameX, nameY, 10, 0, true, *_vm->_draw->_backSurface);
+
+				const int16 cursorLeft   = nameX + _name.size() * _plettre->getCharWidth();
+				const int16 cursorTop    = nameY;
+				const int16 cursorRight  = cursorLeft + _plettre->getCharWidth() - 1;
+				const int16 cursorBottom = cursorTop + _plettre->getCharHeight() - 1;
+
+				_vm->_draw->_backSurface->fillRect(cursorLeft, cursorTop, cursorRight, cursorBottom, 10);
+
+				_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 147, 151, 243, 166);
+			}
+
+			if ((key == kKeyReturn) && !_name.empty()) {
+				_name.setChar(Util::toCP850Upper(_name[0]), 0);
+
+				state = kCharGenStateSure;
+				charGenSetup(state);
+				_vm->_draw->forceBlit();
+			}
+		}
+
+		if (mouseButtons == kMouseButtonsLeft) {
+			int trousers = checkButton(kCharGenTrousersButtons, ARRAYSIZE(kCharGenTrousersButtons), mouseX, mouseY);
+			if ((state == kCharGenStateTrousers) && (trousers >= 0)) {
+				_colorTrousers = trousers;
+
+				state = kCharGenStateName;
+				charGenSetup(state);
+				_vm->_draw->forceBlit();
+			}
+
+			int jacket = checkButton(kCharGenJacketButtons, ARRAYSIZE(kCharGenJacketButtons), mouseX, mouseY);
+			if ((state == kCharGenStateJacket) && (jacket >= 0)) {
+				_colorJacket = jacket;
+
+				state = kCharGenStateTrousers;
+				charGenSetup(state);
+				_vm->_draw->forceBlit();
+			}
+
+			int hair = checkButton(kCharGenHairButtons, ARRAYSIZE(kCharGenHairButtons), mouseX, mouseY);
+			if ((state == kCharGenStateHair) && (hair >= 0)) {
+				_colorHair = hair;
+
+				state = kCharGenStateJacket;
+				charGenSetup(state);
+				_vm->_draw->forceBlit();
+			}
+
+			int head = checkButton(kCharGenHeadButtons, ARRAYSIZE(kCharGenHeadButtons), mouseX, mouseY);
+			if ((state == kCharGenStateHead) && (head >= 0)) {
+				_head = head;
+
+				state = kCharGenStateHair;
+				charGenSetup(state);
+				_vm->_draw->forceBlit();
+			}
+		}
+
+		//drawAnim(anims);
+		showCursor();
+		fadeIn();
+
+		endFrame(true);
+	}
+
+	fadeOut();
+	hideCursor();
+
+	if (_vm->shouldQuit())
+		return kCharGenAbort;
+
+	return action;
 }
 
 bool OnceUpon::sectionChapter1() {
