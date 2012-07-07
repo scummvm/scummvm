@@ -285,6 +285,17 @@ void Costume::setChoreLooping(int num, bool val) {
 	_chores[num]->setLooping(val);
 }
 
+void Costume::playChoreLooping(const char *name) {
+	for (int i = 0; i < _numChores; ++i) {
+		if (strcmp(_chores[i]->getName(), name) == 0) {
+			playChoreLooping(i);
+			return;
+		}
+	}
+	warning("Costume::playChoreLooping: Could not find chore: %s", name);
+	return;
+}
+
 void Costume::playChoreLooping(int num) {
 	if (num < 0 || num >= _numChores) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
