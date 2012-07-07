@@ -1492,12 +1492,6 @@ enum CharGenState {
 	kCharGenStateFinish        // Finished
 };
 
-void OnceUpon::recolor(Surface &surface, uint8 from, uint8 to) {
-	for (Pixel p = surface.get(); p.isValid(); ++p)
-		if (p.get() == from)
-			p.set(to);
-}
-
 void OnceUpon::charGenSetup(uint stage) {
 	Surface choix(320, 200, 1), elchoix(320, 200, 1), paperDoll(65, 137, 1);
 
@@ -1518,12 +1512,14 @@ void OnceUpon::charGenSetup(uint stage) {
 	_vm->_draw->_backSurface->blit(choix, 0, 38, 159, 121, 140, 54);
 
 	// Recolor the paper doll parts
-	if (_colorHair     != 0xFF)
-		recolor(elchoix  , 0x0C, _colorHair);
-	if (_colorJacket   != 0xFF)
-		recolor(paperDoll, 0x0A, _colorJacket);
+	if (_colorHair != 0xFF)
+		elchoix.recolor(0x0C, _colorHair);
+
+	if (_colorJacket != 0xFF)
+		paperDoll.recolor(0x0A, _colorJacket);
+
 	if (_colorTrousers != 0xFF)
-		recolor(paperDoll, 0x09, _colorTrousers);
+		paperDoll.recolor(0x09, _colorTrousers);
 
 	_vm->_draw->_backSurface->blit(paperDoll, 32, 51);
 

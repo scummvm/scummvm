@@ -314,7 +314,6 @@ private:
 	void charGenSetup(uint stage);
 	void charGenDrawName();
 
-	static void recolor(Surface &surface, uint8 from, uint8 to);
 	static bool enterString(Common::String &name, int16 key, uint maxLength, const Font &font);
 
 
