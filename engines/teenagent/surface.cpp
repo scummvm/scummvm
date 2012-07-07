@@ -34,7 +34,7 @@ Surface::~Surface() {
 }
 
 void Surface::load(Common::SeekableReadStream &stream, Type type) {
-	//debug(0, "load()");
+	debug(0, "load()");
 	free();
 
 	x = y = 0;
@@ -48,7 +48,7 @@ void Surface::load(Common::SeekableReadStream &stream, Type type) {
 		y = pos / 320;
 	}
 
-	//debug(0, "declared info: %ux%u (%04xx%04x) -> %u,%u", w_, h_, w_, h_, x, y);
+	debug(0, "declared info: %ux%u (%04xx%04x) -> %u,%u", w_, h_, w_, h_, x, y);
 	if (stream.eos() || w_ == 0)
 		return;
 
@@ -57,7 +57,7 @@ void Surface::load(Common::SeekableReadStream &stream, Type type) {
 		return;
 	}
 
-	//debug(0, "creating surface %ux%u -> %u,%u", w_, h_, x, y);
+	debug(0, "creating surface %ux%u -> %u,%u", w_, h_, x, y);
 	create(w_, h_, Graphics::PixelFormat::createFormatCLUT8());
 
 	stream.read(pixels, w_ * h_);

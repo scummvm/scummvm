@@ -33,88 +33,79 @@ void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animati
 	byte color = color1;
 
 	if (animation1 != 0) {
-		SceneEvent e(SceneEvent::kPlayAnimation);
-		e.animation = animation1;
-		e.slot = 0xc0 | slot1; //looped, paused
-		scene->push(e);
+		SceneEvent e1(SceneEvent::kPlayAnimation);
+		e1.animation = animation1;
+		e1.slot = 0xc0 | slot1; //looped, paused
+		scene->push(e1);
 	}
 
 	if (animation2 != 0) {
-		SceneEvent e(SceneEvent::kPlayAnimation);
-		e.animation = animation2;
-		e.slot = 0xc0 | slot2; //looped, paused
-		scene->push(e);
+		SceneEvent e2(SceneEvent::kPlayAnimation);
+		e2.animation = animation2;
+		e2.slot = 0xc0 | slot2; //looped, paused
+		scene->push(e2);
 	}
 
 	while (n < 4) {
 		byte c = vm->res->eseg.get_byte(addr++);
-		//debug(0, "%02x: %c", c, c > 0x20? c: '.');
+		debug(0, "%02x: %c", c, c > 0x20? c: '.');
 
 		switch (c) {
 		case 0:
 			++n;
 			switch (n) {
 			case 1:
-				//debug(0, "new line\n");
+				debug(0, "new line\n");
 				if (!message.empty())
 					message += '\n';
 				break;
 			case 2:
-				//debug(0, "displaymessage %s", message.c_str());
+				debug(0, "displaymessage %s", message.c_str());
 				if (color == color2) {
 					//pause animation in other slot
-					{
-						SceneEvent e(SceneEvent::kPauseAnimation);
-						e.slot = 0x80 | slot1;
-						scene->push(e);
-					}
-					{
-						SceneEvent e(SceneEvent::kPlayAnimation);
-						e.animation = animation2;
-						e.slot = 0x80 | slot2;
-						scene->push(e);
-					}
+					SceneEvent e1(SceneEvent::kPauseAnimation);
+					e1.slot = 0x80 | slot1;
+					scene->push(e1);
+
+					SceneEvent e2(SceneEvent::kPlayAnimation);
+					e2.animation = animation2;
+					e2.slot = 0x80 | slot2;
+					scene->push(e2);
 				} else if (color == color1) {
 					//pause animation in other slot
-					{
-						SceneEvent e(SceneEvent::kPauseAnimation);
-						e.slot = 0x80 | slot2;
-						scene->push(e);
-					}
-					{
-						SceneEvent e(SceneEvent::kPlayAnimation);
-						e.animation = animation1;
-						e.slot = 0x80 | slot1;
-						scene->push(e);
-					}
+					SceneEvent e2(SceneEvent::kPauseAnimation);
+					e2.slot = 0x80 | slot2;
+					scene->push(e2);
+
+					SceneEvent e1(SceneEvent::kPlayAnimation);
+					e1.animation = animation1;
+					e1.slot = 0x80 | slot1;
+					scene->push(e1);
 				}
 
-				{
-					message.trim();
-					if (message.empty())
-						break;
-
-					SceneEvent e(SceneEvent::kMessage);
-					e.message = message;
-					e.color = color;
+				message.trim();
+				if (!message.empty()) {
+					SceneEvent em(SceneEvent::kMessage);
+					em.message = message;
+					em.color = color;
 					if (color == color1)
-						e.slot = slot1;
+						em.slot = slot1;
 					if (color == color2)
-						e.slot = slot2;
-					scene->push(e);
+						em.slot = slot2;
+					scene->push(em);
 					message.clear();
 				}
 				break;
 
 			case 3:
-				color = color == color1 ? color2 : color1;
-				//debug(0, "changing color to %02x", color);
+				color = (color == color1) ? color2 : color1;
+				debug(0, "changing color to %02x", color);
 				break;
 			}
 			break;
 
 		case 0xff: {
-			//fixme : wait for the next cycle of the animation
+			//FIXME : wait for the next cycle of the animation
 		}
 		break;
 
@@ -124,8 +115,8 @@ void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animati
 		}
 	}
 
-	SceneEvent e(SceneEvent::kClearAnimations);
-	scene->push(e);
+	SceneEvent ec(SceneEvent::kClearAnimations);
+	scene->push(ec);
 }
 
 uint16 Dialog::pop(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {

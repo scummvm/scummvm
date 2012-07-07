@@ -68,7 +68,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 		i0 = -y;
 		y = 0;
 	}
-	//debug(0, "char %c, width: %dx%d", c, w, h);
+	debug(0, "char %c, width: %dx%d", c, w, h);
 	glyph += 2;
 	glyph += i0 * w + j0;
 	byte *dst = (byte *)surface->getBasePtr(x, y);
@@ -109,7 +109,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 		do {
 			j = find_in_str(str, '\n', i);
 			Common::String line(str.c_str() + i, j - i);
-			//debug(0, "line: %s", line.c_str());
+			debug(0, "line: %s", line.c_str());
 
 			if (y + (int)height >= 0) {
 				uint w = render(NULL, 0, 0, line, false);

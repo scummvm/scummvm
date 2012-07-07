@@ -101,7 +101,7 @@ Common::String Object::parse_description(const char *name) {
 	while (*desc != 1 && *desc != 0) {
 		Common::String line;
 		while (*desc != 1 && *desc != 0) {
-			//debug(0, "%02x ", *desc);
+			debug(0, "%02x ", *desc);
 			line += *desc++;
 		}
 

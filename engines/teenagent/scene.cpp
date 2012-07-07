@@ -310,7 +310,7 @@ void Scene::loadOns() {
 	debug(0, "loading ons animation");
 
 	uint16 addr = _vm->res->dseg.get_word(0xb4f5 + (_id - 1) * 2);
-	//debug(0, "ons index: %04x", addr);
+	debug(0, "ons index: %04x", addr);
 
 	ons_count = 0;
 	byte b;
@@ -457,7 +457,7 @@ byte Scene::peekFlagEvent(uint16 addr) const {
 }
 
 void Scene::push(const SceneEvent &event) {
-	//debug(0, "push");
+	debug(0, "push");
 	//event.dump();
 	if (event.type == SceneEvent::kWalk && !events.empty()) {
 		SceneEvent &prev = events.back();
@@ -549,9 +549,9 @@ int Scene::lookupZoom(uint y) const {
 	for (byte *zoom_table = _vm->res->dseg.ptr(_vm->res->dseg.get_word(0x70f4 + (_id - 1) * 2));
 	        zoom_table[0] != 0xff && zoom_table[1] != 0xff;
 	        zoom_table += 2) {
-		//debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
+		debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
 		if (y <= zoom_table[0]) {
-			//debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
+			debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
 			return 256u * (100 - zoom_table[1]) / 100;
 		}
 	}
@@ -814,7 +814,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			bool visible = true;
 			if (message_first_frame != 0 && message_animation != NULL) {
 				int index = message_animation->currentIndex() + 1;
-				//debug(0, "message: %s first: %u index: %u", message.c_str(), message_first_frame, index);
+				debug(0, "message: %s first: %u index: %u", message.c_str(), message_first_frame, index);
 				if (index < message_first_frame)
 					visible = false;
 				if (index > message_last_frame) {
@@ -835,7 +835,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 					_vm->inventory->activate(false);
 				_vm->processCallback(callback);
 			}
-			//debug(0, "callback timer = %u", callback_timer);
+			debug(0, "callback timer = %u", callback_timer);
 		}
 
 		//if (!current_event.empty())
@@ -901,7 +901,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 
 bool Scene::processEventQueue() {
 	while (!events.empty() && current_event.empty()) {
-		//debug(0, "processing next event");
+		debug(0, "processing next event");
 		current_event = events.front();
 		events.pop_front();
 		switch (current_event.type) {
@@ -1162,7 +1162,7 @@ bool Scene::processEventQueue() {
 }
 
 void Scene::setPalette(unsigned mul) {
-	//debug(0, "setPalette(%u)", mul);
+	debug(0, "setPalette(%u)", mul);
 	byte p[3 * 256];
 
 	for (int i = 0; i < 3 * 256; ++i) {
@@ -1224,13 +1224,13 @@ uint Scene::messageDuration(const Common::String &str) {
 	uint delay_delta = 1 + (255 - speed) * 99 / 255;
 
 	uint delay = 60 + (total_width * delay_delta) / 8;
-	//debug(0, "delay = %u, delta: %u", delay, delay_delta);
+	debug(0, "delay = %u, delta: %u", delay, delay_delta);
 	return delay * 10;
 }
 
 void Scene::displayMessage(const Common::String &str, byte color, const Common::Point &pos) {
 	//assert(!str.empty());
-	//debug(0, "displayMessage: %s", str.c_str());
+	debug(0, "displayMessage: %s", str.c_str());
 	message = str;
 	message_pos = (pos.x | pos.y) ? pos : messagePosition(str, position);
 	message_color = color;

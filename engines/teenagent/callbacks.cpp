@@ -36,7 +36,7 @@ namespace TeenAgent {
 void TeenAgentEngine::rejectMessage() {
 	//random reject message:
 	uint i = _rnd.getRandomNumber(3);
-	//debug(0, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
+	debug(0, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
 	displayMessage(res->dseg.get_word(0x339e + 2 * i));
 }
 
@@ -54,7 +54,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		uint16 msg = READ_LE_UINT16(code + 1);
 		uint16 func = 6 + addr + READ_LE_UINT16(code + 4);
 		debug(0, "call %04x", func);
-		//debug(0, "trivial callback, showing message %s", (const char *)res->dseg.ptr(addr));
+		debug(0, "trivial callback, showing message %s", (const char *)res->dseg.ptr(addr));
 		switch (func) {
 		case 0xa055:
 			displayMessage(msg);

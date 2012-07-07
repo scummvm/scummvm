@@ -344,6 +344,7 @@ void Inventory::Item::render(Inventory *inventory, uint item_id, Graphics::Surfa
 void Inventory::render(Graphics::Surface *surface, int delta) {
 	if (!_active)
 		return;
+	debug(0, "Inventory::render()");
 
 	_background.render(surface);
 
@@ -351,11 +352,10 @@ void Inventory::render(Graphics::Surface *surface, int delta) {
 		for (int x = 0; x < 6; x++) {
 			int idx = x + 6 * y;
 			byte item = _inventory[idx];
-			if (item == 0)
-				continue;
-
-			//debug(0, "%d,%d -> %u", x0, y0, item);
-			_graphics[idx].render(this, item, surface, delta);
+			if (item != 0) {
+				debug(0, "\t(x, y): %d,%d -> item: %u", x, y, item);
+				_graphics[idx].render(this, item, surface, delta);
+			}
 		}
 	}
 }

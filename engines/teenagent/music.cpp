@@ -89,11 +89,11 @@ bool MusicPlayer::load(int id) {
 			_rows.push_back(row);
 		} else if ((cmd & 0xF0) == 0x50) {
 			byte sample = stream->readByte();
-			//debug(1, "%02x: set sample %02x", cmd, sample);
+			debug(1, "%02x: set sample %02x", cmd, sample);
 			row.channels[(cmd & 0x0F) - 1].sample = sample;
 		} else if ((cmd & 0xF0) == 0x40) {
 			byte vol = stream->readByte();
-			//debug(1, "%02x: set volume %02x -> %02x", cmd, row.channels[(cmd & 0x0F) - 1].volume, vol);
+			debug(1, "%02x: set volume %02x -> %02x", cmd, row.channels[(cmd & 0x0F) - 1].volume, vol);
 			//channel volume 0x40 * music volume 0x40 mixed with high bytes
 			row.channels[(cmd & 0x0F) - 1].volume = vol * 16;
 		} else {
@@ -124,13 +124,13 @@ void MusicPlayer::interrupt() {
 	for (int chn = 0; chn < 3; ++chn) {
 		setChannelVolume(chn, row->channels[chn].volume);
 
-		//debug(0, "row->channels[%d].volume = %d", chn, row->channels[chn].volume);
+		debug(0, "row->channels[%d].volume = %d", chn, row->channels[chn].volume);
 
 		byte sample = (row->channels[chn].sample);
 		if (row->channels[chn].note != 0 && sample != 0) {
 
-			//debug(0, "row->channels[%d].note = %d", chn, row->channels[chn].note);
-			//debug(0, "row->channels[%d].sample = %d", chn, row->channels[chn].sample);
+			debug(0, "row->channels[%d].note = %d", chn, row->channels[chn].note);
+			debug(0, "row->channels[%d].sample = %d", chn, row->channels[chn].sample);
 
 			byte note = row->channels[chn].note;
 			if (_samples[sample].size == 0) {
@@ -143,7 +143,7 @@ void MusicPlayer::interrupt() {
 		}
 	}
 
-	//debug(0, "------------------------------------------------");
+	debug(0, "------------------------------------------------");
 
 	++_currRow;
 }

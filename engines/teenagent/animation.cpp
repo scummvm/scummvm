@@ -52,7 +52,7 @@ Surface *Animation::currentFrame(int dt) {
 
 	if (data != NULL) {
 		uint32 frame = 3 * index;
-		//debug(0, "%u/%u", index, data_size / 3);
+		debug(0, "%u/%u", index, data_size / 3);
 		index += dt;
 
 		if (!loop && index >= data_size / 3) {
@@ -73,7 +73,7 @@ Surface *Animation::currentFrame(int dt) {
 			y = r->y = pos / 320;
 		}
 	} else {
-		//debug(0, "index %u", index);
+		debug(0, "index %u", index);
 		r = frames + index;
 		index += dt;
 		index %= frames_count;
@@ -107,7 +107,7 @@ void Animation::free() {
 }
 
 void Animation::load(Common::SeekableReadStream &s, Type type) {
-	//fixme: do not reload the same animation each time
+	//FIXME: do not reload the same animation each time
 	free();
 
 	if (s.size() <= 1) {
@@ -115,7 +115,7 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		return;
 	}
 
-	//uint16 pos = 0;
+	uint16 pos = 0;
 	int off = 0;
 	switch (type) {
 	case kTypeLan:
@@ -141,8 +141,8 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		frames = new Surface[frames_count];
 
 		s.skip(frames_count * 2 - 2); //sizes
-		/*pos = */s.readUint16LE();
-		//debug(0, "pos?: %04x", pos);
+		pos = s.readUint16LE();
+		debug(0, "pos?: %04x", pos);
 
 		for (uint16 i = 0; i < frames_count; ++i) {
 			frames[i].load(s, Surface::kTypeLan);
@@ -167,7 +167,7 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 				frames_count = data[idx];
 			data[idx + 1] = 0;
 			data[idx + 2] = 0;
-			//debug(0, "frame #%u", data[idx]);
+			debug(0, "frame #%u", data[idx]);
 		}
 
 		frames = new Surface[frames_count];
@@ -184,11 +184,11 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		uint16 offset[255];
 		for (byte i = 0; i < frames_count; ++i) {
 			offset[i] = s.readUint16LE();
-			//debug(0, "%u: %04x", i, offset[i]);
+			debug(0, "%u: %04x", i, offset[i]);
 		}
 		frames = new Surface[frames_count];
 		for (uint16 i = 0; i < frames_count; ++i) {
-			//debug(0, "%04x", offset[i]);
+			debug(0, "%04x", offset[i]);
 			s.seek(offset[i] + off);
 			frames[i].load(s, Surface::kTypeOns);
 		}

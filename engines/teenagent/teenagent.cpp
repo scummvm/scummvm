@@ -571,7 +571,7 @@ Common::Error TeenAgentEngine::run() {
 			if ((!scene_busy && inventory->processEvent(event)) || scene->processEvent(event))
 				continue;
 
-			//debug(0, "event");
+			debug(0, "event");
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) ||
@@ -590,8 +590,8 @@ Common::Error TeenAgentEngine::run() {
 				examine(event.mouse, current_object);
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				//if (current_object)
-				//	debug(0, "%d, %s", current_object->id, current_object->name.c_str());
+				if (current_object)
+					debug(0, "%d, %s", current_object->id, current_object->name.c_str());
 				if (scene->getId() < 0)
 					break;
 
@@ -799,7 +799,7 @@ void TeenAgentEngine::displayCredits() {
 			++lines;
 	event.dst.x = (320 - res->font7.render(NULL, 0, 0, event.message, 0xd1)) / 2;
 	event.timer = 11 * lines - event.dst.y + 22;
-	//debug(0, "credits = %s", event.message.c_str());
+	debug(0, "credits = %s", event.message.c_str());
 	scene->push(event);
 }
 
@@ -1020,7 +1020,7 @@ void TeenAgentEngine::playSoundNow(byte id) {
 
 	byte *data = (byte *)malloc(size);
 	res->sam_sam.read(id, data, size);
-	//debug(0, "playing %u samples...", size);
+	debug(0, "playing %u samples...", size);
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); //dispose is YES by default
