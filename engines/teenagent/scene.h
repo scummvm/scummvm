@@ -27,8 +27,8 @@
 #include "teenagent/objects.h"
 #include "teenagent/surface.h"
 #include "teenagent/surface_list.h"
+#include "teenagent/teenagent.h"
 
-#include "common/system.h"
 #include "common/array.h"
 #include "common/list.h"
 
@@ -117,7 +117,7 @@ struct SceneEvent {
 	}
 
 	void dump() const {
-		debug(0, "event[%d]: \"%s\"[%02x], slot: %d, animation: %u, timer: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
+		debugC(0, kDebugScene, "event[%d]: \"%s\"[%02x], slot: %d, animation: %u, timer: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
 		      (int)type, message.c_str(), color, slot, animation, timer, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
 		     );
 	}

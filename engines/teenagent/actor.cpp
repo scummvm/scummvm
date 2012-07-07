@@ -35,7 +35,7 @@ Actor::Actor(TeenAgentEngine *vm) : _vm(vm), head_index(0), idle_type(0) {}
 Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom, Common::RandomSource &rnd) {
 	if (index == 0) {
 		idle_type = rnd.getRandomNumber(2);
-		debug(0, "switched to idle animation %u", idle_type);
+		debugC(kDebugActor, "switched to idle animation %u", idle_type);
 	}
 
 	byte *frames_idle;
@@ -44,7 +44,7 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 		index += delta_frame;
 		if (*frames_idle == 0) {
 			idle_type = rnd.getRandomNumber(2);
-			debug(0, "switched to idle animation %u[loop]", idle_type);
+			debugC(kDebugActor, "switched to idle animation %u[loop]", idle_type);
 			index = 3; //put 4th frame (base 1) if idle animation loops
 		}
 	} while (*frames_idle == 0);
@@ -52,7 +52,7 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 	bool mirror = orientation == kActorLeft;
 	Surface *s = frames + *frames_idle - 1;
 
-	///\todo remove copy-paste here and below
+	//TODO: remove copy-paste here and below
 	int xp = position.x - s->w * zoom / 512 - s->x, yp = position.y - 62 * zoom / 256 - s->y; //hardcoded in original game
 	return s->render(surface, xp, yp, mirror, Common::Rect(), zoom);
 }

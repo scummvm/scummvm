@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/events.h"
 #include "common/algorithm.h"
 #include "common/ptr.h"
 #include "common/textconsole.h"
@@ -28,6 +29,7 @@
 #include "graphics/palette.h"
 
 #include "teenagent/scene.h"
+#include "teenagent/inventory.h"
 #include "teenagent/resources.h"
 #include "teenagent/surface.h"
 #include "teenagent/objects.h"
@@ -91,7 +93,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 	if (dst.x < 0 || dst.x > 319 || dst.y < 0 || dst.y > 199)
 		return false;
 
-	debug(1, "findPath %d,%d -> %d,%d", src.x, src.y, dst.x, dst.y);
+	debugC(1, kDebugScene, "findPath %d,%d -> %d,%d", src.x, src.y, dst.x, dst.y);
 	p.clear();
 	p.push_back(src);
 	p.push_back(dst);
@@ -110,7 +112,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 			break;
 
 		const Common::Point &p1 = *i, &p2 = *next;
-		debug(1, "%d,%d -> %d,%d", p1.x, p1.y, p2.x, p2.y);
+		debugC(1, kDebugScene, "%d,%d -> %d,%d", p1.x, p1.y, p2.x, p2.y);
 
 		Common::List<uint>::iterator wi;
 		for (wi = boxes.begin(); wi != boxes.end(); ++wi) {
@@ -121,14 +123,14 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 			}
 
 			w.dump(1);
-			debug(1, "%u: intersection mask 0x%04x, searching hints", *wi, mask);
+			debugC(1, kDebugScene, "%u: intersection mask 0x%04x, searching hints", *wi, mask);
 			int dx = p2.x - p1.x, dy = p2.y - p1.y;
 			if (dx >= 0) {
 				if ((mask & 8) != 0 && w.side_hint[3] != 0) {
-					debug(1, "hint left: %u", w.side_hint[3]);
+					debugC(1, kDebugScene, "hint left: %u", w.side_hint[3]);
 					Common::Point w1, w2;
 					w.rect.side(w1, w2, w.side_hint[3], p1);
-					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
+					debugC(1, kDebugScene, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					if (mask & 2)
 						p.insert(next, w2);
@@ -137,10 +139,10 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 				}
 			} else {
 				if ((mask & 2) != 0 && w.side_hint[1] != 0) {
-					debug(1, "hint right: %u", w.side_hint[1]);
+					debugC(1, kDebugScene, "hint right: %u", w.side_hint[1]);
 					Common::Point w1, w2;
 					w.rect.side(w1, w2, w.side_hint[1], p1);
-					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
+					debugC(1, kDebugScene, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					if (mask & 8)
 						p.insert(next, w2);
@@ -151,10 +153,10 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 
 			if (dy >= 0) {
 				if ((mask & 1) != 0 && w.side_hint[0] != 0) {
-					debug(1, "hint top: %u", w.side_hint[0]);
+					debugC(1, kDebugScene, "hint top: %u", w.side_hint[0]);
 					Common::Point w1, w2;
 					w.rect.side(w1, w2, w.side_hint[0], p1);
-					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
+					debugC(1, kDebugScene, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					if (mask & 4)
 						p.insert(next, w2);
@@ -163,10 +165,10 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 				}
 			} else {
 				if ((mask & 4) != 0 && w.side_hint[2] != 0) {
-					debug(1, "hint bottom: %u", w.side_hint[2]);
+					debugC(1, kDebugScene, "hint bottom: %u", w.side_hint[2]);
 					Common::Point w1, w2;
 					w.rect.side(w1, w2, w.side_hint[2], p1);
-					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
+					debugC(1, kDebugScene, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					if (mask & 1)
 						p.insert(next, w2);
@@ -184,13 +186,13 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 
 void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 	Common::Point point(_point);
-	debug(0, "moveTo(%d, %d, %u)", point.x, point.y, orient);
+	debugC(0, kDebugScene, "moveTo(%d, %d, %u)", point.x, point.y, orient);
 	const Common::Array<Walkbox> &scene_walkboxes = walkboxes[_id - 1];
 
 	for (byte i = 0; i < scene_walkboxes.size(); ++i) {
 		const Walkbox &w = scene_walkboxes[i];
 		if (w.rect.in(point)) {
-			debug(0, "bumped into walkbox %u", i);
+			debugC(0, kDebugScene, "bumped into walkbox %u", i);
 			w.dump();
 			byte o = w.orientation;
 			switch (o) {
@@ -252,11 +254,11 @@ void Scene::loadObjectData() {
 			scene_objects.push_back(obj);
 			scene_table += 2;
 		}
-		debug(0, "scene[%u] has %u object(s)", i + 1, scene_objects.size());
+		debugC(0, kDebugScene, "scene[%u] has %u object(s)", i + 1, scene_objects.size());
 
 		byte *walkboxes_base = _vm->res->dseg.ptr(READ_LE_UINT16(_vm->res->dseg.ptr(0x6746 + i * 2)));
 		byte walkboxes_n = *walkboxes_base++;
-		debug(0, "scene[%u] has %u walkboxes", i + 1, walkboxes_n);
+		debugC(0, kDebugScene, "scene[%u] has %u walkboxes", i + 1, walkboxes_n);
 
 		Common::Array<Walkbox> &scene_walkboxes = walkboxes[i];
 		for (byte j = 0; j < walkboxes_n; ++j) {
@@ -280,7 +282,7 @@ void Scene::loadObjectData() {
 			fade_table += 9;
 			scene_fades.push_back(fade);
 		}
-		debug(0, "scene[%u] has %u fadeboxes", i + 1, scene_fades.size());
+		debugC(0, kDebugScene, "scene[%u] has %u fadeboxes", i + 1, scene_fades.size());
 	}
 }
 
@@ -307,16 +309,16 @@ byte *Scene::getLans(int id) {
 }
 
 void Scene::loadOns() {
-	debug(0, "loading ons animation");
+	debugC(0, kDebugScene, "loading ons animation");
 
 	uint16 addr = _vm->res->dseg.get_word(0xb4f5 + (_id - 1) * 2);
-	debug(0, "ons index: %04x", addr);
+	debugC(0, kDebugScene, "ons index: %04x", addr);
 
 	ons_count = 0;
 	byte b;
 	byte on_id[16];
 	while ((b = _vm->res->dseg.get_byte(addr)) != 0xff) {
-		debug(0, "on: %04x = %02x", addr, b);
+		debugC(0, kDebugScene, "on: %04x = %02x", addr, b);
 		++addr;
 		if (b == 0)
 			continue;
@@ -339,7 +341,7 @@ void Scene::loadOns() {
 }
 
 void Scene::loadLans() {
-	debug(0, "loading lans animation");
+	debugC(0, kDebugScene, "loading lans animation");
 	//load lan000
 
 	for (byte i = 0; i < 4; ++i) {
@@ -348,7 +350,7 @@ void Scene::loadLans() {
 		uint16 bx = 0xd89e + (_id - 1) * 4 + i;
 		byte bxv = _vm->res->dseg.get_byte(bx);
 		uint16 res_id = 4 * (_id - 1) + i + 1;
-		debug(0, "lan[%u]@%04x = %02x, resource id: %u", i, bx, bxv, res_id);
+		debugC(0, kDebugScene, "lan[%u]@%04x = %02x, resource id: %u", i, bx, bxv, res_id);
 		if (bxv == 0)
 			continue;
 
@@ -362,7 +364,7 @@ void Scene::loadLans() {
 }
 
 void Scene::init(int id, const Common::Point &pos) {
-	debug(0, "init(%d)", id);
+	debugC(0, kDebugScene, "init(%d)", id);
 	_id = id;
 	on_enabled = true; //reset on-rendering flag on loading.
 	sounds.clear();
@@ -418,7 +420,7 @@ void Scene::init(int id, const Common::Point &pos) {
 }
 
 void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore) {
-	debug(0, "playAnimation(%u, %u, loop:%s, paused:%s, ignore:%s)", idx, id, loop ? "true" : "false", paused ? "true" : "false", ignore ? "true" : "false");
+	debugC(0, kDebugScene, "playAnimation(%u, %u, loop:%s, paused:%s, ignore:%s)", idx, id, loop ? "true" : "false", paused ? "true" : "false", ignore ? "true" : "false");
 	assert(idx < 4);
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->res->loadLan(id + 1));
 	if (!s)
@@ -431,7 +433,7 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore
 }
 
 void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
-	debug(0, "playActorAnimation(%u, loop:%s, ignore:%s)", id, loop ? "true" : "false", ignore ? "true" : "false");
+	debugC(0, kDebugScene, "playActorAnimation(%u, loop:%s, ignore:%s)", id, loop ? "true" : "false", ignore ? "true" : "false");
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->res->loadLan(id + 1));
 	if (!s)
 		error("playing animation %u failed", id);
@@ -457,12 +459,12 @@ byte Scene::peekFlagEvent(uint16 addr) const {
 }
 
 void Scene::push(const SceneEvent &event) {
-	debug(0, "push");
+	debugC(0, kDebugScene, "push");
 	//event.dump();
 	if (event.type == SceneEvent::kWalk && !events.empty()) {
 		SceneEvent &prev = events.back();
 		if (prev.type == SceneEvent::kWalk && prev.color == event.color) {
-			debug(0, "fixing double-move [skipping event!]");
+			debugC(0, kDebugScene, "fixing double-move [skipping event!]");
 			if ((event.color & 2) != 0) { //relative move
 				prev.dst.x += event.dst.x;
 				prev.dst.y += event.dst.y;
@@ -525,7 +527,7 @@ bool Scene::processEvent(const Common::Event &event) {
 				uint feature = event.kbd.keycode - '1';
 				if (feature < DebugFeatures::kMax) {
 					debug_features.feature[feature] = !debug_features.feature[feature];
-					debug(0, "switched feature %u %s", feature, debug_features.feature[feature] ? "on" : "off");
+					debugC(0, kDebugScene, "switched feature %u %s", feature, debug_features.feature[feature] ? "on" : "off");
 				}
 			}
 			break;
@@ -546,12 +548,12 @@ struct ZOrderCmp {
 };
 
 int Scene::lookupZoom(uint y) const {
+	debugC(2, kDebugScene, "lookupZoom(%d)", y);
 	for (byte *zoom_table = _vm->res->dseg.ptr(_vm->res->dseg.get_word(0x70f4 + (_id - 1) * 2));
 	        zoom_table[0] != 0xff && zoom_table[1] != 0xff;
 	        zoom_table += 2) {
-		debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
+		debugC(2, kDebugScene, "\t%d %d->%d", y, zoom_table[0], zoom_table[1]);
 		if (y <= zoom_table[0]) {
-			debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
 			return 256u * (100 - zoom_table[1]) / 100;
 		}
 	}
@@ -605,7 +607,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		switch (current_event.type) {
 		case SceneEvent::kCredits: {
 			_vm->_system->fillScreen(0);
-			///\todo: optimize me
+			//TODO: optimize me
 			Graphics::Surface *surface = _vm->_system->lockScreen();
 			_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y -= game_delta, current_event.message, current_event.color);
 			_vm->_system->unlockScreen();
@@ -670,7 +672,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			} else {
 				a = animation + i;
 				if (!custom_animation[i].empty()) {
-					debug(0, "custom animation ended, restart animation in the same slot.");
+					debugC(0, kDebugScene, "custom animation ended, restart animation in the same slot.");
 					custom_animation[i].free();
 					a->restart();
 				}
@@ -684,7 +686,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 				}
 				int index = a->currentIndex();
 				if (index == current_event.animation) {
-					debug(0, "kWaitLanAnimationFrame(%d, %d) complete", current_event.slot, current_event.animation);
+					debugC(0, kDebugScene, "kWaitLanAnimationFrame(%d, %d) complete", current_event.slot, current_event.animation);
 					restart |= nextEvent();
 				}
 			}
@@ -814,7 +816,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			bool visible = true;
 			if (message_first_frame != 0 && message_animation != NULL) {
 				int index = message_animation->currentIndex() + 1;
-				debug(0, "message: %s first: %u index: %u", message.c_str(), message_first_frame, index);
+				debugC(0, kDebugScene, "message: %s first: %u index: %u", message.c_str(), message_first_frame, index);
 				if (index < message_first_frame)
 					visible = false;
 				if (index > message_last_frame) {
@@ -835,7 +837,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 					_vm->inventory->activate(false);
 				_vm->processCallback(callback);
 			}
-			debug(0, "callback timer = %u", callback_timer);
+			debugC(0, kDebugScene, "callback timer = %u", callback_timer);
 		}
 
 		//if (!current_event.empty())
@@ -873,7 +875,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		}
 
 		if (!restart && current_event.type == SceneEvent::kWaitForAnimation && !got_any_animation) {
-			debug(0, "no animations, nextevent");
+			debugC(0, kDebugScene, "no animations, nextevent");
 			nextEvent();
 			restart = true;
 		}
@@ -887,7 +889,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 	for (Sounds::iterator i = sounds.begin(); i != sounds.end();) {
 		Sound &sound = *i;
 		if (sound.delay == 0) {
-			debug(1, "sound %u started", sound.id);
+			debugC(1, kDebugScene, "sound %u started", sound.id);
 			_vm->playSoundNow(sound.id);
 			i = sounds.erase(i);
 		} else {
@@ -901,7 +903,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 
 bool Scene::processEventQueue() {
 	while (!events.empty() && current_event.empty()) {
-		debug(0, "processing next event");
+		debugC(0, kDebugScene, "processing next event");
 		current_event = events.front();
 		events.pop_front();
 		switch (current_event.type) {
@@ -911,11 +913,11 @@ bool Scene::processEventQueue() {
 			if (on_id != 0) {
 				--on_id;
 				byte *ptr = getOns(current_event.scene == 0 ? _id : current_event.scene);
-				debug(0, "on[%u] = %02x", on_id, current_event.color);
+				debugC(0, kDebugScene, "on[%u] = %02x", on_id, current_event.color);
 				ptr[on_id] = current_event.color;
 			} else {
 				on_enabled = current_event.color != 0;
-				debug(0, "%s on rendering", on_enabled ? "enabling" : "disabling");
+				debugC(0, kDebugScene, "%s on rendering", on_enabled ? "enabling" : "disabling");
 			}
 			loadOns();
 			current_event.clear();
@@ -924,7 +926,7 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kSetLan: {
 			if (current_event.lan != 0) {
-				debug(0, "lan[%u] = %02x", current_event.lan - 1, current_event.color);
+				debugC(0, kDebugScene, "lan[%u] = %02x", current_event.lan - 1, current_event.color);
 				byte *ptr = getLans(current_event.scene == 0 ? _id : current_event.scene);
 				ptr[current_event.lan - 1] = current_event.color;
 			}
@@ -981,7 +983,7 @@ bool Scene::processEventQueue() {
 					//  message_animation = animation + current_event.slot;
 				} else
 					message_animation = &actor_animation;
-				debug(0, "async message %d-%d (slot %u)", message_first_frame, message_last_frame, current_event.slot);
+				debugC(0, kDebugScene, "async message %d-%d (slot %u)", message_first_frame, message_last_frame, current_event.slot);
 			} else {
 				message_timer = current_event.timer ? current_event.timer * 110 : messageDuration(message);
 				message_first_frame = message_last_frame = 0;
@@ -1018,7 +1020,7 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kPlayAnimation: {
 			byte slot = current_event.slot & 7; //0 - mark's
 			if (current_event.animation != 0) {
-				debug(0, "playing animation %u in slot %u(%02x)", current_event.animation, slot, current_event.slot);
+				debugC(0, kDebugScene, "playing animation %u in slot %u(%02x)", current_event.animation, slot, current_event.slot);
 				if (slot != 0) {
 					--slot;
 					assert(slot < 4);
@@ -1028,7 +1030,7 @@ bool Scene::processEventQueue() {
 			} else {
 				if (slot != 0) {
 					--slot;
-					debug(0, "cancelling animation in slot %u", slot);
+					debugC(0, kDebugScene, "cancelling animation in slot %u", slot);
 					assert(slot < 4);
 					custom_animation[slot].free();
 				} else
@@ -1042,7 +1044,7 @@ bool Scene::processEventQueue() {
 			byte slot = current_event.slot & 7; //0 - mark's
 			if (slot != 0) {
 				--slot;
-				debug(1, "pause animation in slot %u", slot);
+				debugC(1, kDebugScene, "pause animation in slot %u", slot);
 				custom_animation[slot].paused = (current_event.slot & 0x80) != 0;
 			} else {
 				actor_talking = false;
@@ -1059,26 +1061,26 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kPlayActorAnimation:
-			debug(0, "playing actor animation %u", current_event.animation);
+			debugC(0, kDebugScene, "playing actor animation %u", current_event.animation);
 			playActorAnimation(current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x20) != 0);
 			current_event.clear();
 			break;
 
 		case SceneEvent::kPlayMusic:
-			debug(0, "setting music %u", current_event.music);
+			debugC(0, kDebugScene, "setting music %u", current_event.music);
 			_vm->setMusic(current_event.music);
 			_vm->res->dseg.set_byte(0xDB90, current_event.music);
 			current_event.clear();
 			break;
 
 		case SceneEvent::kPlaySound:
-			debug(0, "playing sound %u, delay: %u", current_event.sound, current_event.color);
+			debugC(0, kDebugScene, "playing sound %u, delay: %u", current_event.sound, current_event.color);
 			sounds.push_back(Sound(current_event.sound, current_event.color));
 			current_event.clear();
 			break;
 
 		case SceneEvent::kEnableObject: {
-			debug(0, "%s object #%u", current_event.color ? "enabling" : "disabling", current_event.object - 1);
+			debugC(0, kDebugScene, "%s object #%u", current_event.color ? "enabling" : "disabling", current_event.object - 1);
 			Object *obj = getObject(current_event.object - 1, current_event.scene == 0 ? _id : current_event.scene);
 			obj->enabled = current_event.color;
 			obj->save();
@@ -1092,17 +1094,17 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kWaitForAnimation:
-			debug(0, "waiting for the animation");
+			debugC(0, kDebugScene, "waiting for the animation");
 			break;
 
 		case SceneEvent::kWaitLanAnimationFrame:
-			debug(0, "waiting for the frame %d in slot %d", current_event.animation, current_event.slot);
+			debugC(0, kDebugScene, "waiting for the frame %d in slot %d", current_event.animation, current_event.slot);
 			break;
 
 		case SceneEvent::kTimer:
 			callback = current_event.callback;
 			callback_timer = current_event.timer;
-			debug(0, "triggering callback %04x in %u frames", callback, callback_timer);
+			debugC(0, kDebugScene, "triggering callback %04x in %u frames", callback, callback_timer);
 			current_event.clear();
 			break;
 
@@ -1132,20 +1134,20 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kWait:
-			debug(0, "wait %u", current_event.timer);
+			debugC(0, kDebugScene, "wait %u", current_event.timer);
 			break;
 
 		case SceneEvent::kCredits:
-			debug(0, "showing credits");
+			debugC(0, kDebugScene, "showing credits");
 			break;
 
 		case SceneEvent::kQuit:
-			debug(0, "quit!");
+			debugC(0, kDebugScene, "quit!");
 			_vm->quitGame();
 			break;
 
 		case SceneEvent::kSetFlag:
-			debug(0, "async set_flag(%04x, %d)", current_event.callback, current_event.color);
+			debugC(0, kDebugScene, "async set_flag(%04x, %d)", current_event.callback, current_event.color);
 			_vm->res->dseg.set_byte(current_event.callback, current_event.color);
 			current_event.clear();
 			break;
@@ -1162,7 +1164,7 @@ bool Scene::processEventQueue() {
 }
 
 void Scene::setPalette(unsigned mul) {
-	debug(0, "setPalette(%u)", mul);
+	debugC(0, kDebugScene, "setPalette(%u)", mul);
 	byte p[3 * 256];
 
 	for (int i = 0; i < 3 * 256; ++i) {
@@ -1224,13 +1226,13 @@ uint Scene::messageDuration(const Common::String &str) {
 	uint delay_delta = 1 + (255 - speed) * 99 / 255;
 
 	uint delay = 60 + (total_width * delay_delta) / 8;
-	debug(0, "delay = %u, delta: %u", delay, delay_delta);
+	debugC(0, kDebugScene, "delay = %u, delta: %u", delay, delay_delta);
 	return delay * 10;
 }
 
 void Scene::displayMessage(const Common::String &str, byte color, const Common::Point &pos) {
 	//assert(!str.empty());
-	debug(0, "displayMessage: %s", str.c_str());
+	debugC(0, kDebugScene, "displayMessage: %s", str.c_str());
 	message = str;
 	message_pos = (pos.x | pos.y) ? pos : messagePosition(str, position);
 	message_color = color;

@@ -21,6 +21,8 @@
 
 #include "teenagent/surface.h"
 #include "teenagent/pack.h"
+#include "teenagent/teenagent.h"
+
 #include "common/stream.h"
 #include "common/debug.h"
 
@@ -34,7 +36,7 @@ Surface::~Surface() {
 }
 
 void Surface::load(Common::SeekableReadStream &stream, Type type) {
-	debug(0, "load()");
+	debugC(0, kDebugSurface, "load()");
 	free();
 
 	x = y = 0;
@@ -48,16 +50,16 @@ void Surface::load(Common::SeekableReadStream &stream, Type type) {
 		y = pos / 320;
 	}
 
-	debug(0, "declared info: %ux%u (%04xx%04x) -> %u,%u", w_, h_, w_, h_, x, y);
+	debugC(0, kDebugSurface, "declared info: %ux%u (%04xx%04x) -> %u,%u", w_, h_, w_, h_, x, y);
 	if (stream.eos() || w_ == 0)
 		return;
 
 	if (w_ * h_ > stream.size()) {
-		debug(0, "invalid surface %ux%u -> %u,%u", w_, h_, x, y);
+		debugC(0, kDebugSurface, "invalid surface %ux%u -> %u,%u", w_, h_, x, y);
 		return;
 	}
 
-	debug(0, "creating surface %ux%u -> %u,%u", w_, h_, x, y);
+	debugC(0, kDebugSurface, "creating surface %ux%u -> %u,%u", w_, h_, x, y);
 	create(w_, h_, Graphics::PixelFormat::createFormatCLUT8());
 
 	stream.read(pixels, w_ * h_);

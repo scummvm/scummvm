@@ -20,8 +20,10 @@
  */
 
 #include "teenagent/font.h"
+
 #include "teenagent/pack.h"
-#include "common/debug.h"
+#include "teenagent/teenagent.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -43,13 +45,13 @@ void Font::load(const Pack &pack, int id) {
 
 	data = new byte[s->size()];
 	s->read(data, s->size());
-	debug(0, "font size: %d", s->size());
+	debugC(0, kDebugFont, "font size: %d", s->size());
 }
 
 uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) {
 	unsigned idx = (unsigned char)c;
 	if (idx < 0x20 || idx >= 0x81) {
-		debug(0, "unhandled char 0x%02x", idx);
+		debugC(0, kDebugFont, "unhandled char 0x%02x", idx);
 		return 0;
 	}
 	idx -= 0x20;
@@ -68,7 +70,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 		i0 = -y;
 		y = 0;
 	}
-	debug(0, "char %c, width: %dx%d", c, w, h);
+	debugC(0, kDebugFont, "char %c, width: %dx%d", c, w, h);
 	glyph += 2;
 	glyph += i0 * w + j0;
 	byte *dst = (byte *)surface->getBasePtr(x, y);
@@ -109,7 +111,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 		do {
 			j = find_in_str(str, '\n', i);
 			Common::String line(str.c_str() + i, j - i);
-			debug(0, "line: %s", line.c_str());
+			debugC(0, kDebugFont, "line: %s", line.c_str());
 
 			if (y + (int)height >= 0) {
 				uint w = render(NULL, 0, 0, line, false);

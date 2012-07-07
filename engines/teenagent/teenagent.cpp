@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -39,20 +40,33 @@
 #include "graphics/thumbnail.h"
 
 #include "teenagent/console.h"
+#include "teenagent/inventory.h"
 #include "teenagent/music.h"
 #include "teenagent/objects.h"
 #include "teenagent/pack.h"
+#include "teenagent/resources.h"
 #include "teenagent/scene.h"
 #include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
-	: Engine(system), action(kActionNone), _gameDescription(gd),
-	  _rnd("teenagent") {
+	: Engine(system), action(kActionNone), _gameDescription(gd), _rnd("teenagent") {
+	DebugMan.addDebugChannel(kDebugActor, "Actor", "Enable Actor Debug");
+	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Enable Animation Debug");
+	DebugMan.addDebugChannel(kDebugCallbacks, "Callbacks", "Enable Callbacks Debug");
+	DebugMan.addDebugChannel(kDebugDialog, "Dialog", "Enable Dialog Debug");
+	DebugMan.addDebugChannel(kDebugFont, "Font", "Enable Font Debug");
+	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Enable Inventory Debug");
+	DebugMan.addDebugChannel(kDebugMusic, "Music", "Enable Music Debug");
+	DebugMan.addDebugChannel(kDebugObject, "Object", "Enable Object Debug");
+	DebugMan.addDebugChannel(kDebugPack, "Pack", "Enable Pack Debug");
+	DebugMan.addDebugChannel(kDebugScene, "Scene", "Enable Scene Debug");
+	DebugMan.addDebugChannel(kDebugSurface, "Surface", "Enable Surface Debug");
+
 	music = new MusicPlayer(this);
 	res = new Resources();
-		  
+
 	console = 0;
 }
 
@@ -62,6 +76,7 @@ TeenAgentEngine::~TeenAgentEngine() {
 	delete res;
 
 	delete console;
+	DebugMan.clearAllDebugChannels();
 }
 
 bool TeenAgentEngine::trySelectedObject() {
@@ -69,7 +84,7 @@ bool TeenAgentEngine::trySelectedObject() {
 	if (inv == NULL)
 		return false;
 
-	debug(0, "checking active object %u on %u", inv->id, dst_object->id);
+	debugC(0, kDebugObject, "checking active object %u on %u", inv->id, dst_object->id);
 
 	//mouse time challenge hack:
 	if ((res->dseg.get_byte(0) == 1 && inv->id == 49 && dst_object->id == 5) ||
@@ -83,12 +98,12 @@ bool TeenAgentEngine::trySelectedObject() {
 	for (uint i = 0; i < hotspots.size(); ++i) {
 		const UseHotspot &spot = hotspots[i];
 		if (spot.inventory_id == inv->id && dst_object->id == spot.object_id) {
-			debug(0, "use object on hotspot!");
+			debugC(0, kDebugObject, "use object on hotspot!");
 			spot.dump();
 			if (spot.actor_x != 0xffff && spot.actor_y != 0xffff)
 				moveTo(spot.actor_x, spot.actor_y, spot.orientation);
 			if (!processCallback(spot.callback))
-				debug(0, "fixme! display proper description");
+				debugC(0, kDebugObject, "FIXME: display proper description");
 			inventory->resetSelectedObject();
 			return true;
 		}
@@ -157,14 +172,14 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 
 	if (object != NULL) {
 		Common::Point dst = object->actor_rect.center();
-		debug(0, "click %d, %d, object %d, %d", point.x, point.y, dst.x, dst.y);
+		debugC(0, kDebugObject, "click %d, %d, object %d, %d", point.x, point.y, dst.x, dst.y);
 		action = kActionExamine;
 		if (object->actor_rect.valid())
 			scene->moveTo(dst, object->actor_orientation, true); //validate examine message. Original engine does not let you into walkboxes
 		dst_object = object;
 	} else if (!scene_busy) {
 		//do not reset anything while scene is busy, but allow interrupts while walking.
-		debug(0, "click %d, %d", point.x, point.y);
+		debugC(0, kDebugObject, "click %d, %d", point.x, point.y);
 		action = kActionNone;
 		scene->moveTo(point, 0, true);
 		dst_object = NULL;
@@ -571,7 +586,7 @@ Common::Error TeenAgentEngine::run() {
 			if ((!scene_busy && inventory->processEvent(event)) || scene->processEvent(event))
 				continue;
 
-			debug(0, "event");
+			debug(5, "event");
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) ||
@@ -581,7 +596,7 @@ Common::Error TeenAgentEngine::run() {
 					openMainMenuDialog();
 				} if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
 					_mark_delay = _mark_delay == 80 ? 40 : 80;
-					debug(0, "mark_delay = %u", _mark_delay);
+					debug(5, "mark_delay = %u", _mark_delay);
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -591,7 +606,7 @@ Common::Error TeenAgentEngine::run() {
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				if (current_object)
-					debug(0, "%d, %s", current_object->id, current_object->name.c_str());
+					debugC(0, kDebugObject, "%d, %s", current_object->id, current_object->name.c_str());
 				if (scene->getId() < 0)
 					break;
 
@@ -799,7 +814,7 @@ void TeenAgentEngine::displayCredits() {
 			++lines;
 	event.dst.x = (320 - res->font7.render(NULL, 0, 0, event.message, 0xd1)) / 2;
 	event.timer = 11 * lines - event.dst.y + 22;
-	debug(0, "credits = %s", event.message.c_str());
+	debug(2, "credits = %s", event.message.c_str());
 	scene->push(event);
 }
 
@@ -1020,7 +1035,7 @@ void TeenAgentEngine::playSoundNow(byte id) {
 
 	byte *data = (byte *)malloc(size);
 	res->sam_sam.read(id, data, size);
-	debug(0, "playing %u samples...", size);
+	debug(3, "playing %u samples...", size);
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); //dispose is YES by default
@@ -1028,7 +1043,7 @@ void TeenAgentEngine::playSoundNow(byte id) {
 
 
 void TeenAgentEngine::setMusic(byte id) {
-	debug(0, "starting music %u", id);
+	debugC(0, kDebugMusic, "starting music %u", id);
 
 	if (id != 1) //intro music
 		*res->dseg.ptr(0xDB90) = id;
@@ -1036,11 +1051,11 @@ void TeenAgentEngine::setMusic(byte id) {
 	if (_gameDescription->flags & ADGF_CD) {
 		byte track2cd[] = {7, 2, 0, 9, 3, 6, 8, 10, 4, 5, 11};
 		if (id == 0 || id > 11 || track2cd[id - 1] == 0) {
-			debug(0, "no cd music for id %u", id);
+			debugC(0, kDebugMusic, "no cd music for id %u", id);
 			return;
 		}
 		byte track = track2cd[id - 1];
-		debug(0, "playing cd track %u", track);
+		debugC(0, kDebugMusic, "playing cd track %u", track);
 		_system->getAudioCDManager()->play(track, -1, 0, 0);
 	} else if (music->load(id))
 		music->start();

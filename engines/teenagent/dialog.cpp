@@ -27,7 +27,7 @@
 namespace TeenAgent {
 
 void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
-	debug(0, "Dialog::show(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
+	debugC(0, kDebugDialog, "Dialog::show(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	int n = 0;
 	Common::String message;
 	byte color = color1;
@@ -48,19 +48,19 @@ void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animati
 
 	while (n < 4) {
 		byte c = vm->res->eseg.get_byte(addr++);
-		debug(0, "%02x: %c", c, c > 0x20? c: '.');
+		debugC(1, kDebugDialog, "%02x: %c", c, c > 0x20? c: '.');
 
 		switch (c) {
 		case 0:
 			++n;
 			switch (n) {
 			case 1:
-				debug(0, "new line\n");
+				debugC(1, kDebugDialog, "new line\n");
 				if (!message.empty())
 					message += '\n';
 				break;
 			case 2:
-				debug(0, "displaymessage %s", message.c_str());
+				debugC(1, kDebugDialog, "displaymessage %s", message.c_str());
 				if (color == color2) {
 					//pause animation in other slot
 					SceneEvent e1(SceneEvent::kPauseAnimation);
@@ -99,7 +99,7 @@ void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animati
 
 			case 3:
 				color = (color == color1) ? color2 : color1;
-				debug(0, "changing color to %02x", color);
+				debugC(1, kDebugDialog, "changing color to %02x", color);
 				break;
 			}
 			break;
@@ -120,7 +120,7 @@ void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animati
 }
 
 uint16 Dialog::pop(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
-	debug(0, "Dialog::pop(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
+	debugC(0, kDebugDialog, "Dialog::pop(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	uint16 next;
 	do {
 		next = vm->res->dseg.get_word(addr);

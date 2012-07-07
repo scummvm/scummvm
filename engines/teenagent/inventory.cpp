@@ -24,6 +24,7 @@
 #include "common/textconsole.h"
 
 #include "teenagent/inventory.h"
+
 #include "teenagent/resources.h"
 #include "teenagent/objects.h"
 #include "teenagent/teenagent.h"
@@ -40,13 +41,13 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	Common::ScopedPtr<Common::SeekableReadStream> s(varia.getStream(3));
 	if (!s)
 		error("no inventory background");
-	debug(0, "loading inventory background...");
+	debugC(0, kDebugInventory, "loading inventory background...");
 	_background.load(*s, Surface::kTypeOns);
 
 	uint32 items_size = varia.getSize(4);
 	if (items_size == 0)
 		error("invalid inventory items size");
-	debug(0, "loading items, size: %u", items_size);
+	debugC(0, kDebugInventory, "loading items, size: %u", items_size);
 	_items = new byte[items_size];
 	varia.read(4, _items, items_size);
 
@@ -93,7 +94,7 @@ bool Inventory::has(byte item) const {
 }
 
 void Inventory::remove(byte item) {
-	debug(0, "removing %u from inventory", item);
+	debugC(0, kDebugInventory, "removing %u from inventory", item);
 	int i;
 	for (i = 0; i < 24; ++i) {
 		if (_inventory[i] == item) {
@@ -109,7 +110,7 @@ void Inventory::remove(byte item) {
 }
 
 void Inventory::clear() {
-	debug(0, "clearing inventory");
+	debugC(0, kDebugInventory, "clearing inventory");
 	for (int i = 0; i < 24; ++i) {
 		_inventory[i] = 0;
 		_graphics[i].free();
@@ -128,7 +129,7 @@ void Inventory::reload() {
 void Inventory::add(byte item) {
 	if (has(item))
 		return;
-	debug(0, "adding %u to inventory", item);
+	debugC(0, kDebugInventory, "adding %u to inventory", item);
 	for (int i = 0; i < 24; ++i) {
 		if (_inventory[i] == 0) {
 			_inventory[i] = item;
@@ -191,7 +192,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 		if (_hoveredObj == NULL)
 			return true;
 
-		debug(0, "lclick on %u:%s", _hoveredObj->id, _hoveredObj->name.c_str());
+		debugC(0, kDebugInventory, "lclick on %u:%s", _hoveredObj->id, _hoveredObj->name.c_str());
 
 		if (_selectedObj == NULL) {
 			if (tryObjectCallback(_hoveredObj))
@@ -207,18 +208,15 @@ bool Inventory::processEvent(const Common::Event &event) {
 		if (id1 == id2)
 			return true;
 
-		debug(0, "combine(%u, %u)!", id1, id2);
+		debugC(0, kDebugInventory, "combine(%u, %u)!", id1, id2);
 		byte *table = _vm->res->dseg.ptr(0xC335);
 		while (table[0] != 0 && table[1] != 0) {
-			if (
-			    (id1 == table[0] && id2 == table[1]) ||
-			    (id2 == table[0] && id1 == table[1])
-			) {
+			if ((id1 == table[0] && id2 == table[1]) || (id2 == table[0] && id1 == table[1])) {
 				byte new_obj = table[2];
 				if (new_obj != 0) {
 					remove(id1);
 					remove(id2);
-					debug(0, "adding object %u", new_obj);
+					debugC(0, kDebugInventory, "adding object %u", new_obj);
 					add(new_obj);
 					_vm->playSoundNow(69);
 				}
@@ -241,14 +239,14 @@ bool Inventory::processEvent(const Common::Event &event) {
 			return false;
 
 		if (_hoveredObj != NULL) {
-			debug(0, "rclick object %u:%s", _hoveredObj->id, _hoveredObj->name.c_str());
+			debugC(0, kDebugInventory, "rclick object %u:%s", _hoveredObj->id, _hoveredObj->name.c_str());
 			if (_hoveredObj->id != 51 && tryObjectCallback(_hoveredObj)) //do not process callback for banknote on r-click
 				return true;
 		}
 
 		_selectedObj = _hoveredObj;
 		if (_selectedObj)
-			debug(0, "selected object %s", _selectedObj->name.c_str());
+			debugC(0, kDebugInventory, "selected object %s", _selectedObj->name.c_str());
 		return true;
 
 	case Common::EVENT_KEYDOWN:
@@ -271,7 +269,6 @@ bool Inventory::processEvent(const Common::Event &event) {
 	}
 }
 
-
 void Inventory::Item::free() {
 	_animation.free();
 	_surface.free();
@@ -292,13 +289,13 @@ void Inventory::Item::load(Inventory *inventory, uint item_id) {
 	InventoryObject *obj = &inventory->_objects[item_id];
 	if (obj->animated) {
 		if (_animation.empty()) {
-			debug(0, "loading item %d from offset %x", obj->id, inventory->_offset[obj->id - 1]);
+			debugC(0, kDebugInventory, "loading item %d from offset %x", obj->id, inventory->_offset[obj->id - 1]);
 			Common::MemoryReadStream s(inventory->_items + inventory->_offset[obj->id - 1], inventory->_offset[obj->id] - inventory->_offset[obj->id - 1]);
 			_animation.load(s, Animation::kTypeInventory);
 		}
 	} else {
 		if (_surface.empty()) {
-			debug(0, "loading item %d from offset %x", obj->id, inventory->_offset[obj->id - 1]);
+			debugC(0, kDebugInventory, "loading item %d from offset %x", obj->id, inventory->_offset[obj->id - 1]);
 			Common::MemoryReadStream s(inventory->_items + inventory->_offset[obj->id - 1], inventory->_offset[obj->id] - inventory->_offset[obj->id - 1]);
 			_surface.load(s, Surface::kTypeOns);
 		}
@@ -344,7 +341,7 @@ void Inventory::Item::render(Inventory *inventory, uint item_id, Graphics::Surfa
 void Inventory::render(Graphics::Surface *surface, int delta) {
 	if (!_active)
 		return;
-	debug(0, "Inventory::render()");
+	debugC(0, kDebugInventory, "Inventory::render()");
 
 	_background.render(surface);
 
@@ -353,7 +350,7 @@ void Inventory::render(Graphics::Surface *surface, int delta) {
 			int idx = x + 6 * y;
 			byte item = _inventory[idx];
 			if (item != 0) {
-				debug(0, "\t(x, y): %d,%d -> item: %u", x, y, item);
+				debugC(0, kDebugInventory, "\t(x, y): %d,%d -> item: %u", x, y, item);
 				_graphics[idx].render(this, item, surface, delta);
 			}
 		}

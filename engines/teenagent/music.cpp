@@ -43,6 +43,7 @@ MusicPlayer::~MusicPlayer() {
 }
 
 bool MusicPlayer::load(int id) {
+	debugC(0, kDebugMusic, "MusicPlayer::load(%d)", id);
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->res->mmm.getStream(id));
 	if (!stream)
 		return false;
@@ -55,14 +56,14 @@ bool MusicPlayer::load(int id) {
 	// Load the samples
 	sampleCount = stream->readByte();
 
-	debug(0, "sampleCount = %d", sampleCount);
+	debugC(0, kDebugMusic, "sampleCount = %d", sampleCount);
 
 	for (byte currSample = 0; currSample < sampleCount; currSample++) {
 		byte sample = stream->readByte();
 
 		// Load the sample data
 		byte sampleResource = ((sample >> 4) & 0x0F) * 10 + (sample & 0x0F);
-		debug(0, "currSample = %d, sample = 0x%02x, resource: %d", currSample, sample, sampleResource);
+		debugC(0, kDebugMusic, "currSample = %d, sample = 0x%02x, resource: %d", currSample, sample, sampleResource);
 		uint32 sampleSize = _vm->res->sam_mmm.getSize(sampleResource);
 		if (sampleSize == 0) {
 			warning("load: invalid sample %d (0x%02x)", sample, sample);
@@ -89,15 +90,15 @@ bool MusicPlayer::load(int id) {
 			_rows.push_back(row);
 		} else if ((cmd & 0xF0) == 0x50) {
 			byte sample = stream->readByte();
-			debug(1, "%02x: set sample %02x", cmd, sample);
+			debugC(1, kDebugMusic,  "%02x: set sample %02x", cmd, sample);
 			row.channels[(cmd & 0x0F) - 1].sample = sample;
 		} else if ((cmd & 0xF0) == 0x40) {
 			byte vol = stream->readByte();
-			debug(1, "%02x: set volume %02x -> %02x", cmd, row.channels[(cmd & 0x0F) - 1].volume, vol);
+			debugC(1, kDebugMusic, "%02x: set volume %02x -> %02x", cmd, row.channels[(cmd & 0x0F) - 1].volume, vol);
 			//channel volume 0x40 * music volume 0x40 mixed with high bytes
 			row.channels[(cmd & 0x0F) - 1].volume = vol * 16;
 		} else {
-			debug(0, "unhandled music command %02x", cmd);
+			debugC(0, kDebugMusic, "unhandled music command %02x", cmd);
 		}
 	}
 	_currRow = 0;
@@ -124,13 +125,13 @@ void MusicPlayer::interrupt() {
 	for (int chn = 0; chn < 3; ++chn) {
 		setChannelVolume(chn, row->channels[chn].volume);
 
-		debug(0, "row->channels[%d].volume = %d", chn, row->channels[chn].volume);
+		debugC(2, kDebugMusic, "row->channels[%d].volume = %d", chn, row->channels[chn].volume);
 
 		byte sample = (row->channels[chn].sample);
 		if (row->channels[chn].note != 0 && sample != 0) {
 
-			debug(0, "row->channels[%d].note = %d", chn, row->channels[chn].note);
-			debug(0, "row->channels[%d].sample = %d", chn, row->channels[chn].sample);
+			debugC(2, kDebugMusic, "row->channels[%d].note = %d", chn, row->channels[chn].note);
+			debugC(2, kDebugMusic, "row->channels[%d].sample = %d", chn, row->channels[chn].sample);
 
 			byte note = row->channels[chn].note;
 			if (_samples[sample].size == 0) {
@@ -143,7 +144,7 @@ void MusicPlayer::interrupt() {
 		}
 	}
 
-	debug(0, "------------------------------------------------");
+	debugC(2, kDebugMusic, "------------------------------------------------");
 
 	++_currRow;
 }

@@ -19,9 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "teenagent/surface.h"
 #include "teenagent/surface_list.h"
-#include "objects.h"
+#include "teenagent/surface.h"
+#include "teenagent/objects.h"
+#include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
@@ -39,7 +40,7 @@ void SurfaceList::load(Common::SeekableReadStream &stream, Type type, int sub_ha
 		return;
 
 	surfaces_n = fn - sub_hack;
-	debug(0, "loading %u surfaces from list (skip %d)", surfaces_n, sub_hack);
+	debugC(0, kDebugSurface, "loading %u surfaces from list (skip %d)", surfaces_n, sub_hack);
 
 	if (surfaces_n == 0)
 		return;

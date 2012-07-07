@@ -19,8 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "teenagent/scene.h"
 #include "teenagent/teenagent.h"
+#include "teenagent/scene.h"
+#include "teenagent/inventory.h"
 #include "teenagent/resources.h"
 #include "teenagent/dialog.h"
 
@@ -36,7 +37,7 @@ namespace TeenAgent {
 void TeenAgentEngine::rejectMessage() {
 	//random reject message:
 	uint i = _rnd.getRandomNumber(3);
-	debug(0, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
+	debugC(0, kDebugCallbacks, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
 	displayMessage(res->dseg.get_word(0x339e + 2 * i));
 }
 
@@ -45,7 +46,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	if (addr == 0)
 		return false;
 
-	debug(0, "processCallback(%04x)", addr);
+	debugC(0, kDebugCallbacks, "processCallback(%04x)", addr);
 	byte *code = res->cseg.ptr(addr);
 
 	//try trivial callbacks first
@@ -53,8 +54,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		//call display_message, r
 		uint16 msg = READ_LE_UINT16(code + 1);
 		uint16 func = 6 + addr + READ_LE_UINT16(code + 4);
-		debug(0, "call %04x", func);
-		debug(0, "trivial callback, showing message %s", (const char *)res->dseg.ptr(addr));
+		debugC(0, kDebugCallbacks, "call %04x", func);
+		debugC(0, kDebugCallbacks, "trivial callback, showing message %s", (const char *)res->dseg.ptr(addr));
 		switch (func) {
 		case 0xa055:
 			displayMessage(msg);
@@ -64,7 +65,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	if (code[0] == 0xe8 && code[3] == 0xc3) {
 		uint func = 3 + addr + READ_LE_UINT16(code + 1);
-		debug(0, "call %04x and return", func);
+		debugC(0, kDebugCallbacks, "call %04x and return", func);
 		if (func == 0xa4d6) {
 			rejectMessage();
 			return true;
@@ -4044,12 +4045,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x9d45: {
 		wait(50);
 		byte attempts = ++ *(res->dseg.ptr(0xDBEA));
-		debug(0, "mansion intrusion attempt #%u", attempts);
+		debugC(0, kDebugCallbacks, "mansion intrusion attempt #%u", attempts);
 		if (attempts >= 7)
 			return false;
 
 		uint16 ptr = res->dseg.get_word((attempts - 2) * 2 + 0x6035);
-		debug(0, "mansion callback = %04x", ptr);
+		debugC(0, kDebugCallbacks, "mansion callback = %04x", ptr);
 		byte id = scene->getId();
 
 		playMusic(11);
@@ -4140,7 +4141,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 	}
 
-	//error("invalid callback %04x called", addr);
 	warning("invalid callback %04x called", addr);
 	return true;
 }

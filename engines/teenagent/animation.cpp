@@ -19,7 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "teenagent/teenagent.h"
 #include "teenagent/animation.h"
+
 #include "common/endian.h"
 #include "common/textconsole.h"
 
@@ -52,7 +54,7 @@ Surface *Animation::currentFrame(int dt) {
 
 	if (data != NULL) {
 		uint32 frame = 3 * index;
-		debug(0, "%u/%u", index, data_size / 3);
+		debugC(2, kDebugAnimation, "%u/%u", index, data_size / 3);
 		index += dt;
 
 		if (!loop && index >= data_size / 3) {
@@ -73,7 +75,7 @@ Surface *Animation::currentFrame(int dt) {
 			y = r->y = pos / 320;
 		}
 	} else {
-		debug(0, "index %u", index);
+		debugC(2, kDebugAnimation, "index %u", index);
 		r = frames + index;
 		index += dt;
 		index %= frames_count;
@@ -111,7 +113,7 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 	free();
 
 	if (s.size() <= 1) {
-		debug(1, "empty animation");
+		debugC(1, kDebugAnimation, "empty animation");
 		return;
 	}
 
@@ -121,20 +123,18 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 	case kTypeLan:
 		data_size = s.readUint16LE();
 		if (s.eos()) {
-			debug(1, "empty animation");
+			debugC(1, kDebugAnimation, "empty animation");
 			return;
 		}
 
 		data_size -= 2;
 		data = new byte[data_size];
 		data_size = s.read(data, data_size);
-		/*		for (int i = 0; i < data_size; ++i) {
-					debug(0, "%02x ", data[i]);
-				}
-				debug(0, ", %u frames", data_size / 3);
-		*/
+		for (int i = 0; i < data_size; ++i)
+			debugC(2, kDebugAnimation, "%02x ", data[i]);
+		debugC(2, kDebugAnimation, ", %u frames", data_size / 3);
 		frames_count = s.readByte();
-		debug(1, "%u physical frames", frames_count);
+		debugC(1, kDebugAnimation, "%u physical frames", frames_count);
 		if (frames_count == 0)
 			return;
 
@@ -142,7 +142,7 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 
 		s.skip(frames_count * 2 - 2); //sizes
 		pos = s.readUint16LE();
-		debug(0, "pos?: %04x", pos);
+		debugC(3, kDebugAnimation, "pos?: 0x%04x", pos);
 
 		for (uint16 i = 0; i < frames_count; ++i) {
 			frames[i].load(s, Surface::kTypeLan);
@@ -158,8 +158,8 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		frames_count = 0;
 		for (byte i = 0; i < data_size / 3; ++i) {
 			int idx = i * 3;
-			/* byte unk = */
-			s.readByte();
+			byte unk = s.readByte();
+			debugC(3, kDebugAnimation, "unk?: 0x%02x", unk);
 			data[idx] = s.readByte();
 			if (data[idx] == 0)
 				data[idx] = 1; //fixme: investigate
@@ -167,7 +167,7 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 				frames_count = data[idx];
 			data[idx + 1] = 0;
 			data[idx + 2] = 0;
-			debug(0, "frame #%u", data[idx]);
+			debugC(2, kDebugAnimation, "frame #%u", data[idx]);
 		}
 
 		frames = new Surface[frames_count];
@@ -180,15 +180,15 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 
 	case kTypeVaria:
 		frames_count = s.readByte();
-		debug(1, "loading varia resource, %u physical frames", frames_count);
+		debugC(1, kDebugAnimation, "loading varia resource, %u physical frames", frames_count);
 		uint16 offset[255];
 		for (byte i = 0; i < frames_count; ++i) {
 			offset[i] = s.readUint16LE();
-			debug(0, "%u: %04x", i, offset[i]);
+			debugC(0, kDebugAnimation, "%u: %04x", i, offset[i]);
 		}
 		frames = new Surface[frames_count];
 		for (uint16 i = 0; i < frames_count; ++i) {
-			debug(0, "%04x", offset[i]);
+			debugC(0, kDebugAnimation, "%04x", offset[i]);
 			s.seek(offset[i] + off);
 			frames[i].load(s, Surface::kTypeOns);
 		}
@@ -196,7 +196,7 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		break;
 	}
 
-	debug(0, "%u frames", data_size / 3);
+	debugC(2, kDebugAnimation, "%u frames", data_size / 3);
 }
 
 Animation::~Animation() {

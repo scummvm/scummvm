@@ -26,6 +26,8 @@
 #include "common/rect.h"
 #include "graphics/surface.h"
 
+#include "teenagent/teenagent.h"
+
 namespace TeenAgent {
 
 enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
@@ -52,7 +54,7 @@ struct Rect {
 	void render(Graphics::Surface *surface, uint8 color) const;
 
 	void dump(int level = 0) const {
-		debug(level, "rect[%u, %u, %u, %u]", left, top, right, bottom);
+		debugC(level, kDebugObject, "rect[%u, %u, %u, %u]", left, top, right, bottom);
 	}
 
 	inline void clear() {

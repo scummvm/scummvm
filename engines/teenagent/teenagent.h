@@ -23,12 +23,13 @@
 #define TEENAGENT_ENGINE_H
 
 #include "engines/engine.h"
-#include "teenagent/pack.h"
-#include "teenagent/resources.h"
-#include "teenagent/inventory.h"
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+
 #include "common/random.h"
+#include "common/rect.h"
+#include "common/array.h"
 
 struct ADGameDescription;
 
@@ -43,9 +44,27 @@ struct ADGameDescription;
 namespace TeenAgent {
 
 struct Object;
+struct UseHotspot;
 class Scene;
 class MusicPlayer;
 class Console;
+class Resources;
+class Inventory;
+
+// Engine Debug Flags
+enum {
+	kDebugActor     = (1 << 0),
+	kDebugAnimation = (1 << 1),
+	kDebugCallbacks = (1 << 2),
+	kDebugDialog    = (1 << 3),
+	kDebugFont      = (1 << 4),
+	kDebugInventory = (1 << 5),
+	kDebugMusic     = (1 << 6),
+	kDebugObject    = (1 << 7),
+	kDebugPack      = (1 << 8),
+	kDebugScene     = (1 << 9),
+	kDebugSurface   = (1 << 10)
+};
 
 class TeenAgentEngine : public Engine {
 public:
