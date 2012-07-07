@@ -247,6 +247,72 @@ int16 Util::translateKey(const Common::KeyState &key) {
 	return 0;
 }
 
+static const uint8 kLowerToUpper[][2] = {
+	{0x81, 0x9A},
+	{0x82, 0x90},
+	{0x83, 0xB6},
+	{0x84, 0x8E},
+	{0x85, 0xB7},
+	{0x86, 0x8F},
+	{0x87, 0x80},
+	{0x88, 0xD2},
+	{0x89, 0xD3},
+	{0x8A, 0xD4},
+	{0x8B, 0xD8},
+	{0x8C, 0xD7},
+	{0x8D, 0xDE},
+	{0x91, 0x92},
+	{0x93, 0xE2},
+	{0x94, 0x99},
+	{0x95, 0xE3},
+	{0x96, 0xEA},
+	{0x97, 0xEB},
+	{0x95, 0xE3},
+	{0x96, 0xEA},
+	{0x97, 0xEB},
+	{0x9B, 0x9D},
+	{0xA0, 0xB5},
+	{0xA1, 0xD6},
+	{0xA2, 0xE0},
+	{0xA3, 0xE9},
+	{0xA4, 0xA5},
+	{0xC6, 0xC7},
+	{0xD0, 0xD1},
+	{0xE4, 0xE5},
+	{0xE7, 0xE8},
+	{0xEC, 0xED}
+};
+
+char Util::toCP850Lower(char cp850) {
+	const uint8 cp = (unsigned char)cp850;
+	if (cp <= 32)
+		return cp850;
+
+	if (cp <= 127)
+		return tolower(cp850);
+
+	for (uint i = 0; i < ARRAYSIZE(kLowerToUpper); i++)
+		if (cp == kLowerToUpper[i][1])
+			return (char)kLowerToUpper[i][0];
+
+	return cp850;
+}
+
+char Util::toCP850Upper(char cp850) {
+	const uint8 cp = (unsigned char)cp850;
+	if (cp <= 32)
+		return cp850;
+
+	if (cp <= 127)
+		return toupper(cp850);
+
+	for (uint i = 0; i < ARRAYSIZE(kLowerToUpper); i++)
+		if (cp == kLowerToUpper[i][0])
+			return (char)kLowerToUpper[i][1];
+
+	return cp850;
+}
+
 int16 Util::getKey() {
 	Common::KeyState key;
 
