@@ -289,4 +289,9 @@ void ANIFile::drawLayer(Surface &dest, uint16 layer, uint16 part,
 	_layers[layer]->draw(dest, part, x, y, transp);
 }
 
+void ANIFile::recolor(uint8 from, uint8 to) {
+	for (LayerArray::iterator l = _layers.begin(); l != _layers.end(); ++l)
+		(*l)->recolor(from, to);
+}
+
 } // End of namespace Gob

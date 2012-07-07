@@ -250,4 +250,9 @@ uint16 CMPFile::addSprite(uint16 left, uint16 top, uint16 right, uint16 bottom) 
 	return _coordinates->add(left, top, right, bottom);
 }
 
+void CMPFile::recolor(uint8 from, uint8 to) {
+	if (_surface)
+		_surface->recolor(from, to);
+}
+
 } // End of namespace Gob
