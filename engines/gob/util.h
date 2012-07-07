@@ -166,6 +166,7 @@ protected:
 	void addKeyToBuffer(const Common::KeyState &key);
 	bool getKeyFromBuffer(Common::KeyState &key);
 	int16 translateKey(const Common::KeyState &key);
+	int16 toCP850(uint16 latin1);
 	void checkJoystick();
 
 	void keyDown(const Common::Event &event);
