@@ -80,6 +80,7 @@ MODULE_OBJS := \
 	detection/detection.o \
 	pregob/pregob.o \
 	pregob/txtfile.o \
+	pregob/gctfile.o \
 	pregob/onceupon/onceupon.o \
 	pregob/onceupon/abracadabra.o \
 	pregob/onceupon/babayaga.o \

@@ -35,6 +35,7 @@
 #include "gob/sound/sound.h"
 
 #include "gob/pregob/pregob.h"
+#include "gob/pregob/gctfile.h"
 
 
 namespace Gob {
@@ -339,6 +340,18 @@ TXTFile *PreGob::loadTXT(const Common::String &txtFile, TXTFile::Format format) 
 }
 
 void PreGob::fixTXTStrings(TXTFile &txt) const {
+}
+
+GCTFile *PreGob::loadGCT(const Common::String &gctFile) const {
+	Common::SeekableReadStream *gctStream = _vm->_dataIO->getFile(gctFile);
+	if (!gctStream)
+		error("PreGob::loadGCT(): Failed to open \"%s\"", gctFile.c_str());
+
+	GCTFile *gct = new GCTFile(*gctStream, _vm->_rnd);
+
+	delete gctStream;
+
+	return gct;
 }
 
 } // End of namespace Gob

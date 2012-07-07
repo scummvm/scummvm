@@ -38,6 +38,8 @@ namespace Gob {
 class GobEngine;
 class Surface;
 
+class GCTFile;
+
 class PreGob {
 public:
 	PreGob(GobEngine *vm);
@@ -162,6 +164,11 @@ protected:
 
 	/** Called by loadTXT() to fix strings within the TXT file. */
 	virtual void fixTXTStrings(TXTFile &txt) const;
+
+
+	// -- GCT helpers --
+
+	GCTFile *loadGCT(const Common::String &gctFile) const;
 
 
 	GobEngine *_vm;
