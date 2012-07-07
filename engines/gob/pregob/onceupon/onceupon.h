@@ -24,6 +24,7 @@
 #define GOB_PREGOB_ONCEUPON_ONCEUPON_H
 
 #include "common/system.h"
+#include "common/str.h"
 
 #include "gob/pregob/pregob.h"
 
@@ -312,6 +313,8 @@ private:
 
 	Difficulty _difficulty; ///< The current difficulty.
 	int        _section;    ///< The current game section.
+
+	Common::String _name; ///< The name of the child.
 };
 
 } // End of namespace OnceUpon

@@ -94,6 +94,9 @@ enum ClownAnimation {
 	kClownAnimationClownCry   = 6
 };
 
+// 12 seconds delay for one area full of GCT text
+static const uint32 kGCTDelay = 12000;
+
 namespace Gob {
 
 namespace OnceUpon {
@@ -222,6 +225,9 @@ void OnceUpon::init() {
 	// We start with no selected difficulty and at section 0
 	_difficulty = kDifficultyMAX;
 	_section    = 0;
+
+	// Default name
+	_name = "Nemo";
 }
 
 void OnceUpon::deinit() {
@@ -1518,6 +1524,10 @@ bool OnceUpon::sectionEnd() {
 
 	_vm->_draw->_backSurface->blit(endBackground, 0, 0, 288, 137, 16, 50);
 
+	GCTFile *endText = loadGCT(getLocFile("final.gc"));
+	endText->setArea(17, 18, 303, 41);
+	endText->setText(1, _name);
+
 	ANIFile ani(_vm, "fin.ani", 320);
 	ANIList anims;
 
@@ -1526,26 +1536,48 @@ bool OnceUpon::sectionEnd() {
 
 	_vm->_draw->forceBlit();
 
+	uint32 textStartTime = 0;
+
 	MenuAction action = kMenuActionNone;
 	while (!_vm->shouldQuit() && (action == kMenuActionNone)) {
-		redrawAnim(anims);
-
-		fadeIn();
-
-		endFrame(true);
+		// Check user input
 
 		int16 mouseX, mouseY;
 		MouseButtons mouseButtons;
 
 		int16 key = checkInput(mouseX, mouseY, mouseButtons);
-		if ((key != 0) && (key != kKeyEscape))
-			// Any key pressed => Quit
-			action = kMenuActionQuit;
 
 		action = doIngameMenu(key, mouseButtons);
+		if (action != kMenuActionNone)
+			break;
+
+		clearAnim(anims);
+
+		// Pressed a key or mouse button => Skip to next area-full of text
+		if ((mouseButtons == kMouseButtonsLeft) || (key != 0))
+			textStartTime = 0;
+
+		// Draw the next area-full of text
+		uint32 now = _vm->_util->getTimeKey();
+		if (!endText->finished() && ((textStartTime == 0) || (now >= (textStartTime + kGCTDelay)))) {
+			textStartTime = now;
+
+			int16 left, top, right, bottom;
+			if (endText->clear(*_vm->_draw->_backSurface, left, top, right, bottom))
+				_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+
+			if (endText->draw(*_vm->_draw->_backSurface, 0, *_plettre, 10, left, top, right, bottom))
+				_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+		}
+
+		drawAnim(anims);
+		fadeIn();
+
+		endFrame(true);
 	}
 
 	freeAnims(anims);
+	delete endText;
 
 	// Restart requested
 	if (action == kMenuActionRestart)
