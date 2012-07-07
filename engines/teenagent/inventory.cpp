@@ -31,20 +31,17 @@
 
 namespace TeenAgent {
 
-Inventory::Inventory(TeenAgentEngine *engine) {
-	_engine = engine;
+Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	_active = false;
 
 	FilePack varia;
 	varia.open("varia.res");
 
-	{
-		Common::ScopedPtr<Common::SeekableReadStream> s(varia.getStream(3));
-		if (!s)
-			error("no inventory background");
-		debug(0, "loading inventory background...");
-		_background.load(*s, Surface::kTypeOns);
-	}
+	Common::ScopedPtr<Common::SeekableReadStream> s(varia.getStream(3));
+	if (!s)
+		error("no inventory background");
+	debug(0, "loading inventory background...");
+	_background.load(*s, Surface::kTypeOns);
 
 	uint32 items_size = varia.getSize(4);
 	if (items_size == 0)
@@ -60,16 +57,15 @@ Inventory::Inventory(TeenAgentEngine *engine) {
 	}
 	_offset[92] = items_size;
 
-	Resources *res = Resources::instance();
 	for (byte i = 0; i <= 92; ++i) {
 		InventoryObject io;
-		uint16 obj_addr = res->dseg.get_word(0xc4a4 + i * 2);
+		uint16 obj_addr = vm->res->dseg.get_word(0xc4a4 + i * 2);
 		if (obj_addr != 0)
-			io.load(res->dseg.ptr(obj_addr));
+			io.load(vm->res->dseg.ptr(obj_addr));
 		_objects.push_back(io);
 	}
 
-	_inventory = res->dseg.ptr(0xc48d);
+	_inventory = vm->res->dseg.ptr(0xc48d);
 
 	for (int y = 0; y < 4; ++y)
 		for (int x = 0; x < 6; ++x) {
@@ -145,11 +141,11 @@ void Inventory::add(byte item) {
 bool Inventory::tryObjectCallback(InventoryObject *obj) {
 	byte id = obj->id;
 	uint i = 0;
-	for (byte *table = Resources::instance()->dseg.ptr(0xBB6F + 3); table[0] != 0 && i < 7; table += 3, ++i) {
+	for (byte *table = _vm->res->dseg.ptr(0xBB6F + 3); table[0] != 0 && i < 7; table += 3, ++i) {
 		if (table[0] == id) {
 			resetSelectedObject();
 			activate(false);
-			if (_engine->processCallback(READ_LE_UINT16(table + 1)))
+			if (_vm->processCallback(READ_LE_UINT16(table + 1)))
 				return true;
 		}
 	}
@@ -157,8 +153,6 @@ bool Inventory::tryObjectCallback(InventoryObject *obj) {
 }
 
 bool Inventory::processEvent(const Common::Event &event) {
-	Resources *res = Resources::instance();
-
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
 
@@ -203,8 +197,8 @@ bool Inventory::processEvent(const Common::Event &event) {
 			if (tryObjectCallback(_hoveredObj))
 				return true;
 			//activate(false);
-			int w = res->font7.render(NULL, 0, 0, _hoveredObj->description, 0xd1);
-			_engine->scene->displayMessage(_hoveredObj->description, 0xd1, Common::Point((320 - w) / 2, 162));
+			int w = _vm->res->font7.render(NULL, 0, 0, _hoveredObj->description, 0xd1);
+			_vm->scene->displayMessage(_hoveredObj->description, 0xd1, Common::Point((320 - w) / 2, 162));
 			return true;
 		}
 
@@ -214,7 +208,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 			return true;
 
 		debug(0, "combine(%u, %u)!", id1, id2);
-		byte *table = res->dseg.ptr(0xC335);
+		byte *table = _vm->res->dseg.ptr(0xC335);
 		while (table[0] != 0 && table[1] != 0) {
 			if (
 			    (id1 == table[0] && id2 == table[1]) ||
@@ -226,17 +220,17 @@ bool Inventory::processEvent(const Common::Event &event) {
 					remove(id2);
 					debug(0, "adding object %u", new_obj);
 					add(new_obj);
-					_engine->playSoundNow(69);
+					_vm->playSoundNow(69);
 				}
 				uint16 msg = READ_LE_UINT16(table + 3);
-				_engine->displayMessage(msg);
+				_vm->displayMessage(msg);
 				activate(false);
 				resetSelectedObject();
 				return true;
 			}
 			table += 5;
 		}
-		_engine->displayMessage(0xc3e2);
+		_vm->displayMessage(0xc3e2);
 		activate(false);
 		resetSelectedObject();
 		return true;
@@ -313,7 +307,6 @@ void Inventory::Item::load(Inventory *inventory, uint item_id) {
 
 void Inventory::Item::render(Inventory *inventory, uint item_id, Graphics::Surface *dst, int delta) {
 	InventoryObject *obj = &inventory->_objects[item_id];
-	Resources *res = Resources::instance();
 
 	backgroundEffect(dst);
 	_rect.render(dst, _hovered ? 233 : 234);
@@ -342,9 +335,9 @@ void Inventory::Item::render(Inventory *inventory, uint item_id, Graphics::Surfa
 	if (inventory->_selectedObj != inventory->_hoveredObj)
 		name += obj->name;
 
-	if (_hovered && inventory->_engine->scene->getMessage().empty()) {
-		int w = res->font7.render(NULL, 0, 0, name, 0xd1, true);
-		res->font7.render(dst, (320 - w) / 2, 180, name, 0xd1, true);
+	if (_hovered && inventory->_vm->scene->getMessage().empty()) {
+		int w = inventory->_vm->res->font7.render(NULL, 0, 0, name, 0xd1, true);
+		inventory->_vm->res->font7.render(dst, (320 - w) / 2, 180, name, 0xd1, true);
 	}
 }
 

@@ -26,13 +26,6 @@
 
 namespace TeenAgent {
 
-Resources::Resources() {}
-
-Resources *Resources::instance() {
-	static Resources i;
-	return &i;
-}
-
 void Resources::deinit() {
 	off.close();
 	on.close();
@@ -80,16 +73,14 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 
 	delete dat;
 
-	{
-		FilePack varia;
-		varia.open("varia.res");
-		font7.load(varia, 7);
-		font7.width_pack = 1;
-		font7.height = 11;
-		font8.load(varia, 8);
-		font8.height = 31;
-		varia.close();
-	}
+	FilePack varia;
+	varia.open("varia.res");
+	font7.load(varia, 7);
+	font7.width_pack = 1;
+	font7.height = 11;
+	font8.load(varia, 8);
+	font8.height = 31;
+	varia.close();
 
 	off.open("off.res");
 	on.open("on.res");

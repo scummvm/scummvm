@@ -50,13 +50,16 @@ namespace TeenAgent {
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
 	: Engine(system), action(kActionNone), _gameDescription(gd),
 	  _rnd("teenagent") {
-	music = new MusicPlayer();
-
+	music = new MusicPlayer(this);
+	res = new Resources();
+		  
 	console = 0;
 }
 
 TeenAgentEngine::~TeenAgentEngine() {
 	delete music;
+	res->deinit();
+	delete res;
 
 	delete console;
 }
@@ -66,7 +69,6 @@ bool TeenAgentEngine::trySelectedObject() {
 	if (inv == NULL)
 		return false;
 
-	Resources *res = Resources::instance();
 	debug(0, "checking active object %u on %u", inv->id, dst_object->id);
 
 	//mouse time challenge hack:
@@ -102,7 +104,6 @@ void TeenAgentEngine::processObject() {
 	if (dst_object == NULL)
 		return;
 
-	Resources *res = Resources::instance();
 	switch (action) {
 	case kActionExamine: {
 		if (trySelectedObject())
@@ -174,7 +175,6 @@ void TeenAgentEngine::init() {
 	_mark_delay = 80;
 	_game_delay = 110;
 
-	Resources *res = Resources::instance();
 	use_hotspots.resize(42);
 	byte *scene_hotspots = res->dseg.ptr(0xbb87);
 	for (byte i = 0; i < 42; ++i) {
@@ -198,7 +198,7 @@ void TeenAgentEngine::deinit() {
 	//delete music;
 	//music = NULL;
 	use_hotspots.clear();
-	Resources::instance()->deinit();
+	res->deinit();
 	CursorMan.popCursor();
 }
 
@@ -210,8 +210,6 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 	if (!in)
 		return Common::kReadPermissionDenied;
-
-	Resources *res = Resources::instance();
 
 	const uint dataSize = 0x777a;
 	assert(res->dseg.size() >= 0x6478 + dataSize);
@@ -234,7 +232,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	inventory->activate(false);
 	inventory->reload();
 
-	setMusic(Resources::instance()->dseg.get_byte(0xDB90));
+	setMusic(res->dseg.get_byte(0xDB90));
 
 	int id = res->dseg.get_byte(0xB4F3);
 	uint16 x = res->dseg.get_word(0x64AF), y = res->dseg.get_word(0x64B1);
@@ -251,7 +249,6 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &des
 	if (!out)
 		return Common::kWritingFailed;
 
-	Resources *res = Resources::instance();
 	res->dseg.set_byte(0xB4F3, scene->getId());
 	Common::Point pos = scene->getPosition();
 	res->dseg.set_word(0x64AF, pos.x);
@@ -517,7 +514,6 @@ bool TeenAgentEngine::showMetropolis() {
 }
 
 Common::Error TeenAgentEngine::run() {
-	Resources *res = Resources::instance();
 	if (!res->loadArchives(_gameDescription))
 		return Common::kUnknownError;
 
@@ -697,7 +693,7 @@ Common::Error TeenAgentEngine::run() {
 Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	Common::String message;
 	for (
-	    const char *str = (const char *)Resources::instance()->dseg.ptr(addr);
+	    const char *str = (const char *)res->dseg.ptr(addr);
 	    str[0] != 0 || str[1] != 0;
 	    ++str) {
 		char c = str[0];
@@ -771,7 +767,7 @@ void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 f
 void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
-	const byte *src = Resources::instance()->dseg.ptr(addr);
+	const byte *src = res->dseg.ptr(addr);
 	event.orientation = *src++;
 	event.color = *src++;
 	event.lan = 8;
@@ -786,7 +782,7 @@ void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 			break;
 		event.message += "\n";
 	}
-	int w = Resources::instance()->font8.render(NULL, 0, 0, event.message, 0xd1);
+	int w = res->font8.render(NULL, 0, 0, event.message, 0xd1);
 	event.dst.x = (320 - w) / 2;
 	event.timer = timer;
 	scene->push(event);
@@ -801,7 +797,7 @@ void TeenAgentEngine::displayCredits() {
 	for (uint i = 0; i < event.message.size(); ++i)
 		if (event.message[i] == '\n')
 			++lines;
-	event.dst.x = (320 - Resources::instance()->font7.render(NULL, 0, 0, event.message, 0xd1)) / 2;
+	event.dst.x = (320 - res->font7.render(NULL, 0, 0, event.message, 0xd1)) / 2;
 	event.timer = 11 * lines - event.dst.y + 22;
 	//debug(0, "credits = %s", event.message.c_str());
 	scene->push(event);
@@ -1016,7 +1012,6 @@ void TeenAgentEngine::wait(uint16 frames) {
 }
 
 void TeenAgentEngine::playSoundNow(byte id) {
-	Resources *res = Resources::instance();
 	uint size = res->sam_sam.getSize(id);
 	if (size == 0) {
 		warning("skipping invalid sound %u", id);
@@ -1034,7 +1029,6 @@ void TeenAgentEngine::playSoundNow(byte id) {
 
 void TeenAgentEngine::setMusic(byte id) {
 	debug(0, "starting music %u", id);
-	Resources *res = Resources::instance();
 
 	if (id != 1) //intro music
 		*res->dseg.ptr(0xDB90) = id;

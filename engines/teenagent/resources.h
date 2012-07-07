@@ -32,17 +32,13 @@ struct ADGameDescription;
 namespace TeenAgent {
 
 class Resources {
-protected:
-	Resources();
 public:
-	static Resources *instance();
-	bool loadArchives(const ADGameDescription *gd);
 	void deinit();
+	bool loadArchives(const ADGameDescription *gd);
+
 	void loadOff(Graphics::Surface &surface, byte *palette, int id);
 	Common::SeekableReadStream *loadLan(uint32 id) const;
 	Common::SeekableReadStream *loadLan000(uint32 id) const;
-	//void loadOn(Graphics::Surface &surface, int id, uint16 &dst, uint16 *flags);
-	//void loadOns(Graphics::Surface &surface, int id, uint16 &dst);
 
 	/*
 	 * PSP (as the other sony playstation consoles - to be confirmed and 'ifdef'ed here too)

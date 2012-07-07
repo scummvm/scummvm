@@ -32,16 +32,14 @@
 #include "teenagent/surface.h"
 #include "teenagent/objects.h"
 #include "teenagent/teenagent.h"
-#include "teenagent/dialog.h"
 #include "teenagent/music.h"
 
 namespace TeenAgent {
 
-Scene::Scene(TeenAgentEngine *engine, OSystem *system) : intro(false), _id(0), ons(0),
-	orientation(kActorRight), actor_talking(false),
+Scene::Scene(TeenAgentEngine *vm, OSystem *system) : _vm(vm), intro(false), _id(0), ons(0),
+	orientation(kActorRight), actor_talking(false), teenagent(vm), teenagent_idle(vm),
 	message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL),
 	current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0), _idle_timer(0) {
-	_engine = engine;
 	_system = system;
 
 	_fade_timer = 0;
@@ -229,7 +227,7 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 	}
 
 	if (!findPath(path, position, point)) {
-		_engine->cancel();
+		_vm->cancel();
 		return;
 	}
 
@@ -237,8 +235,6 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 }
 
 void Scene::loadObjectData() {
-	Resources *res = Resources::instance();
-
 	//loading objects & walkboxes
 	objects.resize(42);
 	walkboxes.resize(42);
@@ -248,18 +244,18 @@ void Scene::loadObjectData() {
 		Common::Array<Object> &scene_objects = objects[i];
 		scene_objects.clear();
 
-		uint16 scene_table = res->dseg.get_word(0x7254 + i * 2);
+		uint16 scene_table = _vm->res->dseg.get_word(0x7254 + i * 2);
 		uint16 object_addr;
-		while ((object_addr = res->dseg.get_word(scene_table)) != 0) {
+		while ((object_addr = _vm->res->dseg.get_word(scene_table)) != 0) {
 			Object obj;
-			obj.load(res->dseg.ptr(object_addr));
+			obj.load(_vm->res->dseg.ptr(object_addr));
 			//obj.dump();
 			scene_objects.push_back(obj);
 			scene_table += 2;
 		}
 		debug(0, "scene[%u] has %u object(s)", i + 1, scene_objects.size());
 
-		byte *walkboxes_base = res->dseg.ptr(READ_LE_UINT16(res->dseg.ptr(0x6746 + i * 2)));
+		byte *walkboxes_base = _vm->res->dseg.ptr(READ_LE_UINT16(_vm->res->dseg.ptr(0x6746 + i * 2)));
 		byte walkboxes_n = *walkboxes_base++;
 		debug(0, "scene[%u] has %u walkboxes", i + 1, walkboxes_n);
 
@@ -277,7 +273,7 @@ void Scene::loadObjectData() {
 			scene_walkboxes.push_back(w);
 		}
 
-		byte *fade_table = res->dseg.ptr(res->dseg.get_word(0x663e + i * 2));
+		byte *fade_table = _vm->res->dseg.ptr(_vm->res->dseg.get_word(0x663e + i * 2));
 		Common::Array<FadeType> &scene_fades = fades[i];
 		while (READ_LE_UINT16(fade_table) != 0xffff) {
 			FadeType fade;
@@ -304,26 +300,23 @@ Object *Scene::findObject(const Common::Point &point) {
 }
 
 byte *Scene::getOns(int id) {
-	Resources *res = Resources::instance();
-	return res->dseg.ptr(res->dseg.get_word(0xb4f5 + (id - 1) * 2));
+	return _vm->res->dseg.ptr(_vm->res->dseg.get_word(0xb4f5 + (id - 1) * 2));
 }
 
 byte *Scene::getLans(int id) {
-	Resources *res = Resources::instance();
-	return res->dseg.ptr(0xd89e + (id - 1) * 4);
+	return _vm->res->dseg.ptr(0xd89e + (id - 1) * 4);
 }
 
 void Scene::loadOns() {
 	debug(0, "loading ons animation");
-	Resources *res = Resources::instance();
 
-	uint16 addr = res->dseg.get_word(0xb4f5 + (_id - 1) * 2);
+	uint16 addr = _vm->res->dseg.get_word(0xb4f5 + (_id - 1) * 2);
 	//debug(0, "ons index: %04x", addr);
 
 	ons_count = 0;
 	byte b;
 	byte on_id[16];
-	while ((b = res->dseg.get_byte(addr)) != 0xff) {
+	while ((b = _vm->res->dseg.get_byte(addr)) != 0xff) {
 		debug(0, "on: %04x = %02x", addr, b);
 		++addr;
 		if (b == 0)
@@ -338,7 +331,7 @@ void Scene::loadOns() {
 	if (ons_count > 0) {
 		ons = new Surface[ons_count];
 		for (uint32 i = 0; i < ons_count; ++i) {
-			Common::ScopedPtr<Common::SeekableReadStream> s(res->ons.getStream(on_id[i]));
+			Common::ScopedPtr<Common::SeekableReadStream> s(_vm->res->ons.getStream(on_id[i]));
 			if (s) {
 				ons[i].load(*s, Surface::kTypeOns);
 			}
@@ -348,20 +341,19 @@ void Scene::loadOns() {
 
 void Scene::loadLans() {
 	debug(0, "loading lans animation");
-	Resources *res = Resources::instance();
 	//load lan000
 
 	for (byte i = 0; i < 4; ++i) {
 		animation[i].free();
 
 		uint16 bx = 0xd89e + (_id - 1) * 4 + i;
-		byte bxv = res->dseg.get_byte(bx);
+		byte bxv = _vm->res->dseg.get_byte(bx);
 		uint16 res_id = 4 * (_id - 1) + i + 1;
 		debug(0, "lan[%u]@%04x = %02x, resource id: %u", i, bx, bxv, res_id);
 		if (bxv == 0)
 			continue;
 
-		Common::ScopedPtr<Common::SeekableReadStream> s(res->loadLan000(res_id));
+		Common::ScopedPtr<Common::SeekableReadStream> s(_vm->res->loadLan000(res_id));
 		if (s) {
 			animation[i].load(*s, Animation::kTypeLan);
 			if (bxv != 0 && bxv != 0xff)
@@ -383,11 +375,10 @@ void Scene::init(int id, const Common::Point &pos) {
 
 	warp(pos);
 
-	Resources *res = Resources::instance();
-	res->loadOff(background, palette, id);
+	_vm->res->loadOff(background, palette, id);
 	if (id == 24) {
 		//dark scene
-		if (res->dseg.get_byte(0xDBA4) != 1) {
+		if (_vm->res->dseg.get_byte(0xDBA4) != 1) {
 			//dim down palette
 			uint i;
 			for (i = 0; i < 624; ++i) {
@@ -399,10 +390,10 @@ void Scene::init(int id, const Common::Point &pos) {
 		}
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(res->on.getStream(id));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->res->on.getStream(id));
 	int sub_hack = 0;
 	if (id == 7) { //something patched in the captains room
-		switch (res->dseg.get_byte(0xdbe6)) {
+		switch (_vm->res->dseg.get_byte(0xdbe6)) {
 		case 2:
 			break;
 		case 1:
@@ -418,10 +409,10 @@ void Scene::init(int id, const Common::Point &pos) {
 	loadLans();
 
 	//check music
-	int now_playing = _engine->music->getId();
+	int now_playing = _vm->music->getId();
 
-	if (now_playing != res->dseg.get_byte(0xDB90))
-		_engine->music->load(res->dseg.get_byte(0xDB90));
+	if (now_playing != _vm->res->dseg.get_byte(0xDB90))
+		_vm->music->load(_vm->res->dseg.get_byte(0xDB90));
 
 	_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
 	setPalette(0);
@@ -430,7 +421,7 @@ void Scene::init(int id, const Common::Point &pos) {
 void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore) {
 	debug(0, "playAnimation(%u, %u, loop:%s, paused:%s, ignore:%s)", idx, id, loop ? "true" : "false", paused ? "true" : "false", ignore ? "true" : "false");
 	assert(idx < 4);
-	Common::ScopedPtr<Common::SeekableReadStream> s(Resources::instance()->loadLan(id + 1));
+	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->res->loadLan(id + 1));
 	if (!s)
 		error("playing animation %u failed", id);
 
@@ -442,7 +433,7 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore
 
 void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
 	debug(0, "playActorAnimation(%u, loop:%s, ignore:%s)", id, loop ? "true" : "false", ignore ? "true" : "false");
-	Common::ScopedPtr<Common::SeekableReadStream> s(Resources::instance()->loadLan(id + 1));
+	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->res->loadLan(id + 1));
 	if (!s)
 		error("playing animation %u failed", id);
 
@@ -463,7 +454,7 @@ byte Scene::peekFlagEvent(uint16 addr) const {
 		if (e.type == SceneEvent::kSetFlag && e.callback == addr)
 			return e.color;
 	}
-	return Resources::instance()->dseg.get_byte(addr);
+	return _vm->res->dseg.get_byte(addr);
 }
 
 void Scene::push(const SceneEvent &event) {
@@ -509,8 +500,8 @@ bool Scene::processEvent(const Common::Event &event) {
 				message_color = 0xd1;
 				for (int i = 0; i < 4; ++i)
 					custom_animation[i].free();
-				_engine->playMusic(4);
-				_engine->loadScene(10, Common::Point(136, 153));
+				_vm->playMusic(4);
+				_vm->loadScene(10, Common::Point(136, 153));
 				return true;
 			}
 
@@ -556,8 +547,7 @@ struct ZOrderCmp {
 };
 
 int Scene::lookupZoom(uint y) const {
-	Resources *res = Resources::instance();
-	for (byte *zoom_table = res->dseg.ptr(res->dseg.get_word(0x70f4 + (_id - 1) * 2));
+	for (byte *zoom_table = _vm->res->dseg.ptr(_vm->res->dseg.get_word(0x70f4 + (_id - 1) * 2));
 	        zoom_table[0] != 0xff && zoom_table[1] != 0xff;
 	        zoom_table += 2) {
 		//debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
@@ -571,8 +561,7 @@ int Scene::lookupZoom(uint y) const {
 
 
 void Scene::paletteEffect(byte step) {
-	Resources *res = Resources::instance();
-	byte *src = res->dseg.ptr(0x6609);
+	byte *src = _vm->res->dseg.ptr(0x6609);
 	byte *dst = palette + 3 * 0xf2;
 	for (byte i = 0; i < 0xd; ++i) {
 		for (byte c = 0; c < 3; ++c, ++src)
@@ -595,7 +584,6 @@ byte Scene::findFade() const {
 }
 
 bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
-	Resources *res = Resources::instance();
 	bool busy;
 	bool restart;
 	uint32 game_delta = tick_game ? 1 : 0;
@@ -620,7 +608,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			_system->fillScreen(0);
 			///\todo: optimize me
 			Graphics::Surface *surface = _system->lockScreen();
-			res->font7.render(surface, current_event.dst.x, current_event.dst.y -= game_delta, current_event.message, current_event.color);
+			_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y -= game_delta, current_event.message, current_event.color);
 			_system->unlockScreen();
 
 			if (current_event.dst.y < -(int)current_event.timer)
@@ -644,10 +632,10 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			_system->fillScreen(0);
 			Graphics::Surface *surface = _system->lockScreen();
 			if (current_event.lan == 8) {
-				res->font8.shadow_color = current_event.orientation;
-				res->font8.render(surface, current_event.dst.x, current_event.dst.y, message, current_event.color);
+				_vm->res->font8.shadow_color = current_event.orientation;
+				_vm->res->font8.render(surface, current_event.dst.x, current_event.dst.y, message, current_event.color);
 			} else {
-				res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, 0xd1);
+				_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, 0xd1);
 			}
 			_system->unlockScreen();
 			return true;
@@ -803,7 +791,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 				if (_idle_timer < 50)
 					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
 				else
-					actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, mark_delta, zoom, _engine->_rnd);
+					actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, mark_delta, zoom, _vm->_rnd);
 			}
 		}
 
@@ -837,16 +825,16 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			}
 
 			if (visible) {
-				res->font7.render(surface, message_pos.x, message_pos.y, message, message_color);
+				_vm->res->font7.render(surface, message_pos.x, message_pos.y, message, message_color);
 				busy = true;
 			}
 		}
 
 		if (!busy && !restart && tick_game && callback_timer) {
 			if (--callback_timer == 0) {
-				if (_engine->inventory->active())
-					_engine->inventory->activate(false);
-				_engine->processCallback(callback);
+				if (_vm->inventory->active())
+					_vm->inventory->activate(false);
+				_vm->processCallback(callback);
 			}
 			//debug(0, "callback timer = %u", callback_timer);
 		}
@@ -901,7 +889,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		Sound &sound = *i;
 		if (sound.delay == 0) {
 			debug(1, "sound %u started", sound.id);
-			_engine->playSoundNow(sound.id);
+			_vm->playSoundNow(sound.id);
 			i = sounds.erase(i);
 		} else {
 			sound.delay -= game_delta;
@@ -1079,8 +1067,8 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kPlayMusic:
 			debug(0, "setting music %u", current_event.music);
-			_engine->setMusic(current_event.music);
-			Resources::instance()->dseg.set_byte(0xDB90, current_event.music);
+			_vm->setMusic(current_event.music);
+			_vm->res->dseg.set_byte(0xDB90, current_event.music);
 			current_event.clear();
 			break;
 
@@ -1154,12 +1142,12 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kQuit:
 			debug(0, "quit!");
-			_engine->quitGame();
+			_vm->quitGame();
 			break;
 
 		case SceneEvent::kSetFlag:
 			debug(0, "async set_flag(%04x, %d)", current_event.callback, current_event.color);
-			Resources::instance()->dseg.set_byte(current_event.callback, current_event.color);
+			_vm->res->dseg.set_byte(current_event.callback, current_event.color);
 			current_event.clear();
 			break;
 
@@ -1203,14 +1191,13 @@ Object *Scene::getObject(int id, int scene_id) {
 }
 
 Common::Point Scene::messagePosition(const Common::String &str, Common::Point message_position) {
-	Resources *res = Resources::instance();
 	int lines = 1;
 	for (uint i = 0; i < str.size(); ++i)
 		if (str[i] == '\n')
 			++lines;
 
-	uint w = res->font7.render(NULL, 0, 0, str, 0);
-	uint h = res->font7.height * lines + 3;
+	uint w = _vm->res->font7.render(NULL, 0, 0, str, 0);
+	uint h = _vm->res->font7.height * lines + 3;
 
 	message_position.x -= w / 2;
 	message_position.y -= h;

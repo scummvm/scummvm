@@ -39,7 +39,6 @@ struct Event;
 namespace TeenAgent {
 
 class TeenAgentEngine;
-class Dialog;
 
 struct SceneEvent {
 	enum Type {
@@ -177,8 +176,8 @@ private:
 	void paletteEffect(byte step);
 	byte findFade() const;
 
-	static Common::Point messagePosition(const Common::String &str, Common::Point position);
-	static uint messageDuration(const Common::String &str);
+	Common::Point messagePosition(const Common::String &str, Common::Point position);
+	uint messageDuration(const Common::String &str);
 
 	bool processEventQueue();
 	inline bool nextEvent() {
@@ -187,7 +186,7 @@ private:
 	}
 	void clearMessage();
 
-	TeenAgentEngine *_engine;
+	TeenAgentEngine *_vm;
 	OSystem *_system;
 
 	int _id;

@@ -22,12 +22,12 @@
 #include "teenagent/dialog.h"
 #include "teenagent/resources.h"
 #include "teenagent/scene.h"
+#include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
-void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
+void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
 	debug(0, "Dialog::show(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
-	Resources *res = Resources::instance();
 	int n = 0;
 	Common::String message;
 	byte color = color1;
@@ -47,7 +47,7 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 	}
 
 	while (n < 4) {
-		byte c = res->eseg.get_byte(addr++);
+		byte c = vm->res->eseg.get_byte(addr++);
 		//debug(0, "%02x: %c", c, c > 0x20? c: '.');
 
 		switch (c) {
@@ -128,18 +128,17 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 	scene->push(e);
 }
 
-uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
+uint16 Dialog::pop(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
 	debug(0, "Dialog::pop(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
-	Resources *res = Resources::instance();
 	uint16 next;
 	do {
-		next = res->dseg.get_word(addr);
+		next = vm->res->dseg.get_word(addr);
 		addr += 2;
 	} while (next == 0);
-	uint16 next2 = res->dseg.get_word(addr);
+	uint16 next2 = vm->res->dseg.get_word(addr);
 	if (next2 != 0xffff)
-		res->dseg.set_word(addr - 2, 0);
-	show(scene, next, animation1, animation2, color1, color2, slot1, slot2);
+		vm->res->dseg.set_word(addr - 2, 0);
+	show(vm, scene, next, animation1, animation2, color1, color2, slot1, slot2);
 	return next;
 }
 

@@ -35,7 +35,7 @@ class TeenAgentEngine;
 
 class Inventory {
 public:
-	Inventory(TeenAgentEngine *engine);
+	Inventory(TeenAgentEngine *vm);
 	~Inventory();
 
 	void render(Graphics::Surface *surface, int delta);
@@ -55,7 +55,7 @@ public:
 	void resetSelectedObject() { _selectedObj = NULL; }
 
 private:
-	TeenAgentEngine *_engine;
+	TeenAgentEngine *_vm;
 	Surface _background;
 	byte *_items;
 	uint _offset[93];

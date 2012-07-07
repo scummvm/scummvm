@@ -76,7 +76,7 @@ public:
 	bool showMetropolis();
 	int skipEvents() const;
 
-	static Common::String parseMessage(uint16 addr);
+	Common::String parseMessage(uint16 addr);
 
 	//event driven:
 	void displayMessage(uint16 addr, byte color = 0xd1, uint16 position = 0);
@@ -119,6 +119,7 @@ public:
 
 	Common::RandomSource _rnd;
 
+	Resources *res;
 	Scene *scene;
 	Inventory *inventory;
 	MusicPlayer *music;

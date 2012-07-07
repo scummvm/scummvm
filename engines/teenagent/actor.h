@@ -28,11 +28,18 @@ class RandomSource;
 
 namespace TeenAgent {
 
+class TeenAgentEngine;
+
 class Actor : public Animation {
+private:
+	TeenAgentEngine *_vm;
+
 	uint head_index;
 	uint idle_type;
+
 public:
-	Actor();
+	Actor(TeenAgentEngine *vm);
+
 	Common::Rect render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool head, uint zoom);
 	Common::Rect renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom, Common::RandomSource &rnd);
 };

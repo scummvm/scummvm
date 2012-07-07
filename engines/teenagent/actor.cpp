@@ -22,13 +22,14 @@
 #include "teenagent/actor.h"
 #include "teenagent/objects.h"
 #include "teenagent/resources.h"
+#include "teenagent/teenagent.h"
 
 #include "common/random.h"
 #include "common/textconsole.h"
 
 namespace TeenAgent {
 
-Actor::Actor() : head_index(0), idle_type(0) {}
+Actor::Actor(TeenAgentEngine *vm) : _vm(vm), head_index(0), idle_type(0) {}
 
 //idle animation lists at dseg: 0x6540
 Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom, Common::RandomSource &rnd) {
@@ -37,10 +38,9 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 		debug(0, "switched to idle animation %u", idle_type);
 	}
 
-	Resources *res = Resources::instance();
 	byte *frames_idle;
 	do {
-		frames_idle = res->dseg.ptr(res->dseg.get_word(0x6540 + idle_type * 2)) + index;
+		frames_idle = _vm->res->dseg.ptr(_vm->res->dseg.get_word(0x6540 + idle_type * 2)) + index;
 		index += delta_frame;
 		if (*frames_idle == 0) {
 			idle_type = rnd.getRandomNumber(2);

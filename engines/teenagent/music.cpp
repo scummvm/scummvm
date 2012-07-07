@@ -22,6 +22,8 @@
 
 #include "teenagent/music.h"
 #include "teenagent/resources.h"
+#include "teenagent/teenagent.h"
+
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/textconsole.h"
@@ -34,16 +36,14 @@ static const uint32 noteToPeriod[3][12] = {
 	{214, 201, 189, 179, 170, 160, 151, 143, 135, 127, 120, 113}
 };
 
-MusicPlayer::MusicPlayer() : Paula(false, 44100, 5000), _id(0) {
+MusicPlayer::MusicPlayer(TeenAgentEngine *vm) : Paula(false, 44100, 5000), _vm(vm), _id(0) {
 }
 
 MusicPlayer::~MusicPlayer() {
 }
 
 bool MusicPlayer::load(int id) {
-	Resources *res = Resources::instance();
-
-	Common::ScopedPtr<Common::SeekableReadStream> stream(res->mmm.getStream(id));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->res->mmm.getStream(id));
 	if (!stream)
 		return false;
 
@@ -63,7 +63,7 @@ bool MusicPlayer::load(int id) {
 		// Load the sample data
 		byte sampleResource = ((sample >> 4) & 0x0F) * 10 + (sample & 0x0F);
 		debug(0, "currSample = %d, sample = 0x%02x, resource: %d", currSample, sample, sampleResource);
-		uint32 sampleSize = res->sam_mmm.getSize(sampleResource);
+		uint32 sampleSize = _vm->res->sam_mmm.getSize(sampleResource);
 		if (sampleSize == 0) {
 			warning("load: invalid sample %d (0x%02x)", sample, sample);
 			_samples[sample].clear();
@@ -71,7 +71,7 @@ bool MusicPlayer::load(int id) {
 		}
 
 		_samples[sample].resize(sampleSize);
-		res->sam_mmm.read(sampleResource, _samples[sample].data, sampleSize);
+		_vm->res->sam_mmm.read(sampleResource, _samples[sample].data, sampleSize);
 	}
 
 	// Load the music data
