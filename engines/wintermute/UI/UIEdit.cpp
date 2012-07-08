@@ -534,16 +534,16 @@ const char *CUIEdit::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIEdit::setCursorChar(const char *Char) {
-	if (!Char) return;
+void CUIEdit::setCursorChar(const char *character) {
+	if (!character) return;
 	delete[] _cursorChar;
-	_cursorChar = new char [strlen(Char) + 1];
-	if (_cursorChar) strcpy(_cursorChar, Char);
+	_cursorChar = new char [strlen(character) + 1];
+	if (_cursorChar) strcpy(_cursorChar, character);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
+HRESULT CUIEdit::display(int offsetX, int offsetY) {
 	if (!_visible) return S_OK;
 
 
@@ -551,8 +551,8 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 	TTextEncoding OrigEncoding = Game->_textEncoding;
 	Game->_textEncoding = TEXT_ANSI;
 
-	if (_back) _back->display(OffsetX + _posX, OffsetY + _posY, _width, _height);
-	if (_image) _image->draw(OffsetX + _posX, OffsetY + _posY, NULL);
+	if (_back) _back->display(offsetX + _posX, offsetY + _posY, _width, _height);
+	if (_image) _image->draw(offsetX + _posX, offsetY + _posY, NULL);
 
 	// prepare fonts
 	CBFont *font;
@@ -573,13 +573,13 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 	_selEnd   = MIN((size_t)_selEnd,   strlen(_text));
 
 	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
-	int CursorWidth = font->getTextWidth((byte *)_cursorChar);
+	int cursorWidth = font->getTextWidth((byte *)_cursorChar);
 
 	int s1, s2;
-	bool CurFirst;
+	bool curFirst;
 	// modify scroll offset
 	if (_selStart >= _selEnd) {
-		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selEnd - _scrollOffset)) > _width - CursorWidth - 2 * _frameWidth) {
+		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selEnd - _scrollOffset)) > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= (int)strlen(_text)) break;
 		}
@@ -588,12 +588,12 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 
 		s1 = _selEnd;
 		s2 = _selStart;
-		CurFirst = true;
+		curFirst = true;
 	} else {
 		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selStart - _scrollOffset)) +
 		        sfont->getTextWidth((byte *)(_text + MAX(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
 
-		        > _width - CursorWidth - 2 * _frameWidth) {
+		        > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= (int)strlen(_text)) break;
 		}
@@ -602,7 +602,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 
 		s1 = _selStart;
 		s2 = _selEnd;
-		CurFirst = false;
+		curFirst = false;
 	}
 
 
@@ -612,10 +612,10 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 		// draw text
 		int xxx, yyy, width, height;
 
-		xxx = _posX + _frameWidth + OffsetX;
-		yyy = _posY + _frameWidth + OffsetY;
+		xxx = _posX + _frameWidth + offsetX;
+		yyy = _posY + _frameWidth + offsetY;
 
-		width = _posX + _width + OffsetX - _frameWidth;
+		width = _posX + _width + offsetX - _frameWidth;
 		height = MAX(font->getLetterHeight(), sfont->getLetterHeight());
 
 		if (Game->_textRTL) xxx += AlignOffset;
@@ -631,7 +631,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 		}
 
 		// cursor
-		if (focused && CurFirst) {
+		if (focused && curFirst) {
 			if (Count) {
 				if (CBPlatform::GetTime() - _lastBlinkTime >= _cursorBlinkRate) {
 					_lastBlinkTime = CBPlatform::GetTime();
@@ -640,8 +640,8 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 				if (_cursorVisible)
 					font->drawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
 			}
-			xxx += CursorWidth;
-			AlignOffset += CursorWidth;
+			xxx += cursorWidth;
+			AlignOffset += cursorWidth;
 		}
 
 		// selected
@@ -654,7 +654,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 		}
 
 		// cursor
-		if (focused && !CurFirst) {
+		if (focused && !curFirst) {
 			if (Count) {
 				if (CBPlatform::GetTime() - _lastBlinkTime >= _cursorBlinkRate) {
 					_lastBlinkTime = CBPlatform::GetTime();
@@ -663,8 +663,8 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 				if (_cursorVisible)
 					font->drawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
 			}
-			xxx += CursorWidth;
-			AlignOffset += CursorWidth;
+			xxx += cursorWidth;
+			AlignOffset += cursorWidth;
 		}
 
 		// unselected 2
@@ -676,7 +676,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 	}
 
 
-	Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
+	Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 
 	Game->_textEncoding = OrigEncoding;
@@ -687,7 +687,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
-	bool Handled = false;
+	bool handled = false;
 
 	if (event->type == Common::EVENT_KEYDOWN && !printable) {
 		switch (event->kbd.keycode) {
@@ -701,7 +701,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 			if (CBKeyboardState::isControlDown()) {
 				_selStart = 0;
 				_selEnd = strlen(_text);
-				Handled = true;
+				handled = true;
 			}
 			break;
 
@@ -713,21 +713,21 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 			if (_selEnd >= _selStart) _selEnd -= MAX(1, _selEnd - _selStart);
 			_selStart = _selEnd;
 
-			Handled = true;
+			handled = true;
 			break;
 
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_UP:
 			_selEnd--;
 			if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
-			Handled = true;
+			handled = true;
 			break;
 
 		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_DOWN:
 			_selEnd++;
 			if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
-			Handled = true;
+			handled = true;
 			break;
 
 		case Common::KEYCODE_HOME:
@@ -738,7 +738,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 				_selEnd = 0;
 				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			}
-			Handled = true;
+			handled = true;
 			break;
 
 		case Common::KEYCODE_END:
@@ -749,7 +749,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 				_selEnd = strlen(_text);
 				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			}
-			Handled = true;
+			handled = true;
 			break;
 
 		case Common::KEYCODE_DELETE:
@@ -763,12 +763,12 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 			if (_selEnd > _selStart) _selEnd -= (_selEnd - _selStart);
 
 			_selStart = _selEnd;
-			Handled = true;
+			handled = true;
 			break;
 		default:
 			break;
 		}
-		return Handled;
+		return handled;
 	} else if (event->type == Common::EVENT_KEYDOWN && printable) {
 		if (_selStart != _selEnd) deleteChars(_selStart, _selEnd);
 
@@ -789,48 +789,48 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CUIEdit::deleteChars(int Start, int End) {
-	if (Start > End) CBUtils::swap(&Start, &End);
+int CUIEdit::deleteChars(int start, int end) {
+	if (start > end) CBUtils::swap(&start, &end);
 
-	Start = MAX(Start, (int)0);
-	End = MIN((size_t)End, strlen(_text));
+	start = MAX(start, (int)0);
+	end = MIN((size_t)end, strlen(_text));
 
-	char *str = new char[strlen(_text) - (End - Start) + 1];
+	char *str = new char[strlen(_text) - (end - start) + 1];
 	if (str) {
-		if (Start > 0) memcpy(str, _text, Start);
-		memcpy(str + MAX(0, Start), _text + End, strlen(_text) - End + 1);
+		if (start > 0) memcpy(str, _text, start);
+		memcpy(str + MAX(0, start), _text + end, strlen(_text) - end + 1);
 
 		delete[] _text;
 		_text = str;
 	}
 	if (_parentNotify && _parent) _parent->applyEvent(_name);
 
-	return End - Start;
+	return end - start;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CUIEdit::insertChars(int Pos, byte *Chars, int Num) {
-	if ((int)strlen(_text) + Num > _maxLength) {
-		Num -= (strlen(_text) + Num - _maxLength);
+int CUIEdit::insertChars(int pos, byte *chars, int num) {
+	if ((int)strlen(_text) + num > _maxLength) {
+		num -= (strlen(_text) + num - _maxLength);
 	}
 
-	Pos = MAX(Pos, (int)0);
-	Pos = MIN((size_t)Pos, strlen(_text));
+	pos = MAX(pos, (int)0);
+	pos = MIN((size_t)pos, strlen(_text));
 
-	char *str = new char[strlen(_text) + Num + 1];
+	char *str = new char[strlen(_text) + num + 1];
 	if (str) {
-		if (Pos > 0) memcpy(str, _text, Pos);
-		memcpy(str + Pos + Num, _text + Pos, strlen(_text) - Pos + 1);
+		if (pos > 0) memcpy(str, _text, pos);
+		memcpy(str + pos + num, _text + pos, strlen(_text) - pos + 1);
 
-		memcpy(str + Pos, Chars, Num);
+		memcpy(str + pos, chars, num);
 
 		delete[] _text;
 		_text = str;
 	}
 	if (_parentNotify && _parent) _parent->applyEvent(_name);
 
-	return Num;
+	return num;
 }
 
 
