@@ -37,6 +37,7 @@
 
 #include "gob/pregob/onceupon/onceupon.h"
 #include "gob/pregob/onceupon/palettes.h"
+#include "gob/pregob/onceupon/title.h"
 #include "gob/pregob/onceupon/chargenchild.h"
 
 static const uint kLanguageCount = 5;
@@ -657,94 +658,11 @@ const PreGob::AnimProperties OnceUpon::kTitleAnimation = {
 };
 
 void OnceUpon::showTitle() {
-	// Show the Once Upon A Time title animation
-	// NOTE: This is currently only a mock-up. The real animation is in "ville.seq".
-
 	fadeOut();
 	setGamePalette(10);
 
-	warning("OnceUpon::showTitle(): Actually play the SEQ");
-
-	clearScreen();
-
-	_vm->_video->drawPackedSprite("ville.cmp", *_vm->_draw->_backSurface);
-	_vm->_draw->forceBlit();
-
-	ANIFile ani  (_vm, "pres.ani", 320);
-	ANIList anims;
-
-	loadAnims(anims, ani, 1, &kTitleAnimation);
-
-	playTitleMusic();
-
-	while (!_vm->shouldQuit()) {
-		redrawAnim(anims);
-
-		fadeIn();
-
-		endFrame(true);
-
-		if (hasInput())
-			break;
-	}
-
-	freeAnims(anims);
-
-	fadeOut();
-	stopTitleMusic();
-}
-
-void OnceUpon::playTitleMusic() {
-	// Look at what platform this is and play the appropriate music type
-
-	if      (_vm->getPlatform() == Common::kPlatformPC)
-		playTitleMusicDOS();
-	else if (_vm->getPlatform() == Common::kPlatformAmiga)
-		playTitleMusicAmiga();
-	else if (_vm->getPlatform() == Common::kPlatformAtariST)
-		playTitleMusicAtariST();
-}
-
-void OnceUpon::playTitleMusicDOS() {
-	// Play an AdLib track
-
-	_vm->_sound->adlibLoadTBR("babayaga.tbr");
-	_vm->_sound->adlibLoadMDY("babayaga.mdy");
-	_vm->_sound->adlibSetRepeating(-1);
-	_vm->_sound->adlibPlay();
-}
-
-void OnceUpon::playTitleMusicAmiga() {
-	// Play a Protracker track
-
-	_vm->_sound->protrackerPlay("mod.babayaga");
-}
-
-void OnceUpon::playTitleMusicAtariST() {
-	// Play a Soundblaster composition
-
-	static const int16        titleMusic[21] = { 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0, -1};
-	static const char * const titleFiles[ 3] = {"baba1.snd", "baba2.snd", "baba3.snd"};
-
-	for (uint i = 0; i < ARRAYSIZE(titleFiles); i++)
-		_vm->_sound->sampleLoad(_vm->_sound->sampleGetBySlot(i), SOUND_SND, titleFiles[i]);
-
-	_vm->_sound->blasterPlayComposition(titleMusic, 0);
-	_vm->_sound->blasterRepeatComposition(-1);
-}
-
-void OnceUpon::stopTitleMusic() {
-	// Just stop everything
-
-	_vm->_sound->adlibSetRepeating(0);
-	_vm->_sound->blasterRepeatComposition(0);
-
-	_vm->_sound->adlibStop();
-	_vm->_sound->blasterStopComposition();
-	_vm->_sound->protrackerStop();
-
-	for (int i = 0; i < ::Gob::Sound::kSoundsCount; i++)
-		_vm->_sound->sampleFree(_vm->_sound->sampleGetBySlot(i));
+	Title title(_vm);
+	title.play();
 }
 
 void OnceUpon::showChapter(int chapter) {

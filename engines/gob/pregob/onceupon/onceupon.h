@@ -237,15 +237,6 @@ private:
 	void handleAnimalNames(uint count, const MenuButton *buttons, const char * const *names);
 
 
-	// -- Title music helpers --
-
-	void playTitleMusic();        ///< Play the title music.
-	void playTitleMusicDOS();     ///< Play the title music of the DOS      version.
-	void playTitleMusicAmiga();   ///< Play the title music of the Amiga    version.
-	void playTitleMusicAtariST(); ///< Play the title music of the Atari ST version.
-	void stopTitleMusic();        ///< Stop the title music.
-
-
 	// -- Menu helpers --
 
 	MenuAction handleStartMenu(const MenuButton *animalsButton); ///< Handle the start  menu.
@@ -290,6 +281,7 @@ private:
 	void anSetupNames(const MenuButton &animal);
 	/** Play / Display the name of an animal in one language. */
 	void anPlayAnimalName(const Common::String &animal, uint language);
+
 
 	// -- Game sections --
 
