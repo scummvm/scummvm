@@ -66,7 +66,7 @@ CSXStore::~CSXStore() {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::cleanup() {
-	SetEventsEnabled(NULL, false);
+	setEventsEnabled(NULL, false);
 
 	for (int i = 0; i < _validProducts.GetSize(); i++) {
 		delete _validProducts[i];
@@ -90,8 +90,8 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "EnableEvents") == 0) {
 		stack->correctParams(0);
-		SetEventsEnabled(script, true);
-		stack->pushBool(GetEventsEnabled() == true);
+		setEventsEnabled(script, true);
+		stack->pushBool(getEventsEnabled() == true);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -99,8 +99,8 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisableEvents") == 0) {
 		stack->correctParams(0);
-		SetEventsEnabled(script, false);
-		stack->pushBool(GetEventsEnabled() == false);
+		setEventsEnabled(script, false);
+		stack->pushBool(getEventsEnabled() == false);
 		return S_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(1);
 		const char *prodIdList = stack->pop()->getString();
 		_lastProductRequestOwner = script->_owner;
-		ValidateProducts(prodIdList);
+		validateProducts(prodIdList);
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -123,10 +123,10 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (index >= 0 && index < _validProducts.GetSize()) {
 			CScValue *prod = stack->getPushValue();
 			if (prod) {
-				prod->setProperty("Id", _validProducts[index]->GetId());
-				prod->setProperty("Name", _validProducts[index]->GetName());
-				prod->setProperty("Description", _validProducts[index]->GetDesc());
-				prod->setProperty("Price", _validProducts[index]->GetPrice());
+				prod->setProperty("Id", _validProducts[index]->getId());
+				prod->setProperty("Name", _validProducts[index]->getName());
+				prod->setProperty("Description", _validProducts[index]->getDesc());
+				prod->setProperty("Price", _validProducts[index]->getPrice());
 			}
 		} else
 			stack->pushNULL();
@@ -155,9 +155,9 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (index >= 0 && index < _transactions.GetSize()) {
 			CScValue *trans = stack->getPushValue();
 			if (trans) {
-				trans->setProperty("Id", _transactions[index]->GetId());
-				trans->setProperty("ProductId", _transactions[index]->GetProductId());
-				trans->setProperty("State", _transactions[index]->GetState());
+				trans->setProperty("Id", _transactions[index]->getId());
+				trans->setProperty("ProductId", _transactions[index]->getProductId());
+				trans->setProperty("State", _transactions[index]->getState());
 			}
 		} else
 			stack->pushNULL();
@@ -170,7 +170,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "Purchase") == 0) {
 		stack->correctParams(1);
 		const char *prodId = stack->pop()->getString();
-		stack->pushBool(Purchase(script, prodId));
+		stack->pushBool(purchase(script, prodId));
 
 		return S_OK;
 	}
@@ -180,7 +180,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "FinishTransaction") == 0) {
 		stack->correctParams(1);
 		const char *transId = stack->pop()->getString();
-		stack->pushBool(FinishTransaction(script, transId));
+		stack->pushBool(finishTransaction(script, transId));
 
 		return S_OK;
 	}
@@ -189,7 +189,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RestoreTransactions") == 0) {
 		stack->correctParams(0);
-		RestoreTransactions(script);
+		restoreTransactions(script);
 		stack->pushNULL();
 
 		return S_OK;
@@ -241,14 +241,14 @@ CScValue *CSXStore::scGetProperty(const char *name) {
 	// Available (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Available") == 0) {
-		_scValue->setBool(IsAvailable());
+		_scValue->setBool(isAvailable());
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// EventsEnabled (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EventsEnabled") == 0) {
-		_scValue->setBool(GetEventsEnabled());
+		_scValue->setBool(getEventsEnabled());
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -279,7 +279,8 @@ CScValue *CSXStore::scGetProperty(const char *name) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CSXStore::persist(CBPersistMgr *persistMgr) {
-	if (!persistMgr->_saving) cleanup();
+	if (!persistMgr->_saving)
+		cleanup();
 
 	CBObject::persist(persistMgr);
 
@@ -312,7 +313,7 @@ HRESULT CSXStore::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::afterLoad() {
 	if (_eventsEnabled) {
-		SetEventsEnabled(NULL, true);
+		setEventsEnabled(NULL, true);
 	}
 #ifdef __IPHONEOS__
 	StoreKit_SetExternalData((void *)this);
@@ -327,7 +328,7 @@ void CSXStore::OnObjectDestroyed(CBScriptHolder *obj) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::SetEventsEnabled(CScScript *script, bool val) {
+void CSXStore::setEventsEnabled(CScScript *script, bool val) {
 	_eventsEnabled = val;
 
 	if (val) {
@@ -344,14 +345,14 @@ void CSXStore::SetEventsEnabled(CScScript *script, bool val) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::ValidateProducts(const char *prodIdList) {
+void CSXStore::validateProducts(const char *prodIdList) {
 #ifdef __IPHONEOS__
 	StoreKit_ValidateProducts(prodIdList);
 #endif
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXStore::IsAvailable() {
+bool CSXStore::isAvailable() {
 #ifdef __IPHONEOS__
 	return StoreKit_IsStoreAvailable() > 0;
 #else
@@ -360,7 +361,7 @@ bool CSXStore::IsAvailable() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::ReceiveProductsStart() {
+void CSXStore::receiveProductsStart() {
 	for (int i = 0; i < _validProducts.GetSize(); i++) {
 		delete _validProducts[i];
 	}
@@ -370,23 +371,23 @@ void CSXStore::ReceiveProductsStart() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::ReceiveProductsEnd() {
+void CSXStore::receiveProductsEnd() {
 	if (_lastProductRequestOwner) _lastProductRequestOwner->applyEvent("ProductsValidated");
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::AddValidProduct(const char *id, const char *name, const char *desc, const char *price) {
+void CSXStore::addValidProduct(const char *id, const char *name, const char *desc, const char *price) {
 	CBStoreProduct *prod = new CBStoreProduct(id, name, desc, price);
 	_validProducts.Add(prod);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::AddInvalidProduct(const char *id) {
+void CSXStore::addInvalidProduct(const char *id) {
 	_invalidProducts.push_back(id);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::ReceiveTransactionsStart() {
+void CSXStore::receiveTransactionsStart() {
 	for (int i = 0; i < _transactions.GetSize(); i++) {
 		delete _transactions[i];
 	}
@@ -394,19 +395,21 @@ void CSXStore::ReceiveTransactionsStart() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::ReceiveTransactionsEnd() {
-	if (_lastPurchaseOwner) _lastPurchaseOwner->applyEvent("TransactionsUpdated");
-	else Game->applyEvent("TransactionsUpdated");
+void CSXStore::receiveTransactionsEnd() {
+	if (_lastPurchaseOwner)
+		_lastPurchaseOwner->applyEvent("TransactionsUpdated");
+	else
+		Game->applyEvent("TransactionsUpdated");
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::AddTransaction(const char *id, const char *productId, const char *state) {
+void CSXStore::addTransaction(const char *id, const char *productId, const char *state) {
 	CBStoreTransaction *trans = new CBStoreTransaction(id, productId, state);
 	_transactions.Add(trans);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXStore::Purchase(CScScript *script, const char *productId) {
+bool CSXStore::purchase(CScScript *script, const char *productId) {
 	if (!productId) return false;
 
 #ifdef __IPHONEOS__
@@ -424,7 +427,7 @@ bool CSXStore::Purchase(CScScript *script, const char *productId) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXStore::FinishTransaction(CScScript *script, const char *transId) {
+bool CSXStore::finishTransaction(CScScript *script, const char *transId) {
 	if (!transId) return false;
 #ifdef __IPHONEOS__
 	for (int i = 0; i < _transactions.GetSize(); i++) {
@@ -442,7 +445,7 @@ bool CSXStore::FinishTransaction(CScScript *script, const char *transId) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::RestoreTransactions(CScScript *script) {
+void CSXStore::restoreTransactions(CScScript *script) {
 	_lastRestoreOwner = script->_owner;
 #ifdef __IPHONEOS__
 	StoreKit_RestoreTransactions();
@@ -450,7 +453,7 @@ void CSXStore::RestoreTransactions(CScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXStore::OnRestoreFinished(bool error) {
+void CSXStore::onRestoreFinished(bool error) {
 	if (_lastRestoreOwner) {
 		if (error) _lastRestoreOwner->applyEvent("TransactionsRestoreFailed");
 		else _lastRestoreOwner->applyEvent("TransactionsRestoreFinished");

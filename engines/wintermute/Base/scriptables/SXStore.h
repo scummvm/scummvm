@@ -68,16 +68,16 @@ public:
 			return S_OK;
 		}
 
-		const char *GetId() {
+		const char *getId() {
 			return _id;
 		}
-		const char *GetName() {
+		const char *getName() {
 			return _name;
 		}
-		const char *GetDesc() {
+		const char *getDesc() {
 			return _desc;
 		}
-		const char *GetPrice() {
+		const char *getPrice() {
 			return _price;
 		}
 
@@ -109,13 +109,13 @@ public:
 			delete [] _state;
 		}
 
-		const char *GetId() {
+		const char *getId() {
 			return _id;
 		}
-		const char *GetProductId() {
+		const char *getProductId() {
 			return _productId;
 		}
-		const char *GetState() {
+		const char *getState() {
 			return _state;
 		}
 
@@ -135,29 +135,29 @@ public:
 	void afterLoad();
 	void OnObjectDestroyed(CBScriptHolder *obj);
 
-	bool IsAvailable();
-	void SetEventsEnabled(CScScript *script, bool val);
-	bool GetEventsEnabled() const {
+	bool isAvailable();
+	void setEventsEnabled(CScScript *script, bool val);
+	bool getEventsEnabled() const {
 		return _eventsEnabled;
 	}
-	void ValidateProducts(const char *prodIdList);
+	void validateProducts(const char *prodIdList);
 
-	void ReceiveTransactionsStart();
-	void ReceiveTransactionsEnd();
-	void AddTransaction(const char *id, const char *productId, const char *state);
+	void receiveTransactionsStart();
+	void receiveTransactionsEnd();
+	void addTransaction(const char *id, const char *productId, const char *state);
 
-	void ReceiveProductsStart();
-	void ReceiveProductsEnd();
-	void AddValidProduct(const char *id, const char *name, const char *desc, const char *price);
-	void AddInvalidProduct(const char *id);
+	void receiveProductsStart();
+	void receiveProductsEnd();
+	void addValidProduct(const char *id, const char *name, const char *desc, const char *price);
+	void addInvalidProduct(const char *id);
 
-	void OnRestoreFinished(bool error);
+	void onRestoreFinished(bool error);
 
 private:
 	void cleanup();
-	bool Purchase(CScScript *script, const char *productId);
-	bool FinishTransaction(CScScript *script, const char *transId);
-	void RestoreTransactions(CScScript *script);
+	bool purchase(CScScript *script, const char *productId);
+	bool finishTransaction(CScScript *script, const char *transId);
+	void restoreTransactions(CScScript *script);
 
 	bool _eventsEnabled;
 	CBArray<CBStoreProduct *, CBStoreProduct *> _validProducts;

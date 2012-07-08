@@ -44,8 +44,8 @@ CBScriptable *makeSXObject(CBGame *inGame, CScStack *stack) {
 
 //////////////////////////////////////////////////////////////////////////
 CSXObject::CSXObject(CBGame *inGame, CScStack *stack): CBObject(inGame) {
-	int NumParams = stack->pop()->getInt(0);
-	for (int i = 0; i < NumParams; i++) {
+	int numParams = stack->pop()->getInt(0);
+	for (int i = 0; i < numParams; i++) {
 		addScript(stack->pop()->getString());
 	}
 }
