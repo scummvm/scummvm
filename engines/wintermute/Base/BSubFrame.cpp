@@ -90,7 +90,7 @@ TOKEN_DEF(EDITOR_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
+HRESULT CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(IMAGE)
 	TOKEN_TABLE(TRANSPARENT)
@@ -113,22 +113,22 @@ HRESULT CBSubFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 	RECT rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
-	bool custo_trans = false;
+	bool custoTrans = false;
 	CBPlatform::SetRectEmpty(&rect);
-	char *surface_file = NULL;
+	char *surfaceFile = NULL;
 
 	delete _surface;
 	_surface = NULL;
 
-	while ((cmd = parser.getCommand((char **)&Buffer, commands, &params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_IMAGE:
-			surface_file = params;
+			surfaceFile = params;
 			break;
 
 		case TOKEN_TRANSPARENT:
 			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
-			custo_trans = true;
+			custoTrans = true;
 			break;
 
 		case TOKEN_RECT:
@@ -181,13 +181,13 @@ HRESULT CBSubFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 		return E_FAIL;
 	}
 
-	if (surface_file != NULL) {
-		if (custo_trans) setSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
-		else setSurface(surface_file, true, 0, 0, 0, LifeTime, KeepLoaded);
+	if (surfaceFile != NULL) {
+		if (custoTrans) setSurface(surfaceFile, false, r, g, b, lifeTime, keepLoaded);
+		else setSurface(surfaceFile, true, 0, 0, 0, lifeTime, keepLoaded);
 	}
 
 	_alpha = DRGBA(ar, ag, ab, alpha);
-	if (custo_trans) _transparent = DRGBA(r, g, b, 0xFF);
+	if (custoTrans) _transparent = DRGBA(r, g, b, 0xFF);
 
 	/*
 	if(_surface == NULL)
@@ -204,14 +204,14 @@ HRESULT CBSubFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, bool Precise, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
+HRESULT CBSubFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
 	if (!_surface) return S_OK;
 
-	if (Register != NULL && !_decoration) {
-		if (ZoomX == 100 && ZoomY == 100) {
-			Game->_renderer->_rectList.Add(new CBActiveRect(Game, Register, this, X - _hotspotX + _rect.left, Y - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, ZoomX, ZoomY, Precise));
+	if (registerOwner != NULL && !_decoration) {
+		if (zoomX == 100 && zoomY == 100) {
+			Game->_renderer->_rectList.Add(new CBActiveRect(Game, registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
 		} else {
-			Game->_renderer->_rectList.Add(new CBActiveRect(Game, Register, this, (int)(X - (_hotspotX + _rect.left) * (ZoomX / 100)), (int)(Y - (_hotspotY + _rect.top) * (ZoomY / 100)), (int)((_rect.right - _rect.left) * (ZoomX / 100)), (int)((_rect.bottom - _rect.top) * (ZoomY / 100)), ZoomX, ZoomY, Precise));
+			Game->_renderer->_rectList.Add(new CBActiveRect(Game, registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
 	if (Game->_suspendedRendering) return S_OK;
@@ -219,13 +219,13 @@ HRESULT CBSubFrame::draw(int X, int Y, CBObject *Register, float ZoomX, float Zo
 	HRESULT res;
 
 	//if(Alpha==0xFFFFFFFF) Alpha = _alpha; // TODO: better (combine owner's and self alpha)
-	if (_alpha != 0xFFFFFFFF) Alpha = _alpha;
+	if (_alpha != 0xFFFFFFFF) alpha = _alpha;
 
-	if (Rotate != 0.0f) {
-		res = _surface->displayTransform((int)(X - _hotspotX * (ZoomX / 100)), (int)(Y - _hotspotY * (ZoomY / 100)), _hotspotX, _hotspotY, _rect, ZoomX, ZoomY, Alpha, Rotate, BlendMode, _mirrorX, _mirrorY);
+	if (rotate != 0.0f) {
+		res = _surface->displayTransform((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _hotspotX, _hotspotY, _rect, zoomX, zoomY, alpha, rotate, blendMode, _mirrorX, _mirrorY);
 	} else {
-		if (ZoomX == 100 && ZoomY == 100) res = _surface->displayTrans(X - _hotspotX, Y - _hotspotY, _rect, Alpha, BlendMode, _mirrorX, _mirrorY);
-		else res = _surface->displayTransZoom((int)(X - _hotspotX * (ZoomX / 100)), (int)(Y - _hotspotY * (ZoomY / 100)), _rect, ZoomX, ZoomY, Alpha, BlendMode, _mirrorX, _mirrorY);
+		if (zoomX == 100 && zoomY == 100) res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, _rect, alpha, blendMode, _mirrorX, _mirrorY);
+		else res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _rect, zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 	}
 
 	return res;
@@ -233,17 +233,17 @@ HRESULT CBSubFrame::draw(int X, int Y, CBObject *Register, float ZoomX, float Zo
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float ScaleY) {
-	if (!Rect) return false;
+bool CBSubFrame::getBoundingRect(LPRECT rect, int x, int y, float scaleX, float scaleY) {
+	if (!rect) return false;
 
-	float RatioX = ScaleX / 100.0f;
-	float RatioY = ScaleY / 100.0f;
+	float ratioX = scaleX / 100.0f;
+	float ratioY = scaleY / 100.0f;
 
-	CBPlatform::SetRect(Rect,
-	                    (int)(X - _hotspotX * RatioX),
-	                    (int)(Y - _hotspotY * RatioY),
-	                    (int)(X - _hotspotX * RatioX + (_rect.right - _rect.left)*RatioX),
-	                    (int)(Y - _hotspotY * RatioY + (_rect.bottom - _rect.top)*RatioY));
+	CBPlatform::SetRect(rect,
+	                    (int)(x - _hotspotX * ratioX),
+	                    (int)(y - _hotspotY * ratioY),
+	                    (int)(x - _hotspotX * ratioX + (_rect.right - _rect.left) * ratioX),
+	                    (int)(y - _hotspotY * ratioY + (_rect.bottom - _rect.top) * ratioY));
 	return true;
 }
 
@@ -549,7 +549,7 @@ const char *CBSubFrame::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSubFrame::setSurface(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+HRESULT CBSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (_surface) {
 		Game->_surfaceStorage->removeSurface(_surface);
 		_surface = NULL;
@@ -558,17 +558,17 @@ HRESULT CBSubFrame::setSurface(const char *filename, bool default_ck, byte ck_re
 	delete[] _surfaceFilename;
 	_surfaceFilename = NULL;
 
-	_surface = Game->_surfaceStorage->addSurface(filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
+	_surface = Game->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	if (_surface) {
 		_surfaceFilename = new char[strlen(filename) + 1];
 		strcpy(_surfaceFilename, filename);
 
-		_cKDefault = default_ck;
-		_cKRed = ck_red;
-		_cKGreen = ck_green;
-		_cKBlue = ck_blue;
-		_lifeTime = LifeTime;
-		_keepLoaded = KeepLoaded;
+		_cKDefault = defaultCK;
+		_cKRed = ckRed;
+		_cKGreen = ckGreen;
+		_cKBlue = ckBlue;
+		_lifeTime = lifeTime;
+		_keepLoaded = keepLoaded;
 
 		return S_OK;
 	} else return E_FAIL;

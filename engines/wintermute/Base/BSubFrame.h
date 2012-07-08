@@ -41,7 +41,7 @@ public:
 	bool _mirrorX;
 	bool _mirrorY;
 	bool _decoration;
-	HRESULT setSurface(const char *filename, bool default_ck = true, byte ck_red = 0, byte ck_green = 0, byte ck_blue = 0, int LifeTime = -1, bool KeepLoaded = false);
+	HRESULT setSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
 	HRESULT setSurfaceSimple();
 	DECLARE_PERSISTENT(CBSubFrame, CBScriptable)
 	void setDefaultRect();
@@ -51,9 +51,9 @@ public:
 	bool _editorSelected;
 	CBSubFrame(CBGame *inGame);
 	virtual ~CBSubFrame();
-	HRESULT loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded);
-	HRESULT draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, bool Precise = true, uint32 Alpha = 0xFFFFFFFF, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
-	bool getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX = 100, float ScaleY = 100);
+	HRESULT loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
+	HRESULT draw(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
+	bool getBoundingRect(LPRECT rect, int x, int y, float scaleX = 100, float scaleY = 100);
 
 	int _hotspotX;
 	int _hotspotY;
