@@ -3378,11 +3378,10 @@ void LBLiveTextItem::readData(uint16 type, uint16 size, Common::MemoryReadStream
 			LiveTextWord word;
 			word.bounds = _vm->readRect(stream);
 			word.soundId = stream->readUint16();
-			// TODO: unknowns
-			uint16 unknown1 = stream->readUint16();
-			uint16 unknown2 = stream->readUint16();
-			debug(4, "Word: (%d, %d) to (%d, %d), sound %d, unknowns %04x, %04x",
-				word.bounds.left, word.bounds.top, word.bounds.right, word.bounds.bottom, word.soundId, unknown1, unknown2);
+			word.itemType = stream->readUint16();
+			word.itemId = stream->readUint16();
+			debug(4, "Word: (%d, %d) to (%d, %d), sound %d, item %d (type %d)",
+				word.bounds.left, word.bounds.top, word.bounds.right, word.bounds.bottom, word.soundId, word.itemId, word.itemType);
 			_words.push_back(word);
 		}
 
@@ -3531,6 +3530,11 @@ void LBLiveTextItem::handleMouseDown(Common::Point pos) {
 			_currentWord = i;
 			_vm->playSound(this, soundId);
 			paletteUpdate(_currentWord, true);
+
+			// TODO: check this in RE
+			LBItem *item = _vm->getItemById(_words[i].itemId);
+			if (item)
+				item->togglePlaying(false);
 			return;
 		}
 	}
