@@ -73,10 +73,10 @@ CUIButton::CUIButton(CBGame *inGame): CUIObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CUIButton::~CUIButton() {
-	if (_backPress) delete _backPress;
-	if (_backHover) delete _backHover;
-	if (_backDisable) delete _backDisable;
-	if (_backFocus) delete _backFocus;
+	delete _backPress;
+	delete _backHover;
+	delete _backDisable;
+	delete _backFocus;
 
 	if (!_sharedFonts) {
 		if (_fontHover)   Game->_fontStorage->removeFont(_fontHover);
@@ -86,10 +86,10 @@ CUIButton::~CUIButton() {
 	}
 
 	if (!_sharedImages) {
-		if (_imageHover)   delete _imageHover;
-		if (_imagePress)   delete _imagePress;
-		if (_imageDisable) delete _imageDisable;
-		if (_imageFocus)   delete _imageFocus;
+		delete _imageHover;
+		delete _imagePress;
+		delete _imageDisable;
+		delete _imageFocus;
 	}
 }
 
@@ -108,7 +108,6 @@ HRESULT CUIButton::loadFile(const char *filename) {
 	strcpy(_filename, filename);
 
 	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing BUTTON file '%s'", filename);
-
 
 	delete [] buffer;
 
@@ -578,8 +577,9 @@ void CUIButton::correctSize() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::display(int OffsetX, int OffsetY) {
-	if (!_visible) return S_OK;
+HRESULT CUIButton::display(int offsetX, int offsetY) {
+	if (!_visible)
+		return S_OK;
 
 	CUITiledImage *back = NULL;
 	CBSprite *image = NULL;
@@ -619,26 +619,26 @@ HRESULT CUIButton::display(int OffsetX, int OffsetY) {
 		else font = Game->_systemFont;
 	}
 
-	int ImageX = OffsetX + _posX;
-	int ImageY = OffsetY + _posY;
+	int imageX = offsetX + _posX;
+	int imageY = offsetY + _posY;
 
 	if (image && _centerImage) {
 		RECT rc;
 		image->GetBoundingRect(&rc, 0, 0);
-		ImageX += (_width - (rc.right - rc.left)) / 2;
-		ImageY += (_height - (rc.bottom - rc.top)) / 2;
+		imageX += (_width - (rc.right - rc.left)) / 2;
+		imageY += (_height - (rc.bottom - rc.top)) / 2;
 	}
 
-	if (back) back->display(OffsetX + _posX, OffsetY + _posY, _width, _height);
+	if (back) back->display(offsetX + _posX, offsetY + _posY, _width, _height);
 	//if(image) image->Draw(ImageX +((_press||_oneTimePress)&&back?1:0), ImageY +((_press||_oneTimePress)&&back?1:0), NULL);
-	if (image) image->draw(ImageX + ((_press || _oneTimePress) && back ? 1 : 0), ImageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : NULL);
+	if (image) image->draw(imageX + ((_press || _oneTimePress) && back ? 1 : 0), imageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : NULL);
 
 	if (font && _text) {
 		int text_offset = (_height - font->getTextHeight((byte *)_text, _width)) / 2;
-		font->drawText((byte *)_text, OffsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), OffsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
+		font->drawText((byte *)_text, offsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), offsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
 	}
 
-	if (!_pixelPerfect || !_image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
+	if (!_pixelPerfect || !_image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 	// reset unused sprites
 	if (_image && _image != image) _image->reset();
@@ -690,14 +690,14 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetHoverFont") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
 		if (_fontHover) Game->_fontStorage->removeFont(_fontHover);
-		if (Val->isNULL()) {
+		if (val->isNULL()) {
 			_fontHover = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontHover = Game->_fontStorage->addFont(Val->getString());
+			_fontHover = Game->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontHover != NULL);
 		}
 		return S_OK;
@@ -726,14 +726,14 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetFocusedFont") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
 		if (_fontFocus) Game->_fontStorage->removeFont(_fontFocus);
-		if (Val->isNULL()) {
+		if (val->isNULL()) {
 			_fontFocus = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontFocus = Game->_fontStorage->addFont(Val->getString());
+			_fontFocus = Game->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontFocus != NULL);
 		}
 		return S_OK;
