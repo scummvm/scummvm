@@ -48,56 +48,6 @@ IMPLEMENT_PERSISTENT(CScEngine, true)
 CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 	Game->LOG(0, "Initializing scripting engine...");
 
-	/*
-	#ifdef __WIN32__
-	    char CompilerPath[MAX_PATH];
-	    strcpy(CompilerPath, COMPILER_DLL);
-
-	    _compilerDLL = ::LoadLibrary(CompilerPath);
-	    if (_compilerDLL == NULL) {
-	        char ModuleName[MAX_PATH];
-	        ::GetModuleFileName(NULL, ModuleName, MAX_PATH);
-
-	        // switch to exe's dir
-	        char *ExeDir = CBUtils::GetPath(ModuleName);
-	        sprintf(CompilerPath, "%s%s", ExeDir, COMPILER_DLL);
-	        _compilerDLL = ::LoadLibrary(CompilerPath);
-
-	        delete [] ExeDir;
-	    }
-	    if (_compilerDLL != NULL) {
-	        // bind compiler's functionality
-	        ExtCompileBuffer  = (DLL_COMPILE_BUFFER) ::GetProcAddress(_compilerDLL, "CompileBuffer");
-	        ExtCompileFile    = (DLL_COMPILE_FILE)   ::GetProcAddress(_compilerDLL, "CompileFile");
-	        ExtReleaseBuffer  = (DLL_RELEASE_BUFFER) ::GetProcAddress(_compilerDLL, "ReleaseBuffer");
-	        ExtSetCallbacks   = (DLL_SET_CALLBACKS)  ::GetProcAddress(_compilerDLL, "SetCallbacks");
-	        ExtDefineFunction = (DLL_DEFINE_FUNCTION)::GetProcAddress(_compilerDLL, "DefineFunction");
-	        ExtDefineVariable = (DLL_DEFINE_VARIABLE)::GetProcAddress(_compilerDLL, "DefineVariable");
-
-	        if (!ExtCompileBuffer || !ExtCompileFile || !ExtReleaseBuffer || !ExtSetCallbacks || !ExtDefineFunction || !ExtDefineVariable) {
-	            _compilerAvailable = false;
-	            ::FreeLibrary(_compilerDLL);
-	            _compilerDLL = NULL;
-	        } else {
-	        */  /*
-            // publish external methods to the compiler
-            CALLBACKS c;
-            c.Dll_AddError = AddError;
-            c.Dll_CloseFile = CloseFile;
-            c.Dll_LoadFile = LoadFile;
-            ExtSetCallbacks(&c, Game);
-            */
-	/*
-	            _compilerAvailable = true;
-	        }
-	    } else _compilerAvailable = false;
-	#else
-	*/
-	_compilerAvailable = false;
-	_compilerDLL = 0;
-//#endif
-
-
 	if (_compilerAvailable) Game->LOG(0, "  Script compiler bound successfuly");
 	else Game->LOG(0, "  Script compiler is NOT available");
 
@@ -144,9 +94,7 @@ CScEngine::~CScEngine() {
 	saveBreakpoints();
 
 	disableProfiling();
-#ifdef __WIN32__
-	if (_compilerAvailable && _compilerDLL) ::FreeLibrary(_compilerDLL);
-#endif
+
 	cleanup();
 
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
@@ -219,7 +167,7 @@ void CScEngine::addError(void *data, int line, char *text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void WINAPI CScEngine::parseElement(void *data, int line, int type, void *elementData) {
+void CScEngine::parseElement(void *data, int line, int type, void *elementData) {
 	CBGame *Game = (CBGame *)data;
 
 	if (Game) {
@@ -300,32 +248,9 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 			delete [] buffer;
 			return NULL;
 		}
-
-		compiledNow = true;
-
-		// publish external methods to the compiler
-		CALLBACKS c;
-		c.Dll_AddError = addError;
-		c.Dll_CloseFile = closeFile;
-		c.Dll_LoadFile = loadFile;
-		c.Dll_ParseElement = parseElement;
-		ExtSetCallbacks(&c, Game);
-
-		// publish native interfaces
-		Game->PublishNatives();
-
-		// We have const char* everywhere but in the DLL-interfaces...
-		char *tempFileName = new char[strlen(filename) + 1];
-		memcpy(tempFileName, filename, strlen(filename) + 1);
-
-		setFileToCompile(filename);
-		compBuffer = ExtCompileFile(tempFileName, &compSize);
-		delete[] tempFileName;
-		if (!compBuffer) {
-			Game->quickMessage("Script compiler error. View log for details.");
-			delete [] buffer;
-			return NULL;
-		}
+		// This code will never be called, since _compilerAvailable is const false.
+		// It's only here in the event someone would want to reinclude the compiler.
+		error("Script needs compilation, ScummVM does not contain a WME compiler");
 	}
 
 	byte *ret = NULL;

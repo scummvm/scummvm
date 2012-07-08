@@ -1047,17 +1047,6 @@ HRESULT CAdGame::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdGame::PublishNatives() {
-	if (!_scEngine || !_scEngine->_compilerAvailable) return;
-
-	CBGame::PublishNatives();
-
-	_scEngine->ExtDefineFunction("Actor");
-	_scEngine->ExtDefineFunction("Entity");
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 HRESULT CAdGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name) {
 	CScValue *this_obj;
 

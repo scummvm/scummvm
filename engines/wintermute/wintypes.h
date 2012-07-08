@@ -35,9 +35,6 @@
 
 #ifndef __WIN32__
 
-#define WINAPI
-#define CALLBACK
-
 #define PI ((float) 3.141592653589793f)
 #define DRGBA(r,g,b,a) ((uint32)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
@@ -69,7 +66,6 @@ typedef struct tagPOINT {
 
 
 typedef uint32 HINSTANCE;
-typedef uint32 HMODULE;
 typedef uint32 HWND;
 
 typedef int32 HRESULT;

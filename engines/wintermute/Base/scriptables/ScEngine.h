@@ -132,8 +132,8 @@ public:
 	HRESULT tick();
 	CScValue *_globals;
 	CScScript *runScript(const char *filename, CBScriptHolder *owner = NULL);
-	bool _compilerAvailable;
-	HINSTANCE _compilerDLL;
+	static const bool _compilerAvailable = false;
+
 	CScEngine(CBGame *inGame);
 	virtual ~CScEngine();
 	static void addError(void *data, int line, char *text);

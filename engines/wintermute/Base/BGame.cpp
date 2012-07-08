@@ -197,8 +197,6 @@ CBGame::CBGame(): CBObject(this) {
 
 	_subtitlesSpeed = 70;
 
-	_resourceModule = 0;
-
 	_forceNonStreamedSounds = false;
 
 	_thumbnailWidth = _thumbnailHeight = 0;
@@ -2891,49 +2889,6 @@ bool CBGame::validObject(CBObject *object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::PublishNatives() {
-	if (!_scEngine || !_scEngine->_compilerAvailable) return;
-
-	_scEngine->ExtDefineFunction("LOG");
-	_scEngine->ExtDefineFunction("String");
-	_scEngine->ExtDefineFunction("MemBuffer");
-	_scEngine->ExtDefineFunction("File");
-	_scEngine->ExtDefineFunction("Date");
-	_scEngine->ExtDefineFunction("Array");
-	_scEngine->ExtDefineFunction("TcpClient");
-	_scEngine->ExtDefineFunction("Object");
-	//_scEngine->ExtDefineFunction("Game");
-	_scEngine->ExtDefineFunction("Sleep");
-	_scEngine->ExtDefineFunction("WaitFor");
-	_scEngine->ExtDefineFunction("Random");
-	_scEngine->ExtDefineFunction("SetScriptTimeSlice");
-	_scEngine->ExtDefineFunction("MakeRGBA");
-	_scEngine->ExtDefineFunction("MakeRGB");
-	_scEngine->ExtDefineFunction("MakeHSL");
-	_scEngine->ExtDefineFunction("RGB");
-	_scEngine->ExtDefineFunction("GetRValue");
-	_scEngine->ExtDefineFunction("GetGValue");
-	_scEngine->ExtDefineFunction("GetBValue");
-	_scEngine->ExtDefineFunction("GetAValue");
-	_scEngine->ExtDefineFunction("GetHValue");
-	_scEngine->ExtDefineFunction("GetSValue");
-	_scEngine->ExtDefineFunction("GetLValue");
-	_scEngine->ExtDefineFunction("Debug");
-
-	_scEngine->ExtDefineFunction("ToString");
-	_scEngine->ExtDefineFunction("ToInt");
-	_scEngine->ExtDefineFunction("ToBool");
-	_scEngine->ExtDefineFunction("ToFloat");
-
-	_scEngine->ExtDefineVariable("Game");
-	_scEngine->ExtDefineVariable("Math");
-	_scEngine->ExtDefineVariable("Directory");
-	_scEngine->ExtDefineVariable("self");
-	_scEngine->ExtDefineVariable("this");
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name) {
 	CScValue *thisObj;
 
@@ -4071,12 +4026,6 @@ void CBGame::resetMousePos() {
 	p.y = _mousePos.y + _renderer->_drawOffsetY;
 
 	CBPlatform::SetCursorPos(p.x, p.y);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-void CBGame::setResourceModule(HMODULE resModule) {
-	_resourceModule = resModule;
 }
 
 

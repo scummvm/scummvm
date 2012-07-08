@@ -147,7 +147,6 @@ public:
 	HRESULT loadItemsBuffer(byte *buffer, bool merge = false);
 
 
-	virtual void PublishNatives();
 	virtual HRESULT ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
 
 	// scripting interface

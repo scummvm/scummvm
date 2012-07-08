@@ -139,10 +139,10 @@ typedef enum {
 
 
 // compiler interface
-typedef byte *(WINAPI DLL_LOAD_FILE)(void *Data, char *Filename, uint32 *Size);
-typedef void (WINAPI DLL_CLOSE_FILE)(void *Data, byte *Buffer);
-typedef void (WINAPI DLL_ADD_ERROR)(void *Data, int Line, char *Text);
-typedef void (WINAPI DLL_PARSE_ELEMENT)(void *Data, int Line, int Type, void *ElementData);
+typedef byte *(DLL_LOAD_FILE)(void *data, char *filename, uint32 *size);
+typedef void (DLL_CLOSE_FILE)(void *data, byte *buffer);
+typedef void (DLL_ADD_ERROR)(void *data, int line, char *text);
+typedef void (DLL_PARSE_ELEMENT)(void *data, int line, int type, void *elementData);
 
 typedef struct {
 	DLL_LOAD_FILE *Dll_LoadFile;

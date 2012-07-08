@@ -36,8 +36,8 @@ namespace WinterMute {
 class CBPersistMgr;
 
 // persistence support
-typedef void *(WINAPI *PERSISTBUILD)(void);
-typedef HRESULT(WINAPI *PERSISTLOAD)(void *, CBPersistMgr *);
+typedef void *(*PERSISTBUILD)(void);
+typedef HRESULT(*PERSISTLOAD)(void *, CBPersistMgr *);
 typedef void (*SYS_INSTANCE_CALLBACK)(void *Instance, void *Data);
 } // end of namespace WinterMute
 
@@ -48,9 +48,9 @@ namespace WinterMute {
 
 #define DECLARE_PERSISTENT(class_name, parent_class)\
 	static const char _className[];\
-	static void* WINAPI persistBuild(void);\
+	static void* persistBuild(void);\
 	virtual const char* getClassName();\
-	static HRESULT WINAPI persistLoad(void* Instance, CBPersistMgr* PersistMgr);\
+	static HRESULT persistLoad(void* Instance, CBPersistMgr* PersistMgr);\
 	class_name(TDynamicConstructor p1, TDynamicConstructor p2):parent_class(p1, p2){ /*memset(this, 0, sizeof(class_name));*/ };\
 	virtual HRESULT persist(CBPersistMgr* PersistMgr);\
 	void* operator new (size_t size);\

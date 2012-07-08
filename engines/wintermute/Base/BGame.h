@@ -143,8 +143,6 @@ public:
 	int _thumbnailHeight;
 
 	bool _reportTextureFormat;
-	HMODULE _resourceModule;
-	void setResourceModule(HMODULE resModule);
 
 	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = NULL, void *data = NULL);
 	ENGINE_LOG_CALLBACK _engineLogCallback;
@@ -222,7 +220,6 @@ public:
 	virtual HRESULT invalidateDeviceObjects();
 	virtual HRESULT restoreDeviceObjects();
 
-	virtual void PublishNatives();
 	virtual HRESULT ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
