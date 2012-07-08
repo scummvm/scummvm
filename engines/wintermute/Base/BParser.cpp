@@ -115,7 +115,7 @@ long CBParser::GetObject(char **buf, TokenDesc *tokens, char **name, char **data
 //////////////////////////////////////////////////////////////////////
 long CBParser::GetCommand(char **buf, TokenDesc *tokens, char **params) {
 	if (!*buf) return PARSERR_TOKENNOTFOUND;
-	Game->MiniUpdate();
+	Game->miniUpdate();
 	char *name;
 	return GetObject(buf, tokens, &name, params);
 }

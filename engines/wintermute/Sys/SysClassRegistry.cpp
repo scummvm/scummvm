@@ -249,7 +249,7 @@ HRESULT CSysClassRegistry::saveInstances(CBGame *Game, CBPersistMgr *persistMgr,
 				Game->_renderer->flip();
 			}
 		}
-		Game->MiniUpdate();
+		Game->miniUpdate();
 
 		(it->_value)->saveInstances(Game, persistMgr);
 	}

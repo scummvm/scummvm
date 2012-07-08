@@ -89,7 +89,7 @@ public:
 	uint32 _lastMiniUpdate;
 	bool _miniUpdateEnabled;
 
-	virtual HRESULT MiniUpdate();
+	virtual HRESULT miniUpdate();
 
 	void getMousePos(POINT *Pos);
 	RECT _mouseLockRect;
@@ -144,9 +144,9 @@ public:
 
 	bool _reportTextureFormat;
 	HMODULE _resourceModule;
-	void setResourceModule(HMODULE ResModule);
+	void setResourceModule(HMODULE resModule);
 
-	void setEngineLogCallback(ENGINE_LOG_CALLBACK Callback = NULL, void *Data = NULL);
+	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = NULL, void *data = NULL);
 	ENGINE_LOG_CALLBACK _engineLogCallback;
 	void *_engineLogCallbackData;
 	bool _editorMode;
@@ -253,7 +253,7 @@ public:
 	HRESULT getSaveSlotDescription(int slot, char *buffer);
 	HRESULT getSaveSlotFilename(int slot, char *buffer);
 	void setWindowTitle();
-	virtual bool handleMouseWheel(int Delta);
+	virtual bool handleMouseWheel(int delta);
 	bool _quitting;
 	virtual HRESULT getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
 
@@ -333,9 +333,9 @@ public:
 	bool _forceNonStreamedSounds;
 	void resetMousePos();
 	int _subtitlesSpeed;
-	void SetInteractive(bool State);
+	void setInteractive(bool state);
 	virtual HRESULT windowLoadHook(CUIWindow *win, char **buf, char **params);
-	virtual HRESULT windowScriptMethodHook(CUIWindow *Win, CScScript *script, CScStack *stack, const char *name);
+	virtual HRESULT windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
 	HRESULT getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
 	HRESULT getCurrentViewportRect(RECT *rect, bool *custom = NULL);
 	HRESULT popViewport();
@@ -351,7 +351,7 @@ public:
 
 	bool _touchInterface;
 	bool _constrainedMemory;
-	AnsiString GetDeviceType() const;
+	AnsiString getDeviceType() const;
 
 private:
 	CBDebugger *_debugMgr;

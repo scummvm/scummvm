@@ -658,7 +658,7 @@ bool CBFileManager::isValidPackage(const AnsiString &fileName) const {
 
 	// check for device-type specific packages
 	if (StringUtil::startsWith(plainName, "xdevice_", true)) {
-		return StringUtil::compareNoCase(plainName, "xdevice_" + Game->GetDeviceType());
+		return StringUtil::compareNoCase(plainName, "xdevice_" + Game->getDeviceType());
 	}
 	return true;
 }
