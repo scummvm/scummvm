@@ -66,7 +66,7 @@ HRESULT CBSaveThumbHelper::StoreThumbnail(bool DoFlip) {
 		// normal thumbnail
 		if (Game->_thumbnailWidth > 0 && Game->_thumbnailHeight > 0) {
 			_thumbnail = new CBImage(Game);
-			_thumbnail->CopyFrom(Screenshot, Game->_thumbnailWidth, Game->_thumbnailHeight);
+			_thumbnail->copyFrom(Screenshot, Game->_thumbnailWidth, Game->_thumbnailHeight);
 		}
 
 

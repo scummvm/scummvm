@@ -1807,7 +1807,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		bool ret = false;
 		CBImage *Image = Game->_renderer->takeScreenshot();
 		if (Image) {
-			ret = SUCCEEDED(Image->SaveBMPFile(filename));
+			ret = SUCCEEDED(Image->saveBMPFile(filename));
 			delete Image;
 		} else ret = false;
 
@@ -1827,8 +1827,8 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		bool ret = false;
 		CBImage *Image = Game->_renderer->takeScreenshot();
 		if (Image) {
-			ret = SUCCEEDED(Image->Resize(SizeX, SizeY));
-			if (ret) ret = SUCCEEDED(Image->SaveBMPFile(filename));
+			ret = SUCCEEDED(Image->resize(SizeX, SizeY));
+			if (ret) ret = SUCCEEDED(Image->saveBMPFile(filename));
 			delete Image;
 		} else ret = false;
 

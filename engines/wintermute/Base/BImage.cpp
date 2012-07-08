@@ -112,7 +112,7 @@ void CBImage::copyFrom(Graphics::Surface *surface) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBImage::SaveBMPFile(const char *filename) {
+HRESULT CBImage::saveBMPFile(const char *filename) {
 #if 0
 	if (!_bitmap) return E_FAIL;
 
@@ -124,12 +124,12 @@ HRESULT CBImage::SaveBMPFile(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBImage::Resize(int NewWidth, int NewHeight) {
+HRESULT CBImage::resize(int newWidth, int newHeight) {
 #if 0
 	if (!_bitmap) return E_FAIL;
 
-	if (NewWidth == 0) NewWidth = FreeImage_GetWidth(_bitmap);
-	if (NewHeight == 0) NewHeight = FreeImage_GetHeight(_bitmap);
+	if (newWidth == 0) NewWidth = FreeImage_GetWidth(_bitmap);
+	if (newHeight == 0) NewHeight = FreeImage_GetHeight(_bitmap);
 
 
 	FIBITMAP *newImg = FreeImage_Rescale(_bitmap, NewWidth, NewHeight, FILTER_BILINEAR);
@@ -248,7 +248,7 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBImage::CopyFrom(CBImage *OrigImage, int NewWidth, int NewHeight) {
+HRESULT CBImage::copyFrom(CBImage *origImage, int newWidth, int newHeight) {
 #if 0
 	if (_bitmap) FreeImage_Unload(_bitmap);
 
@@ -257,13 +257,13 @@ HRESULT CBImage::CopyFrom(CBImage *OrigImage, int NewWidth, int NewHeight) {
 
 	_bitmap = FreeImage_Rescale(OrigImage->GetBitmap(), NewWidth, NewHeight, FILTER_BILINEAR);
 #endif
-	TransparentSurface temp(*OrigImage->_surface, false);
+	TransparentSurface temp(*origImage->_surface, false);
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
 		_deletableSurface = NULL;
 	}
-	_surface = _deletableSurface = temp.scale(NewWidth, NewHeight);
+	_surface = _deletableSurface = temp.scale(newWidth, newHeight);
 	return S_OK;
 }
 
