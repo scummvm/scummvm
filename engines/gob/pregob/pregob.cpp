@@ -161,17 +161,7 @@ void PreGob::freeSounds() {
 }
 
 bool PreGob::loadSound(SoundDesc &sound, const Common::String &file) const {
-	int32 size;
-	byte *data = _vm->_dataIO->getFile(file, size);
-
-	if (!data || !sound.load(SOUND_SND, data, size)) {
-		delete data;
-
-		warning("PreGob::loadSound(): Failed to load sound \"%s\"", file.c_str());
-		return false;
-	}
-
-	return true;
+	return _vm->_sound->sampleLoad(&sound, SOUND_SND, file.c_str());
 }
 
 void PreGob::playSound(uint sound, int16 frequency, int16 repCount) {
