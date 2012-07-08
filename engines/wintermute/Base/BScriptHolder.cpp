@@ -80,21 +80,21 @@ void CBScriptHolder::setFilename(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptHolder::applyEvent(const char *EventName, bool Unbreakable) {
-	int NumHandlers = 0;
+HRESULT CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
+	int numHandlers = 0;
 
 	HRESULT ret = E_FAIL;
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (!_scripts[i]->_thread) {
-			CScScript *handler = _scripts[i]->InvokeEventHandler(EventName, Unbreakable);
+			CScScript *handler = _scripts[i]->InvokeEventHandler(eventName, unbreakable);
 			if (handler) {
 				//_scripts.Add(handler);
-				NumHandlers++;
+				numHandlers++;
 				ret = S_OK;
 			}
 		}
 	}
-	if (NumHandlers > 0 && Unbreakable) Game->_scEngine->TickUnbreakable();
+	if (numHandlers > 0 && unbreakable) Game->_scEngine->TickUnbreakable();
 
 	return ret;
 }
@@ -173,11 +173,11 @@ HRESULT CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	else if (strcmp(name, "DetachScript") == 0) {
 		stack->correctParams(2);
 		const char *filename = stack->pop()->getString();
-		bool KillThreads = stack->pop()->getBool(false);
+		bool killThreads = stack->pop()->getBool(false);
 		bool ret = false;
 		for (int i = 0; i < _scripts.GetSize(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
-				_scripts[i]->finish(KillThreads);
+				_scripts[i]->finish(killThreads);
 				ret = true;
 				break;
 			}
@@ -364,64 +364,64 @@ HRESULT CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	char *PropName = NULL;
-	char *PropValue = NULL;
+	char *propName = NULL;
+	char *propValue = NULL;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME:
-			delete[] PropName;
-			PropName = new char[strlen((char *)params) + 1];
-			if (PropName) strcpy(PropName, (char *)params);
+			delete[] propName;
+			propName = new char[strlen((char *)params) + 1];
+			if (propName) strcpy(propName, (char *)params);
 			else cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_VALUE:
-			delete[] PropValue;
-			PropValue = new char[strlen((char *)params) + 1];
-			if (PropValue) strcpy(PropValue, (char *)params);
+			delete[] propValue;
+			propValue = new char[strlen((char *)params) + 1];
+			if (propValue) strcpy(propValue, (char *)params);
 			else cmd = PARSERR_GENERIC;
 			break;
 		}
 
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		delete[] PropName;
-		delete[] PropValue;
-		PropName = NULL;
-		PropValue = NULL;
+		delete[] propName;
+		delete[] propValue;
+		propName = NULL;
+		propValue = NULL;
 		Game->LOG(0, "Syntax error in PROPERTY definition");
 		return E_FAIL;
 	}
-	if (cmd == PARSERR_GENERIC || PropName == NULL || PropValue == NULL) {
-		delete[] PropName;
-		delete[] PropValue;
-		PropName = NULL;
-		PropValue = NULL;
+	if (cmd == PARSERR_GENERIC || propName == NULL || propValue == NULL) {
+		delete[] propName;
+		delete[] propValue;
+		propName = NULL;
+		propValue = NULL;
 		Game->LOG(0, "Error loading PROPERTY definition");
 		return E_FAIL;
 	}
 
 
 	CScValue *val = new CScValue(Game);
-	val->setString(PropValue);
-	scSetProperty(PropName, val);
+	val->setString(propValue);
+	scSetProperty(propName, val);
 
 	delete val;
-	delete[] PropName;
-	delete[] PropValue;
-	PropName = NULL;
-	PropValue = NULL;
+	delete[] propName;
+	delete[] propValue;
+	propName = NULL;
+	propValue = NULL;
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptHolder::makeFreezable(bool Freezable) {
-	_freezable = Freezable;
+void CBScriptHolder::makeFreezable(bool freezable) {
+	_freezable = freezable;
 	for (int i = 0; i < _scripts.GetSize(); i++)
-		_scripts[i]->_freezable = Freezable;
+		_scripts[i]->_freezable = freezable;
 
 }
 
@@ -450,15 +450,15 @@ CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptHolder::scDebuggerDesc(char *Buf, int BufSize) {
-	strcpy(Buf, scToString());
+void CBScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
+	strcpy(buf, scToString());
 	if (_name && strcmp(_name, "<unnamed>") != 0) {
-		strcat(Buf, "  Name: ");
-		strcat(Buf, _name);
+		strcat(buf, "  Name: ");
+		strcat(buf, _name);
 	}
 	if (_filename) {
-		strcat(Buf, "  File: ");
-		strcat(Buf, _filename);
+		strcat(buf, "  File: ");
+		strcat(buf, _filename);
 	}
 }
 
@@ -466,8 +466,8 @@ void CBScriptHolder::scDebuggerDesc(char *Buf, int BufSize) {
 //////////////////////////////////////////////////////////////////////////
 // IWmeObject
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::sendEvent(const char *EventName) {
-	return SUCCEEDED(applyEvent(EventName));
+bool CBScriptHolder::sendEvent(const char *eventName) {
+	return SUCCEEDED(applyEvent(eventName));
 }
 
 } // end of namespace WinterMute
