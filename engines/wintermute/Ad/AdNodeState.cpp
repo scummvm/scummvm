@@ -115,7 +115,7 @@ void CAdNodeState::setCaption(const char *caption, int caseVal) {
 	_caption[caseVal- 1] = new char[strlen(caption) + 1];
 	if (_caption[caseVal- 1]) {
 		strcpy(_caption[caseVal- 1], caption);
-		Game->_stringTable->Expand(&_caption[caseVal- 1]);
+		Game->_stringTable->expand(&_caption[caseVal- 1]);
 	}
 }
 

@@ -137,16 +137,16 @@ HRESULT CBObject::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBObject::setCaption(const char *caption, int Case) { // TODO: rename Case to something usefull
-	if (Case == 0) Case = 1;
-	if (Case < 1 || Case > 7)
+void CBObject::setCaption(const char *caption, int caseVal) { // TODO: rename Case to something usefull
+	if (caseVal == 0) caseVal = 1;
+	if (caseVal < 1 || caseVal > 7)
 		return;
 
-	delete[] _caption[Case - 1];
-	_caption[Case - 1] = new char[strlen(caption) + 1];
-	if (_caption[Case - 1]) {
-		strcpy(_caption[Case - 1], caption);
-		Game->_stringTable->Expand(&_caption[Case - 1]);
+	delete[] _caption[caseVal - 1];
+	_caption[caseVal - 1] = new char[strlen(caption) + 1];
+	if (_caption[caseVal - 1]) {
+		strcpy(_caption[caseVal - 1], caption);
+		Game->_stringTable->expand(&_caption[caseVal - 1]);
 	}
 }
 

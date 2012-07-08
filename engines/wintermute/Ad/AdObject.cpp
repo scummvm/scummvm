@@ -838,7 +838,7 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 	_sentence->_sound = NULL;
 
 	_sentence->setText(text);
-	Game->_stringTable->Expand(&_sentence->_text);
+	Game->_stringTable->expand(&_sentence->_text);
 	_sentence->setStances(stances);
 	_sentence->_duration = duration;
 	_sentence->_align = Align;
@@ -850,7 +850,7 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 	// try to locate speech file automatically
 	bool deleteSound = false;
 	if (!sound) {
-		char *key = Game->_stringTable->GetKey(text);
+		char *key = Game->_stringTable->getKey(text);
 		if (key) {
 			sound = ((CAdGame *)Game)->findSpeechFile(key);
 			delete [] key;

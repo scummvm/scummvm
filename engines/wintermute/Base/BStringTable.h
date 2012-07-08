@@ -37,14 +37,14 @@ namespace WinterMute {
 
 class CBStringTable : public CBBase {
 public:
-	const char *ExpandStatic(const char *String, bool ForceExpand = false);
-	HRESULT loadFile(const char *filename, bool DeleteAll = true);
-	void Expand(char **Str, bool ForceExpand = false);
-	HRESULT AddString(const char *Key, const char *Val, bool ReportDuplicities = true);
+	const char *expandStatic(const char *string, bool forceExpand = false);
+	HRESULT loadFile(const char *filename, bool deleteAll = true);
+	void expand(char **str, bool forceExpand = false);
+	HRESULT addString(const char *key, const char *val, bool reportDuplicities = true);
 	CBStringTable(CBGame *inGame);
 	virtual ~CBStringTable();
 	Common::HashMap<Common::String, Common::String> _strings;
-	char *GetKey(const char *Str);
+	char *getKey(const char *str);
 private:
 	Common::HashMap<Common::String, Common::String>::iterator _stringsIter;
 

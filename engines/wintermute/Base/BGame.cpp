@@ -1118,7 +1118,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		CScValue *val = stack->pop();
 		char *str = new char[strlen(val->getString()) + 1];
 		strcpy(str, val->getString());
-		_stringTable->Expand(&str);
+		_stringTable->expand(&str);
 		stack->pushString(str);
 		delete [] str;
 		return S_OK;

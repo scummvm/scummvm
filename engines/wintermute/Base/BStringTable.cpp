@@ -50,35 +50,35 @@ CBStringTable::~CBStringTable() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBStringTable::AddString(const char *Key, const char *Val, bool ReportDuplicities) {
-	if (Key == NULL || Val == NULL) return E_FAIL;
+HRESULT CBStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
+	if (key == NULL || val == NULL) return E_FAIL;
 
-	if (scumm_stricmp(Key, "@right-to-left") == 0) {
+	if (scumm_stricmp(key, "@right-to-left") == 0) {
 		Game->_textRTL = true;
 		return S_OK;
 	}
 
-	Common::String final_key = Key;
+	Common::String final_key = key;
 	StringUtil::toLowerCase(final_key);
 
 	_stringsIter = _strings.find(final_key);
-	if (_stringsIter != _strings.end() && ReportDuplicities) Game->LOG(0, "  Warning: Duplicate definition of string '%s'.", final_key.c_str());
+	if (_stringsIter != _strings.end() && reportDuplicities) Game->LOG(0, "  Warning: Duplicate definition of string '%s'.", final_key.c_str());
 
-	_strings[final_key] = Val;
+	_strings[final_key] = val;
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CBStringTable::GetKey(const char *Str) {
-	if (Str == NULL || Str[0] != '/') return NULL;
+char *CBStringTable::getKey(const char *str) {
+	if (str == NULL || str[0] != '/') return NULL;
 
-	const char *value = strchr(Str + 1, '/');
+	const char *value = strchr(str + 1, '/');
 	if (value == NULL) return NULL;
 
-	char *key = new char[value - Str];
-	strncpy(key, Str + 1, value - Str - 1);
-	key[value - Str - 1] = '\0';
+	char *key = new char[value - str];
+	strncpy(key, str + 1, value - str - 1);
+	key[value - str - 1] = '\0';
 	CBPlatform::strlwr(key);
 
 	char *new_str;
@@ -89,7 +89,7 @@ char *CBStringTable::GetKey(const char *Str) {
 		strcpy(new_str, _stringsIter->_value.c_str());
 		if (strlen(new_str) > 0 && new_str[0] == '/' && strchr(new_str + 1, '/')) {
 			delete [] key;
-			char *Ret = GetKey(new_str);
+			char *Ret = getKey(new_str);
 			delete [] new_str;
 			return Ret;
 		} else {
@@ -102,17 +102,17 @@ char *CBStringTable::GetKey(const char *Str) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBStringTable::Expand(char **Str, bool ForceExpand) {
-	if (Game->_doNotExpandStrings && !ForceExpand) return;
+void CBStringTable::expand(char **str, bool forceExpand) {
+	if (Game->_doNotExpandStrings && !forceExpand) return;
 
-	if (Str == NULL || *Str == NULL || *Str[0] != '/') return;
+	if (str == NULL || *str == NULL || *str[0] != '/') return;
 
-	char *value = strchr(*Str + 1, '/');
+	char *value = strchr(*str + 1, '/');
 	if (value == NULL) return;
 
-	char *key = new char[value - *Str];
-	strncpy(key, *Str + 1, value - *Str - 1);
-	key[value - *Str - 1] = '\0';
+	char *key = new char[value - *str];
+	strncpy(key, *str + 1, value - *str - 1);
+	key[value - *str - 1] = '\0';
 	CBPlatform::strlwr(key);
 
 	value++;
@@ -129,25 +129,25 @@ void CBStringTable::Expand(char **Str, bool ForceExpand) {
 	}
 
 	delete [] key;
-	delete [] *Str;
-	*Str = new_str;
+	delete [] *str;
+	*str = new_str;
 
-	if (strlen(*Str) > 0 && *Str[0] == '/') Expand(Str, ForceExpand);
+	if (strlen(*str) > 0 && *str[0] == '/') expand(str, forceExpand);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBStringTable::ExpandStatic(const char *String, bool ForceExpand) {
-	if (Game->_doNotExpandStrings && !ForceExpand) return String;
+const char *CBStringTable::expandStatic(const char *string, bool forceExpand) {
+	if (Game->_doNotExpandStrings && !forceExpand) return string;
 
-	if (String == NULL || String[0] == '\0' || String[0] != '/') return String;
+	if (string == NULL || string[0] == '\0' || string[0] != '/') return string;
 
-	const char *value = strchr(String + 1, '/');
-	if (value == NULL) return String;
+	const char *value = strchr(string + 1, '/');
+	if (value == NULL) return string;
 
-	char *key = new char[value - String];
-	strncpy(key, String + 1, value - String - 1);
-	key[value - String - 1] = '\0';
+	char *key = new char[value - string];
+	strncpy(key, string + 1, value - string - 1);
+	key[value - string - 1] = '\0';
 	CBPlatform::strlwr(key);
 
 	value++;
@@ -163,28 +163,28 @@ const char *CBStringTable::ExpandStatic(const char *String, bool ForceExpand) {
 
 	delete [] key;
 
-	if (strlen(new_str) > 0 && new_str[0] == '/') return ExpandStatic(new_str, ForceExpand);
+	if (strlen(new_str) > 0 && new_str[0] == '/') return expandStatic(new_str, forceExpand);
 	else return new_str;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBStringTable::loadFile(const char *filename, bool ClearOld) {
+HRESULT CBStringTable::loadFile(const char *filename, bool clearOld) {
 	Game->LOG(0, "Loading string table...");
 
-	if (ClearOld) _strings.clear();
+	if (clearOld) _strings.clear();
 
-	uint32 Size;
-	byte *buffer = Game->_fileManager->readWholeFile(filename, &Size);
+	uint32 size;
+	byte *buffer = Game->_fileManager->readWholeFile(filename, &size);
 	if (buffer == NULL) {
 		Game->LOG(0, "CBStringTable::LoadFile failed for file '%s'", filename);
 		return E_FAIL;
 	}
 
-	int Pos = 0;
+	int pos = 0;
 
-	if (Size > 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF) {
-		Pos += 3;
+	if (size > 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF) {
+		pos += 3;
 		if (Game->_textEncoding != TEXT_UTF8) {
 			Game->_textEncoding = TEXT_UTF8;
 			//Game->_textEncoding = TEXT_ANSI;
@@ -192,15 +192,15 @@ HRESULT CBStringTable::loadFile(const char *filename, bool ClearOld) {
 		}
 	} else Game->_textEncoding = TEXT_ANSI;
 
-	int LineLength = 0;
-	while (Pos < Size) {
-		LineLength = 0;
-		while (Pos + LineLength < Size && buffer[Pos + LineLength] != '\n' && buffer[Pos + LineLength] != '\0') LineLength++;
+	int lineLength = 0;
+	while (pos < size) {
+		lineLength = 0;
+		while (pos + lineLength < size && buffer[pos + lineLength] != '\n' && buffer[pos + lineLength] != '\0') lineLength++;
 
-		int RealLength = LineLength - (Pos + LineLength >= Size ? 0 : 1);
-		char *line = new char[RealLength + 1];
-		strncpy(line, (char *)&buffer[Pos], RealLength);
-		line[RealLength] = '\0';
+		int realLength = lineLength - (pos + lineLength >= size ? 0 : 1);
+		char *line = new char[realLength + 1];
+		strncpy(line, (char *)&buffer[pos], realLength);
+		line[realLength] = '\0';
 		char *value = strchr(line, '\t');
 		if (value == NULL) value = strchr(line, ' ');
 
@@ -211,12 +211,12 @@ HRESULT CBStringTable::loadFile(const char *filename, bool ClearOld) {
 				for (int i = 0; i < strlen(value); i++) {
 					if (value[i] == '|') value[i] = '\n';
 				}
-				AddString(line, value, ClearOld);
-			} else if (line[0] != '\0') AddString(line, "", ClearOld);
+				addString(line, value, clearOld);
+			} else if (line[0] != '\0') addString(line, "", clearOld);
 		}
 
 		delete [] line;
-		Pos += LineLength + 1;
+		pos += lineLength + 1;
 	}
 
 	delete [] buffer;

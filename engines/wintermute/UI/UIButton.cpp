@@ -353,7 +353,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TEXT:
 			setText((char *)params);
-			Game->_stringTable->Expand(&_text);
+			Game->_stringTable->expand(&_text);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
