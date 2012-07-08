@@ -39,10 +39,10 @@ public:
 	CUIEntity(CBGame *inGame);
 	virtual ~CUIEntity();
 	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte *Buffer, bool Complete);
+	HRESULT loadBuffer(byte *buffer, bool complete);
 	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 
-	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);
+	virtual HRESULT display(int offsetX = 0, int offsetY = 0);
 	CAdEntity *_entity;
 	HRESULT setEntity(const char *filename);
 

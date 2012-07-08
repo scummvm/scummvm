@@ -225,23 +225,23 @@ HRESULT CUIEntity::setEntity(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::display(int OffsetX, int OffsetY) {
+HRESULT CUIEntity::display(int offsetX, int offsetY) {
 	if (!_visible) return S_OK;
 
 	if (_entity) {
-		_entity->_posX = OffsetX + _posX;
-		_entity->_posY = OffsetY + _posY;
+		_entity->_posX = offsetX + _posX;
+		_entity->_posY = offsetY + _posY;
 		if (_entity->_scale < 0) _entity->_zoomable = false;
 		_entity->_shadowable = false;
 
 		_entity->update();
 
-		bool OrigReg = _entity->_registrable;
+		bool origReg = _entity->_registrable;
 
 		if (_entity->_registrable && _disable) _entity->_registrable = false;
 
 		_entity->display();
-		_entity->_registrable = OrigReg;
+		_entity->_registrable = origReg;
 	}
 
 	return S_OK;
