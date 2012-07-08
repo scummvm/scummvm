@@ -951,7 +951,8 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	}
 	if (objName == "savedHeros") {
 		// Import of QfG character files dialog is shown.
-		// display additional popup information before letting user use it.
+		// Display additional popup information before letting user use it.
+		// For the SCI32 version of this, check kernelAddPlane().
 		reg_t changeDirButton = s->_segMan->findObjectByName("changeDirItem");
 		if (!changeDirButton.isNull()) {
 			// check if checkDirButton is still enabled, in that case we are called the first time during that room

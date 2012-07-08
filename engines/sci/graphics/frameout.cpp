@@ -117,6 +117,8 @@ void GfxFrameout::showCurrentScrollText() {
 	}
 }
 
+extern void showScummVMDialog(const Common::String &message);
+
 void GfxFrameout::kernelAddPlane(reg_t object) {
 	PlaneEntry newPlane;
 
@@ -140,6 +142,19 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 		}
 
 		_coordAdjuster->setScriptsResolution(tmpRunningWidth, tmpRunningHeight);
+	}
+
+	// Import of QfG character files dialog is shown in QFG4.
+	// Display additional popup information before letting user use it.
+	// For the SCI0-SCI1.1 version of this, check kDrawControl().
+	if (g_sci->inQfGImportRoom() && !strcmp(_segMan->getObjectName(object), "DSPlane")) {
+		showScummVMDialog("Characters saved inside ScummVM are shown "
+				"automatically. Character files saved in the original "
+				"interpreter need to be put inside ScummVM's saved games "
+				"directory and a prefix needs to be added depending on which "
+				"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
+				"for Quest for Glory 2, 'qfg3-' for Quest for Glory 3. "
+				"Example: 'qfg2-thief.sav'.");
 	}
 
 	newPlane.object = object;
