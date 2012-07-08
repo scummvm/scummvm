@@ -65,7 +65,7 @@ HRESULT CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	/*
 	stack->correctParams(0);
 	stack->pushNULL();
-	script->RuntimeError("Call to undefined method '%s'.", name);
+	script->runtimeError("Call to undefined method '%s'.", name);
 
 	return S_OK;
 	*/

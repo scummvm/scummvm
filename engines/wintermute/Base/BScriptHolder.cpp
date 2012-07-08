@@ -86,7 +86,7 @@ HRESULT CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 	HRESULT ret = E_FAIL;
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (!_scripts[i]->_thread) {
-			CScScript *handler = _scripts[i]->InvokeEventHandler(eventName, unbreakable);
+			CScScript *handler = _scripts[i]->invokeEventHandler(eventName, unbreakable);
 			if (handler) {
 				//_scripts.Add(handler);
 				numHandlers++;
@@ -433,7 +433,7 @@ CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
 
 			CScScript *thread = new CScScript(Game, _scripts[i]->_engine);
 			if (thread) {
-				HRESULT ret = thread->CreateMethodThread(_scripts[i], methodName);
+				HRESULT ret = thread->createMethodThread(_scripts[i], methodName);
 				if (SUCCEEDED(ret)) {
 					_scripts[i]->_engine->_scripts.Add(thread);
 					Game->getDebugMgr()->onScriptMethodThreadInit(thread, _scripts[i], methodName);

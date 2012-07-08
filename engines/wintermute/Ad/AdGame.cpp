@@ -487,7 +487,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 				_responseBox->_responses.Add(res);
 			}
 		} else {
-			script->RuntimeError("Game.AddResponse: response box is not defined");
+			script->runtimeError("Game.AddResponse: response box is not defined");
 		}
 		stack->pushNULL();
 
@@ -541,11 +541,11 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 			_responseBox->createButtons();
 			_responseBox->_waitingScript = script;
-			script->WaitForExclusive(_responseBox);
+			script->waitForExclusive(_responseBox);
 			_state = GAME_SEMI_FROZEN;
 			_stateEx = GAME_WAITING_RESPONSE;
 		} else {
-			script->RuntimeError("Game.GetResponse: response box is not defined");
+			script->runtimeError("Game.GetResponse: response box is not defined");
 			stack->pushNULL();
 		}
 		return S_OK;
@@ -561,7 +561,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			_responseBox->weedResponses();
 			stack->pushInt(_responseBox->_responses.GetSize());
 		} else {
-			script->RuntimeError("Game.GetNumResponses: response box is not defined");
+			script->runtimeError("Game.GetNumResponses: response box is not defined");
 			stack->pushNULL();
 		}
 		return S_OK;
@@ -663,7 +663,7 @@ HRESULT CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 					}
 				}
 			}
-		} else script->RuntimeError("Game.IsItemTaken: item name expected");
+		} else script->runtimeError("Game.IsItemTaken: item name expected");
 
 		stack->pushBool(false);
 		return S_OK;

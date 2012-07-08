@@ -791,7 +791,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "GoExclusive") == 0) {
 		stack->correctParams(0);
 		goExclusive();
-		script->WaitFor(this);
+		script->waitFor(this);
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -802,7 +802,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "GoSystemExclusive") == 0) {
 		stack->correctParams(0);
 		goSystemExclusive();
-		script->WaitFor(this);
+		script->waitFor(this);
 		stack->pushNULL();
 		return S_OK;
 	}

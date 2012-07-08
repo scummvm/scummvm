@@ -439,7 +439,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
 		if (index < 0 || index >= _subframes.GetSize()) {
-			script->RuntimeError("Frame.GetSubframe: Subframe index %d is out of range.", index);
+			script->runtimeError("Frame.GetSubframe: Subframe index %d is out of range.", index);
 			stack->pushNULL();
 		} else stack->pushNative(_subframes[index], true);
 
@@ -455,7 +455,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (val->isInt()) {
 			int index = val->getInt(-1);
 			if (index < 0 || index >= _subframes.GetSize()) {
-				script->RuntimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", index);
+				script->runtimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", index);
 			}
 		} else {
 			CBSubFrame *sub = (CBSubFrame *)val->getNative();
@@ -522,7 +522,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
 		if (index < 0 || index >= _applyEvent.GetSize()) {
-			script->RuntimeError("Frame.GetEvent: Event index %d is out of range.", index);
+			script->runtimeError("Frame.GetEvent: Event index %d is out of range.", index);
 			stack->pushNULL();
 		} else stack->pushString(_applyEvent[index]);
 		return S_OK;

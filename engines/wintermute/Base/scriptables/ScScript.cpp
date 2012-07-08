@@ -118,7 +118,7 @@ void CScScript::readHeader() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::InitScript() {
+HRESULT CScScript::initScript() {
 	if (!_scriptStream) {
 		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 	}
@@ -136,7 +136,7 @@ HRESULT CScScript::InitScript() {
 		return E_FAIL;
 	}
 
-	InitTables();
+	initTables();
 
 	// init stacks
 	_scopeStack = new CScStack(Game);
@@ -165,39 +165,39 @@ HRESULT CScScript::InitScript() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::InitTables() {
+HRESULT CScScript::initTables() {
 	uint32 OrigIP = _iP;
 
 	readHeader();
 	// load symbol table
 	_iP = _header.symbol_table;
 
-	_numSymbols = GetDWORD();
+	_numSymbols = getDWORD();
 	_symbols = new char*[_numSymbols];
 	for (uint32 i = 0; i < _numSymbols; i++) {
-		uint32 index = GetDWORD();
-		_symbols[index] = GetString();
+		uint32 index = getDWORD();
+		_symbols[index] = getString();
 	}
 
 	// load functions table
 	_iP = _header.func_table;
 
-	_numFunctions = GetDWORD();
+	_numFunctions = getDWORD();
 	_functions = new TFunctionPos[_numFunctions];
 	for (uint32 i = 0; i < _numFunctions; i++) {
-		_functions[i].pos = GetDWORD();
-		_functions[i].name = GetString();
+		_functions[i].pos = getDWORD();
+		_functions[i].name = getString();
 	}
 
 
 	// load events table
 	_iP = _header.event_table;
 
-	_numEvents = GetDWORD();
+	_numEvents = getDWORD();
 	_events = new TEventPos[_numEvents];
 	for (uint32 i = 0; i < _numEvents; i++) {
-		_events[i].pos = GetDWORD();
-		_events[i].name = GetString();
+		_events[i].pos = getDWORD();
+		_events[i].name = getString();
 	}
 
 
@@ -205,18 +205,18 @@ HRESULT CScScript::InitTables() {
 	if (_header.version >= 0x0101) {
 		_iP = _header.externals_table;
 
-		_numExternals = GetDWORD();
+		_numExternals = getDWORD();
 		_externals = new TExternalFunction[_numExternals];
 		for (uint32 i = 0; i < _numExternals; i++) {
-			_externals[i].dll_name = GetString();
-			_externals[i].name = GetString();
-			_externals[i].call_type = (TCallType)GetDWORD();
-			_externals[i].returns = (TExternalType)GetDWORD();
-			_externals[i].nu_params = GetDWORD();
+			_externals[i].dll_name = getString();
+			_externals[i].name = getString();
+			_externals[i].call_type = (TCallType)getDWORD();
+			_externals[i].returns = (TExternalType)getDWORD();
+			_externals[i].nu_params = getDWORD();
 			if (_externals[i].nu_params > 0) {
 				_externals[i].params = new TExternalType[_externals[i].nu_params];
 				for (int j = 0; j < _externals[i].nu_params; j++) {
-					_externals[i].params[j] = (TExternalType)GetDWORD();
+					_externals[i].params[j] = (TExternalType)getDWORD();
 				}
 			}
 		}
@@ -225,11 +225,11 @@ HRESULT CScScript::InitTables() {
 	// load method table
 	_iP = _header.method_table;
 
-	_numMethods = GetDWORD();
+	_numMethods = getDWORD();
 	_methods = new TMethodPos[_numMethods];
 	for (uint32 i = 0; i < _numMethods; i++) {
-		_methods[i].pos = GetDWORD();
-		_methods[i].name = GetString();
+		_methods[i].pos = getDWORD();
+		_methods[i].name = getString();
 	}
 
 
@@ -240,7 +240,7 @@ HRESULT CScScript::InitTables() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Create(const char *filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner) {
+HRESULT CScScript::create(const char *filename, byte *buffer, uint32 size, CBScriptHolder *owner) {
 	cleanup();
 
 	_thread = false;
@@ -252,62 +252,62 @@ HRESULT CScScript::Create(const char *filename, byte *Buffer, uint32 Size, CBScr
 	_filename = new char[strlen(filename) + 1];
 	if (_filename) strcpy(_filename, filename);
 
-	_buffer = new byte [Size];
+	_buffer = new byte [size];
 	if (!_buffer) return E_FAIL;
 
-	memcpy(_buffer, Buffer, Size);
+	memcpy(_buffer, buffer, size);
 
-	_bufferSize = Size;
+	_bufferSize = size;
 
-	HRESULT res = InitScript();
+	HRESULT res = initScript();
 	if (FAILED(res)) return res;
 
 	// establish global variables table
 	_globals = new CScValue(Game);
 
-	_owner = Owner;
+	_owner = owner;
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::CreateThread(CScScript *Original, uint32 InitIP, const char *EventName) {
+HRESULT CScScript::createThread(CScScript *original, uint32 initIP, const char *eventName) {
 	cleanup();
 
 	_thread = true;
 	_methodThread = false;
-	_threadEvent = new char[strlen(EventName) + 1];
-	if (_threadEvent) strcpy(_threadEvent, EventName);
+	_threadEvent = new char[strlen(eventName) + 1];
+	if (_threadEvent) strcpy(_threadEvent, eventName);
 
 	// copy filename
-	_filename = new char[strlen(Original->_filename) + 1];
-	if (_filename) strcpy(_filename, Original->_filename);
+	_filename = new char[strlen(original->_filename) + 1];
+	if (_filename) strcpy(_filename, original->_filename);
 
 	// copy buffer
-	_buffer = new byte [Original->_bufferSize];
+	_buffer = new byte [original->_bufferSize];
 	if (!_buffer) return E_FAIL;
 
-	memcpy(_buffer, Original->_buffer, Original->_bufferSize);
-	_bufferSize = Original->_bufferSize;
+	memcpy(_buffer, original->_buffer, original->_bufferSize);
+	_bufferSize = original->_bufferSize;
 
 	// initialize
-	HRESULT res = InitScript();
+	HRESULT res = initScript();
 	if (FAILED(res)) return res;
 
 	// copy globals
-	_globals = Original->_globals;
+	_globals = original->_globals;
 
 	// skip to the beginning of the event
-	_iP = InitIP;
+	_iP = initIP;
 	_scriptStream->seek(_iP);
 
-	_timeSlice = Original->_timeSlice;
-	_freezable = Original->_freezable;
-	_owner = Original->_owner;
+	_timeSlice = original->_timeSlice;
+	_freezable = original->_freezable;
+	_owner = original->_owner;
 
-	_engine = Original->_engine;
-	_parentScript = Original;
+	_engine = original->_engine;
+	_parentScript = original;
 
 	return S_OK;
 }
@@ -316,44 +316,44 @@ HRESULT CScScript::CreateThread(CScScript *Original, uint32 InitIP, const char *
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::CreateMethodThread(CScScript *Original, const char *MethodName) {
-	uint32 IP = Original->GetMethodPos(MethodName);
-	if (IP == 0) return E_FAIL;
+HRESULT CScScript::createMethodThread(CScScript *original, const char *methodName) {
+	uint32 ip = original->getMethodPos(methodName);
+	if (ip == 0) return E_FAIL;
 
 	cleanup();
 
 	_thread = true;
 	_methodThread = true;
-	_threadEvent = new char[strlen(MethodName) + 1];
-	if (_threadEvent) strcpy(_threadEvent, MethodName);
+	_threadEvent = new char[strlen(methodName) + 1];
+	if (_threadEvent) strcpy(_threadEvent, methodName);
 
 	// copy filename
-	_filename = new char[strlen(Original->_filename) + 1];
-	if (_filename) strcpy(_filename, Original->_filename);
+	_filename = new char[strlen(original->_filename) + 1];
+	if (_filename) strcpy(_filename, original->_filename);
 
 	// copy buffer
-	_buffer = new byte [Original->_bufferSize];
+	_buffer = new byte [original->_bufferSize];
 	if (!_buffer) return E_FAIL;
 
-	memcpy(_buffer, Original->_buffer, Original->_bufferSize);
-	_bufferSize = Original->_bufferSize;
+	memcpy(_buffer, original->_buffer, original->_bufferSize);
+	_bufferSize = original->_bufferSize;
 
 	// initialize
-	HRESULT res = InitScript();
+	HRESULT res = initScript();
 	if (FAILED(res)) return res;
 
 	// copy globals
-	_globals = Original->_globals;
+	_globals = original->_globals;
 
 	// skip to the beginning of the event
-	_iP = IP;
+	_iP = ip;
 
-	_timeSlice = Original->_timeSlice;
-	_freezable = Original->_freezable;
-	_owner = Original->_owner;
+	_timeSlice = original->_timeSlice;
+	_freezable = original->_freezable;
+	_owner = original->_owner;
 
-	_engine = Original->_engine;
-	_parentScript = Original;
+	_engine = original->_engine;
+	_parentScript = original;
 
 	return S_OK;
 }
@@ -374,16 +374,16 @@ void CScScript::cleanup() {
 	if (_globals && !_thread) delete _globals;
 	_globals = NULL;
 
-	if (_scopeStack) delete _scopeStack;
+	delete _scopeStack;
 	_scopeStack = NULL;
 
-	if (_callStack) delete _callStack;
+	delete _callStack;
 	_callStack = NULL;
 
-	if (_thisStack) delete _thisStack;
+	delete _thisStack;
 	_thisStack = NULL;
 
-	if (_stack) delete _stack;
+	delete _stack;
 	_stack = NULL;
 
 	if (_functions) delete [] _functions;
@@ -430,7 +430,7 @@ void CScScript::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CScScript::GetDWORD() {
+uint32 CScScript::getDWORD() {
 	_scriptStream->seek(_iP);
 	uint32 ret = _scriptStream->readUint32LE();
 	_iP += sizeof(uint32);
@@ -439,7 +439,7 @@ uint32 CScScript::GetDWORD() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-double CScScript::GetFloat() {
+double CScScript::getFloat() {
 	_scriptStream->seek((int32)_iP);
 	byte buffer[8];
 	_scriptStream->read(buffer, 8);
@@ -459,7 +459,7 @@ double CScScript::GetFloat() {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CScScript::GetString() {
+char *CScScript::getString() {
 	char *ret = (char *)(_buffer + _iP);
 	while (*(char *)(_buffer + _iP) != '\0') _iP++;
 	_iP++; // string terminator
@@ -470,7 +470,7 @@ char *CScScript::GetString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::ExecuteInstruction() {
+HRESULT CScScript::executeInstruction() {
 	HRESULT ret = S_OK;
 
 	uint32 dw;
@@ -482,12 +482,12 @@ HRESULT CScScript::ExecuteInstruction() {
 	CScValue *op1;
 	CScValue *op2;
 
-	uint32 inst = GetDWORD();
+	uint32 inst = getDWORD();
 	switch (inst) {
 
 	case II_DEF_VAR:
 		_operand->setNULL();
-		dw = GetDWORD();
+		dw = getDWORD();
 		if (_scopeStack->_sP < 0) {
 			_globals->setProp(_symbols[dw], _operand);
 			if (Game->getDebugMgr()->_enabled)
@@ -502,7 +502,7 @@ HRESULT CScScript::ExecuteInstruction() {
 
 	case II_DEF_GLOB_VAR:
 	case II_DEF_CONST_VAR: {
-		dw = GetDWORD();
+		dw = getDWORD();
 		/*      char *Temp = _symbols[dw]; // TODO delete */
 		// only create global var if it doesn't exist
 		if (!_engine->_globals->propExists(_symbols[dw])) {
@@ -541,7 +541,7 @@ HRESULT CScScript::ExecuteInstruction() {
 
 
 	case II_CALL:
-		dw = GetDWORD();
+		dw = getDWORD();
 
 		_operand->setInt(_iP);
 		_callStack->push(_operand);
@@ -575,16 +575,16 @@ HRESULT CScScript::ExecuteInstruction() {
 					_waitScript = var->getNative()->invokeMethodThread(MethodName);
 					if (!_waitScript) {
 						_stack->correctParams(0);
-						RuntimeError("Error invoking method '%s'.", MethodName);
+						runtimeError("Error invoking method '%s'.", MethodName);
 						_stack->pushNULL();
 					} else {
 						_state = SCRIPT_WAITING_SCRIPT;
-						_waitScript->CopyParameters(_stack);
+						_waitScript->copyParameters(_stack);
 					}
 				} else {
 					// can call methods in unbreakable mode
 					_stack->correctParams(0);
-					RuntimeError("Cannot call method '%s'. Ignored.", MethodName);
+					runtimeError("Cannot call method '%s'. Ignored.", MethodName);
 					_stack->pushNULL();
 				}
 				delete [] MethodName;
@@ -617,7 +617,7 @@ HRESULT CScScript::ExecuteInstruction() {
 
 				if (FAILED(res)) {
 					_stack->correctParams(0);
-					RuntimeError("Call to undefined method '%s'. Ignored.", MethodName);
+					runtimeError("Call to undefined method '%s'. Ignored.", MethodName);
 					_stack->pushNULL();
 				}
 			}
@@ -627,11 +627,11 @@ HRESULT CScScript::ExecuteInstruction() {
 	break;
 
 	case II_EXTERNAL_CALL: {
-		uint32 SymbolIndex = GetDWORD();
+		uint32 SymbolIndex = getDWORD();
 
-		TExternalFunction *f = GetExternal(_symbols[SymbolIndex]);
+		TExternalFunction *f = getExternal(_symbols[SymbolIndex]);
 		if (f) {
-			ExternalCall(_stack, _thisStack, f);
+			externalCall(_stack, _thisStack, f);
 		} else Game->ExternalCall(this, _stack, _thisStack, _symbols[SymbolIndex]);
 
 		break;
@@ -646,7 +646,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_CORRECT_STACK:
-		dw = GetDWORD(); // params expected
+		dw = getDWORD(); // params expected
 		_stack->correctParams(dw);
 		break;
 
@@ -660,7 +660,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_PUSH_VAR: {
-		CScValue *var = GetVar(_symbols[GetDWORD()]);
+		CScValue *var = getVar(_symbols[getDWORD()]);
 		if (false && /*var->_type==VAL_OBJECT ||*/ var->_type == VAL_NATIVE) {
 			_operand->setReference(var);
 			_stack->push(_operand);
@@ -669,19 +669,19 @@ HRESULT CScScript::ExecuteInstruction() {
 	}
 
 	case II_PUSH_VAR_REF: {
-		CScValue *var = GetVar(_symbols[GetDWORD()]);
+		CScValue *var = getVar(_symbols[getDWORD()]);
 		_operand->setReference(var);
 		_stack->push(_operand);
 		break;
 	}
 
 	case II_POP_VAR: {
-		char *VarName = _symbols[GetDWORD()];
-		CScValue *var = GetVar(VarName);
+		char *VarName = _symbols[getDWORD()];
+		CScValue *var = getVar(VarName);
 		if (var) {
 			CScValue *val = _stack->pop();
 			if (!val) {
-				RuntimeError("Script stack corruption detected. Please report this script at WME bug reports forum.");
+				runtimeError("Script stack corruption detected. Please report this script at WME bug reports forum.");
 				var->setNULL();
 			} else {
 				if (val->getType() == VAL_VARIABLE_REF) val = val->_valRef;
@@ -703,21 +703,21 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_PUSH_INT:
-		_stack->pushInt((int)GetDWORD());
+		_stack->pushInt((int)getDWORD());
 		break;
 
 	case II_PUSH_FLOAT:
-		_stack->pushFloat(GetFloat());
+		_stack->pushFloat(getFloat());
 		break;
 
 
 	case II_PUSH_BOOL:
-		_stack->pushBool(GetDWORD() != 0);
+		_stack->pushBool(getDWORD() != 0);
 
 		break;
 
 	case II_PUSH_STRING:
-		_stack->pushString(GetString());
+		_stack->pushString(getString());
 		break;
 
 	case II_PUSH_NULL:
@@ -730,7 +730,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_PUSH_THIS:
-		_operand->setReference(GetVar(_symbols[GetDWORD()]));
+		_operand->setReference(getVar(_symbols[getDWORD()]));
 		_thisStack->push(_operand);
 		break;
 
@@ -753,7 +753,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		CScValue *val = _stack->pop();
 
 		if (val == NULL) {
-			RuntimeError("Script stack corruption detected. Please report this script at WME bug reports forum.");
+			runtimeError("Script stack corruption detected. Please report this script at WME bug reports forum.");
 			var->setNULL();
 		} else var->setProp(str, val);
 
@@ -772,17 +772,17 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_JMP:
-		_iP = GetDWORD();
+		_iP = getDWORD();
 		break;
 
 	case II_JMP_FALSE: {
-		dw = GetDWORD();
+		dw = getDWORD();
 		//if(!_stack->pop()->getBool()) _iP = dw;
-		CScValue *Val = _stack->pop();
-		if (!Val) {
-			RuntimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
+		CScValue *val = _stack->pop();
+		if (!val) {
+			runtimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
 		} else {
-			if (!Val->getBool()) _iP = dw;
+			if (!val->getBool()) _iP = dw;
 		}
 		break;
 	}
@@ -791,7 +791,8 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		if (op1->isNULL() || op2->isNULL()) _operand->setNULL();
+		if (op1->isNULL() || op2->isNULL())
+			_operand->setNULL();
 		else if (op1->getType() == VAL_STRING || op2->getType() == VAL_STRING) {
 			char *tempStr = new char [strlen(op1->getString()) + strlen(op2->getString()) + 1];
 			strcpy(tempStr, op1->getString());
@@ -810,7 +811,8 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		if (op1->isNULL() || op2->isNULL()) _operand->setNULL();
+		if (op1->isNULL() || op2->isNULL())
+			_operand->setNULL();
 		else if (op1->getType() == VAL_INT && op2->getType() == VAL_INT)
 			_operand->setInt(op1->getInt() - op2->getInt());
 		else _operand->setFloat(op1->getFloat() - op2->getFloat());
@@ -836,7 +838,8 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		if (op2->getFloat() == 0.0f) RuntimeError("Division by zero.");
+		if (op2->getFloat() == 0.0f)
+			runtimeError("Division by zero.");
 
 		if (op1->isNULL() || op2->isNULL() || op2->getFloat() == 0.0f) _operand->setNULL();
 		else _operand->setFloat(op1->getFloat() / op2->getFloat());
@@ -849,9 +852,11 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 
-		if (op2->getInt() == 0) RuntimeError("Division by zero.");
+		if (op2->getInt() == 0)
+			runtimeError("Division by zero.");
 
-		if (op1->isNULL() || op2->isNULL() || op2->getInt() == 0) _operand->setNULL();
+		if (op1->isNULL() || op2->isNULL() || op2->getInt() == 0)
+			_operand->setNULL();
 		else _operand->setInt(op1->getInt() % op2->getInt());
 
 		_stack->push(_operand);
@@ -871,7 +876,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 		if (op1 == NULL || op2 == NULL) {
-			RuntimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
+			runtimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
 			_operand->setBool(false);
 		} else {
 			_operand->setBool(op1->getBool() && op2->getBool());
@@ -883,7 +888,7 @@ HRESULT CScScript::ExecuteInstruction() {
 		op2 = _stack->pop();
 		op1 = _stack->pop();
 		if (op1 == NULL || op2 == NULL) {
-			RuntimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
+			runtimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
 			_operand->setBool(false);
 		} else {
 			_operand->setBool(op1->getBool() || op2->getBool());
@@ -1019,21 +1024,21 @@ HRESULT CScScript::ExecuteInstruction() {
 		break;
 
 	case II_DBG_LINE: {
-		int NewLine = GetDWORD();
-		if (NewLine != _currentLine) {
-			_currentLine = NewLine;
+		int newLine = getDWORD();
+		if (newLine != _currentLine) {
+			_currentLine = newLine;
 			if (Game->getDebugMgr()->_enabled) {
 				Game->getDebugMgr()->onScriptChangeLine(this, _currentLine);
 				for (int i = 0; i < _breakpoints.GetSize(); i++) {
 					if (_breakpoints[i] == _currentLine) {
 						Game->getDebugMgr()->onScriptHitBreakpoint(this);
-						Sleep(0);
+						sleep(0);
 						break;
 					}
 				}
 				if (_tracingMode) {
 					Game->getDebugMgr()->onScriptHitBreakpoint(this);
-					Sleep(0);
+					sleep(0);
 					break;
 				}
 			}
@@ -1054,55 +1059,60 @@ HRESULT CScScript::ExecuteInstruction() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CScScript::GetFuncPos(const char *name) {
+uint32 CScScript::getFuncPos(const char *name) {
 	for (int i = 0; i < _numFunctions; i++) {
-		if (strcmp(name, _functions[i].name) == 0) return _functions[i].pos;
+		if (strcmp(name, _functions[i].name) == 0)
+			return _functions[i].pos;
 	}
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CScScript::GetMethodPos(const char *name) {
+uint32 CScScript::getMethodPos(const char *name) {
 	for (int i = 0; i < _numMethods; i++) {
-		if (strcmp(name, _methods[i].name) == 0) return _methods[i].pos;
+		if (strcmp(name, _methods[i].name) == 0)
+			return _methods[i].pos;
 	}
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CScScript::GetVar(char *name) {
+CScValue *CScScript::getVar(char *name) {
 	CScValue *ret = NULL;
 
 	// scope locals
 	if (_scopeStack->_sP >= 0) {
-		if (_scopeStack->getTop()->propExists(name)) ret = _scopeStack->getTop()->getProp(name);
+		if (_scopeStack->getTop()->propExists(name))
+			ret = _scopeStack->getTop()->getProp(name);
 	}
 
 	// script globals
 	if (ret == NULL) {
-		if (_globals->propExists(name)) ret = _globals->getProp(name);
+		if (_globals->propExists(name))
+			ret = _globals->getProp(name);
 	}
 
 	// engine globals
 	if (ret == NULL) {
-		if (_engine->_globals->propExists(name)) ret = _engine->_globals->getProp(name);
+		if (_engine->_globals->propExists(name))
+			ret = _engine->_globals->getProp(name);
 	}
 
 	if (ret == NULL) {
 		//RuntimeError("Variable '%s' is inaccessible in the current block. Consider changing the script.", name);
 		Game->LOG(0, "Warning: variable '%s' is inaccessible in the current block. Consider changing the script (script:%s, line:%d)", name, _filename, _currentLine);
-		CScValue *Val = new CScValue(Game);
-		CScValue *Scope = _scopeStack->getTop();
-		if (Scope) {
-			Scope->setProp(name, Val);
+		CScValue *val = new CScValue(Game);
+		CScValue *scope = _scopeStack->getTop();
+		if (scope) {
+			scope->setProp(name, val);
 			ret = _scopeStack->getTop()->getProp(name);
 		} else {
-			_globals->setProp(name, Val);
+			_globals->setProp(name, val);
 			ret = _globals->getProp(name);
 		}
-		delete Val;
+		delete val;
 	}
 
 	return ret;
@@ -1110,38 +1120,38 @@ CScValue *CScScript::GetVar(char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::WaitFor(CBObject *Object) {
+HRESULT CScScript::waitFor(CBObject *object) {
 	if (_unbreakable) {
-		RuntimeError("Script cannot be interrupted.");
+		runtimeError("Script cannot be interrupted.");
 		return S_OK;
 	}
 
 	_state = SCRIPT_WAITING;
-	_waitObject = Object;
+	_waitObject = object;
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::WaitForExclusive(CBObject *Object) {
-	_engine->resetObject(Object);
-	return WaitFor(Object);
+HRESULT CScScript::waitForExclusive(CBObject *object) {
+	_engine->resetObject(object);
+	return waitFor(object);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Sleep(uint32 Duration) {
+HRESULT CScScript::sleep(uint32 duration) {
 	if (_unbreakable) {
-		RuntimeError("Script cannot be interrupted.");
+		runtimeError("Script cannot be interrupted.");
 		return S_OK;
 	}
 
 	_state = SCRIPT_SLEEPING;
 	if (Game->_state == GAME_FROZEN) {
-		_waitTime = CBPlatform::GetTime() + Duration;
+		_waitTime = CBPlatform::GetTime() + duration;
 		_waitFrozen = true;
 	} else {
-		_waitTime = Game->_timer + Duration;
+		_waitTime = Game->_timer + duration;
 		_waitFrozen = false;
 	}
 	return S_OK;
@@ -1149,10 +1159,10 @@ HRESULT CScScript::Sleep(uint32 Duration) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::finish(bool IncludingThreads) {
-	if (_state != SCRIPT_FINISHED && IncludingThreads) {
+HRESULT CScScript::finish(bool includingThreads) {
+	if (_state != SCRIPT_FINISHED && includingThreads) {
 		_state = SCRIPT_FINISHED;
-		FinishThreads();
+		finishThreads();
 	} else _state = SCRIPT_FINISHED;
 
 
@@ -1161,14 +1171,14 @@ HRESULT CScScript::finish(bool IncludingThreads) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Run() {
+HRESULT CScScript::run() {
 	_state = SCRIPT_RUNNING;
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-void CScScript::RuntimeError(LPCSTR fmt, ...) {
+void CScScript::runtimeError(LPCSTR fmt, ...) {
 	char buff[256];
 	va_list va;
 
@@ -1205,7 +1215,7 @@ HRESULT CScScript::persist(CBPersistMgr *persistMgr) {
 			_buffer = new byte[_bufferSize];
 			persistMgr->getBytes(_buffer, _bufferSize);
 			_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
-			InitTables();
+			initTables();
 		} else {
 			_buffer = NULL;
 			_scriptStream = NULL;	
@@ -1247,19 +1257,19 @@ HRESULT CScScript::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CScScript::InvokeEventHandler(const char *EventName, bool Unbreakable) {
+CScScript *CScScript::invokeEventHandler(const char *eventName, bool unbreakable) {
 	//if(_state!=SCRIPT_PERSISTENT) return NULL;
 
-	uint32 pos = GetEventPos(EventName);
+	uint32 pos = getEventPos(eventName);
 	if (!pos) return NULL;
 
 	CScScript *thread = new CScScript(Game, _engine);
 	if (thread) {
-		HRESULT ret = thread->CreateThread(this, pos, EventName);
+		HRESULT ret = thread->createThread(this, pos, eventName);
 		if (SUCCEEDED(ret)) {
-			thread->_unbreakable = Unbreakable;
+			thread->_unbreakable = unbreakable;
 			_engine->_scripts.Add(thread);
-			Game->getDebugMgr()->onScriptEventThreadInit(thread, this, EventName);
+			Game->getDebugMgr()->onScriptEventThreadInit(thread, this, eventName);
 			return thread;
 		} else {
 			delete thread;
@@ -1271,7 +1281,7 @@ CScScript *CScScript::InvokeEventHandler(const char *EventName, bool Unbreakable
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CScScript::GetEventPos(const char *name) {
+uint32 CScScript::getEventPos(const char *name) {
 	for (int i = _numEvents - 1; i >= 0; i--) {
 		if (scumm_stricmp(name, _events[i].name) == 0) return _events[i].pos;
 	}
@@ -1280,19 +1290,19 @@ uint32 CScScript::GetEventPos(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScScript::canHandleEvent(const char *EventName) {
-	return GetEventPos(EventName) != 0;
+bool CScScript::canHandleEvent(const char *eventName) {
+	return getEventPos(eventName) != 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScScript::canHandleMethod(const char *MethodName) {
-	return GetMethodPos(MethodName) != 0;
+bool CScScript::canHandleMethod(const char *methodName) {
+	return getMethodPos(methodName) != 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Pause() {
+HRESULT CScScript::pause() {
 	if (_state == SCRIPT_PAUSED) {
 		Game->LOG(0, "Attempting to pause a paused script ('%s', line %d)", _filename, _currentLine);
 		return E_FAIL;
@@ -1308,7 +1318,7 @@ HRESULT CScScript::Pause() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::Resume() {
+HRESULT CScScript::resume() {
 	if (_state != SCRIPT_PAUSED) return S_OK;
 
 	_state = _origState;
@@ -1317,16 +1327,17 @@ HRESULT CScScript::Resume() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript::TExternalFunction *CScScript::GetExternal(char *name) {
+CScScript::TExternalFunction *CScScript::getExternal(char *name) {
 	for (int i = 0; i < _numExternals; i++) {
-		if (strcmp(name, _externals[i].name) == 0) return &_externals[i];
+		if (strcmp(name, _externals[i].name) == 0)
+			return &_externals[i];
 	}
 	return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::ExternalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *Function) {
+HRESULT CScScript::externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function) {
 
 #ifndef __WIN32__
 
@@ -1525,7 +1536,7 @@ double CScScript::GetST0Double(void) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::CopyParameters(CScStack *stack) {
+HRESULT CScScript::copyParameters(CScStack *stack) {
 	int i;
 	int NumParams = stack->pop()->getInt();
 	for (i = NumParams - 1; i >= 0; i--) {
@@ -1540,11 +1551,11 @@ HRESULT CScScript::CopyParameters(CScStack *stack) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::FinishThreads() {
+HRESULT CScScript::finishThreads() {
 	for (int i = 0; i < _engine->_scripts.GetSize(); i++) {
-		CScScript *Scr = _engine->_scripts[i];
-		if (Scr->_thread && Scr->_state != SCRIPT_FINISHED && Scr->_owner == _owner && scumm_stricmp(Scr->_filename, _filename) == 0)
-			Scr->finish(true);
+		CScScript *scr = _engine->_scripts[i];
+		if (scr->_thread && scr->_state != SCRIPT_FINISHED && scr->_owner == _owner && scumm_stricmp(scr->_filename, _filename) == 0)
+			scr->finish(true);
 	}
 	return S_OK;
 }
@@ -1563,19 +1574,19 @@ const char *CScScript::dbgGetFilename() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::DbgSendScript(IWmeDebugClient *Client) {
-	if (_methodThread) Client->onScriptMethodThreadInit(this, _parentScript, _threadEvent);
-	else if (_thread) Client->onScriptEventThreadInit(this, _parentScript, _threadEvent);
-	else Client->onScriptInit(this);
+HRESULT CScScript::dbgSendScript(IWmeDebugClient *client) {
+	if (_methodThread) client->onScriptMethodThreadInit(this, _parentScript, _threadEvent);
+	else if (_thread) client->onScriptEventThreadInit(this, _parentScript, _threadEvent);
+	else client->onScriptInit(this);
 
-	return DbgSendVariables(Client);
+	return dbgSendVariables(client);
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::DbgSendVariables(IWmeDebugClient *Client) {
+HRESULT CScScript::dbgSendVariables(IWmeDebugClient *client) {
 	// send script globals
-	_globals->DbgSendVariables(Client, WME_DBGVAR_SCRIPT, this, 0);
+	_globals->DbgSendVariables(client, WME_DBGVAR_SCRIPT, this, 0);
 
 	// send scope variables
 	if (_scopeStack->_sP >= 0) {
@@ -1599,14 +1610,14 @@ int CScScript::dbgGetNumBreakpoints() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CScScript::dbgGetBreakpoint(int Index) {
-	if (Index >= 0 && Index < _breakpoints.GetSize()) return _breakpoints[Index];
+int CScScript::dbgGetBreakpoint(int index) {
+	if (index >= 0 && index < _breakpoints.GetSize()) return _breakpoints[index];
 	else return -1;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScScript::dbgSetTracingMode(bool IsTracing) {
-	_tracingMode = IsTracing;
+bool CScScript::dbgSetTracingMode(bool isTracing) {
+	_tracingMode = isTracing;
 	return true;
 }
 
@@ -1632,7 +1643,7 @@ void CScScript::afterLoad() {
 		delete _scriptStream;
 		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 
-		InitTables();
+		initTables();
 	}
 }
 

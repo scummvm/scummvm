@@ -419,7 +419,7 @@ bool CSXStore::Purchase(CScScript *script, const char *productId) {
 		}
 	}
 #endif
-	script->RuntimeError("Store.Purchase() - '%s' is not a valid product id", productId);
+	script->runtimeError("Store.Purchase() - '%s' is not a valid product id", productId);
 	return false;
 }
 
@@ -437,7 +437,7 @@ bool CSXStore::FinishTransaction(CScScript *script, const char *transId) {
 		}
 	}
 #endif
-	script->RuntimeError("Store.FinishTransaction() - '%s' is not a valid transaction id", transId);
+	script->runtimeError("Store.FinishTransaction() - '%s' is not a valid transaction id", transId);
 	return false;
 }
 

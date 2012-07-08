@@ -104,13 +104,13 @@ HRESULT CSXMemBuffer::Resize(int NewSize) {
 //////////////////////////////////////////////////////////////////////////
 bool CSXMemBuffer::CheckBounds(CScScript *script, int start, int length) {
 	if (_buffer == NULL) {
-		script->RuntimeError("Cannot use Set/Get methods on an uninitialized memory buffer");
+		script->runtimeError("Cannot use Set/Get methods on an uninitialized memory buffer");
 		return false;
 	}
 	if (_size == 0) return true;
 
 	if (start < 0 || length == 0 || start + length > _size) {
-		script->RuntimeError("Set/Get method call is out of bounds");
+		script->runtimeError("Set/Get method call is out of bounds");
 		return false;
 	} else return true;
 }

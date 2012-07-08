@@ -142,7 +142,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 			const char *filename = val->getString();
 			CBSprite *spr = new CBSprite(Game, this);
 			if (!spr || FAILED(spr->loadFile(filename))) {
-				script->RuntimeError("SetSprite method failed for file '%s'", filename);
+				script->runtimeError("SetSprite method failed for file '%s'", filename);
 				stack->pushBool(false);
 			} else {
 				_sprite = spr;
@@ -187,7 +187,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		CBSprite *spr = new CBSprite(Game, this);
 		if (!spr || FAILED(spr->loadFile(filename))) {
 			stack->pushBool(false);
-			script->RuntimeError("AddTalkSprite method failed for file '%s'", filename);
+			script->runtimeError("AddTalkSprite method failed for file '%s'", filename);
 		} else {
 			if (Ex) _talkSpritesEx.Add(spr);
 			else _talkSprites.Add(spr);
@@ -258,7 +258,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		CBSprite *spr = new CBSprite(Game, this);
 		if (!spr || FAILED(spr->loadFile(filename))) {
 			stack->pushBool(false);
-			script->RuntimeError("SetTalkSprite method failed for file '%s'", filename);
+			script->runtimeError("SetTalkSprite method failed for file '%s'", filename);
 		} else {
 
 			// delete current

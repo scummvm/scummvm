@@ -1331,7 +1331,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		} else {
 			scrollTo(val1->getInt(), val2->getInt());
 		}
-		if (strcmp(name, "ScrollTo") == 0) script->WaitForExclusive(this);
+		if (strcmp(name, "ScrollTo") == 0) script->waitForExclusive(this);
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1513,7 +1513,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		byte alpha = stack->pop()->getInt(0xFF);
 
 		_fader->fadeOut(DRGBA(red, green, blue, alpha), duration);
-		if (strcmp(name, "FadeOutAsync") != 0) script->WaitFor(_fader);
+		if (strcmp(name, "FadeOutAsync") != 0) script->waitFor(_fader);
 
 		stack->pushNULL();
 		return S_OK;
@@ -1531,7 +1531,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		byte alpha = stack->pop()->getInt(0xFF);
 
 		_fader->fadeIn(DRGBA(red, green, blue, alpha), duration);
-		if (strcmp(name, "FadeInAsync") != 0) script->WaitFor(_fader);
+		if (strcmp(name, "FadeInAsync") != 0) script->waitFor(_fader);
 
 		stack->pushNULL();
 		return S_OK;
@@ -1650,7 +1650,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		}
 
 		if (toDelete->_main) {
-			script->RuntimeError("Scene.DeleteLayer - cannot delete main scene layer");
+			script->runtimeError("Scene.DeleteLayer - cannot delete main scene layer");
 			stack->pushBool(false);
 			return S_OK;
 		}

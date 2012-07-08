@@ -242,7 +242,7 @@ CScScript *CScEngine::runScript(const char *filename, CBScriptHolder *owner) {
 
 	// add new script
 	CScScript *script = new CScScript(Game, this);
-	HRESULT ret = script->Create(filename, compBuffer, compSize, owner);
+	HRESULT ret = script->create(filename, compBuffer, compSize, owner);
 	if (FAILED(ret)) {
 		Game->LOG(ret, "Error running script '%s'...", filename);
 		delete script;
@@ -388,16 +388,16 @@ HRESULT CScEngine::tick() {
 			if(!obj_found) _scripts[i]->finish(); // _waitObject no longer exists
 			*/
 			if (Game->validObject(_scripts[i]->_waitObject)) {
-				if (_scripts[i]->_waitObject->isReady()) _scripts[i]->Run();
+				if (_scripts[i]->_waitObject->isReady()) _scripts[i]->run();
 			} else _scripts[i]->finish();
 			break;
 		}
 
 		case SCRIPT_SLEEPING: {
 			if (_scripts[i]->_waitFrozen) {
-				if (_scripts[i]->_waitTime <= CBPlatform::GetTime()) _scripts[i]->Run();
+				if (_scripts[i]->_waitTime <= CBPlatform::GetTime()) _scripts[i]->run();
 			} else {
-				if (_scripts[i]->_waitTime <= Game->_timer) _scripts[i]->Run();
+				if (_scripts[i]->_waitTime <= Game->_timer) _scripts[i]->run();
 			}
 			break;
 		}
@@ -407,12 +407,12 @@ HRESULT CScEngine::tick() {
 				// fake return value
 				_scripts[i]->_stack->pushNULL();
 				_scripts[i]->_waitScript = NULL;
-				_scripts[i]->Run();
+				_scripts[i]->run();
 			} else {
 				if (_scripts[i]->_waitScript->_state == SCRIPT_THREAD_FINISHED) {
 					// copy return value
 					_scripts[i]->_stack->push(_scripts[i]->_waitScript->_stack->pop());
-					_scripts[i]->Run();
+					_scripts[i]->run();
 					_scripts[i]->_waitScript->finish();
 					_scripts[i]->_waitScript = NULL;
 				}
@@ -437,7 +437,7 @@ HRESULT CScEngine::tick() {
 			uint32 StartTime = CBPlatform::GetTime();
 			while (_scripts[i]->_state == SCRIPT_RUNNING && CBPlatform::GetTime() - StartTime < _scripts[i]->_timeSlice) {
 				_currentScript = _scripts[i];
-				_scripts[i]->ExecuteInstruction();
+				_scripts[i]->executeInstruction();
 			}
 			if (_isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
 		}
@@ -450,7 +450,7 @@ HRESULT CScEngine::tick() {
 
 			while (_scripts[i]->_state == SCRIPT_RUNNING) {
 				_currentScript = _scripts[i];
-				_scripts[i]->ExecuteInstruction();
+				_scripts[i]->executeInstruction();
 			}
 			if (isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
 		}
@@ -471,7 +471,7 @@ HRESULT CScEngine::tickUnbreakable() {
 
 		while (_scripts[i]->_state == SCRIPT_RUNNING) {
 			_currentScript = _scripts[i];
-			_scripts[i]->ExecuteInstruction();
+			_scripts[i]->executeInstruction();
 		}
 		_scripts[i]->finish();
 		_currentScript = NULL;
@@ -596,7 +596,7 @@ void CScEngine::editorCleanup() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::pauseAll() {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		if (_scripts[i] != _currentScript) _scripts[i]->Pause();
+		if (_scripts[i] != _currentScript) _scripts[i]->pause();
 	}
 
 	return S_OK;
@@ -606,7 +606,7 @@ HRESULT CScEngine::pauseAll() {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::resumeAll() {
 	for (int i = 0; i < _scripts.GetSize(); i++)
-		_scripts[i]->Resume();
+		_scripts[i]->resume();
 
 	return S_OK;
 }
@@ -658,13 +658,13 @@ HRESULT CScEngine::dbgSendScripts(IWmeDebugClient *client) {
 	// process normal scripts first
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_thread || _scripts[i]->_methodThread) continue;
-		_scripts[i]->DbgSendScript(client);
+		_scripts[i]->dbgSendScript(client);
 	}
 
 	// and threads later
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_thread || _scripts[i]->_methodThread)
-			_scripts[i]->DbgSendScript(client);
+			_scripts[i]->dbgSendScript(client);
 	}
 
 	return S_OK;

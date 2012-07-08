@@ -515,7 +515,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(1);
 		int Index = stack->pop()->getInt(-1);
 		if (Index < 0 || Index >= _frames.GetSize()) {
-			script->RuntimeError("Sprite.GetFrame: Frame index %d is out of range.", Index);
+			script->runtimeError("Sprite.GetFrame: Frame index %d is out of range.", Index);
 			stack->pushNULL();
 		} else stack->pushNative(_frames[Index], true);
 		return S_OK;
@@ -530,7 +530,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (Val->isInt()) {
 			int Index = Val->getInt(-1);
 			if (Index < 0 || Index >= _frames.GetSize()) {
-				script->RuntimeError("Sprite.DeleteFrame: Frame index %d is out of range.", Index);
+				script->runtimeError("Sprite.DeleteFrame: Frame index %d is out of range.", Index);
 			}
 		} else {
 			CBFrame *Frame = (CBFrame *)Val->getNative();

@@ -1315,7 +1315,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		bool swap = stack->pop()->getBool(true);
 
 		if (_musicCrossfadeRunning) {
-			script->RuntimeError("Game.MusicCrossfade: Music crossfade is already in progress.");
+			script->runtimeError("Game.MusicCrossfade: Music crossfade is already in progress.");
 			stack->pushBool(false);
 			return S_OK;
 		}
@@ -1425,7 +1425,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (SUCCEEDED(Game->_videoPlayer->initialize(filename, SubtitleFile))) {
 			if (SUCCEEDED(Game->_videoPlayer->play((TVideoPlayback)Type, xVal, yVal, FreezeMusic))) {
 				stack->pushBool(true);
-				script->Sleep(0);
+				script->sleep(0);
 			} else stack->pushBool(false);
 		} else stack->pushBool(false);
 
@@ -1466,7 +1466,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 			_theoraPlayer->_dontDropFrames = !dropFrames;
 			if (SUCCEEDED(_theoraPlayer->play((TVideoPlayback)type, xVal, yVal, true, freezeMusic))) {
 				stack->pushBool(true);
-				script->Sleep(0);
+				script->sleep(0);
 			} else stack->pushBool(false);
 		} else {
 			stack->pushBool(false);
@@ -1562,7 +1562,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		_scheduledLoadSlot = stack->pop()->getInt();
 		_loading = true;
 		stack->pushBool(false);
-		script->Sleep(0);
+		script->sleep(0);
 		return S_OK;
 	}
 
@@ -1764,7 +1764,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		bool system = (strcmp(name, "SystemFadeOut") == 0 || strcmp(name, "SystemFadeOutAsync") == 0);
 
 		_fader->fadeOut(DRGBA(red, green, blue, alpha), duration, system);
-		if (strcmp(name, "FadeOutAsync") != 0 && strcmp(name, "SystemFadeOutAsync") != 0) script->WaitFor(_fader);
+		if (strcmp(name, "FadeOutAsync") != 0 && strcmp(name, "SystemFadeOutAsync") != 0) script->waitFor(_fader);
 
 		stack->pushNULL();
 		return S_OK;
@@ -1784,7 +1784,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		bool System = (strcmp(name, "SystemFadeIn") == 0 || strcmp(name, "SystemFadeInAsync") == 0);
 
 		_fader->fadeIn(DRGBA(red, green, blue, alpha), duration, system);
-		if (strcmp(name, "FadeInAsync") != 0 && strcmp(name, "SystemFadeInAsync") != 0) script->WaitFor(_fader);
+		if (strcmp(name, "FadeInAsync") != 0 && strcmp(name, "SystemFadeInAsync") != 0) script->waitFor(_fader);
 
 		stack->pushNULL();
 		return S_OK;
@@ -3012,7 +3012,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "Sleep") == 0) {
 		stack->correctParams(1);
 
-		script->Sleep((uint32)stack->pop()->getInt());
+		script->sleep((uint32)stack->pop()->getInt());
 		stack->pushNULL();
 	}
 
@@ -3023,7 +3023,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(1);
 
 		CBScriptable *obj = stack->pop()->getNative();
-		if (validObject((CBObject *)obj)) script->WaitForExclusive((CBObject *)obj);
+		if (validObject((CBObject *)obj)) script->waitForExclusive((CBObject *)obj);
 		stack->pushNULL();
 	}
 
@@ -3161,7 +3161,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 
 		if (Game->getDebugMgr()->_enabled) {
 			Game->getDebugMgr()->onScriptHitBreakpoint(script);
-			script->Sleep(0);
+			script->sleep(0);
 		}
 		stack->pushNULL();
 	}
@@ -3208,7 +3208,7 @@ HRESULT CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	// failure
 	else {
-		script->RuntimeError("Call to undefined function '%s'. Ignored.", name);
+		script->runtimeError("Call to undefined function '%s'. Ignored.", name);
 		stack->correctParams(0);
 		stack->pushNULL();
 	}

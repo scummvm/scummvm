@@ -447,7 +447,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		CBSprite *spr = new CBSprite(Game, this);
 		if (!spr || FAILED(spr->loadFile(filename))) {
 			stack->pushBool(false);
-			script->RuntimeError("Item.SetHoverSprite failed for file '%s'", filename);
+			script->runtimeError("Item.SetHoverSprite failed for file '%s'", filename);
 		} else {
 			_spriteHover = spr;
 			if (setCurrent) _currentSprite = _spriteHover;
@@ -490,7 +490,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		CBSprite *spr = new CBSprite(Game);
 		if (!spr || FAILED(spr->loadFile(filename))) {
 			stack->pushBool(false);
-			script->RuntimeError("Item.SetNormalCursor failed for file '%s'", filename);
+			script->runtimeError("Item.SetNormalCursor failed for file '%s'", filename);
 		} else {
 			_cursorNormal = spr;
 			stack->pushBool(true);
@@ -533,7 +533,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		CBSprite *spr = new CBSprite(Game);
 		if (!spr || FAILED(spr->loadFile(filename))) {
 			stack->pushBool(false);
-			script->RuntimeError("Item.SetHoverCursor failed for file '%s'", filename);
+			script->runtimeError("Item.SetHoverCursor failed for file '%s'", filename);
 		} else {
 			_cursorHover = spr;
 			stack->pushBool(true);

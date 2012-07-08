@@ -43,16 +43,16 @@ class CScEngine;
 class CScStack;
 class CScScript : public CBBase, public IWmeDebugScript {
 public:
-	HRESULT DbgSendScript(IWmeDebugClient *Client);
-	HRESULT DbgSendVariables(IWmeDebugClient *Client);
+	HRESULT dbgSendScript(IWmeDebugClient *client);
+	HRESULT dbgSendVariables(IWmeDebugClient *client);
 
 	CBArray<int, int> _breakpoints;
 	bool _tracingMode;
 
 	CScScript *_parentScript;
 	bool _unbreakable;
-	HRESULT FinishThreads();
-	HRESULT CopyParameters(CScStack *stack);
+	HRESULT finishThreads();
+	HRESULT copyParameters(CScStack *stack);
 
 	void afterLoad();
 
@@ -66,31 +66,31 @@ public:
 	CScValue *_operand;
 	CScValue *_reg1;
 	bool _freezable;
-	HRESULT Resume();
-	HRESULT Pause();
-	bool canHandleEvent(const char *EventName);
-	bool canHandleMethod(const char *MethodName);
-	HRESULT CreateThread(CScScript *Original, uint32 InitIP, const char *EventName);
-	HRESULT CreateMethodThread(CScScript *Original, const char *MethodName);
-	CScScript *InvokeEventHandler(const char *EventName, bool Unbreakable = false);
+	HRESULT resume();
+	HRESULT pause();
+	bool canHandleEvent(const char *eventName);
+	bool canHandleMethod(const char *methodName);
+	HRESULT createThread(CScScript *original, uint32 initIP, const char *eventName);
+	HRESULT createMethodThread(CScScript *original, const char *methodName);
+	CScScript *invokeEventHandler(const char *eventName, bool unbreakable = false);
 	uint32 _timeSlice;
 	DECLARE_PERSISTENT(CScScript, CBBase)
-	void RuntimeError(LPCSTR fmt, ...);
-	HRESULT Run();
-	HRESULT finish(bool IncludingThreads = false);
-	HRESULT Sleep(uint32 Duration);
-	HRESULT WaitForExclusive(CBObject *Object);
-	HRESULT WaitFor(CBObject *Object);
+	void runtimeError(LPCSTR fmt, ...);
+	HRESULT run();
+	HRESULT finish(bool includingThreads = false);
+	HRESULT sleep(uint32 duration);
+	HRESULT waitForExclusive(CBObject *object);
+	HRESULT waitFor(CBObject *object);
 	uint32 _waitTime;
 	bool _waitFrozen;
 	CBObject *_waitObject;
 	CScScript *_waitScript;
 	TScriptState _state;
 	TScriptState _origState;
-	CScValue *GetVar(char *name);
-	uint32 GetFuncPos(const char *name);
-	uint32 GetEventPos(const char *name);
-	uint32 GetMethodPos(const char *name);
+	CScValue *getVar(char *name);
+	uint32 getFuncPos(const char *name);
+	uint32 getEventPos(const char *name);
+	uint32 getMethodPos(const char *name);
 	typedef struct {
 		uint32 magic;
 		uint32 version;
@@ -136,12 +136,12 @@ public:
 	CScValue *_globals;
 	CScEngine *_engine;
 	int _currentLine;
-	HRESULT ExecuteInstruction();
-	char *GetString();
-	uint32 GetDWORD();
-	double GetFloat();
+	HRESULT executeInstruction();
+	char *getString();
+	uint32 getDWORD();
+	double getFloat();
 	void cleanup();
-	HRESULT Create(const char *filename, byte *Buffer, uint32 Size, CBScriptHolder *Owner);
+	HRESULT create(const char *filename, byte *buffer, uint32 size, CBScriptHolder *owner);
 	uint32 _iP;
 private:
 	void readHeader();
@@ -166,11 +166,11 @@ public:
 	bool _methodThread;
 	char *_threadEvent;
 	CBScriptHolder *_owner;
-	CScScript::TExternalFunction *GetExternal(char *name);
-	HRESULT ExternalCall(CScStack *Stack, CScStack *ThisStack, CScScript::TExternalFunction *Function);
+	CScScript::TExternalFunction *getExternal(char *name);
+	HRESULT externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function);
 private:
-	HRESULT InitScript();
-	HRESULT InitTables();
+	HRESULT initScript();
+	HRESULT initTables();
 
 
 // IWmeDebugScript interface implementation

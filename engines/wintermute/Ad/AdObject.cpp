@@ -196,7 +196,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		if (FAILED(playAnim(stack->pop()->getString()))) stack->pushBool(false);
 		else {
-			if (strcmp(name, "PlayAnimAsync") != 0) script->WaitFor(this);
+			if (strcmp(name, "PlayAnimAsync") != 0) script->waitFor(this);
 			stack->pushBool(true);
 		}
 		return S_OK;
@@ -273,7 +273,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		const char *sound = soundVal->isNULL() ? NULL : soundVal->getString();
 
 		talk(text, sound, duration, stances, (TTextAlign)align);
-		if (strcmp(name, "TalkAsync") != 0) script->WaitForExclusive(this);
+		if (strcmp(name, "TalkAsync") != 0) script->waitForExclusive(this);
 
 		stack->pushNULL();
 		return S_OK;
@@ -360,13 +360,13 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			const char *itemName = val->getString();
 			val = stack->pop();
 			const char *insertAfter = val->isNULL() ? NULL : val->getString();
-			if (FAILED(_inventory->insertItem(itemName, insertAfter))) script->RuntimeError("Cannot add item '%s' to inventory", itemName);
+			if (FAILED(_inventory->insertItem(itemName, insertAfter))) script->runtimeError("Cannot add item '%s' to inventory", itemName);
 			else {
 				// hide associated entities
 				((CAdGame *)Game)->_scene->handleItemAssociations(itemName, false);
 			}
 
-		} else script->RuntimeError("TakeItem: item name expected");
+		} else script->runtimeError("TakeItem: item name expected");
 
 		stack->pushNULL();
 		return S_OK;
@@ -385,12 +385,12 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		CScValue *val = stack->pop();
 		if (!val->isNULL()) {
-			if (FAILED(_inventory->removeItem(val->getString()))) script->RuntimeError("Cannot remove item '%s' from inventory", val->getString());
+			if (FAILED(_inventory->removeItem(val->getString()))) script->runtimeError("Cannot remove item '%s' from inventory", val->getString());
 			else {
 				// show associated entities
 				((CAdGame *)Game)->_scene->handleItemAssociations(val->getString(), true);
 			}
-		} else script->RuntimeError("DropItem: item name expected");
+		} else script->runtimeError("DropItem: item name expected");
 
 		stack->pushNULL();
 		return S_OK;
@@ -442,7 +442,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 					return S_OK;
 				}
 			}
-		} else script->RuntimeError("HasItem: item name expected");
+		} else script->runtimeError("HasItem: item name expected");
 
 		stack->pushBool(false);
 		return S_OK;
@@ -493,7 +493,7 @@ HRESULT CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (FAILED(res = ent->loadFile(filename))) {
 			delete ent;
 			ent = NULL;
-			script->RuntimeError("AddAttachment() failed loading entity '%s'", filename);
+			script->runtimeError("AddAttachment() failed loading entity '%s'", filename);
 			stack->pushBool(false);
 		} else {
 			Game->registerObject(ent);

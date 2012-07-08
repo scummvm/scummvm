@@ -859,7 +859,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int X = stack->pop()->getInt();
 		int Y = stack->pop()->getInt();
 		goTo(X, Y);
-		if (strcmp(name, "GoToAsync") != 0) script->WaitForExclusive(this);
+		if (strcmp(name, "GoToAsync") != 0) script->waitForExclusive(this);
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -871,20 +871,20 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 		if (!Val->isNative()) {
-			script->RuntimeError("actor.%s method accepts an entity refrence only", name);
+			script->runtimeError("actor.%s method accepts an entity refrence only", name);
 			stack->pushNULL();
 			return S_OK;
 		}
 		CAdObject *Obj = (CAdObject *)Val->getNative();
 		if (!Obj || Obj->_type != OBJECT_ENTITY) {
-			script->RuntimeError("actor.%s method accepts an entity refrence only", name);
+			script->runtimeError("actor.%s method accepts an entity refrence only", name);
 			stack->pushNULL();
 			return S_OK;
 		}
 		CAdEntity *Ent = (CAdEntity *)Obj;
 		if (Ent->_walkToX == 0 && Ent->_walkToY == 0) goTo(Ent->_posX, Ent->_posY);
 		else goTo(Ent->_walkToX, Ent->_walkToY, Ent->_walkToDir);
-		if (strcmp(name, "GoToObjectAsync") != 0) script->WaitForExclusive(this);
+		if (strcmp(name, "GoToObjectAsync") != 0) script->waitForExclusive(this);
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -908,7 +908,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 		if (dir >= 0 && dir < NUM_DIRECTIONS) {
 			turnTo((TDirection)dir);
-			if (strcmp(name, "TurnToAsync") != 0) script->WaitForExclusive(this);
+			if (strcmp(name, "TurnToAsync") != 0) script->waitForExclusive(this);
 		}
 		stack->pushNULL();
 		return S_OK;

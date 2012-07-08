@@ -655,7 +655,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			//if(m_Scale>=0) m_Theora->m_PlayZoom = m_Scale;
 			stack->pushBool(true);
 		} else {
-			script->RuntimeError("Entity.PlayTheora - error playing video '%s'", filename);
+			script->runtimeError("Entity.PlayTheora - error playing video '%s'", filename);
 			stack->pushBool(false);
 		}
 
