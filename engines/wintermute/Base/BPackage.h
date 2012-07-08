@@ -40,8 +40,8 @@ namespace WinterMute {
 
 class CBPackage : public CBBase {
 public:
-	Common::SeekableReadStream *GetFilePointer();
-	void CloseFilePointer(Common::SeekableReadStream *&file);
+	Common::SeekableReadStream *getFilePointer();
+	void closeFilePointer(Common::SeekableReadStream *&file);
 
 	bool _boundToExe;
 	byte _priority;

@@ -79,7 +79,7 @@ Common::SeekableReadStream *openPkgFile(const Common::String &filename, CBFileMa
 	fileEntry = fileManager->getPackageEntry(fileName);
 	if (!fileEntry) return NULL;
 
-	file = fileEntry->_package->GetFilePointer();
+	file = fileEntry->_package->getFilePointer();
 	if (!file) return NULL;
 
 	// TODO: Cleanup

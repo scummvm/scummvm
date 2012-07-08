@@ -52,7 +52,7 @@ CBPackage::CBPackage(CBGame *inGame): CBBase(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CBPackage::~CBPackage() {
 	if (_name) delete [] _name;
-	CloseFilePointer(_file);
+	closeFilePointer(_file);
 }
 
 
@@ -60,7 +60,7 @@ CBPackage::~CBPackage() {
 HRESULT CBPackage::open() {
 	if (_file) return S_OK;
 	else {
-		_file = GetFilePointer();
+		_file = getFilePointer();
 		return _file ? S_OK : E_FAIL;
 	}
 }
@@ -86,7 +86,7 @@ HRESULT CBPackage::read(Common::SeekableReadStream *file, uint32 offset, byte *b
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::SeekableReadStream *CBPackage::GetFilePointer() {
+Common::SeekableReadStream *CBPackage::getFilePointer() {
 	Common::File *file = Game->_fileManager->openPackage(_name);
 	if (!file) {
 		Game->_fileManager->requestCD(_cD, _name, "");
@@ -96,7 +96,7 @@ Common::SeekableReadStream *CBPackage::GetFilePointer() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBPackage::CloseFilePointer(Common::SeekableReadStream *&file) {
+void CBPackage::closeFilePointer(Common::SeekableReadStream *&file) {
 	delete file;
 	file = NULL;
 }
