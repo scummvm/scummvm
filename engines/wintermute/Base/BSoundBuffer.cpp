@@ -251,15 +251,15 @@ uint32 CBSoundBuffer::getLength() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSoundBuffer::setType(TSoundType Type) {
-	_type = Type;
+void CBSoundBuffer::setType(TSoundType type) {
+	_type = type;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::setVolume(int Volume) {
+HRESULT CBSoundBuffer::setVolume(int volume) {
 	if (_stream && _handle) {
-		byte vol = (byte)(Volume / 100.f * Audio::Mixer::kMaxChannelVolume);
+		byte vol = (byte)(volume / 100.f * Audio::Mixer::kMaxChannelVolume);
 		g_system->getMixer()->setChannelVolume(*_handle, vol);
 	}
 	return S_OK;
@@ -267,23 +267,23 @@ HRESULT CBSoundBuffer::setVolume(int Volume) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::setPrivateVolume(int Volume) {
+HRESULT CBSoundBuffer::setPrivateVolume(int volume) {
 #if 0
 	_privateVolume = Volume;
 
 	switch (_type) {
 	case SOUND_SFX:
-		Volume = Game->_soundMgr->_volumeSFX;
+		volume = Game->_soundMgr->_volumeSFX;
 		break;
 	case SOUND_SPEECH:
-		Volume = Game->_soundMgr->_volumeSpeech;
+		volume = Game->_soundMgr->_volumeSpeech;
 		break;
 	case SOUND_MUSIC:
-		Volume = Game->_soundMgr->_volumeMusic;
+		volume = Game->_soundMgr->_volumeMusic;
 		break;
 	}
 #endif
-	return setVolume(Volume);
+	return setVolume(volume);
 }
 
 
@@ -308,7 +308,7 @@ uint32 CBSoundBuffer::getPosition() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::setPosition(uint32 Pos) {
+HRESULT CBSoundBuffer::setPosition(uint32 pos) {
 	warning("CBSoundBuffer::SetPosition - not implemented yet");
 #if 0
 	if (_stream) {
@@ -320,8 +320,8 @@ HRESULT CBSoundBuffer::setPosition(uint32 Pos) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::setLoopStart(uint32 Pos) {
-	_loopStart = Pos;
+HRESULT CBSoundBuffer::setLoopStart(uint32 pos) {
+	_loopStart = pos;
 #if 0
 	if (_stream) {
 		if (_sync) {
@@ -355,10 +355,10 @@ HRESULT CBSoundBuffer::setPan(float pan) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::applyFX(TSFXType Type, float Param1, float Param2, float Param3, float Param4) {
+HRESULT CBSoundBuffer::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	warning("CBSoundBuffer::ApplyFX - not implemented yet");
 #if 0
-	switch (Type) {
+	switch (type) {
 	case SFX_ECHO:
 		break;
 
