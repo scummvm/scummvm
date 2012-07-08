@@ -227,6 +227,8 @@ private:
 	uint16 callback, callback_timer;
 
 	int _fade_timer;
+	byte _fadeOld;
+
 	uint _idle_timer;
 
 	struct Sound {

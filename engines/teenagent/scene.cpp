@@ -44,6 +44,7 @@ Scene::Scene(TeenAgentEngine *vm) : _vm(vm), intro(false), _id(0), ons(0),
 	current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0), _idle_timer(0) {
 
 	_fade_timer = 0;
+	_fadeOld = 0;
 	on_enabled = true;
 
 	memset(palette, 0, sizeof(palette));
@@ -734,15 +735,13 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		} else if (!hide_actor) {
 			actor_animation.free();
 			uint zoom = lookupZoom(position.y);
-			{
-				byte fade = findFade();
-				static byte old_fade = 0;
-				if (fade != old_fade) {
-					old_fade = fade;
-					paletteEffect(fade);
-					if (_fade_timer == 0)
-						setPalette(4);
-				}
+
+			byte fade = findFade();
+			if (fade != _fadeOld) {
+				_fadeOld = fade;
+				paletteEffect(fade);
+				if (_fade_timer == 0)
+					setPalette(4);
 			}
 
 			if (!path.empty()) {
