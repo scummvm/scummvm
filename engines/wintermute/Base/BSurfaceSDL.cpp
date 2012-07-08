@@ -90,17 +90,17 @@ bool hasTransparency(Graphics::Surface *surf) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int lifeTime, bool keepLoaded) {
+HRESULT CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	/*  CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer); */
 	Common::String strFileName(filename);
 	CBImage *image = new CBImage(Game);
 	image->loadFile(strFileName);
 //	const Graphics::Surface *surface = image->getSurface();
 
-	if (default_ck) {
-		ck_red   = 255;
-		ck_green = 0;
-		ck_blue  = 255;
+	if (defaultCK) {
+		ckRed   = 255;
+		ckGreen = 0;
+		ckBlue  = 255;
 	}
 
 	_width = image->getSurface()->w;
@@ -148,11 +148,11 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool default_ck, byte ck_red,
 	if (strFileName.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		TransparentSurface trans(*_surface);
-		trans.applyColorKey(ck_red, ck_green, ck_blue);
+		trans.applyColorKey(ckRed, ckGreen, ckBlue);
 	} else if (image->getSurface()->format.bytesPerPixel == 1 && image->getPalette()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		TransparentSurface trans(*_surface);
-		trans.applyColorKey(ck_red, ck_green, ck_blue, true);
+		trans.applyColorKey(ckRed, ckGreen, ckBlue, true);
 	} else if (image->getSurface()->format.bytesPerPixel == 4 && image->getSurface()->format != g_system->getScreenFormat()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
 	} else {
@@ -351,7 +351,7 @@ bool CBSurfaceSDL::isTransparentAt(int x, int y) {
 
 
 	StartPixelOp();
-	bool ret = IsTransparentAtLite(X, Y);
+	bool ret = isTransparentAtLite(X, Y);
 	EndPixelOp();
 
 	return ret;
@@ -451,15 +451,15 @@ HRESULT CBSurfaceSDL::displayZoom(int x, int y, RECT rect, float zoomX, float zo
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::displayTransform(int x, int y, int HotX, int HotY, RECT Rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &Rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
+HRESULT CBSurfaceSDL::displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float ZoomY, uint32 Alpha, bool AlphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
-	if (renderer->_forceAlphaColor != 0) Alpha = renderer->_forceAlphaColor;
+	if (renderer->_forceAlphaColor != 0) alpha = renderer->_forceAlphaColor;
 
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
@@ -469,10 +469,10 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 		hasWarned = true;
 	}
 
-	byte r = D3DCOLGetR(Alpha);
-	byte g = D3DCOLGetG(Alpha);
-	byte b = D3DCOLGetB(Alpha);
-	byte a = D3DCOLGetA(Alpha);
+	byte r = D3DCOLGetR(alpha);
+	byte g = D3DCOLGetG(alpha);
+	byte b = D3DCOLGetB(alpha);
+	byte a = D3DCOLGetA(alpha);
 
 	renderer->setAlphaMod(a);
 	renderer->setColorMod(r, g, b);
@@ -488,10 +488,10 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	// TODO: This _might_ miss the intended behaviour by 1 in each direction
 	// But I think it fits the model used in Wintermute.
 	Common::Rect srcRect;
-	srcRect.left = Rect->left;
-	srcRect.top = Rect->top;
-	srcRect.setWidth(Rect->right - Rect->left);
-	srcRect.setHeight(Rect->bottom - Rect->top);
+	srcRect.left = rect->left;
+	srcRect.top = rect->top;
+	srcRect.setWidth(rect->right - rect->left);
+	srcRect.setHeight(rect->bottom - rect->top);
 
 	Common::Rect position;
 	position.left = x + offsetX;
@@ -505,8 +505,8 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 		position.top = 0; // TODO: Something is wrong
 	}
 
-	position.setWidth((float)srcRect.width() * ZoomX / 100.f);
-	position.setHeight((float)srcRect.height() * ZoomX / 100.f);
+	position.setWidth((float)srcRect.width() * zoomX / 100.f);
+	position.setHeight((float)srcRect.height() * zoomX / 100.f);
 
 	renderer->modTargetRect(&position);
 
@@ -517,12 +517,12 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *Rect, float ZoomX, float Zo
 	// But no checking is in place for that yet.
 
 	bool hasAlpha;
-	if (_hasAlpha && !AlphaDisable) {
+	if (_hasAlpha && !alphaDisable) {
 		hasAlpha = true;
 	} else {
 		hasAlpha = false;
 	}
-	if (AlphaDisable) {
+	if (alphaDisable) {
 		warning("CBSurfaceSDL::drawSprite - AlphaDisable ignored");
 	}
 
