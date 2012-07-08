@@ -252,23 +252,23 @@ HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
 	_loadStream = g_system->getSavefileManager()->openForLoading(filename);
 	//_buffer = Game->_fileManager->readWholeFile(filename, &_bufferSize);
 	if (_loadStream) {
-		uint32 Magic;
-		Magic = getDWORD();
+		uint32 magic;
+		magic = getDWORD();
 
-		if (Magic != DCGF_MAGIC) {
+		if (magic != DCGF_MAGIC) {
 			cleanup();
 			return E_FAIL;
 		}
 
-		Magic = getDWORD();
+		magic = getDWORD();
 
-		if (Magic == SAVE_MAGIC || Magic == SAVE_MAGIC_2) {
+		if (magic == SAVE_MAGIC || magic == SAVE_MAGIC_2) {
 			_savedVerMajor = _loadStream->readByte();
 			_savedVerMinor = _loadStream->readByte();
 			_savedExtMajor = _loadStream->readByte();
 			_savedExtMinor = _loadStream->readByte();
 
-			if (Magic == SAVE_MAGIC_2) {
+			if (magic == SAVE_MAGIC_2) {
 				_savedVerBuild = (byte)getDWORD();
 				_savedName = getStringObj();
 
@@ -300,8 +300,6 @@ HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBPersistMgr::initLoad(const char *filename) {
-
-
 	if (FAILED(readHeader(filename))) {
 		cleanup();
 		return E_FAIL;
@@ -735,21 +733,21 @@ HRESULT CBPersistMgr::transfer(const char *name, Vector2 *val) {
 //////////////////////////////////////////////////////////////////////////
 // generic pointer
 HRESULT CBPersistMgr::transfer(const char *name, void *val) {
-	int ClassID = -1, InstanceID = -1;
+	int classID = -1, instanceID = -1;
 
 	if (_saving) {
-		CSysClassRegistry::getInstance()->getPointerID(*(void **)val, &ClassID, &InstanceID);
-		if (*(void **)val != NULL && (ClassID == -1 || InstanceID == -1)) {
+		CSysClassRegistry::getInstance()->getPointerID(*(void **)val, &classID, &instanceID);
+		if (*(void **)val != NULL && (classID == -1 || instanceID == -1)) {
 			Game->LOG(0, "Warning: invalid instance '%s'", name);
 		}
 
-		_saveStream->writeUint32LE(ClassID);
-		_saveStream->writeUint32LE(InstanceID);
+		_saveStream->writeUint32LE(classID);
+		_saveStream->writeUint32LE(instanceID);
 	} else {
-		ClassID = _loadStream->readUint32LE();
-		InstanceID = _loadStream->readUint32LE();
+		classID = _loadStream->readUint32LE();
+		instanceID = _loadStream->readUint32LE();
 
-		*(void **)val = CSysClassRegistry::getInstance()->idToPointer(ClassID, InstanceID);
+		*(void **)val = CSysClassRegistry::getInstance()->idToPointer(classID, instanceID);
 	}
 
 	return S_OK;
