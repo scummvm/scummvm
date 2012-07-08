@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-07-08 12:25+0100\n"
-"PO-Revision-Date: 2012-02-16 13:09+0200+0200\n"
+"PO-Revision-Date: 2012-07-08 22:00+0200+0200\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -193,9 +193,8 @@ msgid "Platform:"
 msgstr "Платформа:"
 
 #: gui/launcher.cpp:231
-#, fuzzy
 msgid "Engine"
-msgstr "Проверить"
+msgstr "Движок"
 
 #: gui/launcher.cpp:239 gui/options.cpp:1062 gui/options.cpp:1079
 msgid "Graphics"
@@ -689,7 +688,7 @@ msgstr "SoundFont:"
 #: gui/options.cpp:849 gui/options.cpp:851 gui/options.cpp:852
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr ""
-"SoundFontы поддердживаются некоторыми звуковыми картами, Fluidsynth и "
+"SoundFontы поддерживаются некоторыми звуковыми картами, Fluidsynth и "
 "Timidity"
 
 #: gui/options.cpp:851
@@ -716,7 +715,7 @@ msgstr "Устр. MT-32:"
 #: gui/options.cpp:870
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Указывает звуковое устройство по умолчания для вывода на Roland MT-32/LAPC1/"
+"Указывает звуковое устройство по умолчанию для вывода на Roland MT-32/LAPC1/"
 "CM32l/CM64"
 
 #: gui/options.cpp:875
@@ -743,7 +742,7 @@ msgstr "Включить режим Roland GS"
 #: gui/options.cpp:880
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
 msgstr ""
-"Выключает маппинг General MIDI для игр с звуковой дорожкой для Roland MT-32"
+"Выключает сопоставление General MIDI для игр с звуковой дорожкой для Roland MT-32"
 
 #: gui/options.cpp:889
 msgid "Don't use Roland MT-32 music"
@@ -922,7 +921,7 @@ msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
 msgstr ""
-"Тема, выбранная вами, не поддерживает выбранный язык. Если вы хотите "
+"Тема, выбранная вами, не поддерживает текущий язык. Если вы хотите "
 "использовать эту тему, вам необходимо сначала переключиться на другой язык."
 
 #: gui/saveload.cpp:59 gui/saveload.cpp:257
@@ -1159,17 +1158,17 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
-"Просим прощения, но этот движое пока не предоставляет помощи внутри игры. "
+"Просим прощения, но этот движок пока не предоставляет помощи внутри игры. "
 "Пожалуйста, обратитесь в файл README за базовой информацией, а также "
 "инструкциями о том, как получить дальнейшую помощь."
 
 #: engines/dialogs.cpp:228
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Просим прощения, но этот движое пока не предоставляет помощи внутри игры. "
+"Не удалось сохранить игру (%s)! "
 "Пожалуйста, обратитесь в файл README за базовой информацией, а также "
 "инструкциями о том, как получить дальнейшую помощь."
 
@@ -1233,12 +1232,12 @@ msgstr ""
 "файле README."
 
 #: engines/engine.cpp:426
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Просим прощения, но этот движое пока не предоставляет помощи внутри игры. "
+"Не удалось прочитать сохранение игры (%s)! "
 "Пожалуйста, обратитесь в файл README за базовой информацией, а также "
 "инструкциями о том, как получить дальнейшую помощь."
 
@@ -1259,12 +1258,14 @@ msgstr "Всё равно запустить"
 #: engines/agi/detection.cpp:145 engines/dreamweb/detection.cpp:47
 #: engines/sci/detection.cpp:390
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "Использовать оригинальные экраны записи/чтения игры"
 
 #: engines/agi/detection.cpp:146 engines/dreamweb/detection.cpp:48
 #: engines/sci/detection.cpp:391
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
+"Использовать оригинальные экраны записи и сохранения игры вместо "
+"сделанных в ScummVM"
 
 #: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore game:"
@@ -1272,73 +1273,71 @@ msgstr "Восстановить игру:"
 
 #: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore"
-msgstr "Восствновить"
+msgstr "Восстановить"
 
 #: engines/dreamweb/detection.cpp:57
-#, fuzzy
 msgid "Use bright palette mode"
-msgstr "Верхний правый предмет"
+msgstr "Использовать режим яркой палитры"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "Рисует графику с использованием яркой палитры игры"
 
 #: engines/sci/detection.cpp:370
 msgid "EGA undithering"
 msgstr "EGA без растра"
 
 #: engines/sci/detection.cpp:371
-#, fuzzy
 msgid "Enable undithering in EGA games"
-msgstr ""
-"Включает режим без растрирования в EGA играх, которые поддерживают такой "
-"режим"
+msgstr "Включает режим без растрирования в EGA играх"
 
 #: engines/sci/detection.cpp:380
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "Громкость специальных звуковых эффектов"
+msgstr "Предпочитать цифровые звуковые эффекты"
 
 #: engines/sci/detection.cpp:381
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "Отдавать предпочтение цифровым звуковым эффектам вместо синтезированных"
 
 #: engines/sci/detection.cpp:400
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
-msgstr ""
+msgstr "Использовать IMF/Yamaha FB-01 для вывода MIDI"
 
 #: engines/sci/detection.cpp:401
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
+"Использвовать звуковую картку IBM Music Feature или модуль синтеза "
+"Yamaha FB-01 FM для MIDI"
 
 #: engines/sci/detection.cpp:411
 msgid "Use CD audio"
-msgstr ""
+msgstr "Использовать CD аудио"
 
 #: engines/sci/detection.cpp:412
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "Использовать звуковые дорожки с CD вместо музыки из файлов игры (если доступно)"
 
 #: engines/sci/detection.cpp:422
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "Использовать курсоры Windows"
 
 #: engines/sci/detection.cpp:423
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
+"Использовать курсоры Windows (меньшие по размеру и одноцветные) вместо курсоров DOS"
 
 #: engines/sci/detection.cpp:433
-#, fuzzy
 msgid "Use silver cursors"
-msgstr "Обычный курсор"
+msgstr "Использовать серебрянные курсоры"
 
 #: engines/sci/detection.cpp:434
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
+"Использовать альтернативный набор серебрянных курсоров вместо обычных золотых"
 
 #: engines/scumm/dialogs.cpp:175
 #, c-format
@@ -2091,61 +2090,59 @@ msgstr "Не удалось сохранить игру"
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr ""
+msgstr "Студийная аудитория"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr ""
+msgstr "Включить звуки аудитории в студии"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr ""
+msgstr "Поддрежка пропусков"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "Включает возможность пропускать тексты и заставки"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr ""
+msgstr "Режим гелия"
 
 #: engines/kyra/detection.cpp:85
-#, fuzzy
 msgid "Enable helium mode"
-msgstr "Включить режим Roland GS"
+msgstr "Включить режим гелия"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr ""
+msgstr "Плавная прокрутка"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr ""
+msgstr "Включить плавную прокрутку во время ходьбы"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:112
-#, fuzzy
 msgid "Floating cursors"
-msgstr "Обычный курсор"
+msgstr "Плавающие курсоры"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "Включить плавающие курсоры"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
 msgid "HP bar graphs"
-msgstr ""
+msgstr "Полоски здоровья"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "Включить отображение полосок здоровья"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -2196,7 +2193,6 @@ msgid "Choose Spell"
 msgstr "Выбрать заклинание"
 
 #: engines/kyra/sound_midi.cpp:475
-#, fuzzy
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -2213,11 +2209,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr ""
+msgstr "Вступление с флоппиков"
 
 #: engines/queen/queen.cpp:60 engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "Использовать вступление с гибких дисков (только для CD версии игры)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2238,7 +2234,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:539
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "Заставка PSX '%s' не может быть проиграна в режиме с палитрой"
 
 #: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:455
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
@@ -2293,19 +2289,18 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Это завершение демо Сломанного Меча 1"
 
 #: engines/sword2/animation.cpp:435
-#, fuzzy
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"Найдены заставки в формате DXA, но ScummVM был собран без поддержки zlib"
+"Найдены заставки в формате PSX, но ScummVM был собран без поддержки RGB цветов"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr ""
+msgstr "Показывать названия объектов"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "Показывает названия объектов пр инаведении курсора мыши"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2334,7 +2329,7 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
 "ScummVM обнаружил у вас старые сохранения игры Nippon Safes, которые "
-"необходимо переименовать.Старые названия больше не поддерживаются, и поэтому "
+"необходимо переименовать. Старые названия больше не поддерживаются, и поэтому "
 "вы не сможете загрузить сохранения, если не переименуете их.\n"
 "\n"
 "Нажмите ОК, чтобы переименовать их сейчас, в противном случае это же "
@@ -2351,7 +2346,7 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
-"ScummVM написал несколько предупреждений в окно консоли, и не смог "
+"ScummVM написал несколько предупреждений в окно консоли и не смог "
 "преобразовать все файлы.\n"
 "\n"
 "Пожалуйста, сообщите об этом команде ScummVM."
@@ -2455,7 +2450,7 @@ msgstr " (Активная)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Blocked)"
-msgstr ""
+msgstr " (Заблокирована)"
 
 #: backends/keymapper/remap-dialog.cpp:119
 msgid " (Global)"
