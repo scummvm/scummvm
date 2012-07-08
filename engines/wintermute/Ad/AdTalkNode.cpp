@@ -98,7 +98,7 @@ HRESULT CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTION) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTION) {
 			Game->LOG(0, "'ACTION' keyword expected.");
 			return E_FAIL;
 		}
@@ -109,7 +109,7 @@ HRESULT CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 	_playToEnd = false;
 	_preCache = false;
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SPRITE:
 			CBUtils::setString(&_spriteFilename, (char *)params);
@@ -131,15 +131,15 @@ HRESULT CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_START_TIME:
-			parser.ScanStr((char *)params, "%d", &_startTime);
+			parser.scanStr((char *)params, "%d", &_startTime);
 			break;
 
 		case TOKEN_END_TIME:
-			parser.ScanStr((char *)params, "%d", &_endTime);
+			parser.scanStr((char *)params, "%d", &_endTime);
 			break;
 
 		case TOKEN_PRECACHE:
-			parser.ScanStr((char *)params, "%b", &_preCache);
+			parser.scanStr((char *)params, "%b", &_preCache);
 			break;
 
 		case TOKEN_COMMENT:

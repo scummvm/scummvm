@@ -170,14 +170,14 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDIT) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDIT) {
 			Game->LOG(0, "'EDIT' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while (cmd > 0 && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -225,23 +225,23 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &_posX);
+			parser.scanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &_posY);
+			parser.scanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.ScanStr((char *)params, "%d", &_width);
+			parser.scanStr((char *)params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &_height);
+			parser.scanStr((char *)params, "%d", &_height);
 			break;
 
 		case TOKEN_MAX_LENGTH:
-			parser.ScanStr((char *)params, "%d", &_maxLength);
+			parser.scanStr((char *)params, "%d", &_maxLength);
 			break;
 
 		case TOKEN_CAPTION:
@@ -259,11 +259,11 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR_BLINK_RATE:
-			parser.ScanStr((char *)params, "%d", &_cursorBlinkRate);
+			parser.scanStr((char *)params, "%d", &_cursorBlinkRate);
 			break;
 
 		case TOKEN_FRAME_WIDTH:
-			parser.ScanStr((char *)params, "%d", &_frameWidth);
+			parser.scanStr((char *)params, "%d", &_frameWidth);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -271,15 +271,15 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
-			parser.ScanStr((char *)params, "%b", &_parentNotify);
+			parser.scanStr((char *)params, "%b", &_parentNotify);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.ScanStr((char *)params, "%b", &_disable);
+			parser.scanStr((char *)params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.ScanStr((char *)params, "%b", &_visible);
+			parser.scanStr((char *)params, "%b", &_visible);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

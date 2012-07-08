@@ -121,7 +121,7 @@ HRESULT CAdRegion::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
 			Game->LOG(0, "'REGION' keyword expected.");
 			return E_FAIL;
 		}
@@ -133,7 +133,7 @@ HRESULT CAdRegion::loadBuffer(byte *buffer, bool complete) {
 
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -148,46 +148,46 @@ HRESULT CAdRegion::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.ScanStr((char *)params, "%b", &_active);
+			parser.scanStr((char *)params, "%b", &_active);
 			break;
 
 		case TOKEN_BLOCKED:
-			parser.ScanStr((char *)params, "%b", &_blocked);
+			parser.scanStr((char *)params, "%b", &_blocked);
 			break;
 
 		case TOKEN_DECORATION:
-			parser.ScanStr((char *)params, "%b", &_decoration);
+			parser.scanStr((char *)params, "%b", &_decoration);
 			break;
 
 		case TOKEN_ZOOM:
 		case TOKEN_SCALE: {
 			int j;
-			parser.ScanStr((char *)params, "%d", &j);
+			parser.scanStr((char *)params, "%d", &j);
 			_zoom = (float)j;
 		}
 		break;
 
 		case TOKEN_POINT: {
 			int x, y;
-			parser.ScanStr((char *)params, "%d,%d", &x, &y);
+			parser.scanStr((char *)params, "%d,%d", &x, &y);
 			_points.Add(new CBPoint(x, y));
 		}
 		break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.ScanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.ScanStr((char *)params, "%d", &alpha);
+			parser.scanStr((char *)params, "%d", &alpha);
 			break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr((char *)params, "%b", &_editorSelected);
+			parser.scanStr((char *)params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
-			parser.ScanStr((char *)params, "%d", &_editorSelectedPoint);
+			parser.scanStr((char *)params, "%d", &_editorSelectedPoint);
 			break;
 
 		case TOKEN_SCRIPT:

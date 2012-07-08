@@ -111,7 +111,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpr
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITESET) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITESET) {
 			Game->LOG(0, "'SPRITESET' keyword expected.");
 			return E_FAIL;
 		}
@@ -119,7 +119,7 @@ HRESULT CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpr
 	}
 
 	CBSprite *spr = NULL;
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;

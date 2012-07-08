@@ -173,10 +173,10 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	CBPlatform::SetRectEmpty(&rect);
 	char *surface_file = NULL;
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, &params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_DELAY:
-			parser.ScanStr(params, "%d", &_delay);
+			parser.scanStr(params, "%d", &_delay);
 			break;
 
 		case TOKEN_IMAGE:
@@ -184,56 +184,56 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			break;
 
 		case TOKEN_TRANSPARENT:
-			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
+			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
 			custoTrans = true;
 			break;
 
 		case TOKEN_RECT:
-			parser.ScanStr(params, "%d,%d,%d,%d", &rect.left, &rect.top, &rect.right, &rect.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &rect.left, &rect.top, &rect.right, &rect.bottom);
 			break;
 
 		case TOKEN_HOTSPOT:
-			parser.ScanStr(params, "%d,%d", &hotspotX, &hotspotY);
+			parser.scanStr(params, "%d,%d", &hotspotX, &hotspotY);
 			break;
 
 		case TOKEN_MOVE:
-			parser.ScanStr(params, "%d,%d", &_moveX, &_moveY);
+			parser.scanStr(params, "%d,%d", &_moveX, &_moveY);
 			break;
 
 		case TOKEN_2D_ONLY:
-			parser.ScanStr(params, "%b", &is2DOnly);
+			parser.scanStr(params, "%b", &is2DOnly);
 			break;
 
 		case TOKEN_3D_ONLY:
-			parser.ScanStr(params, "%b", &is3DOnly);
+			parser.scanStr(params, "%b", &is3DOnly);
 			break;
 
 		case TOKEN_MIRROR_X:
-			parser.ScanStr(params, "%b", &mirrorX);
+			parser.scanStr(params, "%b", &mirrorX);
 			break;
 
 		case TOKEN_MIRROR_Y:
-			parser.ScanStr(params, "%b", &mirrorY);
+			parser.scanStr(params, "%b", &mirrorY);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.ScanStr(params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.ScanStr(params, "%d", &alpha);
+			parser.scanStr(params, "%d", &alpha);
 			break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr(params, "%b", &editorSelected);
+			parser.scanStr(params, "%b", &editorSelected);
 			break;
 
 		case TOKEN_EDITOR_EXPANDED:
-			parser.ScanStr(params, "%b", &_editorExpanded);
+			parser.scanStr(params, "%b", &_editorExpanded);
 			break;
 
 		case TOKEN_KILL_SOUND:
-			parser.ScanStr(params, "%b", &_killSound);
+			parser.scanStr(params, "%b", &_killSound);
 			break;
 
 		case TOKEN_SUBFRAME: {
@@ -267,11 +267,11 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		break;
 
 		case TOKEN_KEYFRAME:
-			parser.ScanStr(params, "%b", &_keyframe);
+			parser.scanStr(params, "%b", &_keyframe);
 			break;
 
 		case TOKEN_DECORATION:
-			parser.ScanStr(params, "%b", &decoration);
+			parser.scanStr(params, "%b", &decoration);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

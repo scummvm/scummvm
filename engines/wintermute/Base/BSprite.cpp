@@ -214,7 +214,7 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITE) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITE) {
 			Game->LOG(0, "'SPRITE' keyword expected.");
 			return E_FAIL;
 		}
@@ -223,14 +223,14 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 
 	int frame_count = 1;
 	CBFrame *frame;
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_CONTINUOUS:
-			parser.ScanStr((char *)params, "%b", &_continuous);
+			parser.scanStr((char *)params, "%b", &_continuous);
 			break;
 
 		case TOKEN_EDITOR_MUTED:
-			parser.ScanStr((char *)params, "%b", &_editorMuted);
+			parser.scanStr((char *)params, "%b", &_editorMuted);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -238,15 +238,15 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_LOOPING:
-			parser.ScanStr((char *)params, "%b", &_looping);
+			parser.scanStr((char *)params, "%b", &_looping);
 			break;
 
 		case TOKEN_PRECISE:
-			parser.ScanStr((char *)params, "%b", &_precise);
+			parser.scanStr((char *)params, "%b", &_precise);
 			break;
 
 		case TOKEN_STREAMED:
-			parser.ScanStr((char *)params, "%b", &_streamed);
+			parser.scanStr((char *)params, "%b", &_streamed);
 			if (_streamed && lifeTime == -1) {
 				lifeTime = 500;
 				cacheType = CACHE_ALL;
@@ -254,7 +254,7 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_STREAMED_KEEP_LOADED:
-			parser.ScanStr((char *)params, "%b", &_streamedKeepLoaded);
+			parser.scanStr((char *)params, "%b", &_streamedKeepLoaded);
 			break;
 
 		case TOKEN_NAME:
@@ -270,15 +270,15 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_EDITOR_BG_OFFSET_X:
-			parser.ScanStr((char *)params, "%d", &_editorBgOffsetX);
+			parser.scanStr((char *)params, "%d", &_editorBgOffsetX);
 			break;
 
 		case TOKEN_EDITOR_BG_OFFSET_Y:
-			parser.ScanStr((char *)params, "%d", &_editorBgOffsetY);
+			parser.scanStr((char *)params, "%d", &_editorBgOffsetY);
 			break;
 
 		case TOKEN_EDITOR_BG_ALPHA:
-			parser.ScanStr((char *)params, "%d", &_editorBgAlpha);
+			parser.scanStr((char *)params, "%d", &_editorBgAlpha);
 			_editorBgAlpha = MIN(_editorBgAlpha, 255);
 			_editorBgAlpha = MAX(_editorBgAlpha, 0);
 			break;

@@ -613,7 +613,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCENE) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCENE) {
 			Game->LOG(0, "'SCENE' keyword expected.");
 			return E_FAIL;
 		}
@@ -624,7 +624,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 	char camera[MAX_PATH] = "";
 	/* float WaypointHeight = -1.0f; */
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -722,91 +722,91 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_EDITOR_MARGIN_H:
-			parser.ScanStr((char *)params, "%d", &_editorMarginH);
+			parser.scanStr((char *)params, "%d", &_editorMarginH);
 			break;
 
 		case TOKEN_EDITOR_MARGIN_V:
-			parser.ScanStr((char *)params, "%d", &_editorMarginV);
+			parser.scanStr((char *)params, "%d", &_editorMarginV);
 			break;
 
 		case TOKEN_EDITOR_COLOR_FRAME:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColFrame = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_ENTITY:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColEntity = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_ENTITY_SEL:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColEntitySel = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_REGION_SEL:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColRegionSel = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_DECORATION_SEL:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColDecorSel = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_BLOCKED_SEL:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColBlockedSel = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_WAYPOINTS_SEL:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColWaypointsSel = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_REGION:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColRegion = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_DECORATION:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColDecor = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_BLOCKED:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColBlocked = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_WAYPOINTS:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColWaypoints = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_SCALE:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColScale = DRGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_SHOW_REGIONS:
-			parser.ScanStr((char *)params, "%b", &_editorShowRegions);
+			parser.scanStr((char *)params, "%b", &_editorShowRegions);
 			break;
 
 		case TOKEN_EDITOR_SHOW_BLOCKED:
-			parser.ScanStr((char *)params, "%b", &_editorShowBlocked);
+			parser.scanStr((char *)params, "%b", &_editorShowBlocked);
 			break;
 
 		case TOKEN_EDITOR_SHOW_DECORATION:
-			parser.ScanStr((char *)params, "%b", &_editorShowDecor);
+			parser.scanStr((char *)params, "%b", &_editorShowDecor);
 			break;
 
 		case TOKEN_EDITOR_SHOW_ENTITIES:
-			parser.ScanStr((char *)params, "%b", &_editorShowEntities);
+			parser.scanStr((char *)params, "%b", &_editorShowEntities);
 			break;
 
 		case TOKEN_EDITOR_SHOW_SCALE:
-			parser.ScanStr((char *)params, "%b", &_editorShowScale);
+			parser.scanStr((char *)params, "%b", &_editorShowScale);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -819,17 +819,17 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_VIEWPORT: {
 			RECT rc;
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 			if (!_viewport) _viewport = new CBViewport(Game);
 			if (_viewport) _viewport->setRect(rc.left, rc.top, rc.right, rc.bottom, true);
 		}
 
 		case TOKEN_PERSISTENT_STATE:
-			parser.ScanStr((char *)params, "%b", &_persistentState);
+			parser.scanStr((char *)params, "%b", &_persistentState);
 			break;
 
 		case TOKEN_PERSISTENT_STATE_SPRITES:
-			parser.ScanStr((char *)params, "%b", &_persistentStateSprites);
+			parser.scanStr((char *)params, "%b", &_persistentStateSprites);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

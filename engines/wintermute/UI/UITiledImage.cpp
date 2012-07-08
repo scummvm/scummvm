@@ -185,14 +185,14 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 	int V1 = 0, V2 = 0, V3 = 0;
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TILED_IMAGE) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TILED_IMAGE) {
 			Game->LOG(0, "'TILED_IMAGE' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -209,48 +209,48 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_UP_LEFT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_upLeft.left, &_upLeft.top, &_upLeft.right, &_upLeft.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_upLeft.left, &_upLeft.top, &_upLeft.right, &_upLeft.bottom);
 			break;
 
 		case TOKEN_UP_RIGHT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_upRight.left, &_upRight.top, &_upRight.right, &_upRight.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_upRight.left, &_upRight.top, &_upRight.right, &_upRight.bottom);
 			break;
 
 		case TOKEN_UP_MIDDLE:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_upMiddle.left, &_upMiddle.top, &_upMiddle.right, &_upMiddle.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_upMiddle.left, &_upMiddle.top, &_upMiddle.right, &_upMiddle.bottom);
 			break;
 
 		case TOKEN_DOWN_LEFT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_downLeft.left, &_downLeft.top, &_downLeft.right, &_downLeft.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_downLeft.left, &_downLeft.top, &_downLeft.right, &_downLeft.bottom);
 			break;
 
 		case TOKEN_DOWN_RIGHT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_downRight.left, &_downRight.top, &_downRight.right, &_downRight.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_downRight.left, &_downRight.top, &_downRight.right, &_downRight.bottom);
 			break;
 
 		case TOKEN_DOWN_MIDDLE:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_downMiddle.left, &_downMiddle.top, &_downMiddle.right, &_downMiddle.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_downMiddle.left, &_downMiddle.top, &_downMiddle.right, &_downMiddle.bottom);
 			break;
 
 		case TOKEN_MIDDLE_LEFT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_middleLeft.left, &_middleLeft.top, &_middleLeft.right, &_middleLeft.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_middleLeft.left, &_middleLeft.top, &_middleLeft.right, &_middleLeft.bottom);
 			break;
 
 		case TOKEN_MIDDLE_RIGHT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_middleRight.left, &_middleRight.top, &_middleRight.right, &_middleRight.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_middleRight.left, &_middleRight.top, &_middleRight.right, &_middleRight.bottom);
 			break;
 
 		case TOKEN_MIDDLE_MIDDLE:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_middleMiddle.left, &_middleMiddle.top, &_middleMiddle.right, &_middleMiddle.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_middleMiddle.left, &_middleMiddle.top, &_middleMiddle.right, &_middleMiddle.bottom);
 			break;
 
 		case TOKEN_HORIZONTAL_TILES:
-			parser.ScanStr((char *)params, "%d,%d,%d", &H1, &H2, &H3);
+			parser.scanStr((char *)params, "%d,%d,%d", &H1, &H2, &H3);
 			HTiles = true;
 			break;
 
 		case TOKEN_VERTICAL_TILES:
-			parser.ScanStr((char *)params, "%d,%d,%d", &V1, &V2, &V3);
+			parser.scanStr((char *)params, "%d,%d,%d", &V1, &V2, &V3);
 			VTiles = true;
 			break;
 

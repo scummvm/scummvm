@@ -146,7 +146,7 @@ HRESULT CBRegion::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
 			Game->LOG(0, "'REGION' keyword expected.");
 			return E_FAIL;
 		}
@@ -158,7 +158,7 @@ HRESULT CBRegion::loadBuffer(byte *buffer, bool complete) {
 	for (i = 0; i < _points.GetSize(); i++) delete _points[i];
 	_points.RemoveAll();
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -173,12 +173,12 @@ HRESULT CBRegion::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.ScanStr((char *)params, "%b", &_active);
+			parser.scanStr((char *)params, "%b", &_active);
 			break;
 
 		case TOKEN_POINT: {
 			int x, y;
-			parser.ScanStr((char *)params, "%d,%d", &x, &y);
+			parser.scanStr((char *)params, "%d,%d", &x, &y);
 			_points.Add(new CBPoint(x, y));
 		}
 		break;
@@ -188,7 +188,7 @@ HRESULT CBRegion::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
-			parser.ScanStr((char *)params, "%d", &_editorSelectedPoint);
+			parser.scanStr((char *)params, "%d", &_editorSelectedPoint);
 			break;
 
 		case TOKEN_PROPERTY:

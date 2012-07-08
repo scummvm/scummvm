@@ -101,7 +101,7 @@ HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDITOR_PROPERTY) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDITOR_PROPERTY) {
 			Game->LOG(0, "'EDITOR_PROPERTY' keyword expected.");
 			return E_FAIL;
 		}
@@ -111,7 +111,7 @@ HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 	char *propName = NULL;
 	char *propValue = NULL;
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME:
 			delete[] propName;

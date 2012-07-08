@@ -811,14 +811,14 @@ HRESULT CBGame::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_GAME) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_GAME) {
 			Game->LOG(0, "'GAME' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -883,19 +883,19 @@ HRESULT CBGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_PERSONAL_SAVEGAMES:
-			parser.ScanStr((char *)params, "%b", &_personalizedSave);
+			parser.scanStr((char *)params, "%b", &_personalizedSave);
 			break;
 
 		case TOKEN_SUBTITLES:
-			parser.ScanStr((char *)params, "%b", &_subtitles);
+			parser.scanStr((char *)params, "%b", &_subtitles);
 			break;
 
 		case TOKEN_SUBTITLES_SPEED:
-			parser.ScanStr((char *)params, "%d", &_subtitlesSpeed);
+			parser.scanStr((char *)params, "%d", &_subtitlesSpeed);
 			break;
 
 		case TOKEN_VIDEO_SUBTITLES:
-			parser.ScanStr((char *)params, "%b", &_videoSubtitles);
+			parser.scanStr((char *)params, "%b", &_videoSubtitles);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -907,34 +907,34 @@ HRESULT CBGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_THUMBNAIL_WIDTH:
-			parser.ScanStr((char *)params, "%d", &_thumbnailWidth);
+			parser.scanStr((char *)params, "%d", &_thumbnailWidth);
 			break;
 
 		case TOKEN_THUMBNAIL_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &_thumbnailHeight);
+			parser.scanStr((char *)params, "%d", &_thumbnailHeight);
 			break;
 
 		case TOKEN_INDICATOR_X:
-			parser.ScanStr((char *)params, "%d", &_indicatorX);
+			parser.scanStr((char *)params, "%d", &_indicatorX);
 			break;
 
 		case TOKEN_INDICATOR_Y:
-			parser.ScanStr((char *)params, "%d", &_indicatorY);
+			parser.scanStr((char *)params, "%d", &_indicatorY);
 			break;
 
 		case TOKEN_INDICATOR_COLOR: {
 			int r, g, b, a;
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &r, &g, &b, &a);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &r, &g, &b, &a);
 			_indicatorColor = DRGBA(r, g, b, a);
 		}
 		break;
 
 		case TOKEN_INDICATOR_WIDTH:
-			parser.ScanStr((char *)params, "%d", &_indicatorWidth);
+			parser.scanStr((char *)params, "%d", &_indicatorWidth);
 			break;
 
 		case TOKEN_INDICATOR_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &_indicatorHeight);
+			parser.scanStr((char *)params, "%d", &_indicatorHeight);
 			break;
 
 		case TOKEN_SAVE_IMAGE:
@@ -942,11 +942,11 @@ HRESULT CBGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SAVE_IMAGE_X:
-			parser.ScanStr((char *)params, "%d", &_saveImageX);
+			parser.scanStr((char *)params, "%d", &_saveImageX);
 			break;
 
 		case TOKEN_SAVE_IMAGE_Y:
-			parser.ScanStr((char *)params, "%d", &_saveImageY);
+			parser.scanStr((char *)params, "%d", &_saveImageY);
 			break;
 
 		case TOKEN_LOAD_IMAGE:
@@ -954,11 +954,11 @@ HRESULT CBGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOAD_IMAGE_X:
-			parser.ScanStr((char *)params, "%d", &_loadImageX);
+			parser.scanStr((char *)params, "%d", &_loadImageX);
 			break;
 
 		case TOKEN_LOAD_IMAGE_Y:
-			parser.ScanStr((char *)params, "%d", &_loadImageY);
+			parser.scanStr((char *)params, "%d", &_loadImageY);
 			break;
 
 		case TOKEN_LOCAL_SAVE_DIR:
@@ -966,7 +966,7 @@ HRESULT CBGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_COMPAT_KILL_METHOD_THREADS:
-			parser.ScanStr((char *)params, "%b", &_compatKillMethodThreads);
+			parser.scanStr((char *)params, "%b", &_compatKillMethodThreads);
 			break;
 		}
 	}
@@ -3534,12 +3534,12 @@ HRESULT CBGame::loadSettings(const char *filename) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
+	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
 		Game->LOG(0, "'SETTINGS' keyword expected in game settings file.");
 		return E_FAIL;
 	}
 	buffer = params;
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_GAME:
 			delete[] _settingsGameFile;
@@ -3552,39 +3552,39 @@ HRESULT CBGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_RESOLUTION:
-			parser.ScanStr((char *)params, "%d,%d", &_settingsResWidth, &_settingsResHeight);
+			parser.scanStr((char *)params, "%d,%d", &_settingsResWidth, &_settingsResHeight);
 			break;
 
 		case TOKEN_REQUIRE_3D_ACCELERATION:
-			parser.ScanStr((char *)params, "%b", &_settingsRequireAcceleration);
+			parser.scanStr((char *)params, "%b", &_settingsRequireAcceleration);
 			break;
 
 		case TOKEN_REQUIRE_SOUND:
-			parser.ScanStr((char *)params, "%b", &_settingsRequireSound);
+			parser.scanStr((char *)params, "%b", &_settingsRequireSound);
 			break;
 
 		case TOKEN_HWTL_MODE:
-			parser.ScanStr((char *)params, "%d", &_settingsTLMode);
+			parser.scanStr((char *)params, "%d", &_settingsTLMode);
 			break;
 
 		case TOKEN_ALLOW_WINDOWED_MODE:
-			parser.ScanStr((char *)params, "%b", &_settingsAllowWindowed);
+			parser.scanStr((char *)params, "%b", &_settingsAllowWindowed);
 			break;
 
 		case TOKEN_ALLOW_DESKTOP_RES:
-			parser.ScanStr((char *)params, "%b", &_settingsAllowDesktopRes);
+			parser.scanStr((char *)params, "%b", &_settingsAllowDesktopRes);
 			break;
 
 		case TOKEN_ALLOW_ADVANCED:
-			parser.ScanStr((char *)params, "%b", &_settingsAllowAdvanced);
+			parser.scanStr((char *)params, "%b", &_settingsAllowAdvanced);
 			break;
 
 		case TOKEN_ALLOW_ACCESSIBILITY_TAB:
-			parser.ScanStr((char *)params, "%b", &_settingsAllowAccessTab);
+			parser.scanStr((char *)params, "%b", &_settingsAllowAccessTab);
 			break;
 
 		case TOKEN_ALLOW_ABOUT_TAB:
-			parser.ScanStr((char *)params, "%b", &_settingsAllowAboutTab);
+			parser.scanStr((char *)params, "%b", &_settingsAllowAboutTab);
 			break;
 
 		case TOKEN_REGISTRY_PATH:
@@ -3592,7 +3592,7 @@ HRESULT CBGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_RICH_SAVED_GAMES:
-			parser.ScanStr((char *)params, "%b", &_richSavedGames);
+			parser.scanStr((char *)params, "%b", &_richSavedGames);
 			break;
 
 		case TOKEN_SAVED_GAME_EXT:

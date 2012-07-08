@@ -460,7 +460,7 @@ HRESULT CBFontTT::loadBuffer(byte *buffer) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TTFONT) {
+	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TTFONT) {
 		Game->LOG(0, "'TTFONT' keyword expected.");
 		return E_FAIL;
 	}
@@ -468,10 +468,10 @@ HRESULT CBFontTT::loadBuffer(byte *buffer) {
 
 	uint32 BaseColor = 0x00000000;
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SIZE:
-			parser.ScanStr(params, "%d", &_fontHeight);
+			parser.scanStr(params, "%d", &_fontHeight);
 			break;
 
 		case TOKEN_FACE:
@@ -483,19 +483,19 @@ HRESULT CBFontTT::loadBuffer(byte *buffer) {
 			break;
 
 		case TOKEN_BOLD:
-			parser.ScanStr(params, "%b", &_isBold);
+			parser.scanStr(params, "%b", &_isBold);
 			break;
 
 		case TOKEN_ITALIC:
-			parser.ScanStr(params, "%b", &_isItalic);
+			parser.scanStr(params, "%b", &_isItalic);
 			break;
 
 		case TOKEN_UNDERLINE:
-			parser.ScanStr(params, "%b", &_isUnderline);
+			parser.scanStr(params, "%b", &_isUnderline);
 			break;
 
 		case TOKEN_STRIKE:
-			parser.ScanStr(params, "%b", &_isStriked);
+			parser.scanStr(params, "%b", &_isStriked);
 			break;
 
 		case TOKEN_CHARSET:
@@ -504,14 +504,14 @@ HRESULT CBFontTT::loadBuffer(byte *buffer) {
 
 		case TOKEN_COLOR: {
 			int r, g, b;
-			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
+			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
 			BaseColor = DRGBA(r, g, b, D3DCOLGetA(BaseColor));
 		}
 		break;
 
 		case TOKEN_ALPHA: {
 			int a;
-			parser.ScanStr(params, "%d", &a);
+			parser.scanStr(params, "%d", &a);
 			BaseColor = DRGBA(D3DCOLGetR(BaseColor), D3DCOLGetG(BaseColor), D3DCOLGetB(BaseColor), a);
 		}
 		break;
@@ -560,26 +560,26 @@ HRESULT CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
 	int cmd;
 	CBParser parser(Game);
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_OFFSET_X:
-			parser.ScanStr(params, "%d", &layer->_offsetX);
+			parser.scanStr(params, "%d", &layer->_offsetX);
 			break;
 
 		case TOKEN_OFFSET_Y:
-			parser.ScanStr(params, "%d", &layer->_offsetY);
+			parser.scanStr(params, "%d", &layer->_offsetY);
 			break;
 
 		case TOKEN_COLOR: {
 			int r, g, b;
-			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
+			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
 			layer->_color = DRGBA(r, g, b, D3DCOLGetA(layer->_color));
 		}
 		break;
 
 		case TOKEN_ALPHA: {
 			int a;
-			parser.ScanStr(params, "%d", &a);
+			parser.scanStr(params, "%d", &a);
 			layer->_color = DRGBA(D3DCOLGetR(layer->_color), D3DCOLGetG(layer->_color), D3DCOLGetB(layer->_color), a);
 		}
 		break;

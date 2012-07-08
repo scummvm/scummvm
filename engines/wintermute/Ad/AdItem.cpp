@@ -169,7 +169,7 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ITEM) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ITEM) {
 			Game->LOG(0, "'ITEM' keyword expected.");
 			return E_FAIL;
 		}
@@ -177,7 +177,7 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 	}
 
 	int ar = 0, ag = 0, ab = 0, alpha = 255;
-	while (cmd > 0 && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -216,19 +216,19 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_AMOUNT:
-			parser.ScanStr((char *)params, "%d", &_amount);
+			parser.scanStr((char *)params, "%d", &_amount);
 			break;
 
 		case TOKEN_DISPLAY_AMOUNT:
-			parser.ScanStr((char *)params, "%b", &_displayAmount);
+			parser.scanStr((char *)params, "%b", &_displayAmount);
 			break;
 
 		case TOKEN_AMOUNT_OFFSET_X:
-			parser.ScanStr((char *)params, "%d", &_amountOffsetX);
+			parser.scanStr((char *)params, "%d", &_amountOffsetX);
 			break;
 
 		case TOKEN_AMOUNT_OFFSET_Y:
-			parser.ScanStr((char *)params, "%d", &_amountOffsetY);
+			parser.scanStr((char *)params, "%d", &_amountOffsetY);
 			break;
 
 		case TOKEN_AMOUNT_ALIGN:
@@ -276,7 +276,7 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR_COMBINED:
-			parser.ScanStr((char *)params, "%b", &_cursorCombined);
+			parser.scanStr((char *)params, "%b", &_cursorCombined);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -288,11 +288,11 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.ScanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.ScanStr((char *)params, "%d", &alpha);
+			parser.scanStr((char *)params, "%d", &alpha);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

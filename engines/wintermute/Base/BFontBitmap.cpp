@@ -308,7 +308,7 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 	int cmd;
 	CBParser parser(Game);
 
-	if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_FONT) {
+	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_FONT) {
 		Game->LOG(0, "'FONT' keyword expected.");
 		return E_FAIL;
 	}
@@ -327,7 +327,7 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 	int spaceWidth = 0;
 	int expandWidth = 0;
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 
 		switch (cmd) {
 		case TOKEN_IMAGE:
@@ -339,55 +339,55 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 			break;
 
 		case TOKEN_TRANSPARENT:
-			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
+			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
 			custoTrans = true;
 			break;
 
 		case TOKEN_WIDTHS:
-			parser.ScanStr(params, "%D", widths, &num);
+			parser.scanStr(params, "%D", widths, &num);
 			for (i = 0; lastWidth < NUM_CHARACTERS, num > 0; lastWidth++, num--, i++) {
 				_widths[lastWidth] = (byte)widths[i];
 			}
 			break;
 
 		case TOKEN_DEFAULT_WIDTH:
-			parser.ScanStr(params, "%d", &default_width);
+			parser.scanStr(params, "%d", &default_width);
 			break;
 
 		case TOKEN_WIDTHS_FRAME:
-			parser.ScanStr(params, "%d", &_widthsFrame);
+			parser.scanStr(params, "%d", &_widthsFrame);
 			break;
 
 		case TOKEN_COLUMNS:
-			parser.ScanStr(params, "%d", &_numColumns);
+			parser.scanStr(params, "%d", &_numColumns);
 			break;
 
 		case TOKEN_TILE_WIDTH:
-			parser.ScanStr(params, "%d", &_tileWidth);
+			parser.scanStr(params, "%d", &_tileWidth);
 			break;
 
 		case TOKEN_TILE_HEIGHT:
-			parser.ScanStr(params, "%d", &_tileHeight);
+			parser.scanStr(params, "%d", &_tileHeight);
 			break;
 
 		case TOKEN_AUTO_WIDTH:
-			parser.ScanStr(params, "%b", &autoWidth);
+			parser.scanStr(params, "%b", &autoWidth);
 			break;
 
 		case TOKEN_FONTEXT_FIX:
-			parser.ScanStr(params, "%b", &_fontextFix);
+			parser.scanStr(params, "%b", &_fontextFix);
 			break;
 
 		case TOKEN_PAINT_WHOLE_CELL:
-			parser.ScanStr(params, "%b", &_wholeCell);
+			parser.scanStr(params, "%b", &_wholeCell);
 			break;
 
 		case TOKEN_SPACE_WIDTH:
-			parser.ScanStr(params, "%d", &spaceWidth);
+			parser.scanStr(params, "%d", &spaceWidth);
 			break;
 
 		case TOKEN_EXPAND_WIDTH:
-			parser.ScanStr(params, "%d", &expandWidth);
+			parser.scanStr(params, "%d", &expandWidth);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

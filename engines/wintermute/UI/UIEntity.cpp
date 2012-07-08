@@ -108,14 +108,14 @@ HRESULT CUIEntity::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY_CONTAINER) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY_CONTAINER) {
 			Game->LOG(0, "'ENTITY_CONTAINER' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while (cmd > 0 && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -126,19 +126,19 @@ HRESULT CUIEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &_posX);
+			parser.scanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &_posY);
+			parser.scanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.ScanStr((char *)params, "%b", &_disable);
+			parser.scanStr((char *)params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.ScanStr((char *)params, "%b", &_visible);
+			parser.scanStr((char *)params, "%b", &_visible);
 			break;
 
 		case TOKEN_ENTITY:

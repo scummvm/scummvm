@@ -56,20 +56,20 @@ CBParser::~CBParser() {
 
 
 //////////////////////////////////////////////////////////////////////
-char *CBParser::GetLastOffender() {
+char *CBParser::getLastOffender() {
 	return _lastOffender;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-long CBParser::GetObject(char **buf, TokenDesc *tokens, char **name, char **data) {
-	SkipCharacters(buf, _whiteSpace);
+long CBParser::getObject(char **buf, TokenDesc *tokens, char **name, char **data) {
+	skipCharacters(buf, _whiteSpace);
 
 	// skip comment lines.
 	while (**buf == ';') {
 		*buf = strchr(*buf, '\n');
 		_parserLine++;
-		SkipCharacters(buf, _whiteSpace);
+		skipCharacters(buf, _whiteSpace);
 	}
 
 	if (! **buf)                  // at end of file
@@ -96,33 +96,33 @@ long CBParser::GetObject(char **buf, TokenDesc *tokens, char **name, char **data
 	}
 	// skip the token
 	*buf += strlen(tokens->token);
-	SkipCharacters(buf, _whiteSpace);
+	skipCharacters(buf, _whiteSpace);
 
 	// get optional name
-	*name = GetSubText(buf, '\'', '\'');  // single quotes
-	SkipCharacters(buf, _whiteSpace);
+	*name = getSubText(buf, '\'', '\'');  // single quotes
+	skipCharacters(buf, _whiteSpace);
 
 	// get optional data
 	if (**buf == '=') // An assignment rather than a command/object.
-		*data = GetAssignmentText(buf);
+		*data = getAssignmentText(buf);
 	else
-		*data = GetSubText(buf, '{', '}');
+		*data = getSubText(buf, '{', '}');
 
 	return tokens->id;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-long CBParser::GetCommand(char **buf, TokenDesc *tokens, char **params) {
+long CBParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
 	if (!*buf) return PARSERR_TOKENNOTFOUND;
 	Game->miniUpdate();
 	char *name;
-	return GetObject(buf, tokens, &name, params);
+	return getObject(buf, tokens, &name, params);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-void CBParser::SkipCharacters(char **buf, const char *toSkip) {
+void CBParser::skipCharacters(char **buf, const char *toSkip) {
 	char ch;
 	while ((ch = **buf) != 0) {
 		if (ch == '\n') _parserLine++;
@@ -135,7 +135,7 @@ void CBParser::SkipCharacters(char **buf, const char *toSkip) {
 
 
 //////////////////////////////////////////////////////////////////////
-char *CBParser::GetSubText(char **buf, char open, char close) {
+char *CBParser::getSubText(char **buf, char open, char close) {
 	if (**buf == 0 || **buf != open)
 		return 0;
 	++*buf;                       // skip opening delimiter
@@ -164,14 +164,14 @@ char *CBParser::GetSubText(char **buf, char open, char close) {
 
 
 //////////////////////////////////////////////////////////////////////
-char *CBParser::GetAssignmentText(char **buf) {
+char *CBParser::getAssignmentText(char **buf) {
 	++*buf;                       // skip the '='
-	SkipCharacters(buf, _whiteSpace);
+	skipCharacters(buf, _whiteSpace);
 	char *result = *buf;
 
 
 	if (*result == '"') {
-		result = GetSubText(buf, '"', '"');
+		result = getSubText(buf, '"', '"');
 	} else {
 		// now, we need to find the next whitespace to end the data
 		char theChar;
@@ -192,7 +192,7 @@ char *CBParser::GetAssignmentText(char **buf) {
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-char *CBParser::GetToken(char **buf) {
+char *CBParser::getToken(char **buf) {
 	static char token[100];
 	char *b = *buf, * t = token;
 	while (true) {
@@ -240,8 +240,8 @@ char *CBParser::GetToken(char **buf) {
 
 
 //////////////////////////////////////////////////////////////////////
-float CBParser::GetTokenFloat(char **buf) {
-	char *t = GetToken(buf);
+float CBParser::getTokenFloat(char **buf) {
+	char *t = getToken(buf);
 	if (!((*t >= '0' && *t <= '9') || *t == '-' || *t == '.')) {
 		// Error situation. We handle this by return 0.
 		return 0.;
@@ -252,8 +252,8 @@ float CBParser::GetTokenFloat(char **buf) {
 
 
 //////////////////////////////////////////////////////////////////////
-int CBParser::GetTokenInt(char **buf) {
-	char *t = GetToken(buf);
+int CBParser::getTokenInt(char **buf) {
+	char *t = getToken(buf);
 	if (!((*t >= '0' && *t <= '9') || *t == '-')) {
 		// Error situation. We handle this by return 0.
 		return 0;
@@ -264,14 +264,14 @@ int CBParser::GetTokenInt(char **buf) {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBParser::SkipToken(char **buf, char *tok, char * /*msg*/) {
-	char *t = GetToken(buf);
+void CBParser::skipToken(char **buf, char *tok, char * /*msg*/) {
+	char *t = getToken(buf);
 	if (strcmp(t, tok)) return;  // Error
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBParser::ScanStr(const char *in, const char *format, ...) {
+int CBParser::scanStr(const char *in, const char *format, ...) {
 	va_list arg;
 	va_start(arg, format);
 

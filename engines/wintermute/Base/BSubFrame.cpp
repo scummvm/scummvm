@@ -120,55 +120,55 @@ HRESULT CBSubFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 	delete _surface;
 	_surface = NULL;
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, &params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&Buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_IMAGE:
 			surface_file = params;
 			break;
 
 		case TOKEN_TRANSPARENT:
-			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
+			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
 			custo_trans = true;
 			break;
 
 		case TOKEN_RECT:
-			parser.ScanStr(params, "%d,%d,%d,%d", &rect.left, &rect.top, &rect.right, &rect.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &rect.left, &rect.top, &rect.right, &rect.bottom);
 			break;
 
 		case TOKEN_HOTSPOT:
-			parser.ScanStr(params, "%d,%d", &_hotspotX, &_hotspotY);
+			parser.scanStr(params, "%d,%d", &_hotspotX, &_hotspotY);
 			break;
 
 		case TOKEN_2D_ONLY:
-			parser.ScanStr(params, "%b", &_2DOnly);
+			parser.scanStr(params, "%b", &_2DOnly);
 			break;
 
 		case TOKEN_3D_ONLY:
-			parser.ScanStr(params, "%b", &_3DOnly);
+			parser.scanStr(params, "%b", &_3DOnly);
 			break;
 
 		case TOKEN_MIRROR_X:
-			parser.ScanStr(params, "%b", &_mirrorX);
+			parser.scanStr(params, "%b", &_mirrorX);
 			break;
 
 		case TOKEN_MIRROR_Y:
-			parser.ScanStr(params, "%b", &_mirrorY);
+			parser.scanStr(params, "%b", &_mirrorY);
 			break;
 
 		case TOKEN_DECORATION:
-			parser.ScanStr(params, "%b", &_decoration);
+			parser.scanStr(params, "%b", &_decoration);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.ScanStr(params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.ScanStr(params, "%d", &alpha);
+			parser.scanStr(params, "%d", &alpha);
 			break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr(params, "%b", &_editorSelected);
+			parser.scanStr(params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

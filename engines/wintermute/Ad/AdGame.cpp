@@ -1171,14 +1171,14 @@ HRESULT CAdGame::loadBuffer(byte *buffer, bool complete) {
 
 	bool itemFound = false, itemsFound = false;
 
-	while (cmd > 0 && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_GAME:
 			if (FAILED(CBGame::loadBuffer(params, false))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_AD_GAME:
-			while (cmd > 0 && (cmd = parser.GetCommand((char **)&params, commands, (char **)&params2)) > 0) {
+			while (cmd > 0 && (cmd = parser.getCommand((char **)&params, commands, (char **)&params2)) > 0) {
 				switch (cmd) {
 				case TOKEN_RESPONSE_BOX:
 					delete _responseBox;
@@ -1222,7 +1222,7 @@ HRESULT CAdGame::loadBuffer(byte *buffer, bool complete) {
 
 				case TOKEN_SCENE_VIEWPORT: {
 					RECT rc;
-					parser.ScanStr((char *)params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
+					parser.scanStr((char *)params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 					if (!_sceneViewport) _sceneViewport = new CBViewport(Game);
 					if (_sceneViewport) _sceneViewport->setRect(rc.left, rc.top, rc.right, rc.bottom);
 				}
@@ -1419,7 +1419,7 @@ HRESULT CAdGame::loadItemsBuffer(byte *buffer, bool merge) {
 		while (_items.GetSize() > 0) deleteItem(_items[0]);
 	}
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ITEM: {
 			CAdItem *item = new CAdItem(Game);
@@ -1492,7 +1492,7 @@ HRESULT CAdGame::windowLoadHook(CUIWindow *win, char **buffer, char **params) {
 	int cmd = PARSERR_GENERIC;
 	CBParser parser(Game);
 
-	cmd = parser.GetCommand(buffer, commands, params);
+	cmd = parser.getCommand(buffer, commands, params);
 	switch (cmd) {
 	case TOKEN_ENTITY_CONTAINER: {
 		CUIEntity *ent = new CUIEntity(Game);

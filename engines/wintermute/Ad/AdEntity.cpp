@@ -201,7 +201,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY) {
 			Game->LOG(0, "'ENTITY' keyword expected.");
 			return E_FAIL;
 		}
@@ -211,18 +211,18 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	CAdGame *adGame = (CAdGame *)Game;
 	CBSprite *spr = NULL;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &_posX);
+			parser.scanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &_posY);
+			parser.scanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_SPRITE: {
@@ -265,12 +265,12 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SCALABLE:
-			parser.ScanStr((char *)params, "%b", &_zoomable);
+			parser.scanStr((char *)params, "%b", &_zoomable);
 			break;
 
 		case TOKEN_SCALE: {
 			int s;
-			parser.ScanStr((char *)params, "%d", &s);
+			parser.scanStr((char *)params, "%d", &s);
 			_scale = (float)s;
 
 		}
@@ -278,7 +278,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_RELATIVE_SCALE: {
 			int s;
-			parser.ScanStr((char *)params, "%d", &s);
+			parser.scanStr((char *)params, "%d", &s);
 			_relativeScale = (float)s;
 
 		}
@@ -286,21 +286,21 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_ROTABLE:
 		case TOKEN_ROTATABLE:
-			parser.ScanStr((char *)params, "%b", &_rotatable);
+			parser.scanStr((char *)params, "%b", &_rotatable);
 			break;
 
 		case TOKEN_REGISTRABLE:
 		case TOKEN_INTERACTIVE:
-			parser.ScanStr((char *)params, "%b", &_registrable);
+			parser.scanStr((char *)params, "%b", &_registrable);
 			break;
 
 		case TOKEN_SHADOWABLE:
 		case TOKEN_COLORABLE:
-			parser.ScanStr((char *)params, "%b", &_shadowable);
+			parser.scanStr((char *)params, "%b", &_shadowable);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.ScanStr((char *)params, "%b", &_active);
+			parser.scanStr((char *)params, "%b", &_active);
 			break;
 
 		case TOKEN_CURSOR:
@@ -314,7 +314,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr((char *)params, "%b", &_editorSelected);
+			parser.scanStr((char *)params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_REGION: {
@@ -399,19 +399,19 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SOUND_START_TIME:
-			parser.ScanStr((char *)params, "%d", &_sFXStart);
+			parser.scanStr((char *)params, "%d", &_sFXStart);
 			break;
 
 		case TOKEN_SOUND_VOLUME:
-			parser.ScanStr((char *)params, "%d", &_sFXVolume);
+			parser.scanStr((char *)params, "%d", &_sFXVolume);
 			break;
 
 		case TOKEN_SOUND_PANNING:
-			parser.ScanStr((char *)params, "%b", &_autoSoundPanning);
+			parser.scanStr((char *)params, "%b", &_autoSoundPanning);
 			break;
 
 		case TOKEN_SAVE_STATE:
-			parser.ScanStr((char *)params, "%b", &_saveState);
+			parser.scanStr((char *)params, "%b", &_saveState);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -419,15 +419,15 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_IGNORE_ITEMS:
-			parser.ScanStr((char *)params, "%b", &_ignoreItems);
+			parser.scanStr((char *)params, "%b", &_ignoreItems);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.ScanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.ScanStr((char *)params, "%d", &alpha);
+			parser.scanStr((char *)params, "%d", &alpha);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -435,16 +435,16 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_WALK_TO_X:
-			parser.ScanStr((char *)params, "%d", &_walkToX);
+			parser.scanStr((char *)params, "%d", &_walkToX);
 			break;
 
 		case TOKEN_WALK_TO_Y:
-			parser.ScanStr((char *)params, "%d", &_walkToY);
+			parser.scanStr((char *)params, "%d", &_walkToY);
 			break;
 
 		case TOKEN_WALK_TO_DIR: {
 			int i;
-			parser.ScanStr((char *)params, "%d", &i);
+			parser.scanStr((char *)params, "%d", &i);
 			if (i < 0) i = 0;
 			if (i >= NUM_DIRECTIONS) i = DI_NONE;
 			_walkToDir = (TDirection)i;

@@ -114,14 +114,14 @@ HRESULT CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TALK) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TALK) {
 			Game->LOG(0, "'TALK' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;

@@ -65,21 +65,22 @@ public:
 	};
 
 public:
-	int ScanStr(const char *in, const char *format, ...);
-	char *GetLastOffender();
-	void SkipToken(char **buf, char *tok, char *msg = NULL);
-	int GetTokenInt(char **buf);
-	float GetTokenFloat(char **buf);
-	char *GetToken(char **buf);
-	char *GetAssignmentText(char **buf);
-	char *GetSubText(char **buf, char open, char close);
-	void SkipCharacters(char **buf, const char *toSkip);
-	long GetCommand(char **buf, TokenDesc *tokens, char **params);
-	long GetObject(char **buf, TokenDesc *tokens, char **name, char **data);
-	int _parserLine;
-	char _lastOffender[255];
+	int scanStr(const char *in, const char *format, ...);
+	long getCommand(char **buf, TokenDesc *tokens, char **params);
 	CBParser(CBGame *inGame = NULL);
 	virtual ~CBParser();
+private:
+	char *getLastOffender();
+	void skipToken(char **buf, char *tok, char *msg = NULL);
+	int getTokenInt(char **buf);
+	float getTokenFloat(char **buf);
+	char *getToken(char **buf);
+	char *getAssignmentText(char **buf);
+	char *getSubText(char **buf, char open, char close);
+	void skipCharacters(char **buf, const char *toSkip);
+	long getObject(char **buf, TokenDesc *tokens, char **name, char **data);
+	int _parserLine;
+	char _lastOffender[255];
 	char *_whiteSpace;
 };
 

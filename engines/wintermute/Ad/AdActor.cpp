@@ -228,7 +228,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTOR) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTOR) {
 			Game->LOG(0, "'ACTOR' keyword expected.");
 			return E_FAIL;
 		}
@@ -238,18 +238,18 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 	CAdGame *adGame = (CAdGame *)Game;
 	CAdSpriteSet *spr = NULL;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &_posX);
+			parser.scanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &_posY);
+			parser.scanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_NAME:
@@ -265,26 +265,26 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SCALABLE:
-			parser.ScanStr((char *)params, "%b", &_zoomable);
+			parser.scanStr((char *)params, "%b", &_zoomable);
 			break;
 
 		case TOKEN_ROTABLE:
 		case TOKEN_ROTATABLE:
-			parser.ScanStr((char *)params, "%b", &_rotatable);
+			parser.scanStr((char *)params, "%b", &_rotatable);
 			break;
 
 		case TOKEN_REGISTRABLE:
 		case TOKEN_INTERACTIVE:
-			parser.ScanStr((char *)params, "%b", &_registrable);
+			parser.scanStr((char *)params, "%b", &_registrable);
 			break;
 
 		case TOKEN_SHADOWABLE:
 		case TOKEN_COLORABLE:
-			parser.ScanStr((char *)params, "%b", &_shadowable);
+			parser.scanStr((char *)params, "%b", &_shadowable);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.ScanStr((char *)params, "%b", &_active);
+			parser.scanStr((char *)params, "%b", &_active);
 			break;
 
 		case TOKEN_WALK:
@@ -346,12 +346,12 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SOUND_VOLUME:
-			parser.ScanStr((char *)params, "%d", &_sFXVolume);
+			parser.scanStr((char *)params, "%d", &_sFXVolume);
 			break;
 
 		case TOKEN_SCALE: {
 			int s;
-			parser.ScanStr((char *)params, "%d", &s);
+			parser.scanStr((char *)params, "%d", &s);
 			_scale = (float)s;
 
 		}
@@ -359,14 +359,14 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_RELATIVE_SCALE: {
 			int s;
-			parser.ScanStr((char *)params, "%d", &s);
+			parser.scanStr((char *)params, "%d", &s);
 			_relativeScale = (float)s;
 
 		}
 		break;
 
 		case TOKEN_SOUND_PANNING:
-			parser.ScanStr((char *)params, "%b", &_autoSoundPanning);
+			parser.scanStr((char *)params, "%b", &_autoSoundPanning);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -416,15 +416,15 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_IGNORE_ITEMS:
-			parser.ScanStr((char *)params, "%b", &_ignoreItems);
+			parser.scanStr((char *)params, "%b", &_ignoreItems);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.ScanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.ScanStr((char *)params, "%d", &alpha);
+			parser.scanStr((char *)params, "%d", &alpha);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -1281,7 +1281,7 @@ HRESULT CAdActor::mergeAnims(const char *animsFilename) {
 
 	HRESULT Ret = S_OK;
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ANIMATION: {
 			CAdSpriteSet *Anim = new CAdSpriteSet(Game, this);

@@ -121,7 +121,7 @@ HRESULT CBFont::loadBuffer(byte * Buffer)
             break;
 
             case TOKEN_TRANSPARENT:
-                parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
+                parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
                 custo_trans = true;
             break;
         }
@@ -196,7 +196,7 @@ bool CBFont::isTrueType(CBGame *Game, const char *filename) {
 	CBParser parser(Game);
 
 	bool ret = false;
-	if (parser.GetCommand((char **)&WorkBuffer, commands, (char **)&params) == TOKEN_TTFONT)
+	if (parser.getCommand((char **)&WorkBuffer, commands, (char **)&params) == TOKEN_TTFONT)
 		ret = true;
 
 	delete [] buffer;

@@ -307,14 +307,14 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WINDOW) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WINDOW) {
 			Game->LOG(0, "'WINDOW' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while (cmd >= PARSERR_TOKENNOTFOUND && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) >= PARSERR_TOKENNOTFOUND) {
+	while (cmd >= PARSERR_TOKENNOTFOUND && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) >= PARSERR_TOKENNOTFOUND) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -392,27 +392,27 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_TITLE_RECT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_titleRect.left, &_titleRect.top, &_titleRect.right, &_titleRect.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_titleRect.left, &_titleRect.top, &_titleRect.right, &_titleRect.bottom);
 			break;
 
 		case TOKEN_DRAG_RECT:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_dragRect.left, &_dragRect.top, &_dragRect.right, &_dragRect.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_dragRect.left, &_dragRect.top, &_dragRect.right, &_dragRect.bottom);
 			break;
 
 		case TOKEN_X:
-			parser.ScanStr((char *)params, "%d", &_posX);
+			parser.scanStr((char *)params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.ScanStr((char *)params, "%d", &_posY);
+			parser.scanStr((char *)params, "%d", &_posY);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.ScanStr((char *)params, "%d", &_width);
+			parser.scanStr((char *)params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &_height);
+			parser.scanStr((char *)params, "%d", &_height);
 			break;
 
 		case TOKEN_CURSOR:
@@ -479,7 +479,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 
 		case TOKEN_TRANSPARENT:
-			parser.ScanStr((char *)params, "%b", &_transparent);
+			parser.scanStr((char *)params, "%b", &_transparent);
 			break;
 
 		case TOKEN_SCRIPT:
@@ -487,40 +487,40 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
-			parser.ScanStr((char *)params, "%b", &_parentNotify);
+			parser.scanStr((char *)params, "%b", &_parentNotify);
 			break;
 
 		case TOKEN_PAUSE_MUSIC:
-			parser.ScanStr((char *)params, "%b", &_pauseMusic);
+			parser.scanStr((char *)params, "%b", &_pauseMusic);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.ScanStr((char *)params, "%b", &_disable);
+			parser.scanStr((char *)params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.ScanStr((char *)params, "%b", &_visible);
+			parser.scanStr((char *)params, "%b", &_visible);
 			break;
 
 		case TOKEN_MENU:
-			parser.ScanStr((char *)params, "%b", &_isMenu);
+			parser.scanStr((char *)params, "%b", &_isMenu);
 			break;
 
 		case TOKEN_IN_GAME:
-			parser.ScanStr((char *)params, "%b", &_inGame);
+			parser.scanStr((char *)params, "%b", &_inGame);
 			break;
 
 		case TOKEN_CLIP_CONTENTS:
-			parser.ScanStr((char *)params, "%b", &_clipContents);
+			parser.scanStr((char *)params, "%b", &_clipContents);
 			break;
 
 		case TOKEN_FADE_COLOR:
-			parser.ScanStr((char *)params, "%d,%d,%d", &FadeR, &FadeG, &FadeB);
+			parser.scanStr((char *)params, "%d,%d,%d", &FadeR, &FadeG, &FadeB);
 			_fadeBackground = true;
 			break;
 
 		case TOKEN_FADE_ALPHA:
-			parser.ScanStr((char *)params, "%d", &FadeA);
+			parser.scanStr((char *)params, "%d", &FadeA);
 			_fadeBackground = true;
 			break;
 
@@ -529,11 +529,11 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.ScanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.ScanStr((char *)params, "%d", &alpha);
+			parser.scanStr((char *)params, "%d", &alpha);
 			break;
 
 

@@ -245,14 +245,14 @@ HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_RESPONSE_BOX) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_RESPONSE_BOX) {
 			Game->LOG(0, "'RESPONSE_BOX' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -281,11 +281,11 @@ HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_AREA:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_responseArea.left, &_responseArea.top, &_responseArea.right, &_responseArea.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_responseArea.left, &_responseArea.top, &_responseArea.right, &_responseArea.bottom);
 			break;
 
 		case TOKEN_HORIZONTAL:
-			parser.ScanStr((char *)params, "%b", &_horizontal);
+			parser.scanStr((char *)params, "%b", &_horizontal);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
@@ -301,7 +301,7 @@ HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SPACING:
-			parser.ScanStr((char *)params, "%d", &_spacing);
+			parser.scanStr((char *)params, "%d", &_spacing);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

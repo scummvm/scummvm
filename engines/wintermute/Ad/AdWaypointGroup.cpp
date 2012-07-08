@@ -113,14 +113,14 @@ HRESULT CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WAYPOINTS) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WAYPOINTS) {
 			Game->LOG(0, "'WAYPOINTS' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -132,17 +132,17 @@ HRESULT CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_POINT: {
 			int x, y;
-			parser.ScanStr((char *)params, "%d,%d", &x, &y);
+			parser.scanStr((char *)params, "%d,%d", &x, &y);
 			_points.Add(new CBPoint(x, y));
 		}
 		break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr((char *)params, "%b", &_editorSelected);
+			parser.scanStr((char *)params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
-			parser.ScanStr((char *)params, "%d", &_editorSelectedPoint);
+			parser.scanStr((char *)params, "%d", &_editorSelectedPoint);
 			break;
 
 		case TOKEN_PROPERTY:

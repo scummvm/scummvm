@@ -217,14 +217,14 @@ HRESULT CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 
 	_exclusive = false;
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_INVENTORY_BOX) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_INVENTORY_BOX) {
 			Game->LOG(0, "'INVENTORY_BOX' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while (cmd > 0 && (cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -249,35 +249,35 @@ HRESULT CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_AREA:
-			parser.ScanStr((char *)params, "%d,%d,%d,%d", &_itemsArea.left, &_itemsArea.top, &_itemsArea.right, &_itemsArea.bottom);
+			parser.scanStr((char *)params, "%d,%d,%d,%d", &_itemsArea.left, &_itemsArea.top, &_itemsArea.right, &_itemsArea.bottom);
 			break;
 
 		case TOKEN_EXCLUSIVE:
-			parser.ScanStr((char *)params, "%b", &_exclusive);
+			parser.scanStr((char *)params, "%b", &_exclusive);
 			break;
 
 		case TOKEN_HIDE_SELECTED:
-			parser.ScanStr((char *)params, "%b", &_hideSelected);
+			parser.scanStr((char *)params, "%b", &_hideSelected);
 			break;
 
 		case TOKEN_ALWAYS_VISIBLE:
-			parser.ScanStr((char *)params, "%b", &always_visible);
+			parser.scanStr((char *)params, "%b", &always_visible);
 			break;
 
 		case TOKEN_SPACING:
-			parser.ScanStr((char *)params, "%d", &_spacing);
+			parser.scanStr((char *)params, "%d", &_spacing);
 			break;
 
 		case TOKEN_ITEM_WIDTH:
-			parser.ScanStr((char *)params, "%d", &_itemWidth);
+			parser.scanStr((char *)params, "%d", &_itemWidth);
 			break;
 
 		case TOKEN_ITEM_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &_itemHeight);
+			parser.scanStr((char *)params, "%d", &_itemHeight);
 			break;
 
 		case TOKEN_SCROLL_BY:
-			parser.ScanStr((char *)params, "%d", &_scrollBy);
+			parser.scanStr((char *)params, "%d", &_scrollBy);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

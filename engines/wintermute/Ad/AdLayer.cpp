@@ -123,14 +123,14 @@ HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
 	CBParser parser(Game);
 
 	if (complete) {
-		if (parser.GetCommand((char **)&buffer, commands, (char **)&params) != TOKEN_LAYER) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_LAYER) {
 			Game->LOG(0, "'LAYER' keyword expected.");
 			return E_FAIL;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.GetCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
 			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
@@ -145,23 +145,23 @@ HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_MAIN:
-			parser.ScanStr((char *)params, "%b", &_main);
+			parser.scanStr((char *)params, "%b", &_main);
 			break;
 
 		case TOKEN_CLOSE_UP:
-			parser.ScanStr((char *)params, "%b", &_closeUp);
+			parser.scanStr((char *)params, "%b", &_closeUp);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.ScanStr((char *)params, "%d", &_width);
+			parser.scanStr((char *)params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.ScanStr((char *)params, "%d", &_height);
+			parser.scanStr((char *)params, "%d", &_height);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.ScanStr((char *)params, "%b", &_active);
+			parser.scanStr((char *)params, "%b", &_active);
 			break;
 
 		case TOKEN_REGION: {
@@ -198,7 +198,7 @@ HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr((char *)params, "%b", &_editorSelected);
+			parser.scanStr((char *)params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_SCRIPT:
