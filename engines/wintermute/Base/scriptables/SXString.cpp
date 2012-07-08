@@ -49,16 +49,16 @@ CSXString::CSXString(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 	_capacity = 0;
 
 	stack->correctParams(1);
-	CScValue *Val = stack->pop();
+	CScValue *val = stack->pop();
 
-	if (Val->isInt()) {
-		_capacity = MAX(0, Val->getInt());
+	if (val->isInt()) {
+		_capacity = MAX(0, val->getInt());
 		if (_capacity > 0) {
 			_string = new char[_capacity];
 			memset(_string, 0, _capacity);
 		}
 	} else {
-		setStringVal(Val->getString());
+		setStringVal(val->getString());
 	}
 
 	if (_capacity == 0) setStringVal("");
@@ -245,12 +245,12 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Split") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
-		char Separators[MAX_PATH] = ",";
-		if (!Val->isNULL()) strcpy(Separators, Val->getString());
+		CScValue *val = stack->pop();
+		char separators[MAX_PATH] = ",";
+		if (!val->isNULL()) strcpy(separators, val->getString());
 
-		CSXArray *Array = new CSXArray(Game);
-		if (!Array) {
+		CSXArray *array = new CSXArray(Game);
+		if (!array) {
 			stack->pushNULL();
 			return S_OK;
 		}
@@ -264,9 +264,9 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		WideString delims;
 		if (Game->_textEncoding == TEXT_UTF8)
-			delims = StringUtil::utf8ToWide(Separators);
+			delims = StringUtil::utf8ToWide(separators);
 		else
-			delims = StringUtil::ansiToWide(Separators);
+			delims = StringUtil::ansiToWide(separators);
 
 		Common::Array<WideString> parts;
 
@@ -299,16 +299,16 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			WideString &part = (*it);
 
 			if (Game->_textEncoding == TEXT_UTF8)
-				Val = new CScValue(Game, StringUtil::wideToUtf8(part).c_str());
+				val = new CScValue(Game, StringUtil::wideToUtf8(part).c_str());
 			else
-				Val = new CScValue(Game, StringUtil::wideToAnsi(part).c_str());
+				val = new CScValue(Game, StringUtil::wideToAnsi(part).c_str());
 
-			Array->push(Val);
-			delete Val;
-			Val = NULL;
+			array->push(val);
+			delete val;
+			val = NULL;
 		}
 
-		stack->pushNative(Array, false);
+		stack->pushNative(array, false);
 		return S_OK;
 	}
 
