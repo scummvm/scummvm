@@ -152,7 +152,8 @@ HRESULT CBSound::persist(CBPersistMgr *persistMgr) {
 		_soundPlaying = _sound->isPlaying();
 		_soundLooping = _sound->_looping;
 		_soundPrivateVolume = _sound->_privateVolume;
-		if (_soundPlaying) _soundPosition = _sound->getPosition();
+		if (_soundPlaying)
+			_soundPosition = _sound->getPosition();
 		_soundLoopStart = _sound->_loopStart;
 		_soundFreezePaused = _sound->_freezePaused;
 	}
@@ -196,7 +197,8 @@ HRESULT CBSound::setPositionTime(uint32 time) {
 	if (!_sound) return E_FAIL;
 	_soundPosition = time;
 	HRESULT ret = _sound->setPosition(_soundPosition);
-	if (_sound->isPlaying()) _soundPosition = 0;
+	if (_sound->isPlaying())
+		_soundPosition = 0;
 	return ret;
 }
 
@@ -205,33 +207,38 @@ HRESULT CBSound::setPositionTime(uint32 time) {
 uint32 CBSound::getPositionTime() {
 	if (!_sound) return 0;
 
-	if (!_sound->isPlaying()) return 0;
+	if (!_sound->isPlaying())
+		return 0;
 	else return _sound->getPosition();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSound::setVolume(int volume) {
-	if (!_sound) return E_FAIL;
+	if (!_sound)
+		return E_FAIL;
 	else return _sound->setPrivateVolume(volume);
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSound::setPrivateVolume(int volume) {
-	if (!_sound) return E_FAIL;
+	if (!_sound) 
+		return E_FAIL;
 	else return _sound->_privateVolume = volume;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 int CBSound::getVolume() {
-	if (!_sound) return 0;
+	if (!_sound)
+		return 0;
 	else return _sound->_privateVolume;
 }
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSound::setLoopStart(uint32 pos) {
-	if (!_sound) return E_FAIL;
+	if (!_sound)
+		return E_FAIL;
 	else {
 		_sound->setLoopStart(pos);
 		return S_OK;
@@ -240,17 +247,19 @@ HRESULT CBSound::setLoopStart(uint32 pos) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSound::setPan(float pan) {
-	if (_sound) return _sound->setPan(pan);
+	if (_sound)
+		return _sound->setPan(pan);
 	else return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSound::ApplyFX(TSFXType type, float param1, float param2, float param3, float param4) {
-	if (!_sound) return S_OK;
+	if (!_sound)
+		return S_OK;
 
 	if (type != _sFXType || param1 != _sFXParam1 || param2 != _sFXParam2 || param3 != _sFXParam3 || param4 != _sFXParam4) {
-		HRESULT Ret = _sound->applyFX(type, param1, param2, param3, param4);
+		HRESULT ret = _sound->applyFX(type, param1, param2, param3, param4);
 
 		_sFXType = type;
 		_sFXParam1 = param1;
@@ -258,7 +267,7 @@ HRESULT CBSound::ApplyFX(TSFXType type, float param1, float param2, float param3
 		_sFXParam3 = param3;
 		_sFXParam4 = param4;
 
-		return Ret;
+		return ret;
 	}
 	return S_OK;
 }
