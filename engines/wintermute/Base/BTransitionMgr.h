@@ -40,7 +40,7 @@ public:
 	bool _origInteractive;
 	bool _preserveInteractive;
 	HRESULT update();
-	HRESULT start(TTransitionType Type, bool NonInteractive = false);
+	HRESULT start(TTransitionType type, bool nonInteractive = false);
 	bool isReady();
 	TTransMgrState _state;
 	CBTransitionMgr(CBGame *inGame);

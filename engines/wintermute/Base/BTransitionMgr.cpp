@@ -97,21 +97,23 @@ HRESULT CBTransitionMgr::update() {
 
 	case TRANSITION_FADE_OUT: {
 		uint32 time = CBPlatform::GetTime() - _lastTime;
-		int Alpha = (int)(255 - (float)time / (float)FADE_DURATION * 255);
-		Alpha = MIN(255, MAX(Alpha, 0));
-		Game->_renderer->fade((uint16)Alpha);
+		int alpha = (int)(255 - (float)time / (float)FADE_DURATION * 255);
+		alpha = MIN(255, MAX(alpha, 0));
+		Game->_renderer->fade((uint16)alpha);
 
-		if (time > FADE_DURATION) _state = TRANS_MGR_READY;
+		if (time > FADE_DURATION)
+			_state = TRANS_MGR_READY;
 	}
 	break;
 
 	case TRANSITION_FADE_IN: {
 		uint32 time = CBPlatform::GetTime() - _lastTime;
-		int Alpha = (int)((float)time / (float)FADE_DURATION * 255);
-		Alpha = MIN(255, MAX(Alpha, 0));
-		Game->_renderer->fade((uint16)Alpha);
+		int alpha = (int)((float)time / (float)FADE_DURATION * 255);
+		alpha = MIN(255, MAX(alpha, 0));
+		Game->_renderer->fade((uint16)alpha);
 
-		if (time > FADE_DURATION) _state = TRANS_MGR_READY;
+		if (time > FADE_DURATION)
+			_state = TRANS_MGR_READY;
 	}
 	break;
 	default:
@@ -119,7 +121,8 @@ HRESULT CBTransitionMgr::update() {
 	}
 
 	if (isReady()) {
-		if (_preserveInteractive) Game->_interactive = _origInteractive;
+		if (_preserveInteractive)
+			Game->_interactive = _origInteractive;
 	}
 	return S_OK;
 }
