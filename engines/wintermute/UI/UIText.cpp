@@ -62,29 +62,29 @@ CUIText::~CUIText() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::display(int OffsetX, int OffsetY) {
+HRESULT CUIText::display(int offsetX, int offsetY) {
 	if (!_visible) return S_OK;
 
 
 	CBFont *font = _font;
 	if (!font) font = Game->_systemFont;
 
-	if (_back) _back->display(OffsetX + _posX, OffsetY + _posY, _width, _height);
-	if (_image) _image->draw(OffsetX + _posX, OffsetY + _posY, NULL);
+	if (_back) _back->display(offsetX + _posX, offsetY + _posY, _width, _height);
+	if (_image) _image->draw(offsetX + _posX, offsetY + _posY, NULL);
 
 	if (font && _text) {
-		int text_offset;
+		int textOffset;
 		switch (_verticalAlign) {
 		case VAL_TOP:
-			text_offset = 0;
+			textOffset = 0;
 			break;
 		case VAL_BOTTOM:
-			text_offset = _height - font->getTextHeight((byte *)_text, _width);
+			textOffset = _height - font->getTextHeight((byte *)_text, _width);
 			break;
 		default:
-			text_offset = (_height - font->getTextHeight((byte *)_text, _width)) / 2;
+			textOffset = (_height - font->getTextHeight((byte *)_text, _width)) / 2;
 		}
-		font->drawText((byte *)_text, OffsetX + _posX, OffsetY + _posY + text_offset, _width, _textAlign, _height);
+		font->drawText((byte *)_text, offsetX + _posX, offsetY + _posY + textOffset, _width, _textAlign, _height);
 	}
 
 	//Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
@@ -382,7 +382,7 @@ HRESULT CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SizeToFit") == 0) {
 		stack->correctParams(0);
-		SizeToFit();
+		sizeToFit();
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -478,7 +478,7 @@ HRESULT CUIText::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::SizeToFit() {
+HRESULT CUIText::sizeToFit() {
 	if (_font && _text) {
 		_width = _font->getTextWidth((byte *)_text);
 		_height = _font->getTextHeight((byte *)_text, _width);

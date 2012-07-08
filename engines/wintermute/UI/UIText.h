@@ -35,9 +35,10 @@
 namespace WinterMute {
 
 class CUIText : public CUIObject {
+private:
+	HRESULT sizeToFit();
 public:
-	HRESULT SizeToFit();
-	virtual HRESULT display(int OffsetX, int OffsetY);
+	virtual HRESULT display(int offsetX, int offsetY);
 	DECLARE_PERSISTENT(CUIText, CUIObject)
 	CUIText(CBGame *inGame = NULL);
 	virtual ~CUIText();
