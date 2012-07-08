@@ -243,7 +243,7 @@ CBGame::CBGame(): CBObject(this) {
 	_lastCursor = NULL;
 
 
-	CBPlatform::SetRectEmpty(&_mouseLockRect);
+	CBPlatform::setRectEmpty(&_mouseLockRect);
 
 	_suppressScriptErrors = false;
 	_lastMiniUpdate = 0;
@@ -336,7 +336,7 @@ CBGame::~CBGame() {
 	_stringTable = NULL;
 
 	DEBUG_DebugDisable();
-	CBPlatform::OutputDebugString("--- shutting down normally ---\n");
+	CBPlatform::outputDebugString("--- shutting down normally ---\n");
 }
 
 
@@ -560,7 +560,7 @@ void CBGame::DEBUG_DebugEnable(const char *filename) {
 	LOG(0, "%s ver %d.%d.%d%s, Compiled on " __DATE__ ", " __TIME__, DCGF_NAME, DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, DCGF_VER_SUFFIX);
 	//LOG(0, "Extensions: %s ver %d.%02d", EXT_NAME, EXT_VER_MAJOR, EXT_VER_MINOR);
 
-	AnsiString platform = CBPlatform::GetPlatformName();
+	AnsiString platform = CBPlatform::getPlatformName();
 	LOG(0, "Platform: %s", platform.c_str());
 	LOG(0, "");
 }
@@ -618,7 +618,7 @@ void CBGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
 HRESULT CBGame::initLoop() {
 	_viewportSP = -1;
 
-	_currentTime = CBPlatform::GetTime();
+	_currentTime = CBPlatform::getTime();
 
 	getDebugMgr()->onGameTick();
 	_renderer->initLoop();
@@ -1364,7 +1364,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		p.x = x + _renderer->_drawOffsetX;
 		p.y = y + _renderer->_drawOffsetY;
 
-		CBPlatform::SetCursorPos(p.x, p.y);
+		CBPlatform::setCursorPos(p.x, p.y);
 
 		stack->pushNULL();
 		return S_OK;
@@ -1383,7 +1383,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		if (right < left) CBUtils::swap(&left, &right);
 		if (bottom < top) CBUtils::swap(&top, &bottom);
 
-		CBPlatform::SetRect(&_mouseLockRect, left, top, right, bottom);
+		CBPlatform::setRect(&_mouseLockRect, left, top, right, bottom);
 
 		stack->pushNULL();
 		return S_OK;
@@ -2213,7 +2213,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// WindowsTime (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WindowsTime") == 0) {
-		_scValue->setInt((int)CBPlatform::GetTime());
+		_scValue->setInt((int)CBPlatform::getTime());
 		return _scValue;
 	}
 
@@ -2532,7 +2532,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// Platform (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Platform") == 0) {
-		_scValue->setString(CBPlatform::GetPlatformName().c_str());
+		_scValue->setString(CBPlatform::getPlatformName().c_str());
 		return _scValue;
 	}
 
@@ -3913,7 +3913,7 @@ HRESULT CBGame::emptySaveSlot(int slot) {
 	char filename[MAX_PATH + 1];
 	getSaveSlotFilename(slot, filename);
 
-	CBPlatform::DeleteFile(filename);
+	CBPlatform::deleteFile(filename);
 
 	return S_OK;
 }
@@ -3971,10 +3971,10 @@ HRESULT CBGame::getCurrentViewportRect(RECT *rect, bool *custom) {
 	if (rect == NULL) return E_FAIL;
 	else {
 		if (_viewportSP >= 0) {
-			CBPlatform::CopyRect(rect, _viewportStack[_viewportSP]->getRect());
+			CBPlatform::copyRect(rect, _viewportStack[_viewportSP]->getRect());
 			if (custom) *custom = true;
 		} else {
-			CBPlatform::SetRect(rect,   _renderer->_drawOffsetX,
+			CBPlatform::setRect(rect,   _renderer->_drawOffsetX,
 			                    _renderer->_drawOffsetY,
 			                    _renderer->_width + _renderer->_drawOffsetX,
 			                    _renderer->_height + _renderer->_drawOffsetY);
@@ -4025,7 +4025,7 @@ void CBGame::resetMousePos() {
 	p.x = _mousePos.x + _renderer->_drawOffsetX;
 	p.y = _mousePos.y + _renderer->_drawOffsetY;
 
-	CBPlatform::SetCursorPos(p.x, p.y);
+	CBPlatform::setCursorPos(p.x, p.y);
 }
 
 
@@ -4049,7 +4049,7 @@ HRESULT CBGame::displayContentSimple() {
 HRESULT CBGame::displayIndicator() {
 	if (_saveLoadImage) {
 		RECT rc;
-		CBPlatform::SetRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
+		CBPlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
 		if (_loadInProgress) _saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
 		else _saveLoadImage->displayTrans(_saveImageX, _saveImageY, rc);
 	}
@@ -4233,7 +4233,7 @@ HRESULT CBGame::onMouseLeftDown() {
 
 	if (_activeObject != NULL) _capturedObject = _activeObject;
 	_mouseLeftDown = true;
-	CBPlatform::SetCapture(_renderer->_window);
+	CBPlatform::setCapture(_renderer->_window);
 
 	return S_OK;
 }
@@ -4242,7 +4242,7 @@ HRESULT CBGame::onMouseLeftDown() {
 HRESULT CBGame::onMouseLeftUp() {
 	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 
-	CBPlatform::ReleaseCapture();
+	CBPlatform::releaseCapture();
 	_capturedObject = NULL;
 	_mouseLeftDown = false;
 
@@ -4408,7 +4408,7 @@ CBDebugger *CBGame::getDebugMgr() {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::getMousePos(POINT *pos) {
-	CBPlatform::GetCursorPos(pos);
+	CBPlatform::getCursorPos(pos);
 
 	pos->x -= _renderer->_drawOffsetX;
 	pos->y -= _renderer->_drawOffsetY;
@@ -4427,7 +4427,7 @@ void CBGame::getMousePos(POINT *pos) {
 	*/
 
 	if (_mouseLockRect.left != 0 && _mouseLockRect.right != 0 && _mouseLockRect.top != 0 && _mouseLockRect.bottom != 0) {
-		if (!CBPlatform::PtInRect(&_mouseLockRect, *pos)) {
+		if (!CBPlatform::ptInRect(&_mouseLockRect, *pos)) {
 			pos->x = MAX(_mouseLockRect.left, pos->x);
 			pos->y = MAX(_mouseLockRect.top, pos->y);
 
@@ -4439,7 +4439,7 @@ void CBGame::getMousePos(POINT *pos) {
 			newPos.x += _renderer->_drawOffsetX;
 			newPos.y += _renderer->_drawOffsetY;
 
-			CBPlatform::SetCursorPos(newPos.x, newPos.y);
+			CBPlatform::setCursorPos(newPos.x, newPos.y);
 		}
 	}
 }
@@ -4448,9 +4448,9 @@ void CBGame::getMousePos(POINT *pos) {
 HRESULT CBGame::miniUpdate() {
 	if (!_miniUpdateEnabled) return S_OK;
 
-	if (CBPlatform::GetTime() - _lastMiniUpdate > 200) {
+	if (CBPlatform::getTime() - _lastMiniUpdate > 200) {
 		if (_soundMgr) _soundMgr->initLoop();
-		_lastMiniUpdate = CBPlatform::GetTime();
+		_lastMiniUpdate = CBPlatform::getTime();
 	}
 	return S_OK;
 }
@@ -4482,14 +4482,14 @@ bool CBGame::isDoubleClick(int buttonIndex) {
 #endif
 
 	POINT pos;
-	CBPlatform::GetCursorPos(&pos);
+	CBPlatform::getCursorPos(&pos);
 
 	int moveX = abs(pos.x - _lastClick[buttonIndex].PosX);
 	int moveY = abs(pos.y - _lastClick[buttonIndex].PosY);
 
 
-	if (_lastClick[buttonIndex].Time == 0 || CBPlatform::GetTime() - _lastClick[buttonIndex].Time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
-		_lastClick[buttonIndex].Time = CBPlatform::GetTime();
+	if (_lastClick[buttonIndex].Time == 0 || CBPlatform::getTime() - _lastClick[buttonIndex].Time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
+		_lastClick[buttonIndex].Time = CBPlatform::getTime();
 		_lastClick[buttonIndex].PosX = pos.x;
 		_lastClick[buttonIndex].PosY = pos.y;
 		return false;

@@ -46,7 +46,7 @@ IMPLEMENT_PERSISTENT(CAdInventoryBox, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdInventoryBox::CAdInventoryBox(CBGame *inGame): CBObject(inGame) {
-	CBPlatform::SetRectEmpty(&_itemsArea);
+	CBPlatform::setRectEmpty(&_itemsArea);
 	_scrollOffset = 0;
 	_spacing = 0;
 	_itemWidth = _itemHeight = 50;
@@ -124,7 +124,7 @@ HRESULT CAdInventoryBox::display() {
 	// display window
 	RECT rect = _itemsArea;
 	if (_window) {
-		CBPlatform::OffsetRect(&rect, _window->_posX, _window->_posY);
+		CBPlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		_window->display();
 	}
 

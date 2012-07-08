@@ -633,8 +633,8 @@ HRESULT CUIEdit::display(int offsetX, int offsetY) {
 		// cursor
 		if (focused && curFirst) {
 			if (Count) {
-				if (CBPlatform::GetTime() - _lastBlinkTime >= _cursorBlinkRate) {
-					_lastBlinkTime = CBPlatform::GetTime();
+				if (CBPlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = CBPlatform::getTime();
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)
@@ -656,8 +656,8 @@ HRESULT CUIEdit::display(int offsetX, int offsetY) {
 		// cursor
 		if (focused && !curFirst) {
 			if (Count) {
-				if (CBPlatform::GetTime() - _lastBlinkTime >= _cursorBlinkRate) {
-					_lastBlinkTime = CBPlatform::GetTime();
+				if (CBPlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = CBPlatform::getTime();
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)

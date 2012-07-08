@@ -57,7 +57,7 @@ CAdResponseBox::CAdResponseBox(CBGame *inGame): CBObject(inGame) {
 	_shieldWindow = new CUIWindow(Game);
 
 	_horizontal = false;
-	CBPlatform::SetRectEmpty(&_responseArea);
+	CBPlatform::setRectEmpty(&_responseArea);
 	_scrollOffset = 0;
 	_spacing = 0;
 
@@ -399,7 +399,7 @@ HRESULT CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
 HRESULT CAdResponseBox::display() {
 	RECT rect = _responseArea;
 	if (_window) {
-		CBPlatform::OffsetRect(&rect, _window->_posX, _window->_posY);
+		CBPlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		//_window->display();
 	}
 

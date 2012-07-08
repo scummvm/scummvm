@@ -36,7 +36,7 @@ IMPLEMENT_PERSISTENT(CBViewport, false)
 
 //////////////////////////////////////////////////////////////////////////
 CBViewport::CBViewport(CBGame *inGame): CBBase(inGame) {
-	CBPlatform::SetRectEmpty(&_rect);
+	CBPlatform::setRectEmpty(&_rect);
 	_mainObject = NULL;
 	_offsetX = _offsetY = 0;
 }
@@ -71,7 +71,7 @@ HRESULT CBViewport::setRect(int left, int top, int right, int bottom, bool noChe
 		bottom = MIN(bottom, Game->_renderer->_height);
 	}
 
-	CBPlatform::SetRect(&_rect, left, top, right, bottom);
+	CBPlatform::setRect(&_rect, left, top, right, bottom);
 	_offsetX = left;
 	_offsetY = top;
 	return S_OK;

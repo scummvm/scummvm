@@ -1925,7 +1925,7 @@ char *CAdGame::findSpeechFile(char *stringID) {
 //////////////////////////////////////////////////////////////////////////
 bool CAdGame::validMouse() {
 	POINT pos;
-	CBPlatform::GetCursorPos(&pos);
+	CBPlatform::getCursorPos(&pos);
 
 	return _renderer->pointInViewport(&pos);
 }
@@ -1953,7 +1953,7 @@ HRESULT CAdGame::onMouseLeftDown() {
 
 	if (_activeObject != NULL) Game->_capturedObject = Game->_activeObject;
 	_mouseLeftDown = true;
-	CBPlatform::SetCapture(_renderer->_window);
+	CBPlatform::setCapture(_renderer->_window);
 
 	return S_OK;
 }
@@ -1962,7 +1962,7 @@ HRESULT CAdGame::onMouseLeftDown() {
 HRESULT CAdGame::onMouseLeftUp() {
 	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 
-	CBPlatform::ReleaseCapture();
+	CBPlatform::releaseCapture();
 	_capturedObject = NULL;
 	_mouseLeftDown = false;
 

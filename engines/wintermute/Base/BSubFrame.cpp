@@ -49,7 +49,7 @@ CBSubFrame::CBSubFrame(CBGame *inGame): CBScriptable(inGame, true) {
 	_alpha = 0xFFFFFFFF;
 	_transparent = 0xFFFF00FF;
 
-	CBPlatform::SetRectEmpty(&_rect);
+	CBPlatform::setRectEmpty(&_rect);
 
 	_editorSelected = false;
 
@@ -114,7 +114,7 @@ HRESULT CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	bool custoTrans = false;
-	CBPlatform::SetRectEmpty(&rect);
+	CBPlatform::setRectEmpty(&rect);
 	char *surfaceFile = NULL;
 
 	delete _surface;
@@ -196,7 +196,7 @@ HRESULT CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	    return E_FAIL;
 	}
 	*/
-	if (CBPlatform::IsRectEmpty(&rect)) setDefaultRect();
+	if (CBPlatform::isRectEmpty(&rect)) setDefaultRect();
 	else _rect = rect;
 
 	return S_OK;
@@ -239,7 +239,7 @@ bool CBSubFrame::getBoundingRect(LPRECT rect, int x, int y, float scaleX, float 
 	float ratioX = scaleX / 100.0f;
 	float ratioY = scaleY / 100.0f;
 
-	CBPlatform::SetRect(rect,
+	CBPlatform::setRect(rect,
 	                    (int)(x - _hotspotX * ratioX),
 	                    (int)(y - _hotspotY * ratioY),
 	                    (int)(x - _hotspotX * ratioX + (_rect.right - _rect.left) * ratioX),
@@ -260,9 +260,9 @@ HRESULT CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete) {
 		buffer->putTextIndent(indent + 2, "TRANSPARENT { %d,%d,%d }\n", D3DCOLGetR(_transparent), D3DCOLGetG(_transparent), D3DCOLGetB(_transparent));
 
 	RECT rect;
-	CBPlatform::SetRectEmpty(&rect);
-	if (_surface) CBPlatform::SetRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
-	if (!CBPlatform::EqualRect(&rect, &_rect))
+	CBPlatform::setRectEmpty(&rect);
+	if (_surface) CBPlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+	if (!CBPlatform::equalRect(&rect, &_rect))
 		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", _rect.left, _rect.top, _rect.right, _rect.bottom);
 
 	if (_hotspotX != 0 || _hotspotY != 0)
@@ -304,8 +304,8 @@ HRESULT CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 void CBSubFrame::setDefaultRect() {
 	if (_surface) {
-		CBPlatform::SetRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
-	} else CBPlatform::SetRectEmpty(&_rect);
+		CBPlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+	} else CBPlatform::setRectEmpty(&_rect);
 }
 
 

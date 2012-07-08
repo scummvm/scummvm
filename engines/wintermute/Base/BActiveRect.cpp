@@ -36,7 +36,7 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
 CBActiveRect::CBActiveRect(CBGame *inGame): CBBase(inGame) {
-	CBPlatform::SetRectEmpty(&_rect);
+	CBPlatform::setRectEmpty(&_rect);
 	_owner = NULL;
 	_frame = NULL;
 	_region = NULL;
@@ -51,7 +51,7 @@ CBActiveRect::CBActiveRect(CBGame *inGame): CBBase(inGame) {
 CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *owner, CBSubFrame *frame, int x, int y, int width, int height, float zoomX, float zoomY, bool precise): CBBase(inGame) {
 	_owner = owner;
 	_frame = frame;
-	CBPlatform::SetRect(&_rect, x, y, x + width, y + height);
+	CBPlatform::setRect(&_rect, x, y, x + width, y + height);
 	_zoomX = zoomX;
 	_zoomY = zoomY;
 	_precise = precise;
@@ -64,8 +64,8 @@ CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *owner, CBSubFrame *frame, i
 CBActiveRect::CBActiveRect(CBGame *inGame, CBObject *owner, CBRegion *region, int offsetX, int offsetY): CBBase(inGame) {
 	_owner = owner;
 	_region = region;
-	CBPlatform::CopyRect(&_rect, &region->_rect);
-	CBPlatform::OffsetRect(&_rect, -offsetX, -offsetY);
+	CBPlatform::copyRect(&_rect, &region->_rect);
+	CBPlatform::offsetRect(&_rect, -offsetX, -offsetY);
 	_zoomX = 100;
 	_zoomY = 100;
 	_precise = true;
@@ -101,7 +101,7 @@ void CBActiveRect::clipRect() {
 	if (rc.left > _rect.left) _offsetX = rc.left - _rect.left;
 	if (rc.top  > _rect.top)  _offsetY = rc.top  - _rect.top;
 
-	CBPlatform::IntersectRect(&_rect, &_rect, &rc);
+	CBPlatform::intersectRect(&_rect, &_rect, &rc);
 }
 
 } // end of namespace WinterMute

@@ -187,7 +187,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Delete") == 0) {
 		stack->correctParams(0);
 		close();
-		stack->pushBool(CBPlatform::DeleteFile(_filename) != false);
+		stack->pushBool(CBPlatform::deleteFile(_filename) != false);
 		return S_OK;
 	}
 
@@ -200,7 +200,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		bool Overwrite = stack->pop()->getBool(true);
 
 		close();
-		stack->pushBool(CBPlatform::CopyFile(_filename, Dest, !Overwrite) != false);
+		stack->pushBool(CBPlatform::copyFile(_filename, Dest, !Overwrite) != false);
 		return S_OK;
 	}
 

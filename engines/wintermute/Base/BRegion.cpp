@@ -49,7 +49,7 @@ CBRegion::CBRegion(CBGame *inGame): CBObject(inGame) {
 	_lastMimicScale = -1;
 	_lastMimicX = _lastMimicY = INT_MIN;
 
-	CBPlatform::SetRectEmpty(&_rect);
+	CBPlatform::setRectEmpty(&_rect);
 }
 
 
@@ -64,7 +64,7 @@ void CBRegion::cleanup() {
 	for (int i = 0; i < _points.GetSize(); i++) delete _points[i];
 	_points.RemoveAll();
 
-	CBPlatform::SetRectEmpty(&_rect);
+	CBPlatform::setRectEmpty(&_rect);
 	_editorSelectedPoint = -1;
 }
 
@@ -89,7 +89,7 @@ bool CBRegion::pointInRegion(int x, int y) {
 	rect.top = y - 1;
 	rect.bottom = y + 2;
 
-	if (CBPlatform::PtInRect(&_rect, pt)) return ptInPolygon(x, y);
+	if (CBPlatform::ptInRect(&_rect, pt)) return ptInPolygon(x, y);
 	else return false;
 }
 
@@ -466,7 +466,7 @@ bool CBRegion::ptInPolygon(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBRegion::getBoundingRect(RECT *rect) {
-	if (_points.GetSize() == 0) CBPlatform::SetRectEmpty(rect);
+	if (_points.GetSize() == 0) CBPlatform::setRectEmpty(rect);
 	else {
 		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;
 
@@ -477,7 +477,7 @@ HRESULT CBRegion::getBoundingRect(RECT *rect) {
 			MaxX = MAX(MaxX, _points[i]->x);
 			MaxY = MAX(MaxY, _points[i]->y);
 		}
-		CBPlatform::SetRect(rect, MinX, MinY, MaxX, MaxY);
+		CBPlatform::setRect(rect, MinX, MinY, MaxX, MaxY);
 	}
 	return S_OK;
 }

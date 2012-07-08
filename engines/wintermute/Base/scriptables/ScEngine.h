@@ -58,7 +58,7 @@ public:
 	class CScCachedScript {
 	public:
 		CScCachedScript(const char *filename, byte *buffer, uint32 size) {
-			_timestamp = CBPlatform::GetTime();
+			_timestamp = CBPlatform::getTime();
 			_buffer = new byte[size];
 			if (_buffer) memcpy(_buffer, buffer, size);
 			_size = size;

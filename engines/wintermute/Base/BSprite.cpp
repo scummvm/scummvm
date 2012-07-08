@@ -146,7 +146,7 @@ HRESULT CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType 
 			delete frame;
 			delete subframe;
 		} else {
-			CBPlatform::SetRect(&subframe->_rect, 0, 0, subframe->_surface->getWidth(), subframe->_surface->getHeight());
+			CBPlatform::setRect(&subframe->_rect, 0, 0, subframe->_surface->getWidth(), subframe->_surface->getHeight());
 			frame->_subframes.Add(subframe);
 			_frames.Add(frame);
 			_currentFrame = 0;
@@ -416,13 +416,13 @@ CBSurface *CBSprite::getSurface() {
 bool CBSprite::GetBoundingRect(LPRECT rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) return false;
 
-	CBPlatform::SetRectEmpty(rect);
+	CBPlatform::setRectEmpty(rect);
 	for (int i = 0; i < _frames.GetSize(); i++) {
 		RECT frame;
 		RECT temp;
-		CBPlatform::CopyRect(&temp, rect);
+		CBPlatform::copyRect(&temp, rect);
 		_frames[i]->getBoundingRect(&frame, x, y, scaleX, scaleY);
-		CBPlatform::UnionRect(rect, &temp, &frame);
+		CBPlatform::unionRect(rect, &temp, &frame);
 	}
 	return true;
 }

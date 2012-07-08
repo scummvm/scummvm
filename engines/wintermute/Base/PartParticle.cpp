@@ -48,7 +48,7 @@ CPartParticle::CPartParticle(CBGame *inGame) : CBBase(inGame) {
 	_creationTime = 0;
 	_lifeTime = 0;
 	_isDead = true;
-	CBPlatform::SetRectEmpty(&_border);
+	CBPlatform::setRectEmpty(&_border);
 
 	_state = PARTICLE_NORMAL;
 	_fadeStart = 0;
@@ -123,11 +123,11 @@ HRESULT CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 
 		}
 
 		// particle hit the border
-		if (!_isDead && !CBPlatform::IsRectEmpty(&_border)) {
+		if (!_isDead && !CBPlatform::isRectEmpty(&_border)) {
 			POINT p;
 			p.x = (int32)_pos.x;
 			p.y = (int32)_pos.y;
-			if (!CBPlatform::PtInRect(&_border, p))
+			if (!CBPlatform::ptInRect(&_border, p))
 				fadeOut(currentTime, emitter->_fadeOutTime);
 		}
 		if (_state != PARTICLE_NORMAL) return S_OK;

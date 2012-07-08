@@ -49,7 +49,7 @@ IMPLEMENT_PERSISTENT(CPartEmitter, false)
 CPartEmitter::CPartEmitter(CBGame *inGame, CBScriptHolder *Owner) : CBObject(inGame) {
 	_width = _height = 0;
 
-	CBPlatform::SetRectEmpty(&_border);
+	CBPlatform::setRectEmpty(&_border);
 	_borderThicknessLeft = _borderThicknessRight = _borderThicknessTop = _borderThicknessBottom = 0;
 
 	_angle1 = _angle2 = 0;
@@ -178,7 +178,7 @@ HRESULT CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, 
 	float angVelocity = CBUtils::randomFloat(_angVelocity1, _angVelocity2);
 	float growthRate = CBUtils::randomFloat(_growthRate1, _growthRate2);
 
-	if (!CBPlatform::IsRectEmpty(&_border)) {
+	if (!CBPlatform::isRectEmpty(&_border)) {
 		int thicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * posZ / 100.0f);
 		int thicknessRight  = (int)(_borderThicknessRight  - (float)_borderThicknessRight  * posZ / 100.0f);
 		int thicknessTop    = (int)(_borderThicknessTop    - (float)_borderThicknessTop    * posZ / 100.0f);
@@ -347,7 +347,7 @@ int CPartEmitter::compareZ(const void *obj1, const void *obj2) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartEmitter::setBorder(int x, int y, int width, int height) {
-	CBPlatform::SetRect(&_border, x, y, x + width, y + height);
+	CBPlatform::setRect(&_border, x, y, x + width, y + height);
 
 	return S_OK;
 }

@@ -142,7 +142,7 @@ int WinterMuteEngine::init() {
 
 	_game = new CAdGame;
 	if (!_game) return 1;
-	CBPlatform::Initialize(_game, 0, NULL);
+	CBPlatform::initialize(_game, 0, NULL);
 
 	bool windowedMode = !ConfMan.getBool("fullscreen");
 	
@@ -231,7 +231,7 @@ int WinterMuteEngine::init() {
 	
 	
 	// load game
-	uint32 DataInitStart = CBPlatform::GetTime();
+	uint32 DataInitStart = CBPlatform::getTime();
 	
 	if (FAILED(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
@@ -243,7 +243,7 @@ int WinterMuteEngine::init() {
 	_game->_renderer->_ready = true;
 	_game->_miniUpdateEnabled = true;
 	
-	_game->LOG(0, "Engine initialized in %d ms", CBPlatform::GetTime() - DataInitStart);
+	_game->LOG(0, "Engine initialized in %d ms", CBPlatform::getTime() - DataInitStart);
 	_game->LOG(0, "");
 	
 	if (ConfMan.hasKey("save_slot")) {
@@ -273,7 +273,7 @@ int WinterMuteEngine::messageLoop() {
 	while (!done) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			CBPlatform::HandleEvent(&event);
+			CBPlatform::handleEvent(&event);
 		}
 		
 		if (_game && _game->_renderer->_active && _game->_renderer->_ready) {

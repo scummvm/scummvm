@@ -656,7 +656,7 @@ HRESULT CVidTheoraPlayer::display(uint32 alpha) {
 	HRESULT res;
 
 	if (_texture && _videoFrameReady) {
-		CBPlatform::SetRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
+		CBPlatform::setRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
 		if (_playZoom == 100.0f) res = _texture->displayTrans(_posX, _posY, rc, alpha);
 		else res = _texture->displayTransZoom(_posX, _posY, rc, _playZoom, _playZoom, alpha);
 	} else res = E_FAIL;

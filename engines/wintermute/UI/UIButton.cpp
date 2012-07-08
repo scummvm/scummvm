@@ -586,12 +586,12 @@ HRESULT CUIButton::display(int offsetX, int offsetY) {
 	CBFont *font = 0;
 
 	//RECT rect;
-	//CBPlatform::SetRect(&rect, OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
-	//_hover = (!_disable && CBPlatform::PtInRect(&rect, Game->_mousePos)!=FALSE);
+	//CBPlatform::setRect(&rect, OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
+	//_hover = (!_disable && CBPlatform::ptInRect(&rect, Game->_mousePos)!=FALSE);
 	_hover = (!_disable && Game->_activeObject == this && (Game->_interactive || Game->_state == GAME_SEMI_FROZEN));
 
 	if ((_press && _hover && !Game->_mouseLeftDown) ||
-	        (_oneTimePress && CBPlatform::GetTime() - _oneTimePressTime >= 100)) press();
+	        (_oneTimePress && CBPlatform::getTime() - _oneTimePressTime >= 100)) press();
 
 
 	if (_disable) {
@@ -908,7 +908,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		if (_visible && !_disable) {
 			_oneTimePress = true;
-			_oneTimePressTime = CBPlatform::GetTime();
+			_oneTimePressTime = CBPlatform::getTime();
 		}
 		stack->pushNULL();
 

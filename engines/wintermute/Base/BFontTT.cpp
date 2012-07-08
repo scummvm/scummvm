@@ -218,7 +218,7 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 	// and paint it
 	if (surface) {
 		RECT rc;
-		CBPlatform::SetRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
+		CBPlatform::setRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
 		for (int i = 0; i < _layers.GetSize(); i++) {
 			uint32 color = _layers[i]->_color;
 			uint32 origForceAlpha = _renderer->_forceAlphaColor;
@@ -639,7 +639,7 @@ HRESULT CBFontTT::initFont() {
 	Common::SeekableReadStream *file = Game->_fileManager->openFile(_fontFile);
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
-		AnsiString fontFileName = PathUtil::combine(CBPlatform::GetSystemFontPath(), PathUtil::getFileName(_fontFile));
+		AnsiString fontFileName = PathUtil::combine(CBPlatform::getSystemFontPath(), PathUtil::getFileName(_fontFile));
 		file = Game->_fileManager->openFile(fontFileName.c_str(), false);
 		if (!file) {
 			Game->LOG(0, "Error loading TrueType font '%s'", _fontFile);

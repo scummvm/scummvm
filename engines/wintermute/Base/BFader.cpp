@@ -67,7 +67,7 @@ HRESULT CBFader::update() {
 
 	uint32 time;
 
-	if (_system) time = CBPlatform::GetTime() - _startTime;
+	if (_system) time = CBPlatform::getTime() - _startTime;
 	else time = Game->_timer - _startTime;
 
 	if (time >= _duration) _currentAlpha = _targetAlpha;
@@ -115,7 +115,7 @@ HRESULT CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_duration = duration;
 	_system = system;
 
-	if (_system) _startTime = CBPlatform::GetTime();
+	if (_system) _startTime = CBPlatform::getTime();
 	else _startTime = Game->_timer;
 
 	return S_OK;
@@ -138,7 +138,7 @@ HRESULT CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_duration = duration;
 	_system = system;
 
-	if (_system) _startTime = CBPlatform::GetTime();
+	if (_system) _startTime = CBPlatform::getTime();
 	else _startTime = Game->_timer;
 
 

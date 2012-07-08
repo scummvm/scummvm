@@ -485,14 +485,14 @@ HRESULT CAdScene::initLoop() {
 #ifdef _DEBUGxxxx
 	int nu_steps = 0;
 	uint32 start = Game->_currentTime;
-	while (!_pfReady && CBPlatform::GetTime() - start <= _pfMaxTime) {
+	while (!_pfReady && CBPlatform::getTime() - start <= _pfMaxTime) {
 		PathFinderStep();
 		nu_steps++;
 	}
 	if (nu_steps > 0) Game->LOG(0, "STAT: PathFinder iterations in one loop: %d (%s)  _pfMaxTime=%d", nu_steps, _pfReady ? "finished" : "not yet done", _pfMaxTime);
 #else
 	uint32 start = Game->_currentTime;
-	while (!_pfReady && CBPlatform::GetTime() - start <= _pfMaxTime) pathFinderStep();
+	while (!_pfReady && CBPlatform::getTime() - start <= _pfMaxTime) pathFinderStep();
 #endif
 
 	return S_OK;

@@ -54,8 +54,8 @@ IMPLEMENT_PERSISTENT(CUIWindow, false)
 
 //////////////////////////////////////////////////////////////////////////
 CUIWindow::CUIWindow(CBGame *inGame): CUIObject(inGame) {
-	CBPlatform::SetRectEmpty(&_titleRect);
-	CBPlatform::SetRectEmpty(&_dragRect);
+	CBPlatform::setRectEmpty(&_titleRect);
+	CBPlatform::setRectEmpty(&_dragRect);
 	_titleAlign = TAL_LEFT;
 	_transparent = false;
 
@@ -185,7 +185,7 @@ HRESULT CUIWindow::display(int offsetX, int offsetY) {
 	if (image)
 		image->draw(_posX + offsetX, _posY + offsetY, _transparent ? NULL : this);
 
-	if (!CBPlatform::IsRectEmpty(&_titleRect) && font && _text) {
+	if (!CBPlatform::isRectEmpty(&_titleRect) && font && _text) {
 		font->drawText((byte *)_text, _posX + offsetX + _titleRect.left, _posY + offsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
@@ -621,11 +621,11 @@ HRESULT CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 		error("UIWindow::SaveAsText - Unhandled enum-value NUM_TEXT_ALIGN");
 	}
 
-	if (!CBPlatform::IsRectEmpty(&_titleRect)) {
+	if (!CBPlatform::isRectEmpty(&_titleRect)) {
 		buffer->putTextIndent(indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", _titleRect.left, _titleRect.top, _titleRect.right, _titleRect.bottom);
 	}
 
-	if (!CBPlatform::IsRectEmpty(&_dragRect)) {
+	if (!CBPlatform::isRectEmpty(&_dragRect)) {
 		buffer->putTextIndent(indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", _dragRect.left, _dragRect.top, _dragRect.right, _dragRect.bottom);
 	}
 
@@ -1132,15 +1132,15 @@ HRESULT CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 	HRESULT res = CUIObject::handleMouse(event, button);
 
 	// handle window dragging
-	if (!CBPlatform::IsRectEmpty(&_dragRect)) {
+	if (!CBPlatform::isRectEmpty(&_dragRect)) {
 		// start drag
 		if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 			RECT dragRect = _dragRect;
 			int offsetX, offsetY;
 			getTotalOffset(&offsetX, &offsetY);
-			CBPlatform::OffsetRect(&dragRect, _posX + offsetX, _posY + offsetY);
+			CBPlatform::offsetRect(&dragRect, _posX + offsetX, _posY + offsetY);
 
-			if (CBPlatform::PtInRect(&dragRect, Game->_mousePos)) {
+			if (CBPlatform::ptInRect(&dragRect, Game->_mousePos)) {
 				_dragFrom.x = Game->_mousePos.x;
 				_dragFrom.y = Game->_mousePos.y;
 				_dragging = true;

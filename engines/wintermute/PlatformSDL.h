@@ -41,34 +41,33 @@ class CBGame;
 //////////////////////////////////////////////////////////////////////////
 class CBPlatform {
 public:
-	static int Initialize(CBGame *inGame, int argc, char *argv[]);
-	static void HandleEvent(Common::Event *event);
+	static int initialize(CBGame *inGame, int argc, char *argv[]);
+	static void handleEvent(Common::Event *event);
 
-	static AnsiString GetSystemFontPath();
-	static AnsiString GetPlatformName();
+	static AnsiString getSystemFontPath();
+	static AnsiString getPlatformName();
 
 	// Win32 API bindings
-	static HINSTANCE ShellExecute(HWND hwnd, LPCSTR lpOperation, LPCSTR lpFile, LPCSTR lpParameters, LPCSTR lpDirectory, int nShowCmd);
-	static void OutputDebugString(LPCSTR lpOutputString);
-	static uint32 GetTime();
-	static bool GetCursorPos(LPPOINT lpPoint);
-	static bool SetCursorPos(int X, int Y);
-	static bool ShowWindow(HWND hWnd, int nCmdShow);
-	static bool DeleteFile(const char *lpFileName);
-	static bool CopyFile(const char *from, const char *to, bool failIfExists);
-	static HWND SetCapture(HWND hWnd);
-	static bool ReleaseCapture();
-	static bool SetForegroundWindow(HWND hWnd);
+	static void outputDebugString(LPCSTR lpOutputString);
+	static uint32 getTime();
+	static bool getCursorPos(LPPOINT lpPoint);
+	static bool setCursorPos(int X, int Y);
+	static bool showWindow(HWND hWnd, int nCmdShow);
+	static bool deleteFile(const char *lpFileName);
+	static bool copyFile(const char *from, const char *to, bool failIfExists);
+	static HWND setCapture(HWND hWnd);
+	static bool releaseCapture();
+	static bool setForegroundWindow(HWND hWnd);
 
-	static bool SetRectEmpty(LPRECT lprc);
-	static bool IsRectEmpty(const LPRECT lprc);
-	static bool PtInRect(LPRECT lprc, POINT p);
-	static bool SetRect(LPRECT lprc, int left, int top, int right, int bottom);
-	static bool IntersectRect(LPRECT lprcDst, const LPRECT lprcSrc1, const LPRECT lprcSrc2);
-	static bool UnionRect(LPRECT lprcDst, RECT *lprcSrc1, RECT *lprcSrc2);
-	static bool CopyRect(LPRECT lprcDst, RECT *lprcSrc);
-	static bool OffsetRect(LPRECT lprc, int dx, int dy);
-	static bool EqualRect(LPRECT rect1, LPRECT rect2);
+	static bool setRectEmpty(LPRECT lprc);
+	static bool isRectEmpty(const LPRECT lprc);
+	static bool ptInRect(LPRECT lprc, POINT p);
+	static bool setRect(LPRECT lprc, int left, int top, int right, int bottom);
+	static bool intersectRect(LPRECT lprcDst, const LPRECT lprcSrc1, const LPRECT lprcSrc2);
+	static bool unionRect(LPRECT lprcDst, RECT *lprcSrc1, RECT *lprcSrc2);
+	static bool copyRect(LPRECT lprcDst, RECT *lprcSrc);
+	static bool offsetRect(LPRECT lprc, int dx, int dy);
+	static bool equalRect(LPRECT rect1, LPRECT rect2);
 
 
 	// string functions

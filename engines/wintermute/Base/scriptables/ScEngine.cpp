@@ -218,7 +218,7 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 	if (!ignoreCache) {
 		for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename.c_str(), filename) == 0) {
-				_cachedScripts[i]->_timestamp = CBPlatform::GetTime();
+				_cachedScripts[i]->_timestamp = CBPlatform::getTime();
 				*outSize = _cachedScripts[i]->_size;
 				return _cachedScripts[i]->_buffer;
 			}
@@ -259,7 +259,7 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 	CScCachedScript *cachedScript = new CScCachedScript(filename, compBuffer, compSize);
 	if (cachedScript) {
 		int index = 0;
-		uint32 MinTime = CBPlatform::GetTime();
+		uint32 MinTime = CBPlatform::getTime();
 		for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 			if (_cachedScripts[i] == NULL) {
 				index = i;
@@ -320,7 +320,7 @@ HRESULT CScEngine::tick() {
 
 		case SCRIPT_SLEEPING: {
 			if (_scripts[i]->_waitFrozen) {
-				if (_scripts[i]->_waitTime <= CBPlatform::GetTime()) _scripts[i]->run();
+				if (_scripts[i]->_waitTime <= CBPlatform::getTime()) _scripts[i]->run();
 			} else {
 				if (_scripts[i]->_waitTime <= Game->_timer) _scripts[i]->run();
 			}
@@ -359,25 +359,25 @@ HRESULT CScEngine::tick() {
 
 		// time sliced script
 		if (_scripts[i]->_timeSlice > 0) {
-			uint32 StartTime = CBPlatform::GetTime();
-			while (_scripts[i]->_state == SCRIPT_RUNNING && CBPlatform::GetTime() - StartTime < _scripts[i]->_timeSlice) {
+			uint32 StartTime = CBPlatform::getTime();
+			while (_scripts[i]->_state == SCRIPT_RUNNING && CBPlatform::getTime() - StartTime < _scripts[i]->_timeSlice) {
 				_currentScript = _scripts[i];
 				_scripts[i]->executeInstruction();
 			}
-			if (_isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
+			if (_isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::getTime() - StartTime);
 		}
 
 		// normal script
 		else {
 			uint32 StartTime = 0;
 			bool isProfiling = _isProfiling;
-			if (isProfiling) StartTime = CBPlatform::GetTime();
+			if (isProfiling) StartTime = CBPlatform::getTime();
 
 			while (_scripts[i]->_state == SCRIPT_RUNNING) {
 				_currentScript = _scripts[i];
 				_scripts[i]->executeInstruction();
 			}
-			if (isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
+			if (isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::getTime() - StartTime);
 		}
 		_currentScript = NULL;
 	}
@@ -740,7 +740,7 @@ void CScEngine::enableProfiling() {
 	// destroy old data, if any
 	_scriptTimes.clear();
 
-	_profilingStartTime = CBPlatform::GetTime();
+	_profilingStartTime = CBPlatform::getTime();
 	_isProfiling = true;
 }
 
@@ -757,7 +757,7 @@ void CScEngine::disableProfiling() {
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::dumpStats() {
 	error("DumpStats not ported to ScummVM yet");
-	/*  uint32 totalTime = CBPlatform::GetTime() - _profilingStartTime;
+	/*  uint32 totalTime = CBPlatform::getTime() - _profilingStartTime;
 
 	    typedef std::vector <std::pair<uint32, std::string> > TimeVector;
 	    TimeVector times;

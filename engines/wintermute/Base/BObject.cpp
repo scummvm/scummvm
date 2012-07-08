@@ -65,7 +65,7 @@ CBObject::CBObject(CBGame *inGame): CBScriptHolder(inGame) {
 
 	_iD = Game->getSequence();
 
-	CBPlatform::SetRectEmpty(&_rect);
+	CBPlatform::setRectEmpty(&_rect);
 	_rectSet = false;
 
 	_cursor = NULL;

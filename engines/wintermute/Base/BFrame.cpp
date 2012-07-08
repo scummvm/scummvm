@@ -170,7 +170,7 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	bool decoration = false;
 	bool mirrorX = false;
 	bool mirrorY = false;
-	CBPlatform::SetRectEmpty(&rect);
+	CBPlatform::setRectEmpty(&rect);
 	char *surface_file = NULL;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
@@ -305,7 +305,7 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		if (custoTrans) sub->_transparent = DRGBA(r, g, b, 0xFF);
 	}
 
-	if (CBPlatform::IsRectEmpty(&rect)) sub->setDefaultRect();
+	if (CBPlatform::isRectEmpty(&rect)) sub->setDefaultRect();
 	else sub->_rect = rect;
 
 	sub->_hotspotX = hotspotX;
@@ -327,13 +327,13 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 //////////////////////////////////////////////////////////////////////////
 bool CBFrame::getBoundingRect(LPRECT rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) return false;
-	CBPlatform::SetRectEmpty(rect);
+	CBPlatform::setRectEmpty(rect);
 
 	RECT subRect;
 
 	for (int i = 0; i < _subframes.GetSize(); i++) {
 		_subframes[i]->getBoundingRect(&subRect, x, y, scaleX, scaleY);
-		CBPlatform::UnionRect(rect, rect, &subRect);
+		CBPlatform::unionRect(rect, rect, &subRect);
 	}
 	return true;
 }

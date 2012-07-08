@@ -47,7 +47,7 @@ CBRenderer::CBRenderer(CBGame *inGame): CBBase(inGame) {
 	_forceAlphaColor = 0x00;
 
 	_width = _height = _bPP = 0;
-	CBPlatform::SetRectEmpty(&_monitorRect);
+	CBPlatform::setRectEmpty(&_monitorRect);
 
 	_realWidth = _realHeight = 0;
 	_drawOffsetX = _drawOffsetY = 0;
@@ -74,7 +74,7 @@ CBObject *CBRenderer::getObjectAt(int x, int y) {
 	point.y = y;
 
 	for (int i = _rectList.GetSize() - 1; i >= 0; i--) {
-		if (CBPlatform::PtInRect(&_rectList[i]->_rect, point)) {
+		if (CBPlatform::ptInRect(&_rectList[i]->_rect, point)) {
 			if (_rectList[i]->_precise) {
 				// frame
 				if (_rectList[i]->_frame) {

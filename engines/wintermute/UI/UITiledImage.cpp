@@ -44,15 +44,15 @@ IMPLEMENT_PERSISTENT(CUITiledImage, false)
 CUITiledImage::CUITiledImage(CBGame *inGame): CBObject(inGame) {
 	_image = NULL;
 
-	CBPlatform::SetRectEmpty(&_upLeft);
-	CBPlatform::SetRectEmpty(&_upMiddle);
-	CBPlatform::SetRectEmpty(&_upRight);
-	CBPlatform::SetRectEmpty(&_middleLeft);
-	CBPlatform::SetRectEmpty(&_middleMiddle);
-	CBPlatform::SetRectEmpty(&_middleRight);
-	CBPlatform::SetRectEmpty(&_downLeft);
-	CBPlatform::SetRectEmpty(&_downMiddle);
-	CBPlatform::SetRectEmpty(&_downRight);
+	CBPlatform::setRectEmpty(&_upLeft);
+	CBPlatform::setRectEmpty(&_upMiddle);
+	CBPlatform::setRectEmpty(&_upRight);
+	CBPlatform::setRectEmpty(&_middleLeft);
+	CBPlatform::setRectEmpty(&_middleMiddle);
+	CBPlatform::setRectEmpty(&_middleRight);
+	CBPlatform::setRectEmpty(&_downLeft);
+	CBPlatform::setRectEmpty(&_downMiddle);
+	CBPlatform::setRectEmpty(&_downRight);
 }
 
 
@@ -270,19 +270,19 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 
 	if (vTiles && hTiles) {
 		// up row
-		CBPlatform::SetRect(&_upLeft,   0,     0, h1,       v1);
-		CBPlatform::SetRect(&_upMiddle, h1,    0, h1 + h2,    v1);
-		CBPlatform::SetRect(&_upRight,  h1 + h2, 0, h1 + h2 + h3, v1);
+		CBPlatform::setRect(&_upLeft,   0,     0, h1,       v1);
+		CBPlatform::setRect(&_upMiddle, h1,    0, h1 + h2,    v1);
+		CBPlatform::setRect(&_upRight,  h1 + h2, 0, h1 + h2 + h3, v1);
 
 		// middle row
-		CBPlatform::SetRect(&_middleLeft,   0,     v1, h1,       v1 + v2);
-		CBPlatform::SetRect(&_middleMiddle, h1,    v1, h1 + h2,    v1 + v2);
-		CBPlatform::SetRect(&_middleRight,  h1 + h2, v1, h1 + h2 + h3, v1 + v2);
+		CBPlatform::setRect(&_middleLeft,   0,     v1, h1,       v1 + v2);
+		CBPlatform::setRect(&_middleMiddle, h1,    v1, h1 + h2,    v1 + v2);
+		CBPlatform::setRect(&_middleRight,  h1 + h2, v1, h1 + h2 + h3, v1 + v2);
 
 		// down row
-		CBPlatform::SetRect(&_downLeft,   0,     v1 + v2, h1,       v1 + v2 + v3);
-		CBPlatform::SetRect(&_downMiddle, h1,    v1 + v2, h1 + h2,    v1 + v2 + v3);
-		CBPlatform::SetRect(&_downRight,  h1 + h2, v1 + v2, h1 + h2 + h3, v1 + v2 + v3);
+		CBPlatform::setRect(&_downLeft,   0,     v1 + v2, h1,       v1 + v2 + v3);
+		CBPlatform::setRect(&_downMiddle, h1,    v1 + v2, h1 + h2,    v1 + v2 + v3);
+		CBPlatform::setRect(&_downRight,  h1 + h2, v1 + v2, h1 + h2 + h3, v1 + v2 + v3);
 	}
 
 	// default
@@ -290,17 +290,17 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 		int width = _image->_surface->getWidth() / 3;
 		int height = _image->_surface->getHeight() / 3;
 
-		if (CBPlatform::IsRectEmpty(&_upLeft))   CBPlatform::SetRect(&_upLeft,   0,       0, width,   height);
-		if (CBPlatform::IsRectEmpty(&_upMiddle)) CBPlatform::SetRect(&_upMiddle, width,   0, 2 * width, height);
-		if (CBPlatform::IsRectEmpty(&_upRight))  CBPlatform::SetRect(&_upRight,  2 * width, 0, 3 * width, height);
+		if (CBPlatform::isRectEmpty(&_upLeft))   CBPlatform::setRect(&_upLeft,   0,       0, width,   height);
+		if (CBPlatform::isRectEmpty(&_upMiddle)) CBPlatform::setRect(&_upMiddle, width,   0, 2 * width, height);
+		if (CBPlatform::isRectEmpty(&_upRight))  CBPlatform::setRect(&_upRight,  2 * width, 0, 3 * width, height);
 
-		if (CBPlatform::IsRectEmpty(&_middleLeft))   CBPlatform::SetRect(&_middleLeft,   0,       height, width,   2 * height);
-		if (CBPlatform::IsRectEmpty(&_middleMiddle)) CBPlatform::SetRect(&_middleMiddle, width,   height, 2 * width, 2 * height);
-		if (CBPlatform::IsRectEmpty(&_middleRight))  CBPlatform::SetRect(&_middleRight,  2 * width, height, 3 * width, 2 * height);
+		if (CBPlatform::isRectEmpty(&_middleLeft))   CBPlatform::setRect(&_middleLeft,   0,       height, width,   2 * height);
+		if (CBPlatform::isRectEmpty(&_middleMiddle)) CBPlatform::setRect(&_middleMiddle, width,   height, 2 * width, 2 * height);
+		if (CBPlatform::isRectEmpty(&_middleRight))  CBPlatform::setRect(&_middleRight,  2 * width, height, 3 * width, 2 * height);
 
-		if (CBPlatform::IsRectEmpty(&_downLeft))   CBPlatform::SetRect(&_downLeft,   0,       2 * height, width,   3 * height);
-		if (CBPlatform::IsRectEmpty(&_downMiddle)) CBPlatform::SetRect(&_downMiddle, width,   2 * height, 2 * width, 3 * height);
-		if (CBPlatform::IsRectEmpty(&_downRight))  CBPlatform::SetRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
+		if (CBPlatform::isRectEmpty(&_downLeft))   CBPlatform::setRect(&_downLeft,   0,       2 * height, width,   3 * height);
+		if (CBPlatform::isRectEmpty(&_downMiddle)) CBPlatform::setRect(&_downMiddle, width,   2 * height, 2 * width, 3 * height);
+		if (CBPlatform::isRectEmpty(&_downRight))  CBPlatform::setRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
 	}
 
 	return S_OK;

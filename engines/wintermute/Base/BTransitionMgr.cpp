@@ -87,7 +87,7 @@ HRESULT CBTransitionMgr::update() {
 
 	if (!_started) {
 		_started = true;
-		_lastTime = CBPlatform::GetTime();
+		_lastTime = CBPlatform::getTime();
 	}
 
 	switch (_type) {
@@ -96,7 +96,7 @@ HRESULT CBTransitionMgr::update() {
 		break;
 
 	case TRANSITION_FADE_OUT: {
-		uint32 time = CBPlatform::GetTime() - _lastTime;
+		uint32 time = CBPlatform::getTime() - _lastTime;
 		int alpha = (int)(255 - (float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
 		Game->_renderer->fade((uint16)alpha);
@@ -107,7 +107,7 @@ HRESULT CBTransitionMgr::update() {
 	break;
 
 	case TRANSITION_FADE_IN: {
-		uint32 time = CBPlatform::GetTime() - _lastTime;
+		uint32 time = CBPlatform::getTime() - _lastTime;
 		int alpha = (int)((float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
 		Game->_renderer->fade((uint16)alpha);

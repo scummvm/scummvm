@@ -229,7 +229,7 @@ void CBFontBitmap::drawChar(byte c, int x, int y) {
 	if (_wholeCell) tileWidth = _tileWidth;
 	else tileWidth = _widths[c];
 
-	CBPlatform::SetRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1)*_tileHeight);
+	CBPlatform::setRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1)*_tileHeight);
 	bool handled = false;
 	if (_sprite) {
 		_sprite->GetCurrentFrame();

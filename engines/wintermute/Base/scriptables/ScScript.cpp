@@ -1148,7 +1148,7 @@ HRESULT CScScript::sleep(uint32 duration) {
 
 	_state = SCRIPT_SLEEPING;
 	if (Game->_state == GAME_FROZEN) {
-		_waitTime = CBPlatform::GetTime() + duration;
+		_waitTime = CBPlatform::getTime() + duration;
 		_waitFrozen = true;
 	} else {
 		_waitTime = Game->_timer + duration;
