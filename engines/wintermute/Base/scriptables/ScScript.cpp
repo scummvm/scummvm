@@ -154,7 +154,7 @@ HRESULT CScScript::InitScript() {
 	_currentLine = 0;
 
 	// init breakpoints
-	_engine->RefreshScriptBreakpoints(this);
+	_engine->refreshScriptBreakpoints(this);
 
 
 	// ready to rumble...
@@ -1124,7 +1124,7 @@ HRESULT CScScript::WaitFor(CBObject *Object) {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScScript::WaitForExclusive(CBObject *Object) {
-	_engine->ResetObject(Object);
+	_engine->resetObject(Object);
 	return WaitFor(Object);
 }
 
@@ -1619,7 +1619,7 @@ bool CScScript::dbgGetTracingMode() {
 //////////////////////////////////////////////////////////////////////////
 void CScScript::afterLoad() {
 	if (_buffer == NULL) {
-		byte *buffer = _engine->GetCompiledScript(_filename, &_bufferSize);
+		byte *buffer = _engine->getCompiledScript(_filename, &_bufferSize);
 		if (!buffer) {
 			Game->LOG(0, "Error reinitializing script '%s' after load. Script will be terminated.", _filename);
 			_state = SCRIPT_ERROR;

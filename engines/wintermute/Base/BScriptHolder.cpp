@@ -94,7 +94,7 @@ HRESULT CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 			}
 		}
 	}
-	if (numHandlers > 0 && unbreakable) Game->_scEngine->TickUnbreakable();
+	if (numHandlers > 0 && unbreakable) Game->_scEngine->tickUnbreakable();
 
 	return ret;
 }
@@ -286,7 +286,7 @@ HRESULT CBScriptHolder::addScript(const char *filename) {
 		}
 	}
 
-	CScScript *scr =  Game->_scEngine->RunScript(filename, this);
+	CScScript *scr =  Game->_scEngine->runScript(filename, this);
 	if (!scr) {
 		if (Game->_editorForceScripts) {
 			// editor hack

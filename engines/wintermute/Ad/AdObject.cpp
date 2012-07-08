@@ -946,7 +946,7 @@ HRESULT CAdObject::reset() {
 
 	_state = _nextState = STATE_READY;
 
-	Game->_scEngine->ResetObject(this);
+	Game->_scEngine->resetObject(this);
 
 	return S_OK;
 }

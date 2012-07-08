@@ -38,15 +38,15 @@
 
 namespace WinterMute {
 
-typedef byte *(*DLL_COMPILE_BUFFER)(byte *Buffer, char *Source, uint32 BufferSize, uint32 *CompiledSize);
-typedef byte *(*DLL_COMPILE_FILE)(char *Filename, uint32 *CompiledSize);
-typedef void (*DLL_RELEASE_BUFFER)(unsigned char *Buffer);
+typedef byte *(*DLL_COMPILE_BUFFER)(byte *buffer, char *source, uint32 bufferSize, uint32 *compiledSize);
+typedef byte *(*DLL_COMPILE_FILE)(char *filename, uint32 *compiledSize);
+typedef void (*DLL_RELEASE_BUFFER)(unsigned char *buffer);
 typedef void (*DLL_SET_CALLBACKS)(CALLBACKS *callbacks, void *Data);
 typedef int (*DLL_DEFINE_FUNCTION)(const char *name); /* Was non-const, changed to silence warnings */
 typedef int (*DLL_DEFINE_VARIABLE)(const char *name); /* Was non-const, changed to silence warnings */
 
-typedef void (*COMPILE_ERROR_CALLBACK)(int Line, char *Text , void *Data);
-typedef void (*PARSE_ELEMENT_CALLBACK)(int Line, int Type, void *ElementData, void *Data);
+typedef void (*COMPILE_ERROR_CALLBACK)(int line, char *text , void *data);
+typedef void (*PARSE_ELEMENT_CALLBACK)(int line, int type, void *elementData, void *data);
 
 #define MAX_CACHED_SCRIPTS 20
 class CScScript;
@@ -57,11 +57,11 @@ class CScEngine : public CBBase {
 public:
 	class CScCachedScript {
 	public:
-		CScCachedScript(const char *filename, byte *Buffer, uint32 Size) {
+		CScCachedScript(const char *filename, byte *buffer, uint32 size) {
 			_timestamp = CBPlatform::GetTime();
-			_buffer = new byte[Size];
-			if (_buffer) memcpy(_buffer, Buffer, Size);
-			_size = Size;
+			_buffer = new byte[size];
+			if (_buffer) memcpy(_buffer, buffer, size);
+			_size = size;
 			_filename = filename;
 		};
 
@@ -93,22 +93,22 @@ public:
 
 
 public:
-	HRESULT DbgSendScripts(IWmeDebugClient *Client);
+	HRESULT dbgSendScripts(IWmeDebugClient *client);
 
 	CBArray<CScBreakpoint *, CScBreakpoint *> _breakpoints;
-	HRESULT addBreakpoint(const char *ScriptFilename, int Line);
-	HRESULT removeBreakpoint(const char *ScriptFilename, int Line);
-	HRESULT RefreshScriptBreakpoints();
-	HRESULT RefreshScriptBreakpoints(CScScript *script);
-	HRESULT SaveBreakpoints();
-	HRESULT LoadBreakpoints();
+	HRESULT addBreakpoint(const char *scriptFilename, int line);
+	HRESULT removeBreakpoint(const char *scriptFilename, int line);
+	HRESULT refreshScriptBreakpoints();
+	HRESULT refreshScriptBreakpoints(CScScript *script);
+	HRESULT saveBreakpoints();
+	HRESULT loadBreakpoints();
 
-	HRESULT ClearGlobals(bool IncludingNatives = false);
-	HRESULT TickUnbreakable();
-	HRESULT RemoveFinishedScripts();
-	bool IsValidScript(CScScript *script);
-	void SetCompileErrorCallback(COMPILE_ERROR_CALLBACK Callback, void *Data);
-	void SetParseElementCallback(PARSE_ELEMENT_CALLBACK Callback, void *Data);
+	HRESULT clearGlobals(bool includingNatives = false);
+	HRESULT tickUnbreakable();
+	HRESULT removeFinishedScripts();
+	bool isValidScript(CScScript *script);
+	void setCompileErrorCallback(COMPILE_ERROR_CALLBACK callback, void *data);
+	void setParseElementCallback(PARSE_ELEMENT_CALLBACK callback, void *data);
 
 	COMPILE_ERROR_CALLBACK _compileErrorCallback;
 	void *_compileErrorCallbackData;
@@ -116,30 +116,30 @@ public:
 	PARSE_ELEMENT_CALLBACK _parseElementCallback;
 	void *_parseElementCallbackData;
 
-	HRESULT SetFileToCompile(const char *filename);
+	HRESULT setFileToCompile(const char *filename);
 	char *_fileToCompile;
 	CScScript *_currentScript;
-	HRESULT ResumeAll();
-	HRESULT PauseAll();
+	HRESULT resumeAll();
+	HRESULT pauseAll();
 	void editorCleanup();
-	HRESULT ResetObject(CBObject *Object);
-	HRESULT ResetScript(CScScript *script);
-	HRESULT EmptyScriptCache();
-	byte *GetCompiledScript(const char *filename, uint32 *OutSize, bool IgnoreCache = false);
+	HRESULT resetObject(CBObject *Object);
+	HRESULT resetScript(CScScript *script);
+	HRESULT emptyScriptCache();
+	byte *getCompiledScript(const char *filename, uint32 *outSize, bool ignoreCache = false);
 	DECLARE_PERSISTENT(CScEngine, CBBase)
 	HRESULT cleanup();
-	int GetNumScripts(int *Running = NULL, int *Waiting = NULL, int *Persistent = NULL);
-	HRESULT Tick();
+	int getNumScripts(int *running = NULL, int *waiting = NULL, int *persistent = NULL);
+	HRESULT tick();
 	CScValue *_globals;
-	CScScript *RunScript(const char *filename, CBScriptHolder *Owner = NULL);
+	CScScript *runScript(const char *filename, CBScriptHolder *owner = NULL);
 	bool _compilerAvailable;
 	HINSTANCE _compilerDLL;
 	CScEngine(CBGame *inGame);
 	virtual ~CScEngine();
-	static void WINAPI AddError(void *Data, int Line, char *Text);
-	static byte *WINAPI loadFile(void *Data, char *Filename, uint32 *Size);
-	static void  WINAPI CloseFile(void *Data, byte *Buffer);
-	static void WINAPI ParseElement(void *Data, int Line, int Type, void *ElementData);
+	static void addError(void *data, int line, char *text);
+	static byte *loadFile(void *data, char *filename, uint32 *size);
+	static void closeFile(void *data, byte *buffer);
+	static void parseElement(void *data, int line, int type, void *elementData);
 	DLL_COMPILE_BUFFER  ExtCompileBuffer;
 	DLL_COMPILE_FILE    ExtCompileFile;
 	DLL_RELEASE_BUFFER  ExtReleaseBuffer;
@@ -149,14 +149,14 @@ public:
 
 	CBArray<CScScript *, CScScript *> _scripts;
 
-	void EnableProfiling();
-	void DisableProfiling();
-	bool IsProfiling() {
+	void enableProfiling();
+	void disableProfiling();
+	bool isProfiling() {
 		return _isProfiling;
 	}
 
-	void AddScriptTime(const char *filename, uint32 Time);
-	void DumpStats();
+	void addScriptTime(const char *filename, uint32 Time);
+	void dumpStats();
 
 private:
 

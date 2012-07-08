@@ -1990,7 +1990,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ClearScriptCache") == 0) {
 		stack->correctParams(0);
-		stack->pushBool(SUCCEEDED(_scEngine->EmptyScriptCache()));
+		stack->pushBool(SUCCEEDED(_scEngine->emptyScriptCache()));
 		return S_OK;
 	}
 
@@ -2130,7 +2130,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EnableScriptProfiling") == 0) {
 		stack->correctParams(0);
-		_scEngine->EnableProfiling();
+		_scEngine->enableProfiling();
 		stack->pushNULL();
 
 		return S_OK;
@@ -2141,7 +2141,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisableScriptProfiling") == 0) {
 		stack->correctParams(0);
-		_scEngine->DisableProfiling();
+		_scEngine->disableProfiling();
 		stack->pushNULL();
 
 		return S_OK;
@@ -3358,7 +3358,7 @@ HRESULT CBGame::initAfterLoad() {
 	CSysClassRegistry::getInstance()->enumInstances(afterLoadFont,     "CBFontTT",   NULL);
 	CSysClassRegistry::getInstance()->enumInstances(afterLoadScript,   "CScScript",  NULL);
 
-	_scEngine->RefreshScriptBreakpoints();
+	_scEngine->refreshScriptBreakpoints();
 	if (_store) _store->afterLoad();
 
 	return S_OK;
@@ -3745,7 +3745,7 @@ HRESULT CBGame::focusWindow(CUIWindow *Window) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::freeze(bool includingMusic) {
 	if (_freezeLevel == 0) {
-		_scEngine->PauseAll();
+		_scEngine->pauseAll();
 		_soundMgr->pauseAll(includingMusic);
 		_origState = _state;
 		_origInteractive = _interactive;
@@ -3766,7 +3766,7 @@ HRESULT CBGame::unfreeze() {
 	if (_freezeLevel == 0) {
 		_state = _origState;
 		_interactive = _origInteractive;
-		_scEngine->ResumeAll();
+		_scEngine->resumeAll();
 		_soundMgr->resumeAll();
 	}
 
@@ -4171,7 +4171,7 @@ HRESULT CBGame::updateMusicCrossfade() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBGame::resetContent() {
-	_scEngine->ClearGlobals();
+	_scEngine->clearGlobals();
 	//_timer = 0;
 	//_liveTimer = 0;
 
@@ -4432,7 +4432,7 @@ HRESULT CBGame::displayDebugInfo() {
 		_renderer->displayDebugInfo();
 
 		int scrTotal, scrRunning, scrWaiting, scrPersistent;
-		scrTotal = _scEngine->GetNumScripts(&scrRunning, &scrWaiting, &scrPersistent);
+		scrTotal = _scEngine->getNumScripts(&scrRunning, &scrWaiting, &scrPersistent);
 		sprintf(str, "Running scripts: %d (r:%d w:%d p:%d)", scrTotal, scrRunning, scrWaiting, scrPersistent);
 		_systemFont->drawText((byte *)str, 0, 70, _renderer->_width, TAL_RIGHT);
 

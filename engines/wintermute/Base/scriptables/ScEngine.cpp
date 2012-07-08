@@ -141,9 +141,9 @@ CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CScEngine::~CScEngine() {
 	Game->LOG(0, "Shutting down scripting engine");
-	SaveBreakpoints();
+	saveBreakpoints();
 
-	DisableProfiling();
+	disableProfiling();
 #ifdef __WIN32__
 	if (_compilerAvailable && _compilerDLL) ::FreeLibrary(_compilerDLL);
 #endif
@@ -171,7 +171,7 @@ HRESULT CScEngine::cleanup() {
 	delete _globals;
 	_globals = NULL;
 
-	EmptyScriptCache();
+	emptyScriptCache();
 
 	_currentScript = NULL; // ref only
 
@@ -189,55 +189,55 @@ HRESULT CScEngine::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-byte *WINAPI CScEngine::loadFile(void *data, char *filename, uint32 *size) {
+byte *CScEngine::loadFile(void *data, char *filename, uint32 *size) {
 	CBGame *Game = (CBGame *)data;
 	return Game->_fileManager->readWholeFile(filename, size);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void WINAPI CScEngine::CloseFile(void *Data, byte *Buffer) {
-	delete [] Buffer;
+void CScEngine::closeFile(void *data, byte *buffer) {
+	delete [] buffer;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void WINAPI CScEngine::AddError(void *Data, int Line, char *Text) {
-	CBGame *Game = (CBGame *)Data;
+void CScEngine::addError(void *data, int line, char *text) {
+	CBGame *Game = (CBGame *)data;
 
 	if (Game) {
 		if (Game->_scEngine && Game->_scEngine->_fileToCompile)
 			Game->LOG(0, "Compiling script '%s'...", Game->_scEngine->_fileToCompile);
-		Game->LOG(0, "  Error@line %d: %s", Line, Text);
+		Game->LOG(0, "  Error@line %d: %s", line, text);
 
 
 		// redirect to an engine's own callback
 		if (Game->_scEngine && Game->_scEngine->_compileErrorCallback) {
-			Game->_scEngine->_compileErrorCallback(Line, Text, Game->_scEngine->_compileErrorCallbackData);
+			Game->_scEngine->_compileErrorCallback(line, text, Game->_scEngine->_compileErrorCallbackData);
 		}
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void WINAPI CScEngine::ParseElement(void *Data, int Line, int Type, void *ElementData) {
-	CBGame *Game = (CBGame *)Data;
+void WINAPI CScEngine::parseElement(void *data, int line, int type, void *elementData) {
+	CBGame *Game = (CBGame *)data;
 
 	if (Game) {
 		// redirect to an engine's own callback
 		if (Game->_scEngine && Game->_scEngine->_parseElementCallback) {
-			Game->_scEngine->_parseElementCallback(Line, Type, ElementData, Game->_scEngine->_compileErrorCallbackData);
+			Game->_scEngine->_parseElementCallback(line, type, elementData, Game->_scEngine->_compileErrorCallbackData);
 		}
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CScEngine::RunScript(const char *filename, CBScriptHolder *owner) {
+CScScript *CScEngine::runScript(const char *filename, CBScriptHolder *owner) {
 	byte *compBuffer;
 	uint32 compSize;
 
 	// get script from cache
-	compBuffer = GetCompiledScript(filename, &compSize);
+	compBuffer = getCompiledScript(filename, &compSize);
 	if (!compBuffer) return NULL;
 
 	// add new script
@@ -265,52 +265,50 @@ CScScript *CScEngine::RunScript(const char *filename, CBScriptHolder *owner) {
 
 
 //////////////////////////////////////////////////////////////////////////
-byte *CScEngine::GetCompiledScript(const char *filename, uint32 *OutSize, bool IgnoreCache) {
-	int i;
-
+byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ignoreCache) {
 	// is script in cache?
-	if (!IgnoreCache) {
-		for (i = 0; i < MAX_CACHED_SCRIPTS; i++) {
+	if (!ignoreCache) {
+		for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename.c_str(), filename) == 0) {
 				_cachedScripts[i]->_timestamp = CBPlatform::GetTime();
-				*OutSize = _cachedScripts[i]->_size;
+				*outSize = _cachedScripts[i]->_size;
 				return _cachedScripts[i]->_buffer;
 			}
 		}
 	}
 
 	// nope, load it
-	byte *CompBuffer;
-	uint32 CompSize;
-	bool CompiledNow = false;
+	byte *compBuffer;
+	uint32 compSize;
+	bool compiledNow = false;
 
-	uint32 Size;
+	uint32 size;
 
-	byte *Buffer = Game->_fileManager->readWholeFile(filename, &Size);
-	if (!Buffer) {
+	byte *buffer = Game->_fileManager->readWholeFile(filename, &size);
+	if (!buffer) {
 		Game->LOG(0, "CScEngine::GetCompiledScript - error opening script '%s'", filename);
 		return NULL;
 	}
 
 	// needs to be compiled?
-	if (FROM_LE_32(*(uint32 *)Buffer) == SCRIPT_MAGIC) {
-		CompBuffer = Buffer;
-		CompSize = Size;
+	if (FROM_LE_32(*(uint32 *)buffer) == SCRIPT_MAGIC) {
+		compBuffer = buffer;
+		compSize = size;
 	} else {
 		if (!_compilerAvailable) {
 			Game->LOG(0, "CScEngine::GetCompiledScript - script '%s' needs to be compiled but compiler is not available", filename);
-			delete [] Buffer;
+			delete [] buffer;
 			return NULL;
 		}
 
-		CompiledNow = true;
+		compiledNow = true;
 
 		// publish external methods to the compiler
 		CALLBACKS c;
-		c.Dll_AddError = AddError;
-		c.Dll_CloseFile = CloseFile;
+		c.Dll_AddError = addError;
+		c.Dll_CloseFile = closeFile;
 		c.Dll_LoadFile = loadFile;
-		c.Dll_ParseElement = ParseElement;
+		c.Dll_ParseElement = parseElement;
 		ExtSetCallbacks(&c, Game);
 
 		// publish native interfaces
@@ -320,12 +318,12 @@ byte *CScEngine::GetCompiledScript(const char *filename, uint32 *OutSize, bool I
 		char *tempFileName = new char[strlen(filename) + 1];
 		memcpy(tempFileName, filename, strlen(filename) + 1);
 
-		SetFileToCompile(filename);
-		CompBuffer = ExtCompileFile(tempFileName, &CompSize);
+		setFileToCompile(filename);
+		compBuffer = ExtCompileFile(tempFileName, &compSize);
 		delete[] tempFileName;
-		if (!CompBuffer) {
+		if (!compBuffer) {
 			Game->quickMessage("Script compiler error. View log for details.");
-			delete [] Buffer;
+			delete [] buffer;
 			return NULL;
 		}
 	}
@@ -333,11 +331,11 @@ byte *CScEngine::GetCompiledScript(const char *filename, uint32 *OutSize, bool I
 	byte *ret = NULL;
 
 	// add script to cache
-	CScCachedScript *CachedScript = new CScCachedScript(filename, CompBuffer, CompSize);
-	if (CachedScript) {
+	CScCachedScript *cachedScript = new CScCachedScript(filename, compBuffer, compSize);
+	if (cachedScript) {
 		int index = 0;
 		uint32 MinTime = CBPlatform::GetTime();
-		for (i = 0; i < MAX_CACHED_SCRIPTS; i++) {
+		for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 			if (_cachedScripts[i] == NULL) {
 				index = i;
 				break;
@@ -348,16 +346,16 @@ byte *CScEngine::GetCompiledScript(const char *filename, uint32 *OutSize, bool I
 		}
 
 		if (_cachedScripts[index] != NULL) delete _cachedScripts[index];
-		_cachedScripts[index] = CachedScript;
+		_cachedScripts[index] = cachedScript;
 
-		ret = CachedScript->_buffer;
-		*OutSize = CachedScript->_size;
+		ret = cachedScript->_buffer;
+		*outSize = cachedScript->_size;
 	}
 
 
 	// cleanup
-	delete [] Buffer;
-	if (CompiledNow) ExtReleaseBuffer(CompBuffer);
+	delete [] buffer;
+	if (compiledNow) ExtReleaseBuffer(compBuffer);
 
 	return ret;
 }
@@ -365,14 +363,14 @@ byte *CScEngine::GetCompiledScript(const char *filename, uint32 *OutSize, bool I
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::Tick() {
-	int i;
+HRESULT CScEngine::tick() {
+
 
 	if (_scripts.GetSize() == 0) return S_OK;
 
 
 	// resolve waiting scripts
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.GetSize(); i++) {
 
 		switch (_scripts[i]->_state) {
 		case SCRIPT_WAITING: {
@@ -405,7 +403,7 @@ HRESULT CScEngine::Tick() {
 		}
 
 		case SCRIPT_WAITING_SCRIPT: {
-			if (!IsValidScript(_scripts[i]->_waitScript) || _scripts[i]->_waitScript->_state == SCRIPT_ERROR) {
+			if (!isValidScript(_scripts[i]->_waitScript) || _scripts[i]->_waitScript->_state == SCRIPT_ERROR) {
 				// fake return value
 				_scripts[i]->_stack->pushNULL();
 				_scripts[i]->_waitScript = NULL;
@@ -429,7 +427,7 @@ HRESULT CScEngine::Tick() {
 
 
 	// execute scripts
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.GetSize(); i++) {
 
 		// skip paused scripts
 		if (_scripts[i]->_state == SCRIPT_PAUSED) continue;
@@ -441,7 +439,7 @@ HRESULT CScEngine::Tick() {
 				_currentScript = _scripts[i];
 				_scripts[i]->ExecuteInstruction();
 			}
-			if (_isProfiling && _scripts[i]->_filename) AddScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
+			if (_isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
 		}
 
 		// normal script
@@ -454,19 +452,19 @@ HRESULT CScEngine::Tick() {
 				_currentScript = _scripts[i];
 				_scripts[i]->ExecuteInstruction();
 			}
-			if (isProfiling && _scripts[i]->_filename) AddScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
+			if (isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::GetTime() - StartTime);
 		}
 		_currentScript = NULL;
 	}
 
-	RemoveFinishedScripts();
+	removeFinishedScripts();
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::TickUnbreakable() {
+HRESULT CScEngine::tickUnbreakable() {
 	// execute unbreakable scripts
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (!_scripts[i]->_unbreakable) continue;
@@ -478,14 +476,14 @@ HRESULT CScEngine::TickUnbreakable() {
 		_scripts[i]->finish();
 		_currentScript = NULL;
 	}
-	RemoveFinishedScripts();
+	removeFinishedScripts();
 
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::RemoveFinishedScripts() {
+HRESULT CScEngine::removeFinishedScripts() {
 	// remove finished scripts
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
@@ -501,8 +499,8 @@ HRESULT CScEngine::RemoveFinishedScripts() {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CScEngine::GetNumScripts(int *Running, int *Waiting, int *Persistent) {
-	int running = 0, waiting = 0, persistent = 0, total = 0;
+int CScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
+	int numRunning = 0, numWaiting = 0, numPersistent = 0, numTotal = 0;
 
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED) continue;
@@ -510,30 +508,30 @@ int CScEngine::GetNumScripts(int *Running, int *Waiting, int *Persistent) {
 		case SCRIPT_RUNNING:
 		case SCRIPT_SLEEPING:
 		case SCRIPT_PAUSED:
-			running++;
+			numRunning++;
 			break;
 		case SCRIPT_WAITING:
-			waiting++;
+			numWaiting++;
 			break;
 		case SCRIPT_PERSISTENT:
-			persistent++;
+			numPersistent++;
 			break;
 		default:
 			warning("CScEngine::GetNumScripts - unhandled enum");
 			break;
 		}
-		total++;
+		numTotal++;
 	}
-	if (Running) *Running = running;
-	if (Waiting) *Waiting = waiting;
-	if (Persistent)  *Persistent = persistent;
+	if (running) *running = numRunning;
+	if (waiting) *waiting = numWaiting;
+	if (persistent)  *persistent = numPersistent;
 
-	return total;
+	return numTotal;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::EmptyScriptCache() {
+HRESULT CScEngine::emptyScriptCache() {
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 		if (_cachedScripts[i]) {
 			delete _cachedScripts[i];
@@ -545,11 +543,11 @@ HRESULT CScEngine::EmptyScriptCache() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::ResetObject(CBObject *Object) {
+HRESULT CScEngine::resetObject(CBObject *Object) {
 	// terminate all scripts waiting for this object
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING && _scripts[i]->_waitObject == Object) {
-			if (!Game->_compatKillMethodThreads) ResetScript(_scripts[i]);
+			if (!Game->_compatKillMethodThreads) resetScript(_scripts[i]);
 
 			bool IsThread = _scripts[i]->_methodThread || _scripts[i]->_thread;
 			_scripts[i]->finish(!IsThread); // 1.9b1 - top-level script kills its threads as well
@@ -559,7 +557,7 @@ HRESULT CScEngine::ResetObject(CBObject *Object) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::ResetScript(CScScript *script) {
+HRESULT CScEngine::resetScript(CScScript *script) {
 	// terminate all scripts waiting for this script
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING_SCRIPT && _scripts[i]->_waitScript == script) {
@@ -596,7 +594,7 @@ void CScEngine::editorCleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::PauseAll() {
+HRESULT CScEngine::pauseAll() {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i] != _currentScript) _scripts[i]->Pause();
 	}
@@ -606,7 +604,7 @@ HRESULT CScEngine::PauseAll() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::ResumeAll() {
+HRESULT CScEngine::resumeAll() {
 	for (int i = 0; i < _scripts.GetSize(); i++)
 		_scripts[i]->Resume();
 
@@ -615,7 +613,7 @@ HRESULT CScEngine::ResumeAll() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::SetFileToCompile(const char *filename) {
+HRESULT CScEngine::setFileToCompile(const char *filename) {
 	delete[] _fileToCompile;
 	_fileToCompile = new char[strlen(filename) + 1];
 	if (_fileToCompile) {
@@ -626,20 +624,20 @@ HRESULT CScEngine::SetFileToCompile(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScEngine::SetCompileErrorCallback(COMPILE_ERROR_CALLBACK Callback, void *Data) {
-	_compileErrorCallback = Callback;
-	_compileErrorCallbackData = Data;
+void CScEngine::setCompileErrorCallback(COMPILE_ERROR_CALLBACK callback, void *data) {
+	_compileErrorCallback = callback;
+	_compileErrorCallbackData = data;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CScEngine::SetParseElementCallback(PARSE_ELEMENT_CALLBACK Callback, void *Data) {
-	_parseElementCallback = Callback;
-	_parseElementCallbackData = Data;
+void CScEngine::setParseElementCallback(PARSE_ELEMENT_CALLBACK callback, void *data) {
+	_parseElementCallback = callback;
+	_parseElementCallbackData = data;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScEngine::IsValidScript(CScScript *script) {
+bool CScEngine::isValidScript(CScScript *script) {
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i] == script) return true;
 	}
@@ -647,73 +645,73 @@ bool CScEngine::IsValidScript(CScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::ClearGlobals(bool IncludingNatives) {
-	_globals->CleanProps(IncludingNatives);
+HRESULT CScEngine::clearGlobals(bool includingNatives) {
+	_globals->CleanProps(includingNatives);
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::DbgSendScripts(IWmeDebugClient *Client) {
+HRESULT CScEngine::dbgSendScripts(IWmeDebugClient *client) {
 	// send global variables
-	_globals->DbgSendVariables(Client, WME_DBGVAR_GLOBAL, NULL, 0);
+	_globals->DbgSendVariables(client, WME_DBGVAR_GLOBAL, NULL, 0);
 
 	// process normal scripts first
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_thread || _scripts[i]->_methodThread) continue;
-		_scripts[i]->DbgSendScript(Client);
+		_scripts[i]->DbgSendScript(client);
 	}
 
 	// and threads later
 	for (int i = 0; i < _scripts.GetSize(); i++) {
 		if (_scripts[i]->_thread || _scripts[i]->_methodThread)
-			_scripts[i]->DbgSendScript(Client);
+			_scripts[i]->DbgSendScript(client);
 	}
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::addBreakpoint(const char *ScriptFilename, int Line) {
+HRESULT CScEngine::addBreakpoint(const char *scriptFilename, int line) {
 	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
-	CScBreakpoint *Bp = NULL;
+	CScBreakpoint *bp = NULL;
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
-		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), ScriptFilename) == 0) {
-			Bp = _breakpoints[i];
+		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), scriptFilename) == 0) {
+			bp = _breakpoints[i];
 			break;
 		}
 	}
-	if (Bp == NULL) {
-		Bp = new CScBreakpoint(ScriptFilename);
-		_breakpoints.Add(Bp);
+	if (bp == NULL) {
+		bp = new CScBreakpoint(scriptFilename);
+		_breakpoints.Add(bp);
 	}
 
-	for (int i = 0; i < Bp->_lines.GetSize(); i++) {
-		if (Bp->_lines[i] == Line) return S_OK;
+	for (int i = 0; i < bp->_lines.GetSize(); i++) {
+		if (bp->_lines[i] == line) return S_OK;
 	}
-	Bp->_lines.Add(Line);
+	bp->_lines.Add(line);
 
 	// refresh changes
-	RefreshScriptBreakpoints();
+	refreshScriptBreakpoints();
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::removeBreakpoint(const char *ScriptFilename, int Line) {
+HRESULT CScEngine::removeBreakpoint(const char *scriptFilename, int line) {
 	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
-		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), ScriptFilename) == 0) {
+		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), scriptFilename) == 0) {
 			for (int j = 0; j < _breakpoints[i]->_lines.GetSize(); j++) {
-				if (_breakpoints[i]->_lines[j] == Line) {
+				if (_breakpoints[i]->_lines[j] == line) {
 					_breakpoints[i]->_lines.RemoveAt(j);
 					if (_breakpoints[i]->_lines.GetSize() == 0) {
 						delete _breakpoints[i];
 						_breakpoints.RemoveAt(i);
 					}
 					// refresh changes
-					RefreshScriptBreakpoints();
+					refreshScriptBreakpoints();
 
 					return S_OK;
 				}
@@ -725,17 +723,17 @@ HRESULT CScEngine::removeBreakpoint(const char *ScriptFilename, int Line) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::RefreshScriptBreakpoints() {
+HRESULT CScEngine::refreshScriptBreakpoints() {
 	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	for (int i = 0; i < _scripts.GetSize(); i++) {
-		RefreshScriptBreakpoints(_scripts[i]);
+		refreshScriptBreakpoints(_scripts[i]);
 	}
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::RefreshScriptBreakpoints(CScScript *script) {
+HRESULT CScEngine::refreshScriptBreakpoints(CScScript *script) {
 	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 	if (!script || !script->_filename) return E_FAIL;
@@ -752,48 +750,48 @@ HRESULT CScEngine::RefreshScriptBreakpoints(CScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::SaveBreakpoints() {
+HRESULT CScEngine::saveBreakpoints() {
 	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
 
-	char Text[512];
-	char Key[100];
+	char text[512];
+	char key[100];
 
-	int Count = 0;
+	int count = 0;
 	for (int i = 0; i < _breakpoints.GetSize(); i++) {
 		for (int j = 0; j < _breakpoints[i]->_lines.GetSize(); j++) {
-			Count++;
-			sprintf(Key, "Breakpoint%d", Count);
-			sprintf(Text, "%s:%d", _breakpoints[i]->_filename.c_str(), _breakpoints[i]->_lines[j]);
+			count++;
+			sprintf(key, "Breakpoint%d", count);
+			sprintf(text, "%s:%d", _breakpoints[i]->_filename.c_str(), _breakpoints[i]->_lines[j]);
 
-			Game->_registry->writeString("Debug", Key, Text);
+			Game->_registry->writeString("Debug", key, text);
 		}
 	}
-	Game->_registry->writeInt("Debug", "NumBreakpoints", Count);
+	Game->_registry->writeInt("Debug", "NumBreakpoints", count);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::LoadBreakpoints() {
+HRESULT CScEngine::loadBreakpoints() {
 	if (!Game->getDebugMgr()->_enabled) return S_OK;
 
-	char Key[100];
+	char key[100];
 
-	int Count = Game->_registry->readInt("Debug", "NumBreakpoints", 0);
-	for (int i = 1; i <= Count; i++) {
+	int count = Game->_registry->readInt("Debug", "NumBreakpoints", 0);
+	for (int i = 1; i <= count; i++) {
 		/*  uint32 BufSize = 512; */
-		sprintf(Key, "Breakpoint%d", i);
-		AnsiString breakpoint = Game->_registry->readString("Debug", Key, "");
+		sprintf(key, "Breakpoint%d", i);
+		AnsiString breakpoint = Game->_registry->readString("Debug", key, "");
 
-		char *Path = CBUtils::strEntry(0, breakpoint.c_str(), ':');
-		char *Line = CBUtils::strEntry(1, breakpoint.c_str(), ':');
+		char *path = CBUtils::strEntry(0, breakpoint.c_str(), ':');
+		char *line = CBUtils::strEntry(1, breakpoint.c_str(), ':');
 
-		if (Path != NULL && Line != NULL) addBreakpoint(Path, atoi(Line));
-		delete[] Path;
-		delete[] Line;
-		Path = NULL;
-		Line = NULL;
+		if (path != NULL && line != NULL) addBreakpoint(path, atoi(line));
+		delete[] path;
+		delete[] line;
+		path = NULL;
+		line = NULL;
 	}
 
 	return S_OK;
@@ -801,17 +799,17 @@ HRESULT CScEngine::LoadBreakpoints() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScEngine::AddScriptTime(const char *filename, uint32 Time) {
+void CScEngine::addScriptTime(const char *filename, uint32 time) {
 	if (!_isProfiling) return;
 
 	AnsiString fileName = filename;
 	StringUtil::toLowerCase(fileName);
-	_scriptTimes[fileName] += Time;
+	_scriptTimes[fileName] += time;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScEngine::EnableProfiling() {
+void CScEngine::enableProfiling() {
 	if (_isProfiling) return;
 
 	// destroy old data, if any
@@ -823,16 +821,16 @@ void CScEngine::EnableProfiling() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScEngine::DisableProfiling() {
+void CScEngine::disableProfiling() {
 	if (!_isProfiling) return;
 
-	DumpStats();
+	dumpStats();
 	_isProfiling = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScEngine::DumpStats() {
+void CScEngine::dumpStats() {
 	error("DumpStats not ported to ScummVM yet");
 	/*  uint32 totalTime = CBPlatform::GetTime() - _profilingStartTime;
 

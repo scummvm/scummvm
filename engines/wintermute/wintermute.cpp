@@ -201,7 +201,7 @@ int WinterMuteEngine::init() {
 	_game->initialize2();
 	
 	_game->getDebugMgr()->onGameInit();
-	_game->_scEngine->LoadBreakpoints();
+	_game->_scEngine->loadBreakpoints();
 	
 	
 	

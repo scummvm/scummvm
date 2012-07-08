@@ -1707,7 +1707,7 @@ HRESULT CAdGame::displayContent(bool update, bool displayAll) {
 	} else {
 
 		// process scripts
-		if (update) _scEngine->Tick();
+		if (update) _scEngine->tick();
 
 		POINT p;
 		getMousePos(&p);
