@@ -150,9 +150,9 @@ HRESULT CBScriptable::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBScriptable::scCompare(CBScriptable *Val) {
-	if (this < Val) return -1;
-	else if (this > Val) return 1;
+int CBScriptable::scCompare(CBScriptable *val) {
+	if (this < val) return -1;
+	else if (this > val) return 1;
 	else return 0;
 }
 
