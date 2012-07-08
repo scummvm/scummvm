@@ -1279,14 +1279,6 @@ bool Actor::updateTalk(uint frameTime) {
 	return false;
 }
 
-Math::Quaternion Actor::getRotationQuat() const {
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		return Math::Quaternion::fromEuler(_yaw, _pitch, _roll);
-	} else {
-		return Math::Quaternion::fromEuler(_pitch, _roll, -_yaw);
-	}
-}
-
 void Actor::draw() {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
@@ -1303,7 +1295,7 @@ void Actor::draw() {
 		}
 	}
 
-	// FIXME: if isAttached(), factor in the joint & actor rotation as well.
+	// FIXME: if isAttached(), factor in the joint rotation as well.
 	Math::Vector3d absPos = getWorldPos();
 	const Math::Quaternion rot = getRotationQuat();
 	if (!_costumeStack.empty()) {
@@ -1711,9 +1703,10 @@ Math::Vector3d Actor::getWorldPos() const {
 	if (! isAttached())
 		return getPos();
 
-	Math::Matrix4 attachedToWorld;
+	Math::Quaternion q = _attachedActor->getRotationQuat();
+	Math::Matrix4 attachedToWorld = q.toMatrix();
+	attachedToWorld.transpose();
 	attachedToWorld.setPosition(_attachedActor->getPos());
-	attachedToWorld.buildFromPitchYawRoll(_attachedActor->getPitch(), _attachedActor->getYaw(), _attachedActor->getRoll());
 
 	// If we were attached to a joint, factor in the joint's position & rotation,
 	// relative to its actor.
@@ -1727,6 +1720,17 @@ Math::Vector3d Actor::getWorldPos() const {
 	Math::Vector3d myPos = getPos();
 	attachedToWorld.transform(&myPos, true);
 	return myPos;
+}
+
+Math::Quaternion Actor::getRotationQuat() const {
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Math::Quaternion ret = Math::Quaternion::fromEuler(_yaw, _pitch, _roll);
+		if (isAttached())
+			ret = ret * _attachedActor->getRotationQuat();
+		return ret;
+	} else {
+		return Math::Quaternion::fromEuler(_pitch, _roll, -_yaw);
+	}
 }
 
 void Actor::attachToActor(Actor *other, const char *joint) {
