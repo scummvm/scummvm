@@ -4245,10 +4245,10 @@ HRESULT CBGame::stopVideo() {
 HRESULT CBGame::drawCursor(CBSprite *cursor) {
 	if (!cursor) return E_FAIL;
 	if (cursor != _lastCursor) {
-		cursor->Reset();
+		cursor->reset();
 		_lastCursor = cursor;
 	}
-	return cursor->Draw(_mousePos.x, _mousePos.y);
+	return cursor->draw(_mousePos.x, _mousePos.y);
 }
 
 

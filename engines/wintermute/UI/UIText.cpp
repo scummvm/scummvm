@@ -70,7 +70,7 @@ HRESULT CUIText::display(int OffsetX, int OffsetY) {
 	if (!font) font = Game->_systemFont;
 
 	if (_back) _back->display(OffsetX + _posX, OffsetY + _posY, _width, _height);
-	if (_image) _image->Draw(OffsetX + _posX, OffsetY + _posY, NULL);
+	if (_image) _image->draw(OffsetX + _posX, OffsetY + _posY, NULL);
 
 	if (font && _text) {
 		int text_offset;

@@ -620,7 +620,7 @@ HRESULT CAdActor::update() {
 				}
 
 				if (_tempSprite2) {
-					_tempSprite2->Reset();
+					_tempSprite2->reset();
 					if (_tempSprite2->_looping) _tempSprite2->_looping = false;
 				}
 				_currentSprite = _tempSprite2;
@@ -649,7 +649,7 @@ HRESULT CAdActor::update() {
 				}
 
 				if (_tempSprite2) {
-					_tempSprite2->Reset();
+					_tempSprite2->reset();
 					if (_tempSprite2->_looping) _tempSprite2->_looping = false;
 				}
 				_currentSprite = _tempSprite2;
@@ -694,7 +694,7 @@ HRESULT CAdActor::update() {
 			} else {
 				_tempSprite2 = getTalkStance(_sentence->getNextStance());
 				if (_tempSprite2) {
-					_tempSprite2->Reset();
+					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 					((CAdGame *)Game)->addSentence(_sentence);
 				}
@@ -1304,7 +1304,7 @@ HRESULT CAdActor::playAnim(const char *filename) {
 	if (Anim) {
 		_animSprite2 = Anim->getSprite(_dir);
 		if (_animSprite2) {
-			_animSprite2->Reset();
+			_animSprite2->reset();
 			_state = STATE_PLAYING_ANIM_SET;
 			return S_OK;
 		}

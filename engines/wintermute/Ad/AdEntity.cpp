@@ -574,7 +574,7 @@ HRESULT CAdEntity::update() {
 			} else {
 				_tempSprite2 = getTalkStance(_sentence->getNextStance());
 				if (_tempSprite2) {
-					_tempSprite2->Reset();
+					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 				}
 				((CAdGame *)Game)->addSentence(_sentence);

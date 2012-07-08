@@ -288,7 +288,7 @@ HRESULT CAdSentence::update(TDirection dir) {
 			talkNodeFound = true;
 
 			CBSprite *newSprite = _talkDef->_nodes[i]->getSprite(dir);
-			if (newSprite != _currentSprite) newSprite->Reset();
+			if (newSprite != _currentSprite) newSprite->reset();
 			_currentSprite = newSprite;
 
 			if (!_talkDef->_nodes[i]->_playToEnd) break;
@@ -300,7 +300,7 @@ HRESULT CAdSentence::update(TDirection dir) {
 	if (!talkNodeFound) {
 		CBSprite *newSprite = _talkDef->getDefaultSprite(dir);
 		if (newSprite) {
-			if (newSprite != _currentSprite) newSprite->Reset();
+			if (newSprite != _currentSprite) newSprite->reset();
 			_currentSprite = newSprite;
 		} else _currentSprite = NULL;
 	}

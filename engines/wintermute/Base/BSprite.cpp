@@ -51,7 +51,7 @@ IMPLEMENT_PERSISTENT(CBSprite, false)
 CBSprite::CBSprite(CBGame *inGame, CBObject *Owner): CBScriptHolder(inGame) {
 	_editorAllFrames = false;
 	_owner = Owner;
-	SetDefaults();
+	setDefaults();
 }
 
 
@@ -62,7 +62,7 @@ CBSprite::~CBSprite() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSprite::SetDefaults() {
+void CBSprite::setDefaults() {
 	_currentFrame = -1;
 	_looping = false;
 	_lastFrameTime = 0;
@@ -97,13 +97,13 @@ void CBSprite::cleanup() {
 	delete[] _editorBgFile;
 	_editorBgFile = NULL;
 
-	SetDefaults();
+	setDefaults();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::Draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, uint32 Alpha) {
-	GetCurrentFrame(ZoomX, ZoomY);
+HRESULT CBSprite::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
+	GetCurrentFrame(zoomX, zoomY);
 	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return S_OK;
 
 	// move owner if allowed to
@@ -112,25 +112,25 @@ HRESULT CBSprite::Draw(int X, int Y, CBObject *Register, float ZoomX, float Zoom
 		_owner->_posY += _moveY;
 		_owner->afterMove();
 
-		X = _owner->_posX;
-		Y = _owner->_posY;
+		x = _owner->_posX;
+		y = _owner->_posY;
 	}
 
 	// draw frame
-	return display(X, Y, Register, ZoomX, ZoomY, Alpha);
+	return display(x, y, registerOwner, zoomX, zoomY, alpha);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::loadFile(const char *filename, int LifeTime, TSpriteCacheType CacheType) {
-	Common::SeekableReadStream *File = Game->_fileManager->openFile(filename);
-	if (!File) {
+HRESULT CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
+	Common::SeekableReadStream *file = Game->_fileManager->openFile(filename);
+	if (!file) {
 		Game->LOG(0, "CBSprite::LoadFile failed for file '%s'", filename);
-		if (Game->_dEBUG_DebugMode) return loadFile("invalid_debug.bmp", LifeTime, CacheType);
-		else return loadFile("invalid.bmp", LifeTime, CacheType);
+		if (Game->_dEBUG_DebugMode) return loadFile("invalid_debug.bmp", lifeTime, cacheType);
+		else return loadFile("invalid.bmp", lifeTime, cacheType);
 	} else {
-		Game->_fileManager->closeFile(File);
-		File = NULL;
+		Game->_fileManager->closeFile(file);
+		file = NULL;
 	}
 
 	HRESULT ret;
@@ -139,7 +139,7 @@ HRESULT CBSprite::loadFile(const char *filename, int LifeTime, TSpriteCacheType 
 	if (StringUtil::startsWith(filename, "savegame:", true) || StringUtil::compareNoCase(ext, "bmp") || StringUtil::compareNoCase(ext, "tga") || StringUtil::compareNoCase(ext, "png") || StringUtil::compareNoCase(ext, "jpg")) {
 		CBFrame *frame = new CBFrame(Game);
 		CBSubFrame *subframe = new CBSubFrame(Game);
-		subframe->setSurface(filename, true, 0, 0, 0, LifeTime, true);
+		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
 		if (subframe->_surface == NULL) {
 			Game->LOG(0, "Error loading simple sprite '%s'", filename);
 			ret = E_FAIL;
@@ -155,7 +155,7 @@ HRESULT CBSprite::loadFile(const char *filename, int LifeTime, TSpriteCacheType 
 	} else {
 		byte *buffer = Game->_fileManager->readWholeFile(filename);
 		if (buffer) {
-			if (FAILED(ret = loadBuffer(buffer, true, LifeTime, CacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", filename);
+			if (FAILED(ret = loadBuffer(buffer, true, lifeTime, cacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", filename);
 			delete [] buffer;
 		}
 	}
@@ -221,7 +221,7 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 		buffer = params;
 	}
 
-	int frame_count = 1;
+	int frameCount = 1;
 	CBFrame *frame;
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -285,18 +285,18 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_FRAME: {
 			int FrameLifeTime = lifeTime;
-			if (cacheType == CACHE_HALF && frame_count % 2 != 1) FrameLifeTime = -1;
+			if (cacheType == CACHE_HALF && frameCount % 2 != 1) FrameLifeTime = -1;
 
 			frame = new CBFrame(Game);
 
 			if (FAILED(frame->loadBuffer(params, FrameLifeTime, _streamedKeepLoaded))) {
 				delete frame;
-				Game->LOG(0, "Error parsing frame %d", frame_count);
+				Game->LOG(0, "Error parsing frame %d", frameCount);
 				return E_FAIL;
 			}
 
 			_frames.Add(frame);
-			frame_count++;
+			frameCount++;
 			if (_currentFrame == -1) _currentFrame = 0;
 		}
 		break;
@@ -318,11 +318,11 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 
 
 //////////////////////////////////////////////////////////////////////
-void CBSprite::Reset() {
+void CBSprite::reset() {
 	if (_frames.GetSize() > 0) _currentFrame = 0;
 	else _currentFrame = -1;
 
-	KillAllSounds();
+	killAllSounds();
 
 	_lastFrameTime = 0;
 	_finished = false;
@@ -331,7 +331,7 @@ void CBSprite::Reset() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBSprite::GetCurrentFrame(float ZoomX, float ZoomY) {
+bool CBSprite::GetCurrentFrame(float zoomX, float zoomY) {
 	//if(_owner && _owner->_freezable && Game->_state == GAME_FROZEN) return true;
 
 	if (_currentFrame == -1) return false;
@@ -340,7 +340,7 @@ bool CBSprite::GetCurrentFrame(float ZoomX, float ZoomY) {
 	if (_owner && _owner->_freezable) timer = Game->_timer;
 	else timer = Game->_liveTimer;
 
-	int LastFrame = _currentFrame;
+	int lastFrame = _currentFrame;
 
 	// get current frame
 	if (!_paused && !_finished && timer >= _lastFrameTime + _frames[_currentFrame]->_delay && _lastFrameTime != 0) {
@@ -360,7 +360,7 @@ bool CBSprite::GetCurrentFrame(float ZoomX, float ZoomY) {
 		_lastFrameTime = timer;
 	}
 
-	_changed = (LastFrame != _currentFrame || (_looping && _frames.GetSize() == 1));
+	_changed = (lastFrame != _currentFrame || (_looping && _frames.GetSize() == 1));
 
 	if (_lastFrameTime == 0) {
 		_lastFrameTime = timer;
@@ -372,9 +372,9 @@ bool CBSprite::GetCurrentFrame(float ZoomX, float ZoomY) {
 		_moveX = _frames[_currentFrame]->_moveX;
 		_moveY = _frames[_currentFrame]->_moveY;
 
-		if (ZoomX != 100 || ZoomY != 100) {
-			_moveX = (int)((float)_moveX * (float)(ZoomX / 100.0f));
-			_moveY = (int)((float)_moveY * (float)(ZoomY / 100.0f));
+		if (zoomX != 100 || zoomY != 100) {
+			_moveX = (int)((float)_moveX * (float)(zoomX / 100.0f));
+			_moveY = (int)((float)_moveY * (float)(zoomY / 100.0f));
 		}
 	}
 
@@ -389,7 +389,7 @@ HRESULT CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float Z
 	// on change...
 	if (_changed) {
 		if (_frames[_currentFrame]->_killSound) {
-			KillAllSounds();
+			killAllSounds();
 		}
 		applyEvent("FrameChanged");
 		_frames[_currentFrame]->oneTimeDisplay(_owner, Game->_editorMode && _editorMuted);
@@ -401,7 +401,7 @@ HRESULT CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float Z
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSurface *CBSprite::GetSurface() {
+CBSurface *CBSprite::getSurface() {
 	// only used for animated textures for 3D models
 	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return NULL;
 	CBFrame *Frame = _frames[_currentFrame];
@@ -413,16 +413,16 @@ CBSurface *CBSprite::GetSurface() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSprite::GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float ScaleY) {
-	if (!Rect) return false;
+bool CBSprite::GetBoundingRect(LPRECT rect, int x, int y, float scaleX, float scaleY) {
+	if (!rect) return false;
 
-	CBPlatform::SetRectEmpty(Rect);
+	CBPlatform::SetRectEmpty(rect);
 	for (int i = 0; i < _frames.GetSize(); i++) {
 		RECT frame;
 		RECT temp;
-		CBPlatform::CopyRect(&temp, Rect);
-		_frames[i]->getBoundingRect(&frame, X, Y, ScaleX, ScaleY);
-		CBPlatform::UnionRect(Rect, &temp, &frame);
+		CBPlatform::CopyRect(&temp, rect);
+		_frames[i]->getBoundingRect(&frame, x, y, scaleX, scaleY);
+		CBPlatform::UnionRect(rect, &temp, &frame);
 	}
 	return true;
 }
@@ -552,7 +552,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Reset") == 0) {
 		stack->correctParams(0);
-		Reset();
+		reset();
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -562,21 +562,21 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddFrame") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 		const char *filename = NULL;
-		if (!Val->isNULL()) filename = Val->getString();
+		if (!val->isNULL()) filename = val->getString();
 
-		CBFrame *Frame = new CBFrame(Game);
+		CBFrame *frame = new CBFrame(Game);
 		if (filename != NULL) {
-			CBSubFrame *Sub = new CBSubFrame(Game);
-			if (SUCCEEDED(Sub->setSurface(filename))) {
-				Sub->setDefaultRect();
-				Frame->_subframes.Add(Sub);
-			} else delete Sub;
+			CBSubFrame *sub = new CBSubFrame(Game);
+			if (SUCCEEDED(sub->setSurface(filename))) {
+				sub->setDefaultRect();
+				frame->_subframes.Add(sub);
+			} else delete sub;
 		}
-		_frames.Add(Frame);
+		_frames.Add(frame);
 
-		stack->pushNative(Frame, true);
+		stack->pushNative(frame, true);
 		return S_OK;
 	}
 
@@ -585,24 +585,27 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertFrame") == 0) {
 		stack->correctParams(2);
-		int Index = stack->pop()->getInt();
-		if (Index < 0) Index = 0;
+		int index = stack->pop()->getInt();
+		if (index < 0) 
+			index = 0;
 
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 		const char *filename = NULL;
-		if (!Val->isNULL()) filename = Val->getString();
+		if (!val->isNULL())
+			filename = val->getString();
 
-		CBFrame *Frame = new CBFrame(Game);
+		CBFrame *frame = new CBFrame(Game);
 		if (filename != NULL) {
-			CBSubFrame *Sub = new CBSubFrame(Game);
-			if (SUCCEEDED(Sub->setSurface(filename))) Frame->_subframes.Add(Sub);
-			else delete Sub;
+			CBSubFrame *sub = new CBSubFrame(Game);
+			if (SUCCEEDED(sub->setSurface(filename))) frame->_subframes.Add(sub);
+			else delete sub;
 		}
 
-		if (Index >= _frames.GetSize()) _frames.Add(Frame);
-		else _frames.InsertAt(Index, Frame);
+		if (index >= _frames.GetSize())
+			_frames.Add(frame);
+		else _frames.InsertAt(index, frame);
 
-		stack->pushNative(Frame, true);
+		stack->pushNative(frame, true);
 		return S_OK;
 	}
 
@@ -744,9 +747,10 @@ const char *CBSprite::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::KillAllSounds() {
+HRESULT CBSprite::killAllSounds() {
 	for (int i = 0; i < _frames.GetSize(); i++) {
-		if (_frames[i]->_sound) _frames[i]->_sound->stop();
+		if (_frames[i]->_sound)
+			_frames[i]->_sound->stop();
 	}
 	return S_OK;
 }

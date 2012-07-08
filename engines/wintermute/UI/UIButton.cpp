@@ -631,7 +631,7 @@ HRESULT CUIButton::display(int OffsetX, int OffsetY) {
 
 	if (back) back->display(OffsetX + _posX, OffsetY + _posY, _width, _height);
 	//if(image) image->Draw(ImageX +((_press||_oneTimePress)&&back?1:0), ImageY +((_press||_oneTimePress)&&back?1:0), NULL);
-	if (image) image->Draw(ImageX + ((_press || _oneTimePress) && back ? 1 : 0), ImageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : NULL);
+	if (image) image->draw(ImageX + ((_press || _oneTimePress) && back ? 1 : 0), ImageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : NULL);
 
 	if (font && _text) {
 		int text_offset = (_height - font->getTextHeight((byte *)_text, _width)) / 2;
@@ -641,11 +641,11 @@ HRESULT CUIButton::display(int OffsetX, int OffsetY) {
 	if (!_pixelPerfect || !_image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
 
 	// reset unused sprites
-	if (_image && _image != image) _image->Reset();
-	if (_imageDisable && _imageDisable != image) _imageDisable->Reset();
-	if (_imageFocus && _imageFocus != image) _imageFocus->Reset();
-	if (_imagePress && _imagePress != image) _imagePress->Reset();
-	if (_imageHover && _imageHover != image) _imageHover->Reset();
+	if (_image && _image != image) _image->reset();
+	if (_imageDisable && _imageDisable != image) _imageDisable->reset();
+	if (_imageFocus && _imageFocus != image) _imageFocus->reset();
+	if (_imagePress && _imagePress != image) _imagePress->reset();
+	if (_imageHover && _imageHover != image) _imageHover->reset();
 
 	_press = _hover && Game->_mouseLeftDown && Game->_capturedObject == this;
 

@@ -74,7 +74,7 @@ CPartParticle::~CPartParticle(void) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartParticle::setSprite(const char *filename) {
 	if (_sprite && _sprite->_filename && scumm_stricmp(filename, _sprite->_filename) == 0) {
-		_sprite->Reset();
+		_sprite->reset();
 		return S_OK;
 	}
 

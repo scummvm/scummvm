@@ -179,7 +179,7 @@ HRESULT CUIWindow::display(int OffsetX, int OffsetY) {
 
 	if (_alphaColor != 0) Game->_renderer->_forceAlphaColor = _alphaColor;
 	if (back) back->display(_posX + OffsetX, _posY + OffsetY, _width, _height);
-	if (image) image->Draw(_posX + OffsetX, _posY + OffsetY, _transparent ? NULL : this);
+	if (image) image->draw(_posX + OffsetX, _posY + OffsetY, _transparent ? NULL : this);
 
 	if (!CBPlatform::IsRectEmpty(&_titleRect) && font && _text) {
 		font->drawText((byte *)_text, _posX + OffsetX + _titleRect.left, _posY + OffsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);

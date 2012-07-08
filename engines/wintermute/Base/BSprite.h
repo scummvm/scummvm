@@ -39,8 +39,8 @@ class CBSurface;
 class CBObject;
 class CBSprite: public CBScriptHolder {
 public:
-	HRESULT KillAllSounds();
-	CBSurface *GetSurface();
+	HRESULT killAllSounds();
+	CBSurface *getSurface();
 	char *_editorBgFile;
 	int _editorBgOffsetX;
 	int _editorBgOffsetY;
@@ -48,32 +48,32 @@ public:
 	bool _streamed;
 	bool _streamedKeepLoaded;
 	void cleanup();
-	void SetDefaults();
+	void setDefaults();
 	bool _precise;
 	DECLARE_PERSISTENT(CBSprite, CBScriptHolder)
 
 	bool _editorAllFrames;
-	bool GetBoundingRect(LPRECT Rect, int X, int Y, float ScaleX = 100, float ScaleY = 100);
+	bool GetBoundingRect(LPRECT rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	int _moveY;
 	int _moveX;
-	HRESULT display(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, uint32 Alpha = 0xFFFFFFFF, float Rotate = 0.0f, TSpriteBlendMode BlendMode = BLEND_NORMAL);
-	bool GetCurrentFrame(float ZoomX = 100, float ZoomY = 100);
+	HRESULT display(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
+	bool GetCurrentFrame(float zoomX = 100, float zoomY = 100);
 	bool _canBreak;
 	bool _editorMuted;
 	bool _continuous;
-	void Reset();
+	void reset();
 	CBObject *_owner;
 	bool _changed;
 	bool _paused;
 	bool _finished;
-	HRESULT loadBuffer(byte *Buffer, bool Compete = true, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
-	HRESULT loadFile(const char *filename, int LifeTime = -1, TSpriteCacheType CacheType = CACHE_ALL);
+	HRESULT loadBuffer(byte *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	HRESULT loadFile(const char *filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	uint32 _lastFrameTime;
-	HRESULT Draw(int X, int Y, CBObject *Register = NULL, float ZoomX = 100, float ZoomY = 100, uint32 Alpha = 0xFFFFFFFF);
+	HRESULT draw(int x, int y, CBObject *Register = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
 	bool _looping;
 	int _currentFrame;
-	HRESULT AddFrame(const char *filename, uint32 Delay = 0, int HotspotX = 0, int HotspotY = 0, RECT *Rect = NULL);
-	CBSprite(CBGame *inGame, CBObject *Owner = NULL);
+	HRESULT addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, RECT *rect = NULL);
+	CBSprite(CBGame *inGame, CBObject *owner = NULL);
 	virtual ~CBSprite();
 	CBArray<CBFrame *, CBFrame *> _frames;
 	HRESULT saveAsText(CBDynBuffer *buffer, int indent);

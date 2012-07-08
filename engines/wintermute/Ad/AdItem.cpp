@@ -366,7 +366,7 @@ HRESULT CAdItem::update() {
 			} else {
 				_tempSprite2 = getTalkStance(_sentence->getNextStance());
 				if (_tempSprite2) {
-					_tempSprite2->Reset();
+					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 				}
 				((CAdGame *)Game)->addSentence(_sentence);
@@ -398,7 +398,8 @@ HRESULT CAdItem::display(int x, int y) {
 	_posY = y;
 
 	HRESULT ret;
-	if (_currentSprite) ret = _currentSprite->Draw(x, y, this, 100, 100, _alphaColor);
+	if (_currentSprite)
+		ret = _currentSprite->draw(x, y, this, 100, 100, _alphaColor);
 	else ret = S_OK;
 
 	if (_displayAmount) {

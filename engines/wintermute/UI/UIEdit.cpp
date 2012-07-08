@@ -552,7 +552,7 @@ HRESULT CUIEdit::display(int OffsetX, int OffsetY) {
 	Game->_textEncoding = TEXT_ANSI;
 
 	if (_back) _back->display(OffsetX + _posX, OffsetY + _posY, _width, _height);
-	if (_image) _image->Draw(OffsetX + _posX, OffsetY + _posY, NULL);
+	if (_image) _image->draw(OffsetX + _posX, OffsetY + _posY, NULL);
 
 	// prepare fonts
 	CBFont *font;
