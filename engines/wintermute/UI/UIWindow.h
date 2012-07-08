@@ -43,31 +43,31 @@ public:
 
 	bool _pauseMusic;
 	void cleanup();
-	virtual void makeFreezable(bool Freezable);
+	virtual void makeFreezable(bool freezable);
 	CBViewport *_viewport;
 	bool _clipContents;
 	bool _inGame;
 	bool _isMenu;
 	bool _fadeBackground;
 	uint32 _fadeColor;
-	virtual bool handleMouseWheel(int Delta);
+	virtual bool handleMouseWheel(int delta);
 	CUIWindow *_shieldWindow;
 	CUIButton *_shieldButton;
 	HRESULT close();
 	HRESULT goSystemExclusive();
 	HRESULT goExclusive();
 	TWindowMode _mode;
-	HRESULT moveFocus(bool Forward = true);
+	HRESULT moveFocus(bool forward = true);
 	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
 	POINT _dragFrom;
 	bool _dragging;
 	DECLARE_PERSISTENT(CUIWindow, CUIObject)
 	bool _transparent;
-	HRESULT showWidget(const char *name, bool Visible = true);
-	HRESULT enableWidget(const char *name, bool Enable = true);
+	HRESULT showWidget(const char *name, bool visible = true);
+	HRESULT enableWidget(const char *name, bool enable = true);
 	RECT _titleRect;
 	RECT _dragRect;
-	virtual HRESULT display(int OffsetX = 0, int OffsetY = 0);
+	virtual HRESULT display(int offsetX = 0, int offsetY = 0);
 	CUIWindow(CBGame *inGame);
 	virtual ~CUIWindow();
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
