@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-06-24 18:06+0100\n"
+"POT-Creation-Date: 2012-07-08 12:25+0100\n"
 "PO-Revision-Date: 2011-12-15 14:53+0100\n"
 "Last-Translator: Mikel Iturbe Urretxa <mikel@hamahiru.org>\n"
 "Language-Team: Librezale <librezale@librezale.org>\n"
@@ -1137,13 +1137,13 @@ msgid "~R~eturn to Launcher"
 msgstr "It~z~uli abiarazlera"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
-#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:728
+#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:735
 msgid "Save game:"
 msgstr "Gorde jokoa:"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/scumm/dialogs.cpp:187 engines/cruise/menu.cpp:212
-#: engines/sci/engine/kfile.cpp:728
+#: engines/sci/engine/kfile.cpp:735
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1261,11 +1261,11 @@ msgstr ""
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore game:"
 msgstr "Jokoa kargatu:"
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore"
 msgstr "Kargatu"
 
@@ -1297,12 +1297,12 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 
 #: engines/sci/detection.cpp:400
-msgid "Use IMF/Yahama FB-01 for MIDI output"
+msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr ""
 
 #: engines/sci/detection.cpp:401
 msgid ""
-"Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI "
+"Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
 
@@ -2189,12 +2189,13 @@ msgid "Choose Spell"
 msgstr "Sorginkeria aukeratu"
 
 #: engines/kyra/sound_midi.cpp:475
+#, fuzzy
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
 "We try to map the Roland MT32 instruments to\n"
-"General MIDI ones. After all it might happen\n"
-"that a few tracks will not be correctly played."
+"General MIDI ones. It is still possible that\n"
+"some tracks sound incorrect."
 msgstr ""
 "General MIDI gailua erabiltzen zaudela dirudi,\n"
 "baina zure jokoak Roland MT32 MIDI bakarrik\n"

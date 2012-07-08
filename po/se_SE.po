@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-06-24 18:06+0100\n"
+"POT-Creation-Date: 2012-07-08 12:25+0100\n"
 "PO-Revision-Date: 2012-06-28 15:47+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
@@ -1137,13 +1137,13 @@ msgid "~R~eturn to Launcher"
 msgstr "Åte~r~vänd till launcher"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
-#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:728
+#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:735
 msgid "Save game:"
 msgstr "Spara spelet:"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/scumm/dialogs.cpp:187 engines/cruise/menu.cpp:212
-#: engines/sci/engine/kfile.cpp:728
+#: engines/sci/engine/kfile.cpp:735
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1260,11 +1260,11 @@ msgstr "Använd originalskärmar för spara/ladda"
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr "Använder originalskärmarna för spara/ladda istället för ScummVM:s"
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore game:"
 msgstr "Återställ spel:"
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore"
 msgstr "Återställ"
 
@@ -1293,12 +1293,12 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Föredra digitala ljudeffekter istället för syntetiserade"
 
 #: engines/sci/detection.cpp:400
-msgid "Use IMF/Yahama FB-01 for MIDI output"
-msgstr "Använd IMF/Yahama FB-01 för MIDI-uppspelning"
+msgid "Use IMF/Yamaha FB-01 for MIDI output"
+msgstr "Använd IMF/Yamaha FB-01 för MIDI-uppspelning"
 
 #: engines/sci/detection.cpp:401
 msgid ""
-"Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI "
+"Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
 "Använd ett IMB Music Feature-kort eller en Yamaha FB-01 FM synthmodul för "
@@ -2186,12 +2186,13 @@ msgid "Choose Spell"
 msgstr "Välj trollformel"
 
 #: engines/kyra/sound_midi.cpp:475
+#, fuzzy
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
 "We try to map the Roland MT32 instruments to\n"
-"General MIDI ones. After all it might happen\n"
-"that a few tracks will not be correctly played."
+"General MIDI ones. It is still possible that\n"
+"some tracks sound incorrect."
 msgstr ""
 "Du verkar använda en General MIDI enhet\n"
 "men ditt spel stöder endast Roland MT32 MIDI.\n"
