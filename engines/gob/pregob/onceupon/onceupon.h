@@ -297,17 +297,17 @@ private:
 
 	bool sectionStork();
 	bool sectionChapter1();
-	bool section02();
+	bool sectionParents();
 	bool sectionChapter2();
-	bool section04();
+	bool sectionForest0();
 	bool sectionChapter3();
-	bool section06();
+	bool sectionEvilCastle();
 	bool sectionChapter4();
-	bool section08();
+	bool sectionForest1();
 	bool sectionChapter5();
-	bool section10();
+	bool sectionBossFight();
 	bool sectionChapter6();
-	bool section12();
+	bool sectionForest2();
 	bool sectionChapter7();
 	bool sectionEnd();
 
@@ -336,6 +336,8 @@ private:
 	int        _section;    ///< The current game section.
 
 	Common::String _name; ///< The name of the child.
+
+	uint8 _house;
 
 	uint8 _head;
 	uint8 _colorHair;

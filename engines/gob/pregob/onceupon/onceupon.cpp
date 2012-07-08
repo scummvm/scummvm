@@ -143,17 +143,17 @@ const char *OnceUpon::kSound[kSoundMAX] = {
 const OnceUpon::SectionFunc OnceUpon::kSectionFuncs[kSectionCount] = {
 	&OnceUpon::sectionStork,
 	&OnceUpon::sectionChapter1,
-	&OnceUpon::section02,
+	&OnceUpon::sectionParents,
 	&OnceUpon::sectionChapter2,
-	&OnceUpon::section04,
+	&OnceUpon::sectionForest0,
 	&OnceUpon::sectionChapter3,
-	&OnceUpon::section06,
+	&OnceUpon::sectionEvilCastle,
 	&OnceUpon::sectionChapter4,
-	&OnceUpon::section08,
+	&OnceUpon::sectionForest1,
 	&OnceUpon::sectionChapter5,
-	&OnceUpon::section10,
+	&OnceUpon::sectionBossFight,
 	&OnceUpon::sectionChapter6,
-	&OnceUpon::section12,
+	&OnceUpon::sectionForest2,
 	&OnceUpon::sectionChapter7,
 	&OnceUpon::sectionEnd
 };
@@ -230,6 +230,13 @@ void OnceUpon::init() {
 
 	// Default name
 	_name = "Nemo";
+
+	// Default character properties
+	_house         = 0;
+	_head          = 0;
+	_colorHair     = 0;
+	_colorJacket   = 0;
+	_colorTrousers = 0;
 }
 
 void OnceUpon::deinit() {
@@ -1403,6 +1410,8 @@ bool OnceUpon::sectionStork() {
 			int house = checkButton(param.houses, param.houseCount, mouseX, mouseY);
 			if ((state == kStorkStateWaitUser) && (house >= 0)) {
 
+				_house = house;
+
 				stork->dropBundle(param.drops[house]);
 				state = kStorkStateWaitBundle;
 
@@ -1819,8 +1828,8 @@ bool OnceUpon::sectionChapter1() {
 	return true;
 }
 
-bool OnceUpon::section02() {
-	warning("OnceUpon::section02(): TODO");
+bool OnceUpon::sectionParents() {
+	warning("OnceUpon::sectionParents(): TODO");
 	return true;
 }
 
@@ -1829,8 +1838,8 @@ bool OnceUpon::sectionChapter2() {
 	return true;
 }
 
-bool OnceUpon::section04() {
-	warning("OnceUpon::section04(): TODO");
+bool OnceUpon::sectionForest0() {
+	warning("OnceUpon::sectionForest0(): TODO");
 	return true;
 }
 
@@ -1839,8 +1848,8 @@ bool OnceUpon::sectionChapter3() {
 	return true;
 }
 
-bool OnceUpon::section06() {
-	warning("OnceUpon::section06(): TODO");
+bool OnceUpon::sectionEvilCastle() {
+	warning("OnceUpon::sectionEvilCastle(): TODO");
 	return true;
 }
 
@@ -1849,8 +1858,8 @@ bool OnceUpon::sectionChapter4() {
 	return true;
 }
 
-bool OnceUpon::section08() {
-	warning("OnceUpon::section08(): TODO");
+bool OnceUpon::sectionForest1() {
+	warning("OnceUpon::sectionForest1(): TODO");
 	return true;
 }
 
@@ -1859,8 +1868,8 @@ bool OnceUpon::sectionChapter5() {
 	return true;
 }
 
-bool OnceUpon::section10() {
-	warning("OnceUpon::section10(): TODO");
+bool OnceUpon::sectionBossFight() {
+	warning("OnceUpon::sectionBossFight(): TODO");
 	return true;
 }
 
@@ -1869,8 +1878,8 @@ bool OnceUpon::sectionChapter6() {
 	return true;
 }
 
-bool OnceUpon::section12() {
-	warning("OnceUpon::section12(): TODO");
+bool OnceUpon::sectionForest2() {
+	warning("OnceUpon::sectionForest2(): TODO");
 	return true;
 }
 
