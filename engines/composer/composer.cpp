@@ -381,11 +381,17 @@ void ComposerEngine::loadLibrary(uint id) {
 			filename = getStringFromConfig(_bookGroup, Common::String::format("%d", id));
 		filename = mangleFilename(filename);
 
+		// bookGroup is the basename of the path.
+		// TODO: tidy this up.
 		_bookGroup.clear();
 		for (uint i = 0; i < filename.size(); i++) {
-			if (filename[i] == '\\' || filename[i] == ':')
+			if (filename[i] == '~' || filename[i] == '/' || filename[i] == ':')
 				continue;
 			for (uint j = 0; j < filename.size(); j++) {
+				if (filename[j] == '/') {
+					_bookGroup.clear();
+					continue;
+				}
 				if (filename[j] == '.')
 					break;
 				_bookGroup += filename[j];
