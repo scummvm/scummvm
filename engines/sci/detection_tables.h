@@ -1238,6 +1238,26 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 5 - English DOS Floppy
+	// VERSION file reports "0.000.051"
+	// Supplied by misterhands in bug report #3536863.
+	// FIXME: According to bug #3536863, there exists another English version
+	// with the same file checksums as the vanilla English version, patched to
+	// Polish. We need a better way of distinguishing the two versions. Until
+	// we do, this is a duplicate entry of the Polish version below.
+	{"kq5", "", {
+		{"resource.map", 0, "70010c20138541f89013bb5e1b30f16a", 7998},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276398},
+		{"resource.001", 0, "c0f48d4a7ebeaa6aa074fc98d77423e9", 1018560},
+		{"resource.002", 0, "7f188a95acdb60bbe32a8379ba299393", 1307048},
+		{"resource.003", 0, "0860785af59518b94d54718dddcd6907", 1348500},
+		{"resource.004", 0, "c4745dd1e261c22daa6477961d08bf6c", 1239887},
+		{"resource.005", 0, "6556ff8e7c4d1acf6a78aea154daa76c", 1287869},
+		{"resource.006", 0, "da82e4beb744731d0a151f1d4922fafa", 1170456},
+		{"resource.007", 0, "431def14ca29cdb5e6a5e84d3f38f679", 1240176},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest 5 - English DOS Floppy (supplied by omer_mor in bug report #3036996)
 	// VERSION file reports "0.000.051"
 	{"kq5", "", {
@@ -1356,6 +1376,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// King's Quest 5 - Polish DOS Floppy (supplied by jacek909 in bug report #2725722, includes english language?!)
 	// SCI interpreter version 1.000.060
+	// FIXME: According to bug #3536863, this is actually a patched English version.
+	// The vanilla English version has the same MD5 checksums.
+	// We need a better way of detecting this. Until we do, a duplicate English
+	// entry has been placed above.
 	{"kq5", "", {
 		{"resource.map", 0, "70010c20138541f89013bb5e1b30f16a", 7998},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276398},
