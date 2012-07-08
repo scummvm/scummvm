@@ -89,6 +89,9 @@ uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
 	// differences from the original, which uses custom implementation of atan().
 	// The differences in the return values are the cause of bug #3540976
 	// and perhaps bug #3037267 as well.
+	// The results of this function match the expected results of SCI0, but not
+	// SCI1 (hence the bug in Longbow). We need to find the point in history
+	// when this function was changed.
 
 	// HACK: Return the expected value for Longbow, scene 150 (bug #3540976).
 	// This is a temporary solution, till the function returns the expected
@@ -128,7 +131,6 @@ uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
 	// Convert from grads to degrees by merging grad 0 with grad 1,
 	// grad 10 with grad 11, grad 20 with grad 21, etc. This leads to
 	// "degrees" that equal either one or two grads.
-	// This subtraction is meant to change from 400 "degrees" into 360 degrees
 	angle -= (angle + 9) / 10;
 	return angle;
 }
