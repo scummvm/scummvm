@@ -48,7 +48,7 @@ CSXMemBuffer::CSXMemBuffer(CBGame *inGame, CScStack *stack): CBScriptable(inGame
 	_size = 0;
 
 	int NewSize = stack->pop()->getInt();
-	Resize(MAX(0, NewSize));
+	resize(MAX(0, NewSize));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,43 +76,45 @@ void CSXMemBuffer::cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::Resize(int NewSize) {
-	int OldSize = _size;
+HRESULT CSXMemBuffer::resize(int newSize) {
+	int oldSize = _size;
 
 	if (_size == 0) {
-		_buffer = malloc(NewSize);
-		if (_buffer) _size = NewSize;
+		_buffer = malloc(newSize);
+		if (_buffer) _size = newSize;
 	} else {
-		void *NewBuf = realloc(_buffer, NewSize);
-		if (!NewBuf) {
-			if (NewSize == 0) {
-				_buffer = NewBuf;
-				_size = NewSize;
+		void *newBuf = realloc(_buffer, newSize);
+		if (!newBuf) {
+			if (newSize == 0) {
+				_buffer = newBuf;
+				_size = newSize;
 			} else return E_FAIL;
 		} else {
-			_buffer = NewBuf;
-			_size = NewSize;
+			_buffer = newBuf;
+			_size = newSize;
 		}
 	}
 
-	if (_buffer && _size > OldSize) {
-		memset((byte *)_buffer + OldSize, 0, _size - OldSize);
+	if (_buffer && _size > oldSize) {
+		memset((byte *)_buffer + oldSize, 0, _size - oldSize);
 	}
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXMemBuffer::CheckBounds(CScScript *script, int start, int length) {
+bool CSXMemBuffer::checkBounds(CScScript *script, int start, int length) {
 	if (_buffer == NULL) {
 		script->runtimeError("Cannot use Set/Get methods on an uninitialized memory buffer");
 		return false;
 	}
-	if (_size == 0) return true;
+	if (_size == 0)
+		return true;
 
 	if (start < 0 || length == 0 || start + length > _size) {
 		script->runtimeError("Set/Get method call is out of bounds");
 		return false;
-	} else return true;
+	} else
+		return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -128,10 +130,12 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetSize") == 0) {
 		stack->correctParams(1);
-		int NewSize = stack->pop()->getInt();
-		NewSize = MAX(0, NewSize);
-		if (SUCCEEDED(Resize(NewSize))) stack->pushBool(true);
-		else stack->pushBool(false);
+		int newSize = stack->pop()->getInt();
+		newSize = MAX(0, newSize);
+		if (SUCCEEDED(resize(newSize)))
+			stack->pushBool(true);
+		else
+			stack->pushBool(false);
 
 		return S_OK;
 	}
@@ -141,9 +145,11 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetBool") == 0) {
 		stack->correctParams(1);
-		int Start = stack->pop()->getInt();
-		if (!CheckBounds(script, Start, sizeof(bool))) stack->pushNULL();
-		else stack->pushBool(*(bool *)((byte *)_buffer + Start));
+		int start = stack->pop()->getInt();
+		if (!checkBounds(script, start, sizeof(bool)))
+			stack->pushNULL();
+		else
+			stack->pushBool(*(bool *)((byte *)_buffer + start));
 
 		return S_OK;
 	}
@@ -153,9 +159,11 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetByte") == 0) {
 		stack->correctParams(1);
-		int Start = stack->pop()->getInt();
-		if (!CheckBounds(script, Start, sizeof(byte))) stack->pushNULL();
-		else stack->pushInt(*(byte *)((byte *)_buffer + Start));
+		int start = stack->pop()->getInt();
+		if (!checkBounds(script, start, sizeof(byte)))
+			stack->pushNULL();
+		else
+			stack->pushInt(*(byte *)((byte *)_buffer + start));
 
 		return S_OK;
 	}
@@ -166,8 +174,10 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	else if (strcmp(name, "GetShort") == 0) {
 		stack->correctParams(1);
 		int Start = stack->pop()->getInt();
-		if (!CheckBounds(script, Start, sizeof(short))) stack->pushNULL();
-		else stack->pushInt(65536 + * (short *)((byte *)_buffer + Start));
+		if (!checkBounds(script, Start, sizeof(short)))
+			stack->pushNULL();
+		else
+			stack->pushInt(65536 + * (short *)((byte *)_buffer + Start));
 
 		return S_OK;
 	}
@@ -177,9 +187,11 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetInt") == 0 || strcmp(name, "GetLong") == 0) {
 		stack->correctParams(1);
-		int Start = stack->pop()->getInt();
-		if (!CheckBounds(script, Start, sizeof(int))) stack->pushNULL();
-		else stack->pushInt(*(int *)((byte *)_buffer + Start));
+		int start = stack->pop()->getInt();
+		if (!checkBounds(script, start, sizeof(int)))
+			stack->pushNULL();
+		else
+			stack->pushInt(*(int *)((byte *)_buffer + start));
 
 		return S_OK;
 	}
@@ -189,9 +201,11 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFloat") == 0) {
 		stack->correctParams(1);
-		int Start = stack->pop()->getInt();
-		if (!CheckBounds(script, Start, sizeof(float))) stack->pushNULL();
-		else stack->pushFloat(*(float *)((byte *)_buffer + Start));
+		int start = stack->pop()->getInt();
+		if (!checkBounds(script, start, sizeof(float)))
+			stack->pushNULL();
+		else
+			stack->pushFloat(*(float *)((byte *)_buffer + start));
 
 		return S_OK;
 	}
@@ -201,9 +215,11 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetDouble") == 0) {
 		stack->correctParams(1);
-		int Start = stack->pop()->getInt();
-		if (!CheckBounds(script, Start, sizeof(double))) stack->pushNULL();
-		else stack->pushFloat(*(double *)((byte *)_buffer + Start));
+		int start = stack->pop()->getInt();
+		if (!checkBounds(script, start, sizeof(double)))
+			stack->pushNULL();
+		else
+			stack->pushFloat(*(double *)((byte *)_buffer + start));
 
 		return S_OK;
 	}
@@ -213,26 +229,27 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetString") == 0) {
 		stack->correctParams(2);
-		int Start = stack->pop()->getInt();
-		int Length = stack->pop()->getInt();
+		int start = stack->pop()->getInt();
+		int length = stack->pop()->getInt();
 
 		// find end of string
-		if (Length == 0 && Start >= 0 && Start < _size) {
-			for (int i = Start; i < _size; i++) {
+		if (length == 0 && start >= 0 && start < _size) {
+			for (int i = start; i < _size; i++) {
 				if (((char *)_buffer)[i] == '\0') {
-					Length = i - Start;
+					length = i - start;
 					break;
 				}
 			}
 		}
 
-		if (!CheckBounds(script, Start, Length)) stack->pushNULL();
+		if (!checkBounds(script, start, length))
+			stack->pushNULL();
 		else {
-			char *Str = new char[Length + 1];
-			strncpy(Str, (const char *)_buffer + Start, Length);
-			Str[Length] = '\0';
-			stack->pushString(Str);
-			delete [] Str;
+			char *str = new char[length + 1];
+			strncpy(str, (const char *)_buffer + start, length);
+			str[length] = '\0';
+			stack->pushString(str);
+			delete [] str;
 		}
 		return S_OK;
 	}
@@ -242,12 +259,13 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetPointer") == 0) {
 		stack->correctParams(1);
-		int Start = stack->pop()->getInt();
-		if (!CheckBounds(script, Start, sizeof(void *))) stack->pushNULL();
+		int start = stack->pop()->getInt();
+		if (!checkBounds(script, start, sizeof(void *)))
+			stack->pushNULL();
 		else {
-			void *Pointer = *(void **)((byte *)_buffer + Start);
-			CSXMemBuffer *Buf = new CSXMemBuffer(Game, Pointer);
-			stack->pushNative(Buf, false);
+			void *pointer = *(void **)((byte *)_buffer + start);
+			CSXMemBuffer *buf = new CSXMemBuffer(Game, pointer);
+			stack->pushNative(buf, false);
 		}
 		return S_OK;
 	}
@@ -257,12 +275,13 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetBool") == 0) {
 		stack->correctParams(2);
-		int Start = stack->pop()->getInt();
-		bool Val = stack->pop()->getBool();
+		int start = stack->pop()->getInt();
+		bool val = stack->pop()->getBool();
 
-		if (!CheckBounds(script, Start, sizeof(bool))) stack->pushBool(false);
+		if (!checkBounds(script, start, sizeof(bool)))
+			stack->pushBool(false);
 		else {
-			*(bool *)((byte *)_buffer + Start) = Val;
+			*(bool *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
 		return S_OK;
@@ -273,12 +292,13 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetByte") == 0) {
 		stack->correctParams(2);
-		int Start = stack->pop()->getInt();
-		byte Val = (byte)stack->pop()->getInt();
+		int start = stack->pop()->getInt();
+		byte val = (byte)stack->pop()->getInt();
 
-		if (!CheckBounds(script, Start, sizeof(byte))) stack->pushBool(false);
+		if (!checkBounds(script, start, sizeof(byte)))
+			stack->pushBool(false);
 		else {
-			*(byte *)((byte *)_buffer + Start) = Val;
+			*(byte *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
 		return S_OK;
@@ -289,12 +309,13 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetShort") == 0) {
 		stack->correctParams(2);
-		int Start = stack->pop()->getInt();
-		short Val = (short)stack->pop()->getInt();
+		int start = stack->pop()->getInt();
+		short val = (short)stack->pop()->getInt();
 
-		if (!CheckBounds(script, Start, sizeof(short))) stack->pushBool(false);
+		if (!checkBounds(script, start, sizeof(short)))
+			stack->pushBool(false);
 		else {
-			*(short *)((byte *)_buffer + Start) = Val;
+			*(short *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
 		return S_OK;
@@ -305,12 +326,13 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetInt") == 0 || strcmp(name, "SetLong") == 0) {
 		stack->correctParams(2);
-		int Start = stack->pop()->getInt();
-		int Val = stack->pop()->getInt();
+		int start = stack->pop()->getInt();
+		int val = stack->pop()->getInt();
 
-		if (!CheckBounds(script, Start, sizeof(int))) stack->pushBool(false);
+		if (!checkBounds(script, start, sizeof(int)))
+			stack->pushBool(false);
 		else {
-			*(int *)((byte *)_buffer + Start) = Val;
+			*(int *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
 		return S_OK;
@@ -321,12 +343,13 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetFloat") == 0) {
 		stack->correctParams(2);
-		int Start = stack->pop()->getInt();
-		float Val = (float)stack->pop()->getFloat();
+		int start = stack->pop()->getInt();
+		float val = (float)stack->pop()->getFloat();
 
-		if (!CheckBounds(script, Start, sizeof(float))) stack->pushBool(false);
+		if (!checkBounds(script, start, sizeof(float)))
+			stack->pushBool(false);
 		else {
-			*(float *)((byte *)_buffer + Start) = Val;
+			*(float *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
 		return S_OK;
@@ -337,12 +360,13 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetDouble") == 0) {
 		stack->correctParams(2);
-		int Start = stack->pop()->getInt();
-		double Val = stack->pop()->getFloat();
+		int start = stack->pop()->getInt();
+		double val = stack->pop()->getFloat();
 
-		if (!CheckBounds(script, Start, sizeof(double))) stack->pushBool(false);
+		if (!checkBounds(script, start, sizeof(double)))
+			stack->pushBool(false);
 		else {
-			*(double *)((byte *)_buffer + Start) = Val;
+			*(double *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
 		return S_OK;
@@ -353,12 +377,13 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetString") == 0) {
 		stack->correctParams(2);
-		int Start = stack->pop()->getInt();
-		const char *Val = stack->pop()->getString();
+		int start = stack->pop()->getInt();
+		const char *val = stack->pop()->getString();
 
-		if (!CheckBounds(script, Start, strlen(Val) + 1)) stack->pushBool(false);
+		if (!checkBounds(script, start, strlen(val) + 1))
+			stack->pushBool(false);
 		else {
-			memcpy((byte *)_buffer + Start, Val, strlen(Val) + 1);
+			memcpy((byte *)_buffer + start, val, strlen(val) + 1);
 			stack->pushBool(true);
 		}
 		return S_OK;
@@ -369,10 +394,11 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetPointer") == 0) {
 		stack->correctParams(2);
-		int Start = stack->pop()->getInt();
+		int start = stack->pop()->getInt();
 		/* CScValue *Val = */ stack->pop();
 
-		if (!CheckBounds(script, Start, sizeof(void *))) stack->pushBool(false);
+		if (!checkBounds(script, start, sizeof(void *)))
+			stack->pushBool(false);
 		else {
 			/*
 			int Pointer = (int)Val->getMemBuffer();
@@ -474,8 +500,8 @@ HRESULT CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CSXMemBuffer::scCompare(CBScriptable *Val) {
-	if (_buffer == Val->scToMemBuffer()) return 0;
+int CSXMemBuffer::scCompare(CBScriptable *val) {
+	if (_buffer == val->scToMemBuffer()) return 0;
 	else return 1;
 }
 

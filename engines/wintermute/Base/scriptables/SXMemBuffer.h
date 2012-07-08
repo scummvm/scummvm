@@ -42,16 +42,16 @@ public:
 	HRESULT scSetProperty(const char *name, CScValue *value);
 	HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	const char *scToString();
-	CSXMemBuffer(CBGame *inGame, CScStack *Stack);
-	CSXMemBuffer(CBGame *inGame, void *Buffer);
+	CSXMemBuffer(CBGame *inGame, CScStack *stack);
+	CSXMemBuffer(CBGame *inGame, void *buffer);
 	virtual ~CSXMemBuffer();
 	virtual void *scToMemBuffer();
 	int _size;
 private:
-	HRESULT Resize(int NewSize);
+	HRESULT resize(int newSize);
 	void *_buffer;
 	void cleanup();
-	bool CheckBounds(CScScript *Script, int Start, int Length);
+	bool checkBounds(CScScript *script, int start, int length);
 };
 
 } // end of namespace WinterMute

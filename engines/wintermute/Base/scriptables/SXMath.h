@@ -43,8 +43,8 @@ public:
 	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 
 private:
-	double degreeToRadian(double Value);
-	double radianToDegree(double Value);
+	double degreeToRadian(double value);
+	double radianToDegree(double value);
 
 };
 
