@@ -1586,7 +1586,7 @@ HRESULT CScScript::dbgSendScript(IWmeDebugClient *client) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScScript::dbgSendVariables(IWmeDebugClient *client) {
 	// send script globals
-	_globals->DbgSendVariables(client, WME_DBGVAR_SCRIPT, this, 0);
+	_globals->dbgSendVariables(client, WME_DBGVAR_SCRIPT, this, 0);
 
 	// send scope variables
 	if (_scopeStack->_sP >= 0) {

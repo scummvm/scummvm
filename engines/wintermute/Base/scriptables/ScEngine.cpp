@@ -653,7 +653,7 @@ HRESULT CScEngine::clearGlobals(bool includingNatives) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::dbgSendScripts(IWmeDebugClient *client) {
 	// send global variables
-	_globals->DbgSendVariables(client, WME_DBGVAR_GLOBAL, NULL, 0);
+	_globals->dbgSendVariables(client, WME_DBGVAR_GLOBAL, NULL, 0);
 
 	// process normal scripts first
 	for (int i = 0; i < _scripts.GetSize(); i++) {

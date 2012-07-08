@@ -43,25 +43,25 @@ class CBScriptable;
 
 class CScValue : public CBBase, public IWmeDebugProp {
 public:
-	HRESULT DbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, CScScript *script, unsigned int scopeID);
+	HRESULT dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, CScScript *script, unsigned int scopeID);
 
-	static int compare(CScValue *Val1, CScValue *Val2);
-	static int compareStrict(CScValue *Val1, CScValue *Val2);
+	static int compare(CScValue *val1, CScValue *val2);
+	static int compareStrict(CScValue *val1, CScValue *val2);
 	TValType getTypeTolerant();
-	void cleanup(bool IgnoreNatives = false);
+	void cleanup(bool ignoreNatives = false);
 	DECLARE_PERSISTENT(CScValue, CBBase)
 
 	bool _isConstVar;
 	HRESULT saveAsText(CBDynBuffer *buffer, int indent);
-	void setValue(CScValue *Val);
+	void setValue(CScValue *val);
 	bool _persistent;
 	bool propExists(const char *name);
 	void copy(CScValue *orig, bool copyWhole = false);
 	void setStringVal(const char *val);
 	TValType getType();
-	bool getBool(bool Default = false);
-	int getInt(int Default = 0);
-	double getFloat(double Default = 0.0f);
+	bool getBool(bool defaultVal = false);
+	int getInt(int defaultVal = 0);
+	double getFloat(double defaultVal = 0.0f);
 	const char *getString();
 	void *getMemBuffer();
 	CBScriptable *getNative();
@@ -104,11 +104,11 @@ public:
 	Common::HashMap<Common::String, CScValue *> _valObject;
 	Common::HashMap<Common::String, CScValue *>::iterator _valIter;
 
-	bool setProperty(const char *PropName, int Value);
-	bool setProperty(const char *PropName, const char *Value);
-	bool setProperty(const char *PropName, double Value);
-	bool setProperty(const char *PropName, bool Value);
-	bool setProperty(const char *PropName);
+	bool setProperty(const char *propName, int value);
+	bool setProperty(const char *propName, const char *value);
+	bool setProperty(const char *propName, double value);
+	bool setProperty(const char *propName, bool value);
+	bool setProperty(const char *propName);
 
 
 // IWmeDebugProp interface implementation
@@ -123,17 +123,17 @@ public:
 	virtual IWmeDebugObject *dbgGetValNative();
 
 	// setters
-	virtual bool dbgSetVal(int Value);
-	virtual bool dbgSetVal(double Value);
-	virtual bool dbgSetVal(bool Value);
-	virtual bool dbgSetVal(const char *Value);
+	virtual bool dbgSetVal(int value);
+	virtual bool dbgSetVal(double value);
+	virtual bool dbgSetVal(bool value);
+	virtual bool dbgSetVal(const char *value);
 	virtual bool dbgSetVal();
 
 	// properties
 	virtual int dbgGetNumProperties();
-	virtual bool dbgGetProperty(int Index, const char **Name, IWmeDebugProp **Value);
+	virtual bool dbgGetProperty(int index, const char **mame, IWmeDebugProp **value);
 
-	virtual bool dbgGetDescription(char *Buf, int BufSize);
+	virtual bool dbgGetDescription(char *buf, int bufSize);
 };
 
 } // end of namespace WinterMute
