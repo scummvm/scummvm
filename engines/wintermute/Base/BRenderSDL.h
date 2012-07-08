@@ -68,12 +68,12 @@ public:
 	HRESULT flip();
 	HRESULT fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
 
-	HRESULT fade(uint16 Alpha);
-	HRESULT fadeToColor(uint32 Color, Common::Rect *rect = NULL);
+	HRESULT fade(uint16 alpha);
+	HRESULT fadeToColor(uint32 color, Common::Rect *rect = NULL);
 
 	HRESULT switchFullscreen();
 
-	HRESULT drawLine(int X1, int Y1, int X2, int Y2, uint32 Color);
+	HRESULT drawLine(int x1, int y1, int x2, int y2, uint32 color);
 
 	CBImage *takeScreenshot();
 

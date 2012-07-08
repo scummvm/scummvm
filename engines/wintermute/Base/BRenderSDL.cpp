@@ -490,32 +490,32 @@ void CBRenderSDL::drawFromSurface(const Graphics::Surface *surf, Common::Rect *s
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::drawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
+HRESULT CBRenderSDL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	static bool hasWarned = false;
 	if (!hasWarned) {
 		warning("CBRenderSDL::DrawLine - not fully ported yet");
 		hasWarned = true;
 	}
-	byte r = D3DCOLGetR(Color);
-	byte g = D3DCOLGetG(Color);
-	byte b = D3DCOLGetB(Color);
-	byte a = D3DCOLGetA(Color);
+	byte r = D3DCOLGetR(color);
+	byte g = D3DCOLGetG(color);
+	byte b = D3DCOLGetB(color);
+	byte a = D3DCOLGetA(color);
 
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 
 	POINT point1, point2;
-	point1.x = X1;
-	point1.y = Y1;
+	point1.x = x1;
+	point1.y = y1;
 	pointToScreen(&point1);
 
-	point2.x = X2;
-	point2.y = Y2;
+	point2.x = x2;
+	point2.y = y2;
 	pointToScreen(&point2);
 
 	// TODO: This thing is mostly here until I'm sure about the final color-format.
-	uint32 color = _renderSurface->format.ARGBToColor(a, r, g, b);
-	_renderSurface->drawLine(point1.x, point1.y, point2.x, point2.y, color);
+	uint32 colorVal = _renderSurface->format.ARGBToColor(a, r, g, b);
+	_renderSurface->drawLine(point1.x, point1.y, point2.x, point2.y, colorVal);
 	//SDL_RenderDrawLine(_renderer, point1.x, point1.y, point2.x, point2.y);
 	return S_OK;
 }
