@@ -60,7 +60,7 @@ CBSurface::~CBSurface() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::create(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int lifeTime, bool keepLoaded) {
+HRESULT CBSurface::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	return E_FAIL;
 }
 
@@ -155,9 +155,9 @@ void CBSurface::setFilename(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBSurface::setSize(int Width, int Height) {
-	_width = Width;
-	_height = Height;
+void CBSurface::setSize(int width, int height) {
+	_width = width;
+	_height = height;
 }
 
 } // end of namespace WinterMute

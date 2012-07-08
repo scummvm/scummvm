@@ -61,7 +61,7 @@ public:
 	virtual HRESULT displayZoom(int x, int y, RECT rect, float ZoomX, float ZoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
 	virtual HRESULT displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
 	virtual HRESULT restore();
-	virtual HRESULT create(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime = -1, bool KeepLoaded = false) = 0;
+	virtual HRESULT create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
 	virtual HRESULT create(int Width, int Height);
 	virtual HRESULT putSurface(const Graphics::Surface &surface, bool hasAlpha = false) {
 		return E_FAIL;
