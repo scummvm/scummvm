@@ -43,7 +43,7 @@ public:
 	HRESULT getTotalOffset(int *offsetX, int *offsetY);
 	bool _canFocus;
 	HRESULT focus();
-	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
+	virtual HRESULT handleMouse(TMouseEvent event, TMouseButton button);
 	bool isFocused();
 	bool _parentNotify;
 	DECLARE_PERSISTENT(CUIObject, CBObject)
@@ -64,7 +64,7 @@ public:
 	int _height;
 	TUIObjectType _type;
 	CBSprite *_image;
-	void setListener(CBScriptHolder *Object, CBScriptHolder *ListenerObject, uint32 ListenerParam);
+	void setListener(CBScriptHolder *object, CBScriptHolder *listenerObject, uint32 listenerParam);
 	CBScriptHolder *_listenerParamObject;
 	uint32 _listenerParamDWORD;
 	CBScriptHolder *_listenerObject;

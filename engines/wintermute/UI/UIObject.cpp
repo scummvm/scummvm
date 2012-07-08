@@ -85,11 +85,11 @@ CUIObject::~CUIObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIObject::setText(const char *Text) {
+void CUIObject::setText(const char *text) {
 	if (_text) delete [] _text;
-	_text = new char [strlen(Text) + 1];
+	_text = new char [strlen(text) + 1];
 	if (_text) {
-		strcpy(_text, Text);
+		strcpy(_text, text);
 		for (int i = 0; i < strlen(_text); i++) {
 			if (_text[i] == '|') _text[i] = '\n';
 		}
@@ -98,16 +98,16 @@ void CUIObject::setText(const char *Text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::display(int OffsetX, int OffsetY) {
+HRESULT CUIObject::display(int offsetX, int offsetY) {
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIObject::setListener(CBScriptHolder *Object, CBScriptHolder *ListenerObject, uint32 ListenerParam) {
-	_listenerObject = Object;
-	_listenerParamObject = ListenerObject;
-	_listenerParamDWORD = ListenerParam;
+void CUIObject::setListener(CBScriptHolder *object, CBScriptHolder *listenerObject, uint32 listenerParam) {
+	_listenerObject = object;
+	_listenerParamObject = listenerObject;
+	_listenerParamDWORD = listenerParam;
 }
 
 
@@ -161,19 +161,19 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetImage") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 
-		/* const char *filename = */ Val->getString();
+		/* const char *filename = */ val->getString();
 
 		delete _image;
 		_image = NULL;
-		if (Val->isNULL()) {
+		if (val->isNULL()) {
 			stack->pushBool(true);
 			return S_OK;
 		}
 
 		_image = new CBSprite(Game);
-		if (!_image || FAILED(_image->loadFile(Val->getString()))) {
+		if (!_image || FAILED(_image->loadFile(val->getString()))) {
 			delete _image;
 			_image = NULL;
 			stack->pushBool(false);
@@ -500,12 +500,12 @@ bool CUIObject::isFocused() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::handleMouse(TMouseEvent Event, TMouseButton Button) {
+HRESULT CUIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	// handle focus change
-	if (Event == MOUSE_CLICK && Button == MOUSE_BUTTON_LEFT) {
+	if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 		focus();
 	}
-	return CBObject::handleMouse(Event, Button);
+	return CBObject::handleMouse(event, button);
 }
 
 
@@ -537,18 +537,18 @@ HRESULT CUIObject::focus() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::getTotalOffset(int *OffsetX, int *OffsetY) {
-	int OffX = 0, OffY = 0;
+HRESULT CUIObject::getTotalOffset(int *offsetX, int *offsetY) {
+	int offX = 0, offY = 0;
 
 	CUIObject *obj = _parent;
 	while (obj) {
-		OffX += obj->_posX;
-		OffY += obj->_posY;
+		offX += obj->_posX;
+		offY += obj->_posY;
 
 		obj = obj->_parent;
 	}
-	if (OffsetX) *OffsetX = OffX;
-	if (OffsetY) *OffsetY = OffY;
+	if (offsetX) *offsetX = offX;
+	if (offsetY) *offsetY = offY;
 
 	return S_OK;
 }
