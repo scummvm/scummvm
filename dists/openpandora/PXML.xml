@@ -6,9 +6,9 @@
         <!-- version type can be alpha, beta or release, set to release in branch -->
         <version major="1" minor="5" release="0" build="1" type="release"/>
         <!-- Both title and titles are needed -->
-        <title lang="en_US">ScummVM 1.5.0git</title>
+        <title lang="en_US">ScummVM 1.5.0pre</title>
         <titles>
-            <title lang="en_US">ScummVM 1.5.0git</title>
+            <title lang="en_US">ScummVM 1.5.0pre</title>
         </titles>
         <descriptions>
             <description lang="en_US">
