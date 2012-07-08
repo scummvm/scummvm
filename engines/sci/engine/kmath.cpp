@@ -77,10 +77,16 @@ reg_t kSqrt(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, (int16) sqrt((float) ABS(argv[0].toSint16())));
 }
 
+/**
+ * Returns the angle (in degrees) between the two points determined by (x1, y1)
+ * and (x2, y2). The angle ranges from 0 to 359 degrees.
+ * What this function does is pretty simple but apparently the original is not
+ * accurate.
+ */
 uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
 	// TODO: This has been implemented based on behavior observed with a test
 	// program created with SCI Studio. However, the return values have subtle
-	// differences from the original, which uses atan().
+	// differences from the original, which uses custom implementation of atan().
 	// The differences in the return values are the cause of bug #3540976
 	// and perhaps bug #3037267 as well.
 
@@ -94,7 +100,7 @@ uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 #if 0
 	// A simpler atan2-based implementation
-	return (360 - atan2((double)(x1 - x2), (double)(y1 - y2)) * 57.2958) % 360;
+	return (int16)(360 - atan2((double)(x1 - x2), (double)(y1 - y2)) * 57.2958) % 360;
 #endif
 
 	int16 xRel = x2 - x1;
@@ -122,6 +128,7 @@ uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
 	// Convert from grads to degrees by merging grad 0 with grad 1,
 	// grad 10 with grad 11, grad 20 with grad 21, etc. This leads to
 	// "degrees" that equal either one or two grads.
+	// This subtraction is meant to change from 400 "degrees" into 360 degrees
 	angle -= (angle + 9) / 10;
 	return angle;
 }
