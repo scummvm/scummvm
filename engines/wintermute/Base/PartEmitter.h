@@ -104,15 +104,15 @@ public:
 
 	HRESULT update();
 	HRESULT display() { return display(NULL); } // To avoid shadowing the inherited display-function.
-	HRESULT display(CBRegion *Region);
+	HRESULT display(CBRegion *region);
 
 	HRESULT sortParticlesByZ();
 	HRESULT addSprite(const char *filename);
 	HRESULT removeSprite(const char *filename);
-	HRESULT setBorder(int X, int Y, int Width, int Height);
-	HRESULT setBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom);
+	HRESULT setBorder(int x, int y, int width, int height);
+	HRESULT setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom);
 
-	HRESULT addForce(const char *name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength);
+	HRESULT addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength);
 	HRESULT removeForce(const char *name);
 
 	CBArray<CPartForce *, CPartForce *> _forces;
@@ -126,9 +126,9 @@ public:
 
 private:
 	CPartForce *addForceByName(const char *name);
-	int static compareZ(const void *Obj1, const void *Obj2);
-	HRESULT initParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta);
-	HRESULT updateInternal(uint32 CurrentTime, uint32 TimerDelta);
+	int static compareZ(const void *obj1, const void *obj2);
+	HRESULT initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta);
+	HRESULT updateInternal(uint32 currentTime, uint32 timerDelta);
 	uint32 _lastGenTime;
 	CBArray<CPartParticle *, CPartParticle *> _particles;
 	CBArray<char *, char *> _sprites;

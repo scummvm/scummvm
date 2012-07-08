@@ -151,77 +151,77 @@ HRESULT CPartEmitter::removeSprite(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::initParticle(CPartParticle *Particle, uint32 CurrentTime, uint32 TimerDelta) {
-	if (!Particle) return E_FAIL;
+HRESULT CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta) {
+	if (!particle) return E_FAIL;
 	if (_sprites.GetSize() == 0) return E_FAIL;
 
-	int PosX = CBUtils::randomInt(_posX, _posX + _width);
-	int PosY = CBUtils::randomInt(_posY, _posY + _height);
-	float PosZ = CBUtils::randomFloat(0.0f, 100.0f);
+	int posX = CBUtils::randomInt(_posX, _posX + _width);
+	int posY = CBUtils::randomInt(_posY, _posY + _height);
+	float posZ = CBUtils::randomFloat(0.0f, 100.0f);
 
-	float Velocity;
-	if (_velocityZBased) Velocity = _velocity1 + PosZ * (_velocity2 - _velocity1) / 100;
-	else Velocity = CBUtils::randomFloat(_velocity1, _velocity2);
+	float velocity;
+	if (_velocityZBased) velocity = _velocity1 + posZ * (_velocity2 - _velocity1) / 100;
+	else velocity = CBUtils::randomFloat(_velocity1, _velocity2);
 
-	float Scale;
-	if (_scaleZBased) Scale = _scale1 + PosZ * (_scale2 - _scale1) / 100;
-	else Scale = CBUtils::randomFloat(_scale1, _scale2);
+	float scale;
+	if (_scaleZBased) scale = _scale1 + posZ * (_scale2 - _scale1) / 100;
+	else scale = CBUtils::randomFloat(_scale1, _scale2);
 
-	int LifeTime;
-	if (_lifeTimeZBased) LifeTime = _lifeTime2 - PosZ * (_lifeTime2 - _lifeTime1) / 100;
-	else LifeTime = CBUtils::randomInt(_lifeTime1, _lifeTime2);
+	int lifeTime;
+	if (_lifeTimeZBased) lifeTime = _lifeTime2 - posZ * (_lifeTime2 - _lifeTime1) / 100;
+	else lifeTime = CBUtils::randomInt(_lifeTime1, _lifeTime2);
 
-	float Angle = CBUtils::randomAngle(_angle1, _angle2);
-	int SpriteIndex = CBUtils::randomInt(0, _sprites.GetSize() - 1);
+	float angle = CBUtils::randomAngle(_angle1, _angle2);
+	int spriteIndex = CBUtils::randomInt(0, _sprites.GetSize() - 1);
 
-	float Rotation = CBUtils::randomAngle(_rotation1, _rotation2);
-	float AngVelocity = CBUtils::randomFloat(_angVelocity1, _angVelocity2);
-	float GrowthRate = CBUtils::randomFloat(_growthRate1, _growthRate2);
+	float rotation = CBUtils::randomAngle(_rotation1, _rotation2);
+	float angVelocity = CBUtils::randomFloat(_angVelocity1, _angVelocity2);
+	float growthRate = CBUtils::randomFloat(_growthRate1, _growthRate2);
 
 	if (!CBPlatform::IsRectEmpty(&_border)) {
-		int ThicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * PosZ / 100.0f);
-		int ThicknessRight  = (int)(_borderThicknessRight  - (float)_borderThicknessRight  * PosZ / 100.0f);
-		int ThicknessTop    = (int)(_borderThicknessTop    - (float)_borderThicknessTop    * PosZ / 100.0f);
-		int ThicknessBottom = (int)(_borderThicknessBottom - (float)_borderThicknessBottom * PosZ / 100.0f);
+		int thicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * posZ / 100.0f);
+		int thicknessRight  = (int)(_borderThicknessRight  - (float)_borderThicknessRight  * posZ / 100.0f);
+		int thicknessTop    = (int)(_borderThicknessTop    - (float)_borderThicknessTop    * posZ / 100.0f);
+		int thicknessBottom = (int)(_borderThicknessBottom - (float)_borderThicknessBottom * posZ / 100.0f);
 
-		Particle->_border = _border;
-		Particle->_border.left += ThicknessLeft;
-		Particle->_border.right -= ThicknessRight;
-		Particle->_border.top += ThicknessTop;
-		Particle->_border.bottom -= ThicknessBottom;
+		particle->_border = _border;
+		particle->_border.left += thicknessLeft;
+		particle->_border.right -= thicknessRight;
+		particle->_border.top += thicknessTop;
+		particle->_border.bottom -= thicknessBottom;
 	}
 
-	Vector2 VecPos((float)PosX, (float)PosY);
-	Vector2 VecVel(0, Velocity);
+	Vector2 vecPos((float)posX, (float)posY);
+	Vector2 vecVel(0, velocity);
 
-	Matrix4 MatRot;
-	MatRot.rotationZ(Common::deg2rad(CBUtils::normalizeAngle(Angle - 180)));
-	MatRot.transformVector2(VecVel);
+	Matrix4 matRot;
+	matRot.rotationZ(Common::deg2rad(CBUtils::normalizeAngle(angle - 180)));
+	matRot.transformVector2(vecVel);
 
 	if (_alphaTimeBased) {
-		Particle->_alpha1 = _alpha1;
-		Particle->_alpha2 = _alpha2;
+		particle->_alpha1 = _alpha1;
+		particle->_alpha2 = _alpha2;
 	} else {
-		int Alpha = CBUtils::randomInt(_alpha1, _alpha2);
-		Particle->_alpha1 = Alpha;
-		Particle->_alpha2 = Alpha;
+		int alpha = CBUtils::randomInt(_alpha1, _alpha2);
+		particle->_alpha1 = alpha;
+		particle->_alpha2 = alpha;
 	}
 
-	Particle->_creationTime = CurrentTime;
-	Particle->_pos = VecPos;
-	Particle->_posZ = PosZ;
-	Particle->_velocity = VecVel;
-	Particle->_scale = Scale;
-	Particle->_lifeTime = LifeTime;
-	Particle->_rotation = Rotation;
-	Particle->_angVelocity = AngVelocity;
-	Particle->_growthRate = GrowthRate;
-	Particle->_exponentialGrowth = _exponentialGrowth;
-	Particle->_isDead = FAILED(Particle->setSprite(_sprites[SpriteIndex]));
-	Particle->fadeIn(CurrentTime, _fadeInTime);
+	particle->_creationTime = currentTime;
+	particle->_pos = vecPos;
+	particle->_posZ = posZ;
+	particle->_velocity = vecVel;
+	particle->_scale = scale;
+	particle->_lifeTime = lifeTime;
+	particle->_rotation = rotation;
+	particle->_angVelocity = angVelocity;
+	particle->_growthRate = growthRate;
+	particle->_exponentialGrowth = _exponentialGrowth;
+	particle->_isDead = FAILED(particle->setSprite(_sprites[spriteIndex]));
+	particle->fadeIn(currentTime, _fadeInTime);
 
 
-	if (Particle->_isDead) return E_FAIL;
+	if (particle->_isDead) return E_FAIL;
 	else return S_OK;
 }
 
@@ -232,54 +232,54 @@ HRESULT CPartEmitter::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::updateInternal(uint32 CurrentTime, uint32 TimerDelta) {
-	int NumLive = 0;
+HRESULT CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
+	int numLive = 0;
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
-		_particles[i]->update(this, CurrentTime, TimerDelta);
+		_particles[i]->update(this, currentTime, timerDelta);
 
-		if (!_particles[i]->_isDead) NumLive++;
+		if (!_particles[i]->_isDead) numLive++;
 	}
 
 
 	// we're understaffed
-	if (NumLive < _maxParticles) {
-		bool NeedsSort = false;
-		if (CurrentTime - _lastGenTime > _genInterval) {
-			_lastGenTime = CurrentTime;
+	if (numLive < _maxParticles) {
+		bool needsSort = false;
+		if (currentTime - _lastGenTime > _genInterval) {
+			_lastGenTime = currentTime;
 			_batchesGenerated++;
 
 			if (_maxBatches > 0 && _batchesGenerated > _maxBatches) {
 				return S_OK;
 			}
 
-			int ToGen = MIN(_genAmount, _maxParticles - NumLive);
-			while (ToGen > 0) {
-				int FirstDeadIndex = -1;
+			int toGen = MIN(_genAmount, _maxParticles - numLive);
+			while (toGen > 0) {
+				int firstDeadIndex = -1;
 				for (int i = 0; i < _particles.GetSize(); i++) {
 					if (_particles[i]->_isDead) {
-						FirstDeadIndex = i;
+						firstDeadIndex = i;
 						break;
 					}
 				}
 
-				CPartParticle *Particle;
-				if (FirstDeadIndex >= 0) Particle = _particles[FirstDeadIndex];
+				CPartParticle *particle;
+				if (firstDeadIndex >= 0) particle = _particles[firstDeadIndex];
 				else {
-					Particle = new CPartParticle(Game);
-					_particles.Add(Particle);
+					particle = new CPartParticle(Game);
+					_particles.Add(particle);
 				}
-				initParticle(Particle, CurrentTime, TimerDelta);
-				NeedsSort = true;
+				initParticle(particle, currentTime, timerDelta);
+				needsSort = true;
 
-				ToGen--;
+				toGen--;
 			}
 		}
-		if (NeedsSort && (_scaleZBased || _velocityZBased || _lifeTimeZBased))
+		if (needsSort && (_scaleZBased || _velocityZBased || _lifeTimeZBased))
 			sortParticlesByZ();
 
 		// we actually generated some particles and we're not in fast-forward mode
-		if (NeedsSort && _overheadTime == 0) {
+		if (needsSort && _overheadTime == 0) {
 			if (_owner && _emitEvent) _owner->applyEvent(_emitEvent);
 		}
 	}
@@ -288,12 +288,12 @@ HRESULT CPartEmitter::updateInternal(uint32 CurrentTime, uint32 TimerDelta) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::display(CBRegion *Region) {
+HRESULT CPartEmitter::display(CBRegion *region) {
 	if (_sprites.GetSize() <= 1) Game->_renderer->startSpriteBatch();
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
-		if (Region != NULL && _useRegion) {
-			if (!Region->pointInRegion(_particles[i]->_pos.x, _particles[i]->_pos.y)) continue;
+		if (region != NULL && _useRegion) {
+			if (!region->pointInRegion(_particles[i]->_pos.x, _particles[i]->_pos.y)) continue;
 		}
 
 		_particles[i]->display(this);
@@ -314,17 +314,16 @@ HRESULT CPartEmitter::start() {
 
 
 	if (_overheadTime > 0) {
-		uint32 Delta = 500;
-		int Steps = _overheadTime / Delta;
-		uint32 CurrentTime = Game->_timer - _overheadTime;
+		uint32 delta = 500;
+		int steps = _overheadTime / delta;
+		uint32 currentTime = Game->_timer - _overheadTime;
 
-		for (int i = 0; i < Steps; i++) {
-			updateInternal(CurrentTime, Delta);
-			CurrentTime += Delta;
+		for (int i = 0; i < steps; i++) {
+			updateInternal(currentTime, delta);
+			currentTime += delta;
 		}
 		_overheadTime = 0;
 	}
-
 
 	return S_OK;
 }
@@ -337,65 +336,65 @@ HRESULT CPartEmitter::sortParticlesByZ() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CPartEmitter::compareZ(const void *Obj1, const void *Obj2) {
-	CPartParticle *P1 = *(CPartParticle **)Obj1;
-	CPartParticle *P2 = *(CPartParticle **)Obj2;
+int CPartEmitter::compareZ(const void *obj1, const void *obj2) {
+	CPartParticle *p1 = *(CPartParticle **)obj1;
+	CPartParticle *p2 = *(CPartParticle **)obj2;
 
-	if (P1->_posZ < P2->_posZ) return -1;
-	else if (P1->_posZ > P2->_posZ) return 1;
+	if (p1->_posZ < p2->_posZ) return -1;
+	else if (p1->_posZ > p2->_posZ) return 1;
 	else return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::setBorder(int X, int Y, int Width, int Height) {
-	CBPlatform::SetRect(&_border, X, Y, X + Width, Y + Height);
+HRESULT CPartEmitter::setBorder(int x, int y, int width, int height) {
+	CBPlatform::SetRect(&_border, x, y, x + width, y + height);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::setBorderThickness(int ThicknessLeft, int ThicknessRight, int ThicknessTop, int ThicknessBottom) {
-	_borderThicknessLeft = ThicknessLeft;
-	_borderThicknessRight = ThicknessRight;
-	_borderThicknessTop = ThicknessTop;
-	_borderThicknessBottom = ThicknessBottom;
+HRESULT CPartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom) {
+	_borderThicknessLeft = thicknessLeft;
+	_borderThicknessRight = thicknessRight;
+	_borderThicknessTop = thicknessTop;
+	_borderThicknessBottom = thicknessBottom;
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 CPartForce *CPartEmitter::addForceByName(const char *name) {
-	CPartForce *Force = NULL;
+	CPartForce *force = NULL;
 
 	for (int i = 0; i < _forces.GetSize(); i++) {
 		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
-			Force = _forces[i];
+			force = _forces[i];
 			break;
 		}
 	}
-	if (!Force) {
-		Force = new CPartForce(Game);
-		if (Force) {
-			Force->setName(name);
-			_forces.Add(Force);
+	if (!force) {
+		force = new CPartForce(Game);
+		if (force) {
+			force->setName(name);
+			_forces.Add(force);
 		}
 	}
-	return Force;
+	return force;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::addForce(const char *name, CPartForce::TForceType Type, int PosX, int PosY, float Angle, float Strength) {
-	CPartForce *Force = addForceByName(name);
-	if (!Force) return E_FAIL;
+HRESULT CPartEmitter::addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength) {
+	CPartForce *force = addForceByName(name);
+	if (!force) return E_FAIL;
 
-	Force->_type = Type;
-	Force->_pos = Vector2(PosX, PosY);
+	force->_type = type;
+	force->_pos = Vector2(posX, posY);
 
-	Force->_direction = Vector2(0, Strength);
-	Matrix4 MatRot;
-	MatRot.rotationZ(Common::deg2rad(CBUtils::normalizeAngle(Angle - 180)));
-	MatRot.transformVector2(Force->_direction);
+	force->_direction = Vector2(0, strength);
+	Matrix4 matRot;
+	matRot.rotationZ(Common::deg2rad(CBUtils::normalizeAngle(angle - 180)));
+	matRot.transformVector2(force->_direction);
 
 	return S_OK;
 }
@@ -422,12 +421,12 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetBorder") == 0) {
 		stack->correctParams(4);
-		int BorderX      = stack->pop()->getInt();
-		int BorderY      = stack->pop()->getInt();
-		int BorderWidth  = stack->pop()->getInt();
-		int BorderHeight = stack->pop()->getInt();
+		int borderX      = stack->pop()->getInt();
+		int borderY      = stack->pop()->getInt();
+		int borderWidth  = stack->pop()->getInt();
+		int borderHeight = stack->pop()->getInt();
 
-		stack->pushBool(SUCCEEDED(setBorder(BorderX, BorderY, BorderWidth, BorderHeight)));
+		stack->pushBool(SUCCEEDED(setBorder(borderX, borderY, borderWidth, borderHeight)));
 
 		return S_OK;
 	}
@@ -436,12 +435,12 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetBorderThickness") == 0) {
 		stack->correctParams(4);
-		int Left   = stack->pop()->getInt();
-		int Right  = stack->pop()->getInt();
-		int Top    = stack->pop()->getInt();
-		int Bottom = stack->pop()->getInt();
+		int left   = stack->pop()->getInt();
+		int right  = stack->pop()->getInt();
+		int top    = stack->pop()->getInt();
+		int bottom = stack->pop()->getInt();
 
-		stack->pushBool(SUCCEEDED(setBorderThickness(Left, Right, Top, Bottom)));
+		stack->pushBool(SUCCEEDED(setBorderThickness(left, right, top, bottom)));
 
 		return S_OK;
 	}
@@ -450,8 +449,8 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddSprite") == 0) {
 		stack->correctParams(1);
-		const char *SpriteFile = stack->pop()->getString();
-		stack->pushBool(SUCCEEDED(addSprite(SpriteFile)));
+		const char *spriteFile = stack->pop()->getString();
+		stack->pushBool(SUCCEEDED(addSprite(spriteFile)));
 
 		return S_OK;
 	}
@@ -460,8 +459,8 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveSprite") == 0) {
 		stack->correctParams(1);
-		const char *SpriteFile = stack->pop()->getString();
-		stack->pushBool(SUCCEEDED(removeSprite(SpriteFile)));
+		const char *spriteFile = stack->pop()->getString();
+		stack->pushBool(SUCCEEDED(removeSprite(spriteFile)));
 
 		return S_OK;
 	}
@@ -522,10 +521,10 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	else if (strcmp(name, "AddGlobalForce") == 0) {
 		stack->correctParams(3);
 		const char *forceName = stack->pop()->getString();
-		float Angle = stack->pop()->getFloat();
-		float Strength = stack->pop()->getFloat();
+		float angle = stack->pop()->getFloat();
+		float strength = stack->pop()->getFloat();
 
-		stack->pushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, Angle, Strength)));
+		stack->pushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, angle, strength)));
 
 		return S_OK;
 	}
@@ -536,12 +535,12 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	else if (strcmp(name, "AddPointForce") == 0) {
 		stack->correctParams(5);
 		const char *forceName = stack->pop()->getString();
-		int PosX = stack->pop()->getInt();
-		int PosY = stack->pop()->getInt();
-		float Angle = stack->pop()->getFloat();
-		float Strength = stack->pop()->getFloat();
+		int posX = stack->pop()->getInt();
+		int posY = stack->pop()->getInt();
+		float angle = stack->pop()->getFloat();
+		float strength = stack->pop()->getFloat();
 
-		stack->pushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, PosX, PosY, Angle, Strength)));
+		stack->pushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, posX, posY, angle, strength)));
 
 		return S_OK;
 	}
@@ -745,11 +744,11 @@ CScValue *CPartEmitter::scGetProperty(const char *name) {
 	// NumLiveParticles (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumLiveParticles") == 0) {
-		int NumAlive = 0;
+		int numAlive = 0;
 		for (int i = 0; i < _particles.GetSize(); i++) {
-			if (_particles[i] && !_particles[i]->_isDead) NumAlive++;
+			if (_particles[i] && !_particles[i]->_isDead) numAlive++;
 		}
-		_scValue->setInt(NumAlive);
+		_scValue->setInt(numAlive);
 		return _scValue;
 	}
 
@@ -1162,35 +1161,35 @@ HRESULT CPartEmitter::persist(CBPersistMgr *persistMgr) {
 
 	_sprites.persist(persistMgr);
 
-	int NumForces;
+	int numForces;
 	if (persistMgr->_saving) {
-		NumForces = _forces.GetSize();
-		persistMgr->transfer(TMEMBER(NumForces));
+		numForces = _forces.GetSize();
+		persistMgr->transfer(TMEMBER(numForces));
 		for (int i = 0; i < _forces.GetSize(); i++) {
 			_forces[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(NumForces));
-		for (int i = 0; i < NumForces; i++) {
-			CPartForce *Force = new CPartForce(Game);
-			Force->persist(persistMgr);
-			_forces.Add(Force);
+		persistMgr->transfer(TMEMBER(numForces));
+		for (int i = 0; i < numForces; i++) {
+			CPartForce *force = new CPartForce(Game);
+			force->persist(persistMgr);
+			_forces.Add(force);
 		}
 	}
 
-	int NumParticles;
+	int numParticles;
 	if (persistMgr->_saving) {
-		NumParticles = _particles.GetSize();
-		persistMgr->transfer(TMEMBER(NumParticles));
+		numParticles = _particles.GetSize();
+		persistMgr->transfer(TMEMBER(numParticles));
 		for (int i = 0; i < _particles.GetSize(); i++) {
 			_particles[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(NumParticles));
-		for (int i = 0; i < NumParticles; i++) {
-			CPartParticle *Particle = new CPartParticle(Game);
-			Particle->persist(persistMgr);
-			_particles.Add(Particle);
+		persistMgr->transfer(TMEMBER(numParticles));
+		for (int i = 0; i < numParticles; i++) {
+			CPartParticle *particle = new CPartParticle(Game);
+			particle->persist(persistMgr);
+			_particles.Add(particle);
 		}
 	}
 
