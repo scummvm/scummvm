@@ -426,72 +426,85 @@ HRESULT CBGame::cleanup() {
 
 //////////////////////////////////////////////////////////////////////
 HRESULT CBGame::initialize1() {
-	_surfaceStorage = new CBSurfaceStorage(this);
-	if (_surfaceStorage == NULL) goto init_fail;
+	bool loaded = false; // Not really a loop, but a goto-replacement.
+	while (!loaded) {
+		_surfaceStorage = new CBSurfaceStorage(this);
+		if (_surfaceStorage == NULL)
+			break;
 
-	_fontStorage = new CBFontStorage(this);
-	if (_fontStorage == NULL) goto init_fail;
+		_fontStorage = new CBFontStorage(this);
+		if (_fontStorage == NULL)
+			break;
 
-	_fileManager = new CBFileManager(this);
-	if (_fileManager == NULL) goto init_fail;
+		_fileManager = new CBFileManager(this);
+		if (_fileManager == NULL)
+			break;
 
-	_soundMgr = new CBSoundMgr(this);
-	if (_soundMgr == NULL) goto init_fail;
+		_soundMgr = new CBSoundMgr(this);
+		if (_soundMgr == NULL)
+			break;
 
-	_debugMgr = new CBDebugger(this);
-	if (_debugMgr == NULL) goto init_fail;
+		_debugMgr = new CBDebugger(this);
+		if (_debugMgr == NULL)
+			break;
 
-	_mathClass = new CSXMath(this);
-	if (_mathClass == NULL) goto init_fail;
+		_mathClass = new CSXMath(this);
+		if (_mathClass == NULL)
+			break;
 
-	_scEngine = new CScEngine(this);
-	if (_scEngine == NULL) goto init_fail;
+		_scEngine = new CScEngine(this);
+		if (_scEngine == NULL)
+			break;
 
-	_videoPlayer = new CVidPlayer(this);
-	if (_videoPlayer == NULL) goto init_fail;
+		_videoPlayer = new CVidPlayer(this);
+		if (_videoPlayer == NULL)
+			break;
 
-	_transMgr = new CBTransitionMgr(this);
-	if (_transMgr == NULL) goto init_fail;
+		_transMgr = new CBTransitionMgr(this);
+		if (_transMgr == NULL)
+			break;
 
-	_keyboardState = new CBKeyboardState(this);
-	if (_keyboardState == NULL) goto init_fail;
+		_keyboardState = new CBKeyboardState(this);
+		if (_keyboardState == NULL)
+			break;
 
-	_fader = new CBFader(this);
-	if (_fader == NULL) goto init_fail;
-	registerObject(_fader);
+		_fader = new CBFader(this);
+		if (_fader == NULL)
+			break;
+		registerObject(_fader);
 
-	_store = new CSXStore(this);
-	if (_store == NULL) goto init_fail;
-	registerObject(_store);
-
-	return S_OK;
-
-init_fail:
-	if (_mathClass) delete _mathClass;
-	if (_store) delete _store;
-	if (_keyboardState) delete _keyboardState;
-	if (_transMgr) delete _transMgr;
-	if (_debugMgr) delete _debugMgr;
-	if (_surfaceStorage) delete _surfaceStorage;
-	if (_fontStorage) delete _fontStorage;
-	if (_soundMgr) delete _soundMgr;
-	if (_fileManager) delete _fileManager;
-	if (_scEngine) delete _scEngine;
-	if (_videoPlayer) delete _videoPlayer;
-	return E_FAIL;
+		_store = new CSXStore(this);
+		if (_store == NULL)
+			break;
+		registerObject(_store);
+		
+		loaded = true;
+	}
+	if (loaded == true) {
+		return S_OK;
+	} else {
+		delete _mathClass;
+		delete _store;
+		delete _keyboardState;
+		delete _transMgr;
+		delete _debugMgr;
+		delete _surfaceStorage;
+		delete _fontStorage;
+		delete _soundMgr;
+		delete _fileManager;
+		delete _scEngine;
+		delete _videoPlayer;
+		return E_FAIL;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////
 HRESULT CBGame::initialize2() { // we know whether we are going to be accelerated
 	_renderer = new CBRenderSDL(this);
-	if (_renderer == NULL) goto init_fail;
+	if (_renderer == NULL) return E_FAIL;
 
 	return S_OK;
-
-init_fail:
-	if (_renderer) delete _renderer;
-	return E_FAIL;
 }
 
 
