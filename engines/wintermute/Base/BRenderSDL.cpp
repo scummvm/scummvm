@@ -394,9 +394,19 @@ void CBRenderSDL::drawFromTicket(RenderTicket *renderTicket) {
 		if (_drawNum == renderTicket->_drawNum) {
 			_drawNum++;
 		} else {
-			// Is not in order
-			renderTicket->_drawNum = _drawNum++;
-			addDirtyRect(renderTicket->_dstRect);
+			// Remove the ticket from the list
+			RenderQueueIterator it = _renderQueue.begin();
+			while (it != _renderQueue.end()) {
+				if ((*it) == renderTicket) {
+					it = _renderQueue.erase(it);
+					break;
+				} else {
+					it++;
+				}
+			}
+			// Is not in order, so readd it as if it was a new ticket
+			renderTicket->_drawNum = 0;
+			drawFromTicket(renderTicket);
 		}
 	}
 }
