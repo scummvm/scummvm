@@ -182,7 +182,7 @@ HRESULT CBPersistMgr::initSave(const char *desc) {
 		// get thumbnails
 		if (!Game->_cachedThumbnail) {
 			Game->_cachedThumbnail = new CBSaveThumbHelper(Game);
-			if (FAILED(Game->_cachedThumbnail->StoreThumbnail(true))) {
+			if (FAILED(Game->_cachedThumbnail->storeThumbnail(true))) {
 				delete Game->_cachedThumbnail;
 				Game->_cachedThumbnail = NULL;
 			}

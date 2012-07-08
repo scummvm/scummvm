@@ -45,12 +45,12 @@ CBSaveThumbHelper::~CBSaveThumbHelper(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbHelper::StoreThumbnail(bool DoFlip) {
+HRESULT CBSaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = NULL;
 
 	if (Game->_thumbnailWidth > 0 && Game->_thumbnailHeight > 0) {
-		if (DoFlip) {
+		if (doFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
 			// works normally for direct3d
 			Game->displayContent(false);
@@ -60,18 +60,18 @@ HRESULT CBSaveThumbHelper::StoreThumbnail(bool DoFlip) {
 			Game->_renderer->flip();
 		}
 
-		CBImage *Screenshot = Game->_renderer->takeScreenshot();
-		if (!Screenshot) return E_FAIL;
+		CBImage *screenshot = Game->_renderer->takeScreenshot();
+		if (!screenshot) return E_FAIL;
 
 		// normal thumbnail
 		if (Game->_thumbnailWidth > 0 && Game->_thumbnailHeight > 0) {
 			_thumbnail = new CBImage(Game);
-			_thumbnail->copyFrom(Screenshot, Game->_thumbnailWidth, Game->_thumbnailHeight);
+			_thumbnail->copyFrom(screenshot, Game->_thumbnailWidth, Game->_thumbnailHeight);
 		}
 
 
-		delete Screenshot;
-		Screenshot = NULL;
+		delete screenshot;
+		screenshot = NULL;
 	}
 	return S_OK;
 }
