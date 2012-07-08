@@ -110,24 +110,24 @@ CScValue *CScStack::getAt(int index) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScStack::correctParams(uint32 expected_params) {
-	int nu_params = pop()->getInt();
+void CScStack::correctParams(uint32 expectedParams) {
+	int nuParams = pop()->getInt();
 
-	if (expected_params < nu_params) { // too many params
-		while (expected_params < nu_params) {
+	if (expectedParams < nuParams) { // too many params
+		while (expectedParams < nuParams) {
 			//Pop();
-			delete _values[_sP - expected_params];
-			_values.RemoveAt(_sP - expected_params);
-			nu_params--;
+			delete _values[_sP - expectedParams];
+			_values.RemoveAt(_sP - expectedParams);
+			nuParams--;
 			_sP--;
 		}
-	} else if (expected_params > nu_params) { // need more params
-		while (expected_params > nu_params) {
+	} else if (expectedParams > nuParams) { // need more params
+		while (expectedParams > nuParams) {
 			//Push(null_val);
-			CScValue *null_val = new CScValue(Game);
-			null_val->setNULL();
-			_values.InsertAt(_sP - nu_params + 1, null_val);
-			nu_params++;
+			CScValue *nullVal = new CScValue(Game);
+			nullVal->setNULL();
+			_values.InsertAt(_sP - nuParams + 1, nullVal);
+			nuParams++;
 			_sP++;
 
 			if (_values.GetSize() > _sP + 1) {

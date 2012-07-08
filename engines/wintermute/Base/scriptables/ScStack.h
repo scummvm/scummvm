@@ -44,15 +44,15 @@ public:
 	CScValue *getAt(int Index);
 	CScValue *getPushValue();
 	DECLARE_PERSISTENT(CScStack, CBBase)
-	void pushNative(CBScriptable *Val, bool Persistent);
-	void pushString(const char *Val);
-	void pushBool(bool Val);
-	void pushInt(int Val);
-	void pushFloat(double Val);
+	void pushNative(CBScriptable *val, bool persistent);
+	void pushString(const char *val);
+	void pushBool(bool val);
+	void pushInt(int val);
+	void pushFloat(double val);
 	void pushNULL();
-	void correctParams(uint32 expected_params);
+	void correctParams(uint32 expectedParams);
 	CScValue *getTop();
-	void push(CScValue *Val);
+	void push(CScValue *val);
 	CScValue *pop();
 	CScStack(CBGame *inGame);
 	virtual ~CScStack();
