@@ -50,7 +50,7 @@ public:
 	float _relativeRotate;
 	bool _rotateValid;
 	float _rotate;
-	void setSoundEvent(const char *EventName);
+	void setSoundEvent(const char *eventName);
 	bool _rotatable;
 	uint32 _alphaColor;
 	float _scale;
@@ -58,19 +58,19 @@ public:
 	float _scaleY;
 	float _relativeScale;
 	virtual bool isReady();
-	virtual bool getExtendedFlag(const char *FlagName);
+	virtual bool getExtendedFlag(const char *flagName);
 	virtual HRESULT resetSoundPan();
 	virtual HRESULT updateSounds();
-	HRESULT updateOneSound(CBSound *Sound);
+	HRESULT updateOneSound(CBSound *sound);
 	bool _autoSoundPanning;
 	uint32 _sFXStart;
 	int _sFXVolume;
-	HRESULT setSFXTime(uint32 Time);
-	HRESULT setSFXVolume(int Volume);
+	HRESULT setSFXTime(uint32 time);
+	HRESULT setSFXVolume(int volume);
 	HRESULT resumeSFX();
 	HRESULT pauseSFX();
-	HRESULT stopSFX(bool DeleteSound = true);
-	HRESULT playSFX(const char *filename, bool Looping = false, bool PlayNow = true, const char *EventName = NULL, uint32 LoopStart = 0);
+	HRESULT stopSFX(bool deleteSound = true);
+	HRESULT playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = NULL, uint32 loopStart = 0);
 	CBSound *_sFX;
 
 	TSFXType _sFXType;
@@ -79,15 +79,15 @@ public:
 	float _sFXParam3;
 	float _sFXParam4;
 
-	virtual bool handleMouseWheel(int Delta);
-	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
+	virtual bool handleMouseWheel(int delta);
+	virtual HRESULT handleMouse(TMouseEvent event, TMouseButton button);
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual int getHeight();
 	HRESULT setCursor(const char *filename);
 	HRESULT setActiveCursor(const char *filename);
 	HRESULT cleanup();
-	char *getCaption(int Case = 1);
-	void setCaption(const char *Caption, int Case = 1);
+	char *getCaption(int caseVal = 1);
+	void setCaption(const char *caption, int caseVal = 1);
 	bool _editorSelected;
 	bool _editorAlwaysRegister;
 	bool _editorOnly;

@@ -86,7 +86,8 @@ CBObject::CBObject(CBGame *inGame): CBScriptHolder(inGame) {
 	_rotateValid = false;
 	_relativeRotate = 0.0f;
 
-	for (int i = 0; i < 7; i++) _caption[i] = NULL;
+	for (int i = 0; i < 7; i++)
+		_caption[i] = NULL;
 	_saveState = true;
 
 	_nonIntMouseEvents = false;
@@ -107,7 +108,8 @@ CBObject::~CBObject() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBObject::cleanup() {
-	if (Game && Game->_activeObject == this) Game->_activeObject = NULL;
+	if (Game && Game->_activeObject == this)
+		Game->_activeObject = NULL;
 
 	CBScriptHolder::cleanup();
 	delete[] _soundEvent;
@@ -137,7 +139,8 @@ HRESULT CBObject::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 void CBObject::setCaption(const char *caption, int Case) { // TODO: rename Case to something usefull
 	if (Case == 0) Case = 1;
-	if (Case < 1 || Case > 7) return;
+	if (Case < 1 || Case > 7)
+		return;
 
 	delete[] _caption[Case - 1];
 	_caption[Case - 1] = new char[strlen(caption) + 1];
@@ -149,10 +152,11 @@ void CBObject::setCaption(const char *caption, int Case) { // TODO: rename Case 
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBObject::getCaption(int Case) {
-	if (Case == 0) Case = 1;
-	if (Case < 1 || Case > 7 || _caption[Case - 1] == NULL) return "";
-	else return _caption[Case - 1];
+char *CBObject::getCaption(int caseVal) {
+	if (caseVal == 0) caseVal = 1;
+	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL)
+		return "";
+	else return _caption[caseVal - 1];
 }
 
 
@@ -284,8 +288,8 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(3);
 
 		const char *filename;
-		bool Looping;
-		uint32 LoopStart;
+		bool looping;
+		uint32 loopStart;
 
 		CScValue *val1 = stack->pop();
 		CScValue *val2 = stack->pop();
@@ -293,16 +297,17 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 		if (val1->_type == VAL_BOOL) {
 			filename = NULL;
-			Looping = val1->getBool();
-			LoopStart = val2->getInt();
+			looping = val1->getBool();
+			loopStart = val2->getInt();
 		} else {
 			if (val1->isNULL()) filename = NULL;
 			else filename = val1->getString();
-			Looping = val2->isNULL() ? false : val2->getBool();
-			LoopStart = val3->getInt();
+			looping = val2->isNULL() ? false : val2->getBool();
+			loopStart = val3->getInt();
 		}
 
-		if (FAILED(playSFX(filename, Looping, true, NULL, LoopStart))) stack->pushBool(false);
+		if (FAILED(playSFX(filename, looping, true, NULL, loopStart)))
+			stack->pushBool(false);
 		else stack->pushBool(true);
 		return S_OK;
 	}
@@ -314,20 +319,20 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(2);
 
 		const char *filename;
-		const char *EventName;
+		const char *eventName;
 
 		CScValue *val1 = stack->pop();
 		CScValue *val2 = stack->pop();
 
 		if (val2->isNULL()) {
 			filename = NULL;
-			EventName = val1->getString();
+			eventName = val1->getString();
 		} else {
 			filename = val1->getString();
-			EventName = val2->getString();
+			eventName = val2->getString();
 		}
 
-		if (FAILED(playSFX(filename, false, true, EventName))) stack->pushBool(false);
+		if (FAILED(playSFX(filename, false, true, eventName))) stack->pushBool(false);
 		else stack->pushBool(true);
 		return S_OK;
 	}
@@ -405,8 +410,8 @@ HRESULT CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "SetSoundVolume") == 0) {
 		stack->correctParams(1);
 
-		int Volume = stack->pop()->getInt();
-		if (FAILED(setSFXVolume(Volume))) stack->pushBool(false);
+		int volume = stack->pop()->getInt();
+		if (FAILED(setSFXVolume(volume))) stack->pushBool(false);
 		else stack->pushBool(true);
 		return S_OK;
 	}
@@ -867,7 +872,8 @@ HRESULT CBObject::saveAsText(CBDynBuffer *buffer, int indent) {
 HRESULT CBObject::persist(CBPersistMgr *persistMgr) {
 	CBScriptHolder::persist(persistMgr);
 
-	for (int i = 0; i < 7; i++) persistMgr->transfer(TMEMBER(_caption[i]));
+	for (int i = 0; i < 7; i++)
+		persistMgr->transfer(TMEMBER(_caption[i]));
 	persistMgr->transfer(TMEMBER(_activeCursor));
 	persistMgr->transfer(TMEMBER(_alphaColor));
 	persistMgr->transfer(TMEMBER(_autoSoundPanning));
@@ -1049,9 +1055,9 @@ HRESULT CBObject::setSFXTime(uint32 time) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBObject::setSFXVolume(int Volume) {
-	_sFXVolume = Volume;
-	if (_sFX) return _sFX->setVolume(Volume);
+HRESULT CBObject::setSFXVolume(int volume) {
+	_sFXVolume = volume;
+	if (_sFX) return _sFX->setVolume(volume);
 	else return S_OK;
 }
 
