@@ -51,7 +51,7 @@ public:
 	const SoundDesc *sampleGetBySlot(int slot) const;
 	int sampleGetNextFreeSlot() const;
 
-	bool sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName, bool tryExist = true);
+	bool sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName);
 	void sampleFree(SoundDesc *sndDesc, bool noteAdLib = false, int index = -1);
 
 
