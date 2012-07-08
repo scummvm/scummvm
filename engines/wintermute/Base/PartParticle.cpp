@@ -96,27 +96,27 @@ HRESULT CPartParticle::setSprite(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 TimerDelta) {
+HRESULT CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta) {
 	if (_state == PARTICLE_FADEIN) {
-		if (CurrentTime - _fadeStart >= _fadeTime) {
+		if (currentTime - _fadeStart >= _fadeTime) {
 			_state = PARTICLE_NORMAL;
 			_currentAlpha = _alpha1;
-		} else _currentAlpha = ((float)CurrentTime - (float)_fadeStart) / (float)_fadeTime * _alpha1;
+		} else _currentAlpha = ((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _alpha1;
 
 		return S_OK;
 	} else if (_state == PARTICLE_FADEOUT) {
-		if (CurrentTime - _fadeStart >= _fadeTime) {
+		if (currentTime - _fadeStart >= _fadeTime) {
 			_isDead = true;
 			return S_OK;
-		} else _currentAlpha = _fadeStartAlpha - ((float)CurrentTime - (float)_fadeStart) / (float)_fadeTime * _fadeStartAlpha;
+		} else _currentAlpha = _fadeStartAlpha - ((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _fadeStartAlpha;
 
 		return S_OK;
 	} else {
 		// time is up
 		if (_lifeTime > 0) {
-			if (CurrentTime - _creationTime >= _lifeTime) {
-				if (Emitter->_fadeOutTime > 0)
-					fadeOut(CurrentTime, Emitter->_fadeOutTime);
+			if (currentTime - _creationTime >= _lifeTime) {
+				if (emitter->_fadeOutTime > 0)
+					fadeOut(currentTime, emitter->_fadeOutTime);
 				else
 					_isDead = true;
 			}
@@ -127,52 +127,54 @@ HRESULT CPartParticle::update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 
 			POINT p;
 			p.x = (int32)_pos.x;
 			p.y = (int32)_pos.y;
-			if (!CBPlatform::PtInRect(&_border, p)) fadeOut(CurrentTime, Emitter->_fadeOutTime);
+			if (!CBPlatform::PtInRect(&_border, p))
+				fadeOut(currentTime, emitter->_fadeOutTime);
 		}
 		if (_state != PARTICLE_NORMAL) return S_OK;
 
 		// update alpha
 		if (_lifeTime > 0) {
-			int Age = (int)(CurrentTime - _creationTime);
-			int AlphaDelta = (int)(_alpha2 - _alpha1);
+			int age = (int)(currentTime - _creationTime);
+			int alphaDelta = (int)(_alpha2 - _alpha1);
 
-			_currentAlpha = _alpha1 + ((float)AlphaDelta / (float)_lifeTime * (float)Age);
+			_currentAlpha = _alpha1 + ((float)alphaDelta / (float)_lifeTime * (float)age);
 		}
 
 		// update position
-		float ElapsedTime = (float)TimerDelta / 1000.f;
+		float elapsedTime = (float)timerDelta / 1000.f;
 
-		for (int i = 0; i < Emitter->_forces.GetSize(); i++) {
-			CPartForce *Force = Emitter->_forces[i];
-			switch (Force->_type) {
+		for (int i = 0; i < emitter->_forces.GetSize(); i++) {
+			CPartForce *force = emitter->_forces[i];
+			switch (force->_type) {
 			case CPartForce::FORCE_GLOBAL:
-				_velocity += Force->_direction * ElapsedTime;
+				_velocity += force->_direction * elapsedTime;
 				break;
 
 			case CPartForce::FORCE_POINT: {
-				Vector2 VecDist = Force->_pos - _pos;
-				float Dist = fabs(VecDist.length());
+				Vector2 vecDist = force->_pos - _pos;
+				float dist = fabs(vecDist.length());
 
-				Dist = 100.0f / Dist;
+				dist = 100.0f / dist;
 
-				_velocity += Force->_direction * Dist * ElapsedTime;
+				_velocity += force->_direction * dist * elapsedTime;
 			}
 			break;
 			}
 		}
-		_pos += _velocity * ElapsedTime;
+		_pos += _velocity * elapsedTime;
 
 		// update rotation
-		_rotation += _angVelocity * ElapsedTime;
+		_rotation += _angVelocity * elapsedTime;
 		_rotation = CBUtils::normalizeAngle(_rotation);
 
 		// update scale
 		if (_exponentialGrowth)
-			_scale += _scale / 100.0f * _growthRate * ElapsedTime;
+			_scale += _scale / 100.0f * _growthRate * elapsedTime;
 		else
-			_scale += _growthRate * ElapsedTime;
+			_scale += _growthRate * elapsedTime;
 
-		if (_scale <= 0.0f) _isDead = true;
+		if (_scale <= 0.0f)
+			_isDead = true;
 
 
 		return S_OK;
@@ -180,7 +182,7 @@ HRESULT CPartParticle::update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::display(CPartEmitter *Emitter) {
+HRESULT CPartParticle::display(CPartEmitter *emitter) {
 	if (!_sprite) return E_FAIL;
 	if (_isDead) return S_OK;
 
@@ -190,26 +192,26 @@ HRESULT CPartParticle::display(CPartEmitter *Emitter) {
 	                        _scale, _scale,
 	                        DRGBA(255, 255, 255, _currentAlpha),
 	                        _rotation,
-	                        Emitter->_blendMode);
+	                        emitter->_blendMode);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::fadeIn(uint32 CurrentTime, int FadeTime) {
+HRESULT CPartParticle::fadeIn(uint32 currentTime, int fadeTime) {
 	_currentAlpha = 0;
-	_fadeStart = CurrentTime;
-	_fadeTime = FadeTime;
+	_fadeStart = currentTime;
+	_fadeTime = fadeTime;
 	_state = PARTICLE_FADEIN;
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::fadeOut(uint32 CurrentTime, int FadeTime) {
+HRESULT CPartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 	//_currentAlpha = 255;
 	_fadeStartAlpha = _currentAlpha;
-	_fadeStart = CurrentTime;
-	_fadeTime = FadeTime;
+	_fadeStart = currentTime;
+	_fadeTime = fadeTime;
 	_state = PARTICLE_FADEOUT;
 
 	return S_OK;

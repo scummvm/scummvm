@@ -68,13 +68,13 @@ public:
 	bool _isDead;
 	TParticleState _state;
 
-	HRESULT update(CPartEmitter *Emitter, uint32 CurrentTime, uint32 TimerDelta);
-	HRESULT display(CPartEmitter *Emitter);
+	HRESULT update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta);
+	HRESULT display(CPartEmitter *emitter);
 
 	HRESULT setSprite(const char *filename);
 
-	HRESULT fadeIn(uint32 CurrentTime, int FadeTime);
-	HRESULT fadeOut(uint32 CurrentTime, int FadeTime);
+	HRESULT fadeIn(uint32 currentTime, int fadeTime);
+	HRESULT fadeOut(uint32 currentTime, int fadeTime);
 
 	HRESULT persist(CBPersistMgr *PersistMgr);
 private:
