@@ -54,8 +54,8 @@ public:
 	virtual HRESULT setScreenViewport();
 	virtual HRESULT fade(uint16 Alpha);
 	virtual HRESULT fadeToColor(uint32 Color, Common::Rect *rect = NULL);
-	virtual HRESULT drawLine(int X1, int Y1, int X2, int Y2, uint32 Color);
-	virtual HRESULT drawRect(int X1, int Y1, int X2, int Y2, uint32 Color, int Width = 1);
+	virtual HRESULT drawLine(int x1, int y1, int x2, int y2, uint32 color);
+	virtual HRESULT drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1);
 	CBRenderer(CBGame *inGame = NULL);
 	virtual ~CBRenderer();
 	virtual HRESULT setProjection() {
@@ -69,7 +69,7 @@ public:
 	virtual HRESULT flip();
 	virtual void initLoop();
 	virtual HRESULT switchFullscreen();
-	virtual HRESULT setup2D(bool Force = false);
+	virtual HRESULT setup2D(bool force = false);
 	virtual HRESULT setupLines();
 
 	virtual const char *getName() {
@@ -92,7 +92,7 @@ public:
 	HRESULT clipCursor();
 	HRESULT unclipCursor();
 
-	CBObject *getObjectAt(int X, int Y);
+	CBObject *getObjectAt(int x, int y);
 	void deleteRectList();
 
 	virtual HRESULT startSpriteBatch() {

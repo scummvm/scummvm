@@ -68,34 +68,34 @@ void CBRenderer::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////
-CBObject *CBRenderer::getObjectAt(int X, int Y) {
+CBObject *CBRenderer::getObjectAt(int x, int y) {
 	POINT point;
-	point.x = X;
-	point.y = Y;
+	point.x = x;
+	point.y = y;
 
 	for (int i = _rectList.GetSize() - 1; i >= 0; i--) {
 		if (CBPlatform::PtInRect(&_rectList[i]->_rect, point)) {
 			if (_rectList[i]->_precise) {
 				// frame
 				if (_rectList[i]->_frame) {
-					int XX = (int)((_rectList[i]->_frame->_rect.left + X - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
-					int YY = (int)((_rectList[i]->_frame->_rect.top  + Y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
+					int xx = (int)((_rectList[i]->_frame->_rect.left + x - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
+					int yy = (int)((_rectList[i]->_frame->_rect.top  + y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
 
 					if (_rectList[i]->_frame->_mirrorX) {
-						int Width = _rectList[i]->_frame->_rect.right - _rectList[i]->_frame->_rect.left;
-						XX = Width - XX;
+						int width = _rectList[i]->_frame->_rect.right - _rectList[i]->_frame->_rect.left;
+						xx = width - xx;
 					}
 
 					if (_rectList[i]->_frame->_mirrorY) {
-						int Height = _rectList[i]->_frame->_rect.bottom - _rectList[i]->_frame->_rect.top;
-						YY = Height - YY;
+						int height = _rectList[i]->_frame->_rect.bottom - _rectList[i]->_frame->_rect.top;
+						yy = height - yy;
 					}
 
-					if (!_rectList[i]->_frame->_surface->isTransparentAt(XX, YY)) return _rectList[i]->_owner;
+					if (!_rectList[i]->_frame->_surface->isTransparentAt(xx, yy)) return _rectList[i]->_owner;
 				}
 				// region
 				else if (_rectList[i]->_region) {
-					if (_rectList[i]->_region->pointInRegion(X + _rectList[i]->_offsetX, Y + _rectList[i]->_offsetY)) return _rectList[i]->_owner;
+					if (_rectList[i]->_region->pointInRegion(x + _rectList[i]->_offsetX, y + _rectList[i]->_offsetY)) return _rectList[i]->_owner;
 				}
 			} else return _rectList[i]->_owner;
 		}
@@ -161,32 +161,32 @@ HRESULT CBRenderer::setupLines() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::drawLine(int X1, int Y1, int X2, int Y2, uint32 Color) {
+HRESULT CBRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::drawRect(int X1, int Y1, int X2, int Y2, uint32 Color, int Width) {
-	for (int i = 0; i < Width; i++) {
-		drawLine(X1 + i, Y1 + i, X2 - i,   Y1 + i,   Color); // up
-		drawLine(X1 + i, Y2 - i, X2 - i + 1, Y2 - i, Color); // down
+HRESULT CBRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
+	for (int i = 0; i < width; i++) {
+		drawLine(x1 + i, y1 + i, x2 - i,   y1 + i,   color); // up
+		drawLine(x1 + i, y2 - i, x2 - i + 1, y2 - i, color); // down
 
-		drawLine(X1 + i, Y1 + i, X1 + i, Y2 - i,   Color); // left
-		drawLine(X2 - i, Y1 + i, X2 - i, Y2 - i + 1, Color); // right
+		drawLine(x1 + i, y1 + i, x1 + i, y2 - i,   color); // left
+		drawLine(x2 - i, y1 + i, x2 - i, y2 - i + 1, color); // right
 	}
 	return S_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::fade(uint16 Alpha) {
+HRESULT CBRenderer::fade(uint16 alpha) {
 	return E_FAIL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::fadeToColor(uint32 Color, Common::Rect *rect) {
+HRESULT CBRenderer::fadeToColor(uint32 color, Common::Rect *rect) {
 	return E_FAIL;
 }
 
@@ -204,11 +204,11 @@ HRESULT CBRenderer::setScreenViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::setViewport(RECT *Rect) {
-	return setViewport(Rect->left + _drawOffsetX,
-	                   Rect->top + _drawOffsetY,
-	                   Rect->right + _drawOffsetX,
-	                   Rect->bottom + _drawOffsetY);
+HRESULT CBRenderer::setViewport(RECT *rect) {
+	return setViewport(rect->left + _drawOffsetX,
+	                   rect->top + _drawOffsetY,
+	                   rect->right + _drawOffsetX,
+	                   rect->bottom + _drawOffsetY);
 }
 
 
@@ -246,11 +246,11 @@ HRESULT CBRenderer::unclipCursor() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::pointInViewport(POINT *P) {
-	if (P->x < _drawOffsetX) return false;
-	if (P->y < _drawOffsetY) return false;
-	if (P->x > _drawOffsetX + _width) return false;
-	if (P->y > _drawOffsetY + _height) return false;
+bool CBRenderer::pointInViewport(POINT *p) {
+	if (p->x < _drawOffsetX) return false;
+	if (p->y < _drawOffsetY) return false;
+	if (p->x > _drawOffsetX + _width) return false;
+	if (p->y > _drawOffsetY + _height) return false;
 
 	return true;
 }
