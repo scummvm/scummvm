@@ -63,8 +63,8 @@ HRESULT CBViewport::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBViewport::setRect(int left, int top, int right, int bottom, bool NoCheck) {
-	if (!NoCheck) {
+HRESULT CBViewport::setRect(int left, int top, int right, int bottom, bool noCheck) {
+	if (!noCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);
 		right = MIN(right, Game->_renderer->_width);
