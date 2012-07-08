@@ -41,14 +41,14 @@ namespace WinterMute {
 CBRegistry::CBRegistry(CBGame *inGame): CBBase(inGame) {
 	_iniName = NULL;
 
-	SetIniName("./wme.ini");
-	LoadValues(true);
+	setIniName("./wme.ini");
+	loadValues(true);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBRegistry::~CBRegistry() {
-	SaveValues();
+	saveValues();
 	delete[] _iniName;
 	_iniName = NULL;
 }
@@ -56,7 +56,7 @@ CBRegistry::~CBRegistry() {
 
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString CBRegistry::ReadString(const AnsiString &subKey, const AnsiString &key, const AnsiString &init) {
+AnsiString CBRegistry::readString(const AnsiString &subKey, const AnsiString &key, const AnsiString &init) {
 	AnsiString ret = "";
 
 #ifdef __WIN32__
@@ -69,8 +69,8 @@ AnsiString CBRegistry::ReadString(const AnsiString &subKey, const AnsiString &ke
 #endif
 
 	bool found = false;
-	ret = GetValue(_localValues, subKey, key, found);
-	if (!found) ret = GetValue(_values, subKey, key, found);
+	ret = getValue(_localValues, subKey, key, found);
+	if (!found) ret = getValue(_values, subKey, key, found);
 	if (!found) ret = init;
 
 	return ret;
@@ -78,46 +78,46 @@ AnsiString CBRegistry::ReadString(const AnsiString &subKey, const AnsiString &ke
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegistry::WriteString(const AnsiString &subKey, const AnsiString &key, const AnsiString &value) {
+bool CBRegistry::writeString(const AnsiString &subKey, const AnsiString &key, const AnsiString &value) {
 	_values[subKey][key] = value;
 	return true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBRegistry::ReadInt(const AnsiString &subKey, const AnsiString &key, int init) {
+int CBRegistry::readInt(const AnsiString &subKey, const AnsiString &key, int init) {
 #ifdef __WIN32__
 	int ret = GetPrivateProfileInt(subKey.c_str(), key.c_str(), init, _iniName);
 	if (ret != init) return ret;
 #endif
 
-	AnsiString val = ReadString(subKey, key, "");
+	AnsiString val = readString(subKey, key, "");
 	if (val.empty()) return init;
 	else return atoi(val.c_str());
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegistry::WriteInt(const AnsiString &subKey, const AnsiString &key, int value) {
-	WriteString(subKey, key, StringUtil::toString(value));
+bool CBRegistry::writeInt(const AnsiString &subKey, const AnsiString &key, int value) {
+	writeString(subKey, key, StringUtil::toString(value));
 	return true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegistry::ReadBool(const AnsiString &subKey, const AnsiString &key, bool init) {
-	return (ReadInt(subKey, key, (int)init) != 0);
+bool CBRegistry::readBool(const AnsiString &subKey, const AnsiString &key, bool init) {
+	return (readInt(subKey, key, (int)init) != 0);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegistry::WriteBool(const AnsiString &subKey, const AnsiString &key, bool value) {
-	return WriteInt(subKey, key, (int)value);
+bool CBRegistry::writeBool(const AnsiString &subKey, const AnsiString &key, bool value) {
+	return writeInt(subKey, key, (int)value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::SetIniName(const char *name) {
+void CBRegistry::setIniName(const char *name) {
 	delete[] _iniName;
 	_iniName = NULL;
 
@@ -132,30 +132,30 @@ void CBRegistry::SetIniName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBRegistry::GetIniName() {
+char *CBRegistry::getIniName() {
 	return _iniName;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::LoadValues(bool local) {
-	if (local) LoadXml("settings.xml", _localValues);
-	else LoadXml(PathUtil::combine(Game->getDataDir(), "settings.xml"), _values);
+void CBRegistry::loadValues(bool local) {
+	if (local) loadXml("settings.xml", _localValues);
+	else loadXml(PathUtil::combine(Game->getDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::SaveValues() {
-	SaveXml(PathUtil::combine(Game->getDataDir(), "settings.xml"), _values);
+void CBRegistry::saveValues() {
+	saveXml(PathUtil::combine(Game->getDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::SetBasePath(const char *basePath) {
+void CBRegistry::setBasePath(const char *basePath) {
 	_basePath = PathUtil::getFileNameWithoutExtension(basePath);
 
-	LoadValues(false);
+	loadValues(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString CBRegistry::GetValue(PathValueMap &values, const AnsiString path, const AnsiString &key, bool &found) {
+AnsiString CBRegistry::getValue(PathValueMap &values, const AnsiString path, const AnsiString &key, bool &found) {
 	found = false;
 	PathValueMap::iterator it = values.find(path);
 	if (it == values.end()) return "";
@@ -170,7 +170,7 @@ AnsiString CBRegistry::GetValue(PathValueMap &values, const AnsiString path, con
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::LoadXml(const AnsiString fileName, PathValueMap &values) {
+void CBRegistry::loadXml(const AnsiString fileName, PathValueMap &values) {
 	TiXmlDocument doc(fileName.c_str());
 	if (!doc.LoadFile()) return;
 
@@ -187,7 +187,7 @@ void CBRegistry::LoadXml(const AnsiString fileName, PathValueMap &values) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::SaveXml(const AnsiString fileName, PathValueMap &values) {
+void CBRegistry::saveXml(const AnsiString fileName, PathValueMap &values) {
 	CBUtils::createPath(fileName.c_str());
 
 	TiXmlDocument doc;

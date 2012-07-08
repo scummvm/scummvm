@@ -284,7 +284,7 @@ HRESULT CBFileManager::initPaths() {
 	int numPaths;
 
 	// single files paths
-	pathList = Game->_registry->ReadString("Resource", "CustomPaths", "");
+	pathList = Game->_registry->readString("Resource", "CustomPaths", "");
 	numPaths = CBUtils::strNumEntries(pathList.c_str(), ';');
 
 	for (int i = 0; i < numPaths; i++) {
@@ -328,7 +328,7 @@ HRESULT CBFileManager::initPaths() {
 	#endif*/
 
 
-	pathList = Game->_registry->ReadString("Resource", "PackagePaths", "");
+	pathList = Game->_registry->readString("Resource", "PackagePaths", "");
 	numPaths = CBUtils::strNumEntries(pathList.c_str(), ';');
 
 	for (int i = 0; i < numPaths; i++) {

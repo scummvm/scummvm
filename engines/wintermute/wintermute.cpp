@@ -174,16 +174,16 @@ int WinterMuteEngine::init() {
 	}*/
 	
 	
-	if (_game->_registry->ReadBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
+	if (_game->_registry->readBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
 	
-	_game->_dEBUG_ShowFPS = _game->_registry->ReadBool("Debug", "ShowFPS");
+	_game->_dEBUG_ShowFPS = _game->_registry->readBool("Debug", "ShowFPS");
 	
-	if (_game->_registry->ReadBool("Debug", "DisableSmartCache")) {
+	if (_game->_registry->readBool("Debug", "DisableSmartCache")) {
 		_game->LOG(0, "Smart cache is DISABLED");
 		_game->_smartCache = false;
 	}
 	
-	/*	bool AllowDirectDraw = _game->_registry->ReadBool("Debug", "AllowDirectDraw", false);*/
+	/*	bool AllowDirectDraw = _game->_registry->readBool("Debug", "AllowDirectDraw", false);*/
 	
 	// load general game settings
 	_game->initialize1();
@@ -307,8 +307,8 @@ int WinterMuteEngine::messageLoop() {
 		 PosX -= _game->_renderer->_monitorRect.left;
 		 PosY -= _game->_renderer->_monitorRect.top;
 		 
-		 _game->_registry->WriteInt("Video", "WindowPosX", PosX);
-		 _game->_registry->WriteInt("Video", "WindowPosY", PosY);
+		 _game->_registry->writeInt("Video", "WindowPosX", PosX);
+		 _game->_registry->writeInt("Video", "WindowPosY", PosY);
 		 }
 		 }
 		 */

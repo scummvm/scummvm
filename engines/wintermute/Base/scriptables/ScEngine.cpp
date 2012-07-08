@@ -766,10 +766,10 @@ HRESULT CScEngine::SaveBreakpoints() {
 			sprintf(Key, "Breakpoint%d", Count);
 			sprintf(Text, "%s:%d", _breakpoints[i]->_filename.c_str(), _breakpoints[i]->_lines[j]);
 
-			Game->_registry->WriteString("Debug", Key, Text);
+			Game->_registry->writeString("Debug", Key, Text);
 		}
 	}
-	Game->_registry->WriteInt("Debug", "NumBreakpoints", Count);
+	Game->_registry->writeInt("Debug", "NumBreakpoints", Count);
 
 	return S_OK;
 }
@@ -780,11 +780,11 @@ HRESULT CScEngine::LoadBreakpoints() {
 
 	char Key[100];
 
-	int Count = Game->_registry->ReadInt("Debug", "NumBreakpoints", 0);
+	int Count = Game->_registry->readInt("Debug", "NumBreakpoints", 0);
 	for (int i = 1; i <= Count; i++) {
 		/*  uint32 BufSize = 512; */
 		sprintf(Key, "Breakpoint%d", i);
-		AnsiString breakpoint = Game->_registry->ReadString("Debug", Key, "");
+		AnsiString breakpoint = Game->_registry->readString("Debug", Key, "");
 
 		char *Path = CBUtils::strEntry(0, breakpoint.c_str(), ':');
 		char *Line = CBUtils::strEntry(1, breakpoint.c_str(), ':');

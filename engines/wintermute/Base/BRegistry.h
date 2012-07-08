@@ -35,24 +35,24 @@ namespace WinterMute {
 
 class CBRegistry : public CBBase {
 public:
-	void SetIniName(const char *name);
-	char *GetIniName();
-	bool WriteBool(const AnsiString &subKey, const AnsiString &key, bool Value);
-	bool ReadBool(const AnsiString &subKey, const AnsiString &key, bool init = false);
-	bool WriteInt(const AnsiString &subKey, const AnsiString &key, int value);
-	int ReadInt(const AnsiString &subKey, const AnsiString &key, int init = 0);
-	bool WriteString(const AnsiString &subKey, const AnsiString &key, const AnsiString &value);
-	AnsiString ReadString(const AnsiString &subKey, const AnsiString &key, const AnsiString &init = "");
+	void setIniName(const char *name);
+	char *getIniName();
+	bool writeBool(const AnsiString &subKey, const AnsiString &key, bool Value);
+	bool readBool(const AnsiString &subKey, const AnsiString &key, bool init = false);
+	bool writeInt(const AnsiString &subKey, const AnsiString &key, int value);
+	int readInt(const AnsiString &subKey, const AnsiString &key, int init = 0);
+	bool writeString(const AnsiString &subKey, const AnsiString &key, const AnsiString &value);
+	AnsiString readString(const AnsiString &subKey, const AnsiString &key, const AnsiString &init = "");
 	CBRegistry(CBGame *inGame);
 	virtual ~CBRegistry();
 
-	void SetBasePath(const char *basePath);
-	AnsiString GetBasePath() const {
+	void setBasePath(const char *basePath);
+	AnsiString getBasePath() const {
 		return _basePath;
 	}
 
-	void LoadValues(bool local);
-	void SaveValues();
+	void loadValues(bool local);
+	void saveValues();
 
 private:
 	char *_iniName;
@@ -65,10 +65,10 @@ private:
 
 	AnsiString _basePath;
 
-	void LoadXml(const AnsiString fileName, PathValueMap &values);
-	void SaveXml(const AnsiString fileName, PathValueMap &values);
+	void loadXml(const AnsiString fileName, PathValueMap &values);
+	void saveXml(const AnsiString fileName, PathValueMap &values);
 
-	AnsiString GetValue(PathValueMap &values, const AnsiString path, const AnsiString &key, bool &found);
+	AnsiString getValue(PathValueMap &values, const AnsiString path, const AnsiString &key, bool &found);
 };
 
 } // end of namespace WinterMute

@@ -202,8 +202,8 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(1);
 		const char *prodId = stack->pop()->getString();
 
-		Game->_registry->WriteBool("Purchases", prodId, true);
-		Game->_registry->SaveValues();
+		Game->_registry->writeBool("Purchases", prodId, true);
+		Game->_registry->saveValues();
 
 		stack->pushBool(true);
 
@@ -217,7 +217,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(1);
 		const char *prodId = stack->pop()->getString();
 
-		stack->pushBool(Game->_registry->ReadBool("Purchases", prodId, false));
+		stack->pushBool(Game->_registry->readBool("Purchases", prodId, false));
 
 		return S_OK;
 	}

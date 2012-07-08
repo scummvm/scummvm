@@ -144,8 +144,8 @@ HRESULT CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 		}
 	}
 #else
-	_realWidth = Game->_registry->ReadInt("Debug", "ForceResWidth", _width);
-	_realHeight = Game->_registry->ReadInt("Debug", "ForceResHeight", _height);
+	_realWidth = Game->_registry->readInt("Debug", "ForceResWidth", _width);
+	_realHeight = Game->_registry->readInt("Debug", "ForceResHeight", _height);
 #endif
 
 	/*
@@ -184,7 +184,7 @@ HRESULT CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 	flags |= SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS;
 #endif
 
-	//_windowed = Game->_registry->ReadBool("Video", "Windowed", true);
+	//_windowed = Game->_registry->readBool("Video", "Windowed", true);
 //	if (!windowed) flags |= SDL_WINDOW_FULLSCREEN;
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -549,7 +549,7 @@ HRESULT CBRenderSDL::switchFullscreen() {
 
 	_windowed = !_windowed;
 	*/
-	Game->_registry->WriteBool("Video", "Windowed", _windowed);
+	Game->_registry->writeBool("Video", "Windowed", _windowed);
 
 	return S_OK;
 }

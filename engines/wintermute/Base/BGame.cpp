@@ -286,7 +286,7 @@ CBGame::~CBGame() {
 
 	getDebugMgr()->onGameShutdown();
 
-	_registry->WriteBool("System", "LastRun", true);
+	_registry->writeBool("System", "LastRun", true);
 
 	cleanup();
 
@@ -1494,7 +1494,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		int val = stack->pop()->getInt();
-		_registry->WriteInt("PrivateSettings", key, val);
+		_registry->writeInt("PrivateSettings", key, val);
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1506,7 +1506,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		int initVal = stack->pop()->getInt();
-		stack->pushInt(_registry->ReadInt("PrivateSettings", key, initVal));
+		stack->pushInt(_registry->readInt("PrivateSettings", key, initVal));
 		return S_OK;
 	}
 
@@ -1517,7 +1517,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *val = stack->pop()->getString();
-		_registry->WriteString("PrivateSettings", key, val);
+		_registry->writeString("PrivateSettings", key, val);
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -1529,7 +1529,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *initVal = stack->pop()->getString();
-		AnsiString val = _registry->ReadString("PrivateSettings", key, initVal);
+		AnsiString val = _registry->readString("PrivateSettings", key, initVal);
 		stack->pushString(val.c_str());
 		return S_OK;
 	}
@@ -2550,7 +2550,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// MostRecentSaveSlot (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MostRecentSaveSlot") == 0) {
-		_scValue->setInt(_registry->ReadInt("System", "MostRecentSaveSlot", -1));
+		_scValue->setInt(_registry->readInt("System", "MostRecentSaveSlot", -1));
 		return _scValue;
 	}
 
@@ -3267,7 +3267,7 @@ HRESULT CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 	if (FAILED(ret = CSysClassRegistry::getInstance()->saveInstances(Game, pm, quickSave))) goto save_finish;
 	if (FAILED(ret = pm->saveFile(filename))) goto save_finish;
 
-	_registry->WriteInt("System", "MostRecentSaveSlot", slot);
+	_registry->writeInt("System", "MostRecentSaveSlot", slot);
 
 save_finish: // TODO: Remove gotos
 	delete pm;
@@ -3588,7 +3588,7 @@ HRESULT CBGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_REGISTRY_PATH:
-			_registry->SetBasePath((char *)params);
+			_registry->setBasePath((char *)params);
 			break;
 
 		case TOKEN_RICH_SAVED_GAMES:
@@ -3612,8 +3612,8 @@ HRESULT CBGame::loadSettings(const char *filename) {
 		ret = E_FAIL;
 	}
 
-	_settingsAllowWindowed = _registry->ReadBool("Debug", "AllowWindowed", _settingsAllowWindowed);
-	_compressedSavegames = _registry->ReadBool("Debug", "CompressedSavegames", _compressedSavegames);
+	_settingsAllowWindowed = _registry->readBool("Debug", "AllowWindowed", _settingsAllowWindowed);
+	_compressedSavegames = _registry->readBool("Debug", "CompressedSavegames", _compressedSavegames);
 	//_compressedSavegames = false;
 
 	delete [] origBuffer;
@@ -3910,7 +3910,7 @@ AnsiString CBGame::getDataDir() {
 #ifdef __IPHONEOS__
 	return userDir;
 #else
-	AnsiString baseDir = _registry->GetBasePath();
+	AnsiString baseDir = _registry->getBasePath();
 	return PathUtil::combine(userDir, baseDir);
 #endif
 }
@@ -4553,7 +4553,7 @@ bool CBGame::isDoubleClick(int buttonIndex) {
 //////////////////////////////////////////////////////////////////////////
 void CBGame::autoSaveOnExit() {
 	_soundMgr->saveSettings();
-	_registry->SaveValues();
+	_registry->saveValues();
 
 	if (!_autoSaveOnExit) return;
 	if (_state == GAME_FROZEN) return;

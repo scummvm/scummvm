@@ -71,11 +71,11 @@ HRESULT CBSoundMgr::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 void CBSoundMgr::saveSettings() {
 	if (_soundAvailable) {
-		Game->_registry->WriteInt("Audio", "MasterVolume", _volumeMaster);
+		Game->_registry->writeInt("Audio", "MasterVolume", _volumeMaster);
 
-		Game->_registry->WriteInt("Audio", "SFXVolume",    _volumeSFX);
-		Game->_registry->WriteInt("Audio", "SpeechVolume", _volumeSpeech);
-		Game->_registry->WriteInt("Audio", "MusicVolume",  _volumeMusic);
+		Game->_registry->writeInt("Audio", "SFXVolume",    _volumeSFX);
+		Game->_registry->writeInt("Audio", "SpeechVolume", _volumeSpeech);
+		Game->_registry->writeInt("Audio", "MusicVolume",  _volumeMusic);
 	}
 }
 
@@ -101,11 +101,11 @@ HRESULT CBSoundMgr::initialize() {
 	}
 #endif
 
-	_volumeMaster = Game->_registry->ReadInt("Audio", "MasterVolume", 100);
+	_volumeMaster = Game->_registry->readInt("Audio", "MasterVolume", 100);
 
-	_volumeSFX    = Game->_registry->ReadInt("Audio", "SFXVolume",    100);
-	_volumeSpeech = Game->_registry->ReadInt("Audio", "SpeechVolume", 100);
-	_volumeMusic  = Game->_registry->ReadInt("Audio", "MusicVolume",  100);
+	_volumeSFX    = Game->_registry->readInt("Audio", "SFXVolume",    100);
+	_volumeSpeech = Game->_registry->readInt("Audio", "SpeechVolume", 100);
+	_volumeMusic  = Game->_registry->readInt("Audio", "MusicVolume",  100);
 
 	_soundAvailable = true;
 	setMasterVolumePercent(_volumeMaster);
