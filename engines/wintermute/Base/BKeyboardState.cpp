@@ -92,7 +92,7 @@ HRESULT CBKeyboardState::scCallMethod(CScScript *script, CScStack *stack, CScSta
 		warning("BKeyboardState doesnt yet have state-support %d", vKey); //TODO;
 //		Uint8 *state = SDL_GetKeyboardState(NULL);
 //		SDL_Scancode scanCode = SDL_GetScancodeFromKey(VKeyToKeyCode(vKey));
-		bool isDown = _keyStates[VKeyToKeyCode(vKey)];
+		bool isDown = _keyStates[vKeyToKeyCode(vKey)];
 
 		stack->pushBool(isDown);
 		return S_OK;
@@ -195,9 +195,9 @@ const char *CBKeyboardState::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBKeyboardState::ReadKey(Common::Event *event) {
+HRESULT CBKeyboardState::readKey(Common::Event *event) {
 	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
-	_currentCharCode = KeyCodeToVKey(event);
+	_currentCharCode = keyCodeToVKey(event);
 	if ((_currentCharCode <= Common::KEYCODE_z && _currentCharCode >= Common::KEYCODE_a) ||
 	        (_currentCharCode <= Common::KEYCODE_9 && _currentCharCode >= Common::KEYCODE_0)) {
 		_currentPrintable = true;
@@ -206,9 +206,9 @@ HRESULT CBKeyboardState::ReadKey(Common::Event *event) {
 	}
 	//_currentKeyData = KeyData;
 
-	_currentControl = IsControlDown();
-	_currentAlt     = IsAltDown();
-	_currentShift   = IsShiftDown();
+	_currentControl = isControlDown();
+	_currentAlt     = isAltDown();
+	_currentShift   = isShiftDown();
 
 	return S_OK;
 }
@@ -237,25 +237,25 @@ HRESULT CBKeyboardState::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::IsShiftDown() {
+bool CBKeyboardState::isShiftDown() {
 	int mod = g_system->getEventManager()->getModifierState();
 	return (mod & Common::KBD_SHIFT);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::IsControlDown() {
+bool CBKeyboardState::isControlDown() {
 	int mod = g_system->getEventManager()->getModifierState();
 	return (mod & Common::KBD_CTRL);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::IsAltDown() {
+bool CBKeyboardState::isAltDown() {
 	int mod = g_system->getEventManager()->getModifierState();
 	return (mod & Common::KBD_ALT);
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBKeyboardState::KeyCodeToVKey(Common::Event *event) {
+uint32 CBKeyboardState::keyCodeToVKey(Common::Event *event) {
 	if (event->type != Common::EVENT_KEYDOWN) return 0;
 
 	switch (event->kbd.keycode) {
@@ -267,7 +267,7 @@ uint32 CBKeyboardState::KeyCodeToVKey(Common::Event *event) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::KeyCode CBKeyboardState::VKeyToKeyCode(uint32 vkey) {
+Common::KeyCode CBKeyboardState::vKeyToKeyCode(uint32 vkey) {
 	// todo
 	return (Common::KeyCode)vkey;
 }

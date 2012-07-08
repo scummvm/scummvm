@@ -698,7 +698,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 			// ctrl+A
 		case Common::KEYCODE_a:
-			if (CBKeyboardState::IsControlDown()) {
+			if (CBKeyboardState::isControlDown()) {
 				_selStart = 0;
 				_selEnd = strlen(_text);
 				Handled = true;
@@ -719,24 +719,24 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_UP:
 			_selEnd--;
-			if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
+			if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			Handled = true;
 			break;
 
 		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_DOWN:
 			_selEnd++;
-			if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
+			if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			Handled = true;
 			break;
 
 		case Common::KEYCODE_HOME:
 			if (Game->_textRTL) {
 				_selEnd = strlen(_text);
-				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
+				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			} else {
 				_selEnd = 0;
-				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
+				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			}
 			Handled = true;
 			break;
@@ -744,10 +744,10 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 		case Common::KEYCODE_END:
 			if (Game->_textRTL) {
 				_selEnd = 0;
-				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
+				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			} else {
 				_selEnd = strlen(_text);
-				if (!CBKeyboardState::IsShiftDown()) _selStart = _selEnd;
+				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			}
 			Handled = true;
 			break;

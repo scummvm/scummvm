@@ -50,13 +50,13 @@ public:
 	DECLARE_PERSISTENT(CBKeyboardState, CBScriptable)
 	CBKeyboardState(CBGame *inGame);
 	virtual ~CBKeyboardState();
-	HRESULT ReadKey(Common::Event *event);
+	HRESULT readKey(Common::Event *event);
 
 	void handleKeyPress(Common::Event *event);
 	void handleKeyRelease(Common::Event *event);
-	static bool IsShiftDown();
-	static bool IsControlDown();
-	static bool IsAltDown();
+	static bool isShiftDown();
+	static bool isControlDown();
+	static bool isAltDown();
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
@@ -66,8 +66,8 @@ public:
 
 private:
 	uint8 *_keyStates;
-	uint32 KeyCodeToVKey(Common::Event *event);
-	Common::KeyCode VKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
+	uint32 keyCodeToVKey(Common::Event *event);
+	Common::KeyCode vKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
 };
 
 } // end of namespace WinterMute

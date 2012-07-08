@@ -3791,7 +3791,7 @@ bool CBGame::handleKeypress(Common::Event *event, bool printable) {
 
 
 	_keyboardState->handleKeyPress(event);
-	_keyboardState->ReadKey(event);
+	_keyboardState->readKey(event);
 // TODO
 
 	if (_focusedWindow) {

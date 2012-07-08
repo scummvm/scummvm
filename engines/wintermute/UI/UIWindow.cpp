@@ -1103,7 +1103,7 @@ const char *CUIWindow::scToString() {
 bool CUIWindow::handleKeypress(Common::Event *event, bool printable) {
 //TODO
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
-		return SUCCEEDED(moveFocus(!CBKeyboardState::IsShiftDown()));
+		return SUCCEEDED(moveFocus(!CBKeyboardState::isShiftDown()));
 	} else {
 		if (_focusedWidget) return _focusedWidget->handleKeypress(event, printable);
 		else return false;
