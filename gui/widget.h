@@ -368,7 +368,10 @@ class ContainerWidget : public Widget {
 public:
 	ContainerWidget(GuiObject *boss, int x, int y, int w, int h);
 	ContainerWidget(GuiObject *boss, const Common::String &name);
+	~ContainerWidget();
 
+	virtual Widget *findWidget(int x, int y);
+	virtual void removeWidget(Widget *widget);
 protected:
 	void drawWidget();
 };

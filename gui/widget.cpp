@@ -711,6 +711,26 @@ ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name) : 
 	_type = kContainerWidget;
 }
 
+ContainerWidget::~ContainerWidget() {
+	// We also remove the widget from the boss to avoid segfaults, when the
+	// deleted widget is an active widget in the boss.
+	for (Widget *w = _firstWidget; w; w = w->next()) {
+		_boss->removeWidget(w);
+	}
+}
+
+Widget *ContainerWidget::findWidget(int x, int y) {
+	return findWidgetInChain(_firstWidget, x, y);
+}
+
+void ContainerWidget::removeWidget(Widget *widget) {
+	// We also remove the widget from the boss to avoid a reference to a
+	// widget not in the widget chain anymore.
+	_boss->removeWidget(widget);
+
+	Widget::removeWidget(widget);
+}
+
 void ContainerWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, ThemeEngine::kWidgetBackgroundBorder);
 }
