@@ -36,24 +36,24 @@ namespace WinterMute {
 class CBSoundBuffer;
 class CBSoundMgr : public CBBase {
 public:
-	float posToPan(int X, int Y);
+	float posToPan(int x, int y);
 	HRESULT resumeAll();
-	HRESULT pauseAll(bool IncludingMusic = true);
+	HRESULT pauseAll(bool includingMusic = true);
 	HRESULT cleanup();
 	//DECLARE_PERSISTENT(CBSoundMgr, CBBase);
 	byte getMasterVolumePercent();
-	HRESULT setMasterVolumePercent(byte  Percent);
-	byte getVolumePercent(TSoundType Type);
-	HRESULT setVolumePercent(TSoundType Type, byte Percent);
-	HRESULT setVolume(TSoundType Type, int Volume);
+	HRESULT setMasterVolumePercent(byte percent);
+	byte getVolumePercent(TSoundType type);
+	HRESULT setVolumePercent(TSoundType type, byte percent);
+	HRESULT setVolume(TSoundType type, int volume);
 	uint32 _volumeOriginal;
 	int _volumeMaster;
 	int _volumeMusic;
 	int _volumeSpeech;
 	int _volumeSFX;
-	HRESULT removeSound(CBSoundBuffer *Sound);
-	CBSoundBuffer *addSound(const char *filename, TSoundType Type = SOUND_SFX, bool Streamed = false);
-	HRESULT addSound(CBSoundBuffer *Sound, TSoundType Type = SOUND_SFX);
+	HRESULT removeSound(CBSoundBuffer *sound);
+	CBSoundBuffer *addSound(const char *filename, TSoundType type = SOUND_SFX, bool streamed = false);
+	HRESULT addSound(CBSoundBuffer *sound, TSoundType type = SOUND_SFX);
 	HRESULT initLoop();
 	HRESULT initialize();
 	bool _soundAvailable;

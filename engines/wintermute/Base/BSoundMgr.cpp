@@ -60,7 +60,8 @@ CBSoundMgr::~CBSoundMgr() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundMgr::cleanup() {
-	for (int i = 0; i < _sounds.GetSize(); i++) delete _sounds[i];
+	for (int i = 0; i < _sounds.GetSize(); i++)
+		delete _sounds[i];
 	_sounds.RemoveAll();
 #if 0
 	BASS_Free();
@@ -116,7 +117,8 @@ HRESULT CBSoundMgr::initialize() {
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundMgr::initLoop() {
-	if (!_soundAvailable) return S_OK;
+	if (!_soundAvailable)
+		return S_OK;
 #if 0
 
 	BASS_Update(500);
@@ -126,8 +128,9 @@ HRESULT CBSoundMgr::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType Type, bool Streamed) {
-	if (!_soundAvailable) return NULL;
+CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType type, bool streamed) {
+	if (!_soundAvailable)
+		return NULL;
 
 	CBSoundBuffer *sound;
 
@@ -146,8 +149,8 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType Type, bool 
 	sound = new CBSoundBuffer(Game);
 	if (!sound) return NULL;
 
-	sound->setStreaming(Streamed);
-	sound->setType(Type);
+	sound->setStreaming(streamed);
+	sound->setType(type);
 
 
 	HRESULT res = sound->loadFromFile(filename);
@@ -158,7 +161,7 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType Type, bool 
 	}
 
 	// set volume appropriately
-	switch (Type) {
+	switch (type) {
 	case SOUND_SFX:
 		sound->setVolume(_volumeSFX);
 		break;
@@ -179,33 +182,33 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType Type, bool 
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::addSound(CBSoundBuffer *Sound, TSoundType Type) {
-	if (!Sound) return E_FAIL;
+HRESULT CBSoundMgr::addSound(CBSoundBuffer *sound, TSoundType type) {
+	if (!sound)
+		return E_FAIL;
 
 	// set volume appropriately
-	switch (Type) {
+	switch (type) {
 	case SOUND_SFX:
-		Sound->setVolume(_volumeSFX);
+		sound->setVolume(_volumeSFX);
 		break;
 	case SOUND_SPEECH:
-		Sound->setVolume(_volumeSpeech);
+		sound->setVolume(_volumeSpeech);
 		break;
 	case SOUND_MUSIC:
-		Sound->setVolume(_volumeMusic);
+		sound->setVolume(_volumeMusic);
 		break;
 	}
 
 	// register sound
-	_sounds.Add(Sound);
+	_sounds.Add(sound);
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::removeSound(CBSoundBuffer *Sound) {
-
+HRESULT CBSoundMgr::removeSound(CBSoundBuffer *sound) {
 	for (int i = 0; i < _sounds.GetSize(); i++) {
-		if (_sounds[i] == Sound) {
+		if (_sounds[i] == sound) {
 			delete _sounds[i];
 			_sounds.RemoveAt(i);
 			return S_OK;
@@ -217,59 +220,60 @@ HRESULT CBSoundMgr::removeSound(CBSoundBuffer *Sound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::setVolume(TSoundType Type, int Volume) {
-	if (!_soundAvailable) return S_OK;
+HRESULT CBSoundMgr::setVolume(TSoundType type, int volume) {
+	if (!_soundAvailable)
+		return S_OK;
 
-	switch (Type) {
+	switch (type) {
 	case SOUND_SFX:
-		_volumeSFX = Volume;
+		_volumeSFX = volume;
 		break;
 	case SOUND_SPEECH:
-		_volumeSpeech = Volume;
+		_volumeSpeech = volume;
 		break;
 	case SOUND_MUSIC:
-		_volumeMusic  = Volume;
+		_volumeMusic  = volume;
 		break;
 	}
 
 	for (int i = 0; i < _sounds.GetSize(); i++) {
-		if (_sounds[i]->_type == Type) _sounds[i]->setVolume(Volume);
+		if (_sounds[i]->_type == type) _sounds[i]->setVolume(volume);
 	}
 
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::setVolumePercent(TSoundType Type, byte Percent) {
-	return setVolume(Type, Percent);
+HRESULT CBSoundMgr::setVolumePercent(TSoundType type, byte percent) {
+	return setVolume(type, percent);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-byte CBSoundMgr::getVolumePercent(TSoundType Type) {
-	int Volume = 0;
-	switch (Type) {
+byte CBSoundMgr::getVolumePercent(TSoundType type) {
+	int volume = 0;
+	switch (type) {
 	case SOUND_SFX:
-		Volume = _volumeSFX;
+		volume = _volumeSFX;
 		break;
 	case SOUND_SPEECH:
-		Volume = _volumeSpeech;
+		volume = _volumeSpeech;
 		break;
 	case SOUND_MUSIC:
-		Volume = _volumeMusic;
+		volume = _volumeMusic;
 		break;
 	default:
 		error("Sound-type not set");
 		break;
 	}
 
-	return (byte)Volume;
+	return (byte)volume;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::setMasterVolumePercent(byte  Percent) {
-	_volumeMaster = Percent;
+HRESULT CBSoundMgr::setMasterVolumePercent(byte percent) {
+	_volumeMaster = percent;
 #if 0
 	BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, (uint32)(10000.0f / 100.0f * (float)Percent));
 #endif
@@ -289,10 +293,10 @@ byte CBSoundMgr::getMasterVolumePercent() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::pauseAll(bool IncludingMusic) {
+HRESULT CBSoundMgr::pauseAll(bool includingMusic) {
 
 	for (int i = 0; i < _sounds.GetSize(); i++) {
-		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != SOUND_MUSIC || IncludingMusic)) {
+		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != SOUND_MUSIC || includingMusic)) {
 			_sounds[i]->pause();
 			_sounds[i]->_freezePaused = true;
 		}
@@ -317,8 +321,8 @@ HRESULT CBSoundMgr::resumeAll() {
 
 
 //////////////////////////////////////////////////////////////////////////
-float CBSoundMgr::posToPan(int X, int Y) {
-	float relPos = (float)X / ((float)Game->_renderer->_width);
+float CBSoundMgr::posToPan(int x, int y) {
+	float relPos = (float)x / ((float)Game->_renderer->_width);
 
 	float minPan = -0.7f;
 	float maxPan = 0.7f;
