@@ -86,6 +86,16 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wintermute",
+		"Five Lethal Demons",
+		AD_ENTRY1s("data.dcp", "1037a77cbd001e0644898addc022322c", 15407750),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_USEEXTRAASTITLE,
+		GUIO0()
+	},
+	{
+		"wintermute",
 		"the white chamber",
 		AD_ENTRY1s("data.dcp", "0011d01142547c61e51ba24dc42b579e", 186451273),
 		Common::EN_ANY,
