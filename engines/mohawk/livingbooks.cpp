@@ -3460,6 +3460,12 @@ void LBLiveTextItem::update() {
 		uint16 soundId = _words[_currentWord].soundId;
 		if (soundId && !_vm->_sound->isPlaying(soundId)) {
 			paletteUpdate(_currentWord, false);
+
+			// TODO: check this in RE
+			LBItem *item = _vm->getItemById(_words[_currentWord].itemId);
+			if (item)
+				item->togglePlaying(false);
+
 			_currentWord = 0xFFFF;
 		}
 	}
@@ -3530,11 +3536,6 @@ void LBLiveTextItem::handleMouseDown(Common::Point pos) {
 			_currentWord = i;
 			_vm->playSound(this, soundId);
 			paletteUpdate(_currentWord, true);
-
-			// TODO: check this in RE
-			LBItem *item = _vm->getItemById(_words[i].itemId);
-			if (item)
-				item->togglePlaying(false);
 			return;
 		}
 	}
