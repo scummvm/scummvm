@@ -209,6 +209,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 				warning("Failed to open movie file %s", filename.c_str());
 				delete videoDecoder;
 				videoDecoder = 0;
+			} else {
+				s->_videoState.fileName = filename;
 			}
 			break;
 		}
