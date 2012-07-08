@@ -30,9 +30,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved predictive dialog look.
    - Various GUI improvements.
 
- SDL ports:
-   - Added support for OpenGL (GSoC Task).
-
  Broken Sword 1:
    - Fixed incorrect sound effects in the DOS/Windows demo.
    - Added support for PlayStation videos.
