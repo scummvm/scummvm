@@ -51,9 +51,9 @@ CBSurfaceStorage::~CBSurfaceStorage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceStorage::cleanup(bool Warn) {
+HRESULT CBSurfaceStorage::cleanup(bool warn) {
 	for (int i = 0; i < _surfaces.GetSize(); i++) {
-		if (Warn) Game->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->_filename, _surfaces[i]->_referenceCount);
+		if (warn) Game->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->_filename, _surfaces[i]->_referenceCount);
 		delete _surfaces[i];
 	}
 	_surfaces.RemoveAll();
@@ -97,7 +97,7 @@ HRESULT CBSurfaceStorage::removeSurface(CBSurface *surface) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool default_ck, byte ck_red, byte ck_green, byte ck_blue, int LifeTime, bool KeepLoaded) {
+CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	for (int i = 0; i < _surfaces.GetSize(); i++) {
 		if (scumm_stricmp(_surfaces[i]->_filename, filename) == 0) {
 			_surfaces[i]->_referenceCount++;
@@ -108,9 +108,9 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool default_ck, b
 	if (!Game->_fileManager->hasFile(filename)) {
 		if (filename) Game->LOG(0, "Missing image: '%s'", filename);
 		if (Game->_dEBUG_DebugMode)
-			return addSurface("invalid_debug.bmp", default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
+			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 		else
-			return addSurface("invalid.bmp", default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded);
+			return addSurface("invalid.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	}
 
 	CBSurface *surface;
@@ -118,7 +118,7 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool default_ck, b
 
 	if (!surface) return NULL;
 
-	if (FAILED(surface->create(filename, default_ck, ck_red, ck_green, ck_blue, LifeTime, KeepLoaded))) {
+	if (FAILED(surface->create(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded))) {
 		delete surface;
 		return NULL;
 	} else {
