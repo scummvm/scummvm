@@ -62,12 +62,11 @@ CBFrame::~CBFrame() {
 	delete _sound;
 	_sound = NULL;
 
-	int i;
-
-	for (i = 0; i < _subframes.GetSize(); i++) delete _subframes[i];
+	for (int i = 0; i < _subframes.GetSize(); i++) 
+		delete _subframes[i];
 	_subframes.RemoveAll();
 
-	for (i = 0; i < _applyEvent.GetSize(); i++) {
+	for (int i = 0; i < _applyEvent.GetSize(); i++) {
 		delete[] _applyEvent[i];
 		_applyEvent[i] = NULL;
 	}
@@ -76,11 +75,11 @@ CBFrame::~CBFrame() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, bool Precise, uint32 Alpha, bool AllFrames, float Rotate, TSpriteBlendMode BlendMode) {
+HRESULT CBFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
 	HRESULT res;
 
 	for (int i = 0; i < _subframes.GetSize(); i++) {
-		res = _subframes[i]->draw(X, Y, Register, ZoomX, ZoomY, Precise, Alpha, Rotate, BlendMode);
+		res = _subframes[i]->draw(x, y, registerOwner, zoomX, zoomY, precise, alpha, rotate, blendMode);
 		if (FAILED(res)) return res;
 	}
 	return S_OK;
@@ -88,9 +87,9 @@ HRESULT CBFrame::draw(int X, int Y, CBObject *Register, float ZoomX, float ZoomY
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::oneTimeDisplay(CBObject *Owner, bool Muted) {
-	if (_sound && !Muted) {
-		if (Owner) Owner->updateOneSound(_sound);
+HRESULT CBFrame::oneTimeDisplay(CBObject *owner, bool muted) {
+	if (_sound && !muted) {
+		if (owner) owner->updateOneSound(_sound);
 		_sound->play();
 		/*
 		if (Game->_state == GAME_FROZEN) {
@@ -98,9 +97,9 @@ HRESULT CBFrame::oneTimeDisplay(CBObject *Owner, bool Muted) {
 		}
 		*/
 	}
-	if (Owner) {
+	if (owner) {
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
-			Owner->applyEvent(_applyEvent[i]);
+			owner->applyEvent(_applyEvent[i]);
 		}
 	}
 	return S_OK;
@@ -132,7 +131,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(KILL_SOUND)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
+HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(DELAY)
 	TOKEN_TABLE(IMAGE)
@@ -163,18 +162,18 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 	RECT rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
-	int HotspotX = 0, HotspotY = 0;
-	bool custo_trans = false;
-	bool editor_selected = false;
-	bool Is2DOnly = false;
-	bool Is3DOnly = false;
-	bool Decoration = false;
-	bool MirrorX = false;
-	bool MirrorY = false;
+	int hotspotX = 0, hotspotY = 0;
+	bool custoTrans = false;
+	bool editorSelected = false;
+	bool is2DOnly = false;
+	bool is3DOnly = false;
+	bool decoration = false;
+	bool mirrorX = false;
+	bool mirrorY = false;
 	CBPlatform::SetRectEmpty(&rect);
 	char *surface_file = NULL;
 
-	while ((cmd = parser.GetCommand((char **)&Buffer, commands, &params)) > 0) {
+	while ((cmd = parser.GetCommand((char **)&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_DELAY:
 			parser.ScanStr(params, "%d", &_delay);
@@ -186,7 +185,7 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 
 		case TOKEN_TRANSPARENT:
 			parser.ScanStr(params, "%d,%d,%d", &r, &g, &b);
-			custo_trans = true;
+			custoTrans = true;
 			break;
 
 		case TOKEN_RECT:
@@ -194,7 +193,7 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_HOTSPOT:
-			parser.ScanStr(params, "%d,%d", &HotspotX, &HotspotY);
+			parser.ScanStr(params, "%d,%d", &hotspotX, &hotspotY);
 			break;
 
 		case TOKEN_MOVE:
@@ -202,19 +201,19 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_2D_ONLY:
-			parser.ScanStr(params, "%b", &Is2DOnly);
+			parser.ScanStr(params, "%b", &is2DOnly);
 			break;
 
 		case TOKEN_3D_ONLY:
-			parser.ScanStr(params, "%b", &Is3DOnly);
+			parser.ScanStr(params, "%b", &is3DOnly);
 			break;
 
 		case TOKEN_MIRROR_X:
-			parser.ScanStr(params, "%b", &MirrorX);
+			parser.ScanStr(params, "%b", &mirrorX);
 			break;
 
 		case TOKEN_MIRROR_Y:
-			parser.ScanStr(params, "%b", &MirrorY);
+			parser.ScanStr(params, "%b", &mirrorY);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
@@ -226,7 +225,7 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.ScanStr(params, "%b", &editor_selected);
+			parser.ScanStr(params, "%b", &editorSelected);
 			break;
 
 		case TOKEN_EDITOR_EXPANDED:
@@ -239,7 +238,7 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 
 		case TOKEN_SUBFRAME: {
 			CBSubFrame *subframe = new CBSubFrame(Game);
-			if (!subframe || FAILED(subframe->loadBuffer((byte *)params, LifeTime, KeepLoaded))) {
+			if (!subframe || FAILED(subframe->loadBuffer((byte *)params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
 			} else _subframes.Add(subframe);
@@ -272,7 +271,7 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 			break;
 
 		case TOKEN_DECORATION:
-			parser.ScanStr(params, "%b", &Decoration);
+			parser.ScanStr(params, "%b", &decoration);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -293,8 +292,8 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 
 	CBSubFrame *sub = new CBSubFrame(Game);
 	if (surface_file != NULL) {
-		if (custo_trans) sub->setSurface(surface_file, false, r, g, b, LifeTime, KeepLoaded);
-		else sub->setSurface(surface_file, true, 0, 0, 0, LifeTime, KeepLoaded);
+		if (custoTrans) sub->setSurface(surface_file, false, r, g, b, lifeTime, keepLoaded);
+		else sub->setSurface(surface_file, true, 0, 0, 0, lifeTime, keepLoaded);
 
 		if (!sub->_surface) {
 			delete sub;
@@ -303,22 +302,22 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 		}
 
 		sub->_alpha = DRGBA(ar, ag, ab, alpha);
-		if (custo_trans) sub->_transparent = DRGBA(r, g, b, 0xFF);
+		if (custoTrans) sub->_transparent = DRGBA(r, g, b, 0xFF);
 	}
 
 	if (CBPlatform::IsRectEmpty(&rect)) sub->setDefaultRect();
 	else sub->_rect = rect;
 
-	sub->_hotspotX = HotspotX;
-	sub->_hotspotY = HotspotY;
-	sub->_2DOnly = Is2DOnly;
-	sub->_3DOnly = Is3DOnly;
-	sub->_decoration = Decoration;
-	sub->_mirrorX = MirrorX;
-	sub->_mirrorY = MirrorY;
+	sub->_hotspotX = hotspotX;
+	sub->_hotspotY = hotspotY;
+	sub->_2DOnly = is2DOnly;
+	sub->_3DOnly = is3DOnly;
+	sub->_decoration = decoration;
+	sub->_mirrorX = mirrorX;
+	sub->_mirrorY = mirrorY;
 
 
-	sub->_editorSelected = editor_selected;
+	sub->_editorSelected = editorSelected;
 	_subframes.InsertAt(0, sub);
 
 	return S_OK;
@@ -326,15 +325,15 @@ HRESULT CBFrame::loadBuffer(byte *Buffer, int LifeTime, bool KeepLoaded) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFrame::getBoundingRect(LPRECT Rect, int X, int Y, float ScaleX, float ScaleY) {
-	if (!Rect) return false;
-	CBPlatform::SetRectEmpty(Rect);
+bool CBFrame::getBoundingRect(LPRECT rect, int x, int y, float scaleX, float scaleY) {
+	if (!rect) return false;
+	CBPlatform::SetRectEmpty(rect);
 
-	RECT SubRect;
+	RECT subRect;
 
 	for (int i = 0; i < _subframes.GetSize(); i++) {
-		_subframes[i]->getBoundingRect(&SubRect, X, Y, ScaleX, ScaleY);
-		CBPlatform::UnionRect(Rect, Rect, &SubRect);
+		_subframes[i]->getBoundingRect(&subRect, x, y, scaleX, scaleY);
+		CBPlatform::UnionRect(rect, rect, &subRect);
 	}
 	return true;
 }
@@ -362,12 +361,11 @@ HRESULT CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	if (_subframes.GetSize() > 0) _subframes[0]->saveAsText(buffer, indent, false);
 
-	int i;
-	for (i = 1; i < _subframes.GetSize(); i++) {
+	for (int i = 1; i < _subframes.GetSize(); i++) {
 		_subframes[i]->saveAsText(buffer, indent + 2);
 	}
 
-	for (i = 0; i < _applyEvent.GetSize(); i++) {
+	for (int i = 0; i < _applyEvent.GetSize(); i++) {
 		buffer->putTextIndent(indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
 	}
 
@@ -419,13 +417,13 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetSound") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 		delete _sound;
 		_sound = NULL;
 
-		if (!Val->isNULL()) {
+		if (!val->isNULL()) {
 			_sound = new CBSound(Game);
-			if (!_sound || FAILED(_sound->setSound(Val->getString(), SOUND_SFX, false))) {
+			if (!_sound || FAILED(_sound->setSound(val->getString(), SOUND_SFX, false))) {
 				stack->pushBool(false);
 				delete _sound;
 				_sound = NULL;
@@ -439,11 +437,11 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
-		int Index = stack->pop()->getInt(-1);
-		if (Index < 0 || Index >= _subframes.GetSize()) {
-			script->RuntimeError("Frame.GetSubframe: Subframe index %d is out of range.", Index);
+		int index = stack->pop()->getInt(-1);
+		if (index < 0 || index >= _subframes.GetSize()) {
+			script->RuntimeError("Frame.GetSubframe: Subframe index %d is out of range.", index);
 			stack->pushNULL();
-		} else stack->pushNative(_subframes[Index], true);
+		} else stack->pushNative(_subframes[index], true);
 
 		return S_OK;
 	}
@@ -453,16 +451,16 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteSubframe") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
-		if (Val->isInt()) {
-			int Index = Val->getInt(-1);
-			if (Index < 0 || Index >= _subframes.GetSize()) {
-				script->RuntimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", Index);
+		CScValue *val = stack->pop();
+		if (val->isInt()) {
+			int index = val->getInt(-1);
+			if (index < 0 || index >= _subframes.GetSize()) {
+				script->RuntimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", index);
 			}
 		} else {
-			CBSubFrame *Sub = (CBSubFrame *)Val->getNative();
+			CBSubFrame *sub = (CBSubFrame *)val->getNative();
 			for (int i = 0; i < _subframes.GetSize(); i++) {
-				if (_subframes[i] == Sub) {
+				if (_subframes[i] == sub) {
 					delete _subframes[i];
 					_subframes.RemoveAt(i);
 					break;
@@ -478,18 +476,18 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddSubframe") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 		const char *filename = NULL;
-		if (!Val->isNULL()) filename = Val->getString();
+		if (!val->isNULL()) filename = val->getString();
 
-		CBSubFrame *Sub = new CBSubFrame(Game);
+		CBSubFrame *sub = new CBSubFrame(Game);
 		if (filename != NULL) {
-			Sub->setSurface(filename);
-			Sub->setDefaultRect();
+			sub->setSurface(filename);
+			sub->setDefaultRect();
 		}
-		_subframes.Add(Sub);
+		_subframes.Add(sub);
 
-		stack->pushNative(Sub, true);
+		stack->pushNative(sub, true);
 		return S_OK;
 	}
 
@@ -498,22 +496,22 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertSubframe") == 0) {
 		stack->correctParams(2);
-		int Index = stack->pop()->getInt();
-		if (Index < 0) Index = 0;
+		int index = stack->pop()->getInt();
+		if (index < 0) index = 0;
 
-		CScValue *Val = stack->pop();
+		CScValue *val = stack->pop();
 		const char *filename = NULL;
-		if (!Val->isNULL()) filename = Val->getString();
+		if (!val->isNULL()) filename = val->getString();
 
-		CBSubFrame *Sub = new CBSubFrame(Game);
+		CBSubFrame *sub = new CBSubFrame(Game);
 		if (filename != NULL) {
-			Sub->setSurface(filename);
+			sub->setSurface(filename);
 		}
 
-		if (Index >= _subframes.GetSize()) _subframes.Add(Sub);
-		else _subframes.InsertAt(Index, Sub);
+		if (index >= _subframes.GetSize()) _subframes.Add(sub);
+		else _subframes.InsertAt(index, sub);
 
-		stack->pushNative(Sub, true);
+		stack->pushNative(sub, true);
 		return S_OK;
 	}
 
@@ -522,11 +520,11 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
-		int Index = stack->pop()->getInt(-1);
-		if (Index < 0 || Index >= _applyEvent.GetSize()) {
-			script->RuntimeError("Frame.GetEvent: Event index %d is out of range.", Index);
+		int index = stack->pop()->getInt(-1);
+		if (index < 0 || index >= _applyEvent.GetSize()) {
+			script->RuntimeError("Frame.GetEvent: Event index %d is out of range.", index);
 			stack->pushNULL();
-		} else stack->pushString(_applyEvent[Index]);
+		} else stack->pushString(_applyEvent[index]);
 		return S_OK;
 	}
 
@@ -535,14 +533,14 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddEvent") == 0) {
 		stack->correctParams(1);
-		const char *Event = stack->pop()->getString();
+		const char *event = stack->pop()->getString();
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
-			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
+			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				stack->pushNULL();
 				return S_OK;
 			}
 		}
-		_applyEvent.Add(Event);
+		_applyEvent.Add(event);
 		stack->pushNULL();
 		return S_OK;
 	}
@@ -552,9 +550,9 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteEvent") == 0) {
 		stack->correctParams(1);
-		const char *Event = stack->pop()->getString();
+		const char *event = stack->pop()->getString();
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
-			if (scumm_stricmp(_applyEvent[i], Event) == 0) {
+			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				delete [] _applyEvent[i];
 				_applyEvent.RemoveAt(i);
 				break;
