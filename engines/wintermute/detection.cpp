@@ -35,6 +35,16 @@ namespace WinterMute {
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"wintermute",
+		"Chivalry is Not Dead",
+		AD_ENTRY1s("data.dcp", "ebd0915d9a12df5224be22f53bb23eb6", 7278306),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_USEEXTRAASTITLE,
+		GUIO0()
+	},
+	{
+		"wintermute",
 		"Dirty Split",
 		AD_ENTRY1s("data.dcp", "8f3dae199361ece0f59fb20cfff6eed3", 88577621),
 		Common::EN_ANY,
