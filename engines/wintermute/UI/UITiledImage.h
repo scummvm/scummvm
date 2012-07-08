@@ -37,12 +37,12 @@ class CBSubFrame;
 class CUITiledImage : public CBObject {
 public:
 	DECLARE_PERSISTENT(CUITiledImage, CBObject)
-	void correctSize(int *Width, int *Height);
+	void correctSize(int *width, int *height);
 	HRESULT loadFile(const char *filename);
 	HRESULT loadBuffer(byte *buffer, bool complete = true);
 	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
 
-	HRESULT display(int X, int Y, int Width, int Height);
+	HRESULT display(int x, int y, int width, int height);
 	CUITiledImage(CBGame *inGame = NULL);
 	virtual ~CUITiledImage();
 	CBSubFrame *_image;

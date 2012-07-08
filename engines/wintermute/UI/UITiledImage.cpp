@@ -64,52 +64,52 @@ CUITiledImage::~CUITiledImage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::display(int X, int Y, int Width, int Height) {
+HRESULT CUITiledImage::display(int x, int y, int width, int height) {
 	if (!_image) return E_FAIL;
 
-	int tile_width = _middleMiddle.right - _middleMiddle.left;
-	int tile_height = _middleMiddle.bottom - _middleMiddle.top;
+	int tileWidth = _middleMiddle.right - _middleMiddle.left;
+	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
 
-	int nu_columns = (Width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tile_width;
-	int nu_rows = (Height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tile_height;
+	int nuColumns = (width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
+	int nuRows = (height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
 	int col, row;
 
 	Game->_renderer->startSpriteBatch();
 
 	// top left/right
-	_image->_surface->displayTrans(X,                                                       Y, _upLeft);
-	_image->_surface->displayTrans(X + (_upLeft.right - _upLeft.left) + nu_columns * tile_width, Y, _upRight);
+	_image->_surface->displayTrans(x,                                                       y, _upLeft);
+	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y, _upRight);
 
 	// bottom left/right
-	_image->_surface->displayTrans(X,                                                       Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downLeft);
-	_image->_surface->displayTrans(X + (_upLeft.right - _upLeft.left) + nu_columns * tile_width, Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downRight);
+	_image->_surface->displayTrans(x,                                                       y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downLeft);
+	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downRight);
 
 	// left/right
-	int yyy = Y + (_upMiddle.bottom - _upMiddle.top);
-	for (row = 0; row < nu_rows; row++) {
-		_image->_surface->displayTrans(X,                                                       yyy, _middleLeft);
-		_image->_surface->displayTrans(X + (_middleLeft.right - _middleLeft.left) + nu_columns * tile_width, yyy, _middleRight);
-		yyy += tile_width;
+	int yyy = y + (_upMiddle.bottom - _upMiddle.top);
+	for (row = 0; row < nuRows; row++) {
+		_image->_surface->displayTrans(x,                                                       yyy, _middleLeft);
+		_image->_surface->displayTrans(x + (_middleLeft.right - _middleLeft.left) + nuColumns * tileWidth, yyy, _middleRight);
+		yyy += tileWidth;
 	}
 
 	// top/bottom
-	int xxx = X + (_upLeft.right - _upLeft.left);
-	for (col = 0; col < nu_columns; col++) {
-		_image->_surface->displayTrans(xxx, Y, _upMiddle);
-		_image->_surface->displayTrans(xxx, Y + (_upMiddle.bottom - _upMiddle.top) + nu_rows * tile_height, _downMiddle);
-		xxx += tile_width;
+	int xxx = x + (_upLeft.right - _upLeft.left);
+	for (col = 0; col < nuColumns; col++) {
+		_image->_surface->displayTrans(xxx, y, _upMiddle);
+		_image->_surface->displayTrans(xxx, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downMiddle);
+		xxx += tileWidth;
 	}
 
 	// tiles
-	yyy = Y + (_upMiddle.bottom - _upMiddle.top);
-	for (row = 0; row < nu_rows; row++) {
-		xxx = X + (_upLeft.right - _upLeft.left);
-		for (col = 0; col < nu_columns; col++) {
+	yyy = y + (_upMiddle.bottom - _upMiddle.top);
+	for (row = 0; row < nuRows; row++) {
+		xxx = x + (_upLeft.right - _upLeft.left);
+		for (col = 0; col < nuColumns; col++) {
 			_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
-			xxx += tile_width;
+			xxx += tileWidth;
 		}
-		yyy += tile_width;
+		yyy += tileWidth;
 	}
 
 	Game->_renderer->endSpriteBatch();
@@ -180,9 +180,9 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 	byte *params;
 	int cmd;
 	CBParser parser(Game);
-	bool HTiles = false, VTiles = false;
-	int H1 = 0, H2 = 0, H3 = 0;
-	int V1 = 0, V2 = 0, V3 = 0;
+	bool hTiles = false, vTiles = false;
+	int h1 = 0, h2 = 0, h3 = 0;
+	int v1 = 0, v2 = 0, v3 = 0;
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TILED_IMAGE) {
@@ -245,13 +245,13 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_HORIZONTAL_TILES:
-			parser.scanStr((char *)params, "%d,%d,%d", &H1, &H2, &H3);
-			HTiles = true;
+			parser.scanStr((char *)params, "%d,%d,%d", &h1, &h2, &h3);
+			hTiles = true;
 			break;
 
 		case TOKEN_VERTICAL_TILES:
-			parser.scanStr((char *)params, "%d,%d,%d", &V1, &V2, &V3);
-			VTiles = true;
+			parser.scanStr((char *)params, "%d,%d,%d", &v1, &v2, &v3);
+			vTiles = true;
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -268,39 +268,39 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 		return E_FAIL;
 	}
 
-	if (VTiles && HTiles) {
+	if (vTiles && hTiles) {
 		// up row
-		CBPlatform::SetRect(&_upLeft,   0,     0, H1,       V1);
-		CBPlatform::SetRect(&_upMiddle, H1,    0, H1 + H2,    V1);
-		CBPlatform::SetRect(&_upRight,  H1 + H2, 0, H1 + H2 + H3, V1);
+		CBPlatform::SetRect(&_upLeft,   0,     0, h1,       v1);
+		CBPlatform::SetRect(&_upMiddle, h1,    0, h1 + h2,    v1);
+		CBPlatform::SetRect(&_upRight,  h1 + h2, 0, h1 + h2 + h3, v1);
 
 		// middle row
-		CBPlatform::SetRect(&_middleLeft,   0,     V1, H1,       V1 + V2);
-		CBPlatform::SetRect(&_middleMiddle, H1,    V1, H1 + H2,    V1 + V2);
-		CBPlatform::SetRect(&_middleRight,  H1 + H2, V1, H1 + H2 + H3, V1 + V2);
+		CBPlatform::SetRect(&_middleLeft,   0,     v1, h1,       v1 + v2);
+		CBPlatform::SetRect(&_middleMiddle, h1,    v1, h1 + h2,    v1 + v2);
+		CBPlatform::SetRect(&_middleRight,  h1 + h2, v1, h1 + h2 + h3, v1 + v2);
 
 		// down row
-		CBPlatform::SetRect(&_downLeft,   0,     V1 + V2, H1,       V1 + V2 + V3);
-		CBPlatform::SetRect(&_downMiddle, H1,    V1 + V2, H1 + H2,    V1 + V2 + V3);
-		CBPlatform::SetRect(&_downRight,  H1 + H2, V1 + V2, H1 + H2 + H3, V1 + V2 + V3);
+		CBPlatform::SetRect(&_downLeft,   0,     v1 + v2, h1,       v1 + v2 + v3);
+		CBPlatform::SetRect(&_downMiddle, h1,    v1 + v2, h1 + h2,    v1 + v2 + v3);
+		CBPlatform::SetRect(&_downRight,  h1 + h2, v1 + v2, h1 + h2 + h3, v1 + v2 + v3);
 	}
 
 	// default
 	if (_image && _image->_surface) {
-		int Width = _image->_surface->getWidth() / 3;
-		int Height = _image->_surface->getHeight() / 3;
+		int width = _image->_surface->getWidth() / 3;
+		int height = _image->_surface->getHeight() / 3;
 
-		if (CBPlatform::IsRectEmpty(&_upLeft))   CBPlatform::SetRect(&_upLeft,   0,       0, Width,   Height);
-		if (CBPlatform::IsRectEmpty(&_upMiddle)) CBPlatform::SetRect(&_upMiddle, Width,   0, 2 * Width, Height);
-		if (CBPlatform::IsRectEmpty(&_upRight))  CBPlatform::SetRect(&_upRight,  2 * Width, 0, 3 * Width, Height);
+		if (CBPlatform::IsRectEmpty(&_upLeft))   CBPlatform::SetRect(&_upLeft,   0,       0, width,   height);
+		if (CBPlatform::IsRectEmpty(&_upMiddle)) CBPlatform::SetRect(&_upMiddle, width,   0, 2 * width, height);
+		if (CBPlatform::IsRectEmpty(&_upRight))  CBPlatform::SetRect(&_upRight,  2 * width, 0, 3 * width, height);
 
-		if (CBPlatform::IsRectEmpty(&_middleLeft))   CBPlatform::SetRect(&_middleLeft,   0,       Height, Width,   2 * Height);
-		if (CBPlatform::IsRectEmpty(&_middleMiddle)) CBPlatform::SetRect(&_middleMiddle, Width,   Height, 2 * Width, 2 * Height);
-		if (CBPlatform::IsRectEmpty(&_middleRight))  CBPlatform::SetRect(&_middleRight,  2 * Width, Height, 3 * Width, 2 * Height);
+		if (CBPlatform::IsRectEmpty(&_middleLeft))   CBPlatform::SetRect(&_middleLeft,   0,       height, width,   2 * height);
+		if (CBPlatform::IsRectEmpty(&_middleMiddle)) CBPlatform::SetRect(&_middleMiddle, width,   height, 2 * width, 2 * height);
+		if (CBPlatform::IsRectEmpty(&_middleRight))  CBPlatform::SetRect(&_middleRight,  2 * width, height, 3 * width, 2 * height);
 
-		if (CBPlatform::IsRectEmpty(&_downLeft))   CBPlatform::SetRect(&_downLeft,   0,       2 * Height, Width,   3 * Height);
-		if (CBPlatform::IsRectEmpty(&_downMiddle)) CBPlatform::SetRect(&_downMiddle, Width,   2 * Height, 2 * Width, 3 * Height);
-		if (CBPlatform::IsRectEmpty(&_downRight))  CBPlatform::SetRect(&_downRight,  2 * Width, 2 * Height, 3 * Width, 3 * Height);
+		if (CBPlatform::IsRectEmpty(&_downLeft))   CBPlatform::SetRect(&_downLeft,   0,       2 * height, width,   3 * height);
+		if (CBPlatform::IsRectEmpty(&_downMiddle)) CBPlatform::SetRect(&_downMiddle, width,   2 * height, 2 * width, 3 * height);
+		if (CBPlatform::IsRectEmpty(&_downRight))  CBPlatform::SetRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
 	}
 
 	return S_OK;
@@ -314,20 +314,20 @@ HRESULT CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
 	if (_image && _image->_surfaceFilename)
 		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
 
-	int H1, H2, H3;
-	int V1, V2, V3;
+	int h1, h2, h3;
+	int v1, v2, v3;
 
-	H1 = _upLeft.right;
-	H2 = _upMiddle.right - _upMiddle.left;
-	H3 = _upRight.right - _upRight.left;
+	h1 = _upLeft.right;
+	h2 = _upMiddle.right - _upMiddle.left;
+	h3 = _upRight.right - _upRight.left;
 
-	V1 = _upLeft.bottom;
-	V2 = _middleLeft.bottom - _middleLeft.top;
-	V3 = _downLeft.bottom - _downLeft.top;
+	v1 = _upLeft.bottom;
+	v2 = _middleLeft.bottom - _middleLeft.top;
+	v3 = _downLeft.bottom - _downLeft.top;
 
 
-	buffer->putTextIndent(indent + 2, "VERTICAL_TILES { %d, %d, %d }\n", V1, V2, V3);
-	buffer->putTextIndent(indent + 2, "HORIZONTAL_TILES { %d, %d, %d }\n", H1, H2, H3);
+	buffer->putTextIndent(indent + 2, "VERTICAL_TILES { %d, %d, %d }\n", v1, v2, v3);
+	buffer->putTextIndent(indent + 2, "HORIZONTAL_TILES { %d, %d, %d }\n", h1, h2, h3);
 
 	// editor properties
 	CBBase::saveAsText(buffer, indent + 2);
@@ -337,15 +337,15 @@ HRESULT CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CUITiledImage::correctSize(int *Width, int *Height) {
-	int tile_width = _middleMiddle.right - _middleMiddle.left;
-	int tile_height = _middleMiddle.bottom - _middleMiddle.top;
+void CUITiledImage::correctSize(int *width, int *height) {
+	int tileWidth = _middleMiddle.right - _middleMiddle.left;
+	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
 
-	int nu_columns = (*Width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tile_width;
-	int nu_rows = (*Height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tile_height;
+	int nuColumns = (*width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
+	int nuRows = (*height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
-	*Width  = (_middleLeft.right - _middleLeft.left) + (_middleRight.right - _middleRight.left) + nu_columns * tile_width;
-	*Height = (_upMiddle.bottom - _upMiddle.top) + (_downMiddle.bottom - _downMiddle.top) + nu_rows * tile_height;
+	*width  = (_middleLeft.right - _middleLeft.left) + (_middleRight.right - _middleRight.left) + nuColumns * tileWidth;
+	*height = (_upMiddle.bottom - _upMiddle.top) + (_downMiddle.bottom - _downMiddle.top) + nuRows * tileHeight;
 }
 
 
