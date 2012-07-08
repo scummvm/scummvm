@@ -51,11 +51,11 @@ private:
 	void *_writeFile;
 	int _mode; // 0..none, 1..read, 2..write, 3..append
 	bool _textMode;
-	void Close();
+	void close();
 	void cleanup();
-	uint32 GetPos();
-	uint32 GetLength();
-	bool SetPos(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);
+	uint32 getPos();
+	uint32 getLength();
+	bool setPos(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);
 	char *_filename;
 };
 
