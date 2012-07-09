@@ -373,7 +373,7 @@ void CBRenderSDL::drawFromTicket(RenderTicket *renderTicket) {
 			// Before something
 			Common::List<RenderTicket*>::iterator pos;
 			for (pos = _renderQueue.begin(); pos != _renderQueue.end(); pos++) {
-				if ((*pos)->_drawNum > _drawNum) {
+				if ((*pos)->_drawNum >= _drawNum) {
 					break;
 				}
 			}
