@@ -47,7 +47,7 @@ AnsiString PathUtil::unifySeparators(const AnsiString &path) {
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::normalizeFileName(const AnsiString &path) {
 	AnsiString newPath = unifySeparators(path);
-	StringUtil::toLowerCase(newPath);
+	newPath.toLowercase();
 	return newPath;
 }
 

@@ -34,34 +34,8 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-void StringUtil::toLowerCase(AnsiString &str) {
-	str.toLowercase();
-}
-
-//////////////////////////////////////////////////////////////////////////
-/*void StringUtil::toLowerCase(WideString &str) {
-    std::transform(str.begin(), str.end(), str.begin(), ::towlower);
-}*/
-
-//////////////////////////////////////////////////////////////////////////
-void StringUtil::toUpperCase(AnsiString &str) {
-	str.toUppercase();
-}
-
-//////////////////////////////////////////////////////////////////////////
-/*void StringUtil::toUpperCase(WideString &str) {
-    std::transform(str.begin(), str.end(), str.begin(), ::towupper);
-}*/
-
-//////////////////////////////////////////////////////////////////////////
 bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
-	AnsiString str1lc = str1;
-	AnsiString str2lc = str2;
-
-	toLowerCase(str1lc);
-	toLowerCase(str2lc);
-
-	return (str1lc == str2lc);
+	return (str1.compareToIgnoreCase(str2) == 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -369,33 +343,21 @@ int StringUtil::lastIndexOf(const WideString &str, const WideString &toFind, siz
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString StringUtil::toString(size_t val) {
-	/*  std::ostringstream str;
-	    str << val;
-	    return str.str();*/
 	return Common::String::format("%u", (uint32)val);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString StringUtil::toString(int val) {
-	/*  std::ostringstream str;
-	    str << val;
-	    return str.str();*/
 	return Common::String::format("%d", val);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString StringUtil::toString(float val) {
-	/*  std::ostringstream str;
-	    str << val;
-	    return str.str();*/
 	return Common::String::format("%f", val);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString StringUtil::toString(double val) {
-	/*  std::ostringstream str;
-	    str << val;
-	    return str.str();*/
 	return Common::String::format("%f", val);
 }
 

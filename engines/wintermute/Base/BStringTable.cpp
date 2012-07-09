@@ -58,13 +58,13 @@ ERRORCODE CBStringTable::addString(const char *key, const char *val, bool report
 		return STATUS_OK;
 	}
 
-	Common::String final_key = key;
-	StringUtil::toLowerCase(final_key);
+	Common::String finalKey = key;
+	finalKey.toLowercase();
 
-	_stringsIter = _strings.find(final_key);
-	if (_stringsIter != _strings.end() && reportDuplicities) Game->LOG(0, "  Warning: Duplicate definition of string '%s'.", final_key.c_str());
+	_stringsIter = _strings.find(finalKey);
+	if (_stringsIter != _strings.end() && reportDuplicities) Game->LOG(0, "  Warning: Duplicate definition of string '%s'.", finalKey.c_str());
 
-	_strings[final_key] = val;
+	_strings[finalKey] = val;
 
 	return STATUS_OK;
 }

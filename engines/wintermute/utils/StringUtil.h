@@ -35,10 +35,6 @@ namespace WinterMute {
 
 class StringUtil {
 public:
-	static void toLowerCase(AnsiString &str);
-	//static void toLowerCase(WideString &str);
-	static void toUpperCase(AnsiString &str);
-	//static void toUpperCase(WideString &str);
 	static bool compareNoCase(const AnsiString &str1, const AnsiString &str2);
 	//static bool compareNoCase(const WideString &str1, const WideString &str2);
 	static WideString utf8ToWide(const Utf8String &Utf8Str);

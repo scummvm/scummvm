@@ -181,7 +181,7 @@ ERRORCODE CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		else
 			str = StringUtil::ansiToWide(_string);
 
-		StringUtil::toUpperCase(str);
+		str.toUppercase();
 
 		if (Game->_textEncoding == TEXT_UTF8)
 			stack->pushString(StringUtil::wideToUtf8(str).c_str());
@@ -203,7 +203,7 @@ ERRORCODE CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		else
 			str = StringUtil::ansiToWide(_string);
 
-		StringUtil::toLowerCase(str);
+		str.toLowercase();
 
 		if (Game->_textEncoding == TEXT_UTF8)
 			stack->pushString(StringUtil::wideToUtf8(str).c_str());

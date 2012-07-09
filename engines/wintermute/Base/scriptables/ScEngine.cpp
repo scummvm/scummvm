@@ -658,7 +658,7 @@ void CScEngine::addScriptTime(const char *filename, uint32 time) {
 	if (!_isProfiling) return;
 
 	AnsiString fileName = filename;
-	StringUtil::toLowerCase(fileName);
+	fileName.toLowercase();
 	_scriptTimes[fileName] += time;
 }
 
