@@ -117,10 +117,10 @@ public:
 	char *_localSaveDir;
 	bool _saveDirChecked;
 
-
+	int _indicatorProgress;
+protected:
 	bool _indicatorDisplay;
 	uint32 _indicatorColor;
-	int _indicatorProgress;
 	int _indicatorX;
 	int _indicatorY;
 	int _indicatorWidth;
@@ -135,14 +135,14 @@ public:
 	int _saveImageY;
 	int _loadImageX;
 	int _loadImageY;
-	CBSurface *_saveLoadImage;
 
+	CBSurface *_saveLoadImage;
 	ERRORCODE displayIndicator();
 
+	bool _reportTextureFormat;
+public:
 	int _thumbnailWidth;
 	int _thumbnailHeight;
-
-	bool _reportTextureFormat;
 
 	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = NULL, void *data = NULL);
 	ENGINE_LOG_CALLBACK _engineLogCallback;
@@ -198,13 +198,16 @@ public:
 	CBArray<CBViewport *, CBViewport *> _viewportStack;
 
 	int _viewportSP;
-	bool _mouseLeftDown;
-	bool _mouseRightDown;
-	bool _mouseMidlleDown;
-	CBStringTable *_stringTable;
 
+	CBStringTable *_stringTable;
 	int _settingsResWidth;
 	int _settingsResHeight;
+	char *_settingsGameFile;
+	bool _suppressScriptErrors;
+	bool _mouseLeftDown;
+protected:
+	bool _mouseRightDown;
+	bool _mouseMidlleDown;
 	bool _settingsRequireAcceleration;
 	bool _settingsAllowWindowed;
 	bool _settingsAllowAdvanced;
@@ -213,13 +216,10 @@ public:
 	bool _settingsRequireSound;
 	bool _settingsAllowDesktopRes;
 	int _settingsTLMode;
-	char *_settingsGameFile;
 	CBFader *_fader;
-	bool _suppressScriptErrors;
-
 	virtual ERRORCODE invalidateDeviceObjects();
 	virtual ERRORCODE restoreDeviceObjects();
-
+public:
 	virtual ERRORCODE ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
@@ -256,7 +256,9 @@ public:
 
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual void handleKeyRelease(Common::Event *event);
+protected:
 	int _freezeLevel;
+public:
 	ERRORCODE unfreeze();
 	ERRORCODE freeze(bool includingMusic = true);
 	ERRORCODE focusWindow(CUIWindow *window);
@@ -265,11 +267,13 @@ public:
 	bool _loadInProgress;
 	CUIWindow *_focusedWindow;
 	bool _editorForceScripts;
+protected:
 	static void afterLoadRegion(void *region, void *data);
 	static void afterLoadSubFrame(void *subframe, void *data);
 	static void afterLoadSound(void *sound, void *data);
 	static void afterLoadFont(void *font, void *data);
 	static void afterLoadScript(void *script, void *data);
+public:
 	static void invalidateValues(void *value, void *data);
 
 	ERRORCODE loadSettings(const char *filename);

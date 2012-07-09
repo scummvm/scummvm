@@ -99,6 +99,7 @@ public:
 	}
 
 	void drawSurface(CBSurfaceSDL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY);
+	CBSurface *createSurface();
 private:
 	void addDirtyRect(const Common::Rect &rect);
 	void drawTickets();

@@ -83,6 +83,10 @@ bool RenderTicket::operator==(RenderTicket &t) {
 	return true;
 }
 
+CBRenderer *makeSDLRenderer(CBGame *inGame) {
+	return new CBRenderSDL(inGame);
+}
+
 // TODO: Redo everything here.
 
 //////////////////////////////////////////////////////////////////////////
@@ -660,6 +664,10 @@ void CBRenderSDL::dumpData(const char *filename) {
 	Game->LOG(0, "Texture Stats Dump completed.");
 	Game->QuickMessage("Texture Stats Dump completed.");
 #endif
+}
+
+CBSurface *CBRenderSDL::createSurface() {
+	return new CBSurfaceSDL(Game);
 }
 
 } // end of namespace WinterMute

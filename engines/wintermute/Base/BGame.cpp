@@ -37,12 +37,12 @@
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BQuickMsg.h"
 #include "engines/wintermute/Base/BRegistry.h"
-#include "engines/wintermute/Base/BRenderSDL.h"
+#include "engines/wintermute/Base/BRenderer.h"
 #include "engines/wintermute/Base/BSound.h"
 #include "engines/wintermute/Base/BSoundMgr.h"
 #include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/Base/BSubFrame.h"
-#include "engines/wintermute/Base/BSurfaceSDL.h"
+#include "engines/wintermute/Base/BSurface.h"
 #include "engines/wintermute/Base/BTransitionMgr.h"
 #include "engines/wintermute/Base/BViewport.h"
 #include "engines/wintermute/Base/BStringTable.h"
@@ -499,7 +499,7 @@ ERRORCODE CBGame::initialize1() {
 
 //////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::initialize2() { // we know whether we are going to be accelerated
-	_renderer = new CBRenderSDL(this);
+	_renderer = makeSDLRenderer(this);
 	if (_renderer == NULL) return STATUS_FAILED;
 
 	return STATUS_OK;
@@ -3209,7 +3209,7 @@ ERRORCODE CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 		delete _saveLoadImage;
 		_saveLoadImage = NULL;
 		if (_saveImageName) {
-			_saveLoadImage = new CBSurfaceSDL(this);
+			_saveLoadImage = _renderer->createSurface();
 
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
 				delete _saveLoadImage;
@@ -3259,7 +3259,7 @@ ERRORCODE CBGame::loadGame(const char *filename) {
 	delete _saveLoadImage;
 	_saveLoadImage = NULL;
 	if (_loadImageName) {
-		_saveLoadImage = new CBSurfaceSDL(this);
+		_saveLoadImage = _renderer->createSurface();
 
 		if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
 			delete _saveLoadImage;

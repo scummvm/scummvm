@@ -39,7 +39,7 @@ namespace WinterMute {
 class CBImage;
 class CBActiveRect;
 class CBObject;
-
+class CBSurface;
 class CBRenderer: public CBBase {
 public:
 	int _realWidth;
@@ -89,6 +89,8 @@ public:
 		return 1.0f;
 	}
 
+	virtual CBSurface *createSurface() = 0;
+
 	ERRORCODE clipCursor();
 	ERRORCODE unclipCursor();
 
@@ -118,6 +120,8 @@ public:
 
 	CBArray<CBActiveRect *, CBActiveRect *> _rectList;
 };
+
+CBRenderer *makeSDLRenderer(CBGame *inGame); // Implemented in BRenderSDL.cpp
 
 } // end of namespace WinterMute
 

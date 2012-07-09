@@ -32,8 +32,8 @@
 #include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/math/MathUtil.h"
-#include "engines/wintermute/Base/BRenderSDL.h"
-#include "engines/wintermute/Base/BSurfaceSDL.h"
+#include "engines/wintermute/Base/BRenderer.h"
+#include "engines/wintermute/Base/BSurface.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
@@ -165,7 +165,7 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 		textStr = Common::String(textStr.c_str(), (uint32)maxLength);
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
-	CBRenderSDL *_renderer = (CBRenderSDL *)Game->_renderer;
+	CBRenderer *renderer = Game->_renderer;
 
 	// find cached surface, if exists
 	int minPriority = INT_MAX;
@@ -221,14 +221,14 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 		CBPlatform::setRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
 		for (int i = 0; i < _layers.getSize(); i++) {
 			uint32 color = _layers[i]->_color;
-			uint32 origForceAlpha = _renderer->_forceAlphaColor;
-			if (_renderer->_forceAlphaColor != 0) {
-				color = BYTETORGBA(RGBCOLGetR(color), RGBCOLGetG(color), RGBCOLGetB(color), RGBCOLGetA(_renderer->_forceAlphaColor));
-				_renderer->_forceAlphaColor = 0;
+			uint32 origForceAlpha = renderer->_forceAlphaColor;
+			if (renderer->_forceAlphaColor != 0) {
+				color = BYTETORGBA(RGBCOLGetR(color), RGBCOLGetG(color), RGBCOLGetB(color), RGBCOLGetA(renderer->_forceAlphaColor));
+				renderer->_forceAlphaColor = 0;
 			}
 			surface->displayTransOffset(x, y - textOffset, rc, color, BLEND_NORMAL, false, false, _layers[i]->_offsetX, _layers[i]->_offsetY);
 
-			_renderer->_forceAlphaColor = origForceAlpha;
+			renderer->_forceAlphaColor = origForceAlpha;
 		}
 	}
 
@@ -270,7 +270,7 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 		heightOffset += (int)_lineHeight;
 	}
 
-	CBSurfaceSDL *retSurface = new CBSurfaceSDL(Game);
+	CBSurface *retSurface = Game->_renderer->createSurface();
 	Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 , 0));
 	retSurface->putSurface(*convertedSurface, true);
 	convertedSurface->free();
