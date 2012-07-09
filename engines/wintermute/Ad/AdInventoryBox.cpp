@@ -103,13 +103,13 @@ ERRORCODE CAdInventoryBox::display() {
 
 	if (!_visible) return STATUS_OK;
 
-	int ItemsX, ItemsY;
-	ItemsX = (int)floor((float)((_itemsArea.right - _itemsArea.left + _spacing) / (_itemWidth + _spacing)));
-	ItemsY = (int)floor((float)((_itemsArea.bottom - _itemsArea.top + _spacing) / (_itemHeight + _spacing)));
+	int itemsX, itemsY;
+	itemsX = (int)floor((float)((_itemsArea.right - _itemsArea.left + _spacing) / (_itemWidth + _spacing)));
+	itemsY = (int)floor((float)((_itemsArea.bottom - _itemsArea.top + _spacing) / (_itemHeight + _spacing)));
 
 	if (_window) {
 		_window->enableWidget("prev", _scrollOffset > 0);
-		_window->enableWidget("next", _scrollOffset + ItemsX * ItemsY < adGame->_inventoryOwner->getInventory()->_takenItems.getSize());
+		_window->enableWidget("next", _scrollOffset + itemsX * itemsY < adGame->_inventoryOwner->getInventory()->_takenItems.getSize());
 	}
 
 
@@ -132,12 +132,12 @@ ERRORCODE CAdInventoryBox::display() {
 	// display items
 	if (_window && _window->_alphaColor != 0) Game->_renderer->_forceAlphaColor = _window->_alphaColor;
 	int yyy = rect.top;
-	for (int j = 0; j < ItemsY; j++) {
+	for (int j = 0; j < itemsY; j++) {
 		int xxx = rect.left;
-		for (int i = 0; i < ItemsX; i++) {
-			int ItemIndex = _scrollOffset + j * ItemsX + i;
-			if (ItemIndex >= 0 && ItemIndex < adGame->_inventoryOwner->getInventory()->_takenItems.getSize()) {
-				CAdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[ItemIndex];
+		for (int i = 0; i < itemsX; i++) {
+			int itemIndex = _scrollOffset + j * itemsX + i;
+			if (itemIndex >= 0 && itemIndex < adGame->_inventoryOwner->getInventory()->_takenItems.getSize()) {
+				CAdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[itemIndex];
 				if (item != ((CAdGame *)Game)->_selectedItem || !_hideSelected) {
 					item->update();
 					item->display(xxx, yyy);
