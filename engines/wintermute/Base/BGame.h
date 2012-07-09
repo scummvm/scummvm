@@ -159,7 +159,7 @@ public:
 	float _offsetPercentY;
 	CBObject *_mainObject;
 
-	HRESULT initInput(HINSTANCE hInst, HWND hWnd);
+	HRESULT initInput();
 	HRESULT initLoop();
 	uint32 _currentTime;
 	uint32 _deltaTime;

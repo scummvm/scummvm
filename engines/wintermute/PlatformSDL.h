@@ -52,12 +52,12 @@ public:
 	static uint32 getTime();
 	static bool getCursorPos(LPPOINT lpPoint);
 	static bool setCursorPos(int X, int Y);
-	static bool showWindow(HWND hWnd, int nCmdShow);
+	static bool showWindow(int nCmdShow);
 	static bool deleteFile(const char *lpFileName);
 	static bool copyFile(const char *from, const char *to, bool failIfExists);
-	static HWND setCapture(HWND hWnd);
+	static void setCapture();
 	static bool releaseCapture();
-	static bool setForegroundWindow(HWND hWnd);
+	static bool setForegroundWindow();
 
 	static bool setRectEmpty(LPRECT lprc);
 	static bool isRectEmpty(const LPRECT lprc);

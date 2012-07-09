@@ -114,7 +114,7 @@ void CBUtils::createPath(const char *path, bool pathOnly) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBUtils::debugMessage(HWND hWnd, const char *text) {
+void CBUtils::debugMessage(const char *text) {
 	//MessageBox(hWnd, Text, "WME", MB_OK|MB_ICONINFORMATION);
 }
 

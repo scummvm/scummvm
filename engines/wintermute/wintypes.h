@@ -66,7 +66,6 @@ typedef struct tagPOINT {
 
 
 typedef uint32 HINSTANCE;
-typedef uint32 HWND;
 
 typedef int32 HRESULT;
 

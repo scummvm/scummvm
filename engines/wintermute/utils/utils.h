@@ -44,7 +44,7 @@ public:
 
 	static void createPath(const char *Path, bool PathOnly = false);
 
-	static void debugMessage(HWND hWnd, const char *Text);
+	static void debugMessage(const char *Text);
 	static char *setString(char **String, const char *Value);
 
 	static int strNumEntries(const char *Str, const char Delim = ',');

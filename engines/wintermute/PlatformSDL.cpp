@@ -207,7 +207,7 @@ bool CBPlatform::setCursorPos(int X, int Y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::showWindow(HWND hWnd, int nCmdShow) {
+bool CBPlatform::showWindow(int nCmdShow) {
 	return false;
 }
 
@@ -230,8 +230,8 @@ bool CBPlatform::copyFile(const char *from, const char *to, bool failIfExists) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HWND CBPlatform::setCapture(HWND hWnd) {
-	return 0;
+void CBPlatform::setCapture() {
+	return;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -240,7 +240,7 @@ bool CBPlatform::releaseCapture() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::setForegroundWindow(HWND hWnd) {
+bool CBPlatform::setForegroundWindow() {
 	return false;
 }
 

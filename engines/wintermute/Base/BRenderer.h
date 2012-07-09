@@ -104,8 +104,8 @@ public:
 	bool pointInViewport(POINT *P);
 	uint32 _forceAlphaColor;
 	HINSTANCE _instance;
-	HWND _window;
-	HWND _clipperWindow;
+	uint32 _window;
+	uint32 _clipperWindow;
 	bool _active;
 	bool _ready;
 	bool _windowed;

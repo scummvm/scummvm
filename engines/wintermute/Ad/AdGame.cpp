@@ -1953,7 +1953,7 @@ HRESULT CAdGame::onMouseLeftDown() {
 
 	if (_activeObject != NULL) Game->_capturedObject = Game->_activeObject;
 	_mouseLeftDown = true;
-	CBPlatform::setCapture(_renderer->_window);
+	CBPlatform::setCapture(/*_renderer->_window*/);
 
 	return S_OK;
 }

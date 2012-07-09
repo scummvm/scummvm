@@ -673,7 +673,7 @@ HRESULT CBGame::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBGame::initInput(HINSTANCE hInst, HWND hWnd) {
+HRESULT CBGame::initInput() {
 	return S_OK;
 }
 
@@ -4233,7 +4233,7 @@ HRESULT CBGame::onMouseLeftDown() {
 
 	if (_activeObject != NULL) _capturedObject = _activeObject;
 	_mouseLeftDown = true;
-	CBPlatform::setCapture(_renderer->_window);
+	CBPlatform::setCapture(/*_renderer->_window*/);
 
 	return S_OK;
 }
