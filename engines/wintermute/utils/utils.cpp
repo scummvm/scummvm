@@ -45,7 +45,7 @@ static inline unsigned Sqr(int x) {
 
 
 //////////////////////////////////////////////////////////////////////////////////
-void CBUtils::clip(int *destX, int *destY, Common::Rect *srcRect, Common::Rect *destRect) {
+void CBUtils::clip(int *destX, int *destY, Rect32 *srcRect, Rect32 *destRect) {
 	// If it's partly off the right side of the screen
 	if (*destX + (srcRect->right - srcRect->left) > destRect->right)
 		srcRect->right -= *destX + (srcRect->right - srcRect->left) - destRect->right;

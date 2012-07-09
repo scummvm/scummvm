@@ -49,7 +49,7 @@ public:
 	CUIButton *_closeButton;
 	int _spacing;
 	int _scrollOffset;
-	Common::Rect _itemsArea;
+	Rect32 _itemsArea;
 	ERRORCODE listen(CBScriptHolder *param1, uint32 param2);
 	CUIWindow *_window;
 	CAdInventoryBox(CBGame *inGame);

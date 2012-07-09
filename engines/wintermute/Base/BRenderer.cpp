@@ -68,7 +68,7 @@ void CBRenderer::initLoop() {
 
 //////////////////////////////////////////////////////////////////////
 CBObject *CBRenderer::getObjectAt(int x, int y) {
-	Common::Point point;
+	Point32 point;
 	point.x = x;
 	point.y = y;
 
@@ -203,7 +203,7 @@ ERRORCODE CBRenderer::setScreenViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::setViewport(Common::Rect *rect) {
+ERRORCODE CBRenderer::setViewport(Rect32 *rect) {
 	return setViewport(rect->left + _drawOffsetX,
 	                   rect->top + _drawOffsetY,
 	                   rect->right + _drawOffsetX,
@@ -221,7 +221,7 @@ CBImage *CBRenderer::takeScreenshot() {
 ERRORCODE CBRenderer::clipCursor() {
 	/*
 	if (!_windowed) {
-	    Common::Rect rc;
+	    Rect32 rc;
 	    GetWindowRect(_window, &rc);
 
 	    // if "maintain aspect ratio" is in effect, lock mouse to visible area
@@ -245,7 +245,7 @@ ERRORCODE CBRenderer::unclipCursor() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::pointInViewport(Common::Point *p) {
+bool CBRenderer::pointInViewport(Point32 *p) {
 	if (p->x < _drawOffsetX) return false;
 	if (p->y < _drawOffsetY) return false;
 	if (p->x > _drawOffsetX + _width) return false;

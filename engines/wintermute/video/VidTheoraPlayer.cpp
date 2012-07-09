@@ -652,7 +652,7 @@ void CVidTheoraPlayer::writeAlpha() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CVidTheoraPlayer::display(uint32 alpha) {
-	Common::Rect rc;
+	Rect32 rc;
 	ERRORCODE res;
 
 	if (_texture && _videoFrameReady) {

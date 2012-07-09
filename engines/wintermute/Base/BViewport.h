@@ -38,7 +38,7 @@ class CBViewport : public CBBase {
 public:
 	int getHeight();
 	int getWidth();
-	Common::Rect *getRect();
+	Rect32 *getRect();
 	ERRORCODE setRect(int left, int top, int right, int bottom, bool noCheck = false);
 	DECLARE_PERSISTENT(CBViewport, CBBase)
 	int _offsetY;
@@ -47,7 +47,7 @@ public:
 	CBViewport(CBGame *inGame = NULL);
 	virtual ~CBViewport();
 private:
-	Common::Rect _rect;
+	Rect32 _rect;
 };
 
 } // end of namespace WinterMute

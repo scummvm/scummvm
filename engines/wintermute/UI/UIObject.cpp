@@ -113,7 +113,7 @@ void CUIObject::setListener(CBScriptHolder *object, CBScriptHolder *listenerObje
 
 //////////////////////////////////////////////////////////////////////////
 void CUIObject::correctSize() {
-	Common::Rect rect;
+	Rect32 rect;
 
 	if (_width <= 0) {
 		if (_image) {

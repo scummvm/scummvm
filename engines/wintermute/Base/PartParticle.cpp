@@ -124,7 +124,7 @@ ERRORCODE CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint3
 
 		// particle hit the border
 		if (!_isDead && !CBPlatform::isRectEmpty(&_border)) {
-			Common::Point p;
+			Point32 p;
 			p.x = (int32)_pos.x;
 			p.y = (int32)_pos.y;
 			if (!CBPlatform::ptInRect(&_border, p))

@@ -181,7 +181,7 @@ uint32 CBPlatform::getTime() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::getCursorPos(Common::Point *lpPoint) {
+bool CBPlatform::getCursorPos(Point32 *lpPoint) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
 	Common::Point p = g_system->getEventManager()->getMousePos();
@@ -197,7 +197,7 @@ bool CBPlatform::getCursorPos(Common::Point *lpPoint) {
 bool CBPlatform::setCursorPos(int X, int Y) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
-	Common::Point p;
+	Point32 p;
 	p.x = X;
 	p.y = Y;
 	renderer->pointToScreen(&p);
@@ -245,23 +245,23 @@ bool CBPlatform::setForegroundWindow() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::setRectEmpty(Common::Rect *lprc) {
+bool CBPlatform::setRectEmpty(Rect32 *lprc) {
 	lprc->left = lprc->right = lprc->top = lprc->bottom = 0;
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::isRectEmpty(const Common::Rect *lprc) {
+bool CBPlatform::isRectEmpty(const Rect32 *lprc) {
 	return (lprc->left >= lprc->right) || (lprc->top >= lprc->bottom);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::ptInRect(Common::Rect *lprc, Common::Point p) {
+bool CBPlatform::ptInRect(Rect32 *lprc, Point32 p) {
 	return (p.x >= lprc->left) && (p.x < lprc->right) && (p.y >= lprc->top) && (p.y < lprc->bottom);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::setRect(Common::Rect *lprc, int left, int top, int right, int bottom) {
+bool CBPlatform::setRect(Rect32 *lprc, int left, int top, int right, int bottom) {
 	lprc->left   = left;
 	lprc->top    = top;
 	lprc->right  = right;
@@ -271,7 +271,7 @@ bool CBPlatform::setRect(Common::Rect *lprc, int left, int top, int right, int b
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::intersectRect(Common::Rect *lprcDst, const Common::Rect *lprcSrc1, const Common::Rect *lprcSrc2) {
+bool CBPlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2) {
 	if (isRectEmpty(lprcSrc1) || isRectEmpty(lprcSrc2) ||
 	        lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right ||
 	        lprcSrc1->top >= lprcSrc2->bottom || lprcSrc2->top >= lprcSrc1->bottom) {
@@ -287,7 +287,7 @@ bool CBPlatform::intersectRect(Common::Rect *lprcDst, const Common::Rect *lprcSr
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::unionRect(Common::Rect *lprcDst, Common::Rect *lprcSrc1, Common::Rect *lprcSrc2) {
+bool CBPlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2) {
 	if (isRectEmpty(lprcSrc1)) {
 		if (isRectEmpty(lprcSrc2)) {
 			setRectEmpty(lprcDst);
@@ -310,7 +310,7 @@ bool CBPlatform::unionRect(Common::Rect *lprcDst, Common::Rect *lprcSrc1, Common
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::copyRect(Common::Rect *lprcDst, Common::Rect *lprcSrc) {
+bool CBPlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
 	if (lprcDst == NULL || lprcSrc == NULL) return false;
 
 	*lprcDst = *lprcSrc;
@@ -318,7 +318,7 @@ bool CBPlatform::copyRect(Common::Rect *lprcDst, Common::Rect *lprcSrc) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::offsetRect(Common::Rect *lprc, int dx, int dy) {
+bool CBPlatform::offsetRect(Rect32 *lprc, int dx, int dy) {
 	if (lprc == NULL) return false;
 
 	lprc->left   += dx;
@@ -330,7 +330,7 @@ bool CBPlatform::offsetRect(Common::Rect *lprc, int dx, int dy) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::equalRect(Common::Rect *rect1, Common::Rect *rect2) {
+bool CBPlatform::equalRect(Rect32 *rect1, Rect32 *rect2) {
 	return rect1->left == rect2->left && rect1->right == rect2->right && rect1->top == rect2->top && rect1->bottom == rect2->bottom;
 }
 

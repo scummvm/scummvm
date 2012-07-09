@@ -1210,7 +1210,7 @@ ERRORCODE CAdGame::loadBuffer(byte *buffer, bool complete) {
 					break;
 
 				case TOKEN_SCENE_VIEWPORT: {
-					Common::Rect rc;
+					Rect32 rc;
 					parser.scanStr((char *)params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 					if (!_sceneViewport) _sceneViewport = new CBViewport(Game);
 					if (_sceneViewport) _sceneViewport->setRect(rc.left, rc.top, rc.right, rc.bottom);
@@ -1698,7 +1698,7 @@ ERRORCODE CAdGame::displayContent(bool doUpdate, bool displayAll) {
 		// process scripts
 		if (doUpdate) _scEngine->tick();
 
-		Common::Point p;
+		Point32 p;
 		getMousePos(&p);
 
 		_scene->update();
@@ -1924,7 +1924,7 @@ char *CAdGame::findSpeechFile(char *stringID) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CAdGame::validMouse() {
-	Common::Point pos;
+	Point32 pos;
 	CBPlatform::getCursorPos(&pos);
 
 	return _renderer->pointInViewport(&pos);

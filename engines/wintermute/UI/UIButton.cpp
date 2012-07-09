@@ -539,7 +539,7 @@ ERRORCODE CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 void CUIButton::correctSize() {
-	Common::Rect rect;
+	Rect32 rect;
 
 	CBSprite *img = NULL;
 	if (_image) img = _image;
@@ -623,7 +623,7 @@ ERRORCODE CUIButton::display(int offsetX, int offsetY) {
 	int imageY = offsetY + _posY;
 
 	if (image && _centerImage) {
-		Common::Rect rc;
+		Rect32 rc;
 		image->getBoundingRect(&rc, 0, 0);
 		imageX += (_width - (rc.right - rc.left)) / 2;
 		imageY += (_height - (rc.bottom - rc.top)) / 2;

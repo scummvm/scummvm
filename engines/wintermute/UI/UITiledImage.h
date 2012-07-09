@@ -47,15 +47,15 @@ public:
 	CUITiledImage(CBGame *inGame = NULL);
 	virtual ~CUITiledImage();
 	CBSubFrame *_image;
-	Common::Rect _upLeft;
-	Common::Rect _upMiddle;
-	Common::Rect _upRight;
-	Common::Rect _middleLeft;
-	Common::Rect _middleMiddle;
-	Common::Rect _middleRight;
-	Common::Rect _downLeft;
-	Common::Rect _downMiddle;
-	Common::Rect _downRight;
+	Rect32 _upLeft;
+	Rect32 _upMiddle;
+	Rect32 _upRight;
+	Rect32 _middleLeft;
+	Rect32 _middleMiddle;
+	Rect32 _middleRight;
+	Rect32 _downLeft;
+	Rect32 _downMiddle;
+	Rect32 _downRight;
 };
 
 } // end of namespace WinterMute

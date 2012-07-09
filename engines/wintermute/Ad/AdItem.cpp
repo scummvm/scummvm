@@ -389,7 +389,7 @@ ERRORCODE CAdItem::update() {
 ERRORCODE CAdItem::display(int x, int y) {
 	int width = 0;
 	if (_currentSprite) {
-		Common::Rect rc;
+		Rect32 rc;
 		_currentSprite->getBoundingRect(&rc, 0, 0);
 		width = rc.width();
 	}

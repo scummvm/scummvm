@@ -302,7 +302,7 @@ ERRORCODE CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 		fillRect.setWidth(rect->width());
 		fillRect.setHeight(rect->height());
 	} else {
-		Common::Rect rc;
+		Rect32 rc;
 		Game->getCurrentViewportRect(&rc);
 		fillRect.left = (int16)rc.left;
 		fillRect.top = (int16)rc.top;
@@ -505,7 +505,7 @@ ERRORCODE CBRenderSDL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 
-	Common::Point point1, point2;
+	Point32 point1, point2;
 	point1.x = x1;
 	point1.y = y1;
 	pointToScreen(&point1);
@@ -609,7 +609,7 @@ void CBRenderSDL::modTargetRect(Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderSDL::pointFromScreen(Common::Point *point) {
+void CBRenderSDL::pointFromScreen(Point32 *point) {
 #if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
@@ -621,7 +621,7 @@ void CBRenderSDL::pointFromScreen(Common::Point *point) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderSDL::pointToScreen(Common::Point *point) {
+void CBRenderSDL::pointToScreen(Point32 *point) {
 #if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);

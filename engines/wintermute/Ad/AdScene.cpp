@@ -818,7 +818,7 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_VIEWPORT: {
-			Common::Rect rc;
+			Rect32 rc;
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 			if (!_viewport) _viewport = new CBViewport(Game);
 			if (_viewport) _viewport->setRect(rc.left, rc.top, rc.right, rc.bottom, true);
@@ -1988,7 +1988,7 @@ ERRORCODE CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	// viewport
 	if (_viewport) {
-		Common::Rect *rc = _viewport->getRect();
+		Rect32 *rc = _viewport->getRect();
 		buffer->putTextIndent(indent + 2, "VIEWPORT { %d, %d, %d, %d }\n", rc->left, rc->top, rc->right, rc->bottom);
 	}
 

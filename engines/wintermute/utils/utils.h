@@ -30,6 +30,7 @@
 #define WINTERMUTE_UTILS_H
 
 #include "engines/wintermute/wintypes.h"
+#include "engines/wintermute/Math/Rect32.h"
 
 namespace WinterMute {
 
@@ -37,7 +38,7 @@ class CBGame;
 
 class CBUtils {
 public:
-	static void clip(int *destX, int *destY, Common::Rect *srcRect, Common::Rect *destRect);
+	static void clip(int *destX, int *destY, Rect32 *srcRect, Rect32 *destRect);
 	static void swap(int *a, int *b);
 	static bool strBeginsI(const char *string, const char *fragment);
 	static float normalizeAngle(float angle);

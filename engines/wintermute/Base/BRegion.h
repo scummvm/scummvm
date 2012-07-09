@@ -41,7 +41,7 @@ public:
 	int _lastMimicY;
 	void cleanup();
 	ERRORCODE mimic(CBRegion *region, float scale = 100.0f, int x = 0, int y = 0);
-	ERRORCODE getBoundingRect(Common::Rect *rect);
+	ERRORCODE getBoundingRect(Rect32 *rect);
 	bool ptInPolygon(int x, int y);
 	DECLARE_PERSISTENT(CBRegion, CBObject)
 	bool _active;
@@ -52,7 +52,7 @@ public:
 	bool createRegion();
 	ERRORCODE loadFile(const char *filename);
 	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
-	Common::Rect _rect;
+	Rect32 _rect;
 	CBArray<CBPoint *, CBPoint *> _points;
 	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride = NULL);
 

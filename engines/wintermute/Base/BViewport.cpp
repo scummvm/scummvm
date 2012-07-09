@@ -79,7 +79,7 @@ ERRORCODE CBViewport::setRect(int left, int top, int right, int bottom, bool noC
 
 
 //////////////////////////////////////////////////////////////////////////
-Common::Rect *CBViewport::getRect() {
+Rect32 *CBViewport::getRect() {
 	return &_rect;
 }
 

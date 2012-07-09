@@ -413,13 +413,13 @@ CBSurface *CBSprite::getSurface() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSprite::getBoundingRect(Common::Rect *rect, int x, int y, float scaleX, float scaleY) {
+bool CBSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) return false;
 
 	CBPlatform::setRectEmpty(rect);
 	for (int i = 0; i < _frames.getSize(); i++) {
-		Common::Rect frame;
-		Common::Rect temp;
+		Rect32 frame;
+		Rect32 temp;
 		CBPlatform::copyRect(&temp, rect);
 		_frames[i]->getBoundingRect(&frame, x, y, scaleX, scaleY);
 		CBPlatform::unionRect(rect, &temp, &frame);

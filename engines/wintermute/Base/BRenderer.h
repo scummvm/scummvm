@@ -50,7 +50,7 @@ public:
 	virtual void dumpData(const char *filename) {};
 	virtual CBImage *takeScreenshot();
 	virtual ERRORCODE setViewport(int left, int top, int right, int bottom);
-	virtual ERRORCODE setViewport(Common::Rect *Rect);
+	virtual ERRORCODE setViewport(Rect32 *Rect);
 	virtual ERRORCODE setScreenViewport();
 	virtual ERRORCODE fade(uint16 Alpha);
 	virtual ERRORCODE fadeToColor(uint32 Color, Common::Rect *rect = NULL);
@@ -103,17 +103,17 @@ public:
 	virtual ERRORCODE endSpriteBatch() {
 		return STATUS_OK;
 	};
-	bool pointInViewport(Common::Point *P);
+	bool pointInViewport(Point32 *P);
 	uint32 _forceAlphaColor;
 	uint32 _window;
 	uint32 _clipperWindow;
 	bool _active;
 	bool _ready;
 	bool _windowed;
-	Common::Rect _windowRect;
-	Common::Rect _viewportRect;
-	Common::Rect _screenRect;
-	Common::Rect _monitorRect;
+	Rect32 _windowRect;
+	Rect32 _viewportRect;
+	Rect32 _screenRect;
+	Rect32 _monitorRect;
 	int _bPP;
 	int _height;
 	int _width;

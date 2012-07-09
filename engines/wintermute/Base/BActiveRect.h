@@ -29,6 +29,7 @@
 #ifndef WINTERMUTE_BACTIVERECT_H
 #define WINTERMUTE_BACTIVERECT_H
 
+#include "engines/wintermute/Math/Rect32.h"
 #include "engines/wintermute/Base/BBase.h"
 
 namespace WinterMute {
@@ -46,7 +47,7 @@ public:
 	CBRegion *_region;
 	int _offsetX;
 	int _offsetY;
-	Common::Rect _rect;
+	Rect32 _rect;
 	CBActiveRect(CBGame *inGameOwner = NULL);
 	CBActiveRect(CBGame *inGameOwner, CBObject *owner, CBSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
 	CBActiveRect(CBGame *inGame, CBObject *owner, CBRegion *region, int offsetX, int offsetY);

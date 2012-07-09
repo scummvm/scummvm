@@ -31,6 +31,7 @@
 
 
 #include "engines/wintermute/Base/BBase.h"
+#include "engines/wintermute/Math/Rect32.h"
 #include "engines/wintermute/math/Vector2.h"
 
 namespace WinterMute {
@@ -57,7 +58,7 @@ public:
 	int _alpha1;
 	int _alpha2;
 
-	Common::Rect _border;
+	Rect32 _border;
 	Vector2 _pos;
 	float _posZ;
 	Vector2 _velocity;

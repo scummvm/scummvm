@@ -1360,7 +1360,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		x = MIN(x, _renderer->_width);
 		y = MAX(y, 0);
 		y = MIN(y, _renderer->_height);
-		Common::Point p;
+		Point32 p;
 		p.x = x + _renderer->_drawOffsetX;
 		p.y = y + _renderer->_drawOffsetY;
 
@@ -3963,7 +3963,7 @@ ERRORCODE CBGame::popViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBGame::getCurrentViewportRect(Common::Rect *rect, bool *custom) {
+ERRORCODE CBGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
 	if (rect == NULL) return STATUS_FAILED;
 	else {
 		if (_viewportSP >= 0) {
@@ -4044,7 +4044,7 @@ ERRORCODE CBGame::displayContentSimple() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::displayIndicator() {
 	if (_saveLoadImage) {
-		Common::Rect rc;
+		Rect32 rc;
 		CBPlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
 		if (_loadInProgress) _saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
 		else _saveLoadImage->displayTrans(_saveImageX, _saveImageY, rc);
@@ -4205,7 +4205,7 @@ ERRORCODE CBGame::onActivate(bool activate, bool refreshMouse) {
 	_renderer->_active = activate;
 
 	if (refreshMouse) {
-		Common::Point p;
+		Point32 p;
 		getMousePos(&p);
 		setActiveObject(_renderer->getObjectAt(p.x, p.y));
 	}
@@ -4403,7 +4403,7 @@ CBDebugger *CBGame::getDebugMgr() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::getMousePos(Common::Point *pos) {
+void CBGame::getMousePos(Point32 *pos) {
 	CBPlatform::getCursorPos(pos);
 
 	pos->x -= _renderer->_drawOffsetX;
@@ -4430,7 +4430,7 @@ void CBGame::getMousePos(Common::Point *pos) {
 			pos->x = MIN(_mouseLockRect.right, pos->x);
 			pos->y = MIN(_mouseLockRect.bottom, pos->y);
 
-			Common::Point newPos = *pos;
+			Point32 newPos = *pos;
 
 			newPos.x += _renderer->_drawOffsetX;
 			newPos.y += _renderer->_drawOffsetY;
@@ -4477,7 +4477,7 @@ bool CBGame::isDoubleClick(int buttonIndex) {
 	maxMoveY = 16;
 #endif
 
-	Common::Point pos;
+	Point32 pos;
 	CBPlatform::getCursorPos(&pos);
 
 	int moveX = abs(pos.x - _lastClick[buttonIndex].PosX);

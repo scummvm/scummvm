@@ -53,7 +53,7 @@ public:
 	DECLARE_PERSISTENT(CBSprite, CBScriptHolder)
 
 	bool _editorAllFrames;
-	bool getBoundingRect(Common::Rect *rect, int x, int y, float scaleX = 100, float scaleY = 100);
+	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	int _moveY;
 	int _moveX;
 	ERRORCODE display(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
@@ -72,7 +72,7 @@ public:
 	ERRORCODE draw(int x, int y, CBObject *Register = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
 	bool _looping;
 	int _currentFrame;
-	ERRORCODE addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Common::Rect *rect = NULL);
+	ERRORCODE addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = NULL);
 	CBSprite(CBGame *inGame, CBObject *owner = NULL);
 	virtual ~CBSprite();
 	CBArray<CBFrame *, CBFrame *> _frames;

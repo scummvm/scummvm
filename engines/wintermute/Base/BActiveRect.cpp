@@ -86,7 +86,7 @@ CBActiveRect::~CBActiveRect() {
 
 //////////////////////////////////////////////////////////////////////////
 void CBActiveRect::clipRect() {
-	Common::Rect rc;
+	Rect32 rc;
 	bool customViewport;
 	Game->getCurrentViewportRect(&rc, &customViewport);
 	CBRenderer *Rend = Game->_renderer;

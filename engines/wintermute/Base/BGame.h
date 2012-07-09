@@ -34,6 +34,7 @@
 #include "engines/wintermute/Base/BObject.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/Math/Rect32.h"
 #include "common/events.h"
 
 namespace WinterMute {
@@ -91,8 +92,8 @@ public:
 
 	virtual ERRORCODE miniUpdate();
 
-	void getMousePos(Common::Point *Pos);
-	Common::Rect _mouseLockRect;
+	void getMousePos(Point32 *Pos);
+	Rect32 _mouseLockRect;
 
 	bool _shuttingDown;
 
@@ -314,7 +315,7 @@ public:
 	uint32 _liveTimerLast;
 
 	CBObject *_capturedObject;
-	Common::Point _mousePos;
+	Point32 _mousePos;
 	bool validObject(CBObject *object);
 	ERRORCODE unregisterObject(CBObject *object);
 	ERRORCODE registerObject(CBObject *object);
@@ -338,7 +339,7 @@ public:
 	virtual ERRORCODE windowLoadHook(CUIWindow *win, char **buf, char **params);
 	virtual ERRORCODE windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
 	ERRORCODE getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
-	ERRORCODE getCurrentViewportRect(Common::Rect *rect, bool *custom = NULL);
+	ERRORCODE getCurrentViewportRect(Rect32 *rect, bool *custom = NULL);
 	ERRORCODE popViewport();
 	ERRORCODE pushViewport(CBViewport *Viewport);
 	ERRORCODE setActiveObject(CBObject *Obj);

@@ -397,7 +397,7 @@ ERRORCODE CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdResponseBox::display() {
-	Common::Rect rect = _responseArea;
+	Rect32 rect = _responseArea;
 	if (_window) {
 		CBPlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		//_window->display();

@@ -159,7 +159,7 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	char *params;
 	int cmd;
 	CBParser parser(Game);
-	Common::Rect rect;
+	Rect32 rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	int hotspotX = 0, hotspotY = 0;
@@ -325,11 +325,11 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFrame::getBoundingRect(Common::Rect *rect, int x, int y, float scaleX, float scaleY) {
+bool CBFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) return false;
 	CBPlatform::setRectEmpty(rect);
 
-	Common::Rect subRect;
+	Rect32 subRect;
 
 	for (int i = 0; i < _subframes.getSize(); i++) {
 		_subframes[i]->getBoundingRect(&subRect, x, y, scaleX, scaleY);

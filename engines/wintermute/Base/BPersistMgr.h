@@ -31,6 +31,7 @@
 
 
 #include "engines/wintermute/Base/BBase.h"
+#include "engines/wintermute/Math/Rect32.h"
 #include "engines/savestate.h"
 #include "common/stream.h"
 #include "common/str.h"
@@ -85,8 +86,8 @@ public:
 	ERRORCODE transfer(const char *name, double *val);
 	ERRORCODE transfer(const char *name, bool *val);
 	ERRORCODE transfer(const char *name, byte *val);
-	ERRORCODE transfer(const char *name, Common::Rect *val);
-	ERRORCODE transfer(const char *name, Common::Point *val);
+	ERRORCODE transfer(const char *name, Rect32 *val);
+	ERRORCODE transfer(const char *name, Point32 *val);
 	ERRORCODE transfer(const char *name, const char **val);
 	ERRORCODE transfer(const char *name, char **val);
 	ERRORCODE transfer(const char *name, Common::String *val);

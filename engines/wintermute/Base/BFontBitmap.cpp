@@ -221,7 +221,7 @@ void CBFontBitmap::drawChar(byte c, int x, int y) {
 	row = c / _numColumns;
 	col = c % _numColumns;
 
-	Common::Rect rect;
+	Rect32 rect;
 	/* l t r b */
 	int tileWidth;
 	if (_wholeCell) tileWidth = _tileWidth;

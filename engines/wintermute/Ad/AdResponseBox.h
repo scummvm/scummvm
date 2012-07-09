@@ -74,7 +74,7 @@ public:
 	CUIWindow *_window;
 	CUIWindow *_shieldWindow;
 	bool _horizontal;
-	Common::Rect _responseArea;
+	Rect32 _responseArea;
 	int _verticalAlign;
 	TTextAlign _align;
 	ERRORCODE loadFile(const char *filename);

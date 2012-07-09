@@ -86,8 +86,8 @@ public:
 	ERRORCODE setViewport(int left, int top, int right, int bottom);
 
 	void modTargetRect(Common::Rect *rect);
-	void pointFromScreen(Common::Point *point);
-	void pointToScreen(Common::Point *point);
+	void pointFromScreen(Point32 *point);
+	void pointToScreen(Point32 *point);
 
 	void dumpData(const char *filename);
 

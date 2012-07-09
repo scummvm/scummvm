@@ -30,7 +30,7 @@
 #define WINTERMUTE_PLATFORMSDL_H
 
 #include "engines/wintermute/dctypes.h"
-
+#include "engines/wintermute/Math/Rect32.h"
 #include "engines/wintermute/wintypes.h"
 #include "common/events.h"
 
@@ -50,7 +50,7 @@ public:
 	// Win32 API bindings
 	static void outputDebugString(const char *lpOutputString);
 	static uint32 getTime();
-	static bool getCursorPos(Common::Point *lpPoint);
+	static bool getCursorPos(Point32 *lpPoint);
 	static bool setCursorPos(int X, int Y);
 	static bool showWindow(int nCmdShow);
 	static bool deleteFile(const char *lpFileName);
@@ -59,15 +59,15 @@ public:
 	static bool releaseCapture();
 	static bool setForegroundWindow();
 
-	static bool setRectEmpty(Common::Rect *lprc);
-	static bool isRectEmpty(const Common::Rect *lprc);
-	static bool ptInRect(Common::Rect *lprc, Common::Point p);
-	static bool setRect(Common::Rect *lprc, int left, int top, int right, int bottom);
-	static bool intersectRect(Common::Rect *lprcDst, const Common::Rect *lprcSrc1, const Common::Rect *lprcSrc2);
-	static bool unionRect(Common::Rect *lprcDst, Common::Rect *lprcSrc1, Common::Rect *lprcSrc2);
-	static bool copyRect(Common::Rect *lprcDst, Common::Rect *lprcSrc);
-	static bool offsetRect(Common::Rect *lprc, int dx, int dy);
-	static bool equalRect(Common::Rect *rect1, Common::Rect *rect2);
+	static bool setRectEmpty(Rect32 *lprc);
+	static bool isRectEmpty(const Rect32 *lprc);
+	static bool ptInRect(Rect32 *lprc, Point32 p);
+	static bool setRect(Rect32 *lprc, int left, int top, int right, int bottom);
+	static bool intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2);
+	static bool unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2);
+	static bool copyRect(Rect32 *lprcDst, Rect32 *lprcSrc);
+	static bool offsetRect(Rect32 *lprc, int dx, int dy);
+	static bool equalRect(Rect32 *rect1, Rect32 *rect2);
 
 
 	// string functions

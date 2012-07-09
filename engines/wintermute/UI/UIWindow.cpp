@@ -1135,7 +1135,7 @@ ERRORCODE CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 	if (!CBPlatform::isRectEmpty(&_dragRect)) {
 		// start drag
 		if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
-			Common::Rect dragRect = _dragRect;
+			Rect32 dragRect = _dragRect;
 			int offsetX, offsetY;
 			getTotalOffset(&offsetX, &offsetY);
 			CBPlatform::offsetRect(&dragRect, _posX + offsetX, _posY + offsetY);
