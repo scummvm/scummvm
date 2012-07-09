@@ -238,9 +238,9 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			}
 			// find by name
 			else {
-				const char *name = val->getString();
+				const char *findName = val->getString();
 				for (i = 0; i < win->_widgets.GetSize(); i++) {
-					if (scumm_stricmp(win->_widgets[i]->_name, name) == 0) {
+					if (scumm_stricmp(win->_widgets[i]->_name, findName) == 0) {
 						found = true;
 						break;
 					}

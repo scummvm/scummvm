@@ -181,7 +181,7 @@ HRESULT CBStringTable::loadFile(const char *filename, bool clearOld) {
 		return E_FAIL;
 	}
 
-	int pos = 0;
+	uint32 pos = 0;
 
 	if (size > 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF) {
 		pos += 3;
@@ -192,12 +192,12 @@ HRESULT CBStringTable::loadFile(const char *filename, bool clearOld) {
 		}
 	} else Game->_textEncoding = TEXT_ANSI;
 
-	int lineLength = 0;
+	uint32 lineLength = 0;
 	while (pos < size) {
 		lineLength = 0;
 		while (pos + lineLength < size && buffer[pos + lineLength] != '\n' && buffer[pos + lineLength] != '\0') lineLength++;
 
-		int realLength = lineLength - (pos + lineLength >= size ? 0 : 1);
+		uint32 realLength = lineLength - (pos + lineLength >= size ? 0 : 1);
 		char *line = new char[realLength + 1];
 		strncpy(line, (char *)&buffer[pos], realLength);
 		line[realLength] = '\0';
@@ -208,7 +208,7 @@ HRESULT CBStringTable::loadFile(const char *filename, bool clearOld) {
 			if (value != NULL) {
 				value[0] = '\0';
 				value++;
-				for (int i = 0; i < strlen(value); i++) {
+				for (uint32 i = 0; i < strlen(value); i++) {
 					if (value[i] == '|') value[i] = '\n';
 				}
 				addString(line, value, clearOld);

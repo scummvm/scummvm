@@ -62,7 +62,7 @@ char *CBParser::getLastOffender() {
 
 
 //////////////////////////////////////////////////////////////////////
-long CBParser::getObject(char **buf, TokenDesc *tokens, char **name, char **data) {
+int32 CBParser::getObject(char **buf, TokenDesc *tokens, char **name, char **data) {
 	skipCharacters(buf, _whiteSpace);
 
 	// skip comment lines.
@@ -113,7 +113,7 @@ long CBParser::getObject(char **buf, TokenDesc *tokens, char **name, char **data
 
 
 //////////////////////////////////////////////////////////////////////
-long CBParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
+int32 CBParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
 	if (!*buf) return PARSERR_TOKENNOTFOUND;
 	Game->miniUpdate();
 	char *name;

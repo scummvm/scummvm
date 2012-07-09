@@ -289,9 +289,8 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 
 //////////////////////////////////////////////////////////////////////////
 HRESULT CScEngine::tick() {
-
-
-	if (_scripts.GetSize() == 0) return S_OK;
+	if (_scripts.GetSize() == 0)
+		return S_OK;
 
 
 	// resolve waiting scripts
@@ -369,15 +368,15 @@ HRESULT CScEngine::tick() {
 
 		// normal script
 		else {
-			uint32 StartTime = 0;
+			uint32 startTime = 0;
 			bool isProfiling = _isProfiling;
-			if (isProfiling) StartTime = CBPlatform::getTime();
+			if (isProfiling) startTime = CBPlatform::getTime();
 
 			while (_scripts[i]->_state == SCRIPT_RUNNING) {
 				_currentScript = _scripts[i];
 				_scripts[i]->executeInstruction();
 			}
-			if (isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::getTime() - StartTime);
+			if (isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, CBPlatform::getTime() - startTime);
 		}
 		_currentScript = NULL;
 	}

@@ -1672,9 +1672,9 @@ HRESULT CAdGame::resetResponse(int ID) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdGame::displayContent(bool update, bool displayAll) {
+HRESULT CAdGame::displayContent(bool doUpdate, bool displayAll) {
 	// init
-	if (update) initLoop();
+	if (doUpdate) initLoop();
 
 	// fill black
 	_renderer->fill(0, 0, 0);
@@ -1682,11 +1682,11 @@ HRESULT CAdGame::displayContent(bool update, bool displayAll) {
 
 	// playing exclusive video?
 	if (_videoPlayer->isPlaying()) {
-		if (update) _videoPlayer->update();
+		if (doUpdate) _videoPlayer->update();
 		_videoPlayer->display();
 	} else if (_theoraPlayer) {
 		if (_theoraPlayer->isPlaying()) {
-			if (update) _theoraPlayer->update();
+			if (doUpdate) _theoraPlayer->update();
 			_theoraPlayer->display();
 		}
 		if (_theoraPlayer->isFinished()) {
@@ -1696,7 +1696,7 @@ HRESULT CAdGame::displayContent(bool update, bool displayAll) {
 	} else {
 
 		// process scripts
-		if (update) _scEngine->tick();
+		if (doUpdate) _scEngine->tick();
 
 		POINT p;
 		getMousePos(&p);
@@ -1712,7 +1712,7 @@ HRESULT CAdGame::displayContent(bool update, bool displayAll) {
 		if (_indicatorDisplay) displayIndicator();
 
 
-		if (update || displayAll) {
+		if (doUpdate || displayAll) {
 			// display normal windows
 			displayWindows(false);
 

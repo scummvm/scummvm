@@ -271,7 +271,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		byte b;
 
 		HRESULT ret = E_FAIL;
-		while (counter < textLen) {
+		while (counter < (uint32)textLen) {
 			ret = _readFile->read(&b, 1);
 			if (ret != 1) break;
 

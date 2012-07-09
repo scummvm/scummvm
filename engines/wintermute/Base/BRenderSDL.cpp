@@ -46,7 +46,7 @@ RenderTicket::RenderTicket(CBSurfaceSDL *owner, const Graphics::Surface *surf, C
 	_colorMod = 0;
 	if (surf) {
 		_surface = new Graphics::Surface();
-		_surface->create(srcRect->width(), srcRect->height(), surf->format);
+		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
 		assert(_surface->format.bytesPerPixel == 4);
 		// Get a clipped copy of the surface
 		for (int i = 0; i < _surface->h; i++) {
@@ -362,8 +362,6 @@ void CBRenderSDL::invalidateTicketsFromSurface(CBSurfaceSDL *surf) {
 
 void CBRenderSDL::drawFromTicket(RenderTicket *renderTicket) {
 	renderTicket->_wantsDraw = true;
-	// New item
-	uint32 size = _renderQueue.size();
 	// A new item always has _drawNum == 0
 	if (renderTicket->_drawNum == 0) {
 		// In-order
@@ -425,7 +423,6 @@ void CBRenderSDL::drawTickets() {
 	if (!_dirtyRect)
 		return;
 	RenderQueueIterator it = _renderQueue.begin();
-	uint32 size = _renderQueue.size();
 	// Clean out the old tickets
 	while (it != _renderQueue.end()) {
 		if ((*it)->_wantsDraw == false) {

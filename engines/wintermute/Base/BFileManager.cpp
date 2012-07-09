@@ -140,7 +140,7 @@ byte *CBFileManager::readWholeFile(const Common::String &filename, uint32 *size,
 		return NULL;
 	}
 
-	if (file->read(buffer, file->size()) != file->size()) {
+	if (file->read(buffer, (uint32)file->size()) != (uint32)file->size()) {
 		Game->LOG(0, "Error reading file '%s'", filename.c_str());
 		closeFile(file);
 		delete [] buffer;
@@ -224,7 +224,7 @@ HRESULT CBFileManager::saveFile(const Common::String &filename, byte *Buffer, ui
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFileManager::requestCD(int cd, char *packageFile, char *filename) {
+HRESULT CBFileManager::requestCD(int cd, char *packageFile, const char *filename) {
 	// unmount all non-local packages
 	for (int i = 0; i < _packages.GetSize(); i++) {
 		if (_packages[i]->_cD > 0) _packages[i]->close();

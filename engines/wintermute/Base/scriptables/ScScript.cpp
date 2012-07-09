@@ -400,7 +400,7 @@ void CScScript::cleanup() {
 
 
 	if (_externals) {
-		for (int i = 0; i < _numExternals; i++) {
+		for (uint32 i = 0; i < _numExternals; i++) {
 			if (_externals[i].nu_params > 0) delete [] _externals[i].params;
 		}
 		delete [] _externals;
@@ -431,7 +431,7 @@ void CScScript::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CScScript::getDWORD() {
-	_scriptStream->seek(_iP);
+	_scriptStream->seek((int32)_iP);
 	uint32 ret = _scriptStream->readUint32LE();
 	_iP += sizeof(uint32);
 //	assert(oldRet == ret);
@@ -1060,7 +1060,7 @@ HRESULT CScScript::executeInstruction() {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CScScript::getFuncPos(const char *name) {
-	for (int i = 0; i < _numFunctions; i++) {
+	for (uint32 i = 0; i < _numFunctions; i++) {
 		if (strcmp(name, _functions[i].name) == 0)
 			return _functions[i].pos;
 	}
@@ -1070,7 +1070,7 @@ uint32 CScScript::getFuncPos(const char *name) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CScScript::getMethodPos(const char *name) {
-	for (int i = 0; i < _numMethods; i++) {
+	for (uint32 i = 0; i < _numMethods; i++) {
 		if (strcmp(name, _methods[i].name) == 0)
 			return _methods[i].pos;
 	}
@@ -1328,7 +1328,7 @@ HRESULT CScScript::resume() {
 
 //////////////////////////////////////////////////////////////////////////
 CScScript::TExternalFunction *CScScript::getExternal(char *name) {
-	for (int i = 0; i < _numExternals; i++) {
+	for (uint32 i = 0; i < _numExternals; i++) {
 		if (strcmp(name, _externals[i].name) == 0)
 			return &_externals[i];
 	}

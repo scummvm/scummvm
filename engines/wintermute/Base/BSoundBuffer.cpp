@@ -349,7 +349,7 @@ void CBSoundBuffer::LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void
 //////////////////////////////////////////////////////////////////////////
 HRESULT CBSoundBuffer::setPan(float pan) {
 	if (_stream) {
-		g_system->getMixer()->setChannelBalance(*_handle, pan * 127);
+		g_system->getMixer()->setChannelBalance(*_handle, (int8)(pan * 127));
 	}
 	return S_OK;
 }

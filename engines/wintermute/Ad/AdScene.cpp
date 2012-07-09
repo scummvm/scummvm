@@ -856,7 +856,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::traverseNodes(bool update) {
+HRESULT CAdScene::traverseNodes(bool doUpdate) {
 	if (!_initialized) return S_OK;
 
 	int j, k;
@@ -877,7 +877,7 @@ HRESULT CAdScene::traverseNodes(bool update) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// *** adjust scroll offset
-	if (update) {
+	if (doUpdate) {
 		/*
 		if (_autoScroll && Game->_mainObject != NULL)
 		{
@@ -947,7 +947,7 @@ HRESULT CAdScene::traverseNodes(bool update) {
 		if (!_layers[j]->_active) continue;
 
 		// make layer exclusive
-		if (!update) {
+		if (!doUpdate) {
 			if (_layers[j]->_closeUp && !Game->_editorMode) {
 				if (!_shieldWindow) _shieldWindow = new CUIWindow(Game);
 				if (_shieldWindow) {
@@ -984,7 +984,7 @@ HRESULT CAdScene::traverseNodes(bool update) {
 				if (node->_entity->_active && (Game->_editorMode || !node->_entity->_editorOnly)) {
 					Game->_renderer->setup2D();
 
-					if (update) node->_entity->update();
+					if (doUpdate) node->_entity->update();
 					else node->_entity->display();
 				}
 				break;
@@ -993,7 +993,7 @@ HRESULT CAdScene::traverseNodes(bool update) {
 				if (node->_region->_blocked) break;
 				if (node->_region->_decoration) break;
 
-				if (!update) displayRegionContent(node->_region);
+				if (!doUpdate) displayRegionContent(node->_region);
 			}
 			break;
 			default:
@@ -1004,7 +1004,7 @@ HRESULT CAdScene::traverseNodes(bool update) {
 
 		// display/update all objects which are off-regions
 		if (_layers[j]->_main) {
-			if (update) {
+			if (doUpdate) {
 				updateFreeObjects();
 			} else {
 				displayRegionContent(NULL);
@@ -1019,7 +1019,7 @@ HRESULT CAdScene::traverseNodes(bool update) {
 
 	// display/update fader
 	if (_fader) {
-		if (update) _fader->update();
+		if (doUpdate) _fader->update();
 		else _fader->display();
 	}
 

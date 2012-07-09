@@ -153,11 +153,11 @@ public:
 	virtual ~CScScript();
 	char *_filename;
 	char **_symbols;
-	int _numSymbols;
+	uint32 _numSymbols;
 	TFunctionPos *_functions;
 	TMethodPos *_methods;
 	TEventPos *_events;
-	int _numExternals;
+	uint32 _numExternals;
 	TExternalFunction *_externals;
 	uint32 _numFunctions;
 	uint32 _numMethods;

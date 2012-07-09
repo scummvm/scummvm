@@ -58,7 +58,7 @@ HRESULT CBSaveThumbFile::open(const Common::String &filename) {
 
 	char *tempFilename = new char[strlen(filename.c_str()) - 8];
 	strcpy(tempFilename, filename.c_str() + 9);
-	for (int i = 0; i < strlen(tempFilename); i++) {
+	for (uint32 i = 0; i < strlen(tempFilename); i++) {
 		if (tempFilename[i] < '0' || tempFilename[i] > '9') {
 			tempFilename[i] = '\0';
 			break;

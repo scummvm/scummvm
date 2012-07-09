@@ -62,7 +62,7 @@ public:
 	    PATH_PACKAGE, PATH_SINGLE
 	} TPathType;
 	HRESULT addPath(TPathType type, const Common::String &path);
-	HRESULT requestCD(int cd, char *packageFile, char *filename);
+	HRESULT requestCD(int cd, char *packageFile, const char *filename);
 	Common::SeekableReadStream *loadSaveGame(const Common::String &filename);
 	HRESULT saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);

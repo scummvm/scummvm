@@ -152,7 +152,7 @@ void CBObject::setCaption(const char *caption, int caseVal) { // TODO: rename Ca
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBObject::getCaption(int caseVal) {
+const char *CBObject::getCaption(int caseVal) {
 	if (caseVal == 0) caseVal = 1;
 	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL)
 		return "";

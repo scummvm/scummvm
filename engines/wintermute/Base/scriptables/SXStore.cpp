@@ -139,8 +139,8 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "GetInvalidProduct") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
-		if (index >= 0 && index < _invalidProducts.size())
-			stack->pushString(_invalidProducts[index].c_str());
+		if (index >= 0 && (uint32)index < _invalidProducts.size())
+			stack->pushString(_invalidProducts[(uint32)index].c_str());
 		else
 			stack->pushNULL();
 
@@ -262,7 +262,7 @@ CScValue *CSXStore::scGetProperty(const char *name) {
 	// NumInvalidProducts (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumInvalidProducts") == 0) {
-		_scValue->setInt(_invalidProducts.size());
+		_scValue->setInt((int)_invalidProducts.size());
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////

@@ -505,8 +505,8 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *rect, float zoomX, float zo
 		position.top = 0; // TODO: Something is wrong
 	}
 
-	position.setWidth((float)srcRect.width() * zoomX / 100.f);
-	position.setHeight((float)srcRect.height() * zoomX / 100.f);
+	position.setWidth((int16)((float)srcRect.width() * zoomX / 100.f));
+	position.setHeight((int16)((float)srcRect.height() * zoomX / 100.f));
 
 	renderer->modTargetRect(&position);
 

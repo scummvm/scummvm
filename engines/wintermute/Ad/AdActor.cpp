@@ -796,7 +796,7 @@ void CAdActor::getNextStep() {
 		maxStepX--;
 	}
 
-	if (((CAdGame *)Game)->_scene->isBlockedAt(_pFX, _pFY, true, this)) {
+	if (((CAdGame *)Game)->_scene->isBlockedAt((int)_pFX,(int) _pFY, true, this)) {
 		if (_pFCount == 0) {
 			_state = _nextState;
 			_nextState = STATE_READY;

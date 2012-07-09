@@ -244,7 +244,7 @@ HRESULT CSysClassRegistry::saveInstances(CBGame *Game, CBPersistMgr *persistMgr,
 
 		if (!quickSave) {
 			if (counter % 20 == 0) {
-				Game->_indicatorProgress = 50 + 50.0f / (float)((float)_classes.size() / (float)counter);
+				Game->_indicatorProgress = (int)(50.0f + 50.0f / (float)((float)_classes.size() / (float)counter));
 				Game->displayContent(false);
 				Game->_renderer->flip();
 			}
@@ -264,7 +264,7 @@ HRESULT CSysClassRegistry::loadInstances(CBGame *Game, CBPersistMgr *persistMgr)
 
 	for (int i = 0; i < numInstances; i++) {
 		if (i % 20 == 0) {
-			Game->_indicatorProgress = 50 + 50.0f / (float)((float)numInstances / (float)i);
+			Game->_indicatorProgress = (int)(50.0f + 50.0f / (float)((float)numInstances / (float)i));
 			Game->displayContentSimple();
 			Game->_renderer->flip();
 		}

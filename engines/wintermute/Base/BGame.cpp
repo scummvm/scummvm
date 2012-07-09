@@ -1779,7 +1779,7 @@ HRESULT CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		byte blue = stack->pop()->getInt(0);
 		byte alpha = stack->pop()->getInt(0xFF);
 
-		bool System = (strcmp(name, "SystemFadeIn") == 0 || strcmp(name, "SystemFadeInAsync") == 0);
+		bool system = (strcmp(name, "SystemFadeIn") == 0 || strcmp(name, "SystemFadeInAsync") == 0);
 
 		_fader->fadeIn(DRGBA(red, green, blue, alpha), duration, system);
 		if (strcmp(name, "FadeInAsync") != 0 && strcmp(name, "SystemFadeInAsync") != 0) script->waitFor(_fader);
@@ -4030,7 +4030,7 @@ void CBGame::resetMousePos() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::displayContent(bool update, bool displayAll) {
+HRESULT CBGame::displayContent(bool doUpdate, bool displayAll) {
 	return S_OK;
 }
 
@@ -4108,8 +4108,8 @@ HRESULT CBGame::updateMusicCrossfade() {
 	} else {
 		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol - (float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
 		//_music[_musicCrossfadeChannel2]->setVolume((float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
-		_music[_musicCrossfadeChannel1]->setVolume(100 - (float)currentTime / (float)_musicCrossfadeLength * 100);
-		_music[_musicCrossfadeChannel2]->setVolume((float)currentTime / (float)_musicCrossfadeLength * 100);
+		_music[_musicCrossfadeChannel1]->setVolume((int)(100.0f - (float)currentTime / (float)_musicCrossfadeLength * 100.0f));
+		_music[_musicCrossfadeChannel2]->setVolume((int)((float)currentTime / (float)_musicCrossfadeLength * 100.0f));
 
 		//Game->QuickMessageForm("%d %d", _music[_musicCrossfadeChannel1]->GetVolume(), _music[_musicCrossfadeChannel2]->GetVolume());
 	}

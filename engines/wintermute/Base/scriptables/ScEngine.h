@@ -151,7 +151,7 @@ public:
 
 	void enableProfiling();
 	void disableProfiling();
-	bool isProfiling() {
+	bool getIsProfiling() {
 		return _isProfiling;
 	}
 

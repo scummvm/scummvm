@@ -86,7 +86,7 @@ public:
 	HRESULT setCursor(const char *filename);
 	HRESULT setActiveCursor(const char *filename);
 	HRESULT cleanup();
-	char *getCaption(int caseVal = 1);
+	const char *getCaption(int caseVal = 1);
 	void setCaption(const char *caption, int caseVal = 1);
 	bool _editorSelected;
 	bool _editorAlwaysRegister;

@@ -357,8 +357,8 @@ HRESULT CSXString::scSetProperty(const char *name, CScValue *value) {
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Capacity") == 0) {
-		int newCap = value->getInt();
-		if (newCap < strlen(_string) + 1) Game->LOG(0, "Warning: cannot lower string capacity");
+		int32 newCap = (uint32)value->getInt();
+		if (newCap < (int32)(strlen(_string) + 1)) Game->LOG(0, "Warning: cannot lower string capacity");
 		else if (newCap != _capacity) {
 			char *newStr = new char[newCap];
 			if (newStr) {

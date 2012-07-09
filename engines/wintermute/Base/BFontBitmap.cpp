@@ -92,8 +92,8 @@ int CBFontBitmap::getTextWidth(byte *text, int maxLength) {
 		str = AnsiString((char *)text);
 	}
 
-	if (maxLength >= 0 && str.size() > maxLength)
-		str = Common::String(str.c_str(), maxLength);
+	if (maxLength >= 0 && str.size() > (uint32)maxLength)
+		str = Common::String(str.c_str(), (uint32)maxLength);
 	//str.substr(0, maxLength); // TODO: Remove
 
 	int textWidth = 0;
@@ -110,8 +110,6 @@ int CBFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign
 	if (maxLength == 0) return 0;
 
 	if (text == NULL || text[0] == '\0') return _tileHeight;
-
-
 
 	AnsiString str;
 

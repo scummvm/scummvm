@@ -98,23 +98,23 @@ HRESULT CPartParticle::setSprite(const char *filename) {
 //////////////////////////////////////////////////////////////////////////
 HRESULT CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta) {
 	if (_state == PARTICLE_FADEIN) {
-		if (currentTime - _fadeStart >= _fadeTime) {
+		if (currentTime - _fadeStart >= (uint32)_fadeTime) {
 			_state = PARTICLE_NORMAL;
 			_currentAlpha = _alpha1;
-		} else _currentAlpha = ((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _alpha1;
+		} else _currentAlpha = (int)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _alpha1);
 
 		return S_OK;
 	} else if (_state == PARTICLE_FADEOUT) {
-		if (currentTime - _fadeStart >= _fadeTime) {
+		if (currentTime - _fadeStart >= (uint32)_fadeTime) {
 			_isDead = true;
 			return S_OK;
-		} else _currentAlpha = _fadeStartAlpha - ((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _fadeStartAlpha;
+		} else _currentAlpha = _fadeStartAlpha - (int)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _fadeStartAlpha);
 
 		return S_OK;
 	} else {
 		// time is up
 		if (_lifeTime > 0) {
-			if (currentTime - _creationTime >= _lifeTime) {
+			if (currentTime - _creationTime >= (uint32)_lifeTime) {
 				if (emitter->_fadeOutTime > 0)
 					fadeOut(currentTime, emitter->_fadeOutTime);
 				else
@@ -137,7 +137,7 @@ HRESULT CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 
 			int age = (int)(currentTime - _creationTime);
 			int alphaDelta = (int)(_alpha2 - _alpha1);
 
-			_currentAlpha = _alpha1 + ((float)alphaDelta / (float)_lifeTime * (float)age);
+			_currentAlpha = _alpha1 + (int)(((float)alphaDelta / (float)_lifeTime * (float)age));
 		}
 
 		// update position

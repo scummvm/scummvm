@@ -269,7 +269,7 @@ int WinterMuteEngine::messageLoop() {
 	uint32 diff = 0;
 
 	const uint32 maxFPS = 25;
-	const uint32 frameTime = (1.0/maxFPS) * 1000;
+	const uint32 frameTime = (uint32)((1.0/maxFPS) * 1000);
 	while (!done) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {

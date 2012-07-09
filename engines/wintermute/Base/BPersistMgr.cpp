@@ -400,7 +400,7 @@ Common::String CBPersistMgr::getStringObj() {
 
 	Common::String retString = ret; 
 
-	if (ret == "(null)") {
+	if (retString == "(null)") {
 		retString = "";
 	} 
 

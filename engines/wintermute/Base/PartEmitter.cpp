@@ -245,7 +245,7 @@ HRESULT CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	// we're understaffed
 	if (numLive < _maxParticles) {
 		bool needsSort = false;
-		if (currentTime - _lastGenTime > _genInterval) {
+		if ((int)(currentTime - _lastGenTime) > _genInterval) {
 			_lastGenTime = currentTime;
 			_batchesGenerated++;
 
@@ -293,7 +293,7 @@ HRESULT CPartEmitter::display(CBRegion *region) {
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
 		if (region != NULL && _useRegion) {
-			if (!region->pointInRegion(_particles[i]->_pos.x, _particles[i]->_pos.y)) continue;
+			if (!region->pointInRegion((int)_particles[i]->_pos.x, (int)_particles[i]->_pos.y)) continue;
 		}
 
 		_particles[i]->display(this);

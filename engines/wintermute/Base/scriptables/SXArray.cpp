@@ -211,17 +211,17 @@ HRESULT CSXArray::persist(CBPersistMgr *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CSXArray::validNumber(const char *origStr, char *outStr) {
-	bool IsNumber = true;
-	for (int i = 0; i < strlen(origStr); i++) {
+	bool isNumber = true;
+	for (uint32 i = 0; i < strlen(origStr); i++) {
 		if (!(origStr[i] >= '0' && origStr[i] <= '9')) {
-			IsNumber = false;
+			isNumber = false;
 			break;
 		}
 	}
 
-	if (IsNumber) {
-		int Index = atoi(origStr);
-		sprintf(outStr, "%d", Index);
+	if (isNumber) {
+		int index = atoi(origStr);
+		sprintf(outStr, "%d", index);
 		return true;
 	} else return false;
 }

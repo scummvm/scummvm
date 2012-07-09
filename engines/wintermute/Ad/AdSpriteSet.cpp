@@ -237,7 +237,7 @@ CBSprite *CAdSpriteSet::getSprite(TDirection direction) {
 
 	// find nearest set sprite
 	int numSteps = 0;
-	for (int i = dir, NumSteps = 0; i >= 0; i--) {
+	for (int i = dir; i >= 0; i--) {
 		if (_sprites[i] != NULL) {
 			ret = _sprites[i];
 			numSteps = dir - i;

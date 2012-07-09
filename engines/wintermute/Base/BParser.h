@@ -60,13 +60,13 @@ namespace WinterMute {
 class CBParser : public CBBase {
 public:
 	struct TokenDesc {
-		long    id;
-		const char  *token;
+		int32	id;
+		const char *token;
 	};
 
 public:
 	int scanStr(const char *in, const char *format, ...);
-	long getCommand(char **buf, TokenDesc *tokens, char **params);
+	int32 getCommand(char **buf, TokenDesc *tokens, char **params);
 	CBParser(CBGame *inGame = NULL);
 	virtual ~CBParser();
 private:
@@ -78,7 +78,7 @@ private:
 	char *getAssignmentText(char **buf);
 	char *getSubText(char **buf, char open, char close);
 	void skipCharacters(char **buf, const char *toSkip);
-	long getObject(char **buf, TokenDesc *tokens, char **name, char **data);
+	int32 getObject(char **buf, TokenDesc *tokens, char **name, char **data);
 	int _parserLine;
 	char _lastOffender[255];
 	char *_whiteSpace;

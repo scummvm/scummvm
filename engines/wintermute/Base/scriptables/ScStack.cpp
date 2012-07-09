@@ -111,7 +111,7 @@ CScValue *CScStack::getAt(int index) {
 
 //////////////////////////////////////////////////////////////////////////
 void CScStack::correctParams(uint32 expectedParams) {
-	int nuParams = pop()->getInt();
+	uint32 nuParams = (uint32)pop()->getInt();
 
 	if (expectedParams < nuParams) { // too many params
 		while (expectedParams < nuParams) {

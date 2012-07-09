@@ -126,8 +126,8 @@ int CBFontTT::getTextWidth(byte *text, int maxLength) {
 	if (Game->_textEncoding == TEXT_UTF8) textStr = StringUtil::utf8ToWide((char *)text);
 	else textStr = StringUtil::ansiToWide((char *)text);
 
-	if (maxLength >= 0 && textStr.size() > maxLength)
-		textStr = Common::String(textStr.c_str(), maxLength);
+	if (maxLength >= 0 && textStr.size() > (uint32)maxLength)
+		textStr = Common::String(textStr.c_str(), (uint32)maxLength);
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
 	int textWidth, textHeight;
@@ -161,8 +161,8 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	        else text = StringUtil::AnsiToWide((char *)Text);*/
 
-	if (maxLength >= 0 && textStr.size() > maxLength)
-		textStr = Common::String(textStr.c_str(), maxLength);
+	if (maxLength >= 0 && textStr.size() > (uint32)maxLength)
+		textStr = Common::String(textStr.c_str(), (uint32)maxLength);
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
 	CBRenderSDL *_renderer = (CBRenderSDL *)Game->_renderer;
