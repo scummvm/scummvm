@@ -611,15 +611,13 @@ void LoadChooserThumbnailed::reflowLayout() {
 			ContainerWidget *container = new ContainerWidget(this, curX, y, containerWidth, containerHeight);
 			container->setVisible(false);
 	
-			int dstY = y + containerFrameHeightAdd / 2;
-			int dstX = curX + containerFrameWidthAdd / 2;
+			int dstY = containerFrameHeightAdd / 2;
+			int dstX = containerFrameWidthAdd / 2;
 
-			PicButtonWidget *button = new PicButtonWidget(this, dstX, dstY, buttonWidth, buttonHeight, 0, curLine * _columns + curColumn + 1);
-			button->setVisible(false);
+			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, 0, curLine * _columns + curColumn + 1);
 			dstY += buttonHeight;
 
-			StaticTextWidget *description = new StaticTextWidget(this, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignLeft);
-			description->setVisible(false);
+			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignLeft);
 
 			_buttons.push_back(SlotButton(container, button, description));
 		}
@@ -642,10 +640,6 @@ void LoadChooserThumbnailed::destroyButtons() {
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
 		removeWidget(i->container);
 		delete i->container;
-		removeWidget(i->button);
-		delete i->button;
-		removeWidget(i->description);
-		delete i->description;
 	}
 
 	_buttons.clear();

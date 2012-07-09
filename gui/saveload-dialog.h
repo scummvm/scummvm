@@ -149,8 +149,6 @@ private:
 
 		void setVisible(bool state) {
 			container->setVisible(state);
-			button->setVisible(state);
-			description->setVisible(state);
 		}
 	};
 	typedef Common::Array<SlotButton> ButtonArray;
