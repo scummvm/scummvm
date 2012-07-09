@@ -133,28 +133,6 @@ void CBSurfaceSDL::finishLoad() {
 		        }*/
 	}
 
-	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
-	/*  if (FreeImage_GetBPP(img) != 32 || (imgFormat == FIF_BMP && FreeImage_GetBPP(img) != 24)) {
-	        FIBITMAP *newImg = FreeImage_ConvertTo24Bits(img);
-	        if (newImg) {
-	            FreeImage_Unload(img);
-	            img = newImg;
-	        } else {
-	            FreeImage_Unload(img);
-	            return -1;
-	        }
-	    }
-
-	    FreeImage_FlipVertical(img);*/
-
-	//TODO: This is rather endian-specific, but should be replaced by non-SDL-code anyhow:
-	/*  uint32 rmask = surface->format.rMax() << surface->format.rShift;
-	    uint32 gmask = surface->format.gMax() << surface->format.gShift;
-	    uint32 bmask = surface->format.bMax() << surface->format.bShift;
-	    uint32 amask = surface->format.aMax();*/
-
-//	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(surface->pixels, _width, _height, surface->format.bytesPerPixel * 8, surface->pitch, rmask, gmask, bmask, amask);
-
 	// no alpha, set color key
 	/*  if (surface->format.bytesPerPixel != 4)
 	        SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
