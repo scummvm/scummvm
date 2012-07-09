@@ -64,11 +64,8 @@ CUIEdit::CUIEdit(CBGame *inGame): CUIObject(inGame) {
 	_cursorChar = NULL;
 	setCursorChar("|");
 
-#ifdef __WIN32__
-	_cursorBlinkRate = GetCaretBlinkTime();
-#else
 	_cursorBlinkRate = 600;
-#endif
+
 	_frameWidth = 0;
 
 	setText("");

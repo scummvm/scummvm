@@ -56,13 +56,6 @@ public:
 
 	void afterLoad();
 
-#ifdef __WIN32__
-	static uint32 Call_cdecl(const void *args, size_t sz, uint32 func, bool *StackCorrupt);
-	static uint32 Call_stdcall(const void *args, size_t sz, uint32 func, bool *StackCorrupt);
-	static uint32 GetST0(void);
-	static double GetST0Double(void);
-#endif
-
 	CScValue *_operand;
 	CScValue *_reg1;
 	bool _freezable;

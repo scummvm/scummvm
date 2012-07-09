@@ -59,15 +59,6 @@ CBRegistry::~CBRegistry() {
 AnsiString CBRegistry::readString(const AnsiString &subKey, const AnsiString &key, const AnsiString &init) {
 	AnsiString ret = "";
 
-#ifdef __WIN32__
-	// check ini file first (so what we can use project files on windows)
-	char buffer[32768];
-	GetPrivateProfileString(subKey.c_str(), key.c_str(), init.c_str(), buffer, 32768, _iniName);
-	ret = AnsiString(buffer);
-
-	if (buffer != init) return ret;
-#endif
-
 	bool found = false;
 	ret = getValue(_localValues, subKey, key, found);
 	if (!found) ret = getValue(_values, subKey, key, found);
@@ -86,11 +77,6 @@ bool CBRegistry::writeString(const AnsiString &subKey, const AnsiString &key, co
 
 //////////////////////////////////////////////////////////////////////////
 int CBRegistry::readInt(const AnsiString &subKey, const AnsiString &key, int init) {
-#ifdef __WIN32__
-	int ret = GetPrivateProfileInt(subKey.c_str(), key.c_str(), init, _iniName);
-	if (ret != init) return ret;
-#endif
-
 	AnsiString val = readString(subKey, key, "");
 	if (val.empty()) return init;
 	else return atoi(val.c_str());

@@ -3736,15 +3736,11 @@ bool CBGame::handleKeypress(Common::Event *event, bool printable) {
 			stopVideo();
 		return true;
 	}
-#ifdef __WIN32__
-	// TODO: Do we really need to handle this in-engine?
-	// handle Alt+F4 on windows
-	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_F4 && (event->kbd.flags == Common::KBD_ALT)) {
+
+	if (event->type == Common::EVENT_QUIT) {
 		onWindowClose();
 		return true;
-		//TODO
 	}
-#endif
 
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_RETURN && (event->kbd.flags == Common::KBD_ALT)) {
 		// TODO: Handle alt-enter as well as alt-return.

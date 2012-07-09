@@ -337,17 +337,17 @@ bool CBPlatform::equalRect(Common::Rect *rect1, Common::Rect *rect2) {
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString CBPlatform::getSystemFontPath() {
-#ifdef __WIN32__
+/*#ifdef __WIN32__
 	// we're looking for something like "c:\windows\fonts\";
 	char winDir[MAX_PATH_LENGTH + 1];
 	winDir[MAX_PATH_LENGTH] = '\0';
 	::GetWindowsDirectory(winDir, MAX_PATH_LENGTH);
 	return PathUtil::Combine(AnsiString(winDir), "fonts");
-#else
+#else*/
 	// !PORTME
 	//return "/Library/Fonts/";
 	return "";
-#endif
+//#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
