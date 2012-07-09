@@ -103,7 +103,6 @@ public:
 	};
 	bool pointInViewport(POINT *P);
 	uint32 _forceAlphaColor;
-	HINSTANCE _instance;
 	uint32 _window;
 	uint32 _clipperWindow;
 	bool _active;

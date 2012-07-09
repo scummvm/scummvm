@@ -64,9 +64,6 @@ typedef struct tagPOINT {
 	int32  y;
 } POINT, *LPPOINT;
 
-
-typedef uint32 HINSTANCE;
-
 typedef int32 HRESULT;
 
 #define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
