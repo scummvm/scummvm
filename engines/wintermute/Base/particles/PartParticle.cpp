@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/PartParticle.h"
-#include "engines/wintermute/Base/PartEmitter.h"
+#include "engines/wintermute/Base/particles/PartParticle.h"
+#include "engines/wintermute/Base/particles/PartEmitter.h"
 #include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/utils/utils.h"

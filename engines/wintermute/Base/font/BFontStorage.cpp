@@ -27,9 +27,9 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/BFontStorage.h"
+#include "engines/wintermute/Base/font/BFontStorage.h"
+#include "engines/wintermute/Base/font/BFont.h"
 #include "engines/wintermute/Base/BGame.h"
-#include "engines/wintermute/Base/BFont.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "common/str.h"
 

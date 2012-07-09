@@ -30,7 +30,7 @@
 #define WINTERMUTE_BFONTBITMAP_H
 
 
-#include "engines/wintermute/Base/BFont.h"
+#include "engines/wintermute/Base/font/BFont.h"
 
 namespace WinterMute {
 class CBSubFrame;

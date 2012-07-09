@@ -43,6 +43,13 @@ MODULE_OBJS := \
 	Base/file/BFile.o \
 	Base/file/BSaveThumbFile.o \
 	Base/file/BPkgFile.o \
+	Base/font/BFontBitmap.o \
+	Base/font/BFontTT.o \
+	Base/font/BFont.o \
+	Base/font/BFontStorage.o \
+	Base/particles/PartParticle.o \
+	Base/particles/PartEmitter.o \
+	Base/particles/PartForce.o \
 	Base/BActiveRect.o \
 	Base/BBase.o \
 	Base/BDebugger.o \
@@ -51,10 +58,6 @@ MODULE_OBJS := \
 	Base/BFileEntry.o \
 	Base/BFileManager.o \
 	Base/BGame.o \
-	Base/BFont.o \
-	Base/BFontBitmap.o \
-	Base/BFontStorage.o \
-	Base/BFontTT.o \
 	Base/BFrame.o \
 	Base/BImage.o \
 	Base/BKeyboardState.o \
@@ -84,9 +87,6 @@ MODULE_OBJS := \
 	Base/BSurfaceStorage.o \
 	Base/BTransitionMgr.o \
 	Base/BViewport.o \
-	Base/PartParticle.o \
-	Base/PartEmitter.o \
-	Base/PartForce.o \
 	detection.o \
 	graphics/transparentSurface.o \
 	graphics/tga.o \

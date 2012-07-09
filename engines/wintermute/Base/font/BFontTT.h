@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_BFONTTT_H
 #define WINTERMUTE_BFONTTT_H
 
-#include "engines/wintermute/Base/BFontStorage.h"
-#include "engines/wintermute/Base/BFont.h"
+#include "engines/wintermute/Base/font/BFontStorage.h"
+#include "engines/wintermute/Base/font/BFont.h"
 #include "engines/wintermute/Base/BSurface.h"
 #include "common/rect.h"
 #include "graphics/surface.h"

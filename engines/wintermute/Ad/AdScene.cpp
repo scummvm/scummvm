@@ -43,7 +43,7 @@
 #include "engines/wintermute/Ad/AdWaypointGroup.h"
 #include "engines/wintermute/Base/BDynBuffer.h"
 #include "engines/wintermute/Base/BFileManager.h"
-#include "engines/wintermute/Base/BFont.h"
+#include "engines/wintermute/Base/font/BFont.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BObject.h"
 #include "engines/wintermute/Base/BParser.h"

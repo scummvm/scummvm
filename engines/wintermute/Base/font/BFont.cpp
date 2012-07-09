@@ -27,11 +27,11 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/BFont.h"
-#include "engines/wintermute/Base/BFontBitmap.h"
+#include "engines/wintermute/Base/font/BFont.h"
+#include "engines/wintermute/Base/font/BFontBitmap.h"
+#include "engines/wintermute/Base/font/BFontTT.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BFileManager.h"
-#include "engines/wintermute/Base/BFontTT.h"
 #include "engines/wintermute/Base/BGame.h"
 
 namespace WinterMute {

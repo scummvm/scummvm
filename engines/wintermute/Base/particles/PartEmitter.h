@@ -31,7 +31,7 @@
 
 
 #include "engines/wintermute/Base/BObject.h"
-#include "engines/wintermute/Base/PartForce.h"
+#include "engines/wintermute/Base/particles/PartForce.h"
 
 namespace WinterMute {
 class CBRegion;

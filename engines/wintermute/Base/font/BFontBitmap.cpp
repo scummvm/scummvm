@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/BFontBitmap.h"
+#include "engines/wintermute/Base/font/BFontBitmap.h"
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BFrame.h"

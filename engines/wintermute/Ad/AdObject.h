@@ -30,7 +30,7 @@
 #define WINTERMUTE_ADOBJECT_H
 
 #include "engines/wintermute/Ad/AdTypes.h"
-#include "engines/wintermute/Base/PartEmitter.h"
+#include "engines/wintermute/Base/particles/PartEmitter.h"
 
 namespace WinterMute {
 

@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/persistent.h"
-#include "engines/wintermute/Base/PartForce.h"
+#include "engines/wintermute/Base/particles/PartForce.h"
 #include "engines/wintermute/Base/BPersistMgr.h"
 
 namespace WinterMute {

@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/file/BFile.h"
-#include "engines/wintermute/Base/BFontTT.h"
+#include "engines/wintermute/Base/font/BFontTT.h"
 #include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/math/MathUtil.h"

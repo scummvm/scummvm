@@ -35,7 +35,7 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSound.h"
 #include "engines/wintermute/Ad/AdScene.h"
-#include "engines/wintermute/Base/BFont.h"
+#include "engines/wintermute/Base/font/BFont.h"
 #include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/Base/BFileManager.h"
 

@@ -34,7 +34,7 @@
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
-#include "engines/wintermute/Base/BFontStorage.h"
+#include "engines/wintermute/Base/font/BFontStorage.h"
 
 namespace WinterMute {
 
