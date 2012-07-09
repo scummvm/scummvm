@@ -161,14 +161,14 @@ Common::SeekableReadStream *CBFileManager::loadSaveGame(const Common::String &fi
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::saveFile(const Common::String &filename, byte *Buffer, uint32 BufferSize, bool Compressed, byte *PrefixBuffer, uint32 PrefixSize) {
+ERRORCODE CBFileManager::saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed, byte *prefixBuffer, uint32 prefixSize) {
 	// TODO
 	warning("Implement SaveFile");
 
 	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
 	Common::OutSaveFile *file = saveMan->openForSaving(filename);
-	file->write(PrefixBuffer, PrefixSize);
-	file->write(Buffer, BufferSize);
+	file->write(prefixBuffer, prefixSize);
+	file->write(buffer, bufferSize);
 	file->finalize();
 	delete file;
 #if 0
@@ -871,26 +871,24 @@ bool CBFileManager::findPackageSignature(Common::File *f, uint32 *offset) {
 	((uint32 *)signature)[0] = PACKAGE_MAGIC_1;
 	((uint32 *)signature)[1] = PACKAGE_MAGIC_2;
 
-	uint32 fileSize = f->size();
-
-	int startPos = 1024 * 1024;
-
+	uint32 fileSize = (uint32)f->size();
+	uint32 startPos = 1024 * 1024;
 	uint32 bytesRead = startPos;
 
 	while (bytesRead < fileSize - 16) {
-		int ToRead = MIN((unsigned int)32768, fileSize - bytesRead);
-		f->seek(startPos, SEEK_SET);
-		int ActuallyRead = f->read(buf, ToRead);
-		if (ActuallyRead != ToRead) return false;
+		uint32 toRead = MIN((unsigned int)32768, fileSize - bytesRead);
+		f->seek((int32)startPos, SEEK_SET);
+		uint32 actuallyRead = f->read(buf, toRead);
+		if (actuallyRead != toRead) return false;
 
-		for (int i = 0; i < ToRead - 8; i++)
+		for (uint32 i = 0; i < toRead - 8; i++)
 			if (!memcmp(buf + i, signature, 8)) {
 				*offset =  startPos + i;
 				return true;
 			}
 
-		bytesRead = bytesRead + ToRead - 16;
-		startPos = startPos + ToRead - 16;
+		bytesRead = bytesRead + toRead - 16;
+		startPos = startPos + toRead - 16;
 
 	}
 	return false;
