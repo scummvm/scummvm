@@ -253,8 +253,8 @@ ERRORCODE CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete)
 	if (complete)
 		buffer->putTextIndent(indent, "SUBFRAME {\n");
 
-	if (_surface && _surface->_filename != NULL)
-		buffer->putTextIndent(indent + 2, "IMAGE = \"%s\"\n", _surface->_filename);
+	if (_surface && _surface->getFileName() != "")
+		buffer->putTextIndent(indent + 2, "IMAGE = \"%s\"\n", _surface->getFileName());
 
 	if (_transparent != 0xFFFF00FF)
 		buffer->putTextIndent(indent + 2, "TRANSPARENT { %d,%d,%d }\n", RGBCOLGetR(_transparent), RGBCOLGetG(_transparent), RGBCOLGetB(_transparent));

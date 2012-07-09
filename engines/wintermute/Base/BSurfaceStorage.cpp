@@ -53,7 +53,7 @@ CBSurfaceStorage::~CBSurfaceStorage() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceStorage::cleanup(bool warn) {
 	for (int i = 0; i < _surfaces.getSize(); i++) {
-		if (warn) Game->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->_filename, _surfaces[i]->_referenceCount);
+		if (warn) Game->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
 		delete _surfaces[i];
 	}
 	_surfaces.removeAll();
@@ -99,7 +99,7 @@ ERRORCODE CBSurfaceStorage::removeSurface(CBSurface *surface) {
 //////////////////////////////////////////////////////////////////////
 CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	for (int i = 0; i < _surfaces.getSize(); i++) {
-		if (scumm_stricmp(_surfaces[i]->_filename, filename) == 0) {
+		if (scumm_stricmp(_surfaces[i]->getFileName(), filename) == 0) {
 			_surfaces[i]->_referenceCount++;
 			return _surfaces[i];
 		}

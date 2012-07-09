@@ -115,7 +115,6 @@ ERRORCODE CBFileManager::cleanup() {
 #define MAX_FILE_SIZE 10000000
 //////////////////////////////////////////////////////////////////////
 byte *CBFileManager::readWholeFile(const Common::String &filename, uint32 *size, bool mustExist) {
-
 	byte *buffer = NULL;
 
 	Common::SeekableReadStream *file = openFile(filename);

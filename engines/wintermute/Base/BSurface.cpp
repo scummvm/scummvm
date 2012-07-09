@@ -38,12 +38,12 @@ CBSurface::CBSurface(CBGame *inGame): CBBase(inGame) {
 
 	_width = _height = 0;
 
-	_filename = NULL;
+	_filename = "";
 
 	_pixelOpReady = false;
 
-	_cKDefault = true;
-	_cKRed = _cKGreen = _cKBlue = 0;
+	_ckDefault = true;
+	_ckRed = _ckGreen = _ckBlue = 0;
 	_lifeTime = 0;
 	_keepLoaded = false;
 
@@ -55,7 +55,6 @@ CBSurface::CBSurface(CBGame *inGame): CBBase(inGame) {
 //////////////////////////////////////////////////////////////////////
 CBSurface::~CBSurface() {
 	if (_pixelOpReady) endPixelOp();
-	if (_filename) delete [] _filename;
 }
 
 
@@ -139,20 +138,10 @@ ERRORCODE CBSurface::prepareToDraw() {
 
 	if (!_valid) {
 		//Game->LOG(0, "Reviving: %s", _filename);
-		return create(_filename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
+		return create(_filename.c_str(), _ckDefault, _ckRed, _ckGreen, _ckBlue, _lifeTime, _keepLoaded);
 	} else return STATUS_OK;
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-void CBSurface::setFilename(const char *filename) {
-	delete[] _filename;
-	_filename = NULL;
-	if (!filename) return;
-
-	_filename = new char[strlen(filename) + 1];
-	if (_filename) strcpy(_filename, filename);
-}
 
 //////////////////////////////////////////////////////////////////////////
 void CBSurface::setSize(int width, int height) {

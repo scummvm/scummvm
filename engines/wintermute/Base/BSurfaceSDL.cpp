@@ -52,6 +52,7 @@ CBSurfaceSDL::CBSurfaceSDL(CBGame *inGame) : CBSurface(inGame) {
 	_hasAlpha = true;
 	_lockPixels = NULL;
 	_lockPitch = 0;
+	_loaded = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -92,9 +93,7 @@ bool hasTransparency(Graphics::Surface *surf) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	/*  CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer); */
-	Common::String strFileName(filename);
-	CBImage *image = new CBImage(Game);
-	image->loadFile(strFileName);
+	_filename = filename;
 //	const Graphics::Surface *surface = image->getSurface();
 
 	if (defaultCK) {
@@ -103,10 +102,28 @@ ERRORCODE CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed,
 		ckBlue  = 255;
 	}
 
+	_ckDefault = defaultCK;
+	_ckRed = ckRed;
+	_ckGreen = ckGreen;
+	_ckBlue = ckBlue;
+
+	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime)
+		_lifeTime = lifeTime;
+
+	_keepLoaded = keepLoaded;
+	if (_keepLoaded) _lifeTime = -1;
+
+	return STATUS_OK;
+}
+
+void CBSurfaceSDL::finishLoad() {
+	CBImage *image = new CBImage(Game);
+	image->loadFile(_filename);
+
 	_width = image->getSurface()->w;
 	_height = image->getSurface()->h;
 
-	bool isSaveGameGrayscale = scumm_strnicmp(filename, "savegame:", 9) == 0 && (filename[strFileName.size() - 1] == 'g' || filename[strFileName.size() - 1] == 'G');
+	bool isSaveGameGrayscale = scumm_strnicmp(_filename.c_str(), "savegame:", 9) == 0 && (_filename.c_str()[_filename.size() - 1] == 'g' || _filename.c_str()[_filename.size() - 1] == 'G');
 	if (isSaveGameGrayscale) {
 		warning("grayscaleConversion not yet implemented");
 		/*      FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img);
@@ -145,14 +162,14 @@ ERRORCODE CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed,
 	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
 	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
 	delete _surface;
-	if (strFileName.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
+	if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		TransparentSurface trans(*_surface);
-		trans.applyColorKey(ckRed, ckGreen, ckBlue);
+		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue);
 	} else if (image->getSurface()->format.bytesPerPixel == 1 && image->getPalette()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		TransparentSurface trans(*_surface);
-		trans.applyColorKey(ckRed, ckGreen, ckBlue, true);
+		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, true);
 	} else if (image->getSurface()->format.bytesPerPixel == 4 && image->getSurface()->format != g_system->getScreenFormat()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
 	} else {
@@ -184,22 +201,7 @@ ERRORCODE CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed,
 
 	SDL_FreeSurface(surf);
 	delete imgDecoder; // TODO: Update this if ImageDecoder doesn't end up owning the surface.
-
-	_cKDefault = default_ck;
-	_cKRed = ck_red;
-	_cKGreen = ck_green;
-	_cKBlue = ck_blue;
 #endif
-
-	if (!_filename || scumm_stricmp(_filename, filename) != 0) {
-		setFilename(filename);
-	}
-
-	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime)
-		_lifeTime = lifeTime;
-
-	_keepLoaded = keepLoaded;
-	if (_keepLoaded) _lifeTime = -1;
 
 	_valid = true;
 
@@ -207,7 +209,7 @@ ERRORCODE CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed,
 
 	delete image;
 
-	return STATUS_OK;
+	_loaded = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -459,7 +461,12 @@ ERRORCODE CBSurfaceSDL::displayTransform(int x, int y, int hotX, int hotY, Commo
 ERRORCODE CBSurfaceSDL::drawSprite(int x, int y, Common::Rect *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
-	if (renderer->_forceAlphaColor != 0) alpha = renderer->_forceAlphaColor;
+	if (!_loaded) {
+		finishLoad();
+	}
+
+	if (renderer->_forceAlphaColor != 0)
+		alpha = renderer->_forceAlphaColor;
 
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
@@ -535,6 +542,7 @@ ERRORCODE CBSurfaceSDL::drawSprite(int x, int y, Common::Rect *rect, float zoomX
 }
 
 ERRORCODE CBSurfaceSDL::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
+	_loaded = true;
 	_surface->copyFrom(surface);
 	_hasAlpha = hasAlpha;
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);

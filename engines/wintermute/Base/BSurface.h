@@ -38,10 +38,10 @@ class CBSurface: public CBBase {
 public:
 	virtual ERRORCODE invalidate();
 	virtual ERRORCODE prepareToDraw();
-	bool _cKDefault;
-	byte _cKRed;
-	byte _cKGreen;
-	byte _cKBlue;
+	bool _ckDefault;
+	byte _ckRed;
+	byte _ckGreen;
+	byte _ckBlue;
 
 	uint32 _lastUsedTime;
 	bool _valid;
@@ -72,11 +72,9 @@ public:
 	virtual ERRORCODE startPixelOp();
 	virtual ERRORCODE endPixelOp();
 	virtual bool isTransparentAtLite(int x, int y);
-	void setFilename(const char *filename);
 	void setSize(int width, int height);
 
 	int _referenceCount;
-	char *_filename;
 
 	virtual int getWidth() {
 		return _width;
@@ -84,9 +82,11 @@ public:
 	virtual int getHeight() {
 		return _height;
 	}
+	const char* getFileName() { return _filename.c_str(); }
 	//void SetWidth(int Width){ _width = Width;    }
 	//void SetHeight(int Height){ _height = Height; }
 protected:
+	Common::String _filename;
 	int _height;
 	int _width;
 

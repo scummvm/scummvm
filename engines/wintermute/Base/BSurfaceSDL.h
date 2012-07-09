@@ -35,6 +35,7 @@
 
 namespace WinterMute {
 struct TransparentSurface;
+class CBImage;
 class CBSurfaceSDL : public CBSurface {
 public:
 	CBSurfaceSDL(CBGame *inGame);
@@ -63,12 +64,18 @@ public:
 	    static int DLL_CALLCONV SeekProc(fi_handle handle, long offset, int origin);
 	    static long DLL_CALLCONV TellProc(fi_handle handle);*/
 	virtual int getWidth() {
+		if (!_loaded) {
+			finishLoad();
+		}
 		if (_surface) {
 			return _surface->w;
 		}
 		return _width;
 	}
 	virtual int getHeight() {
+		if (!_loaded) {
+			finishLoad();
+		}
 		if (_surface) {
 			return _surface->h;
 		}
@@ -77,7 +84,8 @@ public:
 
 private:
 	Graphics::Surface *_surface;
-
+	bool _loaded;
+	void finishLoad();
 	ERRORCODE drawSprite(int x, int y, Common::Rect *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX = 0, int offsetY = 0);
 	void genAlphaMask(Graphics::Surface *surface);
 	uint32 getPixel(Graphics::Surface *surface, int x, int y);
