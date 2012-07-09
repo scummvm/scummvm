@@ -78,7 +78,7 @@ bool CSysClassRegistry::unregisterClass(CSysClass *classObj) {
 	if (it == _classes.end()) return false;
 
 	if (classObj->getNumInstances() != 0) {
-		char str[MAX_PATH];
+		char str[MAX_PATH_LENGTH];
 		sprintf(str, "Memory leak@class %-20s: %d instance(s) left\n", classObj->getName().c_str(), classObj->getNumInstances());
 		CBPlatform::outputDebugString(str);
 	}

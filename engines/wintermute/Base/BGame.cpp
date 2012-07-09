@@ -578,7 +578,7 @@ void CBGame::DEBUG_DebugDisable() {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBGame::LOG(ERRORCODE res, LPCSTR fmt, ...) {
+void CBGame::LOG(ERRORCODE res, const char *fmt, ...) {
 	uint32 secs = g_system->getMillis() / 1000;
 	uint32 hours = secs / 3600;
 	secs = secs % 3600;
@@ -1360,7 +1360,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		x = MIN(x, _renderer->_width);
 		y = MAX(y, 0);
 		y = MIN(y, _renderer->_height);
-		POINT p;
+		Common::Point p;
 		p.x = x + _renderer->_drawOffsetX;
 		p.y = y + _renderer->_drawOffsetY;
 
@@ -1802,7 +1802,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Screenshot") == 0) {
 		stack->correctParams(1);
-		char filename[MAX_PATH];
+		char filename[MAX_PATH_LENGTH];
 
 		CScValue *Val = stack->pop();
 
@@ -2805,7 +2805,7 @@ void CBGame::quickMessage(const char *text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::quickMessageForm(LPSTR fmt, ...) {
+void CBGame::quickMessageForm(char *fmt, ...) {
 	char buff[256];
 	va_list va;
 
@@ -3191,7 +3191,7 @@ ERRORCODE CBGame::showCursor() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
-	char filename[MAX_PATH + 1];
+	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
 
 	LOG(0, "Saving game '%s'...", filename);
@@ -3242,7 +3242,7 @@ ERRORCODE CBGame::loadGame(int slot) {
 	_loading = false;
 	_scheduledLoadSlot = -1;
 
-	char filename[MAX_PATH + 1];
+	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
 
 	return loadGame(filename);
@@ -3875,7 +3875,7 @@ AnsiString CBGame::getDataDir() {
 ERRORCODE CBGame::getSaveSlotDescription(int slot, char *buffer) {
 	buffer[0] = '\0';
 
-	char filename[MAX_PATH + 1];
+	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
 	CBPersistMgr *pm = new CBPersistMgr(Game);
 	if (!pm) return STATUS_FAILED;
@@ -3897,7 +3897,7 @@ ERRORCODE CBGame::getSaveSlotDescription(int slot, char *buffer) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBGame::isSaveSlotUsed(int slot) {
-	char filename[MAX_PATH + 1];
+	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
 
 	warning("CBGame::IsSaveSlotUsed(%d) - FIXME, ugly solution", slot);
@@ -3910,7 +3910,7 @@ bool CBGame::isSaveSlotUsed(int slot) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::emptySaveSlot(int slot) {
-	char filename[MAX_PATH + 1];
+	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
 
 	CBPlatform::deleteFile(filename);
@@ -3967,7 +3967,7 @@ ERRORCODE CBGame::popViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBGame::getCurrentViewportRect(RECT *rect, bool *custom) {
+ERRORCODE CBGame::getCurrentViewportRect(Common::Rect *rect, bool *custom) {
 	if (rect == NULL) return STATUS_FAILED;
 	else {
 		if (_viewportSP >= 0) {
@@ -4021,7 +4021,7 @@ void CBGame::setInteractive(bool state) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBGame::resetMousePos() {
-	POINT p;
+	Common::Point p;
 	p.x = _mousePos.x + _renderer->_drawOffsetX;
 	p.y = _mousePos.y + _renderer->_drawOffsetY;
 
@@ -4048,7 +4048,7 @@ ERRORCODE CBGame::displayContentSimple() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::displayIndicator() {
 	if (_saveLoadImage) {
-		RECT rc;
+		Common::Rect rc;
 		CBPlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
 		if (_loadInProgress) _saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
 		else _saveLoadImage->displayTrans(_saveImageX, _saveImageY, rc);
@@ -4209,7 +4209,7 @@ ERRORCODE CBGame::onActivate(bool activate, bool refreshMouse) {
 	_renderer->_active = activate;
 
 	if (refreshMouse) {
-		POINT p;
+		Common::Point p;
 		getMousePos(&p);
 		setActiveObject(_renderer->getObjectAt(p.x, p.y));
 	}
@@ -4407,7 +4407,7 @@ CBDebugger *CBGame::getDebugMgr() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::getMousePos(POINT *pos) {
+void CBGame::getMousePos(Common::Point *pos) {
 	CBPlatform::getCursorPos(pos);
 
 	pos->x -= _renderer->_drawOffsetX;
@@ -4417,7 +4417,7 @@ void CBGame::getMousePos(POINT *pos) {
 	// Windows can squish maximized window if it's larger than desktop
 	// so we need to modify mouse position appropriately (tnx mRax)
 	if (_renderer->_windowed && ::IsZoomed(_renderer->_window)) {
-	    RECT rc;
+	    Common::Rect rc;
 	    ::GetClientRect(_renderer->_window, &rc);
 	    Pos->x *= Game->_renderer->_realWidth;
 	    Pos->x /= (rc.right - rc.left);
@@ -4434,7 +4434,7 @@ void CBGame::getMousePos(POINT *pos) {
 			pos->x = MIN(_mouseLockRect.right, pos->x);
 			pos->y = MIN(_mouseLockRect.bottom, pos->y);
 
-			POINT newPos = *pos;
+			Common::Point newPos = *pos;
 
 			newPos.x += _renderer->_drawOffsetX;
 			newPos.y += _renderer->_drawOffsetY;
@@ -4481,7 +4481,7 @@ bool CBGame::isDoubleClick(int buttonIndex) {
 	maxMoveY = 16;
 #endif
 
-	POINT pos;
+	Common::Point pos;
 	CBPlatform::getCursorPos(&pos);
 
 	int moveX = abs(pos.x - _lastClick[buttonIndex].PosX);

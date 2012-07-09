@@ -160,7 +160,7 @@ char *CBDynBuffer::getString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::putText(LPCSTR fmt, ...) {
+void CBDynBuffer::putText(const char *fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
@@ -171,7 +171,7 @@ void CBDynBuffer::putText(LPCSTR fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::putTextIndent(int indent, LPCSTR fmt, ...) {
+void CBDynBuffer::putTextIndent(int indent, const char *fmt, ...) {
 	va_list va;
 
 	putText("%*s", indent, "");

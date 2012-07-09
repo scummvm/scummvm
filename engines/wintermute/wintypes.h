@@ -30,6 +30,7 @@
 #define WINTERMUTE_WINTYPES_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace WinterMute {
 
@@ -48,32 +49,7 @@ typedef bool ERRORCODE;
 #define STATUS_OK		(true)
 #define STATUS_FAILED	(false)
 
-#ifndef __WIN32__
-
-#define MAX_PATH 512
-
-typedef char *NPSTR, *LPSTR, *PSTR;
-typedef PSTR *PZPSTR;
-typedef const PSTR *PCZPSTR;
-typedef const char *LPCSTR, *PCSTR;
-typedef PCSTR *PZPCSTR;
-
-typedef struct tagRECT {
-	int32	left;
-	int32	top;
-	int32  right;
-	int32	bottom;
-} RECT, *LPRECT;
-
-
-typedef struct tagPOINT {
-	int32  x;
-	int32  y;
-} POINT, *LPPOINT;
-
-#endif // __WIN32__
-
-
+#define MAX_PATH_LENGTH 512
 
 } // end of namespace WinterMute
 

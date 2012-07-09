@@ -246,7 +246,7 @@ ERRORCODE CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 	else if (strcmp(name, "Split") == 0) {
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
-		char separators[MAX_PATH] = ",";
+		char separators[MAX_PATH_LENGTH] = ",";
 		if (!val->isNULL()) strcpy(separators, val->getString());
 
 		CSXArray *array = new CSXArray(Game);

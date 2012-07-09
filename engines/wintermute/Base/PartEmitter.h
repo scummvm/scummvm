@@ -82,7 +82,7 @@ public:
 	int _maxBatches;
 	int _batchesGenerated;
 
-	RECT _border;
+	Common::Rect _border;
 	int _borderThicknessLeft;
 	int _borderThicknessRight;
 	int _borderThicknessTop;

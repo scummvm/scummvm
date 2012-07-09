@@ -53,12 +53,12 @@ public:
 	virtual ~CBSubFrame();
 	ERRORCODE loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
 	ERRORCODE draw(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
-	bool getBoundingRect(LPRECT rect, int x, int y, float scaleX = 100, float scaleY = 100);
+	bool getBoundingRect(Common::Rect *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 
 	int _hotspotX;
 	int _hotspotY;
 	uint32 _alpha;
-	RECT _rect;
+	Common::Rect _rect;
 
 	bool _cKDefault;
 	byte _cKRed;

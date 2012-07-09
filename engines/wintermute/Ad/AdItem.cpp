@@ -389,9 +389,9 @@ ERRORCODE CAdItem::update() {
 ERRORCODE CAdItem::display(int x, int y) {
 	int width = 0;
 	if (_currentSprite) {
-		RECT rc;
-		_currentSprite->GetBoundingRect(&rc, 0, 0);
-		width = rc.right - rc.left;
+		Common::Rect rc;
+		_currentSprite->getBoundingRect(&rc, 0, 0);
+		width = rc.width();
 	}
 
 	_posX = x + width / 2;

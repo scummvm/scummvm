@@ -33,6 +33,7 @@
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
+#include "common/rect.h"
 
 namespace WinterMute {
 class CAdTalkDef;
@@ -55,7 +56,7 @@ public:
 	TTextAlign _align;
 	ERRORCODE display();
 	int _width;
-	POINT _pos;
+	Common::Point _pos;
 	CBFont *_font;
 	char *getNextStance();
 	char *getCurrentStance();

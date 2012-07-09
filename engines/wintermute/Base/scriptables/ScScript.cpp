@@ -1178,7 +1178,7 @@ ERRORCODE CScScript::run() {
 
 
 //////////////////////////////////////////////////////////////////////
-void CScScript::runtimeError(LPCSTR fmt, ...) {
+void CScScript::runtimeError(const char *fmt, ...) {
 	char buff[256];
 	va_list va;
 

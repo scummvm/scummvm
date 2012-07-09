@@ -75,7 +75,7 @@ public:
 	CScScript *invokeEventHandler(const char *eventName, bool unbreakable = false);
 	uint32 _timeSlice;
 	DECLARE_PERSISTENT(CScScript, CBBase)
-	void runtimeError(LPCSTR fmt, ...);
+	void runtimeError(const char *fmt, ...);
 	ERRORCODE run();
 	ERRORCODE finish(bool includingThreads = false);
 	ERRORCODE sleep(uint32 duration);

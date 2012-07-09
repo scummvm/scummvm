@@ -423,40 +423,40 @@ ERRORCODE CBSurfaceSDL::endPixelOp() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceSDL::display(int x, int y, RECT rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::display(int x, int y, Common::Rect rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, 100, 100, 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceSDL::displayTrans(int x, int y, RECT rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::displayTrans(int x, int y, Common::Rect rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceSDL::displayTransOffset(int x, int y, RECT rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+ERRORCODE CBSurfaceSDL::displayTransOffset(int x, int y, Common::Rect rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY, offsetX, offsetY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceSDL::displayTransZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::displayTransZoom(int x, int y, Common::Rect rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceSDL::displayZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha, bool Transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::displayZoom(int x, int y, Common::Rect rect, float zoomX, float zoomY, uint32 alpha, bool Transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, !Transparent, blendMode, mirrorX, mirrorY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceSDL::displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::displayTransform(int x, int y, int hotX, int hotY, Common::Rect rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceSDL::drawSprite(int x, int y, RECT *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+ERRORCODE CBSurfaceSDL::drawSprite(int x, int y, Common::Rect *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
 	if (renderer->_forceAlphaColor != 0) alpha = renderer->_forceAlphaColor;

@@ -46,7 +46,7 @@ public:
 	CBRegion *_region;
 	int _offsetX;
 	int _offsetY;
-	RECT _rect;
+	Common::Rect _rect;
 	CBActiveRect(CBGame *inGameOwner = NULL);
 	CBActiveRect(CBGame *inGameOwner, CBObject *owner, CBSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
 	CBActiveRect(CBGame *inGame, CBObject *owner, CBRegion *region, int offsetX, int offsetY);

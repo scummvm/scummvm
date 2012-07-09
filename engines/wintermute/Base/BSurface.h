@@ -52,14 +52,14 @@ public:
 	CBSurface(CBGame *inGame);
 	virtual ~CBSurface();
 
-	virtual ERRORCODE displayHalfTrans(int x, int y, RECT rect);
+	virtual ERRORCODE displayHalfTrans(int x, int y, Common::Rect rect);
 	virtual bool isTransparentAt(int x, int y);
-	virtual ERRORCODE displayTransZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual ERRORCODE displayTrans(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual ERRORCODE displayTransOffset(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) = 0;
-	virtual ERRORCODE display(int x, int y, RECT rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool MirrorY = false) = 0;
-	virtual ERRORCODE displayZoom(int x, int y, RECT rect, float ZoomX, float ZoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual ERRORCODE displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual ERRORCODE displayTransZoom(int x, int y, Common::Rect rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual ERRORCODE displayTrans(int x, int y, Common::Rect rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual ERRORCODE displayTransOffset(int x, int y, Common::Rect rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) = 0;
+	virtual ERRORCODE display(int x, int y, Common::Rect rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool MirrorY = false) = 0;
+	virtual ERRORCODE displayZoom(int x, int y, Common::Rect rect, float ZoomX, float ZoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual ERRORCODE displayTransform(int x, int y, int hotX, int hotY, Common::Rect rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
 	virtual ERRORCODE restore();
 	virtual ERRORCODE create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
 	virtual ERRORCODE create(int Width, int Height);

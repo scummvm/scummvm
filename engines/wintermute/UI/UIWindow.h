@@ -59,14 +59,14 @@ public:
 	TWindowMode _mode;
 	ERRORCODE moveFocus(bool forward = true);
 	virtual ERRORCODE handleMouse(TMouseEvent Event, TMouseButton Button);
-	POINT _dragFrom;
+	Common::Point _dragFrom;
 	bool _dragging;
 	DECLARE_PERSISTENT(CUIWindow, CUIObject)
 	bool _transparent;
 	ERRORCODE showWidget(const char *name, bool visible = true);
 	ERRORCODE enableWidget(const char *name, bool enable = true);
-	RECT _titleRect;
-	RECT _dragRect;
+	Common::Rect _titleRect;
+	Common::Rect _dragRect;
 	virtual ERRORCODE display(int offsetX = 0, int offsetY = 0);
 	CUIWindow(CBGame *inGame);
 	virtual ~CUIWindow();

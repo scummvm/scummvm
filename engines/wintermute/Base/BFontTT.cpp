@@ -217,7 +217,7 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 
 	// and paint it
 	if (surface) {
-		RECT rc;
+		Common::Rect rc;
 		CBPlatform::setRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
 		for (int i = 0; i < _layers.GetSize(); i++) {
 			uint32 color = _layers[i]->_color;

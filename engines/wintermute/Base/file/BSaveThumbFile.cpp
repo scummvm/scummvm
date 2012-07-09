@@ -69,7 +69,7 @@ ERRORCODE CBSaveThumbFile::open(const Common::String &filename) {
 	int slot = atoi(tempFilename);
 	delete [] tempFilename;
 
-	char slotFilename[MAX_PATH + 1];
+	char slotFilename[MAX_PATH_LENGTH + 1];
 	Game->getSaveSlotFilename(slot, slotFilename);
 	CBPersistMgr *pm = new CBPersistMgr(Game);
 	if (!pm) return STATUS_FAILED;

@@ -37,8 +37,8 @@ namespace WinterMute {
 class CBDynBuffer : public CBBase {
 public:
 	bool _initialized;
-	void putText(LPCSTR fmt, ...);
-	void putTextIndent(int indent, LPCSTR fmt, ...);
+	void putText(const char *fmt, ...);
+	void putTextIndent(int indent, const char *fmt, ...);
 	uint32 getDWORD();
 	void putDWORD(uint32 val);
 	char *getString();

@@ -110,7 +110,7 @@ ERRORCODE CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	char *params;
 	int cmd;
 	CBParser parser(Game);
-	RECT rect;
+	Common::Rect rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	bool custoTrans = false;
@@ -233,7 +233,7 @@ ERRORCODE CBSubFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, f
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::getBoundingRect(LPRECT rect, int x, int y, float scaleX, float scaleY) {
+bool CBSubFrame::getBoundingRect(Common::Rect *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) return false;
 
 	float ratioX = scaleX / 100.0f;
@@ -259,7 +259,7 @@ ERRORCODE CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete)
 	if (_transparent != 0xFFFF00FF)
 		buffer->putTextIndent(indent + 2, "TRANSPARENT { %d,%d,%d }\n", RGBCOLGetR(_transparent), RGBCOLGetG(_transparent), RGBCOLGetB(_transparent));
 
-	RECT rect;
+	Common::Rect rect;
 	CBPlatform::setRectEmpty(&rect);
 	if (_surface) CBPlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 	if (!CBPlatform::equalRect(&rect, &_rect))

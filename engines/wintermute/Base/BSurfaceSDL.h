@@ -52,12 +52,12 @@ public:
 	ERRORCODE endPixelOp();
 
 
-	ERRORCODE displayTransZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
-	ERRORCODE displayTrans(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
-	ERRORCODE displayTransOffset(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0);
-	ERRORCODE display(int x, int y, RECT rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
-	ERRORCODE displayZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, bool Transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
-	ERRORCODE displayTransform(int x, int y, int hotX, int hotY, RECT Rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	ERRORCODE displayTransZoom(int x, int y, Common::Rect rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	ERRORCODE displayTrans(int x, int y, Common::Rect rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	ERRORCODE displayTransOffset(int x, int y, Common::Rect rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0);
+	ERRORCODE display(int x, int y, Common::Rect rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	ERRORCODE displayZoom(int x, int y, Common::Rect rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, bool Transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
+	ERRORCODE displayTransform(int x, int y, int hotX, int hotY, Common::Rect Rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
 	virtual ERRORCODE putSurface(const Graphics::Surface &surface, bool hasAlpha = false);
 	/*  static unsigned DLL_CALLCONV ReadProc(void *buffer, unsigned size, unsigned count, fi_handle handle);
 	    static int DLL_CALLCONV SeekProc(fi_handle handle, long offset, int origin);
@@ -78,7 +78,7 @@ public:
 private:
 	Graphics::Surface *_surface;
 
-	ERRORCODE drawSprite(int x, int y, RECT *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX = 0, int offsetY = 0);
+	ERRORCODE drawSprite(int x, int y, Common::Rect *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX = 0, int offsetY = 0);
 	void genAlphaMask(Graphics::Surface *surface);
 	uint32 getPixel(Graphics::Surface *surface, int x, int y);
 

@@ -39,6 +39,7 @@
 #include "engines/wintermute/UI/UIWindow.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "common/str.h"
+#include "common/rect.h"
 
 namespace WinterMute {
 
@@ -122,7 +123,7 @@ ERRORCODE CAdInventoryBox::display() {
 
 
 	// display window
-	RECT rect = _itemsArea;
+	Common::Rect rect = _itemsArea;
 	if (_window) {
 		CBPlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		_window->display();

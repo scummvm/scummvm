@@ -116,8 +116,8 @@ AnsiString PathUtil::getSafeLogFileName() {
 	AnsiString logFileName = getUserDirectory();
 
 #ifdef __WIN32__
-	char moduleName[MAX_PATH];
-	::GetModuleFileName(NULL, moduleName, MAX_PATH);
+	char moduleName[MAX_PATH_LENGTH];
+	::GetModuleFileName(NULL, moduleName, MAX_PATH_LENGTH);
 
 	AnsiString fileName = GetFileNameWithoutExtension(moduleName) + ".log";
 	fileName = Combine("/Wintermute Engine/Logs/", fileName);
@@ -162,7 +162,7 @@ AnsiString PathUtil::getUserDirectory() {
 	AnsiString userDir = "./";
 #if 0
 #ifdef __WIN32__
-	char buffer[MAX_PATH];
+	char buffer[MAX_PATH_LENGTH];
 	buffer[0] = '\0';
 	LPITEMIDLIST pidl = NULL;
 	LPMALLOC pMalloc;
@@ -178,14 +178,14 @@ AnsiString PathUtil::getUserDirectory() {
 	FSRef fileRef;
 	OSStatus error = FSFindFolder(kUserDomain, kApplicationSupportFolderType, true, &fileRef);
 	if (error == noErr) {
-		char buffer[MAX_PATH];
+		char buffer[MAX_PATH_LENGTH];
 		error = FSRefMakePath(&fileRef, (UInt8 *)buffer, sizeof(buffer));
 		if (error == noErr)
 			userDir = buffer;
 
 	}
 #elif __IPHONEOS__
-	char path[MAX_PATH];
+	char path[MAX_PATH_LENGTH];
 	IOS_GetDataDir(path);
 	userDir = AnsiString(path);
 #endif

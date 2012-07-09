@@ -68,7 +68,7 @@ public:
 Common::SeekableReadStream *openPkgFile(const Common::String &filename, CBFileManager *fileManager) {
 	CBFileEntry *fileEntry;
 	Common::SeekableReadStream *file = NULL;
-	char fileName[MAX_PATH];
+	char fileName[MAX_PATH_LENGTH];
 	strcpy(fileName, filename.c_str());
 
 	// correct slashes

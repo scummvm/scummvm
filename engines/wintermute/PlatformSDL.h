@@ -48,9 +48,9 @@ public:
 	static AnsiString getPlatformName();
 
 	// Win32 API bindings
-	static void outputDebugString(LPCSTR lpOutputString);
+	static void outputDebugString(const char *lpOutputString);
 	static uint32 getTime();
-	static bool getCursorPos(LPPOINT lpPoint);
+	static bool getCursorPos(Common::Point *lpPoint);
 	static bool setCursorPos(int X, int Y);
 	static bool showWindow(int nCmdShow);
 	static bool deleteFile(const char *lpFileName);
@@ -59,15 +59,15 @@ public:
 	static bool releaseCapture();
 	static bool setForegroundWindow();
 
-	static bool setRectEmpty(LPRECT lprc);
-	static bool isRectEmpty(const LPRECT lprc);
-	static bool ptInRect(LPRECT lprc, POINT p);
-	static bool setRect(LPRECT lprc, int left, int top, int right, int bottom);
-	static bool intersectRect(LPRECT lprcDst, const LPRECT lprcSrc1, const LPRECT lprcSrc2);
-	static bool unionRect(LPRECT lprcDst, RECT *lprcSrc1, RECT *lprcSrc2);
-	static bool copyRect(LPRECT lprcDst, RECT *lprcSrc);
-	static bool offsetRect(LPRECT lprc, int dx, int dy);
-	static bool equalRect(LPRECT rect1, LPRECT rect2);
+	static bool setRectEmpty(Common::Rect *lprc);
+	static bool isRectEmpty(const Common::Rect *lprc);
+	static bool ptInRect(Common::Rect *lprc, Common::Point p);
+	static bool setRect(Common::Rect *lprc, int left, int top, int right, int bottom);
+	static bool intersectRect(Common::Rect *lprcDst, const Common::Rect *lprcSrc1, const Common::Rect *lprcSrc2);
+	static bool unionRect(Common::Rect *lprcDst, Common::Rect *lprcSrc1, Common::Rect *lprcSrc2);
+	static bool copyRect(Common::Rect *lprcDst, Common::Rect *lprcSrc);
+	static bool offsetRect(Common::Rect *lprc, int dx, int dy);
+	static bool equalRect(Common::Rect *rect1, Common::Rect *rect2);
 
 
 	// string functions

@@ -35,6 +35,7 @@
 #include "common/stream.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/rect.h"
 
 namespace WinterMute {
 
@@ -84,8 +85,8 @@ public:
 	ERRORCODE transfer(const char *name, double *val);
 	ERRORCODE transfer(const char *name, bool *val);
 	ERRORCODE transfer(const char *name, byte *val);
-	ERRORCODE transfer(const char *name, RECT *val);
-	ERRORCODE transfer(const char *name, POINT *val);
+	ERRORCODE transfer(const char *name, Common::Rect *val);
+	ERRORCODE transfer(const char *name, Common::Point *val);
 	ERRORCODE transfer(const char *name, const char **val);
 	ERRORCODE transfer(const char *name, char **val);
 	ERRORCODE transfer(const char *name, Common::String *val);

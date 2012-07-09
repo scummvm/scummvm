@@ -79,11 +79,11 @@ bool CBRegion::createRegion() {
 bool CBRegion::pointInRegion(int x, int y) {
 	if (_points.GetSize() < 3) return false;
 
-	POINT pt;
+	Common::Point pt;
 	pt.x = x;
 	pt.y = y;
 
-	RECT rect;
+	Common::Rect rect;
 	rect.left = x - 1;
 	rect.right = x + 2;
 	rect.top = y - 1;
@@ -465,7 +465,7 @@ bool CBRegion::ptInPolygon(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRegion::getBoundingRect(RECT *rect) {
+ERRORCODE CBRegion::getBoundingRect(Common::Rect *rect) {
 	if (_points.GetSize() == 0) CBPlatform::setRectEmpty(rect);
 	else {
 		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;

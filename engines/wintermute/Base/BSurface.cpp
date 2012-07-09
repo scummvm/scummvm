@@ -76,12 +76,12 @@ bool CBSurface::isTransparentAt(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurface::displayHalfTrans(int x, int y, RECT rect) {
+ERRORCODE CBSurface::displayHalfTrans(int x, int y, Common::Rect rect) {
 	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurface::displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurface::displayTransform(int x, int y, int hotX, int hotY, Common::Rect rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return displayTransZoom(x, y, rect, zoomX, zoomY, alpha, blendMode, mirrorX, mirrorY);
 }
 

@@ -57,7 +57,7 @@ public:
 	int _alpha1;
 	int _alpha2;
 
-	RECT _border;
+	Common::Rect _border;
 	Vector2 _pos;
 	float _posZ;
 	Vector2 _velocity;

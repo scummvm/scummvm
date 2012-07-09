@@ -30,6 +30,7 @@
 #define WINTERMUTE_ADINVENTORYBOX_H
 
 #include "engines/wintermute/Base/BObject.h"
+#include "common/rect.h"
 
 namespace WinterMute {
 class CUIButton;
@@ -48,7 +49,7 @@ public:
 	CUIButton *_closeButton;
 	int _spacing;
 	int _scrollOffset;
-	RECT _itemsArea;
+	Common::Rect _itemsArea;
 	ERRORCODE listen(CBScriptHolder *param1, uint32 param2);
 	CUIWindow *_window;
 	CAdInventoryBox(CBGame *inGame);

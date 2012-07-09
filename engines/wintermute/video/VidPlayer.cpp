@@ -128,7 +128,7 @@ ERRORCODE CVidPlayer::initialize(const char *inFilename, const char *SubtitleFil
 #if 0
 	cleanup();
 
-	char Filename[MAX_PATH];
+	char Filename[MAX_PATH_LENGTH];
 	Game->_fileManager->GetFullPath(inFilename, filename);
 
 	// open file
@@ -382,7 +382,7 @@ ERRORCODE CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFi
 #if 0
 	if (!Filename) return STATUS_OK;
 
-	char NewFile[MAX_PATH];
+	char NewFile[MAX_PATH_LENGTH];
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];

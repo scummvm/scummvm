@@ -671,7 +671,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, byte *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-ERRORCODE CBPersistMgr::transfer(const char *name, RECT *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, Common::Rect *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);
@@ -694,7 +694,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, RECT *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-ERRORCODE CBPersistMgr::transfer(const char *name, POINT *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, Common::Point *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);

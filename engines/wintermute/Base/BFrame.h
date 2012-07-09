@@ -46,7 +46,7 @@ public:
 	DECLARE_PERSISTENT(CBFrame, CBScriptable)
 	CBSound *_sound;
 	bool _editorExpanded;
-	bool getBoundingRect(LPRECT rect, int x, int y, float scaleX = 100, float scaleY = 100);
+	bool getBoundingRect(Common::Rect *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
 	int _moveY;
 	int _moveX;

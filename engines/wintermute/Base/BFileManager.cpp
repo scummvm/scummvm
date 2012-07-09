@@ -311,7 +311,7 @@ ERRORCODE CBFileManager::initPaths() {
 	    AddPath(PATH_PACKAGE, pathPtr);
 	    AddPath(PATH_SINGLE, pathPtr);
 	#else
-	    char bundlePath[MAX_PATH];
+	    char bundlePath[MAX_PATH_LENGTH];
 
 	    sprintf(bundlePath, "%s/../", pathPtr);
 	    AddPath(PATH_PACKAGE, bundlePath);
@@ -524,7 +524,7 @@ ERRORCODE CBFileManager::registerPackage(const char *Path, const char *name, boo
 // TODO
 	error("Implement RegisterPackage, this is the old one");
 #if 0
-	char Filename[MAX_PATH];
+	char Filename[MAX_PATH_LENGTH];
 	sprintf(filename, "%s%s", Path, name);
 
 	FILE *f = fopen(filename, "rb");
@@ -670,7 +670,7 @@ Common::File *CBFileManager::openPackage(const Common::String &name) {
 	//RestoreCurrentDir();
 
 	Common::File *ret = new Common::File();
-	char filename[MAX_PATH];
+	char filename[MAX_PATH_LENGTH];
 
 	for (int i = 0; i < _packagePaths.GetSize(); i++) {
 		sprintf(filename, "%s%s.%s", _packagePaths[i], name.c_str(), PACKAGE_EXTENSION);
@@ -696,7 +696,7 @@ Common::File *CBFileManager::openSingleFile(const Common::String &name) {
 	restoreCurrentDir();
 
 	Common::File *ret = NULL;
-	char filename[MAX_PATH];
+	char filename[MAX_PATH_LENGTH];
 
 	for (int i = 0; i < _singlePaths.GetSize(); i++) {
 		sprintf(filename, "%s%s", _singlePaths[i], name.c_str());

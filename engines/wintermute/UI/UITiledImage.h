@@ -31,6 +31,7 @@
 
 
 #include "UIObject.h"
+#include "common/rect.h"
 
 namespace WinterMute {
 class CBSubFrame;
@@ -46,15 +47,15 @@ public:
 	CUITiledImage(CBGame *inGame = NULL);
 	virtual ~CUITiledImage();
 	CBSubFrame *_image;
-	RECT _upLeft;
-	RECT _upMiddle;
-	RECT _upRight;
-	RECT _middleLeft;
-	RECT _middleMiddle;
-	RECT _middleRight;
-	RECT _downLeft;
-	RECT _downMiddle;
-	RECT _downRight;
+	Common::Rect _upLeft;
+	Common::Rect _upMiddle;
+	Common::Rect _upRight;
+	Common::Rect _middleLeft;
+	Common::Rect _middleMiddle;
+	Common::Rect _middleRight;
+	Common::Rect _downLeft;
+	Common::Rect _downMiddle;
+	Common::Rect _downRight;
 };
 
 } // end of namespace WinterMute

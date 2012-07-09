@@ -37,7 +37,7 @@ class CBGame;
 
 class CBUtils {
 public:
-	static void clip(int *DestX, int *DestY, RECT *SrcRect, RECT *DestRect);
+	static void clip(int *DestX, int *DestY, Common::Rect *SrcRect, Common::Rect *DestRect);
 	static void swap(int *a, int *b);
 	static bool strBeginsI(const char *String, const char *Fragment);
 	static float normalizeAngle(float Angle);

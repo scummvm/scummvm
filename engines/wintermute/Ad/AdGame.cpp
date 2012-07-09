@@ -1210,7 +1210,7 @@ ERRORCODE CAdGame::loadBuffer(byte *buffer, bool complete) {
 					break;
 
 				case TOKEN_SCENE_VIEWPORT: {
-					RECT rc;
+					Common::Rect rc;
 					parser.scanStr((char *)params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 					if (!_sceneViewport) _sceneViewport = new CBViewport(Game);
 					if (_sceneViewport) _sceneViewport->setRect(rc.left, rc.top, rc.right, rc.bottom);
@@ -1698,7 +1698,7 @@ ERRORCODE CAdGame::displayContent(bool doUpdate, bool displayAll) {
 		// process scripts
 		if (doUpdate) _scEngine->tick();
 
-		POINT p;
+		Common::Point p;
 		getMousePos(&p);
 
 		_scene->update();
@@ -1900,7 +1900,7 @@ ERRORCODE CAdGame::removeSpeechDir(const char *dir) {
 
 //////////////////////////////////////////////////////////////////////////
 char *CAdGame::findSpeechFile(char *stringID) {
-	char *ret = new char[MAX_PATH];
+	char *ret = new char[MAX_PATH_LENGTH];
 
 	for (int i = 0; i < _speechDirs.GetSize(); i++) {
 		sprintf(ret, "%s%s.ogg", _speechDirs[i], stringID);
@@ -1924,7 +1924,7 @@ char *CAdGame::findSpeechFile(char *stringID) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CAdGame::validMouse() {
-	POINT pos;
+	Common::Point pos;
 	CBPlatform::getCursorPos(&pos);
 
 	return _renderer->pointInViewport(&pos);

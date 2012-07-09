@@ -46,7 +46,7 @@ void correctSlashes(char *fileName) {
 }
 
 Common::SeekableReadStream *openDiskFile(const Common::String &filename, CBFileManager *fileManager) {
-	char fullPath[MAX_PATH];
+	char fullPath[MAX_PATH_LENGTH];
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = NULL;
 

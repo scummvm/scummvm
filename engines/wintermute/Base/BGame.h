@@ -91,8 +91,8 @@ public:
 
 	virtual ERRORCODE miniUpdate();
 
-	void getMousePos(POINT *Pos);
-	RECT _mouseLockRect;
+	void getMousePos(Common::Point *Pos);
+	Common::Rect _mouseLockRect;
 
 	bool _shuttingDown;
 
@@ -172,7 +172,7 @@ public:
 	CBTransitionMgr *_transMgr;
 	CBDebugger *getDebugMgr();
 
-	void LOG(ERRORCODE res, LPCSTR fmt, ...);
+	void LOG(ERRORCODE res, const char *fmt, ...);
 
 	CBRenderer *_renderer;
 	CBSoundMgr *_soundMgr;
@@ -310,12 +310,12 @@ public:
 	uint32 _liveTimerLast;
 
 	CBObject *_capturedObject;
-	POINT _mousePos;
+	Common::Point _mousePos;
 	bool validObject(CBObject *object);
 	ERRORCODE unregisterObject(CBObject *object);
 	ERRORCODE registerObject(CBObject *object);
 	void quickMessage(const char *text);
-	void quickMessageForm(LPSTR fmt, ...);
+	void quickMessageForm(char *fmt, ...);
 	ERRORCODE displayQuickMsg();
 	uint32 _fps;
 	ERRORCODE updateMusicCrossfade();
@@ -334,7 +334,7 @@ public:
 	virtual ERRORCODE windowLoadHook(CUIWindow *win, char **buf, char **params);
 	virtual ERRORCODE windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
 	ERRORCODE getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
-	ERRORCODE getCurrentViewportRect(RECT *rect, bool *custom = NULL);
+	ERRORCODE getCurrentViewportRect(Common::Rect *rect, bool *custom = NULL);
 	ERRORCODE popViewport();
 	ERRORCODE pushViewport(CBViewport *Viewport);
 	ERRORCODE setActiveObject(CBObject *Obj);
