@@ -143,7 +143,7 @@ ERRORCODE CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint3
 		// update position
 		float elapsedTime = (float)timerDelta / 1000.f;
 
-		for (int i = 0; i < emitter->_forces.GetSize(); i++) {
+		for (int i = 0; i < emitter->_forces.getSize(); i++) {
 			CPartForce *force = emitter->_forces[i];
 			switch (force->_type) {
 			case CPartForce::FORCE_GLOBAL:

@@ -244,14 +244,14 @@ ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_TALK: {
 			CBSprite *spr = new CBSprite(Game, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSprites.Add(spr);
+			else _talkSprites.add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			CBSprite *spr = new CBSprite(Game, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSpritesEx.Add(spr);
+			else _talkSpritesEx.add(spr);
 		}
 		break;
 

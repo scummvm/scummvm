@@ -73,10 +73,10 @@ CBFontTT::CBFontTT(CBGame *inGame): CBFont(inGame) {
 CBFontTT::~CBFontTT(void) {
 	clearCache();
 
-	for (int i = 0; i < _layers.GetSize(); i++) {
+	for (int i = 0; i < _layers.getSize(); i++) {
 		delete _layers[i];
 	}
-	_layers.RemoveAll();
+	_layers.removeAll();
 
 	delete[] _fontFile;
 	_fontFile = NULL;
@@ -219,7 +219,7 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 	if (surface) {
 		Common::Rect rc;
 		CBPlatform::setRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
-		for (int i = 0; i < _layers.GetSize(); i++) {
+		for (int i = 0; i < _layers.getSize(); i++) {
 			uint32 color = _layers[i]->_color;
 			uint32 origForceAlpha = _renderer->_forceAlphaColor;
 			if (_renderer->_forceAlphaColor != 0) {
@@ -518,7 +518,7 @@ ERRORCODE CBFontTT::loadBuffer(byte *buffer) {
 
 		case TOKEN_LAYER: {
 			CBTTFontLayer *Layer = new CBTTFontLayer;
-			if (Layer && DID_SUCCEED(parseLayer(Layer, (byte *)params))) _layers.Add(Layer);
+			if (Layer && DID_SUCCEED(parseLayer(Layer, (byte *)params))) _layers.add(Layer);
 			else {
 				delete Layer;
 				Layer = NULL;
@@ -535,10 +535,10 @@ ERRORCODE CBFontTT::loadBuffer(byte *buffer) {
 	}
 
 	// create at least one layer
-	if (_layers.GetSize() == 0) {
+	if (_layers.getSize() == 0) {
 		CBTTFontLayer *Layer = new CBTTFontLayer;
 		Layer->_color = BaseColor;
-		_layers.Add(Layer);
+		_layers.add(Layer);
 	}
 
 	if (!_fontFile) CBUtils::setString(&_fontFile, "arial.ttf");
@@ -605,16 +605,16 @@ ERRORCODE CBFontTT::persist(CBPersistMgr *persistMgr) {
 	// persist layers
 	int numLayers;
 	if (persistMgr->_saving) {
-		numLayers = _layers.GetSize();
+		numLayers = _layers.getSize();
 		persistMgr->transfer(TMEMBER(numLayers));
 		for (int i = 0; i < numLayers; i++) _layers[i]->persist(persistMgr);
 	} else {
-		numLayers = _layers.GetSize();
+		numLayers = _layers.getSize();
 		persistMgr->transfer(TMEMBER(numLayers));
 		for (int i = 0; i < numLayers; i++) {
 			CBTTFontLayer *layer = new CBTTFontLayer;
 			layer->persist(persistMgr);
-			_layers.Add(layer);
+			_layers.add(layer);
 		}
 	}
 

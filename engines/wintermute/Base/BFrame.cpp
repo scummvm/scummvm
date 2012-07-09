@@ -62,15 +62,15 @@ CBFrame::~CBFrame() {
 	delete _sound;
 	_sound = NULL;
 
-	for (int i = 0; i < _subframes.GetSize(); i++) 
+	for (int i = 0; i < _subframes.getSize(); i++) 
 		delete _subframes[i];
-	_subframes.RemoveAll();
+	_subframes.removeAll();
 
-	for (int i = 0; i < _applyEvent.GetSize(); i++) {
+	for (int i = 0; i < _applyEvent.getSize(); i++) {
 		delete[] _applyEvent[i];
 		_applyEvent[i] = NULL;
 	}
-	_applyEvent.RemoveAll();
+	_applyEvent.removeAll();
 }
 
 
@@ -78,7 +78,7 @@ CBFrame::~CBFrame() {
 ERRORCODE CBFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
 	ERRORCODE res;
 
-	for (int i = 0; i < _subframes.GetSize(); i++) {
+	for (int i = 0; i < _subframes.getSize(); i++) {
 		res = _subframes[i]->draw(x, y, registerOwner, zoomX, zoomY, precise, alpha, rotate, blendMode);
 		if (DID_FAIL(res)) return res;
 	}
@@ -98,7 +98,7 @@ ERRORCODE CBFrame::oneTimeDisplay(CBObject *owner, bool muted) {
 		*/
 	}
 	if (owner) {
-		for (int i = 0; i < _applyEvent.GetSize(); i++) {
+		for (int i = 0; i < _applyEvent.getSize(); i++) {
 			owner->applyEvent(_applyEvent[i]);
 		}
 	}
@@ -241,7 +241,7 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			if (!subframe || DID_FAIL(subframe->loadBuffer((byte *)params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
-			} else _subframes.Add(subframe);
+			} else _subframes.add(subframe);
 		}
 		break;
 
@@ -262,7 +262,7 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		case TOKEN_APPLY_EVENT: {
 			char *Event = new char[strlen(params) + 1];
 			strcpy(Event, params);
-			_applyEvent.Add(Event);
+			_applyEvent.add(Event);
 		}
 		break;
 
@@ -318,7 +318,7 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 
 	sub->_editorSelected = editorSelected;
-	_subframes.InsertAt(0, sub);
+	_subframes.insertAt(0, sub);
 
 	return STATUS_OK;
 }
@@ -331,7 +331,7 @@ bool CBFrame::getBoundingRect(Common::Rect *rect, int x, int y, float scaleX, fl
 
 	Common::Rect subRect;
 
-	for (int i = 0; i < _subframes.GetSize(); i++) {
+	for (int i = 0; i < _subframes.getSize(); i++) {
 		_subframes[i]->getBoundingRect(&subRect, x, y, scaleX, scaleY);
 		CBPlatform::unionRect(rect, rect, &subRect);
 	}
@@ -359,13 +359,13 @@ ERRORCODE CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
 	if (_editorExpanded)
 		buffer->putTextIndent(indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
 
-	if (_subframes.GetSize() > 0) _subframes[0]->saveAsText(buffer, indent, false);
+	if (_subframes.getSize() > 0) _subframes[0]->saveAsText(buffer, indent, false);
 
-	for (int i = 1; i < _subframes.GetSize(); i++) {
+	for (int i = 1; i < _subframes.getSize(); i++) {
 		_subframes[i]->saveAsText(buffer, indent + 2);
 	}
 
-	for (int i = 0; i < _applyEvent.GetSize(); i++) {
+	for (int i = 0; i < _applyEvent.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
 	}
 
@@ -438,7 +438,7 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= _subframes.GetSize()) {
+		if (index < 0 || index >= _subframes.getSize()) {
 			script->runtimeError("Frame.GetSubframe: Subframe index %d is out of range.", index);
 			stack->pushNULL();
 		} else stack->pushNative(_subframes[index], true);
@@ -454,15 +454,15 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CScValue *val = stack->pop();
 		if (val->isInt()) {
 			int index = val->getInt(-1);
-			if (index < 0 || index >= _subframes.GetSize()) {
+			if (index < 0 || index >= _subframes.getSize()) {
 				script->runtimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", index);
 			}
 		} else {
 			CBSubFrame *sub = (CBSubFrame *)val->getNative();
-			for (int i = 0; i < _subframes.GetSize(); i++) {
+			for (int i = 0; i < _subframes.getSize(); i++) {
 				if (_subframes[i] == sub) {
 					delete _subframes[i];
-					_subframes.RemoveAt(i);
+					_subframes.removeAt(i);
 					break;
 				}
 			}
@@ -485,7 +485,7 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			sub->setSurface(filename);
 			sub->setDefaultRect();
 		}
-		_subframes.Add(sub);
+		_subframes.add(sub);
 
 		stack->pushNative(sub, true);
 		return STATUS_OK;
@@ -508,8 +508,8 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			sub->setSurface(filename);
 		}
 
-		if (index >= _subframes.GetSize()) _subframes.Add(sub);
-		else _subframes.InsertAt(index, sub);
+		if (index >= _subframes.getSize()) _subframes.add(sub);
+		else _subframes.insertAt(index, sub);
 
 		stack->pushNative(sub, true);
 		return STATUS_OK;
@@ -521,7 +521,7 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= _applyEvent.GetSize()) {
+		if (index < 0 || index >= _applyEvent.getSize()) {
 			script->runtimeError("Frame.GetEvent: Event index %d is out of range.", index);
 			stack->pushNULL();
 		} else stack->pushString(_applyEvent[index]);
@@ -534,13 +534,13 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "AddEvent") == 0) {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
-		for (int i = 0; i < _applyEvent.GetSize(); i++) {
+		for (int i = 0; i < _applyEvent.getSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				stack->pushNULL();
 				return STATUS_OK;
 			}
 		}
-		_applyEvent.Add(event);
+		_applyEvent.add(event);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -551,10 +551,10 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "DeleteEvent") == 0) {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
-		for (int i = 0; i < _applyEvent.GetSize(); i++) {
+		for (int i = 0; i < _applyEvent.getSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				delete [] _applyEvent[i];
-				_applyEvent.RemoveAt(i);
+				_applyEvent.removeAt(i);
 				break;
 			}
 		}
@@ -564,7 +564,7 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->scCallMethod(script, stack, thisStack, name);
+		if (_subframes.getSize() == 1) return _subframes[0]->scCallMethod(script, stack, thisStack, name);
 		else return CBScriptable::scCallMethod(script, stack, thisStack, name);
 	}
 }
@@ -627,7 +627,7 @@ CScValue *CBFrame::scGetProperty(const char *name) {
 	// NumSubframes (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumSubframes") == 0) {
-		_scValue->setInt(_subframes.GetSize());
+		_scValue->setInt(_subframes.getSize());
 		return _scValue;
 	}
 
@@ -635,13 +635,13 @@ CScValue *CBFrame::scGetProperty(const char *name) {
 	// NumEvents (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumEvents") == 0) {
-		_scValue->setInt(_applyEvent.GetSize());
+		_scValue->setInt(_applyEvent.getSize());
 		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->scGetProperty(name);
+		if (_subframes.getSize() == 1) return _subframes[0]->scGetProperty(name);
 		else return CBScriptable::scGetProperty(name);
 	}
 }
@@ -691,7 +691,7 @@ ERRORCODE CBFrame::scSetProperty(const char *name, CScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.GetSize() == 1) return _subframes[0]->scSetProperty(name, value);
+		if (_subframes.getSize() == 1) return _subframes[0]->scSetProperty(name, value);
 		else return CBScriptable::scSetProperty(name, value);
 	}
 }

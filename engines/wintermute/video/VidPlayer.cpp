@@ -114,8 +114,8 @@ ERRORCODE CVidPlayer::cleanup() {
 
 	SAFE_DELETE_ARRAY(_filename);
 
-	for (int i = 0; i < _subtitles.GetSize(); i++) delete _subtitles[i];
-	_subtitles.RemoveAll();
+	for (int i = 0; i < _subtitles.getSize(); i++) delete _subtitles[i];
+	_subtitles.removeAll();
 
 	return SetDefaults();
 #endif
@@ -242,10 +242,10 @@ ERRORCODE CVidPlayer::update() {
 
 		// process subtitles
 		_showSubtitle = false;
-		while (_currentSubtitle < _subtitles.GetSize()) {
+		while (_currentSubtitle < _subtitles.getSize()) {
 			int End = _subtitles[_currentSubtitle]->m_EndFrame;
 
-			bool NextFrameOK = (_currentSubtitle < _subtitles.GetSize() - 1 && _subtitles[_currentSubtitle + 1]->_startFrame <= sample);
+			bool NextFrameOK = (_currentSubtitle < _subtitles.getSize() - 1 && _subtitles[_currentSubtitle + 1]->_startFrame <= sample);
 
 			if (sample > End) {
 				if (NextFrameOK) {
@@ -455,7 +455,7 @@ ERRORCODE CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFi
 		}
 		Text[TextLength] = '\0';
 
-		if (Start != -1 && TextLength > 0) _subtitles.Add(new CVidSubtitle(Game, Text, Start, End));
+		if (Start != -1 && TextLength > 0) _subtitles.add(new CVidSubtitle(Game, Text, Start, End));
 
 		delete [] Text;
 

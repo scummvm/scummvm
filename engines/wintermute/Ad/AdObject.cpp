@@ -138,15 +138,15 @@ CAdObject::~CAdObject() {
 		Game->unregisterObject(_partEmitter);
 
 
-	for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+	for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 		Game->unregisterObject(_attachmentsPre[i]);
 	}
-	_attachmentsPre.RemoveAll();
+	_attachmentsPre.removeAll();
 
-	for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+	for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 		Game->unregisterObject(_attachmentsPost[i]);
 	}
-	_attachmentsPost.RemoveAll();
+	_attachmentsPost.removeAll();
 }
 
 
@@ -295,7 +295,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			regFound = true;
 		} else if (val->isString()) {
 			const char *regionName = val->getString();
-			for (i = 0; i < main->_nodes.GetSize(); i++) {
+			for (i = 0; i < main->_nodes.getSize(); i++) {
 				if (main->_nodes[i]->_type == OBJECT_REGION && main->_nodes[i]->_region->_name && scumm_stricmp(main->_nodes[i]->_region->_name, regionName) == 0) {
 					_stickRegion = main->_nodes[i]->_region;
 					regFound = true;
@@ -305,7 +305,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		} else if (val->isNative()) {
 			CBScriptable *obj = val->getNative();
 
-			for (i = 0; i < main->_nodes.GetSize(); i++) {
+			for (i = 0; i < main->_nodes.getSize(); i++) {
 				if (main->_nodes[i]->_type == OBJECT_REGION && main->_nodes[i]->_region == obj) {
 					_stickRegion = main->_nodes[i]->_region;
 					regFound = true;
@@ -412,7 +412,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			CAdItem *item = ((CAdGame *)Game)->getItemByName(val->getString());
 			if (item) stack->pushNative(item, true);
 			else stack->pushNULL();
-		} else if (val->isNULL() || val->getInt() < 0 || val->getInt() >= _inventory->_takenItems.GetSize())
+		} else if (val->isNULL() || val->getInt() < 0 || val->getInt() >= _inventory->_takenItems.getSize())
 			stack->pushNULL();
 		else
 			stack->pushNative(_inventory->_takenItems[val->getInt()], true);
@@ -433,7 +433,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 
 		CScValue *val = stack->pop();
 		if (!val->isNULL()) {
-			for (int i = 0; i < _inventory->_takenItems.GetSize(); i++) {
+			for (int i = 0; i < _inventory->_takenItems.getSize(); i++) {
 				if (val->getNative() == _inventory->_takenItems[i]) {
 					stack->pushBool(true);
 					return STATUS_OK;
@@ -502,8 +502,8 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			ent->_posY = offsetY;
 			ent->_active = true;
 
-			if (preDisplay) _attachmentsPre.Add(ent);
-			else _attachmentsPost.Add(ent);
+			if (preDisplay) _attachmentsPre.add(ent);
+			else _attachmentsPost.add(ent);
 
 			stack->pushBool(true);
 		}
@@ -520,37 +520,37 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		bool found = false;
 		if (val->isNative()) {
 			CBScriptable *obj = val->getNative();
-			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+			for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i] == obj) {
 					found = true;
 					Game->unregisterObject(_attachmentsPre[i]);
-					_attachmentsPre.RemoveAt(i);
+					_attachmentsPre.removeAt(i);
 					i--;
 				}
 			}
-			for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+			for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 				if (_attachmentsPost[i] == obj) {
 					found = true;
 					Game->unregisterObject(_attachmentsPost[i]);
-					_attachmentsPost.RemoveAt(i);
+					_attachmentsPost.removeAt(i);
 					i--;
 				}
 			}
 		} else {
 			const char *attachmentName = val->getString();
-			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+			for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
 					found = true;
 					Game->unregisterObject(_attachmentsPre[i]);
-					_attachmentsPre.RemoveAt(i);
+					_attachmentsPre.removeAt(i);
 					i--;
 				}
 			}
-			for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+			for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 				if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, attachmentName) == 0) {
 					found = true;
 					Game->unregisterObject(_attachmentsPost[i]);
-					_attachmentsPost.RemoveAt(i);
+					_attachmentsPost.removeAt(i);
 					i--;
 				}
 			}
@@ -571,24 +571,24 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		if (val->isInt()) {
 			int index = val->getInt();
 			int currIndex = 0;
-			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+			for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (currIndex == index) ret = _attachmentsPre[i];
 				currIndex++;
 			}
-			for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+			for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 				if (currIndex == index) ret = _attachmentsPost[i];
 				currIndex++;
 			}
 		} else {
 			const char *attachmentName = val->getString();
-			for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+			for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
 					ret = _attachmentsPre[i];
 					break;
 				}
 			}
 			if (!ret) {
-				for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+				for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 					if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, attachmentName) == 0) {
 						ret = _attachmentsPre[i];
 						break;
@@ -687,7 +687,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// NumItems (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumItems") == 0) {
-		_scValue->setInt(getInventory()->_takenItems.GetSize());
+		_scValue->setInt(getInventory()->_takenItems.getSize());
 		return _scValue;
 	}
 
@@ -705,7 +705,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 	// NumAttachments (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumAttachments") == 0) {
-		_scValue->setInt(_attachmentsPre.GetSize() + _attachmentsPost.GetSize());
+		_scValue->setInt(_attachmentsPre.getSize() + _attachmentsPost.getSize());
 		return _scValue;
 	}
 
@@ -810,7 +810,7 @@ int CAdObject::getHeight() {
 	else {
 		CBFrame *frame = _currentSprite->_frames[_currentSprite->_currentFrame];
 		int ret = 0;
-		for (int i = 0; i < frame->_subframes.GetSize(); i++) {
+		for (int i = 0; i < frame->_subframes.getSize(); i++) {
 			ret = MAX(ret, frame->_subframes[i]->_hotspotY);
 		}
 
@@ -1109,10 +1109,10 @@ ERRORCODE CAdObject::getScale(float *scaleX, float *scaleY) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdObject::updateSpriteAttachments() {
-	for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+	for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 		_attachmentsPre[i]->update();
 	}
-	for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+	for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 		_attachmentsPost[i]->update();
 	}
 	return STATUS_OK;
@@ -1121,11 +1121,11 @@ ERRORCODE CAdObject::updateSpriteAttachments() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdObject::displaySpriteAttachments(bool preDisplay) {
 	if (preDisplay) {
-		for (int i = 0; i < _attachmentsPre.GetSize(); i++) {
+		for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 			displaySpriteAttachment(_attachmentsPre[i]);
 		}
 	} else {
-		for (int i = 0; i < _attachmentsPost.GetSize(); i++) {
+		for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 			displaySpriteAttachment(_attachmentsPost[i]);
 		}
 	}

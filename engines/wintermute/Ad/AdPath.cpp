@@ -49,10 +49,10 @@ CAdPath::~CAdPath() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdPath::reset() {
-	for (int i = 0; i < _points.GetSize(); i++)
+	for (int i = 0; i < _points.getSize(); i++)
 		delete _points[i];
 
-	_points.RemoveAll();
+	_points.removeAll();
 	_currIndex = -1;
 	_ready = false;
 }
@@ -60,7 +60,7 @@ void CAdPath::reset() {
 
 //////////////////////////////////////////////////////////////////////////
 CBPoint *CAdPath::getFirst() {
-	if (_points.GetSize() > 0) {
+	if (_points.getSize() > 0) {
 		_currIndex = 0;
 		return _points[_currIndex];
 	} else return NULL;
@@ -70,21 +70,21 @@ CBPoint *CAdPath::getFirst() {
 //////////////////////////////////////////////////////////////////////////
 CBPoint *CAdPath::getNext() {
 	_currIndex++;
-	if (_currIndex < _points.GetSize()) return _points[_currIndex];
+	if (_currIndex < _points.getSize()) return _points[_currIndex];
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBPoint *CAdPath::getCurrent() {
-	if (_currIndex >= 0 && _currIndex < _points.GetSize()) return _points[_currIndex];
+	if (_currIndex >= 0 && _currIndex < _points.getSize()) return _points[_currIndex];
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdPath::addPoint(CBPoint *point) {
-	_points.Add(point);
+	_points.add(point);
 }
 
 

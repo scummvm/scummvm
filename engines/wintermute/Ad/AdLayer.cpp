@@ -54,9 +54,9 @@ CAdLayer::CAdLayer(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdLayer::~CAdLayer() {
-	for (int i = 0; i < _nodes.GetSize(); i++)
+	for (int i = 0; i < _nodes.getSize(); i++)
 		delete _nodes[i];
-	_nodes.RemoveAll();
+	_nodes.removeAll();
 }
 
 
@@ -175,7 +175,7 @@ ERRORCODE CAdLayer::loadBuffer(byte *buffer, bool complete) {
 				node = NULL;
 			} else {
 				node->setRegion(region);
-				_nodes.Add(node);
+				_nodes.add(node);
 			}
 		}
 		break;
@@ -192,7 +192,7 @@ ERRORCODE CAdLayer::loadBuffer(byte *buffer, bool complete) {
 				node = NULL;
 			} else {
 				node->setEntity(entity);
-				_nodes.Add(node);
+				_nodes.add(node);
 			}
 		}
 		break;
@@ -237,7 +237,7 @@ ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 
 		if (val->_type == VAL_INT) node = val->getInt();
 		else { // get by name
-			for (int i = 0; i < _nodes.GetSize(); i++) {
+			for (int i = 0; i < _nodes.getSize(); i++) {
 				if ((_nodes[i]->_type == OBJECT_ENTITY && scumm_stricmp(_nodes[i]->_entity->_name, val->getString()) == 0) ||
 				        (_nodes[i]->_type == OBJECT_REGION && scumm_stricmp(_nodes[i]->_region->_name, val->getString()) == 0)) {
 					node = i;
@@ -246,7 +246,7 @@ ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			}
 		}
 
-		if (node < 0 || node >= _nodes.GetSize()) stack->pushNULL();
+		if (node < 0 || node >= _nodes.getSize()) stack->pushNULL();
 		else {
 			switch (_nodes[node]->_type) {
 			case OBJECT_ENTITY:
@@ -281,7 +281,7 @@ ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			node->setEntity(entity);
 			stack->pushNative(entity, true);
 		}
-		_nodes.Add(node);
+		_nodes.add(node);
 		return STATUS_OK;
 	}
 
@@ -306,8 +306,8 @@ ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			stack->pushNative(entity, true);
 		}
 		if (index < 0) index = 0;
-		if (index <= _nodes.GetSize() - 1) _nodes.InsertAt(index, node);
-		else _nodes.Add(node);
+		if (index <= _nodes.getSize() - 1) _nodes.insertAt(index, node);
+		else _nodes.add(node);
 
 		return STATUS_OK;
 	}
@@ -322,7 +322,7 @@ ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		CAdSceneNode *toDelete = NULL;
 		if (val->isNative()) {
 			CBScriptable *temp = val->getNative();
-			for (int i = 0; i < _nodes.GetSize(); i++) {
+			for (int i = 0; i < _nodes.getSize(); i++) {
 				if (_nodes[i]->_region == temp || _nodes[i]->_entity == temp) {
 					toDelete = _nodes[i];
 					break;
@@ -330,7 +330,7 @@ ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			}
 		} else {
 			int index = val->getInt();
-			if (index >= 0 && index < _nodes.GetSize()) {
+			if (index >= 0 && index < _nodes.getSize()) {
 				toDelete = _nodes[index];
 			}
 		}
@@ -339,11 +339,11 @@ ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			return STATUS_OK;
 		}
 
-		for (int i = 0; i < _nodes.GetSize(); i++) {
+		for (int i = 0; i < _nodes.getSize(); i++) {
 			if (_nodes[i] == toDelete) {
 				delete _nodes[i];
 				_nodes[i] = NULL;
-				_nodes.RemoveAt(i);
+				_nodes.removeAt(i);
 				break;
 			}
 		}
@@ -371,7 +371,7 @@ CScValue *CAdLayer::scGetProperty(const char *name) {
 	// NumNodes (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumNodes") == 0) {
-		_scValue->setInt(_nodes.GetSize());
+		_scValue->setInt(_nodes.getSize());
 		return _scValue;
 	}
 
@@ -491,13 +491,13 @@ ERRORCODE CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	int i;
 
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
 
-	for (i = 0; i < _nodes.GetSize(); i++) {
+	for (i = 0; i < _nodes.getSize(); i++) {
 		switch (_nodes[i]->_type) {
 		case OBJECT_ENTITY:
 			_nodes[i]->_entity->saveAsText(buffer, indent + 2);

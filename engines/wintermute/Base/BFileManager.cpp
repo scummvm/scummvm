@@ -75,13 +75,13 @@ CBFileManager::~CBFileManager() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBFileManager::cleanup() {
 	// delete registered paths
-	for (int i = 0; i < _singlePaths.GetSize(); i++)
+	for (int i = 0; i < _singlePaths.getSize(); i++)
 		delete [] _singlePaths[i];
-	_singlePaths.RemoveAll();
+	_singlePaths.removeAll();
 
-	for (int i = 0; i < _packagePaths.GetSize(); i++)
+	for (int i = 0; i < _packagePaths.getSize(); i++)
 		delete [] _packagePaths[i];
-	_packagePaths.RemoveAll();
+	_packagePaths.removeAll();
 
 
 	// delete file entries
@@ -93,16 +93,16 @@ ERRORCODE CBFileManager::cleanup() {
 	_files.clear();
 
 	// close open files
-	for (int i = 0; i < _openFiles.GetSize(); i++) {
+	for (int i = 0; i < _openFiles.getSize(); i++) {
 		delete _openFiles[i];
 	}
-	_openFiles.RemoveAll();
+	_openFiles.removeAll();
 
 
 	// delete packages
-	for (int i = 0; i < _packages.GetSize(); i++)
+	for (int i = 0; i < _packages.getSize(); i++)
 		delete _packages[i];
-	_packages.RemoveAll();
+	_packages.removeAll();
 
 	delete[] _basePath;
 	_basePath = NULL;
@@ -226,7 +226,7 @@ ERRORCODE CBFileManager::saveFile(const Common::String &filename, byte *Buffer, 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBFileManager::requestCD(int cd, char *packageFile, const char *filename) {
 	// unmount all non-local packages
-	for (int i = 0; i < _packages.GetSize(); i++) {
+	for (int i = 0; i < _packages.getSize(); i++) {
 		if (_packages[i]->_cD > 0) _packages[i]->close();
 	}
 
@@ -250,10 +250,10 @@ ERRORCODE CBFileManager::addPath(TPathType type, const Common::String &path) {
 
 	switch (type) {
 	case PATH_SINGLE:
-		_singlePaths.Add(buffer);
+		_singlePaths.add(buffer);
 		break;
 	case PATH_PACKAGE:
-		_packagePaths.Add(buffer);
+		_packagePaths.add(buffer);
 		break;
 	}
 
@@ -263,13 +263,13 @@ ERRORCODE CBFileManager::addPath(TPathType type, const Common::String &path) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBFileManager::reloadPaths() {
 	// delete registered paths
-	for (int i = 0; i < _singlePaths.GetSize(); i++)
+	for (int i = 0; i < _singlePaths.getSize(); i++)
 		delete [] _singlePaths[i];
-	_singlePaths.RemoveAll();
+	_singlePaths.removeAll();
 
-	for (int i = 0; i < _packagePaths.GetSize(); i++)
+	for (int i = 0; i < _packagePaths.getSize(); i++)
 		delete [] _packagePaths[i];
-	_packagePaths.RemoveAll();
+	_packagePaths.removeAll();
 
 	return initPaths();
 }
@@ -361,7 +361,7 @@ ERRORCODE CBFileManager::registerPackages() {
 #if 0
 	AnsiString extension = AnsiString(PACKAGE_EXTENSION);
 
-	for (int i = 0; i < _packagePaths.GetSize(); i++) {
+	for (int i = 0; i < _packagePaths.getSize(); i++) {
 		boost::filesystem::path absPath = boost::filesystem::syste_complete(_packagePaths[i]);
 
 		//Game->LOG(0, "Scanning: %s", absPath.string().c_str());
@@ -386,10 +386,10 @@ ERRORCODE CBFileManager::registerPackages() {
 		}
 	}
 #endif
-	warning("  Registered %d files in %d package(s)", _files.size(), _packages.GetSize());
-	Game->LOG(0, "  Registered %d files in %d package(s)", _files.size(), _packages.GetSize());
+	warning("  Registered %d files in %d package(s)", _files.size(), _packages.getSize());
+	Game->LOG(0, "  Registered %d files in %d package(s)", _files.size(), _packages.getSize());
 
-	warning("  Registered %d files in %d package(s)", _files.size(), _packages.GetSize());
+	warning("  Registered %d files in %d package(s)", _files.size(), _packages.getSize());
 	return STATUS_OK;
 }
 
@@ -453,7 +453,7 @@ ERRORCODE CBFileManager::registerPackage(const Common::String &filename , bool s
 		pkg->_priority = hdr.Priority;
 
 		if (!hdr.MasterIndex) pkg->_cD = 0; // override CD to fixed disk
-		_packages.Add(pkg);
+		_packages.add(pkg);
 
 
 		// read file entries
@@ -583,7 +583,7 @@ ERRORCODE CBFileManager::registerPackage(const char *Path, const char *name, boo
 		pkg->_priority = hdr.Priority;
 
 		if (!hdr.MasterIndex) pkg->_cD = 0; // override CD to fixed disk
-		_packages.Add(pkg);
+		_packages.add(pkg);
 
 
 		// read file entries
@@ -672,7 +672,7 @@ Common::File *CBFileManager::openPackage(const Common::String &name) {
 	Common::File *ret = new Common::File();
 	char filename[MAX_PATH_LENGTH];
 
-	for (int i = 0; i < _packagePaths.GetSize(); i++) {
+	for (int i = 0; i < _packagePaths.getSize(); i++) {
 		sprintf(filename, "%s%s.%s", _packagePaths[i], name.c_str(), PACKAGE_EXTENSION);
 		ret->open(filename);
 		if (ret->isOpen()) {
@@ -698,7 +698,7 @@ Common::File *CBFileManager::openSingleFile(const Common::String &name) {
 	Common::File *ret = NULL;
 	char filename[MAX_PATH_LENGTH];
 
-	for (int i = 0; i < _singlePaths.GetSize(); i++) {
+	for (int i = 0; i < _singlePaths.getSize(); i++) {
 		sprintf(filename, "%s%s", _singlePaths[i], name.c_str());
 		ret->open(filename);
 		if (ret->isOpen())
@@ -723,7 +723,7 @@ bool CBFileManager::getFullPath(const Common::String &filename, char *fullname) 
 	Common::File f;
 	bool found = false;
 
-	for (int i = 0; i < _singlePaths.GetSize(); i++) {
+	for (int i = 0; i < _singlePaths.getSize(); i++) {
 		sprintf(fullname, "%s%s", _singlePaths[i], filename.c_str());
 		f.open(fullname);
 		if (f.isOpen()) {
@@ -786,17 +786,17 @@ Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filena
 	#endif*/
 
 	Common::SeekableReadStream *File = openFileRaw(filename);
-	if (File && keepTrackOf) _openFiles.Add(File);
+	if (File && keepTrackOf) _openFiles.add(File);
 	return File;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBFileManager::closeFile(Common::SeekableReadStream *File) {
-	for (int i = 0; i < _openFiles.GetSize(); i++) {
+	for (int i = 0; i < _openFiles.getSize(); i++) {
 		if (_openFiles[i] == File) {
 			delete _openFiles[i];
-			_openFiles.RemoveAt(i);
+			_openFiles.removeAt(i);
 			return STATUS_OK;
 		}
 	}

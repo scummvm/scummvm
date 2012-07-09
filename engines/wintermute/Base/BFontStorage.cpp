@@ -52,18 +52,18 @@ CBFontStorage::~CBFontStorage() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBFontStorage::cleanup(bool warn) {
-	for (int i = 0; i < _fonts.GetSize(); i++) {
+	for (int i = 0; i < _fonts.getSize(); i++) {
 		if (warn) Game->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
 		delete _fonts[i];
 	}
-	_fonts.RemoveAll();
+	_fonts.removeAll();
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBFontStorage::initLoop() {
-	for (int i = 0; i < _fonts.GetSize(); i++) {
+	for (int i = 0; i < _fonts.getSize(); i++) {
 		_fonts[i]->initLoop();
 	}
 	return STATUS_OK;
@@ -73,7 +73,7 @@ ERRORCODE CBFontStorage::initLoop() {
 CBFont *CBFontStorage::addFont(const char *filename) {
 	if (!filename) return NULL;
 
-	for (int i = 0; i < _fonts.GetSize(); i++) {
+	for (int i = 0; i < _fonts.getSize(); i++) {
 		if (scumm_stricmp(_fonts[i]->_filename, filename) == 0) {
 			_fonts[i]->_refCount++;
 			return _fonts[i];
@@ -90,14 +90,14 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 	}
 	else {
 	    font->_refCount = 1;
-	    _fonts.Add(font);
+	    _fonts.add(font);
 	    return font;
 	}
 	*/
 	CBFont *font = CBFont::createFromFile(Game, filename);
 	if (font) {
 		font->_refCount = 1;
-		_fonts.Add(font);
+		_fonts.add(font);
 	}
 	return font;
 }
@@ -107,12 +107,12 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 ERRORCODE CBFontStorage::removeFont(CBFont *font) {
 	if (!font) return STATUS_FAILED;
 
-	for (int i = 0; i < _fonts.GetSize(); i++) {
+	for (int i = 0; i < _fonts.getSize(); i++) {
 		if (_fonts[i] == font) {
 			_fonts[i]->_refCount--;
 			if (_fonts[i]->_refCount <= 0) {
 				delete _fonts[i];
-				_fonts.RemoveAt(i);
+				_fonts.removeAt(i);
 			}
 			break;
 		}

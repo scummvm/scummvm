@@ -360,13 +360,13 @@ ERRORCODE CBGame::cleanup() {
 	unregisterObject(_fader);
 	_fader = NULL;
 
-	for (int i = 0; i < _regObjects.GetSize(); i++) {
+	for (int i = 0; i < _regObjects.getSize(); i++) {
 		delete _regObjects[i];
 		_regObjects[i] = NULL;
 	}
-	_regObjects.RemoveAll();
+	_regObjects.removeAll();
 
-	_windows.RemoveAll(); // refs only
+	_windows.removeAll(); // refs only
 	_focusedWindow = NULL; // ref only
 
 	delete[] _saveImageName;
@@ -386,11 +386,11 @@ ERRORCODE CBGame::cleanup() {
 	_scValue = NULL;
 	_sFX = NULL;
 
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		_scripts[i]->_owner = NULL;
 		_scripts[i]->finish();
 	}
-	_scripts.RemoveAll();
+	_scripts.removeAll();
 
 	_fontStorage->removeFont(_systemFont);
 	_systemFont = NULL;
@@ -398,10 +398,10 @@ ERRORCODE CBGame::cleanup() {
 	_fontStorage->removeFont(_videoFont);
 	_videoFont = NULL;
 
-	for (int i = 0; i < _quickMessages.GetSize(); i++) delete _quickMessages[i];
-	_quickMessages.RemoveAll();
+	for (int i = 0; i < _quickMessages.getSize(); i++) delete _quickMessages[i];
+	_quickMessages.removeAll();
 
-	_viewportStack.RemoveAll();
+	_viewportStack.removeAll();
 	_viewportSP = -1;
 
 	delete[] _name;
@@ -657,7 +657,7 @@ ERRORCODE CBGame::initLoop() {
 	getMousePos(&_mousePos);
 
 	_focusedWindow = NULL;
-	for (int i = _windows.GetSize() - 1; i >= 0; i--) {
+	for (int i = _windows.getSize() - 1; i >= 0; i--) {
 		if (_windows[i]->_visible) {
 			_focusedWindow = _windows[i];
 			break;
@@ -1097,7 +1097,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(1);
 		CUIWindow *win = new CUIWindow(Game);
 		if (win && DID_SUCCEED(win->loadFile(stack->pop()->getString()))) {
-			_windows.Add(win);
+			_windows.add(win);
 			registerObject(win);
 			stack->pushNative(win, true);
 		} else {
@@ -1856,7 +1856,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		CScValue *val = stack->pop();
 
 		CUIWindow *win = new CUIWindow(Game);
-		_windows.Add(win);
+		_windows.add(win);
 		registerObject(win);
 		if (!val->isNULL()) win->setName(val->getString());
 		stack->pushNative(win, true);
@@ -1869,7 +1869,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "DeleteWindow") == 0) {
 		stack->correctParams(1);
 		CBObject *obj = (CBObject *)stack->pop()->getNative();
-		for (int i = 0; i < _windows.GetSize(); i++) {
+		for (int i = 0; i < _windows.getSize(); i++) {
 			if (_windows[i] == obj) {
 				unregisterObject(_windows[i]);
 				stack->pushBool(true);
@@ -2771,13 +2771,13 @@ const char *CBGame::scToString() {
 #define QUICK_MSG_DURATION 3000
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::displayQuickMsg() {
-	if (_quickMessages.GetSize() == 0 || !_systemFont) return STATUS_OK;
+	if (_quickMessages.getSize() == 0 || !_systemFont) return STATUS_OK;
 
 	// update
-	for (int i = 0; i < _quickMessages.GetSize(); i++) {
+	for (int i = 0; i < _quickMessages.getSize(); i++) {
 		if (_currentTime - _quickMessages[i]->_startTime >= QUICK_MSG_DURATION) {
 			delete _quickMessages[i];
-			_quickMessages.RemoveAt(i);
+			_quickMessages.removeAt(i);
 			i--;
 		}
 	}
@@ -2785,7 +2785,7 @@ ERRORCODE CBGame::displayQuickMsg() {
 	int posY = 20;
 
 	// display
-	for (int i = 0; i < _quickMessages.GetSize(); i++) {
+	for (int i = 0; i < _quickMessages.getSize(); i++) {
 		_systemFont->drawText((byte *)_quickMessages[i]->getText(), 0, posY, _renderer->_width);
 		posY += _systemFont->getTextHeight((byte *)_quickMessages[i]->getText(), _renderer->_width);
 	}
@@ -2796,11 +2796,11 @@ ERRORCODE CBGame::displayQuickMsg() {
 #define MAX_QUICK_MSG 5
 //////////////////////////////////////////////////////////////////////////
 void CBGame::quickMessage(const char *text) {
-	if (_quickMessages.GetSize() >= MAX_QUICK_MSG) {
+	if (_quickMessages.getSize() >= MAX_QUICK_MSG) {
 		delete _quickMessages[0];
-		_quickMessages.RemoveAt(0);
+		_quickMessages.removeAt(0);
 	}
-	_quickMessages.Add(new CBQuickMsg(Game, text));
+	_quickMessages.add(new CBQuickMsg(Game, text));
 }
 
 
@@ -2819,7 +2819,7 @@ void CBGame::quickMessageForm(char *fmt, ...) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::registerObject(CBObject *object) {
-	_regObjects.Add(object);
+	_regObjects.add(object);
 	return STATUS_OK;
 }
 
@@ -2829,9 +2829,9 @@ ERRORCODE CBGame::unregisterObject(CBObject *object) {
 	if (!object) return STATUS_OK;
 
 	// is it a window?
-	for (int i = 0; i < _windows.GetSize(); i++) {
+	for (int i = 0; i < _windows.getSize(); i++) {
 		if ((CBObject *)_windows[i] == object) {
-			_windows.RemoveAt(i);
+			_windows.removeAt(i);
 
 			// get new focused window
 			if (_focusedWindow == object) _focusedWindow = NULL;
@@ -2849,9 +2849,9 @@ ERRORCODE CBGame::unregisterObject(CBObject *object) {
 	if (_store) _store->OnObjectDestroyed(object);
 
 	// destroy object
-	for (int i = 0; i < _regObjects.GetSize(); i++) {
+	for (int i = 0; i < _regObjects.getSize(); i++) {
 		if (_regObjects[i] == object) {
-			_regObjects.RemoveAt(i);
+			_regObjects.removeAt(i);
 			if (!_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(invalidateValues, "CScValue", (void *)object);
 			delete object;
 			return STATUS_OK;
@@ -2881,7 +2881,7 @@ bool CBGame::validObject(CBObject *object) {
 	if (!object) return false;
 	if (object == this) return true;
 
-	for (int i = 0; i < _regObjects.GetSize(); i++) {
+	for (int i = 0; i < _regObjects.getSize(); i++) {
 		if (_regObjects[i] == object) return true;
 	}
 	return false;
@@ -3354,7 +3354,7 @@ ERRORCODE CBGame::displayWindows(bool inGame) {
 	// did we lose focus? focus topmost window
 	if (_focusedWindow == NULL || !_focusedWindow->_visible || _focusedWindow->_disable) {
 		_focusedWindow = NULL;
-		for (int i = _windows.GetSize() - 1; i >= 0; i--) {
+		for (int i = _windows.getSize() - 1; i >= 0; i--) {
 			if (_windows[i]->_visible && !_windows[i]->_disable) {
 				_focusedWindow = _windows[i];
 				break;
@@ -3363,7 +3363,7 @@ ERRORCODE CBGame::displayWindows(bool inGame) {
 	}
 
 	// display all windows
-	for (int i = 0; i < _windows.GetSize(); i++) {
+	for (int i = 0; i < _windows.getSize(); i++) {
 		if (_windows[i]->_visible && _windows[i]->_inGame == inGame) {
 
 			res = _windows[i]->display();
@@ -3679,11 +3679,11 @@ ERRORCODE CBGame::persist(CBPersistMgr *persistMgr) {
 ERRORCODE CBGame::focusWindow(CUIWindow *Window) {
 	CUIWindow *Prev = _focusedWindow;
 
-	for (int i = 0; i < _windows.GetSize(); i++) {
+	for (int i = 0; i < _windows.getSize(); i++) {
 		if (_windows[i] == Window) {
-			if (i < _windows.GetSize() - 1) {
-				_windows.RemoveAt(i);
-				_windows.Add(Window);
+			if (i < _windows.getSize() - 1) {
+				_windows.removeAt(i);
+				_windows.add(Window);
 
 				Game->_focusedWindow = Window;
 			}
@@ -3938,7 +3938,7 @@ ERRORCODE CBGame::setActiveObject(CBObject *obj) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::pushViewport(CBViewport *viewport) {
 	_viewportSP++;
-	if (_viewportSP >= _viewportStack.GetSize()) _viewportStack.Add(viewport);
+	if (_viewportSP >= _viewportStack.getSize()) _viewportStack.add(viewport);
 	else _viewportStack[_viewportSP] = viewport;
 
 	_renderer->setViewport(viewport->getRect());
@@ -3952,7 +3952,7 @@ ERRORCODE CBGame::popViewport() {
 	_viewportSP--;
 	if (_viewportSP < -1) Game->LOG(0, "Fatal: Viewport stack underflow!");
 
-	if (_viewportSP >= 0 && _viewportSP < _viewportStack.GetSize()) _renderer->setViewport(_viewportStack[_viewportSP]->getRect());
+	if (_viewportSP >= 0 && _viewportSP < _viewportStack.getSize()) _renderer->setViewport(_viewportStack[_viewportSP]->getRect());
 	else _renderer->setViewport(_renderer->_drawOffsetX,
 		                            _renderer->_drawOffsetY,
 		                            _renderer->_width + _renderer->_drawOffsetX,
@@ -4139,7 +4139,7 @@ void CBGame::DEBUG_DumpClassRegistry() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::invalidateDeviceObjects() {
-	for (int i = 0; i < _regObjects.GetSize(); i++) {
+	for (int i = 0; i < _regObjects.getSize(); i++) {
 		_regObjects[i]->invalidateDeviceObjects();
 	}
 	return STATUS_OK;
@@ -4148,7 +4148,7 @@ ERRORCODE CBGame::invalidateDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::restoreDeviceObjects() {
-	for (int i = 0; i < _regObjects.GetSize(); i++) {
+	for (int i = 0; i < _regObjects.getSize(); i++) {
 		_regObjects[i]->restoreDeviceObjects();
 	}
 	return STATUS_OK;

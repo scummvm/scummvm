@@ -109,7 +109,7 @@ ERRORCODE CAdInventoryBox::display() {
 
 	if (_window) {
 		_window->enableWidget("prev", _scrollOffset > 0);
-		_window->enableWidget("next", _scrollOffset + ItemsX * ItemsY < adGame->_inventoryOwner->getInventory()->_takenItems.GetSize());
+		_window->enableWidget("next", _scrollOffset + ItemsX * ItemsY < adGame->_inventoryOwner->getInventory()->_takenItems.getSize());
 	}
 
 
@@ -136,7 +136,7 @@ ERRORCODE CAdInventoryBox::display() {
 		int xxx = rect.left;
 		for (int i = 0; i < ItemsX; i++) {
 			int ItemIndex = _scrollOffset + j * ItemsX + i;
-			if (ItemIndex >= 0 && ItemIndex < adGame->_inventoryOwner->getInventory()->_takenItems.GetSize()) {
+			if (ItemIndex >= 0 && ItemIndex < adGame->_inventoryOwner->getInventory()->_takenItems.getSize()) {
 				CAdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[ItemIndex];
 				if (item != ((CAdGame *)Game)->_selectedItem || !_hideSelected) {
 					item->update();
@@ -308,7 +308,7 @@ ERRORCODE CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	_visible = always_visible;
 
 	if (_window) {
-		for (int i = 0; i < _window->_widgets.GetSize(); i++) {
+		for (int i = 0; i < _window->_widgets.getSize(); i++) {
 			if (!_window->_widgets[i]->_listenerObject)
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 		}

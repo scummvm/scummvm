@@ -90,9 +90,9 @@ void CBSprite::setDefaults() {
 void CBSprite::cleanup() {
 	CBScriptHolder::cleanup();
 
-	for (int i = 0; i < _frames.GetSize(); i++)
+	for (int i = 0; i < _frames.getSize(); i++)
 		delete _frames[i];
-	_frames.RemoveAll();
+	_frames.removeAll();
 
 	delete[] _editorBgFile;
 	_editorBgFile = NULL;
@@ -104,7 +104,7 @@ void CBSprite::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSprite::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
 	GetCurrentFrame(zoomX, zoomY);
-	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return STATUS_OK;
+	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) return STATUS_OK;
 
 	// move owner if allowed to
 	if (_changed && _owner && _owner->_movable) {
@@ -147,8 +147,8 @@ ERRORCODE CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheTyp
 			delete subframe;
 		} else {
 			CBPlatform::setRect(&subframe->_rect, 0, 0, subframe->_surface->getWidth(), subframe->_surface->getHeight());
-			frame->_subframes.Add(subframe);
-			_frames.Add(frame);
+			frame->_subframes.add(subframe);
+			_frames.add(frame);
 			_currentFrame = 0;
 			ret = STATUS_OK;
 		}
@@ -295,7 +295,7 @@ ERRORCODE CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprit
 				return STATUS_FAILED;
 			}
 
-			_frames.Add(frame);
+			_frames.add(frame);
 			frameCount++;
 			if (_currentFrame == -1) _currentFrame = 0;
 		}
@@ -319,7 +319,7 @@ ERRORCODE CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprit
 
 //////////////////////////////////////////////////////////////////////
 void CBSprite::reset() {
-	if (_frames.GetSize() > 0) _currentFrame = 0;
+	if (_frames.getSize() > 0) _currentFrame = 0;
 	else _currentFrame = -1;
 
 	killAllSounds();
@@ -344,9 +344,9 @@ bool CBSprite::GetCurrentFrame(float zoomX, float zoomY) {
 
 	// get current frame
 	if (!_paused && !_finished && timer >= _lastFrameTime + _frames[_currentFrame]->_delay && _lastFrameTime != 0) {
-		if (_currentFrame < _frames.GetSize() - 1) {
+		if (_currentFrame < _frames.getSize() - 1) {
 			_currentFrame++;
-			if (_continuous) _canBreak = (_currentFrame == _frames.GetSize() - 1);
+			if (_continuous) _canBreak = (_currentFrame == _frames.getSize() - 1);
 		} else {
 			if (_looping) {
 				_currentFrame = 0;
@@ -360,12 +360,12 @@ bool CBSprite::GetCurrentFrame(float zoomX, float zoomY) {
 		_lastFrameTime = timer;
 	}
 
-	_changed = (lastFrame != _currentFrame || (_looping && _frames.GetSize() == 1));
+	_changed = (lastFrame != _currentFrame || (_looping && _frames.getSize() == 1));
 
 	if (_lastFrameTime == 0) {
 		_lastFrameTime = timer;
 		_changed = true;
-		if (_continuous) _canBreak = (_currentFrame == _frames.GetSize() - 1);
+		if (_continuous) _canBreak = (_currentFrame == _frames.getSize() - 1);
 	}
 
 	if (_changed) {
@@ -384,7 +384,7 @@ bool CBSprite::GetCurrentFrame(float zoomX, float zoomY) {
 
 //////////////////////////////////////////////////////////////////////
 ERRORCODE CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
-	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return STATUS_OK;
+	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) return STATUS_OK;
 
 	// on change...
 	if (_changed) {
@@ -403,9 +403,9 @@ ERRORCODE CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float
 //////////////////////////////////////////////////////////////////////////
 CBSurface *CBSprite::getSurface() {
 	// only used for animated textures for 3D models
-	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return NULL;
+	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) return NULL;
 	CBFrame *Frame = _frames[_currentFrame];
-	if (Frame && Frame->_subframes.GetSize() > 0) {
+	if (Frame && Frame->_subframes.getSize() > 0) {
 		CBSubFrame *Subframe = Frame->_subframes[0];
 		if (Subframe) return Subframe->_surface;
 		else return NULL;
@@ -417,7 +417,7 @@ bool CBSprite::getBoundingRect(Common::Rect *rect, int x, int y, float scaleX, f
 	if (!rect) return false;
 
 	CBPlatform::setRectEmpty(rect);
-	for (int i = 0; i < _frames.GetSize(); i++) {
+	for (int i = 0; i < _frames.getSize(); i++) {
 		Common::Rect frame;
 		Common::Rect temp;
 		CBPlatform::copyRect(&temp, rect);
@@ -456,12 +456,12 @@ ERRORCODE CBSprite::saveAsText(CBDynBuffer *buffer, int indent) {
 	int i;
 
 	// scripts
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 
-	for (i = 0; i < _frames.GetSize(); i++) {
+	for (i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->saveAsText(buffer, indent + 2);
 	}
 
@@ -514,7 +514,7 @@ ERRORCODE CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 	if (strcmp(name, "GetFrame") == 0) {
 		stack->correctParams(1);
 		int Index = stack->pop()->getInt(-1);
-		if (Index < 0 || Index >= _frames.GetSize()) {
+		if (Index < 0 || Index >= _frames.getSize()) {
 			script->runtimeError("Sprite.GetFrame: Frame index %d is out of range.", Index);
 			stack->pushNULL();
 		} else stack->pushNative(_frames[Index], true);
@@ -529,16 +529,16 @@ ERRORCODE CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		CScValue *Val = stack->pop();
 		if (Val->isInt()) {
 			int Index = Val->getInt(-1);
-			if (Index < 0 || Index >= _frames.GetSize()) {
+			if (Index < 0 || Index >= _frames.getSize()) {
 				script->runtimeError("Sprite.DeleteFrame: Frame index %d is out of range.", Index);
 			}
 		} else {
 			CBFrame *Frame = (CBFrame *)Val->getNative();
-			for (int i = 0; i < _frames.GetSize(); i++) {
+			for (int i = 0; i < _frames.getSize(); i++) {
 				if (_frames[i] == Frame) {
 					if (i == _currentFrame) _lastFrameTime = 0;
 					delete _frames[i];
-					_frames.RemoveAt(i);
+					_frames.removeAt(i);
 					break;
 				}
 			}
@@ -571,10 +571,10 @@ ERRORCODE CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			CBSubFrame *sub = new CBSubFrame(Game);
 			if (DID_SUCCEED(sub->setSurface(filename))) {
 				sub->setDefaultRect();
-				frame->_subframes.Add(sub);
+				frame->_subframes.add(sub);
 			} else delete sub;
 		}
-		_frames.Add(frame);
+		_frames.add(frame);
 
 		stack->pushNative(frame, true);
 		return STATUS_OK;
@@ -597,13 +597,13 @@ ERRORCODE CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		CBFrame *frame = new CBFrame(Game);
 		if (filename != NULL) {
 			CBSubFrame *sub = new CBSubFrame(Game);
-			if (DID_SUCCEED(sub->setSurface(filename))) frame->_subframes.Add(sub);
+			if (DID_SUCCEED(sub->setSurface(filename))) frame->_subframes.add(sub);
 			else delete sub;
 		}
 
-		if (index >= _frames.GetSize())
-			_frames.Add(frame);
-		else _frames.InsertAt(index, frame);
+		if (index >= _frames.getSize())
+			_frames.add(frame);
+		else _frames.insertAt(index, frame);
 
 		stack->pushNative(frame, true);
 		return STATUS_OK;
@@ -649,7 +649,7 @@ CScValue *CBSprite::scGetProperty(const char *name) {
 	// NumFrames (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumFrames") == 0) {
-		_scValue->setInt(_frames.GetSize());
+		_scValue->setInt(_frames.getSize());
 		return _scValue;
 	}
 
@@ -713,7 +713,7 @@ ERRORCODE CBSprite::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "CurrentFrame") == 0) {
 		_currentFrame = value->getInt(0);
-		if (_currentFrame >= _frames.GetSize() || _currentFrame < 0) {
+		if (_currentFrame >= _frames.getSize() || _currentFrame < 0) {
 			_currentFrame = -1;
 		}
 		_lastFrameTime = 0;
@@ -748,7 +748,7 @@ const char *CBSprite::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSprite::killAllSounds() {
-	for (int i = 0; i < _frames.GetSize(); i++) {
+	for (int i = 0; i < _frames.getSize(); i++) {
 		if (_frames[i]->_sound)
 			_frames[i]->_sound->stop();
 	}

@@ -342,7 +342,7 @@ ERRORCODE CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
 
 	// scripts
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
@@ -673,7 +673,7 @@ ERRORCODE CUIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	Game->_renderer->_rectList.add(new CBActiveRect(Game, this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 
 	Game->_textEncoding = OrigEncoding;

@@ -72,7 +72,7 @@ public:
 		}
 
 		~CScBreakpoint() {
-			_lines.RemoveAll();
+			_lines.removeAll();
 		}
 
 		Common::String _filename;

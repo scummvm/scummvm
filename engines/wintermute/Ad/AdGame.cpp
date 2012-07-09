@@ -120,40 +120,40 @@ CAdGame::~CAdGame() {
 ERRORCODE CAdGame::cleanup() {
 	int i;
 
-	for (i = 0; i < _objects.GetSize(); i++) {
+	for (i = 0; i < _objects.getSize(); i++) {
 		unregisterObject(_objects[i]);
 		_objects[i] = NULL;
 	}
-	_objects.RemoveAll();
+	_objects.removeAll();
 
 
-	for (i = 0; i < _dlgPendingBranches.GetSize(); i++) {
+	for (i = 0; i < _dlgPendingBranches.getSize(); i++) {
 		delete [] _dlgPendingBranches[i];
 	}
-	_dlgPendingBranches.RemoveAll();
+	_dlgPendingBranches.removeAll();
 
-	for (i = 0; i < _speechDirs.GetSize(); i++) {
+	for (i = 0; i < _speechDirs.getSize(); i++) {
 		delete [] _speechDirs[i];
 	}
-	_speechDirs.RemoveAll();
+	_speechDirs.removeAll();
 
 
 	unregisterObject(_scene);
 	_scene = NULL;
 
 	// remove items
-	for (i = 0; i < _items.GetSize(); i++) Game->unregisterObject(_items[i]);
-	_items.RemoveAll();
+	for (i = 0; i < _items.getSize(); i++) Game->unregisterObject(_items[i]);
+	_items.removeAll();
 
 
 	// clear remaining inventories
 	delete _invObject;
 	_invObject = NULL;
 
-	for (i = 0; i < _inventories.GetSize(); i++) {
+	for (i = 0; i < _inventories.getSize(); i++) {
 		delete _inventories[i];
 	}
-	_inventories.RemoveAll();
+	_inventories.removeAll();
 
 
 	if (_responseBox) {
@@ -181,14 +181,14 @@ ERRORCODE CAdGame::cleanup() {
 	delete _sceneViewport;
 	_sceneViewport = NULL;
 
-	for (i = 0; i < _sceneStates.GetSize(); i++) delete _sceneStates[i];
-	_sceneStates.RemoveAll();
+	for (i = 0; i < _sceneStates.getSize(); i++) delete _sceneStates[i];
+	_sceneStates.removeAll();
 
-	for (i = 0; i < _responsesBranch.GetSize(); i++) delete _responsesBranch[i];
-	_responsesBranch.RemoveAll();
+	for (i = 0; i < _responsesBranch.getSize(); i++) delete _responsesBranch[i];
+	_responsesBranch.removeAll();
 
-	for (i = 0; i < _responsesGame.GetSize(); i++) delete _responsesGame[i];
-	_responsesGame.RemoveAll();
+	for (i = 0; i < _responsesGame.getSize(); i++) delete _responsesGame[i];
+	_responsesGame.removeAll();
 
 	return CBGame::cleanup();
 }
@@ -211,7 +211,7 @@ ERRORCODE CAdGame::initLoop() {
 
 	if (_scene) res = _scene->initLoop();
 
-	_sentences.RemoveAll();
+	_sentences.removeAll();
 
 	return res;
 }
@@ -219,7 +219,7 @@ ERRORCODE CAdGame::initLoop() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::addObject(CAdObject *object) {
-	_objects.Add(object);
+	_objects.add(object);
 	return registerObject(object);
 }
 
@@ -232,9 +232,9 @@ ERRORCODE CAdGame::removeObject(CAdObject *object) {
 		if (DID_SUCCEED(Res)) return Res;
 	}
 
-	for (int i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i] == object) {
-			_objects.RemoveAt(i);
+			_objects.removeAt(i);
 			break;
 		}
 	}
@@ -259,7 +259,7 @@ ERRORCODE CAdGame::changeScene(const char *filename, bool fadeIn) {
 
 	if (_scene) {
 		// reset objects
-		for (int i = 0; i < _objects.GetSize(); i++) _objects[i]->reset();
+		for (int i = 0; i < _objects.getSize(); i++) _objects[i]->reset();
 
 		// reset scene properties
 		_scene->_sFXVolume = 100;
@@ -273,7 +273,7 @@ ERRORCODE CAdGame::changeScene(const char *filename, bool fadeIn) {
 
 		if (DID_SUCCEED(ret)) {
 			// invalidate references to the original scene
-			for (int i = 0; i < _objects.GetSize(); i++) {
+			for (int i = 0; i < _objects.getSize(); i++) {
 				_objects[i]->invalidateCurrRegions();
 				_objects[i]->_stickRegion = NULL;
 			}
@@ -288,13 +288,13 @@ ERRORCODE CAdGame::changeScene(const char *filename, bool fadeIn) {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdGame::addSentence(CAdSentence *sentence) {
-	_sentences.Add(sentence);
+	_sentences.add(sentence);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::displaySentences(bool frozen) {
-	for (int i = 0; i < _sentences.GetSize(); i++) {
+	for (int i = 0; i < _sentences.getSize(); i++) {
 		if (frozen && _sentences[i]->_freezable) continue;
 		else _sentences[i]->display();
 	}
@@ -304,7 +304,7 @@ ERRORCODE CAdGame::displaySentences(bool frozen) {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdGame::finishSentences() {
-	for (int i = 0; i < _sentences.GetSize(); i++) {
+	for (int i = 0; i < _sentences.getSize(); i++) {
 		if (_sentences[i]->CanSkip()) {
 			_sentences[i]->_duration = 0;
 			if (_sentences[i]->_sound) _sentences[i]->_sound->stop();
@@ -446,7 +446,7 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CAdItem *item = NULL;
 		if (val->isInt()) {
 			int index = val->getInt();
-			if (index >= 0 && index < _items.GetSize()) item = _items[index];
+			if (index >= 0 && index < _items.getSize()) item = _items[index];
 		} else {
 			item = getItemByName(val->getString());
 		}
@@ -484,7 +484,7 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 				if (strcmp(name, "AddResponseOnce") == 0) res->_responseType = RESPONSE_ONCE;
 				else if (strcmp(name, "AddResponseOnceGame") == 0) res->_responseType = RESPONSE_ONCE_GAME;
 
-				_responseBox->_responses.Add(res);
+				_responseBox->_responses.add(res);
 			}
 		} else {
 			script->runtimeError("Game.AddResponse: response box is not defined");
@@ -526,13 +526,13 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (_responseBox) {
 			_responseBox->weedResponses();
 
-			if (_responseBox->_responses.GetSize() == 0) {
+			if (_responseBox->_responses.getSize() == 0) {
 				stack->pushNULL();
 				return STATUS_OK;
 			}
 
 
-			if (_responseBox->_responses.GetSize() == 1 && autoSelectLast) {
+			if (_responseBox->_responses.getSize() == 1 && autoSelectLast) {
 				stack->pushInt(_responseBox->_responses[0]->_iD);
 				_responseBox->handleResponse(_responseBox->_responses[0]);
 				_responseBox->clearResponses();
@@ -559,7 +559,7 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(0);
 		if (_responseBox) {
 			_responseBox->weedResponses();
-			stack->pushInt(_responseBox->_responses.GetSize());
+			stack->pushInt(_responseBox->_responses.getSize());
 		} else {
 			script->runtimeError("Game.GetNumResponses: response box is not defined");
 			stack->pushNULL();
@@ -607,8 +607,8 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "GetCurrentDlgBranch") == 0) {
 		stack->correctParams(0);
 
-		if (_dlgPendingBranches.GetSize() > 0) {
-			stack->pushString(_dlgPendingBranches[_dlgPendingBranches.GetSize() - 1]);
+		if (_dlgPendingBranches.getSize() > 0) {
+			stack->pushString(_dlgPendingBranches[_dlgPendingBranches.getSize() - 1]);
 		} else stack->pushNULL();
 
 		return STATUS_OK;
@@ -650,10 +650,10 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		CScValue *val = stack->pop();
 		if (!val->isNULL()) {
-			for (int i = 0; i < _inventories.GetSize(); i++) {
+			for (int i = 0; i < _inventories.getSize(); i++) {
 				CAdInventory *Inv = _inventories[i];
 
-				for (int j = 0; j < Inv->_takenItems.GetSize(); j++) {
+				for (int j = 0; j < Inv->_takenItems.getSize(); j++) {
 					if (val->getNative() == Inv->_takenItems[j]) {
 						stack->pushBool(true);
 						return STATUS_OK;
@@ -918,7 +918,7 @@ CScValue *CAdGame::scGetProperty(const char *name) {
 	// TotalNumItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TotalNumItems") == 0) {
-		_scValue->setInt(_items.GetSize());
+		_scValue->setInt(_items.getSize());
 		return _scValue;
 	}
 
@@ -962,7 +962,7 @@ ERRORCODE CAdGame::scSetProperty(const char *name, CScValue *value) {
 		else {
 			if (value->isNative()) {
 				_selectedItem = NULL;
-				for (int i = 0; i < _items.GetSize(); i++) {
+				for (int i = 0; i < _items.getSize(); i++) {
 					if (_items[i] == value->getNative()) {
 						_selectedItem = (CAdItem *)value->getNative();
 						break;
@@ -1405,7 +1405,7 @@ ERRORCODE CAdGame::loadItemsBuffer(byte *buffer, bool merge) {
 	CBParser parser(Game);
 
 	if (!merge) {
-		while (_items.GetSize() > 0) deleteItem(_items[0]);
+		while (_items.getSize() > 0) deleteItem(_items[0]);
 	}
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
@@ -1450,7 +1450,7 @@ CAdSceneState *CAdGame::getSceneState(const char *filename, bool saving) {
 		if (filenameCor[i] == '/') filenameCor[i] = '\\';
 	}
 
-	for (int i = 0; i < _sceneStates.GetSize(); i++) {
+	for (int i = 0; i < _sceneStates.getSize(); i++) {
 		if (scumm_stricmp(_sceneStates[i]->_filename, filenameCor) == 0) {
 			delete [] filenameCor;
 			return _sceneStates[i];
@@ -1461,7 +1461,7 @@ CAdSceneState *CAdGame::getSceneState(const char *filename, bool saving) {
 		CAdSceneState *ret = new CAdSceneState(Game);
 		ret->setFilename(filenameCor);
 
-		_sceneStates.Add(ret);
+		_sceneStates.add(ret);
 
 		delete [] filenameCor;
 		return ret;
@@ -1491,7 +1491,7 @@ ERRORCODE CAdGame::windowLoadHook(CUIWindow *win, char **buffer, char **params) 
 			cmd = PARSERR_GENERIC;
 		} else {
 			ent->_parent = win;
-			win->_widgets.Add(ent);
+			win->_widgets.add(ent);
 		}
 	}
 	break;
@@ -1517,7 +1517,7 @@ ERRORCODE CAdGame::windowScriptMethodHook(CUIWindow *win, CScScript *script, CSc
 		stack->pushNative(ent, true);
 
 		ent->_parent = win;
-		win->_widgets.Add(ent);
+		win->_widgets.add(ent);
 
 		return STATUS_OK;
 	} else return STATUS_FAILED;
@@ -1529,7 +1529,7 @@ ERRORCODE CAdGame::startDlgBranch(const char *branchName, const char *scriptName
 	char *name = new char[strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1];
 	if (name) {
 		sprintf(name, "%s.%s.%s", branchName, scriptName, eventName);
-		_dlgPendingBranches.Add(name);
+		_dlgPendingBranches.add(name);
 	}
 	return STATUS_OK;
 }
@@ -1539,8 +1539,8 @@ ERRORCODE CAdGame::startDlgBranch(const char *branchName, const char *scriptName
 ERRORCODE CAdGame::endDlgBranch(const char *branchName, const char *scriptName, const char *eventName) {
 	char *name = NULL;
 	bool deleteName = false;
-	if (branchName == NULL && _dlgPendingBranches.GetSize() > 0) {
-		name = _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1];
+	if (branchName == NULL && _dlgPendingBranches.getSize() > 0) {
+		name = _dlgPendingBranches[_dlgPendingBranches.getSize() - 1];
 	} else {
 		if (branchName != NULL) {
 			name = new char[strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1];
@@ -1555,25 +1555,25 @@ ERRORCODE CAdGame::endDlgBranch(const char *branchName, const char *scriptName, 
 
 
 	int startIndex = -1;
-	for (int i = _dlgPendingBranches.GetSize() - 1; i >= 0; i--) {
+	for (int i = _dlgPendingBranches.getSize() - 1; i >= 0; i--) {
 		if (scumm_stricmp(name, _dlgPendingBranches[i]) == 0) {
 			startIndex = i;
 			break;
 		}
 	}
 	if (startIndex >= 0) {
-		for (int i = startIndex; i < _dlgPendingBranches.GetSize(); i++) {
+		for (int i = startIndex; i < _dlgPendingBranches.getSize(); i++) {
 			//ClearBranchResponses(_dlgPendingBranches[i]);
 			delete [] _dlgPendingBranches[i];
 			_dlgPendingBranches[i] = NULL;
 		}
-		_dlgPendingBranches.RemoveAt(startIndex, _dlgPendingBranches.GetSize() - startIndex);
+		_dlgPendingBranches.removeAt(startIndex, _dlgPendingBranches.getSize() - startIndex);
 	}
 
 	// dialogue is over, forget selected responses
-	if (_dlgPendingBranches.GetSize() == 0) {
-		for (int i = 0; i < _responsesBranch.GetSize(); i++) delete _responsesBranch[i];
-		_responsesBranch.RemoveAll();
+	if (_dlgPendingBranches.getSize() == 0) {
+		for (int i = 0; i < _responsesBranch.getSize(); i++) delete _responsesBranch[i];
+		_responsesBranch.removeAll();
 	}
 
 	if (deleteName) delete [] name;
@@ -1584,10 +1584,10 @@ ERRORCODE CAdGame::endDlgBranch(const char *branchName, const char *scriptName, 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::clearBranchResponses(char *name) {
-	for (int i = 0; i < _responsesBranch.GetSize(); i++) {
+	for (int i = 0; i < _responsesBranch.getSize(); i++) {
 		if (scumm_stricmp(name, _responsesBranch[i]->_context) == 0) {
 			delete _responsesBranch[i];
-			_responsesBranch.RemoveAt(i);
+			_responsesBranch.removeAt(i);
 			i--;
 		}
 	}
@@ -1600,16 +1600,16 @@ ERRORCODE CAdGame::addBranchResponse(int ID) {
 	if (branchResponseUsed(ID)) return STATUS_OK;
 	CAdResponseContext *r = new CAdResponseContext(Game);
 	r->_iD = ID;
-	r->setContext(_dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL);
-	_responsesBranch.Add(r);
+	r->setContext(_dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : NULL);
+	_responsesBranch.add(r);
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CAdGame::branchResponseUsed(int ID) {
-	char *Context = _dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL;
-	for (int i = 0; i < _responsesBranch.GetSize(); i++) {
+	char *Context = _dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : NULL;
+	for (int i = 0; i < _responsesBranch.getSize(); i++) {
 		if (_responsesBranch[i]->_iD == ID) {
 			if ((Context == NULL && _responsesBranch[i]->_context == NULL) || scumm_stricmp(Context, _responsesBranch[i]->_context) == 0) return true;
 		}
@@ -1623,16 +1623,16 @@ ERRORCODE CAdGame::addGameResponse(int ID) {
 	if (gameResponseUsed(ID)) return STATUS_OK;
 	CAdResponseContext *r = new CAdResponseContext(Game);
 	r->_iD = ID;
-	r->setContext(_dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL);
-	_responsesGame.Add(r);
+	r->setContext(_dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : NULL);
+	_responsesGame.add(r);
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CAdGame::gameResponseUsed(int ID) {
-	char *Context = _dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL;
-	for (int i = 0; i < _responsesGame.GetSize(); i++) {
+	char *Context = _dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : NULL;
+	for (int i = 0; i < _responsesGame.getSize(); i++) {
 		CAdResponseContext *RespContext = _responsesGame[i];
 		if (RespContext->_iD == ID) {
 			if ((Context == NULL && RespContext->_context == NULL) || ((Context != NULL && RespContext->_context != NULL) && scumm_stricmp(Context, RespContext->_context) == 0)) return true;
@@ -1644,25 +1644,25 @@ bool CAdGame::gameResponseUsed(int ID) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::resetResponse(int ID) {
-	char *Context = _dlgPendingBranches.GetSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.GetSize() - 1] : NULL;
+	char *Context = _dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : NULL;
 
 	int i;
 
-	for (i = 0; i < _responsesGame.GetSize(); i++) {
+	for (i = 0; i < _responsesGame.getSize(); i++) {
 		if (_responsesGame[i]->_iD == ID) {
 			if ((Context == NULL && _responsesGame[i]->_context == NULL) || scumm_stricmp(Context, _responsesGame[i]->_context) == 0) {
 				delete _responsesGame[i];
-				_responsesGame.RemoveAt(i);
+				_responsesGame.removeAt(i);
 				break;
 			}
 		}
 	}
 
-	for (i = 0; i < _responsesBranch.GetSize(); i++) {
+	for (i = 0; i < _responsesBranch.getSize(); i++) {
 		if (_responsesBranch[i]->_iD == ID) {
 			if ((Context == NULL && _responsesBranch[i]->_context == NULL) || scumm_stricmp(Context, _responsesBranch[i]->_context) == 0) {
 				delete _responsesBranch[i];
-				_responsesBranch.RemoveAt(i);
+				_responsesBranch.removeAt(i);
 				break;
 			}
 		}
@@ -1741,21 +1741,21 @@ ERRORCODE CAdGame::displayContent(bool doUpdate, bool displayAll) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::registerInventory(CAdInventory *inv) {
-	for (int i = 0; i < _inventories.GetSize(); i++) {
+	for (int i = 0; i < _inventories.getSize(); i++) {
 		if (_inventories[i] == inv) return STATUS_OK;
 	}
 	registerObject(inv);
-	_inventories.Add(inv);
+	_inventories.add(inv);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::unregisterInventory(CAdInventory *inv) {
-	for (int i = 0; i < _inventories.GetSize(); i++) {
+	for (int i = 0; i < _inventories.getSize(); i++) {
 		if (_inventories[i] == inv) {
 			unregisterObject(_inventories[i]);
-			_inventories.RemoveAt(i);
+			_inventories.removeAt(i);
 			return STATUS_OK;
 		}
 	}
@@ -1764,10 +1764,10 @@ ERRORCODE CAdGame::unregisterInventory(CAdInventory *inv) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CAdGame::isItemTaken(char *itemName) {
-	for (int i = 0; i < _inventories.GetSize(); i++) {
+	for (int i = 0; i < _inventories.getSize(); i++) {
 		CAdInventory *Inv = _inventories[i];
 
-		for (int j = 0; j < Inv->_takenItems.GetSize(); j++) {
+		for (int j = 0; j < Inv->_takenItems.getSize(); j++) {
 			if (scumm_stricmp(itemName, Inv->_takenItems[j]->_name) == 0) {
 				return true;
 			}
@@ -1778,7 +1778,7 @@ bool CAdGame::isItemTaken(char *itemName) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdItem *CAdGame::getItemByName(const char *name) {
-	for (int i = 0; i < _items.GetSize(); i++) {
+	for (int i = 0; i < _items.getSize(); i++) {
 		if (scumm_stricmp(_items[i]->_name, name) == 0) return _items[i];
 	}
 	return NULL;
@@ -1787,7 +1787,7 @@ CAdItem *CAdGame::getItemByName(const char *name) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::addItem(CAdItem *item) {
-	_items.Add(item);
+	_items.add(item);
 	return Game->registerObject(item);
 }
 
@@ -1795,28 +1795,28 @@ ERRORCODE CAdGame::addItem(CAdItem *item) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::resetContent() {
 	// clear pending dialogs
-	for (int i = 0; i < _dlgPendingBranches.GetSize(); i++) {
+	for (int i = 0; i < _dlgPendingBranches.getSize(); i++) {
 		delete [] _dlgPendingBranches[i];
 	}
-	_dlgPendingBranches.RemoveAll();
+	_dlgPendingBranches.removeAll();
 
 
 	// clear inventories
-	for (int i = 0; i < _inventories.GetSize(); i++) {
-		_inventories[i]->_takenItems.RemoveAll();
+	for (int i = 0; i < _inventories.getSize(); i++) {
+		_inventories[i]->_takenItems.removeAll();
 	}
 
 	// clear scene states
-	for (int i = 0; i < _sceneStates.GetSize(); i++) delete _sceneStates[i];
-	_sceneStates.RemoveAll();
+	for (int i = 0; i < _sceneStates.getSize(); i++) delete _sceneStates[i];
+	_sceneStates.removeAll();
 
 	// clear once responses
-	for (int i = 0; i < _responsesBranch.GetSize(); i++) delete _responsesBranch[i];
-	_responsesBranch.RemoveAll();
+	for (int i = 0; i < _responsesBranch.getSize(); i++) delete _responsesBranch[i];
+	_responsesBranch.removeAll();
 
 	// clear once game responses
-	for (int i = 0; i < _responsesGame.GetSize(); i++) delete _responsesGame[i];
-	_responsesGame.RemoveAll();
+	for (int i = 0; i < _responsesGame.getSize(); i++) delete _responsesGame[i];
+	_responsesGame.removeAll();
 
 	// reload inventory items
 	if (_itemsFile) loadItemsFile(_itemsFile);
@@ -1835,15 +1835,15 @@ ERRORCODE CAdGame::deleteItem(CAdItem *item) {
 	_scene->handleItemAssociations(item->_name, false);
 
 	// remove from all inventories
-	for (int i = 0; i < _inventories.GetSize(); i++) {
+	for (int i = 0; i < _inventories.getSize(); i++) {
 		_inventories[i]->removeItem(item);
 	}
 
 	// remove object
-	for (int i = 0; i < _items.GetSize(); i++) {
+	for (int i = 0; i < _items.getSize(); i++) {
 		if (_items[i] == item) {
 			unregisterObject(_items[i]);
-			_items.RemoveAt(i);
+			_items.removeAt(i);
 			break;
 		}
 	}
@@ -1861,13 +1861,13 @@ ERRORCODE CAdGame::addSpeechDir(const char *dir) {
 	if (temp[strlen(temp) - 1] != '\\' && temp[strlen(temp) - 1] != '/')
 		strcat(temp, "\\");
 
-	for (int i = 0; i < _speechDirs.GetSize(); i++) {
+	for (int i = 0; i < _speechDirs.getSize(); i++) {
 		if (scumm_stricmp(_speechDirs[i], temp) == 0) {
 			delete [] temp;
 			return STATUS_OK;
 		}
 	}
-	_speechDirs.Add(temp);
+	_speechDirs.add(temp);
 
 	return STATUS_OK;
 }
@@ -1883,10 +1883,10 @@ ERRORCODE CAdGame::removeSpeechDir(const char *dir) {
 		strcat(temp, "\\");
 
 	bool Found = false;
-	for (int i = 0; i < _speechDirs.GetSize(); i++) {
+	for (int i = 0; i < _speechDirs.getSize(); i++) {
 		if (scumm_stricmp(_speechDirs[i], temp) == 0) {
 			delete [] _speechDirs[i];
-			_speechDirs.RemoveAt(i);
+			_speechDirs.removeAt(i);
 			Found = true;
 			break;
 		}
@@ -1902,7 +1902,7 @@ ERRORCODE CAdGame::removeSpeechDir(const char *dir) {
 char *CAdGame::findSpeechFile(char *stringID) {
 	char *ret = new char[MAX_PATH_LENGTH];
 
-	for (int i = 0; i < _speechDirs.GetSize(); i++) {
+	for (int i = 0; i < _speechDirs.getSize(); i++) {
 		sprintf(ret, "%s%s.ogg", _speechDirs[i], stringID);
 		Common::SeekableReadStream *file = _fileManager->openFile(ret); // TODO: Replace with hasFile
 		if (file) {

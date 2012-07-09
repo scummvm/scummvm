@@ -80,39 +80,39 @@ public:
 	CBArray();
 
 // Attributes
-	int GetSize() const;
-	int GetUpperBound() const;
-	void SetSize(int nNewSize, int nGrowBy = -1);
+	int getSize() const;
+	int getUpperBound() const;
+	void setSize(int nNewSize, int nGrowBy = -1);
 
 // Operations
 	// Clean up
-	void FreeExtra();
-	void RemoveAll();
+	void freeExtra();
+	void removeAll();
 	ERRORCODE persist(CBPersistMgr *persistMgr);
 
 	// Accessing elements
-	TYPE GetAt(int nIndex) const;
-	void SetAt(int nIndex, ARG_TYPE newElement);
-	TYPE &ElementAt(int nIndex);
+	TYPE getAt(int nIndex) const;
+	void setAt(int nIndex, ARG_TYPE newElement);
+	TYPE &elementAt(int nIndex);
 
 	// Direct Access to the element data (may return NULL)
-	const TYPE *GetData() const;
-	TYPE *GetData();
+	const TYPE *getData() const;
+	TYPE *getData();
 
 	// Potentially growing the array
-	void SetAtGrow(int nIndex, ARG_TYPE newElement);
-	int Add(ARG_TYPE newElement);
-	int Append(const CBArray &src);
-	void Copy(const CBArray &src);
+	void setAtGrow(int nIndex, ARG_TYPE newElement);
+	int add(ARG_TYPE newElement);
+	int append(const CBArray &src);
+	void copy(const CBArray &src);
 
 	// overloaded operator helpers
 	TYPE operator[](int nIndex) const;
 	TYPE &operator[](int nIndex);
 
 	// Operations that move elements around
-	void InsertAt(int nIndex, ARG_TYPE newElement, int nCount = 1);
-	void RemoveAt(int nIndex, int nCount = 1);
-	void InsertAt(int nStartIndex, CBArray *pNewArray);
+	void insertAt(int nIndex, ARG_TYPE newElement, int nCount = 1);
+	void removeAt(int nIndex, int nCount = 1);
+	void insertAt(int nStartIndex, CBArray *pNewArray);
 
 // Implementation
 protected:
@@ -129,50 +129,50 @@ public:
 // CBArray<TYPE, ARG_TYPE> inline functions
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-inline int CBArray<TYPE, ARG_TYPE>::GetSize() const {
+inline int CBArray<TYPE, ARG_TYPE>::getSize() const {
 	return _nSize;
 }
 template<class TYPE, class ARG_TYPE>
-inline int CBArray<TYPE, ARG_TYPE>::GetUpperBound() const {
+inline int CBArray<TYPE, ARG_TYPE>::getUpperBound() const {
 	return _nSize - 1;
 }
 template<class TYPE, class ARG_TYPE>
-inline void CBArray<TYPE, ARG_TYPE>::RemoveAll() {
-	SetSize(0, -1);
+inline void CBArray<TYPE, ARG_TYPE>::removeAll() {
+	setSize(0, -1);
 }
 template<class TYPE, class ARG_TYPE>
-inline TYPE CBArray<TYPE, ARG_TYPE>::GetAt(int nIndex) const {
+inline TYPE CBArray<TYPE, ARG_TYPE>::getAt(int nIndex) const {
 	return _pData[nIndex];
 }
 template<class TYPE, class ARG_TYPE>
-inline void CBArray<TYPE, ARG_TYPE>::SetAt(int nIndex, ARG_TYPE newElement) {
+inline void CBArray<TYPE, ARG_TYPE>::setAt(int nIndex, ARG_TYPE newElement) {
 	_pData[nIndex] = newElement;
 }
 template<class TYPE, class ARG_TYPE>
-inline TYPE &CBArray<TYPE, ARG_TYPE>::ElementAt(int nIndex) {
+inline TYPE &CBArray<TYPE, ARG_TYPE>::elementAt(int nIndex) {
 	return _pData[nIndex];
 }
 template<class TYPE, class ARG_TYPE>
-inline const TYPE *CBArray<TYPE, ARG_TYPE>::GetData() const {
+inline const TYPE *CBArray<TYPE, ARG_TYPE>::getData() const {
 	return (const TYPE *)_pData;
 }
 template<class TYPE, class ARG_TYPE>
-inline TYPE *CBArray<TYPE, ARG_TYPE>::GetData() {
+inline TYPE *CBArray<TYPE, ARG_TYPE>::getData() {
 	return (TYPE *)_pData;
 }
 template<class TYPE, class ARG_TYPE>
-inline int CBArray<TYPE, ARG_TYPE>::Add(ARG_TYPE newElement) {
+inline int CBArray<TYPE, ARG_TYPE>::add(ARG_TYPE newElement) {
 	int nIndex = _nSize;
-	SetAtGrow(nIndex, newElement);
+	setAtGrow(nIndex, newElement);
 	return nIndex;
 }
 template<class TYPE, class ARG_TYPE>
 inline TYPE CBArray<TYPE, ARG_TYPE>::operator[](int nIndex) const {
-	return GetAt(nIndex);
+	return getAt(nIndex);
 }
 template<class TYPE, class ARG_TYPE>
 inline TYPE &CBArray<TYPE, ARG_TYPE>::operator[](int nIndex) {
-	return ElementAt(nIndex);
+	return elementAt(nIndex);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -195,7 +195,7 @@ CBArray<TYPE, ARG_TYPE>::~CBArray() {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-void CBArray<TYPE, ARG_TYPE>::SetSize(int nNewSize, int nGrowBy) {
+void CBArray<TYPE, ARG_TYPE>::setSize(int nNewSize, int nGrowBy) {
 	if (nGrowBy != -1)
 		_nGrowBy = nGrowBy;  // set new size
 
@@ -255,23 +255,23 @@ void CBArray<TYPE, ARG_TYPE>::SetSize(int nNewSize, int nGrowBy) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-int CBArray<TYPE, ARG_TYPE>::Append(const CBArray &src) {
+int CBArray<TYPE, ARG_TYPE>::append(const CBArray &src) {
 	int nOldSize = _nSize;
-	SetSize(_nSize + src._nSize);
+	setSize(_nSize + src._nSize);
 	DCCopyElements<TYPE>(_pData + nOldSize, src._pData, src._nSize);
 	return nOldSize;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-void CBArray<TYPE, ARG_TYPE>::Copy(const CBArray &src) {
-	SetSize(src._nSize);
+void CBArray<TYPE, ARG_TYPE>::copy(const CBArray &src) {
+	setSize(src._nSize);
 	DCCopyElements<TYPE>(_pData, src._pData, src._nSize);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-void CBArray<TYPE, ARG_TYPE>::FreeExtra() {
+void CBArray<TYPE, ARG_TYPE>::freeExtra() {
 	if (_nSize != _nMaxSize) {
 		// shrink to desired size
 		TYPE *pNewData = NULL;
@@ -290,22 +290,22 @@ void CBArray<TYPE, ARG_TYPE>::FreeExtra() {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-void CBArray<TYPE, ARG_TYPE>::SetAtGrow(int nIndex, ARG_TYPE newElement) {
+void CBArray<TYPE, ARG_TYPE>::setAtGrow(int nIndex, ARG_TYPE newElement) {
 	if (nIndex >= _nSize)
-		SetSize(nIndex + 1, -1);
+		setSize(nIndex + 1, -1);
 	_pData[nIndex] = newElement;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-void CBArray<TYPE, ARG_TYPE>::InsertAt(int nIndex, ARG_TYPE newElement, int nCount /*=1*/) {
+void CBArray<TYPE, ARG_TYPE>::insertAt(int nIndex, ARG_TYPE newElement, int nCount /*=1*/) {
 	if (nIndex >= _nSize) {
 		// adding after the end of the array
-		SetSize(nIndex + nCount, -1);   // grow so nIndex is valid
+		setSize(nIndex + nCount, -1);   // grow so nIndex is valid
 	} else {
 		// inserting in the middle of the array
 		int nOldSize = _nSize;
-		SetSize(_nSize + nCount, -1);  // grow it to new size
+		setSize(_nSize + nCount, -1);  // grow it to new size
 		// destroy intial data before copying over it
 		DCDestructElements<TYPE>(&_pData[nOldSize], nCount);
 		// shift old data up to fill gap
@@ -323,7 +323,7 @@ void CBArray<TYPE, ARG_TYPE>::InsertAt(int nIndex, ARG_TYPE newElement, int nCou
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-void CBArray<TYPE, ARG_TYPE>::RemoveAt(int nIndex, int nCount) {
+void CBArray<TYPE, ARG_TYPE>::removeAt(int nIndex, int nCount) {
 	// just remove a range
 	int nMoveCount = _nSize - (nIndex + nCount);
 	DCDestructElements<TYPE>(&_pData[nIndex], nCount);
@@ -335,11 +335,11 @@ void CBArray<TYPE, ARG_TYPE>::RemoveAt(int nIndex, int nCount) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-void CBArray<TYPE, ARG_TYPE>::InsertAt(int nStartIndex, CBArray *pNewArray) {
+void CBArray<TYPE, ARG_TYPE>::insertAt(int nStartIndex, CBArray *pNewArray) {
 	if (pNewArray->GetSize() > 0) {
 		InsertAt(nStartIndex, pNewArray->GetAt(0), pNewArray->GetSize());
 		for (int i = 0; i < pNewArray->GetSize(); i++)
-			SetAt(nStartIndex + i, pNewArray->GetAt(i));
+			setAt(nStartIndex + i, pNewArray->GetAt(i));
 	}
 }
 
@@ -349,19 +349,19 @@ template<class TYPE, class ARG_TYPE>
 ERRORCODE CBArray<TYPE, ARG_TYPE>::persist(CBPersistMgr *persistMgr) {
 	int i, j;
 	if (persistMgr->_saving) {
-		j = GetSize();
+		j = getSize();
 		persistMgr->transfer("ArraySize", &j);
 		for (i = 0; i < j; i++) {
-			ARG_TYPE obj = GetAt(i);
+			ARG_TYPE obj = getAt(i);
 			persistMgr->transfer("", &obj);
 		}
 	} else {
-		SetSize(0, -1);
+		setSize(0, -1);
 		persistMgr->transfer("ArraySize", &j);
 		for (i = 0; i < j; i++) {
 			ARG_TYPE obj;
 			persistMgr->transfer("", &obj);
-			Add(obj);
+			add(obj);
 		}
 	}
 	return STATUS_OK;

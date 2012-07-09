@@ -524,7 +524,7 @@ ERRORCODE CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// scripts
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
@@ -638,7 +638,7 @@ ERRORCODE CUIButton::display(int offsetX, int offsetY) {
 		font->drawText((byte *)_text, offsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), offsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
 	}
 
-	if (!_pixelPerfect || !_image) Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	if (!_pixelPerfect || !_image) Game->_renderer->_rectList.add(new CBActiveRect(Game, this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 	// reset unused sprites
 	if (_image && _image != image) _image->reset();

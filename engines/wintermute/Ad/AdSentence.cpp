@@ -283,7 +283,7 @@ ERRORCODE CAdSentence::update(TDirection dir) {
 	currentTime = Game->_timer - _startTime;
 
 	bool talkNodeFound = false;
-	for (int i = 0; i < _talkDef->_nodes.GetSize(); i++) {
+	for (int i = 0; i < _talkDef->_nodes.getSize(); i++) {
 		if (_talkDef->_nodes[i]->isInTimeInterval(currentTime, dir)) {
 			talkNodeFound = true;
 

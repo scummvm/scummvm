@@ -231,8 +231,8 @@ void CBFontBitmap::drawChar(byte c, int x, int y) {
 	bool handled = false;
 	if (_sprite) {
 		_sprite->GetCurrentFrame();
-		if (_sprite->_currentFrame >= 0 && _sprite->_currentFrame < _sprite->_frames.GetSize() && _sprite->_frames[_sprite->_currentFrame]) {
-			if (_sprite->_frames[_sprite->_currentFrame]->_subframes.GetSize() > 0) {
+		if (_sprite->_currentFrame >= 0 && _sprite->_currentFrame < _sprite->_frames.getSize() && _sprite->_frames[_sprite->_currentFrame]) {
+			if (_sprite->_frames[_sprite->_currentFrame]->_subframes.getSize() > 0) {
 				_sprite->_frames[_sprite->_currentFrame]->_subframes[0]->_surface->displayTrans(x, y, rect);
 			}
 			handled = true;
@@ -491,8 +491,8 @@ ERRORCODE CBFontBitmap::getWidths() {
 	CBSurface *surf = NULL;
 
 	if (_sprite) {
-		if (_widthsFrame >= 0 && _widthsFrame < _sprite->_frames.GetSize()) {
-			if (_sprite->_frames[_widthsFrame] && _sprite->_frames[_widthsFrame]->_subframes.GetSize() > 0) {
+		if (_widthsFrame >= 0 && _widthsFrame < _sprite->_frames.getSize()) {
+			if (_sprite->_frames[_widthsFrame] && _sprite->_frames[_widthsFrame]->_subframes.getSize() > 0) {
 				surf = _sprite->_frames[_widthsFrame]->_subframes[0]->_surface;
 			}
 		}

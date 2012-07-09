@@ -95,21 +95,21 @@ CPartEmitter::CPartEmitter(CBGame *inGame, CBScriptHolder *Owner) : CBObject(inG
 
 //////////////////////////////////////////////////////////////////////////
 CPartEmitter::~CPartEmitter(void) {
-	for (int i = 0; i < _particles.GetSize(); i++) {
+	for (int i = 0; i < _particles.getSize(); i++) {
 		delete _particles[i];
 	}
-	_particles.RemoveAll();
+	_particles.removeAll();
 
-	for (int i = 0; i < _forces.GetSize(); i++) {
+	for (int i = 0; i < _forces.getSize(); i++) {
 		delete _forces[i];
 	}
-	_forces.RemoveAll();
+	_forces.removeAll();
 
 
-	for (int i = 0; i < _sprites.GetSize(); i++) {
+	for (int i = 0; i < _sprites.getSize(); i++) {
 		delete [] _sprites[i];
 	}
-	_sprites.RemoveAll();
+	_sprites.removeAll();
 
 	delete[] _emitEvent;
 	_emitEvent = NULL;
@@ -120,7 +120,7 @@ ERRORCODE CPartEmitter::addSprite(const char *filename) {
 	if (!filename) return STATUS_FAILED;
 
 	// do we already have the file?
-	for (int i = 0; i < _sprites.GetSize(); i++) {
+	for (int i = 0; i < _sprites.getSize(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) return STATUS_OK;
 	}
 
@@ -133,17 +133,17 @@ ERRORCODE CPartEmitter::addSprite(const char *filename) {
 
 	char *Str = new char[strlen(filename) + 1];
 	strcpy(Str, filename);
-	_sprites.Add(Str);
+	_sprites.add(Str);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CPartEmitter::removeSprite(const char *filename) {
-	for (int i = 0; i < _sprites.GetSize(); i++) {
+	for (int i = 0; i < _sprites.getSize(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			delete [] _sprites[i];
-			_sprites.RemoveAt(i);
+			_sprites.removeAt(i);
 			return STATUS_OK;
 		}
 	}
@@ -153,7 +153,7 @@ ERRORCODE CPartEmitter::removeSprite(const char *filename) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta) {
 	if (!particle) return STATUS_FAILED;
-	if (_sprites.GetSize() == 0) return STATUS_FAILED;
+	if (_sprites.getSize() == 0) return STATUS_FAILED;
 
 	int posX = CBUtils::randomInt(_posX, _posX + _width);
 	int posY = CBUtils::randomInt(_posY, _posY + _height);
@@ -172,7 +172,7 @@ ERRORCODE CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime
 	else lifeTime = CBUtils::randomInt(_lifeTime1, _lifeTime2);
 
 	float angle = CBUtils::randomAngle(_angle1, _angle2);
-	int spriteIndex = CBUtils::randomInt(0, _sprites.GetSize() - 1);
+	int spriteIndex = CBUtils::randomInt(0, _sprites.getSize() - 1);
 
 	float rotation = CBUtils::randomAngle(_rotation1, _rotation2);
 	float angVelocity = CBUtils::randomFloat(_angVelocity1, _angVelocity2);
@@ -235,7 +235,7 @@ ERRORCODE CPartEmitter::update() {
 ERRORCODE CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	int numLive = 0;
 
-	for (int i = 0; i < _particles.GetSize(); i++) {
+	for (int i = 0; i < _particles.getSize(); i++) {
 		_particles[i]->update(this, currentTime, timerDelta);
 
 		if (!_particles[i]->_isDead) numLive++;
@@ -256,7 +256,7 @@ ERRORCODE CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 			int toGen = MIN(_genAmount, _maxParticles - numLive);
 			while (toGen > 0) {
 				int firstDeadIndex = -1;
-				for (int i = 0; i < _particles.GetSize(); i++) {
+				for (int i = 0; i < _particles.getSize(); i++) {
 					if (_particles[i]->_isDead) {
 						firstDeadIndex = i;
 						break;
@@ -267,7 +267,7 @@ ERRORCODE CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 				if (firstDeadIndex >= 0) particle = _particles[firstDeadIndex];
 				else {
 					particle = new CPartParticle(Game);
-					_particles.Add(particle);
+					_particles.add(particle);
 				}
 				initParticle(particle, currentTime, timerDelta);
 				needsSort = true;
@@ -289,9 +289,9 @@ ERRORCODE CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CPartEmitter::display(CBRegion *region) {
-	if (_sprites.GetSize() <= 1) Game->_renderer->startSpriteBatch();
+	if (_sprites.getSize() <= 1) Game->_renderer->startSpriteBatch();
 
-	for (int i = 0; i < _particles.GetSize(); i++) {
+	for (int i = 0; i < _particles.getSize(); i++) {
 		if (region != NULL && _useRegion) {
 			if (!region->pointInRegion((int)_particles[i]->_pos.x, (int)_particles[i]->_pos.y)) continue;
 		}
@@ -299,14 +299,14 @@ ERRORCODE CPartEmitter::display(CBRegion *region) {
 		_particles[i]->display(this);
 	}
 
-	if (_sprites.GetSize() <= 1) Game->_renderer->endSpriteBatch();
+	if (_sprites.getSize() <= 1) Game->_renderer->endSpriteBatch();
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CPartEmitter::start() {
-	for (int i = 0; i < _particles.GetSize(); i++) {
+	for (int i = 0; i < _particles.getSize(); i++) {
 		_particles[i]->_isDead = true;
 	}
 	_running = true;
@@ -331,7 +331,7 @@ ERRORCODE CPartEmitter::start() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CPartEmitter::sortParticlesByZ() {
 	// sort particles by _posY
-	qsort(_particles.GetData(), _particles.GetSize(), sizeof(CPartParticle *), CPartEmitter::compareZ);
+	qsort(_particles.getData(), _particles.getSize(), sizeof(CPartParticle *), CPartEmitter::compareZ);
 	return STATUS_OK;
 }
 
@@ -366,7 +366,7 @@ ERRORCODE CPartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight
 CPartForce *CPartEmitter::addForceByName(const char *name) {
 	CPartForce *force = NULL;
 
-	for (int i = 0; i < _forces.GetSize(); i++) {
+	for (int i = 0; i < _forces.getSize(); i++) {
 		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
 			force = _forces[i];
 			break;
@@ -376,7 +376,7 @@ CPartForce *CPartEmitter::addForceByName(const char *name) {
 		force = new CPartForce(Game);
 		if (force) {
 			force->setName(name);
-			_forces.Add(force);
+			_forces.add(force);
 		}
 	}
 	return force;
@@ -401,10 +401,10 @@ ERRORCODE CPartEmitter::addForce(const char *name, CPartForce::TForceType type, 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CPartEmitter::removeForce(const char *name) {
-	for (int i = 0; i < _forces.GetSize(); i++) {
+	for (int i = 0; i < _forces.getSize(); i++) {
 		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
 			delete _forces[i];
-			_forces.RemoveAt(i);
+			_forces.removeAt(i);
 			return STATUS_OK;
 		}
 	}
@@ -482,10 +482,10 @@ ERRORCODE CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStac
 	else if (strcmp(name, "Stop") == 0) {
 		stack->correctParams(0);
 
-		for (int i = 0; i < _particles.GetSize(); i++) {
+		for (int i = 0; i < _particles.getSize(); i++) {
 			delete _particles[i];
 		}
-		_particles.RemoveAll();
+		_particles.removeAll();
 
 		_running = false;
 		stack->pushBool(true);
@@ -745,7 +745,7 @@ CScValue *CPartEmitter::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumLiveParticles") == 0) {
 		int numAlive = 0;
-		for (int i = 0; i < _particles.GetSize(); i++) {
+		for (int i = 0; i < _particles.getSize(); i++) {
 			if (_particles[i] && !_particles[i]->_isDead) numAlive++;
 		}
 		_scValue->setInt(numAlive);
@@ -1163,9 +1163,9 @@ ERRORCODE CPartEmitter::persist(CBPersistMgr *persistMgr) {
 
 	int numForces;
 	if (persistMgr->_saving) {
-		numForces = _forces.GetSize();
+		numForces = _forces.getSize();
 		persistMgr->transfer(TMEMBER(numForces));
-		for (int i = 0; i < _forces.GetSize(); i++) {
+		for (int i = 0; i < _forces.getSize(); i++) {
 			_forces[i]->persist(persistMgr);
 		}
 	} else {
@@ -1173,15 +1173,15 @@ ERRORCODE CPartEmitter::persist(CBPersistMgr *persistMgr) {
 		for (int i = 0; i < numForces; i++) {
 			CPartForce *force = new CPartForce(Game);
 			force->persist(persistMgr);
-			_forces.Add(force);
+			_forces.add(force);
 		}
 	}
 
 	int numParticles;
 	if (persistMgr->_saving) {
-		numParticles = _particles.GetSize();
+		numParticles = _particles.getSize();
 		persistMgr->transfer(TMEMBER(numParticles));
-		for (int i = 0; i < _particles.GetSize(); i++) {
+		for (int i = 0; i < _particles.getSize(); i++) {
 			_particles[i]->persist(persistMgr);
 		}
 	} else {
@@ -1189,7 +1189,7 @@ ERRORCODE CPartEmitter::persist(CBPersistMgr *persistMgr) {
 		for (int i = 0; i < numParticles; i++) {
 			CPartParticle *particle = new CPartParticle(Game);
 			particle->persist(persistMgr);
-			_particles.Add(particle);
+			_particles.add(particle);
 		}
 	}
 

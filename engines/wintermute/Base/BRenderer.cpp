@@ -72,7 +72,7 @@ CBObject *CBRenderer::getObjectAt(int x, int y) {
 	point.x = x;
 	point.y = y;
 
-	for (int i = _rectList.GetSize() - 1; i >= 0; i--) {
+	for (int i = _rectList.getSize() - 1; i >= 0; i--) {
 		if (CBPlatform::ptInRect(&_rectList[i]->_rect, point)) {
 			if (_rectList[i]->_precise) {
 				// frame
@@ -106,10 +106,10 @@ CBObject *CBRenderer::getObjectAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBRenderer::deleteRectList() {
-	for (int i = 0; i < _rectList.GetSize(); i++) {
+	for (int i = 0; i < _rectList.getSize(); i++) {
 		delete _rectList[i];
 	}
-	_rectList.RemoveAll();
+	_rectList.removeAll();
 }
 
 

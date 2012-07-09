@@ -61,8 +61,8 @@ CBRegion::~CBRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegion::cleanup() {
-	for (int i = 0; i < _points.GetSize(); i++) delete _points[i];
-	_points.RemoveAll();
+	for (int i = 0; i < _points.getSize(); i++) delete _points[i];
+	_points.removeAll();
 
 	CBPlatform::setRectEmpty(&_rect);
 	_editorSelectedPoint = -1;
@@ -77,7 +77,7 @@ bool CBRegion::createRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRegion::pointInRegion(int x, int y) {
-	if (_points.GetSize() < 3) return false;
+	if (_points.getSize() < 3) return false;
 
 	Common::Point pt;
 	pt.x = x;
@@ -155,8 +155,8 @@ ERRORCODE CBRegion::loadBuffer(byte *buffer, bool complete) {
 
 	int i;
 
-	for (i = 0; i < _points.GetSize(); i++) delete _points[i];
-	_points.RemoveAll();
+	for (i = 0; i < _points.getSize(); i++) delete _points[i];
+	_points.removeAll();
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -179,7 +179,7 @@ ERRORCODE CBRegion::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_POINT: {
 			int x, y;
 			parser.scanStr((char *)params, "%d,%d", &x, &y);
-			_points.Add(new CBPoint(x, y));
+			_points.add(new CBPoint(x, y));
 		}
 		break;
 
@@ -220,7 +220,7 @@ ERRORCODE CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		_points.Add(new CBPoint(x, y));
+		_points.add(new CBPoint(x, y));
 		createRegion();
 
 		stack->pushBool(true);
@@ -237,8 +237,8 @@ ERRORCODE CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		if (Index >= 0 && Index < _points.GetSize()) {
-			_points.InsertAt(Index, new CBPoint(x, y));
+		if (Index >= 0 && Index < _points.getSize()) {
+			_points.insertAt(Index, new CBPoint(x, y));
 			createRegion();
 
 			stack->pushBool(true);
@@ -256,7 +256,7 @@ ERRORCODE CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		if (Index >= 0 && Index < _points.GetSize()) {
+		if (Index >= 0 && Index < _points.getSize()) {
 			_points[Index]->x = x;
 			_points[Index]->y = y;
 			createRegion();
@@ -274,11 +274,11 @@ ERRORCODE CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
 
-		if (index >= 0 && index < _points.GetSize()) {
+		if (index >= 0 && index < _points.getSize()) {
 			delete _points[index];
 			_points[index] = NULL;
 
-			_points.RemoveAt(index);
+			_points.removeAt(index);
 			createRegion();
 
 			stack->pushBool(true);
@@ -294,7 +294,7 @@ ERRORCODE CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
 
-		if (index >= 0 && index < _points.GetSize()) {
+		if (index >= 0 && index < _points.getSize()) {
 			CScValue *val = stack->getPushValue();
 			if (val) {
 				val->setProperty("X", _points[index]->x);
@@ -341,7 +341,7 @@ CScValue *CBRegion::scGetProperty(const char *name) {
 	// NumPoints
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumPoints") == 0) {
-		_scValue->setInt(_points.GetSize());
+		_scValue->setInt(_points.getSize());
 		return _scValue;
 	}
 
@@ -389,11 +389,11 @@ ERRORCODE CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *name
 
 	int i;
 
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	for (i = 0; i < _points.GetSize(); i++) {
+	for (i = 0; i < _points.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
@@ -427,7 +427,7 @@ typedef struct {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRegion::ptInPolygon(int x, int y) {
-	if (_points.GetSize() < 3) return false;
+	if (_points.getSize() < 3) return false;
 
 	int counter = 0;
 	double xinters;
@@ -439,9 +439,9 @@ bool CBRegion::ptInPolygon(int x, int y) {
 	p1.x = (double)_points[0]->x;
 	p1.y = (double)_points[0]->y;
 
-	for (int i = 1; i <= _points.GetSize(); i++) {
-		p2.x = (double)_points[i % _points.GetSize()]->x;
-		p2.y = (double)_points[i % _points.GetSize()]->y;
+	for (int i = 1; i <= _points.getSize(); i++) {
+		p2.x = (double)_points[i % _points.getSize()]->x;
+		p2.y = (double)_points[i % _points.getSize()]->y;
 
 		if (p.y > MIN(p1.y, p2.y)) {
 			if (p.y <= MAX(p1.y, p2.y)) {
@@ -466,11 +466,11 @@ bool CBRegion::ptInPolygon(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBRegion::getBoundingRect(Common::Rect *rect) {
-	if (_points.GetSize() == 0) CBPlatform::setRectEmpty(rect);
+	if (_points.getSize() == 0) CBPlatform::setRectEmpty(rect);
 	else {
 		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;
 
-		for (int i = 0; i < _points.GetSize(); i++) {
+		for (int i = 0; i < _points.getSize(); i++) {
 			MinX = MIN(MinX, _points[i]->x);
 			MinY = MIN(MinY, _points[i]->y);
 
@@ -489,13 +489,13 @@ ERRORCODE CBRegion::mimic(CBRegion *region, float scale, int x, int y) {
 
 	cleanup();
 
-	for (int i = 0; i < region->_points.GetSize(); i++) {
+	for (int i = 0; i < region->_points.getSize(); i++) {
 		int xVal, yVal;
 
 		xVal = (int)((float)region->_points[i]->x * scale / 100.0f);
 		yVal = (int)((float)region->_points[i]->y * scale / 100.0f);
 
-		_points.Add(new CBPoint(xVal + x, yVal + y));
+		_points.add(new CBPoint(xVal + x, yVal + y));
 	}
 
 	_lastMimicScale = scale;

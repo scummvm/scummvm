@@ -44,13 +44,13 @@ CScStack::CScStack(CBGame *inGame): CBBase(inGame) {
 CScStack::~CScStack() {
 
 #if _DEBUG
-	//Game->LOG(0, "STAT: Stack size: %d, SP=%d", _values.GetSize(), _sP);
+	//Game->LOG(0, "STAT: Stack size: %d, SP=%d", _values.getSize(), _sP);
 #endif
 
-	for (int i = 0; i < _values.GetSize(); i++) {
+	for (int i = 0; i < _values.getSize(); i++) {
 		delete _values[i];
 	}
-	_values.RemoveAll();
+	_values.removeAll();
 }
 
 
@@ -69,13 +69,13 @@ CScValue *CScStack::pop() {
 void CScStack::push(CScValue *val) {
 	_sP++;
 
-	if (_sP < _values.GetSize()) {
+	if (_sP < _values.getSize()) {
 		_values[_sP]->cleanup();
 		_values[_sP]->copy(val);
 	} else {
 		CScValue *copyVal = new CScValue(Game);
 		copyVal->copy(val);
-		_values.Add(copyVal);
+		_values.add(copyVal);
 	}
 }
 
@@ -84,9 +84,9 @@ void CScStack::push(CScValue *val) {
 CScValue *CScStack::getPushValue() {
 	_sP++;
 
-	if (_sP >= _values.GetSize()) {
+	if (_sP >= _values.getSize()) {
 		CScValue *val = new CScValue(Game);
-		_values.Add(val);
+		_values.add(val);
 	}
 	_values[_sP]->cleanup();
 	return _values[_sP];
@@ -96,7 +96,7 @@ CScValue *CScStack::getPushValue() {
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CScStack::getTop() {
-	if (_sP < 0 || _sP >= _values.GetSize()) return NULL;
+	if (_sP < 0 || _sP >= _values.getSize()) return NULL;
 	else return _values[_sP];
 }
 
@@ -104,7 +104,7 @@ CScValue *CScStack::getTop() {
 //////////////////////////////////////////////////////////////////////////
 CScValue *CScStack::getAt(int index) {
 	index = _sP - index;
-	if (index < 0 || index >= _values.GetSize()) return NULL;
+	if (index < 0 || index >= _values.getSize()) return NULL;
 	else return _values[index];
 }
 
@@ -117,7 +117,7 @@ void CScStack::correctParams(uint32 expectedParams) {
 		while (expectedParams < nuParams) {
 			//Pop();
 			delete _values[_sP - expectedParams];
-			_values.RemoveAt(_sP - expectedParams);
+			_values.removeAt(_sP - expectedParams);
 			nuParams--;
 			_sP--;
 		}
@@ -126,13 +126,13 @@ void CScStack::correctParams(uint32 expectedParams) {
 			//Push(null_val);
 			CScValue *nullVal = new CScValue(Game);
 			nullVal->setNULL();
-			_values.InsertAt(_sP - nuParams + 1, nullVal);
+			_values.insertAt(_sP - nuParams + 1, nullVal);
 			nuParams++;
 			_sP++;
 
-			if (_values.GetSize() > _sP + 1) {
-				delete _values[_values.GetSize() - 1];
-				_values.RemoveAt(_values.GetSize() - 1);
+			if (_values.getSize() > _sP + 1) {
+				delete _values[_values.getSize() - 1];
+				_values.removeAt(_values.getSize() - 1);
 			}
 		}
 	}

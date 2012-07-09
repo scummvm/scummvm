@@ -639,7 +639,7 @@ void CBRenderSDL::dumpData(const char *filename) {
 	int TotalKB = 0;
 	int TotalLoss = 0;
 	fprintf(f, "Filename;Usage;Size;KBytes\n");
-	for (int i = 0; i < Mgr->_surfaces.GetSize(); i++) {
+	for (int i = 0; i < Mgr->_surfaces.getSize(); i++) {
 		CBSurfaceSDL *Surf = (CBSurfaceSDL *)Mgr->_surfaces[i];
 		if (!Surf->_filename) continue;
 		if (!Surf->_valid) continue;
@@ -653,7 +653,7 @@ void CBRenderSDL::dumpData(const char *filename) {
 		fprintf(f, "%d;", kb);
 		fprintf(f, "\n");
 	}
-	fprintf(f, "Total %d;;;%d\n", Mgr->_surfaces.GetSize(), TotalKB);
+	fprintf(f, "Total %d;;;%d\n", Mgr->_surfaces.getSize(), TotalKB);
 
 
 	fclose(f);

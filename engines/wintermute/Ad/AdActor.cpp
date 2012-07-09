@@ -103,21 +103,21 @@ CAdActor::~CAdActor() {
 
 	_animSprite2 = NULL; // ref only
 
-	for (int i = 0; i < _talkSprites.GetSize(); i++) {
+	for (int i = 0; i < _talkSprites.getSize(); i++) {
 		delete _talkSprites[i];
 	}
-	_talkSprites.RemoveAll();
+	_talkSprites.removeAll();
 
-	for (int i = 0; i < _talkSpritesEx.GetSize(); i++) {
+	for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
 		delete _talkSpritesEx[i];
 	}
-	_talkSpritesEx.RemoveAll();
+	_talkSpritesEx.removeAll();
 
-	for (int i = 0; i < _anims.GetSize(); i++) {
+	for (int i = 0; i < _anims.getSize(); i++) {
 		delete _anims[i];
 		_anims[i] = NULL;
 	}
-	_anims.RemoveAll();
+	_anims.removeAll();
 
 }
 
@@ -298,13 +298,13 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_TALK:
 			spr = new CAdSpriteSet(Game, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSprites.Add(spr);
+			else _talkSprites.add(spr);
 			break;
 
 		case TOKEN_TALK_SPECIAL:
 			spr = new CAdSpriteSet(Game, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSpritesEx.Add(spr);
+			else _talkSpritesEx.add(spr);
 			break;
 
 		case TOKEN_STAND:
@@ -434,7 +434,7 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_ANIMATION: {
 			CAdSpriteSet *Anim = new CAdSpriteSet(Game, this);
 			if (!Anim || DID_FAIL(Anim->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
-			else _anims.Add(Anim);
+			else _anims.add(Anim);
 		}
 		break;
 		}
@@ -940,7 +940,7 @@ ERRORCODE CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		const char *AnimName = stack->pop()->getString();
 
 		bool Found = false;
-		for (int i = 0; i < _anims.GetSize(); i++) {
+		for (int i = 0; i < _anims.getSize(); i++) {
 			if (scumm_stricmp(_anims[i]->_name, AnimName) == 0) {
 				// invalidate sprites in use
 				if (_anims[i]->containsSprite(_tempSprite2)) _tempSprite2 = NULL;
@@ -949,7 +949,7 @@ ERRORCODE CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 
 				delete _anims[i];
 				_anims[i] = NULL;
-				_anims.RemoveAt(i);
+				_anims.removeAt(i);
 				i--;
 				Found = true;
 			}
@@ -1118,7 +1118,7 @@ CBSprite *CAdActor::getTalkStance(const char *stance) {
 	}
 
 	// old way
-	if (_talkSprites.GetSize() > 0 || _talkSpritesEx.GetSize() > 0)
+	if (_talkSprites.getSize() > 0 || _talkSpritesEx.getSize() > 0)
 		return getTalkStanceOld(stance);
 
 	// new way
@@ -1131,13 +1131,13 @@ CBSprite *CAdActor::getTalkStance(const char *stance) {
 	// not - get a random talk
 	if (!ret) {
 		CBArray<CAdSpriteSet *, CAdSpriteSet *> TalkAnims;
-		for (int i = 0; i < _anims.GetSize(); i++) {
+		for (int i = 0; i < _anims.getSize(); i++) {
 			if (_talkAnimName.compareToIgnoreCase(_anims[i]->_name) == 0)
-				TalkAnims.Add(_anims[i]);
+				TalkAnims.add(_anims[i]);
 		}
 
-		if (TalkAnims.GetSize() > 0) {
-			int rnd = g_wintermute->randInt(0, TalkAnims.GetSize() - 1);
+		if (TalkAnims.getSize() > 0) {
+			int rnd = g_wintermute->randInt(0, TalkAnims.getSize() - 1);
 			ret = TalkAnims[rnd]->getSprite(_dir);
 		} else {
 			if (_standSprite) ret = _standSprite->getSprite(_dir);
@@ -1156,7 +1156,7 @@ CBSprite *CAdActor::getTalkStanceOld(const char *stance) {
 
 	if (stance != NULL) {
 		// search special stances
-		for (int i = 0; i < _talkSpritesEx.GetSize(); i++) {
+		for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
 			if (scumm_stricmp(_talkSpritesEx[i]->_name, stance) == 0) {
 				ret = _talkSpritesEx[i]->getSprite(_dir);
 				break;
@@ -1164,7 +1164,7 @@ CBSprite *CAdActor::getTalkStanceOld(const char *stance) {
 		}
 		if (ret == NULL) {
 			// search generic stances
-			for (int i = 0; i < _talkSprites.GetSize(); i++) {
+			for (int i = 0; i < _talkSprites.getSize(); i++) {
 				if (scumm_stricmp(_talkSprites[i]->_name, stance) == 0) {
 					ret = _talkSprites[i]->getSprite(_dir);
 					break;
@@ -1175,10 +1175,10 @@ CBSprite *CAdActor::getTalkStanceOld(const char *stance) {
 
 	// not a valid stance? get a random one
 	if (ret == NULL) {
-		if (_talkSprites.GetSize() < 1) ret = _standSprite->getSprite(_dir);
+		if (_talkSprites.getSize() < 1) ret = _standSprite->getSprite(_dir);
 		else {
 			// TODO: remember last
-			int rnd = g_wintermute->randInt(0, _talkSprites.GetSize() - 1);
+			int rnd = g_wintermute->randInt(0, _talkSprites.getSize() - 1);
 			ret = _talkSprites[rnd]->getSprite(_dir);
 		}
 	}
@@ -1254,7 +1254,7 @@ int CAdActor::getHeight() {
 
 //////////////////////////////////////////////////////////////////////////
 CAdSpriteSet *CAdActor::getAnimByName(const Common::String &animName) {
-	for (int i = 0; i < _anims.GetSize(); i++) {
+	for (int i = 0; i < _anims.getSize(); i++) {
 		if (animName.compareToIgnoreCase(_anims[i]->_name) == 0)
 			return _anims[i];
 	}
@@ -1288,7 +1288,7 @@ ERRORCODE CAdActor::mergeAnims(const char *animsFilename) {
 			if (!Anim || DID_FAIL(Anim->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				Ret = STATUS_FAILED;
-			} else _anims.Add(Anim);
+			} else _anims.add(Anim);
 		}
 		break;
 		}

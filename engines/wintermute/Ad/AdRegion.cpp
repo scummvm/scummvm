@@ -128,8 +128,8 @@ ERRORCODE CAdRegion::loadBuffer(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	for (int i = 0; i < _points.GetSize(); i++) delete _points[i];
-	_points.RemoveAll();
+	for (int i = 0; i < _points.getSize(); i++) delete _points[i];
+	_points.removeAll();
 
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 
@@ -170,7 +170,7 @@ ERRORCODE CAdRegion::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_POINT: {
 			int x, y;
 			parser.scanStr((char *)params, "%d,%d", &x, &y);
-			_points.Add(new CBPoint(x, y));
+			_points.add(new CBPoint(x, y));
 		}
 		break;
 
@@ -359,13 +359,13 @@ ERRORCODE CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 
 	int i;
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
 	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
 
-	for (i = 0; i < _points.GetSize(); i++) {
+	for (i = 0; i < _points.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 

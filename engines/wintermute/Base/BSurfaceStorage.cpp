@@ -52,11 +52,11 @@ CBSurfaceStorage::~CBSurfaceStorage() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceStorage::cleanup(bool warn) {
-	for (int i = 0; i < _surfaces.GetSize(); i++) {
+	for (int i = 0; i < _surfaces.getSize(); i++) {
 		if (warn) Game->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->_filename, _surfaces[i]->_referenceCount);
 		delete _surfaces[i];
 	}
-	_surfaces.RemoveAll();
+	_surfaces.removeAll();
 
 	return STATUS_OK;
 }
@@ -67,7 +67,7 @@ ERRORCODE CBSurfaceStorage::initLoop() {
 	if (Game->_smartCache && Game->_liveTimer - _lastCleanupTime >= Game->_surfaceGCCycleTime) {
 		_lastCleanupTime = Game->_liveTimer;
 		sortSurfaces();
-		for (int i = 0; i < _surfaces.GetSize(); i++) {
+		for (int i = 0; i < _surfaces.getSize(); i++) {
 			if (_surfaces[i]->_lifeTime <= 0) break;
 
 			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && Game->_liveTimer - _surfaces[i]->_lastUsedTime >= _surfaces[i]->_lifeTime) {
@@ -82,12 +82,12 @@ ERRORCODE CBSurfaceStorage::initLoop() {
 
 //////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceStorage::removeSurface(CBSurface *surface) {
-	for (int i = 0; i < _surfaces.GetSize(); i++) {
+	for (int i = 0; i < _surfaces.getSize(); i++) {
 		if (_surfaces[i] == surface) {
 			_surfaces[i]->_referenceCount--;
 			if (_surfaces[i]->_referenceCount <= 0) {
 				delete _surfaces[i];
-				_surfaces.RemoveAt(i);
+				_surfaces.removeAt(i);
 			}
 			break;
 		}
@@ -98,7 +98,7 @@ ERRORCODE CBSurfaceStorage::removeSurface(CBSurface *surface) {
 
 //////////////////////////////////////////////////////////////////////
 CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	for (int i = 0; i < _surfaces.GetSize(); i++) {
+	for (int i = 0; i < _surfaces.getSize(); i++) {
 		if (scumm_stricmp(_surfaces[i]->_filename, filename) == 0) {
 			_surfaces[i]->_referenceCount++;
 			return _surfaces[i];
@@ -123,7 +123,7 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, by
 		return NULL;
 	} else {
 		surface->_referenceCount = 1;
-		_surfaces.Add(surface);
+		_surfaces.add(surface);
 		return surface;
 	}
 }
@@ -132,7 +132,7 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, by
 //////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceStorage::restoreAll() {
 	ERRORCODE ret;
-	for (int i = 0; i < _surfaces.GetSize(); i++) {
+	for (int i = 0; i < _surfaces.getSize(); i++) {
 		ret = _surfaces[i]->restore();
 		if (ret != STATUS_OK) {
 			Game->LOG(0, "CBSurfaceStorage::RestoreAll failed");
@@ -161,7 +161,7 @@ ERRORCODE CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceStorage::sortSurfaces() {
-	qsort(_surfaces.GetData(), _surfaces.GetSize(), sizeof(CBSurface *), surfaceSortCB);
+	qsort(_surfaces.getData(), _surfaces.getSize(), sizeof(CBSurface *), surfaceSortCB);
 	return STATUS_OK;
 }
 

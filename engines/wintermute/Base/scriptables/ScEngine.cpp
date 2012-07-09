@@ -89,24 +89,24 @@ CScEngine::~CScEngine() {
 
 	cleanup();
 
-	for (int i = 0; i < _breakpoints.GetSize(); i++) {
+	for (int i = 0; i < _breakpoints.getSize(); i++) {
 		delete _breakpoints[i];
 		_breakpoints[i] = NULL;
 	}
-	_breakpoints.RemoveAll();
+	_breakpoints.removeAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::cleanup() {
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
 		delete _scripts[i];
-		_scripts.RemoveAt(i);
+		_scripts.removeAt(i);
 		i--;
 	}
 
-	_scripts.RemoveAll();
+	_scripts.removeAll();
 
 	delete _globals;
 	_globals = NULL;
@@ -162,7 +162,7 @@ CScScript *CScEngine::runScript(const char *filename, CBScriptHolder *owner) {
 		script->_globals->setProp("self", &val);
 		script->_globals->setProp("this", &val);
 
-		_scripts.Add(script);
+		_scripts.add(script);
 		Game->getDebugMgr()->onScriptInit(script);
 
 		return script;
@@ -245,18 +245,18 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::tick() {
-	if (_scripts.GetSize() == 0)
+	if (_scripts.getSize() == 0)
 		return STATUS_OK;
 
 
 	// resolve waiting scripts
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 
 		switch (_scripts[i]->_state) {
 		case SCRIPT_WAITING: {
 			/*
 			bool obj_found=false;
-			for(int j=0; j<Game->_regObjects.GetSize(); j++)
+			for(int j=0; j<Game->_regObjects.getSize(); j++)
 			{
 			    if(Game->_regObjects[j] == _scripts[i]->_waitObject)
 			    {
@@ -307,7 +307,7 @@ ERRORCODE CScEngine::tick() {
 
 
 	// execute scripts
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 
 		// skip paused scripts
 		if (_scripts[i]->_state == SCRIPT_PAUSED) continue;
@@ -346,7 +346,7 @@ ERRORCODE CScEngine::tick() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::tickUnbreakable() {
 	// execute unbreakable scripts
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_unbreakable) continue;
 
 		while (_scripts[i]->_state == SCRIPT_RUNNING) {
@@ -365,12 +365,12 @@ ERRORCODE CScEngine::tickUnbreakable() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::removeFinishedScripts() {
 	// remove finished scripts
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
 			if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
 			Game->getDebugMgr()->onScriptShutdown(_scripts[i]);
 			delete _scripts[i];
-			_scripts.RemoveAt(i);
+			_scripts.removeAt(i);
 			i--;
 		}
 	}
@@ -382,7 +382,7 @@ ERRORCODE CScEngine::removeFinishedScripts() {
 int CScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 	int numRunning = 0, numWaiting = 0, numPersistent = 0, numTotal = 0;
 
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED) continue;
 		switch (_scripts[i]->_state) {
 		case SCRIPT_RUNNING:
@@ -425,7 +425,7 @@ ERRORCODE CScEngine::emptyScriptCache() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::resetObject(CBObject *Object) {
 	// terminate all scripts waiting for this object
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING && _scripts[i]->_waitObject == Object) {
 			if (!Game->_compatKillMethodThreads) resetScript(_scripts[i]);
 
@@ -439,7 +439,7 @@ ERRORCODE CScEngine::resetObject(CBObject *Object) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::resetScript(CScScript *script) {
 	// terminate all scripts waiting for this script
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING_SCRIPT && _scripts[i]->_waitScript == script) {
 			_scripts[i]->finish();
 		}
@@ -462,10 +462,10 @@ ERRORCODE CScEngine::persist(CBPersistMgr *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::editorCleanup() {
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_owner == NULL && (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR)) {
 			delete _scripts[i];
-			_scripts.RemoveAt(i);
+			_scripts.removeAt(i);
 			i--;
 		}
 	}
@@ -474,7 +474,7 @@ void CScEngine::editorCleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::pauseAll() {
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i] != _currentScript) _scripts[i]->pause();
 	}
 
@@ -484,7 +484,7 @@ ERRORCODE CScEngine::pauseAll() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::resumeAll() {
-	for (int i = 0; i < _scripts.GetSize(); i++)
+	for (int i = 0; i < _scripts.getSize(); i++)
 		_scripts[i]->resume();
 
 	return STATUS_OK;
@@ -493,7 +493,7 @@ ERRORCODE CScEngine::resumeAll() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CScEngine::isValidScript(CScScript *script) {
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i] == script) return true;
 	}
 	return false;
@@ -511,13 +511,13 @@ ERRORCODE CScEngine::dbgSendScripts(IWmeDebugClient *client) {
 	_globals->dbgSendVariables(client, WME_DBGVAR_GLOBAL, NULL, 0);
 
 	// process normal scripts first
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_thread || _scripts[i]->_methodThread) continue;
 		_scripts[i]->dbgSendScript(client);
 	}
 
 	// and threads later
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_thread || _scripts[i]->_methodThread)
 			_scripts[i]->dbgSendScript(client);
 	}
@@ -530,7 +530,7 @@ ERRORCODE CScEngine::addBreakpoint(const char *scriptFilename, int line) {
 	if (!Game->getDebugMgr()->_enabled) return STATUS_OK;
 
 	CScBreakpoint *bp = NULL;
-	for (int i = 0; i < _breakpoints.GetSize(); i++) {
+	for (int i = 0; i < _breakpoints.getSize(); i++) {
 		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), scriptFilename) == 0) {
 			bp = _breakpoints[i];
 			break;
@@ -538,13 +538,13 @@ ERRORCODE CScEngine::addBreakpoint(const char *scriptFilename, int line) {
 	}
 	if (bp == NULL) {
 		bp = new CScBreakpoint(scriptFilename);
-		_breakpoints.Add(bp);
+		_breakpoints.add(bp);
 	}
 
-	for (int i = 0; i < bp->_lines.GetSize(); i++) {
+	for (int i = 0; i < bp->_lines.getSize(); i++) {
 		if (bp->_lines[i] == line) return STATUS_OK;
 	}
-	bp->_lines.Add(line);
+	bp->_lines.add(line);
 
 	// refresh changes
 	refreshScriptBreakpoints();
@@ -556,14 +556,14 @@ ERRORCODE CScEngine::addBreakpoint(const char *scriptFilename, int line) {
 ERRORCODE CScEngine::removeBreakpoint(const char *scriptFilename, int line) {
 	if (!Game->getDebugMgr()->_enabled) return STATUS_OK;
 
-	for (int i = 0; i < _breakpoints.GetSize(); i++) {
+	for (int i = 0; i < _breakpoints.getSize(); i++) {
 		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), scriptFilename) == 0) {
-			for (int j = 0; j < _breakpoints[i]->_lines.GetSize(); j++) {
+			for (int j = 0; j < _breakpoints[i]->_lines.getSize(); j++) {
 				if (_breakpoints[i]->_lines[j] == line) {
-					_breakpoints[i]->_lines.RemoveAt(j);
-					if (_breakpoints[i]->_lines.GetSize() == 0) {
+					_breakpoints[i]->_lines.removeAt(j);
+					if (_breakpoints[i]->_lines.getSize() == 0) {
 						delete _breakpoints[i];
-						_breakpoints.RemoveAt(i);
+						_breakpoints.removeAt(i);
 					}
 					// refresh changes
 					refreshScriptBreakpoints();
@@ -581,7 +581,7 @@ ERRORCODE CScEngine::removeBreakpoint(const char *scriptFilename, int line) {
 ERRORCODE CScEngine::refreshScriptBreakpoints() {
 	if (!Game->getDebugMgr()->_enabled) return STATUS_OK;
 
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		refreshScriptBreakpoints(_scripts[i]);
 	}
 	return STATUS_OK;
@@ -593,13 +593,13 @@ ERRORCODE CScEngine::refreshScriptBreakpoints(CScScript *script) {
 
 	if (!script || !script->_filename) return STATUS_FAILED;
 
-	for (int i = 0; i < _breakpoints.GetSize(); i++) {
+	for (int i = 0; i < _breakpoints.getSize(); i++) {
 		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), script->_filename) == 0) {
-			script->_breakpoints.Copy(_breakpoints[i]->_lines);
+			script->_breakpoints.copy(_breakpoints[i]->_lines);
 			return STATUS_OK;
 		}
 	}
-	if (script->_breakpoints.GetSize() > 0) script->_breakpoints.RemoveAll();
+	if (script->_breakpoints.getSize() > 0) script->_breakpoints.removeAll();
 
 	return STATUS_OK;
 }
@@ -613,8 +613,8 @@ ERRORCODE CScEngine::saveBreakpoints() {
 	char key[100];
 
 	int count = 0;
-	for (int i = 0; i < _breakpoints.GetSize(); i++) {
-		for (int j = 0; j < _breakpoints[i]->_lines.GetSize(); j++) {
+	for (int i = 0; i < _breakpoints.getSize(); i++) {
+		for (int j = 0; j < _breakpoints[i]->_lines.getSize(); j++) {
 			count++;
 			sprintf(key, "Breakpoint%d", count);
 			sprintf(text, "%s:%d", _breakpoints[i]->_filename.c_str(), _breakpoints[i]->_lines[j]);

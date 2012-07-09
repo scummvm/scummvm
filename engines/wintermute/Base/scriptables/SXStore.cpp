@@ -68,16 +68,16 @@ CSXStore::~CSXStore() {
 void CSXStore::cleanup() {
 	setEventsEnabled(NULL, false);
 
-	for (int i = 0; i < _validProducts.GetSize(); i++) {
+	for (int i = 0; i < _validProducts.getSize(); i++) {
 		delete _validProducts[i];
 	}
-	_validProducts.RemoveAll();
+	_validProducts.removeAll();
 
 
-	for (int i = 0; i < _transactions.GetSize(); i++) {
+	for (int i = 0; i < _transactions.getSize(); i++) {
 		delete _transactions[i];
 	}
-	_transactions.RemoveAll();
+	_transactions.removeAll();
 
 
 	_lastProductRequestOwner = _lastPurchaseOwner = _lastRestoreOwner = NULL;
@@ -120,7 +120,7 @@ ERRORCODE CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 	else if (strcmp(name, "GetValidProduct") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
-		if (index >= 0 && index < _validProducts.GetSize()) {
+		if (index >= 0 && index < _validProducts.getSize()) {
 			CScValue *prod = stack->getPushValue();
 			if (prod) {
 				prod->setProperty("Id", _validProducts[index]->getId());
@@ -152,7 +152,7 @@ ERRORCODE CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 	else if (strcmp(name, "GetTransaction") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
-		if (index >= 0 && index < _transactions.GetSize()) {
+		if (index >= 0 && index < _transactions.getSize()) {
 			CScValue *trans = stack->getPushValue();
 			if (trans) {
 				trans->setProperty("Id", _transactions[index]->getId());
@@ -255,7 +255,7 @@ CScValue *CSXStore::scGetProperty(const char *name) {
 	// NumValidProducts (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumValidProducts") == 0) {
-		_scValue->setInt(_validProducts.GetSize());
+		_scValue->setInt(_validProducts.getSize());
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -269,7 +269,7 @@ CScValue *CSXStore::scGetProperty(const char *name) {
 	// NumTransactions (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumTransactions") == 0) {
-		_scValue->setInt(_transactions.GetSize());
+		_scValue->setInt(_transactions.getSize());
 		return _scValue;
 	}
 
@@ -293,16 +293,16 @@ ERRORCODE CSXStore::persist(CBPersistMgr *persistMgr) {
 	// persist valid products
 	int numProducts;
 	if (persistMgr->_saving) {
-		numProducts = _validProducts.GetSize();
+		numProducts = _validProducts.getSize();
 		persistMgr->transfer(TMEMBER(numProducts));
 		for (int i = 0; i < numProducts; i++) _validProducts[i]->persist(persistMgr);
 	} else {
-		numProducts = _validProducts.GetSize();
+		numProducts = _validProducts.getSize();
 		persistMgr->transfer(TMEMBER(numProducts));
 		for (int i = 0; i < numProducts; i++) {
 			CBStoreProduct *prod = new CBStoreProduct;
 			prod->persist(persistMgr);
-			_validProducts.Add(prod);
+			_validProducts.add(prod);
 		}
 	}
 
@@ -362,10 +362,10 @@ bool CSXStore::isAvailable() {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::receiveProductsStart() {
-	for (int i = 0; i < _validProducts.GetSize(); i++) {
+	for (int i = 0; i < _validProducts.getSize(); i++) {
 		delete _validProducts[i];
 	}
-	_validProducts.RemoveAll();
+	_validProducts.removeAll();
 
 	_invalidProducts.clear();
 }
@@ -378,7 +378,7 @@ void CSXStore::receiveProductsEnd() {
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::addValidProduct(const char *id, const char *name, const char *desc, const char *price) {
 	CBStoreProduct *prod = new CBStoreProduct(id, name, desc, price);
-	_validProducts.Add(prod);
+	_validProducts.add(prod);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -388,10 +388,10 @@ void CSXStore::addInvalidProduct(const char *id) {
 
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::receiveTransactionsStart() {
-	for (int i = 0; i < _transactions.GetSize(); i++) {
+	for (int i = 0; i < _transactions.getSize(); i++) {
 		delete _transactions[i];
 	}
-	_transactions.RemoveAll();
+	_transactions.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -405,7 +405,7 @@ void CSXStore::receiveTransactionsEnd() {
 //////////////////////////////////////////////////////////////////////////
 void CSXStore::addTransaction(const char *id, const char *productId, const char *state) {
 	CBStoreTransaction *trans = new CBStoreTransaction(id, productId, state);
-	_transactions.Add(trans);
+	_transactions.add(trans);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -413,7 +413,7 @@ bool CSXStore::purchase(CScScript *script, const char *productId) {
 	if (!productId) return false;
 
 #ifdef __IPHONEOS__
-	for (int i = 0; i < _validProducts.GetSize(); i++) {
+	for (int i = 0; i < _validProducts.getSize(); i++) {
 		if (strcmp(productId, _validProducts[i]->GetId()) == 0) {
 			_lastPurchaseOwner = script->_owner;
 
@@ -430,11 +430,11 @@ bool CSXStore::purchase(CScScript *script, const char *productId) {
 bool CSXStore::finishTransaction(CScScript *script, const char *transId) {
 	if (!transId) return false;
 #ifdef __IPHONEOS__
-	for (int i = 0; i < _transactions.GetSize(); i++) {
+	for (int i = 0; i < _transactions.getSize(); i++) {
 		if (strcmp(transId, _transactions[i]->GetId()) == 0) {
 			if (StoreKit_FinishTransaction(transId) > 0) {
 				SAFE_DELETE(_transactions[i]);
-				_transactions.RemoveAt(i);
+				_transactions.removeAt(i);
 				return true;
 			} else return false;
 		}

@@ -61,11 +61,11 @@ ERRORCODE CBScriptHolder::cleanup() {
 
 	int i;
 
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (i = 0; i < _scripts.getSize(); i++) {
 		_scripts[i]->finish(true);
 		_scripts[i]->_owner = NULL;
 	}
-	_scripts.RemoveAll();
+	_scripts.removeAll();
 
 	return STATUS_OK;
 }
@@ -84,11 +84,11 @@ ERRORCODE CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 	int numHandlers = 0;
 
 	ERRORCODE ret = STATUS_FAILED;
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread) {
 			CScScript *handler = _scripts[i]->invokeEventHandler(eventName, unbreakable);
 			if (handler) {
-				//_scripts.Add(handler);
+				//_scripts.add(handler);
 				numHandlers++;
 				ret = STATUS_OK;
 			}
@@ -175,7 +175,7 @@ ERRORCODE CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScSt
 		const char *filename = stack->pop()->getString();
 		bool killThreads = stack->pop()->getBool(false);
 		bool ret = false;
-		for (int i = 0; i < _scripts.GetSize(); i++) {
+		for (int i = 0; i < _scripts.getSize(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 				_scripts[i]->finish(killThreads);
 				ret = true;
@@ -194,7 +194,7 @@ ERRORCODE CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScSt
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 		bool ret = false;
-		for (int i = 0; i < _scripts.GetSize(); i++) {
+		for (int i = 0; i < _scripts.getSize(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, filename) == 0 && _scripts[i]->_state != SCRIPT_FINISHED && _scripts[i]->_state != SCRIPT_ERROR) {
 				ret = true;
 				break;
@@ -277,7 +277,7 @@ ERRORCODE CBScriptHolder::persist(CBPersistMgr *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBScriptHolder::addScript(const char *filename) {
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
 				Game->LOG(0, "CBScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, _name);
@@ -295,8 +295,8 @@ ERRORCODE CBScriptHolder::addScript(const char *filename) {
 			strcpy(scr->_filename, filename);
 			scr->_state = SCRIPT_ERROR;
 			scr->_owner = this;
-			_scripts.Add(scr);
-			Game->_scEngine->_scripts.Add(scr);
+			_scripts.add(scr);
+			Game->_scEngine->_scripts.add(scr);
 			Game->getDebugMgr()->onScriptInit(scr);
 
 			return STATUS_OK;
@@ -304,7 +304,7 @@ ERRORCODE CBScriptHolder::addScript(const char *filename) {
 		return STATUS_FAILED;
 	} else {
 		scr->_freezable = _freezable;
-		_scripts.Add(scr);
+		_scripts.add(scr);
 		return STATUS_OK;
 	}
 }
@@ -312,9 +312,9 @@ ERRORCODE CBScriptHolder::addScript(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBScriptHolder::removeScript(CScScript *script) {
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i] == script) {
-			_scripts.RemoveAt(i);
+			_scripts.removeAt(i);
 			break;
 		}
 	}
@@ -323,7 +323,7 @@ ERRORCODE CBScriptHolder::removeScript(CScScript *script) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBScriptHolder::canHandleEvent(const char *EventName) {
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) return true;
 	}
 	return false;
@@ -332,7 +332,7 @@ bool CBScriptHolder::canHandleEvent(const char *EventName) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBScriptHolder::canHandleMethod(const char *MethodName) {
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) return true;
 	}
 	return false;
@@ -420,7 +420,7 @@ ERRORCODE CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 void CBScriptHolder::makeFreezable(bool freezable) {
 	_freezable = freezable;
-	for (int i = 0; i < _scripts.GetSize(); i++)
+	for (int i = 0; i < _scripts.getSize(); i++)
 		_scripts[i]->_freezable = freezable;
 
 }
@@ -428,14 +428,14 @@ void CBScriptHolder::makeFreezable(bool freezable) {
 
 //////////////////////////////////////////////////////////////////////////
 CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
-	for (int i = _scripts.GetSize() - 1; i >= 0; i--) {
+	for (int i = _scripts.getSize() - 1; i >= 0; i--) {
 		if (_scripts[i]->canHandleMethod(methodName)) {
 
 			CScScript *thread = new CScScript(Game, _scripts[i]->_engine);
 			if (thread) {
 				ERRORCODE ret = thread->createMethodThread(_scripts[i], methodName);
 				if (DID_SUCCEED(ret)) {
-					_scripts[i]->_engine->_scripts.Add(thread);
+					_scripts[i]->_engine->_scripts.add(thread);
 					Game->getDebugMgr()->onScriptMethodThreadInit(thread, _scripts[i], methodName);
 
 					return thread;

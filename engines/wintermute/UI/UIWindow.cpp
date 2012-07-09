@@ -107,8 +107,8 @@ void CUIWindow::cleanup() {
 	if (!_sharedFonts && _fontInactive) Game->_fontStorage->removeFont(_fontInactive);
 	if (!_sharedImages && _imageInactive) delete _imageInactive;
 
-	for (int i = 0; i < _widgets.GetSize(); i++) delete _widgets[i];
-	_widgets.RemoveAll();
+	for (int i = 0; i < _widgets.getSize(); i++) delete _widgets[i];
+	_widgets.removeAll();
 }
 
 
@@ -190,9 +190,9 @@ ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (!_transparent && !image)
-		Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+		Game->_renderer->_rectList.add(new CBActiveRect(Game, this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 
-	for (int i = 0; i < _widgets.GetSize(); i++) {
+	for (int i = 0; i < _widgets.getSize(); i++) {
 		_widgets[i]->display(_posX + offsetX, _posY + offsetY);
 	}
 
@@ -440,7 +440,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				btn->_parent = this;
-				_widgets.Add(btn);
+				_widgets.add(btn);
 			}
 		}
 		break;
@@ -453,7 +453,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				text->_parent = this;
-				_widgets.Add(text);
+				_widgets.add(text);
 			}
 		}
 		break;
@@ -466,7 +466,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				edit->_parent = this;
-				_widgets.Add(edit);
+				_widgets.add(edit);
 			}
 		}
 		break;
@@ -479,7 +479,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				win->_parent = this;
-				_widgets.Add(win);
+				_widgets.add(win);
 			}
 		}
 		break;
@@ -659,7 +659,7 @@ ERRORCODE CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// scripts
-	for (int i = 0; i < _scripts.GetSize(); i++) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
@@ -669,7 +669,7 @@ ERRORCODE CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 	CBBase::saveAsText(buffer, indent + 2);
 
 	// controls
-	for (int i = 0; i < _widgets.GetSize(); i++)
+	for (int i = 0; i < _widgets.getSize(); i++)
 		_widgets[i]->saveAsText(buffer, indent + 2);
 
 
@@ -679,7 +679,7 @@ ERRORCODE CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIWindow::enableWidget(const char *name, bool Enable) {
-	for (int i = 0; i < _widgets.GetSize(); i++) {
+	for (int i = 0; i < _widgets.getSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_disable = !Enable;
 	}
 	return STATUS_OK;
@@ -688,7 +688,7 @@ ERRORCODE CUIWindow::enableWidget(const char *name, bool Enable) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIWindow::showWidget(const char *name, bool Visible) {
-	for (int i = 0; i < _widgets.GetSize(); i++) {
+	for (int i = 0; i < _widgets.getSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_visible = Visible;
 	}
 	return STATUS_OK;
@@ -707,10 +707,10 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		CScValue *val = stack->pop();
 		if (val->getType() == VAL_INT) {
 			int widget = val->getInt();
-			if (widget < 0 || widget >= _widgets.GetSize()) stack->pushNULL();
+			if (widget < 0 || widget >= _widgets.getSize()) stack->pushNULL();
 			else stack->pushNative(_widgets[widget], true);
 		} else {
-			for (int i = 0; i < _widgets.GetSize(); i++) {
+			for (int i = 0; i < _widgets.getSize(); i++) {
 				if (scumm_stricmp(_widgets[i]->_name, val->getString()) == 0) {
 					stack->pushNative(_widgets[i], true);
 					return STATUS_OK;
@@ -845,7 +845,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->pushNative(btn, true);
 
 		btn->_parent = this;
-		_widgets.Add(btn);
+		_widgets.add(btn);
 
 		return STATUS_OK;
 	}
@@ -862,7 +862,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->pushNative(sta, true);
 
 		sta->_parent = this;
-		_widgets.Add(sta);
+		_widgets.add(sta);
 
 		return STATUS_OK;
 	}
@@ -879,7 +879,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->pushNative(edi, true);
 
 		edi->_parent = this;
-		_widgets.Add(edi);
+		_widgets.add(edi);
 
 		return STATUS_OK;
 	}
@@ -896,7 +896,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->pushNative(win, true);
 
 		win->_parent = this;
-		_widgets.Add(win);
+		_widgets.add(win);
 
 		return STATUS_OK;
 	}
@@ -909,10 +909,10 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		CScValue *val = stack->pop();
 		CUIObject *obj = (CUIObject *)val->getNative();
 
-		for (int i = 0; i < _widgets.GetSize(); i++) {
+		for (int i = 0; i < _widgets.getSize(); i++) {
 			if (_widgets[i] == obj) {
 				delete _widgets[i];
-				_widgets.RemoveAt(i);
+				_widgets.removeAt(i);
 				if (val->getType() == VAL_VARIABLE_REF) val->setNULL();
 			}
 		}
@@ -940,7 +940,7 @@ CScValue *CUIWindow::scGetProperty(const char *name) {
 	// NumWidgets / NumControls (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumWidgets") == 0 || strcmp(name, "NumControls") == 0) {
-		_scValue->setInt(_widgets.GetSize());
+		_scValue->setInt(_widgets.getSize());
 		return _scValue;
 	}
 
@@ -1192,7 +1192,7 @@ ERRORCODE CUIWindow::persist(CBPersistMgr *persistMgr) {
 ERRORCODE CUIWindow::moveFocus(bool forward) {
 	int i;
 	bool found = false;
-	for (i = 0; i < _widgets.GetSize(); i++) {
+	for (i = 0; i < _widgets.getSize(); i++) {
 		if (_widgets[i] == _focusedWidget) {
 			found = true;
 			break;
@@ -1201,14 +1201,14 @@ ERRORCODE CUIWindow::moveFocus(bool forward) {
 	if (!found) _focusedWidget = NULL;
 
 	if (!_focusedWidget) {
-		if (_widgets.GetSize() > 0) i = 0;
+		if (_widgets.getSize() > 0) i = 0;
 		else return STATUS_OK;
 	}
 
 	int numTries = 0;
 	bool done = false;
 
-	while (numTries <= _widgets.GetSize()) {
+	while (numTries <= _widgets.getSize()) {
 		if (_widgets[i] != _focusedWidget && _widgets[i]->_canFocus && _widgets[i]->_visible && !_widgets[i]->_disable) {
 			_focusedWidget = _widgets[i];
 			done = true;
@@ -1217,10 +1217,10 @@ ERRORCODE CUIWindow::moveFocus(bool forward) {
 
 		if (forward) {
 			i++;
-			if (i >= _widgets.GetSize()) i = 0;
+			if (i >= _widgets.getSize()) i = 0;
 		} else {
 			i--;
-			if (i < 0) i = _widgets.GetSize() - 1;
+			if (i < 0) i = _widgets.getSize() - 1;
 		}
 		numTries++;
 	}
@@ -1294,7 +1294,7 @@ ERRORCODE CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
 
 //////////////////////////////////////////////////////////////////////////
 void CUIWindow::makeFreezable(bool freezable) {
-	for (int i = 0; i < _widgets.GetSize(); i++)
+	for (int i = 0; i < _widgets.getSize(); i++)
 		_widgets[i]->makeFreezable(freezable);
 
 	CBObject::makeFreezable(freezable);
@@ -1303,7 +1303,7 @@ void CUIWindow::makeFreezable(bool freezable) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIWindow::getWindowObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
-	for (int i = 0; i < _widgets.GetSize(); i++) {
+	for (int i = 0; i < _widgets.getSize(); i++) {
 		CUIObject *control = _widgets[i];
 		if (control->_disable && interactiveOnly) continue;
 
@@ -1314,11 +1314,11 @@ ERRORCODE CUIWindow::getWindowObjects(CBArray<CUIObject *, CUIObject *> &objects
 
 		case UI_BUTTON:
 		case UI_EDIT:
-			objects.Add(control);
+			objects.add(control);
 			break;
 
 		default:
-			if (!interactiveOnly) objects.Add(control);
+			if (!interactiveOnly) objects.add(control);
 		}
 	}
 	return STATUS_OK;

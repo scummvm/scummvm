@@ -56,9 +56,9 @@ CAdWaypointGroup::~CAdWaypointGroup() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdWaypointGroup::cleanup() {
-	for (int i = 0; i < _points.GetSize(); i++)
+	for (int i = 0; i < _points.getSize(); i++)
 		delete _points[i];
-	_points.RemoveAll();
+	_points.removeAll();
 	_editorSelectedPoint = -1;
 }
 
@@ -133,7 +133,7 @@ ERRORCODE CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_POINT: {
 			int x, y;
 			parser.scanStr((char *)params, "%d,%d", &x, &y);
-			_points.Add(new CBPoint(x, y));
+			_points.add(new CBPoint(x, y));
 		}
 		break;
 
@@ -174,7 +174,7 @@ ERRORCODE CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
 		_scProp->saveAsText(buffer, indent + 2);
 	CBBase::saveAsText(buffer, indent + 2);
 
-	for (int i = 0; i < _points.GetSize(); i++) {
+	for (int i = 0; i < _points.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
@@ -244,11 +244,11 @@ ERRORCODE CAdWaypointGroup::mimic(CAdWaypointGroup *wpt, float scale, int argX, 
 
 	cleanup();
 
-	for (int i = 0; i < wpt->_points.GetSize(); i++) {
+	for (int i = 0; i < wpt->_points.getSize(); i++) {
 		int x = (int)((float)wpt->_points[i]->x * scale / 100.0f);
 		int y = (int)((float)wpt->_points[i]->y * scale / 100.0f);
 
-		_points.Add(new CBPoint(x + argX, y + argY));
+		_points.add(new CBPoint(x + argX, y + argY));
 	}
 
 	_lastMimicScale = scale;

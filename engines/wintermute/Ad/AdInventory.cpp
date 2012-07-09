@@ -44,7 +44,7 @@ CAdInventory::CAdInventory(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdInventory::~CAdInventory() {
-	_takenItems.RemoveAll(); // ref only
+	_takenItems.removeAll(); // ref only
 }
 
 
@@ -56,9 +56,9 @@ ERRORCODE CAdInventory::insertItem(const char *name, const char *insertAfter) {
 	if (item == NULL) return STATUS_FAILED;
 
 	int insertIndex = -1;
-	for (int i = 0; i < _takenItems.GetSize(); i++) {
+	for (int i = 0; i < _takenItems.getSize(); i++) {
 		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
-			_takenItems.RemoveAt(i);
+			_takenItems.removeAt(i);
 			i--;
 			continue;
 		}
@@ -66,8 +66,8 @@ ERRORCODE CAdInventory::insertItem(const char *name, const char *insertAfter) {
 	}
 
 
-	if (insertIndex == -1) _takenItems.Add(item);
-	else _takenItems.InsertAt(insertIndex, item);
+	if (insertIndex == -1) _takenItems.add(item);
+	else _takenItems.insertAt(insertIndex, item);
 
 	return STATUS_OK;
 }
@@ -77,10 +77,10 @@ ERRORCODE CAdInventory::insertItem(const char *name, const char *insertAfter) {
 ERRORCODE CAdInventory::removeItem(const char *name) {
 	if (name == NULL) return STATUS_FAILED;
 
-	for (int i = 0; i < _takenItems.GetSize(); i++) {
+	for (int i = 0; i < _takenItems.getSize(); i++) {
 		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
 			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
-			_takenItems.RemoveAt(i);
+			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}
 	}
@@ -94,10 +94,10 @@ ERRORCODE CAdInventory::removeItem(const char *name) {
 ERRORCODE CAdInventory::removeItem(CAdItem *item) {
 	if (item == NULL) return STATUS_FAILED;
 
-	for (int i = 0; i < _takenItems.GetSize(); i++) {
+	for (int i = 0; i < _takenItems.getSize(); i++) {
 		if (_takenItems[i] == item) {
 			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
-			_takenItems.RemoveAt(i);
+			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}
 	}

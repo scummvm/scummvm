@@ -48,8 +48,8 @@ CAdSceneState::~CAdSceneState() {
 	delete[] _filename;
 	_filename = NULL;
 
-	for (int i = 0; i < _nodeStates.GetSize(); i++) delete _nodeStates[i];
-	_nodeStates.RemoveAll();
+	for (int i = 0; i < _nodeStates.getSize(); i++) delete _nodeStates[i];
+	_nodeStates.removeAll();
 }
 
 
@@ -72,14 +72,14 @@ void CAdSceneState::setFilename(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdNodeState *CAdSceneState::getNodeState(char *name, bool saving) {
-	for (int i = 0; i < _nodeStates.GetSize(); i++) {
+	for (int i = 0; i < _nodeStates.getSize(); i++) {
 		if (scumm_stricmp(_nodeStates[i]->_name, name) == 0) return _nodeStates[i];
 	}
 
 	if (saving) {
 		CAdNodeState *ret = new CAdNodeState(Game);
 		ret->setName(name);
-		_nodeStates.Add(ret);
+		_nodeStates.add(ret);
 
 		return ret;
 	} else return NULL;

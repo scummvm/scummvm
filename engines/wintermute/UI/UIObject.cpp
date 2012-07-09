@@ -229,7 +229,7 @@ ERRORCODE CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			// find directly
 			if (val->isNative()) {
 				CUIObject *widget = (CUIObject *)val->getNative();
-				for (i = 0; i < win->_widgets.GetSize(); i++) {
+				for (i = 0; i < win->_widgets.getSize(); i++) {
 					if (win->_widgets[i] == widget) {
 						found = true;
 						break;
@@ -239,7 +239,7 @@ ERRORCODE CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			// find by name
 			else {
 				const char *findName = val->getString();
-				for (i = 0; i < win->_widgets.GetSize(); i++) {
+				for (i = 0; i < win->_widgets.getSize(); i++) {
 					if (scumm_stricmp(win->_widgets[i]->_name, findName) == 0) {
 						found = true;
 						break;
@@ -249,13 +249,13 @@ ERRORCODE CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 
 			if (found) {
 				bool done = false;
-				for (int j = 0; j < win->_widgets.GetSize(); j++) {
+				for (int j = 0; j < win->_widgets.getSize(); j++) {
 					if (win->_widgets[j] == this) {
 						if (strcmp(name, "MoveAfter") == 0) i++;
 						if (j >= i) j++;
 
-						win->_widgets.InsertAt(i, this);
-						win->_widgets.RemoveAt(j);
+						win->_widgets.insertAt(i, this);
+						win->_widgets.removeAt(j);
 
 						done = true;
 						stack->pushBool(true);
@@ -278,10 +278,10 @@ ERRORCODE CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			CUIWindow *win = (CUIWindow *)_parent;
-			for (int i = 0; i < win->_widgets.GetSize(); i++) {
+			for (int i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
-					win->_widgets.RemoveAt(i);
-					win->_widgets.InsertAt(0, this);
+					win->_widgets.removeAt(i);
+					win->_widgets.insertAt(0, this);
 					break;
 				}
 			}
@@ -299,10 +299,10 @@ ERRORCODE CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			CUIWindow *win = (CUIWindow *)_parent;
-			for (int i = 0; i < win->_widgets.GetSize(); i++) {
+			for (int i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
-					win->_widgets.RemoveAt(i);
-					win->_widgets.Add(this);
+					win->_widgets.removeAt(i);
+					win->_widgets.add(this);
 					break;
 				}
 			}
@@ -399,10 +399,10 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 		_scValue->setNULL();
 		if (_parent && _parent->_type == UI_WINDOW) {
 			CUIWindow *win = (CUIWindow *)_parent;
-			for (int i = 0; i < win->_widgets.GetSize(); i++) {
+			for (int i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
 					if (strcmp(name, "NextSibling") == 0) {
-						if (i < win->_widgets.GetSize() - 1) _scValue->setNative(win->_widgets[i + 1], true);
+						if (i < win->_widgets.getSize() - 1) _scValue->setNative(win->_widgets[i + 1], true);
 					} else {
 						if (i > 0) _scValue->setNative(win->_widgets[i - 1], true);
 					}

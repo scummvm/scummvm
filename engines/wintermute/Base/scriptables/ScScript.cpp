@@ -1029,7 +1029,7 @@ ERRORCODE CScScript::executeInstruction() {
 			_currentLine = newLine;
 			if (Game->getDebugMgr()->_enabled) {
 				Game->getDebugMgr()->onScriptChangeLine(this, _currentLine);
-				for (int i = 0; i < _breakpoints.GetSize(); i++) {
+				for (int i = 0; i < _breakpoints.getSize(); i++) {
 					if (_breakpoints[i] == _currentLine) {
 						Game->getDebugMgr()->onScriptHitBreakpoint(this);
 						sleep(0);
@@ -1268,7 +1268,7 @@ CScScript *CScScript::invokeEventHandler(const char *eventName, bool unbreakable
 		ERRORCODE ret = thread->createThread(this, pos, eventName);
 		if (DID_SUCCEED(ret)) {
 			thread->_unbreakable = unbreakable;
-			_engine->_scripts.Add(thread);
+			_engine->_scripts.add(thread);
 			Game->getDebugMgr()->onScriptEventThreadInit(thread, this, eventName);
 			return thread;
 		} else {
@@ -1363,7 +1363,7 @@ ERRORCODE CScScript::copyParameters(CScStack *stack) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScScript::finishThreads() {
-	for (int i = 0; i < _engine->_scripts.GetSize(); i++) {
+	for (int i = 0; i < _engine->_scripts.getSize(); i++) {
 		CScScript *scr = _engine->_scripts[i];
 		if (scr->_thread && scr->_state != SCRIPT_FINISHED && scr->_owner == _owner && scumm_stricmp(scr->_filename, _filename) == 0)
 			scr->finish(true);
@@ -1417,12 +1417,12 @@ TScriptState CScScript::dbgGetState() {
 
 //////////////////////////////////////////////////////////////////////////
 int CScScript::dbgGetNumBreakpoints() {
-	return _breakpoints.GetSize();
+	return _breakpoints.getSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 int CScScript::dbgGetBreakpoint(int index) {
-	if (index >= 0 && index < _breakpoints.GetSize()) return _breakpoints[index];
+	if (index >= 0 && index < _breakpoints.getSize()) return _breakpoints[index];
 	else return -1;
 }
 

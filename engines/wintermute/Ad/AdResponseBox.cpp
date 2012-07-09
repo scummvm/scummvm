@@ -94,25 +94,25 @@ CAdResponseBox::~CAdResponseBox() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdResponseBox::clearResponses() {
-	for (int i = 0; i < _responses.GetSize(); i++) {
+	for (int i = 0; i < _responses.getSize(); i++) {
 		delete _responses[i];
 	}
-	_responses.RemoveAll();
+	_responses.removeAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void CAdResponseBox::clearButtons() {
-	for (int i = 0; i < _respButtons.GetSize(); i++) {
+	for (int i = 0; i < _respButtons.getSize(); i++) {
 		delete _respButtons[i];
 	}
-	_respButtons.RemoveAll();
+	_respButtons.removeAll();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdResponseBox::invalidateButtons() {
-	for (int i = 0; i < _respButtons.GetSize(); i++) {
+	for (int i = 0; i < _respButtons.getSize(); i++) {
 		_respButtons[i]->_image = NULL;
 		_respButtons[i]->_cursor = NULL;
 		_respButtons[i]->_font = NULL;
@@ -129,7 +129,7 @@ ERRORCODE CAdResponseBox::createButtons() {
 	clearButtons();
 
 	_scrollOffset = 0;
-	for (int i = 0; i < _responses.GetSize(); i++) {
+	for (int i = 0; i < _responses.getSize(); i++) {
 		CUIButton *btn = new CUIButton(Game);
 		if (btn) {
 			btn->_parent = _window;
@@ -172,7 +172,7 @@ ERRORCODE CAdResponseBox::createButtons() {
 			//btn->SetListener(this, btn, _responses[i]->_iD);
 			btn->setListener(this, btn, i);
 			btn->_visible = false;
-			_respButtons.Add(btn);
+			_respButtons.add(btn);
 
 			if (_responseArea.bottom - _responseArea.top < btn->_height) {
 				Game->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->_text);
@@ -325,7 +325,7 @@ ERRORCODE CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	}
 
 	if (_window) {
-		for (int i = 0; i < _window->_widgets.GetSize(); i++) {
+		for (int i = 0; i < _window->_widgets.getSize(); i++) {
 			if (!_window->_widgets[i]->_listenerObject)
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 		}
@@ -411,7 +411,7 @@ ERRORCODE CAdResponseBox::display() {
 	// shift down if needed
 	if (!_horizontal) {
 		int total_height = 0;
-		for (i = 0; i < _respButtons.GetSize(); i++) total_height += (_respButtons[i]->_height + _spacing);
+		for (i = 0; i < _respButtons.getSize(); i++) total_height += (_respButtons[i]->_height + _spacing);
 		total_height -= _spacing;
 
 		switch (_verticalAlign) {
@@ -433,7 +433,7 @@ ERRORCODE CAdResponseBox::display() {
 
 	// prepare response buttons
 	bool scrollNeeded = false;
-	for (i = _scrollOffset; i < _respButtons.GetSize(); i++) {
+	for (i = _scrollOffset; i < _respButtons.getSize(); i++) {
 		if ((_horizontal && xxx + _respButtons[i]->_width > rect.right)
 		        || (!_horizontal && yyy + _respButtons[i]->_height > rect.bottom)) {
 
@@ -473,7 +473,7 @@ ERRORCODE CAdResponseBox::display() {
 
 
 	// display response buttons
-	for (i = _scrollOffset; i < _respButtons.GetSize(); i++) {
+	for (i = _scrollOffset; i < _respButtons.getSize(); i++) {
 		_respButtons[i]->display();
 	}
 
@@ -539,12 +539,12 @@ ERRORCODE CAdResponseBox::persist(CBPersistMgr *persistMgr) {
 ERRORCODE CAdResponseBox::weedResponses() {
 	CAdGame *adGame = (CAdGame *)Game;
 
-	for (int i = 0; i < _responses.GetSize(); i++) {
+	for (int i = 0; i < _responses.getSize(); i++) {
 		switch (_responses[i]->_responseType) {
 		case RESPONSE_ONCE:
 			if (adGame->branchResponseUsed(_responses[i]->_iD)) {
 				delete _responses[i];
-				_responses.RemoveAt(i);
+				_responses.removeAt(i);
 				i--;
 			}
 			break;
@@ -552,7 +552,7 @@ ERRORCODE CAdResponseBox::weedResponses() {
 		case RESPONSE_ONCE_GAME:
 			if (adGame->gameResponseUsed(_responses[i]->_iD)) {
 				delete _responses[i];
-				_responses.RemoveAt(i);
+				_responses.removeAt(i);
 				i--;
 			}
 			break;
@@ -599,12 +599,12 @@ CBObject *CAdResponseBox::getNextAccessObject(CBObject *currObject) {
 	CBArray<CUIObject *, CUIObject *> objects;
 	getObjects(objects, true);
 
-	if (objects.GetSize() == 0) return NULL;
+	if (objects.getSize() == 0) return NULL;
 	else {
 		if (currObject != NULL) {
-			for (int i = 0; i < objects.GetSize(); i++) {
+			for (int i = 0; i < objects.getSize(); i++) {
 				if (objects[i] == currObject) {
-					if (i < objects.GetSize() - 1) return objects[i + 1];
+					if (i < objects.getSize() - 1) return objects[i + 1];
 					else break;
 				}
 			}
@@ -619,25 +619,25 @@ CBObject *CAdResponseBox::getPrevAccessObject(CBObject *currObject) {
 	CBArray<CUIObject *, CUIObject *> objects;
 	getObjects(objects, true);
 
-	if (objects.GetSize() == 0) return NULL;
+	if (objects.getSize() == 0) return NULL;
 	else {
 		if (currObject != NULL) {
-			for (int i = objects.GetSize() - 1; i >= 0; i--) {
+			for (int i = objects.getSize() - 1; i >= 0; i--) {
 				if (objects[i] == currObject) {
 					if (i > 0) return objects[i - 1];
 					else break;
 				}
 			}
 		}
-		return objects[objects.GetSize() - 1];
+		return objects[objects.getSize() - 1];
 	}
 	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
-	for (int i = 0; i < _respButtons.GetSize(); i++) {
-		objects.Add(_respButtons[i]);
+	for (int i = 0; i < _respButtons.getSize(); i++) {
+		objects.add(_respButtons[i]);
 	}
 	if (_window) _window->getWindowObjects(objects, interactiveOnly);
 

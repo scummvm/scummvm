@@ -60,9 +60,9 @@ CBSoundMgr::~CBSoundMgr() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundMgr::cleanup() {
-	for (int i = 0; i < _sounds.GetSize(); i++)
+	for (int i = 0; i < _sounds.getSize(); i++)
 		delete _sounds[i];
-	_sounds.RemoveAll();
+	_sounds.removeAll();
 #if 0
 	BASS_Free();
 #endif
@@ -174,7 +174,7 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType type, bool 
 	}
 
 	// register sound
-	_sounds.Add(sound);
+	_sounds.add(sound);
 
 	return sound;
 
@@ -200,17 +200,17 @@ ERRORCODE CBSoundMgr::addSound(CBSoundBuffer *sound, TSoundType type) {
 	}
 
 	// register sound
-	_sounds.Add(sound);
+	_sounds.add(sound);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundMgr::removeSound(CBSoundBuffer *sound) {
-	for (int i = 0; i < _sounds.GetSize(); i++) {
+	for (int i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i] == sound) {
 			delete _sounds[i];
-			_sounds.RemoveAt(i);
+			_sounds.removeAt(i);
 			return STATUS_OK;
 		}
 	}
@@ -236,7 +236,7 @@ ERRORCODE CBSoundMgr::setVolume(TSoundType type, int volume) {
 		break;
 	}
 
-	for (int i = 0; i < _sounds.GetSize(); i++) {
+	for (int i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i]->_type == type) _sounds[i]->setVolume(volume);
 	}
 
@@ -295,7 +295,7 @@ byte CBSoundMgr::getMasterVolumePercent() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundMgr::pauseAll(bool includingMusic) {
 
-	for (int i = 0; i < _sounds.GetSize(); i++) {
+	for (int i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != SOUND_MUSIC || includingMusic)) {
 			_sounds[i]->pause();
 			_sounds[i]->_freezePaused = true;
@@ -309,7 +309,7 @@ ERRORCODE CBSoundMgr::pauseAll(bool includingMusic) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundMgr::resumeAll() {
 
-	for (int i = 0; i < _sounds.GetSize(); i++) {
+	for (int i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i]->_freezePaused) {
 			_sounds[i]->resume();
 			_sounds[i]->_freezePaused = false;

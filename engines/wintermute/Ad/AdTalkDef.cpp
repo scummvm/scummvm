@@ -53,8 +53,8 @@ CAdTalkDef::CAdTalkDef(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdTalkDef::~CAdTalkDef() {
-	for (int i = 0; i < _nodes.GetSize(); i++) delete _nodes[i];
-	_nodes.RemoveAll();
+	for (int i = 0; i < _nodes.getSize(); i++) delete _nodes[i];
+	_nodes.removeAll();
 
 	delete[] _defaultSpriteFilename;
 	delete _defaultSprite;
@@ -129,7 +129,7 @@ ERRORCODE CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_ACTION: {
 			CAdTalkNode *Node = new CAdTalkNode(Game);
-			if (Node && DID_SUCCEED(Node->loadBuffer(params, false))) _nodes.Add(Node);
+			if (Node && DID_SUCCEED(Node->loadBuffer(params, false))) _nodes.add(Node);
 			else {
 				delete Node;
 				Node = NULL;
@@ -217,7 +217,7 @@ ERRORCODE CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
 	if (_defaultSpriteSetFilename) buffer->putTextIndent(indent + 2, "DEFAULT_SPRITESET_FILE=\"%s\"\n", _defaultSpriteSetFilename);
 	else if (_defaultSpriteSet) _defaultSpriteSet->saveAsText(buffer, indent + 2);
 
-	for (int i = 0; i < _nodes.GetSize(); i++) {
+	for (int i = 0; i < _nodes.getSize(); i++) {
 		_nodes[i]->saveAsText(buffer, indent + 2);
 		buffer->putTextIndent(indent, "\n");
 	}

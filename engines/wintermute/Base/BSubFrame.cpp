@@ -209,9 +209,9 @@ ERRORCODE CBSubFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, f
 
 	if (registerOwner != NULL && !_decoration) {
 		if (zoomX == 100 && zoomY == 100) {
-			Game->_renderer->_rectList.Add(new CBActiveRect(Game, registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
+			Game->_renderer->_rectList.add(new CBActiveRect(Game, registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
 		} else {
-			Game->_renderer->_rectList.Add(new CBActiveRect(Game, registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
+			Game->_renderer->_rectList.add(new CBActiveRect(Game, registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
 	if (Game->_suspendedRendering) return STATUS_OK;

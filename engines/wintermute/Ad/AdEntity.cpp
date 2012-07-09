@@ -237,14 +237,14 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_TALK: {
 			spr = new CBSprite(Game, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSprites.Add(spr);
+			else _talkSprites.add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			spr = new CBSprite(Game, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSpritesEx.Add(spr);
+			else _talkSpritesEx.add(spr);
 		}
 		break;
 
@@ -503,7 +503,7 @@ ERRORCODE CAdEntity::display() {
 		if (_ignoreItems && ((CAdGame *)Game)->_selectedItem) Reg = false;
 
 		if (_region && (Reg || _editorAlwaysRegister)) {
-			Game->_renderer->_rectList.Add(new CBActiveRect(Game, _registerAlias, _region, Game->_offsetX, Game->_offsetY));
+			Game->_renderer->_rectList.add(new CBActiveRect(Game, _registerAlias, _region, Game->_offsetX, Game->_offsetY));
 		}
 
 		displaySpriteAttachments(true);
@@ -910,7 +910,7 @@ ERRORCODE CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	int i;
 
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 

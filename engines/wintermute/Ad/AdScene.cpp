@@ -149,32 +149,32 @@ void CAdScene::cleanup() {
 	Game->unregisterObject(_fader);
 	_fader = NULL;
 
-	for (i = 0; i < _layers.GetSize(); i++)
+	for (i = 0; i < _layers.getSize(); i++)
 		Game->unregisterObject(_layers[i]);
-	_layers.RemoveAll();
+	_layers.removeAll();
 
 
-	for (i = 0; i < _waypointGroups.GetSize(); i++)
+	for (i = 0; i < _waypointGroups.getSize(); i++)
 		Game->unregisterObject(_waypointGroups[i]);
-	_waypointGroups.RemoveAll();
+	_waypointGroups.removeAll();
 
-	for (i = 0; i < _scaleLevels.GetSize(); i++)
+	for (i = 0; i < _scaleLevels.getSize(); i++)
 		Game->unregisterObject(_scaleLevels[i]);
-	_scaleLevels.RemoveAll();
+	_scaleLevels.removeAll();
 
-	for (i = 0; i < _rotLevels.GetSize(); i++)
+	for (i = 0; i < _rotLevels.getSize(); i++)
 		Game->unregisterObject(_rotLevels[i]);
-	_rotLevels.RemoveAll();
+	_rotLevels.removeAll();
 
 
-	for (i = 0; i < _pfPath.GetSize(); i++)
+	for (i = 0; i < _pfPath.getSize(); i++)
 		delete _pfPath[i];
-	_pfPath.RemoveAll();
+	_pfPath.removeAll();
 	_pfPointsNum = 0;
 
-	for (i = 0; i < _objects.GetSize(); i++)
+	for (i = 0; i < _objects.getSize(); i++)
 		Game->unregisterObject(_objects[i]);
-	_objects.RemoveAll();
+	_objects.removeAll();
 
 	delete _viewport;
 	_viewport = NULL;
@@ -200,7 +200,7 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 		pfPointsStart();
 
 		// first point
-		//_pfPath.Add(new CAdPathPoint(source.x, source.y, 0));
+		//_pfPath.add(new CAdPathPoint(source.x, source.y, 0));
 
 		// if we're one pixel stuck, get unstuck
 		int startX = source.x;
@@ -228,11 +228,11 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 		//CorrectTargetPoint(&target.x, &target.y);
 
 		// last point
-		//_pfPath.Add(new CAdPathPoint(target.x, target.y, INT_MAX));
+		//_pfPath.add(new CAdPathPoint(target.x, target.y, INT_MAX));
 		pfPointsAdd(target.x, target.y, INT_MAX);
 
 		// active waypoints
-		for (i = 0; i < _waypointGroups.GetSize(); i++) {
+		for (i = 0; i < _waypointGroups.getSize(); i++) {
 			if (_waypointGroups[i]->_active) {
 				pfAddWaypointGroup(_waypointGroups[i], requester);
 			}
@@ -240,13 +240,13 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 
 
 		// free waypoints
-		for (i = 0; i < _objects.GetSize(); i++) {
+		for (i = 0; i < _objects.getSize(); i++) {
 			if (_objects[i]->_active && _objects[i] != requester && _objects[i]->_currentWptGroup) {
 				pfAddWaypointGroup(_objects[i]->_currentWptGroup, requester);
 			}
 		}
 		CAdGame *adGame = (CAdGame *)Game;
-		for (i = 0; i < adGame->_objects.GetSize(); i++) {
+		for (i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentWptGroup) {
 				pfAddWaypointGroup(adGame->_objects[i]->_currentWptGroup, requester);
 			}
@@ -261,10 +261,10 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 void CAdScene::pfAddWaypointGroup(CAdWaypointGroup *wpt, CBObject *requester) {
 	if (!wpt->_active) return;
 
-	for (int i = 0; i < wpt->_points.GetSize(); i++) {
+	for (int i = 0; i < wpt->_points.getSize(); i++) {
 		if (isBlockedAt(wpt->_points[i]->x, wpt->_points[i]->y, true, requester)) continue;
 
-		//_pfPath.Add(new CAdPathPoint(Wpt->_points[i]->x, Wpt->_points[i]->y, INT_MAX));
+		//_pfPath.add(new CAdPathPoint(Wpt->_points[i]->x, Wpt->_points[i]->y, INT_MAX));
 		pfPointsAdd(wpt->_points[i]->x, wpt->_points[i]->y, INT_MAX);
 	}
 }
@@ -276,7 +276,7 @@ float CAdScene::getZoomAt(int x, int y) {
 
 	bool found = false;
 	if (_mainLayer) {
-		for (int i = _mainLayer->_nodes.GetSize() - 1; i >= 0; i--) {
+		for (int i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
 			CAdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_blocked && node->_region->pointInRegion(x, y)) {
 				if (node->_region->_zoom != 0) {
@@ -302,7 +302,7 @@ uint32 CAdScene::getAlphaAt(int x, int y, bool colorCheck) {
 	else ret = 0xFFFFFFFF;
 
 	if (_mainLayer) {
-		for (int i = _mainLayer->_nodes.GetSize() - 1; i >= 0; i--) {
+		for (int i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
 			CAdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->_blocked) && node->_region->pointInRegion(x, y)) {
 				if (!node->_region->_blocked) ret = node->_region->_alpha;
@@ -320,13 +320,13 @@ bool CAdScene::isBlockedAt(int x, int y, bool checkFreeObjects, CBObject *reques
 
 
 	if (checkFreeObjects) {
-		for (int i = 0; i < _objects.GetSize(); i++) {
+		for (int i = 0; i < _objects.getSize(); i++) {
 			if (_objects[i]->_active && _objects[i] != requester && _objects[i]->_currentBlockRegion) {
 				if (_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return true;
 			}
 		}
 		CAdGame *adGame = (CAdGame *)Game;
-		for (int i = 0; i < adGame->_objects.GetSize(); i++) {
+		for (int i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentBlockRegion) {
 				if (adGame->_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return true;
 			}
@@ -335,7 +335,7 @@ bool CAdScene::isBlockedAt(int x, int y, bool checkFreeObjects, CBObject *reques
 
 
 	if (_mainLayer) {
-		for (int i = 0; i < _mainLayer->_nodes.GetSize(); i++) {
+		for (int i = 0; i < _mainLayer->_nodes.getSize(); i++) {
 			CAdSceneNode *node = _mainLayer->_nodes[i];
 			/*
 			if (Node->_type == OBJECT_REGION && Node->_region->_active && Node->_region->_blocked && Node->_region->PointInRegion(X, Y))
@@ -361,13 +361,13 @@ bool CAdScene::isWalkableAt(int x, int y, bool checkFreeObjects, CBObject *reque
 	bool ret = false;
 
 	if (checkFreeObjects) {
-		for (int i = 0; i < _objects.GetSize(); i++) {
+		for (int i = 0; i < _objects.getSize(); i++) {
 			if (_objects[i]->_active && _objects[i] != requester && _objects[i]->_currentBlockRegion) {
 				if (_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return false;
 			}
 		}
 		CAdGame *adGame = (CAdGame *)Game;
-		for (int i = 0; i < adGame->_objects.GetSize(); i++) {
+		for (int i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentBlockRegion) {
 				if (adGame->_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return false;
 			}
@@ -376,7 +376,7 @@ bool CAdScene::isWalkableAt(int x, int y, bool checkFreeObjects, CBObject *reque
 
 
 	if (_mainLayer) {
-		for (int i = 0; i < _mainLayer->_nodes.GetSize(); i++) {
+		for (int i = 0; i < _mainLayer->_nodes.getSize(); i++) {
 			CAdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->pointInRegion(x, y)) {
 				if (node->_region->_blocked) {
@@ -459,7 +459,7 @@ void CAdScene::pathFinderStep() {
 	// target point marked, generate path and terminate
 	if (lowestPt->x == _pfTarget->x && lowestPt->y == _pfTarget->y) {
 		while (lowestPt != NULL) {
-			_pfTargetPath->_points.InsertAt(0, new CBPoint(lowestPt->x, lowestPt->y));
+			_pfTargetPath->_points.insertAt(0, new CBPoint(lowestPt->x, lowestPt->y));
 			lowestPt = lowestPt->_origin;
 		}
 
@@ -646,7 +646,7 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 				layer = NULL;
 			} else {
 				Game->registerObject(layer);
-				_layers.Add(layer);
+				_layers.add(layer);
 				if (layer->_main) {
 					_mainLayer = layer;
 					_width = layer->_width;
@@ -664,7 +664,7 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 				wpt = NULL;
 			} else {
 				Game->registerObject(wpt);
-				_waypointGroups.Add(wpt);
+				_waypointGroups.add(wpt);
 			}
 		}
 		break;
@@ -677,7 +677,7 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 				sl = NULL;
 			} else {
 				Game->registerObject(sl);
-				_scaleLevels.Add(sl);
+				_scaleLevels.add(sl);
 			}
 		}
 		break;
@@ -690,7 +690,7 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 				rl = NULL;
 			} else {
 				Game->registerObject(rl);
-				_rotLevels.Add(rl);
+				_rotLevels.add(rl);
 			}
 		}
 		break;
@@ -943,7 +943,7 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 	/* int MainOffsetX = 0; */
 	/* int MainOffsetY = 0; */
 
-	for (j = 0; j < _layers.GetSize(); j++) {
+	for (j = 0; j < _layers.getSize(); j++) {
 		if (!_layers[j]->_active) continue;
 
 		// make layer exclusive
@@ -977,7 +977,7 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 
 
 		// for each node
-		for (k = 0; k < _layers[j]->_nodes.GetSize(); k++) {
+		for (k = 0; k < _layers[j]->_nodes.getSize(); k++) {
 			CAdSceneNode *node = _layers[j]->_nodes[k];
 			switch (node->_type) {
 			case OBJECT_ENTITY:
@@ -1041,7 +1041,7 @@ ERRORCODE CAdScene::updateFreeObjects() {
 
 	// *** update all active objects
 	is3DSet = false;
-	for (int i = 0; i < adGame->_objects.GetSize(); i++) {
+	for (int i = 0; i < adGame->_objects.getSize(); i++) {
 		if (!adGame->_objects[i]->_active) continue;
 
 		adGame->_objects[i]->update();
@@ -1049,7 +1049,7 @@ ERRORCODE CAdScene::updateFreeObjects() {
 	}
 
 
-	for (int i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.getSize(); i++) {
 		if (!_objects[i]->_active) continue;
 
 		_objects[i]->update();
@@ -1073,26 +1073,26 @@ ERRORCODE CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) 
 	CAdObject *obj;
 
 	// global objects
-	for (int i = 0; i < adGame->_objects.GetSize(); i++) {
+	for (int i = 0; i < adGame->_objects.getSize(); i++) {
 		obj = adGame->_objects[i];
 		if (obj->_active && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
-			objects.Add(obj);
+			objects.add(obj);
 		}
 	}
 
 	// scene objects
-	for (int i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.getSize(); i++) {
 		obj = _objects[i];
 		if (obj->_active && !obj->_editorOnly && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
-			objects.Add(obj);
+			objects.add(obj);
 		}
 	}
 
 	// sort by _posY
-	qsort(objects.GetData(), objects.GetSize(), sizeof(CAdObject *), CAdScene::compareObjs);
+	qsort(objects.getData(), objects.getSize(), sizeof(CAdObject *), CAdScene::compareObjs);
 
 	// display them
-	for (int i = 0; i < objects.GetSize(); i++) {
+	for (int i = 0; i < objects.getSize(); i++) {
 		obj = objects[i];
 
 		if (display3DOnly && !obj->_is3D) continue;
@@ -1107,7 +1107,7 @@ ERRORCODE CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) 
 	// display design only objects
 	if (!display3DOnly) {
 		if (Game->_editorMode && region == NULL) {
-			for (int i = 0; i < _objects.GetSize(); i++) {
+			for (int i = 0; i < _objects.getSize(); i++) {
 				if (_objects[i]->_active && _objects[i]->_editorOnly) {
 					_objects[i]->display();
 					_objects[i]->_drawn = true;
@@ -1140,7 +1140,7 @@ ERRORCODE CAdScene::displayRegionContentOld(CAdRegion *region) {
 		int minY = INT_MAX;
 
 		// global objects
-		for (int i = 0; i < adGame->_objects.GetSize(); i++) {
+		for (int i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && !adGame->_objects[i]->_drawn && adGame->_objects[i]->_posY < minY && (adGame->_objects[i]->_stickRegion == region || region == NULL || (adGame->_objects[i]->_stickRegion == NULL && region->pointInRegion(adGame->_objects[i]->_posX, adGame->_objects[i]->_posY)))) {
 				obj = adGame->_objects[i];
 				minY = adGame->_objects[i]->_posY;
@@ -1148,7 +1148,7 @@ ERRORCODE CAdScene::displayRegionContentOld(CAdRegion *region) {
 		}
 
 		// scene objects
-		for (int i = 0; i < _objects.GetSize(); i++) {
+		for (int i = 0; i < _objects.getSize(); i++) {
 			if (_objects[i]->_active && !_objects[i]->_editorOnly && !_objects[i]->_drawn && _objects[i]->_posY < minY && (_objects[i]->_stickRegion == region || region == NULL || (_objects[i]->_stickRegion == NULL && region->pointInRegion(_objects[i]->_posX, _objects[i]->_posY)))) {
 				obj = _objects[i];
 				minY = _objects[i]->_posY;
@@ -1167,7 +1167,7 @@ ERRORCODE CAdScene::displayRegionContentOld(CAdRegion *region) {
 
 	// design only objects
 	if (Game->_editorMode && region == NULL) {
-		for (int i = 0; i < _objects.GetSize(); i++) {
+		for (int i = 0; i < _objects.getSize(); i++) {
 			if (_objects[i]->_active && _objects[i]->_editorOnly) {
 				_objects[i]->display();
 				_objects[i]->_drawn = true;
@@ -1344,12 +1344,12 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		CScValue *val = stack->pop();
 		if (val->isInt()) {
 			int layer = val->getInt();
-			if (layer < 0 || layer >= _layers.GetSize()) stack->pushNULL();
+			if (layer < 0 || layer >= _layers.getSize()) stack->pushNULL();
 			else stack->pushNative(_layers[layer], true);
 		} else {
 			const char *LayerName = val->getString();
 			bool LayerFound = false;
-			for (int i = 0; i < _layers.GetSize(); i++) {
+			for (int i = 0; i < _layers.getSize(); i++) {
 				if (scumm_stricmp(LayerName, _layers[i]->_name) == 0) {
 					stack->pushNative(_layers[i], true);
 					LayerFound = true;
@@ -1367,7 +1367,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 	else if (strcmp(name, "GetWaypointGroup") == 0) {
 		stack->correctParams(1);
 		int group = stack->pop()->getInt();
-		if (group < 0 || group >= _waypointGroups.GetSize()) stack->pushNULL();
+		if (group < 0 || group >= _waypointGroups.getSize()) stack->pushNULL();
 		else stack->pushNative(_waypointGroups[group], true);
 		return STATUS_OK;
 	}
@@ -1396,10 +1396,10 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		CAdObject *ret = NULL;
 		if (val->isInt()) {
 			int index = val->getInt();
-			if (index >= 0 && index < _objects.GetSize()) ret = _objects[index];
+			if (index >= 0 && index < _objects.getSize()) ret = _objects[index];
 		} else {
 			const char *nodeName = val->getString();
-			for (int i = 0; i < _objects.GetSize(); i++) {
+			for (int i = 0; i < _objects.getSize(); i++) {
 				if (_objects[i] && _objects[i]->_name && scumm_stricmp(_objects[i]->_name, nodeName) == 0) {
 					ret = _objects[i];
 					break;
@@ -1425,7 +1425,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		if (!val->isNULL()) includeDecors = val->getBool();
 
 		if (_mainLayer) {
-			for (int i = _mainLayer->_nodes.GetSize() - 1; i >= 0; i--) {
+			for (int i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
 				CAdSceneNode *node = _mainLayer->_nodes[i];
 				if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
 					if (node->_region->_decoration && !includeDecors) continue;
@@ -1591,7 +1591,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			layer->_width = _mainLayer->_width;
 			layer->_height = _mainLayer->_height;
 		}
-		_layers.Add(layer);
+		_layers.add(layer);
 		Game->registerObject(layer);
 
 		stack->pushNative(layer, true);
@@ -1613,8 +1613,8 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			layer->_height = _mainLayer->_height;
 		}
 		if (index < 0) index = 0;
-		if (index <= _layers.GetSize() - 1) _layers.InsertAt(index, layer);
-		else _layers.Add(layer);
+		if (index <= _layers.getSize() - 1) _layers.insertAt(index, layer);
+		else _layers.add(layer);
 
 		Game->registerObject(layer);
 
@@ -1632,7 +1632,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		CAdLayer *toDelete = NULL;
 		if (val->isNative()) {
 			CBScriptable *temp = val->getNative();
-			for (int i = 0; i < _layers.GetSize(); i++) {
+			for (int i = 0; i < _layers.getSize(); i++) {
 				if (_layers[i] == temp) {
 					toDelete = _layers[i];
 					break;
@@ -1640,7 +1640,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			}
 		} else {
 			int index = val->getInt();
-			if (index >= 0 && index < _layers.GetSize()) {
+			if (index >= 0 && index < _layers.getSize()) {
 				toDelete = _layers[index];
 			}
 		}
@@ -1655,9 +1655,9 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 			return STATUS_OK;
 		}
 
-		for (int i = 0; i < _layers.GetSize(); i++) {
+		for (int i = 0; i < _layers.getSize(); i++) {
 			if (_layers[i] == toDelete) {
-				_layers.RemoveAt(i);
+				_layers.removeAt(i);
 				Game->unregisterObject(toDelete);
 				break;
 			}
@@ -1686,7 +1686,7 @@ CScValue *CAdScene::scGetProperty(const char *name) {
 	// NumLayers (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumLayers") == 0) {
-		_scValue->setInt(_layers.GetSize());
+		_scValue->setInt(_layers.getSize());
 		return _scValue;
 	}
 
@@ -1694,7 +1694,7 @@ CScValue *CAdScene::scGetProperty(const char *name) {
 	// NumWaypointGroups (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumWaypointGroups") == 0) {
-		_scValue->setInt(_waypointGroups.GetSize());
+		_scValue->setInt(_waypointGroups.getSize());
 		return _scValue;
 	}
 
@@ -1712,7 +1712,7 @@ CScValue *CAdScene::scGetProperty(const char *name) {
 	// NumFreeNodes (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumFreeNodes") == 0) {
-		_scValue->setInt(_objects.GetSize());
+		_scValue->setInt(_objects.getSize());
 		return _scValue;
 	}
 
@@ -1943,16 +1943,16 @@ const char *CAdScene::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::addObject(CAdObject *object) {
-	_objects.Add(object);
+	_objects.add(object);
 	return Game->registerObject(object);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::removeObject(CAdObject *object) {
-	for (int i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i] == object) {
-			_objects.RemoveAt(i);
+			_objects.removeAt(i);
 			return Game->unregisterObject(object);
 		}
 	}
@@ -1977,7 +1977,7 @@ ERRORCODE CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 	// scripts
-	for (i = 0; i < _scripts.GetSize(); i++) {
+	for (i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
@@ -2023,28 +2023,28 @@ ERRORCODE CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	// waypoints
 	buffer->putTextIndent(indent + 2, "; ----- waypoints\n");
-	for (i = 0; i < _waypointGroups.GetSize(); i++) _waypointGroups[i]->saveAsText(buffer, indent + 2);
+	for (i = 0; i < _waypointGroups.getSize(); i++) _waypointGroups[i]->saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// layers
 	buffer->putTextIndent(indent + 2, "; ----- layers\n");
-	for (i = 0; i < _layers.GetSize(); i++) _layers[i]->saveAsText(buffer, indent + 2);
+	for (i = 0; i < _layers.getSize(); i++) _layers[i]->saveAsText(buffer, indent + 2);
 
 	// scale levels
 	buffer->putTextIndent(indent + 2, "; ----- scale levels\n");
-	for (i = 0; i < _scaleLevels.GetSize(); i++) _scaleLevels[i]->saveAsText(buffer, indent + 2);
+	for (i = 0; i < _scaleLevels.getSize(); i++) _scaleLevels[i]->saveAsText(buffer, indent + 2);
 
 	// rotation levels
 	buffer->putTextIndent(indent + 2, "; ----- rotation levels\n");
-	for (i = 0; i < _rotLevels.GetSize(); i++) _rotLevels[i]->saveAsText(buffer, indent + 2);
+	for (i = 0; i < _rotLevels.getSize(); i++) _rotLevels[i]->saveAsText(buffer, indent + 2);
 
 
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// free entities
 	buffer->putTextIndent(indent + 2, "; ----- free entities\n");
-	for (i = 0; i < _objects.GetSize(); i++) {
+	for (i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
 			_objects[i]->saveAsText(buffer, indent + 2);
 
@@ -2063,7 +2063,7 @@ ERRORCODE CAdScene::sortScaleLevels() {
 	bool changed;
 	do {
 		changed = false;
-		for (int i = 0; i < _scaleLevels.GetSize() - 1; i++) {
+		for (int i = 0; i < _scaleLevels.getSize() - 1; i++) {
 			if (_scaleLevels[i]->_posY > _scaleLevels[i + 1]->_posY) {
 				CAdScaleLevel *sl = _scaleLevels[i];
 				_scaleLevels[i] = _scaleLevels[i + 1];
@@ -2084,7 +2084,7 @@ ERRORCODE CAdScene::sortRotLevels() {
 	bool changed;
 	do {
 		changed = false;
-		for (int i = 0; i < _rotLevels.GetSize() - 1; i++) {
+		for (int i = 0; i < _rotLevels.getSize() - 1; i++) {
 			if (_rotLevels[i]->_posX > _rotLevels[i + 1]->_posX) {
 				CAdRotLevel *rl = _rotLevels[i];
 				_rotLevels[i] = _rotLevels[i + 1];
@@ -2105,9 +2105,9 @@ float CAdScene::getScaleAt(int Y) {
 	CAdScaleLevel *prev = NULL;
 	CAdScaleLevel *next = NULL;
 
-	for (int i = 0; i < _scaleLevels.GetSize(); i++) {
+	for (int i = 0; i < _scaleLevels.getSize(); i++) {
 		/* CAdScaleLevel *xxx = _scaleLevels[i];*/
-		/* int j = _scaleLevels.GetSize(); */
+		/* int j = _scaleLevels.getSize(); */
 		if (_scaleLevels[i]->_posY < Y) prev = _scaleLevels[i];
 		else {
 			next = _scaleLevels[i];
@@ -2335,8 +2335,8 @@ void CAdScene::pfPointsStart() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdScene::pfPointsAdd(int x, int y, int distance) {
-	if (_pfPointsNum >= _pfPath.GetSize()) {
-		_pfPath.Add(new CAdPathPoint(x, y, distance));
+	if (_pfPointsNum >= _pfPath.getSize()) {
+		_pfPath.add(new CAdPathPoint(x, y, distance));
 	} else {
 		_pfPath[_pfPointsNum]->x = x;
 		_pfPath[_pfPointsNum]->y = y;
@@ -2424,9 +2424,9 @@ CBObject *CAdScene::getNodeByName(const char *name) {
 	CBObject *ret = NULL;
 
 	// dependent objects
-	for (int i = 0; i < _layers.GetSize(); i++) {
+	for (int i = 0; i < _layers.getSize(); i++) {
 		CAdLayer *layer = _layers[i];
-		for (int j = 0; j < layer->_nodes.GetSize(); j++) {
+		for (int j = 0; j < layer->_nodes.getSize(); j++) {
 			CAdSceneNode *node = layer->_nodes[j];
 			if ((node->_type == OBJECT_ENTITY && !scumm_stricmp(name, node->_entity->_name)) ||
 			        (node->_type == OBJECT_REGION && !scumm_stricmp(name, node->_region->_name))) {
@@ -2446,14 +2446,14 @@ CBObject *CAdScene::getNodeByName(const char *name) {
 	}
 
 	// free entities
-	for (int i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->_name)) {
 			return _objects[i];
 		}
 	}
 
 	// waypoint groups
-	for (int i = 0; i < _waypointGroups.GetSize(); i++) {
+	for (int i = 0; i < _waypointGroups.getSize(); i++) {
 		if (!scumm_stricmp(name, _waypointGroups[i]->_name)) {
 			return _waypointGroups[i];
 		}
@@ -2486,9 +2486,9 @@ ERRORCODE CAdScene::persistState(bool saving) {
 	CAdNodeState *nodeState;
 
 	// dependent objects
-	for (int i = 0; i < _layers.GetSize(); i++) {
+	for (int i = 0; i < _layers.getSize(); i++) {
 		CAdLayer *layer = _layers[i];
-		for (int j = 0; j < layer->_nodes.GetSize(); j++) {
+		for (int j = 0; j < layer->_nodes.getSize(); j++) {
 			CAdSceneNode *node = layer->_nodes[j];
 			switch (node->_type) {
 			case OBJECT_ENTITY:
@@ -2516,7 +2516,7 @@ ERRORCODE CAdScene::persistState(bool saving) {
 	}
 
 	// free entities
-	for (int i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.getSize(); i++) {
 		if (!_objects[i]->_saveState) continue;
 		if (_objects[i]->_type == OBJECT_ENTITY) {
 			nodeState = state->getNodeState(_objects[i]->_name, saving);
@@ -2529,7 +2529,7 @@ ERRORCODE CAdScene::persistState(bool saving) {
 	}
 
 	// waypoint groups
-	for (int i = 0; i < _waypointGroups.GetSize(); i++) {
+	for (int i = 0; i < _waypointGroups.getSize(); i++) {
 		nodeState = state->getNodeState(_waypointGroups[i]->_name, saving);
 		if (nodeState) {
 			if (saving) nodeState->_active = _waypointGroups[i]->_active;
@@ -2546,9 +2546,9 @@ float CAdScene::getRotationAt(int x, int y) {
 	CAdRotLevel *prev = NULL;
 	CAdRotLevel *next = NULL;
 
-	for (int i = 0; i < _rotLevels.GetSize(); i++) {
+	for (int i = 0; i < _rotLevels.getSize(); i++) {
 		/*  CAdRotLevel *xxx = _rotLevels[i];
-		    int j = _rotLevels.GetSize();*/
+		    int j = _rotLevels.getSize();*/
 		if (_rotLevels[i]->_posX < x) prev = _rotLevels[i];
 		else {
 			next = _rotLevels[i];
@@ -2569,9 +2569,9 @@ float CAdScene::getRotationAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::handleItemAssociations(const char *itemName, bool show) {
-	for (int i = 0; i < _layers.GetSize(); i++) {
+	for (int i = 0; i < _layers.getSize(); i++) {
 		CAdLayer *layer = _layers[i];
-		for (int j = 0; j < layer->_nodes.GetSize(); j++) {
+		for (int j = 0; j < layer->_nodes.getSize(); j++) {
 			if (layer->_nodes[j]->_type == OBJECT_ENTITY) {
 				CAdEntity *ent = layer->_nodes[j]->_entity;
 
@@ -2580,7 +2580,7 @@ ERRORCODE CAdScene::handleItemAssociations(const char *itemName, bool show) {
 		}
 	}
 
-	for (int i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
 			CAdEntity *ent = (CAdEntity *)_objects[i];
 			if (ent->_item && strcmp(ent->_item, itemName) == 0) ent->_active = show;
@@ -2595,7 +2595,7 @@ ERRORCODE CAdScene::handleItemAssociations(const char *itemName, bool show) {
 ERRORCODE CAdScene::getRegionsAt(int x, int y, CAdRegion **regionList, int numRegions) {
 	int numUsed = 0;
 	if (_mainLayer) {
-		for (int i = _mainLayer->_nodes.GetSize() - 1; i >= 0; i--) {
+		for (int i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
 			CAdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
 				if (numUsed < numRegions - 1) {
@@ -2623,12 +2623,12 @@ CBObject *CAdScene::getNextAccessObject(CBObject *currObject) {
 	CBArray<CAdObject *, CAdObject *> objects;
 	getSceneObjects(objects, true);
 
-	if (objects.GetSize() == 0) return NULL;
+	if (objects.getSize() == 0) return NULL;
 	else {
 		if (currObject != NULL) {
-			for (int i = 0; i < objects.GetSize(); i++) {
+			for (int i = 0; i < objects.getSize(); i++) {
 				if (objects[i] == currObject) {
-					if (i < objects.GetSize() - 1) return objects[i + 1];
+					if (i < objects.getSize() - 1) return objects[i + 1];
 					else break;
 				}
 			}
@@ -2643,17 +2643,17 @@ CBObject *CAdScene::getPrevAccessObject(CBObject *currObject) {
 	CBArray<CAdObject *, CAdObject *> objects;
 	getSceneObjects(objects, true);
 
-	if (objects.GetSize() == 0) return NULL;
+	if (objects.getSize() == 0) return NULL;
 	else {
 		if (currObject != NULL) {
-			for (int i = objects.GetSize() - 1; i >= 0; i--) {
+			for (int i = objects.getSize() - 1; i >= 0; i--) {
 				if (objects[i] == currObject) {
 					if (i > 0) return objects[i - 1];
 					else break;
 				}
 			}
 		}
-		return objects[objects.GetSize() - 1];
+		return objects[objects.getSize() - 1];
 	}
 	return NULL;
 }
@@ -2661,35 +2661,35 @@ CBObject *CAdScene::getPrevAccessObject(CBObject *currObject) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &objects, bool interactiveOnly) {
-	for (int i = 0; i < _layers.GetSize(); i++) {
+	for (int i = 0; i < _layers.getSize(); i++) {
 		// close-up layer -> remove everything below it
-		if (interactiveOnly && _layers[i]->_closeUp) objects.RemoveAll();
+		if (interactiveOnly && _layers[i]->_closeUp) objects.removeAll();
 
 
-		for (int j = 0; j < _layers[i]->_nodes.GetSize(); j++) {
+		for (int j = 0; j < _layers[i]->_nodes.getSize(); j++) {
 			CAdSceneNode *node = _layers[i]->_nodes[j];
 			switch (node->_type) {
 			case OBJECT_ENTITY: {
 				CAdEntity *ent = node->_entity;
 				if (ent->_active && (ent->_registrable || !interactiveOnly))
-					objects.Add(ent);
+					objects.add(ent);
 			}
 			break;
 
 			case OBJECT_REGION: {
 				CBArray<CAdObject *, CAdObject *> regionObj;
 				getRegionObjects(node->_region, regionObj, interactiveOnly);
-				for (int newIndex = 0; newIndex < regionObj.GetSize(); newIndex++) {
+				for (int newIndex = 0; newIndex < regionObj.getSize(); newIndex++) {
 					bool found = false;
-					for (int old = 0; old < objects.GetSize(); old++) {
+					for (int old = 0; old < objects.getSize(); old++) {
 						if (objects[old] == regionObj[newIndex]) {
 							found = true;
 							break;
 						}
 					}
-					if (!found) objects.Add(regionObj[newIndex]);
+					if (!found) objects.add(regionObj[newIndex]);
 				}
-				//if(RegionObj.GetSize() > 0) Objects.Append(RegionObj);
+				//if(RegionObj.getSize() > 0) Objects.Append(RegionObj);
 			}
 			break;
 			default:
@@ -2702,15 +2702,15 @@ ERRORCODE CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &objects, 
 	// objects outside any region
 	CBArray<CAdObject *, CAdObject *> regionObj;
 	getRegionObjects(NULL, regionObj, interactiveOnly);
-	for (int newIndex = 0; newIndex < regionObj.GetSize(); newIndex++) {
+	for (int newIndex = 0; newIndex < regionObj.getSize(); newIndex++) {
 		bool found = false;
-		for (int old = 0; old < objects.GetSize(); old++) {
+		for (int old = 0; old < objects.getSize(); old++) {
 			if (objects[old] == regionObj[newIndex]) {
 				found = true;
 				break;
 			}
 		}
-		if (!found) objects.Add(regionObj[newIndex]);
+		if (!found) objects.add(regionObj[newIndex]);
 	}
 
 
@@ -2724,27 +2724,27 @@ ERRORCODE CAdScene::getRegionObjects(CAdRegion *region, CBArray<CAdObject *, CAd
 	CAdObject *obj;
 
 	// global objects
-	for (int i = 0; i < adGame->_objects.GetSize(); i++) {
+	for (int i = 0; i < adGame->_objects.getSize(); i++) {
 		obj = adGame->_objects[i];
 		if (obj->_active && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
 			if (interactiveOnly && !obj->_registrable) continue;
 
-			objects.Add(obj);
+			objects.add(obj);
 		}
 	}
 
 	// scene objects
-	for (int i = 0; i < _objects.GetSize(); i++) {
+	for (int i = 0; i < _objects.getSize(); i++) {
 		obj = _objects[i];
 		if (obj->_active && !obj->_editorOnly && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
 			if (interactiveOnly && !obj->_registrable) continue;
 
-			objects.Add(obj);
+			objects.add(obj);
 		}
 	}
 
 	// sort by _posY
-	qsort(objects.GetData(), objects.GetSize(), sizeof(CAdObject *), CAdScene::compareObjs);
+	qsort(objects.getData(), objects.getSize(), sizeof(CAdObject *), CAdScene::compareObjs);
 
 	return STATUS_OK;
 }
