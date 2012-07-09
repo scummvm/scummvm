@@ -47,12 +47,12 @@ class CAdObject : public CBObject {
 public:
 	CPartEmitter *_partEmitter;
 	virtual CPartEmitter *createParticleEmitter(bool followParent = false, int offsetX = 0, int offsetY = 0);
-	virtual HRESULT updatePartEmitter();
+	virtual ERRORCODE updatePartEmitter();
 	bool _partFollowParent;
 	int _partOffsetX;
 	int _partOffsetY;
 
-	HRESULT invalidateCurrRegions();
+	ERRORCODE invalidateCurrRegions();
 	bool _subtitlesModRelative;
 	bool _subtitlesModXCenter;
 	int _subtitlesModX;
@@ -61,23 +61,23 @@ public:
 	CAdRegion *_stickRegion;
 	bool _sceneIndependent;
 	bool _ignoreItems;
-	HRESULT updateBlockRegion();
+	ERRORCODE updateBlockRegion();
 	bool _forcedTalkAnimUsed;
 	char *_forcedTalkAnimName;
 	virtual bool getExtendedFlag(const char *flagName);
-	virtual HRESULT resetSoundPan();
-	virtual HRESULT updateSounds();
-	HRESULT reset();
+	virtual ERRORCODE resetSoundPan();
+	virtual ERRORCODE updateSounds();
+	ERRORCODE reset();
 	DECLARE_PERSISTENT(CAdObject, CBObject)
 	virtual void talk(const char *text, const char *sound = NULL, uint32 duration = 0, const char *stances = NULL, TTextAlign align = TAL_CENTER);
 	virtual int getHeight();
 	CAdSentence *_sentence;
-	HRESULT SetFont(const char *filename);
-	virtual HRESULT update();
-	virtual HRESULT display();
+	ERRORCODE SetFont(const char *filename);
+	virtual ERRORCODE update();
+	virtual ERRORCODE display();
 	bool _drawn;
 	bool _active;
-	virtual HRESULT playAnim(const char *filename);
+	virtual ERRORCODE playAnim(const char *filename);
 	CBSprite *_animSprite;
 	CBSprite *_currentSprite;
 	TObjectState _state;
@@ -93,29 +93,29 @@ public:
 	CAdWaypointGroup *_currentWptGroup;
 	CAdInventory *getInventory();
 
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
 
-	virtual HRESULT afterMove();
+	virtual ERRORCODE afterMove();
 	CAdRegion *_currentRegions[MAX_NUM_REGIONS];
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 	CBArray<CAdObject *, CAdObject *> _attachmentsPre;
 	CBArray<CAdObject *, CAdObject *> _attachmentsPost;
 
-	HRESULT updateSpriteAttachments();
-	HRESULT displaySpriteAttachments(bool preDisplay);
+	ERRORCODE updateSpriteAttachments();
+	ERRORCODE displaySpriteAttachments(bool preDisplay);
 	CAdObject *_registerAlias;
 private:
-	HRESULT displaySpriteAttachment(CAdObject *attachment);
+	ERRORCODE displaySpriteAttachment(CAdObject *attachment);
 	CAdInventory *_inventory;
 
 protected:
-	HRESULT getScale(float *scaleX, float *scaleY);
+	ERRORCODE getScale(float *scaleX, float *scaleY);
 };
 
 } // end of namespace WinterMute

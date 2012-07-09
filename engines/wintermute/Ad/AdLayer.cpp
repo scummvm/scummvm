@@ -61,19 +61,19 @@ CAdLayer::~CAdLayer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::loadFile(const char *filename) {
+ERRORCODE CAdLayer::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdLayer::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing LAYER file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing LAYER file '%s'", filename);
 
 	delete [] buffer;
 
@@ -99,7 +99,7 @@ TOKEN_DEF(CLOSE_UP)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdLayer::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(LAYER)
 	TOKEN_TABLE(TEMPLATE)
@@ -125,7 +125,7 @@ HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_LAYER) {
 			Game->LOG(0, "'LAYER' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -133,7 +133,7 @@ HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -167,7 +167,7 @@ HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_REGION: {
 			CAdRegion *region = new CAdRegion(Game);
 			CAdSceneNode *node = new CAdSceneNode(Game);
-			if (!region || !node || FAILED(region->loadBuffer(params, false))) {
+			if (!region || !node || DID_FAIL(region->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete region;
 				delete node;
@@ -184,7 +184,7 @@ HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
 			CAdEntity *entity = new CAdEntity(Game);
 			CAdSceneNode *node = new CAdSceneNode(Game);
 			if (entity) entity->_zoomable = false; // scene entites default to NOT zoom
-			if (!entity || !node || FAILED(entity->loadBuffer(params, false))) {
+			if (!entity || !node || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
 				delete node;
@@ -216,17 +216,17 @@ HRESULT CAdLayer::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in LAYER definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 				stack->pushNULL();
 			}
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -282,7 +282,7 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			stack->pushNative(entity, true);
 		}
 		_nodes.Add(node);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -309,7 +309,7 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (index <= _nodes.GetSize() - 1) _nodes.InsertAt(index, node);
 		else _nodes.Add(node);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -336,7 +336,7 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		}
 		if (toDelete == NULL) {
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 
 		for (int i = 0; i < _nodes.GetSize(); i++) {
@@ -348,7 +348,7 @@ HRESULT CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			}
 		}
 		stack->pushBool(true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scCallMethod(script, stack, thisStack, name);
@@ -420,13 +420,13 @@ CScValue *CAdLayer::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CAdLayer::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -434,7 +434,7 @@ HRESULT CAdLayer::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CloseUp") == 0) {
 		_closeUp = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -443,7 +443,7 @@ HRESULT CAdLayer::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "Width") == 0) {
 		_width = value->getInt();
 		if (_width < 0) _width = 0;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -452,7 +452,7 @@ HRESULT CAdLayer::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "Height") == 0) {
 		_height = value->getInt();
 		if (_height < 0) _height = 0;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -463,7 +463,7 @@ HRESULT CAdLayer::scSetProperty(const char *name, CScValue *value) {
 		if (b == false && _main) {
 			Game->LOG(0, "Warning: cannot deactivate scene's main layer");
 		} else _active = b;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scSetProperty(name, value);
@@ -477,7 +477,7 @@ const char *CAdLayer::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "LAYER {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
@@ -515,12 +515,12 @@ HRESULT CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent, "}\n\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdLayer::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdLayer::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -531,7 +531,7 @@ HRESULT CAdLayer::persist(CBPersistMgr *persistMgr) {
 	_nodes.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_width));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

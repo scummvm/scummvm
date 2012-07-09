@@ -65,15 +65,15 @@ const char *CBBase::getEditorProp(const char *propName, const char *initVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBBase::setEditorProp(const char *propName, const char *propValue) {
-	if (propName == NULL) return E_FAIL;
+ERRORCODE CBBase::setEditorProp(const char *propName, const char *propValue) {
+	if (propName == NULL) return STATUS_FAILED;
 
 	if (propValue == NULL) {
 		_editorProps.erase(propName);
 	} else {
 		_editorProps[propName] = propValue;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -84,7 +84,7 @@ TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
+ERRORCODE CBBase::parseEditorProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE(NAME)
@@ -93,7 +93,7 @@ HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 
 
 	if (!Game->_editorMode)
-		return S_OK;
+		return STATUS_OK;
 
 
 	byte *params;
@@ -103,7 +103,7 @@ HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDITOR_PROPERTY) {
 			Game->LOG(0, "'EDITOR_PROPERTY' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -135,7 +135,7 @@ HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 		propName = NULL;
 		propValue = NULL;
 		Game->LOG(0, "Syntax error in EDITOR_PROPERTY definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == NULL || propValue == NULL) {
 		delete[] propName;
@@ -143,7 +143,7 @@ HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 		propName = NULL;
 		propValue = NULL;
 		Game->LOG(0, "Error loading EDITOR_PROPERTY definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 
@@ -154,12 +154,12 @@ HRESULT CBBase::parseEditorProperty(byte *buffer, bool complete) {
 	propName = NULL;
 	propValue = NULL;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBBase::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CBBase::saveAsText(CBDynBuffer *buffer, int indent) {
 	_editorPropsIter = _editorProps.begin();
 	while (_editorPropsIter != _editorProps.end()) {
 		buffer->putTextIndent(indent, "EDITOR_PROPERTY\n");
@@ -172,7 +172,7 @@ HRESULT CBBase::saveAsText(CBDynBuffer *buffer, int indent) {
 
 		_editorPropsIter++;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

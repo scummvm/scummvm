@@ -75,19 +75,19 @@ CBFrame::~CBFrame() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
-	HRESULT res;
+ERRORCODE CBFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
+	ERRORCODE res;
 
 	for (int i = 0; i < _subframes.GetSize(); i++) {
 		res = _subframes[i]->draw(x, y, registerOwner, zoomX, zoomY, precise, alpha, rotate, blendMode);
-		if (FAILED(res)) return res;
+		if (DID_FAIL(res)) return res;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::oneTimeDisplay(CBObject *owner, bool muted) {
+ERRORCODE CBFrame::oneTimeDisplay(CBObject *owner, bool muted) {
 	if (_sound && !muted) {
 		if (owner) owner->updateOneSound(_sound);
 		_sound->play();
@@ -102,7 +102,7 @@ HRESULT CBFrame::oneTimeDisplay(CBObject *owner, bool muted) {
 			owner->applyEvent(_applyEvent[i]);
 		}
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -131,7 +131,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(KILL_SOUND)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
+ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(DELAY)
 	TOKEN_TABLE(IMAGE)
@@ -238,7 +238,7 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 		case TOKEN_SUBFRAME: {
 			CBSubFrame *subframe = new CBSubFrame(Game);
-			if (!subframe || FAILED(subframe->loadBuffer((byte *)params, lifeTime, keepLoaded))) {
+			if (!subframe || DID_FAIL(subframe->loadBuffer((byte *)params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
 			} else _subframes.Add(subframe);
@@ -251,7 +251,7 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 				_sound = NULL;
 			}
 			_sound = new CBSound(Game);
-			if (!_sound || FAILED(_sound->setSound(params, SOUND_SFX, false))) {
+			if (!_sound || DID_FAIL(_sound->setSound(params, SOUND_SFX, false))) {
 				if (Game->_soundMgr->_soundAvailable) Game->LOG(0, "Error loading sound '%s'.", params);
 				delete _sound;
 				_sound = NULL;
@@ -281,12 +281,12 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in FRAME definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading FRAME definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 
@@ -298,11 +298,11 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		if (!sub->_surface) {
 			delete sub;
 			Game->LOG(0, "Error loading SUBFRAME");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 
-		sub->_alpha = DRGBA(ar, ag, ab, alpha);
-		if (custoTrans) sub->_transparent = DRGBA(r, g, b, 0xFF);
+		sub->_alpha = BYTETORGBA(ar, ag, ab, alpha);
+		if (custoTrans) sub->_transparent = BYTETORGBA(r, g, b, 0xFF);
 	}
 
 	if (CBPlatform::isRectEmpty(&rect)) sub->setDefaultRect();
@@ -320,7 +320,7 @@ HRESULT CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	sub->_editorSelected = editorSelected;
 	_subframes.InsertAt(0, sub);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -341,7 +341,7 @@ bool CBFrame::getBoundingRect(LPRECT rect, int x, int y, float scaleX, float sca
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "FRAME {\n");
 	buffer->putTextIndent(indent + 2, "DELAY = %d\n", _delay);
 
@@ -374,12 +374,12 @@ HRESULT CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent, "}\n\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBFrame::persist(CBPersistMgr *persistMgr) {
 	CBScriptable::persist(persistMgr);
 
 	_applyEvent.persist(persistMgr);
@@ -392,14 +392,14 @@ HRESULT CBFrame::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_sound));
 	_subframes.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSound
@@ -409,7 +409,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		if (_sound && _sound->_soundFilename) stack->pushString(_sound->_soundFilename);
 		else stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -423,13 +423,13 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		if (!val->isNULL()) {
 			_sound = new CBSound(Game);
-			if (!_sound || FAILED(_sound->setSound(val->getString(), SOUND_SFX, false))) {
+			if (!_sound || DID_FAIL(_sound->setSound(val->getString(), SOUND_SFX, false))) {
 				stack->pushBool(false);
 				delete _sound;
 				_sound = NULL;
 			} else stack->pushBool(true);
 		} else stack->pushBool(true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -443,7 +443,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			stack->pushNULL();
 		} else stack->pushNative(_subframes[index], true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -468,7 +468,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			}
 		}
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -488,7 +488,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		_subframes.Add(sub);
 
 		stack->pushNative(sub, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -512,7 +512,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		else _subframes.InsertAt(index, sub);
 
 		stack->pushNative(sub, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -525,7 +525,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			script->runtimeError("Frame.GetEvent: Event index %d is out of range.", index);
 			stack->pushNULL();
 		} else stack->pushString(_applyEvent[index]);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -537,12 +537,12 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		for (int i = 0; i < _applyEvent.GetSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				stack->pushNULL();
-				return S_OK;
+				return STATUS_OK;
 			}
 		}
 		_applyEvent.Add(event);
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -559,7 +559,7 @@ HRESULT CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			}
 		}
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -648,13 +648,13 @@ CScValue *CBFrame::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFrame::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CBFrame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Delay") == 0) {
 		_delay = MAX(0, value->getInt());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -662,7 +662,7 @@ HRESULT CBFrame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Keyframe") == 0) {
 		_keyframe = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -670,7 +670,7 @@ HRESULT CBFrame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "KillSounds") == 0) {
 		_killSound = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -678,7 +678,7 @@ HRESULT CBFrame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MoveX") == 0) {
 		_moveX = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -686,7 +686,7 @@ HRESULT CBFrame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MoveY") == 0) {
 		_moveY = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////

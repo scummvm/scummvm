@@ -51,10 +51,10 @@ CBSaveThumbFile::~CBSaveThumbFile() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbFile::open(const Common::String &filename) {
+ERRORCODE CBSaveThumbFile::open(const Common::String &filename) {
 	close();
 
-	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) != 0) return E_FAIL;
+	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) != 0) return STATUS_FAILED;
 
 	char *tempFilename = new char[strlen(filename.c_str()) - 8];
 	strcpy(tempFilename, filename.c_str() + 9);
@@ -72,24 +72,24 @@ HRESULT CBSaveThumbFile::open(const Common::String &filename) {
 	char slotFilename[MAX_PATH + 1];
 	Game->getSaveSlotFilename(slot, slotFilename);
 	CBPersistMgr *pm = new CBPersistMgr(Game);
-	if (!pm) return E_FAIL;
+	if (!pm) return STATUS_FAILED;
 
 	Game->_dEBUG_AbsolutePathWarning = false;
-	if (FAILED(pm->initLoad(slotFilename))) {
+	if (DID_FAIL(pm->initLoad(slotFilename))) {
 		Game->_dEBUG_AbsolutePathWarning = true;
 		delete pm;
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	Game->_dEBUG_AbsolutePathWarning = true;
 
-	HRESULT res;
+	ERRORCODE res;
 
 	if (pm->_thumbnailDataSize != 0) {
 		_data = new byte[pm->_thumbnailDataSize];
 		memcpy(_data, pm->_thumbnailData, pm->_thumbnailDataSize);
 		_size = pm->_thumbnailDataSize;
-		res = S_OK;
-	} else res = E_FAIL;
+		res = STATUS_OK;
+	} else res = STATUS_FAILED;
 	delete pm;
 
 	return res;
@@ -97,31 +97,31 @@ HRESULT CBSaveThumbFile::open(const Common::String &filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbFile::close() {
+ERRORCODE CBSaveThumbFile::close() {
 	delete[] _data;
 	_data = NULL;
 
 	_pos = 0;
 	_size = 0;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbFile::read(void *buffer, uint32 size) {
-	if (!_data || _pos + size > _size) return E_FAIL;
+ERRORCODE CBSaveThumbFile::read(void *buffer, uint32 size) {
+	if (!_data || _pos + size > _size) return STATUS_FAILED;
 
 	memcpy(buffer, (byte *)_data + _pos, size);
 	_pos += size;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbFile::seek(uint32 pos, TSeek origin) {
-	if (!_data) return E_FAIL;
+ERRORCODE CBSaveThumbFile::seek(uint32 pos, TSeek origin) {
+	if (!_data) return STATUS_FAILED;
 
 	uint32 newPos = 0;
 
@@ -137,10 +137,10 @@ HRESULT CBSaveThumbFile::seek(uint32 pos, TSeek origin) {
 		break;
 	}
 
-	if (newPos > _size) return E_FAIL;
+	if (newPos > _size) return STATUS_FAILED;
 	else _pos = newPos;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

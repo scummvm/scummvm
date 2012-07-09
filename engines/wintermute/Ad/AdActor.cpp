@@ -76,13 +76,13 @@ CAdActor::CAdActor(CBGame *inGame): CAdTalkHolder(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::setDefaultAnimNames() {
+ERRORCODE CAdActor::setDefaultAnimNames() {
 	_talkAnimName = "talk";
 	_idleAnimName = "idle";
 	_walkAnimName = "walk";
 	_turnLeftAnimName = "turnleft";
 	_turnRightAnimName = "turnright";
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -123,19 +123,19 @@ CAdActor::~CAdActor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::loadFile(const char *filename) {
+ERRORCODE CAdActor::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdActor::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ACTOR file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ACTOR file '%s'", filename);
 
 
 	delete [] buffer;
@@ -183,7 +183,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(ANIMATION)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTOR)
 	TOKEN_TABLE(X)
@@ -230,7 +230,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTOR) {
 			Game->LOG(0, "'ACTOR' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -241,7 +241,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_X:
@@ -291,19 +291,19 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			delete _walkSprite;
 			_walkSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true, adGame->_texWalkLifeTime, CACHE_HALF))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texWalkLifeTime, CACHE_HALF))) cmd = PARSERR_GENERIC;
 			else _walkSprite = spr;
 			break;
 
 		case TOKEN_TALK:
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.Add(spr);
 			break;
 
 		case TOKEN_TALK_SPECIAL:
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.Add(spr);
 			break;
 
@@ -311,7 +311,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			delete _standSprite;
 			_standSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true, adGame->_texStandLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texStandLifeTime))) cmd = PARSERR_GENERIC;
 			else _standSprite = spr;
 			break;
 
@@ -319,7 +319,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			delete _turnLeftSprite;
 			_turnLeftSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) cmd = PARSERR_GENERIC;
 			else _turnLeftSprite = spr;
 			break;
 
@@ -327,7 +327,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			delete _turnRightSprite;
 			_turnRightSprite = NULL;
 			spr = new CAdSpriteSet(Game, this);
-			if (!spr || FAILED(spr->loadBuffer(params, true))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) cmd = PARSERR_GENERIC;
 			else _turnRightSprite = spr;
 			break;
 
@@ -338,7 +338,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -380,7 +380,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			_currentBlockRegion = NULL;
 			CBRegion *rgn = new CBRegion(Game);
 			CBRegion *crgn = new CBRegion(Game);
-			if (!rgn || !crgn || FAILED(rgn->loadBuffer(params, false))) {
+			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				delete _blockRegion;
 				delete _currentBlockRegion;
 				_blockRegion = NULL;
@@ -401,7 +401,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 			_currentWptGroup = NULL;
 			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
 			CAdWaypointGroup *cwpt = new CAdWaypointGroup(Game);
-			if (!wpt || !cwpt || FAILED(wpt->loadBuffer(params, false))) {
+			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				delete _wptGroup;
 				delete _currentWptGroup;
 				_wptGroup = NULL;
@@ -433,7 +433,7 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_ANIMATION: {
 			CAdSpriteSet *Anim = new CAdSpriteSet(Game, this);
-			if (!Anim || FAILED(Anim->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
+			if (!Anim || DID_FAIL(Anim->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
 			else _anims.Add(Anim);
 		}
 		break;
@@ -441,21 +441,21 @@ HRESULT CAdActor::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in ACTOR definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		if (spr) delete spr;
 		Game->LOG(0, "Error loading ACTOR definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (alpha != 0 && ar == 0 && ag == 0 && ab == 0) {
 		ar = ag = ab = 255;
 	}
-	_alphaColor = DRGBA(ar, ag, ab, alpha);
+	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 	_state = _nextState = STATE_READY;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -504,7 +504,7 @@ void CAdActor::goTo(int x, int y, TDirection afterWalkDir) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::display() {
+ERRORCODE CAdActor::display() {
 	if (_active) updateSounds();
 
 	uint32 alpha;
@@ -542,12 +542,12 @@ HRESULT CAdActor::display() {
 	if (_active && _partEmitter) _partEmitter->display();
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::update() {
+ERRORCODE CAdActor::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY) {
@@ -742,7 +742,7 @@ HRESULT CAdActor::update() {
 	updatePartEmitter();
 	updateSpriteAttachments();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -850,7 +850,7 @@ void CAdActor::initLine(CBPoint startPt, CBPoint endPt) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GoTo / GoToAsync
 	//////////////////////////////////////////////////////////////////////////
@@ -861,7 +861,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		goTo(X, Y);
 		if (strcmp(name, "GoToAsync") != 0) script->waitForExclusive(this);
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -873,20 +873,20 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (!Val->isNative()) {
 			script->runtimeError("actor.%s method accepts an entity refrence only", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		CAdObject *Obj = (CAdObject *)Val->getNative();
 		if (!Obj || Obj->_type != OBJECT_ENTITY) {
 			script->runtimeError("actor.%s method accepts an entity refrence only", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		CAdEntity *Ent = (CAdEntity *)Obj;
 		if (Ent->_walkToX == 0 && Ent->_walkToY == 0) goTo(Ent->_posX, Ent->_posY);
 		else goTo(Ent->_walkToX, Ent->_walkToY, Ent->_walkToDir);
 		if (strcmp(name, "GoToObjectAsync") != 0) script->waitForExclusive(this);
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -911,7 +911,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			if (strcmp(name, "TurnToAsync") != 0) script->waitForExclusive(this);
 		}
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -920,7 +920,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "IsWalking") == 0) {
 		stack->correctParams(0);
 		stack->pushBool(_state == STATE_FOLLOWING_PATH);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -928,8 +928,8 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MergeAnims") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(SUCCEEDED(mergeAnims(stack->pop()->getString())));
-		return S_OK;
+		stack->pushBool(DID_SUCCEED(mergeAnims(stack->pop()->getString())));
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -955,7 +955,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			}
 		}
 		stack->pushBool(Found);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -965,7 +965,7 @@ HRESULT CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(1);
 		const char *AnimName = stack->pop()->getString();
 		stack->pushBool(getAnimByName(AnimName) != NULL);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CAdTalkHolder::scCallMethod(script, stack, thisStack, name);
@@ -1035,14 +1035,14 @@ CScValue *CAdActor::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CAdActor::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Direction") == 0) {
 		int dir = value->getInt();
 		if (dir >= 0 && dir < NUM_DIRECTIONS) _dir = (TDirection)dir;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1051,7 +1051,7 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "TalkAnimName") == 0) {
 		if (value->isNULL()) _talkAnimName = "talk";
 		else _talkAnimName = value->getString();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1060,7 +1060,7 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "WalkAnimName") == 0) {
 		if (value->isNULL()) _walkAnimName = "walk";
 		else _walkAnimName = value->getString();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1069,7 +1069,7 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "IdleAnimName") == 0) {
 		if (value->isNULL()) _idleAnimName = "idle";
 		else _idleAnimName = value->getString();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1078,7 +1078,7 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "TurnLeftAnimName") == 0) {
 		if (value->isNULL()) _turnLeftAnimName = "turnleft";
 		else _turnLeftAnimName = value->getString();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1087,7 +1087,7 @@ HRESULT CAdActor::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "TurnRightAnimName") == 0) {
 		if (value->isNULL()) _turnRightAnimName = "turnright";
 		else _turnRightAnimName = value->getString();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CAdTalkHolder::scSetProperty(name, value);
@@ -1108,8 +1108,8 @@ CBSprite *CAdActor::getTalkStance(const char *stance) {
 		delete _animSprite;
 		_animSprite = new CBSprite(Game, this);
 		if (_animSprite) {
-			HRESULT res = _animSprite->loadFile(_forcedTalkAnimName);
-			if (FAILED(res)) {
+			ERRORCODE res = _animSprite->loadFile(_forcedTalkAnimName);
+			if (DID_FAIL(res)) {
 				Game->LOG(res, "CAdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
 				delete _animSprite;
 				_animSprite = NULL;
@@ -1187,7 +1187,7 @@ CBSprite *CAdActor::getTalkStanceOld(const char *stance) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdActor::persist(CBPersistMgr *persistMgr) {
 	CAdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_dir));
@@ -1216,7 +1216,7 @@ HRESULT CAdActor::persist(CBPersistMgr *persistMgr) {
 
 	_anims.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -1262,7 +1262,7 @@ CAdSpriteSet *CAdActor::getAnimByName(const Common::String &animName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::mergeAnims(const char *animsFilename) {
+ERRORCODE CAdActor::mergeAnims(const char *animsFilename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ANIMATION)
 	TOKEN_TABLE_END
@@ -1271,7 +1271,7 @@ HRESULT CAdActor::mergeAnims(const char *animsFilename) {
 	byte *fileBuffer = Game->_fileManager->readWholeFile(animsFilename);
 	if (fileBuffer == NULL) {
 		Game->LOG(0, "CAdActor::MergeAnims failed for file '%s'", animsFilename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	byte *buffer = fileBuffer;
@@ -1279,15 +1279,15 @@ HRESULT CAdActor::mergeAnims(const char *animsFilename) {
 	int cmd;
 	CBParser parser(Game);
 
-	HRESULT Ret = S_OK;
+	ERRORCODE Ret = STATUS_OK;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ANIMATION: {
 			CAdSpriteSet *Anim = new CAdSpriteSet(Game, this);
-			if (!Anim || FAILED(Anim->loadBuffer(params, false))) {
+			if (!Anim || DID_FAIL(Anim->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
-				Ret = E_FAIL;
+				Ret = STATUS_FAILED;
 			} else _anims.Add(Anim);
 		}
 		break;
@@ -1298,7 +1298,7 @@ HRESULT CAdActor::mergeAnims(const char *animsFilename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdActor::playAnim(const char *filename) {
+ERRORCODE CAdActor::playAnim(const char *filename) {
 	// if we have an anim with this name, use it
 	CAdSpriteSet *Anim = getAnimByName(filename);
 	if (Anim) {
@@ -1306,7 +1306,7 @@ HRESULT CAdActor::playAnim(const char *filename) {
 		if (_animSprite2) {
 			_animSprite2->reset();
 			_state = STATE_PLAYING_ANIM_SET;
-			return S_OK;
+			return STATUS_OK;
 		}
 	}
 	// otherwise call the standard handler

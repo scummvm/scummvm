@@ -54,19 +54,19 @@ CAdRegion::~CAdRegion() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::loadFile(const char *filename) {
+ERRORCODE CAdRegion::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdRegion::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", filename);
 
 
 	delete [] buffer;
@@ -95,7 +95,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -123,7 +123,7 @@ HRESULT CAdRegion::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
 			Game->LOG(0, "'REGION' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -136,7 +136,7 @@ HRESULT CAdRegion::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -205,21 +205,21 @@ HRESULT CAdRegion::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in REGION definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	createRegion();
 
-	_alpha = DRGBA(ar, ag, ab, alpha);
+	_alpha = BYTETORGBA(ar, ag, ab, alpha);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	/*
 	    //////////////////////////////////////////////////////////////////////////
 	    // SkipTo
@@ -230,7 +230,7 @@ HRESULT CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	        _posY = stack->pop()->getInt();
 	        stack->pushNULL();
 
-	        return S_OK;
+	        return STATUS_OK;
 	    }
 
 	    else*/ return CBRegion::scCallMethod(script, stack, thisStack, name);
@@ -294,13 +294,13 @@ CScValue *CAdRegion::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -308,7 +308,7 @@ HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Blocked") == 0) {
 		_blocked = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Decoration") == 0) {
 		_decoration = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -324,7 +324,7 @@ HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Scale") == 0) {
 		_zoom = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -332,7 +332,7 @@ HRESULT CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AlphaColor") == 0) {
 		_alpha = (uint32)value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBRegion::scSetProperty(name, value);
@@ -346,7 +346,7 @@ const char *CAdRegion::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "REGION {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
@@ -354,8 +354,8 @@ HRESULT CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "DECORATION=%s\n", _decoration ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "SCALE=%d\n", (int)_zoom);
-	buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alpha), D3DCOLGetG(_alpha), D3DCOLGetB(_alpha));
-	buffer->putTextIndent(indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alpha));
+	buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", RGBCOLGetR(_alpha), RGBCOLGetG(_alpha), RGBCOLGetB(_alpha));
+	buffer->putTextIndent(indent + 2, "ALPHA = %d\n", RGBCOLGetA(_alpha));
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 
 	int i;
@@ -373,12 +373,12 @@ HRESULT CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent, "}\n\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRegion::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdRegion::persist(CBPersistMgr *persistMgr) {
 	CBRegion::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_alpha));
@@ -386,7 +386,7 @@ HRESULT CAdRegion::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_decoration));
 	persistMgr->transfer(TMEMBER(_zoom));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

@@ -49,12 +49,12 @@ CAdResponseContext::~CAdResponseContext() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseContext::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdResponseContext::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(Game));
 	persistMgr->transfer(TMEMBER(_context));
 	persistMgr->transfer(TMEMBER(_iD));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////

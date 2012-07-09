@@ -41,85 +41,85 @@ CBDebugger::~CBDebugger(void) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::initialize() {
-	return S_OK;
+ERRORCODE CBDebugger::initialize() {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::shutdown() {
-	return S_OK;
+ERRORCODE CBDebugger::shutdown() {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onGameInit() {
-	return S_OK;
+ERRORCODE CBDebugger::onGameInit() {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onGameShutdown() {
-	return S_OK;
+ERRORCODE CBDebugger::onGameShutdown() {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onGameTick() {
-	return S_OK;
+ERRORCODE CBDebugger::onGameTick() {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onLog(unsigned int errorCode, const char *text) {
-	return S_OK;
+ERRORCODE CBDebugger::onLog(unsigned int errorCode, const char *text) {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onScriptInit(CScScript *script) {
-	return S_OK;
+ERRORCODE CBDebugger::onScriptInit(CScScript *script) {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onScriptEventThreadInit(CScScript *script, CScScript *parentScript, const char *name) {
-	return S_OK;
+ERRORCODE CBDebugger::onScriptEventThreadInit(CScScript *script, CScScript *parentScript, const char *name) {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onScriptMethodThreadInit(CScScript *script, CScScript *parentScript, const char *name) {
-	return S_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onScriptShutdown(CScScript *script) {
-	return S_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onScriptChangeLine(CScScript *script, int Line) {
-	return S_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onScriptChangeScope(CScScript *script, CScValue *scope) {
-	return S_OK;
+ERRORCODE CBDebugger::onScriptMethodThreadInit(CScScript *script, CScScript *parentScript, const char *name) {
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onScriptShutdownScope(CScScript *script, CScValue *scope) {
-	return S_OK;
+ERRORCODE CBDebugger::onScriptShutdown(CScScript *script) {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onVariableInit(EWmeDebuggerVariableType type, CScScript *script, CScValue *scope, CScValue *var, const char *variableName) {
-	return S_OK;
+ERRORCODE CBDebugger::onScriptChangeLine(CScScript *script, int Line) {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onVariableChangeValue(CScValue *var, CScValue *value) {
-	return S_OK;
+ERRORCODE CBDebugger::onScriptChangeScope(CScScript *script, CScValue *scope) {
+	return STATUS_OK;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+ERRORCODE CBDebugger::onScriptShutdownScope(CScScript *script, CScValue *scope) {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDebugger::onScriptHitBreakpoint(CScScript *script) {
-	return S_OK;
+ERRORCODE CBDebugger::onVariableInit(EWmeDebuggerVariableType type, CScScript *script, CScValue *scope, CScValue *var, const char *variableName) {
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+ERRORCODE CBDebugger::onVariableChangeValue(CScValue *var, CScValue *value) {
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+ERRORCODE CBDebugger::onScriptHitBreakpoint(CScScript *script) {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////

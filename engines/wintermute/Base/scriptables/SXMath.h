@@ -40,7 +40,7 @@ public:
 	CSXMath(CBGame *inGame);
 	virtual ~CSXMath();
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 
 private:
 	double degreeToRadian(double value);

@@ -44,9 +44,9 @@ public:
 	char *_amountString;
 
 
-	HRESULT update();
+	ERRORCODE update();
 	DECLARE_PERSISTENT(CAdItem, CAdTalkHolder)
-	HRESULT display(int x, int y);
+	ERRORCODE display(int x, int y);
 	bool getExtendedFlag(const char *flagName);
 	bool _inInventory;
 	bool _cursorCombined;
@@ -55,13 +55,13 @@ public:
 	CBSprite *_cursorHover;
 	CAdItem(CBGame *inGame);
 	virtual ~CAdItem();
-	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	ERRORCODE loadFile(const char *filename);
+	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

@@ -116,44 +116,44 @@ CPartEmitter::~CPartEmitter(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::addSprite(const char *filename) {
-	if (!filename) return E_FAIL;
+ERRORCODE CPartEmitter::addSprite(const char *filename) {
+	if (!filename) return STATUS_FAILED;
 
 	// do we already have the file?
 	for (int i = 0; i < _sprites.GetSize(); i++) {
-		if (scumm_stricmp(filename, _sprites[i]) == 0) return S_OK;
+		if (scumm_stricmp(filename, _sprites[i]) == 0) return STATUS_OK;
 	}
 
 	// check if file exists
 	Common::SeekableReadStream *File = Game->_fileManager->openFile(filename);
 	if (!File) {
 		Game->LOG(0, "Sprite '%s' not found", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	} else Game->_fileManager->closeFile(File);
 
 	char *Str = new char[strlen(filename) + 1];
 	strcpy(Str, filename);
 	_sprites.Add(Str);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::removeSprite(const char *filename) {
+ERRORCODE CPartEmitter::removeSprite(const char *filename) {
 	for (int i = 0; i < _sprites.GetSize(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			delete [] _sprites[i];
 			_sprites.RemoveAt(i);
-			return S_OK;
+			return STATUS_OK;
 		}
 	}
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta) {
-	if (!particle) return E_FAIL;
-	if (_sprites.GetSize() == 0) return E_FAIL;
+ERRORCODE CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta) {
+	if (!particle) return STATUS_FAILED;
+	if (_sprites.GetSize() == 0) return STATUS_FAILED;
 
 	int posX = CBUtils::randomInt(_posX, _posX + _width);
 	int posY = CBUtils::randomInt(_posY, _posY + _height);
@@ -217,22 +217,22 @@ HRESULT CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, 
 	particle->_angVelocity = angVelocity;
 	particle->_growthRate = growthRate;
 	particle->_exponentialGrowth = _exponentialGrowth;
-	particle->_isDead = FAILED(particle->setSprite(_sprites[spriteIndex]));
+	particle->_isDead = DID_FAIL(particle->setSprite(_sprites[spriteIndex]));
 	particle->fadeIn(currentTime, _fadeInTime);
 
 
-	if (particle->_isDead) return E_FAIL;
-	else return S_OK;
+	if (particle->_isDead) return STATUS_FAILED;
+	else return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::update() {
-	if (!_running) return S_OK;
+ERRORCODE CPartEmitter::update() {
+	if (!_running) return STATUS_OK;
 	else return updateInternal(Game->_timer, Game->_timerDelta);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
+ERRORCODE CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	int numLive = 0;
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
@@ -250,7 +250,7 @@ HRESULT CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 			_batchesGenerated++;
 
 			if (_maxBatches > 0 && _batchesGenerated > _maxBatches) {
-				return S_OK;
+				return STATUS_OK;
 			}
 
 			int toGen = MIN(_genAmount, _maxParticles - numLive);
@@ -284,11 +284,11 @@ HRESULT CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::display(CBRegion *region) {
+ERRORCODE CPartEmitter::display(CBRegion *region) {
 	if (_sprites.GetSize() <= 1) Game->_renderer->startSpriteBatch();
 
 	for (int i = 0; i < _particles.GetSize(); i++) {
@@ -301,11 +301,11 @@ HRESULT CPartEmitter::display(CBRegion *region) {
 
 	if (_sprites.GetSize() <= 1) Game->_renderer->endSpriteBatch();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::start() {
+ERRORCODE CPartEmitter::start() {
 	for (int i = 0; i < _particles.GetSize(); i++) {
 		_particles[i]->_isDead = true;
 	}
@@ -325,14 +325,14 @@ HRESULT CPartEmitter::start() {
 		_overheadTime = 0;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::sortParticlesByZ() {
+ERRORCODE CPartEmitter::sortParticlesByZ() {
 	// sort particles by _posY
 	qsort(_particles.GetData(), _particles.GetSize(), sizeof(CPartParticle *), CPartEmitter::compareZ);
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -346,20 +346,20 @@ int CPartEmitter::compareZ(const void *obj1, const void *obj2) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::setBorder(int x, int y, int width, int height) {
+ERRORCODE CPartEmitter::setBorder(int x, int y, int width, int height) {
 	CBPlatform::setRect(&_border, x, y, x + width, y + height);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom) {
+ERRORCODE CPartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom) {
 	_borderThicknessLeft = thicknessLeft;
 	_borderThicknessRight = thicknessRight;
 	_borderThicknessTop = thicknessTop;
 	_borderThicknessBottom = thicknessBottom;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -384,9 +384,9 @@ CPartForce *CPartEmitter::addForceByName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength) {
+ERRORCODE CPartEmitter::addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength) {
 	CPartForce *force = addForceByName(name);
-	if (!force) return E_FAIL;
+	if (!force) return STATUS_FAILED;
 
 	force->_type = type;
 	force->_pos = Vector2(posX, posY);
@@ -396,26 +396,26 @@ HRESULT CPartEmitter::addForce(const char *name, CPartForce::TForceType type, in
 	matRot.rotationZ(Common::deg2rad(CBUtils::normalizeAngle(angle - 180)));
 	matRot.transformVector2(force->_direction);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::removeForce(const char *name) {
+ERRORCODE CPartEmitter::removeForce(const char *name) {
 	for (int i = 0; i < _forces.GetSize(); i++) {
 		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
 			delete _forces[i];
 			_forces.RemoveAt(i);
-			return S_OK;
+			return STATUS_OK;
 		}
 	}
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetBorder
 	//////////////////////////////////////////////////////////////////////////
@@ -426,9 +426,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		int borderWidth  = stack->pop()->getInt();
 		int borderHeight = stack->pop()->getInt();
 
-		stack->pushBool(SUCCEEDED(setBorder(borderX, borderY, borderWidth, borderHeight)));
+		stack->pushBool(DID_SUCCEED(setBorder(borderX, borderY, borderWidth, borderHeight)));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SetBorderThickness
@@ -440,9 +440,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		int top    = stack->pop()->getInt();
 		int bottom = stack->pop()->getInt();
 
-		stack->pushBool(SUCCEEDED(setBorderThickness(left, right, top, bottom)));
+		stack->pushBool(DID_SUCCEED(setBorderThickness(left, right, top, bottom)));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AddSprite
@@ -450,9 +450,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	else if (strcmp(name, "AddSprite") == 0) {
 		stack->correctParams(1);
 		const char *spriteFile = stack->pop()->getString();
-		stack->pushBool(SUCCEEDED(addSprite(spriteFile)));
+		stack->pushBool(DID_SUCCEED(addSprite(spriteFile)));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// RemoveSprite
@@ -460,9 +460,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	else if (strcmp(name, "RemoveSprite") == 0) {
 		stack->correctParams(1);
 		const char *spriteFile = stack->pop()->getString();
-		stack->pushBool(SUCCEEDED(removeSprite(spriteFile)));
+		stack->pushBool(DID_SUCCEED(removeSprite(spriteFile)));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -471,9 +471,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 	else if (strcmp(name, "Start") == 0) {
 		stack->correctParams(1);
 		_overheadTime = stack->pop()->getInt();
-		stack->pushBool(SUCCEEDED(start()));
+		stack->pushBool(DID_SUCCEED(start()));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -490,7 +490,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		_running = false;
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -501,7 +501,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		_running = false;
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -512,7 +512,7 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		_running = true;
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -524,9 +524,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		float angle = stack->pop()->getFloat();
 		float strength = stack->pop()->getFloat();
 
-		stack->pushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, angle, strength)));
+		stack->pushBool(DID_SUCCEED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, angle, strength)));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -540,9 +540,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		float angle = stack->pop()->getFloat();
 		float strength = stack->pop()->getFloat();
 
-		stack->pushBool(SUCCEEDED(addForce(forceName, CPartForce::FORCE_GLOBAL, posX, posY, angle, strength)));
+		stack->pushBool(DID_SUCCEED(addForce(forceName, CPartForce::FORCE_GLOBAL, posX, posY, angle, strength)));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -552,9 +552,9 @@ HRESULT CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		stack->correctParams(1);
 		const char *forceName = stack->pop()->getString();
 
-		stack->pushBool(SUCCEEDED(removeForce(forceName)));
+		stack->pushBool(DID_SUCCEED(removeForce(forceName)));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scCallMethod(script, stack, thisStack, name);
@@ -833,34 +833,34 @@ CScValue *CPartEmitter::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "X") == 0) {
 		_posX = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Y") == 0) {
 		_posY = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Width") == 0) {
 		_width = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Height") == 0) {
 		_height = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -868,21 +868,21 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Scale1") == 0) {
 		_scale1 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Scale2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Scale2") == 0) {
 		_scale2 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleZBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScaleZBased") == 0) {
 		_scaleZBased = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -890,21 +890,21 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Velocity1") == 0) {
 		_velocity1 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Velocity2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Velocity2") == 0) {
 		_velocity2 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// VelocityZBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "VelocityZBased") == 0) {
 		_velocityZBased = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -912,21 +912,21 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LifeTime1") == 0) {
 		_lifeTime1 = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTime2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LifeTime2") == 0) {
 		_lifeTime2 = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// LifeTimeZBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LifeTimeZBased") == 0) {
 		_lifeTimeZBased = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -934,14 +934,14 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Angle1") == 0) {
 		_angle1 = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Angle2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Angle2") == 0) {
 		_angle2 = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -949,14 +949,14 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AngVelocity1") == 0) {
 		_angVelocity1 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AngVelocity2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AngVelocity2") == 0) {
 		_angVelocity2 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -964,14 +964,14 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Rotation1") == 0) {
 		_rotation1 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Rotation2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Rotation2") == 0) {
 		_rotation2 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -981,7 +981,7 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 		_alpha1 = value->getInt();
 		if (_alpha1 < 0) _alpha1 = 0;
 		if (_alpha1 > 255) _alpha1 = 255;
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Alpha2
@@ -990,14 +990,14 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 		_alpha2 = value->getInt();
 		if (_alpha2 < 0) _alpha2 = 0;
 		if (_alpha2 > 255) _alpha2 = 255;
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaTimeBased
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AlphaTimeBased") == 0) {
 		_alphaTimeBased = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1005,7 +1005,7 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MaxParticles") == 0) {
 		_maxParticles = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1013,21 +1013,21 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GenerationInterval") == 0) {
 		_genInterval = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GenerationAmount
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GenerationAmount") == 0) {
 		_genAmount = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// MaxBatches
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MaxBatches") == 0) {
 		_maxBatches = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1035,14 +1035,14 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FadeInTime") == 0) {
 		_fadeInTime = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// FadeOutTime
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FadeOutTime") == 0) {
 		_fadeOutTime = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1050,21 +1050,21 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GrowthRate1") == 0) {
 		_growthRate1 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GrowthRate2
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GrowthRate2") == 0) {
 		_growthRate2 = value->getFloat();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ExponentialGrowth
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ExponentialGrowth") == 0) {
 		_exponentialGrowth = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1072,7 +1072,7 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UseRegion") == 0) {
 		_useRegion = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1082,7 +1082,7 @@ HRESULT CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 		delete[] _emitEvent;
 		_emitEvent = NULL;
 		if (!value->isNULL()) CBUtils::setString(&_emitEvent, value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scSetProperty(name, value);
@@ -1098,7 +1098,7 @@ const char *CPartEmitter::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartEmitter::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CPartEmitter::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_width));
@@ -1193,7 +1193,7 @@ HRESULT CPartEmitter::persist(CBPersistMgr *persistMgr) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

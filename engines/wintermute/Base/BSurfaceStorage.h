@@ -38,15 +38,15 @@ class CBSurface;
 class CBSurfaceStorage : public CBBase {
 public:
 	uint32 _lastCleanupTime;
-	HRESULT initLoop();
-	HRESULT sortSurfaces();
+	ERRORCODE initLoop();
+	ERRORCODE sortSurfaces();
 	static int surfaceSortCB(const void *arg1, const void *arg2);
-	HRESULT cleanup(bool Warn = false);
+	ERRORCODE cleanup(bool Warn = false);
 	//DECLARE_PERSISTENT(CBSurfaceStorage, CBBase);
 
-	HRESULT restoreAll();
+	ERRORCODE restoreAll();
 	CBSurface *addSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
-	HRESULT removeSurface(CBSurface *surface);
+	ERRORCODE removeSurface(CBSurface *surface);
 	CBSurfaceStorage(CBGame *inGame);
 	virtual ~CBSurfaceStorage();
 

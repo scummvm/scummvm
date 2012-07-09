@@ -43,16 +43,16 @@ class CScEngine;
 class CScStack;
 class CScScript : public CBBase, public IWmeDebugScript {
 public:
-	HRESULT dbgSendScript(IWmeDebugClient *client);
-	HRESULT dbgSendVariables(IWmeDebugClient *client);
+	ERRORCODE dbgSendScript(IWmeDebugClient *client);
+	ERRORCODE dbgSendVariables(IWmeDebugClient *client);
 
 	CBArray<int, int> _breakpoints;
 	bool _tracingMode;
 
 	CScScript *_parentScript;
 	bool _unbreakable;
-	HRESULT finishThreads();
-	HRESULT copyParameters(CScStack *stack);
+	ERRORCODE finishThreads();
+	ERRORCODE copyParameters(CScStack *stack);
 
 	void afterLoad();
 
@@ -66,21 +66,21 @@ public:
 	CScValue *_operand;
 	CScValue *_reg1;
 	bool _freezable;
-	HRESULT resume();
-	HRESULT pause();
+	ERRORCODE resume();
+	ERRORCODE pause();
 	bool canHandleEvent(const char *eventName);
 	bool canHandleMethod(const char *methodName);
-	HRESULT createThread(CScScript *original, uint32 initIP, const char *eventName);
-	HRESULT createMethodThread(CScScript *original, const char *methodName);
+	ERRORCODE createThread(CScScript *original, uint32 initIP, const char *eventName);
+	ERRORCODE createMethodThread(CScScript *original, const char *methodName);
 	CScScript *invokeEventHandler(const char *eventName, bool unbreakable = false);
 	uint32 _timeSlice;
 	DECLARE_PERSISTENT(CScScript, CBBase)
 	void runtimeError(LPCSTR fmt, ...);
-	HRESULT run();
-	HRESULT finish(bool includingThreads = false);
-	HRESULT sleep(uint32 duration);
-	HRESULT waitForExclusive(CBObject *object);
-	HRESULT waitFor(CBObject *object);
+	ERRORCODE run();
+	ERRORCODE finish(bool includingThreads = false);
+	ERRORCODE sleep(uint32 duration);
+	ERRORCODE waitForExclusive(CBObject *object);
+	ERRORCODE waitFor(CBObject *object);
 	uint32 _waitTime;
 	bool _waitFrozen;
 	CBObject *_waitObject;
@@ -136,12 +136,12 @@ public:
 	CScValue *_globals;
 	CScEngine *_engine;
 	int _currentLine;
-	HRESULT executeInstruction();
+	ERRORCODE executeInstruction();
 	char *getString();
 	uint32 getDWORD();
 	double getFloat();
 	void cleanup();
-	HRESULT create(const char *filename, byte *buffer, uint32 size, CBScriptHolder *owner);
+	ERRORCODE create(const char *filename, byte *buffer, uint32 size, CBScriptHolder *owner);
 	uint32 _iP;
 private:
 	void readHeader();
@@ -167,10 +167,10 @@ public:
 	char *_threadEvent;
 	CBScriptHolder *_owner;
 	CScScript::TExternalFunction *getExternal(char *name);
-	HRESULT externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function);
+	ERRORCODE externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function);
 private:
-	HRESULT initScript();
-	HRESULT initTables();
+	ERRORCODE initScript();
+	ERRORCODE initTables();
 
 
 // IWmeDebugScript interface implementation

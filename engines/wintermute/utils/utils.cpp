@@ -256,9 +256,9 @@ char *CBUtils::getFilename(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 void CBUtils::RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL) {
-	float var_R = (D3DCOLGetR(RGBColor) / 255.0f);
-	float var_G = (D3DCOLGetG(RGBColor) / 255.0f);
-	float var_B = (D3DCOLGetB(RGBColor) / 255.0f);
+	float var_R = (RGBCOLGetR(RGBColor) / 255.0f);
+	float var_G = (RGBCOLGetG(RGBColor) / 255.0f);
+	float var_B = (RGBCOLGetB(RGBColor) / 255.0f);
 
 	//Min. value of RGB
 	float var_Min = MIN(var_R, var_G);
@@ -328,7 +328,7 @@ uint32 CBUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 		G = (byte)(255 * Hue2RGB(var_1, var_2, H));
 		B = (byte)(255 * Hue2RGB(var_1, var_2, H - (1.0f / 3.0f)));
 	}
-	return DRGBA(255, R, G, B);
+	return BYTETORGBA(255, R, G, B);
 }
 
 

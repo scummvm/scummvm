@@ -71,7 +71,7 @@ void CBRegion::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRegion::createRegion() {
-	return SUCCEEDED(getBoundingRect(&_rect));
+	return DID_SUCCEED(getBoundingRect(&_rect));
 }
 
 
@@ -95,19 +95,19 @@ bool CBRegion::pointInRegion(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::loadFile(const char *filename) {
+ERRORCODE CBRegion::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CBRegion::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", filename);
 
 
 	delete [] buffer;
@@ -128,7 +128,7 @@ TOKEN_DEF(EDITOR_SELECTED_POINT)
 TOKEN_DEF(PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CBRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -148,7 +148,7 @@ HRESULT CBRegion::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
 			Game->LOG(0, "'REGION' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -161,7 +161,7 @@ HRESULT CBRegion::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -198,19 +198,19 @@ HRESULT CBRegion::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in REGION definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	createRegion();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// AddPoint
@@ -225,7 +225,7 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -244,7 +244,7 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			stack->pushBool(true);
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -264,7 +264,7 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			stack->pushBool(true);
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			stack->pushBool(true);
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -302,7 +302,7 @@ HRESULT CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			}
 		} else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scCallMethod(script, stack, thisStack, name);
@@ -350,13 +350,13 @@ CScValue *CBRegion::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CBRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -364,7 +364,7 @@ HRESULT CBRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Active") == 0) {
 		_active = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scSetProperty(name, value);
@@ -378,7 +378,7 @@ const char *CBRegion::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride) {
+ERRORCODE CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride) {
 	if (!nameOverride) buffer->putTextIndent(indent, "REGION {\n");
 	else buffer->putTextIndent(indent, "%s {\n", nameOverride);
 
@@ -401,12 +401,12 @@ HRESULT CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *nameOv
 
 	buffer->putTextIndent(indent, "}\n\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBRegion::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -417,7 +417,7 @@ HRESULT CBRegion::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_lastMimicY));
 	_points.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -465,7 +465,7 @@ bool CBRegion::ptInPolygon(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::getBoundingRect(RECT *rect) {
+ERRORCODE CBRegion::getBoundingRect(RECT *rect) {
 	if (_points.GetSize() == 0) CBPlatform::setRectEmpty(rect);
 	else {
 		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;
@@ -479,13 +479,13 @@ HRESULT CBRegion::getBoundingRect(RECT *rect) {
 		}
 		CBPlatform::setRect(rect, MinX, MinY, MaxX, MaxY);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRegion::mimic(CBRegion *region, float scale, int x, int y) {
-	if (scale == _lastMimicScale && x == _lastMimicX && y == _lastMimicY) return S_OK;
+ERRORCODE CBRegion::mimic(CBRegion *region, float scale, int x, int y) {
+	if (scale == _lastMimicScale && x == _lastMimicX && y == _lastMimicY) return STATUS_OK;
 
 	cleanup();
 
@@ -502,7 +502,7 @@ HRESULT CBRegion::mimic(CBRegion *region, float scale, int x, int y) {
 	_lastMimicX = x;
 	_lastMimicY = y;
 
-	return createRegion() ? S_OK : E_FAIL;
+	return createRegion() ? STATUS_OK : STATUS_FAILED;
 }
 
 } // end of namespace WinterMute

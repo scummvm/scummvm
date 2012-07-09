@@ -51,22 +51,22 @@ CBFontStorage::~CBFontStorage() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontStorage::cleanup(bool warn) {
+ERRORCODE CBFontStorage::cleanup(bool warn) {
 	for (int i = 0; i < _fonts.GetSize(); i++) {
 		if (warn) Game->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
 		delete _fonts[i];
 	}
 	_fonts.RemoveAll();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontStorage::initLoop() {
+ERRORCODE CBFontStorage::initLoop() {
 	for (int i = 0; i < _fonts.GetSize(); i++) {
 		_fonts[i]->initLoop();
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 	CBFont* font = new CBFont(Game);
 	if (!font) return NULL;
 
-	if (FAILED(font->loadFile(filename))) {
+	if (DID_FAIL(font->loadFile(filename))) {
 	    delete font;
 	    return NULL;
 	}
@@ -104,8 +104,8 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontStorage::removeFont(CBFont *font) {
-	if (!font) return E_FAIL;
+ERRORCODE CBFontStorage::removeFont(CBFont *font) {
+	if (!font) return STATUS_FAILED;
 
 	for (int i = 0; i < _fonts.GetSize(); i++) {
 		if (_fonts[i] == font) {
@@ -117,19 +117,19 @@ HRESULT CBFontStorage::removeFont(CBFont *font) {
 			break;
 		}
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontStorage::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBFontStorage::persist(CBPersistMgr *persistMgr) {
 
 	if (!persistMgr->_saving) cleanup(false);
 
 	persistMgr->transfer(TMEMBER(Game));
 	_fonts.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

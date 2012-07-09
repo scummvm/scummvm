@@ -119,7 +119,7 @@ Common::String CBPersistMgr::getFilenameForSlot(int slot) {
 void CBPersistMgr::getSaveStateDesc(int slot, SaveStateDescriptor &desc) {
 	Common::String filename = getFilenameForSlot(slot);
 	warning("Trying to list savegame %s in slot %d", filename.c_str(), slot);
-	if (FAILED(readHeader(filename))) {
+	if (DID_FAIL(readHeader(filename))) {
 		warning("getSavedDesc(%d) - Failed for %s", slot, filename.c_str());
 		return;
 	}
@@ -163,15 +163,15 @@ uint32 CBPersistMgr::getMaxUsedSlot() {
 bool CBPersistMgr::getSaveExists(int slot) {
 	Common::String filename = getFilenameForSlot(slot);
 	warning("Trying to list savegame %s in slot %d", filename.c_str(), slot);
-	if (FAILED(readHeader(filename))) {
+	if (DID_FAIL(readHeader(filename))) {
 		return false;
 	}
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::initSave(const char *desc) {
-	if (!desc) return E_FAIL;
+ERRORCODE CBPersistMgr::initSave(const char *desc) {
+	if (!desc) return STATUS_FAILED;
 
 	cleanup();
 	_saving = true;
@@ -182,7 +182,7 @@ HRESULT CBPersistMgr::initSave(const char *desc) {
 		// get thumbnails
 		if (!Game->_cachedThumbnail) {
 			Game->_cachedThumbnail = new CBSaveThumbHelper(Game);
-			if (FAILED(Game->_cachedThumbnail->storeThumbnail(true))) {
+			if (DID_FAIL(Game->_cachedThumbnail->storeThumbnail(true))) {
 				delete Game->_cachedThumbnail;
 				Game->_cachedThumbnail = NULL;
 			}
@@ -241,10 +241,10 @@ HRESULT CBPersistMgr::initSave(const char *desc) {
 		_savedPlayTime = g_system->getMillis();
 		_saveStream->writeUint32LE(_savedPlayTime);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
+ERRORCODE CBPersistMgr::readHeader(const Common::String &filename) {
 	cleanup();
 
 	_saving = false;
@@ -257,7 +257,7 @@ HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
 
 		if (magic != DCGF_MAGIC) {
 			cleanup();
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 
 		magic = getDWORD();
@@ -290,26 +290,26 @@ HRESULT CBPersistMgr::readHeader(const Common::String &filename) {
 
 			_offset = dataOffset;
 
-			return S_OK;
+			return STATUS_OK;
 		}
 	}
 
 	cleanup();
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::initLoad(const char *filename) {
-	if (FAILED(readHeader(filename))) {
+ERRORCODE CBPersistMgr::initLoad(const char *filename) {
+	if (DID_FAIL(readHeader(filename))) {
 		cleanup();
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	_saving = false;
 
 	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), Game->_name) != 0) {
 		Game->LOG(0, "ERROR: Saved game name doesn't match current game");
 		cleanup();
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	// if save is newer version than we are, fail
@@ -320,7 +320,7 @@ HRESULT CBPersistMgr::initLoad(const char *filename) {
 		Game->LOG(0, "ERROR: Saved game version is newer than current game");
 		Game->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	// if save is older than the minimal version we support
@@ -331,7 +331,7 @@ HRESULT CBPersistMgr::initLoad(const char *filename) {
 		Game->LOG(0, "ERROR: Saved game is too old and cannot be used by this version of game engine");
 		Game->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
-		return E_FAIL;
+		return STATUS_FAILED;
 
 	}
 
@@ -343,30 +343,30 @@ HRESULT CBPersistMgr::initLoad(const char *filename) {
 	 }
 	 */
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::saveFile(const char *filename) {
+ERRORCODE CBPersistMgr::saveFile(const char *filename) {
 	return Game->_fileManager->saveFile(filename, ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic *)_saveStream)->size(), Game->_compressedSavegames, _richBuffer, _richBufferSize);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::putBytes(byte *buffer, uint32 size) {
+ERRORCODE CBPersistMgr::putBytes(byte *buffer, uint32 size) {
 	_saveStream->write(buffer, size);
 	if (_saveStream->err())
-		return E_FAIL;
-	return S_OK;
+		return STATUS_FAILED;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::getBytes(byte *buffer, uint32 size) {
+ERRORCODE CBPersistMgr::getBytes(byte *buffer, uint32 size) {
 	_loadStream->read(buffer, size);
 	if (_loadStream->err())
-		return E_FAIL;
-	return S_OK;
+		return STATUS_FAILED;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -420,7 +420,7 @@ char *CBPersistMgr::getString() {
 	} else return ret;
 }
 
-HRESULT CBPersistMgr::putTimeDate(const TimeDate &t) {
+ERRORCODE CBPersistMgr::putTimeDate(const TimeDate &t) {
 	_saveStream->writeSint32LE(t.tm_sec);
 	_saveStream->writeSint32LE(t.tm_min);
 	_saveStream->writeSint32LE(t.tm_hour);
@@ -430,9 +430,9 @@ HRESULT CBPersistMgr::putTimeDate(const TimeDate &t) {
 	// _saveStream->writeSint32LE(t.tm_wday); //TODO: Add this in when merging next
 
 	if (_saveStream->err()) {
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 TimeDate CBPersistMgr::getTimeDate() {
@@ -484,134 +484,134 @@ double CBPersistMgr::getDouble() {
 
 //////////////////////////////////////////////////////////////////////////
 // bool
-HRESULT CBPersistMgr::transfer(const char *name, bool *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, bool *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	} else {
 		*val = _loadStream->readByte();
 		if (_loadStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // int
-HRESULT CBPersistMgr::transfer(const char *name, int *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, int *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(*val);
 		if (_saveStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	} else {
 		*val = _loadStream->readSint32LE();
 		if (_loadStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // DWORD
-HRESULT CBPersistMgr::transfer(const char *name, uint32 *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, uint32 *val) {
 	if (_saving) {
 		_saveStream->writeUint32LE(*val);
 		if (_saveStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	} else {
 		*val = _loadStream->readUint32LE();
 		if (_loadStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // float
-HRESULT CBPersistMgr::transfer(const char *name, float *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, float *val) {
 	if (_saving) {
 		putFloat(*val);
 		if (_saveStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	} else {
 		*val = getFloat();
 		if (_loadStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // double
-HRESULT CBPersistMgr::transfer(const char *name, double *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, double *val) {
 	if (_saving) {
 		putDouble(*val);
 		if (_saveStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	} else {
 		*val = getDouble();
 		if (_loadStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // char*
-HRESULT CBPersistMgr::transfer(const char *name, char **val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, char **val) {
 	if (_saving) {
 		putString(*val);
-		return S_OK;
+		return STATUS_OK;
 	} else {
 		char *str = getString();
 		if (_loadStream->err()) {
 			delete[] str;
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		*val = str;
-		return S_OK;
+		return STATUS_OK;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // const char*
-HRESULT CBPersistMgr::transfer(const char *name, const char **val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, const char **val) {
 	if (_saving) {
 		putString(*val);
-		return S_OK;
+		return STATUS_OK;
 	} else {
 		char *str = getString();
 		if (_loadStream->err()) {
 			delete[] str;
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		*val = str;
-		return S_OK;
+		return STATUS_OK;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Common::String
-HRESULT CBPersistMgr::transfer(const char *name, Common::String *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, Common::String *val) {
 	if (_saving) {
 		putString(*val);
-		return S_OK;
+		return STATUS_OK;
 	} else {
 		char *str = getString();
 		if (_loadStream->err()) {
 			delete[] str;
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		if (str) {
 			*val = str;
@@ -619,12 +619,12 @@ HRESULT CBPersistMgr::transfer(const char *name, Common::String *val) {
 		} else {
 			*val = "";
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPersistMgr::transfer(const char *name, AnsiStringArray &val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, AnsiStringArray &val) {
 	size_t size;
 
 	if (_saving) {
@@ -642,97 +642,97 @@ HRESULT CBPersistMgr::transfer(const char *name, AnsiStringArray &val) {
 			char *str = getString();
 			if (_loadStream->err()) {
 				delete[] str;
-				return E_FAIL;
+				return STATUS_FAILED;
 			}
 			if (str) val.push_back(str);
 			delete[] str;
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // BYTE
-HRESULT CBPersistMgr::transfer(const char *name, byte *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, byte *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	} else {
 		*val = _loadStream->readByte();
 		if (_loadStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-HRESULT CBPersistMgr::transfer(const char *name, RECT *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, RECT *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);
 		_saveStream->writeSint32LE(val->right);
 		_saveStream->writeSint32LE(val->bottom);
 		if (_saveStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	} else {
 		val->left = _loadStream->readSint32LE();
 		val->top = _loadStream->readSint32LE();
 		val->right = _loadStream->readSint32LE();
 		val->bottom = _loadStream->readSint32LE();
 		if (_loadStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-HRESULT CBPersistMgr::transfer(const char *name, POINT *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, POINT *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);
 		if (_saveStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	} else {
 		val->x = _loadStream->readSint32LE();
 		val->y = _loadStream->readSint32LE();
 		if (_loadStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-HRESULT CBPersistMgr::transfer(const char *name, Vector2 *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, Vector2 *val) {
 	if (_saving) {
 		putFloat(val->x);
 		putFloat(val->y);
 		if (_saveStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	} else {
 		val->x = getFloat();
 		val->y = getFloat();
 		if (_loadStream->err())
-			return E_FAIL;
-		return S_OK;
+			return STATUS_FAILED;
+		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // generic pointer
-HRESULT CBPersistMgr::transfer(const char *name, void *val) {
+ERRORCODE CBPersistMgr::transfer(const char *name, void *val) {
 	int classID = -1, instanceID = -1;
 
 	if (_saving) {
@@ -750,7 +750,7 @@ HRESULT CBPersistMgr::transfer(const char *name, void *val) {
 		*(void **)val = CSysClassRegistry::getInstance()->idToPointer(classID, instanceID);
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 

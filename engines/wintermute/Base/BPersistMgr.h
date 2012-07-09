@@ -51,7 +51,7 @@ public:
 	byte _savedExtMajor;
 	byte _savedExtMinor;
 	Common::String _savedName;
-	HRESULT saveFile(const char *filename);
+	ERRORCODE saveFile(const char *filename);
 	uint32 getDWORD();
 	void putDWORD(uint32 val);
 	char *getString();
@@ -66,10 +66,10 @@ public:
 	void deleteSaveSlot(int slot);
 	uint32 getMaxUsedSlot();
 	bool getSaveExists(int slot);
-	HRESULT initLoad(const char *filename);
-	HRESULT initSave(const char *desc);
-	HRESULT getBytes(byte *buffer, uint32 size);
-	HRESULT putBytes(byte *buffer, uint32 size);
+	ERRORCODE initLoad(const char *filename);
+	ERRORCODE initSave(const char *desc);
+	ERRORCODE getBytes(byte *buffer, uint32 size);
+	ERRORCODE putBytes(byte *buffer, uint32 size);
 	uint32 _offset;
 
 	bool _saving;
@@ -77,20 +77,20 @@ public:
 	uint32 _richBufferSize;
 	byte *_richBuffer;
 
-	HRESULT transfer(const char *name, void *val);
-	HRESULT transfer(const char *name, int *val);
-	HRESULT transfer(const char *name, uint32 *val);
-	HRESULT transfer(const char *name, float *val);
-	HRESULT transfer(const char *name, double *val);
-	HRESULT transfer(const char *name, bool *val);
-	HRESULT transfer(const char *name, byte *val);
-	HRESULT transfer(const char *name, RECT *val);
-	HRESULT transfer(const char *name, POINT *val);
-	HRESULT transfer(const char *name, const char **val);
-	HRESULT transfer(const char *name, char **val);
-	HRESULT transfer(const char *name, Common::String *val);
-	HRESULT transfer(const char *name, Vector2 *val);
-	HRESULT transfer(const char *name, AnsiStringArray &Val);
+	ERRORCODE transfer(const char *name, void *val);
+	ERRORCODE transfer(const char *name, int *val);
+	ERRORCODE transfer(const char *name, uint32 *val);
+	ERRORCODE transfer(const char *name, float *val);
+	ERRORCODE transfer(const char *name, double *val);
+	ERRORCODE transfer(const char *name, bool *val);
+	ERRORCODE transfer(const char *name, byte *val);
+	ERRORCODE transfer(const char *name, RECT *val);
+	ERRORCODE transfer(const char *name, POINT *val);
+	ERRORCODE transfer(const char *name, const char **val);
+	ERRORCODE transfer(const char *name, char **val);
+	ERRORCODE transfer(const char *name, Common::String *val);
+	ERRORCODE transfer(const char *name, Vector2 *val);
+	ERRORCODE transfer(const char *name, AnsiStringArray &Val);
 	CBPersistMgr(CBGame *inGame = NULL);
 	virtual ~CBPersistMgr();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
@@ -99,9 +99,9 @@ public:
 	byte *_thumbnailData;
 private:
 	Common::String getFilenameForSlot(int slot);
-	HRESULT readHeader(const Common::String &filename);
+	ERRORCODE readHeader(const Common::String &filename);
 	TimeDate getTimeDate();
-	HRESULT putTimeDate(const TimeDate &t);
+	ERRORCODE putTimeDate(const TimeDate &t);
 	Common::WriteStream *_saveStream;
 	Common::SeekableReadStream *_loadStream;
 };

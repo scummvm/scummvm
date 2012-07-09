@@ -84,19 +84,19 @@ CAdEntity::~CAdEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::loadFile(const char *filename) {
+ERRORCODE CAdEntity::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdEntity::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ENTITY file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ENTITY file '%s'", filename);
 
 
 	delete [] buffer;
@@ -150,7 +150,7 @@ TOKEN_DEF(WALK_TO_DIR)
 TOKEN_DEF(SAVE_STATE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY)
 	TOKEN_TABLE(SPRITE)
@@ -203,7 +203,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY) {
 			Game->LOG(0, "'ENTITY' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -214,7 +214,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_X:
@@ -229,21 +229,21 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			delete _sprite;
 			_sprite = NULL;
 			spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			else _sprite = spr;
 		}
 		break;
 
 		case TOKEN_TALK: {
 			spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.Add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.Add(spr);
 		}
 		break;
@@ -306,7 +306,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -321,7 +321,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			if (_region) Game->unregisterObject(_region);
 			_region = NULL;
 			CBRegion *rgn = new CBRegion(Game);
-			if (!rgn || FAILED(rgn->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
+			if (!rgn || DID_FAIL(rgn->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
 			else {
 				_region = rgn;
 				Game->registerObject(_region);
@@ -336,7 +336,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			_currentBlockRegion = NULL;
 			CBRegion *rgn = new CBRegion(Game);
 			CBRegion *crgn = new CBRegion(Game);
-			if (!rgn || !crgn || FAILED(rgn->loadBuffer(params, false))) {
+			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				delete _blockRegion;
 				_blockRegion = NULL;
 				delete _currentBlockRegion;
@@ -357,7 +357,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			_currentWptGroup = NULL;
 			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
 			CAdWaypointGroup *cwpt = new CAdWaypointGroup(Game);
-			if (!wpt || !cwpt || FAILED(wpt->loadBuffer(params, false))) {
+			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				delete _wptGroup;
 				_wptGroup = NULL;
 				delete _currentWptGroup;
@@ -381,7 +381,7 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 				_sprite = NULL;
 				if (Game->_editorMode) {
 					spr = new CBSprite(Game, this);
-					if (!spr || FAILED(spr->loadFile("entity_sound.sprite"))) cmd = PARSERR_GENERIC;
+					if (!spr || DID_FAIL(spr->loadFile("entity_sound.sprite"))) cmd = PARSERR_GENERIC;
 					else _sprite = spr;
 				}
 				if (Game->_editorMode) _editorOnly = true;
@@ -454,12 +454,12 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in ENTITY definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading ENTITY definition");
 		if (spr) delete spr;
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (_region && _sprite) {
@@ -471,17 +471,17 @@ HRESULT CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	if (alpha != 0 && ar == 0 && ag == 0 && ab == 0) {
 		ar = ag = ab = 255;
 	}
-	_alphaColor = DRGBA(ar, ag, ab, alpha);
+	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 	_state = STATE_READY;
 
 	if (_item && ((CAdGame *)Game)->isItemTaken(_item)) _active = false;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::display() {
+ERRORCODE CAdEntity::display() {
 	if (_active) {
 		updateSounds();
 
@@ -524,12 +524,12 @@ HRESULT CAdEntity::display() {
 		if (_partEmitter) _partEmitter->display(_region);
 
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::update() {
+ERRORCODE CAdEntity::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY && _animSprite) {
@@ -618,23 +618,23 @@ HRESULT CAdEntity::update() {
 	updatePartEmitter();
 	updateSpriteAttachments();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// StopSound
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "StopSound") == 0 && _subtype == ENTITY_SOUND) {
 		stack->correctParams(0);
 
-		if (FAILED(stopSFX(false))) stack->pushBool(false);
+		if (DID_FAIL(stopSFX(false))) stack->pushBool(false);
 		else stack->pushBool(true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -649,7 +649,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _theora;
 		_theora = new CVidTheoraPlayer(Game);
-		if (_theora && SUCCEEDED(_theora->initialize(filename))) {
+		if (_theora && DID_SUCCEED(_theora->initialize(filename))) {
 			if (!valAlpha->isNULL())    _theora->setAlphaImage(valAlpha->getString());
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if(m_Scale>=0) m_Theora->m_PlayZoom = m_Scale;
@@ -659,7 +659,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(false);
 		}
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -674,7 +674,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(true);
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -685,7 +685,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (_theora && _theora->isPlaying()) stack->pushBool(true);
 		else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -698,7 +698,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(true);
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -711,7 +711,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(true);
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -722,7 +722,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (_theora && _theora->isPaused()) stack->pushBool(true);
 		else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 
@@ -738,7 +738,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (_region) stack->pushNative(_region, true);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -752,7 +752,7 @@ HRESULT CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(true);
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CAdTalkHolder::scCallMethod(script, stack, thisStack, name);
@@ -831,14 +831,14 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CAdEntity::scSetProperty(const char *name, CScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Item") == 0) {
 		setItem(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -846,7 +846,7 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToX") == 0) {
 		_walkToX = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -854,7 +854,7 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToY") == 0) {
 		_walkToY = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -863,7 +863,7 @@ HRESULT CAdEntity::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "WalkToDirection") == 0) {
 		int dir = value->getInt();
 		if (dir >= 0 && dir < NUM_DIRECTIONS) _walkToDir = (TDirection)dir;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CAdTalkHolder::scSetProperty(name, value);
@@ -877,7 +877,7 @@ const char *CAdEntity::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	if (_subtype == ENTITY_SOUND)
@@ -924,11 +924,11 @@ HRESULT CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 	}
 
 
-	if (D3DCOLGetR(_alphaColor) != 0 || D3DCOLGetG(_alphaColor) != 0 ||  D3DCOLGetB(_alphaColor) != 0)
-		buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", D3DCOLGetR(_alphaColor), D3DCOLGetG(_alphaColor), D3DCOLGetB(_alphaColor));
+	if (RGBCOLGetR(_alphaColor) != 0 || RGBCOLGetG(_alphaColor) != 0 ||  RGBCOLGetB(_alphaColor) != 0)
+		buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", RGBCOLGetR(_alphaColor), RGBCOLGetG(_alphaColor), RGBCOLGetB(_alphaColor));
 
-	if (D3DCOLGetA(_alphaColor) != 0)
-		buffer->putTextIndent(indent + 2, "ALPHA = %d\n", D3DCOLGetA(_alphaColor));
+	if (RGBCOLGetA(_alphaColor) != 0)
+		buffer->putTextIndent(indent + 2, "ALPHA = %d\n", RGBCOLGetA(_alphaColor));
 
 	if (_scale >= 0)
 		buffer->putTextIndent(indent + 2, "SCALE = %d\n", (int)_scale);
@@ -952,7 +952,7 @@ HRESULT CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent, "}\n\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -977,7 +977,7 @@ void CAdEntity::updatePosition() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdEntity::persist(CBPersistMgr *persistMgr) {
 	CAdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_item));
@@ -993,7 +993,7 @@ HRESULT CAdEntity::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_theora));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -1003,7 +1003,7 @@ void CAdEntity::setItem(const char *itemName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdEntity::setSprite(const char *filename) {
+ERRORCODE CAdEntity::setSprite(const char *filename) {
 	bool setCurrent = false;
 	if (_currentSprite == _sprite) {
 		_currentSprite = NULL;
@@ -1013,14 +1013,14 @@ HRESULT CAdEntity::setSprite(const char *filename) {
 	delete _sprite;
 	_sprite = NULL;
 	CBSprite *spr = new CBSprite(Game, this);
-	if (!spr || FAILED(spr->loadFile(filename))) {
+	if (!spr || DID_FAIL(spr->loadFile(filename))) {
 		delete _sprite;
 		_sprite = NULL;
-		return E_FAIL;
+		return STATUS_FAILED;
 	} else {
 		_sprite = spr;
 		_currentSprite = _sprite;
-		return S_OK;
+		return STATUS_OK;
 	}
 }
 

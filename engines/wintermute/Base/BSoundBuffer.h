@@ -48,32 +48,32 @@ public:
 	virtual ~CBSoundBuffer();
 
 
-	HRESULT pause();
-	HRESULT play(bool looping = false, uint32 startSample = 0);
-	HRESULT resume();
-	HRESULT stop();
+	ERRORCODE pause();
+	ERRORCODE play(bool looping = false, uint32 startSample = 0);
+	ERRORCODE resume();
+	ERRORCODE stop();
 	bool isPlaying();
 
 	void setLooping(bool looping);
 
 	uint32 getPosition();
-	HRESULT setPosition(uint32 pos);
+	ERRORCODE setPosition(uint32 pos);
 	uint32 getLength();
 
-	HRESULT setLoopStart(uint32 pos);
+	ERRORCODE setLoopStart(uint32 pos);
 	uint32 getLoopStart() const {
 		return _loopStart;
 	}
 
-	HRESULT setPan(float pan);
-	HRESULT setPrivateVolume(int colume);
-	HRESULT setVolume(int colume);
+	ERRORCODE setPan(float pan);
+	ERRORCODE setPrivateVolume(int colume);
+	ERRORCODE setVolume(int colume);
 
 	void setType(TSoundType Type);
 
-	HRESULT loadFromFile(const char *filename, bool forceReload = false);
+	ERRORCODE loadFromFile(const char *filename, bool forceReload = false);
 	void setStreaming(bool streamed, uint32 numBlocks = 0, uint32 blockSize = 0);
-	HRESULT applyFX(TSFXType type, float param1, float param2, float param3, float param4);
+	ERRORCODE applyFX(TSFXType type, float param1, float param2, float param3, float param4);
 
 	//HSTREAM _stream;
 	//HSYNC _sync;

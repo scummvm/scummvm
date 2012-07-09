@@ -60,14 +60,14 @@ CBSurface::~CBSurface() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	return E_FAIL;
+ERRORCODE CBSurface::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::restore() {
-	return E_FAIL;
+ERRORCODE CBSurface::restore() {
+	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -76,41 +76,41 @@ bool CBSurface::isTransparentAt(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::displayHalfTrans(int x, int y, RECT rect) {
-	return E_FAIL;
+ERRORCODE CBSurface::displayHalfTrans(int x, int y, RECT rect) {
+	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurface::displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return displayTransZoom(x, y, rect, zoomX, zoomY, alpha, blendMode, mirrorX, mirrorY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::create(int Width, int Height) {
-	return E_FAIL;
+ERRORCODE CBSurface::create(int Width, int Height) {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::startPixelOp() {
-	return E_FAIL;
+ERRORCODE CBSurface::startPixelOp() {
+	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::endPixelOp() {
-	return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
-	return E_FAIL;
+ERRORCODE CBSurface::endPixelOp() {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::putPixel(int x, int y, byte r, byte g, byte b, int a) {
-	return E_FAIL;
+ERRORCODE CBSurface::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
+	return STATUS_FAILED;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+ERRORCODE CBSurface::putPixel(int x, int y, byte r, byte g, byte b, int a) {
+	return STATUS_FAILED;
 }
 
 
@@ -127,20 +127,20 @@ bool CBSurface::isTransparentAtLite(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::invalidate() {
-	return E_FAIL;
+ERRORCODE CBSurface::invalidate() {
+	return STATUS_FAILED;
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurface::prepareToDraw() {
+ERRORCODE CBSurface::prepareToDraw() {
 	_lastUsedTime = Game->_liveTimer;
 
 	if (!_valid) {
 		//Game->LOG(0, "Reviving: %s", _filename);
 		return create(_filename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
-	} else return S_OK;
+	} else return STATUS_OK;
 }
 
 

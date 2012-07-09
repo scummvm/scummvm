@@ -50,12 +50,12 @@ CBStringTable::~CBStringTable() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
-	if (key == NULL || val == NULL) return E_FAIL;
+ERRORCODE CBStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
+	if (key == NULL || val == NULL) return STATUS_FAILED;
 
 	if (scumm_stricmp(key, "@right-to-left") == 0) {
 		Game->_textRTL = true;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	Common::String final_key = key;
@@ -66,7 +66,7 @@ HRESULT CBStringTable::addString(const char *key, const char *val, bool reportDu
 
 	_strings[final_key] = val;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -169,7 +169,7 @@ const char *CBStringTable::expandStatic(const char *string, bool forceExpand) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBStringTable::loadFile(const char *filename, bool clearOld) {
+ERRORCODE CBStringTable::loadFile(const char *filename, bool clearOld) {
 	Game->LOG(0, "Loading string table...");
 
 	if (clearOld) _strings.clear();
@@ -178,7 +178,7 @@ HRESULT CBStringTable::loadFile(const char *filename, bool clearOld) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename, &size);
 	if (buffer == NULL) {
 		Game->LOG(0, "CBStringTable::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	uint32 pos = 0;
@@ -223,7 +223,7 @@ HRESULT CBStringTable::loadFile(const char *filename, bool clearOld) {
 
 	Game->LOG(0, "  %d strings loaded", _strings.size());
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

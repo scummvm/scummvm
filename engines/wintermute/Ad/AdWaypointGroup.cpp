@@ -64,19 +64,19 @@ void CAdWaypointGroup::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::loadFile(const char *filename) {
+ERRORCODE CAdWaypointGroup::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdWaypointGroup::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
 
 
 	delete [] buffer;
@@ -96,7 +96,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WAYPOINTS)
 	TOKEN_TABLE(TEMPLATE)
@@ -115,7 +115,7 @@ HRESULT CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WAYPOINTS) {
 			Game->LOG(0, "'WAYPOINTS' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -123,7 +123,7 @@ HRESULT CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -156,15 +156,15 @@ HRESULT CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in WAYPOINTS definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WAYPOINTS {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
@@ -180,12 +180,12 @@ HRESULT CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent, "}\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -196,7 +196,7 @@ HRESULT CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_lastMimicY));
 	_points.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -225,13 +225,13 @@ CScValue *CAdWaypointGroup::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Active") == 0) {
 		_active = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scSetProperty(name, value);
@@ -239,8 +239,8 @@ HRESULT CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdWaypointGroup::mimic(CAdWaypointGroup *wpt, float scale, int argX, int argY) {
-	if (scale == _lastMimicScale && argX == _lastMimicX && argY == _lastMimicY) return S_OK;
+ERRORCODE CAdWaypointGroup::mimic(CAdWaypointGroup *wpt, float scale, int argX, int argY) {
+	if (scale == _lastMimicScale && argX == _lastMimicX && argY == _lastMimicY) return STATUS_OK;
 
 	cleanup();
 
@@ -255,7 +255,7 @@ HRESULT CAdWaypointGroup::mimic(CAdWaypointGroup *wpt, float scale, int argX, in
 	_lastMimicX = argX;
 	_lastMimicY = argY;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

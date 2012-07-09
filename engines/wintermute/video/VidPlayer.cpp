@@ -45,7 +45,7 @@ CVidPlayer::CVidPlayer(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::SetDefaults() {
+ERRORCODE CVidPlayer::SetDefaults() {
 	_playing = false;
 
 	/*  _aviFile = NULL;
@@ -80,7 +80,7 @@ HRESULT CVidPlayer::SetDefaults() {
 	_currentSubtitle = 0;
 	_showSubtitle = false;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -91,7 +91,7 @@ CVidPlayer::~CVidPlayer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::cleanup() {
+ERRORCODE CVidPlayer::cleanup() {
 #if 0
 	if (_sound) _sound->Stop();
 	if (_videoPGF) AVIStreamGetFrameClose(_videoPGF);
@@ -124,7 +124,7 @@ HRESULT CVidPlayer::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
+ERRORCODE CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 #if 0
 	cleanup();
 
@@ -134,13 +134,13 @@ HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile)
 	// open file
 	if (AVIFileOpen(&_aviFile, Filename, OF_READ, NULL) != 0) {
 		Game->LOG(0, "Error opening AVI file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	// get video stream
 	if (AVIFileGetStream(_aviFile, &_videoStream, streamtypeVIDEO, 0) != 0) {
 		Game->LOG(0, "Error finding video stream in AVI file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	_totalVideoTime = AVIStreamEndTime(_videoStream);
 
@@ -156,7 +156,7 @@ HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile)
 	// get video format
 	if (AVIStreamReadFormat(m_VideoStream, 0, NULL, &Size)) {
 		Game->LOG(0, "Error obtaining video stream format in AVI file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	_videoFormat = (LPBITMAPINFO)new BYTE[Size];
 	AVIStreamReadFormat(m_VideoStream, 0, m_VideoFormat, &Size);
@@ -175,19 +175,19 @@ HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile)
 	else
 		m_VidRenderer = new CVidRendererDD(Game);
 
-	if (!m_VidRenderer || FAILED(m_VidRenderer->Initialize(m_VideoFormat, m_TargetFormat))) {
+	if (!m_VidRenderer || DID_FAIL(m_VidRenderer->Initialize(m_VideoFormat, m_TargetFormat))) {
 		Game->LOG(0, "Error initializing video renderer for AVI file '%s'", filename);
 		SAFE_DELETE(m_VidRenderer);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 
 	// create sound buffer
-	HRESULT res;
+	ERRORCODE res;
 
 	if (_soundAvailable) {
 		_sound = new CBSoundAVI(Game);
-		if (FAILED(res = _sound->InitializeBuffer(_audioStream))) {
+		if (DID_FAIL(res = _sound->InitializeBuffer(_audioStream))) {
 			SAFE_DELETE(_sound);
 			_soundAvailable = false;
 			Game->LOG(res, "Error initializing sound buffer for AVI file '%s'", filename);
@@ -199,20 +199,20 @@ HRESULT CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile)
 	_filename = new char[strlen(filename) + 1];
 	if (_filename) strcpy(_filename, filename);
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::update() {
+ERRORCODE CVidPlayer::update() {
 #if 0
-	if (!m_Playing) return S_OK;
+	if (!m_Playing) return STATUS_OK;
 
-	HRESULT res;
+	ERRORCODE res;
 
 	if (_soundAvailable && m_Sound) {
 		res = _sound->update();
-		if (FAILED(res)) return res;
+		if (DID_FAIL(res)) return res;
 	}
 
 
@@ -231,7 +231,7 @@ HRESULT CVidPlayer::update() {
 
 	if (CurrentTime >= _totalVideoTime) {
 		Stop();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 
@@ -266,21 +266,21 @@ HRESULT CVidPlayer::update() {
 		if (FrameData) {
 			if (_slowRendering) return _vidRenderer->ProcessFrameSlow(FrameData);
 			else return _vidRenderer->ProcessFrame(FrameData);
-		} else return E_FAIL;
-	} else return S_OK;
+		} else return STATUS_FAILED;
+	} else return STATUS_OK;
 #endif
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::display() {
+ERRORCODE CVidPlayer::display() {
 #if 0
-	if (!m_Playing) return S_OK;
+	if (!m_Playing) return STATUS_OK;
 
-	HRESULT res;
+	ERRORCODE res;
 	if (_vidRenderer) res = _vidRenderer->display(m_PlayPosX, m_PlayPosY, m_PlayZoom);
-	else res = E_FAIL;
+	else res = STATUS_FAILED;
 
 	// display subtitle
 	if (m_ShowSubtitle) {
@@ -298,9 +298,9 @@ HRESULT CVidPlayer::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
+ERRORCODE CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 #if 0
-	if (!_videoStream || !_vidRenderer) return E_FAIL;
+	if (!_videoStream || !_vidRenderer) return STATUS_FAILED;
 
 	switch (Type) {
 	case VID_PLAY_POS:
@@ -335,7 +335,7 @@ HRESULT CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 		if (!_videoPGF) {
 			Game->LOG(0, "Error: Unsupported AVI format (file '%s')", m_Filename);
 			cleanup();
-			return E_FAIL;
+			return STATUS_FAILED;
 		} else {
 			Game->LOG(0, "Performance warning: non-optimal AVI format, using generic (i.e. slow) rendering routines (file '%s')", m_Filename);
 			_slowRendering = true;
@@ -354,20 +354,20 @@ HRESULT CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 	if (_sound) _sound->Play();
 	_startTime = timeGetTime();
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::stop() {
+ERRORCODE CVidPlayer::stop() {
 #if 0
-	if (!_playing) return S_OK;
+	if (!_playing) return STATUS_OK;
 
 	cleanup();
 
 	Game->Unfreeze();
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -378,9 +378,9 @@ bool CVidPlayer::isPlaying() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) {
+ERRORCODE CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) {
 #if 0
-	if (!Filename) return S_OK;
+	if (!Filename) return STATUS_OK;
 
 	char NewFile[MAX_PATH];
 	char drive[_MAX_DRIVE];
@@ -396,7 +396,7 @@ HRESULT CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFile
 
 	DWORD Size;
 	BYTE *Buffer = Game->m_FileManager->readWholeFile(NewFile, &Size, false);
-	if (Buffer == NULL) return S_OK; // no subtitles
+	if (Buffer == NULL) return STATUS_OK; // no subtitles
 
 
 	LONG Start, End;
@@ -464,7 +464,7 @@ HRESULT CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFile
 
 	delete [] Buffer;
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

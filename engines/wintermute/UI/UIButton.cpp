@@ -95,19 +95,19 @@ CUIButton::~CUIButton() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::loadFile(const char *filename) {
+ERRORCODE CUIButton::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CUIButton::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing BUTTON file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing BUTTON file '%s'", filename);
 
 	delete [] buffer;
 
@@ -154,7 +154,7 @@ TOKEN_DEF(PIXEL_PERFECT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(BUTTON)
 	TOKEN_TABLE(TEMPLATE)
@@ -201,7 +201,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_BUTTON) {
 			Game->LOG(0, "'BUTTON' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -209,7 +209,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -223,7 +223,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK:
 			delete _back;
 			_back = new CUITiledImage(Game);
-			if (!_back || FAILED(_back->loadFile((char *)params))) {
+			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
 				cmd = PARSERR_GENERIC;
@@ -233,7 +233,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK_HOVER:
 			delete _backHover;
 			_backHover = new CUITiledImage(Game);
-			if (!_backHover || FAILED(_backHover->loadFile((char *)params))) {
+			if (!_backHover || DID_FAIL(_backHover->loadFile((char *)params))) {
 				delete _backHover;
 				_backHover = NULL;
 				cmd = PARSERR_GENERIC;
@@ -243,7 +243,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK_PRESS:
 			delete _backPress;
 			_backPress = new CUITiledImage(Game);
-			if (!_backPress || FAILED(_backPress->loadFile((char *)params))) {
+			if (!_backPress || DID_FAIL(_backPress->loadFile((char *)params))) {
 				delete _backPress;
 				_backPress = NULL;
 				cmd = PARSERR_GENERIC;
@@ -253,7 +253,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK_DISABLE:
 			delete _backDisable;
 			_backDisable = new CUITiledImage(Game);
-			if (!_backDisable || FAILED(_backDisable->loadFile((char *)params))) {
+			if (!_backDisable || DID_FAIL(_backDisable->loadFile((char *)params))) {
 				delete _backDisable;
 				_backDisable = NULL;
 				cmd = PARSERR_GENERIC;
@@ -263,7 +263,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK_FOCUS:
 			delete _backFocus;
 			_backFocus = new CUITiledImage(Game);
-			if (!_backFocus || FAILED(_backFocus->loadFile((char *)params))) {
+			if (!_backFocus || DID_FAIL(_backFocus->loadFile((char *)params))) {
 				delete _backFocus;
 				_backFocus = NULL;
 				cmd = PARSERR_GENERIC;
@@ -273,7 +273,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new CBSprite(Game);
-			if (!_image || FAILED(_image->loadFile((char *)params))) {
+			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
 				cmd = PARSERR_GENERIC;
@@ -283,7 +283,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE_HOVER:
 			delete _imageHover;
 			_imageHover = new CBSprite(Game);
-			if (!_imageHover || FAILED(_imageHover->loadFile((char *)params))) {
+			if (!_imageHover || DID_FAIL(_imageHover->loadFile((char *)params))) {
 				delete _imageHover;
 				_imageHover = NULL;
 				cmd = PARSERR_GENERIC;
@@ -293,7 +293,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE_PRESS:
 			delete _imagePress;
 			_imagePress = new CBSprite(Game);
-			if (!_imagePress || FAILED(_imagePress->loadFile((char *)params))) {
+			if (!_imagePress || DID_FAIL(_imagePress->loadFile((char *)params))) {
 				delete _imagePress;
 				_imagePress = NULL;
 				cmd = PARSERR_GENERIC;
@@ -303,7 +303,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE_DISABLE:
 			delete _imageDisable;
 			_imageDisable = new CBSprite(Game);
-			if (!_imageDisable || FAILED(_imageDisable->loadFile((char *)params))) {
+			if (!_imageDisable || DID_FAIL(_imageDisable->loadFile((char *)params))) {
 				delete _imageDisable;
 				_imageDisable = NULL;
 				cmd = PARSERR_GENERIC;
@@ -313,7 +313,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE_FOCUS:
 			delete _imageFocus;
 			_imageFocus = new CBSprite(Game);
-			if (!_imageFocus || FAILED(_imageFocus->loadFile((char *)params))) {
+			if (!_imageFocus || DID_FAIL(_imageFocus->loadFile((char *)params))) {
 				delete _imageFocus;
 				_imageFocus = NULL;
 				cmd = PARSERR_GENERIC;
@@ -380,7 +380,7 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -426,20 +426,20 @@ HRESULT CUIButton::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in BUTTON definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading BUTTON definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	correctSize();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "BUTTON\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -534,7 +534,7 @@ HRESULT CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
 	CBBase::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -577,9 +577,9 @@ void CUIButton::correctSize() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::display(int offsetX, int offsetY) {
+ERRORCODE CUIButton::display(int offsetX, int offsetY) {
 	if (!_visible)
-		return S_OK;
+		return STATUS_OK;
 
 	CUITiledImage *back = NULL;
 	CBSprite *image = NULL;
@@ -649,7 +649,7 @@ HRESULT CUIButton::display(int offsetX, int offsetY) {
 
 	_press = _hover && Game->_mouseLeftDown && Game->_capturedObject == this;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -666,7 +666,7 @@ void CUIButton::press() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetDisabledFont
 	//////////////////////////////////////////////////////////////////////////
@@ -682,7 +682,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			_fontDisable = Game->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_fontDisable != NULL);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -700,7 +700,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			_fontHover = Game->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontHover != NULL);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -718,7 +718,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			_fontPress = Game->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_fontPress != NULL);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -736,7 +736,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			_fontFocus = Game->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontFocus != NULL);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -748,13 +748,13 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		delete _imageDisable;
 		_imageDisable = new CBSprite(Game);
 		const char *filename = stack->pop()->getString();
-		if (!_imageDisable || FAILED(_imageDisable->loadFile(filename))) {
+		if (!_imageDisable || DID_FAIL(_imageDisable->loadFile(filename))) {
 			delete _imageDisable;
 			_imageDisable = NULL;
 			stack->pushBool(false);
 		} else stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -765,7 +765,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imageDisable || !_imageDisable->_filename) stack->pushNULL();
 		else stack->pushString(_imageDisable->_filename);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -776,7 +776,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imageDisable) stack->pushNULL();
 		else stack->pushNative(_imageDisable, true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 
@@ -789,13 +789,13 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		delete _imageHover;
 		_imageHover = new CBSprite(Game);
 		const char *filename = stack->pop()->getString();
-		if (!_imageHover || FAILED(_imageHover->loadFile(filename))) {
+		if (!_imageHover || DID_FAIL(_imageHover->loadFile(filename))) {
 			delete _imageHover;
 			_imageHover = NULL;
 			stack->pushBool(false);
 		} else stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -806,7 +806,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imageHover || !_imageHover->_filename) stack->pushNULL();
 		else stack->pushString(_imageHover->_filename);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -817,7 +817,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imageHover) stack->pushNULL();
 		else stack->pushNative(_imageHover, true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -829,13 +829,13 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		delete _imagePress;
 		_imagePress = new CBSprite(Game);
 		const char *filename = stack->pop()->getString();
-		if (!_imagePress || FAILED(_imagePress->loadFile(filename))) {
+		if (!_imagePress || DID_FAIL(_imagePress->loadFile(filename))) {
 			delete _imagePress;
 			_imagePress = NULL;
 			stack->pushBool(false);
 		} else stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -846,7 +846,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imagePress || !_imagePress->_filename) stack->pushNULL();
 		else stack->pushString(_imagePress->_filename);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -857,7 +857,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imagePress) stack->pushNULL();
 		else stack->pushNative(_imagePress, true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -869,13 +869,13 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		delete _imageFocus;
 		_imageFocus = new CBSprite(Game);
 		const char *filename = stack->pop()->getString();
-		if (!_imageFocus || FAILED(_imageFocus->loadFile(filename))) {
+		if (!_imageFocus || DID_FAIL(_imageFocus->loadFile(filename))) {
 			delete _imageFocus;
 			_imageFocus = NULL;
 			stack->pushBool(false);
 		} else stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -886,7 +886,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imageFocus || !_imageFocus->_filename) stack->pushNULL();
 		else stack->pushString(_imageFocus->_filename);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -897,7 +897,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imageFocus) stack->pushNULL();
 		else stack->pushNative(_imageFocus, true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -912,7 +912,7 @@ HRESULT CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		}
 		stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 
@@ -967,7 +967,7 @@ CScValue *CUIButton::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CUIButton::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
@@ -975,7 +975,7 @@ HRESULT CUIButton::scSetProperty(const char *name, CScValue *value) {
 		int i = value->getInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
 		_align = (TTextAlign)i;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -983,21 +983,21 @@ HRESULT CUIButton::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Focusable") == 0) {
 		_canFocus = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Pressed
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Pressed") == 0) {
 		_stayPressed = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PixelPerfect") == 0) {
 		_pixelPerfect = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CUIObject::scSetProperty(name, value);
@@ -1011,7 +1011,7 @@ const char *CUIButton::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIButton::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CUIButton::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 
@@ -1040,7 +1040,7 @@ HRESULT CUIButton::persist(CBPersistMgr *persistMgr) {
 		_oneTimePressTime = 0;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

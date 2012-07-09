@@ -80,11 +80,11 @@ public:
 			_color = 0x00000000;
 		}
 
-		HRESULT persist(CBPersistMgr *persistMgr) {
+		ERRORCODE persist(CBPersistMgr *persistMgr) {
 			persistMgr->transfer(TMEMBER(_offsetX));
 			persistMgr->transfer(TMEMBER(_offsetY));
 			persistMgr->transfer(TMEMBER(_color));
-			return S_OK;
+			return STATUS_OK;
 		}
 
 		int _offsetX;
@@ -123,8 +123,8 @@ public:
 	virtual void drawText(byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1);
 	virtual int getLetterHeight();
 
-	HRESULT loadBuffer(byte *buffer);
-	HRESULT loadFile(const char *filename);
+	ERRORCODE loadBuffer(byte *buffer);
+	ERRORCODE loadFile(const char *filename);
 
 	float getLineHeight() const {
 		return _lineHeight;
@@ -134,7 +134,7 @@ public:
 	void initLoop();
 
 private:
-	HRESULT parseLayer(CBTTFontLayer *layer, byte *buffer);
+	ERRORCODE parseLayer(CBTTFontLayer *layer, byte *buffer);
 
 	void wrapText(const WideString &text, int maxWidth, int maxHeight, TextLineList &lines);
 	void measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight);
@@ -145,7 +145,7 @@ private:
 
 	CBCachedTTFontText *_cachedTexts[NUM_CACHED_TEXTS];
 
-	HRESULT initFont();
+	ERRORCODE initFont();
 
 	Graphics::Font *_deletableFont;
 	const Graphics::Font *_font;

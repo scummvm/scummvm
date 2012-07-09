@@ -72,59 +72,59 @@ void CAdResponse::setText(const char *text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::setIcon(const char *filename) {
+ERRORCODE CAdResponse::setIcon(const char *filename) {
 	delete _icon;
 	_icon = new CBSprite(Game);
-	if (!_icon || FAILED(_icon->loadFile(filename))) {
+	if (!_icon || DID_FAIL(_icon->loadFile(filename))) {
 		Game->LOG(0, "CAdResponse::setIcon failed for file '%s'", filename);
 		delete _icon;
 		_icon = NULL;
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::setFont(const char *filename) {
+ERRORCODE CAdResponse::setFont(const char *filename) {
 	if (_font) Game->_fontStorage->removeFont(_font);
 	_font = Game->_fontStorage->addFont(filename);
 	if (!_font) {
 		Game->LOG(0, "CAdResponse::setFont failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::setIconHover(const char *filename) {
+ERRORCODE CAdResponse::setIconHover(const char *filename) {
 	delete _iconHover;
 	_iconHover = new CBSprite(Game);
-	if (!_iconHover || FAILED(_iconHover->loadFile(filename))) {
+	if (!_iconHover || DID_FAIL(_iconHover->loadFile(filename))) {
 		Game->LOG(0, "CAdResponse::setIconHover failed for file '%s'", filename);
 		delete _iconHover;
 		_iconHover = NULL;
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::setIconPressed(const char *filename) {
+ERRORCODE CAdResponse::setIconPressed(const char *filename) {
 	delete _iconPressed;
 	_iconPressed = new CBSprite(Game);
-	if (!_iconPressed || FAILED(_iconPressed->loadFile(filename))) {
+	if (!_iconPressed || DID_FAIL(_iconPressed->loadFile(filename))) {
 		Game->LOG(0, "CAdResponse::setIconPressed failed for file '%s'", filename);
 		delete _iconPressed;
 		_iconPressed = NULL;
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponse::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdResponse::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -137,7 +137,7 @@ HRESULT CAdResponse::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER_INT(_responseType));
 	persistMgr->transfer(TMEMBER(_font));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

@@ -84,7 +84,7 @@ void CSXStore::cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// EnableEvents
 	//////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(0);
 		setEventsEnabled(script, true);
 		stack->pushBool(getEventsEnabled() == true);
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// DisableEvents
@@ -101,7 +101,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(0);
 		setEventsEnabled(script, false);
 		stack->pushBool(getEventsEnabled() == false);
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// ValidateProducts
@@ -112,7 +112,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		_lastProductRequestOwner = script->_owner;
 		validateProducts(prodIdList);
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetValidProduct
@@ -131,7 +131,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		} else
 			stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetInvalidProduct
@@ -144,7 +144,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		else
 			stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// GetTransaction
@@ -162,7 +162,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		} else
 			stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Purchase
@@ -172,7 +172,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		const char *prodId = stack->pop()->getString();
 		stack->pushBool(purchase(script, prodId));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// FinishTransaction
@@ -182,7 +182,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		const char *transId = stack->pop()->getString();
 		stack->pushBool(finishTransaction(script, transId));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// RestoreTransactions
@@ -192,7 +192,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		restoreTransactions(script);
 		stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -219,10 +219,10 @@ HRESULT CSXStore::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 		stack->pushBool(Game->_registry->readBool("Purchases", prodId, false));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
-	else return E_FAIL;
+	else return STATUS_FAILED;
 }
 
 
@@ -278,7 +278,7 @@ CScValue *CSXStore::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXStore::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CSXStore::persist(CBPersistMgr *persistMgr) {
 	if (!persistMgr->_saving)
 		cleanup();
 
@@ -306,7 +306,7 @@ HRESULT CSXStore::persist(CBPersistMgr *persistMgr) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 

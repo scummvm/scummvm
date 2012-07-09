@@ -36,8 +36,8 @@ namespace WinterMute {
 
 class CBSurface: public CBBase {
 public:
-	virtual HRESULT invalidate();
-	virtual HRESULT prepareToDraw();
+	virtual ERRORCODE invalidate();
+	virtual ERRORCODE prepareToDraw();
 	bool _cKDefault;
 	byte _cKRed;
 	byte _cKGreen;
@@ -52,25 +52,25 @@ public:
 	CBSurface(CBGame *inGame);
 	virtual ~CBSurface();
 
-	virtual HRESULT displayHalfTrans(int x, int y, RECT rect);
+	virtual ERRORCODE displayHalfTrans(int x, int y, RECT rect);
 	virtual bool isTransparentAt(int x, int y);
-	virtual HRESULT displayTransZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual HRESULT displayTrans(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual HRESULT displayTransOffset(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) = 0;
-	virtual HRESULT display(int x, int y, RECT rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool MirrorY = false) = 0;
-	virtual HRESULT displayZoom(int x, int y, RECT rect, float ZoomX, float ZoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual HRESULT displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual HRESULT restore();
-	virtual HRESULT create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
-	virtual HRESULT create(int Width, int Height);
-	virtual HRESULT putSurface(const Graphics::Surface &surface, bool hasAlpha = false) {
-		return E_FAIL;
+	virtual ERRORCODE displayTransZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual ERRORCODE displayTrans(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual ERRORCODE displayTransOffset(int x, int y, RECT rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) = 0;
+	virtual ERRORCODE display(int x, int y, RECT rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool MirrorY = false) = 0;
+	virtual ERRORCODE displayZoom(int x, int y, RECT rect, float ZoomX, float ZoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual ERRORCODE displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual ERRORCODE restore();
+	virtual ERRORCODE create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
+	virtual ERRORCODE create(int Width, int Height);
+	virtual ERRORCODE putSurface(const Graphics::Surface &surface, bool hasAlpha = false) {
+		return STATUS_FAILED;
 	}
-	virtual HRESULT putPixel(int x, int y, byte r, byte g, byte b, int a = -1);
-	virtual HRESULT getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = NULL);
+	virtual ERRORCODE putPixel(int x, int y, byte r, byte g, byte b, int a = -1);
+	virtual ERRORCODE getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = NULL);
 	virtual bool comparePixel(int x, int y, byte r, byte g, byte b, int a = -1);
-	virtual HRESULT startPixelOp();
-	virtual HRESULT endPixelOp();
+	virtual ERRORCODE startPixelOp();
+	virtual ERRORCODE endPixelOp();
 	virtual bool isTransparentAtLite(int x, int y);
 	void setFilename(const char *filename);
 	void setSize(int width, int height);

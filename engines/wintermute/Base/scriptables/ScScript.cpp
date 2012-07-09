@@ -118,7 +118,7 @@ void CScScript::readHeader() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::initScript() {
+ERRORCODE CScScript::initScript() {
 	if (!_scriptStream) {
 		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 	}
@@ -127,13 +127,13 @@ HRESULT CScScript::initScript() {
 	if (_header.magic != SCRIPT_MAGIC) {
 		Game->LOG(0, "File '%s' is not a valid compiled script", _filename);
 		cleanup();
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (_header.version > SCRIPT_VERSION) {
 		Game->LOG(0, "Script '%s' has a wrong version %d.%d (expected %d.%d)", _filename, _header.version / 256, _header.version % 256, SCRIPT_VERSION / 256, SCRIPT_VERSION % 256);
 		cleanup();
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	initTables();
@@ -160,12 +160,12 @@ HRESULT CScScript::initScript() {
 	// ready to rumble...
 	_state = SCRIPT_RUNNING;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::initTables() {
+ERRORCODE CScScript::initTables() {
 	uint32 OrigIP = _iP;
 
 	readHeader();
@@ -235,12 +235,12 @@ HRESULT CScScript::initTables() {
 
 	_iP = OrigIP;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::create(const char *filename, byte *buffer, uint32 size, CBScriptHolder *owner) {
+ERRORCODE CScScript::create(const char *filename, byte *buffer, uint32 size, CBScriptHolder *owner) {
 	cleanup();
 
 	_thread = false;
@@ -253,26 +253,26 @@ HRESULT CScScript::create(const char *filename, byte *buffer, uint32 size, CBScr
 	if (_filename) strcpy(_filename, filename);
 
 	_buffer = new byte [size];
-	if (!_buffer) return E_FAIL;
+	if (!_buffer) return STATUS_FAILED;
 
 	memcpy(_buffer, buffer, size);
 
 	_bufferSize = size;
 
-	HRESULT res = initScript();
-	if (FAILED(res)) return res;
+	ERRORCODE res = initScript();
+	if (DID_FAIL(res)) return res;
 
 	// establish global variables table
 	_globals = new CScValue(Game);
 
 	_owner = owner;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::createThread(CScScript *original, uint32 initIP, const char *eventName) {
+ERRORCODE CScScript::createThread(CScScript *original, uint32 initIP, const char *eventName) {
 	cleanup();
 
 	_thread = true;
@@ -286,14 +286,14 @@ HRESULT CScScript::createThread(CScScript *original, uint32 initIP, const char *
 
 	// copy buffer
 	_buffer = new byte [original->_bufferSize];
-	if (!_buffer) return E_FAIL;
+	if (!_buffer) return STATUS_FAILED;
 
 	memcpy(_buffer, original->_buffer, original->_bufferSize);
 	_bufferSize = original->_bufferSize;
 
 	// initialize
-	HRESULT res = initScript();
-	if (FAILED(res)) return res;
+	ERRORCODE res = initScript();
+	if (DID_FAIL(res)) return res;
 
 	// copy globals
 	_globals = original->_globals;
@@ -309,16 +309,16 @@ HRESULT CScScript::createThread(CScScript *original, uint32 initIP, const char *
 	_engine = original->_engine;
 	_parentScript = original;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::createMethodThread(CScScript *original, const char *methodName) {
+ERRORCODE CScScript::createMethodThread(CScScript *original, const char *methodName) {
 	uint32 ip = original->getMethodPos(methodName);
-	if (ip == 0) return E_FAIL;
+	if (ip == 0) return STATUS_FAILED;
 
 	cleanup();
 
@@ -333,14 +333,14 @@ HRESULT CScScript::createMethodThread(CScScript *original, const char *methodNam
 
 	// copy buffer
 	_buffer = new byte [original->_bufferSize];
-	if (!_buffer) return E_FAIL;
+	if (!_buffer) return STATUS_FAILED;
 
 	memcpy(_buffer, original->_buffer, original->_bufferSize);
 	_bufferSize = original->_bufferSize;
 
 	// initialize
-	HRESULT res = initScript();
-	if (FAILED(res)) return res;
+	ERRORCODE res = initScript();
+	if (DID_FAIL(res)) return res;
 
 	// copy globals
 	_globals = original->_globals;
@@ -355,7 +355,7 @@ HRESULT CScScript::createMethodThread(CScScript *original, const char *methodNam
 	_engine = original->_engine;
 	_parentScript = original;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -470,8 +470,8 @@ char *CScScript::getString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::executeInstruction() {
-	HRESULT ret = S_OK;
+ERRORCODE CScScript::executeInstruction() {
+	ERRORCODE ret = STATUS_OK;
 
 	uint32 dw;
 	const char *str = NULL;
@@ -560,7 +560,7 @@ HRESULT CScScript::executeInstruction() {
 		CScValue *var = _stack->pop();
 		if (var->_type == VAL_VARIABLE_REF) var = var->_valRef;
 
-		HRESULT res = E_FAIL;
+		ERRORCODE res = STATUS_FAILED;
 		bool TriedNative = false;
 
 		// we are already calling this method, try native
@@ -569,7 +569,7 @@ HRESULT CScScript::executeInstruction() {
 			res = var->_valNative->scCallMethod(this, _stack, _thisStack, MethodName);
 		}
 
-		if (FAILED(res)) {
+		if (DID_FAIL(res)) {
 			if (var->isNative() && var->getNative()->canHandleMethod(MethodName)) {
 				if (!_unbreakable) {
 					_waitScript = var->getNative()->invokeMethodThread(MethodName);
@@ -612,10 +612,10 @@ HRESULT CScScript::executeInstruction() {
 			}
 			*/
 			else {
-				res = E_FAIL;
+				res = STATUS_FAILED;
 				if (var->_type == VAL_NATIVE && !TriedNative) res = var->_valNative->scCallMethod(this, _stack, _thisStack, MethodName);
 
-				if (FAILED(res)) {
+				if (DID_FAIL(res)) {
 					_stack->correctParams(0);
 					runtimeError("Call to undefined method '%s'. Ignored.", MethodName);
 					_stack->pushNULL();
@@ -1049,7 +1049,7 @@ HRESULT CScScript::executeInstruction() {
 	default:
 		Game->LOG(0, "Fatal: Invalid instruction %d ('%s', line %d, IP:0x%x)\n", inst, _filename, _currentLine, _iP - sizeof(uint32));
 		_state = SCRIPT_FINISHED;
-		ret = E_FAIL;
+		ret = STATUS_FAILED;
 	} // switch(instruction)
 
 	//delete op;
@@ -1120,30 +1120,30 @@ CScValue *CScScript::getVar(char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::waitFor(CBObject *object) {
+ERRORCODE CScScript::waitFor(CBObject *object) {
 	if (_unbreakable) {
 		runtimeError("Script cannot be interrupted.");
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	_state = SCRIPT_WAITING;
 	_waitObject = object;
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::waitForExclusive(CBObject *object) {
+ERRORCODE CScScript::waitForExclusive(CBObject *object) {
 	_engine->resetObject(object);
 	return waitFor(object);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::sleep(uint32 duration) {
+ERRORCODE CScScript::sleep(uint32 duration) {
 	if (_unbreakable) {
 		runtimeError("Script cannot be interrupted.");
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	_state = SCRIPT_SLEEPING;
@@ -1154,26 +1154,26 @@ HRESULT CScScript::sleep(uint32 duration) {
 		_waitTime = Game->_timer + duration;
 		_waitFrozen = false;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::finish(bool includingThreads) {
+ERRORCODE CScScript::finish(bool includingThreads) {
 	if (_state != SCRIPT_FINISHED && includingThreads) {
 		_state = SCRIPT_FINISHED;
 		finishThreads();
 	} else _state = SCRIPT_FINISHED;
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::run() {
+ERRORCODE CScScript::run() {
 	_state = SCRIPT_RUNNING;
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -1195,7 +1195,7 @@ void CScScript::runtimeError(LPCSTR fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CScScript::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 
@@ -1252,7 +1252,7 @@ HRESULT CScScript::persist(CBPersistMgr *persistMgr) {
 
 	if (!persistMgr->_saving) _tracingMode = false;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -1265,8 +1265,8 @@ CScScript *CScScript::invokeEventHandler(const char *eventName, bool unbreakable
 
 	CScScript *thread = new CScScript(Game, _engine);
 	if (thread) {
-		HRESULT ret = thread->createThread(this, pos, eventName);
-		if (SUCCEEDED(ret)) {
+		ERRORCODE ret = thread->createThread(this, pos, eventName);
+		if (DID_SUCCEED(ret)) {
 			thread->_unbreakable = unbreakable;
 			_engine->_scripts.Add(thread);
 			Game->getDebugMgr()->onScriptEventThreadInit(thread, this, eventName);
@@ -1302,27 +1302,27 @@ bool CScScript::canHandleMethod(const char *methodName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::pause() {
+ERRORCODE CScScript::pause() {
 	if (_state == SCRIPT_PAUSED) {
 		Game->LOG(0, "Attempting to pause a paused script ('%s', line %d)", _filename, _currentLine);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	if (!_freezable || _state == SCRIPT_PERSISTENT) return S_OK;
+	if (!_freezable || _state == SCRIPT_PERSISTENT) return STATUS_OK;
 
 	_origState = _state;
 	_state = SCRIPT_PAUSED;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::resume() {
-	if (_state != SCRIPT_PAUSED) return S_OK;
+ERRORCODE CScScript::resume() {
+	if (_state != SCRIPT_PAUSED) return STATUS_OK;
 
 	_state = _origState;
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -1337,14 +1337,14 @@ CScScript::TExternalFunction *CScScript::getExternal(char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function) {
+ERRORCODE CScScript::externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function) {
 
 #ifndef __WIN32__
 
 	Game->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);
 	stack->pushNULL();
-	return E_FAIL;
+	return STATUS_FAILED;
 
 #else
 
@@ -1451,7 +1451,7 @@ HRESULT CScScript::externalCall(CScStack *stack, CScStack *thisStack, CScScript:
 
 	if (hDll) FreeLibrary(hDll);
 
-	return Success ? S_OK : E_FAIL;
+	return Success ? STATUS_OK : STATUS_FAILED;
 #endif
 }
 
@@ -1536,7 +1536,7 @@ double CScScript::GetST0Double(void) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::copyParameters(CScStack *stack) {
+ERRORCODE CScScript::copyParameters(CScStack *stack) {
 	int i;
 	int NumParams = stack->pop()->getInt();
 	for (i = NumParams - 1; i >= 0; i--) {
@@ -1546,18 +1546,18 @@ HRESULT CScScript::copyParameters(CScStack *stack) {
 
 	for (i = 0; i < NumParams; i++) stack->pop();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::finishThreads() {
+ERRORCODE CScScript::finishThreads() {
 	for (int i = 0; i < _engine->_scripts.GetSize(); i++) {
 		CScScript *scr = _engine->_scripts[i];
 		if (scr->_thread && scr->_state != SCRIPT_FINISHED && scr->_owner == _owner && scumm_stricmp(scr->_filename, _filename) == 0)
 			scr->finish(true);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -1574,17 +1574,17 @@ const char *CScScript::dbgGetFilename() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::dbgSendScript(IWmeDebugClient *client) {
+ERRORCODE CScScript::dbgSendScript(IWmeDebugClient *client) {
 	if (_methodThread) client->onScriptMethodThreadInit(this, _parentScript, _threadEvent);
 	else if (_thread) client->onScriptEventThreadInit(this, _parentScript, _threadEvent);
 	else client->onScriptInit(this);
 
 	return dbgSendVariables(client);
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScScript::dbgSendVariables(IWmeDebugClient *client) {
+ERRORCODE CScScript::dbgSendVariables(IWmeDebugClient *client) {
 	// send script globals
 	_globals->dbgSendVariables(client, WME_DBGVAR_SCRIPT, this, 0);
 
@@ -1595,7 +1595,7 @@ HRESULT CScScript::dbgSendVariables(IWmeDebugClient *client) {
 			//Scope->DbgSendVariables(Client, WME_DBGVAR_SCOPE, this, (unsigned int)Scope);
 		}
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 

@@ -60,8 +60,8 @@ CBFader::~CBFader() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::update() {
-	if (!_active) return S_OK;
+ERRORCODE CBFader::update() {
+	if (!_active) return STATUS_OK;
 
 	int alphaDelta = _targetAlpha - _sourceAlpha;
 
@@ -79,37 +79,37 @@ HRESULT CBFader::update() {
 	_ready = time >= _duration;
 	if (_ready && _currentAlpha == 0x00) _active = false;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::display() {
-	if (!_active) return S_OK;
+ERRORCODE CBFader::display() {
+	if (!_active) return STATUS_OK;
 
-	if (_currentAlpha > 0x00) return Game->_renderer->fadeToColor(DRGBA(_red, _green, _blue, _currentAlpha));
-	else return S_OK;
+	if (_currentAlpha > 0x00) return Game->_renderer->fadeToColor(BYTETORGBA(_red, _green, _blue, _currentAlpha));
+	else return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::deactivate() {
+ERRORCODE CBFader::deactivate() {
 	_active = false;
 	_ready = true;
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
+ERRORCODE CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
-	_red   = D3DCOLGetR(sourceColor);
-	_green = D3DCOLGetG(sourceColor);
-	_blue  = D3DCOLGetB(sourceColor);
+	_red   = RGBCOLGetR(sourceColor);
+	_green = RGBCOLGetG(sourceColor);
+	_blue  = RGBCOLGetB(sourceColor);
 
-	_sourceAlpha = D3DCOLGetA(sourceColor);
+	_sourceAlpha = RGBCOLGetA(sourceColor);
 	_targetAlpha = 0;
 
 	_duration = duration;
@@ -118,22 +118,22 @@ HRESULT CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	if (_system) _startTime = CBPlatform::getTime();
 	else _startTime = Game->_timer;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
+ERRORCODE CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
-	_red   = D3DCOLGetR(targetColor);
-	_green = D3DCOLGetG(targetColor);
-	_blue  = D3DCOLGetB(targetColor);
+	_red   = RGBCOLGetR(targetColor);
+	_green = RGBCOLGetG(targetColor);
+	_blue  = RGBCOLGetB(targetColor);
 
 	//_sourceAlpha = 0;
 	_sourceAlpha = _currentAlpha;
-	_targetAlpha = D3DCOLGetA(targetColor);
+	_targetAlpha = RGBCOLGetA(targetColor);
 
 	_duration = duration;
 	_system = system;
@@ -142,19 +142,19 @@ HRESULT CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	else _startTime = Game->_timer;
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CBFader::getCurrentColor() {
-	return DRGBA(_red, _green, _blue, _currentAlpha);
+	return BYTETORGBA(_red, _green, _blue, _currentAlpha);
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFader::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBFader::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
@@ -170,7 +170,7 @@ HRESULT CBFader::persist(CBPersistMgr *persistMgr) {
 
 	if (_system && !persistMgr->_saving) _startTime = 0;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

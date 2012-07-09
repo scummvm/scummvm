@@ -45,14 +45,14 @@ public:
 	virtual void makeFreezable(bool freezable);
 	bool canHandleEvent(const char *eventName);
 	virtual bool canHandleMethod(const char *eventMethod);
-	HRESULT cleanup();
-	HRESULT removeScript(CScScript *script);
-	HRESULT addScript(const char *filename);
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
-	virtual HRESULT listen(CBScriptHolder *param1, uint32 param2);
-	HRESULT applyEvent(const char *eventName, bool unbreakable = false);
+	ERRORCODE cleanup();
+	ERRORCODE removeScript(CScScript *script);
+	ERRORCODE addScript(const char *filename);
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	virtual ERRORCODE listen(CBScriptHolder *param1, uint32 param2);
+	ERRORCODE applyEvent(const char *eventName, bool unbreakable = false);
 	void setFilename(const char *filename);
-	HRESULT parseProperty(byte *buffer, bool complete = true);
+	ERRORCODE parseProperty(byte *buffer, bool complete = true);
 	char *_filename;
 	bool _freezable;
 	bool _ready;
@@ -60,8 +60,8 @@ public:
 	CBArray<CScScript *, CScScript *> _scripts;
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	virtual void scDebuggerDesc(char *buf, int bufSize);
 	// IWmeObject

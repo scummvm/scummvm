@@ -55,19 +55,19 @@ CUIEntity::~CUIEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::loadFile(const char *filename) {
+ERRORCODE CUIEntity::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CUIEntity::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ENTITY container file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ENTITY container file '%s'", filename);
 
 
 	delete [] buffer;
@@ -89,7 +89,7 @@ TOKEN_DEF(SCRIPT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CUIEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY_CONTAINER)
 	TOKEN_TABLE(TEMPLATE)
@@ -110,7 +110,7 @@ HRESULT CUIEntity::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY_CONTAINER) {
 			Game->LOG(0, "'ENTITY_CONTAINER' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -118,7 +118,7 @@ HRESULT CUIEntity::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -142,7 +142,7 @@ HRESULT CUIEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ENTITY:
-			if (FAILED(setEntity((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(setEntity((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_SCRIPT:
@@ -156,11 +156,11 @@ HRESULT CUIEntity::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in ENTITY_CONTAINER definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading ENTITY_CONTAINER definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	correctSize();
@@ -170,11 +170,11 @@ HRESULT CUIEntity::loadBuffer(byte *buffer, bool complete) {
 		_height = 50;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CUIEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY_CONTAINER\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -204,29 +204,29 @@ HRESULT CUIEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 	CBBase::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::setEntity(const char *filename) {
+ERRORCODE CUIEntity::setEntity(const char *filename) {
 	if (_entity) Game->unregisterObject(_entity);
 	_entity = new CAdEntity(Game);
-	if (!_entity || FAILED(_entity->loadFile(filename))) {
+	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
 		delete _entity;
 		_entity = NULL;
-		return E_FAIL;
+		return STATUS_FAILED;
 	} else {
 		_entity->_nonIntMouseEvents = true;
 		_entity->_sceneIndependent = true;
 		_entity->makeFreezable(false);
 		Game->registerObject(_entity);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::display(int offsetX, int offsetY) {
-	if (!_visible) return S_OK;
+ERRORCODE CUIEntity::display(int offsetX, int offsetY) {
+	if (!_visible) return STATUS_OK;
 
 	if (_entity) {
 		_entity->_posX = offsetX + _posX;
@@ -244,14 +244,14 @@ HRESULT CUIEntity::display(int offsetX, int offsetY) {
 		_entity->_registrable = origReg;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetEntity
 	//////////////////////////////////////////////////////////////////////////
@@ -261,7 +261,7 @@ HRESULT CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (_entity) stack->pushNative(_entity, true);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -272,12 +272,12 @@ HRESULT CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		const char *filename = stack->pop()->getString();
 
-		if (SUCCEEDED(setEntity(filename)))
+		if (DID_SUCCEED(setEntity(filename)))
 			stack->pushBool(true);
 		else
 			stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CUIObject::scCallMethod(script, stack, thisStack, name);
@@ -310,13 +310,13 @@ CScValue *CUIEntity::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CUIEntity::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Freezable") == 0) {
 		if (_entity) _entity->makeFreezable(value->getBool());
-		return S_OK;
+		return STATUS_OK;
 	} else return CUIObject::scSetProperty(name, value);
 }
 
@@ -328,12 +328,12 @@ const char *CUIEntity::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEntity::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CUIEntity::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_entity));
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

@@ -223,7 +223,7 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 			uint32 color = _layers[i]->_color;
 			uint32 origForceAlpha = _renderer->_forceAlphaColor;
 			if (_renderer->_forceAlphaColor != 0) {
-				color = DRGBA(D3DCOLGetR(color), D3DCOLGetG(color), D3DCOLGetB(color), D3DCOLGetA(_renderer->_forceAlphaColor));
+				color = BYTETORGBA(RGBCOLGetR(color), RGBCOLGetG(color), RGBCOLGetB(color), RGBCOLGetA(_renderer->_forceAlphaColor));
 				_renderer->_forceAlphaColor = 0;
 			}
 			surface->displayTransOffset(x, y - textOffset, rc, color, BLEND_NORMAL, false, false, _layers[i]->_offsetX, _layers[i]->_offsetY);
@@ -257,7 +257,7 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 		hasWarned = true;
 		warning("CBFontTT::RenderTextToTexture - Not fully ported yet");
 	}
-	warning("%s %d %d %d %d", text.c_str(), D3DCOLGetR(_layers[0]->_color), D3DCOLGetG(_layers[0]->_color), D3DCOLGetB(_layers[0]->_color), D3DCOLGetA(_layers[0]->_color));
+	warning("%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
@@ -360,7 +360,7 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 	}
 
 	CBSurfaceSDL *wmeSurface = new CBSurfaceSDL(Game);
-	if (SUCCEEDED(wmeSurface->CreateFromSDLSurface(surface))) {
+	if (DID_SUCCEED(wmeSurface->CreateFromSDLSurface(surface))) {
 		SDL_FreeSurface(surface);
 		return wmeSurface;
 	} else {
@@ -403,19 +403,19 @@ int CBFontTT::getLetterHeight() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::loadFile(const char *filename) {
+ERRORCODE CBFontTT::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CBFontTT::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer))) Game->LOG(0, "Error parsing TTFONT file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer))) Game->LOG(0, "Error parsing TTFONT file '%s'", filename);
 
 	delete [] buffer;
 
@@ -440,7 +440,7 @@ TOKEN_DEF(OFFSET_X)
 TOKEN_DEF(OFFSET_Y)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::loadBuffer(byte *buffer) {
+ERRORCODE CBFontTT::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TTFONT)
 	TOKEN_TABLE(SIZE)
@@ -462,7 +462,7 @@ HRESULT CBFontTT::loadBuffer(byte *buffer) {
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TTFONT) {
 		Game->LOG(0, "'TTFONT' keyword expected.");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	buffer = (byte *)params;
 
@@ -505,20 +505,20 @@ HRESULT CBFontTT::loadBuffer(byte *buffer) {
 		case TOKEN_COLOR: {
 			int r, g, b;
 			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
-			BaseColor = DRGBA(r, g, b, D3DCOLGetA(BaseColor));
+			BaseColor = BYTETORGBA(r, g, b, RGBCOLGetA(BaseColor));
 		}
 		break;
 
 		case TOKEN_ALPHA: {
 			int a;
 			parser.scanStr(params, "%d", &a);
-			BaseColor = DRGBA(D3DCOLGetR(BaseColor), D3DCOLGetG(BaseColor), D3DCOLGetB(BaseColor), a);
+			BaseColor = BYTETORGBA(RGBCOLGetR(BaseColor), RGBCOLGetG(BaseColor), RGBCOLGetB(BaseColor), a);
 		}
 		break;
 
 		case TOKEN_LAYER: {
 			CBTTFontLayer *Layer = new CBTTFontLayer;
-			if (Layer && SUCCEEDED(parseLayer(Layer, (byte *)params))) _layers.Add(Layer);
+			if (Layer && DID_SUCCEED(parseLayer(Layer, (byte *)params))) _layers.Add(Layer);
 			else {
 				delete Layer;
 				Layer = NULL;
@@ -531,7 +531,7 @@ HRESULT CBFontTT::loadBuffer(byte *buffer) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in TTFONT definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	// create at least one layer
@@ -548,7 +548,7 @@ HRESULT CBFontTT::loadBuffer(byte *buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
+ERRORCODE CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(OFFSET_X)
 	TOKEN_TABLE(OFFSET_Y)
@@ -573,25 +573,25 @@ HRESULT CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
 		case TOKEN_COLOR: {
 			int r, g, b;
 			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
-			layer->_color = DRGBA(r, g, b, D3DCOLGetA(layer->_color));
+			layer->_color = BYTETORGBA(r, g, b, RGBCOLGetA(layer->_color));
 		}
 		break;
 
 		case TOKEN_ALPHA: {
 			int a;
 			parser.scanStr(params, "%d", &a);
-			layer->_color = DRGBA(D3DCOLGetR(layer->_color), D3DCOLGetG(layer->_color), D3DCOLGetB(layer->_color), a);
+			layer->_color = BYTETORGBA(RGBCOLGetR(layer->_color), RGBCOLGetG(layer->_color), RGBCOLGetB(layer->_color), a);
 		}
 		break;
 		}
 	}
-	if (cmd != PARSERR_EOF) return E_FAIL;
-	else return S_OK;
+	if (cmd != PARSERR_EOF) return STATUS_FAILED;
+	else return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBFontTT::persist(CBPersistMgr *persistMgr) {
 	CBFont::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_isBold));
@@ -623,7 +623,7 @@ HRESULT CBFontTT::persist(CBPersistMgr *persistMgr) {
 		_fallbackFont = _font = _deletableFont = NULL;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -633,8 +633,8 @@ void CBFontTT::afterLoad() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontTT::initFont() {
-	if (!_fontFile) return E_FAIL;
+ERRORCODE CBFontTT::initFont() {
+	if (!_fontFile) return STATUS_FAILED;
 
 	Common::SeekableReadStream *file = Game->_fileManager->openFile(_fontFile);
 	if (!file) {
@@ -643,7 +643,7 @@ HRESULT CBFontTT::initFont() {
 		file = Game->_fileManager->openFile(fontFileName.c_str(), false);
 		if (!file) {
 			Game->LOG(0, "Error loading TrueType font '%s'", _fontFile);
-			//return E_FAIL;
+			//return STATUS_FAILED;
 		}
 	}
 
@@ -658,7 +658,7 @@ HRESULT CBFontTT::initFont() {
 		warning("BFontTT::InitFont - Couldn't load %s", _fontFile);
 	}
 	_lineHeight = _font->getFontHeight();
-	return S_OK;
+	return STATUS_OK;
 #if 0
 	FT_Error error;
 
@@ -682,14 +682,14 @@ HRESULT CBFontTT::initFont() {
 	if (error) {
 		SAFE_DELETE_ARRAY(_fTStream);
 		Game->_fileManager->closeFile(file);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	error = FT_Set_Char_Size(_fTFace, 0, (FT_F26Dot6)(_fontHeight * 64), (FT_UInt)horDpi, (FT_UInt)vertDpi);
 	if (error) {
 		FT_Done_Face(_fTFace);
 		_fTFace = NULL;
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	// http://en.wikipedia.org/wiki/E_(typography)
@@ -717,7 +717,7 @@ HRESULT CBFontTT::initFont() {
 	_glyphCache->Initialize();
 
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////

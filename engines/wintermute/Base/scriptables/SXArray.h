@@ -35,15 +35,15 @@ namespace WinterMute {
 
 class CSXArray : public CBScriptable {
 public:
-	HRESULT push(CScValue *Val);
+	ERRORCODE push(CScValue *Val);
 	bool validNumber(const char *origStr, char *outStr);
 	DECLARE_PERSISTENT(CSXArray, CBScriptable)
 	CSXArray(CBGame *inGame, CScStack *stack);
 	CSXArray(CBGame *inGame);
 	virtual ~CSXArray();
 	CScValue *scGetProperty(const char *name);
-	HRESULT scSetProperty(const char *name, CScValue *value);
-	HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	ERRORCODE scSetProperty(const char *name, CScValue *value);
+	ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	const char *scToString();
 	int _length;
 	CScValue *_values;

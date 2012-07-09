@@ -53,7 +53,7 @@ CAdSceneNode::~CAdSceneNode() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSceneNode::setEntity(CAdEntity *entity) {
+ERRORCODE CAdSceneNode::setEntity(CAdEntity *entity) {
 	_type = OBJECT_ENTITY;
 	_entity = entity;
 	return Game->registerObject(entity);
@@ -61,7 +61,7 @@ HRESULT CAdSceneNode::setEntity(CAdEntity *entity) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSceneNode::setRegion(CAdRegion *region) {
+ERRORCODE CAdSceneNode::setRegion(CAdRegion *region) {
 	_type = OBJECT_REGION;
 	_region = region;
 	return Game->registerObject(region);
@@ -69,7 +69,7 @@ HRESULT CAdSceneNode::setRegion(CAdRegion *region) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSceneNode::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdSceneNode::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -77,7 +77,7 @@ HRESULT CAdSceneNode::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_region));
 	persistMgr->transfer(TMEMBER_INT(_type));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

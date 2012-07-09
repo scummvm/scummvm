@@ -43,10 +43,10 @@ public:
 	void putDWORD(uint32 val);
 	char *getString();
 	void putString(const char *val);
-	HRESULT getBytes(byte *buffer, uint32 size);
-	HRESULT putBytes(byte *buffer, uint32 size);
+	ERRORCODE getBytes(byte *buffer, uint32 size);
+	ERRORCODE putBytes(byte *buffer, uint32 size);
 	uint32 getSize();
-	HRESULT init(uint32 initSize = 0);
+	ERRORCODE init(uint32 initSize = 0);
 	void cleanup();
 	uint32 _size;
 	byte *_buffer;

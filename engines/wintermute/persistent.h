@@ -37,7 +37,7 @@ class CBPersistMgr;
 
 // persistence support
 typedef void *(*PERSISTBUILD)(void);
-typedef HRESULT(*PERSISTLOAD)(void *, CBPersistMgr *);
+typedef ERRORCODE(*PERSISTLOAD)(void *, CBPersistMgr *);
 typedef void (*SYS_INSTANCE_CALLBACK)(void *Instance, void *Data);
 } // end of namespace WinterMute
 
@@ -50,9 +50,9 @@ namespace WinterMute {
 	static const char _className[];\
 	static void* persistBuild(void);\
 	virtual const char* getClassName();\
-	static HRESULT persistLoad(void* Instance, CBPersistMgr* PersistMgr);\
+	static ERRORCODE persistLoad(void* Instance, CBPersistMgr* PersistMgr);\
 	class_name(TDynamicConstructor p1, TDynamicConstructor p2):parent_class(p1, p2){ /*memset(this, 0, sizeof(class_name));*/ };\
-	virtual HRESULT persist(CBPersistMgr* PersistMgr);\
+	virtual ERRORCODE persist(CBPersistMgr* PersistMgr);\
 	void* operator new (size_t size);\
 	void operator delete(void* p);\
 	 
@@ -63,7 +63,7 @@ namespace WinterMute {
 		return ::new class_name(DYNAMIC_CONSTRUCTOR, DYNAMIC_CONSTRUCTOR);\
 	}\
 	\
-	HRESULT class_name::persistLoad(void* Instance, CBPersistMgr* PersistMgr){\
+	ERRORCODE class_name::persistLoad(void* Instance, CBPersistMgr* PersistMgr){\
 		return ((class_name*)Instance)->persist(PersistMgr);\
 	}\
 	\

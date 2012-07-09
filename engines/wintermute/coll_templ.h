@@ -88,7 +88,7 @@ public:
 	// Clean up
 	void FreeExtra();
 	void RemoveAll();
-	HRESULT persist(CBPersistMgr *persistMgr);
+	ERRORCODE persist(CBPersistMgr *persistMgr);
 
 	// Accessing elements
 	TYPE GetAt(int nIndex) const;
@@ -346,7 +346,7 @@ void CBArray<TYPE, ARG_TYPE>::InsertAt(int nStartIndex, CBArray *pNewArray) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE, class ARG_TYPE>
-HRESULT CBArray<TYPE, ARG_TYPE>::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBArray<TYPE, ARG_TYPE>::persist(CBPersistMgr *persistMgr) {
 	int i, j;
 	if (persistMgr->_saving) {
 		j = GetSize();
@@ -364,7 +364,7 @@ HRESULT CBArray<TYPE, ARG_TYPE>::persist(CBPersistMgr *persistMgr) {
 			Add(obj);
 		}
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

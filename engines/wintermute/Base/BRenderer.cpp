@@ -115,19 +115,19 @@ void CBRenderer::deleteRectList() {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::switchFullscreen() {
-	return E_FAIL;
+ERRORCODE CBRenderer::switchFullscreen() {
+	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::flip() {
-	return E_FAIL;
+ERRORCODE CBRenderer::flip() {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::initRenderer(int width, int height, bool windowed) {
-	return E_FAIL;
+ERRORCODE CBRenderer::initRenderer(int width, int height, bool windowed) {
+	return STATUS_FAILED;
 }
 
 
@@ -137,36 +137,36 @@ void CBRenderer::onWindowChange() {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::fill(byte  r, byte g, byte b, Common::Rect *rect) {
-	return E_FAIL;
+ERRORCODE CBRenderer::fill(byte  r, byte g, byte b, Common::Rect *rect) {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::windowedBlt() {
-	return E_FAIL;
+ERRORCODE CBRenderer::windowedBlt() {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::setup2D(bool Force) {
-	return E_FAIL;
+ERRORCODE CBRenderer::setup2D(bool Force) {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::setupLines() {
-	return E_FAIL;
+ERRORCODE CBRenderer::setupLines() {
+	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
-	return E_FAIL;
+ERRORCODE CBRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
+ERRORCODE CBRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
 	for (int i = 0; i < width; i++) {
 		drawLine(x1 + i, y1 + i, x2 - i,   y1 + i,   color); // up
 		drawLine(x1 + i, y2 - i, x2 - i + 1, y2 - i, color); // down
@@ -174,36 +174,36 @@ HRESULT CBRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int w
 		drawLine(x1 + i, y1 + i, x1 + i, y2 - i,   color); // left
 		drawLine(x2 - i, y1 + i, x2 - i, y2 - i + 1, color); // right
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::fade(uint16 alpha) {
-	return E_FAIL;
+ERRORCODE CBRenderer::fade(uint16 alpha) {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::fadeToColor(uint32 color, Common::Rect *rect) {
-	return E_FAIL;
+ERRORCODE CBRenderer::fadeToColor(uint32 color, Common::Rect *rect) {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::setViewport(int left, int top, int right, int bottom) {
-	return E_FAIL;
+ERRORCODE CBRenderer::setViewport(int left, int top, int right, int bottom) {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::setScreenViewport() {
+ERRORCODE CBRenderer::setScreenViewport() {
 	return setViewport(_drawOffsetX, _drawOffsetY, _width + _drawOffsetX, _height + _drawOffsetY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::setViewport(RECT *rect) {
+ERRORCODE CBRenderer::setViewport(RECT *rect) {
 	return setViewport(rect->left + _drawOffsetX,
 	                   rect->top + _drawOffsetY,
 	                   rect->right + _drawOffsetX,
@@ -218,7 +218,7 @@ CBImage *CBRenderer::takeScreenshot() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::clipCursor() {
+ERRORCODE CBRenderer::clipCursor() {
 	/*
 	if (!_windowed) {
 	    RECT rc;
@@ -233,15 +233,15 @@ HRESULT CBRenderer::clipCursor() {
 	    ::ClipCursor(&rc);
 	}
 	 */
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderer::unclipCursor() {
+ERRORCODE CBRenderer::unclipCursor() {
 	/*
 	if (!_windowed) ::ClipCursor(NULL);
 	*/
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////

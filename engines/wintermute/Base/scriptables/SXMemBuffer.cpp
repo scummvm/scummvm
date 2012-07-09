@@ -76,7 +76,7 @@ void CSXMemBuffer::cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::resize(int newSize) {
+ERRORCODE CSXMemBuffer::resize(int newSize) {
 	int oldSize = _size;
 
 	if (_size == 0) {
@@ -88,7 +88,7 @@ HRESULT CSXMemBuffer::resize(int newSize) {
 			if (newSize == 0) {
 				_buffer = newBuf;
 				_size = newSize;
-			} else return E_FAIL;
+			} else return STATUS_FAILED;
 		} else {
 			_buffer = newBuf;
 			_size = newSize;
@@ -98,7 +98,7 @@ HRESULT CSXMemBuffer::resize(int newSize) {
 	if (_buffer && _size > oldSize) {
 		memset((byte *)_buffer + oldSize, 0, _size - oldSize);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ const char *CSXMemBuffer::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSize
 	//////////////////////////////////////////////////////////////////////////
@@ -132,12 +132,12 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		stack->correctParams(1);
 		int newSize = stack->pop()->getInt();
 		newSize = MAX(0, newSize);
-		if (SUCCEEDED(resize(newSize)))
+		if (DID_SUCCEED(resize(newSize)))
 			stack->pushBool(true);
 		else
 			stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		else
 			stack->pushBool(*(bool *)((byte *)_buffer + start));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -165,7 +165,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		else
 			stack->pushInt(*(byte *)((byte *)_buffer + start));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -179,7 +179,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		else
 			stack->pushInt(65536 + * (short *)((byte *)_buffer + Start));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		else
 			stack->pushInt(*(int *)((byte *)_buffer + start));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		else
 			stack->pushFloat(*(float *)((byte *)_buffer + start));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -221,7 +221,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		else
 			stack->pushFloat(*(double *)((byte *)_buffer + start));
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			stack->pushString(str);
 			delete [] str;
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -267,7 +267,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			CSXMemBuffer *buf = new CSXMemBuffer(Game, pointer);
 			stack->pushNative(buf, false);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			*(bool *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -301,7 +301,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			*(byte *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -318,7 +318,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			*(short *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -335,7 +335,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			*(int *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -352,7 +352,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			*(float *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -369,7 +369,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			*(double *)((byte *)_buffer + start) = val;
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -386,7 +386,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			memcpy((byte *)_buffer + start, val, strlen(val) + 1);
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -409,7 +409,7 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			stack->pushBool(false);
 
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -425,10 +425,10 @@ HRESULT CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 			f.close();
 		}
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
-	else return E_FAIL;
+	else return STATUS_FAILED;
 }
 
 
@@ -457,7 +457,7 @@ CScValue *CSXMemBuffer::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CSXMemBuffer::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
@@ -473,14 +473,14 @@ HRESULT CSXMemBuffer::scSetProperty(const char *name, CScValue *value) {
 	            _values->DeleteProp(PropName);
 	        }
 	    }
-	    return S_OK;
+	    return STATUS_OK;
 	}
 	else*/ return CBScriptable::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
 
@@ -495,7 +495,7 @@ HRESULT CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
 		} else _buffer = NULL;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 

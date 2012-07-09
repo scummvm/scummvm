@@ -84,19 +84,19 @@ CAdItem::~CAdItem() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::loadFile(const char *filename) {
+ERRORCODE CAdItem::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdItem::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", filename);
 
 
 	delete [] buffer;
@@ -134,7 +134,7 @@ TOKEN_DEF(AMOUNT_STRING)
 TOKEN_DEF(AMOUNT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
 	TOKEN_TABLE(TEMPLATE)
@@ -171,7 +171,7 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ITEM) {
 			Game->LOG(0, "'ITEM' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -180,7 +180,7 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -199,7 +199,7 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_SPRITE:
 			delete _sprite;
 			_sprite = new CBSprite(Game, this);
-			if (!_sprite || FAILED(_sprite->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			if (!_sprite || DID_FAIL(_sprite->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
 				delete _sprite;
 				cmd = PARSERR_GENERIC;
 			}
@@ -209,7 +209,7 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_SPRITE_HOVER:
 			delete _spriteHover;
 			_spriteHover = new CBSprite(Game, this);
-			if (!_spriteHover || FAILED(_spriteHover->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
 				delete _spriteHover;
 				cmd = PARSERR_GENERIC;
 			}
@@ -243,14 +243,14 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TALK: {
 			CBSprite *spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.Add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			CBSprite *spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.Add(spr);
 		}
 		break;
@@ -258,7 +258,7 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursorNormal;
 			_cursorNormal = new CBSprite(Game);
-			if (!_cursorNormal || FAILED(_cursorNormal->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
 				delete _cursorNormal;
 				_cursorNormal = NULL;
 				cmd = PARSERR_GENERIC;
@@ -268,7 +268,7 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR_HOVER:
 			delete _cursorHover;
 			_cursorHover = new CBSprite(Game);
-			if (!_cursorHover || FAILED(_cursorHover->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
 				delete _cursorHover;
 				_cursorHover = NULL;
 				cmd = PARSERR_GENERIC;
@@ -302,24 +302,24 @@ HRESULT CAdItem::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in ITEM definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading ITEM definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (alpha != 0 && ar == 0 && ag == 0 && ab == 0) {
 		ar = ag = ab = 255;
 	}
-	_alphaColor = DRGBA(ar, ag, ab, alpha);
+	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::update() {
+ERRORCODE CAdItem::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY && _animSprite) {
@@ -381,12 +381,12 @@ HRESULT CAdItem::update() {
 	}
 	_ready = (_state == STATE_READY);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::display(int x, int y) {
+ERRORCODE CAdItem::display(int x, int y) {
 	int width = 0;
 	if (_currentSprite) {
 		RECT rc;
@@ -397,10 +397,10 @@ HRESULT CAdItem::display(int x, int y) {
 	_posX = x + width / 2;
 	_posY = y;
 
-	HRESULT ret;
+	ERRORCODE ret;
 	if (_currentSprite)
 		ret = _currentSprite->draw(x, y, this, 100, 100, _alphaColor);
-	else ret = S_OK;
+	else ret = STATUS_OK;
 
 	if (_displayAmount) {
 		int amountX = x;
@@ -430,7 +430,7 @@ HRESULT CAdItem::display(int x, int y) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverSprite
 	//////////////////////////////////////////////////////////////////////////
@@ -445,7 +445,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		delete _spriteHover;
 		_spriteHover = NULL;
 		CBSprite *spr = new CBSprite(Game, this);
-		if (!spr || FAILED(spr->loadFile(filename))) {
+		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetHoverSprite failed for file '%s'", filename);
 		} else {
@@ -453,7 +453,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			if (setCurrent) _currentSprite = _spriteHover;
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -464,7 +464,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		if (!_spriteHover || !_spriteHover->_filename) stack->pushNULL();
 		else stack->pushString(_spriteHover->_filename);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -474,7 +474,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(0);
 		if (!_spriteHover) stack->pushNULL();
 		else stack->pushNative(_spriteHover, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -488,14 +488,14 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		delete _cursorNormal;
 		_cursorNormal = NULL;
 		CBSprite *spr = new CBSprite(Game);
-		if (!spr || FAILED(spr->loadFile(filename))) {
+		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetNormalCursor failed for file '%s'", filename);
 		} else {
 			_cursorNormal = spr;
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -506,7 +506,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		if (!_cursorNormal || !_cursorNormal->_filename) stack->pushNULL();
 		else stack->pushString(_cursorNormal->_filename);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -517,7 +517,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		if (!_cursorNormal) stack->pushNULL();
 		else stack->pushNative(_cursorNormal, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -531,14 +531,14 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		delete _cursorHover;
 		_cursorHover = NULL;
 		CBSprite *spr = new CBSprite(Game);
-		if (!spr || FAILED(spr->loadFile(filename))) {
+		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetHoverCursor failed for file '%s'", filename);
 		} else {
 			_cursorHover = spr;
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -549,7 +549,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		if (!_cursorHover || !_cursorHover->_filename) stack->pushNULL();
 		else stack->pushString(_cursorHover->_filename);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -560,7 +560,7 @@ HRESULT CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		if (!_cursorHover) stack->pushNULL();
 		else stack->pushNative(_cursorHover, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CAdTalkHolder::scCallMethod(script, stack, thisStack, name);
@@ -649,13 +649,13 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CAdItem::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -663,7 +663,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisplayAmount") == 0) {
 		_displayAmount = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -671,7 +671,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Amount") == 0) {
 		_amount = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -679,7 +679,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountOffsetX") == 0) {
 		_amountOffsetX = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -687,7 +687,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountOffsetY") == 0) {
 		_amountOffsetY = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -695,7 +695,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountAlign") == 0) {
 		_amountAlign = (TTextAlign)value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -708,7 +708,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 		} else {
 			CBUtils::setString(&_amountString, value->getString());
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -716,7 +716,7 @@ HRESULT CAdItem::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorCombined") == 0) {
 		_cursorCombined = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CAdTalkHolder::scSetProperty(name, value);
@@ -730,7 +730,7 @@ const char *CAdItem::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdItem::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdItem::persist(CBPersistMgr *persistMgr) {
 
 	CAdTalkHolder::persist(persistMgr);
 
@@ -746,7 +746,7 @@ HRESULT CAdItem::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER_INT(_amountAlign));
 	persistMgr->transfer(TMEMBER(_amountString));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 

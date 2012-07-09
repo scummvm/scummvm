@@ -37,7 +37,7 @@ class CAdTalkHolder : public CAdObject {
 public:
 	DECLARE_PERSISTENT(CAdTalkHolder, CAdObject)
 	virtual CBSprite *getTalkStance(const char *stance);
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
 	CBSprite *_sprite;
 	CBArray<CBSprite *, CBSprite *> _talkSprites;
 	CBArray<CBSprite *, CBSprite *> _talkSpritesEx;
@@ -46,8 +46,8 @@ public:
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 };

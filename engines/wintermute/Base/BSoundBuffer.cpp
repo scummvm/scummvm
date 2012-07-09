@@ -93,7 +93,7 @@ void CBSoundBuffer::setStreaming(bool Streamed, uint32 NumBlocks, uint32 BlockSi
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
+ERRORCODE CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	warning("BSoundBuffer::LoadFromFile(%s,%d)", filename, forceReload);
 #if 0
 	if (_stream) {
@@ -108,7 +108,7 @@ HRESULT CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	_file = Game->_fileManager->openFile(filename, true, false);
 	if (!_file) {
 		Game->LOG(0, "Error opening sound file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	Common::String strFilename(filename);
 	if (strFilename.hasSuffix(".ogg")) {
@@ -120,11 +120,11 @@ HRESULT CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 		warning("BSoundBuffer::LoadFromFile - Unknown filetype for %s", filename);
 	}
 	if (!_stream) {
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	CBUtils::setString(&_filename, filename);
 
-	return S_OK;
+	return STATUS_OK;
 #if 0
 	BASS_FILEPROCS fileProc;
 	fileProc.close = CBSoundBuffer::FileCloseProc;
@@ -135,20 +135,20 @@ HRESULT CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	_stream = BASS_StreamCreateFileUser(STREAMFILE_NOBUFFER, 0, &fileProc, (void *)_file);
 	if (!_stream) {
 		Game->LOG(0, "BASS error: %d while loading '%s'", BASS_ErrorGetCode(), filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	CBUtils::setString(&_filename, filename);
 
 	/*
-	HRESULT res;
+	ERRORCODE res;
 	bool NewlyCreated = false;
 
 	if(!_soundBuffer || ForceReload || _streamed){
 	    if(!_file) _file = Game->_fileManager->openFile(filename);
 	    if(!_file){
 	        Game->LOG(0, "Error opening sound file '%s'", filename);
-	        return E_FAIL;
+	        return STATUS_FAILED;
 	    }
 	    // switch to streamed for big files
 	    if(!_streamed && (_file->GetSize() > MAX_NONSTREAMED_FILE_SIZE && !Game->_forceNonStreamedSounds)) SetStreaming(true);
@@ -159,7 +159,7 @@ HRESULT CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	    NewlyCreated = true;
 
 	    res = InitializeBuffer(_file);
-	    if(FAILED(res)){
+	    if(DID_FAIL(res)){
 	        Game->LOG(res, "Error creating sound buffer for file '%s'", filename);
 	        return res;
 	    }
@@ -180,13 +180,13 @@ HRESULT CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	}
 	*/
 
-	return S_OK;
+	return STATUS_OK;
 #endif
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::play(bool looping, uint32 startSample) {
+ERRORCODE CBSoundBuffer::play(bool looping, uint32 startSample) {
 	if (startSample != 0) {
 		warning("BSoundBuffer::Play - Should start playback at %d, but currently we don't", startSample);
 	}
@@ -198,7 +198,7 @@ HRESULT CBSoundBuffer::play(bool looping, uint32 startSample) {
 			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 		}
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -214,29 +214,29 @@ void CBSoundBuffer::setLooping(bool looping) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::resume() {
+ERRORCODE CBSoundBuffer::resume() {
 	if (_stream && _handle) {
 		g_system->getMixer()->pauseHandle(*_handle, false);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::stop() {
+ERRORCODE CBSoundBuffer::stop() {
 	if (_stream && _handle) {
 		g_system->getMixer()->stopHandle(*_handle);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::pause() {
+ERRORCODE CBSoundBuffer::pause() {
 	if (_stream && _handle) {
 		g_system->getMixer()->pauseHandle(*_handle, true);
 	}
-	return S_OK;
+	return STATUS_OK;
 
 }
 
@@ -257,17 +257,17 @@ void CBSoundBuffer::setType(TSoundType type) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::setVolume(int volume) {
+ERRORCODE CBSoundBuffer::setVolume(int volume) {
 	if (_stream && _handle) {
 		byte vol = (byte)(volume / 100.f * Audio::Mixer::kMaxChannelVolume);
 		g_system->getMixer()->setChannelVolume(*_handle, vol);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::setPrivateVolume(int volume) {
+ERRORCODE CBSoundBuffer::setPrivateVolume(int volume) {
 #if 0
 	_privateVolume = Volume;
 
@@ -308,7 +308,7 @@ uint32 CBSoundBuffer::getPosition() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::setPosition(uint32 pos) {
+ERRORCODE CBSoundBuffer::setPosition(uint32 pos) {
 	warning("CBSoundBuffer::SetPosition - not implemented yet");
 #if 0
 	if (_stream) {
@@ -316,11 +316,11 @@ HRESULT CBSoundBuffer::setPosition(uint32 pos) {
 		BASS_ChannelSetPosition(_stream, pos, BASS_POS_BYTE);
 	}
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::setLoopStart(uint32 pos) {
+ERRORCODE CBSoundBuffer::setLoopStart(uint32 pos) {
 	_loopStart = pos;
 #if 0
 	if (_stream) {
@@ -334,7 +334,7 @@ HRESULT CBSoundBuffer::setLoopStart(uint32 pos) {
 		}
 	}
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 #if 0
 //////////////////////////////////////////////////////////////////////////
@@ -347,15 +347,15 @@ void CBSoundBuffer::LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void
 }
 #endif
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::setPan(float pan) {
+ERRORCODE CBSoundBuffer::setPan(float pan) {
 	if (_stream) {
 		g_system->getMixer()->setChannelBalance(*_handle, (int8)(pan * 127));
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundBuffer::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
+ERRORCODE CBSoundBuffer::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	warning("CBSoundBuffer::ApplyFX - not implemented yet");
 #if 0
 	switch (type) {
@@ -369,7 +369,7 @@ HRESULT CBSoundBuffer::applyFX(TSFXType type, float param1, float param2, float 
 		break;
 	}
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

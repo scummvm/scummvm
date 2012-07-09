@@ -39,8 +39,8 @@ public:
 	virtual int scCompare(CBScriptable *Val);
 	DECLARE_PERSISTENT(CSXMemBuffer, CBScriptable)
 	CScValue *scGetProperty(const char *name);
-	HRESULT scSetProperty(const char *name, CScValue *value);
-	HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	ERRORCODE scSetProperty(const char *name, CScValue *value);
+	ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	const char *scToString();
 	CSXMemBuffer(CBGame *inGame, CScStack *stack);
 	CSXMemBuffer(CBGame *inGame, void *buffer);
@@ -48,7 +48,7 @@ public:
 	virtual void *scToMemBuffer();
 	int _size;
 private:
-	HRESULT resize(int newSize);
+	ERRORCODE resize(int newSize);
 	void *_buffer;
 	void cleanup();
 	bool checkBounds(CScScript *script, int start, int length);

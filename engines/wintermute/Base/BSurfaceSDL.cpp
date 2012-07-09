@@ -90,7 +90,7 @@ bool hasTransparency(Graphics::Surface *surf) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+ERRORCODE CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	/*  CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer); */
 	Common::String strFileName(filename);
 	CBImage *image = new CBImage(Game);
@@ -177,7 +177,7 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed, b
 	if (!_texture) {
 		SDL_FreeSurface(surf);
 		delete imgDecoder;
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	GenAlphaMask(surf);
@@ -207,7 +207,7 @@ HRESULT CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed, b
 
 	delete image;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -293,7 +293,7 @@ uint32 CBSurfaceSDL::getPixel(Graphics::Surface *surface, int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::create(int width, int height) {
+ERRORCODE CBSurfaceSDL::create(int width, int height) {
 	warning("SurfaceSDL::Create not ported yet"); //TODO
 #if 0
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
@@ -306,11 +306,11 @@ HRESULT CBSurfaceSDL::create(int width, int height) {
 
 	_valid = true;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::createFromSDLSurface(Graphics::Surface *surface) {
+ERRORCODE CBSurfaceSDL::createFromSDLSurface(Graphics::Surface *surface) {
 	warning("CBSurfaceSDL::CreateFromSDLSurface not ported yet"); //TODO
 #if 0
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
@@ -330,7 +330,7 @@ HRESULT CBSurfaceSDL::createFromSDLSurface(Graphics::Surface *surface) {
 #endif
 	_valid = true;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -407,56 +407,56 @@ bool CBSurfaceSDL::isTransparentAtLite(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::startPixelOp() {
+ERRORCODE CBSurfaceSDL::startPixelOp() {
 	//SDL_LockTexture(_texture, NULL, &_lockPixels, &_lockPitch);
 	// Any pixel-op makes the caching useless:
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::endPixelOp() {
+ERRORCODE CBSurfaceSDL::endPixelOp() {
 	//SDL_UnlockTexture(_texture);
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::display(int x, int y, RECT rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::display(int x, int y, RECT rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, 100, 100, 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::displayTrans(int x, int y, RECT rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::displayTrans(int x, int y, RECT rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::displayTransOffset(int x, int y, RECT rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+ERRORCODE CBSurfaceSDL::displayTransOffset(int x, int y, RECT rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY, offsetX, offsetY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::displayTransZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::displayTransZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::displayZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha, bool Transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::displayZoom(int x, int y, RECT rect, float zoomX, float zoomY, uint32 alpha, bool Transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, !Transparent, blendMode, mirrorX, mirrorY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+ERRORCODE CBSurfaceSDL::displayTransform(int x, int y, int hotX, int hotY, RECT rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+ERRORCODE CBSurfaceSDL::drawSprite(int x, int y, RECT *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 
 	if (renderer->_forceAlphaColor != 0) alpha = renderer->_forceAlphaColor;
@@ -469,10 +469,10 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *rect, float zoomX, float zo
 		hasWarned = true;
 	}
 
-	byte r = D3DCOLGetR(alpha);
-	byte g = D3DCOLGetG(alpha);
-	byte b = D3DCOLGetB(alpha);
-	byte a = D3DCOLGetA(alpha);
+	byte r = RGBCOLGetR(alpha);
+	byte g = RGBCOLGetG(alpha);
+	byte b = RGBCOLGetB(alpha);
+	byte a = RGBCOLGetA(alpha);
 
 	renderer->setAlphaMod(a);
 	renderer->setColorMod(r, g, b);
@@ -531,16 +531,16 @@ HRESULT CBSurfaceSDL::drawSprite(int x, int y, RECT *rect, float zoomX, float zo
 	SDL_RenderCopy(renderer->GetSdlRenderer(), _texture, &srcRect, &position);
 #endif
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT CBSurfaceSDL::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
+ERRORCODE CBSurfaceSDL::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_surface->copyFrom(surface);
 	_hasAlpha = hasAlpha;
 	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 		
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

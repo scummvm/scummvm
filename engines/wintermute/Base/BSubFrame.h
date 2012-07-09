@@ -41,18 +41,18 @@ public:
 	bool _mirrorX;
 	bool _mirrorY;
 	bool _decoration;
-	HRESULT setSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
-	HRESULT setSurfaceSimple();
+	ERRORCODE setSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
+	ERRORCODE setSurfaceSimple();
 	DECLARE_PERSISTENT(CBSubFrame, CBScriptable)
 	void setDefaultRect();
 	uint32 _transparent;
-	HRESULT saveAsText(CBDynBuffer *buffer, int indent) { return saveAsText(buffer, indent, true); }
-	HRESULT saveAsText(CBDynBuffer *buffer, int indent, bool complete);
+	ERRORCODE saveAsText(CBDynBuffer *buffer, int indent) { return saveAsText(buffer, indent, true); }
+	ERRORCODE saveAsText(CBDynBuffer *buffer, int indent, bool complete);
 	bool _editorSelected;
 	CBSubFrame(CBGame *inGame);
 	virtual ~CBSubFrame();
-	HRESULT loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
-	HRESULT draw(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
+	ERRORCODE loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
+	ERRORCODE draw(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
 	bool getBoundingRect(LPRECT rect, int x, int y, float scaleX = 100, float scaleY = 100);
 
 	int _hotspotX;
@@ -75,8 +75,8 @@ public:
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 };

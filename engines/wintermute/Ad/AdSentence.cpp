@@ -165,8 +165,8 @@ char *CAdSentence::getStance(int stance) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::display() {
-	if (!_font || !_text) return E_FAIL;
+ERRORCODE CAdSentence::display() {
+	if (!_font || !_text) return STATUS_FAILED;
 
 	if (_sound && !_soundStarted) {
 		_sound->play();
@@ -190,7 +190,7 @@ HRESULT CAdSentence::display() {
 		_font->drawText((byte *)_text, x, y, _width, _align);
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -204,14 +204,14 @@ void CAdSentence::setSound(CBSound *sound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::finish() {
+ERRORCODE CAdSentence::finish() {
 	if (_sound) _sound->stop();
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdSentence::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 
@@ -233,17 +233,17 @@ HRESULT CAdSentence::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_fixedPos));
 	persistMgr->transfer(TMEMBER(_freezable));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::setupTalkFile(const char *soundFilename) {
+ERRORCODE CAdSentence::setupTalkFile(const char *soundFilename) {
 	delete _talkDef;
 	_talkDef = NULL;
 	_currentSprite = NULL;
 
-	if (!soundFilename) return S_OK;
+	if (!soundFilename) return STATUS_OK;
 
 
 	AnsiString path = PathUtil::getDirectoryName(soundFilename);
@@ -254,24 +254,24 @@ HRESULT CAdSentence::setupTalkFile(const char *soundFilename) {
 	Common::SeekableReadStream *file = Game->_fileManager->openFile(talkDefFileName.c_str());
 	if (file) {
 		Game->_fileManager->closeFile(file);
-	} else return S_OK; // no talk def file found
+	} else return STATUS_OK; // no talk def file found
 
 
 	_talkDef = new CAdTalkDef(Game);
-	if (!_talkDef || FAILED(_talkDef->loadFile(talkDefFileName.c_str()))) {
+	if (!_talkDef || DID_FAIL(_talkDef->loadFile(talkDefFileName.c_str()))) {
 		delete _talkDef;
 		_talkDef = NULL;
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	//Game->LOG(0, "Using .talk file: %s", TalkDefFile);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSentence::update(TDirection dir) {
-	if (!_talkDef) return S_OK;
+ERRORCODE CAdSentence::update(TDirection dir) {
+	if (!_talkDef) return STATUS_OK;
 
 	uint32 currentTime;
 	// if sound is available, synchronize with sound, otherwise use timer
@@ -305,7 +305,7 @@ HRESULT CAdSentence::update(TDirection dir) {
 		} else _currentSprite = NULL;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////

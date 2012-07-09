@@ -31,17 +31,24 @@
 
 #include "common/scummsys.h"
 
-//namespace WinterMute {
+namespace WinterMute {
+
+#define BYTETORGBA(r,g,b,a) ((uint32)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+
+#define RGBCOLGetB(rgb)  ((byte )(rgb))
+#define RGBCOLGetG(rgb)  ((byte )(((uint16)(rgb)) >> 8))
+#define RGBCOLGetR(rgb)  ((byte )((rgb)>>16))
+#define RGBCOLGetA(rgb)  ((byte )((rgb)>>24))
+
+typedef bool ERRORCODE;
+
+#define DID_SUCCEED(hr) ((ERRORCODE)(hr))
+#define DID_FAIL(hr) (!((ERRORCODE)(hr)))
+
+#define STATUS_OK		(true)
+#define STATUS_FAILED	(false)
 
 #ifndef __WIN32__
-
-#define PI ((float) 3.141592653589793f)
-#define DRGBA(r,g,b,a) ((uint32)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
-
-#define D3DCOLGetB(rgb)  ((byte )(rgb))
-#define D3DCOLGetG(rgb)  ((byte )(((uint16)(rgb)) >> 8))
-#define D3DCOLGetR(rgb)  ((byte )((rgb)>>16))
-#define D3DCOLGetA(rgb)  ((byte )((rgb)>>24))
 
 #define MAX_PATH 512
 
@@ -64,17 +71,10 @@ typedef struct tagPOINT {
 	int32  y;
 } POINT, *LPPOINT;
 
-typedef int32 HRESULT;
-
-#define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
-#define FAILED(hr) (((HRESULT)(hr)) < 0)
-
-#define S_OK      ((HRESULT)0)
-//#define S_FALSE   ((HRESULT)1)
-#define E_FAIL   ((HRESULT)-1)
-
 #endif // __WIN32__
 
-//} // end of namespace WinterMute
+
+
+} // end of namespace WinterMute
 
 #endif // WINTERMUTE_WINTYPES_H

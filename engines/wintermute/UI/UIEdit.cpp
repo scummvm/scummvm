@@ -94,19 +94,19 @@ CUIEdit::~CUIEdit() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::loadFile(const char *filename) {
+ERRORCODE CUIEdit::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CUIEdit::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing EDIT file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing EDIT file '%s'", filename);
 
 	delete [] buffer;
 
@@ -139,7 +139,7 @@ TOKEN_DEF(EDIT)
 TOKEN_DEF(CAPTION)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CUIEdit::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TEMPLATE)
 	TOKEN_TABLE(DISABLED)
@@ -172,7 +172,7 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDIT) {
 			Game->LOG(0, "'EDIT' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -180,7 +180,7 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -190,7 +190,7 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK:
 			delete _back;
 			_back = new CUITiledImage(Game);
-			if (!_back || FAILED(_back->loadFile((char *)params))) {
+			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
 				cmd = PARSERR_GENERIC;
@@ -200,7 +200,7 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new CBSprite(Game);
-			if (!_image || FAILED(_image->loadFile((char *)params))) {
+			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
 				cmd = PARSERR_GENERIC;
@@ -251,7 +251,7 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -289,20 +289,20 @@ HRESULT CUIEdit::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in EDIT definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading EDIT definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	correctSize();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "EDIT\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -355,13 +355,13 @@ HRESULT CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
 	CBBase::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSelectedFont
 	//////////////////////////////////////////////////////////////////////////
@@ -372,7 +372,7 @@ HRESULT CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		_fontSelected = Game->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontSelected != NULL);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CUIObject::scCallMethod(script, stack, thisStack, name);
@@ -457,7 +457,7 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
@@ -465,7 +465,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 		_selStart = value->getInt();
 		_selStart = MAX(_selStart, 0);
 		_selStart = MIN((size_t)_selStart, strlen(_text));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -475,7 +475,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 		_selEnd = value->getInt();
 		_selEnd = MAX(_selEnd, 0);
 		_selEnd = MIN((size_t)_selEnd, strlen(_text));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -483,7 +483,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorBlinkRate") == 0) {
 		_cursorBlinkRate = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -491,7 +491,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorChar") == 0) {
 		setCursorChar(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -499,7 +499,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "FrameWidth") == 0) {
 		_frameWidth = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -507,7 +507,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MaxLength") == 0) {
 		_maxLength = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -520,7 +520,7 @@ HRESULT CUIEdit::scSetProperty(const char *name, CScValue *value) {
 		} else {
 			setText(value->getString());
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CUIObject::scSetProperty(name, value);
@@ -543,8 +543,8 @@ void CUIEdit::setCursorChar(const char *character) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::display(int offsetX, int offsetY) {
-	if (!_visible) return S_OK;
+ERRORCODE CUIEdit::display(int offsetX, int offsetY) {
+	if (!_visible) return STATUS_OK;
 
 
 	// hack!
@@ -681,7 +681,7 @@ HRESULT CUIEdit::display(int offsetX, int offsetY) {
 
 	Game->_textEncoding = OrigEncoding;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -836,7 +836,7 @@ int CUIEdit::insertChars(int pos, byte *chars, int num) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIEdit::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CUIEdit::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 
@@ -854,7 +854,7 @@ HRESULT CUIEdit::persist(CBPersistMgr *persistMgr) {
 		_lastBlinkTime = 0;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

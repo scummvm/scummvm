@@ -39,18 +39,18 @@ public:
 	int _lastMimicX;
 	int _lastMimicY;
 	void cleanup();
-	HRESULT mimic(CAdWaypointGroup *wpt, float scale = 100.0f, int x = 0, int y = 0);
+	ERRORCODE mimic(CAdWaypointGroup *wpt, float scale = 100.0f, int x = 0, int y = 0);
 	DECLARE_PERSISTENT(CAdWaypointGroup, CBObject)
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
 	bool _active;
 	CAdWaypointGroup(CBGame *inGame);
-	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	ERRORCODE loadFile(const char *filename);
+	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
 	virtual ~CAdWaypointGroup();
 	CBArray<CBPoint *, CBPoint *> _points;
 	int _editorSelectedPoint;
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
 };
 
 } // end of namespace WinterMute

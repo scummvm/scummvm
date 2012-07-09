@@ -98,7 +98,7 @@ bool CAdPath::setReady(bool ready) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdPath::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdPath::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 
@@ -106,7 +106,7 @@ HRESULT CAdPath::persist(CBPersistMgr *persistMgr) {
 	_points.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_ready));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

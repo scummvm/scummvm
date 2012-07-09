@@ -60,12 +60,12 @@ public:
 			delete [] _price;
 		}
 
-		HRESULT persist(CBPersistMgr *persistMgr) {
+		ERRORCODE persist(CBPersistMgr *persistMgr) {
 			persistMgr->transfer(TMEMBER(_id));
 			persistMgr->transfer(TMEMBER(_name));
 			persistMgr->transfer(TMEMBER(_desc));
 			persistMgr->transfer(TMEMBER(_price));
-			return S_OK;
+			return STATUS_OK;
 		}
 
 		const char *getId() {
@@ -130,7 +130,7 @@ public:
 	CSXStore(CBGame *inGame);
 	virtual ~CSXStore();
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 
 	void afterLoad();
 	void OnObjectDestroyed(CBScriptHolder *obj);

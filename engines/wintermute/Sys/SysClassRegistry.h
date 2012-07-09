@@ -66,11 +66,11 @@ public:
 	CSysClassRegistry();
 	virtual ~CSysClassRegistry();
 
-	HRESULT enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData);
-	HRESULT loadTable(CBGame *Game, CBPersistMgr *PersistMgr);
-	HRESULT saveTable(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
-	HRESULT loadInstances(CBGame *Game, CBPersistMgr *PersistMgr);
-	HRESULT saveInstances(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
+	ERRORCODE enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData);
+	ERRORCODE loadTable(CBGame *Game, CBPersistMgr *PersistMgr);
+	ERRORCODE saveTable(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
+	ERRORCODE loadInstances(CBGame *Game, CBPersistMgr *PersistMgr);
+	ERRORCODE saveInstances(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
 	void *idToPointer(int classID, int instanceID);
 	bool getPointerID(void *pointer, int *classID, int *instanceID);
 	bool registerClass(CSysClass *classObj);

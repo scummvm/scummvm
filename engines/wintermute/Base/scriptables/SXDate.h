@@ -41,8 +41,8 @@ public:
 	CSXDate(CBGame *inGame, CScStack *Stack);
 	virtual ~CSXDate();
 	CScValue *scGetProperty(const char *name);
-	HRESULT scSetProperty(const char *name, CScValue *value);
-	HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	ERRORCODE scSetProperty(const char *name, CScValue *value);
+	ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	const char *scToString();
 	char *_string;
 	TimeDate _tm;

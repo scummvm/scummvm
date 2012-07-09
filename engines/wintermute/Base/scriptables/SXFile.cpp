@@ -105,7 +105,7 @@ const char *CSXFile::scToString() {
 
 #define FILE_BUFFER_SIZE 32768
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFilename
 	//////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		cleanup();
 		CBUtils::setString(&_filename, filename);
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_readFile || _writeFile) stack->pushBool(true);
 		else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(0);
 		close();
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			int Pos = stack->pop()->getInt();
 			stack->pushBool(setPos(Pos));
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(0);
 		close();
 		stack->pushBool(CBPlatform::deleteFile(_filename) != false);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -201,7 +201,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		close();
 		stack->pushBool(CBPlatform::copyFile(_filename, Dest, !Overwrite) != false);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -212,14 +212,14 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (!_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open in text mode.", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		uint32 bufSize = FILE_BUFFER_SIZE;
 		byte *buf = (byte *)malloc(bufSize);
 		uint32 counter = 0;
 		byte b;
 		bool foundNewLine = false;
-		HRESULT ret = E_FAIL;
+		ERRORCODE ret = STATUS_FAILED;
 		do {
 			ret = _readFile->read(&b, 1);
 			if (ret != 1) break;
@@ -237,7 +237,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 				buf[counter] = b;
 				counter++;
 			}
-		} while (SUCCEEDED(ret));
+		} while (DID_SUCCEED(ret));
 
 		if (counter > bufSize) {
 			buf = (byte *)realloc(buf, bufSize + FILE_BUFFER_SIZE);
@@ -250,7 +250,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		free(buf);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -263,14 +263,14 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (!_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open in text mode.", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		uint32 bufSize = FILE_BUFFER_SIZE;
 		byte *buf = (byte *)malloc(bufSize);
 		uint32 counter = 0;
 		byte b;
 
-		HRESULT ret = E_FAIL;
+		ERRORCODE ret = STATUS_FAILED;
 		while (counter < (uint32)textLen) {
 			ret = _readFile->read(&b, 1);
 			if (ret != 1) break;
@@ -297,7 +297,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		free(buf);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -309,7 +309,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (!_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in text mode.", name);
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 		if (strcmp(name, "WriteLine") == 0)
 			fprintf((FILE *)_writeFile, "%s\n", line);
@@ -318,7 +318,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -330,13 +330,13 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		bool val;
 		if (_readFile->read(&val, sizeof(bool)) == sizeof(bool)) stack->pushBool(val);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -347,13 +347,13 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		byte val;
 		if (_readFile->read(&val, sizeof(byte)) == sizeof(byte)) stack->pushInt(val);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -364,13 +364,13 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		short val;
 		if (_readFile->read(&val, sizeof(short)) == sizeof(short)) stack->pushInt(65536 + val);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -381,13 +381,13 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		int val;
 		if (_readFile->read(&val, sizeof(int)) == sizeof(int)) stack->pushInt(val);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -398,13 +398,13 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		float val;
 		if (_readFile->read(&val, sizeof(float)) == sizeof(float)) stack->pushFloat(val);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -415,13 +415,13 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		double val;
 		if (_readFile->read(&val, sizeof(double)) == sizeof(double)) stack->pushFloat(val);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -432,7 +432,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 		uint32 size;
 		if (_readFile->read(&size, sizeof(uint32)) == sizeof(uint32)) {
@@ -446,7 +446,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 			} else stack->pushNULL();
 		} else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -459,12 +459,12 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -477,12 +477,12 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -495,12 +495,12 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -513,12 +513,12 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -531,12 +531,12 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -549,12 +549,12 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -567,7 +567,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 
 		uint32 size = strlen(val);
@@ -576,7 +576,7 @@ HRESULT CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 
@@ -641,7 +641,7 @@ CScValue *CSXFile::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXFile::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CSXFile::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
@@ -657,7 +657,7 @@ HRESULT CSXFile::scSetProperty(const char *name, CScValue *value) {
 	            _values->DeleteProp(PropName);
 	        }
 	    }
-	    return S_OK;
+	    return STATUS_OK;
 	}
 	else*/ return CBScriptable::scSetProperty(name, value);
 }
@@ -692,7 +692,7 @@ uint32 CSXFile::getLength() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXFile::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CSXFile::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
 
@@ -738,7 +738,7 @@ HRESULT CSXFile::persist(CBPersistMgr *persistMgr) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

@@ -58,12 +58,12 @@ bool CBTransitionMgr::isReady() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
-	if (_state != TRANS_MGR_READY) return S_OK;
+ERRORCODE CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
+	if (_state != TRANS_MGR_READY) return STATUS_OK;
 
 	if (type == TRANSITION_NONE || type >= NUM_TRANSITION_TYPES) {
 		_state = TRANS_MGR_READY;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	if (nonInteractive) {
@@ -77,14 +77,14 @@ HRESULT CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 	_state = TRANS_MGR_RUNNING;
 	_started = false;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 #define FADE_DURATION 200
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBTransitionMgr::update() {
-	if (isReady()) return S_OK;
+ERRORCODE CBTransitionMgr::update() {
+	if (isReady()) return STATUS_OK;
 
 	if (!_started) {
 		_started = true;
@@ -125,7 +125,7 @@ HRESULT CBTransitionMgr::update() {
 		if (_preserveInteractive)
 			Game->_interactive = _origInteractive;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

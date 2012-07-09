@@ -54,11 +54,11 @@ CAdSceneState::~CAdSceneState() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdSceneState::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdSceneState::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_filename));
 	_nodeStates.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 

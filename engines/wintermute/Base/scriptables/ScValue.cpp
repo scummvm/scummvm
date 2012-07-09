@@ -188,7 +188,7 @@ CScValue *CScValue::getProp(const char *name) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::deleteProp(const char *name) {
+ERRORCODE CScValue::deleteProp(const char *name) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->deleteProp(name);
 
 	_valIter = _valObject.find(name);
@@ -197,22 +197,22 @@ HRESULT CScValue::deleteProp(const char *name) {
 		_valIter->_value = NULL;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::setProp(const char *name, CScValue *val, bool copyWhole, bool setAsConst) {
+ERRORCODE CScValue::setProp(const char *name, CScValue *val, bool copyWhole, bool setAsConst) {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->setProp(name, val);
 
-	HRESULT ret = E_FAIL;
+	ERRORCODE ret = STATUS_FAILED;
 	if (_type == VAL_NATIVE && _valNative) {
 		ret = _valNative->scSetProperty(name, val);
 	}
 
-	if (FAILED(ret)) {
+	if (DID_FAIL(ret)) {
 		CScValue *newVal = NULL;
 
 		_valIter = _valObject.find(name);
@@ -244,7 +244,7 @@ HRESULT CScValue::setProp(const char *name, CScValue *val, bool copyWhole, bool 
 		*/
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -735,7 +735,7 @@ void CScValue::setValue(CScValue *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CScValue::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(Game));
 
 	persistMgr->transfer(TMEMBER(_persistent));
@@ -814,12 +814,12 @@ HRESULT CScValue::persist(CBPersistMgr *persistMgr) {
 	fclose(f);
 	*/
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CScValue::saveAsText(CBDynBuffer *buffer, int indent) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		buffer->putTextIndent(indent, "PROPERTY {\n");
@@ -829,7 +829,7 @@ HRESULT CScValue::saveAsText(CBDynBuffer *buffer, int indent) {
 
 		_valIter++;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -878,20 +878,20 @@ int CScValue::compareStrict(CScValue *val1, CScValue *val2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScValue::dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, CScScript *script, unsigned int scopeID) {
+ERRORCODE CScValue::dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, CScScript *script, unsigned int scopeID) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		client->onVariableInit(type, script, scopeID, _valIter->_value, _valIter->_key.c_str());
 		_valIter++;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::setProperty(const char *propName, int value) {
 	CScValue *val = new CScValue(Game, value);
-	bool ret =  SUCCEEDED(setProp(propName, val));
+	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
 }
@@ -899,7 +899,7 @@ bool CScValue::setProperty(const char *propName, int value) {
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::setProperty(const char *propName, const char *value) {
 	CScValue *val = new CScValue(Game, value);
-	bool ret =  SUCCEEDED(setProp(propName, val));
+	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
 }
@@ -907,7 +907,7 @@ bool CScValue::setProperty(const char *propName, const char *value) {
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::setProperty(const char *propName, double value) {
 	CScValue *val = new CScValue(Game, value);
-	bool ret =  SUCCEEDED(setProp(propName, val));
+	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
 }
@@ -916,7 +916,7 @@ bool CScValue::setProperty(const char *propName, double value) {
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::setProperty(const char *propName, bool value) {
 	CScValue *val = new CScValue(Game, value);
-	bool ret =  SUCCEEDED(setProp(propName, val));
+	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
 }
@@ -925,7 +925,7 @@ bool CScValue::setProperty(const char *propName, bool value) {
 //////////////////////////////////////////////////////////////////////////
 bool CScValue::setProperty(const char *propName) {
 	CScValue *val = new CScValue(Game);
-	bool ret =  SUCCEEDED(setProp(propName, val));
+	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
 }

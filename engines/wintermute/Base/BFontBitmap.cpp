@@ -243,19 +243,19 @@ void CBFontBitmap::drawChar(byte c, int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::loadFile(const char *filename) {
+ERRORCODE CBFontBitmap::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CBFontBitmap::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer))) Game->LOG(0, "Error parsing FONT file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer))) Game->LOG(0, "Error parsing FONT file '%s'", filename);
 
 	delete [] buffer;
 
@@ -282,7 +282,7 @@ TOKEN_DEF(WIDTHS_FRAME)
 TOKEN_DEF(PAINT_WHOLE_CELL)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
+ERRORCODE CBFontBitmap::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONTEXT_FIX)
 	TOKEN_TABLE(FONT)
@@ -308,7 +308,7 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_FONT) {
 		Game->LOG(0, "'FONT' keyword expected.");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	buffer = (byte *)params;
 
@@ -396,13 +396,13 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in FONT definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (spriteFile != NULL) {
 		delete _sprite;
 		_sprite = new CBSprite(Game, this);
-		if (!_sprite || FAILED(_sprite->loadFile(spriteFile))) {
+		if (!_sprite || DID_FAIL(_sprite->loadFile(spriteFile))) {
 			delete _sprite;
 			_sprite = NULL;
 		}
@@ -417,7 +417,7 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 
 	if (((_subframe == NULL || _subframe->_surface == NULL) && _sprite == NULL) || _numColumns == 0 || _tileWidth == 0 || _tileHeight == 0) {
 		Game->LOG(0, "Incomplete font definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (autoWidth) {
@@ -449,12 +449,12 @@ HRESULT CBFontBitmap::loadBuffer(byte *buffer) {
 	}
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBFontBitmap::persist(CBPersistMgr *persistMgr) {
 
 	CBFont::persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_numColumns));
@@ -475,7 +475,7 @@ HRESULT CBFontBitmap::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_wholeCell));
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -487,7 +487,7 @@ int CBFontBitmap::getCharWidth(byte index) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFontBitmap::getWidths() {
+ERRORCODE CBFontBitmap::getWidths() {
 	CBSurface *surf = NULL;
 
 	if (_sprite) {
@@ -498,7 +498,7 @@ HRESULT CBFontBitmap::getWidths() {
 		}
 	}
 	if (surf == NULL && _subframe) surf = _subframe->_surface;
-	if (!surf || FAILED(surf->startPixelOp())) return E_FAIL;
+	if (!surf || DID_FAIL(surf->startPixelOp())) return STATUS_FAILED;
 
 
 	for (int i = 0; i < NUM_CHARACTERS; i++) {
@@ -529,7 +529,7 @@ HRESULT CBFontBitmap::getWidths() {
 	Game->LOG(0, "%02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d", _widths[j*16+0], _widths[j*16+1], _widths[j*16+2], _widths[j*16+3], _widths[j*16+4], _widths[j*16+5], _widths[j*16+6], _widths[j*16+7], _widths[j*16+8], _widths[j*16+9], _widths[j*16+10], _widths[j*16+11], _widths[j*16+12], _widths[j*16+13], _widths[j*16+14], _widths[j*16+15]);
 	}
 	*/
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////

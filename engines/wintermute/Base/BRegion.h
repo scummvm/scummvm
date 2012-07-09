@@ -40,8 +40,8 @@ public:
 	int _lastMimicX;
 	int _lastMimicY;
 	void cleanup();
-	HRESULT mimic(CBRegion *region, float scale = 100.0f, int x = 0, int y = 0);
-	HRESULT getBoundingRect(RECT *rect);
+	ERRORCODE mimic(CBRegion *region, float scale = 100.0f, int x = 0, int y = 0);
+	ERRORCODE getBoundingRect(RECT *rect);
 	bool ptInPolygon(int x, int y);
 	DECLARE_PERSISTENT(CBRegion, CBObject)
 	bool _active;
@@ -50,16 +50,16 @@ public:
 	virtual ~CBRegion();
 	bool pointInRegion(int x, int y);
 	bool createRegion();
-	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	ERRORCODE loadFile(const char *filename);
+	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
 	RECT _rect;
 	CBArray<CBPoint *, CBPoint *> _points;
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride = NULL);
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride = NULL);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

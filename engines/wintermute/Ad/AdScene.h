@@ -49,17 +49,17 @@ public:
 
 	CBObject *getNextAccessObject(CBObject *CurrObject);
 	CBObject *getPrevAccessObject(CBObject *CurrObject);
-	HRESULT getSceneObjects(CBArray<CAdObject *, CAdObject *> &Objects, bool InteractiveOnly);
-	HRESULT getRegionObjects(CAdRegion *Region, CBArray<CAdObject *, CAdObject *> &Objects, bool InteractiveOnly);
+	ERRORCODE getSceneObjects(CBArray<CAdObject *, CAdObject *> &Objects, bool InteractiveOnly);
+	ERRORCODE getRegionObjects(CAdRegion *Region, CBArray<CAdObject *, CAdObject *> &Objects, bool InteractiveOnly);
 
-	HRESULT afterLoad();
+	ERRORCODE afterLoad();
 
-	HRESULT getRegionsAt(int X, int Y, CAdRegion **RegionList, int NumRegions);
-	HRESULT handleItemAssociations(const char *ItemName, bool Show);
+	ERRORCODE getRegionsAt(int X, int Y, CAdRegion **RegionList, int NumRegions);
+	ERRORCODE handleItemAssociations(const char *ItemName, bool Show);
 	CUIWindow *_shieldWindow;
 	float getRotationAt(int X, int Y);
-	HRESULT loadState();
-	HRESULT saveState();
+	ERRORCODE loadState();
+	ERRORCODE saveState();
 	bool _persistentState;
 	bool _persistentStateSprites;
 	CBObject *getNodeByName(const char *name);
@@ -67,27 +67,27 @@ public:
 	bool pointInViewport(int X, int Y);
 	int getOffsetTop();
 	int getOffsetLeft();
-	HRESULT getViewportSize(int *Width = NULL, int *Height = NULL);
-	HRESULT getViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
+	ERRORCODE getViewportSize(int *Width = NULL, int *Height = NULL);
+	ERRORCODE getViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
 	CBViewport *_viewport;
 	CBFader *_fader;
 	int _pfPointsNum;
 	void pfPointsAdd(int X, int Y, int Distance);
 	void pfPointsStart();
 	bool _initialized;
-	HRESULT correctTargetPoint(int StartX, int StartY, int *X, int *Y, bool CheckFreeObjects = false, CBObject *Requester = NULL);
-	HRESULT correctTargetPoint2(int StartX, int StartY, int *TargetX, int *TargetY, bool CheckFreeObjects, CBObject *Requester);
+	ERRORCODE correctTargetPoint(int StartX, int StartY, int *X, int *Y, bool CheckFreeObjects = false, CBObject *Requester = NULL);
+	ERRORCODE correctTargetPoint2(int StartX, int StartY, int *TargetX, int *TargetY, bool CheckFreeObjects, CBObject *Requester);
 	DECLARE_PERSISTENT(CAdScene, CBObject)
-	HRESULT displayRegionContent(CAdRegion *Region = NULL, bool Display3DOnly = false);
-	HRESULT displayRegionContentOld(CAdRegion *Region = NULL);
+	ERRORCODE displayRegionContent(CAdRegion *Region = NULL, bool Display3DOnly = false);
+	ERRORCODE displayRegionContentOld(CAdRegion *Region = NULL);
 	static int compareObjs(const void *Obj1, const void *Obj2);
 
-	HRESULT updateFreeObjects();
-	HRESULT traverseNodes(bool Update = false);
+	ERRORCODE updateFreeObjects();
+	ERRORCODE traverseNodes(bool Update = false);
 	float getScaleAt(int Y);
-	HRESULT sortScaleLevels();
-	HRESULT sortRotLevels();
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
+	ERRORCODE sortScaleLevels();
+	ERRORCODE sortRotLevels();
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
 	uint32 getAlphaAt(int X, int Y, bool ColorCheck = false);
 	bool _paralaxScrolling;
 	void skipTo(int OffsetX, int OffsetY);
@@ -96,7 +96,7 @@ public:
 	void skipToObject(CBObject *Object);
 	void scrollToObject(CBObject *Object);
 	void scrollTo(int OffsetX, int OffsetY);
-	virtual HRESULT update();
+	virtual ERRORCODE update();
 	bool _autoScroll;
 	int _targetOffsetTop;
 	int _targetOffsetLeft;
@@ -109,9 +109,9 @@ public:
 	uint32 _scrollTimeH;
 	uint32 _lastTimeH;
 
-	virtual HRESULT display();
+	virtual ERRORCODE display();
 	uint32 _pfMaxTime;
-	HRESULT initLoop();
+	ERRORCODE initLoop();
 	void pathFinderStep();
 	bool isBlockedAt(int X, int Y, bool CheckFreeObjects = false, CBObject *Requester = NULL);
 	bool isWalkableAt(int X, int Y, bool CheckFreeObjects = false, CBObject *Requester = NULL);
@@ -123,12 +123,12 @@ public:
 	CBArray<CAdLayer *, CAdLayer *> _layers;
 	CBArray<CAdObject *, CAdObject *> _objects;
 	CBArray<CAdWaypointGroup *, CAdWaypointGroup *> _waypointGroups;
-	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	ERRORCODE loadFile(const char *filename);
+	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
 	int _width;
 	int _height;
-	HRESULT addObject(CAdObject *Object);
-	HRESULT removeObject(CAdObject *Object);
+	ERRORCODE addObject(CAdObject *Object);
+	ERRORCODE removeObject(CAdObject *Object);
 	int _editorMarginH;
 	int _editorMarginV;
 	uint32 _editorColFrame;
@@ -152,18 +152,18 @@ public:
 	CBArray<CAdScaleLevel *, CAdScaleLevel *> _scaleLevels;
 	CBArray<CAdRotLevel *, CAdRotLevel *> _rotLevels;
 
-	virtual HRESULT restoreDeviceObjects();
+	virtual ERRORCODE restoreDeviceObjects();
 	int getPointsDist(CBPoint p1, CBPoint p2, CBObject *requester = NULL);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 
 private:
-	HRESULT persistState(bool Saving = true);
+	ERRORCODE persistState(bool Saving = true);
 	void pfAddWaypointGroup(CAdWaypointGroup *Wpt, CBObject *Requester = NULL);
 	bool _pfReady;
 	CBPoint *_pfTarget;

@@ -51,10 +51,10 @@ public:
 	virtual uint32 getPos() {
 		return _pos;
 	};
-	virtual HRESULT seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN) = 0;
-	virtual HRESULT read(void *buffer, uint32 size) = 0;
-	virtual HRESULT close() = 0;
-	virtual HRESULT open(const Common::String &filename) = 0;
+	virtual ERRORCODE seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN) = 0;
+	virtual ERRORCODE read(void *buffer, uint32 size) = 0;
+	virtual ERRORCODE close() = 0;
+	virtual ERRORCODE open(const Common::String &filename) = 0;
 	virtual bool isEOF();
 	CBFile(CBGame *inGame);
 	virtual ~CBFile();

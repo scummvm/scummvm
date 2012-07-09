@@ -50,7 +50,7 @@ public:
 	DECLARE_PERSISTENT(CBKeyboardState, CBScriptable)
 	CBKeyboardState(CBGame *inGame);
 	virtual ~CBKeyboardState();
-	HRESULT readKey(Common::Event *event);
+	ERRORCODE readKey(Common::Event *event);
 
 	void handleKeyPress(Common::Event *event);
 	void handleKeyRelease(Common::Event *event);
@@ -60,8 +60,8 @@ public:
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 private:

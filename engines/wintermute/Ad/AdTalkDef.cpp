@@ -69,18 +69,18 @@ CAdTalkDef::~CAdTalkDef() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkDef::loadFile(const char *filename) {
+ERRORCODE CAdTalkDef::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdTalkDef::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	CBUtils::setString(&_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing TALK file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing TALK file '%s'", filename);
 
 	delete [] buffer;
 
@@ -98,7 +98,7 @@ TOKEN_DEF(DEFAULT_SPRITE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TALK)
 	TOKEN_TABLE(TEMPLATE)
@@ -116,7 +116,7 @@ HRESULT CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TALK) {
 			Game->LOG(0, "'TALK' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -124,12 +124,12 @@ HRESULT CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_ACTION: {
 			CAdTalkNode *Node = new CAdTalkNode(Game);
-			if (Node && SUCCEEDED(Node->loadBuffer(params, false))) _nodes.Add(Node);
+			if (Node && DID_SUCCEED(Node->loadBuffer(params, false))) _nodes.Add(Node);
 			else {
 				delete Node;
 				Node = NULL;
@@ -149,7 +149,7 @@ HRESULT CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_DEFAULT_SPRITESET: {
 			delete _defaultSpriteSet;
 			_defaultSpriteSet = new CAdSpriteSet(Game);
-			if (!_defaultSpriteSet || FAILED(_defaultSpriteSet->loadBuffer(params, false))) {
+			if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadBuffer(params, false))) {
 				delete _defaultSpriteSet;
 				_defaultSpriteSet = NULL;
 				cmd = PARSERR_GENERIC;
@@ -165,12 +165,12 @@ HRESULT CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in TALK definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading TALK definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	delete _defaultSprite;
@@ -180,21 +180,21 @@ HRESULT CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 
 	if (_defaultSpriteFilename) {
 		_defaultSprite = new CBSprite(Game);
-		if (!_defaultSprite || FAILED(_defaultSprite->loadFile(_defaultSpriteFilename))) return E_FAIL;
+		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) return STATUS_FAILED;
 	}
 
 	if (_defaultSpriteSetFilename) {
 		_defaultSpriteSet = new CAdSpriteSet(Game);
-		if (!_defaultSpriteSet || FAILED(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) return E_FAIL;
+		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) return STATUS_FAILED;
 	}
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkDef::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdTalkDef::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -205,12 +205,12 @@ HRESULT CAdTalkDef::persist(CBPersistMgr *persistMgr) {
 
 	_nodes.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TALK {\n");
 	if (_defaultSpriteFilename) buffer->putTextIndent(indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
 
@@ -225,27 +225,27 @@ HRESULT CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent, "}\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkDef::loadDefaultSprite() {
+ERRORCODE CAdTalkDef::loadDefaultSprite() {
 	if (_defaultSpriteFilename && !_defaultSprite) {
 		_defaultSprite = new CBSprite(Game);
-		if (!_defaultSprite || FAILED(_defaultSprite->loadFile(_defaultSpriteFilename))) {
+		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {
 			delete _defaultSprite;
 			_defaultSprite = NULL;
-			return E_FAIL;
-		} else return S_OK;
+			return STATUS_FAILED;
+		} else return STATUS_OK;
 	} else if (_defaultSpriteSetFilename && !_defaultSpriteSet) {
 		_defaultSpriteSet = new CAdSpriteSet(Game);
-		if (!_defaultSpriteSet || FAILED(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
+		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
 			delete _defaultSpriteSet;
 			_defaultSpriteSet = NULL;
-			return E_FAIL;
-		} else return S_OK;
-	} else return S_OK;
+			return STATUS_FAILED;
+		} else return STATUS_OK;
+	} else return STATUS_OK;
 }
 
 

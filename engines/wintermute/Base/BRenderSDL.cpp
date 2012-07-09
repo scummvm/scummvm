@@ -111,8 +111,8 @@ CBRenderSDL::~CBRenderSDL() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::initRenderer(int width, int height, bool windowed) {
-	//if (SDL_Init(SDL_INIT_VIDEO) < 0) return E_FAIL;
+ERRORCODE CBRenderSDL::initRenderer(int width, int height, bool windowed) {
+	//if (SDL_Init(SDL_INIT_VIDEO) < 0) return STATUS_FAILED;
 
 #if 0
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
@@ -194,7 +194,7 @@ HRESULT CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 
 	if (gfxError != OSystem::kTransactionSuccess) {
 		warning("Couldn't setup GFX-backend for %dx%dx%d", _width, _height, format.bytesPerPixel * 8);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 #if 0
 	_win = SDL_CreateWindow("WME Lite",
@@ -203,7 +203,7 @@ HRESULT CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 	                        _realWidth, _realHeight,
 	                        flags);
 
-	if (!_win) return E_FAIL;
+	if (!_win) return STATUS_FAILED;
 #endif
 
 	g_system->showMouse(false);
@@ -217,30 +217,30 @@ HRESULT CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 #if 0
 	_renderer = SDL_CreateRenderer(_win, -1, 0);
 
-	if (!_renderer) return E_FAIL;
+	if (!_renderer) return STATUS_FAILED;
 #endif
 	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	_active = true;
 
 	_clearColor = _renderSurface->format.ARGBToColor(255, 0, 0, 0);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void CBRenderSDL::setAlphaMod(byte alpha) {
-	byte r = D3DCOLGetR(_colorMod);
-	byte g = D3DCOLGetB(_colorMod);
-	byte b = D3DCOLGetB(_colorMod);
+	byte r = RGBCOLGetR(_colorMod);
+	byte g = RGBCOLGetB(_colorMod);
+	byte b = RGBCOLGetB(_colorMod);
 	_colorMod = BS_ARGB(alpha, r, g, b);
 }
 
 void CBRenderSDL::setColorMod(byte r, byte g, byte b) {
-	byte alpha = D3DCOLGetA(_colorMod);
+	byte alpha = RGBCOLGetA(_colorMod);
 	_colorMod = BS_ARGB(alpha, r, g, b);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::flip() {
+ERRORCODE CBRenderSDL::flip() {
 	if (!_disableDirtyRects) {
 		drawTickets();
 	}
@@ -254,33 +254,33 @@ HRESULT CBRenderSDL::flip() {
 	}
 	_drawNum = 1;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::fill(byte r, byte g, byte b, Common::Rect *rect) {
+ERRORCODE CBRenderSDL::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, 0xFF);
 	//SDL_RenderClear(_renderer);
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
 	if (!_disableDirtyRects)
-		return S_OK;
+		return STATUS_OK;
 	if (!rect) {
 		rect = &_renderRect;
 	}
 	_renderSurface->fillRect(*rect, _clearColor);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::fade(uint16 Alpha) {
+ERRORCODE CBRenderSDL::fade(uint16 Alpha) {
 	uint32 dwAlpha = 255 - Alpha;
 	return fadeToColor(dwAlpha << 24);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
+ERRORCODE CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
@@ -307,10 +307,10 @@ HRESULT CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 	}
 	modTargetRect(&fillRect);
 
-	byte r = D3DCOLGetR(Color);
-	byte g = D3DCOLGetG(Color);
-	byte b = D3DCOLGetB(Color);
-	byte a = D3DCOLGetA(Color);
+	byte r = RGBCOLGetR(Color);
+	byte g = RGBCOLGetG(Color);
+	byte b = RGBCOLGetB(Color);
+	byte a = RGBCOLGetA(Color);
 
 	//TODO: This is only here until I'm sure about the final pixelformat
 	uint32 col = _renderSurface->format.ARGBToColor(a, r, g, b);
@@ -320,7 +320,7 @@ HRESULT CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 	//SDL_RenderFillRect(_renderer, &fillRect);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void CBRenderSDL::drawSurface(CBSurfaceSDL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
@@ -487,16 +487,16 @@ void CBRenderSDL::drawFromSurface(const Graphics::Surface *surf, Common::Rect *s
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+ERRORCODE CBRenderSDL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	static bool hasWarned = false;
 	if (!hasWarned) {
 		warning("CBRenderSDL::DrawLine - not fully ported yet");
 		hasWarned = true;
 	}
-	byte r = D3DCOLGetR(color);
-	byte g = D3DCOLGetG(color);
-	byte b = D3DCOLGetB(color);
-	byte a = D3DCOLGetA(color);
+	byte r = RGBCOLGetR(color);
+	byte g = RGBCOLGetG(color);
+	byte b = RGBCOLGetB(color);
+	byte a = RGBCOLGetA(color);
 
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
@@ -514,7 +514,7 @@ HRESULT CBRenderSDL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	uint32 colorVal = _renderSurface->format.ARGBToColor(a, r, g, b);
 	_renderSurface->drawLine(point1.x, point1.y, point2.x, point2.y, colorVal);
 	//SDL_RenderDrawLine(_renderer, point1.x, point1.y, point2.x, point2.y);
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -550,7 +550,7 @@ CBImage *CBRenderSDL::takeScreenshot() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::switchFullscreen() {
+ERRORCODE CBRenderSDL::switchFullscreen() {
 	/*if (_windowed) SDL_SetWindowFullscreen(_win, SDL_TRUE);
 	else SDL_SetWindowFullscreen(_win, SDL_FALSE);
 
@@ -558,7 +558,7 @@ HRESULT CBRenderSDL::switchFullscreen() {
 	*/
 	Game->_registry->writeBool("Video", "Windowed", _windowed);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -576,7 +576,7 @@ const char *CBRenderSDL::getName() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBRenderSDL::setViewport(int left, int top, int right, int bottom) {
+ERRORCODE CBRenderSDL::setViewport(int left, int top, int right, int bottom) {
 	Common::Rect rect;
 	// TODO: Hopefully this is the same logic that ScummVM uses.
 	rect.left = (int16)(left + _borderLeft);
@@ -588,7 +588,7 @@ HRESULT CBRenderSDL::setViewport(int left, int top, int right, int bottom) {
 #ifndef __IPHONEOS__
 	//SDL_RenderSetViewport(GetSdlRenderer(), &rect);
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////

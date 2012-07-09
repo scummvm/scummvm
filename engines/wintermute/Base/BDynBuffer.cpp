@@ -69,7 +69,7 @@ uint32 CBDynBuffer::getSize() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDynBuffer::init(uint32 initSize) {
+ERRORCODE CBDynBuffer::init(uint32 initSize) {
 	cleanup();
 
 	if (initSize == 0) initSize = _initSize;
@@ -77,18 +77,18 @@ HRESULT CBDynBuffer::init(uint32 initSize) {
 	_buffer = (byte *)malloc(initSize);
 	if (!_buffer) {
 		Game->LOG(0, "CBDynBuffer::Init - Error allocating %d bytes", initSize);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	_realSize = initSize;
 	_initialized = true;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDynBuffer::putBytes(byte *buffer, uint32 size) {
+ERRORCODE CBDynBuffer::putBytes(byte *buffer, uint32 size) {
 	if (!_initialized) init();
 
 	while (_offset + size > _realSize) {
@@ -96,7 +96,7 @@ HRESULT CBDynBuffer::putBytes(byte *buffer, uint32 size) {
 		_buffer = (byte *)realloc(_buffer, _realSize);
 		if (!_buffer) {
 			Game->LOG(0, "CBDynBuffer::PutBytes - Error reallocating buffer to %d bytes", _realSize);
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 	}
 
@@ -104,23 +104,23 @@ HRESULT CBDynBuffer::putBytes(byte *buffer, uint32 size) {
 	_offset += size;
 	_size += size;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBDynBuffer::getBytes(byte *buffer, uint32 size) {
+ERRORCODE CBDynBuffer::getBytes(byte *buffer, uint32 size) {
 	if (!_initialized) init();
 
 	if (_offset + size > _size) {
 		Game->LOG(0, "CBDynBuffer::GetBytes - Buffer underflow");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	memcpy(buffer, _buffer + _offset, size);
 	_offset += size;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 

@@ -111,7 +111,7 @@ void CAdResponseBox::clearButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::invalidateButtons() {
+ERRORCODE CAdResponseBox::invalidateButtons() {
 	for (int i = 0; i < _respButtons.GetSize(); i++) {
 		_respButtons[i]->_image = NULL;
 		_respButtons[i]->_cursor = NULL;
@@ -120,12 +120,12 @@ HRESULT CAdResponseBox::invalidateButtons() {
 		_respButtons[i]->_fontPress = NULL;
 		_respButtons[i]->setText("");
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::createButtons() {
+ERRORCODE CAdResponseBox::createButtons() {
 	clearButtons();
 
 	_scrollOffset = 0;
@@ -182,24 +182,24 @@ HRESULT CAdResponseBox::createButtons() {
 	}
 	_ready = false;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::loadFile(const char *filename) {
+ERRORCODE CAdResponseBox::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
 
 
 	delete [] buffer;
@@ -223,7 +223,7 @@ TOKEN_DEF(VERTICAL_ALIGN)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(RESPONSE_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -247,7 +247,7 @@ HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_RESPONSE_BOX) {
 			Game->LOG(0, "'RESPONSE_BOX' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -255,13 +255,13 @@ HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_WINDOW:
 			delete _window;
 			_window = new CUIWindow(Game);
-			if (!_window || FAILED(_window->loadBuffer(params, false))) {
+			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				delete _window;
 				_window = NULL;
 				cmd = PARSERR_GENERIC;
@@ -311,7 +311,7 @@ HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -321,7 +321,7 @@ HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in RESPONSE_BOX definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (_window) {
@@ -331,11 +331,11 @@ HRESULT CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "RESPONSE_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -391,12 +391,12 @@ HRESULT CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
 	CBBase::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::display() {
+ERRORCODE CAdResponseBox::display() {
 	RECT rect = _responseArea;
 	if (_window) {
 		CBPlatform::offsetRect(&rect, _window->_posX, _window->_posY);
@@ -477,12 +477,12 @@ HRESULT CAdResponseBox::display() {
 		_respButtons[i]->display();
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
+ERRORCODE CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
 	switch (obj->_type) {
@@ -506,12 +506,12 @@ HRESULT CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 		error("AdResponseBox::Listen - Unhandled enum");
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdResponseBox::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_font));
@@ -531,12 +531,12 @@ HRESULT CAdResponseBox::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
 	persistMgr->transfer(TMEMBER_INT(_align));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::weedResponses() {
+ERRORCODE CAdResponseBox::weedResponses() {
 	CAdGame *adGame = (CAdGame *)Game;
 
 	for (int i = 0; i < _responses.GetSize(); i++) {
@@ -561,7 +561,7 @@ HRESULT CAdResponseBox::weedResponses() {
 			break;
 		}
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -573,7 +573,7 @@ void CAdResponseBox::setLastResponseText(const char *text, const char *textOrig)
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::handleResponse(CAdResponse *response) {
+ERRORCODE CAdResponseBox::handleResponse(CAdResponse *response) {
 	setLastResponseText(response->_text, response->_textOrig);
 
 	CAdGame *adGame = (CAdGame *)Game;
@@ -590,7 +590,7 @@ HRESULT CAdResponseBox::handleResponse(CAdResponse *response) {
 		warning("CAdResponseBox::HandleResponse - Unhandled enum");
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -635,13 +635,13 @@ CBObject *CAdResponseBox::getPrevAccessObject(CBObject *currObject) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
+ERRORCODE CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _respButtons.GetSize(); i++) {
 		objects.Add(_respButtons[i]);
 	}
 	if (_window) _window->getWindowObjects(objects, interactiveOnly);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

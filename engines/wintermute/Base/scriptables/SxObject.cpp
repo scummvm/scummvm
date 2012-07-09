@@ -58,10 +58,10 @@ CSXObject::~CSXObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXObject::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CSXObject::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

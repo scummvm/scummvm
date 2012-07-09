@@ -167,7 +167,7 @@ bool checkHeader(const char *tag, CBPersistMgr *pm) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSysClassRegistry::saveTable(CBGame *Game, CBPersistMgr *persistMgr, bool quickSave) {
+ERRORCODE CSysClassRegistry::saveTable(CBGame *Game, CBPersistMgr *persistMgr, bool quickSave) {
 	persistMgr->putString("<CLASS_REGISTRY_TABLE>");
 	persistMgr->putDWORD(_classes.size());
 
@@ -186,12 +186,12 @@ HRESULT CSysClassRegistry::saveTable(CBGame *Game, CBPersistMgr *persistMgr, boo
 		(it->_value)->saveTable(Game, persistMgr);
 	}
 	persistMgr->putString("</CLASS_REGISTRY_TABLE>");
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSysClassRegistry::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
+ERRORCODE CSysClassRegistry::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
 	checkHeader("<CLASS_REGISTRY_TABLE>", persistMgr);
 
 	// reset SavedID of current instances
@@ -221,12 +221,12 @@ HRESULT CSysClassRegistry::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
 
 	checkHeader("</CLASS_REGISTRY_TABLE>", persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSysClassRegistry::saveInstances(CBGame *Game, CBPersistMgr *persistMgr, bool quickSave) {
+ERRORCODE CSysClassRegistry::saveInstances(CBGame *Game, CBPersistMgr *persistMgr, bool quickSave) {
 
 	Classes::iterator it;
 
@@ -254,11 +254,11 @@ HRESULT CSysClassRegistry::saveInstances(CBGame *Game, CBPersistMgr *persistMgr,
 		(it->_value)->saveInstances(Game, persistMgr);
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSysClassRegistry::loadInstances(CBGame *Game, CBPersistMgr *persistMgr) {
+ERRORCODE CSysClassRegistry::loadInstances(CBGame *Game, CBPersistMgr *persistMgr) {
 	// get total instances
 	int numInstances = persistMgr->getDWORD();
 
@@ -289,17 +289,17 @@ HRESULT CSysClassRegistry::loadInstances(CBGame *Game, CBPersistMgr *persistMgr)
 
 	_savedInstanceMap.clear();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSysClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData) {
+ERRORCODE CSysClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData) {
 	NameMap::iterator mapIt = _nameMap.find(className);
-	if (mapIt == _nameMap.end()) return E_FAIL;
+	if (mapIt == _nameMap.end()) return STATUS_FAILED;
 
 	(*mapIt)._value->instanceCallback(lpCallback, lpData);
-	return S_OK;
+	return STATUS_OK;
 }
 
 

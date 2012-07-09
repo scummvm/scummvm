@@ -166,7 +166,7 @@ AnsiString PathUtil::getUserDirectory() {
 	buffer[0] = '\0';
 	LPITEMIDLIST pidl = NULL;
 	LPMALLOC pMalloc;
-	if (SUCCEEDED(SHGetMalloc(&pMalloc))) {
+	if (DID_SUCCEED(SHGetMalloc(&pMalloc))) {
 		SHGetSpecialFolderLocation(NULL, CSIDL_APPDATA, &pidl);
 		if (pidl) {
 			SHGetPathFromIDList(pidl, buffer);

@@ -53,19 +53,19 @@ CAdRotLevel::~CAdRotLevel() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::loadFile(const char *filename) {
+ERRORCODE CAdRotLevel::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdRotLevel::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ROTATION_LEVEL file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ROTATION_LEVEL file '%s'", filename);
 
 
 	delete [] buffer;
@@ -82,7 +82,7 @@ TOKEN_DEF(ROTATION)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ROTATION_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -98,7 +98,7 @@ HRESULT CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ROTATION_LEVEL) {
 			Game->LOG(0, "'ROTATION_LEVEL' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -106,7 +106,7 @@ HRESULT CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_X:
@@ -127,33 +127,33 @@ HRESULT CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in ROTATION_LEVEL definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdRotLevel::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ROTATION_LEVEL {\n");
 	buffer->putTextIndent(indent + 2, "X=%d\n", _posX);
 	buffer->putTextIndent(indent + 2, "ROTATION=%d\n", (int)_rotation);
 	CBBase::saveAsText(buffer, indent + 2);
 	buffer->putTextIndent(indent, "}\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdRotLevel::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdRotLevel::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_rotation));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

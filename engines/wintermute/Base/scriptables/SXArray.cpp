@@ -93,7 +93,7 @@ const char *CSXArray::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Push
 	//////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		}
 		stack->pushInt(_length);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -126,10 +126,10 @@ HRESULT CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			_length--;
 		} else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
-	else return E_FAIL;
+	else return STATUS_FAILED;
 }
 
 
@@ -166,7 +166,7 @@ CScValue *CSXArray::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXArray::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CSXArray::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ HRESULT CSXArray::scSetProperty(const char *name, CScValue *value) {
 				_values->deleteProp(PropName);
 			}
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -193,19 +193,19 @@ HRESULT CSXArray::scSetProperty(const char *name, CScValue *value) {
 			int Index = atoi(paramName);
 			if (Index >= _length) _length = Index + 1;
 			return _values->setProp(paramName, value);
-		} else return E_FAIL;
+		} else return STATUS_FAILED;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXArray::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CSXArray::persist(CBPersistMgr *persistMgr) {
 	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_length));
 	persistMgr->transfer(TMEMBER(_values));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -227,12 +227,12 @@ bool CSXArray::validNumber(const char *origStr, char *outStr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXArray::push(CScValue *val) {
+ERRORCODE CSXArray::push(CScValue *val) {
 	char paramName[20];
 	_length++;
 	sprintf(paramName, "%d", _length - 1);
 	_values->setProp(paramName, val, true);
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

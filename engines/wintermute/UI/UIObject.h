@@ -40,15 +40,15 @@ class CBFont;
 class CUIObject : public CBObject {
 public:
 
-	HRESULT getTotalOffset(int *offsetX, int *offsetY);
+	ERRORCODE getTotalOffset(int *offsetX, int *offsetY);
 	bool _canFocus;
-	HRESULT focus();
-	virtual HRESULT handleMouse(TMouseEvent event, TMouseButton button);
+	ERRORCODE focus();
+	virtual ERRORCODE handleMouse(TMouseEvent event, TMouseButton button);
 	bool isFocused();
 	bool _parentNotify;
 	DECLARE_PERSISTENT(CUIObject, CBObject)
 	CUIObject *_parent;
-	virtual HRESULT display(int offsetX = 0, int offsetY = 0);
+	virtual ERRORCODE display(int offsetX = 0, int offsetY = 0);
 	virtual void correctSize();
 	bool _sharedFonts;
 	bool _sharedImages;
@@ -69,12 +69,12 @@ public:
 	uint32 _listenerParamDWORD;
 	CBScriptHolder *_listenerObject;
 	CUIObject *_focusedWidget;
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

@@ -45,7 +45,7 @@ CBSaveThumbHelper::~CBSaveThumbHelper(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSaveThumbHelper::storeThumbnail(bool doFlip) {
+ERRORCODE CBSaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = NULL;
 
@@ -61,7 +61,7 @@ HRESULT CBSaveThumbHelper::storeThumbnail(bool doFlip) {
 		}
 
 		CBImage *screenshot = Game->_renderer->takeScreenshot();
-		if (!screenshot) return E_FAIL;
+		if (!screenshot) return STATUS_FAILED;
 
 		// normal thumbnail
 		if (Game->_thumbnailWidth > 0 && Game->_thumbnailHeight > 0) {
@@ -73,7 +73,7 @@ HRESULT CBSaveThumbHelper::storeThumbnail(bool doFlip) {
 		delete screenshot;
 		screenshot = NULL;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

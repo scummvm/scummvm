@@ -59,14 +59,14 @@ CBSoundMgr::~CBSoundMgr() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::cleanup() {
+ERRORCODE CBSoundMgr::cleanup() {
 	for (int i = 0; i < _sounds.GetSize(); i++)
 		delete _sounds[i];
 	_sounds.RemoveAll();
 #if 0
 	BASS_Free();
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ void CBSoundMgr::saveSettings() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::initialize() {
+ERRORCODE CBSoundMgr::initialize() {
 	_soundAvailable = false;
 #if 0
 
@@ -93,12 +93,12 @@ HRESULT CBSoundMgr::initialize() {
 
 	if (HIWORD(BASS_GetVersion()) != BASSVERSION) {
 		Game->LOG(0, "An incorrect version of BASS was loaded");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (!BASS_Init(-1, 44100, 0, 0, NULL)) {
 		Game->LOG(0, "Can't initialize sound device");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 #endif
 
@@ -111,19 +111,19 @@ HRESULT CBSoundMgr::initialize() {
 	_soundAvailable = true;
 	setMasterVolumePercent(_volumeMaster);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::initLoop() {
+ERRORCODE CBSoundMgr::initLoop() {
 	if (!_soundAvailable)
-		return S_OK;
+		return STATUS_OK;
 #if 0
 
 	BASS_Update(500);
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -153,8 +153,8 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType type, bool 
 	sound->setType(type);
 
 
-	HRESULT res = sound->loadFromFile(filename);
-	if (FAILED(res)) {
+	ERRORCODE res = sound->loadFromFile(filename);
+	if (DID_FAIL(res)) {
 		Game->LOG(res, "Error loading sound '%s'", filename);
 		delete sound;
 		return NULL;
@@ -182,9 +182,9 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType type, bool 
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::addSound(CBSoundBuffer *sound, TSoundType type) {
+ERRORCODE CBSoundMgr::addSound(CBSoundBuffer *sound, TSoundType type) {
 	if (!sound)
-		return E_FAIL;
+		return STATUS_FAILED;
 
 	// set volume appropriately
 	switch (type) {
@@ -202,27 +202,27 @@ HRESULT CBSoundMgr::addSound(CBSoundBuffer *sound, TSoundType type) {
 	// register sound
 	_sounds.Add(sound);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::removeSound(CBSoundBuffer *sound) {
+ERRORCODE CBSoundMgr::removeSound(CBSoundBuffer *sound) {
 	for (int i = 0; i < _sounds.GetSize(); i++) {
 		if (_sounds[i] == sound) {
 			delete _sounds[i];
 			_sounds.RemoveAt(i);
-			return S_OK;
+			return STATUS_OK;
 		}
 	}
 
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::setVolume(TSoundType type, int volume) {
+ERRORCODE CBSoundMgr::setVolume(TSoundType type, int volume) {
 	if (!_soundAvailable)
-		return S_OK;
+		return STATUS_OK;
 
 	switch (type) {
 	case SOUND_SFX:
@@ -240,11 +240,11 @@ HRESULT CBSoundMgr::setVolume(TSoundType type, int volume) {
 		if (_sounds[i]->_type == type) _sounds[i]->setVolume(volume);
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::setVolumePercent(TSoundType type, byte percent) {
+ERRORCODE CBSoundMgr::setVolumePercent(TSoundType type, byte percent) {
 	return setVolume(type, percent);
 }
 
@@ -272,12 +272,12 @@ byte CBSoundMgr::getVolumePercent(TSoundType type) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::setMasterVolumePercent(byte percent) {
+ERRORCODE CBSoundMgr::setMasterVolumePercent(byte percent) {
 	_volumeMaster = percent;
 #if 0
 	BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, (uint32)(10000.0f / 100.0f * (float)Percent));
 #endif
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -293,7 +293,7 @@ byte CBSoundMgr::getMasterVolumePercent() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::pauseAll(bool includingMusic) {
+ERRORCODE CBSoundMgr::pauseAll(bool includingMusic) {
 
 	for (int i = 0; i < _sounds.GetSize(); i++) {
 		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != SOUND_MUSIC || includingMusic)) {
@@ -302,12 +302,12 @@ HRESULT CBSoundMgr::pauseAll(bool includingMusic) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSoundMgr::resumeAll() {
+ERRORCODE CBSoundMgr::resumeAll() {
 
 	for (int i = 0; i < _sounds.GetSize(); i++) {
 		if (_sounds[i]->_freezePaused) {
@@ -316,7 +316,7 @@ HRESULT CBSoundMgr::resumeAll() {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 

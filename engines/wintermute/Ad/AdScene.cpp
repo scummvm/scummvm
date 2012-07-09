@@ -481,7 +481,7 @@ void CAdScene::pathFinderStep() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::initLoop() {
+ERRORCODE CAdScene::initLoop() {
 #ifdef _DEBUGxxxx
 	int nu_steps = 0;
 	uint32 start = Game->_currentTime;
@@ -495,25 +495,25 @@ HRESULT CAdScene::initLoop() {
 	while (!_pfReady && CBPlatform::getTime() - start <= _pfMaxTime) pathFinderStep();
 #endif
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::loadFile(const char *filename) {
+ERRORCODE CAdScene::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdScene::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	delete[] _filename;
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing SCENE file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing SCENE file '%s'", filename);
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -565,7 +565,7 @@ TOKEN_DEF(PERSISTENT_STATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCENE)
 	TOKEN_TABLE(TEMPLATE)
@@ -615,7 +615,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCENE) {
 			Game->LOG(0, "'SCENE' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -627,7 +627,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -640,7 +640,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_LAYER: {
 			CAdLayer *layer = new CAdLayer(Game);
-			if (!layer || FAILED(layer->loadBuffer(params, false))) {
+			if (!layer || DID_FAIL(layer->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete layer;
 				layer = NULL;
@@ -658,7 +658,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WAYPOINTS: {
 			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
-			if (!wpt || FAILED(wpt->loadBuffer(params, false))) {
+			if (!wpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete wpt;
 				wpt = NULL;
@@ -671,7 +671,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_SCALE_LEVEL: {
 			CAdScaleLevel *sl = new CAdScaleLevel(Game);
-			if (!sl || FAILED(sl->loadBuffer(params, false))) {
+			if (!sl || DID_FAIL(sl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete sl;
 				sl = NULL;
@@ -684,7 +684,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_ROTATION_LEVEL: {
 			CAdRotLevel *rl = new CAdRotLevel(Game);
-			if (!rl || FAILED(rl->loadBuffer(params, false))) {
+			if (!rl || DID_FAIL(rl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete rl;
 				rl = NULL;
@@ -697,7 +697,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_ENTITY: {
 			CAdEntity *entity = new CAdEntity(Game);
-			if (!entity || FAILED(entity->loadBuffer(params, false))) {
+			if (!entity || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
 				entity = NULL;
@@ -710,7 +710,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -731,62 +731,62 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_EDITOR_COLOR_FRAME:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColFrame = DRGBA(ar, ag, ab, aa);
+			_editorColFrame = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_ENTITY:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColEntity = DRGBA(ar, ag, ab, aa);
+			_editorColEntity = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_ENTITY_SEL:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColEntitySel = DRGBA(ar, ag, ab, aa);
+			_editorColEntitySel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_REGION_SEL:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColRegionSel = DRGBA(ar, ag, ab, aa);
+			_editorColRegionSel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_DECORATION_SEL:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColDecorSel = DRGBA(ar, ag, ab, aa);
+			_editorColDecorSel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_BLOCKED_SEL:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColBlockedSel = DRGBA(ar, ag, ab, aa);
+			_editorColBlockedSel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_WAYPOINTS_SEL:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColWaypointsSel = DRGBA(ar, ag, ab, aa);
+			_editorColWaypointsSel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_REGION:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColRegion = DRGBA(ar, ag, ab, aa);
+			_editorColRegion = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_DECORATION:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColDecor = DRGBA(ar, ag, ab, aa);
+			_editorColDecor = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_BLOCKED:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColBlocked = DRGBA(ar, ag, ab, aa);
+			_editorColBlocked = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_WAYPOINTS:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColWaypoints = DRGBA(ar, ag, ab, aa);
+			_editorColWaypoints = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_SCALE:
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
-			_editorColScale = DRGBA(ar, ag, ab, aa);
+			_editorColScale = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_SHOW_REGIONS:
@@ -840,7 +840,7 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in SCENE definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (_mainLayer == NULL) Game->LOG(0, "Warning: scene '%s' has no main layer.", _filename);
@@ -852,12 +852,12 @@ HRESULT CAdScene::loadBuffer(byte *buffer, bool complete) {
 	_initialized = true;
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::traverseNodes(bool doUpdate) {
-	if (!_initialized) return S_OK;
+ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
+	if (!_initialized) return STATUS_OK;
 
 	int j, k;
 	CAdGame *adGame = (CAdGame *)Game;
@@ -1025,17 +1025,17 @@ HRESULT CAdScene::traverseNodes(bool doUpdate) {
 
 	if (PopViewport) Game->popViewport();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::display() {
+ERRORCODE CAdScene::display() {
 	return traverseNodes(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::updateFreeObjects() {
+ERRORCODE CAdScene::updateFreeObjects() {
 	CAdGame *adGame = (CAdGame *)Game;
 	bool is3DSet;
 
@@ -1062,12 +1062,12 @@ HRESULT CAdScene::updateFreeObjects() {
 	}
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) {
+ERRORCODE CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) {
 	CAdGame *adGame = (CAdGame *)Game;
 	CBArray<CAdObject *, CAdObject *> objects;
 	CAdObject *obj;
@@ -1116,7 +1116,7 @@ HRESULT CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1130,7 +1130,7 @@ int CAdScene::compareObjs(const void *obj1, const void *obj2) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::displayRegionContentOld(CAdRegion *region) {
+ERRORCODE CAdScene::displayRegionContentOld(CAdRegion *region) {
 	CAdGame *adGame = (CAdGame *)Game;
 	CAdObject *obj;
 
@@ -1175,12 +1175,12 @@ HRESULT CAdScene::displayRegionContentOld(CAdRegion *region) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::update() {
+ERRORCODE CAdScene::update() {
 	return traverseNodes(true);
 }
 
@@ -1240,14 +1240,14 @@ void CAdScene::skipTo(int offsetX, int offsetY) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LoadActor
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "LoadActor") == 0) {
 		stack->correctParams(1);
 		CAdActor *act = new CAdActor(Game);
-		if (act && SUCCEEDED(act->loadFile(stack->pop()->getString()))) {
+		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
 			addObject(act);
 			stack->pushNative(act, true);
 		} else {
@@ -1255,7 +1255,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			act = NULL;
 			stack->pushNULL();
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1264,7 +1264,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "LoadEntity") == 0) {
 		stack->correctParams(1);
 		CAdEntity *ent = new CAdEntity(Game);
-		if (ent && SUCCEEDED(ent->loadFile(stack->pop()->getString()))) {
+		if (ent && DID_SUCCEED(ent->loadFile(stack->pop()->getString()))) {
 			addObject(ent);
 			stack->pushNative(ent, true);
 		} else {
@@ -1272,7 +1272,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			ent = NULL;
 			stack->pushNULL();
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1286,7 +1286,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		addObject(ent);
 		if (!val->isNULL()) ent->setName(val->getString());
 		stack->pushNative(ent, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1300,7 +1300,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (val->getType() == VAL_VARIABLE_REF) val->setNULL();
 
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1316,7 +1316,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			skipTo(val1->getInt(), val2->getInt());
 		}
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1333,7 +1333,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		}
 		if (strcmp(name, "ScrollTo") == 0) script->waitForExclusive(this);
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1358,7 +1358,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			}
 			if (!LayerFound) stack->pushNULL();
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1369,7 +1369,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int group = stack->pop()->getInt();
 		if (group < 0 || group >= _waypointGroups.GetSize()) stack->pushNULL();
 		else stack->pushNative(_waypointGroups[group], true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1383,7 +1383,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (node) stack->pushNative((CBScriptable *)node, true);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1409,7 +1409,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (ret) stack->pushNative(ret, true);
 		else stack->pushNULL();
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1431,12 +1431,12 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 					if (node->_region->_decoration && !includeDecors) continue;
 
 					stack->pushNative(node->_region, true);
-					return S_OK;
+					return STATUS_OK;
 				}
 			}
 		}
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1448,7 +1448,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int y = stack->pop()->getInt();
 
 		stack->pushBool(isBlockedAt(x, y));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1460,7 +1460,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int y = stack->pop()->getInt();
 
 		stack->pushBool(isWalkableAt(x, y));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1472,7 +1472,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int y = stack->pop()->getInt();
 
 		stack->pushFloat(getZoomAt(x, y));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1484,7 +1484,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int y = stack->pop()->getInt();
 
 		stack->pushFloat(getRotationAt(x, y));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1498,7 +1498,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		}
 
 		stack->pushBool(ret);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1512,11 +1512,11 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		byte blue = stack->pop()->getInt(0);
 		byte alpha = stack->pop()->getInt(0xFF);
 
-		_fader->fadeOut(DRGBA(red, green, blue, alpha), duration);
+		_fader->fadeOut(BYTETORGBA(red, green, blue, alpha), duration);
 		if (strcmp(name, "FadeOutAsync") != 0) script->waitFor(_fader);
 
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1530,11 +1530,11 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		byte blue = stack->pop()->getInt(0);
 		byte alpha = stack->pop()->getInt(0xFF);
 
-		_fader->fadeIn(DRGBA(red, green, blue, alpha), duration);
+		_fader->fadeIn(BYTETORGBA(red, green, blue, alpha), duration);
 		if (strcmp(name, "FadeInAsync") != 0) script->waitFor(_fader);
 
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1543,7 +1543,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "GetFadeColor") == 0) {
 		stack->correctParams(0);
 		stack->pushInt(_fader->getCurrentColor());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1554,7 +1554,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 		stack->pushBool(pointInViewport(x, y));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1575,7 +1575,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 
 		stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1595,7 +1595,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		Game->registerObject(layer);
 
 		stack->pushNative(layer, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1619,7 +1619,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		Game->registerObject(layer);
 
 		stack->pushNative(layer, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1646,13 +1646,13 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		}
 		if (toDelete == NULL) {
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 
 		if (toDelete->_main) {
 			script->runtimeError("Scene.DeleteLayer - cannot delete main scene layer");
 			stack->pushBool(false);
-			return S_OK;
+			return STATUS_OK;
 		}
 
 		for (int i = 0; i < _layers.GetSize(); i++) {
@@ -1663,7 +1663,7 @@ HRESULT CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			}
 		}
 		stack->pushBool(true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scCallMethod(script, stack, thisStack, name);
@@ -1834,13 +1834,13 @@ CScValue *CAdScene::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CAdScene::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1848,7 +1848,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AutoScroll") == 0) {
 		_autoScroll = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1856,7 +1856,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PersistentState") == 0) {
 		_persistentState = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1864,7 +1864,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PersistentStateSprites") == 0) {
 		_persistentStateSprites = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1872,7 +1872,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollPixelsX") == 0) {
 		_scrollPixelsH = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1880,7 +1880,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollPixelsY") == 0) {
 		_scrollPixelsV = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1888,7 +1888,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedX") == 0) {
 		_scrollTimeH = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1896,7 +1896,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedY") == 0) {
 		_scrollTimeV = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1912,7 +1912,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 		_offsetLeft = MIN(_offsetLeft, _width - viewportWidth);
 		_targetOffsetLeft = _offsetLeft;
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1928,7 +1928,7 @@ HRESULT CAdScene::scSetProperty(const char *name, CScValue *value) {
 		_offsetTop = MIN(_offsetTop, _height - viewportHeight);
 		_targetOffsetTop = _offsetTop;
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scSetProperty(name, value);
@@ -1942,26 +1942,26 @@ const char *CAdScene::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::addObject(CAdObject *object) {
+ERRORCODE CAdScene::addObject(CAdObject *object) {
 	_objects.Add(object);
 	return Game->registerObject(object);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::removeObject(CAdObject *object) {
+ERRORCODE CAdScene::removeObject(CAdObject *object) {
 	for (int i = 0; i < _objects.GetSize(); i++) {
 		if (_objects[i] == object) {
 			_objects.RemoveAt(i);
 			return Game->unregisterObject(object);
 		}
 	}
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
 	int i;
 
 	buffer->putTextIndent(indent, "SCENE {\n");
@@ -1998,18 +1998,18 @@ HRESULT CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "; ----- editor settings\n");
 	buffer->putTextIndent(indent + 2, "EDITOR_MARGIN_H=%d\n", _editorMarginH);
 	buffer->putTextIndent(indent + 2, "EDITOR_MARGIN_V=%d\n", _editorMarginV);
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_FRAME { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColFrame), D3DCOLGetG(_editorColFrame), D3DCOLGetB(_editorColFrame), D3DCOLGetA(_editorColFrame));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_ENTITY_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColEntitySel), D3DCOLGetG(_editorColEntitySel), D3DCOLGetB(_editorColEntitySel), D3DCOLGetA(_editorColEntitySel));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_REGION_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColRegionSel), D3DCOLGetG(_editorColRegionSel), D3DCOLGetB(_editorColRegionSel), D3DCOLGetA(_editorColRegionSel));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_BLOCKED_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColBlockedSel), D3DCOLGetG(_editorColBlockedSel), D3DCOLGetB(_editorColBlockedSel), D3DCOLGetA(_editorColBlockedSel));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_DECORATION_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColDecorSel), D3DCOLGetG(_editorColDecorSel), D3DCOLGetB(_editorColDecorSel), D3DCOLGetA(_editorColDecorSel));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_WAYPOINTS_SEL { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColWaypointsSel), D3DCOLGetG(_editorColWaypointsSel), D3DCOLGetB(_editorColWaypointsSel), D3DCOLGetA(_editorColWaypointsSel));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_ENTITY { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColEntity), D3DCOLGetG(_editorColEntity), D3DCOLGetB(_editorColEntity), D3DCOLGetA(_editorColEntity));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_REGION { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColRegion), D3DCOLGetG(_editorColRegion), D3DCOLGetB(_editorColRegion), D3DCOLGetA(_editorColRegion));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_DECORATION { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColDecor), D3DCOLGetG(_editorColDecor), D3DCOLGetB(_editorColDecor), D3DCOLGetA(_editorColDecor));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_BLOCKED { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColBlocked), D3DCOLGetG(_editorColBlocked), D3DCOLGetB(_editorColBlocked), D3DCOLGetA(_editorColBlocked));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_WAYPOINTS { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColWaypoints), D3DCOLGetG(_editorColWaypoints), D3DCOLGetB(_editorColWaypoints), D3DCOLGetA(_editorColWaypoints));
-	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_SCALE { %d,%d,%d,%d }\n", D3DCOLGetR(_editorColScale), D3DCOLGetG(_editorColScale), D3DCOLGetB(_editorColScale), D3DCOLGetA(_editorColScale));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_FRAME { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColFrame), RGBCOLGetG(_editorColFrame), RGBCOLGetB(_editorColFrame), RGBCOLGetA(_editorColFrame));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_ENTITY_SEL { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColEntitySel), RGBCOLGetG(_editorColEntitySel), RGBCOLGetB(_editorColEntitySel), RGBCOLGetA(_editorColEntitySel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_REGION_SEL { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColRegionSel), RGBCOLGetG(_editorColRegionSel), RGBCOLGetB(_editorColRegionSel), RGBCOLGetA(_editorColRegionSel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_BLOCKED_SEL { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColBlockedSel), RGBCOLGetG(_editorColBlockedSel), RGBCOLGetB(_editorColBlockedSel), RGBCOLGetA(_editorColBlockedSel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_DECORATION_SEL { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColDecorSel), RGBCOLGetG(_editorColDecorSel), RGBCOLGetB(_editorColDecorSel), RGBCOLGetA(_editorColDecorSel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_WAYPOINTS_SEL { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColWaypointsSel), RGBCOLGetG(_editorColWaypointsSel), RGBCOLGetB(_editorColWaypointsSel), RGBCOLGetA(_editorColWaypointsSel));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_ENTITY { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColEntity), RGBCOLGetG(_editorColEntity), RGBCOLGetB(_editorColEntity), RGBCOLGetA(_editorColEntity));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_REGION { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColRegion), RGBCOLGetG(_editorColRegion), RGBCOLGetB(_editorColRegion), RGBCOLGetA(_editorColRegion));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_DECORATION { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColDecor), RGBCOLGetG(_editorColDecor), RGBCOLGetB(_editorColDecor), RGBCOLGetA(_editorColDecor));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_BLOCKED { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColBlocked), RGBCOLGetG(_editorColBlocked), RGBCOLGetB(_editorColBlocked), RGBCOLGetA(_editorColBlocked));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_WAYPOINTS { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColWaypoints), RGBCOLGetG(_editorColWaypoints), RGBCOLGetB(_editorColWaypoints), RGBCOLGetA(_editorColWaypoints));
+	buffer->putTextIndent(indent + 2, "EDITOR_COLOR_SCALE { %d,%d,%d,%d }\n", RGBCOLGetR(_editorColScale), RGBCOLGetG(_editorColScale), RGBCOLGetB(_editorColScale), RGBCOLGetA(_editorColScale));
 
 	buffer->putTextIndent(indent + 2, "EDITOR_SHOW_REGIONS=%s\n", _editorShowRegions ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "EDITOR_SHOW_BLOCKED=%s\n", _editorShowBlocked ? "TRUE" : "FALSE");
@@ -2054,12 +2054,12 @@ HRESULT CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 	buffer->putTextIndent(indent, "}\n");
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::sortScaleLevels() {
+ERRORCODE CAdScene::sortScaleLevels() {
 	bool changed;
 	do {
 		changed = false;
@@ -2075,12 +2075,12 @@ HRESULT CAdScene::sortScaleLevels() {
 
 	} while (changed);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::sortRotLevels() {
+ERRORCODE CAdScene::sortRotLevels() {
 	bool changed;
 	do {
 		changed = false;
@@ -2096,7 +2096,7 @@ HRESULT CAdScene::sortRotLevels() {
 
 	} while (changed);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -2127,7 +2127,7 @@ float CAdScene::getScaleAt(int Y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdScene::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_autoScroll));
@@ -2183,16 +2183,16 @@ HRESULT CAdScene::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_viewport));
 	persistMgr->transfer(TMEMBER(_width));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::afterLoad() {
-	return S_OK;
+ERRORCODE CAdScene::afterLoad() {
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::correctTargetPoint2(int startX, int startY, int *targetX, int *targetY, bool checkFreeObjects, CBObject *requester) {
+ERRORCODE CAdScene::correctTargetPoint2(int startX, int startY, int *targetX, int *targetY, bool checkFreeObjects, CBObject *requester) {
 	double xStep, yStep, x, y;
 	int xLength, yLength, xCount, yCount;
 	int x1, y1, x2, y2;
@@ -2222,7 +2222,7 @@ HRESULT CAdScene::correctTargetPoint2(int startX, int startY, int *targetX, int 
 			if (isWalkableAt(xCount, (int)y, checkFreeObjects, requester)) {
 				*targetX = xCount;
 				*targetY = (int)y;
-				return S_OK;
+				return STATUS_OK;
 			}
 			y += yStep;
 		}
@@ -2241,22 +2241,22 @@ HRESULT CAdScene::correctTargetPoint2(int startX, int startY, int *targetX, int 
 			if (isWalkableAt((int)x, yCount, checkFreeObjects, requester)) {
 				*targetX = (int)x;
 				*targetY = yCount;
-				return S_OK;
+				return STATUS_OK;
 			}
 			x += xStep;
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::correctTargetPoint(int startX, int startY, int *argX, int *argY, bool checkFreeObjects, CBObject *requester) {
+ERRORCODE CAdScene::correctTargetPoint(int startX, int startY, int *argX, int *argY, bool checkFreeObjects, CBObject *requester) {
 	int x = *argX;
 	int y = *argY;
 
 	if (isWalkableAt(x, y, checkFreeObjects, requester) || !_mainLayer) {
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	// right
@@ -2300,7 +2300,7 @@ HRESULT CAdScene::correctTargetPoint(int startX, int startY, int *argX, int *arg
 	}
 
 	if (!found_left && !found_right && !found_up && !found_down) {
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	int OffsetX = INT_MAX, OffsetY = INT_MAX;
@@ -2323,7 +2323,7 @@ HRESULT CAdScene::correctTargetPoint(int startX, int startY, int *argX, int *arg
 		*argY = *argY + OffsetY;
 
 	if (!isWalkableAt(*argX, *argY)) return correctTargetPoint2(startX, startY, argX, argY, checkFreeObjects, requester);
-	else return S_OK;
+	else return STATUS_OK;
 }
 
 
@@ -2350,7 +2350,7 @@ void CAdScene::pfPointsAdd(int x, int y, int distance) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::getViewportOffset(int *offsetX, int *offsetY) {
+ERRORCODE CAdScene::getViewportOffset(int *offsetX, int *offsetY) {
 	CAdGame *adGame = (CAdGame *)Game;
 	if (_viewport && !Game->_editorMode) {
 		if (offsetX) *offsetX = _viewport->_offsetX;
@@ -2362,12 +2362,12 @@ HRESULT CAdScene::getViewportOffset(int *offsetX, int *offsetY) {
 		if (offsetX) *offsetX = 0;
 		if (offsetY) *offsetY = 0;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::getViewportSize(int *width, int *height) {
+ERRORCODE CAdScene::getViewportSize(int *width, int *height) {
 	CAdGame *adGame = (CAdGame *)Game;
 	if (_viewport && !Game->_editorMode) {
 		if (width)  *width  = _viewport->getWidth();
@@ -2379,7 +2379,7 @@ HRESULT CAdScene::getViewportSize(int *width, int *height) {
 		if (width)  *width  = Game->_renderer->_width;
 		if (height) *height = Game->_renderer->_height;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -2464,24 +2464,24 @@ CBObject *CAdScene::getNodeByName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::saveState() {
+ERRORCODE CAdScene::saveState() {
 	return persistState(true);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::loadState() {
+ERRORCODE CAdScene::loadState() {
 	return persistState(false);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::persistState(bool saving) {
-	if (!_persistentState) return S_OK;
+ERRORCODE CAdScene::persistState(bool saving) {
+	if (!_persistentState) return STATUS_OK;
 
 	CAdGame *adGame = (CAdGame *)Game;
 	CAdSceneState *state = adGame->getSceneState(_filename, saving);
-	if (!state) return S_OK;
+	if (!state) return STATUS_OK;
 
 	CAdNodeState *nodeState;
 
@@ -2537,7 +2537,7 @@ HRESULT CAdScene::persistState(bool saving) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -2568,7 +2568,7 @@ float CAdScene::getRotationAt(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::handleItemAssociations(const char *itemName, bool show) {
+ERRORCODE CAdScene::handleItemAssociations(const char *itemName, bool show) {
 	for (int i = 0; i < _layers.GetSize(); i++) {
 		CAdLayer *layer = _layers[i];
 		for (int j = 0; j < layer->_nodes.GetSize(); j++) {
@@ -2587,12 +2587,12 @@ HRESULT CAdScene::handleItemAssociations(const char *itemName, bool show) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::getRegionsAt(int x, int y, CAdRegion **regionList, int numRegions) {
+ERRORCODE CAdScene::getRegionsAt(int x, int y, CAdRegion **regionList, int numRegions) {
 	int numUsed = 0;
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.GetSize() - 1; i >= 0; i--) {
@@ -2609,12 +2609,12 @@ HRESULT CAdScene::getRegionsAt(int x, int y, CAdRegion **regionList, int numRegi
 		regionList[i] = NULL;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::restoreDeviceObjects() {
-	return S_OK;
+ERRORCODE CAdScene::restoreDeviceObjects() {
+	return STATUS_OK;
 }
 
 
@@ -2660,7 +2660,7 @@ CBObject *CAdScene::getPrevAccessObject(CBObject *currObject) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &objects, bool interactiveOnly) {
+ERRORCODE CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _layers.GetSize(); i++) {
 		// close-up layer -> remove everything below it
 		if (interactiveOnly && _layers[i]->_closeUp) objects.RemoveAll();
@@ -2714,12 +2714,12 @@ HRESULT CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &objects, bo
 	}
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScene::getRegionObjects(CAdRegion *region, CBArray<CAdObject *, CAdObject *> &objects, bool interactiveOnly) {
+ERRORCODE CAdScene::getRegionObjects(CAdRegion *region, CBArray<CAdObject *, CAdObject *> &objects, bool interactiveOnly) {
 	CAdGame *adGame = (CAdGame *)Game;
 	CAdObject *obj;
 
@@ -2746,7 +2746,7 @@ HRESULT CAdScene::getRegionObjects(CAdRegion *region, CBArray<CAdObject *, CAdOb
 	// sort by _posY
 	qsort(objects.GetData(), objects.GetSize(), sizeof(CAdObject *), CAdScene::compareObjs);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

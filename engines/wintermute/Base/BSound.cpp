@@ -65,7 +65,7 @@ CBSound::~CBSound() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::setSound(const char *filename, TSoundType type, bool streamed) {
+ERRORCODE CBSound::setSound(const char *filename, TSoundType type, bool streamed) {
 	if (_sound) {
 		Game->_soundMgr->removeSound(_sound);
 		_sound = NULL;
@@ -81,13 +81,13 @@ HRESULT CBSound::setSound(const char *filename, TSoundType type, bool streamed) 
 		_soundType = type;
 		_soundStreamed = streamed;
 
-		return S_OK;
-	} else return E_FAIL;
+		return STATUS_OK;
+	} else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::setSoundSimple() {
+ERRORCODE CBSound::setSoundSimple() {
 	_sound = Game->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
 	if (_sound) {
 		if (_soundPosition) _sound->setPosition(_soundPosition);
@@ -96,8 +96,8 @@ HRESULT CBSound::setSoundSimple() {
 		_sound->setLoopStart(_soundLoopStart);
 		_sound->_freezePaused = _soundFreezePaused;
 		if (_soundPlaying) return _sound->resume();
-		else return S_OK;
-	} else return E_FAIL;
+		else return STATUS_OK;
+	} else return STATUS_FAILED;
 }
 
 
@@ -110,44 +110,44 @@ uint32 CBSound::getLength() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::play(bool looping) {
+ERRORCODE CBSound::play(bool looping) {
 	if (_sound) {
 		_soundPaused = false;
 		return _sound->play(looping, _soundPosition);
-	} else return E_FAIL;
+	} else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::stop() {
+ERRORCODE CBSound::stop() {
 	if (_sound) {
 		_soundPaused = false;
 		return _sound->stop();
-	} else return E_FAIL;
+	} else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::pause(bool freezePaused) {
+ERRORCODE CBSound::pause(bool freezePaused) {
 	if (_sound) {
 		_soundPaused = true;
 		if (freezePaused) _sound->_freezePaused = true;
 		return _sound->pause();
-	} else return E_FAIL;
+	} else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::resume() {
+ERRORCODE CBSound::resume() {
 	if (_sound && _soundPaused) {
 		_soundPaused = false;
 		return _sound->resume();
-	} else return E_FAIL;
+	} else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBSound::persist(CBPersistMgr *persistMgr) {
 	if (persistMgr->_saving && _sound) {
 		_soundPlaying = _sound->isPlaying();
 		_soundLooping = _sound->_looping;
@@ -176,7 +176,7 @@ HRESULT CBSound::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER_INT(_soundType));
 	persistMgr->transfer(TMEMBER(_soundLoopStart));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -193,10 +193,10 @@ bool CBSound::isPaused() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::setPositionTime(uint32 time) {
-	if (!_sound) return E_FAIL;
+ERRORCODE CBSound::setPositionTime(uint32 time) {
+	if (!_sound) return STATUS_FAILED;
 	_soundPosition = time;
-	HRESULT ret = _sound->setPosition(_soundPosition);
+	ERRORCODE ret = _sound->setPosition(_soundPosition);
 	if (_sound->isPlaying())
 		_soundPosition = 0;
 	return ret;
@@ -214,16 +214,16 @@ uint32 CBSound::getPositionTime() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::setVolume(int volume) {
+ERRORCODE CBSound::setVolume(int volume) {
 	if (!_sound)
-		return E_FAIL;
+		return STATUS_FAILED;
 	else return _sound->setPrivateVolume(volume);
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::setPrivateVolume(int volume) {
+ERRORCODE CBSound::setPrivateVolume(int volume) {
 	if (!_sound) 
-		return E_FAIL;
+		return STATUS_FAILED;
 	else return _sound->_privateVolume = volume;
 }
 
@@ -236,30 +236,30 @@ int CBSound::getVolume() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::setLoopStart(uint32 pos) {
+ERRORCODE CBSound::setLoopStart(uint32 pos) {
 	if (!_sound)
-		return E_FAIL;
+		return STATUS_FAILED;
 	else {
 		_sound->setLoopStart(pos);
-		return S_OK;
+		return STATUS_OK;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::setPan(float pan) {
+ERRORCODE CBSound::setPan(float pan) {
 	if (_sound)
 		return _sound->setPan(pan);
-	else return E_FAIL;
+	else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSound::ApplyFX(TSFXType type, float param1, float param2, float param3, float param4) {
+ERRORCODE CBSound::ApplyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	if (!_sound)
-		return S_OK;
+		return STATUS_OK;
 
 	if (type != _sFXType || param1 != _sFXParam1 || param2 != _sFXParam2 || param3 != _sFXParam3 || param4 != _sFXParam4) {
-		HRESULT ret = _sound->applyFX(type, param1, param2, param3, param4);
+		ERRORCODE ret = _sound->applyFX(type, param1, param2, param3, param4);
 
 		_sFXType = type;
 		_sFXParam1 = param1;
@@ -269,7 +269,7 @@ HRESULT CBSound::ApplyFX(TSFXType type, float param1, float param2, float param3
 
 		return ret;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

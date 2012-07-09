@@ -98,8 +98,8 @@ void CUIObject::setText(const char *text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::display(int offsetX, int offsetY) {
-	return S_OK;
+ERRORCODE CUIObject::display(int offsetX, int offsetY) {
+	return STATUS_OK;
 }
 
 
@@ -137,7 +137,7 @@ void CUIObject::correctSize() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFont
 	//////////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			_font = Game->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_font != NULL);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -169,17 +169,17 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		_image = NULL;
 		if (val->isNULL()) {
 			stack->pushBool(true);
-			return S_OK;
+			return STATUS_OK;
 		}
 
 		_image = new CBSprite(Game);
-		if (!_image || FAILED(_image->loadFile(val->getString()))) {
+		if (!_image || DID_FAIL(_image->loadFile(val->getString()))) {
 			delete _image;
 			_image = NULL;
 			stack->pushBool(false);
 		} else stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_image || !_image->_filename) stack->pushNULL();
 		else stack->pushString(_image->_filename);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -201,7 +201,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_image) stack->pushNULL();
 		else stack->pushNative(_image, true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -211,7 +211,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(0);
 		focus();
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -267,7 +267,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -288,7 +288,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(true);
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -309,7 +309,7 @@ HRESULT CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(true);
 		} else stack->pushBool(false);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scCallMethod(script, stack, thisStack, name);
@@ -418,13 +418,13 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CUIObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -432,7 +432,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ParentNotify") == 0) {
 		_parentNotify = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -440,7 +440,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Width") == 0) {
 		_width = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -448,7 +448,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Height") == 0) {
 		_height = value->getInt();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -456,7 +456,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Visible") == 0) {
 		_visible = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -464,7 +464,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Disabled") == 0) {
 		_disable = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -472,7 +472,7 @@ HRESULT CUIObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
 		setText(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBObject::scSetProperty(name, value);
@@ -500,7 +500,7 @@ bool CUIObject::isFocused() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::handleMouse(TMouseEvent event, TMouseButton button) {
+ERRORCODE CUIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	// handle focus change
 	if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 		focus();
@@ -510,7 +510,7 @@ HRESULT CUIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::focus() {
+ERRORCODE CUIObject::focus() {
 	CUIObject *obj = this;
 	bool disabled = false;
 	while (obj) {
@@ -532,12 +532,12 @@ HRESULT CUIObject::focus() {
 			obj = obj->_parent;
 		}
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::getTotalOffset(int *offsetX, int *offsetY) {
+ERRORCODE CUIObject::getTotalOffset(int *offsetX, int *offsetY) {
 	int offX = 0, offY = 0;
 
 	CUIObject *obj = _parent;
@@ -550,12 +550,12 @@ HRESULT CUIObject::getTotalOffset(int *offsetX, int *offsetY) {
 	if (offsetX) *offsetX = offX;
 	if (offsetY) *offsetY = offY;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CUIObject::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -578,12 +578,12 @@ HRESULT CUIObject::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_visible));
 	persistMgr->transfer(TMEMBER(_width));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIObject::saveAsText(CBDynBuffer *buffer, int indent) {
-	return E_FAIL;
+ERRORCODE CUIObject::saveAsText(CBDynBuffer *buffer, int indent) {
+	return STATUS_FAILED;
 }
 
 } // end of namespace WinterMute

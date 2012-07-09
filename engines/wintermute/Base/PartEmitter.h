@@ -100,35 +100,35 @@ public:
 	char *_emitEvent;
 	CBScriptHolder *_owner;
 
-	HRESULT start();
+	ERRORCODE start();
 
-	HRESULT update();
-	HRESULT display() { return display(NULL); } // To avoid shadowing the inherited display-function.
-	HRESULT display(CBRegion *region);
+	ERRORCODE update();
+	ERRORCODE display() { return display(NULL); } // To avoid shadowing the inherited display-function.
+	ERRORCODE display(CBRegion *region);
 
-	HRESULT sortParticlesByZ();
-	HRESULT addSprite(const char *filename);
-	HRESULT removeSprite(const char *filename);
-	HRESULT setBorder(int x, int y, int width, int height);
-	HRESULT setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom);
+	ERRORCODE sortParticlesByZ();
+	ERRORCODE addSprite(const char *filename);
+	ERRORCODE removeSprite(const char *filename);
+	ERRORCODE setBorder(int x, int y, int width, int height);
+	ERRORCODE setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom);
 
-	HRESULT addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength);
-	HRESULT removeForce(const char *name);
+	ERRORCODE addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength);
+	ERRORCODE removeForce(const char *name);
 
 	CBArray<CPartForce *, CPartForce *> _forces;
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 
 private:
 	CPartForce *addForceByName(const char *name);
 	int static compareZ(const void *obj1, const void *obj2);
-	HRESULT initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta);
-	HRESULT updateInternal(uint32 currentTime, uint32 timerDelta);
+	ERRORCODE initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta);
+	ERRORCODE updateInternal(uint32 currentTime, uint32 timerDelta);
 	uint32 _lastGenTime;
 	CBArray<CPartParticle *, CPartParticle *> _particles;
 	CBArray<char *, char *> _sprites;

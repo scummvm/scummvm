@@ -63,16 +63,16 @@ public:
 	//CVidSubtitler *_subtitler;
 
 	// control methods
-	HRESULT initialize(const Common::String &filename, const Common::String &subtitleFile = NULL);
-	HRESULT initializeSimple();
-	HRESULT update();
-	HRESULT play(TVideoPlayback type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeGame = false, bool freezeMusic = true, bool Looping = false, uint32 startTime = 0, float forceZoom = -1.0f, int volume = -1);
-	HRESULT stop();
-	HRESULT display(uint32 alpha = 0xFFFFFFFF);
-	//HRESULT RenderFrame(CBSurface *Texture, yuv_buffer *yuv);
+	ERRORCODE initialize(const Common::String &filename, const Common::String &subtitleFile = NULL);
+	ERRORCODE initializeSimple();
+	ERRORCODE update();
+	ERRORCODE play(TVideoPlayback type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeGame = false, bool freezeMusic = true, bool Looping = false, uint32 startTime = 0, float forceZoom = -1.0f, int volume = -1);
+	ERRORCODE stop();
+	ERRORCODE display(uint32 alpha = 0xFFFFFFFF);
+	//ERRORCODE RenderFrame(CBSurface *Texture, yuv_buffer *yuv);
 
-	HRESULT pause();
-	HRESULT resume();
+	ERRORCODE pause();
+	ERRORCODE resume();
 
 	bool isPlaying()  {
 		return _state == THEORA_STATE_PLAYING;
@@ -99,15 +99,15 @@ public:
 	// alpha related
 	CBImage *_alphaImage;
 	Common::String _alphaFilename;
-	HRESULT setAlphaImage(const Common::String &filename);
+	ERRORCODE setAlphaImage(const Common::String &filename);
 	__inline byte getAlphaAt(int x, int y);
 	void writeAlpha();
 
-	HRESULT SeekToTime(uint32 Time);
+	ERRORCODE SeekToTime(uint32 Time);
 
 
 	void cleanup();
-	HRESULT resetStream();
+	ERRORCODE resetStream();
 
 	// video properties
 	TVideoPlayback _playbackType;
@@ -137,7 +137,7 @@ private:
 	bool _videoFrameReady;
 	float _videobufTime;
 
-	HRESULT WriteVideo();
+	ERRORCODE WriteVideo();
 
 	bool _playbackStarted;
 

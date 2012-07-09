@@ -47,13 +47,13 @@ CPartForce::~CPartForce(void) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartForce::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CPartForce::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_name));
 	persistMgr->transfer(TMEMBER(_pos));
 	persistMgr->transfer(TMEMBER(_direction));
 	persistMgr->transfer(TMEMBER_INT(_type));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

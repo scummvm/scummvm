@@ -39,7 +39,7 @@ class CUIButton;
 class CBViewport;
 class CUIWindow : public CUIObject {
 public:
-	HRESULT getWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
+	ERRORCODE getWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
 
 	bool _pauseMusic;
 	void cleanup();
@@ -53,38 +53,38 @@ public:
 	virtual bool handleMouseWheel(int delta);
 	CUIWindow *_shieldWindow;
 	CUIButton *_shieldButton;
-	HRESULT close();
-	HRESULT goSystemExclusive();
-	HRESULT goExclusive();
+	ERRORCODE close();
+	ERRORCODE goSystemExclusive();
+	ERRORCODE goExclusive();
 	TWindowMode _mode;
-	HRESULT moveFocus(bool forward = true);
-	virtual HRESULT handleMouse(TMouseEvent Event, TMouseButton Button);
+	ERRORCODE moveFocus(bool forward = true);
+	virtual ERRORCODE handleMouse(TMouseEvent Event, TMouseButton Button);
 	POINT _dragFrom;
 	bool _dragging;
 	DECLARE_PERSISTENT(CUIWindow, CUIObject)
 	bool _transparent;
-	HRESULT showWidget(const char *name, bool visible = true);
-	HRESULT enableWidget(const char *name, bool enable = true);
+	ERRORCODE showWidget(const char *name, bool visible = true);
+	ERRORCODE enableWidget(const char *name, bool enable = true);
 	RECT _titleRect;
 	RECT _dragRect;
-	virtual HRESULT display(int offsetX = 0, int offsetY = 0);
+	virtual ERRORCODE display(int offsetX = 0, int offsetY = 0);
 	CUIWindow(CBGame *inGame);
 	virtual ~CUIWindow();
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	CBArray<CUIObject *, CUIObject *> _widgets;
 	TTextAlign _titleAlign;
-	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	ERRORCODE loadFile(const char *filename);
+	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
 	CUITiledImage *_backInactive;
 	CBFont *_fontInactive;
 	CBSprite *_imageInactive;
-	virtual HRESULT listen(CBScriptHolder *param1, uint32 param2);
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
+	virtual ERRORCODE listen(CBScriptHolder *param1, uint32 param2);
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

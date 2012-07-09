@@ -213,14 +213,14 @@ void CScStack::pushNative(CBScriptable *val, bool persistent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CScStack::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CScStack::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 
 	persistMgr->transfer(TMEMBER(_sP));
 	_values.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

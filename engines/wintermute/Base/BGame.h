@@ -38,7 +38,7 @@
 
 namespace WinterMute {
 
-typedef void (*ENGINE_LOG_CALLBACK)(char *Text, HRESULT Result, void *Data);
+typedef void (*ENGINE_LOG_CALLBACK)(char *Text, ERRORCODE Result, void *Data);
 
 class CBSoundMgr;
 class CBFader;
@@ -67,19 +67,19 @@ class CBGame: public CBObject {
 public:
 	DECLARE_PERSISTENT(CBGame, CBObject)
 
-	virtual HRESULT onScriptShutdown(CScScript *script);
+	virtual ERRORCODE onScriptShutdown(CScScript *script);
 
-	virtual HRESULT onActivate(bool activate, bool refreshMouse);
-	virtual HRESULT onMouseLeftDown();
-	virtual HRESULT onMouseLeftUp();
-	virtual HRESULT onMouseLeftDblClick();
-	virtual HRESULT onMouseRightDblClick();
-	virtual HRESULT onMouseRightDown();
-	virtual HRESULT onMouseRightUp();
-	virtual HRESULT onMouseMiddleDown();
-	virtual HRESULT onMouseMiddleUp();
-	virtual HRESULT onPaint();
-	virtual HRESULT onWindowClose();
+	virtual ERRORCODE onActivate(bool activate, bool refreshMouse);
+	virtual ERRORCODE onMouseLeftDown();
+	virtual ERRORCODE onMouseLeftUp();
+	virtual ERRORCODE onMouseLeftDblClick();
+	virtual ERRORCODE onMouseRightDblClick();
+	virtual ERRORCODE onMouseRightDown();
+	virtual ERRORCODE onMouseRightUp();
+	virtual ERRORCODE onMouseMiddleDown();
+	virtual ERRORCODE onMouseMiddleUp();
+	virtual ERRORCODE onPaint();
+	virtual ERRORCODE onWindowClose();
 
 	bool isLeftDoubleClick();
 	bool isRightDoubleClick();
@@ -89,14 +89,14 @@ public:
 	uint32 _lastMiniUpdate;
 	bool _miniUpdateEnabled;
 
-	virtual HRESULT miniUpdate();
+	virtual ERRORCODE miniUpdate();
 
 	void getMousePos(POINT *Pos);
 	RECT _mouseLockRect;
 
 	bool _shuttingDown;
 
-	virtual HRESULT displayDebugInfo();
+	virtual ERRORCODE displayDebugInfo();
 	bool _dEBUG_ShowFPS;
 
 	bool _suspendedRendering;
@@ -110,10 +110,10 @@ public:
 	int _loadingIconY;
 	int _loadingIconPersistent;
 
-	virtual HRESULT resetContent();
+	virtual ERRORCODE resetContent();
 
 	void DEBUG_DumpClassRegistry();
-	HRESULT setWaitCursor(const char *filename);
+	ERRORCODE setWaitCursor(const char *filename);
 	char *_localSaveDir;
 	bool _saveDirChecked;
 
@@ -137,7 +137,7 @@ public:
 	int _loadImageY;
 	CBSurface *_saveLoadImage;
 
-	HRESULT displayIndicator();
+	ERRORCODE displayIndicator();
 
 	int _thumbnailWidth;
 	int _thumbnailHeight;
@@ -159,20 +159,20 @@ public:
 	float _offsetPercentY;
 	CBObject *_mainObject;
 
-	HRESULT initInput();
-	HRESULT initLoop();
+	ERRORCODE initInput();
+	ERRORCODE initLoop();
 	uint32 _currentTime;
 	uint32 _deltaTime;
 	CBFont *_systemFont;
 	CBFont *_videoFont;
-	HRESULT initialize1();
-	HRESULT initialize2();
-	HRESULT initialize3();
+	ERRORCODE initialize1();
+	ERRORCODE initialize2();
+	ERRORCODE initialize3();
 	CBFileManager *_fileManager;
 	CBTransitionMgr *_transMgr;
 	CBDebugger *getDebugMgr();
 
-	void LOG(HRESULT res, LPCSTR fmt, ...);
+	void LOG(ERRORCODE res, LPCSTR fmt, ...);
 
 	CBRenderer *_renderer;
 	CBSoundMgr *_soundMgr;
@@ -191,8 +191,8 @@ public:
 
 	void *_dEBUG_LogFile;
 	int _sequence;
-	virtual HRESULT loadFile(const char *filename);
-	virtual HRESULT loadBuffer(byte *buffer, bool complete = true);
+	virtual ERRORCODE loadFile(const char *filename);
+	virtual ERRORCODE loadBuffer(byte *buffer, bool complete = true);
 	CBArray<CBQuickMsg *, CBQuickMsg *> _quickMessages;
 	CBArray<CUIWindow *, CUIWindow *> _windows;
 	CBArray<CBViewport *, CBViewport *> _viewportStack;
@@ -217,14 +217,14 @@ public:
 	CBFader *_fader;
 	bool _suppressScriptErrors;
 
-	virtual HRESULT invalidateDeviceObjects();
-	virtual HRESULT restoreDeviceObjects();
+	virtual ERRORCODE invalidateDeviceObjects();
+	virtual ERRORCODE restoreDeviceObjects();
 
-	virtual HRESULT ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
+	virtual ERRORCODE ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	// compatibility bits
 	bool _compatKillMethodThreads;
@@ -245,21 +245,21 @@ public:
 	int _scheduledLoadSlot;
 	bool _loading;
 	bool _personalizedSave;
-	HRESULT emptySaveSlot(int slot);
+	ERRORCODE emptySaveSlot(int slot);
 	bool isSaveSlotUsed(int slot);
-	HRESULT getSaveSlotDescription(int slot, char *buffer);
-	HRESULT getSaveSlotFilename(int slot, char *buffer);
+	ERRORCODE getSaveSlotDescription(int slot, char *buffer);
+	ERRORCODE getSaveSlotFilename(int slot, char *buffer);
 	void setWindowTitle();
 	virtual bool handleMouseWheel(int delta);
 	bool _quitting;
-	virtual HRESULT getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
+	virtual ERRORCODE getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
 
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual void handleKeyRelease(Common::Event *event);
 	int _freezeLevel;
-	HRESULT unfreeze();
-	HRESULT freeze(bool includingMusic = true);
-	HRESULT focusWindow(CUIWindow *window);
+	ERRORCODE unfreeze();
+	ERRORCODE freeze(bool includingMusic = true);
+	ERRORCODE focusWindow(CUIWindow *window);
 	CVidPlayer *_videoPlayer;
 	CVidTheoraPlayer *_theoraPlayer;
 	bool _loadInProgress;
@@ -272,12 +272,12 @@ public:
 	static void afterLoadScript(void *script, void *data);
 	static void invalidateValues(void *value, void *data);
 
-	HRESULT loadSettings(const char *filename);
-	HRESULT resumeMusic(int channel);
-	HRESULT setMusicStartTime(int channel, uint32 time);
-	HRESULT pauseMusic(int channel);
-	HRESULT stopMusic(int channel);
-	HRESULT playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
+	ERRORCODE loadSettings(const char *filename);
+	ERRORCODE resumeMusic(int channel);
+	ERRORCODE setMusicStartTime(int channel, uint32 time);
+	ERRORCODE pauseMusic(int channel);
+	ERRORCODE stopMusic(int channel);
+	ERRORCODE playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
 	CBSound *_music[NUM_MUSIC_CHANNELS];
 	bool _musicCrossfadeRunning;
 	bool _musicCrossfadeSwap;
@@ -285,14 +285,14 @@ public:
 	uint32 _musicCrossfadeLength;
 	int _musicCrossfadeChannel1;
 	int _musicCrossfadeChannel2;
-	HRESULT displayWindows(bool inGame = false);
+	ERRORCODE displayWindows(bool inGame = false);
 	CBRegistry *_registry;
 	bool _useD3D;
-	virtual HRESULT cleanup();
-	virtual HRESULT loadGame(int slot);
-	virtual HRESULT loadGame(const char *filename);
-	virtual HRESULT SaveGame(int slot, const char *desc, bool quickSave = false);
-	virtual HRESULT showCursor();
+	virtual ERRORCODE cleanup();
+	virtual ERRORCODE loadGame(int slot);
+	virtual ERRORCODE loadGame(const char *filename);
+	virtual ERRORCODE SaveGame(int slot, const char *desc, bool quickSave = false);
+	virtual ERRORCODE showCursor();
 
 	CBSprite *_cursorNoninteractive;
 	CBObject *_activeObject;
@@ -312,36 +312,36 @@ public:
 	CBObject *_capturedObject;
 	POINT _mousePos;
 	bool validObject(CBObject *object);
-	HRESULT unregisterObject(CBObject *object);
-	HRESULT registerObject(CBObject *object);
+	ERRORCODE unregisterObject(CBObject *object);
+	ERRORCODE registerObject(CBObject *object);
 	void quickMessage(const char *text);
 	void quickMessageForm(LPSTR fmt, ...);
-	HRESULT displayQuickMsg();
+	ERRORCODE displayQuickMsg();
 	uint32 _fps;
-	HRESULT updateMusicCrossfade();
+	ERRORCODE updateMusicCrossfade();
 
 	bool isVideoPlaying();
-	HRESULT stopVideo();
+	ERRORCODE stopVideo();
 
 	CBArray<CBObject *, CBObject *> _regObjects;
 public:
-	virtual HRESULT displayContent(bool update = true, bool displayAll = false);
-	virtual HRESULT displayContentSimple();
+	virtual ERRORCODE displayContent(bool update = true, bool displayAll = false);
+	virtual ERRORCODE displayContentSimple();
 	bool _forceNonStreamedSounds;
 	void resetMousePos();
 	int _subtitlesSpeed;
 	void setInteractive(bool state);
-	virtual HRESULT windowLoadHook(CUIWindow *win, char **buf, char **params);
-	virtual HRESULT windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
-	HRESULT getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
-	HRESULT getCurrentViewportRect(RECT *rect, bool *custom = NULL);
-	HRESULT popViewport();
-	HRESULT pushViewport(CBViewport *Viewport);
-	HRESULT setActiveObject(CBObject *Obj);
+	virtual ERRORCODE windowLoadHook(CUIWindow *win, char **buf, char **params);
+	virtual ERRORCODE windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
+	ERRORCODE getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
+	ERRORCODE getCurrentViewportRect(RECT *rect, bool *custom = NULL);
+	ERRORCODE popViewport();
+	ERRORCODE pushViewport(CBViewport *Viewport);
+	ERRORCODE setActiveObject(CBObject *Obj);
 	CBSprite *_lastCursor;
-	HRESULT drawCursor(CBSprite *Cursor);
+	ERRORCODE drawCursor(CBSprite *Cursor);
 
-	virtual HRESULT initAfterLoad();
+	virtual ERRORCODE initAfterLoad();
 	CBSaveThumbHelper *_cachedThumbnail;
 	AnsiString getDataDir();
 	void addMem(int bytes);

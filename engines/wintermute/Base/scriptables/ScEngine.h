@@ -83,33 +83,33 @@ public:
 
 
 public:
-	HRESULT dbgSendScripts(IWmeDebugClient *client);
+	ERRORCODE dbgSendScripts(IWmeDebugClient *client);
 
 	CBArray<CScBreakpoint *, CScBreakpoint *> _breakpoints;
-	HRESULT addBreakpoint(const char *scriptFilename, int line);
-	HRESULT removeBreakpoint(const char *scriptFilename, int line);
-	HRESULT refreshScriptBreakpoints();
-	HRESULT refreshScriptBreakpoints(CScScript *script);
-	HRESULT saveBreakpoints();
-	HRESULT loadBreakpoints();
+	ERRORCODE addBreakpoint(const char *scriptFilename, int line);
+	ERRORCODE removeBreakpoint(const char *scriptFilename, int line);
+	ERRORCODE refreshScriptBreakpoints();
+	ERRORCODE refreshScriptBreakpoints(CScScript *script);
+	ERRORCODE saveBreakpoints();
+	ERRORCODE loadBreakpoints();
 
-	HRESULT clearGlobals(bool includingNatives = false);
-	HRESULT tickUnbreakable();
-	HRESULT removeFinishedScripts();
+	ERRORCODE clearGlobals(bool includingNatives = false);
+	ERRORCODE tickUnbreakable();
+	ERRORCODE removeFinishedScripts();
 	bool isValidScript(CScScript *script);
 
 	CScScript *_currentScript;
-	HRESULT resumeAll();
-	HRESULT pauseAll();
+	ERRORCODE resumeAll();
+	ERRORCODE pauseAll();
 	void editorCleanup();
-	HRESULT resetObject(CBObject *Object);
-	HRESULT resetScript(CScScript *script);
-	HRESULT emptyScriptCache();
+	ERRORCODE resetObject(CBObject *Object);
+	ERRORCODE resetScript(CScScript *script);
+	ERRORCODE emptyScriptCache();
 	byte *getCompiledScript(const char *filename, uint32 *outSize, bool ignoreCache = false);
 	DECLARE_PERSISTENT(CScEngine, CBBase)
-	HRESULT cleanup();
+	ERRORCODE cleanup();
 	int getNumScripts(int *running = NULL, int *waiting = NULL, int *persistent = NULL);
-	HRESULT tick();
+	ERRORCODE tick();
 	CScValue *_globals;
 	CScScript *runScript(const char *filename, CBScriptHolder *owner = NULL);
 	static const bool _compilerAvailable = false;

@@ -40,9 +40,9 @@ public:
 	float _scale;
 	CAdScaleLevel(CBGame *inGame);
 	virtual ~CAdScaleLevel();
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
-	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	ERRORCODE loadFile(const char *filename);
+	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
 };
 
 } // end of namespace WinterMute

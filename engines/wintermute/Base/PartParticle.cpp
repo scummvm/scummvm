@@ -72,10 +72,10 @@ CPartParticle::~CPartParticle(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::setSprite(const char *filename) {
+ERRORCODE CPartParticle::setSprite(const char *filename) {
 	if (_sprite && _sprite->_filename && scumm_stricmp(filename, _sprite->_filename) == 0) {
 		_sprite->reset();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	delete _sprite;
@@ -83,34 +83,34 @@ HRESULT CPartParticle::setSprite(const char *filename) {
 
 	CSysClassRegistry::getInstance()->_disabled = true;
 	_sprite = new CBSprite(Game, Game);
-	if (_sprite && SUCCEEDED(_sprite->loadFile(filename))) {
+	if (_sprite && DID_SUCCEED(_sprite->loadFile(filename))) {
 		CSysClassRegistry::getInstance()->_disabled = false;
-		return S_OK;
+		return STATUS_OK;
 	} else {
 		delete _sprite;
 		_sprite = NULL;
 		CSysClassRegistry::getInstance()->_disabled = false;
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta) {
+ERRORCODE CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta) {
 	if (_state == PARTICLE_FADEIN) {
 		if (currentTime - _fadeStart >= (uint32)_fadeTime) {
 			_state = PARTICLE_NORMAL;
 			_currentAlpha = _alpha1;
 		} else _currentAlpha = (int)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _alpha1);
 
-		return S_OK;
+		return STATUS_OK;
 	} else if (_state == PARTICLE_FADEOUT) {
 		if (currentTime - _fadeStart >= (uint32)_fadeTime) {
 			_isDead = true;
-			return S_OK;
+			return STATUS_OK;
 		} else _currentAlpha = _fadeStartAlpha - (int)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _fadeStartAlpha);
 
-		return S_OK;
+		return STATUS_OK;
 	} else {
 		// time is up
 		if (_lifeTime > 0) {
@@ -130,7 +130,7 @@ HRESULT CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 
 			if (!CBPlatform::ptInRect(&_border, p))
 				fadeOut(currentTime, emitter->_fadeOutTime);
 		}
-		if (_state != PARTICLE_NORMAL) return S_OK;
+		if (_state != PARTICLE_NORMAL) return STATUS_OK;
 
 		// update alpha
 		if (_lifeTime > 0) {
@@ -177,48 +177,48 @@ HRESULT CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 
 			_isDead = true;
 
 
-		return S_OK;
+		return STATUS_OK;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::display(CPartEmitter *emitter) {
-	if (!_sprite) return E_FAIL;
-	if (_isDead) return S_OK;
+ERRORCODE CPartParticle::display(CPartEmitter *emitter) {
+	if (!_sprite) return STATUS_FAILED;
+	if (_isDead) return STATUS_OK;
 
 	_sprite->GetCurrentFrame();
 	return _sprite->display(_pos.x, _pos.y,
 	                        NULL,
 	                        _scale, _scale,
-	                        DRGBA(255, 255, 255, _currentAlpha),
+	                        BYTETORGBA(255, 255, 255, _currentAlpha),
 	                        _rotation,
 	                        emitter->_blendMode);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::fadeIn(uint32 currentTime, int fadeTime) {
+ERRORCODE CPartParticle::fadeIn(uint32 currentTime, int fadeTime) {
 	_currentAlpha = 0;
 	_fadeStart = currentTime;
 	_fadeTime = fadeTime;
 	_state = PARTICLE_FADEIN;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::fadeOut(uint32 currentTime, int fadeTime) {
+ERRORCODE CPartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 	//_currentAlpha = 255;
 	_fadeStartAlpha = _currentAlpha;
 	_fadeStart = currentTime;
 	_fadeTime = fadeTime;
 	_state = PARTICLE_FADEOUT;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CPartParticle::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CPartParticle::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha1));
 	persistMgr->transfer(TMEMBER(_alpha2));
 	persistMgr->transfer(TMEMBER(_border));
@@ -251,7 +251,7 @@ HRESULT CPartParticle::persist(CBPersistMgr *persistMgr) {
 		filename = NULL;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

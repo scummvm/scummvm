@@ -53,12 +53,12 @@ CBPoint::CBPoint(int initX, int initY) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBPoint::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBPoint::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(x));
 	persistMgr->transfer(TMEMBER(y));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

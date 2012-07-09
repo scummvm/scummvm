@@ -44,56 +44,56 @@ class CAdResponseContext;
 class CAdResponseBox;
 class CAdGame : public CBGame {
 public:
-	virtual HRESULT onScriptShutdown(CScScript *script);
+	virtual ERRORCODE onScriptShutdown(CScScript *script);
 
-	virtual HRESULT onMouseLeftDown();
-	virtual HRESULT onMouseLeftUp();
-	virtual HRESULT onMouseLeftDblClick();
-	virtual HRESULT onMouseRightDown();
-	virtual HRESULT onMouseRightUp();
+	virtual ERRORCODE onMouseLeftDown();
+	virtual ERRORCODE onMouseLeftUp();
+	virtual ERRORCODE onMouseLeftDblClick();
+	virtual ERRORCODE onMouseRightDown();
+	virtual ERRORCODE onMouseRightUp();
 
-	virtual HRESULT displayDebugInfo();
+	virtual ERRORCODE displayDebugInfo();
 
 
-	virtual HRESULT initAfterLoad();
+	virtual ERRORCODE initAfterLoad();
 	static void afterLoadScene(void *scene, void *data);
 
 	bool _smartItemCursor;
 
 	CBArray<char *, char *> _speechDirs;
-	HRESULT addSpeechDir(const char *dir);
-	HRESULT removeSpeechDir(const char *dir);
+	ERRORCODE addSpeechDir(const char *dir);
+	ERRORCODE removeSpeechDir(const char *dir);
 	char *findSpeechFile(char *StringID);
 
-	HRESULT deleteItem(CAdItem *Item);
+	ERRORCODE deleteItem(CAdItem *Item);
 	char *_itemsFile;
 	bool _tempDisableSaveState;
-	virtual HRESULT resetContent();
-	HRESULT addItem(CAdItem *item);
+	virtual ERRORCODE resetContent();
+	ERRORCODE addItem(CAdItem *item);
 	CAdItem *getItemByName(const char *name);
 	CBArray<CAdItem *, CAdItem *> _items;
 	CAdObject *_inventoryOwner;
 	bool isItemTaken(char *itemName);
-	HRESULT registerInventory(CAdInventory *inv);
-	HRESULT unregisterInventory(CAdInventory *inv);
+	ERRORCODE registerInventory(CAdInventory *inv);
+	ERRORCODE unregisterInventory(CAdInventory *inv);
 
 	CAdObject *_invObject;
 	CBArray<CAdInventory *, CAdInventory *> _inventories;
-	virtual HRESULT displayContent(bool update = true, bool displayAll = false);
+	virtual ERRORCODE displayContent(bool update = true, bool displayAll = false);
 	char *_debugStartupScene;
 	char *_startupScene;
 	bool _initialScene;
 	bool gameResponseUsed(int ID);
-	HRESULT addGameResponse(int ID);
-	HRESULT resetResponse(int ID);
+	ERRORCODE addGameResponse(int ID);
+	ERRORCODE resetResponse(int ID);
 
 	bool branchResponseUsed(int ID);
-	HRESULT addBranchResponse(int ID);
-	HRESULT clearBranchResponses(char *name);
-	HRESULT startDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
-	HRESULT endDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
-	virtual HRESULT windowLoadHook(CUIWindow *win, char **buf, char **params);
-	virtual HRESULT windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
+	ERRORCODE addBranchResponse(int ID);
+	ERRORCODE clearBranchResponses(char *name);
+	ERRORCODE startDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
+	ERRORCODE endDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
+	virtual ERRORCODE windowLoadHook(CUIWindow *win, char **buf, char **params);
+	virtual ERRORCODE windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
 
 	CAdSceneState *getSceneState(const char *filename, bool saving);
 	CBViewport *_sceneViewport;
@@ -104,31 +104,31 @@ public:
 
 	TTalkSkipButton _talkSkipButton;
 
-	virtual HRESULT getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
-	HRESULT scheduleChangeScene(const char *filename, bool fadeIn);
+	virtual ERRORCODE getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
+	ERRORCODE scheduleChangeScene(const char *filename, bool fadeIn);
 	char *_scheduledScene;
 	bool _scheduledFadeIn;
 	void setPrevSceneName(const char *name);
 	void setPrevSceneFilename(const char *name);
 	char *_prevSceneName;
 	char *_prevSceneFilename;
-	virtual HRESULT loadGame(const char *filename);
+	virtual ERRORCODE loadGame(const char *filename);
 	CAdItem *_selectedItem;
-	HRESULT cleanup();
+	ERRORCODE cleanup();
 	DECLARE_PERSISTENT(CAdGame, CBGame)
 
 	void finishSentences();
-	HRESULT showCursor();
+	ERRORCODE showCursor();
 	TGameStateEx _stateEx;
 	CAdResponseBox *_responseBox;
 	CAdInventoryBox *_inventoryBox;
-	HRESULT displaySentences(bool frozen);
+	ERRORCODE displaySentences(bool frozen);
 	void addSentence(CAdSentence *sentence);
-	HRESULT changeScene(const char *filename, bool fadeIn);
-	HRESULT removeObject(CAdObject *object);
-	HRESULT addObject(CAdObject *object);
+	ERRORCODE changeScene(const char *filename, bool fadeIn);
+	ERRORCODE removeObject(CAdObject *object);
+	ERRORCODE addObject(CAdObject *object);
 	CAdScene *_scene;
-	HRESULT initLoop();
+	ERRORCODE initLoop();
 	CAdGame();
 	virtual ~CAdGame();
 	CBArray<CAdObject *, CAdObject *> _objects;
@@ -140,19 +140,19 @@ public:
 	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesBranch;
 	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesGame;
 
-	virtual HRESULT loadFile(const char *filename);
-	virtual HRESULT loadBuffer(byte *buffer, bool complete = true);
+	virtual ERRORCODE loadFile(const char *filename);
+	virtual ERRORCODE loadBuffer(byte *buffer, bool complete = true);
 
-	HRESULT loadItemsFile(const char *filename, bool merge = false);
-	HRESULT loadItemsBuffer(byte *buffer, bool merge = false);
+	ERRORCODE loadItemsFile(const char *filename, bool merge = false);
+	ERRORCODE loadItemsBuffer(byte *buffer, bool merge = false);
 
 
-	virtual HRESULT ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
+	virtual ERRORCODE ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	bool validMouse();
 };
 

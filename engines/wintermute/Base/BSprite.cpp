@@ -102,9 +102,9 @@ void CBSprite::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
+ERRORCODE CBSprite::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
 	GetCurrentFrame(zoomX, zoomY);
-	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return S_OK;
+	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return STATUS_OK;
 
 	// move owner if allowed to
 	if (_changed && _owner && _owner->_movable) {
@@ -122,7 +122,7 @@ HRESULT CBSprite::draw(int x, int y, CBObject *registerOwner, float zoomX, float
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
+ERRORCODE CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	Common::SeekableReadStream *file = Game->_fileManager->openFile(filename);
 	if (!file) {
 		Game->LOG(0, "CBSprite::LoadFile failed for file '%s'", filename);
@@ -133,7 +133,7 @@ HRESULT CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType 
 		file = NULL;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	AnsiString ext = PathUtil::getExtension(filename);
 	if (StringUtil::startsWith(filename, "savegame:", true) || StringUtil::compareNoCase(ext, "bmp") || StringUtil::compareNoCase(ext, "tga") || StringUtil::compareNoCase(ext, "png") || StringUtil::compareNoCase(ext, "jpg")) {
@@ -142,7 +142,7 @@ HRESULT CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType 
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
 		if (subframe->_surface == NULL) {
 			Game->LOG(0, "Error loading simple sprite '%s'", filename);
-			ret = E_FAIL;
+			ret = STATUS_FAILED;
 			delete frame;
 			delete subframe;
 		} else {
@@ -150,12 +150,12 @@ HRESULT CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType 
 			frame->_subframes.Add(subframe);
 			_frames.Add(frame);
 			_currentFrame = 0;
-			ret = S_OK;
+			ret = STATUS_OK;
 		}
 	} else {
 		byte *buffer = Game->_fileManager->readWholeFile(filename);
 		if (buffer) {
-			if (FAILED(ret = loadBuffer(buffer, true, lifeTime, cacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", filename);
+			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", filename);
 			delete [] buffer;
 		}
 	}
@@ -187,7 +187,7 @@ TOKEN_DEF(EDITOR_BG_ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
+ERRORCODE CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(CONTINUOUS)
 	TOKEN_TABLE(SPRITE)
@@ -216,7 +216,7 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITE) {
 			Game->LOG(0, "'SPRITE' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -289,10 +289,10 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 
 			frame = new CBFrame(Game);
 
-			if (FAILED(frame->loadBuffer(params, FrameLifeTime, _streamedKeepLoaded))) {
+			if (DID_FAIL(frame->loadBuffer(params, FrameLifeTime, _streamedKeepLoaded))) {
 				delete frame;
 				Game->LOG(0, "Error parsing frame %d", frameCount);
-				return E_FAIL;
+				return STATUS_FAILED;
 			}
 
 			_frames.Add(frame);
@@ -309,11 +309,11 @@ HRESULT CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in SPRITE definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	_canBreak = !_continuous;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -383,8 +383,8 @@ bool CBSprite::GetCurrentFrame(float zoomX, float zoomY) {
 
 
 //////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
-	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return S_OK;
+ERRORCODE CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
+	if (_currentFrame < 0 || _currentFrame >= _frames.GetSize()) return STATUS_OK;
 
 	// on change...
 	if (_changed) {
@@ -428,7 +428,7 @@ bool CBSprite::GetBoundingRect(LPRECT rect, int x, int y, float scaleX, float sc
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CBSprite::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITE {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "LOOPING=%s\n", _looping ? "TRUE" : "FALSE");
@@ -467,12 +467,12 @@ HRESULT CBSprite::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent, "}\n\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBSprite::persist(CBPersistMgr *persistMgr) {
 	CBScriptHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_canBreak));
@@ -500,14 +500,14 @@ HRESULT CBSprite::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_streamedKeepLoaded));
 
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetFrame
 	//////////////////////////////////////////////////////////////////////////
@@ -518,7 +518,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			script->runtimeError("Sprite.GetFrame: Frame index %d is out of range.", Index);
 			stack->pushNULL();
 		} else stack->pushNative(_frames[Index], true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -544,7 +544,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			}
 		}
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -554,7 +554,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(0);
 		reset();
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -569,7 +569,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		CBFrame *frame = new CBFrame(Game);
 		if (filename != NULL) {
 			CBSubFrame *sub = new CBSubFrame(Game);
-			if (SUCCEEDED(sub->setSurface(filename))) {
+			if (DID_SUCCEED(sub->setSurface(filename))) {
 				sub->setDefaultRect();
 				frame->_subframes.Add(sub);
 			} else delete sub;
@@ -577,7 +577,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		_frames.Add(frame);
 
 		stack->pushNative(frame, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -597,7 +597,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		CBFrame *frame = new CBFrame(Game);
 		if (filename != NULL) {
 			CBSubFrame *sub = new CBSubFrame(Game);
-			if (SUCCEEDED(sub->setSurface(filename))) frame->_subframes.Add(sub);
+			if (DID_SUCCEED(sub->setSurface(filename))) frame->_subframes.Add(sub);
 			else delete sub;
 		}
 
@@ -606,7 +606,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		else _frames.InsertAt(index, frame);
 
 		stack->pushNative(frame, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -616,7 +616,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(0);
 		_paused = true;
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -626,7 +626,7 @@ HRESULT CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(0);
 		_paused = false;
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBScriptHolder::scCallMethod(script, stack, thisStack, name);
@@ -707,7 +707,7 @@ CScValue *CBSprite::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CBSprite::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
@@ -717,7 +717,7 @@ HRESULT CBSprite::scSetProperty(const char *name, CScValue *value) {
 			_currentFrame = -1;
 		}
 		_lastFrameTime = 0;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -725,7 +725,7 @@ HRESULT CBSprite::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PixelPerfect") == 0) {
 		_precise = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -733,7 +733,7 @@ HRESULT CBSprite::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Looping") == 0) {
 		_looping = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CBScriptHolder::scSetProperty(name, value);
@@ -747,12 +747,12 @@ const char *CBSprite::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBSprite::killAllSounds() {
+ERRORCODE CBSprite::killAllSounds() {
 	for (int i = 0; i < _frames.GetSize(); i++) {
 		if (_frames[i]->_sound)
 			_frames[i]->_sound->stop();
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

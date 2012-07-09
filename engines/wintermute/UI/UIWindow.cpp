@@ -113,7 +113,7 @@ void CUIWindow::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::display(int offsetX, int offsetY) {
+ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
 	// go exclusive
 	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		if (!_shieldWindow) _shieldWindow = new CUIWindow(Game);
@@ -141,7 +141,7 @@ HRESULT CUIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (!_visible)
-		return S_OK;
+		return STATUS_OK;
 
 	if (_fadeBackground) Game->_renderer->fadeToColor(_fadeColor);
 
@@ -202,24 +202,24 @@ HRESULT CUIWindow::display(int offsetX, int offsetY) {
 	if (popViewport)
 		Game->popViewport();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::loadFile(const char *filename) {
+ERRORCODE CUIWindow::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CUIWindow::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing WINDOW file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing WINDOW file '%s'", filename);
 
 	delete [] buffer;
 
@@ -266,7 +266,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(EDIT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WINDOW)
 	TOKEN_TABLE(ALPHA_COLOR)
@@ -316,7 +316,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WINDOW) {
 			Game->LOG(0, "'WINDOW' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -324,7 +324,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 	while (cmd >= PARSERR_TOKENNOTFOUND && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) >= PARSERR_TOKENNOTFOUND) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -338,7 +338,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK:
 			delete _back;
 			_back = new CUITiledImage(Game);
-			if (!_back || FAILED(_back->loadFile((char *)params))) {
+			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
 				cmd = PARSERR_GENERIC;
@@ -348,7 +348,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK_INACTIVE:
 			delete _backInactive;
 			_backInactive = new CUITiledImage(Game);
-			if (!_backInactive || FAILED(_backInactive->loadFile((char *)params))) {
+			if (!_backInactive || DID_FAIL(_backInactive->loadFile((char *)params))) {
 				delete _backInactive;
 				_backInactive = NULL;
 				cmd = PARSERR_GENERIC;
@@ -358,7 +358,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new CBSprite(Game);
-			if (!_image || FAILED(_image->loadFile((char *)params))) {
+			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
 				cmd = PARSERR_GENERIC;
@@ -368,7 +368,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE_INACTIVE:
 			delete _imageInactive,
 			       _imageInactive = new CBSprite(Game);
-			if (!_imageInactive || FAILED(_imageInactive->loadFile((char *)params))) {
+			if (!_imageInactive || DID_FAIL(_imageInactive->loadFile((char *)params))) {
 				delete _imageInactive;
 				_imageInactive = NULL;
 				cmd = PARSERR_GENERIC;
@@ -425,7 +425,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -434,7 +434,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BUTTON: {
 			CUIButton *btn = new CUIButton(Game);
-			if (!btn || FAILED(btn->loadBuffer(params, false))) {
+			if (!btn || DID_FAIL(btn->loadBuffer(params, false))) {
 				delete btn;
 				btn = NULL;
 				cmd = PARSERR_GENERIC;
@@ -447,7 +447,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_STATIC: {
 			CUIText *text = new CUIText(Game);
-			if (!text || FAILED(text->loadBuffer(params, false))) {
+			if (!text || DID_FAIL(text->loadBuffer(params, false))) {
 				delete text;
 				text = NULL;
 				cmd = PARSERR_GENERIC;
@@ -460,7 +460,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_EDIT: {
 			CUIEdit *edit = new CUIEdit(Game);
-			if (!edit || FAILED(edit->loadBuffer(params, false))) {
+			if (!edit || DID_FAIL(edit->loadBuffer(params, false))) {
 				delete edit;
 				edit = NULL;
 				cmd = PARSERR_GENERIC;
@@ -473,7 +473,7 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WINDOW: {
 			CUIWindow *win = new CUIWindow(Game);
-			if (!win || FAILED(win->loadBuffer(params, false))) {
+			if (!win || DID_FAIL(win->loadBuffer(params, false))) {
 				delete win;
 				win = NULL;
 				cmd = PARSERR_GENERIC;
@@ -545,18 +545,18 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 
 		default:
-			if (FAILED(Game->windowLoadHook(this, (char **)&buffer, (char **)params))) {
+			if (DID_FAIL(Game->windowLoadHook(this, (char **)&buffer, (char **)params))) {
 				cmd = PARSERR_GENERIC;
 			}
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in WINDOW definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading WINDOW definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	correctSize();
@@ -564,18 +564,18 @@ HRESULT CUIWindow::loadBuffer(byte *buffer, bool complete) {
 	if (alpha != 0 && ar == 0 && ag == 0 && ab == 0) {
 		ar = ag = ab = 255;
 	}
-	_alphaColor = DRGBA(ar, ag, ab, alpha);
+	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 
 	if (_fadeBackground)
-		_fadeColor = DRGBA(fadeR, fadeG, fadeB, fadeA);
+		_fadeColor = BYTETORGBA(fadeR, fadeG, fadeB, fadeA);
 
 	_focusedWidget = NULL;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WINDOW\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -649,12 +649,12 @@ HRESULT CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	if (_fadeBackground) {
-		buffer->putTextIndent(indent + 2, "FADE_COLOR { %d, %d, %d }\n", D3DCOLGetR(_fadeColor), D3DCOLGetG(_fadeColor), D3DCOLGetB(_fadeColor));
-		buffer->putTextIndent(indent + 2, "FADE_ALPHA=%d\n", D3DCOLGetA(_fadeColor));
+		buffer->putTextIndent(indent + 2, "FADE_COLOR { %d, %d, %d }\n", RGBCOLGetR(_fadeColor), RGBCOLGetG(_fadeColor), RGBCOLGetB(_fadeColor));
+		buffer->putTextIndent(indent + 2, "FADE_ALPHA=%d\n", RGBCOLGetA(_fadeColor));
 	}
 
-	buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d, %d, %d }\n", D3DCOLGetR(_alphaColor), D3DCOLGetG(_alphaColor), D3DCOLGetB(_alphaColor));
-	buffer->putTextIndent(indent + 2, "ALPHA=%d\n", D3DCOLGetA(_alphaColor));
+	buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d, %d, %d }\n", RGBCOLGetR(_alphaColor), RGBCOLGetG(_alphaColor), RGBCOLGetB(_alphaColor));
+	buffer->putTextIndent(indent + 2, "ALPHA=%d\n", RGBCOLGetA(_alphaColor));
 
 	buffer->putTextIndent(indent + 2, "\n");
 
@@ -674,31 +674,31 @@ HRESULT CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 	buffer->putTextIndent(indent, "}\n");
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::enableWidget(const char *name, bool Enable) {
+ERRORCODE CUIWindow::enableWidget(const char *name, bool Enable) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_disable = !Enable;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::showWidget(const char *name, bool Visible) {
+ERRORCODE CUIWindow::showWidget(const char *name, bool Visible) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_visible = Visible;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetWidget / GetControl
 	//////////////////////////////////////////////////////////////////////////
@@ -713,13 +713,13 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			for (int i = 0; i < _widgets.GetSize(); i++) {
 				if (scumm_stricmp(_widgets[i]->_name, val->getString()) == 0) {
 					stack->pushNative(_widgets[i], true);
-					return S_OK;
+					return STATUS_OK;
 				}
 			}
 			stack->pushNULL();
 		}
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -732,7 +732,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		_fontInactive = Game->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontInactive != NULL);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -744,13 +744,13 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		delete _imageInactive;
 		_imageInactive = new CBSprite(Game);
 		const char *filename = stack->pop()->getString();
-		if (!_imageInactive || FAILED(_imageInactive->loadFile(filename))) {
+		if (!_imageInactive || DID_FAIL(_imageInactive->loadFile(filename))) {
 			delete _imageInactive;
 			_imageInactive = NULL;
 			stack->pushBool(false);
 		} else stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -761,7 +761,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imageInactive || !_imageInactive->_filename) stack->pushNULL();
 		else stack->pushString(_imageInactive->_filename);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -772,7 +772,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (!_imageInactive) stack->pushNULL();
 		else stack->pushNative(_imageInactive, true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 
@@ -781,8 +781,8 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Close") == 0) {
 		stack->correctParams(0);
-		stack->pushBool(SUCCEEDED(close()));
-		return S_OK;
+		stack->pushBool(DID_SUCCEED(close()));
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -793,7 +793,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		goExclusive();
 		script->waitFor(this);
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -804,7 +804,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		goSystemExclusive();
 		script->waitFor(this);
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -815,7 +815,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		_posX = (Game->_renderer->_width - _width) / 2;
 		_posY = (Game->_renderer->_height - _height) / 2;
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -827,10 +827,10 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CScValue *val = stack->pop();
 		cleanup();
 		if (!val->isNULL()) {
-			stack->pushBool(SUCCEEDED(loadFile(val->getString())));
+			stack->pushBool(DID_SUCCEED(loadFile(val->getString())));
 		} else stack->pushBool(true);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -847,7 +847,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		btn->_parent = this;
 		_widgets.Add(btn);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -864,7 +864,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		sta->_parent = this;
 		_widgets.Add(sta);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -881,7 +881,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		edi->_parent = this;
 		_widgets.Add(edi);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -898,7 +898,7 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		win->_parent = this;
 		_widgets.Add(win);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -917,8 +917,8 @@ HRESULT CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			}
 		}
 		stack->pushNULL();
-		return S_OK;
-	} else if SUCCEEDED(Game->windowScriptMethodHook(this, script, stack, name)) return S_OK;
+		return STATUS_OK;
+	} else if DID_SUCCEED(Game->windowScriptMethodHook(this, script, stack, name)) return STATUS_OK;
 
 	else return CUIObject::scCallMethod(script, stack, thisStack, name);
 }
@@ -1013,13 +1013,13 @@ CScValue *CUIWindow::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CUIWindow::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1027,7 +1027,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Menu") == 0) {
 		_isMenu = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1035,7 +1035,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InGame") == 0) {
 		_inGame = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1043,7 +1043,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PauseMusic") == 0) {
 		_pauseMusic = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1051,7 +1051,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ClipContents") == 0) {
 		_clipContents = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1059,7 +1059,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Transparent") == 0) {
 		_transparent = value->getBool();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1068,7 +1068,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "FadeColor") == 0) {
 		_fadeColor = (uint32)value->getInt();
 		_fadeBackground = (_fadeColor != 0);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1081,7 +1081,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
 			close();
 			_visible = true;
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1094,7 +1094,7 @@ HRESULT CUIWindow::scSetProperty(const char *name, CScValue *value) {
 			close();
 			_visible = true;
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CUIObject::scSetProperty(name, value);
@@ -1111,7 +1111,7 @@ const char *CUIWindow::scToString() {
 bool CUIWindow::handleKeypress(Common::Event *event, bool printable) {
 //TODO
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
-		return SUCCEEDED(moveFocus(!CBKeyboardState::isShiftDown()));
+		return DID_SUCCEED(moveFocus(!CBKeyboardState::isShiftDown()));
 	} else {
 		if (_focusedWidget) return _focusedWidget->handleKeypress(event, printable);
 		else return false;
@@ -1128,8 +1128,8 @@ bool CUIWindow::handleMouseWheel(int Delta) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
-	HRESULT res = CUIObject::handleMouse(event, button);
+ERRORCODE CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
+	ERRORCODE res = CUIObject::handleMouse(event, button);
 
 	// handle window dragging
 	if (!CBPlatform::isRectEmpty(&_dragRect)) {
@@ -1158,7 +1158,7 @@ HRESULT CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CUIWindow::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 
@@ -1184,12 +1184,12 @@ HRESULT CUIWindow::persist(CBPersistMgr *persistMgr) {
 
 	_widgets.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::moveFocus(bool forward) {
+ERRORCODE CUIWindow::moveFocus(bool forward) {
 	int i;
 	bool found = false;
 	for (i = 0; i < _widgets.GetSize(); i++) {
@@ -1202,7 +1202,7 @@ HRESULT CUIWindow::moveFocus(bool forward) {
 
 	if (!_focusedWidget) {
 		if (_widgets.GetSize() > 0) i = 0;
-		else return S_OK;
+		else return STATUS_OK;
 	}
 
 	int numTries = 0;
@@ -1225,13 +1225,13 @@ HRESULT CUIWindow::moveFocus(bool forward) {
 		numTries++;
 	}
 
-	return done ? S_OK : E_FAIL;
+	return done ? STATUS_OK : STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::goExclusive() {
-	if (_mode == WINDOW_EXCLUSIVE) return S_OK;
+ERRORCODE CUIWindow::goExclusive() {
+	if (_mode == WINDOW_EXCLUSIVE) return STATUS_OK;
 
 	if (_mode == WINDOW_NORMAL) {
 		_ready = false;
@@ -1239,14 +1239,14 @@ HRESULT CUIWindow::goExclusive() {
 		_visible = true;
 		_disable = false;
 		Game->focusWindow(this);
-		return S_OK;
-	} else return E_FAIL;
+		return STATUS_OK;
+	} else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::goSystemExclusive() {
-	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) return S_OK;
+ERRORCODE CUIWindow::goSystemExclusive() {
+	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) return STATUS_OK;
 
 	makeFreezable(false);
 
@@ -1257,12 +1257,12 @@ HRESULT CUIWindow::goSystemExclusive() {
 	Game->focusWindow(this);
 
 	Game->freeze(_pauseMusic);
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::close() {
+ERRORCODE CUIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		Game->unfreeze();
 	}
@@ -1271,12 +1271,12 @@ HRESULT CUIWindow::close() {
 	_visible = false;
 	_ready = true;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
+ERRORCODE CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
 	switch (obj->_type) {
@@ -1288,7 +1288,7 @@ HRESULT CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
 		return CBObject::listen(param1, param2);
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -1302,7 +1302,7 @@ void CUIWindow::makeFreezable(bool freezable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIWindow::getWindowObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
+ERRORCODE CUIWindow::getWindowObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _widgets.GetSize(); i++) {
 		CUIObject *control = _widgets[i];
 		if (control->_disable && interactiveOnly) continue;
@@ -1321,7 +1321,7 @@ HRESULT CUIWindow::getWindowObjects(CBArray<CUIObject *, CUIObject *> &objects, 
 			if (!interactiveOnly) objects.Add(control);
 		}
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

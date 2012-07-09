@@ -70,7 +70,7 @@ CBImage::~CBImage() {
 #endif
 }
 
-HRESULT CBImage::loadFile(const Common::String &filename) {
+ERRORCODE CBImage::loadFile(const Common::String &filename) {
 	_filename = filename;
 
 	if (StringUtil::startsWith(filename, "savegame:", true)) {
@@ -88,14 +88,14 @@ HRESULT CBImage::loadFile(const Common::String &filename) {
 	}
 
 	Common::SeekableReadStream *file = Game->_fileManager->openFile(filename.c_str());
-	if (!file) return E_FAIL;
+	if (!file) return STATUS_FAILED;
 
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
 	_palette = _decoder->getPalette();
 	Game->_fileManager->closeFile(file);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 byte CBImage::getAlphaAt(int x, int y) {
@@ -112,21 +112,21 @@ void CBImage::copyFrom(Graphics::Surface *surface) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBImage::saveBMPFile(const char *filename) {
+ERRORCODE CBImage::saveBMPFile(const char *filename) {
 #if 0
-	if (!_bitmap) return E_FAIL;
+	if (!_bitmap) return STATUS_FAILED;
 
-	if (FreeImage_Save(FIF_BMP, _bitmap, filename)) return S_OK;
-	else return E_FAIL;
+	if (FreeImage_Save(FIF_BMP, _bitmap, filename)) return STATUS_OK;
+	else return STATUS_FAILED;
 #endif
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBImage::resize(int newWidth, int newHeight) {
+ERRORCODE CBImage::resize(int newWidth, int newHeight) {
 #if 0
-	if (!_bitmap) return E_FAIL;
+	if (!_bitmap) return STATUS_FAILED;
 
 	if (newWidth == 0) NewWidth = FreeImage_GetWidth(_bitmap);
 	if (newHeight == 0) NewHeight = FreeImage_GetHeight(_bitmap);
@@ -136,10 +136,10 @@ HRESULT CBImage::resize(int newWidth, int newHeight) {
 	if (newImg) {
 		FreeImage_Unload(_bitmap);
 		_bitmap = newImg;
-		return S_OK;
-	} else return E_FAIL;
+		return STATUS_OK;
+	} else return STATUS_FAILED;
 #endif
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 
@@ -248,7 +248,7 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBImage::copyFrom(CBImage *origImage, int newWidth, int newHeight) {
+ERRORCODE CBImage::copyFrom(CBImage *origImage, int newWidth, int newHeight) {
 #if 0
 	if (_bitmap) FreeImage_Unload(_bitmap);
 
@@ -264,7 +264,7 @@ HRESULT CBImage::copyFrom(CBImage *origImage, int newWidth, int newHeight) {
 		_deletableSurface = NULL;
 	}
 	_surface = _deletableSurface = temp.scale(newWidth, newHeight);
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

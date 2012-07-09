@@ -92,7 +92,7 @@ void CAdNodeState::setCursor(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdNodeState::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdNodeState::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(Game));
 
 	persistMgr->transfer(TMEMBER(_active));
@@ -102,7 +102,7 @@ HRESULT CAdNodeState::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alphaColor));
 	for (int i = 0; i < 7; i++) persistMgr->transfer(TMEMBER(_caption[i]));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -129,8 +129,8 @@ char *CAdNodeState::getCaption(int caseVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdNodeState::transferEntity(CAdEntity *entity, bool includingSprites, bool saving) {
-	if (!entity) return E_FAIL;
+ERRORCODE CAdNodeState::transferEntity(CAdEntity *entity, bool includingSprites, bool saving) {
+	if (!entity) return STATUS_FAILED;
 
 	// hack!
 	if (this->Game != entity->Game) this->Game = entity->Game;
@@ -163,7 +163,7 @@ HRESULT CAdNodeState::transferEntity(CAdEntity *entity, bool includingSprites, b
 		entity->_alphaColor = _alphaColor;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

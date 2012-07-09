@@ -71,20 +71,20 @@ int CBFont::getTextWidth(byte *text, int maxLength) {
 
 /*
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFont::loadFile(const char * Filename)
+ERRORCODE CBFont::loadFile(const char * Filename)
 {
     BYTE* Buffer = Game->_fileManager->readWholeFile(filename);
     if(Buffer==NULL){
         Game->LOG(0, "CBFont::LoadFile failed for file '%s'", filename);
-        return E_FAIL;
+        return STATUS_FAILED;
     }
 
-    HRESULT ret;
+    ERRORCODE ret;
 
     _filename = new char [strlen(filename)+1];
     strcpy(_filename, filename);
 
-    if(FAILED(ret = loadBuffer(Buffer))) Game->LOG(0, "Error parsing FONT file '%s'", filename);
+    if(DID_FAIL(ret = loadBuffer(Buffer))) Game->LOG(0, "Error parsing FONT file '%s'", filename);
 
     delete [] Buffer;
 
@@ -96,7 +96,7 @@ TOKEN_DEF_START
   TOKEN_DEF (FONT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-HRESULT CBFont::loadBuffer(byte * Buffer)
+ERRORCODE CBFont::loadBuffer(byte * Buffer)
 {
     TOKEN_TABLE_START(commands)
         TOKEN_TABLE (FONT)
@@ -108,7 +108,7 @@ HRESULT CBFont::loadBuffer(byte * Buffer)
 
     if(parser.GetCommand ((char**)&Buffer, commands, (char**)&params)!=TOKEN_FONT){
         Game->LOG(0, "'FONT' keyword expected.");
-        return E_FAIL;
+        return STATUS_FAILED;
     }
     Buffer = (byte *)params;
 
@@ -130,10 +130,10 @@ HRESULT CBFont::loadBuffer(byte * Buffer)
     }
     if (cmd == PARSERR_TOKENNOTFOUND){
         Game->LOG(0, "Syntax error in FONT definition");
-        return E_FAIL;
+        return STATUS_FAILED;
     }
 
-    return S_OK;
+    return STATUS_OK;
 }
 */
 
@@ -144,10 +144,10 @@ int CBFont::getLetterHeight() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBFont::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBFont::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -156,7 +156,7 @@ CBFont *CBFont::createFromFile(CBGame *Game, const char *filename) {
 	if (isTrueType(Game, filename)) {
 		CBFontTT *font = new CBFontTT(Game);
 		if (font) {
-			if (FAILED(font->loadFile(filename))) {
+			if (DID_FAIL(font->loadFile(filename))) {
 				delete font;
 				return NULL;
 			}
@@ -165,7 +165,7 @@ CBFont *CBFont::createFromFile(CBGame *Game, const char *filename) {
 	} else {
 		CBFontBitmap *font = new CBFontBitmap(Game);
 		if (font) {
-			if (FAILED(font->loadFile(filename))) {
+			if (DID_FAIL(font->loadFile(filename))) {
 				delete font;
 				return NULL;
 			}

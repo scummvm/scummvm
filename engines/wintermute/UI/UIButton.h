@@ -44,7 +44,7 @@ public:
 	uint32 _oneTimePressTime;
 	DECLARE_PERSISTENT(CUIButton, CUIObject)
 	void press();
-	virtual HRESULT display(int offsetX = 0, int offsetY = 0);
+	virtual ERRORCODE display(int offsetX = 0, int offsetY = 0);
 	bool _press;
 	bool _hover;
 	void correctSize();
@@ -63,14 +63,14 @@ public:
 	CUITiledImage *_backFocus;
 	CUIButton(CBGame *inGame = NULL);
 	virtual ~CUIButton();
-	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte *buffer, bool complete = true);
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
+	ERRORCODE loadFile(const char *filename);
+	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

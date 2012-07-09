@@ -62,8 +62,8 @@ CUIText::~CUIText() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::display(int offsetX, int offsetY) {
-	if (!_visible) return S_OK;
+ERRORCODE CUIText::display(int offsetX, int offsetY) {
+	if (!_visible) return STATUS_OK;
 
 
 	CBFont *font = _font;
@@ -89,25 +89,25 @@ HRESULT CUIText::display(int offsetX, int offsetY) {
 
 	//Game->_renderer->_rectList.Add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::loadFile(const char *filename) {
+ERRORCODE CUIText::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CUIText::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing STATIC file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing STATIC file '%s'", filename);
 
 	delete [] buffer;
 
@@ -138,7 +138,7 @@ TOKEN_DEF(PARENT_NOTIFY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CUIText::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(STATIC)
 	TOKEN_TABLE(TEMPLATE)
@@ -169,7 +169,7 @@ HRESULT CUIText::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_STATIC) {
 			Game->LOG(0, "'STATIC' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -177,7 +177,7 @@ HRESULT CUIText::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -191,7 +191,7 @@ HRESULT CUIText::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK:
 			delete _back;
 			_back = new CUITiledImage(Game);
-			if (!_back || FAILED(_back->loadFile((char *)params))) {
+			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
 				cmd = PARSERR_GENERIC;
@@ -201,7 +201,7 @@ HRESULT CUIText::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new CBSprite(Game);
-			if (!_image || FAILED(_image->loadFile((char *)params))) {
+			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
 				cmd = PARSERR_GENERIC;
@@ -250,7 +250,7 @@ HRESULT CUIText::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new CBSprite(Game);
-			if (!_cursor || FAILED(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
 				cmd = PARSERR_GENERIC;
@@ -280,20 +280,20 @@ HRESULT CUIText::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in STATIC definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading STATIC definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	correctSize();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "STATIC\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -370,13 +370,13 @@ HRESULT CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
 	CBBase::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SizeToFit
 	//////////////////////////////////////////////////////////////////////////
@@ -384,7 +384,7 @@ HRESULT CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(0);
 		sizeToFit();
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -394,7 +394,7 @@ HRESULT CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		stack->correctParams(0);
 		if (_font && _text) _height = _font->getTextHeight((byte *)_text, _width);
 		stack->pushNULL();
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CUIObject::scCallMethod(script, stack, thisStack, name);
@@ -434,7 +434,7 @@ CScValue *CUIText::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CUIText::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
@@ -442,7 +442,7 @@ HRESULT CUIText::scSetProperty(const char *name, CScValue *value) {
 		int i = value->getInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
 		_textAlign = (TTextAlign)i;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -452,7 +452,7 @@ HRESULT CUIText::scSetProperty(const char *name, CScValue *value) {
 		int i = value->getInt();
 		if (i < 0 || i >= NUM_VERTICAL_ALIGN) i = 0;
 		_verticalAlign = (TVerticalAlign)i;
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CUIObject::scSetProperty(name, value);
@@ -467,23 +467,23 @@ const char *CUIText::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CUIText::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 	persistMgr->transfer(TMEMBER_INT(_textAlign));
 	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUIText::sizeToFit() {
+ERRORCODE CUIText::sizeToFit() {
 	if (_font && _text) {
 		_width = _font->getTextWidth((byte *)_text);
 		_height = _font->getTextHeight((byte *)_text, _width);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

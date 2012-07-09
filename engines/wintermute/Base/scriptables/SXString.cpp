@@ -99,7 +99,7 @@ void CSXString::scSetString(const char *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Substring
 	//////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		//      stack->pushNULL();
 		//  }
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		if (!val->isNULL() && len <= 0) {
 			stack->pushString("");
-			return S_OK;
+			return STATUS_OK;
 		}
 
 		if (val->isNULL()) len = strlen(_string) - start;
@@ -166,7 +166,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 //			stack->pushNULL();
 //		}
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		else
 			stack->pushString(StringUtil::wideToAnsi(str).c_str());
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		else
 			stack->pushString(StringUtil::wideToAnsi(str).c_str());
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -237,7 +237,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		int indexOf = StringUtil::indexOf(str, toFind, index);
 		stack->pushInt(indexOf);
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -252,7 +252,7 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CSXArray *array = new CSXArray(Game);
 		if (!array) {
 			stack->pushNULL();
-			return S_OK;
+			return STATUS_OK;
 		}
 
 
@@ -309,10 +309,10 @@ HRESULT CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		}
 
 		stack->pushNative(array, false);
-		return S_OK;
+		return STATUS_OK;
 	}
 
-	else return E_FAIL;
+	else return STATUS_FAILED;
 }
 
 
@@ -352,7 +352,7 @@ CScValue *CSXString::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CSXString::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
@@ -369,15 +369,15 @@ HRESULT CSXString::scSetProperty(const char *name, CScValue *value) {
 				_capacity = newCap;
 			}
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
-	else return E_FAIL;
+	else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXString::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CSXString::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
 
@@ -392,7 +392,7 @@ HRESULT CSXString::persist(CBPersistMgr *persistMgr) {
 		} else _string = NULL;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 

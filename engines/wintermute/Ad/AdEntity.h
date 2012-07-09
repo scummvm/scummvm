@@ -36,7 +36,7 @@ class CVidTheoraPlayer;
 class CAdEntity : public CAdTalkHolder {
 public:
 	CVidTheoraPlayer *_theora;
-	HRESULT setSprite(const char *filename);
+	ERRORCODE setSprite(const char *filename);
 	int _walkToX;
 	int _walkToY;
 	TDirection _walkToDir;
@@ -46,19 +46,19 @@ public:
 	void updatePosition();
 	virtual int getHeight();
 	CBRegion *_region;
-	virtual HRESULT saveAsText(CBDynBuffer *buffer, int indent);
-	virtual HRESULT update();
-	virtual HRESULT display();
+	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	virtual ERRORCODE update();
+	virtual ERRORCODE display();
 	CAdEntity(CBGame *inGame);
 	virtual ~CAdEntity();
-	HRESULT loadFile(const char *filename);
-	HRESULT loadBuffer(byte *buffer, bool complete = true);
+	ERRORCODE loadFile(const char *filename);
+	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
 	TEntityType _subtype;
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 };

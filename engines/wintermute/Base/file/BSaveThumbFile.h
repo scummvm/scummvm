@@ -39,10 +39,10 @@ class CBSaveThumbFile : public CBFile {
 public:
 	CBSaveThumbFile(CBGame *Game);
 	virtual ~CBSaveThumbFile();
-	virtual HRESULT seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN);
-	virtual HRESULT read(void *buffer, uint32 size);
-	virtual HRESULT close();
-	virtual HRESULT open(const Common::String &filename);
+	virtual ERRORCODE seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN);
+	virtual ERRORCODE read(void *buffer, uint32 size);
+	virtual ERRORCODE close();
+	virtual ERRORCODE open(const Common::String &filename);
 private:
 	byte *_data;
 };

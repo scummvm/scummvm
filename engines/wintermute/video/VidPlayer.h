@@ -46,23 +46,23 @@ class CVidPlayer : public CBBase {
 public:
 	bool _showSubtitle;
 	int _currentSubtitle;
-	HRESULT loadSubtitles(const char *filename, const char *SubtitleFile);
+	ERRORCODE loadSubtitles(const char *filename, const char *SubtitleFile);
 	bool _slowRendering;
 	bool isPlaying();
 	char *_filename;
-	HRESULT stop();
-	HRESULT play(TVideoPlayback Type = VID_PLAY_CENTER, int X = 0, int Y = 0, bool FreezeMusic = true);
+	ERRORCODE stop();
+	ERRORCODE play(TVideoPlayback Type = VID_PLAY_CENTER, int X = 0, int Y = 0, bool FreezeMusic = true);
 	uint32 _totalVideoTime;
 	uint32 _startTime;
 	//CVidRenderer *_vidRenderer;
 	//CBSoundAVI *_sound;
 	bool _soundAvailable;
-	HRESULT SetDefaults();
+	ERRORCODE SetDefaults();
 	bool _playing;
-	HRESULT display();
-	HRESULT update();
-	HRESULT initialize(const char *inFilename, const char *SubtitleFile = NULL);
-	HRESULT cleanup();
+	ERRORCODE display();
+	ERRORCODE update();
+	ERRORCODE initialize(const char *inFilename, const char *SubtitleFile = NULL);
+	ERRORCODE cleanup();
 	CVidPlayer(CBGame *inGame);
 	virtual ~CVidPlayer();
 

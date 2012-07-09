@@ -189,7 +189,7 @@ int WinterMuteEngine::init() {
 	_game->initialize1();
 	
 	
-	if (FAILED(_game->loadSettings("startup.settings"))) {
+	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");
 		delete _game;
 		_game = NULL;
@@ -205,11 +205,11 @@ int WinterMuteEngine::init() {
 	
 	
 	
-	HRESULT ret;
+	ERRORCODE ret;
 	
 	// initialize the renderer
 	ret = _game->_renderer->initRenderer(_game->_settingsResWidth, _game->_settingsResHeight, windowedMode);
-	if (FAILED(ret)) {
+	if (DID_FAIL(ret)) {
 		_game->LOG(ret, "Error initializing renderer. Exiting.");
 		
 		delete _game;
@@ -225,7 +225,7 @@ int WinterMuteEngine::init() {
 	
 	// initialize sound manager (non-fatal if we fail)
 	ret = _game->_soundMgr->initialize();
-	if (FAILED(ret)) {
+	if (DID_FAIL(ret)) {
 		_game->LOG(ret, "Sound is NOT available.");
 	}
 	
@@ -233,7 +233,7 @@ int WinterMuteEngine::init() {
 	// load game
 	uint32 DataInitStart = CBPlatform::getTime();
 	
-	if (FAILED(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
+	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
 		delete _game;
 		_game = NULL;

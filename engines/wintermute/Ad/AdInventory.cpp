@@ -49,11 +49,11 @@ CAdInventory::~CAdInventory() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::insertItem(const char *name, const char *insertAfter) {
-	if (name == NULL) return E_FAIL;
+ERRORCODE CAdInventory::insertItem(const char *name, const char *insertAfter) {
+	if (name == NULL) return STATUS_FAILED;
 
 	CAdItem *item = ((CAdGame *)Game)->getItemByName(name);
-	if (item == NULL) return E_FAIL;
+	if (item == NULL) return STATUS_FAILED;
 
 	int insertIndex = -1;
 	for (int i = 0; i < _takenItems.GetSize(); i++) {
@@ -69,51 +69,51 @@ HRESULT CAdInventory::insertItem(const char *name, const char *insertAfter) {
 	if (insertIndex == -1) _takenItems.Add(item);
 	else _takenItems.InsertAt(insertIndex, item);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::removeItem(const char *name) {
-	if (name == NULL) return E_FAIL;
+ERRORCODE CAdInventory::removeItem(const char *name) {
+	if (name == NULL) return STATUS_FAILED;
 
 	for (int i = 0; i < _takenItems.GetSize(); i++) {
 		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
 			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
 			_takenItems.RemoveAt(i);
-			return S_OK;
+			return STATUS_OK;
 		}
 	}
 
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::removeItem(CAdItem *item) {
-	if (item == NULL) return E_FAIL;
+ERRORCODE CAdInventory::removeItem(CAdItem *item) {
+	if (item == NULL) return STATUS_FAILED;
 
 	for (int i = 0; i < _takenItems.GetSize(); i++) {
 		if (_takenItems[i] == item) {
 			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
 			_takenItems.RemoveAt(i);
-			return S_OK;
+			return STATUS_OK;
 		}
 	}
 
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventory::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdInventory::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
 	_takenItems.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_scrollOffset));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

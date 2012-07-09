@@ -61,15 +61,15 @@ CBScriptable::~CBScriptable() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	/*
 	stack->correctParams(0);
 	stack->pushNULL();
 	script->runtimeError("Call to undefined method '%s'.", name);
 
-	return S_OK;
+	return STATUS_OK;
 	*/
-	return E_FAIL;
+	return STATUS_FAILED;
 }
 
 
@@ -82,10 +82,10 @@ CScValue *CBScriptable::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptable::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CBScriptable::scSetProperty(const char *name, CScValue *value) {
 	if (!_scProp) _scProp = new CScValue(Game);
 	if (_scProp) return _scProp->setProp(name, value);
-	else return E_FAIL;
+	else return STATUS_FAILED;
 }
 
 
@@ -139,13 +139,13 @@ void CBScriptable::scSetBool(bool val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBScriptable::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBScriptable::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(Game));
 	persistMgr->transfer(TMEMBER(_refCount));
 	persistMgr->transfer(TMEMBER(_scProp));
 	persistMgr->transfer(TMEMBER(_scValue));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 

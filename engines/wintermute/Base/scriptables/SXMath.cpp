@@ -30,6 +30,7 @@
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/scriptables/ScValue.h"
 #include "engines/wintermute/persistent.h"
+#include "common/math.h"
 #include <cmath>
 
 namespace WinterMute {
@@ -58,14 +59,14 @@ CSXMath::~CSXMath() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Abs
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Abs") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(fabs(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Acos") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(acos(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -83,7 +84,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Asin") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(asin(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -92,7 +93,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Atan") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(atan(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -103,7 +104,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		double y = stack->pop()->getFloat();
 		double x = stack->pop()->getFloat();
 		stack->pushFloat(atan2(y, x));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -112,7 +113,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Ceil") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(ceil(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -121,7 +122,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Cos") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(cos(degreeToRadian(stack->pop()->getFloat())));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -130,7 +131,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Cosh") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(cosh(degreeToRadian(stack->pop()->getFloat())));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -139,7 +140,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Exp") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(exp(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -148,7 +149,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Floor") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(floor(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -157,7 +158,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Log") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(log(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -166,7 +167,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Log10") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(log10(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -178,7 +179,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		double y = stack->pop()->getFloat();
 
 		stack->pushFloat(pow(x, y));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -187,7 +188,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Sin") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(sin(degreeToRadian(stack->pop()->getFloat())));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -196,7 +197,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Sinh") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(sinh(degreeToRadian(stack->pop()->getFloat())));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -205,7 +206,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Tan") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(tan(degreeToRadian(stack->pop()->getFloat())));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -214,7 +215,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Tanh") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(tanh(degreeToRadian(stack->pop()->getFloat())));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -223,7 +224,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "Sqrt") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(sqrt(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -232,7 +233,7 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "DegToRad") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(degreeToRadian(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -241,10 +242,10 @@ HRESULT CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	else if (strcmp(name, "RadToDeg") == 0) {
 		stack->correctParams(1);
 		stack->pushFloat(radianToDegree(stack->pop()->getFloat()));
-		return S_OK;
+		return STATUS_OK;
 	}
 
-	else return E_FAIL;
+	else return STATUS_FAILED;
 }
 
 
@@ -264,7 +265,7 @@ CScValue *CSXMath::scGetProperty(const char *name) {
 	// PI
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PI") == 0) {
-		_scValue->setFloat(PI);
+		_scValue->setFloat(M_PI);
 		return _scValue;
 	}
 
@@ -274,21 +275,21 @@ CScValue *CSXMath::scGetProperty(const char *name) {
 
 //////////////////////////////////////////////////////////////////////////
 double CSXMath::degreeToRadian(double value) {
-	return value * (PI / 180.0f);
+	return value * (M_PI / 180.0f);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 double CSXMath::radianToDegree(double value) {
-	return value * (180.0f / PI);
+	return value * (180.0f / M_PI);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CSXMath::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CSXMath::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

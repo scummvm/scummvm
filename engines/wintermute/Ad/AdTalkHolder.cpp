@@ -73,8 +73,8 @@ CBSprite *CAdTalkHolder::getTalkStance(const char *stance) {
 		delete _animSprite;
 		_animSprite = new CBSprite(Game, this);
 		if (_animSprite) {
-			HRESULT res = _animSprite->loadFile(_forcedTalkAnimName);
-			if (FAILED(res)) {
+			ERRORCODE res = _animSprite->loadFile(_forcedTalkAnimName);
+			if (DID_FAIL(res)) {
 				Game->LOG(res, "CAdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
 				delete _animSprite;
 				_animSprite = NULL;
@@ -119,7 +119,7 @@ CBSprite *CAdTalkHolder::getTalkStance(const char *stance) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+ERRORCODE CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSprite
 	//////////////////////////////////////////////////////////////////////////
@@ -141,7 +141,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		} else {
 			const char *filename = val->getString();
 			CBSprite *spr = new CBSprite(Game, this);
-			if (!spr || FAILED(spr->loadFile(filename))) {
+			if (!spr || DID_FAIL(spr->loadFile(filename))) {
 				script->runtimeError("SetSprite method failed for file '%s'", filename);
 				stack->pushBool(false);
 			} else {
@@ -150,7 +150,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 				stack->pushBool(true);
 			}
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 
 		if (!_sprite || !_sprite->_filename) stack->pushNULL();
 		else stack->pushString(_sprite->_filename);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 
 		if (!_sprite) stack->pushNULL();
 		else stack->pushNative(_sprite, true);
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -185,7 +185,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		bool Ex = stack->pop()->getBool();
 
 		CBSprite *spr = new CBSprite(Game, this);
-		if (!spr || FAILED(spr->loadFile(filename))) {
+		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("AddTalkSprite method failed for file '%s'", filename);
 		} else {
@@ -193,7 +193,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 			else _talkSprites.Add(spr);
 			stack->pushBool(true);
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		if (setTemp2)
 			_tempSprite2 = _sprite;
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 		bool setTemp2 = false;
 
 		CBSprite *spr = new CBSprite(Game, this);
-		if (!spr || FAILED(spr->loadFile(filename))) {
+		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("SetTalkSprite method failed for file '%s'", filename);
 		} else {
@@ -292,7 +292,7 @@ HRESULT CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack
 			if (setTemp2)
 				_tempSprite2 = spr;
 		}
-		return S_OK;
+		return STATUS_OK;
 	}
 
 	else return CAdObject::scCallMethod(script, stack, thisStack, name);
@@ -316,14 +316,14 @@ CScValue *CAdTalkHolder::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkHolder::scSetProperty(const char *name, CScValue *value) {
+ERRORCODE CAdTalkHolder::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	if(strcmp(name, "Item")==0){
 	    SetItem(value->getString());
-	    return S_OK;
+	    return STATUS_OK;
 	}
 
 	else*/ return CAdObject::scSetProperty(name, value);
@@ -337,7 +337,7 @@ const char *CAdTalkHolder::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkHolder::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdTalkHolder::saveAsText(CBDynBuffer *buffer, int indent) {
 	for (int i = 0; i < _talkSprites.GetSize(); i++) {
 		if (_talkSprites[i]->_filename)
 			buffer->putTextIndent(indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->_filename);
@@ -348,19 +348,19 @@ HRESULT CAdTalkHolder::saveAsText(CBDynBuffer *buffer, int indent) {
 			buffer->putTextIndent(indent + 2, "TALK_SPECIAL=\"%s\"\n", _talkSpritesEx[i]->_filename);
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdTalkHolder::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdTalkHolder::persist(CBPersistMgr *persistMgr) {
 	CAdObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_sprite));
 	_talkSprites.persist(persistMgr);
 	_talkSpritesEx.persist(persistMgr);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

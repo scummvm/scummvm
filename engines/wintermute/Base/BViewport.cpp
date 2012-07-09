@@ -49,7 +49,7 @@ CBViewport::~CBViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBViewport::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CBViewport::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 
@@ -58,12 +58,12 @@ HRESULT CBViewport::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_offsetY));
 	persistMgr->transfer(TMEMBER(_rect));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CBViewport::setRect(int left, int top, int right, int bottom, bool noCheck) {
+ERRORCODE CBViewport::setRect(int left, int top, int right, int bottom, bool noCheck) {
 	if (!noCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);
@@ -74,7 +74,7 @@ HRESULT CBViewport::setRect(int left, int top, int right, int bottom, bool noChe
 	CBPlatform::setRect(&_rect, left, top, right, bottom);
 	_offsetX = left;
 	_offsetY = top;
-	return S_OK;
+	return STATUS_OK;
 }
 
 

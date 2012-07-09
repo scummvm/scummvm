@@ -64,8 +64,8 @@ CUITiledImage::~CUITiledImage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::display(int x, int y, int width, int height) {
-	if (!_image) return E_FAIL;
+ERRORCODE CUITiledImage::display(int x, int y, int width, int height) {
+	if (!_image) return STATUS_FAILED;
 
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
@@ -114,24 +114,24 @@ HRESULT CUITiledImage::display(int x, int y, int width, int height) {
 
 	Game->_renderer->endSpriteBatch();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::loadFile(const char *filename) {
+ERRORCODE CUITiledImage::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
 
 
 	delete [] buffer;
@@ -158,7 +158,7 @@ TOKEN_DEF(HORIZONTAL_TILES)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TILED_IMAGE)
 	TOKEN_TABLE(TEMPLATE)
@@ -187,7 +187,7 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TILED_IMAGE) {
 			Game->LOG(0, "'TILED_IMAGE' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -195,13 +195,13 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new CBSubFrame(Game);
-			if (!_image || FAILED(_image->setSurface((char *)params))) {
+			if (!_image || DID_FAIL(_image->setSurface((char *)params))) {
 				delete _image;
 				_image = NULL;
 				cmd = PARSERR_GENERIC;
@@ -261,11 +261,11 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in TILED_IMAGE definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading TILED_IMAGE definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (vTiles && hTiles) {
@@ -303,11 +303,11 @@ HRESULT CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 		if (CBPlatform::isRectEmpty(&_downRight))  CBPlatform::setRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TILED_IMAGE\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -333,7 +333,7 @@ HRESULT CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
 	CBBase::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -350,7 +350,7 @@ void CUITiledImage::correctSize(int *width, int *height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CUITiledImage::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CUITiledImage::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_downLeft));
@@ -364,7 +364,7 @@ HRESULT CUITiledImage::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_upMiddle));
 	persistMgr->transfer(TMEMBER(_upRight));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

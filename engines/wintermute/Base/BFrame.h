@@ -42,18 +42,18 @@ class CBFrame: public CBScriptable {
 public:
 	bool _killSound;
 	bool _keyframe;
-	HRESULT oneTimeDisplay(CBObject *owner, bool muted = false);
+	ERRORCODE oneTimeDisplay(CBObject *owner, bool muted = false);
 	DECLARE_PERSISTENT(CBFrame, CBScriptable)
 	CBSound *_sound;
 	bool _editorExpanded;
 	bool getBoundingRect(LPRECT rect, int x, int y, float scaleX = 100, float scaleY = 100);
-	HRESULT saveAsText(CBDynBuffer *buffer, int indent);
+	ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
 	int _moveY;
 	int _moveX;
 	uint32 _delay;
 	CBArray<CBSubFrame *, CBSubFrame *> _subframes;
-	HRESULT draw(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 Alpha = 0xFFFFFFFF, bool allFrames = false, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
-	HRESULT loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
+	ERRORCODE draw(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 Alpha = 0xFFFFFFFF, bool allFrames = false, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
+	ERRORCODE loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
 
 	CBFrame(CBGame *inGame);
 	virtual ~CBFrame();
@@ -62,8 +62,8 @@ public:
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual HRESULT scSetProperty(const char *name, CScValue *value);
-	virtual HRESULT scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 };

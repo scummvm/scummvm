@@ -61,7 +61,7 @@ CAdPathPoint::~CAdPathPoint() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdPathPoint::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdPathPoint::persist(CBPersistMgr *persistMgr) {
 
 	CBPoint::persist(persistMgr);
 
@@ -69,7 +69,7 @@ HRESULT CAdPathPoint::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_marked));
 	persistMgr->transfer(TMEMBER(_origin));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

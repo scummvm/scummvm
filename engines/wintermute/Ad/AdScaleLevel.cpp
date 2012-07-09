@@ -51,19 +51,19 @@ CAdScaleLevel::~CAdScaleLevel() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::loadFile(const char *filename) {
+ERRORCODE CAdScaleLevel::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdScaleLevel::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing SCALE_LEVEL file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing SCALE_LEVEL file '%s'", filename);
 
 
 	delete [] buffer;
@@ -80,7 +80,7 @@ TOKEN_DEF(SCALE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCALE_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -96,7 +96,7 @@ HRESULT CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCALE_LEVEL) {
 			Game->LOG(0, "'SCALE_LEVEL' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -104,7 +104,7 @@ HRESULT CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_Y:
@@ -125,33 +125,33 @@ HRESULT CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in SCALE_LEVEL definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdScaleLevel::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SCALE_LEVEL {\n");
 	buffer->putTextIndent(indent + 2, "Y=%d\n", _posY);
 	buffer->putTextIndent(indent + 2, "SCALE=%d\n", (int)_scale);
 	CBBase::saveAsText(buffer, indent + 2);
 	buffer->putTextIndent(indent, "}\n");
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdScaleLevel::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdScaleLevel::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_scale));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

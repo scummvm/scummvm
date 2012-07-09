@@ -73,7 +73,7 @@ CAdInventoryBox::~CAdInventoryBox() {
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
+ERRORCODE CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
 	switch (obj->_type) {
@@ -92,15 +92,15 @@ HRESULT CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 		break;
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::display() {
+ERRORCODE CAdInventoryBox::display() {
 	CAdGame *adGame = (CAdGame *)Game;
 
-	if (!_visible) return S_OK;
+	if (!_visible) return STATUS_OK;
 
 	int ItemsX, ItemsY;
 	ItemsX = (int)floor((float)((_itemsArea.right - _itemsArea.left + _spacing) / (_itemWidth + _spacing)));
@@ -149,24 +149,24 @@ HRESULT CAdInventoryBox::display() {
 	}
 	if (_window && _window->_alphaColor != 0) Game->_renderer->_forceAlphaColor = 0;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::loadFile(const char *filename) {
+ERRORCODE CAdInventoryBox::loadFile(const char *filename) {
 	byte *buffer = Game->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		Game->LOG(0, "CAdInventoryBox::LoadFile failed for file '%s'", filename);
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
-	HRESULT ret;
+	ERRORCODE ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (FAILED(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
 
 
 	delete [] buffer;
@@ -192,7 +192,7 @@ TOKEN_DEF(HIDE_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
+ERRORCODE CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(INVENTORY_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -219,7 +219,7 @@ HRESULT CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_INVENTORY_BOX) {
 			Game->LOG(0, "'INVENTORY_BOX' keyword expected.");
-			return E_FAIL;
+			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
@@ -227,7 +227,7 @@ HRESULT CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (FAILED(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_NAME:
@@ -241,7 +241,7 @@ HRESULT CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_WINDOW:
 			delete _window;
 			_window = new CUIWindow(Game);
-			if (!_window || FAILED(_window->loadBuffer(params, false))) {
+			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				delete _window;
 				_window = NULL;
 				cmd = PARSERR_GENERIC;
@@ -287,11 +287,11 @@ HRESULT CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		Game->LOG(0, "Syntax error in INVENTORY_BOX definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		Game->LOG(0, "Error loading INVENTORY_BOX definition");
-		return E_FAIL;
+		return STATUS_FAILED;
 	}
 
 	if (_exclusive) {
@@ -313,11 +313,11 @@ HRESULT CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
+ERRORCODE CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "INVENTORY_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -345,12 +345,12 @@ HRESULT CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
 	CBBase::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
-	return S_OK;
+	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-HRESULT CAdInventoryBox::persist(CBPersistMgr *persistMgr) {
+ERRORCODE CAdInventoryBox::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_closeButton));
@@ -365,7 +365,7 @@ HRESULT CAdInventoryBox::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_window));
 	persistMgr->transfer(TMEMBER(_exclusive));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

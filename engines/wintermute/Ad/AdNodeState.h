@@ -35,7 +35,7 @@ class CAdEntity;
 
 class CAdNodeState : public CBBase {
 public:
-	HRESULT transferEntity(CAdEntity *entity, bool includingSprites, bool saving);
+	ERRORCODE transferEntity(CAdEntity *entity, bool includingSprites, bool saving);
 	void setName(const char *name);
 	void setFilename(const char *filename);
 	void setCursor(const char *filename);

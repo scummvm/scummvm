@@ -38,9 +38,9 @@ namespace WinterMute {
 class CBStringTable : public CBBase {
 public:
 	const char *expandStatic(const char *string, bool forceExpand = false);
-	HRESULT loadFile(const char *filename, bool deleteAll = true);
+	ERRORCODE loadFile(const char *filename, bool deleteAll = true);
 	void expand(char **str, bool forceExpand = false);
-	HRESULT addString(const char *key, const char *val, bool reportDuplicities = true);
+	ERRORCODE addString(const char *key, const char *val, bool reportDuplicities = true);
 	CBStringTable(CBGame *inGame);
 	virtual ~CBStringTable();
 	Common::HashMap<Common::String, Common::String> _strings;
