@@ -255,51 +255,51 @@ char *CBUtils::getFilename(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBUtils::RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL) {
-	float var_R = (RGBCOLGetR(RGBColor) / 255.0f);
-	float var_G = (RGBCOLGetG(RGBColor) / 255.0f);
-	float var_B = (RGBCOLGetB(RGBColor) / 255.0f);
+void CBUtils::RGBtoHSL(uint32 RGBColor, byte *outH, byte *outS, byte *outL) {
+	float varR = (RGBCOLGetR(RGBColor) / 255.0f);
+	float varG = (RGBCOLGetG(RGBColor) / 255.0f);
+	float varB = (RGBCOLGetB(RGBColor) / 255.0f);
 
 	//Min. value of RGB
-	float var_Min = MIN(var_R, var_G);
-	var_Min = MIN(var_Min, var_B);
+	float varMin = MIN(varR, varG);
+	varMin = MIN(varMin, varB);
 
 	//Max. value of RGB
-	float var_Max = MAX(var_R, var_G);
-	var_Max = MAX(var_Max, var_B);
+	float varMax = MAX(varR, varG);
+	varMax = MAX(varMax, varB);
 
 	//Delta RGB value
-	float del_Max = var_Max - var_Min;
+	float delMax = varMax - varMin;
 
 	float H = 0.0f, S = 0.0f, L = 0.0f;
 
-	L = (var_Max + var_Min) / 2.0f;
+	L = (varMax + varMin) / 2.0f;
 
 	//This is a gray, no chroma...
-	if (del_Max == 0) {
+	if (delMax == 0) {
 		H = 0;
 		S = 0;
 	}
 	//Chromatic data...
 	else {
-		if (L < 0.5f) S = del_Max / (var_Max + var_Min);
-		else S = del_Max / (2.0f - var_Max - var_Min);
+		if (L < 0.5f) S = delMax / (varMax + varMin);
+		else S = delMax / (2.0f - varMax - varMin);
 
-		float del_R = (((var_Max - var_R) / 6.0f) + (del_Max / 2.0f)) / del_Max;
-		float del_G = (((var_Max - var_G) / 6.0f) + (del_Max / 2.0f)) / del_Max;
-		float del_B = (((var_Max - var_B) / 6.0f) + (del_Max / 2.0f)) / del_Max;
+		float delR = (((varMax - varR) / 6.0f) + (delMax / 2.0f)) / delMax;
+		float delG = (((varMax - varG) / 6.0f) + (delMax / 2.0f)) / delMax;
+		float delB = (((varMax - varB) / 6.0f) + (delMax / 2.0f)) / delMax;
 
-		if (var_R == var_Max) H = del_B - del_G;
-		else if (var_G == var_Max) H = (1.0f / 3.0f) + del_R - del_B;
-		else if (var_B == var_Max) H = (2.0f / 3.0f) + del_G - del_R;
+		if (varR == varMax) H = delB - delG;
+		else if (varG == varMax) H = (1.0f / 3.0f) + delR - delB;
+		else if (varB == varMax) H = (2.0f / 3.0f) + delG - delR;
 
 		if (H < 0) H += 1;
 		if (H > 1) H -= 1;
 	}
 
-	*OutH = (byte)(H * 255);
-	*OutS = (byte)(S * 255);
-	*OutL = (byte)(L * 255);
+	*outH = (byte)(H * 255);
+	*outS = (byte)(S * 255);
+	*outL = (byte)(L * 255);
 }
 
 
