@@ -136,21 +136,6 @@ typedef enum {
     ELEMENT_STRING = 0
 } TElementType;
 
-
-
-// compiler interface
-typedef byte *(DLL_LOAD_FILE)(void *data, char *filename, uint32 *size);
-typedef void (DLL_CLOSE_FILE)(void *data, byte *buffer);
-typedef void (DLL_ADD_ERROR)(void *data, int line, char *text);
-typedef void (DLL_PARSE_ELEMENT)(void *data, int line, int type, void *elementData);
-
-typedef struct {
-	DLL_LOAD_FILE *Dll_LoadFile;
-	DLL_CLOSE_FILE *Dll_CloseFile;
-	DLL_ADD_ERROR *Dll_AddError;
-	DLL_PARSE_ELEMENT *Dll_ParseElement;
-} CALLBACKS;
-
 } // end of namespace WinterMute
 
 #endif

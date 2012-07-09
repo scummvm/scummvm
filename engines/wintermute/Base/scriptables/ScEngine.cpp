@@ -73,14 +73,6 @@ CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 
 	_currentScript = NULL;
 
-	_fileToCompile = NULL;
-
-	_compileErrorCallback = NULL;
-	_compileErrorCallbackData = NULL;
-
-	_parseElementCallback = NULL;
-	_parseElementCallbackData = NULL;
-
 	_isProfiling = false;
 	_profilingStartTime = 0;
 
@@ -123,15 +115,6 @@ HRESULT CScEngine::cleanup() {
 
 	_currentScript = NULL; // ref only
 
-	delete[] _fileToCompile;
-	_fileToCompile = NULL;
-
-	_compileErrorCallback = NULL;
-	_compileErrorCallbackData = NULL;
-
-	_parseElementCallback = NULL;
-	_parseElementCallbackData = NULL;
-
 	return S_OK;
 }
 
@@ -148,34 +131,9 @@ void CScEngine::closeFile(void *data, byte *buffer) {
 	delete [] buffer;
 }
 
-//////////////////////////////////////////////////////////////////////////
-void CScEngine::addError(void *data, int line, char *text) {
-	CBGame *Game = (CBGame *)data;
-
-	if (Game) {
-		if (Game->_scEngine && Game->_scEngine->_fileToCompile)
-			Game->LOG(0, "Compiling script '%s'...", Game->_scEngine->_fileToCompile);
-		Game->LOG(0, "  Error@line %d: %s", line, text);
-
-
-		// redirect to an engine's own callback
-		if (Game->_scEngine && Game->_scEngine->_compileErrorCallback) {
-			Game->_scEngine->_compileErrorCallback(line, text, Game->_scEngine->_compileErrorCallbackData);
-		}
-	}
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 void CScEngine::parseElement(void *data, int line, int type, void *elementData) {
-	CBGame *Game = (CBGame *)data;
-
-	if (Game) {
-		// redirect to an engine's own callback
-		if (Game->_scEngine && Game->_scEngine->_parseElementCallback) {
-			Game->_scEngine->_parseElementCallback(line, type, elementData, Game->_scEngine->_compileErrorCallbackData);
-		}
-	}
 }
 
 
@@ -228,7 +186,6 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 	// nope, load it
 	byte *compBuffer;
 	uint32 compSize;
-	bool compiledNow = false;
 
 	uint32 size;
 
@@ -280,7 +237,6 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 
 	// cleanup
 	delete [] buffer;
-	if (compiledNow) ExtReleaseBuffer(compBuffer);
 
 	return ret;
 }
@@ -497,7 +453,6 @@ HRESULT CScEngine::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(Game));
 	persistMgr->transfer(TMEMBER(_currentScript));
-	persistMgr->transfer(TMEMBER(_fileToCompile));
 	persistMgr->transfer(TMEMBER(_globals));
 	_scripts.persist(persistMgr);
 
@@ -533,30 +488,6 @@ HRESULT CScEngine::resumeAll() {
 		_scripts[i]->resume();
 
 	return S_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CScEngine::setFileToCompile(const char *filename) {
-	delete[] _fileToCompile;
-	_fileToCompile = new char[strlen(filename) + 1];
-	if (_fileToCompile) {
-		strcpy(_fileToCompile, filename);
-		return S_OK;
-	} else return E_FAIL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-void CScEngine::setCompileErrorCallback(COMPILE_ERROR_CALLBACK callback, void *data) {
-	_compileErrorCallback = callback;
-	_compileErrorCallbackData = data;
-}
-
-//////////////////////////////////////////////////////////////////////////
-void CScEngine::setParseElementCallback(PARSE_ELEMENT_CALLBACK callback, void *data) {
-	_parseElementCallback = callback;
-	_parseElementCallbackData = data;
 }
 
 

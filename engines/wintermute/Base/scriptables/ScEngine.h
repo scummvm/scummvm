@@ -38,16 +38,6 @@
 
 namespace WinterMute {
 
-typedef byte *(*DLL_COMPILE_BUFFER)(byte *buffer, char *source, uint32 bufferSize, uint32 *compiledSize);
-typedef byte *(*DLL_COMPILE_FILE)(char *filename, uint32 *compiledSize);
-typedef void (*DLL_RELEASE_BUFFER)(unsigned char *buffer);
-typedef void (*DLL_SET_CALLBACKS)(CALLBACKS *callbacks, void *Data);
-typedef int (*DLL_DEFINE_FUNCTION)(const char *name); /* Was non-const, changed to silence warnings */
-typedef int (*DLL_DEFINE_VARIABLE)(const char *name); /* Was non-const, changed to silence warnings */
-
-typedef void (*COMPILE_ERROR_CALLBACK)(int line, char *text , void *data);
-typedef void (*PARSE_ELEMENT_CALLBACK)(int line, int type, void *elementData, void *data);
-
 #define MAX_CACHED_SCRIPTS 20
 class CScScript;
 class CScValue;
@@ -107,17 +97,7 @@ public:
 	HRESULT tickUnbreakable();
 	HRESULT removeFinishedScripts();
 	bool isValidScript(CScScript *script);
-	void setCompileErrorCallback(COMPILE_ERROR_CALLBACK callback, void *data);
-	void setParseElementCallback(PARSE_ELEMENT_CALLBACK callback, void *data);
 
-	COMPILE_ERROR_CALLBACK _compileErrorCallback;
-	void *_compileErrorCallbackData;
-
-	PARSE_ELEMENT_CALLBACK _parseElementCallback;
-	void *_parseElementCallbackData;
-
-	HRESULT setFileToCompile(const char *filename);
-	char *_fileToCompile;
 	CScScript *_currentScript;
 	HRESULT resumeAll();
 	HRESULT pauseAll();
@@ -136,16 +116,9 @@ public:
 
 	CScEngine(CBGame *inGame);
 	virtual ~CScEngine();
-	static void addError(void *data, int line, char *text);
 	static byte *loadFile(void *data, char *filename, uint32 *size);
 	static void closeFile(void *data, byte *buffer);
 	static void parseElement(void *data, int line, int type, void *elementData);
-	DLL_COMPILE_BUFFER  ExtCompileBuffer;
-	DLL_COMPILE_FILE    ExtCompileFile;
-	DLL_RELEASE_BUFFER  ExtReleaseBuffer;
-	DLL_SET_CALLBACKS   ExtSetCallbacks;
-	DLL_DEFINE_FUNCTION ExtDefineFunction;
-	DLL_DEFINE_VARIABLE ExtDefineVariable;
 
 	CBArray<CScScript *, CScScript *> _scripts;
 
