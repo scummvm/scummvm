@@ -3464,7 +3464,7 @@ void LBLiveTextItem::update() {
 			// TODO: check this in RE
 			LBItem *item = _vm->getItemById(_words[_currentWord].itemId);
 			if (item)
-				item->togglePlaying(false);
+				item->togglePlaying(false, true);
 
 			_currentWord = 0xFFFF;
 		}
