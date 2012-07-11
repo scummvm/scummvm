@@ -249,11 +249,11 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	// Compile configuration
 	if (setup.devTools || name == setup.projectName || name == "sword25" || name == "grim") {
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
-	} else {
-		if (name == "scummvm" && !isRelease)
-			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
 
-		if (warningsIterator != _projectWarnings.end())
+		if (name == setup.projectName && !isRelease)
+			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
+	} else {
+				if (warningsIterator != _projectWarnings.end())
 			project << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
 	}
 
