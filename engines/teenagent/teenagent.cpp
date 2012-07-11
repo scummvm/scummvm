@@ -40,6 +40,7 @@
 #include "graphics/thumbnail.h"
 
 #include "teenagent/console.h"
+#include "teenagent/dialog.h"
 #include "teenagent/inventory.h"
 #include "teenagent/music.h"
 #include "teenagent/objects.h"
@@ -65,6 +66,7 @@ TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
 	DebugMan.addDebugChannel(kDebugSurface, "Surface", "Enable Surface Debug");
 
 	music = new MusicPlayer(this);
+	dialog = new Dialog(this);
 	res = new Resources();
 
 	console = 0;
@@ -72,6 +74,7 @@ TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
 
 TeenAgentEngine::~TeenAgentEngine() {
 	delete music;
+	delete dialog;
 	res->deinit();
 	delete res;
 

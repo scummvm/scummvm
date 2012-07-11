@@ -32,21 +32,26 @@ class TeenAgentEngine;
 
 class Dialog {
 public:
-	static uint16 pop(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
+	Dialog(TeenAgentEngine *vm) : _vm(vm) { }
 
-	static uint16 popMark(TeenAgentEngine *vm, Scene *scene, uint16 addr) {
-		return pop(vm, scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
+	uint16 pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
+
+	uint16 popMark(Scene *scene, uint16 addr) {
+		return pop(scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
 	}
 
-	static void show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
+	void show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
 
-	static void showMono(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation, byte color, byte slot) {
-		show(vm, scene, addr, animation, animation, color, color, slot, slot);
+	void showMono(Scene *scene, uint16 addr, uint16 animation, byte color, byte slot) {
+		show(scene, addr, animation, animation, color, color, slot, slot);
 	}
 
-	static void showMark(TeenAgentEngine *vm, Scene *scene, uint16 addr) {
-		show(vm, scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
+	void showMark(Scene *scene, uint16 addr) {
+		show(scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
 	}
+
+private:
+	TeenAgentEngine *_vm;
 };
 
 } // End of namespace TeenAgent

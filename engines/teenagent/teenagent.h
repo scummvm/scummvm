@@ -47,6 +47,7 @@ struct Object;
 struct UseHotspot;
 class Scene;
 class MusicPlayer;
+class Dialog;
 class Console;
 class Resources;
 class Inventory;
@@ -142,6 +143,7 @@ public:
 	Scene *scene;
 	Inventory *inventory;
 	MusicPlayer *music;
+	Dialog *dialog;
 	Console *console;
 
 	void setMusic(byte id);

@@ -26,7 +26,7 @@
 
 namespace TeenAgent {
 
-void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
+void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
 	debugC(0, kDebugDialog, "Dialog::show(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	int n = 0;
 	Common::String message;
@@ -47,7 +47,7 @@ void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animati
 	}
 
 	while (n < 4) {
-		byte c = vm->res->eseg.get_byte(addr++);
+		byte c = _vm->res->eseg.get_byte(addr++);
 		debugC(1, kDebugDialog, "%02x: %c", c, c > 0x20? c: '.');
 
 		switch (c) {
@@ -119,17 +119,17 @@ void Dialog::show(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animati
 	scene->push(ec);
 }
 
-uint16 Dialog::pop(TeenAgentEngine *vm, Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
+uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
 	debugC(0, kDebugDialog, "Dialog::pop(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	uint16 next;
 	do {
-		next = vm->res->dseg.get_word(addr);
+		next = _vm->res->dseg.get_word(addr);
 		addr += 2;
 	} while (next == 0);
-	uint16 next2 = vm->res->dseg.get_word(addr);
+	uint16 next2 = _vm->res->dseg.get_word(addr);
 	if (next2 != 0xffff)
-		vm->res->dseg.set_word(addr - 2, 0);
-	show(vm, scene, next, animation1, animation2, color1, color2, slot1, slot2);
+		_vm->res->dseg.set_word(addr - 2, 0);
+	show(scene, next, animation1, animation2, color1, color2, slot1, slot2);
 	return next;
 }
 
