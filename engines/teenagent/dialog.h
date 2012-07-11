@@ -40,18 +40,20 @@ public:
 		return pop(scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
 	}
 
-	void show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
+	void show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
 
-	void showMono(Scene *scene, uint16 addr, uint16 animation, byte color, byte slot) {
-		show(scene, addr, animation, animation, color, color, slot, slot);
+	void showMono(uint16 dialogNum, Scene *scene, uint16 animation, byte color, byte slot) {
+		show(dialogNum, scene, animation, animation, color, color, slot, slot);
 	}
 
-	void showMark(Scene *scene, uint16 addr) {
-		show(scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
+	void showMark(uint16 dialogNum, Scene *scene) {
+		show(dialogNum, scene, 0, 0, 0xd1, 0xd1, 0, 0);
 	}
 
 private:
 	TeenAgentEngine *_vm;
+
+	void show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
 };
 
 } // End of namespace TeenAgent

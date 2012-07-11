@@ -55,7 +55,8 @@ public:
 	Segment cseg, dseg;
 	Font font7, font8;
 
-	const byte *getDialog(uint16 dialogNum) { return eseg.ptr(dialogOffsets[dialogNum]); }
+	//const byte *getDialog(uint16 dialogNum) { return eseg.ptr(dialogOffsets[dialogNum]); }
+	uint16 getDialogAddr(uint16 dialogNum) { return dialogOffsets[dialogNum]; }
 
 	Segment eseg;
 private:

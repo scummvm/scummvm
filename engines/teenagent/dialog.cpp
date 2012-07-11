@@ -26,6 +26,17 @@
 
 namespace TeenAgent {
 
+void Dialog::show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
+	uint16 addr = _vm->res->getDialogAddr(dialogNum);
+	// WORKAROUND: For Dialog 163, The usage of this in the engine overlaps the previous dialog i.e. the 
+	// starting offset used is two bytes early, thus implicitly changing the first command of this dialog
+	// from NEW_LINE to CHANGE_CHARACTER.
+	// FIXME: Unsure if this is correct behaviour or if this is a regression from the original. Check this.
+	if (dialogNum == 163)
+		addr -= 2;
+	show(scene, addr, animation1, animation2, color1, color2, slot1, slot2);
+}
+
 void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
 	debugC(0, kDebugDialog, "Dialog::show(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	int n = 0;

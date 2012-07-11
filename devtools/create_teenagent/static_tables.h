@@ -16232,6 +16232,10 @@ const static char* dialog_162[] = {
 	END_DIALOG
 };
 
+// Note:
+// The usage of this in the engine overlaps the previous dialog i.e. the 
+// starting offset used is two bytes early, thus implicitly changing the
+// first command of this dialog from NEW_LINE to CHANGE_CHARACTER.
 const static char* dialog_163[] = {
 	NEW_LINE,
 	"OH GIMMIE GIMMIE GIMMIE!!!",
