@@ -37,10 +37,9 @@ namespace TeenAgent {
 void TeenAgentEngine::rejectMessage() {
 	//random reject message:
 	uint i = _rnd.getRandomNumber(3);
-	debugC(0, kDebugCallbacks, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
-	displayMessage(res->dseg.get_word(0x339e + 2 * i));
+	debugC(0, kDebugCallbacks, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(dsAddr_rejectMsg + 2 * i)));
+	displayMessage(res->dseg.get_word(dsAddr_rejectMsg + 2 * i));
 }
-
 
 bool TeenAgentEngine::processCallback(uint16 addr) {
 	if (addr == 0)
@@ -56,8 +55,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		uint16 func = 6 + addr + READ_LE_UINT16(code + 4);
 		debugC(0, kDebugCallbacks, "call %04x", func);
 		debugC(0, kDebugCallbacks, "trivial callback, showing message %s", (const char *)res->dseg.ptr(addr));
-		switch (func) {
-		case 0xa055:
+		if (func == csAddr_displayMsg) {
 			displayMessage(msg);
 			return true;
 		}
@@ -66,7 +64,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	if (code[0] == 0xe8 && code[3] == 0xc3) {
 		uint func = 3 + addr + READ_LE_UINT16(code + 1);
 		debugC(0, kDebugCallbacks, "call %04x and return", func);
-		if (func == 0xa4d6) {
+		if (func == csAddr_rejectMsg) {
 			rejectMessage();
 			return true;
 		}
@@ -84,7 +82,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	switch (addr) {
 
-	case 0x024c: //intro
+	case csAddr_intro: //intro
 		hideActor();
 
 		loadScene(41, 139, 156, 3);

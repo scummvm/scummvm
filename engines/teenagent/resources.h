@@ -31,6 +31,18 @@ struct ADGameDescription;
 
 namespace TeenAgent {
 
+// Code Segment Addresses
+// Intro function : 0x024c
+const uint16 csAddr_intro = 0x024c;
+// Display Message function : 0xa055
+const uint16 csAddr_displayMsg = 0xa055;
+// Reject Message function : 0xa4d6
+const uint16 csAddr_rejectMsg = 0xa4d6;
+
+// Data Segment Addresses
+// Reject Messages Address Pointers : (4 * 2-byte) = 0x339e to 0x33a5
+const uint16 dsAddr_rejectMsg = 0x339e;
+
 class Resources {
 public:
 	void deinit();
