@@ -63,6 +63,7 @@
     </Link>
     <PostBuildEvent>
       <Command>@echo off
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc11\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc10\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc9\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc8\"
@@ -89,6 +90,7 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     </Link>
     <PostBuildEvent>
       <Command>@echo off
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc11\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc10\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc9\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc8\"
