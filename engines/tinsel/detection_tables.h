@@ -218,6 +218,41 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// Polish fan translation CD V1 version, with *.gra files (same as the floppy one, with english.smp)
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.gra", 0, "ef05bbd2a754bd11a2e87bcd84ab5ccf", 781864},
+				{"english.smp", 0, NULL, -1},
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
+	{	// Polish fan translaction floppy V1 version, with *.gra files
+		{
+			"dw",
+			"Floppy",
+			AD_ENTRY1s("dw.gra", "ef05bbd2a754bd11a2e87bcd84ab5ccf", 781864),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		GID_DW1,
+		0,
+		GF_FLOPPY | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
 	{	// Italian CD with english speech and *.gra files.
 		// Note: It contains only italian subtitles, but inside english.txt
 		{
@@ -518,6 +553,27 @@ static const TinselGameDescription gameDescriptions[] = {
 		0,
 		GF_CD | GF_SCNFILES | GF_DEMO,
 		TINSEL_V2,
+	},
+
+	{	// Polish fan translaction Discworld 1
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.scn", 0, "fa169d2c98660215ebd84b49c1899eef", 776396},
+				{"english.txt", 0, "c1a53eb7ec812689dab70e2bb22cf2ab", 224151},
+				{"english.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::PL_POL,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
 	},
 
 	{	// European/Australian Discworld 2 release
