@@ -57,6 +57,32 @@ quick note on varia resources:
 #define DSEG_SIZE 59280 // 0xe790
 #define ESEG_SIZE 35810 // 0x8be2
 
+void Resources::precomputeDialogOffsets() {
+	dialogOffsets.push_back(0);
+	int n = 0;
+	uint8 current, last = 0xff;
+	for (uint i = 0; i < eseg.size(); i++) {
+		current = eseg.get_byte(i);
+
+		if (n == 4) {
+			dialogOffsets.push_back(i);
+			n = 0;
+		}
+
+		if (current != 0x00 && last == 0x00)
+			n = 0;
+
+		if (current == 0x00)
+			n++;
+
+		last = current;
+	}
+
+	debug(1, "Resources::precomputeDialogOffsets() - Found %d dialogs", dialogOffsets.size());
+	for (uint i = 0; i < dialogOffsets.size(); i++)
+		debug(1, "\tDialog #%d: Offset 0x%04x", i, dialogOffsets[i]);
+}
+
 bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File *dat_file = new Common::File();
 	if (!dat_file->open("teenagent.dat")) {
@@ -72,6 +98,8 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	eseg.read(dat, ESEG_SIZE);
 
 	delete dat;
+
+	precomputeDialogOffsets();
 
 	FilePack varia;
 	varia.open("varia.res");
