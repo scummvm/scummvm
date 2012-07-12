@@ -138,7 +138,7 @@ void Chore::update(uint time) {
 
 	setKeys(_currTime, newTime);
 
-	if (newTime > _length) {
+	if (newTime > _length || _length == 1000000) {
 		if (!_looping) {
 			_playing = false;
 		} else {

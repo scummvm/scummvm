@@ -59,6 +59,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		data->read(&length, 4);
 		int numTracks = data->readUint32LE();
 
+		length *= 1000;
+
 		_chores[i] = new PoolChore(name, i, this, (int)length, numTracks);
 
 		for (int k = 0; k < numTracks; k++) {
@@ -115,7 +117,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 				float time, value;
 				data->read(&time, 4);
 				data->read(&value, 4);
-				track.keys[j].time = (int)time;
+				track.keys[j].time = (int)(time * 1000);
 				track.keys[j].value = (int)value;
 			}
 			delete[] name;
