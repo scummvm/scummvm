@@ -628,8 +628,8 @@ void Lua_V2::SetActorLighting() {
 			//FIXME actor->
 			warning("Lua_V2::SetActorLighting: case param 2(LIGHT_NORMDYN), actor: %s", actor->getName().c_str());
 		} else {
-			//FIXME actor->
-			warning("Lua_V2::SetActorLighting: case param %d(LIGHT_NONE), actor: %s", lightMode, actor->getName().c_str());
+			actor->setGlobalAlpha(0.0f);
+			actor->setAlphaMode(Grim::Actor::AlphaReplace);
 		}
 	} else {
 		//FIXME actor->
