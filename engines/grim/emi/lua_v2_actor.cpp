@@ -216,6 +216,20 @@ void Lua_V2::IsChoreLooping() {
 	}
 }
 
+void Lua_V2::SetChoreLooping() {
+	lua_Object choreObj = lua_getparam(1);
+	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
+		return;
+
+	int chore = lua_getuserdata(choreObj);
+	Chore *c = PoolChore::getPool().getObject(chore);
+
+	if (c) {
+		c->setLooping(false);
+	}
+	lua_pushnil();
+}
+
 void Lua_V2::StopChore() {
 	lua_Object choreObj = lua_getparam(1);
 	lua_Object timeObj = lua_getparam(2);

@@ -100,6 +100,7 @@ protected:
 	DECLARE_LUA_OPCODE(EnableActorPuck);
 	DECLARE_LUA_OPCODE(GetActorSortOrder);
 	DECLARE_LUA_OPCODE(IsChoreLooping);
+	DECLARE_LUA_OPCODE(SetChoreLooping);
 	DECLARE_LUA_OPCODE(PlayChore);
 	DECLARE_LUA_OPCODE(PauseChore);
 	DECLARE_LUA_OPCODE(CompleteChore);
