@@ -50,7 +50,7 @@ bool MusicPlayer::load(int id) {
 
 	char header[4];
 	stream->read(header, 4);
-	//check header?
+	// check header?
 
 	Common::StackLock lock(_mutex);
 	// Load the samples
@@ -62,7 +62,7 @@ bool MusicPlayer::load(int id) {
 		byte sample = stream->readByte();
 
 		// Load the sample data
-		byte sampleResource = ((sample >> 4) & 0x0F) * 10 + (sample & 0x0F);
+		byte sampleResource = ((sample >> 4) & 0x0f) * 10 + (sample & 0x0f);
 		debugC(0, kDebugMusic, "currSample = %d, sample = 0x%02x, resource: %d", currSample, sample, sampleResource);
 		uint32 sampleSize = _vm->res->sam_mmm.getSize(sampleResource);
 		if (sampleSize == 0) {
@@ -88,15 +88,15 @@ bool MusicPlayer::load(int id) {
 			row.channels[1].note = stream->readByte();
 			row.channels[2].note = stream->readByte();
 			_rows.push_back(row);
-		} else if ((cmd & 0xF0) == 0x50) {
+		} else if ((cmd & 0xf0) == 0x50) {
 			byte sample = stream->readByte();
 			debugC(1, kDebugMusic,  "%02x: set sample %02x", cmd, sample);
-			row.channels[(cmd & 0x0F) - 1].sample = sample;
-		} else if ((cmd & 0xF0) == 0x40) {
+			row.channels[(cmd & 0x0f) - 1].sample = sample;
+		} else if ((cmd & 0xf0) == 0x40) {
 			byte vol = stream->readByte();
-			debugC(1, kDebugMusic, "%02x: set volume %02x -> %02x", cmd, row.channels[(cmd & 0x0F) - 1].volume, vol);
-			//channel volume 0x40 * music volume 0x40 mixed with high bytes
-			row.channels[(cmd & 0x0F) - 1].volume = vol * 16;
+			debugC(1, kDebugMusic, "%02x: set volume %02x -> %02x", cmd, row.channels[(cmd & 0x0f) - 1].volume, vol);
+			// channel volume 0x40 * music volume 0x40 mixed with high bytes
+			row.channels[(cmd & 0x0f) - 1].volume = vol * 16;
 		} else {
 			debugC(0, kDebugMusic, "unhandled music command %02x", cmd);
 		}
@@ -140,7 +140,7 @@ void MusicPlayer::interrupt() {
 			}
 
 			setChannelData(chn, (const int8 *)_samples[sample].data, NULL, _samples[sample].size, 0);
-			setChannelPeriod(chn, noteToPeriod[((note >> 4) & 0x0F) - 1][(note & 0x0F)]);
+			setChannelPeriod(chn, noteToPeriod[((note >> 4) & 0x0f) - 1][(note & 0x0f)]);
 		}
 	}
 

@@ -153,13 +153,13 @@ Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
 	switch (id) {
 
 	case 81:
-		if (dseg.get_byte(0xDBAD))
+		if (dseg.get_byte(0xdbad))
 			return lan500.getStream(160);
 		break;
 
 	case 137:
-		if (dseg.get_byte(0xDBC5) == 1) {
-			if (dseg.get_byte(0xDBC6) == 1)
+		if (dseg.get_byte(0xdbc5) == 1) {
+			if (dseg.get_byte(0xdbc6) == 1)
 				return lan500.getStream(203);
 			else
 				return lan500.getStream(202);
@@ -167,7 +167,7 @@ Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
 		break;
 
 	case 25:
-		if (dseg.get_byte(0xDBDF) == 2) {
+		if (dseg.get_byte(0xdbdf) == 2) {
 			return lan500.getStream(332);
 		}
 		break;
@@ -181,17 +181,17 @@ Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
 		break;
 
 	case 29:
-		if (dseg.get_byte(0xDBE7) == 1) {
+		if (dseg.get_byte(0xdbe7) == 1) {
 			return lan500.getStream(380);
 		}
 
 	case 30:
-		if (dseg.get_byte(0xDBE7) == 1) {
+		if (dseg.get_byte(0xdbe7) == 1) {
 			return lan500.getStream(381);
 		}
 
 	case 42:
-		if (dseg.get_byte(0xDBEC) == 1) {
+		if (dseg.get_byte(0xdbec) == 1) {
 			return lan500.getStream(400);
 		}
 	}

@@ -142,7 +142,7 @@ void Inventory::add(byte item) {
 bool Inventory::tryObjectCallback(InventoryObject *obj) {
 	byte id = obj->id;
 	uint i = 0;
-	for (byte *table = _vm->res->dseg.ptr(0xBB6F + 3); table[0] != 0 && i < 7; table += 3, ++i) {
+	for (byte *table = _vm->res->dseg.ptr(0xbb6f + 3); table[0] != 0 && i < 7; table += 3, ++i) {
 		if (table[0] == id) {
 			resetSelectedObject();
 			activate(false);
@@ -209,7 +209,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 			return true;
 
 		debugC(0, kDebugInventory, "combine(%u, %u)!", id1, id2);
-		byte *table = _vm->res->dseg.ptr(0xC335);
+		byte *table = _vm->res->dseg.ptr(0xc335);
 		while (table[0] != 0 && table[1] != 0) {
 			if ((id1 == table[0] && id2 == table[1]) || (id2 == table[0] && id1 == table[1])) {
 				byte new_obj = table[2];
@@ -240,7 +240,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		if (_hoveredObj != NULL) {
 			debugC(0, kDebugInventory, "rclick object %u:%s", _hoveredObj->id, _hoveredObj->name.c_str());
-			if (_hoveredObj->id != 51 && tryObjectCallback(_hoveredObj)) //do not process callback for banknote on r-click
+			if (_hoveredObj->id != 51 && tryObjectCallback(_hoveredObj)) // do not process callback for banknote on r-click
 				return true;
 		}
 
@@ -254,7 +254,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 			activate(false);
 			return true;
 		}
-		if (event.kbd.keycode == Common::KEYCODE_RETURN) { //triangle button on psp
+		if (event.kbd.keycode == Common::KEYCODE_RETURN) { // triangle button on psp
 			activate(!_active);
 			return true;
 		}

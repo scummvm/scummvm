@@ -343,7 +343,7 @@ void Scene::loadOns() {
 
 void Scene::loadLans() {
 	debugC(0, kDebugScene, "loading lans animation");
-	//load lan000
+	// load lan000
 
 	for (byte i = 0; i < 4; ++i) {
 		animation[i].free();
@@ -379,9 +379,9 @@ void Scene::init(int id, const Common::Point &pos) {
 
 	_vm->res->loadOff(background, palette, id);
 	if (id == 24) {
-		//dark scene
-		if (_vm->res->dseg.get_byte(0xDBA4) != 1) {
-			//dim down palette
+		// ark scene
+		if (_vm->res->dseg.get_byte(0xdba4) != 1) {
+			// dim down palette
 			uint i;
 			for (i = 0; i < 624; ++i) {
 				palette[i] = palette[i] > 0x20 ? palette[i] - 0x20 : 0;
@@ -394,7 +394,7 @@ void Scene::init(int id, const Common::Point &pos) {
 
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->res->on.getStream(id));
 	int sub_hack = 0;
-	if (id == 7) { //something patched in the captains room
+	if (id == 7) { // something patched in the captains room
 		switch (_vm->res->dseg.get_byte(0xdbe6)) {
 		case 2:
 			break;
@@ -410,11 +410,11 @@ void Scene::init(int id, const Common::Point &pos) {
 	loadOns();
 	loadLans();
 
-	//check music
+	// check music
 	int now_playing = _vm->music->getId();
 
-	if (now_playing != _vm->res->dseg.get_byte(0xDB90))
-		_vm->music->load(_vm->res->dseg.get_byte(0xDB90));
+	if (now_playing != _vm->res->dseg.get_byte(0xdb90))
+		_vm->music->load(_vm->res->dseg.get_byte(0xdb90));
 
 	_vm->_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
 	setPalette(0);
@@ -466,7 +466,7 @@ void Scene::push(const SceneEvent &event) {
 		SceneEvent &prev = events.back();
 		if (prev.type == SceneEvent::kWalk && prev.color == event.color) {
 			debugC(0, kDebugScene, "fixing double-move [skipping event!]");
-			if ((event.color & 2) != 0) { //relative move
+			if ((event.color & 2) != 0) { // relative move
 				prev.dst.x += event.dst.x;
 				prev.dst.y += event.dst.y;
 			} else {
@@ -561,7 +561,6 @@ int Scene::lookupZoom(uint y) const {
 	return 256;
 }
 
-
 void Scene::paletteEffect(byte step) {
 	byte *src = _vm->res->dseg.ptr(0x6609);
 	byte *dst = palette + 3 * 0xf2;
@@ -608,7 +607,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		switch (current_event.type) {
 		case SceneEvent::kCredits: {
 			_vm->_system->fillScreen(0);
-			//TODO: optimize me
+			// TODO: optimize me
 			Graphics::Surface *surface = _vm->_system->lockScreen();
 			_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y -= game_delta, current_event.message, current_event.color);
 			_vm->_system->unlockScreen();
@@ -756,7 +755,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 				}
 
 				if (tick_mark) {
-					int speed_x = zoom / 32; //8 * zoom / 256
+					int speed_x = zoom / 32; // 8 * zoom / 256
 					int speed_y = (o == kActorDown || o == kActorUp ? 2 : 1) * zoom / 256;
 					if (speed_x == 0)
 						speed_x = 1;
@@ -777,7 +776,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 					path.pop_front();
 					if (path.empty()) {
 						if (orientation == 0)
-							orientation = o; //save last orientation
+							orientation = o; // save last orientation
 						nextEvent();
 						got_any_animation = true;
 						restart = true;
@@ -799,12 +798,10 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			_vm->_system->unlockScreen();
 			continue;
 		}
-		//removed mark == null. In final scene of chapter 2 mark rendered above table.
-		//if it'd cause any bugs, add hack here. (_id != 23 && mark == NULL)
-		if (on_enabled &&
-		        debug_features.feature[DebugFeatures::kShowOn]) {
+		// removed mark == null. In final scene of chapter 2 mark rendered above table.
+		// if it'd cause any bugs, add hack here. (_id != 23 && mark == NULL)
+		if (on_enabled && debug_features.feature[DebugFeatures::kShowOn])
 			on.render(surface, actor_animation_position);
-		}
 
 		for (; z_order_it != z_order.end(); ++z_order_it) {
 			Surface *s = *z_order_it;
@@ -940,7 +937,7 @@ bool Scene::processEventQueue() {
 				if (current_event.orientation != 0)
 					orientation = current_event.orientation;
 			} else {
-				//special case, empty scene
+				// special case, empty scene
 				background.free();
 				on.free();
 				delete[] ons;
@@ -956,7 +953,7 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kWalk: {
 			Common::Point dst = current_event.dst;
-			if ((current_event.color & 2) != 0) { //relative move
+			if ((current_event.color & 2) != 0) { // relative move
 				dst.x += position.x;
 				dst.y += position.y;
 			}
@@ -1012,12 +1009,12 @@ bool Scene::processEventQueue() {
 			message_color = current_event.color;
 
 			if (message_first_frame)
-				current_event.clear(); //async message, clearing event
+				current_event.clear(); // async message, clearing event
 			}
 			break;
 
 		case SceneEvent::kPlayAnimation: {
-			byte slot = current_event.slot & 7; //0 - mark's
+			byte slot = current_event.slot & 7; // 0 - mark's
 			if (current_event.animation != 0) {
 				debugC(0, kDebugScene, "playing animation %u in slot %u(%02x)", current_event.animation, slot, current_event.slot);
 				if (slot != 0) {
@@ -1040,7 +1037,7 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kPauseAnimation: {
-			byte slot = current_event.slot & 7; //0 - mark's
+			byte slot = current_event.slot & 7; // 0 - mark's
 			if (slot != 0) {
 				--slot;
 				debugC(1, kDebugScene, "pause animation in slot %u", slot);
@@ -1068,7 +1065,7 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kPlayMusic:
 			debugC(0, kDebugScene, "setting music %u", current_event.music);
 			_vm->setMusic(current_event.music);
-			_vm->res->dseg.set_byte(0xDB90, current_event.music);
+			_vm->res->dseg.set_byte(0xdb90, current_event.music);
 			current_event.clear();
 			break;
 
@@ -1108,19 +1105,19 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kEffect:
-			_vm->_system->delayMillis(80); //2 vsyncs
+			_vm->_system->delayMillis(80); // 2 vsyncs
 			_vm->_system->setShakePos(8);
 			_vm->_system->updateScreen();
 
-			_vm->_system->delayMillis(80); //2 vsyncs
+			_vm->_system->delayMillis(80); // 2 vsyncs
 			_vm->_system->setShakePos(0);
 			_vm->_system->updateScreen();
 
-			_vm->_system->delayMillis(80); //2 vsyncs
+			_vm->_system->delayMillis(80); // 2 vsyncs
 			_vm->_system->setShakePos(4);
 			_vm->_system->updateScreen();
 
-			_vm->_system->delayMillis(80); //2 vsyncs
+			_vm->_system->delayMillis(80); // 2 vsyncs
 			_vm->_system->setShakePos(0);
 			_vm->_system->updateScreen();
 
@@ -1155,10 +1152,12 @@ bool Scene::processEventQueue() {
 			error("empty/unhandler event[%d]", (int)current_event.type);
 		}
 	}
+
 	if (events.empty()) {
 		message_color = 0xd1;
 		hide_actor = false;
 	}
+
 	return !current_event.empty();
 }
 
@@ -1215,8 +1214,8 @@ Common::Point Scene::messagePosition(const Common::String &str, Common::Point me
 }
 
 uint Scene::messageDuration(const Common::String &str) {
-	//original game uses static delays: 100-slow, 50, 20 and 1 tick - crazy speed.
-	//total delay = total message length * delay / 8 + 60.
+	// original game uses static delays: 100-slow, 50, 20 and 1 tick - crazy speed.
+	// total delay = total message length * delay / 8 + 60.
 	uint total_width = str.size();
 
 	int speed = ConfMan.getInt("talkspeed");
