@@ -267,23 +267,27 @@ void Lua_V2::AdvanceChore() {
 
 void Lua_V2::SetActorSortOrder() {
 	lua_Object actorObj = lua_getparam(1);
-	lua_Object modeObj = lua_getparam(2);
+	lua_Object orderObj = lua_getparam(2);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 
-	if (!lua_isnumber(modeObj))
+	if (!lua_isnumber(orderObj))
 		return;
 
 	Actor *actor = getactor(actorObj);
-	int mode = (int)lua_getnumber(modeObj);
-	warning("Lua_V2::SetActorSortOrder, actor: %s, mode: %d", actor->getName().c_str(), mode);
-	// FIXME: actor->func(mode);
+	int order = (int)lua_getnumber(orderObj);
+	actor->setSortOrder(order);
 }
 
 void Lua_V2::GetActorSortOrder() {
-	warning("Lua_V2::GetActorSortOrder, implement opcode");
-	lua_pushnumber(0);
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	lua_pushnumber(actor->getSortOrder());
 }
 
 void Lua_V2::ActorActivateShadow() {
