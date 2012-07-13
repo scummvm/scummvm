@@ -296,8 +296,8 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
-		sendCommand(_cmd, 0);
 		startAnimatePressedState();
+		sendCommand(_cmd, 0);
 	}
 }
 

@@ -832,6 +832,26 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'SavenameDialog' overlays = 'screen_center'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
+			<widget name = 'DescriptionText'
+					width = '180'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Description'
+					height = '19'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Ok'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
 	<dialog name = 'ScummHelp' overlays = 'screen' inset = '8'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Title'

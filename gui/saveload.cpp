@@ -40,14 +40,14 @@ SaveLoadChooser::~SaveLoadChooser() {
 }
 
 void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
-	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(_saveMode, engine);
+	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(engine);
 	if (!_impl || _impl->getType() != requestedType) {
 		delete _impl;
 		_impl = 0;
 
 		switch (requestedType) {
 		case kSaveLoadDialogGrid:
-			_impl = new LoadChooserThumbnailed(_title);
+			_impl = new LoadChooserThumbnailed(_title, _saveMode);
 			break;
 
 		case kSaveLoadDialogList:

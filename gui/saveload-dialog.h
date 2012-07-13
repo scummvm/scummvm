@@ -36,7 +36,7 @@ enum SaveLoadChooserType {
 	kSaveLoadDialogGrid = 1
 };
 
-SaveLoadChooserType getRequestedSaveLoadDialog(const bool saveMode, const MetaEngine &metaEngine);
+SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine);
 
 class SaveLoadChooserDialog : protected Dialog {
 public:
@@ -109,9 +109,30 @@ private:
 	void updateSelection(bool redraw);
 };
 
+
+class EditTextWidget;
+
+class SavenameDialog : public Dialog {
+public:
+	SavenameDialog();
+
+	void setDescription(const Common::String &desc);
+	const Common::String &getDescription();
+
+	void setTargetSlot(int slot) { _targetSlot = slot; }
+
+	virtual void open();
+protected:
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+private:
+	int _targetSlot;
+	StaticTextWidget *_title;
+	EditTextWidget *_description;
+};
+
 class LoadChooserThumbnailed : public SaveLoadChooserDialog {
 public:
-	LoadChooserThumbnailed(const Common::String &title);
+	LoadChooserThumbnailed(const Common::String &title, bool saveMode);
 	~LoadChooserThumbnailed();
 
 	virtual const Common::String &getResultString() const;
@@ -138,6 +159,13 @@ private:
 	GUI::ButtonWidget *_prevButton;
 
 	GUI::StaticTextWidget *_pageDisplay;
+
+	ContainerWidget *_newSaveContainer;
+	int _nextFreeSaveSlot;
+	Common::String _resultString;
+
+	SavenameDialog _savenameDialog;
+	bool selectDescription();
 
 	struct SlotButton {
 		SlotButton() : container(0), button(0), description(0) {}

@@ -26,14 +26,15 @@
 #include "gui/message.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "gui/widgets/edittext.h"
 
 #include "graphics/scaler.h"
 
 namespace GUI {
 
-SaveLoadChooserType getRequestedSaveLoadDialog(const bool saveMode, const MetaEngine &metaEngine) {
+SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
 	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
-	if (!saveMode && g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
+	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
 	    && metaEngine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
 	    && metaEngine.hasFeature(MetaEngine::kSavesSupportThumbnail)
 	    && userConfig.equalsIgnoreCase("grid")) {
@@ -124,7 +125,7 @@ void SaveLoadChooserDialog::addChooserButtons() {
 
 	_listButton = createSwitchButton("SaveLoadChooser.ListSwitch", "L", _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
 	_gridButton = createSwitchButton("SaveLoadChooser.GridSwitch", "G", _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
-	if (!_metaInfoSupport || !_thumbnailSupport || _saveMode || !(g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400))
+	if (!_metaInfoSupport || !_thumbnailSupport || !(g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400))
 		_gridButton->setEnabled(false);
 }
 
@@ -132,7 +133,7 @@ void SaveLoadChooserDialog::reflowLayout() {
 	addChooserButtons();
 
 	const SaveLoadChooserType currentType = getType();
-	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(_saveMode, *_metaEngine);
+	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(*_metaEngine);
 
 	// Change the dialog type if there is any need for it.
 	if (requestedType != currentType) {
@@ -479,12 +480,13 @@ void SaveLoadChooserSimple::updateSaveList() {
 
 enum {
 	kNextCmd = 'NEXT',
-	kPrevCmd = 'PREV'
+	kPrevCmd = 'PREV',
+	kNewSaveCmd = 'SAVE'
 };
 
-LoadChooserThumbnailed::LoadChooserThumbnailed(const Common::String &title)
-	: SaveLoadChooserDialog("SaveLoadChooser", false), _lines(0), _columns(0), _entriesPerPage(0),
-	_curPage(0), _buttons() {
+LoadChooserThumbnailed::LoadChooserThumbnailed(const Common::String &title, bool saveMode)
+	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _lines(0), _columns(0), _entriesPerPage(0),
+	_curPage(0), _newSaveContainer(0), _nextFreeSaveSlot(0), _buttons() {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
@@ -508,14 +510,18 @@ LoadChooserThumbnailed::~LoadChooserThumbnailed() {
 }
 
 const Common::String &LoadChooserThumbnailed::getResultString() const {
-	// FIXME: This chooser is only for loading, thus the result is never used
-	// anyway. But this is still an ugly hack.
-	return _target;
+	return _resultString;
 }
 
 void LoadChooserThumbnailed::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd <= _entriesPerPage) {
-		setResult(_saveList[cmd - 1 + _curPage * _entriesPerPage].getSaveSlot());
+		const SaveStateDescriptor &desc = _saveList[cmd - 1 + _curPage * _entriesPerPage];
+
+		if (_saveMode) {
+			_resultString = desc.getDescription();
+		}
+
+		setResult(desc.getSaveSlot());
 		close();
 	}
 
@@ -530,6 +536,11 @@ void LoadChooserThumbnailed::handleCommand(GUI::CommandSender *sender, uint32 cm
 		--_curPage;
 		updateSaves();
 		draw();
+		break;
+
+	case kNewSaveCmd:
+		setResult(_nextFreeSaveSlot);
+		close();
 		break;
 
 	case kCloseCmd:
@@ -560,6 +571,30 @@ void LoadChooserThumbnailed::open() {
 
 	_curPage = 0;
 	_saveList = _metaEngine->listSaves(_target.c_str());
+	_resultString.clear();
+
+	// Determine the next free save slot for save mode
+	if (_saveMode) {
+		int lastSlot = -1;
+		_nextFreeSaveSlot = -1;
+		for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
+			const int curSlot = x->getSaveSlot();
+
+			// In case there was a gap found use the slot.
+			if (lastSlot + 1 < curSlot) {
+				_nextFreeSaveSlot = lastSlot + 1;
+				break;
+			}
+
+			lastSlot = curSlot;
+		}
+
+		// Use the next available slot otherwise.
+		if (_nextFreeSaveSlot == -1 && lastSlot + 1 < _metaEngine->getMaximumSaveSlot()) {
+			_nextFreeSaveSlot = lastSlot + 1;
+		}
+	}
+
 	updateSaves();
 }
 
@@ -596,9 +631,20 @@ void LoadChooserThumbnailed::reflowLayout() {
 	_columns = MAX<uint>(1, availableWidth / slotAreaWidth);
 	_lines = MAX<uint>(1, availableHeight / slotAreaHeight);
 	_entriesPerPage = _columns * _lines;
+
+	// In save mode the first button is always "New Save", thus we need to
+	// adjust the entries per page here.
+	if (_saveMode) {
+		--_entriesPerPage;
+	}
+
 	// Recalculate the page number
 	if (!_saveList.empty() && oldEntriesPerPage != 0) {
-		_curPage = (_curPage * oldEntriesPerPage) / _entriesPerPage;
+		if (_entriesPerPage != 0) {
+			_curPage = (_curPage * oldEntriesPerPage) / _entriesPerPage;
+		} else {
+			_curPage = 0;
+		}
 	}
 
 	const uint addX = _columns > 1 ? (availableWidth % slotAreaWidth) / (_columns - 1) : 0;
@@ -608,13 +654,32 @@ void LoadChooserThumbnailed::reflowLayout() {
 	y += defaultSpacingVertical / 2;
 	for (uint curLine = 0; curLine < _lines; ++curLine, y += slotAreaHeight/* + addY*/) {
 		for (uint curColumn = 0, curX = x + defaultSpacingHorizontal / 2; curColumn < _columns; ++curColumn, curX += slotAreaWidth + addX) {
-			ContainerWidget *container = new ContainerWidget(this, curX, y, containerWidth, containerHeight);
-			container->setVisible(false);
-	
 			int dstY = containerFrameHeightAdd / 2;
 			int dstX = containerFrameWidthAdd / 2;
 
-			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, 0, curLine * _columns + curColumn + 1);
+			// In the save mode we will always create a new save button as the first button.
+			if (_saveMode && curLine == 0 && curColumn == 0) {
+				_newSaveContainer = new ContainerWidget(this, curX, y, containerWidth, containerHeight);
+				ButtonWidget *newSave = new ButtonWidget(_newSaveContainer, dstX, dstY, buttonWidth, buttonHeight, _("New Save"), _("Create a new save game"), kNewSaveCmd);
+				// In case no more slots are free, we will disable the new save button
+				if (_nextFreeSaveSlot == -1) {
+					newSave->setEnabled(false);
+				}
+				continue;
+			}
+
+			ContainerWidget *container = new ContainerWidget(this, curX, y, containerWidth, containerHeight);
+			container->setVisible(false);
+
+			// Command 0 cannot be used, since it won't be send. Thus we will adjust
+			// command number here, if required. This is only the case for load mode
+			// since for save mode, the first button used is index 1 anyway.
+			uint buttonCmd = curLine * _columns + curColumn;
+			if (!_saveMode) {
+				buttonCmd += 1;
+			}
+	
+			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, 0, buttonCmd);
 			dstY += buttonHeight;
 
 			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignLeft);
@@ -633,10 +698,41 @@ void LoadChooserThumbnailed::close() {
 }
 
 int LoadChooserThumbnailed::runIntern() {
-	return SaveLoadChooserDialog::runModal();
+	int slot;
+	do {
+		const SaveLoadChooserType currentType = getType();
+		const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(*_metaEngine);
+
+		// Catch resolution changes when the save name dialog was open.
+		if (currentType != requestedType) {
+			setResult(kSwitchSaveLoadDialog);
+			return kSwitchSaveLoadDialog;
+		}
+
+		slot = runModal();
+	} while (_saveMode && slot >= 0 && !selectDescription());
+
+	return slot;
+}
+
+bool LoadChooserThumbnailed::selectDescription() {
+	_savenameDialog.setDescription(_resultString);
+	_savenameDialog.setTargetSlot(getResult());
+	if (_savenameDialog.runModal() == 0) {
+		_resultString = _savenameDialog.getDescription();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void LoadChooserThumbnailed::destroyButtons() {
+	if (_newSaveContainer) {
+		removeWidget(_newSaveContainer);
+		delete _newSaveContainer;
+		_newSaveContainer = 0;
+	}
+
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
 		removeWidget(i->container);
 		delete i->container;
@@ -696,9 +792,17 @@ void LoadChooserThumbnailed::updateSaves() {
 		}
 
 		curButton.button->setTooltip(tooltip);
+
+		// In save mode we disable the button, when it's write protected.
+		// TODO: Maybe we should not display it at all then?
+		if (_saveMode && desc.getWriteProtectedFlag()) {
+			curButton.button->setEnabled(false);
+		} else {
+			curButton.button->setEnabled(true);
+		}
 	}
 
-	const uint numPages = _saveList.size() / _entriesPerPage + 1;
+	const uint numPages = (_entriesPerPage != 0) ? (_saveList.size() / _entriesPerPage + 1) : 1;
 	_pageDisplay->setLabel(Common::String::format("%u/%u", _curPage + 1, numPages));
 
 	if (_curPage > 0)
@@ -710,6 +814,43 @@ void LoadChooserThumbnailed::updateSaves() {
 		_nextButton->setEnabled(true);
 	else
 		_nextButton->setEnabled(false);
+}
+
+SavenameDialog::SavenameDialog()
+	: Dialog("SavenameDialog") {
+	_title = new StaticTextWidget(this, "SavenameDialog.DescriptionText", Common::String());
+
+	new ButtonWidget(this, "SavenameDialog.Cancel", _("Cancel"), 0, kCloseCmd);
+	new ButtonWidget(this, "SavenameDialog.Ok", _("Ok"), 0, kOKCmd);
+
+	_description = new EditTextWidget(this, "SavenameDialog.Description", Common::String(), 0, 0, kOKCmd);
+}
+
+void SavenameDialog::setDescription(const Common::String &desc) {
+	_description->setEditString(desc);
+}
+
+const Common::String &SavenameDialog::getDescription() {
+	return _description->getEditString();
+}
+
+void SavenameDialog::open() {
+	Dialog::open();
+	setResult(-1);
+
+	_title->setLabel(Common::String::format(_("Enter a description for slot %d:"), _targetSlot));
+}
+
+void SavenameDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kOKCmd:
+		setResult(0);
+		close();
+		break;
+
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
 }
 
 } // End of namespace GUI
