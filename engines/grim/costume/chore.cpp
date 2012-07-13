@@ -80,12 +80,19 @@ void Chore::playLooping() {
 	fade(Animation::None, 0);
 }
 
+Component *Chore::getComponentForTrack(int i) const {
+	if (_tracks[i].compID == -1)
+		return _tracks[i].component;
+	else
+		return _owner->_components[_tracks[i].compID];
+}
+
 void Chore::stop() {
 	_playing = false;
 	_hasPlayed = false;
 
 	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
+		Component *comp = getComponentForTrack(i);
 		if (comp)
 			comp->reset();
 	}
@@ -93,7 +100,7 @@ void Chore::stop() {
 
 void Chore::setKeys(int startTime, int stopTime) {
 	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
+		Component *comp = getComponentForTrack(i);
 		if (!comp)
 			continue;
 
@@ -153,7 +160,7 @@ void Chore::update(uint time) {
 
 void Chore::fade(Animation::FadeMode mode, uint msecs) {
 	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
+		Component *comp = getComponentForTrack(i);
 		if (comp && comp->isComponentType('K','E','Y','F')) {
 			KeyframeComponent *kf = static_cast<KeyframeComponent *>(comp);
 			kf->fade(mode, msecs);

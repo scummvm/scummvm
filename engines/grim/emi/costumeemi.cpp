@@ -108,9 +108,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 			track.numKeys = data->readUint32LE();
 			track.keys = new TrackKey[track.numKeys];
 			track.component = component;
+			track.compID = -1; // -1 means "look at .component"
 
-			// this is probably wrong
-			track.compID = 0;
 			for (int j = 0; j < track.numKeys; j++) {
 				float time, value;
 				data->read(&time, 4);
