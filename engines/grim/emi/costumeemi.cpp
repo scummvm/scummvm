@@ -59,7 +59,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		data->read(&length, 4);
 		int numTracks = data->readUint32LE();
 
-		length *= 1000;
+		if (length < 1000)
+			length *= 1000;
 
 		_chores[i] = new PoolChore(name, i, this, (int)length, numTracks);
 
