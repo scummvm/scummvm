@@ -228,20 +228,19 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	if (!in)
 		return Common::kReadPermissionDenied;
 
-	const uint dataSize = 0x777a;
-	assert(res->dseg.size() >= 0x6478 + dataSize);
+	assert(res->dseg.size() >= dsAddr_saveState + saveStateSize);
 
-	char *data = (char *)malloc(dataSize);
+	char *data = (char *)malloc(saveStateSize);
 	if (!data)
 		error("[TeenAgentEngine::loadGameState] Cannot allocate buffer");
 
 	in->seek(0);
-	if (in->read(data, dataSize) != dataSize) {
+	if (in->read(data, saveStateSize) != saveStateSize) {
 		free(data);
 		return Common::kReadingFailed;
 	}
 
-	memcpy(res->dseg.ptr(0x6478), data, dataSize);
+	memcpy(res->dseg.ptr(dsAddr_saveState), data, saveStateSize);
 
 	free(data);
 
@@ -271,9 +270,9 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &des
 	res->dseg.set_word(0x64af, pos.x);
 	res->dseg.set_word(0x64b1, pos.y);
 
-	assert(res->dseg.size() >= 0x6478 + 0x777a);
-	strncpy((char *)res->dseg.ptr(0x6478), desc.c_str(), 0x16);
-	out->write(res->dseg.ptr(0x6478), 0x777a);
+	assert(res->dseg.size() >= dsAddr_saveState + saveStateSize);
+	strncpy((char *)res->dseg.ptr(dsAddr_saveState), desc.c_str(), 0x16);
+	out->write(res->dseg.ptr(dsAddr_saveState), saveStateSize);
 	if (!Graphics::saveThumbnail(*out))
 		warning("saveThumbnail failed");
 

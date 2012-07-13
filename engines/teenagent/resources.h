@@ -43,6 +43,10 @@ const uint16 csAddr_rejectMsg = 0xa4d6;
 // Reject Messages Address Pointers : (4 * 2-byte) = 0x339e to 0x33a5
 const uint16 dsAddr_rejectMsg = 0x339e;
 
+// Save State Region : 0x6478 to 0xdbf1
+const uint16 dsAddr_saveState = 0x6478;
+const uint16 saveStateSize = 0x777a;
+
 class Resources {
 public:
 	void deinit();
