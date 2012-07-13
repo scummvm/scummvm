@@ -2200,7 +2200,6 @@ msgid "Choose Spell"
 msgstr "Choisir un Sort"
 
 #: engines/kyra/sound_midi.cpp:475
-#, fuzzy
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -2209,10 +2208,10 @@ msgid ""
 "some tracks sound incorrect."
 msgstr ""
 "Il semble que vous utilisiez un périphérique General MIDI,\n"
-"mais ce jeu ne support que le MIDI Roland MT32.\n"
-"Nous essayons d'associer les instruments Roland MT32 auxinstruments General "
-"MIDI. Mais il est possible que quelquespistes ne soient pas jouées "
-"correctement."
+"mais ce jeu ne support que le MIDI Roland MT32. Nous essayons\n"
+"d'associer les instruments Roland MT32 aux instruments General\n"
+"MIDI. Cependant il est possible que quelques pistes ne soient\n "
+"pas jouées correctement."
 
 #: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
 msgid "Floppy intro"
