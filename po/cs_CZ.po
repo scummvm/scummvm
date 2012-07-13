@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-07-08 12:25+0100\n"
-"PO-Revision-Date: 2012-05-22 21:02+0100\n"
+"PO-Revision-Date: 2012-07-08 18:03+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgstr "(sestaveno %s)"
 
 #: gui/about.cpp:98
 msgid "Features compiled in:"
-msgstr "Zakompilované Funkce:"
+msgstr "Zakompilované funkce:"
 
 #: gui/about.cpp:107
 msgid "Available engines:"
@@ -309,7 +309,7 @@ msgstr "Cesta pro ulo¾ení:"
 #: gui/launcher.cpp:333 gui/launcher.cpp:335 gui/launcher.cpp:336
 #: gui/options.cpp:1123 gui/options.cpp:1125 gui/options.cpp:1126
 msgid "Specifies where your savegames are put"
-msgstr "Stanovuje, kam jsou umístìny Va¹e ulo¾ené hry"
+msgstr "Stanovuje, kam jsou umístìny va¹e ulo¾ené hry"
 
 #: gui/launcher.cpp:335 gui/options.cpp:1125
 msgctxt "lowres"
@@ -726,7 +726,7 @@ msgid ""
 "connected to your computer"
 msgstr ""
 "Za¹krtnìte, pokud chcete pou¾ít pravé hardwarové zaøízení kompatibilní s "
-"Roland, pøipojené k Va¹emu poèítaèi"
+"Roland, pøipojené k va¹emu poèítaèi"
 
 #: gui/options.cpp:877
 msgctxt "lowres"
@@ -2180,7 +2180,6 @@ msgid "Choose Spell"
 msgstr "Zvolit Kouzlo"
 
 #: engines/kyra/sound_midi.cpp:475
-#, fuzzy
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -2189,10 +2188,10 @@ msgid ""
 "some tracks sound incorrect."
 msgstr ""
 "Zdá se, ¾e pou¾íváte zaøízení General MIDI,\n"
-"ale Va¹e hra podporuje pouze Roland MT32 MIDI.\n"
+"ale va¹e hra podporuje pouze Roland MT32 MIDI.\n"
 "Sna¾íme se mapovat nástroje Roland MT32 na\n"
-"ty od General MIDI. Po tomto se mù¾e stát,\n"
-"¾e pár stop nebude správnì pøehráno."
+"ty od General MIDI. Je stále mo¾né, ¾e\n"
+"nìkteré stopy nebudou znít správnì."
 
 #: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -2249,7 +2248,7 @@ msgstr ""
 "ScummVM zjistil, ¾e máte staré ulo¾ené pozice pro Broken Sword 1, které by "
 "mìly být pøevedeny.\n"
 "Starý formát ulo¾ených her ji¾ není podporován, tak¾e pokud je nepøevedete, "
-"nebudete moci Va¹e hry naèíst.\n"
+"nebudete moci va¹e hry naèíst.\n"
 "\n"
 "Stisknìte OK, abyste je pøevedli teï, jinak budete po¾ádáni znovu, pøi "
 "spu¹tìní této hry.\n"
@@ -2317,13 +2316,13 @@ msgstr ""
 "ScummVM zjistil, ¾e máte staré ulo¾ené pozice pro Nippon Safes, které by "
 "mìly být pøejmenovány.\n"
 "Staré názvy ji¾ nejsou podporovány, tak¾e pokud je nepøevedete, nebudete "
-"moci Va¹e hry naèíst.\n"
+"moci va¹e hry naèíst.\n"
 "\n"
 "Stisknìte OK, abyste je pøevedli teï, jinak budete po¾ádáni pøí¹tì.\n"
 
 #: engines/parallaction/saveload.cpp:319
 msgid "ScummVM successfully converted all your savefiles."
-msgstr "ScummVM úspì¹nì pøevedl v¹echny Va¹e ulo¾ené pozice. "
+msgstr "ScummVM úspì¹nì pøevedl v¹echny va¹e ulo¾ené pozice. "
 
 #: engines/parallaction/saveload.cpp:321
 msgid ""
@@ -2332,8 +2331,8 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
-"ScummVM vytiskl nìkterá varování ve Va¹em oknì konzole a nemù¾e zaruèit, ¾e "
-"v¹echny Va¹e soubory byly pøevedeny.\n"
+"ScummVM vytiskl nìkterá varování ve va¹em oknì konzole a nemù¾e zaruèit, ¾e "
+"v¹echny va¹e soubory byly pøevedeny.\n"
 "\n"
 "Prosím nahlaste to týmu"
 
