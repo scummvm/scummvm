@@ -60,9 +60,6 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
  *					false if there is an error.
  *
  * @note Blitting to a 3Bpp destination is not supported
- * @note This implementation currently arbitrarily requires that the
- *		 destination's format have at least as high a bytedepth as
- *		 the source's.
  * @note This can convert a rectangle in place, if the source and
  *		 destination format have the same bytedepth.
  *
