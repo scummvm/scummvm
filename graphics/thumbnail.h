@@ -50,8 +50,6 @@ bool skipThumbnail(Common::SeekableReadStream &in);
 
 /**
  * Loads a thumbnail from the given input stream.
- * The loaded thumbnail will be automatically converted to the
- * current overlay pixelformat.
  */
 Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in);
 
