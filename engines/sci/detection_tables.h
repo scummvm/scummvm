@@ -1241,10 +1241,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// King's Quest 5 - English DOS Floppy
 	// VERSION file reports "0.000.051"
 	// Supplied by misterhands in bug report #3536863.
-	// FIXME: According to bug #3536863, there exists another English version
-	// with the same file checksums as the vanilla English version, patched to
-	// Polish. We need a better way of distinguishing the two versions. Until
-	// we do, this is a duplicate entry of the Polish version below.
+	// This is the original English version, which has been externally patched to
+	// Polish in the Polish release below.
 	{"kq5", "", {
 		{"resource.map", 0, "70010c20138541f89013bb5e1b30f16a", 7998},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276398},
@@ -1374,12 +1372,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::IT_ITA, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// King's Quest 5 - Polish DOS Floppy (supplied by jacek909 in bug report #2725722, includes english language?!)
+	// King's Quest 5 - Polish DOS Floppy (supplied by jacek909 in bug report #2725722)
 	// SCI interpreter version 1.000.060
-	// FIXME: According to bug #3536863, this is actually a patched English version.
-	// The vanilla English version has the same MD5 checksums.
-	// We need a better way of detecting this. Until we do, a duplicate English
-	// entry has been placed above.
+	// VERSION file reports "0.000.051".
+	// This is actually an English version with external text resource patches (bug #3536863).
 	{"kq5", "", {
 		{"resource.map", 0, "70010c20138541f89013bb5e1b30f16a", 7998},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276398},
@@ -1390,6 +1386,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "6556ff8e7c4d1acf6a78aea154daa76c", 1287869},
 		{"resource.006", 0, "da82e4beb744731d0a151f1d4922fafa", 1170456},
 		{"resource.007", 0, "431def14ca29cdb5e6a5e84d3f38f679", 1240176},
+		{"text.000",     0, "601aa35a3ddeb558e1280e0963e955a2", 1517},
 		AD_LISTEND},
 	 	Common::PL_POL, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
