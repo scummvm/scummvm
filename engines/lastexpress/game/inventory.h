@@ -107,9 +107,9 @@ public:
 	// UI Control
 	void show();
 	void blinkEgg(bool enabled);
-	void showHourGlass();
-	void setPortrait(InventoryItem item);
-	void drawEgg();
+	void showHourGlass() const;
+	void setPortrait(InventoryItem item) const;
+	void drawEgg() const;
 	void drawBlinkingEgg();
 
 	// Handle inventory UI events.
@@ -168,14 +168,14 @@ private:
 	void close();
 	void examine(InventoryItem item);
 	void drawHighlight(uint32 currentIndex, bool reset);
-	uint32 getItemIndex(uint32 currentIndex);
+	uint32 getItemIndex(uint32 currentIndex) const;
 
 	bool isItemSceneParameter(InventoryItem item) const;
 
-	void drawItem(CursorStyle id, uint16 x, uint16 y, int16 brighnessIndex = -1);
+	void drawItem(CursorStyle id, uint16 x, uint16 y, int16 brighnessIndex = -1) const;
 
 	void drawSelectedItem();
-	void clearSelectedItem();
+	void clearSelectedItem() const;
 };
 
 } // End of namespace LastExpress

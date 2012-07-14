@@ -356,6 +356,8 @@ public:
 			Audio::ADPCMStream(stream, disposeAfterUse, size, 44100, 1, blockSize) {
 		_currentFilterId = -1;
 		_nextFilterId = filterId;
+		_stepAdjust1 = 0;
+		_stepAdjust2 = 0;
 	}
 
 	int readBuffer(int16 *buffer, const int numSamples) {
@@ -453,7 +455,9 @@ void SimpleSound::play(Audio::AudioStream *as) {
 //////////////////////////////////////////////////////////////////////////
 StreamedSound::StreamedSound() : _as(NULL), _loaded(false) {}
 
-StreamedSound::~StreamedSound() {}
+StreamedSound::~StreamedSound() {
+	_as = NULL;
+}
 
 bool StreamedSound::load(Common::SeekableReadStream *stream, int32 filterId) {
 	if (!stream)
@@ -482,6 +486,9 @@ bool StreamedSound::isFinished() {
 }
 
 void StreamedSound::setFilterId(int32 filterId) {
+	if (_as == NULL)
+		return;
+
 	((LastExpress_ADPCMStream *)_as)->setFilterId(filterId);
 }
 

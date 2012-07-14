@@ -259,7 +259,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 		// Change item highlight on list
 		if (getFlags()->mouseLeftPressed) {
-			uint32 index = ev.mouse.y / 40;
+			uint32 index = (unsigned) (int) ev.mouse.y / 40;
 
 			if (_highlightedItemIndex && _highlightedItemIndex != index)
 				drawHighlight(_highlightedItemIndex, true);
@@ -416,12 +416,12 @@ void Inventory::show() {
 	drawEgg();
 }
 
-void Inventory::setPortrait(InventoryItem item) {
+void Inventory::setPortrait(InventoryItem item) const {
 	getProgress().portrait = item;
 	drawItem((CursorStyle)getProgress().portrait, 0, 0);
 }
 
-void Inventory::showHourGlass(){
+void Inventory::showHourGlass() const {
 	if (!getMenu()->isShown())
 		drawItem(kCursorHourGlass, 608, 448);
 
@@ -611,7 +611,7 @@ void Inventory::examine(InventoryItem item) {
 	}
 }
 
-void Inventory::drawEgg() {
+void Inventory::drawEgg() const {
 	if (!getMenu()->isShown())
 		drawItem((CursorStyle)(getMenu()->getGameId() + 39), 608, 448, _eggHightlighted ? 0 : 1);
 
@@ -652,7 +652,7 @@ void Inventory::drawBlinkingEgg() {
 	askForRedraw();
 }
 
-void Inventory::drawItem(CursorStyle id, uint16 x, uint16 y, int16 brightnessIndex) {
+void Inventory::drawItem(CursorStyle id, uint16 x, uint16 y, int16 brightnessIndex) const {
 	Icon icon(id);
 	icon.setPosition(x, y);
 
@@ -676,7 +676,7 @@ void Inventory::drawSelectedItem() {
 	}
 }
 
-void Inventory::clearSelectedItem() {
+void Inventory::clearSelectedItem() const {
 	_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
 }
 
@@ -731,7 +731,7 @@ void Inventory::drawHighlight(uint32 currentIndex, bool reset) {
 	}
 }
 
-uint32 Inventory::getItemIndex(uint32 currentIndex) {
+uint32 Inventory::getItemIndex(uint32 currentIndex) const {
 	uint32 count = 0;
 
 	for (uint32 i = 1; i < ARRAYSIZE(_entries); i++) {

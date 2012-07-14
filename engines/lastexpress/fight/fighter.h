@@ -99,9 +99,6 @@ protected:
 	void draw();
 	void process();
 
-	// Cleanup
-	void clearSequences();
-
 	// Helpers
 	bool checkFrame(uint32 val);
 };

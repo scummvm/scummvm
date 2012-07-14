@@ -150,7 +150,7 @@ SubtitleManager::~SubtitleManager() {
 }
 
 void SubtitleManager::reset() {
-	for (int i = 0; i < (int)_subtitles.size(); i++)
+	for (uint i = 0; i < _subtitles.size(); i++)
 		delete _subtitles[i];
 
 	_subtitles.clear();
