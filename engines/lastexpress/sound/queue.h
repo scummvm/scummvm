@@ -106,7 +106,7 @@ private:
 
 	// Entries
 	Common::List<SoundEntry *> _soundList;    ///< List of all sound entries
-	void *_soundCacheData;
+	//void *_soundCacheData;
 
 	// Subtitles
 	int _subtitlesFlag;

@@ -38,7 +38,7 @@ SoundQueue::SoundQueue(LastExpressEngine *engine) : _engine(engine) {
 
 	_subtitlesFlag = 0;
 	_currentSubtitle = NULL;
-	_soundCacheData = NULL;
+	//_soundCacheData = NULL;
 }
 
 SoundQueue::~SoundQueue() {
@@ -51,7 +51,7 @@ SoundQueue::~SoundQueue() {
 	_subtitles.clear();
 
 	_currentSubtitle = NULL;
-	SAFE_DELETE(_soundCacheData);
+	//SAFE_DELETE(_soundCacheData);
 
 	// Zero passed pointers
 	_engine = NULL;
