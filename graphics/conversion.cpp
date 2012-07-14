@@ -27,8 +27,10 @@ namespace Graphics {
 // TODO: YUV to RGB conversion function
 
 // Function to blit a rect from one color format to another
-bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
-						int w, int h, const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt) {
+bool crossBlit(byte *dst, const byte *src,
+               const uint dstPitch, const uint srcPitch,
+               const uint w, const uint h,
+               const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt) {
 	// Error out if conversion is impossible
 	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
 			 || (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel)
@@ -37,32 +39,31 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 
 	// Don't perform unnecessary conversion
 	if (srcFmt == dstFmt) {
-		if (dst == src)
-			return true;
-		if (dstpitch == srcpitch && ((w * dstFmt.bytesPerPixel) == dstpitch)) {
-			memcpy(dst,src,dstpitch * h);
-			return true;
-		} else {
-			for (int i = 0; i < h; i++) {
-				memcpy(dst,src,w * dstFmt.bytesPerPixel);
-				dst += dstpitch;
-				src += srcpitch;
+		if (dst != src) {
+			if (dstPitch == srcPitch && ((w * dstFmt.bytesPerPixel) == dstPitch)) {
+				memcpy(dst, src, dstPitch * h);
+			} else {
+				for (uint i = 0; i < h; ++i) {
+					memcpy(dst, src, w * dstFmt.bytesPerPixel);
+					dst += dstPitch;
+					src += srcPitch;
+				}
 			}
-			return true;
 		}
+
+		return true;
 	}
 
 	// Faster, but larger, to provide optimized handling for each case.
-	int srcDelta, dstDelta;
-	srcDelta = (srcpitch - w * srcFmt.bytesPerPixel);
-	dstDelta = (dstpitch - w * dstFmt.bytesPerPixel);
+	const uint srcDelta = (srcPitch - w * srcFmt.bytesPerPixel);
+	const uint dstDelta = (dstPitch - w * dstFmt.bytesPerPixel);
 
 	// TODO: optimized cases for dstDelta of 0
 	uint8 r, g, b, a;
 	if (dstFmt.bytesPerPixel == 2) {
 		uint16 color;
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++, src += 2, dst += 2) {
+		for (uint y = 0; y < h; ++y) {
+			for (uint x = 0; x < w; ++x, src += 2, dst += 2) {
 				color = *(const uint16 *)src;
 				srcFmt.colorToARGB(color, a, r, g, b);
 				color = dstFmt.ARGBToColor(a, r, g, b);
@@ -78,8 +79,8 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 		col++;
 #endif
 		if (srcFmt.bytesPerPixel == 2) {
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++, src += 2, dst += 3) {
+			for (uint y = 0; y < h; ++y) {
+				for (uint x = 0; x < w; ++x, src += 2, dst += 3) {
 					color = *(const uint16 *)src;
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
@@ -89,8 +90,8 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 				dst += dstDelta;
 			}
 		} else {
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++, src += 3, dst += 3) {
+			for (uint y = 0; y < h; ++y) {
+				for (uint x = 0; x < w; ++x, src += 3, dst += 3) {
 					memcpy(col, src, 3);
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
@@ -103,8 +104,8 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 	} else if (dstFmt.bytesPerPixel == 4) {
 		uint32 color;
 		if (srcFmt.bytesPerPixel == 2) {
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++, src += 2, dst += 4) {
+			for (uint y = 0; y < h; ++y) {
+				for (uint x = 0; x < w; ++x, src += 2, dst += 4) {
 					color = *(const uint16 *)src;
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
@@ -118,8 +119,8 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 #ifdef SCUMM_BIG_ENDIAN
 			col++;
 #endif
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++, src += 2, dst += 4) {
+			for (uint y = 0; y < h; ++y) {
+				for (uint x = 0; x < w; ++x, src += 2, dst += 4) {
 					memcpy(col, src, 3);
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
@@ -129,8 +130,8 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 				dst += dstDelta;
 			}
 		} else {
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++, src += 4, dst += 4) {
+			for (uint y = 0; y < h; ++y) {
+				for (uint x = 0; x < w; ++x, src += 4, dst += 4) {
 					color = *(const uint32 *)src;
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);

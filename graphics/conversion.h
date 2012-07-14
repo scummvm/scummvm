@@ -66,8 +66,10 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
  *		 destination format have the same bytedepth.
  *
  */
-bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
-						int w, int h, const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
+bool crossBlit(byte *dst, const byte *src,
+               const uint dstPitch, const uint srcPitch,
+               const uint w, const uint h,
+               const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
 
 } // End of namespace Graphics
 
