@@ -96,7 +96,7 @@ bool crossBlit(byte *dst, const byte *src,
 			col++;
 #endif
 			for (uint y = 0; y < h; ++y) {
-				for (uint x = 0; x < w; ++x, src += 2, dst += 4) {
+				for (uint x = 0; x < w; ++x, src += 3, dst += 4) {
 					memcpy(col, src, 3);
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
