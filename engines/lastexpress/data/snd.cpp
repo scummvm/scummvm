@@ -486,7 +486,7 @@ bool StreamedSound::isFinished() {
 }
 
 void StreamedSound::setFilterId(int32 filterId) {
-	if (_as == NULL)
+	if (!_as)
 		return;
 
 	((LastExpress_ADPCMStream *)_as)->setFilterId(filterId);
@@ -526,6 +526,7 @@ void AppendableSound::queueBuffer(Common::SeekableReadStream *bufferIn) {
 	// Setup the ADPCM decoder
 	uint32 sizeIn = (uint32)bufferIn->size();
 	Audio::AudioStream *adpcm = makeDecoder(bufferIn, sizeIn);
+	((LastExpress_ADPCMStream *)adpcm)->setFilterId(1);
 
 	// Queue the stream
 	_as->queueAudioStream(adpcm);
