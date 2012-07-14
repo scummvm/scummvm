@@ -67,7 +67,7 @@ inline void outputConfiguration(std::ostream &project, const std::string &config
 inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, int version) {
 	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n"
 	           "\t\t<ConfigurationType>" << ((name == setup.projectName || setup.devTools) ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
-	           "\t\t<PlatformToolset>v" << version << "0</PlatformToolset>"
+	           "\t\t<PlatformToolset>v" << version << "0</PlatformToolset>\n"
 	           "\t</PropertyGroup>\n";
 }
 
@@ -403,6 +403,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t</ClCompile>\n"
 		              "\t\t<Link>\n"
 		              "\t\t\t<GenerateDebugInformation>true</GenerateDebugInformation>\n"
+		              "\t\t\t<ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>\n"
 		              "\t\t\t<IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n";
 	}
 
