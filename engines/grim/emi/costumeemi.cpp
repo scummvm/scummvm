@@ -34,6 +34,7 @@
 #include "engines/grim/emi/costume/emimesh_component.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
 #include "engines/grim/emi/costume/emisprite_component.h"
+#include "engines/grim/emi/costume/emitexi_component.h"
 #include "engines/grim/costume/main_model_component.h"
 
 namespace Grim {
@@ -157,8 +158,8 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SKEL-handling: %s" , name);
 		return new EMISkelComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('t','e','x','i')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
-		//return new MaterialComponent(parent, parentID, name, tag);
+//    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
+		return new EMITexiComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('a','n','i','m')) {
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement ANIM-handling: %s" , name);
 		return new EMIAnimComponent(parent, parentID, name, prevComponent, tag);
