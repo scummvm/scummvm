@@ -74,10 +74,27 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	// zlib here is no longer needed, and it's maintained only for backwards
 	// compatibility.
 	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(dat_file);
+
+#if !defined(USE_ZLIB)
+	uint16 header = dat->readUint16BE();
+	bool isCompressed = (header == 0x1F8B ||
+				     ((header & 0x0F00) == 0x0800 &&
+				      header % 31 == 0));
+	dat->seek(-2, SEEK_CUR);
+
+	if (isCompressed) {
+		// teenagent.dat is compressed, but zlib hasn't been compiled in
+		delete dat;
+		Common::String errorMessage = "The teenagent.dat file is compressed and zlib hasn't been included in this executable. Please decompress it";
+		GUIErrorMessage(errorMessage);
+		warning("%s", errorMessage.c_str());
+		return false;
+	}
+#endif
+
 	cseg.read(dat, 0xb3b0);
 	dseg.read(dat, 0xe790);
 	eseg.read(dat, 0x8be2);
-
 	delete dat;
 
 	FilePack varia;
