@@ -259,7 +259,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 		// Change item highlight on list
 		if (getFlags()->mouseLeftPressed) {
-			uint32 index = (unsigned) (int) ev.mouse.y / 40;
+			uint32 index = (uint16)ev.mouse.y / 40;
 
 			if (_highlightedItemIndex && _highlightedItemIndex != index)
 				drawHighlight(_highlightedItemIndex, true);
