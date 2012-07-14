@@ -36,11 +36,10 @@ FORCEINLINE void crossBlitLogic(byte *dst, const byte *src, const uint w, const 
                               const uint srcDelta, const uint dstDelta) {
 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
-			uint32 color = *(const SrcColor *)src;
+			const uint32 color = *(const SrcColor *)src;
 			byte a, r, g, b;
 			srcFmt.colorToARGB(color, a, r, g, b);
-			color = dstFmt.ARGBToColor(a, r, g, b);
-			*(DstColor *)dst = color;
+			*(DstColor *)dst = dstFmt.ARGBToColor(a, r, g, b);
 
 			if (backward) {
 				src -= sizeof(SrcColor);
@@ -75,8 +74,7 @@ FORCEINLINE void crossBlitLogic3BppSource(byte *dst, const byte *src, const uint
 		for (uint x = 0; x < w; ++x) {
 			memcpy(col, src, 3);
 			srcFmt.colorToARGB(color, a, r, g, b);
-			color = dstFmt.ARGBToColor(a, r, g, b);
-			*(DstColor *)dst = color;
+			*(DstColor *)dst = dstFmt.ARGBToColor(a, r, g, b);
 
 			if (backward) {
 				src -= 3;
