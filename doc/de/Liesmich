@@ -2241,7 +2241,7 @@ folgende nicht standardmäßige Schlüsselwörter:
                                 erweiterten von ScummVM verwendet.
     native_fb01        Bool     Falls „true“, wird für die MIDI-Ausgabe
                                 der Musiktreiber für eine Music-Feature-Karte
-                                von IBM oder für ein Yahama-FB-01-FM-
+                                von IBM oder für ein Yamaha-FB-01-FM-
                                 Synthetisierungsmodul verwendet.
 
 Baphomets Fluch II verfügt zusätzlich über folgende nicht standardmäßige
