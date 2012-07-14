@@ -148,7 +148,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION_SI(7, August, enterExitCompartment3, ObjectIndex)
 	if (savepoint.action == kAction4) {
 		getEntities()->exitCompartment(kEntityAugust, (ObjectIndex)params->param4);
-		CALLBACK_ACTION();
+		callbackAction();
 		return;
 	}
 
@@ -175,7 +175,7 @@ IMPLEMENT_FUNCTION_IIS(10, August, callSavepointNoDrawing, EntityIndex, ActionIn
 		if (!params->param6)
 			getSavePoints()->call(kEntityAugust, (EntityIndex)params->param1, (ActionIndex)params->param2, (char *)&params->seq);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction10:
@@ -231,7 +231,7 @@ IMPLEMENT_FUNCTION_I(17, August, function17, TimeValue)
 	case kActionNone:
 		if (params->param1 < getState()->time && !params->param2) {
 			params->param2 = 1;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -260,7 +260,7 @@ IMPLEMENT_FUNCTION_I(17, August, function17, TimeValue)
 
 		case 1:
 			if (ENTITY_PARAM(0, 1)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -270,7 +270,7 @@ IMPLEMENT_FUNCTION_I(17, August, function17, TimeValue)
 		case 2:
 		case 3:
 			if (ENTITY_PARAM(0, 1)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -287,7 +287,7 @@ IMPLEMENT_FUNCTION_I(17, August, function17, TimeValue)
 
 		case 5:
 			if (ENTITY_PARAM(0, 1)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -306,7 +306,7 @@ IMPLEMENT_FUNCTION_II(18, August, updateEntity2, CarIndex, EntityPosition)
 
 	case kActionNone:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 		} else if (getEntities()->isDistanceBetweenEntities(kEntityAugust, kEntityPlayer, 1000)
 		        && !getEntities()->isInGreenCarEntrance(kEntityPlayer)
 				&& !getEntities()->isInsideCompartments(kEntityPlayer)
@@ -314,14 +314,14 @@ IMPLEMENT_FUNCTION_II(18, August, updateEntity2, CarIndex, EntityPosition)
 
 			if (getData()->car == kCarGreenSleeping || getData()->car == kCarRedSleeping) {
 				ENTITY_PARAM(0, 1) = 1;
-				CALLBACK_ACTION();
+				callbackAction();
 			}
 		}
 		break;
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -405,7 +405,7 @@ IMPLEMENT_FUNCTION_II(19, August, function19, bool, bool)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityAugust);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -501,7 +501,7 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 		getObjects()->update(kObjectCompartment3, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getEntities()->exitCompartment(kEntityAugust, kObjectCompartment3, true);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -518,7 +518,7 @@ IMPLEMENT_FUNCTION_I(21, August, function21, TimeValue)
 
 			getObjects()->update(kObjectCompartment3, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -784,7 +784,7 @@ IMPLEMENT_FUNCTION_I(23, August, function23, TimeValue)
 			} else {
 				getEntities()->exitCompartment(kEntityAugust, kObjectCompartment1, true);
 				getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-				CALLBACK_ACTION();
+				callbackAction();
 			}
 			break;
 		}
@@ -865,7 +865,7 @@ label_callback_9:
 
 				if (params->param8 >= 3) {
 					getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
-					CALLBACK_ACTION();
+					callbackAction();
 					break;
 				}
 
@@ -957,7 +957,7 @@ label_callback_9:
 
 		case 2:
 			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 3:
@@ -984,7 +984,7 @@ label_callback_9:
 
 			getScenes()->loadScene(kScene41);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 5:
@@ -1026,7 +1026,7 @@ label_callback_9:
 
 		case 12:
 			getData()->location = kLocationOutsideCompartment;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 13:
@@ -1054,7 +1054,7 @@ label_callback_9:
 
 			getScenes()->loadScene(kScene41);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 15:
@@ -1094,7 +1094,7 @@ IMPLEMENT_FUNCTION(24, August, dinner)
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 61);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -2108,7 +2108,7 @@ IMPLEMENT_FUNCTION_II(41, August, function41, CarIndex, EntityPosition)
 			getData()->inventoryItem = kItemNone;
 
 		if (getEntities()->updateEntity(kEntityAugust, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -2145,7 +2145,7 @@ IMPLEMENT_FUNCTION_II(41, August, function41, CarIndex, EntityPosition)
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityAugust, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -2170,7 +2170,7 @@ IMPLEMENT_FUNCTION_III(42, August, function42, CarIndex, EntityPosition, bool)
 		if (getEntities()->updateEntity(kEntityAugust, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			getData()->inventoryItem = kItemNone;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -2189,7 +2189,7 @@ IMPLEMENT_FUNCTION_III(42, August, function42, CarIndex, EntityPosition, bool)
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityAugust, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -2471,7 +2471,7 @@ IMPLEMENT_FUNCTION(47, August, function47)
 			break;
 
 		case 5:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

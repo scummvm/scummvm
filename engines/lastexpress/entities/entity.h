@@ -784,13 +784,18 @@ protected:
 	/**
 	 * Updates the position
 	 *
-	 * @param savepoint 	 The savepoint
+	 * @param savepoint       The savepoint
 	 *                        - Sequence name
 	 *                        - CarIndex
 	 *                        - Position
 	 * @param handleExcuseMe true to handle excuseMe actions
 	 */
 	void updatePosition(const SavePoint &savepoint, bool handleExcuseMe = false);
+
+	/**
+	 * Store the current callback information and perform the callback action
+	 */
+	void callbackAction();
 };
 
 

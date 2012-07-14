@@ -150,7 +150,7 @@ IMPLEMENT_FUNCTION(5, Chapters, resetMainEntities)
 	RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_reset);
 	RESET_ENTITY_STATE(kEntityYasmin, Yasmin, setup_reset);
 
-	CALLBACK_ACTION();
+	callbackAction();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
 
 			getScenes()->loadScene(kScene41);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		} else {
 			getSound()->playSound(kEntityPlayer, "LIB014");
 			getSound()->playSound(kEntityPlayer, "LIB015", kFlagDefault, 15);
@@ -1813,7 +1813,7 @@ void Chapters::enterExitHelper(bool isEnteringStation) {
 		ENTITY_PARAM(0, 3) = 1;
 	}
 
-	CALLBACK_ACTION();
+	callbackAction();
 }
 
 } // End of namespace LastExpress

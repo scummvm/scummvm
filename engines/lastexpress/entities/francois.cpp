@@ -113,7 +113,7 @@ IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
 
 	case kActionNone:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 		} else {
 			if (!getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000)
 			 || !getInventory()->hasItem(kItemFirebird)
@@ -168,7 +168,7 @@ IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionCallback:
@@ -224,7 +224,7 @@ IMPLEMENT_FUNCTION(9, Francois, function9)
 
 		case 2:
 			getData()->location = kLocationOutsideCompartment;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -262,7 +262,7 @@ IMPLEMENT_FUNCTION(10, Francois, function10)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityFrancois);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -441,7 +441,7 @@ label_callback:
 			break;
 
 		case 5:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 6:
@@ -464,7 +464,7 @@ label_callback:
 		getData()->field_4A3 = 30;
 		getData()->inventoryItem = kItemNone;
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction205346192:
@@ -523,7 +523,7 @@ IMPLEMENT_FUNCTION(12, Francois, function12)
 			break;
 
 		case 7:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -608,7 +608,7 @@ IMPLEMENT_FUNCTION(13, Francois, function13)
 			break;
 
 		case 11:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -707,7 +707,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 			break;
 
 		case 13:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -763,7 +763,7 @@ IMPLEMENT_FUNCTION(15, Francois, function15)
 
 		case 7:
 			if (!getEntities()->isInsideCompartment(kEntityMmeBoutarel, kCarRedSleeping, kPosition_5790)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -772,7 +772,7 @@ IMPLEMENT_FUNCTION(15, Francois, function15)
 			break;
 
 		case 8:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -829,7 +829,7 @@ IMPLEMENT_FUNCTION(16, Francois, function16)
 			getData()->entityPosition = kPosition_5790;
 			getData()->location = kLocationInsideCompartment;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

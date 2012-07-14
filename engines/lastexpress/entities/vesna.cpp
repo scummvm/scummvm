@@ -131,7 +131,7 @@ IMPLEMENT_FUNCTION_II(7, Vesna, updateEntity2, CarIndex, EntityPosition)
 		break;
 
 	case kAction123668192:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -242,7 +242,7 @@ IMPLEMENT_FUNCTION(11, Vesna, function11)
 
 	case kAction55996766:
 	case kAction101687594:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -455,7 +455,7 @@ IMPLEMENT_FUNCTION(18, Vesna, function18)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityVesna);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -708,7 +708,7 @@ IMPLEMENT_FUNCTION(21, Vesna, function21)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityVesna);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

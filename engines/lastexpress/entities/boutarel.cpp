@@ -229,7 +229,7 @@ IMPLEMENT_FUNCTION_I(11, Boutarel, function11, bool)
 		case 7:
 			getData()->location = kLocationInsideCompartment;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -247,7 +247,7 @@ IMPLEMENT_FUNCTION(12, Boutarel, enterTableWithMmeBoutarel)
 		getSavePoints()->push(kEntityBoutarel, kEntityTables2, kAction136455232);
 		getData()->location = kLocationInsideCompartment;
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -274,7 +274,7 @@ IMPLEMENT_FUNCTION(13, Boutarel, leaveTableWithMmeBoutarel)
 		getSavePoints()->push(kEntityBoutarel, kEntityTables2, kActionDrawTablesWithChairs, "008F");
 		getEntities()->clearSequences(kEntityMmeBoutarel);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -356,7 +356,7 @@ IMPLEMENT_FUNCTION_I(14, Boutarel, function14, bool)
 			getEntities()->clearSequences(kEntityBoutarel);
 			getData()->location = kLocationInsideCompartment;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -414,7 +414,7 @@ IMPLEMENT_FUNCTION_IS(15, Boutarel, function15, bool)
 		case 5:
 			getData()->location = kLocationInsideCompartment;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -462,7 +462,7 @@ IMPLEMENT_FUNCTION_IS(16, Boutarel, function16, bool)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityBoutarel);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -509,7 +509,7 @@ IMPLEMENT_FUNCTION_I(18, Boutarel, function18, TimeValue)
 			getObjects()->update(kObjectCompartmentC, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getObjects()->update(kObject50, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -680,7 +680,7 @@ IMPLEMENT_FUNCTION(20, Boutarel, function20)
 		case 4:
 			getSavePoints()->push(kEntityBoutarel, kEntityCooks, kAction224849280);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

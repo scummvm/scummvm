@@ -169,7 +169,7 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 4) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -183,7 +183,7 @@ IMPLEMENT_FUNCTION(9, Pascale, sitSophieAndRebecca)
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -215,7 +215,7 @@ IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 69);
 		}
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction4:
@@ -237,7 +237,7 @@ IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 69);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -281,7 +281,7 @@ IMPLEMENT_FUNCTION(11, Pascale, function11)
 			getEntities()->clearSequences(kEntityPascale);
 			getData()->entityPosition = kPosition_5900;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -364,7 +364,7 @@ IMPLEMENT_FUNCTION(13, Pascale, getMessageFromAugustToTyler)
 			getSavePoints()->push(kEntityPascale, kEntityVerges, kActionDeliverMessageToTyler);
 			ENTITY_PARAM(0, 1) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -380,7 +380,7 @@ IMPLEMENT_FUNCTION(14, Pascale, sitAnna)
 	case kActionExitCompartment:
 		getEntities()->updatePositionExit(kEntityPascale, kCarRestaurant, 62);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -431,7 +431,7 @@ IMPLEMENT_FUNCTION(15, Pascale, welcomeAnna)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 2) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -484,7 +484,7 @@ IMPLEMENT_FUNCTION(16, Pascale, serveTatianaVassili)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 3) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -725,7 +725,7 @@ IMPLEMENT_FUNCTION(23, Pascale, function23)
 			ENTITY_PARAM(0, 7) = 0;
 			getEntities()->clearSequences(kEntityPascale);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -746,7 +746,7 @@ IMPLEMENT_FUNCTION(24, Pascale, welcomeAbbot)
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction10:
@@ -951,7 +951,7 @@ IMPLEMENT_FUNCTION(27, Pascale, function27)
 			ENTITY_PARAM(1, 1) = 0;
 			ENTITY_PARAM(1, 2) = 1;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -997,7 +997,7 @@ IMPLEMENT_FUNCTION(28, Pascale, messageFromAnna)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(1, 2) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1035,7 +1035,7 @@ IMPLEMENT_FUNCTION(29, Pascale, function29)
 		case 2:
 			getData()->entityPosition = kPosition_850;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1073,7 +1073,7 @@ IMPLEMENT_FUNCTION(30, Pascale, function30)
 		case 2:
 			getData()->entityPosition = kPosition_5900;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

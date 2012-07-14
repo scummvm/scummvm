@@ -184,7 +184,7 @@ IMPLEMENT_FUNCTION(7, Max, function7)
 	case kAction101687594:
 		getEntities()->clearSequences(kEntityMax);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction122358304:
@@ -193,7 +193,7 @@ IMPLEMENT_FUNCTION(7, Max, function7)
 		getObjects()->update(kObjectCompartmentF, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObject53, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction158007856:

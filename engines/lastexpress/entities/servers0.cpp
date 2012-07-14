@@ -110,11 +110,11 @@ IMPLEMENT_FUNCTION_NOSETUP(5, Servers0, callbackActionOnDirection)
 
 	case kActionNone:
 		if (getData()->direction != kDirectionRight)
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
  		break;
 
 	case kActionExcuseMeCath:
@@ -160,7 +160,7 @@ IMPLEMENT_FUNCTION(7, Servers0, function7)
 		case 2:
 			getEntities()->clearSequences(kEntityServers0);
 			getData()->entityPosition = kPosition_5900;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -217,7 +217,7 @@ IMPLEMENT_FUNCTION(9, Servers0, function9)
 			ENTITY_PARAM(2, 2) = 0;
 			ENTITY_PARAM(1, 6) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -483,7 +483,7 @@ IMPLEMENT_FUNCTION(25, Servers0, function25)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(1, 3) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -644,7 +644,7 @@ IMPLEMENT_FUNCTION(29, Servers0, augustAnnaDateOrder)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(1, 5) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -690,7 +690,7 @@ IMPLEMENT_FUNCTION(30, Servers0, function30)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(2, 4) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -856,7 +856,7 @@ IMPLEMENT_FUNCTION(33, Servers0, augustOrderSteak)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(1, 7) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -899,7 +899,7 @@ IMPLEMENT_FUNCTION(34, Servers0, augustServeDuck)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(1, 8) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -969,7 +969,7 @@ void Servers0::handleServer(const SavePoint &savepoint, const char *name, Entity
 			getSavePoints()->push(kEntityServers0, entity, action);
 			*parameter = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -1024,7 +1024,7 @@ void Servers0::serveTable(const SavePoint &savepoint, const char *seq1, EntityIn
 			getEntities()->clearSequences(kEntityServers0);
 			*parameter = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

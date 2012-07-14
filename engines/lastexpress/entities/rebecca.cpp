@@ -177,7 +177,7 @@ IMPLEMENT_FUNCTION(15, Rebecca, function15)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityRebecca);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -259,7 +259,7 @@ IMPLEMENT_FUNCTION_I(16, Rebecca, function16, bool)
 		getSavePoints()->push(kEntityRebecca, kEntityTables3, kAction136455232);
 		getData()->location = kLocationInsideCompartment;
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -332,7 +332,7 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 		case 5:
 			getData()->location = kLocationInsideCompartment;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 6:
@@ -341,7 +341,7 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 
 			getData()->location = kLocationInsideCompartment;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -395,7 +395,7 @@ IMPLEMENT_FUNCTION(18, Rebecca, function18)
 
 		case 2:
 		case 3:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -471,7 +471,7 @@ IMPLEMENT_FUNCTION(19, Rebecca, function19)
 
 		case 5:
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -491,7 +491,7 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 			getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getObjects()->update(kObject52, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
