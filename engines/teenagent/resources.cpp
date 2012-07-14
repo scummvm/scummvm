@@ -22,7 +22,6 @@
 #include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
 #include "common/textconsole.h"
-#include "common/zlib.h"
 
 namespace TeenAgent {
 
@@ -69,23 +68,36 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 		warning("%s", errorMessage.c_str());
 		return false;
 	}
-	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(dat_file);
-	cseg.read(dat, 0xb3b0);
-	dseg.read(dat, 0xe790);
-	eseg.read(dat, 0x8be2);
 
-	delete dat;
-
-	{
-		FilePack varia;
-		varia.open("varia.res");
-		font7.load(varia, 7);
-		font7.width_pack = 1;
-		font7.height = 11;
-		font8.load(varia, 8);
-		font8.height = 31;
-		varia.close();
+	// Check if teenagent.dat is compressed (older versions of the file)
+	uint16 header = dat_file->readUint16BE();
+	bool isCompressed = (header == 0x1F8B ||
+				    ((header & 0x0F00) == 0x0800 &&
+				    header % 31 == 0));
+	dat_file->seek(-2, SEEK_CUR);
+	
+	if (isCompressed) {
+		delete dat_file;
+		Common::String errorMessage = "The teenagent.dat file is compressed. Please decompress it";
+		GUIErrorMessage(errorMessage);
+		warning("%s", errorMessage.c_str());
+		return false;
 	}
+
+	cseg.read(dat_file, 0xb3b0);
+	dseg.read(dat_file, 0xe790);
+	eseg.read(dat_file, 0x8be2);
+
+	delete dat_file;
+
+	FilePack varia;
+	varia.open("varia.res");
+	font7.load(varia, 7);
+	font7.width_pack = 1;
+	font7.height = 11;
+	font8.load(varia, 8);
+	font8.height = 31;
+	varia.close();
 
 	off.open("off.res");
 	on.open("on.res");
