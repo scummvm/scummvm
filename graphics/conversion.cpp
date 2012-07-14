@@ -26,6 +26,29 @@ namespace Graphics {
 
 // TODO: YUV to RGB conversion function
 
+namespace {
+
+template<typename SrcColor, typename DstColor>
+FORCEINLINE void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
+                              const PixelFormat &srcFmt, const PixelFormat &dstFmt,
+                              const uint srcDelta, const uint dstDelta) {
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			uint32 color = *(const SrcColor *)src;
+			byte a, r, g, b;
+			srcFmt.colorToARGB(color, a, r, g, b);
+			color = dstFmt.ARGBToColor(a, r, g, b);
+			*(DstColor *)dst = color;
+			src += sizeof(SrcColor);
+			dst += sizeof(DstColor);
+		}
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
+} // End of anonymous namespace
+
 // Function to blit a rect from one color format to another
 bool crossBlit(byte *dst, const byte *src,
                const uint dstPitch, const uint srcPitch,
@@ -59,21 +82,11 @@ bool crossBlit(byte *dst, const byte *src,
 	const uint dstDelta = (dstPitch - w * dstFmt.bytesPerPixel);
 
 	// TODO: optimized cases for dstDelta of 0
-	uint8 r, g, b, a;
 	if (dstFmt.bytesPerPixel == 2) {
-		uint16 color;
-		for (uint y = 0; y < h; ++y) {
-			for (uint x = 0; x < w; ++x, src += 2, dst += 2) {
-				color = *(const uint16 *)src;
-				srcFmt.colorToARGB(color, a, r, g, b);
-				color = dstFmt.ARGBToColor(a, r, g, b);
-				*(uint16 *)dst = color;
-			}
-			src += srcDelta;
-			dst += dstDelta;
-		}
+		crossBlitLogic<uint16, uint16>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
 	} else if (dstFmt.bytesPerPixel == 3) {
 		uint32 color;
+		uint8 r, g, b, a;
 		uint8 *col = (uint8 *) &color;
 #ifdef SCUMM_BIG_ENDIAN
 		col++;
@@ -102,19 +115,11 @@ bool crossBlit(byte *dst, const byte *src,
 			}
 		}
 	} else if (dstFmt.bytesPerPixel == 4) {
-		uint32 color;
 		if (srcFmt.bytesPerPixel == 2) {
-			for (uint y = 0; y < h; ++y) {
-				for (uint x = 0; x < w; ++x, src += 2, dst += 4) {
-					color = *(const uint16 *)src;
-					srcFmt.colorToARGB(color, a, r, g, b);
-					color = dstFmt.ARGBToColor(a, r, g, b);
-					*(uint32 *)dst = color;
-				}
-				src += srcDelta;
-				dst += dstDelta;
-			}
+			crossBlitLogic<uint16, uint32>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
 		} else if (srcFmt.bytesPerPixel == 3) {
+			uint32 color;
+			byte r, g, b, a;
 			uint8 *col = (uint8 *)&color;
 #ifdef SCUMM_BIG_ENDIAN
 			col++;
@@ -130,16 +135,7 @@ bool crossBlit(byte *dst, const byte *src,
 				dst += dstDelta;
 			}
 		} else {
-			for (uint y = 0; y < h; ++y) {
-				for (uint x = 0; x < w; ++x, src += 4, dst += 4) {
-					color = *(const uint32 *)src;
-					srcFmt.colorToARGB(color, a, r, g, b);
-					color = dstFmt.ARGBToColor(a, r, g, b);
-					*(uint32 *)dst = color;
-				}
-				src += srcDelta;
-				dst += dstDelta;
-			}
+			crossBlitLogic<uint32, uint32>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
 		}
 	} else {
 		return false;
