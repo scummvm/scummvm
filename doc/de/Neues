@@ -2,7 +2,7 @@ Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
 Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-1.5.0 (??.??.????)
+1.5.0 (27.07.2012)
  Neue Spiele:
    - Unterstützung für Backyard Baseball 2003 hinzugefügt.
    - Unterstützung für Blue Force hinzugefügt.
@@ -10,10 +10,7 @@ Sie auf Englisch unter:
    - Unterstützung für Dreamweb hinzugefügt.
    - Unterstützung für Geisha hinzugefügt.
    - Unterstützung für Gregor und der Heißluftballon hinzugefügt.
-   - Unterstützung für Magic Tales: Baba Yaga and the Magic Geese hinzugefügt.
-   - Unterstützung für Magic Tales: Imo and the King hinzugefügt.
    - Unterstützung für Magic Tales: Liam Finds a Story hinzugefügt.
-   - Unterstützung für Magic Tales: The Little Samurai hinzugefügt.
    - Unterstützung für Once Upon A Time: Little Red Riding Hood hinzugefügt.
    - Unterstützung für Sleeping Cub's Test of Courage hinzugefügt.
    - Unterstützung für Soltys hinzugefügt.
@@ -36,18 +33,20 @@ Allgemein:
    - Aussehen von vorhersagendem Eingabedialog verbessert.
    - Verschiedene Verbesserungen der grafischen Benutzeroberfläche.
 
- SDL-Portierungen:
-   - Unterstützung für OpenGL hinzugefügt. (GSoC-Aufgabe)
-
  Baphomets Fluch 1:
    - Falsche Soundeffekte in der DOS-/Windows-Demo korrigiert.
    - Unterstützung für PlayStation-Videos hinzugefügt.
+   - Fehlende Untertitel zur Demo hinzugefügt.
 
  Baphomets Fluch 2:
    - Unterstützung für PlayStation-Videos hinzugefügt.
 
  Cine:
    - Roland-MT-32-Ausgabetreiber integriert.
+
+ Drascula:
+   - Spanische Untertitel zur Zwischensequenz mit Von Braun
+     hinzugefügt (3069981: Keine Untertitel in Szene mit „Von Braun“).
 
  Gob:
    - Absturz in Lost in Time beseitigt.
@@ -68,6 +67,10 @@ Allgemein:
      wird beispielsweise der rote Zeiger im modernen Thema verwendet.
    - Unterstützung für Seitenverhältniskorrektur hinzugefügt.
    - Unterstützung für 16 Bits pro Pixel bei Spielen integriert.
+
+ Maemo-Portierung:
+   - Unterstützung für Nokia 770 mit dem Betriebssystem OS2008 HE hinzugefügt.
+   - Konfigurierbare Tastenzuweisung hinzugefügt.
 
  Windows-Portierung:
    - Standard-Verzeichnis für Spielstände bei
