@@ -30,7 +30,7 @@ namespace Graphics {
 
 namespace {
 
-template<typename SrcColor, typename DstColor>
+template<typename SrcColor, typename DstColor, bool backward>
 FORCEINLINE void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
                               const PixelFormat &srcFmt, const PixelFormat &dstFmt,
                               const uint srcDelta, const uint dstDelta) {
@@ -41,15 +41,27 @@ FORCEINLINE void crossBlitLogic(byte *dst, const byte *src, const uint w, const 
 			srcFmt.colorToARGB(color, a, r, g, b);
 			color = dstFmt.ARGBToColor(a, r, g, b);
 			*(DstColor *)dst = color;
-			src += sizeof(SrcColor);
-			dst += sizeof(DstColor);
+
+			if (backward) {
+				src -= sizeof(SrcColor);
+				dst -= sizeof(DstColor);
+			} else {
+				src += sizeof(SrcColor);
+				dst += sizeof(DstColor);
+			}
 		}
-		src += srcDelta;
-		dst += dstDelta;
+
+		if (backward) {
+			src -= srcDelta;
+			dst -= dstDelta;
+		} else {
+			src += srcDelta;
+			dst += dstDelta;
+		}
 	}
 }
 
-template<typename DstColor>
+template<typename DstColor, bool backward>
 FORCEINLINE void crossBlitLogic3BppSource(byte *dst, const byte *src, const uint w, const uint h,
                                           const PixelFormat &srcFmt, const PixelFormat &dstFmt,
                                           const uint srcDelta, const uint dstDelta) {
@@ -65,11 +77,23 @@ FORCEINLINE void crossBlitLogic3BppSource(byte *dst, const byte *src, const uint
 			srcFmt.colorToARGB(color, a, r, g, b);
 			color = dstFmt.ARGBToColor(a, r, g, b);
 			*(DstColor *)dst = color;
-			src += 3;
-			dst += sizeof(DstColor);
+
+			if (backward) {
+				src -= 3;
+				dst -= sizeof(DstColor);
+			} else {
+				src += 3;
+				dst += sizeof(DstColor);
+			}
 		}
-		src += srcDelta;
-		dst += dstDelta;
+
+		if (backward) {
+			src -= srcDelta;
+			dst -= dstDelta;
+		} else {
+			src += srcDelta;
+			dst += dstDelta;
+		}
 	}
 }
 
@@ -110,19 +134,33 @@ bool crossBlit(byte *dst, const byte *src,
 	// TODO: optimized cases for dstDelta of 0
 	if (dstFmt.bytesPerPixel == 2) {
 		if (srcFmt.bytesPerPixel == 2) {
-			crossBlitLogic<uint16, uint16>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
+			crossBlitLogic<uint16, uint16, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
 		} else if (srcFmt.bytesPerPixel == 3) {
-			crossBlitLogic3BppSource<uint16>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
+			crossBlitLogic3BppSource<uint16, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
 		} else {
-			crossBlitLogic<uint32, uint16>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
+			crossBlitLogic<uint32, uint16, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
 		}
 	} else if (dstFmt.bytesPerPixel == 4) {
 		if (srcFmt.bytesPerPixel == 2) {
-			crossBlitLogic<uint16, uint32>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
+			// We need to blit the surface from bottom right to top left here.
+			// This is neeeded, because when we convert to the same memory
+			// buffer copying the surface from top left to bottom right would
+			// overwrite the source, since we have more bits per destination
+			// color than per source color.
+			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
+			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
+			crossBlitLogic<uint16, uint32, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
 		} else if (srcFmt.bytesPerPixel == 3) {
-			crossBlitLogic3BppSource<uint32>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
+			// We need to blit the surface from bottom right to top left here.
+			// This is neeeded, because when we convert to the same memory
+			// buffer copying the surface from top left to bottom right would
+			// overwrite the source, since we have more bits per destination
+			// color than per source color.
+			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
+			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
+			crossBlitLogic3BppSource<uint32, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
 		} else {
-			crossBlitLogic<uint32, uint32>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
+			crossBlitLogic<uint32, uint32, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta);
 		}
 	} else {
 		return false;
