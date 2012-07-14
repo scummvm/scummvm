@@ -31,9 +31,6 @@
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {

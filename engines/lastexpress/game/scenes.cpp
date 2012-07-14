@@ -22,8 +22,6 @@
 
 #include "lastexpress/game/scenes.h"
 
-#include "lastexpress/data/scene.h"
-
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/beetle.h"
 #include "lastexpress/game/entities.h"
@@ -34,10 +32,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 

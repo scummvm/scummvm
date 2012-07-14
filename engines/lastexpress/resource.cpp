@@ -31,7 +31,6 @@
 
 #include "common/debug.h"
 #include "common/file.h"
-#include "common/textconsole.h"
 
 namespace LastExpress {
 

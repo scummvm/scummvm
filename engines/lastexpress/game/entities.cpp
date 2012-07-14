@@ -27,8 +27,6 @@
 #include "lastexpress/data/sequence.h"
 
 // Entities
-#include "lastexpress/entities/entity.h"
-
 #include "lastexpress/entities/abbot.h"
 #include "lastexpress/entities/alexei.h"
 #include "lastexpress/entities/alouan.h"
@@ -71,10 +69,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 

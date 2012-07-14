@@ -30,10 +30,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -186,7 +184,7 @@ IMPLEMENT_FUNCTION(9, Pascale, sitSophieAndRebecca)
 
 	case kActionExitCompartment:
 		CALLBACK_ACTION();
- 		break;
+		break;
 
 	case kActionDefault:
 		getEntities()->drawSequenceLeft(kEntityPascale, "012C1");
@@ -298,7 +296,7 @@ IMPLEMENT_FUNCTION(12, Pascale, chapter1)
 
 	case kActionNone:
 		setup_chapter1Handler();
- 		break;
+		break;
 
 	case kActionDefault:
 		getSavePoints()->addData(kEntityPascale, kAction239072064, 0);
@@ -648,7 +646,7 @@ IMPLEMENT_FUNCTION(21, Pascale, chapter3)
 
 	case kActionNone:
 		setup_chapter3Handler();
- 		break;
+		break;
 
 	case kActionDefault:
 		getEntities()->clearSequences(kEntityPascale);
@@ -685,7 +683,7 @@ label_callback:
 			setCallback(2);
 			setup_welcomeSophieAndRebecca();
 		}
- 		break;
+		break;
 
 	case kActionCallback:
 		if (getCallback() == 1)
@@ -771,7 +769,7 @@ IMPLEMENT_FUNCTION(25, Pascale, chapter4)
 
 	case kActionNone:
 		setup_chapter4Handler();
- 		break;
+		break;
 
 	case kActionDefault:
 		getEntities()->clearSequences(kEntityPascale);
@@ -1090,7 +1088,7 @@ IMPLEMENT_FUNCTION(31, Pascale, chapter5)
 
 	case kActionNone:
 		setup_chapter5Handler();
- 		break;
+		break;
 
 	case kActionDefault:
 		getEntities()->clearSequences(kEntityPascale);

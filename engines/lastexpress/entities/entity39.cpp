@@ -28,7 +28,6 @@
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {

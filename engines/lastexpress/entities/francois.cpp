@@ -32,7 +32,6 @@
 
 #include "lastexpress/sound/queue.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {

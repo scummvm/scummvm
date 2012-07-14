@@ -28,7 +28,6 @@
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
-#include "common/textconsole.h"
 #include "common/stream.h"
 
 namespace LastExpress {

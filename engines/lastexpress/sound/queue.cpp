@@ -27,7 +27,6 @@
 
 #include "lastexpress/sound/entry.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {

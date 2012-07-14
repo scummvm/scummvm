@@ -27,14 +27,11 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
-#include "common/stream.h"
 
 namespace LastExpress {
 

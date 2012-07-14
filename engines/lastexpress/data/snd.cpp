@@ -28,11 +28,9 @@
 #include "lastexpress/debug.h"
 
 #include "audio/decoders/adpcm_intern.h"
-#include "audio/audiostream.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/system.h"
-#include "common/textconsole.h"
 
 namespace LastExpress {
 

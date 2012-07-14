@@ -31,7 +31,6 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
