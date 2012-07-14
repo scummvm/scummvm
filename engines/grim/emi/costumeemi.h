@@ -34,6 +34,7 @@ typedef uint32 tag32;
 
 class EMISkelComponent;
 class EMIMeshComponent;
+class Material;
 
 class EMICostume : public Costume {
 public:
@@ -47,9 +48,11 @@ public:
 	void saveState(SaveGame *state) const;
 	bool restoreState(SaveGame *state);
 
+	Material * findSharedMaterial(const Common::String &name);
 public:
 	EMISkelComponent *_emiSkel;
 	EMIMeshComponent *_emiMesh;
+	Common::List<Material *> _materials;
 private:
 	Component *loadComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
 	

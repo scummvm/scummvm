@@ -92,6 +92,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 						if (_emiSkel) {
 							_emiMesh->_obj->setSkeleton(_emiSkel->_obj);
 						}
+						for (unsigned int z = 0; z < _emiMesh->_obj->_numTextures; ++z)
+							_materials.push_back(_emiMesh->_obj->_mats[z]);
 					} else if (component->isComponentType('s','k','e','l')) {
 						_emiSkel = static_cast<EMISkelComponent *>(component);
 						if (_emiMesh) {
@@ -219,6 +221,18 @@ int EMICostume::update(uint time) {
 
 	return marker;
 }
+
+Material * EMICostume::findSharedMaterial(const Common::String &name) {
+	Common::List<Material *>::iterator it = _materials.begin();
+	for (; it != _materials.end(); ++it)
+		if ((*it)->getFilename() == name)
+			return *it;
+
+	Material * mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
+	_materials.push_back(mat);
+	return mat;
+}
+
 
 void EMICostume::saveState(SaveGame *state) const {
 	// TODO
