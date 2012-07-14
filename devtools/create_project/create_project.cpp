@@ -76,14 +76,6 @@ namespace {
 std::string unifyPath(const std::string &path);
 
 /**
- * Returns the last path component.
- *
- * @param path Path string.
- * @return Last path component.
- */
-std::string getLastPathComponent(const std::string &path);
-
-/**
  * Display the help text for the program.
  *
  * @param exe Name of the executable.
@@ -606,14 +598,6 @@ std::string unifyPath(const std::string &path) {
 	return result;
 }
 
-std::string getLastPathComponent(const std::string &path) {
-	std::string::size_type pos = path.find_last_of('/');
-	if (pos == std::string::npos)
-		return path;
-	else
-		return path.substr(pos + 1);
-}
-
 void displayHelp(const char *exe) {
 	using std::cout;
 
@@ -1001,7 +985,7 @@ bool isInList(const std::string &dir, const std::string &fileName, const StringL
 				continue;
 		}
 
-		const std::string lastPathComponent = getLastPathComponent(*i);
+		const std::string lastPathComponent = ProjectProvider::getLastPathComponent(*i);
 		if (extensionName == "o") {
 			return false;
 		} else if (!producesObjectFile(fileName) && extensionName != "h") {
@@ -1302,6 +1286,14 @@ std::string ProjectProvider::createUUID() const {
 
 	return uuidString.str();
 #endif
+}
+
+std::string ProjectProvider::getLastPathComponent(const std::string &path) {
+	std::string::size_type pos = path.find_last_of('/');
+	if (pos == std::string::npos)
+		return path;
+	else
+		return path.substr(pos + 1);
 }
 
 void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &projectFile,

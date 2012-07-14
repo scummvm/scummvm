@@ -202,18 +202,38 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 
 	// Init root group
 	_groups.comment = "PBXGroup";
-	Object *group = new Object(this, "PBXGroup", "PBXGroup", "PBXGroup", "", "");
 
-	//Property children;
-	//children.flags = SettingsAsList;
-	//group->properties["children"] = children;
-	group->addProperty("children", "", "", SettingsNoValue|SettingsAsList);
+	// Create group
+	std::string name = getLastPathComponent(dir.name);
+	Object *group = new Object(this, "PBXGroup_" + name , "PBXGroup", "PBXGroup", "", name);
+	
+	// List of children
+	Property children;
+	children.hasOrder = true;
+	children.flags = SettingsAsList;
 
+	group->addProperty("name", name, "", SettingsNoValue|SettingsQuoteVariable);
 	group->addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
 
-	_groups.add(group);
+	int order = 0;
+	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
+		const FileNode *node = *i;
 
-	// TODO Add files
+		std::string id = "FileReference_" + node->name;
+		FileProperty property = FileProperty(node->name, node->name, node->name, "<group>");
+
+		ADD_SETTING_ORDER_NOVALUE(children, getHash(id), node->name, order++);
+		ADD_BUILD_FILE(id, node->name, node->name + " in Sources");
+		ADD_FILE_REFERENCE(node->name, property);
+		
+		// Process child nodes
+		if (!node->children.empty())
+			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
+	}
+
+	group->properties["children"] = children;
+
+	_groups.add(group);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -717,6 +737,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	ADD_SETTING_QUOTE(scummvmSimulator_Debug, "FRAMEWORK_SEARCH_PATHS", "$(inherited)");
 	ADD_SETTING_LIST(scummvmSimulator_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
 	ADD_SETTING(scummvmSimulator_Debug, "SDKROOT", "iphonesimulator3.2");
+	ADD_SETTING_QUOTE(scummvmSimulator_Debug, "VALID_ARCHS", "i386 x86_64");
 	REMOVE_SETTING(scummvmSimulator_Debug, "TARGETED_DEVICE_FAMILY");
 
 	scummvmSimulator_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
@@ -726,6 +747,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	Object *scummvmSimulator_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Release", _targets[2] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property scummvmSimulator_Release(scummvmSimulator_Debug);
 	ADD_SETTING(scummvmSimulator_Release, "COPY_PHASE_STRIP", "YES");
+	ADD_SETTING(scummvmSimulator_Release, "GCC_OPTIMIZATION_LEVEL", "3");
 	REMOVE_SETTING(scummvmSimulator_Release, "GCC_DYNAMIC_NO_PIC");
 	ADD_SETTING(scummvmSimulator_Release, "WRAPPER_EXTENSION", "app");
 
