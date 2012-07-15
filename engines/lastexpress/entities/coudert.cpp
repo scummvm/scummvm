@@ -37,15 +37,6 @@
 
 namespace LastExpress {
 
-#define SAVEGAME_BLOOD_JACKET() \
-	if (getProgress().jacket == kJacketBlood \
-		&& getEntities()->isDistanceBetweenEntities(kEntityCoudert, kEntityPlayer, 1000) \
-		&& !getEntities()->isInsideCompartments(kEntityPlayer) \
-		&& !getEntities()->checkFields10(kEntityPlayer)) { \
-		setCallback(1); \
-		setup_savegame(kSavegameTypeEvent, kEventMertensBloodJacket); \
-	}
-
 Coudert::Coudert(LastExpressEngine *engine) : Entity(engine, kEntityCoudert) {
 	ADD_CALLBACK_FUNCTION(Coudert, reset);
 	ADD_CALLBACK_FUNCTION(Coudert, bloodJacket);
@@ -124,7 +115,7 @@ IMPLEMENT_FUNCTION_S(2, Coudert, bloodJacket)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 		break;
 
 	case kActionExitCompartment:
@@ -151,7 +142,7 @@ IMPLEMENT_FUNCTION_SI(3, Coudert, enterExitCompartment, ObjectIndex)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 		return;
 
 	case kActionCallback:
@@ -177,7 +168,7 @@ IMPLEMENT_FUNCTION(4, Coudert, callbackActionOnDirection)
 			break;
 		}
 
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 		break;
 
 	case kActionExitCompartment:
@@ -200,7 +191,7 @@ IMPLEMENT_FUNCTION_SIII(5, Coudert, enterExitCompartment2, ObjectIndex, EntityPo
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 		return;
 
 	case kActionCallback:
@@ -221,7 +212,7 @@ IMPLEMENT_FUNCTION_S(6, Coudert, playSound)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 		break;
 
 	case kActionEndSound:
@@ -250,7 +241,7 @@ IMPLEMENT_FUNCTION_NOSETUP(7, Coudert, playSound16)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 		break;
 
 	case kActionEndSound:
@@ -363,7 +354,7 @@ IMPLEMENT_FUNCTION_I(10, Coudert, updateFromTime, uint32)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 
 		UPDATE_PARAM(params->param2, getState()->time, params->param1);
 
@@ -386,7 +377,7 @@ IMPLEMENT_FUNCTION_I(11, Coudert, updateFromTicks, uint32)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 
 		UPDATE_PARAM(params->param2, getState()->timeTicks, params->param1);
 
@@ -460,7 +451,7 @@ IMPLEMENT_FUNCTION_II(13, Coudert, function13, bool, EntityIndex)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 
 		if (!params->param2 && !params->param3) {
 
@@ -582,7 +573,7 @@ IMPLEMENT_FUNCTION_I(14, Coudert, function14, EntityIndex)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		savegameBloodJacket();
 		break;
 
 	case kActionDefault:
@@ -4170,6 +4161,16 @@ void Coudert::visitCompartment(const SavePoint &savepoint, EntityPosition positi
 			break;
 		}
 		break;
+	}
+}
+
+void Coudert::savegameBloodJacket() {
+	if (getProgress().jacket == kJacketBlood
+	&& getEntities()->isDistanceBetweenEntities(kEntityCoudert, kEntityPlayer, 1000)
+	&& !getEntities()->isInsideCompartments(kEntityPlayer)
+	&& !getEntities()->checkFields10(kEntityPlayer)) {
+		setCallback(1);
+		setup_savegame(kSavegameTypeEvent, kEventMertensBloodJacket);
 	}
 }
 
