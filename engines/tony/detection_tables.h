@@ -37,7 +37,7 @@ static const TonyGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -54,7 +54,7 @@ static const TonyGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
@@ -70,7 +70,7 @@ static const TonyGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_DEMO | GF_COMPRESSED,
 			GUIO1(GUIO_NONE)
 		},
@@ -86,7 +86,7 @@ static const TonyGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -102,7 +102,7 @@ static const TonyGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -118,7 +118,7 @@ static const TonyGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -134,7 +134,7 @@ static const TonyGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::PL_POL,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
