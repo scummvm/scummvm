@@ -38,6 +38,7 @@
 #include "gob/pregob/onceupon/onceupon.h"
 #include "gob/pregob/onceupon/palettes.h"
 #include "gob/pregob/onceupon/title.h"
+#include "gob/pregob/onceupon/parents.h"
 #include "gob/pregob/onceupon/chargenchild.h"
 
 static const uint kLanguageCount = 5;
@@ -1747,7 +1748,17 @@ bool OnceUpon::sectionChapter1() {
 }
 
 bool OnceUpon::sectionParents() {
-	warning("OnceUpon::sectionParents(): TODO");
+	fadeOut();
+	setGamePalette(14);
+	clearScreen();
+
+	const Common::String seq = ((_house == 1) || (_house == 2)) ? "parents.seq" : "parents2.seq";
+	const Common::String gct = getLocFile("mefait.gc");
+
+	Parents parents(_vm, seq, gct, _name, _house, *_plettre, kGamePalettes[14], kGamePalettes[13], kPaletteSize);
+	parents.play();
+
+	warning("OnceUpon::sectionParents(): TODO: Item search");
 	return true;
 }
 

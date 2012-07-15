@@ -86,6 +86,7 @@ MODULE_OBJS := \
 	pregob/onceupon/abracadabra.o \
 	pregob/onceupon/babayaga.o \
 	pregob/onceupon/title.o \
+	pregob/onceupon/parents.o \
 	pregob/onceupon/stork.o \
 	pregob/onceupon/chargenchild.o \
 	minigames/geisha/evilfish.o \

@@ -80,10 +80,10 @@ const char *Abracadabra::kAnimalNames[] = {
 
 // The houses where the stork can drop a bundle
 const OnceUpon::MenuButton Abracadabra::kStorkHouses[] = {
-	{false,  16,  80,  87, 125, 0, 0, 0, 0, 0, 0, 0},
-	{false,  61, 123,  96, 149, 0, 0, 0, 0, 0, 0, 1},
-	{false, 199, 118, 226, 137, 0, 0, 0, 0, 0, 0, 2},
-	{false, 229,  91, 304, 188, 0, 0, 0, 0, 0, 0, 3}
+	{false,  16,  80,  87, 125, 0, 0, 0, 0, 0, 0, 0}, // Castle , Lord & Lady
+	{false,  61, 123,  96, 149, 0, 0, 0, 0, 0, 0, 1}, // Cottage, Farmers
+	{false, 199, 118, 226, 137, 0, 0, 0, 0, 0, 0, 2}, // Hut    , Woodcutters
+	{false, 229,  91, 304, 188, 0, 0, 0, 0, 0, 0, 3}  // Palace , King & Queen
 };
 
 // The stork bundle drop parameters
