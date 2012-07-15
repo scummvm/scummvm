@@ -3412,7 +3412,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			// Kick off the sample now (perhaps with a delay)
 			if (g_bNoPause)
 				g_bNoPause = false;
-			else if (!IsDemo)
+			else if (!TinselV2Demo)
 				CORO_SLEEP(SysVar(SV_SPEECHDELAY));
 
 			//SamplePlay(VOICE, hText, _ctx->sub, false, -1, -1, PRIORITY_TALK);
@@ -4244,7 +4244,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	int libCode;
 	if (TinselV0) libCode = DW1DEMO_CODES[operand];
 	else if (!TinselV2) libCode = DW1_CODES[operand];
-	else if (_vm->getFeatures() & GF_DEMO) libCode = DW2DEMO_CODES[operand];
+	else if (TinselV2Demo) libCode = DW2DEMO_CODES[operand];
 	else libCode = DW2_CODES[operand];
 
 	debug(7, "CallLibraryRoutine op %d (escOn %d, myEscape %d)", operand, pic->escOn, pic->myEscape);

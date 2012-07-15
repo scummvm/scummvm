@@ -47,7 +47,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_DEMO,
+		0,
 		TINSEL_V0,
 	},
 
@@ -551,7 +551,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW2,
 		0,
-		GF_CD | GF_SCNFILES | GF_DEMO,
+		GF_CD | GF_SCNFILES,
 		TINSEL_V2,
 	},
 

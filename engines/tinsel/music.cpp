@@ -300,7 +300,7 @@ void OpenMidiFiles() {
 	Common::File midiStream;
 
 	// Demo version has no midi file
-	if ((_vm->getFeatures() & GF_DEMO) || (TinselVersion == TINSEL_V2))
+	if (TinselV0 || TinselV2)
 		return;
 
 	if (g_midiBuffer.pDat)
