@@ -753,6 +753,11 @@ static CONFBOX t1RestartBox[] = {
 #endif
 };
 
+static CONFBOX t1RestartBoxPSX[] = {
+	{ AAGBUT, INITGAME, TM_NONE, NULL, USE_POINTER, 122, 48,	23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 82, 48,	23, 19, NULL, IX1_CROSS1 }
+};
+
 static CONFBOX t2RestartBox[] = {
 	{ AAGBUT, INITGAME, TM_NONE, NULL, 0, 140, 78, BW, BH, NULL, IX2_TICK1 },
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78,  BW, BH, NULL, IX2_CROSS1 }
@@ -763,10 +768,10 @@ static CONFINIT t1ciRestart	= { 6, 2, 72, 53, false, t1RestartBox,	ARRAYSIZE(t1R
 #else
 static CONFINIT t1ciRestart	= { 4, 2, 98, 53, false, t1RestartBox,	ARRAYSIZE(t1RestartBox),	SIX_RESTART_HEADING };
 #endif
+static CONFINIT t1ciRestartPSX	= { 8, 2, 46, 53, false, t1RestartBoxPSX,	ARRAYSIZE(t1RestartBoxPSX),	SIX_RESTART_HEADING };
 static CONFINIT t2ciRestart	= { 4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox)/sizeof(CONFBOX), SS_RESTART_HEADING };
 
-#define ciRestart (TinselV2 ? t2ciRestart : t1ciRestart)
-#define restartBox (TinselV2 ? t2RestartBox : t1RestartBox)
+#define ciRestart (TinselV2 ? t2ciRestart : (TinselV1PSX ? t1ciRestartPSX : t1ciRestart))
 
 /*-------------------------------------------------------------*\
 | This is the sound control 'menu'. In Discworld 2, it also		|
