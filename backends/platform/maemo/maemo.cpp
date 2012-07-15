@@ -43,6 +43,7 @@ namespace Maemo {
 
 OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 	:
+	_eventObserver(0),
 	OSystem_POSIX() {
 }
 
