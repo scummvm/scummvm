@@ -86,7 +86,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_SCNFILES | GF_BIG_ENDIAN,
+		GF_SCNFILES,
 		TINSEL_V1,
 	},
 #endif
@@ -491,7 +491,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT | GF_BIG_ENDIAN,
+		GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 

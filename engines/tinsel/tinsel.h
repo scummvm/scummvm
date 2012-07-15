@@ -72,9 +72,7 @@ enum TinselGameFeatures {
 	// None of these defined -> 1 language, in ENGLISH.TXT
 	GF_USE_3FLAGS = 1 << 3,	// French, German, Spanish
 	GF_USE_4FLAGS = 1 << 4,	// French, German, Spanish, Italian
-	GF_USE_5FLAGS = 1 << 5,	// All 5 flags
-
-	GF_BIG_ENDIAN = 1 << 6
+	GF_USE_5FLAGS = 1 << 5	// All 5 flags
 };
 
 /**
@@ -135,8 +133,8 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define TinselV1PSX (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformPSX)
 #define TinselV1Mac (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformMacintosh)
 
-#define READ_16(v) ((_vm->getFeatures() & GF_BIG_ENDIAN) ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
-#define READ_32(v) ((_vm->getFeatures() & GF_BIG_ENDIAN) ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
+#define READ_16(v) (TinselV1Mac ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
+#define READ_32(v) (TinselV1Mac ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
 
 // Global reference to the TinselEngine object
 extern TinselEngine *_vm;
