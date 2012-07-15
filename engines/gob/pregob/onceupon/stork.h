@@ -79,12 +79,6 @@ private:
 	};
 
 
-	void setState(State state, uint16 anim);
-	void setState(State state, uint16 anim, int16 x);
-
-	void dropBundle(State state, uint16 anim);
-
-
 	GobEngine *_vm;
 
 	Surface   *_frame;
@@ -94,6 +88,12 @@ private:
 
 	bool       _shouldDrop;
 	BundleDrop _bundleDrop;
+
+
+	void setState(State state, uint16 anim);
+	void setState(State state, uint16 anim, int16 x);
+
+	void dropBundle(State state, uint16 anim);
 };
 
 } // End of namespace OnceUpon

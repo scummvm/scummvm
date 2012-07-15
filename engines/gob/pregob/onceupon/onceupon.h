@@ -129,7 +129,7 @@ private:
 		kDifficultyBeginner     = 0,
 		kDifficultyIntermediate = 1,
 		kDifficultyAdvanced     = 2,
-		kDifficultyMAX
+		kDifficultyCount
 	};
 
 	/** The different sounds common in the game. */
@@ -137,7 +137,7 @@ private:
 		kSoundClick = 0,
 		kSoundStork    ,
 		kSoundJump     ,
-		kSoundMAX
+		kSoundCount
 	};
 
 	/** Action the character generation wants us to take. */
@@ -181,7 +181,7 @@ private:
 	static const MenuButton kCharGenNameEntry[];
 
 	/** All general game sounds we know about. */
-	static const char *kSound[kSoundMAX];
+	static const char *kSound[kSoundCount];
 
 
 	static const AnimProperties kClownAnimations[];
@@ -194,6 +194,33 @@ private:
 	typedef bool (OnceUpon::*SectionFunc)();
 	/** Section handler function. */
 	static const SectionFunc kSectionFuncs[kSectionCount];
+
+
+	/** Did we open the game archives? */
+	bool _openedArchives;
+
+	// Fonts
+	Font *_jeudak;
+	Font *_lettre;
+	Font *_plettre;
+	Font *_glettre;
+
+	/** The current palette. */
+	int _palette;
+
+	bool _quit; ///< Did the user request a normal game quit?
+
+	Difficulty _difficulty; ///< The current difficulty.
+	int        _section;    ///< The current game section.
+
+	Common::String _name; ///< The name of the child.
+
+	uint8 _house;
+
+	uint8 _head;
+	uint8 _colorHair;
+	uint8 _colorJacket;
+	uint8 _colorTrousers;
 
 
 	// -- General helpers --
@@ -308,33 +335,6 @@ private:
 	void charGenDrawName();
 
 	static bool enterString(Common::String &name, int16 key, uint maxLength, const Font &font);
-
-
-	/** Did we open the game archives? */
-	bool _openedArchives;
-
-	// Fonts
-	Font *_jeudak;
-	Font *_lettre;
-	Font *_plettre;
-	Font *_glettre;
-
-	/** The current palette. */
-	int _palette;
-
-	bool _quit; ///< Did the user request a normal game quit?
-
-	Difficulty _difficulty; ///< The current difficulty.
-	int        _section;    ///< The current game section.
-
-	Common::String _name; ///< The name of the child.
-
-	uint8 _house;
-
-	uint8 _head;
-	uint8 _colorHair;
-	uint8 _colorJacket;
-	uint8 _colorTrousers;
 };
 
 } // End of namespace OnceUpon

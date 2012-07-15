@@ -68,6 +68,9 @@ protected:
 	static const char *kLanguageSuffixLong [5];
 
 
+	GobEngine *_vm;
+
+
 	// -- Graphics --
 
 	/** Initialize the game screen. */
@@ -174,18 +177,16 @@ protected:
 	GCTFile *loadGCT(const Common::String &gctFile) const;
 
 
-	GobEngine *_vm;
-
 private:
-	/** Load a sound file. */
-	bool loadSound(SoundDesc &sound, const Common::String &file) const;
-
-
 	/** Did we fade out? */
 	bool _fadedOut;
 
 	/** All loaded sounds. */
 	Common::Array<SoundDesc> _sounds;
+
+
+	/** Load a sound file. */
+	bool loadSound(SoundDesc &sound, const Common::String &file) const;
 };
 
 } // End of namespace Gob

@@ -135,7 +135,7 @@ const OnceUpon::MenuButton OnceUpon::kLanguageButtons[] = {
 	{true, 234, 138, 284, 173, 265, 55, 315, 90, 234, 138, 2}
 };
 
-const char *OnceUpon::kSound[kSoundMAX] = {
+const char *OnceUpon::kSound[kSoundCount] = {
 	"diamant.snd", // kSoundClick
 	"cigogne.snd", // kSoundStork
 	"saute.snd"    // kSoundJump
@@ -216,7 +216,7 @@ void OnceUpon::init() {
 
 	// Load all our sounds and init the screen
 
-	loadSounds(kSound, kSoundMAX);
+	loadSounds(kSound, kSoundCount);
 	initScreen();
 
 	// We start with an invalid palette
@@ -226,7 +226,7 @@ void OnceUpon::init() {
 	_quit = false;
 
 	// We start with no selected difficulty and at section 0
-	_difficulty = kDifficultyMAX;
+	_difficulty = kDifficultyCount;
 	_section    = 0;
 
 	// Default name
@@ -926,7 +926,7 @@ void OnceUpon::drawIngameMenu() {
 }
 
 void OnceUpon::drawMenuDifficulty() {
-	if (_difficulty == kDifficultyMAX)
+	if (_difficulty == kDifficultyCount)
 		return;
 
 	TXTFile *difficulties = loadTXT(getLocFile("diffic.tx"), TXTFile::kFormatStringPositionColor);
