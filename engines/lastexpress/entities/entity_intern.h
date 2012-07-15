@@ -25,8 +25,6 @@
 
 namespace LastExpress {
 
-#define LOW_BYTE(w)           ((unsigned char)(((unsigned long)(w)) & 0xff))
-
 //////////////////////////////////////////////////////////////////////////
 // Callbacks
 #define ENTITY_CALLBACK(class, name, pointer) \
