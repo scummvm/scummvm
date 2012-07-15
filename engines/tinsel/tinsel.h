@@ -186,6 +186,7 @@ public:
 	uint16 getVersion() const;
 	uint32 getFlags() const;
 	Common::Platform getPlatform() const;
+	bool getIsADGFDemo() const;
 
 	const char *getSampleIndex(LANGUAGE lang);
 	const char *getSampleFile(LANGUAGE lang);

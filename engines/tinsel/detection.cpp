@@ -63,6 +63,10 @@ uint16 TinselEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
+bool TinselEngine::getIsADGFDemo() const {
+	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
+}
+
 } // End of namespace Tinsel
 
 static const PlainGameDescriptor tinselGames[] = {
