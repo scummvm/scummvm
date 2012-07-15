@@ -84,7 +84,6 @@ static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymap
 #endif
 
 void OSystem_SDL_Maemo::initBackend() {
-
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 
