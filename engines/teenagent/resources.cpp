@@ -22,6 +22,7 @@
 #include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "common/zlib.h"
 
 namespace TeenAgent {
@@ -64,9 +65,9 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File *dat_file = new Common::File();
 	if (!dat_file->open("teenagent.dat")) {
 		delete dat_file;
-		Common::String errorMessage = "You're missing the 'teenagent.dat' file. Get it from the ScummVM website";
-		GUIErrorMessage(errorMessage);
+		Common::String errorMessage = _("You're missing the 'teenagent.dat' file. Get it from the ScummVM website");
 		warning("%s", errorMessage.c_str());
+		GUIErrorMessage(errorMessage);
 		return false;
 	}
 
@@ -85,9 +86,9 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	if (isCompressed) {
 		// teenagent.dat is compressed, but zlib hasn't been compiled in
 		delete dat;
-		Common::String errorMessage = "The teenagent.dat file is compressed and zlib hasn't been included in this executable. Please decompress it";
-		GUIErrorMessage(errorMessage);
+		Common::String errorMessage = _("The teenagent.dat file is compressed and zlib hasn't been included in this executable. Please decompress it");
 		warning("%s", errorMessage.c_str());
+		GUIErrorMessage(errorMessage);
 		return false;
 	}
 #endif
