@@ -63,20 +63,18 @@ enum TinselGameID {
 };
 
 enum TinselGameFeatures {
-	GF_CD = 1 << 0,
-	GF_FLOPPY = 1 << 1,
-	GF_SCNFILES = 1 << 2,
-	GF_ENHANCED_AUDIO_SUPPORT = 1 << 3,
-	GF_ALT_MIDI = 1 << 4,		// Alternate sequence in midi.dat file
+	GF_SCNFILES = 1 << 0,
+	GF_ENHANCED_AUDIO_SUPPORT = 1 << 1,
+	GF_ALT_MIDI = 1 << 2,		// Alternate sequence in midi.dat file
 
 	// The GF_USE_?FLAGS values specify how many country flags are displayed
 	// in the subtitles options dialog.
 	// None of these defined -> 1 language, in ENGLISH.TXT
-	GF_USE_3FLAGS = 1 << 5,	// French, German, Spanish
-	GF_USE_4FLAGS = 1 << 6,	// French, German, Spanish, Italian
-	GF_USE_5FLAGS = 1 << 7,	// All 5 flags
+	GF_USE_3FLAGS = 1 << 3,	// French, German, Spanish
+	GF_USE_4FLAGS = 1 << 4,	// French, German, Spanish, Italian
+	GF_USE_5FLAGS = 1 << 5,	// All 5 flags
 
-	GF_BIG_ENDIAN = 1 << 8
+	GF_BIG_ENDIAN = 1 << 6
 };
 
 /**
@@ -185,6 +183,7 @@ public:
 	uint32 getFlags() const;
 	Common::Platform getPlatform() const;
 	bool getIsADGFDemo() const;
+	bool isCD() const;
 
 	const char *getSampleIndex(LANGUAGE lang);
 	const char *getSampleFile(LANGUAGE lang);

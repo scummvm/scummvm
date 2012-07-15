@@ -67,6 +67,10 @@ bool TinselEngine::getIsADGFDemo() const {
 	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
 }
 
+bool TinselEngine::isCD() const {
+	return (bool)(_gameDescription->desc.flags & ADGF_CD);
+}
+
 } // End of namespace Tinsel
 
 static const PlainGameDescriptor tinselGames[] = {
