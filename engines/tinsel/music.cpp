@@ -131,13 +131,11 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	g_currentMidi = dwFileOffset;
 	g_currentLoop = bLoop;
 
-	if (_vm->_config->_musicVolume != 0) {
-		bool mute = false;
-		if (ConfMan.hasKey("mute"))
-			mute = ConfMan.getBool("mute");
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
 
-		SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
-	}
+	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 
 	// the index and length of the last tune loaded
 	uint32 dwSeqLen = 0;	// length of the sequence
@@ -270,27 +268,7 @@ int GetMidiVolume() {
  */
 void SetMidiVolume(int vol) {
 	assert(vol >= 0 && vol <= Audio::Mixer::kMaxChannelVolume);
-
-	static int priorVolMusic = 0;	// FIXME: Avoid non-const global vars
-
-	if (vol == 0 && priorVolMusic == 0)	{
-		// Nothing to do
-	} else if (vol == 0 && priorVolMusic != 0) {
-		// Stop current midi sequence
-		StopMidi();
-		_vm->_midiMusic->setVolume(vol);
-	} else if (vol != 0 && priorVolMusic == 0) {
-		// Perhaps restart last midi sequence
-		if (g_currentLoop)
-			PlayMidiSequence(g_currentMidi, true);
-
-		_vm->_midiMusic->setVolume(vol);
-	} else if (vol != 0 && priorVolMusic != 0) {
-		// Alter current volume
-		_vm->_midiMusic->setVolume(vol);
-	}
-
-	priorVolMusic = vol;
+	_vm->_midiMusic->setVolume(vol);
 }
 
 /**
@@ -933,14 +911,12 @@ void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
 	g_currentMidi = Midi;
 	g_currentLoop = Loop;
 
-	if (_vm->_config->_musicVolume != 0 && Loop) {
-		bool mute = false;
-		if (ConfMan.hasKey("mute"))
-			mute = ConfMan.getBool("mute");
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
 
-		PlayMidiSequence(g_currentMidi, true);
-		SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
-	}
+	PlayMidiSequence(g_currentMidi, true);
+	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 }
 
 #if 0

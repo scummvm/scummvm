@@ -1625,10 +1625,6 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
  * Play a midi file.
  */
 static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
-	// FIXME: This is a workaround for the FIXME below
-	if (GetMidiVolume() == 0)
-		return;
-
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1637,18 +1633,13 @@ static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 
 	PlayMidiSequence(hMidi, loop == MIDI_LOOP);
 
-	// FIXME: The following check messes up the script arguments when
-	// entering the secret door in the bookshelf in the library,
-	// leading to a crash, when the music volume is set to 0 (MidiPlaying()
-	// always false then).
-	//
-	// Why exactly this happens is unclear. An analysis of the involved
-	// script(s) might reveal more.
-	//
-	// Note: This check&sleep was added in DW v2. It was most likely added
-	// to ensure that the MIDI song started playing before the next opcode
+	// This check&sleep was added in DW v2. It was most likely added to
+	// ensure that the MIDI song started playing before the next opcode
 	// is executed.
-	if (!MidiPlaying())
+	// In DW1, it messes up the script arguments when entering the secret
+	// door in the bookshelf in the library, leading to a crash, when the
+	// music volume is set to 0.
+	if (!MidiPlaying() && TinselV2)
 		CORO_SLEEP(1);
 
 	if (complete) {
