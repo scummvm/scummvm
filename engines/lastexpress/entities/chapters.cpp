@@ -384,12 +384,6 @@ IMPLEMENT_FUNCTION(7, Chapters, chapter1Init)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-#define PLAY_STEAM() { \
-	getSoundQueue()->resetState(); \
-	getSound()->playSteam((CityIndex)ENTITY_PARAM(0, 4)); \
-	ENTITY_PARAM(0, 2) = 0; \
-	}
-
 IMPLEMENT_FUNCTION(8, Chapters, chapter1Handler)
 	switch (savepoint.action) {
 	default:
@@ -522,43 +516,43 @@ label_chapter1_next:
 			getSavePoints()->push(kEntityChapters, kEntityTrain, kActionTrainStopRunning);
 
 			if (getEntityData(kEntityPlayer)->location != kLocationOutsideTrain) {
-				PLAY_STEAM();
+				playSteam();
 				break;
 			}
 
 			if (getEntities()->isOutsideAlexeiWindow()) {
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
-				PLAY_STEAM();
+				playSteam();
 				break;
 			}
 
 			if (getEntities()->isOutsideAnnaWindow()) {
 				getScenes()->loadSceneFromPosition(kCarRedSleeping, 49);
-				PLAY_STEAM();
+				playSteam();
 				break;
 			}
 
 			CarIndex car = getEntityData(kEntityPlayer)->car;
 			if (car < kCarRedSleeping || car > kCarCoalTender) {
 				if (car < kCarBaggageRear || car > kCarGreenSleeping) {
-					PLAY_STEAM();
+					playSteam();
 					break;
 				}
 
 				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 98)) {
 					getSound()->playSound(kEntityPlayer, "LIB015");
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 71);
-					PLAY_STEAM();
+					playSteam();
 					break;
 				}
 
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 82);
-				PLAY_STEAM();
+				playSteam();
 				break;
 			}
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 82);
-			PLAY_STEAM();
+			playSteam();
 			break;
 		}
 
@@ -1278,43 +1272,43 @@ label_callback_4:
 			getSavePoints()->push(kEntityChapters, kEntityTrain, kActionTrainStopRunning);
 
 			if (getEntityData(kEntityPlayer)->location != kLocationOutsideTrain) {
-				PLAY_STEAM();
+				playSteam();
 				break;
 			}
 
 			if (getEntities()->isOutsideAlexeiWindow()) {
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
-				PLAY_STEAM();
+				playSteam();
 				break;
 			}
 
 			if (getEntities()->isOutsideAnnaWindow()) {
 				getScenes()->loadSceneFromPosition(kCarRedSleeping, 49);
-				PLAY_STEAM();
+				playSteam();
 				break;
 			}
 
 			CarIndex car = getEntityData(kEntityPlayer)->car;
 			if (car < kCarRedSleeping || car > kCarCoalTender) {
 				if (car < kCarBaggageRear || car > kCarGreenSleeping) {
-					PLAY_STEAM();
+					playSteam();
 					break;
 				}
 
 				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 98)) {
 					getSound()->playSound(kEntityPlayer, "LIB015");
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 71);
-					PLAY_STEAM();
+					playSteam();
 					break;
 				}
 
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 82);
-				PLAY_STEAM();
+				playSteam();
 				break;
 			}
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 82);
-			PLAY_STEAM();
+			playSteam();
 			break;
 		}
 
@@ -1814,6 +1808,12 @@ void Chapters::enterExitHelper(bool isEnteringStation) {
 	}
 
 	callbackAction();
+}
+
+void Chapters::playSteam() {
+	getSoundQueue()->resetState();
+	getSound()->playSteam((CityIndex)ENTITY_PARAM(0, 4));
+	ENTITY_PARAM(0, 2) = 0;
 }
 
 } // End of namespace LastExpress

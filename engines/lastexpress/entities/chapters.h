@@ -156,6 +156,7 @@ public:
 private:
 	void enterExitStation(const SavePoint &savepoint, bool isEnteringStation);
 	void enterExitHelper(bool isEnteringStation);
+	void playSteam();
 };
 
 } // End of namespace LastExpress
