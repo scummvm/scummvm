@@ -535,26 +535,6 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
-	{	// English DW2 demo
-		{
-			"dw2",
-			"Demo",
-			{
-				{"dw2.scn", 0, "853ab998f5136b69bc586991175d6eeb", 4231121},
-				{"english.smp", 0, "b5660a0e031cb4710bcb0ef5629ea61d", 28562357},
-				{NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GID_DW2,
-		0,
-		GF_CD | GF_SCNFILES,
-		TINSEL_V2,
-	},
-
 	{	// Polish fan translaction Discworld 1
 		{
 			"dw",
@@ -574,6 +554,26 @@ static const TinselGameDescription gameDescriptions[] = {
 		0,
 		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
+	},
+
+	{	// English Discworld 2 demo
+		{
+			"dw2",
+			"Demo",
+			{
+				{"dw2.scn", 0, "853ab998f5136b69bc586991175d6eeb", 4231121},
+				{"english.smp", 0, "b5660a0e031cb4710bcb0ef5629ea61d", 28562357},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_DW2,
+		0,
+		GF_CD | GF_SCNFILES,
+		TINSEL_V2,
 	},
 
 	{	// European/Australian Discworld 2 release
