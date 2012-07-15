@@ -86,22 +86,22 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Alouan, compartment6)
-	COMPARTMENT_TO(Alouan, kObjectCompartment6, kPosition_4070, "621Cf", "621Df");
+	Entity::goToCompartment(savepoint, kObjectCompartment6, kPosition_4070, "621Cf", "621Df", WRAP_ENTER_FUNCTION(Alouan, setup_enterExitCompartment));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Alouan, compartment8)
-	COMPARTMENT_TO(Alouan, kObjectCompartment8, kPosition_2740, "621Ch", "621Dh");
+	Entity::goToCompartment(savepoint, kObjectCompartment8, kPosition_2740, "621Ch", "621Dh", WRAP_ENTER_FUNCTION(Alouan, setup_enterExitCompartment));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Alouan, compartment6to8)
-	COMPARTMENT_FROM_TO(Alouan, kObjectCompartment6, kPosition_4070, "621Bf", kObjectCompartment8, kPosition_2740, "621Ah");
+	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment6, kPosition_4070, "621Bf", kObjectCompartment8, kPosition_2740, "621Ah", WRAP_ENTER_FUNCTION(Alouan, setup_enterExitCompartment), WRAP_UPDATE_FUNCTION(Alouan, setup_updateEntity));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Alouan, compartment8to6)
-	COMPARTMENT_FROM_TO(Alouan, kObjectCompartment8, kPosition_2740, "621Bh", kObjectCompartment6, kPosition_4070, "621Af");
+	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment8, kPosition_2740, "621Bh", kObjectCompartment6, kPosition_4070, "621Af", WRAP_ENTER_FUNCTION(Alouan, setup_enterExitCompartment), WRAP_UPDATE_FUNCTION(Alouan, setup_updateEntity));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////

@@ -451,66 +451,6 @@ void class::setup_##name() { \
 		if (!parameter) \
 			parameter = (uint)(type + value);
 
-//////////////////////////////////////////////////////////////////////////
-// Compartments
-//////////////////////////////////////////////////////////////////////////
-// Go from one compartment to another (or the same one if no optional args are passed
-#define COMPARTMENT_TO(class, compartmentFrom, positionFrom, sequenceFrom, sequenceTo) \
-	switch (savepoint.action) { \
-	default: \
-		break; \
-	case kActionDefault: \
-		getData()->entityPosition = positionFrom; \
-		setCallback(1); \
-		setup_enterExitCompartment(sequenceFrom, compartmentFrom); \
-		break; \
-	case kActionCallback: \
-		switch (getCallback()) { \
-		default: \
-			break; \
-		case 1: \
-			setCallback(2); \
-			setup_enterExitCompartment(sequenceTo, compartmentFrom); \
-			break; \
-		case 2: \
-			getData()->entityPosition = positionFrom; \
-			getEntities()->clearSequences(_entityIndex); \
-			callbackAction(); \
-		} \
-		break; \
-	}
-
-#define COMPARTMENT_FROM_TO(class, compartmentFrom, positionFrom, sequenceFrom, compartmentTo, positionTo, sequenceTo) \
-	switch (savepoint.action) { \
-	default: \
-		break; \
-	case kActionDefault: \
-		getData()->entityPosition = positionFrom; \
-		getData()->location = kLocationOutsideCompartment; \
-		setCallback(1); \
-		setup_enterExitCompartment(sequenceFrom, compartmentFrom); \
-		break; \
-	case kActionCallback: \
-		switch (getCallback()) { \
-		default: \
-			break; \
-		case 1: \
-			setCallback(2); \
-			setup_updateEntity(kCarGreenSleeping, positionTo); \
-			break; \
-		case 2: \
-			setCallback(3); \
-			setup_enterExitCompartment(sequenceTo, compartmentTo); \
-			break; \
-		case 3: \
-			getData()->location = kLocationInsideCompartment; \
-			getEntities()->clearSequences(_entityIndex); \
-			callbackAction(); \
-			break; \
-		} \
-		break; \
-	}
-
 } // End of namespace LastExpress
 
 #endif // LASTEXPRESS_ENTITY_INTERN_H

@@ -464,6 +464,74 @@ void Entity::enterExitCompartment(const SavePoint &savepoint, EntityPosition pos
 	}
 }
 
+void Entity::goToCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, Common::String sequenceTo, Entity::EnterFunction *enterFunction) {
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionDefault:
+		getData()->entityPosition = positionFrom;
+		setCallback(1);
+		(*enterFunction)(sequenceFrom.c_str(), compartmentFrom);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			setCallback(2);
+			(*enterFunction)(sequenceTo.c_str(), compartmentFrom);
+			break;
+
+		case 2:
+			getData()->entityPosition = positionFrom;
+			getEntities()->clearSequences(_entityIndex);
+			callbackAction();
+			break;
+		}
+		break;
+	}
+}
+
+void Entity::goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, ObjectIndex compartmentTo, EntityPosition positionTo, Common::String sequenceTo, Entity::EnterFunction *enterFunction, Entity::UpdateFunction *updateFunction) {
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionDefault:
+		getData()->entityPosition = positionFrom;
+		getData()->location = kLocationOutsideCompartment;
+		setCallback(1);
+		(*enterFunction)(sequenceFrom.c_str(), compartmentFrom);
+		break;
+
+	case kActionCallback:
+		switch (getCallback()) {
+		default:
+			break;
+
+		case 1:
+			setCallback(2);
+			(*updateFunction)(kCarGreenSleeping, positionTo);
+			break;
+
+		case 2:
+			setCallback(3);
+			(*enterFunction)(sequenceTo.c_str(), compartmentTo);
+			break;
+
+		case 3:
+			getData()->location = kLocationInsideCompartment;
+			getEntities()->clearSequences(_entityIndex);
+			callbackAction();
+			break;
+		}
+		break;
+	}
+}
+
 void Entity::updatePosition(const SavePoint &savepoint, bool handleExcuseMe) {
 	EXPOSE_PARAMS(EntityData::EntityParametersSIII)
 
