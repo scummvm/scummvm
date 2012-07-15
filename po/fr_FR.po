@@ -1262,7 +1262,7 @@ msgstr "Jouer quand même"
 #: engines/agi/detection.cpp:145 engines/dreamweb/detection.cpp:47
 #: engines/sci/detection.cpp:390
 msgid "Use original save/load screens"
-msgstr "Utiliser les dialogues sauvegarde/chargement d'origine"
+msgstr "Dialogues sauvegarde/chargement d'origine"
 
 #: engines/agi/detection.cpp:146 engines/dreamweb/detection.cpp:48
 #: engines/sci/detection.cpp:391
