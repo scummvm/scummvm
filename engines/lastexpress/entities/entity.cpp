@@ -51,6 +51,17 @@ EntityData::EntityCallData::~EntityCallData() {
 	SAFE_DELETE(sequence3);
 }
 
+void EntityData::EntityCallData::syncString(Common::Serializer &s, Common::String &string, int length) {
+	char seqName[13];
+	memset(&seqName, 0, length);
+
+	if (s.isSaving()) strcpy((char *)&seqName, string.c_str());
+		s.syncBytes((byte *)&seqName, length);
+
+	if (s.isLoading())
+		string = seqName;
+}
+
 void EntityData::EntityCallData::saveLoadWithSerializer(Common::Serializer &s) {
 	for (uint i = 0; i < ARRAYSIZE(callbacks); i++)
 		s.syncAsByte(callbacks[i]);
@@ -77,20 +88,10 @@ void EntityData::EntityCallData::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsByte(directionSwitch);
 
 	// Sync strings
-#define SYNC_STRING(varName, count) { \
-	char seqName[13]; \
-	memset(&seqName, 0, count); \
-	if (s.isSaving()) strcpy((char *)&seqName, varName.c_str()); \
-	s.syncBytes((byte *)&seqName, count); \
-	if (s.isLoading()) varName = seqName; \
-}
-
-	SYNC_STRING(sequenceName, 13);
-	SYNC_STRING(sequenceName2, 13);
-	SYNC_STRING(sequenceNamePrefix, 7);
-	SYNC_STRING(sequenceNameCopy, 13);
-
-#undef SYNC_STRING
+	syncString(s, sequenceName, 13);
+	syncString(s, sequenceName2, 13);
+	syncString(s, sequenceNamePrefix, 7);
+	syncString(s, sequenceNameCopy, 13);
 
 	// Skip pointers to frame & sequences
 	s.skip(5 * 4);

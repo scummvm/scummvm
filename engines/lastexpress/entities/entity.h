@@ -596,6 +596,15 @@ public:
 			return str;
 		}
 
+		/**
+		 * Synchronizes a string.
+		 *
+		 * @param	s	  	The Common::Serializer to use.
+		 * @param	string	The string.
+		 * @param	length	Length of the string.
+		 */
+		void syncString(Common::Serializer &s, Common::String &string, int length);
+
 		// Serializable
 		void saveLoadWithSerializer(Common::Serializer &s);
 	};
