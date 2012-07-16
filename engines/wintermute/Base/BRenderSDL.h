@@ -44,8 +44,7 @@ public:
 	Graphics::Surface *_surface;
 	Common::Rect _srcRect;
 	Common::Rect _dstRect;
-	bool _mirrorX;
-	bool _mirrorY;
+	uint32 _mirror;
 	bool _hasAlpha;
 
 	bool _isValid;
@@ -103,7 +102,7 @@ public:
 private:
 	void addDirtyRect(const Common::Rect &rect);
 	void drawTickets();
-	void drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, bool mirrorX = false, bool mirrorY = false);
+	void drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror);
 	typedef Common::List<RenderTicket*>::iterator RenderQueueIterator;
 	Common::Rect *_dirtyRect;
 	Common::List<RenderTicket*> _renderQueue;

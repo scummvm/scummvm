@@ -42,8 +42,13 @@
 namespace WinterMute {
 
 RenderTicket::RenderTicket(CBSurfaceSDL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) : _owner(owner),
-	_srcRect(*srcRect), _dstRect(*dstRect), _mirrorX(mirrorX), _mirrorY(mirrorY), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(true) {
+	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(true) {
 	_colorMod = 0;
+		_mirror = TransparentSurface::FLIP_NONE;
+		if (mirrorX)
+			_mirror |= TransparentSurface::FLIP_V;
+		if (mirrorY)
+			_mirror |= TransparentSurface::FLIP_H;
 	if (surf) {
 		_surface = new Graphics::Surface();
 		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
@@ -75,10 +80,10 @@ RenderTicket::~RenderTicket() {
 bool RenderTicket::operator==(RenderTicket &t) {
 	if ((t._srcRect != _srcRect) ||
 		(t._dstRect != _dstRect) ||
-		(t._mirrorX != _mirrorX) ||
-		(t._mirrorY != _mirrorY) ||
+		(t._mirror != _mirror) ||
 		(t._owner != _owner) ||
-		(t._hasAlpha != _hasAlpha)) {
+		(t._hasAlpha != _hasAlpha) ||
+		(t._colorMod != _colorMod)) {
 			return false;
 		}
 	return true;
@@ -101,7 +106,7 @@ CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
 	setAlphaMod(255);
 	setColorMod(255, 255, 255);
 	_dirtyRect = NULL;
-	_disableDirtyRects = true;
+	_disableDirtyRects = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -321,8 +326,20 @@ ERRORCODE CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 
 	//TODO: This is only here until I'm sure about the final pixelformat
 	uint32 col = _renderSurface->format.ARGBToColor(a, r, g, b);
-	_renderSurface->fillRect(fillRect, col);
-
+	if (_disableDirtyRects)
+		_renderSurface->fillRect(fillRect, col);
+	else {
+		setAlphaMod(a);
+		setColorMod(r, g, b);
+		Graphics::Surface surf;
+		surf.create((uint16)fillRect.width(), (uint16)fillRect.height(), _renderSurface->format);
+		Common::Rect sizeRect(fillRect);
+		sizeRect.translate(-fillRect.top, -fillRect.left);
+		surf.fillRect(fillRect, col);
+		drawSurface(NULL, &surf, &sizeRect, &fillRect, false, false);
+		surf.free();
+		_clearColor = col;
+	}
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 	//SDL_RenderFillRect(_renderer, &fillRect);
@@ -335,10 +352,16 @@ void CBRenderSDL::drawSurface(CBSurfaceSDL *owner, const Graphics::Surface *surf
 		RenderTicket renderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY);
 		// HINT: The surface-data contains other info than it should.
 	//	drawFromSurface(renderTicket._surface, srcRect, dstRect, NULL, mirrorX, mirrorY);
-		drawFromSurface(renderTicket._surface, &renderTicket._srcRect, &renderTicket._dstRect, NULL);
+		drawFromSurface(renderTicket._surface, &renderTicket._srcRect, &renderTicket._dstRect, NULL, renderTicket._mirror);
 		return;
 	}
+	// Skip rects that are completely outside the screen:
+	if ((dstRect->left < 0 && dstRect->right < 0) || (dstRect->top < 0 && dstRect->bottom < 0)) {
+		return;
+	}
+	
 	RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY); 
+	compare._colorMod = _colorMod;
 	RenderQueueIterator it;
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
 		if ((*it)->_owner == owner && *(*it) == compare && (*it)->_isValid) {
@@ -387,10 +410,10 @@ void CBRenderSDL::drawFromTicket(RenderTicket *renderTicket) {
 			_renderQueue.insert(pos, renderTicket);
 			Common::List<RenderTicket*>::iterator it;
 			renderTicket->_drawNum = _drawNum++;
-
 			// Increment the following tickets, so they still are in line
 			for (it = pos; it != _renderQueue.end(); it++) {
 				(*it)->_drawNum++;
+				(*it)->_wantsDraw = false;
 			}
 			addDirtyRect(renderTicket->_dstRect);
 		}
@@ -430,21 +453,22 @@ void CBRenderSDL::drawTickets() {
 	RenderQueueIterator it = _renderQueue.begin();
 	// Clean out the old tickets
 	while (it != _renderQueue.end()) {
-		if ((*it)->_wantsDraw == false) {
+		if ((*it)->_wantsDraw == false || (*it)->_isValid == false) {
 			RenderTicket* ticket = *it;
 			addDirtyRect((*it)->_dstRect);
+			//warning("Discarding Rect: %d %d %d %d Width: %d Height: %d", (*it)->_dstRect.left, (*it)->_dstRect.top, (*it)->_dstRect.right, (*it)->_dstRect.bottom, (*it)->_dstRect.width() , (*it)->_dstRect.height());
 			it = _renderQueue.erase(it);
 			delete ticket;
 		} else {
 			it++;
 		}
 	}
-	if (!_dirtyRect)
+	if (!_dirtyRect || _dirtyRect->width() == 0 || _dirtyRect->height() == 0)
 		return;
 	// The color-mods are stored in the RenderTickets on add, since we set that state again during
 	// draw, we need to keep track of what it was prior to draw.
 	uint32 oldColorMod = _colorMod;
-//	warning("DirtyRect: %d %d %d %d", _dirtyRect->left, _dirtyRect->top, _dirtyRect->right, _dirtyRect->bottom);
+//	warning("DirtyRect: %d %d %d %d Width: %d Height: %d", _dirtyRect->left, _dirtyRect->top, _dirtyRect->right, _dirtyRect->bottom, _dirtyRect->width(), _dirtyRect->height());
 	
 	// Apply the clear-color to the dirty rect.
 	_renderSurface->fillRect(*_dirtyRect, _clearColor);
@@ -457,29 +481,27 @@ void CBRenderSDL::drawTickets() {
 			dstClip.clip(*_dirtyRect);
 			// we need to keep track of the position to redraw the dirty rect
 			Common::Rect pos(dstClip);
-			int offsetX = ticket->_dstRect.left;
-			int offsetY = ticket->_dstRect.top;
+			int16 offsetX = ticket->_dstRect.left;
+			int16 offsetY = ticket->_dstRect.top;
 			// convert from screen-coords to surface-coords.
 			dstClip.translate(-offsetX, -offsetY);
 
 			_colorMod = ticket->_colorMod;
-			drawFromSurface(ticket->_surface, &ticket->_srcRect, &pos, &dstClip, ticket->_mirrorX, ticket->_mirrorX);
-			ticket->_wantsDraw = false;
+			drawFromSurface(ticket->_surface, &ticket->_srcRect, &pos, &dstClip, ticket->_mirror);
 			_needsFlip = true;
 		}
+		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
+		ticket->_wantsDraw = false;
 	}
+	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+
 	// Revert the colorMod-state.
 	_colorMod = oldColorMod;
 }
 
 // Replacement for SDL2's SDL_RenderCopy
-void CBRenderSDL::drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, bool mirrorX, bool mirrorY) {
+void CBRenderSDL::drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror) {
 	TransparentSurface src(*surf, false);
-	int mirror = TransparentSurface::FLIP_NONE;
-	if (mirrorX)
-		mirror |= TransparentSurface::FLIP_V;
-	if (mirrorY)
-		mirror |= TransparentSurface::FLIP_H;
 	bool doDelete = false;
 	if (!clipRect) {
 		doDelete = true;
@@ -489,8 +511,6 @@ void CBRenderSDL::drawFromSurface(const Graphics::Surface *surf, Common::Rect *s
 	}
 
 	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
-	if (!_disableDirtyRects)
-		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(dstRect->left, dstRect->top), _renderSurface->pitch, dstRect->left, dstRect->top, dstRect->width(), dstRect->height());
 	if (doDelete)
 		delete clipRect;
 }
