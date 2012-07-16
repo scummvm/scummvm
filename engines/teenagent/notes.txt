@@ -1,3 +1,6 @@
+// Dialogs Not Directly Used... 
+// Probably used via dseg dialog lookup i.e. pop
+
 //	Dialog #0: Offset 0x0000
 //	Dialog #1: Offset 0x01b4
 //	Dialog #2: Offset 0x046f
