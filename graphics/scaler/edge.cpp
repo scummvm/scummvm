@@ -3561,8 +3561,8 @@ void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-void EdgePlugin::oldSrcScale(const uint8 *srcPtr, uint32 srcPitch,
-                       uint8 *dstPtr, uint32 dstPitch, const uint8 *oldSrcPtr, uint32 oldSrcPitch, int width, int height, int x, int y) {
+void EdgePlugin::internScale(const uint8 *srcPtr, uint32 srcPitch,
+                       uint8 *dstPtr, uint32 dstPitch, const uint8 *oldSrcPtr, uint32 oldSrcPitch, int width, int height) {
 	if (_format.bytesPerPixel == 2) {
 		if (_factor == 2) {
 			if (_format.gLoss == 2)
