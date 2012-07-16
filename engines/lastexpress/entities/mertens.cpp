@@ -300,14 +300,6 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
-
-#define LOADSCENE_FROM_POSITION() \
-	if (getData()->direction != kDirectionUp) { \
-		getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + 750)); \
-	} else { \
-		getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition - 750), true); \
-	}
-
 	switch (savepoint.action) {
 	default:
 		break;
@@ -406,7 +398,7 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 			ENTITY_PARAM(0, 7) = 0;
 
 			if (params->param1 != 3 || (params->param2 != kPosition_8200 && params->param2 != kPosition_9510)) {
-				LOADSCENE_FROM_POSITION();
+				loadSceneFromPosition();
 				break;
 			}
 
@@ -438,31 +430,29 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 				break;
 			}
 
-			LOADSCENE_FROM_POSITION();
+			loadSceneFromPosition();
 			break;
 
 		case 4:
 			getAction()->playAnimation(kEventMertensKronosConcertInvitation);
 			ENTITY_PARAM(2, 4) = 0;
 
-			LOADSCENE_FROM_POSITION();
+			loadSceneFromPosition();
 			break;
 
 		case 5:
 			getAction()->playAnimation(getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition ? kEventMertensAskTylerCompartmentD : kEventMertensAskTylerCompartment);
-			LOADSCENE_FROM_POSITION();
+			loadSceneFromPosition();
 			break;
 
 		case 6:
 			getAction()->playAnimation(kEventMertensDontMakeBed);
-			LOADSCENE_FROM_POSITION();
+			loadSceneFromPosition();
 			ENTITY_PARAM(0, 4) = 0;
 			break;
 		}
 		break;
 	}
-
-#undef LOADSCENE_FROM_POSITION
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -4097,5 +4087,16 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(54, Mertens)
+
+//////////////////////////////////////////////////////////////////////////
+// Helper functions
+//////////////////////////////////////////////////////////////////////////
+
+void Mertens::loadSceneFromPosition() {
+	if (getData()->direction != kDirectionUp)
+		getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + 750));
+	else
+		getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition - 750), true);
+}
 
 } // End of namespace LastExpress
