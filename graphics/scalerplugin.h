@@ -25,6 +25,15 @@
 #include "base/plugins.h"
 #include "graphics/pixelformat.h"
 
+enum SourceType {
+	SRC_SCREEN = 0,
+	SRC_CURSOR,
+	SRC_OTHER,
+
+	SRC_MAX
+};
+
+
 class ScalerPluginObject : public PluginObject {
 public:
 
@@ -96,18 +105,29 @@ public:
 	 * optionally call it.
 	 *
 	 * @see oldSourceScale
+	 * @see setSource
 	 */
 	virtual bool useOldSrc() const { return false; }
 
 	/**
-	 * Secondary scaling method for computationally intense scalers.
+	 * Set the source to be used when scaling and copying to the old buffer.
 	 *
-	 * @see useOldSource
+	 * @param padding The number of pixels on the border (Used to prevent memory access crashes)
+	 * @param type    The surface type. This source will only be used when calling oldSrcScale with the same type.
 	 */
-	virtual void oldSrcScale(const uint8 *srcPtr, uint32 srcPitch,
-	                         uint8 *dstPtr, uint32 dstPitch,
-	                         const uint8 *oldSrcPtr, uint32 oldSrcPitch,
-	                         int width, int height, int x, int y) {
+	virtual void setSource(byte *src, uint pitch, int width, int height, int padding, SourceType type) {
+		// Should not be called unless overriden
+		assert(0);
+	}
+
+	/**
+	 * Scale using the source from setSource called with the same value as type.
+	 * The source will be compared against previous frames to avoid computations
+	 * on unchanged pixels.
+	 *
+	 * @param type    The surface type set previously with setSource
+	 */
+	virtual void oldSrcScale(byte *dst, uint dstPitch, SourceType type) {
 		// Should not be called unless overriden
 		assert(0);
 	}
@@ -116,6 +136,40 @@ protected:
 	uint _factor;
 	Common::Array<uint> _factors;
 	Graphics::PixelFormat _format;
+};
+
+/**
+ * Convenience class that implements some bookkeeping for keeping track of
+ * old source images.
+ */
+class SourceScaler : public ScalerPluginObject {
+
+public:
+
+	SourceScaler();
+
+	virtual void setSource(byte *src, uint pitch, int width, int height, int padding, SourceType type);
+	virtual void oldSrcScale(byte *dst, uint dstPitch, SourceType type);
+
+protected:
+
+	/**
+	 * Scalers must implement this function. It will be called by oldSrcScale.
+	 * If by comparing the src and oldsrc images it is discovered that no change
+	 * is necessary, do not write a pixel.
+	 */
+	virtual void internScale(const uint8 *srcPtr, uint32 srcPitch,
+	                         uint8 *dstPtr, uint32 dstPitch,
+	                         const uint8 *oldSrcPtr, uint32 oldSrcPitch,
+	                         int width, int height) = 0;
+
+	int widths[SRC_MAX];
+	int heights[SRC_MAX];
+	uint paddings[SRC_MAX];
+	uint pitches[SRC_MAX];
+
+	byte *newSrcs[SRC_MAX];
+	byte *oldSrcs[SRC_MAX];
 };
 
 typedef PluginSubclass<ScalerPluginObject> ScalerPlugin;

@@ -24,7 +24,7 @@
 
 #include "graphics/scalerplugin.h"
 
-class EdgePlugin : public ScalerPluginObject {
+class EdgePlugin : public SourceScaler {
 public:
 
 	EdgePlugin();
@@ -32,10 +32,10 @@ public:
 	virtual void deinitialize();
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
-	virtual void oldSrcScale(const uint8 *srcPtr, uint32 srcPitch,
+	virtual void internScale(const uint8 *srcPtr, uint32 srcPitch,
 						   uint8 *dstPtr, uint32 dstPitch,
 						   const uint8 *oldSrcPtr, uint32 oldSrcPitch,
-						   int width, int height, int x, int y);
+						   int width, int height);
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
 	virtual uint getFactor() const { return _factor; }
