@@ -88,6 +88,10 @@ public:
 	DECLARE_FUNCTION(chapter5Handler)
 
 	DECLARE_NULL_FUNCTION()
+
+private:
+	void handleAction(const SavePoint &savepoint);
+	void handleChapter(const SavePoint &savepoint);
 };
 
 } // End of namespace LastExpress

@@ -31,31 +31,6 @@
 
 namespace LastExpress {
 
-#define CHAPTER_IMPLEMENTATION() \
-	switch (savepoint.action) { \
-	default: \
-		break; \
-	case kActionNone: \
-		setup_chaptersHandler(); \
-		break; \
-	case kActionDefault: \
-		getEntities()->clearSequences(kEntitySophie); \
-		getData()->entityPosition = kPosition_4840; \
-		getData()->location = kLocationInsideCompartment; \
-		getData()->car = kCarRedSleeping; \
-		getData()->clothes = kClothesDefault; \
-		getData()->inventoryItem = kItemNone; \
-		break; \
-	}
-
-#define DEFAULT_ACTION_IMPLEMENTATION() \
-	if (savepoint.action == kActionDefault) { \
-		getData()->entityPosition = kPosition_4840; \
-		getData()->location = kLocationInsideCompartment; \
-		getData()->car = kCarRedSleeping; \
-		getEntities()->clearSequences(kEntitySophie); \
-	}
-
 Sophie::Sophie(LastExpressEngine *engine) : Entity(engine, kEntitySophie) {
 	ADD_CALLBACK_FUNCTION(Sophie, reset);
 	ADD_CALLBACK_FUNCTION(Sophie, updateEntity);
@@ -217,27 +192,27 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Sophie, function5)
-	DEFAULT_ACTION_IMPLEMENTATION()
+	handleAction(savepoint);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Sophie, chapter2)
-	CHAPTER_IMPLEMENTATION()
+	handleChapter(savepoint);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Sophie, chapter3)
-	CHAPTER_IMPLEMENTATION()
+	handleChapter(savepoint);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Sophie, chapter4)
-	CHAPTER_IMPLEMENTATION()
+	handleChapter(savepoint);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Sophie, function9)
-	DEFAULT_ACTION_IMPLEMENTATION()
+	handleAction(savepoint);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -270,5 +245,38 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(12, Sophie)
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers functions
+//////////////////////////////////////////////////////////////////////////
+
+void Sophie::handleAction(const SavePoint &savepoint) {
+	if (savepoint.action == kActionDefault) {
+		getData()->entityPosition = kPosition_4840;
+		getData()->location = kLocationInsideCompartment;
+		getData()->car = kCarRedSleeping;
+		getEntities()->clearSequences(kEntitySophie);
+	}
+}
+
+void Sophie::handleChapter(const SavePoint &savepoint) {
+	switch (savepoint.action) {
+	default:
+		break;
+
+	case kActionNone:
+		setup_chaptersHandler();
+		break;
+
+	case kActionDefault:
+		getEntities()->clearSequences(kEntitySophie);
+		getData()->entityPosition = kPosition_4840;
+		getData()->location = kLocationInsideCompartment;
+		getData()->car = kCarRedSleeping;
+		getData()->clothes = kClothesDefault;
+		getData()->inventoryItem = kItemNone;
+		break;
+	}
+}
 
 } // End of namespace LastExpress
