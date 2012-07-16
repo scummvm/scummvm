@@ -32,10 +32,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -552,7 +550,7 @@ void Train::handleCompartmentAction() {
 
 	ENTITY_PARAM(0, 8) = params->param1;
 
-	CALLBACK_ACTION();
+	callbackAction();
 }
 
 //////////////////////////////////////////////////////////////////////////

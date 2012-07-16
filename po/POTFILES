@@ -53,6 +53,7 @@ engines/sword1/logic.cpp
 engines/sword1/sword1.cpp
 engines/sword2/animation.cpp
 engines/sword2/sword2.cpp
+engines/teenagent/resources.cpp
 engines/tinsel/saveload.cpp
 engines/parallaction/saveload.cpp
 

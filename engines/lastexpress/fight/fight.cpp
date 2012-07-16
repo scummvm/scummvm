@@ -40,7 +40,6 @@
 #include "lastexpress/sound/queue.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
@@ -53,6 +52,8 @@ Fight::FightData::FightData() {
 	index = 0;
 
 	isFightRunning = false;
+
+	memset(&sequences, 0, sizeof(sequences));
 }
 
 Fight::FightData::~FightData() {
@@ -399,6 +400,9 @@ end_load:
 }
 
 void Fight::setOpponents() {
+	if (!_data)
+		error("[Fight::setOpponents] Data not initialized");
+
 	_data->player->setOpponent(_data->opponent);
 	_data->opponent->setOpponent(_data->player);
 

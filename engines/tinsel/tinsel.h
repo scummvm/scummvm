@@ -63,21 +63,16 @@ enum TinselGameID {
 };
 
 enum TinselGameFeatures {
-	GF_DEMO = 1 << 0,
-	GF_CD = 1 << 1,
-	GF_FLOPPY = 1 << 2,
-	GF_SCNFILES = 1 << 3,
-	GF_ENHANCED_AUDIO_SUPPORT = 1 << 4,
-	GF_ALT_MIDI = 1 << 5,		// Alternate sequence in midi.dat file
+	GF_SCNFILES = 1 << 0,
+	GF_ENHANCED_AUDIO_SUPPORT = 1 << 1,
+	GF_ALT_MIDI = 1 << 2,		// Alternate sequence in midi.dat file
 
 	// The GF_USE_?FLAGS values specify how many country flags are displayed
 	// in the subtitles options dialog.
 	// None of these defined -> 1 language, in ENGLISH.TXT
-	GF_USE_3FLAGS = 1 << 6,	// French, German, Spanish
-	GF_USE_4FLAGS = 1 << 7,	// French, German, Spanish, Italian
-	GF_USE_5FLAGS = 1 << 8,	// All 5 flags
-
-	GF_BIG_ENDIAN = 1 << 9
+	GF_USE_3FLAGS = 1 << 3,	// French, German, Spanish
+	GF_USE_4FLAGS = 1 << 4,	// French, German, Spanish, Italian
+	GF_USE_5FLAGS = 1 << 5	// All 5 flags
 };
 
 /**
@@ -134,13 +129,12 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define TinselV0 (TinselVersion == TINSEL_V0)
 #define TinselV1 (TinselVersion == TINSEL_V1)
 #define TinselV2 (TinselVersion == TINSEL_V2)
+#define TinselV2Demo (TinselVersion == TINSEL_V2 && _vm->getIsADGFDemo())
 #define TinselV1PSX (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformPSX)
 #define TinselV1Mac (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformMacintosh)
 
-#define IsDemo (_vm->getFeatures() & GF_DEMO)
-
-#define READ_16(v) ((_vm->getFeatures() & GF_BIG_ENDIAN) ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
-#define READ_32(v) ((_vm->getFeatures() & GF_BIG_ENDIAN) ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
+#define READ_16(v) (TinselV1Mac ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
+#define READ_32(v) (TinselV1Mac ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
 
 // Global reference to the TinselEngine object
 extern TinselEngine *_vm;
@@ -186,6 +180,8 @@ public:
 	uint16 getVersion() const;
 	uint32 getFlags() const;
 	Common::Platform getPlatform() const;
+	bool getIsADGFDemo() const;
+	bool isCD() const;
 
 	const char *getSampleIndex(LANGUAGE lang);
 	const char *getSampleFile(LANGUAGE lang);

@@ -28,10 +28,8 @@
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -132,7 +130,7 @@ IMPLEMENT_FUNCTION(6, Yasmin, function6)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityYasmin);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -172,7 +170,7 @@ IMPLEMENT_FUNCTION(7, Yasmin, function7)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityYasmin);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -472,7 +470,7 @@ IMPLEMENT_FUNCTION(21, Yasmin, function21)
 	case kActionNone:
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityYasmin, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionExcuseMeCath:

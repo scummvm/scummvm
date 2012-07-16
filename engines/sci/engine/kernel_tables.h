@@ -517,10 +517,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(MakeSaveCatName),   SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
 	{ MAP_CALL(MakeSaveFileName),  SIG_EVERYWHERE,           "rri",                   NULL,            NULL },
-
-	// SCI2 unmapped functions - TODO!
-
-	// PalCycle - called by Game::newRoom. Related to RemapColors.
+	{ MAP_CALL(SetScroll),         SIG_EVERYWHERE,           "oiiiii(i)",             NULL,            NULL },
+	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 
 	// SCI2 Empty functions
 	
@@ -587,8 +585,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
-	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "roiiiiiiiii",           NULL,            NULL },
-	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
+	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "[r0]oiiiiiiiii",        NULL,            NULL },
+	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "[r0]o",                 NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -624,8 +622,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(WinDLL),            SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(DeletePic),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,      "(.*)",                 NULL,            NULL },
-	// SetHotRectangles is used by Phantasmagoria 1, script 64981 (a debug script)
-	{ MAP_DUMMY(SetHotRectangles),  SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// Unused / debug functions in the in-between SCI2.1 interpreters
 	{ MAP_DUMMY(PreloadResource),   SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
@@ -634,6 +630,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(TestPoly),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 
 	// SCI2.1 unmapped functions - TODO!
+
+	// SetHotRectangles - used by Phantasmagoria 1, script 64981 (used in the chase scene)
+	//     <lskovlun> The idea, if I understand correctly, is that the engine generates events
+	//     of a special HotRect type continuously when the mouse is on that rectangle
 
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
 	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end

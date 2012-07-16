@@ -24,6 +24,7 @@ echo Copying data files
 echo.
 
 xcopy /F /Y "%~4/lib/%~3/SDL.dll"                          "%~2" 1>NUL 2>&1
+xcopy /F /Y "%~4/lib/%~3/freetype6.dll"                    "%~2" 1>NUL 2>&1
 xcopy /F /Y "%~1/backends/vkeybd/packs/vkeybd_default.zip" "%~2" 1>NUL 2>&1
 
 if "%~5"=="0" goto done

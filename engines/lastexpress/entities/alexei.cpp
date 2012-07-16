@@ -31,9 +31,6 @@
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -207,7 +204,7 @@ IMPLEMENT_FUNCTION(13, Alexei, function13)
 			getData()->entityPosition = kPosition_7500;
 			getEntities()->clearSequences(kEntityAlexei);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -242,7 +239,7 @@ IMPLEMENT_FUNCTION(14, Alexei, function14)
 		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getEntities()->exitCompartment(kEntityAlexei, kObjectCompartment2, true);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -292,7 +289,7 @@ IMPLEMENT_FUNCTION(15, Alexei, function15)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->drawSequenceLeft(kEntityAlexei, "103B");
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -312,7 +309,7 @@ IMPLEMENT_FUNCTION_IS(16, Alexei, function16, TimeValue)
 			getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			getObjects()->update(kObjectHandleInsideBathroom, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -1378,7 +1375,7 @@ label_callback_3:
 
 		case 2:
 		case 5:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 3:
@@ -1448,7 +1445,7 @@ IMPLEMENT_FUNCTION(36, Alexei, function36)
 			break;
 
 		case 4:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

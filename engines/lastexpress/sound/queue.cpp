@@ -27,7 +27,6 @@
 
 #include "lastexpress/sound/entry.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -39,6 +38,7 @@ SoundQueue::SoundQueue(LastExpressEngine *engine) : _engine(engine) {
 
 	_subtitlesFlag = 0;
 	_currentSubtitle = NULL;
+	_soundCacheData = NULL;
 }
 
 SoundQueue::~SoundQueue() {
@@ -51,6 +51,7 @@ SoundQueue::~SoundQueue() {
 	_subtitles.clear();
 
 	_currentSubtitle = NULL;
+	SAFE_DELETE(_soundCacheData);
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -134,7 +135,7 @@ void SoundQueue::updateQueue() {
 
 	// Original update the current entry, loading another set of samples to be decoded
 
-	getFlags()->flag_3 = 0;
+	getFlags()->flag_3 = false;
 
 	--_flag;
 }
@@ -340,13 +341,14 @@ void SoundQueue::updateSubtitles() {
 		return;
 	}
 
+	if (!subtitle)
+		return;
+
 	if (_subtitlesFlag & 1)
 		subtitle->drawOnScreen();
 
-	if (subtitle) {
-		subtitle->loadData();
-		subtitle->setupAndDraw();
-	}
+	subtitle->loadData();
+	subtitle->setupAndDraw();
 }
 
 //////////////////////////////////////////////////////////////////////////

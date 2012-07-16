@@ -436,6 +436,8 @@ reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv);
 reg_t kEditText(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
+reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
+reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
 reg_t kText(EngineState *s, int argc, reg_t *argv);

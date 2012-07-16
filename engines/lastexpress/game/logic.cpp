@@ -36,7 +36,6 @@
 // Game
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/beetle.h"
-#include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savegame.h"
@@ -47,10 +46,8 @@
 #include "lastexpress/menu/menu.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 

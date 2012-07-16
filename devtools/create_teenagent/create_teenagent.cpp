@@ -91,7 +91,5 @@ int main(int argc, char *argv[]) {
 
 	fclose(fout);
 
-	fprintf(stderr, "please run \"gzip -n %s\"\n", dat_name);
-
 	return 0;
 }

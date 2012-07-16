@@ -29,9 +29,7 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -96,7 +94,7 @@ IMPLEMENT_FUNCTION(3, Cooks, function3)
 	case kActionDrawScene:
 		if (!getEntities()->isInKitchen(kEntityPlayer)) {
 			getEntities()->clearSequences(kEntityCooks);
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -108,7 +106,7 @@ IMPLEMENT_FUNCTION(3, Cooks, function3)
 					if (!getEntities()->hasValidFrame(kEntityCooks)) {
 						getSound()->playSound(kEntityCooks, "LIB015");
 						getEntities()->clearSequences(kEntityCooks);
-						CALLBACK_ACTION();
+						callbackAction();
 					}
 					break;
 				}
@@ -122,7 +120,7 @@ IMPLEMENT_FUNCTION(3, Cooks, function3)
 		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks)) {
 			getSound()->playSound(kEntityCooks, "LIB015");
 			getEntities()->clearSequences(kEntityCooks);
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -182,7 +180,7 @@ IMPLEMENT_FUNCTION(4, Cooks, function4)
 	case kActionDrawScene:
 		if (!getEntities()->isInKitchen(kEntityPlayer)) {
 			getEntities()->clearSequences(kEntityCooks);
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -194,7 +192,7 @@ IMPLEMENT_FUNCTION(4, Cooks, function4)
 					if (!getEntities()->hasValidFrame(kEntityCooks)) {
 						getSound()->playSound(kEntityCooks, "LIB015");
 						getEntities()->clearSequences(kEntityCooks);
-						CALLBACK_ACTION();
+						callbackAction();
 					}
 					break;
 				}
@@ -208,7 +206,7 @@ IMPLEMENT_FUNCTION(4, Cooks, function4)
 		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks)) {
 			getSound()->playSound(kEntityCooks, "LIB015");
 			getEntities()->clearSequences(kEntityCooks);
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 

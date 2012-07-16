@@ -117,6 +117,8 @@ void GfxFrameout::showCurrentScrollText() {
 	}
 }
 
+extern void showScummVMDialog(const Common::String &message);
+
 void GfxFrameout::kernelAddPlane(reg_t object) {
 	PlaneEntry newPlane;
 
@@ -131,8 +133,28 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 			tmpRunningWidth = 320;
 			tmpRunningHeight = 200;
 		}
+		
+		// HACK: Phantasmagoria 1 sets a window size of 630x450.
+		// We can't set a width of 630, as that messes up the pitch, so we hack
+		// the internal script width here
+		if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
+			tmpRunningWidth = 325;
+		}
 
 		_coordAdjuster->setScriptsResolution(tmpRunningWidth, tmpRunningHeight);
+	}
+
+	// Import of QfG character files dialog is shown in QFG4.
+	// Display additional popup information before letting user use it.
+	// For the SCI0-SCI1.1 version of this, check kDrawControl().
+	if (g_sci->inQfGImportRoom() && !strcmp(_segMan->getObjectName(object), "DSPlane")) {
+		showScummVMDialog("Characters saved inside ScummVM are shown "
+				"automatically. Character files saved in the original "
+				"interpreter need to be put inside ScummVM's saved games "
+				"directory and a prefix needs to be added depending on which "
+				"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
+				"for Quest for Glory 2, 'qfg3-' for Quest for Glory 3. "
+				"Example: 'qfg2-thief.sav'.");
 	}
 
 	newPlane.object = object;
@@ -294,6 +316,10 @@ reg_t GfxFrameout::addPlaneLine(reg_t object, Common::Point startPoint, Common::
 }
 
 void GfxFrameout::updatePlaneLine(reg_t object, reg_t hunkId, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
+	// Check if we're asked to update a line that was never added
+	if (hunkId.isNull())
+		return;
+
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
 		if (it->object == object) {
 			for (PlaneLineList::iterator it2 = it->lines.begin(); it2 != it->lines.end(); ++it2) {
@@ -311,6 +337,10 @@ void GfxFrameout::updatePlaneLine(reg_t object, reg_t hunkId, Common::Point star
 }
 
 void GfxFrameout::deletePlaneLine(reg_t object, reg_t hunkId) {
+	// Check if we're asked to delete a line that was never added (happens during the intro of LSL6)
+	if (hunkId.isNull())
+		return;
+
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); ++it) {
 		if (it->object == object) {
 			for (PlaneLineList::iterator it2 = it->lines.begin(); it2 != it->lines.end(); ++it2) {

@@ -34,10 +34,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -95,7 +93,7 @@ IMPLEMENT_FUNCTION_SIII(4, Mahmud, enterExitCompartment2, ObjectIndex, uint32, O
 	case kActionExitCompartment:
 		getEntities()->exitCompartment(kEntityMahmud, (ObjectIndex)params->param4);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -267,7 +265,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMahmud);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -392,7 +390,7 @@ IMPLEMENT_FUNCTION(11, Mahmud, function11)
 			getEntities()->clearSequences(kEntityMahmud);
 			getObjects()->update(kObjectCompartment4, kEntityMahmud, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -471,7 +469,7 @@ IMPLEMENT_FUNCTION(12, Mahmud, function12)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMahmud);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		}
@@ -537,7 +535,7 @@ IMPLEMENT_FUNCTION(13, Mahmud, function13)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMahmud);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		}

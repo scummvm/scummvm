@@ -70,6 +70,7 @@ struct CGEEvent {
 	uint16 _mask;
 	uint16 _x;
 	uint16 _y;
+	Common::KeyCode _keyCode;
 	Sprite *_spritePtr;
 };
 

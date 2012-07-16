@@ -135,9 +135,11 @@ void Keyboard::newKeyboard(Common::Event &event) {
 
 	if ((event.type == Common::EVENT_KEYDOWN) && (_client)) {
 		CGEEvent &evt = _vm->_eventManager->getNextEvent();
-		evt._x = event.kbd.keycode;	// Keycode
-		evt._mask = kEventKeyb;	// Event mask
-		evt._spritePtr = _client;	// Sprite pointer
+		evt._x = 0;
+		evt._y = 0;
+		evt._keyCode = event.kbd.keycode;   // Keycode
+		evt._mask = kEventKeyb;             // Event mask
+		evt._spritePtr = _client;           // Sprite pointer
 	}
 }
 
@@ -204,6 +206,7 @@ void Mouse::newMouse(Common::Event &event) {
 	CGEEvent &evt = _vm->_eventManager->getNextEvent();
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
+	evt._keyCode = Common::KEYCODE_INVALID;
 	evt._spritePtr = _vm->spriteAt(evt._x, evt._y);
 
 	switch (event.type) {
@@ -269,7 +272,7 @@ void EventManager::handleEvents() {
 		CGEEvent e = _eventQueue[_eventQueueTail];
 		if (e._mask) {
 			if (_vm->_mouse->_hold && e._spritePtr != _vm->_mouse->_hold)
-				_vm->_mouse->_hold->touch(e._mask | kEventAttn, e._x - _vm->_mouse->_hold->_x, e._y - _vm->_mouse->_hold->_y);
+				_vm->_mouse->_hold->touch(e._mask | kEventAttn, e._x - _vm->_mouse->_hold->_x, e._y - _vm->_mouse->_hold->_y, e._keyCode);
 
 			// update mouse cursor position
 			if (e._mask & kMouseRoll)
@@ -278,11 +281,11 @@ void EventManager::handleEvents() {
 			// activate current touched SPRITE
 			if (e._spritePtr) {
 				if (e._mask & kEventKeyb)
-					e._spritePtr->touch(e._mask, e._x, e._y);
+					e._spritePtr->touch(e._mask, e._x, e._y, e._keyCode);
 				else
-					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y);
+					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y, e._keyCode);
 			} else if (_vm->_sys)
-					_vm->_sys->touch(e._mask, e._x, e._y);
+				_vm->_sys->touch(e._mask, e._x, e._y, e._keyCode);
 
 			if (e._mask & kMouseLeftDown) {
 				_vm->_mouse->_hold = e._spritePtr;

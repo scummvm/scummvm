@@ -33,10 +33,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -137,7 +135,7 @@ IMPLEMENT_FUNCTION_II(7, Salko, function7, CarIndex, EntityPosition)
 		break;
 
 	case kAction123668192:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -390,7 +388,7 @@ label_callback3:
 			getData()->entityPosition = kPosition_2740;
 			getEntities()->clearSequences(kEntitySalko);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

@@ -506,6 +506,11 @@ reg_t kListAt(EngineState *s, int argc, reg_t *argv) {
 		curIndex++;
 	}
 
+	// Update the virtual file selected in the character import screen of QFG4.
+	// For the SCI0-SCI1.1 version of this, check kDrawControl().
+	if (g_sci->inQfGImportRoom() && !strcmp(s->_segMan->getObjectName(curObject), "SelectorDText"))
+		s->_chosenQfGImportItem = listIndex;
+
 	return curObject;
 }
 

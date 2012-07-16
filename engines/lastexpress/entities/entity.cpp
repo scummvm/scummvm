@@ -33,11 +33,7 @@
 #include "lastexpress/game/state.h"
 #include "lastexpress/game/savegame.h"
 #include "lastexpress/game/savepoint.h"
-#include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -246,12 +242,12 @@ void Entity::savegame(const SavePoint &savepoint) {
 		break;
 
 	case kActionNone:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
 		getSaveLoad()->saveGame((SavegameType)params->param1, _entityIndex, (EventIndex)params->param2);
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 }
@@ -264,7 +260,7 @@ void Entity::playSound(const SavePoint &savepoint, bool resetItem, SoundFlag fla
 		break;
 
 	case kActionEndSound:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -284,7 +280,7 @@ void Entity::draw(const SavePoint &savepoint, bool handleExcuseMe) {
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionExcuseMeCath:
@@ -308,7 +304,7 @@ void Entity::draw2(const SavePoint &savepoint) {
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -327,7 +323,7 @@ void Entity::updateFromTicks(const SavePoint &savepoint) {
 
 	case kActionNone:
 		UPDATE_PARAM(params->param2, getState()->timeTicks, params->param1)
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 }
@@ -341,7 +337,7 @@ void Entity::updateFromTime(const SavePoint &savepoint) {
 
 	case kActionNone:
 		UPDATE_PARAM(params->param2, getState()->time, params->param1)
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 }
@@ -352,12 +348,12 @@ void Entity::callbackActionOnDirection(const SavePoint &savepoint) {
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
 		if (getData()->direction != kDirectionRight)
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 }
@@ -370,7 +366,7 @@ void Entity::callbackActionRestaurantOrSalon(const SavePoint &savepoint) {
 	case kActionNone:
 	case kActionDefault:
 		if (getEntities()->isSomebodyInsideRestaurantOrSalon())
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 }
@@ -395,7 +391,7 @@ void Entity::updateEntity(const SavePoint &savepoint, bool handleExcuseMe) {
 	case kActionNone:
 	case kActionDefault:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 }
@@ -410,7 +406,7 @@ void Entity::callSavepoint(const SavePoint &savepoint, bool handleExcuseMe) {
 	case kActionExitCompartment:
 		if (!CURRENT_PARAM(1, 1))
 			getSavePoints()->call(_entityIndex, (EntityIndex)params->param4, (ActionIndex)params->param5, (char *)&params->seq2);
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionExcuseMeCath:
@@ -448,7 +444,7 @@ void Entity::enterExitCompartment(const SavePoint &savepoint, EntityPosition pos
 		if (updateLocation)
 			getData()->location = kLocationInsideCompartment;
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -477,7 +473,7 @@ void Entity::updatePosition(const SavePoint &savepoint, bool handleExcuseMe) {
 
 	case kActionExitCompartment:
 		getEntities()->updatePositionExit(_entityIndex, (CarIndex)params->param4, (Position)params->param5);
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionExcuseMeCath:
@@ -492,6 +488,17 @@ void Entity::updatePosition(const SavePoint &savepoint, bool handleExcuseMe) {
 		getEntities()->updatePositionEnter(_entityIndex, (CarIndex)params->param4, (Position)params->param5);
 		break;
 	}
+}
+
+void Entity::callbackAction() {
+	if (getData()->currentCall == 0)
+		error("[Entity::callbackAction] currentCall is already 0, cannot proceed");
+
+	getData()->currentCall--;
+
+	getSavePoints()->setCallback(_entityIndex, _callbacks[_data->getCurrentCallback()]);
+
+	getSavePoints()->call(_entityIndex, _entityIndex, kActionCallback);
 }
 
 } // End of namespace LastExpress

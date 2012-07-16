@@ -36,10 +36,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -135,7 +133,7 @@ IMPLEMENT_FUNCTION_II(10, Milos, enterCompartmentDialog, CarIndex, EntityPositio
 	case kActionNone:
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityMilos, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionExcuseMeCath:
@@ -173,7 +171,7 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 		if (!params->param5 && params->param1 < getState()->time && !params->param7) {
 			params->param7 = 1;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -394,7 +392,7 @@ IMPLEMENT_FUNCTION(13, Milos, function13)
 		getEntities()->clearSequences(kEntityIvo);
 		getEntities()->clearSequences(kEntitySalko);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -422,7 +420,7 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 				getEntities()->exitCompartment(kEntityMilos, kObjectCompartment1, true);
 				getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
-				CALLBACK_ACTION();
+				callbackAction();
 			}
 			break;
 		}
@@ -474,7 +472,7 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 
 						getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
 
-						CALLBACK_ACTION();
+						callbackAction();
 						break;
 					}
 				} else {
@@ -593,7 +591,7 @@ label_callback_12:
 			getData()->location = kLocationOutsideCompartment;
 			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 2:
@@ -633,7 +631,7 @@ label_callback_12:
 			getScenes()->loadScene(kScene41);
 			getData()->location = kLocationOutsideCompartment;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 6:
@@ -1386,7 +1384,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 
 	case kActionNone:
 		if (params->param1 < getState()->time && !params->param2) {
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -1415,7 +1413,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 
 		case 1:
 			if (ENTITY_PARAM(0, 2)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -1425,7 +1423,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 		case 2:
 		case 3:
 			if (ENTITY_PARAM(0, 2)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -1442,7 +1440,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 
 		case 5:
 			if (ENTITY_PARAM(0, 2)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -1461,7 +1459,7 @@ IMPLEMENT_FUNCTION_II(27, Milos, function27, CarIndex, EntityPosition)
 
 	case kActionNone:
 		if (getEntities()->updateEntity(kEntityMilos, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -1472,14 +1470,14 @@ IMPLEMENT_FUNCTION_II(27, Milos, function27, CarIndex, EntityPosition)
 			if (getData()->car == kCarRedSleeping || getData()->car == kCarGreenSleeping) {
 				ENTITY_PARAM(0, 2) = 1;
 
-				CALLBACK_ACTION();
+				callbackAction();
 			}
 		}
 		break;
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityMilos, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END

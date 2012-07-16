@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-06-24 18:06+0100\n"
-"PO-Revision-Date: 2012-01-29 21:11+0100\n"
+"POT-Creation-Date: 2012-07-08 12:25+0100\n"
+"PO-Revision-Date: 2012-07-14 22:49+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de> (Lead), Lothar Serra Mari "
-"<Lothar@Windowsbase.de> (Contributor)\n"
+"(Contributor)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -931,8 +931,9 @@ msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
 msgstr ""
-"Das ausgewählte Thema unterstützt nicht die aktuelle Sprache. Wenn Sie dieses "
-"Thema benutzen wollen, müssen Sie erst zu einer anderen Sprache wechseln."
+"Das ausgewählte Thema unterstützt nicht die aktuelle Sprache. Wenn Sie "
+"dieses Thema benutzen wollen, müssen Sie erst zu einer anderen Sprache "
+"wechseln."
 
 #: gui/saveload.cpp:59 gui/saveload.cpp:257
 msgid "No date saved"
@@ -1150,13 +1151,13 @@ msgid "~R~eturn to Launcher"
 msgstr "Zur Spiele~l~iste"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
-#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:728
+#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:735
 msgid "Save game:"
 msgstr "Speichern:"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/scumm/dialogs.cpp:187 engines/cruise/menu.cpp:212
-#: engines/sci/engine/kfile.cpp:728
+#: engines/sci/engine/kfile.cpp:735
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1250,8 +1251,8 @@ msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Laden des Spielstands %s fehlgeschlagen! Bitte lesen Sie die Liesmich-"
-"Datei für grundlegende Informationen und Anweisungen zu weiterer Hilfe."
+"Laden des Spielstands %s fehlgeschlagen! Bitte lesen Sie die Liesmich-Datei "
+"für grundlegende Informationen und Anweisungen zu weiterer Hilfe."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1276,13 +1277,14 @@ msgstr "Originale Spielstand-Menüs"
 #: engines/agi/detection.cpp:146 engines/dreamweb/detection.cpp:48
 #: engines/sci/detection.cpp:391
 msgid "Use the original save/load screens, instead of the ScummVM ones"
-msgstr "Verwendet die originalen Menüs zum Speichern und Laden statt der von ScummVM."
+msgstr ""
+"Verwendet die originalen Menüs zum Speichern und Laden statt der von ScummVM."
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore game:"
 msgstr "Spiel laden:"
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore"
 msgstr "Laden"
 
@@ -1311,16 +1313,16 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Bevorzugt digitale Sound-Effekte statt synthethisierter."
 
 #: engines/sci/detection.cpp:400
-msgid "Use IMF/Yahama FB-01 for MIDI output"
-msgstr "IMF/Yahama FB-01 für MIDI-Ausgabe verwenden"
+msgid "Use IMF/Yamaha FB-01 for MIDI output"
+msgstr "IMF/Yamaha FB-01 für MIDI-Ausgabe verwenden"
 
 #: engines/sci/detection.cpp:401
 msgid ""
-"Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI "
+"Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Verwendet eine Music-Feature-Karte von IBM oder ein "
-"Yahama-FB-01-FM-Synthetisierungsmodul für die MIDI-Ausgabe."
+"Verwendet eine Music-Feature-Karte von IBM oder ein Yamaha-FB-01-FM-"
+"Synthetisierungsmodul für die MIDI-Ausgabe."
 
 #: engines/sci/detection.cpp:411
 msgid "Use CD audio"
@@ -2212,15 +2214,15 @@ msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
 "We try to map the Roland MT32 instruments to\n"
-"General MIDI ones. After all it might happen\n"
-"that a few tracks will not be correctly played."
+"General MIDI ones. It is still possible that\n"
+"some tracks sound incorrect."
 msgstr ""
 "Sie scheinen ein General-MIDI-Gerät zu\n"
 "verwenden, aber das Spiel unterstützt nur\n"
-"Roland MT-32 MIDI. Es wird versucht, die\n"
-"Roland-MT-32-Instrumente denen von\n"
-"General MIDI zuzuordnen. Es kann jedoch\n"
-"vorkommen, dass ein paar Musikstücke nicht\n"
+"Roland MT32 MIDI. Es wird versucht, die\n"
+"Roland-MT32-Instrumente denen von\n"
+"General MIDI zuzuordnen. Es ist dennoch\n"
+"möglich, dass ein paar Musikstücke nicht\n"
 "richtig abgespielt werden."
 
 #: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
@@ -2280,10 +2282,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM hat erkannt, dass Sie alte Spielstände von Baphomets Fluch 1 "
-"haben, die umgewandelt werden sollten.\n"
-"Das alte Speicherformat wird nicht mehr unterstützt, also können Sie "
-"diese Spielstände unkonvertiert nicht laden.\n"
+"ScummVM hat erkannt, dass Sie alte Spielstände von Baphomets Fluch 1 haben, "
+"die umgewandelt werden sollten.\n"
+"Das alte Speicherformat wird nicht mehr unterstützt, also können Sie diese "
+"Spielstände unkonvertiert nicht laden.\n"
 "\n"
 "Klicken Sie auf OK, um diese jetzt umzuwandeln, sonst werden Sie erneut "
 "gefragt, wenn Sie nächstes Mal dieses Spiel starten.\n"
@@ -2313,8 +2315,8 @@ msgstr "Das ist das Ende der Demo von Broken Sword 1 (Baphomets Fluch 1)."
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"PSX-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung "
-"für RGB-Farben erstellt."
+"PSX-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung für "
+"RGB-Farben erstellt."
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
@@ -2350,8 +2352,8 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"ScummVM hat erkannt, dass Sie alte Spielstände von Nippon Safes haben, "
-"die umbenannt werden sollten.\n"
+"ScummVM hat erkannt, dass Sie alte Spielstände von Nippon Safes haben, die "
+"umbenannt werden sollten.\n"
 "Die alten Dateinamen werden nicht mehr unterstützt, also können Sie diese "
 "Spielstände unkonvertiert nicht laden.\n"
 "\n"

@@ -34,9 +34,7 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -770,7 +768,7 @@ IMPLEMENT_FUNCTION(29, Abbot, function29)
 			getSavePoints()->push(kEntityAbbot, kEntityBoutarel, kAction122358304);
 			getEntities()->drawSequenceLeft(kEntityAbbot, "508B");
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1287,7 +1285,7 @@ IMPLEMENT_FUNCTION_II(40, Abbot, function40, CarIndex, EntityPosition)
 
 	case kActionNone:
 		if (getEntities()->updateEntity(kEntityAbbot, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 		} else if (!getEvent(kEventAbbotInvitationDrink)
 			    && getEntities()->isDistanceBetweenEntities(kEntityAbbot, kEntityPlayer, 1000)
 			    && !getEntities()->isInsideCompartments(kEntityPlayer)
@@ -1302,7 +1300,7 @@ IMPLEMENT_FUNCTION_II(40, Abbot, function40, CarIndex, EntityPosition)
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityAbbot, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionCallback:

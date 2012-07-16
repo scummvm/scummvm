@@ -9,10 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Dreamweb.
    - Added support for Geisha.
    - Added support for Gregory and the Hot Air Balloon.
-   - Added support for Magic Tales: Baba Yaga and the Magic Geese.
-   - Added support for Magic Tales: Imo and the King.
    - Added support for Magic Tales: Liam Finds a Story.
-   - Added support for Magic Tales: The Little Samurai.
    - Added support for Once Upon A Time: Little Red Riding Hood
    - Added support for Sleeping Cub's Test of Courage.
    - Added support for Soltys.
@@ -32,9 +29,6 @@ For a more comprehensive changelog of the latest experimental code, see:
      launcher in order to get the custom options tab.
    - Improved predictive dialog look.
    - Various GUI improvements.
-
- SDL ports:
-   - Added support for OpenGL (GSoC Task).
 
  Broken Sword 1:
    - Fixed incorrect sound effects in the DOS/Windows demo.
@@ -67,6 +61,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      the red pointer cursor for example.
    - Added aspect ratio correction feature.
    - Implemented 16 bits per pixel support for games.
+
+ Maemo port:
+   - Added support for Nokia 770 running OS2008 HE.
+   - Added configurable keymap.
 
  Windows port:
    - Changed default savegames location for Windows NT4/2000/XP/Vista/7.

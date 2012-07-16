@@ -92,7 +92,7 @@ public:
 
 	void setPal();
 	void funTouch();
-	virtual void touch(uint16 mask, int x, int y);
+	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
 	void tick();
 private:
 	CGEEngine *_vm;
@@ -101,7 +101,7 @@ private:
 class Square : public Sprite {
 public:
 	Square(CGEEngine *vm);
-	virtual void touch(uint16 mask, int x, int y);
+	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
 private:
 	CGEEngine *_vm;
 };

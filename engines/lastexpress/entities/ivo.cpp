@@ -32,10 +32,7 @@
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -184,7 +181,7 @@ IMPLEMENT_FUNCTION(11, Ivo, function11)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityIvo);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 4:
@@ -193,7 +190,7 @@ IMPLEMENT_FUNCTION(11, Ivo, function11)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityIvo);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -210,7 +207,7 @@ IMPLEMENT_FUNCTION(12, Ivo, sitAtTableWithSalko)
 		getEntities()->clearSequences(kEntitySalko);
 		getSavePoints()->push(kEntityIvo, kEntityTables2, kAction136455232);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -231,7 +228,7 @@ IMPLEMENT_FUNCTION(13, Ivo, leaveTableWithSalko)
 		getSavePoints()->push(kEntityIvo, kEntityTables2, kActionDrawTablesWithChairs, "009E");
 		getEntities()->clearSequences(kEntitySalko);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:

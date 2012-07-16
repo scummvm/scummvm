@@ -32,10 +32,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -102,11 +100,11 @@ IMPLEMENT_FUNCTION(3, Verges, callbackActionOnDirection)
 
 	case kActionNone:
 		if (getData()->direction != kDirectionRight)
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
  		break;
 
 	case kActionExcuseMeCath:
@@ -219,7 +217,7 @@ switch (savepoint.action) {
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -241,7 +239,7 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 		}
 
 		if (getEntities()->updateEntity(kEntityVerges, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -266,7 +264,7 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 		}
 
 		if (getEntities()->updateEntity(kEntityVerges, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -337,7 +335,7 @@ IMPLEMENT_FUNCTION(11, Verges, function11)
 			getObjects()->update(kObject104, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
 			getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 			}
 		}
@@ -397,7 +395,7 @@ IMPLEMENT_FUNCTION(12, Verges, function12)
 			getData()->entityPosition = kPosition_850;
 			getEntities()->clearSequences(kEntityVerges);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -438,7 +436,7 @@ IMPLEMENT_FUNCTION_I(13, Verges, function13, bool)
 			getEntities()->clearSequences(kEntityVerges);
 			getScenes()->loadSceneFromPosition(kCarBaggage, 91);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -462,7 +460,7 @@ IMPLEMENT_FUNCTION_IS(15, Verges, function15, EntityIndex)
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -499,7 +497,7 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -559,7 +557,7 @@ IMPLEMENT_FUNCTION(17, Verges, function17)
 
 		case 4:
 			ENTITY_PARAM(0, 3) = 0;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -651,7 +649,7 @@ IMPLEMENT_FUNCTION(22, Verges, function22)
 			break;
 
 		case 5:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -697,7 +695,7 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 		break;
 
 	case kActionEndSound:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -818,7 +816,7 @@ IMPLEMENT_FUNCTION(25, Verges, function25)
 		case 11:
 			ENTITY_PARAM(0, 7) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 6:
@@ -1224,7 +1222,7 @@ IMPLEMENT_FUNCTION_S(30, Verges, function30)
 			break;
 
 		case 4:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1266,7 +1264,7 @@ IMPLEMENT_FUNCTION(31, Verges, function31)
 			getProgress().field_48 = 1;
 			ENTITY_PARAM(0, 4) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1343,7 +1341,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1548,7 +1546,7 @@ IMPLEMENT_FUNCTION(35, Verges, function35)
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1887,7 +1885,7 @@ void Verges::talk(const SavePoint &savepoint, const char *sound1, const char *so
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

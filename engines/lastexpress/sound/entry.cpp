@@ -27,14 +27,11 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
-#include "common/stream.h"
 
 namespace LastExpress {
 
@@ -46,6 +43,8 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_type = kSoundTypeNone;
+
+	_currentDataPtr = NULL;
 
 	_blockCount = 0;
 	_time = 0;
@@ -71,7 +70,13 @@ SoundEntry::~SoundEntry() {
 	// Entries that have been queued will have their streamed disposed automatically
 	if (!_soundStream)
 		SAFE_DELETE(_stream);
-	delete _soundStream;
+
+	SAFE_DELETE(_soundStream);
+
+	free(_currentDataPtr);
+
+	_subtitle = NULL;
+	_stream = NULL;
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -277,7 +282,7 @@ bool SoundEntry::updateSound() {
 
 				int l = strlen(sub) + 1;
 				if (l - 1 > 4)
-					sub[l - 1 - 4] = 0;
+					sub[l - (1 + 4)] = 0;
 				showSubtitle(sub);
 			}
 		} else {
@@ -393,6 +398,10 @@ SubtitleEntry::SubtitleEntry(LastExpressEngine *engine) : _engine(engine) {
 
 SubtitleEntry::~SubtitleEntry() {
 	SAFE_DELETE(_data);
+
+	// Zero-out passed pointers
+	_sound = NULL;
+	_engine = NULL;
 }
 
 void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
@@ -423,6 +432,9 @@ void SubtitleEntry::loadData() {
 }
 
 void SubtitleEntry::setupAndDraw() {
+	if (!_sound)
+		error("[SubtitleEntry::setupAndDraw] Sound entry not initialized");
+
 	if (!_data) {
 		_data = new SubtitleManager(_engine->getFont());
 		_data->load(getArchive(_filename));

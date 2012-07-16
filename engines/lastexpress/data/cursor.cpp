@@ -128,7 +128,7 @@ Common::Rect Icon::draw(Graphics::Surface *surface) {
 		for (int i = 0; i < 32; i++) {
 
 			// Adjust brightness
-			if (_brightnessIndex == -1)
+			if (_brightnessIndex == -1 || _brightnessIndex >= ARRAYSIZE(brigthnessData))
 				*s = *image;
 			else
 				*s = (*image & brigthnessData[_brightnessIndex]) >> _brightnessIndex;

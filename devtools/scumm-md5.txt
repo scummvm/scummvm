@@ -575,6 +575,7 @@ maze	Freddi Fish and Luther's Maze Madness
 	4f04b321a95d4315ce6d65f8e1dd0368	-1	us	All	HE 80	-	-	Kirben
 	cd424f143a141bc59226ad83a6e40f51	-1	nl	All	HE 98.5	-	-	daniel9, sugarcube
 	4dbff3787aedcd96b0b325f2d92d7ad9	-1	us	All	HE 100	Updated	-	Kirben
+	4522564b3c31aaf218b6a96826a549fd	-1	us	Windows	HE 99	-	-	legoking831
 
 water	Freddi Fish and Luther's Water Worries
 	4ba37f835be11a59d969f90f272f575b	-1	us	All	HE 80	-	-	Kirben

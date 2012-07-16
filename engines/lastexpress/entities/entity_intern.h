@@ -378,7 +378,7 @@ void class::setup_##name() { \
 #define TIME_CHECK_CALLBACK_ACTION(timeValue, parameter) \
 	if (getState()->time > timeValue && !parameter) { \
 		parameter = 1; \
-		CALLBACK_ACTION(); \
+		callbackAction(); \
 		break; \
 	}
 
@@ -407,17 +407,6 @@ void class::setup_##name() { \
 		break; \
 	} \
 }
-
-//////////////////////////////////////////////////////////////////////////
-// Callback action
-//////////////////////////////////////////////////////////////////////////
-#define CALLBACK_ACTION() { \
-	if (getData()->currentCall == 0) \
-		error("[CALLBACK_ACTION] currentCall is already 0, cannot proceed"); \
-	getData()->currentCall--; \
-	getSavePoints()->setCallback(_entityIndex, _callbacks[_data->getCurrentCallback()]); \
-	getSavePoints()->call(_entityIndex, _entityIndex, kActionCallback); \
-	}
 
 //////////////////////////////////////////////////////////////////////////
 // Param update
@@ -486,7 +475,7 @@ void class::setup_##name() { \
 		case 2: \
 			getData()->entityPosition = positionFrom; \
 			getEntities()->clearSequences(_entityIndex); \
-			CALLBACK_ACTION(); \
+			callbackAction(); \
 		} \
 		break; \
 	}
@@ -516,7 +505,7 @@ void class::setup_##name() { \
 		case 3: \
 			getData()->location = kLocationInsideCompartment; \
 			getEntities()->clearSequences(_entityIndex); \
-			CALLBACK_ACTION(); \
+			callbackAction(); \
 			break; \
 		} \
 		break; \

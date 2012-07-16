@@ -31,10 +31,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -124,7 +122,7 @@ IMPLEMENT_FUNCTION_S(8, MmeBoutarel, function8)
 			if (!getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -211,7 +209,7 @@ IMPLEMENT_FUNCTION(9, MmeBoutarel, function9)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMmeBoutarel);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 5:
@@ -220,7 +218,7 @@ IMPLEMENT_FUNCTION(9, MmeBoutarel, function9)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMmeBoutarel);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -312,7 +310,7 @@ IMPLEMENT_FUNCTION(11, MmeBoutarel, function11)
 			break;
 
 		case 4:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

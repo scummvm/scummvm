@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-06-24 18:06+0100\n"
-"PO-Revision-Date: 2012-02-16 13:09+0200\n"
-"Last-Translator: Eugene Sandulenko\n"
+"POT-Creation-Date: 2012-07-08 12:25+0100\n"
+"PO-Revision-Date: 2012-06-29 20:19+0200\n"
+"Last-Translator: lubomyr <lubomyr31@gmail.com>\n"
 "Language-Team: Ukrainian\n"
+"Language: Ukrainian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Ukrainian\n"
-"Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n%"
-"10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: gui/about.cpp:91
 #, c-format
@@ -194,9 +194,8 @@ msgid "Platform:"
 msgstr "Платформа:"
 
 #: gui/launcher.cpp:231
-#, fuzzy
 msgid "Engine"
-msgstr "Розглянути"
+msgstr "Движок"
 
 #: gui/launcher.cpp:239 gui/options.cpp:1062 gui/options.cpp:1079
 msgid "Graphics"
@@ -1136,13 +1135,13 @@ msgid "~R~eturn to Launcher"
 msgstr "~П~овер.в головне меню"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
-#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:728
+#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:735
 msgid "Save game:"
 msgstr "Зберегти гру: "
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/scumm/dialogs.cpp:187 engines/cruise/menu.cpp:212
-#: engines/sci/engine/kfile.cpp:728
+#: engines/sci/engine/kfile.cpp:735
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1162,14 +1161,13 @@ msgstr ""
 "допомогу."
 
 #: engines/dialogs.cpp:228
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Вибачте, цей движок не підтримує довідку по іграм. Будь-ласка, дивіться файл "
-"README для основної інормації, а також інструкцій, як отримати подальшу "
-"допомогу."
+"Збереження стану гри не вдалося (%s)!. Будь-ласка, дивіться файл README для "
+"основної інормації, а також інструкцій, як отримати подальшу допомогу."
 
 #: engines/dialogs.cpp:301 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
@@ -1230,14 +1228,13 @@ msgstr ""
 "Дивіться файл README для подальших інструкцій."
 
 #: engines/engine.cpp:426
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Вибачте, цей движок не підтримує довідку по іграм. Будь-ласка, дивіться файл "
-"README для основної інормації, а також інструкцій, як отримати подальшу "
-"допомогу."
+"Завантаження стану гри не вдалося (%s)! . Будь-ласка, дивіться файл README "
+"для основної інормації, а також інструкцій, як отримати подальшу допомогу."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1256,84 +1253,83 @@ msgstr "Все одно запустити"
 #: engines/agi/detection.cpp:145 engines/dreamweb/detection.cpp:47
 #: engines/sci/detection.cpp:390
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "Використовувати ориг. збереження/завантаження екрани"
 
 #: engines/agi/detection.cpp:146 engines/dreamweb/detection.cpp:48
 #: engines/sci/detection.cpp:391
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
+"Використовувати оригінальні збереження/завантаження екрани, замість ScummVM"
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore game:"
 msgstr "Відновити гру:"
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:824
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
 msgid "Restore"
 msgstr "Відновити"
 
 #: engines/dreamweb/detection.cpp:57
-#, fuzzy
 msgid "Use bright palette mode"
-msgstr "Верхня справа річ"
+msgstr "Використовувати яскравий режим палітри"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "Відображення графіки з використанням яскравої палітри ігр"
 
 #: engines/sci/detection.cpp:370
 msgid "EGA undithering"
 msgstr "EGA без растрування"
 
 #: engines/sci/detection.cpp:371
-#, fuzzy
 msgid "Enable undithering in EGA games"
-msgstr "Вімкнути растрування в EGA іграх які це підтримують"
+msgstr "Увімкнути анти-згладжування в EGA іграх"
 
 #: engines/sci/detection.cpp:380
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "Гучність спеціальних звукових ефектів"
+msgstr "Надавати перевагу цифровим звуковим ефектам"
 
 #: engines/sci/detection.cpp:381
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "Віддавати перевагу цифровим звуковим ефектам, а не синтезованим"
 
 #: engines/sci/detection.cpp:400
-msgid "Use IMF/Yahama FB-01 for MIDI output"
-msgstr ""
+msgid "Use IMF/Yamaha FB-01 for MIDI output"
+msgstr "Використовувати IMF/Yahama FB-01 для MIDI виходу"
 
 #: engines/sci/detection.cpp:401
 msgid ""
-"Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI "
+"Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
 
 #: engines/sci/detection.cpp:411
 msgid "Use CD audio"
-msgstr ""
+msgstr "Використовувати CD аудіо"
 
 #: engines/sci/detection.cpp:412
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "Використовувати CD аудіо замість у-грі аудіо, якщо такі є"
 
 #: engines/sci/detection.cpp:422
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "Використовувати Windows курсори"
 
 #: engines/sci/detection.cpp:423
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr ""
+msgstr "Використовувати Windows курсори (менших і монохромних), замість DOS"
 
 #: engines/sci/detection.cpp:433
-#, fuzzy
 msgid "Use silver cursors"
-msgstr "Звичайний курсор"
+msgstr "Використовувати срібні курсори"
 
 #: engines/sci/detection.cpp:434
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
+"Використовувати альтернативний набір срібних курсорів, замість звичайних "
+"золотих"
 
 #: engines/scumm/dialogs.cpp:175
 #, c-format
@@ -2086,52 +2082,50 @@ msgstr "Не вдалося записати гру"
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr ""
+msgstr "Студія аудиторії"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr ""
+msgstr "Увімкнути студію аудиторії"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr ""
+msgstr "Підтримувати Пропустити"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "Дозволити пропускати текст і ролики"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr ""
+msgstr "Режим Геліум"
 
 #: engines/kyra/detection.cpp:85
-#, fuzzy
 msgid "Enable helium mode"
-msgstr "Увімкнути режим Roland GS"
+msgstr "Увімкнути режим Геліум"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr ""
+msgstr "Плавна прокрутка"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr ""
+msgstr "Увімкнути плавну прокрутку при ходьбі"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:112
-#, fuzzy
 msgid "Floating cursors"
-msgstr "Звичайний курсор"
+msgstr "Плаваючі курсори"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "Увімкнути плаваючі курсори"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
@@ -2195,8 +2189,8 @@ msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
 "We try to map the Roland MT32 instruments to\n"
-"General MIDI ones. After all it might happen\n"
-"that a few tracks will not be correctly played."
+"General MIDI ones. It is still possible that\n"
+"some tracks sound incorrect."
 msgstr ""
 "Здається, що Ви використовуєте пристрій General\n"
 "MIDI, але Ваша гра підтримує тільки Roland MT32\n"
@@ -2206,11 +2200,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr ""
+msgstr "Дискетне введення"
 
 #: engines/queen/queen.cpp:60 engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "Використовувати дискетні версії введення (тільки CD версія)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2231,7 +2225,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:539
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr " ролик PSX потоку '%s' не можуть бути відтворені у режимі палітри"
 
 #: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:455
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
@@ -2285,18 +2279,17 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "На цьому закінчується демо Broken Sword 1"
 
 #: engines/sword2/animation.cpp:435
-#, fuzzy
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "Знайдено заставки DXA, але ScummVM був побудований без підтримки zlib"
+msgstr "Знайдені PSX ролики, але ScummVM був зібраний без підтримки RGB коліру"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr ""
+msgstr "Показувати мітки об'єктів"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "Показувати мітки для об'єктів при наведенні миші"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2361,7 +2354,7 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Вибраний звуковий пристрій %s не було знайдено (тобто, його може бути "
+"Вибраний звуковий пристрій '%s' не було знайдено (тобто, його може бути "
 "вимкнено або не підключено)."
 
 #: audio/mididrv.cpp:209 audio/mididrv.cpp:221 audio/mididrv.cpp:257
@@ -2375,7 +2368,7 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Вибраний звуковий пристрій %s не може бути використаний. Дивіться файл логу "
+"Вибраний звуковий пристрій '%s' не може бути використаний. Дивіться файл логу "
 "для додаткової інформації."
 
 #: audio/mididrv.cpp:257
@@ -2384,7 +2377,7 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Уподобаний звуковий пристрій %s не було знайдено (тобто, його може бути "
+"Уподобаний звуковий пристрій '%s' не було знайдено (тобто, його може бути "
 "вимкнено або не підключено)."
 
 #: audio/mididrv.cpp:272
@@ -2393,7 +2386,7 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Уподобаний звуковий пристрій %s не може бути використаний. Дивіться файл "
+"Уподобаний звуковий пристрій '%s' не може бути використаний. Дивіться файл "
 "логу для додаткової інформації."
 
 #: audio/null.h:43
@@ -2446,7 +2439,7 @@ msgstr " (Активна)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Blocked)"
-msgstr ""
+msgstr " (Заблокований)"
 
 #: backends/keymapper/remap-dialog.cpp:119
 msgid " (Global)"
@@ -2866,11 +2859,11 @@ msgstr "Вільний огляд"
 
 #: backends/platform/wince/CEActionsPocket.cpp:52
 msgid "Zoom up"
-msgstr "Збіл. маштаб"
+msgstr "Збіл. масштаб"
 
 #: backends/platform/wince/CEActionsPocket.cpp:53
 msgid "Zoom down"
-msgstr "Змнш. маштаб"
+msgstr "Змнш. масштаб"
 
 #: backends/platform/wince/CEActionsPocket.cpp:55
 #: backends/platform/wince/CEActionsSmartphone.cpp:49
@@ -2939,7 +2932,7 @@ msgstr "Перепризначити дію 'Сховати Панель інстр.'"
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Ви повинні перепризначити кнопку для дії 'Сховати Панель інстр.', щоб грати "
-"в цю гру"
+"у цю гру"
 
 #: backends/platform/wince/wince-sdl.cpp:541
 msgid "Map Zoom Up action (optional)"

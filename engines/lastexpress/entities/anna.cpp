@@ -34,9 +34,7 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -227,7 +225,7 @@ IMPLEMENT_FUNCTION(12, Anna, function12)
 
 	case kActionEndSound:
 		if (params->param2) {
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -289,7 +287,7 @@ IMPLEMENT_FUNCTION(12, Anna, function12)
 			getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			getObjects()->update(kObject53, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -424,7 +422,7 @@ IMPLEMENT_FUNCTION_IS(15, Anna, function15, TimeValue)
 			getObjects()->update(kObjectCompartmentF, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			getObjects()->update(kObject53, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -577,7 +575,7 @@ IMPLEMENT_FUNCTION_II(17, Anna, function17, uint32, uint32)
 
 		if (getEntities()->updateEntity(kEntityAnna, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			getData()->inventoryItem = kItemNone;
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -615,7 +613,7 @@ IMPLEMENT_FUNCTION_II(17, Anna, function17, uint32, uint32)
 		}
 
 		if (getEntities()->updateEntity(kEntityAnna, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionCallback:
@@ -664,7 +662,7 @@ IMPLEMENT_FUNCTION_I(18, Anna, function18, TimeValue)
 	case kActionNone:
 		if (params->param1 && params->param1 < getState()->time && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->inventoryItem = kItemNone;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -757,7 +755,7 @@ IMPLEMENT_FUNCTION_I(18, Anna, function18, TimeValue)
 	case kAction259136835:
 	case kAction268773672:
 		getData()->inventoryItem = kItemNone;
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -1666,7 +1664,7 @@ IMPLEMENT_FUNCTION_II(39, Anna, function39, CarIndex, EntityPosition)
 		if (getEntities()->updateEntity(kEntityAnna, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			getData()->inventoryItem = kItemNone;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -1687,7 +1685,7 @@ IMPLEMENT_FUNCTION_II(39, Anna, function39, CarIndex, EntityPosition)
 		if (getEntities()->updateEntity(kEntityAnna, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			getData()->inventoryItem = kItemNone;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -1985,7 +1983,7 @@ IMPLEMENT_FUNCTION_I(45, Anna, function45, bool)
 
 		case 2:
 			getEntities()->exitCompartment(kEntityAnna, kObjectCompartmentF, true);
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -2195,7 +2193,7 @@ IMPLEMENT_FUNCTION(49, Anna, leaveTableWithAugust)
 		getSavePoints()->push(kEntityAnna, kEntityTables3, kActionDrawTablesWithChairs, "010M");
 		getEntities()->clearSequences(kEntityAugust);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -3040,7 +3038,7 @@ IMPLEMENT_FUNCTION(60, Anna, function60)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityAnna);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -3533,7 +3531,7 @@ IMPLEMENT_FUNCTION(71, Anna, function71)
 		getEntities()->exitCompartment(kEntityAnna, kObjectCompartmentF);
 		getData()->entityPosition = kPosition_4070;
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -3589,7 +3587,7 @@ IMPLEMENT_FUNCTION_II(72, Anna, function72, CarIndex, EntityPosition)
 
 		if (getEntities()->updateEntity(kEntityAnna, (CarIndex)params->param1, (EntityPosition)params->param2)) {
 			getData()->inventoryItem = kItemNone;
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -3602,7 +3600,7 @@ IMPLEMENT_FUNCTION_II(72, Anna, function72, CarIndex, EntityPosition)
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityAnna, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 		} else if (!getEvent(kEventAnnaTired))
 			getData()->inventoryItem = kItemInvalid;
 		break;

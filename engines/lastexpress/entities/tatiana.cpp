@@ -35,10 +35,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -192,7 +190,7 @@ IMPLEMENT_FUNCTION(14, Tatiana, function14)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityTatiana);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -228,7 +226,7 @@ IMPLEMENT_FUNCTION(15, Tatiana, function15)
 		getEntities()->exitCompartment(kEntityTatiana, kObjectCompartmentB, true);
 		getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -246,7 +244,7 @@ IMPLEMENT_FUNCTION_I(16, Tatiana, function16, uint32)
 			getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getObjects()->update(kObject49, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -386,14 +384,14 @@ IMPLEMENT_FUNCTION(18, Tatiana, function18)
 			getSavePoints()->push(kEntityTatiana, kEntityAlexei, kAction157159392);
 			getEntities()->clearSequences(kEntityTatiana);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
 	case kActionExitCompartment:
 		getSavePoints()->push(kEntityTatiana, kEntityAlexei, kAction188784532);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -1535,7 +1533,7 @@ IMPLEMENT_FUNCTION(40, Tatiana, function40)
 		if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarKronos)
 		 || getData()->car != getEntityData(kEntityPlayer)->car
 		 || getEntities()->updateEntity(kEntityTatiana, kCarKronos, kPosition_9270))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionExcuseMe:
@@ -1547,7 +1545,7 @@ IMPLEMENT_FUNCTION(40, Tatiana, function40)
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityTatiana, kCarKronos, kPosition_9270))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -1595,7 +1593,7 @@ IMPLEMENT_FUNCTION(41, Tatiana, function41)
 			}
 
 			getEntities()->clearSequences(kEntityTatiana);
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -1629,7 +1627,7 @@ IMPLEMENT_FUNCTION(41, Tatiana, function41)
 		case 6:
 			getEntities()->clearSequences(kEntityTatiana);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 4:
