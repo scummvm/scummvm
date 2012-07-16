@@ -39,6 +39,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
@@ -171,8 +172,9 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelStrings, "kCreateTextBitmap case 0 (%04x:%04x, %04x:%04x, %04x:%04x)",
 				PRINT_REG(argv[1]), PRINT_REG(argv[2]), PRINT_REG(argv[3]));
 		debugC(kDebugLevelStrings, "%s", text.c_str());
-		uint16 maxWidth = argv[1].toUint16();	// nsRight - nsLeft + 1
-		uint16 maxHeight = argv[2].toUint16();	// nsBottom - nsTop + 1
+		int16 maxWidth = argv[1].toUint16();
+		int16 maxHeight = argv[2].toUint16();
+		g_sci->_gfxCoordAdjuster->fromScriptToDisplay(maxHeight, maxWidth);
 		// These values can be larger than the screen in the SQ6 demo, room 100
 		// TODO: Find out why. For now, don't show any text in that room.
 		if (g_sci->getGameId() == GID_SQ6 && g_sci->isDemo() && s->currentRoomNumber() == 100)
