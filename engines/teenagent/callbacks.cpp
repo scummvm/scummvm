@@ -776,7 +776,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(0, 0);
 		break;
 
-	case 0x5189: // guard is drinking, boo!
+	case csAddr_guardDrinking:
 		SET_FLAG(0, 0);
 		setTimerCallback(0, 0);
 		scene->getAnimation(0)->free();
@@ -2837,7 +2837,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(0, 0);
 		break;
 
-	case 0x8d57:
+	case csAddr_putRockInHole:
 		if (CHECK_FLAG(0, 0)) {
 			playSound(5, 2);
 			playSound(15, 12);
@@ -3923,7 +3923,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
-	case 0x99e0: // success getting an anchor
+	case csAddr_gotAnchor:
 		SET_FLAG(0, 0);
 		setTimerCallback(0, 0);
 		scene->getActorAnimation()->free();

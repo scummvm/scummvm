@@ -34,6 +34,12 @@ namespace TeenAgent {
 // Code Segment Addresses (Read Only)
 // Intro function : 0x024c
 const uint16 csAddr_intro = 0x024c;
+// Guard Drinking function : 0x5189
+const uint16 csAddr_guardDrinking = 0x5189;
+// Putting Rock in Hole function : 0x8d57
+const uint16 csAddr_putRockInHole = 0x8d57;
+// Successfully Got Anchor function : 0x99e0
+const uint16 csAddr_gotAnchor = 0x99e0;
 // Display Message function : 0xa055
 const uint16 csAddr_displayMsg = 0xa055;
 // Reject Message function : 0xa4d6

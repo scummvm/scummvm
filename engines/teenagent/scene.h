@@ -172,7 +172,7 @@ private:
 	void playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore);
 	void playActorAnimation(uint id, bool loop, bool ignore);
 
-	byte palette[768];
+	byte palette[3 * 256];
 	void paletteEffect(byte step);
 	byte findFade() const;
 
