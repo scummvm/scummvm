@@ -173,9 +173,9 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelStrings, "%s", text.c_str());
 		uint16 maxWidth = argv[1].toUint16();	// nsRight - nsLeft + 1
 		uint16 maxHeight = argv[2].toUint16();	// nsBottom - nsTop + 1
-		// These values can be larger than the screen in the SQ6 demo
-		// TODO: Find out why. For now, don't show any text in the SQ6 demo.
-		if (g_sci->getGameId() == GID_SQ6 && g_sci->isDemo())
+		// These values can be larger than the screen in the SQ6 demo, room 100
+		// TODO: Find out why. For now, don't show any text in that room.
+		if (g_sci->getGameId() == GID_SQ6 && g_sci->isDemo() && s->currentRoomNumber() == 100)
 			return NULL_REG;
 		return g_sci->_gfxText32->createTextBitmap(object, maxWidth, maxHeight);
 	}
