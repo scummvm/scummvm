@@ -43,7 +43,7 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
-void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, uint32 inStep, uint32 inoStep) {
+void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in, *out;
 	
 	const int bShift = 8;//img->format.bShift;
