@@ -189,8 +189,6 @@ protected:
 
 	/** Temporary screen (for scalers) */
 	SDL_Surface *_tmpscreen;
-	/** Previous frame's screen (for scalers) */
-	SDL_Surface *_oldscreen;
 	/** Previous frame's raw scaled screen (for scalers) */
 	SDL_Surface *_destbuffer;
 	/** Temporary screen (for scalers) */

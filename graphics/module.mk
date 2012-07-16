@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	maccursor.o \
 	primitives.o \
 	scaler.o \
+	scalerplugin.o \
 	scaler/thumbnail_intern.o \
 	scaler/normal.o \
 	sjis.o \
