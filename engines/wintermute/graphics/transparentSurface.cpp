@@ -43,6 +43,74 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
+void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, uint32 inStep, uint32 inoStep) {
+	byte *in, *out;
+	
+	const int bShift = 8;//img->format.bShift;
+	const int gShift = 16;//img->format.gShift;
+	const int rShift = 24;//img->format.rShift;
+	const int aShift = 0;//img->format.aShift;
+	
+	const int bShiftTarget = 8;//target.format.bShift;
+	const int gShiftTarget = 16;//target.format.gShift;
+	const int rShiftTarget = 24;//target.format.rShift;
+	
+	for (int i = 0; i < height; i++) {
+		out = outo;
+		in = ino;
+		for (int j = 0; j < width; j++) {
+			uint32 pix = *(uint32 *)in;
+			uint32 o_pix = *(uint32 *) out;
+			int b = (pix >> bShift) & 0xff;
+			int g = (pix >> gShift) & 0xff;
+			int r = (pix >> rShift) & 0xff;
+			int a = (pix >> aShift) & 0xff;
+			int o_b, o_g, o_r, o_a;
+			in += inStep;
+			
+	/*		if (ca != 255) {
+				a = a * ca >> 8;
+			}*/
+			
+			switch (a) {
+				case 0: // Full transparency
+					out += 4;
+					break;
+				case 255: // Full opacity
+					o_b = b;
+					o_g = g;
+					o_r = r;
+					o_a = a;
+					//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
+					out[0] = o_a;
+					out[1] = o_b;
+					out[2] = o_g;
+					out[3] = o_r;
+					out += 4;
+					break;
+					
+				default: // alpha blending
+					o_a = 255;
+					o_b = (o_pix >> bShiftTarget) & 0xff;
+					o_g = (o_pix >> gShiftTarget) & 0xff;
+					o_r = (o_pix >> rShiftTarget) & 0xff;
+					o_b += ((b - o_b) * a) >> 8;
+					o_g += ((g - o_g) * a) >> 8;
+					o_r += ((r - o_r) * a) >> 8;
+					//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
+					out[0] = o_a;
+					out[1] = o_b;
+					out[2] = o_g;
+					out[3] = o_r;
+					out += 4;
+			}
+		}
+		outo += pitch;
+		ino += inoStep;
+	}
+}
+
+
 Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
 	int ca = (color >> 24) & 0xff;
 
@@ -145,85 +213,97 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
 		byte *in, *out;
 
-		int bShift = img->format.bShift;
-		int gShift = img->format.gShift;
-		int rShift = img->format.rShift;
-		int aShift = img->format.aShift;
+		const int bShift = 8;//img->format.bShift;
+		const int gShift = 16;//img->format.gShift;
+		const int rShift = 24;//img->format.rShift;
+		const int aShift = 0;//img->format.aShift;
 
-		int bShiftTarget = target.format.bShift;
-		int gShiftTarget = target.format.gShift;
-		int rShiftTarget = target.format.rShift;
+		const int bShiftTarget = 8;//target.format.bShift;
+		const int gShiftTarget = 16;//target.format.gShift;
+		const int rShiftTarget = 24;//target.format.rShift;
 
-		for (int i = 0; i < img->h; i++) {
-			out = outo;
-			in = ino;
-			for (int j = 0; j < img->w; j++) {
-				uint32 pix = *(uint32 *)in;
-				uint32 o_pix = *(uint32 *) out;
-				int b = (pix >> bShift) & 0xff;
-				int g = (pix >> gShift) & 0xff;
-				int r = (pix >> rShift) & 0xff;
-				int a = (pix >> aShift) & 0xff;
-				int o_b, o_g, o_r, o_a;
-				in += inStep;
+		if (ca == 255 && cb == 255 && cg == 255 && cr == 255) {
+			doBlit(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+		} else {
+			for (int i = 0; i < img->h; i++) {
+				out = outo;
+				in = ino;
+				for (int j = 0; j < img->w; j++) {
+					uint32 pix = *(uint32 *)in;
+					uint32 o_pix = *(uint32 *) out;
+					int b = (pix >> bShift) & 0xff;
+					int g = (pix >> gShift) & 0xff;
+					int r = (pix >> rShift) & 0xff;
+					int a = (pix >> aShift) & 0xff;
+					int o_b, o_g, o_r, o_a;
+					in += inStep;
 
-				if (ca != 255) {
-					a = a * ca >> 8;
+					if (ca != 255) {
+						a = a * ca >> 8;
+					}
+
+					switch (a) {
+					case 0: // Full transparency
+						out += 4;
+						break;
+					case 255: // Full opacity
+						if (cb != 255)
+							o_b = (b * cb) >> 8;
+						else
+							o_b = b;
+
+						if (cg != 255)
+							o_g = (g * cg) >> 8;
+						else
+							o_g = g;
+
+						if (cr != 255)
+							o_r = (r * cr) >> 8;
+						else
+							o_r = r;
+						o_a = a;
+						//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
+						out[0] = o_a;
+						out[1] = o_b;
+						out[2] = o_g;
+						out[3] = o_r;
+						out += 4;
+						break;
+
+					default: // alpha blending
+						o_a = 255;
+						o_b = (o_pix >> bShiftTarget) & 0xff;
+						o_g = (o_pix >> gShiftTarget) & 0xff;
+						o_r = (o_pix >> rShiftTarget) & 0xff;
+						if (cb == 0)
+							o_b = 0;
+						else if (cb != 255)
+							o_b += ((b - o_b) * a * cb) >> 16;
+						else
+							o_b += ((b - o_b) * a) >> 8;
+						if (cg == 0)
+							o_g = 0;
+						else if (cg != 255)
+							o_g += ((g - o_g) * a * cg) >> 16;
+						else
+							o_g += ((g - o_g) * a) >> 8;
+						if (cr == 0)
+							o_r = 0;
+						else if (cr != 255)
+							o_r += ((r - o_r) * a * cr) >> 16;
+						else
+							o_r += ((r - o_r) * a) >> 8;
+						//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
+						out[0] = o_a;
+						out[1] = o_b;
+						out[2] = o_g;
+						out[3] = o_r;
+						out += 4;
+					}
 				}
-
-				switch (a) {
-				case 0: // Full transparency
-					out += 4;
-					break;
-				case 255: // Full opacity
-					if (cb != 255)
-						o_b = (b * cb) >> 8;
-					else
-						o_b = b;
-
-					if (cg != 255)
-						o_g = (g * cg) >> 8;
-					else
-						o_g = g;
-
-					if (cr != 255)
-						o_r = (r * cr) >> 8;
-					else
-						o_r = r;
-					o_a = a;
-					*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-					out += 4;
-					break;
-
-				default: // alpha blending
-					o_a = 255;
-					o_b = (o_pix >> bShiftTarget) & 0xff;
-					o_g = (o_pix >> gShiftTarget) & 0xff;
-					o_r = (o_pix >> rShiftTarget) & 0xff;
-					if (cb == 0)
-						o_b = 0;
-					else if (cb != 255)
-						o_b += ((b - o_b) * a * cb) >> 16;
-					else
-						o_b += ((b - o_b) * a) >> 8;
-					if (cg == 0)
-						o_g = 0;
-					else if (cg != 255)
-						o_g += ((g - o_g) * a * cg) >> 16;
-					else
-						o_g += ((g - o_g) * a) >> 8;
-					if (cr == 0)
-						o_r = 0;
-					else if (cr != 255)
-						o_r += ((r - o_r) * a * cr) >> 16;
-					else
-						o_r += ((r - o_r) * a) >> 8;
-					*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-					out += 4;
-				}
+				outo += target.pitch;
+				ino += inoStep;
 			}
-			outo += target.pitch;
-			ino += inoStep;
 		}
 	}
 
