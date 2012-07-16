@@ -159,7 +159,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 
 	newPlane.object = object;
 	newPlane.priority = readSelectorValue(_segMan, object, SELECTOR(priority));
-	newPlane.lastPriority = 0xFFFF; // hidden
+	newPlane.lastPriority = -1; // hidden
 	newPlane.planeOffsetX = 0;
 	newPlane.planeOffsetY = 0;
 	newPlane.pictureId = kPlanePlainColored;
@@ -465,15 +465,10 @@ bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
 }
 
 bool planeSortHelper(const PlaneEntry &entry1, const PlaneEntry &entry2) {
-//	SegManager *segMan = g_sci->getEngineState()->_segMan;
-
-//	uint16 plane1Priority = readSelectorValue(segMan, entry1, SELECTOR(priority));
-//	uint16 plane2Priority = readSelectorValue(segMan, entry2, SELECTOR(priority));
-
-	if (entry1.priority == 0xffff)
+	if (entry1.priority < 0)
 		return true;
 
-	if (entry2.priority == 0xffff)
+	if (entry2.priority < 0)
 		return false;
 
 	return entry1.priority < entry2.priority;
@@ -639,13 +634,13 @@ void GfxFrameout::kernelFrameout() {
 			_screen->drawLine(startPoint, endPoint, it2->color, it2->priority, it2->control);
 		}
 
-		uint16 planeLastPriority = it->lastPriority;
+		int16 planeLastPriority = it->lastPriority;
 
 		// Update priority here, sq6 sets it w/o UpdatePlane
-		uint16 planePriority = it->priority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
+		int16 planePriority = it->priority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
 
 		it->lastPriority = planePriority;
-		if (planePriority == 0xffff) { // Plane currently not meant to be shown
+		if (planePriority < 0) { // Plane currently not meant to be shown
 			// If plane was shown before, delete plane rect
 			if (planePriority != planeLastPriority)
 				_paint32->fillRect(it->planeRect, 0);

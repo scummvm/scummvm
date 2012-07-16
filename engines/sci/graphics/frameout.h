@@ -40,8 +40,8 @@ typedef Common::List<PlaneLineEntry> PlaneLineList;
 
 struct PlaneEntry {
 	reg_t object;
-	uint16 priority;
-	uint16 lastPriority;
+	int16 priority;
+	int16 lastPriority;
 	int16 planeOffsetX;
 	int16 planeOffsetY;
 	GuiResourceId pictureId;
