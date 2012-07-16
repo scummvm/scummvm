@@ -49,8 +49,17 @@ const uint16 dsAddr_rejectMsg = 0x339e;
 const uint16 dsAddr_saveState = 0x6478;
 const uint16 saveStateSize = 0x777a;
 
+// Save Description String (24 bytes) : 0x6478 to 0x648f
+
+// Ego (Mark) position in scene : 0x64af to 0x64b2
+const uint16 dsAddr_egoX = 0x64af; // 2 bytes
+const uint16 dsAddr_egoY = 0x64b1; // 2 bytes
+
+// Current Scene Id : 0xb4f3
+const uint16 dsAddr_currentScene = 0xb4f3; // 1 byte
+
 // Current Music Id Playing : 0xdb90
-const uint16 dsAddr_currentMusic = 0xdb90;
+const uint16 dsAddr_currentMusic = 0xdb90; // 1 byte
 
 class Resources {
 public:

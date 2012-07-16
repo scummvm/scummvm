@@ -250,8 +250,8 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 	setMusic(res->dseg.get_byte(dsAddr_currentMusic));
 
-	int id = res->dseg.get_byte(0xb4f3);
-	uint16 x = res->dseg.get_word(0x64af), y = res->dseg.get_word(0x64b1);
+	int id = res->dseg.get_byte(dsAddr_currentScene);
+	uint16 x = res->dseg.get_word(dsAddr_egoX), y = res->dseg.get_word(dsAddr_egoY);
 	scene->loadObjectData();
 	scene->init(id, Common::Point(x, y));
 	scene->setPalette(4);
@@ -265,13 +265,14 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &des
 	if (!out)
 		return Common::kWritingFailed;
 
-	res->dseg.set_byte(0xb4f3, scene->getId());
+	res->dseg.set_byte(dsAddr_currentScene, scene->getId());
 	Common::Point pos = scene->getPosition();
-	res->dseg.set_word(0x64af, pos.x);
-	res->dseg.set_word(0x64b1, pos.y);
+	res->dseg.set_word(dsAddr_egoX, pos.x);
+	res->dseg.set_word(dsAddr_egoY, pos.y);
 
 	assert(res->dseg.size() >= dsAddr_saveState + saveStateSize);
-	strncpy((char *)res->dseg.ptr(dsAddr_saveState), desc.c_str(), 0x16);
+	// FIXME: Description string is 24 bytes and null based on detection.cpp code, not 22?
+	strncpy((char *)res->dseg.ptr(dsAddr_saveState), desc.c_str(), 22);
 	out->write(res->dseg.ptr(dsAddr_saveState), saveStateSize);
 	if (!Graphics::saveThumbnail(*out))
 		warning("saveThumbnail failed");
@@ -307,7 +308,7 @@ bool TeenAgentEngine::showCDLogo() {
 	if (!cdlogo.exists("cdlogo.res") || !cdlogo.open("cdlogo.res"))
 		return true;
 
-	const uint bgSize = 0xfa00;
+	const uint bgSize = 320 * 200;
 	const uint paletteSize = 3 * 256;
 
 	byte *bg = (byte *)malloc(bgSize);
@@ -353,7 +354,7 @@ bool TeenAgentEngine::showLogo() {
 	if (!frame)
 		return true;
 
-	const uint bgSize = 0xfa00;
+	const uint bgSize = 320 * 200;
 	const uint paletteSize = 3 * 256;
 
 	byte *bg = (byte *)malloc(bgSize);
