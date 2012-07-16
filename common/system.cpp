@@ -157,3 +157,7 @@ Common::String OSystem::getSystemLanguage() const {
 Common::TimerManager * OSystem::getTimerManager() {
 	return _timerManager;
 }
+
+Common::SaveFileManager * OSystem::getSavefileManager() {
+	return g_eventRec.getSaveManager(_savefileManager);
+}

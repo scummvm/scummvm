@@ -1084,9 +1084,7 @@ public:
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.
 	 */
-	inline Common::SaveFileManager *getSavefileManager() {
-		return _savefileManager;
-	}
+	Common::SaveFileManager *getSavefileManager();
 
 #if defined(USE_TASKBAR)
 	/**

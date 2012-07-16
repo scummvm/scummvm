@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
+	saves/recorder/recorder-saves.o \
 	timer/default/default-timer.o
 
 

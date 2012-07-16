@@ -286,7 +286,10 @@ bool EventRecorder::openRecordFile(const String &fileName) {
 		return _playbackFile.openWrite(fileName);
 	}
 	if (_recordMode == kRecorderPlayback) {
-		return _playbackFile.openRead(fileName);
+		_recordMode = kPassthrough;
+		bool result = _playbackFile.openRead(fileName);
+		_recordMode = kRecorderPlayback;
+		return result;
 	}
 	return true;
 }
@@ -481,6 +484,36 @@ void EventRecorder::takeScreenshot() {
 			_playbackFile.saveScreenShot(screen, md5);
 			screen.free();
 		}
+	}
+}
+
+Common::SeekableReadStream * EventRecorder::processSaveStream(const Common::String &fileName) {
+	Common::InSaveFile *saveFile;
+	switch (_recordMode) {
+		case kRecorderPlayback:
+			for (Common::HashMap<Common::String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile.getHeader().saveFiles.begin(); i != _playbackFile.getHeader().saveFiles.end(); ++i) {
+				debug("%s %d ", i->_key.c_str(), i->_value.size);
+			}
+			return new MemoryReadStream(_playbackFile.getHeader().saveFiles[fileName].buffer, _playbackFile.getHeader().saveFiles[fileName].size);
+		case kRecorderRecord:
+			saveFile = _realSaveManager->openForLoading(fileName);
+			if (saveFile != NULL) {
+				_playbackFile.addSaveFile(fileName, saveFile);
+				saveFile->seek(0);
+			}
+			return saveFile;
+		default:
+			return NULL;
+			break;
+	}
+}
+
+SaveFileManager * EventRecorder::getSaveManager(SaveFileManager *realSaveManager) {
+	_realSaveManager = realSaveManager;
+	if (_recordMode != kPassthrough) {
+		return &_fakeSaveManager;
+	} else {
+		return realSaveManager;
 	}
 }
 

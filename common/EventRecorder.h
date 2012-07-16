@@ -29,6 +29,7 @@
 #include "common/mutex.h"
 #include "common/array.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "backends/mixer/nullmixer/nullsdl-mixer.h"
@@ -39,6 +40,8 @@
 #include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/recorderfile.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/saves/recorder/recorder-saves.h"
 
 
 #define g_eventRec (Common::EventRecorder::instance())
@@ -102,9 +105,14 @@ public:
 	void resumeRecording() {
 		_initialized = _savedState;
 	}
+	void saveStream(Common::OutSaveFile *saveStream);
+	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
 	void RegisterEventSource();
 	Common::String generateRecordFileName(const String &target);
-private:	
+	SaveFileManager *getSaveManager(SaveFileManager *realSaveManager);
+private:
+	SaveFileManager *_realSaveManager;
+	RecorderSaveFileManager _fakeSaveManager;
 	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
 	bool _initialized;
 	void setGameMd5(const ADGameDescription *gameDesc);
