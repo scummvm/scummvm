@@ -210,6 +210,9 @@ public:
 	DECLARE_FUNCTION(function53)
 
 	DECLARE_NULL_FUNCTION()
+
+private:
+	void loadSceneFromPosition();
 };
 
 } // End of namespace LastExpress

@@ -72,4 +72,4 @@ private:
 
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_##define##_H
+#endif // LASTEXPRESS_ENTITY39_H

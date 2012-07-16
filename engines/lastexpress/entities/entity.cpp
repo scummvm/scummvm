@@ -253,6 +253,28 @@ void Entity::savegame(const SavePoint &savepoint) {
 	}
 }
 
+void Entity::savegameBloodJacket(SaveFunction *savegame) {
+	if (getProgress().jacket == kJacketBlood
+	 && getEntities()->isDistanceBetweenEntities(_entityIndex, kEntityPlayer, 1000)
+	 && !getEntities()->isInsideCompartments(kEntityPlayer)
+	 && !getEntities()->checkFields10(kEntityPlayer)) {
+		setCallback(1);
+
+		switch (_entityIndex) {
+		default:
+			break;
+
+		case kEntityCoudert:
+			(*savegame)(kSavegameTypeEvent, kEventCoudertBloodJacket);
+			break;
+
+		case kEntityMertens:
+			(*savegame)(kSavegameTypeEvent, kEventCoudertBloodJacket);
+			break;
+		}
+	}
+}
+
 void Entity::playSound(const SavePoint &savepoint, bool resetItem, SoundFlag flag) {
 	EXPOSE_PARAMS(EntityData::EntityParametersSIIS)
 

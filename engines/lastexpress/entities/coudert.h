@@ -219,7 +219,6 @@ public:
 
 private:
 	void visitCompartment(const SavePoint &savepoint, EntityPosition position, const char *seq1, ObjectIndex compartment, const char *seq2, const char *seq3, EntityPosition sittingPosition, ObjectIndex object, const char *seq4);
-	void savegameBloodJacket();
 };
 
 } // End of namespace LastExpress

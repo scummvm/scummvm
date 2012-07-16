@@ -680,9 +680,11 @@ protected:
 
 	typedef Common::Functor2<const char *, ObjectIndex, void> EnterFunction;
 	typedef Common::Functor2<CarIndex, EntityPosition, void> UpdateFunction;
+	typedef Common::Functor2<SavegameType, uint32, void> SaveFunction;
 
 	#define WRAP_ENTER_FUNCTION(className, method) new Common::Functor2Mem<const char *, ObjectIndex, void, className>(this, &className::method)
 	#define WRAP_UPDATE_FUNCTION(className, method) new Common::Functor2Mem<CarIndex, EntityPosition, void, className>(this, &className::method)
+	#define WRAP_SAVE_FUNCTION(className, method) new Common::Functor2Mem<SavegameType, uint32, void, className>(this, &className::method)
 
 	/**
 	 * Saves the game
@@ -692,6 +694,11 @@ protected:
 	 *                   - EventIndex
 	 */
 	void savegame(const SavePoint &savepoint);
+
+	/**
+	 * Saves the game before being found out with a blood covered jacket
+	 */
+	void savegameBloodJacket(SaveFunction *savegame);
 
 	/**
 	 * Play sound
