@@ -77,6 +77,7 @@ bool RenderTicket::operator==(RenderTicket &t) {
 		(t._dstRect != _dstRect) ||
 		(t._mirrorX != _mirrorX) ||
 		(t._mirrorY != _mirrorY) ||
+		(t._owner != _owner) ||
 		(t._hasAlpha != _hasAlpha)) {
 			return false;
 		}
@@ -249,7 +250,9 @@ ERRORCODE CBRenderSDL::flip() {
 		drawTickets();
 	}
 	if (_needsFlip || _disableDirtyRects) {
-		g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+		if (_disableDirtyRects) {
+			g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+		}
 	//	g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 		delete _dirtyRect;
 		_dirtyRect = NULL;
@@ -424,8 +427,6 @@ void CBRenderSDL::addDirtyRect(const Common::Rect &rect) {
 }
 
 void CBRenderSDL::drawTickets() {
-	if (!_dirtyRect)
-		return;
 	RenderQueueIterator it = _renderQueue.begin();
 	// Clean out the old tickets
 	while (it != _renderQueue.end()) {
@@ -438,6 +439,8 @@ void CBRenderSDL::drawTickets() {
 			it++;
 		}
 	}
+	if (!_dirtyRect)
+		return;
 	// The color-mods are stored in the RenderTickets on add, since we set that state again during
 	// draw, we need to keep track of what it was prior to draw.
 	uint32 oldColorMod = _colorMod;
@@ -486,6 +489,8 @@ void CBRenderSDL::drawFromSurface(const Graphics::Surface *surf, Common::Rect *s
 	}
 
 	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
+	if (!_disableDirtyRects)
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(dstRect->left, dstRect->top), _renderSurface->pitch, dstRect->left, dstRect->top, dstRect->width(), dstRect->height());
 	if (doDelete)
 		delete clipRect;
 }
