@@ -31,7 +31,7 @@ struct ADGameDescription;
 
 namespace TeenAgent {
 
-// Code Segment Addresses
+// Code Segment Addresses (Read Only)
 // Intro function : 0x024c
 const uint16 csAddr_intro = 0x024c;
 // Display Message function : 0xa055
@@ -40,12 +40,17 @@ const uint16 csAddr_displayMsg = 0xa055;
 const uint16 csAddr_rejectMsg = 0xa4d6;
 
 // Data Segment Addresses
+// Cursor Graphic 8*12px : 0x00da to 0x0139 (Read Only)
+const uint16 dsAddr_cursor = 0x00da;
 // Reject Messages Address Pointers : (4 * 2-byte) = 0x339e to 0x33a5
 const uint16 dsAddr_rejectMsg = 0x339e;
 
 // Save State Region : 0x6478 to 0xdbf1
 const uint16 dsAddr_saveState = 0x6478;
 const uint16 saveStateSize = 0x777a;
+
+// Current Music Id Playing : 0xdb90
+const uint16 dsAddr_currentMusic = 0xdb90;
 
 class Resources {
 public:

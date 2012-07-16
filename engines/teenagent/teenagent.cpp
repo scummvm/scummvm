@@ -248,7 +248,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	inventory->activate(false);
 	inventory->reload();
 
-	setMusic(res->dseg.get_byte(0xdb90));
+	setMusic(res->dseg.get_byte(dsAddr_currentMusic));
 
 	int id = res->dseg.get_byte(0xb4f3);
 	uint16 x = res->dseg.get_word(0x64af), y = res->dseg.get_word(0x64b1);
@@ -542,7 +542,7 @@ Common::Error TeenAgentEngine::run() {
 
 	init();
 
-	CursorMan.pushCursor(res->dseg.ptr(0x00da), 8, 12, 0, 0, 1);
+	CursorMan.pushCursor(res->dseg.ptr(dsAddr_cursor), 8, 12, 0, 0, 1);
 
 	syncSoundSettings();
 
@@ -1042,7 +1042,7 @@ void TeenAgentEngine::setMusic(byte id) {
 	debugC(0, kDebugMusic, "starting music %u", id);
 
 	if (id != 1) // intro music
-		*res->dseg.ptr(0xdb90) = id;
+		res->dseg.set_byte(dsAddr_currentMusic, id);
 
 	if (_gameDescription->flags & ADGF_CD) {
 		byte track2cd[] = {7, 2, 0, 9, 3, 6, 8, 10, 4, 5, 11};

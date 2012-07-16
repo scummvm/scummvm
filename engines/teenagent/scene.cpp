@@ -413,8 +413,8 @@ void Scene::init(int id, const Common::Point &pos) {
 	// check music
 	int now_playing = _vm->music->getId();
 
-	if (now_playing != _vm->res->dseg.get_byte(0xdb90))
-		_vm->music->load(_vm->res->dseg.get_byte(0xdb90));
+	if (now_playing != _vm->res->dseg.get_byte(dsAddr_currentMusic))
+		_vm->music->load(_vm->res->dseg.get_byte(dsAddr_currentMusic));
 
 	_vm->_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
 	setPalette(0);
@@ -1065,7 +1065,7 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kPlayMusic:
 			debugC(0, kDebugScene, "setting music %u", current_event.music);
 			_vm->setMusic(current_event.music);
-			_vm->res->dseg.set_byte(0xdb90, current_event.music);
+			_vm->res->dseg.set_byte(dsAddr_currentMusic, current_event.music);
 			current_event.clear();
 			break;
 
