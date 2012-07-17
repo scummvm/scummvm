@@ -31,16 +31,19 @@
 
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
-#include "engines/wintermute/Base/BSoundBuffer.h"
 #include "engines/wintermute/persistent.h"
+#include "audio/mixer.h"
 
 namespace WinterMute {
 
+class CBSoundBuffer;
 class CBSound : public CBBase {
 public:
 	ERRORCODE setPan(float pan);
 	int _soundPrivateVolume;
 	int getVolume();
+	int getVolumePercent();
+	ERRORCODE setVolumePercent(int percent);
 	ERRORCODE setVolume(int volume);
 	ERRORCODE setPrivateVolume(int volume);
 	ERRORCODE setLoopStart(uint32 pos);
@@ -61,10 +64,10 @@ public:
 	ERRORCODE play(bool looping = false);
 	uint32 getLength();
 	bool _soundStreamed;
-	TSoundType _soundType;
+	Audio::Mixer::SoundType _soundType;
 	char *_soundFilename;
 	ERRORCODE setSoundSimple();
-	ERRORCODE setSound(const char *filename, TSoundType type = SOUND_SFX, bool streamed = false);
+	ERRORCODE setSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
 	CBSound(CBGame *inGame);
 	virtual ~CBSound();
 

@@ -29,6 +29,7 @@
 #include "engines/wintermute/Base/BSound.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSoundMgr.h"
+#include "engines/wintermute/Base/BSoundBuffer.h"
 
 namespace WinterMute {
 
@@ -39,7 +40,7 @@ CBSound::CBSound(CBGame *inGame): CBBase(inGame) {
 	_sound = NULL;
 	_soundFilename = NULL;
 
-	_soundType = SOUND_SFX;
+	_soundType = Audio::Mixer::kSFXSoundType;
 	_soundStreamed = false;
 	_soundLooping = false;
 	_soundPlaying = false;
@@ -65,7 +66,7 @@ CBSound::~CBSound() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSound::setSound(const char *filename, TSoundType type, bool streamed) {
+ERRORCODE CBSound::setSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (_sound) {
 		Game->_soundMgr->removeSound(_sound);
 		_sound = NULL;
@@ -212,6 +213,12 @@ uint32 CBSound::getPositionTime() {
 	else return _sound->getPosition();
 }
 
+//////////////////////////////////////////////////////////////////////////
+ERRORCODE CBSound::setVolumePercent(int percent) {
+	if (!_sound)
+		return STATUS_FAILED;
+	else return _sound->setPrivateVolume(percent * 255 / 100);
+}
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSound::setVolume(int volume) {
@@ -227,6 +234,12 @@ ERRORCODE CBSound::setPrivateVolume(int volume) {
 	else return _sound->_privateVolume = volume;
 }
 
+//////////////////////////////////////////////////////////////////////////
+int CBSound::getVolumePercent() {
+	if (!_sound)
+		return 0;
+	else return _sound->_privateVolume * 100 / 255;
+}
 
 //////////////////////////////////////////////////////////////////////////
 int CBSound::getVolume() {

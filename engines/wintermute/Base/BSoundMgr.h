@@ -31,6 +31,7 @@
 
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/Base/BBase.h"
+#include "audio/mixer.h"
 
 namespace WinterMute {
 class CBSoundBuffer;
@@ -42,18 +43,17 @@ public:
 	ERRORCODE cleanup();
 	//DECLARE_PERSISTENT(CBSoundMgr, CBBase);
 	byte getMasterVolumePercent();
+	byte getMasterVolume();
+	ERRORCODE setMasterVolume(byte percent);
 	ERRORCODE setMasterVolumePercent(byte percent);
-	byte getVolumePercent(TSoundType type);
-	ERRORCODE setVolumePercent(TSoundType type, byte percent);
-	ERRORCODE setVolume(TSoundType type, int volume);
+	byte getVolumePercent(Audio::Mixer::SoundType type);
+	ERRORCODE setVolumePercent(Audio::Mixer::SoundType type, byte percent);
+	ERRORCODE setVolume(Audio::Mixer::SoundType type, int volume);
 	uint32 _volumeOriginal;
 	int _volumeMaster;
-	int _volumeMusic;
-	int _volumeSpeech;
-	int _volumeSFX;
 	ERRORCODE removeSound(CBSoundBuffer *sound);
-	CBSoundBuffer *addSound(const char *filename, TSoundType type = SOUND_SFX, bool streamed = false);
-	ERRORCODE addSound(CBSoundBuffer *sound, TSoundType type = SOUND_SFX);
+	CBSoundBuffer *addSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
+	ERRORCODE addSound(CBSoundBuffer *sound, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
 	ERRORCODE initLoop();
 	ERRORCODE initialize();
 	bool _soundAvailable;

@@ -1279,7 +1279,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int volume = stack->pop()->getInt();
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) stack->pushBool(false);
 		else {
-			if (DID_FAIL(_music[channel]->setVolume(volume))) stack->pushBool(false);
+			if (DID_FAIL(_music[channel]->setVolumePercent(volume))) stack->pushBool(false);
 			else stack->pushBool(true);
 		}
 		return STATUS_OK;
@@ -1297,7 +1297,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		}
 
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) stack->pushInt(0);
-		else stack->pushInt(_music[channel]->getVolume());
+		else stack->pushInt(_music[channel]->getVolumePercent());
 
 		return STATUS_OK;
 	}
@@ -1340,7 +1340,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		const char *filename = stack->pop()->getString();
 
 		CBSound *sound = new CBSound(Game);
-		if (sound && DID_SUCCEED(sound->setSound(filename, SOUND_MUSIC, true))) {
+		if (sound && DID_SUCCEED(sound->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
 			length = sound->getLength();
 			delete sound;
 			sound = NULL;
@@ -1603,7 +1603,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalSFXVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte)stack->pop()->getInt());
+		Game->_soundMgr->setVolumePercent(Audio::Mixer::kSFXSoundType, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1613,7 +1613,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalSpeechVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte)stack->pop()->getInt());
+		Game->_soundMgr->setVolumePercent(Audio::Mixer::kSpeechSoundType, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1623,7 +1623,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalMusicVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte)stack->pop()->getInt());
+		Game->_soundMgr->setVolumePercent(Audio::Mixer::kMusicSoundType, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1643,7 +1643,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetGlobalSFXVolume") == 0) {
 		stack->correctParams(0);
-		stack->pushInt(_soundMgr->getVolumePercent(SOUND_SFX));
+		stack->pushInt(_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType));
 		return STATUS_OK;
 	}
 
@@ -1652,7 +1652,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetGlobalSpeechVolume") == 0) {
 		stack->correctParams(0);
-		stack->pushInt(_soundMgr->getVolumePercent(SOUND_SPEECH));
+		stack->pushInt(_soundMgr->getVolumePercent(Audio::Mixer::kSpeechSoundType));
 		return STATUS_OK;
 	}
 
@@ -1661,7 +1661,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetGlobalMusicVolume") == 0) {
 		stack->correctParams(0);
-		stack->pushInt(_soundMgr->getVolumePercent(SOUND_MUSIC));
+		stack->pushInt(_soundMgr->getVolumePercent(Audio::Mixer::kMusicSoundType));
 		return STATUS_OK;
 	}
 
@@ -2302,7 +2302,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SFXVolume") == 0) {
 		Game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		_scValue->setInt(_soundMgr->getVolumePercent(SOUND_SFX));
+		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType));
 		return _scValue;
 	}
 
@@ -2311,7 +2311,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SpeechVolume") == 0) {
 		Game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		_scValue->setInt(_soundMgr->getVolumePercent(SOUND_SPEECH));
+		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kSpeechSoundType));
 		return _scValue;
 	}
 
@@ -2320,7 +2320,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MusicVolume") == 0) {
 		Game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		_scValue->setInt(_soundMgr->getVolumePercent(SOUND_MUSIC));
+		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kMusicSoundType));
 		return _scValue;
 	}
 
@@ -2626,7 +2626,7 @@ ERRORCODE CBGame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SFXVolume") == 0) {
 		Game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(SOUND_SFX, (byte)value->getInt());
+		Game->_soundMgr->setVolumePercent(Audio::Mixer::kSFXSoundType, (byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -2635,7 +2635,7 @@ ERRORCODE CBGame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SpeechVolume") == 0) {
 		Game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(SOUND_SPEECH, (byte)value->getInt());
+		Game->_soundMgr->setVolumePercent(Audio::Mixer::kSpeechSoundType, (byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -2644,7 +2644,7 @@ ERRORCODE CBGame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MusicVolume") == 0) {
 		Game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(SOUND_MUSIC, (byte)value->getInt());
+		Game->_soundMgr->setVolumePercent(Audio::Mixer::kMusicSoundType, (byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -3386,7 +3386,7 @@ ERRORCODE CBGame::playMusic(int channel, const char *filename, bool looping, uin
 	_music[channel] = NULL;
 
 	_music[channel] = new CBSound(Game);
-	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, SOUND_MUSIC, true))) {
+	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
 		if (_musicStartTime[channel]) {
 			_music[channel]->setPositionTime(_musicStartTime[channel]);
 			_musicStartTime[channel] = 0;
@@ -4083,11 +4083,11 @@ ERRORCODE CBGame::updateMusicCrossfade() {
 	if (currentTime >= _musicCrossfadeLength) {
 		_musicCrossfadeRunning = false;
 		//_music[_musicCrossfadeChannel2]->setVolume(GlobMusicVol);
-		_music[_musicCrossfadeChannel2]->setVolume(100);
+		_music[_musicCrossfadeChannel2]->setVolumePercent(100);
 
 		_music[_musicCrossfadeChannel1]->stop();
 		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol);
-		_music[_musicCrossfadeChannel1]->setVolume(100);
+		_music[_musicCrossfadeChannel1]->setVolumePercent(100);
 
 
 		if (_musicCrossfadeSwap) {
@@ -4104,8 +4104,8 @@ ERRORCODE CBGame::updateMusicCrossfade() {
 	} else {
 		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol - (float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
 		//_music[_musicCrossfadeChannel2]->setVolume((float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
-		_music[_musicCrossfadeChannel1]->setVolume((int)(100.0f - (float)currentTime / (float)_musicCrossfadeLength * 100.0f));
-		_music[_musicCrossfadeChannel2]->setVolume((int)((float)currentTime / (float)_musicCrossfadeLength * 100.0f));
+		_music[_musicCrossfadeChannel1]->setVolumePercent((int)(100.0f - (float)currentTime / (float)_musicCrossfadeLength * 100.0f));
+		_music[_musicCrossfadeChannel2]->setVolumePercent((int)((float)currentTime / (float)_musicCrossfadeLength * 100.0f));
 
 		//Game->QuickMessageForm("%d %d", _music[_musicCrossfadeChannel1]->GetVolume(), _music[_musicCrossfadeChannel2]->GetVolume());
 	}

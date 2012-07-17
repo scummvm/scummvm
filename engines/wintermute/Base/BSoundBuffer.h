@@ -31,6 +31,7 @@
 
 
 #include "engines/wintermute/Base/BBase.h"
+#include "audio/mixer.h"
 #include "common/stream.h"
 
 namespace Audio {
@@ -68,8 +69,9 @@ public:
 	ERRORCODE setPan(float pan);
 	ERRORCODE setPrivateVolume(int colume);
 	ERRORCODE setVolume(int colume);
+	void updateVolume();
 
-	void setType(TSoundType Type);
+	void setType(Audio::Mixer::SoundType Type);
 
 	ERRORCODE loadFromFile(const char *filename, bool forceReload = false);
 	void setStreaming(bool streamed, uint32 numBlocks = 0, uint32 blockSize = 0);
@@ -82,19 +84,15 @@ public:
 
 	bool _freezePaused;
 	uint32 _loopStart;
-	TSoundType _type;
+	Audio::Mixer::SoundType _type;
 	bool _looping;
 	Common::SeekableReadStream *_file;
 	char *_filename;
 	bool _streamed;
+
 	int _privateVolume;
-
-	/*static void CALLBACK LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void *user);
-
-	static void CALLBACK FileCloseProc(void *user);
-	static QWORD CALLBACK FileLenProc(void *user);
-	static uint32 CALLBACK FileReadProc(void *buffer, uint32 length, void *user);
-	static BOOL CALLBACK FileSeekProc(QWORD offset, void *user);*/
+private:
+	int _volume;
 };
 
 } // end of namespace WinterMute

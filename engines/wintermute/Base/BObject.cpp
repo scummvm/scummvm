@@ -423,7 +423,7 @@ ERRORCODE CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		stack->correctParams(0);
 
 		if (!_sFX) stack->pushInt(_sFXVolume);
-		else stack->pushInt(_sFX->getVolume());
+		else stack->pushInt(_sFX->getVolumePercent());
 		return STATUS_OK;
 	}
 
@@ -982,7 +982,7 @@ ERRORCODE CBObject::playSFX(const char *filename, bool looping, bool playNow, co
 	// just play loaded sound
 	if (filename == NULL && _sFX) {
 		if (Game->_editorMode || _sFXStart) {
-			_sFX->setVolume(_sFXVolume);
+			_sFX->setVolumePercent(_sFXVolume);
 			_sFX->setPositionTime(_sFXStart);
 			if (!Game->_editorMode) _sFXStart = 0;
 		}
@@ -999,8 +999,8 @@ ERRORCODE CBObject::playSFX(const char *filename, bool looping, bool playNow, co
 	delete _sFX;
 
 	_sFX = new CBSound(Game);
-	if (_sFX && DID_SUCCEED(_sFX->setSound(filename, SOUND_SFX, true))) {
-		_sFX->setVolume(_sFXVolume);
+	if (_sFX && DID_SUCCEED(_sFX->setSound(filename, Audio::Mixer::kSFXSoundType, true))) {
+		_sFX->setVolumePercent(_sFXVolume);
 		if (_sFXStart) {
 			_sFX->setPositionTime(_sFXStart);
 			_sFXStart = 0;
@@ -1057,7 +1057,7 @@ ERRORCODE CBObject::setSFXTime(uint32 time) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBObject::setSFXVolume(int volume) {
 	_sFXVolume = volume;
-	if (_sFX) return _sFX->setVolume(volume);
+	if (_sFX) return _sFX->setVolumePercent(volume);
 	else return STATUS_OK;
 }
 

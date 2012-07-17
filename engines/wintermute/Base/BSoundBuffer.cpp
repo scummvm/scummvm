@@ -37,7 +37,9 @@
 #include "audio/mixer.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
+#include "audio/decoders/raw.h"
 #include "common/system.h"
+#include "common/substream.h"
 
 namespace WinterMute {
 
@@ -50,18 +52,19 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////////
 CBSoundBuffer::CBSoundBuffer(CBGame *inGame): CBBase(inGame) {
 	_stream = NULL;
-	_handle = new Audio::SoundHandle;
+	_handle = NULL;
 //	_sync = NULL;
 
 	_streamed = false;
 	_filename = NULL;
 	_file = NULL;
-	_privateVolume = 100;
+	_privateVolume = 255;
+	_volume = 255;
 
 	_looping = false;
 	_loopStart = 0;
 
-	_type = SOUND_SFX;
+	_type = Audio::Mixer::kSFXSoundType;
 
 	_freezePaused = false;
 }
@@ -72,14 +75,12 @@ CBSoundBuffer::~CBSoundBuffer() {
 	stop();
 
 	if (_handle) {
+		g_system->getMixer()->stopHandle(*_handle);
 		delete _handle;
 		_handle = NULL;
 	}
-
-	if (_file) {
-		Game->_fileManager->closeFile(_file);
-		_file = NULL;
-	}
+	delete _stream;
+	_stream = NULL;
 
 	delete[] _filename;
 	_filename = NULL;
@@ -101,8 +102,6 @@ ERRORCODE CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 		_stream = NULL;
 	}
 #endif
-	// If we already had a file, delete it.
-	delete _file;
 
 	// Load a file, but avoid having the File-manager handle the disposal of it.
 	_file = Game->_fileManager->openFile(filename, true, false);
@@ -114,8 +113,19 @@ ERRORCODE CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	if (strFilename.hasSuffix(".ogg")) {
 		_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::YES);
 	} else if (strFilename.hasSuffix(".wav")) {
-		warning("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s", filename);
-		//_stream = Audio::makeWAVStream(_file, DisposeAfterUse::NO);
+		int waveSize, waveRate;
+		byte waveFlags;
+		uint16 waveType;
+		
+		if (Audio::loadWAVFromStream(*_file, waveSize, waveRate, waveFlags, &waveType)) {
+			if (waveType == 1) {
+				// We need to wrap the file in a substream to make sure the size is right.
+				_file = new Common::SeekableSubReadStream(_file, 0, waveSize);
+				_stream = Audio::makeRawStream(_file, waveRate, waveFlags, DisposeAfterUse::YES);
+			} else {
+				warning("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s with type %d", filename, waveType);
+			}
+		}
 	} else {
 		warning("BSoundBuffer::LoadFromFile - Unknown filetype for %s", filename);
 	}
@@ -190,22 +200,31 @@ ERRORCODE CBSoundBuffer::play(bool looping, uint32 startSample) {
 	if (startSample != 0) {
 		warning("BSoundBuffer::Play - Should start playback at %d, but currently we don't", startSample);
 	}
-	if (_stream) {
-		if (looping) {
-			Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::YES);
-			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, loopStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
-		} else {
-			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
-		}
+	if (_handle) {
+		g_system->getMixer()->stopHandle(*_handle);
+		delete _handle;
+		_handle = NULL;
 	}
+	if (_stream) {
+		_stream->seek(startSample);
+		_handle = new Audio::SoundHandle;
+		if (looping) {
+			Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
+			g_system->getMixer()->playStream(_type, _handle, loopStream, -1, _volume, 0, DisposeAfterUse::YES);
+		} else {
+			g_system->getMixer()->playStream(_type, _handle, _stream, -1, _volume, 0, DisposeAfterUse::NO);
+		}
+	} 
+
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBSoundBuffer::setLooping(bool looping) {
-	warning("BSoundBuffer::SetLooping(%d) - not implemented yet", looping);
-#if 0
+	warning("BSoundBuffer::SetLooping(%d) - won't change a playing sound", looping);
 	_looping = looping;
+#if 0
+
 
 	if (_stream) {
 		BASS_ChannelFlags(_stream, looping ? BASS_SAMPLE_LOOP : 0, BASS_SAMPLE_LOOP);
@@ -251,15 +270,20 @@ uint32 CBSoundBuffer::getLength() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSoundBuffer::setType(TSoundType type) {
+void CBSoundBuffer::setType(Audio::Mixer::SoundType type) {
 	_type = type;
 }
 
+//////////////////////////////////////////////////////////////////////////
+void CBSoundBuffer::updateVolume() {
+	setVolume(_privateVolume);
+}
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundBuffer::setVolume(int volume) {
+	_volume = volume * Game->_soundMgr->getMasterVolume() / 255;
 	if (_stream && _handle) {
-		byte vol = (byte)(volume / 100.f * Audio::Mixer::kMaxChannelVolume);
+		byte vol = (byte)(_volume);
 		g_system->getMixer()->setChannelVolume(*_handle, vol);
 	}
 	return STATUS_OK;
@@ -268,22 +292,8 @@ ERRORCODE CBSoundBuffer::setVolume(int volume) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundBuffer::setPrivateVolume(int volume) {
-#if 0
-	_privateVolume = Volume;
-
-	switch (_type) {
-	case SOUND_SFX:
-		volume = Game->_soundMgr->_volumeSFX;
-		break;
-	case SOUND_SPEECH:
-		volume = Game->_soundMgr->_volumeSpeech;
-		break;
-	case SOUND_MUSIC:
-		volume = Game->_soundMgr->_volumeMusic;
-		break;
-	}
-#endif
-	return setVolume(volume);
+	_privateVolume = volume;
+	return setVolume(_privateVolume);
 }
 
 
@@ -348,7 +358,7 @@ void CBSoundBuffer::LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void
 #endif
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundBuffer::setPan(float pan) {
-	if (_stream) {
+	if (_handle) {
 		g_system->getMixer()->setChannelBalance(*_handle, (int8)(pan * 127));
 	}
 	return STATUS_OK;
@@ -357,7 +367,6 @@ ERRORCODE CBSoundBuffer::setPan(float pan) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundBuffer::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	warning("CBSoundBuffer::ApplyFX - not implemented yet");
-#if 0
 	switch (type) {
 	case SFX_ECHO:
 		break;
@@ -368,7 +377,6 @@ ERRORCODE CBSoundBuffer::applyFX(TSFXType type, float param1, float param2, floa
 	default:
 		break;
 	}
-#endif
 	return STATUS_OK;
 }
 

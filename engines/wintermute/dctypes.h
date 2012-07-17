@@ -140,12 +140,6 @@ enum TSeek {
     SEEK_TO_END     = SEEK_END
 };
 
-enum TSoundType {
-    SOUND_SFX,
-	SOUND_MUSIC,
-	SOUND_SPEECH
-};
-
 enum TVideoMode {
     VIDEO_WINDOW,
 	VIDEO_FULLSCREEN,

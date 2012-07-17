@@ -32,7 +32,7 @@
 #include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/utils/utils.h"
-
+#include "common/config-manager.h"
 #include "common/file.h"
 
 namespace WinterMute {
@@ -77,6 +77,33 @@ bool CBRegistry::writeString(const AnsiString &subKey, const AnsiString &key, co
 
 //////////////////////////////////////////////////////////////////////////
 int CBRegistry::readInt(const AnsiString &subKey, const AnsiString &key, int init) {
+	if (subKey == "Audio") {
+		if (key == "MasterVolume") {
+			if (ConfMan.hasKey("master_volume")) {
+				return ConfMan.getInt("master_volume");
+			} else {
+				return init;
+			}
+		} else if (key == "SFXVolume") {
+			if (ConfMan.hasKey("sfx_volume")) {
+				error("This key shouldn't be read by the scripts");
+			} else {
+				return init;
+			}
+		} else if (key == "SpeechVolume") {
+			if (ConfMan.hasKey("speech_volume")) {
+				error("This key shouldn't be read by the scripts");
+			} else {
+				return init;
+			}
+		} else if (key == "MusicVolume") {
+			if (ConfMan.hasKey("music_volume")) {
+				error("This key shouldn't be read by the scripts");
+			} else {
+				return init;
+			}
+		}
+	} 
 	AnsiString val = readString(subKey, key, "");
 	if (val.empty()) return init;
 	else return atoi(val.c_str());
@@ -85,6 +112,21 @@ int CBRegistry::readInt(const AnsiString &subKey, const AnsiString &key, int ini
 
 //////////////////////////////////////////////////////////////////////////
 bool CBRegistry::writeInt(const AnsiString &subKey, const AnsiString &key, int value) {
+	if (subKey == "Audio") {
+		if (key == "MasterVolume") {
+			ConfMan.setInt("master_volume", value);
+			return true;
+		} else if (key == "SFXVolume") {
+			error("This key shouldn't be read by the scripts");
+			return true;
+		} else if (key == "SpeechVolume") {
+			error("This key shouldn't be read by the scripts");
+			return true;
+		} else if (key == "MusicVolume") {
+			error("This key shouldn't be read by the scripts");
+			return true;
+		}
+	} 
 	writeString(subKey, key, StringUtil::toString(value));
 	return true;
 }

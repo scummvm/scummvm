@@ -351,7 +351,7 @@ ERRORCODE CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeG
 	if (forceZoom < 0.0f)
 		forceZoom = 100.0f;
 	if (volume < 0)
-		_volume = Game->_soundMgr->getVolumePercent(SOUND_SFX);
+		_volume = Game->_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType);
 	else _volume = volume;
 
 	_freezeGame = freezeGame;

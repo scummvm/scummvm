@@ -251,7 +251,7 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 				_sound = NULL;
 			}
 			_sound = new CBSound(Game);
-			if (!_sound || DID_FAIL(_sound->setSound(params, SOUND_SFX, false))) {
+			if (!_sound || DID_FAIL(_sound->setSound(params, Audio::Mixer::kSFXSoundType, false))) {
 				if (Game->_soundMgr->_soundAvailable) Game->LOG(0, "Error loading sound '%s'.", params);
 				delete _sound;
 				_sound = NULL;
@@ -423,7 +423,7 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		if (!val->isNULL()) {
 			_sound = new CBSound(Game);
-			if (!_sound || DID_FAIL(_sound->setSound(val->getString(), SOUND_SFX, false))) {
+			if (!_sound || DID_FAIL(_sound->setSound(val->getString(), Audio::Mixer::kSFXSoundType, false))) {
 				stack->pushBool(false);
 				delete _sound;
 				_sound = NULL;

@@ -34,6 +34,9 @@
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/BSoundBuffer.h"
+#include "engines/wintermute/wintermute.h"
+#include "common/config-manager.h"
+#include "audio/mixer.h"
 
 namespace WinterMute {
 
@@ -46,8 +49,7 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////////
 CBSoundMgr::CBSoundMgr(CBGame *inGame): CBBase(inGame) {
 	_soundAvailable = false;
-
-	_volumeSFX = _volumeSpeech = _volumeMusic = _volumeMaster = 100;
+	_volumeMaster = 255;
 }
 
 
@@ -73,43 +75,18 @@ ERRORCODE CBSoundMgr::cleanup() {
 void CBSoundMgr::saveSettings() {
 	if (_soundAvailable) {
 		Game->_registry->writeInt("Audio", "MasterVolume", _volumeMaster);
-
-		Game->_registry->writeInt("Audio", "SFXVolume",    _volumeSFX);
-		Game->_registry->writeInt("Audio", "SpeechVolume", _volumeSpeech);
-		Game->_registry->writeInt("Audio", "MusicVolume",  _volumeMusic);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundMgr::initialize() {
 	_soundAvailable = false;
-#if 0
-
-#ifdef __IPHONEOS__
-#define BASS_CONFIG_IOS_MIXAUDIO 34
-	BASS_SetConfig(BASS_CONFIG_IOS_MIXAUDIO, 0);
-#endif
-
-
-	if (HIWORD(BASS_GetVersion()) != BASSVERSION) {
-		Game->LOG(0, "An incorrect version of BASS was loaded");
+	
+	if (!g_system->getMixer()->isReady()) {
 		return STATUS_FAILED;
 	}
-
-	if (!BASS_Init(-1, 44100, 0, 0, NULL)) {
-		Game->LOG(0, "Can't initialize sound device");
-		return STATUS_FAILED;
-	}
-#endif
-
-	_volumeMaster = Game->_registry->readInt("Audio", "MasterVolume", 100);
-
-	_volumeSFX    = Game->_registry->readInt("Audio", "SFXVolume",    100);
-	_volumeSpeech = Game->_registry->readInt("Audio", "SpeechVolume", 100);
-	_volumeMusic  = Game->_registry->readInt("Audio", "MusicVolume",  100);
-
+	_volumeMaster = Game->_registry->readInt("Audio", "MasterVolume", 255);
 	_soundAvailable = true;
-	setMasterVolumePercent(_volumeMaster);
 
 	return STATUS_OK;
 }
@@ -128,7 +105,7 @@ ERRORCODE CBSoundMgr::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType type, bool streamed) {
+CBSoundBuffer *CBSoundMgr::addSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (!_soundAvailable)
 		return NULL;
 
@@ -160,18 +137,8 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType type, bool 
 		return NULL;
 	}
 
-	// set volume appropriately
-	switch (type) {
-	case SOUND_SFX:
-		sound->setVolume(_volumeSFX);
-		break;
-	case SOUND_SPEECH:
-		sound->setVolume(_volumeSpeech);
-		break;
-	case SOUND_MUSIC:
-		sound->setVolume(_volumeMusic);
-		break;
-	}
+	// Make sure the master-volume is applied to the sound.
+	sound->updateVolume();
 
 	// register sound
 	_sounds.add(sound);
@@ -182,22 +149,12 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, TSoundType type, bool 
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::addSound(CBSoundBuffer *sound, TSoundType type) {
+ERRORCODE CBSoundMgr::addSound(CBSoundBuffer *sound, Audio::Mixer::SoundType type) {
 	if (!sound)
 		return STATUS_FAILED;
 
-	// set volume appropriately
-	switch (type) {
-	case SOUND_SFX:
-		sound->setVolume(_volumeSFX);
-		break;
-	case SOUND_SPEECH:
-		sound->setVolume(_volumeSpeech);
-		break;
-	case SOUND_MUSIC:
-		sound->setVolume(_volumeMusic);
-		break;
-	}
+	// Make sure the master-volume is applied to the sound.
+	sound->updateVolume();
 
 	// register sound
 	_sounds.add(sound);
@@ -220,83 +177,81 @@ ERRORCODE CBSoundMgr::removeSound(CBSoundBuffer *sound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::setVolume(TSoundType type, int volume) {
+ERRORCODE CBSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 	if (!_soundAvailable)
 		return STATUS_OK;
 
 	switch (type) {
-	case SOUND_SFX:
-		_volumeSFX = volume;
+	case Audio::Mixer::kSFXSoundType:
+		ConfMan.setInt("sfx_volume", volume);
 		break;
-	case SOUND_SPEECH:
-		_volumeSpeech = volume;
+	case Audio::Mixer::kSpeechSoundType:
+		ConfMan.setInt("speech_volume", volume);
 		break;
-	case SOUND_MUSIC:
-		_volumeMusic  = volume;
+	case Audio::Mixer::kMusicSoundType:
+		ConfMan.setInt("music_volume", volume);
 		break;
 	}
-
-	for (int i = 0; i < _sounds.getSize(); i++) {
-		if (_sounds[i]->_type == type) _sounds[i]->setVolume(volume);
-	}
+	g_wintermute->syncSoundSettings();
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::setVolumePercent(TSoundType type, byte percent) {
-	return setVolume(type, percent);
+ERRORCODE CBSoundMgr::setVolumePercent(Audio::Mixer::SoundType type, byte percent) {
+	return setVolume(type, percent * 255 / 100);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-byte CBSoundMgr::getVolumePercent(TSoundType type) {
+byte CBSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 	int volume = 0;
+
 	switch (type) {
-	case SOUND_SFX:
-		volume = _volumeSFX;
-		break;
-	case SOUND_SPEECH:
-		volume = _volumeSpeech;
-		break;
-	case SOUND_MUSIC:
-		volume = _volumeMusic;
+	case Audio::Mixer::kSFXSoundType:
+	case Audio::Mixer::kSpeechSoundType:
+	case Audio::Mixer::kMusicSoundType:
+		volume = g_system->getMixer()->getVolumeForSoundType(type);
 		break;
 	default:
 		error("Sound-type not set");
 		break;
 	}
 
-	return (byte)volume;
+	return (byte)(volume * 100 / 255);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
+ERRORCODE CBSoundMgr::setMasterVolume(byte value) {
+	_volumeMaster = value;
+	for (int i = 0; i < _sounds.getSize(); i++) {
+		_sounds[i]->updateVolume();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundMgr::setMasterVolumePercent(byte percent) {
-	_volumeMaster = percent;
-#if 0
-	BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, (uint32)(10000.0f / 100.0f * (float)Percent));
-#endif
-	return STATUS_OK;
+	setMasterVolume(percent * 255 / 100);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 byte CBSoundMgr::getMasterVolumePercent() {
-#if 0
-	uint32 val = BASS_GetConfig(BASS_CONFIG_GVOL_STREAM);
-	return (float)val / 10000.0f * 100.0f;
-#endif
-	return 0;
+	return getMasterVolume() * 100 / 255;
 }
 
+//////////////////////////////////////////////////////////////////////////
+byte CBSoundMgr::getMasterVolume() {
+	return _volumeMaster;
+}
 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundMgr::pauseAll(bool includingMusic) {
 
 	for (int i = 0; i < _sounds.getSize(); i++) {
-		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != SOUND_MUSIC || includingMusic)) {
+		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != Audio::Mixer::kMusicSoundType || includingMusic)) {
 			_sounds[i]->pause();
 			_sounds[i]->_freezePaused = true;
 		}

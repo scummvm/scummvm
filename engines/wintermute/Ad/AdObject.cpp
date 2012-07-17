@@ -862,7 +862,7 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 	// load sound and set duration appropriately
 	if (sound) {
 		CBSound *snd = new CBSound(Game);
-		if (snd && DID_SUCCEED(snd->setSound(sound, SOUND_SPEECH, true))) {
+		if (snd && DID_SUCCEED(snd->setSound(sound, Audio::Mixer::kSpeechSoundType, true))) {
 			_sentence->setSound(snd);
 			if (_sentence->_duration <= 0) {
 				uint32 Length = snd->getLength();
