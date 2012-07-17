@@ -625,9 +625,9 @@ Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filena
 	    }
 	#endif*/
 
-	Common::SeekableReadStream *File = openFileRaw(filename);
-	if (File && keepTrackOf) _openFiles.add(File);
-	return File;
+	Common::SeekableReadStream *file = openFileRaw(filename);
+	if (file && keepTrackOf) _openFiles.add(file);
+	return file;
 }
 
 
