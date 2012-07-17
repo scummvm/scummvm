@@ -2204,7 +2204,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			SET_FLAG(0xdbe6, 1);
 			setOns(1, 0x66);
 			moveTo(224, 194, 0, true);
-			displayCutsceneMessage(0x57df, 30423);
+			displayCutsceneMessage(0x57df, 23, 95);
 			inventory->remove(0x59);
 			enableOn(true);
 		} else
@@ -3241,7 +3241,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(754);
 		hideActor();
 
-		displayCutsceneMessage(0x517b, 30430);
+		displayCutsceneMessage(0x517b, 30, 95);
 
 		playMusic(3);
 		loadScene(11, scene->getPosition());
@@ -3954,7 +3954,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			for (uint i = 0; i < 8; ++i)
 				playSound(26, 30 + i * 11);
 			playActorAnimation(661);
-			displayCutsceneMessage(0x3c80, 30484);
+			displayCutsceneMessage(0x3c80, 84, 95);
 			playSound(56, 10);
 			playSound(56, 21);
 
@@ -3968,7 +3968,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			waitAnimation();
 			setOns(1, 49);
 
-			displayCutsceneMessage(0x3c9a, 30453);
+			displayCutsceneMessage(0x3c9a, 53, 95);
 			moveTo(162, 184, 0, true);
 			playSound(26, 6);
 			playSound(26, 17);
@@ -4052,7 +4052,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				byte id = scene->getId();
 
 				playMusic(11);
-				displayCutsceneMessage(0x580a, 30484);
+				displayCutsceneMessage(0x580a, 84, 95);
 				processCallback(ptr);
 				playMusic(6);
 				if (getFlag(0xdbec) != 1 || ptr != 0x9f3e) // ptr check eq. scene_id == 11

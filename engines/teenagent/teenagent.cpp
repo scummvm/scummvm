@@ -818,12 +818,12 @@ void TeenAgentEngine::displayCredits() {
 	scene->push(event);
 }
 
-void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 position) {
+void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 x, uint16 y) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
 	event.message = parseMessage(addr);
-	event.dst.x = position % 320;
-	event.dst.y = position / 320;
+	event.dst.x = x;
+	event.dst.y = y;
 	event.lan = 7;
 
 	scene->push(event);
