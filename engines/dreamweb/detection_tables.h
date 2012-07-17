@@ -46,7 +46,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_TESTING,
+			0,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -63,7 +63,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -84,7 +84,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::EN_GRB,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -101,7 +101,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::EN_USA,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -118,7 +118,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -136,7 +136,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -153,7 +153,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_TESTING,
+			0,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -170,7 +170,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -187,7 +187,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_TESTING,
+			0,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -204,7 +204,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -222,7 +222,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
@@ -239,7 +239,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			ADGF_TESTING,
+			0,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
 		},
 	},
