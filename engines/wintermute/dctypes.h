@@ -134,11 +134,6 @@ enum TDynamicConstructor {
     DYNAMIC_CONSTRUCTOR
 };
 
-enum TSeek {
-    SEEK_TO_BEGIN   = SEEK_SET,
-    SEEK_TO_CURRENT = SEEK_CUR,
-    SEEK_TO_END     = SEEK_END
-};
 
 enum TVideoMode {
     VIDEO_WINDOW,

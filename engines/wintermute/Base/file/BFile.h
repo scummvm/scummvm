@@ -51,7 +51,7 @@ public:
 	virtual uint32 getPos() {
 		return _pos;
 	};
-	virtual ERRORCODE seek(uint32 pos, TSeek origin = SEEK_TO_BEGIN) = 0;
+	virtual ERRORCODE seek(uint32 pos, int whence = SEEK_SET) = 0;
 	virtual ERRORCODE read(void *buffer, uint32 size) = 0;
 	virtual ERRORCODE close() = 0;
 	virtual ERRORCODE open(const Common::String &filename) = 0;

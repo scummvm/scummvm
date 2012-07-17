@@ -120,19 +120,19 @@ ERRORCODE CBSaveThumbFile::read(void *buffer, uint32 size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSaveThumbFile::seek(uint32 pos, TSeek origin) {
+ERRORCODE CBSaveThumbFile::seek(uint32 pos, int whence) {
 	if (!_data) return STATUS_FAILED;
 
 	uint32 newPos = 0;
 
-	switch (origin) {
-	case SEEK_TO_BEGIN:
+	switch (whence) {
+	case SEEK_SET:
 		newPos = pos;
 		break;
-	case SEEK_TO_END:
+	case SEEK_END:
 		newPos = _size + pos;
 		break;
-	case SEEK_TO_CURRENT:
+	case SEEK_CUR:
 		newPos = _pos + pos;
 		break;
 	}
