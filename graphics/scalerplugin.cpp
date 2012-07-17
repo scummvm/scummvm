@@ -27,7 +27,7 @@ SourceScaler::SourceScaler() {
 	}
 }
 
-void SourceScaler::setSource(byte *src, uint pitch, int width, int height, int padding, SourceType type) {
+void SourceScaler::setSource(const byte *src, uint pitch, int width, int height, int padding, SourceType type) {
 	widths[type] = width;
 	heights[type] = height;
 	pitches[type] = pitch;
