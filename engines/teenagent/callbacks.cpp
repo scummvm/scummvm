@@ -95,7 +95,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(1, 109);
 		setLan(2, 1);
 		dialog->show(192, scene, 914, 915, 0xe7, 0xd7, 2, 1);
-		displayCredits(0xe3c2);
+		displayCredits(dsAddr_introCredits1);
 
 		loadScene(42, 139, 156, 3);
 		playSound(15, 20);
@@ -108,7 +108,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(918, 0, true);
 		playAnimation(917, 1, true);
 		waitAnimation();
-		displayCredits(0xe3e6);
+		displayCredits(dsAddr_introCredits2);
 
 		loadScene(40, 139, 156, 3);
 		playMusic(3);
@@ -118,7 +118,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(926, 1, true);
 		waitAnimation();
 		dialog->show(194, scene, 927, 920, 0xeb, 0xe7, 2, 1);
-		displayCredits(0xe3ff);
+		displayCredits(dsAddr_introCredits3);
 
 		loadScene(39, 139, 156, 3);
 		playMusic(11);
@@ -143,7 +143,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(24, 11);
 		playActorAnimation(931);
 
-		displayCredits(0xe42f);
+		displayCredits(dsAddr_introCredits4);
 
 		playMusic(3);
 		loadScene(40, 50, 186, 1);
@@ -591,7 +591,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		dialog->show(202, scene, 0, 920, 0xd1, 0xe7, 0, 1);
 		inventory->clear();
 		inventory->add(0x1d);
-		displayCredits(0xe45c);
+		displayCredits(dsAddr_credits5);
 		loadScene(1, 198, 186);
 		hideActor();
 		playActorAnimation(956);
@@ -3867,7 +3867,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(954, 0);
 		dialog->showMono(211, scene, 955, 0xe3, 1);
 		playMusic(2);
-		displayCredits(0xe47c, 4500); // 3 minutes (infinite until key pressed in original)
+		displayCredits(dsAddr_finalCredits6, 4500); // 3 minutes (infinite until key pressed in original)
 		scene->push(SceneEvent(SceneEvent::kQuit));
 		break;
 

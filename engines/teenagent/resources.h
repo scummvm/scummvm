@@ -67,6 +67,22 @@ const uint16 dsAddr_currentScene = 0xb4f3; // 1 byte
 // Current Music Id Playing : 0xdb90
 const uint16 dsAddr_currentMusic = 0xdb90; // 1 byte
 
+// Intro Credits #1 : 0xe3c2 to 0xe3e5 (Read Only)
+const uint16 dsAddr_introCredits1 = 0xe3c2; // "backgrounds ..."
+// Intro Credits #2 : 0xe3e6 to 0xe3fe (Read Only)
+const uint16 dsAddr_introCredits2 = 0xe3e6; // "music ..."
+// Intro Credits #3 : 0xe3ff to 0xe42e (Read Only)
+const uint16 dsAddr_introCredits3 = 0xe3ff; // "animation..."
+// Intro Credits #4 : 0xe42f to 0xe45b (Read Only)
+const uint16 dsAddr_introCredits4 = 0xe42f; // "programming..."
+// Credits #5 : 0xe45c to 0xe47b (Read Only)
+const uint16 dsAddr_credits5 = 0xe45c; // "after the tiring journey..."
+// Final Credits #6 : 0xe47c to 0xe487 (Read Only)
+const uint16 dsAddr_finalCredits6 = 0xe47c; // "THE END..."
+// Final Credits #7 : 0xe488 to 0xe782 (Read Only)
+const uint16 dsAddr_finalCredits7 = 0xe488; // "programming..."
+// 0xe783 to 0xe78f: 13 null bytes at end of dseg data - segment alignment padding?
+
 class Resources {
 public:
 	void deinit();

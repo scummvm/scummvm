@@ -805,7 +805,7 @@ void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 
 void TeenAgentEngine::displayCredits() {
 	SceneEvent event(SceneEvent::kCredits);
-	event.message = parseMessage(0xe488);
+	event.message = parseMessage(dsAddr_finalCredits7);
 	event.dst.y = 200;
 
 	int lines = 1;
