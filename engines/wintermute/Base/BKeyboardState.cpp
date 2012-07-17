@@ -266,10 +266,39 @@ uint32 CBKeyboardState::keyCodeToVKey(Common::Event *event) {
 	}
 }
 
+enum VKeyCodes {
+	VK_SPACE = 32,
+	VK_LEFT = 37,
+	VK_UP = 38,
+	VK_RIGHT = 39,
+	VK_DOWN = 40
+};
+
 //////////////////////////////////////////////////////////////////////////
 Common::KeyCode CBKeyboardState::vKeyToKeyCode(uint32 vkey) {
 	// todo
-	return (Common::KeyCode)vkey;
+	switch (vkey) {
+		case VK_SPACE:
+			return Common::KEYCODE_SPACE;
+			break;
+		case VK_LEFT:
+			return Common::KEYCODE_LEFT;
+			break;
+		case VK_RIGHT:
+			return Common::KEYCODE_RIGHT;
+			break;
+		case VK_UP:
+			return Common::KEYCODE_UP;
+			break;
+		case VK_DOWN:
+			return Common::KEYCODE_DOWN;
+			break;
+		default:
+			warning("Unknown VKEY: %d", vkey);
+			return (Common::KeyCode)vkey;
+			break;
+	}
+
 }
 
 } // end of namespace WinterMute
