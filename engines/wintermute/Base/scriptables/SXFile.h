@@ -48,15 +48,17 @@ public:
 	virtual ~CSXFile();
 private:
 	Common::SeekableReadStream *_readFile;
-	void *_writeFile;
+	Common::WriteStream *_writeFile;
 	int _mode; // 0..none, 1..read, 2..write, 3..append
 	bool _textMode;
 	void close();
 	void cleanup();
 	uint32 getPos();
 	uint32 getLength();
-	bool setPos(uint32 Pos, TSeek Origin = SEEK_TO_BEGIN);
+	bool setPos(uint32 Pos, int whence = SEEK_SET);
 	char *_filename;
+	Common::WriteStream *openForWrite(const Common::String &filename, bool binary);
+	Common::WriteStream *openForAppend(const Common::String &filename, bool binary);
 };
 
 } // end of namespace WinterMute

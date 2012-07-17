@@ -26,14 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_ftell
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "engines/wintermute/Sys/SysClassRegistry.h"
 #include "engines/wintermute/Sys/SysClass.h"
 #include "engines/wintermute/Base/scriptables/ScStack.h"
@@ -45,6 +37,8 @@
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/Base/scriptables/SXFile.h"
+
+// Note: This code is completely untested, as I have yet to find a game that uses SXFile.
 
 namespace WinterMute {
 
@@ -89,8 +83,9 @@ void CSXFile::close() {
 		Game->_fileManager->closeFile(_readFile);
 		_readFile = NULL;
 	}
-	if ((FILE *)_writeFile) {
-		fclose((FILE *)_writeFile);
+	if (_writeFile) {
+		_writeFile->finalize();
+		delete _writeFile;
 		_writeFile = NULL;
 	}
 	_mode = 0;
@@ -137,11 +132,11 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			} else _textMode = strcmp(name, "OpenAsText") == 0;
 		} else {
 			if (strcmp(name, "OpenAsText") == 0) {
-				if (_mode == 2) _writeFile = fopen(_filename, "w+");
-				else _writeFile = fopen(_filename, "a+");
+				if (_mode == 2) _writeFile = openForWrite(_filename, false);
+				else _writeFile = openForAppend(_filename, false);
 			} else {
-				if (_mode == 2) _writeFile = fopen(_filename, "wb+");
-				else _writeFile = fopen(_filename, "ab+");
+				if (_mode == 2) _writeFile = openForWrite(_filename, true);
+				else _writeFile = openForAppend(_filename, true);
 			}
 
 			if (!_writeFile) {
@@ -311,11 +306,14 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
-		if (strcmp(name, "WriteLine") == 0)
-			fprintf((FILE *)_writeFile, "%s\n", line);
-		else
-			fprintf((FILE *)_writeFile, "%s", line);
-
+		Common::String writeLine;
+		if (strcmp(name, "WriteLine") == 0) {
+			writeLine = Common::String::format("%s\n", line);
+		} else {
+			writeLine = Common::String::format("%s", line);
+		}
+		_writeFile->writeString(writeLine);
+		_writeFile->writeByte(0);
 		stack->pushBool(true);
 
 		return STATUS_OK;
@@ -349,9 +347,12 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushNULL();
 			return STATUS_OK;
 		}
-		byte val;
-		if (_readFile->read(&val, sizeof(byte)) == sizeof(byte)) stack->pushInt(val);
-		else stack->pushNULL();
+		byte val = _readFile->readByte();
+		if (!_readFile->err()) {
+			stack->pushInt(val);
+		} else {
+			stack->pushNULL();	
+		} 
 
 		return STATUS_OK;
 	}
@@ -366,10 +367,12 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushNULL();
 			return STATUS_OK;
 		}
-		short val;
-		if (_readFile->read(&val, sizeof(short)) == sizeof(short)) stack->pushInt(65536 + val);
-		else stack->pushNULL();
-
+		int16 val = _readFile->readSint16LE();
+		if (!_readFile->err()) {
+			stack->pushInt(65536 + val);
+		} else {
+			stack->pushNULL();	
+		}
 		return STATUS_OK;
 	}
 
@@ -383,9 +386,12 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushNULL();
 			return STATUS_OK;
 		}
-		int val;
-		if (_readFile->read(&val, sizeof(int)) == sizeof(int)) stack->pushInt(val);
-		else stack->pushNULL();
+		int32 val = _readFile->readSint32LE();
+		if (!_readFile->err()) {
+			stack->pushInt(val);
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
 	}
@@ -401,8 +407,12 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			return STATUS_OK;
 		}
 		float val;
-		if (_readFile->read(&val, sizeof(float)) == sizeof(float)) stack->pushFloat(val);
-		else stack->pushNULL();
+		(*(uint32*)&val) = _readFile->readUint32LE();
+		if (!_readFile->err()) {
+			stack->pushFloat(val);
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
 	}
@@ -410,7 +420,8 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	// ReadDouble
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadDouble") == 0) {
+	else if (strcmp(name, "ReadDouble") == 0) { // TODO: Solve reading a 8 byte double.
+		error("SXFile::ReadDouble - Not endian safe yet");
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
@@ -434,8 +445,8 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushNULL();
 			return STATUS_OK;
 		}
-		uint32 size;
-		if (_readFile->read(&size, sizeof(uint32)) == sizeof(uint32)) {
+		uint32 size = _readFile->readUint32LE();
+		if (!_readFile->err()) {
 			byte *str = new byte[size + 1];
 			if (str) {
 				if (_readFile->read(str, size) == size) {
@@ -461,7 +472,7 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
-		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
+		_writeFile->writeByte(val);
 		stack->pushBool(true);
 
 		return STATUS_OK;
@@ -479,7 +490,7 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
-		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
+		_writeFile->writeByte(val);
 		stack->pushBool(true);
 
 		return STATUS_OK;
@@ -490,14 +501,14 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WriteShort") == 0) {
 		stack->correctParams(1);
-		short val = stack->pop()->getInt();
+		int16 val = stack->pop()->getInt();
 
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
-		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
+		_writeFile->writeSint16LE(val);
 		stack->pushBool(true);
 
 		return STATUS_OK;
@@ -508,14 +519,14 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WriteInt") == 0 || strcmp(name, "WriteLong") == 0) {
 		stack->correctParams(1);
-		int val = stack->pop()->getInt();
+		int32 val = stack->pop()->getInt();
 
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
-		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
+		_writeFile->writeSint32LE(val);
 		stack->pushBool(true);
 
 		return STATUS_OK;
@@ -533,7 +544,8 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
-		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
+		uint32 *ptr = (uint32*)&val;
+		_writeFile->writeUint32LE(*ptr);
 		stack->pushBool(true);
 
 		return STATUS_OK;
@@ -543,6 +555,7 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	// WriteDouble
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WriteDouble") == 0) {
+		error("SXFile::WriteDouble - Not endian safe yet");
 		stack->correctParams(1);
 		double val = stack->pop()->getFloat();
 
@@ -551,7 +564,7 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
-		fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
+		//fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
 		stack->pushBool(true);
 
 		return STATUS_OK;
@@ -571,8 +584,8 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		}
 
 		uint32 size = strlen(val);
-		fwrite(&size, sizeof(size), 1, (FILE *)_writeFile);
-		fwrite(val, size, 1, (FILE *)_writeFile);
+		_writeFile->writeUint32LE(size);
+		_writeFile->writeString(val);
 
 		stack->pushBool(true);
 
@@ -666,15 +679,24 @@ ERRORCODE CSXFile::scSetProperty(const char *name, CScValue *value) {
 uint32 CSXFile::getPos() {
 	if (_mode == 1 && _readFile)
 		return _readFile->pos();
-	else if ((_mode == 2 || _mode == 3) && _writeFile) return ftell((FILE *)_writeFile);
-	else return 0;
+	else if ((_mode == 2 || _mode == 3) && _writeFile) {
+		error("SXFile - getPos for WriteFile not supported");
+		return 0;
+//		return ftell((FILE *)_writeFile);
+	} else { 
+		return 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXFile::setPos(uint32 pos, TSeek origin) {
+bool CSXFile::setPos(uint32 pos, int whence) {
 	if (_mode == 1 && _readFile)
-		return _readFile->seek(pos, origin);
-	else if ((_mode == 2 || _mode == 3) && _writeFile) return fseek((FILE *)_writeFile, pos, (int)origin) == 0;
+		return _readFile->seek(pos, whence);
+	else if ((_mode == 2 || _mode == 3) && _writeFile) {
+		error("CSXFile - seeking in WriteFile not supported");
+		return false;
+//		return fseek((FILE *)_writeFile, pos, (int)origin) == 0;
+	}
 	else return false;
 }
 
@@ -683,11 +705,14 @@ uint32 CSXFile::getLength() {
 	if (_mode == 1 && _readFile)
 		return _readFile->size();
 	else if ((_mode == 2 || _mode == 3) && _writeFile) {
-		uint32 CurrentPos = ftell((FILE *)_writeFile);
+		error("CSXFile - reading length for WriteFile not supported");
+		return 0;
+/*
+		uint32 currentPos = ftell((FILE *)_writeFile);
 		fseek((FILE *)_writeFile, 0, SEEK_END);
-		int Ret = ftell((FILE *)_writeFile);
+		int ret = ftell((FILE *)_writeFile);
 		fseek((FILE *)_writeFile, CurrentPos, SEEK_SET);
-		return Ret;
+		return Ret;*/
 	} else return 0;
 }
 
@@ -722,14 +747,14 @@ ERRORCODE CSXFile::persist(CBPersistMgr *persistMgr) {
 			else {
 				if (_textMode) {
 					if (_mode == 2)
-						_writeFile = fopen(_filename, "w+");
+						_writeFile = openForWrite(_filename, false);
 					else
-						_writeFile = fopen(_filename, "a+");
+						_writeFile = openForAppend(_filename, false);
 				} else {
 					if (_mode == 2)
-						_writeFile = fopen(_filename, "wb+");
+						_writeFile = openForWrite(_filename, true);
 					else
-						_writeFile = fopen(_filename, "ab+");
+						_writeFile = openForAppend(_filename, true);
 				}
 				if (_writeFile)
 					close();
@@ -739,6 +764,16 @@ ERRORCODE CSXFile::persist(CBPersistMgr *persistMgr) {
 	}
 
 	return STATUS_OK;
+}
+
+// Should replace fopen(..., "wb+") and fopen(..., "w+")
+Common::WriteStream *CSXFile::openForWrite(const Common::String &filename, bool binary) {
+	error("SXFile::openForWrite - WriteFiles not supported");
+}
+
+// Should replace fopen(..., "ab+") and fopen(..., "a+")
+Common::WriteStream *CSXFile::openForAppend(const Common::String &filename, bool binary) {
+	error("SXFile::openForAppend - WriteFiles not supported");	
 }
 
 } // end of namespace WinterMute
