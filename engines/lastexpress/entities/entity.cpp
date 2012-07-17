@@ -254,7 +254,7 @@ void Entity::savegame(const SavePoint &savepoint) {
 	}
 }
 
-void Entity::savegameBloodJacket(SaveFunction *savegame) {
+void Entity::savegameBloodJacket(SaveFunction *saveFunction) {
 	if (getProgress().jacket == kJacketBlood
 	 && getEntities()->isDistanceBetweenEntities(_entityIndex, kEntityPlayer, 1000)
 	 && !getEntities()->isInsideCompartments(kEntityPlayer)
@@ -266,11 +266,11 @@ void Entity::savegameBloodJacket(SaveFunction *savegame) {
 			break;
 
 		case kEntityCoudert:
-			(*savegame)(kSavegameTypeEvent, kEventCoudertBloodJacket);
+			(*saveFunction)(kSavegameTypeEvent, kEventCoudertBloodJacket);
 			break;
 
 		case kEntityMertens:
-			(*savegame)(kSavegameTypeEvent, kEventCoudertBloodJacket);
+			(*saveFunction)(kSavegameTypeEvent, kEventCoudertBloodJacket);
 			break;
 		}
 	}

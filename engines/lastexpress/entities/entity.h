@@ -696,9 +696,11 @@ protected:
 	void savegame(const SavePoint &savepoint);
 
 	/**
-	 * Saves the game before being found out with a blood covered jacket
+	 * Saves the game before being found out with a blood covered jacket.
+	 *
+	 * @param	saveFunction	The setup function to call to save the game
 	 */
-	void savegameBloodJacket(SaveFunction *savegame);
+	void savegameBloodJacket(SaveFunction *saveFunction);
 
 	/**
 	 * Play sound
@@ -826,7 +828,7 @@ protected:
 	 * @param	positionTo			  	The position to.
 	 * @param	sequenceTo			  	The sequence to.
 	 * @param	enterFunction			The enter/exit compartment function.
-	 * @param	enterFunction			The update entity function.
+	 * @param	updateFunction			The update entity function.
 	 */
 	void goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, ObjectIndex compartmentTo, EntityPosition positionTo, Common::String sequenceTo, Entity::EnterFunction *enterFunction, Entity::UpdateFunction *updateFunction);
 
