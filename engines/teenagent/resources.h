@@ -51,6 +51,19 @@ const uint16 dsAddr_cursor = 0x00da;
 // Reject Messages Address Pointers : (4 * 2-byte) = 0x339e to 0x33a5
 const uint16 dsAddr_rejectMsg = 0x339e;
 
+// Cutscene Message A : 0x3c80 to 0x3c99
+const uint16 dsAddr_cutsceneMsgA = 0x3c80; // "Hundred moments later"
+// Cutscene Message B : 0x3c9a to 0x3cbb
+const uint16 dsAddr_cutsceneMsgB = 0x3c9a; // "Another hundred moments later"
+
+// Cutscene Message #0 : 0x517b to 0x51a6
+const uint16 dsAddr_cutsceneMsg0 = 0x517b; // "A secret diary of ..."
+
+// Cutscene Message #1 : 0x57df to 0x5809
+const uint16 dsAddr_cutsceneMsg1 = 0x57df; // "sixty seven rude words later"
+// Cutscene Message #2 : 0x580a to 0x5826
+const uint16 dsAddr_cutsceneMsg2 = 0x580a; // "Meanwhile in the mansion"
+
 // Save State Region : 0x6478 to 0xdbf1
 const uint16 dsAddr_saveState = 0x6478;
 const uint16 saveStateSize = 0x777a;
