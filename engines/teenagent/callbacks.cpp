@@ -4041,7 +4041,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x9d45:
 		{
 			wait(50);
-			byte attempts = ++ *(res->dseg.ptr(0xdbea));
+			byte attempts = res->dseg.get_byte(dsAddr_mansionEntryCount) + 1;
+			res->dseg.set_byte(dsAddr_mansionEntryCount, attempts);
 			debugC(0, kDebugCallbacks, "mansion intrusion attempt #%u", attempts);
 			if (attempts >= 7)
 				retVal = false;

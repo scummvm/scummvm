@@ -66,6 +66,8 @@ const uint16 dsAddr_currentScene = 0xb4f3; // 1 byte
 
 // Current Music Id Playing : 0xdb90
 const uint16 dsAddr_currentMusic = 0xdb90; // 1 byte
+// Counter for Mansion Intrusion Attempts : 0xdbea
+const uint16 dsAddr_mansionEntryCount = 0xdbea;// 1 byte
 
 // Intro Credits #1 : 0xe3c2 to 0xe3e5 (Read Only)
 const uint16 dsAddr_introCredits1 = 0xe3c2; // "backgrounds ..."
