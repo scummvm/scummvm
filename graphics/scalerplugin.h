@@ -115,7 +115,7 @@ public:
 	 * @param padding The number of pixels on the border (Used to prevent memory access crashes)
 	 * @param type    The surface type. This source will only be used when calling oldSrcScale with the same type.
 	 */
-	virtual void setSource(byte *src, uint pitch, int width, int height, int padding, SourceType type) {
+	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding, SourceType type) {
 		// Should not be called unless overriden
 		assert(0);
 	}
@@ -148,7 +148,7 @@ public:
 
 	SourceScaler();
 
-	virtual void setSource(byte *src, uint pitch, int width, int height, int padding, SourceType type);
+	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding, SourceType type);
 	virtual void oldSrcScale(byte *dst, uint dstPitch, SourceType type);
 
 protected:
@@ -168,7 +168,7 @@ protected:
 	uint paddings[SRC_MAX];
 	uint pitches[SRC_MAX];
 
-	byte *newSrcs[SRC_MAX];
+	const byte *newSrcs[SRC_MAX];
 	byte *oldSrcs[SRC_MAX];
 };
 
