@@ -300,33 +300,6 @@ ERRORCODE CBFileManager::initPaths() {
 	// package files paths
 	addPath(PATH_PACKAGE, "./");
 
-	/*#ifdef __APPLE__
-	    // search .app path and Resources dir in the bundle
-	    CFURLRef appUrlRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-	    CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
-	    const char *pathPtr = CFStringGetCStringPtr(macPath, CFStringGetSystemEncoding());
-
-	#ifdef __IPHONE__
-	    AddPath(PATH_PACKAGE, pathPtr);
-	    AddPath(PATH_SINGLE, pathPtr);
-	#else
-	    char bundlePath[MAX_PATH_LENGTH];
-
-	    sprintf(bundlePath, "%s/../", pathPtr);
-	    AddPath(PATH_PACKAGE, bundlePath);
-	    AddPath(PATH_SINGLE, bundlePath);
-
-	    sprintf(bundlePath, "%s/Contents/Resources/", pathPtr);
-	    AddPath(PATH_PACKAGE, bundlePath);
-	    AddPath(PATH_SINGLE, bundlePath);
-
-
-	    CFRelease(appUrlRef);
-	    CFRelease(macPath);
-	#endif
-	#endif*/
-
-
 	pathList = Game->_registry->readString("Resource", "PackagePaths", "");
 	numPaths = CBUtils::strNumEntries(pathList.c_str(), ';');
 

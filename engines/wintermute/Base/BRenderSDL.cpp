@@ -138,7 +138,7 @@ ERRORCODE CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 
 
 	// find suitable resolution
-#ifdef __IPHONEOS__
+/*#ifdef __IPHONEOS__
 	_realWidth = 480;
 	_realHeight = 320;
 
@@ -153,10 +153,10 @@ ERRORCODE CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 			break;
 		}
 	}
-#else
+#else*/
 	_realWidth = Game->_registry->readInt("Debug", "ForceResWidth", _width);
 	_realHeight = Game->_registry->readInt("Debug", "ForceResHeight", _height);
-#endif
+//#endif
 
 	/*
 	_realWidth = 480;
@@ -191,7 +191,7 @@ ERRORCODE CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 	Uint32 flags = SDL_WINDOW_SHOWN;
 #endif
 #ifdef __IPHONEOS__
-	flags |= SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS;
+	//flags |= SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS;
 #endif
 
 	//_windowed = Game->_registry->readBool("Video", "Windowed", true);
@@ -220,7 +220,7 @@ ERRORCODE CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 
 #ifdef __IPHONEOS__
 	// SDL defaults to OGL ES2, which doesn't work on old devices
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles");
+	//SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles");
 #else
 	//SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 #endif

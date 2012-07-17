@@ -68,10 +68,6 @@
 #include "common/system.h"
 #include "common/file.h"
 
-#ifdef __IPHONEOS__
-#   include "ios_utils.h"
-#endif
-
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
@@ -262,13 +258,13 @@ CBGame::CBGame(): CBObject(this) {
 	_autoSaveSlot = 999;
 	_cursorHidden = false;
 
-#ifdef __IPHONEOS__
+/*#ifdef __IPHONEOS__
 	_touchInterface = true;
 	_constrainedMemory = true; // TODO differentiate old and new iOS devices
-#else
+#else*/
 	_touchInterface = false;
 	_constrainedMemory = false;
-#endif
+//#endif
 
 }
 
@@ -511,19 +507,6 @@ ERRORCODE CBGame::initialize3() { // renderer is initialized
 //////////////////////////////////////////////////////////////////////
 void CBGame::DEBUG_DebugEnable(const char *filename) {
 	_dEBUG_DebugMode = true;
-
-#ifndef __IPHONEOS__
-	//if (filename)_dEBUG_LogFile = fopen(filename, "a+");
-	//else _dEBUG_LogFile = fopen("./zz_debug.log", "a+");
-
-	if (!_dEBUG_LogFile) {
-		AnsiString safeLogFileName = PathUtil::getSafeLogFileName();
-		//_dEBUG_LogFile = fopen(safeLogFileName.c_str(), "a+");
-	}
-
-	//if (_dEBUG_LogFile != NULL) fprintf((FILE *)_dEBUG_LogFile, "\n");
-	warning("BGame::DEBUG_DebugEnable - No logfile is currently created"); //TODO: Use a dumpfile?
-#endif
 
 	/*  time_t timeNow;
 	    time(&timeNow);
@@ -2139,9 +2122,9 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ShowStatusLine") == 0) {
 		stack->correctParams(0);
-#ifdef __IPHONEOS__
+/*#ifdef __IPHONEOS__
 		IOS_ShowStatusLine(TRUE);
-#endif
+#endif*/
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -2152,9 +2135,9 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HideStatusLine") == 0) {
 		stack->correctParams(0);
-#ifdef __IPHONEOS__
+/*#ifdef __IPHONEOS__
 		IOS_ShowStatusLine(FALSE);
-#endif
+#endif*/
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -3839,12 +3822,8 @@ ERRORCODE CBGame::getSaveSlotFilename(int slot, char *buffer) {
 //////////////////////////////////////////////////////////////////////////
 AnsiString CBGame::getDataDir() {
 	AnsiString userDir = PathUtil::getUserDirectory();
-#ifdef __IPHONEOS__
-	return userDir;
-#else
 	AnsiString baseDir = _registry->getBasePath();
 	return PathUtil::combine(userDir, baseDir);
-#endif
 }
 
 
@@ -4453,11 +4432,6 @@ bool CBGame::isDoubleClick(int buttonIndex) {
 	int maxMoveX = 4;
 	int maxMoveY = 4;
 
-#if __IPHONEOS__
-	maxMoveX = 16;
-	maxMoveY = 16;
-#endif
-
 	Point32 pos;
 	CBPlatform::getCursorPos(&pos);
 
@@ -4494,13 +4468,7 @@ void CBGame::addMem(int bytes) {
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString CBGame::getDeviceType() const {
-#ifdef __IPHONEOS__
-	char devType[128];
-	IOS_GetDeviceType(devType);
-	return AnsiString(devType);
-#else
 	return "computer";
-#endif
 }
 
 } // end of namespace WinterMute

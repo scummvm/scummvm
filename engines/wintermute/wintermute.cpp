@@ -219,10 +219,6 @@ int WinterMuteEngine::init() {
 	
 	_game->initialize3();
 	
-#ifdef __IPHONEOS__
-	SDL_AddEventWatch(CBPlatform::SDLEventWatcher, NULL);
-#endif
-	
 	// initialize sound manager (non-fatal if we fail)
 	ret = _game->_soundMgr->initialize();
 	if (DID_FAIL(ret)) {

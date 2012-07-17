@@ -133,14 +133,14 @@ void CBPlatform::handleEvent(Common::Event *event) {
 		*/
 	case Common::EVENT_QUIT:
 	case Common::EVENT_RTL:
-#ifdef __IPHONEOS__
+/*#ifdef __IPHONEOS__
 		if (Game) {
 			Game->AutoSaveOnExit();
 			Game->_quitting = true;
 		}
-#else
+#else*/
 		if (Game) Game->onWindowClose();
-#endif
+//#endif
 
 		break;
 	default:
