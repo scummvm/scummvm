@@ -56,7 +56,6 @@ class CBRenderer;
 class CBRegistry;
 class CBSaveThumbHelper;
 class CBSurfaceStorage;
-class CSXStore;
 class CSXMath;
 class CBKeyboardState;
 class CVidPlayer;
@@ -179,7 +178,6 @@ public:
 	CBSoundMgr *_soundMgr;
 	CScEngine *_scEngine;
 	CSXMath *_mathClass;
-	CSXStore *_store;
 	CBSurfaceStorage *_surfaceStorage;
 	CBFontStorage *_fontStorage;
 	CBGame();

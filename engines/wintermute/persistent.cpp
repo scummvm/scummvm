@@ -78,7 +78,6 @@
 #include "engines/wintermute/Base/scriptables/SXMath.h"
 #include "engines/wintermute/Base/scriptables/SXMemBuffer.h"
 #include "engines/wintermute/Base/scriptables/SxObject.h"
-#include "engines/wintermute/Base/scriptables/SXStore.h"
 #include "engines/wintermute/Base/scriptables/SXString.h"
 #include "engines/wintermute/UI/UIButton.h"
 #include "engines/wintermute/UI/UIEdit.h"
@@ -152,7 +151,6 @@ void CSysClassRegistry::registerClasses() {
 	REGISTER_CLASS(CSXMath, true)
 	REGISTER_CLASS(CSXMemBuffer, false)
 	REGISTER_CLASS(CSXObject, false)
-	REGISTER_CLASS(CSXStore, false)
 	REGISTER_CLASS(CSXString, false)
 
 	REGISTER_CLASS(CUIButton, false)

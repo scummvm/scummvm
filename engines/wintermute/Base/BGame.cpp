@@ -58,7 +58,6 @@
 #include "engines/wintermute/Base/scriptables/ScStack.h"
 #include "engines/wintermute/Base/scriptables/ScScript.h"
 #include "engines/wintermute/Base/scriptables/SXMath.h"
-#include "engines/wintermute/Base/scriptables/SXStore.h"
 #include "engines/wintermute/video/VidPlayer.h"
 #include "engines/wintermute/video/VidTheoraPlayer.h"
 #include "engines/wintermute/wintermute.h"
@@ -271,7 +270,6 @@ CBGame::CBGame(): CBObject(this) {
 	_constrainedMemory = false;
 #endif
 
-	_store = NULL;
 }
 
 
@@ -353,9 +351,6 @@ ERRORCODE CBGame::cleanup() {
 		_music[i] = NULL;
 		_musicStartTime[i] = 0;
 	}
-
-	unregisterObject(_store);
-	_store = NULL;
 
 	unregisterObject(_fader);
 	_fader = NULL;
@@ -470,11 +465,6 @@ ERRORCODE CBGame::initialize1() {
 		if (_fader == NULL)
 			break;
 		registerObject(_fader);
-
-		_store = new CSXStore(this);
-		if (_store == NULL)
-			break;
-		registerObject(_store);
 		
 		loaded = true;
 	}
@@ -482,7 +472,6 @@ ERRORCODE CBGame::initialize1() {
 		return STATUS_OK;
 	} else {
 		delete _mathClass;
-		delete _store;
 		delete _keyboardState;
 		delete _transMgr;
 		delete _debugMgr;
@@ -2556,8 +2545,8 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// Store (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Store") == 0) {
-		if (_store) _scValue->setNative(_store, true);
-		else _scValue->setNULL();
+		_scValue->setNULL();
+		error("Request for a SXStore-object, which is not supported by ScummVM");
 
 		return _scValue;
 	}
@@ -2845,8 +2834,6 @@ ERRORCODE CBGame::unregisterObject(CBObject *object) {
 
 	// is it main object?
 	if (_mainObject == object) _mainObject = NULL;
-
-	if (_store) _store->OnObjectDestroyed(object);
 
 	// destroy object
 	for (int i = 0; i < _regObjects.getSize(); i++) {
@@ -3314,7 +3301,6 @@ ERRORCODE CBGame::initAfterLoad() {
 	CSysClassRegistry::getInstance()->enumInstances(afterLoadScript,   "CScScript",  NULL);
 
 	_scEngine->refreshScriptBreakpoints();
-	if (_store) _store->afterLoad();
 
 	return STATUS_OK;
 }
@@ -3662,11 +3648,6 @@ ERRORCODE CBGame::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_autoSaveOnExit));
 	persistMgr->transfer(TMEMBER(_autoSaveSlot));
 	persistMgr->transfer(TMEMBER(_cursorHidden));
-
-	if (persistMgr->checkVersion(1, 0, 1))
-		persistMgr->transfer(TMEMBER(_store));
-	else
-		_store = NULL;
 
 	if (!persistMgr->_saving)
 		_quitting = false;
