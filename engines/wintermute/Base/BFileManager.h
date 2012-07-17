@@ -75,7 +75,6 @@ public:
 
 	Common::HashMap<Common::String, CBFileEntry *> _files;
 private:
-	ERRORCODE registerPackage(const char *path, const char *name, bool searchSignature = false);
 	ERRORCODE registerPackage(const Common::String &filename, bool searchSignature = false);
 	Common::HashMap<Common::String, CBFileEntry *>::iterator _filesIter;
 	bool isValidPackage(const AnsiString &fileName) const;
