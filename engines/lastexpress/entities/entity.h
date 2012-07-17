@@ -845,6 +845,13 @@ protected:
 	 * Store the current callback information and perform the callback action
 	 */
 	void callbackAction();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helper functions
+	//////////////////////////////////////////////////////////////////////////
+
+	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action);
+	void timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex index, ObjectLocation location);
 };
 
 

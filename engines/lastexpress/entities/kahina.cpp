@@ -267,7 +267,7 @@ IMPLEMENT_FUNCTION(11, Kahina, chapter1Handler)
 		return;
 
 	if (getProgress().jacket != kJacketOriginal)
-		TIME_CHECK_SAVEPOINT(kTime1107000, params->param1, kEntityKahina, kEntityMertens, kAction238732837);
+		Entity::timeCheckSavepoint(kTime1107000, params->param1, kEntityKahina, kEntityMertens, kAction238732837);
 
 	if (getProgress().eventMertensKronosInvitation)
 		setup_function12();

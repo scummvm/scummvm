@@ -841,7 +841,7 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1134000, params->param2, kEntityRebecca, kEntityServers0, kAction223712416);
+		Entity::timeCheckSavepoint(kTime1134000, params->param2, kEntityRebecca, kEntityServers0, kAction223712416);
 
 		if (!params->param1)
 			break;

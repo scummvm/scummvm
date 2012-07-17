@@ -326,12 +326,6 @@ void class::setup_##name() { \
 		break; \
 	}
 
-#define TIME_CHECK_SAVEPOINT(timeValue, parameter, entity1, entity2, action) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		getSavePoints()->push(entity1, entity2, action); \
-	}
-
 #define TIME_CHECK_CALLBACK(timeValue, parameter, callback, function) \
 	if (getState()->time > timeValue && !parameter) { \
 		parameter = 1; \
@@ -366,11 +360,11 @@ void class::setup_##name() { \
 
 #define TIME_CHECK_CALLBACK_INVENTORY(timeValue, parameter, callback, function) \
 	if (getState()->time > timeValue && !parameter) { \
-	parameter = 1; \
-	getData()->inventoryItem = kItemNone; \
-	setCallback(callback); \
-	function(); \
-	break; \
+		parameter = 1; \
+		getData()->inventoryItem = kItemNone; \
+		setCallback(callback); \
+		function(); \
+		break; \
 	}
 
 #define TIME_CHECK_CALLBACK_ACTION(timeValue, parameter) \
@@ -387,12 +381,6 @@ void class::setup_##name() { \
 		setCallback(callback); \
 		setup_playSound(sound); \
 		break; \
-	}
-
-#define TIME_CHECK_OBJECT(timeValue, parameter, object, location) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		getObjects()->updateLocation2(object, location); \
 	}
 
 #define TIME_CHECK_CAR(timeValue, parameter, callback, function) {\

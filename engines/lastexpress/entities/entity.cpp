@@ -29,6 +29,7 @@
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
 #include "lastexpress/game/logic.h"
+#include "lastexpress/game/object.h"
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 #include "lastexpress/game/savegame.h"
@@ -590,6 +591,24 @@ void Entity::callbackAction() {
 	getSavePoints()->setCallback(_entityIndex, _callbacks[_data->getCurrentCallback()]);
 
 	getSavePoints()->call(_entityIndex, _entityIndex, kActionCallback);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helper functions
+//////////////////////////////////////////////////////////////////////////
+
+void Entity::timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		getSavePoints()->push(entity1, entity2, action);
+	}
+}
+
+void Entity::timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex object, ObjectLocation location) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		getObjects()->updateLocation2(object, location);
+	}
 }
 
 } // End of namespace LastExpress

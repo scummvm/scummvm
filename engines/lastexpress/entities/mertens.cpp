@@ -2993,7 +2993,7 @@ IMPLEMENT_FUNCTION(42, Mertens, function42)
 			getData()->inventoryItem = kItemInvalid;
 
 		if (!params->param2) {
-			TIME_CHECK_SAVEPOINT(kTime1125000, params->param3, kEntityMertens, kEntityMahmud, kAction170483072);
+			Entity::timeCheckSavepoint(kTime1125000, params->param3, kEntityMertens, kEntityMahmud, kAction170483072);
 
 			if (params->param4 != kTimeInvalid && getState()->time > kTimeCityChalons) {
 

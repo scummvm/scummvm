@@ -2285,9 +2285,9 @@ label_callback_10:
 		if (!ENTITY_PARAM(0, 2))
 			break;
 
-		TIME_CHECK_OBJECT(kTime1107000, params->param4, kObject111, kObjectLocation2);
-		TIME_CHECK_OBJECT(kTime1161000, params->param5, kObject111, kObjectLocation3);
-		TIME_CHECK_OBJECT(kTime1206000, params->param6, kObject111, kObjectLocation4);
+		timeCheckObject(kTime1107000, params->param4, kObject111, kObjectLocation2);
+		timeCheckObject(kTime1161000, params->param5, kObject111, kObjectLocation3);
+		timeCheckObject(kTime1206000, params->param6, kObject111, kObjectLocation4);
 		break;
 
 	case kAction1:
@@ -2835,9 +2835,9 @@ label_callback_18:
 
 label_callback_19:
 		if (ENTITY_PARAM(0, 2)) {
-			TIME_CHECK_OBJECT(kTime2025000, params->param7, kObject111, kObjectLocation7);
-			TIME_CHECK_OBJECT(kTime2133000, params->param8, kObject111, kObjectLocation8);
-			TIME_CHECK_OBJECT(kTime2173500, CURRENT_PARAM(1, 1), kObject111, kObjectLocation9);
+			timeCheckObject(kTime2025000, params->param7, kObject111, kObjectLocation7);
+			timeCheckObject(kTime2133000, params->param8, kObject111, kObjectLocation8);
+			timeCheckObject(kTime2173500, CURRENT_PARAM(1, 1), kObject111, kObjectLocation9);
 		}
 		break;
 

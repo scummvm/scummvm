@@ -440,7 +440,7 @@ IMPLEMENT_FUNCTION(19, Tatiana, chapter1Handler)
 		}
 
 label_tatiana_chapter1_2:
-		TIME_CHECK_SAVEPOINT(kTime1084500, params->param7, kEntityTatiana, kEntityPascale, kAction257489762);
+		Entity::timeCheckSavepoint(kTime1084500, params->param7, kEntityTatiana, kEntityPascale, kAction257489762);
 
 		if (params->param1) {
 			UPDATE_PARAM(params->param8, getState()->timeTicks, 90);

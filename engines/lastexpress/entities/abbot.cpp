@@ -415,7 +415,7 @@ IMPLEMENT_FUNCTION(22, Abbot, function22)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1971000, params->param1, kEntityAbbot, kEntityServers0, kAction218586752);
+		Entity::timeCheckSavepoint(kTime1971000, params->param1, kEntityAbbot, kEntityServers0, kAction218586752);
 
 		if (getState()->time > kTime1989000 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->inventoryItem = kItemNone;
@@ -1319,7 +1319,7 @@ IMPLEMENT_FUNCTION(41, Abbot, chapter4Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime2358000, params->param1, kEntityAbbot, kEntityServers0, kAction218128129);
+		Entity::timeCheckSavepoint(kTime2358000, params->param1, kEntityAbbot, kEntityServers0, kAction218128129);
 
 		if (getState()->time > kTime2389500 && getEntities()->isSomebodyInsideRestaurantOrSalon())
 			setup_function42();

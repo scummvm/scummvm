@@ -1811,7 +1811,7 @@ IMPLEMENT_FUNCTION(36, August, chapter2Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1755000, params->param2, kEntityAugust, kEntityServers0, kAction252568704);
+		Entity::timeCheckSavepoint(kTime1755000, params->param2, kEntityAugust, kEntityServers0, kAction252568704);
 
 		if (getState()->time > kTime1773000 && params->param1 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->inventoryItem = kItemNone;
@@ -1960,7 +1960,7 @@ IMPLEMENT_FUNCTION(38, August, function38)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1801800, params->param1, kEntityAugust, kEntityRebecca, kAction155980128);
+		Entity::timeCheckSavepoint(kTime1801800, params->param1, kEntityAugust, kEntityRebecca, kAction155980128);
 
 		TIME_CHECK_CALLBACK(kTime1820700, params->param2, 3, setup_callbackActionRestaurantOrSalon);
 		break;
@@ -2210,7 +2210,7 @@ IMPLEMENT_FUNCTION(43, August, chapter3Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1953000, params->param2, kEntityAugust, kEntityAnna, kAction291662081);
+		Entity::timeCheckSavepoint(kTime1953000, params->param2, kEntityAugust, kEntityAnna, kAction291662081);
 
 		// Set as same position as Anna
 		if (params->param1) {
