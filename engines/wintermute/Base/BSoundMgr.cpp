@@ -191,6 +191,8 @@ ERRORCODE CBSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 	case Audio::Mixer::kMusicSoundType:
 		ConfMan.setInt("music_volume", volume);
 		break;
+	case Audio::Mixer::kPlainSoundType:
+		error("Plain sound type shouldn't be used in WME");
 	}
 	g_wintermute->syncSoundSettings();
 
@@ -228,11 +230,13 @@ ERRORCODE CBSoundMgr::setMasterVolume(byte value) {
 	for (int i = 0; i < _sounds.getSize(); i++) {
 		_sounds[i]->updateVolume();
 	}
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSoundMgr::setMasterVolumePercent(byte percent) {
 	setMasterVolume(percent * 255 / 100);
+	return STATUS_OK;
 }
 
 
@@ -243,7 +247,7 @@ byte CBSoundMgr::getMasterVolumePercent() {
 
 //////////////////////////////////////////////////////////////////////////
 byte CBSoundMgr::getMasterVolume() {
-	return _volumeMaster;
+	return (byte)_volumeMaster;
 }
 
 

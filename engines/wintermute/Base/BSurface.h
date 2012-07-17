@@ -83,6 +83,7 @@ public:
 	virtual int getHeight() {
 		return _height;
 	}
+	Common::String getFileNameStr() { return _filename; }
 	const char* getFileName() { return _filename.c_str(); }
 	//void SetWidth(int Width){ _width = Width;    }
 	//void SetHeight(int Height){ _height = Height; }
