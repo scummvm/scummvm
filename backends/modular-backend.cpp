@@ -26,6 +26,7 @@
 
 #include "backends/graphics/graphics.h"
 #include "backends/mutex/mutex.h"
+#include "common/EventRecorder.h"
 
 #include "audio/mixer.h"
 #include "graphics/pixelformat.h"
@@ -141,7 +142,9 @@ void ModularBackend::fillScreen(uint32 col) {
 }
 
 void ModularBackend::updateScreen() {
+	g_eventRec.preDrawOverlayGui();
 	_graphicsManager->updateScreen();
+	g_eventRec.postDrawOverlayGui();
 }
 
 void ModularBackend::setShakePos(int shakeOffset) {
