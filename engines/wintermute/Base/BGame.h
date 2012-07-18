@@ -233,8 +233,10 @@ private:
 	uint32 _lastTime;
 	uint32 _fpsTime;
 	uint32 _framesRendered;
-
+	Common::String _gameId;
 public:
+	const char* getGameId() { return _gameId.c_str(); }
+	void setGameId(const Common::String& gameId) { _gameId = gameId; }
 	uint32 _surfaceGCCycleTime;
 	bool _smartCache;
 	bool _videoSubtitles;

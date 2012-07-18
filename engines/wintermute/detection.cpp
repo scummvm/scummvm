@@ -304,7 +304,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const {
 		SaveStateList saves;
-		WinterMute::CBPersistMgr pm;
+		WinterMute::CBPersistMgr pm(NULL, target);
 		for (int i = 0; i < getMaximumSaveSlot(); i++) {
 			if (pm.getSaveExists(i)) {
 				SaveStateDescriptor desc;
@@ -316,17 +316,16 @@ public:
 	}
 	
 	int getMaximumSaveSlot() const {
-		WinterMute::CBPersistMgr pm;
-		return pm.getMaxUsedSlot() + 1; // TODO: Since we use slot 0, this misses a bit.
+		return 100;
 	}
 	
 	void removeSaveState(const char *target, int slot) const {
-		WinterMute::CBPersistMgr pm;
+		WinterMute::CBPersistMgr pm(NULL, target);
 		pm.deleteSaveSlot(slot);
 	}
 	
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
-		WinterMute::CBPersistMgr pm;
+		WinterMute::CBPersistMgr pm(NULL, target);
 		SaveStateDescriptor retVal;
 		retVal.setDescription("Invalid savegame");
 		pm.getSaveStateDesc(slot, retVal);

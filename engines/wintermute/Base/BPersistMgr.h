@@ -52,6 +52,7 @@ public:
 	byte _savedVerBuild;
 	byte _savedExtMajor;
 	byte _savedExtMinor;
+	Common::String _savePrefix;
 	Common::String _savedName;
 	bool saveFile(const char *filename);
 	uint32 getDWORD();
@@ -93,14 +94,14 @@ public:
 	bool transfer(const char *name, Common::String *val);
 	bool transfer(const char *name, Vector2 *val);
 	bool transfer(const char *name, AnsiStringArray &Val);
-	CBPersistMgr(CBGame *inGame = NULL);
+	CBPersistMgr(CBGame *inGame = NULL, const char *savePrefix = NULL);
 	virtual ~CBPersistMgr();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
 
 	uint32 _thumbnailDataSize;
 	byte *_thumbnailData;
+	Common::String getFilenameForSlot(int slot) const;
 private:
-	Common::String getFilenameForSlot(int slot);
 	bool readHeader(const Common::String &filename);
 	TimeDate getTimeDate();
 	bool putTimeDate(const TimeDate &t);

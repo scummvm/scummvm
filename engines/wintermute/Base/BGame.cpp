@@ -3814,7 +3814,10 @@ void CBGame::setWindowTitle() {
 bool CBGame::getSaveSlotFilename(int slot, char *buffer) {
 	AnsiString dataDir = getDataDir();
 	//sprintf(Buffer, "%s/save%03d.%s", dataDir.c_str(), Slot, _savedGameExt);
-	sprintf(buffer, "save%03d.%s", slot, _savedGameExt);
+	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
+	Common::String filename = pm->getFilenameForSlot(slot);
+	delete pm;
+	strcpy(buffer, filename.c_str());
 	warning("Saving %s - we really should prefix these things to avoid collisions.", buffer);
 	return STATUS_OK;
 }

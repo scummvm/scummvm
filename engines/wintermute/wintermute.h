@@ -70,6 +70,7 @@ public:
 	virtual ~Console(void) {}
 };
 
+// Mainly used for randInt()
 extern WinterMuteEngine *g_wintermute;
 
 } // End of namespace Wintermute

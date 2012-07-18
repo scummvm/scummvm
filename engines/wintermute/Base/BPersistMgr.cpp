@@ -51,7 +51,7 @@ namespace WinterMute {
 #define SAVE_MAGIC_2    0x32564153
 
 //////////////////////////////////////////////////////////////////////////
-CBPersistMgr::CBPersistMgr(CBGame *inGame): CBBase(inGame) {
+CBPersistMgr::CBPersistMgr(CBGame *inGame, const char *savePrefix): CBBase(inGame) {
 	_saving = false;
 //	_buffer = NULL;
 //	_bufferSize = 0;
@@ -69,6 +69,13 @@ CBPersistMgr::CBPersistMgr(CBGame *inGame): CBBase(inGame) {
 
 	_thumbnailDataSize = 0;
 	_thumbnailData = NULL;
+	if (savePrefix) {
+		_savePrefix = savePrefix;
+	} else if (_gameRef) {
+		_savePrefix = _gameRef->getGameId();
+	} else {
+		_savePrefix = "wmesav";
+	}
 }
 
 
@@ -111,9 +118,9 @@ void CBPersistMgr::cleanup() {
 	_saveStream = NULL;
 }
 
-Common::String CBPersistMgr::getFilenameForSlot(int slot) {
-	// TODO: Temporary solution until I have the namespacing sorted out
-	return Common::String::format("save%03d.DirtySplitSav", slot);
+Common::String CBPersistMgr::getFilenameForSlot(int slot) const {
+	// 3 Digits, to allow for one save-slot for autosave + slot 1 - 100 (which will be numbered 0-99 filename-wise)
+	return Common::String::format("%s-save%03d.wsv", _savePrefix.c_str(), slot);
 }
 
 void CBPersistMgr::getSaveStateDesc(int slot, SaveStateDescriptor &desc) {
@@ -149,7 +156,8 @@ void CBPersistMgr::deleteSaveSlot(int slot) {
 }
 
 uint32 CBPersistMgr::getMaxUsedSlot() {
-	Common::StringArray saves = g_system->getSavefileManager()->listSavefiles("save???.DirtySplitSav");
+	Common::String saveMask = Common::String::format("%s-save???.wsv", _savePrefix.c_str());
+	Common::StringArray saves = g_system->getSavefileManager()->listSavefiles(saveMask);
 	Common::StringArray::iterator it = saves.begin();
 	int ret = -1;
 	for (; it != saves.end(); it++) {
