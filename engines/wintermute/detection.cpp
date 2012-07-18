@@ -39,6 +39,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"chivalry",		"Chivalry is Not Dead"},
 	{"dirtysplit",		"Dirty Split"},
 	{"ghostsheet",		"Ghost in the Sheet"},
+	{"hamlet",			"Hamlet or the last game without MMORPS features, shaders and product placement"},
 	{"julia",			"J.U.L.I.A."},
 	{"mirage",			"Mirage"},
 	{"pigeons",			"Pigeons in the Park"},
@@ -111,6 +112,15 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE |
 		ADGF_DEMO,
+		GUIO0()
+	},
+	{
+		"hamlet",
+		"",
+		AD_ENTRY1s("data.dcp", "f624add957a77c9930529fb28cc2450f", 88183022),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
