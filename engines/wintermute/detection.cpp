@@ -44,6 +44,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mirage",			"Mirage"},
 	{"pigeons",			"Pigeons in the Park"},
 	{"rosemary",		"Rosemary"},
+	{"thebox",			"The Box"},
 	{"twc",				"the white chamber"},
 	{"wintermute",		"Wintermute engine game"},
 	{0, 0}
@@ -164,6 +165,15 @@ static const ADGameDescription gameDescriptions[] = {
 		"rosemary",
 		"",
 		AD_ENTRY1s("data.dcp", "4f2631138bd4d27587d9043f8aeff3df", 29483643),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"thebox",
+		"",
+		AD_ENTRY1s("data.dcp", "ec5f0c7e8174e307701447b53afe7e2f", 108372483),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
