@@ -111,7 +111,7 @@ void CAdResponseBox::clearButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::invalidateButtons() {
+bool CAdResponseBox::invalidateButtons() {
 	for (int i = 0; i < _respButtons.getSize(); i++) {
 		_respButtons[i]->_image = NULL;
 		_respButtons[i]->_cursor = NULL;
@@ -125,7 +125,7 @@ ERRORCODE CAdResponseBox::invalidateButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::createButtons() {
+bool CAdResponseBox::createButtons() {
 	clearButtons();
 
 	_scrollOffset = 0;
@@ -187,14 +187,14 @@ ERRORCODE CAdResponseBox::createButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::loadFile(const char *filename) {
+bool CAdResponseBox::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -223,7 +223,7 @@ TOKEN_DEF(VERTICAL_ALIGN)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
+bool CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(RESPONSE_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -335,7 +335,7 @@ ERRORCODE CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "RESPONSE_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -396,7 +396,7 @@ ERRORCODE CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::display() {
+bool CAdResponseBox::display() {
 	Rect32 rect = _responseArea;
 	if (_window) {
 		CBPlatform::offsetRect(&rect, _window->_posX, _window->_posY);
@@ -482,7 +482,7 @@ ERRORCODE CAdResponseBox::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
+bool CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
 	switch (obj->_type) {
@@ -511,7 +511,7 @@ ERRORCODE CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::persist(CBPersistMgr *persistMgr) {
+bool CAdResponseBox::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_font));
@@ -536,7 +536,7 @@ ERRORCODE CAdResponseBox::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::weedResponses() {
+bool CAdResponseBox::weedResponses() {
 	CAdGame *adGame = (CAdGame *)_gameRef;
 
 	for (int i = 0; i < _responses.getSize(); i++) {
@@ -573,7 +573,7 @@ void CAdResponseBox::setLastResponseText(const char *text, const char *textOrig)
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::handleResponse(CAdResponse *response) {
+bool CAdResponseBox::handleResponse(CAdResponse *response) {
 	setLastResponseText(response->_text, response->_textOrig);
 
 	CAdGame *adGame = (CAdGame *)_gameRef;
@@ -635,7 +635,7 @@ CBObject *CAdResponseBox::getPrevAccessObject(CBObject *currObject) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
+bool CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _respButtons.getSize(); i++) {
 		objects.add(_respButtons[i]);
 	}

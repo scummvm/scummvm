@@ -93,7 +93,7 @@ const char *CSXArray::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Push
 	//////////////////////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ CScValue *CSXArray::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXArray::scSetProperty(const char *name, CScValue *value) {
+bool CSXArray::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
@@ -199,7 +199,7 @@ ERRORCODE CSXArray::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXArray::persist(CBPersistMgr *persistMgr) {
+bool CSXArray::persist(CBPersistMgr *persistMgr) {
 	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_length));
@@ -227,7 +227,7 @@ bool CSXArray::validNumber(const char *origStr, char *outStr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXArray::push(CScValue *val) {
+bool CSXArray::push(CScValue *val) {
 	char paramName[20];
 	_length++;
 	sprintf(paramName, "%d", _length - 1);

@@ -98,7 +98,7 @@ bool CAdPath::setReady(bool ready) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdPath::persist(CBPersistMgr *persistMgr) {
+bool CAdPath::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 

@@ -113,7 +113,7 @@ void CUIWindow::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
+bool CUIWindow::display(int offsetX, int offsetY) {
 	// go exclusive
 	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		if (!_shieldWindow) _shieldWindow = new CUIWindow(_gameRef);
@@ -207,14 +207,14 @@ ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::loadFile(const char *filename) {
+bool CUIWindow::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CUIWindow::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -266,7 +266,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(EDIT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
+bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WINDOW)
 	TOKEN_TABLE(ALPHA_COLOR)
@@ -575,7 +575,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WINDOW\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -678,7 +678,7 @@ ERRORCODE CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::enableWidget(const char *name, bool Enable) {
+bool CUIWindow::enableWidget(const char *name, bool Enable) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_disable = !Enable;
 	}
@@ -687,7 +687,7 @@ ERRORCODE CUIWindow::enableWidget(const char *name, bool Enable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::showWidget(const char *name, bool Visible) {
+bool CUIWindow::showWidget(const char *name, bool Visible) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_visible = Visible;
 	}
@@ -698,7 +698,7 @@ ERRORCODE CUIWindow::showWidget(const char *name, bool Visible) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetWidget / GetControl
 	//////////////////////////////////////////////////////////////////////////
@@ -1013,7 +1013,7 @@ CScValue *CUIWindow::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::scSetProperty(const char *name, CScValue *value) {
+bool CUIWindow::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -1128,8 +1128,8 @@ bool CUIWindow::handleMouseWheel(int Delta) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
-	ERRORCODE res = CUIObject::handleMouse(event, button);
+bool CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
+	bool res = CUIObject::handleMouse(event, button);
 
 	// handle window dragging
 	if (!CBPlatform::isRectEmpty(&_dragRect)) {
@@ -1158,7 +1158,7 @@ ERRORCODE CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::persist(CBPersistMgr *persistMgr) {
+bool CUIWindow::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 
@@ -1189,7 +1189,7 @@ ERRORCODE CUIWindow::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::moveFocus(bool forward) {
+bool CUIWindow::moveFocus(bool forward) {
 	int i;
 	bool found = false;
 	for (i = 0; i < _widgets.getSize(); i++) {
@@ -1230,7 +1230,7 @@ ERRORCODE CUIWindow::moveFocus(bool forward) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::goExclusive() {
+bool CUIWindow::goExclusive() {
 	if (_mode == WINDOW_EXCLUSIVE) return STATUS_OK;
 
 	if (_mode == WINDOW_NORMAL) {
@@ -1245,7 +1245,7 @@ ERRORCODE CUIWindow::goExclusive() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::goSystemExclusive() {
+bool CUIWindow::goSystemExclusive() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) return STATUS_OK;
 
 	makeFreezable(false);
@@ -1262,7 +1262,7 @@ ERRORCODE CUIWindow::goSystemExclusive() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::close() {
+bool CUIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		_gameRef->unfreeze();
 	}
@@ -1276,7 +1276,7 @@ ERRORCODE CUIWindow::close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
+bool CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
 	switch (obj->_type) {
@@ -1302,7 +1302,7 @@ void CUIWindow::makeFreezable(bool freezable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIWindow::getWindowObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
+bool CUIWindow::getWindowObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		CUIObject *control = _widgets[i];
 		if (control->_disable && interactiveOnly) continue;

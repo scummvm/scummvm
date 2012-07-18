@@ -65,7 +65,7 @@ const char *CBBase::getEditorProp(const char *propName, const char *initVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBBase::setEditorProp(const char *propName, const char *propValue) {
+bool CBBase::setEditorProp(const char *propName, const char *propValue) {
 	if (propName == NULL) return STATUS_FAILED;
 
 	if (propValue == NULL) {
@@ -84,7 +84,7 @@ TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBBase::parseEditorProperty(byte *buffer, bool complete) {
+bool CBBase::parseEditorProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE(NAME)
@@ -159,7 +159,7 @@ ERRORCODE CBBase::parseEditorProperty(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBBase::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CBBase::saveAsText(CBDynBuffer *buffer, int indent) {
 	_editorPropsIter = _editorProps.begin();
 	while (_editorPropsIter != _editorProps.end()) {
 		buffer->putTextIndent(indent, "EDITOR_PROPERTY\n");

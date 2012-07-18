@@ -51,7 +51,7 @@ CBSurfaceStorage::~CBSurfaceStorage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceStorage::cleanup(bool warn) {
+bool CBSurfaceStorage::cleanup(bool warn) {
 	for (int i = 0; i < _surfaces.getSize(); i++) {
 		if (warn) _gameRef->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
 		delete _surfaces[i];
@@ -63,7 +63,7 @@ ERRORCODE CBSurfaceStorage::cleanup(bool warn) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceStorage::initLoop() {
+bool CBSurfaceStorage::initLoop() {
 	if (_gameRef->_smartCache && _gameRef->_liveTimer - _lastCleanupTime >= _gameRef->_surfaceGCCycleTime) {
 		_lastCleanupTime = _gameRef->_liveTimer;
 		sortSurfaces();
@@ -81,7 +81,7 @@ ERRORCODE CBSurfaceStorage::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceStorage::removeSurface(CBSurface *surface) {
+bool CBSurfaceStorage::removeSurface(CBSurface *surface) {
 	for (int i = 0; i < _surfaces.getSize(); i++) {
 		if (_surfaces[i] == surface) {
 			_surfaces[i]->_referenceCount--;
@@ -130,8 +130,8 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, by
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceStorage::restoreAll() {
-	ERRORCODE ret;
+bool CBSurfaceStorage::restoreAll() {
+	bool ret;
 	for (int i = 0; i < _surfaces.getSize(); i++) {
 		ret = _surfaces[i]->restore();
 		if (ret != STATUS_OK) {
@@ -145,7 +145,7 @@ ERRORCODE CBSurfaceStorage::restoreAll() {
 
 /*
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
+bool CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
 {
 
     if(!persistMgr->_saving) cleanup(false);
@@ -160,7 +160,7 @@ ERRORCODE CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSurfaceStorage::sortSurfaces() {
+bool CBSurfaceStorage::sortSurfaces() {
 	qsort(_surfaces.getData(), _surfaces.getSize(), sizeof(CBSurface *), surfaceSortCB);
 	return STATUS_OK;
 }

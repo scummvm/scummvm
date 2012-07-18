@@ -41,13 +41,13 @@ class CBFont;
 class CBFontStorage : public CBBase {
 public:
 	DECLARE_PERSISTENT(CBFontStorage, CBBase)
-	ERRORCODE cleanup(bool warn = false);
-	ERRORCODE removeFont(CBFont *font);
+	bool cleanup(bool warn = false);
+	bool removeFont(CBFont *font);
 	CBFont *addFont(const char *filename);
 	CBFontStorage(CBGame *inGame);
 	virtual ~CBFontStorage();
 	CBArray<CBFont *, CBFont *> _fonts;
-	ERRORCODE initLoop();
+	bool initLoop();
 };
 
 } // end of namespace WinterMute

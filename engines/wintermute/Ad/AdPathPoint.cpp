@@ -61,7 +61,7 @@ CAdPathPoint::~CAdPathPoint() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdPathPoint::persist(CBPersistMgr *persistMgr) {
+bool CAdPathPoint::persist(CBPersistMgr *persistMgr) {
 
 	CBPoint::persist(persistMgr);
 

@@ -170,7 +170,7 @@ bool CBPersistMgr::getSaveExists(int slot) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBPersistMgr::initSave(const char *desc) {
+bool CBPersistMgr::initSave(const char *desc) {
 	if (!desc) return STATUS_FAILED;
 
 	cleanup();
@@ -244,7 +244,7 @@ ERRORCODE CBPersistMgr::initSave(const char *desc) {
 	return STATUS_OK;
 }
 
-ERRORCODE CBPersistMgr::readHeader(const Common::String &filename) {
+bool CBPersistMgr::readHeader(const Common::String &filename) {
 	cleanup();
 
 	_saving = false;
@@ -299,7 +299,7 @@ ERRORCODE CBPersistMgr::readHeader(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBPersistMgr::initLoad(const char *filename) {
+bool CBPersistMgr::initLoad(const char *filename) {
 	if (DID_FAIL(readHeader(filename))) {
 		cleanup();
 		return STATUS_FAILED;
@@ -348,13 +348,13 @@ ERRORCODE CBPersistMgr::initLoad(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBPersistMgr::saveFile(const char *filename) {
+bool CBPersistMgr::saveFile(const char *filename) {
 	return _gameRef->_fileManager->saveFile(filename, ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic *)_saveStream)->size(), _gameRef->_compressedSavegames, _richBuffer, _richBufferSize);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBPersistMgr::putBytes(byte *buffer, uint32 size) {
+bool CBPersistMgr::putBytes(byte *buffer, uint32 size) {
 	_saveStream->write(buffer, size);
 	if (_saveStream->err())
 		return STATUS_FAILED;
@@ -362,7 +362,7 @@ ERRORCODE CBPersistMgr::putBytes(byte *buffer, uint32 size) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBPersistMgr::getBytes(byte *buffer, uint32 size) {
+bool CBPersistMgr::getBytes(byte *buffer, uint32 size) {
 	_loadStream->read(buffer, size);
 	if (_loadStream->err())
 		return STATUS_FAILED;
@@ -420,7 +420,7 @@ char *CBPersistMgr::getString() {
 	} else return ret;
 }
 
-ERRORCODE CBPersistMgr::putTimeDate(const TimeDate &t) {
+bool CBPersistMgr::putTimeDate(const TimeDate &t) {
 	_saveStream->writeSint32LE(t.tm_sec);
 	_saveStream->writeSint32LE(t.tm_min);
 	_saveStream->writeSint32LE(t.tm_hour);
@@ -484,7 +484,7 @@ double CBPersistMgr::getDouble() {
 
 //////////////////////////////////////////////////////////////////////////
 // bool
-ERRORCODE CBPersistMgr::transfer(const char *name, bool *val) {
+bool CBPersistMgr::transfer(const char *name, bool *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err())
@@ -501,7 +501,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, bool *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // int
-ERRORCODE CBPersistMgr::transfer(const char *name, int *val) {
+bool CBPersistMgr::transfer(const char *name, int *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(*val);
 		if (_saveStream->err())
@@ -518,7 +518,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, int *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // DWORD
-ERRORCODE CBPersistMgr::transfer(const char *name, uint32 *val) {
+bool CBPersistMgr::transfer(const char *name, uint32 *val) {
 	if (_saving) {
 		_saveStream->writeUint32LE(*val);
 		if (_saveStream->err())
@@ -535,7 +535,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, uint32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // float
-ERRORCODE CBPersistMgr::transfer(const char *name, float *val) {
+bool CBPersistMgr::transfer(const char *name, float *val) {
 	if (_saving) {
 		putFloat(*val);
 		if (_saveStream->err())
@@ -552,7 +552,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, float *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // double
-ERRORCODE CBPersistMgr::transfer(const char *name, double *val) {
+bool CBPersistMgr::transfer(const char *name, double *val) {
 	if (_saving) {
 		putDouble(*val);
 		if (_saveStream->err())
@@ -569,7 +569,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, double *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // char*
-ERRORCODE CBPersistMgr::transfer(const char *name, char **val) {
+bool CBPersistMgr::transfer(const char *name, char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -586,7 +586,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // const char*
-ERRORCODE CBPersistMgr::transfer(const char *name, const char **val) {
+bool CBPersistMgr::transfer(const char *name, const char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -603,7 +603,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, const char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Common::String
-ERRORCODE CBPersistMgr::transfer(const char *name, Common::String *val) {
+bool CBPersistMgr::transfer(const char *name, Common::String *val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -624,7 +624,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, Common::String *val) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBPersistMgr::transfer(const char *name, AnsiStringArray &val) {
+bool CBPersistMgr::transfer(const char *name, AnsiStringArray &val) {
 	size_t size;
 
 	if (_saving) {
@@ -654,7 +654,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, AnsiStringArray &val) {
 
 //////////////////////////////////////////////////////////////////////////
 // BYTE
-ERRORCODE CBPersistMgr::transfer(const char *name, byte *val) {
+bool CBPersistMgr::transfer(const char *name, byte *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err())
@@ -671,7 +671,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, byte *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-ERRORCODE CBPersistMgr::transfer(const char *name, Rect32 *val) {
+bool CBPersistMgr::transfer(const char *name, Rect32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);
@@ -694,7 +694,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, Rect32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-ERRORCODE CBPersistMgr::transfer(const char *name, Point32 *val) {
+bool CBPersistMgr::transfer(const char *name, Point32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);
@@ -713,7 +713,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, Point32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-ERRORCODE CBPersistMgr::transfer(const char *name, Vector2 *val) {
+bool CBPersistMgr::transfer(const char *name, Vector2 *val) {
 	if (_saving) {
 		putFloat(val->x);
 		putFloat(val->y);
@@ -732,7 +732,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, Vector2 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // generic pointer
-ERRORCODE CBPersistMgr::transfer(const char *name, void *val) {
+bool CBPersistMgr::transfer(const char *name, void *val) {
 	int classID = -1, instanceID = -1;
 
 	if (_saving) {

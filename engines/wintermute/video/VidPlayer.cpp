@@ -45,7 +45,7 @@ CVidPlayer::CVidPlayer(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidPlayer::SetDefaults() {
+bool CVidPlayer::SetDefaults() {
 	_playing = false;
 
 	/*  _aviFile = NULL;
@@ -91,7 +91,7 @@ CVidPlayer::~CVidPlayer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidPlayer::cleanup() {
+bool CVidPlayer::cleanup() {
 #if 0
 	if (_sound) _sound->Stop();
 	if (_videoPGF) AVIStreamGetFrameClose(_videoPGF);
@@ -124,7 +124,7 @@ ERRORCODE CVidPlayer::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
+bool CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 #if 0
 	cleanup();
 
@@ -183,7 +183,7 @@ ERRORCODE CVidPlayer::initialize(const char *inFilename, const char *SubtitleFil
 
 
 	// create sound buffer
-	ERRORCODE res;
+	bool res;
 
 	if (_soundAvailable) {
 		_sound = new CBSoundAVI(_gameRef);
@@ -204,11 +204,11 @@ ERRORCODE CVidPlayer::initialize(const char *inFilename, const char *SubtitleFil
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidPlayer::update() {
+bool CVidPlayer::update() {
 #if 0
 	if (!m_Playing) return STATUS_OK;
 
-	ERRORCODE res;
+	bool res;
 
 	if (_soundAvailable && m_Sound) {
 		res = _sound->update();
@@ -274,11 +274,11 @@ ERRORCODE CVidPlayer::update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidPlayer::display() {
+bool CVidPlayer::display() {
 #if 0
 	if (!m_Playing) return STATUS_OK;
 
-	ERRORCODE res;
+	bool res;
 	if (_vidRenderer) res = _vidRenderer->display(m_PlayPosX, m_PlayPosY, m_PlayZoom);
 	else res = STATUS_FAILED;
 
@@ -298,7 +298,7 @@ ERRORCODE CVidPlayer::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
+bool CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 #if 0
 	if (!_videoStream || !_vidRenderer) return STATUS_FAILED;
 
@@ -359,7 +359,7 @@ ERRORCODE CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) 
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidPlayer::stop() {
+bool CVidPlayer::stop() {
 #if 0
 	if (!_playing) return STATUS_OK;
 
@@ -378,7 +378,7 @@ bool CVidPlayer::isPlaying() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) {
+bool CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) {
 #if 0
 	if (!Filename) return STATUS_OK;
 

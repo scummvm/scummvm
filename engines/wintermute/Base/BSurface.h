@@ -37,8 +37,8 @@ namespace WinterMute {
 
 class CBSurface: public CBBase {
 public:
-	virtual ERRORCODE invalidate();
-	virtual ERRORCODE prepareToDraw();
+	virtual bool invalidate();
+	virtual bool prepareToDraw();
 	bool _ckDefault;
 	byte _ckRed;
 	byte _ckGreen;
@@ -53,25 +53,25 @@ public:
 	CBSurface(CBGame *inGame);
 	virtual ~CBSurface();
 
-	virtual ERRORCODE displayHalfTrans(int x, int y, Rect32 rect);
+	virtual bool displayHalfTrans(int x, int y, Rect32 rect);
 	virtual bool isTransparentAt(int x, int y);
-	virtual ERRORCODE displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual ERRORCODE displayTrans(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual ERRORCODE displayTransOffset(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) = 0;
-	virtual ERRORCODE display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool MirrorY = false) = 0;
-	virtual ERRORCODE displayZoom(int x, int y, Rect32 rect, float ZoomX, float ZoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual ERRORCODE displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual ERRORCODE restore();
-	virtual ERRORCODE create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
-	virtual ERRORCODE create(int Width, int Height);
-	virtual ERRORCODE putSurface(const Graphics::Surface &surface, bool hasAlpha = false) {
+	virtual bool displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual bool displayTrans(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual bool displayTransOffset(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) = 0;
+	virtual bool display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool MirrorY = false) = 0;
+	virtual bool displayZoom(int x, int y, Rect32 rect, float ZoomX, float ZoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual bool displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual bool restore();
+	virtual bool create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
+	virtual bool create(int Width, int Height);
+	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) {
 		return STATUS_FAILED;
 	}
-	virtual ERRORCODE putPixel(int x, int y, byte r, byte g, byte b, int a = -1);
-	virtual ERRORCODE getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = NULL);
+	virtual bool putPixel(int x, int y, byte r, byte g, byte b, int a = -1);
+	virtual bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = NULL);
 	virtual bool comparePixel(int x, int y, byte r, byte g, byte b, int a = -1);
-	virtual ERRORCODE startPixelOp();
-	virtual ERRORCODE endPixelOp();
+	virtual bool startPixelOp();
+	virtual bool endPixelOp();
 	virtual bool isTransparentAtLite(int x, int y);
 	void setSize(int width, int height);
 

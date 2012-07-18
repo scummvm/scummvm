@@ -42,29 +42,29 @@ class CAdResponseBox : public CBObject {
 public:
 	CBObject *getNextAccessObject(CBObject *CurrObject);
 	CBObject *getPrevAccessObject(CBObject *CurrObject);
-	ERRORCODE getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly);
+	bool getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly);
 
-	ERRORCODE handleResponse(CAdResponse *response);
+	bool handleResponse(CAdResponse *response);
 	void setLastResponseText(const char *text, const char *textOrig);
 	char *_lastResponseText;
 	char *_lastResponseTextOrig;
 	DECLARE_PERSISTENT(CAdResponseBox, CBObject)
 	CScScript *_waitingScript;
-	virtual ERRORCODE listen(CBScriptHolder *param1, uint32 param2);
+	virtual bool listen(CBScriptHolder *param1, uint32 param2);
 	typedef enum {
 	    EVENT_PREV, 
 		EVENT_NEXT, 
 		EVENT_RESPONSE
 	} TResponseEvent;
 
-	ERRORCODE weedResponses();
-	ERRORCODE display();
+	bool weedResponses();
+	bool display();
 	int _spacing;
 	int _scrollOffset;
 	CBFont *_fontHover;
 	CBFont *_font;
-	ERRORCODE createButtons();
-	ERRORCODE invalidateButtons();
+	bool createButtons();
+	bool invalidateButtons();
 	void clearButtons();
 	void clearResponses();
 	CAdResponseBox(CBGame *inGame);
@@ -77,9 +77,9 @@ public:
 	Rect32 _responseArea;
 	int _verticalAlign;
 	TTextAlign _align;
-	ERRORCODE loadFile(const char *filename);
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
 };
 
 } // end of namespace WinterMute

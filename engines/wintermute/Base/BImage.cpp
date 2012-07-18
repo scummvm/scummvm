@@ -69,7 +69,7 @@ CBImage::~CBImage() {
 #endif
 }
 
-ERRORCODE CBImage::loadFile(const Common::String &filename) {
+bool CBImage::loadFile(const Common::String &filename) {
 	_filename = filename;
 	_filename.toLowercase();
 	if (StringUtil::startsWith(filename, "savegame:", true)) {
@@ -111,7 +111,7 @@ void CBImage::copyFrom(Graphics::Surface *surface) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBImage::saveBMPFile(const char *filename) {
+bool CBImage::saveBMPFile(const char *filename) {
 #if 0
 	if (!_bitmap) return STATUS_FAILED;
 
@@ -123,7 +123,7 @@ ERRORCODE CBImage::saveBMPFile(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBImage::resize(int newWidth, int newHeight) {
+bool CBImage::resize(int newWidth, int newHeight) {
 #if 0
 	if (!_bitmap) return STATUS_FAILED;
 
@@ -247,7 +247,7 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBImage::copyFrom(CBImage *origImage, int newWidth, int newHeight) {
+bool CBImage::copyFrom(CBImage *origImage, int newWidth, int newHeight) {
 #if 0
 	if (_bitmap) FreeImage_Unload(_bitmap);
 

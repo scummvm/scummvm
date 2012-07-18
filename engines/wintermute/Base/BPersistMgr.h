@@ -53,7 +53,7 @@ public:
 	byte _savedExtMajor;
 	byte _savedExtMinor;
 	Common::String _savedName;
-	ERRORCODE saveFile(const char *filename);
+	bool saveFile(const char *filename);
 	uint32 getDWORD();
 	void putDWORD(uint32 val);
 	char *getString();
@@ -68,10 +68,10 @@ public:
 	void deleteSaveSlot(int slot);
 	uint32 getMaxUsedSlot();
 	bool getSaveExists(int slot);
-	ERRORCODE initLoad(const char *filename);
-	ERRORCODE initSave(const char *desc);
-	ERRORCODE getBytes(byte *buffer, uint32 size);
-	ERRORCODE putBytes(byte *buffer, uint32 size);
+	bool initLoad(const char *filename);
+	bool initSave(const char *desc);
+	bool getBytes(byte *buffer, uint32 size);
+	bool putBytes(byte *buffer, uint32 size);
 	uint32 _offset;
 
 	bool _saving;
@@ -79,20 +79,20 @@ public:
 	uint32 _richBufferSize;
 	byte *_richBuffer;
 
-	ERRORCODE transfer(const char *name, void *val);
-	ERRORCODE transfer(const char *name, int *val);
-	ERRORCODE transfer(const char *name, uint32 *val);
-	ERRORCODE transfer(const char *name, float *val);
-	ERRORCODE transfer(const char *name, double *val);
-	ERRORCODE transfer(const char *name, bool *val);
-	ERRORCODE transfer(const char *name, byte *val);
-	ERRORCODE transfer(const char *name, Rect32 *val);
-	ERRORCODE transfer(const char *name, Point32 *val);
-	ERRORCODE transfer(const char *name, const char **val);
-	ERRORCODE transfer(const char *name, char **val);
-	ERRORCODE transfer(const char *name, Common::String *val);
-	ERRORCODE transfer(const char *name, Vector2 *val);
-	ERRORCODE transfer(const char *name, AnsiStringArray &Val);
+	bool transfer(const char *name, void *val);
+	bool transfer(const char *name, int *val);
+	bool transfer(const char *name, uint32 *val);
+	bool transfer(const char *name, float *val);
+	bool transfer(const char *name, double *val);
+	bool transfer(const char *name, bool *val);
+	bool transfer(const char *name, byte *val);
+	bool transfer(const char *name, Rect32 *val);
+	bool transfer(const char *name, Point32 *val);
+	bool transfer(const char *name, const char **val);
+	bool transfer(const char *name, char **val);
+	bool transfer(const char *name, Common::String *val);
+	bool transfer(const char *name, Vector2 *val);
+	bool transfer(const char *name, AnsiStringArray &Val);
 	CBPersistMgr(CBGame *inGame = NULL);
 	virtual ~CBPersistMgr();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
@@ -101,9 +101,9 @@ public:
 	byte *_thumbnailData;
 private:
 	Common::String getFilenameForSlot(int slot);
-	ERRORCODE readHeader(const Common::String &filename);
+	bool readHeader(const Common::String &filename);
 	TimeDate getTimeDate();
-	ERRORCODE putTimeDate(const TimeDate &t);
+	bool putTimeDate(const TimeDate &t);
 	Common::WriteStream *_saveStream;
 	Common::SeekableReadStream *_loadStream;
 };

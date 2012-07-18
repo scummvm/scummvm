@@ -53,14 +53,14 @@ CAdRotLevel::~CAdRotLevel() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRotLevel::loadFile(const char *filename) {
+bool CAdRotLevel::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdRotLevel::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -82,7 +82,7 @@ TOKEN_DEF(ROTATION)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
+bool CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ROTATION_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -135,7 +135,7 @@ ERRORCODE CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRotLevel::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdRotLevel::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ROTATION_LEVEL {\n");
 	buffer->putTextIndent(indent + 2, "X=%d\n", _posX);
 	buffer->putTextIndent(indent + 2, "ROTATION=%d\n", (int)_rotation);
@@ -147,7 +147,7 @@ ERRORCODE CAdRotLevel::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRotLevel::persist(CBPersistMgr *persistMgr) {
+bool CAdRotLevel::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 

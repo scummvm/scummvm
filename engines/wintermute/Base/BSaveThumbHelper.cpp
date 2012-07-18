@@ -45,7 +45,7 @@ CBSaveThumbHelper::~CBSaveThumbHelper(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSaveThumbHelper::storeThumbnail(bool doFlip) {
+bool CBSaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = NULL;
 

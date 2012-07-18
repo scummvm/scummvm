@@ -37,8 +37,8 @@ class CBSubFrame;
 class CBFontBitmap : public CBFont {
 public:
 	DECLARE_PERSISTENT(CBFontBitmap, CBFont)
-	ERRORCODE loadBuffer(byte *Buffer);
-	ERRORCODE loadFile(const char *filename);
+	bool loadBuffer(byte *Buffer);
+	bool loadFile(const char *filename);
 	virtual int getTextWidth(byte *text, int maxLength = -1);
 	virtual int getTextHeight(byte *text, int width);
 	virtual void drawText(byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1);
@@ -48,7 +48,7 @@ public:
 	virtual ~CBFontBitmap();
 
 
-	ERRORCODE getWidths();
+	bool getWidths();
 	CBSprite *_sprite;
 	int _widthsFrame;
 	bool _fontextFix;

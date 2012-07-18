@@ -73,7 +73,7 @@ CBSprite *CAdTalkHolder::getTalkStance(const char *stance) {
 		delete _animSprite;
 		_animSprite = new CBSprite(_gameRef, this);
 		if (_animSprite) {
-			ERRORCODE res = _animSprite->loadFile(_forcedTalkAnimName);
+			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
 				_gameRef->LOG(res, "CAdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
 				delete _animSprite;
@@ -119,7 +119,7 @@ CBSprite *CAdTalkHolder::getTalkStance(const char *stance) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSprite
 	//////////////////////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ CScValue *CAdTalkHolder::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkHolder::scSetProperty(const char *name, CScValue *value) {
+bool CAdTalkHolder::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Item
@@ -337,7 +337,7 @@ const char *CAdTalkHolder::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkHolder::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdTalkHolder::saveAsText(CBDynBuffer *buffer, int indent) {
 	for (int i = 0; i < _talkSprites.getSize(); i++) {
 		if (_talkSprites[i]->_filename)
 			buffer->putTextIndent(indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->_filename);
@@ -353,7 +353,7 @@ ERRORCODE CAdTalkHolder::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkHolder::persist(CBPersistMgr *persistMgr) {
+bool CAdTalkHolder::persist(CBPersistMgr *persistMgr) {
 	CAdObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_sprite));

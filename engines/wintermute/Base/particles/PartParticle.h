@@ -69,15 +69,15 @@ public:
 	bool _isDead;
 	TParticleState _state;
 
-	ERRORCODE update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta);
-	ERRORCODE display(CPartEmitter *emitter);
+	bool update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta);
+	bool display(CPartEmitter *emitter);
 
-	ERRORCODE setSprite(const char *filename);
+	bool setSprite(const char *filename);
 
-	ERRORCODE fadeIn(uint32 currentTime, int fadeTime);
-	ERRORCODE fadeOut(uint32 currentTime, int fadeTime);
+	bool fadeIn(uint32 currentTime, int fadeTime);
+	bool fadeOut(uint32 currentTime, int fadeTime);
 
-	ERRORCODE persist(CBPersistMgr *PersistMgr);
+	bool persist(CBPersistMgr *PersistMgr);
 private:
 	uint32 _fadeStart;
 	int _fadeTime;

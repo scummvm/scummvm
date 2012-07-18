@@ -52,8 +52,8 @@ public:
 	CBSprite *getTalkStance(const char *stance);
 	virtual void goTo(int x, int y, TDirection afterWalkDir = DI_NONE);
 	CBPoint *_targetPoint;
-	virtual ERRORCODE update();
-	virtual ERRORCODE display();
+	virtual bool update();
+	virtual bool display();
 	TDirection _targetDir;
 	TDirection _afterWalkDir;
 	virtual void turnTo(TDirection dir);
@@ -67,8 +67,8 @@ public:
 	TDirection _dir;
 	CAdActor(CBGame *inGame/*=NULL*/);
 	virtual ~CAdActor();
-	ERRORCODE loadFile(const char *filename);
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
 
 	// new anim system
 	Common::String _talkAnimName;
@@ -77,19 +77,19 @@ public:
 	Common::String _turnLeftAnimName;
 	Common::String _turnRightAnimName;
 	CBArray<CAdSpriteSet *, CAdSpriteSet *> _anims;
-	virtual ERRORCODE playAnim(const char *filename);
+	virtual bool playAnim(const char *filename);
 	CAdSpriteSet *getAnimByName(const Common::String &animName);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
-	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scSetProperty(const char *name, CScValue *value);
+	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 private:
-	ERRORCODE setDefaultAnimNames();
+	bool setDefaultAnimNames();
 	CBSprite *getTalkStanceOld(const char *stance);
-	ERRORCODE mergeAnims(const char *animsFilename);
+	bool mergeAnims(const char *animsFilename);
 	CBSprite *_animSprite2;
 
 	void initLine(CBPoint startPt, CBPoint endPt);

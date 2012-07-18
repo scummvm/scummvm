@@ -61,14 +61,14 @@ CAdLayer::~CAdLayer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdLayer::loadFile(const char *filename) {
+bool CAdLayer::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdLayer::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -99,7 +99,7 @@ TOKEN_DEF(CLOSE_UP)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdLayer::loadBuffer(byte *buffer, bool complete) {
+bool CAdLayer::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(LAYER)
 	TOKEN_TABLE(TEMPLATE)
@@ -226,7 +226,7 @@ ERRORCODE CAdLayer::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
@@ -420,7 +420,7 @@ CScValue *CAdLayer::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdLayer::scSetProperty(const char *name, CScValue *value) {
+bool CAdLayer::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -477,7 +477,7 @@ const char *CAdLayer::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "LAYER {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
@@ -520,7 +520,7 @@ ERRORCODE CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdLayer::persist(CBPersistMgr *persistMgr) {
+bool CAdLayer::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 

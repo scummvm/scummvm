@@ -50,9 +50,9 @@ public:
 
 	// high level scripting interface
 	virtual bool canHandleMethod(const char *eventMethod);
-	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
+	virtual bool scSetProperty(const char *name, CScValue *value);
 	virtual CScValue *scGetProperty(const char *name);
-	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	virtual void *scToMemBuffer();
 	virtual int scToInt();

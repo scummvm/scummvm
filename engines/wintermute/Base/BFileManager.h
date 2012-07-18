@@ -43,28 +43,28 @@ class CBFile;
 class CBFileManager: CBBase {
 public:
 	bool findPackageSignature(Common::File *f, uint32 *offset);
-	ERRORCODE cleanup();
-	ERRORCODE setBasePath(const Common::String &path);
-	ERRORCODE restoreCurrentDir();
+	bool cleanup();
+	bool setBasePath(const Common::String &path);
+	bool restoreCurrentDir();
 	char *_basePath;
 	bool getFullPath(const Common::String &filename, char *fullname);
 	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
-	ERRORCODE closeFile(Common::SeekableReadStream *File);
+	bool closeFile(Common::SeekableReadStream *File);
 	bool hasFile(const Common::String &filename);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
 	CBFileEntry *getPackageEntry(const Common::String &filename);
 	Common::File *openSingleFile(const Common::String &name);
 	Common::File *openPackage(const Common::String &name);
-	ERRORCODE registerPackages();
-	ERRORCODE initPaths();
-	ERRORCODE reloadPaths();
+	bool registerPackages();
+	bool initPaths();
+	bool reloadPaths();
 	typedef enum {
 	    PATH_PACKAGE, PATH_SINGLE
 	} TPathType;
-	ERRORCODE addPath(TPathType type, const Common::String &path);
-	ERRORCODE requestCD(int cd, char *packageFile, const char *filename);
+	bool addPath(TPathType type, const Common::String &path);
+	bool requestCD(int cd, char *packageFile, const char *filename);
 	Common::SeekableReadStream *loadSaveGame(const Common::String &filename);
-	ERRORCODE saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
+	bool saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
 	CBFileManager(CBGame *inGame = NULL);
 	virtual ~CBFileManager();
@@ -75,7 +75,7 @@ public:
 
 	Common::HashMap<Common::String, CBFileEntry *> _files;
 private:
-	ERRORCODE registerPackage(const Common::String &filename, bool searchSignature = false);
+	bool registerPackage(const Common::String &filename, bool searchSignature = false);
 	Common::HashMap<Common::String, CBFileEntry *>::iterator _filesIter;
 	bool isValidPackage(const AnsiString &fileName) const;
 

@@ -39,7 +39,7 @@ class CBSurface;
 class CBObject;
 class CBSprite: public CBScriptHolder {
 public:
-	ERRORCODE killAllSounds();
+	bool killAllSounds();
 	CBSurface *getSurface();
 	char *_editorBgFile;
 	int _editorBgOffsetX;
@@ -56,7 +56,7 @@ public:
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	int _moveY;
 	int _moveX;
-	ERRORCODE display(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
+	bool display(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
 	bool GetCurrentFrame(float zoomX = 100, float zoomY = 100);
 	bool _canBreak;
 	bool _editorMuted;
@@ -66,22 +66,22 @@ public:
 	bool _changed;
 	bool _paused;
 	bool _finished;
-	ERRORCODE loadBuffer(byte *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
-	ERRORCODE loadFile(const char *filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	bool loadBuffer(byte *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	bool loadFile(const char *filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	uint32 _lastFrameTime;
-	ERRORCODE draw(int x, int y, CBObject *Register = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
+	bool draw(int x, int y, CBObject *Register = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
 	bool _looping;
 	int _currentFrame;
-	ERRORCODE addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = NULL);
+	bool addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = NULL);
 	CBSprite(CBGame *inGame, CBObject *owner = NULL);
 	virtual ~CBSprite();
 	CBArray<CBFrame *, CBFrame *> _frames;
-	ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	bool saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
-	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scSetProperty(const char *name, CScValue *value);
+	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

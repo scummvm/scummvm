@@ -213,7 +213,7 @@ void CScStack::pushNative(CBScriptable *val, bool persistent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScStack::persist(CBPersistMgr *persistMgr) {
+bool CScStack::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 

@@ -133,7 +133,7 @@ void CVidTheoraPlayer::cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Common::String &subtitleFile) {
+bool CVidTheoraPlayer::initialize(const Common::String &filename, const Common::String &subtitleFile) {
 	cleanup();
 
 	_filename = filename;
@@ -294,7 +294,7 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 		vorbis_comment_clear(&m_VorbisComment);
 	}
 
-	ERRORCODE Res = STATUS_OK;
+	bool Res = STATUS_OK;
 
 	// create sound buffer
 	if (m_VorbisStreams && _gameRef->m_SoundMgr->m_SoundAvailable) {
@@ -334,7 +334,7 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::resetStream() {
+bool CVidTheoraPlayer::resetStream() {
 	warning("VidTheoraPlayer::resetStream - stubbed");
 #if 0
 	if (_sound) _sound->Stop();
@@ -347,7 +347,7 @@ ERRORCODE CVidTheoraPlayer::resetStream() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame, bool freezeMusic, bool looping, uint32 startTime, float forceZoom, int volume) {
+bool CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame, bool freezeMusic, bool looping, uint32 startTime, float forceZoom, int volume) {
 	if (forceZoom < 0.0f)
 		forceZoom = 100.0f;
 	if (volume < 0)
@@ -451,7 +451,7 @@ ERRORCODE CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeG
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::stop() {
+bool CVidTheoraPlayer::stop() {
 	_theoraDecoder->close();
 	_state = THEORA_STATE_FINISHED;
 	if (_freezeGame) {
@@ -466,7 +466,7 @@ ERRORCODE CVidTheoraPlayer::stop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::update() {
+bool CVidTheoraPlayer::update() {
 	_currentTime = _freezeGame ? _gameRef->_liveTimer : _gameRef->_timer;
 
 	if (!isPlaying()) return STATUS_OK;
@@ -614,7 +614,7 @@ uint32 CVidTheoraPlayer::getMovieFrame() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::WriteVideo() {
+bool CVidTheoraPlayer::WriteVideo() {
 	if (!_texture) return STATUS_FAILED;
 
 	_texture->startPixelOp();
@@ -651,9 +651,9 @@ void CVidTheoraPlayer::writeAlpha() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::display(uint32 alpha) {
+bool CVidTheoraPlayer::display(uint32 alpha) {
 	Rect32 rc;
-	ERRORCODE res;
+	bool res;
 
 	if (_texture && _videoFrameReady) {
 		CBPlatform::setRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
@@ -667,7 +667,7 @@ ERRORCODE CVidTheoraPlayer::display(uint32 alpha) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
+bool CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	warning("CVidTheoraPlayer::SetAlphaImage(%s) - Not implemented", filename.c_str());
 
 	delete _alphaImage;
@@ -716,7 +716,7 @@ inline int intlog(int num) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::SeekToTime(uint32 time) {
+bool CVidTheoraPlayer::SeekToTime(uint32 time) {
 	warning("CVidTheoraPlayer::SeekToTime(%d) - not supported", time);
 #if 0
 	if (!m_TheoraStreams) return STATUS_FAILED;
@@ -780,7 +780,7 @@ finish:
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::pause() {
+bool CVidTheoraPlayer::pause() {
 	if (_state == THEORA_STATE_PLAYING) {
 		_state = THEORA_STATE_PAUSED;
 		_theoraDecoder->pauseVideo(true);
@@ -791,7 +791,7 @@ ERRORCODE CVidTheoraPlayer::pause() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::resume() {
+bool CVidTheoraPlayer::resume() {
 	if (_state == THEORA_STATE_PAUSED) {
 		_state = THEORA_STATE_PLAYING;
 		_theoraDecoder->pauseVideo(false);
@@ -802,7 +802,7 @@ ERRORCODE CVidTheoraPlayer::resume() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::persist(CBPersistMgr *persistMgr) {
+bool CVidTheoraPlayer::persist(CBPersistMgr *persistMgr) {
 	//CBBase::persist(persistMgr);
 
 	if (persistMgr->_saving) {
@@ -832,7 +832,7 @@ ERRORCODE CVidTheoraPlayer::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CVidTheoraPlayer::initializeSimple() {
+bool CVidTheoraPlayer::initializeSimple() {
 	if (DID_SUCCEED(initialize(_filename))) {
 		if (_alphaFilename != "") setAlphaImage(_alphaFilename);
 		play(_playbackType, _posX, _posY, false, false, _looping, _savedPos, _playZoom);

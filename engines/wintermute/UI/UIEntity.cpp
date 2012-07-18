@@ -55,14 +55,14 @@ CUIEntity::~CUIEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEntity::loadFile(const char *filename) {
+bool CUIEntity::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CUIEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -89,7 +89,7 @@ TOKEN_DEF(SCRIPT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEntity::loadBuffer(byte *buffer, bool complete) {
+bool CUIEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY_CONTAINER)
 	TOKEN_TABLE(TEMPLATE)
@@ -174,7 +174,7 @@ ERRORCODE CUIEntity::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEntity::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CUIEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY_CONTAINER\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -208,7 +208,7 @@ ERRORCODE CUIEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEntity::setEntity(const char *filename) {
+bool CUIEntity::setEntity(const char *filename) {
 	if (_entity) _gameRef->unregisterObject(_entity);
 	_entity = new CAdEntity(_gameRef);
 	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
@@ -225,7 +225,7 @@ ERRORCODE CUIEntity::setEntity(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEntity::display(int offsetX, int offsetY) {
+bool CUIEntity::display(int offsetX, int offsetY) {
 	if (!_visible) return STATUS_OK;
 
 	if (_entity) {
@@ -251,7 +251,7 @@ ERRORCODE CUIEntity::display(int offsetX, int offsetY) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetEntity
 	//////////////////////////////////////////////////////////////////////////
@@ -310,7 +310,7 @@ CScValue *CUIEntity::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEntity::scSetProperty(const char *name, CScValue *value) {
+bool CUIEntity::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
@@ -328,7 +328,7 @@ const char *CUIEntity::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEntity::persist(CBPersistMgr *persistMgr) {
+bool CUIEntity::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 

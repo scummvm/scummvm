@@ -167,7 +167,7 @@ bool checkHeader(const char *tag, CBPersistMgr *pm) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSysClassRegistry::saveTable(CBGame *gameRef, CBPersistMgr *persistMgr, bool quickSave) {
+bool CSysClassRegistry::saveTable(CBGame *gameRef, CBPersistMgr *persistMgr, bool quickSave) {
 	persistMgr->putString("<CLASS_REGISTRY_TABLE>");
 	persistMgr->putDWORD(_classes.size());
 
@@ -191,7 +191,7 @@ ERRORCODE CSysClassRegistry::saveTable(CBGame *gameRef, CBPersistMgr *persistMgr
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSysClassRegistry::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
+bool CSysClassRegistry::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
 	checkHeader("<CLASS_REGISTRY_TABLE>", persistMgr);
 
 	// reset SavedID of current instances
@@ -226,7 +226,7 @@ ERRORCODE CSysClassRegistry::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSysClassRegistry::saveInstances(CBGame *gameRef, CBPersistMgr *persistMgr, bool quickSave) {
+bool CSysClassRegistry::saveInstances(CBGame *gameRef, CBPersistMgr *persistMgr, bool quickSave) {
 
 	Classes::iterator it;
 
@@ -258,7 +258,7 @@ ERRORCODE CSysClassRegistry::saveInstances(CBGame *gameRef, CBPersistMgr *persis
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSysClassRegistry::loadInstances(CBGame *gameRef, CBPersistMgr *persistMgr) {
+bool CSysClassRegistry::loadInstances(CBGame *gameRef, CBPersistMgr *persistMgr) {
 	// get total instances
 	int numInstances = persistMgr->getDWORD();
 
@@ -294,7 +294,7 @@ ERRORCODE CSysClassRegistry::loadInstances(CBGame *gameRef, CBPersistMgr *persis
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSysClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData) {
+bool CSysClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData) {
 	NameMap::iterator mapIt = _nameMap.find(className);
 	if (mapIt == _nameMap.end()) return STATUS_FAILED;
 

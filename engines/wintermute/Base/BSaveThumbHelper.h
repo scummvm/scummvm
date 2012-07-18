@@ -39,7 +39,7 @@ class CBSaveThumbHelper : public CBBase {
 public:
 	CBSaveThumbHelper(CBGame *inGame);
 	virtual ~CBSaveThumbHelper(void);
-	ERRORCODE storeThumbnail(bool doFlip = false);
+	bool storeThumbnail(bool doFlip = false);
 
 	CBImage *_thumbnail;
 	CBImage *_richThumbnail;

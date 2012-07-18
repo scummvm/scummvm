@@ -75,7 +75,7 @@ const char *CSXDate::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetYear
 	//////////////////////////////////////////////////////////////////////////
@@ -223,7 +223,7 @@ CScValue *CSXDate::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXDate::scSetProperty(const char *name, CScValue *value) {
+bool CSXDate::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -238,7 +238,7 @@ ERRORCODE CSXDate::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXDate::persist(CBPersistMgr *persistMgr) {
+bool CSXDate::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_tm.tm_year));

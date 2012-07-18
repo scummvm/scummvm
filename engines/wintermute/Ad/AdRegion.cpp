@@ -54,14 +54,14 @@ CAdRegion::~CAdRegion() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRegion::loadFile(const char *filename) {
+bool CAdRegion::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -95,7 +95,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRegion::loadBuffer(byte *buffer, bool complete) {
+bool CAdRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -219,7 +219,7 @@ ERRORCODE CAdRegion::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	/*
 	    //////////////////////////////////////////////////////////////////////////
 	    // SkipTo
@@ -294,7 +294,7 @@ CScValue *CAdRegion::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRegion::scSetProperty(const char *name, CScValue *value) {
+bool CAdRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -346,7 +346,7 @@ const char *CAdRegion::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "REGION {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
@@ -378,7 +378,7 @@ ERRORCODE CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdRegion::persist(CBPersistMgr *persistMgr) {
+bool CAdRegion::persist(CBPersistMgr *persistMgr) {
 	CBRegion::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_alpha));

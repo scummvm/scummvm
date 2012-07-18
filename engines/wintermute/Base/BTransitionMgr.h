@@ -39,8 +39,8 @@ public:
 	uint32 _lastTime;
 	bool _origInteractive;
 	bool _preserveInteractive;
-	ERRORCODE update();
-	ERRORCODE start(TTransitionType type, bool nonInteractive = false);
+	bool update();
+	bool start(TTransitionType type, bool nonInteractive = false);
 	bool isReady();
 	TTransMgrState _state;
 	CBTransitionMgr(CBGame *inGame);

@@ -39,7 +39,7 @@ class CUIButton;
 class CBViewport;
 class CUIWindow : public CUIObject {
 public:
-	ERRORCODE getWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
+	bool getWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
 
 	bool _pauseMusic;
 	void cleanup();
@@ -53,38 +53,38 @@ public:
 	virtual bool handleMouseWheel(int delta);
 	CUIWindow *_shieldWindow;
 	CUIButton *_shieldButton;
-	ERRORCODE close();
-	ERRORCODE goSystemExclusive();
-	ERRORCODE goExclusive();
+	bool close();
+	bool goSystemExclusive();
+	bool goExclusive();
 	TWindowMode _mode;
-	ERRORCODE moveFocus(bool forward = true);
-	virtual ERRORCODE handleMouse(TMouseEvent Event, TMouseButton Button);
+	bool moveFocus(bool forward = true);
+	virtual bool handleMouse(TMouseEvent Event, TMouseButton Button);
 	Point32 _dragFrom;
 	bool _dragging;
 	DECLARE_PERSISTENT(CUIWindow, CUIObject)
 	bool _transparent;
-	ERRORCODE showWidget(const char *name, bool visible = true);
-	ERRORCODE enableWidget(const char *name, bool enable = true);
+	bool showWidget(const char *name, bool visible = true);
+	bool enableWidget(const char *name, bool enable = true);
 	Rect32 _titleRect;
 	Rect32 _dragRect;
-	virtual ERRORCODE display(int offsetX = 0, int offsetY = 0);
+	virtual bool display(int offsetX = 0, int offsetY = 0);
 	CUIWindow(CBGame *inGame);
 	virtual ~CUIWindow();
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	CBArray<CUIObject *, CUIObject *> _widgets;
 	TTextAlign _titleAlign;
-	ERRORCODE loadFile(const char *filename);
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
 	CUITiledImage *_backInactive;
 	CBFont *_fontInactive;
 	CBSprite *_imageInactive;
-	virtual ERRORCODE listen(CBScriptHolder *param1, uint32 param2);
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool listen(CBScriptHolder *param1, uint32 param2);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
-	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scSetProperty(const char *name, CScValue *value);
+	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

@@ -45,18 +45,18 @@ public:
 	int _itemHeight;
 	int _itemWidth;
 	bool _visible;
-	virtual ERRORCODE display();
+	virtual bool display();
 	CUIButton *_closeButton;
 	int _spacing;
 	int _scrollOffset;
 	Rect32 _itemsArea;
-	ERRORCODE listen(CBScriptHolder *param1, uint32 param2);
+	bool listen(CBScriptHolder *param1, uint32 param2);
 	CUIWindow *_window;
 	CAdInventoryBox(CBGame *inGame);
 	virtual ~CAdInventoryBox();
-	ERRORCODE loadFile(const char *filename);
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
 };
 
 } // end of namespace WinterMute

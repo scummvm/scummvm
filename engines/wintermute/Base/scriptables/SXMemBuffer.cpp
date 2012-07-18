@@ -76,7 +76,7 @@ void CSXMemBuffer::cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXMemBuffer::resize(int newSize) {
+bool CSXMemBuffer::resize(int newSize) {
 	int oldSize = _size;
 
 	if (_size == 0) {
@@ -124,7 +124,7 @@ const char *CSXMemBuffer::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSize
 	//////////////////////////////////////////////////////////////////////////
@@ -457,7 +457,7 @@ CScValue *CSXMemBuffer::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXMemBuffer::scSetProperty(const char *name, CScValue *value) {
+bool CSXMemBuffer::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
@@ -480,7 +480,7 @@ ERRORCODE CSXMemBuffer::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
+bool CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
 

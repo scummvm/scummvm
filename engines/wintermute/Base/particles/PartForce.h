@@ -49,7 +49,7 @@ public:
 	Vector2 _direction;
 	TForceType _type;
 
-	ERRORCODE persist(CBPersistMgr *PersistMgr);
+	bool persist(CBPersistMgr *PersistMgr);
 };
 
 } // end of namespace WinterMute

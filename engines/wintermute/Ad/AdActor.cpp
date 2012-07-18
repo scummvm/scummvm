@@ -76,7 +76,7 @@ CAdActor::CAdActor(CBGame *inGame): CAdTalkHolder(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::setDefaultAnimNames() {
+bool CAdActor::setDefaultAnimNames() {
 	_talkAnimName = "talk";
 	_idleAnimName = "idle";
 	_walkAnimName = "walk";
@@ -123,14 +123,14 @@ CAdActor::~CAdActor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::loadFile(const char *filename) {
+bool CAdActor::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdActor::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -183,7 +183,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(ANIMATION)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
+bool CAdActor::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTOR)
 	TOKEN_TABLE(X)
@@ -504,7 +504,7 @@ void CAdActor::goTo(int x, int y, TDirection afterWalkDir) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::display() {
+bool CAdActor::display() {
 	if (_active) updateSounds();
 
 	uint32 alpha;
@@ -547,7 +547,7 @@ ERRORCODE CAdActor::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::update() {
+bool CAdActor::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY) {
@@ -850,7 +850,7 @@ void CAdActor::initLine(CBPoint startPt, CBPoint endPt) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GoTo / GoToAsync
 	//////////////////////////////////////////////////////////////////////////
@@ -1035,7 +1035,7 @@ CScValue *CAdActor::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::scSetProperty(const char *name, CScValue *value) {
+bool CAdActor::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
@@ -1108,7 +1108,7 @@ CBSprite *CAdActor::getTalkStance(const char *stance) {
 		delete _animSprite;
 		_animSprite = new CBSprite(_gameRef, this);
 		if (_animSprite) {
-			ERRORCODE res = _animSprite->loadFile(_forcedTalkAnimName);
+			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
 				_gameRef->LOG(res, "CAdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
 				delete _animSprite;
@@ -1187,7 +1187,7 @@ CBSprite *CAdActor::getTalkStanceOld(const char *stance) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::persist(CBPersistMgr *persistMgr) {
+bool CAdActor::persist(CBPersistMgr *persistMgr) {
 	CAdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_dir));
@@ -1262,7 +1262,7 @@ CAdSpriteSet *CAdActor::getAnimByName(const Common::String &animName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::mergeAnims(const char *animsFilename) {
+bool CAdActor::mergeAnims(const char *animsFilename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ANIMATION)
 	TOKEN_TABLE_END
@@ -1279,7 +1279,7 @@ ERRORCODE CAdActor::mergeAnims(const char *animsFilename) {
 	int cmd;
 	CBParser parser(_gameRef);
 
-	ERRORCODE Ret = STATUS_OK;
+	bool Ret = STATUS_OK;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -1298,7 +1298,7 @@ ERRORCODE CAdActor::mergeAnims(const char *animsFilename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdActor::playAnim(const char *filename) {
+bool CAdActor::playAnim(const char *filename) {
 	// if we have an anim with this name, use it
 	CAdSpriteSet *Anim = getAnimByName(filename);
 	if (Anim) {

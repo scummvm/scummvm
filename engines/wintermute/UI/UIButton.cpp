@@ -95,14 +95,14 @@ CUIButton::~CUIButton() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIButton::loadFile(const char *filename) {
+bool CUIButton::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CUIButton::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -154,7 +154,7 @@ TOKEN_DEF(PIXEL_PERFECT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
+bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(BUTTON)
 	TOKEN_TABLE(TEMPLATE)
@@ -439,7 +439,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "BUTTON\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -577,7 +577,7 @@ void CUIButton::correctSize() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIButton::display(int offsetX, int offsetY) {
+bool CUIButton::display(int offsetX, int offsetY) {
 	if (!_visible)
 		return STATUS_OK;
 
@@ -666,7 +666,7 @@ void CUIButton::press() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetDisabledFont
 	//////////////////////////////////////////////////////////////////////////
@@ -967,7 +967,7 @@ CScValue *CUIButton::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIButton::scSetProperty(const char *name, CScValue *value) {
+bool CUIButton::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
@@ -1011,7 +1011,7 @@ const char *CUIButton::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIButton::persist(CBPersistMgr *persistMgr) {
+bool CUIButton::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 

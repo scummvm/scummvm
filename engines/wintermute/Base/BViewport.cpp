@@ -49,7 +49,7 @@ CBViewport::~CBViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBViewport::persist(CBPersistMgr *persistMgr) {
+bool CBViewport::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 
@@ -63,7 +63,7 @@ ERRORCODE CBViewport::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBViewport::setRect(int left, int top, int right, int bottom, bool noCheck) {
+bool CBViewport::setRect(int left, int top, int right, int bottom, bool noCheck) {
 	if (!noCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);

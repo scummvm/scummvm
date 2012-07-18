@@ -49,7 +49,7 @@ CAdInventory::~CAdInventory() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventory::insertItem(const char *name, const char *insertAfter) {
+bool CAdInventory::insertItem(const char *name, const char *insertAfter) {
 	if (name == NULL) return STATUS_FAILED;
 
 	CAdItem *item = ((CAdGame *)_gameRef)->getItemByName(name);
@@ -74,7 +74,7 @@ ERRORCODE CAdInventory::insertItem(const char *name, const char *insertAfter) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventory::removeItem(const char *name) {
+bool CAdInventory::removeItem(const char *name) {
 	if (name == NULL) return STATUS_FAILED;
 
 	for (int i = 0; i < _takenItems.getSize(); i++) {
@@ -91,7 +91,7 @@ ERRORCODE CAdInventory::removeItem(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventory::removeItem(CAdItem *item) {
+bool CAdInventory::removeItem(CAdItem *item) {
 	if (item == NULL) return STATUS_FAILED;
 
 	for (int i = 0; i < _takenItems.getSize(); i++) {
@@ -106,7 +106,7 @@ ERRORCODE CAdInventory::removeItem(CAdItem *item) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventory::persist(CBPersistMgr *persistMgr) {
+bool CAdInventory::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 

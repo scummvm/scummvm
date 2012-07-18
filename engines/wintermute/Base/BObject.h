@@ -46,7 +46,7 @@ class CScScript;
 class CBObject : public CBScriptHolder {
 public:
 	TSpriteBlendMode _blendMode;
-	virtual ERRORCODE afterMove();
+	virtual bool afterMove();
 	float _relativeRotate;
 	bool _rotateValid;
 	float _rotate;
@@ -59,18 +59,18 @@ public:
 	float _relativeScale;
 	virtual bool isReady();
 	virtual bool getExtendedFlag(const char *flagName);
-	virtual ERRORCODE resetSoundPan();
-	virtual ERRORCODE updateSounds();
-	ERRORCODE updateOneSound(CBSound *sound);
+	virtual bool resetSoundPan();
+	virtual bool updateSounds();
+	bool updateOneSound(CBSound *sound);
 	bool _autoSoundPanning;
 	uint32 _sFXStart;
 	int _sFXVolume;
-	ERRORCODE setSFXTime(uint32 time);
-	ERRORCODE setSFXVolume(int volume);
-	ERRORCODE resumeSFX();
-	ERRORCODE pauseSFX();
-	ERRORCODE stopSFX(bool deleteSound = true);
-	ERRORCODE playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = NULL, uint32 loopStart = 0);
+	bool setSFXTime(uint32 time);
+	bool setSFXVolume(int volume);
+	bool resumeSFX();
+	bool pauseSFX();
+	bool stopSFX(bool deleteSound = true);
+	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = NULL, uint32 loopStart = 0);
 	CBSound *_sFX;
 
 	TSFXType _sFXType;
@@ -80,12 +80,12 @@ public:
 	float _sFXParam4;
 
 	virtual bool handleMouseWheel(int delta);
-	virtual ERRORCODE handleMouse(TMouseEvent event, TMouseButton button);
+	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual int getHeight();
-	ERRORCODE setCursor(const char *filename);
-	ERRORCODE setActiveCursor(const char *filename);
-	ERRORCODE cleanup();
+	bool setCursor(const char *filename);
+	bool setActiveCursor(const char *filename);
+	bool cleanup();
 	const char *getCaption(int caseVal = 1);
 	void setCaption(const char *caption, int caseVal = 1);
 	bool _editorSelected;
@@ -93,12 +93,12 @@ public:
 	bool _editorOnly;
 	bool _is3D;
 	DECLARE_PERSISTENT(CBObject, CBScriptHolder)
-	virtual ERRORCODE showCursor();
+	virtual bool showCursor();
 	CBSprite *_cursor;
 	bool _sharedCursors;
 	CBSprite *_activeCursor;
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
-	virtual ERRORCODE listen(CBScriptHolder *param1, uint32 param2);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool listen(CBScriptHolder *param1, uint32 param2);
 	bool _ready;
 	bool _registrable;
 	bool _zoomable;
@@ -116,16 +116,16 @@ public:
 	bool _saveState;
 
 	// base
-	virtual ERRORCODE update()  {
+	virtual bool update()  {
 		return STATUS_FAILED;
 	};
-	virtual ERRORCODE display() {
+	virtual bool display() {
 		return STATUS_FAILED;
 	};
-	virtual ERRORCODE invalidateDeviceObjects()  {
+	virtual bool invalidateDeviceObjects()  {
 		return STATUS_OK;
 	};
-	virtual ERRORCODE restoreDeviceObjects()     {
+	virtual bool restoreDeviceObjects()     {
 		return STATUS_OK;
 	};
 	bool _nonIntMouseEvents;
@@ -134,8 +134,8 @@ public:
 public:
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
-	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scSetProperty(const char *name, CScValue *value);
+	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

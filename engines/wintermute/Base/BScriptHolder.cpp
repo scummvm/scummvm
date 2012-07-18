@@ -55,7 +55,7 @@ CBScriptHolder::~CBScriptHolder() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::cleanup() {
+bool CBScriptHolder::cleanup() {
 	delete[] _filename;
 	_filename = NULL;
 
@@ -80,10 +80,10 @@ void CBScriptHolder::setFilename(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
+bool CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 	int numHandlers = 0;
 
-	ERRORCODE ret = STATUS_FAILED;
+	bool ret = STATUS_FAILED;
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread) {
 			CScScript *handler = _scripts[i]->invokeEventHandler(eventName, unbreakable);
@@ -101,7 +101,7 @@ ERRORCODE CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::listen(CBScriptHolder *param1, uint32 param2) {
+bool CBScriptHolder::listen(CBScriptHolder *param1, uint32 param2) {
 	return STATUS_FAILED;
 }
 
@@ -109,7 +109,7 @@ ERRORCODE CBScriptHolder::listen(CBScriptHolder *param1, uint32 param2) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG_CrashMe
 	//////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ ERRORCODE CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScSt
 	else if (strcmp(name, "ApplyEvent") == 0) {
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
-		ERRORCODE ret;
+		bool ret;
 		ret = applyEvent(val->getString());
 
 		if (DID_SUCCEED(ret)) stack->pushBool(true);
@@ -240,7 +240,7 @@ CScValue *CBScriptHolder::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::scSetProperty(const char *name, CScValue *value) {
+bool CBScriptHolder::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -257,13 +257,13 @@ const char *CBScriptHolder::scToString() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CBScriptHolder::saveAsText(CBDynBuffer *buffer, int indent) {
 	return CBBase::saveAsText(buffer, indent);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::persist(CBPersistMgr *persistMgr) {
+bool CBScriptHolder::persist(CBPersistMgr *persistMgr) {
 	CBScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_filename));
@@ -276,7 +276,7 @@ ERRORCODE CBScriptHolder::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::addScript(const char *filename) {
+bool CBScriptHolder::addScript(const char *filename) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
@@ -311,7 +311,7 @@ ERRORCODE CBScriptHolder::addScript(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::removeScript(CScScript *script) {
+bool CBScriptHolder::removeScript(CScScript *script) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i] == script) {
 			_scripts.removeAt(i);
@@ -345,7 +345,7 @@ TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptHolder::parseProperty(byte *buffer, bool complete) {
+bool CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(PROPERTY)
 	TOKEN_TABLE(NAME)
@@ -433,7 +433,7 @@ CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
 
 			CScScript *thread = new CScScript(_gameRef,  _scripts[i]->_engine);
 			if (thread) {
-				ERRORCODE ret = thread->createMethodThread(_scripts[i], methodName);
+				bool ret = thread->createMethodThread(_scripts[i], methodName);
 				if (DID_SUCCEED(ret)) {
 					_scripts[i]->_engine->_scripts.add(thread);
 					_gameRef->getDebugMgr()->onScriptMethodThreadInit(thread, _scripts[i], methodName);

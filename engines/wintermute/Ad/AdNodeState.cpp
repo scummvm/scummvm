@@ -92,7 +92,7 @@ void CAdNodeState::setCursor(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdNodeState::persist(CBPersistMgr *persistMgr) {
+bool CAdNodeState::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_active));
@@ -129,7 +129,7 @@ char *CAdNodeState::getCaption(int caseVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdNodeState::transferEntity(CAdEntity *entity, bool includingSprites, bool saving) {
+bool CAdNodeState::transferEntity(CAdEntity *entity, bool includingSprites, bool saving) {
 	if (!entity) return STATUS_FAILED;
 
 	// hack!

@@ -75,8 +75,8 @@ CBFrame::~CBFrame() {
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
-	ERRORCODE res;
+bool CBFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
+	bool res;
 
 	for (int i = 0; i < _subframes.getSize(); i++) {
 		res = _subframes[i]->draw(x, y, registerOwner, zoomX, zoomY, precise, alpha, rotate, blendMode);
@@ -87,7 +87,7 @@ ERRORCODE CBFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, floa
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFrame::oneTimeDisplay(CBObject *owner, bool muted) {
+bool CBFrame::oneTimeDisplay(CBObject *owner, bool muted) {
 	if (_sound && !muted) {
 		if (owner) owner->updateOneSound(_sound);
 		_sound->play();
@@ -131,7 +131,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(KILL_SOUND)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
+bool CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(DELAY)
 	TOKEN_TABLE(IMAGE)
@@ -341,7 +341,7 @@ bool CBFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float sc
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "FRAME {\n");
 	buffer->putTextIndent(indent + 2, "DELAY = %d\n", _delay);
 
@@ -379,7 +379,7 @@ ERRORCODE CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFrame::persist(CBPersistMgr *persistMgr) {
+bool CBFrame::persist(CBPersistMgr *persistMgr) {
 	CBScriptable::persist(persistMgr);
 
 	_applyEvent.persist(persistMgr);
@@ -399,7 +399,7 @@ ERRORCODE CBFrame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSound
@@ -648,7 +648,7 @@ CScValue *CBFrame::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFrame::scSetProperty(const char *name, CScValue *value) {
+bool CBFrame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////

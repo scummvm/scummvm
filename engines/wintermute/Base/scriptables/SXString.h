@@ -39,8 +39,8 @@ public:
 	virtual int scCompare(CBScriptable *Val);
 	DECLARE_PERSISTENT(CSXString, CBScriptable)
 	CScValue *scGetProperty(const char *name);
-	ERRORCODE scSetProperty(const char *name, CScValue *value);
-	ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	bool scSetProperty(const char *name, CScValue *value);
+	bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	void scSetString(const char *val);
 	const char *scToString();
 	void setStringVal(const char *val);

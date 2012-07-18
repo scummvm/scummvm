@@ -38,11 +38,11 @@ class CBFader : public CBObject {
 public:
 	bool _system;
 	uint32 getCurrentColor();
-	ERRORCODE fadeOut(uint32 targetColor, uint32 duration, bool system = false);
-	ERRORCODE fadeIn(uint32 sourceColor, uint32 duration, bool system = false);
-	ERRORCODE deactivate();
-	ERRORCODE display();
-	ERRORCODE update();
+	bool fadeOut(uint32 targetColor, uint32 duration, bool system = false);
+	bool fadeIn(uint32 sourceColor, uint32 duration, bool system = false);
+	bool deactivate();
+	bool display();
+	bool update();
 	DECLARE_PERSISTENT(CBFader, CBObject)
 	CBFader(CBGame *inGame);
 	virtual ~CBFader();

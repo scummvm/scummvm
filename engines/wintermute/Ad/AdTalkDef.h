@@ -40,17 +40,17 @@ public:
 	char *_defaultSpriteSetFilename;
 	CAdSpriteSet *_defaultSpriteSet;
 	CBSprite *getDefaultSprite(TDirection Dir);
-	ERRORCODE loadDefaultSprite();
+	bool loadDefaultSprite();
 	DECLARE_PERSISTENT(CAdTalkDef, CBObject)
 
 	CAdTalkDef(CBGame *inGame);
 	virtual ~CAdTalkDef();
-	ERRORCODE loadFile(const char *filename);
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
 	CBArray<CAdTalkNode *, CAdTalkNode *> _nodes;
 	char *_defaultSpriteFilename;
 	CBSprite *_defaultSprite;
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent = 0);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent = 0);
 };
 
 } // end of namespace WinterMute

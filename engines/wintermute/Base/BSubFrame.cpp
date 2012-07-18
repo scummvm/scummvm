@@ -90,7 +90,7 @@ TOKEN_DEF(EDITOR_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
+bool CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(IMAGE)
 	TOKEN_TABLE(TRANSPARENT)
@@ -204,7 +204,7 @@ ERRORCODE CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBSubFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
+bool CBSubFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
 	if (!_surface) return STATUS_OK;
 
 	if (registerOwner != NULL && !_decoration) {
@@ -216,7 +216,7 @@ ERRORCODE CBSubFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, f
 	}
 	if (_gameRef->_suspendedRendering) return STATUS_OK;
 
-	ERRORCODE res;
+	bool res;
 
 	//if(Alpha==0xFFFFFFFF) Alpha = _alpha; // TODO: better (combine owner's and self alpha)
 	if (_alpha != 0xFFFFFFFF) alpha = _alpha;
@@ -249,7 +249,7 @@ bool CBSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete) {
+bool CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete) {
 	if (complete)
 		buffer->putTextIndent(indent, "SUBFRAME {\n");
 
@@ -310,7 +310,7 @@ void CBSubFrame::setDefaultRect() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSubFrame::persist(CBPersistMgr *persistMgr) {
+bool CBSubFrame::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
 
@@ -342,7 +342,7 @@ ERRORCODE CBSubFrame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetImage
@@ -473,7 +473,7 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSubFrame::scSetProperty(const char *name, CScValue *value) {
+bool CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
@@ -549,7 +549,7 @@ const char *CBSubFrame::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool CBSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (_surface) {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
 		_surface = NULL;
@@ -576,7 +576,7 @@ ERRORCODE CBSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRe
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSubFrame::setSurfaceSimple() {
+bool CBSubFrame::setSurfaceSimple() {
 	if (!_surfaceFilename) {
 		_surface = NULL;
 		return STATUS_OK;

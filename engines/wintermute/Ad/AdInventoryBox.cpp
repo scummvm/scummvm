@@ -74,7 +74,7 @@ CAdInventoryBox::~CAdInventoryBox() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
+bool CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 	CUIObject *obj = (CUIObject *)param1;
 
 	switch (obj->_type) {
@@ -98,7 +98,7 @@ ERRORCODE CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventoryBox::display() {
+bool CAdInventoryBox::display() {
 	CAdGame *adGame = (CAdGame *)_gameRef;
 
 	if (!_visible) return STATUS_OK;
@@ -155,14 +155,14 @@ ERRORCODE CAdInventoryBox::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventoryBox::loadFile(const char *filename) {
+bool CAdInventoryBox::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdInventoryBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -193,7 +193,7 @@ TOKEN_DEF(HIDE_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
+bool CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(INVENTORY_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -318,7 +318,7 @@ ERRORCODE CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "INVENTORY_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -351,7 +351,7 @@ ERRORCODE CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdInventoryBox::persist(CBPersistMgr *persistMgr) {
+bool CAdInventoryBox::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_closeButton));

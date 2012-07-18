@@ -118,7 +118,7 @@ void CScScript::readHeader() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::initScript() {
+bool CScScript::initScript() {
 	if (!_scriptStream) {
 		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 	}
@@ -165,7 +165,7 @@ ERRORCODE CScScript::initScript() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::initTables() {
+bool CScScript::initTables() {
 	uint32 OrigIP = _iP;
 
 	readHeader();
@@ -240,7 +240,7 @@ ERRORCODE CScScript::initTables() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::create(const char *filename, byte *buffer, uint32 size, CBScriptHolder *owner) {
+bool CScScript::create(const char *filename, byte *buffer, uint32 size, CBScriptHolder *owner) {
 	cleanup();
 
 	_thread = false;
@@ -259,7 +259,7 @@ ERRORCODE CScScript::create(const char *filename, byte *buffer, uint32 size, CBS
 
 	_bufferSize = size;
 
-	ERRORCODE res = initScript();
+	bool res = initScript();
 	if (DID_FAIL(res)) return res;
 
 	// establish global variables table
@@ -272,7 +272,7 @@ ERRORCODE CScScript::create(const char *filename, byte *buffer, uint32 size, CBS
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::createThread(CScScript *original, uint32 initIP, const char *eventName) {
+bool CScScript::createThread(CScScript *original, uint32 initIP, const char *eventName) {
 	cleanup();
 
 	_thread = true;
@@ -292,7 +292,7 @@ ERRORCODE CScScript::createThread(CScScript *original, uint32 initIP, const char
 	_bufferSize = original->_bufferSize;
 
 	// initialize
-	ERRORCODE res = initScript();
+	bool res = initScript();
 	if (DID_FAIL(res)) return res;
 
 	// copy globals
@@ -316,7 +316,7 @@ ERRORCODE CScScript::createThread(CScScript *original, uint32 initIP, const char
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::createMethodThread(CScScript *original, const char *methodName) {
+bool CScScript::createMethodThread(CScScript *original, const char *methodName) {
 	uint32 ip = original->getMethodPos(methodName);
 	if (ip == 0) return STATUS_FAILED;
 
@@ -339,7 +339,7 @@ ERRORCODE CScScript::createMethodThread(CScScript *original, const char *methodN
 	_bufferSize = original->_bufferSize;
 
 	// initialize
-	ERRORCODE res = initScript();
+	bool res = initScript();
 	if (DID_FAIL(res)) return res;
 
 	// copy globals
@@ -470,8 +470,8 @@ char *CScScript::getString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::executeInstruction() {
-	ERRORCODE ret = STATUS_OK;
+bool CScScript::executeInstruction() {
+	bool ret = STATUS_OK;
 
 	uint32 dw;
 	const char *str = NULL;
@@ -560,7 +560,7 @@ ERRORCODE CScScript::executeInstruction() {
 		CScValue *var = _stack->pop();
 		if (var->_type == VAL_VARIABLE_REF) var = var->_valRef;
 
-		ERRORCODE res = STATUS_FAILED;
+		bool res = STATUS_FAILED;
 		bool TriedNative = false;
 
 		// we are already calling this method, try native
@@ -1120,7 +1120,7 @@ CScValue *CScScript::getVar(char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::waitFor(CBObject *object) {
+bool CScScript::waitFor(CBObject *object) {
 	if (_unbreakable) {
 		runtimeError("Script cannot be interrupted.");
 		return STATUS_OK;
@@ -1133,14 +1133,14 @@ ERRORCODE CScScript::waitFor(CBObject *object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::waitForExclusive(CBObject *object) {
+bool CScScript::waitForExclusive(CBObject *object) {
 	_engine->resetObject(object);
 	return waitFor(object);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::sleep(uint32 duration) {
+bool CScScript::sleep(uint32 duration) {
 	if (_unbreakable) {
 		runtimeError("Script cannot be interrupted.");
 		return STATUS_OK;
@@ -1159,7 +1159,7 @@ ERRORCODE CScScript::sleep(uint32 duration) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::finish(bool includingThreads) {
+bool CScScript::finish(bool includingThreads) {
 	if (_state != SCRIPT_FINISHED && includingThreads) {
 		_state = SCRIPT_FINISHED;
 		finishThreads();
@@ -1171,7 +1171,7 @@ ERRORCODE CScScript::finish(bool includingThreads) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::run() {
+bool CScScript::run() {
 	_state = SCRIPT_RUNNING;
 	return STATUS_OK;
 }
@@ -1195,7 +1195,7 @@ void CScScript::runtimeError(const char *fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::persist(CBPersistMgr *persistMgr) {
+bool CScScript::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 
@@ -1265,7 +1265,7 @@ CScScript *CScScript::invokeEventHandler(const char *eventName, bool unbreakable
 
 	CScScript *thread = new CScScript(_gameRef,  _engine);
 	if (thread) {
-		ERRORCODE ret = thread->createThread(this, pos, eventName);
+		bool ret = thread->createThread(this, pos, eventName);
 		if (DID_SUCCEED(ret)) {
 			thread->_unbreakable = unbreakable;
 			_engine->_scripts.add(thread);
@@ -1302,7 +1302,7 @@ bool CScScript::canHandleMethod(const char *methodName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::pause() {
+bool CScScript::pause() {
 	if (_state == SCRIPT_PAUSED) {
 		_gameRef->LOG(0, "Attempting to pause a paused script ('%s', line %d)", _filename, _currentLine);
 		return STATUS_FAILED;
@@ -1318,7 +1318,7 @@ ERRORCODE CScScript::pause() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::resume() {
+bool CScScript::resume() {
 	if (_state != SCRIPT_PAUSED) return STATUS_OK;
 
 	_state = _origState;
@@ -1337,7 +1337,7 @@ CScScript::TExternalFunction *CScScript::getExternal(char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function) {
+bool CScScript::externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function) {
 
 	_gameRef->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);
@@ -1347,7 +1347,7 @@ ERRORCODE CScScript::externalCall(CScStack *stack, CScStack *thisStack, CScScrip
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::copyParameters(CScStack *stack) {
+bool CScScript::copyParameters(CScStack *stack) {
 	int i;
 	int NumParams = stack->pop()->getInt();
 	for (i = NumParams - 1; i >= 0; i--) {
@@ -1362,7 +1362,7 @@ ERRORCODE CScScript::copyParameters(CScStack *stack) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::finishThreads() {
+bool CScScript::finishThreads() {
 	for (int i = 0; i < _engine->_scripts.getSize(); i++) {
 		CScScript *scr = _engine->_scripts[i];
 		if (scr->_thread && scr->_state != SCRIPT_FINISHED && scr->_owner == _owner && scumm_stricmp(scr->_filename, _filename) == 0)
@@ -1385,7 +1385,7 @@ const char *CScScript::dbgGetFilename() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::dbgSendScript(IWmeDebugClient *client) {
+bool CScScript::dbgSendScript(IWmeDebugClient *client) {
 	if (_methodThread) client->onScriptMethodThreadInit(this, _parentScript, _threadEvent);
 	else if (_thread) client->onScriptEventThreadInit(this, _parentScript, _threadEvent);
 	else client->onScriptInit(this);
@@ -1395,7 +1395,7 @@ ERRORCODE CScScript::dbgSendScript(IWmeDebugClient *client) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScScript::dbgSendVariables(IWmeDebugClient *client) {
+bool CScScript::dbgSendVariables(IWmeDebugClient *client) {
 	// send script globals
 	_globals->dbgSendVariables(client, WME_DBGVAR_SCRIPT, this, 0);
 

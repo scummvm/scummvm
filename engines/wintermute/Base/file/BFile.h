@@ -51,10 +51,10 @@ public:
 	virtual uint32 getPos() {
 		return _pos;
 	};
-	virtual ERRORCODE seek(uint32 pos, int whence = SEEK_SET) = 0;
-	virtual ERRORCODE read(void *buffer, uint32 size) = 0;
-	virtual ERRORCODE close() = 0;
-	virtual ERRORCODE open(const Common::String &filename) = 0;
+	virtual bool seek(uint32 pos, int whence = SEEK_SET) = 0;
+	virtual bool read(void *buffer, uint32 size) = 0;
+	virtual bool close() = 0;
+	virtual bool open(const Common::String &filename) = 0;
 	virtual bool isEOF();
 	CBFile(CBGame *inGame);
 	virtual ~CBFile();

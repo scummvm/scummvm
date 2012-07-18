@@ -51,14 +51,14 @@ CAdScaleLevel::~CAdScaleLevel() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdScaleLevel::loadFile(const char *filename) {
+bool CAdScaleLevel::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdScaleLevel::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -80,7 +80,7 @@ TOKEN_DEF(SCALE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
+bool CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCALE_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -133,7 +133,7 @@ ERRORCODE CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdScaleLevel::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdScaleLevel::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SCALE_LEVEL {\n");
 	buffer->putTextIndent(indent + 2, "Y=%d\n", _posY);
 	buffer->putTextIndent(indent + 2, "SCALE=%d\n", (int)_scale);
@@ -145,7 +145,7 @@ ERRORCODE CAdScaleLevel::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdScaleLevel::persist(CBPersistMgr *persistMgr) {
+bool CAdScaleLevel::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 

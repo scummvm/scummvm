@@ -43,7 +43,7 @@ public:
 	int deleteChars(int start, int end);
 	bool _cursorVisible;
 	uint32 _lastBlinkTime;
-	virtual ERRORCODE display(int offsetX, int offsetY);
+	virtual bool display(int offsetX, int offsetY);
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	int _scrollOffset;
 	int _frameWidth;
@@ -56,14 +56,14 @@ public:
 	CUIEdit(CBGame *inGame);
 	virtual ~CUIEdit();
 
-	ERRORCODE loadFile(const char *filename);
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
-	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scSetProperty(const char *name, CScValue *value);
+	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

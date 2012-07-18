@@ -64,7 +64,7 @@ CUITiledImage::~CUITiledImage() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUITiledImage::display(int x, int y, int width, int height) {
+bool CUITiledImage::display(int x, int y, int width, int height) {
 	if (!_image) return STATUS_FAILED;
 
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
@@ -119,14 +119,14 @@ ERRORCODE CUITiledImage::display(int x, int y, int width, int height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUITiledImage::loadFile(const char *filename) {
+bool CUITiledImage::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -158,7 +158,7 @@ TOKEN_DEF(HORIZONTAL_TILES)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUITiledImage::loadBuffer(byte *buffer, bool complete) {
+bool CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TILED_IMAGE)
 	TOKEN_TABLE(TEMPLATE)
@@ -307,7 +307,7 @@ ERRORCODE CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TILED_IMAGE\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -350,7 +350,7 @@ void CUITiledImage::correctSize(int *width, int *height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUITiledImage::persist(CBPersistMgr *persistMgr) {
+bool CUITiledImage::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_downLeft));

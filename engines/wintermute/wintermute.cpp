@@ -205,7 +205,7 @@ int WinterMuteEngine::init() {
 	
 	
 	
-	ERRORCODE ret;
+	bool ret;
 	
 	// initialize the renderer
 	ret = _game->_renderer->initRenderer(_game->_settingsResWidth, _game->_settingsResHeight, windowedMode);

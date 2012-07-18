@@ -62,7 +62,7 @@ CUIText::~CUIText() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIText::display(int offsetX, int offsetY) {
+bool CUIText::display(int offsetX, int offsetY) {
 	if (!_visible) return STATUS_OK;
 
 
@@ -95,14 +95,14 @@ ERRORCODE CUIText::display(int offsetX, int offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIText::loadFile(const char *filename) {
+bool CUIText::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CUIText::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -138,7 +138,7 @@ TOKEN_DEF(PARENT_NOTIFY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIText::loadBuffer(byte *buffer, bool complete) {
+bool CUIText::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(STATIC)
 	TOKEN_TABLE(TEMPLATE)
@@ -293,7 +293,7 @@ ERRORCODE CUIText::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "STATIC\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -376,7 +376,7 @@ ERRORCODE CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SizeToFit
 	//////////////////////////////////////////////////////////////////////////
@@ -434,7 +434,7 @@ CScValue *CUIText::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIText::scSetProperty(const char *name, CScValue *value) {
+bool CUIText::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
@@ -467,7 +467,7 @@ const char *CUIText::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIText::persist(CBPersistMgr *persistMgr) {
+bool CUIText::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 	persistMgr->transfer(TMEMBER_INT(_textAlign));
@@ -478,7 +478,7 @@ ERRORCODE CUIText::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIText::sizeToFit() {
+bool CUIText::sizeToFit() {
 	if (_font && _text) {
 		_width = _font->getTextWidth((byte *)_text);
 		_height = _font->getTextHeight((byte *)_text, _width);

@@ -51,7 +51,7 @@ CBSaveThumbFile::~CBSaveThumbFile() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSaveThumbFile::open(const Common::String &filename) {
+bool CBSaveThumbFile::open(const Common::String &filename) {
 	close();
 
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) != 0) return STATUS_FAILED;
@@ -82,7 +82,7 @@ ERRORCODE CBSaveThumbFile::open(const Common::String &filename) {
 	}
 	_gameRef->_debugAbsolutePathWarning = true;
 
-	ERRORCODE res;
+	bool res;
 
 	if (pm->_thumbnailDataSize != 0) {
 		_data = new byte[pm->_thumbnailDataSize];
@@ -97,7 +97,7 @@ ERRORCODE CBSaveThumbFile::open(const Common::String &filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSaveThumbFile::close() {
+bool CBSaveThumbFile::close() {
 	delete[] _data;
 	_data = NULL;
 
@@ -109,7 +109,7 @@ ERRORCODE CBSaveThumbFile::close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSaveThumbFile::read(void *buffer, uint32 size) {
+bool CBSaveThumbFile::read(void *buffer, uint32 size) {
 	if (!_data || _pos + size > _size) return STATUS_FAILED;
 
 	memcpy(buffer, (byte *)_data + _pos, size);
@@ -120,7 +120,7 @@ ERRORCODE CBSaveThumbFile::read(void *buffer, uint32 size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSaveThumbFile::seek(uint32 pos, int whence) {
+bool CBSaveThumbFile::seek(uint32 pos, int whence) {
 	if (!_data) return STATUS_FAILED;
 
 	uint32 newPos = 0;

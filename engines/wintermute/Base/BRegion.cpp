@@ -95,14 +95,14 @@ bool CBRegion::pointInRegion(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRegion::loadFile(const char *filename) {
+bool CBRegion::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CBRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -128,7 +128,7 @@ TOKEN_DEF(EDITOR_SELECTED_POINT)
 TOKEN_DEF(PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRegion::loadBuffer(byte *buffer, bool complete) {
+bool CBRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -210,7 +210,7 @@ ERRORCODE CBRegion::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// AddPoint
@@ -350,7 +350,7 @@ CScValue *CBRegion::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRegion::scSetProperty(const char *name, CScValue *value) {
+bool CBRegion::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -378,7 +378,7 @@ const char *CBRegion::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride) {
+bool CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride) {
 	if (!nameOverride) buffer->putTextIndent(indent, "REGION {\n");
 	else buffer->putTextIndent(indent, "%s {\n", nameOverride);
 
@@ -406,7 +406,7 @@ ERRORCODE CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *name
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRegion::persist(CBPersistMgr *persistMgr) {
+bool CBRegion::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -465,7 +465,7 @@ bool CBRegion::ptInPolygon(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRegion::getBoundingRect(Rect32 *rect) {
+bool CBRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.getSize() == 0) CBPlatform::setRectEmpty(rect);
 	else {
 		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;
@@ -484,7 +484,7 @@ ERRORCODE CBRegion::getBoundingRect(Rect32 *rect) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRegion::mimic(CBRegion *region, float scale, int x, int y) {
+bool CBRegion::mimic(CBRegion *region, float scale, int x, int y) {
 	if (scale == _lastMimicScale && x == _lastMimicX && y == _lastMimicY) return STATUS_OK;
 
 	cleanup();

@@ -39,7 +39,7 @@
 
 namespace WinterMute {
 
-typedef void (*ENGINE_LOG_CALLBACK)(char *Text, ERRORCODE Result, void *Data);
+typedef void (*ENGINE_LOG_CALLBACK)(char *Text, bool Result, void *Data);
 
 class CBSoundMgr;
 class CBFader;
@@ -67,19 +67,19 @@ class CBGame: public CBObject {
 public:
 	DECLARE_PERSISTENT(CBGame, CBObject)
 
-	virtual ERRORCODE onScriptShutdown(CScScript *script);
+	virtual bool onScriptShutdown(CScScript *script);
 
-	virtual ERRORCODE onActivate(bool activate, bool refreshMouse);
-	virtual ERRORCODE onMouseLeftDown();
-	virtual ERRORCODE onMouseLeftUp();
-	virtual ERRORCODE onMouseLeftDblClick();
-	virtual ERRORCODE onMouseRightDblClick();
-	virtual ERRORCODE onMouseRightDown();
-	virtual ERRORCODE onMouseRightUp();
-	virtual ERRORCODE onMouseMiddleDown();
-	virtual ERRORCODE onMouseMiddleUp();
-	virtual ERRORCODE onPaint();
-	virtual ERRORCODE onWindowClose();
+	virtual bool onActivate(bool activate, bool refreshMouse);
+	virtual bool onMouseLeftDown();
+	virtual bool onMouseLeftUp();
+	virtual bool onMouseLeftDblClick();
+	virtual bool onMouseRightDblClick();
+	virtual bool onMouseRightDown();
+	virtual bool onMouseRightUp();
+	virtual bool onMouseMiddleDown();
+	virtual bool onMouseMiddleUp();
+	virtual bool onPaint();
+	virtual bool onWindowClose();
 
 	bool isLeftDoubleClick();
 	bool isRightDoubleClick();
@@ -89,14 +89,14 @@ public:
 	uint32 _lastMiniUpdate;
 	bool _miniUpdateEnabled;
 
-	virtual ERRORCODE miniUpdate();
+	virtual bool miniUpdate();
 
 	void getMousePos(Point32 *Pos);
 	Rect32 _mouseLockRect;
 
 	bool _shuttingDown;
 
-	virtual ERRORCODE displayDebugInfo();
+	virtual bool displayDebugInfo();
 	bool _debugShowFPS;
 
 	bool _suspendedRendering;
@@ -110,10 +110,10 @@ public:
 	int _loadingIconY;
 	int _loadingIconPersistent;
 
-	virtual ERRORCODE resetContent();
+	virtual bool resetContent();
 
 	void DEBUG_DumpClassRegistry();
-	ERRORCODE setWaitCursor(const char *filename);
+	bool setWaitCursor(const char *filename);
 	char *_localSaveDir;
 	bool _saveDirChecked;
 
@@ -137,7 +137,7 @@ protected:
 	int _loadImageY;
 
 	CBSurface *_saveLoadImage;
-	ERRORCODE displayIndicator();
+	bool displayIndicator();
 
 	bool _reportTextureFormat;
 public:
@@ -159,20 +159,20 @@ public:
 	float _offsetPercentY;
 	CBObject *_mainObject;
 
-	ERRORCODE initInput();
-	ERRORCODE initLoop();
+	bool initInput();
+	bool initLoop();
 	uint32 _currentTime;
 	uint32 _deltaTime;
 	CBFont *_systemFont;
 	CBFont *_videoFont;
-	ERRORCODE initialize1();
-	ERRORCODE initialize2();
-	ERRORCODE initialize3();
+	bool initialize1();
+	bool initialize2();
+	bool initialize3();
 	CBFileManager *_fileManager;
 	CBTransitionMgr *_transMgr;
 	CBDebugger *getDebugMgr();
 
-	void LOG(ERRORCODE res, const char *fmt, ...);
+	void LOG(bool res, const char *fmt, ...);
 
 	CBRenderer *_renderer;
 	CBSoundMgr *_soundMgr;
@@ -190,8 +190,8 @@ public:
 
 	void *_debugLogFile;
 	int _sequence;
-	virtual ERRORCODE loadFile(const char *filename);
-	virtual ERRORCODE loadBuffer(byte *buffer, bool complete = true);
+	virtual bool loadFile(const char *filename);
+	virtual bool loadBuffer(byte *buffer, bool complete = true);
 	CBArray<CBQuickMsg *, CBQuickMsg *> _quickMessages;
 	CBArray<CUIWindow *, CUIWindow *> _windows;
 	CBArray<CBViewport *, CBViewport *> _viewportStack;
@@ -216,14 +216,14 @@ protected:
 	bool _settingsAllowDesktopRes;
 	int _settingsTLMode;
 	CBFader *_fader;
-	virtual ERRORCODE invalidateDeviceObjects();
-	virtual ERRORCODE restoreDeviceObjects();
+	virtual bool invalidateDeviceObjects();
+	virtual bool restoreDeviceObjects();
 public:
-	virtual ERRORCODE ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
+	virtual bool ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
-	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scSetProperty(const char *name, CScValue *value);
+	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	// compatibility bits
 	bool _compatKillMethodThreads;
@@ -244,23 +244,23 @@ public:
 	int _scheduledLoadSlot;
 	bool _loading;
 	bool _personalizedSave;
-	ERRORCODE emptySaveSlot(int slot);
+	bool emptySaveSlot(int slot);
 	bool isSaveSlotUsed(int slot);
-	ERRORCODE getSaveSlotDescription(int slot, char *buffer);
-	ERRORCODE getSaveSlotFilename(int slot, char *buffer);
+	bool getSaveSlotDescription(int slot, char *buffer);
+	bool getSaveSlotFilename(int slot, char *buffer);
 	void setWindowTitle();
 	virtual bool handleMouseWheel(int delta);
 	bool _quitting;
-	virtual ERRORCODE getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
+	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
 
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual void handleKeyRelease(Common::Event *event);
 protected:
 	int _freezeLevel;
 public:
-	ERRORCODE unfreeze();
-	ERRORCODE freeze(bool includingMusic = true);
-	ERRORCODE focusWindow(CUIWindow *window);
+	bool unfreeze();
+	bool freeze(bool includingMusic = true);
+	bool focusWindow(CUIWindow *window);
 	CVidPlayer *_videoPlayer;
 	CVidTheoraPlayer *_theoraPlayer;
 	bool _loadInProgress;
@@ -275,12 +275,12 @@ protected:
 public:
 	static void invalidateValues(void *value, void *data);
 
-	ERRORCODE loadSettings(const char *filename);
-	ERRORCODE resumeMusic(int channel);
-	ERRORCODE setMusicStartTime(int channel, uint32 time);
-	ERRORCODE pauseMusic(int channel);
-	ERRORCODE stopMusic(int channel);
-	ERRORCODE playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
+	bool loadSettings(const char *filename);
+	bool resumeMusic(int channel);
+	bool setMusicStartTime(int channel, uint32 time);
+	bool pauseMusic(int channel);
+	bool stopMusic(int channel);
+	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
 	CBSound *_music[NUM_MUSIC_CHANNELS];
 	bool _musicCrossfadeRunning;
 	bool _musicCrossfadeSwap;
@@ -288,14 +288,14 @@ public:
 	uint32 _musicCrossfadeLength;
 	int _musicCrossfadeChannel1;
 	int _musicCrossfadeChannel2;
-	ERRORCODE displayWindows(bool inGame = false);
+	bool displayWindows(bool inGame = false);
 	CBRegistry *_registry;
 	bool _useD3D;
-	virtual ERRORCODE cleanup();
-	virtual ERRORCODE loadGame(int slot);
-	virtual ERRORCODE loadGame(const char *filename);
-	virtual ERRORCODE SaveGame(int slot, const char *desc, bool quickSave = false);
-	virtual ERRORCODE showCursor();
+	virtual bool cleanup();
+	virtual bool loadGame(int slot);
+	virtual bool loadGame(const char *filename);
+	virtual bool SaveGame(int slot, const char *desc, bool quickSave = false);
+	virtual bool showCursor();
 
 	CBSprite *_cursorNoninteractive;
 	CBObject *_activeObject;
@@ -315,36 +315,36 @@ public:
 	CBObject *_capturedObject;
 	Point32 _mousePos;
 	bool validObject(CBObject *object);
-	ERRORCODE unregisterObject(CBObject *object);
-	ERRORCODE registerObject(CBObject *object);
+	bool unregisterObject(CBObject *object);
+	bool registerObject(CBObject *object);
 	void quickMessage(const char *text);
 	void quickMessageForm(char *fmt, ...);
-	ERRORCODE displayQuickMsg();
+	bool displayQuickMsg();
 	uint32 _fps;
-	ERRORCODE updateMusicCrossfade();
+	bool updateMusicCrossfade();
 
 	bool isVideoPlaying();
-	ERRORCODE stopVideo();
+	bool stopVideo();
 
 	CBArray<CBObject *, CBObject *> _regObjects;
 public:
-	virtual ERRORCODE displayContent(bool update = true, bool displayAll = false);
-	virtual ERRORCODE displayContentSimple();
+	virtual bool displayContent(bool update = true, bool displayAll = false);
+	virtual bool displayContentSimple();
 	bool _forceNonStreamedSounds;
 	void resetMousePos();
 	int _subtitlesSpeed;
 	void setInteractive(bool state);
-	virtual ERRORCODE windowLoadHook(CUIWindow *win, char **buf, char **params);
-	virtual ERRORCODE windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
-	ERRORCODE getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
-	ERRORCODE getCurrentViewportRect(Rect32 *rect, bool *custom = NULL);
-	ERRORCODE popViewport();
-	ERRORCODE pushViewport(CBViewport *Viewport);
-	ERRORCODE setActiveObject(CBObject *Obj);
+	virtual bool windowLoadHook(CUIWindow *win, char **buf, char **params);
+	virtual bool windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
+	bool getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
+	bool getCurrentViewportRect(Rect32 *rect, bool *custom = NULL);
+	bool popViewport();
+	bool pushViewport(CBViewport *Viewport);
+	bool setActiveObject(CBObject *Obj);
 	CBSprite *_lastCursor;
-	ERRORCODE drawCursor(CBSprite *Cursor);
+	bool drawCursor(CBSprite *Cursor);
 
-	virtual ERRORCODE initAfterLoad();
+	virtual bool initAfterLoad();
 	CBSaveThumbHelper *_cachedThumbnail;
 	AnsiString getDataDir();
 	void addMem(int bytes);

@@ -49,33 +49,33 @@ public:
 	virtual ~CBSoundBuffer();
 
 
-	ERRORCODE pause();
-	ERRORCODE play(bool looping = false, uint32 startSample = 0);
-	ERRORCODE resume();
-	ERRORCODE stop();
+	bool pause();
+	bool play(bool looping = false, uint32 startSample = 0);
+	bool resume();
+	bool stop();
 	bool isPlaying();
 
 	void setLooping(bool looping);
 
 	uint32 getPosition();
-	ERRORCODE setPosition(uint32 pos);
+	bool setPosition(uint32 pos);
 	uint32 getLength();
 
-	ERRORCODE setLoopStart(uint32 pos);
+	bool setLoopStart(uint32 pos);
 	uint32 getLoopStart() const {
 		return _loopStart;
 	}
 
-	ERRORCODE setPan(float pan);
-	ERRORCODE setPrivateVolume(int colume);
-	ERRORCODE setVolume(int colume);
+	bool setPan(float pan);
+	bool setPrivateVolume(int colume);
+	bool setVolume(int colume);
 	void updateVolume();
 
 	void setType(Audio::Mixer::SoundType Type);
 
-	ERRORCODE loadFromFile(const char *filename, bool forceReload = false);
+	bool loadFromFile(const char *filename, bool forceReload = false);
 	void setStreaming(bool streamed, uint32 numBlocks = 0, uint32 blockSize = 0);
-	ERRORCODE applyFX(TSFXType type, float param1, float param2, float param3, float param4);
+	bool applyFX(TSFXType type, float param1, float param2, float param3, float param4);
 
 	//HSTREAM _stream;
 	//HSYNC _sync;

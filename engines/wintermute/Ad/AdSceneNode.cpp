@@ -53,7 +53,7 @@ CAdSceneNode::~CAdSceneNode() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSceneNode::setEntity(CAdEntity *entity) {
+bool CAdSceneNode::setEntity(CAdEntity *entity) {
 	_type = OBJECT_ENTITY;
 	_entity = entity;
 	return _gameRef->registerObject(entity);
@@ -61,7 +61,7 @@ ERRORCODE CAdSceneNode::setEntity(CAdEntity *entity) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSceneNode::setRegion(CAdRegion *region) {
+bool CAdSceneNode::setRegion(CAdRegion *region) {
 	_type = OBJECT_REGION;
 	_region = region;
 	return _gameRef->registerObject(region);
@@ -69,7 +69,7 @@ ERRORCODE CAdSceneNode::setRegion(CAdRegion *region) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSceneNode::persist(CBPersistMgr *persistMgr) {
+bool CAdSceneNode::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 

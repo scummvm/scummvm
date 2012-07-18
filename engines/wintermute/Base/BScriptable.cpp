@@ -61,7 +61,7 @@ CBScriptable::~CBScriptable() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	/*
 	stack->correctParams(0);
 	stack->pushNULL();
@@ -82,7 +82,7 @@ CScValue *CBScriptable::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptable::scSetProperty(const char *name, CScValue *value) {
+bool CBScriptable::scSetProperty(const char *name, CScValue *value) {
 	if (!_scProp) _scProp = new CScValue(_gameRef);
 	if (_scProp) return _scProp->setProp(name, value);
 	else return STATUS_FAILED;
@@ -139,7 +139,7 @@ void CBScriptable::scSetBool(bool val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBScriptable::persist(CBPersistMgr *persistMgr) {
+bool CBScriptable::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_refCount));
 	persistMgr->transfer(TMEMBER(_scProp));

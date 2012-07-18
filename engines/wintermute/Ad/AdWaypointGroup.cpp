@@ -64,14 +64,14 @@ void CAdWaypointGroup::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdWaypointGroup::loadFile(const char *filename) {
+bool CAdWaypointGroup::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdWaypointGroup::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -96,7 +96,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
+bool CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WAYPOINTS)
 	TOKEN_TABLE(TEMPLATE)
@@ -164,7 +164,7 @@ ERRORCODE CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WAYPOINTS {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
@@ -185,7 +185,7 @@ ERRORCODE CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
+bool CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -225,7 +225,7 @@ CScValue *CAdWaypointGroup::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
+bool CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
@@ -239,7 +239,7 @@ ERRORCODE CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdWaypointGroup::mimic(CAdWaypointGroup *wpt, float scale, int argX, int argY) {
+bool CAdWaypointGroup::mimic(CAdWaypointGroup *wpt, float scale, int argX, int argY) {
 	if (scale == _lastMimicScale && argX == _lastMimicX && argY == _lastMimicY) return STATUS_OK;
 
 	cleanup();

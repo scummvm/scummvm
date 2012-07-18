@@ -44,56 +44,56 @@ class CAdResponseContext;
 class CAdResponseBox;
 class CAdGame : public CBGame {
 public:
-	virtual ERRORCODE onScriptShutdown(CScScript *script);
+	virtual bool onScriptShutdown(CScScript *script);
 
-	virtual ERRORCODE onMouseLeftDown();
-	virtual ERRORCODE onMouseLeftUp();
-	virtual ERRORCODE onMouseLeftDblClick();
-	virtual ERRORCODE onMouseRightDown();
-	virtual ERRORCODE onMouseRightUp();
+	virtual bool onMouseLeftDown();
+	virtual bool onMouseLeftUp();
+	virtual bool onMouseLeftDblClick();
+	virtual bool onMouseRightDown();
+	virtual bool onMouseRightUp();
 
-	virtual ERRORCODE displayDebugInfo();
+	virtual bool displayDebugInfo();
 
 
-	virtual ERRORCODE initAfterLoad();
+	virtual bool initAfterLoad();
 	static void afterLoadScene(void *scene, void *data);
 
 	bool _smartItemCursor;
 
 	CBArray<char *, char *> _speechDirs;
-	ERRORCODE addSpeechDir(const char *dir);
-	ERRORCODE removeSpeechDir(const char *dir);
+	bool addSpeechDir(const char *dir);
+	bool removeSpeechDir(const char *dir);
 	char *findSpeechFile(char *StringID);
 
-	ERRORCODE deleteItem(CAdItem *Item);
+	bool deleteItem(CAdItem *Item);
 	char *_itemsFile;
 	bool _tempDisableSaveState;
-	virtual ERRORCODE resetContent();
-	ERRORCODE addItem(CAdItem *item);
+	virtual bool resetContent();
+	bool addItem(CAdItem *item);
 	CAdItem *getItemByName(const char *name);
 	CBArray<CAdItem *, CAdItem *> _items;
 	CAdObject *_inventoryOwner;
 	bool isItemTaken(char *itemName);
-	ERRORCODE registerInventory(CAdInventory *inv);
-	ERRORCODE unregisterInventory(CAdInventory *inv);
+	bool registerInventory(CAdInventory *inv);
+	bool unregisterInventory(CAdInventory *inv);
 
 	CAdObject *_invObject;
 	CBArray<CAdInventory *, CAdInventory *> _inventories;
-	virtual ERRORCODE displayContent(bool update = true, bool displayAll = false);
+	virtual bool displayContent(bool update = true, bool displayAll = false);
 	char *_debugStartupScene;
 	char *_startupScene;
 	bool _initialScene;
 	bool gameResponseUsed(int ID);
-	ERRORCODE addGameResponse(int ID);
-	ERRORCODE resetResponse(int ID);
+	bool addGameResponse(int ID);
+	bool resetResponse(int ID);
 
 	bool branchResponseUsed(int ID);
-	ERRORCODE addBranchResponse(int ID);
-	ERRORCODE clearBranchResponses(char *name);
-	ERRORCODE startDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
-	ERRORCODE endDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
-	virtual ERRORCODE windowLoadHook(CUIWindow *win, char **buf, char **params);
-	virtual ERRORCODE windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
+	bool addBranchResponse(int ID);
+	bool clearBranchResponses(char *name);
+	bool startDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
+	bool endDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
+	virtual bool windowLoadHook(CUIWindow *win, char **buf, char **params);
+	virtual bool windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
 
 	CAdSceneState *getSceneState(const char *filename, bool saving);
 	CBViewport *_sceneViewport;
@@ -104,31 +104,31 @@ public:
 
 	TTalkSkipButton _talkSkipButton;
 
-	virtual ERRORCODE getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
-	ERRORCODE scheduleChangeScene(const char *filename, bool fadeIn);
+	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
+	bool scheduleChangeScene(const char *filename, bool fadeIn);
 	char *_scheduledScene;
 	bool _scheduledFadeIn;
 	void setPrevSceneName(const char *name);
 	void setPrevSceneFilename(const char *name);
 	char *_prevSceneName;
 	char *_prevSceneFilename;
-	virtual ERRORCODE loadGame(const char *filename);
+	virtual bool loadGame(const char *filename);
 	CAdItem *_selectedItem;
-	ERRORCODE cleanup();
+	bool cleanup();
 	DECLARE_PERSISTENT(CAdGame, CBGame)
 
 	void finishSentences();
-	ERRORCODE showCursor();
+	bool showCursor();
 	TGameStateEx _stateEx;
 	CAdResponseBox *_responseBox;
 	CAdInventoryBox *_inventoryBox;
-	ERRORCODE displaySentences(bool frozen);
+	bool displaySentences(bool frozen);
 	void addSentence(CAdSentence *sentence);
-	ERRORCODE changeScene(const char *filename, bool fadeIn);
-	ERRORCODE removeObject(CAdObject *object);
-	ERRORCODE addObject(CAdObject *object);
+	bool changeScene(const char *filename, bool fadeIn);
+	bool removeObject(CAdObject *object);
+	bool addObject(CAdObject *object);
 	CAdScene *_scene;
-	ERRORCODE initLoop();
+	bool initLoop();
 	CAdGame();
 	virtual ~CAdGame();
 	CBArray<CAdObject *, CAdObject *> _objects;
@@ -140,19 +140,19 @@ public:
 	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesBranch;
 	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesGame;
 
-	virtual ERRORCODE loadFile(const char *filename);
-	virtual ERRORCODE loadBuffer(byte *buffer, bool complete = true);
+	virtual bool loadFile(const char *filename);
+	virtual bool loadBuffer(byte *buffer, bool complete = true);
 
-	ERRORCODE loadItemsFile(const char *filename, bool merge = false);
-	ERRORCODE loadItemsBuffer(byte *buffer, bool merge = false);
+	bool loadItemsFile(const char *filename, bool merge = false);
+	bool loadItemsBuffer(byte *buffer, bool merge = false);
 
 
-	virtual ERRORCODE ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
+	virtual bool ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
-	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scSetProperty(const char *name, CScValue *value);
+	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	bool validMouse();
 };
 

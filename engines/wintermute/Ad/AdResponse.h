@@ -38,10 +38,10 @@ class CBFont;
 class CAdResponse : public CBObject {
 public:
 	DECLARE_PERSISTENT(CAdResponse, CBObject)
-	ERRORCODE setIcon(const char *filename);
-	ERRORCODE setFont(const char *filename);
-	ERRORCODE setIconHover(const char *filename);
-	ERRORCODE setIconPressed(const char *filename);
+	bool setIcon(const char *filename);
+	bool setFont(const char *filename);
+	bool setIconHover(const char *filename);
+	bool setIconPressed(const char *filename);
 	void setText(const char *text);
 	int _iD;
 	CBSprite *_icon;

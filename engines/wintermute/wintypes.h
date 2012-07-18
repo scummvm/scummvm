@@ -41,10 +41,8 @@ namespace WinterMute {
 #define RGBCOLGetR(rgb)  ((byte )((rgb)>>16))
 #define RGBCOLGetA(rgb)  ((byte )((rgb)>>24))
 
-typedef bool ERRORCODE;
-
-#define DID_SUCCEED(hr) ((ERRORCODE)(hr))
-#define DID_FAIL(hr) (!((ERRORCODE)(hr)))
+#define DID_SUCCEED(hr) ((bool)(hr))
+#define DID_FAIL(hr) (!((bool)(hr)))
 
 #define STATUS_OK		(true)
 #define STATUS_FAILED	(false)

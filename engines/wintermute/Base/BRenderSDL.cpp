@@ -121,7 +121,7 @@ CBRenderSDL::~CBRenderSDL() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderSDL::initRenderer(int width, int height, bool windowed) {
+bool CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 	//if (SDL_Init(SDL_INIT_VIDEO) < 0) return STATUS_FAILED;
 
 #if 0
@@ -250,7 +250,7 @@ void CBRenderSDL::setColorMod(byte r, byte g, byte b) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderSDL::flip() {
+bool CBRenderSDL::flip() {
 	if (!_disableDirtyRects) {
 		drawTickets();
 	}
@@ -270,7 +270,7 @@ ERRORCODE CBRenderSDL::flip() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderSDL::fill(byte r, byte g, byte b, Common::Rect *rect) {
+bool CBRenderSDL::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, 0xFF);
 	//SDL_RenderClear(_renderer);
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
@@ -285,14 +285,14 @@ ERRORCODE CBRenderSDL::fill(byte r, byte g, byte b, Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderSDL::fade(uint16 Alpha) {
+bool CBRenderSDL::fade(uint16 Alpha) {
 	uint32 dwAlpha = 255 - Alpha;
 	return fadeToColor(dwAlpha << 24);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
+bool CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
@@ -519,7 +519,7 @@ void CBRenderSDL::drawFromSurface(const Graphics::Surface *surf, Common::Rect *s
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderSDL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+bool CBRenderSDL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	static bool hasWarned = false;
 	if (!hasWarned) {
 		warning("CBRenderSDL::DrawLine - not fully ported yet");
@@ -582,7 +582,7 @@ CBImage *CBRenderSDL::takeScreenshot() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderSDL::switchFullscreen() {
+bool CBRenderSDL::switchFullscreen() {
 	/*if (_windowed) SDL_SetWindowFullscreen(_win, SDL_TRUE);
 	else SDL_SetWindowFullscreen(_win, SDL_FALSE);
 
@@ -608,7 +608,7 @@ const char *CBRenderSDL::getName() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderSDL::setViewport(int left, int top, int right, int bottom) {
+bool CBRenderSDL::setViewport(int left, int top, int right, int bottom) {
 	Common::Rect rect;
 	// TODO: Hopefully this is the same logic that ScummVM uses.
 	rect.left = (int16)(left + _borderLeft);

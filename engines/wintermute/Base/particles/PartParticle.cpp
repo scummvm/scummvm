@@ -72,7 +72,7 @@ CPartParticle::~CPartParticle(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartParticle::setSprite(const char *filename) {
+bool CPartParticle::setSprite(const char *filename) {
 	if (_sprite && _sprite->_filename && scumm_stricmp(filename, _sprite->_filename) == 0) {
 		_sprite->reset();
 		return STATUS_OK;
@@ -96,7 +96,7 @@ ERRORCODE CPartParticle::setSprite(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta) {
+bool CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta) {
 	if (_state == PARTICLE_FADEIN) {
 		if (currentTime - _fadeStart >= (uint32)_fadeTime) {
 			_state = PARTICLE_NORMAL;
@@ -182,7 +182,7 @@ ERRORCODE CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint3
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartParticle::display(CPartEmitter *emitter) {
+bool CPartParticle::display(CPartEmitter *emitter) {
 	if (!_sprite) return STATUS_FAILED;
 	if (_isDead) return STATUS_OK;
 
@@ -197,7 +197,7 @@ ERRORCODE CPartParticle::display(CPartEmitter *emitter) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartParticle::fadeIn(uint32 currentTime, int fadeTime) {
+bool CPartParticle::fadeIn(uint32 currentTime, int fadeTime) {
 	_currentAlpha = 0;
 	_fadeStart = currentTime;
 	_fadeTime = fadeTime;
@@ -207,7 +207,7 @@ ERRORCODE CPartParticle::fadeIn(uint32 currentTime, int fadeTime) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartParticle::fadeOut(uint32 currentTime, int fadeTime) {
+bool CPartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 	//_currentAlpha = 255;
 	_fadeStartAlpha = _currentAlpha;
 	_fadeStart = currentTime;
@@ -218,7 +218,7 @@ ERRORCODE CPartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartParticle::persist(CBPersistMgr *persistMgr) {
+bool CPartParticle::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha1));
 	persistMgr->transfer(TMEMBER(_alpha2));
 	persistMgr->transfer(TMEMBER(_border));

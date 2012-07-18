@@ -73,7 +73,7 @@ void CBKeyboardState::handleKeyRelease(Common::Event *event) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBKeyboardState::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CBKeyboardState::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsKeyDown
 	//////////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ CScValue *CBKeyboardState::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBKeyboardState::scSetProperty(const char *name, CScValue *value) {
+bool CBKeyboardState::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -195,7 +195,7 @@ const char *CBKeyboardState::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBKeyboardState::readKey(Common::Event *event) {
+bool CBKeyboardState::readKey(Common::Event *event) {
 	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
 	_currentCharCode = keyCodeToVKey(event);
 	if ((_currentCharCode <= Common::KEYCODE_z && _currentCharCode >= Common::KEYCODE_a) ||
@@ -215,7 +215,7 @@ ERRORCODE CBKeyboardState::readKey(Common::Event *event) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBKeyboardState::persist(CBPersistMgr *persistMgr) {
+bool CBKeyboardState::persist(CBPersistMgr *persistMgr) {
 	//if(!persistMgr->_saving) cleanup();
 	CBScriptable::persist(persistMgr);
 

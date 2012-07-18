@@ -84,14 +84,14 @@ CAdItem::~CAdItem() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdItem::loadFile(const char *filename) {
+bool CAdItem::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdItem::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -134,7 +134,7 @@ TOKEN_DEF(AMOUNT_STRING)
 TOKEN_DEF(AMOUNT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
+bool CAdItem::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
 	TOKEN_TABLE(TEMPLATE)
@@ -319,7 +319,7 @@ ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdItem::update() {
+bool CAdItem::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY && _animSprite) {
@@ -386,7 +386,7 @@ ERRORCODE CAdItem::update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdItem::display(int x, int y) {
+bool CAdItem::display(int x, int y) {
 	int width = 0;
 	if (_currentSprite) {
 		Rect32 rc;
@@ -397,7 +397,7 @@ ERRORCODE CAdItem::display(int x, int y) {
 	_posX = x + width / 2;
 	_posY = y;
 
-	ERRORCODE ret;
+	bool ret;
 	if (_currentSprite)
 		ret = _currentSprite->draw(x, y, this, 100, 100, _alphaColor);
 	else ret = STATUS_OK;
@@ -430,7 +430,7 @@ ERRORCODE CAdItem::display(int x, int y) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverSprite
 	//////////////////////////////////////////////////////////////////////////
@@ -649,7 +649,7 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdItem::scSetProperty(const char *name, CScValue *value) {
+bool CAdItem::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -730,7 +730,7 @@ const char *CAdItem::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdItem::persist(CBPersistMgr *persistMgr) {
+bool CAdItem::persist(CBPersistMgr *persistMgr) {
 
 	CAdTalkHolder::persist(persistMgr);
 

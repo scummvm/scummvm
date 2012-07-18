@@ -116,7 +116,7 @@ CPartEmitter::~CPartEmitter(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::addSprite(const char *filename) {
+bool CPartEmitter::addSprite(const char *filename) {
 	if (!filename) return STATUS_FAILED;
 
 	// do we already have the file?
@@ -139,7 +139,7 @@ ERRORCODE CPartEmitter::addSprite(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::removeSprite(const char *filename) {
+bool CPartEmitter::removeSprite(const char *filename) {
 	for (int i = 0; i < _sprites.getSize(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			delete [] _sprites[i];
@@ -151,7 +151,7 @@ ERRORCODE CPartEmitter::removeSprite(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta) {
+bool CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta) {
 	if (!particle) return STATUS_FAILED;
 	if (_sprites.getSize() == 0) return STATUS_FAILED;
 
@@ -226,13 +226,13 @@ ERRORCODE CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::update() {
+bool CPartEmitter::update() {
 	if (!_running) return STATUS_OK;
 	else return updateInternal(_gameRef->_timer, _gameRef->_timerDelta);
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
+bool CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	int numLive = 0;
 
 	for (int i = 0; i < _particles.getSize(); i++) {
@@ -288,7 +288,7 @@ ERRORCODE CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::display(CBRegion *region) {
+bool CPartEmitter::display(CBRegion *region) {
 	if (_sprites.getSize() <= 1) _gameRef->_renderer->startSpriteBatch();
 
 	for (int i = 0; i < _particles.getSize(); i++) {
@@ -305,7 +305,7 @@ ERRORCODE CPartEmitter::display(CBRegion *region) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::start() {
+bool CPartEmitter::start() {
 	for (int i = 0; i < _particles.getSize(); i++) {
 		_particles[i]->_isDead = true;
 	}
@@ -329,7 +329,7 @@ ERRORCODE CPartEmitter::start() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::sortParticlesByZ() {
+bool CPartEmitter::sortParticlesByZ() {
 	// sort particles by _posY
 	qsort(_particles.getData(), _particles.getSize(), sizeof(CPartParticle *), CPartEmitter::compareZ);
 	return STATUS_OK;
@@ -346,14 +346,14 @@ int CPartEmitter::compareZ(const void *obj1, const void *obj2) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::setBorder(int x, int y, int width, int height) {
+bool CPartEmitter::setBorder(int x, int y, int width, int height) {
 	CBPlatform::setRect(&_border, x, y, x + width, y + height);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom) {
+bool CPartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom) {
 	_borderThicknessLeft = thicknessLeft;
 	_borderThicknessRight = thicknessRight;
 	_borderThicknessTop = thicknessTop;
@@ -384,7 +384,7 @@ CPartForce *CPartEmitter::addForceByName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength) {
+bool CPartEmitter::addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength) {
 	CPartForce *force = addForceByName(name);
 	if (!force) return STATUS_FAILED;
 
@@ -400,7 +400,7 @@ ERRORCODE CPartEmitter::addForce(const char *name, CPartForce::TForceType type, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::removeForce(const char *name) {
+bool CPartEmitter::removeForce(const char *name) {
 	for (int i = 0; i < _forces.getSize(); i++) {
 		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
 			delete _forces[i];
@@ -415,7 +415,7 @@ ERRORCODE CPartEmitter::removeForce(const char *name) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetBorder
 	//////////////////////////////////////////////////////////////////////////
@@ -833,7 +833,7 @@ CScValue *CPartEmitter::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::scSetProperty(const char *name, CScValue *value) {
+bool CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
@@ -1098,7 +1098,7 @@ const char *CPartEmitter::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CPartEmitter::persist(CBPersistMgr *persistMgr) {
+bool CPartEmitter::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_width));

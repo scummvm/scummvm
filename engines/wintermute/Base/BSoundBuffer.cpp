@@ -94,7 +94,7 @@ void CBSoundBuffer::setStreaming(bool Streamed, uint32 NumBlocks, uint32 BlockSi
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
+bool CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	warning("BSoundBuffer::LoadFromFile(%s,%d)", filename, forceReload);
 #if 0
 	if (_stream) {
@@ -151,7 +151,7 @@ ERRORCODE CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	CBUtils::setString(&_filename, filename);
 
 	/*
-	ERRORCODE res;
+	bool res;
 	bool NewlyCreated = false;
 
 	if(!_soundBuffer || ForceReload || _streamed){
@@ -196,7 +196,7 @@ ERRORCODE CBSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::play(bool looping, uint32 startSample) {
+bool CBSoundBuffer::play(bool looping, uint32 startSample) {
 	if (startSample != 0) {
 		warning("BSoundBuffer::Play - Should start playback at %d, but currently we don't", startSample);
 	}
@@ -233,7 +233,7 @@ void CBSoundBuffer::setLooping(bool looping) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::resume() {
+bool CBSoundBuffer::resume() {
 	if (_stream && _handle) {
 		g_system->getMixer()->pauseHandle(*_handle, false);
 	}
@@ -242,7 +242,7 @@ ERRORCODE CBSoundBuffer::resume() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::stop() {
+bool CBSoundBuffer::stop() {
 	if (_stream && _handle) {
 		g_system->getMixer()->stopHandle(*_handle);
 	}
@@ -251,7 +251,7 @@ ERRORCODE CBSoundBuffer::stop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::pause() {
+bool CBSoundBuffer::pause() {
 	if (_stream && _handle) {
 		g_system->getMixer()->pauseHandle(*_handle, true);
 	}
@@ -280,7 +280,7 @@ void CBSoundBuffer::updateVolume() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::setVolume(int volume) {
+bool CBSoundBuffer::setVolume(int volume) {
 	_volume = volume * _gameRef->_soundMgr->getMasterVolume() / 255;
 	if (_stream && _handle) {
 		byte vol = (byte)(_volume);
@@ -291,7 +291,7 @@ ERRORCODE CBSoundBuffer::setVolume(int volume) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::setPrivateVolume(int volume) {
+bool CBSoundBuffer::setPrivateVolume(int volume) {
 	_privateVolume = volume;
 	return setVolume(_privateVolume);
 }
@@ -318,7 +318,7 @@ uint32 CBSoundBuffer::getPosition() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::setPosition(uint32 pos) {
+bool CBSoundBuffer::setPosition(uint32 pos) {
 	warning("CBSoundBuffer::SetPosition - not implemented yet");
 #if 0
 	if (_stream) {
@@ -330,7 +330,7 @@ ERRORCODE CBSoundBuffer::setPosition(uint32 pos) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::setLoopStart(uint32 pos) {
+bool CBSoundBuffer::setLoopStart(uint32 pos) {
 	_loopStart = pos;
 #if 0
 	if (_stream) {
@@ -357,7 +357,7 @@ void CBSoundBuffer::LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void
 }
 #endif
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::setPan(float pan) {
+bool CBSoundBuffer::setPan(float pan) {
 	if (_handle) {
 		g_system->getMixer()->setChannelBalance(*_handle, (int8)(pan * 127));
 	}
@@ -365,7 +365,7 @@ ERRORCODE CBSoundBuffer::setPan(float pan) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundBuffer::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
+bool CBSoundBuffer::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	warning("CBSoundBuffer::ApplyFX - not implemented yet");
 	switch (type) {
 	case SFX_ECHO:

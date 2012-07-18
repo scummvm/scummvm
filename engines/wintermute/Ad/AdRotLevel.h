@@ -39,9 +39,9 @@ public:
 	CAdRotLevel(CBGame *inGame);
 	virtual ~CAdRotLevel();
 	float _rotation;
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
-	ERRORCODE loadFile(const char *filename);
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
 };
 
 } // end of namespace WinterMute

@@ -50,7 +50,7 @@ CBStringTable::~CBStringTable() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
+bool CBStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
 	if (key == NULL || val == NULL) return STATUS_FAILED;
 
 	if (scumm_stricmp(key, "@right-to-left") == 0) {
@@ -169,7 +169,7 @@ const char *CBStringTable::expandStatic(const char *string, bool forceExpand) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBStringTable::loadFile(const char *filename, bool clearOld) {
+bool CBStringTable::loadFile(const char *filename, bool clearOld) {
 	_gameRef->LOG(0, "Loading string table...");
 
 	if (clearOld) _strings.clear();

@@ -102,7 +102,7 @@ void CBSprite::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSprite::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
+bool CBSprite::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
 	GetCurrentFrame(zoomX, zoomY);
 	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) return STATUS_OK;
 
@@ -122,7 +122,7 @@ ERRORCODE CBSprite::draw(int x, int y, CBObject *registerOwner, float zoomX, flo
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
+bool CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(filename);
 	if (!file) {
 		_gameRef->LOG(0, "CBSprite::LoadFile failed for file '%s'", filename);
@@ -133,7 +133,7 @@ ERRORCODE CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheTyp
 		file = NULL;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	AnsiString ext = PathUtil::getExtension(filename);
 	if (StringUtil::startsWith(filename, "savegame:", true) || StringUtil::compareNoCase(ext, "bmp") || StringUtil::compareNoCase(ext, "tga") || StringUtil::compareNoCase(ext, "png") || StringUtil::compareNoCase(ext, "jpg")) {
@@ -187,7 +187,7 @@ TOKEN_DEF(EDITOR_BG_ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
+bool CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(CONTINUOUS)
 	TOKEN_TABLE(SPRITE)
@@ -383,7 +383,7 @@ bool CBSprite::GetCurrentFrame(float zoomX, float zoomY) {
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
+bool CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
 	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) return STATUS_OK;
 
 	// on change...
@@ -428,7 +428,7 @@ bool CBSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float s
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSprite::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CBSprite::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITE {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "LOOPING=%s\n", _looping ? "TRUE" : "FALSE");
@@ -472,7 +472,7 @@ ERRORCODE CBSprite::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSprite::persist(CBPersistMgr *persistMgr) {
+bool CBSprite::persist(CBPersistMgr *persistMgr) {
 	CBScriptHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_canBreak));
@@ -507,7 +507,7 @@ ERRORCODE CBSprite::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetFrame
 	//////////////////////////////////////////////////////////////////////////
@@ -707,7 +707,7 @@ CScValue *CBSprite::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSprite::scSetProperty(const char *name, CScValue *value) {
+bool CBSprite::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
@@ -747,7 +747,7 @@ const char *CBSprite::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSprite::killAllSounds() {
+bool CBSprite::killAllSounds() {
 	for (int i = 0; i < _frames.getSize(); i++) {
 		if (_frames[i]->_sound)
 			_frames[i]->_sound->stop();

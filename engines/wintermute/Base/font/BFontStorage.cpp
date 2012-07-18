@@ -51,7 +51,7 @@ CBFontStorage::~CBFontStorage() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontStorage::cleanup(bool warn) {
+bool CBFontStorage::cleanup(bool warn) {
 	for (int i = 0; i < _fonts.getSize(); i++) {
 		if (warn) _gameRef->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
 		delete _fonts[i];
@@ -62,7 +62,7 @@ ERRORCODE CBFontStorage::cleanup(bool warn) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontStorage::initLoop() {
+bool CBFontStorage::initLoop() {
 	for (int i = 0; i < _fonts.getSize(); i++) {
 		_fonts[i]->initLoop();
 	}
@@ -104,7 +104,7 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontStorage::removeFont(CBFont *font) {
+bool CBFontStorage::removeFont(CBFont *font) {
 	if (!font) return STATUS_FAILED;
 
 	for (int i = 0; i < _fonts.getSize(); i++) {
@@ -122,7 +122,7 @@ ERRORCODE CBFontStorage::removeFont(CBFont *font) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontStorage::persist(CBPersistMgr *persistMgr) {
+bool CBFontStorage::persist(CBPersistMgr *persistMgr) {
 
 	if (!persistMgr->_saving) cleanup(false);
 

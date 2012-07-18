@@ -115,18 +115,18 @@ void CBRenderer::deleteRectList() {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::switchFullscreen() {
+bool CBRenderer::switchFullscreen() {
 	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::flip() {
+bool CBRenderer::flip() {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::initRenderer(int width, int height, bool windowed) {
+bool CBRenderer::initRenderer(int width, int height, bool windowed) {
 	return STATUS_FAILED;
 }
 
@@ -137,36 +137,36 @@ void CBRenderer::onWindowChange() {
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::fill(byte  r, byte g, byte b, Common::Rect *rect) {
+bool CBRenderer::fill(byte  r, byte g, byte b, Common::Rect *rect) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::windowedBlt() {
+bool CBRenderer::windowedBlt() {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::setup2D(bool Force) {
+bool CBRenderer::setup2D(bool Force) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::setupLines() {
+bool CBRenderer::setupLines() {
 	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+bool CBRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
+bool CBRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
 	for (int i = 0; i < width; i++) {
 		drawLine(x1 + i, y1 + i, x2 - i,   y1 + i,   color); // up
 		drawLine(x1 + i, y2 - i, x2 - i + 1, y2 - i, color); // down
@@ -179,31 +179,31 @@ ERRORCODE CBRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::fade(uint16 alpha) {
+bool CBRenderer::fade(uint16 alpha) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::fadeToColor(uint32 color, Common::Rect *rect) {
+bool CBRenderer::fadeToColor(uint32 color, Common::Rect *rect) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::setViewport(int left, int top, int right, int bottom) {
+bool CBRenderer::setViewport(int left, int top, int right, int bottom) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::setScreenViewport() {
+bool CBRenderer::setScreenViewport() {
 	return setViewport(_drawOffsetX, _drawOffsetY, _width + _drawOffsetX, _height + _drawOffsetY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::setViewport(Rect32 *rect) {
+bool CBRenderer::setViewport(Rect32 *rect) {
 	return setViewport(rect->left + _drawOffsetX,
 	                   rect->top + _drawOffsetY,
 	                   rect->right + _drawOffsetX,
@@ -218,7 +218,7 @@ CBImage *CBRenderer::takeScreenshot() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::clipCursor() {
+bool CBRenderer::clipCursor() {
 	/*
 	if (!_windowed) {
 	    Rect32 rc;
@@ -237,7 +237,7 @@ ERRORCODE CBRenderer::clipCursor() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBRenderer::unclipCursor() {
+bool CBRenderer::unclipCursor() {
 	/*
 	if (!_windowed) ::ClipCursor(NULL);
 	*/

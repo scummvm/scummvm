@@ -100,7 +100,7 @@ const char *CSXFile::scToString() {
 
 #define FILE_BUFFER_SIZE 32768
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFilename
 	//////////////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		uint32 counter = 0;
 		byte b;
 		bool foundNewLine = false;
-		ERRORCODE ret = STATUS_FAILED;
+		bool ret = STATUS_FAILED;
 		do {
 			ret = _readFile->read(&b, 1);
 			if (ret != 1) break;
@@ -265,7 +265,7 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		uint32 counter = 0;
 		byte b;
 
-		ERRORCODE ret = STATUS_FAILED;
+		bool ret = STATUS_FAILED;
 		while (counter < (uint32)textLen) {
 			ret = _readFile->read(&b, 1);
 			if (ret != 1) break;
@@ -654,7 +654,7 @@ CScValue *CSXFile::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXFile::scSetProperty(const char *name, CScValue *value) {
+bool CSXFile::scSetProperty(const char *name, CScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
@@ -717,7 +717,7 @@ uint32 CSXFile::getLength() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXFile::persist(CBPersistMgr *persistMgr) {
+bool CSXFile::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
 

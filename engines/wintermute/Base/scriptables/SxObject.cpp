@@ -58,7 +58,7 @@ CSXObject::~CSXObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXObject::persist(CBPersistMgr *persistMgr) {
+bool CSXObject::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	return STATUS_OK;

@@ -47,7 +47,7 @@ public:
 	CBImage(CBGame *inGame, FIBITMAP *bitmap = NULL);
 	~CBImage();
 
-	ERRORCODE loadFile(const Common::String &filename);
+	bool loadFile(const Common::String &filename);
 	const Graphics::Surface *getSurface() const {
 		return _surface;
 	};
@@ -56,9 +56,9 @@ public:
 	}
 	byte getAlphaAt(int x, int y);
 	bool writeBMPToStream(Common::WriteStream *stream);
-	ERRORCODE resize(int newWidth, int newHeight);
-	ERRORCODE saveBMPFile(const char *filename);
-	ERRORCODE copyFrom(CBImage *origImage, int newWidth = 0, int newHeight = 0);
+	bool resize(int newWidth, int newHeight);
+	bool saveBMPFile(const char *filename);
+	bool copyFrom(CBImage *origImage, int newWidth = 0, int newHeight = 0);
 	void copyFrom(Graphics::Surface *surface);
 private:
 	Common::String _filename;

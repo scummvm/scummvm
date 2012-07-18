@@ -39,7 +39,7 @@ public:
 	int getHeight();
 	int getWidth();
 	Rect32 *getRect();
-	ERRORCODE setRect(int left, int top, int right, int bottom, bool noCheck = false);
+	bool setRect(int left, int top, int right, int bottom, bool noCheck = false);
 	DECLARE_PERSISTENT(CBViewport, CBBase)
 	int _offsetY;
 	int _offsetX;

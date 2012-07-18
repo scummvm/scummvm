@@ -69,14 +69,14 @@ CAdTalkDef::~CAdTalkDef() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkDef::loadFile(const char *filename) {
+bool CAdTalkDef::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdTalkDef::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	CBUtils::setString(&_filename, filename);
 
@@ -98,7 +98,7 @@ TOKEN_DEF(DEFAULT_SPRITE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
+bool CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TALK)
 	TOKEN_TABLE(TEMPLATE)
@@ -194,7 +194,7 @@ ERRORCODE CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkDef::persist(CBPersistMgr *persistMgr) {
+bool CAdTalkDef::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -210,7 +210,7 @@ ERRORCODE CAdTalkDef::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TALK {\n");
 	if (_defaultSpriteFilename) buffer->putTextIndent(indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
 
@@ -230,7 +230,7 @@ ERRORCODE CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkDef::loadDefaultSprite() {
+bool CAdTalkDef::loadDefaultSprite() {
 	if (_defaultSpriteFilename && !_defaultSprite) {
 		_defaultSprite = new CBSprite(_gameRef);
 		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {

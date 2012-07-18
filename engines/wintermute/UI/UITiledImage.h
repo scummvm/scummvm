@@ -39,11 +39,11 @@ class CUITiledImage : public CBObject {
 public:
 	DECLARE_PERSISTENT(CUITiledImage, CBObject)
 	void correctSize(int *width, int *height);
-	ERRORCODE loadFile(const char *filename);
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
 
-	ERRORCODE display(int x, int y, int width, int height);
+	bool display(int x, int y, int width, int height);
 	CUITiledImage(CBGame *inGame = NULL);
 	virtual ~CUITiledImage();
 	CBSubFrame *_image;

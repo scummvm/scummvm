@@ -58,14 +58,14 @@ CAdSpriteSet::~CAdSpriteSet() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
+bool CAdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdSpriteSet::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing SPRITESET file '%s'", filename);
 
@@ -90,7 +90,7 @@ TOKEN_DEF(TEMPLATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType CacheType) {
+bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType CacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SPRITESET)
 	TOKEN_TABLE(NAME)
@@ -214,7 +214,7 @@ ERRORCODE CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TS
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSpriteSet::persist(CBPersistMgr *persistMgr) {
+bool CAdSpriteSet::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -258,7 +258,7 @@ CBSprite *CAdSpriteSet::getSprite(TDirection direction) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSpriteSet::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdSpriteSet::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITESET {\n");
 	if (_name) buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {

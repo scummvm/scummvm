@@ -165,7 +165,7 @@ char *CAdSentence::getStance(int stance) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSentence::display() {
+bool CAdSentence::display() {
 	if (!_font || !_text) return STATUS_FAILED;
 
 	if (_sound && !_soundStarted) {
@@ -204,14 +204,14 @@ void CAdSentence::setSound(CBSound *sound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSentence::finish() {
+bool CAdSentence::finish() {
 	if (_sound) _sound->stop();
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSentence::persist(CBPersistMgr *persistMgr) {
+bool CAdSentence::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 
@@ -238,7 +238,7 @@ ERRORCODE CAdSentence::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSentence::setupTalkFile(const char *soundFilename) {
+bool CAdSentence::setupTalkFile(const char *soundFilename) {
 	delete _talkDef;
 	_talkDef = NULL;
 	_currentSprite = NULL;
@@ -270,7 +270,7 @@ ERRORCODE CAdSentence::setupTalkFile(const char *soundFilename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdSentence::update(TDirection dir) {
+bool CAdSentence::update(TDirection dir) {
 	if (!_talkDef) return STATUS_OK;
 
 	uint32 currentTime;

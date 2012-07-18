@@ -53,7 +53,7 @@ CBPoint::CBPoint(int initX, int initY) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBPoint::persist(CBPersistMgr *persistMgr) {
+bool CBPoint::persist(CBPersistMgr *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(x));
 	persistMgr->transfer(TMEMBER(y));

@@ -61,7 +61,7 @@ CBSoundMgr::~CBSoundMgr() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::cleanup() {
+bool CBSoundMgr::cleanup() {
 	for (int i = 0; i < _sounds.getSize(); i++)
 		delete _sounds[i];
 	_sounds.removeAll();
@@ -79,7 +79,7 @@ void CBSoundMgr::saveSettings() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::initialize() {
+bool CBSoundMgr::initialize() {
 	_soundAvailable = false;
 	
 	if (!g_system->getMixer()->isReady()) {
@@ -93,7 +93,7 @@ ERRORCODE CBSoundMgr::initialize() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::initLoop() {
+bool CBSoundMgr::initLoop() {
 	if (!_soundAvailable)
 		return STATUS_OK;
 #if 0
@@ -130,7 +130,7 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, Audio::Mixer::SoundTyp
 	sound->setType(type);
 
 
-	ERRORCODE res = sound->loadFromFile(filename);
+	bool res = sound->loadFromFile(filename);
 	if (DID_FAIL(res)) {
 		_gameRef->LOG(res, "Error loading sound '%s'", filename);
 		delete sound;
@@ -149,7 +149,7 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, Audio::Mixer::SoundTyp
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::addSound(CBSoundBuffer *sound, Audio::Mixer::SoundType type) {
+bool CBSoundMgr::addSound(CBSoundBuffer *sound, Audio::Mixer::SoundType type) {
 	if (!sound)
 		return STATUS_FAILED;
 
@@ -163,7 +163,7 @@ ERRORCODE CBSoundMgr::addSound(CBSoundBuffer *sound, Audio::Mixer::SoundType typ
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::removeSound(CBSoundBuffer *sound) {
+bool CBSoundMgr::removeSound(CBSoundBuffer *sound) {
 	for (int i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i] == sound) {
 			delete _sounds[i];
@@ -177,7 +177,7 @@ ERRORCODE CBSoundMgr::removeSound(CBSoundBuffer *sound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
+bool CBSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 	if (!_soundAvailable)
 		return STATUS_OK;
 
@@ -200,7 +200,7 @@ ERRORCODE CBSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::setVolumePercent(Audio::Mixer::SoundType type, byte percent) {
+bool CBSoundMgr::setVolumePercent(Audio::Mixer::SoundType type, byte percent) {
 	return setVolume(type, percent * 255 / 100);
 }
 
@@ -225,7 +225,7 @@ byte CBSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::setMasterVolume(byte value) {
+bool CBSoundMgr::setMasterVolume(byte value) {
 	_volumeMaster = value;
 	for (int i = 0; i < _sounds.getSize(); i++) {
 		_sounds[i]->updateVolume();
@@ -234,7 +234,7 @@ ERRORCODE CBSoundMgr::setMasterVolume(byte value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::setMasterVolumePercent(byte percent) {
+bool CBSoundMgr::setMasterVolumePercent(byte percent) {
 	setMasterVolume(percent * 255 / 100);
 	return STATUS_OK;
 }
@@ -252,7 +252,7 @@ byte CBSoundMgr::getMasterVolume() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::pauseAll(bool includingMusic) {
+bool CBSoundMgr::pauseAll(bool includingMusic) {
 
 	for (int i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != Audio::Mixer::kMusicSoundType || includingMusic)) {
@@ -266,7 +266,7 @@ ERRORCODE CBSoundMgr::pauseAll(bool includingMusic) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBSoundMgr::resumeAll() {
+bool CBSoundMgr::resumeAll() {
 
 	for (int i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i]->_freezePaused) {

@@ -47,15 +47,15 @@ public:
 	bool _fixedPos;
 	CBSprite *_currentSprite;
 	char *_currentSkelAnim;
-	ERRORCODE update(TDirection dir = DI_DOWN);
-	ERRORCODE setupTalkFile(const char *soundFilename);
+	bool update(TDirection dir = DI_DOWN);
+	bool setupTalkFile(const char *soundFilename);
 	DECLARE_PERSISTENT(CAdSentence, CBBase)
-	ERRORCODE finish();
+	bool finish();
 	void setSound(CBSound *Sound);
 	bool _soundStarted;
 	CBSound *_sound;
 	TTextAlign _align;
-	ERRORCODE display();
+	bool display();
 	int _width;
 	Point32 _pos;
 	CBFont *_font;

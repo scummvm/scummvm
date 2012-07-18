@@ -49,36 +49,36 @@ public:
 
 	virtual void dumpData(const char *filename) {};
 	virtual CBImage *takeScreenshot();
-	virtual ERRORCODE setViewport(int left, int top, int right, int bottom);
-	virtual ERRORCODE setViewport(Rect32 *Rect);
-	virtual ERRORCODE setScreenViewport();
-	virtual ERRORCODE fade(uint16 Alpha);
-	virtual ERRORCODE fadeToColor(uint32 Color, Common::Rect *rect = NULL);
-	virtual ERRORCODE drawLine(int x1, int y1, int x2, int y2, uint32 color);
-	virtual ERRORCODE drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1);
+	virtual bool setViewport(int left, int top, int right, int bottom);
+	virtual bool setViewport(Rect32 *Rect);
+	virtual bool setScreenViewport();
+	virtual bool fade(uint16 Alpha);
+	virtual bool fadeToColor(uint32 Color, Common::Rect *rect = NULL);
+	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
+	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1);
 	CBRenderer(CBGame *inGame = NULL);
 	virtual ~CBRenderer();
-	virtual ERRORCODE setProjection() {
+	virtual bool setProjection() {
 		return STATUS_OK;
 	};
 
-	virtual ERRORCODE windowedBlt();
-	virtual ERRORCODE fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
+	virtual bool windowedBlt();
+	virtual bool fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
 	virtual void onWindowChange();
-	virtual ERRORCODE initRenderer(int width, int height, bool windowed);
-	virtual ERRORCODE flip();
+	virtual bool initRenderer(int width, int height, bool windowed);
+	virtual bool flip();
 	virtual void initLoop();
-	virtual ERRORCODE switchFullscreen();
-	virtual ERRORCODE setup2D(bool force = false);
-	virtual ERRORCODE setupLines();
+	virtual bool switchFullscreen();
+	virtual bool setup2D(bool force = false);
+	virtual bool setupLines();
 
 	virtual const char *getName() {
 		return "";
 	};
-	virtual ERRORCODE displayDebugInfo() {
+	virtual bool displayDebugInfo() {
 		return STATUS_FAILED;
 	};
-	virtual ERRORCODE drawShaderQuad() {
+	virtual bool drawShaderQuad() {
 		return STATUS_FAILED;
 	}
 
@@ -91,16 +91,16 @@ public:
 
 	virtual CBSurface *createSurface() = 0;
 
-	ERRORCODE clipCursor();
-	ERRORCODE unclipCursor();
+	bool clipCursor();
+	bool unclipCursor();
 
 	CBObject *getObjectAt(int x, int y);
 	void deleteRectList();
 
-	virtual ERRORCODE startSpriteBatch() {
+	virtual bool startSpriteBatch() {
 		return STATUS_OK;
 	};
-	virtual ERRORCODE endSpriteBatch() {
+	virtual bool endSpriteBatch() {
 		return STATUS_OK;
 	};
 	bool pointInViewport(Point32 *P);

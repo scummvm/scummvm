@@ -63,16 +63,16 @@ public:
 
 	const char *getName();
 
-	ERRORCODE initRenderer(int width, int height, bool windowed);
-	ERRORCODE flip();
-	ERRORCODE fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
+	bool initRenderer(int width, int height, bool windowed);
+	bool flip();
+	bool fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
 
-	ERRORCODE fade(uint16 alpha);
-	ERRORCODE fadeToColor(uint32 color, Common::Rect *rect = NULL);
+	bool fade(uint16 alpha);
+	bool fadeToColor(uint32 color, Common::Rect *rect = NULL);
 
-	ERRORCODE switchFullscreen();
+	bool switchFullscreen();
 
-	ERRORCODE drawLine(int x1, int y1, int x2, int y2, uint32 color);
+	bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
 
 	CBImage *takeScreenshot();
 
@@ -82,7 +82,7 @@ public:
 	void invalidateTicketsFromSurface(CBSurfaceSDL *surf);
 	void drawFromTicket(RenderTicket *renderTicket);
 
-	ERRORCODE setViewport(int left, int top, int right, int bottom);
+	bool setViewport(int left, int top, int right, int bottom);
 
 	void modTargetRect(Common::Rect *rect);
 	void pointFromScreen(Point32 *point);

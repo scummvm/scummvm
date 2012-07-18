@@ -69,7 +69,7 @@ uint32 CBDynBuffer::getSize() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBDynBuffer::init(uint32 initSize) {
+bool CBDynBuffer::init(uint32 initSize) {
 	cleanup();
 
 	if (initSize == 0) initSize = _initSize;
@@ -88,7 +88,7 @@ ERRORCODE CBDynBuffer::init(uint32 initSize) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBDynBuffer::putBytes(byte *buffer, uint32 size) {
+bool CBDynBuffer::putBytes(byte *buffer, uint32 size) {
 	if (!_initialized) init();
 
 	while (_offset + size > _realSize) {
@@ -109,7 +109,7 @@ ERRORCODE CBDynBuffer::putBytes(byte *buffer, uint32 size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBDynBuffer::getBytes(byte *buffer, uint32 size) {
+bool CBDynBuffer::getBytes(byte *buffer, uint32 size) {
 	if (!_initialized) init();
 
 	if (_offset + size > _size) {

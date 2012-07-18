@@ -99,7 +99,7 @@ void CSXString::scSetString(const char *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Substring
 	//////////////////////////////////////////////////////////////////////////
@@ -352,7 +352,7 @@ CScValue *CSXString::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXString::scSetProperty(const char *name, CScValue *value) {
+bool CSXString::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
@@ -377,7 +377,7 @@ ERRORCODE CSXString::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXString::persist(CBPersistMgr *persistMgr) {
+bool CSXString::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
 

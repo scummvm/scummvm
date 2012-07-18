@@ -80,7 +80,7 @@ TOKEN_DEF(PRECACHE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
+bool CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTION)
 	TOKEN_TABLE(SPRITESET_FILE)
@@ -186,7 +186,7 @@ ERRORCODE CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkNode::persist(CBPersistMgr *persistMgr) {
+bool CAdTalkNode::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_comment));
 	persistMgr->transfer(TMEMBER(_startTime));
 	persistMgr->transfer(TMEMBER(_endTime));
@@ -201,7 +201,7 @@ ERRORCODE CAdTalkNode::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkNode::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdTalkNode::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ACTION {\n");
 	if (_comment) buffer->putTextIndent(indent + 2, "COMMENT=\"%s\"\n", _comment);
 	buffer->putTextIndent(indent + 2, "START_TIME=%d\n", _startTime);
@@ -220,7 +220,7 @@ ERRORCODE CAdTalkNode::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdTalkNode::loadSprite() {
+bool CAdTalkNode::loadSprite() {
 	if (_spriteFilename && !_sprite) {
 		_sprite = new CBSprite(_gameRef);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {

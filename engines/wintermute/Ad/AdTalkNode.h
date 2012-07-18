@@ -41,13 +41,13 @@ public:
 	CAdSpriteSet *_spriteSet;
 	CBSprite *getSprite(TDirection dir);
 	bool isInTimeInterval(uint32 time, TDirection dir);
-	ERRORCODE loadSprite();
+	bool loadSprite();
 	DECLARE_PERSISTENT(CAdTalkNode, CBBase)
 
 	CAdTalkNode(CBGame *inGame);
 	virtual ~CAdTalkNode();
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent = 0);
+	bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent = 0);
 	char *_spriteFilename;
 	CBSprite *_sprite;
 	uint32 _startTime;

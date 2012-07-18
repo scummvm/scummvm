@@ -107,7 +107,7 @@ CBObject::~CBObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::cleanup() {
+bool CBObject::cleanup() {
 	if (_gameRef && _gameRef->_activeObject == this)
 		_gameRef->_activeObject = NULL;
 
@@ -161,7 +161,7 @@ const char *CBObject::getCaption(int caseVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::listen(CBScriptHolder *param1, uint32 param2) {
+bool CBObject::listen(CBScriptHolder *param1, uint32 param2) {
 	return STATUS_FAILED;
 }
 
@@ -169,7 +169,7 @@ ERRORCODE CBObject::listen(CBScriptHolder *param1, uint32 param2) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// SkipTo
@@ -671,7 +671,7 @@ CScValue *CBObject::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::scSetProperty(const char *name, CScValue *value) {
+bool CBObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
@@ -856,20 +856,20 @@ const char *CBObject::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::showCursor() {
+bool CBObject::showCursor() {
 	if (_cursor) return _gameRef->drawCursor(_cursor);
 	else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CBObject::saveAsText(CBDynBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::persist(CBPersistMgr *persistMgr) {
+bool CBObject::persist(CBPersistMgr *persistMgr) {
 	CBScriptHolder::persist(persistMgr);
 
 	for (int i = 0; i < 7; i++)
@@ -925,7 +925,7 @@ ERRORCODE CBObject::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::setCursor(const char *filename) {
+bool CBObject::setCursor(const char *filename) {
 	if (!_sharedCursors) {
 		delete _cursor;
 		_cursor = NULL;
@@ -942,7 +942,7 @@ ERRORCODE CBObject::setCursor(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::setActiveCursor(const char *filename) {
+bool CBObject::setActiveCursor(const char *filename) {
 	delete _activeCursor;
 	_activeCursor = new CBSprite(_gameRef);
 	if (!_activeCursor || DID_FAIL(_activeCursor->loadFile(filename))) {
@@ -960,7 +960,7 @@ int CBObject::getHeight() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::handleMouse(TMouseEvent event, TMouseButton button) {
+bool CBObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	return STATUS_OK;
 }
 
@@ -978,7 +978,7 @@ bool CBObject::handleMouseWheel(int delta) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
+bool CBObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
 	// just play loaded sound
 	if (filename == NULL && _sFX) {
 		if (_gameRef->_editorMode || _sFXStart) {
@@ -1020,7 +1020,7 @@ ERRORCODE CBObject::playSFX(const char *filename, bool looping, bool playNow, co
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::stopSFX(bool deleteSound) {
+bool CBObject::stopSFX(bool deleteSound) {
 	if (_sFX) {
 		_sFX->stop();
 		if (deleteSound) {
@@ -1033,21 +1033,21 @@ ERRORCODE CBObject::stopSFX(bool deleteSound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::pauseSFX() {
+bool CBObject::pauseSFX() {
 	if (_sFX) return _sFX->pause();
 	else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::resumeSFX() {
+bool CBObject::resumeSFX() {
 	if (_sFX) return _sFX->resume();
 	else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::setSFXTime(uint32 time) {
+bool CBObject::setSFXTime(uint32 time) {
 	_sFXStart = time;
 	if (_sFX && _sFX->isPlaying()) return _sFX->setPositionTime(time);
 	else return STATUS_OK;
@@ -1055,7 +1055,7 @@ ERRORCODE CBObject::setSFXTime(uint32 time) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::setSFXVolume(int volume) {
+bool CBObject::setSFXVolume(int volume) {
 	_sFXVolume = volume;
 	if (_sFX) return _sFX->setVolumePercent(volume);
 	else return STATUS_OK;
@@ -1063,7 +1063,7 @@ ERRORCODE CBObject::setSFXVolume(int volume) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::updateSounds() {
+bool CBObject::updateSounds() {
 	if (_soundEvent) {
 		if (_sFX && !_sFX->isPlaying()) {
 			applyEvent(_soundEvent);
@@ -1077,8 +1077,8 @@ ERRORCODE CBObject::updateSounds() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::updateOneSound(CBSound *sound) {
-	ERRORCODE Ret = STATUS_OK;
+bool CBObject::updateOneSound(CBSound *sound) {
+	bool Ret = STATUS_OK;
 
 	if (sound) {
 		if (_autoSoundPanning)
@@ -1090,7 +1090,7 @@ ERRORCODE CBObject::updateOneSound(CBSound *sound) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::resetSoundPan() {
+bool CBObject::resetSoundPan() {
 	if (!_sFX) return STATUS_OK;
 	else {
 		return _sFX->setPan(0.0f);
@@ -1121,7 +1121,7 @@ void CBObject::setSoundEvent(const char *eventName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBObject::afterMove() {
+bool CBObject::afterMove() {
 	return STATUS_OK;
 }
 

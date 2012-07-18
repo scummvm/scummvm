@@ -98,7 +98,7 @@ void CUIObject::setText(const char *text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIObject::display(int offsetX, int offsetY) {
+bool CUIObject::display(int offsetX, int offsetY) {
 	return STATUS_OK;
 }
 
@@ -137,7 +137,7 @@ void CUIObject::correctSize() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFont
 	//////////////////////////////////////////////////////////////////////////
@@ -418,7 +418,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIObject::scSetProperty(const char *name, CScValue *value) {
+bool CUIObject::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -500,7 +500,7 @@ bool CUIObject::isFocused() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIObject::handleMouse(TMouseEvent event, TMouseButton button) {
+bool CUIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	// handle focus change
 	if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 		focus();
@@ -510,7 +510,7 @@ ERRORCODE CUIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIObject::focus() {
+bool CUIObject::focus() {
 	CUIObject *obj = this;
 	bool disabled = false;
 	while (obj) {
@@ -537,7 +537,7 @@ ERRORCODE CUIObject::focus() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIObject::getTotalOffset(int *offsetX, int *offsetY) {
+bool CUIObject::getTotalOffset(int *offsetX, int *offsetY) {
 	int offX = 0, offY = 0;
 
 	CUIObject *obj = _parent;
@@ -555,7 +555,7 @@ ERRORCODE CUIObject::getTotalOffset(int *offsetX, int *offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIObject::persist(CBPersistMgr *persistMgr) {
+bool CUIObject::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 
@@ -582,7 +582,7 @@ ERRORCODE CUIObject::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIObject::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CUIObject::saveAsText(CBDynBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }
 

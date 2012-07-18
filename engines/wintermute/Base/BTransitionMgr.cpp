@@ -58,7 +58,7 @@ bool CBTransitionMgr::isReady() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
+bool CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 	if (_state != TRANS_MGR_READY) return STATUS_OK;
 
 	if (type == TRANSITION_NONE || type >= NUM_TRANSITION_TYPES) {
@@ -83,7 +83,7 @@ ERRORCODE CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 #define FADE_DURATION 200
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBTransitionMgr::update() {
+bool CBTransitionMgr::update() {
 	if (isReady()) return STATUS_OK;
 
 	if (!_started) {

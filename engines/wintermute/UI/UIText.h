@@ -36,22 +36,22 @@ namespace WinterMute {
 
 class CUIText : public CUIObject {
 private:
-	ERRORCODE sizeToFit();
+	bool sizeToFit();
 public:
-	virtual ERRORCODE display(int offsetX, int offsetY);
+	virtual bool display(int offsetX, int offsetY);
 	DECLARE_PERSISTENT(CUIText, CUIObject)
 	CUIText(CBGame *inGame = NULL);
 	virtual ~CUIText();
 	TTextAlign _textAlign;
 	TVerticalAlign _verticalAlign;
-	ERRORCODE loadFile(const char *filename);
-	ERRORCODE loadBuffer(byte *buffer, bool complete = true);
-	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent);
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
 
 	// scripting interface
 	virtual CScValue *scGetProperty(const char *name);
-	virtual ERRORCODE scSetProperty(const char *name, CScValue *value);
-	virtual ERRORCODE scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scSetProperty(const char *name, CScValue *value);
+	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

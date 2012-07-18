@@ -151,7 +151,7 @@ CAdObject::~CAdObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::playAnim(const char *filename) {
+bool CAdObject::playAnim(const char *filename) {
 	delete _animSprite;
 	_animSprite = NULL;
 	_animSprite = new CBSprite(_gameRef, this);
@@ -159,7 +159,7 @@ ERRORCODE CAdObject::playAnim(const char *filename) {
 		_gameRef->LOG(0, "CAdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
 		return STATUS_FAILED;
 	}
-	ERRORCODE res = _animSprite->loadFile(filename);
+	bool res = _animSprite->loadFile(filename);
 	if (DID_FAIL(res)) {
 		_gameRef->LOG(res, "CAdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
 		delete _animSprite;
@@ -173,13 +173,13 @@ ERRORCODE CAdObject::playAnim(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::display() {
+bool CAdObject::display() {
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::update() {
+bool CAdObject::update() {
 	return STATUS_OK;
 }
 
@@ -187,7 +187,7 @@ ERRORCODE CAdObject::update() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// PlayAnim / PlayAnimAsync
@@ -488,7 +488,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		int offsetX = stack->pop()->getInt();
 		int offsetY = stack->pop()->getInt();
 
-		ERRORCODE res;
+		bool res;
 		CAdEntity *ent = new CAdEntity(_gameRef);
 		if (DID_FAIL(res = ent->loadFile(filename))) {
 			delete ent;
@@ -715,7 +715,7 @@ CScValue *CAdObject::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::scSetProperty(const char *name, CScValue *value) {
+bool CAdObject::scSetProperty(const char *name, CScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Active
@@ -792,7 +792,7 @@ const char *CAdObject::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::SetFont(const char *filename) {
+bool CAdObject::SetFont(const char *filename) {
 	if (_font) _gameRef->_fontStorage->removeFont(_font);
 	if (filename) {
 		_font = _gameRef->_fontStorage->addFont(filename);
@@ -936,7 +936,7 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::reset() {
+bool CAdObject::reset() {
 	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL) {
 		delete _animSprite;
 		_animSprite = NULL;
@@ -953,7 +953,7 @@ ERRORCODE CAdObject::reset() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::persist(CBPersistMgr *persistMgr) {
+bool CAdObject::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
@@ -998,7 +998,7 @@ ERRORCODE CAdObject::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::updateSounds() {
+bool CAdObject::updateSounds() {
 	if (_sentence && _sentence->_sound)
 		updateOneSound(_sentence->_sound);
 
@@ -1007,7 +1007,7 @@ ERRORCODE CAdObject::updateSounds() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::resetSoundPan() {
+bool CAdObject::resetSoundPan() {
 	if (_sentence && _sentence->_sound) {
 		_sentence->_sound->setPan(0.0f);
 	}
@@ -1025,7 +1025,7 @@ bool CAdObject::getExtendedFlag(const char *flagName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdObject::saveAsText(CBDynBuffer *buffer, int indent) {
 	if (_blockRegion) _blockRegion->saveAsText(buffer, indent + 2, "BLOCKED_REGION");
 	if (_wptGroup) _wptGroup->saveAsText(buffer, indent + 2);
 
@@ -1036,7 +1036,7 @@ ERRORCODE CAdObject::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::updateBlockRegion() {
+bool CAdObject::updateBlockRegion() {
 	CAdGame *adGame = (CAdGame *)_gameRef;
 	if (adGame->_scene) {
 		if (_blockRegion && _currentBlockRegion)
@@ -1059,7 +1059,7 @@ CAdInventory *CAdObject::getInventory() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::afterMove() {
+bool CAdObject::afterMove() {
 	CAdRegion *newRegions[MAX_NUM_REGIONS];
 
 	((CAdGame *)_gameRef)->_scene->getRegionsAt(_posX, _posY, newRegions, MAX_NUM_REGIONS);
@@ -1087,14 +1087,14 @@ ERRORCODE CAdObject::afterMove() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::invalidateCurrRegions() {
+bool CAdObject::invalidateCurrRegions() {
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) _currentRegions[i] = NULL;
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::getScale(float *scaleX, float *scaleY) {
+bool CAdObject::getScale(float *scaleX, float *scaleY) {
 	if (_zoomable) {
 		if (_scaleX >= 0 || _scaleY >= 0) {
 			*scaleX = _scaleX < 0 ? 100 : _scaleX;
@@ -1108,7 +1108,7 @@ ERRORCODE CAdObject::getScale(float *scaleX, float *scaleY) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::updateSpriteAttachments() {
+bool CAdObject::updateSpriteAttachments() {
 	for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 		_attachmentsPre[i]->update();
 	}
@@ -1119,7 +1119,7 @@ ERRORCODE CAdObject::updateSpriteAttachments() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::displaySpriteAttachments(bool preDisplay) {
+bool CAdObject::displaySpriteAttachments(bool preDisplay) {
 	if (preDisplay) {
 		for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 			displaySpriteAttachment(_attachmentsPre[i]);
@@ -1133,7 +1133,7 @@ ERRORCODE CAdObject::displaySpriteAttachments(bool preDisplay) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::displaySpriteAttachment(CAdObject *attachment) {
+bool CAdObject::displaySpriteAttachment(CAdObject *attachment) {
 	if (!attachment->_active) return STATUS_OK;
 
 	float scaleX, scaleY;
@@ -1162,7 +1162,7 @@ ERRORCODE CAdObject::displaySpriteAttachment(CAdObject *attachment) {
 	attachment->_registerAlias = this;
 	attachment->_registrable = this->_registrable;
 
-	ERRORCODE ret = attachment->display();
+	bool ret = attachment->display();
 
 	attachment->_posX = origX;
 	attachment->_posY = origY;
@@ -1187,7 +1187,7 @@ CPartEmitter *CAdObject::createParticleEmitter(bool followParent, int offsetX, i
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdObject::updatePartEmitter() {
+bool CAdObject::updatePartEmitter() {
 	if (!_partEmitter) return STATUS_FAILED;
 
 	if (_partFollowParent) {

@@ -243,14 +243,14 @@ void CBFontBitmap::drawChar(byte c, int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontBitmap::loadFile(const char *filename) {
+bool CBFontBitmap::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CBFontBitmap::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -282,7 +282,7 @@ TOKEN_DEF(WIDTHS_FRAME)
 TOKEN_DEF(PAINT_WHOLE_CELL)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontBitmap::loadBuffer(byte *buffer) {
+bool CBFontBitmap::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONTEXT_FIX)
 	TOKEN_TABLE(FONT)
@@ -454,7 +454,7 @@ ERRORCODE CBFontBitmap::loadBuffer(byte *buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontBitmap::persist(CBPersistMgr *persistMgr) {
+bool CBFontBitmap::persist(CBPersistMgr *persistMgr) {
 
 	CBFont::persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_numColumns));
@@ -487,7 +487,7 @@ int CBFontBitmap::getCharWidth(byte index) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontBitmap::getWidths() {
+bool CBFontBitmap::getWidths() {
 	CBSurface *surf = NULL;
 
 	if (_sprite) {

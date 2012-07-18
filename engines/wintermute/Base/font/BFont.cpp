@@ -71,7 +71,7 @@ int CBFont::getTextWidth(byte *text, int maxLength) {
 
 /*
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBFont::loadFile(const char * Filename)
+bool CBFont::loadFile(const char * Filename)
 {
     BYTE* Buffer = _gameRef->_fileManager->readWholeFile(filename);
     if(Buffer==NULL){
@@ -79,7 +79,7 @@ ERRORCODE CBFont::loadFile(const char * Filename)
         return STATUS_FAILED;
     }
 
-    ERRORCODE ret;
+    bool ret;
 
     _filename = new char [strlen(filename)+1];
     strcpy(_filename, filename);
@@ -96,7 +96,7 @@ TOKEN_DEF_START
   TOKEN_DEF (FONT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBFont::loadBuffer(byte * Buffer)
+bool CBFont::loadBuffer(byte * Buffer)
 {
     TOKEN_TABLE_START(commands)
         TOKEN_TABLE (FONT)
@@ -144,7 +144,7 @@ int CBFont::getLetterHeight() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFont::persist(CBPersistMgr *persistMgr) {
+bool CBFont::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 	return STATUS_OK;

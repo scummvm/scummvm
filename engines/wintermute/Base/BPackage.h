@@ -45,9 +45,9 @@ public:
 
 	bool _boundToExe;
 	byte _priority;
-	ERRORCODE read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size);
-	ERRORCODE close();
-	ERRORCODE open();
+	bool read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size);
+	bool close();
+	bool open();
 	char *_name;
 	int _cD;
 	Common::SeekableReadStream *_file;

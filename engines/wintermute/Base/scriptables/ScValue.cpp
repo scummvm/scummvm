@@ -188,7 +188,7 @@ CScValue *CScValue::getProp(const char *name) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScValue::deleteProp(const char *name) {
+bool CScValue::deleteProp(const char *name) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->deleteProp(name);
 
 	_valIter = _valObject.find(name);
@@ -203,11 +203,11 @@ ERRORCODE CScValue::deleteProp(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScValue::setProp(const char *name, CScValue *val, bool copyWhole, bool setAsConst) {
+bool CScValue::setProp(const char *name, CScValue *val, bool copyWhole, bool setAsConst) {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->setProp(name, val);
 
-	ERRORCODE ret = STATUS_FAILED;
+	bool ret = STATUS_FAILED;
 	if (_type == VAL_NATIVE && _valNative) {
 		ret = _valNative->scSetProperty(name, val);
 	}
@@ -735,7 +735,7 @@ void CScValue::setValue(CScValue *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScValue::persist(CBPersistMgr *persistMgr) {
+bool CScValue::persist(CBPersistMgr *persistMgr) {
 	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_persistent));
@@ -819,7 +819,7 @@ ERRORCODE CScValue::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScValue::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CScValue::saveAsText(CBDynBuffer *buffer, int indent) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		buffer->putTextIndent(indent, "PROPERTY {\n");
@@ -878,7 +878,7 @@ int CScValue::compareStrict(CScValue *val1, CScValue *val2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScValue::dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, CScScript *script, unsigned int scopeID) {
+bool CScValue::dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, CScScript *script, unsigned int scopeID) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		client->onVariableInit(type, script, scopeID, _valIter->_value, _valIter->_key.c_str());

@@ -60,7 +60,7 @@ CBFader::~CBFader() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFader::update() {
+bool CBFader::update() {
 	if (!_active) return STATUS_OK;
 
 	int alphaDelta = _targetAlpha - _sourceAlpha;
@@ -84,7 +84,7 @@ ERRORCODE CBFader::update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFader::display() {
+bool CBFader::display() {
 	if (!_active) return STATUS_OK;
 
 	if (_currentAlpha > 0x00) return _gameRef->_renderer->fadeToColor(BYTETORGBA(_red, _green, _blue, _currentAlpha));
@@ -93,7 +93,7 @@ ERRORCODE CBFader::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFader::deactivate() {
+bool CBFader::deactivate() {
 	_active = false;
 	_ready = true;
 	return STATUS_OK;
@@ -101,7 +101,7 @@ ERRORCODE CBFader::deactivate() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
+bool CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
@@ -123,7 +123,7 @@ ERRORCODE CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
+bool CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
@@ -154,7 +154,7 @@ uint32 CBFader::getCurrentColor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFader::persist(CBPersistMgr *persistMgr) {
+bool CBFader::persist(CBPersistMgr *persistMgr) {
 	CBObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));

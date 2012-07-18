@@ -98,7 +98,7 @@ CScEngine::~CScEngine() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::cleanup() {
+bool CScEngine::cleanup() {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
 		delete _scripts[i];
@@ -148,7 +148,7 @@ CScScript *CScEngine::runScript(const char *filename, CBScriptHolder *owner) {
 
 	// add new script
 	CScScript *script = new CScScript(_gameRef, this);
-	ERRORCODE ret = script->create(filename, compBuffer, compSize, owner);
+	bool ret = script->create(filename, compBuffer, compSize, owner);
 	if (DID_FAIL(ret)) {
 		_gameRef->LOG(ret, "Error running script '%s'...", filename);
 		delete script;
@@ -244,7 +244,7 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::tick() {
+bool CScEngine::tick() {
 	if (_scripts.getSize() == 0)
 		return STATUS_OK;
 
@@ -344,7 +344,7 @@ ERRORCODE CScEngine::tick() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::tickUnbreakable() {
+bool CScEngine::tickUnbreakable() {
 	// execute unbreakable scripts
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_unbreakable) continue;
@@ -363,7 +363,7 @@ ERRORCODE CScEngine::tickUnbreakable() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::removeFinishedScripts() {
+bool CScEngine::removeFinishedScripts() {
 	// remove finished scripts
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
@@ -411,7 +411,7 @@ int CScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::emptyScriptCache() {
+bool CScEngine::emptyScriptCache() {
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 		if (_cachedScripts[i]) {
 			delete _cachedScripts[i];
@@ -423,7 +423,7 @@ ERRORCODE CScEngine::emptyScriptCache() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::resetObject(CBObject *Object) {
+bool CScEngine::resetObject(CBObject *Object) {
 	// terminate all scripts waiting for this object
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING && _scripts[i]->_waitObject == Object) {
@@ -437,7 +437,7 @@ ERRORCODE CScEngine::resetObject(CBObject *Object) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::resetScript(CScScript *script) {
+bool CScEngine::resetScript(CScScript *script) {
 	// terminate all scripts waiting for this script
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING_SCRIPT && _scripts[i]->_waitScript == script) {
@@ -448,7 +448,7 @@ ERRORCODE CScEngine::resetScript(CScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::persist(CBPersistMgr *persistMgr) {
+bool CScEngine::persist(CBPersistMgr *persistMgr) {
 	if (!persistMgr->_saving) cleanup();
 
 	persistMgr->transfer(TMEMBER(_gameRef));
@@ -473,7 +473,7 @@ void CScEngine::editorCleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::pauseAll() {
+bool CScEngine::pauseAll() {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i] != _currentScript) _scripts[i]->pause();
 	}
@@ -483,7 +483,7 @@ ERRORCODE CScEngine::pauseAll() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::resumeAll() {
+bool CScEngine::resumeAll() {
 	for (int i = 0; i < _scripts.getSize(); i++)
 		_scripts[i]->resume();
 
@@ -500,13 +500,13 @@ bool CScEngine::isValidScript(CScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::clearGlobals(bool includingNatives) {
+bool CScEngine::clearGlobals(bool includingNatives) {
 	_globals->CleanProps(includingNatives);
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::dbgSendScripts(IWmeDebugClient *client) {
+bool CScEngine::dbgSendScripts(IWmeDebugClient *client) {
 	// send global variables
 	_globals->dbgSendVariables(client, WME_DBGVAR_GLOBAL, NULL, 0);
 
@@ -526,7 +526,7 @@ ERRORCODE CScEngine::dbgSendScripts(IWmeDebugClient *client) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::addBreakpoint(const char *scriptFilename, int line) {
+bool CScEngine::addBreakpoint(const char *scriptFilename, int line) {
 	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	CScBreakpoint *bp = NULL;
@@ -553,7 +553,7 @@ ERRORCODE CScEngine::addBreakpoint(const char *scriptFilename, int line) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::removeBreakpoint(const char *scriptFilename, int line) {
+bool CScEngine::removeBreakpoint(const char *scriptFilename, int line) {
 	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	for (int i = 0; i < _breakpoints.getSize(); i++) {
@@ -578,7 +578,7 @@ ERRORCODE CScEngine::removeBreakpoint(const char *scriptFilename, int line) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::refreshScriptBreakpoints() {
+bool CScEngine::refreshScriptBreakpoints() {
 	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	for (int i = 0; i < _scripts.getSize(); i++) {
@@ -588,7 +588,7 @@ ERRORCODE CScEngine::refreshScriptBreakpoints() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::refreshScriptBreakpoints(CScScript *script) {
+bool CScEngine::refreshScriptBreakpoints(CScScript *script) {
 	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	if (!script || !script->_filename) return STATUS_FAILED;
@@ -605,7 +605,7 @@ ERRORCODE CScEngine::refreshScriptBreakpoints(CScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::saveBreakpoints() {
+bool CScEngine::saveBreakpoints() {
 	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 
@@ -628,7 +628,7 @@ ERRORCODE CScEngine::saveBreakpoints() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CScEngine::loadBreakpoints() {
+bool CScEngine::loadBreakpoints() {
 	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	char key[100];

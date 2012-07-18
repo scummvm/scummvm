@@ -39,16 +39,16 @@ namespace WinterMute {
 class CBSoundBuffer;
 class CBSound : public CBBase {
 public:
-	ERRORCODE setPan(float pan);
+	bool setPan(float pan);
 	int _soundPrivateVolume;
 	int getVolume();
 	int getVolumePercent();
-	ERRORCODE setVolumePercent(int percent);
-	ERRORCODE setVolume(int volume);
-	ERRORCODE setPrivateVolume(int volume);
-	ERRORCODE setLoopStart(uint32 pos);
+	bool setVolumePercent(int percent);
+	bool setVolume(int volume);
+	bool setPrivateVolume(int volume);
+	bool setLoopStart(uint32 pos);
 	uint32 getPositionTime();
-	ERRORCODE setPositionTime(uint32 time);
+	bool setPositionTime(uint32 time);
 	bool _soundPaused;
 	bool _soundFreezePaused;
 	bool isPlaying();
@@ -58,20 +58,20 @@ public:
 	uint32 _soundLoopStart;
 	uint32 _soundPosition;
 	DECLARE_PERSISTENT(CBSound, CBBase)
-	ERRORCODE resume();
-	ERRORCODE pause(bool freezePaused = false);
-	ERRORCODE stop();
-	ERRORCODE play(bool looping = false);
+	bool resume();
+	bool pause(bool freezePaused = false);
+	bool stop();
+	bool play(bool looping = false);
 	uint32 getLength();
 	bool _soundStreamed;
 	Audio::Mixer::SoundType _soundType;
 	char *_soundFilename;
-	ERRORCODE setSoundSimple();
-	ERRORCODE setSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
+	bool setSoundSimple();
+	bool setSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
 	CBSound(CBGame *inGame);
 	virtual ~CBSound();
 
-	ERRORCODE ApplyFX(TSFXType type = SFX_NONE, float param1 = 0, float param2 = 0, float param3 = 0, float param4 = 0);
+	bool ApplyFX(TSFXType type = SFX_NONE, float param1 = 0, float param2 = 0, float param3 = 0, float param4 = 0);
 
 private:
 	TSFXType _sFXType;

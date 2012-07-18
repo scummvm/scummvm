@@ -91,14 +91,14 @@ CUIEdit::~CUIEdit() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEdit::loadFile(const char *filename) {
+bool CUIEdit::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CUIEdit::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -136,7 +136,7 @@ TOKEN_DEF(EDIT)
 TOKEN_DEF(CAPTION)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEdit::loadBuffer(byte *buffer, bool complete) {
+bool CUIEdit::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TEMPLATE)
 	TOKEN_TABLE(DISABLED)
@@ -299,7 +299,7 @@ ERRORCODE CUIEdit::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "EDIT\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -358,7 +358,7 @@ ERRORCODE CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSelectedFont
 	//////////////////////////////////////////////////////////////////////////
@@ -454,7 +454,7 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEdit::scSetProperty(const char *name, CScValue *value) {
+bool CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
@@ -540,7 +540,7 @@ void CUIEdit::setCursorChar(const char *character) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEdit::display(int offsetX, int offsetY) {
+bool CUIEdit::display(int offsetX, int offsetY) {
 	if (!_visible) return STATUS_OK;
 
 
@@ -833,7 +833,7 @@ int CUIEdit::insertChars(int pos, byte *chars, int num) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CUIEdit::persist(CBPersistMgr *persistMgr) {
+bool CUIEdit::persist(CBPersistMgr *persistMgr) {
 
 	CUIObject::persist(persistMgr);
 

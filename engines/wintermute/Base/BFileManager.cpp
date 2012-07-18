@@ -73,7 +73,7 @@ CBFileManager::~CBFileManager() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::cleanup() {
+bool CBFileManager::cleanup() {
 	// delete registered paths
 	for (int i = 0; i < _singlePaths.getSize(); i++)
 		delete [] _singlePaths[i];
@@ -160,7 +160,7 @@ Common::SeekableReadStream *CBFileManager::loadSaveGame(const Common::String &fi
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed, byte *prefixBuffer, uint32 prefixSize) {
+bool CBFileManager::saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed, byte *prefixBuffer, uint32 prefixSize) {
 	// TODO
 	warning("Implement SaveFile");
 
@@ -223,7 +223,7 @@ ERRORCODE CBFileManager::saveFile(const Common::String &filename, byte *buffer, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::requestCD(int cd, char *packageFile, const char *filename) {
+bool CBFileManager::requestCD(int cd, char *packageFile, const char *filename) {
 	// unmount all non-local packages
 	for (int i = 0; i < _packages.getSize(); i++) {
 		if (_packages[i]->_cD > 0) _packages[i]->close();
@@ -235,7 +235,7 @@ ERRORCODE CBFileManager::requestCD(int cd, char *packageFile, const char *filena
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::addPath(TPathType type, const Common::String &path) {
+bool CBFileManager::addPath(TPathType type, const Common::String &path) {
 	if (path.c_str() == NULL || strlen(path.c_str()) < 1) return STATUS_FAILED;
 
 	bool slashed = (path[path.size() - 1] == '\\' || path[path.size() - 1] == '/');
@@ -260,7 +260,7 @@ ERRORCODE CBFileManager::addPath(TPathType type, const Common::String &path) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::reloadPaths() {
+bool CBFileManager::reloadPaths() {
 	// delete registered paths
 	for (int i = 0; i < _singlePaths.getSize(); i++)
 		delete [] _singlePaths[i];
@@ -276,7 +276,7 @@ ERRORCODE CBFileManager::reloadPaths() {
 
 #define TEMP_BUFFER_SIZE 32768
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::initPaths() {
+bool CBFileManager::initPaths() {
 	restoreCurrentDir();
 
 	AnsiString pathList;
@@ -318,7 +318,7 @@ ERRORCODE CBFileManager::initPaths() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::registerPackages() {
+bool CBFileManager::registerPackages() {
 	restoreCurrentDir();
 
 	_gameRef->LOG(0, "Scanning packages...");
@@ -366,7 +366,7 @@ ERRORCODE CBFileManager::registerPackages() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::registerPackage(const Common::String &filename , bool searchSignature) {
+bool CBFileManager::registerPackage(const Common::String &filename , bool searchSignature) {
 //	FILE *f = fopen(filename, "rb");
 	Common::File *package = new Common::File();
 	package->open(filename);
@@ -632,7 +632,7 @@ Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filena
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::closeFile(Common::SeekableReadStream *File) {
+bool CBFileManager::closeFile(Common::SeekableReadStream *File) {
 	for (int i = 0; i < _openFiles.getSize(); i++) {
 		if (_openFiles[i] == File) {
 			delete _openFiles[i];
@@ -676,7 +676,7 @@ Common::SeekableReadStream *CBFileManager::openFileRaw(const Common::String &fil
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::restoreCurrentDir() {
+bool CBFileManager::restoreCurrentDir() {
 	if (!_basePath) return STATUS_OK;
 	else {
 		/*if (!chdir(_basePath)) return STATUS_OK;
@@ -688,7 +688,7 @@ ERRORCODE CBFileManager::restoreCurrentDir() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFileManager::setBasePath(const Common::String &path) {
+bool CBFileManager::setBasePath(const Common::String &path) {
 	cleanup();
 
 	if (path.c_str()) {

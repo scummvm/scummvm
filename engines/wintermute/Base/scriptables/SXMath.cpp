@@ -59,7 +59,7 @@ CSXMath::~CSXMath() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Abs
 	//////////////////////////////////////////////////////////////////////////
@@ -286,7 +286,7 @@ double CSXMath::radianToDegree(double value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSXMath::persist(CBPersistMgr *persistMgr) {
+bool CSXMath::persist(CBPersistMgr *persistMgr) {
 
 	CBScriptable::persist(persistMgr);
 	return STATUS_OK;

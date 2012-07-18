@@ -84,14 +84,14 @@ CAdEntity::~CAdEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdEntity::loadFile(const char *filename) {
+bool CAdEntity::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CAdEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -150,7 +150,7 @@ TOKEN_DEF(WALK_TO_DIR)
 TOKEN_DEF(SAVE_STATE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
+bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY)
 	TOKEN_TABLE(SPRITE)
@@ -481,7 +481,7 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdEntity::display() {
+bool CAdEntity::display() {
 	if (_active) {
 		updateSounds();
 
@@ -529,7 +529,7 @@ ERRORCODE CAdEntity::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdEntity::update() {
+bool CAdEntity::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY && _animSprite) {
@@ -625,7 +625,7 @@ ERRORCODE CAdEntity::update() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// StopSound
 	//////////////////////////////////////////////////////////////////////////
@@ -831,7 +831,7 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdEntity::scSetProperty(const char *name, CScValue *value) {
+bool CAdEntity::scSetProperty(const char *name, CScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Item
@@ -877,7 +877,7 @@ const char *CAdEntity::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
+bool CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	if (_subtype == ENTITY_SOUND)
@@ -977,7 +977,7 @@ void CAdEntity::updatePosition() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdEntity::persist(CBPersistMgr *persistMgr) {
+bool CAdEntity::persist(CBPersistMgr *persistMgr) {
 	CAdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_item));
@@ -1003,7 +1003,7 @@ void CAdEntity::setItem(const char *itemName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdEntity::setSprite(const char *filename) {
+bool CAdEntity::setSprite(const char *filename) {
 	bool setCurrent = false;
 	if (_currentSprite == _sprite) {
 		_currentSprite = NULL;

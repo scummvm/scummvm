@@ -72,7 +72,7 @@ void CAdResponse::setText(const char *text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponse::setIcon(const char *filename) {
+bool CAdResponse::setIcon(const char *filename) {
 	delete _icon;
 	_icon = new CBSprite(_gameRef);
 	if (!_icon || DID_FAIL(_icon->loadFile(filename))) {
@@ -85,7 +85,7 @@ ERRORCODE CAdResponse::setIcon(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponse::setFont(const char *filename) {
+bool CAdResponse::setFont(const char *filename) {
 	if (_font) _gameRef->_fontStorage->removeFont(_font);
 	_font = _gameRef->_fontStorage->addFont(filename);
 	if (!_font) {
@@ -96,7 +96,7 @@ ERRORCODE CAdResponse::setFont(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponse::setIconHover(const char *filename) {
+bool CAdResponse::setIconHover(const char *filename) {
 	delete _iconHover;
 	_iconHover = new CBSprite(_gameRef);
 	if (!_iconHover || DID_FAIL(_iconHover->loadFile(filename))) {
@@ -110,7 +110,7 @@ ERRORCODE CAdResponse::setIconHover(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponse::setIconPressed(const char *filename) {
+bool CAdResponse::setIconPressed(const char *filename) {
 	delete _iconPressed;
 	_iconPressed = new CBSprite(_gameRef);
 	if (!_iconPressed || DID_FAIL(_iconPressed->loadFile(filename))) {
@@ -124,7 +124,7 @@ ERRORCODE CAdResponse::setIconPressed(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CAdResponse::persist(CBPersistMgr *persistMgr) {
+bool CAdResponse::persist(CBPersistMgr *persistMgr) {
 
 	CBObject::persist(persistMgr);
 

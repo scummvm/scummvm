@@ -405,14 +405,14 @@ int CBFontTT::getLetterHeight() {
 
 
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontTT::loadFile(const char *filename) {
+bool CBFontTT::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "CBFontTT::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
-	ERRORCODE ret;
+	bool ret;
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -442,7 +442,7 @@ TOKEN_DEF(OFFSET_X)
 TOKEN_DEF(OFFSET_Y)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontTT::loadBuffer(byte *buffer) {
+bool CBFontTT::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TTFONT)
 	TOKEN_TABLE(SIZE)
@@ -550,7 +550,7 @@ ERRORCODE CBFontTT::loadBuffer(byte *buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
+bool CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(OFFSET_X)
 	TOKEN_TABLE(OFFSET_Y)
@@ -593,7 +593,7 @@ ERRORCODE CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontTT::persist(CBPersistMgr *persistMgr) {
+bool CBFontTT::persist(CBPersistMgr *persistMgr) {
 	CBFont::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_isBold));
@@ -635,7 +635,7 @@ void CBFontTT::afterLoad() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CBFontTT::initFont() {
+bool CBFontTT::initFont() {
 	if (!_fontFile) return STATUS_FAILED;
 
 	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(_fontFile);
