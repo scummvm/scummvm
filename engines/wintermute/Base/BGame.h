@@ -97,7 +97,7 @@ public:
 	bool _shuttingDown;
 
 	virtual ERRORCODE displayDebugInfo();
-	bool _dEBUG_ShowFPS;
+	bool _debugShowFPS;
 
 	bool _suspendedRendering;
 	int _soundBufferSizeSec;
@@ -185,10 +185,10 @@ public:
 	virtual ~CBGame();
 	void DEBUG_DebugDisable();
 	void DEBUG_DebugEnable(const char *filename = NULL);
-	bool _dEBUG_DebugMode;
-	bool _dEBUG_AbsolutePathWarning;
+	bool _debugDebugMode;
+	bool _debugAbsolutePathWarning;
 
-	void *_dEBUG_LogFile;
+	void *_debugLogFile;
 	int _sequence;
 	virtual ERRORCODE loadFile(const char *filename);
 	virtual ERRORCODE loadBuffer(byte *buffer, bool complete = true);

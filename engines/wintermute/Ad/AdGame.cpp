@@ -266,7 +266,7 @@ ERRORCODE CAdGame::changeScene(const char *filename, bool fadeIn) {
 		if (_scene->_scProp) _scene->_scProp->cleanup();
 
 		ERRORCODE ret;
-		if (_initialScene && _dEBUG_DebugMode && _debugStartupScene) {
+		if (_initialScene && _debugDebugMode && _debugStartupScene) {
 			_initialScene = false;
 			ret = _scene->loadFile(_debugStartupScene);
 		} else ret = _scene->loadFile(filename);
@@ -2039,7 +2039,7 @@ ERRORCODE CAdGame::onMouseRightUp() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::displayDebugInfo() {
 	char str[100];
-	if (_gameRef->_dEBUG_DebugMode) {
+	if (_gameRef->_debugDebugMode) {
 		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + _scene->getOffsetLeft(), _mousePos.y + _scene->getOffsetTop());
 		_systemFont->drawText((byte *)str, 0, 90, _renderer->_width, TAL_RIGHT);
 

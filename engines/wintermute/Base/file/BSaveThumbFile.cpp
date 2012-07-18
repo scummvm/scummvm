@@ -74,13 +74,13 @@ ERRORCODE CBSaveThumbFile::open(const Common::String &filename) {
 	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
 	if (!pm) return STATUS_FAILED;
 
-	_gameRef->_dEBUG_AbsolutePathWarning = false;
+	_gameRef->_debugAbsolutePathWarning = false;
 	if (DID_FAIL(pm->initLoad(slotFilename))) {
-		_gameRef->_dEBUG_AbsolutePathWarning = true;
+		_gameRef->_debugAbsolutePathWarning = true;
 		delete pm;
 		return STATUS_FAILED;
 	}
-	_gameRef->_dEBUG_AbsolutePathWarning = true;
+	_gameRef->_debugAbsolutePathWarning = true;
 
 	ERRORCODE res;
 

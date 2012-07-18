@@ -126,7 +126,7 @@ ERRORCODE CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheTyp
 	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(filename);
 	if (!file) {
 		_gameRef->LOG(0, "CBSprite::LoadFile failed for file '%s'", filename);
-		if (_gameRef->_dEBUG_DebugMode) return loadFile("invalid_debug.bmp", lifeTime, cacheType);
+		if (_gameRef->_debugDebugMode) return loadFile("invalid_debug.bmp", lifeTime, cacheType);
 		else return loadFile("invalid.bmp", lifeTime, cacheType);
 	} else {
 		_gameRef->_fileManager->closeFile(file);

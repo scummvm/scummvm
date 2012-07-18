@@ -295,7 +295,7 @@ float CAdScene::getZoomAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CAdScene::getAlphaAt(int x, int y, bool colorCheck) {
-	if (!_gameRef->_dEBUG_DebugMode) colorCheck = false;
+	if (!_gameRef->_debugDebugMode) colorCheck = false;
 
 	uint32 ret;
 	if (colorCheck) ret = 0xFFFF0000;

@@ -107,7 +107,7 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, by
 
 	if (!_gameRef->_fileManager->hasFile(filename)) {
 		if (filename) _gameRef->LOG(0, "Missing image: '%s'", filename);
-		if (_gameRef->_dEBUG_DebugMode)
+		if (_gameRef->_debugDebugMode)
 			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 		else
 			return addSurface("invalid.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);

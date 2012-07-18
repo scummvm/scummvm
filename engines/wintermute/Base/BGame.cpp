@@ -100,10 +100,10 @@ CBGame::CBGame(): CBObject(this) {
 
 	_mathClass = NULL;
 
-	_dEBUG_LogFile = NULL;
-	_dEBUG_DebugMode = false;
-	_dEBUG_AbsolutePathWarning = true;
-	_dEBUG_ShowFPS = false;
+	_debugLogFile = NULL;
+	_debugDebugMode = false;
+	_debugAbsolutePathWarning = true;
+	_debugShowFPS = false;
 
 	_systemFont = NULL;
 	_videoFont = NULL;
@@ -506,7 +506,7 @@ ERRORCODE CBGame::initialize3() { // renderer is initialized
 
 //////////////////////////////////////////////////////////////////////
 void CBGame::DEBUG_DebugEnable(const char *filename) {
-	_dEBUG_DebugMode = true;
+	_debugDebugMode = true;
 
 	/*  time_t timeNow;
 	    time(&timeNow);
@@ -540,12 +540,12 @@ void CBGame::DEBUG_DebugEnable(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////
 void CBGame::DEBUG_DebugDisable() {
-	if (_dEBUG_LogFile != NULL) {
+	if (_debugLogFile != NULL) {
 		LOG(0, "********** DEBUG LOG CLOSED ********************************************");
-		//fclose((FILE *)_dEBUG_LogFile);
-		_dEBUG_LogFile = NULL;
+		//fclose((FILE *)_debugLogFile);
+		_debugLogFile = NULL;
 	}
-	_dEBUG_DebugMode = false;
+	_debugDebugMode = false;
 }
 
 
@@ -572,8 +572,8 @@ void CBGame::LOG(ERRORCODE res, const char *fmt, ...) {
 
 	debugCN(kWinterMuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
 
-	//fprintf((FILE *)_dEBUG_LogFile, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
-	//fflush((FILE *)_dEBUG_LogFile);
+	//fprintf((FILE *)_debugLogFile, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
+	//fflush((FILE *)_debugLogFile);
 
 	//QuickMessage(buff);
 }
@@ -2257,7 +2257,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// DebugMode (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DebugMode") == 0) {
-		_scValue->setBool(_dEBUG_DebugMode);
+		_scValue->setBool(_debugDebugMode);
 		return _scValue;
 	}
 
@@ -3242,7 +3242,7 @@ ERRORCODE CBGame::loadGame(const char *filename) {
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
 	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
-	_dEBUG_AbsolutePathWarning = false;
+	_debugAbsolutePathWarning = false;
 	if (DID_FAIL(ret = pm->initLoad(filename))) goto load_finish;
 
 	//if(DID_FAIL(ret = cleanup())) goto load_finish;
@@ -3260,7 +3260,7 @@ ERRORCODE CBGame::loadGame(const char *filename) {
 	getDebugMgr()->onGameInit();
 
 load_finish:
-	_dEBUG_AbsolutePathWarning = true;
+	_debugAbsolutePathWarning = true;
 
 	_indicatorDisplay = false;
 	delete pm;
@@ -3836,14 +3836,14 @@ ERRORCODE CBGame::getSaveSlotDescription(int slot, char *buffer) {
 	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
 	if (!pm) return STATUS_FAILED;
 
-	_dEBUG_AbsolutePathWarning = false;
+	_debugAbsolutePathWarning = false;
 	if (DID_FAIL(pm->initLoad(filename))) {
-		_dEBUG_AbsolutePathWarning = true;
+		_debugAbsolutePathWarning = true;
 		delete pm;
 		return STATUS_FAILED;
 	}
 
-	_dEBUG_AbsolutePathWarning = true;
+	_debugAbsolutePathWarning = true;
 	strcpy(buffer, pm->_savedDescription);
 	delete pm;
 
@@ -4318,12 +4318,12 @@ ERRORCODE CBGame::onWindowClose() {
 ERRORCODE CBGame::displayDebugInfo() {
 	char str[100];
 
-	if (_dEBUG_ShowFPS) {
+	if (_debugShowFPS) {
 		sprintf(str, "FPS: %d", _gameRef->_fps);
 		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);
 	}
 
-	if (_gameRef->_dEBUG_DebugMode) {
+	if (_gameRef->_debugDebugMode) {
 		if (!_gameRef->_renderer->_windowed)
 			sprintf(str, "Mode: %dx%dx%d", _renderer->_width, _renderer->_height, _renderer->_bPP);
 		else

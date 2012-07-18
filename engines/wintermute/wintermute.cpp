@@ -176,7 +176,7 @@ int WinterMuteEngine::init() {
 	
 	if (_game->_registry->readBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
 	
-	_game->_dEBUG_ShowFPS = _game->_registry->readBool("Debug", "ShowFPS");
+	_game->_debugShowFPS = _game->_registry->readBool("Debug", "ShowFPS");
 	
 	if (_game->_registry->readBool("Debug", "DisableSmartCache")) {
 		_game->LOG(0, "Smart cache is DISABLED");

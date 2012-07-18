@@ -616,7 +616,7 @@ Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filena
 	if (strcmp(filename.c_str(), "") == 0) return NULL;
 	//_gameRef->LOG(0, "open file: %s", filename);
 	/*#ifdef __WIN32__
-	    if (_gameRef->_dEBUG_DebugMode && _gameRef->_dEBUG_AbsolutePathWarning && AbsPathWarning) {
+	    if (_gameRef->_debugDebugMode && _gameRef->_debugAbsolutePathWarning && AbsPathWarning) {
 	        char Drive[_MAX_DRIVE];
 	        _splitpath(filename, Drive, NULL, NULL, NULL);
 	        if (Drive[0] != '\0') {
