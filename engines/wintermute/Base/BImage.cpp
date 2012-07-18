@@ -152,7 +152,7 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 
 	/* Since we don't care during reads, we don't care during writes: */
 	/* uint32 fileSize = */
-	stream->writeUint32LE(0);
+	stream->writeUint32LE(54 + _surface->h * _surface->pitch);
 	/* uint16 res1 = */
 	stream->writeUint16LE(0);
 	/* uint16 res2 = */
@@ -176,7 +176,7 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 		return false;
 	}
 
-	/* uint16 planes = */ stream->writeUint16LE(0);
+	/* uint16 planes = */ stream->writeUint16LE(1);
 	const uint16 bitsPerPixel = 24;
 	stream->writeUint16LE(bitsPerPixel);
 
@@ -184,7 +184,7 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 	stream->writeUint32LE(compression);
 
 	/* uint32 imageSize = */
-	stream->writeUint32LE(0);
+	stream->writeUint32LE(_surface->h * _surface->pitch);
 	/* uint32 pixelsPerMeterX = */
 	stream->writeUint32LE(0);
 	/* uint32 pixelsPerMeterY = */
