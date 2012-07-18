@@ -35,9 +35,12 @@ namespace WinterMute {
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",				"Five Lethal Demons"},
 	{"5ma",				"Five Magical Amulets"},
+	{"actualdest",		"Actual Destination"},
 	{"chivalry",		"Chivalry is Not Dead"},
 	{"dirtysplit",		"Dirty Split"},
+	{"ghostsheet",		"Ghost in the Sheet"},
 	{"julia",			"J.U.L.I.A."},
+	{"mirage",			"Mirage"},
 	{"pigeons",			"Pigeons in the Park"},
 	{"rosemary",		"Rosemary"},
 	{"twc",				"the white chamber"},
@@ -46,6 +49,15 @@ static const PlainGameDescriptor wintermuteGames[] = {
 };
 
 static const ADGameDescription gameDescriptions[] = {
+	{
+		"actualdest",
+		"",
+		AD_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	{
 		"chivalry",
 		"",
@@ -77,6 +89,25 @@ static const ADGameDescription gameDescriptions[] = {
 		"5ma",
 		"",
 		AD_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"ghostsheet",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "dc1f6595f412ac25a52eaf47dad4ab81", 169083),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
+	{
+		"mirage",
+		"",
+		AD_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
