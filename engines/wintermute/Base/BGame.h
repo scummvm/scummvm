@@ -358,13 +358,13 @@ private:
 
 	struct LastClickInfo {
 		LastClickInfo() {
-			PosX = PosY = 0;
-			Time = 0;
+			posX = posY = 0;
+			time = 0;
 		}
 
-		int PosX;
-		int PosY;
-		uint32 Time;
+		int posX;
+		int posY;
+		uint32 time;
 	};
 
 	LastClickInfo _lastClick[2];

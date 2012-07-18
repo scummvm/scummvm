@@ -4435,17 +4435,17 @@ bool CBGame::isDoubleClick(int buttonIndex) {
 	Point32 pos;
 	CBPlatform::getCursorPos(&pos);
 
-	int moveX = abs(pos.x - _lastClick[buttonIndex].PosX);
-	int moveY = abs(pos.y - _lastClick[buttonIndex].PosY);
+	int moveX = abs(pos.x - _lastClick[buttonIndex].posX);
+	int moveY = abs(pos.y - _lastClick[buttonIndex].posY);
 
 
-	if (_lastClick[buttonIndex].Time == 0 || CBPlatform::getTime() - _lastClick[buttonIndex].Time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
-		_lastClick[buttonIndex].Time = CBPlatform::getTime();
-		_lastClick[buttonIndex].PosX = pos.x;
-		_lastClick[buttonIndex].PosY = pos.y;
+	if (_lastClick[buttonIndex].time == 0 || CBPlatform::getTime() - _lastClick[buttonIndex].time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
+		_lastClick[buttonIndex].time = CBPlatform::getTime();
+		_lastClick[buttonIndex].posX = pos.x;
+		_lastClick[buttonIndex].posY = pos.y;
 		return false;
 	} else {
-		_lastClick[buttonIndex].Time = 0;
+		_lastClick[buttonIndex].time = 0;
 		return true;
 	}
 }
