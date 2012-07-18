@@ -108,7 +108,7 @@ private:
 	void constructImage();
 	void unfilterScanLine(byte *dest, const byte *scanLine, const byte *prevLine, uint16 byteWidth, byte filterType, uint16 length);
 	byte paethPredictor(int16 a, int16 b, int16 c);
-
+	void adam7Deinterlace(byte* out);
 	// The original file stream
 	Common::SeekableReadStream *_stream;
 	// The unzipped image data stream
