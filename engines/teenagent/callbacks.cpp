@@ -248,11 +248,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(842);
 		wait(100);
 		// shown in different positions
-		displayMessage(0x5656, 0xd1, 0x5510);
+		displayMessage(0x5656, 0xd1, 16, 68);
 		wait(50);
-		displayMessage(0x567a, 0xd1, 0x555c);
+		displayMessage(0x567a, 0xd1, 92, 68);
 		wait(50);
-		displayMessage(0x5682, 0xd1, 0x553e);
+		displayMessage(0x5682, 0xd1, 62, 68);
 		wait(50);
 		playActorAnimation(843);
 		showActor();
@@ -486,7 +486,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			moveTo(140, 152, 1);
 			if (CHECK_FLAG(0xdbe8, 1)) {
 				dialog->showMono(177, scene, 0, 0xd1, 0);
-				displayMessage(0x5883, 0xef, 21472);
+				displayMessage(0x5883, 0xef, 32, 67);
 				//reloadLan();
 				setLan(1, 0);
 				playAnimation(882, 0);
@@ -1328,15 +1328,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x411d);
 		} else {
 			displayMessage(0x408a);
-			displayMessage(0x4091, 0xe5, 52728);
+			displayMessage(0x4091, 0xe5, 248, 164);
 			displayMessage(0x4098);
-			displayMessage(0x40a7, 0xe5, 52705);
+			displayMessage(0x40a7, 0xe5, 225, 164);
 			displayMessage(0x40b6);
-			displayMessage(0x40ce, 0xe5, 52652);
+			displayMessage(0x40ce, 0xe5, 172, 164);
 			displayMessage(0x40e8);
-			displayMessage(0x410f, 0xe5, 52712);
+			displayMessage(0x410f, 0xe5, 232, 164);
 			wait(100);
-			displayMessage(0x4091, 0xe5, 52728);
+			displayMessage(0x4091, 0xe5, 248, 164);
 			SET_FLAG(0xdbb2, 1);
 		}
 		break;
@@ -2552,8 +2552,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			disableObject(15);
 			disableObject(16);
 			moveTo(162, 164, 2);
-			displayMessage(0x3d01, 0xe5, 24390);
-			displayMessage(0x3d20, 0xd8, 24410);
+			displayMessage(0x3d01, 0xe5, 70, 76);
+			displayMessage(0x3d20, 0xd8, 90, 76);
 			moveTo(162, 191, 2);
 			setOns(1, 0);
 			setOns(2, 0);

@@ -99,8 +99,8 @@ public:
 	Common::String parseMessage(uint16 addr);
 
 	//event driven:
-	void displayMessage(uint16 addr, byte color = 0xd1, uint16 position = 0);
-	void displayMessage(const Common::String &str, byte color = 0xd1, uint16 position = 0);
+	void displayMessage(uint16 addr, byte color = 0xd1, uint16 x = 0, uint16 y = 0);
+	void displayMessage(const Common::String &str, byte color = 0xd1, uint16 x = 0, uint16 y = 0);
 	void displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 first_frame, uint16 last_frame, byte color = 0xd1);
 	void displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 first_frame, uint16 last_frame, byte color = 0xd1);
 	void displayCredits(uint16 addr, uint16 timer = 0);

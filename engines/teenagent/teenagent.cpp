@@ -721,7 +721,7 @@ Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	return message;
 }
 
-void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint16 position) {
+void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint16 x, uint16 y) {
 	if (str.empty()) {
 		return;
 	}
@@ -738,8 +738,8 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint
 		event.message = str;
 		event.color = color;
 		event.slot = 0;
-		event.dst.x = position % 320;
-		event.dst.y = position / 320;
+		event.dst.x = x;
+		event.dst.y = y;
 		scene->push(event);
 	}
 
@@ -751,8 +751,8 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint
 	}
 }
 
-void TeenAgentEngine::displayMessage(uint16 addr, byte color, uint16 position) {
-	displayMessage(parseMessage(addr), color, position);
+void TeenAgentEngine::displayMessage(uint16 addr, byte color, uint16 x, uint16 y) {
+	displayMessage(parseMessage(addr), color, x, y);
 }
 
 void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 first_frame, uint16 last_frame, byte color) {
