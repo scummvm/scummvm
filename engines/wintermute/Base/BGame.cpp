@@ -3871,9 +3871,9 @@ bool CBGame::isSaveSlotUsed(int slot) {
 bool CBGame::emptySaveSlot(int slot) {
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
-
-	CBPlatform::deleteFile(filename);
-
+	CBPersistMgr *pm = new CBPersistMgr(this);
+	g_wintermute->getSaveFileMan()->removeSavefile(pm->getFilenameForSlot(slot));
+	delete pm;
 	return STATUS_OK;
 }
 
