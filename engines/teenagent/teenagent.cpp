@@ -755,13 +755,13 @@ void TeenAgentEngine::displayMessage(uint16 addr, byte color, uint16 position) {
 	displayMessage(parseMessage(addr), color, position);
 }
 
-void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 position, uint16 first_frame, uint16 last_frame, byte color) {
+void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 first_frame, uint16 last_frame, byte color) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
 	event.slot = 0;
 	event.color = color;
-	event.dst.x = position % 320;
-	event.dst.y = position / 320;
+	event.dst.x = x;
+	event.dst.y = y;
 	event.first_frame = first_frame;
 	event.last_frame = last_frame;
 

@@ -136,7 +136,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		showActor();
 		moveTo(319, 150, 1, true);
 		moveTo(63, 150, 1);
-		displayAsyncMessage(0x5da8, 19844, 18, 36); // hey, what's the matter?
+		displayAsyncMessage(0x5da8, 4, 62, 18, 36); // hey, what's the matter?
 		playAnimation(851, 0, true);
 		playActorAnimation(930, true);
 		waitAnimation();
@@ -661,7 +661,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x4d94: // talking with fatso
 		dialog->show(87, scene, 0, 666, 0xd1, 0xd0, 0, 2);
-		displayAsyncMessage(0x49ae, /*25060*/ 35000, 1, 10, 0xd0);
+		displayAsyncMessage(0x49ae, 120, 109, 1, 10, 0xd0); // FIXME: Original (x,y) was (100, 78), rather than (120, 109)?
 		playSound(5, 3);
 		playAnimation(667, 1);
 		playAnimation(668, 1);
@@ -739,7 +739,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(56, 8);
 			playSound(56, 12);
 			playSound(49, 10);
-			displayAsyncMessage(0x4652, 31579, 16, 24);
+			displayAsyncMessage(0x4652, 219, 98, 16, 24);
 			playActorAnimation(587);
 			moveRel(0, 0, 2);
 			wait(100);
@@ -782,7 +782,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		scene->getAnimation(0)->free();
 		SET_FLAG(0xdb9c, 1);
 
-		displayAsyncMessage(0x3563, 320 * 130 + 300, 1, 5);
+		displayAsyncMessage(0x3563, 300, 130, 1, 5);
 		setOns(0, 16);
 		enableObject(2);
 
@@ -1784,7 +1784,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x62d0: // Get bone from under rock
-		displayAsyncMessage(0x463c, 30938, 16, 24);
+		displayAsyncMessage(0x463c, 218, 96, 16, 24);
 		playSound(26, 6);
 		playSound(26, 10);
 		playSound(24, 13);
@@ -1954,7 +1954,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(89, 4);
 				playSound(89, 4);
 				playSound(87, 45);
-				displayAsyncMessage(0x4fcb, 34672, 11, 35, 0xe5);
+				displayAsyncMessage(0x4fcb, 112, 108, 11, 35, 0xe5);
 				playActorAnimation(718);
 				wait(100);
 				displayMessage(0x4fe2);
@@ -2001,7 +2001,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x7336:
 		setOns(1, 0);
 		playSound(5, 42);
-		displayAsyncMessage(0x4d02, 32642, 20, 38);
+		displayAsyncMessage(0x4d02, 2, 102, 20, 38);
 		playActorAnimation(697);
 		inventory->add(56);
 		disableObject(1);
@@ -2369,12 +2369,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		for (byte i = 3; i <= 18; i += 3)
 			playSound(56, i);
 
-		displayAsyncMessage(0x3ace, 3878, 20, 37, 0xd9);
+		displayAsyncMessage(0x3ace, 38, 12, 20, 37, 0xd9);
 		playActorAnimation(621, true);
 		playAnimation(623, 1, true);
 		waitAnimation();
 
-		displayAsyncMessage(0x3ae6, 3870, 1, 9, 0xd9);
+		displayAsyncMessage(0x3ae6, 30, 12, 1, 9, 0xd9);
 		playSound(35, 1);
 		playActorAnimation(622, true);
 		playAnimation(624, 0, true);
@@ -2528,7 +2528,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 43);
 			playSound(61, 70);
 			playSound(61, 91);
-			displayAsyncMessage(0x3cfb, 28877, 6, 17);
+			displayAsyncMessage(0x3cfb, 77, 90, 6, 17);
 			playActorAnimation(505, true);
 			playAnimation(507, 0, true);
 			waitAnimation();
@@ -2702,7 +2702,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			//playAnimation(672, 1);
 
 			playSound(83, 12);
-			displayAsyncMessage(0x4a5b, 36684, 23, 38, 0xe5);
+			displayAsyncMessage(0x4a5b, 204, 114, 23, 38, 0xe5);
 			playActorAnimation(673);
 			loadScene(11, scene->getPosition());
 			playSound(24, 31);
@@ -2729,7 +2729,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(92, 20);
 		playSound(92, 38);
 		playSound(92, 58);
-		displayAsyncMessage(0x464a, 36510, 58, 67);
+		displayAsyncMessage(0x464a, 30, 114, 58, 67);
 		playActorAnimation(602);
 		playSound(5, 3);
 		playActorAnimation(603);
@@ -2875,7 +2875,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(56, i);
 		playSound(2, 64);
 		playSound(3, 74);
-		displayAsyncMessage(0x34c7, 25812, 35, 50);
+		displayAsyncMessage(0x34c7, 212, 80, 35, 50);
 		playActorAnimation(516, true);
 		playAnimation(517, 2, true);
 		playAnimation(518, 3, true);
@@ -3550,7 +3550,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 					playSound(5, 3);
 					playSound(5, 39);
-					displayAsyncMessage(0x5124, 40388, 9, 35, 0xd0);
+					displayAsyncMessage(0x5124, 68, 126, 9, 35, 0xd0);
 					playActorAnimation(728);
 
 					waitLanAnimationFrame(1, 1);
