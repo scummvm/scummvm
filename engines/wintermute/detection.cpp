@@ -50,6 +50,24 @@ static const PlainGameDescriptor wintermuteGames[] = {
 
 static const ADGameDescription gameDescriptions[] = {
 	{
+		"5ld",
+		"",
+		AD_ENTRY1s("data.dcp", "1037a77cbd001e0644898addc022322c", 15407750),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"5ma",
+		"",
+		AD_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
 		"actualdest",
 		"",
 		AD_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740),
@@ -86,15 +104,6 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
-		"5ma",
-		"",
-		AD_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO0()
-	},
-	{
 		"ghostsheet",
 		"Demo",
 		AD_ENTRY1s("data.dcp", "dc1f6595f412ac25a52eaf47dad4ab81", 169083),
@@ -102,24 +111,6 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE |
 		ADGF_DEMO,
-		GUIO0()
-	},
-	{
-		"mirage",
-		"",
-		AD_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO0()
-	},
-	{
-		"rosemary",
-		"",
-		AD_ENTRY1s("data.dcp", "4f2631138bd4d27587d9043f8aeff3df", 29483643),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
@@ -142,9 +133,9 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
-		"5ld",
+		"mirage",
 		"",
-		AD_ENTRY1s("data.dcp", "1037a77cbd001e0644898addc022322c", 15407750),
+		AD_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -154,6 +145,15 @@ static const ADGameDescription gameDescriptions[] = {
 		"pigeons",
 		"",
 		AD_ENTRY1s("data.dcp", "9143a5b6ff8206aefe3c4c643add3ec7", 2611100),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"rosemary",
+		"",
+		AD_ENTRY1s("data.dcp", "4f2631138bd4d27587d9043f8aeff3df", 29483643),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
