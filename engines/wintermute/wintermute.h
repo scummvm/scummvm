@@ -25,6 +25,7 @@
 
 #include "common/random.h"
 #include "engines/engine.h"
+#include "engines/advancedDetector.h"
 #include "gui/debugger.h"
 
 namespace WinterMute {
@@ -42,7 +43,7 @@ enum {
 
 class WinterMuteEngine : public Engine {
 public:
-	WinterMuteEngine(OSystem *syst);
+	WinterMuteEngine(OSystem *syst, const ADGameDescription *desc);
 	~WinterMuteEngine();
 
 	virtual Common::Error run();
@@ -59,6 +60,7 @@ private:
 	CSysClassRegistry *_classReg;
 	// We need random numbers
 	Common::RandomSource *_rnd;
+	const ADGameDescription *_gameDescription;
 };
 
 // Example console class

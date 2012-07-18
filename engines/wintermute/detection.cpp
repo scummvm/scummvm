@@ -32,106 +32,109 @@
 
 namespace WinterMute {
 
+static const PlainGameDescriptor wintermuteGames[] = {
+	{"5ld",				"Five Lethal Demons"},
+	{"5ma",				"Five Magical Amulets"},
+	{"chivalry",		"Chivalry is Not Dead"},
+	{"dirtysplit",		"Dirty Split"},
+	{"julia",			"J.U.L.I.A."},
+	{"pigeons",			"Pigeons in the Park"},
+	{"rosemary",		"Rosemary"},
+	{"twc",				"the white chamber"},
+	{"wintermute",		"Wintermute engine game"},
+	{0, 0}
+};
+
 static const ADGameDescription gameDescriptions[] = {
 	{
-		"wintermute",
-		"Chivalry is Not Dead",
+		"chivalry",
+		"",
 		AD_ENTRY1s("data.dcp", "ebd0915d9a12df5224be22f53bb23eb6", 7278306),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
-		"wintermute",
-		"Dirty Split",
+		"dirtysplit",
+		"",
 		AD_ENTRY1s("data.dcp", "8f3dae199361ece0f59fb20cfff6eed3", 88577621),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
-		"wintermute",
-		"Dirty Split",
+		"dirtysplit",
+		"",
 		AD_ENTRY1s("data.dcp", "139d8a25579e969f8b37d20e6e3de5f9", 92668291),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
-		"wintermute",
-		"Five Magical Amulets",
+		"5ma",
+		"",
 		AD_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
-		"wintermute",
-		"Rosemary",
+		"rosemary",
+		"",
 		AD_ENTRY1s("data.dcp", "4f2631138bd4d27587d9043f8aeff3df", 29483643),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
-		"wintermute",
-		"J.U.L.I.A.",
+		"julia",
+		"",
 		AD_ENTRY1s("data.dcp", "c2264b4f8fcd132d2913ff5b6076a24f", 10109741),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
-		"wintermute",
-		"J.U.L.I.A. Demo",
+		"julia",
+		"Demo",
 		AD_ENTRY1s("data.dcp", "f0bbc3394555a9811f6050dae428cab6", 7655237),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE |
 		ADGF_DEMO,
 		GUIO0()
 	},
 	{
-		"wintermute",
-		"Five Lethal Demons",
+		"5ld",
+		"",
 		AD_ENTRY1s("data.dcp", "1037a77cbd001e0644898addc022322c", 15407750),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
-		"wintermute",
-		"Pigeons in the Park",
+		"pigeons",
+		"",
 		AD_ENTRY1s("data.dcp", "9143a5b6ff8206aefe3c4c643add3ec7", 2611100),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	{
-		"wintermute",
-		"the white chamber",
+		"twc",
+		"",
 		AD_ENTRY1s("data.dcp", "0011d01142547c61e51ba24dc42b579e", 186451273),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_USEEXTRAASTITLE,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	AD_TABLE_END_MARKER
@@ -139,14 +142,10 @@ static const ADGameDescription gameDescriptions[] = {
 
 }
 
-static const PlainGameDescriptor wintermuteGames[] = {
-	{ "wintermute", "Wintermute - Unspecified game" },
-	{ 0, 0 }
-};
-
 class WinterMuteMetaEngine : public AdvancedMetaEngine {
 public:
-	WinterMuteMetaEngine() : AdvancedMetaEngine(WinterMute::gameDescriptions, sizeof(ADGameDescription), wintermuteGames) {
+	WinterMuteMetaEngine() : AdvancedMetaEngine(WinterMute::gameDescriptions, sizeof(ADGameDescription), WinterMute::wintermuteGames) {
+		_singleid = "wintermute";
 	}
 	virtual const char *getName() const {
 		return "Wintermute";
@@ -198,27 +197,8 @@ public:
 		assert(syst);
 		assert(engine);
 
-		// Scan the target directory for files (error out if it does not exist)
-		Common::FSList fslist;
-		Common::FSNode dir(ConfMan.get("path"));
-		if (!dir.getChildren(fslist, Common::FSNode::kListAll)) {
-			return Common::kNoGameDataFoundError;
-		}
-
-		// Invoke the detector
-		Common::String gameid = ConfMan.get("gameid");
-		GameList detectedGames = detectGames(fslist);
-
-		for (uint i = 0; i < detectedGames.size(); i++) {
-			if (detectedGames[i].gameid() == gameid) {
-				// At this point you may want to perform additional sanity checks.
-				*engine = new WinterMute::WinterMuteEngine(syst);
-				return true;
-			}
-		}
-
-		// Failed to find any game data
-		return false;
+		*engine = new WinterMute::WinterMuteEngine(syst, desc);
+		return true;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const {
