@@ -37,12 +37,15 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ma",				"Five Magical Amulets"},
 	{"actualdest",		"Actual Destination"},
 	{"chivalry",		"Chivalry is Not Dead"},
+	{"deadcity",		"Dead City"},
 	{"dirtysplit",		"Dirty Split"},
+	{"eastside",		"East Side Story"},
 	{"ghostsheet",		"Ghost in the Sheet"},
 	{"hamlet",			"Hamlet or the last game without MMORPS features, shaders and product placement"},
 	{"julia",			"J.U.L.I.A."},
 	{"mirage",			"Mirage"},
 	{"pigeons",			"Pigeons in the Park"},
+	{"reversion",		"Reversion"},
 	{"rosemary",		"Rosemary"},
 	{"thebox",			"The Box"},
 	{"twc",				"the white chamber"},
@@ -88,6 +91,15 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		"deadcity",
+		"",
+		AD_ENTRY1s("data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
 		"dirtysplit",
 		"",
 		AD_ENTRY1s("data.dcp", "8f3dae199361ece0f59fb20cfff6eed3", 88577621),
@@ -103,6 +115,16 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"eastside",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "b3f8b09bb4b05ee3e9d14697525257f9", 59296246),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
 		GUIO0()
 	},
 	{
@@ -156,6 +178,15 @@ static const ADGameDescription gameDescriptions[] = {
 		"pigeons",
 		"",
 		AD_ENTRY1s("data.dcp", "9143a5b6ff8206aefe3c4c643add3ec7", 2611100),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"reversion",
+		"",
+		AD_ENTRY1s("data.dcp", "cd616f98ebfd047e0c540b50b4b70761", 254384531),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
