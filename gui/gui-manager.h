@@ -35,6 +35,10 @@ namespace Graphics {
 class Font;
 }
 
+namespace Common {
+	struct Event;
+}
+
 namespace GUI {
 
 class Dialog;
@@ -66,6 +70,8 @@ public:
 	// Main entry for the GUI: this will start an event loop that keeps running
 	// until no dialogs are active anymore.
 	void runLoop();
+
+	void processEvent(const Common::Event &event, Dialog *const activeDialog);
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
