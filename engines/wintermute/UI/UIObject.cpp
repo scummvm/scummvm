@@ -71,10 +71,10 @@ CUIObject::CUIObject(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CUIObject::~CUIObject() {
-	if (!Game->_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(CBGame::invalidateValues, "CScValue", (void *)this);
+	if (!_gameRef->_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(CBGame::invalidateValues, "CScValue", (void *)this);
 
 	if (_back) delete _back;
-	if (_font && !_sharedFonts) Game->_fontStorage->removeFont(_font);
+	if (_font && !_sharedFonts) _gameRef->_fontStorage->removeFont(_font);
 
 	if (_image && !_sharedImages) delete _image;
 
@@ -145,12 +145,12 @@ ERRORCODE CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (_font) Game->_fontStorage->removeFont(_font);
+		if (_font) _gameRef->_fontStorage->removeFont(_font);
 		if (Val->isNULL()) {
 			_font = NULL;
 			stack->pushBool(true);
 		} else {
-			_font = Game->_fontStorage->addFont(Val->getString());
+			_font = _gameRef->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_font != NULL);
 		}
 		return STATUS_OK;
@@ -172,7 +172,7 @@ ERRORCODE CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			return STATUS_OK;
 		}
 
-		_image = new CBSprite(Game);
+		_image = new CBSprite(_gameRef);
 		if (!_image || DID_FAIL(_image->loadFile(val->getString()))) {
 			delete _image;
 			_image = NULL;
@@ -487,10 +487,10 @@ const char *CUIObject::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CUIObject::isFocused() {
-	if (!Game->_focusedWindow) return false;
-	if (Game->_focusedWindow == this) return true;
+	if (!_gameRef->_focusedWindow) return false;
+	if (_gameRef->_focusedWindow == this) return true;
 
-	CUIObject *obj = Game->_focusedWindow;
+	CUIObject *obj = _gameRef->_focusedWindow;
 	while (obj) {
 		if (obj == this) return true;
 		else obj = obj->_focusedWidget;
@@ -526,7 +526,7 @@ ERRORCODE CUIObject::focus() {
 			if (obj->_parent) {
 				if (!obj->_disable && obj->_canFocus) obj->_parent->_focusedWidget = obj;
 			} else {
-				if (obj->_type == UI_WINDOW) Game->focusWindow((CUIWindow *)obj);
+				if (obj->_type == UI_WINDOW) _gameRef->focusWindow((CUIWindow *)obj);
 			}
 
 			obj = obj->_parent;

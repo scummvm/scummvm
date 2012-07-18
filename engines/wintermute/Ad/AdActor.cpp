@@ -57,7 +57,7 @@ IMPLEMENT_PERSISTENT(CAdActor, false)
 
 //////////////////////////////////////////////////////////////////////////
 CAdActor::CAdActor(CBGame *inGame): CAdTalkHolder(inGame) {
-	_path = new CAdPath(Game);
+	_path = new CAdPath(_gameRef);
 
 	_type = OBJECT_ACTOR;
 	_dir = DI_LEFT;
@@ -124,9 +124,9 @@ CAdActor::~CAdActor() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdActor::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdActor::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdActor::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -135,7 +135,7 @@ ERRORCODE CAdActor::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ACTOR file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ACTOR file '%s'", filename);
 
 
 	delete [] buffer;
@@ -225,17 +225,17 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTOR) {
-			Game->LOG(0, "'ACTOR' keyword expected.");
+			_gameRef->LOG(0, "'ACTOR' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 	CAdSpriteSet *spr = NULL;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
@@ -290,19 +290,19 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_WALK:
 			delete _walkSprite;
 			_walkSprite = NULL;
-			spr = new CAdSpriteSet(Game, this);
+			spr = new CAdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texWalkLifeTime, CACHE_HALF))) cmd = PARSERR_GENERIC;
 			else _walkSprite = spr;
 			break;
 
 		case TOKEN_TALK:
-			spr = new CAdSpriteSet(Game, this);
+			spr = new CAdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.add(spr);
 			break;
 
 		case TOKEN_TALK_SPECIAL:
-			spr = new CAdSpriteSet(Game, this);
+			spr = new CAdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.add(spr);
 			break;
@@ -310,7 +310,7 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_STAND:
 			delete _standSprite;
 			_standSprite = NULL;
-			spr = new CAdSpriteSet(Game, this);
+			spr = new CAdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texStandLifeTime))) cmd = PARSERR_GENERIC;
 			else _standSprite = spr;
 			break;
@@ -318,7 +318,7 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_TURN_LEFT:
 			delete _turnLeftSprite;
 			_turnLeftSprite = NULL;
-			spr = new CAdSpriteSet(Game, this);
+			spr = new CAdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) cmd = PARSERR_GENERIC;
 			else _turnLeftSprite = spr;
 			break;
@@ -326,7 +326,7 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_TURN_RIGHT:
 			delete _turnRightSprite;
 			_turnRightSprite = NULL;
-			spr = new CAdSpriteSet(Game, this);
+			spr = new CAdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) cmd = PARSERR_GENERIC;
 			else _turnRightSprite = spr;
 			break;
@@ -337,7 +337,7 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(Game);
+			_cursor = new CBSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -378,8 +378,8 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 			delete _currentBlockRegion;
 			_blockRegion = NULL;
 			_currentBlockRegion = NULL;
-			CBRegion *rgn = new CBRegion(Game);
-			CBRegion *crgn = new CBRegion(Game);
+			CBRegion *rgn = new CBRegion(_gameRef);
+			CBRegion *crgn = new CBRegion(_gameRef);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				delete _blockRegion;
 				delete _currentBlockRegion;
@@ -399,8 +399,8 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 			delete _currentWptGroup;
 			_wptGroup = NULL;
 			_currentWptGroup = NULL;
-			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
-			CAdWaypointGroup *cwpt = new CAdWaypointGroup(Game);
+			CAdWaypointGroup *wpt = new CAdWaypointGroup(_gameRef);
+			CAdWaypointGroup *cwpt = new CAdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				delete _wptGroup;
 				delete _currentWptGroup;
@@ -432,7 +432,7 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ANIMATION: {
-			CAdSpriteSet *Anim = new CAdSpriteSet(Game, this);
+			CAdSpriteSet *Anim = new CAdSpriteSet(_gameRef, this);
 			if (!Anim || DID_FAIL(Anim->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
 			else _anims.add(Anim);
 		}
@@ -440,12 +440,12 @@ ERRORCODE CAdActor::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in ACTOR definition");
+		_gameRef->LOG(0, "Syntax error in ACTOR definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		if (spr) delete spr;
-		Game->LOG(0, "Error loading ACTOR definition");
+		_gameRef->LOG(0, "Error loading ACTOR definition");
 		return STATUS_FAILED;
 	}
 
@@ -496,7 +496,7 @@ void CAdActor::goTo(int x, int y, TDirection afterWalkDir) {
 	_targetPoint->x = x;
 	_targetPoint->y = y;
 
-	((CAdGame *)Game)->_scene->correctTargetPoint(_posX, _posY, &_targetPoint->x, &_targetPoint->y, true, this);
+	((CAdGame *)_gameRef)->_scene->correctTargetPoint(_posX, _posY, &_targetPoint->x, &_targetPoint->y, true, this);
 
 	_state = STATE_SEARCHING_PATH;
 
@@ -509,7 +509,7 @@ ERRORCODE CAdActor::display() {
 
 	uint32 alpha;
 	if (_alphaColor != 0) alpha = _alphaColor;
-	else alpha = _shadowable ? ((CAdGame *)Game)->_scene->getAlphaAt(_posX, _posY, true) : 0xFFFFFFFF;
+	else alpha = _shadowable ? ((CAdGame *)_gameRef)->_scene->getAlphaAt(_posX, _posY, true) : 0xFFFFFFFF;
 
 	float scaleX, scaleY;
 	getScale(&scaleX, &scaleY);
@@ -518,14 +518,14 @@ ERRORCODE CAdActor::display() {
 	float rotate;
 	if (_rotatable) {
 		if (_rotateValid) rotate = _rotate;
-		else rotate = ((CAdGame *)Game)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
+		else rotate = ((CAdGame *)_gameRef)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
 	} else rotate = 0.0f;
 
 	if (_active) displaySpriteAttachments(true);
 
 	if (_currentSprite && _active) {
 		bool reg = _registrable;
-		if (_ignoreItems && ((CAdGame *)Game)->_selectedItem) reg = false;
+		if (_ignoreItems && ((CAdGame *)_gameRef)->_selectedItem) reg = false;
 
 		_currentSprite->display(_posX,
 		                        _posY,
@@ -661,7 +661,7 @@ ERRORCODE CAdActor::update() {
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_SEARCHING_PATH:
 		// keep asking scene for the path
-		if (((CAdGame *)Game)->_scene->getPath(CBPoint(_posX, _posY), *_targetPoint, _path, this))
+		if (((CAdGame *)_gameRef)->_scene->getPath(CBPoint(_posX, _posY), *_targetPoint, _path, this))
 			_state = STATE_WAITING_PATH;
 		break;
 
@@ -684,7 +684,7 @@ ERRORCODE CAdActor::update() {
 		_sentence->update(_dir);
 		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
 
-		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
+		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
 		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
 			if (TimeIsUp) {
 				_sentence->finish();
@@ -696,12 +696,12 @@ ERRORCODE CAdActor::update() {
 				if (_tempSprite2) {
 					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
-					((CAdGame *)Game)->addSentence(_sentence);
+					((CAdGame *)_gameRef)->addSentence(_sentence);
 				}
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((CAdGame *)Game)->addSentence(_sentence);
+			((CAdGame *)_gameRef)->addSentence(_sentence);
 		}
 	}
 	break;
@@ -726,7 +726,7 @@ ERRORCODE CAdActor::update() {
 
 
 	if (_currentSprite && !already_moved) {
-		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100);
+		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
@@ -734,7 +734,7 @@ ERRORCODE CAdActor::update() {
 		}
 	}
 
-	//Game->QuickMessageForm("%s", _currentSprite->_filename);
+	//_gameRef->QuickMessageForm("%s", _currentSprite->_filename);
 
 	updateBlockRegion();
 	_ready = (_state == STATE_READY);
@@ -777,7 +777,7 @@ void CAdActor::getNextStep() {
 
 	if (!_currentSprite) return;
 
-	_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100);
+	_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((CAdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
 	if (!_currentSprite->_changed) return;
 
 
@@ -796,7 +796,7 @@ void CAdActor::getNextStep() {
 		maxStepX--;
 	}
 
-	if (((CAdGame *)Game)->_scene->isBlockedAt((int)_pFX,(int) _pFY, true, this)) {
+	if (((CAdGame *)_gameRef)->_scene->isBlockedAt((int)_pFX,(int) _pFY, true, this)) {
 		if (_pFCount == 0) {
 			_state = _nextState;
 			_nextState = STATE_READY;
@@ -898,7 +898,7 @@ ERRORCODE CAdActor::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		CScValue *val = stack->pop();
 
 		// turn to object?
-		if (val->isNative() && Game->validObject((CBObject *)val->getNative())) {
+		if (val->isNative() && _gameRef->validObject((CBObject *)val->getNative())) {
 			CBObject *obj = (CBObject *)val->getNative();
 			int angle = (int)(atan2((double)(obj->_posY - _posY), (double)(obj->_posX - _posX)) * (180 / 3.14));
 			dir = (int)angleToDirection(angle);
@@ -1106,11 +1106,11 @@ CBSprite *CAdActor::getTalkStance(const char *stance) {
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
 		delete _animSprite;
-		_animSprite = new CBSprite(Game, this);
+		_animSprite = new CBSprite(_gameRef, this);
 		if (_animSprite) {
 			ERRORCODE res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
-				Game->LOG(res, "CAdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
+				_gameRef->LOG(res, "CAdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
 				delete _animSprite;
 				_animSprite = NULL;
 			} else return _animSprite;
@@ -1268,23 +1268,23 @@ ERRORCODE CAdActor::mergeAnims(const char *animsFilename) {
 	TOKEN_TABLE_END
 
 
-	byte *fileBuffer = Game->_fileManager->readWholeFile(animsFilename);
+	byte *fileBuffer = _gameRef->_fileManager->readWholeFile(animsFilename);
 	if (fileBuffer == NULL) {
-		Game->LOG(0, "CAdActor::MergeAnims failed for file '%s'", animsFilename);
+		_gameRef->LOG(0, "CAdActor::MergeAnims failed for file '%s'", animsFilename);
 		return STATUS_FAILED;
 	}
 
 	byte *buffer = fileBuffer;
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	ERRORCODE Ret = STATUS_OK;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ANIMATION: {
-			CAdSpriteSet *Anim = new CAdSpriteSet(Game, this);
+			CAdSpriteSet *Anim = new CAdSpriteSet(_gameRef, this);
 			if (!Anim || DID_FAIL(Anim->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				Ret = STATUS_FAILED;

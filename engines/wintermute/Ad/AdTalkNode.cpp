@@ -95,11 +95,11 @@ ERRORCODE CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTION) {
-			Game->LOG(0, "'ACTION' keyword expected.");
+			_gameRef->LOG(0, "'ACTION' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -121,7 +121,7 @@ ERRORCODE CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_SPRITESET: {
 			delete _spriteSet;
-			_spriteSet = new CAdSpriteSet(Game);
+			_spriteSet = new CAdSpriteSet(_gameRef);
 			if (!_spriteSet || DID_FAIL(_spriteSet->loadBuffer(params, false))) {
 				delete _spriteSet;
 				_spriteSet = NULL;
@@ -143,7 +143,7 @@ ERRORCODE CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_COMMENT:
-			if (Game->_editorMode) CBUtils::setString(&_comment, (char *)params);
+			if (_gameRef->_editorMode) CBUtils::setString(&_comment, (char *)params);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -152,12 +152,12 @@ ERRORCODE CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in ACTION definition");
+		_gameRef->LOG(0, "Syntax error in ACTION definition");
 		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading ACTION definition");
+		_gameRef->LOG(0, "Error loading ACTION definition");
 		return STATUS_FAILED;
 	}
 
@@ -168,14 +168,14 @@ ERRORCODE CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 	if (_preCache && _spriteFilename) {
 		delete _sprite;
-		_sprite = new CBSprite(Game);
+		_sprite = new CBSprite(_gameRef);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename)))
 			return STATUS_FAILED;
 	}
 
 	if (_preCache && _spriteSetFilename) {
 		delete _spriteSet;
-		_spriteSet = new CAdSpriteSet(Game);
+		_spriteSet = new CAdSpriteSet(_gameRef);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename)))
 			return STATUS_FAILED;
 	}
@@ -222,7 +222,7 @@ ERRORCODE CAdTalkNode::saveAsText(CBDynBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdTalkNode::loadSprite() {
 	if (_spriteFilename && !_sprite) {
-		_sprite = new CBSprite(Game);
+		_sprite = new CBSprite(_gameRef);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
 			delete _sprite;
 			_sprite = NULL;
@@ -231,7 +231,7 @@ ERRORCODE CAdTalkNode::loadSprite() {
 	}
 
 	else if (_spriteSetFilename && !_spriteSet) {
-		_spriteSet = new CAdSpriteSet(Game);
+		_spriteSet = new CAdSpriteSet(_gameRef);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			delete _spriteSet;
 			_spriteSet = NULL;

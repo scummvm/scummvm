@@ -79,10 +79,10 @@ CUIButton::~CUIButton() {
 	delete _backFocus;
 
 	if (!_sharedFonts) {
-		if (_fontHover)   Game->_fontStorage->removeFont(_fontHover);
-		if (_fontPress)   Game->_fontStorage->removeFont(_fontPress);
-		if (_fontDisable) Game->_fontStorage->removeFont(_fontDisable);
-		if (_fontFocus)   Game->_fontStorage->removeFont(_fontFocus);
+		if (_fontHover)   _gameRef->_fontStorage->removeFont(_fontHover);
+		if (_fontPress)   _gameRef->_fontStorage->removeFont(_fontPress);
+		if (_fontDisable) _gameRef->_fontStorage->removeFont(_fontDisable);
+		if (_fontFocus)   _gameRef->_fontStorage->removeFont(_fontFocus);
 	}
 
 	if (!_sharedImages) {
@@ -96,9 +96,9 @@ CUIButton::~CUIButton() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIButton::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CUIButton::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CUIButton::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -107,7 +107,7 @@ ERRORCODE CUIButton::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing BUTTON file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing BUTTON file '%s'", filename);
 
 	delete [] buffer;
 
@@ -196,11 +196,11 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_BUTTON) {
-			Game->LOG(0, "'BUTTON' keyword expected.");
+			_gameRef->LOG(0, "'BUTTON' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -222,7 +222,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			delete _back;
-			_back = new CUITiledImage(Game);
+			_back = new CUITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
@@ -232,7 +232,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_HOVER:
 			delete _backHover;
-			_backHover = new CUITiledImage(Game);
+			_backHover = new CUITiledImage(_gameRef);
 			if (!_backHover || DID_FAIL(_backHover->loadFile((char *)params))) {
 				delete _backHover;
 				_backHover = NULL;
@@ -242,7 +242,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_PRESS:
 			delete _backPress;
-			_backPress = new CUITiledImage(Game);
+			_backPress = new CUITiledImage(_gameRef);
 			if (!_backPress || DID_FAIL(_backPress->loadFile((char *)params))) {
 				delete _backPress;
 				_backPress = NULL;
@@ -252,7 +252,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_DISABLE:
 			delete _backDisable;
-			_backDisable = new CUITiledImage(Game);
+			_backDisable = new CUITiledImage(_gameRef);
 			if (!_backDisable || DID_FAIL(_backDisable->loadFile((char *)params))) {
 				delete _backDisable;
 				_backDisable = NULL;
@@ -262,7 +262,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_FOCUS:
 			delete _backFocus;
-			_backFocus = new CUITiledImage(Game);
+			_backFocus = new CUITiledImage(_gameRef);
 			if (!_backFocus || DID_FAIL(_backFocus->loadFile((char *)params))) {
 				delete _backFocus;
 				_backFocus = NULL;
@@ -272,7 +272,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSprite(Game);
+			_image = new CBSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -282,7 +282,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_HOVER:
 			delete _imageHover;
-			_imageHover = new CBSprite(Game);
+			_imageHover = new CBSprite(_gameRef);
 			if (!_imageHover || DID_FAIL(_imageHover->loadFile((char *)params))) {
 				delete _imageHover;
 				_imageHover = NULL;
@@ -292,7 +292,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_PRESS:
 			delete _imagePress;
-			_imagePress = new CBSprite(Game);
+			_imagePress = new CBSprite(_gameRef);
 			if (!_imagePress || DID_FAIL(_imagePress->loadFile((char *)params))) {
 				delete _imagePress;
 				_imagePress = NULL;
@@ -302,7 +302,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_DISABLE:
 			delete _imageDisable;
-			_imageDisable = new CBSprite(Game);
+			_imageDisable = new CBSprite(_gameRef);
 			if (!_imageDisable || DID_FAIL(_imageDisable->loadFile((char *)params))) {
 				delete _imageDisable;
 				_imageDisable = NULL;
@@ -312,7 +312,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_FOCUS:
 			delete _imageFocus;
-			_imageFocus = new CBSprite(Game);
+			_imageFocus = new CBSprite(_gameRef);
 			if (!_imageFocus || DID_FAIL(_imageFocus->loadFile((char *)params))) {
 				delete _imageFocus;
 				_imageFocus = NULL;
@@ -321,38 +321,38 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->removeFont(_font);
-			_font = Game->_fontStorage->addFont((char *)params);
+			if (_font) _gameRef->_fontStorage->removeFont(_font);
+			_font = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_HOVER:
-			if (_fontHover) Game->_fontStorage->removeFont(_fontHover);
-			_fontHover = Game->_fontStorage->addFont((char *)params);
+			if (_fontHover) _gameRef->_fontStorage->removeFont(_fontHover);
+			_fontHover = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_fontHover) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_PRESS:
-			if (_fontPress) Game->_fontStorage->removeFont(_fontPress);
-			_fontPress = Game->_fontStorage->addFont((char *)params);
+			if (_fontPress) _gameRef->_fontStorage->removeFont(_fontPress);
+			_fontPress = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_fontPress) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_DISABLE:
-			if (_fontDisable) Game->_fontStorage->removeFont(_fontDisable);
-			_fontDisable = Game->_fontStorage->addFont((char *)params);
+			if (_fontDisable) _gameRef->_fontStorage->removeFont(_fontDisable);
+			_fontDisable = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_fontDisable) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_FOCUS:
-			if (_fontFocus) Game->_fontStorage->removeFont(_fontFocus);
-			_fontFocus = Game->_fontStorage->addFont((char *)params);
+			if (_fontFocus) _gameRef->_fontStorage->removeFont(_fontFocus);
+			_fontFocus = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_fontFocus) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_TEXT:
 			setText((char *)params);
-			Game->_stringTable->expand(&_text);
+			_gameRef->_stringTable->expand(&_text);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
@@ -379,7 +379,7 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(Game);
+			_cursor = new CBSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -425,11 +425,11 @@ ERRORCODE CUIButton::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in BUTTON definition");
+		_gameRef->LOG(0, "Syntax error in BUTTON definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading BUTTON definition");
+		_gameRef->LOG(0, "Error loading BUTTON definition");
 		return STATUS_FAILED;
 	}
 
@@ -565,7 +565,7 @@ void CUIButton::correctSize() {
 	if (_text) {
 		int text_height;
 		if (_font) text_height = _font->getTextHeight((byte *)_text, _width);
-		else text_height = Game->_systemFont->getTextHeight((byte *)_text, _width);
+		else text_height = _gameRef->_systemFont->getTextHeight((byte *)_text, _width);
 
 		if (text_height > _height) _height = text_height;
 	}
@@ -587,10 +587,10 @@ ERRORCODE CUIButton::display(int offsetX, int offsetY) {
 
 	//RECT rect;
 	//CBPlatform::setRect(&rect, OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
-	//_hover = (!_disable && CBPlatform::ptInRect(&rect, Game->_mousePos)!=FALSE);
-	_hover = (!_disable && Game->_activeObject == this && (Game->_interactive || Game->_state == GAME_SEMI_FROZEN));
+	//_hover = (!_disable && CBPlatform::ptInRect(&rect, _gameRef->_mousePos)!=FALSE);
+	_hover = (!_disable && _gameRef->_activeObject == this && (_gameRef->_interactive || _gameRef->_state == GAME_SEMI_FROZEN));
 
-	if ((_press && _hover && !Game->_mouseLeftDown) ||
+	if ((_press && _hover && !_gameRef->_mouseLeftDown) ||
 	        (_oneTimePress && CBPlatform::getTime() - _oneTimePressTime >= 100)) press();
 
 
@@ -616,7 +616,7 @@ ERRORCODE CUIButton::display(int offsetX, int offsetY) {
 	if (!image && _image) image = _image;
 	if (_text && !font) {
 		if (_font) font = _font;
-		else font = Game->_systemFont;
+		else font = _gameRef->_systemFont;
 	}
 
 	int imageX = offsetX + _posX;
@@ -638,7 +638,7 @@ ERRORCODE CUIButton::display(int offsetX, int offsetY) {
 		font->drawText((byte *)_text, offsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), offsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
 	}
 
-	if (!_pixelPerfect || !_image) Game->_renderer->_rectList.add(new CBActiveRect(Game, this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	if (!_pixelPerfect || !_image) _gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 	// reset unused sprites
 	if (_image && _image != image) _image->reset();
@@ -647,7 +647,7 @@ ERRORCODE CUIButton::display(int offsetX, int offsetY) {
 	if (_imagePress && _imagePress != image) _imagePress->reset();
 	if (_imageHover && _imageHover != image) _imageHover->reset();
 
-	_press = _hover && Game->_mouseLeftDown && Game->_capturedObject == this;
+	_press = _hover && _gameRef->_mouseLeftDown && _gameRef->_capturedObject == this;
 
 	return STATUS_OK;
 }
@@ -674,12 +674,12 @@ ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (_fontDisable) Game->_fontStorage->removeFont(_fontDisable);
+		if (_fontDisable) _gameRef->_fontStorage->removeFont(_fontDisable);
 		if (Val->isNULL()) {
 			_fontDisable = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontDisable = Game->_fontStorage->addFont(Val->getString());
+			_fontDisable = _gameRef->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_fontDisable != NULL);
 		}
 		return STATUS_OK;
@@ -692,12 +692,12 @@ ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		if (_fontHover) Game->_fontStorage->removeFont(_fontHover);
+		if (_fontHover) _gameRef->_fontStorage->removeFont(_fontHover);
 		if (val->isNULL()) {
 			_fontHover = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontHover = Game->_fontStorage->addFont(val->getString());
+			_fontHover = _gameRef->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontHover != NULL);
 		}
 		return STATUS_OK;
@@ -710,12 +710,12 @@ ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 		CScValue *Val = stack->pop();
 
-		if (_fontPress) Game->_fontStorage->removeFont(_fontPress);
+		if (_fontPress) _gameRef->_fontStorage->removeFont(_fontPress);
 		if (Val->isNULL()) {
 			_fontPress = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontPress = Game->_fontStorage->addFont(Val->getString());
+			_fontPress = _gameRef->_fontStorage->addFont(Val->getString());
 			stack->pushBool(_fontPress != NULL);
 		}
 		return STATUS_OK;
@@ -728,12 +728,12 @@ ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		if (_fontFocus) Game->_fontStorage->removeFont(_fontFocus);
+		if (_fontFocus) _gameRef->_fontStorage->removeFont(_fontFocus);
 		if (val->isNULL()) {
 			_fontFocus = NULL;
 			stack->pushBool(true);
 		} else {
-			_fontFocus = Game->_fontStorage->addFont(val->getString());
+			_fontFocus = _gameRef->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontFocus != NULL);
 		}
 		return STATUS_OK;
@@ -746,7 +746,7 @@ ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 
 		delete _imageDisable;
-		_imageDisable = new CBSprite(Game);
+		_imageDisable = new CBSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageDisable || DID_FAIL(_imageDisable->loadFile(filename))) {
 			delete _imageDisable;
@@ -787,7 +787,7 @@ ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 
 		delete _imageHover;
-		_imageHover = new CBSprite(Game);
+		_imageHover = new CBSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageHover || DID_FAIL(_imageHover->loadFile(filename))) {
 			delete _imageHover;
@@ -827,7 +827,7 @@ ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 
 		delete _imagePress;
-		_imagePress = new CBSprite(Game);
+		_imagePress = new CBSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imagePress || DID_FAIL(_imagePress->loadFile(filename))) {
 			delete _imagePress;
@@ -867,7 +867,7 @@ ERRORCODE CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 
 		delete _imageFocus;
-		_imageFocus = new CBSprite(Game);
+		_imageFocus = new CBSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageFocus || DID_FAIL(_imageFocus->loadFile(filename))) {
 			delete _imageFocus;

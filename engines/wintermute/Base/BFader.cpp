@@ -68,7 +68,7 @@ ERRORCODE CBFader::update() {
 	uint32 time;
 
 	if (_system) time = CBPlatform::getTime() - _startTime;
-	else time = Game->_timer - _startTime;
+	else time = _gameRef->_timer - _startTime;
 
 	if (time >= _duration) _currentAlpha = _targetAlpha;
 	else {
@@ -87,7 +87,7 @@ ERRORCODE CBFader::update() {
 ERRORCODE CBFader::display() {
 	if (!_active) return STATUS_OK;
 
-	if (_currentAlpha > 0x00) return Game->_renderer->fadeToColor(BYTETORGBA(_red, _green, _blue, _currentAlpha));
+	if (_currentAlpha > 0x00) return _gameRef->_renderer->fadeToColor(BYTETORGBA(_red, _green, _blue, _currentAlpha));
 	else return STATUS_OK;
 }
 
@@ -116,7 +116,7 @@ ERRORCODE CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_system = system;
 
 	if (_system) _startTime = CBPlatform::getTime();
-	else _startTime = Game->_timer;
+	else _startTime = _gameRef->_timer;
 
 	return STATUS_OK;
 }
@@ -139,7 +139,7 @@ ERRORCODE CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_system = system;
 
 	if (_system) _startTime = CBPlatform::getTime();
-	else _startTime = Game->_timer;
+	else _startTime = _gameRef->_timer;
 
 
 	return STATUS_OK;

@@ -82,7 +82,7 @@ ERRORCODE CPartParticle::setSprite(const char *filename) {
 	_sprite = NULL;
 
 	CSysClassRegistry::getInstance()->_disabled = true;
-	_sprite = new CBSprite(Game, Game);
+	_sprite = new CBSprite(_gameRef, _gameRef);
 	if (_sprite && DID_SUCCEED(_sprite->loadFile(filename))) {
 		CSysClassRegistry::getInstance()->_disabled = false;
 		return STATUS_OK;

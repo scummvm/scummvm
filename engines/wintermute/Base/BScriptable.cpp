@@ -40,7 +40,7 @@ CBScriptable::CBScriptable(CBGame *inGame, bool noValue, bool persistable): CBNa
 	_refCount = 0;
 
 	if (noValue) _scValue = NULL;
-	else _scValue = new CScValue(Game);
+	else _scValue = new CScValue(_gameRef);
 
 	_persistable = persistable;
 
@@ -50,7 +50,7 @@ CBScriptable::CBScriptable(CBGame *inGame, bool noValue, bool persistable): CBNa
 
 //////////////////////////////////////////////////////////////////////////
 CBScriptable::~CBScriptable() {
-	//if(_refCount>0) Game->LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
+	//if(_refCount>0) _gameRef->LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
 	delete _scValue;
 	delete _scProp;
 	_scValue = NULL;
@@ -75,7 +75,7 @@ ERRORCODE CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStac
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBScriptable::scGetProperty(const char *name) {
-	if (!_scProp) _scProp = new CScValue(Game);
+	if (!_scProp) _scProp = new CScValue(_gameRef);
 	if (_scProp) return _scProp->getProp(name);
 	else return NULL;
 }
@@ -83,7 +83,7 @@ CScValue *CBScriptable::scGetProperty(const char *name) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBScriptable::scSetProperty(const char *name, CScValue *value) {
-	if (!_scProp) _scProp = new CScValue(Game);
+	if (!_scProp) _scProp = new CScValue(_gameRef);
 	if (_scProp) return _scProp->setProp(name, value);
 	else return STATUS_FAILED;
 }
@@ -140,7 +140,7 @@ void CBScriptable::scSetBool(bool val) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBScriptable::persist(CBPersistMgr *persistMgr) {
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_refCount));
 	persistMgr->transfer(TMEMBER(_scProp));
 	persistMgr->transfer(TMEMBER(_scValue));

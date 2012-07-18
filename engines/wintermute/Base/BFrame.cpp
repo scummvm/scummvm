@@ -92,7 +92,7 @@ ERRORCODE CBFrame::oneTimeDisplay(CBObject *owner, bool muted) {
 		if (owner) owner->updateOneSound(_sound);
 		_sound->play();
 		/*
-		if (Game->_state == GAME_FROZEN) {
+		if (_gameRef->_state == GAME_FROZEN) {
 		    _sound->Pause(true);
 		}
 		*/
@@ -158,7 +158,7 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 	char *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 	Rect32 rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
@@ -237,7 +237,7 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			break;
 
 		case TOKEN_SUBFRAME: {
-			CBSubFrame *subframe = new CBSubFrame(Game);
+			CBSubFrame *subframe = new CBSubFrame(_gameRef);
 			if (!subframe || DID_FAIL(subframe->loadBuffer((byte *)params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
@@ -250,9 +250,9 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 				delete _sound;
 				_sound = NULL;
 			}
-			_sound = new CBSound(Game);
+			_sound = new CBSound(_gameRef);
 			if (!_sound || DID_FAIL(_sound->setSound(params, Audio::Mixer::kSFXSoundType, false))) {
-				if (Game->_soundMgr->_soundAvailable) Game->LOG(0, "Error loading sound '%s'.", params);
+				if (_gameRef->_soundMgr->_soundAvailable) _gameRef->LOG(0, "Error loading sound '%s'.", params);
 				delete _sound;
 				_sound = NULL;
 			}
@@ -280,24 +280,24 @@ ERRORCODE CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in FRAME definition");
+		_gameRef->LOG(0, "Syntax error in FRAME definition");
 		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading FRAME definition");
+		_gameRef->LOG(0, "Error loading FRAME definition");
 		return STATUS_FAILED;
 	}
 
 
-	CBSubFrame *sub = new CBSubFrame(Game);
+	CBSubFrame *sub = new CBSubFrame(_gameRef);
 	if (surface_file != NULL) {
 		if (custoTrans) sub->setSurface(surface_file, false, r, g, b, lifeTime, keepLoaded);
 		else sub->setSurface(surface_file, true, 0, 0, 0, lifeTime, keepLoaded);
 
 		if (!sub->_surface) {
 			delete sub;
-			Game->LOG(0, "Error loading SUBFRAME");
+			_gameRef->LOG(0, "Error loading SUBFRAME");
 			return STATUS_FAILED;
 		}
 
@@ -422,7 +422,7 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		_sound = NULL;
 
 		if (!val->isNULL()) {
-			_sound = new CBSound(Game);
+			_sound = new CBSound(_gameRef);
 			if (!_sound || DID_FAIL(_sound->setSound(val->getString(), Audio::Mixer::kSFXSoundType, false))) {
 				stack->pushBool(false);
 				delete _sound;
@@ -480,7 +480,7 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		const char *filename = NULL;
 		if (!val->isNULL()) filename = val->getString();
 
-		CBSubFrame *sub = new CBSubFrame(Game);
+		CBSubFrame *sub = new CBSubFrame(_gameRef);
 		if (filename != NULL) {
 			sub->setSurface(filename);
 			sub->setDefaultRect();
@@ -503,7 +503,7 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		const char *filename = NULL;
 		if (!val->isNULL()) filename = val->getString();
 
-		CBSubFrame *sub = new CBSubFrame(Game);
+		CBSubFrame *sub = new CBSubFrame(_gameRef);
 		if (filename != NULL) {
 			sub->setSurface(filename);
 		}
@@ -572,7 +572,7 @@ ERRORCODE CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBFrame::scGetProperty(const char *name) {
-	if (!_scValue) _scValue = new CScValue(Game);
+	if (!_scValue) _scValue = new CScValue(_gameRef);
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////

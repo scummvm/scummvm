@@ -127,24 +127,24 @@ CAdObject::~CAdObject() {
 	_tempSprite2 = NULL; // reference only
 	_stickRegion = NULL;
 
-	if (_font) Game->_fontStorage->removeFont(_font);
+	if (_font) _gameRef->_fontStorage->removeFont(_font);
 
 	if (_inventory) {
-		((CAdGame *)Game)->unregisterInventory(_inventory);
+		((CAdGame *)_gameRef)->unregisterInventory(_inventory);
 		_inventory = NULL;
 	}
 
 	if (_partEmitter)
-		Game->unregisterObject(_partEmitter);
+		_gameRef->unregisterObject(_partEmitter);
 
 
 	for (int i = 0; i < _attachmentsPre.getSize(); i++) {
-		Game->unregisterObject(_attachmentsPre[i]);
+		_gameRef->unregisterObject(_attachmentsPre[i]);
 	}
 	_attachmentsPre.removeAll();
 
 	for (int i = 0; i < _attachmentsPost.getSize(); i++) {
-		Game->unregisterObject(_attachmentsPost[i]);
+		_gameRef->unregisterObject(_attachmentsPost[i]);
 	}
 	_attachmentsPost.removeAll();
 }
@@ -154,14 +154,14 @@ CAdObject::~CAdObject() {
 ERRORCODE CAdObject::playAnim(const char *filename) {
 	delete _animSprite;
 	_animSprite = NULL;
-	_animSprite = new CBSprite(Game, this);
+	_animSprite = new CBSprite(_gameRef, this);
 	if (!_animSprite) {
-		Game->LOG(0, "CAdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
+		_gameRef->LOG(0, "CAdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
 		return STATUS_FAILED;
 	}
 	ERRORCODE res = _animSprite->loadFile(filename);
 	if (DID_FAIL(res)) {
-		Game->LOG(res, "CAdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
+		_gameRef->LOG(res, "CAdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
 		delete _animSprite;
 		_animSprite = NULL;
 		return res;
@@ -285,7 +285,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 	else if (strcmp(name, "StickToRegion") == 0) {
 		stack->correctParams(1);
 
-		CAdLayer *main = ((CAdGame *)Game)->_scene->_mainLayer;
+		CAdLayer *main = ((CAdGame *)_gameRef)->_scene->_mainLayer;
 		bool regFound = false;
 
 		int i;
@@ -351,8 +351,8 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(2);
 
 		if (!_inventory) {
-			_inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->registerInventory(_inventory);
+			_inventory = new CAdInventory(_gameRef);
+			((CAdGame *)_gameRef)->registerInventory(_inventory);
 		}
 
 		CScValue *val = stack->pop();
@@ -363,7 +363,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			if (DID_FAIL(_inventory->insertItem(itemName, insertAfter))) script->runtimeError("Cannot add item '%s' to inventory", itemName);
 			else {
 				// hide associated entities
-				((CAdGame *)Game)->_scene->handleItemAssociations(itemName, false);
+				((CAdGame *)_gameRef)->_scene->handleItemAssociations(itemName, false);
 			}
 
 		} else script->runtimeError("TakeItem: item name expected");
@@ -379,8 +379,8 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 
 		if (!_inventory) {
-			_inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->registerInventory(_inventory);
+			_inventory = new CAdInventory(_gameRef);
+			((CAdGame *)_gameRef)->registerInventory(_inventory);
 		}
 
 		CScValue *val = stack->pop();
@@ -388,7 +388,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			if (DID_FAIL(_inventory->removeItem(val->getString()))) script->runtimeError("Cannot remove item '%s' from inventory", val->getString());
 			else {
 				// show associated entities
-				((CAdGame *)Game)->_scene->handleItemAssociations(val->getString(), true);
+				((CAdGame *)_gameRef)->_scene->handleItemAssociations(val->getString(), true);
 			}
 		} else script->runtimeError("DropItem: item name expected");
 
@@ -403,13 +403,13 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 
 		if (!_inventory) {
-			_inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->registerInventory(_inventory);
+			_inventory = new CAdInventory(_gameRef);
+			((CAdGame *)_gameRef)->registerInventory(_inventory);
 		}
 
 		CScValue *val = stack->pop();
 		if (val->_type == VAL_STRING) {
-			CAdItem *item = ((CAdGame *)Game)->getItemByName(val->getString());
+			CAdItem *item = ((CAdGame *)_gameRef)->getItemByName(val->getString());
 			if (item) stack->pushNative(item, true);
 			else stack->pushNULL();
 		} else if (val->isNULL() || val->getInt() < 0 || val->getInt() >= _inventory->_takenItems.getSize())
@@ -427,8 +427,8 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 
 		if (!_inventory) {
-			_inventory = new CAdInventory(Game);
-			((CAdGame *)Game)->registerInventory(_inventory);
+			_inventory = new CAdInventory(_gameRef);
+			((CAdGame *)_gameRef)->registerInventory(_inventory);
 		}
 
 		CScValue *val = stack->pop();
@@ -470,7 +470,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 	else if (strcmp(name, "DeleteParticleEmitter") == 0) {
 		stack->correctParams(0);
 		if (_partEmitter) {
-			Game->unregisterObject(_partEmitter);
+			_gameRef->unregisterObject(_partEmitter);
 			_partEmitter = NULL;
 		}
 		stack->pushNULL();
@@ -489,14 +489,14 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		int offsetY = stack->pop()->getInt();
 
 		ERRORCODE res;
-		CAdEntity *ent = new CAdEntity(Game);
+		CAdEntity *ent = new CAdEntity(_gameRef);
 		if (DID_FAIL(res = ent->loadFile(filename))) {
 			delete ent;
 			ent = NULL;
 			script->runtimeError("AddAttachment() failed loading entity '%s'", filename);
 			stack->pushBool(false);
 		} else {
-			Game->registerObject(ent);
+			_gameRef->registerObject(ent);
 
 			ent->_posX = offsetX;
 			ent->_posY = offsetY;
@@ -523,7 +523,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i] == obj) {
 					found = true;
-					Game->unregisterObject(_attachmentsPre[i]);
+					_gameRef->unregisterObject(_attachmentsPre[i]);
 					_attachmentsPre.removeAt(i);
 					i--;
 				}
@@ -531,7 +531,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 				if (_attachmentsPost[i] == obj) {
 					found = true;
-					Game->unregisterObject(_attachmentsPost[i]);
+					_gameRef->unregisterObject(_attachmentsPost[i]);
 					_attachmentsPost.removeAt(i);
 					i--;
 				}
@@ -541,7 +541,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
 					found = true;
-					Game->unregisterObject(_attachmentsPre[i]);
+					_gameRef->unregisterObject(_attachmentsPre[i]);
 					_attachmentsPre.removeAt(i);
 					i--;
 				}
@@ -549,7 +549,7 @@ ERRORCODE CAdObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 			for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 				if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, attachmentName) == 0) {
 					found = true;
-					Game->unregisterObject(_attachmentsPost[i]);
+					_gameRef->unregisterObject(_attachmentsPost[i]);
 					_attachmentsPost.removeAt(i);
 					i--;
 				}
@@ -793,9 +793,9 @@ const char *CAdObject::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdObject::SetFont(const char *filename) {
-	if (_font) Game->_fontStorage->removeFont(_font);
+	if (_font) _gameRef->_fontStorage->removeFont(_font);
 	if (filename) {
-		_font = Game->_fontStorage->addFont(filename);
+		_font = _gameRef->_fontStorage->addFont(filename);
 		return _font == NULL ? STATUS_FAILED : STATUS_OK;
 	} else {
 		_font = NULL;
@@ -815,7 +815,7 @@ int CAdObject::getHeight() {
 		}
 
 		if (_zoomable) {
-			float zoom = ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY);
+			float zoom = ((CAdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY);
 			ret = (int)(ret * zoom / 100);
 		}
 		return ret;
@@ -825,7 +825,7 @@ int CAdObject::getHeight() {
 
 //////////////////////////////////////////////////////////////////////////
 void CAdObject::talk(const char *text, const char *sound, uint32 duration, const char *stances, TTextAlign Align) {
-	if (!_sentence) _sentence = new CAdSentence(Game);
+	if (!_sentence) _sentence = new CAdSentence(_gameRef);
 	if (!_sentence) return;
 
 	if (_forcedTalkAnimName && _forcedTalkAnimUsed) {
@@ -838,21 +838,21 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 	_sentence->_sound = NULL;
 
 	_sentence->setText(text);
-	Game->_stringTable->expand(&_sentence->_text);
+	_gameRef->_stringTable->expand(&_sentence->_text);
 	_sentence->setStances(stances);
 	_sentence->_duration = duration;
 	_sentence->_align = Align;
-	_sentence->_startTime = Game->_timer;
+	_sentence->_startTime = _gameRef->_timer;
 	_sentence->_currentStance = -1;
-	_sentence->_font = _font == NULL ? Game->_systemFont : _font;
+	_sentence->_font = _font == NULL ? _gameRef->_systemFont : _font;
 	_sentence->_freezable = _freezable;
 
 	// try to locate speech file automatically
 	bool deleteSound = false;
 	if (!sound) {
-		char *key = Game->_stringTable->getKey(text);
+		char *key = _gameRef->_stringTable->getKey(text);
 		if (key) {
-			sound = ((CAdGame *)Game)->findSpeechFile(key);
+			sound = ((CAdGame *)_gameRef)->findSpeechFile(key);
 			delete [] key;
 
 			if (sound) deleteSound = true;
@@ -861,7 +861,7 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 
 	// load sound and set duration appropriately
 	if (sound) {
-		CBSound *snd = new CBSound(Game);
+		CBSound *snd = new CBSound(_gameRef);
 		if (snd && DID_SUCCEED(snd->setSound(sound, Audio::Mixer::kSpeechSoundType, true))) {
 			_sentence->setSound(snd);
 			if (_sentence->_duration <= 0) {
@@ -873,7 +873,7 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 
 	// set duration by text length
 	if (_sentence->_duration <= 0) {// TODO: Avoid longs.
-		_sentence->_duration = MAX((size_t)1000, Game->_subtitlesSpeed * strlen(_sentence->_text));
+		_sentence->_duration = MAX((size_t)1000, _gameRef->_subtitlesSpeed * strlen(_sentence->_text));
 	}
 
 
@@ -883,16 +883,16 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 	y = _posY;
 
 	if (!_sceneIndependent && _subtitlesModRelative) {
-		x -= ((CAdGame *)Game)->_scene->getOffsetLeft();
-		y -= ((CAdGame *)Game)->_scene->getOffsetTop();
+		x -= ((CAdGame *)_gameRef)->_scene->getOffsetLeft();
+		y -= ((CAdGame *)_gameRef)->_scene->getOffsetTop();
 	}
 
 
 	if (_subtitlesWidth > 0) width = _subtitlesWidth;
 	else {
-		if ((x < Game->_renderer->_width / 4 || x > Game->_renderer->_width * 0.75) && !Game->_touchInterface) {
-			width = MAX(Game->_renderer->_width / 4, MIN(x * 2, (Game->_renderer->_width - x) * 2));
-		} else width = Game->_renderer->_width / 2;
+		if ((x < _gameRef->_renderer->_width / 4 || x > _gameRef->_renderer->_width * 0.75) && !_gameRef->_touchInterface) {
+			width = MAX(_gameRef->_renderer->_width / 4, MIN(x * 2, (_gameRef->_renderer->_width - x) * 2));
+		} else width = _gameRef->_renderer->_width / 2;
 	}
 
 	height = _sentence->_font->getTextHeight((byte *)_sentence->_text, width);
@@ -909,8 +909,8 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 		x = x - width / 2;
 
 
-	x = MIN(MAX(0, x), Game->_renderer->_width - width);
-	y = MIN(MAX(0, y), Game->_renderer->_height - height);
+	x = MIN(MAX(0, x), _gameRef->_renderer->_width - width);
+	y = MIN(MAX(0, y), _gameRef->_renderer->_height - height);
 
 	_sentence->_width = width;
 
@@ -920,8 +920,8 @@ void CAdObject::talk(const char *text, const char *sound, uint32 duration, const
 
 
 	if (_subtitlesModRelative) {
-		_sentence->_pos.x += ((CAdGame *)Game)->_scene->getOffsetLeft();
-		_sentence->_pos.y += ((CAdGame *)Game)->_scene->getOffsetTop();
+		_sentence->_pos.x += ((CAdGame *)_gameRef)->_scene->getOffsetLeft();
+		_sentence->_pos.y += ((CAdGame *)_gameRef)->_scene->getOffsetTop();
 	}
 
 	_sentence->_fixedPos = !_subtitlesModRelative;
@@ -946,7 +946,7 @@ ERRORCODE CAdObject::reset() {
 
 	_state = _nextState = STATE_READY;
 
-	Game->_scEngine->resetObject(this);
+	_gameRef->_scEngine->resetObject(this);
 
 	return STATUS_OK;
 }
@@ -1037,7 +1037,7 @@ ERRORCODE CAdObject::saveAsText(CBDynBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdObject::updateBlockRegion() {
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 	if (adGame->_scene) {
 		if (_blockRegion && _currentBlockRegion)
 			_currentBlockRegion->mimic(_blockRegion, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
@@ -1051,8 +1051,8 @@ ERRORCODE CAdObject::updateBlockRegion() {
 //////////////////////////////////////////////////////////////////////////
 CAdInventory *CAdObject::getInventory() {
 	if (!_inventory) {
-		_inventory = new CAdInventory(Game);
-		((CAdGame *)Game)->registerInventory(_inventory);
+		_inventory = new CAdInventory(_gameRef);
+		((CAdGame *)_gameRef)->registerInventory(_inventory);
 	}
 	return _inventory;
 }
@@ -1062,7 +1062,7 @@ CAdInventory *CAdObject::getInventory() {
 ERRORCODE CAdObject::afterMove() {
 	CAdRegion *newRegions[MAX_NUM_REGIONS];
 
-	((CAdGame *)Game)->_scene->getRegionsAt(_posX, _posY, newRegions, MAX_NUM_REGIONS);
+	((CAdGame *)_gameRef)->_scene->getRegionsAt(_posX, _posY, newRegions, MAX_NUM_REGIONS);
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
 		if (!newRegions[i]) break;
 		bool regFound = false;
@@ -1077,7 +1077,7 @@ ERRORCODE CAdObject::afterMove() {
 	}
 
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
-		if (_currentRegions[i] && Game->validObject(_currentRegions[i])) {
+		if (_currentRegions[i] && _gameRef->validObject(_currentRegions[i])) {
 			_currentRegions[i]->applyEvent("ActorLeave");
 		}
 		_currentRegions[i] = newRegions[i];
@@ -1100,7 +1100,7 @@ ERRORCODE CAdObject::getScale(float *scaleX, float *scaleY) {
 			*scaleX = _scaleX < 0 ? 100 : _scaleX;
 			*scaleY = _scaleY < 0 ? 100 : _scaleY;
 		} else if (_scale >= 0) *scaleX = *scaleY = _scale;
-		else *scaleX = *scaleY = ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) + _relativeScale;
+		else *scaleX = *scaleY = ((CAdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) + _relativeScale;
 	} else {
 		*scaleX = *scaleY = 100;
 	}
@@ -1177,9 +1177,9 @@ CPartEmitter *CAdObject::createParticleEmitter(bool followParent, int offsetX, i
 	_partOffsetY = offsetY;
 
 	if (!_partEmitter) {
-		_partEmitter = new CPartEmitter(Game, this);
+		_partEmitter = new CPartEmitter(_gameRef, this);
 		if (_partEmitter) {
-			Game->registerObject(_partEmitter);
+			_gameRef->registerObject(_partEmitter);
 		}
 	}
 	updatePartEmitter();

@@ -35,15 +35,15 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-CBBase::CBBase(CBGame *GameOwner) {
-	Game = GameOwner;
+CBBase::CBBase(CBGame *gameOwner) {
+	_gameRef = gameOwner;
 	_persistable = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 CBBase::CBBase() {
-	Game = NULL;
+	_gameRef = NULL;
 	_persistable = true;
 }
 
@@ -92,17 +92,17 @@ ERRORCODE CBBase::parseEditorProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_END
 
 
-	if (!Game->_editorMode)
+	if (!_gameRef->_editorMode)
 		return STATUS_OK;
 
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDITOR_PROPERTY) {
-			Game->LOG(0, "'EDITOR_PROPERTY' keyword expected.");
+			_gameRef->LOG(0, "'EDITOR_PROPERTY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -134,7 +134,7 @@ ERRORCODE CBBase::parseEditorProperty(byte *buffer, bool complete) {
 		delete[] propValue;
 		propName = NULL;
 		propValue = NULL;
-		Game->LOG(0, "Syntax error in EDITOR_PROPERTY definition");
+		_gameRef->LOG(0, "Syntax error in EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == NULL || propValue == NULL) {
@@ -142,7 +142,7 @@ ERRORCODE CBBase::parseEditorProperty(byte *buffer, bool complete) {
 		delete[] propValue;
 		propName = NULL;
 		propValue = NULL;
-		Game->LOG(0, "Error loading EDITOR_PROPERTY definition");
+		_gameRef->LOG(0, "Error loading EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
 

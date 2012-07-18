@@ -75,7 +75,7 @@ ERRORCODE CUITiledImage::display(int x, int y, int width, int height) {
 
 	int col, row;
 
-	Game->_renderer->startSpriteBatch();
+	_gameRef->_renderer->startSpriteBatch();
 
 	// top left/right
 	_image->_surface->displayTrans(x,                                                       y, _upLeft);
@@ -112,7 +112,7 @@ ERRORCODE CUITiledImage::display(int x, int y, int width, int height) {
 		yyy += tileWidth;
 	}
 
-	Game->_renderer->endSpriteBatch();
+	_gameRef->_renderer->endSpriteBatch();
 
 	return STATUS_OK;
 }
@@ -120,9 +120,9 @@ ERRORCODE CUITiledImage::display(int x, int y, int width, int height) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUITiledImage::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -131,7 +131,7 @@ ERRORCODE CUITiledImage::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
 
 
 	delete [] buffer;
@@ -179,14 +179,14 @@ ERRORCODE CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 	bool hTiles = false, vTiles = false;
 	int h1 = 0, h2 = 0, h3 = 0;
 	int v1 = 0, v2 = 0, v3 = 0;
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TILED_IMAGE) {
-			Game->LOG(0, "'TILED_IMAGE' keyword expected.");
+			_gameRef->LOG(0, "'TILED_IMAGE' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -200,7 +200,7 @@ ERRORCODE CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSubFrame(Game);
+			_image = new CBSubFrame(_gameRef);
 			if (!_image || DID_FAIL(_image->setSurface((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -260,11 +260,11 @@ ERRORCODE CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in TILED_IMAGE definition");
+		_gameRef->LOG(0, "Syntax error in TILED_IMAGE definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading TILED_IMAGE definition");
+		_gameRef->LOG(0, "Error loading TILED_IMAGE definition");
 		return STATUS_FAILED;
 	}
 

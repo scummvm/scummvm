@@ -104,7 +104,7 @@ void CUIWindow::cleanup() {
 	_viewport = NULL;
 
 	delete _backInactive;
-	if (!_sharedFonts && _fontInactive) Game->_fontStorage->removeFont(_fontInactive);
+	if (!_sharedFonts && _fontInactive) _gameRef->_fontStorage->removeFont(_fontInactive);
 	if (!_sharedImages && _imageInactive) delete _imageInactive;
 
 	for (int i = 0; i < _widgets.getSize(); i++) delete _widgets[i];
@@ -116,25 +116,25 @@ void CUIWindow::cleanup() {
 ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
 	// go exclusive
 	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
-		if (!_shieldWindow) _shieldWindow = new CUIWindow(Game);
+		if (!_shieldWindow) _shieldWindow = new CUIWindow(_gameRef);
 		if (_shieldWindow) {
 			_shieldWindow->_posX = _shieldWindow->_posY = 0;
-			_shieldWindow->_width = Game->_renderer->_width;
-			_shieldWindow->_height = Game->_renderer->_height;
+			_shieldWindow->_width = _gameRef->_renderer->_width;
+			_shieldWindow->_height = _gameRef->_renderer->_height;
 
 			_shieldWindow->display();
 		}
 	} else if (_isMenu) {
 		if (!_shieldButton) {
-			_shieldButton = new CUIButton(Game);
+			_shieldButton = new CUIButton(_gameRef);
 			_shieldButton->setName("close");
 			_shieldButton->setListener(this, _shieldButton, 0);
 			_shieldButton->_parent = this;
 		}
 		if (_shieldButton) {
 			_shieldButton->_posX = _shieldButton->_posY = 0;
-			_shieldButton->_width = Game->_renderer->_width;
-			_shieldButton->_height = Game->_renderer->_height;
+			_shieldButton->_width = _gameRef->_renderer->_width;
+			_shieldButton->_height = _gameRef->_renderer->_height;
 
 			_shieldButton->display();
 		}
@@ -143,14 +143,14 @@ ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
 	if (!_visible)
 		return STATUS_OK;
 
-	if (_fadeBackground) Game->_renderer->fadeToColor(_fadeColor);
+	if (_fadeBackground) _gameRef->_renderer->fadeToColor(_fadeColor);
 
 	if (_dragging) {
-		_posX += (Game->_mousePos.x - _dragFrom.x);
-		_posY += (Game->_mousePos.y - _dragFrom.y);
+		_posX += (_gameRef->_mousePos.x - _dragFrom.x);
+		_posY += (_gameRef->_mousePos.y - _dragFrom.y);
 
-		_dragFrom.x = Game->_mousePos.x;
-		_dragFrom.y = Game->_mousePos.y;
+		_dragFrom.x = _gameRef->_mousePos.x;
+		_dragFrom.y = _gameRef->_mousePos.y;
 	}
 
 	if (!_focusedWidget || (!_focusedWidget->_canFocus || _focusedWidget->_disable || !_focusedWidget->_visible)) {
@@ -159,10 +159,10 @@ ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
 
 	bool popViewport = false;
 	if (_clipContents) {
-		if (!_viewport) _viewport = new CBViewport(Game);
+		if (!_viewport) _viewport = new CBViewport(_gameRef);
 		if (_viewport) {
 			_viewport->setRect(_posX + offsetX, _posY + offsetY, _posX + _width + offsetX, _posY + _height + offsetY);
-			Game->pushViewport(_viewport);
+			_gameRef->pushViewport(_viewport);
 			popViewport = true;
 		}
 	}
@@ -179,7 +179,7 @@ ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (_alphaColor != 0)
-		Game->_renderer->_forceAlphaColor = _alphaColor;
+		_gameRef->_renderer->_forceAlphaColor = _alphaColor;
 	if (back)
 		back->display(_posX + offsetX, _posY + offsetY, _width, _height);
 	if (image)
@@ -190,17 +190,17 @@ ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (!_transparent && !image)
-		Game->_renderer->_rectList.add(new CBActiveRect(Game, this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+		_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		_widgets[i]->display(_posX + offsetX, _posY + offsetY);
 	}
 
 	if (_alphaColor != 0)
-		Game->_renderer->_forceAlphaColor = 0;
+		_gameRef->_renderer->_forceAlphaColor = 0;
 
 	if (popViewport)
-		Game->popViewport();
+		_gameRef->popViewport();
 
 	return STATUS_OK;
 }
@@ -208,9 +208,9 @@ ERRORCODE CUIWindow::display(int offsetX, int offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIWindow::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CUIWindow::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CUIWindow::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -219,7 +219,7 @@ ERRORCODE CUIWindow::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing WINDOW file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing WINDOW file '%s'", filename);
 
 	delete [] buffer;
 
@@ -308,14 +308,14 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	int fadeR = 0, fadeG = 0, fadeB = 0, fadeA = 0;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WINDOW) {
-			Game->LOG(0, "'WINDOW' keyword expected.");
+			_gameRef->LOG(0, "'WINDOW' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -337,7 +337,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			delete _back;
-			_back = new CUITiledImage(Game);
+			_back = new CUITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
@@ -347,7 +347,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_INACTIVE:
 			delete _backInactive;
-			_backInactive = new CUITiledImage(Game);
+			_backInactive = new CUITiledImage(_gameRef);
 			if (!_backInactive || DID_FAIL(_backInactive->loadFile((char *)params))) {
 				delete _backInactive;
 				_backInactive = NULL;
@@ -357,7 +357,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSprite(Game);
+			_image = new CBSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -367,7 +367,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_INACTIVE:
 			delete _imageInactive,
-			       _imageInactive = new CBSprite(Game);
+			       _imageInactive = new CBSprite(_gameRef);
 			if (!_imageInactive || DID_FAIL(_imageInactive->loadFile((char *)params))) {
 				delete _imageInactive;
 				_imageInactive = NULL;
@@ -376,20 +376,20 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->removeFont(_font);
-			_font = Game->_fontStorage->addFont((char *)params);
+			if (_font) _gameRef->_fontStorage->removeFont(_font);
+			_font = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_INACTIVE:
-			if (_fontInactive) Game->_fontStorage->removeFont(_fontInactive);
-			_fontInactive = Game->_fontStorage->addFont((char *)params);
+			if (_fontInactive) _gameRef->_fontStorage->removeFont(_fontInactive);
+			_fontInactive = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_fontInactive) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_TITLE:
 			setText((char *)params);
-			Game->_stringTable->expand(&_text);
+			_gameRef->_stringTable->expand(&_text);
 			break;
 
 		case TOKEN_TITLE_ALIGN:
@@ -424,7 +424,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(Game);
+			_cursor = new CBSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -433,7 +433,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_BUTTON: {
-			CUIButton *btn = new CUIButton(Game);
+			CUIButton *btn = new CUIButton(_gameRef);
 			if (!btn || DID_FAIL(btn->loadBuffer(params, false))) {
 				delete btn;
 				btn = NULL;
@@ -446,7 +446,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_STATIC: {
-			CUIText *text = new CUIText(Game);
+			CUIText *text = new CUIText(_gameRef);
 			if (!text || DID_FAIL(text->loadBuffer(params, false))) {
 				delete text;
 				text = NULL;
@@ -459,7 +459,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_EDIT: {
-			CUIEdit *edit = new CUIEdit(Game);
+			CUIEdit *edit = new CUIEdit(_gameRef);
 			if (!edit || DID_FAIL(edit->loadBuffer(params, false))) {
 				delete edit;
 				edit = NULL;
@@ -472,7 +472,7 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_WINDOW: {
-			CUIWindow *win = new CUIWindow(Game);
+			CUIWindow *win = new CUIWindow(_gameRef);
 			if (!win || DID_FAIL(win->loadBuffer(params, false))) {
 				delete win;
 				win = NULL;
@@ -545,17 +545,17 @@ ERRORCODE CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 
 		default:
-			if (DID_FAIL(Game->windowLoadHook(this, (char **)&buffer, (char **)params))) {
+			if (DID_FAIL(_gameRef->windowLoadHook(this, (char **)&buffer, (char **)params))) {
 				cmd = PARSERR_GENERIC;
 			}
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in WINDOW definition");
+		_gameRef->LOG(0, "Syntax error in WINDOW definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading WINDOW definition");
+		_gameRef->LOG(0, "Error loading WINDOW definition");
 		return STATUS_FAILED;
 	}
 
@@ -728,8 +728,8 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 	else if (strcmp(name, "SetInactiveFont") == 0) {
 		stack->correctParams(1);
 
-		if (_fontInactive) Game->_fontStorage->removeFont(_fontInactive);
-		_fontInactive = Game->_fontStorage->addFont(stack->pop()->getString());
+		if (_fontInactive) _gameRef->_fontStorage->removeFont(_fontInactive);
+		_fontInactive = _gameRef->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontInactive != NULL);
 
 		return STATUS_OK;
@@ -742,7 +742,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 
 		delete _imageInactive;
-		_imageInactive = new CBSprite(Game);
+		_imageInactive = new CBSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageInactive || DID_FAIL(_imageInactive->loadFile(filename))) {
 			delete _imageInactive;
@@ -812,8 +812,8 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Center") == 0) {
 		stack->correctParams(0);
-		_posX = (Game->_renderer->_width - _width) / 2;
-		_posY = (Game->_renderer->_height - _height) / 2;
+		_posX = (_gameRef->_renderer->_width - _width) / 2;
+		_posY = (_gameRef->_renderer->_height - _height) / 2;
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -840,7 +840,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CUIButton *btn = new CUIButton(Game);
+		CUIButton *btn = new CUIButton(_gameRef);
 		if (!val->isNULL()) btn->setName(val->getString());
 		stack->pushNative(btn, true);
 
@@ -857,7 +857,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CUIText *sta = new CUIText(Game);
+		CUIText *sta = new CUIText(_gameRef);
 		if (!val->isNULL()) sta->setName(val->getString());
 		stack->pushNative(sta, true);
 
@@ -874,7 +874,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CUIEdit *edi = new CUIEdit(Game);
+		CUIEdit *edi = new CUIEdit(_gameRef);
 		if (!val->isNULL()) edi->setName(val->getString());
 		stack->pushNative(edi, true);
 
@@ -891,7 +891,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CUIWindow *win = new CUIWindow(Game);
+		CUIWindow *win = new CUIWindow(_gameRef);
 		if (!val->isNULL()) win->setName(val->getString());
 		stack->pushNative(win, true);
 
@@ -918,7 +918,7 @@ ERRORCODE CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		}
 		stack->pushNULL();
 		return STATUS_OK;
-	} else if DID_SUCCEED(Game->windowScriptMethodHook(this, script, stack, name)) return STATUS_OK;
+	} else if DID_SUCCEED(_gameRef->windowScriptMethodHook(this, script, stack, name)) return STATUS_OK;
 
 	else return CUIObject::scCallMethod(script, stack, thisStack, name);
 }
@@ -1140,9 +1140,9 @@ ERRORCODE CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 			getTotalOffset(&offsetX, &offsetY);
 			CBPlatform::offsetRect(&dragRect, _posX + offsetX, _posY + offsetY);
 
-			if (CBPlatform::ptInRect(&dragRect, Game->_mousePos)) {
-				_dragFrom.x = Game->_mousePos.x;
-				_dragFrom.y = Game->_mousePos.y;
+			if (CBPlatform::ptInRect(&dragRect, _gameRef->_mousePos)) {
+				_dragFrom.x = _gameRef->_mousePos.x;
+				_dragFrom.y = _gameRef->_mousePos.y;
 				_dragging = true;
 			}
 		}
@@ -1238,7 +1238,7 @@ ERRORCODE CUIWindow::goExclusive() {
 		_mode = WINDOW_EXCLUSIVE;
 		_visible = true;
 		_disable = false;
-		Game->focusWindow(this);
+		_gameRef->focusWindow(this);
 		return STATUS_OK;
 	} else return STATUS_FAILED;
 }
@@ -1254,9 +1254,9 @@ ERRORCODE CUIWindow::goSystemExclusive() {
 	_ready = false;
 	_visible = true;
 	_disable = false;
-	Game->focusWindow(this);
+	_gameRef->focusWindow(this);
 
-	Game->freeze(_pauseMusic);
+	_gameRef->freeze(_pauseMusic);
 	return STATUS_OK;
 }
 
@@ -1264,7 +1264,7 @@ ERRORCODE CUIWindow::goSystemExclusive() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
-		Game->unfreeze();
+		_gameRef->unfreeze();
 	}
 
 	_mode = WINDOW_NORMAL;

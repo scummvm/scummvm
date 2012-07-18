@@ -94,7 +94,7 @@ ERRORCODE CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 			}
 		}
 	}
-	if (numHandlers > 0 && unbreakable) Game->_scEngine->tickUnbreakable();
+	if (numHandlers > 0 && unbreakable) _gameRef->_scEngine->tickUnbreakable();
 
 	return ret;
 }
@@ -280,24 +280,24 @@ ERRORCODE CBScriptHolder::addScript(const char *filename) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
-				Game->LOG(0, "CBScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, _name);
+				_gameRef->LOG(0, "CBScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, _name);
 				return STATUS_OK;
 			}
 		}
 	}
 
-	CScScript *scr =  Game->_scEngine->runScript(filename, this);
+	CScScript *scr =  _gameRef->_scEngine->runScript(filename, this);
 	if (!scr) {
-		if (Game->_editorForceScripts) {
+		if (_gameRef->_editorForceScripts) {
 			// editor hack
-			scr = new CScScript(Game, Game->_scEngine);
+			scr = new CScScript(_gameRef,  _gameRef->_scEngine);
 			scr->_filename = new char[strlen(filename) + 1];
 			strcpy(scr->_filename, filename);
 			scr->_state = SCRIPT_ERROR;
 			scr->_owner = this;
 			_scripts.add(scr);
-			Game->_scEngine->_scripts.add(scr);
-			Game->getDebugMgr()->onScriptInit(scr);
+			_gameRef->_scEngine->_scripts.add(scr);
+			_gameRef->getDebugMgr()->onScriptInit(scr);
 
 			return STATUS_OK;
 		}
@@ -354,11 +354,11 @@ ERRORCODE CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_PROPERTY) {
-			Game->LOG(0, "'PROPERTY' keyword expected.");
+			_gameRef->LOG(0, "'PROPERTY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -390,7 +390,7 @@ ERRORCODE CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 		delete[] propValue;
 		propName = NULL;
 		propValue = NULL;
-		Game->LOG(0, "Syntax error in PROPERTY definition");
+		_gameRef->LOG(0, "Syntax error in PROPERTY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == NULL || propValue == NULL) {
@@ -398,12 +398,12 @@ ERRORCODE CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 		delete[] propValue;
 		propName = NULL;
 		propValue = NULL;
-		Game->LOG(0, "Error loading PROPERTY definition");
+		_gameRef->LOG(0, "Error loading PROPERTY definition");
 		return STATUS_FAILED;
 	}
 
 
-	CScValue *val = new CScValue(Game);
+	CScValue *val = new CScValue(_gameRef);
 	val->setString(propValue);
 	scSetProperty(propName, val);
 
@@ -431,12 +431,12 @@ CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
 	for (int i = _scripts.getSize() - 1; i >= 0; i--) {
 		if (_scripts[i]->canHandleMethod(methodName)) {
 
-			CScScript *thread = new CScScript(Game, _scripts[i]->_engine);
+			CScScript *thread = new CScScript(_gameRef,  _scripts[i]->_engine);
 			if (thread) {
 				ERRORCODE ret = thread->createMethodThread(_scripts[i], methodName);
 				if (DID_SUCCEED(ret)) {
 					_scripts[i]->_engine->_scripts.add(thread);
-					Game->getDebugMgr()->onScriptMethodThreadInit(thread, _scripts[i], methodName);
+					_gameRef->getDebugMgr()->onScriptMethodThreadInit(thread, _scripts[i], methodName);
 
 					return thread;
 				} else {

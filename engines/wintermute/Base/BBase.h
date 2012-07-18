@@ -49,7 +49,7 @@ public:
 	ERRORCODE parseEditorProperty(byte *buffer, bool complete = true);
 	virtual ERRORCODE saveAsText(CBDynBuffer *buffer, int indent = 0);
 	CBBase();
-	CBGame *Game;
+	CBGame *_gameRef;
 	CBBase(CBGame *GameOwner);
 	virtual ~CBBase();
 

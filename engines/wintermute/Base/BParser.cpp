@@ -115,7 +115,7 @@ int32 CBParser::getObject(char **buf, TokenDesc *tokens, char **name, char **dat
 //////////////////////////////////////////////////////////////////////
 int32 CBParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
 	if (!*buf) return PARSERR_TOKENNOTFOUND;
-	Game->miniUpdate();
+	_gameRef->miniUpdate();
 	char *name;
 	return getObject(buf, tokens, &name, params);
 }

@@ -109,7 +109,7 @@ CVidTheoraPlayer::~CVidTheoraPlayer(void) {
 //////////////////////////////////////////////////////////////////////////
 void CVidTheoraPlayer::cleanup() {
 	if (_file) {
-		Game->_fileManager->closeFile(_file);
+		_gameRef->_fileManager->closeFile(_file);
 		_file = NULL;
 	}
 
@@ -122,7 +122,7 @@ void CVidTheoraPlayer::cleanup() {
 	_texture = NULL;
 #if 0
 	if (m_Sound) {
-		Game->m_SoundMgr->RemoveSound(m_Sound);
+		_gameRef->m_SoundMgr->RemoveSound(m_Sound);
 		m_Sound = NULL;
 	}
 
@@ -137,7 +137,7 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 	cleanup();
 
 	_filename = filename;
-	_file = Game->_fileManager->openFile(filename, true, false);
+	_file = _gameRef->_fileManager->openFile(filename, true, false);
 	if (!_file) return STATUS_FAILED;
 
 	//if (Filename != _filename) CBUtils::setString(&_filename, filename);
@@ -155,7 +155,7 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 
 	// Additional setup.
 	_surface.create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight(), _theoraDecoder->getPixelFormat());
-	_texture = new CBSurfaceSDL(Game);
+	_texture = new CBSurfaceSDL(_gameRef);
 	_texture->create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight());
 	_state = THEORA_STATE_PLAYING;
 	_playZoom = 100;
@@ -164,7 +164,7 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 #if 0
 	cleanup();
 
-	_file = Game->_fileManager->openFile(filename);
+	_file = _gameRef->_fileManager->openFile(filename);
 	if (!_file) return STATUS_FAILED;
 
 	if (Filename != _filename) CBUtils::setString(&_filename, filename);
@@ -232,11 +232,11 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 		// look for further theora headers
 		while (m_TheoraStreams && (m_TheoraStreams < 3) && (Ret = ogg_stream_packetout(&m_TheoraStreamState, &TempOggPacket))) {
 			if (Ret < 0) {
-				Game->LOG(0, "Error parsing Theora stream headers; corrupt stream?");
+				_gameRef->LOG(0, "Error parsing Theora stream headers; corrupt stream?");
 				return STATUS_FAILED;
 			}
 			if (theora_decode_header(&m_TheoraInfo, &m_TheoraComment, &TempOggPacket)) {
-				Game->LOG(0, "Error parsing Theora stream headers; corrupt stream?");
+				_gameRef->LOG(0, "Error parsing Theora stream headers; corrupt stream?");
 				return STATUS_FAILED;
 			}
 			m_TheoraStreams++;
@@ -246,11 +246,11 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 		/* look for more vorbis header packets */
 		while (m_VorbisStreams && (m_VorbisStreams < 3) && (Ret = ogg_stream_packetout(&m_VorbisStreamState, &TempOggPacket))) {
 			if (Ret < 0) {
-				Game->LOG(0, "Error parsing Vorbis stream headers; corrupt stream?");
+				_gameRef->LOG(0, "Error parsing Vorbis stream headers; corrupt stream?");
 				return STATUS_FAILED;
 			}
 			if (vorbis_synthesis_headerin(&m_VorbisInfo, &m_VorbisComment, &TempOggPacket)) {
-				Game->LOG(0, "Error parsing Vorbis stream headers; corrupt stream?");
+				_gameRef->LOG(0, "Error parsing Vorbis stream headers; corrupt stream?");
 				return STATUS_FAILED;
 			}
 			m_VorbisStreams++;
@@ -267,7 +267,7 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 		} else {
 			int Ret = BufferData(&m_OggSyncState); // someone needs more data
 			if (Ret == 0) {
-				Game->LOG(0, "End of file while searching for codec headers");
+				_gameRef->LOG(0, "End of file while searching for codec headers");
 				return STATUS_FAILED;
 			}
 		}
@@ -297,13 +297,13 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 	ERRORCODE Res = STATUS_OK;
 
 	// create sound buffer
-	if (m_VorbisStreams && Game->m_SoundMgr->m_SoundAvailable) {
-		m_Sound = new CBSoundTheora(Game);
-		Game->m_SoundMgr->AddSound(m_Sound);
+	if (m_VorbisStreams && _gameRef->m_SoundMgr->m_SoundAvailable) {
+		m_Sound = new CBSoundTheora(_gameRef);
+		_gameRef->m_SoundMgr->AddSound(m_Sound);
 		if (DID_FAIL(Res = m_Sound->InitializeBuffer(this))) {
-			Game->m_SoundMgr->RemoveSound(m_Sound);
+			_gameRef->m_SoundMgr->RemoveSound(m_Sound);
 			m_Sound = NULL;
-			Game->LOG(Res, "Error initializing sound buffer for Theora file '%s'", filename);
+			_gameRef->LOG(Res, "Error initializing sound buffer for Theora file '%s'", filename);
 		} else {
 			SAFE_DELETE_ARRAY(m_AudioBuf);
 			m_AudioBufSize = m_Sound->m_StreamBlockSize;
@@ -313,10 +313,10 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 
 	// create texture
 	if (m_TheoraStreams && !m_Texture) {
-		if (Game->m_UseD3D)
-			m_Texture = new CBSurfaceD3D(Game);
+		if (_gameRef->m_UseD3D)
+			m_Texture = new CBSurfaceD3D(_gameRef);
 		else
-			m_Texture = new CBSurfaceDD(Game);
+			m_Texture = new CBSurfaceDD(_gameRef);
 
 		if (!m_Texture || DID_FAIL(Res = m_Texture->Create(m_TheoraInfo.width, m_TheoraInfo.height))) {
 			SAFE_DELETE(m_Texture);
@@ -324,8 +324,8 @@ ERRORCODE CVidTheoraPlayer::initialize(const Common::String &filename, const Com
 	}
 
 
-	if (!m_Subtitler) m_Subtitler = new CVidSubtitler(Game);
-	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->LoadSubtitles(filename, SubtitleFile);
+	if (!m_Subtitler) m_Subtitler = new CVidSubtitler(_gameRef);
+	if (m_Subtitler && _gameRef->m_VideoSubtitles) m_Subtitler->LoadSubtitles(filename, SubtitleFile);
 
 	return Res;
 #endif
@@ -351,13 +351,13 @@ ERRORCODE CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeG
 	if (forceZoom < 0.0f)
 		forceZoom = 100.0f;
 	if (volume < 0)
-		_volume = Game->_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType);
+		_volume = _gameRef->_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType);
 	else _volume = volume;
 
 	_freezeGame = freezeGame;
 
 	if (!_playbackStarted && _freezeGame)
-		Game->freeze(freezeMusic);
+		_gameRef->freeze(freezeMusic);
 
 	_playbackStarted = false;
 	float width, height;
@@ -376,8 +376,8 @@ ERRORCODE CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeG
 		width = (float)_theoraDecoder->getWidth();
 		height = (float)_theoraDecoder->getHeight();
 	} else {
-		width = (float)Game->_renderer->_width;
-		height = (float)Game->_renderer->_height;
+		width = (float)_gameRef->_renderer->_width;
+		height = (float)_gameRef->_renderer->_height;
 	}
 
 	switch (type) {
@@ -388,18 +388,18 @@ ERRORCODE CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeG
 		break;
 
 	case VID_PLAY_STRETCH: {
-		float ZoomX = (float)((float)Game->_renderer->_width / width * 100);
-		float ZoomY = (float)((float)Game->_renderer->_height / height * 100);
+		float ZoomX = (float)((float)_gameRef->_renderer->_width / width * 100);
+		float ZoomY = (float)((float)_gameRef->_renderer->_height / height * 100);
 		_playZoom = MIN(ZoomX, ZoomY);
-		_posX = (int)((Game->_renderer->_width - width * (_playZoom / 100)) / 2);
-		_posY = (int)((Game->_renderer->_height - height * (_playZoom / 100)) / 2);
+		_posX = (int)((_gameRef->_renderer->_width - width * (_playZoom / 100)) / 2);
+		_posY = (int)((_gameRef->_renderer->_height - height * (_playZoom / 100)) / 2);
 	}
 	break;
 
 	case VID_PLAY_CENTER:
 		_playZoom = 100.0f;
-		_posX = (int)((Game->_renderer->_width - width) / 2);
-		_posY = (int)((Game->_renderer->_height - height) / 2);
+		_posX = (int)((_gameRef->_renderer->_width - width) / 2);
+		_posY = (int)((_gameRef->_renderer->_height - height) / 2);
 		break;
 	}
 	return STATUS_OK;
@@ -415,8 +415,8 @@ ERRORCODE CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeG
 		Width = (float)m_TheoraInfo.width;
 		Height = (float)m_TheoraInfo.height;
 	} else {
-		Width = (float)Game->m_Renderer->m_Width;
-		Height = (float)Game->m_Renderer->m_Height;
+		Width = (float)_gameRef->m_Renderer->m_Width;
+		Height = (float)_gameRef->m_Renderer->m_Height;
 	}
 
 	switch (Type) {
@@ -427,18 +427,18 @@ ERRORCODE CVidTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeG
 		break;
 
 	case VID_PLAY_STRETCH: {
-		float ZoomX = (float)((float)Game->m_Renderer->m_Width / Width * 100);
-		float ZoomY = (float)((float)Game->m_Renderer->m_Height / Height * 100);
+		float ZoomX = (float)((float)_gameRef->m_Renderer->m_Width / Width * 100);
+		float ZoomY = (float)((float)_gameRef->m_Renderer->m_Height / Height * 100);
 		m_PlayZoom = min(ZoomX, ZoomY);
-		m_PosX = (Game->m_Renderer->m_Width - Width * (m_PlayZoom / 100)) / 2;
-		m_PosY = (Game->m_Renderer->m_Height - Height * (m_PlayZoom / 100)) / 2;
+		m_PosX = (_gameRef->m_Renderer->m_Width - Width * (m_PlayZoom / 100)) / 2;
+		m_PosY = (_gameRef->m_Renderer->m_Height - Height * (m_PlayZoom / 100)) / 2;
 	}
 	break;
 
 	case VID_PLAY_CENTER:
 		m_PlayZoom = 100.0f;
-		m_PosX = (Game->m_Renderer->m_Width - Width) / 2;
-		m_PosY = (Game->m_Renderer->m_Height - Height) / 2;
+		m_PosX = (_gameRef->m_Renderer->m_Width - Width) / 2;
+		m_PosY = (_gameRef->m_Renderer->m_Height - Height) / 2;
 		break;
 	}
 
@@ -455,25 +455,25 @@ ERRORCODE CVidTheoraPlayer::stop() {
 	_theoraDecoder->close();
 	_state = THEORA_STATE_FINISHED;
 	if (_freezeGame) {
-		Game->unfreeze();
+		_gameRef->unfreeze();
 	}
 #if 0
 	if (m_Sound) m_Sound->Stop();
 	m_State = THEORA_STATE_FINISHED;
-	if (m_FreezeGame) Game->Unfreeze();
+	if (m_FreezeGame) _gameRef->Unfreeze();
 #endif
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CVidTheoraPlayer::update() {
-	_currentTime = _freezeGame ? Game->_liveTimer : Game->_timer;
+	_currentTime = _freezeGame ? _gameRef->_liveTimer : _gameRef->_timer;
 
 	if (!isPlaying()) return STATUS_OK;
 
 	if (_playbackStarted /*&& m_Sound && !m_Sound->IsPlaying()*/) return STATUS_OK;
 
-	if (_playbackStarted && !_freezeGame && Game->_state == GAME_FROZEN) return STATUS_OK;
+	if (_playbackStarted && !_freezeGame && _gameRef->_state == GAME_FROZEN) return STATUS_OK;
 
 	if (_theoraDecoder) {
 		if (_theoraDecoder->endOfVideo() && _looping) {
@@ -483,7 +483,7 @@ ERRORCODE CVidTheoraPlayer::update() {
 			warning("Finished movie");
 			_state = THEORA_STATE_FINISHED;
 			_playbackStarted = false;
-			if (_freezeGame) Game->unfreeze();
+			if (_freezeGame) _gameRef->unfreeze();
 		}
 		if (_state == THEORA_STATE_PLAYING) {
 			if (_theoraDecoder->getTimeToNextFrame() == 0) {
@@ -500,7 +500,7 @@ ERRORCODE CVidTheoraPlayer::update() {
 		// end playback
 		if (!_looping) {
 			_state = THEORA_STATE_FINISHED;
-			if (_freezeGame) Game->unfreeze();
+			if (_freezeGame) _gameRef->unfreeze();
 			return STATUS_OK;
 		} else {
 			resetStream();
@@ -509,13 +509,13 @@ ERRORCODE CVidTheoraPlayer::update() {
 	}
 
 #if 0
-	m_CurrentTime = m_FreezeGame ? Game->m_LiveTimer : Game->m_Timer;
+	m_CurrentTime = m_FreezeGame ? _gameRef->m_LiveTimer : _gameRef->m_Timer;
 
 	if (!IsPlaying()) return STATUS_OK;
 
 	if (m_PlaybackStarted && m_Sound && !m_Sound->IsPlaying()) return STATUS_OK;
 
-	if (m_PlaybackStarted && !m_FreezeGame && Game->m_State == GAME_FROZEN) return STATUS_OK;
+	if (m_PlaybackStarted && !m_FreezeGame && _gameRef->m_State == GAME_FROZEN) return STATUS_OK;
 
 	int Counter = 0;
 	while (true) {
@@ -530,7 +530,7 @@ ERRORCODE CVidTheoraPlayer::update() {
 			if (!m_Looping) {
 				m_State = THEORA_STATE_FINISHED;
 				if (m_Sound) m_Sound->Stop();
-				if (m_FreezeGame) Game->Unfreeze();
+				if (m_FreezeGame) _gameRef->Unfreeze();
 				break;
 			} else {
 				ResetStream();
@@ -551,7 +551,7 @@ ERRORCODE CVidTheoraPlayer::update() {
 
 	// are we at or past time for this video frame?
 	if (m_PlaybackStarted && m_VideoFrameReady && (!m_FrameRendered || m_VideobufTime <= GetMovieTime())) {
-		//Game->LOG(0, "%f %f", m_VideobufTime, GetMovieTime());
+		//_gameRef->LOG(0, "%f %f", m_VideobufTime, GetMovieTime());
 		if (m_Texture) WriteVideo();
 		m_VideoFrameReady = false;
 
@@ -583,7 +583,7 @@ ERRORCODE CVidTheoraPlayer::update() {
 		m_PlaybackStarted = true;
 	}
 
-	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->update(GetMovieFrame());
+	if (m_Subtitler && _gameRef->m_VideoSubtitles) m_Subtitler->update(GetMovieFrame());
 #endif
 	return STATUS_OK;
 }
@@ -661,7 +661,7 @@ ERRORCODE CVidTheoraPlayer::display(uint32 alpha) {
 		else res = _texture->displayTransZoom(_posX, _posY, rc, _playZoom, _playZoom, alpha);
 	} else res = STATUS_FAILED;
 #if 0
-	if (m_Subtitler && Game->m_VideoSubtitles) m_Subtitler->display();
+	if (m_Subtitler && _gameRef->m_VideoSubtitles) m_Subtitler->display();
 #endif
 	return res;
 }
@@ -671,7 +671,7 @@ ERRORCODE CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	warning("CVidTheoraPlayer::SetAlphaImage(%s) - Not implemented", filename.c_str());
 
 	delete _alphaImage;
-	_alphaImage = new CBImage(Game);
+	_alphaImage = new CBImage(_gameRef);
 	if (!_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
 		delete _alphaImage;
 		_alphaImage = NULL;
@@ -685,7 +685,7 @@ ERRORCODE CVidTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	//TODO: Conversion.
 #if 0
 	SAFE_DELETE(m_AlphaImage);
-	m_AlphaImage = new CBImage(Game);
+	m_AlphaImage = new CBImage(_gameRef);
 	if (!m_AlphaImage || DID_FAIL(m_AlphaImage->loadFile(filename))) {
 		SAFE_DELETE(m_AlphaImage);
 		SAFE_DELETE_ARRAY(m_AlphaFilename);
@@ -812,7 +812,7 @@ ERRORCODE CVidTheoraPlayer::persist(CBPersistMgr *persistMgr) {
 		SetDefaults();
 	}
 
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_savedPos));
 	persistMgr->transfer(TMEMBER(_savedState));
 	persistMgr->transfer(TMEMBER(_filename));

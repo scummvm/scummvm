@@ -68,8 +68,8 @@ ERRORCODE CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 
 	if (nonInteractive) {
 		_preserveInteractive = true;
-		_origInteractive = Game->_interactive;
-		Game->_interactive = false;
+		_origInteractive = _gameRef->_interactive;
+		_gameRef->_interactive = false;
 	} /*else _preserveInteractive */;
 	
 
@@ -100,7 +100,7 @@ ERRORCODE CBTransitionMgr::update() {
 		uint32 time = CBPlatform::getTime() - _lastTime;
 		int alpha = (int)(255 - (float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
-		Game->_renderer->fade((uint16)alpha);
+		_gameRef->_renderer->fade((uint16)alpha);
 
 		if (time > FADE_DURATION)
 			_state = TRANS_MGR_READY;
@@ -111,7 +111,7 @@ ERRORCODE CBTransitionMgr::update() {
 		uint32 time = CBPlatform::getTime() - _lastTime;
 		int alpha = (int)((float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
-		Game->_renderer->fade((uint16)alpha);
+		_gameRef->_renderer->fade((uint16)alpha);
 
 		if (time > FADE_DURATION)
 			_state = TRANS_MGR_READY;
@@ -123,7 +123,7 @@ ERRORCODE CBTransitionMgr::update() {
 
 	if (isReady()) {
 		if (_preserveInteractive)
-			Game->_interactive = _origInteractive;
+			_gameRef->_interactive = _origInteractive;
 	}
 	return STATUS_OK;
 }

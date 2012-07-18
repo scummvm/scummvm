@@ -125,13 +125,13 @@ ERRORCODE CScScript::initScript() {
 	readHeader();
 
 	if (_header.magic != SCRIPT_MAGIC) {
-		Game->LOG(0, "File '%s' is not a valid compiled script", _filename);
+		_gameRef->LOG(0, "File '%s' is not a valid compiled script", _filename);
 		cleanup();
 		return STATUS_FAILED;
 	}
 
 	if (_header.version > SCRIPT_VERSION) {
-		Game->LOG(0, "Script '%s' has a wrong version %d.%d (expected %d.%d)", _filename, _header.version / 256, _header.version % 256, SCRIPT_VERSION / 256, SCRIPT_VERSION % 256);
+		_gameRef->LOG(0, "Script '%s' has a wrong version %d.%d (expected %d.%d)", _filename, _header.version / 256, _header.version % 256, SCRIPT_VERSION / 256, SCRIPT_VERSION % 256);
 		cleanup();
 		return STATUS_FAILED;
 	}
@@ -139,13 +139,13 @@ ERRORCODE CScScript::initScript() {
 	initTables();
 
 	// init stacks
-	_scopeStack = new CScStack(Game);
-	_callStack  = new CScStack(Game);
-	_thisStack  = new CScStack(Game);
-	_stack      = new CScStack(Game);
+	_scopeStack = new CScStack(_gameRef);
+	_callStack  = new CScStack(_gameRef);
+	_thisStack  = new CScStack(_gameRef);
+	_stack      = new CScStack(_gameRef);
 
-	_operand    = new CScValue(Game);
-	_reg1       = new CScValue(Game);
+	_operand    = new CScValue(_gameRef);
+	_reg1       = new CScValue(_gameRef);
 
 
 	// skip to the beginning
@@ -263,7 +263,7 @@ ERRORCODE CScScript::create(const char *filename, byte *buffer, uint32 size, CBS
 	if (DID_FAIL(res)) return res;
 
 	// establish global variables table
-	_globals = new CScValue(Game);
+	_globals = new CScValue(_gameRef);
 
 	_owner = owner;
 
@@ -476,7 +476,7 @@ ERRORCODE CScScript::executeInstruction() {
 	uint32 dw;
 	const char *str = NULL;
 
-	//CScValue* op = new CScValue(Game);
+	//CScValue* op = new CScValue(_gameRef);
 	_operand->cleanup();
 
 	CScValue *op1;
@@ -490,12 +490,12 @@ ERRORCODE CScScript::executeInstruction() {
 		dw = getDWORD();
 		if (_scopeStack->_sP < 0) {
 			_globals->setProp(_symbols[dw], _operand);
-			if (Game->getDebugMgr()->_enabled)
-				Game->getDebugMgr()->onVariableInit(WME_DBGVAR_SCRIPT, this, NULL, _globals->getProp(_symbols[dw]), _symbols[dw]);
+			if (_gameRef->getDebugMgr()->_enabled)
+				_gameRef->getDebugMgr()->onVariableInit(WME_DBGVAR_SCRIPT, this, NULL, _globals->getProp(_symbols[dw]), _symbols[dw]);
 		} else {
 			_scopeStack->getTop()->setProp(_symbols[dw], _operand);
-			if (Game->getDebugMgr()->_enabled)
-				Game->getDebugMgr()->onVariableInit(WME_DBGVAR_SCOPE, this, _scopeStack->getTop(), _scopeStack->getTop()->getProp(_symbols[dw]), _symbols[dw]);
+			if (_gameRef->getDebugMgr()->_enabled)
+				_gameRef->getDebugMgr()->onVariableInit(WME_DBGVAR_SCOPE, this, _scopeStack->getTop(), _scopeStack->getTop()->getProp(_symbols[dw]), _symbols[dw]);
 		}
 
 		break;
@@ -509,21 +509,21 @@ ERRORCODE CScScript::executeInstruction() {
 			_operand->setNULL();
 			_engine->_globals->setProp(_symbols[dw], _operand, false, inst == II_DEF_CONST_VAR);
 
-			if (Game->getDebugMgr()->_enabled)
-				Game->getDebugMgr()->onVariableInit(WME_DBGVAR_GLOBAL, this, NULL, _engine->_globals->getProp(_symbols[dw]), _symbols[dw]);
+			if (_gameRef->getDebugMgr()->_enabled)
+				_gameRef->getDebugMgr()->onVariableInit(WME_DBGVAR_GLOBAL, this, NULL, _engine->_globals->getProp(_symbols[dw]), _symbols[dw]);
 		}
 		break;
 	}
 
 	case II_RET:
 		if (_scopeStack->_sP >= 0 && _callStack->_sP >= 0) {
-			Game->getDebugMgr()->onScriptShutdownScope(this, _scopeStack->getTop());
+			_gameRef->getDebugMgr()->onScriptShutdownScope(this, _scopeStack->getTop());
 
 			_scopeStack->pop();
 			_iP = (uint32)_callStack->pop()->getInt();
 
-			if (_scopeStack->_sP < 0) Game->getDebugMgr()->onScriptChangeScope(this, NULL);
-			else Game->getDebugMgr()->onScriptChangeScope(this, _scopeStack->getTop());
+			if (_scopeStack->_sP < 0) _gameRef->getDebugMgr()->onScriptChangeScope(this, NULL);
+			else _gameRef->getDebugMgr()->onScriptChangeScope(this, _scopeStack->getTop());
 		} else {
 			if (_thread) {
 				_state = SCRIPT_THREAD_FINISHED;
@@ -601,7 +601,7 @@ ERRORCODE CScScript::executeInstruction() {
 			        }
 			        else{
 			            // not an internal nor external, try for native function
-			            Game->ExternalCall(this, _stack, _thisStack, val->getString());
+			            _gameRef->ExternalCall(this, _stack, _thisStack, val->getString());
 			        }
 			    }
 			    else{
@@ -632,7 +632,7 @@ ERRORCODE CScScript::executeInstruction() {
 		TExternalFunction *f = getExternal(_symbols[SymbolIndex]);
 		if (f) {
 			externalCall(_stack, _thisStack, f);
-		} else Game->ExternalCall(this, _stack, _thisStack, _symbols[SymbolIndex]);
+		} else _gameRef->ExternalCall(this, _stack, _thisStack, _symbols[SymbolIndex]);
 
 		break;
 	}
@@ -640,8 +640,8 @@ ERRORCODE CScScript::executeInstruction() {
 		_operand->setNULL();
 		_scopeStack->push(_operand);
 
-		if (_scopeStack->_sP < 0) Game->getDebugMgr()->onScriptChangeScope(this, NULL);
-		else Game->getDebugMgr()->onScriptChangeScope(this, _scopeStack->getTop());
+		if (_scopeStack->_sP < 0) _gameRef->getDebugMgr()->onScriptChangeScope(this, NULL);
+		else _gameRef->getDebugMgr()->onScriptChangeScope(this, _scopeStack->getTop());
 
 		break;
 
@@ -691,8 +691,8 @@ ERRORCODE CScScript::executeInstruction() {
 				}
 			}
 
-			if (Game->getDebugMgr()->_enabled)
-				Game->getDebugMgr()->onVariableChangeValue(var, val);
+			if (_gameRef->getDebugMgr()->_enabled)
+				_gameRef->getDebugMgr()->onVariableChangeValue(var, val);
 		}
 
 		break;
@@ -757,8 +757,8 @@ ERRORCODE CScScript::executeInstruction() {
 			var->setNULL();
 		} else var->setProp(str, val);
 
-		if (Game->getDebugMgr()->_enabled)
-			Game->getDebugMgr()->onVariableChangeValue(var, NULL);
+		if (_gameRef->getDebugMgr()->_enabled)
+			_gameRef->getDebugMgr()->onVariableChangeValue(var, NULL);
 
 		break;
 	}
@@ -1027,17 +1027,17 @@ ERRORCODE CScScript::executeInstruction() {
 		int newLine = getDWORD();
 		if (newLine != _currentLine) {
 			_currentLine = newLine;
-			if (Game->getDebugMgr()->_enabled) {
-				Game->getDebugMgr()->onScriptChangeLine(this, _currentLine);
+			if (_gameRef->getDebugMgr()->_enabled) {
+				_gameRef->getDebugMgr()->onScriptChangeLine(this, _currentLine);
 				for (int i = 0; i < _breakpoints.getSize(); i++) {
 					if (_breakpoints[i] == _currentLine) {
-						Game->getDebugMgr()->onScriptHitBreakpoint(this);
+						_gameRef->getDebugMgr()->onScriptHitBreakpoint(this);
 						sleep(0);
 						break;
 					}
 				}
 				if (_tracingMode) {
-					Game->getDebugMgr()->onScriptHitBreakpoint(this);
+					_gameRef->getDebugMgr()->onScriptHitBreakpoint(this);
 					sleep(0);
 					break;
 				}
@@ -1047,7 +1047,7 @@ ERRORCODE CScScript::executeInstruction() {
 
 	}
 	default:
-		Game->LOG(0, "Fatal: Invalid instruction %d ('%s', line %d, IP:0x%x)\n", inst, _filename, _currentLine, _iP - sizeof(uint32));
+		_gameRef->LOG(0, "Fatal: Invalid instruction %d ('%s', line %d, IP:0x%x)\n", inst, _filename, _currentLine, _iP - sizeof(uint32));
 		_state = SCRIPT_FINISHED;
 		ret = STATUS_FAILED;
 	} // switch(instruction)
@@ -1102,8 +1102,8 @@ CScValue *CScScript::getVar(char *name) {
 
 	if (ret == NULL) {
 		//RuntimeError("Variable '%s' is inaccessible in the current block. Consider changing the script.", name);
-		Game->LOG(0, "Warning: variable '%s' is inaccessible in the current block. Consider changing the script (script:%s, line:%d)", name, _filename, _currentLine);
-		CScValue *val = new CScValue(Game);
+		_gameRef->LOG(0, "Warning: variable '%s' is inaccessible in the current block. Consider changing the script (script:%s, line:%d)", name, _filename, _currentLine);
+		CScValue *val = new CScValue(_gameRef);
 		CScValue *scope = _scopeStack->getTop();
 		if (scope) {
 			scope->setProp(name, val);
@@ -1147,11 +1147,11 @@ ERRORCODE CScScript::sleep(uint32 duration) {
 	}
 
 	_state = SCRIPT_SLEEPING;
-	if (Game->_state == GAME_FROZEN) {
+	if (_gameRef->_state == GAME_FROZEN) {
 		_waitTime = CBPlatform::getTime() + duration;
 		_waitFrozen = true;
 	} else {
-		_waitTime = Game->_timer + duration;
+		_waitTime = _gameRef->_timer + duration;
 		_waitFrozen = false;
 	}
 	return STATUS_OK;
@@ -1186,18 +1186,18 @@ void CScScript::runtimeError(const char *fmt, ...) {
 	vsprintf(buff, fmt, va);
 	va_end(va);
 
-	Game->LOG(0, "Runtime error. Script '%s', line %d", _filename, _currentLine);
-	Game->LOG(0, "  %s", buff);
+	_gameRef->LOG(0, "Runtime error. Script '%s', line %d", _filename, _currentLine);
+	_gameRef->LOG(0, "  %s", buff);
 
-	if (!Game->_suppressScriptErrors)
-		Game->quickMessage("Script runtime error. View log for details.");
+	if (!_gameRef->_suppressScriptErrors)
+		_gameRef->quickMessage("Script runtime error. View log for details.");
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScScript::persist(CBPersistMgr *persistMgr) {
 
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 
 	// buffer
 	if (persistMgr->_saving) {
@@ -1263,13 +1263,13 @@ CScScript *CScScript::invokeEventHandler(const char *eventName, bool unbreakable
 	uint32 pos = getEventPos(eventName);
 	if (!pos) return NULL;
 
-	CScScript *thread = new CScScript(Game, _engine);
+	CScScript *thread = new CScScript(_gameRef,  _engine);
 	if (thread) {
 		ERRORCODE ret = thread->createThread(this, pos, eventName);
 		if (DID_SUCCEED(ret)) {
 			thread->_unbreakable = unbreakable;
 			_engine->_scripts.add(thread);
-			Game->getDebugMgr()->onScriptEventThreadInit(thread, this, eventName);
+			_gameRef->getDebugMgr()->onScriptEventThreadInit(thread, this, eventName);
 			return thread;
 		} else {
 			delete thread;
@@ -1304,7 +1304,7 @@ bool CScScript::canHandleMethod(const char *methodName) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScScript::pause() {
 	if (_state == SCRIPT_PAUSED) {
-		Game->LOG(0, "Attempting to pause a paused script ('%s', line %d)", _filename, _currentLine);
+		_gameRef->LOG(0, "Attempting to pause a paused script ('%s', line %d)", _filename, _currentLine);
 		return STATUS_FAILED;
 	}
 
@@ -1339,7 +1339,7 @@ CScScript::TExternalFunction *CScScript::getExternal(char *name) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScScript::externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function) {
 
-	Game->LOG(0, "External functions are not supported on this platform.");
+	_gameRef->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);
 	stack->pushNULL();
 	return STATUS_FAILED;
@@ -1443,7 +1443,7 @@ void CScScript::afterLoad() {
 	if (_buffer == NULL) {
 		byte *buffer = _engine->getCompiledScript(_filename, &_bufferSize);
 		if (!buffer) {
-			Game->LOG(0, "Error reinitializing script '%s' after load. Script will be terminated.", _filename);
+			_gameRef->LOG(0, "Error reinitializing script '%s' after load. Script will be terminated.", _filename);
 			_state = SCRIPT_ERROR;
 			return;
 		}

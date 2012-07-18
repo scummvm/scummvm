@@ -62,9 +62,9 @@ CAdLayer::~CAdLayer() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdLayer::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdLayer::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdLayer::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -73,7 +73,7 @@ ERRORCODE CAdLayer::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing LAYER file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing LAYER file '%s'", filename);
 
 	delete [] buffer;
 
@@ -120,11 +120,11 @@ ERRORCODE CAdLayer::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_LAYER) {
-			Game->LOG(0, "'LAYER' keyword expected.");
+			_gameRef->LOG(0, "'LAYER' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -165,8 +165,8 @@ ERRORCODE CAdLayer::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_REGION: {
-			CAdRegion *region = new CAdRegion(Game);
-			CAdSceneNode *node = new CAdSceneNode(Game);
+			CAdRegion *region = new CAdRegion(_gameRef);
+			CAdSceneNode *node = new CAdSceneNode(_gameRef);
 			if (!region || !node || DID_FAIL(region->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete region;
@@ -181,8 +181,8 @@ ERRORCODE CAdLayer::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_ENTITY: {
-			CAdEntity *entity = new CAdEntity(Game);
-			CAdSceneNode *node = new CAdSceneNode(Game);
+			CAdEntity *entity = new CAdEntity(_gameRef);
+			CAdSceneNode *node = new CAdSceneNode(_gameRef);
 			if (entity) entity->_zoomable = false; // scene entites default to NOT zoom
 			if (!entity || !node || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
@@ -215,7 +215,7 @@ ERRORCODE CAdLayer::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in LAYER definition");
+		_gameRef->LOG(0, "Syntax error in LAYER definition");
 		return STATUS_FAILED;
 	}
 
@@ -269,14 +269,14 @@ ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CAdSceneNode *node = new CAdSceneNode(Game);
+		CAdSceneNode *node = new CAdSceneNode(_gameRef);
 		if (strcmp(name, "AddRegion") == 0) {
-			CAdRegion *region = new CAdRegion(Game);
+			CAdRegion *region = new CAdRegion(_gameRef);
 			if (!val->isNULL()) region->setName(val->getString());
 			node->setRegion(region);
 			stack->pushNative(region, true);
 		} else {
-			CAdEntity *entity = new CAdEntity(Game);
+			CAdEntity *entity = new CAdEntity(_gameRef);
 			if (!val->isNULL()) entity->setName(val->getString());
 			node->setEntity(entity);
 			stack->pushNative(entity, true);
@@ -293,14 +293,14 @@ ERRORCODE CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		int index = stack->pop()->getInt();
 		CScValue *val = stack->pop();
 
-		CAdSceneNode *node = new CAdSceneNode(Game);
+		CAdSceneNode *node = new CAdSceneNode(_gameRef);
 		if (strcmp(name, "InsertRegion") == 0) {
-			CAdRegion *region = new CAdRegion(Game);
+			CAdRegion *region = new CAdRegion(_gameRef);
 			if (!val->isNULL()) region->setName(val->getString());
 			node->setRegion(region);
 			stack->pushNative(region, true);
 		} else {
-			CAdEntity *entity = new CAdEntity(Game);
+			CAdEntity *entity = new CAdEntity(_gameRef);
 			if (!val->isNULL()) entity->setName(val->getString());
 			node->setEntity(entity);
 			stack->pushNative(entity, true);
@@ -461,7 +461,7 @@ ERRORCODE CAdLayer::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "Active") == 0) {
 		bool b = value->getBool();
 		if (b == false && _main) {
-			Game->LOG(0, "Warning: cannot deactivate scene's main layer");
+			_gameRef->LOG(0, "Warning: cannot deactivate scene's main layer");
 		} else _active = b;
 		return STATUS_OK;
 	}

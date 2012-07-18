@@ -87,10 +87,10 @@ ERRORCODE CBPackage::read(Common::SeekableReadStream *file, uint32 offset, byte 
 
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *CBPackage::getFilePointer() {
-	Common::File *file = Game->_fileManager->openPackage(_name);
+	Common::File *file = _gameRef->_fileManager->openPackage(_name);
 	if (!file) {
-		Game->_fileManager->requestCD(_cD, _name, "");
-		file = Game->_fileManager->openPackage(_name);
+		_gameRef->_fileManager->requestCD(_cD, _name, "");
+		file = _gameRef->_fileManager->openPackage(_name);
 	}
 	return file;
 }

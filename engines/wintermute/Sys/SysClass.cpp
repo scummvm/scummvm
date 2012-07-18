@@ -128,7 +128,7 @@ void CSysClass::dump(Common::WriteStream *stream) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::saveTable(CBGame *Game, CBPersistMgr *persistMgr) {
+void CSysClass::saveTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
 	persistMgr->putString(_name.c_str());
 	persistMgr->putDWORD(_iD);
 	persistMgr->putDWORD(_instances.size());
@@ -140,7 +140,7 @@ void CSysClass::saveTable(CBGame *Game, CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
+void CSysClass::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
 	_savedID = persistMgr->getDWORD();
 	int numInstances = persistMgr->getDWORD();
 
@@ -149,7 +149,7 @@ void CSysClass::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
 		if (_persistent) {
 
 			if (i > 0) {
-				Game->LOG(0, "Warning: attempting to load multiple instances of persistent class %s (%d)", _name.c_str(), numInstances);
+				gameRef->LOG(0, "Warning: attempting to load multiple instances of persistent class %s (%d)", _name.c_str(), numInstances);
 				continue;
 			}
 
@@ -157,7 +157,7 @@ void CSysClass::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
 			if (it != _instances.end()) {
 				(it->_value)->setSavedID(instID);
 				CSysClassRegistry::getInstance()->addInstanceToTable((it->_value), (it->_value)->getInstance());
-			} else Game->LOG(0, "Warning: instance %d of persistent class %s not found", i, _name.c_str());
+			} else gameRef->LOG(0, "Warning: instance %d of persistent class %s not found", i, _name.c_str());
 		}
 		// normal instances, create empty objects
 		else {

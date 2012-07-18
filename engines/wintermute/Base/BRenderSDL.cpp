@@ -154,8 +154,8 @@ ERRORCODE CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 		}
 	}
 #else*/
-	_realWidth = Game->_registry->readInt("Debug", "ForceResWidth", _width);
-	_realHeight = Game->_registry->readInt("Debug", "ForceResHeight", _height);
+	_realWidth = _gameRef->_registry->readInt("Debug", "ForceResWidth", _width);
+	_realHeight = _gameRef->_registry->readInt("Debug", "ForceResHeight", _height);
 //#endif
 
 	/*
@@ -194,7 +194,7 @@ ERRORCODE CBRenderSDL::initRenderer(int width, int height, bool windowed) {
 	//flags |= SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS;
 #endif
 
-	//_windowed = Game->_registry->readBool("Video", "Windowed", true);
+	//_windowed = _gameRef->_registry->readBool("Video", "Windowed", true);
 //	if (!windowed) flags |= SDL_WINDOW_FULLSCREEN;
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -311,7 +311,7 @@ ERRORCODE CBRenderSDL::fadeToColor(uint32 Color, Common::Rect *rect) {
 		fillRect.setHeight(rect->height());
 	} else {
 		Rect32 rc;
-		Game->getCurrentViewportRect(&rc);
+		_gameRef->getCurrentViewportRect(&rc);
 		fillRect.left = (int16)rc.left;
 		fillRect.top = (int16)rc.top;
 		fillRect.setWidth((int16)(rc.right - rc.left));
@@ -553,7 +553,7 @@ ERRORCODE CBRenderSDL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 CBImage *CBRenderSDL::takeScreenshot() {
 // TODO: Fix this
 	warning("CBRenderSDL::TakeScreenshot() - not ported yet");
-	CBImage *screenshot = new CBImage(Game);
+	CBImage *screenshot = new CBImage(_gameRef);
 	screenshot->copyFrom(_renderSurface);
 	return screenshot;
 #if 0
@@ -576,7 +576,7 @@ CBImage *CBRenderSDL::takeScreenshot() {
 		memcpy(bits, src, bytespp * viewport.w);
 	}
 
-	return new CBImage(Game, dib);
+	return new CBImage(_gameRef,  dib);
 #endif
 	return NULL;
 }
@@ -588,7 +588,7 @@ ERRORCODE CBRenderSDL::switchFullscreen() {
 
 	_windowed = !_windowed;
 	*/
-	Game->_registry->writeBool("Video", "Windowed", _windowed);
+	_gameRef->_registry->writeBool("Video", "Windowed", _windowed);
 
 	return STATUS_OK;
 }
@@ -666,7 +666,7 @@ void CBRenderSDL::dumpData(const char *filename) {
 	FILE *f = fopen(filename, "wt");
 	if (!f) return;
 
-	CBSurfaceStorage *Mgr = Game->_surfaceStorage;
+	CBSurfaceStorage *Mgr = _gameRef->_surfaceStorage;
 
 	int TotalKB = 0;
 	int TotalLoss = 0;
@@ -689,13 +689,13 @@ void CBRenderSDL::dumpData(const char *filename) {
 
 
 	fclose(f);
-	Game->LOG(0, "Texture Stats Dump completed.");
-	Game->QuickMessage("Texture Stats Dump completed.");
+	_gameRef->LOG(0, "Texture Stats Dump completed.");
+	_gameRef->QuickMessage("Texture Stats Dump completed.");
 #endif
 }
 
 CBSurface *CBRenderSDL::createSurface() {
-	return new CBSurfaceSDL(Game);
+	return new CBSurfaceSDL(_gameRef);
 }
 
 } // end of namespace WinterMute

@@ -106,7 +106,7 @@ void CBFontTT::clearCache() {
 //////////////////////////////////////////////////////////////////////////
 void CBFontTT::initLoop() {
 	// we need more aggressive cache management on iOS not to waste too much memory on fonts
-	if (Game->_constrainedMemory) {
+	if (_gameRef->_constrainedMemory) {
 		// purge all cached images not used in the last frame
 		for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
 			if (_cachedTexts[i] == NULL) continue;
@@ -123,7 +123,7 @@ void CBFontTT::initLoop() {
 int CBFontTT::getTextWidth(byte *text, int maxLength) {
 	WideString textStr;
 
-	if (Game->_textEncoding == TEXT_UTF8) textStr = StringUtil::utf8ToWide((char *)text);
+	if (_gameRef->_textEncoding == TEXT_UTF8) textStr = StringUtil::utf8ToWide((char *)text);
 	else textStr = StringUtil::ansiToWide((char *)text);
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength)
@@ -140,7 +140,7 @@ int CBFontTT::getTextWidth(byte *text, int maxLength) {
 int CBFontTT::getTextHeight(byte *text, int width) {
 	WideString textStr;
 
-	if (Game->_textEncoding == TEXT_UTF8) textStr = StringUtil::utf8ToWide((char *)text);
+	if (_gameRef->_textEncoding == TEXT_UTF8) textStr = StringUtil::utf8ToWide((char *)text);
 	else textStr = StringUtil::ansiToWide((char *)text);
 
 
@@ -158,14 +158,14 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 	WideString textStr = (char *)text;
 
 	// TODO: Why do we still insist on Widestrings everywhere?
-	/*  if (Game->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
+	/*  if (_gameRef->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	        else text = StringUtil::AnsiToWide((char *)Text);*/
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength)
 		textStr = Common::String(textStr.c_str(), (uint32)maxLength);
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
-	CBRenderer *renderer = Game->_renderer;
+	CBRenderer *renderer = _gameRef->_renderer;
 
 	// find cached surface, if exists
 	int minPriority = INT_MAX;
@@ -272,7 +272,7 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 		heightOffset += (int)_lineHeight;
 	}
 
-	CBSurface *retSurface = Game->_renderer->createSurface();
+	CBSurface *retSurface = _gameRef->_renderer->createSurface();
 	Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 , 0));
 	retSurface->putSurface(*convertedSurface, true);
 	convertedSurface->free();
@@ -361,7 +361,7 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 		posY += GetLineHeight();
 	}
 
-	CBSurfaceSDL *wmeSurface = new CBSurfaceSDL(Game);
+	CBSurfaceSDL *wmeSurface = new CBSurfaceSDL(_gameRef);
 	if (DID_SUCCEED(wmeSurface->CreateFromSDLSurface(surface))) {
 		SDL_FreeSurface(surface);
 		return wmeSurface;
@@ -406,9 +406,9 @@ int CBFontTT::getLetterHeight() {
 
 //////////////////////////////////////////////////////////////////////
 ERRORCODE CBFontTT::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CBFontTT::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CBFontTT::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -417,7 +417,7 @@ ERRORCODE CBFontTT::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer))) Game->LOG(0, "Error parsing TTFONT file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer))) _gameRef->LOG(0, "Error parsing TTFONT file '%s'", filename);
 
 	delete [] buffer;
 
@@ -460,10 +460,10 @@ ERRORCODE CBFontTT::loadBuffer(byte *buffer) {
 
 	char *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TTFONT) {
-		Game->LOG(0, "'TTFONT' keyword expected.");
+		_gameRef->LOG(0, "'TTFONT' keyword expected.");
 		return STATUS_FAILED;
 	}
 	buffer = (byte *)params;
@@ -532,7 +532,7 @@ ERRORCODE CBFontTT::loadBuffer(byte *buffer) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in TTFONT definition");
+		_gameRef->LOG(0, "Syntax error in TTFONT definition");
 		return STATUS_FAILED;
 	}
 
@@ -560,7 +560,7 @@ ERRORCODE CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
 
 	char *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -638,13 +638,13 @@ void CBFontTT::afterLoad() {
 ERRORCODE CBFontTT::initFont() {
 	if (!_fontFile) return STATUS_FAILED;
 
-	Common::SeekableReadStream *file = Game->_fileManager->openFile(_fontFile);
+	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(_fontFile);
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
 		AnsiString fontFileName = PathUtil::combine(CBPlatform::getSystemFontPath(), PathUtil::getFileName(_fontFile));
-		file = Game->_fileManager->openFile(fontFileName.c_str(), false);
+		file = _gameRef->_fileManager->openFile(fontFileName.c_str(), false);
 		if (!file) {
-			Game->LOG(0, "Error loading TrueType font '%s'", _fontFile);
+			_gameRef->LOG(0, "Error loading TrueType font '%s'", _fontFile);
 			//return STATUS_FAILED;
 		}
 	}
@@ -680,10 +680,10 @@ ERRORCODE CBFontTT::initFont() {
 	args.flags = FT_OPEN_STREAM;
 	args.stream = _fTStream;
 
-	error = FT_Open_Face(Game->_fontStorage->GetFTLibrary(), &args, 0, &_fTFace);
+	error = FT_Open_Face(_gameRef->_fontStorage->GetFTLibrary(), &args, 0, &_fTFace);
 	if (error) {
 		SAFE_DELETE_ARRAY(_fTStream);
-		Game->_fileManager->closeFile(file);
+		_gameRef->_fileManager->closeFile(file);
 		return STATUS_FAILED;
 	}
 

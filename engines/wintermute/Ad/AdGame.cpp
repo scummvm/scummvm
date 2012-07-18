@@ -70,7 +70,7 @@ CAdGame::CAdGame(): CBGame() {
 	_responseBox = NULL;
 	_inventoryBox = NULL;
 
-	_scene = new CAdScene(Game);
+	_scene = new CAdScene(_gameRef);
 	_scene->setName("");
 	registerObject(_scene);
 
@@ -142,7 +142,7 @@ ERRORCODE CAdGame::cleanup() {
 	_scene = NULL;
 
 	// remove items
-	for (i = 0; i < _items.getSize(); i++) Game->unregisterObject(_items[i]);
+	for (i = 0; i < _items.getSize(); i++) _gameRef->unregisterObject(_items[i]);
 	_items.removeAll();
 
 
@@ -157,12 +157,12 @@ ERRORCODE CAdGame::cleanup() {
 
 
 	if (_responseBox) {
-		Game->unregisterObject(_responseBox);
+		_gameRef->unregisterObject(_responseBox);
 		_responseBox = NULL;
 	}
 
 	if (_inventoryBox) {
-		Game->unregisterObject(_inventoryBox);
+		_gameRef->unregisterObject(_inventoryBox);
 		_inventoryBox = NULL;
 	}
 
@@ -201,7 +201,7 @@ ERRORCODE CAdGame::initLoop() {
 		delete[] _scheduledScene;
 		_scheduledScene = NULL;
 
-		Game->_activeObject = NULL;
+		_gameRef->_activeObject = NULL;
 	}
 
 
@@ -245,7 +245,7 @@ ERRORCODE CAdGame::removeObject(CAdObject *object) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::changeScene(const char *filename, bool fadeIn) {
 	if (_scene == NULL) {
-		_scene = new CAdScene(Game);
+		_scene = new CAdScene(_gameRef);
 		registerObject(_scene);
 	} else {
 		_scene->applyEvent("SceneShutdown", true);
@@ -280,7 +280,7 @@ ERRORCODE CAdGame::changeScene(const char *filename, bool fadeIn) {
 
 			_scene->loadState();
 		}
-		if (fadeIn) Game->_transMgr->start(TRANSITION_FADE_IN);
+		if (fadeIn) _gameRef->_transMgr->start(TRANSITION_FADE_IN);
 		return ret;
 	} else return STATUS_FAILED;
 }
@@ -346,7 +346,7 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadActor") == 0) {
 		stack->correctParams(1);
-		CAdActor *act = new CAdActor(Game);
+		CAdActor *act = new CAdActor(_gameRef);
 		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
 			addObject(act);
 			stack->pushNative(act, true);
@@ -363,7 +363,7 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadEntity") == 0) {
 		stack->correctParams(1);
-		CAdEntity *ent = new CAdEntity(Game);
+		CAdEntity *ent = new CAdEntity(_gameRef);
 		if (ent && DID_SUCCEED(ent->loadFile(stack->pop()->getString()))) {
 			addObject(ent);
 			stack->pushNative(ent, true);
@@ -396,7 +396,7 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CAdEntity *ent = new CAdEntity(Game);
+		CAdEntity *ent = new CAdEntity(_gameRef);
 		addObject(ent);
 		if (!val->isNULL()) ent->setName(val->getString());
 		stack->pushNative(ent, true);
@@ -410,7 +410,7 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CAdItem *item = new CAdItem(Game);
+		CAdItem *item = new CAdItem(_gameRef);
 		addItem(item);
 		if (!val->isNULL()) item->setName(val->getString());
 		stack->pushNative(item, true);
@@ -471,7 +471,7 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		CScValue *val4 = stack->pop();
 
 		if (_responseBox) {
-			CAdResponse *res = new CAdResponse(Game);
+			CAdResponse *res = new CAdResponse(_gameRef);
 			if (res) {
 				res->_iD = id;
 				res->setText(text);
@@ -702,8 +702,8 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 
-		Game->unregisterObject(_responseBox);
-		_responseBox = new CAdResponseBox(Game);
+		_gameRef->unregisterObject(_responseBox);
+		_responseBox = new CAdResponseBox(_gameRef);
 		if (_responseBox && !DID_FAIL(_responseBox->loadFile(filename))) {
 			registerObject(_responseBox);
 			stack->pushBool(true);
@@ -722,8 +722,8 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 
-		Game->unregisterObject(_inventoryBox);
-		_inventoryBox = new CAdInventoryBox(Game);
+		_gameRef->unregisterObject(_inventoryBox);
+		_inventoryBox = new CAdInventoryBox(_gameRef);
 		if (_inventoryBox && !DID_FAIL(_inventoryBox->loadFile(filename))) {
 			registerObject(_inventoryBox);
 			stack->pushBool(true);
@@ -784,7 +784,7 @@ ERRORCODE CAdGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		if (width <= 0) width = _renderer->_width;
 		if (height <= 0) height = _renderer->_height;
 
-		if (!_sceneViewport) _sceneViewport = new CBViewport(Game);
+		if (!_sceneViewport) _sceneViewport = new CBViewport(_gameRef);
 		if (_sceneViewport) _sceneViewport->setRect(x, y, x + width, y + height);
 
 		stack->pushBool(true);
@@ -1003,7 +1003,7 @@ ERRORCODE CAdGame::scSetProperty(const char *name, CScValue *value) {
 		else {
 			CBObject *Obj = (CBObject *)value->getNative();
 			if (Obj == this) _inventoryOwner = _invObject;
-			else if (Game->validObject(Obj)) _inventoryOwner = (CAdObject *)Obj;
+			else if (_gameRef->validObject(Obj)) _inventoryOwner = (CAdObject *)Obj;
 		}
 
 		if (_inventoryOwner && _inventoryBox) _inventoryBox->_scrollOffset = _inventoryOwner->getInventory()->_scrollOffset;
@@ -1057,7 +1057,7 @@ ERRORCODE CAdGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(0);
 		this_obj = thisStack->getTop();
 
-		this_obj->setNative(new CAdActor(Game));
+		this_obj->setNative(new CAdActor(_gameRef));
 		stack->pushNULL();
 	}
 
@@ -1068,7 +1068,7 @@ ERRORCODE CAdGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *th
 		stack->correctParams(0);
 		this_obj = thisStack->getTop();
 
-		this_obj->setNative(new CAdEntity(Game));
+		this_obj->setNative(new CAdEntity(_gameRef));
 		stack->pushNULL();
 	}
 
@@ -1086,7 +1086,7 @@ ERRORCODE CAdGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *th
 ERRORCODE CAdGame::showCursor() {
 	if (_cursorHidden) return STATUS_OK;
 
-	if (_selectedItem && Game->_state == GAME_RUNNING && _stateEx == GAME_NORMAL && _interactive) {
+	if (_selectedItem && _gameRef->_state == GAME_RUNNING && _stateEx == GAME_NORMAL && _interactive) {
 		if (_selectedItem->_cursorCombined) {
 			CBSprite *origLastCursor = _lastCursor;
 			CBGame::showCursor();
@@ -1106,7 +1106,7 @@ ERRORCODE CAdGame::showCursor() {
 ERRORCODE CAdGame::loadFile(const char *filename) {
 	byte *buffer = _fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdGame::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -1115,7 +1115,7 @@ ERRORCODE CAdGame::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing GAME file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing GAME file '%s'", filename);
 
 
 	delete [] buffer;
@@ -1156,7 +1156,7 @@ ERRORCODE CAdGame::loadBuffer(byte *buffer, bool complete) {
 	byte *params;
 	byte *params2;
 	int cmd = 1;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	bool itemFound = false, itemsFound = false;
 
@@ -1171,7 +1171,7 @@ ERRORCODE CAdGame::loadBuffer(byte *buffer, bool complete) {
 				switch (cmd) {
 				case TOKEN_RESPONSE_BOX:
 					delete _responseBox;
-					_responseBox = new CAdResponseBox(Game);
+					_responseBox = new CAdResponseBox(_gameRef);
 					if (_responseBox && !DID_FAIL(_responseBox->loadFile((char *)params2)))
 						registerObject(_responseBox);
 					else {
@@ -1183,7 +1183,7 @@ ERRORCODE CAdGame::loadBuffer(byte *buffer, bool complete) {
 
 				case TOKEN_INVENTORY_BOX:
 					delete _inventoryBox;
-					_inventoryBox = new CAdInventoryBox(Game);
+					_inventoryBox = new CAdInventoryBox(_gameRef);
 					if (_inventoryBox && !DID_FAIL(_inventoryBox->loadFile((char *)params2)))
 						registerObject(_inventoryBox);
 					else {
@@ -1212,7 +1212,7 @@ ERRORCODE CAdGame::loadBuffer(byte *buffer, bool complete) {
 				case TOKEN_SCENE_VIEWPORT: {
 					Rect32 rc;
 					parser.scanStr((char *)params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
-					if (!_sceneViewport) _sceneViewport = new CBViewport(Game);
+					if (!_sceneViewport) _sceneViewport = new CBViewport(_gameRef);
 					if (_sceneViewport) _sceneViewport->setRect(rc.left, rc.top, rc.right, rc.bottom);
 				}
 				break;
@@ -1235,16 +1235,16 @@ ERRORCODE CAdGame::loadBuffer(byte *buffer, bool complete) {
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in GAME definition");
+		_gameRef->LOG(0, "Syntax error in GAME definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading GAME definition");
+		_gameRef->LOG(0, "Error loading GAME definition");
 		return STATUS_FAILED;
 	}
 
 	if (itemFound && !itemsFound) {
-		Game->LOG(0, "**Warning** Please put the items definition to a separate file.");
+		_gameRef->LOG(0, "**Warning** Please put the items definition to a separate file.");
 	}
 
 	return STATUS_OK;
@@ -1374,9 +1374,9 @@ ERRORCODE CAdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, by
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::loadItemsFile(const char *filename, bool merge) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdGame::LoadItemsFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdGame::LoadItemsFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -1385,7 +1385,7 @@ ERRORCODE CAdGame::loadItemsFile(const char *filename, bool merge) {
 	//_filename = new char [strlen(filename)+1];
 	//strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadItemsBuffer(buffer, merge))) Game->LOG(0, "Error parsing ITEMS file '%s'", filename);
+	if (DID_FAIL(ret = loadItemsBuffer(buffer, merge))) _gameRef->LOG(0, "Error parsing ITEMS file '%s'", filename);
 
 
 	delete [] buffer;
@@ -1402,7 +1402,7 @@ ERRORCODE CAdGame::loadItemsBuffer(byte *buffer, bool merge) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (!merge) {
 		while (_items.getSize() > 0) deleteItem(_items[0]);
@@ -1411,7 +1411,7 @@ ERRORCODE CAdGame::loadItemsBuffer(byte *buffer, bool merge) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ITEM: {
-			CAdItem *item = new CAdItem(Game);
+			CAdItem *item = new CAdItem(_gameRef);
 			if (item && !DID_FAIL(item->loadBuffer(params, false))) {
 				// delete item with the same name, if exists
 				if (merge) {
@@ -1430,11 +1430,11 @@ ERRORCODE CAdGame::loadItemsBuffer(byte *buffer, bool merge) {
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in ITEMS definition");
+		_gameRef->LOG(0, "Syntax error in ITEMS definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading ITEMS definition");
+		_gameRef->LOG(0, "Error loading ITEMS definition");
 		return STATUS_FAILED;
 	}
 
@@ -1458,7 +1458,7 @@ CAdSceneState *CAdGame::getSceneState(const char *filename, bool saving) {
 	}
 
 	if (saving) {
-		CAdSceneState *ret = new CAdSceneState(Game);
+		CAdSceneState *ret = new CAdSceneState(_gameRef);
 		ret->setFilename(filenameCor);
 
 		_sceneStates.add(ret);
@@ -1479,12 +1479,12 @@ ERRORCODE CAdGame::windowLoadHook(CUIWindow *win, char **buffer, char **params) 
 	TOKEN_TABLE_END
 
 	int cmd = PARSERR_GENERIC;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	cmd = parser.getCommand(buffer, commands, params);
 	switch (cmd) {
 	case TOKEN_ENTITY_CONTAINER: {
-		CUIEntity *ent = new CUIEntity(Game);
+		CUIEntity *ent = new CUIEntity(_gameRef);
 		if (!ent || DID_FAIL(ent->loadBuffer((byte *)*params, false))) {
 			delete ent;
 			ent = NULL;
@@ -1512,7 +1512,7 @@ ERRORCODE CAdGame::windowScriptMethodHook(CUIWindow *win, CScScript *script, CSc
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CUIEntity *ent = new CUIEntity(Game);
+		CUIEntity *ent = new CUIEntity(_gameRef);
 		if (!val->isNULL()) ent->setName(val->getString());
 		stack->pushNative(ent, true);
 
@@ -1598,7 +1598,7 @@ ERRORCODE CAdGame::clearBranchResponses(char *name) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::addBranchResponse(int ID) {
 	if (branchResponseUsed(ID)) return STATUS_OK;
-	CAdResponseContext *r = new CAdResponseContext(Game);
+	CAdResponseContext *r = new CAdResponseContext(_gameRef);
 	r->_iD = ID;
 	r->setContext(_dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : NULL);
 	_responsesBranch.add(r);
@@ -1621,7 +1621,7 @@ bool CAdGame::branchResponseUsed(int ID) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::addGameResponse(int ID) {
 	if (gameResponseUsed(ID)) return STATUS_OK;
-	CAdResponseContext *r = new CAdResponseContext(Game);
+	CAdResponseContext *r = new CAdResponseContext(_gameRef);
 	r->_iD = ID;
 	r->setContext(_dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : NULL);
 	_responsesGame.add(r);
@@ -1716,7 +1716,7 @@ ERRORCODE CAdGame::displayContent(bool doUpdate, bool displayAll) {
 			// display normal windows
 			displayWindows(false);
 
-			setActiveObject(Game->_renderer->getObjectAt(p.x, p.y));
+			setActiveObject(_gameRef->_renderer->getObjectAt(p.x, p.y));
 
 			// textual info
 			displaySentences(_state == GAME_FROZEN);
@@ -1788,7 +1788,7 @@ CAdItem *CAdGame::getItemByName(const char *name) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::addItem(CAdItem *item) {
 	_items.add(item);
-	return Game->registerObject(item);
+	return _gameRef->registerObject(item);
 }
 
 
@@ -1951,7 +1951,7 @@ ERRORCODE CAdGame::onMouseLeftDown() {
 		}
 	}
 
-	if (_activeObject != NULL) Game->_capturedObject = Game->_activeObject;
+	if (_activeObject != NULL) _gameRef->_capturedObject = _gameRef->_activeObject;
 	_mouseLeftDown = true;
 	CBPlatform::setCapture(/*_renderer->_window*/);
 
@@ -2039,7 +2039,7 @@ ERRORCODE CAdGame::onMouseRightUp() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdGame::displayDebugInfo() {
 	char str[100];
-	if (Game->_dEBUG_DebugMode) {
+	if (_gameRef->_dEBUG_DebugMode) {
 		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + _scene->getOffsetLeft(), _mousePos.y + _scene->getOffsetTop());
 		_systemFont->drawText((byte *)str, 0, 90, _renderer->_width, TAL_RIGHT);
 

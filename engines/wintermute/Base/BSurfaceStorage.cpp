@@ -53,7 +53,7 @@ CBSurfaceStorage::~CBSurfaceStorage() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceStorage::cleanup(bool warn) {
 	for (int i = 0; i < _surfaces.getSize(); i++) {
-		if (warn) Game->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
+		if (warn) _gameRef->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
 		delete _surfaces[i];
 	}
 	_surfaces.removeAll();
@@ -64,14 +64,14 @@ ERRORCODE CBSurfaceStorage::cleanup(bool warn) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceStorage::initLoop() {
-	if (Game->_smartCache && Game->_liveTimer - _lastCleanupTime >= Game->_surfaceGCCycleTime) {
-		_lastCleanupTime = Game->_liveTimer;
+	if (_gameRef->_smartCache && _gameRef->_liveTimer - _lastCleanupTime >= _gameRef->_surfaceGCCycleTime) {
+		_lastCleanupTime = _gameRef->_liveTimer;
 		sortSurfaces();
 		for (int i = 0; i < _surfaces.getSize(); i++) {
 			if (_surfaces[i]->_lifeTime <= 0) break;
 
-			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && Game->_liveTimer - _surfaces[i]->_lastUsedTime >= _surfaces[i]->_lifeTime) {
-				//Game->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
+			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && _gameRef->_liveTimer - _surfaces[i]->_lastUsedTime >= _surfaces[i]->_lifeTime) {
+				//_gameRef->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
 				_surfaces[i]->invalidate();
 			}
 		}
@@ -105,16 +105,16 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, by
 		}
 	}
 
-	if (!Game->_fileManager->hasFile(filename)) {
-		if (filename) Game->LOG(0, "Missing image: '%s'", filename);
-		if (Game->_dEBUG_DebugMode)
+	if (!_gameRef->_fileManager->hasFile(filename)) {
+		if (filename) _gameRef->LOG(0, "Missing image: '%s'", filename);
+		if (_gameRef->_dEBUG_DebugMode)
 			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 		else
 			return addSurface("invalid.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	}
 
 	CBSurface *surface;
-	surface = new CBSurfaceSDL(Game);
+	surface = new CBSurfaceSDL(_gameRef);
 
 	if (!surface) return NULL;
 
@@ -135,7 +135,7 @@ ERRORCODE CBSurfaceStorage::restoreAll() {
 	for (int i = 0; i < _surfaces.getSize(); i++) {
 		ret = _surfaces[i]->restore();
 		if (ret != STATUS_OK) {
-			Game->LOG(0, "CBSurfaceStorage::RestoreAll failed");
+			_gameRef->LOG(0, "CBSurfaceStorage::RestoreAll failed");
 			return ret;
 		}
 	}
@@ -150,7 +150,7 @@ ERRORCODE CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
 
     if(!persistMgr->_saving) cleanup(false);
 
-    persistMgr->transfer(TMEMBER(Game));
+    persistMgr->transfer(TMEMBER(_gameRef));
 
     //_surfaces.persist(persistMgr);
 

@@ -180,11 +180,11 @@ ERRORCODE CBPersistMgr::initSave(const char *desc) {
 
 	if (_saveStream) {
 		// get thumbnails
-		if (!Game->_cachedThumbnail) {
-			Game->_cachedThumbnail = new CBSaveThumbHelper(Game);
-			if (DID_FAIL(Game->_cachedThumbnail->storeThumbnail(true))) {
-				delete Game->_cachedThumbnail;
-				Game->_cachedThumbnail = NULL;
+		if (!_gameRef->_cachedThumbnail) {
+			_gameRef->_cachedThumbnail = new CBSaveThumbHelper(_gameRef);
+			if (DID_FAIL(_gameRef->_cachedThumbnail->storeThumbnail(true))) {
+				delete _gameRef->_cachedThumbnail;
+				_gameRef->_cachedThumbnail = NULL;
 			}
 		}
 
@@ -195,7 +195,7 @@ ERRORCODE CBPersistMgr::initSave(const char *desc) {
 		putDWORD(magic);
 
 		byte VerMajor, VerMinor, ExtMajor, ExtMinor;
-		Game->getVersion(&VerMajor, &VerMinor, &ExtMajor, &ExtMinor);
+		_gameRef->getVersion(&VerMajor, &VerMinor, &ExtMajor, &ExtMinor);
 		//uint32 Version = MAKELONG(MAKEWORD(VerMajor, VerMinor), MAKEWORD(ExtMajor, ExtMinor));
 		_saveStream->writeByte(VerMajor);
 		_saveStream->writeByte(VerMinor);
@@ -204,15 +204,15 @@ ERRORCODE CBPersistMgr::initSave(const char *desc) {
 
 		// new in ver 2
 		putDWORD((uint32)DCGF_VER_BUILD);
-		putString(Game->_name);
+		putString(_gameRef->_name);
 
 		// thumbnail data size
 		bool thumbnailOK = false;
 
-		if (Game->_cachedThumbnail) {
-			if (Game->_cachedThumbnail->_thumbnail) {
+		if (_gameRef->_cachedThumbnail) {
+			if (_gameRef->_cachedThumbnail->_thumbnail) {
 				Common::MemoryWriteStreamDynamic thumbStream(DisposeAfterUse::YES);
-				if (Game->_cachedThumbnail->_thumbnail->writeBMPToStream(&thumbStream)) {
+				if (_gameRef->_cachedThumbnail->_thumbnail->writeBMPToStream(&thumbStream)) {
 					_saveStream->writeUint32LE(thumbStream.size());
 					_saveStream->write(thumbStream.getData(), thumbStream.size());
 				} else {
@@ -225,8 +225,8 @@ ERRORCODE CBPersistMgr::initSave(const char *desc) {
 		if (!thumbnailOK) putDWORD(0);
 
 		// in any case, destroy the cached thumbnail once used
-		delete Game->_cachedThumbnail;
-		Game->_cachedThumbnail = NULL;
+		delete _gameRef->_cachedThumbnail;
+		_gameRef->_cachedThumbnail = NULL;
 
 		uint32 dataOffset = _offset +
 		                    sizeof(uint32) + // data offset
@@ -250,7 +250,7 @@ ERRORCODE CBPersistMgr::readHeader(const Common::String &filename) {
 	_saving = false;
 
 	_loadStream = g_system->getSavefileManager()->openForLoading(filename);
-	//_buffer = Game->_fileManager->readWholeFile(filename, &_bufferSize);
+	//_buffer = _gameRef->_fileManager->readWholeFile(filename, &_bufferSize);
 	if (_loadStream) {
 		uint32 magic;
 		magic = getDWORD();
@@ -306,8 +306,8 @@ ERRORCODE CBPersistMgr::initLoad(const char *filename) {
 	}
 	_saving = false;
 
-	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), Game->_name) != 0) {
-		Game->LOG(0, "ERROR: Saved game name doesn't match current game");
+	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), _gameRef->_name) != 0) {
+		_gameRef->LOG(0, "ERROR: Saved game name doesn't match current game");
 		cleanup();
 		return STATUS_FAILED;
 	}
@@ -317,8 +317,8 @@ ERRORCODE CBPersistMgr::initLoad(const char *filename) {
 	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor >  DCGF_VER_MINOR) ||
 	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)
 	   ) {
-		Game->LOG(0, "ERROR: Saved game version is newer than current game");
-		Game->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
+		_gameRef->LOG(0, "ERROR: Saved game version is newer than current game");
+		_gameRef->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
 		return STATUS_FAILED;
 	}
@@ -328,8 +328,8 @@ ERRORCODE CBPersistMgr::initLoad(const char *filename) {
 	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor <  SAVEGAME_VER_MINOR) ||
 	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)
 	   ) {
-		Game->LOG(0, "ERROR: Saved game is too old and cannot be used by this version of game engine");
-		Game->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
+		_gameRef->LOG(0, "ERROR: Saved game is too old and cannot be used by this version of game engine");
+		_gameRef->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
 		return STATUS_FAILED;
 
@@ -338,7 +338,7 @@ ERRORCODE CBPersistMgr::initLoad(const char *filename) {
 	/*
 	 if ( _savedVerMajor != DCGF_VER_MAJOR || _savedVerMinor != DCGF_VER_MINOR)
 	 {
-	 Game->LOG(0, "ERROR: Saved game is created by other WME version");
+	 _gameRef->LOG(0, "ERROR: Saved game is created by other WME version");
 	 goto init_fail;
 	 }
 	 */
@@ -349,7 +349,7 @@ ERRORCODE CBPersistMgr::initLoad(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBPersistMgr::saveFile(const char *filename) {
-	return Game->_fileManager->saveFile(filename, ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic *)_saveStream)->size(), Game->_compressedSavegames, _richBuffer, _richBufferSize);
+	return _gameRef->_fileManager->saveFile(filename, ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic *)_saveStream)->size(), _gameRef->_compressedSavegames, _richBuffer, _richBufferSize);
 }
 
 
@@ -738,7 +738,7 @@ ERRORCODE CBPersistMgr::transfer(const char *name, void *val) {
 	if (_saving) {
 		CSysClassRegistry::getInstance()->getPointerID(*(void **)val, &classID, &instanceID);
 		if (*(void **)val != NULL && (classID == -1 || instanceID == -1)) {
-			Game->LOG(0, "Warning: invalid instance '%s'", name);
+			_gameRef->LOG(0, "Warning: invalid instance '%s'", name);
 		}
 
 		_saveStream->writeUint32LE(classID);

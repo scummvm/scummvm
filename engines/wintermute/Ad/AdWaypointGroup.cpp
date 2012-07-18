@@ -65,9 +65,9 @@ void CAdWaypointGroup::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdWaypointGroup::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdWaypointGroup::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdWaypointGroup::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -76,7 +76,7 @@ ERRORCODE CAdWaypointGroup::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
 
 
 	delete [] buffer;
@@ -110,11 +110,11 @@ ERRORCODE CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WAYPOINTS) {
-			Game->LOG(0, "'WAYPOINTS' keyword expected.");
+			_gameRef->LOG(0, "'WAYPOINTS' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -155,7 +155,7 @@ ERRORCODE CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in WAYPOINTS definition");
+		_gameRef->LOG(0, "Syntax error in WAYPOINTS definition");
 		return STATUS_FAILED;
 	}
 

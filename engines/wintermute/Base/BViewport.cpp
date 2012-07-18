@@ -51,7 +51,7 @@ CBViewport::~CBViewport() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBViewport::persist(CBPersistMgr *persistMgr) {
 
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_mainObject));
 	persistMgr->transfer(TMEMBER(_offsetX));
@@ -67,8 +67,8 @@ ERRORCODE CBViewport::setRect(int left, int top, int right, int bottom, bool noC
 	if (!noCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);
-		right = MIN(right, Game->_renderer->_width);
-		bottom = MIN(bottom, Game->_renderer->_height);
+		right = MIN(right, _gameRef->_renderer->_width);
+		bottom = MIN(bottom, _gameRef->_renderer->_height);
 	}
 
 	CBPlatform::setRect(&_rect, left, top, right, bottom);

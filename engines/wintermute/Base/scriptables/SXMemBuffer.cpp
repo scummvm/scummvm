@@ -264,7 +264,7 @@ ERRORCODE CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStac
 			stack->pushNULL();
 		else {
 			void *pointer = *(void **)((byte *)_buffer + start);
-			CSXMemBuffer *buf = new CSXMemBuffer(Game, pointer);
+			CSXMemBuffer *buf = new CSXMemBuffer(_gameRef,  pointer);
 			stack->pushNative(buf, false);
 		}
 		return STATUS_OK;

@@ -63,7 +63,7 @@ CBObject::CBObject(CBGame *inGame): CBScriptHolder(inGame) {
 
 	_soundEvent = NULL;
 
-	_iD = Game->getSequence();
+	_iD = _gameRef->getSequence();
 
 	CBPlatform::setRectEmpty(&_rect);
 	_rectSet = false;
@@ -108,8 +108,8 @@ CBObject::~CBObject() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBObject::cleanup() {
-	if (Game && Game->_activeObject == this)
-		Game->_activeObject = NULL;
+	if (_gameRef && _gameRef->_activeObject == this)
+		_gameRef->_activeObject = NULL;
 
 	CBScriptHolder::cleanup();
 	delete[] _soundEvent;
@@ -146,7 +146,7 @@ void CBObject::setCaption(const char *caption, int caseVal) { // TODO: rename Ca
 	_caption[caseVal - 1] = new char[strlen(caption) + 1];
 	if (_caption[caseVal - 1]) {
 		strcpy(_caption[caseVal - 1], caption);
-		Game->_stringTable->expand(&_caption[caseVal - 1]);
+		_gameRef->_stringTable->expand(&_caption[caseVal - 1]);
 	}
 }
 
@@ -857,7 +857,7 @@ const char *CBObject::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBObject::showCursor() {
-	if (_cursor) return Game->drawCursor(_cursor);
+	if (_cursor) return _gameRef->drawCursor(_cursor);
 	else return STATUS_FAILED;
 }
 
@@ -932,7 +932,7 @@ ERRORCODE CBObject::setCursor(const char *filename) {
 	}
 
 	_sharedCursors = false;
-	_cursor = new CBSprite(Game);
+	_cursor = new CBSprite(_gameRef);
 	if (!_cursor || DID_FAIL(_cursor->loadFile(filename))) {
 		delete _cursor;
 		_cursor = NULL;
@@ -944,7 +944,7 @@ ERRORCODE CBObject::setCursor(const char *filename) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBObject::setActiveCursor(const char *filename) {
 	delete _activeCursor;
-	_activeCursor = new CBSprite(Game);
+	_activeCursor = new CBSprite(_gameRef);
 	if (!_activeCursor || DID_FAIL(_activeCursor->loadFile(filename))) {
 		delete _activeCursor;
 		_activeCursor = NULL;
@@ -981,10 +981,10 @@ bool CBObject::handleMouseWheel(int delta) {
 ERRORCODE CBObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
 	// just play loaded sound
 	if (filename == NULL && _sFX) {
-		if (Game->_editorMode || _sFXStart) {
+		if (_gameRef->_editorMode || _sFXStart) {
 			_sFX->setVolumePercent(_sFXVolume);
 			_sFX->setPositionTime(_sFXStart);
-			if (!Game->_editorMode) _sFXStart = 0;
+			if (!_gameRef->_editorMode) _sFXStart = 0;
 		}
 		if (playNow) {
 			setSoundEvent(eventName);
@@ -998,7 +998,7 @@ ERRORCODE CBObject::playSFX(const char *filename, bool looping, bool playNow, co
 	// create new sound
 	delete _sFX;
 
-	_sFX = new CBSound(Game);
+	_sFX = new CBSound(_gameRef);
 	if (_sFX && DID_SUCCEED(_sFX->setSound(filename, Audio::Mixer::kSFXSoundType, true))) {
 		_sFX->setVolumePercent(_sFXVolume);
 		if (_sFXStart) {
@@ -1082,7 +1082,7 @@ ERRORCODE CBObject::updateOneSound(CBSound *sound) {
 
 	if (sound) {
 		if (_autoSoundPanning)
-			Ret = sound->setPan(Game->_soundMgr->posToPan(_posX  - Game->_offsetX, _posY - Game->_offsetY));
+			Ret = sound->setPan(_gameRef->_soundMgr->posToPan(_posX  - _gameRef->_offsetX, _posY - _gameRef->_offsetY));
 
 		Ret = sound->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 	}

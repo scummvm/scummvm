@@ -49,24 +49,24 @@ ERRORCODE CBSaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = NULL;
 
-	if (Game->_thumbnailWidth > 0 && Game->_thumbnailHeight > 0) {
+	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
 		if (doFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
 			// works normally for direct3d
-			Game->displayContent(false);
-			Game->_renderer->flip();
+			_gameRef->displayContent(false);
+			_gameRef->_renderer->flip();
 
-			Game->displayContent(false);
-			Game->_renderer->flip();
+			_gameRef->displayContent(false);
+			_gameRef->_renderer->flip();
 		}
 
-		CBImage *screenshot = Game->_renderer->takeScreenshot();
+		CBImage *screenshot = _gameRef->_renderer->takeScreenshot();
 		if (!screenshot) return STATUS_FAILED;
 
 		// normal thumbnail
-		if (Game->_thumbnailWidth > 0 && Game->_thumbnailHeight > 0) {
-			_thumbnail = new CBImage(Game);
-			_thumbnail->copyFrom(screenshot, Game->_thumbnailWidth, Game->_thumbnailHeight);
+		if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
+			_thumbnail = new CBImage(_gameRef);
+			_thumbnail->copyFrom(screenshot, _gameRef->_thumbnailWidth, _gameRef->_thumbnailHeight);
 		}
 
 

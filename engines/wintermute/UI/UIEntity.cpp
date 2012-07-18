@@ -49,16 +49,16 @@ CUIEntity::CUIEntity(CBGame *inGame): CUIObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CUIEntity::~CUIEntity() {
-	if (_entity) Game->unregisterObject(_entity);
+	if (_entity) _gameRef->unregisterObject(_entity);
 	_entity = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIEntity::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CUIEntity::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CUIEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -67,7 +67,7 @@ ERRORCODE CUIEntity::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ENTITY container file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ENTITY container file '%s'", filename);
 
 
 	delete [] buffer;
@@ -105,11 +105,11 @@ ERRORCODE CUIEntity::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY_CONTAINER) {
-			Game->LOG(0, "'ENTITY_CONTAINER' keyword expected.");
+			_gameRef->LOG(0, "'ENTITY_CONTAINER' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -155,17 +155,17 @@ ERRORCODE CUIEntity::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in ENTITY_CONTAINER definition");
+		_gameRef->LOG(0, "Syntax error in ENTITY_CONTAINER definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading ENTITY_CONTAINER definition");
+		_gameRef->LOG(0, "Error loading ENTITY_CONTAINER definition");
 		return STATUS_FAILED;
 	}
 
 	correctSize();
 
-	if (Game->_editorMode) {
+	if (_gameRef->_editorMode) {
 		_width = 50;
 		_height = 50;
 	}
@@ -209,8 +209,8 @@ ERRORCODE CUIEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIEntity::setEntity(const char *filename) {
-	if (_entity) Game->unregisterObject(_entity);
-	_entity = new CAdEntity(Game);
+	if (_entity) _gameRef->unregisterObject(_entity);
+	_entity = new CAdEntity(_gameRef);
 	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
 		delete _entity;
 		_entity = NULL;
@@ -219,7 +219,7 @@ ERRORCODE CUIEntity::setEntity(const char *filename) {
 		_entity->_nonIntMouseEvents = true;
 		_entity->_sceneIndependent = true;
 		_entity->makeFreezable(false);
-		Game->registerObject(_entity);
+		_gameRef->registerObject(_entity);
 	}
 	return STATUS_OK;
 }

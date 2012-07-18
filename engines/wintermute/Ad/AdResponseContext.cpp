@@ -50,7 +50,7 @@ CAdResponseContext::~CAdResponseContext() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdResponseContext::persist(CBPersistMgr *persistMgr) {
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_context));
 	persistMgr->transfer(TMEMBER(_iD));
 

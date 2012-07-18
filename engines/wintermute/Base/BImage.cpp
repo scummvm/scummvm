@@ -86,13 +86,13 @@ ERRORCODE CBImage::loadFile(const Common::String &filename) {
 		error("CBImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 	_filename = filename;
-	Common::SeekableReadStream *file = Game->_fileManager->openFile(filename.c_str());
+	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(filename.c_str());
 	if (!file) return STATUS_FAILED;
 
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
 	_palette = _decoder->getPalette();
-	Game->_fileManager->closeFile(file);
+	_gameRef->_fileManager->closeFile(file);
 
 	return STATUS_OK;
 }

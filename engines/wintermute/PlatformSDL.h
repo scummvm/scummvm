@@ -80,7 +80,7 @@ public:
 	static int SDLEventWatcher(void *userdata, Common::Event *event);
 
 private:
-	static CBGame *Game;
+	static CBGame *_gameRef;
 };
 
 } // end of namespace WinterMute

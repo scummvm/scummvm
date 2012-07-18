@@ -57,7 +57,7 @@ CBSound::CBSound(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CBSound::~CBSound() {
-	if (_sound) Game->_soundMgr->removeSound(_sound);
+	if (_sound) _gameRef->_soundMgr->removeSound(_sound);
 	_sound = NULL;
 
 	delete[] _soundFilename;
@@ -68,13 +68,13 @@ CBSound::~CBSound() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSound::setSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (_sound) {
-		Game->_soundMgr->removeSound(_sound);
+		_gameRef->_soundMgr->removeSound(_sound);
 		_sound = NULL;
 	}
 	delete[] _soundFilename;
 	_soundFilename = NULL;
 
-	_sound = Game->_soundMgr->addSound(filename, type, streamed);
+	_sound = _gameRef->_soundMgr->addSound(filename, type, streamed);
 	if (_sound) {
 		_soundFilename = new char[strlen(filename) + 1];
 		strcpy(_soundFilename, filename);
@@ -89,7 +89,7 @@ ERRORCODE CBSound::setSound(const char *filename, Audio::Mixer::SoundType type, 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSound::setSoundSimple() {
-	_sound = Game->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
+	_sound = _gameRef->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
 	if (_sound) {
 		if (_soundPosition) _sound->setPosition(_soundPosition);
 		_sound->setLooping(_soundLooping);
@@ -164,7 +164,7 @@ ERRORCODE CBSound::persist(CBPersistMgr *persistMgr) {
 		_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 	}
 
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_soundFilename));
 	persistMgr->transfer(TMEMBER(_soundLooping));

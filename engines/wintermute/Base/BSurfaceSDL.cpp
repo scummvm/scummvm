@@ -67,8 +67,8 @@ CBSurfaceSDL::~CBSurfaceSDL() {
 	delete[] _alphaMask;
 	_alphaMask = NULL;
 
-	Game->addMem(-_width * _height * 4);
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	_gameRef->addMem(-_width * _height * 4);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 }
 
@@ -92,7 +92,7 @@ bool hasTransparency(Graphics::Surface *surf) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	/*  CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer); */
+	/*  CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer); */
 	_filename = filename;
 //	const Graphics::Surface *surface = image->getSurface();
 
@@ -117,7 +117,7 @@ ERRORCODE CBSurfaceSDL::create(const char *filename, bool defaultCK, byte ckRed,
 }
 
 void CBSurfaceSDL::finishLoad() {
-	CBImage *image = new CBImage(Game);
+	CBImage *image = new CBImage(_gameRef);
 	image->loadFile(_filename);
 
 	_width = image->getSurface()->w;
@@ -183,7 +183,7 @@ void CBSurfaceSDL::finishLoad() {
 
 	_valid = true;
 
-	Game->addMem(_width * _height * 4);
+	_gameRef->addMem(_width * _height * 4);
 
 	delete image;
 
@@ -276,13 +276,13 @@ uint32 CBSurfaceSDL::getPixel(Graphics::Surface *surface, int x, int y) {
 ERRORCODE CBSurfaceSDL::create(int width, int height) {
 	warning("SurfaceSDL::Create not ported yet"); //TODO
 #if 0
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
 	_texture = SDL_CreateTexture(renderer->GetSdlRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, Width, Height);
 #endif
 	_width = width;
 	_height = height;
 
-	Game->addMem(_width * _height * 4);
+	_gameRef->addMem(_width * _height * 4);
 
 	_valid = true;
 
@@ -293,7 +293,7 @@ ERRORCODE CBSurfaceSDL::create(int width, int height) {
 ERRORCODE CBSurfaceSDL::createFromSDLSurface(Graphics::Surface *surface) {
 	warning("CBSurfaceSDL::CreateFromSDLSurface not ported yet"); //TODO
 #if 0
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
 	_texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surface);
 #endif
 	if (_surface) {
@@ -306,7 +306,7 @@ ERRORCODE CBSurfaceSDL::createFromSDLSurface(Graphics::Surface *surface) {
 	_width = surface->w;
 	_height = surface->h;
 #if 0
-	Game->AddMem(_width * _height * 4);
+	_gameRef->AddMem(_width * _height * 4);
 #endif
 	_valid = true;
 
@@ -390,7 +390,7 @@ bool CBSurfaceSDL::isTransparentAtLite(int x, int y) {
 ERRORCODE CBSurfaceSDL::startPixelOp() {
 	//SDL_LockTexture(_texture, NULL, &_lockPixels, &_lockPitch);
 	// Any pixel-op makes the caching useless:
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 	return STATUS_OK;
 }
@@ -437,7 +437,7 @@ ERRORCODE CBSurfaceSDL::displayTransform(int x, int y, int hotX, int hotY, Rect3
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurfaceSDL::drawSprite(int x, int y, Rect32 *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
 
 	if (!_loaded) {
 		finishLoad();
@@ -523,7 +523,7 @@ ERRORCODE CBSurfaceSDL::putSurface(const Graphics::Surface &surface, bool hasAlp
 	_loaded = true;
 	_surface->copyFrom(surface);
 	_hasAlpha = hasAlpha;
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 		
 	return STATUS_OK;

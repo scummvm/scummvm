@@ -53,7 +53,7 @@ CBFontStorage::~CBFontStorage() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBFontStorage::cleanup(bool warn) {
 	for (int i = 0; i < _fonts.getSize(); i++) {
-		if (warn) Game->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
+		if (warn) _gameRef->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
 		delete _fonts[i];
 	}
 	_fonts.removeAll();
@@ -81,7 +81,7 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 	}
 
 	/*
-	CBFont* font = new CBFont(Game);
+	CBFont* font = new CBFont(_gameRef);
 	if (!font) return NULL;
 
 	if (DID_FAIL(font->loadFile(filename))) {
@@ -94,7 +94,7 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 	    return font;
 	}
 	*/
-	CBFont *font = CBFont::createFromFile(Game, filename);
+	CBFont *font = CBFont::createFromFile(_gameRef,  filename);
 	if (font) {
 		font->_refCount = 1;
 		_fonts.add(font);
@@ -126,7 +126,7 @@ ERRORCODE CBFontStorage::persist(CBPersistMgr *persistMgr) {
 
 	if (!persistMgr->_saving) cleanup(false);
 
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 	_fonts.persist(persistMgr);
 
 	return STATUS_OK;

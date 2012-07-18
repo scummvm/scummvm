@@ -46,25 +46,25 @@ IMPLEMENT_PERSISTENT(CScEngine, true)
 #define COMPILER_DLL "dcscomp.dll"
 //////////////////////////////////////////////////////////////////////////
 CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
-	Game->LOG(0, "Initializing scripting engine...");
+	_gameRef->LOG(0, "Initializing scripting engine...");
 
-	if (_compilerAvailable) Game->LOG(0, "  Script compiler bound successfuly");
-	else Game->LOG(0, "  Script compiler is NOT available");
+	if (_compilerAvailable) _gameRef->LOG(0, "  Script compiler bound successfuly");
+	else _gameRef->LOG(0, "  Script compiler is NOT available");
 
-	_globals = new CScValue(Game);
+	_globals = new CScValue(_gameRef);
 
 
 	// register 'Game' as global variable
 	if (!_globals->propExists("Game")) {
-		CScValue val(Game);
-		val.setNative(Game, true);
+		CScValue val(_gameRef);
+		val.setNative(_gameRef,  true);
 		_globals->setProp("Game", &val);
 	}
 
 	// register 'Math' as global variable
 	if (!_globals->propExists("Math")) {
-		CScValue val(Game);
-		val.setNative(Game->_mathClass, true);
+		CScValue val(_gameRef);
+		val.setNative(_gameRef->_mathClass, true);
 		_globals->setProp("Math", &val);
 	}
 
@@ -82,7 +82,7 @@ CScEngine::CScEngine(CBGame *inGame): CBBase(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CScEngine::~CScEngine() {
-	Game->LOG(0, "Shutting down scripting engine");
+	_gameRef->LOG(0, "Shutting down scripting engine");
 	saveBreakpoints();
 
 	disableProfiling();
@@ -121,8 +121,8 @@ ERRORCODE CScEngine::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 byte *CScEngine::loadFile(void *data, char *filename, uint32 *size) {
-	CBGame *Game = (CBGame *)data;
-	return Game->_fileManager->readWholeFile(filename, size);
+	CBGame *gameRef = (CBGame *)data;
+	return gameRef->_fileManager->readWholeFile(filename, size);
 }
 
 
@@ -147,15 +147,15 @@ CScScript *CScEngine::runScript(const char *filename, CBScriptHolder *owner) {
 	if (!compBuffer) return NULL;
 
 	// add new script
-	CScScript *script = new CScScript(Game, this);
+	CScScript *script = new CScScript(_gameRef, this);
 	ERRORCODE ret = script->create(filename, compBuffer, compSize, owner);
 	if (DID_FAIL(ret)) {
-		Game->LOG(ret, "Error running script '%s'...", filename);
+		_gameRef->LOG(ret, "Error running script '%s'...", filename);
 		delete script;
 		return NULL;
 	} else {
 		// publish the "self" pseudo-variable
-		CScValue val(Game);
+		CScValue val(_gameRef);
 		if (owner)val.setNative(owner, true);
 		else val.setNULL();
 
@@ -163,7 +163,7 @@ CScScript *CScEngine::runScript(const char *filename, CBScriptHolder *owner) {
 		script->_globals->setProp("this", &val);
 
 		_scripts.add(script);
-		Game->getDebugMgr()->onScriptInit(script);
+		_gameRef->getDebugMgr()->onScriptInit(script);
 
 		return script;
 	}
@@ -189,9 +189,9 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 
 	uint32 size;
 
-	byte *buffer = Game->_fileManager->readWholeFile(filename, &size);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename, &size);
 	if (!buffer) {
-		Game->LOG(0, "CScEngine::GetCompiledScript - error opening script '%s'", filename);
+		_gameRef->LOG(0, "CScEngine::GetCompiledScript - error opening script '%s'", filename);
 		return NULL;
 	}
 
@@ -201,7 +201,7 @@ byte *CScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool i
 		compSize = size;
 	} else {
 		if (!_compilerAvailable) {
-			Game->LOG(0, "CScEngine::GetCompiledScript - script '%s' needs to be compiled but compiler is not available", filename);
+			_gameRef->LOG(0, "CScEngine::GetCompiledScript - script '%s' needs to be compiled but compiler is not available", filename);
 			delete [] buffer;
 			return NULL;
 		}
@@ -256,18 +256,18 @@ ERRORCODE CScEngine::tick() {
 		case SCRIPT_WAITING: {
 			/*
 			bool obj_found=false;
-			for(int j=0; j<Game->_regObjects.getSize(); j++)
+			for(int j=0; j<_gameRef->_regObjects.getSize(); j++)
 			{
-			    if(Game->_regObjects[j] == _scripts[i]->_waitObject)
+			    if(_gameRef->_regObjects[j] == _scripts[i]->_waitObject)
 			    {
-			        if(Game->_regObjects[j]->IsReady()) _scripts[i]->Run();
+			        if(_gameRef->_regObjects[j]->IsReady()) _scripts[i]->Run();
 			        obj_found = true;
 			        break;
 			    }
 			}
 			if(!obj_found) _scripts[i]->finish(); // _waitObject no longer exists
 			*/
-			if (Game->validObject(_scripts[i]->_waitObject)) {
+			if (_gameRef->validObject(_scripts[i]->_waitObject)) {
 				if (_scripts[i]->_waitObject->isReady()) _scripts[i]->run();
 			} else _scripts[i]->finish();
 			break;
@@ -277,7 +277,7 @@ ERRORCODE CScEngine::tick() {
 			if (_scripts[i]->_waitFrozen) {
 				if (_scripts[i]->_waitTime <= CBPlatform::getTime()) _scripts[i]->run();
 			} else {
-				if (_scripts[i]->_waitTime <= Game->_timer) _scripts[i]->run();
+				if (_scripts[i]->_waitTime <= _gameRef->_timer) _scripts[i]->run();
 			}
 			break;
 		}
@@ -368,7 +368,7 @@ ERRORCODE CScEngine::removeFinishedScripts() {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
 			if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
-			Game->getDebugMgr()->onScriptShutdown(_scripts[i]);
+			_gameRef->getDebugMgr()->onScriptShutdown(_scripts[i]);
 			delete _scripts[i];
 			_scripts.removeAt(i);
 			i--;
@@ -427,7 +427,7 @@ ERRORCODE CScEngine::resetObject(CBObject *Object) {
 	// terminate all scripts waiting for this object
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING && _scripts[i]->_waitObject == Object) {
-			if (!Game->_compatKillMethodThreads) resetScript(_scripts[i]);
+			if (!_gameRef->_compatKillMethodThreads) resetScript(_scripts[i]);
 
 			bool IsThread = _scripts[i]->_methodThread || _scripts[i]->_thread;
 			_scripts[i]->finish(!IsThread); // 1.9b1 - top-level script kills its threads as well
@@ -451,7 +451,7 @@ ERRORCODE CScEngine::resetScript(CScScript *script) {
 ERRORCODE CScEngine::persist(CBPersistMgr *persistMgr) {
 	if (!persistMgr->_saving) cleanup();
 
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_currentScript));
 	persistMgr->transfer(TMEMBER(_globals));
 	_scripts.persist(persistMgr);
@@ -527,7 +527,7 @@ ERRORCODE CScEngine::dbgSendScripts(IWmeDebugClient *client) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::addBreakpoint(const char *scriptFilename, int line) {
-	if (!Game->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	CScBreakpoint *bp = NULL;
 	for (int i = 0; i < _breakpoints.getSize(); i++) {
@@ -554,7 +554,7 @@ ERRORCODE CScEngine::addBreakpoint(const char *scriptFilename, int line) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::removeBreakpoint(const char *scriptFilename, int line) {
-	if (!Game->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	for (int i = 0; i < _breakpoints.getSize(); i++) {
 		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), scriptFilename) == 0) {
@@ -579,7 +579,7 @@ ERRORCODE CScEngine::removeBreakpoint(const char *scriptFilename, int line) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::refreshScriptBreakpoints() {
-	if (!Game->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		refreshScriptBreakpoints(_scripts[i]);
@@ -589,7 +589,7 @@ ERRORCODE CScEngine::refreshScriptBreakpoints() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::refreshScriptBreakpoints(CScScript *script) {
-	if (!Game->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	if (!script || !script->_filename) return STATUS_FAILED;
 
@@ -606,7 +606,7 @@ ERRORCODE CScEngine::refreshScriptBreakpoints(CScScript *script) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::saveBreakpoints() {
-	if (!Game->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 
 	char text[512];
@@ -619,25 +619,25 @@ ERRORCODE CScEngine::saveBreakpoints() {
 			sprintf(key, "Breakpoint%d", count);
 			sprintf(text, "%s:%d", _breakpoints[i]->_filename.c_str(), _breakpoints[i]->_lines[j]);
 
-			Game->_registry->writeString("Debug", key, text);
+			_gameRef->_registry->writeString("Debug", key, text);
 		}
 	}
-	Game->_registry->writeInt("Debug", "NumBreakpoints", count);
+	_gameRef->_registry->writeInt("Debug", "NumBreakpoints", count);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScEngine::loadBreakpoints() {
-	if (!Game->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
 
 	char key[100];
 
-	int count = Game->_registry->readInt("Debug", "NumBreakpoints", 0);
+	int count = _gameRef->_registry->readInt("Debug", "NumBreakpoints", 0);
 	for (int i = 1; i <= count; i++) {
 		/*  uint32 BufSize = 512; */
 		sprintf(key, "Breakpoint%d", i);
-		AnsiString breakpoint = Game->_registry->readString("Debug", key, "");
+		AnsiString breakpoint = _gameRef->_registry->readString("Debug", key, "");
 
 		char *path = CBUtils::strEntry(0, breakpoint.c_str(), ':');
 		char *line = CBUtils::strEntry(1, breakpoint.c_str(), ':');
@@ -701,11 +701,11 @@ void CScEngine::dumpStats() {
 
 	    TimeVector::reverse_iterator tit;
 
-	    Game->LOG(0, "***** Script profiling information: *****");
-	    Game->LOG(0, "  %-40s %fs", "Total execution time", (float)totalTime / 1000);
+	    _gameRef->LOG(0, "***** Script profiling information: *****");
+	    _gameRef->LOG(0, "  %-40s %fs", "Total execution time", (float)totalTime / 1000);
 
 	    for (tit = times.rbegin(); tit != times.rend(); tit++) {
-	        Game->LOG(0, "  %-40s %fs (%f%%)", tit->second.c_str(), (float)tit->first / 1000, (float)tit->first / (float)totalTime * 100);
+	        _gameRef->LOG(0, "  %-40s %fs (%f%%)", tit->second.c_str(), (float)tit->first / 1000, (float)tit->first / (float)totalTime * 100);
 	    }*/
 }
 

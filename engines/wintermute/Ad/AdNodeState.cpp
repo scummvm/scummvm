@@ -93,7 +93,7 @@ void CAdNodeState::setCursor(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdNodeState::persist(CBPersistMgr *persistMgr) {
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_name));
@@ -115,7 +115,7 @@ void CAdNodeState::setCaption(const char *caption, int caseVal) {
 	_caption[caseVal- 1] = new char[strlen(caption) + 1];
 	if (_caption[caseVal- 1]) {
 		strcpy(_caption[caseVal- 1], caption);
-		Game->_stringTable->expand(&_caption[caseVal- 1]);
+		_gameRef->_stringTable->expand(&_caption[caseVal- 1]);
 	}
 }
 
@@ -133,7 +133,7 @@ ERRORCODE CAdNodeState::transferEntity(CAdEntity *entity, bool includingSprites,
 	if (!entity) return STATUS_FAILED;
 
 	// hack!
-	if (this->Game != entity->Game) this->Game = entity->Game;
+	if (this->_gameRef != entity->_gameRef) this->_gameRef = entity->_gameRef;
 
 	if (saving) {
 		for (int i = 0; i < 7; i++) {

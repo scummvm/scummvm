@@ -167,12 +167,12 @@ char *CBRegistry::getIniName() {
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::loadValues(bool local) {
 	if (local) loadXml("settings.xml", _localValues);
-	else loadXml(PathUtil::combine(Game->getDataDir(), "settings.xml"), _values);
+	else loadXml(PathUtil::combine(_gameRef->getDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CBRegistry::saveValues() {
-	saveXml(PathUtil::combine(Game->getDataDir(), "settings.xml"), _values);
+	saveXml(PathUtil::combine(_gameRef->getDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////

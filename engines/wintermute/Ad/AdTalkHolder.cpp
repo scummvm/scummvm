@@ -71,11 +71,11 @@ CBSprite *CAdTalkHolder::getTalkStance(const char *stance) {
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
 		delete _animSprite;
-		_animSprite = new CBSprite(Game, this);
+		_animSprite = new CBSprite(_gameRef, this);
 		if (_animSprite) {
 			ERRORCODE res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
-				Game->LOG(res, "CAdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
+				_gameRef->LOG(res, "CAdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
 				delete _animSprite;
 				_animSprite = NULL;
 			} else return _animSprite;
@@ -140,7 +140,7 @@ ERRORCODE CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScSta
 			stack->pushBool(true);
 		} else {
 			const char *filename = val->getString();
-			CBSprite *spr = new CBSprite(Game, this);
+			CBSprite *spr = new CBSprite(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadFile(filename))) {
 				script->runtimeError("SetSprite method failed for file '%s'", filename);
 				stack->pushBool(false);
@@ -184,7 +184,7 @@ ERRORCODE CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScSta
 		const char *filename = stack->pop()->getString();
 		bool Ex = stack->pop()->getBool();
 
-		CBSprite *spr = new CBSprite(Game, this);
+		CBSprite *spr = new CBSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("AddTalkSprite method failed for file '%s'", filename);
@@ -255,7 +255,7 @@ ERRORCODE CAdTalkHolder::scCallMethod(CScScript *script, CScStack *stack, CScSta
 		bool setCurrent = false;
 		bool setTemp2 = false;
 
-		CBSprite *spr = new CBSprite(Game, this);
+		CBSprite *spr = new CBSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("SetTalkSprite method failed for file '%s'", filename);

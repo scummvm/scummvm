@@ -56,7 +56,7 @@ CAdSentence::CAdSentence(CBGame *inGame): CBBase(inGame) {
 	_font = NULL;
 
 	_pos.x = _pos.y = 0;
-	_width = Game->_renderer->_width;
+	_width = _gameRef->_renderer->_width;
 
 	_align = (TTextAlign)TAL_CENTER;
 
@@ -173,18 +173,18 @@ ERRORCODE CAdSentence::display() {
 		_soundStarted = true;
 	}
 
-	if (Game->_subtitles) {
+	if (_gameRef->_subtitles) {
 		int x = _pos.x;
 		int y = _pos.y;
 
 		if (!_fixedPos) {
-			x = x - ((CAdGame *)Game)->_scene->getOffsetLeft();
-			y = y - ((CAdGame *)Game)->_scene->getOffsetTop();
+			x = x - ((CAdGame *)_gameRef)->_scene->getOffsetLeft();
+			y = y - ((CAdGame *)_gameRef)->_scene->getOffsetTop();
 		}
 
 
 		x = MAX(x, 0);
-		x = MIN(x, Game->_renderer->_width - _width);
+		x = MIN(x, _gameRef->_renderer->_width - _width);
 		y = MAX(y, 0);
 
 		_font->drawText((byte *)_text, x, y, _width, _align);
@@ -213,7 +213,7 @@ ERRORCODE CAdSentence::finish() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdSentence::persist(CBPersistMgr *persistMgr) {
 
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER_INT(_align));
 	persistMgr->transfer(TMEMBER(_currentStance));
@@ -251,19 +251,19 @@ ERRORCODE CAdSentence::setupTalkFile(const char *soundFilename) {
 
 	AnsiString talkDefFileName = PathUtil::combine(path, name + ".talk");
 
-	Common::SeekableReadStream *file = Game->_fileManager->openFile(talkDefFileName.c_str());
+	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(talkDefFileName.c_str());
 	if (file) {
-		Game->_fileManager->closeFile(file);
+		_gameRef->_fileManager->closeFile(file);
 	} else return STATUS_OK; // no talk def file found
 
 
-	_talkDef = new CAdTalkDef(Game);
+	_talkDef = new CAdTalkDef(_gameRef);
 	if (!_talkDef || DID_FAIL(_talkDef->loadFile(talkDefFileName.c_str()))) {
 		delete _talkDef;
 		_talkDef = NULL;
 		return STATUS_FAILED;
 	}
-	//Game->LOG(0, "Using .talk file: %s", TalkDefFile);
+	//_gameRef->LOG(0, "Using .talk file: %s", TalkDefFile);
 
 	return STATUS_OK;
 }
@@ -278,9 +278,9 @@ ERRORCODE CAdSentence::update(TDirection dir) {
 
 	/*
 	if (_sound) CurrentTime = _sound->GetPositionTime();
-	else CurrentTime = Game->_timer - _startTime;
+	else CurrentTime = _gameRef->_timer - _startTime;
 	*/
-	currentTime = Game->_timer - _startTime;
+	currentTime = _gameRef->_timer - _startTime;
 
 	bool talkNodeFound = false;
 	for (int i = 0; i < _talkDef->_nodes.getSize(); i++) {
@@ -311,7 +311,7 @@ ERRORCODE CAdSentence::update(TDirection dir) {
 //////////////////////////////////////////////////////////////////////////
 bool CAdSentence::CanSkip() {
 	// prevent accidental sentence skipping (TODO make configurable)
-	return (Game->_timer - _startTime) > 300;
+	return (_gameRef->_timer - _startTime) > 300;
 }
 
 } // end of namespace WinterMute

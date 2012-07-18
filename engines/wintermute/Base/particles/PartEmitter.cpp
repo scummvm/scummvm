@@ -125,11 +125,11 @@ ERRORCODE CPartEmitter::addSprite(const char *filename) {
 	}
 
 	// check if file exists
-	Common::SeekableReadStream *File = Game->_fileManager->openFile(filename);
+	Common::SeekableReadStream *File = _gameRef->_fileManager->openFile(filename);
 	if (!File) {
-		Game->LOG(0, "Sprite '%s' not found", filename);
+		_gameRef->LOG(0, "Sprite '%s' not found", filename);
 		return STATUS_FAILED;
-	} else Game->_fileManager->closeFile(File);
+	} else _gameRef->_fileManager->closeFile(File);
 
 	char *Str = new char[strlen(filename) + 1];
 	strcpy(Str, filename);
@@ -228,7 +228,7 @@ ERRORCODE CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CPartEmitter::update() {
 	if (!_running) return STATUS_OK;
-	else return updateInternal(Game->_timer, Game->_timerDelta);
+	else return updateInternal(_gameRef->_timer, _gameRef->_timerDelta);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -266,7 +266,7 @@ ERRORCODE CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 				CPartParticle *particle;
 				if (firstDeadIndex >= 0) particle = _particles[firstDeadIndex];
 				else {
-					particle = new CPartParticle(Game);
+					particle = new CPartParticle(_gameRef);
 					_particles.add(particle);
 				}
 				initParticle(particle, currentTime, timerDelta);
@@ -289,7 +289,7 @@ ERRORCODE CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CPartEmitter::display(CBRegion *region) {
-	if (_sprites.getSize() <= 1) Game->_renderer->startSpriteBatch();
+	if (_sprites.getSize() <= 1) _gameRef->_renderer->startSpriteBatch();
 
 	for (int i = 0; i < _particles.getSize(); i++) {
 		if (region != NULL && _useRegion) {
@@ -299,7 +299,7 @@ ERRORCODE CPartEmitter::display(CBRegion *region) {
 		_particles[i]->display(this);
 	}
 
-	if (_sprites.getSize() <= 1) Game->_renderer->endSpriteBatch();
+	if (_sprites.getSize() <= 1) _gameRef->_renderer->endSpriteBatch();
 
 	return STATUS_OK;
 }
@@ -316,7 +316,7 @@ ERRORCODE CPartEmitter::start() {
 	if (_overheadTime > 0) {
 		uint32 delta = 500;
 		int steps = _overheadTime / delta;
-		uint32 currentTime = Game->_timer - _overheadTime;
+		uint32 currentTime = _gameRef->_timer - _overheadTime;
 
 		for (int i = 0; i < steps; i++) {
 			updateInternal(currentTime, delta);
@@ -373,7 +373,7 @@ CPartForce *CPartEmitter::addForceByName(const char *name) {
 		}
 	}
 	if (!force) {
-		force = new CPartForce(Game);
+		force = new CPartForce(_gameRef);
 		if (force) {
 			force->setName(name);
 			_forces.add(force);
@@ -1171,7 +1171,7 @@ ERRORCODE CPartEmitter::persist(CBPersistMgr *persistMgr) {
 	} else {
 		persistMgr->transfer(TMEMBER(numForces));
 		for (int i = 0; i < numForces; i++) {
-			CPartForce *force = new CPartForce(Game);
+			CPartForce *force = new CPartForce(_gameRef);
 			force->persist(persistMgr);
 			_forces.add(force);
 		}
@@ -1187,7 +1187,7 @@ ERRORCODE CPartEmitter::persist(CBPersistMgr *persistMgr) {
 	} else {
 		persistMgr->transfer(TMEMBER(numParticles));
 		for (int i = 0; i < numParticles; i++) {
-			CPartParticle *particle = new CPartParticle(Game);
+			CPartParticle *particle = new CPartParticle(_gameRef);
 			particle->persist(persistMgr);
 			_particles.add(particle);
 		}

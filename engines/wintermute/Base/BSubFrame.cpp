@@ -68,7 +68,7 @@ CBSubFrame::CBSubFrame(CBGame *inGame): CBScriptable(inGame, true) {
 
 //////////////////////////////////////////////////////////////////////////
 CBSubFrame::~CBSubFrame() {
-	if (_surface) Game->_surfaceStorage->removeSurface(_surface);
+	if (_surface) _gameRef->_surfaceStorage->removeSurface(_surface);
 	delete[] _surfaceFilename;
 	_surfaceFilename = NULL;
 }
@@ -109,7 +109,7 @@ ERRORCODE CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 	char *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 	Rect32 rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
@@ -177,7 +177,7 @@ ERRORCODE CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in SUBFRAME definition");
+		_gameRef->LOG(0, "Syntax error in SUBFRAME definition");
 		return STATUS_FAILED;
 	}
 
@@ -192,7 +192,7 @@ ERRORCODE CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	/*
 	if(_surface == NULL)
 	{
-	    Game->LOG(0, "Error parsing sub-frame. Image not set.");
+	    _gameRef->LOG(0, "Error parsing sub-frame. Image not set.");
 	    return STATUS_FAILED;
 	}
 	*/
@@ -209,12 +209,12 @@ ERRORCODE CBSubFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, f
 
 	if (registerOwner != NULL && !_decoration) {
 		if (zoomX == 100 && zoomY == 100) {
-			Game->_renderer->_rectList.add(new CBActiveRect(Game, registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
+			_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
 		} else {
-			Game->_renderer->_rectList.add(new CBActiveRect(Game, registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
+			_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
-	if (Game->_suspendedRendering) return STATUS_OK;
+	if (_gameRef->_suspendedRendering) return STATUS_OK;
 
 	ERRORCODE res;
 
@@ -363,7 +363,7 @@ ERRORCODE CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		CScValue *Val = stack->pop();
 
 		if (Val->isNULL()) {
-			if (_surface) Game->_surfaceStorage->removeSurface(_surface);
+			if (_surface) _gameRef->_surfaceStorage->removeSurface(_surface);
 			delete[] _surfaceFilename;
 			_surfaceFilename = NULL;
 			stack->pushBool(true);
@@ -384,7 +384,7 @@ ERRORCODE CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 
 //////////////////////////////////////////////////////////////////////////
 CScValue *CBSubFrame::scGetProperty(const char *name) {
-	if (!_scValue) _scValue = new CScValue(Game);
+	if (!_scValue) _scValue = new CScValue(_gameRef);
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -551,14 +551,14 @@ const char *CBSubFrame::scToString() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (_surface) {
-		Game->_surfaceStorage->removeSurface(_surface);
+		_gameRef->_surfaceStorage->removeSurface(_surface);
 		_surface = NULL;
 	}
 
 	delete[] _surfaceFilename;
 	_surfaceFilename = NULL;
 
-	_surface = Game->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
+	_surface = _gameRef->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	if (_surface) {
 		_surfaceFilename = new char[strlen(filename) + 1];
 		strcpy(_surfaceFilename, filename);
@@ -581,7 +581,7 @@ ERRORCODE CBSubFrame::setSurfaceSimple() {
 		_surface = NULL;
 		return STATUS_OK;
 	}
-	_surface = Game->_surfaceStorage->addSurface(_surfaceFilename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
+	_surface = _gameRef->_surfaceStorage->addSurface(_surfaceFilename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
 	if (_surface) return STATUS_OK;
 	else return STATUS_FAILED;
 }

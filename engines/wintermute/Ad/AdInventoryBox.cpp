@@ -65,7 +65,7 @@ CAdInventoryBox::CAdInventoryBox(CBGame *inGame): CBObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdInventoryBox::~CAdInventoryBox() {
-	Game->unregisterObject(_window);
+	_gameRef->unregisterObject(_window);
 	_window = NULL;
 
 	delete _closeButton;
@@ -99,7 +99,7 @@ ERRORCODE CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdInventoryBox::display() {
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 
 	if (!_visible) return STATUS_OK;
 
@@ -115,8 +115,8 @@ ERRORCODE CAdInventoryBox::display() {
 
 	if (_closeButton) {
 		_closeButton->_posX = _closeButton->_posY = 0;
-		_closeButton->_width = Game->_renderer->_width;
-		_closeButton->_height = Game->_renderer->_height;
+		_closeButton->_width = _gameRef->_renderer->_width;
+		_closeButton->_height = _gameRef->_renderer->_height;
 
 		_closeButton->display();
 	}
@@ -130,7 +130,7 @@ ERRORCODE CAdInventoryBox::display() {
 	}
 
 	// display items
-	if (_window && _window->_alphaColor != 0) Game->_renderer->_forceAlphaColor = _window->_alphaColor;
+	if (_window && _window->_alphaColor != 0) _gameRef->_renderer->_forceAlphaColor = _window->_alphaColor;
 	int yyy = rect.top;
 	for (int j = 0; j < itemsY; j++) {
 		int xxx = rect.left;
@@ -138,7 +138,7 @@ ERRORCODE CAdInventoryBox::display() {
 			int itemIndex = _scrollOffset + j * itemsX + i;
 			if (itemIndex >= 0 && itemIndex < adGame->_inventoryOwner->getInventory()->_takenItems.getSize()) {
 				CAdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[itemIndex];
-				if (item != ((CAdGame *)Game)->_selectedItem || !_hideSelected) {
+				if (item != ((CAdGame *)_gameRef)->_selectedItem || !_hideSelected) {
 					item->update();
 					item->display(xxx, yyy);
 				}
@@ -148,7 +148,7 @@ ERRORCODE CAdInventoryBox::display() {
 		}
 		yyy += (_itemHeight + _spacing);
 	}
-	if (_window && _window->_alphaColor != 0) Game->_renderer->_forceAlphaColor = 0;
+	if (_window && _window->_alphaColor != 0) _gameRef->_renderer->_forceAlphaColor = 0;
 
 	return STATUS_OK;
 }
@@ -156,9 +156,9 @@ ERRORCODE CAdInventoryBox::display() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdInventoryBox::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdInventoryBox::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdInventoryBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -167,7 +167,7 @@ ERRORCODE CAdInventoryBox::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
 
 
 	delete [] buffer;
@@ -213,13 +213,13 @@ ERRORCODE CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 	bool always_visible = false;
 
 	_exclusive = false;
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_INVENTORY_BOX) {
-			Game->LOG(0, "'INVENTORY_BOX' keyword expected.");
+			_gameRef->LOG(0, "'INVENTORY_BOX' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -241,12 +241,12 @@ ERRORCODE CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WINDOW:
 			delete _window;
-			_window = new CUIWindow(Game);
+			_window = new CUIWindow(_gameRef);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				delete _window;
 				_window = NULL;
 				cmd = PARSERR_GENERIC;
-			} else Game->registerObject(_window);
+			} else _gameRef->registerObject(_window);
 			break;
 
 		case TOKEN_AREA:
@@ -287,17 +287,17 @@ ERRORCODE CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in INVENTORY_BOX definition");
+		_gameRef->LOG(0, "Syntax error in INVENTORY_BOX definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading INVENTORY_BOX definition");
+		_gameRef->LOG(0, "Error loading INVENTORY_BOX definition");
 		return STATUS_FAILED;
 	}
 
 	if (_exclusive) {
 		delete _closeButton;
-		_closeButton = new CUIButton(Game);
+		_closeButton = new CUIButton(_gameRef);
 		if (_closeButton) {
 			_closeButton->setName("close");
 			_closeButton->setListener(this, _closeButton, 0);

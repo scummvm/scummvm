@@ -54,7 +54,7 @@ CAdResponseBox::CAdResponseBox(CBGame *inGame): CBObject(inGame) {
 	_font = _fontHover = NULL;
 
 	_window = NULL;
-	_shieldWindow = new CUIWindow(Game);
+	_shieldWindow = new CUIWindow(_gameRef);
 
 	_horizontal = false;
 	CBPlatform::setRectEmpty(&_responseArea);
@@ -82,8 +82,8 @@ CAdResponseBox::~CAdResponseBox() {
 	delete[] _lastResponseTextOrig;
 	_lastResponseTextOrig = NULL;
 
-	if (_font) Game->_fontStorage->removeFont(_font);
-	if (_fontHover) Game->_fontStorage->removeFont(_fontHover);
+	if (_font) _gameRef->_fontStorage->removeFont(_font);
+	if (_fontHover) _gameRef->_fontStorage->removeFont(_fontHover);
 
 	clearResponses();
 	clearButtons();
@@ -130,7 +130,7 @@ ERRORCODE CAdResponseBox::createButtons() {
 
 	_scrollOffset = 0;
 	for (int i = 0; i < _responses.getSize(); i++) {
-		CUIButton *btn = new CUIButton(Game);
+		CUIButton *btn = new CUIButton(_gameRef);
 		if (btn) {
 			btn->_parent = _window;
 			btn->_sharedFonts = btn->_sharedImages = true;
@@ -143,30 +143,30 @@ ERRORCODE CAdResponseBox::createButtons() {
 
 				btn->setCaption(_responses[i]->_text);
 				if (_cursor) btn->_cursor = _cursor;
-				else if (Game->_activeCursor) btn->_cursor = Game->_activeCursor;
+				else if (_gameRef->_activeCursor) btn->_cursor = _gameRef->_activeCursor;
 			}
 			// textual
 			else {
 				btn->setText(_responses[i]->_text);
-				btn->_font = (_font == NULL) ? Game->_systemFont : _font;
-				btn->_fontHover = (_fontHover == NULL) ? Game->_systemFont : _fontHover;
+				btn->_font = (_font == NULL) ? _gameRef->_systemFont : _font;
+				btn->_fontHover = (_fontHover == NULL) ? _gameRef->_systemFont : _fontHover;
 				btn->_fontPress = btn->_fontHover;
 				btn->_align = _align;
 
-				if (Game->_touchInterface)
+				if (_gameRef->_touchInterface)
 					btn->_fontHover = btn->_font;
 
 
 				if (_responses[i]->_font) btn->_font = _responses[i]->_font;
 
 				btn->_width = _responseArea.right - _responseArea.left;
-				if (btn->_width <= 0) btn->_width = Game->_renderer->_width;
+				if (btn->_width <= 0) btn->_width = _gameRef->_renderer->_width;
 			}
 			btn->setName("response");
 			btn->correctSize();
 
 			// make the responses touchable
-			if (Game->_touchInterface)
+			if (_gameRef->_touchInterface)
 				btn->_height = MAX(btn->_height, 50);
 
 			//btn->SetListener(this, btn, _responses[i]->_iD);
@@ -175,7 +175,7 @@ ERRORCODE CAdResponseBox::createButtons() {
 			_respButtons.add(btn);
 
 			if (_responseArea.bottom - _responseArea.top < btn->_height) {
-				Game->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->_text);
+				_gameRef->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->_text);
 				_responseArea.bottom += (btn->_height - (_responseArea.bottom - _responseArea.top));
 			}
 		}
@@ -188,9 +188,9 @@ ERRORCODE CAdResponseBox::createButtons() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdResponseBox::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -199,7 +199,7 @@ ERRORCODE CAdResponseBox::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
 
 
 	delete [] buffer;
@@ -242,11 +242,11 @@ ERRORCODE CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_RESPONSE_BOX) {
-			Game->LOG(0, "'RESPONSE_BOX' keyword expected.");
+			_gameRef->LOG(0, "'RESPONSE_BOX' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -260,7 +260,7 @@ ERRORCODE CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WINDOW:
 			delete _window;
-			_window = new CUIWindow(Game);
+			_window = new CUIWindow(_gameRef);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				delete _window;
 				_window = NULL;
@@ -269,14 +269,14 @@ ERRORCODE CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->removeFont(_font);
-			_font = Game->_fontStorage->addFont((char *)params);
+			if (_font) _gameRef->_fontStorage->removeFont(_font);
+			_font = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_HOVER:
-			if (_fontHover) Game->_fontStorage->removeFont(_fontHover);
-			_fontHover = Game->_fontStorage->addFont((char *)params);
+			if (_fontHover) _gameRef->_fontStorage->removeFont(_fontHover);
+			_fontHover = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_fontHover) cmd = PARSERR_GENERIC;
 			break;
 
@@ -310,7 +310,7 @@ ERRORCODE CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(Game);
+			_cursor = new CBSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -320,7 +320,7 @@ ERRORCODE CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in RESPONSE_BOX definition");
+		_gameRef->LOG(0, "Syntax error in RESPONSE_BOX definition");
 		return STATUS_FAILED;
 	}
 
@@ -462,8 +462,8 @@ ERRORCODE CAdResponseBox::display() {
 	// go exclusive
 	if (_shieldWindow) {
 		_shieldWindow->_posX = _shieldWindow->_posY = 0;
-		_shieldWindow->_width = Game->_renderer->_width;
-		_shieldWindow->_height = Game->_renderer->_height;
+		_shieldWindow->_width = _gameRef->_renderer->_width;
+		_shieldWindow->_height = _gameRef->_renderer->_height;
 
 		_shieldWindow->display();
 	}
@@ -495,8 +495,8 @@ ERRORCODE CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 			if (_waitingScript) _waitingScript->_stack->pushInt(_responses[param2]->_iD);
 			handleResponse(_responses[param2]);
 			_waitingScript = NULL;
-			Game->_state = GAME_RUNNING;
-			((CAdGame *)Game)->_stateEx = GAME_NORMAL;
+			_gameRef->_state = GAME_RUNNING;
+			((CAdGame *)_gameRef)->_stateEx = GAME_NORMAL;
 			_ready = true;
 			invalidateButtons();
 			clearResponses();
@@ -537,7 +537,7 @@ ERRORCODE CAdResponseBox::persist(CBPersistMgr *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdResponseBox::weedResponses() {
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 
 	for (int i = 0; i < _responses.getSize(); i++) {
 		switch (_responses[i]->_responseType) {
@@ -576,7 +576,7 @@ void CAdResponseBox::setLastResponseText(const char *text, const char *textOrig)
 ERRORCODE CAdResponseBox::handleResponse(CAdResponse *response) {
 	setLastResponseText(response->_text, response->_textOrig);
 
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 
 	switch (response->_responseType) {
 	case RESPONSE_ONCE:

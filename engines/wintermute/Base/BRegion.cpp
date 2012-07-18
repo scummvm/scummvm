@@ -96,9 +96,9 @@ bool CBRegion::pointInRegion(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBRegion::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CBRegion::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CBRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -107,7 +107,7 @@ ERRORCODE CBRegion::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing REGION file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing REGION file '%s'", filename);
 
 
 	delete [] buffer;
@@ -143,11 +143,11 @@ ERRORCODE CBRegion::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
-			Game->LOG(0, "'REGION' keyword expected.");
+			_gameRef->LOG(0, "'REGION' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -197,7 +197,7 @@ ERRORCODE CBRegion::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in REGION definition");
+		_gameRef->LOG(0, "Syntax error in REGION definition");
 		return STATUS_FAILED;
 	}
 

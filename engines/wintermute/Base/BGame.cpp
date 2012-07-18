@@ -624,7 +624,7 @@ ERRORCODE CBGame::initLoop() {
 		_framesRendered  = 0;
 		_fpsTime = 0;
 	}
-	//Game->LOG(0, "%d", _fps);
+	//_gameRef->LOG(0, "%d", _fps);
 
 	getMousePos(&_mousePos);
 
@@ -671,9 +671,9 @@ void CBGame::getOffset(int *offsetX, int *offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CBGame::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CBGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -682,7 +682,7 @@ ERRORCODE CBGame::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing GAME file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing GAME file '%s'", filename);
 
 	delete [] buffer;
 
@@ -778,11 +778,11 @@ ERRORCODE CBGame::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_GAME) {
-			Game->LOG(0, "'GAME' keyword expected.");
+			_gameRef->LOG(0, "'GAME' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -806,20 +806,20 @@ ERRORCODE CBGame::loadBuffer(byte *buffer, bool complete) {
 			if (_systemFont) _fontStorage->removeFont(_systemFont);
 			_systemFont = NULL;
 
-			_systemFont = Game->_fontStorage->addFont((char *)params);
+			_systemFont = _gameRef->_fontStorage->addFont((char *)params);
 			break;
 
 		case TOKEN_VIDEO_FONT:
 			if (_videoFont) _fontStorage->removeFont(_videoFont);
 			_videoFont = NULL;
 
-			_videoFont = Game->_fontStorage->addFont((char *)params);
+			_videoFont = _gameRef->_fontStorage->addFont((char *)params);
 			break;
 
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(Game);
+			_cursor = new CBSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -830,7 +830,7 @@ ERRORCODE CBGame::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_ACTIVE_CURSOR:
 			delete _activeCursor;
 			_activeCursor = NULL;
-			_activeCursor = new CBSprite(Game);
+			_activeCursor = new CBSprite(_gameRef);
 			if (!_activeCursor || DID_FAIL(_activeCursor->loadFile((char *)params))) {
 				delete _activeCursor;
 				_activeCursor = NULL;
@@ -840,7 +840,7 @@ ERRORCODE CBGame::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_NONINTERACTIVE_CURSOR:
 			delete _cursorNoninteractive;
-			_cursorNoninteractive = new CBSprite(Game);
+			_cursorNoninteractive = new CBSprite(_gameRef);
 			if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile((char *)params))) {
 				delete _cursorNoninteractive;
 				_cursorNoninteractive = NULL;
@@ -941,15 +941,15 @@ ERRORCODE CBGame::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 
-	if (!_systemFont) _systemFont = Game->_fontStorage->addFont("system_font.fnt");
+	if (!_systemFont) _systemFont = _gameRef->_fontStorage->addFont("system_font.fnt");
 
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in GAME definition");
+		_gameRef->LOG(0, "Syntax error in GAME definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading GAME definition");
+		_gameRef->LOG(0, "Error loading GAME definition");
 		return STATUS_FAILED;
 	}
 
@@ -994,7 +994,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	// RunScript
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RunScript") == 0) {
-		Game->LOG(0, "**Warning** The 'RunScript' method is now obsolete. Use 'AttachScript' instead (same syntax)");
+		_gameRef->LOG(0, "**Warning** The 'RunScript' method is now obsolete. Use 'AttachScript' instead (same syntax)");
 		stack->correctParams(1);
 		if (DID_FAIL(addScript(stack->pop()->getString())))
 			stack->pushBool(false);
@@ -1067,7 +1067,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadWindow") == 0) {
 		stack->correctParams(1);
-		CUIWindow *win = new CUIWindow(Game);
+		CUIWindow *win = new CUIWindow(_gameRef);
 		if (win && DID_SUCCEED(win->loadFile(stack->pop()->getString()))) {
 			_windows.add(win);
 			registerObject(win);
@@ -1311,7 +1311,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int length = 0;
 		const char *filename = stack->pop()->getString();
 
-		CBSound *sound = new CBSound(Game);
+		CBSound *sound = new CBSound(_gameRef);
 		if (sound && DID_SUCCEED(sound->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
 			length = sound->getLength();
 			delete sound;
@@ -1372,7 +1372,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		        // TODO: ADDVIDEO
 		        */
 
-		Game->LOG(0, "Warning: Game.PlayVideo() is now deprecated. Use Game.PlayTheora() instead.");
+		_gameRef->LOG(0, "Warning: Game.PlayVideo() is now deprecated. Use Game.PlayTheora() instead.");
 
 		stack->correctParams(6);
 		const char *filename = stack->pop()->getString();
@@ -1392,8 +1392,8 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		if (Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER)
 			Type = (int)VID_PLAY_STRETCH;
 
-		if (DID_SUCCEED(Game->_videoPlayer->initialize(filename, SubtitleFile))) {
-			if (DID_SUCCEED(Game->_videoPlayer->play((TVideoPlayback)Type, xVal, yVal, FreezeMusic))) {
+		if (DID_SUCCEED(_gameRef->_videoPlayer->initialize(filename, SubtitleFile))) {
+			if (DID_SUCCEED(_gameRef->_videoPlayer->play((TVideoPlayback)Type, xVal, yVal, FreezeMusic))) {
 				stack->pushBool(true);
 				script->sleep(0);
 			} else stack->pushBool(false);
@@ -1575,7 +1575,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalSFXVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setVolumePercent(Audio::Mixer::kSFXSoundType, (byte)stack->pop()->getInt());
+		_gameRef->_soundMgr->setVolumePercent(Audio::Mixer::kSFXSoundType, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1585,7 +1585,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalSpeechVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setVolumePercent(Audio::Mixer::kSpeechSoundType, (byte)stack->pop()->getInt());
+		_gameRef->_soundMgr->setVolumePercent(Audio::Mixer::kSpeechSoundType, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1595,7 +1595,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalMusicVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setVolumePercent(Audio::Mixer::kMusicSoundType, (byte)stack->pop()->getInt());
+		_gameRef->_soundMgr->setVolumePercent(Audio::Mixer::kMusicSoundType, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1605,7 +1605,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalMasterVolume") == 0) {
 		stack->correctParams(1);
-		Game->_soundMgr->setMasterVolumePercent((byte)stack->pop()->getInt());
+		_gameRef->_soundMgr->setMasterVolumePercent((byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1789,7 +1789,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		}
 
 		bool ret = false;
-		CBImage *image = Game->_renderer->takeScreenshot();
+		CBImage *image = _gameRef->_renderer->takeScreenshot();
 		if (image) {
 			ret = DID_SUCCEED(image->saveBMPFile(filename));
 			delete image;
@@ -1809,7 +1809,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		int sizeY = stack->pop()->getInt(_renderer->_height);
 
 		bool ret = false;
-		CBImage *image = Game->_renderer->takeScreenshot();
+		CBImage *image = _gameRef->_renderer->takeScreenshot();
 		if (image) {
 			ret = DID_SUCCEED(image->resize(sizeX, sizeY));
 			if (ret) ret = DID_SUCCEED(image->saveBMPFile(filename));
@@ -1827,7 +1827,7 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CUIWindow *win = new CUIWindow(Game);
+		CUIWindow *win = new CUIWindow(_gameRef);
 		_windows.add(win);
 		registerObject(win);
 		if (!val->isNULL()) win->setName(val->getString());
@@ -1982,8 +1982,8 @@ ERRORCODE CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thi
 			_loadingIcon = NULL;
 		} else {
 			displayContent(false, true);
-			Game->_renderer->flip();
-			Game->_renderer->initLoop();
+			_gameRef->_renderer->flip();
+			_gameRef->_renderer->initLoop();
 		}
 		stack->pushNULL();
 
@@ -2273,7 +2273,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// SFXVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SFXVolume") == 0) {
-		Game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
+		_gameRef->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
 		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType));
 		return _scValue;
 	}
@@ -2282,7 +2282,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// SpeechVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SpeechVolume") == 0) {
-		Game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
+		_gameRef->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
 		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kSpeechSoundType));
 		return _scValue;
 	}
@@ -2291,7 +2291,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// MusicVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MusicVolume") == 0) {
-		Game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
+		_gameRef->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
 		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kMusicSoundType));
 		return _scValue;
 	}
@@ -2300,7 +2300,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// MasterVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MasterVolume") == 0) {
-		Game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
+		_gameRef->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
 		_scValue->setInt(_soundMgr->getMasterVolumePercent());
 		return _scValue;
 	}
@@ -2597,8 +2597,8 @@ ERRORCODE CBGame::scSetProperty(const char *name, CScValue *value) {
 	// SFXVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SFXVolume") == 0) {
-		Game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(Audio::Mixer::kSFXSoundType, (byte)value->getInt());
+		_gameRef->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
+		_gameRef->_soundMgr->setVolumePercent(Audio::Mixer::kSFXSoundType, (byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -2606,8 +2606,8 @@ ERRORCODE CBGame::scSetProperty(const char *name, CScValue *value) {
 	// SpeechVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SpeechVolume") == 0) {
-		Game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(Audio::Mixer::kSpeechSoundType, (byte)value->getInt());
+		_gameRef->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
+		_gameRef->_soundMgr->setVolumePercent(Audio::Mixer::kSpeechSoundType, (byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -2615,8 +2615,8 @@ ERRORCODE CBGame::scSetProperty(const char *name, CScValue *value) {
 	// MusicVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MusicVolume") == 0) {
-		Game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		Game->_soundMgr->setVolumePercent(Audio::Mixer::kMusicSoundType, (byte)value->getInt());
+		_gameRef->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
+		_gameRef->_soundMgr->setVolumePercent(Audio::Mixer::kMusicSoundType, (byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -2624,8 +2624,8 @@ ERRORCODE CBGame::scSetProperty(const char *name, CScValue *value) {
 	// MasterVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MasterVolume") == 0) {
-		Game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
-		Game->_soundMgr->setMasterVolumePercent((byte)value->getInt());
+		_gameRef->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
+		_gameRef->_soundMgr->setMasterVolumePercent((byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -2772,7 +2772,7 @@ void CBGame::quickMessage(const char *text) {
 		delete _quickMessages[0];
 		_quickMessages.removeAt(0);
 	}
-	_quickMessages.add(new CBQuickMsg(Game, text));
+	_quickMessages.add(new CBQuickMsg(_gameRef,  text));
 }
 
 
@@ -2867,7 +2867,7 @@ ERRORCODE CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "LOG") == 0) {
 		stack->correctParams(1);
-		Game->LOG(0, "sc: %s", stack->pop()->getString());
+		_gameRef->LOG(0, "sc: %s", stack->pop()->getString());
 		stack->pushNULL();
 	}
 
@@ -2877,7 +2877,7 @@ ERRORCODE CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "String") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXString(Game, stack));
+		thisObj->setNative(makeSXString(_gameRef,  stack));
 		stack->pushNULL();
 	}
 
@@ -2887,7 +2887,7 @@ ERRORCODE CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "MemBuffer") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXMemBuffer(Game, stack));
+		thisObj->setNative(makeSXMemBuffer(_gameRef,  stack));
 		stack->pushNULL();
 	}
 
@@ -2897,7 +2897,7 @@ ERRORCODE CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "File") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXFile(Game, stack));
+		thisObj->setNative(makeSXFile(_gameRef,  stack));
 		stack->pushNULL();
 	}
 
@@ -2907,7 +2907,7 @@ ERRORCODE CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "Date") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXDate(Game, stack));
+		thisObj->setNative(makeSXDate(_gameRef,  stack));
 		stack->pushNULL();
 	}
 
@@ -2917,7 +2917,7 @@ ERRORCODE CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "Array") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXArray(Game, stack));
+		thisObj->setNative(makeSXArray(_gameRef,  stack));
 		stack->pushNULL();
 	}
 
@@ -2927,7 +2927,7 @@ ERRORCODE CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "Object") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXObject(Game, stack));
+		thisObj->setNative(makeSXObject(_gameRef,  stack));
 		stack->pushNULL();
 	}
 
@@ -3084,8 +3084,8 @@ ERRORCODE CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thi
 	else if (strcmp(name, "Debug") == 0) {
 		stack->correctParams(0);
 
-		if (Game->getDebugMgr()->_enabled) {
-			Game->getDebugMgr()->onScriptHitBreakpoint(script);
+		if (_gameRef->getDebugMgr()->_enabled) {
+			_gameRef->getDebugMgr()->onScriptHitBreakpoint(script);
 			script->sleep(0);
 		}
 		stack->pushNULL();
@@ -3146,7 +3146,7 @@ ERRORCODE CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thi
 ERRORCODE CBGame::showCursor() {
 	if (_cursorHidden) return STATUS_OK;
 
-	if (!_interactive && Game->_state == GAME_RUNNING) {
+	if (!_interactive && _gameRef->_state == GAME_RUNNING) {
 		if (_cursorNoninteractive) return drawCursor(_cursorNoninteractive);
 	} else {
 		if (_activeObject && !DID_FAIL(_activeObject->showCursor())) return STATUS_OK;
@@ -3166,13 +3166,13 @@ ERRORCODE CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 
 	LOG(0, "Saving game '%s'...", filename);
 
-	Game->applyEvent("BeforeSave", true);
+	_gameRef->applyEvent("BeforeSave", true);
 
 	ERRORCODE ret;
 
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
-	CBPersistMgr *pm = new CBPersistMgr(Game);
+	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
 	if (DID_FAIL(ret = pm->initSave(desc))) goto save_finish;
 
 	if (!quickSave) {
@@ -3188,8 +3188,8 @@ ERRORCODE CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 		}
 	}
 
-	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->saveTable(Game, pm, quickSave))) goto save_finish;
-	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->saveInstances(Game, pm, quickSave))) goto save_finish;
+	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->saveTable(_gameRef,  pm, quickSave))) goto save_finish;
+	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->saveInstances(_gameRef,  pm, quickSave))) goto save_finish;
 	if (DID_FAIL(ret = pm->saveFile(filename))) goto save_finish;
 
 	_registry->writeInt("System", "MostRecentSaveSlot", slot);
@@ -3207,7 +3207,7 @@ save_finish: // TODO: Remove gotos
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::loadGame(int slot) {
-	//Game->LOG(0, "Load start %d", CBUtils::GetUsedMemMB());
+	//_gameRef->LOG(0, "Load start %d", CBUtils::GetUsedMemMB());
 
 	_loading = false;
 	_scheduledLoadSlot = -1;
@@ -3241,18 +3241,18 @@ ERRORCODE CBGame::loadGame(const char *filename) {
 	_loadInProgress = true;
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
-	CBPersistMgr *pm = new CBPersistMgr(Game);
+	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
 	_dEBUG_AbsolutePathWarning = false;
 	if (DID_FAIL(ret = pm->initLoad(filename))) goto load_finish;
 
 	//if(DID_FAIL(ret = cleanup())) goto load_finish;
-	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->loadTable(Game, pm))) goto load_finish;
-	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->loadInstances(Game, pm))) goto load_finish;
+	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->loadTable(_gameRef,  pm))) goto load_finish;
+	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->loadInstances(_gameRef,  pm))) goto load_finish;
 
 	// data initialization after load
 	initAfterLoad();
 
-	Game->applyEvent("AfterLoad", true);
+	_gameRef->applyEvent("AfterLoad", true);
 
 	displayContent(true, false);
 	//_renderer->flip();
@@ -3269,7 +3269,7 @@ load_finish:
 	delete _saveLoadImage;
 	_saveLoadImage = NULL;
 
-	//Game->LOG(0, "Load end %d", CBUtils::GetUsedMemMB());
+	//_gameRef->LOG(0, "Load end %d", CBUtils::GetUsedMemMB());
 
 	return ret;
 }
@@ -3347,14 +3347,14 @@ ERRORCODE CBGame::displayWindows(bool inGame) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::playMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
 	delete _music[channel];
 	_music[channel] = NULL;
 
-	_music[channel] = new CBSound(Game);
+	_music[channel] = new CBSound(_gameRef);
 	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
 		if (_musicStartTime[channel]) {
 			_music[channel]->setPositionTime(_musicStartTime[channel]);
@@ -3373,7 +3373,7 @@ ERRORCODE CBGame::playMusic(int channel, const char *filename, bool looping, uin
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::stopMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
@@ -3389,7 +3389,7 @@ ERRORCODE CBGame::stopMusic(int channel) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::pauseMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
@@ -3401,7 +3401,7 @@ ERRORCODE CBGame::pauseMusic(int channel) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::resumeMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
@@ -3413,7 +3413,7 @@ ERRORCODE CBGame::resumeMusic(int channel) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::setMusicStartTime(int channel, uint32 time) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		Game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
@@ -3445,9 +3445,9 @@ ERRORCODE CBGame::loadSettings(const char *filename) {
 	TOKEN_TABLE_END
 
 
-	byte *origBuffer = Game->_fileManager->readWholeFile(filename);
+	byte *origBuffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (origBuffer == NULL) {
-		Game->LOG(0, "CBGame::LoadSettings failed for file '%s'", filename);
+		_gameRef->LOG(0, "CBGame::LoadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -3456,10 +3456,10 @@ ERRORCODE CBGame::loadSettings(const char *filename) {
 	byte *buffer = origBuffer;
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
-		Game->LOG(0, "'SETTINGS' keyword expected in game settings file.");
+		_gameRef->LOG(0, "'SETTINGS' keyword expected in game settings file.");
 		return STATUS_FAILED;
 	}
 	buffer = params;
@@ -3528,11 +3528,11 @@ ERRORCODE CBGame::loadSettings(const char *filename) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in game settings '%s'", filename);
+		_gameRef->LOG(0, "Syntax error in game settings '%s'", filename);
 		ret = STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading game settings '%s'", filename);
+		_gameRef->LOG(0, "Error loading game settings '%s'", filename);
 		ret = STATUS_FAILED;
 	}
 
@@ -3649,10 +3649,10 @@ ERRORCODE CBGame::focusWindow(CUIWindow *Window) {
 				_windows.removeAt(i);
 				_windows.add(Window);
 
-				Game->_focusedWindow = Window;
+				_gameRef->_focusedWindow = Window;
 			}
 
-			if (Window->_mode == WINDOW_NORMAL && Prev != Window && Game->validObject(Prev) && (Prev->_mode == WINDOW_EXCLUSIVE || Prev->_mode == WINDOW_SYSTEM_EXCLUSIVE))
+			if (Window->_mode == WINDOW_NORMAL && Prev != Window && _gameRef->validObject(Prev) && (Prev->_mode == WINDOW_EXCLUSIVE || Prev->_mode == WINDOW_SYSTEM_EXCLUSIVE))
 				return focusWindow(Prev);
 			else return STATUS_OK;
 		}
@@ -3718,10 +3718,10 @@ bool CBGame::handleKeypress(Common::Event *event, bool printable) {
 // TODO
 
 	if (_focusedWindow) {
-		if (!Game->_focusedWindow->handleKeypress(event, _keyboardState->_currentPrintable)) {
+		if (!_gameRef->_focusedWindow->handleKeypress(event, _keyboardState->_currentPrintable)) {
 			/*if (event->type != SDL_TEXTINPUT) {*/
-			if (Game->_focusedWindow->canHandleEvent("Keypress"))
-				Game->_focusedWindow->applyEvent("Keypress");
+			if (_gameRef->_focusedWindow->canHandleEvent("Keypress"))
+				_gameRef->_focusedWindow->applyEvent("Keypress");
 			else
 				applyEvent("Keypress");
 			/*}*/
@@ -3744,14 +3744,14 @@ void CBGame::handleKeyRelease(Common::Event *event) {
 bool CBGame::handleMouseWheel(int Delta) {
 	bool handled = false;
 	if (_focusedWindow) {
-		handled = Game->_focusedWindow->handleMouseWheel(Delta);
+		handled = _gameRef->_focusedWindow->handleMouseWheel(Delta);
 
 		if (!handled) {
-			if (Delta < 0 && Game->_focusedWindow->canHandleEvent("MouseWheelDown")) {
-				Game->_focusedWindow->applyEvent("MouseWheelDown");
+			if (Delta < 0 && _gameRef->_focusedWindow->canHandleEvent("MouseWheelDown")) {
+				_gameRef->_focusedWindow->applyEvent("MouseWheelDown");
 				handled = true;
-			} else if (Game->_focusedWindow->canHandleEvent("MouseWheelUp")) {
-				Game->_focusedWindow->applyEvent("MouseWheelUp");
+			} else if (_gameRef->_focusedWindow->canHandleEvent("MouseWheelUp")) {
+				_gameRef->_focusedWindow->applyEvent("MouseWheelUp");
 				handled = true;
 			}
 
@@ -3833,7 +3833,7 @@ ERRORCODE CBGame::getSaveSlotDescription(int slot, char *buffer) {
 
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
-	CBPersistMgr *pm = new CBPersistMgr(Game);
+	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
 	if (!pm) return STATUS_FAILED;
 
 	_dEBUG_AbsolutePathWarning = false;
@@ -3878,7 +3878,7 @@ ERRORCODE CBGame::emptySaveSlot(int slot) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::setActiveObject(CBObject *obj) {
 	// not-active when game is frozen
-	if (obj && !Game->_interactive && !obj->_nonIntMouseEvents) {
+	if (obj && !_gameRef->_interactive && !obj->_nonIntMouseEvents) {
 		obj = NULL;
 	}
 
@@ -3910,7 +3910,7 @@ ERRORCODE CBGame::pushViewport(CBViewport *viewport) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::popViewport() {
 	_viewportSP--;
-	if (_viewportSP < -1) Game->LOG(0, "Fatal: Viewport stack underflow!");
+	if (_viewportSP < -1) _gameRef->LOG(0, "Fatal: Viewport stack underflow!");
 
 	if (_viewportSP >= 0 && _viewportSP < _viewportStack.getSize()) _renderer->setViewport(_viewportStack[_viewportSP]->getRect());
 	else _renderer->setViewport(_renderer->_drawOffsetX,
@@ -4038,7 +4038,7 @@ ERRORCODE CBGame::updateMusicCrossfade() {
 	if (!_music[_musicCrossfadeChannel1]->isPlaying()) _music[_musicCrossfadeChannel1]->play();
 	if (!_music[_musicCrossfadeChannel2]->isPlaying()) _music[_musicCrossfadeChannel2]->play();
 
-	uint32 currentTime = Game->_liveTimer - _musicCrossfadeStartTime;
+	uint32 currentTime = _gameRef->_liveTimer - _musicCrossfadeStartTime;
 
 	if (currentTime >= _musicCrossfadeLength) {
 		_musicCrossfadeRunning = false;
@@ -4067,7 +4067,7 @@ ERRORCODE CBGame::updateMusicCrossfade() {
 		_music[_musicCrossfadeChannel1]->setVolumePercent((int)(100.0f - (float)currentTime / (float)_musicCrossfadeLength * 100.0f));
 		_music[_musicCrossfadeChannel2]->setVolumePercent((int)((float)currentTime / (float)_musicCrossfadeLength * 100.0f));
 
-		//Game->QuickMessageForm("%d %d", _music[_musicCrossfadeChannel1]->GetVolume(), _music[_musicCrossfadeChannel2]->GetVolume());
+		//_gameRef->QuickMessageForm("%d %d", _music[_musicCrossfadeChannel1]->GetVolume(), _music[_musicCrossfadeChannel2]->GetVolume());
 	}
 
 	return STATUS_OK;
@@ -4093,7 +4093,7 @@ void CBGame::DEBUG_DumpClassRegistry() {
 
 	f->close();
 	delete f;
-	Game->quickMessage("Classes dump completed.");
+	_gameRef->quickMessage("Classes dump completed.");
 }
 
 
@@ -4119,7 +4119,7 @@ ERRORCODE CBGame::setWaitCursor(const char *filename) {
 	delete _cursorNoninteractive;
 	_cursorNoninteractive = NULL;
 
-	_cursorNoninteractive = new CBSprite(Game);
+	_cursorNoninteractive = new CBSprite(_gameRef);
 	if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile(filename))) {
 		delete _cursorNoninteractive;
 		_cursorNoninteractive = NULL;
@@ -4309,7 +4309,7 @@ ERRORCODE CBGame::onPaint() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBGame::onWindowClose() {
 	if (canHandleEvent("QuitGame")) {
-		if (_state != GAME_FROZEN) Game->applyEvent("QuitGame");
+		if (_state != GAME_FROZEN) _gameRef->applyEvent("QuitGame");
 		return STATUS_OK;
 	} else return STATUS_FAILED;
 }
@@ -4319,12 +4319,12 @@ ERRORCODE CBGame::displayDebugInfo() {
 	char str[100];
 
 	if (_dEBUG_ShowFPS) {
-		sprintf(str, "FPS: %d", Game->_fps);
+		sprintf(str, "FPS: %d", _gameRef->_fps);
 		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);
 	}
 
-	if (Game->_dEBUG_DebugMode) {
-		if (!Game->_renderer->_windowed)
+	if (_gameRef->_dEBUG_DebugMode) {
+		if (!_gameRef->_renderer->_windowed)
 			sprintf(str, "Mode: %dx%dx%d", _renderer->_width, _renderer->_height, _renderer->_bPP);
 		else
 			sprintf(str, "Mode: %dx%d windowed", _renderer->_width, _renderer->_height);
@@ -4343,7 +4343,7 @@ ERRORCODE CBGame::displayDebugInfo() {
 
 
 		sprintf(str, "Timer: %d", _timer);
-		Game->_systemFont->drawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
+		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
 
 		if (_activeObject != NULL) _systemFont->drawText((byte *)_activeObject->_name, 0, 150, _renderer->_width, TAL_RIGHT);
 
@@ -4375,9 +4375,9 @@ void CBGame::getMousePos(Point32 *pos) {
 	if (_renderer->_windowed && ::IsZoomed(_renderer->_window)) {
 	    Common::Rect rc;
 	    ::GetClientRect(_renderer->_window, &rc);
-	    Pos->x *= Game->_renderer->_realWidth;
+	    Pos->x *= _gameRef->_renderer->_realWidth;
 	    Pos->x /= (rc.right - rc.left);
-	    Pos->y *= Game->_renderer->_realHeight;
+	    Pos->y *= _gameRef->_renderer->_realHeight;
 	    Pos->y /= (rc.bottom - rc.top);
 	}
 	*/

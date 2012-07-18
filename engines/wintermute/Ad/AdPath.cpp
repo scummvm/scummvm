@@ -100,7 +100,7 @@ bool CAdPath::setReady(bool ready) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdPath::persist(CBPersistMgr *persistMgr) {
 
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_currIndex));
 	_points.persist(persistMgr);

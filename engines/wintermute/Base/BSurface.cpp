@@ -134,10 +134,10 @@ ERRORCODE CBSurface::invalidate() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CBSurface::prepareToDraw() {
-	_lastUsedTime = Game->_liveTimer;
+	_lastUsedTime = _gameRef->_liveTimer;
 
 	if (!_valid) {
-		//Game->LOG(0, "Reviving: %s", _filename);
+		//_gameRef->LOG(0, "Reviving: %s", _filename);
 		return create(_filename.c_str(), _ckDefault, _ckRed, _ckGreen, _ckBlue, _lifeTime, _keepLoaded);
 	} else return STATUS_OK;
 }

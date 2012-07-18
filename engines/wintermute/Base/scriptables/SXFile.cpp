@@ -80,7 +80,7 @@ void CSXFile::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 void CSXFile::close() {
 	if (_readFile) {
-		Game->_fileManager->closeFile(_readFile);
+		_gameRef->_fileManager->closeFile(_readFile);
 		_readFile = NULL;
 	}
 	if (_writeFile) {
@@ -125,7 +125,7 @@ ERRORCODE CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			_mode = 1;
 		}
 		if (_mode == 1) {
-			_readFile = Game->_fileManager->openFile(_filename);
+			_readFile = _gameRef->_fileManager->openFile(_filename);
 			if (!_readFile) {
 				//script->runtimeError("File.%s: Error opening file '%s' for reading.", Name, _filename);
 				close();
@@ -739,7 +739,7 @@ ERRORCODE CSXFile::persist(CBPersistMgr *persistMgr) {
 		if (_mode != 0) {
 			// open for reading
 			if (_mode == 1) {
-				_readFile = Game->_fileManager->openFile(_filename);
+				_readFile = _gameRef->_fileManager->openFile(_filename);
 				if (!_readFile)
 					close();
 			}

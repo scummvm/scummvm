@@ -40,11 +40,11 @@
 
 namespace WinterMute {
 
-CBGame *CBPlatform::Game = NULL;
+CBGame *CBPlatform::_gameRef = NULL;
 
 #define CLASS_NAME "GF_FRAME"
 int CBPlatform::initialize(CBGame *inGame, int argc, char *argv[]) {
-	Game = inGame;
+	_gameRef = inGame;
 	return true;
 }
 
@@ -53,48 +53,48 @@ void CBPlatform::handleEvent(Common::Event *event) {
 	switch (event->type) {
 
 	case Common::EVENT_LBUTTONDOWN:
-		if (Game) {
-			if (Game->isLeftDoubleClick()) Game->onMouseLeftDblClick();
-			else Game->onMouseLeftDown();
+		if (_gameRef) {
+			if (_gameRef->isLeftDoubleClick()) _gameRef->onMouseLeftDblClick();
+			else _gameRef->onMouseLeftDown();
 		}
 		break;
 	case Common::EVENT_RBUTTONDOWN:
-		if (Game) {
-			if (Game->isRightDoubleClick()) Game->onMouseRightDblClick();
-			else Game->onMouseRightDown();
+		if (_gameRef) {
+			if (_gameRef->isRightDoubleClick()) _gameRef->onMouseRightDblClick();
+			else _gameRef->onMouseRightDown();
 		}
 		break;
 	case Common::EVENT_MBUTTONDOWN:
-		if (Game) Game->onMouseMiddleDown();
+		if (_gameRef) _gameRef->onMouseMiddleDown();
 		break;
 	case Common::EVENT_LBUTTONUP:
-		if (Game) Game->onMouseLeftUp();
+		if (_gameRef) _gameRef->onMouseLeftUp();
 		break;
 	case Common::EVENT_RBUTTONUP:
-		if (Game) Game->onMouseRightUp();
+		if (_gameRef) _gameRef->onMouseRightUp();
 		break;
 	case Common::EVENT_MBUTTONUP:
-		if (Game) Game->onMouseMiddleUp();
+		if (_gameRef) _gameRef->onMouseMiddleUp();
 		break;
 	case Common::EVENT_KEYDOWN:
-		if (Game) Game->handleKeypress(event);
+		if (_gameRef) _gameRef->handleKeypress(event);
 		break;
 	case Common::EVENT_KEYUP:
-		if (Game) Game->handleKeyRelease(event);
+		if (_gameRef) _gameRef->handleKeyRelease(event);
 		break;
 	case Common::EVENT_WHEELUP:
 	case Common::EVENT_WHEELDOWN:
-		if (Game) Game->handleMouseWheel(event->mouse.y);
+		if (_gameRef) _gameRef->handleMouseWheel(event->mouse.y);
 		break;
 		/*#ifdef __IPHONEOS__
 		        {
-		            CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+		            CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
 		            POINT p;
 		            GetCursorPos(&p);
-		            Game->SetActiveObject(renderer->GetObjectAt(p.x, p.y));
+		            _gameRef->SetActiveObject(renderer->GetObjectAt(p.x, p.y));
 
-		            if (Game->_activeObject != NULL && strcmp(Game->_activeObject->getClassName(), "CUIButton") == 0) {
-		                CUIButton *btn = static_cast<CUIButton *>(Game->_activeObject);
+		            if (_gameRef->_activeObject != NULL && strcmp(_gameRef->_activeObject->getClassName(), "CUIButton") == 0) {
+		                CUIButton *btn = static_cast<CUIButton *>(_gameRef->_activeObject);
 		                if (btn->_visible && !btn->_disable) btn->_press = true;
 		            }
 		        }
@@ -102,25 +102,25 @@ void CBPlatform::handleEvent(Common::Event *event) {
 
 //TODO
 		/*  case SDL_MOUSEWHEEL:
-		        if (Game) Game->handleMouseWheel(event->wheel.y);
+		        if (_gameRef) _gameRef->handleMouseWheel(event->wheel.y);
 		        break;
 
 		    case SDL_KEYDOWN:
 		    case SDL_TEXTINPUT:
-		        if (Game) Game->handleKeypress(event);
+		        if (_gameRef) _gameRef->handleKeypress(event);
 		        break;
 
 		    case SDL_WINDOWEVENT:
 		        switch (event->window.event) {
 		        case SDL_WINDOWEVENT_FOCUS_GAINED:
 		        case SDL_WINDOWEVENT_RESTORED:
-		            if (Game) Game->OnActivate(true, true);
+		            if (_gameRef) _gameRef->OnActivate(true, true);
 		            SDL_ShowCursor(SDL_DISABLE);
 		            break;
 		        case SDL_WINDOWEVENT_FOCUS_LOST:
 		        case SDL_WINDOWEVENT_MINIMIZED:
 		#ifndef __IPHONEOS__
-		            if (Game) Game->OnActivate(false, false);
+		            if (_gameRef) _gameRef->OnActivate(false, false);
 		            SDL_ShowCursor(SDL_ENABLE);
 		#endif
 		            break;
@@ -134,12 +134,12 @@ void CBPlatform::handleEvent(Common::Event *event) {
 	case Common::EVENT_QUIT:
 	case Common::EVENT_RTL:
 /*#ifdef __IPHONEOS__
-		if (Game) {
-			Game->AutoSaveOnExit();
-			Game->_quitting = true;
+		if (_gameRef) {
+			_gameRef->AutoSaveOnExit();
+			_gameRef->_quitting = true;
 		}
 #else*/
-		if (Game) Game->onWindowClose();
+		if (_gameRef) _gameRef->onWindowClose();
 //#endif
 
 		break;
@@ -154,8 +154,8 @@ void CBPlatform::handleEvent(Common::Event *event) {
 int CBPlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
 	//TODO
 	/*  if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_MINIMIZED) {
-	        if (Game) Game->AutoSaveOnExit();
-	        if (Game) Game->OnActivate(false, false);
+	        if (_gameRef) _gameRef->AutoSaveOnExit();
+	        if (_gameRef) _gameRef->OnActivate(false, false);
 	        SDL_ShowCursor(SDL_ENABLE);
 	    }
 	*/
@@ -182,7 +182,7 @@ uint32 CBPlatform::getTime() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBPlatform::getCursorPos(Point32 *lpPoint) {
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
 
 	Common::Point p = g_system->getEventManager()->getMousePos();
 	lpPoint->x = p.x;
@@ -195,7 +195,7 @@ bool CBPlatform::getCursorPos(Point32 *lpPoint) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBPlatform::setCursorPos(int X, int Y) {
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(Game->_renderer);
+	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
 
 	Point32 p;
 	p.x = X;

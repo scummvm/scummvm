@@ -67,7 +67,7 @@ ERRORCODE CUIText::display(int offsetX, int offsetY) {
 
 
 	CBFont *font = _font;
-	if (!font) font = Game->_systemFont;
+	if (!font) font = _gameRef->_systemFont;
 
 	if (_back) _back->display(offsetX + _posX, offsetY + _posY, _width, _height);
 	if (_image) _image->draw(offsetX + _posX, offsetY + _posY, NULL);
@@ -87,7 +87,7 @@ ERRORCODE CUIText::display(int offsetX, int offsetY) {
 		font->drawText((byte *)_text, offsetX + _posX, offsetY + _posY + textOffset, _width, _textAlign, _height);
 	}
 
-	//Game->_renderer->_rectList.add(new CBActiveRect(Game, this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
+	//_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
 
 	return STATUS_OK;
 }
@@ -96,9 +96,9 @@ ERRORCODE CUIText::display(int offsetX, int offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIText::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CUIText::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CUIText::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -107,7 +107,7 @@ ERRORCODE CUIText::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing STATIC file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing STATIC file '%s'", filename);
 
 	delete [] buffer;
 
@@ -164,11 +164,11 @@ ERRORCODE CUIText::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_STATIC) {
-			Game->LOG(0, "'STATIC' keyword expected.");
+			_gameRef->LOG(0, "'STATIC' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -190,7 +190,7 @@ ERRORCODE CUIText::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			delete _back;
-			_back = new CUITiledImage(Game);
+			_back = new CUITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
@@ -200,7 +200,7 @@ ERRORCODE CUIText::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSprite(Game);
+			_image = new CBSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -209,14 +209,14 @@ ERRORCODE CUIText::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->removeFont(_font);
-			_font = Game->_fontStorage->addFont((char *)params);
+			if (_font) _gameRef->_fontStorage->removeFont(_font);
+			_font = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_TEXT:
 			setText((char *)params);
-			Game->_stringTable->expand(&_text);
+			_gameRef->_stringTable->expand(&_text);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
@@ -249,7 +249,7 @@ ERRORCODE CUIText::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(Game);
+			_cursor = new CBSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -279,11 +279,11 @@ ERRORCODE CUIText::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in STATIC definition");
+		_gameRef->LOG(0, "Syntax error in STATIC definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading STATIC definition");
+		_gameRef->LOG(0, "Error loading STATIC definition");
 		return STATUS_FAILED;
 	}
 

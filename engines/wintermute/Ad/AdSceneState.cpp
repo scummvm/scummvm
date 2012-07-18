@@ -77,7 +77,7 @@ CAdNodeState *CAdSceneState::getNodeState(char *name, bool saving) {
 	}
 
 	if (saving) {
-		CAdNodeState *ret = new CAdNodeState(Game);
+		CAdNodeState *ret = new CAdNodeState(_gameRef);
 		ret->setName(name);
 		_nodeStates.add(ret);
 

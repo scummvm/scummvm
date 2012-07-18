@@ -74,7 +74,7 @@ CAdScene::CAdScene(CBGame *inGame): CBObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CAdScene::~CAdScene() {
 	cleanup();
-	Game->unregisterObject(_fader);
+	_gameRef->unregisterObject(_fader);
 	delete _pfTarget;
 	_pfTarget = NULL;
 }
@@ -128,8 +128,8 @@ void CAdScene::setDefaults() {
 
 	_shieldWindow = NULL;
 
-	_fader = new CBFader(Game);
-	Game->registerObject(_fader);
+	_fader = new CBFader(_gameRef);
+	_gameRef->registerObject(_fader);
 
 	_viewport = NULL;
 }
@@ -146,24 +146,24 @@ void CAdScene::cleanup() {
 	delete _shieldWindow;
 	_shieldWindow = NULL;
 
-	Game->unregisterObject(_fader);
+	_gameRef->unregisterObject(_fader);
 	_fader = NULL;
 
 	for (i = 0; i < _layers.getSize(); i++)
-		Game->unregisterObject(_layers[i]);
+		_gameRef->unregisterObject(_layers[i]);
 	_layers.removeAll();
 
 
 	for (i = 0; i < _waypointGroups.getSize(); i++)
-		Game->unregisterObject(_waypointGroups[i]);
+		_gameRef->unregisterObject(_waypointGroups[i]);
 	_waypointGroups.removeAll();
 
 	for (i = 0; i < _scaleLevels.getSize(); i++)
-		Game->unregisterObject(_scaleLevels[i]);
+		_gameRef->unregisterObject(_scaleLevels[i]);
 	_scaleLevels.removeAll();
 
 	for (i = 0; i < _rotLevels.getSize(); i++)
-		Game->unregisterObject(_rotLevels[i]);
+		_gameRef->unregisterObject(_rotLevels[i]);
 	_rotLevels.removeAll();
 
 
@@ -173,7 +173,7 @@ void CAdScene::cleanup() {
 	_pfPointsNum = 0;
 
 	for (i = 0; i < _objects.getSize(); i++)
-		Game->unregisterObject(_objects[i]);
+		_gameRef->unregisterObject(_objects[i]);
 	_objects.removeAll();
 
 	delete _viewport;
@@ -245,7 +245,7 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 				pfAddWaypointGroup(_objects[i]->_currentWptGroup, requester);
 			}
 		}
-		CAdGame *adGame = (CAdGame *)Game;
+		CAdGame *adGame = (CAdGame *)_gameRef;
 		for (i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentWptGroup) {
 				pfAddWaypointGroup(adGame->_objects[i]->_currentWptGroup, requester);
@@ -295,7 +295,7 @@ float CAdScene::getZoomAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 CAdScene::getAlphaAt(int x, int y, bool colorCheck) {
-	if (!Game->_dEBUG_DebugMode) colorCheck = false;
+	if (!_gameRef->_dEBUG_DebugMode) colorCheck = false;
 
 	uint32 ret;
 	if (colorCheck) ret = 0xFFFF0000;
@@ -325,7 +325,7 @@ bool CAdScene::isBlockedAt(int x, int y, bool checkFreeObjects, CBObject *reques
 				if (_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return true;
 			}
 		}
-		CAdGame *adGame = (CAdGame *)Game;
+		CAdGame *adGame = (CAdGame *)_gameRef;
 		for (int i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentBlockRegion) {
 				if (adGame->_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return true;
@@ -366,7 +366,7 @@ bool CAdScene::isWalkableAt(int x, int y, bool checkFreeObjects, CBObject *reque
 				if (_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return false;
 			}
 		}
-		CAdGame *adGame = (CAdGame *)Game;
+		CAdGame *adGame = (CAdGame *)_gameRef;
 		for (int i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentBlockRegion) {
 				if (adGame->_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return false;
@@ -484,14 +484,14 @@ void CAdScene::pathFinderStep() {
 ERRORCODE CAdScene::initLoop() {
 #ifdef _DEBUGxxxx
 	int nu_steps = 0;
-	uint32 start = Game->_currentTime;
+	uint32 start = _gameRef->_currentTime;
 	while (!_pfReady && CBPlatform::getTime() - start <= _pfMaxTime) {
 		PathFinderStep();
 		nu_steps++;
 	}
-	if (nu_steps > 0) Game->LOG(0, "STAT: PathFinder iterations in one loop: %d (%s)  _pfMaxTime=%d", nu_steps, _pfReady ? "finished" : "not yet done", _pfMaxTime);
+	if (nu_steps > 0) _gameRef->LOG(0, "STAT: PathFinder iterations in one loop: %d (%s)  _pfMaxTime=%d", nu_steps, _pfReady ? "finished" : "not yet done", _pfMaxTime);
 #else
-	uint32 start = Game->_currentTime;
+	uint32 start = _gameRef->_currentTime;
 	while (!_pfReady && CBPlatform::getTime() - start <= _pfMaxTime) pathFinderStep();
 #endif
 
@@ -501,9 +501,9 @@ ERRORCODE CAdScene::initLoop() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdScene::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdScene::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -513,7 +513,7 @@ ERRORCODE CAdScene::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing SCENE file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing SCENE file '%s'", filename);
 
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
@@ -610,11 +610,11 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCENE) {
-			Game->LOG(0, "'SCENE' keyword expected.");
+			_gameRef->LOG(0, "'SCENE' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -639,13 +639,13 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_LAYER: {
-			CAdLayer *layer = new CAdLayer(Game);
+			CAdLayer *layer = new CAdLayer(_gameRef);
 			if (!layer || DID_FAIL(layer->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete layer;
 				layer = NULL;
 			} else {
-				Game->registerObject(layer);
+				_gameRef->registerObject(layer);
 				_layers.add(layer);
 				if (layer->_main) {
 					_mainLayer = layer;
@@ -657,46 +657,46 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_WAYPOINTS: {
-			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
+			CAdWaypointGroup *wpt = new CAdWaypointGroup(_gameRef);
 			if (!wpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete wpt;
 				wpt = NULL;
 			} else {
-				Game->registerObject(wpt);
+				_gameRef->registerObject(wpt);
 				_waypointGroups.add(wpt);
 			}
 		}
 		break;
 
 		case TOKEN_SCALE_LEVEL: {
-			CAdScaleLevel *sl = new CAdScaleLevel(Game);
+			CAdScaleLevel *sl = new CAdScaleLevel(_gameRef);
 			if (!sl || DID_FAIL(sl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete sl;
 				sl = NULL;
 			} else {
-				Game->registerObject(sl);
+				_gameRef->registerObject(sl);
 				_scaleLevels.add(sl);
 			}
 		}
 		break;
 
 		case TOKEN_ROTATION_LEVEL: {
-			CAdRotLevel *rl = new CAdRotLevel(Game);
+			CAdRotLevel *rl = new CAdRotLevel(_gameRef);
 			if (!rl || DID_FAIL(rl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete rl;
 				rl = NULL;
 			} else {
-				Game->registerObject(rl);
+				_gameRef->registerObject(rl);
 				_rotLevels.add(rl);
 			}
 		}
 		break;
 
 		case TOKEN_ENTITY: {
-			CAdEntity *entity = new CAdEntity(Game);
+			CAdEntity *entity = new CAdEntity(_gameRef);
 			if (!entity || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
@@ -709,7 +709,7 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(Game);
+			_cursor = new CBSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -820,7 +820,7 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_VIEWPORT: {
 			Rect32 rc;
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
-			if (!_viewport) _viewport = new CBViewport(Game);
+			if (!_viewport) _viewport = new CBViewport(_gameRef);
 			if (_viewport) _viewport->setRect(rc.left, rc.top, rc.right, rc.bottom, true);
 		}
 
@@ -839,11 +839,11 @@ ERRORCODE CAdScene::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in SCENE definition");
+		_gameRef->LOG(0, "Syntax error in SCENE definition");
 		return STATUS_FAILED;
 	}
 
-	if (_mainLayer == NULL) Game->LOG(0, "Warning: scene '%s' has no main layer.", _filename);
+	if (_mainLayer == NULL) _gameRef->LOG(0, "Warning: scene '%s' has no main layer.", _filename);
 
 
 	sortScaleLevels();
@@ -860,17 +860,17 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 	if (!_initialized) return STATUS_OK;
 
 	int j, k;
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// prepare viewport
 	bool PopViewport = false;
-	if (_viewport && !Game->_editorMode) {
-		Game->pushViewport(_viewport);
+	if (_viewport && !_gameRef->_editorMode) {
+		_gameRef->pushViewport(_viewport);
 		PopViewport = true;
-	} else if (adGame->_sceneViewport && !Game->_editorMode) {
-		Game->pushViewport(adGame->_sceneViewport);
+	} else if (adGame->_sceneViewport && !_gameRef->_editorMode) {
+		_gameRef->pushViewport(adGame->_sceneViewport);
 		PopViewport = true;
 	}
 
@@ -879,16 +879,16 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 	// *** adjust scroll offset
 	if (doUpdate) {
 		/*
-		if (_autoScroll && Game->_mainObject != NULL)
+		if (_autoScroll && _gameRef->_mainObject != NULL)
 		{
-		    ScrollToObject(Game->_mainObject);
+		    ScrollToObject(_gameRef->_mainObject);
 		}
 		*/
 
 		if (_autoScroll) {
 			// adjust horizontal scroll
-			if (Game->_timer - _lastTimeH >= _scrollTimeH) {
-				_lastTimeH = Game->_timer;
+			if (_gameRef->_timer - _lastTimeH >= _scrollTimeH) {
+				_lastTimeH = _gameRef->_timer;
 				if (_offsetLeft < _targetOffsetLeft) {
 					_offsetLeft += _scrollPixelsH;
 					_offsetLeft = MIN(_offsetLeft, _targetOffsetLeft);
@@ -899,8 +899,8 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 			}
 
 			// adjust vertical scroll
-			if (Game->_timer - _lastTimeV >= _scrollTimeV) {
-				_lastTimeV = Game->_timer;
+			if (_gameRef->_timer - _lastTimeV >= _scrollTimeV) {
+				_lastTimeV = _gameRef->_timer;
 				if (_offsetTop < _targetOffsetTop) {
 					_offsetTop += _scrollPixelsV;
 					_offsetTop = MIN(_offsetTop, _targetOffsetTop);
@@ -931,13 +931,13 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 	double heightRatio = scrollableY <= 0 ? 0 : ((double)(_offsetTop)  / (double)scrollableY);
 
 	int origX, origY;
-	Game->getOffset(&origX, &origY);
+	_gameRef->getOffset(&origX, &origY);
 
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// *** display/update everything
-	Game->_renderer->setup2D();
+	_gameRef->_renderer->setup2D();
 
 	// for each layer
 	/* int MainOffsetX = 0; */
@@ -948,12 +948,12 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 
 		// make layer exclusive
 		if (!doUpdate) {
-			if (_layers[j]->_closeUp && !Game->_editorMode) {
-				if (!_shieldWindow) _shieldWindow = new CUIWindow(Game);
+			if (_layers[j]->_closeUp && !_gameRef->_editorMode) {
+				if (!_shieldWindow) _shieldWindow = new CUIWindow(_gameRef);
 				if (_shieldWindow) {
 					_shieldWindow->_posX = _shieldWindow->_posY = 0;
-					_shieldWindow->_width = Game->_renderer->_width;
-					_shieldWindow->_height = Game->_renderer->_height;
+					_shieldWindow->_width = _gameRef->_renderer->_width;
+					_shieldWindow->_height = _gameRef->_renderer->_height;
 					_shieldWindow->display();
 				}
 			}
@@ -962,17 +962,17 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 		if (_paralaxScrolling) {
 			int offsetX = (int)(widthRatio  * (_layers[j]->_width  - viewportWidth) - viewportX);
 			int offsetY = (int)(heightRatio * (_layers[j]->_height - viewportHeight) - viewportY);
-			Game->setOffset(offsetX, offsetY);
+			_gameRef->setOffset(offsetX, offsetY);
 
-			Game->_offsetPercentX = (float)offsetX / ((float)_layers[j]->_width - viewportWidth) * 100.0f;
-			Game->_offsetPercentY = (float)offsetY / ((float)_layers[j]->_height - viewportHeight) * 100.0f;
+			_gameRef->_offsetPercentX = (float)offsetX / ((float)_layers[j]->_width - viewportWidth) * 100.0f;
+			_gameRef->_offsetPercentY = (float)offsetY / ((float)_layers[j]->_height - viewportHeight) * 100.0f;
 
-			//Game->QuickMessageForm("%d %f", OffsetX+ViewportX, Game->_offsetPercentX);
+			//_gameRef->QuickMessageForm("%d %f", OffsetX+ViewportX, _gameRef->_offsetPercentX);
 		} else {
-			Game->setOffset(_offsetLeft - viewportX, _offsetTop - viewportY);
+			_gameRef->setOffset(_offsetLeft - viewportX, _offsetTop - viewportY);
 
-			Game->_offsetPercentX = (float)(_offsetLeft - viewportX) / ((float)_layers[j]->_width - viewportWidth) * 100.0f;
-			Game->_offsetPercentY = (float)(_offsetTop - viewportY) / ((float)_layers[j]->_height - viewportHeight) * 100.0f;
+			_gameRef->_offsetPercentX = (float)(_offsetLeft - viewportX) / ((float)_layers[j]->_width - viewportWidth) * 100.0f;
+			_gameRef->_offsetPercentY = (float)(_offsetTop - viewportY) / ((float)_layers[j]->_height - viewportHeight) * 100.0f;
 		}
 
 
@@ -981,8 +981,8 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 			CAdSceneNode *node = _layers[j]->_nodes[k];
 			switch (node->_type) {
 			case OBJECT_ENTITY:
-				if (node->_entity->_active && (Game->_editorMode || !node->_entity->_editorOnly)) {
-					Game->_renderer->setup2D();
+				if (node->_entity->_active && (_gameRef->_editorMode || !node->_entity->_editorOnly)) {
+					_gameRef->_renderer->setup2D();
 
 					if (doUpdate) node->_entity->update();
 					else node->_entity->display();
@@ -1014,8 +1014,8 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 
 
 	// restore state
-	Game->setOffset(origX, origY);
-	Game->_renderer->setup2D();
+	_gameRef->setOffset(origX, origY);
+	_gameRef->_renderer->setup2D();
 
 	// display/update fader
 	if (_fader) {
@@ -1023,7 +1023,7 @@ ERRORCODE CAdScene::traverseNodes(bool doUpdate) {
 		else _fader->display();
 	}
 
-	if (PopViewport) Game->popViewport();
+	if (PopViewport) _gameRef->popViewport();
 
 	return STATUS_OK;
 }
@@ -1036,7 +1036,7 @@ ERRORCODE CAdScene::display() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::updateFreeObjects() {
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 	bool is3DSet;
 
 	// *** update all active objects
@@ -1057,8 +1057,8 @@ ERRORCODE CAdScene::updateFreeObjects() {
 	}
 
 
-	if (_autoScroll && Game->_mainObject != NULL) {
-		scrollToObject(Game->_mainObject);
+	if (_autoScroll && _gameRef->_mainObject != NULL) {
+		scrollToObject(_gameRef->_mainObject);
 	}
 
 
@@ -1068,7 +1068,7 @@ ERRORCODE CAdScene::updateFreeObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) {
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 	CBArray<CAdObject *, CAdObject *> objects;
 	CAdObject *obj;
 
@@ -1097,16 +1097,16 @@ ERRORCODE CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) 
 
 		if (display3DOnly && !obj->_is3D) continue;
 
-		Game->_renderer->setup2D();
+		_gameRef->_renderer->setup2D();
 
-		if (Game->_editorMode || !obj->_editorOnly) obj->display();
+		if (_gameRef->_editorMode || !obj->_editorOnly) obj->display();
 		obj->_drawn = true;
 	}
 
 
 	// display design only objects
 	if (!display3DOnly) {
-		if (Game->_editorMode && region == NULL) {
+		if (_gameRef->_editorMode && region == NULL) {
 			for (int i = 0; i < _objects.getSize(); i++) {
 				if (_objects[i]->_active && _objects[i]->_editorOnly) {
 					_objects[i]->display();
@@ -1131,7 +1131,7 @@ int CAdScene::compareObjs(const void *obj1, const void *obj2) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::displayRegionContentOld(CAdRegion *region) {
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 	CAdObject *obj;
 
 	// display all objects in region sorted by _posY
@@ -1157,16 +1157,16 @@ ERRORCODE CAdScene::displayRegionContentOld(CAdRegion *region) {
 
 
 		if (obj != NULL) {
-			Game->_renderer->setup2D();
+			_gameRef->_renderer->setup2D();
 
-			if (Game->_editorMode || !obj->_editorOnly) obj->display();
+			if (_gameRef->_editorMode || !obj->_editorOnly) obj->display();
 			obj->_drawn = true;
 		}
 	} while (obj != NULL);
 
 
 	// design only objects
-	if (Game->_editorMode && region == NULL) {
+	if (_gameRef->_editorMode && region == NULL) {
 		for (int i = 0; i < _objects.getSize(); i++) {
 			if (_objects[i]->_active && _objects[i]->_editorOnly) {
 				_objects[i]->display();
@@ -1199,7 +1199,7 @@ void CAdScene::scrollTo(int offsetX, int offsetY) {
 	_targetOffsetTop = MIN(_targetOffsetTop, _height - viewportHeight);
 
 
-	if (Game->_mainObject && Game->_mainObject->_is3D) {
+	if (_gameRef->_mainObject && _gameRef->_mainObject->_is3D) {
 		if (abs(origOffsetLeft - _targetOffsetLeft) < 5) _targetOffsetLeft = origOffsetLeft;
 		if (abs(origOffsetTop - _targetOffsetTop) < 5) _targetOffsetTop = origOffsetTop;
 		//_targetOffsetTop = 0;
@@ -1246,7 +1246,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "LoadActor") == 0) {
 		stack->correctParams(1);
-		CAdActor *act = new CAdActor(Game);
+		CAdActor *act = new CAdActor(_gameRef);
 		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
 			addObject(act);
 			stack->pushNative(act, true);
@@ -1263,7 +1263,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadEntity") == 0) {
 		stack->correctParams(1);
-		CAdEntity *ent = new CAdEntity(Game);
+		CAdEntity *ent = new CAdEntity(_gameRef);
 		if (ent && DID_SUCCEED(ent->loadFile(stack->pop()->getString()))) {
 			addObject(ent);
 			stack->pushNative(ent, true);
@@ -1282,7 +1282,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CAdEntity *ent = new CAdEntity(Game);
+		CAdEntity *ent = new CAdEntity(_gameRef);
 		addObject(ent);
 		if (!val->isNULL()) ent->setName(val->getString());
 		stack->pushNative(ent, true);
@@ -1567,10 +1567,10 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		int width = stack->pop()->getInt();
 		int height = stack->pop()->getInt();
 
-		if (width <= 0) width = Game->_renderer->_width;
-		if (height <= 0) height = Game->_renderer->_height;
+		if (width <= 0) width = _gameRef->_renderer->_width;
+		if (height <= 0) height = _gameRef->_renderer->_height;
 
-		if (!_viewport) _viewport = new CBViewport(Game);
+		if (!_viewport) _viewport = new CBViewport(_gameRef);
 		if (_viewport) _viewport->setRect(x, y, x + width, y + height);
 
 		stack->pushBool(true);
@@ -1585,14 +1585,14 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		stack->correctParams(1);
 		CScValue *val = stack->pop();
 
-		CAdLayer *layer = new CAdLayer(Game);
+		CAdLayer *layer = new CAdLayer(_gameRef);
 		if (!val->isNULL()) layer->setName(val->getString());
 		if (_mainLayer) {
 			layer->_width = _mainLayer->_width;
 			layer->_height = _mainLayer->_height;
 		}
 		_layers.add(layer);
-		Game->registerObject(layer);
+		_gameRef->registerObject(layer);
 
 		stack->pushNative(layer, true);
 		return STATUS_OK;
@@ -1606,7 +1606,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		int index = stack->pop()->getInt();
 		CScValue *val = stack->pop();
 
-		CAdLayer *layer = new CAdLayer(Game);
+		CAdLayer *layer = new CAdLayer(_gameRef);
 		if (!val->isNULL()) layer->setName(val->getString());
 		if (_mainLayer) {
 			layer->_width = _mainLayer->_width;
@@ -1616,7 +1616,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		if (index <= _layers.getSize() - 1) _layers.insertAt(index, layer);
 		else _layers.add(layer);
 
-		Game->registerObject(layer);
+		_gameRef->registerObject(layer);
 
 		stack->pushNative(layer, true);
 		return STATUS_OK;
@@ -1658,7 +1658,7 @@ ERRORCODE CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		for (int i = 0; i < _layers.getSize(); i++) {
 			if (_layers[i] == toDelete) {
 				_layers.removeAt(i);
-				Game->unregisterObject(toDelete);
+				_gameRef->unregisterObject(toDelete);
 				break;
 			}
 		}
@@ -1723,7 +1723,7 @@ CScValue *CAdScene::scGetProperty(const char *name) {
 		int viewportX;
 		getViewportOffset(&viewportX);
 
-		_scValue->setInt(Game->_mousePos.x + _offsetLeft - viewportX);
+		_scValue->setInt(_gameRef->_mousePos.x + _offsetLeft - viewportX);
 		return _scValue;
 	}
 
@@ -1734,7 +1734,7 @@ CScValue *CAdScene::scGetProperty(const char *name) {
 		int viewportY;
 		getViewportOffset(NULL, &viewportY);
 
-		_scValue->setInt(Game->_mousePos.y + _offsetTop - viewportY);
+		_scValue->setInt(_gameRef->_mousePos.y + _offsetTop - viewportY);
 		return _scValue;
 	}
 
@@ -1944,7 +1944,7 @@ const char *CAdScene::scToString() {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::addObject(CAdObject *object) {
 	_objects.add(object);
-	return Game->registerObject(object);
+	return _gameRef->registerObject(object);
 }
 
 
@@ -1953,7 +1953,7 @@ ERRORCODE CAdScene::removeObject(CAdObject *object) {
 	for (int i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i] == object) {
 			_objects.removeAt(i);
-			return Game->unregisterObject(object);
+			return _gameRef->unregisterObject(object);
 		}
 	}
 	return STATUS_FAILED;
@@ -2351,11 +2351,11 @@ void CAdScene::pfPointsAdd(int x, int y, int distance) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::getViewportOffset(int *offsetX, int *offsetY) {
-	CAdGame *adGame = (CAdGame *)Game;
-	if (_viewport && !Game->_editorMode) {
+	CAdGame *adGame = (CAdGame *)_gameRef;
+	if (_viewport && !_gameRef->_editorMode) {
 		if (offsetX) *offsetX = _viewport->_offsetX;
 		if (offsetY) *offsetY = _viewport->_offsetY;
-	} else if (adGame->_sceneViewport && !Game->_editorMode) {
+	} else if (adGame->_sceneViewport && !_gameRef->_editorMode) {
 		if (offsetX) *offsetX = adGame->_sceneViewport->_offsetX;
 		if (offsetY) *offsetY = adGame->_sceneViewport->_offsetY;
 	} else {
@@ -2368,16 +2368,16 @@ ERRORCODE CAdScene::getViewportOffset(int *offsetX, int *offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::getViewportSize(int *width, int *height) {
-	CAdGame *adGame = (CAdGame *)Game;
-	if (_viewport && !Game->_editorMode) {
+	CAdGame *adGame = (CAdGame *)_gameRef;
+	if (_viewport && !_gameRef->_editorMode) {
 		if (width)  *width  = _viewport->getWidth();
 		if (height) *height = _viewport->getHeight();
-	} else if (adGame->_sceneViewport && !Game->_editorMode) {
+	} else if (adGame->_sceneViewport && !_gameRef->_editorMode) {
 		if (width)  *width  = adGame->_sceneViewport->getWidth();
 		if (height) *height = adGame->_sceneViewport->getHeight();
 	} else {
-		if (width)  *width  = Game->_renderer->_width;
-		if (height) *height = Game->_renderer->_height;
+		if (width)  *width  = _gameRef->_renderer->_width;
+		if (height) *height = _gameRef->_renderer->_height;
 	}
 	return STATUS_OK;
 }
@@ -2479,7 +2479,7 @@ ERRORCODE CAdScene::loadState() {
 ERRORCODE CAdScene::persistState(bool saving) {
 	if (!_persistentState) return STATUS_OK;
 
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 	CAdSceneState *state = adGame->getSceneState(_filename, saving);
 	if (!state) return STATUS_OK;
 
@@ -2720,7 +2720,7 @@ ERRORCODE CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &objects, 
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdScene::getRegionObjects(CAdRegion *region, CBArray<CAdObject *, CAdObject *> &objects, bool interactiveOnly) {
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 	CAdObject *obj;
 
 	// global objects

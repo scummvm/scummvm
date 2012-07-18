@@ -52,7 +52,7 @@ CAdInventory::~CAdInventory() {
 ERRORCODE CAdInventory::insertItem(const char *name, const char *insertAfter) {
 	if (name == NULL) return STATUS_FAILED;
 
-	CAdItem *item = ((CAdGame *)Game)->getItemByName(name);
+	CAdItem *item = ((CAdGame *)_gameRef)->getItemByName(name);
 	if (item == NULL) return STATUS_FAILED;
 
 	int insertIndex = -1;
@@ -79,7 +79,7 @@ ERRORCODE CAdInventory::removeItem(const char *name) {
 
 	for (int i = 0; i < _takenItems.getSize(); i++) {
 		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
-			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
+			if (((CAdGame *)_gameRef)->_selectedItem == _takenItems[i])((CAdGame *)_gameRef)->_selectedItem = NULL;
 			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}
@@ -96,7 +96,7 @@ ERRORCODE CAdInventory::removeItem(CAdItem *item) {
 
 	for (int i = 0; i < _takenItems.getSize(); i++) {
 		if (_takenItems[i] == item) {
-			if (((CAdGame *)Game)->_selectedItem == _takenItems[i])((CAdGame *)Game)->_selectedItem = NULL;
+			if (((CAdGame *)_gameRef)->_selectedItem == _takenItems[i])((CAdGame *)_gameRef)->_selectedItem = NULL;
 			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}

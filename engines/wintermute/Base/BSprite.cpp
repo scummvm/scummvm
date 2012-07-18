@@ -123,13 +123,13 @@ ERRORCODE CBSprite::draw(int x, int y, CBObject *registerOwner, float zoomX, flo
 
 //////////////////////////////////////////////////////////////////////
 ERRORCODE CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
-	Common::SeekableReadStream *file = Game->_fileManager->openFile(filename);
+	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(filename);
 	if (!file) {
-		Game->LOG(0, "CBSprite::LoadFile failed for file '%s'", filename);
-		if (Game->_dEBUG_DebugMode) return loadFile("invalid_debug.bmp", lifeTime, cacheType);
+		_gameRef->LOG(0, "CBSprite::LoadFile failed for file '%s'", filename);
+		if (_gameRef->_dEBUG_DebugMode) return loadFile("invalid_debug.bmp", lifeTime, cacheType);
 		else return loadFile("invalid.bmp", lifeTime, cacheType);
 	} else {
-		Game->_fileManager->closeFile(file);
+		_gameRef->_fileManager->closeFile(file);
 		file = NULL;
 	}
 
@@ -137,11 +137,11 @@ ERRORCODE CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheTyp
 
 	AnsiString ext = PathUtil::getExtension(filename);
 	if (StringUtil::startsWith(filename, "savegame:", true) || StringUtil::compareNoCase(ext, "bmp") || StringUtil::compareNoCase(ext, "tga") || StringUtil::compareNoCase(ext, "png") || StringUtil::compareNoCase(ext, "jpg")) {
-		CBFrame *frame = new CBFrame(Game);
-		CBSubFrame *subframe = new CBSubFrame(Game);
+		CBFrame *frame = new CBFrame(_gameRef);
+		CBSubFrame *subframe = new CBSubFrame(_gameRef);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
 		if (subframe->_surface == NULL) {
-			Game->LOG(0, "Error loading simple sprite '%s'", filename);
+			_gameRef->LOG(0, "Error loading simple sprite '%s'", filename);
 			ret = STATUS_FAILED;
 			delete frame;
 			delete subframe;
@@ -153,9 +153,9 @@ ERRORCODE CBSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheTyp
 			ret = STATUS_OK;
 		}
 	} else {
-		byte *buffer = Game->_fileManager->readWholeFile(filename);
+		byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 		if (buffer) {
-			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) Game->LOG(0, "Error parsing SPRITE file '%s'", filename);
+			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) _gameRef->LOG(0, "Error parsing SPRITE file '%s'", filename);
 			delete [] buffer;
 		}
 	}
@@ -208,14 +208,14 @@ ERRORCODE CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprit
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	cleanup();
 
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITE) {
-			Game->LOG(0, "'SPRITE' keyword expected.");
+			_gameRef->LOG(0, "'SPRITE' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -262,7 +262,7 @@ ERRORCODE CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprit
 			break;
 
 		case TOKEN_EDITOR_BG_FILE:
-			if (Game->_editorMode) {
+			if (_gameRef->_editorMode) {
 				delete[] _editorBgFile;
 				_editorBgFile = new char[strlen((char *)params) + 1];
 				if (_editorBgFile) strcpy(_editorBgFile, (char *)params);
@@ -287,11 +287,11 @@ ERRORCODE CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprit
 			int FrameLifeTime = lifeTime;
 			if (cacheType == CACHE_HALF && frameCount % 2 != 1) FrameLifeTime = -1;
 
-			frame = new CBFrame(Game);
+			frame = new CBFrame(_gameRef);
 
 			if (DID_FAIL(frame->loadBuffer(params, FrameLifeTime, _streamedKeepLoaded))) {
 				delete frame;
-				Game->LOG(0, "Error parsing frame %d", frameCount);
+				_gameRef->LOG(0, "Error parsing frame %d", frameCount);
 				return STATUS_FAILED;
 			}
 
@@ -308,7 +308,7 @@ ERRORCODE CBSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprit
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in SPRITE definition");
+		_gameRef->LOG(0, "Syntax error in SPRITE definition");
 		return STATUS_FAILED;
 	}
 	_canBreak = !_continuous;
@@ -332,13 +332,13 @@ void CBSprite::reset() {
 
 //////////////////////////////////////////////////////////////////////
 bool CBSprite::GetCurrentFrame(float zoomX, float zoomY) {
-	//if(_owner && _owner->_freezable && Game->_state == GAME_FROZEN) return true;
+	//if(_owner && _owner->_freezable && _gameRef->_state == GAME_FROZEN) return true;
 
 	if (_currentFrame == -1) return false;
 
 	uint32 timer;
-	if (_owner && _owner->_freezable) timer = Game->_timer;
-	else timer = Game->_liveTimer;
+	if (_owner && _owner->_freezable) timer = _gameRef->_timer;
+	else timer = _gameRef->_liveTimer;
 
 	int lastFrame = _currentFrame;
 
@@ -392,11 +392,11 @@ ERRORCODE CBSprite::display(int X, int Y, CBObject *Register, float ZoomX, float
 			killAllSounds();
 		}
 		applyEvent("FrameChanged");
-		_frames[_currentFrame]->oneTimeDisplay(_owner, Game->_editorMode && _editorMuted);
+		_frames[_currentFrame]->oneTimeDisplay(_owner, _gameRef->_editorMode && _editorMuted);
 	}
 
 	// draw frame
-	return _frames[_currentFrame]->draw(X - Game->_offsetX, Y - Game->_offsetY, Register, ZoomX, ZoomY, _precise, Alpha, _editorAllFrames, Rotate, BlendMode);
+	return _frames[_currentFrame]->draw(X - _gameRef->_offsetX, Y - _gameRef->_offsetY, Register, ZoomX, ZoomY, _precise, Alpha, _editorAllFrames, Rotate, BlendMode);
 }
 
 
@@ -566,9 +566,9 @@ ERRORCODE CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		const char *filename = NULL;
 		if (!val->isNULL()) filename = val->getString();
 
-		CBFrame *frame = new CBFrame(Game);
+		CBFrame *frame = new CBFrame(_gameRef);
 		if (filename != NULL) {
-			CBSubFrame *sub = new CBSubFrame(Game);
+			CBSubFrame *sub = new CBSubFrame(_gameRef);
 			if (DID_SUCCEED(sub->setSurface(filename))) {
 				sub->setDefaultRect();
 				frame->_subframes.add(sub);
@@ -594,9 +594,9 @@ ERRORCODE CBSprite::scCallMethod(CScScript *script, CScStack *stack, CScStack *t
 		if (!val->isNULL())
 			filename = val->getString();
 
-		CBFrame *frame = new CBFrame(Game);
+		CBFrame *frame = new CBFrame(_gameRef);
 		if (filename != NULL) {
-			CBSubFrame *sub = new CBSubFrame(Game);
+			CBSubFrame *sub = new CBSubFrame(_gameRef);
 			if (DID_SUCCEED(sub->setSurface(filename))) frame->_subframes.add(sub);
 			else delete sub;
 		}

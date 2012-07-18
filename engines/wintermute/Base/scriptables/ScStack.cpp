@@ -44,7 +44,7 @@ CScStack::CScStack(CBGame *inGame): CBBase(inGame) {
 CScStack::~CScStack() {
 
 #if _DEBUG
-	//Game->LOG(0, "STAT: Stack size: %d, SP=%d", _values.getSize(), _sP);
+	//_gameRef->LOG(0, "STAT: Stack size: %d, SP=%d", _values.getSize(), _sP);
 #endif
 
 	for (int i = 0; i < _values.getSize(); i++) {
@@ -57,7 +57,7 @@ CScStack::~CScStack() {
 //////////////////////////////////////////////////////////////////////////
 CScValue *CScStack::pop() {
 	if (_sP < 0) {
-		Game->LOG(0, "Fatal: Stack underflow");
+		_gameRef->LOG(0, "Fatal: Stack underflow");
 		return NULL;
 	}
 
@@ -73,7 +73,7 @@ void CScStack::push(CScValue *val) {
 		_values[_sP]->cleanup();
 		_values[_sP]->copy(val);
 	} else {
-		CScValue *copyVal = new CScValue(Game);
+		CScValue *copyVal = new CScValue(_gameRef);
 		copyVal->copy(val);
 		_values.add(copyVal);
 	}
@@ -85,7 +85,7 @@ CScValue *CScStack::getPushValue() {
 	_sP++;
 
 	if (_sP >= _values.getSize()) {
-		CScValue *val = new CScValue(Game);
+		CScValue *val = new CScValue(_gameRef);
 		_values.add(val);
 	}
 	_values[_sP]->cleanup();
@@ -124,7 +124,7 @@ void CScStack::correctParams(uint32 expectedParams) {
 	} else if (expectedParams > nuParams) { // need more params
 		while (expectedParams > nuParams) {
 			//Push(null_val);
-			CScValue *nullVal = new CScValue(Game);
+			CScValue *nullVal = new CScValue(_gameRef);
 			nullVal->setNULL();
 			_values.insertAt(_sP - nuParams + 1, nullVal);
 			nuParams++;
@@ -142,7 +142,7 @@ void CScStack::correctParams(uint32 expectedParams) {
 //////////////////////////////////////////////////////////////////////////
 void CScStack::pushNULL() {
 	/*
-	CScValue* val = new CScValue(Game);
+	CScValue* val = new CScValue(_gameRef);
 	val->setNULL();
 	Push(val);
 	delete val;
@@ -154,7 +154,7 @@ void CScStack::pushNULL() {
 //////////////////////////////////////////////////////////////////////////
 void CScStack::pushInt(int val) {
 	/*
-	CScValue* val = new CScValue(Game);
+	CScValue* val = new CScValue(_gameRef);
 	val->setInt(Val);
 	Push(val);
 	delete val;
@@ -166,7 +166,7 @@ void CScStack::pushInt(int val) {
 //////////////////////////////////////////////////////////////////////////
 void CScStack::pushFloat(double val) {
 	/*
-	CScValue* val = new CScValue(Game);
+	CScValue* val = new CScValue(_gameRef);
 	val->setFloat(Val);
 	Push(val);
 	delete val;
@@ -178,7 +178,7 @@ void CScStack::pushFloat(double val) {
 //////////////////////////////////////////////////////////////////////////
 void CScStack::pushBool(bool val) {
 	/*
-	CScValue* val = new CScValue(Game);
+	CScValue* val = new CScValue(_gameRef);
 	val->setBool(Val);
 	Push(val);
 	delete val;
@@ -190,7 +190,7 @@ void CScStack::pushBool(bool val) {
 //////////////////////////////////////////////////////////////////////////
 void CScStack::pushString(const char *val) {
 	/*
-	CScValue* val = new CScValue(Game);
+	CScValue* val = new CScValue(_gameRef);
 	val->setString(Val);
 	Push(val);
 	delete val;
@@ -202,7 +202,7 @@ void CScStack::pushString(const char *val) {
 //////////////////////////////////////////////////////////////////////////
 void CScStack::pushNative(CBScriptable *val, bool persistent) {
 	/*
-	CScValue* val = new CScValue(Game);
+	CScValue* val = new CScValue(_gameRef);
 	val->setNative(Val, Persistent);
 	Push(val);
 	delete val;
@@ -215,7 +215,7 @@ void CScStack::pushNative(CBScriptable *val, bool persistent) {
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CScStack::persist(CBPersistMgr *persistMgr) {
 
-	persistMgr->transfer(TMEMBER(Game));
+	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_sP));
 	_values.persist(persistMgr);

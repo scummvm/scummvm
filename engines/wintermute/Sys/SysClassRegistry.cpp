@@ -167,7 +167,7 @@ bool checkHeader(const char *tag, CBPersistMgr *pm) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSysClassRegistry::saveTable(CBGame *Game, CBPersistMgr *persistMgr, bool quickSave) {
+ERRORCODE CSysClassRegistry::saveTable(CBGame *gameRef, CBPersistMgr *persistMgr, bool quickSave) {
 	persistMgr->putString("<CLASS_REGISTRY_TABLE>");
 	persistMgr->putDWORD(_classes.size());
 
@@ -178,12 +178,12 @@ ERRORCODE CSysClassRegistry::saveTable(CBGame *Game, CBPersistMgr *persistMgr, b
 		counter++;
 
 		if (!quickSave) {
-			Game->_indicatorProgress = (int)(50.0f / (float)((float)_classes.size() / (float)counter));
-			Game->displayContent(false);
-			Game->_renderer->flip();
+			gameRef->_indicatorProgress = (int)(50.0f / (float)((float)_classes.size() / (float)counter));
+			gameRef->displayContent(false);
+			gameRef->_renderer->flip();
 		}
 
-		(it->_value)->saveTable(Game, persistMgr);
+		(it->_value)->saveTable(gameRef,  persistMgr);
 	}
 	persistMgr->putString("</CLASS_REGISTRY_TABLE>");
 	return STATUS_OK;
@@ -191,7 +191,7 @@ ERRORCODE CSysClassRegistry::saveTable(CBGame *Game, CBPersistMgr *persistMgr, b
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSysClassRegistry::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
+ERRORCODE CSysClassRegistry::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
 	checkHeader("<CLASS_REGISTRY_TABLE>", persistMgr);
 
 	// reset SavedID of current instances
@@ -210,13 +210,13 @@ ERRORCODE CSysClassRegistry::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
 	uint32 numClasses = persistMgr->getDWORD();
 
 	for (uint32 i = 0; i < numClasses; i++) {
-		Game->_indicatorProgress = (int)(50.0f / (float)((float)numClasses / (float)i));
-		Game->displayContentSimple();
-		Game->_renderer->flip();
+		gameRef->_indicatorProgress = (int)(50.0f / (float)((float)numClasses / (float)i));
+		gameRef->displayContentSimple();
+		gameRef->_renderer->flip();
 
 		Common::String className = persistMgr->getStringObj();
 		NameMap::iterator mapIt = _nameMap.find(className);
-		if (mapIt != _nameMap.end())(*mapIt)._value->loadTable(Game, persistMgr);
+		if (mapIt != _nameMap.end())(*mapIt)._value->loadTable(gameRef,  persistMgr);
 	}
 
 	checkHeader("</CLASS_REGISTRY_TABLE>", persistMgr);
@@ -226,7 +226,7 @@ ERRORCODE CSysClassRegistry::loadTable(CBGame *Game, CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSysClassRegistry::saveInstances(CBGame *Game, CBPersistMgr *persistMgr, bool quickSave) {
+ERRORCODE CSysClassRegistry::saveInstances(CBGame *gameRef, CBPersistMgr *persistMgr, bool quickSave) {
 
 	Classes::iterator it;
 
@@ -244,29 +244,29 @@ ERRORCODE CSysClassRegistry::saveInstances(CBGame *Game, CBPersistMgr *persistMg
 
 		if (!quickSave) {
 			if (counter % 20 == 0) {
-				Game->_indicatorProgress = (int)(50.0f + 50.0f / (float)((float)_classes.size() / (float)counter));
-				Game->displayContent(false);
-				Game->_renderer->flip();
+				gameRef->_indicatorProgress = (int)(50.0f + 50.0f / (float)((float)_classes.size() / (float)counter));
+				gameRef->displayContent(false);
+				gameRef->_renderer->flip();
 			}
 		}
-		Game->miniUpdate();
+		gameRef->miniUpdate();
 
-		(it->_value)->saveInstances(Game, persistMgr);
+		(it->_value)->saveInstances(gameRef,  persistMgr);
 	}
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-ERRORCODE CSysClassRegistry::loadInstances(CBGame *Game, CBPersistMgr *persistMgr) {
+ERRORCODE CSysClassRegistry::loadInstances(CBGame *gameRef, CBPersistMgr *persistMgr) {
 	// get total instances
 	int numInstances = persistMgr->getDWORD();
 
 	for (int i = 0; i < numInstances; i++) {
 		if (i % 20 == 0) {
-			Game->_indicatorProgress = (int)(50.0f + 50.0f / (float)((float)numInstances / (float)i));
-			Game->displayContentSimple();
-			Game->_renderer->flip();
+			gameRef->_indicatorProgress = (int)(50.0f + 50.0f / (float)((float)numInstances / (float)i));
+			gameRef->displayContentSimple();
+			gameRef->_renderer->flip();
 		}
 
 		checkHeader("<INSTANCE_HEAD>", persistMgr);

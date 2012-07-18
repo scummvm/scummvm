@@ -73,7 +73,7 @@ CAdEntity::CAdEntity(CBGame *inGame): CAdTalkHolder(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CAdEntity::~CAdEntity() {
-	Game->unregisterObject(_region);
+	_gameRef->unregisterObject(_region);
 
 	delete _theora;
 	_theora = NULL;
@@ -85,9 +85,9 @@ CAdEntity::~CAdEntity() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdEntity::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdEntity::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -96,7 +96,7 @@ ERRORCODE CAdEntity::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ENTITY file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ENTITY file '%s'", filename);
 
 
 	delete [] buffer;
@@ -198,17 +198,17 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY) {
-			Game->LOG(0, "'ENTITY' keyword expected.");
+			_gameRef->LOG(0, "'ENTITY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	CAdGame *adGame = (CAdGame *)Game;
+	CAdGame *adGame = (CAdGame *)_gameRef;
 	CBSprite *spr = NULL;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
@@ -228,21 +228,21 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_SPRITE: {
 			delete _sprite;
 			_sprite = NULL;
-			spr = new CBSprite(Game, this);
+			spr = new CBSprite(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			else _sprite = spr;
 		}
 		break;
 
 		case TOKEN_TALK: {
-			spr = new CBSprite(Game, this);
+			spr = new CBSprite(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
-			spr = new CBSprite(Game, this);
+			spr = new CBSprite(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.add(spr);
 		}
@@ -305,7 +305,7 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(Game);
+			_cursor = new CBSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -318,13 +318,13 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_REGION: {
-			if (_region) Game->unregisterObject(_region);
+			if (_region) _gameRef->unregisterObject(_region);
 			_region = NULL;
-			CBRegion *rgn = new CBRegion(Game);
+			CBRegion *rgn = new CBRegion(_gameRef);
 			if (!rgn || DID_FAIL(rgn->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
 			else {
 				_region = rgn;
-				Game->registerObject(_region);
+				_gameRef->registerObject(_region);
 			}
 		}
 		break;
@@ -334,8 +334,8 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			_blockRegion = NULL;
 			delete _currentBlockRegion;
 			_currentBlockRegion = NULL;
-			CBRegion *rgn = new CBRegion(Game);
-			CBRegion *crgn = new CBRegion(Game);
+			CBRegion *rgn = new CBRegion(_gameRef);
+			CBRegion *crgn = new CBRegion(_gameRef);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				delete _blockRegion;
 				_blockRegion = NULL;
@@ -355,8 +355,8 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			_wptGroup = NULL;
 			delete _currentWptGroup;
 			_currentWptGroup = NULL;
-			CAdWaypointGroup *wpt = new CAdWaypointGroup(Game);
-			CAdWaypointGroup *cwpt = new CAdWaypointGroup(Game);
+			CAdWaypointGroup *wpt = new CAdWaypointGroup(_gameRef);
+			CAdWaypointGroup *cwpt = new CAdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				delete _wptGroup;
 				_wptGroup = NULL;
@@ -379,15 +379,15 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			if (scumm_stricmp((char *)params, "sound") == 0) {
 				delete _sprite;
 				_sprite = NULL;
-				if (Game->_editorMode) {
-					spr = new CBSprite(Game, this);
+				if (_gameRef->_editorMode) {
+					spr = new CBSprite(_gameRef, this);
 					if (!spr || DID_FAIL(spr->loadFile("entity_sound.sprite"))) cmd = PARSERR_GENERIC;
 					else _sprite = spr;
 				}
-				if (Game->_editorMode) _editorOnly = true;
+				if (_gameRef->_editorMode) _editorOnly = true;
 				_zoomable = false;
 				_rotatable = false;
-				_registrable = Game->_editorMode;
+				_registrable = _gameRef->_editorMode;
 				_shadowable = false;
 				_subtype = ENTITY_SOUND;
 			}
@@ -453,17 +453,17 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in ENTITY definition");
+		_gameRef->LOG(0, "Syntax error in ENTITY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading ENTITY definition");
+		_gameRef->LOG(0, "Error loading ENTITY definition");
 		if (spr) delete spr;
 		return STATUS_FAILED;
 	}
 
 	if (_region && _sprite) {
-		Game->LOG(0, "Warning: Entity '%s' has both sprite and region.", _name);
+		_gameRef->LOG(0, "Warning: Entity '%s' has both sprite and region.", _name);
 	}
 
 	updatePosition();
@@ -474,7 +474,7 @@ ERRORCODE CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 	_state = STATE_READY;
 
-	if (_item && ((CAdGame *)Game)->isItemTaken(_item)) _active = false;
+	if (_item && ((CAdGame *)_gameRef)->isItemTaken(_item)) _active = false;
 
 	return STATUS_OK;
 }
@@ -487,7 +487,7 @@ ERRORCODE CAdEntity::display() {
 
 		uint32 Alpha;
 		if (_alphaColor != 0) Alpha = _alphaColor;
-		else Alpha = _shadowable ? ((CAdGame *)Game)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
+		else Alpha = _shadowable ? ((CAdGame *)_gameRef)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
 
 		float ScaleX, ScaleY;
 		getScale(&ScaleX, &ScaleY);
@@ -495,15 +495,15 @@ ERRORCODE CAdEntity::display() {
 		float Rotate;
 		if (_rotatable) {
 			if (_rotateValid) Rotate = _rotate;
-			else Rotate = ((CAdGame *)Game)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
+			else Rotate = ((CAdGame *)_gameRef)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
 		} else Rotate = 0.0f;
 
 
 		bool Reg = _registrable;
-		if (_ignoreItems && ((CAdGame *)Game)->_selectedItem) Reg = false;
+		if (_ignoreItems && ((CAdGame *)_gameRef)->_selectedItem) Reg = false;
 
 		if (_region && (Reg || _editorAlwaysRegister)) {
-			Game->_renderer->_rectList.add(new CBActiveRect(Game, _registerAlias, _region, Game->_offsetX, Game->_offsetY));
+			_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
 		}
 
 		displaySpriteAttachments(true);
@@ -565,7 +565,7 @@ ERRORCODE CAdEntity::update() {
 		_sentence->update();
 		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
 
-		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
+		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
 		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
 			if (TimeIsUp) {
 				_sentence->finish();
@@ -577,11 +577,11 @@ ERRORCODE CAdEntity::update() {
 					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 				}
-				((CAdGame *)Game)->addSentence(_sentence);
+				((CAdGame *)_gameRef)->addSentence(_sentence);
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((CAdGame *)Game)->addSentence(_sentence);
+			((CAdGame *)_gameRef)->addSentence(_sentence);
 		}
 	}
 	break;
@@ -591,7 +591,7 @@ ERRORCODE CAdEntity::update() {
 
 
 	if (_currentSprite) {
-		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)Game)->_scene->getZoomAt(_posX, _posY) : 100);
+		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
@@ -603,7 +603,7 @@ ERRORCODE CAdEntity::update() {
 
 	if (_theora) {
 		int OffsetX, OffsetY;
-		Game->getOffset(&OffsetX, &OffsetY);
+		_gameRef->getOffset(&OffsetX, &OffsetY);
 		_theora->_posX = _posX - OffsetX;
 		_theora->_posY = _posY - OffsetY;
 
@@ -648,7 +648,7 @@ ERRORCODE CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		int startTime = stack->pop()->getInt();
 
 		delete _theora;
-		_theora = new CVidTheoraPlayer(Game);
+		_theora = new CVidTheoraPlayer(_gameRef);
 		if (_theora && DID_SUCCEED(_theora->initialize(filename))) {
 			if (!valAlpha->isNULL())    _theora->setAlphaImage(valAlpha->getString());
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
@@ -732,8 +732,8 @@ ERRORCODE CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 	else if (strcmp(name, "CreateRegion") == 0) {
 		stack->correctParams(0);
 		if (!_region) {
-			_region = new CBRegion(Game);
-			Game->registerObject(_region);
+			_region = new CBRegion(_gameRef);
+			_gameRef->registerObject(_region);
 		}
 		if (_region) stack->pushNative(_region, true);
 		else stack->pushNULL();
@@ -747,7 +747,7 @@ ERRORCODE CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 	else if (strcmp(name, "DeleteRegion") == 0) {
 		stack->correctParams(0);
 		if (_region) {
-			Game->unregisterObject(_region);
+			_gameRef->unregisterObject(_region);
 			_region = NULL;
 			stack->pushBool(true);
 		} else stack->pushBool(false);
@@ -1012,7 +1012,7 @@ ERRORCODE CAdEntity::setSprite(const char *filename) {
 
 	delete _sprite;
 	_sprite = NULL;
-	CBSprite *spr = new CBSprite(Game, this);
+	CBSprite *spr = new CBSprite(_gameRef, this);
 	if (!spr || DID_FAIL(spr->loadFile(filename))) {
 		delete _sprite;
 		_sprite = NULL;

@@ -43,7 +43,7 @@ CBScriptable *makeSXArray(CBGame *inGame, CScStack *stack) {
 //////////////////////////////////////////////////////////////////////////
 CSXArray::CSXArray(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 	_length = 0;
-	_values = new CScValue(Game);
+	_values = new CScValue(_gameRef);
 
 	int numParams = stack->pop()->getInt(0);
 
@@ -61,7 +61,7 @@ CSXArray::CSXArray(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CSXArray::CSXArray(CBGame *inGame): CBScriptable(inGame) {
 	_length = 0;
-	_values = new CScValue(Game);
+	_values = new CScValue(_gameRef);
 }
 
 

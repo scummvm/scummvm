@@ -70,17 +70,17 @@ ERRORCODE CBSaveThumbFile::open(const Common::String &filename) {
 	delete [] tempFilename;
 
 	char slotFilename[MAX_PATH_LENGTH + 1];
-	Game->getSaveSlotFilename(slot, slotFilename);
-	CBPersistMgr *pm = new CBPersistMgr(Game);
+	_gameRef->getSaveSlotFilename(slot, slotFilename);
+	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
 	if (!pm) return STATUS_FAILED;
 
-	Game->_dEBUG_AbsolutePathWarning = false;
+	_gameRef->_dEBUG_AbsolutePathWarning = false;
 	if (DID_FAIL(pm->initLoad(slotFilename))) {
-		Game->_dEBUG_AbsolutePathWarning = true;
+		_gameRef->_dEBUG_AbsolutePathWarning = true;
 		delete pm;
 		return STATUS_FAILED;
 	}
-	Game->_dEBUG_AbsolutePathWarning = true;
+	_gameRef->_dEBUG_AbsolutePathWarning = true;
 
 	ERRORCODE res;
 

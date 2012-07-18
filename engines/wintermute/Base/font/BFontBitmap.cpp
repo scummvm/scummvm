@@ -85,7 +85,7 @@ int CBFontBitmap::getTextHeight(byte *text, int width) {
 int CBFontBitmap::getTextWidth(byte *text, int maxLength) {
 	AnsiString str;
 
-	if (Game->_textEncoding == TEXT_UTF8) {
+	if (_gameRef->_textEncoding == TEXT_UTF8) {
 		WideString wstr = StringUtil::utf8ToWide(Utf8String((char *)text));
 		str = StringUtil::wideToAnsi(wstr);
 	} else {
@@ -113,7 +113,7 @@ int CBFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign
 
 	AnsiString str;
 
-	if (Game->_textEncoding == TEXT_UTF8) {
+	if (_gameRef->_textEncoding == TEXT_UTF8) {
 		WideString wstr = StringUtil::utf8ToWide(Utf8String((char *)text));
 		str = StringUtil::wideToAnsi(wstr);
 	} else {
@@ -136,11 +136,11 @@ int CBFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign
 	bool new_line = false;
 	bool long_line = false;
 
-	if (draw) Game->_renderer->startSpriteBatch();
+	if (draw) _gameRef->_renderer->startSpriteBatch();
 
 	while (!done) {
 		if (maxHeight > 0 && (NumLines + 1)*_tileHeight > maxHeight) {
-			if (draw) Game->_renderer->endSpriteBatch();
+			if (draw) _gameRef->_renderer->endSpriteBatch();
 			return NumLines * _tileHeight;
 		}
 
@@ -206,7 +206,7 @@ int CBFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign
 		}
 	}
 
-	if (draw) Game->_renderer->endSpriteBatch();
+	if (draw) _gameRef->_renderer->endSpriteBatch();
 
 	return NumLines * _tileHeight;
 }
@@ -244,9 +244,9 @@ void CBFontBitmap::drawChar(byte c, int x, int y) {
 
 //////////////////////////////////////////////////////////////////////
 ERRORCODE CBFontBitmap::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CBFontBitmap::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CBFontBitmap::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -255,7 +255,7 @@ ERRORCODE CBFontBitmap::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer))) Game->LOG(0, "Error parsing FONT file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer))) _gameRef->LOG(0, "Error parsing FONT file '%s'", filename);
 
 	delete [] buffer;
 
@@ -304,10 +304,10 @@ ERRORCODE CBFontBitmap::loadBuffer(byte *buffer) {
 
 	char *params;
 	int cmd;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_FONT) {
-		Game->LOG(0, "'FONT' keyword expected.");
+		_gameRef->LOG(0, "'FONT' keyword expected.");
 		return STATUS_FAILED;
 	}
 	buffer = (byte *)params;
@@ -395,13 +395,13 @@ ERRORCODE CBFontBitmap::loadBuffer(byte *buffer) {
 
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in FONT definition");
+		_gameRef->LOG(0, "Syntax error in FONT definition");
 		return STATUS_FAILED;
 	}
 
 	if (spriteFile != NULL) {
 		delete _sprite;
-		_sprite = new CBSprite(Game, this);
+		_sprite = new CBSprite(_gameRef, this);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(spriteFile))) {
 			delete _sprite;
 			_sprite = NULL;
@@ -409,14 +409,14 @@ ERRORCODE CBFontBitmap::loadBuffer(byte *buffer) {
 	}
 
 	if (surfaceFile != NULL && !_sprite) {
-		_subframe = new CBSubFrame(Game);
+		_subframe = new CBSubFrame(_gameRef);
 		if (custoTrans) _subframe->setSurface(surfaceFile, false, r, g, b);
 		else _subframe->setSurface(surfaceFile);
 	}
 
 
 	if (((_subframe == NULL || _subframe->_surface == NULL) && _sprite == NULL) || _numColumns == 0 || _tileWidth == 0 || _tileHeight == 0) {
-		Game->LOG(0, "Incomplete font definition");
+		_gameRef->LOG(0, "Incomplete font definition");
 		return STATUS_FAILED;
 	}
 
@@ -523,10 +523,10 @@ ERRORCODE CBFontBitmap::getWidths() {
 	}
 	surf->endPixelOp();
 	/*
-	Game->LOG(0, "----- %s ------", _filename);
+	_gameRef->LOG(0, "----- %s ------", _filename);
 	for(int j=0; j<16; j++)
 	{
-	Game->LOG(0, "%02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d", _widths[j*16+0], _widths[j*16+1], _widths[j*16+2], _widths[j*16+3], _widths[j*16+4], _widths[j*16+5], _widths[j*16+6], _widths[j*16+7], _widths[j*16+8], _widths[j*16+9], _widths[j*16+10], _widths[j*16+11], _widths[j*16+12], _widths[j*16+13], _widths[j*16+14], _widths[j*16+15]);
+	_gameRef->LOG(0, "%02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d", _widths[j*16+0], _widths[j*16+1], _widths[j*16+2], _widths[j*16+3], _widths[j*16+4], _widths[j*16+5], _widths[j*16+6], _widths[j*16+7], _widths[j*16+8], _widths[j*16+9], _widths[j*16+10], _widths[j*16+11], _widths[j*16+12], _widths[j*16+13], _widths[j*16+14], _widths[j*16+15]);
 	}
 	*/
 	return STATUS_OK;

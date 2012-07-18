@@ -82,7 +82,7 @@ CUIEdit::CUIEdit(CBGame *inGame): CUIObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 CUIEdit::~CUIEdit() {
 	if (!_sharedFonts) {
-		if (_fontSelected)   Game->_fontStorage->removeFont(_fontSelected);
+		if (_fontSelected)   _gameRef->_fontStorage->removeFont(_fontSelected);
 	}
 
 	delete[] _cursorChar;
@@ -92,9 +92,9 @@ CUIEdit::~CUIEdit() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CUIEdit::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CUIEdit::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CUIEdit::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -103,7 +103,7 @@ ERRORCODE CUIEdit::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing EDIT file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing EDIT file '%s'", filename);
 
 	delete [] buffer;
 
@@ -164,11 +164,11 @@ ERRORCODE CUIEdit::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDIT) {
-			Game->LOG(0, "'EDIT' keyword expected.");
+			_gameRef->LOG(0, "'EDIT' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -186,7 +186,7 @@ ERRORCODE CUIEdit::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			delete _back;
-			_back = new CUITiledImage(Game);
+			_back = new CUITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
@@ -196,7 +196,7 @@ ERRORCODE CUIEdit::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSprite(Game);
+			_image = new CBSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -205,20 +205,20 @@ ERRORCODE CUIEdit::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) Game->_fontStorage->removeFont(_font);
-			_font = Game->_fontStorage->addFont((char *)params);
+			if (_font) _gameRef->_fontStorage->removeFont(_font);
+			_font = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_font) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_FONT_SELECTED:
-			if (_fontSelected) Game->_fontStorage->removeFont(_fontSelected);
-			_fontSelected = Game->_fontStorage->addFont((char *)params);
+			if (_fontSelected) _gameRef->_fontStorage->removeFont(_fontSelected);
+			_fontSelected = _gameRef->_fontStorage->addFont((char *)params);
 			if (!_fontSelected) cmd = PARSERR_GENERIC;
 			break;
 
 		case TOKEN_TEXT:
 			setText((char *)params);
-			Game->_stringTable->expand(&_text);
+			_gameRef->_stringTable->expand(&_text);
 			break;
 
 		case TOKEN_X:
@@ -247,7 +247,7 @@ ERRORCODE CUIEdit::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(Game);
+			_cursor = new CBSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -285,11 +285,11 @@ ERRORCODE CUIEdit::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in EDIT definition");
+		_gameRef->LOG(0, "Syntax error in EDIT definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading EDIT definition");
+		_gameRef->LOG(0, "Error loading EDIT definition");
 		return STATUS_FAILED;
 	}
 
@@ -365,8 +365,8 @@ ERRORCODE CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	if (strcmp(name, "SetSelectedFont") == 0) {
 		stack->correctParams(1);
 
-		if (_fontSelected) Game->_fontStorage->removeFont(_fontSelected);
-		_fontSelected = Game->_fontStorage->addFont(stack->pop()->getString());
+		if (_fontSelected) _gameRef->_fontStorage->removeFont(_fontSelected);
+		_fontSelected = _gameRef->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontSelected != NULL);
 
 		return STATUS_OK;
@@ -440,7 +440,7 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
-		if (Game->_textEncoding == TEXT_UTF8) {
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::ansiToWide(_text);
 			_scValue->setString(StringUtil::wideToUtf8(wstr).c_str());
 		} else {
@@ -511,7 +511,7 @@ ERRORCODE CUIEdit::scSetProperty(const char *name, CScValue *value) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
-		if (Game->_textEncoding == TEXT_UTF8) {
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::utf8ToWide(value->getString());
 			setText(StringUtil::wideToAnsi(wstr).c_str());
 		} else {
@@ -545,8 +545,8 @@ ERRORCODE CUIEdit::display(int offsetX, int offsetY) {
 
 
 	// hack!
-	TTextEncoding OrigEncoding = Game->_textEncoding;
-	Game->_textEncoding = TEXT_ANSI;
+	TTextEncoding OrigEncoding = _gameRef->_textEncoding;
+	_gameRef->_textEncoding = TEXT_ANSI;
 
 	if (_back) _back->display(offsetX + _posX, offsetY + _posY, _width, _height);
 	if (_image) _image->draw(offsetX + _posX, offsetY + _posY, NULL);
@@ -556,7 +556,7 @@ ERRORCODE CUIEdit::display(int offsetX, int offsetY) {
 	CBFont *sfont;
 
 	if (_font) font = _font;
-	else font = Game->_systemFont;
+	else font = _gameRef->_systemFont;
 
 	if (_fontSelected) sfont = _fontSelected;
 	else sfont = font;
@@ -615,7 +615,7 @@ ERRORCODE CUIEdit::display(int offsetX, int offsetY) {
 		width = _posX + _width + offsetX - _frameWidth;
 		height = MAX(font->getLetterHeight(), sfont->getLetterHeight());
 
-		if (Game->_textRTL) xxx += AlignOffset;
+		if (_gameRef->_textRTL) xxx += AlignOffset;
 
 		TTextAlign Align = TAL_LEFT;
 
@@ -673,10 +673,10 @@ ERRORCODE CUIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	Game->_renderer->_rectList.add(new CBActiveRect(Game, this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 
-	Game->_textEncoding = OrigEncoding;
+	_gameRef->_textEncoding = OrigEncoding;
 
 	return STATUS_OK;
 }
@@ -704,7 +704,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 		case Common::KEYCODE_BACKSPACE:
 			if (_selStart == _selEnd) {
-				if (Game->_textRTL) deleteChars(_selStart, _selStart + 1);
+				if (_gameRef->_textRTL) deleteChars(_selStart, _selStart + 1);
 				else deleteChars(_selStart - 1, _selStart);
 			} else deleteChars(_selStart, _selEnd);
 			if (_selEnd >= _selStart) _selEnd -= MAX(1, _selEnd - _selStart);
@@ -728,7 +728,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 			break;
 
 		case Common::KEYCODE_HOME:
-			if (Game->_textRTL) {
+			if (_gameRef->_textRTL) {
 				_selEnd = strlen(_text);
 				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			} else {
@@ -739,7 +739,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 			break;
 
 		case Common::KEYCODE_END:
-			if (Game->_textRTL) {
+			if (_gameRef->_textRTL) {
 				_selEnd = 0;
 				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
 			} else {
@@ -751,7 +751,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 		case Common::KEYCODE_DELETE:
 			if (_selStart == _selEnd) {
-				if (Game->_textRTL) {
+				if (_gameRef->_textRTL) {
 					deleteChars(_selStart - 1, _selStart);
 					_selEnd--;
 					if (_selEnd < 0) _selEnd = 0;
@@ -774,7 +774,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 		wstr += (char)event->kbd.ascii;
 		_selEnd += insertChars(_selEnd, (byte *)StringUtil::wideToAnsi(wstr).c_str(), 1);
 
-		if (Game->_textRTL) _selEnd = _selStart;
+		if (_gameRef->_textRTL) _selEnd = _selStart;
 		else _selStart = _selEnd;
 
 		return true;

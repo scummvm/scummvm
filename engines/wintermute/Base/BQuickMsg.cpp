@@ -36,7 +36,7 @@ namespace WinterMute {
 CBQuickMsg::CBQuickMsg(CBGame *inGame, const char *text): CBBase(inGame) {
 	_text = new char [strlen(text) + 1];
 	if (_text) strcpy(_text, text);
-	_startTime = Game->_currentTime;
+	_startTime = _gameRef->_currentTime;
 }
 
 

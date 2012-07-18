@@ -76,7 +76,7 @@ ERRORCODE CBDynBuffer::init(uint32 initSize) {
 
 	_buffer = (byte *)malloc(initSize);
 	if (!_buffer) {
-		Game->LOG(0, "CBDynBuffer::Init - Error allocating %d bytes", initSize);
+		_gameRef->LOG(0, "CBDynBuffer::Init - Error allocating %d bytes", initSize);
 		return STATUS_FAILED;
 	}
 
@@ -95,7 +95,7 @@ ERRORCODE CBDynBuffer::putBytes(byte *buffer, uint32 size) {
 		_realSize += _growBy;
 		_buffer = (byte *)realloc(_buffer, _realSize);
 		if (!_buffer) {
-			Game->LOG(0, "CBDynBuffer::PutBytes - Error reallocating buffer to %d bytes", _realSize);
+			_gameRef->LOG(0, "CBDynBuffer::PutBytes - Error reallocating buffer to %d bytes", _realSize);
 			return STATUS_FAILED;
 		}
 	}
@@ -113,7 +113,7 @@ ERRORCODE CBDynBuffer::getBytes(byte *buffer, uint32 size) {
 	if (!_initialized) init();
 
 	if (_offset + size > _size) {
-		Game->LOG(0, "CBDynBuffer::GetBytes - Buffer underflow");
+		_gameRef->LOG(0, "CBDynBuffer::GetBytes - Buffer underflow");
 		return STATUS_FAILED;
 	}
 

@@ -74,7 +74,7 @@ ERRORCODE CBSoundMgr::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 void CBSoundMgr::saveSettings() {
 	if (_soundAvailable) {
-		Game->_registry->writeInt("Audio", "MasterVolume", _volumeMaster);
+		_gameRef->_registry->writeInt("Audio", "MasterVolume", _volumeMaster);
 	}
 }
 
@@ -85,7 +85,7 @@ ERRORCODE CBSoundMgr::initialize() {
 	if (!g_system->getMixer()->isReady()) {
 		return STATUS_FAILED;
 	}
-	_volumeMaster = Game->_registry->readInt("Audio", "MasterVolume", 255);
+	_volumeMaster = _gameRef->_registry->readInt("Audio", "MasterVolume", 255);
 	_soundAvailable = true;
 
 	return STATUS_OK;
@@ -118,12 +118,12 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, Audio::Mixer::SoundTyp
 		AnsiString name = PathUtil::getFileNameWithoutExtension(filename);
 
 		AnsiString newFile = PathUtil::combine(path, name + "ogg");
-		if (Game->_fileManager->hasFile(newFile)) {
+		if (_gameRef->_fileManager->hasFile(newFile)) {
 			filename = newFile.c_str();
 		}
 	}
 
-	sound = new CBSoundBuffer(Game);
+	sound = new CBSoundBuffer(_gameRef);
 	if (!sound) return NULL;
 
 	sound->setStreaming(streamed);
@@ -132,7 +132,7 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, Audio::Mixer::SoundTyp
 
 	ERRORCODE res = sound->loadFromFile(filename);
 	if (DID_FAIL(res)) {
-		Game->LOG(res, "Error loading sound '%s'", filename);
+		_gameRef->LOG(res, "Error loading sound '%s'", filename);
 		delete sound;
 		return NULL;
 	}
@@ -281,7 +281,7 @@ ERRORCODE CBSoundMgr::resumeAll() {
 
 //////////////////////////////////////////////////////////////////////////
 float CBSoundMgr::posToPan(int x, int y) {
-	float relPos = (float)x / ((float)Game->_renderer->_width);
+	float relPos = (float)x / ((float)_gameRef->_renderer->_width);
 
 	float minPan = -0.7f;
 	float maxPan = 0.7f;

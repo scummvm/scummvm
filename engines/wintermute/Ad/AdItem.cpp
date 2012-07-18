@@ -85,9 +85,9 @@ CAdItem::~CAdItem() {
 
 //////////////////////////////////////////////////////////////////////////
 ERRORCODE CAdItem::loadFile(const char *filename) {
-	byte *buffer = Game->_fileManager->readWholeFile(filename);
+	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		Game->LOG(0, "CAdItem::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "CAdItem::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -96,7 +96,7 @@ ERRORCODE CAdItem::loadFile(const char *filename) {
 	_filename = new char [strlen(filename) + 1];
 	strcpy(_filename, filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) Game->LOG(0, "Error parsing ITEM file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ITEM file '%s'", filename);
 
 
 	delete [] buffer;
@@ -166,11 +166,11 @@ ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(Game);
+	CBParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ITEM) {
-			Game->LOG(0, "'ITEM' keyword expected.");
+			_gameRef->LOG(0, "'ITEM' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -198,8 +198,8 @@ ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE:
 		case TOKEN_SPRITE:
 			delete _sprite;
-			_sprite = new CBSprite(Game, this);
-			if (!_sprite || DID_FAIL(_sprite->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			_sprite = new CBSprite(_gameRef, this);
+			if (!_sprite || DID_FAIL(_sprite->loadFile((char *)params, ((CAdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _sprite;
 				cmd = PARSERR_GENERIC;
 			}
@@ -208,8 +208,8 @@ ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE_HOVER:
 		case TOKEN_SPRITE_HOVER:
 			delete _spriteHover;
-			_spriteHover = new CBSprite(Game, this);
-			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			_spriteHover = new CBSprite(_gameRef, this);
+			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile((char *)params, ((CAdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _spriteHover;
 				cmd = PARSERR_GENERIC;
 			}
@@ -242,23 +242,23 @@ ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_TALK: {
-			CBSprite *spr = new CBSprite(Game, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			CBSprite *spr = new CBSprite(_gameRef, this);
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)_gameRef)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
-			CBSprite *spr = new CBSprite(Game, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)Game)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			CBSprite *spr = new CBSprite(_gameRef, this);
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)_gameRef)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.add(spr);
 		}
 		break;
 
 		case TOKEN_CURSOR:
 			delete _cursorNormal;
-			_cursorNormal = new CBSprite(Game);
-			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			_cursorNormal = new CBSprite(_gameRef);
+			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile((char *)params, ((CAdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _cursorNormal;
 				_cursorNormal = NULL;
 				cmd = PARSERR_GENERIC;
@@ -267,8 +267,8 @@ ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR_HOVER:
 			delete _cursorHover;
-			_cursorHover = new CBSprite(Game);
-			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile((char *)params, ((CAdGame *)Game)->_texItemLifeTime))) {
+			_cursorHover = new CBSprite(_gameRef);
+			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile((char *)params, ((CAdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _cursorHover;
 				_cursorHover = NULL;
 				cmd = PARSERR_GENERIC;
@@ -301,11 +301,11 @@ ERRORCODE CAdItem::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		Game->LOG(0, "Syntax error in ITEM definition");
+		_gameRef->LOG(0, "Syntax error in ITEM definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		Game->LOG(0, "Error loading ITEM definition");
+		_gameRef->LOG(0, "Error loading ITEM definition");
 		return STATUS_FAILED;
 	}
 
@@ -347,7 +347,7 @@ ERRORCODE CAdItem::update() {
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_READY:
 		if (!_animSprite) {
-			if (Game->_activeObject == this && _spriteHover) _currentSprite = _spriteHover;
+			if (_gameRef->_activeObject == this && _spriteHover) _currentSprite = _spriteHover;
 			else _currentSprite = _sprite;
 		}
 		break;
@@ -357,7 +357,7 @@ ERRORCODE CAdItem::update() {
 		_sentence->update();
 		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
 
-		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= Game->_timer - _sentence->_startTime);
+		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
 		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
 			if (TimeIsUp) {
 				_sentence->finish();
@@ -369,11 +369,11 @@ ERRORCODE CAdItem::update() {
 					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 				}
-				((CAdGame *)Game)->addSentence(_sentence);
+				((CAdGame *)_gameRef)->addSentence(_sentence);
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((CAdGame *)Game)->addSentence(_sentence);
+			((CAdGame *)_gameRef)->addSentence(_sentence);
 		}
 	}
 	default:
@@ -412,7 +412,7 @@ ERRORCODE CAdItem::display(int x, int y) {
 		}
 		amountX += _amountOffsetX;
 
-		CBFont *font = _font ? _font : Game->_systemFont;
+		CBFont *font = _font ? _font : _gameRef->_systemFont;
 		if (font) {
 			if (_amountString) font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
 			else {
@@ -444,7 +444,7 @@ ERRORCODE CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _spriteHover;
 		_spriteHover = NULL;
-		CBSprite *spr = new CBSprite(Game, this);
+		CBSprite *spr = new CBSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetHoverSprite failed for file '%s'", filename);
@@ -487,7 +487,7 @@ ERRORCODE CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _cursorNormal;
 		_cursorNormal = NULL;
-		CBSprite *spr = new CBSprite(Game);
+		CBSprite *spr = new CBSprite(_gameRef);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetNormalCursor failed for file '%s'", filename);
@@ -530,7 +530,7 @@ ERRORCODE CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 		delete _cursorHover;
 		_cursorHover = NULL;
-		CBSprite *spr = new CBSprite(Game);
+		CBSprite *spr = new CBSprite(_gameRef);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetHoverCursor failed for file '%s'", filename);
