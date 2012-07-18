@@ -71,21 +71,21 @@ CBImage::~CBImage() {
 
 ERRORCODE CBImage::loadFile(const Common::String &filename) {
 	_filename = filename;
-
+	_filename.toLowercase();
 	if (StringUtil::startsWith(filename, "savegame:", true)) {
 		_decoder = new Graphics::BitmapDecoder();
-	} else if (filename.hasSuffix(".png")) {
+	} else if (_filename.hasSuffix(".png")) {
 		_decoder = new Graphics::PNGDecoder();
-	} else if (filename.hasSuffix(".bmp")) {
+	} else if (_filename.hasSuffix(".bmp")) {
 		_decoder = new Graphics::BitmapDecoder();
-	} else if (filename.hasSuffix(".tga")) {
+	} else if (_filename.hasSuffix(".tga")) {
 		_decoder = new WinterMute::TGA();
-	} else if (filename.hasSuffix(".jpg")) {
+	} else if (_filename.hasSuffix(".jpg")) {
 		_decoder = new Graphics::JPEGDecoder();
 	} else {
 		error("CBImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
-
+	_filename = filename;
 	Common::SeekableReadStream *file = Game->_fileManager->openFile(filename.c_str());
 	if (!file) return STATUS_FAILED;
 
