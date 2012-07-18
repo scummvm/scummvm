@@ -39,6 +39,7 @@
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/wintermute.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
 #include <limits.h>
@@ -195,7 +196,7 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 
 	// not found, create one
 	if (!surface) {
-		warning("Draw text: %s", text);
+		debugC(kWinterMuteDebugFont, "Draw text: %s", text);
 		surface = renderTextToTexture(textStr, width, align, maxHeight, textOffset);
 		if (surface) {
 			// write surface to cache
@@ -257,7 +258,8 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 		hasWarned = true;
 		warning("CBFontTT::RenderTextToTexture - Not fully ported yet");
 	}
-	warning("%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
+
+	debugC(kWinterMuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
 	if (_deletableFont) // We actually have a TTF

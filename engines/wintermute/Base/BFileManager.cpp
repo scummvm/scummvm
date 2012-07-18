@@ -322,7 +322,7 @@ bool CBFileManager::registerPackages() {
 	restoreCurrentDir();
 
 	_gameRef->LOG(0, "Scanning packages...");
-	warning("Scanning packages");
+	debugC(kWinterMuteDebugFileAccess, "Scanning packages");
 
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.dcp");
@@ -358,10 +358,9 @@ bool CBFileManager::registerPackages() {
 		}
 	}
 #endif
-	warning("  Registered %d files in %d package(s)", _files.size(), _packages.getSize());
+	debugC(kWinterMuteDebugFileAccess, "  Registered %d files in %d package(s)", _files.size(), _packages.getSize());
 	_gameRef->LOG(0, "  Registered %d files in %d package(s)", _files.size(), _packages.getSize());
 
-	warning("  Registered %d files in %d package(s)", _files.size(), _packages.getSize());
 	return STATUS_OK;
 }
 

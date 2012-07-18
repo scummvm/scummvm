@@ -58,7 +58,8 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 	// Here is the right place to set up the engine specific debug channels
 	DebugMan.addDebugChannel(kWinterMuteDebugLog, "enginelog", "Covers the same output as the log-file in WME");
 	DebugMan.addDebugChannel(kWinterMuteDebugSaveGame, "savegame", "Savegames");
-
+	DebugMan.addDebugChannel(kWinterMuteDebugFont, "font", "Text-drawing-related messages");
+	DebugMan.addDebugChannel(kWinterMuteDebugFileAccess, "file-access", "Non-critical problems like missing files");
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("WinterMute");
 

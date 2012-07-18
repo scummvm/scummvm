@@ -3818,7 +3818,7 @@ bool CBGame::getSaveSlotFilename(int slot, char *buffer) {
 	Common::String filename = pm->getFilenameForSlot(slot);
 	delete pm;
 	strcpy(buffer, filename.c_str());
-	warning("Saving %s - we really should prefix these things to avoid collisions.", buffer);
+	debugC(kWinterMuteDebugSaveGame, "getSaveSlotFileName(%d) = %s", slot, buffer);
 	return STATUS_OK;
 }
 

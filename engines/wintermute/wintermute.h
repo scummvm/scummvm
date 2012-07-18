@@ -36,9 +36,9 @@ class CSysClassRegistry;
 // our engine debug channels
 enum {
     kWinterMuteDebugLog = 1 << 0, // The debug-logs from the original engine
-    kWinterMuteDebugSaveGame = 1 << 1
-                               // next new channel must be 1 << 2 (4)
-                               // the current limitation is 32 debug channels (1 << 31 is the last one)
+    kWinterMuteDebugSaveGame = 1 << 1,
+    kWinterMuteDebugFont = 1 << 2, // next new channel must be 1 << 2 (4)
+	kWinterMuteDebugFileAccess = 1 << 3	 // the current limitation is 32 debug channels (1 << 31 is the last one)
 };
 
 class WinterMuteEngine : public Engine {
