@@ -106,7 +106,7 @@ CBRenderSDL::CBRenderSDL(CBGame *inGame) : CBRenderer(inGame) {
 	setAlphaMod(255);
 	setColorMod(255, 255, 255);
 	_dirtyRect = NULL;
-	_disableDirtyRects = false;
+	_disableDirtyRects = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
