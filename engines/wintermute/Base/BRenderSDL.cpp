@@ -452,6 +452,7 @@ void CBRenderSDL::addDirtyRect(const Common::Rect &rect) {
 void CBRenderSDL::drawTickets() {
 	RenderQueueIterator it = _renderQueue.begin();
 	// Clean out the old tickets
+	int decrement = 0;
 	while (it != _renderQueue.end()) {
 		if ((*it)->_wantsDraw == false || (*it)->_isValid == false) {
 			RenderTicket* ticket = *it;
@@ -459,7 +460,9 @@ void CBRenderSDL::drawTickets() {
 			//warning("Discarding Rect: %d %d %d %d Width: %d Height: %d", (*it)->_dstRect.left, (*it)->_dstRect.top, (*it)->_dstRect.right, (*it)->_dstRect.bottom, (*it)->_dstRect.width() , (*it)->_dstRect.height());
 			it = _renderQueue.erase(it);
 			delete ticket;
+			decrement++;
 		} else {
+			(*it)->_drawNum -= decrement;
 			it++;
 		}
 	}
