@@ -63,7 +63,7 @@ public:
 	};
 
 	virtual bool windowedBlt();
-	virtual bool fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
+	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL);
 	virtual void onWindowChange();
 	virtual bool initRenderer(int width, int height, bool windowed);
 	virtual bool flip();

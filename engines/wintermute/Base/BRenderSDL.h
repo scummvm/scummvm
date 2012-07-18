@@ -65,7 +65,7 @@ public:
 
 	bool initRenderer(int width, int height, bool windowed);
 	bool flip();
-	bool fill(byte  r, byte g, byte b, Common::Rect *rect = NULL);
+	bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL);
 
 	bool fade(uint16 alpha);
 	bool fadeToColor(uint32 color, Common::Rect *rect = NULL);

@@ -137,7 +137,7 @@ void CBRenderer::onWindowChange() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBRenderer::fill(byte  r, byte g, byte b, Common::Rect *rect) {
+bool CBRenderer::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	return STATUS_FAILED;
 }
 
