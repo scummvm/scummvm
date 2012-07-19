@@ -120,7 +120,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "17eabb456cb1546c66baf1aff387ba6a", 10032614),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			0,
+			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,
