@@ -37,7 +37,6 @@ MODULE_OBJS := \
 	Base/scriptables/SXMath.o \
 	Base/scriptables/SxObject.o \
 	Base/scriptables/SXMemBuffer.o \
-	Base/scriptables/SXStore.o \
 	Base/scriptables/SXString.o \
 	Base/file/BDiskFile.o \
 	Base/file/BFile.o \
