@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BGame.h"
-#include "engines/wintermute/Base/BRenderSDL.h"
+#include "engines/wintermute/Base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/Base/BRegistry.h"
@@ -88,7 +88,7 @@ void CBPlatform::handleEvent(Common::Event *event) {
 		break;
 		/*#ifdef __IPHONEOS__
 		        {
-		            CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
+		            CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
 		            POINT p;
 		            GetCursorPos(&p);
 		            _gameRef->SetActiveObject(renderer->GetObjectAt(p.x, p.y));
@@ -182,7 +182,7 @@ uint32 CBPlatform::getTime() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBPlatform::getCursorPos(Point32 *lpPoint) {
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
+	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
 
 	Common::Point p = g_system->getEventManager()->getMousePos();
 	lpPoint->x = p.x;
@@ -195,7 +195,7 @@ bool CBPlatform::getCursorPos(Point32 *lpPoint) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBPlatform::setCursorPos(int X, int Y) {
-	CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_gameRef->_renderer);
+	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
 
 	Point32 p;
 	p.x = X;

@@ -30,16 +30,16 @@
 #define WINTERMUTE_BSURFACESDL_H
 
 #include "graphics/surface.h"
-#include "engines/wintermute/Base/BSurface.h"
+#include "engines/wintermute/Base/gfx/base_surface.h"
 #include "common/list.h"
 
 namespace WinterMute {
 struct TransparentSurface;
 class CBImage;
-class CBSurfaceSDL : public CBSurface {
+class CBSurfaceOSystem : public CBSurface {
 public:
-	CBSurfaceSDL(CBGame *inGame);
-	~CBSurfaceSDL();
+	CBSurfaceOSystem(CBGame *inGame);
+	~CBSurfaceOSystem();
 
 	bool create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false);
 	bool create(int width, int height);

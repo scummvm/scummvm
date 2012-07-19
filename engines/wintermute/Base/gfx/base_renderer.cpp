@@ -28,8 +28,8 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BActiveRect.h"
-#include "engines/wintermute/Base/BRenderer.h"
-#include "engines/wintermute/Base/BSurface.h"
+#include "engines/wintermute/Base/gfx/base_renderer.h"
+#include "engines/wintermute/Base/gfx/base_surface.h"
 #include "engines/wintermute/Base/BSubFrame.h"
 #include "engines/wintermute/Base/BRegion.h"
 #include "engines/wintermute/PlatformSDL.h"

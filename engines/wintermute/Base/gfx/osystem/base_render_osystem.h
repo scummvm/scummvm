@@ -29,16 +29,16 @@
 #ifndef WINTERMUTE_BRENDERER_SDL_H
 #define WINTERMUTE_BRENDERER_SDL_H
 
-#include "engines/wintermute/Base/BRenderer.h"
+#include "engines/wintermute/Base/gfx/base_renderer.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 #include "common/list.h"
 
 namespace WinterMute {
-class CBSurfaceSDL;
+class CBSurfaceOSystem;
 class RenderTicket {
 public:
-	RenderTicket(CBSurfaceSDL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
+	RenderTicket(CBSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
 	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0) {}
 	~RenderTicket();
 	Graphics::Surface *_surface;
@@ -52,14 +52,14 @@ public:
 	uint32 _drawNum;
 	uint32 _colorMod;
 
-	CBSurfaceSDL *_owner;
+	CBSurfaceOSystem *_owner;
 	bool operator==(RenderTicket &a);
 };
 
-class CBRenderSDL : public CBRenderer {
+class CBRenderOSystem : public CBRenderer {
 public:
-	CBRenderSDL(CBGame *inGame);
-	~CBRenderSDL();
+	CBRenderOSystem(CBGame *inGame);
+	~CBRenderOSystem();
 
 	const char *getName();
 
@@ -79,7 +79,7 @@ public:
 	void setAlphaMod(byte alpha);
 	void setColorMod(byte r, byte g, byte b);
 	void invalidateTicket(RenderTicket *renderTicket);
-	void invalidateTicketsFromSurface(CBSurfaceSDL *surf);
+	void invalidateTicketsFromSurface(CBSurfaceOSystem *surf);
 	void drawFromTicket(RenderTicket *renderTicket);
 
 	bool setViewport(int left, int top, int right, int bottom);
@@ -97,7 +97,7 @@ public:
 		return _ratioY;
 	}
 
-	void drawSurface(CBSurfaceSDL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY);
+	void drawSurface(CBSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY);
 	CBSurface *createSurface();
 private:
 	void addDirtyRect(const Common::Rect &rect);

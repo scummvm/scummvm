@@ -46,6 +46,11 @@ MODULE_OBJS := \
 	Base/font/BFontTT.o \
 	Base/font/BFont.o \
 	Base/font/BFontStorage.o \
+	Base/gfx/base_image.o \
+	Base/gfx/base_renderer.o \
+	Base/gfx/base_surface.o \
+	Base/gfx/osystem/base_surface_osystem.o \
+	Base/gfx/osystem/base_render_osystem.o \
 	Base/particles/PartParticle.o \
 	Base/particles/PartEmitter.o \
 	Base/particles/PartForce.o \
@@ -58,7 +63,6 @@ MODULE_OBJS := \
 	Base/BFileManager.o \
 	Base/BGame.o \
 	Base/BFrame.o \
-	Base/BImage.o \
 	Base/BKeyboardState.o \
 	Base/BNamedObject.o \
 	Base/BObject.o \
@@ -69,8 +73,6 @@ MODULE_OBJS := \
 	Base/BQuickMsg.o \
 	Base/BRegion.o \
 	Base/BRegistry.o \
-	Base/BRenderer.o \
-	Base/BRenderSDL.o \
 	Base/BResources.o \
 	Base/BSaveThumbHelper.o \
 	Base/BScriptable.o \
@@ -81,8 +83,6 @@ MODULE_OBJS := \
 	Base/BSprite.o \
 	Base/BStringTable.o \
 	Base/BSubFrame.o \
-	Base/BSurface.o \
-	Base/BSurfaceSDL.o \
 	Base/BSurfaceStorage.o \
 	Base/BTransitionMgr.o \
 	Base/BViewport.o \

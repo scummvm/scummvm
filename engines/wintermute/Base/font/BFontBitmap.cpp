@@ -31,7 +31,7 @@
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BFrame.h"
-#include "engines/wintermute/Base/BSurface.h"
+#include "engines/wintermute/Base/gfx/base_surface.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BSubFrame.h"
 #include "engines/wintermute/Base/BFrame.h"

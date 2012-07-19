@@ -31,14 +31,14 @@
 
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/Base/file/BFile.h"
-#include "engines/wintermute/Base/BSurface.h"
-#include "engines/wintermute/Base/BImage.h"
 #include "engines/wintermute/persistent.h"
 #include "video/video_decoder.h"
 #include "common/stream.h"
+#include "graphics/surface.h"
 
 namespace WinterMute {
-
+class CBSurface;
+class CBImage;
 class CVidTheoraPlayer : public CBBase {
 private:
 	enum {

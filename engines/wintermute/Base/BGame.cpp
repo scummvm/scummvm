@@ -32,17 +32,18 @@
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/Base/font/BFont.h"
 #include "engines/wintermute/Base/font/BFontStorage.h"
-#include "engines/wintermute/Base/BImage.h"
+#include "engines/wintermute/Base/gfx/base_image.h"
+#include "engines/wintermute/Base/gfx/base_surface.h"
+#include "engines/wintermute/Base/gfx/base_renderer.h"
 #include "engines/wintermute/Base/BKeyboardState.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BQuickMsg.h"
 #include "engines/wintermute/Base/BRegistry.h"
-#include "engines/wintermute/Base/BRenderer.h"
 #include "engines/wintermute/Base/BSound.h"
 #include "engines/wintermute/Base/BSoundMgr.h"
 #include "engines/wintermute/Base/BSprite.h"
 #include "engines/wintermute/Base/BSubFrame.h"
-#include "engines/wintermute/Base/BSurface.h"
+
 #include "engines/wintermute/Base/BTransitionMgr.h"
 #include "engines/wintermute/Base/BViewport.h"
 #include "engines/wintermute/Base/BStringTable.h"
@@ -484,7 +485,7 @@ bool CBGame::initialize1() {
 
 //////////////////////////////////////////////////////////////////////
 bool CBGame::initialize2() { // we know whether we are going to be accelerated
-	_renderer = makeSDLRenderer(this);
+	_renderer = makeOSystemRenderer(this);
 	if (_renderer == NULL) return STATUS_FAILED;
 
 	return STATUS_OK;
@@ -3801,7 +3802,7 @@ void CBGame::setWindowTitle() {
 			            title = StringUtil::WideToUtf8(wstr);*/
 		}
 #if 0
-		CBRenderSDL *renderer = static_cast<CBRenderSDL *>(_renderer);
+		CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_renderer);
 		// TODO
 
 		SDL_SetWindowTitle(renderer->GetSdlWindow(), title.c_str());

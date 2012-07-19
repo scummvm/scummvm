@@ -32,7 +32,8 @@
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
-#include "engines/wintermute/Base/BSurfaceSDL.h"
+#include "engines/wintermute/Base/gfx/osystem/base_surface_osystem.h"
+#include "engines/wintermute/Base/gfx/base_image.h"
 #include "engines/wintermute/Base/BSoundMgr.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/PlatformSDL.h"
@@ -155,7 +156,7 @@ bool CVidTheoraPlayer::initialize(const Common::String &filename, const Common::
 
 	// Additional setup.
 	_surface.create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight(), _theoraDecoder->getPixelFormat());
-	_texture = new CBSurfaceSDL(_gameRef);
+	_texture = new CBSurfaceOSystem(_gameRef);
 	_texture->create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight());
 	_state = THEORA_STATE_PLAYING;
 	_playZoom = 100;

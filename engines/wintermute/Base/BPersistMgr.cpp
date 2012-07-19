@@ -34,7 +34,7 @@
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/math/Vector2.h"
 #include "engines/wintermute/utils/StringUtil.h"
-#include "engines/wintermute/Base/BImage.h"
+#include "engines/wintermute/Base/gfx/base_image.h"
 #include "engines/wintermute/Base/BSound.h"
 #include "graphics/decoders/bmp.h"
 #include "common/memstream.h"

@@ -121,7 +121,7 @@ public:
 	CBArray<CBActiveRect *, CBActiveRect *> _rectList;
 };
 
-CBRenderer *makeSDLRenderer(CBGame *inGame); // Implemented in BRenderSDL.cpp
+CBRenderer *makeOSystemRenderer(CBGame *inGame); // Implemented in BRenderSDL.cpp
 
 } // end of namespace WinterMute
 

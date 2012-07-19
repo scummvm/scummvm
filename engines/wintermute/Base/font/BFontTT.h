@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/Base/font/BFontStorage.h"
 #include "engines/wintermute/Base/font/BFont.h"
-#include "engines/wintermute/Base/BSurface.h"
+#include "engines/wintermute/Base/gfx/base_surface.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 #include "graphics/font.h"

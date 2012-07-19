@@ -32,8 +32,8 @@
 #include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/math/MathUtil.h"
-#include "engines/wintermute/Base/BRenderer.h"
-#include "engines/wintermute/Base/BSurface.h"
+#include "engines/wintermute/Base/gfx/base_renderer.h"
+#include "engines/wintermute/Base/gfx/base_surface.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
@@ -363,7 +363,7 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 		posY += GetLineHeight();
 	}
 
-	CBSurfaceSDL *wmeSurface = new CBSurfaceSDL(_gameRef);
+	CBSurfaceOSystem *wmeSurface = new CBSurfaceOSystem(_gameRef);
 	if (DID_SUCCEED(wmeSurface->CreateFromSDLSurface(surface))) {
 		SDL_FreeSurface(surface);
 		return wmeSurface;

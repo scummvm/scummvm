@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/UI/UITiledImage.h"
-#include "engines/wintermute/Base/BSurface.h"
+#include "engines/wintermute/Base/gfx/base_surface.h"
 #include "engines/wintermute/Base/BDynBuffer.h"
 #include "engines/wintermute/Base/BParser.h"
 #include "engines/wintermute/Base/BGame.h"

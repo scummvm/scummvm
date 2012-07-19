@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/BImage.h"
+#include "engines/wintermute/Base/gfx/base_image.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/graphics/transparentSurface.h"

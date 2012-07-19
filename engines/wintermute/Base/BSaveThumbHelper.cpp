@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BSaveThumbHelper.h"
-#include "engines/wintermute/Base/BImage.h"
+#include "engines/wintermute/Base/gfx/base_image.h"
 #include "engines/wintermute/Base/BGame.h"
 
 namespace WinterMute {

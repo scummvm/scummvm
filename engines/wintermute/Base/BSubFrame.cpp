@@ -31,7 +31,7 @@
 #include "engines/wintermute/Base/BSubFrame.h"
 #include "engines/wintermute/Base/BActiveRect.h"
 #include "engines/wintermute/Base/BDynBuffer.h"
-#include "engines/wintermute/Base/BSurface.h"
+#include "engines/wintermute/Base/gfx/base_surface.h"
 #include "engines/wintermute/Base/BSurfaceStorage.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/PlatformSDL.h"

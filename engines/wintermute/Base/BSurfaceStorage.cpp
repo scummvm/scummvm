@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/Base/BSurfaceStorage.h"
-#include "engines/wintermute/Base/BSurfaceSDL.h"
+#include "engines/wintermute/Base/gfx/base_surface.h"
 #include "engines/wintermute/Base/BGame.h"
 #include "engines/wintermute/Base/BFileManager.h"
 #include "engines/wintermute/PlatformSDL.h"
@@ -114,7 +114,7 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, by
 	}
 
 	CBSurface *surface;
-	surface = new CBSurfaceSDL(_gameRef);
+	surface = _gameRef->_renderer->createSurface();
 
 	if (!surface) return NULL;
 
