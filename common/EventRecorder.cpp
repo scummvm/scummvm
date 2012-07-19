@@ -121,6 +121,7 @@ void EventRecorder::processMillis(uint32 &millis) {
 		millisDelay = millis - _lastMillis;
 		_lastMillis = millis;
 		_fakeTimer += millisDelay;
+		controlPanel->setReplayedTime(_fakeTimer);
 		timerEvent.type = EVENT_TIMER;
 		timerEvent.time = _fakeTimer;
 		_playbackFile.writeEvent(timerEvent);
@@ -249,13 +250,11 @@ Common::String EventRecorder::generateRecordFileName(const String &target) {
 
 void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_fakeTimer = 0;
-	_lastMillis = 0;
+	_lastMillis = g_system->getMillis();
 	_lastScreenshotTime = g_system->getMillis();
 	_screenshotsFile = NULL;
 	_recordMode = mode;
-	controlPanel = new GUI::Dialog(10,10,200,30);
-	GUI::ButtonWidget *btn = new GUI::ButtonWidget(controlPanel, "", "|>");
-	btn->resize(0,0,30,30);
+	controlPanel = new GUI::OnScreenDialog(10,10,200,30);
 	controlPanel->open();
 
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
@@ -267,6 +266,9 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	if (!openRecordFile(recordFileName)) {
 		deinit();
 		return;
+	}
+	if (_recordMode != kPassthrough) {
+		g_gui.theme()->enable();
 	}
 	if (_recordMode == kRecorderPlayback) {
 		applyPlaybackSettings();
@@ -537,10 +539,11 @@ SaveFileManager *EventRecorder::getSaveManager(SaveFileManager *realSaveManager)
 void EventRecorder::preDrawOverlayGui() {
     if (_recordMode != kPassthrough) {
 		g_system->showOverlay();
-        g_gui.theme()->openDialog(true, GUI::ThemeEngine::kShadingNone);
-        controlPanel->drawDialog();
-        g_gui.theme()->finishBuffering();
-        g_gui.theme()->updateScreen();
+		g_gui.theme()->clearAll();
+		g_gui.theme()->openDialog(true, GUI::ThemeEngine::kShadingNone);
+		controlPanel->drawDialog();
+		g_gui.theme()->finishBuffering();
+		g_gui.theme()->updateScreen();
    }
 }
 
