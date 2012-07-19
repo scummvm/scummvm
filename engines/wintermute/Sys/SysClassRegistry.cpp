@@ -38,6 +38,7 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////////
 CSysClassRegistry::CSysClassRegistry() {
 	_count = 0;
+	_disabled = false;
 }
 
 

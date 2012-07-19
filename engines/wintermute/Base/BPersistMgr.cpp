@@ -404,9 +404,9 @@ Common::String CBPersistMgr::getStringObj() {
 	char *ret = new char[len + 1];
 	_loadStream->read(ret, len);
 	ret[len] = '\0';
-	delete[] ret;
 
 	Common::String retString = ret; 
+	delete[] ret;
 
 	if (retString == "(null)") {
 		retString = "";
