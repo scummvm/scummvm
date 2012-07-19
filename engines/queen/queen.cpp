@@ -56,8 +56,8 @@ static const PlainGameDescriptor queenGameDescriptor = {
 };
 
 static const ExtraGuiOption queenExtraGuiOption = {
-	_s("Floppy intro"),
-	_s("Use the floppy version's intro (CD version only)"),
+	_s("Alternative intro"),
+	_s("Use an alternative game intro (CD version only)"),
 	"alt_intro",
 	false
 };
