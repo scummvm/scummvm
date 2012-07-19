@@ -29,9 +29,8 @@
 #ifndef WINTERMUTE_BSURFACESTORAGE_H
 #define WINTERMUTE_BSURFACESTORAGE_H
 
-
-#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/Base/BBase.h"
+#include "common/array.h"
 
 namespace WinterMute {
 class CBSurface;
@@ -50,7 +49,7 @@ public:
 	CBSurfaceStorage(CBGame *inGame);
 	virtual ~CBSurfaceStorage();
 
-	CBArray<CBSurface *, CBSurface *> _surfaces;
+	Common::Array<CBSurface *> _surfaces;
 };
 
 } // end of namespace WinterMute

@@ -32,6 +32,7 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/Base/BBase.h"
 #include "audio/mixer.h"
+#include "common/array.h"
 
 namespace WinterMute {
 class CBSoundBuffer;
@@ -59,7 +60,7 @@ public:
 	bool _soundAvailable;
 	CBSoundMgr(CBGame *inGame);
 	virtual ~CBSoundMgr();
-	CBArray<CBSoundBuffer *, CBSoundBuffer *> _sounds;
+	Common::Array<CBSoundBuffer *> _sounds;
 	void saveSettings();
 };
 

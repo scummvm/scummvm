@@ -75,13 +75,13 @@ CBFileManager::~CBFileManager() {
 //////////////////////////////////////////////////////////////////////////
 bool CBFileManager::cleanup() {
 	// delete registered paths
-	for (int i = 0; i < _singlePaths.getSize(); i++)
+	for (int i = 0; i < _singlePaths.size(); i++)
 		delete [] _singlePaths[i];
-	_singlePaths.removeAll();
+	_singlePaths.clear();
 
-	for (int i = 0; i < _packagePaths.getSize(); i++)
+	for (int i = 0; i < _packagePaths.size(); i++)
 		delete [] _packagePaths[i];
-	_packagePaths.removeAll();
+	_packagePaths.clear();
 
 
 	// delete file entries
@@ -93,16 +93,16 @@ bool CBFileManager::cleanup() {
 	_files.clear();
 
 	// close open files
-	for (int i = 0; i < _openFiles.getSize(); i++) {
+	for (int i = 0; i < _openFiles.size(); i++) {
 		delete _openFiles[i];
 	}
-	_openFiles.removeAll();
+	_openFiles.clear();
 
 
 	// delete packages
-	for (int i = 0; i < _packages.getSize(); i++)
+	for (int i = 0; i < _packages.size(); i++)
 		delete _packages[i];
-	_packages.removeAll();
+	_packages.clear();
 
 	delete[] _basePath;
 	_basePath = NULL;
@@ -225,7 +225,7 @@ bool CBFileManager::saveFile(const Common::String &filename, byte *buffer, uint3
 //////////////////////////////////////////////////////////////////////////
 bool CBFileManager::requestCD(int cd, char *packageFile, const char *filename) {
 	// unmount all non-local packages
-	for (int i = 0; i < _packages.getSize(); i++) {
+	for (int i = 0; i < _packages.size(); i++) {
 		if (_packages[i]->_cD > 0) _packages[i]->close();
 	}
 
@@ -249,10 +249,10 @@ bool CBFileManager::addPath(TPathType type, const Common::String &path) {
 
 	switch (type) {
 	case PATH_SINGLE:
-		_singlePaths.add(buffer);
+		_singlePaths.push_back(buffer);
 		break;
 	case PATH_PACKAGE:
-		_packagePaths.add(buffer);
+		_packagePaths.push_back(buffer);
 		break;
 	}
 
@@ -262,13 +262,13 @@ bool CBFileManager::addPath(TPathType type, const Common::String &path) {
 //////////////////////////////////////////////////////////////////////////
 bool CBFileManager::reloadPaths() {
 	// delete registered paths
-	for (int i = 0; i < _singlePaths.getSize(); i++)
+	for (int i = 0; i < _singlePaths.size(); i++)
 		delete [] _singlePaths[i];
-	_singlePaths.removeAll();
+	_singlePaths.clear();
 
-	for (int i = 0; i < _packagePaths.getSize(); i++)
+	for (int i = 0; i < _packagePaths.size(); i++)
 		delete [] _packagePaths[i];
-	_packagePaths.removeAll();
+	_packagePaths.clear();
 
 	return initPaths();
 }
@@ -358,8 +358,8 @@ bool CBFileManager::registerPackages() {
 		}
 	}
 #endif
-	debugC(kWinterMuteDebugFileAccess, "  Registered %d files in %d package(s)", _files.size(), _packages.getSize());
-	_gameRef->LOG(0, "  Registered %d files in %d package(s)", _files.size(), _packages.getSize());
+	debugC(kWinterMuteDebugFileAccess, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
+	_gameRef->LOG(0, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
 
 	return STATUS_OK;
 }
@@ -424,7 +424,7 @@ bool CBFileManager::registerPackage(const Common::String &filename , bool search
 		pkg->_priority = hdr.Priority;
 
 		if (!hdr.MasterIndex) pkg->_cD = 0; // override CD to fixed disk
-		_packages.add(pkg);
+		_packages.push_back(pkg);
 
 
 		// read file entries
@@ -511,7 +511,7 @@ Common::File *CBFileManager::openPackage(const Common::String &name) {
 	Common::File *ret = new Common::File();
 	char filename[MAX_PATH_LENGTH];
 
-	for (int i = 0; i < _packagePaths.getSize(); i++) {
+	for (int i = 0; i < _packagePaths.size(); i++) {
 		sprintf(filename, "%s%s.%s", _packagePaths[i], name.c_str(), PACKAGE_EXTENSION);
 		ret->open(filename);
 		if (ret->isOpen()) {
@@ -537,7 +537,7 @@ Common::File *CBFileManager::openSingleFile(const Common::String &name) {
 	Common::File *ret = NULL;
 	char filename[MAX_PATH_LENGTH];
 
-	for (int i = 0; i < _singlePaths.getSize(); i++) {
+	for (int i = 0; i < _singlePaths.size(); i++) {
 		sprintf(filename, "%s%s", _singlePaths[i], name.c_str());
 		ret->open(filename);
 		if (ret->isOpen())
@@ -562,7 +562,7 @@ bool CBFileManager::getFullPath(const Common::String &filename, char *fullname) 
 	Common::File f;
 	bool found = false;
 
-	for (int i = 0; i < _singlePaths.getSize(); i++) {
+	for (int i = 0; i < _singlePaths.size(); i++) {
 		sprintf(fullname, "%s%s", _singlePaths[i], filename.c_str());
 		f.open(fullname);
 		if (f.isOpen()) {
@@ -625,17 +625,17 @@ Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filena
 	#endif*/
 
 	Common::SeekableReadStream *file = openFileRaw(filename);
-	if (file && keepTrackOf) _openFiles.add(file);
+	if (file && keepTrackOf) _openFiles.push_back(file);
 	return file;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CBFileManager::closeFile(Common::SeekableReadStream *File) {
-	for (int i = 0; i < _openFiles.getSize(); i++) {
+	for (int i = 0; i < _openFiles.size(); i++) {
 		if (_openFiles[i] == File) {
 			delete _openFiles[i];
-			_openFiles.removeAt(i);
+			_openFiles.remove_at(i);
 			return STATUS_OK;
 		}
 	}

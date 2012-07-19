@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BFILEMANAGER_H
 #define WINTERMUTE_BFILEMANAGER_H
 
-#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/Base/BFileEntry.h"
 #include "common/archive.h"
 #include "common/str.h"
@@ -68,10 +67,10 @@ public:
 	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
 	CBFileManager(CBGame *inGame = NULL);
 	virtual ~CBFileManager();
-	CBArray<char *, char *> _singlePaths;
-	CBArray<char *, char *> _packagePaths;
-	CBArray<CBPackage *, CBPackage *> _packages;
-	CBArray<Common::SeekableReadStream *, Common::SeekableReadStream *> _openFiles;
+	Common::Array<char *> _singlePaths;
+	Common::Array<char * > _packagePaths;
+	Common::Array<CBPackage *> _packages;
+	Common::Array<Common::SeekableReadStream *> _openFiles;
 
 	Common::HashMap<Common::String, CBFileEntry *> _files;
 private:
