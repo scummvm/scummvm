@@ -31,7 +31,7 @@
 #include "engines/wintermute/ui/UIObject.h"
 #include "engines/wintermute/ui/UITiledImage.h"
 #include "engines/wintermute/ui/UIWindow.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/ScValue.h"
 #include "engines/wintermute/base/scriptables/ScStack.h"
 #include "engines/wintermute/base/font/BFontStorage.h"

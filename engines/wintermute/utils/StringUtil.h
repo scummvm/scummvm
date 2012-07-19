@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_STRINGUTIL_H
 #define WINTERMUTE_STRINGUTIL_H
 
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace WinterMute {
 

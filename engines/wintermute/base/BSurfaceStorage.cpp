@@ -31,7 +31,7 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/BGame.h"
 #include "engines/wintermute/base/BFileManager.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
 namespace WinterMute {

@@ -30,7 +30,7 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/ad/AdSceneState.h"
 #include "engines/wintermute/ad/AdNodeState.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
 namespace WinterMute {

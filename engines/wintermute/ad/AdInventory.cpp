@@ -29,7 +29,7 @@
 #include "engines/wintermute/ad/AdInventory.h"
 #include "engines/wintermute/ad/AdGame.h"
 #include "engines/wintermute/ad/AdItem.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
 namespace WinterMute {

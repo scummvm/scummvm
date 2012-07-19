@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/BActiveRect.h"
 #include "engines/wintermute/base/BGame.h"
 #include "engines/wintermute/base/BRegion.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace WinterMute {
 

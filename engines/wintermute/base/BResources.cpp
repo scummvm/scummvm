@@ -26,7 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/BResources.h"
 #include "common/str.h"
 #include "common/memstream.h"

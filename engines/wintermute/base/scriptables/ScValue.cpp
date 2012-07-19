@@ -26,7 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/BDynBuffer.h"
 #include "engines/wintermute/base/BGame.h"
 #include "engines/wintermute/base/scriptables/ScValue.h"

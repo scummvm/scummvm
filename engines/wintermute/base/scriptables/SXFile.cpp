@@ -35,7 +35,7 @@
 #include "engines/wintermute/base/BGame.h"
 #include "engines/wintermute/base/file/BFile.h"
 #include "engines/wintermute/base/BFileManager.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/SXFile.h"
 
 // Note: This code is completely untested, as I have yet to find a game that uses SXFile.

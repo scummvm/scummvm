@@ -33,7 +33,7 @@
 #include "engines/util.h"
 #include "engines/wintermute/ad/AdGame.h"
 #include "engines/wintermute/wintermute.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/BRegistry.h"
 
 #include "engines/wintermute/base/BSoundMgr.h"

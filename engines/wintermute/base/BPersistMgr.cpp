@@ -31,7 +31,7 @@
 #include "engines/wintermute/base/BGame.h"
 #include "engines/wintermute/base/BPersistMgr.h"
 #include "engines/wintermute/base/BSaveThumbHelper.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/math/Vector2.h"
 #include "engines/wintermute/utils/StringUtil.h"
 #include "engines/wintermute/base/gfx/base_image.h"

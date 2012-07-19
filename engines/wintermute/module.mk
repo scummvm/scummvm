@@ -92,7 +92,7 @@ MODULE_OBJS := \
 	math/MathUtil.o \
 	math/Matrix4.o \
 	math/Vector2.o \
-	PlatformSDL.o \
+	platform_osystem.o \
 	system/SysClass.o \
 	system/SysClassRegistry.o \
 	system/SysInstance.o \

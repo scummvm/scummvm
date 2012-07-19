@@ -40,7 +40,7 @@
 #include "engines/wintermute/base/BGame.h"
 #include "engines/wintermute/dcpackage.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/str.h"
 #include "common/textconsole.h"

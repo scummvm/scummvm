@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/BBase.h"
 #include "engines/wintermute/wme_debugger.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace WinterMute {
 

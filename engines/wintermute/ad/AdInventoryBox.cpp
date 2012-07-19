@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/BDynBuffer.h"
 #include "engines/wintermute/ui/UIButton.h"
 #include "engines/wintermute/ui/UIWindow.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 #include "common/rect.h"
 

@@ -29,7 +29,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/BFader.h"
 #include "engines/wintermute/base/BGame.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/util.h"
 
 namespace WinterMute {

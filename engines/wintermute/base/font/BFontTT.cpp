@@ -38,7 +38,7 @@
 #include "engines/wintermute/base/BGame.h"
 #include "engines/wintermute/base/BFileManager.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"

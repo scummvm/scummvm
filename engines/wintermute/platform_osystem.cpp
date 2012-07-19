@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/BGame.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/utils/PathUtil.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/BRegistry.h"
 #include "engines/wintermute/base/BSoundMgr.h"
 #include "engines/wintermute/base/scriptables/ScEngine.h"

@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "utils.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintypes.h"
 #include "PathUtil.h"
 #include "engines/wintermute/base/BGame.h"

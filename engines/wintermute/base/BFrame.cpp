@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/BSoundMgr.h"
 #include "engines/wintermute/base/BSound.h"
 #include "engines/wintermute/base/BSubFrame.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/ScValue.h"
 #include "engines/wintermute/base/scriptables/ScScript.h"
 #include "engines/wintermute/base/scriptables/ScStack.h"

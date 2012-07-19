@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "graphics/decoders/png.h"
 #include "graphics/decoders/bmp.h"
 #include "graphics/decoders/jpeg.h"

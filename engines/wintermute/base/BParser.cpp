@@ -29,7 +29,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/BParser.h"
 #include "engines/wintermute/base/BGame.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 #include "common/util.h"
 

@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/scriptables/ScStack.h"
 #include "engines/wintermute/base/BGame.h"
 #include "engines/wintermute/base/BSprite.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/str.h"
 

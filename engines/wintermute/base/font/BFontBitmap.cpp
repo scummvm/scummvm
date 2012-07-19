@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/BFrame.h"
 #include "engines/wintermute/base/BSprite.h"
 #include "engines/wintermute/base/BFileManager.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace WinterMute {
 

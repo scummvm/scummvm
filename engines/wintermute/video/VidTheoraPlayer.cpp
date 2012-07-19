@@ -36,7 +36,7 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/BSoundMgr.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/video/decoders/theora_decoder.h"
 #include "common/system.h"
 //#pragma comment(lib, "libtheora.lib")

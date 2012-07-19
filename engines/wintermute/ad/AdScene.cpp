@@ -52,7 +52,7 @@
 #include "engines/wintermute/base/BScriptable.h"
 #include "engines/wintermute/base/BSprite.h"
 #include "engines/wintermute/base/BViewport.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/ScStack.h"
 #include "engines/wintermute/base/scriptables/ScValue.h"
 #include "engines/wintermute/base/scriptables/ScScript.h"

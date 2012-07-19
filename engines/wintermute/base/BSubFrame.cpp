@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/BSurfaceStorage.h"
 #include "engines/wintermute/base/BGame.h"
-#include "engines/wintermute/PlatformSDL.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/ScValue.h"
 #include "engines/wintermute/base/scriptables/ScStack.h"
 
