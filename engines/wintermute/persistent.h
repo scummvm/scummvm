@@ -29,8 +29,6 @@
 #ifndef WINTERMUTE_PERSISTENT_H
 #define WINTERMUTE_PERSISTENT_H
 
-#include "engines/wintermute/wintypes.h"
-
 namespace WinterMute {
 
 class CBPersistMgr;
@@ -41,7 +39,6 @@ typedef bool(*PERSISTLOAD)(void *, CBPersistMgr *);
 typedef void (*SYS_INSTANCE_CALLBACK)(void *Instance, void *Data);
 } // end of namespace WinterMute
 
-#include "engines/wintermute/system/SysClass.h"
 #include "engines/wintermute/system/SysClassRegistry.h"
 namespace WinterMute {
 

@@ -32,6 +32,7 @@
 #include "engines/wintermute/wintypes.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/persistent.h"
+#include "engines/wintermute/system/SysClass.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/func.h"

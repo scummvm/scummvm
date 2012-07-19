@@ -86,6 +86,7 @@
 #include "engines/wintermute/ui/UITiledImage.h"
 #include "engines/wintermute/ui/UIWindow.h"
 #include "engines/wintermute/video/VidTheoraPlayer.h"
+#include "engines/wintermute/system/SysClass.h"
 
 // CSysClass adds these objects to the registry, thus they aren't as leaked as they look
 #define REGISTER_CLASS(class_name, persistent_class)\

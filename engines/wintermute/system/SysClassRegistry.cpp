@@ -31,6 +31,7 @@
 #include "engines/wintermute/wintermute.h"
 #include "SysInstance.h"
 #include "SysClassRegistry.h"
+#include "engines/wintermute/system/SysClass.h"
 #include "common/stream.h"
 
 namespace WinterMute {

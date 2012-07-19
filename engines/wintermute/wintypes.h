@@ -30,7 +30,6 @@
 #define WINTERMUTE_WINTYPES_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
 
 namespace WinterMute {
 
