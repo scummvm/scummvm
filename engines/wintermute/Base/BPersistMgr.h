@@ -31,7 +31,7 @@
 
 
 #include "engines/wintermute/Base/BBase.h"
-#include "engines/wintermute/Math/Rect32.h"
+#include "engines/wintermute/math/Rect32.h"
 #include "engines/savestate.h"
 #include "common/stream.h"
 #include "common/str.h"

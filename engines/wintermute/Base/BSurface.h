@@ -30,7 +30,7 @@
 #define WINTERMUTE_BSURFACE_H
 
 #include "engines/wintermute/Base/BBase.h"
-#include "engines/wintermute/Math/Rect32.h"
+#include "engines/wintermute/math/Rect32.h"
 #include "graphics/surface.h"
 
 namespace WinterMute {

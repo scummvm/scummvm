@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_BACTIVERECT_H
 #define WINTERMUTE_BACTIVERECT_H
 
-#include "engines/wintermute/Math/Rect32.h"
+#include "engines/wintermute/math/Rect32.h"
 #include "engines/wintermute/Base/BBase.h"
 
 namespace WinterMute {

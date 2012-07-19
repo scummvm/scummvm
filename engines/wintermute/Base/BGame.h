@@ -34,7 +34,7 @@
 #include "engines/wintermute/Base/BObject.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/Math/Rect32.h"
+#include "engines/wintermute/math/Rect32.h"
 #include "common/events.h"
 
 namespace WinterMute {

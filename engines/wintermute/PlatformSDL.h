@@ -30,7 +30,7 @@
 #define WINTERMUTE_PLATFORMSDL_H
 
 #include "engines/wintermute/dctypes.h"
-#include "engines/wintermute/Math/Rect32.h"
+#include "engines/wintermute/math/Rect32.h"
 #include "engines/wintermute/wintypes.h"
 #include "common/events.h"
 

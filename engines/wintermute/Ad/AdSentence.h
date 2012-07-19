@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/Base/BBase.h"
 #include "engines/wintermute/persistent.h"
-#include "engines/wintermute/Math/Rect32.h"
+#include "engines/wintermute/math/Rect32.h"
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 #include "common/rect.h"
 
