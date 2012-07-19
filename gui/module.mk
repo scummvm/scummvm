@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	massadd.o \
 	message.o \
 	object.o \
+	onscreendialog.o \
 	options.o \
 	predictivedialog.o \
 	recorderdialog.o \

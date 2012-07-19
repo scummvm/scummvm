@@ -29,7 +29,7 @@
 #include "common/md5.h"
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
-#include "gui/dialog.h"
+#include "gui/onscreendialog.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"

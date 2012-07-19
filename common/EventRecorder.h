@@ -47,7 +47,7 @@
 #define g_eventRec (Common::EventRecorder::instance())
 
 namespace GUI {
-	class Dialog;
+	class OnScreenDialog;
 }
 
 namespace Common {
@@ -84,7 +84,7 @@ public:
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
 
-	GUI::Dialog *controlPanel;
+	GUI::OnScreenDialog *controlPanel;
 	SdlMixerManager *getMixerManager();
 	DefaultTimerManager *getTimerManager();
 	void setAuthor(const Common::String &author);
@@ -115,10 +115,6 @@ public:
 	Common::String generateRecordFileName(const String &target);
 	SaveFileManager *getSaveManager(SaveFileManager *realSaveManager);
 	void togglePause();
-	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
-	SDL_Surface *getSurface(int width, int height);
-	bool checkForContinueGame();
-	void deleteTemporarySave();
 private:
 	SaveFileManager *_realSaveManager;
 	RecorderSaveFileManager _fakeSaveManager;
@@ -147,7 +143,6 @@ private:
 	bool allowMapping() const { return false; }
 	void checkForKeyCode(const Event &event);
 	void writeGameSettings();
-	void togglePause();
 	RecorderEvent _nextEvent;
 	WriteStream *_screenshotsFile;
 	MutexRef _timeMutex;
