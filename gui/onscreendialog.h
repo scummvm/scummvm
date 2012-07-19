@@ -29,7 +29,8 @@
 namespace GUI {
 
 class OnScreenDialog : public Dialog {
-
+private:
+	void setReplayedTime(uint32 newTime);
 public:
 	OnScreenDialog(int x, int y, int w, int h);
 	virtual bool isVisible() const;
