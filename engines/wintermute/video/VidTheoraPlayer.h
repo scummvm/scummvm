@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_VIDTHEORAPLAYER_H
 #define WINTERMUTE_VIDTHEORAPLAYER_H
 
-#include "engines/wintermute/Base/BBase.h"
-#include "engines/wintermute/Base/file/BFile.h"
+#include "engines/wintermute/base/BBase.h"
+#include "engines/wintermute/base/file/BFile.h"
 #include "engines/wintermute/persistent.h"
 #include "video/video_decoder.h"
 #include "common/stream.h"

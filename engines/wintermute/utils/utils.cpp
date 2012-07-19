@@ -31,7 +31,7 @@
 #include "engines/wintermute/PlatformSDL.h"
 #include "engines/wintermute/wintypes.h"
 #include "PathUtil.h"
-#include "engines/wintermute/Base/BGame.h"
+#include "engines/wintermute/base/BGame.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "engines/wintermute/wintermute.h"

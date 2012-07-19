@@ -1,0 +1,88 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME Lite.
+ * http://dead-code.org/redir.php?target=wmelite
+ * Copyright (c) 2011 Jan Nedoma
+ */
+
+#ifndef WINTERMUTE_BSOUND_H
+#define WINTERMUTE_BSOUND_H
+
+#include "engines/wintermute/base/BBase.h"
+#include "engines/wintermute/dctypes.h"    // Added by ClassView
+#include "engines/wintermute/persistent.h"
+#include "audio/mixer.h"
+
+namespace WinterMute {
+
+class CBSoundBuffer;
+class CBSound : public CBBase {
+public:
+	bool setPan(float pan);
+	int _soundPrivateVolume;
+	int getVolume();
+	int getVolumePercent();
+	bool setVolumePercent(int percent);
+	bool setVolume(int volume);
+	bool setPrivateVolume(int volume);
+	bool setLoopStart(uint32 pos);
+	uint32 getPositionTime();
+	bool setPositionTime(uint32 time);
+	bool _soundPaused;
+	bool _soundFreezePaused;
+	bool isPlaying();
+	bool isPaused();
+	bool _soundPlaying;
+	bool _soundLooping;
+	uint32 _soundLoopStart;
+	uint32 _soundPosition;
+	DECLARE_PERSISTENT(CBSound, CBBase)
+	bool resume();
+	bool pause(bool freezePaused = false);
+	bool stop();
+	bool play(bool looping = false);
+	uint32 getLength();
+	bool _soundStreamed;
+	Audio::Mixer::SoundType _soundType;
+	char *_soundFilename;
+	bool setSoundSimple();
+	bool setSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
+	CBSound(CBGame *inGame);
+	virtual ~CBSound();
+
+	bool ApplyFX(TSFXType type = SFX_NONE, float param1 = 0, float param2 = 0, float param3 = 0, float param4 = 0);
+
+private:
+	TSFXType _sFXType;
+	float _sFXParam1;
+	float _sFXParam2;
+	float _sFXParam3;
+	float _sFXParam4;
+	CBSoundBuffer *_sound;
+
+};
+
+} // end of namespace WinterMute
+
+#endif

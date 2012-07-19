@@ -27,13 +27,13 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/Base/BGame.h"
-#include "engines/wintermute/Base/gfx/osystem/base_render_osystem.h"
+#include "engines/wintermute/base/BGame.h"
+#include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/utils/PathUtil.h"
 #include "engines/wintermute/PlatformSDL.h"
-#include "engines/wintermute/Base/BRegistry.h"
-#include "engines/wintermute/Base/BSoundMgr.h"
-#include "engines/wintermute/Base/scriptables/ScEngine.h"
+#include "engines/wintermute/base/BRegistry.h"
+#include "engines/wintermute/base/BSoundMgr.h"
+#include "engines/wintermute/base/scriptables/ScEngine.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "common/system.h"

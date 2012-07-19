@@ -34,7 +34,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "engines/wintermute/Base/BBase.h"
+#include "engines/wintermute/base/BBase.h"
 
 #define MAX_AUDIO_STREAMS 5
 #define MAX_VIDEO_STREAMS 5

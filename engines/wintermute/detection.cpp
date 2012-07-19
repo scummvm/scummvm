@@ -22,7 +22,7 @@
 
 #include "engines/advancedDetector.h"
 #include "engines/wintermute/wintermute.h"
-#include "engines/wintermute/Base/BPersistMgr.h"
+#include "engines/wintermute/base/BPersistMgr.h"
 
 #include "common/config-manager.h"
 #include "common/error.h"

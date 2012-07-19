@@ -1,0 +1,54 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME Lite.
+ * http://dead-code.org/redir.php?target=wmelite
+ * Copyright (c) 2011 Jan Nedoma
+ */
+
+#ifndef WINTERMUTE_ADSPRITESET_H
+#define WINTERMUTE_ADSPRITESET_H
+
+
+#include "engines/wintermute/base/BObject.h"
+#include "engines/wintermute/base/BSprite.h"    // Added by ClassView
+
+namespace WinterMute {
+
+class CAdSpriteSet : public CBObject {
+public:
+	bool containsSprite(CBSprite *sprite);
+	virtual bool saveAsText(CBDynBuffer *buffer, int indent = 0);
+	CBSprite *getSprite(TDirection direction);
+	DECLARE_PERSISTENT(CAdSpriteSet, CBObject)
+	CBObject *_owner;
+	CAdSpriteSet(CBGame *inGame, CBObject *owner = NULL);
+	virtual ~CAdSpriteSet();
+	bool loadFile(const char *filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	bool loadBuffer(byte *buffer, bool complete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	CBSprite *_sprites[NUM_DIRECTIONS];
+};
+
+} // end of namespace WinterMute
+
+#endif
