@@ -30,8 +30,8 @@
 #include "SysInstance.h"
 #include "SysClass.h"
 #include "SysClassRegistry.h"
-#include "engines/wintermute/Base/BGame.h"
-#include "engines/wintermute/Base/BPersistMgr.h"
+#include "engines/wintermute/base/BGame.h"
+#include "engines/wintermute/base/BPersistMgr.h"
 
 namespace WinterMute {
 
