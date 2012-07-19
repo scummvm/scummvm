@@ -451,7 +451,12 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 			Event evt = ev;
 			evt.mouse.x *= 2;
 			evt.mouse.y *= 2;
-			g_gui.processEvent(evt, controlPanel);
+			if (evt.mouse.x > controlPanel->_x && evt.mouse.x < controlPanel->_x + controlPanel->_w && evt.mouse.y > controlPanel->_y && evt.mouse.y < controlPanel->_y + controlPanel->_h) {
+				g_gui.processEvent(evt, controlPanel);
+				if (ev.type != EVENT_MOUSEMOVE) {
+					return List<Event>();
+				}
+			}
 		}
 	}
 	if ((_recordMode == kRecorderPlayback) && (ev.synthetic != true)) {
