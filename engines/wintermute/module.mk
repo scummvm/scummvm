@@ -40,6 +40,8 @@ MODULE_OBJS := \
 	base/scriptables/SXString.o \
 	base/file/BDiskFile.o \
 	base/file/BFile.o \
+	base/file/BFileEntry.o \
+	base/file/BPackage.o \
 	base/file/BSaveThumbFile.o \
 	base/file/BPkgFile.o \
 	base/font/BFontBitmap.o \
@@ -59,14 +61,12 @@ MODULE_OBJS := \
 	base/BDebugger.o \
 	base/BDynBuffer.o \
 	base/BFader.o \
-	base/BFileEntry.o \
 	base/BFileManager.o \
 	base/BGame.o \
 	base/BFrame.o \
 	base/BKeyboardState.o \
 	base/BNamedObject.o \
 	base/BObject.o \
-	base/BPackage.o \
 	base/BParser.o \
 	base/BPersistMgr.o \
 	base/BPoint.o \

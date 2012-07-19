@@ -26,7 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/base/BFileEntry.h"
+#include "engines/wintermute/base/file/BFileEntry.h"
 
 namespace WinterMute {
 

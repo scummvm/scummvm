@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_BFILEMANAGER_H
 #define WINTERMUTE_BFILEMANAGER_H
 
-#include "engines/wintermute/base/BFileEntry.h"
+#include "engines/wintermute/base/file/BFileEntry.h"
 #include "common/archive.h"
 #include "common/str.h"
 

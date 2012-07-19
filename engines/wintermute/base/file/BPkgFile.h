@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_BPKGFILE_H
 #define WINTERMUTE_BPKGFILE_H
 
-#include "engines/wintermute/base/BFileEntry.h"
+#include "engines/wintermute/base/file/BFileEntry.h"
 
 namespace Common {
 class SeekableReadStream;
