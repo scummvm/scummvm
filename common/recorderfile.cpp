@@ -72,18 +72,19 @@ bool PlaybackFile::openRead(Common::String fileName) {
 
 void PlaybackFile::close() {
 	delete _readStream;
+	_readStream = NULL;
 	if (_writeStream != NULL) {
 		dumpRecordsToFile();
 		_writeStream->finalize();
+		delete _writeStream;
+		_writeStream = NULL;
+		updateHeader();
 	}
-	delete _writeStream;
 	for (Common::HashMap<Common::String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
 		free(i->_value.buffer);
 	}
 	_header.saveFiles.clear();
 	_mode = kClosed;
-	_readStream = NULL;
-	_writeStream = NULL;
 }
 
 bool PlaybackFile::parseHeader() {
@@ -584,6 +585,9 @@ Graphics::Surface *PlaybackFile::getScreenShot(int number) {
 }
 
 void PlaybackFile::updateHeader() {
+	if (_mode = kWrite) {
+		_readStream = g_system->getSavefileManager()->openForLoading(_header.fileName);
+	}
 	_readStream->seek(0);
 	skipHeader();
 	Common::String tmpFilename = "_" + _header.fileName;
@@ -594,10 +598,15 @@ void PlaybackFile::updateHeader() {
 		readedSize = _readStream->read(_tmpBuffer, kRecordBuffSize);
 		_writeStream->write(_tmpBuffer, readedSize);
 	} while (readedSize != 0);
-	close();
+	delete _writeStream;
+	_writeStream = NULL;
+	delete _readStream;
+	_readStream = NULL;
 	g_system->getSavefileManager()->removeSavefile(_header.fileName);
 	g_system->getSavefileManager()->renameSavefile(tmpFilename, _header.fileName);
-	openRead(_header.fileName);
+	if (_mode = kRead) {
+		openRead(_header.fileName);
+	}
 }
 
 void PlaybackFile::skipHeader() {
