@@ -710,5 +710,9 @@ static const char *credits[] = {
 "C0""",
 "C0""Broken Sword 2.5 team for providing sources of their engine and their great support.",
 "C0""",
+"C0""Neil Dodwell and David Dew from Creative Reality for providing the source of Dreamweb and for their tremendous support.",
+"C0""",
+"C0""Janusz Wisniewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon for providing full source code for Soltys and letting us to redistribute the game.",
+"C0""",
 "",
 };
