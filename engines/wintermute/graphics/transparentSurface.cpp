@@ -45,16 +45,28 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 
 void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in, *out;
-	
+
+#ifdef SCUMM_LITTLE_ENDIAN
+	const int aIndex = 0;
+	const int bIndex = 1;
+	const int gIndex = 2;
+	const int rIndex = 3;
+#else
+	const int aIndex = 3;
+	const int bIndex = 2;
+	const int gIndex = 1;
+	const int rIndex = 0;
+#endif
+
 	const int bShift = 8;//img->format.bShift;
 	const int gShift = 16;//img->format.gShift;
 	const int rShift = 24;//img->format.rShift;
 	const int aShift = 0;//img->format.aShift;
-	
+
 	const int bShiftTarget = 8;//target.format.bShift;
 	const int gShiftTarget = 16;//target.format.gShift;
 	const int rShiftTarget = 24;//target.format.rShift;
-	
+
 	for (uint32 i = 0; i < height; i++) {
 		out = outo;
 		in = ino;
@@ -67,7 +79,7 @@ void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, in
 			int a = (pix >> aShift) & 0xff;
 			int o_b, o_g, o_r, o_a;
 			in += inStep;
-			
+
 	/*		if (ca != 255) {
 				a = a * ca >> 8;
 			}*/
@@ -82,13 +94,13 @@ void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, in
 					o_r = r;
 					o_a = a;
 					//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-					out[0] = o_a;
-					out[1] = o_b;
-					out[2] = o_g;
-					out[3] = o_r;
+					out[aIndex] = o_a;
+					out[bIndex] = o_b;
+					out[gIndex] = o_g;
+					out[rIndex] = o_r;
 					out += 4;
 					break;
-					
+
 				default: // alpha blending
 					o_a = 255;
 					o_b = (o_pix >> bShiftTarget) & 0xff;
@@ -98,10 +110,10 @@ void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, in
 					o_g += ((g - o_g) * a) >> 8;
 					o_r += ((r - o_r) * a) >> 8;
 					//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-					out[0] = o_a;
-					out[1] = o_b;
-					out[2] = o_g;
-					out[3] = o_r;
+					out[aIndex] = o_a;
+					out[bIndex] = o_b;
+					out[gIndex] = o_g;
+					out[rIndex] = o_r;
 					out += 4;
 			}
 		}
@@ -213,6 +225,18 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
 		byte *in, *out;
 
+#ifdef SCUMM_LITTLE_ENDIAN
+		const int aIndex = 0;
+		const int bIndex = 1;
+		const int gIndex = 2;
+		const int rIndex = 3;
+#else
+		const int aIndex = 3;
+		const int bIndex = 2;
+		const int gIndex = 1;
+		const int rIndex = 0;
+#endif
+
 		const int bShift = 8;//img->format.bShift;
 		const int gShift = 16;//img->format.gShift;
 		const int rShift = 24;//img->format.rShift;
@@ -263,10 +287,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 							o_r = r;
 						o_a = a;
 						//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-						out[0] = o_a;
-						out[1] = o_b;
-						out[2] = o_g;
-						out[3] = o_r;
+						out[aIndex] = o_a;
+						out[bIndex] = o_b;
+						out[gIndex] = o_g;
+						out[rIndex] = o_r;
 						out += 4;
 						break;
 
@@ -294,10 +318,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 						else
 							o_r += ((r - o_r) * a) >> 8;
 						//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-						out[0] = o_a;
-						out[1] = o_b;
-						out[2] = o_g;
-						out[3] = o_r;
+						out[aIndex] = o_a;
+						out[bIndex] = o_b;
+						out[gIndex] = o_g;
+						out[rIndex] = o_r;
 						out += 4;
 					}
 				}
