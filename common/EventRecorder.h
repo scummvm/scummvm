@@ -61,7 +61,7 @@ class WriteStream;
  *
  * TODO: Add more documentation.
  */
-class EventRecorder : private EventSource, private EventObserver, public Singleton<EventRecorder>, private DefaultEventMapper {
+class EventRecorder : private EventSource, public Singleton<EventRecorder>, private DefaultEventMapper {
 	friend class Singleton<SingletonBaseType>;
 	EventRecorder();
 	~EventRecorder();
@@ -136,7 +136,6 @@ private:
 	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
 	bool openRecordFile(const String &fileName);
 	bool checkGameHash(const ADGameDescription *desc);
-	bool notifyEvent(const Event &ev);
 	String findMD5ByFileName(const ADGameDescription *gameDesc, const String &fileName);
 	bool notifyPoll();
 	bool pollEvent(Event &ev);

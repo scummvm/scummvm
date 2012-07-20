@@ -93,7 +93,6 @@ void EventRecorder::deinit() {
 	delete controlPanel;
 	debugC(3, kDebugLevelEventRec, "EventRecorder: deinit");
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
-	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	g_system->lockMutex(_timeMutex);
 	g_system->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
@@ -155,21 +154,6 @@ void EventRecorder::checkForKeyCode(const Event &event) {
 			togglePause();
 		}
 	}
-}
-
-bool EventRecorder::notifyEvent(const Event &ev) {
-	StackLock lock(_recorderMutex);
-	if (_recordMode != kRecorderRecord)
-		return false;
-	if (!_initialized) {
-		return false;
-	}
-	RecorderEvent e;
-	memcpy(&e, &ev, sizeof(ev));
-	e.time = _fakeTimer;
-	_playbackFile.writeEvent(e);
-
-	return false;
 }
 
 bool EventRecorder::pollEvent(Event &ev) {
@@ -258,7 +242,6 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	controlPanel->open();
 
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, EventManager::kEventRecorderPriority, false, true);
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
 	if (_screenshotPeriod == 0) {
 		_screenshotPeriod = kDefaultScreenshotPeriod;
@@ -462,6 +445,12 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 	if ((_recordMode == kRecorderPlayback) && (ev.synthetic != true)) {
 		return List<Event>();
 	} else {
+		if (_recordMode == kRecorderRecord) {
+			RecorderEvent e;
+			memcpy(&e, &ev, sizeof(ev));
+			e.time = _fakeTimer;
+			_playbackFile.writeEvent(e);
+		}
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
 }
