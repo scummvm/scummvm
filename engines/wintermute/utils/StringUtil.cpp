@@ -168,11 +168,11 @@ WideString StringUtil::ansiToWide(const AnsiString &str) {
 		hasWarned = true;
 		warning("StringUtil::AnsiToWide - WideString not supported yet");
 	}
-	Common::String converted = "";
+	/*Common::String converted = "";
 	uint32 index = 0;
 	while (index != str.size()) {
 		converted += simpleAnsiToWide(str, index);
-	}
+	}*/
 	// using default os locale!
 
 	/*  setlocale(LC_CTYPE, "");
@@ -182,7 +182,7 @@ WideString StringUtil::ansiToWide(const AnsiString &str) {
 	    WideString ResultString(wstr);
 	    delete [] wstr;
 	    return ResultString;*/
-	return WideString(converted);
+	return WideString(str);
 }
 
 //////////////////////////////////////////////////////////////////////////
