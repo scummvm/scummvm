@@ -1,7 +1,7 @@
 [Setup]
 AppCopyright=2012
 AppName=ScummVM
-AppVerName=ScummVM Git
+AppVerName=ScummVM 1.5.0
 AppPublisher=The ScummVM Team
 AppPublisherURL=http://www.scummvm.org/
 AppSupportURL=http://www.scummvm.org/
