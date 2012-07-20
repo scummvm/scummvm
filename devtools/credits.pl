@@ -553,7 +553,9 @@ begin_credits("Credits");
 			begin_section("DreamWeb");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 				add_person("Bertrand Augereau", "Tramb", "");
+				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Vladimir Menshakov", "whoozle", "(retired)");
+				add_person("Willem Jan Palenstijn", "wjp", "");
 			end_section();
 
 			begin_section("Gob");
