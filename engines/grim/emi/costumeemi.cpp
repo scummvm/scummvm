@@ -68,8 +68,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		for (int k = 0; k < numTracks; k++) {
 			int componentNameLength = data->readUint32LE();
 
-			char *name = new char[componentNameLength];
-			data->read(name, componentNameLength);
+			char *componentName = new char[componentNameLength];
+			data->read(componentName, componentNameLength);
 
 			data->readUint32LE();
 			int parentID = data->readUint32LE();
@@ -85,7 +85,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 					prevComponent = NULL;
 			}
 			// Actually load the appropriate component
-			Component *component = loadComponent(parentID < 0 ? NULL : components[parentID], parentID, name, prevComponent);
+			Component *component = loadComponent(parentID < 0 ? NULL : components[parentID], parentID, componentName, prevComponent);
 			if (component) {
 				component->setCostume(this);
 				component->init();
@@ -123,7 +123,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 				track.keys[j].time = (int)(time * 1000);
 				track.keys[j].value = (int)value;
 			}
-			delete[] name;
+			delete[] componentName;
 		}
 	}
 
