@@ -52,7 +52,7 @@ CBSurfaceStorage::~CBSurfaceStorage() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBSurfaceStorage::cleanup(bool warn) {
-	for (int i = 0; i < _surfaces.size(); i++) {
+	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		if (warn) _gameRef->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
 		delete _surfaces[i];
 	}
@@ -67,7 +67,7 @@ bool CBSurfaceStorage::initLoop() {
 	if (_gameRef->_smartCache && _gameRef->_liveTimer - _lastCleanupTime >= _gameRef->_surfaceGCCycleTime) {
 		_lastCleanupTime = _gameRef->_liveTimer;
 		sortSurfaces();
-		for (int i = 0; i < _surfaces.size(); i++) {
+		for (uint32 i = 0; i < _surfaces.size(); i++) {
 			if (_surfaces[i]->_lifeTime <= 0) break;
 
 			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && _gameRef->_liveTimer - _surfaces[i]->_lastUsedTime >= _surfaces[i]->_lifeTime) {
@@ -82,7 +82,7 @@ bool CBSurfaceStorage::initLoop() {
 
 //////////////////////////////////////////////////////////////////////
 bool CBSurfaceStorage::removeSurface(CBSurface *surface) {
-	for (int i = 0; i < _surfaces.size(); i++) {
+	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		if (_surfaces[i] == surface) {
 			_surfaces[i]->_referenceCount--;
 			if (_surfaces[i]->_referenceCount <= 0) {
@@ -98,7 +98,7 @@ bool CBSurfaceStorage::removeSurface(CBSurface *surface) {
 
 //////////////////////////////////////////////////////////////////////
 CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	for (int i = 0; i < _surfaces.size(); i++) {
+	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		if (scumm_stricmp(_surfaces[i]->getFileName(), filename) == 0) {
 			_surfaces[i]->_referenceCount++;
 			return _surfaces[i];
@@ -132,7 +132,7 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, by
 //////////////////////////////////////////////////////////////////////
 bool CBSurfaceStorage::restoreAll() {
 	bool ret;
-	for (int i = 0; i < _surfaces.size(); i++) {
+	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		ret = _surfaces[i]->restore();
 		if (ret != STATUS_OK) {
 			_gameRef->LOG(0, "CBSurfaceStorage::RestoreAll failed");

@@ -50,7 +50,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename, CBFileM
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = NULL;
 
-	for (int i = 0; i < fileManager->_singlePaths.size(); i++) {
+	for (uint32 i = 0; i < fileManager->_singlePaths.size(); i++) {
 		sprintf(fullPath, "%s%s", fileManager->_singlePaths[i], filename.c_str());
 		correctSlashes(fullPath);
 		Common::File *tempFile = new Common::File();

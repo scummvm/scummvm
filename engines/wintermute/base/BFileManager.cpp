@@ -75,11 +75,11 @@ CBFileManager::~CBFileManager() {
 //////////////////////////////////////////////////////////////////////////
 bool CBFileManager::cleanup() {
 	// delete registered paths
-	for (int i = 0; i < _singlePaths.size(); i++)
+	for (uint32 i = 0; i < _singlePaths.size(); i++)
 		delete [] _singlePaths[i];
 	_singlePaths.clear();
 
-	for (int i = 0; i < _packagePaths.size(); i++)
+	for (uint32 i = 0; i < _packagePaths.size(); i++)
 		delete [] _packagePaths[i];
 	_packagePaths.clear();
 
@@ -93,14 +93,14 @@ bool CBFileManager::cleanup() {
 	_files.clear();
 
 	// close open files
-	for (int i = 0; i < _openFiles.size(); i++) {
+	for (uint32 i = 0; i < _openFiles.size(); i++) {
 		delete _openFiles[i];
 	}
 	_openFiles.clear();
 
 
 	// delete packages
-	for (int i = 0; i < _packages.size(); i++)
+	for (uint32 i = 0; i < _packages.size(); i++)
 		delete _packages[i];
 	_packages.clear();
 
@@ -225,7 +225,7 @@ bool CBFileManager::saveFile(const Common::String &filename, byte *buffer, uint3
 //////////////////////////////////////////////////////////////////////////
 bool CBFileManager::requestCD(int cd, char *packageFile, const char *filename) {
 	// unmount all non-local packages
-	for (int i = 0; i < _packages.size(); i++) {
+	for (uint32 i = 0; i < _packages.size(); i++) {
 		if (_packages[i]->_cD > 0) _packages[i]->close();
 	}
 
@@ -262,11 +262,11 @@ bool CBFileManager::addPath(TPathType type, const Common::String &path) {
 //////////////////////////////////////////////////////////////////////////
 bool CBFileManager::reloadPaths() {
 	// delete registered paths
-	for (int i = 0; i < _singlePaths.size(); i++)
+	for (uint32 i = 0; i < _singlePaths.size(); i++)
 		delete [] _singlePaths[i];
 	_singlePaths.clear();
 
-	for (int i = 0; i < _packagePaths.size(); i++)
+	for (uint32 i = 0; i < _packagePaths.size(); i++)
 		delete [] _packagePaths[i];
 	_packagePaths.clear();
 
@@ -378,13 +378,13 @@ bool CBFileManager::registerPackage(const Common::String &filename , bool search
 	bool boundToExe = false;
 
 	if (searchSignature) {
-		uint32 Offset;
-		if (!findPackageSignature(package, &Offset)) {
+		uint32 offset;
+		if (!findPackageSignature(package, &offset)) {
 			delete package;
 			return STATUS_OK;
 		} else {
-			package->seek(Offset, SEEK_SET);
-			absoluteOffset = Offset;
+			package->seek(offset, SEEK_SET);
+			absoluteOffset = offset;
 			boundToExe = true;
 		}
 	}
@@ -511,7 +511,7 @@ Common::File *CBFileManager::openPackage(const Common::String &name) {
 	Common::File *ret = new Common::File();
 	char filename[MAX_PATH_LENGTH];
 
-	for (int i = 0; i < _packagePaths.size(); i++) {
+	for (uint32 i = 0; i < _packagePaths.size(); i++) {
 		sprintf(filename, "%s%s.%s", _packagePaths[i], name.c_str(), PACKAGE_EXTENSION);
 		ret->open(filename);
 		if (ret->isOpen()) {
@@ -537,7 +537,7 @@ Common::File *CBFileManager::openSingleFile(const Common::String &name) {
 	Common::File *ret = NULL;
 	char filename[MAX_PATH_LENGTH];
 
-	for (int i = 0; i < _singlePaths.size(); i++) {
+	for (uint32 i = 0; i < _singlePaths.size(); i++) {
 		sprintf(filename, "%s%s", _singlePaths[i], name.c_str());
 		ret->open(filename);
 		if (ret->isOpen())
@@ -562,7 +562,7 @@ bool CBFileManager::getFullPath(const Common::String &filename, char *fullname) 
 	Common::File f;
 	bool found = false;
 
-	for (int i = 0; i < _singlePaths.size(); i++) {
+	for (uint32 i = 0; i < _singlePaths.size(); i++) {
 		sprintf(fullname, "%s%s", _singlePaths[i], filename.c_str());
 		f.open(fullname);
 		if (f.isOpen()) {
@@ -632,7 +632,7 @@ Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filena
 
 //////////////////////////////////////////////////////////////////////////
 bool CBFileManager::closeFile(Common::SeekableReadStream *File) {
-	for (int i = 0; i < _openFiles.size(); i++) {
+	for (uint32 i = 0; i < _openFiles.size(); i++) {
 		if (_openFiles[i] == File) {
 			delete _openFiles[i];
 			_openFiles.remove_at(i);

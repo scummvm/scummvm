@@ -97,7 +97,7 @@ int CBFontBitmap::getTextWidth(byte *text, int maxLength) {
 	//str.substr(0, maxLength); // TODO: Remove
 
 	int textWidth = 0;
-	for (size_t i = 0; i < str.size(); i++) {
+	for (int i = 0; i < str.size(); i++) {
 		textWidth += getCharWidth(str[i]);
 	}
 

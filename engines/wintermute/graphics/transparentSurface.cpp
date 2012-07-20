@@ -55,10 +55,10 @@ void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, in
 	const int gShiftTarget = 16;//target.format.gShift;
 	const int rShiftTarget = 24;//target.format.rShift;
 	
-	for (int i = 0; i < height; i++) {
+	for (uint32 i = 0; i < height; i++) {
 		out = outo;
 		in = ino;
-		for (int j = 0; j < width; j++) {
+		for (uint32 j = 0; j < width; j++) {
 			uint32 pix = *(uint32 *)in;
 			uint32 o_pix = *(uint32 *) out;
 			int b = (pix >> bShift) & 0xff;

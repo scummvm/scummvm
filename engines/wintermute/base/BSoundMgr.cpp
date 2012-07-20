@@ -62,7 +62,7 @@ CBSoundMgr::~CBSoundMgr() {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBSoundMgr::cleanup() {
-	for (int i = 0; i < _sounds.size(); i++)
+	for (uint32 i = 0; i < _sounds.size(); i++)
 		delete _sounds[i];
 	_sounds.clear();
 #if 0
@@ -164,7 +164,7 @@ bool CBSoundMgr::addSound(CBSoundBuffer *sound, Audio::Mixer::SoundType type) {
 
 //////////////////////////////////////////////////////////////////////////
 bool CBSoundMgr::removeSound(CBSoundBuffer *sound) {
-	for (int i = 0; i < _sounds.size(); i++) {
+	for (uint32 i = 0; i < _sounds.size(); i++) {
 		if (_sounds[i] == sound) {
 			delete _sounds[i];
 			_sounds.remove_at(i);
@@ -227,7 +227,7 @@ byte CBSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 //////////////////////////////////////////////////////////////////////////
 bool CBSoundMgr::setMasterVolume(byte value) {
 	_volumeMaster = value;
-	for (int i = 0; i < _sounds.size(); i++) {
+	for (uint32 i = 0; i < _sounds.size(); i++) {
 		_sounds[i]->updateVolume();
 	}
 	return STATUS_OK;
@@ -254,7 +254,7 @@ byte CBSoundMgr::getMasterVolume() {
 //////////////////////////////////////////////////////////////////////////
 bool CBSoundMgr::pauseAll(bool includingMusic) {
 
-	for (int i = 0; i < _sounds.size(); i++) {
+	for (uint32 i = 0; i < _sounds.size(); i++) {
 		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != Audio::Mixer::kMusicSoundType || includingMusic)) {
 			_sounds[i]->pause();
 			_sounds[i]->_freezePaused = true;
@@ -268,7 +268,7 @@ bool CBSoundMgr::pauseAll(bool includingMusic) {
 //////////////////////////////////////////////////////////////////////////
 bool CBSoundMgr::resumeAll() {
 
-	for (int i = 0; i < _sounds.size(); i++) {
+	for (uint32 i = 0; i < _sounds.size(); i++) {
 		if (_sounds[i]->_freezePaused) {
 			_sounds[i]->resume();
 			_sounds[i]->_freezePaused = false;
