@@ -4,7 +4,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.scummvm.scummvm"
 		android:versionCode="@ANDROID_VERSIONCODE@"
-		android:versionName="1.5.0pre"
+		android:versionName="1.5.0"
 		android:installLocation="preferExternal"
 		android:sharedUserId="org.scummvm.scummvm">
 
@@ -47,8 +47,6 @@
 		android:protectionLevel="signature"/>
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-	<uses-feature android:name="android.hardware.screen.landscape" android:required="false"/>
 
 	<!-- Always needs some sort of qwerty keyboard.
 			Can work with a D-pad / trackball -->
