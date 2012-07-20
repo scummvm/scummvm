@@ -109,6 +109,7 @@ public:
 	void resumeRecording() {
 		_initialized = _savedState;
 	}
+	Common::StringArray listSaveFiles(const Common::String &pattern);
 	void saveStream(Common::OutSaveFile *saveStream);
 	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
 	void RegisterEventSource();

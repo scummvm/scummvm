@@ -29,6 +29,7 @@
  * Provides a savefile manager implementation for event recorder.
  */
 class RecorderSaveFileManager : public DefaultSaveFileManager {
+	virtual Common::StringArray listSaveFiles(const Common::String &pattern);
 	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
 };
 

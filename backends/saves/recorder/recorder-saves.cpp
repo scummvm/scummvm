@@ -29,3 +29,7 @@ Common::InSaveFile *RecorderSaveFileManager::openForLoading(const Common::String
 	return result;
 }
 
+Common::StringArray RecorderSaveFileManager::listSaveFiles(const Common::String &pattern) {
+	return g_eventRec.listSaveFiles(pattern);
+}
+
