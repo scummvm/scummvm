@@ -405,6 +405,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "IsChoreValid", LUA_OPCODE(Lua_V2, IsChoreValid) },
 	{ "IsChorePlaying", LUA_OPCODE(Lua_V2, IsChorePlaying) },
 	{ "IsChoreLooping", LUA_OPCODE(Lua_V2, IsChoreLooping) },
+	{ "SetChoreLooping", LUA_OPCODE(Lua_V2, SetChoreLooping) },
 	{ "StopActorChores", LUA_OPCODE(Lua_V2, StopActorChores) },
 	{ "PlayChore", LUA_OPCODE(Lua_V2, PlayChore) },
 	{ "StopChore", LUA_OPCODE(Lua_V2, StopChore) },

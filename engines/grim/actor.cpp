@@ -84,6 +84,7 @@ Actor::Actor(const Common::String &actorName) :
 	_puckOrient = false;
 	_talking = false;
 	_inOverworld = false;
+	_sortOrder = 0;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
@@ -109,6 +110,8 @@ Actor::Actor() {
 
 	_alphaMode = AlphaOff;
 	_globalAlpha = 1.f;
+
+	_sortOrder = 0;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
