@@ -352,7 +352,7 @@ void CBRenderOSystem::drawSurface(CBSurfaceOSystem *owner, const Graphics::Surfa
 		RenderTicket renderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY);
 		// HINT: The surface-data contains other info than it should.
 	//	drawFromSurface(renderTicket._surface, srcRect, dstRect, NULL, mirrorX, mirrorY);
-		drawFromSurface(renderTicket._surface, &renderTicket._srcRect, &renderTicket._dstRect, NULL, renderTicket._mirror);
+		drawFromSurface(renderTicket.getSurface(), &renderTicket._srcRect, &renderTicket._dstRect, NULL, renderTicket._mirror);
 		return;
 	}
 	// Skip rects that are completely outside the screen:
@@ -432,6 +432,12 @@ void CBRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 					it++;
 				}
 			}
+			if (it != _renderQueue.end()) {
+				// Decreement the following tickets.
+				for (; it != _renderQueue.end(); it++) {
+					(*it)->_drawNum--;
+				} 
+			}
 			// Is not in order, so readd it as if it was a new ticket
 			renderTicket->_drawNum = 0;
 			drawFromTicket(renderTicket);
@@ -475,8 +481,10 @@ void CBRenderOSystem::drawTickets() {
 	
 	// Apply the clear-color to the dirty rect.
 	_renderSurface->fillRect(*_dirtyRect, _clearColor);
+	_drawNum = 1;
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
 		RenderTicket *ticket = *it;
+		assert(ticket->_drawNum == _drawNum++);
 		if (ticket->_isValid && ticket->_dstRect.intersects(*_dirtyRect)) {
 			// dstClip is the area we want redrawn.
 			Common::Rect dstClip(ticket->_dstRect);
@@ -490,7 +498,7 @@ void CBRenderOSystem::drawTickets() {
 			dstClip.translate(-offsetX, -offsetY);
 
 			_colorMod = ticket->_colorMod;
-			drawFromSurface(ticket->_surface, &ticket->_srcRect, &pos, &dstClip, ticket->_mirror);
+			drawFromSurface(ticket->getSurface(), &ticket->_srcRect, &pos, &dstClip, ticket->_mirror);
 			_needsFlip = true;
 		}
 		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)

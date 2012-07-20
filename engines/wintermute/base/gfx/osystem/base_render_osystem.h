@@ -37,11 +37,12 @@
 namespace WinterMute {
 class CBSurfaceOSystem;
 class RenderTicket {
+	Graphics::Surface *_surface;
 public:
 	RenderTicket(CBSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
 	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0) {}
 	~RenderTicket();
-	Graphics::Surface *_surface;
+	const Graphics::Surface *getSurface() { return _surface; }
 	Common::Rect _srcRect;
 	Common::Rect _dstRect;
 	uint32 _mirror;
