@@ -75,6 +75,7 @@ public:
 private:
 	void setKeys(int startTime, int stopTime);
 	void fade(Animation::FadeMode, uint msecs);
+	Component *getComponentForTrack(int i) const;
 
 	Costume *_owner;
 

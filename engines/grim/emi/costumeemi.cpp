@@ -34,6 +34,7 @@
 #include "engines/grim/emi/costume/emimesh_component.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
 #include "engines/grim/emi/costume/emisprite_component.h"
+#include "engines/grim/emi/costume/emitexi_component.h"
 #include "engines/grim/costume/main_model_component.h"
 
 namespace Grim {
@@ -95,6 +96,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 						if (_emiSkel) {
 							_emiMesh->_obj->setSkeleton(_emiSkel->_obj);
 						}
+						for (unsigned int z = 0; z < _emiMesh->_obj->_numTextures; ++z)
+							_materials.push_back(_emiMesh->_obj->_mats[z]);
 					} else if (component->isComponentType('s','k','e','l')) {
 						_emiSkel = static_cast<EMISkelComponent *>(component);
 						if (_emiMesh) {
@@ -111,9 +114,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 			track.numKeys = data->readUint32LE();
 			track.keys = new TrackKey[track.numKeys];
 			track.component = component;
+			track.compID = -1; // -1 means "look at .component"
 
-			// this is probably wrong
-			track.compID = 0;
 			for (int j = 0; j < track.numKeys; j++) {
 				float time, value;
 				data->read(&time, 4);
@@ -159,8 +161,8 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SKEL-handling: %s" , name);
 		return new EMISkelComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('t','e','x','i')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
-		//return new MaterialComponent(parent, parentID, name, tag);
+//    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
+		return new EMITexiComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('a','n','i','m')) {
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement ANIM-handling: %s" , name);
 		return new EMIAnimComponent(parent, parentID, name, prevComponent, tag);
@@ -223,6 +225,18 @@ int EMICostume::update(uint time) {
 
 	return marker;
 }
+
+Material * EMICostume::findSharedMaterial(const Common::String &name) {
+	Common::List<Material *>::iterator it = _materials.begin();
+	for (; it != _materials.end(); ++it)
+		if ((*it)->getFilename() == name)
+			return *it;
+
+	Material * mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
+	_materials.push_back(mat);
+	return mat;
+}
+
 
 void EMICostume::saveState(SaveGame *state) const {
 	// TODO

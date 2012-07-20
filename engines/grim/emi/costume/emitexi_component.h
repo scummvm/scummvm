@@ -20,43 +20,29 @@
  *
  */
 
-#ifndef GRIM_COSTUMEEMI_H
-#define GRIM_COSTUMEEMI_H
+#ifndef GRIM_EMI_TEXI_COMPONENT_H
+#define GRIM_EMI_TEXI_COMPONENT_H
 
-#include "common/stream.h"
-
-#include "engines/grim/object.h"
-#include "engines/grim/costume.h"
+#include "engines/grim/costume/component.h"
+#include "engines/grim/material.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/model.h"
 
 namespace Grim {
 
-typedef uint32 tag32;
-
-class EMISkelComponent;
-class EMIMeshComponent;
-class Material;
-
-class EMICostume : public Costume {
+class EMITexiComponent : public Component {
 public:
-	EMICostume(const Common::String &filename, Costume *prevCost);
+	EMITexiComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
+	~EMITexiComponent();
 
-	void load(Common::SeekableReadStream *data);
-
-	int update(uint frameTime);
+	void init();
+	int update(uint time);
+	void reset();
 	void draw();
-	
-	void saveState(SaveGame *state) const;
-	bool restoreState(SaveGame *state);
+	void setKey(int k);
 
-	Material * findSharedMaterial(const Common::String &name);
-public:
-	EMISkelComponent *_emiSkel;
-	EMIMeshComponent *_emiMesh;
-	Common::List<Material *> _materials;
 private:
-	Component *loadComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
-	
-	friend class Chore;
+	Material * _mat;
 };
 
 } // end of namespace Grim

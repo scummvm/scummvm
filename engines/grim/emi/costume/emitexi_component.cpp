@@ -20,45 +20,44 @@
  *
  */
 
-#ifndef GRIM_COSTUMEEMI_H
-#define GRIM_COSTUMEEMI_H
-
-#include "common/stream.h"
-
-#include "engines/grim/object.h"
 #include "engines/grim/costume.h"
+#include "engines/grim/debug.h"
+#include "engines/grim/material.h"
+#include "engines/grim/savegame.h"
+
+#include "engines/grim/emi/costumeemi.h"
+#include "engines/grim/emi/modelemi.h"
+#include "engines/grim/emi/costume/emimesh_component.h"
+#include "engines/grim/emi/costume/emitexi_component.h"
 
 namespace Grim {
 
-typedef uint32 tag32;
+	EMITexiComponent::EMITexiComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag) : Component(parent, parentID, filename, tag) {
+	}
 
-class EMISkelComponent;
-class EMIMeshComponent;
-class Material;
+	EMITexiComponent::~EMITexiComponent() {
+		if (_mat)
+			_mat->dereference();
+	}
 
-class EMICostume : public Costume {
-public:
-	EMICostume(const Common::String &filename, Costume *prevCost);
+	void EMITexiComponent::init() {
+		EMICostume *c = static_cast<EMICostume *>(_cost);
+		_mat = c->findSharedMaterial(_name);
+	}
 
-	void load(Common::SeekableReadStream *data);
+	int EMITexiComponent::update(uint time) {
+		return 0;
+	}
 
-	int update(uint frameTime);
-	void draw();
-	
-	void saveState(SaveGame *state) const;
-	bool restoreState(SaveGame *state);
+	void EMITexiComponent::setKey(int k) {
+		if (_mat)
+			_mat->setActiveTexture(k);
+	}
 
-	Material * findSharedMaterial(const Common::String &name);
-public:
-	EMISkelComponent *_emiSkel;
-	EMIMeshComponent *_emiMesh;
-	Common::List<Material *> _materials;
-private:
-	Component *loadComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
-	
-	friend class Chore;
-};
+	void EMITexiComponent::reset() {
+	}
+
+	void EMITexiComponent::draw() {
+	}
 
 } // end of namespace Grim
-
-#endif
