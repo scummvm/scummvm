@@ -31,9 +31,11 @@
 
 
 #include <new>
-#include "engines/wintermute/base/BPersistMgr.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
 
 namespace WinterMute {
+
+// Quite the same as Common::Array, but with persistence-support.
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>

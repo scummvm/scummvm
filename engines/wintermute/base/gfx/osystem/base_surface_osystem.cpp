@@ -26,9 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/file/BFile.h"
-#include "engines/wintermute/base/BFileManager.h"
-#include "engines/wintermute/base/BGame.h"
+#include "engines/wintermute/base/file/base_file.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/base_image.h"
@@ -36,7 +36,7 @@
 #include "graphics/decoders/png.h"
 #include "graphics/decoders/bmp.h"
 #include "graphics/decoders/jpeg.h"
-#include "engines/wintermute/graphics/transparentSurface.h"
+#include "engines/wintermute/graphics/transparent_surface.h"
 #include "engines/wintermute/graphics/tga.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"

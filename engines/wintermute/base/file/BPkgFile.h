@@ -29,7 +29,10 @@
 #ifndef WINTERMUTE_BPKGFILE_H
 #define WINTERMUTE_BPKGFILE_H
 
-#include "engines/wintermute/base/file/BFileEntry.h"
+#include "engines/wintermute/base/file/base_file_entry.h"
+
+// This file is only needed until the next merge/rebase, as wrapCompressedStream now can set a known size
+// as such it is not renamed to follow the convention of the rest of the files.
 
 namespace Common {
 class SeekableReadStream;

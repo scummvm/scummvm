@@ -31,7 +31,7 @@
 
 
 #include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/base/BBase.h"
+#include "engines/wintermute/base/base.h"
 #include "common/rect.h"
 
 namespace WinterMute {

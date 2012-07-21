@@ -28,15 +28,15 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
-#include "engines/wintermute/base/BRegistry.h"
+#include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
-#include "engines/wintermute/base/BSurfaceStorage.h"
+#include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/math/MathUtil.h"
-#include "engines/wintermute/base/BGame.h"
-#include "engines/wintermute/base/BSprite.h"
+#include "engines/wintermute/math/math_util.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_sprite.h"
 #include "common/system.h"
-#include "engines/wintermute/graphics/transparentSurface.h"
+#include "engines/wintermute/graphics/transparent_surface.h"
 #include "common/queue.h"
 
 namespace WinterMute {

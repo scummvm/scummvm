@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/wintypes.h"
-#include "engines/wintermute/base/BGame.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 
 namespace WinterMute {

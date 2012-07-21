@@ -31,13 +31,13 @@
 #include "common/fs.h"
 
 #include "engines/util.h"
-#include "engines/wintermute/ad/AdGame.h"
+#include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/BRegistry.h"
+#include "engines/wintermute/base/base_registry.h"
 
-#include "engines/wintermute/base/BSoundMgr.h"
-#include "engines/wintermute/base/scriptables/ScEngine.h"
+#include "engines/wintermute/base/sound/base_sound_manager.h"
+#include "engines/wintermute/base/scriptables/script_engine.h"
 
 namespace WinterMute {
 

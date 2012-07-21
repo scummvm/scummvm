@@ -1,0 +1,473 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME Lite.
+ * http://dead-code.org/redir.php?target=wmelite
+ * Copyright (c) 2011 Jan Nedoma
+ */
+
+#include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/ad/ad_game.h"
+#include "engines/wintermute/base/base_script_holder.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/scriptables/script_engine.h"
+#include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+
+namespace WinterMute {
+
+IMPLEMENT_PERSISTENT(CBScriptHolder, false)
+
+//////////////////////////////////////////////////////////////////////
+CBScriptHolder::CBScriptHolder(CBGame *inGame): CBScriptable(inGame) {
+	setName("<unnamed>");
+
+	_freezable = true;
+	_filename = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+CBScriptHolder::~CBScriptHolder() {
+	cleanup();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::cleanup() {
+	delete[] _filename;
+	_filename = NULL;
+
+	int i;
+
+	for (i = 0; i < _scripts.getSize(); i++) {
+		_scripts[i]->finish(true);
+		_scripts[i]->_owner = NULL;
+	}
+	_scripts.removeAll();
+
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////
+void CBScriptHolder::setFilename(const char *filename) {
+	if (_filename != NULL) delete [] _filename;
+
+	_filename = new char [strlen(filename) + 1];
+	if (_filename != NULL) strcpy(_filename, filename);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
+	int numHandlers = 0;
+
+	bool ret = STATUS_FAILED;
+	for (int i = 0; i < _scripts.getSize(); i++) {
+		if (!_scripts[i]->_thread) {
+			CScScript *handler = _scripts[i]->invokeEventHandler(eventName, unbreakable);
+			if (handler) {
+				//_scripts.add(handler);
+				numHandlers++;
+				ret = STATUS_OK;
+			}
+		}
+	}
+	if (numHandlers > 0 && unbreakable) _gameRef->_scEngine->tickUnbreakable();
+
+	return ret;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::listen(CBScriptHolder *param1, uint32 param2) {
+	return STATUS_FAILED;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// high level scripting interface
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG_CrashMe
+	//////////////////////////////////////////////////////////////////////////
+	if (strcmp(name, "DEBUG_CrashMe") == 0) {
+		stack->correctParams(0);
+		byte *p = 0;
+		*p = 10;
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// ApplyEvent
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ApplyEvent") == 0) {
+		stack->correctParams(1);
+		CScValue *val = stack->pop();
+		bool ret;
+		ret = applyEvent(val->getString());
+
+		if (DID_SUCCEED(ret)) stack->pushBool(true);
+		else stack->pushBool(false);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// CanHandleEvent
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "CanHandleEvent") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(canHandleEvent(stack->pop()->getString()));
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// CanHandleMethod
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "CanHandleMethod") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(canHandleMethod(stack->pop()->getString()));
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// AttachScript
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "AttachScript") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(DID_SUCCEED(addScript(stack->pop()->getString())));
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// DetachScript
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "DetachScript") == 0) {
+		stack->correctParams(2);
+		const char *filename = stack->pop()->getString();
+		bool killThreads = stack->pop()->getBool(false);
+		bool ret = false;
+		for (int i = 0; i < _scripts.getSize(); i++) {
+			if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
+				_scripts[i]->finish(killThreads);
+				ret = true;
+				break;
+			}
+		}
+		stack->pushBool(ret);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// IsScriptRunning
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "IsScriptRunning") == 0) {
+		stack->correctParams(1);
+		const char *filename = stack->pop()->getString();
+		bool ret = false;
+		for (int i = 0; i < _scripts.getSize(); i++) {
+			if (scumm_stricmp(_scripts[i]->_filename, filename) == 0 && _scripts[i]->_state != SCRIPT_FINISHED && _scripts[i]->_state != SCRIPT_ERROR) {
+				ret = true;
+				break;
+			}
+		}
+		stack->pushBool(ret);
+
+		return STATUS_OK;
+	} else return CBScriptable::scCallMethod(script, stack, thisStack, name);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+CScValue *CBScriptHolder::scGetProperty(const char *name) {
+	_scValue->setNULL();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Type
+	//////////////////////////////////////////////////////////////////////////
+	if (strcmp(name, "Type") == 0) {
+		_scValue->setString("script_holder");
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Name
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Name") == 0) {
+		_scValue->setString(_name);
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Filename (RO)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Filename") == 0) {
+		_scValue->setString(_filename);
+		return _scValue;
+	}
+
+	else return CBScriptable::scGetProperty(name);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::scSetProperty(const char *name, CScValue *value) {
+	//////////////////////////////////////////////////////////////////////////
+	// Name
+	//////////////////////////////////////////////////////////////////////////
+	if (strcmp(name, "Name") == 0) {
+		setName(value->getString());
+		return STATUS_OK;
+	} else return CBScriptable::scSetProperty(name, value);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+const char *CBScriptHolder::scToString() {
+	return "[script_holder]";
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::saveAsText(CBDynBuffer *buffer, int indent) {
+	return CBBase::saveAsText(buffer, indent);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::persist(CBPersistMgr *persistMgr) {
+	CBScriptable::persist(persistMgr);
+
+	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transfer(TMEMBER(_freezable));
+	persistMgr->transfer(TMEMBER(_name));
+	_scripts.persist(persistMgr);
+
+	return STATUS_OK;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::addScript(const char *filename) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
+		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
+			if (_scripts[i]->_state != SCRIPT_FINISHED) {
+				_gameRef->LOG(0, "CBScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, _name);
+				return STATUS_OK;
+			}
+		}
+	}
+
+	CScScript *scr =  _gameRef->_scEngine->runScript(filename, this);
+	if (!scr) {
+		if (_gameRef->_editorForceScripts) {
+			// editor hack
+			scr = new CScScript(_gameRef,  _gameRef->_scEngine);
+			scr->_filename = new char[strlen(filename) + 1];
+			strcpy(scr->_filename, filename);
+			scr->_state = SCRIPT_ERROR;
+			scr->_owner = this;
+			_scripts.add(scr);
+			_gameRef->_scEngine->_scripts.add(scr);
+			_gameRef->getDebugMgr()->onScriptInit(scr);
+
+			return STATUS_OK;
+		}
+		return STATUS_FAILED;
+	} else {
+		scr->_freezable = _freezable;
+		_scripts.add(scr);
+		return STATUS_OK;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::removeScript(CScScript *script) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
+		if (_scripts[i] == script) {
+			_scripts.removeAt(i);
+			break;
+		}
+	}
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::canHandleEvent(const char *EventName) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
+		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) return true;
+	}
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::canHandleMethod(const char *MethodName) {
+	for (int i = 0; i < _scripts.getSize(); i++) {
+		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) return true;
+	}
+	return false;
+}
+
+
+TOKEN_DEF_START
+TOKEN_DEF(PROPERTY)
+TOKEN_DEF(NAME)
+TOKEN_DEF(VALUE)
+TOKEN_DEF_END
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::parseProperty(byte *buffer, bool complete) {
+	TOKEN_TABLE_START(commands)
+	TOKEN_TABLE(PROPERTY)
+	TOKEN_TABLE(NAME)
+	TOKEN_TABLE(VALUE)
+	TOKEN_TABLE_END
+
+	byte *params;
+	int cmd;
+	CBParser parser(_gameRef);
+
+	if (complete) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_PROPERTY) {
+			_gameRef->LOG(0, "'PROPERTY' keyword expected.");
+			return STATUS_FAILED;
+		}
+		buffer = params;
+	}
+
+	char *propName = NULL;
+	char *propValue = NULL;
+
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+		switch (cmd) {
+		case TOKEN_NAME:
+			delete[] propName;
+			propName = new char[strlen((char *)params) + 1];
+			if (propName) strcpy(propName, (char *)params);
+			else cmd = PARSERR_GENERIC;
+			break;
+
+		case TOKEN_VALUE:
+			delete[] propValue;
+			propValue = new char[strlen((char *)params) + 1];
+			if (propValue) strcpy(propValue, (char *)params);
+			else cmd = PARSERR_GENERIC;
+			break;
+		}
+
+	}
+	if (cmd == PARSERR_TOKENNOTFOUND) {
+		delete[] propName;
+		delete[] propValue;
+		propName = NULL;
+		propValue = NULL;
+		_gameRef->LOG(0, "Syntax error in PROPERTY definition");
+		return STATUS_FAILED;
+	}
+	if (cmd == PARSERR_GENERIC || propName == NULL || propValue == NULL) {
+		delete[] propName;
+		delete[] propValue;
+		propName = NULL;
+		propValue = NULL;
+		_gameRef->LOG(0, "Error loading PROPERTY definition");
+		return STATUS_FAILED;
+	}
+
+
+	CScValue *val = new CScValue(_gameRef);
+	val->setString(propValue);
+	scSetProperty(propName, val);
+
+	delete val;
+	delete[] propName;
+	delete[] propValue;
+	propName = NULL;
+	propValue = NULL;
+
+	return STATUS_OK;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void CBScriptHolder::makeFreezable(bool freezable) {
+	_freezable = freezable;
+	for (int i = 0; i < _scripts.getSize(); i++)
+		_scripts[i]->_freezable = freezable;
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
+	for (int i = _scripts.getSize() - 1; i >= 0; i--) {
+		if (_scripts[i]->canHandleMethod(methodName)) {
+
+			CScScript *thread = new CScScript(_gameRef,  _scripts[i]->_engine);
+			if (thread) {
+				bool ret = thread->createMethodThread(_scripts[i], methodName);
+				if (DID_SUCCEED(ret)) {
+					_scripts[i]->_engine->_scripts.add(thread);
+					_gameRef->getDebugMgr()->onScriptMethodThreadInit(thread, _scripts[i], methodName);
+
+					return thread;
+				} else {
+					delete thread;
+				}
+			}
+		}
+	}
+	return NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void CBScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
+	strcpy(buf, scToString());
+	if (_name && strcmp(_name, "<unnamed>") != 0) {
+		strcat(buf, "  Name: ");
+		strcat(buf, _name);
+	}
+	if (_filename) {
+		strcat(buf, "  File: ");
+		strcat(buf, _filename);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// IWmeObject
+//////////////////////////////////////////////////////////////////////////
+bool CBScriptHolder::sendEvent(const char *eventName) {
+	return DID_SUCCEED(applyEvent(eventName));
+}
+
+} // end of namespace WinterMute

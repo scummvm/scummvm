@@ -27,10 +27,10 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/base/file/BPackage.h"
+#include "engines/wintermute/base/file/base_package.h"
 #include "engines/wintermute/base/file/BPkgFile.h"
-#include "engines/wintermute/base/BGame.h"
-#include "engines/wintermute/base/BFileManager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "common/util.h"
 #include "common/file.h"
 #include "common/stream.h"

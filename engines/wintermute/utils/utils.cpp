@@ -27,11 +27,11 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "utils.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintypes.h"
-#include "PathUtil.h"
-#include "engines/wintermute/base/BGame.h"
+#include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/base/base_game.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "engines/wintermute/wintermute.h"

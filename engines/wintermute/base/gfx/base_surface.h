@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_BSURFACE_H
 #define WINTERMUTE_BSURFACE_H
 
-#include "engines/wintermute/base/BBase.h"
-#include "engines/wintermute/math/Rect32.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/math/rect32.h"
 #include "graphics/surface.h"
 
 namespace WinterMute {

@@ -27,11 +27,11 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/base/BActiveRect.h"
+#include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
-#include "engines/wintermute/base/BSubFrame.h"
-#include "engines/wintermute/base/BRegion.h"
+#include "engines/wintermute/base/base_sub_frame.h"
+#include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/platform_osystem.h"
 
 namespace WinterMute {

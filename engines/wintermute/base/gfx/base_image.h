@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_BIMAGE_H
 #define WINTERMUTE_BIMAGE_H
 
-#include "engines/wintermute/base/BBase.h"
+#include "engines/wintermute/base/base.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/decoders/image_decoder.h"

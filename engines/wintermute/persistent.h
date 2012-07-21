@@ -39,7 +39,7 @@ typedef bool(*PERSISTLOAD)(void *, CBPersistMgr *);
 typedef void (*SYS_INSTANCE_CALLBACK)(void *Instance, void *Data);
 } // end of namespace WinterMute
 
-#include "engines/wintermute/system/SysClassRegistry.h"
+#include "engines/wintermute/system/sys_class_registry.h"
 namespace WinterMute {
 
 
