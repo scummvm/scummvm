@@ -196,7 +196,7 @@ uint32 AdvancedVideoDecoder::getTime() const {
 
 	if (useAudioSync()) {
 		for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
-			if ((*it)->getTrackType() == Track::kTrackTypeAudio) {
+			if ((*it)->getTrackType() == Track::kTrackTypeAudio && !(*it)->endOfTrack()) {
 				uint32 time = ((const AudioTrack *)*it)->getRunningTime();
 
 				if (time != 0)
