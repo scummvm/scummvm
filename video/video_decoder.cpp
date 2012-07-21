@@ -414,7 +414,7 @@ Audio::Timestamp AdvancedVideoDecoder::FixedDurationVideoTrack::getDuration() co
 
 bool AdvancedVideoDecoder::AudioTrack::endOfTrack() const {
 	Audio::AudioStream *stream = getAudioStream();
-	return !stream || (!g_system->getMixer()->isSoundHandleActive(_handle) && stream->endOfData());
+	return !stream || !g_system->getMixer()->isSoundHandleActive(_handle) || stream->endOfData();
 }
 
 void AdvancedVideoDecoder::AudioTrack::setVolume(byte volume) {
