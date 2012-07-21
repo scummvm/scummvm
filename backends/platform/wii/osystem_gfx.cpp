@@ -451,7 +451,7 @@ bool OSystem_Wii::needsScreenUpdate() {
 void OSystem_Wii::updateScreen() {
 	static f32 ar;
 	static gfx_screen_coords_t cc;
-	static int cs;
+	static f32 csx, csy;
 
 	u32 now = getMillis();
 	if (now - _lastScreenUpdate < 1000 / MAX_FPS)
@@ -466,7 +466,6 @@ void OSystem_Wii::updateScreen() {
 	wii_memstats();
 #endif
 
-	cs = _cursorScale;
 	_lastScreenUpdate = now;
 
 	if (_overlayVisible || _consoleVisible)
@@ -488,12 +487,6 @@ void OSystem_Wii::updateScreen() {
 		if (_gameRunning)
 			ar = gfx_set_ar(4.0 / 3.0);
 
-		// ugly, but the modern theme sets a factor of 3, only god knows why
-		if (cs > 2)
-			cs = 1;
-		else
-			cs *= 2;
-
 		if (_overlayDirty) {
 			gfx_tex_convert(&_texOverlay, _overlayPixels);
 			_overlayDirty = false;
@@ -503,10 +496,18 @@ void OSystem_Wii::updateScreen() {
 	}
 
 	if (_mouseVisible) {
-		cc.x = f32(_mouseX - cs * _mouseHotspotX) * _currentXScale;
-		cc.y = f32(_mouseY - cs * _mouseHotspotY) * _currentYScale;
-		cc.w = f32(_texMouse.width) * _currentXScale * cs;
-		cc.h = f32(_texMouse.height) * _currentYScale * cs;
+		if (_cursorDontScale) {
+			csx = 1.0f / _currentXScale;
+			csy = 1.0f / _currentYScale;
+		} else {
+			csx = 1.0f;
+			csy = 1.0f;
+		}
+
+		cc.x = f32(_mouseX - csx * _mouseHotspotX) * _currentXScale;
+		cc.y = f32(_mouseY - csy * _mouseHotspotY) * _currentYScale;
+		cc.w = f32(_texMouse.width) * _currentXScale * csx;
+		cc.h = f32(_texMouse.height) * _currentYScale * csy;
 
 		if (_texMouse.palette && _cursorPaletteDirty) {
 			_texMouse.palette[_mouseKeyColor] = 0;
@@ -745,8 +746,7 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;
-	// TODO: Adapt to new dontScale logic!
-	_cursorScale = 1;
+	_cursorDontScale = dontScale;
 
 	if ((_texMouse.palette) && (oldKeycolor != _mouseKeyColor))
 		_cursorPaletteDirty = true;
