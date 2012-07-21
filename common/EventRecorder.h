@@ -117,6 +117,8 @@ public:
 	SaveFileManager *getSaveManager(SaveFileManager *realSaveManager);
 	void togglePause();
 private:
+	bool _enableDrag;
+	Common::Point dragPoint;
 	SaveFileManager *_realSaveManager;
 	RecorderSaveFileManager _fakeSaveManager;
 	virtual List<Event> mapEvent(const Event &ev, EventSource *source);

@@ -69,6 +69,7 @@ EventRecorder::EventRecorder() {
 	_recordMode = kPassthrough;
 	_timerManager = NULL;
 	_screenshotsFile = NULL;
+	_enableDrag = false;
 	_initialized = false;
 }
 
@@ -236,7 +237,7 @@ Common::String EventRecorder::generateRecordFileName(const String &target) {
 void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_fakeTimer = 0;
 	_lastMillis = g_system->getMillis();
-	_lastScreenshotTime = g_system->getMillis();
+	_lastScreenshotTime = 0;
 	_screenshotsFile = NULL;
 	_recordMode = mode;
 	controlPanel = new GUI::OnScreenDialog(10,10,200,30);
@@ -438,8 +439,22 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 			if (evt.mouse.x > controlPanel->_x && evt.mouse.x < controlPanel->_x + controlPanel->_w && evt.mouse.y > controlPanel->_y && evt.mouse.y < controlPanel->_y + controlPanel->_h) {
 				g_gui.processEvent(evt, controlPanel);
 				if (ev.type != EVENT_MOUSEMOVE) {
-					return List<Event>();
+					if (ev.type == EVENT_LBUTTONDOWN) {
+						dragPoint.x = evt.mouse.x - controlPanel->_x;
+						dragPoint.y = evt.mouse.y - controlPanel->_y;
+						_enableDrag = true;
+					}
+					if (ev.type == EVENT_LBUTTONUP) {
+						_enableDrag = false;
+					}
 				}
+				return List<Event>();
+			}
+			if ((ev.type == EVENT_MOUSEMOVE) && (_enableDrag)) {
+				controlPanel->_x = evt.mouse.x - dragPoint.x;
+				controlPanel->_y = evt.mouse.y - dragPoint.y;
+				g_system->updateScreen();
+				return List<Event>();
 			}
 		}
 	}
