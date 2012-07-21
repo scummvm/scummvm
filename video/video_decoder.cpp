@@ -481,6 +481,12 @@ bool AdvancedVideoDecoder::SeekableAudioTrack::seek(const Audio::Timestamp &time
 
 void AdvancedVideoDecoder::addTrack(Track *track) {
 	_tracks.push_back(track);
+
+	if (isPaused())
+		track->pause(true);
+
+	if (isPlaying())
+		track->start();
 }
 
 AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack() {
