@@ -23,10 +23,16 @@
 #ifndef VIDEO_DECODER_H
 #define VIDEO_DECODER_H
 
+#include "audio/mixer.h"
+#include "audio/timestamp.h"	// TODO: Move this to common/ ?
+#include "common/list.h"
 #include "common/str.h"
 
-#include "audio/timestamp.h"	// TODO: Move this to common/ ?
-
+namespace Audio {
+class AudioStream;
+class RewindableAudioStream;
+class SeekableAudioStream;
+}
 
 namespace Common {
 class Rational;
@@ -42,6 +48,7 @@ namespace Video {
 
 /**
  * Generic interface for video decoder classes.
+ * @note This class is now deprecated in favor of AdvancedVideoDecoder.
  */
 class VideoDecoder {
 public:
@@ -109,6 +116,7 @@ public:
 	/**
 	 * Set the system palette to the palette returned by getPalette.
 	 * @see getPalette
+	 * @note This function is now deprecated. There is no replacement.
 	 */
 	void setSystemPalette();
 
@@ -222,39 +230,46 @@ public:
 protected:
 	/**
 	 * Resets _curFrame and _startTime. Should be called from every close() function.
+	 * @note This function is now deprecated. There is no replacement.
 	 */
 	void reset();
 
 	/**
 	 * Actual implementation of pause by subclasses. See pause()
 	 * for details.
+	 * @note This function is now deprecated. There is no replacement.
 	 */
 	virtual void pauseVideoIntern(bool pause) {}
 
 	/**
 	 * Add the time the video has been paused to maintain sync
+	 * @note This function is now deprecated. There is no replacement.
 	 */
 	virtual void addPauseTime(uint32 ms) { _startTime += ms; }
 
 	/**
 	 * Reset the pause start time (which should be called when seeking)
+	 * @note This function is now deprecated. There is no replacement.
 	 */
 	void resetPauseStartTime();
 
 	/**
 	 * Update currently playing audio tracks with the new volume setting
+	 * @note This function is now deprecated. There is no replacement.
 	 */
 	virtual void updateVolume() {}
 
 	/**
 	 * Update currently playing audio tracks with the new balance setting
+	 * @note This function is now deprecated. There is no replacement.
 	 */
 	virtual void updateBalance() {}
 
 	int32 _curFrame;
 	int32 _startTime;
 
-private:
+// FIXME: These are protected until the new API takes over this one
+//private:
 	uint32 _pauseLevel;
 	uint32 _pauseStartTime;
 	byte _audioVolume;
@@ -262,7 +277,342 @@ private:
 };
 
 /**
+ * Improved interface for video decoder classes.
+ */
+class AdvancedVideoDecoder : public VideoDecoder {
+public:
+	AdvancedVideoDecoder();
+	virtual ~AdvancedVideoDecoder() {}
+
+	// Old API Non-changing
+	// loadFile()
+	// loadStream()
+	// getWidth()
+	// getHeight()
+	// needsUpdate()
+
+	// Old API Changing
+	virtual void close();
+	bool isVideoLoaded() const;
+	virtual const Graphics::Surface *decodeNextFrame();
+	const byte *getPalette();
+	bool hasDirtyPalette() const { return _dirtyPalette; }
+	int getCurFrame() const;
+	uint32 getFrameCount() const;
+	uint32 getTime() const;
+	uint32 getTimeToNextFrame() const;
+	bool endOfVideo() const;
+
+	// New API
+	/**
+	 * Returns if a video is rewindable or not.
+	 */
+	bool isRewindable() const;
+
+	/**
+	 * Rewind a video to its beginning.
+	 *
+	 * If the video is playing, it will continue to play.
+	 *
+	 * @return true on success, false otherwise
+	 */
+	bool rewind();
+
+	/**
+	 * Returns if a video is seekable or not.
+	 */
+	bool isSeekable() const;
+
+	/**
+	 * Seek to a given time in the video.
+	 *
+	 * If the video is playing, it will continue to play.
+	 *
+	 * @param time The time to seek to
+	 * @return true on success, false otherwise
+	 */
+	bool seek(const Audio::Timestamp &time);
+
+	/**
+	 * Begin playback of the video.
+	 *
+	 * @note This has no effect is the video is already playing.
+	 */
+	void start();
+
+	/**
+	 * Stop playback of the video.
+	 *
+	 * @note This will close() the video if it is not rewindable.
+	 */
+	void stop();
+
+	/**
+	 * Returns if the video is currently playing or not.
+	 * @todo Differentiate this function from endOfVideo()
+	 */
+	bool isPlaying() const { return _isPlaying; }
+
+	/**
+	 * Get the duration of the video.
+	 *
+	 * If the duration is unknown, this will return 0.
+	 */
+	virtual Audio::Timestamp getDuration() const;
+
+	// Future API
+	//void setRate(const Common::Rational &rate);
+	//Common::Rational getRate() const;
+	//void setStartTime(const Audio::Timestamp &startTime);
+	//Audio::Timestamp getStartTime() const;
+	//void setStopTime(const Audio::Timestamp &stopTime);
+	//Audio::Timestamp getStopTime() const;
+	//void setSegment(const Audio::Timestamp &startTime, const Audio::Timestamp &stopTime);
+
+protected:
+	// Old API
+	void pauseVideoIntern(bool pause);
+	void updateVolume();
+	void updateBalance();
+
+	// New API
+
+	/**
+	 * An abstract representation of a track in a movie.
+	 */
+	class Track {
+	public:
+		Track();
+		virtual ~Track() {}
+
+		/**
+		 * The types of tracks this class can be.
+		 */
+		enum TrackType {
+			kTrackTypeNone,
+			kTrackTypeVideo,
+			kTrackTypeAudio
+		};
+
+		/**
+		 * Get the type of track.
+		 */
+		virtual TrackType getTrackType() const = 0;
+
+		/**
+		 * Return if the track has finished.
+		 */
+		virtual bool endOfTrack() const = 0;
+
+		/**
+		 * Return if the track is rewindable.
+		 */
+		virtual bool isRewindable() const;
+
+		/**
+		 * Rewind the video to the beginning.
+		 * @return true on success, false otherwise.
+		 */
+		virtual bool rewind();
+
+		/**
+		 * Return if the track is seekable.
+		 */
+		virtual bool isSeekable() const { return false; }
+
+		/**
+		 * Seek to the given time.
+		 * @param time The time to seek to.
+		 * @return true on success, false otherwise.
+		 */
+		virtual bool seek(const Audio::Timestamp &time) { return false; }
+
+		/**
+		 * Start playback of the track.
+		 */
+		virtual void start() {}
+
+		/**
+		 * Stop playback of the track.
+		 */
+		virtual void stop() {}
+
+		/**
+		 * Set the pause status of the track.
+		 */
+		void pause(bool shouldPause) {}
+
+		/**
+		 * Return if the track is paused.
+		 */
+		bool isPaused() const { return _paused; }
+
+	protected:
+		/**
+		 * Function called by pause() for subclasses to implement.
+		 */
+		void pauseIntern(bool pause);
+
+	private:
+		bool _paused;
+	};
+
+	/**
+	 * An abstract representation of a video track.
+	 */
+	class VideoTrack : public Track {
+	public:
+		VideoTrack() {}
+		virtual ~VideoTrack() {}
+
+		TrackType getTrackType() const  { return kTrackTypeVideo; }
+
+		// TODO: Document
+		virtual int getCurFrame() const = 0;
+		virtual int getFrameCount() const { return 0; }
+		virtual uint32 getNextFrameStartTime() const = 0;
+		virtual const Graphics::Surface *decodeNextFrame() = 0;
+		virtual const byte *getPalette() const { return 0; }
+		virtual bool hasDirtyPalette() const { return false; }
+	};
+
+	/**
+	 * A VideoTrack that is played at a constant rate.
+	 */
+	class FixedRateVideoTrack : public virtual VideoTrack {
+	public:
+		FixedRateVideoTrack() {}
+		virtual ~FixedRateVideoTrack() {}
+
+		uint32 getNextFrameStartTime() const;
+
+	protected:
+		/**
+		 * Get the rate at which this track is played.
+		 */
+		virtual Common::Rational getFrameRate() const = 0;
+	};
+
+	/**
+	 * A VideoTrack with a known frame count that can be reliably
+	 * used to figure out if the track has finished.
+	 */
+	class FixedLengthVideoTrack : public virtual VideoTrack {
+	public:
+		FixedLengthVideoTrack() {}
+		virtual ~FixedLengthVideoTrack() {}
+
+		bool endOfTrack() const;
+	};
+
+	/**
+	 * An abstract representation of an audio track.
+	 */
+	class AudioTrack : public Track {
+	public:
+		AudioTrack() {}
+		virtual ~AudioTrack() {}
+
+		TrackType getTrackType() const { return kTrackTypeAudio; }
+
+		virtual bool endOfTrack() const;
+		void start();
+		void stop();
+
+		// TODO: Document
+		byte getVolume() const { return _volume; }
+		void setVolume(byte volume);
+		int8 getBalance() const { return _balance; }
+		void setBalance(int8 balance);
+		uint32 getRunningTime() const;
+
+		virtual Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kPlainSoundType; }
+
+	protected:
+		void pauseIntern(bool pause);
+
+		// TODO: Document
+		virtual Audio::AudioStream *getAudioStream() const = 0;
+
+	private:
+		Audio::SoundHandle _handle;
+		byte _volume;
+		int8 _balance;
+	};
+
+	/**
+	 * An AudioTrack that implements isRewindable() and rewind() using
+	 * the RewindableAudioStream API.
+	 */
+	class RewindableAudioTrack : public AudioTrack {
+	public:
+		RewindableAudioTrack() {}
+		virtual ~RewindableAudioTrack() {}
+
+		bool isRewindable() const { return true; }
+		bool rewind();
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+		// TODO: Document
+		virtual Audio::RewindableAudioStream *getRewindableAudioStream() const = 0;
+	};
+
+	/**
+	 * An AudioTrack that implements isSeekable() and seek() using
+	 * the SeekableAudioStream API.
+	 */
+	class SeekableAudioTrack : public AudioTrack {
+	public:
+		SeekableAudioTrack() {}
+		virtual ~SeekableAudioTrack() {}
+
+		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time);
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+		// TODO: Document
+		virtual Audio::SeekableAudioStream *getSeekableAudioStream() const = 0;
+	};
+
+	/**
+	 * Decode enough data for the next frame and enough audio to last that long.
+	 *
+	 * This function is used by the default decodeNextFrame() function. A subclass
+	 * of a Track may decide to just have its decodeNextFrame() function read
+	 * and decode the frame.
+	 */
+	virtual void readNextPacket() {}
+
+	/**
+	 * Define a track to be used by this class.
+	 *
+	 * The pointer is then owned by this base class.
+	 */
+	void addTrack(Track *track);
+
+private:
+	// Tracks owned by this AdvancedVideoDecoder
+	typedef Common::List<Track *> TrackList;
+	TrackList _tracks;
+	VideoTrack *findNextVideoTrack();
+	const VideoTrack *findNextVideoTrack() const;
+
+	// Current playback status
+	bool _isPlaying, _needsRewind;
+	Audio::Timestamp _audioStartOffset;
+
+	// Palette settings from individual tracks
+	mutable bool _dirtyPalette;
+	const byte *_palette;
+};
+
+/**
  * A VideoDecoder wrapper that implements getTimeToNextFrame() based on getFrameRate().
+ * @note This class is now deprecated. Use AdvancedVideoDecoder instead.
  */
 class FixedRateVideoDecoder : public virtual VideoDecoder {
 public:
@@ -282,6 +632,7 @@ private:
 
 /**
  * A VideoDecoder that can be rewound back to the beginning.
+ * @note This class is now deprecated. Use AdvancedVideoDecoder instead.
  */
 class RewindableVideoDecoder : public virtual VideoDecoder {
 public:
@@ -293,6 +644,7 @@ public:
 
 /**
  * A VideoDecoder that can seek to a frame or point in time.
+ * @note This class is now deprecated. Use AdvancedVideoDecoder instead.
  */
 class SeekableVideoDecoder : public virtual RewindableVideoDecoder {
 public:
