@@ -47,21 +47,15 @@ public:
 
 	bool loadStream(Common::SeekableReadStream *stream);
 
-	uint16 getWidth() const { return SEQ_SCREEN_WIDTH; }
-	uint16 getHeight() const { return SEQ_SCREEN_HEIGHT; }
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
-
 private:
-	enum {
-		SEQ_SCREEN_WIDTH = 320,
-		SEQ_SCREEN_HEIGHT = 200
-	};
-
 	class SEQVideoTrack : public FixedRateVideoTrack, public FixedLengthVideoTrack {
 	public:
 		SEQVideoTrack(Common::SeekableReadStream *stream, uint frameDelay);
 		~SEQVideoTrack();
 
+		uint16 getWidth() const { return SEQ_SCREEN_WIDTH; }
+		uint16 getHeight() const { return SEQ_SCREEN_HEIGHT; }
+		Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame();
@@ -72,6 +66,11 @@ private:
 		Common::Rational getFrameRate() const { return Common::Rational(60, _frameDelay); }
 
 	private:
+		enum {
+			SEQ_SCREEN_WIDTH = 320,
+			SEQ_SCREEN_HEIGHT = 200
+		};
+
 		void readPaletteChunk(uint16 chunkSize);
 		bool decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey);
 

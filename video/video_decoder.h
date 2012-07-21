@@ -287,13 +287,14 @@ public:
 	// Old API Non-changing
 	// loadFile()
 	// loadStream()
-	// getWidth()
-	// getHeight()
 	// needsUpdate()
 
 	// Old API Changing
 	virtual void close();
 	bool isVideoLoaded() const;
+	virtual uint16 getWidth() const;
+	virtual uint16 getHeight() const;
+	virtual Graphics::PixelFormat getPixelFormat() const;
 	virtual const Graphics::Surface *decodeNextFrame();
 	const byte *getPalette();
 	bool hasDirtyPalette() const { return _dirtyPalette; }
@@ -468,6 +469,9 @@ protected:
 		TrackType getTrackType() const  { return kTrackTypeVideo; }
 
 		// TODO: Document
+		virtual uint16 getWidth() const = 0;
+		virtual uint16 getHeight() const = 0;
+		virtual Graphics::PixelFormat getPixelFormat() const = 0;
 		virtual int getCurFrame() const = 0;
 		virtual int getFrameCount() const { return 0; }
 		virtual uint32 getNextFrameStartTime() const = 0;

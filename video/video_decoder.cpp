@@ -119,6 +119,30 @@ bool AdvancedVideoDecoder::isVideoLoaded() const {
 	return !_tracks.empty();
 }
 
+uint16 AdvancedVideoDecoder::getWidth() const {
+	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
+			return ((VideoTrack *)*it)->getWidth();
+
+	return 0;
+}
+
+uint16 AdvancedVideoDecoder::getHeight() const {
+	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
+			return ((VideoTrack *)*it)->getHeight();
+
+	return 0;
+}
+
+Graphics::PixelFormat AdvancedVideoDecoder::getPixelFormat() const {
+	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
+			return ((VideoTrack *)*it)->getPixelFormat();
+
+	return Graphics::PixelFormat();
+}
+
 const Graphics::Surface *AdvancedVideoDecoder::decodeNextFrame() {
 	readNextPacket();
 	VideoTrack *track = findNextVideoTrack();
