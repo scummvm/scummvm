@@ -98,6 +98,9 @@ AdvancedVideoDecoder::AdvancedVideoDecoder() {
 	_dirtyPalette = false;
 	_palette = 0;
 	_isPlaying = false;
+	_audioVolume = Audio::Mixer::kMaxChannelVolume;
+	_audioBalance = 0;
+	_pauseLevel = 0;
 }
 
 void AdvancedVideoDecoder::close() {
@@ -112,7 +115,9 @@ void AdvancedVideoDecoder::close() {
 	_dirtyPalette = false;
 	_palette = 0;
 	_startTime = 0;
-	reset();
+	_audioVolume = Audio::Mixer::kMaxChannelVolume;
+	_audioBalance = 0;
+	_pauseLevel = 0;
 }
 
 bool AdvancedVideoDecoder::isVideoLoaded() const {
@@ -482,9 +487,17 @@ bool AdvancedVideoDecoder::SeekableAudioTrack::seek(const Audio::Timestamp &time
 void AdvancedVideoDecoder::addTrack(Track *track) {
 	_tracks.push_back(track);
 
+	// Update volume settings if it's an audio track
+	if (track->getTrackType() == Track::kTrackTypeAudio) {
+		((AudioTrack *)track)->setVolume(_audioVolume);
+		((AudioTrack *)track)->setBalance(_audioBalance);
+	}
+
+	// Keep the track paused if we're paused
 	if (isPaused())
 		track->pause(true);
 
+	// Start the track if we're playing
 	if (isPlaying())
 		track->start();
 }
