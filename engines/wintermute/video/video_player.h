@@ -30,10 +30,6 @@
 #define WINTERMUTE_VIDPLAYER_H
 
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
 #include "engines/wintermute/base/base.h"
 
 #define MAX_AUDIO_STREAMS 5

@@ -37,11 +37,8 @@
 #include "engines/wintermute/persistent.h"
 #include "common/str.h"
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
 namespace WinterMute {
+
 class CAdSpriteSet;
 class CAdPath;
 class CAdActor : public CAdTalkHolder {
