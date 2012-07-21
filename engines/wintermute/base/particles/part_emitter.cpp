@@ -168,7 +168,7 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	else scale = BaseUtils::randomFloat(_scale1, _scale2);
 
 	int lifeTime;
-	if (_lifeTimeZBased) lifeTime = _lifeTime2 - posZ * (_lifeTime2 - _lifeTime1) / 100;
+	if (_lifeTimeZBased) lifeTime = (int)(_lifeTime2 - posZ * (_lifeTime2 - _lifeTime1) / 100);
 	else lifeTime = BaseUtils::randomInt(_lifeTime1, _lifeTime2);
 
 	float angle = BaseUtils::randomAngle(_angle1, _angle2);

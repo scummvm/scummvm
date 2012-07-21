@@ -97,8 +97,8 @@ int BaseFontBitmap::getTextWidth(byte *text, int maxLength) {
 	//str.substr(0, maxLength); // TODO: Remove
 
 	int textWidth = 0;
-	for (int i = 0; i < str.size(); i++) {
-		textWidth += getCharWidth(str[i]);
+	for (int i = 0; (uint32)i < str.size(); i++) {
+		textWidth += getCharWidth((byte)str[i]);
 	}
 
 	return textWidth;
