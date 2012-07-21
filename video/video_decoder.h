@@ -625,6 +625,13 @@ protected:
 	 */
 	void addTrack(Track *track);
 
+	/**
+	 * Whether or not getTime() will sync with a playing audio track.
+	 *
+	 * A subclass should override this to disable this feature.
+	 */
+	virtual bool useAudioSync() const { return true; }
+
 private:
 	// Tracks owned by this AdvancedVideoDecoder
 	typedef Common::List<Track *> TrackList;

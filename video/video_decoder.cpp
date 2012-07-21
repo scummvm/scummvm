@@ -194,12 +194,14 @@ uint32 AdvancedVideoDecoder::getTime() const {
 	if (isPaused())
 		return _pauseStartTime - _startTime;
 
-	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
-		if ((*it)->getTrackType() == Track::kTrackTypeAudio) {
-			uint32 time = ((const AudioTrack *)*it)->getRunningTime();
+	if (useAudioSync()) {
+		for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
+			if ((*it)->getTrackType() == Track::kTrackTypeAudio) {
+				uint32 time = ((const AudioTrack *)*it)->getRunningTime();
 
-			if (time != 0)
-				return time + _audioStartOffset.msecs();
+				if (time != 0)
+					return time + _audioStartOffset.msecs();
+			}
 		}
 	}
 
