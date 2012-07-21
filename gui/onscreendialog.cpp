@@ -32,7 +32,7 @@ bool OnScreenDialog::isVisible() const {
 }
 
 enum {
-	kPlayCmd = 'PLAY'
+	kStopCmd = 'PLAY'
 };
 
 void OnScreenDialog::reflowLayout() {
@@ -43,8 +43,10 @@ void OnScreenDialog::releaseFocus() {
 }
 
 OnScreenDialog::OnScreenDialog(int x, int y, int w, int h) : Dialog(x, y, w, h) {
-	GUI::ButtonWidget *btn = new GUI::ButtonWidget(this, "", "|>", 0, kPlayCmd);
-	btn->resize(0,0,30,30);
+	GUI::PicButtonWidget *btn = new PicButtonWidget(this, "", "|>", kStopCmd);
+	btn->useThemeTransparency(true);
+	btn->resize(0,0,32,32);
+	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopbtn));
 	text = new GUI::StaticTextWidget(this, "", "00:00:00");
 	text->resize(40,5,50,30);
 	uint32 lastTime = 0;
@@ -52,7 +54,7 @@ OnScreenDialog::OnScreenDialog(int x, int y, int w, int h) : Dialog(x, y, w, h) 
 
 void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kPlayCmd:
+	case kStopCmd:
 		g_eventRec.togglePause();
 		break;
 	}

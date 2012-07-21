@@ -99,6 +99,7 @@
 		<bitmap filename = 'radiobutton_empty.bmp'/>
 		<bitmap filename = 'logo_small.bmp'/>
 		<bitmap filename = 'search.bmp'/>
+		<bitmap filename = 'stopbtn.bmp'/>
 		<bitmap filename = 'eraser.bmp'/>
 		<bitmap filename = 'delbtn.bmp'/>
 		<bitmap filename = 'list.bmp'/>

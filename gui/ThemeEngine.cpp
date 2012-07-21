@@ -50,6 +50,7 @@ const char * const ThemeEngine::kImageEraser = "eraser.bmp";
 const char * const ThemeEngine::kImageDelbtn = "delbtn.bmp";
 const char * const ThemeEngine::kImageList = "list.bmp";
 const char * const ThemeEngine::kImageGrid = "grid.bmp";
+const char * const ThemeEngine::kImageStopbtn = "stopbtn.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;

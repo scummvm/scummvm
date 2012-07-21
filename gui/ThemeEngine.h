@@ -234,6 +234,7 @@ public:
 	static const char *const kImageDelbtn; ///< Delete characters in the predictive dialog
 	static const char *const kImageList;      ///< List image used in save/load chooser selection
 	static const char *const kImageGrid;      ///< Grid image used in save/load chooser selection
+	static const char *const kImageStopbtn; ///< Delete characters in the predictive dialog
 
 	/**
 	 * Graphics mode enumeration.

@@ -240,7 +240,7 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_lastScreenshotTime = 0;
 	_screenshotsFile = NULL;
 	_recordMode = mode;
-	controlPanel = new GUI::OnScreenDialog(10,10,200,30);
+	controlPanel = new GUI::OnScreenDialog(10,10,200,32);
 	controlPanel->open();
 
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
