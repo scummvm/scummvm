@@ -610,6 +610,27 @@ protected:
 	};
 
 	/**
+	 * A SeekableAudioTrack that constructs its SeekableAudioStream using
+	 * SeekableAudioStream::openStreamFile()
+	 */
+	class StreamFileAudioTrack : public SeekableAudioTrack {
+	public:
+		StreamFileAudioTrack();
+		~StreamFileAudioTrack();
+
+		/**
+		 * Load the track from a file with the given base name.
+		 *
+		 * @return true on success, false otherwise
+		 */
+		bool loadFromFile(const Common::String &baseName);
+
+	protected:
+		Audio::SeekableAudioStream *_stream;
+		Audio::SeekableAudioStream *getSeekableAudioStream() const { return _stream; }
+	};
+
+	/**
 	 * Decode enough data for the next frame and enough audio to last that long.
 	 *
 	 * This function is used by the default decodeNextFrame() function. A subclass

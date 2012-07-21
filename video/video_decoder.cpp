@@ -486,6 +486,21 @@ bool AdvancedVideoDecoder::SeekableAudioTrack::seek(const Audio::Timestamp &time
 	return stream->seek(time);
 }
 
+AdvancedVideoDecoder::StreamFileAudioTrack::StreamFileAudioTrack() {
+	_stream = 0;
+}
+
+AdvancedVideoDecoder::StreamFileAudioTrack::~StreamFileAudioTrack() {
+	delete _stream;
+}
+
+bool AdvancedVideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::String &baseName) {
+	// TODO: Make sure the stream isn't being played
+	delete _stream;
+	_stream = Audio::SeekableAudioStream::openStreamFile(baseName);
+	return _stream != 0;
+}
+
 void AdvancedVideoDecoder::addTrack(Track *track) {
 	_tracks.push_back(track);
 
