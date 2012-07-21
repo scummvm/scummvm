@@ -162,15 +162,16 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
-			SeqDecoder *seqDecoder = new SeqDecoder();
-			seqDecoder->setFrameDelay(argv[1].toUint16()); // Time between frames in ticks
-			videoDecoder = seqDecoder;
+			// Time is specified as ticks
+			videoDecoder = new SEQDecoder(argv[1].toUint16());
 
 			if (!videoDecoder->loadFile(filename)) {
 				warning("Failed to open movie file %s", filename.c_str());
 				delete videoDecoder;
 				videoDecoder = 0;
 			}
+
+			((Video::AdvancedVideoDecoder *)videoDecoder)->start(); // TODO: Remove after new API is complete
 		}
 	} else {
 		// Windows AVI

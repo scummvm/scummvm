@@ -250,9 +250,8 @@ void Console::postEnter() {
 #endif
 
 		if (_videoFile.hasSuffix(".seq")) {
-			SeqDecoder *seqDecoder = new SeqDecoder();
-			seqDecoder->setFrameDelay(_videoFrameDelay);
-			videoDecoder = seqDecoder;
+			videoDecoder = new SEQDecoder(_videoFrameDelay);
+			((Video::AdvancedVideoDecoder *)videoDecoder)->start(); // TODO: Remove after new API is complete
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
 			videoDecoder = new Video::VMDDecoder(g_system->getMixer());
