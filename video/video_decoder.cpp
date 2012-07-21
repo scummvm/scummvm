@@ -328,7 +328,21 @@ void AdvancedVideoDecoder::stop() {
 }
 
 Audio::Timestamp AdvancedVideoDecoder::getDuration() const {
-	return Audio::Timestamp(0, 1000);
+	Audio::Timestamp maxDuration(0, 1000);
+
+	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
+		Audio::Timestamp startTime = (*it)->getStartTime();
+		Audio::Timestamp duration = (*it)->getDuration();
+
+		if (duration.totalNumberOfFrames() != 0) {
+			// HACK: Timestamp's + operator doesn't do framerate conversion :(
+			duration = duration + startTime.convertToFramerate(duration.framerate());
+			if (duration > maxDuration)
+				maxDuration = duration;
+		}
+	}
+
+	return maxDuration;
 }
 
 void AdvancedVideoDecoder::pauseVideoIntern(bool pause) {
@@ -359,7 +373,15 @@ bool AdvancedVideoDecoder::Track::isRewindable() const {
 }
 
 bool AdvancedVideoDecoder::Track::rewind() {
-	return seek(Audio::Timestamp(0, 1000));
+	return seek(getStartTime());
+}
+
+Audio::Timestamp AdvancedVideoDecoder::Track::getStartTime() const {
+	return Audio::Timestamp(0, 1000);
+}
+
+Audio::Timestamp AdvancedVideoDecoder::Track::getDuration() const {
+	return Audio::Timestamp(0, 1000);
 }
 
 uint32 AdvancedVideoDecoder::FixedRateVideoTrack::getNextFrameStartTime() const {
@@ -373,6 +395,14 @@ uint32 AdvancedVideoDecoder::FixedRateVideoTrack::getNextFrameStartTime() const 
 
 bool AdvancedVideoDecoder::FixedLengthVideoTrack::endOfTrack() const {
 	return getCurFrame() >= (getFrameCount() - 1);
+}
+
+Audio::Timestamp AdvancedVideoDecoder::FixedDurationVideoTrack::getDuration() const {
+	// Since Audio::Timestamp doesn't support a fractional frame rate, we're currently
+	// just converting to milliseconds.
+	Common::Rational time = getFrameCount() * 1000;
+	time /= getFrameRate();
+	return time.toInt();
 }
 
 bool AdvancedVideoDecoder::AudioTrack::endOfTrack() const {
@@ -431,6 +461,12 @@ bool AdvancedVideoDecoder::RewindableAudioTrack::rewind() {
 	Audio::RewindableAudioStream *stream = getRewindableAudioStream();
 	assert(stream);
 	return stream->rewind();
+}
+
+Audio::Timestamp AdvancedVideoDecoder::SeekableAudioTrack::getDuration() const {
+	Audio::SeekableAudioStream *stream = getSeekableAudioStream();
+	assert(stream);
+	return stream->getLength();
 }
 
 Audio::AudioStream *AdvancedVideoDecoder::SeekableAudioTrack::getAudioStream() const {

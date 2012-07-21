@@ -423,7 +423,7 @@ protected:
 
 		/**
 		 * Seek to the given time.
-		 * @param time The time to seek to.
+		 * @param time The time to seek to, from the beginning of the video.
 		 * @return true on success, false otherwise.
 		 */
 		virtual bool seek(const Audio::Timestamp &time) { return false; }
@@ -447,6 +447,19 @@ protected:
 		 * Return if the track is paused.
 		 */
 		bool isPaused() const { return _paused; }
+
+		/**
+		 * Get the start time of the track (starting from the beginning of the
+		 * movie).
+		 */
+		virtual Audio::Timestamp getStartTime() const;
+
+		/**
+		 * Get the duration of the track (starting from this track's start time).
+		 *
+		 * By default, this returns 0 for unknown.
+		 */
+		virtual Audio::Timestamp getDuration() const;
 
 	protected:
 		/**
@@ -507,6 +520,18 @@ protected:
 		virtual ~FixedLengthVideoTrack() {}
 
 		bool endOfTrack() const;
+	};
+
+	/**
+	 * A FixedRateVideoTrack and FixedLengthVideoTrack that implements the getDuration()
+	 * function.
+	 */
+	class FixedDurationVideoTrack : public FixedRateVideoTrack, public FixedLengthVideoTrack {
+	public:
+		FixedDurationVideoTrack() {}
+		virtual ~FixedDurationVideoTrack() {}
+
+		virtual Audio::Timestamp getDuration() const;
 	};
 
 	/**
@@ -574,6 +599,8 @@ protected:
 
 		bool isSeekable() const { return true; }
 		bool seek(const Audio::Timestamp &time);
+
+		Audio::Timestamp getDuration() const;
 
 	protected:
 		Audio::AudioStream *getAudioStream() const;
