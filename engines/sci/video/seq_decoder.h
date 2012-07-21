@@ -48,7 +48,7 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream);
 
 private:
-	class SEQVideoTrack : public FixedRateVideoTrack, public FixedLengthVideoTrack {
+	class SEQVideoTrack : public FixedDurationVideoTrack {
 	public:
 		SEQVideoTrack(Common::SeekableReadStream *stream, uint frameDelay);
 		~SEQVideoTrack();
