@@ -99,6 +99,7 @@ bool MoviePlayer::load(const char *name) {
 		// Need to load here in case it fails in which case we'd need
 		// to go back to paletted mode
 		if (_decoder->loadFile(filename)) {
+			((Video::AdvancedVideoDecoder *)_decoder)->start(); // TODO: Remove after new API is complete
 			return true;
 		} else {
 			initGraphics(640, 480, true);
