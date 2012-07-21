@@ -34,23 +34,23 @@
 
 namespace WinterMute {
 
-class CUIButton;
-class CUIWindow;
-class CUIObject;
-class CAdResponse;
-class CAdResponseBox : public CBObject {
+class UIButton;
+class UIWindow;
+class UIObject;
+class AdResponse;
+class AdResponseBox : public BaseObject {
 public:
-	CBObject *getNextAccessObject(CBObject *CurrObject);
-	CBObject *getPrevAccessObject(CBObject *CurrObject);
-	bool getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly);
+	BaseObject *getNextAccessObject(BaseObject *CurrObject);
+	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
+	bool getObjects(BaseArray<UIObject *, UIObject *> &objects, bool interactiveOnly);
 
-	bool handleResponse(CAdResponse *response);
+	bool handleResponse(AdResponse *response);
 	void setLastResponseText(const char *text, const char *textOrig);
 	char *_lastResponseText;
 	char *_lastResponseTextOrig;
-	DECLARE_PERSISTENT(CAdResponseBox, CBObject)
-	CScScript *_waitingScript;
-	virtual bool listen(CBScriptHolder *param1, uint32 param2);
+	DECLARE_PERSISTENT(AdResponseBox, BaseObject)
+	ScScript *_waitingScript;
+	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	typedef enum {
 	    EVENT_PREV, 
 		EVENT_NEXT, 
@@ -61,25 +61,25 @@ public:
 	bool display();
 	int _spacing;
 	int _scrollOffset;
-	CBFont *_fontHover;
-	CBFont *_font;
+	BaseFont *_fontHover;
+	BaseFont *_font;
 	bool createButtons();
 	bool invalidateButtons();
 	void clearButtons();
 	void clearResponses();
-	CAdResponseBox(CBGame *inGame);
-	virtual ~CAdResponseBox();
-	CBArray<CAdResponse *, CAdResponse *> _responses;
-	CBArray<CUIButton *, CUIButton *> _respButtons;
-	CUIWindow *_window;
-	CUIWindow *_shieldWindow;
+	AdResponseBox(BaseGame *inGame);
+	virtual ~AdResponseBox();
+	BaseArray<AdResponse *, AdResponse *> _responses;
+	BaseArray<UIButton *, UIButton *> _respButtons;
+	UIWindow *_window;
+	UIWindow *_shieldWindow;
 	bool _horizontal;
 	Rect32 _responseArea;
 	int _verticalAlign;
 	TTextAlign _align;
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 };
 
 } // end of namespace WinterMute

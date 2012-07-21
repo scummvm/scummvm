@@ -32,30 +32,30 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBNamedObject::CBNamedObject(CBGame *inGame) : CBBase(inGame) {
+BaseNamedObject::BaseNamedObject(BaseGame *inGame) : BaseClass(inGame) {
 	_name = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBNamedObject::CBNamedObject() : CBBase() {
+BaseNamedObject::BaseNamedObject() : BaseClass() {
 	_name = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBNamedObject::CBNamedObject(TDynamicConstructor, TDynamicConstructor) {
+BaseNamedObject::BaseNamedObject(TDynamicConstructor, TDynamicConstructor) {
 	_name = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBNamedObject::~CBNamedObject(void) {
+BaseNamedObject::~BaseNamedObject(void) {
 	delete[] _name;
 	_name = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-void CBNamedObject::setName(const char *name) {
+void BaseNamedObject::setName(const char *name) {
 	delete[] _name;
 
 	_name = new char [strlen(name) + 1];

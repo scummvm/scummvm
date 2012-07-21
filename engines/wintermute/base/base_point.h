@@ -34,14 +34,14 @@
 
 namespace WinterMute {
 
-class CBPoint: public CBBase {
+class BasePoint: public BaseClass {
 public:
-	DECLARE_PERSISTENT(CBPoint, CBBase)
-	CBPoint();
-	CBPoint(int initX, int initY);
+	DECLARE_PERSISTENT(BasePoint, BaseClass)
+	BasePoint();
+	BasePoint(int initX, int initY);
 	int y;
 	int x;
-	virtual ~CBPoint();
+	virtual ~BasePoint();
 
 };
 

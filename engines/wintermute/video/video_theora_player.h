@@ -37,9 +37,9 @@
 #include "graphics/surface.h"
 
 namespace WinterMute {
-class CBSurface;
-class CBImage;
-class CVidTheoraPlayer : public CBBase {
+class BaseSurface;
+class BaseImage;
+class VideoTheoraPlayer : public BaseClass {
 private:
 	enum {
 	    THEORA_STATE_NONE = 0,
@@ -50,16 +50,16 @@ private:
 	Video::RewindableVideoDecoder *_theoraDecoder;
 	Graphics::Surface _surface;
 public:
-	DECLARE_PERSISTENT(CVidTheoraPlayer, CBBase)
+	DECLARE_PERSISTENT(VideoTheoraPlayer, BaseClass)
 
-	CVidTheoraPlayer(CBGame *inGame);
-	virtual ~CVidTheoraPlayer(void);
+	VideoTheoraPlayer(BaseGame *inGame);
+	virtual ~VideoTheoraPlayer(void);
 
 	// external objects
 	Common::SeekableReadStream *_file;
 	Common::String _filename;
 
-	CBSurface *_texture;
+	BaseSurface *_texture;
 	//CVidSubtitler *_subtitler;
 
 	// control methods
@@ -69,7 +69,7 @@ public:
 	bool play(TVideoPlayback type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeGame = false, bool freezeMusic = true, bool Looping = false, uint32 startTime = 0, float forceZoom = -1.0f, int volume = -1);
 	bool stop();
 	bool display(uint32 alpha = 0xFFFFFFFF);
-	//bool RenderFrame(CBSurface *Texture, yuv_buffer *yuv);
+	//bool RenderFrame(BaseSurface *Texture, yuv_buffer *yuv);
 
 	bool pause();
 	bool resume();
@@ -87,7 +87,7 @@ public:
 	uint32 getMovieTime();
 	uint32 getMovieFrame();
 
-	CBSurface *getTexture();
+	BaseSurface *getTexture();
 
 	int _state;
 	uint32 _startTime;
@@ -97,7 +97,7 @@ public:
 
 
 	// alpha related
-	CBImage *_alphaImage;
+	BaseImage *_alphaImage;
 	Common::String _alphaFilename;
 	bool setAlphaImage(const Common::String &filename);
 	__inline byte getAlphaAt(int x, int y);

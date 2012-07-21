@@ -38,10 +38,10 @@ namespace WinterMute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-IMPLEMENT_PERSISTENT(CBFader, false)
+IMPLEMENT_PERSISTENT(BaseFader, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBFader::CBFader(CBGame *inGame): CBObject(inGame) {
+BaseFader::BaseFader(BaseGame *inGame): BaseObject(inGame) {
 	_active = false;
 	_red = _green = _blue = 0;
 	_currentAlpha = 0x00;
@@ -54,20 +54,20 @@ CBFader::CBFader(CBGame *inGame): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFader::~CBFader() {
+BaseFader::~BaseFader() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFader::update() {
+bool BaseFader::update() {
 	if (!_active) return STATUS_OK;
 
 	int alphaDelta = _targetAlpha - _sourceAlpha;
 
 	uint32 time;
 
-	if (_system) time = CBPlatform::getTime() - _startTime;
+	if (_system) time = BasePlatform::getTime() - _startTime;
 	else time = _gameRef->_timer - _startTime;
 
 	if (time >= _duration) _currentAlpha = _targetAlpha;
@@ -84,7 +84,7 @@ bool CBFader::update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFader::display() {
+bool BaseFader::display() {
 	if (!_active) return STATUS_OK;
 
 	if (_currentAlpha > 0x00) return _gameRef->_renderer->fadeToColor(BYTETORGBA(_red, _green, _blue, _currentAlpha));
@@ -93,7 +93,7 @@ bool CBFader::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFader::deactivate() {
+bool BaseFader::deactivate() {
 	_active = false;
 	_ready = true;
 	return STATUS_OK;
@@ -101,7 +101,7 @@ bool CBFader::deactivate() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
+bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
@@ -115,7 +115,7 @@ bool CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_duration = duration;
 	_system = system;
 
-	if (_system) _startTime = CBPlatform::getTime();
+	if (_system) _startTime = BasePlatform::getTime();
 	else _startTime = _gameRef->_timer;
 
 	return STATUS_OK;
@@ -123,7 +123,7 @@ bool CBFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
+bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
@@ -138,7 +138,7 @@ bool CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_duration = duration;
 	_system = system;
 
-	if (_system) _startTime = CBPlatform::getTime();
+	if (_system) _startTime = BasePlatform::getTime();
 	else _startTime = _gameRef->_timer;
 
 
@@ -147,15 +147,15 @@ bool CBFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBFader::getCurrentColor() {
+uint32 BaseFader::getCurrentColor() {
 	return BYTETORGBA(_red, _green, _blue, _currentAlpha);
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFader::persist(CBPersistMgr *persistMgr) {
-	CBObject::persist(persistMgr);
+bool BaseFader::persist(BasePersistenceManager *persistMgr) {
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_blue));

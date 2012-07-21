@@ -34,16 +34,16 @@
 #include "engines/wintermute/coll_templ.h"
 
 namespace WinterMute {
-class CAdNodeState;
-class CAdSceneState : public CBBase {
+class AdNodeState;
+class AdSceneState : public BaseClass {
 public:
-	CAdNodeState *getNodeState(char *name, bool saving);
+	AdNodeState *getNodeState(char *name, bool saving);
 	void setFilename(const char *filename);
-	DECLARE_PERSISTENT(CAdSceneState, CBBase)
-	CAdSceneState(CBGame *inGame);
-	virtual ~CAdSceneState();
+	DECLARE_PERSISTENT(AdSceneState, BaseClass)
+	AdSceneState(BaseGame *inGame);
+	virtual ~AdSceneState();
 	char *_filename;
-	CBArray<CAdNodeState *, CAdNodeState *> _nodeStates;
+	BaseArray<AdNodeState *, AdNodeState *> _nodeStates;
 };
 
 } // end of namespace WinterMute

@@ -33,7 +33,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-CBSurface::CBSurface(CBGame *inGame): CBBase(inGame) {
+BaseSurface::BaseSurface(BaseGame *inGame): BaseClass(inGame) {
 	_referenceCount = 0;
 
 	_width = _height = 0;
@@ -53,87 +53,87 @@ CBSurface::CBSurface(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBSurface::~CBSurface() {
+BaseSurface::~BaseSurface() {
 	if (_pixelOpReady) endPixelOp();
 }
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBSurface::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSurface::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBSurface::restore() {
+bool BaseSurface::restore() {
 	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CBSurface::isTransparentAt(int x, int y) {
+bool BaseSurface::isTransparentAt(int x, int y) {
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CBSurface::displayHalfTrans(int x, int y, Rect32 rect) {
+bool BaseSurface::displayHalfTrans(int x, int y, Rect32 rect) {
 	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurface::displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurface::displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return displayTransZoom(x, y, rect, zoomX, zoomY, alpha, blendMode, mirrorX, mirrorY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurface::create(int Width, int Height) {
+bool BaseSurface::create(int Width, int Height) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurface::startPixelOp() {
+bool BaseSurface::startPixelOp() {
 	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurface::endPixelOp() {
-	return STATUS_FAILED;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool CBSurface::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
+bool BaseSurface::endPixelOp() {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurface::putPixel(int x, int y, byte r, byte g, byte b, int a) {
+bool BaseSurface::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurface::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
+bool BaseSurface::putPixel(int x, int y, byte r, byte g, byte b, int a) {
+	return STATUS_FAILED;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSurface::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBSurface::isTransparentAtLite(int x, int y) {
+bool BaseSurface::isTransparentAtLite(int x, int y) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurface::invalidate() {
+bool BaseSurface::invalidate() {
 	return STATUS_FAILED;
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurface::prepareToDraw() {
+bool BaseSurface::prepareToDraw() {
 	_lastUsedTime = _gameRef->_liveTimer;
 
 	if (!_valid) {
@@ -144,7 +144,7 @@ bool CBSurface::prepareToDraw() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSurface::setSize(int width, int height) {
+void BaseSurface::setSize(int width, int height) {
 	_width = width;
 	_height = height;
 }

@@ -44,24 +44,24 @@ namespace WinterMute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-//IMPLEMENT_PERSISTENT(CBSoundMgr, true);
+//IMPLEMENT_PERSISTENT(BaseSoundMgr, true);
 
 //////////////////////////////////////////////////////////////////////////
-CBSoundMgr::CBSoundMgr(CBGame *inGame): CBBase(inGame) {
+BaseSoundMgr::BaseSoundMgr(BaseGame *inGame): BaseClass(inGame) {
 	_soundAvailable = false;
 	_volumeMaster = 255;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSoundMgr::~CBSoundMgr() {
+BaseSoundMgr::~BaseSoundMgr() {
 	saveSettings();
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::cleanup() {
+bool BaseSoundMgr::cleanup() {
 	for (uint32 i = 0; i < _sounds.size(); i++)
 		delete _sounds[i];
 	_sounds.clear();
@@ -72,14 +72,14 @@ bool CBSoundMgr::cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBSoundMgr::saveSettings() {
+void BaseSoundMgr::saveSettings() {
 	if (_soundAvailable) {
 		_gameRef->_registry->writeInt("Audio", "MasterVolume", _volumeMaster);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::initialize() {
+bool BaseSoundMgr::initialize() {
 	_soundAvailable = false;
 	
 	if (!g_system->getMixer()->isReady()) {
@@ -93,7 +93,7 @@ bool CBSoundMgr::initialize() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::initLoop() {
+bool BaseSoundMgr::initLoop() {
 	if (!_soundAvailable)
 		return STATUS_OK;
 #if 0
@@ -105,11 +105,11 @@ bool CBSoundMgr::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSoundBuffer *CBSoundMgr::addSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
+BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (!_soundAvailable)
 		return NULL;
 
-	CBSoundBuffer *sound;
+	BaseSoundBuffer *sound;
 
 	// try to switch WAV to OGG file (if available)
 	AnsiString ext = PathUtil::getExtension(filename);
@@ -123,7 +123,7 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, Audio::Mixer::SoundTyp
 		}
 	}
 
-	sound = new CBSoundBuffer(_gameRef);
+	sound = new BaseSoundBuffer(_gameRef);
 	if (!sound) return NULL;
 
 	sound->setStreaming(streamed);
@@ -149,7 +149,7 @@ CBSoundBuffer *CBSoundMgr::addSound(const char *filename, Audio::Mixer::SoundTyp
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::addSound(CBSoundBuffer *sound, Audio::Mixer::SoundType type) {
+bool BaseSoundMgr::addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type) {
 	if (!sound)
 		return STATUS_FAILED;
 
@@ -163,7 +163,7 @@ bool CBSoundMgr::addSound(CBSoundBuffer *sound, Audio::Mixer::SoundType type) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::removeSound(CBSoundBuffer *sound) {
+bool BaseSoundMgr::removeSound(BaseSoundBuffer *sound) {
 	for (uint32 i = 0; i < _sounds.size(); i++) {
 		if (_sounds[i] == sound) {
 			delete _sounds[i];
@@ -177,7 +177,7 @@ bool CBSoundMgr::removeSound(CBSoundBuffer *sound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
+bool BaseSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 	if (!_soundAvailable)
 		return STATUS_OK;
 
@@ -200,13 +200,13 @@ bool CBSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::setVolumePercent(Audio::Mixer::SoundType type, byte percent) {
+bool BaseSoundMgr::setVolumePercent(Audio::Mixer::SoundType type, byte percent) {
 	return setVolume(type, percent * 255 / 100);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-byte CBSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
+byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 	int volume = 0;
 
 	switch (type) {
@@ -225,7 +225,7 @@ byte CBSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::setMasterVolume(byte value) {
+bool BaseSoundMgr::setMasterVolume(byte value) {
 	_volumeMaster = value;
 	for (uint32 i = 0; i < _sounds.size(); i++) {
 		_sounds[i]->updateVolume();
@@ -234,25 +234,25 @@ bool CBSoundMgr::setMasterVolume(byte value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::setMasterVolumePercent(byte percent) {
+bool BaseSoundMgr::setMasterVolumePercent(byte percent) {
 	setMasterVolume(percent * 255 / 100);
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-byte CBSoundMgr::getMasterVolumePercent() {
+byte BaseSoundMgr::getMasterVolumePercent() {
 	return getMasterVolume() * 100 / 255;
 }
 
 //////////////////////////////////////////////////////////////////////////
-byte CBSoundMgr::getMasterVolume() {
+byte BaseSoundMgr::getMasterVolume() {
 	return (byte)_volumeMaster;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::pauseAll(bool includingMusic) {
+bool BaseSoundMgr::pauseAll(bool includingMusic) {
 
 	for (uint32 i = 0; i < _sounds.size(); i++) {
 		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != Audio::Mixer::kMusicSoundType || includingMusic)) {
@@ -266,7 +266,7 @@ bool CBSoundMgr::pauseAll(bool includingMusic) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSoundMgr::resumeAll() {
+bool BaseSoundMgr::resumeAll() {
 
 	for (uint32 i = 0; i < _sounds.size(); i++) {
 		if (_sounds[i]->_freezePaused) {
@@ -280,7 +280,7 @@ bool CBSoundMgr::resumeAll() {
 
 
 //////////////////////////////////////////////////////////////////////////
-float CBSoundMgr::posToPan(int x, int y) {
+float BaseSoundMgr::posToPan(int x, int y) {
 	float relPos = (float)x / ((float)_gameRef->_renderer->_width);
 
 	float minPan = -0.7f;

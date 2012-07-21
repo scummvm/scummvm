@@ -41,10 +41,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdLayer, false)
+IMPLEMENT_PERSISTENT(AdLayer, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdLayer::CAdLayer(CBGame *inGame): CBObject(inGame) {
+AdLayer::AdLayer(BaseGame *inGame): BaseObject(inGame) {
 	_main = false;
 	_width = _height = 0;
 	_active = true;
@@ -53,7 +53,7 @@ CAdLayer::CAdLayer(CBGame *inGame): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdLayer::~CAdLayer() {
+AdLayer::~AdLayer() {
 	for (int i = 0; i < _nodes.getSize(); i++)
 		delete _nodes[i];
 	_nodes.removeAll();
@@ -61,10 +61,10 @@ CAdLayer::~CAdLayer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdLayer::loadFile(const char *filename) {
+bool AdLayer::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdLayer::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdLayer::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -99,7 +99,7 @@ TOKEN_DEF(CLOSE_UP)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdLayer::loadBuffer(byte *buffer, bool complete) {
+bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(LAYER)
 	TOKEN_TABLE(TEMPLATE)
@@ -120,7 +120,7 @@ bool CAdLayer::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_LAYER) {
@@ -165,8 +165,8 @@ bool CAdLayer::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_REGION: {
-			CAdRegion *region = new CAdRegion(_gameRef);
-			CAdSceneNode *node = new CAdSceneNode(_gameRef);
+			AdRegion *region = new AdRegion(_gameRef);
+			AdSceneNode *node = new AdSceneNode(_gameRef);
 			if (!region || !node || DID_FAIL(region->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete region;
@@ -181,8 +181,8 @@ bool CAdLayer::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_ENTITY: {
-			CAdEntity *entity = new CAdEntity(_gameRef);
-			CAdSceneNode *node = new CAdSceneNode(_gameRef);
+			AdEntity *entity = new AdEntity(_gameRef);
+			AdSceneNode *node = new AdSceneNode(_gameRef);
 			if (entity) entity->_zoomable = false; // scene entites default to NOT zoom
 			if (!entity || !node || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
@@ -226,13 +226,13 @@ bool CAdLayer::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetNode") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		int node = -1;
 
 		if (val->_type == VAL_INT) node = val->getInt();
@@ -267,16 +267,16 @@ bool CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddRegion") == 0 || strcmp(name, "AddEntity") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CAdSceneNode *node = new CAdSceneNode(_gameRef);
+		AdSceneNode *node = new AdSceneNode(_gameRef);
 		if (strcmp(name, "AddRegion") == 0) {
-			CAdRegion *region = new CAdRegion(_gameRef);
+			AdRegion *region = new AdRegion(_gameRef);
 			if (!val->isNULL()) region->setName(val->getString());
 			node->setRegion(region);
 			stack->pushNative(region, true);
 		} else {
-			CAdEntity *entity = new CAdEntity(_gameRef);
+			AdEntity *entity = new AdEntity(_gameRef);
 			if (!val->isNULL()) entity->setName(val->getString());
 			node->setEntity(entity);
 			stack->pushNative(entity, true);
@@ -291,16 +291,16 @@ bool CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	else if (strcmp(name, "InsertRegion") == 0 || strcmp(name, "InsertEntity") == 0) {
 		stack->correctParams(2);
 		int index = stack->pop()->getInt();
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CAdSceneNode *node = new CAdSceneNode(_gameRef);
+		AdSceneNode *node = new AdSceneNode(_gameRef);
 		if (strcmp(name, "InsertRegion") == 0) {
-			CAdRegion *region = new CAdRegion(_gameRef);
+			AdRegion *region = new AdRegion(_gameRef);
 			if (!val->isNULL()) region->setName(val->getString());
 			node->setRegion(region);
 			stack->pushNative(region, true);
 		} else {
-			CAdEntity *entity = new CAdEntity(_gameRef);
+			AdEntity *entity = new AdEntity(_gameRef);
 			if (!val->isNULL()) entity->setName(val->getString());
 			node->setEntity(entity);
 			stack->pushNative(entity, true);
@@ -317,11 +317,11 @@ bool CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteNode") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CAdSceneNode *toDelete = NULL;
+		AdSceneNode *toDelete = NULL;
 		if (val->isNative()) {
-			CBScriptable *temp = val->getNative();
+			BaseScriptable *temp = val->getNative();
 			for (int i = 0; i < _nodes.getSize(); i++) {
 				if (_nodes[i]->_region == temp || _nodes[i]->_entity == temp) {
 					toDelete = _nodes[i];
@@ -351,12 +351,12 @@ bool CAdLayer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		return STATUS_OK;
 	}
 
-	else return CBObject::scCallMethod(script, stack, thisStack, name);
+	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdLayer::scGetProperty(const char *name) {
+ScValue *AdLayer::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -415,12 +415,12 @@ CScValue *CAdLayer::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(name);
+	else return BaseObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdLayer::scSetProperty(const char *name, CScValue *value) {
+bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -466,18 +466,18 @@ bool CAdLayer::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CBObject::scSetProperty(name, value);
+	else return BaseObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdLayer::scToString() {
+const char *AdLayer::scToString() {
 	return "[layer]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "LAYER {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
@@ -506,12 +506,12 @@ bool CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
 			_nodes[i]->_region->saveAsText(buffer, indent + 2);
 			break;
 		default:
-			error("CAdLayer::SaveAsText - Unhandled enum");
+			error("AdLayer::SaveAsText - Unhandled enum");
 			break;
 		}
 	}
 
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n\n");
 
@@ -520,9 +520,9 @@ bool CAdLayer::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdLayer::persist(CBPersistMgr *persistMgr) {
+bool AdLayer::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_closeUp));

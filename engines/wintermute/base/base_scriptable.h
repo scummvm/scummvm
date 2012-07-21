@@ -36,23 +36,23 @@
 
 namespace WinterMute {
 
-class CScValue;
-class CScStack;
-class CScScript;
+class ScValue;
+class ScStack;
+class ScScript;
 
-class CBScriptable : public CBNamedObject, public IWmeDebugObject {
+class BaseScriptable : public BaseNamedObject, public IWmeDebugObject {
 public:
-	virtual CScScript *invokeMethodThread(const char *methodName);
-	DECLARE_PERSISTENT(CBScriptable, CBNamedObject)
+	virtual ScScript *invokeMethodThread(const char *methodName);
+	DECLARE_PERSISTENT(BaseScriptable, BaseNamedObject)
 
-	CBScriptable(CBGame *inGame, bool noValue = false, bool persistable = true);
-	virtual ~CBScriptable();
+	BaseScriptable(BaseGame *inGame, bool noValue = false, bool persistable = true);
+	virtual ~BaseScriptable();
 
 	// high level scripting interface
 	virtual bool canHandleMethod(const char *eventMethod);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	virtual void *scToMemBuffer();
 	virtual int scToInt();
@@ -62,11 +62,11 @@ public:
 	virtual void scSetInt(int val);
 	virtual void scSetFloat(double val);
 	virtual void scSetBool(bool val);
-	virtual int scCompare(CBScriptable *val);
+	virtual int scCompare(BaseScriptable *val);
 	virtual void scDebuggerDesc(char *buf, int bufSize);
 	int _refCount;
-	CScValue *_scValue;
-	CScValue *_scProp;
+	ScValue *_scValue;
+	ScValue *_scProp;
 
 public:
 	// IWmeDebugObject
@@ -76,14 +76,14 @@ public:
 };
 
 // Implemented in their respective .cpp-files
-CBScriptable *makeSXArray(CBGame *inGame, CScStack *stack);
-CBScriptable *makeSXDate(CBGame *inGame, CScStack *stack);
-CBScriptable *makeSXFile(CBGame *inGame, CScStack *stack);
-CBScriptable *makeSXMath(CBGame *inGame);
-CBScriptable *makeSXMemBuffer(CBGame *inGame, CScStack *stack);
-CBScriptable *makeSXObject(CBGame *inGame, CScStack *stack);
-CBScriptable *makeSXStore(CBGame *inGame);
-CBScriptable *makeSXString(CBGame *inGame, CScStack *stack);
+BaseScriptable *makeSXArray(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXDate(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXFile(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXMath(BaseGame *inGame);
+BaseScriptable *makeSXMemBuffer(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXObject(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXStore(BaseGame *inGame);
+BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack);
 
 } // end of namespace WinterMute
 

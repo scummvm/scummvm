@@ -40,16 +40,16 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBSubFrame, false)
+IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBSubFrame::CBSubFrame(CBGame *inGame): CBScriptable(inGame, true) {
+BaseSubFrame::BaseSubFrame(BaseGame *inGame): BaseScriptable(inGame, true) {
 	_surface = NULL;
 	_hotspotX = _hotspotY = 0;
 	_alpha = 0xFFFFFFFF;
 	_transparent = 0xFFFF00FF;
 
-	CBPlatform::setRectEmpty(&_rect);
+	BasePlatform::setRectEmpty(&_rect);
 
 	_editorSelected = false;
 
@@ -67,7 +67,7 @@ CBSubFrame::CBSubFrame(CBGame *inGame): CBScriptable(inGame, true) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSubFrame::~CBSubFrame() {
+BaseSubFrame::~BaseSubFrame() {
 	if (_surface) _gameRef->_surfaceStorage->removeSurface(_surface);
 	delete[] _surfaceFilename;
 	_surfaceFilename = NULL;
@@ -90,7 +90,7 @@ TOKEN_DEF(EDITOR_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
+bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(IMAGE)
 	TOKEN_TABLE(TRANSPARENT)
@@ -109,12 +109,12 @@ bool CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 	char *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 	Rect32 rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	bool custoTrans = false;
-	CBPlatform::setRectEmpty(&rect);
+	BasePlatform::setRectEmpty(&rect);
 	char *surfaceFile = NULL;
 
 	delete _surface;
@@ -196,7 +196,7 @@ bool CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	    return STATUS_FAILED;
 	}
 	*/
-	if (CBPlatform::isRectEmpty(&rect)) setDefaultRect();
+	if (BasePlatform::isRectEmpty(&rect)) setDefaultRect();
 	else _rect = rect;
 
 	return STATUS_OK;
@@ -204,14 +204,14 @@ bool CBSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBSubFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
+bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
 	if (!_surface) return STATUS_OK;
 
 	if (registerOwner != NULL && !_decoration) {
 		if (zoomX == 100 && zoomY == 100) {
-			_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
+			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
 		} else {
-			_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
+			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
 	if (_gameRef->_suspendedRendering) return STATUS_OK;
@@ -233,13 +233,13 @@ bool CBSubFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
+bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) return false;
 
 	float ratioX = scaleX / 100.0f;
 	float ratioY = scaleY / 100.0f;
 
-	CBPlatform::setRect(rect,
+	BasePlatform::setRect(rect,
 	                    (int)(x - _hotspotX * ratioX),
 	                    (int)(y - _hotspotY * ratioY),
 	                    (int)(x - _hotspotX * ratioX + (_rect.right - _rect.left) * ratioX),
@@ -249,7 +249,7 @@ bool CBSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete) {
+bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool complete) {
 	if (complete)
 		buffer->putTextIndent(indent, "SUBFRAME {\n");
 
@@ -260,9 +260,9 @@ bool CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete) {
 		buffer->putTextIndent(indent + 2, "TRANSPARENT { %d,%d,%d }\n", RGBCOLGetR(_transparent), RGBCOLGetG(_transparent), RGBCOLGetB(_transparent));
 
 	Rect32 rect;
-	CBPlatform::setRectEmpty(&rect);
-	if (_surface) CBPlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
-	if (!CBPlatform::equalRect(&rect, &_rect))
+	BasePlatform::setRectEmpty(&rect);
+	if (_surface) BasePlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+	if (!BasePlatform::equalRect(&rect, &_rect))
 		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", _rect.left, _rect.top, _rect.right, _rect.bottom);
 
 	if (_hotspotX != 0 || _hotspotY != 0)
@@ -291,7 +291,7 @@ bool CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete) {
 	if (_editorSelected)
 		buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 
 	if (complete)
@@ -302,17 +302,17 @@ bool CBSubFrame::saveAsText(CBDynBuffer *buffer, int indent, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBSubFrame::setDefaultRect() {
+void BaseSubFrame::setDefaultRect() {
 	if (_surface) {
-		CBPlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
-	} else CBPlatform::setRectEmpty(&_rect);
+		BasePlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+	} else BasePlatform::setRectEmpty(&_rect);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::persist(CBPersistMgr *persistMgr) {
+bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
-	CBScriptable::persist(persistMgr);
+	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_2DOnly));
 	persistMgr->transfer(TMEMBER(_3DOnly));
@@ -342,7 +342,7 @@ bool CBSubFrame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetImage
@@ -360,7 +360,7 @@ bool CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetImage") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		ScValue *Val = stack->pop();
 
 		if (Val->isNULL()) {
 			if (_surface) _gameRef->_surfaceStorage->removeSurface(_surface);
@@ -378,13 +378,13 @@ bool CBSubFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *this
 		return STATUS_OK;
 	}
 
-	else return CBScriptable::scCallMethod(script, stack, thisStack, name);
+	else return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBSubFrame::scGetProperty(const char *name) {
-	if (!_scValue) _scValue = new CScValue(_gameRef);
+ScValue *BaseSubFrame::scGetProperty(const char *name) {
+	if (!_scValue) _scValue = new ScValue(_gameRef);
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -468,12 +468,12 @@ CScValue *CBSubFrame::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::scGetProperty(name);
+	else return BaseScriptable::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::scSetProperty(const char *name, CScValue *value) {
+bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
@@ -538,18 +538,18 @@ bool CBSubFrame::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CBScriptable::scSetProperty(name, value);
+	else return BaseScriptable::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBSubFrame::scToString() {
+const char *BaseSubFrame::scToString() {
 	return "[subframe]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (_surface) {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
 		_surface = NULL;
@@ -576,7 +576,7 @@ bool CBSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, by
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSubFrame::setSurfaceSimple() {
+bool BaseSubFrame::setSurfaceSimple() {
 	if (!_surfaceFilename) {
 		_surface = NULL;
 		return STATUS_OK;

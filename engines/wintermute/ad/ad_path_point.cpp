@@ -31,10 +31,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdPathPoint, false)
+IMPLEMENT_PERSISTENT(AdPathPoint, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdPathPoint::CAdPathPoint() {
+AdPathPoint::AdPathPoint() {
 	x = y = 0;
 	_distance = 0;
 
@@ -44,7 +44,7 @@ CAdPathPoint::CAdPathPoint() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdPathPoint::CAdPathPoint(int initX, int initY, int initDistance) {
+AdPathPoint::AdPathPoint(int initX, int initY, int initDistance) {
 	x = initX;
 	y = initY;
 	_distance = initDistance;
@@ -55,15 +55,15 @@ CAdPathPoint::CAdPathPoint(int initX, int initY, int initDistance) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdPathPoint::~CAdPathPoint() {
+AdPathPoint::~AdPathPoint() {
 	_origin = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdPathPoint::persist(CBPersistMgr *persistMgr) {
+bool AdPathPoint::persist(BasePersistenceManager *persistMgr) {
 
-	CBPoint::persist(persistMgr);
+	BasePoint::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_distance));
 	persistMgr->transfer(TMEMBER(_marked));

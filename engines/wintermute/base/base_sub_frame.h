@@ -34,25 +34,25 @@
 #include "engines/wintermute/base/base_scriptable.h"
 
 namespace WinterMute {
-class CBObject;
-class CBSurface;
-class CBSubFrame : public CBScriptable {
+class BaseObject;
+class BaseSurface;
+class BaseSubFrame : public BaseScriptable {
 public:
 	bool _mirrorX;
 	bool _mirrorY;
 	bool _decoration;
 	bool setSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
 	bool setSurfaceSimple();
-	DECLARE_PERSISTENT(CBSubFrame, CBScriptable)
+	DECLARE_PERSISTENT(BaseSubFrame, BaseScriptable)
 	void setDefaultRect();
 	uint32 _transparent;
-	bool saveAsText(CBDynBuffer *buffer, int indent) { return saveAsText(buffer, indent, true); }
-	bool saveAsText(CBDynBuffer *buffer, int indent, bool complete);
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) { return saveAsText(buffer, indent, true); }
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent, bool complete);
 	bool _editorSelected;
-	CBSubFrame(CBGame *inGame);
-	virtual ~CBSubFrame();
+	BaseSubFrame(BaseGame *inGame);
+	virtual ~BaseSubFrame();
 	bool loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
-	bool draw(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
+	bool draw(int x, int y, BaseObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 
 	int _hotspotX;
@@ -71,12 +71,12 @@ public:
 	bool _2DOnly;
 	bool _3DOnly;
 
-	CBSurface *_surface;
+	BaseSurface *_surface;
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 };

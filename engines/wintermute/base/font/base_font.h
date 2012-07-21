@@ -35,9 +35,9 @@
 
 namespace WinterMute {
 
-class CBFont: public CBObject {
+class BaseFont: public BaseObject {
 public:
-	DECLARE_PERSISTENT(CBFont, CBObject)
+	DECLARE_PERSISTENT(BaseFont, BaseObject)
 	virtual int getTextWidth(byte *text, int maxLength = -1);
 	virtual int getTextHeight(byte *text, int width);
 	virtual void drawText(byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1);
@@ -45,15 +45,15 @@ public:
 
 	virtual void initLoop() {};
 	virtual void afterLoad() {};
-	CBFont(CBGame *inGame);
-	virtual ~CBFont();
+	BaseFont(BaseGame *inGame);
+	virtual ~BaseFont();
 
-	static CBFont *createFromFile(CBGame *game, const char *filename);
+	static BaseFont *createFromFile(BaseGame *game, const char *filename);
 
 private:
 	//bool loadBuffer(byte * Buffer);
 	//bool loadFile(const char* Filename);
-	static bool isTrueType(CBGame *game, const char *filename);
+	static bool isTrueType(BaseGame *game, const char *filename);
 };
 
 } // end of namespace WinterMute

@@ -43,13 +43,13 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CPartEmitter, false)
+IMPLEMENT_PERSISTENT(PartEmitter, false)
 
 //////////////////////////////////////////////////////////////////////////
-CPartEmitter::CPartEmitter(CBGame *inGame, CBScriptHolder *Owner) : CBObject(inGame) {
+PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner) : BaseObject(inGame) {
 	_width = _height = 0;
 
-	CBPlatform::setRectEmpty(&_border);
+	BasePlatform::setRectEmpty(&_border);
 	_borderThicknessLeft = _borderThicknessRight = _borderThicknessTop = _borderThicknessBottom = 0;
 
 	_angle1 = _angle2 = 0;
@@ -94,7 +94,7 @@ CPartEmitter::CPartEmitter(CBGame *inGame, CBScriptHolder *Owner) : CBObject(inG
 
 
 //////////////////////////////////////////////////////////////////////////
-CPartEmitter::~CPartEmitter(void) {
+PartEmitter::~PartEmitter(void) {
 	for (int i = 0; i < _particles.getSize(); i++) {
 		delete _particles[i];
 	}
@@ -116,7 +116,7 @@ CPartEmitter::~CPartEmitter(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::addSprite(const char *filename) {
+bool PartEmitter::addSprite(const char *filename) {
 	if (!filename) return STATUS_FAILED;
 
 	// do we already have the file?
@@ -139,7 +139,7 @@ bool CPartEmitter::addSprite(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::removeSprite(const char *filename) {
+bool PartEmitter::removeSprite(const char *filename) {
 	for (int i = 0; i < _sprites.getSize(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			delete [] _sprites[i];
@@ -151,34 +151,34 @@ bool CPartEmitter::removeSprite(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta) {
+bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta) {
 	if (!particle) return STATUS_FAILED;
 	if (_sprites.getSize() == 0) return STATUS_FAILED;
 
-	int posX = CBUtils::randomInt(_posX, _posX + _width);
-	int posY = CBUtils::randomInt(_posY, _posY + _height);
-	float posZ = CBUtils::randomFloat(0.0f, 100.0f);
+	int posX = BaseUtils::randomInt(_posX, _posX + _width);
+	int posY = BaseUtils::randomInt(_posY, _posY + _height);
+	float posZ = BaseUtils::randomFloat(0.0f, 100.0f);
 
 	float velocity;
 	if (_velocityZBased) velocity = _velocity1 + posZ * (_velocity2 - _velocity1) / 100;
-	else velocity = CBUtils::randomFloat(_velocity1, _velocity2);
+	else velocity = BaseUtils::randomFloat(_velocity1, _velocity2);
 
 	float scale;
 	if (_scaleZBased) scale = _scale1 + posZ * (_scale2 - _scale1) / 100;
-	else scale = CBUtils::randomFloat(_scale1, _scale2);
+	else scale = BaseUtils::randomFloat(_scale1, _scale2);
 
 	int lifeTime;
 	if (_lifeTimeZBased) lifeTime = _lifeTime2 - posZ * (_lifeTime2 - _lifeTime1) / 100;
-	else lifeTime = CBUtils::randomInt(_lifeTime1, _lifeTime2);
+	else lifeTime = BaseUtils::randomInt(_lifeTime1, _lifeTime2);
 
-	float angle = CBUtils::randomAngle(_angle1, _angle2);
-	int spriteIndex = CBUtils::randomInt(0, _sprites.getSize() - 1);
+	float angle = BaseUtils::randomAngle(_angle1, _angle2);
+	int spriteIndex = BaseUtils::randomInt(0, _sprites.getSize() - 1);
 
-	float rotation = CBUtils::randomAngle(_rotation1, _rotation2);
-	float angVelocity = CBUtils::randomFloat(_angVelocity1, _angVelocity2);
-	float growthRate = CBUtils::randomFloat(_growthRate1, _growthRate2);
+	float rotation = BaseUtils::randomAngle(_rotation1, _rotation2);
+	float angVelocity = BaseUtils::randomFloat(_angVelocity1, _angVelocity2);
+	float growthRate = BaseUtils::randomFloat(_growthRate1, _growthRate2);
 
-	if (!CBPlatform::isRectEmpty(&_border)) {
+	if (!BasePlatform::isRectEmpty(&_border)) {
 		int thicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * posZ / 100.0f);
 		int thicknessRight  = (int)(_borderThicknessRight  - (float)_borderThicknessRight  * posZ / 100.0f);
 		int thicknessTop    = (int)(_borderThicknessTop    - (float)_borderThicknessTop    * posZ / 100.0f);
@@ -195,14 +195,14 @@ bool CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, uin
 	Vector2 vecVel(0, velocity);
 
 	Matrix4 matRot;
-	matRot.rotationZ(Common::deg2rad(CBUtils::normalizeAngle(angle - 180)));
+	matRot.rotationZ(Common::deg2rad(BaseUtils::normalizeAngle(angle - 180)));
 	matRot.transformVector2(vecVel);
 
 	if (_alphaTimeBased) {
 		particle->_alpha1 = _alpha1;
 		particle->_alpha2 = _alpha2;
 	} else {
-		int alpha = CBUtils::randomInt(_alpha1, _alpha2);
+		int alpha = BaseUtils::randomInt(_alpha1, _alpha2);
 		particle->_alpha1 = alpha;
 		particle->_alpha2 = alpha;
 	}
@@ -226,13 +226,13 @@ bool CPartEmitter::initParticle(CPartParticle *particle, uint32 currentTime, uin
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::update() {
+bool PartEmitter::update() {
 	if (!_running) return STATUS_OK;
 	else return updateInternal(_gameRef->_timer, _gameRef->_timerDelta);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
+bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	int numLive = 0;
 
 	for (int i = 0; i < _particles.getSize(); i++) {
@@ -263,10 +263,10 @@ bool CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 					}
 				}
 
-				CPartParticle *particle;
+				PartParticle *particle;
 				if (firstDeadIndex >= 0) particle = _particles[firstDeadIndex];
 				else {
-					particle = new CPartParticle(_gameRef);
+					particle = new PartParticle(_gameRef);
 					_particles.add(particle);
 				}
 				initParticle(particle, currentTime, timerDelta);
@@ -288,7 +288,7 @@ bool CPartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::display(CBRegion *region) {
+bool PartEmitter::display(BaseRegion *region) {
 	if (_sprites.getSize() <= 1) _gameRef->_renderer->startSpriteBatch();
 
 	for (int i = 0; i < _particles.getSize(); i++) {
@@ -305,7 +305,7 @@ bool CPartEmitter::display(CBRegion *region) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::start() {
+bool PartEmitter::start() {
 	for (int i = 0; i < _particles.getSize(); i++) {
 		_particles[i]->_isDead = true;
 	}
@@ -329,16 +329,16 @@ bool CPartEmitter::start() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::sortParticlesByZ() {
+bool PartEmitter::sortParticlesByZ() {
 	// sort particles by _posY
-	qsort(_particles.getData(), _particles.getSize(), sizeof(CPartParticle *), CPartEmitter::compareZ);
+	qsort(_particles.getData(), _particles.getSize(), sizeof(PartParticle *), PartEmitter::compareZ);
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CPartEmitter::compareZ(const void *obj1, const void *obj2) {
-	CPartParticle *p1 = *(CPartParticle **)obj1;
-	CPartParticle *p2 = *(CPartParticle **)obj2;
+int PartEmitter::compareZ(const void *obj1, const void *obj2) {
+	PartParticle *p1 = *(PartParticle **)obj1;
+	PartParticle *p2 = *(PartParticle **)obj2;
 
 	if (p1->_posZ < p2->_posZ) return -1;
 	else if (p1->_posZ > p2->_posZ) return 1;
@@ -346,14 +346,14 @@ int CPartEmitter::compareZ(const void *obj1, const void *obj2) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::setBorder(int x, int y, int width, int height) {
-	CBPlatform::setRect(&_border, x, y, x + width, y + height);
+bool PartEmitter::setBorder(int x, int y, int width, int height) {
+	BasePlatform::setRect(&_border, x, y, x + width, y + height);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom) {
+bool PartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom) {
 	_borderThicknessLeft = thicknessLeft;
 	_borderThicknessRight = thicknessRight;
 	_borderThicknessTop = thicknessTop;
@@ -363,8 +363,8 @@ bool CPartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int
 }
 
 //////////////////////////////////////////////////////////////////////////
-CPartForce *CPartEmitter::addForceByName(const char *name) {
-	CPartForce *force = NULL;
+PartForce *PartEmitter::addForceByName(const char *name) {
+	PartForce *force = NULL;
 
 	for (int i = 0; i < _forces.getSize(); i++) {
 		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
@@ -373,7 +373,7 @@ CPartForce *CPartEmitter::addForceByName(const char *name) {
 		}
 	}
 	if (!force) {
-		force = new CPartForce(_gameRef);
+		force = new PartForce(_gameRef);
 		if (force) {
 			force->setName(name);
 			_forces.add(force);
@@ -384,8 +384,8 @@ CPartForce *CPartEmitter::addForceByName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength) {
-	CPartForce *force = addForceByName(name);
+bool PartEmitter::addForce(const char *name, PartForce::TForceType type, int posX, int posY, float angle, float strength) {
+	PartForce *force = addForceByName(name);
 	if (!force) return STATUS_FAILED;
 
 	force->_type = type;
@@ -393,14 +393,14 @@ bool CPartEmitter::addForce(const char *name, CPartForce::TForceType type, int p
 
 	force->_direction = Vector2(0, strength);
 	Matrix4 matRot;
-	matRot.rotationZ(Common::deg2rad(CBUtils::normalizeAngle(angle - 180)));
+	matRot.rotationZ(Common::deg2rad(BaseUtils::normalizeAngle(angle - 180)));
 	matRot.transformVector2(force->_direction);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::removeForce(const char *name) {
+bool PartEmitter::removeForce(const char *name) {
 	for (int i = 0; i < _forces.getSize(); i++) {
 		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
 			delete _forces[i];
@@ -415,7 +415,7 @@ bool CPartEmitter::removeForce(const char *name) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool PartEmitter::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetBorder
 	//////////////////////////////////////////////////////////////////////////
@@ -524,7 +524,7 @@ bool CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		float angle = stack->pop()->getFloat();
 		float strength = stack->pop()->getFloat();
 
-		stack->pushBool(DID_SUCCEED(addForce(forceName, CPartForce::FORCE_GLOBAL, 0, 0, angle, strength)));
+		stack->pushBool(DID_SUCCEED(addForce(forceName, PartForce::FORCE_GLOBAL, 0, 0, angle, strength)));
 
 		return STATUS_OK;
 	}
@@ -540,7 +540,7 @@ bool CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		float angle = stack->pop()->getFloat();
 		float strength = stack->pop()->getFloat();
 
-		stack->pushBool(DID_SUCCEED(addForce(forceName, CPartForce::FORCE_GLOBAL, posX, posY, angle, strength)));
+		stack->pushBool(DID_SUCCEED(addForce(forceName, PartForce::FORCE_GLOBAL, posX, posY, angle, strength)));
 
 		return STATUS_OK;
 	}
@@ -557,11 +557,11 @@ bool CPartEmitter::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 		return STATUS_OK;
 	}
 
-	else return CBObject::scCallMethod(script, stack, thisStack, name);
+	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CPartEmitter::scGetProperty(const char *name) {
+ScValue *PartEmitter::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -828,12 +828,12 @@ CScValue *CPartEmitter::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(name);
+	else return BaseObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::scSetProperty(const char *name, CScValue *value) {
+bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
@@ -1081,16 +1081,16 @@ bool CPartEmitter::scSetProperty(const char *name, CScValue *value) {
 	else if (strcmp(name, "EmitEvent") == 0) {
 		delete[] _emitEvent;
 		_emitEvent = NULL;
-		if (!value->isNULL()) CBUtils::setString(&_emitEvent, value->getString());
+		if (!value->isNULL()) BaseUtils::setString(&_emitEvent, value->getString());
 		return STATUS_OK;
 	}
 
-	else return CBObject::scSetProperty(name, value);
+	else return BaseObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CPartEmitter::scToString() {
+const char *PartEmitter::scToString() {
 	return "[particle emitter]";
 }
 
@@ -1098,8 +1098,8 @@ const char *CPartEmitter::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartEmitter::persist(CBPersistMgr *persistMgr) {
-	CBObject::persist(persistMgr);
+bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_width));
 	persistMgr->transfer(TMEMBER(_height));
@@ -1171,7 +1171,7 @@ bool CPartEmitter::persist(CBPersistMgr *persistMgr) {
 	} else {
 		persistMgr->transfer(TMEMBER(numForces));
 		for (int i = 0; i < numForces; i++) {
-			CPartForce *force = new CPartForce(_gameRef);
+			PartForce *force = new PartForce(_gameRef);
 			force->persist(persistMgr);
 			_forces.add(force);
 		}
@@ -1187,7 +1187,7 @@ bool CPartEmitter::persist(CBPersistMgr *persistMgr) {
 	} else {
 		persistMgr->transfer(TMEMBER(numParticles));
 		for (int i = 0; i < numParticles; i++) {
-			CPartParticle *particle = new CPartParticle(_gameRef);
+			PartParticle *particle = new PartParticle(_gameRef);
 			particle->persist(persistMgr);
 			_particles.add(particle);
 		}

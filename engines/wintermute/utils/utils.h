@@ -34,9 +34,9 @@
 
 namespace WinterMute {
 
-class CBGame;
+class BaseGame;
 
-class CBUtils {
+class BaseUtils {
 public:
 	static void clip(int *destX, int *destY, Rect32 *srcRect, Rect32 *destRect);
 	static void swap(int *a, int *b);

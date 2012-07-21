@@ -37,50 +37,50 @@
 #include "engines/wintermute/wme_debugger.h"
 
 namespace WinterMute {
-class CBScriptHolder;
-class CBObject;
-class CScEngine;
-class CScStack;
-class CScScript : public CBBase, public IWmeDebugScript {
+class BaseScriptHolder;
+class BaseObject;
+class ScEngine;
+class ScStack;
+class ScScript : public BaseClass, public IWmeDebugScript {
 public:
 	bool dbgSendScript(IWmeDebugClient *client);
 	bool dbgSendVariables(IWmeDebugClient *client);
 
-	CBArray<int, int> _breakpoints;
+	BaseArray<int, int> _breakpoints;
 	bool _tracingMode;
 
-	CScScript *_parentScript;
+	ScScript *_parentScript;
 	bool _unbreakable;
 	bool finishThreads();
-	bool copyParameters(CScStack *stack);
+	bool copyParameters(ScStack *stack);
 
 	void afterLoad();
 
-	CScValue *_operand;
-	CScValue *_reg1;
+	ScValue *_operand;
+	ScValue *_reg1;
 	bool _freezable;
 	bool resume();
 	bool pause();
 	bool canHandleEvent(const char *eventName);
 	bool canHandleMethod(const char *methodName);
-	bool createThread(CScScript *original, uint32 initIP, const char *eventName);
-	bool createMethodThread(CScScript *original, const char *methodName);
-	CScScript *invokeEventHandler(const char *eventName, bool unbreakable = false);
+	bool createThread(ScScript *original, uint32 initIP, const char *eventName);
+	bool createMethodThread(ScScript *original, const char *methodName);
+	ScScript *invokeEventHandler(const char *eventName, bool unbreakable = false);
 	uint32 _timeSlice;
-	DECLARE_PERSISTENT(CScScript, CBBase)
+	DECLARE_PERSISTENT(ScScript, BaseClass)
 	void runtimeError(const char *fmt, ...);
 	bool run();
 	bool finish(bool includingThreads = false);
 	bool sleep(uint32 duration);
-	bool waitForExclusive(CBObject *object);
-	bool waitFor(CBObject *object);
+	bool waitForExclusive(BaseObject *object);
+	bool waitFor(BaseObject *object);
 	uint32 _waitTime;
 	bool _waitFrozen;
-	CBObject *_waitObject;
-	CScScript *_waitScript;
+	BaseObject *_waitObject;
+	ScScript *_waitScript;
 	TScriptState _state;
 	TScriptState _origState;
-	CScValue *getVar(char *name);
+	ScValue *getVar(char *name);
 	uint32 getFuncPos(const char *name);
 	uint32 getEventPos(const char *name);
 	uint32 getMethodPos(const char *name);
@@ -122,19 +122,19 @@ public:
 	} TExternalFunction;
 
 
-	CScStack *_callStack;
-	CScStack *_thisStack;
-	CScStack *_scopeStack;
-	CScStack *_stack;
-	CScValue *_globals;
-	CScEngine *_engine;
+	ScStack *_callStack;
+	ScStack *_thisStack;
+	ScStack *_scopeStack;
+	ScStack *_stack;
+	ScValue *_globals;
+	ScEngine *_engine;
 	int _currentLine;
 	bool executeInstruction();
 	char *getString();
 	uint32 getDWORD();
 	double getFloat();
 	void cleanup();
-	bool create(const char *filename, byte *buffer, uint32 size, CBScriptHolder *owner);
+	bool create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner);
 	uint32 _iP;
 private:
 	void readHeader();
@@ -142,8 +142,8 @@ private:
 	byte *_buffer;
 public:
 	Common::SeekableReadStream *_scriptStream;
-	CScScript(CBGame *inGame, CScEngine *Engine);
-	virtual ~CScScript();
+	ScScript(BaseGame *inGame, ScEngine *Engine);
+	virtual ~ScScript();
 	char *_filename;
 	char **_symbols;
 	uint32 _numSymbols;
@@ -158,9 +158,9 @@ public:
 	bool _thread;
 	bool _methodThread;
 	char *_threadEvent;
-	CBScriptHolder *_owner;
-	CScScript::TExternalFunction *getExternal(char *name);
-	bool externalCall(CScStack *stack, CScStack *thisStack, CScScript::TExternalFunction *function);
+	BaseScriptHolder *_owner;
+	ScScript::TExternalFunction *getExternal(char *name);
+	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
 private:
 	bool initScript();
 	bool initTables();

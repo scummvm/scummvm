@@ -39,31 +39,31 @@
 
 namespace WinterMute {
 
-class CAdSpriteSet;
-class CAdPath;
-class CAdActor : public CAdTalkHolder {
+class AdSpriteSet;
+class AdPath;
+class AdActor : public AdTalkHolder {
 public:
 	TDirection angleToDirection(int angle);
-	DECLARE_PERSISTENT(CAdActor, CAdTalkHolder)
+	DECLARE_PERSISTENT(AdActor, AdTalkHolder)
 	virtual int getHeight();
-	CBSprite *getTalkStance(const char *stance);
+	BaseSprite *getTalkStance(const char *stance);
 	virtual void goTo(int x, int y, TDirection afterWalkDir = DI_NONE);
-	CBPoint *_targetPoint;
+	BasePoint *_targetPoint;
 	virtual bool update();
 	virtual bool display();
 	TDirection _targetDir;
 	TDirection _afterWalkDir;
 	virtual void turnTo(TDirection dir);
-	CAdPath *_path;
-	CAdSpriteSet *_walkSprite;
-	CAdSpriteSet *_standSprite;
-	CAdSpriteSet *_turnLeftSprite;
-	CAdSpriteSet *_turnRightSprite;
-	CBArray<CAdSpriteSet *, CAdSpriteSet *> _talkSprites;
-	CBArray<CAdSpriteSet *, CAdSpriteSet *> _talkSpritesEx;
+	AdPath *_path;
+	AdSpriteSet *_walkSprite;
+	AdSpriteSet *_standSprite;
+	AdSpriteSet *_turnLeftSprite;
+	AdSpriteSet *_turnRightSprite;
+	BaseArray<AdSpriteSet *, AdSpriteSet *> _talkSprites;
+	BaseArray<AdSpriteSet *, AdSpriteSet *> _talkSpritesEx;
 	TDirection _dir;
-	CAdActor(CBGame *inGame/*=NULL*/);
-	virtual ~CAdActor();
+	AdActor(BaseGame *inGame/*=NULL*/);
+	virtual ~AdActor();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 
@@ -73,23 +73,23 @@ public:
 	Common::String _walkAnimName;
 	Common::String _turnLeftAnimName;
 	Common::String _turnRightAnimName;
-	CBArray<CAdSpriteSet *, CAdSpriteSet *> _anims;
+	BaseArray<AdSpriteSet *, AdSpriteSet *> _anims;
 	virtual bool playAnim(const char *filename);
-	CAdSpriteSet *getAnimByName(const Common::String &animName);
+	AdSpriteSet *getAnimByName(const Common::String &animName);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 private:
 	bool setDefaultAnimNames();
-	CBSprite *getTalkStanceOld(const char *stance);
+	BaseSprite *getTalkStanceOld(const char *stance);
 	bool mergeAnims(const char *animsFilename);
-	CBSprite *_animSprite2;
+	BaseSprite *_animSprite2;
 
-	void initLine(CBPoint startPt, CBPoint endPt);
+	void initLine(BasePoint startPt, BasePoint endPt);
 	void getNextStep();
 	void followPath();
 	double _pFStepX;

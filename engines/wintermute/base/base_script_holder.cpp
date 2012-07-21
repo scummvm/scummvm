@@ -37,10 +37,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBScriptHolder, false)
+IMPLEMENT_PERSISTENT(BaseScriptHolder, false)
 
 //////////////////////////////////////////////////////////////////////
-CBScriptHolder::CBScriptHolder(CBGame *inGame): CBScriptable(inGame) {
+BaseScriptHolder::BaseScriptHolder(BaseGame *inGame): BaseScriptable(inGame) {
 	setName("<unnamed>");
 
 	_freezable = true;
@@ -49,13 +49,13 @@ CBScriptHolder::CBScriptHolder(CBGame *inGame): CBScriptable(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBScriptHolder::~CBScriptHolder() {
+BaseScriptHolder::~BaseScriptHolder() {
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::cleanup() {
+bool BaseScriptHolder::cleanup() {
 	delete[] _filename;
 	_filename = NULL;
 
@@ -71,7 +71,7 @@ bool CBScriptHolder::cleanup() {
 }
 
 //////////////////////////////////////////////////////////////////////
-void CBScriptHolder::setFilename(const char *filename) {
+void BaseScriptHolder::setFilename(const char *filename) {
 	if (_filename != NULL) delete [] _filename;
 
 	_filename = new char [strlen(filename) + 1];
@@ -80,13 +80,13 @@ void CBScriptHolder::setFilename(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
+bool BaseScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 	int numHandlers = 0;
 
 	bool ret = STATUS_FAILED;
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread) {
-			CScScript *handler = _scripts[i]->invokeEventHandler(eventName, unbreakable);
+			ScScript *handler = _scripts[i]->invokeEventHandler(eventName, unbreakable);
 			if (handler) {
 				//_scripts.add(handler);
 				numHandlers++;
@@ -101,7 +101,7 @@ bool CBScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::listen(CBScriptHolder *param1, uint32 param2) {
+bool BaseScriptHolder::listen(BaseScriptHolder *param1, uint32 param2) {
 	return STATUS_FAILED;
 }
 
@@ -109,7 +109,7 @@ bool CBScriptHolder::listen(CBScriptHolder *param1, uint32 param2) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG_CrashMe
 	//////////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ bool CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ApplyEvent") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		bool ret;
 		ret = applyEvent(val->getString());
 
@@ -203,12 +203,12 @@ bool CBScriptHolder::scCallMethod(CScScript *script, CScStack *stack, CScStack *
 		stack->pushBool(ret);
 
 		return STATUS_OK;
-	} else return CBScriptable::scCallMethod(script, stack, thisStack, name);
+	} else return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBScriptHolder::scGetProperty(const char *name) {
+ScValue *BaseScriptHolder::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -235,36 +235,36 @@ CScValue *CBScriptHolder::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::scGetProperty(name);
+	else return BaseScriptable::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::scSetProperty(const char *name, CScValue *value) {
+bool BaseScriptHolder::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
 		return STATUS_OK;
-	} else return CBScriptable::scSetProperty(name, value);
+	} else return BaseScriptable::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBScriptHolder::scToString() {
+const char *BaseScriptHolder::scToString() {
 	return "[script_holder]";
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::saveAsText(CBDynBuffer *buffer, int indent) {
-	return CBBase::saveAsText(buffer, indent);
+bool BaseScriptHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
+	return BaseClass::saveAsText(buffer, indent);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::persist(CBPersistMgr *persistMgr) {
-	CBScriptable::persist(persistMgr);
+bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
+	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_freezable));
@@ -276,21 +276,21 @@ bool CBScriptHolder::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::addScript(const char *filename) {
+bool BaseScriptHolder::addScript(const char *filename) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
-				_gameRef->LOG(0, "CBScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, _name);
+				_gameRef->LOG(0, "BaseScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, _name);
 				return STATUS_OK;
 			}
 		}
 	}
 
-	CScScript *scr =  _gameRef->_scEngine->runScript(filename, this);
+	ScScript *scr =  _gameRef->_scEngine->runScript(filename, this);
 	if (!scr) {
 		if (_gameRef->_editorForceScripts) {
 			// editor hack
-			scr = new CScScript(_gameRef,  _gameRef->_scEngine);
+			scr = new ScScript(_gameRef,  _gameRef->_scEngine);
 			scr->_filename = new char[strlen(filename) + 1];
 			strcpy(scr->_filename, filename);
 			scr->_state = SCRIPT_ERROR;
@@ -311,7 +311,7 @@ bool CBScriptHolder::addScript(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::removeScript(CScScript *script) {
+bool BaseScriptHolder::removeScript(ScScript *script) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i] == script) {
 			_scripts.removeAt(i);
@@ -322,7 +322,7 @@ bool CBScriptHolder::removeScript(CScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::canHandleEvent(const char *EventName) {
+bool BaseScriptHolder::canHandleEvent(const char *EventName) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) return true;
 	}
@@ -331,7 +331,7 @@ bool CBScriptHolder::canHandleEvent(const char *EventName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::canHandleMethod(const char *MethodName) {
+bool BaseScriptHolder::canHandleMethod(const char *MethodName) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) return true;
 	}
@@ -345,7 +345,7 @@ TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::parseProperty(byte *buffer, bool complete) {
+bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(PROPERTY)
 	TOKEN_TABLE(NAME)
@@ -354,7 +354,7 @@ bool CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_PROPERTY) {
@@ -403,7 +403,7 @@ bool CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 	}
 
 
-	CScValue *val = new CScValue(_gameRef);
+	ScValue *val = new ScValue(_gameRef);
 	val->setString(propValue);
 	scSetProperty(propName, val);
 
@@ -418,7 +418,7 @@ bool CBScriptHolder::parseProperty(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptHolder::makeFreezable(bool freezable) {
+void BaseScriptHolder::makeFreezable(bool freezable) {
 	_freezable = freezable;
 	for (int i = 0; i < _scripts.getSize(); i++)
 		_scripts[i]->_freezable = freezable;
@@ -427,11 +427,11 @@ void CBScriptHolder::makeFreezable(bool freezable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
+ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 	for (int i = _scripts.getSize() - 1; i >= 0; i--) {
 		if (_scripts[i]->canHandleMethod(methodName)) {
 
-			CScScript *thread = new CScScript(_gameRef,  _scripts[i]->_engine);
+			ScScript *thread = new ScScript(_gameRef,  _scripts[i]->_engine);
 			if (thread) {
 				bool ret = thread->createMethodThread(_scripts[i], methodName);
 				if (DID_SUCCEED(ret)) {
@@ -450,7 +450,7 @@ CScScript *CBScriptHolder::invokeMethodThread(const char *methodName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
+void BaseScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
 	strcpy(buf, scToString());
 	if (_name && strcmp(_name, "<unnamed>") != 0) {
 		strcat(buf, "  Name: ");
@@ -466,7 +466,7 @@ void CBScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
 //////////////////////////////////////////////////////////////////////////
 // IWmeObject
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptHolder::sendEvent(const char *eventName) {
+bool BaseScriptHolder::sendEvent(const char *eventName) {
 	return DID_SUCCEED(applyEvent(eventName));
 }
 

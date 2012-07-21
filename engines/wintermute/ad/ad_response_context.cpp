@@ -32,24 +32,24 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdResponseContext, false)
+IMPLEMENT_PERSISTENT(AdResponseContext, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdResponseContext::CAdResponseContext(CBGame *inGame): CBBase(inGame) {
+AdResponseContext::AdResponseContext(BaseGame *inGame): BaseClass(inGame) {
 	_iD = 0;
 	_context = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdResponseContext::~CAdResponseContext() {
+AdResponseContext::~AdResponseContext() {
 	delete[] _context;
 	_context = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseContext::persist(CBPersistMgr *persistMgr) {
+bool AdResponseContext::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_context));
 	persistMgr->transfer(TMEMBER(_iD));
@@ -58,7 +58,7 @@ bool CAdResponseContext::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseContext::setContext(const char *context) {
+void AdResponseContext::setContext(const char *context) {
 	delete[] _context;
 	_context = NULL;
 	if (context) {

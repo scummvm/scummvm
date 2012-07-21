@@ -62,17 +62,17 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdScene, false)
+IMPLEMENT_PERSISTENT(AdScene, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdScene::CAdScene(CBGame *inGame): CBObject(inGame) {
-	_pfTarget = new CBPoint;
+AdScene::AdScene(BaseGame *inGame): BaseObject(inGame) {
+	_pfTarget = new BasePoint;
 	setDefaults();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdScene::~CAdScene() {
+AdScene::~AdScene() {
 	cleanup();
 	_gameRef->unregisterObject(_fader);
 	delete _pfTarget;
@@ -81,7 +81,7 @@ CAdScene::~CAdScene() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::setDefaults() {
+void AdScene::setDefaults() {
 	_initialized = false;
 	_pfReady = true;
 	_pfTargetPath = NULL;
@@ -128,7 +128,7 @@ void CAdScene::setDefaults() {
 
 	_shieldWindow = NULL;
 
-	_fader = new CBFader(_gameRef);
+	_fader = new BaseFader(_gameRef);
 	_gameRef->registerObject(_fader);
 
 	_viewport = NULL;
@@ -136,8 +136,8 @@ void CAdScene::setDefaults() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::cleanup() {
-	CBObject::cleanup();
+void AdScene::cleanup() {
+	BaseObject::cleanup();
 
 	_mainLayer = NULL; // reference only
 
@@ -184,7 +184,7 @@ void CAdScene::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *requester) {
+bool AdScene::getPath(BasePoint source, BasePoint target, AdPath *path, BaseObject *requester) {
 	if (!_pfReady) return false;
 	else {
 		_pfReady = false;
@@ -200,7 +200,7 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 		pfPointsStart();
 
 		// first point
-		//_pfPath.add(new CAdPathPoint(source.x, source.y, 0));
+		//_pfPath.add(new AdPathPoint(source.x, source.y, 0));
 
 		// if we're one pixel stuck, get unstuck
 		int startX = source.x;
@@ -228,7 +228,7 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 		//CorrectTargetPoint(&target.x, &target.y);
 
 		// last point
-		//_pfPath.add(new CAdPathPoint(target.x, target.y, INT_MAX));
+		//_pfPath.add(new AdPathPoint(target.x, target.y, INT_MAX));
 		pfPointsAdd(target.x, target.y, INT_MAX);
 
 		// active waypoints
@@ -245,7 +245,7 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 				pfAddWaypointGroup(_objects[i]->_currentWptGroup, requester);
 			}
 		}
-		CAdGame *adGame = (CAdGame *)_gameRef;
+		AdGame *adGame = (AdGame *)_gameRef;
 		for (i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentWptGroup) {
 				pfAddWaypointGroup(adGame->_objects[i]->_currentWptGroup, requester);
@@ -258,26 +258,26 @@ bool CAdScene::getPath(CBPoint source, CBPoint target, CAdPath *path, CBObject *
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::pfAddWaypointGroup(CAdWaypointGroup *wpt, CBObject *requester) {
+void AdScene::pfAddWaypointGroup(AdWaypointGroup *wpt, BaseObject *requester) {
 	if (!wpt->_active) return;
 
 	for (int i = 0; i < wpt->_points.getSize(); i++) {
 		if (isBlockedAt(wpt->_points[i]->x, wpt->_points[i]->y, true, requester)) continue;
 
-		//_pfPath.add(new CAdPathPoint(Wpt->_points[i]->x, Wpt->_points[i]->y, INT_MAX));
+		//_pfPath.add(new AdPathPoint(Wpt->_points[i]->x, Wpt->_points[i]->y, INT_MAX));
 		pfPointsAdd(wpt->_points[i]->x, wpt->_points[i]->y, INT_MAX);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-float CAdScene::getZoomAt(int x, int y) {
+float AdScene::getZoomAt(int x, int y) {
 	float ret = 100;
 
 	bool found = false;
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
-			CAdSceneNode *node = _mainLayer->_nodes[i];
+			AdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_blocked && node->_region->pointInRegion(x, y)) {
 				if (node->_region->_zoom != 0) {
 					ret = node->_region->_zoom;
@@ -294,7 +294,7 @@ float CAdScene::getZoomAt(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CAdScene::getAlphaAt(int x, int y, bool colorCheck) {
+uint32 AdScene::getAlphaAt(int x, int y, bool colorCheck) {
 	if (!_gameRef->_debugDebugMode) colorCheck = false;
 
 	uint32 ret;
@@ -303,7 +303,7 @@ uint32 CAdScene::getAlphaAt(int x, int y, bool colorCheck) {
 
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
-			CAdSceneNode *node = _mainLayer->_nodes[i];
+			AdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->_blocked) && node->_region->pointInRegion(x, y)) {
 				if (!node->_region->_blocked) ret = node->_region->_alpha;
 				break;
@@ -315,7 +315,7 @@ uint32 CAdScene::getAlphaAt(int x, int y, bool colorCheck) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::isBlockedAt(int x, int y, bool checkFreeObjects, CBObject *requester) {
+bool AdScene::isBlockedAt(int x, int y, bool checkFreeObjects, BaseObject *requester) {
 	bool ret = true;
 
 
@@ -325,7 +325,7 @@ bool CAdScene::isBlockedAt(int x, int y, bool checkFreeObjects, CBObject *reques
 				if (_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return true;
 			}
 		}
-		CAdGame *adGame = (CAdGame *)_gameRef;
+		AdGame *adGame = (AdGame *)_gameRef;
 		for (int i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentBlockRegion) {
 				if (adGame->_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return true;
@@ -336,7 +336,7 @@ bool CAdScene::isBlockedAt(int x, int y, bool checkFreeObjects, CBObject *reques
 
 	if (_mainLayer) {
 		for (int i = 0; i < _mainLayer->_nodes.getSize(); i++) {
-			CAdSceneNode *node = _mainLayer->_nodes[i];
+			AdSceneNode *node = _mainLayer->_nodes[i];
 			/*
 			if (Node->_type == OBJECT_REGION && Node->_region->_active && Node->_region->_blocked && Node->_region->PointInRegion(X, Y))
 			{
@@ -357,7 +357,7 @@ bool CAdScene::isBlockedAt(int x, int y, bool checkFreeObjects, CBObject *reques
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::isWalkableAt(int x, int y, bool checkFreeObjects, CBObject *requester) {
+bool AdScene::isWalkableAt(int x, int y, bool checkFreeObjects, BaseObject *requester) {
 	bool ret = false;
 
 	if (checkFreeObjects) {
@@ -366,7 +366,7 @@ bool CAdScene::isWalkableAt(int x, int y, bool checkFreeObjects, CBObject *reque
 				if (_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return false;
 			}
 		}
-		CAdGame *adGame = (CAdGame *)_gameRef;
+		AdGame *adGame = (AdGame *)_gameRef;
 		for (int i = 0; i < adGame->_objects.getSize(); i++) {
 			if (adGame->_objects[i]->_active && adGame->_objects[i] != requester && adGame->_objects[i]->_currentBlockRegion) {
 				if (adGame->_objects[i]->_currentBlockRegion->pointInRegion(x, y)) return false;
@@ -377,7 +377,7 @@ bool CAdScene::isWalkableAt(int x, int y, bool checkFreeObjects, CBObject *reque
 
 	if (_mainLayer) {
 		for (int i = 0; i < _mainLayer->_nodes.getSize(); i++) {
-			CAdSceneNode *node = _mainLayer->_nodes[i];
+			AdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->pointInRegion(x, y)) {
 				if (node->_region->_blocked) {
 					ret = false;
@@ -391,7 +391,7 @@ bool CAdScene::isWalkableAt(int x, int y, bool checkFreeObjects, CBObject *reque
 
 
 //////////////////////////////////////////////////////////////////////////
-int CAdScene::getPointsDist(CBPoint p1, CBPoint p2, CBObject *requester) {
+int AdScene::getPointsDist(BasePoint p1, BasePoint p2, BaseObject *requester) {
 	double xStep, yStep, x, y;
 	int xLength, yLength, xCount, yCount;
 	int x1, y1, x2, y2;
@@ -406,8 +406,8 @@ int CAdScene::getPointsDist(CBPoint p1, CBPoint p2, CBObject *requester) {
 
 	if (xLength > yLength) {
 		if (x1 > x2) {
-			CBUtils::swap(&x1, &x2);
-			CBUtils::swap(&y1, &y2);
+			BaseUtils::swap(&x1, &x2);
+			BaseUtils::swap(&y1, &y2);
 		}
 
 		yStep = (double)(y2 - y1) / (double)(x2 - x1);
@@ -419,8 +419,8 @@ int CAdScene::getPointsDist(CBPoint p1, CBPoint p2, CBObject *requester) {
 		}
 	} else {
 		if (y1 > y2) {
-			CBUtils::swap(&x1, &x2);
-			CBUtils::swap(&y1, &y2);
+			BaseUtils::swap(&x1, &x2);
+			BaseUtils::swap(&y1, &y2);
 		}
 
 		xStep = (double)(x2 - x1) / (double)(y2 - y1);
@@ -436,11 +436,11 @@ int CAdScene::getPointsDist(CBPoint p1, CBPoint p2, CBObject *requester) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::pathFinderStep() {
+void AdScene::pathFinderStep() {
 	int i;
 	// get lowest unmarked
 	int lowestDist = INT_MAX;
-	CAdPathPoint *lowestPt = NULL;
+	AdPathPoint *lowestPt = NULL;
 
 	for (i = 0; i < _pfPointsNum; i++)
 		if (!_pfPath[i]->_marked && _pfPath[i]->_distance < lowestDist) {
@@ -459,7 +459,7 @@ void CAdScene::pathFinderStep() {
 	// target point marked, generate path and terminate
 	if (lowestPt->x == _pfTarget->x && lowestPt->y == _pfTarget->y) {
 		while (lowestPt != NULL) {
-			_pfTargetPath->_points.insertAt(0, new CBPoint(lowestPt->x, lowestPt->y));
+			_pfTargetPath->_points.insertAt(0, new BasePoint(lowestPt->x, lowestPt->y));
 			lowestPt = lowestPt->_origin;
 		}
 
@@ -481,18 +481,18 @@ void CAdScene::pathFinderStep() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::initLoop() {
+bool AdScene::initLoop() {
 #ifdef _DEBUGxxxx
 	int nu_steps = 0;
 	uint32 start = _gameRef->_currentTime;
-	while (!_pfReady && CBPlatform::getTime() - start <= _pfMaxTime) {
+	while (!_pfReady && BasePlatform::getTime() - start <= _pfMaxTime) {
 		PathFinderStep();
 		nu_steps++;
 	}
 	if (nu_steps > 0) _gameRef->LOG(0, "STAT: PathFinder iterations in one loop: %d (%s)  _pfMaxTime=%d", nu_steps, _pfReady ? "finished" : "not yet done", _pfMaxTime);
 #else
 	uint32 start = _gameRef->_currentTime;
-	while (!_pfReady && CBPlatform::getTime() - start <= _pfMaxTime) pathFinderStep();
+	while (!_pfReady && BasePlatform::getTime() - start <= _pfMaxTime) pathFinderStep();
 #endif
 
 	return STATUS_OK;
@@ -500,10 +500,10 @@ bool CAdScene::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::loadFile(const char *filename) {
+bool AdScene::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdScene::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdScene::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -565,7 +565,7 @@ TOKEN_DEF(PERSISTENT_STATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::loadBuffer(byte *buffer, bool complete) {
+bool AdScene::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCENE)
 	TOKEN_TABLE(TEMPLATE)
@@ -610,7 +610,7 @@ bool CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCENE) {
@@ -639,7 +639,7 @@ bool CAdScene::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_LAYER: {
-			CAdLayer *layer = new CAdLayer(_gameRef);
+			AdLayer *layer = new AdLayer(_gameRef);
 			if (!layer || DID_FAIL(layer->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete layer;
@@ -657,7 +657,7 @@ bool CAdScene::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_WAYPOINTS: {
-			CAdWaypointGroup *wpt = new CAdWaypointGroup(_gameRef);
+			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete wpt;
@@ -670,7 +670,7 @@ bool CAdScene::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_SCALE_LEVEL: {
-			CAdScaleLevel *sl = new CAdScaleLevel(_gameRef);
+			AdScaleLevel *sl = new AdScaleLevel(_gameRef);
 			if (!sl || DID_FAIL(sl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete sl;
@@ -683,7 +683,7 @@ bool CAdScene::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_ROTATION_LEVEL: {
-			CAdRotLevel *rl = new CAdRotLevel(_gameRef);
+			AdRotLevel *rl = new AdRotLevel(_gameRef);
 			if (!rl || DID_FAIL(rl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete rl;
@@ -696,7 +696,7 @@ bool CAdScene::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_ENTITY: {
-			CAdEntity *entity = new CAdEntity(_gameRef);
+			AdEntity *entity = new AdEntity(_gameRef);
 			if (!entity || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
@@ -709,7 +709,7 @@ bool CAdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(_gameRef);
+			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -820,7 +820,7 @@ bool CAdScene::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_VIEWPORT: {
 			Rect32 rc;
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
-			if (!_viewport) _viewport = new CBViewport(_gameRef);
+			if (!_viewport) _viewport = new BaseViewport(_gameRef);
 			if (_viewport) _viewport->setRect(rc.left, rc.top, rc.right, rc.bottom, true);
 		}
 
@@ -856,11 +856,11 @@ bool CAdScene::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::traverseNodes(bool doUpdate) {
+bool AdScene::traverseNodes(bool doUpdate) {
 	if (!_initialized) return STATUS_OK;
 
 	int j, k;
-	CAdGame *adGame = (CAdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_gameRef;
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -949,7 +949,7 @@ bool CAdScene::traverseNodes(bool doUpdate) {
 		// make layer exclusive
 		if (!doUpdate) {
 			if (_layers[j]->_closeUp && !_gameRef->_editorMode) {
-				if (!_shieldWindow) _shieldWindow = new CUIWindow(_gameRef);
+				if (!_shieldWindow) _shieldWindow = new UIWindow(_gameRef);
 				if (_shieldWindow) {
 					_shieldWindow->_posX = _shieldWindow->_posY = 0;
 					_shieldWindow->_width = _gameRef->_renderer->_width;
@@ -978,7 +978,7 @@ bool CAdScene::traverseNodes(bool doUpdate) {
 
 		// for each node
 		for (k = 0; k < _layers[j]->_nodes.getSize(); k++) {
-			CAdSceneNode *node = _layers[j]->_nodes[k];
+			AdSceneNode *node = _layers[j]->_nodes[k];
 			switch (node->_type) {
 			case OBJECT_ENTITY:
 				if (node->_entity->_active && (_gameRef->_editorMode || !node->_entity->_editorOnly)) {
@@ -1030,13 +1030,13 @@ bool CAdScene::traverseNodes(bool doUpdate) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::display() {
+bool AdScene::display() {
 	return traverseNodes(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::updateFreeObjects() {
-	CAdGame *adGame = (CAdGame *)_gameRef;
+bool AdScene::updateFreeObjects() {
+	AdGame *adGame = (AdGame *)_gameRef;
 	bool is3DSet;
 
 	// *** update all active objects
@@ -1067,10 +1067,10 @@ bool CAdScene::updateFreeObjects() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) {
-	CAdGame *adGame = (CAdGame *)_gameRef;
-	CBArray<CAdObject *, CAdObject *> objects;
-	CAdObject *obj;
+bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
+	AdGame *adGame = (AdGame *)_gameRef;
+	BaseArray<AdObject *, AdObject *> objects;
+	AdObject *obj;
 
 	// global objects
 	for (int i = 0; i < adGame->_objects.getSize(); i++) {
@@ -1089,7 +1089,7 @@ bool CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) {
 	}
 
 	// sort by _posY
-	qsort(objects.getData(), objects.getSize(), sizeof(CAdObject *), CAdScene::compareObjs);
+	qsort(objects.getData(), objects.getSize(), sizeof(AdObject *), AdScene::compareObjs);
 
 	// display them
 	for (int i = 0; i < objects.getSize(); i++) {
@@ -1120,9 +1120,9 @@ bool CAdScene::displayRegionContent(CAdRegion *region, bool display3DOnly) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CAdScene::compareObjs(const void *obj1, const void *obj2) {
-	CAdObject *object1 = *(CAdObject **)obj1;
-	CAdObject *object2 = *(CAdObject **)obj2;
+int AdScene::compareObjs(const void *obj1, const void *obj2) {
+	AdObject *object1 = *(AdObject **)obj1;
+	AdObject *object2 = *(AdObject **)obj2;
 
 	if (object1->_posY < object2->_posY) return -1;
 	else if (object1->_posY > object2->_posY) return 1;
@@ -1130,9 +1130,9 @@ int CAdScene::compareObjs(const void *obj1, const void *obj2) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::displayRegionContentOld(CAdRegion *region) {
-	CAdGame *adGame = (CAdGame *)_gameRef;
-	CAdObject *obj;
+bool AdScene::displayRegionContentOld(AdRegion *region) {
+	AdGame *adGame = (AdGame *)_gameRef;
+	AdObject *obj;
 
 	// display all objects in region sorted by _posY
 	do {
@@ -1180,12 +1180,12 @@ bool CAdScene::displayRegionContentOld(CAdRegion *region) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::update() {
+bool AdScene::update() {
 	return traverseNodes(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::scrollTo(int offsetX, int offsetY) {
+void AdScene::scrollTo(int offsetX, int offsetY) {
 	int viewportWidth, viewportHeight;
 	getViewportSize(&viewportWidth, &viewportHeight);
 
@@ -1210,19 +1210,19 @@ void CAdScene::scrollTo(int offsetX, int offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::scrollToObject(CBObject *object) {
+void AdScene::scrollToObject(BaseObject *object) {
 	if (object) scrollTo(object->_posX, object->_posY - object->getHeight() / 2);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::skipToObject(CBObject *object) {
+void AdScene::skipToObject(BaseObject *object) {
 	if (object) skipTo(object->_posX, object->_posY - object->getHeight() / 2);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::skipTo(int offsetX, int offsetY) {
+void AdScene::skipTo(int offsetX, int offsetY) {
 	int viewportWidth, viewportHeight;
 	getViewportSize(&viewportWidth, &viewportHeight);
 
@@ -1240,13 +1240,13 @@ void CAdScene::skipTo(int offsetX, int offsetY) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LoadActor
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "LoadActor") == 0) {
 		stack->correctParams(1);
-		CAdActor *act = new CAdActor(_gameRef);
+		AdActor *act = new AdActor(_gameRef);
 		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
 			addObject(act);
 			stack->pushNative(act, true);
@@ -1263,7 +1263,7 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadEntity") == 0) {
 		stack->correctParams(1);
-		CAdEntity *ent = new CAdEntity(_gameRef);
+		AdEntity *ent = new AdEntity(_gameRef);
 		if (ent && DID_SUCCEED(ent->loadFile(stack->pop()->getString()))) {
 			addObject(ent);
 			stack->pushNative(ent, true);
@@ -1280,9 +1280,9 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateEntity") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CAdEntity *ent = new CAdEntity(_gameRef);
+		AdEntity *ent = new AdEntity(_gameRef);
 		addObject(ent);
 		if (!val->isNULL()) ent->setName(val->getString());
 		stack->pushNative(ent, true);
@@ -1294,8 +1294,8 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "UnloadActor3D") == 0 || strcmp(name, "DeleteEntity") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
-		CAdObject *obj = (CAdObject *)val->getNative();
+		ScValue *val = stack->pop();
+		AdObject *obj = (AdObject *)val->getNative();
 		removeObject(obj);
 		if (val->getType() == VAL_VARIABLE_REF) val->setNULL();
 
@@ -1308,10 +1308,10 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SkipTo") == 0) {
 		stack->correctParams(2);
-		CScValue *val1 = stack->pop();
-		CScValue *val2 = stack->pop();
+		ScValue *val1 = stack->pop();
+		ScValue *val2 = stack->pop();
 		if (val1->isNative()) {
-			skipToObject((CBObject *)val1->getNative());
+			skipToObject((BaseObject *)val1->getNative());
 		} else {
 			skipTo(val1->getInt(), val2->getInt());
 		}
@@ -1324,10 +1324,10 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollTo") == 0 || strcmp(name, "ScrollToAsync") == 0) {
 		stack->correctParams(2);
-		CScValue *val1 = stack->pop();
-		CScValue *val2 = stack->pop();
+		ScValue *val1 = stack->pop();
+		ScValue *val2 = stack->pop();
 		if (val1->isNative()) {
-			scrollToObject((CBObject *)val1->getNative());
+			scrollToObject((BaseObject *)val1->getNative());
 		} else {
 			scrollTo(val1->getInt(), val2->getInt());
 		}
@@ -1341,7 +1341,7 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLayer") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		if (val->isInt()) {
 			int layer = val->getInt();
 			if (layer < 0 || layer >= _layers.getSize()) stack->pushNULL();
@@ -1379,8 +1379,8 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		stack->correctParams(1);
 		const char *nodeName = stack->pop()->getString();
 
-		CBObject *node = getNodeByName(nodeName);
-		if (node) stack->pushNative((CBScriptable *)node, true);
+		BaseObject *node = getNodeByName(nodeName);
+		if (node) stack->pushNative((BaseScriptable *)node, true);
 		else stack->pushNULL();
 
 		return STATUS_OK;
@@ -1391,9 +1391,9 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFreeNode") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CAdObject *ret = NULL;
+		AdObject *ret = NULL;
 		if (val->isInt()) {
 			int index = val->getInt();
 			if (index >= 0 && index < _objects.getSize()) ret = _objects[index];
@@ -1419,14 +1419,14 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		stack->correctParams(3);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
 		bool includeDecors = false;
 		if (!val->isNULL()) includeDecors = val->getBool();
 
 		if (_mainLayer) {
 			for (int i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
-				CAdSceneNode *node = _mainLayer->_nodes[i];
+				AdSceneNode *node = _mainLayer->_nodes[i];
 				if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
 					if (node->_region->_decoration && !includeDecors) continue;
 
@@ -1570,7 +1570,7 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		if (width <= 0) width = _gameRef->_renderer->_width;
 		if (height <= 0) height = _gameRef->_renderer->_height;
 
-		if (!_viewport) _viewport = new CBViewport(_gameRef);
+		if (!_viewport) _viewport = new BaseViewport(_gameRef);
 		if (_viewport) _viewport->setRect(x, y, x + width, y + height);
 
 		stack->pushBool(true);
@@ -1583,9 +1583,9 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddLayer") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CAdLayer *layer = new CAdLayer(_gameRef);
+		AdLayer *layer = new AdLayer(_gameRef);
 		if (!val->isNULL()) layer->setName(val->getString());
 		if (_mainLayer) {
 			layer->_width = _mainLayer->_width;
@@ -1604,9 +1604,9 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	else if (strcmp(name, "InsertLayer") == 0) {
 		stack->correctParams(2);
 		int index = stack->pop()->getInt();
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CAdLayer *layer = new CAdLayer(_gameRef);
+		AdLayer *layer = new AdLayer(_gameRef);
 		if (!val->isNULL()) layer->setName(val->getString());
 		if (_mainLayer) {
 			layer->_width = _mainLayer->_width;
@@ -1627,11 +1627,11 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteLayer") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CAdLayer *toDelete = NULL;
+		AdLayer *toDelete = NULL;
 		if (val->isNative()) {
-			CBScriptable *temp = val->getNative();
+			BaseScriptable *temp = val->getNative();
 			for (int i = 0; i < _layers.getSize(); i++) {
 				if (_layers[i] == temp) {
 					toDelete = _layers[i];
@@ -1666,12 +1666,12 @@ bool CAdScene::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		return STATUS_OK;
 	}
 
-	else return CBObject::scCallMethod(script, stack, thisStack, name);
+	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdScene::scGetProperty(const char *name) {
+ScValue *AdScene::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1829,12 +1829,12 @@ CScValue *CAdScene::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(name);
+	else return BaseObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::scSetProperty(const char *name, CScValue *value) {
+bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -1931,25 +1931,25 @@ bool CAdScene::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CBObject::scSetProperty(name, value);
+	else return BaseObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdScene::scToString() {
+const char *AdScene::scToString() {
 	return "[scene object]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::addObject(CAdObject *object) {
+bool AdScene::addObject(AdObject *object) {
 	_objects.add(object);
 	return _gameRef->registerObject(object);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::removeObject(CAdObject *object) {
+bool AdScene::removeObject(AdObject *object) {
 	for (int i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i] == object) {
 			_objects.removeAt(i);
@@ -1961,7 +1961,7 @@ bool CAdScene::removeObject(CAdObject *object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	int i;
 
 	buffer->putTextIndent(indent, "SCENE {\n");
@@ -2019,7 +2019,7 @@ bool CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	// waypoints
 	buffer->putTextIndent(indent + 2, "; ----- waypoints\n");
@@ -2059,13 +2059,13 @@ bool CAdScene::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::sortScaleLevels() {
+bool AdScene::sortScaleLevels() {
 	bool changed;
 	do {
 		changed = false;
 		for (int i = 0; i < _scaleLevels.getSize() - 1; i++) {
 			if (_scaleLevels[i]->_posY > _scaleLevels[i + 1]->_posY) {
-				CAdScaleLevel *sl = _scaleLevels[i];
+				AdScaleLevel *sl = _scaleLevels[i];
 				_scaleLevels[i] = _scaleLevels[i + 1];
 				_scaleLevels[i + 1] = sl;
 
@@ -2080,13 +2080,13 @@ bool CAdScene::sortScaleLevels() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::sortRotLevels() {
+bool AdScene::sortRotLevels() {
 	bool changed;
 	do {
 		changed = false;
 		for (int i = 0; i < _rotLevels.getSize() - 1; i++) {
 			if (_rotLevels[i]->_posX > _rotLevels[i + 1]->_posX) {
-				CAdRotLevel *rl = _rotLevels[i];
+				AdRotLevel *rl = _rotLevels[i];
 				_rotLevels[i] = _rotLevels[i + 1];
 				_rotLevels[i + 1] = rl;
 
@@ -2101,12 +2101,12 @@ bool CAdScene::sortRotLevels() {
 
 
 //////////////////////////////////////////////////////////////////////////
-float CAdScene::getScaleAt(int Y) {
-	CAdScaleLevel *prev = NULL;
-	CAdScaleLevel *next = NULL;
+float AdScene::getScaleAt(int Y) {
+	AdScaleLevel *prev = NULL;
+	AdScaleLevel *next = NULL;
 
 	for (int i = 0; i < _scaleLevels.getSize(); i++) {
-		/* CAdScaleLevel *xxx = _scaleLevels[i];*/
+		/* AdScaleLevel *xxx = _scaleLevels[i];*/
 		/* int j = _scaleLevels.getSize(); */
 		if (_scaleLevels[i]->_posY < Y) prev = _scaleLevels[i];
 		else {
@@ -2127,8 +2127,8 @@ float CAdScene::getScaleAt(int Y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::persist(CBPersistMgr *persistMgr) {
-	CBObject::persist(persistMgr);
+bool AdScene::persist(BasePersistenceManager *persistMgr) {
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_autoScroll));
 	persistMgr->transfer(TMEMBER(_editorColBlocked));
@@ -2187,12 +2187,12 @@ bool CAdScene::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::afterLoad() {
+bool AdScene::afterLoad() {
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::correctTargetPoint2(int startX, int startY, int *targetX, int *targetY, bool checkFreeObjects, CBObject *requester) {
+bool AdScene::correctTargetPoint2(int startX, int startY, int *targetX, int *targetY, bool checkFreeObjects, BaseObject *requester) {
 	double xStep, yStep, x, y;
 	int xLength, yLength, xCount, yCount;
 	int x1, y1, x2, y2;
@@ -2251,7 +2251,7 @@ bool CAdScene::correctTargetPoint2(int startX, int startY, int *targetX, int *ta
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::correctTargetPoint(int startX, int startY, int *argX, int *argY, bool checkFreeObjects, CBObject *requester) {
+bool AdScene::correctTargetPoint(int startX, int startY, int *argX, int *argY, bool checkFreeObjects, BaseObject *requester) {
 	int x = *argX;
 	int y = *argY;
 
@@ -2328,15 +2328,15 @@ bool CAdScene::correctTargetPoint(int startX, int startY, int *argX, int *argY, 
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::pfPointsStart() {
+void AdScene::pfPointsStart() {
 	_pfPointsNum = 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::pfPointsAdd(int x, int y, int distance) {
+void AdScene::pfPointsAdd(int x, int y, int distance) {
 	if (_pfPointsNum >= _pfPath.getSize()) {
-		_pfPath.add(new CAdPathPoint(x, y, distance));
+		_pfPath.add(new AdPathPoint(x, y, distance));
 	} else {
 		_pfPath[_pfPointsNum]->x = x;
 		_pfPath[_pfPointsNum]->y = y;
@@ -2350,8 +2350,8 @@ void CAdScene::pfPointsAdd(int x, int y, int distance) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::getViewportOffset(int *offsetX, int *offsetY) {
-	CAdGame *adGame = (CAdGame *)_gameRef;
+bool AdScene::getViewportOffset(int *offsetX, int *offsetY) {
+	AdGame *adGame = (AdGame *)_gameRef;
 	if (_viewport && !_gameRef->_editorMode) {
 		if (offsetX) *offsetX = _viewport->_offsetX;
 		if (offsetY) *offsetY = _viewport->_offsetY;
@@ -2367,8 +2367,8 @@ bool CAdScene::getViewportOffset(int *offsetX, int *offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::getViewportSize(int *width, int *height) {
-	CAdGame *adGame = (CAdGame *)_gameRef;
+bool AdScene::getViewportSize(int *width, int *height) {
+	AdGame *adGame = (AdGame *)_gameRef;
 	if (_viewport && !_gameRef->_editorMode) {
 		if (width)  *width  = _viewport->getWidth();
 		if (height) *height = _viewport->getHeight();
@@ -2384,7 +2384,7 @@ bool CAdScene::getViewportSize(int *width, int *height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CAdScene::getOffsetLeft() {
+int AdScene::getOffsetLeft() {
 	int viewportX;
 	getViewportOffset(&viewportX);
 
@@ -2393,7 +2393,7 @@ int CAdScene::getOffsetLeft() {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CAdScene::getOffsetTop() {
+int AdScene::getOffsetTop() {
 	int viewportY;
 	getViewportOffset(NULL, &viewportY);
 
@@ -2402,7 +2402,7 @@ int CAdScene::getOffsetTop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::pointInViewport(int x, int y) {
+bool AdScene::pointInViewport(int x, int y) {
 	int left, top, width, height;
 
 	getViewportOffset(&left, &top);
@@ -2413,21 +2413,21 @@ bool CAdScene::pointInViewport(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdScene::setOffset(int offsetLeft, int offsetTop) {
+void AdScene::setOffset(int offsetLeft, int offsetTop) {
 	_offsetLeft = offsetLeft;
 	_offsetTop  = offsetTop;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdScene::getNodeByName(const char *name) {
-	CBObject *ret = NULL;
+BaseObject *AdScene::getNodeByName(const char *name) {
+	BaseObject *ret = NULL;
 
 	// dependent objects
 	for (int i = 0; i < _layers.getSize(); i++) {
-		CAdLayer *layer = _layers[i];
+		AdLayer *layer = _layers[i];
 		for (int j = 0; j < layer->_nodes.getSize(); j++) {
-			CAdSceneNode *node = layer->_nodes[j];
+			AdSceneNode *node = layer->_nodes[j];
 			if ((node->_type == OBJECT_ENTITY && !scumm_stricmp(name, node->_entity->_name)) ||
 			        (node->_type == OBJECT_REGION && !scumm_stricmp(name, node->_region->_name))) {
 				switch (node->_type) {
@@ -2464,32 +2464,32 @@ CBObject *CAdScene::getNodeByName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::saveState() {
+bool AdScene::saveState() {
 	return persistState(true);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::loadState() {
+bool AdScene::loadState() {
 	return persistState(false);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::persistState(bool saving) {
+bool AdScene::persistState(bool saving) {
 	if (!_persistentState) return STATUS_OK;
 
-	CAdGame *adGame = (CAdGame *)_gameRef;
-	CAdSceneState *state = adGame->getSceneState(_filename, saving);
+	AdGame *adGame = (AdGame *)_gameRef;
+	AdSceneState *state = adGame->getSceneState(_filename, saving);
 	if (!state) return STATUS_OK;
 
-	CAdNodeState *nodeState;
+	AdNodeState *nodeState;
 
 	// dependent objects
 	for (int i = 0; i < _layers.getSize(); i++) {
-		CAdLayer *layer = _layers[i];
+		AdLayer *layer = _layers[i];
 		for (int j = 0; j < layer->_nodes.getSize(); j++) {
-			CAdSceneNode *node = layer->_nodes[j];
+			AdSceneNode *node = layer->_nodes[j];
 			switch (node->_type) {
 			case OBJECT_ENTITY:
 				if (!node->_entity->_saveState) continue;
@@ -2509,7 +2509,7 @@ bool CAdScene::persistState(bool saving) {
 				}
 				break;
 			default:
-				warning("CAdScene::PersistState - unhandled enum");
+				warning("AdScene::PersistState - unhandled enum");
 				break;
 			}
 		}
@@ -2521,7 +2521,7 @@ bool CAdScene::persistState(bool saving) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
 			nodeState = state->getNodeState(_objects[i]->_name, saving);
 			if (nodeState) {
-				nodeState->transferEntity((CAdEntity *)_objects[i], _persistentStateSprites, saving);
+				nodeState->transferEntity((AdEntity *)_objects[i], _persistentStateSprites, saving);
 				//if(Saving) NodeState->_active = _objects[i]->_active;
 				//else _objects[i]->_active = NodeState->_active;
 			}
@@ -2542,12 +2542,12 @@ bool CAdScene::persistState(bool saving) {
 
 
 //////////////////////////////////////////////////////////////////////////
-float CAdScene::getRotationAt(int x, int y) {
-	CAdRotLevel *prev = NULL;
-	CAdRotLevel *next = NULL;
+float AdScene::getRotationAt(int x, int y) {
+	AdRotLevel *prev = NULL;
+	AdRotLevel *next = NULL;
 
 	for (int i = 0; i < _rotLevels.getSize(); i++) {
-		/*  CAdRotLevel *xxx = _rotLevels[i];
+		/*  AdRotLevel *xxx = _rotLevels[i];
 		    int j = _rotLevels.getSize();*/
 		if (_rotLevels[i]->_posX < x) prev = _rotLevels[i];
 		else {
@@ -2568,12 +2568,12 @@ float CAdScene::getRotationAt(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::handleItemAssociations(const char *itemName, bool show) {
+bool AdScene::handleItemAssociations(const char *itemName, bool show) {
 	for (int i = 0; i < _layers.getSize(); i++) {
-		CAdLayer *layer = _layers[i];
+		AdLayer *layer = _layers[i];
 		for (int j = 0; j < layer->_nodes.getSize(); j++) {
 			if (layer->_nodes[j]->_type == OBJECT_ENTITY) {
-				CAdEntity *ent = layer->_nodes[j]->_entity;
+				AdEntity *ent = layer->_nodes[j]->_entity;
 
 				if (ent->_item && strcmp(ent->_item, itemName) == 0) ent->_active = show;
 			}
@@ -2582,7 +2582,7 @@ bool CAdScene::handleItemAssociations(const char *itemName, bool show) {
 
 	for (int i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
-			CAdEntity *ent = (CAdEntity *)_objects[i];
+			AdEntity *ent = (AdEntity *)_objects[i];
 			if (ent->_item && strcmp(ent->_item, itemName) == 0) ent->_active = show;
 		}
 	}
@@ -2592,11 +2592,11 @@ bool CAdScene::handleItemAssociations(const char *itemName, bool show) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::getRegionsAt(int x, int y, CAdRegion **regionList, int numRegions) {
+bool AdScene::getRegionsAt(int x, int y, AdRegion **regionList, int numRegions) {
 	int numUsed = 0;
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
-			CAdSceneNode *node = _mainLayer->_nodes[i];
+			AdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
 				if (numUsed < numRegions - 1) {
 					regionList[numUsed] = node->_region;
@@ -2613,14 +2613,14 @@ bool CAdScene::getRegionsAt(int x, int y, CAdRegion **regionList, int numRegions
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::restoreDeviceObjects() {
+bool AdScene::restoreDeviceObjects() {
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdScene::getNextAccessObject(CBObject *currObject) {
-	CBArray<CAdObject *, CAdObject *> objects;
+BaseObject *AdScene::getNextAccessObject(BaseObject *currObject) {
+	BaseArray<AdObject *, AdObject *> objects;
 	getSceneObjects(objects, true);
 
 	if (objects.getSize() == 0) return NULL;
@@ -2639,8 +2639,8 @@ CBObject *CAdScene::getNextAccessObject(CBObject *currObject) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdScene::getPrevAccessObject(CBObject *currObject) {
-	CBArray<CAdObject *, CAdObject *> objects;
+BaseObject *AdScene::getPrevAccessObject(BaseObject *currObject) {
+	BaseArray<AdObject *, AdObject *> objects;
 	getSceneObjects(objects, true);
 
 	if (objects.getSize() == 0) return NULL;
@@ -2660,24 +2660,24 @@ CBObject *CAdScene::getPrevAccessObject(CBObject *currObject) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &objects, bool interactiveOnly) {
+bool AdScene::getSceneObjects(BaseArray<AdObject *, AdObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _layers.getSize(); i++) {
 		// close-up layer -> remove everything below it
 		if (interactiveOnly && _layers[i]->_closeUp) objects.removeAll();
 
 
 		for (int j = 0; j < _layers[i]->_nodes.getSize(); j++) {
-			CAdSceneNode *node = _layers[i]->_nodes[j];
+			AdSceneNode *node = _layers[i]->_nodes[j];
 			switch (node->_type) {
 			case OBJECT_ENTITY: {
-				CAdEntity *ent = node->_entity;
+				AdEntity *ent = node->_entity;
 				if (ent->_active && (ent->_registrable || !interactiveOnly))
 					objects.add(ent);
 			}
 			break;
 
 			case OBJECT_REGION: {
-				CBArray<CAdObject *, CAdObject *> regionObj;
+				BaseArray<AdObject *, AdObject *> regionObj;
 				getRegionObjects(node->_region, regionObj, interactiveOnly);
 				for (int newIndex = 0; newIndex < regionObj.getSize(); newIndex++) {
 					bool found = false;
@@ -2693,14 +2693,14 @@ bool CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &objects, bool 
 			}
 			break;
 			default:
-				warning("CAdScene::GetSceneObjects - Unhandled enum");
+				warning("AdScene::GetSceneObjects - Unhandled enum");
 				break;
 			}
 		}
 	}
 
 	// objects outside any region
-	CBArray<CAdObject *, CAdObject *> regionObj;
+	BaseArray<AdObject *, AdObject *> regionObj;
 	getRegionObjects(NULL, regionObj, interactiveOnly);
 	for (int newIndex = 0; newIndex < regionObj.getSize(); newIndex++) {
 		bool found = false;
@@ -2719,9 +2719,9 @@ bool CAdScene::getSceneObjects(CBArray<CAdObject *, CAdObject *> &objects, bool 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScene::getRegionObjects(CAdRegion *region, CBArray<CAdObject *, CAdObject *> &objects, bool interactiveOnly) {
-	CAdGame *adGame = (CAdGame *)_gameRef;
-	CAdObject *obj;
+bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *, AdObject *> &objects, bool interactiveOnly) {
+	AdGame *adGame = (AdGame *)_gameRef;
+	AdObject *obj;
 
 	// global objects
 	for (int i = 0; i < adGame->_objects.getSize(); i++) {
@@ -2744,7 +2744,7 @@ bool CAdScene::getRegionObjects(CAdRegion *region, CBArray<CAdObject *, CAdObjec
 	}
 
 	// sort by _posY
-	qsort(objects.getData(), objects.getSize(), sizeof(CAdObject *), CAdScene::compareObjs);
+	qsort(objects.getData(), objects.getSize(), sizeof(AdObject *), AdScene::compareObjs);
 
 	return STATUS_OK;
 }

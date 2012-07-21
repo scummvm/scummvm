@@ -33,10 +33,10 @@
 #include "engines/wintermute/base/font/base_font.h"
 
 namespace WinterMute {
-class CBSubFrame;
-class CBFontBitmap : public CBFont {
+class BaseSubFrame;
+class BaseFontBitmap : public BaseFont {
 public:
-	DECLARE_PERSISTENT(CBFontBitmap, CBFont)
+	DECLARE_PERSISTENT(BaseFontBitmap, BaseFont)
 	bool loadBuffer(byte *Buffer);
 	bool loadFile(const char *filename);
 	virtual int getTextWidth(byte *text, int maxLength = -1);
@@ -44,19 +44,19 @@ public:
 	virtual void drawText(byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1);
 	virtual int getLetterHeight();
 
-	CBFontBitmap(CBGame *inGame);
-	virtual ~CBFontBitmap();
+	BaseFontBitmap(BaseGame *inGame);
+	virtual ~BaseFontBitmap();
 
 
 	bool getWidths();
-	CBSprite *_sprite;
+	BaseSprite *_sprite;
 	int _widthsFrame;
 	bool _fontextFix;
 	int _numColumns;
 	int _tileHeight;
 	int _tileWidth;
 	byte _widths[NUM_CHARACTERS];
-	CBSubFrame *_subframe;
+	BaseSubFrame *_subframe;
 	bool _wholeCell;
 
 private:

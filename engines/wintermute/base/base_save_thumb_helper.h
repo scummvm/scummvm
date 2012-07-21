@@ -33,16 +33,16 @@
 
 namespace WinterMute {
 
-class CBImage;
+class BaseImage;
 
-class CBSaveThumbHelper : public CBBase {
+class BaseSaveThumbHelper : public BaseClass {
 public:
-	CBSaveThumbHelper(CBGame *inGame);
-	virtual ~CBSaveThumbHelper(void);
+	BaseSaveThumbHelper(BaseGame *inGame);
+	virtual ~BaseSaveThumbHelper(void);
 	bool storeThumbnail(bool doFlip = false);
 
-	CBImage *_thumbnail;
-	CBImage *_richThumbnail;
+	BaseImage *_thumbnail;
+	BaseImage *_richThumbnail;
 };
 
 } // end of namespace WinterMute

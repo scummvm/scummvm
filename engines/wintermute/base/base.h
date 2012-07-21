@@ -37,21 +37,21 @@
 
 namespace WinterMute {
 
-class CBGame;
-class CBDynBuffer;
+class BaseGame;
+class BaseDynamicBuffer;
 
-class CBBase {
+class BaseClass {
 public:
 	bool _persistable;
 	bool setEditorProp(const char *propName, const char *propValue);
 	const char *getEditorProp(const char *propName, const char *initVal = NULL);
-	CBBase(TDynamicConstructor, TDynamicConstructor) {};
+	BaseClass(TDynamicConstructor, TDynamicConstructor) {};
 	bool parseEditorProperty(byte *buffer, bool complete = true);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent = 0);
-	CBBase();
-	CBGame *_gameRef;
-	CBBase(CBGame *GameOwner);
-	virtual ~CBBase();
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
+	BaseClass();
+	BaseGame *_gameRef;
+	BaseClass(BaseGame *GameOwner);
+	virtual ~BaseClass();
 
 	Common::HashMap<Common::String, Common::String> _editorProps;
 	Common::HashMap<Common::String, Common::String>::iterator _editorPropsIter;

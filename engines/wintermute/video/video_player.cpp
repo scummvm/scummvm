@@ -39,13 +39,13 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
-CVidPlayer::CVidPlayer(CBGame *inGame): CBBase(inGame) {
+VideoPlayer::VideoPlayer(BaseGame *inGame): BaseClass(inGame) {
 	SetDefaults();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::SetDefaults() {
+bool VideoPlayer::SetDefaults() {
 	_playing = false;
 
 	/*  _aviFile = NULL;
@@ -85,13 +85,13 @@ bool CVidPlayer::SetDefaults() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CVidPlayer::~CVidPlayer() {
+VideoPlayer::~VideoPlayer() {
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::cleanup() {
+bool VideoPlayer::cleanup() {
 #if 0
 	if (_sound) _sound->Stop();
 	if (_videoPGF) AVIStreamGetFrameClose(_videoPGF);
@@ -124,7 +124,7 @@ bool CVidPlayer::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
+bool VideoPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 #if 0
 	cleanup();
 
@@ -186,7 +186,7 @@ bool CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 	bool res;
 
 	if (_soundAvailable) {
-		_sound = new CBSoundAVI(_gameRef);
+		_sound = new BaseSoundAVI(_gameRef);
 		if (DID_FAIL(res = _sound->InitializeBuffer(_audioStream))) {
 			SAFE_DELETE(_sound);
 			_soundAvailable = false;
@@ -204,7 +204,7 @@ bool CVidPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::update() {
+bool VideoPlayer::update() {
 #if 0
 	if (!m_Playing) return STATUS_OK;
 
@@ -274,7 +274,7 @@ bool CVidPlayer::update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::display() {
+bool VideoPlayer::display() {
 #if 0
 	if (!m_Playing) return STATUS_OK;
 
@@ -284,7 +284,7 @@ bool CVidPlayer::display() {
 
 	// display subtitle
 	if (m_ShowSubtitle) {
-		CBFont *font = _gameRef->_videoFont ? _gameRef->_videoFont : _gameRef->_systemFont;
+		BaseFont *font = _gameRef->_videoFont ? _gameRef->_videoFont : _gameRef->_systemFont;
 		int Height = font->GetTextHeight((BYTE *)m_Subtitles[_currentSubtitle]->_text, _gameRef->_renderer->_width);
 		font->drawText((byte *)_subtitles[m_CurrentSubtitle]->_text, 0, _gameRef->_renderer->_height - Height - 5, _gameRef->_renderer->_width, TAL_CENTER);
 	}
@@ -298,7 +298,7 @@ bool CVidPlayer::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
+bool VideoPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 #if 0
 	if (!_videoStream || !_vidRenderer) return STATUS_FAILED;
 
@@ -359,7 +359,7 @@ bool CVidPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::stop() {
+bool VideoPlayer::stop() {
 #if 0
 	if (!_playing) return STATUS_OK;
 
@@ -372,13 +372,13 @@ bool CVidPlayer::stop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::isPlaying() {
+bool VideoPlayer::isPlaying() {
 	return _playing;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) {
+bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) {
 #if 0
 	if (!Filename) return STATUS_OK;
 

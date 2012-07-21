@@ -35,42 +35,42 @@
 
 namespace WinterMute {
 
-class CUIButton : public CUIObject {
+class UIButton : public UIObject {
 public:
 	bool _pixelPerfect;
 	bool _stayPressed;
 	bool _centerImage;
 	bool _oneTimePress;
 	uint32 _oneTimePressTime;
-	DECLARE_PERSISTENT(CUIButton, CUIObject)
+	DECLARE_PERSISTENT(UIButton, UIObject)
 	void press();
 	virtual bool display(int offsetX = 0, int offsetY = 0);
 	bool _press;
 	bool _hover;
 	void correctSize();
 	TTextAlign _align;
-	CBSprite *_imageHover;
-	CBSprite *_imagePress;
-	CBSprite *_imageDisable;
-	CBSprite *_imageFocus;
-	CBFont *_fontDisable;
-	CBFont *_fontPress;
-	CBFont *_fontHover;
-	CBFont *_fontFocus;
-	CUITiledImage *_backPress;
-	CUITiledImage *_backHover;
-	CUITiledImage *_backDisable;
-	CUITiledImage *_backFocus;
-	CUIButton(CBGame *inGame = NULL);
-	virtual ~CUIButton();
+	BaseSprite *_imageHover;
+	BaseSprite *_imagePress;
+	BaseSprite *_imageDisable;
+	BaseSprite *_imageFocus;
+	BaseFont *_fontDisable;
+	BaseFont *_fontPress;
+	BaseFont *_fontHover;
+	BaseFont *_fontFocus;
+	UITiledImage *_backPress;
+	UITiledImage *_backHover;
+	UITiledImage *_backDisable;
+	UITiledImage *_backFocus;
+	UIButton(BaseGame *inGame = NULL);
+	virtual ~UIButton();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

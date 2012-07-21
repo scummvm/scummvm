@@ -35,10 +35,10 @@
 namespace WinterMute {
 
 //TODO: Get rid of this
-class CBSaveThumbFile : public CBFile {
+class BaseSaveThumbFile : public BaseFile {
 public:
-	CBSaveThumbFile(CBGame *Game);
-	virtual ~CBSaveThumbFile();
+	BaseSaveThumbFile(BaseGame *Game);
+	virtual ~BaseSaveThumbFile();
 	virtual bool seek(uint32 pos, int whence = SEEK_SET);
 	virtual bool read(void *buffer, uint32 size);
 	virtual bool close();

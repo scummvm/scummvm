@@ -39,7 +39,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CPartParticle::CPartParticle(CBGame *inGame) : CBBase(inGame) {
+PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 	_pos = Vector2(0.0f, 0.0f);
 	_posZ = 0.0f;
 	_velocity = Vector2(0.0f, 0.0f);
@@ -48,7 +48,7 @@ CPartParticle::CPartParticle(CBGame *inGame) : CBBase(inGame) {
 	_creationTime = 0;
 	_lifeTime = 0;
 	_isDead = true;
-	CBPlatform::setRectEmpty(&_border);
+	BasePlatform::setRectEmpty(&_border);
 
 	_state = PARTICLE_NORMAL;
 	_fadeStart = 0;
@@ -66,13 +66,13 @@ CPartParticle::CPartParticle(CBGame *inGame) : CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CPartParticle::~CPartParticle(void) {
+PartParticle::~PartParticle(void) {
 	delete _sprite;
 	_sprite = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartParticle::setSprite(const char *filename) {
+bool PartParticle::setSprite(const char *filename) {
 	if (_sprite && _sprite->_filename && scumm_stricmp(filename, _sprite->_filename) == 0) {
 		_sprite->reset();
 		return STATUS_OK;
@@ -81,22 +81,22 @@ bool CPartParticle::setSprite(const char *filename) {
 	delete _sprite;
 	_sprite = NULL;
 
-	CSysClassRegistry::getInstance()->_disabled = true;
-	_sprite = new CBSprite(_gameRef, _gameRef);
+	SystemClassRegistry::getInstance()->_disabled = true;
+	_sprite = new BaseSprite(_gameRef, _gameRef);
 	if (_sprite && DID_SUCCEED(_sprite->loadFile(filename))) {
-		CSysClassRegistry::getInstance()->_disabled = false;
+		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_OK;
 	} else {
 		delete _sprite;
 		_sprite = NULL;
-		CSysClassRegistry::getInstance()->_disabled = false;
+		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_FAILED;
 	}
 
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta) {
+bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timerDelta) {
 	if (_state == PARTICLE_FADEIN) {
 		if (currentTime - _fadeStart >= (uint32)_fadeTime) {
 			_state = PARTICLE_NORMAL;
@@ -123,11 +123,11 @@ bool CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 tim
 		}
 
 		// particle hit the border
-		if (!_isDead && !CBPlatform::isRectEmpty(&_border)) {
+		if (!_isDead && !BasePlatform::isRectEmpty(&_border)) {
 			Point32 p;
 			p.x = (int32)_pos.x;
 			p.y = (int32)_pos.y;
-			if (!CBPlatform::ptInRect(&_border, p))
+			if (!BasePlatform::ptInRect(&_border, p))
 				fadeOut(currentTime, emitter->_fadeOutTime);
 		}
 		if (_state != PARTICLE_NORMAL) return STATUS_OK;
@@ -144,13 +144,13 @@ bool CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 tim
 		float elapsedTime = (float)timerDelta / 1000.f;
 
 		for (int i = 0; i < emitter->_forces.getSize(); i++) {
-			CPartForce *force = emitter->_forces[i];
+			PartForce *force = emitter->_forces[i];
 			switch (force->_type) {
-			case CPartForce::FORCE_GLOBAL:
+			case PartForce::FORCE_GLOBAL:
 				_velocity += force->_direction * elapsedTime;
 				break;
 
-			case CPartForce::FORCE_POINT: {
+			case PartForce::FORCE_POINT: {
 				Vector2 vecDist = force->_pos - _pos;
 				float dist = fabs(vecDist.length());
 
@@ -165,7 +165,7 @@ bool CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 tim
 
 		// update rotation
 		_rotation += _angVelocity * elapsedTime;
-		_rotation = CBUtils::normalizeAngle(_rotation);
+		_rotation = BaseUtils::normalizeAngle(_rotation);
 
 		// update scale
 		if (_exponentialGrowth)
@@ -182,7 +182,7 @@ bool CPartParticle::update(CPartEmitter *emitter, uint32 currentTime, uint32 tim
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartParticle::display(CPartEmitter *emitter) {
+bool PartParticle::display(PartEmitter *emitter) {
 	if (!_sprite) return STATUS_FAILED;
 	if (_isDead) return STATUS_OK;
 
@@ -197,7 +197,7 @@ bool CPartParticle::display(CPartEmitter *emitter) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartParticle::fadeIn(uint32 currentTime, int fadeTime) {
+bool PartParticle::fadeIn(uint32 currentTime, int fadeTime) {
 	_currentAlpha = 0;
 	_fadeStart = currentTime;
 	_fadeTime = fadeTime;
@@ -207,7 +207,7 @@ bool CPartParticle::fadeIn(uint32 currentTime, int fadeTime) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartParticle::fadeOut(uint32 currentTime, int fadeTime) {
+bool PartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 	//_currentAlpha = 255;
 	_fadeStartAlpha = _currentAlpha;
 	_fadeStart = currentTime;
@@ -218,7 +218,7 @@ bool CPartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPartParticle::persist(CBPersistMgr *persistMgr) {
+bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha1));
 	persistMgr->transfer(TMEMBER(_alpha2));
 	persistMgr->transfer(TMEMBER(_border));
@@ -244,9 +244,9 @@ bool CPartParticle::persist(CBPersistMgr *persistMgr) {
 	} else {
 		char *filename;
 		persistMgr->transfer(TMEMBER(filename));
-		CSysClassRegistry::getInstance()->_disabled = true;
+		SystemClassRegistry::getInstance()->_disabled = true;
 		setSprite(filename);
-		CSysClassRegistry::getInstance()->_disabled = false;
+		SystemClassRegistry::getInstance()->_disabled = false;
 		delete[] filename;
 		filename = NULL;
 	}

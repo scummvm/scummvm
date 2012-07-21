@@ -40,26 +40,26 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////
 
 
-IMPLEMENT_PERSISTENT(CSXMath, true)
+IMPLEMENT_PERSISTENT(SXMath, true)
 
-CBScriptable *makeSXMath(CBGame *inGame) {
-	return new CSXMath(inGame);
+BaseScriptable *makeSXMath(BaseGame *inGame) {
+	return new SXMath(inGame);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXMath::CSXMath(CBGame *inGame): CBScriptable(inGame) {
-
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-CSXMath::~CSXMath() {
+SXMath::SXMath(BaseGame *inGame): BaseScriptable(inGame) {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+SXMath::~SXMath() {
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Abs
 	//////////////////////////////////////////////////////////////////////////
@@ -250,7 +250,7 @@ bool CSXMath::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXMath::scGetProperty(const char *name) {
+ScValue *SXMath::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -274,21 +274,21 @@ CScValue *CSXMath::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-double CSXMath::degreeToRadian(double value) {
+double SXMath::degreeToRadian(double value) {
 	return value * (M_PI / 180.0f);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-double CSXMath::radianToDegree(double value) {
+double SXMath::radianToDegree(double value) {
 	return value * (180.0f / M_PI);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXMath::persist(CBPersistMgr *persistMgr) {
+bool SXMath::persist(BasePersistenceManager *persistMgr) {
 
-	CBScriptable::persist(persistMgr);
+	BaseScriptable::persist(persistMgr);
 	return STATUS_OK;
 }
 

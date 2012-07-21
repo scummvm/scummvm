@@ -43,10 +43,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdInventoryBox, false)
+IMPLEMENT_PERSISTENT(AdInventoryBox, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdInventoryBox::CAdInventoryBox(CBGame *inGame): CBObject(inGame) {
+AdInventoryBox::AdInventoryBox(BaseGame *inGame): BaseObject(inGame) {
 	_itemsArea.setEmpty();
 	_scrollOffset = 0;
 	_spacing = 0;
@@ -64,7 +64,7 @@ CAdInventoryBox::CAdInventoryBox(CBGame *inGame): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdInventoryBox::~CAdInventoryBox() {
+AdInventoryBox::~AdInventoryBox() {
 	_gameRef->unregisterObject(_window);
 	_window = NULL;
 
@@ -74,8 +74,8 @@ CAdInventoryBox::~CAdInventoryBox() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
-	CUIObject *obj = (CUIObject *)param1;
+bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
+	UIObject *obj = (UIObject *)param1;
 
 	switch (obj->_type) {
 	case UI_BUTTON:
@@ -86,10 +86,10 @@ bool CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 			_scrollOffset = MAX(_scrollOffset, 0);
 		} else if (scumm_stricmp(obj->_name, "next") == 0) {
 			_scrollOffset += _scrollBy;
-		} else return CBObject::listen(param1, param2);
+		} else return BaseObject::listen(param1, param2);
 		break;
 	default:
-		error("CAdInventoryBox::Listen - Unhandled enum");
+		error("AdInventoryBox::Listen - Unhandled enum");
 		break;
 	}
 
@@ -98,8 +98,8 @@ bool CAdInventoryBox::listen(CBScriptHolder *param1, uint32 param2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventoryBox::display() {
-	CAdGame *adGame = (CAdGame *)_gameRef;
+bool AdInventoryBox::display() {
+	AdGame *adGame = (AdGame *)_gameRef;
 
 	if (!_visible) return STATUS_OK;
 
@@ -137,8 +137,8 @@ bool CAdInventoryBox::display() {
 		for (int i = 0; i < itemsX; i++) {
 			int itemIndex = _scrollOffset + j * itemsX + i;
 			if (itemIndex >= 0 && itemIndex < adGame->_inventoryOwner->getInventory()->_takenItems.getSize()) {
-				CAdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[itemIndex];
-				if (item != ((CAdGame *)_gameRef)->_selectedItem || !_hideSelected) {
+				AdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[itemIndex];
+				if (item != ((AdGame *)_gameRef)->_selectedItem || !_hideSelected) {
 					item->update();
 					item->display(xxx, yyy);
 				}
@@ -155,10 +155,10 @@ bool CAdInventoryBox::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventoryBox::loadFile(const char *filename) {
+bool AdInventoryBox::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdInventoryBox::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdInventoryBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -193,7 +193,7 @@ TOKEN_DEF(HIDE_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
+bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(INVENTORY_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -213,7 +213,7 @@ bool CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 	bool always_visible = false;
 
 	_exclusive = false;
@@ -241,7 +241,7 @@ bool CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WINDOW:
 			delete _window;
-			_window = new CUIWindow(_gameRef);
+			_window = new UIWindow(_gameRef);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				delete _window;
 				_window = NULL;
@@ -297,7 +297,7 @@ bool CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 
 	if (_exclusive) {
 		delete _closeButton;
-		_closeButton = new CUIButton(_gameRef);
+		_closeButton = new UIButton(_gameRef);
 		if (_closeButton) {
 			_closeButton->setName("close");
 			_closeButton->setListener(this, _closeButton, 0);
@@ -318,7 +318,7 @@ bool CAdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "INVENTORY_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -343,7 +343,7 @@ bool CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 	return STATUS_OK;
@@ -351,8 +351,8 @@ bool CAdInventoryBox::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventoryBox::persist(CBPersistMgr *persistMgr) {
-	CBObject::persist(persistMgr);
+bool AdInventoryBox::persist(BasePersistenceManager *persistMgr) {
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_closeButton));
 	persistMgr->transfer(TMEMBER(_hideSelected));

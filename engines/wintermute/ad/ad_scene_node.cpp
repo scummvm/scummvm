@@ -32,10 +32,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdSceneNode, false)
+IMPLEMENT_PERSISTENT(AdSceneNode, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdSceneNode::CAdSceneNode(CBGame *inGame): CBObject(inGame) {
+AdSceneNode::AdSceneNode(BaseGame *inGame): BaseObject(inGame) {
 	_type = OBJECT_NONE;
 	_region = NULL;
 	_entity = NULL;
@@ -43,7 +43,7 @@ CAdSceneNode::CAdSceneNode(CBGame *inGame): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdSceneNode::~CAdSceneNode() {
+AdSceneNode::~AdSceneNode() {
 	_gameRef->unregisterObject(_region);
 	_region = NULL;
 
@@ -53,7 +53,7 @@ CAdSceneNode::~CAdSceneNode() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSceneNode::setEntity(CAdEntity *entity) {
+bool AdSceneNode::setEntity(AdEntity *entity) {
 	_type = OBJECT_ENTITY;
 	_entity = entity;
 	return _gameRef->registerObject(entity);
@@ -61,7 +61,7 @@ bool CAdSceneNode::setEntity(CAdEntity *entity) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSceneNode::setRegion(CAdRegion *region) {
+bool AdSceneNode::setRegion(AdRegion *region) {
 	_type = OBJECT_REGION;
 	_region = region;
 	return _gameRef->registerObject(region);
@@ -69,9 +69,9 @@ bool CAdSceneNode::setRegion(CAdRegion *region) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSceneNode::persist(CBPersistMgr *persistMgr) {
+bool AdSceneNode::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_entity));
 	persistMgr->transfer(TMEMBER(_region));

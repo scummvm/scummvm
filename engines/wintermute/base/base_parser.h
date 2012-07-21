@@ -40,7 +40,7 @@
 	TOKEN_TOTAL_COUNT           \
 	};
 #define TOKEN_TABLE_START(name)     \
-	static CBParser::TokenDesc name [] =      \
+	static BaseParser::TokenDesc name [] =      \
 	        {
 #define TOKEN_TABLE(name)       \
 	{ TOKEN_ ## name, #name },
@@ -57,7 +57,7 @@
 
 namespace WinterMute {
 
-class CBParser : public CBBase {
+class BaseParser : public BaseClass {
 public:
 	struct TokenDesc {
 		int32	id;
@@ -67,8 +67,8 @@ public:
 public:
 	int scanStr(const char *in, const char *format, ...);
 	int32 getCommand(char **buf, TokenDesc *tokens, char **params);
-	CBParser(CBGame *inGame = NULL);
-	virtual ~CBParser();
+	BaseParser(BaseGame *inGame = NULL);
+	virtual ~BaseParser();
 private:
 	char *getLastOffender();
 	void skipToken(char **buf, char *tok, char *msg = NULL);

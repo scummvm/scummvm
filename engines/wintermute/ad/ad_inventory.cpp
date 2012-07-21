@@ -34,25 +34,25 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdInventory, false)
+IMPLEMENT_PERSISTENT(AdInventory, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdInventory::CAdInventory(CBGame *inGame): CBObject(inGame) {
+AdInventory::AdInventory(BaseGame *inGame): BaseObject(inGame) {
 	_scrollOffset = 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdInventory::~CAdInventory() {
+AdInventory::~AdInventory() {
 	_takenItems.removeAll(); // ref only
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventory::insertItem(const char *name, const char *insertAfter) {
+bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 	if (name == NULL) return STATUS_FAILED;
 
-	CAdItem *item = ((CAdGame *)_gameRef)->getItemByName(name);
+	AdItem *item = ((AdGame *)_gameRef)->getItemByName(name);
 	if (item == NULL) return STATUS_FAILED;
 
 	int insertIndex = -1;
@@ -74,12 +74,12 @@ bool CAdInventory::insertItem(const char *name, const char *insertAfter) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventory::removeItem(const char *name) {
+bool AdInventory::removeItem(const char *name) {
 	if (name == NULL) return STATUS_FAILED;
 
 	for (int i = 0; i < _takenItems.getSize(); i++) {
 		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
-			if (((CAdGame *)_gameRef)->_selectedItem == _takenItems[i])((CAdGame *)_gameRef)->_selectedItem = NULL;
+			if (((AdGame *)_gameRef)->_selectedItem == _takenItems[i])((AdGame *)_gameRef)->_selectedItem = NULL;
 			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}
@@ -91,12 +91,12 @@ bool CAdInventory::removeItem(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventory::removeItem(CAdItem *item) {
+bool AdInventory::removeItem(AdItem *item) {
 	if (item == NULL) return STATUS_FAILED;
 
 	for (int i = 0; i < _takenItems.getSize(); i++) {
 		if (_takenItems[i] == item) {
-			if (((CAdGame *)_gameRef)->_selectedItem == _takenItems[i])((CAdGame *)_gameRef)->_selectedItem = NULL;
+			if (((AdGame *)_gameRef)->_selectedItem == _takenItems[i])((AdGame *)_gameRef)->_selectedItem = NULL;
 			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}
@@ -106,9 +106,9 @@ bool CAdInventory::removeItem(CAdItem *item) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdInventory::persist(CBPersistMgr *persistMgr) {
+bool AdInventory::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	_takenItems.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_scrollOffset));

@@ -36,18 +36,18 @@
 
 namespace WinterMute {
 
-class CPartEmitter;
-class CBSprite;
-class CBPersistMgr;
+class PartEmitter;
+class BaseSprite;
+class BasePersistenceManager;
 
-class CPartParticle : public CBBase {
+class PartParticle : public BaseClass {
 public:
 	enum TParticleState {
 	    PARTICLE_NORMAL, PARTICLE_FADEIN, PARTICLE_FADEOUT
 	};
 
-	CPartParticle(CBGame *inGame);
-	virtual ~CPartParticle(void);
+	PartParticle(BaseGame *inGame);
+	virtual ~PartParticle(void);
 
 	float _growthRate;
 	bool _exponentialGrowth;
@@ -63,21 +63,21 @@ public:
 	float _posZ;
 	Vector2 _velocity;
 	float _scale;
-	CBSprite *_sprite;
+	BaseSprite *_sprite;
 	uint32 _creationTime;
 	int _lifeTime;
 	bool _isDead;
 	TParticleState _state;
 
-	bool update(CPartEmitter *emitter, uint32 currentTime, uint32 timerDelta);
-	bool display(CPartEmitter *emitter);
+	bool update(PartEmitter *emitter, uint32 currentTime, uint32 timerDelta);
+	bool display(PartEmitter *emitter);
 
 	bool setSprite(const char *filename);
 
 	bool fadeIn(uint32 currentTime, int fadeTime);
 	bool fadeOut(uint32 currentTime, int fadeTime);
 
-	bool persist(CBPersistMgr *PersistMgr);
+	bool persist(BasePersistenceManager *PersistMgr);
 private:
 	uint32 _fadeStart;
 	int _fadeTime;

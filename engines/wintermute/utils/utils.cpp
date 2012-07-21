@@ -45,7 +45,7 @@ static inline unsigned Sqr(int x) {
 
 
 //////////////////////////////////////////////////////////////////////////////////
-void CBUtils::clip(int *destX, int *destY, Rect32 *srcRect, Rect32 *destRect) {
+void BaseUtils::clip(int *destX, int *destY, Rect32 *srcRect, Rect32 *destRect) {
 	// If it's partly off the right side of the screen
 	if (*destX + (srcRect->right - srcRect->left) > destRect->right)
 		srcRect->right -= *destX + (srcRect->right - srcRect->left) - destRect->right;
@@ -76,20 +76,20 @@ void CBUtils::clip(int *destX, int *destY, Rect32 *srcRect, Rect32 *destRect) {
 //////////////////////////////////////////////////////////////////////////////////
 // Swap - swaps two integers
 //////////////////////////////////////////////////////////////////////////////////
-void CBUtils::swap(int *a, int *b) {
+void BaseUtils::swap(int *a, int *b) {
 	int Temp = *a;
 	*a = *b;
 	*b = Temp;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBUtils::strBeginsI(const char *string, const char *fragment) {
+bool BaseUtils::strBeginsI(const char *string, const char *fragment) {
 	return (scumm_strnicmp(string, fragment, strlen(fragment)) == 0);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-float CBUtils::normalizeAngle(float angle) {
+float BaseUtils::normalizeAngle(float angle) {
 	while (angle > 360) angle -= 360;
 	while (angle < 0) angle += 360;
 
@@ -98,14 +98,14 @@ float CBUtils::normalizeAngle(float angle) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void CBUtils::createPath(const char *path, bool pathOnly) {
+void BaseUtils::createPath(const char *path, bool pathOnly) {
 	AnsiString pathStr;
 
 	if (!pathOnly) pathStr = PathUtil::getDirectoryName(path);
 	else pathStr = path;
 
 //	try {
-	warning("CBUtils::CreatePath - not implemented: %s", path);
+	warning("BaseUtils::CreatePath - not implemented: %s", path);
 //		boost::filesystem::create_directories(path);
 //	} catch (...) {
 	return;
@@ -114,13 +114,13 @@ void CBUtils::createPath(const char *path, bool pathOnly) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBUtils::debugMessage(const char *text) {
+void BaseUtils::debugMessage(const char *text) {
 	//MessageBox(hWnd, Text, "WME", MB_OK|MB_ICONINFORMATION);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBUtils::setString(char **string, const char *value) {
+char *BaseUtils::setString(char **string, const char *value) {
 	delete[] *string;
 	*string = new char[strlen(value) + 1];
 	if (*string) strcpy(*string, value);
@@ -128,7 +128,7 @@ char *CBUtils::setString(char **string, const char *value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBUtils::strNumEntries(const char *str, const char delim) {
+int BaseUtils::strNumEntries(const char *str, const char delim) {
 	int numEntries = 1;
 	for (uint32 i = 0; i < strlen(str); i++) {
 		if (str[i] == delim) numEntries++;
@@ -138,7 +138,7 @@ int CBUtils::strNumEntries(const char *str, const char delim) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBUtils::strEntry(int entry, const char *str, const char delim) {
+char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 	int numEntries = 0;
 
 	const char *start = NULL;
@@ -163,7 +163,7 @@ char *CBUtils::strEntry(int entry, const char *str, const char delim) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBUtils::randomInt(int from, int to) {
+int BaseUtils::randomInt(int from, int to) {
 	if (to < from) {
 		int i = to;
 		to = from;
@@ -174,14 +174,14 @@ int CBUtils::randomInt(int from, int to) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-float CBUtils::randomFloat(float from, float to) {
+float BaseUtils::randomFloat(float from, float to) {
 	const uint32 randMax = RAND_MAX;
 	float randNum = (float)g_wintermute->randInt(0, randMax) / (float)randMax;
 	return from + (to - from) * randNum;
 }
 
 //////////////////////////////////////////////////////////////////////////
-float CBUtils::randomAngle(float From, float To) {
+float BaseUtils::randomAngle(float From, float To) {
 	while (To < From) {
 		To += 360;
 	}
@@ -189,7 +189,7 @@ float CBUtils::randomAngle(float From, float To) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBUtils::matchesPattern(const char *pattern, const char *string) {
+bool BaseUtils::matchesPattern(const char *pattern, const char *string) {
 	char stringc, patternc;
 
 	for (;; ++string) {
@@ -220,14 +220,14 @@ bool CBUtils::matchesPattern(const char *pattern, const char *string) {
 			}
 
 			while (*string)
-				if (CBUtils::matchesPattern(pattern, string++))
+				if (BaseUtils::matchesPattern(pattern, string++))
 					return true;
 			return false;
 
 		default:
 			if (patternc != stringc)
 				if (patternc == '.' && stringc == 0)
-					return(CBUtils::matchesPattern(pattern, string));
+					return(BaseUtils::matchesPattern(pattern, string));
 				else
 					return false;
 			break;
@@ -236,10 +236,10 @@ bool CBUtils::matchesPattern(const char *pattern, const char *string) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CBUtils::getPath(const char *filename) {
+char *BaseUtils::getPath(const char *filename) {
 	AnsiString path = PathUtil::getDirectoryName(filename);
 	//path = boost::filesystem::syste_complete(path).string();
-	warning("CBUtils::GetPath: (%s), not implemented", filename);
+	warning("BaseUtils::GetPath: (%s), not implemented", filename);
 	char *ret = new char[path.size() + 1];
 	strcpy(ret, path.c_str());
 
@@ -247,7 +247,7 @@ char *CBUtils::getPath(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CBUtils::getFilename(const char *filename) {
+char *BaseUtils::getFilename(const char *filename) {
 	AnsiString path = PathUtil::getFileName(filename);
 	char *ret = new char[path.size() + 1];
 	strcpy(ret, path.c_str());
@@ -255,7 +255,7 @@ char *CBUtils::getFilename(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBUtils::RGBtoHSL(uint32 RGBColor, byte *outH, byte *outS, byte *outL) {
+void BaseUtils::RGBtoHSL(uint32 RGBColor, byte *outH, byte *outS, byte *outL) {
 	float varR = (RGBCOLGetR(RGBColor) / 255.0f);
 	float varG = (RGBCOLGetG(RGBColor) / 255.0f);
 	float varB = (RGBCOLGetB(RGBColor) / 255.0f);
@@ -304,7 +304,7 @@ void CBUtils::RGBtoHSL(uint32 RGBColor, byte *outH, byte *outS, byte *outL) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
+uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 	float H = InH / 255.0f;
 	float S = InS / 255.0f;
 	float L = InL / 255.0f;
@@ -333,7 +333,7 @@ uint32 CBUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 
 
 //////////////////////////////////////////////////////////////////////////
-float CBUtils::Hue2RGB(float v1, float v2, float vH) {
+float BaseUtils::Hue2RGB(float v1, float v2, float vH) {
 	if (vH < 0.0f) vH += 1.0f;
 	if (vH > 1.0f) vH -= 1.0f;
 	if ((6.0f * vH) < 1.0f) return (v1 + (v2 - v1) * 6.0f * vH);

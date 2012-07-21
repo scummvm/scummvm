@@ -34,24 +34,24 @@
 
 namespace WinterMute {
 
-class CUIText : public CUIObject {
+class UIText : public UIObject {
 private:
 	bool sizeToFit();
 public:
 	virtual bool display(int offsetX, int offsetY);
-	DECLARE_PERSISTENT(CUIText, CUIObject)
-	CUIText(CBGame *inGame = NULL);
-	virtual ~CUIText();
+	DECLARE_PERSISTENT(UIText, UIObject)
+	UIText(BaseGame *inGame = NULL);
+	virtual ~UIText();
 	TTextAlign _textAlign;
 	TVerticalAlign _verticalAlign;
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

@@ -37,10 +37,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdRegion, false)
+IMPLEMENT_PERSISTENT(AdRegion, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdRegion::CAdRegion(CBGame *inGame): CBRegion(inGame) {
+AdRegion::AdRegion(BaseGame *inGame): BaseRegion(inGame) {
 	_blocked = false;
 	_decoration = false;
 	_zoom = 0;
@@ -49,15 +49,15 @@ CAdRegion::CAdRegion(CBGame *inGame): CBRegion(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdRegion::~CAdRegion() {
+AdRegion::~AdRegion() {
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdRegion::loadFile(const char *filename) {
+bool AdRegion::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdRegion::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -95,7 +95,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdRegion::loadBuffer(byte *buffer, bool complete) {
+bool AdRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -118,7 +118,7 @@ bool CAdRegion::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
@@ -170,7 +170,7 @@ bool CAdRegion::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_POINT: {
 			int x, y;
 			parser.scanStr((char *)params, "%d,%d", &x, &y);
-			_points.add(new CBPoint(x, y));
+			_points.add(new BasePoint(x, y));
 		}
 		break;
 
@@ -219,7 +219,7 @@ bool CAdRegion::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool AdRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	/*
 	    //////////////////////////////////////////////////////////////////////////
 	    // SkipTo
@@ -233,12 +233,12 @@ bool CAdRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	        return STATUS_OK;
 	    }
 
-	    else*/ return CBRegion::scCallMethod(script, stack, thisStack, name);
+	    else*/ return BaseRegion::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdRegion::scGetProperty(const char *name) {
+ScValue *AdRegion::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -289,12 +289,12 @@ CScValue *CAdRegion::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBRegion::scGetProperty(name);
+	else return BaseRegion::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdRegion::scSetProperty(const char *name, CScValue *value) {
+bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -335,18 +335,18 @@ bool CAdRegion::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CBRegion::scSetProperty(name, value);
+	else return BaseRegion::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdRegion::scToString() {
+const char *AdRegion::scToString() {
 	return "[ad region]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdRegion::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "REGION {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
@@ -369,7 +369,7 @@ bool CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n\n");
 
@@ -378,8 +378,8 @@ bool CAdRegion::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdRegion::persist(CBPersistMgr *persistMgr) {
-	CBRegion::persist(persistMgr);
+bool AdRegion::persist(BasePersistenceManager *persistMgr) {
+	BaseRegion::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_alpha));
 	persistMgr->transfer(TMEMBER(_blocked));

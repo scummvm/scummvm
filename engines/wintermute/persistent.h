@@ -31,11 +31,11 @@
 
 namespace WinterMute {
 
-class CBPersistMgr;
+class BasePersistenceManager;
 
 // persistence support
 typedef void *(*PERSISTBUILD)(void);
-typedef bool(*PERSISTLOAD)(void *, CBPersistMgr *);
+typedef bool(*PERSISTLOAD)(void *, BasePersistenceManager *);
 typedef void (*SYS_INSTANCE_CALLBACK)(void *Instance, void *Data);
 } // end of namespace WinterMute
 
@@ -47,9 +47,9 @@ namespace WinterMute {
 	static const char _className[];\
 	static void* persistBuild(void);\
 	virtual const char* getClassName();\
-	static bool persistLoad(void* Instance, CBPersistMgr* PersistMgr);\
+	static bool persistLoad(void* Instance, BasePersistenceManager* PersistMgr);\
 	class_name(TDynamicConstructor p1, TDynamicConstructor p2):parent_class(p1, p2){ /*memset(this, 0, sizeof(class_name));*/ };\
-	virtual bool persist(CBPersistMgr* PersistMgr);\
+	virtual bool persist(BasePersistenceManager* PersistMgr);\
 	void* operator new (size_t size);\
 	void operator delete(void* p);\
 	 
@@ -60,7 +60,7 @@ namespace WinterMute {
 		return ::new class_name(DYNAMIC_CONSTRUCTOR, DYNAMIC_CONSTRUCTOR);\
 	}\
 	\
-	bool class_name::persistLoad(void* Instance, CBPersistMgr* PersistMgr){\
+	bool class_name::persistLoad(void* Instance, BasePersistenceManager* PersistMgr){\
 		return ((class_name*)Instance)->persist(PersistMgr);\
 	}\
 	\
@@ -68,16 +68,16 @@ namespace WinterMute {
 		return #class_name;\
 	}\
 	\
-	/*CSysClass Register##class_name(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);*/\
+	/*SystemClass Register##class_name(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);*/\
 	\
 	void* class_name::operator new (size_t size){\
 		void* ret = ::operator new(size);\
-		CSysClassRegistry::getInstance()->registerInstance(#class_name, ret);\
+		SystemClassRegistry::getInstance()->registerInstance(#class_name, ret);\
 		return ret;\
 	}\
 	\
 	void class_name::operator delete (void* p){\
-		CSysClassRegistry::getInstance()->unregisterInstance(#class_name, p);\
+		SystemClassRegistry::getInstance()->unregisterInstance(#class_name, p);\
 		::operator delete(p);\
 	}\
 	 

@@ -36,27 +36,27 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdRotLevel, false)
+IMPLEMENT_PERSISTENT(AdRotLevel, false)
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdRotLevel::CAdRotLevel(CBGame *inGame): CBObject(inGame) {
+AdRotLevel::AdRotLevel(BaseGame *inGame): BaseObject(inGame) {
 	_posX = 0;
 	_rotation = 0.0f;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdRotLevel::~CAdRotLevel() {
+AdRotLevel::~AdRotLevel() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdRotLevel::loadFile(const char *filename) {
+bool AdRotLevel::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdRotLevel::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdRotLevel::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -82,7 +82,7 @@ TOKEN_DEF(ROTATION)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
+bool AdRotLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ROTATION_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -93,7 +93,7 @@ bool CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ROTATION_LEVEL) {
@@ -135,11 +135,11 @@ bool CAdRotLevel::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdRotLevel::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdRotLevel::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ROTATION_LEVEL {\n");
 	buffer->putTextIndent(indent + 2, "X=%d\n", _posX);
 	buffer->putTextIndent(indent + 2, "ROTATION=%d\n", (int)_rotation);
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 	buffer->putTextIndent(indent, "}\n");
 
 	return STATUS_OK;
@@ -147,9 +147,9 @@ bool CAdRotLevel::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdRotLevel::persist(CBPersistMgr *persistMgr) {
+bool AdRotLevel::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_rotation));
 

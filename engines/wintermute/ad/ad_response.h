@@ -34,24 +34,24 @@
 #include "engines/wintermute/ad/ad_types.h"
 
 namespace WinterMute {
-class CBFont;
-class CAdResponse : public CBObject {
+class BaseFont;
+class AdResponse : public BaseObject {
 public:
-	DECLARE_PERSISTENT(CAdResponse, CBObject)
+	DECLARE_PERSISTENT(AdResponse, BaseObject)
 	bool setIcon(const char *filename);
 	bool setFont(const char *filename);
 	bool setIconHover(const char *filename);
 	bool setIconPressed(const char *filename);
 	void setText(const char *text);
 	int _iD;
-	CBSprite *_icon;
-	CBSprite *_iconHover;
-	CBSprite *_iconPressed;
-	CBFont *_font;
+	BaseSprite *_icon;
+	BaseSprite *_iconHover;
+	BaseSprite *_iconPressed;
+	BaseFont *_font;
 	char *_text;
 	char *_textOrig;
-	CAdResponse(CBGame *inGame);
-	virtual ~CAdResponse();
+	AdResponse(BaseGame *inGame);
+	virtual ~AdResponse();
 	TResponseType _responseType;
 
 };

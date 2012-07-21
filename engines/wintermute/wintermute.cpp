@@ -138,12 +138,12 @@ Common::Error WinterMuteEngine::run() {
 }
 
 int WinterMuteEngine::init() {
-	_classReg = new CSysClassRegistry();
+	_classReg = new SystemClassRegistry();
 	_classReg->registerClasses();
 
-	_game = new CAdGame;
+	_game = new AdGame;
 	if (!_game) return 1;
-	CBPlatform::initialize(_game, 0, NULL);
+	BasePlatform::initialize(_game, 0, NULL);
 
 	bool windowedMode = !ConfMan.getBool("fullscreen");
 	
@@ -157,8 +157,8 @@ int WinterMuteEngine::init() {
 			else param[0] = '\0';
 			
 			if (strcmp(param, "") != 0) {
-				char *IniDir = CBUtils::GetPath(param);
-				char *IniName = CBUtils::GetFilename(param);
+				char *IniDir = BaseUtils::GetPath(param);
+				char *IniName = BaseUtils::GetFilename(param);
 				
 				// switch to ini's dir
 				warning("TODO: Place ini-files somewhere");
@@ -230,7 +230,7 @@ int WinterMuteEngine::init() {
 	
 	
 	// load game
-	uint32 DataInitStart = CBPlatform::getTime();
+	uint32 DataInitStart = BasePlatform::getTime();
 	
 	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
@@ -242,7 +242,7 @@ int WinterMuteEngine::init() {
 	_game->_renderer->_ready = true;
 	_game->_miniUpdateEnabled = true;
 	
-	_game->LOG(0, "Engine initialized in %d ms", CBPlatform::getTime() - DataInitStart);
+	_game->LOG(0, "Engine initialized in %d ms", BasePlatform::getTime() - DataInitStart);
 	_game->LOG(0, "");
 	
 	if (ConfMan.hasKey("save_slot")) {
@@ -272,7 +272,7 @@ int WinterMuteEngine::messageLoop() {
 	while (!done) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			CBPlatform::handleEvent(&event);
+			BasePlatform::handleEvent(&event);
 		}
 		
 		if (_game && _game->_renderer->_active && _game->_renderer->_ready) {

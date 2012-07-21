@@ -51,7 +51,7 @@ namespace WinterMute {
 #define SAVE_MAGIC_2    0x32564153
 
 //////////////////////////////////////////////////////////////////////////
-CBPersistMgr::CBPersistMgr(CBGame *inGame, const char *savePrefix): CBBase(inGame) {
+BasePersistenceManager::BasePersistenceManager(BaseGame *inGame, const char *savePrefix): BaseClass(inGame) {
 	_saving = false;
 //	_buffer = NULL;
 //	_bufferSize = 0;
@@ -80,13 +80,13 @@ CBPersistMgr::CBPersistMgr(CBGame *inGame, const char *savePrefix): CBBase(inGam
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPersistMgr::~CBPersistMgr() {
+BasePersistenceManager::~BasePersistenceManager() {
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBPersistMgr::cleanup() {
+void BasePersistenceManager::cleanup() {
 	/*  if (_buffer) {
 	        if (_saving) free(_buffer);
 	        else delete [] _buffer; // allocated by file manager
@@ -118,12 +118,12 @@ void CBPersistMgr::cleanup() {
 	_saveStream = NULL;
 }
 
-Common::String CBPersistMgr::getFilenameForSlot(int slot) const {
+Common::String BasePersistenceManager::getFilenameForSlot(int slot) const {
 	// 3 Digits, to allow for one save-slot for autosave + slot 1 - 100 (which will be numbered 0-99 filename-wise)
 	return Common::String::format("%s-save%03d.wsv", _savePrefix.c_str(), slot);
 }
 
-void CBPersistMgr::getSaveStateDesc(int slot, SaveStateDescriptor &desc) {
+void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &desc) {
 	Common::String filename = getFilenameForSlot(slot);
 	warning("Trying to list savegame %s in slot %d", filename.c_str(), slot);
 	if (DID_FAIL(readHeader(filename))) {
@@ -150,12 +150,12 @@ void CBPersistMgr::getSaveStateDesc(int slot, SaveStateDescriptor &desc) {
 	desc.setPlayTime(0);
 }
 
-void CBPersistMgr::deleteSaveSlot(int slot) {
+void BasePersistenceManager::deleteSaveSlot(int slot) {
 	Common::String filename = getFilenameForSlot(slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-uint32 CBPersistMgr::getMaxUsedSlot() {
+uint32 BasePersistenceManager::getMaxUsedSlot() {
 	Common::String saveMask = Common::String::format("%s-save???.wsv", _savePrefix.c_str());
 	Common::StringArray saves = g_system->getSavefileManager()->listSavefiles(saveMask);
 	Common::StringArray::iterator it = saves.begin();
@@ -168,7 +168,7 @@ uint32 CBPersistMgr::getMaxUsedSlot() {
 	return ret;
 }
 
-bool CBPersistMgr::getSaveExists(int slot) {
+bool BasePersistenceManager::getSaveExists(int slot) {
 	Common::String filename = getFilenameForSlot(slot);
 	warning("Trying to list savegame %s in slot %d", filename.c_str(), slot);
 	if (DID_FAIL(readHeader(filename))) {
@@ -178,7 +178,7 @@ bool CBPersistMgr::getSaveExists(int slot) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPersistMgr::initSave(const char *desc) {
+bool BasePersistenceManager::initSave(const char *desc) {
 	if (!desc) return STATUS_FAILED;
 
 	cleanup();
@@ -189,7 +189,7 @@ bool CBPersistMgr::initSave(const char *desc) {
 	if (_saveStream) {
 		// get thumbnails
 		if (!_gameRef->_cachedThumbnail) {
-			_gameRef->_cachedThumbnail = new CBSaveThumbHelper(_gameRef);
+			_gameRef->_cachedThumbnail = new BaseSaveThumbHelper(_gameRef);
 			if (DID_FAIL(_gameRef->_cachedThumbnail->storeThumbnail(true))) {
 				delete _gameRef->_cachedThumbnail;
 				_gameRef->_cachedThumbnail = NULL;
@@ -252,7 +252,7 @@ bool CBPersistMgr::initSave(const char *desc) {
 	return STATUS_OK;
 }
 
-bool CBPersistMgr::readHeader(const Common::String &filename) {
+bool BasePersistenceManager::readHeader(const Common::String &filename) {
 	cleanup();
 
 	_saving = false;
@@ -307,7 +307,7 @@ bool CBPersistMgr::readHeader(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPersistMgr::initLoad(const char *filename) {
+bool BasePersistenceManager::initLoad(const char *filename) {
 	if (DID_FAIL(readHeader(filename))) {
 		cleanup();
 		return STATUS_FAILED;
@@ -356,13 +356,13 @@ bool CBPersistMgr::initLoad(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPersistMgr::saveFile(const char *filename) {
+bool BasePersistenceManager::saveFile(const char *filename) {
 	return _gameRef->_fileManager->saveFile(filename, ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic *)_saveStream)->size(), _gameRef->_compressedSavegames, _richBuffer, _richBufferSize);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPersistMgr::putBytes(byte *buffer, uint32 size) {
+bool BasePersistenceManager::putBytes(byte *buffer, uint32 size) {
 	_saveStream->write(buffer, size);
 	if (_saveStream->err())
 		return STATUS_FAILED;
@@ -370,7 +370,7 @@ bool CBPersistMgr::putBytes(byte *buffer, uint32 size) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPersistMgr::getBytes(byte *buffer, uint32 size) {
+bool BasePersistenceManager::getBytes(byte *buffer, uint32 size) {
 	_loadStream->read(buffer, size);
 	if (_loadStream->err())
 		return STATUS_FAILED;
@@ -378,20 +378,20 @@ bool CBPersistMgr::getBytes(byte *buffer, uint32 size) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBPersistMgr::putDWORD(uint32 val) {
+void BasePersistenceManager::putDWORD(uint32 val) {
 	_saveStream->writeUint32LE(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBPersistMgr::getDWORD() {
+uint32 BasePersistenceManager::getDWORD() {
 	uint32 ret = _loadStream->readUint32LE();
 	return ret;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBPersistMgr::putString(const Common::String &val) {
+void BasePersistenceManager::putString(const Common::String &val) {
 	if (!val.size()) putString("(null)");
 	else {
 		_saveStream->writeUint32LE(val.size());
@@ -399,7 +399,7 @@ void CBPersistMgr::putString(const Common::String &val) {
 	}
 }
 
-Common::String CBPersistMgr::getStringObj() {
+Common::String BasePersistenceManager::getStringObj() {
 	uint32 len = _loadStream->readUint32LE();
 	char *ret = new char[len + 1];
 	_loadStream->read(ret, len);
@@ -416,7 +416,7 @@ Common::String CBPersistMgr::getStringObj() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CBPersistMgr::getString() {
+char *BasePersistenceManager::getString() {
 	uint32 len = _loadStream->readUint32LE();
 	char *ret = new char[len + 1];
 	_loadStream->read(ret, len);
@@ -428,7 +428,7 @@ char *CBPersistMgr::getString() {
 	} else return ret;
 }
 
-bool CBPersistMgr::putTimeDate(const TimeDate &t) {
+bool BasePersistenceManager::putTimeDate(const TimeDate &t) {
 	_saveStream->writeSint32LE(t.tm_sec);
 	_saveStream->writeSint32LE(t.tm_min);
 	_saveStream->writeSint32LE(t.tm_hour);
@@ -443,7 +443,7 @@ bool CBPersistMgr::putTimeDate(const TimeDate &t) {
 	return STATUS_OK;
 }
 
-TimeDate CBPersistMgr::getTimeDate() {
+TimeDate BasePersistenceManager::getTimeDate() {
 	TimeDate t;
 	t.tm_sec = _loadStream->readSint32LE();
 	t.tm_min = _loadStream->readSint32LE();
@@ -455,13 +455,13 @@ TimeDate CBPersistMgr::getTimeDate() {
 	return t;
 }
 
-void CBPersistMgr::putFloat(float val) {
+void BasePersistenceManager::putFloat(float val) {
 	Common::String str = Common::String::format("F%f", val);
 	_saveStream->writeUint32LE(str.size());
 	_saveStream->writeString(str);
 }
 
-float CBPersistMgr::getFloat() {
+float BasePersistenceManager::getFloat() {
 	char *str = getString();
 	float value = 0.0f;
 	int ret = sscanf(str, "F%f", &value);
@@ -472,14 +472,14 @@ float CBPersistMgr::getFloat() {
 	return value;
 }
 
-void CBPersistMgr::putDouble(double val) {
+void BasePersistenceManager::putDouble(double val) {
 	Common::String str = Common::String::format("F%f", val);
 	str.format("D%f", val);
 	_saveStream->writeUint32LE(str.size());
 	_saveStream->writeString(str);
 }
 
-double CBPersistMgr::getDouble() {
+double BasePersistenceManager::getDouble() {
 	char *str = getString();
 	double value = 0.0f;
 	int ret = sscanf(str, "F%f", &value);
@@ -492,7 +492,7 @@ double CBPersistMgr::getDouble() {
 
 //////////////////////////////////////////////////////////////////////////
 // bool
-bool CBPersistMgr::transfer(const char *name, bool *val) {
+bool BasePersistenceManager::transfer(const char *name, bool *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err())
@@ -509,7 +509,7 @@ bool CBPersistMgr::transfer(const char *name, bool *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // int
-bool CBPersistMgr::transfer(const char *name, int *val) {
+bool BasePersistenceManager::transfer(const char *name, int *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(*val);
 		if (_saveStream->err())
@@ -526,7 +526,7 @@ bool CBPersistMgr::transfer(const char *name, int *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // DWORD
-bool CBPersistMgr::transfer(const char *name, uint32 *val) {
+bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
 	if (_saving) {
 		_saveStream->writeUint32LE(*val);
 		if (_saveStream->err())
@@ -543,7 +543,7 @@ bool CBPersistMgr::transfer(const char *name, uint32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // float
-bool CBPersistMgr::transfer(const char *name, float *val) {
+bool BasePersistenceManager::transfer(const char *name, float *val) {
 	if (_saving) {
 		putFloat(*val);
 		if (_saveStream->err())
@@ -560,7 +560,7 @@ bool CBPersistMgr::transfer(const char *name, float *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // double
-bool CBPersistMgr::transfer(const char *name, double *val) {
+bool BasePersistenceManager::transfer(const char *name, double *val) {
 	if (_saving) {
 		putDouble(*val);
 		if (_saveStream->err())
@@ -577,7 +577,7 @@ bool CBPersistMgr::transfer(const char *name, double *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // char*
-bool CBPersistMgr::transfer(const char *name, char **val) {
+bool BasePersistenceManager::transfer(const char *name, char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -594,7 +594,7 @@ bool CBPersistMgr::transfer(const char *name, char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // const char*
-bool CBPersistMgr::transfer(const char *name, const char **val) {
+bool BasePersistenceManager::transfer(const char *name, const char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -611,7 +611,7 @@ bool CBPersistMgr::transfer(const char *name, const char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Common::String
-bool CBPersistMgr::transfer(const char *name, Common::String *val) {
+bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -632,7 +632,7 @@ bool CBPersistMgr::transfer(const char *name, Common::String *val) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPersistMgr::transfer(const char *name, AnsiStringArray &val) {
+bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
 	size_t size;
 
 	if (_saving) {
@@ -662,7 +662,7 @@ bool CBPersistMgr::transfer(const char *name, AnsiStringArray &val) {
 
 //////////////////////////////////////////////////////////////////////////
 // BYTE
-bool CBPersistMgr::transfer(const char *name, byte *val) {
+bool BasePersistenceManager::transfer(const char *name, byte *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err())
@@ -679,7 +679,7 @@ bool CBPersistMgr::transfer(const char *name, byte *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-bool CBPersistMgr::transfer(const char *name, Rect32 *val) {
+bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);
@@ -702,7 +702,7 @@ bool CBPersistMgr::transfer(const char *name, Rect32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-bool CBPersistMgr::transfer(const char *name, Point32 *val) {
+bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);
@@ -721,7 +721,7 @@ bool CBPersistMgr::transfer(const char *name, Point32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-bool CBPersistMgr::transfer(const char *name, Vector2 *val) {
+bool BasePersistenceManager::transfer(const char *name, Vector2 *val) {
 	if (_saving) {
 		putFloat(val->x);
 		putFloat(val->y);
@@ -740,11 +740,11 @@ bool CBPersistMgr::transfer(const char *name, Vector2 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // generic pointer
-bool CBPersistMgr::transfer(const char *name, void *val) {
+bool BasePersistenceManager::transfer(const char *name, void *val) {
 	int classID = -1, instanceID = -1;
 
 	if (_saving) {
-		CSysClassRegistry::getInstance()->getPointerID(*(void **)val, &classID, &instanceID);
+		SystemClassRegistry::getInstance()->getPointerID(*(void **)val, &classID, &instanceID);
 		if (*(void **)val != NULL && (classID == -1 || instanceID == -1)) {
 			_gameRef->LOG(0, "Warning: invalid instance '%s'", name);
 		}
@@ -755,7 +755,7 @@ bool CBPersistMgr::transfer(const char *name, void *val) {
 		classID = _loadStream->readUint32LE();
 		instanceID = _loadStream->readUint32LE();
 
-		*(void **)val = CSysClassRegistry::getInstance()->idToPointer(classID, instanceID);
+		*(void **)val = SystemClassRegistry::getInstance()->idToPointer(classID, instanceID);
 	}
 
 	return STATUS_OK;
@@ -763,7 +763,7 @@ bool CBPersistMgr::transfer(const char *name, void *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPersistMgr::checkVersion(byte verMajor, byte verMinor, byte verBuild) {
+bool BasePersistenceManager::checkVersion(byte verMajor, byte verMinor, byte verBuild) {
 	if (_saving) return true;
 
 	// it's ok if we are same or newer than the saved game

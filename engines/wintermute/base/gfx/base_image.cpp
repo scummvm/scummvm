@@ -44,7 +44,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-CBImage::CBImage(CBGame *inGame, FIBITMAP *bitmap): CBBase(inGame) {
+BaseImage::BaseImage(BaseGame *inGame, FIBITMAP *bitmap): BaseClass(inGame) {
 #if 0
 	_bitmap = bitmap;
 #endif
@@ -57,7 +57,7 @@ CBImage::CBImage(CBGame *inGame, FIBITMAP *bitmap): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBImage::~CBImage() {
+BaseImage::~BaseImage() {
 	/*  delete _bitmap; */
 	delete _decoder;
 	if (_deletableSurface) {
@@ -69,7 +69,7 @@ CBImage::~CBImage() {
 #endif
 }
 
-bool CBImage::loadFile(const Common::String &filename) {
+bool BaseImage::loadFile(const Common::String &filename) {
 	_filename = filename;
 	_filename.toLowercase();
 	if (StringUtil::startsWith(filename, "savegame:", true)) {
@@ -83,7 +83,7 @@ bool CBImage::loadFile(const Common::String &filename) {
 	} else if (_filename.hasSuffix(".jpg")) {
 		_decoder = new Graphics::JPEGDecoder();
 	} else {
-		error("CBImage::loadFile : Unsupported fileformat %s", filename.c_str());
+		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 	_filename = filename;
 	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(filename.c_str());
@@ -97,7 +97,7 @@ bool CBImage::loadFile(const Common::String &filename) {
 	return STATUS_OK;
 }
 
-byte CBImage::getAlphaAt(int x, int y) {
+byte BaseImage::getAlphaAt(int x, int y) {
 	if (!_surface) return 0xFF;
 	uint32 color = *(uint32 *)_surface->getBasePtr(x, y);
 	byte r, g, b, a;
@@ -105,13 +105,13 @@ byte CBImage::getAlphaAt(int x, int y) {
 	return a;
 }
 
-void CBImage::copyFrom(Graphics::Surface *surface) {
+void BaseImage::copyFrom(Graphics::Surface *surface) {
 	_surface = _deletableSurface = new Graphics::Surface();
 	_deletableSurface->copyFrom(*surface);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBImage::saveBMPFile(const char *filename) {
+bool BaseImage::saveBMPFile(const char *filename) {
 #if 0
 	if (!_bitmap) return STATUS_FAILED;
 
@@ -123,7 +123,7 @@ bool CBImage::saveBMPFile(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBImage::resize(int newWidth, int newHeight) {
+bool BaseImage::resize(int newWidth, int newHeight) {
 #if 0
 	if (!_bitmap) return STATUS_FAILED;
 
@@ -143,7 +143,7 @@ bool CBImage::resize(int newWidth, int newHeight) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
+bool BaseImage::writeBMPToStream(Common::WriteStream *stream) {
 	if (!_surface) return false;
 
 	/* The following is just copied over and inverted to write-ops from the BMP-decoder */
@@ -247,7 +247,7 @@ bool CBImage::writeBMPToStream(Common::WriteStream *stream) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBImage::copyFrom(CBImage *origImage, int newWidth, int newHeight) {
+bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 #if 0
 	if (_bitmap) FreeImage_Unload(_bitmap);
 

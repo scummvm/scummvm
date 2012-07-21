@@ -35,26 +35,26 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdScaleLevel, false)
+IMPLEMENT_PERSISTENT(AdScaleLevel, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdScaleLevel::CAdScaleLevel(CBGame *inGame): CBObject(inGame) {
+AdScaleLevel::AdScaleLevel(BaseGame *inGame): BaseObject(inGame) {
 	_posY = 0;
 	_scale = 100;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdScaleLevel::~CAdScaleLevel() {
+AdScaleLevel::~AdScaleLevel() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScaleLevel::loadFile(const char *filename) {
+bool AdScaleLevel::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdScaleLevel::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdScaleLevel::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -80,7 +80,7 @@ TOKEN_DEF(SCALE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
+bool AdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCALE_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -91,7 +91,7 @@ bool CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCALE_LEVEL) {
@@ -133,11 +133,11 @@ bool CAdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScaleLevel::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdScaleLevel::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SCALE_LEVEL {\n");
 	buffer->putTextIndent(indent + 2, "Y=%d\n", _posY);
 	buffer->putTextIndent(indent + 2, "SCALE=%d\n", (int)_scale);
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 	buffer->putTextIndent(indent, "}\n");
 
 	return STATUS_OK;
@@ -145,9 +145,9 @@ bool CAdScaleLevel::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdScaleLevel::persist(CBPersistMgr *persistMgr) {
+bool AdScaleLevel::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_scale));
 

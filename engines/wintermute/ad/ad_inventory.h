@@ -33,17 +33,17 @@
 
 namespace WinterMute {
 
-class CAdItem;
+class AdItem;
 
-class CAdInventory : public CBObject {
+class AdInventory : public BaseObject {
 public:
-	DECLARE_PERSISTENT(CAdInventory, CBObject)
+	DECLARE_PERSISTENT(AdInventory, BaseObject)
 	bool removeItem(const char *name);
-	bool removeItem(CAdItem *Item);
+	bool removeItem(AdItem *Item);
 	bool insertItem(const char *name, const char *insertAfter = NULL);
-	CAdInventory(CBGame *inGame);
-	virtual ~CAdInventory();
-	CBArray<CAdItem *, CAdItem *> _takenItems;
+	AdInventory(BaseGame *inGame);
+	virtual ~AdInventory();
+	BaseArray<AdItem *, AdItem *> _takenItems;
 	int _scrollOffset;
 };
 

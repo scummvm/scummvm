@@ -33,23 +33,23 @@
 #include "common/array.h"
 
 namespace WinterMute {
-class CBSurface;
-class CBSurfaceStorage : public CBBase {
+class BaseSurface;
+class BaseSurfaceStorage : public BaseClass {
 public:
 	uint32 _lastCleanupTime;
 	bool initLoop();
 	bool sortSurfaces();
 	static int surfaceSortCB(const void *arg1, const void *arg2);
 	bool cleanup(bool Warn = false);
-	//DECLARE_PERSISTENT(CBSurfaceStorage, CBBase);
+	//DECLARE_PERSISTENT(BaseSurfaceStorage, BaseClass);
 
 	bool restoreAll();
-	CBSurface *addSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
-	bool removeSurface(CBSurface *surface);
-	CBSurfaceStorage(CBGame *inGame);
-	virtual ~CBSurfaceStorage();
+	BaseSurface *addSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
+	bool removeSurface(BaseSurface *surface);
+	BaseSurfaceStorage(BaseGame *inGame);
+	virtual ~BaseSurfaceStorage();
 
-	Common::Array<CBSurface *> _surfaces;
+	Common::Array<BaseSurface *> _surfaces;
 };
 
 } // end of namespace WinterMute

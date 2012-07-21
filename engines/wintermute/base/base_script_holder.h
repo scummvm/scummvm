@@ -35,21 +35,21 @@
 
 namespace WinterMute {
 
-class CBScriptHolder : public CBScriptable {
+class BaseScriptHolder : public BaseScriptable {
 public:
-	DECLARE_PERSISTENT(CBScriptHolder, CBScriptable)
+	DECLARE_PERSISTENT(BaseScriptHolder, BaseScriptable)
 
-	CBScriptHolder(CBGame *inGame);
-	virtual ~CBScriptHolder();
-	virtual CScScript *invokeMethodThread(const char *methodName);
+	BaseScriptHolder(BaseGame *inGame);
+	virtual ~BaseScriptHolder();
+	virtual ScScript *invokeMethodThread(const char *methodName);
 	virtual void makeFreezable(bool freezable);
 	bool canHandleEvent(const char *eventName);
 	virtual bool canHandleMethod(const char *eventMethod);
 	bool cleanup();
-	bool removeScript(CScScript *script);
+	bool removeScript(ScScript *script);
 	bool addScript(const char *filename);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
-	virtual bool listen(CBScriptHolder *param1, uint32 param2);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	bool applyEvent(const char *eventName, bool unbreakable = false);
 	void setFilename(const char *filename);
 	bool parseProperty(byte *buffer, bool complete = true);
@@ -57,11 +57,11 @@ public:
 	bool _freezable;
 	bool _ready;
 
-	CBArray<CScScript *, CScScript *> _scripts;
+	BaseArray<ScScript *, ScScript *> _scripts;
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	virtual void scDebuggerDesc(char *buf, int bufSize);
 	// IWmeObject

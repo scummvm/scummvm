@@ -33,13 +33,13 @@
 
 namespace WinterMute {
 
-class CBQuickMsg : public CBBase {
+class BaseQuickMsg : public BaseClass {
 public:
 	char *getText();
 	uint32 _startTime;
 	char *_text;
-	CBQuickMsg(CBGame *inGame, const char *Text);
-	virtual ~CBQuickMsg();
+	BaseQuickMsg(BaseGame *inGame, const char *Text);
+	virtual ~BaseQuickMsg();
 
 };
 

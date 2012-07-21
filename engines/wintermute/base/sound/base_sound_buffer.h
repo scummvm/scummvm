@@ -41,12 +41,12 @@ class SoundHandle;
 
 namespace WinterMute {
 
-class CBFile;
-class CBSoundBuffer : public CBBase {
+class BaseFile;
+class BaseSoundBuffer : public BaseClass {
 public:
 
-	CBSoundBuffer(CBGame *inGame);
-	virtual ~CBSoundBuffer();
+	BaseSoundBuffer(BaseGame *inGame);
+	virtual ~BaseSoundBuffer();
 
 
 	bool pause();

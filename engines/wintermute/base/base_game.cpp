@@ -74,11 +74,11 @@ namespace WinterMute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-IMPLEMENT_PERSISTENT(CBGame, true)
+IMPLEMENT_PERSISTENT(BaseGame, true)
 
 
 //////////////////////////////////////////////////////////////////////
-CBGame::CBGame(): CBObject(this) {
+BaseGame::BaseGame(): BaseObject(this) {
 	_shuttingDown = false;
 
 	_state = GAME_RUNNING;
@@ -143,8 +143,8 @@ CBGame::CBGame(): CBObject(this) {
 
 	_useD3D = false;
 
-	_registry = new CBRegistry(this);
-	_stringTable = new CBStringTable(this);
+	_registry = new BaseRegistry(this);
+	_stringTable = new BaseStringTable(this);
 
 	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
 		_music[i] = NULL;
@@ -205,7 +205,7 @@ CBGame::CBGame(): CBObject(this) {
 	_indicatorHeight = 8;
 	_richSavedGames = false;
 	_savedGameExt = NULL;
-	CBUtils::setString(&_savedGameExt, "dsv");
+	BaseUtils::setString(&_savedGameExt, "dsv");
 
 	_musicCrossfadeRunning = false;
 	_musicCrossfadeStartTime = 0;
@@ -222,7 +222,7 @@ CBGame::CBGame(): CBObject(this) {
 	_loadImageX = _loadImageY = 0;
 
 	_localSaveDir = NULL;
-	CBUtils::setString(&_localSaveDir, "saves");
+	BaseUtils::setString(&_localSaveDir, "saves");
 	_saveDirChecked = false;
 
 	_loadingIcon = NULL;
@@ -238,7 +238,7 @@ CBGame::CBGame(): CBObject(this) {
 	_lastCursor = NULL;
 
 
-	CBPlatform::setRectEmpty(&_mouseLockRect);
+	BasePlatform::setRectEmpty(&_mouseLockRect);
 
 	_suppressScriptErrors = false;
 	_lastMiniUpdate = 0;
@@ -270,7 +270,7 @@ CBGame::CBGame(): CBObject(this) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBGame::~CBGame() {
+BaseGame::~BaseGame() {
 	_shuttingDown = true;
 
 	LOG(0, "");
@@ -330,12 +330,12 @@ CBGame::~CBGame() {
 	_stringTable = NULL;
 
 	DEBUG_DebugDisable();
-	CBPlatform::outputDebugString("--- shutting down normally ---\n");
+	BasePlatform::outputDebugString("--- shutting down normally ---\n");
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::cleanup() {
+bool BaseGame::cleanup() {
 	delete _loadingIcon;
 	_loadingIcon = NULL;
 
@@ -414,50 +414,50 @@ bool CBGame::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBGame::initialize1() {
+bool BaseGame::initialize1() {
 	bool loaded = false; // Not really a loop, but a goto-replacement.
 	while (!loaded) {
-		_surfaceStorage = new CBSurfaceStorage(this);
+		_surfaceStorage = new BaseSurfaceStorage(this);
 		if (_surfaceStorage == NULL)
 			break;
 
-		_fontStorage = new CBFontStorage(this);
+		_fontStorage = new BaseFontStorage(this);
 		if (_fontStorage == NULL)
 			break;
 
-		_fileManager = new CBFileManager(this);
+		_fileManager = new BaseFileManager(this);
 		if (_fileManager == NULL)
 			break;
 
-		_soundMgr = new CBSoundMgr(this);
+		_soundMgr = new BaseSoundMgr(this);
 		if (_soundMgr == NULL)
 			break;
 
-		_debugMgr = new CBDebugger(this);
+		_debugMgr = new BaseDebugger(this);
 		if (_debugMgr == NULL)
 			break;
 
-		_mathClass = new CSXMath(this);
+		_mathClass = new SXMath(this);
 		if (_mathClass == NULL)
 			break;
 
-		_scEngine = new CScEngine(this);
+		_scEngine = new ScEngine(this);
 		if (_scEngine == NULL)
 			break;
 
-		_videoPlayer = new CVidPlayer(this);
+		_videoPlayer = new VideoPlayer(this);
 		if (_videoPlayer == NULL)
 			break;
 
-		_transMgr = new CBTransitionMgr(this);
+		_transMgr = new BaseTransitionMgr(this);
 		if (_transMgr == NULL)
 			break;
 
-		_keyboardState = new CBKeyboardState(this);
+		_keyboardState = new BaseKeyboardState(this);
 		if (_keyboardState == NULL)
 			break;
 
-		_fader = new CBFader(this);
+		_fader = new BaseFader(this);
 		if (_fader == NULL)
 			break;
 		registerObject(_fader);
@@ -483,7 +483,7 @@ bool CBGame::initialize1() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBGame::initialize2() { // we know whether we are going to be accelerated
+bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 	_renderer = makeOSystemRenderer(this);
 	if (_renderer == NULL) return STATUS_FAILED;
 
@@ -492,7 +492,7 @@ bool CBGame::initialize2() { // we know whether we are going to be accelerated
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBGame::initialize3() { // renderer is initialized
+bool BaseGame::initialize3() { // renderer is initialized
 	_posX = _renderer->_width / 2;
 	_posY = _renderer->_height / 2;
 
@@ -505,7 +505,7 @@ bool CBGame::initialize3() { // renderer is initialized
 
 
 //////////////////////////////////////////////////////////////////////
-void CBGame::DEBUG_DebugEnable(const char *filename) {
+void BaseGame::DEBUG_DebugEnable(const char *filename) {
 	_debugDebugMode = true;
 
 	/*  time_t timeNow;
@@ -532,14 +532,14 @@ void CBGame::DEBUG_DebugEnable(const char *filename) {
 	LOG(0, "%s ver %d.%d.%d%s, Compiled on " __DATE__ ", " __TIME__, DCGF_NAME, DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, DCGF_VER_SUFFIX);
 	//LOG(0, "Extensions: %s ver %d.%02d", EXT_NAME, EXT_VER_MAJOR, EXT_VER_MINOR);
 
-	AnsiString platform = CBPlatform::getPlatformName();
+	AnsiString platform = BasePlatform::getPlatformName();
 	LOG(0, "Platform: %s", platform.c_str());
 	LOG(0, "");
 }
 
 
 //////////////////////////////////////////////////////////////////////
-void CBGame::DEBUG_DebugDisable() {
+void BaseGame::DEBUG_DebugDisable() {
 	if (_debugLogFile != NULL) {
 		LOG(0, "********** DEBUG LOG CLOSED ********************************************");
 		//fclose((FILE *)_debugLogFile);
@@ -550,7 +550,7 @@ void CBGame::DEBUG_DebugDisable() {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBGame::LOG(bool res, const char *fmt, ...) {
+void BaseGame::LOG(bool res, const char *fmt, ...) {
 	uint32 secs = g_system->getMillis() / 1000;
 	uint32 hours = secs / 3600;
 	secs = secs % 3600;
@@ -580,17 +580,17 @@ void CBGame::LOG(bool res, const char *fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
+void BaseGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
 	_engineLogCallback = callback;
 	_engineLogCallbackData = data;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBGame::initLoop() {
+bool BaseGame::initLoop() {
 	_viewportSP = -1;
 
-	_currentTime = CBPlatform::getTime();
+	_currentTime = BasePlatform::getTime();
 
 	getDebugMgr()->onGameTick();
 	_renderer->initLoop();
@@ -645,35 +645,35 @@ bool CBGame::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBGame::initInput() {
+bool BaseGame::initInput() {
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBGame::getSequence() {
+int BaseGame::getSequence() {
 	return ++_sequence;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::setOffset(int offsetX, int offsetY) {
+void BaseGame::setOffset(int offsetX, int offsetY) {
 	_offsetX = offsetX;
 	_offsetY = offsetY;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::getOffset(int *offsetX, int *offsetY) {
+void BaseGame::getOffset(int *offsetX, int *offsetY) {
 	if (offsetX != NULL) *offsetX = _offsetX;
 	if (offsetY != NULL) *offsetY = _offsetY;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::loadFile(const char *filename) {
+bool BaseGame::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CBGame::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "BaseGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -740,7 +740,7 @@ TOKEN_DEF(GUID)
 TOKEN_DEF(COMPAT_KILL_METHOD_THREADS)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::loadBuffer(byte *buffer, bool complete) {
+bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(GAME)
 	TOKEN_TABLE(TEMPLATE)
@@ -778,7 +778,7 @@ bool CBGame::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_GAME) {
@@ -819,7 +819,7 @@ bool CBGame::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(_gameRef);
+			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -830,7 +830,7 @@ bool CBGame::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_ACTIVE_CURSOR:
 			delete _activeCursor;
 			_activeCursor = NULL;
-			_activeCursor = new CBSprite(_gameRef);
+			_activeCursor = new BaseSprite(_gameRef);
 			if (!_activeCursor || DID_FAIL(_activeCursor->loadFile((char *)params))) {
 				delete _activeCursor;
 				_activeCursor = NULL;
@@ -840,7 +840,7 @@ bool CBGame::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_NONINTERACTIVE_CURSOR:
 			delete _cursorNoninteractive;
-			_cursorNoninteractive = new CBSprite(_gameRef);
+			_cursorNoninteractive = new BaseSprite(_gameRef);
 			if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile((char *)params))) {
 				delete _cursorNoninteractive;
 				_cursorNoninteractive = NULL;
@@ -908,7 +908,7 @@ bool CBGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SAVE_IMAGE:
-			CBUtils::setString(&_saveImageName, (char *)params);
+			BaseUtils::setString(&_saveImageName, (char *)params);
 			break;
 
 		case TOKEN_SAVE_IMAGE_X:
@@ -920,7 +920,7 @@ bool CBGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOAD_IMAGE:
-			CBUtils::setString(&_loadImageName, (char *)params);
+			BaseUtils::setString(&_loadImageName, (char *)params);
 			break;
 
 		case TOKEN_LOAD_IMAGE_X:
@@ -932,7 +932,7 @@ bool CBGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOCAL_SAVE_DIR:
-			CBUtils::setString(&_localSaveDir, (char *)params);
+			BaseUtils::setString(&_localSaveDir, (char *)params);
 			break;
 
 		case TOKEN_COMPAT_KILL_METHOD_THREADS:
@@ -960,7 +960,7 @@ bool CBGame::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LOG
 	//////////////////////////////////////////////////////////////////////////
@@ -975,7 +975,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Caption") == 0) {
-		bool res = CBObject::scCallMethod(script, stack, thisStack, name);
+		bool res = BaseObject::scCallMethod(script, stack, thisStack, name);
 		setWindowTitle();
 		return res;
 	}
@@ -1010,7 +1010,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	else if (strcmp(name, "LoadStringTable") == 0) {
 		stack->correctParams(2);
 		const char *filename = stack->pop()->getString();
-		CScValue *Val = stack->pop();
+		ScValue *Val = stack->pop();
 
 		bool ClearOld;
 		if (Val->isNULL()) ClearOld = true;
@@ -1029,8 +1029,8 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ValidObject") == 0) {
 		stack->correctParams(1);
-		CBScriptable *obj = stack->pop()->getNative();
-		if (validObject((CBObject *) obj)) stack->pushBool(true);
+		BaseScriptable *obj = stack->pop()->getNative();
+		if (validObject((BaseObject *) obj)) stack->pushBool(true);
 		else stack->pushBool(false);
 
 		return STATUS_OK;
@@ -1053,8 +1053,8 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UnloadObject") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
-		CBObject *obj = (CBObject *)val->getNative();
+		ScValue *val = stack->pop();
+		BaseObject *obj = (BaseObject *)val->getNative();
 		unregisterObject(obj);
 		if (val->getType() == VAL_VARIABLE_REF) val->setNULL();
 
@@ -1067,7 +1067,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadWindow") == 0) {
 		stack->correctParams(1);
-		CUIWindow *win = new CUIWindow(_gameRef);
+		UIWindow *win = new UIWindow(_gameRef);
 		if (win && DID_SUCCEED(win->loadFile(stack->pop()->getString()))) {
 			_windows.add(win);
 			registerObject(win);
@@ -1085,7 +1085,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ExpandString") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		char *str = new char[strlen(val->getString()) + 1];
 		strcpy(str, val->getString());
 		_stringTable->expand(&str);
@@ -1106,10 +1106,10 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		}
 
 		const char *filename = stack->pop()->getString();
-		CScValue *valLooping = stack->pop();
+		ScValue *valLooping = stack->pop();
 		bool looping = valLooping->isNULL() ? true : valLooping->getBool();
 
-		CScValue *valLoopStart = stack->pop();
+		ScValue *valLoopStart = stack->pop();
 		uint32 loopStart = (uint32)(valLoopStart->isNULL() ? 0 : valLoopStart->getInt());
 
 
@@ -1311,7 +1311,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		int length = 0;
 		const char *filename = stack->pop()->getString();
 
-		CBSound *sound = new CBSound(_gameRef);
+		BaseSound *sound = new BaseSound(_gameRef);
 		if (sound && DID_SUCCEED(sound->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
 			length = sound->getLength();
 			delete sound;
@@ -1336,7 +1336,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		p.x = x + _renderer->_drawOffsetX;
 		p.y = y + _renderer->_drawOffsetY;
 
-		CBPlatform::setCursorPos(p.x, p.y);
+		BasePlatform::setCursorPos(p.x, p.y);
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -1352,10 +1352,10 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		int right = stack->pop()->getInt();
 		int bottom = stack->pop()->getInt();
 
-		if (right < left) CBUtils::swap(&left, &right);
-		if (bottom < top) CBUtils::swap(&top, &bottom);
+		if (right < left) BaseUtils::swap(&left, &right);
+		if (bottom < top) BaseUtils::swap(&top, &bottom);
 
-		CBPlatform::setRect(&_mouseLockRect, left, top, right, bottom);
+		BasePlatform::setRect(&_mouseLockRect, left, top, right, bottom);
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -1377,7 +1377,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		stack->correctParams(6);
 		const char *filename = stack->pop()->getString();
 		warning("PlayVideo: %s - not implemented yet", filename);
-		CScValue *valType = stack->pop();
+		ScValue *valType = stack->pop();
 		int Type;
 		if (valType->isNULL()) Type = (int)VID_PLAY_STRETCH;
 		else Type = valType->getInt();
@@ -1386,7 +1386,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		int yVal = stack->pop()->getInt();
 		bool FreezeMusic = stack->pop()->getBool(true);
 
-		CScValue *valSub = stack->pop();
+		ScValue *valSub = stack->pop();
 		const char *SubtitleFile = valSub->isNULL() ? NULL : valSub->getString();
 
 		if (Type < (int)VID_PLAY_POS || Type > (int)VID_PLAY_CENTER)
@@ -1414,7 +1414,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 
 		stack->correctParams(7);
 		const char *filename = stack->pop()->getString();
-		CScValue *valType = stack->pop();
+		ScValue *valType = stack->pop();
 		int type;
 		if (valType->isNULL())
 			type = (int)VID_PLAY_STRETCH;
@@ -1425,13 +1425,13 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		bool freezeMusic = stack->pop()->getBool(true);
 		bool dropFrames = stack->pop()->getBool(true);
 
-		CScValue *valSub = stack->pop();
+		ScValue *valSub = stack->pop();
 		const char *SubtitleFile = valSub->isNULL() ? NULL : valSub->getString();
 
 		if (type < (int)VID_PLAY_POS || type > (int)VID_PLAY_CENTER) type = (int)VID_PLAY_STRETCH;
 
 		delete _theoraPlayer;
-		_theoraPlayer = new CVidTheoraPlayer(this);
+		_theoraPlayer = new VideoTheoraPlayer(this);
 		if (_theoraPlayer && DID_SUCCEED(_theoraPlayer->initialize(filename, SubtitleFile))) {
 			_theoraPlayer->_dontDropFrames = !dropFrames;
 			if (DID_SUCCEED(_theoraPlayer->play((TVideoPlayback)type, xVal, yVal, true, freezeMusic))) {
@@ -1776,7 +1776,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		stack->correctParams(1);
 		char filename[MAX_PATH_LENGTH];
 
-		CScValue *Val = stack->pop();
+		ScValue *Val = stack->pop();
 
 		warning("BGame::ScCallMethod - Screenshot not reimplemented"); //TODO
 		int fileNum = 0;
@@ -1789,7 +1789,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		}
 
 		bool ret = false;
-		CBImage *image = _gameRef->_renderer->takeScreenshot();
+		BaseImage *image = _gameRef->_renderer->takeScreenshot();
 		if (image) {
 			ret = DID_SUCCEED(image->saveBMPFile(filename));
 			delete image;
@@ -1809,7 +1809,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		int sizeY = stack->pop()->getInt(_renderer->_height);
 
 		bool ret = false;
-		CBImage *image = _gameRef->_renderer->takeScreenshot();
+		BaseImage *image = _gameRef->_renderer->takeScreenshot();
 		if (image) {
 			ret = DID_SUCCEED(image->resize(sizeX, sizeY));
 			if (ret) ret = DID_SUCCEED(image->saveBMPFile(filename));
@@ -1825,9 +1825,9 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateWindow") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CUIWindow *win = new CUIWindow(_gameRef);
+		UIWindow *win = new UIWindow(_gameRef);
 		_windows.add(win);
 		registerObject(win);
 		if (!val->isNULL()) win->setName(val->getString());
@@ -1840,7 +1840,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteWindow") == 0) {
 		stack->correctParams(1);
-		CBObject *obj = (CBObject *)stack->pop()->getNative();
+		BaseObject *obj = (BaseObject *)stack->pop()->getNative();
 		for (int i = 0; i < _windows.getSize(); i++) {
 			if (_windows[i] == obj) {
 				unregisterObject(_windows[i]);
@@ -1876,7 +1876,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetLoadingScreen") == 0) {
 		stack->correctParams(3);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		_loadImageX = stack->pop()->getInt();
 		_loadImageY = stack->pop()->getInt();
 
@@ -1884,7 +1884,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 			delete[] _loadImageName;
 			_loadImageName = NULL;
 		} else {
-			CBUtils::setString(&_loadImageName, val->getString());
+			BaseUtils::setString(&_loadImageName, val->getString());
 		}
 		stack->pushNULL();
 		return STATUS_OK;
@@ -1895,7 +1895,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetSavingScreen") == 0) {
 		stack->correctParams(3);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		_saveImageX = stack->pop()->getInt();
 		_saveImageY = stack->pop()->getInt();
 
@@ -1903,7 +1903,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 			delete[] _saveImageName;
 			_saveImageName = NULL;
 		} else {
-			CBUtils::setString(&_saveImageName, val->getString());
+			BaseUtils::setString(&_saveImageName, val->getString());
 		}
 		stack->pushNULL();
 		return STATUS_OK;
@@ -1976,7 +1976,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		_loadingIconPersistent = stack->pop()->getBool();
 
 		delete _loadingIcon;
-		_loadingIcon = new CBSprite(this);
+		_loadingIcon = new BaseSprite(this);
 		if (!_loadingIcon || DID_FAIL(_loadingIcon->loadFile(filename))) {
 			delete _loadingIcon;
 			_loadingIcon = NULL;
@@ -2035,7 +2035,7 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 	else if (strcmp(name, "StoreSaveThumbnail") == 0) {
 		stack->correctParams(0);
 		delete _cachedThumbnail;
-		_cachedThumbnail = new CBSaveThumbHelper(this);
+		_cachedThumbnail = new BaseSaveThumbHelper(this);
 		if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
 			delete _cachedThumbnail;
 			_cachedThumbnail = NULL;
@@ -2143,12 +2143,12 @@ bool CBGame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStac
 		return STATUS_OK;
 	}
 
-	else return CBObject::scCallMethod(script, stack, thisStack, name);
+	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBGame::scGetProperty(const char *name) {
+ScValue *BaseGame::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2185,7 +2185,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// WindowsTime (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WindowsTime") == 0) {
-		_scValue->setInt((int)CBPlatform::getTime());
+		_scValue->setInt((int)BasePlatform::getTime());
 		return _scValue;
 	}
 
@@ -2504,7 +2504,7 @@ CScValue *CBGame::scGetProperty(const char *name) {
 	// Platform (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Platform") == 0) {
-		_scValue->setString(CBPlatform::getPlatformName().c_str());
+		_scValue->setString(BasePlatform::getPlatformName().c_str());
 		return _scValue;
 	}
 
@@ -2534,12 +2534,12 @@ CScValue *CBGame::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(name);
+	else return BaseObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::scSetProperty(const char *name, CScValue *value) {
+bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -2571,7 +2571,7 @@ bool CBGame::scSetProperty(const char *name, CScValue *value) {
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Name") == 0) {
-		bool res = CBObject::scSetProperty(name, value);
+		bool res = BaseObject::scSetProperty(name, value);
 		setWindowTitle();
 		return res;
 	}
@@ -2580,8 +2580,8 @@ bool CBGame::scSetProperty(const char *name, CScValue *value) {
 	// MainObject
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MainObject") == 0) {
-		CBScriptable *obj = value->getNative();
-		if (obj == NULL || validObject((CBObject *)obj)) _mainObject = (CBObject *)obj;
+		BaseScriptable *obj = value->getNative();
+		if (obj == NULL || validObject((BaseObject *)obj)) _mainObject = (BaseObject *)obj;
 		return STATUS_OK;
 	}
 
@@ -2729,12 +2729,12 @@ bool CBGame::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CBObject::scSetProperty(name, value);
+	else return BaseObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBGame::scToString() {
+const char *BaseGame::scToString() {
 	return "[game object]";
 }
 
@@ -2742,7 +2742,7 @@ const char *CBGame::scToString() {
 
 #define QUICK_MSG_DURATION 3000
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::displayQuickMsg() {
+bool BaseGame::displayQuickMsg() {
 	if (_quickMessages.getSize() == 0 || !_systemFont) return STATUS_OK;
 
 	// update
@@ -2767,17 +2767,17 @@ bool CBGame::displayQuickMsg() {
 
 #define MAX_QUICK_MSG 5
 //////////////////////////////////////////////////////////////////////////
-void CBGame::quickMessage(const char *text) {
+void BaseGame::quickMessage(const char *text) {
 	if (_quickMessages.getSize() >= MAX_QUICK_MSG) {
 		delete _quickMessages[0];
 		_quickMessages.removeAt(0);
 	}
-	_quickMessages.add(new CBQuickMsg(_gameRef,  text));
+	_quickMessages.add(new BaseQuickMsg(_gameRef,  text));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::quickMessageForm(char *fmt, ...) {
+void BaseGame::quickMessageForm(char *fmt, ...) {
 	char buff[256];
 	va_list va;
 
@@ -2790,19 +2790,19 @@ void CBGame::quickMessageForm(char *fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::registerObject(CBObject *object) {
+bool BaseGame::registerObject(BaseObject *object) {
 	_regObjects.add(object);
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::unregisterObject(CBObject *object) {
+bool BaseGame::unregisterObject(BaseObject *object) {
 	if (!object) return STATUS_OK;
 
 	// is it a window?
 	for (int i = 0; i < _windows.getSize(); i++) {
-		if ((CBObject *)_windows[i] == object) {
+		if ((BaseObject *)_windows[i] == object) {
 			_windows.removeAt(i);
 
 			// get new focused window
@@ -2822,7 +2822,7 @@ bool CBGame::unregisterObject(CBObject *object) {
 	for (int i = 0; i < _regObjects.getSize(); i++) {
 		if (_regObjects[i] == object) {
 			_regObjects.removeAt(i);
-			if (!_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(invalidateValues, "CScValue", (void *)object);
+			if (!_loadInProgress) SystemClassRegistry::getInstance()->enumInstances(invalidateValues, "ScValue", (void *)object);
 			delete object;
 			return STATUS_OK;
 		}
@@ -2833,11 +2833,11 @@ bool CBGame::unregisterObject(CBObject *object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::invalidateValues(void *value, void *data) {
-	CScValue *val = (CScValue *)value;
+void BaseGame::invalidateValues(void *value, void *data) {
+	ScValue *val = (ScValue *)value;
 	if (val->isNative() && val->getNative() == data) {
-		if (!val->_persistent && ((CBScriptable *)data)->_refCount == 1) {
-			((CBScriptable *)data)->_refCount++;
+		if (!val->_persistent && ((BaseScriptable *)data)->_refCount == 1) {
+			((BaseScriptable *)data)->_refCount++;
 		}
 		val->setNative(NULL);
 		val->setNULL();
@@ -2847,7 +2847,7 @@ void CBGame::invalidateValues(void *value, void *data) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::validObject(CBObject *object) {
+bool BaseGame::validObject(BaseObject *object) {
 	if (!object) return false;
 	if (object == this) return true;
 
@@ -2859,8 +2859,8 @@ bool CBGame::validObject(CBObject *object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name) {
-	CScValue *thisObj;
+bool BaseGame::ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) {
+	ScValue *thisObj;
 
 	//////////////////////////////////////////////////////////////////////////
 	// LOG
@@ -2947,8 +2947,8 @@ bool CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStac
 	else if (strcmp(name, "WaitFor") == 0) {
 		stack->correctParams(1);
 
-		CBScriptable *obj = stack->pop()->getNative();
-		if (validObject((CBObject *)obj)) script->waitForExclusive((CBObject *)obj);
+		BaseScriptable *obj = stack->pop()->getNative();
+		if (validObject((BaseObject *)obj)) script->waitForExclusive((BaseObject *)obj);
 		stack->pushNULL();
 	}
 
@@ -2961,7 +2961,7 @@ bool CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStac
 		int from = stack->pop()->getInt();
 		int to   = stack->pop()->getInt();
 
-		stack->pushInt(CBUtils::randomInt(from, to));
+		stack->pushInt(BaseUtils::randomInt(from, to));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2983,7 +2983,7 @@ bool CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStac
 		int g = stack->pop()->getInt();
 		int b = stack->pop()->getInt();
 		int a;
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		if (val->isNULL()) a = 255;
 		else a = val->getInt();
 
@@ -2999,7 +2999,7 @@ bool CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStac
 		int s = stack->pop()->getInt();
 		int l = stack->pop()->getInt();
 
-		stack->pushInt(CBUtils::HSLtoRGB(h, s, l));
+		stack->pushInt(BaseUtils::HSLtoRGB(h, s, l));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -3050,7 +3050,7 @@ bool CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStac
 		uint32 rgb = (uint32)stack->pop()->getInt();
 
 		byte H, S, L;
-		CBUtils::RGBtoHSL(rgb, &H, &S, &L);
+		BaseUtils::RGBtoHSL(rgb, &H, &S, &L);
 		stack->pushInt(H);
 	}
 
@@ -3062,7 +3062,7 @@ bool CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStac
 		uint32 rgb = (uint32)stack->pop()->getInt();
 
 		byte H, S, L;
-		CBUtils::RGBtoHSL(rgb, &H, &S, &L);
+		BaseUtils::RGBtoHSL(rgb, &H, &S, &L);
 		stack->pushInt(S);
 	}
 
@@ -3074,7 +3074,7 @@ bool CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStac
 		uint32 rgb = (uint32)stack->pop()->getInt();
 
 		byte H, S, L;
-		CBUtils::RGBtoHSL(rgb, &H, &S, &L);
+		BaseUtils::RGBtoHSL(rgb, &H, &S, &L);
 		stack->pushInt(L);
 	}
 
@@ -3143,7 +3143,7 @@ bool CBGame::ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStac
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::showCursor() {
+bool BaseGame::showCursor() {
 	if (_cursorHidden) return STATUS_OK;
 
 	if (!_interactive && _gameRef->_state == GAME_RUNNING) {
@@ -3160,7 +3160,7 @@ bool CBGame::showCursor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
+bool BaseGame::SaveGame(int slot, const char *desc, bool quickSave) {
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
 
@@ -3172,7 +3172,7 @@ bool CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
-	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	if (DID_FAIL(ret = pm->initSave(desc))) goto save_finish;
 
 	if (!quickSave) {
@@ -3188,8 +3188,8 @@ bool CBGame::SaveGame(int slot, const char *desc, bool quickSave) {
 		}
 	}
 
-	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->saveTable(_gameRef,  pm, quickSave))) goto save_finish;
-	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->saveInstances(_gameRef,  pm, quickSave))) goto save_finish;
+	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->saveTable(_gameRef,  pm, quickSave))) goto save_finish;
+	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->saveInstances(_gameRef,  pm, quickSave))) goto save_finish;
 	if (DID_FAIL(ret = pm->saveFile(filename))) goto save_finish;
 
 	_registry->writeInt("System", "MostRecentSaveSlot", slot);
@@ -3206,8 +3206,8 @@ save_finish: // TODO: Remove gotos
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::loadGame(int slot) {
-	//_gameRef->LOG(0, "Load start %d", CBUtils::GetUsedMemMB());
+bool BaseGame::loadGame(int slot) {
+	//_gameRef->LOG(0, "Load start %d", BaseUtils::GetUsedMemMB());
 
 	_loading = false;
 	_scheduledLoadSlot = -1;
@@ -3220,7 +3220,7 @@ bool CBGame::loadGame(int slot) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::loadGame(const char *filename) {
+bool BaseGame::loadGame(const char *filename) {
 	LOG(0, "Loading game '%s'...", filename);
 	getDebugMgr()->onGameShutdown();
 
@@ -3241,13 +3241,13 @@ bool CBGame::loadGame(const char *filename) {
 	_loadInProgress = true;
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
-	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	_debugAbsolutePathWarning = false;
 	if (DID_FAIL(ret = pm->initLoad(filename))) goto load_finish;
 
 	//if(DID_FAIL(ret = cleanup())) goto load_finish;
-	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->loadTable(_gameRef,  pm))) goto load_finish;
-	if (DID_FAIL(ret = CSysClassRegistry::getInstance()->loadInstances(_gameRef,  pm))) goto load_finish;
+	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->loadTable(_gameRef,  pm))) goto load_finish;
+	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->loadInstances(_gameRef,  pm))) goto load_finish;
 
 	// data initialization after load
 	initAfterLoad();
@@ -3269,19 +3269,19 @@ load_finish:
 	delete _saveLoadImage;
 	_saveLoadImage = NULL;
 
-	//_gameRef->LOG(0, "Load end %d", CBUtils::GetUsedMemMB());
+	//_gameRef->LOG(0, "Load end %d", BaseUtils::GetUsedMemMB());
 
 	return ret;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::initAfterLoad() {
-	CSysClassRegistry::getInstance()->enumInstances(afterLoadRegion,   "CBRegion",   NULL);
-	CSysClassRegistry::getInstance()->enumInstances(afterLoadSubFrame, "CBSubFrame", NULL);
-	CSysClassRegistry::getInstance()->enumInstances(afterLoadSound,    "CBSound",    NULL);
-	CSysClassRegistry::getInstance()->enumInstances(afterLoadFont,     "CBFontTT",   NULL);
-	CSysClassRegistry::getInstance()->enumInstances(afterLoadScript,   "CScScript",  NULL);
+bool BaseGame::initAfterLoad() {
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadRegion,   "BaseRegion",   NULL);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadSubFrame, "BaseSubFrame", NULL);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadSound,    "BaseSound",    NULL);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadFont,     "BaseFontTT",   NULL);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript,   "ScScript",  NULL);
 
 	_scEngine->refreshScriptBreakpoints();
 
@@ -3289,35 +3289,35 @@ bool CBGame::initAfterLoad() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::afterLoadRegion(void *region, void *data) {
-	((CBRegion *)region)->createRegion();
+void BaseGame::afterLoadRegion(void *region, void *data) {
+	((BaseRegion *)region)->createRegion();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::afterLoadSubFrame(void *subframe, void *data) {
-	((CBSubFrame *)subframe)->setSurfaceSimple();
+void BaseGame::afterLoadSubFrame(void *subframe, void *data) {
+	((BaseSubFrame *)subframe)->setSurfaceSimple();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::afterLoadSound(void *sound, void *data) {
-	((CBSound *)sound)->setSoundSimple();
+void BaseGame::afterLoadSound(void *sound, void *data) {
+	((BaseSound *)sound)->setSoundSimple();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::afterLoadFont(void *font, void *data) {
-	((CBFont *)font)->afterLoad();
+void BaseGame::afterLoadFont(void *font, void *data) {
+	((BaseFont *)font)->afterLoad();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::afterLoadScript(void *script, void *data) {
-	((CScScript *)script)->afterLoad();
+void BaseGame::afterLoadScript(void *script, void *data) {
+	((ScScript *)script)->afterLoad();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::displayWindows(bool inGame) {
+bool BaseGame::displayWindows(bool inGame) {
 	bool res;
 
 	// did we lose focus? focus topmost window
@@ -3345,7 +3345,7 @@ bool CBGame::displayWindows(bool inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::playMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
+bool BaseGame::playMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
@@ -3354,7 +3354,7 @@ bool CBGame::playMusic(int channel, const char *filename, bool looping, uint32 l
 	delete _music[channel];
 	_music[channel] = NULL;
 
-	_music[channel] = new CBSound(_gameRef);
+	_music[channel] = new BaseSound(_gameRef);
 	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
 		if (_musicStartTime[channel]) {
 			_music[channel]->setPositionTime(_musicStartTime[channel]);
@@ -3371,7 +3371,7 @@ bool CBGame::playMusic(int channel, const char *filename, bool looping, uint32 l
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::stopMusic(int channel) {
+bool BaseGame::stopMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
@@ -3387,7 +3387,7 @@ bool CBGame::stopMusic(int channel) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::pauseMusic(int channel) {
+bool BaseGame::pauseMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
@@ -3399,7 +3399,7 @@ bool CBGame::pauseMusic(int channel) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::resumeMusic(int channel) {
+bool BaseGame::resumeMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
@@ -3411,7 +3411,7 @@ bool CBGame::resumeMusic(int channel) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::setMusicStartTime(int channel, uint32 time) {
+bool BaseGame::setMusicStartTime(int channel, uint32 time) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
@@ -3424,7 +3424,7 @@ bool CBGame::setMusicStartTime(int channel, uint32 time) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::loadSettings(const char *filename) {
+bool BaseGame::loadSettings(const char *filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SETTINGS)
 	TOKEN_TABLE(GAME)
@@ -3447,7 +3447,7 @@ bool CBGame::loadSettings(const char *filename) {
 
 	byte *origBuffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (origBuffer == NULL) {
-		_gameRef->LOG(0, "CBGame::LoadSettings failed for file '%s'", filename);
+		_gameRef->LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -3456,7 +3456,7 @@ bool CBGame::loadSettings(const char *filename) {
 	byte *buffer = origBuffer;
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
 		_gameRef->LOG(0, "'SETTINGS' keyword expected in game settings file.");
@@ -3520,7 +3520,7 @@ bool CBGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_SAVED_GAME_EXT:
-			CBUtils::setString(&_savedGameExt, (char *)params);
+			BaseUtils::setString(&_savedGameExt, (char *)params);
 			break;
 
 		case TOKEN_GUID:
@@ -3547,11 +3547,11 @@ bool CBGame::loadSettings(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::persist(CBPersistMgr *persistMgr) {
+bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	if (!persistMgr->_saving)
 		cleanup();
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_activeObject));
 	persistMgr->transfer(TMEMBER(_capturedObject));
@@ -3640,8 +3640,8 @@ bool CBGame::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::focusWindow(CUIWindow *Window) {
-	CUIWindow *Prev = _focusedWindow;
+bool BaseGame::focusWindow(UIWindow *Window) {
+	UIWindow *Prev = _focusedWindow;
 
 	for (int i = 0; i < _windows.getSize(); i++) {
 		if (_windows[i] == Window) {
@@ -3662,7 +3662,7 @@ bool CBGame::focusWindow(CUIWindow *Window) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::freeze(bool includingMusic) {
+bool BaseGame::freeze(bool includingMusic) {
 	if (_freezeLevel == 0) {
 		_scEngine->pauseAll();
 		_soundMgr->pauseAll(includingMusic);
@@ -3678,7 +3678,7 @@ bool CBGame::freeze(bool includingMusic) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::unfreeze() {
+bool BaseGame::unfreeze() {
 	if (_freezeLevel == 0) return STATUS_OK;
 
 	_freezeLevel--;
@@ -3694,7 +3694,7 @@ bool CBGame::unfreeze() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::handleKeypress(Common::Event *event, bool printable) {
+bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 	if (isVideoPlaying()) {
 		if (event->kbd.keycode == Common::KEYCODE_ESCAPE)
 			stopVideo();
@@ -3735,13 +3735,13 @@ bool CBGame::handleKeypress(Common::Event *event, bool printable) {
 	return false;
 }
 
-void CBGame::handleKeyRelease(Common::Event *event) {
+void BaseGame::handleKeyRelease(Common::Event *event) {
 	_keyboardState->handleKeyRelease(event);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::handleMouseWheel(int Delta) {
+bool BaseGame::handleMouseWheel(int Delta) {
 	bool handled = false;
 	if (_focusedWindow) {
 		handled = _gameRef->_focusedWindow->handleMouseWheel(Delta);
@@ -3771,7 +3771,7 @@ bool CBGame::handleMouseWheel(int Delta) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
+bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
 	if (verMajor) *verMajor = DCGF_VER_MAJOR;
 	if (verMinor) *verMinor = DCGF_VER_MINOR;
 
@@ -3783,7 +3783,7 @@ bool CBGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *ex
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::setWindowTitle() {
+void BaseGame::setWindowTitle() {
 	if (_renderer) {
 		char title[512];
 		strcpy(title, _caption[0]);
@@ -3795,13 +3795,13 @@ void CBGame::setWindowTitle() {
 		if (_textEncoding == TEXT_UTF8) {
 			utf8Title = Utf8String(title);
 		} else {
-			warning("CBGame::SetWindowTitle -Ignoring textencoding");
+			warning("BaseGame::SetWindowTitle -Ignoring textencoding");
 			utf8Title = Utf8String(title);
 			/*          WideString wstr = StringUtil::AnsiToWide(Title);
 			            title = StringUtil::WideToUtf8(wstr);*/
 		}
 #if 0
-		CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_renderer);
+		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_renderer);
 		// TODO
 
 		SDL_SetWindowTitle(renderer->GetSdlWindow(), title.c_str());
@@ -3811,10 +3811,10 @@ void CBGame::setWindowTitle() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::getSaveSlotFilename(int slot, char *buffer) {
+bool BaseGame::getSaveSlotFilename(int slot, char *buffer) {
 	AnsiString dataDir = getDataDir();
 	//sprintf(Buffer, "%s/save%03d.%s", dataDir.c_str(), Slot, _savedGameExt);
-	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	Common::String filename = pm->getFilenameForSlot(slot);
 	delete pm;
 	strcpy(buffer, filename.c_str());
@@ -3823,7 +3823,7 @@ bool CBGame::getSaveSlotFilename(int slot, char *buffer) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString CBGame::getDataDir() {
+AnsiString BaseGame::getDataDir() {
 	AnsiString userDir = PathUtil::getUserDirectory();
 	AnsiString baseDir = _registry->getBasePath();
 	return PathUtil::combine(userDir, baseDir);
@@ -3831,12 +3831,12 @@ AnsiString CBGame::getDataDir() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::getSaveSlotDescription(int slot, char *buffer) {
+bool BaseGame::getSaveSlotDescription(int slot, char *buffer) {
 	buffer[0] = '\0';
 
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
-	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	if (!pm) return STATUS_FAILED;
 
 	_debugAbsolutePathWarning = false;
@@ -3855,11 +3855,11 @@ bool CBGame::getSaveSlotDescription(int slot, char *buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::isSaveSlotUsed(int slot) {
+bool BaseGame::isSaveSlotUsed(int slot) {
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
 
-	warning("CBGame::IsSaveSlotUsed(%d) - FIXME, ugly solution", slot);
+	warning("BaseGame::IsSaveSlotUsed(%d) - FIXME, ugly solution", slot);
 	Common::SeekableReadStream *File = g_wintermute->getSaveFileMan()->openForLoading(filename);
 	if (!File) return false;
 	delete File;
@@ -3868,10 +3868,10 @@ bool CBGame::isSaveSlotUsed(int slot) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::emptySaveSlot(int slot) {
+bool BaseGame::emptySaveSlot(int slot) {
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
-	CBPersistMgr *pm = new CBPersistMgr(this);
+	BasePersistenceManager *pm = new BasePersistenceManager(this);
 	g_wintermute->getSaveFileMan()->removeSavefile(pm->getFilenameForSlot(slot));
 	delete pm;
 	return STATUS_OK;
@@ -3879,7 +3879,7 @@ bool CBGame::emptySaveSlot(int slot) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::setActiveObject(CBObject *obj) {
+bool BaseGame::setActiveObject(BaseObject *obj) {
 	// not-active when game is frozen
 	if (obj && !_gameRef->_interactive && !obj->_nonIntMouseEvents) {
 		obj = NULL;
@@ -3899,7 +3899,7 @@ bool CBGame::setActiveObject(CBObject *obj) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::pushViewport(CBViewport *viewport) {
+bool BaseGame::pushViewport(BaseViewport *viewport) {
 	_viewportSP++;
 	if (_viewportSP >= _viewportStack.getSize()) _viewportStack.add(viewport);
 	else _viewportStack[_viewportSP] = viewport;
@@ -3911,7 +3911,7 @@ bool CBGame::pushViewport(CBViewport *viewport) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::popViewport() {
+bool BaseGame::popViewport() {
 	_viewportSP--;
 	if (_viewportSP < -1) _gameRef->LOG(0, "Fatal: Viewport stack underflow!");
 
@@ -3926,14 +3926,14 @@ bool CBGame::popViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
+bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
 	if (rect == NULL) return STATUS_FAILED;
 	else {
 		if (_viewportSP >= 0) {
-			CBPlatform::copyRect(rect, _viewportStack[_viewportSP]->getRect());
+			BasePlatform::copyRect(rect, _viewportStack[_viewportSP]->getRect());
 			if (custom) *custom = true;
 		} else {
-			CBPlatform::setRect(rect,   _renderer->_drawOffsetX,
+			BasePlatform::setRect(rect,   _renderer->_drawOffsetX,
 			                    _renderer->_drawOffsetY,
 			                    _renderer->_width + _renderer->_drawOffsetX,
 			                    _renderer->_height + _renderer->_drawOffsetY);
@@ -3946,7 +3946,7 @@ bool CBGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::getCurrentViewportOffset(int *offsetX, int *offsetY) {
+bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) {
 	if (_viewportSP >= 0) {
 		if (offsetX) *offsetX = _viewportStack[_viewportSP]->_offsetX;
 		if (offsetY) *offsetY = _viewportStack[_viewportSP]->_offsetY;
@@ -3960,42 +3960,42 @@ bool CBGame::getCurrentViewportOffset(int *offsetX, int *offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::windowLoadHook(CUIWindow *win, char **buf, char **params) {
+bool BaseGame::windowLoadHook(UIWindow *win, char **buf, char **params) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name) {
+bool BaseGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::setInteractive(bool state) {
+void BaseGame::setInteractive(bool state) {
 	_interactive = state;
 	if (_transMgr) _transMgr->_origInteractive = state;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::resetMousePos() {
+void BaseGame::resetMousePos() {
 	Common::Point p;
 	p.x = _mousePos.x + _renderer->_drawOffsetX;
 	p.y = _mousePos.y + _renderer->_drawOffsetY;
 
-	CBPlatform::setCursorPos(p.x, p.y);
+	BasePlatform::setCursorPos(p.x, p.y);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::displayContent(bool doUpdate, bool displayAll) {
+bool BaseGame::displayContent(bool doUpdate, bool displayAll) {
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::displayContentSimple() {
+bool BaseGame::displayContentSimple() {
 	// fill black
 	_renderer->fill(0, 0, 0);
 	if (_indicatorDisplay) displayIndicator();
@@ -4005,10 +4005,10 @@ bool CBGame::displayContentSimple() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::displayIndicator() {
+bool BaseGame::displayIndicator() {
 	if (_saveLoadImage) {
 		Rect32 rc;
-		CBPlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
+		BasePlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
 		if (_loadInProgress) _saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
 		else _saveLoadImage->displayTrans(_saveImageX, _saveImageY, rc);
 	}
@@ -4023,7 +4023,7 @@ bool CBGame::displayIndicator() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::updateMusicCrossfade() {
+bool BaseGame::updateMusicCrossfade() {
 	/* byte GlobMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC); */
 
 	if (!_musicCrossfadeRunning) return STATUS_OK;
@@ -4055,7 +4055,7 @@ bool CBGame::updateMusicCrossfade() {
 
 		if (_musicCrossfadeSwap) {
 			// swap channels
-			CBSound *dummy = _music[_musicCrossfadeChannel1];
+			BaseSound *dummy = _music[_musicCrossfadeChannel1];
 			int dummyInt = _musicStartTime[_musicCrossfadeChannel1];
 
 			_music[_musicCrossfadeChannel1] = _music[_musicCrossfadeChannel2];
@@ -4078,7 +4078,7 @@ bool CBGame::updateMusicCrossfade() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::resetContent() {
+bool BaseGame::resetContent() {
 	_scEngine->clearGlobals();
 	//_timer = 0;
 	//_liveTimer = 0;
@@ -4087,12 +4087,12 @@ bool CBGame::resetContent() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::DEBUG_DumpClassRegistry() {
+void BaseGame::DEBUG_DumpClassRegistry() {
 	warning("DEBUG_DumpClassRegistry - untested");
 	Common::DumpFile *f = new Common::DumpFile;
 	f->open("zz_class_reg_dump.log");
 
-	CSysClassRegistry::getInstance()->dumpClasses(f);
+	SystemClassRegistry::getInstance()->dumpClasses(f);
 
 	f->close();
 	delete f;
@@ -4101,7 +4101,7 @@ void CBGame::DEBUG_DumpClassRegistry() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::invalidateDeviceObjects() {
+bool BaseGame::invalidateDeviceObjects() {
 	for (int i = 0; i < _regObjects.getSize(); i++) {
 		_regObjects[i]->invalidateDeviceObjects();
 	}
@@ -4110,7 +4110,7 @@ bool CBGame::invalidateDeviceObjects() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::restoreDeviceObjects() {
+bool BaseGame::restoreDeviceObjects() {
 	for (int i = 0; i < _regObjects.getSize(); i++) {
 		_regObjects[i]->restoreDeviceObjects();
 	}
@@ -4118,11 +4118,11 @@ bool CBGame::restoreDeviceObjects() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::setWaitCursor(const char *filename) {
+bool BaseGame::setWaitCursor(const char *filename) {
 	delete _cursorNoninteractive;
 	_cursorNoninteractive = NULL;
 
-	_cursorNoninteractive = new CBSprite(_gameRef);
+	_cursorNoninteractive = new BaseSprite(_gameRef);
 	if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile(filename))) {
 		delete _cursorNoninteractive;
 		_cursorNoninteractive = NULL;
@@ -4131,14 +4131,14 @@ bool CBGame::setWaitCursor(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::isVideoPlaying() {
+bool BaseGame::isVideoPlaying() {
 	if (_videoPlayer->isPlaying()) return true;
 	if (_theoraPlayer && _theoraPlayer->isPlaying()) return true;
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::stopVideo() {
+bool BaseGame::stopVideo() {
 	if (_videoPlayer->isPlaying()) _videoPlayer->stop();
 	if (_theoraPlayer && _theoraPlayer->isPlaying()) {
 		_theoraPlayer->stop();
@@ -4150,7 +4150,7 @@ bool CBGame::stopVideo() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::drawCursor(CBSprite *cursor) {
+bool BaseGame::drawCursor(BaseSprite *cursor) {
 	if (!cursor) return STATUS_FAILED;
 	if (cursor != _lastCursor) {
 		cursor->reset();
@@ -4162,7 +4162,7 @@ bool CBGame::drawCursor(CBSprite *cursor) {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onActivate(bool activate, bool refreshMouse) {
+bool BaseGame::onActivate(bool activate, bool refreshMouse) {
 	if (_shuttingDown || !_renderer) return STATUS_OK;
 
 	_renderer->_active = activate;
@@ -4180,7 +4180,7 @@ bool CBGame::onActivate(bool activate, bool refreshMouse) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onMouseLeftDown() {
+bool BaseGame::onMouseLeftDown() {
 	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("LeftClick"));
@@ -4192,16 +4192,16 @@ bool CBGame::onMouseLeftDown() {
 
 	if (_activeObject != NULL) _capturedObject = _activeObject;
 	_mouseLeftDown = true;
-	CBPlatform::setCapture(/*_renderer->_window*/);
+	BasePlatform::setCapture(/*_renderer->_window*/);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onMouseLeftUp() {
+bool BaseGame::onMouseLeftUp() {
 	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 
-	CBPlatform::releaseCapture();
+	BasePlatform::releaseCapture();
 	_capturedObject = NULL;
 	_mouseLeftDown = false;
 
@@ -4215,7 +4215,7 @@ bool CBGame::onMouseLeftUp() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onMouseLeftDblClick() {
+bool BaseGame::onMouseLeftDblClick() {
 	if (_state == GAME_RUNNING && !_interactive) return STATUS_OK;
 
 	if (_activeObject) _activeObject->handleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_LEFT);
@@ -4230,7 +4230,7 @@ bool CBGame::onMouseLeftDblClick() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onMouseRightDblClick() {
+bool BaseGame::onMouseRightDblClick() {
 	if (_state == GAME_RUNNING && !_interactive) return STATUS_OK;
 
 	if (_activeObject) _activeObject->handleMouse(MOUSE_DBLCLICK, MOUSE_BUTTON_RIGHT);
@@ -4245,7 +4245,7 @@ bool CBGame::onMouseRightDblClick() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onMouseRightDown() {
+bool BaseGame::onMouseRightDown() {
 	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("RightClick"));
@@ -4258,7 +4258,7 @@ bool CBGame::onMouseRightDown() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onMouseRightUp() {
+bool BaseGame::onMouseRightUp() {
 	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("RightRelease"));
@@ -4271,7 +4271,7 @@ bool CBGame::onMouseRightUp() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onMouseMiddleDown() {
+bool BaseGame::onMouseMiddleDown() {
 	if (_state == GAME_RUNNING && !_interactive) return STATUS_OK;
 
 	if (_activeObject) _activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_MIDDLE);
@@ -4286,7 +4286,7 @@ bool CBGame::onMouseMiddleDown() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onMouseMiddleUp() {
+bool BaseGame::onMouseMiddleUp() {
 	if (_activeObject) _activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_MIDDLE);
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("MiddleRelease"));
@@ -4299,7 +4299,7 @@ bool CBGame::onMouseMiddleUp() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onPaint() {
+bool BaseGame::onPaint() {
 	if (_renderer && _renderer->_windowed && _renderer->_ready) {
 		_renderer->initLoop();
 		displayContent(false, true);
@@ -4310,7 +4310,7 @@ bool CBGame::onPaint() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onWindowClose() {
+bool BaseGame::onWindowClose() {
 	if (canHandleEvent("QuitGame")) {
 		if (_state != GAME_FROZEN) _gameRef->applyEvent("QuitGame");
 		return STATUS_OK;
@@ -4318,7 +4318,7 @@ bool CBGame::onWindowClose() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::displayDebugInfo() {
+bool BaseGame::displayDebugInfo() {
 	char str[100];
 
 	if (_debugShowFPS) {
@@ -4359,15 +4359,15 @@ bool CBGame::displayDebugInfo() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBDebugger *CBGame::getDebugMgr() {
-	if (!_debugMgr) _debugMgr = new CBDebugger(this);
+BaseDebugger *BaseGame::getDebugMgr() {
+	if (!_debugMgr) _debugMgr = new BaseDebugger(this);
 	return _debugMgr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::getMousePos(Point32 *pos) {
-	CBPlatform::getCursorPos(pos);
+void BaseGame::getMousePos(Point32 *pos) {
+	BasePlatform::getCursorPos(pos);
 
 	pos->x -= _renderer->_drawOffsetX;
 	pos->y -= _renderer->_drawOffsetY;
@@ -4386,7 +4386,7 @@ void CBGame::getMousePos(Point32 *pos) {
 	*/
 
 	if (_mouseLockRect.left != 0 && _mouseLockRect.right != 0 && _mouseLockRect.top != 0 && _mouseLockRect.bottom != 0) {
-		if (!CBPlatform::ptInRect(&_mouseLockRect, *pos)) {
+		if (!BasePlatform::ptInRect(&_mouseLockRect, *pos)) {
 			pos->x = MAX(_mouseLockRect.left, pos->x);
 			pos->y = MAX(_mouseLockRect.top, pos->y);
 
@@ -4398,52 +4398,52 @@ void CBGame::getMousePos(Point32 *pos) {
 			newPos.x += _renderer->_drawOffsetX;
 			newPos.y += _renderer->_drawOffsetY;
 
-			CBPlatform::setCursorPos(newPos.x, newPos.y);
+			BasePlatform::setCursorPos(newPos.x, newPos.y);
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::miniUpdate() {
+bool BaseGame::miniUpdate() {
 	if (!_miniUpdateEnabled) return STATUS_OK;
 
-	if (CBPlatform::getTime() - _lastMiniUpdate > 200) {
+	if (BasePlatform::getTime() - _lastMiniUpdate > 200) {
 		if (_soundMgr) _soundMgr->initLoop();
-		_lastMiniUpdate = CBPlatform::getTime();
+		_lastMiniUpdate = BasePlatform::getTime();
 	}
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::onScriptShutdown(CScScript *script) {
+bool BaseGame::onScriptShutdown(ScScript *script) {
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::isLeftDoubleClick() {
+bool BaseGame::isLeftDoubleClick() {
 	return isDoubleClick(0);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::isRightDoubleClick() {
+bool BaseGame::isRightDoubleClick() {
 	return isDoubleClick(1);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBGame::isDoubleClick(int buttonIndex) {
+bool BaseGame::isDoubleClick(int buttonIndex) {
 	uint32 maxDoubleCLickTime = 500;
 	int maxMoveX = 4;
 	int maxMoveY = 4;
 
 	Point32 pos;
-	CBPlatform::getCursorPos(&pos);
+	BasePlatform::getCursorPos(&pos);
 
 	int moveX = abs(pos.x - _lastClick[buttonIndex].posX);
 	int moveY = abs(pos.y - _lastClick[buttonIndex].posY);
 
 
-	if (_lastClick[buttonIndex].time == 0 || CBPlatform::getTime() - _lastClick[buttonIndex].time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
-		_lastClick[buttonIndex].time = CBPlatform::getTime();
+	if (_lastClick[buttonIndex].time == 0 || BasePlatform::getTime() - _lastClick[buttonIndex].time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
+		_lastClick[buttonIndex].time = BasePlatform::getTime();
 		_lastClick[buttonIndex].posX = pos.x;
 		_lastClick[buttonIndex].posY = pos.y;
 		return false;
@@ -4454,7 +4454,7 @@ bool CBGame::isDoubleClick(int buttonIndex) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::autoSaveOnExit() {
+void BaseGame::autoSaveOnExit() {
 	_soundMgr->saveSettings();
 	_registry->saveValues();
 
@@ -4465,12 +4465,12 @@ void CBGame::autoSaveOnExit() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBGame::addMem(int bytes) {
+void BaseGame::addMem(int bytes) {
 	_usedMem += bytes;
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString CBGame::getDeviceType() const {
+AnsiString BaseGame::getDeviceType() const {
 	return "computer";
 }
 

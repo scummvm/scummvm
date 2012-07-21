@@ -38,10 +38,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CUIObject, false)
+IMPLEMENT_PERSISTENT(UIObject, false)
 
 //////////////////////////////////////////////////////////////////////////
-CUIObject::CUIObject(CBGame *inGame): CBObject(inGame) {
+UIObject::UIObject(BaseGame *inGame): BaseObject(inGame) {
 	_back = NULL;
 	_image = NULL;
 	_font = NULL;
@@ -70,8 +70,8 @@ CUIObject::CUIObject(CBGame *inGame): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CUIObject::~CUIObject() {
-	if (!_gameRef->_loadInProgress) CSysClassRegistry::getInstance()->enumInstances(CBGame::invalidateValues, "CScValue", (void *)this);
+UIObject::~UIObject() {
+	if (!_gameRef->_loadInProgress) SystemClassRegistry::getInstance()->enumInstances(BaseGame::invalidateValues, "ScValue", (void *)this);
 
 	if (_back) delete _back;
 	if (_font && !_sharedFonts) _gameRef->_fontStorage->removeFont(_font);
@@ -85,7 +85,7 @@ CUIObject::~CUIObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIObject::setText(const char *text) {
+void UIObject::setText(const char *text) {
 	if (_text) delete [] _text;
 	_text = new char [strlen(text) + 1];
 	if (_text) {
@@ -98,13 +98,13 @@ void CUIObject::setText(const char *text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::display(int offsetX, int offsetY) {
+bool UIObject::display(int offsetX, int offsetY) {
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIObject::setListener(CBScriptHolder *object, CBScriptHolder *listenerObject, uint32 listenerParam) {
+void UIObject::setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam) {
 	_listenerObject = object;
 	_listenerParamObject = listenerObject;
 	_listenerParamDWORD = listenerParam;
@@ -112,7 +112,7 @@ void CUIObject::setListener(CBScriptHolder *object, CBScriptHolder *listenerObje
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIObject::correctSize() {
+void UIObject::correctSize() {
 	Rect32 rect;
 
 	if (_width <= 0) {
@@ -137,13 +137,13 @@ void CUIObject::correctSize() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFont
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetFont") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		ScValue *Val = stack->pop();
 
 		if (_font) _gameRef->_fontStorage->removeFont(_font);
 		if (Val->isNULL()) {
@@ -161,7 +161,7 @@ bool CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetImage") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
 		/* const char *filename = */ val->getString();
 
@@ -172,7 +172,7 @@ bool CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 			return STATUS_OK;
 		}
 
-		_image = new CBSprite(_gameRef);
+		_image = new BaseSprite(_gameRef);
 		if (!_image || DID_FAIL(_image->loadFile(val->getString()))) {
 			delete _image;
 			_image = NULL;
@@ -221,14 +221,14 @@ bool CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(1);
 
 		if (_parent && _parent->_type == UI_WINDOW) {
-			CUIWindow *win = (CUIWindow *)_parent;
+			UIWindow *win = (UIWindow *)_parent;
 
 			int i;
 			bool found = false;
-			CScValue *val = stack->pop();
+			ScValue *val = stack->pop();
 			// find directly
 			if (val->isNative()) {
-				CUIObject *widget = (CUIObject *)val->getNative();
+				UIObject *widget = (UIObject *)val->getNative();
 				for (i = 0; i < win->_widgets.getSize(); i++) {
 					if (win->_widgets[i] == widget) {
 						found = true;
@@ -277,7 +277,7 @@ bool CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(0);
 
 		if (_parent && _parent->_type == UI_WINDOW) {
-			CUIWindow *win = (CUIWindow *)_parent;
+			UIWindow *win = (UIWindow *)_parent;
 			for (int i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
 					win->_widgets.removeAt(i);
@@ -298,7 +298,7 @@ bool CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(0);
 
 		if (_parent && _parent->_type == UI_WINDOW) {
-			CUIWindow *win = (CUIWindow *)_parent;
+			UIWindow *win = (UIWindow *)_parent;
 			for (int i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
 					win->_widgets.removeAt(i);
@@ -312,12 +312,12 @@ bool CUIObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		return STATUS_OK;
 	}
 
-	else return CBObject::scCallMethod(script, stack, thisStack, name);
+	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIObject::scGetProperty(const char *name) {
+ScValue *UIObject::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -398,7 +398,7 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 	else if (strcmp(name, "NextSibling") == 0 || strcmp(name, "PrevSibling") == 0) {
 		_scValue->setNULL();
 		if (_parent && _parent->_type == UI_WINDOW) {
-			CUIWindow *win = (CUIWindow *)_parent;
+			UIWindow *win = (UIWindow *)_parent;
 			for (int i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
 					if (strcmp(name, "NextSibling") == 0) {
@@ -413,12 +413,12 @@ CScValue *CUIObject::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(name);
+	else return BaseObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::scSetProperty(const char *name, CScValue *value) {
+bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -475,22 +475,22 @@ bool CUIObject::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CBObject::scSetProperty(name, value);
+	else return BaseObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIObject::scToString() {
+const char *UIObject::scToString() {
 	return "[ui_object]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::isFocused() {
+bool UIObject::isFocused() {
 	if (!_gameRef->_focusedWindow) return false;
 	if (_gameRef->_focusedWindow == this) return true;
 
-	CUIObject *obj = _gameRef->_focusedWindow;
+	UIObject *obj = _gameRef->_focusedWindow;
 	while (obj) {
 		if (obj == this) return true;
 		else obj = obj->_focusedWidget;
@@ -500,18 +500,18 @@ bool CUIObject::isFocused() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::handleMouse(TMouseEvent event, TMouseButton button) {
+bool UIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	// handle focus change
 	if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 		focus();
 	}
-	return CBObject::handleMouse(event, button);
+	return BaseObject::handleMouse(event, button);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::focus() {
-	CUIObject *obj = this;
+bool UIObject::focus() {
+	UIObject *obj = this;
 	bool disabled = false;
 	while (obj) {
 		if (obj->_disable && obj->_type == UI_WINDOW) {
@@ -526,7 +526,7 @@ bool CUIObject::focus() {
 			if (obj->_parent) {
 				if (!obj->_disable && obj->_canFocus) obj->_parent->_focusedWidget = obj;
 			} else {
-				if (obj->_type == UI_WINDOW) _gameRef->focusWindow((CUIWindow *)obj);
+				if (obj->_type == UI_WINDOW) _gameRef->focusWindow((UIWindow *)obj);
 			}
 
 			obj = obj->_parent;
@@ -537,10 +537,10 @@ bool CUIObject::focus() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::getTotalOffset(int *offsetX, int *offsetY) {
+bool UIObject::getTotalOffset(int *offsetX, int *offsetY) {
 	int offX = 0, offY = 0;
 
-	CUIObject *obj = _parent;
+	UIObject *obj = _parent;
 	while (obj) {
 		offX += obj->_posX;
 		offY += obj->_posY;
@@ -555,9 +555,9 @@ bool CUIObject::getTotalOffset(int *offsetX, int *offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::persist(CBPersistMgr *persistMgr) {
+bool UIObject::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_back));
 	persistMgr->transfer(TMEMBER(_canFocus));
@@ -582,7 +582,7 @@ bool CUIObject::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIObject::saveAsText(CBDynBuffer *buffer, int indent) {
+bool UIObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }
 

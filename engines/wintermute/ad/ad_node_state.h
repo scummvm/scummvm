@@ -31,17 +31,17 @@
 
 namespace WinterMute {
 
-class CAdEntity;
+class AdEntity;
 
-class CAdNodeState : public CBBase {
+class AdNodeState : public BaseClass {
 public:
-	bool transferEntity(CAdEntity *entity, bool includingSprites, bool saving);
+	bool transferEntity(AdEntity *entity, bool includingSprites, bool saving);
 	void setName(const char *name);
 	void setFilename(const char *filename);
 	void setCursor(const char *filename);
-	DECLARE_PERSISTENT(CAdNodeState, CBBase)
-	CAdNodeState(CBGame *inGame);
-	virtual ~CAdNodeState();
+	DECLARE_PERSISTENT(AdNodeState, BaseClass)
+	AdNodeState(BaseGame *inGame);
+	virtual ~AdNodeState();
 	char *_name;
 	bool _active;
 	char *_caption[7];

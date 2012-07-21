@@ -47,17 +47,17 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdResponseBox, false)
+IMPLEMENT_PERSISTENT(AdResponseBox, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdResponseBox::CAdResponseBox(CBGame *inGame): CBObject(inGame) {
+AdResponseBox::AdResponseBox(BaseGame *inGame): BaseObject(inGame) {
 	_font = _fontHover = NULL;
 
 	_window = NULL;
-	_shieldWindow = new CUIWindow(_gameRef);
+	_shieldWindow = new UIWindow(_gameRef);
 
 	_horizontal = false;
-	CBPlatform::setRectEmpty(&_responseArea);
+	BasePlatform::setRectEmpty(&_responseArea);
 	_scrollOffset = 0;
 	_spacing = 0;
 
@@ -71,7 +71,7 @@ CAdResponseBox::CAdResponseBox(CBGame *inGame): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdResponseBox::~CAdResponseBox() {
+AdResponseBox::~AdResponseBox() {
 
 	delete _window;
 	_window = NULL;
@@ -93,7 +93,7 @@ CAdResponseBox::~CAdResponseBox() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseBox::clearResponses() {
+void AdResponseBox::clearResponses() {
 	for (int i = 0; i < _responses.getSize(); i++) {
 		delete _responses[i];
 	}
@@ -102,7 +102,7 @@ void CAdResponseBox::clearResponses() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseBox::clearButtons() {
+void AdResponseBox::clearButtons() {
 	for (int i = 0; i < _respButtons.getSize(); i++) {
 		delete _respButtons[i];
 	}
@@ -111,7 +111,7 @@ void CAdResponseBox::clearButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::invalidateButtons() {
+bool AdResponseBox::invalidateButtons() {
 	for (int i = 0; i < _respButtons.getSize(); i++) {
 		_respButtons[i]->_image = NULL;
 		_respButtons[i]->_cursor = NULL;
@@ -125,12 +125,12 @@ bool CAdResponseBox::invalidateButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::createButtons() {
+bool AdResponseBox::createButtons() {
 	clearButtons();
 
 	_scrollOffset = 0;
 	for (int i = 0; i < _responses.getSize(); i++) {
-		CUIButton *btn = new CUIButton(_gameRef);
+		UIButton *btn = new UIButton(_gameRef);
 		if (btn) {
 			btn->_parent = _window;
 			btn->_sharedFonts = btn->_sharedImages = true;
@@ -187,10 +187,10 @@ bool CAdResponseBox::createButtons() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::loadFile(const char *filename) {
+bool AdResponseBox::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdResponseBox::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdResponseBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -223,7 +223,7 @@ TOKEN_DEF(VERTICAL_ALIGN)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
+bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(RESPONSE_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -242,7 +242,7 @@ bool CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_RESPONSE_BOX) {
@@ -260,7 +260,7 @@ bool CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WINDOW:
 			delete _window;
-			_window = new CUIWindow(_gameRef);
+			_window = new UIWindow(_gameRef);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				delete _window;
 				_window = NULL;
@@ -310,7 +310,7 @@ bool CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(_gameRef);
+			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -335,7 +335,7 @@ bool CAdResponseBox::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "RESPONSE_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -362,7 +362,7 @@ bool CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
-		error("CAdResponseBox::SaveAsText - Unhandled enum");
+		error("AdResponseBox::SaveAsText - Unhandled enum");
 		break;
 	}
 
@@ -388,7 +388,7 @@ bool CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 	return STATUS_OK;
@@ -396,10 +396,10 @@ bool CAdResponseBox::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::display() {
+bool AdResponseBox::display() {
 	Rect32 rect = _responseArea;
 	if (_window) {
-		CBPlatform::offsetRect(&rect, _window->_posX, _window->_posY);
+		BasePlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		//_window->display();
 	}
 
@@ -482,8 +482,8 @@ bool CAdResponseBox::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
-	CUIObject *obj = (CUIObject *)param1;
+bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
+	UIObject *obj = (UIObject *)param1;
 
 	switch (obj->_type) {
 	case UI_BUTTON:
@@ -496,11 +496,11 @@ bool CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 			handleResponse(_responses[param2]);
 			_waitingScript = NULL;
 			_gameRef->_state = GAME_RUNNING;
-			((CAdGame *)_gameRef)->_stateEx = GAME_NORMAL;
+			((AdGame *)_gameRef)->_stateEx = GAME_NORMAL;
 			_ready = true;
 			invalidateButtons();
 			clearResponses();
-		} else return CBObject::listen(param1, param2);
+		} else return BaseObject::listen(param1, param2);
 		break;
 	default:
 		error("AdResponseBox::Listen - Unhandled enum");
@@ -511,8 +511,8 @@ bool CAdResponseBox::listen(CBScriptHolder *param1, uint32 param2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::persist(CBPersistMgr *persistMgr) {
-	CBObject::persist(persistMgr);
+bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_font));
 	persistMgr->transfer(TMEMBER(_fontHover));
@@ -536,8 +536,8 @@ bool CAdResponseBox::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::weedResponses() {
-	CAdGame *adGame = (CAdGame *)_gameRef;
+bool AdResponseBox::weedResponses() {
+	AdGame *adGame = (AdGame *)_gameRef;
 
 	for (int i = 0; i < _responses.getSize(); i++) {
 		switch (_responses[i]->_responseType) {
@@ -557,7 +557,7 @@ bool CAdResponseBox::weedResponses() {
 			}
 			break;
 		default:
-			warning("CAdResponseBox::WeedResponses - Unhandled enum");
+			warning("AdResponseBox::WeedResponses - Unhandled enum");
 			break;
 		}
 	}
@@ -566,17 +566,17 @@ bool CAdResponseBox::weedResponses() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponseBox::setLastResponseText(const char *text, const char *textOrig) {
-	CBUtils::setString(&_lastResponseText, text);
-	CBUtils::setString(&_lastResponseTextOrig, textOrig);
+void AdResponseBox::setLastResponseText(const char *text, const char *textOrig) {
+	BaseUtils::setString(&_lastResponseText, text);
+	BaseUtils::setString(&_lastResponseTextOrig, textOrig);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::handleResponse(CAdResponse *response) {
+bool AdResponseBox::handleResponse(AdResponse *response) {
 	setLastResponseText(response->_text, response->_textOrig);
 
-	CAdGame *adGame = (CAdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_gameRef;
 
 	switch (response->_responseType) {
 	case RESPONSE_ONCE:
@@ -587,7 +587,7 @@ bool CAdResponseBox::handleResponse(CAdResponse *response) {
 		adGame->addGameResponse(response->_iD);
 		break;
 	default:
-		warning("CAdResponseBox::HandleResponse - Unhandled enum");
+		warning("AdResponseBox::HandleResponse - Unhandled enum");
 	}
 
 	return STATUS_OK;
@@ -595,8 +595,8 @@ bool CAdResponseBox::handleResponse(CAdResponse *response) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdResponseBox::getNextAccessObject(CBObject *currObject) {
-	CBArray<CUIObject *, CUIObject *> objects;
+BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {
+	BaseArray<UIObject *, UIObject *> objects;
 	getObjects(objects, true);
 
 	if (objects.getSize() == 0) return NULL;
@@ -615,8 +615,8 @@ CBObject *CAdResponseBox::getNextAccessObject(CBObject *currObject) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdResponseBox::getPrevAccessObject(CBObject *currObject) {
-	CBArray<CUIObject *, CUIObject *> objects;
+BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
+	BaseArray<UIObject *, UIObject *> objects;
 	getObjects(objects, true);
 
 	if (objects.getSize() == 0) return NULL;
@@ -635,7 +635,7 @@ CBObject *CAdResponseBox::getPrevAccessObject(CBObject *currObject) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponseBox::getObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
+bool AdResponseBox::getObjects(BaseArray<UIObject *, UIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _respButtons.getSize(); i++) {
 		objects.add(_respButtons[i]);
 	}

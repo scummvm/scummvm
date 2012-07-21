@@ -33,13 +33,13 @@
 
 namespace WinterMute {
 
-class CAdRotLevel : public CBObject {
+class AdRotLevel : public BaseObject {
 public:
-	DECLARE_PERSISTENT(CAdRotLevel, CBObject)
-	CAdRotLevel(CBGame *inGame);
-	virtual ~CAdRotLevel();
+	DECLARE_PERSISTENT(AdRotLevel, BaseObject)
+	AdRotLevel(BaseGame *inGame);
+	virtual ~AdRotLevel();
 	float _rotation;
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 };

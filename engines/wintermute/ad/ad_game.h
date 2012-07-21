@@ -32,19 +32,19 @@
 #include "engines/wintermute/base/base_game.h"
 
 namespace WinterMute {
-class CAdItem;
-class CAdInventory;
-class CAdSceneState;
-class CAdScene;
-class CAdItem;
-class CAdObject;
-class CAdSentence;
-class CAdInventoryBox;
-class CAdResponseContext;
-class CAdResponseBox;
-class CAdGame : public CBGame {
+class AdItem;
+class AdInventory;
+class AdSceneState;
+class AdScene;
+class AdItem;
+class AdObject;
+class AdSentence;
+class AdInventoryBox;
+class AdResponseContext;
+class AdResponseBox;
+class AdGame : public BaseGame {
 public:
-	virtual bool onScriptShutdown(CScScript *script);
+	virtual bool onScriptShutdown(ScScript *script);
 
 	virtual bool onMouseLeftDown();
 	virtual bool onMouseLeftUp();
@@ -60,25 +60,25 @@ public:
 
 	bool _smartItemCursor;
 
-	CBArray<char *, char *> _speechDirs;
+	BaseArray<char *, char *> _speechDirs;
 	bool addSpeechDir(const char *dir);
 	bool removeSpeechDir(const char *dir);
 	char *findSpeechFile(char *StringID);
 
-	bool deleteItem(CAdItem *Item);
+	bool deleteItem(AdItem *Item);
 	char *_itemsFile;
 	bool _tempDisableSaveState;
 	virtual bool resetContent();
-	bool addItem(CAdItem *item);
-	CAdItem *getItemByName(const char *name);
-	CBArray<CAdItem *, CAdItem *> _items;
-	CAdObject *_inventoryOwner;
+	bool addItem(AdItem *item);
+	AdItem *getItemByName(const char *name);
+	BaseArray<AdItem *, AdItem *> _items;
+	AdObject *_inventoryOwner;
 	bool isItemTaken(char *itemName);
-	bool registerInventory(CAdInventory *inv);
-	bool unregisterInventory(CAdInventory *inv);
+	bool registerInventory(AdInventory *inv);
+	bool unregisterInventory(AdInventory *inv);
 
-	CAdObject *_invObject;
-	CBArray<CAdInventory *, CAdInventory *> _inventories;
+	AdObject *_invObject;
+	BaseArray<AdInventory *, AdInventory *> _inventories;
 	virtual bool displayContent(bool update = true, bool displayAll = false);
 	char *_debugStartupScene;
 	char *_startupScene;
@@ -92,11 +92,11 @@ public:
 	bool clearBranchResponses(char *name);
 	bool startDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
 	bool endDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
-	virtual bool windowLoadHook(CUIWindow *win, char **buf, char **params);
-	virtual bool windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
+	virtual bool windowLoadHook(UIWindow *win, char **buf, char **params);
+	virtual bool windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name);
 
-	CAdSceneState *getSceneState(const char *filename, bool saving);
-	CBViewport *_sceneViewport;
+	AdSceneState *getSceneState(const char *filename, bool saving);
+	BaseViewport *_sceneViewport;
 	int _texItemLifeTime;
 	int _texWalkLifeTime;
 	int _texStandLifeTime;
@@ -113,32 +113,32 @@ public:
 	char *_prevSceneName;
 	char *_prevSceneFilename;
 	virtual bool loadGame(const char *filename);
-	CAdItem *_selectedItem;
+	AdItem *_selectedItem;
 	bool cleanup();
-	DECLARE_PERSISTENT(CAdGame, CBGame)
+	DECLARE_PERSISTENT(AdGame, BaseGame)
 
 	void finishSentences();
 	bool showCursor();
 	TGameStateEx _stateEx;
-	CAdResponseBox *_responseBox;
-	CAdInventoryBox *_inventoryBox;
+	AdResponseBox *_responseBox;
+	AdInventoryBox *_inventoryBox;
 	bool displaySentences(bool frozen);
-	void addSentence(CAdSentence *sentence);
+	void addSentence(AdSentence *sentence);
 	bool changeScene(const char *filename, bool fadeIn);
-	bool removeObject(CAdObject *object);
-	bool addObject(CAdObject *object);
-	CAdScene *_scene;
+	bool removeObject(AdObject *object);
+	bool addObject(AdObject *object);
+	AdScene *_scene;
 	bool initLoop();
-	CAdGame();
-	virtual ~CAdGame();
-	CBArray<CAdObject *, CAdObject *> _objects;
-	CBArray<CAdSentence *, CAdSentence *> _sentences;
+	AdGame();
+	virtual ~AdGame();
+	BaseArray<AdObject *, AdObject *> _objects;
+	BaseArray<AdSentence *, AdSentence *> _sentences;
 
-	CBArray<CAdSceneState *, CAdSceneState *> _sceneStates;
-	CBArray<char *, char *> _dlgPendingBranches;
+	BaseArray<AdSceneState *, AdSceneState *> _sceneStates;
+	BaseArray<char *, char *> _dlgPendingBranches;
 
-	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesBranch;
-	CBArray<CAdResponseContext *, CAdResponseContext *> _responsesGame;
+	BaseArray<AdResponseContext *, AdResponseContext *> _responsesBranch;
+	BaseArray<AdResponseContext *, AdResponseContext *> _responsesGame;
 
 	virtual bool loadFile(const char *filename);
 	virtual bool loadBuffer(byte *buffer, bool complete = true);
@@ -147,12 +147,12 @@ public:
 	bool loadItemsBuffer(byte *buffer, bool merge = false);
 
 
-	virtual bool ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
+	virtual bool ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	bool validMouse();
 };
 

@@ -38,24 +38,24 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFile::CBFile(CBGame *inGame): CBBase(inGame) {
+BaseFile::BaseFile(BaseGame *inGame): BaseClass(inGame) {
 	_pos = 0;
 	_size = 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFile::~CBFile() {
+BaseFile::~BaseFile() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFile::isEOF() {
+bool BaseFile::isEOF() {
 	return _pos == _size;
 }
 
-Common::SeekableReadStream *CBFile::getMemStream() {
+Common::SeekableReadStream *BaseFile::getMemStream() {
 	uint32 oldPos = getPos();
 	seek(0);
 	byte *data = new byte[getSize()];

@@ -36,10 +36,10 @@
 #include "engines/wintermute/utils/utils.h"
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdTalkNode, false)
+IMPLEMENT_PERSISTENT(AdTalkNode, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdTalkNode::CAdTalkNode(CBGame *inGame): CBBase(inGame) {
+AdTalkNode::AdTalkNode(BaseGame *inGame): BaseClass(inGame) {
 	_sprite = NULL;
 	_spriteFilename = NULL;
 	_spriteSet = NULL;
@@ -53,7 +53,7 @@ CAdTalkNode::CAdTalkNode(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdTalkNode::~CAdTalkNode() {
+AdTalkNode::~AdTalkNode() {
 	delete[] _spriteFilename;
 	delete _sprite;
 	delete[] _spriteSetFilename;
@@ -80,7 +80,7 @@ TOKEN_DEF(PRECACHE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
+bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTION)
 	TOKEN_TABLE(SPRITESET_FILE)
@@ -95,7 +95,7 @@ bool CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTION) {
@@ -112,16 +112,16 @@ bool CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SPRITE:
-			CBUtils::setString(&_spriteFilename, (char *)params);
+			BaseUtils::setString(&_spriteFilename, (char *)params);
 			break;
 
 		case TOKEN_SPRITESET_FILE:
-			CBUtils::setString(&_spriteSetFilename, (char *)params);
+			BaseUtils::setString(&_spriteSetFilename, (char *)params);
 			break;
 
 		case TOKEN_SPRITESET: {
 			delete _spriteSet;
-			_spriteSet = new CAdSpriteSet(_gameRef);
+			_spriteSet = new AdSpriteSet(_gameRef);
 			if (!_spriteSet || DID_FAIL(_spriteSet->loadBuffer(params, false))) {
 				delete _spriteSet;
 				_spriteSet = NULL;
@@ -143,7 +143,7 @@ bool CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_COMMENT:
-			if (_gameRef->_editorMode) CBUtils::setString(&_comment, (char *)params);
+			if (_gameRef->_editorMode) BaseUtils::setString(&_comment, (char *)params);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -168,14 +168,14 @@ bool CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 	if (_preCache && _spriteFilename) {
 		delete _sprite;
-		_sprite = new CBSprite(_gameRef);
+		_sprite = new BaseSprite(_gameRef);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename)))
 			return STATUS_FAILED;
 	}
 
 	if (_preCache && _spriteSetFilename) {
 		delete _spriteSet;
-		_spriteSet = new CAdSpriteSet(_gameRef);
+		_spriteSet = new AdSpriteSet(_gameRef);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename)))
 			return STATUS_FAILED;
 	}
@@ -186,7 +186,7 @@ bool CAdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkNode::persist(CBPersistMgr *persistMgr) {
+bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_comment));
 	persistMgr->transfer(TMEMBER(_startTime));
 	persistMgr->transfer(TMEMBER(_endTime));
@@ -201,7 +201,7 @@ bool CAdTalkNode::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkNode::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ACTION {\n");
 	if (_comment) buffer->putTextIndent(indent + 2, "COMMENT=\"%s\"\n", _comment);
 	buffer->putTextIndent(indent + 2, "START_TIME=%d\n", _startTime);
@@ -211,7 +211,7 @@ bool CAdTalkNode::saveAsText(CBDynBuffer *buffer, int indent) {
 	else if (_spriteSet) _spriteSet->saveAsText(buffer, indent + 2);
 	if (_preCache) buffer->putTextIndent(indent + 2, "PRECACHE=\"%s\"\n", _preCache ? "TRUE" : "FALSE");
 
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 
@@ -220,9 +220,9 @@ bool CAdTalkNode::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkNode::loadSprite() {
+bool AdTalkNode::loadSprite() {
 	if (_spriteFilename && !_sprite) {
-		_sprite = new CBSprite(_gameRef);
+		_sprite = new BaseSprite(_gameRef);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
 			delete _sprite;
 			_sprite = NULL;
@@ -231,7 +231,7 @@ bool CAdTalkNode::loadSprite() {
 	}
 
 	else if (_spriteSetFilename && !_spriteSet) {
-		_spriteSet = new CAdSpriteSet(_gameRef);
+		_spriteSet = new AdSpriteSet(_gameRef);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			delete _spriteSet;
 			_spriteSet = NULL;
@@ -244,7 +244,7 @@ bool CAdTalkNode::loadSprite() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
+bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 	if (time >= _startTime) {
 		if (_playToEnd) {
 			if ((_spriteFilename && _sprite == NULL) || (_sprite && _sprite->_finished == false)) return true;
@@ -256,7 +256,7 @@ bool CAdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSprite *CAdTalkNode::getSprite(TDirection dir) {
+BaseSprite *AdTalkNode::getSprite(TDirection dir) {
 	loadSprite();
 	if (_sprite) return _sprite;
 	else if (_spriteSet) return _spriteSet->getSprite(dir);

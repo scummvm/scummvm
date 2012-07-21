@@ -35,27 +35,27 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-CBBase::CBBase(CBGame *gameOwner) {
+BaseClass::BaseClass(BaseGame *gameOwner) {
 	_gameRef = gameOwner;
 	_persistable = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBBase::CBBase() {
+BaseClass::BaseClass() {
 	_gameRef = NULL;
 	_persistable = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-CBBase::~CBBase() {
+BaseClass::~BaseClass() {
 	_editorProps.clear();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBBase::getEditorProp(const char *propName, const char *initVal) {
+const char *BaseClass::getEditorProp(const char *propName, const char *initVal) {
 	_editorPropsIter = _editorProps.find(propName);
 	if (_editorPropsIter != _editorProps.end())
 		return _editorPropsIter->_value.c_str();
@@ -65,7 +65,7 @@ const char *CBBase::getEditorProp(const char *propName, const char *initVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBBase::setEditorProp(const char *propName, const char *propValue) {
+bool BaseClass::setEditorProp(const char *propName, const char *propValue) {
 	if (propName == NULL) return STATUS_FAILED;
 
 	if (propValue == NULL) {
@@ -84,7 +84,7 @@ TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CBBase::parseEditorProperty(byte *buffer, bool complete) {
+bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE(NAME)
@@ -98,7 +98,7 @@ bool CBBase::parseEditorProperty(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDITOR_PROPERTY) {
@@ -159,7 +159,7 @@ bool CBBase::parseEditorProperty(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBBase::saveAsText(CBDynBuffer *buffer, int indent) {
+bool BaseClass::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	_editorPropsIter = _editorProps.begin();
 	while (_editorPropsIter != _editorProps.end()) {
 		buffer->putTextIndent(indent, "EDITOR_PROPERTY\n");

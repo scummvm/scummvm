@@ -33,30 +33,30 @@
 #include "common/rect.h"
 
 namespace WinterMute {
-class CUIButton;
-class CUIWindow;
+class UIButton;
+class UIWindow;
 
-class CAdInventoryBox : public CBObject {
+class AdInventoryBox : public BaseObject {
 public:
 	bool _hideSelected;
-	DECLARE_PERSISTENT(CAdInventoryBox, CBObject)
+	DECLARE_PERSISTENT(AdInventoryBox, BaseObject)
 	bool _exclusive;
 	int _scrollBy;
 	int _itemHeight;
 	int _itemWidth;
 	bool _visible;
 	virtual bool display();
-	CUIButton *_closeButton;
+	UIButton *_closeButton;
 	int _spacing;
 	int _scrollOffset;
 	Rect32 _itemsArea;
-	bool listen(CBScriptHolder *param1, uint32 param2);
-	CUIWindow *_window;
-	CAdInventoryBox(CBGame *inGame);
-	virtual ~CAdInventoryBox();
+	bool listen(BaseScriptHolder *param1, uint32 param2);
+	UIWindow *_window;
+	AdInventoryBox(BaseGame *inGame);
+	virtual ~AdInventoryBox();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 };
 
 } // end of namespace WinterMute

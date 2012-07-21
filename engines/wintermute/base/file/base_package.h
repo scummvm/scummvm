@@ -38,7 +38,7 @@ class SeekableReadStream;
 
 namespace WinterMute {
 
-class CBPackage : public CBBase {
+class BasePackage : public BaseClass {
 public:
 	Common::SeekableReadStream *getFilePointer();
 	void closeFilePointer(Common::SeekableReadStream *&file);
@@ -51,8 +51,8 @@ public:
 	char *_name;
 	int _cD;
 	Common::SeekableReadStream *_file;
-	CBPackage(CBGame *inGame);
-	virtual ~CBPackage();
+	BasePackage(BaseGame *inGame);
+	virtual ~BasePackage();
 
 };
 

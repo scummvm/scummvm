@@ -46,7 +46,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBSurfaceOSystem::CBSurfaceOSystem(CBGame *inGame) : CBSurface(inGame) {
+BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = NULL;
 	_hasAlpha = true;
@@ -56,7 +56,7 @@ CBSurfaceOSystem::CBSurfaceOSystem(CBGame *inGame) : CBSurface(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBSurfaceOSystem::~CBSurfaceOSystem() {
+BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	//TODO
 	if (_surface) {
 		_surface->free();
@@ -68,7 +68,7 @@ CBSurfaceOSystem::~CBSurfaceOSystem() {
 	_alphaMask = NULL;
 
 	_gameRef->addMem(-_width * _height * 4);
-	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 }
 
@@ -91,8 +91,8 @@ bool hasTransparency(Graphics::Surface *surf) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	/*  CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer); */
+bool BaseSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+	/*  BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer); */
 	_filename = filename;
 //	const Graphics::Surface *surface = image->getSurface();
 
@@ -116,8 +116,8 @@ bool CBSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed, 
 	return STATUS_OK;
 }
 
-void CBSurfaceOSystem::finishLoad() {
-	CBImage *image = new CBImage(_gameRef);
+void BaseSurfaceOSystem::finishLoad() {
+	BaseImage *image = new BaseImage(_gameRef);
 	image->loadFile(_filename);
 
 	_width = image->getSurface()->w;
@@ -191,8 +191,8 @@ void CBSurfaceOSystem::finishLoad() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
-	warning("CBSurfaceOSystem::GenAlphaMask - Not ported yet");
+void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
+	warning("BaseSurfaceOSystem::GenAlphaMask - Not ported yet");
 	return;
 
 	delete[] _alphaMask;
@@ -237,8 +237,8 @@ void CBSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBSurfaceOSystem::getPixel(Graphics::Surface *surface, int x, int y) {
-	warning("CBSurfaceOSystem::GetPixel - Not ported yet");
+uint32 BaseSurfaceOSystem::getPixel(Graphics::Surface *surface, int x, int y) {
+	warning("BaseSurfaceOSystem::GetPixel - Not ported yet");
 	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
 	uint8 *p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
@@ -273,10 +273,10 @@ uint32 CBSurfaceOSystem::getPixel(Graphics::Surface *surface, int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::create(int width, int height) {
-	warning("CBSurfaceOSystem::Create not ported yet"); //TODO
+bool BaseSurfaceOSystem::create(int width, int height) {
+	warning("BaseSurfaceOSystem::Create not ported yet"); //TODO
 #if 0
-	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	_texture = SDL_CreateTexture(renderer->GetSdlRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, Width, Height);
 #endif
 	_width = width;
@@ -290,10 +290,10 @@ bool CBSurfaceOSystem::create(int width, int height) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::createFromSDLSurface(Graphics::Surface *surface) {
-	warning("CBSurfaceOSystem::CreateFromSDLSurface not ported yet"); //TODO
+bool BaseSurfaceOSystem::createFromSDLSurface(Graphics::Surface *surface) {
+	warning("BaseSurfaceOSystem::CreateFromSDLSurface not ported yet"); //TODO
 #if 0
-	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	_texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surface);
 #endif
 	if (_surface) {
@@ -314,12 +314,12 @@ bool CBSurfaceOSystem::createFromSDLSurface(Graphics::Surface *surface) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::isTransparentAt(int x, int y) {
+bool BaseSurfaceOSystem::isTransparentAt(int x, int y) {
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
 	if (!hasWarned) {
-		warning("CBSurfaceOSystem::IsTransparentAt not ported yet");
+		warning("BaseSurfaceOSystem::IsTransparentAt not ported yet");
 		hasWarned = true;
 	}
 #if 0
@@ -340,14 +340,14 @@ bool CBSurfaceOSystem::isTransparentAt(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::isTransparentAtLite(int x, int y) {
+bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 	//if (!_lockPixels) return false;
 
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
 	if (!hasWarned) {
-		warning("CBSurfaceOSystem::IsTransparentAtLite not ported yet");
+		warning("BaseSurfaceOSystem::IsTransparentAtLite not ported yet");
 		hasWarned = true;
 	}
 	if (_surface->format.bytesPerPixel == 4) {
@@ -387,57 +387,57 @@ bool CBSurfaceOSystem::isTransparentAtLite(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::startPixelOp() {
+bool BaseSurfaceOSystem::startPixelOp() {
 	//SDL_LockTexture(_texture, NULL, &_lockPixels, &_lockPitch);
 	// Any pixel-op makes the caching useless:
-	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::endPixelOp() {
+bool BaseSurfaceOSystem::endPixelOp() {
 	//SDL_UnlockTexture(_texture);
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, 100, 100, 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY, offsetX, offsetY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool Transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool Transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, !Transparent, blendMode, mirrorX, mirrorY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
-	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
+bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
 	if (!_loaded) {
 		finishLoad();
@@ -450,7 +450,7 @@ bool CBSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, float
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
 	if (!hasWarned) {
-		warning("CBSurfaceOSystem::DrawSprite not fully ported yet"); // TODO.
+		warning("BaseSurfaceOSystem::DrawSprite not fully ported yet"); // TODO.
 		hasWarned = true;
 	}
 
@@ -508,7 +508,7 @@ bool CBSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, float
 		hasAlpha = false;
 	}
 	if (alphaDisable) {
-		warning("CBSurfaceOSystem::drawSprite - AlphaDisable ignored");
+		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
 	}
 
 	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY);
@@ -519,11 +519,11 @@ bool CBSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, float
 	return STATUS_OK;
 }
 
-bool CBSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
+bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_loaded = true;
 	_surface->copyFrom(surface);
 	_hasAlpha = hasAlpha;
-	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 		
 	return STATUS_OK;

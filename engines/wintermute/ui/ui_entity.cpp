@@ -38,27 +38,27 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CUIEntity, false)
+IMPLEMENT_PERSISTENT(UIEntity, false)
 
 //////////////////////////////////////////////////////////////////////////
-CUIEntity::CUIEntity(CBGame *inGame): CUIObject(inGame) {
+UIEntity::UIEntity(BaseGame *inGame): UIObject(inGame) {
 	_type = UI_CUSTOM;
 	_entity = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CUIEntity::~CUIEntity() {
+UIEntity::~UIEntity() {
 	if (_entity) _gameRef->unregisterObject(_entity);
 	_entity = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEntity::loadFile(const char *filename) {
+bool UIEntity::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CUIEntity::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "UIEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -89,7 +89,7 @@ TOKEN_DEF(SCRIPT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CUIEntity::loadBuffer(byte *buffer, bool complete) {
+bool UIEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY_CONTAINER)
 	TOKEN_TABLE(TEMPLATE)
@@ -105,7 +105,7 @@ bool CUIEntity::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY_CONTAINER) {
@@ -174,7 +174,7 @@ bool CUIEntity::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEntity::saveAsText(CBDynBuffer *buffer, int indent) {
+bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY_CONTAINER\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -201,16 +201,16 @@ bool CUIEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEntity::setEntity(const char *filename) {
+bool UIEntity::setEntity(const char *filename) {
 	if (_entity) _gameRef->unregisterObject(_entity);
-	_entity = new CAdEntity(_gameRef);
+	_entity = new AdEntity(_gameRef);
 	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
 		delete _entity;
 		_entity = NULL;
@@ -225,7 +225,7 @@ bool CUIEntity::setEntity(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEntity::display(int offsetX, int offsetY) {
+bool UIEntity::display(int offsetX, int offsetY) {
 	if (!_visible) return STATUS_OK;
 
 	if (_entity) {
@@ -251,7 +251,7 @@ bool CUIEntity::display(int offsetX, int offsetY) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetEntity
 	//////////////////////////////////////////////////////////////////////////
@@ -280,12 +280,12 @@ bool CUIEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		return STATUS_OK;
 	}
 
-	else return CUIObject::scCallMethod(script, stack, thisStack, name);
+	else return UIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIEntity::scGetProperty(const char *name) {
+ScValue *UIEntity::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -305,32 +305,32 @@ CScValue *CUIEntity::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CUIObject::scGetProperty(name);
+	else return UIObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEntity::scSetProperty(const char *name, CScValue *value) {
+bool UIEntity::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Freezable") == 0) {
 		if (_entity) _entity->makeFreezable(value->getBool());
 		return STATUS_OK;
-	} else return CUIObject::scSetProperty(name, value);
+	} else return UIObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIEntity::scToString() {
+const char *UIEntity::scToString() {
 	return "[entity container]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEntity::persist(CBPersistMgr *persistMgr) {
+bool UIEntity::persist(BasePersistenceManager *persistMgr) {
 
-	CUIObject::persist(persistMgr);
+	UIObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_entity));
 	return STATUS_OK;

@@ -41,33 +41,33 @@ namespace WinterMute {
 
 typedef void (*ENGINE_LOG_CALLBACK)(char *Text, bool Result, void *Data);
 
-class CBSoundMgr;
-class CBFader;
-class CBFont;
-class CBFileManager;
-class CBTransitionMgr;
-class CScEngine;
-class CBFontStorage;
-class CBStringTable;
-class CBQuickMsg;
-class CUIWindow;
-class CBViewport;
-class CBRenderer;
-class CBRegistry;
-class CBSaveThumbHelper;
-class CBSurfaceStorage;
-class CSXMath;
-class CBKeyboardState;
-class CVidPlayer;
-class CVidTheoraPlayer;
+class BaseSoundMgr;
+class BaseFader;
+class BaseFont;
+class BaseFileManager;
+class BaseTransitionMgr;
+class ScEngine;
+class BaseFontStorage;
+class BaseStringTable;
+class BaseQuickMsg;
+class UIWindow;
+class BaseViewport;
+class BaseRenderer;
+class BaseRegistry;
+class BaseSaveThumbHelper;
+class BaseSurfaceStorage;
+class SXMath;
+class BaseKeyboardState;
+class VideoPlayer;
+class VideoTheoraPlayer;
 
 #define NUM_MUSIC_CHANNELS 5
 
-class CBGame: public CBObject {
+class BaseGame: public BaseObject {
 public:
-	DECLARE_PERSISTENT(CBGame, CBObject)
+	DECLARE_PERSISTENT(BaseGame, BaseObject)
 
-	virtual bool onScriptShutdown(CScScript *script);
+	virtual bool onScriptShutdown(ScScript *script);
 
 	virtual bool onActivate(bool activate, bool refreshMouse);
 	virtual bool onMouseLeftDown();
@@ -105,7 +105,7 @@ public:
 	TTextEncoding _textEncoding;
 	bool _textRTL;
 
-	CBSprite *_loadingIcon;
+	BaseSprite *_loadingIcon;
 	int _loadingIconX;
 	int _loadingIconY;
 	int _loadingIconPersistent;
@@ -136,7 +136,7 @@ protected:
 	int _loadImageX;
 	int _loadImageY;
 
-	CBSurface *_saveLoadImage;
+	BaseSurface *_saveLoadImage;
 	bool displayIndicator();
 
 	bool _reportTextureFormat;
@@ -157,32 +157,32 @@ public:
 	int _offsetX;
 	float _offsetPercentX;
 	float _offsetPercentY;
-	CBObject *_mainObject;
+	BaseObject *_mainObject;
 
 	bool initInput();
 	bool initLoop();
 	uint32 _currentTime;
 	uint32 _deltaTime;
-	CBFont *_systemFont;
-	CBFont *_videoFont;
+	BaseFont *_systemFont;
+	BaseFont *_videoFont;
 	bool initialize1();
 	bool initialize2();
 	bool initialize3();
-	CBFileManager *_fileManager;
-	CBTransitionMgr *_transMgr;
-	CBDebugger *getDebugMgr();
+	BaseFileManager *_fileManager;
+	BaseTransitionMgr *_transMgr;
+	BaseDebugger *getDebugMgr();
 
 	void LOG(bool res, const char *fmt, ...);
 
-	CBRenderer *_renderer;
-	CBSoundMgr *_soundMgr;
-	CScEngine *_scEngine;
-	CSXMath *_mathClass;
-	CBSurfaceStorage *_surfaceStorage;
-	CBFontStorage *_fontStorage;
-	CBGame();
+	BaseRenderer *_renderer;
+	BaseSoundMgr *_soundMgr;
+	ScEngine *_scEngine;
+	SXMath *_mathClass;
+	BaseSurfaceStorage *_surfaceStorage;
+	BaseFontStorage *_fontStorage;
+	BaseGame();
 
-	virtual ~CBGame();
+	virtual ~BaseGame();
 	void DEBUG_DebugDisable();
 	void DEBUG_DebugEnable(const char *filename = NULL);
 	bool _debugDebugMode;
@@ -192,13 +192,13 @@ public:
 	int _sequence;
 	virtual bool loadFile(const char *filename);
 	virtual bool loadBuffer(byte *buffer, bool complete = true);
-	CBArray<CBQuickMsg *, CBQuickMsg *> _quickMessages;
-	CBArray<CUIWindow *, CUIWindow *> _windows;
-	CBArray<CBViewport *, CBViewport *> _viewportStack;
+	BaseArray<BaseQuickMsg *, BaseQuickMsg *> _quickMessages;
+	BaseArray<UIWindow *, UIWindow *> _windows;
+	BaseArray<BaseViewport *, BaseViewport *> _viewportStack;
 
 	int _viewportSP;
 
-	CBStringTable *_stringTable;
+	BaseStringTable *_stringTable;
 	int _settingsResWidth;
 	int _settingsResHeight;
 	char *_settingsGameFile;
@@ -215,15 +215,15 @@ protected:
 	bool _settingsRequireSound;
 	bool _settingsAllowDesktopRes;
 	int _settingsTLMode;
-	CBFader *_fader;
+	BaseFader *_fader;
 	virtual bool invalidateDeviceObjects();
 	virtual bool restoreDeviceObjects();
 public:
-	virtual bool ExternalCall(CScScript *script, CScStack *stack, CScStack *thisStack, char *name);
+	virtual bool ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	// compatibility bits
 	bool _compatKillMethodThreads;
@@ -262,11 +262,11 @@ protected:
 public:
 	bool unfreeze();
 	bool freeze(bool includingMusic = true);
-	bool focusWindow(CUIWindow *window);
-	CVidPlayer *_videoPlayer;
-	CVidTheoraPlayer *_theoraPlayer;
+	bool focusWindow(UIWindow *window);
+	VideoPlayer *_videoPlayer;
+	VideoTheoraPlayer *_theoraPlayer;
 	bool _loadInProgress;
-	CUIWindow *_focusedWindow;
+	UIWindow *_focusedWindow;
 	bool _editorForceScripts;
 protected:
 	static void afterLoadRegion(void *region, void *data);
@@ -283,7 +283,7 @@ public:
 	bool pauseMusic(int channel);
 	bool stopMusic(int channel);
 	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
-	CBSound *_music[NUM_MUSIC_CHANNELS];
+	BaseSound *_music[NUM_MUSIC_CHANNELS];
 	bool _musicCrossfadeRunning;
 	bool _musicCrossfadeSwap;
 	uint32 _musicCrossfadeStartTime;
@@ -291,7 +291,7 @@ public:
 	int _musicCrossfadeChannel1;
 	int _musicCrossfadeChannel2;
 	bool displayWindows(bool inGame = false);
-	CBRegistry *_registry;
+	BaseRegistry *_registry;
 	bool _useD3D;
 	virtual bool cleanup();
 	virtual bool loadGame(int slot);
@@ -299,9 +299,9 @@ public:
 	virtual bool SaveGame(int slot, const char *desc, bool quickSave = false);
 	virtual bool showCursor();
 
-	CBSprite *_cursorNoninteractive;
-	CBObject *_activeObject;
-	CBKeyboardState *_keyboardState;
+	BaseSprite *_cursorNoninteractive;
+	BaseObject *_activeObject;
+	BaseKeyboardState *_keyboardState;
 	bool _interactive;
 	TGameState _state;
 	TGameState _origState;
@@ -314,11 +314,11 @@ public:
 	uint32 _liveTimerDelta;
 	uint32 _liveTimerLast;
 
-	CBObject *_capturedObject;
+	BaseObject *_capturedObject;
 	Point32 _mousePos;
-	bool validObject(CBObject *object);
-	bool unregisterObject(CBObject *object);
-	bool registerObject(CBObject *object);
+	bool validObject(BaseObject *object);
+	bool unregisterObject(BaseObject *object);
+	bool registerObject(BaseObject *object);
 	void quickMessage(const char *text);
 	void quickMessageForm(char *fmt, ...);
 	bool displayQuickMsg();
@@ -328,7 +328,7 @@ public:
 	bool isVideoPlaying();
 	bool stopVideo();
 
-	CBArray<CBObject *, CBObject *> _regObjects;
+	BaseArray<BaseObject *, BaseObject *> _regObjects;
 public:
 	virtual bool displayContent(bool update = true, bool displayAll = false);
 	virtual bool displayContentSimple();
@@ -336,18 +336,18 @@ public:
 	void resetMousePos();
 	int _subtitlesSpeed;
 	void setInteractive(bool state);
-	virtual bool windowLoadHook(CUIWindow *win, char **buf, char **params);
-	virtual bool windowScriptMethodHook(CUIWindow *win, CScScript *script, CScStack *stack, const char *name);
+	virtual bool windowLoadHook(UIWindow *win, char **buf, char **params);
+	virtual bool windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name);
 	bool getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
 	bool getCurrentViewportRect(Rect32 *rect, bool *custom = NULL);
 	bool popViewport();
-	bool pushViewport(CBViewport *Viewport);
-	bool setActiveObject(CBObject *Obj);
-	CBSprite *_lastCursor;
-	bool drawCursor(CBSprite *Cursor);
+	bool pushViewport(BaseViewport *Viewport);
+	bool setActiveObject(BaseObject *Obj);
+	BaseSprite *_lastCursor;
+	bool drawCursor(BaseSprite *Cursor);
 
 	virtual bool initAfterLoad();
-	CBSaveThumbHelper *_cachedThumbnail;
+	BaseSaveThumbHelper *_cachedThumbnail;
 	AnsiString getDataDir();
 	void addMem(int bytes);
 
@@ -356,7 +356,7 @@ public:
 	AnsiString getDeviceType() const;
 
 private:
-	CBDebugger *_debugMgr;
+	BaseDebugger *_debugMgr;
 
 	struct LastClickInfo {
 		LastClickInfo() {

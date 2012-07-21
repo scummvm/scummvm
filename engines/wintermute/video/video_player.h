@@ -38,7 +38,7 @@
 
 namespace WinterMute {
 
-class CVidPlayer : public CBBase {
+class VideoPlayer : public BaseClass {
 public:
 	bool _showSubtitle;
 	int _currentSubtitle;
@@ -51,7 +51,7 @@ public:
 	uint32 _totalVideoTime;
 	uint32 _startTime;
 	//CVidRenderer *_vidRenderer;
-	//CBSoundAVI *_sound;
+	//BaseSoundAVI *_sound;
 	bool _soundAvailable;
 	bool SetDefaults();
 	bool _playing;
@@ -59,8 +59,8 @@ public:
 	bool update();
 	bool initialize(const char *inFilename, const char *SubtitleFile = NULL);
 	bool cleanup();
-	CVidPlayer(CBGame *inGame);
-	virtual ~CVidPlayer();
+	VideoPlayer(BaseGame *inGame);
+	virtual ~VideoPlayer();
 
 	/*PAVIFILE _aviFile;
 
@@ -81,7 +81,7 @@ public:
 
 	/*  LPBITMAPV4HEADER _targetFormat;
 
-	    CBArray<CVidSubtitle *, CVidSubtitle *> _subtitles;*/
+	    BaseArray<CVidSubtitle *, CVidSubtitle *> _subtitles;*/
 };
 
 } // end of namespace WinterMute

@@ -38,11 +38,11 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdNodeState, false)
+IMPLEMENT_PERSISTENT(AdNodeState, false)
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdNodeState::CAdNodeState(CBGame *inGame): CBBase(inGame) {
+AdNodeState::AdNodeState(BaseGame *inGame): BaseClass(inGame) {
 	_name = NULL;
 	_active = false;
 	for (int i = 0; i < 7; i++) _caption[i] = NULL;
@@ -53,7 +53,7 @@ CAdNodeState::CAdNodeState(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdNodeState::~CAdNodeState() {
+AdNodeState::~AdNodeState() {
 	delete[] _name;
 	delete[] _filename;
 	delete[] _cursor;
@@ -68,31 +68,31 @@ CAdNodeState::~CAdNodeState() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::setName(const char *name) {
+void AdNodeState::setName(const char *name) {
 	delete[] _name;
 	_name = NULL;
-	CBUtils::setString(&_name, name);
+	BaseUtils::setString(&_name, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::setFilename(const char *filename) {
+void AdNodeState::setFilename(const char *filename) {
 	delete[] _filename;
 	_filename = NULL;
-	CBUtils::setString(&_filename, filename);
+	BaseUtils::setString(&_filename, filename);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::setCursor(const char *filename) {
+void AdNodeState::setCursor(const char *filename) {
 	delete[] _cursor;
 	_cursor = NULL;
-	CBUtils::setString(&_cursor, filename);
+	BaseUtils::setString(&_cursor, filename);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdNodeState::persist(CBPersistMgr *persistMgr) {
+bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_active));
@@ -107,7 +107,7 @@ bool CAdNodeState::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdNodeState::setCaption(const char *caption, int caseVal) {
+void AdNodeState::setCaption(const char *caption, int caseVal) {
 	if (caseVal== 0) caseVal= 1;
 	if (caseVal< 1 || caseVal> 7) return;
 
@@ -121,7 +121,7 @@ void CAdNodeState::setCaption(const char *caption, int caseVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdNodeState::getCaption(int caseVal) {
+char *AdNodeState::getCaption(int caseVal) {
 	if (caseVal== 0) caseVal= 1;
 	if (caseVal< 1 || caseVal> 7 || _caption[caseVal- 1] == NULL) return "";
 	else return _caption[caseVal- 1];
@@ -129,7 +129,7 @@ char *CAdNodeState::getCaption(int caseVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdNodeState::transferEntity(CAdEntity *entity, bool includingSprites, bool saving) {
+bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool saving) {
 	if (!entity) return STATUS_FAILED;
 
 	// hack!

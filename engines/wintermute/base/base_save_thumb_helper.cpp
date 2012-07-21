@@ -34,18 +34,18 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBSaveThumbHelper::CBSaveThumbHelper(CBGame *inGame): CBBase(inGame) {
+BaseSaveThumbHelper::BaseSaveThumbHelper(BaseGame *inGame): BaseClass(inGame) {
 	_thumbnail = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBSaveThumbHelper::~CBSaveThumbHelper(void) {
+BaseSaveThumbHelper::~BaseSaveThumbHelper(void) {
 	delete _thumbnail;
 	_thumbnail = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSaveThumbHelper::storeThumbnail(bool doFlip) {
+bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = NULL;
 
@@ -60,12 +60,12 @@ bool CBSaveThumbHelper::storeThumbnail(bool doFlip) {
 			_gameRef->_renderer->flip();
 		}
 
-		CBImage *screenshot = _gameRef->_renderer->takeScreenshot();
+		BaseImage *screenshot = _gameRef->_renderer->takeScreenshot();
 		if (!screenshot) return STATUS_FAILED;
 
 		// normal thumbnail
 		if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
-			_thumbnail = new CBImage(_gameRef);
+			_thumbnail = new BaseImage(_gameRef);
 			_thumbnail->copyFrom(screenshot, _gameRef->_thumbnailWidth, _gameRef->_thumbnailHeight);
 		}
 

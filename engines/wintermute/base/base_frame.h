@@ -33,37 +33,37 @@
 #include "engines/wintermute/coll_templ.h"
 
 namespace WinterMute {
-class CBSound;
-class CBSubFrame;
-class CBObject;
-class CScScript;
-class CScStack;
-class CBFrame: public CBScriptable {
+class BaseSound;
+class BaseSubFrame;
+class BaseObject;
+class ScScript;
+class ScStack;
+class BaseFrame: public BaseScriptable {
 public:
 	bool _killSound;
 	bool _keyframe;
-	bool oneTimeDisplay(CBObject *owner, bool muted = false);
-	DECLARE_PERSISTENT(CBFrame, CBScriptable)
-	CBSound *_sound;
+	bool oneTimeDisplay(BaseObject *owner, bool muted = false);
+	DECLARE_PERSISTENT(BaseFrame, BaseScriptable)
+	BaseSound *_sound;
 	bool _editorExpanded;
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
-	bool saveAsText(CBDynBuffer *buffer, int indent);
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	int _moveY;
 	int _moveX;
 	uint32 _delay;
-	CBArray<CBSubFrame *, CBSubFrame *> _subframes;
-	bool draw(int x, int y, CBObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 Alpha = 0xFFFFFFFF, bool allFrames = false, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
+	BaseArray<BaseSubFrame *, BaseSubFrame *> _subframes;
+	bool draw(int x, int y, BaseObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 Alpha = 0xFFFFFFFF, bool allFrames = false, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
 	bool loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
 
-	CBFrame(CBGame *inGame);
-	virtual ~CBFrame();
+	BaseFrame(BaseGame *inGame);
+	virtual ~BaseFrame();
 
-	CBArray<const char *, const char *> _applyEvent;
+	BaseArray<const char *, const char *> _applyEvent;
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 };

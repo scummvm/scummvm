@@ -34,7 +34,7 @@
 
 namespace WinterMute {
 
-class CAdItem : public CAdTalkHolder {
+class AdItem : public AdTalkHolder {
 public:
 	bool _displayAmount;
 	int _amount;
@@ -45,23 +45,23 @@ public:
 
 
 	bool update();
-	DECLARE_PERSISTENT(CAdItem, CAdTalkHolder)
+	DECLARE_PERSISTENT(AdItem, AdTalkHolder)
 	bool display(int x, int y);
 	bool getExtendedFlag(const char *flagName);
 	bool _inInventory;
 	bool _cursorCombined;
-	CBSprite *_spriteHover;
-	CBSprite *_cursorNormal;
-	CBSprite *_cursorHover;
-	CAdItem(CBGame *inGame);
-	virtual ~CAdItem();
+	BaseSprite *_spriteHover;
+	BaseSprite *_cursorNormal;
+	BaseSprite *_cursorHover;
+	AdItem(BaseGame *inGame);
+	virtual ~AdItem();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

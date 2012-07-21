@@ -35,11 +35,11 @@
 #include "common/list.h"
 
 namespace WinterMute {
-class CBSurfaceOSystem;
+class BaseSurfaceOSystem;
 class RenderTicket {
 	Graphics::Surface *_surface;
 public:
-	RenderTicket(CBSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
+	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
 	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0) {}
 	~RenderTicket();
 	const Graphics::Surface *getSurface() { return _surface; }
@@ -53,14 +53,14 @@ public:
 	uint32 _drawNum;
 	uint32 _colorMod;
 
-	CBSurfaceOSystem *_owner;
+	BaseSurfaceOSystem *_owner;
 	bool operator==(RenderTicket &a);
 };
 
-class CBRenderOSystem : public CBRenderer {
+class BaseRenderOSystem : public BaseRenderer {
 public:
-	CBRenderOSystem(CBGame *inGame);
-	~CBRenderOSystem();
+	BaseRenderOSystem(BaseGame *inGame);
+	~BaseRenderOSystem();
 
 	const char *getName();
 
@@ -75,12 +75,12 @@ public:
 
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
 
-	CBImage *takeScreenshot();
+	BaseImage *takeScreenshot();
 
 	void setAlphaMod(byte alpha);
 	void setColorMod(byte r, byte g, byte b);
 	void invalidateTicket(RenderTicket *renderTicket);
-	void invalidateTicketsFromSurface(CBSurfaceOSystem *surf);
+	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
 	void drawFromTicket(RenderTicket *renderTicket);
 
 	bool setViewport(int left, int top, int right, int bottom);
@@ -98,8 +98,8 @@ public:
 		return _ratioY;
 	}
 
-	void drawSurface(CBSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY);
-	CBSurface *createSurface();
+	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY);
+	BaseSurface *createSurface();
 private:
 	void addDirtyRect(const Common::Rect &rect);
 	void drawTickets();

@@ -34,7 +34,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBTransitionMgr::CBTransitionMgr(CBGame *inGame): CBBase(inGame) {
+BaseTransitionMgr::BaseTransitionMgr(BaseGame *inGame): BaseClass(inGame) {
 	_state = TRANS_MGR_READY;
 	_type = TRANSITION_NONE;
 	_origInteractive = false;
@@ -46,19 +46,19 @@ CBTransitionMgr::CBTransitionMgr(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBTransitionMgr::~CBTransitionMgr() {
+BaseTransitionMgr::~BaseTransitionMgr() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBTransitionMgr::isReady() {
+bool BaseTransitionMgr::isReady() {
 	return (_state == TRANS_MGR_READY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
+bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 	if (_state != TRANS_MGR_READY) return STATUS_OK;
 
 	if (type == TRANSITION_NONE || type >= NUM_TRANSITION_TYPES) {
@@ -83,12 +83,12 @@ bool CBTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 #define FADE_DURATION 200
 
 //////////////////////////////////////////////////////////////////////////
-bool CBTransitionMgr::update() {
+bool BaseTransitionMgr::update() {
 	if (isReady()) return STATUS_OK;
 
 	if (!_started) {
 		_started = true;
-		_lastTime = CBPlatform::getTime();
+		_lastTime = BasePlatform::getTime();
 	}
 
 	switch (_type) {
@@ -97,7 +97,7 @@ bool CBTransitionMgr::update() {
 		break;
 
 	case TRANSITION_FADE_OUT: {
-		uint32 time = CBPlatform::getTime() - _lastTime;
+		uint32 time = BasePlatform::getTime() - _lastTime;
 		int alpha = (int)(255 - (float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
 		_gameRef->_renderer->fade((uint16)alpha);
@@ -108,7 +108,7 @@ bool CBTransitionMgr::update() {
 	break;
 
 	case TRANSITION_FADE_IN: {
-		uint32 time = CBPlatform::getTime() - _lastTime;
+		uint32 time = BasePlatform::getTime() - _lastTime;
 		int alpha = (int)((float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
 		_gameRef->_renderer->fade((uint16)alpha);
@@ -118,7 +118,7 @@ bool CBTransitionMgr::update() {
 	}
 	break;
 	default:
-		error("CBTransitionMgr::Update - unhandled enum NUM_TRANSITION_TYPES");
+		error("BaseTransitionMgr::Update - unhandled enum NUM_TRANSITION_TYPES");
 	}
 
 	if (isReady()) {

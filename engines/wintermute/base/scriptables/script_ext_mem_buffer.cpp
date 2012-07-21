@@ -35,14 +35,14 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CSXMemBuffer, false)
+IMPLEMENT_PERSISTENT(SXMemBuffer, false)
 
-CBScriptable *makeSXMemBuffer(CBGame *inGame, CScStack *stack) {
-	return new CSXMemBuffer(inGame, stack);
+BaseScriptable *makeSXMemBuffer(BaseGame *inGame, ScStack *stack) {
+	return new SXMemBuffer(inGame, stack);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXMemBuffer::CSXMemBuffer(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
+SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 	stack->correctParams(1);
 	_buffer = NULL;
 	_size = 0;
@@ -52,31 +52,31 @@ CSXMemBuffer::CSXMemBuffer(CBGame *inGame, CScStack *stack): CBScriptable(inGame
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXMemBuffer::CSXMemBuffer(CBGame *inGame, void *Buffer): CBScriptable(inGame) {
+SXMemBuffer::SXMemBuffer(BaseGame *inGame, void *Buffer): BaseScriptable(inGame) {
 	_size = 0;
 	_buffer = Buffer;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CSXMemBuffer::~CSXMemBuffer() {
+SXMemBuffer::~SXMemBuffer() {
 	cleanup();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void *CSXMemBuffer::scToMemBuffer() {
+void *SXMemBuffer::scToMemBuffer() {
 	return _buffer;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXMemBuffer::cleanup() {
+void SXMemBuffer::cleanup() {
 	if (_size) free(_buffer);
 	_buffer = NULL;
 	_size = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXMemBuffer::resize(int newSize) {
+bool SXMemBuffer::resize(int newSize) {
 	int oldSize = _size;
 
 	if (_size == 0) {
@@ -102,7 +102,7 @@ bool CSXMemBuffer::resize(int newSize) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXMemBuffer::checkBounds(CScScript *script, int start, int length) {
+bool SXMemBuffer::checkBounds(ScScript *script, int start, int length) {
 	if (_buffer == NULL) {
 		script->runtimeError("Cannot use Set/Get methods on an uninitialized memory buffer");
 		return false;
@@ -118,13 +118,13 @@ bool CSXMemBuffer::checkBounds(CScScript *script, int start, int length) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CSXMemBuffer::scToString() {
+const char *SXMemBuffer::scToString() {
 	return "[membuffer object]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSize
 	//////////////////////////////////////////////////////////////////////////
@@ -264,7 +264,7 @@ bool CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 			stack->pushNULL();
 		else {
 			void *pointer = *(void **)((byte *)_buffer + start);
-			CSXMemBuffer *buf = new CSXMemBuffer(_gameRef,  pointer);
+			SXMemBuffer *buf = new SXMemBuffer(_gameRef,  pointer);
 			stack->pushNative(buf, false);
 		}
 		return STATUS_OK;
@@ -395,7 +395,7 @@ bool CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 	else if (strcmp(name, "SetPointer") == 0) {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
-		/* CScValue *Val = */ stack->pop();
+		/* ScValue *Val = */ stack->pop();
 
 		if (!checkBounds(script, start, sizeof(void *)))
 			stack->pushBool(false);
@@ -433,7 +433,7 @@ bool CSXMemBuffer::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXMemBuffer::scGetProperty(const char *name) {
+ScValue *SXMemBuffer::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -452,12 +452,12 @@ CScValue *CSXMemBuffer::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::scGetProperty(name);
+	else return BaseScriptable::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXMemBuffer::scSetProperty(const char *name, CScValue *value) {
+bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
@@ -475,14 +475,14 @@ bool CSXMemBuffer::scSetProperty(const char *name, CScValue *value) {
 	    }
 	    return STATUS_OK;
 	}
-	else*/ return CBScriptable::scSetProperty(name, value);
+	else*/ return BaseScriptable::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
+bool SXMemBuffer::persist(BasePersistenceManager *persistMgr) {
 
-	CBScriptable::persist(persistMgr);
+	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_size));
 
@@ -500,7 +500,7 @@ bool CSXMemBuffer::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CSXMemBuffer::scCompare(CBScriptable *val) {
+int SXMemBuffer::scCompare(BaseScriptable *val) {
 	if (_buffer == val->scToMemBuffer()) return 0;
 	else return 1;
 }

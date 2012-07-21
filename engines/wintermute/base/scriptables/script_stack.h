@@ -36,27 +36,27 @@
 
 namespace WinterMute {
 
-class CScValue;
-class CBScriptable;
+class ScValue;
+class BaseScriptable;
 
-class CScStack : public CBBase {
+class ScStack : public BaseClass {
 public:
-	CScValue *getAt(int Index);
-	CScValue *getPushValue();
-	DECLARE_PERSISTENT(CScStack, CBBase)
-	void pushNative(CBScriptable *val, bool persistent);
+	ScValue *getAt(int Index);
+	ScValue *getPushValue();
+	DECLARE_PERSISTENT(ScStack, BaseClass)
+	void pushNative(BaseScriptable *val, bool persistent);
 	void pushString(const char *val);
 	void pushBool(bool val);
 	void pushInt(int val);
 	void pushFloat(double val);
 	void pushNULL();
 	void correctParams(uint32 expectedParams);
-	CScValue *getTop();
-	void push(CScValue *val);
-	CScValue *pop();
-	CScStack(CBGame *inGame);
-	virtual ~CScStack();
-	CBArray<CScValue *, CScValue *> _values;
+	ScValue *getTop();
+	void push(ScValue *val);
+	ScValue *pop();
+	ScStack(BaseGame *inGame);
+	virtual ~ScStack();
+	BaseArray<ScValue *, ScValue *> _values;
 	int _sP;
 
 };

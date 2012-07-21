@@ -34,13 +34,13 @@
 
 namespace WinterMute {
 
-class CSXMath : public CBScriptable {
+class SXMath : public BaseScriptable {
 public:
-	DECLARE_PERSISTENT(CSXMath, CBScriptable)
-	CSXMath(CBGame *inGame);
-	virtual ~CSXMath();
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	DECLARE_PERSISTENT(SXMath, BaseScriptable)
+	SXMath(BaseGame *inGame);
+	virtual ~SXMath();
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 
 private:
 	double degreeToRadian(double value);

@@ -33,7 +33,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CSysInstance::CSysInstance(void *instance, int id, CSysClass *sysClass) {
+SystemInstance::SystemInstance(void *instance, int id, SystemClass *sysClass) {
 	_instance = instance;
 	_id = id;
 	_savedID = -1;
@@ -43,7 +43,7 @@ CSysInstance::CSysInstance(void *instance, int id, CSysClass *sysClass) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSysInstance::~CSysInstance() {
+SystemInstance::~SystemInstance() {
 }
 
 } // end of namespace WinterMute

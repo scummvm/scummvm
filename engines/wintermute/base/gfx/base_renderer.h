@@ -36,11 +36,11 @@
 
 namespace WinterMute {
 
-class CBImage;
-class CBActiveRect;
-class CBObject;
-class CBSurface;
-class CBRenderer: public CBBase {
+class BaseImage;
+class BaseActiveRect;
+class BaseObject;
+class BaseSurface;
+class BaseRenderer: public BaseClass {
 public:
 	int _realWidth;
 	int _realHeight;
@@ -48,7 +48,7 @@ public:
 	int _drawOffsetY;
 
 	virtual void dumpData(const char *filename) {};
-	virtual CBImage *takeScreenshot();
+	virtual BaseImage *takeScreenshot();
 	virtual bool setViewport(int left, int top, int right, int bottom);
 	virtual bool setViewport(Rect32 *Rect);
 	virtual bool setScreenViewport();
@@ -56,8 +56,8 @@ public:
 	virtual bool fadeToColor(uint32 Color, Common::Rect *rect = NULL);
 	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
 	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1);
-	CBRenderer(CBGame *inGame = NULL);
-	virtual ~CBRenderer();
+	BaseRenderer(BaseGame *inGame = NULL);
+	virtual ~BaseRenderer();
 	virtual bool setProjection() {
 		return STATUS_OK;
 	};
@@ -89,12 +89,12 @@ public:
 		return 1.0f;
 	}
 
-	virtual CBSurface *createSurface() = 0;
+	virtual BaseSurface *createSurface() = 0;
 
 	bool clipCursor();
 	bool unclipCursor();
 
-	CBObject *getObjectAt(int x, int y);
+	BaseObject *getObjectAt(int x, int y);
 	void deleteRectList();
 
 	virtual bool startSpriteBatch() {
@@ -118,10 +118,10 @@ public:
 	int _height;
 	int _width;
 
-	CBArray<CBActiveRect *, CBActiveRect *> _rectList;
+	BaseArray<BaseActiveRect *, BaseActiveRect *> _rectList;
 };
 
-CBRenderer *makeOSystemRenderer(CBGame *inGame); // Implemented in BRenderSDL.cpp
+BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
 
 } // end of namespace WinterMute
 

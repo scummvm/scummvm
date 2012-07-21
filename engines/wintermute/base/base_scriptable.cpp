@@ -33,14 +33,14 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBScriptable, false)
+IMPLEMENT_PERSISTENT(BaseScriptable, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBScriptable::CBScriptable(CBGame *inGame, bool noValue, bool persistable): CBNamedObject(inGame) {
+BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable): BaseNamedObject(inGame) {
 	_refCount = 0;
 
 	if (noValue) _scValue = NULL;
-	else _scValue = new CScValue(_gameRef);
+	else _scValue = new ScValue(_gameRef);
 
 	_persistable = persistable;
 
@@ -49,7 +49,7 @@ CBScriptable::CBScriptable(CBGame *inGame, bool noValue, bool persistable): CBNa
 
 
 //////////////////////////////////////////////////////////////////////////
-CBScriptable::~CBScriptable() {
+BaseScriptable::~BaseScriptable() {
 	//if(_refCount>0) _gameRef->LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
 	delete _scValue;
 	delete _scProp;
@@ -61,7 +61,7 @@ CBScriptable::~CBScriptable() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	/*
 	stack->correctParams(0);
 	stack->pushNULL();
@@ -74,72 +74,72 @@ bool CBScriptable::scCallMethod(CScScript *script, CScStack *stack, CScStack *th
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBScriptable::scGetProperty(const char *name) {
-	if (!_scProp) _scProp = new CScValue(_gameRef);
+ScValue *BaseScriptable::scGetProperty(const char *name) {
+	if (!_scProp) _scProp = new ScValue(_gameRef);
 	if (_scProp) return _scProp->getProp(name);
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptable::scSetProperty(const char *name, CScValue *value) {
-	if (!_scProp) _scProp = new CScValue(_gameRef);
+bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
+	if (!_scProp) _scProp = new ScValue(_gameRef);
 	if (_scProp) return _scProp->setProp(name, value);
 	else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBScriptable::scToString() {
+const char *BaseScriptable::scToString() {
 	return "[native object]";
 }
 
 //////////////////////////////////////////////////////////////////////////
-void *CBScriptable::scToMemBuffer() {
+void *BaseScriptable::scToMemBuffer() {
 	return (void *)NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBScriptable::scToInt() {
+int BaseScriptable::scToInt() {
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-double CBScriptable::scToFloat() {
+double BaseScriptable::scToFloat() {
 	return 0.0f;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptable::scToBool() {
+bool BaseScriptable::scToBool() {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::scSetString(const char *val) {
+void BaseScriptable::scSetString(const char *val) {
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::scSetInt(int val) {
+void BaseScriptable::scSetInt(int val) {
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::scSetFloat(double val) {
+void BaseScriptable::scSetFloat(double val) {
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::scSetBool(bool val) {
+void BaseScriptable::scSetBool(bool val) {
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptable::persist(CBPersistMgr *persistMgr) {
+bool BaseScriptable::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_refCount));
 	persistMgr->transfer(TMEMBER(_scProp));
@@ -150,25 +150,25 @@ bool CBScriptable::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBScriptable::scCompare(CBScriptable *val) {
+int BaseScriptable::scCompare(BaseScriptable *val) {
 	if (this < val) return -1;
 	else if (this > val) return 1;
 	else return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBScriptable::scDebuggerDesc(char *buf, int bufSize) {
+void BaseScriptable::scDebuggerDesc(char *buf, int bufSize) {
 	strcpy(buf, scToString());
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBScriptable::canHandleMethod(const char *eventMethod) {
+bool BaseScriptable::canHandleMethod(const char *eventMethod) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScScript *CBScriptable::invokeMethodThread(const char *methodName) {
+ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return NULL;
 }
 
@@ -176,12 +176,12 @@ CScScript *CBScriptable::invokeMethodThread(const char *methodName) {
 //////////////////////////////////////////////////////////////////////////
 // IWmeDebugObject
 //////////////////////////////////////////////////////////////////////////
-const char *CBScriptable::dbgGetNativeClass() {
+const char *BaseScriptable::dbgGetNativeClass() {
 	return getClassName();
 }
 
 //////////////////////////////////////////////////////////////////////////
-IWmeDebugProp *CBScriptable::dbgGetProperty(const char *name) {
+IWmeDebugProp *BaseScriptable::dbgGetProperty(const char *name) {
 	return scGetProperty(name);
 }
 

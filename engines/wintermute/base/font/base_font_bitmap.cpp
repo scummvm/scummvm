@@ -45,10 +45,10 @@ namespace WinterMute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-IMPLEMENT_PERSISTENT(CBFontBitmap, false)
+IMPLEMENT_PERSISTENT(BaseFontBitmap, false)
 
 //////////////////////////////////////////////////////////////////////
-CBFontBitmap::CBFontBitmap(CBGame *inGame): CBFont(inGame) {
+BaseFontBitmap::BaseFontBitmap(BaseGame *inGame): BaseFont(inGame) {
 	_subframe = NULL;
 	_sprite = NULL;
 	_widthsFrame = 0;
@@ -61,7 +61,7 @@ CBFontBitmap::CBFontBitmap(CBGame *inGame): CBFont(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBFontBitmap::~CBFontBitmap() {
+BaseFontBitmap::~BaseFontBitmap() {
 	delete _subframe;
 	delete _sprite;
 	_subframe = NULL;
@@ -70,19 +70,19 @@ CBFontBitmap::~CBFontBitmap() {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBFontBitmap::drawText(byte *text, int x, int y, int width, TTextAlign align, int max_height, int maxLength) {
+void BaseFontBitmap::drawText(byte *text, int x, int y, int width, TTextAlign align, int max_height, int maxLength) {
 	textHeightDraw(text, x, y, width, align, true, max_height, maxLength);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFontBitmap::getTextHeight(byte *text, int width) {
+int BaseFontBitmap::getTextHeight(byte *text, int width) {
 	return textHeightDraw(text, 0, 0, width, TAL_LEFT, false);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFontBitmap::getTextWidth(byte *text, int maxLength) {
+int BaseFontBitmap::getTextWidth(byte *text, int maxLength) {
 	AnsiString str;
 
 	if (_gameRef->_textEncoding == TEXT_UTF8) {
@@ -106,7 +106,7 @@ int CBFontBitmap::getTextWidth(byte *text, int maxLength) {
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign align, bool draw, int maxHeight, int maxLength) {
+int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign align, bool draw, int maxHeight, int maxLength) {
 	if (maxLength == 0) return 0;
 
 	if (text == NULL || text[0] == '\0') return _tileHeight;
@@ -187,7 +187,7 @@ int CBFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign
 				StartX = x;
 				break;
 			default:
-				error("CBFontBitmap::TextHeightDraw - Unhandled enum");
+				error("BaseFontBitmap::TextHeightDraw - Unhandled enum");
 				break;
 			}
 			for (i = start; i < end + 1; i++) {
@@ -213,7 +213,7 @@ int CBFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign
 
 
 //////////////////////////////////////////////////////////////////////
-void CBFontBitmap::drawChar(byte c, int x, int y) {
+void BaseFontBitmap::drawChar(byte c, int x, int y) {
 	if (_fontextFix) c--;
 
 	int row, col;
@@ -227,7 +227,7 @@ void CBFontBitmap::drawChar(byte c, int x, int y) {
 	if (_wholeCell) tileWidth = _tileWidth;
 	else tileWidth = _widths[c];
 
-	CBPlatform::setRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1)*_tileHeight);
+	BasePlatform::setRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1)*_tileHeight);
 	bool handled = false;
 	if (_sprite) {
 		_sprite->GetCurrentFrame();
@@ -243,10 +243,10 @@ void CBFontBitmap::drawChar(byte c, int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBFontBitmap::loadFile(const char *filename) {
+bool BaseFontBitmap::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CBFontBitmap::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "BaseFontBitmap::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -282,7 +282,7 @@ TOKEN_DEF(WIDTHS_FRAME)
 TOKEN_DEF(PAINT_WHOLE_CELL)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool CBFontBitmap::loadBuffer(byte *buffer) {
+bool BaseFontBitmap::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONTEXT_FIX)
 	TOKEN_TABLE(FONT)
@@ -304,7 +304,7 @@ bool CBFontBitmap::loadBuffer(byte *buffer) {
 
 	char *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_FONT) {
 		_gameRef->LOG(0, "'FONT' keyword expected.");
@@ -401,7 +401,7 @@ bool CBFontBitmap::loadBuffer(byte *buffer) {
 
 	if (spriteFile != NULL) {
 		delete _sprite;
-		_sprite = new CBSprite(_gameRef, this);
+		_sprite = new BaseSprite(_gameRef, this);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(spriteFile))) {
 			delete _sprite;
 			_sprite = NULL;
@@ -409,7 +409,7 @@ bool CBFontBitmap::loadBuffer(byte *buffer) {
 	}
 
 	if (surfaceFile != NULL && !_sprite) {
-		_subframe = new CBSubFrame(_gameRef);
+		_subframe = new BaseSubFrame(_gameRef);
 		if (custoTrans) _subframe->setSurface(surfaceFile, false, r, g, b);
 		else _subframe->setSurface(surfaceFile);
 	}
@@ -454,9 +454,9 @@ bool CBFontBitmap::loadBuffer(byte *buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFontBitmap::persist(CBPersistMgr *persistMgr) {
+bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 
-	CBFont::persist(persistMgr);
+	BaseFont::persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_numColumns));
 
 	persistMgr->transfer(TMEMBER(_subframe));
@@ -480,15 +480,15 @@ bool CBFontBitmap::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontBitmap::getCharWidth(byte index) {
+int BaseFontBitmap::getCharWidth(byte index) {
 	if (_fontextFix) index--;
 	return _widths[index];
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFontBitmap::getWidths() {
-	CBSurface *surf = NULL;
+bool BaseFontBitmap::getWidths() {
+	BaseSurface *surf = NULL;
 
 	if (_sprite) {
 		if (_widthsFrame >= 0 && _widthsFrame < _sprite->_frames.getSize()) {
@@ -533,7 +533,7 @@ bool CBFontBitmap::getWidths() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontBitmap::getLetterHeight() {
+int BaseFontBitmap::getLetterHeight() {
 	return _tileHeight;
 }
 

@@ -58,7 +58,7 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
-CBFileManager::CBFileManager(CBGame *inGame): CBBase(inGame) {
+BaseFileManager::BaseFileManager(BaseGame *inGame): BaseClass(inGame) {
 	_basePath = NULL;
 
 	initPaths();
@@ -67,13 +67,13 @@ CBFileManager::CBFileManager(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBFileManager::~CBFileManager() {
+BaseFileManager::~BaseFileManager() {
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::cleanup() {
+bool BaseFileManager::cleanup() {
 	// delete registered paths
 	for (uint32 i = 0; i < _singlePaths.size(); i++)
 		delete [] _singlePaths[i];
@@ -114,7 +114,7 @@ bool CBFileManager::cleanup() {
 
 #define MAX_FILE_SIZE 10000000
 //////////////////////////////////////////////////////////////////////
-byte *CBFileManager::readWholeFile(const Common::String &filename, uint32 *size, bool mustExist) {
+byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *size, bool mustExist) {
 	byte *buffer = NULL;
 
 	Common::SeekableReadStream *file = openFile(filename);
@@ -153,14 +153,14 @@ byte *CBFileManager::readWholeFile(const Common::String &filename, uint32 *size,
 	return buffer;
 }
 
-Common::SeekableReadStream *CBFileManager::loadSaveGame(const Common::String &filename) {
+Common::SeekableReadStream *BaseFileManager::loadSaveGame(const Common::String &filename) {
 	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
 	Common::InSaveFile *file = saveMan->openForLoading(filename);
 	return file;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed, byte *prefixBuffer, uint32 prefixSize) {
+bool BaseFileManager::saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed, byte *prefixBuffer, uint32 prefixSize) {
 	// TODO
 	warning("Implement SaveFile");
 
@@ -173,7 +173,7 @@ bool CBFileManager::saveFile(const Common::String &filename, byte *buffer, uint3
 #if 0
 	RestoreCurrentDir();
 
-	CBUtils::CreatePath(filename, false);
+	BaseUtils::CreatePath(filename, false);
 
 	FILE *f = fopen(filename, "wb");
 	if (!f) {
@@ -223,7 +223,7 @@ bool CBFileManager::saveFile(const Common::String &filename, byte *buffer, uint3
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::requestCD(int cd, char *packageFile, const char *filename) {
+bool BaseFileManager::requestCD(int cd, char *packageFile, const char *filename) {
 	// unmount all non-local packages
 	for (uint32 i = 0; i < _packages.size(); i++) {
 		if (_packages[i]->_cD > 0) _packages[i]->close();
@@ -235,7 +235,7 @@ bool CBFileManager::requestCD(int cd, char *packageFile, const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::addPath(TPathType type, const Common::String &path) {
+bool BaseFileManager::addPath(TPathType type, const Common::String &path) {
 	if (path.c_str() == NULL || strlen(path.c_str()) < 1) return STATUS_FAILED;
 
 	bool slashed = (path[path.size() - 1] == '\\' || path[path.size() - 1] == '/');
@@ -245,7 +245,7 @@ bool CBFileManager::addPath(TPathType type, const Common::String &path) {
 
 	strcpy(buffer, path.c_str());
 	if (!slashed) strcat(buffer, "\\");
-	//CBPlatform::strlwr(buffer);
+	//BasePlatform::strlwr(buffer);
 
 	switch (type) {
 	case PATH_SINGLE:
@@ -260,7 +260,7 @@ bool CBFileManager::addPath(TPathType type, const Common::String &path) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::reloadPaths() {
+bool BaseFileManager::reloadPaths() {
 	// delete registered paths
 	for (uint32 i = 0; i < _singlePaths.size(); i++)
 		delete [] _singlePaths[i];
@@ -276,7 +276,7 @@ bool CBFileManager::reloadPaths() {
 
 #define TEMP_BUFFER_SIZE 32768
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::initPaths() {
+bool BaseFileManager::initPaths() {
 	restoreCurrentDir();
 
 	AnsiString pathList;
@@ -284,10 +284,10 @@ bool CBFileManager::initPaths() {
 
 	// single files paths
 	pathList = _gameRef->_registry->readString("Resource", "CustomPaths", "");
-	numPaths = CBUtils::strNumEntries(pathList.c_str(), ';');
+	numPaths = BaseUtils::strNumEntries(pathList.c_str(), ';');
 
 	for (int i = 0; i < numPaths; i++) {
-		char *path = CBUtils::strEntry(i, pathList.c_str(), ';');
+		char *path = BaseUtils::strEntry(i, pathList.c_str(), ';');
 		if (path && strlen(path) > 0) {
 			addPath(PATH_SINGLE, path);
 		}
@@ -301,10 +301,10 @@ bool CBFileManager::initPaths() {
 	addPath(PATH_PACKAGE, "./");
 
 	pathList = _gameRef->_registry->readString("Resource", "PackagePaths", "");
-	numPaths = CBUtils::strNumEntries(pathList.c_str(), ';');
+	numPaths = BaseUtils::strNumEntries(pathList.c_str(), ';');
 
 	for (int i = 0; i < numPaths; i++) {
-		char *path = CBUtils::strEntry(i, pathList.c_str(), ';');
+		char *path = BaseUtils::strEntry(i, pathList.c_str(), ';');
 		if (path && strlen(path) > 0) {
 			addPath(PATH_PACKAGE, path);
 		}
@@ -318,7 +318,7 @@ bool CBFileManager::initPaths() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::registerPackages() {
+bool BaseFileManager::registerPackages() {
 	restoreCurrentDir();
 
 	_gameRef->LOG(0, "Scanning packages...");
@@ -365,7 +365,7 @@ bool CBFileManager::registerPackages() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::registerPackage(const Common::String &filename , bool searchSignature) {
+bool BaseFileManager::registerPackage(const Common::String &filename , bool searchSignature) {
 //	FILE *f = fopen(filename, "rb");
 	Common::File *package = new Common::File();
 	package->open(filename);
@@ -411,7 +411,7 @@ bool CBFileManager::registerPackage(const Common::String &filename , bool search
 	}
 
 	for (uint32 i = 0; i < hdr.NumDirs; i++) {
-		CBPackage *pkg = new CBPackage(_gameRef);
+		BasePackage *pkg = new BasePackage(_gameRef);
 		if (!pkg) return STATUS_FAILED;
 
 		pkg->_boundToExe = boundToExe;
@@ -450,7 +450,7 @@ bool CBFileManager::registerPackage(const Common::String &filename , bool search
 			name[nameLength - 1] = '\0';
 
 
-			CBPlatform::strupr(name);
+			BasePlatform::strupr(name);
 
 			offset = package->readUint32LE();
 			offset += absoluteOffset;
@@ -464,7 +464,7 @@ bool CBFileManager::registerPackage(const Common::String &filename , bool search
 			}
 			_filesIter = _files.find(name);
 			if (_filesIter == _files.end()) {
-				CBFileEntry *file = new CBFileEntry(_gameRef);
+				BaseFileEntry *file = new BaseFileEntry(_gameRef);
 				file->_package = pkg;
 				file->_offset = offset;
 				file->_length = length;
@@ -492,7 +492,7 @@ bool CBFileManager::registerPackage(const Common::String &filename , bool search
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::isValidPackage(const AnsiString &fileName) const {
+bool BaseFileManager::isValidPackage(const AnsiString &fileName) const {
 	AnsiString plainName = PathUtil::getFileNameWithoutExtension(fileName);
 
 	// check for device-type specific packages
@@ -503,7 +503,7 @@ bool CBFileManager::isValidPackage(const AnsiString &fileName) const {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::File *CBFileManager::openPackage(const Common::String &name) {
+Common::File *BaseFileManager::openPackage(const Common::String &name) {
 	//TODO: Is it really necessary to do this when we have the ScummVM-system?
 
 	//RestoreCurrentDir();
@@ -524,14 +524,14 @@ Common::File *CBFileManager::openPackage(const Common::String &name) {
 	if (ret->isOpen()) {
 		return ret;
 	}
-	warning("CBFileManager::OpenPackage - Couldn't load file %s", name.c_str());
+	warning("BaseFileManager::OpenPackage - Couldn't load file %s", name.c_str());
 	delete ret;
 	return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-Common::File *CBFileManager::openSingleFile(const Common::String &name) {
+Common::File *BaseFileManager::openSingleFile(const Common::String &name) {
 	restoreCurrentDir();
 
 	Common::File *ret = NULL;
@@ -556,7 +556,7 @@ Common::File *CBFileManager::openSingleFile(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::getFullPath(const Common::String &filename, char *fullname) {
+bool BaseFileManager::getFullPath(const Common::String &filename, char *fullname) {
 	restoreCurrentDir();
 
 	Common::File f;
@@ -586,12 +586,12 @@ bool CBFileManager::getFullPath(const Common::String &filename, char *fullname) 
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFileEntry *CBFileManager::getPackageEntry(const Common::String &filename) {
+BaseFileEntry *BaseFileManager::getPackageEntry(const Common::String &filename) {
 	char *upc_name = new char[strlen(filename.c_str()) + 1];
 	strcpy(upc_name, filename.c_str());
-	CBPlatform::strupr(upc_name);
+	BasePlatform::strupr(upc_name);
 
-	CBFileEntry *ret = NULL;
+	BaseFileEntry *ret = NULL;
 	_filesIter = _files.find(upc_name);
 	if (_filesIter != _files.end()) ret = _filesIter->_value;
 
@@ -600,7 +600,7 @@ CBFileEntry *CBFileManager::getPackageEntry(const Common::String &filename) {
 	return ret;
 }
 
-bool CBFileManager::hasFile(const Common::String &filename) {
+bool BaseFileManager::hasFile(const Common::String &filename) {
 	//TODO: Do this in a much simpler fashion
 	Common::SeekableReadStream *stream = openFile(filename, true, false);
 	if (!stream) {
@@ -611,7 +611,7 @@ bool CBFileManager::hasFile(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filename, bool absPathWarning, bool keepTrackOf) {
+Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &filename, bool absPathWarning, bool keepTrackOf) {
 	if (strcmp(filename.c_str(), "") == 0) return NULL;
 	//_gameRef->LOG(0, "open file: %s", filename);
 	/*#ifdef __WIN32__
@@ -631,7 +631,7 @@ Common::SeekableReadStream *CBFileManager::openFile(const Common::String &filena
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::closeFile(Common::SeekableReadStream *File) {
+bool BaseFileManager::closeFile(Common::SeekableReadStream *File) {
 	for (uint32 i = 0; i < _openFiles.size(); i++) {
 		if (_openFiles[i] == File) {
 			delete _openFiles[i];
@@ -644,13 +644,13 @@ bool CBFileManager::closeFile(Common::SeekableReadStream *File) {
 
 
 //////////////////////////////////////////////////////////////////////////
-Common::SeekableReadStream *CBFileManager::openFileRaw(const Common::String &filename) {
+Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &filename) {
 	restoreCurrentDir();
 
 	Common::SeekableReadStream *ret = NULL;
 
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
-		CBSaveThumbFile *SaveThumbFile = new CBSaveThumbFile(_gameRef);
+		BaseSaveThumbFile *SaveThumbFile = new BaseSaveThumbFile(_gameRef);
 		if (DID_SUCCEED(SaveThumbFile->open(filename))) {
 			ret = SaveThumbFile->getMemStream();
 		} 
@@ -666,7 +666,7 @@ Common::SeekableReadStream *CBFileManager::openFileRaw(const Common::String &fil
 	ret = openPkgFile(filename, this);
 	if (ret) return ret;
 
-	ret = CBResources::getFile(filename);
+	ret = BaseResources::getFile(filename);
 	if (ret) return ret;
 
 	warning("BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
@@ -675,19 +675,19 @@ Common::SeekableReadStream *CBFileManager::openFileRaw(const Common::String &fil
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::restoreCurrentDir() {
+bool BaseFileManager::restoreCurrentDir() {
 	if (!_basePath) return STATUS_OK;
 	else {
 		/*if (!chdir(_basePath)) return STATUS_OK;
 		else return STATUS_FAILED;*/
-		warning("CBFileManager::RestoreCurrentDir - ignored");
+		warning("BaseFileManager::RestoreCurrentDir - ignored");
 		return STATUS_OK;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::setBasePath(const Common::String &path) {
+bool BaseFileManager::setBasePath(const Common::String &path) {
 	cleanup();
 
 	if (path.c_str()) {
@@ -703,7 +703,7 @@ bool CBFileManager::setBasePath(const Common::String &path) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFileManager::findPackageSignature(Common::File *f, uint32 *offset) {
+bool BaseFileManager::findPackageSignature(Common::File *f, uint32 *offset) {
 	byte buf[32768];
 
 	byte signature[8];

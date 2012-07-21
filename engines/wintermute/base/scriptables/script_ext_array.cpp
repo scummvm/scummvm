@@ -34,16 +34,16 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CSXArray, false)
+IMPLEMENT_PERSISTENT(SXArray, false)
 
-CBScriptable *makeSXArray(CBGame *inGame, CScStack *stack) {
-	return new CSXArray(inGame, stack);
+BaseScriptable *makeSXArray(BaseGame *inGame, ScStack *stack) {
+	return new SXArray(inGame, stack);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXArray::CSXArray(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
+SXArray::SXArray(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 	_length = 0;
-	_values = new CScValue(_gameRef);
+	_values = new ScValue(_gameRef);
 
 	int numParams = stack->pop()->getInt(0);
 
@@ -59,27 +59,27 @@ CSXArray::CSXArray(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXArray::CSXArray(CBGame *inGame): CBScriptable(inGame) {
+SXArray::SXArray(BaseGame *inGame): BaseScriptable(inGame) {
 	_length = 0;
-	_values = new CScValue(_gameRef);
+	_values = new ScValue(_gameRef);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CSXArray::~CSXArray() {
+SXArray::~SXArray() {
 	delete _values;
 	_values = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CSXArray::scToString() {
+const char *SXArray::scToString() {
 	static char dummy[32768]; // TODO: Get rid of static.
 	strcpy(dummy, "");
 	char propName[20];
 	for (int i = 0; i < _length; i++) {
 		sprintf(propName, "%d", i);
-		CScValue *val = _values->getProp(propName);
+		ScValue *val = _values->getProp(propName);
 		if (val) {
 			if (strlen(dummy) + strlen(val->getString()) < 32768) {
 				strcat(dummy, val->getString());
@@ -93,7 +93,7 @@ const char *CSXArray::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Push
 	//////////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ bool CSXArray::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXArray::scGetProperty(const char *name) {
+ScValue *SXArray::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ CScValue *CSXArray::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXArray::scSetProperty(const char *name, CScValue *value) {
+bool SXArray::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
@@ -199,8 +199,8 @@ bool CSXArray::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXArray::persist(CBPersistMgr *persistMgr) {
-	CBScriptable::persist(persistMgr);
+bool SXArray::persist(BasePersistenceManager *persistMgr) {
+	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_length));
 	persistMgr->transfer(TMEMBER(_values));
@@ -210,7 +210,7 @@ bool CSXArray::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXArray::validNumber(const char *origStr, char *outStr) {
+bool SXArray::validNumber(const char *origStr, char *outStr) {
 	bool isNumber = true;
 	for (uint32 i = 0; i < strlen(origStr); i++) {
 		if (!(origStr[i] >= '0' && origStr[i] <= '9')) {
@@ -227,7 +227,7 @@ bool CSXArray::validNumber(const char *origStr, char *outStr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXArray::push(CScValue *val) {
+bool SXArray::push(ScValue *val) {
 	char paramName[20];
 	_length++;
 	sprintf(paramName, "%d", _length - 1);

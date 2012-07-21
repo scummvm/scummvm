@@ -55,10 +55,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdEntity, false)
+IMPLEMENT_PERSISTENT(AdEntity, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdEntity::CAdEntity(CBGame *inGame): CAdTalkHolder(inGame) {
+AdEntity::AdEntity(BaseGame *inGame): AdTalkHolder(inGame) {
 	_type = OBJECT_ENTITY;
 	_subtype = ENTITY_NORMAL;
 	_region = NULL;
@@ -72,7 +72,7 @@ CAdEntity::CAdEntity(CBGame *inGame): CAdTalkHolder(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdEntity::~CAdEntity() {
+AdEntity::~AdEntity() {
 	_gameRef->unregisterObject(_region);
 
 	delete _theora;
@@ -84,10 +84,10 @@ CAdEntity::~CAdEntity() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdEntity::loadFile(const char *filename) {
+bool AdEntity::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdEntity::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -150,7 +150,7 @@ TOKEN_DEF(WALK_TO_DIR)
 TOKEN_DEF(SAVE_STATE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
+bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY)
 	TOKEN_TABLE(SPRITE)
@@ -198,7 +198,7 @@ bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY) {
@@ -208,8 +208,8 @@ bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	CAdGame *adGame = (CAdGame *)_gameRef;
-	CBSprite *spr = NULL;
+	AdGame *adGame = (AdGame *)_gameRef;
+	BaseSprite *spr = NULL;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -228,21 +228,21 @@ bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_SPRITE: {
 			delete _sprite;
 			_sprite = NULL;
-			spr = new CBSprite(_gameRef, this);
+			spr = new BaseSprite(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params))) cmd = PARSERR_GENERIC;
 			else _sprite = spr;
 		}
 		break;
 
 		case TOKEN_TALK: {
-			spr = new CBSprite(_gameRef, this);
+			spr = new BaseSprite(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
-			spr = new CBSprite(_gameRef, this);
+			spr = new BaseSprite(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.add(spr);
 		}
@@ -305,7 +305,7 @@ bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(_gameRef);
+			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -320,7 +320,7 @@ bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_REGION: {
 			if (_region) _gameRef->unregisterObject(_region);
 			_region = NULL;
-			CBRegion *rgn = new CBRegion(_gameRef);
+			BaseRegion *rgn = new BaseRegion(_gameRef);
 			if (!rgn || DID_FAIL(rgn->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
 			else {
 				_region = rgn;
@@ -334,8 +334,8 @@ bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			_blockRegion = NULL;
 			delete _currentBlockRegion;
 			_currentBlockRegion = NULL;
-			CBRegion *rgn = new CBRegion(_gameRef);
-			CBRegion *crgn = new CBRegion(_gameRef);
+			BaseRegion *rgn = new BaseRegion(_gameRef);
+			BaseRegion *crgn = new BaseRegion(_gameRef);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				delete _blockRegion;
 				_blockRegion = NULL;
@@ -355,8 +355,8 @@ bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 			_wptGroup = NULL;
 			delete _currentWptGroup;
 			_currentWptGroup = NULL;
-			CAdWaypointGroup *wpt = new CAdWaypointGroup(_gameRef);
-			CAdWaypointGroup *cwpt = new CAdWaypointGroup(_gameRef);
+			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
+			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				delete _wptGroup;
 				_wptGroup = NULL;
@@ -380,7 +380,7 @@ bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 				delete _sprite;
 				_sprite = NULL;
 				if (_gameRef->_editorMode) {
-					spr = new CBSprite(_gameRef, this);
+					spr = new BaseSprite(_gameRef, this);
 					if (!spr || DID_FAIL(spr->loadFile("entity_sound.sprite"))) cmd = PARSERR_GENERIC;
 					else _sprite = spr;
 				}
@@ -474,20 +474,20 @@ bool CAdEntity::loadBuffer(byte *buffer, bool complete) {
 	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 	_state = STATE_READY;
 
-	if (_item && ((CAdGame *)_gameRef)->isItemTaken(_item)) _active = false;
+	if (_item && ((AdGame *)_gameRef)->isItemTaken(_item)) _active = false;
 
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdEntity::display() {
+bool AdEntity::display() {
 	if (_active) {
 		updateSounds();
 
 		uint32 Alpha;
 		if (_alphaColor != 0) Alpha = _alphaColor;
-		else Alpha = _shadowable ? ((CAdGame *)_gameRef)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
+		else Alpha = _shadowable ? ((AdGame *)_gameRef)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
 
 		float ScaleX, ScaleY;
 		getScale(&ScaleX, &ScaleY);
@@ -495,15 +495,15 @@ bool CAdEntity::display() {
 		float Rotate;
 		if (_rotatable) {
 			if (_rotateValid) Rotate = _rotate;
-			else Rotate = ((CAdGame *)_gameRef)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
+			else Rotate = ((AdGame *)_gameRef)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
 		} else Rotate = 0.0f;
 
 
 		bool Reg = _registrable;
-		if (_ignoreItems && ((CAdGame *)_gameRef)->_selectedItem) Reg = false;
+		if (_ignoreItems && ((AdGame *)_gameRef)->_selectedItem) Reg = false;
 
 		if (_region && (Reg || _editorAlwaysRegister)) {
-			_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
+			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
 		}
 
 		displaySpriteAttachments(true);
@@ -529,7 +529,7 @@ bool CAdEntity::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdEntity::update() {
+bool AdEntity::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY && _animSprite) {
@@ -577,11 +577,11 @@ bool CAdEntity::update() {
 					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 				}
-				((CAdGame *)_gameRef)->addSentence(_sentence);
+				((AdGame *)_gameRef)->addSentence(_sentence);
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((CAdGame *)_gameRef)->addSentence(_sentence);
+			((AdGame *)_gameRef)->addSentence(_sentence);
 		}
 	}
 	break;
@@ -591,7 +591,7 @@ bool CAdEntity::update() {
 
 
 	if (_currentSprite) {
-		_currentSprite->GetCurrentFrame(_zoomable ? ((CAdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
+		_currentSprite->GetCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
@@ -625,7 +625,7 @@ bool CAdEntity::update() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// StopSound
 	//////////////////////////////////////////////////////////////////////////
@@ -644,11 +644,11 @@ bool CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(4);
 		const char *filename = stack->pop()->getString();
 		bool looping = stack->pop()->getBool(false);
-		CScValue *valAlpha = stack->pop();
+		ScValue *valAlpha = stack->pop();
 		int startTime = stack->pop()->getInt();
 
 		delete _theora;
-		_theora = new CVidTheoraPlayer(_gameRef);
+		_theora = new VideoTheoraPlayer(_gameRef);
 		if (_theora && DID_SUCCEED(_theora->initialize(filename))) {
 			if (!valAlpha->isNULL())    _theora->setAlphaImage(valAlpha->getString());
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
@@ -732,7 +732,7 @@ bool CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "CreateRegion") == 0) {
 		stack->correctParams(0);
 		if (!_region) {
-			_region = new CBRegion(_gameRef);
+			_region = new BaseRegion(_gameRef);
 			_gameRef->registerObject(_region);
 		}
 		if (_region) stack->pushNative(_region, true);
@@ -755,12 +755,12 @@ bool CAdEntity::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		return STATUS_OK;
 	}
 
-	else return CAdTalkHolder::scCallMethod(script, stack, thisStack, name);
+	else return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdEntity::scGetProperty(const char *name) {
+ScValue *AdEntity::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -826,12 +826,12 @@ CScValue *CAdEntity::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CAdTalkHolder::scGetProperty(name);
+	else return AdTalkHolder::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdEntity::scSetProperty(const char *name, CScValue *value) {
+bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Item
@@ -866,18 +866,18 @@ bool CAdEntity::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CAdTalkHolder::scSetProperty(name, value);
+	else return AdTalkHolder::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdEntity::scToString() {
+const char *AdEntity::scToString() {
 	return "[entity object]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	if (_subtype == ENTITY_SOUND)
@@ -942,13 +942,13 @@ bool CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 	if (_cursor && _cursor->_filename)
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 
-	CAdTalkHolder::saveAsText(buffer, indent + 2);
+	AdTalkHolder::saveAsText(buffer, indent + 2);
 
 	if (_region) _region->saveAsText(buffer, indent + 2);
 
 	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
 
-	CAdObject::saveAsText(buffer, indent + 2);
+	AdObject::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n\n");
 
@@ -957,18 +957,18 @@ bool CAdEntity::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CAdEntity::getHeight() {
+int AdEntity::getHeight() {
 	if (_region && !_sprite) {
 		return _region->_rect.bottom - _region->_rect.top;
 	} else {
 		if (_currentSprite == NULL) _currentSprite = _sprite;
-		return CAdObject::getHeight();
+		return AdObject::getHeight();
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdEntity::updatePosition() {
+void AdEntity::updatePosition() {
 	if (_region && !_sprite) {
 		_posX = _region->_rect.left + (_region->_rect.right - _region->_rect.left) / 2;
 		_posY = _region->_rect.bottom;
@@ -977,8 +977,8 @@ void CAdEntity::updatePosition() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdEntity::persist(CBPersistMgr *persistMgr) {
-	CAdTalkHolder::persist(persistMgr);
+bool AdEntity::persist(BasePersistenceManager *persistMgr) {
+	AdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_item));
 	persistMgr->transfer(TMEMBER(_region));
@@ -998,12 +998,12 @@ bool CAdEntity::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdEntity::setItem(const char *itemName) {
-	CBUtils::setString(&_item, itemName);
+void AdEntity::setItem(const char *itemName) {
+	BaseUtils::setString(&_item, itemName);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdEntity::setSprite(const char *filename) {
+bool AdEntity::setSprite(const char *filename) {
 	bool setCurrent = false;
 	if (_currentSprite == _sprite) {
 		_currentSprite = NULL;
@@ -1012,7 +1012,7 @@ bool CAdEntity::setSprite(const char *filename) {
 
 	delete _sprite;
 	_sprite = NULL;
-	CBSprite *spr = new CBSprite(_gameRef, this);
+	BaseSprite *spr = new BaseSprite(_gameRef, this);
 	if (!spr || DID_FAIL(spr->loadFile(filename))) {
 		delete _sprite;
 		_sprite = NULL;

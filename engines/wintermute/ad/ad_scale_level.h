@@ -34,13 +34,13 @@
 
 namespace WinterMute {
 
-class CAdScaleLevel : public CBObject {
+class AdScaleLevel : public BaseObject {
 public:
-	DECLARE_PERSISTENT(CAdScaleLevel, CBObject)
+	DECLARE_PERSISTENT(AdScaleLevel, BaseObject)
 	float _scale;
-	CAdScaleLevel(CBGame *inGame);
-	virtual ~CAdScaleLevel();
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	AdScaleLevel(BaseGame *inGame);
+	virtual ~AdScaleLevel();
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 };

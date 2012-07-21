@@ -33,10 +33,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBSound, false)
+IMPLEMENT_PERSISTENT(BaseSound, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBSound::CBSound(CBGame *inGame): CBBase(inGame) {
+BaseSound::BaseSound(BaseGame *inGame): BaseClass(inGame) {
 	_sound = NULL;
 	_soundFilename = NULL;
 
@@ -56,7 +56,7 @@ CBSound::CBSound(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSound::~CBSound() {
+BaseSound::~BaseSound() {
 	if (_sound) _gameRef->_soundMgr->removeSound(_sound);
 	_sound = NULL;
 
@@ -66,7 +66,7 @@ CBSound::~CBSound() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::setSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
+bool BaseSound::setSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (_sound) {
 		_gameRef->_soundMgr->removeSound(_sound);
 		_sound = NULL;
@@ -88,7 +88,7 @@ bool CBSound::setSound(const char *filename, Audio::Mixer::SoundType type, bool 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::setSoundSimple() {
+bool BaseSound::setSoundSimple() {
 	_sound = _gameRef->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
 	if (_sound) {
 		if (_soundPosition) _sound->setPosition(_soundPosition);
@@ -104,14 +104,14 @@ bool CBSound::setSoundSimple() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBSound::getLength() {
+uint32 BaseSound::getLength() {
 	if (_sound) return _sound->getLength();
 	else return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::play(bool looping) {
+bool BaseSound::play(bool looping) {
 	if (_sound) {
 		_soundPaused = false;
 		return _sound->play(looping, _soundPosition);
@@ -120,7 +120,7 @@ bool CBSound::play(bool looping) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::stop() {
+bool BaseSound::stop() {
 	if (_sound) {
 		_soundPaused = false;
 		return _sound->stop();
@@ -129,7 +129,7 @@ bool CBSound::stop() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::pause(bool freezePaused) {
+bool BaseSound::pause(bool freezePaused) {
 	if (_sound) {
 		_soundPaused = true;
 		if (freezePaused) _sound->_freezePaused = true;
@@ -139,7 +139,7 @@ bool CBSound::pause(bool freezePaused) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::resume() {
+bool BaseSound::resume() {
 	if (_sound && _soundPaused) {
 		_soundPaused = false;
 		return _sound->resume();
@@ -148,7 +148,7 @@ bool CBSound::resume() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::persist(CBPersistMgr *persistMgr) {
+bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 	if (persistMgr->_saving && _sound) {
 		_soundPlaying = _sound->isPlaying();
 		_soundLooping = _sound->_looping;
@@ -182,19 +182,19 @@ bool CBSound::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::isPlaying() {
+bool BaseSound::isPlaying() {
 	return _sound && _sound->isPlaying();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::isPaused() {
+bool BaseSound::isPaused() {
 	return _sound && _soundPaused;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::setPositionTime(uint32 time) {
+bool BaseSound::setPositionTime(uint32 time) {
 	if (!_sound) return STATUS_FAILED;
 	_soundPosition = time;
 	bool ret = _sound->setPosition(_soundPosition);
@@ -205,7 +205,7 @@ bool CBSound::setPositionTime(uint32 time) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBSound::getPositionTime() {
+uint32 BaseSound::getPositionTime() {
 	if (!_sound) return 0;
 
 	if (!_sound->isPlaying())
@@ -214,42 +214,42 @@ uint32 CBSound::getPositionTime() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::setVolumePercent(int percent) {
+bool BaseSound::setVolumePercent(int percent) {
 	if (!_sound)
 		return STATUS_FAILED;
 	else return _sound->setPrivateVolume(percent * 255 / 100);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::setVolume(int volume) {
+bool BaseSound::setVolume(int volume) {
 	if (!_sound)
 		return STATUS_FAILED;
 	else return _sound->setPrivateVolume(volume);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::setPrivateVolume(int volume) {
+bool BaseSound::setPrivateVolume(int volume) {
 	if (!_sound) 
 		return STATUS_FAILED;
 	else return _sound->_privateVolume = volume;
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBSound::getVolumePercent() {
+int BaseSound::getVolumePercent() {
 	if (!_sound)
 		return 0;
 	else return _sound->_privateVolume * 100 / 255;
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBSound::getVolume() {
+int BaseSound::getVolume() {
 	if (!_sound)
 		return 0;
 	else return _sound->_privateVolume;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::setLoopStart(uint32 pos) {
+bool BaseSound::setLoopStart(uint32 pos) {
 	if (!_sound)
 		return STATUS_FAILED;
 	else {
@@ -259,7 +259,7 @@ bool CBSound::setLoopStart(uint32 pos) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::setPan(float pan) {
+bool BaseSound::setPan(float pan) {
 	if (_sound)
 		return _sound->setPan(pan);
 	else return STATUS_FAILED;
@@ -267,7 +267,7 @@ bool CBSound::setPan(float pan) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSound::ApplyFX(TSFXType type, float param1, float param2, float param3, float param4) {
+bool BaseSound::ApplyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	if (!_sound)
 		return STATUS_OK;
 

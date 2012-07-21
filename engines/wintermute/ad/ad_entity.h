@@ -32,33 +32,33 @@
 #include "engines/wintermute/ad/ad_talk_holder.h"
 
 namespace WinterMute {
-class CVidTheoraPlayer;
-class CAdEntity : public CAdTalkHolder {
+class VideoTheoraPlayer;
+class AdEntity : public AdTalkHolder {
 public:
-	CVidTheoraPlayer *_theora;
+	VideoTheoraPlayer *_theora;
 	bool setSprite(const char *filename);
 	int _walkToX;
 	int _walkToY;
 	TDirection _walkToDir;
 	void setItem(const char *itemName);
 	char *_item;
-	DECLARE_PERSISTENT(CAdEntity, CAdTalkHolder)
+	DECLARE_PERSISTENT(AdEntity, AdTalkHolder)
 	void updatePosition();
 	virtual int getHeight();
-	CBRegion *_region;
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	BaseRegion *_region;
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	virtual bool update();
 	virtual bool display();
-	CAdEntity(CBGame *inGame);
-	virtual ~CAdEntity();
+	AdEntity(BaseGame *inGame);
+	virtual ~AdEntity();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 	TEntityType _subtype;
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 };

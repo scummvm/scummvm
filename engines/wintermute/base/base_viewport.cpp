@@ -32,24 +32,24 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBViewport, false)
+IMPLEMENT_PERSISTENT(BaseViewport, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBViewport::CBViewport(CBGame *inGame): CBBase(inGame) {
-	CBPlatform::setRectEmpty(&_rect);
+BaseViewport::BaseViewport(BaseGame *inGame): BaseClass(inGame) {
+	BasePlatform::setRectEmpty(&_rect);
 	_mainObject = NULL;
 	_offsetX = _offsetY = 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBViewport::~CBViewport() {
+BaseViewport::~BaseViewport() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBViewport::persist(CBPersistMgr *persistMgr) {
+bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 
@@ -63,7 +63,7 @@ bool CBViewport::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBViewport::setRect(int left, int top, int right, int bottom, bool noCheck) {
+bool BaseViewport::setRect(int left, int top, int right, int bottom, bool noCheck) {
 	if (!noCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);
@@ -71,7 +71,7 @@ bool CBViewport::setRect(int left, int top, int right, int bottom, bool noCheck)
 		bottom = MIN(bottom, _gameRef->_renderer->_height);
 	}
 
-	CBPlatform::setRect(&_rect, left, top, right, bottom);
+	BasePlatform::setRect(&_rect, left, top, right, bottom);
 	_offsetX = left;
 	_offsetY = top;
 	return STATUS_OK;
@@ -79,19 +79,19 @@ bool CBViewport::setRect(int left, int top, int right, int bottom, bool noCheck)
 
 
 //////////////////////////////////////////////////////////////////////////
-Rect32 *CBViewport::getRect() {
+Rect32 *BaseViewport::getRect() {
 	return &_rect;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBViewport::getWidth() {
+int BaseViewport::getWidth() {
 	return _rect.right - _rect.left;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBViewport::getHeight() {
+int BaseViewport::getHeight() {
 	return _rect.bottom - _rect.top;
 }
 

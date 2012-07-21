@@ -37,10 +37,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdWaypointGroup, false)
+IMPLEMENT_PERSISTENT(AdWaypointGroup, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdWaypointGroup::CAdWaypointGroup(CBGame *inGame): CBObject(inGame) {
+AdWaypointGroup::AdWaypointGroup(BaseGame *inGame): BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
 	_lastMimicScale = -1;
@@ -49,13 +49,13 @@ CAdWaypointGroup::CAdWaypointGroup(CBGame *inGame): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdWaypointGroup::~CAdWaypointGroup() {
+AdWaypointGroup::~AdWaypointGroup() {
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdWaypointGroup::cleanup() {
+void AdWaypointGroup::cleanup() {
 	for (int i = 0; i < _points.getSize(); i++)
 		delete _points[i];
 	_points.removeAll();
@@ -64,10 +64,10 @@ void CAdWaypointGroup::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdWaypointGroup::loadFile(const char *filename) {
+bool AdWaypointGroup::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdWaypointGroup::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdWaypointGroup::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -96,7 +96,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
+bool AdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WAYPOINTS)
 	TOKEN_TABLE(TEMPLATE)
@@ -110,7 +110,7 @@ bool CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WAYPOINTS) {
@@ -133,7 +133,7 @@ bool CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_POINT: {
 			int x, y;
 			parser.scanStr((char *)params, "%d,%d", &x, &y);
-			_points.add(new CBPoint(x, y));
+			_points.add(new BasePoint(x, y));
 		}
 		break;
 
@@ -164,7 +164,7 @@ bool CAdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdWaypointGroup::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WAYPOINTS {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
@@ -172,7 +172,7 @@ bool CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
 
 	if (_scProp)
 		_scProp->saveAsText(buffer, indent + 2);
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	for (int i = 0; i < _points.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
@@ -185,9 +185,9 @@ bool CAdWaypointGroup::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
+bool AdWaypointGroup::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
@@ -201,7 +201,7 @@ bool CAdWaypointGroup::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdWaypointGroup::scGetProperty(const char *name) {
+ScValue *AdWaypointGroup::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -220,12 +220,12 @@ CScValue *CAdWaypointGroup::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(name);
+	else return BaseObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
+bool AdWaypointGroup::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
@@ -234,12 +234,12 @@ bool CAdWaypointGroup::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CBObject::scSetProperty(name, value);
+	else return BaseObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdWaypointGroup::mimic(CAdWaypointGroup *wpt, float scale, int argX, int argY) {
+bool AdWaypointGroup::mimic(AdWaypointGroup *wpt, float scale, int argX, int argY) {
 	if (scale == _lastMimicScale && argX == _lastMimicX && argY == _lastMimicY) return STATUS_OK;
 
 	cleanup();
@@ -248,7 +248,7 @@ bool CAdWaypointGroup::mimic(CAdWaypointGroup *wpt, float scale, int argX, int a
 		int x = (int)((float)wpt->_points[i]->x * scale / 100.0f);
 		int y = (int)((float)wpt->_points[i]->y * scale / 100.0f);
 
-		_points.add(new CBPoint(x + argX, y + argY));
+		_points.add(new BasePoint(x + argX, y + argY));
 	}
 
 	_lastMimicScale = scale;

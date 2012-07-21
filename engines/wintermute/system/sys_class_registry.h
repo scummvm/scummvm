@@ -39,13 +39,13 @@
 #include "common/stream.h"
 
 namespace WinterMute {
-class CSysClass;
+class SystemClass;
 }
 
 namespace Common {
 template<typename T> struct Hash;
-template<> struct Hash<WinterMute::CSysClass *> : public UnaryFunction<WinterMute::CSysClass *, uint> {
-	uint operator()(WinterMute::CSysClass *val) const {
+template<> struct Hash<WinterMute::SystemClass *> : public UnaryFunction<WinterMute::SystemClass *, uint> {
+	uint operator()(WinterMute::SystemClass *val) const {
 		return (uint)((size_t)val);
 	}
 };
@@ -54,50 +54,50 @@ template<> struct Hash<WinterMute::CSysClass *> : public UnaryFunction<WinterMut
 
 namespace WinterMute {
 
-class CBGame;
-class CBPersistMgr;
-class CSysInstance;
+class BaseGame;
+class BasePersistenceManager;
+class SystemInstance;
 
-class CSysClassRegistry {
+class SystemClassRegistry {
 	void unregisterClasses();
 public:
 	void registerClasses(); // persistent.cpp
-	static CSysClassRegistry *getInstance();
+	static SystemClassRegistry *getInstance();
 
-	CSysClassRegistry();
-	virtual ~CSysClassRegistry();
+	SystemClassRegistry();
+	virtual ~SystemClassRegistry();
 
 	bool enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData);
-	bool loadTable(CBGame *Game, CBPersistMgr *PersistMgr);
-	bool saveTable(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
-	bool loadInstances(CBGame *Game, CBPersistMgr *PersistMgr);
-	bool saveInstances(CBGame *Game, CBPersistMgr *PersistMgr, bool quickSave);
+	bool loadTable(BaseGame *Game, BasePersistenceManager *PersistMgr);
+	bool saveTable(BaseGame *Game, BasePersistenceManager *PersistMgr, bool quickSave);
+	bool loadInstances(BaseGame *Game, BasePersistenceManager *PersistMgr);
+	bool saveInstances(BaseGame *Game, BasePersistenceManager *PersistMgr, bool quickSave);
 	void *idToPointer(int classID, int instanceID);
 	bool getPointerID(void *pointer, int *classID, int *instanceID);
-	bool registerClass(CSysClass *classObj);
-	bool unregisterClass(CSysClass *classObj);
+	bool registerClass(SystemClass *classObj);
+	bool unregisterClass(SystemClass *classObj);
 	bool registerInstance(const char *className, void *instance);
 	bool unregisterInstance(const char *className, void *instance);
 	void dumpClasses(Common::WriteStream *stream);
 	int getNextID();
-	void addInstanceToTable(CSysInstance *instance, void *pointer);
+	void addInstanceToTable(SystemInstance *instance, void *pointer);
 
 	bool _disabled;
 	int _count;
 
-	typedef Common::HashMap<CSysClass *, CSysClass *> Classes;
+	typedef Common::HashMap<SystemClass *, SystemClass *> Classes;
 	Classes _classes;
 
-	typedef Common::HashMap<AnsiString, CSysClass *> NameMap;
+	typedef Common::HashMap<AnsiString, SystemClass *> NameMap;
 	NameMap _nameMap;
 
-	typedef Common::HashMap<int, CSysClass *> IdMap;
+	typedef Common::HashMap<int, SystemClass *> IdMap;
 	IdMap _idMap;
 
-	typedef Common::HashMap<void *, CSysInstance *> InstanceMap;
+	typedef Common::HashMap<void *, SystemInstance *> InstanceMap;
 	InstanceMap _instanceMap;
 
-	typedef Common::HashMap<int, CSysInstance *> SavedInstanceMap;
+	typedef Common::HashMap<int, SystemInstance *> SavedInstanceMap;
 	SavedInstanceMap _savedInstanceMap;
 
 };

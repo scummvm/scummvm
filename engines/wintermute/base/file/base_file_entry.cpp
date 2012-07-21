@@ -31,7 +31,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBFileEntry::CBFileEntry(CBGame *inGame): CBBase(inGame) {
+BaseFileEntry::BaseFileEntry(BaseGame *inGame): BaseClass(inGame) {
 	_package = NULL;
 	_length = _compressedLength = _offset = _flags = 0;
 	_filename = "";
@@ -43,7 +43,7 @@ CBFileEntry::CBFileEntry(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFileEntry::~CBFileEntry() {
+BaseFileEntry::~BaseFileEntry() {
 	_package = NULL; // ref only
 }
 

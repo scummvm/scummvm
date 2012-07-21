@@ -35,14 +35,14 @@
 #include "common/array.h"
 
 namespace WinterMute {
-class CBSoundBuffer;
-class CBSoundMgr : public CBBase {
+class BaseSoundBuffer;
+class BaseSoundMgr : public BaseClass {
 public:
 	float posToPan(int x, int y);
 	bool resumeAll();
 	bool pauseAll(bool includingMusic = true);
 	bool cleanup();
-	//DECLARE_PERSISTENT(CBSoundMgr, CBBase);
+	//DECLARE_PERSISTENT(BaseSoundMgr, BaseClass);
 	byte getMasterVolumePercent();
 	byte getMasterVolume();
 	bool setMasterVolume(byte percent);
@@ -52,15 +52,15 @@ public:
 	bool setVolume(Audio::Mixer::SoundType type, int volume);
 	uint32 _volumeOriginal;
 	int _volumeMaster;
-	bool removeSound(CBSoundBuffer *sound);
-	CBSoundBuffer *addSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
-	bool addSound(CBSoundBuffer *sound, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
+	bool removeSound(BaseSoundBuffer *sound);
+	BaseSoundBuffer *addSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
+	bool addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
 	bool initLoop();
 	bool initialize();
 	bool _soundAvailable;
-	CBSoundMgr(CBGame *inGame);
-	virtual ~CBSoundMgr();
-	Common::Array<CBSoundBuffer *> _sounds;
+	BaseSoundMgr(BaseGame *inGame);
+	virtual ~BaseSoundMgr();
+	Common::Array<BaseSoundBuffer *> _sounds;
 	void saveSettings();
 };
 

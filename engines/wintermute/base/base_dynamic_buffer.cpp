@@ -32,7 +32,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBDynBuffer::CBDynBuffer(CBGame *inGame, uint32 initSize, uint32 growBy): CBBase(inGame) {
+BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 growBy): BaseClass(inGame) {
 	_buffer = NULL;
 	_size = 0;
 	_realSize = 0;
@@ -46,13 +46,13 @@ CBDynBuffer::CBDynBuffer(CBGame *inGame, uint32 initSize, uint32 growBy): CBBase
 
 
 //////////////////////////////////////////////////////////////////////////
-CBDynBuffer::~CBDynBuffer() {
+BaseDynamicBuffer::~BaseDynamicBuffer() {
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::cleanup() {
+void BaseDynamicBuffer::cleanup() {
 	if (_buffer) free(_buffer);
 	_buffer = NULL;
 	_size = 0;
@@ -63,20 +63,20 @@ void CBDynBuffer::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBDynBuffer::getSize() {
+uint32 BaseDynamicBuffer::getSize() {
 	return _size;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBDynBuffer::init(uint32 initSize) {
+bool BaseDynamicBuffer::init(uint32 initSize) {
 	cleanup();
 
 	if (initSize == 0) initSize = _initSize;
 
 	_buffer = (byte *)malloc(initSize);
 	if (!_buffer) {
-		_gameRef->LOG(0, "CBDynBuffer::Init - Error allocating %d bytes", initSize);
+		_gameRef->LOG(0, "BaseDynamicBuffer::Init - Error allocating %d bytes", initSize);
 		return STATUS_FAILED;
 	}
 
@@ -88,14 +88,14 @@ bool CBDynBuffer::init(uint32 initSize) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBDynBuffer::putBytes(byte *buffer, uint32 size) {
+bool BaseDynamicBuffer::putBytes(byte *buffer, uint32 size) {
 	if (!_initialized) init();
 
 	while (_offset + size > _realSize) {
 		_realSize += _growBy;
 		_buffer = (byte *)realloc(_buffer, _realSize);
 		if (!_buffer) {
-			_gameRef->LOG(0, "CBDynBuffer::PutBytes - Error reallocating buffer to %d bytes", _realSize);
+			_gameRef->LOG(0, "BaseDynamicBuffer::PutBytes - Error reallocating buffer to %d bytes", _realSize);
 			return STATUS_FAILED;
 		}
 	}
@@ -109,11 +109,11 @@ bool CBDynBuffer::putBytes(byte *buffer, uint32 size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBDynBuffer::getBytes(byte *buffer, uint32 size) {
+bool BaseDynamicBuffer::getBytes(byte *buffer, uint32 size) {
 	if (!_initialized) init();
 
 	if (_offset + size > _size) {
-		_gameRef->LOG(0, "CBDynBuffer::GetBytes - Buffer underflow");
+		_gameRef->LOG(0, "BaseDynamicBuffer::GetBytes - Buffer underflow");
 		return STATUS_FAILED;
 	}
 
@@ -125,13 +125,13 @@ bool CBDynBuffer::getBytes(byte *buffer, uint32 size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::putDWORD(uint32 val) {
+void BaseDynamicBuffer::putDWORD(uint32 val) {
 	putBytes((byte *)&val, sizeof(uint32));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBDynBuffer::getDWORD() {
+uint32 BaseDynamicBuffer::getDWORD() {
 	uint32 ret;
 	getBytes((byte *)&ret, sizeof(uint32));
 	return ret;
@@ -139,7 +139,7 @@ uint32 CBDynBuffer::getDWORD() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::putString(const char *val) {
+void BaseDynamicBuffer::putString(const char *val) {
 	if (!val) putString("(null)");
 	else {
 		putDWORD(strlen(val) + 1);
@@ -149,7 +149,7 @@ void CBDynBuffer::putString(const char *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBDynBuffer::getString() {
+char *BaseDynamicBuffer::getString() {
 	uint32 len = getDWORD();
 	char *ret = (char *)(_buffer + _offset);
 	_offset += len;
@@ -160,7 +160,7 @@ char *CBDynBuffer::getString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::putText(const char *fmt, ...) {
+void BaseDynamicBuffer::putText(const char *fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
@@ -171,7 +171,7 @@ void CBDynBuffer::putText(const char *fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::putTextIndent(int indent, const char *fmt, ...) {
+void BaseDynamicBuffer::putTextIndent(int indent, const char *fmt, ...) {
 	va_list va;
 
 	putText("%*s", indent, "");
@@ -183,7 +183,7 @@ void CBDynBuffer::putTextIndent(int indent, const char *fmt, ...) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBDynBuffer::putTextForm(const char *format, va_list argptr) {
+void BaseDynamicBuffer::putTextForm(const char *format, va_list argptr) {
 	char buff[32768];
 	vsprintf(buff, format, argptr);
 	putBytes((byte *)buff, strlen(buff));

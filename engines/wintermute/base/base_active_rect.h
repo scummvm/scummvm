@@ -33,25 +33,25 @@
 #include "engines/wintermute/base/base.h"
 
 namespace WinterMute {
-class CBRegion;
-class CBSubFrame;
-class CBObject;
-class CBActiveRect: CBBase {
+class BaseRegion;
+class BaseSubFrame;
+class BaseObject;
+class BaseActiveRect: BaseClass {
 public:
 	void clipRect();
 	bool _precise;
 	float _zoomX;
 	float _zoomY;
-	CBSubFrame *_frame;
-	CBObject *_owner;
-	CBRegion *_region;
+	BaseSubFrame *_frame;
+	BaseObject *_owner;
+	BaseRegion *_region;
 	int _offsetX;
 	int _offsetY;
 	Rect32 _rect;
-	CBActiveRect(CBGame *inGameOwner = NULL);
-	CBActiveRect(CBGame *inGameOwner, CBObject *owner, CBSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
-	CBActiveRect(CBGame *inGame, CBObject *owner, CBRegion *region, int offsetX, int offsetY);
-	virtual ~CBActiveRect();
+	BaseActiveRect(BaseGame *inGameOwner = NULL);
+	BaseActiveRect(BaseGame *inGameOwner, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
+	BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY);
+	virtual ~BaseActiveRect();
 
 };
 

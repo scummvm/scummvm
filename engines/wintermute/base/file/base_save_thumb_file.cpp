@@ -39,19 +39,19 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSaveThumbFile::CBSaveThumbFile(CBGame *inGame): CBFile(inGame) {
+BaseSaveThumbFile::BaseSaveThumbFile(BaseGame *inGame): BaseFile(inGame) {
 	_data = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSaveThumbFile::~CBSaveThumbFile() {
+BaseSaveThumbFile::~BaseSaveThumbFile() {
 	close();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSaveThumbFile::open(const Common::String &filename) {
+bool BaseSaveThumbFile::open(const Common::String &filename) {
 	close();
 
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) != 0) return STATUS_FAILED;
@@ -71,7 +71,7 @@ bool CBSaveThumbFile::open(const Common::String &filename) {
 
 	char slotFilename[MAX_PATH_LENGTH + 1];
 	_gameRef->getSaveSlotFilename(slot, slotFilename);
-	CBPersistMgr *pm = new CBPersistMgr(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	if (!pm) return STATUS_FAILED;
 
 	_gameRef->_debugAbsolutePathWarning = false;
@@ -97,7 +97,7 @@ bool CBSaveThumbFile::open(const Common::String &filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSaveThumbFile::close() {
+bool BaseSaveThumbFile::close() {
 	delete[] _data;
 	_data = NULL;
 
@@ -109,7 +109,7 @@ bool CBSaveThumbFile::close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSaveThumbFile::read(void *buffer, uint32 size) {
+bool BaseSaveThumbFile::read(void *buffer, uint32 size) {
 	if (!_data || _pos + size > _size) return STATUS_FAILED;
 
 	memcpy(buffer, (byte *)_data + _pos, size);
@@ -120,7 +120,7 @@ bool CBSaveThumbFile::read(void *buffer, uint32 size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSaveThumbFile::seek(uint32 pos, int whence) {
+bool BaseSaveThumbFile::seek(uint32 pos, int whence) {
 	if (!_data) return STATUS_FAILED;
 
 	uint32 newPos = 0;

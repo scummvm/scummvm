@@ -35,9 +35,9 @@
 
 namespace WinterMute {
 
-class CUITiledImage;
-class CBFont;
-class CUIObject : public CBObject {
+class UITiledImage;
+class BaseFont;
+class UIObject : public BaseObject {
 public:
 
 	bool getTotalOffset(int *offsetX, int *offsetY);
@@ -46,35 +46,35 @@ public:
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
 	bool isFocused();
 	bool _parentNotify;
-	DECLARE_PERSISTENT(CUIObject, CBObject)
-	CUIObject *_parent;
+	DECLARE_PERSISTENT(UIObject, BaseObject)
+	UIObject *_parent;
 	virtual bool display(int offsetX = 0, int offsetY = 0);
 	virtual void correctSize();
 	bool _sharedFonts;
 	bool _sharedImages;
 	void setText(const char *text);
 	char *_text;
-	CBFont *_font;
+	BaseFont *_font;
 	bool _visible;
-	CUITiledImage *_back;
+	UITiledImage *_back;
 	bool _disable;
-	CUIObject(CBGame *inGame = NULL);
-	virtual ~CUIObject();
+	UIObject(BaseGame *inGame = NULL);
+	virtual ~UIObject();
 	int _width;
 	int _height;
 	TUIObjectType _type;
-	CBSprite *_image;
-	void setListener(CBScriptHolder *object, CBScriptHolder *listenerObject, uint32 listenerParam);
-	CBScriptHolder *_listenerParamObject;
+	BaseSprite *_image;
+	void setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam);
+	BaseScriptHolder *_listenerParamObject;
 	uint32 _listenerParamDWORD;
-	CBScriptHolder *_listenerObject;
-	CUIObject *_focusedWidget;
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	BaseScriptHolder *_listenerObject;
+	UIObject *_focusedWidget;
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

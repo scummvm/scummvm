@@ -39,10 +39,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdTalkDef, false)
+IMPLEMENT_PERSISTENT(AdTalkDef, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdTalkDef::CAdTalkDef(CBGame *inGame): CBObject(inGame) {
+AdTalkDef::AdTalkDef(BaseGame *inGame): BaseObject(inGame) {
 	_defaultSpriteFilename = NULL;
 	_defaultSprite = NULL;
 
@@ -52,7 +52,7 @@ CAdTalkDef::CAdTalkDef(CBGame *inGame): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdTalkDef::~CAdTalkDef() {
+AdTalkDef::~AdTalkDef() {
 	for (int i = 0; i < _nodes.getSize(); i++) delete _nodes[i];
 	_nodes.removeAll();
 
@@ -69,16 +69,16 @@ CAdTalkDef::~CAdTalkDef() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkDef::loadFile(const char *filename) {
+bool AdTalkDef::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdTalkDef::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdTalkDef::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
 	bool ret;
 
-	CBUtils::setString(&_filename, filename);
+	BaseUtils::setString(&_filename, filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing TALK file '%s'", filename);
 
@@ -98,7 +98,7 @@ TOKEN_DEF(DEFAULT_SPRITE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
+bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TALK)
 	TOKEN_TABLE(TEMPLATE)
@@ -111,7 +111,7 @@ bool CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TALK) {
@@ -128,7 +128,7 @@ bool CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ACTION: {
-			CAdTalkNode *Node = new CAdTalkNode(_gameRef);
+			AdTalkNode *Node = new AdTalkNode(_gameRef);
 			if (Node && DID_SUCCEED(Node->loadBuffer(params, false))) _nodes.add(Node);
 			else {
 				delete Node;
@@ -139,16 +139,16 @@ bool CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_DEFAULT_SPRITE:
-			CBUtils::setString(&_defaultSpriteFilename, (char *)params);
+			BaseUtils::setString(&_defaultSpriteFilename, (char *)params);
 			break;
 
 		case TOKEN_DEFAULT_SPRITESET_FILE:
-			CBUtils::setString(&_defaultSpriteSetFilename, (char *)params);
+			BaseUtils::setString(&_defaultSpriteSetFilename, (char *)params);
 			break;
 
 		case TOKEN_DEFAULT_SPRITESET: {
 			delete _defaultSpriteSet;
-			_defaultSpriteSet = new CAdSpriteSet(_gameRef);
+			_defaultSpriteSet = new AdSpriteSet(_gameRef);
 			if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadBuffer(params, false))) {
 				delete _defaultSpriteSet;
 				_defaultSpriteSet = NULL;
@@ -179,12 +179,12 @@ bool CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	_defaultSpriteSet = NULL;
 
 	if (_defaultSpriteFilename) {
-		_defaultSprite = new CBSprite(_gameRef);
+		_defaultSprite = new BaseSprite(_gameRef);
 		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) return STATUS_FAILED;
 	}
 
 	if (_defaultSpriteSetFilename) {
-		_defaultSpriteSet = new CAdSpriteSet(_gameRef);
+		_defaultSpriteSet = new AdSpriteSet(_gameRef);
 		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) return STATUS_FAILED;
 	}
 
@@ -194,9 +194,9 @@ bool CAdTalkDef::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkDef::persist(CBPersistMgr *persistMgr) {
+bool AdTalkDef::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_defaultSprite));
 	persistMgr->transfer(TMEMBER(_defaultSpriteFilename));
@@ -210,7 +210,7 @@ bool CAdTalkDef::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdTalkDef::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TALK {\n");
 	if (_defaultSpriteFilename) buffer->putTextIndent(indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
 
@@ -221,7 +221,7 @@ bool CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
 		_nodes[i]->saveAsText(buffer, indent + 2);
 		buffer->putTextIndent(indent, "\n");
 	}
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 
@@ -230,16 +230,16 @@ bool CAdTalkDef::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdTalkDef::loadDefaultSprite() {
+bool AdTalkDef::loadDefaultSprite() {
 	if (_defaultSpriteFilename && !_defaultSprite) {
-		_defaultSprite = new CBSprite(_gameRef);
+		_defaultSprite = new BaseSprite(_gameRef);
 		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {
 			delete _defaultSprite;
 			_defaultSprite = NULL;
 			return STATUS_FAILED;
 		} else return STATUS_OK;
 	} else if (_defaultSpriteSetFilename && !_defaultSpriteSet) {
-		_defaultSpriteSet = new CAdSpriteSet(_gameRef);
+		_defaultSpriteSet = new AdSpriteSet(_gameRef);
 		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
 			delete _defaultSpriteSet;
 			_defaultSpriteSet = NULL;
@@ -250,7 +250,7 @@ bool CAdTalkDef::loadDefaultSprite() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSprite *CAdTalkDef::getDefaultSprite(TDirection dir) {
+BaseSprite *AdTalkDef::getDefaultSprite(TDirection dir) {
 	loadDefaultSprite();
 	if (_defaultSprite) return _defaultSprite;
 	else if (_defaultSpriteSet) return _defaultSpriteSet->getSprite(dir);

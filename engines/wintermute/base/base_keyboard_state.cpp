@@ -35,10 +35,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBKeyboardState, false)
+IMPLEMENT_PERSISTENT(BaseKeyboardState, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBKeyboardState::CBKeyboardState(CBGame *inGame): CBScriptable(inGame) {
+BaseKeyboardState::BaseKeyboardState(BaseGame *inGame): BaseScriptable(inGame) {
 	_currentPrintable = false;
 	_currentCharCode = 0;
 	_currentKeyData = 0;
@@ -54,17 +54,17 @@ CBKeyboardState::CBKeyboardState(CBGame *inGame): CBScriptable(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBKeyboardState::~CBKeyboardState() {
+BaseKeyboardState::~BaseKeyboardState() {
 	delete[] _keyStates;
 }
 
-void CBKeyboardState::handleKeyPress(Common::Event *event) {
+void BaseKeyboardState::handleKeyPress(Common::Event *event) {
 	if (event->type == Common::EVENT_KEYDOWN) {
 		_keyStates[event->kbd.keycode] = true;
 	}
 }
 
-void CBKeyboardState::handleKeyRelease(Common::Event *event) {
+void BaseKeyboardState::handleKeyRelease(Common::Event *event) {
 	if (event->type == Common::EVENT_KEYUP) {
 		_keyStates[event->kbd.keycode] = false;
 	}
@@ -73,13 +73,13 @@ void CBKeyboardState::handleKeyRelease(Common::Event *event) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsKeyDown
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "IsKeyDown") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		int vKey;
 
 		if (val->_type == VAL_STRING && strlen(val->getString()) > 0) {
@@ -98,12 +98,12 @@ bool CBKeyboardState::scCallMethod(CScScript *script, CScStack *stack, CScStack 
 		return STATUS_OK;
 	}
 
-	else return CBScriptable::scCallMethod(script, stack, thisStack, name);
+	else return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBKeyboardState::scGetProperty(const char *name) {
+ScValue *BaseKeyboardState::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -168,12 +168,12 @@ CScValue *CBKeyboardState::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::scGetProperty(name);
+	else return BaseScriptable::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::scSetProperty(const char *name, CScValue *value) {
+bool BaseKeyboardState::scSetProperty(const char *name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -184,18 +184,18 @@ bool CBKeyboardState::scSetProperty(const char *name, CScValue *value) {
 	    return STATUS_OK;
 	}
 
-	else*/ return CBScriptable::scSetProperty(name, value);
+	else*/ return BaseScriptable::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBKeyboardState::scToString() {
+const char *BaseKeyboardState::scToString() {
 	return "[keyboard state]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::readKey(Common::Event *event) {
+bool BaseKeyboardState::readKey(Common::Event *event) {
 	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
 	_currentCharCode = keyCodeToVKey(event);
 	if ((_currentCharCode <= Common::KEYCODE_z && _currentCharCode >= Common::KEYCODE_a) ||
@@ -215,9 +215,9 @@ bool CBKeyboardState::readKey(Common::Event *event) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::persist(CBPersistMgr *persistMgr) {
+bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
 	//if(!persistMgr->_saving) cleanup();
-	CBScriptable::persist(persistMgr);
+	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_currentAlt));
 	persistMgr->transfer(TMEMBER(_currentCharCode));
@@ -237,25 +237,25 @@ bool CBKeyboardState::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::isShiftDown() {
+bool BaseKeyboardState::isShiftDown() {
 	int mod = g_system->getEventManager()->getModifierState();
 	return (mod & Common::KBD_SHIFT);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::isControlDown() {
+bool BaseKeyboardState::isControlDown() {
 	int mod = g_system->getEventManager()->getModifierState();
 	return (mod & Common::KBD_CTRL);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBKeyboardState::isAltDown() {
+bool BaseKeyboardState::isAltDown() {
 	int mod = g_system->getEventManager()->getModifierState();
 	return (mod & Common::KBD_ALT);
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBKeyboardState::keyCodeToVKey(Common::Event *event) {
+uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 	if (event->type != Common::EVENT_KEYDOWN) return 0;
 
 	switch (event->kbd.keycode) {
@@ -275,7 +275,7 @@ enum VKeyCodes {
 };
 
 //////////////////////////////////////////////////////////////////////////
-Common::KeyCode CBKeyboardState::vKeyToKeyCode(uint32 vkey) {
+Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 	// todo
 	switch (vkey) {
 		case VK_SPACE:

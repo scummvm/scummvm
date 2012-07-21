@@ -35,7 +35,7 @@ class SeekableReadStream;
 
 namespace WinterMute {
 
-Common::SeekableReadStream *openDiskFile(const Common::String &filename, CBFileManager *fileManager);
+Common::SeekableReadStream *openDiskFile(const Common::String &filename, BaseFileManager *fileManager);
 
 } // end of namespace WinterMute
 

@@ -41,7 +41,7 @@
 
 namespace WinterMute {
 
-RenderTicket::RenderTicket(CBSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) : _owner(owner),
+RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) : _owner(owner),
 	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(true) {
 	_colorMod = 0;
 		_mirror = TransparentSurface::FLIP_NONE;
@@ -89,14 +89,14 @@ bool RenderTicket::operator==(RenderTicket &t) {
 	return true;
 }
 
-CBRenderer *makeOSystemRenderer(CBGame *inGame) {
-	return new CBRenderOSystem(inGame);
+BaseRenderer *makeOSystemRenderer(BaseGame *inGame) {
+	return new BaseRenderOSystem(inGame);
 }
 
 // TODO: Redo everything here.
 
 //////////////////////////////////////////////////////////////////////////
-CBRenderOSystem::CBRenderOSystem(CBGame *inGame) : CBRenderer(inGame) {
+BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_renderSurface = new Graphics::Surface();
 	_drawNum = 1;
 	_needsFlip = true;
@@ -110,7 +110,7 @@ CBRenderOSystem::CBRenderOSystem(CBGame *inGame) : CBRenderer(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBRenderOSystem::~CBRenderOSystem() {
+BaseRenderOSystem::~BaseRenderOSystem() {
 	_renderSurface->free();
 	delete _renderSurface;
 #if 0
@@ -121,7 +121,7 @@ CBRenderOSystem::~CBRenderOSystem() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderOSystem::initRenderer(int width, int height, bool windowed) {
+bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	//if (SDL_Init(SDL_INIT_VIDEO) < 0) return STATUS_FAILED;
 
 #if 0
@@ -237,20 +237,20 @@ bool CBRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	return STATUS_OK;
 }
 
-void CBRenderOSystem::setAlphaMod(byte alpha) {
+void BaseRenderOSystem::setAlphaMod(byte alpha) {
 	byte r = RGBCOLGetR(_colorMod);
 	byte g = RGBCOLGetB(_colorMod);
 	byte b = RGBCOLGetB(_colorMod);
 	_colorMod = BS_ARGB(alpha, r, g, b);
 }
 
-void CBRenderOSystem::setColorMod(byte r, byte g, byte b) {
+void BaseRenderOSystem::setColorMod(byte r, byte g, byte b) {
 	byte alpha = RGBCOLGetA(_colorMod);
 	_colorMod = BS_ARGB(alpha, r, g, b);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderOSystem::flip() {
+bool BaseRenderOSystem::flip() {
 	if (!_disableDirtyRects) {
 		drawTickets();
 	}
@@ -270,7 +270,7 @@ bool CBRenderOSystem::flip() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
+bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, 0xFF);
 	//SDL_RenderClear(_renderer);
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
@@ -285,20 +285,20 @@ bool CBRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderOSystem::fade(uint16 Alpha) {
+bool BaseRenderOSystem::fade(uint16 Alpha) {
 	uint32 dwAlpha = 255 - Alpha;
 	return fadeToColor(dwAlpha << 24);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderOSystem::fadeToColor(uint32 Color, Common::Rect *rect) {
+bool BaseRenderOSystem::fadeToColor(uint32 Color, Common::Rect *rect) {
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
 	if (!hasWarned) {
-		warning("CBRenderOSystem::FadeToColor - Breaks when using dirty rects");
-		warning("Implement CBRenderOSystem::FadeToColor"); // TODO.
+		warning("BaseRenderOSystem::FadeToColor - Breaks when using dirty rects");
+		warning("Implement BaseRenderOSystem::FadeToColor"); // TODO.
 		hasWarned = true;
 	}
 
@@ -347,7 +347,7 @@ bool CBRenderOSystem::fadeToColor(uint32 Color, Common::Rect *rect) {
 	return STATUS_OK;
 }
 
-void CBRenderOSystem::drawSurface(CBSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
+void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
 	if (_disableDirtyRects) {
 		RenderTicket renderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY);
 		// HINT: The surface-data contains other info than it should.
@@ -375,13 +375,13 @@ void CBRenderOSystem::drawSurface(CBSurfaceOSystem *owner, const Graphics::Surfa
 	drawFromTicket(ticket);
 }
 
-void CBRenderOSystem::invalidateTicket(RenderTicket *renderTicket) {
+void BaseRenderOSystem::invalidateTicket(RenderTicket *renderTicket) {
 	addDirtyRect(renderTicket->_dstRect);
 	renderTicket->_isValid = false;
 //	renderTicket->_canDelete = true; // TODO: Maybe readd this, to avoid even more duplicates.
 }
 
-void CBRenderOSystem::invalidateTicketsFromSurface(CBSurfaceOSystem *surf) {
+void BaseRenderOSystem::invalidateTicketsFromSurface(BaseSurfaceOSystem *surf) {
 	RenderQueueIterator it;
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
 		if ((*it)->_owner == surf) {
@@ -390,7 +390,7 @@ void CBRenderOSystem::invalidateTicketsFromSurface(CBSurfaceOSystem *surf) {
 	}
 }
 
-void CBRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
+void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 	renderTicket->_wantsDraw = true;
 	// A new item always has _drawNum == 0
 	if (renderTicket->_drawNum == 0) {
@@ -445,7 +445,7 @@ void CBRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 	}
 }
 
-void CBRenderOSystem::addDirtyRect(const Common::Rect &rect) {
+void BaseRenderOSystem::addDirtyRect(const Common::Rect &rect) {
 	if (!_dirtyRect) {
 		_dirtyRect = new Common::Rect(rect);
 	} else {
@@ -455,7 +455,7 @@ void CBRenderOSystem::addDirtyRect(const Common::Rect &rect) {
 //	warning("AddDirtyRect: %d %d %d %d", rect.left, rect.top, rect.right, rect.bottom);
 }
 
-void CBRenderOSystem::drawTickets() {
+void BaseRenderOSystem::drawTickets() {
 	RenderQueueIterator it = _renderQueue.begin();
 	// Clean out the old tickets
 	int decrement = 0;
@@ -511,7 +511,7 @@ void CBRenderOSystem::drawTickets() {
 }
 
 // Replacement for SDL2's SDL_RenderCopy
-void CBRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror) {
+void BaseRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror) {
 	TransparentSurface src(*surf, false);
 	bool doDelete = false;
 	if (!clipRect) {
@@ -527,10 +527,10 @@ void CBRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::Rec
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	static bool hasWarned = false;
 	if (!hasWarned) {
-		warning("CBRenderOSystem::DrawLine - not fully ported yet");
+		warning("BaseRenderOSystem::DrawLine - not fully ported yet");
 		hasWarned = true;
 	}
 	byte r = RGBCOLGetR(color);
@@ -558,10 +558,10 @@ bool CBRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBImage *CBRenderOSystem::takeScreenshot() {
+BaseImage *BaseRenderOSystem::takeScreenshot() {
 // TODO: Fix this
-	warning("CBRenderOSystem::TakeScreenshot() - not ported yet");
-	CBImage *screenshot = new CBImage(_gameRef);
+	warning("BaseRenderOSystem::TakeScreenshot() - not ported yet");
+	BaseImage *screenshot = new BaseImage(_gameRef);
 	screenshot->copyFrom(_renderSurface);
 	return screenshot;
 #if 0
@@ -584,13 +584,13 @@ CBImage *CBRenderOSystem::takeScreenshot() {
 		memcpy(bits, src, bytespp * viewport.w);
 	}
 
-	return new CBImage(_gameRef,  dib);
+	return new BaseImage(_gameRef,  dib);
 #endif
 	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderOSystem::switchFullscreen() {
+bool BaseRenderOSystem::switchFullscreen() {
 	/*if (_windowed) SDL_SetWindowFullscreen(_win, SDL_TRUE);
 	else SDL_SetWindowFullscreen(_win, SDL_FALSE);
 
@@ -602,7 +602,7 @@ bool CBRenderOSystem::switchFullscreen() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBRenderOSystem::getName() {
+const char *BaseRenderOSystem::getName() {
 	if (_name.empty()) {
 #if 0
 		if (_renderer) {
@@ -616,7 +616,7 @@ const char *CBRenderOSystem::getName() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderOSystem::setViewport(int left, int top, int right, int bottom) {
+bool BaseRenderOSystem::setViewport(int left, int top, int right, int bottom) {
 	Common::Rect rect;
 	// TODO: Hopefully this is the same logic that ScummVM uses.
 	rect.left = (int16)(left + _borderLeft);
@@ -632,7 +632,7 @@ bool CBRenderOSystem::setViewport(int left, int top, int right, int bottom) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderOSystem::modTargetRect(Common::Rect *rect) {
+void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
 #if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
@@ -645,7 +645,7 @@ void CBRenderOSystem::modTargetRect(Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderOSystem::pointFromScreen(Point32 *point) {
+void BaseRenderOSystem::pointFromScreen(Point32 *point) {
 #if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
@@ -657,7 +657,7 @@ void CBRenderOSystem::pointFromScreen(Point32 *point) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderOSystem::pointToScreen(Point32 *point) {
+void BaseRenderOSystem::pointToScreen(Point32 *point) {
 #if 0
 	SDL_Rect viewportRect;
 	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
@@ -668,19 +668,19 @@ void CBRenderOSystem::pointToScreen(Point32 *point) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderOSystem::dumpData(const char *filename) {
-	warning("CBRenderOSystem::DumpData(%s) - not reimplemented yet", filename); // TODO
+void BaseRenderOSystem::dumpData(const char *filename) {
+	warning("BaseRenderOSystem::DumpData(%s) - not reimplemented yet", filename); // TODO
 #if 0
 	FILE *f = fopen(filename, "wt");
 	if (!f) return;
 
-	CBSurfaceStorage *Mgr = _gameRef->_surfaceStorage;
+	BaseSurfaceStorage *Mgr = _gameRef->_surfaceStorage;
 
 	int TotalKB = 0;
 	int TotalLoss = 0;
 	fprintf(f, "Filename;Usage;Size;KBytes\n");
 	for (int i = 0; i < Mgr->_surfaces.getSize(); i++) {
-		CBSurfaceOSystem *Surf = (CBSurfaceOSystem *)Mgr->_surfaces[i];
+		BaseSurfaceOSystem *Surf = (BaseSurfaceOSystem *)Mgr->_surfaces[i];
 		if (!Surf->_filename) continue;
 		if (!Surf->_valid) continue;
 
@@ -702,8 +702,8 @@ void CBRenderOSystem::dumpData(const char *filename) {
 #endif
 }
 
-CBSurface *CBRenderOSystem::createSurface() {
-	return new CBSurfaceOSystem(_gameRef);
+BaseSurface *BaseRenderOSystem::createSurface() {
+	return new BaseSurfaceOSystem(_gameRef);
 }
 
 } // end of namespace WinterMute

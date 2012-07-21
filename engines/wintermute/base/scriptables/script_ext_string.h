@@ -34,19 +34,19 @@
 
 namespace WinterMute {
 
-class CSXString : public CBScriptable {
+class SXString : public BaseScriptable {
 public:
-	virtual int scCompare(CBScriptable *Val);
-	DECLARE_PERSISTENT(CSXString, CBScriptable)
-	CScValue *scGetProperty(const char *name);
-	bool scSetProperty(const char *name, CScValue *value);
-	bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual int scCompare(BaseScriptable *Val);
+	DECLARE_PERSISTENT(SXString, BaseScriptable)
+	ScValue *scGetProperty(const char *name);
+	bool scSetProperty(const char *name, ScValue *value);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	void scSetString(const char *val);
 	const char *scToString();
 	void setStringVal(const char *val);
 
-	CSXString(CBGame *inGame, CScStack *Stack);
-	virtual ~CSXString();
+	SXString(BaseGame *inGame, ScStack *Stack);
+	virtual ~SXString();
 
 private:
 	char *_string;

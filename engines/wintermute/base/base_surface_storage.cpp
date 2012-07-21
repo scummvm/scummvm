@@ -36,24 +36,24 @@
 
 namespace WinterMute {
 
-//IMPLEMENT_PERSISTENT(CBSurfaceStorage, true);
+//IMPLEMENT_PERSISTENT(BaseSurfaceStorage, true);
 
 //////////////////////////////////////////////////////////////////////
-CBSurfaceStorage::CBSurfaceStorage(CBGame *inGame): CBBase(inGame) {
+BaseSurfaceStorage::BaseSurfaceStorage(BaseGame *inGame): BaseClass(inGame) {
 	_lastCleanupTime = 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-CBSurfaceStorage::~CBSurfaceStorage() {
+BaseSurfaceStorage::~BaseSurfaceStorage() {
 	cleanup(true);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceStorage::cleanup(bool warn) {
+bool BaseSurfaceStorage::cleanup(bool warn) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
-		if (warn) _gameRef->LOG(0, "CBSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
+		if (warn) _gameRef->LOG(0, "BaseSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
 		delete _surfaces[i];
 	}
 	_surfaces.clear();
@@ -63,7 +63,7 @@ bool CBSurfaceStorage::cleanup(bool warn) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceStorage::initLoop() {
+bool BaseSurfaceStorage::initLoop() {
 	if (_gameRef->_smartCache && _gameRef->_liveTimer - _lastCleanupTime >= _gameRef->_surfaceGCCycleTime) {
 		_lastCleanupTime = _gameRef->_liveTimer;
 		sortSurfaces();
@@ -81,7 +81,7 @@ bool CBSurfaceStorage::initLoop() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBSurfaceStorage::removeSurface(CBSurface *surface) {
+bool BaseSurfaceStorage::removeSurface(BaseSurface *surface) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		if (_surfaces[i] == surface) {
 			_surfaces[i]->_referenceCount--;
@@ -97,7 +97,7 @@ bool CBSurfaceStorage::removeSurface(CBSurface *surface) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		if (scumm_stricmp(_surfaces[i]->getFileName(), filename) == 0) {
 			_surfaces[i]->_referenceCount++;
@@ -113,7 +113,7 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, by
 			return addSurface("invalid.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	}
 
-	CBSurface *surface;
+	BaseSurface *surface;
 	surface = _gameRef->_renderer->createSurface();
 
 	if (!surface) return NULL;
@@ -130,12 +130,12 @@ CBSurface *CBSurfaceStorage::addSurface(const char *filename, bool defaultCK, by
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBSurfaceStorage::restoreAll() {
+bool BaseSurfaceStorage::restoreAll() {
 	bool ret;
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		ret = _surfaces[i]->restore();
 		if (ret != STATUS_OK) {
-			_gameRef->LOG(0, "CBSurfaceStorage::RestoreAll failed");
+			_gameRef->LOG(0, "BaseSurfaceStorage::RestoreAll failed");
 			return ret;
 		}
 	}
@@ -145,7 +145,7 @@ bool CBSurfaceStorage::restoreAll() {
 
 /*
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
+bool BaseSurfaceStorage::persist(BasePersistenceManager *persistMgr)
 {
 
     if(!persistMgr->_saving) cleanup(false);
@@ -160,16 +160,16 @@ bool CBSurfaceStorage::persist(CBPersistMgr *persistMgr)
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBSurfaceStorage::sortSurfaces() {
-	qsort(&_surfaces[0], _surfaces.size(), sizeof(CBSurface *), surfaceSortCB);
+bool BaseSurfaceStorage::sortSurfaces() {
+	qsort(&_surfaces[0], _surfaces.size(), sizeof(BaseSurface *), surfaceSortCB);
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
-	CBSurface *s1 = *((CBSurface **)arg1);
-	CBSurface *s2 = *((CBSurface **)arg2);
+int BaseSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
+	BaseSurface *s1 = *((BaseSurface **)arg1);
+	BaseSurface *s2 = *((BaseSurface **)arg2);
 
 	// sort by life time
 	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0) return 1;

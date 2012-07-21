@@ -45,10 +45,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CUIButton, false)
+IMPLEMENT_PERSISTENT(UIButton, false)
 
 //////////////////////////////////////////////////////////////////////////
-CUIButton::CUIButton(CBGame *inGame): CUIObject(inGame) {
+UIButton::UIButton(BaseGame *inGame): UIObject(inGame) {
 	_backPress = _backHover = _backDisable = _backFocus = NULL;
 
 	_fontHover = _fontPress = _fontDisable = _fontFocus = NULL;
@@ -72,7 +72,7 @@ CUIButton::CUIButton(CBGame *inGame): CUIObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CUIButton::~CUIButton() {
+UIButton::~UIButton() {
 	delete _backPress;
 	delete _backHover;
 	delete _backDisable;
@@ -95,10 +95,10 @@ CUIButton::~CUIButton() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIButton::loadFile(const char *filename) {
+bool UIButton::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CUIButton::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "UIButton::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -154,7 +154,7 @@ TOKEN_DEF(PIXEL_PERFECT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CUIButton::loadBuffer(byte *buffer, bool complete) {
+bool UIButton::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(BUTTON)
 	TOKEN_TABLE(TEMPLATE)
@@ -196,7 +196,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_BUTTON) {
@@ -222,7 +222,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			delete _back;
-			_back = new CUITiledImage(_gameRef);
+			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
@@ -232,7 +232,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_HOVER:
 			delete _backHover;
-			_backHover = new CUITiledImage(_gameRef);
+			_backHover = new UITiledImage(_gameRef);
 			if (!_backHover || DID_FAIL(_backHover->loadFile((char *)params))) {
 				delete _backHover;
 				_backHover = NULL;
@@ -242,7 +242,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_PRESS:
 			delete _backPress;
-			_backPress = new CUITiledImage(_gameRef);
+			_backPress = new UITiledImage(_gameRef);
 			if (!_backPress || DID_FAIL(_backPress->loadFile((char *)params))) {
 				delete _backPress;
 				_backPress = NULL;
@@ -252,7 +252,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_DISABLE:
 			delete _backDisable;
-			_backDisable = new CUITiledImage(_gameRef);
+			_backDisable = new UITiledImage(_gameRef);
 			if (!_backDisable || DID_FAIL(_backDisable->loadFile((char *)params))) {
 				delete _backDisable;
 				_backDisable = NULL;
@@ -262,7 +262,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_FOCUS:
 			delete _backFocus;
-			_backFocus = new CUITiledImage(_gameRef);
+			_backFocus = new UITiledImage(_gameRef);
 			if (!_backFocus || DID_FAIL(_backFocus->loadFile((char *)params))) {
 				delete _backFocus;
 				_backFocus = NULL;
@@ -272,7 +272,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSprite(_gameRef);
+			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -282,7 +282,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_HOVER:
 			delete _imageHover;
-			_imageHover = new CBSprite(_gameRef);
+			_imageHover = new BaseSprite(_gameRef);
 			if (!_imageHover || DID_FAIL(_imageHover->loadFile((char *)params))) {
 				delete _imageHover;
 				_imageHover = NULL;
@@ -292,7 +292,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_PRESS:
 			delete _imagePress;
-			_imagePress = new CBSprite(_gameRef);
+			_imagePress = new BaseSprite(_gameRef);
 			if (!_imagePress || DID_FAIL(_imagePress->loadFile((char *)params))) {
 				delete _imagePress;
 				_imagePress = NULL;
@@ -302,7 +302,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_DISABLE:
 			delete _imageDisable;
-			_imageDisable = new CBSprite(_gameRef);
+			_imageDisable = new BaseSprite(_gameRef);
 			if (!_imageDisable || DID_FAIL(_imageDisable->loadFile((char *)params))) {
 				delete _imageDisable;
 				_imageDisable = NULL;
@@ -312,7 +312,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_FOCUS:
 			delete _imageFocus;
-			_imageFocus = new CBSprite(_gameRef);
+			_imageFocus = new BaseSprite(_gameRef);
 			if (!_imageFocus || DID_FAIL(_imageFocus->loadFile((char *)params))) {
 				delete _imageFocus;
 				_imageFocus = NULL;
@@ -379,7 +379,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(_gameRef);
+			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -439,7 +439,7 @@ bool CUIButton::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
+bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "BUTTON\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -501,7 +501,7 @@ bool CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
-		warning("CUIButton::SaveAsText - unhandled enum");
+		warning("UIButton::SaveAsText - unhandled enum");
 		break;
 	}
 
@@ -531,17 +531,17 @@ bool CUIButton::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CUIButton::correctSize() {
+void UIButton::correctSize() {
 	Rect32 rect;
 
-	CBSprite *img = NULL;
+	BaseSprite *img = NULL;
 	if (_image) img = _image;
 	else if (_imageDisable) img = _imageDisable;
 	else if (_imageHover) img = _imageHover;
@@ -577,21 +577,21 @@ void CUIButton::correctSize() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIButton::display(int offsetX, int offsetY) {
+bool UIButton::display(int offsetX, int offsetY) {
 	if (!_visible)
 		return STATUS_OK;
 
-	CUITiledImage *back = NULL;
-	CBSprite *image = NULL;
-	CBFont *font = 0;
+	UITiledImage *back = NULL;
+	BaseSprite *image = NULL;
+	BaseFont *font = 0;
 
 	//RECT rect;
-	//CBPlatform::setRect(&rect, OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
-	//_hover = (!_disable && CBPlatform::ptInRect(&rect, _gameRef->_mousePos)!=FALSE);
+	//BasePlatform::setRect(&rect, OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
+	//_hover = (!_disable && BasePlatform::ptInRect(&rect, _gameRef->_mousePos)!=FALSE);
 	_hover = (!_disable && _gameRef->_activeObject == this && (_gameRef->_interactive || _gameRef->_state == GAME_SEMI_FROZEN));
 
 	if ((_press && _hover && !_gameRef->_mouseLeftDown) ||
-	        (_oneTimePress && CBPlatform::getTime() - _oneTimePressTime >= 100)) press();
+	        (_oneTimePress && BasePlatform::getTime() - _oneTimePressTime >= 100)) press();
 
 
 	if (_disable) {
@@ -638,7 +638,7 @@ bool CUIButton::display(int offsetX, int offsetY) {
 		font->drawText((byte *)_text, offsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), offsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
 	}
 
-	if (!_pixelPerfect || !_image) _gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	if (!_pixelPerfect || !_image) _gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 	// reset unused sprites
 	if (_image && _image != image) _image->reset();
@@ -654,7 +654,7 @@ bool CUIButton::display(int offsetX, int offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIButton::press() {
+void UIButton::press() {
 	applyEvent("Press");
 	if (_listenerObject) _listenerObject->listen(_listenerParamObject, _listenerParamDWORD);
 	if (_parentNotify && _parent) _parent->applyEvent(_name);
@@ -666,13 +666,13 @@ void CUIButton::press() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetDisabledFont
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetDisabledFont") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		ScValue *Val = stack->pop();
 
 		if (_fontDisable) _gameRef->_fontStorage->removeFont(_fontDisable);
 		if (Val->isNULL()) {
@@ -690,7 +690,7 @@ bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetHoverFont") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
 		if (_fontHover) _gameRef->_fontStorage->removeFont(_fontHover);
 		if (val->isNULL()) {
@@ -708,7 +708,7 @@ bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetPressedFont") == 0) {
 		stack->correctParams(1);
-		CScValue *Val = stack->pop();
+		ScValue *Val = stack->pop();
 
 		if (_fontPress) _gameRef->_fontStorage->removeFont(_fontPress);
 		if (Val->isNULL()) {
@@ -726,7 +726,7 @@ bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetFocusedFont") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
 		if (_fontFocus) _gameRef->_fontStorage->removeFont(_fontFocus);
 		if (val->isNULL()) {
@@ -746,7 +746,7 @@ bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(1);
 
 		delete _imageDisable;
-		_imageDisable = new CBSprite(_gameRef);
+		_imageDisable = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageDisable || DID_FAIL(_imageDisable->loadFile(filename))) {
 			delete _imageDisable;
@@ -787,7 +787,7 @@ bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(1);
 
 		delete _imageHover;
-		_imageHover = new CBSprite(_gameRef);
+		_imageHover = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageHover || DID_FAIL(_imageHover->loadFile(filename))) {
 			delete _imageHover;
@@ -827,7 +827,7 @@ bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(1);
 
 		delete _imagePress;
-		_imagePress = new CBSprite(_gameRef);
+		_imagePress = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imagePress || DID_FAIL(_imagePress->loadFile(filename))) {
 			delete _imagePress;
@@ -867,7 +867,7 @@ bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(1);
 
 		delete _imageFocus;
-		_imageFocus = new CBSprite(_gameRef);
+		_imageFocus = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageFocus || DID_FAIL(_imageFocus->loadFile(filename))) {
 			delete _imageFocus;
@@ -908,7 +908,7 @@ bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 
 		if (_visible && !_disable) {
 			_oneTimePress = true;
-			_oneTimePressTime = CBPlatform::getTime();
+			_oneTimePressTime = BasePlatform::getTime();
 		}
 		stack->pushNULL();
 
@@ -916,12 +916,12 @@ bool CUIButton::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	}
 
 
-	else return CUIObject::scCallMethod(script, stack, thisStack, name);
+	else return UIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIButton::scGetProperty(const char *name) {
+ScValue *UIButton::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -962,12 +962,12 @@ CScValue *CUIButton::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CUIObject::scGetProperty(name);
+	else return UIObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIButton::scSetProperty(const char *name, CScValue *value) {
+bool UIButton::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
@@ -1000,20 +1000,20 @@ bool CUIButton::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CUIObject::scSetProperty(name, value);
+	else return UIObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIButton::scToString() {
+const char *UIButton::scToString() {
 	return "[button]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIButton::persist(CBPersistMgr *persistMgr) {
+bool UIButton::persist(BasePersistenceManager *persistMgr) {
 
-	CUIObject::persist(persistMgr);
+	UIObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_align));
 	persistMgr->transfer(TMEMBER(_backDisable));

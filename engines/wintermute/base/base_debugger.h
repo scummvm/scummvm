@@ -36,12 +36,12 @@
 // TODO: The entire debugger should possibly be removed
 
 namespace WinterMute {
-class CScScript;
-class CScValue;
-class CBDebugger : public CBBase, public IWmeDebugServer {
+class ScScript;
+class ScValue;
+class BaseDebugger : public BaseClass, public IWmeDebugServer {
 public:
-	CBDebugger(CBGame *inGame);
-	virtual ~CBDebugger(void);
+	BaseDebugger(BaseGame *inGame);
+	virtual ~BaseDebugger(void);
 
 	// initialization
 	bool _enabled;
@@ -53,18 +53,18 @@ public:
 	bool onGameShutdown();
 	bool onGameTick();
 	bool onLog(unsigned int errorCode, const char *text);
-	bool onScriptInit(CScScript *script);
-	bool onScriptEventThreadInit(CScScript *script, CScScript *parentScript, const char *name);
-	bool onScriptMethodThreadInit(CScScript *script, CScScript *parentScript, const char *name);
+	bool onScriptInit(ScScript *script);
+	bool onScriptEventThreadInit(ScScript *script, ScScript *parentScript, const char *name);
+	bool onScriptMethodThreadInit(ScScript *script, ScScript *parentScript, const char *name);
 
-	bool onScriptShutdown(CScScript *script);
-	bool onScriptChangeLine(CScScript *script, int line);
-	bool onScriptChangeScope(CScScript *script, CScValue *scope);
-	bool onScriptShutdownScope(CScScript *script, CScValue *scope);
-	bool onVariableInit(EWmeDebuggerVariableType type, CScScript *script, CScValue *scope, CScValue *var, const char *variableName);
-	bool onVariableChangeValue(CScValue *var, CScValue *value);
+	bool onScriptShutdown(ScScript *script);
+	bool onScriptChangeLine(ScScript *script, int line);
+	bool onScriptChangeScope(ScScript *script, ScValue *scope);
+	bool onScriptShutdownScope(ScScript *script, ScValue *scope);
+	bool onVariableInit(EWmeDebuggerVariableType type, ScScript *script, ScValue *scope, ScValue *var, const char *variableName);
+	bool onVariableChangeValue(ScValue *var, ScValue *value);
 
-	bool onScriptHitBreakpoint(CScScript *script);
+	bool onScriptHitBreakpoint(ScScript *script);
 
 	// IWmeDebugServer interface
 	virtual bool attachClient(IWmeDebugClient *client);

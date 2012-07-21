@@ -30,26 +30,26 @@
 #define WINTERMUTE_ADLAYER_H
 
 namespace WinterMute {
-class CAdSceneNode;
-class CAdLayer : public CBObject {
+class AdSceneNode;
+class AdLayer : public BaseObject {
 public:
 	bool _closeUp;
-	DECLARE_PERSISTENT(CAdLayer, CBObject)
+	DECLARE_PERSISTENT(AdLayer, BaseObject)
 	bool _active;
 	int _height;
 	int _width;
 	bool _main;
-	CAdLayer(CBGame *inGame);
-	virtual ~CAdLayer();
-	CBArray<CAdSceneNode *, CAdSceneNode *> _nodes;
+	AdLayer(BaseGame *inGame);
+	virtual ~AdLayer();
+	BaseArray<AdSceneNode *, AdSceneNode *> _nodes;
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

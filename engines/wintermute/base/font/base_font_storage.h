@@ -36,17 +36,17 @@
 
 namespace WinterMute {
 
-class CBFont;
+class BaseFont;
 
-class CBFontStorage : public CBBase {
+class BaseFontStorage : public BaseClass {
 public:
-	DECLARE_PERSISTENT(CBFontStorage, CBBase)
+	DECLARE_PERSISTENT(BaseFontStorage, BaseClass)
 	bool cleanup(bool warn = false);
-	bool removeFont(CBFont *font);
-	CBFont *addFont(const char *filename);
-	CBFontStorage(CBGame *inGame);
-	virtual ~CBFontStorage();
-	CBArray<CBFont *, CBFont *> _fonts;
+	bool removeFont(BaseFont *font);
+	BaseFont *addFont(const char *filename);
+	BaseFontStorage(BaseGame *inGame);
+	virtual ~BaseFontStorage();
+	BaseArray<BaseFont *, BaseFont *> _fonts;
 	bool initLoop();
 };
 

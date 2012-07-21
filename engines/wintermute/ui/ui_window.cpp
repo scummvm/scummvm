@@ -50,12 +50,12 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CUIWindow, false)
+IMPLEMENT_PERSISTENT(UIWindow, false)
 
 //////////////////////////////////////////////////////////////////////////
-CUIWindow::CUIWindow(CBGame *inGame): CUIObject(inGame) {
-	CBPlatform::setRectEmpty(&_titleRect);
-	CBPlatform::setRectEmpty(&_dragRect);
+UIWindow::UIWindow(BaseGame *inGame): UIObject(inGame) {
+	BasePlatform::setRectEmpty(&_titleRect);
+	BasePlatform::setRectEmpty(&_dragRect);
 	_titleAlign = TAL_LEFT;
 	_transparent = false;
 
@@ -88,14 +88,14 @@ CUIWindow::CUIWindow(CBGame *inGame): CUIObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CUIWindow::~CUIWindow() {
+UIWindow::~UIWindow() {
 	close();
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIWindow::cleanup() {
+void UIWindow::cleanup() {
 	delete _shieldWindow;
 	delete _shieldButton;
 	delete _viewport;
@@ -113,10 +113,10 @@ void CUIWindow::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::display(int offsetX, int offsetY) {
+bool UIWindow::display(int offsetX, int offsetY) {
 	// go exclusive
 	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
-		if (!_shieldWindow) _shieldWindow = new CUIWindow(_gameRef);
+		if (!_shieldWindow) _shieldWindow = new UIWindow(_gameRef);
 		if (_shieldWindow) {
 			_shieldWindow->_posX = _shieldWindow->_posY = 0;
 			_shieldWindow->_width = _gameRef->_renderer->_width;
@@ -126,7 +126,7 @@ bool CUIWindow::display(int offsetX, int offsetY) {
 		}
 	} else if (_isMenu) {
 		if (!_shieldButton) {
-			_shieldButton = new CUIButton(_gameRef);
+			_shieldButton = new UIButton(_gameRef);
 			_shieldButton->setName("close");
 			_shieldButton->setListener(this, _shieldButton, 0);
 			_shieldButton->_parent = this;
@@ -159,7 +159,7 @@ bool CUIWindow::display(int offsetX, int offsetY) {
 
 	bool popViewport = false;
 	if (_clipContents) {
-		if (!_viewport) _viewport = new CBViewport(_gameRef);
+		if (!_viewport) _viewport = new BaseViewport(_gameRef);
 		if (_viewport) {
 			_viewport->setRect(_posX + offsetX, _posY + offsetY, _posX + _width + offsetX, _posY + _height + offsetY);
 			_gameRef->pushViewport(_viewport);
@@ -168,9 +168,9 @@ bool CUIWindow::display(int offsetX, int offsetY) {
 	}
 
 
-	CUITiledImage *back = _back;
-	CBSprite *image = _image;
-	CBFont *font = _font;
+	UITiledImage *back = _back;
+	BaseSprite *image = _image;
+	BaseFont *font = _font;
 
 	if (!isFocused()) {
 		if (_backInactive) back = _backInactive;
@@ -185,12 +185,12 @@ bool CUIWindow::display(int offsetX, int offsetY) {
 	if (image)
 		image->draw(_posX + offsetX, _posY + offsetY, _transparent ? NULL : this);
 
-	if (!CBPlatform::isRectEmpty(&_titleRect) && font && _text) {
+	if (!BasePlatform::isRectEmpty(&_titleRect) && font && _text) {
 		font->drawText((byte *)_text, _posX + offsetX + _titleRect.left, _posY + offsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
 	if (!_transparent && !image)
-		_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+		_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		_widgets[i]->display(_posX + offsetX, _posY + offsetY);
@@ -207,10 +207,10 @@ bool CUIWindow::display(int offsetX, int offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::loadFile(const char *filename) {
+bool UIWindow::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CUIWindow::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "UIWindow::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -266,7 +266,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(EDIT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
+bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WINDOW)
 	TOKEN_TABLE(ALPHA_COLOR)
@@ -308,7 +308,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	int fadeR = 0, fadeG = 0, fadeB = 0, fadeA = 0;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
@@ -337,7 +337,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			delete _back;
-			_back = new CUITiledImage(_gameRef);
+			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
@@ -347,7 +347,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK_INACTIVE:
 			delete _backInactive;
-			_backInactive = new CUITiledImage(_gameRef);
+			_backInactive = new UITiledImage(_gameRef);
 			if (!_backInactive || DID_FAIL(_backInactive->loadFile((char *)params))) {
 				delete _backInactive;
 				_backInactive = NULL;
@@ -357,7 +357,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSprite(_gameRef);
+			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -367,7 +367,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE_INACTIVE:
 			delete _imageInactive,
-			       _imageInactive = new CBSprite(_gameRef);
+			       _imageInactive = new BaseSprite(_gameRef);
 			if (!_imageInactive || DID_FAIL(_imageInactive->loadFile((char *)params))) {
 				delete _imageInactive;
 				_imageInactive = NULL;
@@ -424,7 +424,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(_gameRef);
+			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -433,7 +433,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_BUTTON: {
-			CUIButton *btn = new CUIButton(_gameRef);
+			UIButton *btn = new UIButton(_gameRef);
 			if (!btn || DID_FAIL(btn->loadBuffer(params, false))) {
 				delete btn;
 				btn = NULL;
@@ -446,7 +446,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_STATIC: {
-			CUIText *text = new CUIText(_gameRef);
+			UIText *text = new UIText(_gameRef);
 			if (!text || DID_FAIL(text->loadBuffer(params, false))) {
 				delete text;
 				text = NULL;
@@ -459,7 +459,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_EDIT: {
-			CUIEdit *edit = new CUIEdit(_gameRef);
+			UIEdit *edit = new UIEdit(_gameRef);
 			if (!edit || DID_FAIL(edit->loadBuffer(params, false))) {
 				delete edit;
 				edit = NULL;
@@ -472,7 +472,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_WINDOW: {
-			CUIWindow *win = new CUIWindow(_gameRef);
+			UIWindow *win = new UIWindow(_gameRef);
 			if (!win || DID_FAIL(win->loadBuffer(params, false))) {
 				delete win;
 				win = NULL;
@@ -575,7 +575,7 @@ bool CUIWindow::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
+bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WINDOW\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -621,11 +621,11 @@ bool CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 		error("UIWindow::SaveAsText - Unhandled enum-value NUM_TEXT_ALIGN");
 	}
 
-	if (!CBPlatform::isRectEmpty(&_titleRect)) {
+	if (!BasePlatform::isRectEmpty(&_titleRect)) {
 		buffer->putTextIndent(indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", _titleRect.left, _titleRect.top, _titleRect.right, _titleRect.bottom);
 	}
 
-	if (!CBPlatform::isRectEmpty(&_dragRect)) {
+	if (!BasePlatform::isRectEmpty(&_dragRect)) {
 		buffer->putTextIndent(indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", _dragRect.left, _dragRect.top, _dragRect.right, _dragRect.bottom);
 	}
 
@@ -666,7 +666,7 @@ bool CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	// controls
 	for (int i = 0; i < _widgets.getSize(); i++)
@@ -678,7 +678,7 @@ bool CUIWindow::saveAsText(CBDynBuffer *buffer, int indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::enableWidget(const char *name, bool Enable) {
+bool UIWindow::enableWidget(const char *name, bool Enable) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_disable = !Enable;
 	}
@@ -687,7 +687,7 @@ bool CUIWindow::enableWidget(const char *name, bool Enable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::showWidget(const char *name, bool Visible) {
+bool UIWindow::showWidget(const char *name, bool Visible) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_visible = Visible;
 	}
@@ -698,13 +698,13 @@ bool CUIWindow::showWidget(const char *name, bool Visible) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetWidget / GetControl
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetWidget") == 0 || strcmp(name, "GetControl") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		if (val->getType() == VAL_INT) {
 			int widget = val->getInt();
 			if (widget < 0 || widget >= _widgets.getSize()) stack->pushNULL();
@@ -742,7 +742,7 @@ bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(1);
 
 		delete _imageInactive;
-		_imageInactive = new CBSprite(_gameRef);
+		_imageInactive = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageInactive || DID_FAIL(_imageInactive->loadFile(filename))) {
 			delete _imageInactive;
@@ -824,7 +824,7 @@ bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	else if (strcmp(name, "LoadFromFile") == 0) {
 		stack->correctParams(1);
 
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		cleanup();
 		if (!val->isNULL()) {
 			stack->pushBool(DID_SUCCEED(loadFile(val->getString())));
@@ -838,9 +838,9 @@ bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateButton") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CUIButton *btn = new CUIButton(_gameRef);
+		UIButton *btn = new UIButton(_gameRef);
 		if (!val->isNULL()) btn->setName(val->getString());
 		stack->pushNative(btn, true);
 
@@ -855,9 +855,9 @@ bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateStatic") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CUIText *sta = new CUIText(_gameRef);
+		UIText *sta = new UIText(_gameRef);
 		if (!val->isNULL()) sta->setName(val->getString());
 		stack->pushNative(sta, true);
 
@@ -872,9 +872,9 @@ bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateEditor") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CUIEdit *edi = new CUIEdit(_gameRef);
+		UIEdit *edi = new UIEdit(_gameRef);
 		if (!val->isNULL()) edi->setName(val->getString());
 		stack->pushNative(edi, true);
 
@@ -889,9 +889,9 @@ bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CreateWindow") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 
-		CUIWindow *win = new CUIWindow(_gameRef);
+		UIWindow *win = new UIWindow(_gameRef);
 		if (!val->isNULL()) win->setName(val->getString());
 		stack->pushNative(win, true);
 
@@ -906,8 +906,8 @@ bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteControl") == 0 || strcmp(name, "DeleteButton") == 0 || strcmp(name, "DeleteStatic") == 0 || strcmp(name, "DeleteEditor") == 0 || strcmp(name, "DeleteWindow") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
-		CUIObject *obj = (CUIObject *)val->getNative();
+		ScValue *val = stack->pop();
+		UIObject *obj = (UIObject *)val->getNative();
 
 		for (int i = 0; i < _widgets.getSize(); i++) {
 			if (_widgets[i] == obj) {
@@ -920,12 +920,12 @@ bool CUIWindow::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		return STATUS_OK;
 	} else if DID_SUCCEED(_gameRef->windowScriptMethodHook(this, script, stack, name)) return STATUS_OK;
 
-	else return CUIObject::scCallMethod(script, stack, thisStack, name);
+	else return UIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIWindow::scGetProperty(const char *name) {
+ScValue *UIWindow::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1008,12 +1008,12 @@ CScValue *CUIWindow::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CUIObject::scGetProperty(name);
+	else return UIObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::scSetProperty(const char *name, CScValue *value) {
+bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -1097,21 +1097,21 @@ bool CUIWindow::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CUIObject::scSetProperty(name, value);
+	else return UIObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIWindow::scToString() {
+const char *UIWindow::scToString() {
 	return "[window]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::handleKeypress(Common::Event *event, bool printable) {
+bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
 //TODO
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
-		return DID_SUCCEED(moveFocus(!CBKeyboardState::isShiftDown()));
+		return DID_SUCCEED(moveFocus(!BaseKeyboardState::isShiftDown()));
 	} else {
 		if (_focusedWidget) return _focusedWidget->handleKeypress(event, printable);
 		else return false;
@@ -1121,26 +1121,26 @@ bool CUIWindow::handleKeypress(Common::Event *event, bool printable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::handleMouseWheel(int Delta) {
+bool UIWindow::handleMouseWheel(int Delta) {
 	if (_focusedWidget) return _focusedWidget->handleMouseWheel(Delta);
 	else return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
-	bool res = CUIObject::handleMouse(event, button);
+bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
+	bool res = UIObject::handleMouse(event, button);
 
 	// handle window dragging
-	if (!CBPlatform::isRectEmpty(&_dragRect)) {
+	if (!BasePlatform::isRectEmpty(&_dragRect)) {
 		// start drag
 		if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 			Rect32 dragRect = _dragRect;
 			int offsetX, offsetY;
 			getTotalOffset(&offsetX, &offsetY);
-			CBPlatform::offsetRect(&dragRect, _posX + offsetX, _posY + offsetY);
+			BasePlatform::offsetRect(&dragRect, _posX + offsetX, _posY + offsetY);
 
-			if (CBPlatform::ptInRect(&dragRect, _gameRef->_mousePos)) {
+			if (BasePlatform::ptInRect(&dragRect, _gameRef->_mousePos)) {
 				_dragFrom.x = _gameRef->_mousePos.x;
 				_dragFrom.y = _gameRef->_mousePos.y;
 				_dragging = true;
@@ -1158,9 +1158,9 @@ bool CUIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::persist(CBPersistMgr *persistMgr) {
+bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 
-	CUIObject::persist(persistMgr);
+	UIObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_backInactive));
 	persistMgr->transfer(TMEMBER(_clipContents));
@@ -1189,7 +1189,7 @@ bool CUIWindow::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::moveFocus(bool forward) {
+bool UIWindow::moveFocus(bool forward) {
 	int i;
 	bool found = false;
 	for (i = 0; i < _widgets.getSize(); i++) {
@@ -1230,7 +1230,7 @@ bool CUIWindow::moveFocus(bool forward) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::goExclusive() {
+bool UIWindow::goExclusive() {
 	if (_mode == WINDOW_EXCLUSIVE) return STATUS_OK;
 
 	if (_mode == WINDOW_NORMAL) {
@@ -1245,7 +1245,7 @@ bool CUIWindow::goExclusive() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::goSystemExclusive() {
+bool UIWindow::goSystemExclusive() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) return STATUS_OK;
 
 	makeFreezable(false);
@@ -1262,7 +1262,7 @@ bool CUIWindow::goSystemExclusive() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::close() {
+bool UIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		_gameRef->unfreeze();
 	}
@@ -1276,16 +1276,16 @@ bool CUIWindow::close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
-	CUIObject *obj = (CUIObject *)param1;
+bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
+	UIObject *obj = (UIObject *)param1;
 
 	switch (obj->_type) {
 	case UI_BUTTON:
 		if (scumm_stricmp(obj->_name, "close") == 0) close();
-		else return CBObject::listen(param1, param2);
+		else return BaseObject::listen(param1, param2);
 		break;
 	default:
-		return CBObject::listen(param1, param2);
+		return BaseObject::listen(param1, param2);
 	}
 
 	return STATUS_OK;
@@ -1293,23 +1293,23 @@ bool CUIWindow::listen(CBScriptHolder *param1, uint32 param2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIWindow::makeFreezable(bool freezable) {
+void UIWindow::makeFreezable(bool freezable) {
 	for (int i = 0; i < _widgets.getSize(); i++)
 		_widgets[i]->makeFreezable(freezable);
 
-	CBObject::makeFreezable(freezable);
+	BaseObject::makeFreezable(freezable);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIWindow::getWindowObjects(CBArray<CUIObject *, CUIObject *> &objects, bool interactiveOnly) {
+bool UIWindow::getWindowObjects(BaseArray<UIObject *, UIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
-		CUIObject *control = _widgets[i];
+		UIObject *control = _widgets[i];
 		if (control->_disable && interactiveOnly) continue;
 
 		switch (control->_type) {
 		case UI_WINDOW:
-			((CUIWindow *)control)->getWindowObjects(objects, interactiveOnly);
+			((UIWindow *)control)->getWindowObjects(objects, interactiveOnly);
 			break;
 
 		case UI_BUTTON:

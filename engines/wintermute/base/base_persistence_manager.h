@@ -42,7 +42,7 @@ namespace WinterMute {
 
 class Vector2;
 
-class CBPersistMgr : public CBBase {
+class BasePersistenceManager : public BaseClass {
 public:
 	char *_savedDescription;
 	TimeDate _savedTimestamp;
@@ -94,8 +94,8 @@ public:
 	bool transfer(const char *name, Common::String *val);
 	bool transfer(const char *name, Vector2 *val);
 	bool transfer(const char *name, AnsiStringArray &Val);
-	CBPersistMgr(CBGame *inGame = NULL, const char *savePrefix = NULL);
-	virtual ~CBPersistMgr();
+	BasePersistenceManager(BaseGame *inGame = NULL, const char *savePrefix = NULL);
+	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
 
 	uint32 _thumbnailDataSize;

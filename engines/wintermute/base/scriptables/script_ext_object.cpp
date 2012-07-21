@@ -36,14 +36,14 @@ namespace WinterMute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-IMPLEMENT_PERSISTENT(CSXObject, false)
+IMPLEMENT_PERSISTENT(SXObject, false)
 
-CBScriptable *makeSXObject(CBGame *inGame, CScStack *stack) {
-	return new CSXObject(inGame, stack);
+BaseScriptable *makeSXObject(BaseGame *inGame, ScStack *stack) {
+	return new SXObject(inGame, stack);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXObject::CSXObject(CBGame *inGame, CScStack *stack): CBObject(inGame) {
+SXObject::SXObject(BaseGame *inGame, ScStack *stack): BaseObject(inGame) {
 	int numParams = stack->pop()->getInt(0);
 	for (int i = 0; i < numParams; i++) {
 		addScript(stack->pop()->getString());
@@ -52,14 +52,14 @@ CSXObject::CSXObject(CBGame *inGame, CScStack *stack): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CSXObject::~CSXObject() {
+SXObject::~SXObject() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXObject::persist(CBPersistMgr *persistMgr) {
-	CBObject::persist(persistMgr);
+bool SXObject::persist(BasePersistenceManager *persistMgr) {
+	BaseObject::persist(persistMgr);
 
 	return STATUS_OK;
 }

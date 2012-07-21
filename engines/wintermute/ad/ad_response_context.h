@@ -34,14 +34,14 @@
 
 namespace WinterMute {
 
-class CAdResponseContext : public CBBase {
+class AdResponseContext : public BaseClass {
 public:
 	void setContext(const char *context);
 	int _iD;
 	char *_context;
-	DECLARE_PERSISTENT(CAdResponseContext, CBBase)
-	CAdResponseContext(CBGame *inGame);
-	virtual ~CAdResponseContext();
+	DECLARE_PERSISTENT(AdResponseContext, BaseClass)
+	AdResponseContext(BaseGame *inGame);
+	virtual ~AdResponseContext();
 
 };
 

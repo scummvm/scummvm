@@ -34,14 +34,14 @@
 #include "engines/wintermute/base/particles/part_force.h"
 
 namespace WinterMute {
-class CBRegion;
-class CPartParticle;
-class CPartEmitter : public CBObject {
+class BaseRegion;
+class PartParticle;
+class PartEmitter : public BaseObject {
 public:
-	DECLARE_PERSISTENT(CPartEmitter, CBObject)
+	DECLARE_PERSISTENT(PartEmitter, BaseObject)
 
-	CPartEmitter(CBGame *inGame, CBScriptHolder *Owner);
-	virtual ~CPartEmitter(void);
+	PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner);
+	virtual ~PartEmitter(void);
 
 	int _width;
 	int _height;
@@ -98,13 +98,13 @@ public:
 	bool _useRegion;
 
 	char *_emitEvent;
-	CBScriptHolder *_owner;
+	BaseScriptHolder *_owner;
 
 	bool start();
 
 	bool update();
 	bool display() { return display(NULL); } // To avoid shadowing the inherited display-function.
-	bool display(CBRegion *region);
+	bool display(BaseRegion *region);
 
 	bool sortParticlesByZ();
 	bool addSprite(const char *filename);
@@ -112,26 +112,26 @@ public:
 	bool setBorder(int x, int y, int width, int height);
 	bool setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom);
 
-	bool addForce(const char *name, CPartForce::TForceType type, int posX, int posY, float angle, float strength);
+	bool addForce(const char *name, PartForce::TForceType type, int posX, int posY, float angle, float strength);
 	bool removeForce(const char *name);
 
-	CBArray<CPartForce *, CPartForce *> _forces;
+	BaseArray<PartForce *, PartForce *> _forces;
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 
 private:
-	CPartForce *addForceByName(const char *name);
+	PartForce *addForceByName(const char *name);
 	int static compareZ(const void *obj1, const void *obj2);
-	bool initParticle(CPartParticle *particle, uint32 currentTime, uint32 timerDelta);
+	bool initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta);
 	bool updateInternal(uint32 currentTime, uint32 timerDelta);
 	uint32 _lastGenTime;
-	CBArray<CPartParticle *, CPartParticle *> _particles;
-	CBArray<char *, char *> _sprites;
+	BaseArray<PartParticle *, PartParticle *> _particles;
+	BaseArray<char *, char *> _sprites;
 };
 
 } // end of namespace WinterMute

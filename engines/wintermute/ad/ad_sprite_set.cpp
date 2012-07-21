@@ -35,10 +35,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdSpriteSet, false)
+IMPLEMENT_PERSISTENT(AdSpriteSet, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdSpriteSet::CAdSpriteSet(CBGame *inGame, CBObject *owner): CBObject(inGame) {
+AdSpriteSet::AdSpriteSet(BaseGame *inGame, BaseObject *owner): BaseObject(inGame) {
 	_owner = owner;
 
 	for (int i = 0; i < NUM_DIRECTIONS; i++)
@@ -47,7 +47,7 @@ CAdSpriteSet::CAdSpriteSet(CBGame *inGame, CBObject *owner): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdSpriteSet::~CAdSpriteSet() {
+AdSpriteSet::~AdSpriteSet() {
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
 		delete _sprites[i];
 		_sprites[i] = NULL;
@@ -58,10 +58,10 @@ CAdSpriteSet::~CAdSpriteSet() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
+bool AdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdSpriteSet::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdSpriteSet::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -90,7 +90,7 @@ TOKEN_DEF(TEMPLATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType CacheType) {
+bool AdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType CacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SPRITESET)
 	TOKEN_TABLE(NAME)
@@ -108,7 +108,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITESET) {
@@ -118,7 +118,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 		buffer = params;
 	}
 
-	CBSprite *spr = NULL;
+	BaseSprite *spr = NULL;
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
@@ -132,7 +132,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 		case TOKEN_LEFT:
 			delete _sprites[DI_LEFT];
 			_sprites[DI_LEFT] = NULL;
-			spr = new CBSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_LEFT] = spr;
 			break;
@@ -140,7 +140,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 		case TOKEN_RIGHT:
 			delete _sprites[DI_RIGHT];
 			_sprites[DI_RIGHT] = NULL;
-			spr = new CBSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_RIGHT] = spr;
 			break;
@@ -148,7 +148,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 		case TOKEN_UP:
 			delete _sprites[DI_UP];
 			_sprites[DI_UP] = NULL;
-			spr = new CBSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_UP] = spr;
 			break;
@@ -156,7 +156,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 		case TOKEN_DOWN:
 			delete _sprites[DI_DOWN];
 			_sprites[DI_DOWN] = NULL;
-			spr = new CBSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_DOWN] = spr;
 			break;
@@ -164,7 +164,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 		case TOKEN_UP_LEFT:
 			delete _sprites[DI_UPLEFT];
 			_sprites[DI_UPLEFT] = NULL;
-			spr = new CBSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_UPLEFT] = spr;
 			break;
@@ -172,7 +172,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 		case TOKEN_UP_RIGHT:
 			delete _sprites[DI_UPRIGHT];
 			_sprites[DI_UPRIGHT] = NULL;
-			spr = new CBSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_UPRIGHT] = spr;
 			break;
@@ -180,7 +180,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 		case TOKEN_DOWN_LEFT:
 			delete _sprites[DI_DOWNLEFT];
 			_sprites[DI_DOWNLEFT] = NULL;
-			spr = new CBSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_DOWNLEFT] = spr;
 			break;
@@ -188,7 +188,7 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 		case TOKEN_DOWN_RIGHT:
 			delete _sprites[DI_DOWNRIGHT];
 			_sprites[DI_DOWNRIGHT] = NULL;
-			spr = new CBSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
 			else _sprites[DI_DOWNRIGHT] = spr;
 			break;
@@ -214,9 +214,9 @@ bool CAdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSprite
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSpriteSet::persist(CBPersistMgr *persistMgr) {
+bool AdSpriteSet::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_owner));
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
@@ -228,12 +228,12 @@ bool CAdSpriteSet::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBSprite *CAdSpriteSet::getSprite(TDirection direction) {
+BaseSprite *AdSpriteSet::getSprite(TDirection direction) {
 	int dir = (int)direction;
 	if (dir < 0) dir = 0;
 	if (dir >= NUM_DIRECTIONS) dir = NUM_DIRECTIONS - 1;
 
-	CBSprite *ret = NULL;
+	BaseSprite *ret = NULL;
 
 	// find nearest set sprite
 	int numSteps = 0;
@@ -258,7 +258,7 @@ CBSprite *CAdSpriteSet::getSprite(TDirection direction) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSpriteSet::saveAsText(CBDynBuffer *buffer, int indent) {
+bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITESET {\n");
 	if (_name) buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
@@ -292,7 +292,7 @@ bool CAdSpriteSet::saveAsText(CBDynBuffer *buffer, int indent) {
 		}
 	}
 
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 
@@ -300,7 +300,7 @@ bool CAdSpriteSet::saveAsText(CBDynBuffer *buffer, int indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSpriteSet::containsSprite(CBSprite *sprite) {
+bool AdSpriteSet::containsSprite(BaseSprite *sprite) {
 	if (!sprite) return false;
 
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {

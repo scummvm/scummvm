@@ -35,7 +35,7 @@
 
 namespace WinterMute {
 
-class CBSurface: public CBBase {
+class BaseSurface: public BaseClass {
 public:
 	virtual bool invalidate();
 	virtual bool prepareToDraw();
@@ -50,8 +50,8 @@ public:
 	bool _keepLoaded;
 
 	bool _pixelOpReady;
-	CBSurface(CBGame *inGame);
-	virtual ~CBSurface();
+	BaseSurface(BaseGame *inGame);
+	virtual ~BaseSurface();
 
 	virtual bool displayHalfTrans(int x, int y, Rect32 rect);
 	virtual bool isTransparentAt(int x, int y);

@@ -44,10 +44,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CUIText, false)
+IMPLEMENT_PERSISTENT(UIText, false)
 
 //////////////////////////////////////////////////////////////////////////
-CUIText::CUIText(CBGame *inGame): CUIObject(inGame) {
+UIText::UIText(BaseGame *inGame): UIObject(inGame) {
 	_textAlign = TAL_LEFT;
 	_verticalAlign = VAL_CENTER;
 	_type = UI_STATIC;
@@ -56,17 +56,17 @@ CUIText::CUIText(CBGame *inGame): CUIObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CUIText::~CUIText() {
+UIText::~UIText() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIText::display(int offsetX, int offsetY) {
+bool UIText::display(int offsetX, int offsetY) {
 	if (!_visible) return STATUS_OK;
 
 
-	CBFont *font = _font;
+	BaseFont *font = _font;
 	if (!font) font = _gameRef->_systemFont;
 
 	if (_back) _back->display(offsetX + _posX, offsetY + _posY, _width, _height);
@@ -87,7 +87,7 @@ bool CUIText::display(int offsetX, int offsetY) {
 		font->drawText((byte *)_text, offsetX + _posX, offsetY + _posY + textOffset, _width, _textAlign, _height);
 	}
 
-	//_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
+	//_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
 
 	return STATUS_OK;
 }
@@ -95,10 +95,10 @@ bool CUIText::display(int offsetX, int offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIText::loadFile(const char *filename) {
+bool UIText::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CUIText::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "UIText::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -138,7 +138,7 @@ TOKEN_DEF(PARENT_NOTIFY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CUIText::loadBuffer(byte *buffer, bool complete) {
+bool UIText::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(STATIC)
 	TOKEN_TABLE(TEMPLATE)
@@ -164,7 +164,7 @@ bool CUIText::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_STATIC) {
@@ -190,7 +190,7 @@ bool CUIText::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			delete _back;
-			_back = new CUITiledImage(_gameRef);
+			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
@@ -200,7 +200,7 @@ bool CUIText::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSprite(_gameRef);
+			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -249,7 +249,7 @@ bool CUIText::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(_gameRef);
+			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -293,7 +293,7 @@ bool CUIText::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
+bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "STATIC\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -328,7 +328,7 @@ bool CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
-		error("CUIText::SaveAsText - Unhandled enum");
+		error("UIText::SaveAsText - Unhandled enum");
 		break;
 	}
 
@@ -367,7 +367,7 @@ bool CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 	return STATUS_OK;
@@ -376,7 +376,7 @@ bool CUIText::saveAsText(CBDynBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SizeToFit
 	//////////////////////////////////////////////////////////////////////////
@@ -397,12 +397,12 @@ bool CUIText::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 		return STATUS_OK;
 	}
 
-	else return CUIObject::scCallMethod(script, stack, thisStack, name);
+	else return UIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIText::scGetProperty(const char *name) {
+ScValue *UIText::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -429,12 +429,12 @@ CScValue *CUIText::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CUIObject::scGetProperty(name);
+	else return UIObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIText::scSetProperty(const char *name, CScValue *value) {
+bool UIText::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
@@ -455,21 +455,21 @@ bool CUIText::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CUIObject::scSetProperty(name, value);
+	else return UIObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIText::scToString() {
+const char *UIText::scToString() {
 	return "[static]";
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIText::persist(CBPersistMgr *persistMgr) {
+bool UIText::persist(BasePersistenceManager *persistMgr) {
 
-	CUIObject::persist(persistMgr);
+	UIObject::persist(persistMgr);
 	persistMgr->transfer(TMEMBER_INT(_textAlign));
 	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
 
@@ -478,7 +478,7 @@ bool CUIText::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIText::sizeToFit() {
+bool UIText::sizeToFit() {
 	if (_font && _text) {
 		_width = _font->getTextWidth((byte *)_text);
 		_height = _font->getTextHeight((byte *)_text, _width);

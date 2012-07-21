@@ -36,16 +36,16 @@
 
 namespace WinterMute {
 
-class CAdSceneNode : public CBObject {
+class AdSceneNode : public BaseObject {
 public:
-	DECLARE_PERSISTENT(CAdSceneNode, CBObject)
-	bool setRegion(CAdRegion *region);
-	bool setEntity(CAdEntity *entity);
-	CAdEntity *_entity;
-	CAdRegion *_region;
+	DECLARE_PERSISTENT(AdSceneNode, BaseObject)
+	bool setRegion(AdRegion *region);
+	bool setEntity(AdEntity *entity);
+	AdEntity *_entity;
+	AdRegion *_region;
 	TObjectType _type;
-	CAdSceneNode(CBGame *inGame);
-	virtual ~CAdSceneNode();
+	AdSceneNode(BaseGame *inGame);
+	virtual ~AdSceneNode();
 
 };
 

@@ -33,7 +33,7 @@
 
 namespace WinterMute {
 
-class CBRegistry : public CBBase {
+class BaseRegistry : public BaseClass {
 public:
 	void setIniName(const char *name);
 	char *getIniName();
@@ -43,8 +43,8 @@ public:
 	int readInt(const AnsiString &subKey, const AnsiString &key, int init = 0);
 	bool writeString(const AnsiString &subKey, const AnsiString &key, const AnsiString &value);
 	AnsiString readString(const AnsiString &subKey, const AnsiString &key, const AnsiString &init = "");
-	CBRegistry(CBGame *inGame);
-	virtual ~CBRegistry();
+	BaseRegistry(BaseGame *inGame);
+	virtual ~BaseRegistry();
 
 	void setBasePath(const char *basePath);
 	AnsiString getBasePath() const {

@@ -38,8 +38,8 @@ class File;
 }
 
 namespace WinterMute {
-class CBFile;
-class CBFileManager: CBBase {
+class BaseFile;
+class BaseFileManager: BaseClass {
 public:
 	bool findPackageSignature(Common::File *f, uint32 *offset);
 	bool cleanup();
@@ -51,7 +51,7 @@ public:
 	bool closeFile(Common::SeekableReadStream *File);
 	bool hasFile(const Common::String &filename);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
-	CBFileEntry *getPackageEntry(const Common::String &filename);
+	BaseFileEntry *getPackageEntry(const Common::String &filename);
 	Common::File *openSingleFile(const Common::String &name);
 	Common::File *openPackage(const Common::String &name);
 	bool registerPackages();
@@ -65,17 +65,17 @@ public:
 	Common::SeekableReadStream *loadSaveGame(const Common::String &filename);
 	bool saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
-	CBFileManager(CBGame *inGame = NULL);
-	virtual ~CBFileManager();
+	BaseFileManager(BaseGame *inGame = NULL);
+	virtual ~BaseFileManager();
 	Common::Array<char *> _singlePaths;
 	Common::Array<char * > _packagePaths;
-	Common::Array<CBPackage *> _packages;
+	Common::Array<BasePackage *> _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
 
-	Common::HashMap<Common::String, CBFileEntry *> _files;
+	Common::HashMap<Common::String, BaseFileEntry *> _files;
 private:
 	bool registerPackage(const Common::String &filename, bool searchSignature = false);
-	Common::HashMap<Common::String, CBFileEntry *>::iterator _filesIter;
+	Common::HashMap<Common::String, BaseFileEntry *>::iterator _filesIter;
 	bool isValidPackage(const AnsiString &fileName) const;
 
 };

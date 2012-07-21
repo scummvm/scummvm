@@ -35,10 +35,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdResponse, false)
+IMPLEMENT_PERSISTENT(AdResponse, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdResponse::CAdResponse(CBGame *inGame): CBObject(inGame) {
+AdResponse::AdResponse(BaseGame *inGame): BaseObject(inGame) {
 	_text = NULL;
 	_textOrig = NULL;
 	_icon = _iconHover = _iconPressed = NULL;
@@ -49,7 +49,7 @@ CAdResponse::CAdResponse(CBGame *inGame): CBObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdResponse::~CAdResponse() {
+AdResponse::~AdResponse() {
 	delete[] _text;
 	delete[] _textOrig;
 	delete _icon;
@@ -65,18 +65,18 @@ CAdResponse::~CAdResponse() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdResponse::setText(const char *text) {
-	CBUtils::setString(&_text, text);
-	CBUtils::setString(&_textOrig, text);
+void AdResponse::setText(const char *text) {
+	BaseUtils::setString(&_text, text);
+	BaseUtils::setString(&_textOrig, text);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponse::setIcon(const char *filename) {
+bool AdResponse::setIcon(const char *filename) {
 	delete _icon;
-	_icon = new CBSprite(_gameRef);
+	_icon = new BaseSprite(_gameRef);
 	if (!_icon || DID_FAIL(_icon->loadFile(filename))) {
-		_gameRef->LOG(0, "CAdResponse::setIcon failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdResponse::setIcon failed for file '%s'", filename);
 		delete _icon;
 		_icon = NULL;
 		return STATUS_FAILED;
@@ -85,22 +85,22 @@ bool CAdResponse::setIcon(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponse::setFont(const char *filename) {
+bool AdResponse::setFont(const char *filename) {
 	if (_font) _gameRef->_fontStorage->removeFont(_font);
 	_font = _gameRef->_fontStorage->addFont(filename);
 	if (!_font) {
-		_gameRef->LOG(0, "CAdResponse::setFont failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdResponse::setFont failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponse::setIconHover(const char *filename) {
+bool AdResponse::setIconHover(const char *filename) {
 	delete _iconHover;
-	_iconHover = new CBSprite(_gameRef);
+	_iconHover = new BaseSprite(_gameRef);
 	if (!_iconHover || DID_FAIL(_iconHover->loadFile(filename))) {
-		_gameRef->LOG(0, "CAdResponse::setIconHover failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdResponse::setIconHover failed for file '%s'", filename);
 		delete _iconHover;
 		_iconHover = NULL;
 		return STATUS_FAILED;
@@ -110,11 +110,11 @@ bool CAdResponse::setIconHover(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponse::setIconPressed(const char *filename) {
+bool AdResponse::setIconPressed(const char *filename) {
 	delete _iconPressed;
-	_iconPressed = new CBSprite(_gameRef);
+	_iconPressed = new BaseSprite(_gameRef);
 	if (!_iconPressed || DID_FAIL(_iconPressed->loadFile(filename))) {
-		_gameRef->LOG(0, "CAdResponse::setIconPressed failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdResponse::setIconPressed failed for file '%s'", filename);
 		delete _iconPressed;
 		_iconPressed = NULL;
 		return STATUS_FAILED;
@@ -124,9 +124,9 @@ bool CAdResponse::setIconPressed(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdResponse::persist(CBPersistMgr *persistMgr) {
+bool AdResponse::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_icon));
 	persistMgr->transfer(TMEMBER(_iconHover));

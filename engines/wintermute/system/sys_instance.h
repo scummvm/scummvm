@@ -31,12 +31,12 @@
 
 namespace WinterMute {
 
-class CSysClass;
+class SystemClass;
 
-class CSysInstance {
+class SystemInstance {
 public:
-	CSysInstance(void *Instance, int ID, CSysClass *sysClass);
-	virtual ~CSysInstance();
+	SystemInstance(void *Instance, int ID, SystemClass *sysClass);
+	virtual ~SystemInstance();
 
 	int getID() const {
 		return _id;
@@ -47,7 +47,7 @@ public:
 	void *getInstance() const {
 		return _instance;
 	}
-	CSysClass *getClass() const {
+	SystemClass *getClass() const {
 		return _class;
 	}
 
@@ -60,7 +60,7 @@ private:
 	int _id;
 	int _savedID;
 	void *_instance;
-	CSysClass *_class;
+	SystemClass *_class;
 };
 
 } // end of namespace WinterMute

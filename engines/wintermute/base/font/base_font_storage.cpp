@@ -39,19 +39,19 @@ namespace WinterMute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-IMPLEMENT_PERSISTENT(CBFontStorage, true)
+IMPLEMENT_PERSISTENT(BaseFontStorage, true)
 
 //////////////////////////////////////////////////////////////////////////
-CBFontStorage::CBFontStorage(CBGame *inGame): CBBase(inGame) {
+BaseFontStorage::BaseFontStorage(BaseGame *inGame): BaseClass(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBFontStorage::~CBFontStorage() {
+BaseFontStorage::~BaseFontStorage() {
 	cleanup(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFontStorage::cleanup(bool warn) {
+bool BaseFontStorage::cleanup(bool warn) {
 	for (int i = 0; i < _fonts.getSize(); i++) {
 		if (warn) _gameRef->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
 		delete _fonts[i];
@@ -62,7 +62,7 @@ bool CBFontStorage::cleanup(bool warn) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFontStorage::initLoop() {
+bool BaseFontStorage::initLoop() {
 	for (int i = 0; i < _fonts.getSize(); i++) {
 		_fonts[i]->initLoop();
 	}
@@ -70,7 +70,7 @@ bool CBFontStorage::initLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBFont *CBFontStorage::addFont(const char *filename) {
+BaseFont *BaseFontStorage::addFont(const char *filename) {
 	if (!filename) return NULL;
 
 	for (int i = 0; i < _fonts.getSize(); i++) {
@@ -81,7 +81,7 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 	}
 
 	/*
-	CBFont* font = new CBFont(_gameRef);
+	BaseFont* font = new BaseFont(_gameRef);
 	if (!font) return NULL;
 
 	if (DID_FAIL(font->loadFile(filename))) {
@@ -94,7 +94,7 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 	    return font;
 	}
 	*/
-	CBFont *font = CBFont::createFromFile(_gameRef,  filename);
+	BaseFont *font = BaseFont::createFromFile(_gameRef,  filename);
 	if (font) {
 		font->_refCount = 1;
 		_fonts.add(font);
@@ -104,7 +104,7 @@ CBFont *CBFontStorage::addFont(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFontStorage::removeFont(CBFont *font) {
+bool BaseFontStorage::removeFont(BaseFont *font) {
 	if (!font) return STATUS_FAILED;
 
 	for (int i = 0; i < _fonts.getSize(); i++) {
@@ -122,7 +122,7 @@ bool CBFontStorage::removeFont(CBFont *font) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFontStorage::persist(CBPersistMgr *persistMgr) {
+bool BaseFontStorage::persist(BasePersistenceManager *persistMgr) {
 
 	if (!persistMgr->_saving) cleanup(false);
 

@@ -41,10 +41,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdSentence, false)
+IMPLEMENT_PERSISTENT(AdSentence, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdSentence::CAdSentence(CBGame *inGame): CBBase(inGame) {
+AdSentence::AdSentence(BaseGame *inGame): BaseClass(inGame) {
 	_text = NULL;
 	_stances = NULL;
 	_tempStance = NULL;
@@ -72,7 +72,7 @@ CAdSentence::CAdSentence(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdSentence::~CAdSentence() {
+AdSentence::~AdSentence() {
 	delete _sound;
 	delete[] _text;
 	delete[] _stances;
@@ -91,7 +91,7 @@ CAdSentence::~CAdSentence() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSentence::setText(const char *text) {
+void AdSentence::setText(const char *text) {
 	if (_text) delete [] _text;
 	_text = new char[strlen(text) + 1];
 	if (_text) strcpy(_text, text);
@@ -99,7 +99,7 @@ void CAdSentence::setText(const char *text) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSentence::setStances(const char *stances) {
+void AdSentence::setStances(const char *stances) {
 	if (_stances) delete [] _stances;
 	if (stances) {
 		_stances = new char[strlen(stances) + 1];
@@ -109,20 +109,20 @@ void CAdSentence::setStances(const char *stances) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdSentence::getCurrentStance() {
+char *AdSentence::getCurrentStance() {
 	return getStance(_currentStance);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdSentence::getNextStance() {
+char *AdSentence::getNextStance() {
 	_currentStance++;
 	return getStance(_currentStance);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CAdSentence::getStance(int stance) {
+char *AdSentence::getStance(int stance) {
 	if (_stances == NULL) return NULL;
 
 	if (_tempStance) delete [] _tempStance;
@@ -165,7 +165,7 @@ char *CAdSentence::getStance(int stance) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSentence::display() {
+bool AdSentence::display() {
 	if (!_font || !_text) return STATUS_FAILED;
 
 	if (_sound && !_soundStarted) {
@@ -178,8 +178,8 @@ bool CAdSentence::display() {
 		int y = _pos.y;
 
 		if (!_fixedPos) {
-			x = x - ((CAdGame *)_gameRef)->_scene->getOffsetLeft();
-			y = y - ((CAdGame *)_gameRef)->_scene->getOffsetTop();
+			x = x - ((AdGame *)_gameRef)->_scene->getOffsetLeft();
+			y = y - ((AdGame *)_gameRef)->_scene->getOffsetTop();
 		}
 
 
@@ -195,7 +195,7 @@ bool CAdSentence::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSentence::setSound(CBSound *sound) {
+void AdSentence::setSound(BaseSound *sound) {
 	if (!sound) return;
 	delete _sound;
 	_sound = sound;
@@ -204,14 +204,14 @@ void CAdSentence::setSound(CBSound *sound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSentence::finish() {
+bool AdSentence::finish() {
 	if (_sound) _sound->stop();
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSentence::persist(CBPersistMgr *persistMgr) {
+bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 
@@ -238,7 +238,7 @@ bool CAdSentence::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSentence::setupTalkFile(const char *soundFilename) {
+bool AdSentence::setupTalkFile(const char *soundFilename) {
 	delete _talkDef;
 	_talkDef = NULL;
 	_currentSprite = NULL;
@@ -257,7 +257,7 @@ bool CAdSentence::setupTalkFile(const char *soundFilename) {
 	} else return STATUS_OK; // no talk def file found
 
 
-	_talkDef = new CAdTalkDef(_gameRef);
+	_talkDef = new AdTalkDef(_gameRef);
 	if (!_talkDef || DID_FAIL(_talkDef->loadFile(talkDefFileName.c_str()))) {
 		delete _talkDef;
 		_talkDef = NULL;
@@ -270,7 +270,7 @@ bool CAdSentence::setupTalkFile(const char *soundFilename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSentence::update(TDirection dir) {
+bool AdSentence::update(TDirection dir) {
 	if (!_talkDef) return STATUS_OK;
 
 	uint32 currentTime;
@@ -287,7 +287,7 @@ bool CAdSentence::update(TDirection dir) {
 		if (_talkDef->_nodes[i]->isInTimeInterval(currentTime, dir)) {
 			talkNodeFound = true;
 
-			CBSprite *newSprite = _talkDef->_nodes[i]->getSprite(dir);
+			BaseSprite *newSprite = _talkDef->_nodes[i]->getSprite(dir);
 			if (newSprite != _currentSprite) newSprite->reset();
 			_currentSprite = newSprite;
 
@@ -298,7 +298,7 @@ bool CAdSentence::update(TDirection dir) {
 
 	// no talk node, try to use default sprite instead (if any)
 	if (!talkNodeFound) {
-		CBSprite *newSprite = _talkDef->getDefaultSprite(dir);
+		BaseSprite *newSprite = _talkDef->getDefaultSprite(dir);
 		if (newSprite) {
 			if (newSprite != _currentSprite) newSprite->reset();
 			_currentSprite = newSprite;
@@ -309,7 +309,7 @@ bool CAdSentence::update(TDirection dir) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSentence::CanSkip() {
+bool AdSentence::CanSkip() {
 	// prevent accidental sentence skipping (TODO make configurable)
 	return (_gameRef->_timer - _startTime) > 300;
 }

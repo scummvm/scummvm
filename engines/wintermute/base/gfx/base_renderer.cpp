@@ -37,7 +37,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-CBRenderer::CBRenderer(CBGame *inGame): CBBase(inGame) {
+BaseRenderer::BaseRenderer(BaseGame *inGame): BaseClass(inGame) {
 	_window = 0;
 	_clipperWindow = 0;
 	_active = false;
@@ -46,7 +46,7 @@ CBRenderer::CBRenderer(CBGame *inGame): CBBase(inGame) {
 	_forceAlphaColor = 0x00;
 
 	_width = _height = _bPP = 0;
-	CBPlatform::setRectEmpty(&_monitorRect);
+	BasePlatform::setRectEmpty(&_monitorRect);
 
 	_realWidth = _realHeight = 0;
 	_drawOffsetX = _drawOffsetY = 0;
@@ -54,26 +54,26 @@ CBRenderer::CBRenderer(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBRenderer::~CBRenderer() {
+BaseRenderer::~BaseRenderer() {
 	deleteRectList();
 	unclipCursor();
 }
 
 
 //////////////////////////////////////////////////////////////////////
-void CBRenderer::initLoop() {
+void BaseRenderer::initLoop() {
 	deleteRectList();
 }
 
 
 //////////////////////////////////////////////////////////////////////
-CBObject *CBRenderer::getObjectAt(int x, int y) {
+BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 	Point32 point;
 	point.x = x;
 	point.y = y;
 
 	for (int i = _rectList.getSize() - 1; i >= 0; i--) {
-		if (CBPlatform::ptInRect(&_rectList[i]->_rect, point)) {
+		if (BasePlatform::ptInRect(&_rectList[i]->_rect, point)) {
 			if (_rectList[i]->_precise) {
 				// frame
 				if (_rectList[i]->_frame) {
@@ -100,12 +100,12 @@ CBObject *CBRenderer::getObjectAt(int x, int y) {
 		}
 	}
 
-	return (CBObject *)NULL;
+	return (BaseObject *)NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRenderer::deleteRectList() {
+void BaseRenderer::deleteRectList() {
 	for (int i = 0; i < _rectList.getSize(); i++) {
 		delete _rectList[i];
 	}
@@ -115,58 +115,58 @@ void CBRenderer::deleteRectList() {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-bool CBRenderer::switchFullscreen() {
+bool BaseRenderer::switchFullscreen() {
 	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CBRenderer::flip() {
-	return STATUS_FAILED;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-bool CBRenderer::initRenderer(int width, int height, bool windowed) {
+bool BaseRenderer::flip() {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-void CBRenderer::onWindowChange() {
+bool BaseRenderer::initRenderer(int width, int height, bool windowed) {
+	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBRenderer::fill(byte r, byte g, byte b, Common::Rect *rect) {
+void BaseRenderer::onWindowChange() {
+}
+
+
+//////////////////////////////////////////////////////////////////////
+bool BaseRenderer::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::windowedBlt() {
+bool BaseRenderer::windowedBlt() {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::setup2D(bool Force) {
+bool BaseRenderer::setup2D(bool Force) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::setupLines() {
+bool BaseRenderer::setupLines() {
 	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+bool BaseRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
+bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
 	for (int i = 0; i < width; i++) {
 		drawLine(x1 + i, y1 + i, x2 - i,   y1 + i,   color); // up
 		drawLine(x1 + i, y2 - i, x2 - i + 1, y2 - i, color); // down
@@ -179,31 +179,31 @@ bool CBRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int widt
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::fade(uint16 alpha) {
+bool BaseRenderer::fade(uint16 alpha) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::fadeToColor(uint32 color, Common::Rect *rect) {
+bool BaseRenderer::fadeToColor(uint32 color, Common::Rect *rect) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::setViewport(int left, int top, int right, int bottom) {
+bool BaseRenderer::setViewport(int left, int top, int right, int bottom) {
 	return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::setScreenViewport() {
+bool BaseRenderer::setScreenViewport() {
 	return setViewport(_drawOffsetX, _drawOffsetY, _width + _drawOffsetX, _height + _drawOffsetY);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::setViewport(Rect32 *rect) {
+bool BaseRenderer::setViewport(Rect32 *rect) {
 	return setViewport(rect->left + _drawOffsetX,
 	                   rect->top + _drawOffsetY,
 	                   rect->right + _drawOffsetX,
@@ -212,13 +212,13 @@ bool CBRenderer::setViewport(Rect32 *rect) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBImage *CBRenderer::takeScreenshot() {
+BaseImage *BaseRenderer::takeScreenshot() {
 	return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::clipCursor() {
+bool BaseRenderer::clipCursor() {
 	/*
 	if (!_windowed) {
 	    Rect32 rc;
@@ -237,7 +237,7 @@ bool CBRenderer::clipCursor() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::unclipCursor() {
+bool BaseRenderer::unclipCursor() {
 	/*
 	if (!_windowed) ::ClipCursor(NULL);
 	*/
@@ -245,7 +245,7 @@ bool CBRenderer::unclipCursor() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRenderer::pointInViewport(Point32 *p) {
+bool BaseRenderer::pointInViewport(Point32 *p) {
 	if (p->x < _drawOffsetX) return false;
 	if (p->y < _drawOffsetY) return false;
 	if (p->x > _drawOffsetX + _width) return false;

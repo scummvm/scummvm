@@ -32,24 +32,24 @@
 #include "engines/wintermute/ui/ui_object.h"
 
 namespace WinterMute {
-class CAdEntity;
-class CUIEntity : public CUIObject {
+class AdEntity;
+class UIEntity : public UIObject {
 public:
-	DECLARE_PERSISTENT(CUIEntity, CUIObject)
-	CUIEntity(CBGame *inGame);
-	virtual ~CUIEntity();
+	DECLARE_PERSISTENT(UIEntity, UIObject)
+	UIEntity(BaseGame *inGame);
+	virtual ~UIEntity();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	virtual bool display(int offsetX = 0, int offsetY = 0);
-	CAdEntity *_entity;
+	AdEntity *_entity;
 	bool setEntity(const char *filename);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

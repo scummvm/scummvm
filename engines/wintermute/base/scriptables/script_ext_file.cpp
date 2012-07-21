@@ -42,19 +42,19 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CSXFile, false)
+IMPLEMENT_PERSISTENT(SXFile, false)
 
-CBScriptable *makeSXFile(CBGame *inGame, CScStack *stack) {
-	return new CSXFile(inGame, stack);
+BaseScriptable *makeSXFile(BaseGame *inGame, ScStack *stack) {
+	return new SXFile(inGame, stack);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXFile::CSXFile(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
+SXFile::SXFile(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 	stack->correctParams(1);
-	CScValue *Val = stack->pop();
+	ScValue *Val = stack->pop();
 
 	_filename = NULL;
-	if (!Val->isNULL()) CBUtils::setString(&_filename, Val->getString());
+	if (!Val->isNULL()) BaseUtils::setString(&_filename, Val->getString());
 
 	_readFile = NULL;
 	_writeFile = NULL;
@@ -65,12 +65,12 @@ CSXFile::CSXFile(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CSXFile::~CSXFile() {
+SXFile::~SXFile() {
 	cleanup();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSXFile::cleanup() {
+void SXFile::cleanup() {
 	delete[] _filename;
 	_filename = NULL;
 	close();
@@ -78,7 +78,7 @@ void CSXFile::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSXFile::close() {
+void SXFile::close() {
 	if (_readFile) {
 		_gameRef->_fileManager->closeFile(_readFile);
 		_readFile = NULL;
@@ -93,14 +93,14 @@ void CSXFile::close() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CSXFile::scToString() {
+const char *SXFile::scToString() {
 	if (_filename) return _filename;
 	else return "[file object]";
 }
 
 #define FILE_BUFFER_SIZE 32768
 //////////////////////////////////////////////////////////////////////////
-bool CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFilename
 	//////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ bool CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 		cleanup();
-		CBUtils::setString(&_filename, filename);
+		BaseUtils::setString(&_filename, filename);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -182,7 +182,7 @@ bool CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 	else if (strcmp(name, "Delete") == 0) {
 		stack->correctParams(0);
 		close();
-		stack->pushBool(CBPlatform::deleteFile(_filename) != false);
+		stack->pushBool(BasePlatform::deleteFile(_filename) != false);
 		return STATUS_OK;
 	}
 
@@ -195,7 +195,7 @@ bool CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 		bool Overwrite = stack->pop()->getBool(true);
 
 		close();
-		stack->pushBool(CBPlatform::copyFile(_filename, Dest, !Overwrite) != false);
+		stack->pushBool(BasePlatform::copyFile(_filename, Dest, !Overwrite) != false);
 		return STATUS_OK;
 	}
 
@@ -593,12 +593,12 @@ bool CSXFile::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 	}
 
 
-	else return CBScriptable::scCallMethod(script, stack, thisStack, name);
+	else return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXFile::scGetProperty(const char *name) {
+ScValue *SXFile::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -649,12 +649,12 @@ CScValue *CSXFile::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBScriptable::scGetProperty(name);
+	else return BaseScriptable::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXFile::scSetProperty(const char *name, CScValue *value) {
+bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
@@ -672,11 +672,11 @@ bool CSXFile::scSetProperty(const char *name, CScValue *value) {
 	    }
 	    return STATUS_OK;
 	}
-	else*/ return CBScriptable::scSetProperty(name, value);
+	else*/ return BaseScriptable::scSetProperty(name, value);
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CSXFile::getPos() {
+uint32 SXFile::getPos() {
 	if (_mode == 1 && _readFile)
 		return _readFile->pos();
 	else if ((_mode == 2 || _mode == 3) && _writeFile) {
@@ -689,11 +689,11 @@ uint32 CSXFile::getPos() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXFile::setPos(uint32 pos, int whence) {
+bool SXFile::setPos(uint32 pos, int whence) {
 	if (_mode == 1 && _readFile)
 		return _readFile->seek(pos, whence);
 	else if ((_mode == 2 || _mode == 3) && _writeFile) {
-		error("CSXFile - seeking in WriteFile not supported");
+		error("SXFile - seeking in WriteFile not supported");
 		return false;
 //		return fseek((FILE *)_writeFile, pos, (int)origin) == 0;
 	}
@@ -701,11 +701,11 @@ bool CSXFile::setPos(uint32 pos, int whence) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CSXFile::getLength() {
+uint32 SXFile::getLength() {
 	if (_mode == 1 && _readFile)
 		return _readFile->size();
 	else if ((_mode == 2 || _mode == 3) && _writeFile) {
-		error("CSXFile - reading length for WriteFile not supported");
+		error("SXFile - reading length for WriteFile not supported");
 		return 0;
 /*
 		uint32 currentPos = ftell((FILE *)_writeFile);
@@ -717,9 +717,9 @@ uint32 CSXFile::getLength() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXFile::persist(CBPersistMgr *persistMgr) {
+bool SXFile::persist(BasePersistenceManager *persistMgr) {
 
-	CBScriptable::persist(persistMgr);
+	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_mode));
@@ -767,12 +767,12 @@ bool CSXFile::persist(CBPersistMgr *persistMgr) {
 }
 
 // Should replace fopen(..., "wb+") and fopen(..., "w+")
-Common::WriteStream *CSXFile::openForWrite(const Common::String &filename, bool binary) {
+Common::WriteStream *SXFile::openForWrite(const Common::String &filename, bool binary) {
 	error("SXFile::openForWrite - WriteFiles not supported");
 }
 
 // Should replace fopen(..., "ab+") and fopen(..., "a+")
-Common::WriteStream *CSXFile::openForAppend(const Common::String &filename, bool binary) {
+Common::WriteStream *SXFile::openForAppend(const Common::String &filename, bool binary) {
 	error("SXFile::openForAppend - WriteFiles not supported");	
 }
 

@@ -37,19 +37,19 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CSXString, false)
+IMPLEMENT_PERSISTENT(SXString, false)
 
-CBScriptable *makeSXString(CBGame *inGame, CScStack *stack) {
-	return new CSXString(inGame, stack);
+BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack) {
+	return new SXString(inGame, stack);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXString::CSXString(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
+SXString::SXString(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 	_string = NULL;
 	_capacity = 0;
 
 	stack->correctParams(1);
-	CScValue *val = stack->pop();
+	ScValue *val = stack->pop();
 
 	if (val->isInt()) {
 		_capacity = MAX(0, val->getInt());
@@ -66,13 +66,13 @@ CSXString::CSXString(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CSXString::~CSXString() {
+SXString::~SXString() {
 	if (_string) delete [] _string;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSXString::setStringVal(const char *val) {
+void SXString::setStringVal(const char *val) {
 	int len = strlen(val);
 	if (len >= _capacity) {
 		_capacity = len + 1;
@@ -86,20 +86,20 @@ void CSXString::setStringVal(const char *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CSXString::scToString() {
+const char *SXString::scToString() {
 	if (_string) return _string;
 	else return "[null string]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSXString::scSetString(const char *val) {
+void SXString::scSetString(const char *val) {
 	setStringVal(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Substring
 	//////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ bool CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		int start = stack->pop()->getInt();
 		int end   = stack->pop()->getInt();
 
-		if (end < start) CBUtils::swap(&start, &end);
+		if (end < start) BaseUtils::swap(&start, &end);
 
 		//try {
 		WideString str;
@@ -138,7 +138,7 @@ bool CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		int len = val->getInt();
 
 		if (!val->isNULL() && len <= 0) {
@@ -245,11 +245,11 @@ bool CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Split") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		char separators[MAX_PATH_LENGTH] = ",";
 		if (!val->isNULL()) strcpy(separators, val->getString());
 
-		CSXArray *array = new CSXArray(_gameRef);
+		SXArray *array = new SXArray(_gameRef);
 		if (!array) {
 			stack->pushNULL();
 			return STATUS_OK;
@@ -299,9 +299,9 @@ bool CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 			WideString &part = (*it);
 
 			if (_gameRef->_textEncoding == TEXT_UTF8)
-				val = new CScValue(_gameRef,  StringUtil::wideToUtf8(part).c_str());
+				val = new ScValue(_gameRef,  StringUtil::wideToUtf8(part).c_str());
 			else
-				val = new CScValue(_gameRef,  StringUtil::wideToAnsi(part).c_str());
+				val = new ScValue(_gameRef,  StringUtil::wideToAnsi(part).c_str());
 
 			array->push(val);
 			delete val;
@@ -317,7 +317,7 @@ bool CSXString::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisS
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXString::scGetProperty(const char *name) {
+ScValue *SXString::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -352,7 +352,7 @@ CScValue *CSXString::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXString::scSetProperty(const char *name, CScValue *value) {
+bool SXString::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
@@ -377,9 +377,9 @@ bool CSXString::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXString::persist(CBPersistMgr *persistMgr) {
+bool SXString::persist(BasePersistenceManager *persistMgr) {
 
-	CBScriptable::persist(persistMgr);
+	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_capacity));
 
@@ -397,8 +397,8 @@ bool CSXString::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CSXString::scCompare(CBScriptable *val) {
-	return strcmp(_string, ((CSXString *)val)->_string);
+int SXString::scCompare(BaseScriptable *val) {
+	return strcmp(_string, ((SXString *)val)->_string);
 }
 
 } // end of namespace WinterMute

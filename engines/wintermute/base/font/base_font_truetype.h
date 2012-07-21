@@ -40,22 +40,22 @@
 
 namespace WinterMute {
 
-class CBFontTT : public CBFont {
+class BaseFontTT : public BaseFont {
 private:
 	//////////////////////////////////////////////////////////////////////////
-	class CBCachedTTFontText {
+	class BaseCachedTTFontText {
 	public:
 		WideString _text;
 		int _width;
 		TTextAlign _align;
 		int _maxHeight;
 		int _maxLength;
-		CBSurface *_surface;
+		BaseSurface *_surface;
 		int _priority;
 		int _textOffset;
 		bool _marked;
 
-		CBCachedTTFontText() {
+		BaseCachedTTFontText() {
 			//_text = L"";
 			_text = "";
 			_width = _maxHeight = _maxLength = -1;
@@ -66,21 +66,21 @@ private:
 			_marked = false;
 		}
 
-		virtual ~CBCachedTTFontText() {
+		virtual ~BaseCachedTTFontText() {
 			if (_surface) delete _surface;
 		}
 	};
 
 public:
 	//////////////////////////////////////////////////////////////////////////
-	class CBTTFontLayer {
+	class BaseTTFontLayer {
 	public:
-		CBTTFontLayer() {
+		BaseTTFontLayer() {
 			_offsetX = _offsetY = 0;
 			_color = 0x00000000;
 		}
 
-		bool persist(CBPersistMgr *persistMgr) {
+		bool persist(BasePersistenceManager *persistMgr) {
 			persistMgr->transfer(TMEMBER(_offsetX));
 			persistMgr->transfer(TMEMBER(_offsetY));
 			persistMgr->transfer(TMEMBER(_color));
@@ -114,9 +114,9 @@ public:
 
 
 public:
-	DECLARE_PERSISTENT(CBFontTT, CBFont)
-	CBFontTT(CBGame *inGame);
-	virtual ~CBFontTT(void);
+	DECLARE_PERSISTENT(BaseFontTT, BaseFont)
+	BaseFontTT(BaseGame *inGame);
+	virtual ~BaseFontTT(void);
 
 	virtual int getTextWidth(byte *text, int maxLength = -1);
 	virtual int getTextHeight(byte *text, int width);
@@ -134,16 +134,16 @@ public:
 	void initLoop();
 
 private:
-	bool parseLayer(CBTTFontLayer *layer, byte *buffer);
+	bool parseLayer(BaseTTFontLayer *layer, byte *buffer);
 
 	void wrapText(const WideString &text, int maxWidth, int maxHeight, TextLineList &lines);
 	void measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight);
 
-	CBSurface *renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset);
+	BaseSurface *renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset);
 	void blitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect);
 
 
-	CBCachedTTFontText *_cachedTexts[NUM_CACHED_TEXTS];
+	BaseCachedTTFontText *_cachedTexts[NUM_CACHED_TEXTS];
 
 	bool initFont();
 
@@ -170,7 +170,7 @@ public:
 	int _fontHeight;
 	char *_fontFile;
 
-	CBArray<CBTTFontLayer *, CBTTFontLayer *> _layers;
+	BaseArray<BaseTTFontLayer *, BaseTTFontLayer *> _layers;
 	void clearCache();
 
 };

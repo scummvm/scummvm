@@ -40,7 +40,7 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPackage::CBPackage(CBGame *inGame): CBBase(inGame) {
+BasePackage::BasePackage(BaseGame *inGame): BaseClass(inGame) {
 	_file = NULL;
 	_name = NULL;
 	_cD = 0;
@@ -50,14 +50,14 @@ CBPackage::CBPackage(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPackage::~CBPackage() {
+BasePackage::~BasePackage() {
 	if (_name) delete [] _name;
 	closeFilePointer(_file);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPackage::open() {
+bool BasePackage::open() {
 	if (_file) return STATUS_OK;
 	else {
 		_file = getFilePointer();
@@ -67,7 +67,7 @@ bool CBPackage::open() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPackage::close() {
+bool BasePackage::close() {
 	delete _file;
 	_file = NULL;
 	return STATUS_OK;
@@ -75,7 +75,7 @@ bool CBPackage::close() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPackage::read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size) {
+bool BasePackage::read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size) {
 	bool ret;
 	if (DID_FAIL(ret = open())) return ret;
 	else {
@@ -86,7 +86,7 @@ bool CBPackage::read(Common::SeekableReadStream *file, uint32 offset, byte *buff
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::SeekableReadStream *CBPackage::getFilePointer() {
+Common::SeekableReadStream *BasePackage::getFilePointer() {
 	Common::File *file = _gameRef->_fileManager->openPackage(_name);
 	if (!file) {
 		_gameRef->_fileManager->requestCD(_cD, _name, "");
@@ -96,7 +96,7 @@ Common::SeekableReadStream *CBPackage::getFilePointer() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBPackage::closeFilePointer(Common::SeekableReadStream *&file) {
+void BasePackage::closeFilePointer(Common::SeekableReadStream *&file) {
 	delete file;
 	file = NULL;
 }

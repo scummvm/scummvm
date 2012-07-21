@@ -37,31 +37,31 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CSysClassRegistry::CSysClassRegistry() {
+SystemClassRegistry::SystemClassRegistry() {
 	_count = 0;
 	_disabled = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CSysClassRegistry::~CSysClassRegistry() {
+SystemClassRegistry::~SystemClassRegistry() {
 	unregisterClasses();
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSysClassRegistry *CSysClassRegistry::getInstance() {
+SystemClassRegistry *SystemClassRegistry::getInstance() {
 	return g_wintermute->getClassRegistry();
 }
 
-void CSysClassRegistry::unregisterClasses() {
-	// CSysClass calls UnregisterClass upon destruction.
+void SystemClassRegistry::unregisterClasses() {
+	// SystemClass calls UnregisterClass upon destruction.
 	while (_classes.size() > 0) {
 		delete _classes.begin()->_value;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::registerClass(CSysClass *classObj) {
+bool SystemClassRegistry::registerClass(SystemClass *classObj) {
 	classObj->setID(_count++);
 	//_classes.insert(classObj);
 	_classes[classObj] = classObj;
@@ -74,7 +74,7 @@ bool CSysClassRegistry::registerClass(CSysClass *classObj) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::unregisterClass(CSysClass *classObj) {
+bool SystemClassRegistry::unregisterClass(SystemClass *classObj) {
 
 	Classes::iterator it = _classes.find(classObj);
 	if (it == _classes.end()) return false;
@@ -82,7 +82,7 @@ bool CSysClassRegistry::unregisterClass(CSysClass *classObj) {
 	if (classObj->getNumInstances() != 0) {
 		char str[MAX_PATH_LENGTH];
 		sprintf(str, "Memory leak@class %-20s: %d instance(s) left\n", classObj->getName().c_str(), classObj->getNumInstances());
-		CBPlatform::outputDebugString(str);
+		BasePlatform::outputDebugString(str);
 	}
 	_classes.erase(it);
 
@@ -98,18 +98,18 @@ bool CSysClassRegistry::unregisterClass(CSysClass *classObj) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::registerInstance(const char *className, void *instance) {
+bool SystemClassRegistry::registerInstance(const char *className, void *instance) {
 	if (_disabled) return true;
 
 	NameMap::iterator mapIt = _nameMap.find(className);
 	if (mapIt == _nameMap.end()) return false;
 
-	CSysInstance *inst = (*mapIt)._value->addInstance(instance, _count++);
+	SystemInstance *inst = (*mapIt)._value->addInstance(instance, _count++);
 	return (inst != NULL);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClassRegistry::addInstanceToTable(CSysInstance *instance, void *pointer) {
+void SystemClassRegistry::addInstanceToTable(SystemInstance *instance, void *pointer) {
 	_instanceMap[pointer] = instance;
 
 	if (instance->getSavedID() >= 0)
@@ -117,12 +117,12 @@ void CSysClassRegistry::addInstanceToTable(CSysInstance *instance, void *pointer
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CSysClassRegistry::getNextID() {
+int SystemClassRegistry::getNextID() {
 	return _count++;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::unregisterInstance(const char *className, void *instance) {
+bool SystemClassRegistry::unregisterInstance(const char *className, void *instance) {
 	NameMap::iterator mapIt = _nameMap.find(className);
 	if (mapIt == _nameMap.end()) return false;
 	(*mapIt)._value->removeInstance(instance);
@@ -136,14 +136,14 @@ bool CSysClassRegistry::unregisterInstance(const char *className, void *instance
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::getPointerID(void *pointer, int *classID, int *instanceID) {
+bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanceID) {
 	if (pointer == NULL) return true;
 
 	InstanceMap::iterator it = _instanceMap.find(pointer);
 	if (it == _instanceMap.end()) return false;
 
 
-	CSysInstance *inst = (*it)._value;
+	SystemInstance *inst = (*it)._value;
 	*instanceID = inst->getID();
 	*classID = inst->getClass()->getID();
 
@@ -151,13 +151,13 @@ bool CSysClassRegistry::getPointerID(void *pointer, int *classID, int *instanceI
 }
 
 //////////////////////////////////////////////////////////////////////////
-void *CSysClassRegistry::idToPointer(int classID, int instanceID) {
+void *SystemClassRegistry::idToPointer(int classID, int instanceID) {
 	SavedInstanceMap::iterator it = _savedInstanceMap.find(instanceID);
 	if (it == _savedInstanceMap.end()) return NULL;
 	else return (*it)._value->getInstance();
 }
 
-bool checkHeader(const char *tag, CBPersistMgr *pm) {
+bool checkHeader(const char *tag, BasePersistenceManager *pm) {
 	char *test = pm->getString();
 	Common::String verify = test;
 	delete[] test;
@@ -169,7 +169,7 @@ bool checkHeader(const char *tag, CBPersistMgr *pm) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::saveTable(CBGame *gameRef, CBPersistMgr *persistMgr, bool quickSave) {
+bool SystemClassRegistry::saveTable(BaseGame *gameRef, BasePersistenceManager *persistMgr, bool quickSave) {
 	persistMgr->putString("<CLASS_REGISTRY_TABLE>");
 	persistMgr->putDWORD(_classes.size());
 
@@ -193,7 +193,7 @@ bool CSysClassRegistry::saveTable(CBGame *gameRef, CBPersistMgr *persistMgr, boo
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
+bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
 	checkHeader("<CLASS_REGISTRY_TABLE>", persistMgr);
 
 	// reset SavedID of current instances
@@ -228,7 +228,7 @@ bool CSysClassRegistry::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::saveInstances(CBGame *gameRef, CBPersistMgr *persistMgr, bool quickSave) {
+bool SystemClassRegistry::saveInstances(BaseGame *gameRef, BasePersistenceManager *persistMgr, bool quickSave) {
 
 	Classes::iterator it;
 
@@ -260,7 +260,7 @@ bool CSysClassRegistry::saveInstances(CBGame *gameRef, CBPersistMgr *persistMgr,
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::loadInstances(CBGame *gameRef, CBPersistMgr *persistMgr) {
+bool SystemClassRegistry::loadInstances(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
 	// get total instances
 	int numInstances = persistMgr->getDWORD();
 
@@ -296,7 +296,7 @@ bool CSysClassRegistry::loadInstances(CBGame *gameRef, CBPersistMgr *persistMgr)
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData) {
+bool SystemClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData) {
 	NameMap::iterator mapIt = _nameMap.find(className);
 	if (mapIt == _nameMap.end()) return STATUS_FAILED;
 
@@ -306,7 +306,7 @@ bool CSysClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const ch
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClassRegistry::dumpClasses(Common::WriteStream *stream) {
+void SystemClassRegistry::dumpClasses(Common::WriteStream *stream) {
 	Classes::iterator it;
 	for (it = _classes.begin(); it != _classes.end(); ++it)
 		(it->_value)->dump(stream);

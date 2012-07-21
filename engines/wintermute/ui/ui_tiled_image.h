@@ -34,19 +34,19 @@
 #include "common/rect.h"
 
 namespace WinterMute {
-class CBSubFrame;
-class CUITiledImage : public CBObject {
+class BaseSubFrame;
+class UITiledImage : public BaseObject {
 public:
-	DECLARE_PERSISTENT(CUITiledImage, CBObject)
+	DECLARE_PERSISTENT(UITiledImage, BaseObject)
 	void correctSize(int *width, int *height);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	bool display(int x, int y, int width, int height);
-	CUITiledImage(CBGame *inGame = NULL);
-	virtual ~CUITiledImage();
-	CBSubFrame *_image;
+	UITiledImage(BaseGame *inGame = NULL);
+	virtual ~UITiledImage();
+	BaseSubFrame *_image;
 	Rect32 _upLeft;
 	Rect32 _upMiddle;
 	Rect32 _upRight;

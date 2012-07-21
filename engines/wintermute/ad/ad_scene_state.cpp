@@ -35,16 +35,16 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdSceneState, false)
+IMPLEMENT_PERSISTENT(AdSceneState, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdSceneState::CAdSceneState(CBGame *inGame): CBBase(inGame) {
+AdSceneState::AdSceneState(BaseGame *inGame): BaseClass(inGame) {
 	_filename = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdSceneState::~CAdSceneState() {
+AdSceneState::~AdSceneState() {
 	delete[] _filename;
 	_filename = NULL;
 
@@ -54,7 +54,7 @@ CAdSceneState::~CAdSceneState() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdSceneState::persist(CBPersistMgr *persistMgr) {
+bool AdSceneState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_filename));
 	_nodeStates.persist(persistMgr);
 
@@ -63,7 +63,7 @@ bool CAdSceneState::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdSceneState::setFilename(const char *filename) {
+void AdSceneState::setFilename(const char *filename) {
 	delete[] _filename;
 	_filename = new char [strlen(filename) + 1];
 	if (_filename) strcpy(_filename, filename);
@@ -71,13 +71,13 @@ void CAdSceneState::setFilename(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdNodeState *CAdSceneState::getNodeState(char *name, bool saving) {
+AdNodeState *AdSceneState::getNodeState(char *name, bool saving) {
 	for (int i = 0; i < _nodeStates.getSize(); i++) {
 		if (scumm_stricmp(_nodeStates[i]->_name, name) == 0) return _nodeStates[i];
 	}
 
 	if (saving) {
-		CAdNodeState *ret = new CAdNodeState(_gameRef);
+		AdNodeState *ret = new AdNodeState(_gameRef);
 		ret->setName(name);
 		_nodeStates.add(ret);
 

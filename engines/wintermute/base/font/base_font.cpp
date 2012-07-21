@@ -40,42 +40,42 @@ namespace WinterMute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-IMPLEMENT_PERSISTENT(CBFont, false)
+IMPLEMENT_PERSISTENT(BaseFont, false)
 
 //////////////////////////////////////////////////////////////////////
-CBFont::CBFont(CBGame *inGame): CBObject(inGame) {
+BaseFont::BaseFont(BaseGame *inGame): BaseObject(inGame) {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////
-CBFont::~CBFont() {
+BaseFont::~BaseFont() {
 }
 
 
 //////////////////////////////////////////////////////////////////////
-void CBFont::drawText(byte *text, int x, int y, int width, TTextAlign align, int max_height, int maxLength) {
+void BaseFont::drawText(byte *text, int x, int y, int width, TTextAlign align, int max_height, int maxLength) {
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFont::getTextHeight(byte *text, int width) {
+int BaseFont::getTextHeight(byte *text, int width) {
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBFont::getTextWidth(byte *text, int maxLength) {
+int BaseFont::getTextWidth(byte *text, int maxLength) {
 	return 0;
 }
 
 /*
 //////////////////////////////////////////////////////////////////////
-bool CBFont::loadFile(const char * Filename)
+bool BaseFont::loadFile(const char * Filename)
 {
     BYTE* Buffer = _gameRef->_fileManager->readWholeFile(filename);
     if(Buffer==NULL){
-        _gameRef->LOG(0, "CBFont::LoadFile failed for file '%s'", filename);
+        _gameRef->LOG(0, "BaseFont::LoadFile failed for file '%s'", filename);
         return STATUS_FAILED;
     }
 
@@ -96,7 +96,7 @@ TOKEN_DEF_START
   TOKEN_DEF (FONT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool CBFont::loadBuffer(byte * Buffer)
+bool BaseFont::loadBuffer(byte * Buffer)
 {
     TOKEN_TABLE_START(commands)
         TOKEN_TABLE (FONT)
@@ -104,7 +104,7 @@ bool CBFont::loadBuffer(byte * Buffer)
 
     char* params;
     int cmd;
-    CBParser parser(_gameRef);
+    BaseParser parser(_gameRef);
 
     if(parser.GetCommand ((char**)&Buffer, commands, (char**)&params)!=TOKEN_FONT){
         _gameRef->LOG(0, "'FONT' keyword expected.");
@@ -138,23 +138,23 @@ bool CBFont::loadBuffer(byte * Buffer)
 */
 
 //////////////////////////////////////////////////////////////////////////
-int CBFont::getLetterHeight() {
+int BaseFont::getLetterHeight() {
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFont::persist(CBPersistMgr *persistMgr) {
+bool BaseFont::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBFont *CBFont::createFromFile(CBGame *gameRef, const char *filename) {
+BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const char *filename) {
 	if (isTrueType(gameRef,  filename)) {
-		CBFontTT *font = new CBFontTT(gameRef);
+		BaseFontTT *font = new BaseFontTT(gameRef);
 		if (font) {
 			if (DID_FAIL(font->loadFile(filename))) {
 				delete font;
@@ -163,7 +163,7 @@ CBFont *CBFont::createFromFile(CBGame *gameRef, const char *filename) {
 		}
 		return font;
 	} else {
-		CBFontBitmap *font = new CBFontBitmap(gameRef);
+		BaseFontBitmap *font = new BaseFontBitmap(gameRef);
 		if (font) {
 			if (DID_FAIL(font->loadFile(filename))) {
 				delete font;
@@ -180,7 +180,7 @@ TOKEN_DEF(FONT)
 TOKEN_DEF(TTFONT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CBFont::isTrueType(CBGame *gameRef, const char *filename) {
+bool BaseFont::isTrueType(BaseGame *gameRef, const char *filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONT)
 	TOKEN_TABLE(TTFONT)
@@ -193,7 +193,7 @@ bool CBFont::isTrueType(CBGame *gameRef, const char *filename) {
 	byte *WorkBuffer = buffer;
 
 	char *params;
-	CBParser parser(gameRef);
+	BaseParser parser(gameRef);
 
 	bool ret = false;
 	if (parser.getCommand((char **)&WorkBuffer, commands, (char **)&params) == TOKEN_TTFONT)

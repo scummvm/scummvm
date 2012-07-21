@@ -32,23 +32,23 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdPath, false)
+IMPLEMENT_PERSISTENT(AdPath, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdPath::CAdPath(CBGame *inGame): CBBase(inGame) {
+AdPath::AdPath(BaseGame *inGame): BaseClass(inGame) {
 	_currIndex = -1;
 	_ready = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdPath::~CAdPath() {
+AdPath::~AdPath() {
 	reset();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdPath::reset() {
+void AdPath::reset() {
 	for (int i = 0; i < _points.getSize(); i++)
 		delete _points[i];
 
@@ -59,7 +59,7 @@ void CAdPath::reset() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPoint *CAdPath::getFirst() {
+BasePoint *AdPath::getFirst() {
 	if (_points.getSize() > 0) {
 		_currIndex = 0;
 		return _points[_currIndex];
@@ -68,7 +68,7 @@ CBPoint *CAdPath::getFirst() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPoint *CAdPath::getNext() {
+BasePoint *AdPath::getNext() {
 	_currIndex++;
 	if (_currIndex < _points.getSize()) return _points[_currIndex];
 	else return NULL;
@@ -76,20 +76,20 @@ CBPoint *CAdPath::getNext() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPoint *CAdPath::getCurrent() {
+BasePoint *AdPath::getCurrent() {
 	if (_currIndex >= 0 && _currIndex < _points.getSize()) return _points[_currIndex];
 	else return NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CAdPath::addPoint(CBPoint *point) {
+void AdPath::addPoint(BasePoint *point) {
 	_points.add(point);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdPath::setReady(bool ready) {
+bool AdPath::setReady(bool ready) {
 	bool orig = _ready;
 	_ready = ready;
 
@@ -98,7 +98,7 @@ bool CAdPath::setReady(bool ready) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdPath::persist(CBPersistMgr *persistMgr) {
+bool AdPath::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 

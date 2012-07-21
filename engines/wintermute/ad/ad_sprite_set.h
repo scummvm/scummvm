@@ -35,18 +35,18 @@
 
 namespace WinterMute {
 
-class CAdSpriteSet : public CBObject {
+class AdSpriteSet : public BaseObject {
 public:
-	bool containsSprite(CBSprite *sprite);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent = 0);
-	CBSprite *getSprite(TDirection direction);
-	DECLARE_PERSISTENT(CAdSpriteSet, CBObject)
-	CBObject *_owner;
-	CAdSpriteSet(CBGame *inGame, CBObject *owner = NULL);
-	virtual ~CAdSpriteSet();
+	bool containsSprite(BaseSprite *sprite);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
+	BaseSprite *getSprite(TDirection direction);
+	DECLARE_PERSISTENT(AdSpriteSet, BaseObject)
+	BaseObject *_owner;
+	AdSpriteSet(BaseGame *inGame, BaseObject *owner = NULL);
+	virtual ~AdSpriteSet();
 	bool loadFile(const char *filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool loadBuffer(byte *buffer, bool complete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
-	CBSprite *_sprites[NUM_DIRECTIONS];
+	BaseSprite *_sprites[NUM_DIRECTIONS];
 };
 
 } // end of namespace WinterMute

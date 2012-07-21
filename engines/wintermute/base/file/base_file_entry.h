@@ -34,9 +34,9 @@
 
 namespace WinterMute {
 
-class CBPackage;
+class BasePackage;
 
-class CBFileEntry : public CBBase {
+class BaseFileEntry : public BaseClass {
 public:
 	uint32 _timeDate2;
 	uint32 _timeDate1;
@@ -46,9 +46,9 @@ public:
 	uint32 _compressedLength;
 	uint32 _length;
 	uint32 _offset;
-	CBPackage *_package;
-	CBFileEntry(CBGame *inGame);
-	virtual ~CBFileEntry();
+	BasePackage *_package;
+	BaseFileEntry(BaseGame *inGame);
+	virtual ~BaseFileEntry();
 
 };
 

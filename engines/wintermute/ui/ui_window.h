@@ -35,24 +35,24 @@
 
 namespace WinterMute {
 
-class CUIButton;
-class CBViewport;
-class CUIWindow : public CUIObject {
+class UIButton;
+class BaseViewport;
+class UIWindow : public UIObject {
 public:
-	bool getWindowObjects(CBArray<CUIObject *, CUIObject *> &Objects, bool InteractiveOnly);
+	bool getWindowObjects(BaseArray<UIObject *, UIObject *> &Objects, bool InteractiveOnly);
 
 	bool _pauseMusic;
 	void cleanup();
 	virtual void makeFreezable(bool freezable);
-	CBViewport *_viewport;
+	BaseViewport *_viewport;
 	bool _clipContents;
 	bool _inGame;
 	bool _isMenu;
 	bool _fadeBackground;
 	uint32 _fadeColor;
 	virtual bool handleMouseWheel(int delta);
-	CUIWindow *_shieldWindow;
-	CUIButton *_shieldButton;
+	UIWindow *_shieldWindow;
+	UIButton *_shieldButton;
 	bool close();
 	bool goSystemExclusive();
 	bool goExclusive();
@@ -61,30 +61,30 @@ public:
 	virtual bool handleMouse(TMouseEvent Event, TMouseButton Button);
 	Point32 _dragFrom;
 	bool _dragging;
-	DECLARE_PERSISTENT(CUIWindow, CUIObject)
+	DECLARE_PERSISTENT(UIWindow, UIObject)
 	bool _transparent;
 	bool showWidget(const char *name, bool visible = true);
 	bool enableWidget(const char *name, bool enable = true);
 	Rect32 _titleRect;
 	Rect32 _dragRect;
 	virtual bool display(int offsetX = 0, int offsetY = 0);
-	CUIWindow(CBGame *inGame);
-	virtual ~CUIWindow();
+	UIWindow(BaseGame *inGame);
+	virtual ~UIWindow();
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
-	CBArray<CUIObject *, CUIObject *> _widgets;
+	BaseArray<UIObject *, UIObject *> _widgets;
 	TTextAlign _titleAlign;
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	CUITiledImage *_backInactive;
-	CBFont *_fontInactive;
-	CBSprite *_imageInactive;
-	virtual bool listen(CBScriptHolder *param1, uint32 param2);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	UITiledImage *_backInactive;
+	BaseFont *_fontInactive;
+	BaseSprite *_imageInactive;
+	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

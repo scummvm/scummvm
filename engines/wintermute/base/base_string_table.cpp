@@ -36,13 +36,13 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBStringTable::CBStringTable(CBGame *inGame): CBBase(inGame) {
+BaseStringTable::BaseStringTable(BaseGame *inGame): BaseClass(inGame) {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBStringTable::~CBStringTable() {
+BaseStringTable::~BaseStringTable() {
 	// delete strings
 	_strings.clear();
 
@@ -50,7 +50,7 @@ CBStringTable::~CBStringTable() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
+bool BaseStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
 	if (key == NULL || val == NULL) return STATUS_FAILED;
 
 	if (scumm_stricmp(key, "@right-to-left") == 0) {
@@ -70,7 +70,7 @@ bool CBStringTable::addString(const char *key, const char *val, bool reportDupli
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CBStringTable::getKey(const char *str) {
+char *BaseStringTable::getKey(const char *str) {
 	if (str == NULL || str[0] != '/') return NULL;
 
 	const char *value = strchr(str + 1, '/');
@@ -79,7 +79,7 @@ char *CBStringTable::getKey(const char *str) {
 	char *key = new char[value - str];
 	strncpy(key, str + 1, value - str - 1);
 	key[value - str - 1] = '\0';
-	CBPlatform::strlwr(key);
+	BasePlatform::strlwr(key);
 
 	char *new_str;
 
@@ -102,7 +102,7 @@ char *CBStringTable::getKey(const char *str) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBStringTable::expand(char **str, bool forceExpand) {
+void BaseStringTable::expand(char **str, bool forceExpand) {
 	if (_gameRef->_doNotExpandStrings && !forceExpand) return;
 
 	if (str == NULL || *str == NULL || *str[0] != '/') return;
@@ -113,7 +113,7 @@ void CBStringTable::expand(char **str, bool forceExpand) {
 	char *key = new char[value - *str];
 	strncpy(key, *str + 1, value - *str - 1);
 	key[value - *str - 1] = '\0';
-	CBPlatform::strlwr(key);
+	BasePlatform::strlwr(key);
 
 	value++;
 
@@ -137,7 +137,7 @@ void CBStringTable::expand(char **str, bool forceExpand) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBStringTable::expandStatic(const char *string, bool forceExpand) {
+const char *BaseStringTable::expandStatic(const char *string, bool forceExpand) {
 	if (_gameRef->_doNotExpandStrings && !forceExpand) return string;
 
 	if (string == NULL || string[0] == '\0' || string[0] != '/') return string;
@@ -148,7 +148,7 @@ const char *CBStringTable::expandStatic(const char *string, bool forceExpand) {
 	char *key = new char[value - string];
 	strncpy(key, string + 1, value - string - 1);
 	key[value - string - 1] = '\0';
-	CBPlatform::strlwr(key);
+	BasePlatform::strlwr(key);
 
 	value++;
 
@@ -169,7 +169,7 @@ const char *CBStringTable::expandStatic(const char *string, bool forceExpand) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBStringTable::loadFile(const char *filename, bool clearOld) {
+bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	_gameRef->LOG(0, "Loading string table...");
 
 	if (clearOld) _strings.clear();
@@ -177,7 +177,7 @@ bool CBStringTable::loadFile(const char *filename, bool clearOld) {
 	uint32 size;
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename, &size);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CBStringTable::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "BaseStringTable::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 

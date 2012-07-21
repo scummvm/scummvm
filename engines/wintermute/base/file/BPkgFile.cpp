@@ -39,6 +39,9 @@
 
 namespace WinterMute {
 
+// This file is only needed until the next merge/rebase, as wrapCompressedStream now can set a known size
+// as such it is not renamed to follow the convention of the rest of the files.
+
 // HACK: wrapCompressedStream might set the size to 0, so we need a way to override it.
 class CBPkgFile : public Common::SeekableReadStream {
 	uint32 _size;
@@ -65,8 +68,8 @@ public:
 	}
 };
 
-Common::SeekableReadStream *openPkgFile(const Common::String &filename, CBFileManager *fileManager) {
-	CBFileEntry *fileEntry;
+Common::SeekableReadStream *openPkgFile(const Common::String &filename, BaseFileManager *fileManager) {
+	BaseFileEntry *fileEntry;
 	Common::SeekableReadStream *file = NULL;
 	char fileName[MAX_PATH_LENGTH];
 	strcpy(fileName, filename.c_str());

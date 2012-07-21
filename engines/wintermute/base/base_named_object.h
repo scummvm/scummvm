@@ -34,12 +34,12 @@
 
 namespace WinterMute {
 
-class CBNamedObject : public CBBase {
+class BaseNamedObject : public BaseClass {
 public:
-	CBNamedObject(CBGame *inGame);
-	CBNamedObject();
-	virtual ~CBNamedObject(void);
-	CBNamedObject(TDynamicConstructor, TDynamicConstructor);
+	BaseNamedObject(BaseGame *inGame);
+	BaseNamedObject();
+	virtual ~BaseNamedObject(void);
+	BaseNamedObject(TDynamicConstructor, TDynamicConstructor);
 
 	char *_name;
 	void setName(const char *name);

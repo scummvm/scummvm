@@ -34,11 +34,11 @@
 
 namespace WinterMute {
 
-class CSXObject : public CBObject {
+class SXObject : public BaseObject {
 public:
-	DECLARE_PERSISTENT(CSXObject, CBObject)
-	CSXObject(CBGame *inGame, CScStack *Stack);
-	virtual ~CSXObject();
+	DECLARE_PERSISTENT(SXObject, BaseObject)
+	SXObject(BaseGame *inGame, ScStack *Stack);
+	virtual ~SXObject();
 
 };
 

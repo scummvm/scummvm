@@ -38,7 +38,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CBRegistry::CBRegistry(CBGame *inGame): CBBase(inGame) {
+BaseRegistry::BaseRegistry(BaseGame *inGame): BaseClass(inGame) {
 	_iniName = NULL;
 
 	setIniName("./wme.ini");
@@ -47,7 +47,7 @@ CBRegistry::CBRegistry(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBRegistry::~CBRegistry() {
+BaseRegistry::~BaseRegistry() {
 	saveValues();
 	delete[] _iniName;
 	_iniName = NULL;
@@ -56,7 +56,7 @@ CBRegistry::~CBRegistry() {
 
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString CBRegistry::readString(const AnsiString &subKey, const AnsiString &key, const AnsiString &init) {
+AnsiString BaseRegistry::readString(const AnsiString &subKey, const AnsiString &key, const AnsiString &init) {
 	AnsiString ret = "";
 
 	bool found = false;
@@ -69,14 +69,14 @@ AnsiString CBRegistry::readString(const AnsiString &subKey, const AnsiString &ke
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegistry::writeString(const AnsiString &subKey, const AnsiString &key, const AnsiString &value) {
+bool BaseRegistry::writeString(const AnsiString &subKey, const AnsiString &key, const AnsiString &value) {
 	_values[subKey][key] = value;
 	return true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBRegistry::readInt(const AnsiString &subKey, const AnsiString &key, int init) {
+int BaseRegistry::readInt(const AnsiString &subKey, const AnsiString &key, int init) {
 	if (subKey == "Audio") {
 		if (key == "MasterVolume") {
 			if (ConfMan.hasKey("master_volume")) {
@@ -111,7 +111,7 @@ int CBRegistry::readInt(const AnsiString &subKey, const AnsiString &key, int ini
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegistry::writeInt(const AnsiString &subKey, const AnsiString &key, int value) {
+bool BaseRegistry::writeInt(const AnsiString &subKey, const AnsiString &key, int value) {
 	if (subKey == "Audio") {
 		if (key == "MasterVolume") {
 			ConfMan.setInt("master_volume", value);
@@ -133,19 +133,19 @@ bool CBRegistry::writeInt(const AnsiString &subKey, const AnsiString &key, int v
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegistry::readBool(const AnsiString &subKey, const AnsiString &key, bool init) {
+bool BaseRegistry::readBool(const AnsiString &subKey, const AnsiString &key, bool init) {
 	return (readInt(subKey, key, (int)init) != 0);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegistry::writeBool(const AnsiString &subKey, const AnsiString &key, bool value) {
+bool BaseRegistry::writeBool(const AnsiString &subKey, const AnsiString &key, bool value) {
 	return writeInt(subKey, key, (int)value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::setIniName(const char *name) {
+void BaseRegistry::setIniName(const char *name) {
 	delete[] _iniName;
 	_iniName = NULL;
 
@@ -160,30 +160,30 @@ void CBRegistry::setIniName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *CBRegistry::getIniName() {
+char *BaseRegistry::getIniName() {
 	return _iniName;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::loadValues(bool local) {
+void BaseRegistry::loadValues(bool local) {
 	if (local) loadXml("settings.xml", _localValues);
 	else loadXml(PathUtil::combine(_gameRef->getDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::saveValues() {
+void BaseRegistry::saveValues() {
 	saveXml(PathUtil::combine(_gameRef->getDataDir(), "settings.xml"), _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::setBasePath(const char *basePath) {
+void BaseRegistry::setBasePath(const char *basePath) {
 	_basePath = PathUtil::getFileNameWithoutExtension(basePath);
 
 	loadValues(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString CBRegistry::getValue(PathValueMap &values, const AnsiString path, const AnsiString &key, bool &found) {
+AnsiString BaseRegistry::getValue(PathValueMap &values, const AnsiString path, const AnsiString &key, bool &found) {
 	found = false;
 	PathValueMap::iterator it = values.find(path);
 	if (it == values.end()) return "";
@@ -198,7 +198,7 @@ AnsiString CBRegistry::getValue(PathValueMap &values, const AnsiString path, con
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::loadXml(const AnsiString fileName, PathValueMap &values) {
+void BaseRegistry::loadXml(const AnsiString fileName, PathValueMap &values) {
 	TiXmlDocument doc(fileName.c_str());
 	if (!doc.LoadFile()) return;
 
@@ -215,8 +215,8 @@ void CBRegistry::loadXml(const AnsiString fileName, PathValueMap &values) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegistry::saveXml(const AnsiString fileName, PathValueMap &values) {
-	CBUtils::createPath(fileName.c_str());
+void BaseRegistry::saveXml(const AnsiString fileName, PathValueMap &values) {
+	BaseUtils::createPath(fileName.c_str());
 
 	TiXmlDocument doc;
 	doc.LinkEndChild(new TiXmlDeclaration("1.0", "utf-8", ""));

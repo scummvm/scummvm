@@ -36,7 +36,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-CSysClass::CSysClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class) {
+SystemClass::SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class) {
 	_name = name;
 
 	_build = build;
@@ -46,18 +46,18 @@ CSysClass::CSysClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD loa
 	_persistent = persistent_class;
 	_numInst = 0;
 
-	CSysClassRegistry::getInstance()->registerClass(this);
+	SystemClassRegistry::getInstance()->registerClass(this);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CSysClass::~CSysClass() {
-	CSysClassRegistry::getInstance()->unregisterClass(this);
+SystemClass::~SystemClass() {
+	SystemClassRegistry::getInstance()->unregisterClass(this);
 	removeAllInstances();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClass::removeAllInstances() {
+bool SystemClass::removeAllInstances() {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
 		delete(it->_value);
@@ -69,21 +69,21 @@ bool CSysClass::removeAllInstances() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSysInstance *CSysClass::addInstance(void *instance, int id, int savedId) {
-	CSysInstance *inst = new CSysInstance(instance, id, this);
+SystemInstance *SystemClass::addInstance(void *instance, int id, int savedId) {
+	SystemInstance *inst = new SystemInstance(instance, id, this);
 	inst->setSavedID(savedId);
 	_instances[inst] = (inst);
 
 	_instanceMap[instance] = inst;
 
-	CSysClassRegistry::getInstance()->addInstanceToTable(inst, instance);
+	SystemClassRegistry::getInstance()->addInstanceToTable(inst, instance);
 
 	return inst;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSysClass::removeInstance(void *instance) {
+bool SystemClass::removeInstance(void *instance) {
 	InstanceMap::iterator mapIt = _instanceMap.find(instance);
 	if (mapIt == _instanceMap.end()) return false;
 
@@ -99,14 +99,14 @@ bool CSysClass::removeInstance(void *instance) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CSysClass::getInstanceID(void *pointer) {
+int SystemClass::getInstanceID(void *pointer) {
 	InstanceMap::iterator mapIt = _instanceMap.find(pointer);
 	if (mapIt == _instanceMap.end()) return -1;
 	else return (mapIt->_value)->getID();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void *CSysClass::idToPointer(int savedID) {
+void *SystemClass::idToPointer(int savedID) {
 	//slow
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
@@ -116,19 +116,19 @@ void *CSysClass::idToPointer(int savedID) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CSysClass::getNumInstances() {
+int SystemClass::getNumInstances() {
 	return _instances.size();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::dump(Common::WriteStream *stream) {
+void SystemClass::dump(Common::WriteStream *stream) {
 	Common::String str;
 	str = Common::String::format("%03d %c %-20s instances: %d\n", _iD, _persistent ? 'p' : ' ', _name.c_str(), getNumInstances());
 	stream->write(str.c_str(), str.size());
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::saveTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
+void SystemClass::saveTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
 	persistMgr->putString(_name.c_str());
 	persistMgr->putDWORD(_iD);
 	persistMgr->putDWORD(_instances.size());
@@ -140,7 +140,7 @@ void CSysClass::saveTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
+void SystemClass::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
 	_savedID = persistMgr->getDWORD();
 	int numInstances = persistMgr->getDWORD();
 
@@ -156,7 +156,7 @@ void CSysClass::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
 			Instances::iterator it = _instances.begin();
 			if (it != _instances.end()) {
 				(it->_value)->setSavedID(instID);
-				CSysClassRegistry::getInstance()->addInstanceToTable((it->_value), (it->_value)->getInstance());
+				SystemClassRegistry::getInstance()->addInstanceToTable((it->_value), (it->_value)->getInstance());
 			} else gameRef->LOG(0, "Warning: instance %d of persistent class %s not found", i, _name.c_str());
 		}
 		// normal instances, create empty objects
@@ -166,14 +166,14 @@ void CSysClass::loadTable(CBGame *gameRef, CBPersistMgr *persistMgr) {
 				warning("HALT");
 			}
 
-			addInstance(emptyObject, CSysClassRegistry::getInstance()->getNextID(), instID);
+			addInstance(emptyObject, SystemClassRegistry::getInstance()->getNextID(), instID);
 		}
 
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::saveInstances(CBGame *Game, CBPersistMgr *persistMgr) {
+void SystemClass::saveInstances(BaseGame *Game, BasePersistenceManager *persistMgr) {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
 		// write instace header
@@ -187,13 +187,13 @@ void CSysClass::saveInstances(CBGame *Game, CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::loadInstance(void *instance, CBPersistMgr *persistMgr) {
+void SystemClass::loadInstance(void *instance, BasePersistenceManager *persistMgr) {
 	_load(instance, persistMgr);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::resetSavedIDs() {
+void SystemClass::resetSavedIDs() {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
 		(it->_value)->setSavedID(-1);
@@ -201,7 +201,7 @@ void CSysClass::resetSavedIDs() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CSysClass::instanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpData) {
+void SystemClass::instanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpData) {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
 		lpCallback((it->_value)->getInstance(), lpData);

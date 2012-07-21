@@ -50,10 +50,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CUIEdit, false)
+IMPLEMENT_PERSISTENT(UIEdit, false)
 
 //////////////////////////////////////////////////////////////////////////
-CUIEdit::CUIEdit(CBGame *inGame): CUIObject(inGame) {
+UIEdit::UIEdit(BaseGame *inGame): UIObject(inGame) {
 	_type = UI_EDIT;
 
 	_fontSelected = NULL;
@@ -80,7 +80,7 @@ CUIEdit::CUIEdit(CBGame *inGame): CUIObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CUIEdit::~CUIEdit() {
+UIEdit::~UIEdit() {
 	if (!_sharedFonts) {
 		if (_fontSelected)   _gameRef->_fontStorage->removeFont(_fontSelected);
 	}
@@ -91,10 +91,10 @@ CUIEdit::~CUIEdit() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::loadFile(const char *filename) {
+bool UIEdit::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CUIEdit::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "UIEdit::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -136,7 +136,7 @@ TOKEN_DEF(EDIT)
 TOKEN_DEF(CAPTION)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::loadBuffer(byte *buffer, bool complete) {
+bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TEMPLATE)
 	TOKEN_TABLE(DISABLED)
@@ -164,7 +164,7 @@ bool CUIEdit::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDIT) {
@@ -186,7 +186,7 @@ bool CUIEdit::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			delete _back;
-			_back = new CUITiledImage(_gameRef);
+			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
 				_back = NULL;
@@ -196,7 +196,7 @@ bool CUIEdit::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSprite(_gameRef);
+			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -247,7 +247,7 @@ bool CUIEdit::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			delete _cursor;
-			_cursor = new CBSprite(_gameRef);
+			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
 				_cursor = NULL;
@@ -299,7 +299,7 @@ bool CUIEdit::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
+bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "EDIT\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -349,7 +349,7 @@ bool CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// editor properties
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 	return STATUS_OK;
@@ -358,7 +358,7 @@ bool CUIEdit::saveAsText(CBDynBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSelectedFont
 	//////////////////////////////////////////////////////////////////////////
@@ -372,12 +372,12 @@ bool CUIEdit::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 		return STATUS_OK;
 	}
 
-	else return CUIObject::scCallMethod(script, stack, thisStack, name);
+	else return UIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CUIEdit::scGetProperty(const char *name) {
+ScValue *UIEdit::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -449,12 +449,12 @@ CScValue *CUIEdit::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CUIObject::scGetProperty(name);
+	else return UIObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::scSetProperty(const char *name, CScValue *value) {
+bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
@@ -520,18 +520,18 @@ bool CUIEdit::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CUIObject::scSetProperty(name, value);
+	else return UIObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CUIEdit::scToString() {
+const char *UIEdit::scToString() {
 	return "[edit]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CUIEdit::setCursorChar(const char *character) {
+void UIEdit::setCursorChar(const char *character) {
 	if (!character) return;
 	delete[] _cursorChar;
 	_cursorChar = new char [strlen(character) + 1];
@@ -540,7 +540,7 @@ void CUIEdit::setCursorChar(const char *character) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::display(int offsetX, int offsetY) {
+bool UIEdit::display(int offsetX, int offsetY) {
 	if (!_visible) return STATUS_OK;
 
 
@@ -552,8 +552,8 @@ bool CUIEdit::display(int offsetX, int offsetY) {
 	if (_image) _image->draw(offsetX + _posX, offsetY + _posY, NULL);
 
 	// prepare fonts
-	CBFont *font;
-	CBFont *sfont;
+	BaseFont *font;
+	BaseFont *sfont;
 
 	if (_font) font = _font;
 	else font = _gameRef->_systemFont;
@@ -630,8 +630,8 @@ bool CUIEdit::display(int offsetX, int offsetY) {
 		// cursor
 		if (focused && curFirst) {
 			if (Count) {
-				if (CBPlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
-					_lastBlinkTime = CBPlatform::getTime();
+				if (BasePlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = BasePlatform::getTime();
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)
@@ -653,8 +653,8 @@ bool CUIEdit::display(int offsetX, int offsetY) {
 		// cursor
 		if (focused && !curFirst) {
 			if (Count) {
-				if (CBPlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
-					_lastBlinkTime = CBPlatform::getTime();
+				if (BasePlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = BasePlatform::getTime();
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)
@@ -673,7 +673,7 @@ bool CUIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	_gameRef->_renderer->_rectList.add(new CBActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 
 	_gameRef->_textEncoding = OrigEncoding;
@@ -683,7 +683,7 @@ bool CUIEdit::display(int offsetX, int offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
+bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 	bool handled = false;
 
 	if (event->type == Common::EVENT_KEYDOWN && !printable) {
@@ -695,7 +695,7 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 			// ctrl+A
 		case Common::KEYCODE_a:
-			if (CBKeyboardState::isControlDown()) {
+			if (BaseKeyboardState::isControlDown()) {
 				_selStart = 0;
 				_selEnd = strlen(_text);
 				handled = true;
@@ -716,24 +716,24 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_UP:
 			_selEnd--;
-			if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
+			if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
 			handled = true;
 			break;
 
 		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_DOWN:
 			_selEnd++;
-			if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
+			if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
 			handled = true;
 			break;
 
 		case Common::KEYCODE_HOME:
 			if (_gameRef->_textRTL) {
 				_selEnd = strlen(_text);
-				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
+				if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
 			} else {
 				_selEnd = 0;
-				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
+				if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
 			}
 			handled = true;
 			break;
@@ -741,10 +741,10 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 		case Common::KEYCODE_END:
 			if (_gameRef->_textRTL) {
 				_selEnd = 0;
-				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
+				if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
 			} else {
 				_selEnd = strlen(_text);
-				if (!CBKeyboardState::isShiftDown()) _selStart = _selEnd;
+				if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
 			}
 			handled = true;
 			break;
@@ -786,8 +786,8 @@ bool CUIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CUIEdit::deleteChars(int start, int end) {
-	if (start > end) CBUtils::swap(&start, &end);
+int UIEdit::deleteChars(int start, int end) {
+	if (start > end) BaseUtils::swap(&start, &end);
 
 	start = MAX(start, (int)0);
 	end = MIN((size_t)end, strlen(_text));
@@ -807,7 +807,7 @@ int CUIEdit::deleteChars(int start, int end) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CUIEdit::insertChars(int pos, byte *chars, int num) {
+int UIEdit::insertChars(int pos, byte *chars, int num) {
 	if ((int)strlen(_text) + num > _maxLength) {
 		num -= (strlen(_text) + num - _maxLength);
 	}
@@ -833,9 +833,9 @@ int CUIEdit::insertChars(int pos, byte *chars, int num) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUIEdit::persist(CBPersistMgr *persistMgr) {
+bool UIEdit::persist(BasePersistenceManager *persistMgr) {
 
-	CUIObject::persist(persistMgr);
+	UIObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_cursorBlinkRate));
 	persistMgr->transfer(TMEMBER(_cursorChar));

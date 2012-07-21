@@ -33,20 +33,20 @@
 
 namespace WinterMute {
 
-class CSXArray : public CBScriptable {
+class SXArray : public BaseScriptable {
 public:
-	bool push(CScValue *Val);
+	bool push(ScValue *Val);
 	bool validNumber(const char *origStr, char *outStr);
-	DECLARE_PERSISTENT(CSXArray, CBScriptable)
-	CSXArray(CBGame *inGame, CScStack *stack);
-	CSXArray(CBGame *inGame);
-	virtual ~CSXArray();
-	CScValue *scGetProperty(const char *name);
-	bool scSetProperty(const char *name, CScValue *value);
-	bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	DECLARE_PERSISTENT(SXArray, BaseScriptable)
+	SXArray(BaseGame *inGame, ScStack *stack);
+	SXArray(BaseGame *inGame);
+	virtual ~SXArray();
+	ScValue *scGetProperty(const char *name);
+	bool scSetProperty(const char *name, ScValue *value);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	const char *scToString();
 	int _length;
-	CScValue *_values;
+	ScValue *_values;
 };
 
 } // end of namespace WinterMute

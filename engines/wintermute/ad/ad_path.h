@@ -34,19 +34,19 @@
 #include "engines/wintermute/base/base.h"
 
 namespace WinterMute {
-class CBPoint;
-class CAdPath : public CBBase {
+class BasePoint;
+class AdPath : public BaseClass {
 public:
-	DECLARE_PERSISTENT(CAdPath, CBBase)
-	CBPoint *getCurrent();
+	DECLARE_PERSISTENT(AdPath, BaseClass)
+	BasePoint *getCurrent();
 	bool setReady(bool ready = true);
-	void addPoint(CBPoint *point);
-	CBPoint *getNext();
-	CBPoint *getFirst();
+	void addPoint(BasePoint *point);
+	BasePoint *getNext();
+	BasePoint *getFirst();
 	void reset();
-	CAdPath(CBGame *inGame);
-	virtual ~CAdPath();
-	CBArray <CBPoint *, CBPoint *> _points;
+	AdPath(BaseGame *inGame);
+	virtual ~AdPath();
+	BaseArray <BasePoint *, BasePoint *> _points;
 	int _currIndex;
 	bool _ready;
 };

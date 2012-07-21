@@ -33,23 +33,23 @@
 #include "engines/wintermute/base/base.h"
 
 namespace WinterMute {
-class CAdSpriteSet;
-class CBSprite;
-class CAdTalkNode : public CBBase {
+class AdSpriteSet;
+class BaseSprite;
+class AdTalkNode : public BaseClass {
 public:
 	char *_spriteSetFilename;
-	CAdSpriteSet *_spriteSet;
-	CBSprite *getSprite(TDirection dir);
+	AdSpriteSet *_spriteSet;
+	BaseSprite *getSprite(TDirection dir);
 	bool isInTimeInterval(uint32 time, TDirection dir);
 	bool loadSprite();
-	DECLARE_PERSISTENT(CAdTalkNode, CBBase)
+	DECLARE_PERSISTENT(AdTalkNode, BaseClass)
 
-	CAdTalkNode(CBGame *inGame);
-	virtual ~CAdTalkNode();
+	AdTalkNode(BaseGame *inGame);
+	virtual ~AdTalkNode();
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent = 0);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
 	char *_spriteFilename;
-	CBSprite *_sprite;
+	BaseSprite *_sprite;
 	uint32 _startTime;
 	uint32 _endTime;
 	bool _playToEnd;

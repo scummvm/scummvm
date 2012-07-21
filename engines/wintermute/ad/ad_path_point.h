@@ -34,13 +34,13 @@
 
 namespace WinterMute {
 
-class CAdPathPoint : public CBPoint {
+class AdPathPoint : public BasePoint {
 public:
-	DECLARE_PERSISTENT(CAdPathPoint, CBPoint)
-	CAdPathPoint(int initX, int initY, int initDistance);
-	CAdPathPoint();
-	virtual ~CAdPathPoint();
-	CAdPathPoint *_origin;
+	DECLARE_PERSISTENT(AdPathPoint, BasePoint)
+	AdPathPoint(int initX, int initY, int initDistance);
+	AdPathPoint();
+	virtual ~AdPathPoint();
+	AdPathPoint *_origin;
 	bool _marked;
 	int _distance;
 };

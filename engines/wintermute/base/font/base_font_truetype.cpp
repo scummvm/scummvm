@@ -46,10 +46,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBFontTT, false)
+IMPLEMENT_PERSISTENT(BaseFontTT, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBFontTT::CBFontTT(CBGame *inGame): CBFont(inGame) {
+BaseFontTT::BaseFontTT(BaseGame *inGame): BaseFont(inGame) {
 	_fontHeight = 12;
 	_isBold = _isItalic = _isUnderline = _isStriked = false;
 
@@ -71,7 +71,7 @@ CBFontTT::CBFontTT(CBGame *inGame): CBFont(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBFontTT::~CBFontTT(void) {
+BaseFontTT::~BaseFontTT(void) {
 	clearCache();
 
 	for (int i = 0; i < _layers.getSize(); i++) {
@@ -97,7 +97,7 @@ CBFontTT::~CBFontTT(void) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::clearCache() {
+void BaseFontTT::clearCache() {
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
 		if (_cachedTexts[i]) delete _cachedTexts[i];
 		_cachedTexts[i] = NULL;
@@ -105,7 +105,7 @@ void CBFontTT::clearCache() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::initLoop() {
+void BaseFontTT::initLoop() {
 	// we need more aggressive cache management on iOS not to waste too much memory on fonts
 	if (_gameRef->_constrainedMemory) {
 		// purge all cached images not used in the last frame
@@ -121,7 +121,7 @@ void CBFontTT::initLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::getTextWidth(byte *text, int maxLength) {
+int BaseFontTT::getTextWidth(byte *text, int maxLength) {
 	WideString textStr;
 
 	if (_gameRef->_textEncoding == TEXT_UTF8) textStr = StringUtil::utf8ToWide((char *)text);
@@ -138,7 +138,7 @@ int CBFontTT::getTextWidth(byte *text, int maxLength) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::getTextHeight(byte *text, int width) {
+int BaseFontTT::getTextHeight(byte *text, int width) {
 	WideString textStr;
 
 	if (_gameRef->_textEncoding == TEXT_UTF8) textStr = StringUtil::utf8ToWide((char *)text);
@@ -153,7 +153,7 @@ int CBFontTT::getTextHeight(byte *text, int width) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
+void BaseFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
 	if (text == NULL || strcmp((char *)text, "") == 0) return;
 
 	WideString textStr = (char *)text;
@@ -166,12 +166,12 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 		textStr = Common::String(textStr.c_str(), (uint32)maxLength);
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
-	CBRenderer *renderer = _gameRef->_renderer;
+	BaseRenderer *renderer = _gameRef->_renderer;
 
 	// find cached surface, if exists
 	int minPriority = INT_MAX;
 	int minIndex = -1;
-	CBSurface *surface = NULL;
+	BaseSurface *surface = NULL;
 	int textOffset = 0;
 
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
@@ -201,7 +201,7 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 		if (surface) {
 			// write surface to cache
 			if (_cachedTexts[minIndex] != NULL) delete _cachedTexts[minIndex];
-			_cachedTexts[minIndex] = new CBCachedTTFontText;
+			_cachedTexts[minIndex] = new BaseCachedTTFontText;
 
 			_cachedTexts[minIndex]->_surface = surface;
 			_cachedTexts[minIndex]->_align = align;
@@ -219,7 +219,7 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 	// and paint it
 	if (surface) {
 		Rect32 rc;
-		CBPlatform::setRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
+		BasePlatform::setRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
 		for (int i = 0; i < _layers.getSize(); i++) {
 			uint32 color = _layers[i]->_color;
 			uint32 origForceAlpha = renderer->_forceAlphaColor;
@@ -237,7 +237,7 @@ void CBFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, i
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset) {
+BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset) {
 	//TextLineList lines;
 	// TODO
 	//WrapText(text, width, maxHeight, lines);
@@ -256,7 +256,7 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 	static bool hasWarned = false;
 	if (!hasWarned) {
 		hasWarned = true;
-		warning("CBFontTT::RenderTextToTexture - Not fully ported yet");
+		warning("BaseFontTT::RenderTextToTexture - Not fully ported yet");
 	}
 
 	debugC(kWinterMuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
@@ -274,7 +274,7 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 		heightOffset += (int)_lineHeight;
 	}
 
-	CBSurface *retSurface = _gameRef->_renderer->createSurface();
+	BaseSurface *retSurface = _gameRef->_renderer->createSurface();
 	Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8 , 0));
 	retSurface->putSurface(*convertedSurface, true);
 	convertedSurface->free();
@@ -363,7 +363,7 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 		posY += GetLineHeight();
 	}
 
-	CBSurfaceOSystem *wmeSurface = new CBSurfaceOSystem(_gameRef);
+	BaseSurfaceOSystem *wmeSurface = new BaseSurfaceOSystem(_gameRef);
 	if (DID_SUCCEED(wmeSurface->CreateFromSDLSurface(surface))) {
 		SDL_FreeSurface(surface);
 		return wmeSurface;
@@ -377,9 +377,9 @@ CBSurface *CBFontTT::renderTextToTexture(const WideString &text, int width, TTex
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::blitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect) {
+void BaseFontTT::blitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect) {
 	//SDL_BlitSurface(src, NULL, target, targetRect);
-	warning("CBFontTT::BlitSurface - not ported yet");
+	warning("BaseFontTT::BlitSurface - not ported yet");
 #if 0
 	for (int y = 0; y < src->h; y++) {
 		if (targetRect->y + y < 0 || targetRect->y + y >= target->h) continue;
@@ -401,16 +401,16 @@ void CBFontTT::blitSurface(Graphics::Surface *src, Graphics::Surface *target, Co
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBFontTT::getLetterHeight() {
+int BaseFontTT::getLetterHeight() {
 	return (int)getLineHeight();
 }
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBFontTT::loadFile(const char *filename) {
+bool BaseFontTT::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CBFontTT::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "BaseFontTT::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -444,7 +444,7 @@ TOKEN_DEF(OFFSET_X)
 TOKEN_DEF(OFFSET_Y)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool CBFontTT::loadBuffer(byte *buffer) {
+bool BaseFontTT::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TTFONT)
 	TOKEN_TABLE(SIZE)
@@ -462,7 +462,7 @@ bool CBFontTT::loadBuffer(byte *buffer) {
 
 	char *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TTFONT) {
 		_gameRef->LOG(0, "'TTFONT' keyword expected.");
@@ -483,7 +483,7 @@ bool CBFontTT::loadBuffer(byte *buffer) {
 			break;
 
 		case TOKEN_FILENAME:
-			CBUtils::setString(&_fontFile, params);
+			BaseUtils::setString(&_fontFile, params);
 			break;
 
 		case TOKEN_BOLD:
@@ -521,7 +521,7 @@ bool CBFontTT::loadBuffer(byte *buffer) {
 		break;
 
 		case TOKEN_LAYER: {
-			CBTTFontLayer *Layer = new CBTTFontLayer;
+			BaseTTFontLayer *Layer = new BaseTTFontLayer;
 			if (Layer && DID_SUCCEED(parseLayer(Layer, (byte *)params))) _layers.add(Layer);
 			else {
 				delete Layer;
@@ -540,19 +540,19 @@ bool CBFontTT::loadBuffer(byte *buffer) {
 
 	// create at least one layer
 	if (_layers.getSize() == 0) {
-		CBTTFontLayer *Layer = new CBTTFontLayer;
+		BaseTTFontLayer *Layer = new BaseTTFontLayer;
 		Layer->_color = BaseColor;
 		_layers.add(Layer);
 	}
 
-	if (!_fontFile) CBUtils::setString(&_fontFile, "arial.ttf");
+	if (!_fontFile) BaseUtils::setString(&_fontFile, "arial.ttf");
 
 	return initFont();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
+bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(OFFSET_X)
 	TOKEN_TABLE(OFFSET_Y)
@@ -562,7 +562,7 @@ bool CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
 
 	char *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -595,8 +595,8 @@ bool CBFontTT::parseLayer(CBTTFontLayer *layer, byte *buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFontTT::persist(CBPersistMgr *persistMgr) {
-	CBFont::persist(persistMgr);
+bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
+	BaseFont::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_isBold));
 	persistMgr->transfer(TMEMBER(_isItalic));
@@ -616,7 +616,7 @@ bool CBFontTT::persist(CBPersistMgr *persistMgr) {
 		numLayers = _layers.getSize();
 		persistMgr->transfer(TMEMBER(numLayers));
 		for (int i = 0; i < numLayers; i++) {
-			CBTTFontLayer *layer = new CBTTFontLayer;
+			BaseTTFontLayer *layer = new BaseTTFontLayer;
 			layer->persist(persistMgr);
 			_layers.add(layer);
 		}
@@ -632,18 +632,18 @@ bool CBFontTT::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::afterLoad() {
+void BaseFontTT::afterLoad() {
 	initFont();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFontTT::initFont() {
+bool BaseFontTT::initFont() {
 	if (!_fontFile) return STATUS_FAILED;
 
 	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(_fontFile);
 	if (!file) {
 		// the requested font file is not in wme file space; try loading a system font
-		AnsiString fontFileName = PathUtil::combine(CBPlatform::getSystemFontPath(), PathUtil::getFileName(_fontFile));
+		AnsiString fontFileName = PathUtil::combine(BasePlatform::getSystemFontPath(), PathUtil::getFileName(_fontFile));
 		file = _gameRef->_fileManager->openFile(fontFileName.c_str(), false);
 		if (!file) {
 			_gameRef->LOG(0, "Error loading TrueType font '%s'", _fontFile);
@@ -659,7 +659,7 @@ bool CBFontTT::initFont() {
 	}
 	if (!_font) {
 		_font = _fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		warning("BFontTT::InitFont - Couldn't load %s", _fontFile);
+		warning("BaseFontTT::InitFont - Couldn't load %s", _fontFile);
 	}
 	_lineHeight = _font->getFontHeight();
 	return STATUS_OK;
@@ -673,8 +673,8 @@ bool CBFontTT::initFont() {
 	_fTStream = (FT_Stream)new byte[sizeof(*_fTStream)];
 	memset(_fTStream, 0, sizeof(*_fTStream));
 
-	_fTStream->read = CBFontTT::FTReadSeekProc;
-	_fTStream->close = CBFontTT::FTCloseProc;
+	_fTStream->read = BaseFontTT::FTReadSeekProc;
+	_fTStream->close = BaseFontTT::FTCloseProc;
 	_fTStream->descriptor.pointer = file;
 	_fTStream->size = file->GetSize();
 
@@ -725,7 +725,7 @@ bool CBFontTT::initFont() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBFontTT::measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
+void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
 	//TextLineList lines;
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
 	static bool hasWarned = false;

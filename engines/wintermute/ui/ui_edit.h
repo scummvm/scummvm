@@ -34,10 +34,10 @@
 #include "common/events.h"
 
 namespace WinterMute {
-class CBFont;
-class CUIEdit : public CUIObject {
+class BaseFont;
+class UIEdit : public UIObject {
 public:
-	DECLARE_PERSISTENT(CUIEdit, CUIObject)
+	DECLARE_PERSISTENT(UIEdit, UIObject)
 	int _maxLength;
 	int insertChars(int pos, byte *chars, int num);
 	int deleteChars(int start, int end);
@@ -52,18 +52,18 @@ public:
 	char *_cursorChar;
 	int _selEnd;
 	int _selStart;
-	CBFont *_fontSelected;
-	CUIEdit(CBGame *inGame);
-	virtual ~CUIEdit();
+	BaseFont *_fontSelected;
+	UIEdit(BaseGame *inGame);
+	virtual ~UIEdit();
 
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

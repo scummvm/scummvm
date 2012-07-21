@@ -39,16 +39,16 @@
 namespace WinterMute {
 
 #define MAX_CACHED_SCRIPTS 20
-class CScScript;
-class CScValue;
-class CBObject;
-class CBScriptHolder;
-class CScEngine : public CBBase {
+class ScScript;
+class ScValue;
+class BaseObject;
+class BaseScriptHolder;
+class ScEngine : public BaseClass {
 public:
 	class CScCachedScript {
 	public:
 		CScCachedScript(const char *filename, byte *buffer, uint32 size) {
-			_timestamp = CBPlatform::getTime();
+			_timestamp = BasePlatform::getTime();
 			_buffer = new byte[size];
 			if (_buffer) memcpy(_buffer, buffer, size);
 			_size = size;
@@ -76,7 +76,7 @@ public:
 		}
 
 		Common::String _filename;
-		CBArray<int, int> _lines;
+		BaseArray<int, int> _lines;
 	};
 
 
@@ -85,42 +85,42 @@ public:
 public:
 	bool dbgSendScripts(IWmeDebugClient *client);
 
-	CBArray<CScBreakpoint *, CScBreakpoint *> _breakpoints;
+	BaseArray<CScBreakpoint *, CScBreakpoint *> _breakpoints;
 	bool addBreakpoint(const char *scriptFilename, int line);
 	bool removeBreakpoint(const char *scriptFilename, int line);
 	bool refreshScriptBreakpoints();
-	bool refreshScriptBreakpoints(CScScript *script);
+	bool refreshScriptBreakpoints(ScScript *script);
 	bool saveBreakpoints();
 	bool loadBreakpoints();
 
 	bool clearGlobals(bool includingNatives = false);
 	bool tickUnbreakable();
 	bool removeFinishedScripts();
-	bool isValidScript(CScScript *script);
+	bool isValidScript(ScScript *script);
 
-	CScScript *_currentScript;
+	ScScript *_currentScript;
 	bool resumeAll();
 	bool pauseAll();
 	void editorCleanup();
-	bool resetObject(CBObject *Object);
-	bool resetScript(CScScript *script);
+	bool resetObject(BaseObject *Object);
+	bool resetScript(ScScript *script);
 	bool emptyScriptCache();
 	byte *getCompiledScript(const char *filename, uint32 *outSize, bool ignoreCache = false);
-	DECLARE_PERSISTENT(CScEngine, CBBase)
+	DECLARE_PERSISTENT(ScEngine, BaseClass)
 	bool cleanup();
 	int getNumScripts(int *running = NULL, int *waiting = NULL, int *persistent = NULL);
 	bool tick();
-	CScValue *_globals;
-	CScScript *runScript(const char *filename, CBScriptHolder *owner = NULL);
+	ScValue *_globals;
+	ScScript *runScript(const char *filename, BaseScriptHolder *owner = NULL);
 	static const bool _compilerAvailable = false;
 
-	CScEngine(CBGame *inGame);
-	virtual ~CScEngine();
+	ScEngine(BaseGame *inGame);
+	virtual ~ScEngine();
 	static byte *loadFile(void *data, char *filename, uint32 *size);
 	static void closeFile(void *data, byte *buffer);
 	static void parseElement(void *data, int line, int type, void *elementData);
 
-	CBArray<CScScript *, CScScript *> _scripts;
+	BaseArray<ScScript *, ScScript *> _scripts;
 
 	void enableProfiling();
 	void disableProfiling();

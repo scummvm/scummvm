@@ -36,8 +36,8 @@
 
 namespace WinterMute {
 
-class CBSoundBuffer;
-class CBSound : public CBBase {
+class BaseSoundBuffer;
+class BaseSound : public BaseClass {
 public:
 	bool setPan(float pan);
 	int _soundPrivateVolume;
@@ -57,7 +57,7 @@ public:
 	bool _soundLooping;
 	uint32 _soundLoopStart;
 	uint32 _soundPosition;
-	DECLARE_PERSISTENT(CBSound, CBBase)
+	DECLARE_PERSISTENT(BaseSound, BaseClass)
 	bool resume();
 	bool pause(bool freezePaused = false);
 	bool stop();
@@ -68,8 +68,8 @@ public:
 	char *_soundFilename;
 	bool setSoundSimple();
 	bool setSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
-	CBSound(CBGame *inGame);
-	virtual ~CBSound();
+	BaseSound(BaseGame *inGame);
+	virtual ~BaseSound();
 
 	bool ApplyFX(TSFXType type = SFX_NONE, float param1 = 0, float param2 = 0, float param3 = 0, float param4 = 0);
 
@@ -79,7 +79,7 @@ private:
 	float _sFXParam2;
 	float _sFXParam3;
 	float _sFXParam4;
-	CBSoundBuffer *_sound;
+	BaseSoundBuffer *_sound;
 
 };
 

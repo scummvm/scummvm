@@ -40,16 +40,16 @@
 
 namespace WinterMute {
 
-CBGame *CBPlatform::_gameRef = NULL;
+BaseGame *BasePlatform::_gameRef = NULL;
 
 #define CLASS_NAME "GF_FRAME"
-int CBPlatform::initialize(CBGame *inGame, int argc, char *argv[]) {
+int BasePlatform::initialize(BaseGame *inGame, int argc, char *argv[]) {
 	_gameRef = inGame;
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBPlatform::handleEvent(Common::Event *event) {
+void BasePlatform::handleEvent(Common::Event *event) {
 	switch (event->type) {
 
 	case Common::EVENT_LBUTTONDOWN:
@@ -88,13 +88,13 @@ void CBPlatform::handleEvent(Common::Event *event) {
 		break;
 		/*#ifdef __IPHONEOS__
 		        {
-		            CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
+		            BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 		            POINT p;
 		            GetCursorPos(&p);
 		            _gameRef->SetActiveObject(renderer->GetObjectAt(p.x, p.y));
 
-		            if (_gameRef->_activeObject != NULL && strcmp(_gameRef->_activeObject->getClassName(), "CUIButton") == 0) {
-		                CUIButton *btn = static_cast<CUIButton *>(_gameRef->_activeObject);
+		            if (_gameRef->_activeObject != NULL && strcmp(_gameRef->_activeObject->getClassName(), "UIButton") == 0) {
+		                UIButton *btn = static_cast<UIButton *>(_gameRef->_activeObject);
 		                if (btn->_visible && !btn->_disable) btn->_press = true;
 		            }
 		        }
@@ -151,7 +151,7 @@ void CBPlatform::handleEvent(Common::Event *event) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CBPlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
+int BasePlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
 	//TODO
 	/*  if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_MINIMIZED) {
 	        if (_gameRef) _gameRef->AutoSaveOnExit();
@@ -166,7 +166,7 @@ int CBPlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
 //////////////////////////////////////////////////////////////////////////
 // Win32 API bindings
 //////////////////////////////////////////////////////////////////////////
-void CBPlatform::outputDebugString(const char *lpOutputString) {
+void BasePlatform::outputDebugString(const char *lpOutputString) {
 /*
 #ifdef __WIN32__
 	::OutputDebugString(lpOutputString);
@@ -176,13 +176,13 @@ void CBPlatform::outputDebugString(const char *lpOutputString) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 CBPlatform::getTime() {
+uint32 BasePlatform::getTime() {
 	return g_system->getMillis();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::getCursorPos(Point32 *lpPoint) {
-	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
+bool BasePlatform::getCursorPos(Point32 *lpPoint) {
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
 	Common::Point p = g_system->getEventManager()->getMousePos();
 	lpPoint->x = p.x;
@@ -194,8 +194,8 @@ bool CBPlatform::getCursorPos(Point32 *lpPoint) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::setCursorPos(int X, int Y) {
-	CBRenderOSystem *renderer = static_cast<CBRenderOSystem *>(_gameRef->_renderer);
+bool BasePlatform::setCursorPos(int X, int Y) {
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
 	Point32 p;
 	p.x = X;
@@ -207,19 +207,19 @@ bool CBPlatform::setCursorPos(int X, int Y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::showWindow(int nCmdShow) {
+bool BasePlatform::showWindow(int nCmdShow) {
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::deleteFile(const char *lpFileName) {
+bool BasePlatform::deleteFile(const char *lpFileName) {
 	return remove(lpFileName) ? true : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::copyFile(const char *from, const char *to, bool failIfExists) {
+bool BasePlatform::copyFile(const char *from, const char *to, bool failIfExists) {
 //	try {
-	warning("CBPlatform::copyFile(%s, %s, %d) - not implemented", from, to, failIfExists);
+	warning("BasePlatform::copyFile(%s, %s, %d) - not implemented", from, to, failIfExists);
 	return false;
 //		if (failIfExists && boost::filesystem::exists(to)) return false;
 //		boost::filesystem::copy_file(from, to);
@@ -230,38 +230,38 @@ bool CBPlatform::copyFile(const char *from, const char *to, bool failIfExists) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CBPlatform::setCapture() {
+void BasePlatform::setCapture() {
 	return;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::releaseCapture() {
+bool BasePlatform::releaseCapture() {
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::setForegroundWindow() {
+bool BasePlatform::setForegroundWindow() {
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::setRectEmpty(Rect32 *lprc) {
+bool BasePlatform::setRectEmpty(Rect32 *lprc) {
 	lprc->left = lprc->right = lprc->top = lprc->bottom = 0;
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::isRectEmpty(const Rect32 *lprc) {
+bool BasePlatform::isRectEmpty(const Rect32 *lprc) {
 	return (lprc->left >= lprc->right) || (lprc->top >= lprc->bottom);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::ptInRect(Rect32 *lprc, Point32 p) {
+bool BasePlatform::ptInRect(Rect32 *lprc, Point32 p) {
 	return (p.x >= lprc->left) && (p.x < lprc->right) && (p.y >= lprc->top) && (p.y < lprc->bottom);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::setRect(Rect32 *lprc, int left, int top, int right, int bottom) {
+bool BasePlatform::setRect(Rect32 *lprc, int left, int top, int right, int bottom) {
 	lprc->left   = left;
 	lprc->top    = top;
 	lprc->right  = right;
@@ -271,7 +271,7 @@ bool CBPlatform::setRect(Rect32 *lprc, int left, int top, int right, int bottom)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2) {
+bool BasePlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2) {
 	if (isRectEmpty(lprcSrc1) || isRectEmpty(lprcSrc2) ||
 	        lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right ||
 	        lprcSrc1->top >= lprcSrc2->bottom || lprcSrc2->top >= lprcSrc1->bottom) {
@@ -287,7 +287,7 @@ bool CBPlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Re
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2) {
+bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2) {
 	if (isRectEmpty(lprcSrc1)) {
 		if (isRectEmpty(lprcSrc2)) {
 			setRectEmpty(lprcDst);
@@ -310,7 +310,7 @@ bool CBPlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2) 
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
+bool BasePlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
 	if (lprcDst == NULL || lprcSrc == NULL) return false;
 
 	*lprcDst = *lprcSrc;
@@ -318,7 +318,7 @@ bool CBPlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::offsetRect(Rect32 *lprc, int dx, int dy) {
+bool BasePlatform::offsetRect(Rect32 *lprc, int dx, int dy) {
 	if (lprc == NULL) return false;
 
 	lprc->left   += dx;
@@ -330,13 +330,13 @@ bool CBPlatform::offsetRect(Rect32 *lprc, int dx, int dy) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPlatform::equalRect(Rect32 *rect1, Rect32 *rect2) {
+bool BasePlatform::equalRect(Rect32 *rect1, Rect32 *rect2) {
 	return rect1->left == rect2->left && rect1->right == rect2->right && rect1->top == rect2->top && rect1->bottom == rect2->bottom;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString CBPlatform::getSystemFontPath() {
+AnsiString BasePlatform::getSystemFontPath() {
 /*#ifdef __WIN32__
 	// we're looking for something like "c:\windows\fonts\";
 	char winDir[MAX_PATH_LENGTH + 1];
@@ -351,14 +351,14 @@ AnsiString CBPlatform::getSystemFontPath() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString CBPlatform::getPlatformName() {
+AnsiString BasePlatform::getPlatformName() {
 	// TODO: Should conform to the WME-spec.
 	//return AnsiString(SDL_GetPlatform());
 	return AnsiString("ScummVM");
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CBPlatform::strupr(char *string) {
+char *BasePlatform::strupr(char *string) {
 	if (string) {
 		for (size_t i = 0; i < strlen(string); ++i) {
 			string[i] = toupper(string[i]);
@@ -368,7 +368,7 @@ char *CBPlatform::strupr(char *string) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *CBPlatform::strlwr(char *string) {
+char *BasePlatform::strlwr(char *string) {
 	if (string) {
 		for (size_t i = 0; i < strlen(string); ++i) {
 			string[i] = tolower(string[i]);

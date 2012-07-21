@@ -46,10 +46,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CAdItem, false)
+IMPLEMENT_PERSISTENT(AdItem, false)
 
 //////////////////////////////////////////////////////////////////////////
-CAdItem::CAdItem(CBGame *inGame): CAdTalkHolder(inGame) {
+AdItem::AdItem(BaseGame *inGame): AdTalkHolder(inGame) {
 	_spriteHover = NULL;
 	_cursorNormal = _cursorHover = NULL;
 
@@ -70,7 +70,7 @@ CAdItem::CAdItem(CBGame *inGame): CAdTalkHolder(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CAdItem::~CAdItem() {
+AdItem::~AdItem() {
 	delete _spriteHover;
 	delete _cursorNormal;
 	delete _cursorHover;
@@ -84,10 +84,10 @@ CAdItem::~CAdItem() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::loadFile(const char *filename) {
+bool AdItem::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CAdItem::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "AdItem::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -134,7 +134,7 @@ TOKEN_DEF(AMOUNT_STRING)
 TOKEN_DEF(AMOUNT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::loadBuffer(byte *buffer, bool complete) {
+bool AdItem::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
 	TOKEN_TABLE(TEMPLATE)
@@ -166,7 +166,7 @@ bool CAdItem::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ITEM) {
@@ -198,8 +198,8 @@ bool CAdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE:
 		case TOKEN_SPRITE:
 			delete _sprite;
-			_sprite = new CBSprite(_gameRef, this);
-			if (!_sprite || DID_FAIL(_sprite->loadFile((char *)params, ((CAdGame *)_gameRef)->_texItemLifeTime))) {
+			_sprite = new BaseSprite(_gameRef, this);
+			if (!_sprite || DID_FAIL(_sprite->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _sprite;
 				cmd = PARSERR_GENERIC;
 			}
@@ -208,8 +208,8 @@ bool CAdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE_HOVER:
 		case TOKEN_SPRITE_HOVER:
 			delete _spriteHover;
-			_spriteHover = new CBSprite(_gameRef, this);
-			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile((char *)params, ((CAdGame *)_gameRef)->_texItemLifeTime))) {
+			_spriteHover = new BaseSprite(_gameRef, this);
+			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _spriteHover;
 				cmd = PARSERR_GENERIC;
 			}
@@ -238,27 +238,27 @@ bool CAdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_AMOUNT_STRING:
-			CBUtils::setString(&_amountString, (char *)params);
+			BaseUtils::setString(&_amountString, (char *)params);
 			break;
 
 		case TOKEN_TALK: {
-			CBSprite *spr = new CBSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)_gameRef)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			BaseSprite *spr = new BaseSprite(_gameRef, this);
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((AdGame *)_gameRef)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSprites.add(spr);
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
-			CBSprite *spr = new CBSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((CAdGame *)_gameRef)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
+			BaseSprite *spr = new BaseSprite(_gameRef, this);
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((AdGame *)_gameRef)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
 			else _talkSpritesEx.add(spr);
 		}
 		break;
 
 		case TOKEN_CURSOR:
 			delete _cursorNormal;
-			_cursorNormal = new CBSprite(_gameRef);
-			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile((char *)params, ((CAdGame *)_gameRef)->_texItemLifeTime))) {
+			_cursorNormal = new BaseSprite(_gameRef);
+			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _cursorNormal;
 				_cursorNormal = NULL;
 				cmd = PARSERR_GENERIC;
@@ -267,8 +267,8 @@ bool CAdItem::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_CURSOR_HOVER:
 			delete _cursorHover;
-			_cursorHover = new CBSprite(_gameRef);
-			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile((char *)params, ((CAdGame *)_gameRef)->_texItemLifeTime))) {
+			_cursorHover = new BaseSprite(_gameRef);
+			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _cursorHover;
 				_cursorHover = NULL;
 				cmd = PARSERR_GENERIC;
@@ -319,7 +319,7 @@ bool CAdItem::loadBuffer(byte *buffer, bool complete) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::update() {
+bool AdItem::update() {
 	_currentSprite = NULL;
 
 	if (_state == STATE_READY && _animSprite) {
@@ -369,11 +369,11 @@ bool CAdItem::update() {
 					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 				}
-				((CAdGame *)_gameRef)->addSentence(_sentence);
+				((AdGame *)_gameRef)->addSentence(_sentence);
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((CAdGame *)_gameRef)->addSentence(_sentence);
+			((AdGame *)_gameRef)->addSentence(_sentence);
 		}
 	}
 	default:
@@ -386,7 +386,7 @@ bool CAdItem::update() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::display(int x, int y) {
+bool AdItem::display(int x, int y) {
 	int width = 0;
 	if (_currentSprite) {
 		Rect32 rc;
@@ -412,7 +412,7 @@ bool CAdItem::display(int x, int y) {
 		}
 		amountX += _amountOffsetX;
 
-		CBFont *font = _font ? _font : _gameRef->_systemFont;
+		BaseFont *font = _font ? _font : _gameRef->_systemFont;
 		if (font) {
 			if (_amountString) font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
 			else {
@@ -430,7 +430,7 @@ bool CAdItem::display(int x, int y) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverSprite
 	//////////////////////////////////////////////////////////////////////////
@@ -444,7 +444,7 @@ bool CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 
 		delete _spriteHover;
 		_spriteHover = NULL;
-		CBSprite *spr = new CBSprite(_gameRef, this);
+		BaseSprite *spr = new BaseSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetHoverSprite failed for file '%s'", filename);
@@ -487,7 +487,7 @@ bool CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 
 		delete _cursorNormal;
 		_cursorNormal = NULL;
-		CBSprite *spr = new CBSprite(_gameRef);
+		BaseSprite *spr = new BaseSprite(_gameRef);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetNormalCursor failed for file '%s'", filename);
@@ -530,7 +530,7 @@ bool CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 
 		delete _cursorHover;
 		_cursorHover = NULL;
-		CBSprite *spr = new CBSprite(_gameRef);
+		BaseSprite *spr = new BaseSprite(_gameRef);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetHoverCursor failed for file '%s'", filename);
@@ -563,12 +563,12 @@ bool CAdItem::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 		return STATUS_OK;
 	}
 
-	else return CAdTalkHolder::scCallMethod(script, stack, thisStack, name);
+	else return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CAdItem::scGetProperty(const char *name) {
+ScValue *AdItem::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -644,12 +644,12 @@ CScValue *CAdItem::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CAdTalkHolder::scGetProperty(name);
+	else return AdTalkHolder::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::scSetProperty(const char *name, CScValue *value) {
+bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -706,7 +706,7 @@ bool CAdItem::scSetProperty(const char *name, CScValue *value) {
 			delete[] _amountString;
 			_amountString = NULL;
 		} else {
-			CBUtils::setString(&_amountString, value->getString());
+			BaseUtils::setString(&_amountString, value->getString());
 		}
 		return STATUS_OK;
 	}
@@ -719,20 +719,20 @@ bool CAdItem::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CAdTalkHolder::scSetProperty(name, value);
+	else return AdTalkHolder::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CAdItem::scToString() {
+const char *AdItem::scToString() {
 	return "[item]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::persist(CBPersistMgr *persistMgr) {
+bool AdItem::persist(BasePersistenceManager *persistMgr) {
 
-	CAdTalkHolder::persist(persistMgr);
+	AdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_cursorCombined));
 	persistMgr->transfer(TMEMBER(_cursorHover));
@@ -751,10 +751,10 @@ bool CAdItem::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CAdItem::getExtendedFlag(const char *flagName) {
+bool AdItem::getExtendedFlag(const char *flagName) {
 	if (!flagName) return false;
 	else if (strcmp(flagName, "usable") == 0) return true;
-	else return CAdObject::getExtendedFlag(flagName);
+	else return AdObject::getExtendedFlag(flagName);
 }
 
 } // end of namespace WinterMute

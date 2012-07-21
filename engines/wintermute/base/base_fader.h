@@ -34,7 +34,7 @@
 
 namespace WinterMute {
 
-class CBFader : public CBObject {
+class BaseFader : public BaseObject {
 public:
 	bool _system;
 	uint32 getCurrentColor();
@@ -43,9 +43,9 @@ public:
 	bool deactivate();
 	bool display();
 	bool update();
-	DECLARE_PERSISTENT(CBFader, CBObject)
-	CBFader(CBGame *inGame);
-	virtual ~CBFader();
+	DECLARE_PERSISTENT(BaseFader, BaseObject)
+	BaseFader(BaseGame *inGame);
+	virtual ~BaseFader();
 	bool _active;
 	byte _red;
 	byte _green;

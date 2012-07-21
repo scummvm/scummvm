@@ -31,8 +31,8 @@
 namespace WinterMute {
 
 class Console;
-class CBGame;
-class CSysClassRegistry;
+class BaseGame;
+class SystemClassRegistry;
 // our engine debug channels
 enum {
     kWinterMuteDebugLog = 1 << 0, // The debug-logs from the original engine
@@ -49,15 +49,15 @@ public:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
-	CSysClassRegistry *getClassRegistry(){ return _classReg; }
+	SystemClassRegistry *getClassRegistry(){ return _classReg; }
 	uint32 randInt(int from, int to);
 private:
 	int init();
 	void deinit();
 	int messageLoop();
 	Console *_console;
-	CBGame *_game;
-	CSysClassRegistry *_classReg;
+	BaseGame *_game;
+	SystemClassRegistry *_classReg;
 	// We need random numbers
 	Common::RandomSource *_rnd;
 	const ADGameDescription *_gameDescription;

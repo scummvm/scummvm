@@ -32,28 +32,28 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBPoint, false)
+IMPLEMENT_PERSISTENT(BasePoint, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBPoint::CBPoint() {
+BasePoint::BasePoint() {
 	x = y = 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPoint::~CBPoint() {
+BasePoint::~BasePoint() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBPoint::CBPoint(int initX, int initY) {
+BasePoint::BasePoint(int initX, int initY) {
 	x = initX;
 	y = initY;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBPoint::persist(CBPersistMgr *persistMgr) {
+bool BasePoint::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(x));
 	persistMgr->transfer(TMEMBER(y));

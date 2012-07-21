@@ -40,7 +40,7 @@ class SeekableReadStream;
 
 namespace WinterMute {
 
-class CBFile : public CBBase {
+class BaseFile : public BaseClass {
 protected:
 	uint32 _pos;
 	uint32 _size;
@@ -56,8 +56,8 @@ public:
 	virtual bool close() = 0;
 	virtual bool open(const Common::String &filename) = 0;
 	virtual bool isEOF();
-	CBFile(CBGame *inGame);
-	virtual ~CBFile();
+	BaseFile(BaseGame *inGame);
+	virtual ~BaseFile();
 	// Temporary solution to allow usage in ScummVM-code:
 	virtual Common::SeekableReadStream *getMemStream();
 };

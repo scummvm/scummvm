@@ -42,10 +42,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBFrame, false)
+IMPLEMENT_PERSISTENT(BaseFrame, false)
 
 //////////////////////////////////////////////////////////////////////
-CBFrame::CBFrame(CBGame *inGame): CBScriptable(inGame, true) {
+BaseFrame::BaseFrame(BaseGame *inGame): BaseScriptable(inGame, true) {
 	_delay = 0;
 	_moveX = _moveY = 0;
 
@@ -58,7 +58,7 @@ CBFrame::CBFrame(CBGame *inGame): CBScriptable(inGame, true) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBFrame::~CBFrame() {
+BaseFrame::~BaseFrame() {
 	delete _sound;
 	_sound = NULL;
 
@@ -75,7 +75,7 @@ CBFrame::~CBFrame() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool CBFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
+bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
 	bool res;
 
 	for (int i = 0; i < _subframes.getSize(); i++) {
@@ -87,7 +87,7 @@ bool CBFrame::draw(int x, int y, CBObject *registerOwner, float zoomX, float zoo
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFrame::oneTimeDisplay(CBObject *owner, bool muted) {
+bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 	if (_sound && !muted) {
 		if (owner) owner->updateOneSound(_sound);
 		_sound->play();
@@ -131,7 +131,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(KILL_SOUND)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
+bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(DELAY)
 	TOKEN_TABLE(IMAGE)
@@ -158,7 +158,7 @@ bool CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 	char *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 	Rect32 rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
@@ -170,7 +170,7 @@ bool CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	bool decoration = false;
 	bool mirrorX = false;
 	bool mirrorY = false;
-	CBPlatform::setRectEmpty(&rect);
+	BasePlatform::setRectEmpty(&rect);
 	char *surface_file = NULL;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
@@ -237,7 +237,7 @@ bool CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			break;
 
 		case TOKEN_SUBFRAME: {
-			CBSubFrame *subframe = new CBSubFrame(_gameRef);
+			BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
 			if (!subframe || DID_FAIL(subframe->loadBuffer((byte *)params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
@@ -250,7 +250,7 @@ bool CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 				delete _sound;
 				_sound = NULL;
 			}
-			_sound = new CBSound(_gameRef);
+			_sound = new BaseSound(_gameRef);
 			if (!_sound || DID_FAIL(_sound->setSound(params, Audio::Mixer::kSFXSoundType, false))) {
 				if (_gameRef->_soundMgr->_soundAvailable) _gameRef->LOG(0, "Error loading sound '%s'.", params);
 				delete _sound;
@@ -290,7 +290,7 @@ bool CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	}
 
 
-	CBSubFrame *sub = new CBSubFrame(_gameRef);
+	BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 	if (surface_file != NULL) {
 		if (custoTrans) sub->setSurface(surface_file, false, r, g, b, lifeTime, keepLoaded);
 		else sub->setSurface(surface_file, true, 0, 0, 0, lifeTime, keepLoaded);
@@ -305,7 +305,7 @@ bool CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		if (custoTrans) sub->_transparent = BYTETORGBA(r, g, b, 0xFF);
 	}
 
-	if (CBPlatform::isRectEmpty(&rect)) sub->setDefaultRect();
+	if (BasePlatform::isRectEmpty(&rect)) sub->setDefaultRect();
 	else sub->_rect = rect;
 
 	sub->_hotspotX = hotspotX;
@@ -325,15 +325,15 @@ bool CBFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
+bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) return false;
-	CBPlatform::setRectEmpty(rect);
+	BasePlatform::setRectEmpty(rect);
 
 	Rect32 subRect;
 
 	for (int i = 0; i < _subframes.getSize(); i++) {
 		_subframes[i]->getBoundingRect(&subRect, x, y, scaleX, scaleY);
-		CBPlatform::unionRect(rect, rect, &subRect);
+		BasePlatform::unionRect(rect, rect, &subRect);
 	}
 	return true;
 }
@@ -341,7 +341,7 @@ bool CBFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float sc
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
+bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "FRAME {\n");
 	buffer->putTextIndent(indent + 2, "DELAY = %d\n", _delay);
 
@@ -369,7 +369,7 @@ bool CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
 	}
 
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 
 	buffer->putTextIndent(indent, "}\n\n");
@@ -379,8 +379,8 @@ bool CBFrame::saveAsText(CBDynBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFrame::persist(CBPersistMgr *persistMgr) {
-	CBScriptable::persist(persistMgr);
+bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
+	BaseScriptable::persist(persistMgr);
 
 	_applyEvent.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_delay));
@@ -399,7 +399,7 @@ bool CBFrame::persist(CBPersistMgr *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSound
@@ -417,12 +417,12 @@ bool CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetSound") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		delete _sound;
 		_sound = NULL;
 
 		if (!val->isNULL()) {
-			_sound = new CBSound(_gameRef);
+			_sound = new BaseSound(_gameRef);
 			if (!_sound || DID_FAIL(_sound->setSound(val->getString(), Audio::Mixer::kSFXSoundType, false))) {
 				stack->pushBool(false);
 				delete _sound;
@@ -451,14 +451,14 @@ bool CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteSubframe") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		if (val->isInt()) {
 			int index = val->getInt(-1);
 			if (index < 0 || index >= _subframes.getSize()) {
 				script->runtimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", index);
 			}
 		} else {
-			CBSubFrame *sub = (CBSubFrame *)val->getNative();
+			BaseSubFrame *sub = (BaseSubFrame *)val->getNative();
 			for (int i = 0; i < _subframes.getSize(); i++) {
 				if (_subframes[i] == sub) {
 					delete _subframes[i];
@@ -476,11 +476,11 @@ bool CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddSubframe") == 0) {
 		stack->correctParams(1);
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		const char *filename = NULL;
 		if (!val->isNULL()) filename = val->getString();
 
-		CBSubFrame *sub = new CBSubFrame(_gameRef);
+		BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 		if (filename != NULL) {
 			sub->setSurface(filename);
 			sub->setDefaultRect();
@@ -499,11 +499,11 @@ bool CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 		int index = stack->pop()->getInt();
 		if (index < 0) index = 0;
 
-		CScValue *val = stack->pop();
+		ScValue *val = stack->pop();
 		const char *filename = NULL;
 		if (!val->isNULL()) filename = val->getString();
 
-		CBSubFrame *sub = new CBSubFrame(_gameRef);
+		BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 		if (filename != NULL) {
 			sub->setSurface(filename);
 		}
@@ -565,14 +565,14 @@ bool CBFrame::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else {
 		if (_subframes.getSize() == 1) return _subframes[0]->scCallMethod(script, stack, thisStack, name);
-		else return CBScriptable::scCallMethod(script, stack, thisStack, name);
+		else return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBFrame::scGetProperty(const char *name) {
-	if (!_scValue) _scValue = new CScValue(_gameRef);
+ScValue *BaseFrame::scGetProperty(const char *name) {
+	if (!_scValue) _scValue = new ScValue(_gameRef);
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -642,13 +642,13 @@ CScValue *CBFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else {
 		if (_subframes.getSize() == 1) return _subframes[0]->scGetProperty(name);
-		else return CBScriptable::scGetProperty(name);
+		else return BaseScriptable::scGetProperty(name);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBFrame::scSetProperty(const char *name, CScValue *value) {
+bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
@@ -692,13 +692,13 @@ bool CBFrame::scSetProperty(const char *name, CScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else {
 		if (_subframes.getSize() == 1) return _subframes[0]->scSetProperty(name, value);
-		else return CBScriptable::scSetProperty(name, value);
+		else return BaseScriptable::scSetProperty(name, value);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBFrame::scToString() {
+const char *BaseFrame::scToString() {
 	return "[frame]";
 }
 

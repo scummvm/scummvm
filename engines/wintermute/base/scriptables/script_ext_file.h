@@ -35,17 +35,17 @@
 
 namespace WinterMute {
 
-class CBFile;
+class BaseFile;
 
-class CSXFile : public CBScriptable {
+class SXFile : public BaseScriptable {
 public:
-	DECLARE_PERSISTENT(CSXFile, CBScriptable)
-	CScValue *scGetProperty(const char *name);
-	bool scSetProperty(const char *name, CScValue *value);
-	bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	DECLARE_PERSISTENT(SXFile, BaseScriptable)
+	ScValue *scGetProperty(const char *name);
+	bool scSetProperty(const char *name, ScValue *value);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	const char *scToString();
-	CSXFile(CBGame *inGame, CScStack *Stack);
-	virtual ~CSXFile();
+	SXFile(BaseGame *inGame, ScStack *Stack);
+	virtual ~SXFile();
 private:
 	Common::SeekableReadStream *_readFile;
 	Common::WriteStream *_writeFile;

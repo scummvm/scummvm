@@ -40,12 +40,12 @@
 struct FIBITMAP;
 
 namespace WinterMute {
-class CBSurface;
-class CBImage: CBBase {
+class BaseSurface;
+class BaseImage: BaseClass {
 
 public:
-	CBImage(CBGame *inGame, FIBITMAP *bitmap = NULL);
-	~CBImage();
+	BaseImage(BaseGame *inGame, FIBITMAP *bitmap = NULL);
+	~BaseImage();
 
 	bool loadFile(const Common::String &filename);
 	const Graphics::Surface *getSurface() const {
@@ -58,7 +58,7 @@ public:
 	bool writeBMPToStream(Common::WriteStream *stream);
 	bool resize(int newWidth, int newHeight);
 	bool saveBMPFile(const char *filename);
-	bool copyFrom(CBImage *origImage, int newWidth = 0, int newHeight = 0);
+	bool copyFrom(BaseImage *origImage, int newWidth = 0, int newHeight = 0);
 	void copyFrom(Graphics::Surface *surface);
 private:
 	Common::String _filename;

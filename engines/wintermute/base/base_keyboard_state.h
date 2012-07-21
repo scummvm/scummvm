@@ -37,7 +37,7 @@
 
 namespace WinterMute {
 
-class CBKeyboardState : public CBScriptable {
+class BaseKeyboardState : public BaseScriptable {
 public:
 	uint32 _currentKeyData;
 	uint32 _currentCharCode;
@@ -47,9 +47,9 @@ public:
 	bool _currentAlt;
 	bool _currentControl;
 
-	DECLARE_PERSISTENT(CBKeyboardState, CBScriptable)
-	CBKeyboardState(CBGame *inGame);
-	virtual ~CBKeyboardState();
+	DECLARE_PERSISTENT(BaseKeyboardState, BaseScriptable)
+	BaseKeyboardState(BaseGame *inGame);
+	virtual ~BaseKeyboardState();
 	bool readKey(Common::Event *event);
 
 	void handleKeyPress(Common::Event *event);
@@ -59,9 +59,9 @@ public:
 	static bool isAltDown();
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 private:

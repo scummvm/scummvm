@@ -43,26 +43,26 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////
-CBParser::CBParser(CBGame *inGame): CBBase(inGame) {
+BaseParser::BaseParser(BaseGame *inGame): BaseClass(inGame) {
 	_whiteSpace = new char [strlen(WHITESPACE) + 1];
 	strcpy(_whiteSpace, WHITESPACE);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-CBParser::~CBParser() {
+BaseParser::~BaseParser() {
 	if (_whiteSpace != NULL) delete [] _whiteSpace;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-char *CBParser::getLastOffender() {
+char *BaseParser::getLastOffender() {
 	return _lastOffender;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int32 CBParser::getObject(char **buf, TokenDesc *tokens, char **name, char **data) {
+int32 BaseParser::getObject(char **buf, TokenDesc *tokens, char **name, char **data) {
 	skipCharacters(buf, _whiteSpace);
 
 	// skip comment lines.
@@ -113,7 +113,7 @@ int32 CBParser::getObject(char **buf, TokenDesc *tokens, char **name, char **dat
 
 
 //////////////////////////////////////////////////////////////////////
-int32 CBParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
+int32 BaseParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
 	if (!*buf) return PARSERR_TOKENNOTFOUND;
 	_gameRef->miniUpdate();
 	char *name;
@@ -122,7 +122,7 @@ int32 CBParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBParser::skipCharacters(char **buf, const char *toSkip) {
+void BaseParser::skipCharacters(char **buf, const char *toSkip) {
 	char ch;
 	while ((ch = **buf) != 0) {
 		if (ch == '\n') _parserLine++;
@@ -135,7 +135,7 @@ void CBParser::skipCharacters(char **buf, const char *toSkip) {
 
 
 //////////////////////////////////////////////////////////////////////
-char *CBParser::getSubText(char **buf, char open, char close) {
+char *BaseParser::getSubText(char **buf, char open, char close) {
 	if (**buf == 0 || **buf != open)
 		return 0;
 	++*buf;                       // skip opening delimiter
@@ -164,7 +164,7 @@ char *CBParser::getSubText(char **buf, char open, char close) {
 
 
 //////////////////////////////////////////////////////////////////////
-char *CBParser::getAssignmentText(char **buf) {
+char *BaseParser::getAssignmentText(char **buf) {
 	++*buf;                       // skip the '='
 	skipCharacters(buf, _whiteSpace);
 	char *result = *buf;
@@ -192,7 +192,7 @@ char *CBParser::getAssignmentText(char **buf) {
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-char *CBParser::getToken(char **buf) {
+char *BaseParser::getToken(char **buf) {
 	static char token[100];
 	char *b = *buf, * t = token;
 	while (true) {
@@ -240,7 +240,7 @@ char *CBParser::getToken(char **buf) {
 
 
 //////////////////////////////////////////////////////////////////////
-float CBParser::getTokenFloat(char **buf) {
+float BaseParser::getTokenFloat(char **buf) {
 	char *t = getToken(buf);
 	if (!((*t >= '0' && *t <= '9') || *t == '-' || *t == '.')) {
 		// Error situation. We handle this by return 0.
@@ -252,7 +252,7 @@ float CBParser::getTokenFloat(char **buf) {
 
 
 //////////////////////////////////////////////////////////////////////
-int CBParser::getTokenInt(char **buf) {
+int BaseParser::getTokenInt(char **buf) {
 	char *t = getToken(buf);
 	if (!((*t >= '0' && *t <= '9') || *t == '-')) {
 		// Error situation. We handle this by return 0.
@@ -264,14 +264,14 @@ int CBParser::getTokenInt(char **buf) {
 
 
 //////////////////////////////////////////////////////////////////////
-void CBParser::skipToken(char **buf, char *tok, char * /*msg*/) {
+void BaseParser::skipToken(char **buf, char *tok, char * /*msg*/) {
 	char *t = getToken(buf);
 	if (strcmp(t, tok)) return;  // Error
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int CBParser::scanStr(const char *in, const char *format, ...) {
+int BaseParser::scanStr(const char *in, const char *format, ...) {
 	va_list arg;
 	va_start(arg, format);
 

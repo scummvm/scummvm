@@ -34,7 +34,7 @@
 
 namespace WinterMute {
 
-class CBDynBuffer : public CBBase {
+class BaseDynamicBuffer : public BaseClass {
 public:
 	bool _initialized;
 	void putText(const char *fmt, ...);
@@ -50,8 +50,8 @@ public:
 	void cleanup();
 	uint32 _size;
 	byte *_buffer;
-	CBDynBuffer(CBGame *inGame, uint32 initSize = 1000, uint32 growBy = 1000);
-	virtual ~CBDynBuffer();
+	BaseDynamicBuffer(BaseGame *inGame, uint32 initSize = 1000, uint32 growBy = 1000);
+	virtual ~BaseDynamicBuffer();
 
 private:
 	uint32 _realSize;

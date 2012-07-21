@@ -36,20 +36,20 @@
 
 namespace WinterMute {
 
-class CPartForce : public CBNamedObject {
+class PartForce : public BaseNamedObject {
 public:
 	enum TForceType {
 	    FORCE_POINT, FORCE_GLOBAL
 	};
 
-	CPartForce(CBGame *inGame);
-	virtual ~CPartForce(void);
+	PartForce(BaseGame *inGame);
+	virtual ~PartForce(void);
 
 	Vector2 _pos;
 	Vector2 _direction;
 	TForceType _type;
 
-	bool persist(CBPersistMgr *PersistMgr);
+	bool persist(BasePersistenceManager *PersistMgr);
 };
 
 } // end of namespace WinterMute

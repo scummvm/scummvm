@@ -38,25 +38,25 @@
 
 namespace WinterMute {
 
-class CScScript;
-class CBScriptable;
+class ScScript;
+class BaseScriptable;
 
-class CScValue : public CBBase, public IWmeDebugProp {
+class ScValue : public BaseClass, public IWmeDebugProp {
 public:
-	bool dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, CScScript *script, unsigned int scopeID);
+	bool dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, ScScript *script, unsigned int scopeID);
 
-	static int compare(CScValue *val1, CScValue *val2);
-	static int compareStrict(CScValue *val1, CScValue *val2);
+	static int compare(ScValue *val1, ScValue *val2);
+	static int compareStrict(ScValue *val1, ScValue *val2);
 	TValType getTypeTolerant();
 	void cleanup(bool ignoreNatives = false);
-	DECLARE_PERSISTENT(CScValue, CBBase)
+	DECLARE_PERSISTENT(ScValue, BaseClass)
 
 	bool _isConstVar;
-	bool saveAsText(CBDynBuffer *buffer, int indent);
-	void setValue(CScValue *val);
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	void setValue(ScValue *val);
 	bool _persistent;
 	bool propExists(const char *name);
-	void copy(CScValue *orig, bool copyWhole = false);
+	void copy(ScValue *orig, bool copyWhole = false);
 	void setStringVal(const char *val);
 	TValType getType();
 	bool getBool(bool defaultVal = false);
@@ -64,7 +64,7 @@ public:
 	double getFloat(double defaultVal = 0.0f);
 	const char *getString();
 	void *getMemBuffer();
-	CBScriptable *getNative();
+	BaseScriptable *getNative();
 	bool deleteProp(const char *name);
 	void deleteProps();
 	void CleanProps(bool includingNatives);
@@ -74,9 +74,9 @@ public:
 	void setString(const char *val);
 	void setString(const Common::String &val);
 	void setNULL();
-	void setNative(CBScriptable *val, bool persistent = false);
+	void setNative(BaseScriptable *val, bool persistent = false);
 	void setObject();
-	void setReference(CScValue *val);
+	void setReference(ScValue *val);
 	bool isNULL();
 	bool isNative();
 	bool isString();
@@ -84,10 +84,10 @@ public:
 	bool isFloat();
 	bool isInt();
 	bool isObject();
-	bool setProp(const char *name, CScValue *val, bool copyWhole = false, bool setAsConst = false);
-	CScValue *getProp(const char *name);
-	CBScriptable *_valNative;
-	CScValue *_valRef;
+	bool setProp(const char *name, ScValue *val, bool copyWhole = false, bool setAsConst = false);
+	ScValue *getProp(const char *name);
+	BaseScriptable *_valNative;
+	ScValue *_valRef;
 protected:
 	bool _valBool;
 	int _valInt;
@@ -95,14 +95,14 @@ protected:
 	char *_valString;
 public:
 	TValType _type;
-	CScValue(CBGame *inGame);
-	CScValue(CBGame *inGame, bool Val);
-	CScValue(CBGame *inGame, int Val);
-	CScValue(CBGame *inGame, double Val);
-	CScValue(CBGame *inGame, const char *Val);
-	virtual ~CScValue();
-	Common::HashMap<Common::String, CScValue *> _valObject;
-	Common::HashMap<Common::String, CScValue *>::iterator _valIter;
+	ScValue(BaseGame *inGame);
+	ScValue(BaseGame *inGame, bool Val);
+	ScValue(BaseGame *inGame, int Val);
+	ScValue(BaseGame *inGame, double Val);
+	ScValue(BaseGame *inGame, const char *Val);
+	virtual ~ScValue();
+	Common::HashMap<Common::String, ScValue *> _valObject;
+	Common::HashMap<Common::String, ScValue *>::iterator _valIter;
 
 	bool setProperty(const char *propName, int value);
 	bool setProperty(const char *propName, const char *value);

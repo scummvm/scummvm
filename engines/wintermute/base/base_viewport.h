@@ -33,19 +33,19 @@
 #include "engines/wintermute/base/base.h"
 
 namespace WinterMute {
-class CBObject;
-class CBViewport : public CBBase {
+class BaseObject;
+class BaseViewport : public BaseClass {
 public:
 	int getHeight();
 	int getWidth();
 	Rect32 *getRect();
 	bool setRect(int left, int top, int right, int bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(CBViewport, CBBase)
+	DECLARE_PERSISTENT(BaseViewport, BaseClass)
 	int _offsetY;
 	int _offsetX;
-	CBObject *_mainObject;
-	CBViewport(CBGame *inGame = NULL);
-	virtual ~CBViewport();
+	BaseObject *_mainObject;
+	BaseViewport(BaseGame *inGame = NULL);
+	virtual ~BaseViewport();
 private:
 	Rect32 _rect;
 };

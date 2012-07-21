@@ -40,43 +40,43 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBRegion, false)
+IMPLEMENT_PERSISTENT(BaseRegion, false)
 
 //////////////////////////////////////////////////////////////////////////
-CBRegion::CBRegion(CBGame *inGame): CBObject(inGame) {
+BaseRegion::BaseRegion(BaseGame *inGame): BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
 	_lastMimicScale = -1;
 	_lastMimicX = _lastMimicY = INT_MIN;
 
-	CBPlatform::setRectEmpty(&_rect);
+	BasePlatform::setRectEmpty(&_rect);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CBRegion::~CBRegion() {
+BaseRegion::~BaseRegion() {
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBRegion::cleanup() {
+void BaseRegion::cleanup() {
 	for (int i = 0; i < _points.getSize(); i++) delete _points[i];
 	_points.removeAll();
 
-	CBPlatform::setRectEmpty(&_rect);
+	BasePlatform::setRectEmpty(&_rect);
 	_editorSelectedPoint = -1;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::createRegion() {
+bool BaseRegion::createRegion() {
 	return DID_SUCCEED(getBoundingRect(&_rect));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::pointInRegion(int x, int y) {
+bool BaseRegion::pointInRegion(int x, int y) {
 	if (_points.getSize() < 3) return false;
 
 	Point32 pt;
@@ -89,16 +89,16 @@ bool CBRegion::pointInRegion(int x, int y) {
 	rect.top = y - 1;
 	rect.bottom = y + 2;
 
-	if (CBPlatform::ptInRect(&_rect, pt)) return ptInPolygon(x, y);
+	if (BasePlatform::ptInRect(&_rect, pt)) return ptInPolygon(x, y);
 	else return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::loadFile(const char *filename) {
+bool BaseRegion::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CBRegion::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "BaseRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -128,7 +128,7 @@ TOKEN_DEF(EDITOR_SELECTED_POINT)
 TOKEN_DEF(PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::loadBuffer(byte *buffer, bool complete) {
+bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -143,7 +143,7 @@ bool CBRegion::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
@@ -179,7 +179,7 @@ bool CBRegion::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_POINT: {
 			int x, y;
 			parser.scanStr((char *)params, "%d,%d", &x, &y);
-			_points.add(new CBPoint(x, y));
+			_points.add(new BasePoint(x, y));
 		}
 		break;
 
@@ -210,7 +210,7 @@ bool CBRegion::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// AddPoint
@@ -220,7 +220,7 @@ bool CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		_points.add(new CBPoint(x, y));
+		_points.add(new BasePoint(x, y));
 		createRegion();
 
 		stack->pushBool(true);
@@ -238,7 +238,7 @@ bool CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		int y = stack->pop()->getInt();
 
 		if (Index >= 0 && Index < _points.getSize()) {
-			_points.insertAt(Index, new CBPoint(x, y));
+			_points.insertAt(Index, new BasePoint(x, y));
 			createRegion();
 
 			stack->pushBool(true);
@@ -295,7 +295,7 @@ bool CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		int index = stack->pop()->getInt();
 
 		if (index >= 0 && index < _points.getSize()) {
-			CScValue *val = stack->getPushValue();
+			ScValue *val = stack->getPushValue();
 			if (val) {
 				val->setProperty("X", _points[index]->x);
 				val->setProperty("Y", _points[index]->y);
@@ -305,12 +305,12 @@ bool CBRegion::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		return STATUS_OK;
 	}
 
-	else return CBObject::scCallMethod(script, stack, thisStack, name);
+	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBRegion::scGetProperty(const char *name) {
+ScValue *BaseRegion::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -345,12 +345,12 @@ CScValue *CBRegion::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBObject::scGetProperty(name);
+	else return BaseObject::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::scSetProperty(const char *name, CScValue *value) {
+bool BaseRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
@@ -367,18 +367,18 @@ bool CBRegion::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CBObject::scSetProperty(name, value);
+	else return BaseObject::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBRegion::scToString() {
+const char *BaseRegion::scToString() {
 	return "[region]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride) {
+bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride) {
 	if (!nameOverride) buffer->putTextIndent(indent, "REGION {\n");
 	else buffer->putTextIndent(indent, "%s {\n", nameOverride);
 
@@ -406,9 +406,9 @@ bool CBRegion::saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverr
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::persist(CBPersistMgr *persistMgr) {
+bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 
-	CBObject::persist(persistMgr);
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
@@ -426,7 +426,7 @@ typedef struct {
 } dPoint;
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::ptInPolygon(int x, int y) {
+bool BaseRegion::ptInPolygon(int x, int y) {
 	if (_points.getSize() < 3) return false;
 
 	int counter = 0;
@@ -465,8 +465,8 @@ bool CBRegion::ptInPolygon(int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::getBoundingRect(Rect32 *rect) {
-	if (_points.getSize() == 0) CBPlatform::setRectEmpty(rect);
+bool BaseRegion::getBoundingRect(Rect32 *rect) {
+	if (_points.getSize() == 0) BasePlatform::setRectEmpty(rect);
 	else {
 		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;
 
@@ -477,14 +477,14 @@ bool CBRegion::getBoundingRect(Rect32 *rect) {
 			MaxX = MAX(MaxX, _points[i]->x);
 			MaxY = MAX(MaxY, _points[i]->y);
 		}
-		CBPlatform::setRect(rect, MinX, MinY, MaxX, MaxY);
+		BasePlatform::setRect(rect, MinX, MinY, MaxX, MaxY);
 	}
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBRegion::mimic(CBRegion *region, float scale, int x, int y) {
+bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 	if (scale == _lastMimicScale && x == _lastMimicX && y == _lastMimicY) return STATUS_OK;
 
 	cleanup();
@@ -495,7 +495,7 @@ bool CBRegion::mimic(CBRegion *region, float scale, int x, int y) {
 		xVal = (int)((float)region->_points[i]->x * scale / 100.0f);
 		yVal = (int)((float)region->_points[i]->y * scale / 100.0f);
 
-		_points.add(new CBPoint(xVal + x, yVal + y));
+		_points.add(new BasePoint(xVal + x, yVal + y));
 	}
 
 	_lastMimicScale = scale;

@@ -32,25 +32,25 @@
 #include "engines/wintermute/base/base_object.h"
 
 namespace WinterMute {
-class CBPoint;
-class CAdWaypointGroup : public CBObject {
+class BasePoint;
+class AdWaypointGroup : public BaseObject {
 public:
 	float _lastMimicScale;
 	int _lastMimicX;
 	int _lastMimicY;
 	void cleanup();
-	bool mimic(CAdWaypointGroup *wpt, float scale = 100.0f, int x = 0, int y = 0);
-	DECLARE_PERSISTENT(CAdWaypointGroup, CBObject)
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	bool mimic(AdWaypointGroup *wpt, float scale = 100.0f, int x = 0, int y = 0);
+	DECLARE_PERSISTENT(AdWaypointGroup, BaseObject)
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	bool _active;
-	CAdWaypointGroup(CBGame *inGame);
+	AdWaypointGroup(BaseGame *inGame);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual ~CAdWaypointGroup();
-	CBArray<CBPoint *, CBPoint *> _points;
+	virtual ~AdWaypointGroup();
+	BaseArray<BasePoint *, BasePoint *> _points;
 	int _editorSelectedPoint;
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
 };
 
 } // end of namespace WinterMute

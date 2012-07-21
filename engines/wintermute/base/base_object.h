@@ -36,14 +36,14 @@
 
 namespace WinterMute {
 
-class CBSprite;
-class CBSound;
-class CBSurface;
-class CBScriptHolder;
-class CScValue;
-class CScStack;
-class CScScript;
-class CBObject : public CBScriptHolder {
+class BaseSprite;
+class BaseSound;
+class BaseSurface;
+class BaseScriptHolder;
+class ScValue;
+class ScStack;
+class ScScript;
+class BaseObject : public BaseScriptHolder {
 public:
 	TSpriteBlendMode _blendMode;
 	virtual bool afterMove();
@@ -61,7 +61,7 @@ public:
 	virtual bool getExtendedFlag(const char *flagName);
 	virtual bool resetSoundPan();
 	virtual bool updateSounds();
-	bool updateOneSound(CBSound *sound);
+	bool updateOneSound(BaseSound *sound);
 	bool _autoSoundPanning;
 	uint32 _sFXStart;
 	int _sFXVolume;
@@ -71,7 +71,7 @@ public:
 	bool pauseSFX();
 	bool stopSFX(bool deleteSound = true);
 	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = NULL, uint32 loopStart = 0);
-	CBSound *_sFX;
+	BaseSound *_sFX;
 
 	TSFXType _sFXType;
 	float _sFXParam1;
@@ -92,13 +92,13 @@ public:
 	bool _editorAlwaysRegister;
 	bool _editorOnly;
 	bool _is3D;
-	DECLARE_PERSISTENT(CBObject, CBScriptHolder)
+	DECLARE_PERSISTENT(BaseObject, BaseScriptHolder)
 	virtual bool showCursor();
-	CBSprite *_cursor;
+	BaseSprite *_cursor;
 	bool _sharedCursors;
-	CBSprite *_activeCursor;
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
-	virtual bool listen(CBScriptHolder *param1, uint32 param2);
+	BaseSprite *_activeCursor;
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	bool _ready;
 	bool _registrable;
 	bool _zoomable;
@@ -107,8 +107,8 @@ public:
 	bool _rectSet;
 	int _iD;
 	bool _movable;
-	CBObject(CBGame *inGame);
-	virtual ~CBObject();
+	BaseObject(BaseGame *inGame);
+	virtual ~BaseObject();
 	char *_caption[7];
 	char *_soundEvent;
 	int _posY;
@@ -133,9 +133,9 @@ public:
 
 public:
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

@@ -34,19 +34,19 @@
 
 namespace WinterMute {
 
-class CAdWaypointGroup;
-class CAdRegion;
-class CAdSentence;
-class CBFont;
-class CBRegion;
-class CAdInventory;
+class AdWaypointGroup;
+class AdRegion;
+class AdSentence;
+class BaseFont;
+class BaseRegion;
+class AdInventory;
 
 #define MAX_NUM_REGIONS 10
 
-class CAdObject : public CBObject {
+class AdObject : public BaseObject {
 public:
-	CPartEmitter *_partEmitter;
-	virtual CPartEmitter *createParticleEmitter(bool followParent = false, int offsetX = 0, int offsetY = 0);
+	PartEmitter *_partEmitter;
+	virtual PartEmitter *createParticleEmitter(bool followParent = false, int offsetX = 0, int offsetY = 0);
 	virtual bool updatePartEmitter();
 	bool _partFollowParent;
 	int _partOffsetX;
@@ -58,7 +58,7 @@ public:
 	int _subtitlesModX;
 	int _subtitlesModY;
 	int _subtitlesWidth;
-	CAdRegion *_stickRegion;
+	AdRegion *_stickRegion;
 	bool _sceneIndependent;
 	bool _ignoreItems;
 	bool updateBlockRegion();
@@ -68,51 +68,51 @@ public:
 	virtual bool resetSoundPan();
 	virtual bool updateSounds();
 	bool reset();
-	DECLARE_PERSISTENT(CAdObject, CBObject)
+	DECLARE_PERSISTENT(AdObject, BaseObject)
 	virtual void talk(const char *text, const char *sound = NULL, uint32 duration = 0, const char *stances = NULL, TTextAlign align = TAL_CENTER);
 	virtual int getHeight();
-	CAdSentence *_sentence;
+	AdSentence *_sentence;
 	bool SetFont(const char *filename);
 	virtual bool update();
 	virtual bool display();
 	bool _drawn;
 	bool _active;
 	virtual bool playAnim(const char *filename);
-	CBSprite *_animSprite;
-	CBSprite *_currentSprite;
+	BaseSprite *_animSprite;
+	BaseSprite *_currentSprite;
 	TObjectState _state;
 	TObjectState _nextState;
 	TObjectType _type;
-	CAdObject(CBGame *inGame);
-	virtual ~CAdObject();
-	CBFont *_font;
-	CBSprite *_tempSprite2;
-	CBRegion *_blockRegion;
-	CAdWaypointGroup *_wptGroup;
-	CBRegion *_currentBlockRegion;
-	CAdWaypointGroup *_currentWptGroup;
-	CAdInventory *getInventory();
+	AdObject(BaseGame *inGame);
+	virtual ~AdObject();
+	BaseFont *_font;
+	BaseSprite *_tempSprite2;
+	BaseRegion *_blockRegion;
+	AdWaypointGroup *_wptGroup;
+	BaseRegion *_currentBlockRegion;
+	AdWaypointGroup *_currentWptGroup;
+	AdInventory *getInventory();
 
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	virtual bool afterMove();
-	CAdRegion *_currentRegions[MAX_NUM_REGIONS];
+	AdRegion *_currentRegions[MAX_NUM_REGIONS];
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
-	CBArray<CAdObject *, CAdObject *> _attachmentsPre;
-	CBArray<CAdObject *, CAdObject *> _attachmentsPost;
+	BaseArray<AdObject *, AdObject *> _attachmentsPre;
+	BaseArray<AdObject *, AdObject *> _attachmentsPost;
 
 	bool updateSpriteAttachments();
 	bool displaySpriteAttachments(bool preDisplay);
-	CAdObject *_registerAlias;
+	AdObject *_registerAlias;
 private:
-	bool displaySpriteAttachment(CAdObject *attachment);
-	CAdInventory *_inventory;
+	bool displaySpriteAttachment(AdObject *attachment);
+	AdInventory *_inventory;
 
 protected:
 	bool getScale(float *scaleX, float *scaleY);

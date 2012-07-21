@@ -40,10 +40,10 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CBObject, false)
+IMPLEMENT_PERSISTENT(BaseObject, false)
 
 //////////////////////////////////////////////////////////////////////
-CBObject::CBObject(CBGame *inGame): CBScriptHolder(inGame) {
+BaseObject::BaseObject(BaseGame *inGame): BaseScriptHolder(inGame) {
 	_posX = _posY = 0;
 	_movable = true;
 	_zoomable = true;
@@ -65,7 +65,7 @@ CBObject::CBObject(CBGame *inGame): CBScriptHolder(inGame) {
 
 	_iD = _gameRef->getSequence();
 
-	CBPlatform::setRectEmpty(&_rect);
+	BasePlatform::setRectEmpty(&_rect);
 	_rectSet = false;
 
 	_cursor = NULL;
@@ -101,17 +101,17 @@ CBObject::CBObject(CBGame *inGame): CBScriptHolder(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////
-CBObject::~CBObject() {
+BaseObject::~BaseObject() {
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::cleanup() {
+bool BaseObject::cleanup() {
 	if (_gameRef && _gameRef->_activeObject == this)
 		_gameRef->_activeObject = NULL;
 
-	CBScriptHolder::cleanup();
+	BaseScriptHolder::cleanup();
 	delete[] _soundEvent;
 	_soundEvent = NULL;
 
@@ -137,7 +137,7 @@ bool CBObject::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBObject::setCaption(const char *caption, int caseVal) { // TODO: rename Case to something usefull
+void BaseObject::setCaption(const char *caption, int caseVal) { // TODO: rename Case to something usefull
 	if (caseVal == 0) caseVal = 1;
 	if (caseVal < 1 || caseVal > 7)
 		return;
@@ -152,7 +152,7 @@ void CBObject::setCaption(const char *caption, int caseVal) { // TODO: rename Ca
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBObject::getCaption(int caseVal) {
+const char *BaseObject::getCaption(int caseVal) {
 	if (caseVal == 0) caseVal = 1;
 	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL)
 		return "";
@@ -161,7 +161,7 @@ const char *CBObject::getCaption(int caseVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::listen(CBScriptHolder *param1, uint32 param2) {
+bool BaseObject::listen(BaseScriptHolder *param1, uint32 param2) {
 	return STATUS_FAILED;
 }
 
@@ -169,7 +169,7 @@ bool CBObject::listen(CBScriptHolder *param1, uint32 param2) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// SkipTo
@@ -291,9 +291,9 @@ bool CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		bool looping;
 		uint32 loopStart;
 
-		CScValue *val1 = stack->pop();
-		CScValue *val2 = stack->pop();
-		CScValue *val3 = stack->pop();
+		ScValue *val1 = stack->pop();
+		ScValue *val2 = stack->pop();
+		ScValue *val3 = stack->pop();
 
 		if (val1->_type == VAL_BOOL) {
 			filename = NULL;
@@ -321,8 +321,8 @@ bool CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		const char *filename;
 		const char *eventName;
 
-		CScValue *val1 = stack->pop();
-		CScValue *val2 = stack->pop();
+		ScValue *val1 = stack->pop();
+		ScValue *val2 = stack->pop();
 
 		if (val2->isNULL()) {
 			filename = NULL;
@@ -473,12 +473,12 @@ bool CBObject::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSt
 		return STATUS_OK;
 	}
 
-	else return CBScriptHolder::scCallMethod(script, stack, thisStack, name);
+	else return BaseScriptHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CBObject::scGetProperty(const char *name) {
+ScValue *BaseObject::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -666,12 +666,12 @@ CScValue *CBObject::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	else return CBScriptHolder::scGetProperty(name);
+	else return BaseScriptHolder::scGetProperty(name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::scSetProperty(const char *name, CScValue *value) {
+bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
@@ -845,32 +845,32 @@ bool CBObject::scSetProperty(const char *name, CScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return CBScriptHolder::scSetProperty(name, value);
+	else return BaseScriptHolder::scSetProperty(name, value);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CBObject::scToString() {
+const char *BaseObject::scToString() {
 	return "[object]";
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::showCursor() {
+bool BaseObject::showCursor() {
 	if (_cursor) return _gameRef->drawCursor(_cursor);
 	else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::saveAsText(CBDynBuffer *buffer, int indent) {
+bool BaseObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::persist(CBPersistMgr *persistMgr) {
-	CBScriptHolder::persist(persistMgr);
+bool BaseObject::persist(BasePersistenceManager *persistMgr) {
+	BaseScriptHolder::persist(persistMgr);
 
 	for (int i = 0; i < 7; i++)
 		persistMgr->transfer(TMEMBER(_caption[i]));
@@ -925,14 +925,14 @@ bool CBObject::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::setCursor(const char *filename) {
+bool BaseObject::setCursor(const char *filename) {
 	if (!_sharedCursors) {
 		delete _cursor;
 		_cursor = NULL;
 	}
 
 	_sharedCursors = false;
-	_cursor = new CBSprite(_gameRef);
+	_cursor = new BaseSprite(_gameRef);
 	if (!_cursor || DID_FAIL(_cursor->loadFile(filename))) {
 		delete _cursor;
 		_cursor = NULL;
@@ -942,9 +942,9 @@ bool CBObject::setCursor(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::setActiveCursor(const char *filename) {
+bool BaseObject::setActiveCursor(const char *filename) {
 	delete _activeCursor;
-	_activeCursor = new CBSprite(_gameRef);
+	_activeCursor = new BaseSprite(_gameRef);
 	if (!_activeCursor || DID_FAIL(_activeCursor->loadFile(filename))) {
 		delete _activeCursor;
 		_activeCursor = NULL;
@@ -954,31 +954,31 @@ bool CBObject::setActiveCursor(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CBObject::getHeight() {
+int BaseObject::getHeight() {
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::handleMouse(TMouseEvent event, TMouseButton button) {
+bool BaseObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::handleKeypress(Common::Event *event, bool printable) {
+bool BaseObject::handleKeypress(Common::Event *event, bool printable) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::handleMouseWheel(int delta) {
+bool BaseObject::handleMouseWheel(int delta) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
+bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
 	// just play loaded sound
 	if (filename == NULL && _sFX) {
 		if (_gameRef->_editorMode || _sFXStart) {
@@ -998,7 +998,7 @@ bool CBObject::playSFX(const char *filename, bool looping, bool playNow, const c
 	// create new sound
 	delete _sFX;
 
-	_sFX = new CBSound(_gameRef);
+	_sFX = new BaseSound(_gameRef);
 	if (_sFX && DID_SUCCEED(_sFX->setSound(filename, Audio::Mixer::kSFXSoundType, true))) {
 		_sFX->setVolumePercent(_sFXVolume);
 		if (_sFXStart) {
@@ -1020,7 +1020,7 @@ bool CBObject::playSFX(const char *filename, bool looping, bool playNow, const c
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::stopSFX(bool deleteSound) {
+bool BaseObject::stopSFX(bool deleteSound) {
 	if (_sFX) {
 		_sFX->stop();
 		if (deleteSound) {
@@ -1033,21 +1033,21 @@ bool CBObject::stopSFX(bool deleteSound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::pauseSFX() {
+bool BaseObject::pauseSFX() {
 	if (_sFX) return _sFX->pause();
 	else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::resumeSFX() {
+bool BaseObject::resumeSFX() {
 	if (_sFX) return _sFX->resume();
 	else return STATUS_FAILED;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::setSFXTime(uint32 time) {
+bool BaseObject::setSFXTime(uint32 time) {
 	_sFXStart = time;
 	if (_sFX && _sFX->isPlaying()) return _sFX->setPositionTime(time);
 	else return STATUS_OK;
@@ -1055,7 +1055,7 @@ bool CBObject::setSFXTime(uint32 time) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::setSFXVolume(int volume) {
+bool BaseObject::setSFXVolume(int volume) {
 	_sFXVolume = volume;
 	if (_sFX) return _sFX->setVolumePercent(volume);
 	else return STATUS_OK;
@@ -1063,7 +1063,7 @@ bool CBObject::setSFXVolume(int volume) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::updateSounds() {
+bool BaseObject::updateSounds() {
 	if (_soundEvent) {
 		if (_sFX && !_sFX->isPlaying()) {
 			applyEvent(_soundEvent);
@@ -1077,7 +1077,7 @@ bool CBObject::updateSounds() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::updateOneSound(CBSound *sound) {
+bool BaseObject::updateOneSound(BaseSound *sound) {
 	bool Ret = STATUS_OK;
 
 	if (sound) {
@@ -1090,7 +1090,7 @@ bool CBObject::updateOneSound(CBSound *sound) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::resetSoundPan() {
+bool BaseObject::resetSoundPan() {
 	if (!_sFX) return STATUS_OK;
 	else {
 		return _sFX->setPan(0.0f);
@@ -1099,19 +1099,19 @@ bool CBObject::resetSoundPan() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::getExtendedFlag(const char *flagName) {
+bool BaseObject::getExtendedFlag(const char *flagName) {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::isReady() {
+bool BaseObject::isReady() {
 	return _ready;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CBObject::setSoundEvent(const char *eventName) {
+void BaseObject::setSoundEvent(const char *eventName) {
 	delete[] _soundEvent;
 	_soundEvent = NULL;
 	if (eventName) {
@@ -1121,7 +1121,7 @@ void CBObject::setSoundEvent(const char *eventName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CBObject::afterMove() {
+bool BaseObject::afterMove() {
 	return STATUS_OK;
 }
 

@@ -36,12 +36,12 @@
 
 namespace WinterMute {
 
-class CBGame;
+class BaseGame;
 
 //////////////////////////////////////////////////////////////////////////
-class CBPlatform {
+class BasePlatform {
 public:
-	static int initialize(CBGame *inGame, int argc, char *argv[]);
+	static int initialize(BaseGame *inGame, int argc, char *argv[]);
 	static void handleEvent(Common::Event *event);
 
 	static AnsiString getSystemFontPath();
@@ -80,7 +80,7 @@ public:
 	static int SDLEventWatcher(void *userdata, Common::Event *event);
 
 private:
-	static CBGame *_gameRef;
+	static BaseGame *_gameRef;
 };
 
 } // end of namespace WinterMute

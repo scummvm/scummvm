@@ -36,10 +36,10 @@
 #include "common/stream.h"
 
 namespace WinterMute {
-class CSysInstance;
-class CBGame;
-class CBPersistMgr;
-class CSysClass;
+class SystemInstance;
+class BaseGame;
+class BasePersistenceManager;
+class SystemClass;
 
 }
 
@@ -52,8 +52,8 @@ template<> struct Hash<void *> : public UnaryFunction<void *, uint> {
 	}
 };
 
-template<> struct Hash<WinterMute::CSysInstance *> : public UnaryFunction<WinterMute::CSysInstance *, uint> {
-	uint operator()(WinterMute::CSysInstance *val) const {
+template<> struct Hash<WinterMute::SystemInstance *> : public UnaryFunction<WinterMute::SystemInstance *, uint> {
+	uint operator()(WinterMute::SystemInstance *val) const {
 		return (uint)((size_t)val);
 	}
 };
@@ -63,14 +63,14 @@ template<> struct Hash<WinterMute::CSysInstance *> : public UnaryFunction<Winter
 
 namespace WinterMute {
 
-class CSysClass {
+class SystemClass {
 public:
-	CSysClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class);
-	~CSysClass();
+	SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class);
+	~SystemClass();
 
 	int getNumInstances();
 	bool removeInstance(void *instance);
-	CSysInstance *addInstance(void *instance, int id, int savedId = -1);
+	SystemInstance *addInstance(void *instance, int id, int savedId = -1);
 	bool removeAllInstances();
 
 	int getInstanceID(void *pointer);
@@ -95,11 +95,11 @@ public:
 		return _name;
 	}
 
-	void saveTable(CBGame *Game, CBPersistMgr *PersistMgr);
-	void loadTable(CBGame *Game, CBPersistMgr *PersistMgr);
+	void saveTable(BaseGame *Game, BasePersistenceManager *PersistMgr);
+	void loadTable(BaseGame *Game, BasePersistenceManager *PersistMgr);
 
-	void saveInstances(CBGame *Game, CBPersistMgr *PersistMgr);
-	void loadInstance(void *instance, CBPersistMgr *PersistMgr);
+	void saveInstances(BaseGame *Game, BasePersistenceManager *PersistMgr);
+	void loadInstance(void *instance, BasePersistenceManager *PersistMgr);
 
 	void instanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpData);
 
@@ -110,18 +110,18 @@ public:
 private:
 	int _numInst;
 	bool _persistent;
-	CSysClass *_next;
+	SystemClass *_next;
 	int _iD;
 	int _savedID;
 	AnsiString _name;
 	PERSISTBUILD _build;
 	PERSISTLOAD _load;
 
-	//typedef std::set<CSysInstance *> Instances;
-	typedef Common::HashMap<CSysInstance *, CSysInstance *> Instances;
+	//typedef std::set<SystemInstance *> Instances;
+	typedef Common::HashMap<SystemInstance *, SystemInstance *> Instances;
 	Instances _instances;
 
-	typedef Common::HashMap<void *, CSysInstance *> InstanceMap;
+	typedef Common::HashMap<void *, SystemInstance *> InstanceMap;
 	InstanceMap _instanceMap;
 };
 

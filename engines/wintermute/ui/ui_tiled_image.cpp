@@ -38,33 +38,33 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CUITiledImage, false)
+IMPLEMENT_PERSISTENT(UITiledImage, false)
 
 //////////////////////////////////////////////////////////////////////////
-CUITiledImage::CUITiledImage(CBGame *inGame): CBObject(inGame) {
+UITiledImage::UITiledImage(BaseGame *inGame): BaseObject(inGame) {
 	_image = NULL;
 
-	CBPlatform::setRectEmpty(&_upLeft);
-	CBPlatform::setRectEmpty(&_upMiddle);
-	CBPlatform::setRectEmpty(&_upRight);
-	CBPlatform::setRectEmpty(&_middleLeft);
-	CBPlatform::setRectEmpty(&_middleMiddle);
-	CBPlatform::setRectEmpty(&_middleRight);
-	CBPlatform::setRectEmpty(&_downLeft);
-	CBPlatform::setRectEmpty(&_downMiddle);
-	CBPlatform::setRectEmpty(&_downRight);
+	BasePlatform::setRectEmpty(&_upLeft);
+	BasePlatform::setRectEmpty(&_upMiddle);
+	BasePlatform::setRectEmpty(&_upRight);
+	BasePlatform::setRectEmpty(&_middleLeft);
+	BasePlatform::setRectEmpty(&_middleMiddle);
+	BasePlatform::setRectEmpty(&_middleRight);
+	BasePlatform::setRectEmpty(&_downLeft);
+	BasePlatform::setRectEmpty(&_downMiddle);
+	BasePlatform::setRectEmpty(&_downRight);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CUITiledImage::~CUITiledImage() {
+UITiledImage::~UITiledImage() {
 	delete _image;
 	_image = NULL;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUITiledImage::display(int x, int y, int width, int height) {
+bool UITiledImage::display(int x, int y, int width, int height) {
 	if (!_image) return STATUS_FAILED;
 
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
@@ -119,10 +119,10 @@ bool CUITiledImage::display(int x, int y, int width, int height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUITiledImage::loadFile(const char *filename) {
+bool UITiledImage::loadFile(const char *filename) {
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "CUITiledImage::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "UITiledImage::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -158,7 +158,7 @@ TOKEN_DEF(HORIZONTAL_TILES)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool CUITiledImage::loadBuffer(byte *buffer, bool complete) {
+bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TILED_IMAGE)
 	TOKEN_TABLE(TEMPLATE)
@@ -179,7 +179,7 @@ bool CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	CBParser parser(_gameRef);
+	BaseParser parser(_gameRef);
 	bool hTiles = false, vTiles = false;
 	int h1 = 0, h2 = 0, h3 = 0;
 	int v1 = 0, v2 = 0, v3 = 0;
@@ -200,7 +200,7 @@ bool CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			delete _image;
-			_image = new CBSubFrame(_gameRef);
+			_image = new BaseSubFrame(_gameRef);
 			if (!_image || DID_FAIL(_image->setSurface((char *)params))) {
 				delete _image;
 				_image = NULL;
@@ -270,19 +270,19 @@ bool CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 
 	if (vTiles && hTiles) {
 		// up row
-		CBPlatform::setRect(&_upLeft,   0,     0, h1,       v1);
-		CBPlatform::setRect(&_upMiddle, h1,    0, h1 + h2,    v1);
-		CBPlatform::setRect(&_upRight,  h1 + h2, 0, h1 + h2 + h3, v1);
+		BasePlatform::setRect(&_upLeft,   0,     0, h1,       v1);
+		BasePlatform::setRect(&_upMiddle, h1,    0, h1 + h2,    v1);
+		BasePlatform::setRect(&_upRight,  h1 + h2, 0, h1 + h2 + h3, v1);
 
 		// middle row
-		CBPlatform::setRect(&_middleLeft,   0,     v1, h1,       v1 + v2);
-		CBPlatform::setRect(&_middleMiddle, h1,    v1, h1 + h2,    v1 + v2);
-		CBPlatform::setRect(&_middleRight,  h1 + h2, v1, h1 + h2 + h3, v1 + v2);
+		BasePlatform::setRect(&_middleLeft,   0,     v1, h1,       v1 + v2);
+		BasePlatform::setRect(&_middleMiddle, h1,    v1, h1 + h2,    v1 + v2);
+		BasePlatform::setRect(&_middleRight,  h1 + h2, v1, h1 + h2 + h3, v1 + v2);
 
 		// down row
-		CBPlatform::setRect(&_downLeft,   0,     v1 + v2, h1,       v1 + v2 + v3);
-		CBPlatform::setRect(&_downMiddle, h1,    v1 + v2, h1 + h2,    v1 + v2 + v3);
-		CBPlatform::setRect(&_downRight,  h1 + h2, v1 + v2, h1 + h2 + h3, v1 + v2 + v3);
+		BasePlatform::setRect(&_downLeft,   0,     v1 + v2, h1,       v1 + v2 + v3);
+		BasePlatform::setRect(&_downMiddle, h1,    v1 + v2, h1 + h2,    v1 + v2 + v3);
+		BasePlatform::setRect(&_downRight,  h1 + h2, v1 + v2, h1 + h2 + h3, v1 + v2 + v3);
 	}
 
 	// default
@@ -290,24 +290,24 @@ bool CUITiledImage::loadBuffer(byte *buffer, bool complete) {
 		int width = _image->_surface->getWidth() / 3;
 		int height = _image->_surface->getHeight() / 3;
 
-		if (CBPlatform::isRectEmpty(&_upLeft))   CBPlatform::setRect(&_upLeft,   0,       0, width,   height);
-		if (CBPlatform::isRectEmpty(&_upMiddle)) CBPlatform::setRect(&_upMiddle, width,   0, 2 * width, height);
-		if (CBPlatform::isRectEmpty(&_upRight))  CBPlatform::setRect(&_upRight,  2 * width, 0, 3 * width, height);
+		if (BasePlatform::isRectEmpty(&_upLeft))   BasePlatform::setRect(&_upLeft,   0,       0, width,   height);
+		if (BasePlatform::isRectEmpty(&_upMiddle)) BasePlatform::setRect(&_upMiddle, width,   0, 2 * width, height);
+		if (BasePlatform::isRectEmpty(&_upRight))  BasePlatform::setRect(&_upRight,  2 * width, 0, 3 * width, height);
 
-		if (CBPlatform::isRectEmpty(&_middleLeft))   CBPlatform::setRect(&_middleLeft,   0,       height, width,   2 * height);
-		if (CBPlatform::isRectEmpty(&_middleMiddle)) CBPlatform::setRect(&_middleMiddle, width,   height, 2 * width, 2 * height);
-		if (CBPlatform::isRectEmpty(&_middleRight))  CBPlatform::setRect(&_middleRight,  2 * width, height, 3 * width, 2 * height);
+		if (BasePlatform::isRectEmpty(&_middleLeft))   BasePlatform::setRect(&_middleLeft,   0,       height, width,   2 * height);
+		if (BasePlatform::isRectEmpty(&_middleMiddle)) BasePlatform::setRect(&_middleMiddle, width,   height, 2 * width, 2 * height);
+		if (BasePlatform::isRectEmpty(&_middleRight))  BasePlatform::setRect(&_middleRight,  2 * width, height, 3 * width, 2 * height);
 
-		if (CBPlatform::isRectEmpty(&_downLeft))   CBPlatform::setRect(&_downLeft,   0,       2 * height, width,   3 * height);
-		if (CBPlatform::isRectEmpty(&_downMiddle)) CBPlatform::setRect(&_downMiddle, width,   2 * height, 2 * width, 3 * height);
-		if (CBPlatform::isRectEmpty(&_downRight))  CBPlatform::setRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
+		if (BasePlatform::isRectEmpty(&_downLeft))   BasePlatform::setRect(&_downLeft,   0,       2 * height, width,   3 * height);
+		if (BasePlatform::isRectEmpty(&_downMiddle)) BasePlatform::setRect(&_downMiddle, width,   2 * height, 2 * width, 3 * height);
+		if (BasePlatform::isRectEmpty(&_downRight))  BasePlatform::setRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
 	}
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
+bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TILED_IMAGE\n");
 	buffer->putTextIndent(indent, "{\n");
 
@@ -330,14 +330,14 @@ bool CUITiledImage::saveAsText(CBDynBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "HORIZONTAL_TILES { %d, %d, %d }\n", h1, h2, h3);
 
 	// editor properties
-	CBBase::saveAsText(buffer, indent + 2);
+	BaseClass::saveAsText(buffer, indent + 2);
 
 	buffer->putTextIndent(indent, "}\n");
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CUITiledImage::correctSize(int *width, int *height) {
+void UITiledImage::correctSize(int *width, int *height) {
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
 
@@ -350,8 +350,8 @@ void CUITiledImage::correctSize(int *width, int *height) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CUITiledImage::persist(CBPersistMgr *persistMgr) {
-	CBObject::persist(persistMgr);
+bool UITiledImage::persist(BasePersistenceManager *persistMgr) {
+	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_downLeft));
 	persistMgr->transfer(TMEMBER(_downMiddle));

@@ -34,32 +34,32 @@
 
 namespace WinterMute {
 
-class CBRegion : public CBObject {
+class BaseRegion : public BaseObject {
 public:
 	float _lastMimicScale;
 	int _lastMimicX;
 	int _lastMimicY;
 	void cleanup();
-	bool mimic(CBRegion *region, float scale = 100.0f, int x = 0, int y = 0);
+	bool mimic(BaseRegion *region, float scale = 100.0f, int x = 0, int y = 0);
 	bool getBoundingRect(Rect32 *rect);
 	bool ptInPolygon(int x, int y);
-	DECLARE_PERSISTENT(CBRegion, CBObject)
+	DECLARE_PERSISTENT(BaseRegion, BaseObject)
 	bool _active;
 	int _editorSelectedPoint;
-	CBRegion(CBGame *inGame);
-	virtual ~CBRegion();
+	BaseRegion(BaseGame *inGame);
+	virtual ~BaseRegion();
 	bool pointInRegion(int x, int y);
 	bool createRegion();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 	Rect32 _rect;
-	CBArray<CBPoint *, CBPoint *> _points;
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent, const char *nameOverride = NULL);
+	BaseArray<BasePoint *, BasePoint *> _points;
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride = NULL);
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 };
 

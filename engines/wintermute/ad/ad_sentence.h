@@ -37,28 +37,28 @@
 #include "common/rect.h"
 
 namespace WinterMute {
-class CAdTalkDef;
-class CBFont;
-class CBSprite;
-class CBSound;
-class CAdSentence : public CBBase {
+class AdTalkDef;
+class BaseFont;
+class BaseSprite;
+class BaseSound;
+class AdSentence : public BaseClass {
 public:
 	bool _freezable;
 	bool _fixedPos;
-	CBSprite *_currentSprite;
+	BaseSprite *_currentSprite;
 	char *_currentSkelAnim;
 	bool update(TDirection dir = DI_DOWN);
 	bool setupTalkFile(const char *soundFilename);
-	DECLARE_PERSISTENT(CAdSentence, CBBase)
+	DECLARE_PERSISTENT(AdSentence, BaseClass)
 	bool finish();
-	void setSound(CBSound *Sound);
+	void setSound(BaseSound *Sound);
 	bool _soundStarted;
-	CBSound *_sound;
+	BaseSound *_sound;
 	TTextAlign _align;
 	bool display();
 	int _width;
 	Point32 _pos;
-	CBFont *_font;
+	BaseFont *_font;
 	char *getNextStance();
 	char *getCurrentStance();
 	void setStances(const char *stances);
@@ -68,9 +68,9 @@ public:
 	char *_stances;
 	char *_text;
 	uint32 _duration;
-	CAdSentence(CBGame *inGame);
-	virtual ~CAdSentence();
-	CAdTalkDef *_talkDef;
+	AdSentence(BaseGame *inGame);
+	virtual ~AdSentence();
+	AdTalkDef *_talkDef;
 
 	bool CanSkip();
 

@@ -40,10 +40,10 @@ namespace WinterMute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-IMPLEMENT_PERSISTENT(CScValue, false)
+IMPLEMENT_PERSISTENT(ScValue, false)
 
 //////////////////////////////////////////////////////////////////////////
-CScValue::CScValue(CBGame *inGame): CBBase(inGame) {
+ScValue::ScValue(BaseGame *inGame): BaseClass(inGame) {
 	_type = VAL_NULL;
 
 	_valBool = false;
@@ -58,7 +58,7 @@ CScValue::CScValue(CBGame *inGame): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue::CScValue(CBGame *inGame, bool val): CBBase(inGame) {
+ScValue::ScValue(BaseGame *inGame, bool val): BaseClass(inGame) {
 	_type = VAL_BOOL;
 	_valBool = val;
 
@@ -73,7 +73,7 @@ CScValue::CScValue(CBGame *inGame, bool val): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue::CScValue(CBGame *inGame, int val): CBBase(inGame) {
+ScValue::ScValue(BaseGame *inGame, int val): BaseClass(inGame) {
 	_type = VAL_INT;
 	_valInt = val;
 
@@ -88,7 +88,7 @@ CScValue::CScValue(CBGame *inGame, int val): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue::CScValue(CBGame *inGame, double val): CBBase(inGame) {
+ScValue::ScValue(BaseGame *inGame, double val): BaseClass(inGame) {
 	_type = VAL_FLOAT;
 	_valFloat = val;
 
@@ -103,7 +103,7 @@ CScValue::CScValue(CBGame *inGame, double val): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue::CScValue(CBGame *inGame, const char *val): CBBase(inGame) {
+ScValue::ScValue(BaseGame *inGame, const char *val): BaseClass(inGame) {
 	_type = VAL_STRING;
 	_valString = NULL;
 	setStringVal(val);
@@ -119,7 +119,7 @@ CScValue::CScValue(CBGame *inGame, const char *val): CBBase(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::cleanup(bool ignoreNatives) {
+void ScValue::cleanup(bool ignoreNatives) {
 	deleteProps();
 
 	if (_valString) delete [] _valString;
@@ -150,13 +150,13 @@ void CScValue::cleanup(bool ignoreNatives) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue::~CScValue() {
+ScValue::~ScValue() {
 	cleanup();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CScValue::getProp(const char *name) {
+ScValue *ScValue::getProp(const char *name) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->getProp(name);
 
 	if (_type == VAL_STRING && strcmp(name, "Length") == 0) {
@@ -176,7 +176,7 @@ CScValue *CScValue::getProp(const char *name) {
 		return _gameRef->_scValue;
 	}
 
-	CScValue *ret = NULL;
+	ScValue *ret = NULL;
 
 	if (_type == VAL_NATIVE && _valNative) ret = _valNative->scGetProperty(name);
 
@@ -188,7 +188,7 @@ CScValue *CScValue::getProp(const char *name) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::deleteProp(const char *name) {
+bool ScValue::deleteProp(const char *name) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->deleteProp(name);
 
 	_valIter = _valObject.find(name);
@@ -203,7 +203,7 @@ bool CScValue::deleteProp(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::setProp(const char *name, CScValue *val, bool copyWhole, bool setAsConst) {
+bool ScValue::setProp(const char *name, ScValue *val, bool copyWhole, bool setAsConst) {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->setProp(name, val);
 
@@ -213,14 +213,14 @@ bool CScValue::setProp(const char *name, CScValue *val, bool copyWhole, bool set
 	}
 
 	if (DID_FAIL(ret)) {
-		CScValue *newVal = NULL;
+		ScValue *newVal = NULL;
 
 		_valIter = _valObject.find(name);
 		if (_valIter != _valObject.end()) {
 			newVal = _valIter->_value;
 		}
 		if (!newVal)
-			newVal = new CScValue(_gameRef);
+			newVal = new ScValue(_gameRef);
 		else newVal->cleanup();
 
 		newVal->copy(val, copyWhole);
@@ -235,7 +235,7 @@ bool CScValue::setProp(const char *name, CScValue *val, bool copyWhole, bool set
 		    delete _valIter->_value;
 		    _valIter->_value = NULL;
 		}
-		CScValue* val = new CScValue(_gameRef);
+		ScValue* val = new ScValue(_gameRef);
 		val->Copy(Val, CopyWhole);
 		val->_isConstVar = SetAsConst;
 		_valObject[Name] = val;
@@ -249,7 +249,7 @@ bool CScValue::setProp(const char *name, CScValue *val, bool copyWhole, bool set
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::propExists(const char *name) {
+bool ScValue::propExists(const char *name) {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->propExists(name);
 	_valIter = _valObject.find(name);
@@ -259,10 +259,10 @@ bool CScValue::propExists(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::deleteProps() {
+void ScValue::deleteProps() {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
-		delete(CScValue *)_valIter->_value;
+		delete(ScValue *)_valIter->_value;
 		_valIter++;
 	}
 	_valObject.clear();
@@ -270,7 +270,7 @@ void CScValue::deleteProps() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::CleanProps(bool includingNatives) {
+void ScValue::CleanProps(bool includingNatives) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		if (!_valIter->_value->_isConstVar && (!_valIter->_value->isNative() || includingNatives)) _valIter->_value->setNULL();
@@ -279,7 +279,7 @@ void CScValue::CleanProps(bool includingNatives) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::isNULL() {
+bool ScValue::isNULL() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->isNULL();
 
@@ -288,7 +288,7 @@ bool CScValue::isNULL() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::isNative() {
+bool ScValue::isNative() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->isNative();
 
@@ -297,7 +297,7 @@ bool CScValue::isNative() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::isString() {
+bool ScValue::isString() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->isString();
 
@@ -306,7 +306,7 @@ bool CScValue::isString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::isFloat() {
+bool ScValue::isFloat() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->isFloat();
 
@@ -315,7 +315,7 @@ bool CScValue::isFloat() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::isInt() {
+bool ScValue::isInt() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->isInt();
 
@@ -324,7 +324,7 @@ bool CScValue::isInt() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::isBool() {
+bool ScValue::isBool() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->isBool();
 
@@ -333,7 +333,7 @@ bool CScValue::isBool() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::isObject() {
+bool ScValue::isObject() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->isObject();
 
@@ -342,7 +342,7 @@ bool CScValue::isObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-TValType CScValue::getTypeTolerant() {
+TValType ScValue::getTypeTolerant() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->getType();
 
@@ -351,7 +351,7 @@ TValType CScValue::getTypeTolerant() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setBool(bool val) {
+void ScValue::setBool(bool val) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setBool(val);
 		return;
@@ -368,7 +368,7 @@ void CScValue::setBool(bool val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setInt(int val) {
+void ScValue::setInt(int val) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setInt(val);
 		return;
@@ -385,7 +385,7 @@ void CScValue::setInt(int val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setFloat(double val) {
+void ScValue::setFloat(double val) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setFloat(val);
 		return;
@@ -402,7 +402,7 @@ void CScValue::setFloat(double val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setString(const char *val) {
+void ScValue::setString(const char *val) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setString(val);
 		return;
@@ -418,12 +418,12 @@ void CScValue::setString(const char *val) {
 	else _type = VAL_NULL;
 }
 
-void CScValue::setString(const Common::String &val) {
+void ScValue::setString(const Common::String &val) {
 	setString(val.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setStringVal(const char *val) {
+void ScValue::setStringVal(const char *val) {
 	if (_valString) {
 		delete [] _valString;
 		_valString = NULL;
@@ -442,7 +442,7 @@ void CScValue::setStringVal(const char *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setNULL() {
+void ScValue::setNULL() {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setNULL();
 		return;
@@ -460,7 +460,7 @@ void CScValue::setNULL() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setNative(CBScriptable *val, bool persistent) {
+void ScValue::setNative(BaseScriptable *val, bool persistent) {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setNative(val, persistent);
 		return;
@@ -487,7 +487,7 @@ void CScValue::setNative(CBScriptable *val, bool persistent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setObject() {
+void ScValue::setObject() {
 	if (_type == VAL_VARIABLE_REF) {
 		_valRef->setObject();
 		return;
@@ -499,14 +499,14 @@ void CScValue::setObject() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setReference(CScValue *val) {
+void ScValue::setReference(ScValue *val) {
 	_valRef = val;
 	_type = VAL_VARIABLE_REF;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::getBool(bool defaultVal) {
+bool ScValue::getBool(bool defaultVal) {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->getBool();
 
@@ -533,7 +533,7 @@ bool CScValue::getBool(bool defaultVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CScValue::getInt(int defaultVal) {
+int ScValue::getInt(int defaultVal) {
 	if (_type == VAL_VARIABLE_REF) return _valRef->getInt();
 
 	switch (_type) {
@@ -559,7 +559,7 @@ int CScValue::getInt(int defaultVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-double CScValue::getFloat(double defaultVal) {
+double ScValue::getFloat(double defaultVal) {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->getFloat();
 
@@ -585,7 +585,7 @@ double CScValue::getFloat(double defaultVal) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void *CScValue::getMemBuffer() {
+void *ScValue::getMemBuffer() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->getMemBuffer();
 
@@ -596,7 +596,7 @@ void *CScValue::getMemBuffer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *CScValue::getString() {
+const char *ScValue::getString() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->getString();
 
@@ -646,7 +646,7 @@ const char *CScValue::getString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-CBScriptable *CScValue::getNative() {
+BaseScriptable *ScValue::getNative() {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->getNative();
 
@@ -656,13 +656,13 @@ CBScriptable *CScValue::getNative() {
 
 
 //////////////////////////////////////////////////////////////////////////
-TValType CScValue::getType() {
+TValType ScValue::getType() {
 	return _type;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::copy(CScValue *orig, bool copyWhole) {
+void ScValue::copy(ScValue *orig, bool copyWhole) {
 	_gameRef = orig->_gameRef;
 
 	if (_valNative && !_persistent) {
@@ -694,7 +694,7 @@ void CScValue::copy(CScValue *orig, bool copyWhole) {
 	if (orig->_type == VAL_OBJECT && orig->_valObject.size() > 0) {
 		orig->_valIter = orig->_valObject.begin();
 		while (orig->_valIter != orig->_valObject.end()) {
-			_valObject[orig->_valIter->_key] = new CScValue(_gameRef);
+			_valObject[orig->_valIter->_key] = new ScValue(_gameRef);
 			_valObject[orig->_valIter->_key]->copy(orig->_valIter->_value);
 			orig->_valIter++;
 		}
@@ -703,7 +703,7 @@ void CScValue::copy(CScValue *orig, bool copyWhole) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void CScValue::setValue(CScValue *val) {
+void ScValue::setValue(ScValue *val) {
 	if (val->_type == VAL_VARIABLE_REF) {
 		setValue(val->_valRef);
 		return;
@@ -725,7 +725,7 @@ void CScValue::setValue(CScValue *val) {
 			_valNative->scSetString(val->getString());
 			break;
 		default:
-			warning("CScValue::setValue - unhandled enum");
+			warning("ScValue::setValue - unhandled enum");
 			break;
 		}
 	}
@@ -735,7 +735,7 @@ void CScValue::setValue(CScValue *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::persist(CBPersistMgr *persistMgr) {
+bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_persistent));
@@ -760,7 +760,7 @@ bool CScValue::persist(CBPersistMgr *persistMgr) {
 			_valIter++;
 		}
 	} else {
-		CScValue *val;
+		ScValue *val;
 		persistMgr->transfer("", &size);
 		for (int i = 0; i < size; i++) {
 			persistMgr->transfer("", &str);
@@ -819,7 +819,7 @@ bool CScValue::persist(CBPersistMgr *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::saveAsText(CBDynBuffer *buffer, int indent) {
+bool ScValue::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		buffer->putTextIndent(indent, "PROPERTY {\n");
@@ -835,7 +835,7 @@ bool CScValue::saveAsText(CBDynBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 // -1 ... left is less, 0 ... equals, 1 ... left is greater
-int CScValue::compare(CScValue *val1, CScValue *val2) {
+int ScValue::compare(ScValue *val1, ScValue *val2) {
 	// both natives?
 	if (val1->isNative() && val2->isNative()) {
 		// same class?
@@ -871,14 +871,14 @@ int CScValue::compare(CScValue *val1, CScValue *val2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int CScValue::compareStrict(CScValue *val1, CScValue *val2) {
+int ScValue::compareStrict(ScValue *val1, ScValue *val2) {
 	if (val1->getTypeTolerant() != val2->getTypeTolerant()) return -1;
-	else return CScValue::compare(val1, val2);
+	else return ScValue::compare(val1, val2);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, CScScript *script, unsigned int scopeID) {
+bool ScValue::dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, ScScript *script, unsigned int scopeID) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		client->onVariableInit(type, script, scopeID, _valIter->_value, _valIter->_key.c_str());
@@ -889,33 +889,24 @@ bool CScValue::dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableTyp
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::setProperty(const char *propName, int value) {
-	CScValue *val = new CScValue(_gameRef,  value);
+bool ScValue::setProperty(const char *propName, int value) {
+	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::setProperty(const char *propName, const char *value) {
-	CScValue *val = new CScValue(_gameRef,  value);
+bool ScValue::setProperty(const char *propName, const char *value) {
+	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::setProperty(const char *propName, double value) {
-	CScValue *val = new CScValue(_gameRef,  value);
-	bool ret =  DID_SUCCEED(setProp(propName, val));
-	delete val;
-	return ret;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool CScValue::setProperty(const char *propName, bool value) {
-	CScValue *val = new CScValue(_gameRef,  value);
+bool ScValue::setProperty(const char *propName, double value) {
+	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
@@ -923,8 +914,17 @@ bool CScValue::setProperty(const char *propName, bool value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::setProperty(const char *propName) {
-	CScValue *val = new CScValue(_gameRef);
+bool ScValue::setProperty(const char *propName, bool value) {
+	ScValue *val = new ScValue(_gameRef,  value);
+	bool ret =  DID_SUCCEED(setProp(propName, val));
+	delete val;
+	return ret;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool ScValue::setProperty(const char *propName) {
+	ScValue *val = new ScValue(_gameRef);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
@@ -934,7 +934,7 @@ bool CScValue::setProperty(const char *propName) {
 //////////////////////////////////////////////////////////////////////////
 // IWmeDebugProp
 //////////////////////////////////////////////////////////////////////////
-EWmeDebuggerPropType CScValue::dbgGetType() {
+EWmeDebuggerPropType ScValue::dbgGetType() {
 	switch (getType()) {
 	case VAL_NULL:
 		return WME_DBGPROP_NULL;
@@ -956,70 +956,70 @@ EWmeDebuggerPropType CScValue::dbgGetType() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CScValue::dbgGetValInt() {
+int ScValue::dbgGetValInt() {
 	return getInt();
 }
 
 //////////////////////////////////////////////////////////////////////////
-double CScValue::dbgGetValFloat() {
+double ScValue::dbgGetValFloat() {
 	return getFloat();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::dbgGetValBool() {
+bool ScValue::dbgGetValBool() {
 	return getBool();
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CScValue::dbgGetValString() {
+const char *ScValue::dbgGetValString() {
 	return getString();
 }
 
 //////////////////////////////////////////////////////////////////////////
-IWmeDebugObject *CScValue::dbgGetValNative() {
+IWmeDebugObject *ScValue::dbgGetValNative() {
 	return getNative();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::dbgSetVal(int value) {
+bool ScValue::dbgSetVal(int value) {
 	setInt(value);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::dbgSetVal(double value) {
+bool ScValue::dbgSetVal(double value) {
 	setFloat(value);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::dbgSetVal(bool value) {
+bool ScValue::dbgSetVal(bool value) {
 	setBool(value);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::dbgSetVal(const char *value) {
+bool ScValue::dbgSetVal(const char *value) {
 	setString(value);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::dbgSetVal() {
+bool ScValue::dbgSetVal() {
 	setNULL();
 	return true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int CScValue::dbgGetNumProperties() {
+int ScValue::dbgGetNumProperties() {
 	if (_valNative && _valNative->_scProp)
 		return _valNative->_scProp->dbgGetNumProperties();
 	else return _valObject.size();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::dbgGetProperty(int index, const char **name, IWmeDebugProp **value) {
+bool ScValue::dbgGetProperty(int index, const char **name, IWmeDebugProp **value) {
 	if (_valNative && _valNative->_scProp)
 		return _valNative->_scProp->dbgGetProperty(index, name, value);
 	else {
@@ -1039,7 +1039,7 @@ bool CScValue::dbgGetProperty(int index, const char **name, IWmeDebugProp **valu
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CScValue::dbgGetDescription(char *buf, int bufSize) {
+bool ScValue::dbgGetDescription(char *buf, int bufSize) {
 	if (_type == VAL_VARIABLE_REF)
 		return _valRef->dbgGetDescription(buf, bufSize);
 

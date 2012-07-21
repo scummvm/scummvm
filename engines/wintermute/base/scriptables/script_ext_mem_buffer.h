@@ -34,24 +34,24 @@
 
 namespace WinterMute {
 
-class CSXMemBuffer : public CBScriptable {
+class SXMemBuffer : public BaseScriptable {
 public:
-	virtual int scCompare(CBScriptable *Val);
-	DECLARE_PERSISTENT(CSXMemBuffer, CBScriptable)
-	CScValue *scGetProperty(const char *name);
-	bool scSetProperty(const char *name, CScValue *value);
-	bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual int scCompare(BaseScriptable *Val);
+	DECLARE_PERSISTENT(SXMemBuffer, BaseScriptable)
+	ScValue *scGetProperty(const char *name);
+	bool scSetProperty(const char *name, ScValue *value);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	const char *scToString();
-	CSXMemBuffer(CBGame *inGame, CScStack *stack);
-	CSXMemBuffer(CBGame *inGame, void *buffer);
-	virtual ~CSXMemBuffer();
+	SXMemBuffer(BaseGame *inGame, ScStack *stack);
+	SXMemBuffer(BaseGame *inGame, void *buffer);
+	virtual ~SXMemBuffer();
 	virtual void *scToMemBuffer();
 	int _size;
 private:
 	bool resize(int newSize);
 	void *_buffer;
 	void cleanup();
-	bool checkBounds(CScScript *script, int start, int length);
+	bool checkBounds(ScScript *script, int start, int length);
 };
 
 } // end of namespace WinterMute

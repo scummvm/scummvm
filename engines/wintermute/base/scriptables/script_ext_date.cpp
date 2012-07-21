@@ -32,19 +32,19 @@
 
 namespace WinterMute {
 
-IMPLEMENT_PERSISTENT(CSXDate, false)
+IMPLEMENT_PERSISTENT(SXDate, false)
 
-CBScriptable *makeSXDate(CBGame *inGame, CScStack *stack) {
-	return new CSXDate(inGame, stack);
+BaseScriptable *makeSXDate(BaseGame *inGame, ScStack *stack) {
+	return new SXDate(inGame, stack);
 }
 
 //////////////////////////////////////////////////////////////////////////
-CSXDate::CSXDate(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
+SXDate::SXDate(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 	stack->correctParams(6);
 
 	memset(&_tm, 0, sizeof(_tm));
 
-	CScValue *valYear = stack->pop();
+	ScValue *valYear = stack->pop();
 	_tm.tm_year = valYear->getInt() - 1900;
 	_tm.tm_mon = stack->pop()->getInt() - 1;
 	_tm.tm_mday = stack->pop()->getInt();
@@ -59,12 +59,12 @@ CSXDate::CSXDate(CBGame *inGame, CScStack *stack): CBScriptable(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-CSXDate::~CSXDate() {
+SXDate::~SXDate() {
 
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *CSXDate::scToString() {
+const char *SXDate::scToString() {
 	// TODO: Make this more stringy, and less ISO 8601-like
 	_strRep.format("%04d-%02d-%02d - %02d:%02d:%02d", _tm.tm_year, _tm.tm_mon, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec);
 	return _strRep.c_str();
@@ -75,7 +75,7 @@ const char *CSXDate::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name) {
+bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetYear
 	//////////////////////////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ bool CSXDate::scCallMethod(CScScript *script, CScStack *stack, CScStack *thisSta
 
 
 //////////////////////////////////////////////////////////////////////////
-CScValue *CSXDate::scGetProperty(const char *name) {
+ScValue *SXDate::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -223,7 +223,7 @@ CScValue *CSXDate::scGetProperty(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXDate::scSetProperty(const char *name, CScValue *value) {
+bool SXDate::scSetProperty(const char *name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
@@ -238,9 +238,9 @@ bool CSXDate::scSetProperty(const char *name, CScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CSXDate::persist(CBPersistMgr *persistMgr) {
+bool SXDate::persist(BasePersistenceManager *persistMgr) {
 
-	CBScriptable::persist(persistMgr);
+	BaseScriptable::persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_tm.tm_year));
 	persistMgr->transfer(TMEMBER(_tm.tm_mon));
 	persistMgr->transfer(TMEMBER(_tm.tm_mday));
@@ -251,9 +251,9 @@ bool CSXDate::persist(CBPersistMgr *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CSXDate::scCompare(CBScriptable *Value) {
+int SXDate::scCompare(BaseScriptable *Value) {
 	TimeDate time1 = _tm;
-	TimeDate time2 = ((CSXDate *)Value)->_tm;
+	TimeDate time2 = ((SXDate *)Value)->_tm;
 
 	if (time1.tm_year < time2.tm_year) {
 		return -1;

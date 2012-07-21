@@ -33,21 +33,21 @@
 
 namespace WinterMute {
 
-class CAdTalkHolder : public CAdObject {
+class AdTalkHolder : public AdObject {
 public:
-	DECLARE_PERSISTENT(CAdTalkHolder, CAdObject)
-	virtual CBSprite *getTalkStance(const char *stance);
-	virtual bool saveAsText(CBDynBuffer *buffer, int indent);
-	CBSprite *_sprite;
-	CBArray<CBSprite *, CBSprite *> _talkSprites;
-	CBArray<CBSprite *, CBSprite *> _talkSpritesEx;
-	CAdTalkHolder(CBGame *inGame);
-	virtual ~CAdTalkHolder();
+	DECLARE_PERSISTENT(AdTalkHolder, AdObject)
+	virtual BaseSprite *getTalkStance(const char *stance);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	BaseSprite *_sprite;
+	BaseArray<BaseSprite *, BaseSprite *> _talkSprites;
+	BaseArray<BaseSprite *, BaseSprite *> _talkSpritesEx;
+	AdTalkHolder(BaseGame *inGame);
+	virtual ~AdTalkHolder();
 
 	// scripting interface
-	virtual CScValue *scGetProperty(const char *name);
-	virtual bool scSetProperty(const char *name, CScValue *value);
-	virtual bool scCallMethod(CScScript *script, CScStack *stack, CScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const char *name);
+	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
 };
