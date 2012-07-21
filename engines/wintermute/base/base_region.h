@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_BREGION_H
 #define WINTERMUTE_BREGION_H
 
-#include "engines/wintermute/base/base_Point.h"
+#include "engines/wintermute/base/base_point.h"
 #include "engines/wintermute/base/base_object.h"
 
 namespace WinterMute {

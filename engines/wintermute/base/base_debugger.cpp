@@ -26,7 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_Debugger.h"
+#include "engines/wintermute/base/base_debugger.h"
 
 namespace WinterMute {
 

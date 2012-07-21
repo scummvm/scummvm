@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/base/base_Fader.h"
+#include "engines/wintermute/base/base_fader.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/util.h"

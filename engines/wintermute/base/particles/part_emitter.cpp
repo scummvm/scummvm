@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/particles/part_particle.h"
 #include "engines/wintermute/math/vector2.h"
-#include "engines/wintermute/math/Matrix4.h"
+#include "engines/wintermute/math/matrix4.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/base_game.h"
