@@ -439,7 +439,7 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 	}
 
 	for (uint32 i = 0; i < hdr._numDirs; i++) {
-		BasePackage *pkg = new BasePackage(_gameRef);
+		BasePackage *pkg = new BasePackage(this);
 		if (!pkg) return STATUS_FAILED;
 
 		pkg->_boundToExe = boundToExe;

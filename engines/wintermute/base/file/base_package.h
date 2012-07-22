@@ -29,16 +29,16 @@
 #ifndef WINTERMUTE_BPACKAGE_H
 #define WINTERMUTE_BPACKAGE_H
 
-
-#include "engines/wintermute/base/base.h"
+#include "common/stream.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace WinterMute {
-
-class BasePackage : public BaseClass {
+class BaseFileManager;
+class BasePackage {
+	BaseFileManager *_fileManager;
 public:
 	Common::SeekableReadStream *getFilePointer();
 	void closeFilePointer(Common::SeekableReadStream *&file);
@@ -51,9 +51,8 @@ public:
 	char *_name;
 	int _cd;
 	Common::SeekableReadStream *_file;
-	BasePackage(BaseGame *inGame);
-	virtual ~BasePackage();
-
+	BasePackage(BaseFileManager *fileMan);
+	~BasePackage();
 };
 
 } // end of namespace WinterMute

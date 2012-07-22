@@ -40,12 +40,13 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////////
-BasePackage::BasePackage(BaseGame *inGame): BaseClass(inGame) {
+BasePackage::BasePackage(BaseFileManager *fileMan)/*: BaseClass(inGame) */{
 	_file = NULL;
 	_name = NULL;
 	_cd = 0;
 	_priority = 0;
 	_boundToExe = false;
+	_fileManager = fileMan;
 }
 
 
@@ -87,10 +88,10 @@ bool BasePackage::read(Common::SeekableReadStream *file, uint32 offset, byte *bu
 
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *BasePackage::getFilePointer() {
-	Common::File *file = _gameRef->_fileManager->openPackage(_name);
+	Common::File *file = _fileManager->openPackage(_name);
 	if (!file) {
-		_gameRef->_fileManager->requestCD(_cd, _name, "");
-		file = _gameRef->_fileManager->openPackage(_name);
+		_fileManager->requestCD(_cd, _name, "");
+		file = _fileManager->openPackage(_name);
 	}
 	return file;
 }
