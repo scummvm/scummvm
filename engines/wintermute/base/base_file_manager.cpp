@@ -439,12 +439,11 @@ Common::File *BaseFileManager::openPackage(const Common::String &name) {
 			return ret;
 		}
 	}
-
-/*	sprintf(filename, "%s.%s", name.c_str(), PACKAGE_EXTENSION);
+	Common::String filename = Common::String::format("%s.%s", name.c_str(), PACKAGE_EXTENSION);
 	ret->open(filename);
 	if (ret->isOpen()) {
 		return ret;
-	}*/
+	}
 	warning("BaseFileManager::OpenPackage - Couldn't load file %s", name.c_str());
 	delete ret;
 	return NULL;
