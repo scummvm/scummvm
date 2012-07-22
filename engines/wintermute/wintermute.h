@@ -44,6 +44,7 @@ enum {
 class WinterMuteEngine : public Engine {
 public:
 	WinterMuteEngine(OSystem *syst, const ADGameDescription *desc);
+	WinterMuteEngine();
 	~WinterMuteEngine();
 
 	virtual Common::Error run();
@@ -51,6 +52,8 @@ public:
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	SystemClassRegistry *getClassRegistry(){ return _classReg; }
 	uint32 randInt(int from, int to);
+	// For detection-purposes:
+	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
 private:
 	int init();
 	void deinit();

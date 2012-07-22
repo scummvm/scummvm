@@ -29,6 +29,7 @@
 #include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/tokenizer.h"
 
 #include "engines/util.h"
 #include "engines/wintermute/ad/ad_game.h"
@@ -37,11 +38,23 @@
 #include "engines/wintermute/base/base_registry.h"
 
 #include "engines/wintermute/base/sound/base_sound_manager.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 
 namespace WinterMute {
 
 WinterMuteEngine *g_wintermute;
+
+// Simple constructor for detection - we need to setup the persistence to avoid special-casing in-engine
+// This might not be the prettiest solution
+WinterMuteEngine::WinterMuteEngine() : Engine(g_system) {
+	g_wintermute = this;
+	_classReg = new SystemClassRegistry();
+	_classReg->registerClasses();
+	
+	_game = new AdGame();
+	_rnd = NULL;
+}
 
 WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst), _gameDescription(desc) {
@@ -74,7 +87,10 @@ WinterMuteEngine::~WinterMuteEngine() {
 	debug("WinterMuteEngine::~WinterMuteEngine");
 
 	// Dispose your resources here
+	delete _classReg;
 	delete _rnd;
+	delete _game;
+	g_wintermute = NULL;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -320,6 +336,52 @@ int WinterMuteEngine::messageLoop() {
 
 void WinterMuteEngine::deinit() {
 	delete _classReg;
+	_classReg = NULL;
+}
+
+bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {
+	bool retVal = false;
+	caption = name = "(invalid)";
+	
+	// Quick-fix, instead of possibly breaking the persistence-system, let's just roll with it
+	WinterMuteEngine *engine = new WinterMuteEngine();
+	
+	engine->_game->initialize1();
+	engine->_game->_fileManager->registerPackages(fslist);
+	if (engine->_game->loadSettings("startup.settings")) {
+		// We do some manual parsing here, as the engine needs gfx to be initalized to do that.
+		Common::SeekableReadStream *stream = engine->_game->_fileManager->openFile((engine->_game->_settingsGameFile ? engine->_game->_settingsGameFile : "default.game"), false, false);
+		while (!stream->eos() && !stream->err()) {
+			Common::String line = stream->readLine();
+			line.trim(); // Get rid of indentation
+			// Expect "GAME {" or comment, or empty line
+			if (line.size() == 0 || line[0] == ';' || (line.contains("{")))
+				continue;
+			else {
+				Common::StringTokenizer token(line, "=");
+				Common::String key = token.nextToken();
+				Common::String value = token.nextToken();
+				if (value.size() == 0)
+					continue;
+				if (value[0] == '\"')
+					value.deleteChar(0);
+				else
+					continue; // not a string
+				if (value.lastChar() == '\"')
+					value.deleteLastChar();
+				if (key == "NAME") {
+					retVal = true;
+					name = value;
+				} else if (key == "CAPTION") {
+					retVal = true;
+					caption = value;
+				}
+			}
+		}
+		delete stream;
+	}
+	delete engine;
+	return retVal;
 }
 
 uint32 WinterMuteEngine::randInt(int from, int to) {

@@ -32,6 +32,24 @@
 
 #include "engines/wintermute/detection_tables.h"
 
+namespace WinterMute {
+
+/**
+ * The fallback game descriptor used by the WinterMute engine's fallbackDetector.
+ * Contents of this struct are overwritten by the fallbackDetector. (logic copied partially
+ * from the SCI-engine).
+ */
+static ADGameDescription s_fallbackDesc = {
+	"",
+	"",
+	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+	Common::UNK_LANG,
+	Common::kPlatformWindows,
+	ADGF_UNSTABLE,
+	GUIO0()
+};
+static char s_fallbackGameIdBuf[256];
+
 class WinterMuteMetaEngine : public AdvancedMetaEngine {
 public:
 	WinterMuteMetaEngine() : AdvancedMetaEngine(WinterMute::gameDescriptions, sizeof(ADGameDescription), WinterMute::wintermuteGames) {
@@ -83,6 +101,44 @@ public:
 		}
 		return detectedGames;
 	}*/
+	
+	
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		// Set some defaults
+		s_fallbackDesc.extra = "";
+		s_fallbackDesc.language = Common::UNK_LANG;
+		s_fallbackDesc.flags = ADGF_UNSTABLE;
+		s_fallbackDesc.platform = Common::kPlatformWindows;	// default to Windows
+		s_fallbackDesc.gameid = "wintermute";
+		s_fallbackDesc.guioptions = GUIO0();
+		
+		if (allFiles.contains("data.dcp")) {
+			Common::String name, caption;
+			if (WinterMuteEngine::getGameInfo(fslist, name, caption)) {
+				for (int32 i = 0; i < name.size(); i++) {
+					// Replace spaces with underscores
+					if (name[i] == ' ') {
+						name.setChar('_', (uint32)i);
+					}
+				}
+				// Prefix to avoid collisions with actually known games
+				name = "wmefan-" + name;
+				strncpy(s_fallbackGameIdBuf, name.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
+				s_fallbackDesc.gameid = s_fallbackGameIdBuf;
+				if (caption != name) {
+					caption += " (fangame) ";
+					char *offset = s_fallbackGameIdBuf + name.size() + 1;
+					uint32 remainingLength = (sizeof(s_fallbackGameIdBuf) - 1) - (name.size() + 1);
+					strncpy(offset, caption.c_str(), remainingLength);
+					s_fallbackDesc.extra = offset;
+					s_fallbackDesc.flags |= ADGF_USEEXTRAASTITLE;
+				}
+				return &s_fallbackDesc;
+			} // Fall through to return 0;
+		}
+		return 0;
+	}
+	
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		assert(syst);
 		assert(engine);
@@ -141,8 +197,10 @@ public:
 	}
 };
 
+} // end of namespace WinterMute
+
 #if PLUGIN_ENABLED_DYNAMIC(WINTERMUTE)
-REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, WinterMuteMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, WinterMute::WinterMuteMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, WinterMuteMetaEngine);
+REGISTER_PLUGIN_STATIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, WinterMute::WinterMuteMetaEngine);
 #endif
