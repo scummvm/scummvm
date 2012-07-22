@@ -509,15 +509,11 @@ bool AdScene::loadFile(const char *filename) {
 
 	bool ret;
 
-	delete[] _filename;
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing SCENE file '%s'", filename);
 
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
-
+	setFilename(filename);
 
 	delete [] buffer;
 
@@ -843,7 +839,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 		return STATUS_FAILED;
 	}
 
-	if (_mainLayer == NULL) _gameRef->LOG(0, "Warning: scene '%s' has no main layer.", _filename);
+	if (_mainLayer == NULL) _gameRef->LOG(0, "Warning: scene '%s' has no main layer.", getFilename());
 
 
 	sortScaleLevels();
@@ -2480,7 +2476,7 @@ bool AdScene::persistState(bool saving) {
 	if (!_persistentState) return STATUS_OK;
 
 	AdGame *adGame = (AdGame *)_gameRef;
-	AdSceneState *state = adGame->getSceneState(_filename, saving);
+	AdSceneState *state = adGame->getSceneState(getFilename(), saving);
 	if (!state) return STATUS_OK;
 
 	AdNodeState *nodeState;

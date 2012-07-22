@@ -73,7 +73,7 @@ PartParticle::~PartParticle(void) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartParticle::setSprite(const char *filename) {
-	if (_sprite && _sprite->_filename && scumm_stricmp(filename, _sprite->_filename) == 0) {
+	if (_sprite && _sprite->getFilename() && scumm_stricmp(filename, _sprite->getFilename()) == 0) {
 		_sprite->reset();
 		return STATUS_OK;
 	}
@@ -240,7 +240,8 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_fadeStartAlpha));
 
 	if (persistMgr->_saving) {
-		persistMgr->transfer(TMEMBER(_sprite->_filename));
+		const char *filename = _sprite->getFilename();
+		persistMgr->transfer(TMEMBER(filename));
 	} else {
 		char *filename;
 		persistMgr->transfer(TMEMBER(filename));

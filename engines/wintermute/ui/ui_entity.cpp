@@ -64,8 +64,7 @@ bool UIEntity::loadFile(const char *filename) {
 
 	bool ret;
 
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ENTITY container file '%s'", filename);
 
@@ -188,8 +187,8 @@ bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
 
-	if (_entity && _entity->_filename)
-		buffer->putTextIndent(indent + 2, "ENTITY=\"%s\"\n", _entity->_filename);
+	if (_entity && _entity->getFilename())
+		buffer->putTextIndent(indent + 2, "ENTITY=\"%s\"\n", _entity->getFilename());
 
 	buffer->putTextIndent(indent + 2, "\n");
 

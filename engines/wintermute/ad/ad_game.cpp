@@ -251,7 +251,7 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 		_scene->applyEvent("SceneShutdown", true);
 
 		setPrevSceneName(_scene->_name);
-		setPrevSceneFilename(_scene->_filename);
+		setPrevSceneFilename(_scene->getFilename());
 
 		if (!_tempDisableSaveState) _scene->saveState();
 		_tempDisableSaveState = false;
@@ -1112,8 +1112,7 @@ bool AdGame::loadFile(const char *filename) {
 
 	bool ret;
 
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing GAME file '%s'", filename);
 

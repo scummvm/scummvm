@@ -52,8 +52,8 @@ public:
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	bool applyEvent(const char *eventName, bool unbreakable = false);
 	void setFilename(const char *filename);
+	const char *getFilename() { return _filename; }
 	bool parseProperty(byte *buffer, bool complete = true);
-	char *_filename;
 	bool _freezable;
 	bool _ready;
 
@@ -65,6 +65,8 @@ public:
 	virtual const char *scToString();
 	virtual void scDebuggerDesc(char *buf, int bufSize);
 	// IWmeObject
+private:
+	char *_filename;
 public:
 	virtual bool sendEvent(const char *eventName);
 };

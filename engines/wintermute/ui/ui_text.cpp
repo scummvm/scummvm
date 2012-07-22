@@ -104,8 +104,7 @@ bool UIText::loadFile(const char *filename) {
 
 	bool ret;
 
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing STATIC file '%s'", filename);
 
@@ -302,17 +301,17 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->_filename)
-		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
+	if (_back && _back->getFilename())
+		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->getFilename());
 
-	if (_image && _image->_filename)
-		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
+	if (_image && _image->getFilename())
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getFilename());
 
-	if (_font && _font->_filename)
-		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
+	if (_font && _font->getFilename())
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
 
-	if (_cursor && _cursor->_filename)
-		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+	if (_cursor && _cursor->getFilename())
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
 
 	if (_text)
 		buffer->putTextIndent(indent + 2, "TEXT=\"%s\"\n", _text);

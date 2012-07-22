@@ -53,7 +53,7 @@ BaseFontStorage::~BaseFontStorage() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::cleanup(bool warn) {
 	for (int i = 0; i < _fonts.getSize(); i++) {
-		if (warn) _gameRef->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
+		if (warn) _gameRef->LOG(0, "Removing orphan font '%s'", _fonts[i]->getFilename());
 		delete _fonts[i];
 	}
 	_fonts.removeAll();
@@ -74,7 +74,7 @@ BaseFont *BaseFontStorage::addFont(const char *filename) {
 	if (!filename) return NULL;
 
 	for (int i = 0; i < _fonts.getSize(); i++) {
-		if (scumm_stricmp(_fonts[i]->_filename, filename) == 0) {
+		if (scumm_stricmp(_fonts[i]->getFilename(), filename) == 0) {
 			_fonts[i]->_refCount++;
 			return _fonts[i];
 		}

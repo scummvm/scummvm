@@ -216,8 +216,7 @@ bool UIWindow::loadFile(const char *filename) {
 
 	bool ret;
 
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing WINDOW file '%s'", filename);
 
@@ -584,23 +583,23 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->_filename)
-		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
-	if (_backInactive && _backInactive->_filename)
-		buffer->putTextIndent(indent + 2, "BACK_INACTIVE=\"%s\"\n", _backInactive->_filename);
+	if (_back && _back->getFilename())
+		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->getFilename());
+	if (_backInactive && _backInactive->getFilename())
+		buffer->putTextIndent(indent + 2, "BACK_INACTIVE=\"%s\"\n", _backInactive->getFilename());
 
-	if (_image && _image->_filename)
-		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
-	if (_imageInactive && _imageInactive->_filename)
-		buffer->putTextIndent(indent + 2, "IMAGE_INACTIVE=\"%s\"\n", _imageInactive->_filename);
+	if (_image && _image->getFilename())
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getFilename());
+	if (_imageInactive && _imageInactive->getFilename())
+		buffer->putTextIndent(indent + 2, "IMAGE_INACTIVE=\"%s\"\n", _imageInactive->getFilename());
 
-	if (_font && _font->_filename)
-		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
-	if (_fontInactive && _fontInactive->_filename)
-		buffer->putTextIndent(indent + 2, "FONT_INACTIVE=\"%s\"\n", _fontInactive->_filename);
+	if (_font && _font->getFilename())
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
+	if (_fontInactive && _fontInactive->getFilename())
+		buffer->putTextIndent(indent + 2, "FONT_INACTIVE=\"%s\"\n", _fontInactive->getFilename());
 
-	if (_cursor && _cursor->_filename)
-		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+	if (_cursor && _cursor->getFilename())
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
 
 	buffer->putTextIndent(indent + 2, "\n");
 
@@ -758,8 +757,8 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetInactiveImage") == 0) {
 		stack->correctParams(0);
-		if (!_imageInactive || !_imageInactive->_filename) stack->pushNULL();
-		else stack->pushString(_imageInactive->_filename);
+		if (!_imageInactive || !_imageInactive->getFilename()) stack->pushNULL();
+		else stack->pushString(_imageInactive->getFilename());
 
 		return STATUS_OK;
 	}

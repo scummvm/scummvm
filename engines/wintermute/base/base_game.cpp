@@ -396,9 +396,8 @@ bool BaseGame::cleanup() {
 	_viewportSP = -1;
 
 	delete[] _name;
-	delete[] _filename;
 	_name = NULL;
-	_filename = NULL;
+	setFilename(NULL);
 	for (int i = 0; i < 7; i++) {
 		delete[] _caption[i];
 		_caption[i] = NULL;
@@ -679,8 +678,7 @@ bool BaseGame::loadFile(const char *filename) {
 
 	bool ret;
 
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing GAME file '%s'", filename);
 
@@ -1662,8 +1660,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetActiveCursor") == 0) {
 		stack->correctParams(0);
-		if (!_activeCursor || !_activeCursor->_filename) stack->pushNULL();
-		else stack->pushString(_activeCursor->_filename);
+		if (!_activeCursor || !_activeCursor->getFilename()) stack->pushNULL();
+		else stack->pushString(_activeCursor->getFilename());
 
 		return STATUS_OK;
 	}
@@ -1938,8 +1936,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetWaitCursor") == 0) {
 		stack->correctParams(0);
-		if (!_cursorNoninteractive || !_cursorNoninteractive->_filename) stack->pushNULL();
-		else stack->pushString(_cursorNoninteractive->_filename);
+		if (!_cursorNoninteractive || !_cursorNoninteractive->getFilename()) stack->pushNULL();
+		else stack->pushString(_cursorNoninteractive->getFilename());
 
 		return STATUS_OK;
 	}

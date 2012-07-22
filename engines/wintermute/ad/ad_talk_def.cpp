@@ -78,7 +78,7 @@ bool AdTalkDef::loadFile(const char *filename) {
 
 	bool ret;
 
-	BaseUtils::setString(&_filename, filename);
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing TALK file '%s'", filename);
 

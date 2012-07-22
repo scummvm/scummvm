@@ -66,7 +66,7 @@ void BaseSprite::setDefaults() {
 	_currentFrame = -1;
 	_looping = false;
 	_lastFrameTime = 0;
-	_filename = NULL;
+	setFilename(NULL);
 	_finished = false;
 	_changed = false;
 	_paused = false;
@@ -160,9 +160,7 @@ bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType c
 		}
 	}
 
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
-
+	setFilename(filename);
 
 	return ret;
 }

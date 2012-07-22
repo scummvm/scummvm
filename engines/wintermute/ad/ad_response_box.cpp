@@ -196,8 +196,7 @@ bool AdResponseBox::loadFile(const char *filename) {
 
 	bool ret;
 
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
 
@@ -341,13 +340,13 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "AREA { %d, %d, %d, %d }\n", _responseArea.left, _responseArea.top, _responseArea.right, _responseArea.bottom);
 
-	if (_font && _font->_filename)
-		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
-	if (_fontHover && _fontHover->_filename)
-		buffer->putTextIndent(indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
+	if (_font && _font->getFilename())
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
+	if (_fontHover && _fontHover->getFilename())
+		buffer->putTextIndent(indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->getFilename());
 
-	if (_cursor && _cursor->_filename)
-		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
+	if (_cursor && _cursor->getFilename())
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
 
 	buffer->putTextIndent(indent + 2, "HORIZONTAL=%s\n", _horizontal ? "TRUE" : "FALSE");
 

@@ -93,8 +93,7 @@ bool AdItem::loadFile(const char *filename) {
 
 	bool ret;
 
-	_filename = new char [strlen(filename) + 1];
-	strcpy(_filename, filename);
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ITEM file '%s'", filename);
 
@@ -462,8 +461,8 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetHoverSprite") == 0) {
 		stack->correctParams(0);
 
-		if (!_spriteHover || !_spriteHover->_filename) stack->pushNULL();
-		else stack->pushString(_spriteHover->_filename);
+		if (!_spriteHover || !_spriteHover->getFilename()) stack->pushNULL();
+		else stack->pushString(_spriteHover->getFilename());
 		return STATUS_OK;
 	}
 
@@ -504,8 +503,8 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetNormalCursor") == 0) {
 		stack->correctParams(0);
 
-		if (!_cursorNormal || !_cursorNormal->_filename) stack->pushNULL();
-		else stack->pushString(_cursorNormal->_filename);
+		if (!_cursorNormal || !_cursorNormal->getFilename()) stack->pushNULL();
+		else stack->pushString(_cursorNormal->getFilename());
 		return STATUS_OK;
 	}
 
@@ -547,8 +546,8 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetHoverCursor") == 0) {
 		stack->correctParams(0);
 
-		if (!_cursorHover || !_cursorHover->_filename) stack->pushNULL();
-		else stack->pushString(_cursorHover->_filename);
+		if (!_cursorHover || !_cursorHover->getFilename()) stack->pushNULL();
+		else stack->pushString(_cursorHover->getFilename());
 		return STATUS_OK;
 	}
 
