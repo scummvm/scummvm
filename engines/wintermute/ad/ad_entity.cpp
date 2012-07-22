@@ -502,7 +502,7 @@ bool AdEntity::display() {
 		if (_ignoreItems && ((AdGame *)_gameRef)->_selectedItem) Reg = false;
 
 		if (_region && (Reg || _editorAlwaysRegister)) {
-			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
+			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
 		}
 
 		displaySpriteAttachments(true);

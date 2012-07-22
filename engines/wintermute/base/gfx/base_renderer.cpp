@@ -72,7 +72,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 	point.x = x;
 	point.y = y;
 
-	for (int i = _rectList.getSize() - 1; i >= 0; i--) {
+	for (int i = _rectList.size() - 1; i >= 0; i--) {
 		if (BasePlatform::ptInRect(&_rectList[i]->_rect, point)) {
 			if (_rectList[i]->_precise) {
 				// frame
@@ -106,10 +106,10 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderer::deleteRectList() {
-	for (int i = 0; i < _rectList.getSize(); i++) {
+	for (int i = 0; i < _rectList.size(); i++) {
 		delete _rectList[i];
 	}
-	_rectList.removeAll();
+	_rectList.clear();
 }
 
 
@@ -252,6 +252,10 @@ bool BaseRenderer::pointInViewport(Point32 *p) {
 	if (p->y > _drawOffsetY + _height) return false;
 
 	return true;
+}
+
+void BaseRenderer::addRectToList(BaseActiveRect *rect) {
+	_rectList.push_back(rect);
 }
 
 } // end of namespace WinterMute

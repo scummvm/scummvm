@@ -672,7 +672,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 
 	_gameRef->_textEncoding = OrigEncoding;

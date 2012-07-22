@@ -637,7 +637,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		font->drawText((byte *)_text, offsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), offsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
 	}
 
-	if (!_pixelPerfect || !_image) _gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	if (!_pixelPerfect || !_image) _gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 	// reset unused sprites
 	if (_image && _image != image) _image->reset();

@@ -209,9 +209,9 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 
 	if (registerOwner != NULL && !_decoration) {
 		if (zoomX == 100 && zoomY == 100) {
-			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
+			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
 		} else {
-			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
+			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
 	if (_gameRef->_suspendedRendering) return STATUS_OK;

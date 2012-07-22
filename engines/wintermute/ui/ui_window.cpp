@@ -190,7 +190,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (!_transparent && !image)
-		_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		_widgets[i]->display(_posX + offsetX, _posY + offsetY);

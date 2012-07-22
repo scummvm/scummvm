@@ -29,10 +29,10 @@
 #ifndef WINTERMUTE_BRENDERER_H
 #define WINTERMUTE_BRENDERER_H
 
-
-#include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"
 #include "common/rect.h"
+#include "common/array.h"
 
 namespace WinterMute {
 
@@ -117,8 +117,10 @@ public:
 	int _bPP;
 	int _height;
 	int _width;
-
-	BaseArray<BaseActiveRect *, BaseActiveRect *> _rectList;
+	
+	void addRectToList(BaseActiveRect *rect);
+private:
+	Common::Array<BaseActiveRect *> _rectList;
 };
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
