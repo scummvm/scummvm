@@ -3925,7 +3925,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x39ae);
 			break;
 		default:
-			displayMessage(0x39b7);
+			displayMessage(0x3ab7);
 		}
 		return true;
 
