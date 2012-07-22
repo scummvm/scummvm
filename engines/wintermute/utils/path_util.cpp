@@ -37,10 +37,11 @@ namespace WinterMute {
 AnsiString PathUtil::unifySeparators(const AnsiString &path) {
 	AnsiString newPath = path;
 
-	AnsiString::iterator it;
-	for (it = newPath.begin(); it != newPath.end(); it++) {
-		if (*it == '\\') *it = '/';
+	for (uint32 i = 0; i < newPath.size(); i++) {
+		if (newPath[i] == '\\')
+			newPath.setChar('/', i);
 	}
+
 	return newPath;
 }
 
@@ -78,7 +79,7 @@ AnsiString PathUtil::getFileName(const AnsiString &path) {
 	AnsiString newPath = unifySeparators(path);
 
 	//size_t pos = newPath.find_last_of(L'/'); TODO REMOVE.
-	Common::String lastPart = Common::lastPathComponent(path, '/');
+	Common::String lastPart = Common::lastPathComponent(newPath, '/');
 	if (lastPart[lastPart.size() - 1 ] != '/')
 		return lastPart;
 	else
@@ -93,9 +94,12 @@ AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
 
 	//size_t pos = fileName.find_last_of('.'); //TODO REMOVE!
 	// TODO: Prettify this.
-	Common::String extension = Common::lastPathComponent(path, '.');
-	Common::String filename = Common::String(path.c_str(), path.size() - extension.size());
-	return filename;
+	AnsiString extension = Common::lastPathComponent(fileName, '.');
+	for (int i = 0; i < extension.size() + 1; i++) {
+		fileName.deleteLastChar();
+	}
+//	Common::String filename = Common::String(fileName.c_str(), fileName.size() - extension.size() + 1);
+	return fileName;
 	//if (pos == AnsiString::npos) return fileName;
 	//else return fileName.substr(0, pos);
 }
