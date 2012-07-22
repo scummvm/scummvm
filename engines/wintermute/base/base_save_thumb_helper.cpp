@@ -65,7 +65,7 @@ bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
 
 		// normal thumbnail
 		if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
-			_thumbnail = new BaseImage(_gameRef);
+			_thumbnail = new BaseImage(_gameRef->_fileManager);
 			_thumbnail->copyFrom(screenshot, _gameRef->_thumbnailWidth, _gameRef->_thumbnailHeight);
 		}
 

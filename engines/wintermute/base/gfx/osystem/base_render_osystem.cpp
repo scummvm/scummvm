@@ -561,7 +561,7 @@ bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 BaseImage *BaseRenderOSystem::takeScreenshot() {
 // TODO: Fix this
 	warning("BaseRenderOSystem::TakeScreenshot() - not ported yet");
-	BaseImage *screenshot = new BaseImage(_gameRef);
+	BaseImage *screenshot = new BaseImage(_gameRef->_fileManager);
 	screenshot->copyFrom(_renderSurface);
 	return screenshot;
 #if 0

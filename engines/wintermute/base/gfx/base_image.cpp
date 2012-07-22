@@ -26,9 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
 #include "engines/wintermute/utils/string_util.h"
@@ -44,11 +42,8 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-BaseImage::BaseImage(BaseGame *inGame, FIBITMAP *bitmap): BaseClass(inGame) {
-#if 0
-	_bitmap = bitmap;
-#endif
-	_bitmap = NULL;
+BaseImage::BaseImage(BaseFileManager *fileManager) {
+	_fileManager = fileManager;
 	_palette = NULL;
 	_surface = NULL;
 	_decoder = NULL;
@@ -86,13 +81,13 @@ bool BaseImage::loadFile(const Common::String &filename) {
 		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 	_filename = filename;
-	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(filename.c_str());
+	Common::SeekableReadStream *file = _fileManager->openFile(filename.c_str());
 	if (!file) return STATUS_FAILED;
 
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
 	_palette = _decoder->getPalette();
-	_gameRef->_fileManager->closeFile(file);
+	_fileManager->closeFile(file);
 
 	return STATUS_OK;
 }

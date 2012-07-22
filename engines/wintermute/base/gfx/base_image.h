@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BIMAGE_H
 #define WINTERMUTE_BIMAGE_H
 
-#include "engines/wintermute/base/base.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/decoders/image_decoder.h"
@@ -37,14 +36,13 @@
 #include "common/str.h"
 #include "common/stream.h"
 
-struct FIBITMAP;
-
 namespace WinterMute {
 class BaseSurface;
-class BaseImage: BaseClass {
+class BaseFileManager;
+class BaseImage {
 
 public:
-	BaseImage(BaseGame *inGame, FIBITMAP *bitmap = NULL);
+	BaseImage(BaseFileManager *fileManager);
 	~BaseImage();
 
 	bool loadFile(const Common::String &filename);
@@ -63,10 +61,10 @@ public:
 private:
 	Common::String _filename;
 	Graphics::ImageDecoder *_decoder;
-	FIBITMAP *_bitmap;
 	const Graphics::Surface *_surface;
 	Graphics::Surface *_deletableSurface;
 	const byte *_palette;
+	BaseFileManager *_fileManager;
 };
 
 } // end of namespace WinterMute

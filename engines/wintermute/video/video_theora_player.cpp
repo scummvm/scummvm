@@ -672,7 +672,7 @@ bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	warning("VideoTheoraPlayer::SetAlphaImage(%s) - Not implemented", filename.c_str());
 
 	delete _alphaImage;
-	_alphaImage = new BaseImage(_gameRef);
+	_alphaImage = new BaseImage(_gameRef->_fileManager);
 	if (!_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
 		delete _alphaImage;
 		_alphaImage = NULL;
