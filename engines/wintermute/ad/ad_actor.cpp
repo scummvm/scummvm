@@ -26,10 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/dctypes.h"
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/ad/ad_actor.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_scene.h"
@@ -38,16 +34,15 @@
 #include "engines/wintermute/ad/ad_waypoint_group.h"
 #include "engines/wintermute/ad/ad_path.h"
 #include "engines/wintermute/ad/ad_sentence.h"
-#include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/wintermute.h"
 
 namespace WinterMute {

@@ -51,6 +51,7 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/video/video_theora_player.h"
+#include "engines/wintermute/base/particles/part_emitter.h"
 #include "common/str.h"
 
 namespace WinterMute {

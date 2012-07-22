@@ -30,7 +30,7 @@
 #define WINTERMUTE_ADOBJECT_H
 
 #include "engines/wintermute/ad/ad_types.h"
-#include "engines/wintermute/base/particles/part_emitter.h"
+#include "engines/wintermute/base/base_object.h"
 
 namespace WinterMute {
 
@@ -40,6 +40,7 @@ class AdSentence;
 class BaseFont;
 class BaseRegion;
 class AdInventory;
+class PartEmitter;
 
 #define MAX_NUM_REGIONS 10
 

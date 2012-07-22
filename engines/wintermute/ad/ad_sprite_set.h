@@ -31,10 +31,9 @@
 
 
 #include "engines/wintermute/base/base_object.h"
-#include "engines/wintermute/base/base_sprite.h"    // Added by ClassView
 
 namespace WinterMute {
-
+class BaseSprite;
 class AdSpriteSet : public BaseObject {
 public:
 	bool containsSprite(BaseSprite *sprite);
