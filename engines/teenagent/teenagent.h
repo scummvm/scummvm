@@ -163,6 +163,11 @@ private:
 	uint _mark_delay, _game_delay;
 
 	Common::Array<Common::Array<UseHotspot> > use_hotspots;
+
+	void fnIntro();
+	void fnGotAnchor();
+	void fnGuardDrinking();
+	void fnPutRockInHole();
 };
 
 } // End of namespace TeenAgent

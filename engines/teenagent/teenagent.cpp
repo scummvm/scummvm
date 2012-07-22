@@ -93,7 +93,7 @@ bool TeenAgentEngine::trySelectedObject() {
 	if ((res->dseg.get_byte(0) == 1 && inv->id == 49 && dst_object->id == 5) ||
 	    (res->dseg.get_byte(0) == 2 && inv->id == 29 && dst_object->id == 5)) {
 		//putting rock into hole or superglue on rock
-		processCallback(csAddr_putRockInHole);
+		fnPutRockInHole();
 		return true;
 	}
 
@@ -563,7 +563,7 @@ Common::Error TeenAgentEngine::run() {
 			return Common::kNoError;
 		scene->intro = true;
 		scene_busy = true;
-		processCallback(csAddr_intro);
+		fnIntro();
 	}
 
 	CursorMan.showMouse(true);
@@ -615,11 +615,11 @@ Common::Error TeenAgentEngine::run() {
 					break;
 
 				if (res->dseg.get_byte(0) == 3 && current_object->id == 1) {
-					processCallback(csAddr_guardDrinking);
+					fnGuardDrinking();
 					break;
 				}
 				if (res->dseg.get_byte(0) == 4 && current_object->id == 5) {
-					processCallback(csAddr_gotAnchor);
+					fnGotAnchor();
 					break;
 				}
 				use(current_object);

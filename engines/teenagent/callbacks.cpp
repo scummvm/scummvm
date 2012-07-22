@@ -34,6 +34,155 @@ namespace TeenAgent {
 #define GET_FLAG(addr) (res->dseg.get_byte(addr))
 #define INC_FLAG(addr) (++*res->dseg.ptr(addr))
 
+void TeenAgentEngine::fnIntro() {
+	hideActor();
+
+	loadScene(41, 139, 156, 3);
+	playSound(41, 12);
+	playAnimation(912, 1);
+	setOns(0, 108);
+	playSound(62, 8);
+	playSound(58, 40);
+	playAnimation(913, 1);
+	setOns(1, 109);
+	setLan(2, 1);
+	dialog->show(192, scene, 914, 915, 0xe7, 0xd7, 2, 1);
+	displayCredits(dsAddr_introCredits1);
+
+	loadScene(42, 139, 156, 3);
+	playSound(15, 20);
+	playAnimation(916, 1);
+	playSound(40, 18);
+	playSound(40, 22);
+	for (byte i = 27; i < 37; i += 2)
+		playSound(40, i);
+	playSound(29, 44);
+	playAnimation(918, 0, true);
+	playAnimation(917, 1, true);
+	waitAnimation();
+	displayCredits(dsAddr_introCredits2);
+
+	loadScene(40, 139, 156, 3);
+	playMusic(3);
+	dialog->show(193, scene, 920, 924, 0xe7, 0xeb, 1, 2);
+	playSound(26, 50);
+	playAnimation(925, 0, true);
+	playAnimation(926, 1, true);
+	waitAnimation();
+	dialog->show(194, scene, 927, 920, 0xeb, 0xe7, 2, 1);
+	displayCredits(dsAddr_introCredits3);
+
+	loadScene(39, 139, 156, 3);
+	playMusic(11);
+	playSound(81, 2);
+	playSound(81, 8);
+	playSound(81, 11);
+	playSound(81, 14);
+	playSound(81, 16);
+	playSound(81, 18);
+	playSound(81, 20);
+	playSound(81, 21);
+	playAnimation(928, 1);
+	setOns(0, 112);
+	dialog->showMono(195, scene, 929, 0xd1, 1);
+	showActor();
+	moveTo(319, 150, 1, true);
+	moveTo(63, 150, 1);
+	displayAsyncMessage(dsAddr_HeyWtmQMsg, 4, 62, 18, 36); // hey, what's the matter?
+	playAnimation(851, 0, true);
+	playActorAnimation(930, true);
+	waitAnimation();
+	playSound(24, 11);
+	playActorAnimation(931);
+
+	displayCredits(dsAddr_introCredits4);
+
+	playMusic(3);
+	loadScene(40, 50, 186, 1);
+	setOns(0, 113);
+	dialog->show(196, scene, 919, 0, 0xe7, 0xd1, 1, 0);
+	moveTo(196, 186, 1);
+	dialog->show(197, scene, 0, 920, 0xd1, 0xe7, 0, 1);
+	playActorAnimation(932);
+	dialog->show(198, scene, 0, 920, 0xd1, 0xe7, 0, 1);
+	playActorAnimation(932);
+	dialog->show(199, scene, 0, 920, 0xd1, 0xe7, 0, 1);
+	playActorAnimation(932);
+	dialog->show(200, scene, 0, 922, 0xd1, 0xe7, 0, 1);
+	playActorAnimation(933);
+	dialog->show(201, scene, 0, 920, 0xd1, 0xe7, 0, 1);
+	moveTo(174, 186, 1);
+	playAnimation(851, 0, true);
+	playActorAnimation(934, true);
+	waitAnimation();
+	loadScene(10, 136, 153, 3);
+}
+
+void TeenAgentEngine::fnGotAnchor() {
+	SET_FLAG(0, 0);
+	setTimerCallback(0, 0);
+	scene->getActorAnimation()->free();
+	playSound(64, 7);
+	playActorAnimation(618);
+	disableObject(5);
+	setOns(0, 0);
+	playSound(31, 1);
+	playActorAnimation(619);
+	processCallback(0x9a7a);
+	inventory->add(42);
+	displayMessage(dsAddr_hookedAnchorMsg); // "I was really hooked on this anchor!"
+}
+
+void TeenAgentEngine::fnGuardDrinking() {
+	SET_FLAG(0, 0);
+	setTimerCallback(0, 0);
+	scene->getAnimation(0)->free();
+	SET_FLAG(0xdb9c, 1);
+
+	displayAsyncMessage(dsAddr_BooMsg, 300, 130, 1, 5); // "Booo!"
+	setOns(0, 16);
+	enableObject(2);
+
+	playSound(17, 5);
+	playAnimation(545, 0);
+
+	dialog->show(5, scene, 0, 546, 0xd1, 0xd9, 0, 1);
+	SET_FLAG(0xda96, 1);
+	SET_FLAG(0xda97, 0);
+}
+
+void TeenAgentEngine::fnPutRockInHole() {
+	if (CHECK_FLAG(0, 0)) {
+		playSound(5, 2);
+		playSound(15, 12);
+		playActorAnimation(638);
+		inventory->remove(48);
+		setTimerCallback(0x8d79, 100);
+		SET_FLAG(0, 1);
+	} else if (CHECK_FLAG(0, 1)) {
+		playSound(5, 2);
+		playSound(52, 13);
+		playActorAnimation(648);
+		setOns(1, 46);
+		inventory->remove(49);
+		setTimerCallback(0x8d79, 100);
+		SET_FLAG(0, 2);
+	} else if (CHECK_FLAG(0, 2)) {
+		playActorAnimation(649);
+		setOns(1, 47);
+		wait(300);
+		for (byte i = 1; i <= 37; i += 4)
+			playSound(68, i);
+		playAnimation(639, 2);
+		setOns(0, 42);
+		enableObject(6);
+		disableObject(5);
+		SET_FLAG(0xdbab, 1);
+		SET_FLAG(0, 0);
+		setTimerCallback(0, 0);
+	}
+}
+
 void TeenAgentEngine::rejectMessage() {
 	//random reject message:
 	uint i = _rnd.getRandomNumber(3);
@@ -83,87 +232,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	bool retVal = true;
 	switch (addr) {
 	case csAddr_intro: // intro
-		hideActor();
-
-		loadScene(41, 139, 156, 3);
-		playSound(41, 12);
-		playAnimation(912, 1);
-		setOns(0, 108);
-		playSound(62, 8);
-		playSound(58, 40);
-		playAnimation(913, 1);
-		setOns(1, 109);
-		setLan(2, 1);
-		dialog->show(192, scene, 914, 915, 0xe7, 0xd7, 2, 1);
-		displayCredits(dsAddr_introCredits1);
-
-		loadScene(42, 139, 156, 3);
-		playSound(15, 20);
-		playAnimation(916, 1);
-		playSound(40, 18);
-		playSound(40, 22);
-		for (byte i = 27; i < 37; i += 2)
-			playSound(40, i);
-		playSound(29, 44);
-		playAnimation(918, 0, true);
-		playAnimation(917, 1, true);
-		waitAnimation();
-		displayCredits(dsAddr_introCredits2);
-
-		loadScene(40, 139, 156, 3);
-		playMusic(3);
-		dialog->show(193, scene, 920, 924, 0xe7, 0xeb, 1, 2);
-		playSound(26, 50);
-		playAnimation(925, 0, true);
-		playAnimation(926, 1, true);
-		waitAnimation();
-		dialog->show(194, scene, 927, 920, 0xeb, 0xe7, 2, 1);
-		displayCredits(dsAddr_introCredits3);
-
-		loadScene(39, 139, 156, 3);
-		playMusic(11);
-		playSound(81, 2);
-		playSound(81, 8);
-		playSound(81, 11);
-		playSound(81, 14);
-		playSound(81, 16);
-		playSound(81, 18);
-		playSound(81, 20);
-		playSound(81, 21);
-		playAnimation(928, 1);
-		setOns(0, 112);
-		dialog->showMono(195, scene, 929, 0xd1, 1);
-		showActor();
-		moveTo(319, 150, 1, true);
-		moveTo(63, 150, 1);
-		displayAsyncMessage(dsAddr_HeyWtmQMsg, 4, 62, 18, 36); // hey, what's the matter?
-		playAnimation(851, 0, true);
-		playActorAnimation(930, true);
-		waitAnimation();
-		playSound(24, 11);
-		playActorAnimation(931);
-
-		displayCredits(dsAddr_introCredits4);
-
-		playMusic(3);
-		loadScene(40, 50, 186, 1);
-		setOns(0, 113);
-		dialog->show(196, scene, 919, 0, 0xe7, 0xd1, 1, 0);
-		moveTo(196, 186, 1);
-		dialog->show(197, scene, 0, 920, 0xd1, 0xe7, 0, 1);
-		playActorAnimation(932);
-		dialog->show(198, scene, 0, 920, 0xd1, 0xe7, 0, 1);
-		playActorAnimation(932);
-		dialog->show(199, scene, 0, 920, 0xd1, 0xe7, 0, 1);
-		playActorAnimation(932);
-		dialog->show(200, scene, 0, 922, 0xd1, 0xe7, 0, 1);
-		playActorAnimation(933);
-		dialog->show(201, scene, 0, 920, 0xd1, 0xe7, 0, 1);
-		moveTo(174, 186, 1);
-		playAnimation(851, 0, true);
-		playActorAnimation(934, true);
-		waitAnimation();
-		loadScene(10, 136, 153, 3);
+		fnIntro();
 		break;
 
 	case 0x4021:
@@ -779,21 +848,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case csAddr_guardDrinking:
-		SET_FLAG(0, 0);
-		setTimerCallback(0, 0);
-		scene->getAnimation(0)->free();
-		SET_FLAG(0xdb9c, 1);
-
-		displayAsyncMessage(dsAddr_BooMsg, 300, 130, 1, 5); // "Booo!"
-		setOns(0, 16);
-		enableObject(2);
-
-		playSound(17, 5);
-		playAnimation(545, 0);
-
-		dialog->show(5, scene, 0, 546, 0xd1, 0xd9, 0, 1);
-		SET_FLAG(0xda96, 1);
-		SET_FLAG(0xda97, 0);
+		fnGuardDrinking();
 		break;
 
 	case 0x51f0:
@@ -2848,35 +2903,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case csAddr_putRockInHole:
-		if (CHECK_FLAG(0, 0)) {
-			playSound(5, 2);
-			playSound(15, 12);
-			playActorAnimation(638);
-			inventory->remove(48);
-			setTimerCallback(0x8d79, 100);
-			SET_FLAG(0, 1);
-		} else if (CHECK_FLAG(0, 1)) {
-			playSound(5, 2);
-			playSound(52, 13);
-			playActorAnimation(648);
-			setOns(1, 46);
-			inventory->remove(49);
-			setTimerCallback(0x8d79, 100);
-			SET_FLAG(0, 2);
-		} else if (CHECK_FLAG(0, 2)) {
-			playActorAnimation(649);
-			setOns(1, 47);
-			wait(300);
-			for (byte i = 1; i <= 37; i += 4)
-				playSound(68, i);
-			playAnimation(639, 2);
-			setOns(0, 42);
-			enableObject(6);
-			disableObject(5);
-			SET_FLAG(0xdbab, 1);
-			SET_FLAG(0, 0);
-			setTimerCallback(0, 0);
-		}
+		fnPutRockInHole();
 		break;
 
 	case 0x8f1d:
@@ -3938,18 +3965,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case csAddr_gotAnchor:
-		SET_FLAG(0, 0);
-		setTimerCallback(0, 0);
-		scene->getActorAnimation()->free();
-		playSound(64, 7);
-		playActorAnimation(618);
-		disableObject(5);
-		setOns(0, 0);
-		playSound(31, 1);
-		playActorAnimation(619);
-		processCallback(0x9a7a);
-		inventory->add(42);
-		displayMessage(dsAddr_hookedAnchorMsg); // "I was really hooked on this anchor!"
+		fnGotAnchor();
 		break;
 
 	case 0x9a7a:
