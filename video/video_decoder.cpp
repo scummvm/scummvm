@@ -400,11 +400,11 @@ uint32 AdvancedVideoDecoder::FixedRateVideoTrack::getNextFrameStartTime() const 
 	return time.toInt();
 }
 
-bool AdvancedVideoDecoder::FixedLengthVideoTrack::endOfTrack() const {
+bool AdvancedVideoDecoder::FixedRateVideoTrack::endOfTrack() const {
 	return getCurFrame() >= (getFrameCount() - 1);
 }
 
-Audio::Timestamp AdvancedVideoDecoder::FixedDurationVideoTrack::getDuration() const {
+Audio::Timestamp AdvancedVideoDecoder::FixedRateVideoTrack::getDuration() const {
 	// Since Audio::Timestamp doesn't support a fractional frame rate, we're currently
 	// just converting to milliseconds.
 	Common::Rational time = getFrameCount() * 1000;

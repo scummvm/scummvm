@@ -499,43 +499,23 @@ protected:
 
 	/**
 	 * A VideoTrack that is played at a constant rate.
+	 *
+	 * If the frame count is unknown, you must override endOfTrack().
 	 */
-	class FixedRateVideoTrack : public virtual VideoTrack {
+	class FixedRateVideoTrack : public VideoTrack {
 	public:
 		FixedRateVideoTrack() {}
 		virtual ~FixedRateVideoTrack() {}
 
+		virtual bool endOfTrack() const;
 		uint32 getNextFrameStartTime() const;
+		virtual Audio::Timestamp getDuration() const;
 
 	protected:
 		/**
 		 * Get the rate at which this track is played.
 		 */
 		virtual Common::Rational getFrameRate() const = 0;
-	};
-
-	/**
-	 * A VideoTrack with a known frame count that can be reliably
-	 * used to figure out if the track has finished.
-	 */
-	class FixedLengthVideoTrack : public virtual VideoTrack {
-	public:
-		FixedLengthVideoTrack() {}
-		virtual ~FixedLengthVideoTrack() {}
-
-		bool endOfTrack() const;
-	};
-
-	/**
-	 * A FixedRateVideoTrack and FixedLengthVideoTrack that implements the getDuration()
-	 * function.
-	 */
-	class FixedDurationVideoTrack : public FixedRateVideoTrack, public FixedLengthVideoTrack {
-	public:
-		FixedDurationVideoTrack() {}
-		virtual ~FixedDurationVideoTrack() {}
-
-		virtual Audio::Timestamp getDuration() const;
 	};
 
 	/**
