@@ -519,6 +519,20 @@ void AdvancedVideoDecoder::addTrack(Track *track) {
 		track->start();
 }
 
+AdvancedVideoDecoder::Track *AdvancedVideoDecoder::getTrack(uint track) {
+	if (track > _tracks.size())
+		return 0;
+
+	return _tracks[track];
+}
+
+const AdvancedVideoDecoder::Track *AdvancedVideoDecoder::getTrack(uint track) const {
+	if (track > _tracks.size())
+		return 0;
+
+	return _tracks[track];
+}
+
 AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack() {
 	VideoTrack *bestTrack = 0;
 	uint32 bestTime = 0xFFFFFFFF;

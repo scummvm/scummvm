@@ -25,7 +25,7 @@
 
 #include "audio/mixer.h"
 #include "audio/timestamp.h"	// TODO: Move this to common/ ?
-#include "common/list.h"
+#include "common/array.h"
 #include "common/str.h"
 
 namespace Audio {
@@ -657,9 +657,23 @@ protected:
 	 */
 	virtual bool useAudioSync() const { return true; }
 
+	/**
+	 * Get the given track based on its index.
+	 *
+	 * @return A valid track pointer on success, 0 otherwise
+	 */
+	Track *getTrack(uint track);
+
+	/**
+	 * Get the given track based on its index
+	 *
+	 * @return A valid track pointer on success, 0 otherwise
+	 */
+	const Track *getTrack(uint track) const;
+
 private:
 	// Tracks owned by this AdvancedVideoDecoder
-	typedef Common::List<Track *> TrackList;
+	typedef Common::Array<Track *> TrackList;
 	TrackList _tracks;
 	VideoTrack *findNextVideoTrack();
 	const VideoTrack *findNextVideoTrack() const;
