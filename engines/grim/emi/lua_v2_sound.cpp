@@ -25,6 +25,7 @@
 #include "common/system.h"
 
 #include "engines/grim/emi/sound/aifftrack.h"
+#include "engines/grim/emi/sound/scxtrack.h"
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/lua/lua.h"
 
@@ -258,11 +259,22 @@ void Lua_V2::PlaySound() {
 	const char *str = lua_getstring(strObj);
 	Common::String filename = str;
 
+	SoundTrack *track;
+
 	if (g_grim->getGameFlags() != ADGF_DEMO) {
-		filename += ".aif";
+		if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+			filename += ".scx";
+		} else {
+			filename += ".aif";
+		}
 	}
 
-	AIFFTrack *track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
+	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
+		track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
+	} else {
+		track = new SCXTrack(Audio::Mixer::kSFXSoundType);
+	}
+
 	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
 	track->openSound(filename, stream);
 	track->play();
