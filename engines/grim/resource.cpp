@@ -149,6 +149,10 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "sfx.m4b");
 			SearchMan.listMatchingMembers(files, "voice???.m4b");
 			SearchMan.listMatchingMembers(files, "music?.m4b");
+
+			if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+				SearchMan.listMatchingMembers(files, "???.m4b");
+			}
 		}
 	}
 
