@@ -2265,7 +2265,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x78f5:
 		if (CHECK_FLAG(0xDB95, 1)) {
-			displayMessage(0x3575);
+			displayMessage(0x3E75);
 			return true;
 		} else
 			return false;
