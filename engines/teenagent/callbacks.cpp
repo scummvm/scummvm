@@ -2269,7 +2269,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x78f5:
 		if (CHECK_FLAG(0xdb95, 1)) {
-			displayMessage(0x3575); // FIXME: Not sure this address is correct
+			displayMessage(dsAddr_bootEmptyMsg); // "There's nothing else in the boot"
 		} else
 			retVal = false;
 		break;
