@@ -296,7 +296,7 @@ public:
 	virtual bool cleanup();
 	virtual bool loadGame(int slot);
 	virtual bool loadGame(const char *filename);
-	virtual bool SaveGame(int slot, const char *desc, bool quickSave = false);
+	virtual bool saveGame(int slot, const char *desc, bool quickSave = false);
 	virtual bool showCursor();
 
 	BaseSprite *_cursorNoninteractive;

@@ -1513,7 +1513,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		char *desc = new char[strlen(xdesc) + 1];
 		strcpy(desc, xdesc);
 		stack->pushBool(true);
-		if (DID_FAIL(SaveGame(slot, desc, quick))) {
+		if (DID_FAIL(saveGame(slot, desc, quick))) {
 			stack->pop();
 			stack->pushBool(false);
 		}
@@ -3157,7 +3157,7 @@ bool BaseGame::showCursor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::SaveGame(int slot, const char *desc, bool quickSave) {
+bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
 
@@ -4458,7 +4458,7 @@ void BaseGame::autoSaveOnExit() {
 	if (!_autoSaveOnExit) return;
 	if (_state == GAME_FROZEN) return;
 
-	SaveGame(_autoSaveSlot, "autosave", true);
+	saveGame(_autoSaveSlot, "autosave", true);
 }
 
 //////////////////////////////////////////////////////////////////////////
