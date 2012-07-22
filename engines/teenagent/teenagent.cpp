@@ -114,7 +114,7 @@ bool TeenAgentEngine::trySelectedObject() {
 
 	// error
 	inventory->resetSelectedObject();
-	displayMessage(0x3457);
+	displayMessage(dsAddr_objErrorMsg); // "That's no good"
 	return true;
 }
 

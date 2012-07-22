@@ -228,7 +228,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 			}
 			table += 5;
 		}
-		_vm->displayMessage(0xc3e2);
+		_vm->displayMessage(dsAddr_objCombineErrorMsg);
 		activate(false);
 		resetSelectedObject();
 		return true;
