@@ -940,7 +940,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 		bool Found = false;
 		for (int i = 0; i < _anims.getSize(); i++) {
-			if (scumm_stricmp(_anims[i]->_name, AnimName) == 0) {
+			if (scumm_stricmp(_anims[i]->getName(), AnimName) == 0) {
 				// invalidate sprites in use
 				if (_anims[i]->containsSprite(_tempSprite2)) _tempSprite2 = NULL;
 				if (_anims[i]->containsSprite(_currentSprite)) _currentSprite = NULL;
@@ -1109,7 +1109,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 		if (_animSprite) {
 			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
-				_gameRef->LOG(res, "AdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
+				_gameRef->LOG(res, "AdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", getName(), _forcedTalkAnimName);
 				delete _animSprite;
 				_animSprite = NULL;
 			} else return _animSprite;
@@ -1131,7 +1131,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	if (!ret) {
 		BaseArray<AdSpriteSet *, AdSpriteSet *> TalkAnims;
 		for (int i = 0; i < _anims.getSize(); i++) {
-			if (_talkAnimName.compareToIgnoreCase(_anims[i]->_name) == 0)
+			if (_talkAnimName.compareToIgnoreCase(_anims[i]->getName()) == 0)
 				TalkAnims.add(_anims[i]);
 		}
 
@@ -1156,7 +1156,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 	if (stance != NULL) {
 		// search special stances
 		for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
-			if (scumm_stricmp(_talkSpritesEx[i]->_name, stance) == 0) {
+			if (scumm_stricmp(_talkSpritesEx[i]->getName(), stance) == 0) {
 				ret = _talkSpritesEx[i]->getSprite(_dir);
 				break;
 			}
@@ -1164,7 +1164,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 		if (ret == NULL) {
 			// search generic stances
 			for (int i = 0; i < _talkSprites.getSize(); i++) {
-				if (scumm_stricmp(_talkSprites[i]->_name, stance) == 0) {
+				if (scumm_stricmp(_talkSprites[i]->getName(), stance) == 0) {
 					ret = _talkSprites[i]->getSprite(_dir);
 					break;
 				}
@@ -1254,7 +1254,7 @@ int AdActor::getHeight() {
 //////////////////////////////////////////////////////////////////////////
 AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
 	for (int i = 0; i < _anims.getSize(); i++) {
-		if (animName.compareToIgnoreCase(_anims[i]->_name) == 0)
+		if (animName.compareToIgnoreCase(_anims[i]->getName()) == 0)
 			return _anims[i];
 	}
 	return NULL;

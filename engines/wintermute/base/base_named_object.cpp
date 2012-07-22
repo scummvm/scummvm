@@ -57,6 +57,10 @@ BaseNamedObject::~BaseNamedObject(void) {
 //////////////////////////////////////////////////////////////////////
 void BaseNamedObject::setName(const char *name) {
 	delete[] _name;
+	_name = NULL;
+
+	if (name == NULL)
+		return;
 
 	_name = new char [strlen(name) + 1];
 	if (_name != NULL) strcpy(_name, name);

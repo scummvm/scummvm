@@ -250,7 +250,7 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 	} else {
 		_scene->applyEvent("SceneShutdown", true);
 
-		setPrevSceneName(_scene->_name);
+		setPrevSceneName(_scene->getName());
 		setPrevSceneFilename(_scene->getFilename());
 
 		if (!_tempDisableSaveState) _scene->saveState();
@@ -657,7 +657,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 					if (val->getNative() == Inv->_takenItems[j]) {
 						stack->pushBool(true);
 						return STATUS_OK;
-					} else if (scumm_stricmp(val->getString(), Inv->_takenItems[j]->_name) == 0) {
+					} else if (scumm_stricmp(val->getString(), Inv->_takenItems[j]->getName()) == 0) {
 						stack->pushBool(true);
 						return STATUS_OK;
 					}
@@ -1093,7 +1093,7 @@ bool AdGame::showCursor() {
 			_lastCursor = origLastCursor;
 		}
 		if (_activeObject && _selectedItem->_cursorHover && _activeObject->getExtendedFlag("usable")) {
-			if (!_smartItemCursor || _activeObject->canHandleEvent(_selectedItem->_name))
+			if (!_smartItemCursor || _activeObject->canHandleEvent(_selectedItem->getName()))
 				return drawCursor(_selectedItem->_cursorHover);
 			else
 				return drawCursor(_selectedItem->_cursorNormal);
@@ -1414,7 +1414,7 @@ bool AdGame::loadItemsBuffer(byte *buffer, bool merge) {
 			if (item && !DID_FAIL(item->loadBuffer(params, false))) {
 				// delete item with the same name, if exists
 				if (merge) {
-					AdItem *PrevItem = getItemByName(item->_name);
+					AdItem *PrevItem = getItemByName(item->getName());
 					if (PrevItem) deleteItem(PrevItem);
 				}
 				addItem(item);
@@ -1767,7 +1767,7 @@ bool AdGame::isItemTaken(char *itemName) {
 		AdInventory *Inv = _inventories[i];
 
 		for (int j = 0; j < Inv->_takenItems.getSize(); j++) {
-			if (scumm_stricmp(itemName, Inv->_takenItems[j]->_name) == 0) {
+			if (scumm_stricmp(itemName, Inv->_takenItems[j]->getName()) == 0) {
 				return true;
 			}
 		}
@@ -1778,7 +1778,7 @@ bool AdGame::isItemTaken(char *itemName) {
 //////////////////////////////////////////////////////////////////////////
 AdItem *AdGame::getItemByName(const char *name) {
 	for (int i = 0; i < _items.getSize(); i++) {
-		if (scumm_stricmp(_items[i]->_name, name) == 0) return _items[i];
+		if (scumm_stricmp(_items[i]->getName(), name) == 0) return _items[i];
 	}
 	return NULL;
 }
@@ -1831,7 +1831,7 @@ bool AdGame::deleteItem(AdItem *item) {
 	if (!item) return STATUS_FAILED;
 
 	if (_selectedItem == item) _selectedItem = NULL;
-	_scene->handleItemAssociations(item->_name, false);
+	_scene->handleItemAssociations(item->getName(), false);
 
 	// remove from all inventories
 	for (int i = 0; i < _inventories.getSize(); i++) {
@@ -2036,7 +2036,7 @@ bool AdGame::displayDebugInfo() {
 		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + _scene->getOffsetLeft(), _mousePos.y + _scene->getOffsetTop());
 		_systemFont->drawText((byte *)str, 0, 90, _renderer->_width, TAL_RIGHT);
 
-		sprintf(str, "Scene: %s (prev: %s)", (_scene && _scene->_name) ? _scene->_name : "???", _prevSceneName ? _prevSceneName : "???");
+		sprintf(str, "Scene: %s (prev: %s)", (_scene && _scene->getName()) ? _scene->getName() : "???", _prevSceneName ? _prevSceneName : "???");
 		_systemFont->drawText((byte *)str, 0, 110, _renderer->_width, TAL_RIGHT);
 	}
 	return BaseGame::displayDebugInfo();

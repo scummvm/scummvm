@@ -35,13 +35,14 @@
 namespace WinterMute {
 
 class BaseNamedObject : public BaseClass {
+	char *_name;
 public:
 	BaseNamedObject(BaseGame *inGame);
 	BaseNamedObject();
 	virtual ~BaseNamedObject(void);
 	BaseNamedObject(TDynamicConstructor, TDynamicConstructor);
 
-	char *_name;
+	const char *getName() { return _name; }
 	void setName(const char *name);
 };
 

@@ -37,7 +37,7 @@ namespace WinterMute {
 class AdNodeState;
 class AdSceneState : public BaseClass {
 public:
-	AdNodeState *getNodeState(char *name, bool saving);
+	AdNodeState *getNodeState(const char *name, bool saving);
 	void setFilename(const char *filename);
 	DECLARE_PERSISTENT(AdSceneState, BaseClass)
 	AdSceneState(BaseGame *inGame);

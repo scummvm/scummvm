@@ -578,7 +578,7 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WINDOW\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "\n");
@@ -679,7 +679,7 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::enableWidget(const char *name, bool Enable) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
-		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_disable = !Enable;
+		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) _widgets[i]->_disable = !Enable;
 	}
 	return STATUS_OK;
 }
@@ -688,7 +688,7 @@ bool UIWindow::enableWidget(const char *name, bool Enable) {
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::showWidget(const char *name, bool Visible) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
-		if (scumm_stricmp(_widgets[i]->_name, name) == 0) _widgets[i]->_visible = Visible;
+		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) _widgets[i]->_visible = Visible;
 	}
 	return STATUS_OK;
 }
@@ -710,7 +710,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			else stack->pushNative(_widgets[widget], true);
 		} else {
 			for (int i = 0; i < _widgets.getSize(); i++) {
-				if (scumm_stricmp(_widgets[i]->_name, val->getString()) == 0) {
+				if (scumm_stricmp(_widgets[i]->getName(), val->getString()) == 0) {
 					stack->pushNative(_widgets[i], true);
 					return STATUS_OK;
 				}
@@ -1280,7 +1280,7 @@ bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
 
 	switch (obj->_type) {
 	case UI_BUTTON:
-		if (scumm_stricmp(obj->_name, "close") == 0) close();
+		if (scumm_stricmp(obj->getName(), "close") == 0) close();
 		else return BaseObject::listen(param1, param2);
 		break;
 	default:

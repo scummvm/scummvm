@@ -156,12 +156,12 @@ bool AdObject::playAnim(const char *filename) {
 	_animSprite = NULL;
 	_animSprite = new BaseSprite(_gameRef, this);
 	if (!_animSprite) {
-		_gameRef->LOG(0, "AdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
+		_gameRef->LOG(0, "AdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", getName(), filename);
 		return STATUS_FAILED;
 	}
 	bool res = _animSprite->loadFile(filename);
 	if (DID_FAIL(res)) {
-		_gameRef->LOG(res, "AdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
+		_gameRef->LOG(res, "AdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", getName(), filename);
 		delete _animSprite;
 		_animSprite = NULL;
 		return res;
@@ -296,7 +296,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		} else if (val->isString()) {
 			const char *regionName = val->getString();
 			for (i = 0; i < main->_nodes.getSize(); i++) {
-				if (main->_nodes[i]->_type == OBJECT_REGION && main->_nodes[i]->_region->_name && scumm_stricmp(main->_nodes[i]->_region->_name, regionName) == 0) {
+				if (main->_nodes[i]->_type == OBJECT_REGION && main->_nodes[i]->_region->getName() && scumm_stricmp(main->_nodes[i]->_region->getName(), regionName) == 0) {
 					_stickRegion = main->_nodes[i]->_region;
 					regFound = true;
 					break;
@@ -437,7 +437,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				if (val->getNative() == _inventory->_takenItems[i]) {
 					stack->pushBool(true);
 					return STATUS_OK;
-				} else if (scumm_stricmp(val->getString(), _inventory->_takenItems[i]->_name) == 0) {
+				} else if (scumm_stricmp(val->getString(), _inventory->_takenItems[i]->getName()) == 0) {
 					stack->pushBool(true);
 					return STATUS_OK;
 				}
@@ -539,7 +539,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		} else {
 			const char *attachmentName = val->getString();
 			for (int i = 0; i < _attachmentsPre.getSize(); i++) {
-				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
+				if (_attachmentsPre[i]->getName() && scumm_stricmp(_attachmentsPre[i]->getName(), attachmentName) == 0) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPre[i]);
 					_attachmentsPre.removeAt(i);
@@ -547,7 +547,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				}
 			}
 			for (int i = 0; i < _attachmentsPost.getSize(); i++) {
-				if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, attachmentName) == 0) {
+				if (_attachmentsPost[i]->getName() && scumm_stricmp(_attachmentsPost[i]->getName(), attachmentName) == 0) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPost[i]);
 					_attachmentsPost.removeAt(i);
@@ -582,14 +582,14 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		} else {
 			const char *attachmentName = val->getString();
 			for (int i = 0; i < _attachmentsPre.getSize(); i++) {
-				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
+				if (_attachmentsPre[i]->getName() && scumm_stricmp(_attachmentsPre[i]->getName(), attachmentName) == 0) {
 					ret = _attachmentsPre[i];
 					break;
 				}
 			}
 			if (!ret) {
 				for (int i = 0; i < _attachmentsPost.getSize(); i++) {
-					if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, attachmentName) == 0) {
+					if (_attachmentsPost[i]->getName() && scumm_stricmp(_attachmentsPost[i]->getName(), attachmentName) == 0) {
 						ret = _attachmentsPre[i];
 						break;
 					}

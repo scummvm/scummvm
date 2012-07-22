@@ -442,7 +442,7 @@ bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "BUTTON\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "\n");
@@ -656,7 +656,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 void UIButton::press() {
 	applyEvent("Press");
 	if (_listenerObject) _listenerObject->listen(_listenerParamObject, _listenerParamDWORD);
-	if (_parentNotify && _parent) _parent->applyEvent(_name);
+	if (_parentNotify && _parent) _parent->applyEvent(getName());
 
 	_oneTimePress = false;
 }

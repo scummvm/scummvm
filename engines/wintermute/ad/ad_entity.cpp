@@ -462,7 +462,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	}
 
 	if (_region && _sprite) {
-		_gameRef->LOG(0, "Warning: Entity '%s' has both sprite and region.", _name);
+		_gameRef->LOG(0, "Warning: Entity '%s' has both sprite and region.", getName());
 	}
 
 	updatePosition();
@@ -878,7 +878,7 @@ const char *AdEntity::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY {\n");
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
 	if (_subtype == ENTITY_SOUND)
 		buffer->putTextIndent(indent + 2, "SUBTYPE=\"SOUND\"\n");
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());

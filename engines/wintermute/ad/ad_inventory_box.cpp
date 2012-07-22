@@ -79,12 +79,12 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 
 	switch (obj->_type) {
 	case UI_BUTTON:
-		if (scumm_stricmp(obj->_name, "close") == 0) {
+		if (scumm_stricmp(obj->getName(), "close") == 0) {
 			_visible = false;
-		} else if (scumm_stricmp(obj->_name, "prev") == 0) {
+		} else if (scumm_stricmp(obj->getName(), "prev") == 0) {
 			_scrollOffset -= _scrollBy;
 			_scrollOffset = MAX(_scrollOffset, 0);
-		} else if (scumm_stricmp(obj->_name, "next") == 0) {
+		} else if (scumm_stricmp(obj->getName(), "next") == 0) {
 			_scrollOffset += _scrollBy;
 		} else return BaseObject::listen(param1, param2);
 		break;
@@ -321,7 +321,7 @@ bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "INVENTORY_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "AREA { %d, %d, %d, %d }\n", _itemsArea.left, _itemsArea.top, _itemsArea.right, _itemsArea.bottom);

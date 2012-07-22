@@ -237,8 +237,8 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		if (val->_type == VAL_INT) node = val->getInt();
 		else { // get by name
 			for (int i = 0; i < _nodes.getSize(); i++) {
-				if ((_nodes[i]->_type == OBJECT_ENTITY && scumm_stricmp(_nodes[i]->_entity->_name, val->getString()) == 0) ||
-				        (_nodes[i]->_type == OBJECT_REGION && scumm_stricmp(_nodes[i]->_region->_name, val->getString()) == 0)) {
+				if ((_nodes[i]->_type == OBJECT_ENTITY && scumm_stricmp(_nodes[i]->_entity->getName(), val->getString()) == 0) ||
+				        (_nodes[i]->_type == OBJECT_REGION && scumm_stricmp(_nodes[i]->_region->getName(), val->getString()) == 0)) {
 					node = i;
 					break;
 				}
@@ -478,7 +478,7 @@ const char *AdLayer::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "LAYER {\n");
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 	buffer->putTextIndent(indent + 2, "MAIN=%s\n", _main ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "WIDTH=%d\n", _width);

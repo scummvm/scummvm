@@ -75,7 +75,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 		if (_animSprite) {
 			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
-				_gameRef->LOG(res, "AdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
+				_gameRef->LOG(res, "AdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", getName(), _forcedTalkAnimName);
 				delete _animSprite;
 				_animSprite = NULL;
 			} else return _animSprite;
@@ -86,7 +86,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 	if (stance != NULL) {
 		// search special talk stances
 		for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
-			if (scumm_stricmp(_talkSpritesEx[i]->_name, stance) == 0) {
+			if (scumm_stricmp(_talkSpritesEx[i]->getName(), stance) == 0) {
 				ret = _talkSpritesEx[i];
 				break;
 			}
@@ -94,7 +94,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 		if (ret == NULL) {
 			// serach generic talk stances
 			for (int i = 0; i < _talkSprites.getSize(); i++) {
-				if (scumm_stricmp(_talkSprites[i]->_name, stance) == 0) {
+				if (scumm_stricmp(_talkSprites[i]->getName(), stance) == 0) {
 					ret = _talkSprites[i];
 					break;
 				}

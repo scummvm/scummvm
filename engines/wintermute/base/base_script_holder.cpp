@@ -227,7 +227,7 @@ ScValue *BaseScriptHolder::scGetProperty(const char *name) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Name") == 0) {
-		_scValue->setString(_name);
+		_scValue->setString(getName());
 		return _scValue;
 	}
 
@@ -272,7 +272,14 @@ bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_freezable));
-	persistMgr->transfer(TMEMBER(_name));
+	if (persistMgr->_saving) {
+		const char *name = getName();
+		persistMgr->transfer(TMEMBER(name));
+	} else {
+		const char *name;
+		persistMgr->transfer(TMEMBER(name));
+		setName(name);
+	}
 	_scripts.persist(persistMgr);
 
 	return STATUS_OK;
@@ -284,7 +291,7 @@ bool BaseScriptHolder::addScript(const char *filename) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
-				_gameRef->LOG(0, "BaseScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, _name);
+				_gameRef->LOG(0, "BaseScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, getName());
 				return STATUS_OK;
 			}
 		}
@@ -456,9 +463,9 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
 	strcpy(buf, scToString());
-	if (_name && strcmp(_name, "<unnamed>") != 0) {
+	if (getName() && strcmp(getName(), "<unnamed>") != 0) {
 		strcat(buf, "  Name: ");
-		strcat(buf, _name);
+		strcat(buf, getName());
 	}
 	if (_filename) {
 		strcat(buf, "  File: ");

@@ -395,8 +395,7 @@ bool BaseGame::cleanup() {
 	_viewportStack.removeAll();
 	_viewportSP = -1;
 
-	delete[] _name;
-	_name = NULL;
+	setName(NULL);
 	setFilename(NULL);
 	for (int i = 0; i < 7; i++) {
 		delete[] _caption[i];
@@ -1780,7 +1779,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int fileNum = 0;
 
 		while (true) {
-			sprintf(filename, "%s%03d.bmp", Val->isNULL() ? _name : Val->getString(), fileNum);
+			sprintf(filename, "%s%03d.bmp", Val->isNULL() ? getName() : Val->getString(), fileNum);
 			if (!Common::File::exists(filename))
 				break;
 			fileNum++;
@@ -2160,7 +2159,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Name") == 0) {
-		_scValue->setString(_name);
+		_scValue->setString(getName());
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -4346,7 +4345,7 @@ bool BaseGame::displayDebugInfo() {
 		sprintf(str, "Timer: %d", _timer);
 		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
 
-		if (_activeObject != NULL) _systemFont->drawText((byte *)_activeObject->_name, 0, 150, _renderer->_width, TAL_RIGHT);
+		if (_activeObject != NULL) _systemFont->drawText((byte *)_activeObject->getName(), 0, 150, _renderer->_width, TAL_RIGHT);
 
 		sprintf(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
 		_systemFont->drawText((byte *)str, 0, 170, _renderer->_width, TAL_RIGHT);

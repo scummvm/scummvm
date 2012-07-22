@@ -240,7 +240,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			else {
 				const char *findName = val->getString();
 				for (i = 0; i < win->_widgets.getSize(); i++) {
-					if (scumm_stricmp(win->_widgets[i]->_name, findName) == 0) {
+					if (scumm_stricmp(win->_widgets[i]->getName(), findName) == 0) {
 						found = true;
 						break;
 					}
@@ -332,7 +332,7 @@ ScValue *UIObject::scGetProperty(const char *name) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Name") == 0) {
-		_scValue->setString(_name);
+		_scValue->setString(getName());
 		return _scValue;
 	}
 

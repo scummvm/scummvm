@@ -71,7 +71,7 @@ void AdSceneState::setFilename(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-AdNodeState *AdSceneState::getNodeState(char *name, bool saving) {
+AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
 	for (int i = 0; i < _nodeStates.getSize(); i++) {
 		if (scumm_stricmp(_nodeStates[i]->_name, name) == 0) return _nodeStates[i];
 	}

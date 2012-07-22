@@ -1346,7 +1346,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			const char *LayerName = val->getString();
 			bool LayerFound = false;
 			for (int i = 0; i < _layers.getSize(); i++) {
-				if (scumm_stricmp(LayerName, _layers[i]->_name) == 0) {
+				if (scumm_stricmp(LayerName, _layers[i]->getName()) == 0) {
 					stack->pushNative(_layers[i], true);
 					LayerFound = true;
 					break;
@@ -1396,7 +1396,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		} else {
 			const char *nodeName = val->getString();
 			for (int i = 0; i < _objects.getSize(); i++) {
-				if (_objects[i] && _objects[i]->_name && scumm_stricmp(_objects[i]->_name, nodeName) == 0) {
+				if (_objects[i] && _objects[i]->getName() && scumm_stricmp(_objects[i]->getName(), nodeName) == 0) {
 					ret = _objects[i];
 					break;
 				}
@@ -1962,7 +1962,7 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent, "SCENE {\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	if (_persistentState)
@@ -2424,8 +2424,8 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 		AdLayer *layer = _layers[i];
 		for (int j = 0; j < layer->_nodes.getSize(); j++) {
 			AdSceneNode *node = layer->_nodes[j];
-			if ((node->_type == OBJECT_ENTITY && !scumm_stricmp(name, node->_entity->_name)) ||
-			        (node->_type == OBJECT_REGION && !scumm_stricmp(name, node->_region->_name))) {
+			if ((node->_type == OBJECT_ENTITY && !scumm_stricmp(name, node->_entity->getName())) ||
+			        (node->_type == OBJECT_REGION && !scumm_stricmp(name, node->_region->getName()))) {
 				switch (node->_type) {
 				case OBJECT_ENTITY:
 					ret = node->_entity;
@@ -2443,14 +2443,14 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 
 	// free entities
 	for (int i = 0; i < _objects.getSize(); i++) {
-		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->_name)) {
+		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->getName())) {
 			return _objects[i];
 		}
 	}
 
 	// waypoint groups
 	for (int i = 0; i < _waypointGroups.getSize(); i++) {
-		if (!scumm_stricmp(name, _waypointGroups[i]->_name)) {
+		if (!scumm_stricmp(name, _waypointGroups[i]->getName())) {
 			return _waypointGroups[i];
 		}
 	}
@@ -2489,7 +2489,7 @@ bool AdScene::persistState(bool saving) {
 			switch (node->_type) {
 			case OBJECT_ENTITY:
 				if (!node->_entity->_saveState) continue;
-				nodeState = state->getNodeState(node->_entity->_name, saving);
+				nodeState = state->getNodeState(node->_entity->getName(), saving);
 				if (nodeState) {
 					nodeState->transferEntity(node->_entity, _persistentStateSprites, saving);
 					//if(Saving) NodeState->_active = node->_entity->_active;
@@ -2498,7 +2498,7 @@ bool AdScene::persistState(bool saving) {
 				break;
 			case OBJECT_REGION:
 				if (!node->_region->_saveState) continue;
-				nodeState = state->getNodeState(node->_region->_name, saving);
+				nodeState = state->getNodeState(node->_region->getName(), saving);
 				if (nodeState) {
 					if (saving) nodeState->_active = node->_region->_active;
 					else node->_region->_active = nodeState->_active;
@@ -2515,7 +2515,7 @@ bool AdScene::persistState(bool saving) {
 	for (int i = 0; i < _objects.getSize(); i++) {
 		if (!_objects[i]->_saveState) continue;
 		if (_objects[i]->_type == OBJECT_ENTITY) {
-			nodeState = state->getNodeState(_objects[i]->_name, saving);
+			nodeState = state->getNodeState(_objects[i]->getName(), saving);
 			if (nodeState) {
 				nodeState->transferEntity((AdEntity *)_objects[i], _persistentStateSprites, saving);
 				//if(Saving) NodeState->_active = _objects[i]->_active;
@@ -2526,7 +2526,7 @@ bool AdScene::persistState(bool saving) {
 
 	// waypoint groups
 	for (int i = 0; i < _waypointGroups.getSize(); i++) {
-		nodeState = state->getNodeState(_waypointGroups[i]->_name, saving);
+		nodeState = state->getNodeState(_waypointGroups[i]->getName(), saving);
 		if (nodeState) {
 			if (saving) nodeState->_active = _waypointGroups[i]->_active;
 			else _waypointGroups[i]->_active = nodeState->_active;

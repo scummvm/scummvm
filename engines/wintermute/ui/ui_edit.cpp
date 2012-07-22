@@ -302,7 +302,7 @@ bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "EDIT\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "\n");
@@ -799,7 +799,7 @@ int UIEdit::deleteChars(int start, int end) {
 		delete[] _text;
 		_text = str;
 	}
-	if (_parentNotify && _parent) _parent->applyEvent(_name);
+	if (_parentNotify && _parent) _parent->applyEvent(getName());
 
 	return end - start;
 }
@@ -824,7 +824,7 @@ int UIEdit::insertChars(int pos, byte *chars, int num) {
 		delete[] _text;
 		_text = str;
 	}
-	if (_parentNotify && _parent) _parent->applyEvent(_name);
+	if (_parentNotify && _parent) _parent->applyEvent(getName());
 
 	return num;
 }

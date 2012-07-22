@@ -212,7 +212,7 @@ bool BasePersistenceManager::initSave(const char *desc) {
 
 		// new in ver 2
 		putDWORD((uint32)DCGF_VER_BUILD);
-		putString(_gameRef->_name);
+		putString(_gameRef->getName());
 
 		// thumbnail data size
 		bool thumbnailOK = false;
@@ -314,7 +314,7 @@ bool BasePersistenceManager::initLoad(const char *filename) {
 	}
 	_saving = false;
 
-	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), _gameRef->_name) != 0) {
+	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), _gameRef->getName()) != 0) {
 		_gameRef->LOG(0, "ERROR: Saved game name doesn't match current game");
 		cleanup();
 		return STATUS_FAILED;
