@@ -306,33 +306,37 @@ public:
 
 	// New API
 	/**
-	 * Returns if a video is rewindable or not.
+	 * Returns if a video is rewindable or not. The default implementation
+	 * polls each track for rewindability.
 	 */
-	bool isRewindable() const;
+	virtual bool isRewindable() const;
 
 	/**
 	 * Rewind a video to its beginning.
 	 *
-	 * If the video is playing, it will continue to play.
+	 * If the video is playing, it will continue to play. The default
+	 * implementation will rewind each track.
 	 *
 	 * @return true on success, false otherwise
 	 */
-	bool rewind();
+	virtual bool rewind();
 
 	/**
-	 * Returns if a video is seekable or not.
+	 * Returns if a video is seekable or not. The default implementation
+	 * polls each track for seekability.
 	 */
-	bool isSeekable() const;
+	virtual bool isSeekable() const;
 
 	/**
 	 * Seek to a given time in the video.
 	 *
-	 * If the video is playing, it will continue to play.
+	 * If the video is playing, it will continue to play. The default
+	 * implementation will seek each track.
 	 *
 	 * @param time The time to seek to
 	 * @return true on success, false otherwise
 	 */
-	bool seek(const Audio::Timestamp &time);
+	virtual bool seek(const Audio::Timestamp &time);
 
 	/**
 	 * Begin playback of the video.
