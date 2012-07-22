@@ -259,10 +259,12 @@ void Console::postEnter() {
 			videoDecoder = new RobotDecoder(g_system->getMixer(), _engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
 			duckMode = true;
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
+			((Video::AdvancedVideoDecoder *)videoDecoder)->start();
 #endif
 		} else if (_videoFile.hasSuffix(".avi")) {
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
+			((Video::AdvancedVideoDecoder *)videoDecoder)->start();
 		} else {
 			warning("Unrecognized video type");
 		}

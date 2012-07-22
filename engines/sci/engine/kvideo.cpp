@@ -191,7 +191,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		switch (argv[0].toUint16()) {
 		case 0: {
 			Common::String filename = s->_segMan->getString(argv[1]);
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
 
 			if (filename.equalsIgnoreCase("gk2a.avi")) {
 				// HACK: Switch to 16bpp graphics for Indeo3.
@@ -212,6 +212,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 				videoDecoder = 0;
 			} else {
 				s->_videoState.fileName = filename;
+				((Video::AdvancedVideoDecoder *)videoDecoder)->start();
 			}
 			break;
 		}
@@ -407,12 +408,14 @@ reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
 		s->_videoState.reset();
 		s->_videoState.fileName = Common::String::format("%d.duk", argv[1].toUint16());
 
-		videoDecoder = new Video::AviDecoder(g_system->getMixer());
+		videoDecoder = new Video::AVIDecoder();
 
 		if (!videoDecoder->loadFile(s->_videoState.fileName)) {
 			warning("Could not open Duck %s", s->_videoState.fileName.c_str());
 			break;
 		}
+
+		((Video::AdvancedVideoDecoder *)videoDecoder)->start();
 
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelHide();
