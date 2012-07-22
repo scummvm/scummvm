@@ -57,7 +57,7 @@ Localizer::Localizer() {
 	data[filesize] = '\0';
 	delete f;
 
-	if (!(g_grim->getGameFlags() & ADGF_DEMO)) {
+	if (!(g_grim->getGameFlags() & ADGF_DEMO) && g_grim->getGamePlatform() != Common::kPlatformPS2) {
 		if (filesize < 4)
 			error("%s to short: %i", filename.c_str(), filesize);
 		switch (READ_BE_UINT32(data)) {
