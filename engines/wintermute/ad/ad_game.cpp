@@ -1904,18 +1904,12 @@ char *AdGame::findSpeechFile(char *stringID) {
 
 	for (int i = 0; i < _speechDirs.getSize(); i++) {
 		sprintf(ret, "%s%s.ogg", _speechDirs[i], stringID);
-		Common::SeekableReadStream *file = _fileManager->openFile(ret); // TODO: Replace with hasFile
-		if (file) {
-			_fileManager->closeFile(file);
+		if (_fileManager->hasFile(ret))
 			return ret;
-		}
 
 		sprintf(ret, "%s%s.wav", _speechDirs[i], stringID);
-		file = _fileManager->openFile(ret);
-		if (file) {
-			_fileManager->closeFile(file);
+		if (_fileManager->hasFile(ret))
 			return ret;
-		}
 	}
 	delete [] ret;
 	return NULL;

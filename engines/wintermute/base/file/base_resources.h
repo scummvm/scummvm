@@ -36,7 +36,8 @@ namespace WinterMute {
 
 class BaseResources {
 public:
-	static Common::SeekableReadStream *getFile(const Common::String &fileName);
+	static Common::SeekableReadStream *getFile(const Common::String &filename);
+	static bool hasFile(const Common::String& filename);
 };
 
 } // end of namespace WinterMute

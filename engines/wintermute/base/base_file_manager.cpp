@@ -582,12 +582,13 @@ BaseFileEntry *BaseFileManager::getPackageEntry(const Common::String &filename) 
 }
 
 bool BaseFileManager::hasFile(const Common::String &filename) {
-	//TODO: Do this in a much simpler fashion
-	Common::SeekableReadStream *stream = openFile(filename, true, false);
-	if (!stream) {
-		return false;
-	}
-	delete stream;
+	if (diskFileExists(filename))
+		return true;
+	if (getPackageEntry(filename))
+		return true; // We don't bother checking if the file can actually be opened, something bigger is wrong if that is the case.
+	if (BaseResources::hasFile(filename))
+		return true;
+	return false;
 	return true;
 }
 

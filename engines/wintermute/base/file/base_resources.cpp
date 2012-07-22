@@ -2806,15 +2806,26 @@ unsigned char systemfont[] = {
 	0x01, 0x01, 0x01, 0x01, 0x01, 0x01
 } ;
 
-Common::SeekableReadStream *BaseResources::getFile(const Common::String &fileName) {
-	if (scumm_stricmp(fileName.c_str(), "invalid.bmp") == 0) {
+Common::SeekableReadStream *BaseResources::getFile(const Common::String &filename) {
+	if (scumm_stricmp(filename.c_str(), "invalid.bmp") == 0) {
 		return new Common::MemoryReadStream(invalid, sizeof(invalid), DisposeAfterUse::NO);
-	} else if (scumm_stricmp(fileName.c_str(), "invalid_debug.bmp") == 0) {
+	} else if (scumm_stricmp(filename.c_str(), "invalid_debug.bmp") == 0) {
 		return new Common::MemoryReadStream(invaliddebug, sizeof(invalid), DisposeAfterUse::NO);
-	} else if (scumm_stricmp(fileName.c_str(), "syste_font.bmp") == 0) {
+	} else if (scumm_stricmp(filename.c_str(), "syste_font.bmp") == 0) {
 		return new Common::MemoryReadStream(systemfont, sizeof(invalid), DisposeAfterUse::NO);
 	}
 	return NULL;
+}
+
+bool BaseResources::hasFile(const Common::String& filename) {
+	if (scumm_stricmp(filename.c_str(), "invalid.bmp") == 0) {
+		return true;
+	} else if (scumm_stricmp(filename.c_str(), "invalid_debug.bmp") == 0) {
+		return true;
+	} else if (scumm_stricmp(filename.c_str(), "syste_font.bmp") == 0) {
+		return true;
+	}
+	return false;
 }
 
 } // end of namespace WinterMute

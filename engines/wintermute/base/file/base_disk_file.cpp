@@ -48,6 +48,43 @@ void correctSlashes(char *fileName) {
 	}
 }
 
+bool diskFileExists(const Common::String& filename) {
+	Common::SeekableReadStream *file = NULL;
+	// Try directly from SearchMan first
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, filename);
+	
+	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
+		if ((*it)->getName() == filename) {
+			return true;
+		}
+	}
+	// The filename can be an explicit path, thus we need to chop it up, expecting the path the game
+	// specifies to follow the Windows-convention of folder\subfolder\file (absolute paths should not happen)
+	if (filename.contains(':'))
+		error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
+	if (filename.contains('\\')) {
+		Common::StringTokenizer path(filename, "\\");
+		
+		const Common::FSNode gameDataDir(ConfMan.get("path"));
+		Common::FSNode curNode = gameDataDir;
+		while (!path.empty()) {
+			Common::String pathPart = path.nextToken();
+			Common::FSNode nextNode(curNode.getChild(pathPart));
+			if (nextNode.exists() && nextNode.isReadable()) {
+				curNode = nextNode;
+			}
+			if (!curNode.isDirectory()) {
+				if (curNode.exists() && curNode.isReadable())
+					return true;
+				else
+					return false;
+			}
+		}
+	}
+	return false;
+}
+
 Common::SeekableReadStream *openDiskFile(const Common::String &filename, BaseFileManager *fileManager) {
 	char fullPath[MAX_PATH_LENGTH];
 	uint32 prefixSize = 0;

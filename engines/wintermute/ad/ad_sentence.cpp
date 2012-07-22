@@ -251,11 +251,8 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 
 	AnsiString talkDefFileName = PathUtil::combine(path, name + ".talk");
 
-	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(talkDefFileName.c_str());
-	if (file) {
-		_gameRef->_fileManager->closeFile(file);
-	} else return STATUS_OK; // no talk def file found
-
+	if (!_gameRef->_fileManager->hasFile(talkDefFileName))
+		return STATUS_OK; // no talk def file found
 
 	_talkDef = new AdTalkDef(_gameRef);
 	if (!_talkDef || DID_FAIL(_talkDef->loadFile(talkDefFileName.c_str()))) {
