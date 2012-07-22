@@ -84,11 +84,15 @@ bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 	int channel = getFreeChannel();
 	assert(channel != -1);
 	
-	_channels[channel] = new VimaTrack(soundName);
+	// TODO: This could be handled on filenames instead
+	if (g_grim->getGamePlatform() == Common::kPlatformPS2)
+		_channels[channel] = new SCXTrack(Audio::Mixer::kSpeechSoundType);
+	else
+		_channels[channel] = new VimaTrack(soundName);
 	
 	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(soundName);
 
-	if (_channels[channel]->openSound(soundName, str)) {
+	if (str && _channels[channel]->openSound(soundName, str)) {
 		_channels[channel]->play();
 		return true;
 	}

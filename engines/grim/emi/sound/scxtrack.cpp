@@ -40,7 +40,11 @@ SCXTrack::~SCXTrack() {
 	
 bool SCXTrack::openSound(Common::String soundName, Common::SeekableReadStream *file) {
 	_soundName = soundName;
-	_stream = Audio::makeLoopingAudioStream(makeSCXStream(file, DisposeAfterUse::YES), 0);
+	Audio::RewindableAudioStream *scxStream = makeSCXStream(file, DisposeAfterUse::YES);
+	if (_soundType == Audio::Mixer::kMusicSoundType)
+		_stream = Audio::makeLoopingAudioStream(scxStream, 0);
+	else
+		_stream = scxStream;
 	_handle = new Audio::SoundHandle();
 	return true;
 }

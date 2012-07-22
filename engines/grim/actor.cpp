@@ -845,11 +845,13 @@ void Actor::sayLine(const char *msgId, bool background) {
 
 	Common::String soundName = id;
 
-	if (g_grim->getGameType() == GType_GRIM)
+	if (g_grim->getGameType() == GType_GRIM) {
 		soundName += ".wav";
-	else
+	} else if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		soundName += ".scx";
+	} else {
 		soundName += ".wVC";
-
+	}
 	if (_talkSoundName == soundName)
 		return;
 
