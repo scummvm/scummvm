@@ -200,7 +200,7 @@ uint32 AdvancedVideoDecoder::getTime() const {
 				uint32 time = ((const AudioTrack *)*it)->getRunningTime();
 
 				if (time != 0)
-					return time + _audioStartOffset.msecs();
+					return time + (*it)->getStartTime().msecs() + _audioStartOffset.msecs();
 			}
 		}
 	}
