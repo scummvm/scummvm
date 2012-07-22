@@ -49,7 +49,7 @@ public:
 	bool close();
 	bool open();
 	char *_name;
-	int _cD;
+	int _cd;
 	Common::SeekableReadStream *_file;
 	BasePackage(BaseGame *inGame);
 	virtual ~BasePackage();

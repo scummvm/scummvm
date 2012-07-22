@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/file/base_file_entry.h"
 #include "common/archive.h"
 #include "common/str.h"
+#include "common/fs.h"
 
 namespace Common {
 class File;
@@ -41,39 +42,38 @@ namespace WinterMute {
 class BaseFile;
 class BaseFileManager: BaseClass {
 public:
-	bool findPackageSignature(Common::File *f, uint32 *offset);
+	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
 	bool cleanup();
 	bool setBasePath(const Common::String &path);
 	bool restoreCurrentDir();
 	char *_basePath;
-	bool getFullPath(const Common::String &filename, char *fullname);
 	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
 	bool closeFile(Common::SeekableReadStream *File);
 	bool hasFile(const Common::String &filename);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
 	BaseFileEntry *getPackageEntry(const Common::String &filename);
-	Common::File *openSingleFile(const Common::String &name);
 	Common::File *openPackage(const Common::String &name);
+	bool registerPackages(const Common::FSList &fslist);
 	bool registerPackages();
 	bool initPaths();
 	bool reloadPaths();
 	typedef enum {
 	    PATH_PACKAGE, PATH_SINGLE
 	} TPathType;
-	bool addPath(TPathType type, const Common::String &path);
+	bool addPath(TPathType type, const Common::FSNode &path);
 	bool requestCD(int cd, char *packageFile, const char *filename);
 	Common::SeekableReadStream *loadSaveGame(const Common::String &filename);
 	bool saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
 	BaseFileManager(BaseGame *inGame = NULL);
 	virtual ~BaseFileManager();
-	Common::Array<char *> _singlePaths;
-	Common::Array<char * > _packagePaths;
+//	Common::FSList _singlePaths;
+	Common::FSList _packagePaths;
 	Common::Array<BasePackage *> _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
-
 	Common::HashMap<Common::String, BaseFileEntry *> _files;
 private:
+	bool registerPackage(Common::SeekableReadStream *stream, const Common::String &filename = "", bool searchSignature = false);
 	bool registerPackage(const Common::String &filename, bool searchSignature = false);
 	Common::HashMap<Common::String, BaseFileEntry *>::iterator _filesIter;
 	bool isValidPackage(const AnsiString &fileName) const;

@@ -40,33 +40,33 @@
 namespace WinterMute {
 
 struct TPackageHeader {
-	uint32 Magic1;
-	uint32 Magic2;
-	uint32 PackageVersion;
-	uint32 GameVersion;
-	byte Priority;
-	byte CD;
-	bool MasterIndex;
-	uint32 CreationTime;
-	char Desc[100];
-	uint32 NumDirs;
+	uint32 _magic1;
+	uint32 _magic2;
+	uint32 _packageVersion;
+	uint32 _gameVersion;
+	byte _priority;
+	byte _cd;
+	bool _masterIndex;
+	uint32 _creationTime;
+	char _desc[100];
+	uint32 _numDirs;
 	// TODO: Move this out of the header.
 	void readFromStream(Common::ReadStream *stream) {
-		Magic1 = stream->readUint32LE();
-		Magic2 = stream->readUint32LE();
-		PackageVersion = stream->readUint32LE();
+		_magic1 = stream->readUint32LE();
+		_magic2 = stream->readUint32LE();
+		_packageVersion = stream->readUint32LE();
 
-		GameVersion = stream->readUint32LE();
+		_gameVersion = stream->readUint32LE();
 
-		Priority = stream->readByte();
-		CD = stream->readByte();
-		MasterIndex = stream->readByte();
+		_priority = stream->readByte();
+		_cd = stream->readByte();
+		_masterIndex = stream->readByte();
 		stream->readByte(); // To align the next byte...
 
-		CreationTime = stream->readUint32LE();
+		_creationTime = stream->readUint32LE();
 
-		stream->read(Desc, 100);
-		NumDirs = stream->readUint32LE();
+		stream->read(_desc, 100);
+		_numDirs = stream->readUint32LE();
 	}
 };
 

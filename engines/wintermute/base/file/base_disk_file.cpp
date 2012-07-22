@@ -36,6 +36,7 @@
 #include "common/memstream.h"
 #include "common/file.h"
 #include "common/zlib.h"
+#include "common/archive.h"
 
 namespace WinterMute {
 
@@ -50,27 +51,13 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename, BaseFil
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = NULL;
 
-	for (uint32 i = 0; i < fileManager->_singlePaths.size(); i++) {
-		sprintf(fullPath, "%s%s", fileManager->_singlePaths[i], filename.c_str());
-		correctSlashes(fullPath);
-		Common::File *tempFile = new Common::File();
-		if (tempFile->open(fullPath)) {
-			file = tempFile;
-		} else {
-			delete tempFile;
-		}
-	}
-
-	// if we didn't find it in search paths, try to open directly
-	if (!file) {
-		strcpy(fullPath, filename.c_str());
-		correctSlashes(fullPath);
-
-		Common::File *tempFile = new Common::File();
-		if (tempFile->open(fullPath)) {
-			file = tempFile;
-		} else {
-			delete tempFile;
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, filename);
+	
+	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
+		if ((*it)->getName() == filename) {
+			file = (*it)->createReadStream();
+			break;
 		}
 	}
 
@@ -83,38 +70,38 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename, BaseFil
 		if (magic1 == DCGF_MAGIC && magic2 == COMPRESSED_FILE_MAGIC) compressed = true;
 
 		if (compressed) {
-			uint32 DataOffset, CompSize, UncompSize;
-			DataOffset = file->readUint32LE();
-			CompSize = file->readUint32LE();
-			UncompSize = file->readUint32LE();
+			uint32 dataOffset, compSize, uncompSize;
+			dataOffset = file->readUint32LE();
+			compSize = file->readUint32LE();
+			uncompSize = file->readUint32LE();
 
-			byte *CompBuffer = new byte[CompSize];
-			if (!CompBuffer) {
+			byte *compBuffer = new byte[compSize];
+			if (!compBuffer) {
 				error("Error allocating memory for compressed file '%s'", filename.c_str());
 				delete file;
 				return NULL;
 			}
 
-			byte *data = new byte[UncompSize];
+			byte *data = new byte[uncompSize];
 			if (!data) {
 				error("Error allocating buffer for file '%s'", filename.c_str());
-				delete [] CompBuffer;
+				delete [] compBuffer;
 				delete file;
 				return NULL;
 			}
-			file->seek(DataOffset + prefixSize, SEEK_SET);
-			file->read(CompBuffer, CompSize);
+			file->seek(dataOffset + prefixSize, SEEK_SET);
+			file->read(compBuffer, compSize);
 
-			if (Common::uncompress(data, (unsigned long *)&UncompSize, CompBuffer, CompSize) != true) {
+			if (Common::uncompress(data, (unsigned long *)&uncompSize, compBuffer, compSize) != true) {
 				error("Error uncompressing file '%s'", filename.c_str());
-				delete [] CompBuffer;
+				delete [] compBuffer;
 				delete file;
 				return NULL;
 			}
 
-			delete [] CompBuffer;
+			delete [] compBuffer;
 
-			return new Common::MemoryReadStream(data, UncompSize, DisposeAfterUse::YES);
+			return new Common::MemoryReadStream(data, uncompSize, DisposeAfterUse::YES);
 			delete file;
 			file = NULL;
 		} else {

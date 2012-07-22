@@ -50,6 +50,7 @@
 #include "common/fs.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "common/fs.h"
 
 namespace WinterMute {
 
@@ -75,14 +76,7 @@ BaseFileManager::~BaseFileManager() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::cleanup() {
 	// delete registered paths
-	for (uint32 i = 0; i < _singlePaths.size(); i++)
-		delete [] _singlePaths[i];
-	_singlePaths.clear();
-
-	for (uint32 i = 0; i < _packagePaths.size(); i++)
-		delete [] _packagePaths[i];
 	_packagePaths.clear();
-
 
 	// delete file entries
 	_filesIter = _files.begin();
@@ -226,7 +220,7 @@ bool BaseFileManager::saveFile(const Common::String &filename, byte *buffer, uin
 bool BaseFileManager::requestCD(int cd, char *packageFile, const char *filename) {
 	// unmount all non-local packages
 	for (uint32 i = 0; i < _packages.size(); i++) {
-		if (_packages[i]->_cD > 0) _packages[i]->close();
+		if (_packages[i]->_cd > 0) _packages[i]->close();
 	}
 
 
@@ -235,24 +229,25 @@ bool BaseFileManager::requestCD(int cd, char *packageFile, const char *filename)
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseFileManager::addPath(TPathType type, const Common::String &path) {
-	if (path.c_str() == NULL || strlen(path.c_str()) < 1) return STATUS_FAILED;
+bool BaseFileManager::addPath(TPathType type, const Common::FSNode &path) {
+	if (path.getName().c_str() == NULL || strlen(path.getName().c_str()) < 1) return STATUS_FAILED;
 
-	bool slashed = (path[path.size() - 1] == '\\' || path[path.size() - 1] == '/');
+//	bool slashed = (path[path.size() - 1] == '\\' || path[path.size() - 1] == '/');
 
-	char *buffer = new char [strlen(path.c_str()) + 1 + (slashed ? 0 : 1)];
+/*	char *buffer = new char [strlen(path.c_str()) + 1 + (slashed ? 0 : 1)];
 	if (buffer == NULL) return STATUS_FAILED;
 
 	strcpy(buffer, path.c_str());
-	if (!slashed) strcat(buffer, "\\");
+	if (!slashed) strcat(buffer, "\\");*/
 	//BasePlatform::strlwr(buffer);
 
 	switch (type) {
 	case PATH_SINGLE:
-		_singlePaths.push_back(buffer);
+	//	_singlePaths.push_back(path);
+		error("TODO: Allow adding single-paths");
 		break;
 	case PATH_PACKAGE:
-		_packagePaths.push_back(buffer);
+		_packagePaths.push_back(path);
 		break;
 	}
 
@@ -262,12 +257,12 @@ bool BaseFileManager::addPath(TPathType type, const Common::String &path) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::reloadPaths() {
 	// delete registered paths
-	for (uint32 i = 0; i < _singlePaths.size(); i++)
-		delete [] _singlePaths[i];
-	_singlePaths.clear();
+/*	for (uint32 i = 0; i < _singlePaths.size(); i++)
+		delete [] _singlePaths[i];*/
+	//_singlePaths.clear();
 
-	for (uint32 i = 0; i < _packagePaths.size(); i++)
-		delete [] _packagePaths[i];
+/*	for (uint32 i = 0; i < _packagePaths.size(); i++)
+		delete [] _packagePaths[i];*/
 	_packagePaths.clear();
 
 	return initPaths();
@@ -289,16 +284,17 @@ bool BaseFileManager::initPaths() {
 	for (int i = 0; i < numPaths; i++) {
 		char *path = BaseUtils::strEntry(i, pathList.c_str(), ';');
 		if (path && strlen(path) > 0) {
-			addPath(PATH_SINGLE, path);
+			error("BaseFileManager::initPaths - Game wants to add customPath: %s", path); // TODO
+//			addPath(PATH_SINGLE, path);
 		}
 		delete[] path;
 		path = NULL;
 	}
-	addPath(PATH_SINGLE, ".\\");
-
+//	addPath(PATH_SINGLE, ".\\");
 
 	// package files paths
-	addPath(PATH_PACKAGE, "./");
+	const Common::FSNode gameData(ConfMan.get("path"));
+	addPath(PATH_PACKAGE, gameData);
 
 	pathList = _gameRef->_registry->readString("Resource", "PackagePaths", "");
 	numPaths = BaseUtils::strNumEntries(pathList.c_str(), ';');
@@ -306,16 +302,32 @@ bool BaseFileManager::initPaths() {
 	for (int i = 0; i < numPaths; i++) {
 		char *path = BaseUtils::strEntry(i, pathList.c_str(), ';');
 		if (path && strlen(path) > 0) {
-			addPath(PATH_PACKAGE, path);
+			error("BaseFileManager::initPaths - Game wants to add packagePath: %s", path); // TODO
+//			addPath(PATH_PACKAGE, path);
 		}
 		delete[] path;
 		path = NULL;
 	}
-	addPath(PATH_PACKAGE, "data");
+
+	Common::FSNode dataSubFolder = gameData.getChild("data");
+	if (dataSubFolder.exists()) {
+		addPath(PATH_PACKAGE, dataSubFolder);
+	}
 
 	return STATUS_OK;
 }
 
+bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
+	for (Common::FSList::const_iterator it = fslist.begin(); it != fslist.end(); it++) {
+		warning("Adding %s", (*it).getName().c_str());
+		if ((*it).getName().contains(".dcp")) {
+			if (registerPackage((*it).createReadStream())) {
+				addPath(PATH_PACKAGE, (*it));
+			}
+		}
+	}
+	warning("  Registered %d files in %d package(s)", _files.size(), _packages.size());
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::registerPackages() {
@@ -324,11 +336,24 @@ bool BaseFileManager::registerPackages() {
 	_gameRef->LOG(0, "Scanning packages...");
 	debugC(kWinterMuteDebugFileAccess, "Scanning packages");
 
-	Common::ArchiveMemberList files;
+/*	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.dcp");
 
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
 		registerPackage((*it)->getName().c_str());
+	}*/
+	// Register without using SearchMan, as otherwise the FSNode-based lookup in openPackage will fail
+	// and that has to be like that to support the detection-scheme.
+	Common::FSList files;
+	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); it++) {
+		warning("Should register %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
+		(*it).getChildren(files, Common::FSNode::kListFilesOnly);
+		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+			if (!fileIt->getName().contains(".dcp"))
+				continue;
+			warning("Registering %s %s", (*fileIt).getPath().c_str(), (*fileIt).getName().c_str());
+			registerPackage((*fileIt).createReadStream());
+		}
 	}
 #if 0
 	AnsiString extension = AnsiString(PACKAGE_EXTENSION);
@@ -373,7 +398,10 @@ bool BaseFileManager::registerPackage(const Common::String &filename , bool sear
 		_gameRef->LOG(0, "  Error opening package file '%s'. Ignoring.", filename.c_str());
 		return STATUS_OK;
 	}
+	return registerPackage(package, filename);
+}
 
+bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const Common::String &filename, bool searchSignature) {
 	uint32 absoluteOffset = 0;
 	bool boundToExe = false;
 
@@ -392,25 +420,25 @@ bool BaseFileManager::registerPackage(const Common::String &filename , bool sear
 	TPackageHeader hdr;
 	hdr.readFromStream(package);
 //	package->read(&hdr, sizeof(TPackageHeader), 1, f);
-	if (hdr.Magic1 != PACKAGE_MAGIC_1 || hdr.Magic2 != PACKAGE_MAGIC_2 || hdr.PackageVersion > PACKAGE_VERSION) {
+	if (hdr._magic1 != PACKAGE_MAGIC_1 || hdr._magic2 != PACKAGE_MAGIC_2 || hdr._packageVersion > PACKAGE_VERSION) {
 		_gameRef->LOG(0, "  Invalid header in package file '%s'. Ignoring.", filename.c_str());
 		delete package;
 		return STATUS_OK;
 	}
 
-	if (hdr.PackageVersion != PACKAGE_VERSION) {
+	if (hdr._packageVersion != PACKAGE_VERSION) {
 		_gameRef->LOG(0, "  Warning: package file '%s' is outdated.", filename.c_str());
 	}
 
 	// new in v2
-	if (hdr.PackageVersion == PACKAGE_VERSION) {
+	if (hdr._packageVersion == PACKAGE_VERSION) {
 		uint32 dirOffset;
 		dirOffset = package->readUint32LE();
 		dirOffset += absoluteOffset;
 		package->seek(dirOffset, SEEK_SET);
 	}
 
-	for (uint32 i = 0; i < hdr.NumDirs; i++) {
+	for (uint32 i = 0; i < hdr._numDirs; i++) {
 		BasePackage *pkg = new BasePackage(_gameRef);
 		if (!pkg) return STATUS_FAILED;
 
@@ -420,10 +448,10 @@ bool BaseFileManager::registerPackage(const Common::String &filename , bool sear
 		byte nameLength = package->readByte();
 		pkg->_name = new char[nameLength];
 		package->read(pkg->_name, nameLength);
-		pkg->_cD = package->readByte();
-		pkg->_priority = hdr.Priority;
+		pkg->_cd = package->readByte();
+		pkg->_priority = hdr._priority;
 
-		if (!hdr.MasterIndex) pkg->_cD = 0; // override CD to fixed disk
+		if (!hdr._masterIndex) pkg->_cd = 0; // override CD to fixed disk
 		_packages.push_back(pkg);
 
 
@@ -439,7 +467,7 @@ bool BaseFileManager::registerPackage(const Common::String &filename , bool sear
 			package->read(name, nameLength);
 
 			// v2 - xor name
-			if (hdr.PackageVersion == PACKAGE_VERSION) {
+			if (hdr._packageVersion == PACKAGE_VERSION) {
 				for (int k = 0; k < nameLength; k++) {
 					((byte *)name)[k] ^= 'D';
 				}
@@ -458,7 +486,7 @@ bool BaseFileManager::registerPackage(const Common::String &filename , bool sear
 			compLength = package->readUint32LE();
 			flags = package->readUint32LE();
 
-			if (hdr.PackageVersion == PACKAGE_VERSION) {
+			if (hdr._packageVersion == PACKAGE_VERSION) {
 				timeDate1 = package->readUint32LE();
 				timeDate2 = package->readUint32LE();
 			}
@@ -474,7 +502,7 @@ bool BaseFileManager::registerPackage(const Common::String &filename , bool sear
 				_files[name] = file;
 			} else {
 				// current package has lower CD number or higher priority, than the registered
-				if (pkg->_cD < _filesIter->_value->_package->_cD || pkg->_priority > _filesIter->_value->_package->_priority) {
+				if (pkg->_cd < _filesIter->_value->_package->_cd || pkg->_priority > _filesIter->_value->_package->_priority) {
 					_filesIter->_value->_package = pkg;
 					_filesIter->_value->_offset = offset;
 					_filesIter->_value->_length = length;
@@ -511,13 +539,21 @@ Common::File *BaseFileManager::openPackage(const Common::String &name) {
 	Common::File *ret = new Common::File();
 	char filename[MAX_PATH_LENGTH];
 
-	for (uint32 i = 0; i < _packagePaths.size(); i++) {
+	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); it++) {
+		Common::String packageName = (*it).getName();
+		if (packageName == (name + ".dcp"))
+			ret->open((*it));
+		if (ret->isOpen()) {
+			return ret;
+		}
+	}
+/*	for (uint32 i = 0; i < _packagePaths.size(); i++) {
 		sprintf(filename, "%s%s.%s", _packagePaths[i], name.c_str(), PACKAGE_EXTENSION);
 		ret->open(filename);
 		if (ret->isOpen()) {
 			return ret;
 		}
-	}
+	}*/
 
 	sprintf(filename, "%s.%s", name.c_str(), PACKAGE_EXTENSION);
 	ret->open(filename);
@@ -527,61 +563,6 @@ Common::File *BaseFileManager::openPackage(const Common::String &name) {
 	warning("BaseFileManager::OpenPackage - Couldn't load file %s", name.c_str());
 	delete ret;
 	return NULL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-Common::File *BaseFileManager::openSingleFile(const Common::String &name) {
-	restoreCurrentDir();
-
-	Common::File *ret = NULL;
-	char filename[MAX_PATH_LENGTH];
-
-	for (uint32 i = 0; i < _singlePaths.size(); i++) {
-		sprintf(filename, "%s%s", _singlePaths[i], name.c_str());
-		ret->open(filename);
-		if (ret->isOpen())
-			return ret;
-	}
-
-	// didn't find in search paths, try to open directly
-	ret->open(name);
-	if (ret->isOpen()) {
-		return ret;
-	} else {
-		delete ret;
-		return NULL;
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseFileManager::getFullPath(const Common::String &filename, char *fullname) {
-	restoreCurrentDir();
-
-	Common::File f;
-	bool found = false;
-
-	for (uint32 i = 0; i < _singlePaths.size(); i++) {
-		sprintf(fullname, "%s%s", _singlePaths[i], filename.c_str());
-		f.open(fullname);
-		if (f.isOpen()) {
-			f.close();
-			found = true;
-			break;
-		}
-	}
-
-	if (!found) {
-		f.open(filename.c_str());
-		if (f.isOpen()) {
-			f.close();
-			found = true;
-			strcpy(fullname, filename.c_str());
-		}
-	}
-
-	return found;
 }
 
 
@@ -703,7 +684,7 @@ bool BaseFileManager::setBasePath(const Common::String &path) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseFileManager::findPackageSignature(Common::File *f, uint32 *offset) {
+bool BaseFileManager::findPackageSignature(Common::SeekableReadStream *f, uint32 *offset) {
 	byte buf[32768];
 
 	byte signature[8];
