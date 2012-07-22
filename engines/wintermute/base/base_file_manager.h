@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_BFILEMANAGER_H
 #define WINTERMUTE_BFILEMANAGER_H
 
-#include "engines/wintermute/base/file/base_file_entry.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/base/file/base_package.h"
 #include "common/archive.h"
 #include "common/str.h"
 #include "common/fs.h"
@@ -41,44 +41,47 @@ class File;
 
 namespace WinterMute {
 class BaseFile;
+class BaseFileEntry;
 class BaseFileManager: BaseClass {
 public:
-	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
 	bool cleanup();
-	bool setBasePath(const Common::String &path);
-	bool restoreCurrentDir();
-	char *_basePath;
-	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
+
 	bool closeFile(Common::SeekableReadStream *File);
 	bool hasFile(const Common::String &filename);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
-	BaseFileEntry *getPackageEntry(const Common::String &filename);
-	Common::File *openPackage(const Common::String &name);
-	bool registerPackages(const Common::FSList &fslist);
-	bool registerPackages();
-	bool initPaths();
-	bool reloadPaths();
-	typedef enum {
-	    PATH_PACKAGE, PATH_SINGLE
-	} TPathType;
-	bool addPath(TPathType type, const Common::FSNode &path);
-	bool requestCD(int cd, char *packageFile, const char *filename);
 	Common::SeekableReadStream *loadSaveGame(const Common::String &filename);
-	bool saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
+
 	BaseFileManager(BaseGame *inGame = NULL);
 	virtual ~BaseFileManager();
-//	Common::FSList _singlePaths;
+	// Used only by BasePersistenceManager
+	bool saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
+	// Used only for detection
+	bool registerPackages(const Common::FSList &fslist);
+	// Used by BasePackage only
+	BaseFileEntry *getPackageEntry(const Common::String &filename);
+	Common::File *openPackage(const Common::String &name);
+	bool requestCD(int cd, char *packageFile, const char *filename);
+private:
+	typedef enum {
+	    PATH_PACKAGE,
+		PATH_SINGLE
+	} TPathType;
+	bool reloadPaths();
+	bool initPaths();
+	bool addPath(TPathType type, const Common::FSNode &path);
+	bool registerPackages();
+	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
 	Common::FSList _packagePaths;
+//	Common::FSList _singlePaths;
+	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
+	bool registerPackage(Common::SeekableReadStream *stream, const Common::String &filename = "", bool searchSignature = false);
+	bool registerPackage(const Common::String &filename, bool searchSignature = false);
+	bool isValidPackage(const AnsiString &fileName) const;
 	Common::Array<BasePackage *> _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
 	Common::HashMap<Common::String, BaseFileEntry *> _files;
-private:
-	bool registerPackage(Common::SeekableReadStream *stream, const Common::String &filename = "", bool searchSignature = false);
-	bool registerPackage(const Common::String &filename, bool searchSignature = false);
 	Common::HashMap<Common::String, BaseFileEntry *>::iterator _filesIter;
-	bool isValidPackage(const AnsiString &fileName) const;
-
 };
 
 } // end of namespace WinterMute
