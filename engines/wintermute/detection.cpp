@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/fs.h"
+#include "common/util.h"
 
 #include "engines/metaengine.h"
 
@@ -116,8 +117,8 @@ public:
 			Common::String name, caption;
 			if (WinterMuteEngine::getGameInfo(fslist, name, caption)) {
 				for (int32 i = 0; i < name.size(); i++) {
-					// Replace spaces with underscores
-					if (name[i] == ' ') {
+					// Replace spaces (and other non-alphanumerics) with underscores
+					if (!Common::isAlnum(name[i])) {
 						name.setChar('_', (uint32)i);
 					}
 				}
