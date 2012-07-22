@@ -41,6 +41,29 @@ class Sequence;
 class SequenceFrame;
 struct SavePoint;
 
+
+//////////////////////////////////////////////////////////////////////////
+// Callbacks
+#define ENTITY_CALLBACK(class, name, pointer) \
+	Common::Functor1Mem<const SavePoint&, void, class>(pointer, &class::name)
+
+#define ADD_CALLBACK_FUNCTION(class, name) \
+	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this));
+
+#define ADD_NULL_FUNCTION() \
+	_callbacks.push_back(new ENTITY_CALLBACK(Entity, nullfunction, this));
+
+//////////////////////////////////////////////////////////////////////////
+// Parameters macros
+//////////////////////////////////////////////////////////////////////////
+#define CURRENT_PARAM(index, id) \
+	((EntityData::EntityParametersIIII*)_data->getCurrentParameters(index))->param##id
+
+#define ENTITY_PARAM(index, id) \
+	((EntityData::EntityParametersIIII*)_data->getParameters(8, index))->param##id
+
+
+
 class EntityData : Common::Serializable {
 public:
 

@@ -26,17 +26,6 @@
 namespace LastExpress {
 
 //////////////////////////////////////////////////////////////////////////
-// Callbacks
-#define ENTITY_CALLBACK(class, name, pointer) \
-	Common::Functor1Mem<const SavePoint&, void, class>(pointer, &class::name)
-
-#define ADD_CALLBACK_FUNCTION(class, name) \
-	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this));
-
-#define ADD_NULL_FUNCTION() \
-	_callbacks.push_back(new ENTITY_CALLBACK(Entity, nullfunction, this));
-
-//////////////////////////////////////////////////////////////////////////
 // Declaration
 //////////////////////////////////////////////////////////////////////////
 
@@ -306,15 +295,6 @@ void class::setup_##name() { \
 #define RESET_ENTITY_STATE(entity, class, function) \
 	getEntities()->resetState(entity); \
 	((class *)getEntities()->get(entity))->function();
-
-//////////////////////////////////////////////////////////////////////////
-// Parameters macros (for default IIII parameters)
-//////////////////////////////////////////////////////////////////////////
-#define CURRENT_PARAM(index, id) \
-	((EntityData::EntityParametersIIII*)_data->getCurrentParameters(index))->param##id
-
-#define ENTITY_PARAM(index, id) \
-	((EntityData::EntityParametersIIII*)_data->getParameters(8, index))->param##id
 
 //////////////////////////////////////////////////////////////////////////
 // Time check macros
