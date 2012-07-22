@@ -31,6 +31,8 @@
 #include "engines/grim/costume/chore.h"
 #include "engines/grim/costume/head.h"
 #include "engines/grim/emi/costume/emianim_component.h"
+#include "engines/grim/emi/costume/emiluavar_component.h"
+#include "engines/grim/emi/costume/emiluacode_component.h"
 #include "engines/grim/emi/costume/emimesh_component.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
 #include "engines/grim/emi/costume/emisprite_component.h"
@@ -167,10 +169,11 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement ANIM-handling: %s" , name);
 		return new EMIAnimComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('l','u','a','c')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAC-handling: %s" , name);
+//    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAC-handling: %s" , name);
+		return new EMILuaCodeComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('l','u','a','v')) {
-		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAV-handling: %s" , name);
-		//return new LuaVarComponent(parent, parentID, name, tag);
+//    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAV-handling: %s" , name);
+		return new EMILuaVarComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('s','p','r','t')) {
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
 		return new EMISpriteComponent(parent, parentID, name, prevComponent, tag);

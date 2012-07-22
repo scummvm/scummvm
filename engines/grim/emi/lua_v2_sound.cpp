@@ -268,6 +268,17 @@ void Lua_V2::PlaySound() {
 	track->play();
 }
 
+// FIXME: implement sound positioning
+void Lua_V2::PlaySoundFrom() {
+//  lua_Object strObj = lua_getparam(1);
+//  lua_Object volObj = lua_getparam(2);
+//  lua_Object posxObj = lua_getparam(3);
+//  lua_Object posyObj = lua_getparam(4);
+//  lua_Object posZObj = lua_getparam(5);
+
+	return PlaySound();
+}
+
 void Lua_V2::ImSetMusicVol() {
 	// This only seems to be used in the demo.
 	lua_Object volumeObj = lua_getparam(1);
