@@ -73,6 +73,7 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kWinterMuteDebugSaveGame, "savegame", "Savegames");
 	DebugMan.addDebugChannel(kWinterMuteDebugFont, "font", "Text-drawing-related messages");
 	DebugMan.addDebugChannel(kWinterMuteDebugFileAccess, "file-access", "Non-critical problems like missing files");
+	DebugMan.addDebugChannel(kWinterMuteDebugAudio, "audio", "audio-playback-related issues");
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("WinterMute");
 

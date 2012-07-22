@@ -38,7 +38,8 @@ enum {
     kWinterMuteDebugLog = 1 << 0, // The debug-logs from the original engine
     kWinterMuteDebugSaveGame = 1 << 1,
     kWinterMuteDebugFont = 1 << 2, // next new channel must be 1 << 2 (4)
-	kWinterMuteDebugFileAccess = 1 << 3	 // the current limitation is 32 debug channels (1 << 31 is the last one)
+	kWinterMuteDebugFileAccess = 1 << 3, // the current limitation is 32 debug channels (1 << 31 is the last one)
+	kWinterMuteDebugAudio = 1 << 4
 };
 
 class WinterMuteEngine : public Engine {

@@ -472,7 +472,7 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 					((byte *)name)[k] ^= 'D';
 				}
 			}
-
+			debugC(kWinterMuteDebugFileAccess, "Package contains %s", name);
 			// some old version of ProjectMan writes invalid directory entries
 			// so at least prevent strupr from corrupting memory
 			name[nameLength - 1] = '\0';

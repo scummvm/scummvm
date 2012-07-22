@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/wintermute.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/vorbis.h"
@@ -95,13 +96,7 @@ void BaseSoundBuffer::setStreaming(bool Streamed, uint32 NumBlocks, uint32 Block
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
-	warning("BSoundBuffer::LoadFromFile(%s,%d)", filename, forceReload);
-#if 0
-	if (_stream) {
-		BASS_StreamFree(_stream);
-		_stream = NULL;
-	}
-#endif
+	debugC(kWinterMuteDebugAudio, "BSoundBuffer::LoadFromFile(%s,%d)", filename, forceReload);
 
 	// Load a file, but avoid having the File-manager handle the disposal of it.
 	_file = _gameRef->_fileManager->openFile(filename, true, false);
@@ -123,11 +118,11 @@ bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 				_file = new Common::SeekableSubReadStream(_file, 0, waveSize);
 				_stream = Audio::makeRawStream(_file, waveRate, waveFlags, DisposeAfterUse::YES);
 			} else {
-				warning("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s with type %d", filename, waveType);
+				error("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s with type %d", filename, waveType);
 			}
 		}
 	} else {
-		warning("BSoundBuffer::LoadFromFile - Unknown filetype for %s", filename);
+		error("BSoundBuffer::LoadFromFile - Unknown filetype for %s", filename);
 	}
 	if (!_stream) {
 		return STATUS_FAILED;
