@@ -29,9 +29,7 @@
 #ifndef WINTERMUTE_BDISKFILE_H
 #define WINTERMUTE_BDISKFILE_H
 
-namespace Common {
-class SeekableReadStream;
-}
+#include "common/stream.h"
 
 namespace WinterMute {
 

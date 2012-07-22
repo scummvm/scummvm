@@ -28,7 +28,6 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/file/base_package.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "common/file.h"
 #include "common/stream.h"

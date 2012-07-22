@@ -25,13 +25,13 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-#include "engines/wintermute/dcgf.h"
+
 #include "engines/wintermute/base/file/base_file_entry.h"
 
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseFileEntry::BaseFileEntry(BaseGame *inGame): BaseClass(inGame) {
+BaseFileEntry::BaseFileEntry(){
 	_package = NULL;
 	_length = _compressedLength = _offset = _flags = 0;
 	_filename = "";

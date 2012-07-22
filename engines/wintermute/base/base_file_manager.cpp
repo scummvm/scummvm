@@ -492,7 +492,7 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 			}
 			_filesIter = _files.find(name);
 			if (_filesIter == _files.end()) {
-				BaseFileEntry *file = new BaseFileEntry(_gameRef);
+				BaseFileEntry *file = new BaseFileEntry();
 				file->_package = pkg;
 				file->_offset = offset;
 				file->_length = length;

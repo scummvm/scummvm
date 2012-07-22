@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/file/base_resources.h"
 #include "common/str.h"
 #include "common/memstream.h"

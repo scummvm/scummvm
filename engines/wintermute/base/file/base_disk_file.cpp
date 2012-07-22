@@ -27,8 +27,6 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/wintypes.h"
 #include "engines/wintermute/base/file/BPkgFile.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -49,7 +47,6 @@ void correctSlashes(char *fileName) {
 }
 
 bool diskFileExists(const Common::String& filename) {
-	Common::SeekableReadStream *file = NULL;
 	// Try directly from SearchMan first
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, filename);
@@ -86,7 +83,6 @@ bool diskFileExists(const Common::String& filename) {
 }
 
 Common::SeekableReadStream *openDiskFile(const Common::String &filename, BaseFileManager *fileManager) {
-	char fullPath[MAX_PATH_LENGTH];
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = NULL;
 	// Try directly from SearchMan first

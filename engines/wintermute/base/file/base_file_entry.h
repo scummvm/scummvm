@@ -29,14 +29,13 @@
 #ifndef WINTERMUTE_BFILEENTRY_H
 #define WINTERMUTE_BFILEENTRY_H
 
-
-#include "engines/wintermute/base/base.h"
+#include "common/str.h"
 
 namespace WinterMute {
 
 class BasePackage;
 
-class BaseFileEntry : public BaseClass {
+class BaseFileEntry {
 public:
 	uint32 _timeDate2;
 	uint32 _timeDate1;
@@ -47,7 +46,7 @@ public:
 	uint32 _length;
 	uint32 _offset;
 	BasePackage *_package;
-	BaseFileEntry(BaseGame *inGame);
+	BaseFileEntry();
 	virtual ~BaseFileEntry();
 
 };

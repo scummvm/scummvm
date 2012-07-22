@@ -30,6 +30,7 @@
 #define WINTERMUTE_BFILEMANAGER_H
 
 #include "engines/wintermute/base/file/base_file_entry.h"
+#include "engines/wintermute/base/base.h"
 #include "common/archive.h"
 #include "common/str.h"
 #include "common/fs.h"
