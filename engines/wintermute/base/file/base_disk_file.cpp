@@ -37,6 +37,8 @@
 #include "common/file.h"
 #include "common/zlib.h"
 #include "common/archive.h"
+#include "common/tokenizer.h"
+#include "common/config-manager.h"
 
 namespace WinterMute {
 
@@ -50,7 +52,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename, BaseFil
 	char fullPath[MAX_PATH_LENGTH];
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = NULL;
-
+	// Try directly from SearchMan first
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, filename);
 	
@@ -60,7 +62,29 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename, BaseFil
 			break;
 		}
 	}
+	// The filename can be an explicit path, thus we need to chop it up, expecting the path the game
+	// specifies to follow the Windows-convention of folder\subfolder\file (absolute paths should not happen)
+	if (!file) {
+		if (filename.contains(':'))
+			error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
+		if (filename.contains('\\')) {
+			Common::StringTokenizer path(filename, "\\");
 
+			const Common::FSNode gameDataDir(ConfMan.get("path"));
+			Common::FSNode curNode = gameDataDir;
+			while (!path.empty()) {
+				Common::String pathPart = path.nextToken();
+				Common::FSNode nextNode(curNode.getChild(pathPart));
+				if (nextNode.exists() && nextNode.isReadable()) {
+					curNode = nextNode;
+				}
+				if (!curNode.isDirectory()) {
+					file = curNode.createReadStream();
+					break;
+				}
+			}
+		}
+	}
 	if (file) {
 		uint32 magic1, magic2;
 		magic1 = file->readUint32LE();
