@@ -116,9 +116,11 @@ bool BaseSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed
 	return STATUS_OK;
 }
 
-void BaseSurfaceOSystem::finishLoad() {
+bool BaseSurfaceOSystem::finishLoad() {
 	BaseImage *image = new BaseImage(_gameRef);
-	image->loadFile(_filename);
+	if (!image->loadFile(_filename)) {
+		return false;
+	}
 
 	_width = image->getSurface()->w;
 	_height = image->getSurface()->h;
@@ -188,6 +190,8 @@ void BaseSurfaceOSystem::finishLoad() {
 	delete image;
 
 	_loaded = true;
+	
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

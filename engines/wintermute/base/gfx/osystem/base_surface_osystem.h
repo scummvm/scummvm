@@ -85,7 +85,7 @@ public:
 private:
 	Graphics::Surface *_surface;
 	bool _loaded;
-	void finishLoad();
+	bool finishLoad();
 	bool drawSprite(int x, int y, Rect32 *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX = 0, int offsetY = 0);
 	void genAlphaMask(Graphics::Surface *surface);
 	uint32 getPixel(Graphics::Surface *surface, int x, int y);
