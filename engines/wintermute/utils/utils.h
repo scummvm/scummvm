@@ -38,9 +38,7 @@ class BaseGame;
 
 class BaseUtils {
 public:
-	static void clip(int *destX, int *destY, Rect32 *srcRect, Rect32 *destRect);
 	static void swap(int *a, int *b);
-	static bool strBeginsI(const char *string, const char *fragment);
 	static float normalizeAngle(float angle);
 
 	static void createPath(const char *path, bool pathOnly = false);
@@ -56,9 +54,6 @@ public:
 	static float randomAngle(float from, float to);
 
 	static bool matchesPattern(const char *pattern, const char *string);
-
-	static char *getPath(const char *filename);
-	static char *getFilename(const char *filename);
 
 	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
 	static uint32 HSLtoRGB(byte H, byte S, byte L);

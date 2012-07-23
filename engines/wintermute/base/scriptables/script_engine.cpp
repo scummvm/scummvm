@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_file_manager.h"
-
+#include "engines/wintermute/utils/utils.h"
 
 namespace WinterMute {
 

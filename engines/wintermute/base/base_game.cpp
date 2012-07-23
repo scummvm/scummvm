@@ -60,6 +60,7 @@
 #include "engines/wintermute/base/scriptables/script_ext_math.h"
 #include "engines/wintermute/video/video_player.h"
 #include "engines/wintermute/video/video_theora_player.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"

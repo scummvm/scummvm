@@ -26,14 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/wintypes.h"
-#include "engines/wintermute/utils/path_util.h"
-#include "engines/wintermute/base/base_game.h"
-#include "common/str.h"
-#include "common/textconsole.h"
 #include "engines/wintermute/wintermute.h"
 
 namespace WinterMute {
@@ -43,36 +36,6 @@ static inline unsigned Sqr(int x) {
 	return (x * x);
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////
-void BaseUtils::clip(int *destX, int *destY, Rect32 *srcRect, Rect32 *destRect) {
-	// If it's partly off the right side of the screen
-	if (*destX + (srcRect->right - srcRect->left) > destRect->right)
-		srcRect->right -= *destX + (srcRect->right - srcRect->left) - destRect->right;
-
-	if (srcRect->right < 0) srcRect->right = 0;
-
-	// Partly off the left side of the screen
-	if (*destX < destRect->left) {
-		srcRect->left += destRect->left - *destX;
-		*destX = destRect->left;
-	}
-
-	// Partly off the top of the screen
-	if (*destY < destRect->top) {
-		srcRect->top += destRect->top - *destY;
-		*destY = destRect->top;
-	}
-
-	// If it's partly off the bottom side of the screen
-	if (*destY + (srcRect->bottom - srcRect->top) > destRect->bottom)
-		srcRect->bottom -= ((srcRect->bottom - srcRect->top) + *destY) - destRect->bottom;
-
-	if (srcRect->bottom < 0) srcRect->bottom = 0;
-
-	return;
-}
-
 //////////////////////////////////////////////////////////////////////////////////
 // Swap - swaps two integers
 //////////////////////////////////////////////////////////////////////////////////
@@ -80,11 +43,6 @@ void BaseUtils::swap(int *a, int *b) {
 	int Temp = *a;
 	*a = *b;
 	*b = Temp;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseUtils::strBeginsI(const char *string, const char *fragment) {
-	return (scumm_strnicmp(string, fragment, strlen(fragment)) == 0);
 }
 
 
@@ -99,11 +57,11 @@ float BaseUtils::normalizeAngle(float angle) {
 
 ////////////////////////////////////////////////////////////////////////////////
 void BaseUtils::createPath(const char *path, bool pathOnly) {
-	AnsiString pathStr;
+/*	AnsiString pathStr;
 
 	if (!pathOnly) pathStr = PathUtil::getDirectoryName(path);
 	else pathStr = path;
-
+*/
 //	try {
 	warning("BaseUtils::CreatePath - not implemented: %s", path);
 //		boost::filesystem::create_directories(path);
@@ -235,24 +193,6 @@ bool BaseUtils::matchesPattern(const char *pattern, const char *string) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
-char *BaseUtils::getPath(const char *filename) {
-	AnsiString path = PathUtil::getDirectoryName(filename);
-	//path = boost::filesystem::syste_complete(path).string();
-	warning("BaseUtils::GetPath: (%s), not implemented", filename);
-	char *ret = new char[path.size() + 1];
-	strcpy(ret, path.c_str());
-
-	return ret;
-}
-
-//////////////////////////////////////////////////////////////////////////
-char *BaseUtils::getFilename(const char *filename) {
-	AnsiString path = PathUtil::getFileName(filename);
-	char *ret = new char[path.size() + 1];
-	strcpy(ret, path.c_str());
-	return ret;
-}
 
 //////////////////////////////////////////////////////////////////////////
 void BaseUtils::RGBtoHSL(uint32 RGBColor, byte *outH, byte *outS, byte *outL) {

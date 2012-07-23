@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_STRINGUTIL_H
 #define WINTERMUTE_STRINGUTIL_H
 
-#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dctypes.h"
 
 namespace WinterMute {
 
@@ -46,19 +46,9 @@ public:
 	static bool endsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase = false);
 
 	static bool isUtf8BOM(const byte *buffer, uint32 bufferSize);
-
-	static AnsiString replace(const AnsiString &str, const AnsiString &from, const AnsiString &to);
-	static AnsiString trim(const AnsiString &str, bool fromLeft = true, bool fromRight = true, const AnsiString &chars = " \n\r\t");
-
 	static int indexOf(const WideString &str, const WideString &toFind, size_t startFrom);
-	static int lastIndexOf(const WideString &str, const WideString &toFind, size_t startFrom);
 
-	static AnsiString toString(size_t val);
 	static AnsiString toString(int val);
-	static AnsiString toString(float val);
-	static AnsiString toString(double val);
-
-	static void split(const AnsiString &list, const AnsiString &delimiters, AnsiStringArray &result, bool keepEmptyItems = false);
 };
 
 } // end of namespace WinterMute

@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_PATHUTILS_H
 #define WINTERMUTE_PATHUTILS_H
 
-#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dctypes.h"
 
 namespace WinterMute {
 

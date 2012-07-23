@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "common/tokenizer.h"
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/utils/convert_utf.h"
@@ -265,48 +264,6 @@ bool StringUtil::isUtf8BOM(const byte *Buffer, uint32 BufferSize) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::replace(const AnsiString &str, const AnsiString &from, const AnsiString &to) {
-	if (from.empty() || from == to) return str;
-
-	AnsiString result = str;
-	/*size_t pos = 0;*/
-
-	while (result.contains(from)) {
-		const char *startPtr = strstr(result.c_str(), from.c_str());
-		uint32 index = startPtr - result.c_str();
-
-		Common::String tail(result.c_str() + index + to.size());
-		result = Common::String(result.c_str(), index);
-		result += to;
-		result += tail;
-
-		/*      pos = result.find(from, pos);
-		        if (pos == result.npos) break;
-
-		        result.replace(pos, from.size(), to);
-		        pos += to.size();*/
-	}
-
-	return result;
-}
-
-//////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::trim(const AnsiString &str, bool fromLeft, bool fromRight, const AnsiString &chars) {
-	AnsiString trimmedStr = str;
-
-	if (fromRight) {
-		//trimmedStr.erase(trimmedStr.find_last_not_of(chars) + 1); // TODO
-		warning("fromRight-trim not implemented yet, %s", chars.c_str());
-	}
-	if (fromLeft) {
-		uint32 lastOf = lastIndexOf(str, chars, 0);
-		trimmedStr = Common::String(trimmedStr.c_str() + lastOf);
-		//trimmedStr.erase(0, trimmedStr.find_first_not_of(chars));
-	}
-	return trimmedStr;
-}
-
-//////////////////////////////////////////////////////////////////////////
 int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
 	/*size_t pos = str.find(toFind, startFrom);
 	if (pos == str.npos) return -1;
@@ -318,64 +275,11 @@ int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t 
 		return index - str.c_str();
 }
 
-//////////////////////////////////////////////////////////////////////////
-int StringUtil::lastIndexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
-	/*size_t pos = str.rfind(toFind, startFrom);
-	if (pos == str.npos) return -1;
-	else return pos;*/
-	int32 lastIndex = -1;
-	bool found = false;
-	for (size_t i = startFrom; i < str.size(); i++) {
-		found = false;
-		for (size_t j = 0; j < toFind.size(); j++) {
-			if (str[i + j] != toFind[j]) {
-				found = false;
-				break;
-			} else {
-				found = true;
-			}
-		}
-		if (found)
-			lastIndex = i;
-	}
-	return lastIndex;
-}
-
-//////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::toString(size_t val) {
-	return Common::String::format("%u", (uint32)val);
-}
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString StringUtil::toString(int val) {
 	return Common::String::format("%d", val);
 }
 
-//////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::toString(float val) {
-	return Common::String::format("%f", val);
-}
-
-//////////////////////////////////////////////////////////////////////////
-AnsiString StringUtil::toString(double val) {
-	return Common::String::format("%f", val);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-void StringUtil::split(const AnsiString &list, const AnsiString &delimiters, AnsiStringArray &result, bool keepEmptyItems) {
-	result.clear();
-//TODO: Verify this, wrt keepEmptyItems.
-	Common::StringTokenizer tokenizer(list.c_str(), delimiters.c_str());
-	//typedef boost::char_separator<char> separator_t;
-	//typedef boost::tokenizer<separator_t, AnsiString::const_iterator, AnsiString> tokenizer_t;
-
-	//separator_t del(delimiters.c_str(), "", keepEmptyItems ? boost::keep_empty_tokens : boost::drop_empty_tokens);
-	//tokenizer_t tokens(list, del);
-	while (!tokenizer.empty()) {
-		Common::String copy(tokenizer.nextToken().c_str());
-		result.push_back(copy);
-	}
-}
 
 } // end of namespace WinterMute
