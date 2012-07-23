@@ -1023,7 +1023,7 @@ IMPLEMENT_FUNCTION(32, Tatiana, chapter3Handler)
 		}
 
 		if (parameters->param4 && parameters->param5) {
-			UPDATE_PARAM_CHECK(parameters->param4, getState()->time, 6300)
+			if (Entity::updateParameterCheck(parameters->param4, getState()->time, 6300)) {
 				if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 					getData()->location = kLocationOutsideCompartment;
 

@@ -613,6 +613,16 @@ bool Entity::updateParameter(uint &parameter, uint timeValue, uint delta) {
 	return true;
 }
 
+bool Entity::updateParameterCheck(uint &parameter, uint timeValue, uint delta) {
+	if (parameter && parameter >= timeValue)
+		return false;
+
+	if (!parameter)
+		parameter = (uint)(timeValue + delta);
+
+	return true;
+}
+
 void Entity::timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) {
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;

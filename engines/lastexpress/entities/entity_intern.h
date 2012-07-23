@@ -388,12 +388,6 @@ void class::setup_##name() { \
 
 #define UPDATE_PARAM_PROC_END }
 
-// Updating parameter with an added check (and code inside the check)
-#define UPDATE_PARAM_CHECK(parameter, type, value) \
-	if (!parameter || parameter < type) { \
-		if (!parameter) \
-			parameter = (uint)(type + value);
-
 } // End of namespace LastExpress
 
 #endif // LASTEXPRESS_ENTITY_INTERN_H

@@ -251,7 +251,7 @@ IMPLEMENT_FUNCTION(15, Alexei, function15)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_CHECK(params->param2, getState()->time, params->param1)
+		if (Entity::updateParameterCheck(params->param2, getState()->time, params->param1)) {
 			if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 				getData()->location = kLocationOutsideCompartment;
 
@@ -689,7 +689,7 @@ IMPLEMENT_FUNCTION(21, Alexei, function21)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_CHECK(params->param2, getState()->time, params->param1)
+		if (Entity::updateParameterCheck(params->param2, getState()->time, params->param1)) {
 			getData()->location = kLocationOutsideCompartment;
 			getData()->inventoryItem = kItemNone;
 
