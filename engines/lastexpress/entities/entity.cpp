@@ -254,7 +254,7 @@ void Entity::savegame(const SavePoint &savepoint) {
 	}
 }
 
-void Entity::savegameBloodJacket(SaveFunction *saveFunction) {
+void Entity::savegameBloodJacket() {
 	if (getProgress().jacket == kJacketBlood
 	 && getEntities()->isDistanceBetweenEntities(_entityIndex, kEntityPlayer, 1000)
 	 && !getEntities()->isInsideCompartments(kEntityPlayer)
@@ -266,11 +266,11 @@ void Entity::savegameBloodJacket(SaveFunction *saveFunction) {
 			break;
 
 		case kEntityCoudert:
-			(*saveFunction)(kSavegameTypeEvent, kEventCoudertBloodJacket);
+			setup_savegame(kSavegameTypeEvent, kEventCoudertBloodJacket);
 			break;
 
 		case kEntityMertens:
-			(*saveFunction)(kSavegameTypeEvent, kEventCoudertBloodJacket);
+			setup_savegame(kSavegameTypeEvent, kEventCoudertBloodJacket);
 			break;
 		}
 	}
@@ -488,7 +488,7 @@ void Entity::enterExitCompartment(const SavePoint &savepoint, EntityPosition pos
 	}
 }
 
-void Entity::goToCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, Common::String sequenceTo, Entity::EnterFunction *enterFunction) {
+void Entity::goToCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, Common::String sequenceTo) {
 	switch (savepoint.action) {
 	default:
 		break;
@@ -496,7 +496,7 @@ void Entity::goToCompartment(const SavePoint &savepoint, ObjectIndex compartment
 	case kActionDefault:
 		getData()->entityPosition = positionFrom;
 		setCallback(1);
-		(*enterFunction)(sequenceFrom.c_str(), compartmentFrom);
+		setup_enterExitCompartment(sequenceFrom.c_str(), compartmentFrom);
 		break;
 
 	case kActionCallback:
@@ -506,7 +506,7 @@ void Entity::goToCompartment(const SavePoint &savepoint, ObjectIndex compartment
 
 		case 1:
 			setCallback(2);
-			(*enterFunction)(sequenceTo.c_str(), compartmentFrom);
+			setup_enterExitCompartment(sequenceTo.c_str(), compartmentFrom);
 			break;
 
 		case 2:
@@ -519,7 +519,7 @@ void Entity::goToCompartment(const SavePoint &savepoint, ObjectIndex compartment
 	}
 }
 
-void Entity::goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, ObjectIndex compartmentTo, EntityPosition positionTo, Common::String sequenceTo, Entity::EnterFunction *enterFunction, Entity::UpdateFunction *updateFunction) {
+void Entity::goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, ObjectIndex compartmentTo, EntityPosition positionTo, Common::String sequenceTo) {
 	switch (savepoint.action) {
 	default:
 		break;
@@ -528,7 +528,7 @@ void Entity::goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIn
 		getData()->entityPosition = positionFrom;
 		getData()->location = kLocationOutsideCompartment;
 		setCallback(1);
-		(*enterFunction)(sequenceFrom.c_str(), compartmentFrom);
+		setup_enterExitCompartment(sequenceFrom.c_str(), compartmentFrom);
 		break;
 
 	case kActionCallback:
@@ -538,12 +538,12 @@ void Entity::goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIn
 
 		case 1:
 			setCallback(2);
-			(*updateFunction)(kCarGreenSleeping, positionTo);
+			setup_updateEntity(kCarGreenSleeping, positionTo);
 			break;
 
 		case 2:
 			setCallback(3);
-			(*enterFunction)(sequenceTo.c_str(), compartmentTo);
+			setup_enterExitCompartment(sequenceTo.c_str(), compartmentTo);
 			break;
 
 		case 3:

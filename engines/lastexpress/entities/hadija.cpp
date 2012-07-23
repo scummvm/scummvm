@@ -86,22 +86,22 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Hadija, compartment6)
-	Entity::goToCompartment(savepoint, kObjectCompartment6, kPosition_4070, "619Cf", "619Df", WRAP_ENTER_FUNCTION(Hadija, setup_enterExitCompartment));
+	Entity::goToCompartment(savepoint, kObjectCompartment6, kPosition_4070, "619Cf", "619Df");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Hadija, compartment8)
-	Entity::goToCompartment(savepoint, kObjectCompartment8, kPosition_2740, "619Ch", "619Dh", WRAP_ENTER_FUNCTION(Hadija, setup_enterExitCompartment));
+	Entity::goToCompartment(savepoint, kObjectCompartment8, kPosition_2740, "619Ch", "619Dh");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Hadija, compartment6to8)
-	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment6, kPosition_4070, "619Bf", kObjectCompartment8, kPosition_2740, "619Ah", WRAP_ENTER_FUNCTION(Hadija, setup_enterExitCompartment), WRAP_UPDATE_FUNCTION(Hadija, setup_updateEntity));
+	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment6, kPosition_4070, "619Bf", kObjectCompartment8, kPosition_2740, "619Ah");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Hadija, compartment8to6)
-	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment8, kPosition_2740, "619Bh", kObjectCompartment6, kPosition_4070, "619Af", WRAP_ENTER_FUNCTION(Hadija, setup_enterExitCompartment), WRAP_UPDATE_FUNCTION(Hadija, setup_updateEntity));
+	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment8, kPosition_2740, "619Bh", kObjectCompartment6, kPosition_4070, "619Af");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////

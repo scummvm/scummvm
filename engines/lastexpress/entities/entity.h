@@ -689,6 +689,11 @@ public:
 	virtual void setup_chapter4() = 0;
 	virtual void setup_chapter5() = 0;
 
+	// Shared functions
+	virtual void setup_savegame(SavegameType, uint32) { error("[Entity::setup_savegame] Trying to call the parent setup function. Use the specific entity function directly"); }
+	virtual void setup_enterExitCompartment(const char *, ObjectIndex) { error("[Entity::setup_enterExitCompartment] Trying to call the parent setup function. Use the specific entity function directly"); }
+	virtual void setup_updateEntity(CarIndex, EntityPosition) { error("[Entity::setup_updateEntity] Trying to call the parent setup function. Use the specific entity function directly"); }
+
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser) { _data->saveLoadWithSerializer(ser); }
 
@@ -700,14 +705,6 @@ protected:
 	EntityIndex                _entityIndex;
 	EntityData                *_data;
 	Common::Array<Callback *>  _callbacks;
-
-	typedef Common::Functor2<const char *, ObjectIndex, void> EnterFunction;
-	typedef Common::Functor2<CarIndex, EntityPosition, void> UpdateFunction;
-	typedef Common::Functor2<SavegameType, uint32, void> SaveFunction;
-
-	#define WRAP_ENTER_FUNCTION(className, method) new Common::Functor2Mem<const char *, ObjectIndex, void, className>(this, &className::method)
-	#define WRAP_UPDATE_FUNCTION(className, method) new Common::Functor2Mem<CarIndex, EntityPosition, void, className>(this, &className::method)
-	#define WRAP_SAVE_FUNCTION(className, method) new Common::Functor2Mem<SavegameType, uint32, void, className>(this, &className::method)
 
 	/**
 	 * Saves the game
@@ -723,7 +720,7 @@ protected:
 	 *
 	 * @param	saveFunction	The setup function to call to save the game
 	 */
-	void savegameBloodJacket(SaveFunction *saveFunction);
+	void savegameBloodJacket();
 
 	/**
 	 * Play sound
@@ -836,9 +833,8 @@ protected:
 	 * @param	positionFrom		 	The position from.
 	 * @param	sequenceFrom		 	The sequence from.
 	 * @param	sequenceTo			 	The sequence to.
-	 * @param	enterFunction			The enter/exit compartment function.
 	 */
-	void goToCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, Common::String sequenceTo, EnterFunction *enterFunction);
+	void goToCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, Common::String sequenceTo);
 
 	/**
 	 * Go to compartment from compartment.
@@ -850,10 +846,8 @@ protected:
 	 * @param	compartmentTo		  	The compartment to.
 	 * @param	positionTo			  	The position to.
 	 * @param	sequenceTo			  	The sequence to.
-	 * @param	enterFunction			The enter/exit compartment function.
-	 * @param	updateFunction			The update entity function.
 	 */
-	void goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, ObjectIndex compartmentTo, EntityPosition positionTo, Common::String sequenceTo, Entity::EnterFunction *enterFunction, Entity::UpdateFunction *updateFunction);
+	void goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, ObjectIndex compartmentTo, EntityPosition positionTo, Common::String sequenceTo);
 
 	/**
 	 * Updates the position

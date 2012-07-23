@@ -107,7 +107,7 @@ IMPLEMENT_FUNCTION_S(2, Mertens, bloodJacket)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionExitCompartment:
@@ -134,7 +134,7 @@ IMPLEMENT_FUNCTION_SI(3, Mertens, enterExitCompartment, ObjectIndex)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 		return;
 
 	case kActionCallback:
@@ -155,7 +155,7 @@ IMPLEMENT_FUNCTION_SI(4, Mertens, enterExitCompartment2, ObjectIndex)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 		return;
 
 	case kAction4:
@@ -181,7 +181,7 @@ IMPLEMENT_FUNCTION_SIII(5, Mertens, enterExitCompartment3, ObjectIndex, EntityPo
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionExitCompartment:
@@ -223,7 +223,7 @@ IMPLEMENT_FUNCTION(6, Mertens, callbackActionOnDirection)
 			break;
 		}
 
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionExitCompartment:
@@ -246,7 +246,7 @@ IMPLEMENT_FUNCTION_S(7, Mertens, playSound)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionEndSound:
@@ -273,7 +273,7 @@ IMPLEMENT_FUNCTION_S(8, Mertens, playSound16)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionEndSound:
@@ -462,7 +462,7 @@ IMPLEMENT_FUNCTION_I(11, Mertens, function11, uint32)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 
 		UPDATE_PARAM(params->param2, getState()->time, params->param1)
 
@@ -530,7 +530,7 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 
 		if (!params->param2 && !params->param3) {
 			UPDATE_PARAM_PROC(params->param4, getState()->timeTicks, 75)
@@ -652,7 +652,7 @@ IMPLEMENT_FUNCTION_I(14, Mertens, function14, EntityIndex)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(WRAP_SAVE_FUNCTION(Mertens, setup_savegame));
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionDefault:
