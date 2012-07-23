@@ -446,7 +446,7 @@ IMPLEMENT_FUNCTION(17, Alexei, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler)
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Alexei, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -978,7 +978,7 @@ IMPLEMENT_FUNCTION(26, Alexei, function26)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1512000, params->param1, setup_function27)
+		Entity::timeCheck(kTime1512000, params->param1, WRAP_SETUP_FUNCTION(Alexei, setup_function27));
 		break;
 
 	case kActionDefault:

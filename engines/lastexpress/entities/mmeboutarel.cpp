@@ -244,7 +244,7 @@ IMPLEMENT_FUNCTION(10, MmeBoutarel, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(MmeBoutarel, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -424,7 +424,8 @@ label_callback_1:
 			}
 		}
 
-		TIME_CHECK(kTime1094400, params->param8, setup_function14);
+		if (Entity::timeCheck(kTime1094400, params->param8, WRAP_SETUP_FUNCTION(MmeBoutarel, setup_function14)))
+			break;
 
 		if (params->param4) {
 			if (!Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->timeTicks, 75))
@@ -1065,7 +1066,8 @@ IMPLEMENT_FUNCTION(24, MmeBoutarel, function24)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime2470500, params->param4, setup_function25);
+		if (Entity::timeCheck(kTime2470500, params->param4, WRAP_SETUP_FUNCTION(MmeBoutarel, setup_function25)))
+			break;
 
 		if (params->param2) {
 			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))

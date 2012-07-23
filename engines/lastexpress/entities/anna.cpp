@@ -547,7 +547,7 @@ IMPLEMENT_FUNCTION(16, Anna, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Anna, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -1423,7 +1423,7 @@ IMPLEMENT_FUNCTION(34, Anna, function34)
 		}
 
 label_callback_1:
-		TIME_CHECK(kTime1489500, params->param3, setup_function35);
+		Entity::timeCheck(kTime1489500, params->param3, WRAP_SETUP_FUNCTION(Anna, setup_function35));
 		break;
 
 	case kActionKnock:
@@ -2544,7 +2544,8 @@ IMPLEMENT_FUNCTION(54, Anna, function54)
 
 	case kActionNone:
 		if (params->param3) {
-			TIME_CHECK(kTime2079000, params->param5, setup_function55);
+			if (Entity::timeCheck(kTime2079000, params->param5, WRAP_SETUP_FUNCTION(Anna, setup_function55)))
+				break;
 
 			if (Entity::updateParameter(params->param6, getState()->time, 9000)) {
 				params->param4 = !params->param4;
@@ -3429,7 +3430,7 @@ IMPLEMENT_FUNCTION(69, Anna, function69)
 			break;
 		}
 
-		TIME_CHECK_CALLBACK(kTime2535300, params->param3, 4, setup_callbackActionRestaurantOrSalon);
+		Entity::timeCheckCallback(kTime2535300, params->param3, 4, WRAP_SETUP_FUNCTION(Anna, setup_callbackActionRestaurantOrSalon));
 		break;
 
 	case kActionDefault:

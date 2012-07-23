@@ -752,7 +752,7 @@ IMPLEMENT_FUNCTION(22, August, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(August, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -1966,7 +1966,7 @@ IMPLEMENT_FUNCTION(38, August, function38)
 	case kActionNone:
 		Entity::timeCheckSavepoint(kTime1801800, params->param1, kEntityAugust, kEntityRebecca, kAction155980128);
 
-		TIME_CHECK_CALLBACK(kTime1820700, params->param2, 3, setup_callbackActionRestaurantOrSalon);
+		Entity::timeCheckCallback(kTime1820700, params->param2, 3, WRAP_SETUP_FUNCTION(August, setup_callbackActionRestaurantOrSalon));
 		break;
 
 	case kActionDefault:
@@ -2404,7 +2404,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(46, August, function46)
 	switch (savepoint.action) {
 	default:
-		TIME_CHECK_CALLBACK(kTime2088000, params->param1, 1, setup_function47);
+		Entity::timeCheckCallback(kTime2088000, params->param1, 1, WRAP_SETUP_FUNCTION(August, setup_function47));
 		break;
 
 	case kActionNone:
@@ -2489,7 +2489,7 @@ IMPLEMENT_FUNCTION(48, August, function48)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeCityLinz, params->param1, setup_function49);
+		Entity::timeCheck(kTimeCityLinz, params->param1, WRAP_SETUP_FUNCTION(August, setup_function49));
 		break;
 
 	case kActionKnock:

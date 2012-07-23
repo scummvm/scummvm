@@ -269,21 +269,6 @@ void class::setup_##name() { \
 //////////////////////////////////////////////////////////////////////////
 // Time check macros
 //////////////////////////////////////////////////////////////////////////
-#define TIME_CHECK(timeValue, parameter, function) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		function(); \
-		break; \
-	}
-
-#define TIME_CHECK_CALLBACK(timeValue, parameter, callback, function) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		setCallback(callback); \
-		function(); \
-		break; \
-	}
-
 #define TIME_CHECK_CALLBACK_1(timeValue, parameter, callback, function, param1) \
 	if (getState()->time > timeValue && !parameter) { \
 		parameter = 1; \
@@ -307,26 +292,6 @@ void class::setup_##name() { \
 		function(param1, param2, param3); \
 		break; \
 	}
-
-#define TIME_CHECK_CALLBACK_INVENTORY(timeValue, parameter, callback, function) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		getData()->inventoryItem = kItemNone; \
-		setCallback(callback); \
-		function(); \
-		break; \
-	}
-
-#define TIME_CHECK_CAR(timeValue, parameter, callback, function) {\
-	if ((getState()->time <= timeValue && !getEntities()->isPlayerInCar(kCarGreenSleeping)) || !parameter) \
-		parameter = (uint)getState()->time + 75; \
-	if (getState()->time > timeValue || parameter < getState()->time) { \
-		parameter = kTimeInvalid; \
-		setCallback(callback); \
-		function(); \
-		break; \
-	} \
-}
 
 } // End of namespace LastExpress
 

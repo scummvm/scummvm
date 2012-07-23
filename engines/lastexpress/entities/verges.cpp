@@ -572,7 +572,7 @@ IMPLEMENT_FUNCTION(18, Verges, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Verges, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -910,7 +910,8 @@ label_callback3:
 		TIME_CHECK_CALLBACK_1(kTimeChapter1, params->param7, 4, setup_function9, "TRA1001");
 
 label_callback4:
-		TIME_CHECK_CALLBACK(kTime1089000, params->param8, 5, setup_function12);
+		if (Entity::timeCheckCallback(kTime1089000, params->param8, 5, WRAP_SETUP_FUNCTION(Verges, setup_function12)))
+			break;
 
 		params->param8 = 1;
 
@@ -1445,7 +1446,8 @@ label_callback_4:
 		TIME_CHECK_CALLBACK_1(kTime1998000, params->param2, 5, setup_function9, "Tra3010a");
 
 label_callback_5:
-		TIME_CHECK_CALLBACK(kTime2016000, params->param3, 6, setup_function35);
+		if (Entity::timeCheckCallback(kTime2016000, params->param3, 6, WRAP_SETUP_FUNCTION(Verges, setup_function35)))
+			break;
 
 label_callback_6:
 		TIME_CHECK_CALLBACK_1(kTime2070000, params->param4, 7, setup_function9, "Tra3002");
@@ -1457,7 +1459,7 @@ label_callback_8:
 		TIME_CHECK_CALLBACK_1(kTime2173500, params->param6, 9, setup_function30, "Tra3012");
 
 label_callback_9:
-		TIME_CHECK_CALLBACK(kTime2218500, params->param7, 10, setup_function32);
+		Entity::timeCheckCallback(kTime2218500, params->param7, 10, WRAP_SETUP_FUNCTION(Verges, setup_function32));
 		break;
 
 	case kActionOpenDoor:

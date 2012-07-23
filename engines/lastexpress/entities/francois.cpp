@@ -848,7 +848,7 @@ IMPLEMENT_FUNCTION(17, Francois, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Francois, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -883,7 +883,7 @@ IMPLEMENT_FUNCTION(19, Francois, function19)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK(kTime1161000, params->param1, 2, setup_function12);
+		Entity::timeCheckCallback(kTime1161000, params->param1, 2, WRAP_SETUP_FUNCTION(Francois, setup_function12));
 		break;
 
 	case kAction101107728:
@@ -981,7 +981,8 @@ label_callback_1:
 		TIME_CHECK_CALLBACK_1(kTime1764000, params->param1, 2, setup_playSound, "Fra2011");
 
 label_callback_2:
-		TIME_CHECK_CALLBACK(kTime1800000, params->param2, 3, setup_function13);
+		if (Entity::timeCheckCallback(kTime1800000, params->param2, 3, WRAP_SETUP_FUNCTION(Francois, setup_function13)))
+			break;
 
 label_callback_3:
 		if (!getInventory()->hasItem(kItemWhistle) && getInventory()->get(kItemWhistle)->location != kObjectLocation3) {
@@ -1085,25 +1086,32 @@ IMPLEMENT_FUNCTION(25, Francois, chapter3Handler)
 			}
 
 label_callback_2:
-			TIME_CHECK_CALLBACK(kTime2025000, params->param3, 3, setup_function12);
+			if (Entity::timeCheckCallback(kTime2025000, params->param3, 3, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_3:
-			TIME_CHECK_CALLBACK(kTime2052000, params->param4, 4, setup_function12);
+			if (Entity::timeCheckCallback(kTime2052000, params->param4, 4, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_4:
-			TIME_CHECK_CALLBACK(kTime2079000, params->param5, 5, setup_function12);
+			if (Entity::timeCheckCallback(kTime2079000, params->param5, 5, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_5:
-			TIME_CHECK_CALLBACK(kTime2092500, params->param6, 6, setup_function12);
+			if (Entity::timeCheckCallback(kTime2092500, params->param6, 6, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_6:
-			TIME_CHECK_CALLBACK(kTime2173500, params->param7, 7, setup_function12);
+			if (Entity::timeCheckCallback(kTime2173500, params->param7, 7, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_7:
-			TIME_CHECK_CALLBACK(kTime2182500, params->param8, 8, setup_function12);
+			if (Entity::timeCheckCallback(kTime2182500, params->param8, 8, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_8:
-			TIME_CHECK_CALLBACK(kTime2241000, CURRENT_PARAM(1, 1), 9, setup_function12);
+			if (Entity::timeCheckCallback(kTime2241000, CURRENT_PARAM(1, 1), 9, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_9:
 			if (!getInventory()->hasItem(kItemWhistle) && getInventory()->get(kItemWhistle)->location != kObjectLocation3) {

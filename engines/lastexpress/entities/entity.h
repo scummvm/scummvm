@@ -82,6 +82,9 @@ struct SavePoint;
 #define ADD_NULL_FUNCTION() \
 	_callbacks.push_back(new ENTITY_CALLBACK(Entity, nullfunction, this));
 
+#define WRAP_SETUP_FUNCTION(className, method) \
+	new Common::Functor0Mem<void, className>(this, &className::method)
+
 //////////////////////////////////////////////////////////////////////////
 // Parameters macros
 //////////////////////////////////////////////////////////////////////////
@@ -903,10 +906,15 @@ protected:
 	bool updateParameterCheck(uint &parameter, uint timeType, uint delta);
 	bool updateParameterTime(TimeValue timeValue, bool check, uint &parameter, uint delta);
 
+	bool timeCheck(TimeValue timeValue, uint &parameter, Common::Functor0<void> *function);
+	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
+	bool timeCheckCallbackInventory(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
+	bool timeCheckCar(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
 	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action);
 	void timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex index, ObjectLocation location);
 	bool timeCheckCallbackAction(TimeValue timeValue, uint &parameter);
 	bool timeCheckPlaySoundUpdatePosition(TimeValue timeValue, uint &parameter, byte callback, const char* sound, EntityPosition position);
+
 };
 
 

@@ -691,7 +691,7 @@ IMPLEMENT_FUNCTION(28, Abbot, function28)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK(kTime2052000, params->param1, 1, setup_function29);
+		Entity::timeCheckCallback(kTime2052000, params->param1, 1, WRAP_SETUP_FUNCTION(Abbot, setup_function29));
 		break;
 
 	case kActionDefault:
@@ -1428,7 +1428,8 @@ IMPLEMENT_FUNCTION(43, Abbot, function43)
 		}
 
 label_callback_1:
-		TIME_CHECK(kTime2466000, params->param5, setup_function44);
+		if (Entity::timeCheck(kTime2466000, params->param5, WRAP_SETUP_FUNCTION(Abbot, setup_function44)))
+			break;
 
 		if (params->param3) {
 			if (!Entity::updateParameter(params->param6, getState()->timeTicks, 75))
@@ -1657,7 +1658,7 @@ IMPLEMENT_FUNCTION(48, Abbot, function48)
 			setup_updatePosition("126C", kCarRedSleeping, 52);
 		}
 
-		TIME_CHECK_CALLBACK_INVENTORY(kTime2533500, params->param2, 5, setup_callbackActionRestaurantOrSalon);
+		Entity::timeCheckCallbackInventory(kTime2533500, params->param2, 5, WRAP_SETUP_FUNCTION(Abbot, setup_callbackActionRestaurantOrSalon));
 		break;
 
 	case kAction1:
@@ -1709,7 +1710,7 @@ IMPLEMENT_FUNCTION(48, Abbot, function48)
 			getEntities()->drawSequenceLeft(kEntityAbbot, "126B");
 			params->param1 = 0;
 
-			TIME_CHECK_CALLBACK_INVENTORY(kTime2533500, params->param2, 5, setup_callbackActionRestaurantOrSalon);
+			Entity::timeCheckCallbackInventory(kTime2533500, params->param2, 5, WRAP_SETUP_FUNCTION(Abbot, setup_callbackActionRestaurantOrSalon));
 			break;
 
 		case 5:

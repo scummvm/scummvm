@@ -1963,7 +1963,7 @@ IMPLEMENT_FUNCTION(36, Coudert, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK(kTimeChapter1, params->param1, 1, setup_chapter1Handler)
+		Entity::timeCheckCallback(kTimeChapter1, params->param1, 1, WRAP_SETUP_FUNCTION(Coudert, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -2825,22 +2825,28 @@ label_callback_12:
 		}
 
 label_callback_13:
-		TIME_CHECK_CALLBACK(kTime2088900, params->param1, 14, setup_function32);
+		if (Entity::timeCheckCallback(kTime2088900, params->param1, 14, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_14:
-		TIME_CHECK_CALLBACK(kTime2119500, params->param2, 15, setup_function32);
+		if (Entity::timeCheckCallback(kTime2119500, params->param2, 15, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_15:
-		TIME_CHECK_CALLBACK(kTime2138400, params->param3, 16, setup_function32);
+		if (Entity::timeCheckCallback(kTime2138400, params->param3, 16, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_16:
-		TIME_CHECK_CALLBACK(kTime2147400, params->param4, 17, setup_function32);
+		if (Entity::timeCheckCallback(kTime2147400, params->param4, 17, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_17:
-		TIME_CHECK_CALLBACK(kTime2160000, params->param5, 18, setup_function32);
+		if (Entity::timeCheckCallback(kTime2160000, params->param5, 18, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_18:
-		TIME_CHECK_CALLBACK(kTime2205000, params->param6, 19, setup_function32);
+		if (Entity::timeCheckCallback(kTime2205000, params->param6, 19, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_19:
 		if (ENTITY_PARAM(0, 2)) {
@@ -3556,13 +3562,16 @@ label_callback_2:
 
 label_callback_3:
 		if (!params->param1) {
-			TIME_CHECK_CALLBACK(kTime2394000, params->param4, 4, setup_function56);
+			if (Entity::timeCheckCallback(kTime2394000, params->param4, 4, WRAP_SETUP_FUNCTION(Coudert, setup_function56)))
+				break;
 
 label_callback_4:
-			TIME_CHECK_CALLBACK(kTime2434500, params->param5, 5, setup_function32);
+			if (Entity::timeCheckCallback(kTime2434500, params->param5, 5, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+				break;
 
 label_callback_5:
-			TIME_CHECK_CALLBACK(kTime2448000, params->param6, 6, setup_function32);
+			if (Entity::timeCheckCallback(kTime2448000, params->param6, 6, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+				break;
 		}
 
 label_callback_6:

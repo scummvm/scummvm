@@ -324,7 +324,7 @@ IMPLEMENT_FUNCTION(10, Max, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter12_handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Max, setup_chapter12_handler));
 		break;
 
 	case kActionDefault:

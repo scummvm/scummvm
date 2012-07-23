@@ -255,7 +255,7 @@ IMPLEMENT_FUNCTION(12, Vesna, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Vesna, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:

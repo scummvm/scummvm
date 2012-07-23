@@ -156,7 +156,7 @@ IMPLEMENT_FUNCTION(9, Salko, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Salko, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:

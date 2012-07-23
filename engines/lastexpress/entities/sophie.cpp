@@ -179,7 +179,7 @@ IMPLEMENT_FUNCTION(4, Sophie, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chaptersHandler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Sophie, setup_chaptersHandler));
 		break;
 
 	case kActionDefault:

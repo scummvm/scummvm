@@ -246,7 +246,7 @@ IMPLEMENT_FUNCTION(14, Ivo, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Ivo, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -371,7 +371,7 @@ IMPLEMENT_FUNCTION(18, Ivo, chapter2)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1777500, params->param1, setup_function19);
+		Entity::timeCheck(kTime1777500, params->param1, WRAP_SETUP_FUNCTION(Ivo, setup_function19));
 		break;
 
 	case kActionDefault:

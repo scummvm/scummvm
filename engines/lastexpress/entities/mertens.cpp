@@ -2498,7 +2498,7 @@ IMPLEMENT_FUNCTION(34, Mertens, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Mertens, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -3535,16 +3535,18 @@ label_callback_6:
 		TIME_CHECK_CALLBACK_1(kTime1971000, params->param1, 7, setup_function28, "CON3012");
 
 label_callback_7:
-		TIME_CHECK_CALLBACK(kTime2117700, params->param2, 8, setup_function32);
+		if (Entity::timeCheckCallback(kTime2117700, params->param2, 8, WRAP_SETUP_FUNCTION(Mertens, setup_function32)))
+			break;
 
 label_callback_8:
 		TIME_CHECK_CALLBACK_1(kTime2124000, params->param3, 9, setup_function28, "CON2010");
 
 label_callback_9:
-		TIME_CHECK_CALLBACK(kTime2146500, params->param4, 10, setup_function32);
+		if (Entity::timeCheckCallback(kTime2146500, params->param4, 10, WRAP_SETUP_FUNCTION(Mertens, setup_function32)))
+			break;
 
 label_callback_10:
-		TIME_CHECK_CALLBACK(kTime2169000, params->param5, 11, setup_function32);
+		Entity::timeCheckCallback(kTime2169000, params->param5, 11, WRAP_SETUP_FUNCTION(Mertens, setup_function32));
 		break;
 
 	case kAction11:
@@ -3727,16 +3729,20 @@ label_callback_3:
 
 label_callback_4:
 		if (!params->param1) {
-			TIME_CHECK_CALLBACK(kTime2403000, params->param2, 5, setup_function49);
+			if (Entity::timeCheckCallback(kTime2403000, params->param2, 5, WRAP_SETUP_FUNCTION(Mertens, setup_function49)))
+				break;
 
 label_callback_5:
-			TIME_CHECK_CALLBACK(kTime2430000, params->param3, 6, setup_function32);
+			if (Entity::timeCheckCallback(kTime2430000, params->param3, 6, WRAP_SETUP_FUNCTION(Mertens, setup_function32)))
+				break;
 
 label_callback_6:
-			TIME_CHECK_CALLBACK(kTime2439000, params->param4, 7, setup_function32);
+			if (Entity::timeCheckCallback(kTime2439000, params->param4, 7, WRAP_SETUP_FUNCTION(Mertens, setup_function32)))
+				break;
 
 label_callback_7:
-			TIME_CHECK_CALLBACK(kTime2448000, params->param5, 8, setup_function32);
+			if (Entity::timeCheckCallback(kTime2448000, params->param5, 8, WRAP_SETUP_FUNCTION(Mertens, setup_function32)))
+				break;
 		}
 
 label_callback_8:

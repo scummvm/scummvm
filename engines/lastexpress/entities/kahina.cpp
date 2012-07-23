@@ -247,7 +247,7 @@ IMPLEMENT_FUNCTION(10, Kahina, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Kahina, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -280,7 +280,7 @@ IMPLEMENT_FUNCTION(12, Kahina, function12)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1485000, params->param2, setup_function13);
+		Entity::timeCheck(kTime1485000, params->param2, WRAP_SETUP_FUNCTION(Kahina, setup_function13));
 		break;
 
 	case kActionKnock:

@@ -126,7 +126,7 @@ IMPLEMENT_FUNCTION(7, Kronos, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Kronos, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -147,7 +147,7 @@ IMPLEMENT_FUNCTION(8, Kronos, chapter1Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1489500, params->param2, setup_function11);
+		Entity::timeCheck(kTime1489500, params->param2, WRAP_SETUP_FUNCTION(Kronos, setup_function11));
 		break;
 
 	case kAction171849314:
@@ -189,7 +189,7 @@ IMPLEMENT_FUNCTION(10, Kronos, function10)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1489500, params->param1, setup_function11);
+		Entity::timeCheck(kTime1489500, params->param1, WRAP_SETUP_FUNCTION(Kronos, setup_function11));
 		break;
 
 	case kActionDefault:
@@ -405,8 +405,7 @@ IMPLEMENT_FUNCTION(18, Kronos, function18)
 			params->param2 = 1;
 		}
 
-		TIME_CHECK(kTime2106000, params->param3, setup_function19)
-		else {
+		if (!Entity::timeCheck(kTime2106000, params->param3, WRAP_SETUP_FUNCTION(Kronos, setup_function19))) {
 			if (params->param1 && getEntities()->isInKronosSanctum(kEntityPlayer)) {
 				setCallback(1);
 				setup_savegame(kSavegameTypeEvent, kEventKahinaPunchSuite4);

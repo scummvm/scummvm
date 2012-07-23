@@ -560,7 +560,8 @@ IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
 
 		if (!params->param2 && getProgress().chapter == kChapter1) {
 
-			TIME_CHECK_CALLBACK(kTime1098000, params->param6, 1, setup_function13);
+			if (Entity::timeCheckCallback(kTime1098000, params->param6, 1, WRAP_SETUP_FUNCTION(Mahmud, setup_function13)))
+				break;
 
 			if (!getSoundQueue()->isBuffered("HAR1104") && getState()->time > kTime1167300 && !params->param7) {
 				params->param7 = 1;
@@ -733,7 +734,7 @@ IMPLEMENT_FUNCTION(15, Mahmud, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chaptersHandler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Mahmud, setup_chaptersHandler));
 		break;
 
 	case kActionDefault:

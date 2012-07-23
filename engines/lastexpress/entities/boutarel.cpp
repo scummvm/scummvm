@@ -617,7 +617,7 @@ IMPLEMENT_FUNCTION(19, Boutarel, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Boutarel, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -1047,7 +1047,7 @@ IMPLEMENT_FUNCTION(32, Boutarel, chapter4Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime2367000, params->param1, setup_function33);
+		Entity::timeCheck(kTime2367000, params->param1, WRAP_SETUP_FUNCTION(Boutarel, setup_function33));
 		break;
 
 	case kActionDefault:
@@ -1113,7 +1113,8 @@ IMPLEMENT_FUNCTION(34, Boutarel, function34)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime2470500, params->param1, setup_function35);
+		if (Entity::timeCheck(kTime2470500, params->param1, WRAP_SETUP_FUNCTION(Boutarel, setup_function35)))
+			break;
 
 		if (getState()->time > kTime2457000 && getEvent(kEventAugustDrink)) {
 			getSavePoints()->push(kEntityBoutarel, kEntityAbbot, kAction159003408);

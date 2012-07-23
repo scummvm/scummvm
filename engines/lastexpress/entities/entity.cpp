@@ -637,6 +637,57 @@ bool Entity::updateParameterCheck(uint &parameter, uint timeType, uint delta) {
 	return true;
 }
 
+bool Entity::timeCheck(TimeValue timeValue, uint &parameter, Common::Functor0<void> *function) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		(*function)();
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Entity::timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		setCallback(callback);
+		(*function)();
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Entity::timeCheckCallbackInventory(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		getData()->inventoryItem = kItemNone;
+		setCallback(callback);
+		(*function)();
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Entity::timeCheckCar(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function) {
+	if ((getState()->time <= timeValue && !getEntities()->isPlayerInCar(kCarGreenSleeping)) || !parameter)
+		parameter = (uint)getState()->time + 75;
+
+	if (getState()->time > timeValue || parameter < getState()->time) {
+		parameter = kTimeInvalid;
+		setCallback(callback);
+		(*function)();
+
+		return true;
+	}
+
+	return false;
+}
+
 void Entity::timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) {
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;
