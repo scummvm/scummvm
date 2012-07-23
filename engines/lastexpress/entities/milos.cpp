@@ -434,7 +434,8 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 			if (CURRENT_PARAM(1, 1) < getState()->timeTicks) {
 
 				if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
-					UPDATE_PARAM(CURRENT_PARAM(1, 2), getState()->timeTicks, 75);
+					if (!Entity::updateParameter(CURRENT_PARAM(1, 2), getState()->timeTicks, 75))
+						break;
 
 					getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
 
@@ -505,7 +506,8 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 			}
 
 label_callback_12:
-			UPDATE_PARAM(CURRENT_PARAM(1, 4), getState()->timeTicks, 75);
+			if (!Entity::updateParameter(CURRENT_PARAM(1, 4), getState()->timeTicks, 75))
+				break;
 
 			getEntities()->exitCompartment(kEntityMilos, kObjectCompartment1, true);
 
@@ -736,7 +738,8 @@ IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
 		}
 
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 70) && !params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 45);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 45))
+				break;
 
 			setCallback(2);
 			setup_draw("009C");
@@ -951,7 +954,8 @@ IMPLEMENT_FUNCTION(21, Milos, function21)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param2, getState()->time, 4500);
+		if (!Entity::updateParameter(params->param2, getState()->time, 4500))
+			break;
 
 		params->param1 = 1;
 		break;
@@ -1116,7 +1120,8 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 		}
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;
@@ -1289,7 +1294,8 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 		}
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param4, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param4, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;

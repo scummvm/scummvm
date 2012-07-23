@@ -427,7 +427,8 @@ label_callback_1:
 		TIME_CHECK(kTime1094400, params->param8, setup_function14);
 
 		if (params->param4) {
-			UPDATE_PARAM(CURRENT_PARAM(1, 1), getState()->timeTicks, 75);
+			if (!Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->timeTicks, 75))
+				break;
 
 			params->param3 = 1;
 			params->param4 = 0;
@@ -587,7 +588,8 @@ IMPLEMENT_FUNCTION(15, MmeBoutarel, function15)
 
 label_callback_5:
 		if (params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 1;
 			params->param2 = 0;
@@ -1016,7 +1018,8 @@ IMPLEMENT_FUNCTION(23, MmeBoutarel, chapter4Handler)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param2, getState()->time, 900);
+			if (!Entity::updateParameter(params->param2, getState()->time, 900))
+				break;
 
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 
@@ -1065,7 +1068,8 @@ IMPLEMENT_FUNCTION(24, MmeBoutarel, function24)
 		TIME_CHECK(kTime2470500, params->param4, setup_function25);
 
 		if (params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 1;
 			params->param2 = 0;
@@ -1208,7 +1212,8 @@ IMPLEMENT_FUNCTION(28, MmeBoutarel, function28)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;

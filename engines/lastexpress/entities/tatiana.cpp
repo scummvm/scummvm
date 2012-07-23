@@ -249,7 +249,8 @@ IMPLEMENT_FUNCTION_I(16, Tatiana, function16, uint32)
 		}
 
 		if (params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param2 = 0;
 			params->param3 = 1;
@@ -443,7 +444,9 @@ label_tatiana_chapter1_2:
 		Entity::timeCheckSavepoint(kTime1084500, params->param7, kEntityTatiana, kEntityPascale, kAction257489762);
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param8, getState()->timeTicks, 90);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 90))
+				break;
+
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 65);
 		} else {
 			params->param8 = 0;
@@ -1292,7 +1295,8 @@ IMPLEMENT_FUNCTION(37, Tatiana, function37)
 		}
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			getObjects()->update(kObjectCompartmentB, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
 			getObjects()->update(kObject49, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
@@ -1401,7 +1405,8 @@ IMPLEMENT_FUNCTION(38, Tatiana, function38)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 450);
+		if (!Entity::updateParameter(params->param1, getState()->time, 450))
+			break;
 
 		getEntities()->exitCompartment(kEntityTatiana, kObjectCompartmentF, true);
 
@@ -2197,7 +2202,8 @@ IMPLEMENT_FUNCTION(54, Tatiana, function54)
 		}
 
 		if (params->param1 > 3) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, 225);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, 225))
+				break;
 
 			params->param1 = 0;
 			params->param3 = 0;

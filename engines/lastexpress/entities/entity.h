@@ -870,6 +870,8 @@ protected:
 	// Helper functions
 	//////////////////////////////////////////////////////////////////////////
 
+	bool updateParameter(uint &parameter, uint time, uint delta);
+
 	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action);
 	void timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex index, ObjectLocation location);
 	bool timeCheckCallbackAction(TimeValue timeValue, uint &parameter);

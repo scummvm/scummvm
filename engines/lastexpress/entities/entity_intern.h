@@ -361,13 +361,6 @@ void class::setup_##name() { \
 //////////////////////////////////////////////////////////////////////////
 // Param update
 //////////////////////////////////////////////////////////////////////////
-#define UPDATE_PARAM(parameter, type, value) { \
-	if (!parameter) \
-		parameter = (uint)(type + value); \
-	if (parameter >= type) \
-		break; \
-	parameter = kTimeInvalid; \
-}
 
 // Todo: replace with UPDATE_PARAM_PROC as appropriate
 #define UPDATE_PARAM_GOTO(parameter, type, value, label) { \

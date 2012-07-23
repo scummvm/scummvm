@@ -1126,7 +1126,8 @@ IMPLEMENT_FUNCTION(33, Pascale, function33)
 
 label_callback1:
 		if (params->param1) {
-			UPDATE_PARAM(params->param6, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param6, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 2;

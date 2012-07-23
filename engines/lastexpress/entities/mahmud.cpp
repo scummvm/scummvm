@@ -84,7 +84,8 @@ IMPLEMENT_FUNCTION_SIII(4, Mahmud, enterExitCompartment2, ObjectIndex, uint32, O
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param7, getState()->timeTicks, params->param5);
+		if (!Entity::updateParameter(params->param7, getState()->timeTicks, params->param5))
+			break;
 
 		if (!getScenes()->checkPosition(kSceneNone, SceneManager::kCheckPositionLookingUp))
 			getScenes()->loadSceneFromObject((ObjectIndex)params->param6, true);
@@ -144,7 +145,8 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param6, getState()->time, 13500);
+		if (!Entity::updateParameter(params->param6, getState()->time, 13500))
+			break;
 
 		getObjects()->update(kObjectCompartment5, kEntityTrain, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectCompartment6, kEntityTrain, kObjectLocation3, kCursorHandKnock, kCursorHand);
@@ -570,7 +572,8 @@ IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
 		}
 
 		if (params->param5) {
-			UPDATE_PARAM(params->param8, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 75))
+				break;
 
 			params->param4 = 1;
 			params->param5 = 0;

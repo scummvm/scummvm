@@ -480,7 +480,9 @@ IMPLEMENT_FUNCTION_IS(17, Boutarel, function17, TimeValue)
 			break;
 
 		if (params->param5) {
-			UPDATE_PARAM(params->param7, getState()->timeTicks, 90)
+			if (!Entity::updateParameter(params->param7, getState()->timeTicks, 90))
+				break;
+
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 51);
 		} else {
 			params->param7 = 0;
@@ -515,7 +517,8 @@ IMPLEMENT_FUNCTION_I(18, Boutarel, function18, TimeValue)
 		}
 
 		if (params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param2 = 0;
 			params->param3 = 1;

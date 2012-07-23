@@ -794,7 +794,8 @@ label_callback_2:
 		if (getEvent(kEventKahinaAskSpeakFirebird)
 		 && !getEvent(kEventKronosConversationFirebird)
 		 && getEntities()->isInsideTrainCar(kEntityPlayer, kCarKronos)) {
-			UPDATE_PARAM(params->param4, getState()->time, 900);
+			if (!Entity::updateParameter(params->param4, getState()->time, 900))
+				break;
 
 			setCallback(3);
 			setup_savegame(kSavegameTypeEvent, kEventKronosConversationFirebird);

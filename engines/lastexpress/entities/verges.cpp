@@ -244,7 +244,8 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 		}
 
 		if (params->param6) {
-			UPDATE_PARAM(params->param8, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 75))
+				break;
 
 			getSound()->playSound(kEntityVerges, (char *)&params->seq);
 

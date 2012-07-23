@@ -346,7 +346,9 @@ void Entity::updateFromTicks(const SavePoint &savepoint) {
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param2, getState()->timeTicks, params->param1)
+		if (Entity::updateParameter(params->param2, getState()->timeTicks, params->param1))
+			break;
+
 		callbackAction();
 		break;
 	}
@@ -360,7 +362,9 @@ void Entity::updateFromTime(const SavePoint &savepoint) {
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param2, getState()->time, params->param1)
+		if (Entity::updateParameter(params->param2, getState()->time, params->param1))
+			break;
+
 		callbackAction();
 		break;
 	}
@@ -596,6 +600,18 @@ void Entity::callbackAction() {
 //////////////////////////////////////////////////////////////////////////
 // Helper functions
 //////////////////////////////////////////////////////////////////////////
+
+bool Entity::updateParameter(uint &parameter, uint timeValue, uint delta) {
+	if (!parameter)
+		parameter = (uint)(timeValue + delta);
+
+	if (parameter >= timeValue)
+		return false;
+
+	parameter = kTimeInvalid;
+
+	return true;
+}
 
 void Entity::timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) {
 	if (getState()->time > timeValue && !parameter) {

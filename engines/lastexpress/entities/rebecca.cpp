@@ -708,7 +708,9 @@ label_callback_4:
 
 label_callback_5:
 			if (params->param2) {
-				UPDATE_PARAM(params->param6, getState()->timeTicks, 90);
+				if (!Entity::updateParameter(params->param6, getState()->timeTicks, 90))
+					break;
+
 				getScenes()->loadSceneFromPosition(kCarRestaurant, 55);
 			} else {
 				params->param6 = 0;
@@ -966,7 +968,8 @@ IMPLEMENT_FUNCTION(26, Rebecca, function26)
 		TIME_CHECK_CALLBACK_3(kTime1224000, params->param2, 1, setup_updatePosition, "118H", kCarRestaurant, 52);
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, 90);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, 90))
+				break;
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 51);
 		}
@@ -1753,7 +1756,8 @@ IMPLEMENT_FUNCTION(48, Rebecca, function48)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;

@@ -514,7 +514,8 @@ IMPLEMENT_FUNCTION(24, Abbot, function24)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 900);
+		if (!Entity::updateParameter(params->param1, getState()->time, 900))
+			break;
 
 		setup_function25();
 		break;
@@ -615,7 +616,8 @@ IMPLEMENT_FUNCTION(26, Abbot, function26)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param2, getState()->time, 4500);
+		if (!Entity::updateParameter(params->param2, getState()->time, 4500))
+			break;
 
 		if (getEntities()->isSomebodyInsideRestaurantOrSalon())
 			setup_function27();
@@ -862,7 +864,8 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 		if (!params->param1)
 			break;
 
-		UPDATE_PARAM(params->param5, getState()->time, 450);
+		if (!Entity::updateParameter(params->param5, getState()->time, 450))
+			break;
 
 		setCallback(6);
 		setup_callbackActionRestaurantOrSalon();
@@ -918,7 +921,8 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 			getSavePoints()->push(kEntityAbbot, kEntityAlexei, kAction122288808);
 			params->param1 = 1;
 
-			UPDATE_PARAM(params->param5, getState()->time, 450);
+			if (!Entity::updateParameter(params->param5, getState()->time, 450))
+				break;
 
 			setCallback(6);
 			setup_callbackActionRestaurantOrSalon();
@@ -1161,7 +1165,8 @@ IMPLEMENT_FUNCTION(36, Abbot, function36)
 			break;
 
 		case 2:
-			UPDATE_PARAM(params->param4, getState()->time, 900);
+			if (!Entity::updateParameter(params->param4, getState()->time, 900))
+				break;
 
 			getSound()->playSound(kEntityAbbot, "Abb3042");
 			break;
@@ -1426,7 +1431,8 @@ label_callback_1:
 		TIME_CHECK(kTime2466000, params->param5, setup_function44);
 
 		if (params->param3) {
-			UPDATE_PARAM(params->param6, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param6, getState()->timeTicks, 75))
+				break;
 
 			params->param2 = 1;
 			params->param3 = 0;
@@ -1748,7 +1754,8 @@ IMPLEMENT_FUNCTION(49, Abbot, pickBomb)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->timeTicks, 150);
+		if (!Entity::updateParameter(params->param1, getState()->timeTicks, 150))
+			break;
 
 		getSavePoints()->push(kEntityAbbot, kEntityAbbot, kAction157489665);
 		break;

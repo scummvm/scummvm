@@ -400,7 +400,8 @@ IMPLEMENT_FUNCTION(13, Vassili, sleeping)
 
 	case kActionNone:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, params->param1);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
+				break;
 
 			setCallback(1);
 			setup_draw("303B");
@@ -459,7 +460,8 @@ IMPLEMENT_FUNCTION(15, Vassili, stealEgg)
 
 	case kActionNone:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, params->param1);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
+				break;
 
 			setCallback(1);
 			setup_draw("303B");
@@ -543,7 +545,8 @@ IMPLEMENT_FUNCTION(17, Vassili, chapter4Handler)
 
 	case kActionNone:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, params->param1);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
+				break;
 
 			setCallback(1);
 			setup_draw("303B");

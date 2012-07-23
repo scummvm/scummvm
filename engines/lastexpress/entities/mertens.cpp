@@ -464,7 +464,8 @@ IMPLEMENT_FUNCTION_I(11, Mertens, function11, uint32)
 	case kActionNone:
 		Entity::savegameBloodJacket();
 
-		UPDATE_PARAM(params->param2, getState()->time, params->param1)
+		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
+			break;
 
 		callbackAction();
 		break;
@@ -1062,7 +1063,8 @@ IMPLEMENT_FUNCTION_II(21, Mertens, function21, ObjectIndex, ObjectIndex)
 			getSound()->playSound(kEntityPlayer, "ZFX1004", getSound()->getSoundFlag(kEntityMertens));
 		UPDATE_PARAM_PROC_END
 
-		UPDATE_PARAM(CURRENT_PARAM(1, 5), getState()->time, 900);
+		if (!Entity::updateParameter(CURRENT_PARAM(1, 5), getState()->time, 900))
+			break;
 
 		// Update objects
 		getObjects()->updateLocation2((ObjectIndex)params->param1, kObjectLocation1);
@@ -1286,7 +1288,8 @@ IMPLEMENT_FUNCTION(24, Mertens, function24)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment3("601Rc", kObjectCompartment3, kPosition_6470, kPosition_6130);
@@ -1389,7 +1392,8 @@ IMPLEMENT_FUNCTION(25, Mertens, function25)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment3("601Zb", kObjectCompartment2, kPosition_7500, kPositionNone);
@@ -1626,7 +1630,8 @@ label_callback10:
 
 		if (params->param3 >= getState()->timeTicks) {
 label_callback11:
-			UPDATE_PARAM(params->param4, getState()->timeTicks, 375);
+			if (!Entity::updateParameter(params->param4, getState()->timeTicks, 375))
+				break;
 
 			getSound()->playSound(kEntityPlayer, "LIB033");
 
@@ -3736,7 +3741,8 @@ label_callback_7:
 
 label_callback_8:
 		if (getState()->time > kTime2538000 && !ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
-			UPDATE_PARAM(params->param6, getState()->time, 2700);
+			if (!Entity::updateParameter(params->param6, getState()->time, 2700))
+				break;
 
 			getEntities()->drawSequenceLeft(kEntityMertens, "601E");
 
@@ -3990,7 +3996,8 @@ IMPLEMENT_FUNCTION(53, Mertens, function53)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param4, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param4, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 0;

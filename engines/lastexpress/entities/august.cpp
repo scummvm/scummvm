@@ -840,7 +840,8 @@ label_callback_9:
 			break;
 
 		if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
-			UPDATE_PARAM(CURRENT_PARAM(1, 2), getState()->timeTicks, 75);
+			if (!Entity::updateParameter(CURRENT_PARAM(1, 2), getState()->timeTicks, 75))
+				break;
 
 			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
 
@@ -1483,7 +1484,8 @@ IMPLEMENT_FUNCTION(30, August, restaurant)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param3, getState()->timeTicks, 75);
+		if (!Entity::updateParameter(params->param3, getState()->timeTicks, 75))
+			break;
 
 		getData()->inventoryItem = kItemInvalid;
 		break;
@@ -1654,7 +1656,8 @@ IMPLEMENT_FUNCTION(32, August, function32)
 		}
 
 		if (params->param3) {
-			UPDATE_PARAM(params->param8, getState()->timeTicks, 90);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 90))
+				break;
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 55);
 		} else {
@@ -2768,7 +2771,8 @@ IMPLEMENT_FUNCTION(54, August, function54)
 			getData()->inventoryItem = kItemInvalid;
 
 		if (!params->param2 && params->param1) {
-			UPDATE_PARAM(params->param5, getState()->time, params->param1);
+			if (!Entity::updateParameter(params->param5, getState()->time, params->param1))
+				break;
 
 			getData()->inventoryItem = kItemNone;
 			setup_function55();
@@ -3044,7 +3048,8 @@ IMPLEMENT_FUNCTION(60, August, function60)
 		if (!params->param1)
 			break;
 
-		UPDATE_PARAM(params->param3, getState()->time, 9000);
+		if (!Entity::updateParameter(params->param3, getState()->time, 9000))
+			break;
 
 		setCallback(1);
 		setup_callbackActionRestaurantOrSalon();
@@ -3140,7 +3145,8 @@ IMPLEMENT_FUNCTION(62, August, function62)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 900);
+		if (!Entity::updateParameter(params->param1, getState()->time, 900))
+			break;
 
 		getSound()->playSound(kEntityAugust, "Aug4003A");
 
@@ -3229,7 +3235,8 @@ IMPLEMENT_FUNCTION(63, August, function63)
 			break;
 		}
 
-		UPDATE_PARAM(params->param5, getState()->timeTicks, params->param1);
+		if (!Entity::updateParameter(params->param5, getState()->timeTicks, params->param1))
+			break;
 
 		params->param2 = (params->param6 < 1 ? 1 : 0);
 
@@ -3386,7 +3393,8 @@ IMPLEMENT_FUNCTION(68, August, function68)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param4, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param4, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;

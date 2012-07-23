@@ -445,7 +445,9 @@ IMPLEMENT_FUNCTION(20, Yasmin, function20)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 2700);
+		if (!Entity::updateParameter(params->param1, getState()->time, 2700))
+			break;
+
 		setup_function21();
 		break;
 

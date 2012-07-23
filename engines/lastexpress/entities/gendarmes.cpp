@@ -266,7 +266,8 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 			getSound()->playSound(kEntityGendarmes, "POL1046A", kFlagDefault);
 		}
 
-		UPDATE_PARAM(params->param7, getState()->timeTicks, 300);
+		if (!Entity::updateParameter(params->param7, getState()->timeTicks, 300))
+			break;
 
 		if (!params->param4 && getEntities()->isOutsideAlexeiWindow()) {
 			getObjects()->update((ObjectIndex)params->param3, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);

@@ -356,7 +356,8 @@ IMPLEMENT_FUNCTION_I(10, Coudert, updateFromTime, uint32)
 	case kActionNone:
 		Entity::savegameBloodJacket();
 
-		UPDATE_PARAM(params->param2, getState()->time, params->param1);
+		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
+			break;
 
 		callbackAction();
 		break;
@@ -379,7 +380,8 @@ IMPLEMENT_FUNCTION_I(11, Coudert, updateFromTicks, uint32)
 	case kActionNone:
 		Entity::savegameBloodJacket();
 
-		UPDATE_PARAM(params->param2, getState()->timeTicks, params->param1);
+		if (!Entity::updateParameter(params->param2, getState()->timeTicks, params->param1))
+			break;
 
 		callbackAction();
 		break;
@@ -476,7 +478,8 @@ IMPLEMENT_FUNCTION_II(13, Coudert, function13, bool, EntityIndex)
 			}
 		}
 
-		UPDATE_PARAM(params->param5, getState()->timeTicks, 225);
+		if (!Entity::updateParameter(params->param5, getState()->timeTicks, 225))
+			break;
 
 		getData()->inventoryItem = kItemNone;
 		setCallback(5);
@@ -909,7 +912,8 @@ IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
 			getSound()->playSound(kEntityPlayer, "ZFX1004", getSound()->getSoundFlag(kEntityCoudert));
 		UPDATE_PARAM_PROC_END
 
-		UPDATE_PARAM(CURRENT_PARAM(1, 4), getState()->time, 900);
+		if (!Entity::updateParameter(CURRENT_PARAM(1, 4), getState()->time, 900))
+			break;
 
 		getObjects()->updateLocation2((ObjectIndex)params->param1, kObjectLocation1);
 
@@ -988,7 +992,8 @@ IMPLEMENT_FUNCTION(21, Coudert, function21)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment("627Zh", kObjectCompartmentH);
@@ -1089,7 +1094,8 @@ IMPLEMENT_FUNCTION(22, Coudert, function22)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment("627Rg", kObjectCompartmentG);
@@ -1300,7 +1306,8 @@ IMPLEMENT_FUNCTION(26, Coudert, function26)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment2("627Zd", kObjectCompartmentD, kPosition_5790, kPosition_6130);
@@ -1391,7 +1398,8 @@ IMPLEMENT_FUNCTION(27, Coudert, function27)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment2("627Rc", kObjectCompartmentC, kPosition_6470, kPosition_6130);
@@ -1891,7 +1899,8 @@ IMPLEMENT_FUNCTION_I(35, Coudert, function35, bool)
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 65);
 		}
 
-		UPDATE_PARAM(params->param2, getState()->time, 2700);
+		if (!Entity::updateParameter(params->param2, getState()->time, 2700))
+			break;
 
 		getSavePoints()->push(kEntityCoudert, kEntityMax, kActionMaxFreeFromCage);
 
@@ -3558,7 +3567,8 @@ label_callback_5:
 
 label_callback_6:
 		if (getState()->time > kTime2538000 && !ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
-			UPDATE_PARAM(params->param7, getState()->time, 2700);
+			if (!Entity::updateParameter(params->param7, getState()->time, 2700))
+				break;
 
 			ENTITY_PARAM(0, 2) = 0;
 			ENTITY_PARAM(0, 1) = 1;
@@ -4023,7 +4033,8 @@ IMPLEMENT_FUNCTION(62, Coudert, function62)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param4, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param4, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;

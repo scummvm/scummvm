@@ -466,7 +466,9 @@ IMPLEMENT_FUNCTION(22, Hadija, function22)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 2700);
+		if (!Entity::updateParameter(params->param1, getState()->time, 2700))
+			break;
+
 		setup_function23();
 		break;
 

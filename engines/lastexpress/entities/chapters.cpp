@@ -809,7 +809,8 @@ IMPLEMENT_FUNCTION(12, Chapters, chapter2Handler)
 		if (!getProgress().isTrainRunning)
 			break;
 
-		UPDATE_PARAM(params->param2, getState()->timeTicks, params->param1);
+		if (!Entity::updateParameter(params->param2, getState()->timeTicks, params->param1))
+			break;
 
 		getSound()->playLocomotiveSound();
 
