@@ -38,7 +38,6 @@
 #include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -590,7 +589,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	_hover = (!_disable && _gameRef->_activeObject == this && (_gameRef->_interactive || _gameRef->_state == GAME_SEMI_FROZEN));
 
 	if ((_press && _hover && !_gameRef->_mouseLeftDown) ||
-	        (_oneTimePress && BasePlatform::getTime() - _oneTimePressTime >= 100)) press();
+	        (_oneTimePress && g_system->getMillis() - _oneTimePressTime >= 100)) press();
 
 
 	if (_disable) {
@@ -907,7 +906,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		if (_visible && !_disable) {
 			_oneTimePress = true;
-			_oneTimePressTime = BasePlatform::getTime();
+			_oneTimePressTime = g_system->getMillis();
 		}
 		stack->pushNULL();
 

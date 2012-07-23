@@ -40,7 +40,6 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script.h"
@@ -629,8 +628,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		// cursor
 		if (focused && curFirst) {
 			if (Count) {
-				if (BasePlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
-					_lastBlinkTime = BasePlatform::getTime();
+				if (g_system->getMillis() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = g_system->getMillis();
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)
@@ -652,8 +651,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		// cursor
 		if (focused && !curFirst) {
 			if (Count) {
-				if (BasePlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
-					_lastBlinkTime = BasePlatform::getTime();
+				if (g_system->getMillis() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = g_system->getMillis();
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible)

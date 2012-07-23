@@ -29,7 +29,6 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_fader.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "common/util.h"
 
 namespace WinterMute {
@@ -67,7 +66,7 @@ bool BaseFader::update() {
 
 	uint32 time;
 
-	if (_system) time = BasePlatform::getTime() - _startTime;
+	if (_system) time = g_system->getMillis() - _startTime;
 	else time = _gameRef->_timer - _startTime;
 
 	if (time >= _duration) _currentAlpha = _targetAlpha;
@@ -115,7 +114,7 @@ bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_duration = duration;
 	_system = system;
 
-	if (_system) _startTime = BasePlatform::getTime();
+	if (_system) _startTime = g_system->getMillis();
 	else _startTime = _gameRef->_timer;
 
 	return STATUS_OK;
@@ -138,7 +137,7 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_duration = duration;
 	_system = system;
 
-	if (_system) _startTime = BasePlatform::getTime();
+	if (_system) _startTime = g_system->getMillis();
 	else _startTime = _gameRef->_timer;
 
 

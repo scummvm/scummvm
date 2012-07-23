@@ -641,13 +641,15 @@ bool BaseFontTT::initFont() {
 
 	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(_fontFile);
 	if (!file) {
+		//TODO: Try to fallback from Arial to FreeSans
+		/*
 		// the requested font file is not in wme file space; try loading a system font
 		AnsiString fontFileName = PathUtil::combine(BasePlatform::getSystemFontPath(), PathUtil::getFileName(_fontFile));
 		file = _gameRef->_fileManager->openFile(fontFileName.c_str(), false);
 		if (!file) {
 			_gameRef->LOG(0, "Error loading TrueType font '%s'", _fontFile);
 			//return STATUS_FAILED;
-		}
+		}*/
 	}
 
 	if (file) {

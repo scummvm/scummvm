@@ -52,7 +52,6 @@
 #include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_viewport.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
@@ -485,14 +484,14 @@ bool AdScene::initLoop() {
 #ifdef _DEBUGxxxx
 	int nu_steps = 0;
 	uint32 start = _gameRef->_currentTime;
-	while (!_pfReady && BasePlatform::getTime() - start <= _pfMaxTime) {
+	while (!_pfReady && g_system->getMillis() - start <= _pfMaxTime) {
 		PathFinderStep();
 		nu_steps++;
 	}
 	if (nu_steps > 0) _gameRef->LOG(0, "STAT: PathFinder iterations in one loop: %d (%s)  _pfMaxTime=%d", nu_steps, _pfReady ? "finished" : "not yet done", _pfMaxTime);
 #else
 	uint32 start = _gameRef->_currentTime;
-	while (!_pfReady && BasePlatform::getTime() - start <= _pfMaxTime) pathFinderStep();
+	while (!_pfReady && g_system->getMillis() - start <= _pfMaxTime) pathFinderStep();
 #endif
 
 	return STATUS_OK;

@@ -262,7 +262,7 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 	Rect32 rect;
 	BasePlatform::setRectEmpty(&rect);
 	if (_surface) BasePlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
-	if (!BasePlatform::equalRect(&rect, &_rect))
+	if (!(rect == _rect))
 		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", _rect.left, _rect.top, _rect.right, _rect.bottom);
 
 	if (_hotspotX != 0 || _hotspotY != 0)

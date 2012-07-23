@@ -59,6 +59,7 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/video/video_player.h"
 #include "engines/wintermute/video/video_theora_player.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
 namespace WinterMute {

@@ -247,7 +247,7 @@ int WinterMuteEngine::init() {
 	
 	
 	// load game
-	uint32 DataInitStart = BasePlatform::getTime();
+	uint32 DataInitStart = g_system->getMillis();
 	
 	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
@@ -259,7 +259,7 @@ int WinterMuteEngine::init() {
 	_game->_renderer->_ready = true;
 	_game->_miniUpdateEnabled = true;
 	
-	_game->LOG(0, "Engine initialized in %d ms", BasePlatform::getTime() - DataInitStart);
+	_game->LOG(0, "Engine initialized in %d ms", g_system->getMillis() - DataInitStart);
 	_game->LOG(0, "");
 	
 	if (ConfMan.hasKey("save_slot")) {

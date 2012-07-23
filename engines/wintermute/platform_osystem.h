@@ -31,7 +31,6 @@
 
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/wintypes.h"
 #include "common/events.h"
 
 namespace WinterMute {
@@ -43,21 +42,17 @@ class BasePlatform {
 public:
 	static int initialize(BaseGame *inGame, int argc, char *argv[]);
 	static void handleEvent(Common::Event *event);
-
-	static AnsiString getSystemFontPath();
 	static AnsiString getPlatformName();
 
 	// Win32 API bindings
 	static void outputDebugString(const char *lpOutputString);
-	static uint32 getTime();
+	//static uint32 getTime();
 	static bool getCursorPos(Point32 *lpPoint);
 	static bool setCursorPos(int X, int Y);
 	static bool showWindow(int nCmdShow);
-	static bool deleteFile(const char *lpFileName);
-	static bool copyFile(const char *from, const char *to, bool failIfExists);
+
 	static void setCapture();
 	static bool releaseCapture();
-	static bool setForegroundWindow();
 
 	static bool setRectEmpty(Rect32 *lprc);
 	static bool isRectEmpty(const Rect32 *lprc);
@@ -66,18 +61,9 @@ public:
 	static bool intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2);
 	static bool unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2);
 	static bool copyRect(Rect32 *lprcDst, Rect32 *lprcSrc);
-	static bool offsetRect(Rect32 *lprc, int dx, int dy);
-	static bool equalRect(Rect32 *rect1, Rect32 *rect2);
-
 
 	// string functions
-//	static int stricmp(const char *str1, const char *str2);
-//	static int strnicmp(const char *str1, const char *str2, size_t maxCount);
-	static char *strupr(char *string);
 	static char *strlwr(char *string);
-
-	// sdl event callback
-	static int SDLEventWatcher(void *userdata, Common::Event *event);
 
 private:
 	static BaseGame *_gameRef;

@@ -33,7 +33,6 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/wme_debugger.h"
-#include "engines/wintermute/platform_osystem.h"
 
 namespace WinterMute {
 
@@ -47,7 +46,7 @@ public:
 	class CScCachedScript {
 	public:
 		CScCachedScript(const char *filename, byte *buffer, uint32 size) {
-			_timestamp = BasePlatform::getTime();
+			_timestamp = g_system->getMillis();
 			_buffer = new byte[size];
 			if (_buffer) memcpy(_buffer, buffer, size);
 			_size = size;

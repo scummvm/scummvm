@@ -26,14 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
-#include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/base_registry.h"
-#include "engines/wintermute/base/sound/base_sound_manager.h"
-#include "engines/wintermute/base/scriptables/script_engine.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "common/system.h"
@@ -150,18 +145,6 @@ void BasePlatform::handleEvent(Common::Event *event) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
-int BasePlatform::SDLEventWatcher(void *userdata, Common::Event *event) {
-	//TODO
-	/*  if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_MINIMIZED) {
-	        if (_gameRef) _gameRef->AutoSaveOnExit();
-	        if (_gameRef) _gameRef->OnActivate(false, false);
-	        SDL_ShowCursor(SDL_ENABLE);
-	    }
-	*/
-	return 1;
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 // Win32 API bindings
@@ -174,11 +157,6 @@ void BasePlatform::outputDebugString(const char *lpOutputString) {
 */
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-uint32 BasePlatform::getTime() {
-	return g_system->getMillis();
-}
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::getCursorPos(Point32 *lpPoint) {
@@ -212,35 +190,12 @@ bool BasePlatform::showWindow(int nCmdShow) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePlatform::deleteFile(const char *lpFileName) {
-	return remove(lpFileName) ? true : false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BasePlatform::copyFile(const char *from, const char *to, bool failIfExists) {
-//	try {
-	warning("BasePlatform::copyFile(%s, %s, %d) - not implemented", from, to, failIfExists);
-	return false;
-//		if (failIfExists && boost::filesystem::exists(to)) return false;
-//		boost::filesystem::copy_file(from, to);
-//		return true;
-//	} catch (...) {
-//		return false;
-//	}
-}
-
-//////////////////////////////////////////////////////////////////////////
 void BasePlatform::setCapture() {
 	return;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::releaseCapture() {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BasePlatform::setForegroundWindow() {
 	return false;
 }
 
@@ -318,53 +273,10 @@ bool BasePlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePlatform::offsetRect(Rect32 *lprc, int dx, int dy) {
-	if (lprc == NULL) return false;
-
-	lprc->left   += dx;
-	lprc->top    += dy;
-	lprc->right  += dx;
-	lprc->bottom += dy;
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BasePlatform::equalRect(Rect32 *rect1, Rect32 *rect2) {
-	return rect1->left == rect2->left && rect1->right == rect2->right && rect1->top == rect2->top && rect1->bottom == rect2->bottom;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-AnsiString BasePlatform::getSystemFontPath() {
-/*#ifdef __WIN32__
-	// we're looking for something like "c:\windows\fonts\";
-	char winDir[MAX_PATH_LENGTH + 1];
-	winDir[MAX_PATH_LENGTH] = '\0';
-	::GetWindowsDirectory(winDir, MAX_PATH_LENGTH);
-	return PathUtil::Combine(AnsiString(winDir), "fonts");
-#else*/
-	// !PORTME
-	//return "/Library/Fonts/";
-	return "";
-//#endif
-}
-
-//////////////////////////////////////////////////////////////////////////
 AnsiString BasePlatform::getPlatformName() {
 	// TODO: Should conform to the WME-spec.
 	//return AnsiString(SDL_GetPlatform());
 	return AnsiString("ScummVM");
-}
-
-//////////////////////////////////////////////////////////////////////////
-char *BasePlatform::strupr(char *string) {
-	if (string) {
-		for (size_t i = 0; i < strlen(string); ++i) {
-			string[i] = toupper(string[i]);
-		}
-	}
-	return string;
 }
 
 //////////////////////////////////////////////////////////////////////////

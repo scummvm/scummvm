@@ -182,7 +182,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "Delete") == 0) {
 		stack->correctParams(0);
 		close();
-		stack->pushBool(BasePlatform::deleteFile(_filename) != false);
+		error("SXFile-Method: \"Delete\" not supported");
+		//stack->pushBool(BasePlatform::deleteFile(_filename) != false);
+		stack->pushBool(false);
 		return STATUS_OK;
 	}
 
@@ -191,11 +193,13 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Copy") == 0) {
 		stack->correctParams(2);
-		const char *Dest = stack->pop()->getString();
-		bool Overwrite = stack->pop()->getBool(true);
+		const char *dest = stack->pop()->getString();
+		bool overwrite = stack->pop()->getBool(true);
 
 		close();
-		stack->pushBool(BasePlatform::copyFile(_filename, Dest, !Overwrite) != false);
+		error("SXFile-Method: Copy not supported");
+		//stack->pushBool(BasePlatform::copyFile(_filename, Dest, !Overwrite) != false);
+		stack->pushBool(false);
 		return STATUS_OK;
 	}
 

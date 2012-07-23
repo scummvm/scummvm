@@ -1137,7 +1137,7 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 			Rect32 dragRect = _dragRect;
 			int offsetX, offsetY;
 			getTotalOffset(&offsetX, &offsetY);
-			BasePlatform::offsetRect(&dragRect, _posX + offsetX, _posY + offsetY);
+			dragRect.offsetRect(_posX + offsetX, _posY + offsetY);
 
 			if (BasePlatform::ptInRect(&dragRect, _gameRef->_mousePos)) {
 				_dragFrom.x = _gameRef->_mousePos.x;

@@ -1148,7 +1148,7 @@ bool ScScript::sleep(uint32 duration) {
 
 	_state = SCRIPT_SLEEPING;
 	if (_gameRef->_state == GAME_FROZEN) {
-		_waitTime = BasePlatform::getTime() + duration;
+		_waitTime = g_system->getMillis() + duration;
 		_waitFrozen = true;
 	} else {
 		_waitTime = _gameRef->_timer + duration;

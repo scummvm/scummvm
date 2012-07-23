@@ -62,6 +62,7 @@
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -589,7 +590,7 @@ void BaseGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
 bool BaseGame::initLoop() {
 	_viewportSP = -1;
 
-	_currentTime = BasePlatform::getTime();
+	_currentTime = g_system->getMillis();
 
 	getDebugMgr()->onGameTick();
 	_renderer->initLoop();
@@ -2183,7 +2184,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// WindowsTime (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WindowsTime") == 0) {
-		_scValue->setInt((int)BasePlatform::getTime());
+		_scValue->setInt((int)g_system->getMillis());
 		return _scValue;
 	}
 
@@ -4405,9 +4406,9 @@ void BaseGame::getMousePos(Point32 *pos) {
 bool BaseGame::miniUpdate() {
 	if (!_miniUpdateEnabled) return STATUS_OK;
 
-	if (BasePlatform::getTime() - _lastMiniUpdate > 200) {
+	if (g_system->getMillis() - _lastMiniUpdate > 200) {
 		if (_soundMgr) _soundMgr->initLoop();
-		_lastMiniUpdate = BasePlatform::getTime();
+		_lastMiniUpdate = g_system->getMillis();
 	}
 	return STATUS_OK;
 }
@@ -4440,8 +4441,8 @@ bool BaseGame::isDoubleClick(int buttonIndex) {
 	int moveY = abs(pos.y - _lastClick[buttonIndex].posY);
 
 
-	if (_lastClick[buttonIndex].time == 0 || BasePlatform::getTime() - _lastClick[buttonIndex].time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
-		_lastClick[buttonIndex].time = BasePlatform::getTime();
+	if (_lastClick[buttonIndex].time == 0 || g_system->getMillis() - _lastClick[buttonIndex].time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
+		_lastClick[buttonIndex].time = g_system->getMillis();
 		_lastClick[buttonIndex].posX = pos.x;
 		_lastClick[buttonIndex].posY = pos.y;
 		return false;

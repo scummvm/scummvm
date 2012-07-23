@@ -372,9 +372,11 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 			// some old version of ProjectMan writes invalid directory entries
 			// so at least prevent strupr from corrupting memory
 			name[nameLength - 1] = '\0';
-
-
-			BasePlatform::strupr(name);
+			
+			Common::String upcName = name;
+			upcName.toUppercase();
+			delete[] name;
+			name = NULL;
 
 			offset = package->readUint32LE();
 			offset += absoluteOffset;
@@ -386,7 +388,7 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 				timeDate1 = package->readUint32LE();
 				timeDate2 = package->readUint32LE();
 			}
-			_filesIter = _files.find(name);
+			_filesIter = _files.find(upcName.c_str());
 			if (_filesIter == _files.end()) {
 				BaseFileEntry *file = new BaseFileEntry();
 				file->_package = pkg;
@@ -395,7 +397,7 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 				file->_compressedLength = compLength;
 				file->_flags = flags;
 
-				_files[name] = file;
+				_files[upcName.c_str()] = file;
 			} else {
 				// current package has lower CD number or higher priority, than the registered
 				if (pkg->_cd < _filesIter->_value->_package->_cd || pkg->_priority > _filesIter->_value->_package->_priority) {
@@ -406,7 +408,6 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 					_filesIter->_value->_flags = flags;
 				}
 			}
-			delete [] name;
 		}
 	}
 
@@ -441,15 +442,12 @@ Common::File *BaseFileManager::openPackage(const Common::String &name) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseFileEntry *BaseFileManager::getPackageEntry(const Common::String &filename) {
-	char *upc_name = new char[strlen(filename.c_str()) + 1];
-	strcpy(upc_name, filename.c_str());
-	BasePlatform::strupr(upc_name);
+	Common::String upc_name = filename;
+	upc_name.toUppercase();
 
 	BaseFileEntry *ret = NULL;
-	_filesIter = _files.find(upc_name);
+	_filesIter = _files.find(upc_name.c_str());
 	if (_filesIter != _files.end()) ret = _filesIter->_value;
-
-	delete [] upc_name;
 
 	return ret;
 }
