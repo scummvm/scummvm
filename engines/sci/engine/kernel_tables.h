@@ -419,7 +419,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(Random),            SIG_EVERYWHERE,           "i(i)(i)",               NULL,            NULL },
 	{ MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(RemapColors),       SIG_EVERYWHERE,           "i(i)(i)(i)(i)(i)",      NULL,            NULL },
+	{ MAP_CALL(RemapColors),       SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "RemapColors", kRemapColors32, SIG_SCI32, SIGFOR_ALL,  "i(i)(i)(i)(i)(i)",      NULL,            NULL },
+#endif
 	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
 	{ MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
