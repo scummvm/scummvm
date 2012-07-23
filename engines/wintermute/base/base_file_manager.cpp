@@ -246,7 +246,10 @@ bool BaseFileManager::initPaths() {
 	if (dataSubFolder.exists()) {
 		addPath(PATH_PACKAGE, dataSubFolder);
 	}
-
+	Common::FSNode languageSubFolder = gameData.getChild("language");
+	if (languageSubFolder.exists()) {
+		addPath(PATH_PACKAGE, languageSubFolder);
+	}
 	return STATUS_OK;
 }
 
@@ -254,7 +257,7 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 	for (Common::FSList::const_iterator it = fslist.begin(); it != fslist.end(); it++) {
 		debugC(kWinterMuteDebugFileAccess, "Adding %s", (*it).getName().c_str());
 		if ((*it).getName().contains(".dcp")) {
-			if (registerPackage((*it).createReadStream())) {
+			if (registerPackage((*it))) {
 				addPath(PATH_PACKAGE, (*it));
 			}
 		}
@@ -276,8 +279,16 @@ bool BaseFileManager::registerPackages() {
 		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
 			if (!fileIt->getName().contains(".dcp"))
 				continue;
+			// Avoid registering all the language files
+			// TODO: Select based on the gameDesc.
+			if (fileIt->getParent().getName() == "language") {
+				Common::String parentName = fileIt->getParent().getName();
+				Common::String dcpName = fileIt->getName();
+				if (fileIt->getName() != "english.dcp")
+					continue;
+			}
 			warning("Registering %s %s", (*fileIt).getPath().c_str(), (*fileIt).getName().c_str());
-			registerPackage((*fileIt).createReadStream());
+			registerPackage((*fileIt));
 		}
 	}
 
@@ -287,7 +298,7 @@ bool BaseFileManager::registerPackages() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseFileManager::registerPackage(const Common::String &filename , bool searchSignature) {
+/*bool BaseFileManager::registerPackage(const Common::String &filename , bool searchSignature) {
 	Common::File *package = new Common::File();
 	package->open(filename);
 	if (!package->isOpen()) {
@@ -295,12 +306,14 @@ bool BaseFileManager::registerPackage(const Common::String &filename , bool sear
 		return STATUS_OK;
 	}
 	return registerPackage(package, filename);
-}
+}*/
 
-bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const Common::String &filename, bool searchSignature) {
+bool BaseFileManager::registerPackage(Common::FSNode file, const Common::String &filename, bool searchSignature) {
 	uint32 absoluteOffset = 0;
 	bool boundToExe = false;
-
+	Common::SeekableReadStream * package = file.createReadStream();
+	if (!package)
+		return STATUS_FAILED;
 	if (searchSignature) {
 		uint32 offset;
 		if (!findPackageSignature(package, &offset)) {
@@ -335,6 +348,7 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 
 	for (uint32 i = 0; i < hdr._numDirs; i++) {
 		BasePackage *pkg = new BasePackage(this);
+		pkg->_fsnode = file;
 		if (!pkg) return STATUS_FAILED;
 
 		pkg->_boundToExe = boundToExe;

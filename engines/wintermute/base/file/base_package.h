@@ -30,6 +30,7 @@
 #define WINTERMUTE_BPACKAGE_H
 
 #include "common/stream.h"
+#include "common/fs.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -43,6 +44,7 @@ public:
 	Common::SeekableReadStream *getFilePointer();
 	void closeFilePointer(Common::SeekableReadStream *&file);
 
+	Common::FSNode _fsnode;
 	bool _boundToExe;
 	byte _priority;
 	bool read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size);

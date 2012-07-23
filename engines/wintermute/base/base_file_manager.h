@@ -75,8 +75,8 @@ private:
 	Common::FSList _packagePaths;
 //	Common::FSList _singlePaths;
 	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
-	bool registerPackage(Common::SeekableReadStream *stream, const Common::String &filename = "", bool searchSignature = false);
-	bool registerPackage(const Common::String &filename, bool searchSignature = false);
+	bool registerPackage(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
+//	bool registerPackage(const Common::String &filename, bool searchSignature = false);
 	Common::Array<BasePackage *> _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
 	Common::HashMap<Common::String, BaseFileEntry *> _files;

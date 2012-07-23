@@ -86,12 +86,13 @@ bool BasePackage::read(Common::SeekableReadStream *file, uint32 offset, byte *bu
 
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *BasePackage::getFilePointer() {
-	Common::File *file = _fileManager->openPackage(_name);
+	Common::SeekableReadStream *stream = _fsnode.createReadStream();
+/*	Common::File *file = _fileManager->openPackage(_name);
 	if (!file) {
 		_fileManager->requestCD(_cd, _name, "");
 		file = _fileManager->openPackage(_name);
-	}
-	return file;
+	}*/
+	return stream;
 }
 
 //////////////////////////////////////////////////////////////////////////
