@@ -204,7 +204,8 @@ IMPLEMENT_FUNCTION(9, Yasmin, chapter1Handler)
 	case kActionNone:
 		TIME_CHECK_CALLBACK(kTime1093500, params->param1, 1, setup_function6);
 		TIME_CHECK_CALLBACK(kTime1161000, params->param2, 3, setup_function7);
-		TIME_CHECK_PLAYSOUND_UPDATEPOSITION(kTime1162800, params->param3, 4, "Har1102", kPosition_4070);
+		if (Entity::timeCheckPlaySoundUpdatePosition(kTime1162800, params->param3, 4, "Har1102", kPosition_4070))
+			break;
 		TIME_CHECK_CALLBACK_1(kTime1165500, params->param4, 5, setup_playSound, "Har1104");
 		TIME_CHECK_CALLBACK_1(kTime1174500, params->param5, 6, setup_playSound, "Har1106");
 		TIME_CHECK_CALLBACK(kTime1183500, params->param6, 7, setup_function6);
@@ -226,7 +227,8 @@ IMPLEMENT_FUNCTION(9, Yasmin, chapter1Handler)
 			// Fallback to case 3
 
 		case 3:
-			TIME_CHECK_PLAYSOUND_UPDATEPOSITION(kTime1162800, params->param3, 4, "Har1102", kPosition_4070);
+			if (Entity::timeCheckPlaySoundUpdatePosition(kTime1162800, params->param3, 4, "Har1102", kPosition_4070))
+				break;
 			// Fallback to case 4
 
 		case 4:

@@ -130,7 +130,8 @@ IMPLEMENT_FUNCTION(11, Hadija, chapter1Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_PLAYSOUND_UPDATEPOSITION(kTimeParisEpernay, params->param1, 1, "Har1100", kPosition_4840);
+		if (Entity::timeCheckPlaySoundUpdatePosition(kTimeParisEpernay, params->param1, 1, "Har1100", kPosition_4840))
+			break;
 
 label_callback1:
 		TIME_CHECK_CALLBACK(kTime1084500, params->param2, 2, setup_compartment6to8);

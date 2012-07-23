@@ -347,15 +347,6 @@ void class::setup_##name() { \
 		break; \
 	}
 
-#define TIME_CHECK_PLAYSOUND_UPDATEPOSITION(timeValue, parameter, callback, sound, position) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		getData()->entityPosition = position; \
-		setCallback(callback); \
-		setup_playSound(sound); \
-		break; \
-	}
-
 #define TIME_CHECK_CAR(timeValue, parameter, callback, function) {\
 	if ((getState()->time <= timeValue && !getEntities()->isPlayerInCar(kCarGreenSleeping)) || !parameter) \
 		parameter = (uint)getState()->time + 75; \

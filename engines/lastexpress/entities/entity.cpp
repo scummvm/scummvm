@@ -621,4 +621,17 @@ bool Entity::timeCheckCallbackAction(TimeValue timeValue, uint &parameter) {
 	return false;
 }
 
+bool Entity::timeCheckPlaySoundUpdatePosition(TimeValue timeValue, uint &parameter, byte callback, const char* sound, EntityPosition position) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		getData()->entityPosition = position;
+		setCallback(callback);
+		setup_playSound(sound);
+		return true;
+	}
+
+	return false;
+}
+
+
 } // End of namespace LastExpress
