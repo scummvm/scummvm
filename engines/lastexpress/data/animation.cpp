@@ -248,7 +248,7 @@ void Animation::processChunkAudio(Common::SeekableReadStream *in, const Chunk &c
 		// Read Snd header
 		uint32 header1 = in->readUint32LE();
 		uint16 header2 = in->readUint16LE();
-		warning("Start ADPCM: %d, %d", header1, header2);
+		debugC(4, kLastExpressDebugSound, "Start ADPCM: %d, %d", header1, header2);
 		size -= 6;
 	}
 
