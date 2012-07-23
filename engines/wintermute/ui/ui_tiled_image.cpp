@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/ui/ui_tiled_image.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"

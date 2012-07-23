@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/particles/part_force.h"
 #include "engines/wintermute/base/base_persistence_manager.h"

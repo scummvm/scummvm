@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_talk_def.h"
 #include "engines/wintermute/ad/ad_talk_node.h"

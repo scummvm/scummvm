@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/ad/ad_actor.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_entity.h"

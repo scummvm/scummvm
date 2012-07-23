@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/base/scriptables/script_value.h"

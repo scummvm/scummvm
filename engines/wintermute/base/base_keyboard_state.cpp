@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"

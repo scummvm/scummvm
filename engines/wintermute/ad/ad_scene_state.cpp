@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/ad/ad_scene_state.h"
 #include "engines/wintermute/ad/ad_node_state.h"

@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_game.h"
 

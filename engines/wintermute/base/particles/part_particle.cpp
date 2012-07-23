@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/particles/part_particle.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/base_sprite.h"
@@ -34,7 +33,6 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
-#include <math.h>
 
 namespace WinterMute {
 

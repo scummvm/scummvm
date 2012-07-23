@@ -27,7 +27,6 @@
  */
 
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_game.h"

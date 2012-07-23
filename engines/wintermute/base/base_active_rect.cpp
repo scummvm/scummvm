@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_region.h"

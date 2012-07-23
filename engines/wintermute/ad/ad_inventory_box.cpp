@@ -25,7 +25,7 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-#include "engines/wintermute/dcgf.h"
+
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_inventory_box.h"
 #include "engines/wintermute/ad/ad_inventory.h"

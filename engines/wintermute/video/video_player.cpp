@@ -27,7 +27,6 @@
  */
 
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/video/video_player.h"
 
 //#pragma comment(lib, "vfw32.lib")

@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/utils/path_util.h"

@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/particles/part_particle.h"
 #include "engines/wintermute/math/vector2.h"

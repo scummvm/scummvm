@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/ui/ui_button.h"

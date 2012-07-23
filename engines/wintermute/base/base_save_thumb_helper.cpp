@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_save_thumb_helper.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_game.h"

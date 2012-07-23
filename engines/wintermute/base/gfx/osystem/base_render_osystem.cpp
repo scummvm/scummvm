@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
