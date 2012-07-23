@@ -77,7 +77,6 @@ private:
 	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
 	bool registerPackage(Common::SeekableReadStream *stream, const Common::String &filename = "", bool searchSignature = false);
 	bool registerPackage(const Common::String &filename, bool searchSignature = false);
-	bool isValidPackage(const AnsiString &fileName) const;
 	Common::Array<BasePackage *> _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
 	Common::HashMap<Common::String, BaseFileEntry *> _files;

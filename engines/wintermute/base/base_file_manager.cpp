@@ -108,7 +108,8 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 
 	Common::SeekableReadStream *file = openFile(filename);
 	if (!file) {
-		if (mustExist) _gameRef->LOG(0, "Error opening file '%s'", filename.c_str());
+		if (mustExist)
+			debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Error opening file '%s'", filename.c_str());
 		return NULL;
 	}
 
@@ -123,13 +124,13 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 
 	buffer = new byte[file->size() + 1];
 	if (buffer == NULL) {
-		_gameRef->LOG(0, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), file->size() + 1);
+		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), file->size() + 1);
 		closeFile(file);
 		return NULL;
 	}
 
 	if (file->read(buffer, (uint32)file->size()) != (uint32)file->size()) {
-		_gameRef->LOG(0, "Error reading file '%s'", filename.c_str());
+		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Error reading file '%s'", filename.c_str());
 		closeFile(file);
 		delete [] buffer;
 		return NULL;
@@ -265,8 +266,7 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::registerPackages() {
-	_gameRef->LOG(0, "Scanning packages...");
-	debugC(kWinterMuteDebugFileAccess, "Scanning packages");
+	debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Scanning packages");
 
 	// Register without using SearchMan, as otherwise the FSNode-based lookup in openPackage will fail
 	// and that has to be like that to support the detection-scheme.
@@ -282,8 +282,7 @@ bool BaseFileManager::registerPackages() {
 		}
 	}
 
-	debugC(kWinterMuteDebugFileAccess, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
-	_gameRef->LOG(0, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
+	debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
 
 	return STATUS_OK;
 }
@@ -293,7 +292,7 @@ bool BaseFileManager::registerPackage(const Common::String &filename , bool sear
 	Common::File *package = new Common::File();
 	package->open(filename);
 	if (!package->isOpen()) {
-		_gameRef->LOG(0, "  Error opening package file '%s'. Ignoring.", filename.c_str());
+		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Error opening package file '%s'. Ignoring.", filename.c_str());
 		return STATUS_OK;
 	}
 	return registerPackage(package, filename);
@@ -318,13 +317,13 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 	TPackageHeader hdr;
 	hdr.readFromStream(package);
 	if (hdr._magic1 != PACKAGE_MAGIC_1 || hdr._magic2 != PACKAGE_MAGIC_2 || hdr._packageVersion > PACKAGE_VERSION) {
-		_gameRef->LOG(0, "  Invalid header in package file '%s'. Ignoring.", filename.c_str());
+		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Invalid header in package file '%s'. Ignoring.", filename.c_str());
 		delete package;
 		return STATUS_OK;
 	}
 
 	if (hdr._packageVersion != PACKAGE_VERSION) {
-		_gameRef->LOG(0, "  Warning: package file '%s' is outdated.", filename.c_str());
+		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Warning: package file '%s' is outdated.", filename.c_str());
 	}
 
 	// new in v2
@@ -416,16 +415,6 @@ bool BaseFileManager::registerPackage(Common::SeekableReadStream *package, const
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
-bool BaseFileManager::isValidPackage(const AnsiString &fileName) const {
-	AnsiString plainName = PathUtil::getFileNameWithoutExtension(fileName);
-
-	// check for device-type specific packages
-	if (StringUtil::startsWith(plainName, "xdevice_", true)) {
-		return StringUtil::compareNoCase(plainName, "xdevice_" + _gameRef->getDeviceType());
-	}
-	return true;
-}
 
 //////////////////////////////////////////////////////////////////////////
 Common::File *BaseFileManager::openPackage(const Common::String &name) {
