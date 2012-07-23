@@ -347,13 +347,6 @@ void class::setup_##name() { \
 		break; \
 	}
 
-#define TIME_CHECK_CALLBACK_ACTION(timeValue, parameter) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		callbackAction(); \
-		break; \
-	}
-
 #define TIME_CHECK_PLAYSOUND_UPDATEPOSITION(timeValue, parameter, callback, sound, position) \
 	if (getState()->time > timeValue && !parameter) { \
 		parameter = 1; \

@@ -611,4 +611,14 @@ void Entity::timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex o
 	}
 }
 
+bool Entity::timeCheckCallbackAction(TimeValue timeValue, uint &parameter) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		callbackAction();
+		return true;
+	}
+
+	return false;
+}
+
 } // End of namespace LastExpress

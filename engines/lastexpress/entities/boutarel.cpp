@@ -476,7 +476,8 @@ IMPLEMENT_FUNCTION_IS(17, Boutarel, function17, TimeValue)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_ACTION(params->param1, params->param6);
+		if (Entity::timeCheckCallbackAction((TimeValue)params->param1, params->param6))
+			break;
 
 		if (params->param5) {
 			UPDATE_PARAM(params->param7, getState()->timeTicks, 90)

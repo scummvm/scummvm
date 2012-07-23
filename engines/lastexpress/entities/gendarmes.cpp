@@ -551,7 +551,8 @@ void Gendarmes::arrest(const SavePoint &savepoint, bool shouldPlaySound, SoundFl
 	case kActionNone:
 		if (checkCallback) {
 			EXPOSE_PARAMS(EntityData::EntityParametersIIII);
-			TIME_CHECK_CALLBACK_ACTION(params->param1, params->param2);
+			if (Entity::timeCheckCallbackAction((TimeValue)params->param1, params->param2))
+				break;
 		}
 
 		if (shouldUpdateEntity) {
