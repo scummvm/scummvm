@@ -149,7 +149,7 @@ bool BaseSound::resume() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::persist(BasePersistenceManager *persistMgr) {
-	if (persistMgr->_saving && _sound) {
+	if (persistMgr->getIsSaving() && _sound) {
 		_soundPlaying = _sound->isPlaying();
 		_soundLooping = _sound->_looping;
 		_soundPrivateVolume = _sound->_privateVolume;
@@ -159,7 +159,7 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 		_soundFreezePaused = _sound->_freezePaused;
 	}
 
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		_sFXType = SFX_NONE;
 		_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 	}

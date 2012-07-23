@@ -3547,7 +3547,7 @@ bool BaseGame::loadSettings(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::persist(BasePersistenceManager *persistMgr) {
-	if (!persistMgr->_saving)
+	if (!persistMgr->getIsSaving())
 		cleanup();
 
 	BaseObject::persist(persistMgr);
@@ -3631,7 +3631,7 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_autoSaveSlot));
 	persistMgr->transfer(TMEMBER(_cursorHidden));
 
-	if (!persistMgr->_saving)
+	if (!persistMgr->getIsSaving())
 		_quitting = false;
 
 	return STATUS_OK;

@@ -350,7 +350,7 @@ void BaseArray<TYPE, ARG_TYPE>::insertAt(int nStartIndex, BaseArray *pNewArray) 
 template<class TYPE, class ARG_TYPE>
 bool BaseArray<TYPE, ARG_TYPE>::persist(BasePersistenceManager *persistMgr) {
 	int i, j;
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		j = getSize();
 		persistMgr->transfer("ArraySize", &j);
 		for (i = 0; i < j; i++) {
@@ -366,7 +366,7 @@ bool BaseArray<TYPE, ARG_TYPE>::persist(BasePersistenceManager *persistMgr) {
 			add(obj);
 		}
 	}
-	return STATUS_OK;
+	return true;
 }
 
 } // end of namespace WinterMute

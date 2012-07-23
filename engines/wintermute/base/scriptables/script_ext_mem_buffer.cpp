@@ -486,7 +486,7 @@ bool SXMemBuffer::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_size));
 
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		if (_size > 0) persistMgr->putBytes((byte *)_buffer, _size);
 	} else {
 		if (_size > 0) {

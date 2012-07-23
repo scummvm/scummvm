@@ -748,7 +748,7 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 
 	int size;
 	const char *str;
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		size = _valObject.size();
 		persistMgr->transfer("", &size);
 		_valIter = _valObject.begin();

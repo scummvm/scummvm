@@ -1252,7 +1252,7 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::persist(BasePersistenceManager *persistMgr) {
-	if (!persistMgr->_saving) cleanup();
+	if (!persistMgr->getIsSaving()) cleanup();
 	BaseGame::persist(persistMgr);
 
 	_dlgPendingBranches.persist(persistMgr);
@@ -1292,7 +1292,7 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 	_speechDirs.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_smartItemCursor));
 
-	if (!persistMgr->_saving) _initialScene = false;
+	if (!persistMgr->getIsSaving()) _initialScene = false;
 
 	persistMgr->transfer(TMEMBER(_startupScene));
 

@@ -36,6 +36,7 @@
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/sound/base_sound.h"
+#include "engines/wintermute/wintermute.h"
 #include "graphics/decoders/bmp.h"
 #include "common/memstream.h"
 #include "common/str.h"
@@ -51,7 +52,7 @@ namespace WinterMute {
 #define SAVE_MAGIC_2    0x32564153
 
 //////////////////////////////////////////////////////////////////////////
-BasePersistenceManager::BasePersistenceManager(BaseGame *inGame, const char *savePrefix): BaseClass(inGame) {
+BasePersistenceManager::BasePersistenceManager(BaseGame *inGame, const char *savePrefix) {
 	_saving = false;
 //	_buffer = NULL;
 //	_bufferSize = 0;
@@ -315,7 +316,7 @@ bool BasePersistenceManager::initLoad(const char *filename) {
 	_saving = false;
 
 	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), _gameRef->getName()) != 0) {
-		_gameRef->LOG(0, "ERROR: Saved game name doesn't match current game");
+		debugC(kWinterMuteDebugSaveGame, "ERROR: Saved game name doesn't match current game");
 		cleanup();
 		return STATUS_FAILED;
 	}
@@ -325,8 +326,9 @@ bool BasePersistenceManager::initLoad(const char *filename) {
 	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor >  DCGF_VER_MINOR) ||
 	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)
 	   ) {
-		_gameRef->LOG(0, "ERROR: Saved game version is newer than current game");
-		_gameRef->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
+
+		debugC(kWinterMuteDebugSaveGame, "ERROR: Saved game version is newer than current game");
+		debugC(kWinterMuteDebugSaveGame, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
 		return STATUS_FAILED;
 	}
@@ -336,8 +338,8 @@ bool BasePersistenceManager::initLoad(const char *filename) {
 	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor <  SAVEGAME_VER_MINOR) ||
 	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)
 	   ) {
-		_gameRef->LOG(0, "ERROR: Saved game is too old and cannot be used by this version of game engine");
-		_gameRef->LOG(0, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
+		debugC(kWinterMuteDebugSaveGame, "ERROR: Saved game is too old and cannot be used by this version of game engine");
+		debugC(kWinterMuteDebugSaveGame, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
 		return STATUS_FAILED;
 
@@ -746,7 +748,7 @@ bool BasePersistenceManager::transfer(const char *name, void *val) {
 	if (_saving) {
 		SystemClassRegistry::getInstance()->getPointerID(*(void **)val, &classID, &instanceID);
 		if (*(void **)val != NULL && (classID == -1 || instanceID == -1)) {
-			_gameRef->LOG(0, "Warning: invalid instance '%s'", name);
+			debugC(kWinterMuteDebugSaveGame, "Warning: invalid instance '%s'", name);
 		}
 
 		_saveStream->writeUint32LE(classID);

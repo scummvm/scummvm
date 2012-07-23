@@ -805,7 +805,7 @@ bool VideoTheoraPlayer::resume() {
 bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 	//BaseClass::persist(persistMgr);
 
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		_savedPos = getMovieTime() * 1000;
 		_savedState = _state;
 	} else {
@@ -824,7 +824,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_looping));
 	persistMgr->transfer(TMEMBER(_volume));
 
-	if (!persistMgr->_saving && (_savedState != THEORA_STATE_NONE)) {
+	if (!persistMgr->getIsSaving() && (_savedState != THEORA_STATE_NONE)) {
 		initializeSimple();
 	}
 

@@ -237,7 +237,7 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_exponentialGrowth));
 	persistMgr->transfer(TMEMBER(_fadeStartAlpha));
 
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		const char *filename = _sprite->getFilename();
 		persistMgr->transfer(TMEMBER(filename));
 	} else {

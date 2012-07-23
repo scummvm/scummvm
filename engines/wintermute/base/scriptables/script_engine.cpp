@@ -448,7 +448,7 @@ bool ScEngine::resetScript(ScScript *script) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::persist(BasePersistenceManager *persistMgr) {
-	if (!persistMgr->_saving) cleanup();
+	if (!persistMgr->getIsSaving()) cleanup();
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_currentScript));

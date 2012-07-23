@@ -1161,7 +1161,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	_sprites.persist(persistMgr);
 
 	int numForces;
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		numForces = _forces.getSize();
 		persistMgr->transfer(TMEMBER(numForces));
 		for (int i = 0; i < _forces.getSize(); i++) {
@@ -1177,7 +1177,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	int numParticles;
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		numParticles = _particles.getSize();
 		persistMgr->transfer(TMEMBER(numParticles));
 		for (int i = 0; i < _particles.getSize(); i++) {

@@ -123,7 +123,7 @@ bool BaseFontStorage::removeFont(BaseFont *font) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::persist(BasePersistenceManager *persistMgr) {
 
-	if (!persistMgr->_saving) cleanup(false);
+	if (!persistMgr->getIsSaving()) cleanup(false);
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 	_fonts.persist(persistMgr);

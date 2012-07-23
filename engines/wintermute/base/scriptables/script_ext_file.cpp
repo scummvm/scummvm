@@ -730,7 +730,7 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_textMode));
 
 	uint32 pos = 0;
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		pos = getPos();
 		persistMgr->transfer(TMEMBER(pos));
 	} else {

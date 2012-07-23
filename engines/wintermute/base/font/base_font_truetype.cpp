@@ -606,7 +606,7 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 
 	// persist layers
 	int numLayers;
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		numLayers = _layers.getSize();
 		persistMgr->transfer(TMEMBER(numLayers));
 		for (int i = 0; i < numLayers; i++) _layers[i]->persist(persistMgr);
@@ -620,7 +620,7 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 		}
 	}
 
-	if (!persistMgr->_saving) {
+	if (!persistMgr->getIsSaving()) {
 		for (int i = 0; i < NUM_CACHED_TEXTS; i++) _cachedTexts[i] = NULL;
 		_fallbackFont = _font = _deletableFont = NULL;
 	}

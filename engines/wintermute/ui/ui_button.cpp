@@ -1032,7 +1032,7 @@ bool UIButton::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_press));
 	persistMgr->transfer(TMEMBER(_stayPressed));
 
-	if (!persistMgr->_saving) {
+	if (!persistMgr->getIsSaving()) {
 		_oneTimePress = false;
 		_oneTimePressTime = 0;
 	}

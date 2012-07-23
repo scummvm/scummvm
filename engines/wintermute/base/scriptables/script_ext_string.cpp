@@ -383,7 +383,7 @@ bool SXString::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_capacity));
 
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		if (_capacity > 0) persistMgr->putBytes((byte *)_string, _capacity);
 	} else {
 		if (_capacity > 0) {

@@ -463,7 +463,7 @@ bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_sprite));
 	persistMgr->transfer(TMEMBER(_widthsFrame));
 
-	if (persistMgr->_saving)
+	if (persistMgr->getIsSaving())
 		persistMgr->putBytes(_widths, sizeof(_widths));
 	else
 		persistMgr->getBytes(_widths, sizeof(_widths));

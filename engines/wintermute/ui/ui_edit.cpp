@@ -844,7 +844,7 @@ bool UIEdit::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_selEnd));
 	persistMgr->transfer(TMEMBER(_selStart));
 
-	if (!persistMgr->_saving) {
+	if (!persistMgr->getIsSaving()) {
 		_cursorVisible = false;
 		_lastBlinkTime = 0;
 	}

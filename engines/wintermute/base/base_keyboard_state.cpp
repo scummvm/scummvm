@@ -215,7 +215,7 @@ bool BaseKeyboardState::readKey(Common::Event *event) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
-	//if(!persistMgr->_saving) cleanup();
+	//if(!persistMgr->getIsSaving()) cleanup();
 	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_currentAlt));
@@ -225,7 +225,7 @@ bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_currentPrintable));
 	persistMgr->transfer(TMEMBER(_currentShift));
 
-	if (!persistMgr->_saving) {
+	if (!persistMgr->getIsSaving()) {
 		_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
 		for (int i = 0; i < 323; i++) {
 			_keyStates[i] = false;

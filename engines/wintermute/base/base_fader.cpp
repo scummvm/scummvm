@@ -166,7 +166,7 @@ bool BaseFader::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_targetAlpha));
 	persistMgr->transfer(TMEMBER(_system));
 
-	if (_system && !persistMgr->_saving) _startTime = 0;
+	if (_system && !persistMgr->getIsSaving()) _startTime = 0;
 
 	return STATUS_OK;
 }

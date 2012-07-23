@@ -30,7 +30,7 @@
 #define WINTERMUTE_BPERSISTMGR_H
 
 
-#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/savestate.h"
 #include "common/stream.h"
@@ -41,17 +41,10 @@
 namespace WinterMute {
 
 class Vector2;
-
-class BasePersistenceManager : public BaseClass {
+class BaseGame;
+class BasePersistenceManager {
 public:
 	char *_savedDescription;
-	TimeDate _savedTimestamp;
-	uint32 _savedPlayTime;
-	byte _savedVerMajor;
-	byte _savedVerMinor;
-	byte _savedVerBuild;
-	byte _savedExtMajor;
-	byte _savedExtMinor;
 	Common::String _savePrefix;
 	Common::String _savedName;
 	bool saveFile(const char *filename);
@@ -75,7 +68,7 @@ public:
 	bool putBytes(byte *buffer, uint32 size);
 	uint32 _offset;
 
-	bool _saving;
+	bool getIsSaving() { return _saving; }
 
 	uint32 _richBufferSize;
 	byte *_richBuffer;
@@ -107,6 +100,16 @@ private:
 	bool putTimeDate(const TimeDate &t);
 	Common::WriteStream *_saveStream;
 	Common::SeekableReadStream *_loadStream;
+	TimeDate _savedTimestamp;
+	uint32 _savedPlayTime;
+	byte _savedVerMajor;
+	byte _savedVerMinor;
+	byte _savedVerBuild;
+	byte _savedExtMajor;
+	byte _savedExtMinor;
+	bool _saving;
+	// Separate from Base, as this class can do SOME operations without a _gameRef.
+	BaseGame *_gameRef;
 };
 
 } // end of namespace WinterMute

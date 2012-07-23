@@ -1199,7 +1199,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_gameRef));
 
 	// buffer
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		if (_state != SCRIPT_PERSISTENT && _state != SCRIPT_FINISHED && _state != SCRIPT_THREAD_FINISHED) {
 			persistMgr->transfer(TMEMBER(_bufferSize));
 			persistMgr->putBytes(_buffer, _bufferSize);
@@ -1249,7 +1249,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_unbreakable));
 	persistMgr->transfer(TMEMBER(_parentScript));
 
-	if (!persistMgr->_saving) _tracingMode = false;
+	if (!persistMgr->getIsSaving()) _tracingMode = false;
 
 	return STATUS_OK;
 }

@@ -47,7 +47,7 @@ PartForce::~PartForce(void) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartForce::persist(BasePersistenceManager *persistMgr) {
-	if (persistMgr->_saving) {
+	if (persistMgr->getIsSaving()) {
 		const char *name = getName();
 		persistMgr->transfer(TMEMBER(name));
 	} else {
