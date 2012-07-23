@@ -59,6 +59,7 @@ BasePersistenceManager::BasePersistenceManager(BaseGame *inGame, const char *sav
 	_offset = 0;
 	_saveStream = NULL;
 	_loadStream = NULL;
+	_gameRef = inGame;
 
 	_richBuffer = NULL;
 	_richBufferSize = 0;
