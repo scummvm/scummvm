@@ -184,10 +184,24 @@ void TeenAgentEngine::fnPutRockInHole() {
 }
 
 void TeenAgentEngine::rejectMessage() {
-	//random reject message:
 	uint i = _rnd.getRandomNumber(3);
-	debugC(0, kDebugCallbacks, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(dsAddr_rejectMsg + 2 * i)));
-	displayMessage(res->dseg.get_word(dsAddr_rejectMsg + 2 * i));
+	switch (i) {
+	case 0:
+		displayMessage(dsAddr_rejectMsg0); // "I have no idea what to do with it"
+		break;
+	case 1:
+		displayMessage(dsAddr_rejectMsg1); // "I can't imagine what I could do with this"
+		break;
+	case 2:
+		displayMessage(dsAddr_rejectMsg2); // "I can't figure out what I should do with this"
+		break;
+	case 3:
+		displayMessage(dsAddr_rejectMsg3); // "I can't find any reason to mess with it"
+		break;
+	default:
+		error("rejectMessage() index out of range");
+		break;
+	}
 }
 
 bool TeenAgentEngine::processCallback(uint16 addr) {
@@ -3461,7 +3475,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x79eb: // color of the book
 		// FIXME - Replace with internal lookup and switch
-		displayMessage(res->dseg.get_word(0x5f3c + GET_FLAG(0xdbc1) * 2 - 2));
+		displayMessage(res->dseg.get_word(dsAddr_bookColorMsgPtr + GET_FLAG(0xdbc1) * 2 - 2));
 		break;
 
 	case 0x79fd:

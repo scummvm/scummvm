@@ -48,8 +48,17 @@ const uint16 csAddr_rejectMsg = 0xa4d6;
 // Data Segment Addresses
 // Cursor Graphic 8*12px : 0x00da to 0x0139 (Read Only)
 const uint16 dsAddr_cursor = 0x00da;
-// Reject Messages Address Pointers : (4 * 2-byte) = 0x339e to 0x33a5
-const uint16 dsAddr_rejectMsg = 0x339e;
+
+// Reject Message Address Pointers : (4 * 2-byte) = 0x339e to 0x33a5
+const uint16 dsAddr_rejectMsgPtr = 0x339e;
+// Reject Message #0 : 0x33a6 to 0x33c9
+const uint16 dsAddr_rejectMsg0 = 0x33a6; // "I have no idea what to do with it"
+// Reject Message #1 : 0x33ca to 0x33f5
+const uint16 dsAddr_rejectMsg1 = 0x33ca; // "I can't imagine what I could do with this"
+// Reject Message #2 : 0x33f6 to 0x3425
+const uint16 dsAddr_rejectMsg2 = 0x33f6; // "I can't figure out what I should do with this"
+// Reject Message #3 : 0x3426 to 0x344f
+const uint16 dsAddr_rejectMsg3 = 0x3426; // "I can't find any reason to mess with it"
 
 // Object Usage Error Message : 0x3457 to 0x3467
 const uint16 dsAddr_objErrorMsg = 0x3457; // "That's no good"
@@ -548,6 +557,21 @@ const uint16 dsAddr_captainWatchingMsg = 0x5de2; // "with captain watching? Bett
 
 // First Business Message : 0x5e25 to 0x5e53
 const uint16 dsAddr_firstBusinessMsg = 0x5e25; // "First I've got some business to take care of"
+
+// Book Color Message Address Pointers : (6 * 2-byte) = 0x5f3c to 0x5f47
+const uint16 dsAddr_bookColorMsgPtr = 0x5f3c;
+// Book Color Message #0 : 0x5f48 to 0x5f60
+const uint16 dsAddr_bookColorMsg0 = 0x5f48; // ""The history of blues""
+// Book Color Message #1 : 0x5f61 to 0x5f8f
+const uint16 dsAddr_bookColorMsg1 = 0x5f61; // ""Manchester United, or the Red Devils story""
+// Book Color Message #2 : 0x5f90 to 0x5fb5
+const uint16 dsAddr_bookColorMsg2 = 0x5f90; // ""Greyhounds and other hunting dogs""
+// Book Color Message #3 : 0x5fb6 to 0x5fe6
+const uint16 dsAddr_bookColorMsg3 = 0x5fb6; // ""Greenhorn, or my adventures in the Wild West""
+// Book Color Message #4 : 0x5fe7 to 0x6008
+const uint16 dsAddr_bookColorMsg4 = 0x5fe7; // ""Charlie Brown and his company""
+// Book Color Message #5 : 0x6009 to 0x6034
+const uint16 dsAddr_bookColorMsg5 = 0x6009; // ""Pink Panther: an unauthorised biography""
 
 // Save State Region : 0x6478 to 0xdbf1
 const uint16 dsAddr_saveState = 0x6478;
