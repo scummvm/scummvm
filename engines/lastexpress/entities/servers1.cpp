@@ -563,10 +563,10 @@ IMPLEMENT_FUNCTION(26, Servers1, chapter4Handler)
 
 	case kActionNone:
 		if (params->param2) {
-			UPDATE_PARAM_PROC(params->param2, getState()->time, 900)
+			if (Entity::updateParameter(params->param2, getState()->time, 900)) {
 				ENTITY_PARAM(1, 5) = 1;
 				params->param1 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!getEntities()->isInKitchen(kEntityServers1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())

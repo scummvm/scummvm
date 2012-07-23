@@ -1082,10 +1082,10 @@ IMPLEMENT_FUNCTION(30, Vesna, function30)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM_PROC(params->param3, getState()->timeTicks, 120)
+			if (Entity::updateParameter(params->param3, getState()->timeTicks, 120)) {
 				getSound()->playSound(kEntityVesna, "Ves50001", kFlagDefault);
 				params->param1 = 1;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!Entity::updateParameter(params->param4, getState()->timeTicks, 180))

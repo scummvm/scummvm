@@ -908,9 +908,9 @@ IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(CURRENT_PARAM(1, 3), getState()->time, 300)
+		if (Entity::updateParameter(CURRENT_PARAM(1, 3), getState()->time, 300)) {
 			getSound()->playSound(kEntityPlayer, "ZFX1004", getSound()->getSoundFlag(kEntityCoudert));
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (!Entity::updateParameter(CURRENT_PARAM(1, 4), getState()->time, 900))
 			break;
@@ -2281,14 +2281,14 @@ label_callback_9:
 
 label_callback_10:
 		if (getState()->time > kTime1189800 && !ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 2700);
+			if (Entity::updateParameter(params->param3, getState()->time, 2700)) {
 				ENTITY_PARAM(0, 2) = 1;
 				ENTITY_PARAM(0, 1) = 1;
 
 				getEntities()->drawSequenceLeft(kEntityCoudert, "697F");
 
 				params->param3 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!ENTITY_PARAM(0, 2))
@@ -3539,11 +3539,11 @@ label_callback_1:
 				params->param2 = (uint)(getState()->time + 4500);
 
 			if (params->param3 != kTimeInvalid) {
-				UPDATE_PARAM_PROC_TIME(params->param2, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param3, 0)
+				if (Entity::updateParameterTime((TimeValue)params->param2, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param3, 0)) {
 					setCallback(2);
 					setup_function55();
 					break;
-				UPDATE_PARAM_PROC_END
+				}
 			}
 		}
 

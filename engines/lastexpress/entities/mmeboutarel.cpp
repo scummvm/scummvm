@@ -400,7 +400,7 @@ IMPLEMENT_FUNCTION(13, MmeBoutarel, function13)
 
 	case kActionNone:
 		if (!getSoundQueue()->isBuffered(kEntityMmeBoutarel) && params->param6 != kTimeInvalid) {
-			UPDATE_PARAM_PROC_TIME(params->param1, !getEntities()->isDistanceBetweenEntities(kEntityMmeBoutarel, kEntityPlayer, 2000), params->param6, 0)
+			if (Entity::updateParameterTime((TimeValue)params->param1, !getEntities()->isDistanceBetweenEntities(kEntityMmeBoutarel, kEntityPlayer, 2000), params->param6, 0)) {
 				getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
 				getObjects()->update(kObject51, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
 
@@ -412,16 +412,16 @@ IMPLEMENT_FUNCTION(13, MmeBoutarel, function13)
 				setCallback(1);
 				setup_playSound("MME1037");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 label_callback_1:
 		if (getProgress().field_24 && params->param7 != kTimeInvalid) {
-			UPDATE_PARAM_PROC_TIME(kTime1093500, (!params->param5 || !getEntities()->isPlayerInCar(kCarRedSleeping)), params->param7, 0)
+			if (Entity::updateParameterTime(kTime1093500, (!params->param5 || !getEntities()->isPlayerInCar(kCarRedSleeping)), params->param7, 0)) {
 				setCallback(2);
 				setup_function11();
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		TIME_CHECK(kTime1094400, params->param8, setup_function14);

@@ -293,10 +293,10 @@ IMPLEMENT_FUNCTION(15, Kronos, function15)
 
 	case kActionNone:
 		if (params->param1 && !getEntities()->isInSalon(kEntityBoutarel)) {
-			UPDATE_PARAM_PROC(params->param2, getState()->timeTicks, 75)
+			if (Entity::updateParameter(params->param2, getState()->timeTicks, 75)) {
 				setup_function16();
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (params->param3 != kTimeInvalid && getState()->time > kTime2002500) {
@@ -526,9 +526,9 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 		}
 
 		if (CURRENT_PARAM(1, 2) != kTimeInvalid && params->param7 < getState()->time) {
-			UPDATE_PARAM_PROC_TIME(params->param8, !params->param1, CURRENT_PARAM(1, 2), 450)
+			if (Entity::updateParameterTime((TimeValue)params->param8, !params->param1, CURRENT_PARAM(1, 2), 450)) {
 				getSavePoints()->push(kEntityKronos, kEntityKahina, kAction237555748);
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!params->param1)

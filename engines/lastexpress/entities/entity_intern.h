@@ -371,23 +371,6 @@ void class::setup_##name() { \
 	parameter = kTimeInvalid; \
 }
 
-// Updating parameter with code inside the check
-#define UPDATE_PARAM_PROC(parameter, type, value) \
-	if (!parameter) \
-		parameter = (uint)(type + value); \
-	if (parameter < type) { \
-		parameter = kTimeInvalid;
-
-#define UPDATE_PARAM_PROC_TIME(timeValue, test, parameter, value) \
-	if (getState()->time <= timeValue) { \
-		if (test || !parameter) \
-			parameter = (uint)(getState()->time + value); \
-	} \
-	if (parameter < getState()->time || getState()->time > timeValue) { \
-		parameter = kTimeInvalid;
-
-#define UPDATE_PARAM_PROC_END }
-
 } // End of namespace LastExpress
 
 #endif // LASTEXPRESS_ENTITY_INTERN_H

@@ -601,11 +601,11 @@ void Entity::callbackAction() {
 // Helper functions
 //////////////////////////////////////////////////////////////////////////
 
-bool Entity::updateParameter(uint &parameter, uint timeValue, uint delta) {
+bool Entity::updateParameter(uint &parameter, uint timeType, uint delta) {
 	if (!parameter)
-		parameter = (uint)(timeValue + delta);
+		parameter = (uint)(timeType + delta);
 
-	if (parameter >= timeValue)
+	if (parameter >= timeType)
 		return false;
 
 	parameter = kTimeInvalid;
@@ -613,12 +613,26 @@ bool Entity::updateParameter(uint &parameter, uint timeValue, uint delta) {
 	return true;
 }
 
-bool Entity::updateParameterCheck(uint &parameter, uint timeValue, uint delta) {
-	if (parameter && parameter >= timeValue)
+bool Entity::updateParameterTime(TimeValue timeValue, bool check, uint &parameter, uint delta) {
+	if (getState()->time <= timeValue) {
+		if (check || !parameter)
+			parameter = (uint)(getState()->time + delta);
+	}
+
+	if (parameter >= getState()->time && getState()->time <= timeValue)
+		return false;
+
+	parameter = kTimeInvalid;
+
+	return true;
+}
+
+bool Entity::updateParameterCheck(uint &parameter, uint timeType, uint delta) {
+	if (parameter && parameter >= timeType)
 		return false;
 
 	if (!parameter)
-		parameter = (uint)(timeValue + delta);
+		parameter = (uint)(timeType + delta);
 
 	return true;
 }

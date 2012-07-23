@@ -1115,13 +1115,13 @@ IMPLEMENT_FUNCTION(33, Pascale, function33)
 
 	case kActionNone:
 		if (params->param4) {
-			UPDATE_PARAM_PROC(params->param5, getState()->time, 4500)
+			if (Entity::updateParameter(params->param5, getState()->time, 4500)) {
 				getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 				setCallback(1);
 				setup_playSound("Wat5010");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 label_callback1:

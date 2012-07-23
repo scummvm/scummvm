@@ -1650,12 +1650,12 @@ IMPLEMENT_FUNCTION(48, Abbot, function48)
 		if (ENTITY_PARAM(0, 1))
 			getData()->inventoryItem = kItemInvalid;
 
-		UPDATE_PARAM_PROC(params->param1, getState()->time, 1800)
+		if (Entity::updateParameter(params->param1, getState()->time, 1800)) {
 			getData()->inventoryItem = kItemNone;
 
 			setCallback(4);
 			setup_updatePosition("126C", kCarRedSleeping, 52);
-		UPDATE_PARAM_PROC_END
+		}
 
 		TIME_CHECK_CALLBACK_INVENTORY(kTime2533500, params->param2, 5, setup_callbackActionRestaurantOrSalon);
 		break;

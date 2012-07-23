@@ -646,11 +646,11 @@ IMPLEMENT_FUNCTION(20, Boutarel, function20)
 			break;
 
 		if (!params->param2) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 4500)
+			if (Entity::updateParameter(params->param3, getState()->time, 4500)) {
 				setCallback(3);
 				setup_playSound("MRB1078A");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		TIME_CHECK_CALLBACK_1(kTime1138500, params->param4, 4, setup_function14, false);
@@ -936,9 +936,9 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(params->param2, getState()->time, 450)
+		if (Entity::updateParameter(params->param2, getState()->time, 450)) {
 			getSavePoints()->push(kEntityBoutarel, kEntityServers1, kAction256200848);
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (!params->param1)
 			break;

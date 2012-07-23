@@ -534,20 +534,20 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
 		Entity::savegameBloodJacket();
 
 		if (!params->param2 && !params->param3) {
-			UPDATE_PARAM_PROC(params->param4, getState()->timeTicks, 75)
+			if (Entity::updateParameter(params->param4, getState()->timeTicks, 75)) {
 				getData()->inventoryItem = kItemNone;
 				setCallback(5);
 				setup_function18();
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
-		UPDATE_PARAM_PROC(params->param5, getState()->timeTicks, 225)
+		if (Entity::updateParameter(params->param5, getState()->timeTicks, 225)) {
 			getData()->inventoryItem = kItemNone;
 			setCallback(6);
 			setup_function18();
 			break;
-		UPDATE_PARAM_PROC_END
+		}
 
 		getData()->inventoryItem = (getProgress().chapter == kChapter1
 								 && !ENTITY_PARAM(2, 1)
@@ -1059,9 +1059,9 @@ IMPLEMENT_FUNCTION_II(21, Mertens, function21, ObjectIndex, ObjectIndex)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(CURRENT_PARAM(1, 4), getState()->time, 300)
+		if (Entity::updateParameter(CURRENT_PARAM(1, 4), getState()->time, 300)) {
 			getSound()->playSound(kEntityPlayer, "ZFX1004", getSound()->getSoundFlag(kEntityMertens));
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (!Entity::updateParameter(CURRENT_PARAM(1, 5), getState()->time, 900))
 			break;
@@ -1616,13 +1616,13 @@ IMPLEMENT_FUNCTION_I(27, Mertens, tylerCompartment, MertensActionType)
 			break;
 		}
 
-		UPDATE_PARAM_PROC(params->param2, getState()->timeTicks, 150)
+		if (Entity::updateParameter(params->param2, getState()->timeTicks, 150)) {
 			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
 
 			setCallback(10);
 			setup_playSound16("CON1018A");
 			break;
-		UPDATE_PARAM_PROC_END
+		}
 
 label_callback10:
 		if (!params->param3)
@@ -3025,11 +3025,11 @@ IMPLEMENT_FUNCTION(42, Mertens, function42)
 
 label_callback_8:
 		if (getState()->time > kTime1215000 && !ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
-			UPDATE_PARAM_PROC(params->param5, getState()->time, 2700)
+			if (Entity::updateParameter(params->param5, getState()->time, 2700)) {
 				getEntities()->drawSequenceLeft(kEntityMertens, "601E");
 				ENTITY_PARAM(0, 1) = 1;
 				params->param5 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (ENTITY_PARAM(0, 8)) {

@@ -312,17 +312,17 @@ IMPLEMENT_FUNCTION(20, Servers0, chapter1Handler)
 
 	case kActionNone:
 		if (params->param2) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 2700);
+			if (Entity::updateParameter(params->param3, getState()->time, 2700)) {
 				ENTITY_PARAM(0, 4) = 1;
 				params->param2 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (params->param1) {
-			UPDATE_PARAM_PROC(params->param4, getState()->time, 4500)
+			if (Entity::updateParameter(params->param4, getState()->time, 4500)) {
 				ENTITY_PARAM(0, 5) = 1;
 				params->param1 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!getEntities()->isInKitchen(kEntityServers0) && !getEntities()->isSomebodyInsideRestaurantOrSalon())
@@ -733,10 +733,10 @@ IMPLEMENT_FUNCTION(32, Servers0, chapter4Handler)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(params->param2, getState()->time, 3600)
+		if (Entity::updateParameter(params->param2, getState()->time, 3600)) {
 			ENTITY_PARAM(1, 8) = 1;
 			params->param1 = 0;
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (!getEntities()->isInKitchen(kEntityServers1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;

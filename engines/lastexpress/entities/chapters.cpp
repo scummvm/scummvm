@@ -393,13 +393,13 @@ IMPLEMENT_FUNCTION(8, Chapters, chapter1Handler)
 		if (!getProgress().isTrainRunning || getState()->time >= kTime1458000)
 			goto label_processStations;
 
-		UPDATE_PARAM_PROC(params->param6, getState()->timeTicks, params->param2)
+		if (Entity::updateParameter(params->param6, getState()->timeTicks, params->param2)) {
 			// Play sound FX
 			getSound()->playLocomotiveSound();
 
 			params->param2 = 225 * (4 * rnd(5) + 20);
 			params->param6 = 0;
-		UPDATE_PARAM_PROC_END
+		}
 
 label_processStations:
 		// Process stations
@@ -896,15 +896,15 @@ IMPLEMENT_FUNCTION(15, Chapters, chapter3Handler)
 
 	case kActionNone:
 		if (getProgress().isTrainRunning) {
-			UPDATE_PARAM_PROC(params->param4, getState()->timeTicks, params->param1)
+			if (Entity::updateParameter(params->param4, getState()->timeTicks, params->param1)) {
 				getSound()->playLocomotiveSound();
 
 				params->param1 = 225 * (4 * rnd(5) + 20);
 				params->param4 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
-		UPDATE_PARAM_PROC(params->param5, getState()->timeTicks, params->param2)
+		if (Entity::updateParameter(params->param5, getState()->timeTicks, params->param2)) {
 			switch (rnd(2)) {
 			default:
 				break;
@@ -920,7 +920,7 @@ IMPLEMENT_FUNCTION(15, Chapters, chapter3Handler)
 
 			params->param2 = 225 * (4 * rnd(6) + 8);
 			params->param5 = 0;
-		UPDATE_PARAM_PROC_END
+		}
 
 		TIME_CHECK_CALLBACK_2(kTimeEnterSalzbourg, params->param6, 1, setup_enterStation, "Salzburg", kCitySalzbourg);
 
@@ -1195,15 +1195,15 @@ IMPLEMENT_FUNCTION(19, Chapters, chapter4Handler)
 
 	case kActionNone:
 		if (getProgress().isTrainRunning) {
-			UPDATE_PARAM_PROC(params->param6, getState()->timeTicks, params->param4);
+			if (Entity::updateParameter(params->param6, getState()->timeTicks, params->param4)) {
 				getSound()->playLocomotiveSound();
 
 				params->param4 = 225 * (4 * rnd(5) + 20);
 				params->param6 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
-		UPDATE_PARAM_PROC(params->param7, getState()->timeTicks, params->param5)
+		if (Entity::updateParameter(params->param7, getState()->timeTicks, params->param5)) {
 			switch (rnd(2)) {
 			default:
 				break;
@@ -1219,7 +1219,7 @@ IMPLEMENT_FUNCTION(19, Chapters, chapter4Handler)
 
 			params->param5 = 225 * (4 * rnd(6) + 8);
 			params->param7 = 0;
-		UPDATE_PARAM_PROC_END
+		}
 
 		TIME_CHECK_CALLBACK_2(kTimeEnterPoszony, params->param8, 1, setup_enterStation, "Pozsony", kCityPoszony);
 

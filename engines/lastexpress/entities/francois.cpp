@@ -278,7 +278,7 @@ IMPLEMENT_FUNCTION_I(11, Francois, function11, TimeValue)
 	case kActionNone:
 		if (!getSoundQueue()->isBuffered(kEntityFrancois)) {
 
-			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 1), getState()->timeTicks, params->param6)
+			if (Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->timeTicks, params->param6)) {
 				switch (rnd(7)) {
 				default:
 					break;
@@ -311,7 +311,7 @@ IMPLEMENT_FUNCTION_I(11, Francois, function11, TimeValue)
 
 				params->param6 = 15 * rnd(7);
 				CURRENT_PARAM(1, 1) = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!getEntities()->hasValidFrame(kEntityFrancois) || !getEntities()->isWalkingOppositeToPlayer(kEntityFrancois))
@@ -998,11 +998,11 @@ label_callback_5:
 		}
 
 		if (params->param5 != kTimeInvalid) {
-			UPDATE_PARAM_PROC_TIME(kTimeEnd, !getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000), params->param5, 75);
+			if (Entity::updateParameterTime(kTimeEnd, !getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000), params->param5, 75)) {
 				setCallback(6);
 				setup_playSound("Fra2010");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 label_callback_6:

@@ -176,11 +176,11 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 		}
 
 		if (params->param2) {
-			UPDATE_PARAM_PROC(params->param8,  getState()->timeTicks, 75)
+			if (Entity::updateParameter(params->param8,  getState()->timeTicks, 75)) {
 				params->param2 = 0;
 				params->param3 = 1;
 				getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		params->param8 = 0;
@@ -189,10 +189,10 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 			break;
 
 		if (params->param6) {
-			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 1), getState()->time, 4500)
+			if (Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->time, 4500)) {
 				params->param6 = 0;
 				CURRENT_PARAM(1, 1) = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!getProgress().field_CC) {
@@ -730,11 +730,11 @@ IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
 		}
 
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 61) && !params->param1) {
-			UPDATE_PARAM_PROC(params->param4, getState()->timeTicks, 45)
+			if (Entity::updateParameter(params->param4, getState()->timeTicks, 45)) {
 				setCallback(1);
 				setup_draw("009C");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 70) && !params->param2) {
@@ -1287,10 +1287,10 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 
 	case kActionNone:
 		if (!getEvent(kEventMilosCompartmentVisitTyler) && !getProgress().field_54 && !ENTITY_PARAM(0, 4)) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 13500)
+			if (Entity::updateParameter(params->param3, getState()->time, 13500)) {
 				getSavePoints()->push(kEntityMilos, kEntityVesna, kAction155913424);
 				params->param3 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (params->param1) {
