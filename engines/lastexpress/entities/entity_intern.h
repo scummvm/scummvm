@@ -26,36 +26,6 @@
 namespace LastExpress {
 
 //////////////////////////////////////////////////////////////////////////
-// Declaration
-//////////////////////////////////////////////////////////////////////////
-
-#define DECLARE_FUNCTION(name) \
-	void setup_##name(); \
-	void name(const SavePoint &savepoint);
-
-#define DECLARE_FUNCTION_1(name, param1) \
-	void setup_##name(param1); \
-	void name(const SavePoint &savepoint);
-
-#define DECLARE_FUNCTION_2(name, param1, param2) \
-	void setup_##name(param1, param2); \
-	void name(const SavePoint &savepoint);
-
-#define DECLARE_FUNCTION_3(name, param1, param2, param3) \
-	void setup_##name(param1, param2, param3); \
-	void name(const SavePoint &savepoint);
-
-#define DECLARE_FUNCTION_4(name, param1, param2, param3, param4) \
-	void setup_##name(param1, param2, param3, param4); \
-	void name(const SavePoint &savepoint);
-
-#define DECLARE_FUNCTION_NOSETUP(name) \
-	void name(const SavePoint &savepoint);
-
-#define DECLARE_NULL_FUNCTION() \
-	void setup_nullfunction();
-
-//////////////////////////////////////////////////////////////////////////
 // Setup
 //////////////////////////////////////////////////////////////////////////
 
