@@ -30,7 +30,6 @@
 #define WINTERMUTE_VIDTHEORAPLAYER_H
 
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/base/file/base_file.h"
 #include "engines/wintermute/persistent.h"
 #include "video/video_decoder.h"
 #include "common/stream.h"
