@@ -254,6 +254,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 		int16 y = argv[5].toUint16();
 		warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
 		g_sci->_robotDecoder->load(id);
+		g_sci->_robotDecoder->start();
 		g_sci->_robotDecoder->setPos(x, y);
 		}
 		break;
@@ -269,13 +270,13 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 		warning("kRobot(%d)", subop);
 		break;
 	case 8: // sync
-		//if (false) {	// debug: automatically skip all robot videos
-		if ((uint32)g_sci->_robotDecoder->getCurFrame() !=  g_sci->_robotDecoder->getFrameCount() - 1) {
-			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
-		} else {
+		//if (true) {	// debug: automatically skip all robot videos
+		if (g_sci->_robotDecoder->endOfVideo()) {
 			g_sci->_robotDecoder->close();
 			// Signal the engine scripts that the video is done
 			writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
+		} else {
+			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);	
 		}
 		break;
 	default:

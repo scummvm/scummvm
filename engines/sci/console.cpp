@@ -251,25 +251,25 @@ void Console::postEnter() {
 
 		if (_videoFile.hasSuffix(".seq")) {
 			videoDecoder = new SEQDecoder(_videoFrameDelay);
-			((Video::AdvancedVideoDecoder *)videoDecoder)->start(); // TODO: Remove after new API is complete
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
 			videoDecoder = new Video::VMDDecoder(g_system->getMixer());
 		} else if (_videoFile.hasSuffix(".rbt")) {
-			videoDecoder = new RobotDecoder(g_system->getMixer(), _engine->getPlatform() == Common::kPlatformMacintosh);
+			videoDecoder = new RobotDecoder(_engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
 			duckMode = true;
 			videoDecoder = new Video::AVIDecoder();
-			((Video::AdvancedVideoDecoder *)videoDecoder)->start();
 #endif
 		} else if (_videoFile.hasSuffix(".avi")) {
 			videoDecoder = new Video::AVIDecoder();
-			((Video::AdvancedVideoDecoder *)videoDecoder)->start();
 		} else {
 			warning("Unrecognized video type");
 		}
 
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
+			if (!_videoFile.hasSuffix(".vmd")) // TODO: Remove after new API is complete
+				((Video::AdvancedVideoDecoder *)videoDecoder)->start();
+
 			_engine->_gfxCursor->kernelHide();
 
 #ifdef ENABLE_SCI32
