@@ -358,19 +358,6 @@ void class::setup_##name() { \
 	} \
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Param update
-//////////////////////////////////////////////////////////////////////////
-
-// Todo: replace with UPDATE_PARAM_PROC as appropriate
-#define UPDATE_PARAM_GOTO(parameter, type, value, label) { \
-	if (!parameter) \
-		parameter = (uint)(type + value); \
-	if (parameter >= type) \
-		goto label; \
-	parameter = kTimeInvalid; \
-}
-
 } // End of namespace LastExpress
 
 #endif // LASTEXPRESS_ENTITY_INTERN_H

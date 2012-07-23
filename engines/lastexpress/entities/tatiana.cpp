@@ -1955,7 +1955,8 @@ IMPLEMENT_FUNCTION(48, Tatiana, function48)
 		if (!params->param1 || getSoundQueue()->isBuffered(kEntityTatiana))
 			goto label_end;
 
-		UPDATE_PARAM_GOTO(params->param2, getState()->timeTicks, 5 * (3 * rnd(5) + 30), label_end);
+		if (!Entity::updateParameter(params->param2, getState()->timeTicks, 5 * (3 * rnd(5) + 30)))
+			goto label_end;
 
 		getSound()->playSound(kEntityTatiana, "LIB012", kFlagDefault);
 		params->param2 = 0;

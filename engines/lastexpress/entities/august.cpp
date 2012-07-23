@@ -523,7 +523,8 @@ IMPLEMENT_FUNCTION_I(21, August, function21, TimeValue)
 		}
 
 		if (params->param2) {
-			UPDATE_PARAM_GOTO(params->param8, getState()->timeTicks, 75, label_continue);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 75))
+				goto label_continue;
 
 			params->param2 = 0;
 			params->param3 = 1;

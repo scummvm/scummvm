@@ -144,7 +144,8 @@ IMPLEMENT_FUNCTION(6, Vassili, function6)
 
 	case kActionNone:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
-			UPDATE_PARAM_GOTO(params->param3, getState()->timeTicks, params->param1, label_function7);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
+				goto label_function7;
 
 			setCallback(1);
 			setup_draw("303B");

@@ -3277,7 +3277,8 @@ IMPLEMENT_FUNCTION(67, Anna, chapter4Handler)
 
 	case kActionNone:
 		if (getEntities()->isPlayerPosition(kCarRedSleeping, 46)) {
-			UPDATE_PARAM_GOTO(params->param4, getState()->timeTicks, 30, label_next);
+			if (!Entity::updateParameter(params->param4, getState()->timeTicks, 30))
+				goto label_next;
 
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 8);
 		}

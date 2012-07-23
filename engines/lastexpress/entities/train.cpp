@@ -267,18 +267,20 @@ IMPLEMENT_FUNCTION(8, Train, process)
 		if ((getEntities()->isPlayerInCar(kCarGreenSleeping) || getEntities()->isPlayerInCar(kCarRedSleeping))
 		  && params->param4 && !params->param5) {
 
-		  params->param4 -= 1;
+			params->param4 -= 1;
 
-		  if (!params->param4 && getProgress().jacket == kJacketGreen) {
+			if (!params->param4 && getProgress().jacket == kJacketGreen) {
 
-			  getAction()->playAnimation(isNight() ? kEventCathSmokeNight : kEventCathSmokeDay);
-			  params->param5 = 1;
-			  getScenes()->processScene();
-		  }
+				getAction()->playAnimation(isNight() ? kEventCathSmokeNight : kEventCathSmokeDay);
+				params->param5 = 1;
+				getScenes()->processScene();
+			}
 		}
 
 		if (params->param6) {
-			UPDATE_PARAM_GOTO(params1->param7, getState()->time, 900, label_process);
+			if (!Entity::updateParameter(params1->param7, getState()->time, 900))
+				goto label_process;
+
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 58);
 		}
 
