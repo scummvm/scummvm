@@ -53,9 +53,11 @@ public:
 	void getSys(Palette *pal);
 	uint16 getTotalColorCount() const { return _totalScreenColors; }
 
-	void toggleRemap(bool remap) { _remapOn = remap; }
-	void setRemappingPercent(uint16 percent) { _remappingPercent = percent;	}
-	bool isRemapColor(byte color);
+	void toggleRemapping(bool remap) { _remapOn = remap; }
+	void resetRemapping();
+	void setRemappingPercent(byte color, byte percent);
+	void setRemappingRange(byte color, byte from, byte to, byte base);
+	bool isRemapMask(byte color);
 	byte remapColor(byte color);
 
 	void setOnScreen();
@@ -129,7 +131,9 @@ private:
 	uint16 _totalScreenColors;
 
 	bool _remapOn;
-	uint16 _remappingPercent;
+	byte _remappingTable[256];
+	uint16 _remappingMaskFrom, _remappingMaskTo;
+	uint16 _remappingPercentToSet;
 
 	void loadMacIconBarPalette();
 	byte *_macClut;

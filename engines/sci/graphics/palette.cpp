@@ -102,7 +102,7 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	}
 
 	_remapOn = false;
-	_remappingPercent = 0;
+	resetRemapping();
 }
 
 GfxPalette::~GfxPalette() {
@@ -332,24 +332,62 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	}
 }
 
-bool GfxPalette::isRemapColor(byte color) {
-	// TODO: Expand this for SCI32 (more than one remap color can be set).
-	// Now, it is assumed that colors 253 and 254 are the remap colors.
-	return _remapOn && (color == 253 || color == 254);
+bool GfxPalette::isRemapMask(byte color) {
+	return (_remapOn && (color >= _remappingMaskFrom && color <= _remappingMaskTo));
+}
+
+void GfxPalette::resetRemapping() {
+	_remappingMaskFrom = 0;
+	_remappingMaskTo = 0;
+	_remappingPercentToSet = 0;
+
+	for (int i = 0; i < 256; i++) {
+		_remappingTable[i] = i;
+	}
+}
+
+void GfxPalette::setRemappingPercent(byte color, byte percent) {
+	// We need to defer the setup of the remapping table until something is
+	// shown on screen, otherwise kernelFindColor() won't find correct
+	// colors. The actual setup of the remapping table will be performed in
+	// remapColor().
+	_remappingPercentToSet = percent;
+
+	if (_remappingMaskFrom > color || _remappingMaskFrom == 0)
+		_remappingMaskFrom = color;
+	if (_remappingMaskTo < color)
+		_remappingMaskTo = color;
+}
+
+void GfxPalette::setRemappingRange(byte color, byte from, byte to, byte base) {
+	for (int i = from; i <= to; i++) {
+		_remappingTable[i] = i + base;
+	}
+
+	if (_remappingMaskFrom > color || _remappingMaskFrom == 0)
+		_remappingMaskFrom = color;
+	if (_remappingMaskTo < color)
+		_remappingMaskTo = color;
 }
 
 byte GfxPalette::remapColor(byte color) {
 	assert(_remapOn);
 
-	// TODO: Change this to use a table instead, like the original.
-	if (_remappingPercent) {
-		byte r = _sysPalette.colors[color].r * _remappingPercent / 100;
-		byte g = _sysPalette.colors[color].g * _remappingPercent / 100;
-		byte b = _sysPalette.colors[color].b * _remappingPercent / 100;
-		return kernelFindColor(r, g, b);
-	} else {
-		return color;
+	// Check if we need to set remapping by percent. This can only be
+	// performed when something is shown on screen, so that the screen
+	// palette is set up and kernelFindColor() can work correctly.
+	if (_remappingPercentToSet) {
+		for (int i = 0; i < 256; i++) {
+			byte r = _sysPalette.colors[i].r * _remappingPercentToSet / 100;
+			byte g = _sysPalette.colors[i].g * _remappingPercentToSet / 100;
+			byte b = _sysPalette.colors[i].b * _remappingPercentToSet / 100;
+			_remappingTable[i] = kernelFindColor(r, g, b);
+		}
+
+		_remappingPercentToSet = 0;
 	}
+
+	return _remappingTable[color];
 }
 
 bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {

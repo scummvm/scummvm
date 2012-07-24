@@ -737,46 +737,44 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
-	case 0:	{ // Set remapping to base. 0 turns remapping off.
+	case 0:	{ // turn remapping off
 		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
-		if (base != 0)	// 0 is the default behavior when changing rooms in GK1, thus silencing the warning
-			warning("kRemapColors: Set remapping to base %d", base);
+		if (base > 0)
+			warning("kRemapColors(0) called with base %d", base);
+		g_sci->_gfxPalette->toggleRemapping(false);
+		g_sci->_gfxPalette->resetRemapping();
 		}
-		// TODO: Don't turn remapping off always
-		g_sci->_gfxPalette->toggleRemap(false);
-		g_sci->_gfxPalette->setRemappingPercent(0);
 		break;
-	case 1:	{ // set remapping base
-		//int16 unk1 = argv[1].toSint16();
-		//int16 unk2 = argv[2].toSint16();
-		//int16 unk3 = argv[3].toSint16();
-		//uint16 unk4 = argv[4].toUint16();
-		//uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
-		kStub(s, argc, argv);
+	case 1:	{ // remap by range
+		uint16 color = argv[1].toUint16();
+		uint16 from = argv[2].toUint16();
+		uint16 to = argv[3].toUint16();
+		uint16 base = argv[4].toUint16();
+		uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
+		if (unk5 > 0)
+			warning("kRemapColors(1) called with 6 parameters, unknown parameter is %d", unk5);
+		g_sci->_gfxPalette->toggleRemapping(true);
+		g_sci->_gfxPalette->setRemappingRange(color, from, to, base);
 		}
 		break;
 	case 2:	{ // remap by percent
-		// TODO: Use the color index. The -10 offset is wrong.
-		/*int16 color = argv[1].toSint16();
-		if (color >= 10)
-			color -= 10;*/
+		uint16 color = argv[1].toUint16();
 		uint16 percent = argv[2].toUint16(); // 0 - 100
 		if (argc >= 4)
 			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		g_sci->_gfxPalette->toggleRemap(true);
-		g_sci->_gfxPalette->setRemappingPercent(percent);
+		g_sci->_gfxPalette->toggleRemapping(true);
+		g_sci->_gfxPalette->setRemappingPercent(color, percent);
 		}
 		break;
 	case 3:	{ // remap to gray
-		// NOTE: This adjusts the alpha value of a specific color, and it operates on
-		// an RGBA palette
 		int16 color = argv[1].toSint16();	// this is subtracted from a maximum color value, and can be offset by 10
 		int16 percent = argv[2].toSint16(); // 0 - 100
 		uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
 		warning("kRemapColors: RemapToGray color %d by %d percent (unk3 = %d)", color, percent, unk3);
+		// TODO
 		}
 		break;
-	case 4:	{ // unknown
+	case 4:	{ // remap to percent gray
 		//int16 unk1 = argv[1].toSint16();
 		//uint16 unk2 = argv[2].toUint16();
 		//uint16 unk3 = argv[3].toUint16();
@@ -784,10 +782,7 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		kStub(s, argc, argv);
 		}
 		break;
-	case 5:	{ // set color intensity
-		// TODO: This isn't right, it should be setting a mapping table instead.
-		// For PQ4, we can emulate this with kernelSetIntensity(). In QFG4, this
-		// won't do.
+	case 5:	{ // don't map to range
 		//int16 mapping = argv[1].toSint16();
 		uint16 intensity = argv[2].toUint16();
 		// HACK for PQ4

@@ -1228,15 +1228,18 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	switch (operation) {
 	case 0: { // remap by percent
 		uint16 percent = argv[1].toUint16();
-		g_sci->_gfxPalette->toggleRemap(true);
-		g_sci->_gfxPalette->setRemappingPercent(percent);
+		g_sci->_gfxPalette->toggleRemapping(true);
+		g_sci->_gfxPalette->resetRemapping();
+		g_sci->_gfxPalette->setRemappingPercent(254, percent);
 		}
 		break;
-	case 1:	{ // set remapping base
-		//int16 unk1 = argv[1].toSint16();
-		//int16 unk2 = argv[2].toSint16();
-		//int16 unk3 = argv[3].toSint16();
-		kStub(s, argc, argv);
+	case 1:	{ // remap by range
+		uint16 from = argv[1].toUint16();
+		uint16 to = argv[2].toUint16();
+		uint16 base = argv[3].toUint16();
+		g_sci->_gfxPalette->toggleRemapping(true);
+		g_sci->_gfxPalette->resetRemapping();
+		g_sci->_gfxPalette->setRemappingRange(254, from, to, base);
 		}
 		break;
 	case 2:	// turn remapping off (unused)
