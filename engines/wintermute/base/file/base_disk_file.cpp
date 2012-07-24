@@ -69,14 +69,19 @@ static Common::FSNode getNodeForRelativePath(const Common::String& filename) {
 			Common::String pathPart = path.nextToken();
 			// Get the next FSNode in the chain, if it exists as a child from the previous.
 			Common::FSNode nextNode(curNode.getChild(pathPart));
+			if (!nextNode.exists()) {
+				// Return an invalid FSNode.
+				return Common::FSNode();
+			}
 			if (nextNode.exists() && nextNode.isReadable()) {
 				curNode = nextNode;
 			}
 			// Following the comments in common/fs.h, anything not a directory is a file.
 			if (!curNode.isDirectory()) {
-				assert(path.empty());
+				if (!path.empty()) {
+					error("Relative path %s reached a file before the end of the path", filename.c_str());
+				}
 				return curNode;
-				break;
 			}
 		}
 	}
