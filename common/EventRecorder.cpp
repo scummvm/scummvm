@@ -82,13 +82,11 @@ EventRecorder::~EventRecorder() {
 }
 
 void EventRecorder::init() {
-	_fakeMixerManager = new NullSdlMixerManager();
-	_fakeMixerManager->init();
-	_fakeMixerManager->suspendAudio();
 	DebugMan.addDebugChannel(kDebugLevelEventRec, "EventRec", "Event recorder debug level");
 }
 
 void EventRecorder::deinit() {
+	delete _fakeMixerManager;
 	_initialized = false;
 	_recordMode = kPassthrough;
 	delete controlPanel;
@@ -235,6 +233,9 @@ Common::String EventRecorder::generateRecordFileName(const String &target) {
 
 
 void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
+	_fakeMixerManager = new NullSdlMixerManager();
+	_fakeMixerManager->init();
+	_fakeMixerManager->suspendAudio();
 	_fakeTimer = 0;
 	_lastMillis = g_system->getMillis();
 	_lastScreenshotTime = 0;
@@ -323,7 +324,6 @@ void EventRecorder::registerMixerManager(SdlMixerManager *mixerManager) {
 
 void EventRecorder::switchMixer() {
 	if (_recordMode == kPassthrough) {
-		_fakeMixerManager->suspendAudio();
 		_realMixerManager->resumeAudio();
 	} else {
 		_realMixerManager->suspendAudio();
