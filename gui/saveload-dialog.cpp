@@ -125,8 +125,10 @@ void SaveLoadChooserDialog::addChooserButtons() {
 
 	_listButton = createSwitchButton("SaveLoadChooser.ListSwitch", "L", _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
 	_gridButton = createSwitchButton("SaveLoadChooser.GridSwitch", "G", _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
-	if (!_metaInfoSupport || !_thumbnailSupport || !(g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400))
+	if (!_metaInfoSupport || !_thumbnailSupport || !(g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400)) {
 		_gridButton->setEnabled(false);
+		_listButton->setEnabled(false);
+	}
 }
 
 void SaveLoadChooserDialog::reflowLayout() {
