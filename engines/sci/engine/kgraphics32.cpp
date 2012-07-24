@@ -738,6 +738,12 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 
 	switch (operation) {
 	case 0:	{ // turn remapping off
+		// WORKAROUND: Game scripts in QFG4 erroneously turn remapping off in room
+		// 140 (the character point allocation screen) and never turn it back on,
+		// even if it's clearly used in that screen.
+		if (g_sci->getGameId() == GID_QFG4 && s->currentRoomNumber() == 140)
+			return s->r_acc;
+
 		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
 		if (base > 0)
 			warning("kRemapColors(0) called with base %d", base);
