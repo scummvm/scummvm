@@ -21,34 +21,47 @@
 
 #include "graphics/scalerplugin.h"
 
-SourceScaler::SourceScaler() {
-	for (int i = 0; i < SRC_MAX; ++i) {
-		oldSrcs[i] = NULL;
+SourceScaler::SourceScaler() : _oldSrc(NULL), _enable(false) {
+}
+
+SourceScaler::~SourceScaler() {
+	if (_oldSrc != NULL)
+		delete[] _oldSrc;
+}
+
+void SourceScaler::setSource(const byte *src, uint pitch, int width, int height, int padding) {
+	if (_oldSrc != NULL)
+		delete[] _oldSrc;
+
+	_padding = padding;
+	// Give _oldSrc same pitch
+	int size = (height + padding * 2) * pitch;
+	_oldSrc = new byte[size];
+	memset(_oldSrc, 0, size);
+}
+
+void SourceScaler::scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+                         uint32 dstPitch, int width, int height, int x, int y) {
+	if (!_enable) {
+		// Do not pass _oldSrc, do not update _oldSrc
+		internScale(srcPtr, srcPitch,
+					dstPtr, dstPitch,
+					NULL, 0,
+					width, height);
+		return;
 	}
-}
-
-void SourceScaler::setSource(const byte *src, uint pitch, int width, int height, int padding, SourceType type) {
-	widths[type] = width;
-	heights[type] = height;
-	pitches[type] = pitch;
-	newSrcs[type] = src;
-	paddings[type] = padding;
-
-	if (oldSrcs[type] != NULL)
-		free(oldSrcs[type]);
-
-	int size = (height + _format.bytesPerPixel * padding) * 2 * pitch;
-	oldSrcs[type] = new byte[size];
-	memset(oldSrcs[type], 0, size);
-}
-
-void SourceScaler::oldSrcScale(byte *dst, uint dstPitch, SourceType type) {
+	int offset = (_padding + x) * _format.bytesPerPixel + (_padding + y) * srcPitch;
 	// Call user defined scale function
-	internScale(newSrcs[type] + paddings[type] * 2 + pitches[type] * paddings[type], pitches[type],
-	            dst, dstPitch,
-	            oldSrcs[type] + paddings[type] * 2 + pitches[type] * paddings[type], pitches[type],
-				widths[type], heights[type]);
+	internScale(srcPtr, srcPitch,
+				dstPtr, dstPitch,
+				_oldSrc + offset, srcPitch,
+				width, height);
 	// Update old src
-	memcpy(oldSrcs[type], newSrcs[type], (heights[type] + _format.bytesPerPixel * paddings[type])  * 2 * pitches[type]);
+	byte *oldSrc = _oldSrc + offset;
+	while (height--) {
+		memcpy(oldSrc, srcPtr, width * _format.bytesPerPixel);
+		oldSrc += srcPitch;
+		srcPtr += srcPitch;
+	}
 }
 

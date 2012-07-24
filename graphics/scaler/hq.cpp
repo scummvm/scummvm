@@ -4990,7 +4990,7 @@ HQPlugin::HQPlugin() {
 	_factors.push_back(3);
 }
 
-void HQPlugin::initialize(Graphics::PixelFormat format) {
+void HQPlugin::initialize(const Graphics::PixelFormat &format) {
 	if (format.bytesPerPixel == 2) {
 		InitLUT(format);
 	} else {

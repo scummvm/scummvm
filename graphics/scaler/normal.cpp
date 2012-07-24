@@ -31,7 +31,7 @@ NormalPlugin::NormalPlugin() {
 #endif
 }
 
-void NormalPlugin::initialize(Graphics::PixelFormat format) {
+void NormalPlugin::initialize(const Graphics::PixelFormat &format) {
 	_format = format;
 }
 

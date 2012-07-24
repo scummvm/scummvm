@@ -190,7 +190,7 @@ PMPlugin::PMPlugin() {
 	_factors.push_back(2);
 }
 
-void PMPlugin::initialize(Graphics::PixelFormat format) {
+void PMPlugin::initialize(const Graphics::PixelFormat &format) {
 	_format = format;
 }
 
