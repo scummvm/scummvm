@@ -89,6 +89,8 @@ void EventRecorder::deinit() {
 	delete _fakeMixerManager;
 	_initialized = false;
 	_recordMode = kPassthrough;
+	g_gui.theme()->disable();
+	controlPanel->close();
 	delete controlPanel;
 	debugC(3, kDebugLevelEventRec, "EventRecorder: deinit");
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
@@ -237,12 +239,14 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_fakeMixerManager = new NullSdlMixerManager();
 	_fakeMixerManager->init();
 	_fakeMixerManager->suspendAudio();
+	_enableDrag = false;
 	_fakeTimer = 0;
 	_lastMillis = g_system->getMillis();
 	_playbackFile = new PlaybackFile();
 	_lastScreenshotTime = 0;
 	_screenshotsFile = NULL;
 	_recordMode = mode;
+
 	controlPanel = new GUI::OnScreenDialog(10,10,200,32);
 	controlPanel->open();
 
@@ -433,7 +437,7 @@ void EventRecorder::updateSubsystems() {
 
 List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 	checkForKeyCode(ev);
-	if (_recordMode != kPassthrough) {
+	if (_recordMode == kRecorderRecord) {
 		if (ev.kbd.keycode != KEYCODE_ESCAPE) {
 			Event evt = ev;
 			evt.mouse.x *= 2;
@@ -456,6 +460,8 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 				controlPanel->_x = evt.mouse.x - dragPoint.x;
 				controlPanel->_y = evt.mouse.y - dragPoint.y;
 				g_system->updateScreen();
+				return List<Event>();
+			} else if (_enableDrag) {
 				return List<Event>();
 			}
 		}
@@ -550,18 +556,24 @@ SaveFileManager *EventRecorder::getSaveManager(SaveFileManager *realSaveManager)
 
 void EventRecorder::preDrawOverlayGui() {
     if (_recordMode != kPassthrough) {
+		RecordMode oldMode = _recordMode;
+		_recordMode = kPassthrough;
 		g_system->showOverlay();
 		g_gui.theme()->clearAll();
 		g_gui.theme()->openDialog(true, GUI::ThemeEngine::kShadingNone);
 		controlPanel->drawDialog();
 		g_gui.theme()->finishBuffering();
 		g_gui.theme()->updateScreen();
+		_recordMode = oldMode;
    }
 }
 
 void EventRecorder::postDrawOverlayGui() {
     if (_recordMode != kPassthrough) {
+		RecordMode oldMode = _recordMode;
+		_recordMode = kPassthrough;
 	    g_system->hideOverlay();
+		_recordMode = oldMode;
 	}
 }
 
