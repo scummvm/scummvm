@@ -277,7 +277,7 @@ bool BaseFileManager::registerPackages() {
 		warning("Should register %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
 		(*it).getChildren(files, Common::FSNode::kListFilesOnly);
 		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
-			if (!fileIt->getName().contains(".dcp"))
+			if (!fileIt->getName().hasSuffix(".dcp"))
 				continue;
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.
