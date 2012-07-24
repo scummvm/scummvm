@@ -1771,7 +1771,7 @@ int EdgePlugin::fixKnights(int sub_type, Pixel *pixels, int8 *sim) {
 #define greenMask   0x07E0
 
 template<typename ColorMask, typename Pixel>
-void EdgePlugin::anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
+void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
         Pixel *pixels, int sub_type, int16 *bptr) {
 	Pixel *dptr2;
 	int16 tmp_grey;
@@ -2370,7 +2370,7 @@ void EdgePlugin::anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
 
 
 template<typename ColorMask, typename Pixel>
-void EdgePlugin::anti_alias_grid_2x(uint8 *dptr, int dstPitch,
+void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
                                     Pixel *pixels, int sub_type, int16 *bptr,
                                     int8 *sim,
                                     int interpolate_2x) {
@@ -3363,7 +3363,7 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 
 			/* block of solid color */
 			if (!diffs) {
-				anti_alias_grid_clean_3x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
+				antiAliasGridClean3x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
 				                                    0, NULL);
 				continue;
 			}
@@ -3377,7 +3377,7 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 			if (sub_type >= 0)
 				sub_type = fixKnights<Pixel>(sub_type, pixels, sim);
 
-			anti_alias_grid_clean_3x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
+			antiAliasGridClean3x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
 			                                    sub_type, bplane);
 		}
 	}
@@ -3443,7 +3443,7 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 
 			/* block of solid color */
 			if (!diffs) {
-				anti_alias_grid_2x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
+				antiAliasGrid2x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
 				                              0, NULL, NULL, 0);
 				continue;
 			}
@@ -3457,7 +3457,7 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 			if (sub_type >= 0)
 				sub_type = fixKnights<Pixel>(sub_type, pixels, sim);
 
-			anti_alias_grid_2x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
+			antiAliasGrid2x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
 			                              sub_type, bplane, sim,
 			                              interpolate_2x);
 		}
