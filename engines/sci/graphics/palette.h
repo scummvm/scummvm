@@ -53,7 +53,6 @@ public:
 	void getSys(Palette *pal);
 	uint16 getTotalColorCount() const { return _totalScreenColors; }
 
-	void toggleRemapping(bool remap) { _remapOn = remap; }
 	void resetRemapping();
 	void setRemappingPercent(byte color, byte percent);
 	void setRemappingRange(byte color, byte from, byte to, byte base);

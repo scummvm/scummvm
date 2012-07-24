@@ -741,7 +741,6 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
 		if (base > 0)
 			warning("kRemapColors(0) called with base %d", base);
-		g_sci->_gfxPalette->toggleRemapping(false);
 		g_sci->_gfxPalette->resetRemapping();
 		}
 		break;
@@ -753,7 +752,6 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
 		if (unk5 > 0)
 			warning("kRemapColors(1) called with 6 parameters, unknown parameter is %d", unk5);
-		g_sci->_gfxPalette->toggleRemapping(true);
 		g_sci->_gfxPalette->setRemappingRange(color, from, to, base);
 		}
 		break;
@@ -762,7 +760,6 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		uint16 percent = argv[2].toUint16(); // 0 - 100
 		if (argc >= 4)
 			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		g_sci->_gfxPalette->toggleRemapping(true);
 		g_sci->_gfxPalette->setRemappingPercent(color, percent);
 		}
 		break;

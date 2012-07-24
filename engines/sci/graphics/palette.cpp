@@ -337,6 +337,7 @@ bool GfxPalette::isRemapMask(byte color) {
 }
 
 void GfxPalette::resetRemapping() {
+	_remapOn = false;
 	_remappingMaskFrom = 0;
 	_remappingMaskTo = 0;
 	_remappingPercentToSet = 0;
@@ -347,6 +348,8 @@ void GfxPalette::resetRemapping() {
 }
 
 void GfxPalette::setRemappingPercent(byte color, byte percent) {
+	_remapOn = true;
+
 	// We need to defer the setup of the remapping table until something is
 	// shown on screen, otherwise kernelFindColor() won't find correct
 	// colors. The actual setup of the remapping table will be performed in
@@ -360,6 +363,8 @@ void GfxPalette::setRemappingPercent(byte color, byte percent) {
 }
 
 void GfxPalette::setRemappingRange(byte color, byte from, byte to, byte base) {
+	_remapOn = true;
+
 	for (int i = from; i <= to; i++) {
 		_remappingTable[i] = i + base;
 	}
