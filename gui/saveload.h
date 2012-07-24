@@ -52,7 +52,7 @@ public:
 	int runModalWithCurrentTarget();
 	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
 
-	Common::String getResultString() const;
+	const Common::String &getResultString() const;
 
 	/**
 	 * Creates a default save description for the specified slot. Depending

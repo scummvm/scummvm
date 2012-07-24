@@ -103,11 +103,9 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 	return ret;
 }
 
-Common::String SaveLoadChooser::getResultString() const {
-	if (_impl)
-		return _impl->getResultString();
-	else
-		return Common::String();
+const Common::String &SaveLoadChooser::getResultString() const {
+	assert(_impl);
+	return _impl->getResultString();
 }
 
 } // End of namespace GUI
