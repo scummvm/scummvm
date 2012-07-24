@@ -350,10 +350,10 @@ void GfxPalette::resetRemapping() {
 void GfxPalette::setRemappingPercent(byte color, byte percent) {
 	_remapOn = true;
 
-	// We need to defer the setup of the remapping table until something is
-	// shown on screen, otherwise kernelFindColor() won't find correct
+	// We need to defer the setup of the remapping table every time the screen
+	// palette is changed, so that kernelFindColor() can find the correct
 	// colors. The actual setup of the remapping table will be performed in
-	// remapColor().
+	// copySysPaletteToScreen().
 	_remappingPercentToSet = percent;
 
 	if (_remappingMaskFrom > color || _remappingMaskFrom == 0)
@@ -377,21 +377,6 @@ void GfxPalette::setRemappingRange(byte color, byte from, byte to, byte base) {
 
 byte GfxPalette::remapColor(byte color) {
 	assert(_remapOn);
-
-	// Check if we need to set remapping by percent. This can only be
-	// performed when something is shown on screen, so that the screen
-	// palette is set up and kernelFindColor() can work correctly.
-	if (_remappingPercentToSet) {
-		for (int i = 0; i < 256; i++) {
-			byte r = _sysPalette.colors[i].r * _remappingPercentToSet / 100;
-			byte g = _sysPalette.colors[i].g * _remappingPercentToSet / 100;
-			byte b = _sysPalette.colors[i].b * _remappingPercentToSet / 100;
-			_remappingTable[i] = kernelFindColor(r, g, b);
-		}
-
-		_remappingPercentToSet = 0;
-	}
-
 	return _remappingTable[color];
 }
 
@@ -554,6 +539,16 @@ void GfxPalette::copySysPaletteToScreen() {
 			bpal[i * 3    ] = CLIP(_sysPalette.colors[i].r * _sysPalette.intensity[i] / 100, 0, 255);
 			bpal[i * 3 + 1] = CLIP(_sysPalette.colors[i].g * _sysPalette.intensity[i] / 100, 0, 255);
 			bpal[i * 3 + 2] = CLIP(_sysPalette.colors[i].b * _sysPalette.intensity[i] / 100, 0, 255);
+		}
+	}
+
+	// Check if we need to reset remapping by percent with the new colors.
+	if (_remappingPercentToSet) {
+		for (int i = 0; i < 256; i++) {
+			byte r = _sysPalette.colors[i].r * _remappingPercentToSet / 100;
+			byte g = _sysPalette.colors[i].g * _remappingPercentToSet / 100;
+			byte b = _sysPalette.colors[i].b * _remappingPercentToSet / 100;
+			_remappingTable[i] = kernelFindColor(r, g, b);
 		}
 	}
 
