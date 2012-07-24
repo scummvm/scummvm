@@ -521,6 +521,17 @@ void AdvancedVideoDecoder::addTrack(Track *track) {
 		track->start();
 }
 
+bool AdvancedVideoDecoder::addStreamFileTrack(const Common::String &baseName) {
+	StreamFileAudioTrack *track = new StreamFileAudioTrack();
+
+	bool result = track->loadFromFile(baseName);
+
+	if (result)
+		addTrack(track);
+
+	return result;
+}
+
 AdvancedVideoDecoder::Track *AdvancedVideoDecoder::getTrack(uint track) {
 	if (track > _tracks.size())
 		return 0;

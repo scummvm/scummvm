@@ -365,6 +365,11 @@ public:
 	 */
 	virtual Audio::Timestamp getDuration() const;
 
+	/**
+	 * Add an audio track from a stream file.
+	 */
+	bool addStreamFileTrack(const Common::String &baseName);
+
 	// Future API
 	//void setRate(const Common::Rational &rate);
 	//Common::Rational getRate() const;
