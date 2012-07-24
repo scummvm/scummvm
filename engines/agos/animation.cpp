@@ -415,7 +415,7 @@ void MoviePlayerDXA::updateBalance() {
 
 
 MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
-	: MoviePlayer(vm), SmackerDecoder(vm->_mixer) {
+	: MoviePlayer(vm), SmackerDecoder() {
 	debug(0, "Creating SMK cutscene player");
 
 	memset(baseName, 0, sizeof(baseName));
@@ -431,11 +431,11 @@ bool MoviePlayerSMK::load() {
 	if (!loadStream(videoStream))
 		error("Failed to load video stream from file %s", videoName.c_str());
 
+	start();
+
 	debug(0, "Playing video %s", videoName.c_str());
 
 	CursorMan.showMouse(false);
-
-	_firstFrameOffset = _fileStream->pos();
 
 	return true;
 }
@@ -477,10 +477,8 @@ void MoviePlayerSMK::handleNextFrame() {
 }
 
 void MoviePlayerSMK::nextFrame() {
-	if (_vm->_interactiveVideo == TYPE_LOOPING && endOfVideo()) {
-		_fileStream->seek(_firstFrameOffset);
-		_curFrame = -1;
-	}
+	if (_vm->_interactiveVideo == TYPE_LOOPING && endOfVideo())
+		rewind();
 
 	if (!endOfVideo()) {
 		decodeNextFrame();

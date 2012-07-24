@@ -67,9 +67,6 @@ protected:
 	virtual void handleNextFrame();
 	virtual bool processFrame() = 0;
 	virtual void startSound() {}
-
-protected:
-	uint32 _firstFrameOffset;
 };
 
 class MoviePlayerDXA : public MoviePlayer, Video::DXADecoder {
@@ -93,6 +90,7 @@ private:
 	bool processFrame();
 	void startSound();
 	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
+	uint32 _firstFrameOffset;
 };
 
 class MoviePlayerSMK : public MoviePlayer, Video::SmackerDecoder {

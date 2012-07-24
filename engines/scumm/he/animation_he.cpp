@@ -40,7 +40,10 @@ MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer) : _vm(vm) {
 		_video = new Video::BinkDecoder();
 	else
 #endif
-		_video = new Video::SmackerDecoder(mixer);
+	{
+		_video = new Video::SmackerDecoder();
+		((Video::AdvancedVideoDecoder *)_video)->start();
+	}
 
 	_flags = 0;
 	_wizResNum = 0;

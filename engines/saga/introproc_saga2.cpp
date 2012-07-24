@@ -92,7 +92,7 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 }
 
 void Scene::playMovie(const char *filename) {
-	Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder(_vm->_mixer);
+	Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder();
 
 	if (!smkDecoder->loadFile(filename))
 		return;
@@ -100,6 +100,8 @@ void Scene::playMovie(const char *filename) {
 	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
 	bool skipVideo = false;
+
+	smkDecoder->start();
 
 	while (!_vm->shouldQuit() && !smkDecoder->endOfVideo() && !skipVideo) {
 		if (smkDecoder->needsUpdate()) {

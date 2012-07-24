@@ -179,6 +179,13 @@ bool MoviePlayer::load(uint32 id) {
 		break;
 	case kVideoDecoderSMK:
 		filename = Common::String::format("%s.smk", sequenceList[id]);
+
+		if (_decoder->loadFile(filename)) {
+			((Video::AdvancedVideoDecoder *)_decoder)->start(); // TODO: Remove after new API is complete
+			return true;
+		} else {
+			return false;
+		}
 		break;
 	case kVideoDecoderPSX:
 		filename = Common::String::format("%s.str", (_vm->_systemVars.isDemo) ? sequenceList[id] : sequenceListPSX[id]);
@@ -547,7 +554,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 	filename = Common::String::format("%s.smk", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
-		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder(snd);
+		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder();
 		return new MoviePlayer(vm, textMan, resMan, snd, system, bgSoundHandle, smkDecoder, kVideoDecoderSMK);
 	}
 
