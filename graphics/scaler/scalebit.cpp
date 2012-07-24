@@ -359,7 +359,7 @@ AdvMamePlugin::AdvMamePlugin() {
 	_factors.push_back(4);
 }
 
-void AdvMamePlugin::initialize(Graphics::PixelFormat format) {
+void AdvMamePlugin::initialize(const Graphics::PixelFormat &format) {
 	_format = format;
 }
 

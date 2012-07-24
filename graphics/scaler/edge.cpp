@@ -3518,20 +3518,20 @@ void EdgePlugin::initTables(const uint8 *srcPtr, uint32 srcPitch,
 	}
 }
 
-EdgePlugin::EdgePlugin() {
+EdgePlugin::EdgePlugin() : SourceScaler() {
 	_factor = 2;
 	_factors.push_back(2);
 	_factors.push_back(3);
 }
 
-void EdgePlugin::initialize(Graphics::PixelFormat format) {
+void EdgePlugin::initialize(const Graphics::PixelFormat &format) {
 	_format = format;
 	initTables(0, 0, 0, 0);
 }
 
 void EdgePlugin::deinitialize() {
 }
-
+#if 0
 void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
                        uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
@@ -3560,32 +3560,34 @@ void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 		}
 	}
 }
+#endif
 
 void EdgePlugin::internScale(const uint8 *srcPtr, uint32 srcPitch,
                        uint8 *dstPtr, uint32 dstPitch, const uint8 *oldSrcPtr, uint32 oldSrcPitch, int width, int height) {
+	bool enable = oldSrcPtr != NULL;
 	if (_format.bytesPerPixel == 2) {
 		if (_factor == 2) {
 			if (_format.gLoss == 2)
-				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, true, oldSrcPtr, oldSrcPitch);
+				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch);
 			else
-				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, true, oldSrcPtr, oldSrcPitch);
+				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch);
 		} else {
 			if (_format.gLoss == 2)
-				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, true, oldSrcPtr, oldSrcPitch);
+				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch);
 			else
-				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, true, oldSrcPtr, oldSrcPitch);
+				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch);
 		}
 	} else {
 		if (_factor == 2) {
 			if (_format.aLoss == 0)
-				antiAliasPass2x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, true, oldSrcPtr, oldSrcPitch);
+				antiAliasPass2x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch);
 			else
-				antiAliasPass2x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, true, oldSrcPtr, oldSrcPitch);
+				antiAliasPass2x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch);
 		} else {
 			if (_format.aLoss == 0)
-				antiAliasPass3x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, true, oldSrcPtr, oldSrcPitch);
+				antiAliasPass3x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch);
 			else
-				antiAliasPass3x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, true, oldSrcPtr, oldSrcPitch);
+				antiAliasPass3x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch);
 		}
 	}
 }
