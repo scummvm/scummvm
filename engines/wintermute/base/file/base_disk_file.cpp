@@ -46,6 +46,44 @@ void correctSlashes(char *fileName) {
 	}
 }
 
+// Parse a relative path in the game-folder, and if it exists, return a FSNode to it.
+static Common::FSNode getNodeForRelativePath(const Common::String& filename) {
+	// The filename can be an explicit path, thus we need to chop it up, expecting the path the game
+	// specifies to follow the Windows-convention of folder\subfolder\file (absolute paths should not happen)
+
+	// Absolute path: TODO: Add specific fallbacks here.
+	if (filename.contains(':'))
+		error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
+
+	// Relative path:
+	if (filename.contains('\\')) {
+		Common::StringTokenizer path(filename, "\\");
+
+		// Start traversing relative to the game-data-dir
+		const Common::FSNode gameDataDir(ConfMan.get("path"));
+		Common::FSNode curNode = gameDataDir;
+
+		// Parse all path-elements
+		while (!path.empty()) {
+			// Get the next path-component by slicing on '\\'
+			Common::String pathPart = path.nextToken();
+			// Get the next FSNode in the chain, if it exists as a child from the previous.
+			Common::FSNode nextNode(curNode.getChild(pathPart));
+			if (nextNode.exists() && nextNode.isReadable()) {
+				curNode = nextNode;
+			}
+			// Following the comments in common/fs.h, anything not a directory is a file.
+			if (!curNode.isDirectory()) {
+				assert(path.empty());
+				return curNode;
+				break;
+			}
+		}
+	}
+	// Return an invalid FSNode to mark that we didn't find the requested file.
+	return Common::FSNode();
+}
+
 bool diskFileExists(const Common::String& filename) {
 	// Try directly from SearchMan first
 	Common::ArchiveMemberList files;
@@ -56,33 +94,15 @@ bool diskFileExists(const Common::String& filename) {
 			return true;
 		}
 	}
-	// The filename can be an explicit path, thus we need to chop it up, expecting the path the game
-	// specifies to follow the Windows-convention of folder\subfolder\file (absolute paths should not happen)
-	if (filename.contains(':'))
-		error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
-	if (filename.contains('\\')) {
-		Common::StringTokenizer path(filename, "\\");
-		
-		const Common::FSNode gameDataDir(ConfMan.get("path"));
-		Common::FSNode curNode = gameDataDir;
-		while (!path.empty()) {
-			Common::String pathPart = path.nextToken();
-			Common::FSNode nextNode(curNode.getChild(pathPart));
-			if (nextNode.exists() && nextNode.isReadable()) {
-				curNode = nextNode;
-			}
-			if (!curNode.isDirectory()) {
-				if (curNode.exists() && curNode.isReadable())
-					return true;
-				else
-					return false;
-			}
-		}
+	// File wasn't found in SearchMan, try to parse the path as a relative path.
+	Common::FSNode searchNode = getNodeForRelativePath(filename);
+	if (searchNode.exists() && !searchNode.isDirectory() && searchNode.isReadable()) {
+		return true;
 	}
 	return false;
 }
 
-Common::SeekableReadStream *openDiskFile(const Common::String &filename, BaseFileManager *fileManager) {
+Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = NULL;
 	// Try directly from SearchMan first
@@ -95,27 +115,11 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename, BaseFil
 			break;
 		}
 	}
-	// The filename can be an explicit path, thus we need to chop it up, expecting the path the game
-	// specifies to follow the Windows-convention of folder\subfolder\file (absolute paths should not happen)
+	// File wasn't found in SearchMan, try to parse the path as a relative path.
 	if (!file) {
-		if (filename.contains(':'))
-			error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
-		if (filename.contains('\\')) {
-			Common::StringTokenizer path(filename, "\\");
-
-			const Common::FSNode gameDataDir(ConfMan.get("path"));
-			Common::FSNode curNode = gameDataDir;
-			while (!path.empty()) {
-				Common::String pathPart = path.nextToken();
-				Common::FSNode nextNode(curNode.getChild(pathPart));
-				if (nextNode.exists() && nextNode.isReadable()) {
-					curNode = nextNode;
-				}
-				if (!curNode.isDirectory()) {
-					file = curNode.createReadStream();
-					break;
-				}
-			}
+		Common::FSNode searchNode = getNodeForRelativePath(filename);
+		if (searchNode.exists() && !searchNode.isDirectory() && searchNode.isReadable()) {
+			file = searchNode.createReadStream();
 		}
 	}
 	if (file) {

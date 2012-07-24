@@ -514,7 +514,7 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 		return ret;
 	}
 
-	ret = openDiskFile(filename, this);
+	ret = openDiskFile(filename);
 	if (ret)
 		return ret;
 
