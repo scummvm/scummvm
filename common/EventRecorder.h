@@ -152,7 +152,7 @@ private:
 	volatile uint32 _fakeTimer;
 	uint32 _lastScreenshotTime;
 	uint32 _screenshotPeriod;
-	PlaybackFile _playbackFile;
+	PlaybackFile *_playbackFile;
 	void saveScreenShot();
 	void checkRecordedMD5();
 	volatile RecordMode _recordMode;

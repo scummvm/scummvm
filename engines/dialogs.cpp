@@ -151,7 +151,6 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		Common::Event eventRTL;
 		eventRTL.type = Common::EVENT_RTL;
 		g_system->getEventManager()->pushEvent(eventRTL);
-		close();
 		}
 		break;
 	case kQuitCmd: {

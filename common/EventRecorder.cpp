@@ -95,7 +95,8 @@ void EventRecorder::deinit() {
 	g_system->lockMutex(_timeMutex);
 	g_system->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
-	_playbackFile.close();
+	_playbackFile->close();
+	delete _playbackFile;
 	if (_screenshotsFile != NULL) {
 		_screenshotsFile->finalize();
 		delete _screenshotsFile;
@@ -122,7 +123,7 @@ void EventRecorder::processMillis(uint32 &millis) {
 		controlPanel->setReplayedTime(_fakeTimer);
 		timerEvent.type = EVENT_TIMER;
 		timerEvent.time = _fakeTimer;
-		_playbackFile.writeEvent(timerEvent);
+		_playbackFile->writeEvent(timerEvent);
 		takeScreenshot();
 		_timerManager->handler();
 		break;
@@ -130,7 +131,7 @@ void EventRecorder::processMillis(uint32 &millis) {
 		updateSubsystems();
 		if (_nextEvent.type == EVENT_TIMER) {
 			_fakeTimer = _nextEvent.time;
-			_nextEvent = _playbackFile.getNextEvent();
+			_nextEvent = _playbackFile->getNextEvent();
 		}
 		_timerManager->handler();
 		millis = _fakeTimer;
@@ -182,7 +183,7 @@ bool EventRecorder::pollEvent(Event &ev) {
 		break;
 	}
 	ev = _nextEvent;
-	_nextEvent = _playbackFile.getNextEvent();
+	_nextEvent = _playbackFile->getNextEvent();
 	return true;
 }
 
@@ -211,9 +212,9 @@ void EventRecorder::RegisterEventSource() {
 uint32 EventRecorder::getRandomSeed(const String &name) {
 	uint32 result = g_system->getMillis();
 	if (_recordMode == kRecorderRecord) {
-		_playbackFile.getHeader().randomSourceRecords[name] = result;
+		_playbackFile->getHeader().randomSourceRecords[name] = result;
 	} else if (_recordMode == kRecorderPlayback) {
-		result = _playbackFile.getHeader().randomSourceRecords[name];
+		result = _playbackFile->getHeader().randomSourceRecords[name];
 	}
 	return result;
 }
@@ -238,6 +239,7 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_fakeMixerManager->suspendAudio();
 	_fakeTimer = 0;
 	_lastMillis = g_system->getMillis();
+	_playbackFile = new PlaybackFile();
 	_lastScreenshotTime = 0;
 	_screenshotsFile = NULL;
 	_recordMode = mode;
@@ -258,7 +260,7 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	}
 	if (_recordMode == kRecorderPlayback) {
 		applyPlaybackSettings();
-		_nextEvent = _playbackFile.getNextEvent();
+		_nextEvent = _playbackFile->getNextEvent();
 	}
 	if (_recordMode == kRecorderRecord) {
 		getConfig();
@@ -280,11 +282,11 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 
 bool EventRecorder::openRecordFile(const String &fileName) {
 	if (_recordMode == kRecorderRecord) {
-		return _playbackFile.openWrite(fileName);
+		return _playbackFile->openWrite(fileName);
 	}
 	if (_recordMode == kRecorderPlayback) {
 		_recordMode = kPassthrough;
-		bool result = _playbackFile.openRead(fileName);
+		bool result = _playbackFile->openRead(fileName);
 		_recordMode = kRecorderPlayback;
 		return result;
 	}
@@ -292,17 +294,17 @@ bool EventRecorder::openRecordFile(const String &fileName) {
 }
 
 bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
-	if ((gameDesc == NULL) && (_playbackFile.getHeader().hashRecords.size() != 0)) {
+	if ((gameDesc == NULL) && (_playbackFile->getHeader().hashRecords.size() != 0)) {
 		warning("Engine doesn't contain description table");
 		return false;
 	}
 	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
-		if (_playbackFile.getHeader().hashRecords.find(fileDesc->fileName) == _playbackFile.getHeader().hashRecords.end()) {
+		if (_playbackFile->getHeader().hashRecords.find(fileDesc->fileName) == _playbackFile->getHeader().hashRecords.end()) {
 			warning("MD5 hash for file %s not found in record file", fileDesc->fileName);
 			return false;
 		}
-		if (_playbackFile.getHeader().hashRecords[fileDesc->fileName] != fileDesc->md5) {
-			warning("Incorrect version of game file %s. Stored MD5 is %s. MD5 of loaded game is %s", fileDesc->fileName, _playbackFile.getHeader().hashRecords[fileDesc->fileName].c_str(), fileDesc->md5);
+		if (_playbackFile->getHeader().hashRecords[fileDesc->fileName] != fileDesc->md5) {
+			warning("Incorrect version of game file %s. Stored MD5 is %s. MD5 of loaded game is %s", fileDesc->fileName, _playbackFile->getHeader().hashRecords[fileDesc->fileName].c_str(), fileDesc->md5);
 			return false;
 		}
 	}
@@ -341,19 +343,19 @@ SdlMixerManager *EventRecorder::getMixerManager() {
 
 void EventRecorder::getConfigFromDomain(ConfigManager::Domain *domain) {
 	for (ConfigManager::Domain::iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
-		_playbackFile.getHeader().settingsRecords[entry->_key] = entry->_value;
+		_playbackFile->getHeader().settingsRecords[entry->_key] = entry->_value;
 	}
 }
 
 void EventRecorder::getConfig() {
 	getConfigFromDomain(ConfMan.getDomain(ConfMan.kApplicationDomain));
 	getConfigFromDomain(ConfMan.getActiveDomain());
-	_playbackFile.getHeader().settingsRecords["save_slot"] = ConfMan.get("save_slot");
+	_playbackFile->getHeader().settingsRecords["save_slot"] = ConfMan.get("save_slot");
 }
 
 
 void EventRecorder::applyPlaybackSettings() {
-	for (StringMap::iterator i = _playbackFile.getHeader().settingsRecords.begin(); i != _playbackFile.getHeader().settingsRecords.end(); ++i) {
+	for (StringMap::iterator i = _playbackFile->getHeader().settingsRecords.begin(); i != _playbackFile->getHeader().settingsRecords.end(); ++i) {
 		String currentValue = ConfMan.get(i->_key);
 		if (currentValue != i->_value) {
 			warning("Config value <%s>: %s -> %s", i->_key.c_str(), i->_value.c_str(), currentValue.c_str());
@@ -366,7 +368,7 @@ void EventRecorder::applyPlaybackSettings() {
 
 void EventRecorder::removeDifferentEntriesInDomain(ConfigManager::Domain *domain) {
 	for (ConfigManager::Domain::iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
-		if (_playbackFile.getHeader().settingsRecords.find(entry->_key) == _playbackFile.getHeader().settingsRecords.end()) {
+		if (_playbackFile->getHeader().settingsRecords.find(entry->_key) == _playbackFile->getHeader().settingsRecords.end()) {
 			warning("Config value <%s>: %s -> (null)", entry->_key.c_str(), entry->_value.c_str());
 			domain->erase(entry->_key);
 		}
@@ -465,7 +467,7 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 			RecorderEvent e;
 			memcpy(&e, &ev, sizeof(ev));
 			e.time = _fakeTimer;
-			_playbackFile.writeEvent(e);
+			_playbackFile->writeEvent(e);
 		}
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
@@ -474,7 +476,7 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 void EventRecorder::setGameMd5(const ADGameDescription *gameDesc) {
 	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 		if (fileDesc->md5 != NULL) {
-			_playbackFile.getHeader().hashRecords[fileDesc->fileName] = fileDesc->md5;
+			_playbackFile->getHeader().hashRecords[fileDesc->fileName] = fileDesc->md5;
 		}
 	}
 }
@@ -493,15 +495,15 @@ void EventRecorder::deleteRecord(const String& fileName) {
 }
 
 void EventRecorder::setAuthor(const Common::String &author) {
-	_playbackFile.getHeader().author = author;
+	_playbackFile->getHeader().author = author;
 }
 
 void EventRecorder::setNotes(const Common::String &desc) {
-	_playbackFile.getHeader().notes = desc;
+	_playbackFile->getHeader().notes = desc;
 }
 
 void EventRecorder::setName(const Common::String &name) {
-	_playbackFile.getHeader().name = name;
+	_playbackFile->getHeader().name = name;
 }
 
 void EventRecorder::takeScreenshot() {
@@ -510,7 +512,7 @@ void EventRecorder::takeScreenshot() {
 		uint8 md5[16];
 		if (grabScreenAndComputeMD5(screen, md5)) {
 			_lastScreenshotTime = _fakeTimer;
-			_playbackFile.saveScreenShot(screen, md5);
+			_playbackFile->saveScreenShot(screen, md5);
 			screen.free();
 		}
 	}
@@ -520,14 +522,14 @@ Common::SeekableReadStream * EventRecorder::processSaveStream(const Common::Stri
 	Common::InSaveFile *saveFile;
 	switch (_recordMode) {
 		case kRecorderPlayback:
-			for (Common::HashMap<Common::String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile.getHeader().saveFiles.begin(); i != _playbackFile.getHeader().saveFiles.end(); ++i) {
+			for (Common::HashMap<Common::String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
 				debug("%s %d ", i->_key.c_str(), i->_value.size);
 			}
-			return new MemoryReadStream(_playbackFile.getHeader().saveFiles[fileName].buffer, _playbackFile.getHeader().saveFiles[fileName].size);
+			return new MemoryReadStream(_playbackFile->getHeader().saveFiles[fileName].buffer, _playbackFile->getHeader().saveFiles[fileName].size);
 		case kRecorderRecord:
 			saveFile = _realSaveManager->openForLoading(fileName);
 			if (saveFile != NULL) {
-				_playbackFile.addSaveFile(fileName, saveFile);
+				_playbackFile->addSaveFile(fileName, saveFile);
 				saveFile->seek(0);
 			}
 			return saveFile;
@@ -566,7 +568,7 @@ void EventRecorder::postDrawOverlayGui() {
 Common::StringArray EventRecorder::listSaveFiles(const Common::String &pattern) {
 	if (_recordMode == kRecorderPlayback) {
 		Common::StringArray result;
-		for (Common::HashMap<Common::String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile.getHeader().saveFiles.begin(); i != _playbackFile.getHeader().saveFiles.end(); ++i) {
+		for (Common::HashMap<Common::String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
 			if (i->_key.matchString(pattern, false, true)) {
 				result.push_back(i->_key);
 			}
