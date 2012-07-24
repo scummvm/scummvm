@@ -748,7 +748,6 @@ void SaveLoadChooserGrid::hideButtons() {
 		i->button->setGfx(0);
 		i->setVisible(false);
 	}
-
 }
 
 void SaveLoadChooserGrid::updateSaves() {
