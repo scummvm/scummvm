@@ -36,8 +36,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *sdlEventSource)
-	: SurfaceSdlGraphicsManager(sdlEventSource),
-	_cursorDontScale(true) {
+	: SurfaceSdlGraphicsManager(sdlEventSource) {
 }
 
 const OSystem::GraphicsMode *GPHGraphicsManager::getSupportedGraphicsModes() const {
