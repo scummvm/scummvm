@@ -70,15 +70,15 @@ private:
 	bool registerPackages();
 	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
 	Common::FSList _packagePaths;
-//	Common::FSList _singlePaths;
 	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
 	bool registerPackage(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
-//	bool registerPackage(const Common::String &filename, bool searchSignature = false);
-	BaseGame *_gameRef;
 	Common::Array<BasePackage *> _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
 	Common::HashMap<Common::String, BaseFileEntry *> _files;
 	Common::HashMap<Common::String, BaseFileEntry *>::iterator _filesIter;
+	// This class is intentionally not a subclass of Base, as it needs to be used by
+	// the detector too, without launching the entire engine:
+	BaseGame *_gameRef;
 };
 
 } // end of namespace WinterMute

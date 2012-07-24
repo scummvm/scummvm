@@ -31,14 +31,14 @@
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/base/file/base_file_entry.h"
 #include "engines/wintermute/base/file/base_package.h"
-#include "engines/wintermute/base/file/BPkgFile.h"
 #include "engines/wintermute/base/file/base_resources.h"
+#include "engines/wintermute/base/file/BPkgFile.h"
 #include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/file/dcpackage.h"
-#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/str.h"
+#include "common/tokenizer.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "common/config-manager.h"
@@ -96,7 +96,6 @@ bool BaseFileManager::cleanup() {
 
 
 
-#define MAX_FILE_SIZE 10000000
 //////////////////////////////////////////////////////////////////////
 byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *size, bool mustExist) {
 	byte *buffer = NULL;
@@ -107,15 +106,6 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 			debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Error opening file '%s'", filename.c_str());
 		return NULL;
 	}
-
-	/*
-	if (File->GetSize() > MAX_FILE_SIZE) {
-	    _gameRef->LOG(0, "File '%s' exceeds the maximum size limit (%d bytes)", Filename, MAX_FILE_SIZE);
-	    CloseFile(File);
-	    return NULL;
-	}
-	*/
-
 
 	buffer = new byte[file->size() + 1];
 	if (buffer == NULL) {
@@ -207,39 +197,36 @@ bool BaseFileManager::initPaths() {
 		return STATUS_FAILED;
 
 	AnsiString pathList;
-	int numPaths;
 
 	// single files paths
 	pathList = _gameRef->_registry->readString("Resource", "CustomPaths", "");
-	numPaths = BaseUtils::strNumEntries(pathList.c_str(), ';');
-
-	for (int i = 0; i < numPaths; i++) {
-		char *path = BaseUtils::strEntry(i, pathList.c_str(), ';');
-		if (path && strlen(path) > 0) {
-			error("BaseFileManager::initPaths - Game wants to add customPath: %s", path); // TODO
-//			addPath(PATH_SINGLE, path);
+	Common::StringTokenizer *entries = new Common::StringTokenizer(pathList, ";");
+//	numPaths = BaseUtils::strNumEntries(pathList.c_str(), ';');
+	while (!entries->empty()) {
+		Common::String path = entries->nextToken();
+		if (path.size() > 0) {
+			error("BaseFileManager::initPaths - Game wants to add customPath: %s", path.c_str()); // TODO
+			//			addPath(PATH_SINGLE, path);
 		}
-		delete[] path;
-		path = NULL;
 	}
-//	addPath(PATH_SINGLE, ".\\");
+	delete entries;
+	entries = NULL;
 
 	// package files paths
 	const Common::FSNode gameData(ConfMan.get("path"));
 	addPath(PATH_PACKAGE, gameData);
 
 	pathList = _gameRef->_registry->readString("Resource", "PackagePaths", "");
-	numPaths = BaseUtils::strNumEntries(pathList.c_str(), ';');
-
-	for (int i = 0; i < numPaths; i++) {
-		char *path = BaseUtils::strEntry(i, pathList.c_str(), ';');
-		if (path && strlen(path) > 0) {
-			error("BaseFileManager::initPaths - Game wants to add packagePath: %s", path); // TODO
-//			addPath(PATH_PACKAGE, path);
+	entries = new Common::StringTokenizer(pathList, ";");
+	while (!entries->empty()) {
+		Common::String path = entries->nextToken();
+		if (path.size() > 0) {
+			error("BaseFileManager::initPaths - Game wants to add packagePath: %s", path.c_str()); // TODO
+			//			addPath(PATH_SINGLE, path);
 		}
-		delete[] path;
-		path = NULL;
 	}
+	delete entries;
+	entries = NULL;
 
 	Common::FSNode dataSubFolder = gameData.getChild("data");
 	if (dataSubFolder.exists()) {
@@ -295,17 +282,6 @@ bool BaseFileManager::registerPackages() {
 
 	return STATUS_OK;
 }
-
-//////////////////////////////////////////////////////////////////////////
-/*bool BaseFileManager::registerPackage(const Common::String &filename , bool searchSignature) {
-	Common::File *package = new Common::File();
-	package->open(filename);
-	if (!package->isOpen()) {
-		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Error opening package file '%s'. Ignoring.", filename.c_str());
-		return STATUS_OK;
-	}
-	return registerPackage(package, filename);
-}*/
 
 bool BaseFileManager::registerPackage(Common::FSNode file, const Common::String &filename, bool searchSignature) {
 	uint32 absoluteOffset = 0;
