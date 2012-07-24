@@ -555,10 +555,11 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 		convertSDLPixelFormat(_hwscreen->format, &format);
 		(*_scalerPlugin)->initialize(format);
 		_extraPixels = (*_scalerPlugin)->extraPixels();
-		_useOldSrc = (*_scalerPlugin)->useOldSrc();
+		_useOldSrc = (*_scalerPlugin)->useOldSource();
 		if (_useOldSrc) {
+			(*_scalerPlugin)->enableSource(true);
 			(*_scalerPlugin)->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
-										_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels, SRC_SCREEN);
+										_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 			if (!_destbuffer) {
 				_destbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth * _videoMode.scaleFactor,
 									_videoMode.screenHeight * _videoMode.scaleFactor,
@@ -758,7 +759,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_useOldSrc) {
 		// Create surface containing previous frame's data to pass to scaler
 		(*_scalerPlugin)->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
-									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels, SRC_SCREEN);
+									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 
 		// Create surface containing the raw output from the scaler
 		_destbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth * _videoMode.scaleFactor,
@@ -1005,7 +1006,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 	// Force a full redraw if requested.
 	// If _useOldSrc, the scaler will do its own partial updates.
-	if (_forceFull || (_useOldSrc && !_overlayVisible && _numDirtyRects > 0)) {
+	if (_forceFull) {
 		_numDirtyRects = 1;
 		_dirtyRectList[0].x = 0;
 		_dirtyRectList[0].y = 0;
@@ -1066,7 +1067,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				} else {
 					if (_useOldSrc) {
 						// scale into _destbuffer instead of _hwscreen to avoid AR problems
-						(*_scalerPlugin)->oldSrcScale((byte *)_destbuffer->pixels, _destbuffer->pitch, SRC_SCREEN);
+						(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+							(byte *)_destbuffer->pixels + rx1 * 2 + orig_dst_y * scale1 * _destbuffer->pitch, _destbuffer->pitch, r->w, dst_h, r->x, r->y);
 					} else
 						(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
 							(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);

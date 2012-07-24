@@ -28,10 +28,8 @@ class EdgePlugin : public SourceScaler {
 public:
 
 	EdgePlugin();
-	virtual void initialize(Graphics::PixelFormat format);
+	virtual void initialize(const Graphics::PixelFormat &format);
 	virtual void deinitialize();
-	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
 	virtual void internScale(const uint8 *srcPtr, uint32 srcPitch,
 						   uint8 *dstPtr, uint32 dstPitch,
 						   const uint8 *oldSrcPtr, uint32 oldSrcPitch,
@@ -40,7 +38,7 @@ public:
 	virtual uint decreaseFactor();
 	virtual uint getFactor() const { return _factor; }
 	virtual bool canDrawCursor() const { return false; }
-	virtual bool useOldSrc() const { return true; }
+	virtual bool useOldSource() const { return true; }
 	virtual uint extraPixels() const { return 1; }
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
