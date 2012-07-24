@@ -123,8 +123,8 @@
 #define GREY_SHIFT 12           /* bit shift for greyscale precision */
 #define RGB_SHIFT 13            /* bit shift for RGB precision */
 
-const int16 one_sqrt2 = (int16)(((int16)1 << GREY_SHIFT) / sqrt(2.0) + 0.5);
-const int16 int32_sqrt3 = (int16)(((int16)1 << GREY_SHIFT) * sqrt(3.0) + 0.5);
+static const int16 one_sqrt2 = (int16)(((int16)1 << GREY_SHIFT) / sqrt(2.0) + 0.5);
+static const int16 int32_sqrt3 = (int16)(((int16)1 << GREY_SHIFT) * sqrt(3.0) + 0.5);
 
 
 #define interpolate_1_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1<ColorMask>(a,b) : interpolate32_1_1<ColorMask>(a,b))
@@ -159,7 +159,7 @@ const int16 int32_sqrt3 = (int16)(((int16)1 << GREY_SHIFT) * sqrt(3.0) + 0.5);
  * the simple purposes we require here, so I've not included it :)
  */
 
-uint32 seed0, seed1, seed2, seed3;
+static uint32 seed0, seed1, seed2, seed3;
 
 /* period 2^32 - 1 */
 /* fails Gorilla test, binary rank matrix */
@@ -177,7 +177,7 @@ uint32 seed0, seed1, seed2, seed3;
  *
  * all others, including the "favorite" (13, 17, 5), fail some Monkey tests
  */
-uint32 xorshift_32(void) {
+static uint32 xorshift32(void) {
 	seed0 ^= seed0 << 6;
 	seed0 ^= seed0 << 5;
 	seed0 ^= seed0 >> 13;
@@ -187,7 +187,7 @@ uint32 xorshift_32(void) {
 
 /* period 2^128 - 1 */
 /* None of the other published 2^128-1 xorshift RNGs passed OPERM5 */
-uint32 xorshift_128(void) {
+static uint32 xorshift128(void) {
 	uint32 temp;
 
 	temp = (seed0 ^ (seed0 << 20)) ^ (seed1 ^ (seed1 >> 11)) ^
@@ -201,7 +201,7 @@ uint32 xorshift_128(void) {
 }
 
 /* return a random fraction over the range [0, 1) */
-double dxorshift_128(void) {
+static double dxorshift128(void) {
 	uint32 temp;
 
 	temp = (seed0 ^ (seed0 << 20)) ^ (seed1 ^ (seed1 >> 11)) ^
@@ -214,15 +214,15 @@ double dxorshift_128(void) {
 	return (temp / 4294967296.0);
 }
 
-void initialize_xorshift_128(uint32 seed) {
-	/* seed0 needs to be initialized prior to calling xorshift_32() */
+static void initializeXorshift128(uint32 seed) {
+	/* seed0 needs to be initialized prior to calling xorshift32() */
 	seed0 = seed;
 
-	/* initialize with xorshift_32() */
-	seed0 = xorshift_32();
-	seed1 = xorshift_32();
-	seed2 = xorshift_32();
-	seed3 = xorshift_32();
+	/* initialize with xorshift32() */
+	seed0 = xorshift32();
+	seed1 = xorshift32();
+	seed2 = xorshift32();
+	seed3 = xorshift32();
 }
 #endif
 
@@ -262,7 +262,7 @@ void initialize_xorshift_128(uint32 seed) {
  *          J = 0.6784840295980, K = 0.0859554204018
  *
  */
-double fast_atan(double x0) {
+static double fastAtan(double x0) {
 	double x2;
 	double x;
 
@@ -646,7 +646,7 @@ int EdgePlugin::findPrincipleAxis(int16 *diffs, int16 *bplane,
 
 	/* calculate angle in degrees * 100 */
 	if (x) {
-		angle = (int32) floor(5729.577951307 * fast_atan(ratio) + 0.5);
+		angle = (int32) floor(5729.577951307 * fastAtan(ratio) + 0.5);
 		if (x < 0.0) angle += 18000;
 	} else {
 		if (y > 0.0) angle = 9000;
@@ -2335,7 +2335,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		*dptr2++ = center;
 		*dptr2++ = center;
 #if DEBUG_REFRESH_RANDOM_XOR
-		*dptr2 = center ^ (Pixel)(dxorshift_128() * (1L << 16));
+		*dptr2 = center ^ (Pixel)(dxorshift128() * (1L << 16));
 #else
 		*dptr2 = center;
 #endif
@@ -2358,7 +2358,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 	*dptr2++ = *ptmp++;
 	*dptr2++ = *ptmp++;
 #if DEBUG_REFRESH_RANDOM_XOR
-	*dptr2 = *ptmp++ ^ (Pixel)(dxorshift_128() * (1L << 16));
+	*dptr2 = *ptmp++ ^ (Pixel)(dxorshift128() * (1L << 16));
 #else
 	*dptr2 = *ptmp++;
 #endif
@@ -3204,7 +3204,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		dptr2 = (Pixel *) dptr;
 		*dptr2++ = center;
 #if DEBUG_REFRESH_RANDOM_XOR
-		*dptr2 = center ^ (Pixel)(dxorshift_128() * (1L << 16));
+		*dptr2 = center ^ (Pixel)(dxorshift128() * (1L << 16));
 #else
 		*dptr2 = center;
 #endif
@@ -3221,7 +3221,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 	dptr2 = (Pixel *) dptr;
 	*dptr2++ = *ptmp++;
 #if DEBUG_REFRESH_RANDOM_XOR
-	*dptr2 = *ptmp++ ^ (Pixel)(dxorshift_128() * (1L << 16));
+	*dptr2 = *ptmp++ ^ (Pixel)(dxorshift128() * (1L << 16));
 #else
 	*dptr2 = *ptmp++;
 #endif
@@ -3233,7 +3233,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 
 /* Check for changed pixel grid, return 1 if unchanged. */
 template<typename Pixel>
-int check_unchanged_pixels(const Pixel *old_src_ptr, const Pixel *pixels, int w) {
+int checkUnchangedPixels(const Pixel *old_src_ptr, const Pixel *pixels, int w) {
 	const Pixel *dptr;
 
 	dptr = old_src_ptr - w - 1;
@@ -3348,7 +3348,7 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 #if DEBUG_DRAW_REFRESH_BORDERS
 						x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
 #endif
-						check_unchanged_pixels(oldSptr, pixels, oldPitch / sizeof(Pixel))) {
+						checkUnchangedPixels(oldSptr, pixels, oldPitch / sizeof(Pixel))) {
 					//draw_unchanged_grid_3x(dptr16, dstPitch, old_dptr16,
 					//					   old_dst_inc);
 
@@ -3428,7 +3428,7 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 #if DEBUG_DRAW_REFRESH_BORDERS
 						x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
 #endif
-						check_unchanged_pixels<Pixel>(oldSptr, pixels, oldSrcPitch / sizeof(Pixel))) {
+						checkUnchangedPixels<Pixel>(oldSptr, pixels, oldSrcPitch / sizeof(Pixel))) {
 					//draw_unchanged_grid_2x(dptr16, dstPitch, old_dptr16,
 					//					   old_dst_inc);
 
@@ -3476,7 +3476,7 @@ void EdgePlugin::initTables(const uint8 *srcPtr, uint32 srcPitch,
 
 #if DEBUG_REFRESH_RANDOM_XOR
 	/* seed the random number generator, we don't care if the seed is random */
-	initialize_xorshift_128(42);
+	initializeXorshift128(42);
 #endif
 
 	/* initialize greyscale table */
