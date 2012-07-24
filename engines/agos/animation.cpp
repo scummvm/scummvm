@@ -260,9 +260,6 @@ bool MoviePlayerDXA::load() {
 	debug(0, "Playing video %s", videoName.c_str());
 
 	CursorMan.showMouse(false);
-
-	_firstFrameOffset = _fileStream->pos();
-
 	return true;
 }
 
@@ -302,35 +299,6 @@ void MoviePlayerDXA::stopVideo() {
 }
 
 void MoviePlayerDXA::startSound() {
-	uint32 offset, size;
-
-	if (getSoundTag() == MKTAG('W','A','V','E')) {
-		size = _fileStream->readUint32BE();
-
-		if (_sequenceNum) {
-			Common::File in;
-
-			_fileStream->seek(size, SEEK_CUR);
-
-			in.open("audio.wav");
-			if (!in.isOpen()) {
-				error("Can't read offset file 'audio.wav'");
-			}
-
-			in.seek(_sequenceNum * 8, SEEK_SET);
-			offset = in.readUint32LE();
-			size = in.readUint32LE();
-
-			in.seek(offset, SEEK_SET);
-			_bgSoundStream = Audio::makeWAVStream(in.readStream(size), DisposeAfterUse::YES);
-			in.close();
-		} else {
-			_bgSoundStream = Audio::makeWAVStream(_fileStream->readStream(size), DisposeAfterUse::YES);
-		}
-	} else {
-		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(baseName);
-	}
-
 	if (_bgSoundStream != NULL) {
 		_vm->_mixer->stopHandle(_bgSound);
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream, -1, getVolume(), getBalance());
@@ -344,8 +312,7 @@ void MoviePlayerDXA::nextFrame() {
 	}
 
 	if (_vm->_interactiveVideo == TYPE_LOOPING && endOfVideo()) {
-		_fileStream->seek(_firstFrameOffset);
-		_curFrame = -1;
+		rewind();
 		startSound();
 	}
 
@@ -374,13 +341,15 @@ bool MoviePlayerDXA::processFrame() {
 	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, screen->pitch);
 	_vm->_system->unlockScreen();
 
-	Common::Rational soundTime(_mixer->getSoundElapsedTime(_bgSound), 1000);
-	if ((_bgSoundStream == NULL) || ((soundTime * getFrameRate()).toInt() / 1000 < getCurFrame() + 1)) {
+	uint32 soundTime = _mixer->getSoundElapsedTime(_bgSound);
+	uint32 nextFrameStartTime = ((Video::AdvancedVideoDecoder::VideoTrack *)getTrack(0))->getNextFrameStartTime();
+
+	if ((_bgSoundStream == NULL) || soundTime < nextFrameStartTime) {
 
 		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
-			while (_mixer->isSoundHandleActive(_bgSound) && (soundTime * getFrameRate()).toInt() < getCurFrame()) {
+			while (_mixer->isSoundHandleActive(_bgSound) && soundTime < nextFrameStartTime) {
 				_vm->_system->delayMillis(10);
-				soundTime = Common::Rational(_mixer->getSoundElapsedTime(_bgSound), 1000);
+				soundTime = _mixer->getSoundElapsedTime(_bgSound);
 			}
 			// In case the background sound ends prematurely, update
 			// _ticks so that we can still fall back on the no-sound
@@ -399,14 +368,35 @@ bool MoviePlayerDXA::processFrame() {
 	return false;
 }
 
-void MoviePlayerDXA::updateVolume() {
-	if (g_system->getMixer()->isSoundHandleActive(_bgSound))
-		g_system->getMixer()->setChannelVolume(_bgSound, getVolume());
-}
+void MoviePlayerDXA::readSoundData(Common::SeekableReadStream *stream) {
+	uint32 tag = stream->readUint32BE();
 
-void MoviePlayerDXA::updateBalance() {
-	if (g_system->getMixer()->isSoundHandleActive(_bgSound))
-		g_system->getMixer()->setChannelBalance(_bgSound, getBalance());
+	if (tag == MKTAG('W','A','V','E')) {
+		uint32 size = stream->readUint32BE();
+
+		if (_sequenceNum) {
+			Common::File in;
+
+			stream->skip(size);
+
+			in.open("audio.wav");
+			if (!in.isOpen()) {
+				error("Can't read offset file 'audio.wav'");
+			}
+
+			in.seek(_sequenceNum * 8, SEEK_SET);
+			uint32 offset = in.readUint32LE();
+			size = in.readUint32LE();
+
+			in.seek(offset, SEEK_SET);
+			_bgSoundStream = Audio::makeWAVStream(in.readStream(size), DisposeAfterUse::YES);
+			in.close();
+		} else {
+			_bgSoundStream = Audio::makeWAVStream(stream->readStream(size), DisposeAfterUse::YES);
+		}
+	} else {
+		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(baseName);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -81,16 +81,13 @@ public:
 	virtual void stopVideo();
 
 protected:
-	// VideoDecoder API
-	void updateVolume();
-	void updateBalance();
+	void readSoundData(Common::SeekableReadStream *stream);
 
 private:
 	void handleNextFrame();
 	bool processFrame();
 	void startSound();
 	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
-	uint32 _firstFrameOffset;
 };
 
 class MoviePlayerSMK : public MoviePlayer, Video::SmackerDecoder {
