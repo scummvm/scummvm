@@ -31,6 +31,12 @@ namespace Sci {
 class ResourceManager;
 class GfxScreen;
 
+enum ColorRemappingType {
+	kRemappingNone = 0,
+	kRemappingByRange = 1,
+	kRemappingByPercent = 2
+};
+
 /**
  * Palette class, handles palette operations like changing intensity, setting up the palette, merging different palettes
  */
@@ -56,8 +62,10 @@ public:
 	void resetRemapping();
 	void setRemappingPercent(byte color, byte percent);
 	void setRemappingRange(byte color, byte from, byte to, byte base);
-	bool isRemapMask(byte color);
-	byte remapColor(byte color);
+	bool isRemapped(byte color) const {
+		return _remapOn && (_remappingType[color] != kRemappingNone);
+	}
+	byte remapColor(byte remappedColor, byte screenColor);
 
 	void setOnScreen();
 	void copySysPaletteToScreen();
@@ -130,8 +138,9 @@ private:
 	uint16 _totalScreenColors;
 
 	bool _remapOn;
-	byte _remappingTable[256];
-	uint16 _remappingMaskFrom, _remappingMaskTo;
+	ColorRemappingType _remappingType[256];
+	byte _remappingByPercent[256];
+	byte _remappingByRange[256];
 	uint16 _remappingPercentToSet;
 
 	void loadMacIconBarPalette();

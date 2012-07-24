@@ -143,8 +143,9 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 	memset(paletteOut, 0, sizeof(Palette));
 
 	// Setup 1:1 mapping
-	for (colorNo = 0; colorNo < 256; colorNo++)
+	for (colorNo = 0; colorNo < 256; colorNo++) {
 		paletteOut->mapping[colorNo] = colorNo;
+	}
 
 	if (bytesLeft < 37) {
 		// This happens when loading palette of picture 0 in sq5 - the resource is broken and doesn't contain a full
@@ -332,18 +333,26 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	}
 }
 
-bool GfxPalette::isRemapMask(byte color) {
-	return (_remapOn && (color >= _remappingMaskFrom && color <= _remappingMaskTo));
+byte GfxPalette::remapColor(byte remappedColor, byte screenColor) {
+	assert(_remapOn);
+	if (_remappingType[remappedColor] == kRemappingByRange)
+		return _remappingByRange[screenColor];
+	else if (_remappingType[remappedColor] == kRemappingByPercent)
+		return _remappingByPercent[screenColor];
+	else
+		error("remapColor(): Color %d isn't remapped", remappedColor);
+
+	return 0;	// should never reach here
 }
 
 void GfxPalette::resetRemapping() {
 	_remapOn = false;
-	_remappingMaskFrom = 0;
-	_remappingMaskTo = 0;
 	_remappingPercentToSet = 0;
 
 	for (int i = 0; i < 256; i++) {
-		_remappingTable[i] = i;
+		_remappingType[i] = kRemappingNone;
+		_remappingByPercent[i] = i;
+		_remappingByRange[i] = i;
 	}
 }
 
@@ -356,28 +365,17 @@ void GfxPalette::setRemappingPercent(byte color, byte percent) {
 	// copySysPaletteToScreen().
 	_remappingPercentToSet = percent;
 
-	if (_remappingMaskFrom > color || _remappingMaskFrom == 0)
-		_remappingMaskFrom = color;
-	if (_remappingMaskTo < color)
-		_remappingMaskTo = color;
+	_remappingType[color] = kRemappingByPercent;
 }
 
 void GfxPalette::setRemappingRange(byte color, byte from, byte to, byte base) {
 	_remapOn = true;
 
 	for (int i = from; i <= to; i++) {
-		_remappingTable[i] = i + base;
+		_remappingByRange[i] = i + base;
 	}
 
-	if (_remappingMaskFrom > color || _remappingMaskFrom == 0)
-		_remappingMaskFrom = color;
-	if (_remappingMaskTo < color)
-		_remappingMaskTo = color;
-}
-
-byte GfxPalette::remapColor(byte color) {
-	assert(_remapOn);
-	return _remappingTable[color];
+	_remappingType[color] = kRemappingByRange;
 }
 
 bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
@@ -548,7 +546,7 @@ void GfxPalette::copySysPaletteToScreen() {
 			byte r = _sysPalette.colors[i].r * _remappingPercentToSet / 100;
 			byte g = _sysPalette.colors[i].g * _remappingPercentToSet / 100;
 			byte b = _sysPalette.colors[i].b * _remappingPercentToSet / 100;
-			_remappingTable[i] = kernelFindColor(r, g, b);
+			_remappingByPercent[i] = kernelFindColor(r, g, b);
 		}
 	}
 
@@ -1060,8 +1058,9 @@ bool GfxPalette::loadClut(uint16 clutId) {
 	memset(&pal, 0, sizeof(Palette));
 
 	// Setup 1:1 mapping
-	for (int i = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++) {
 		pal.mapping[i] = i;
+	}
 
 	// Now load in the palette
 	for (int i = 1; i <= 236; i++) {
