@@ -59,11 +59,6 @@ OSystem_OP::OSystem_OP()
 	OSystem_POSIX() {
 }
 
-//static Uint32 timer_handler(Uint32 interval, void *param) {
-//	((DefaultTimerManager *)param)->handler();
-//	return interval;
-//}
-
 void OSystem_OP::initBackend() {
 
 	assert(!_inited);
@@ -76,28 +71,6 @@ void OSystem_OP::initBackend() {
 	if (_graphicsManager == 0) {
 		_graphicsManager = new OPGraphicsManager(_eventSource);
 	}
-
-//	int joystick_num = ConfMan.getInt("joystick_num");
-//	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
-//
-//	if (ConfMan.hasKey("disable_sdl_parachute"))
-//		sdlFlags |= SDL_INIT_NOPARACHUTE;
-//
-//	if (joystick_num > -1)
-//		sdlFlags |= SDL_INIT_JOYSTICK;
-//
-//	if (SDL_Init(sdlFlags) == -1) {
-//		error("Could not initialize SDL: %s", SDL_GetError());
-//	}
-//
-
-	// Create the mixer manager
-//	if (_mixer == 0) {
-//		_mixerManager = new DoubleBufferSDLMixerManager();
-
-	// Setup and start mixer
-//		_mixerManager->init();
-//	}
 
 	/* Setup default save path to be workingdir/saves */
 
