@@ -87,7 +87,7 @@ int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngine *m
 	return runIntern();
 }
 
-void SaveLoadChooserDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kListSwitchCmd:
 		setResult(kSwitchSaveLoadDialog);
@@ -146,7 +146,7 @@ void SaveLoadChooserDialog::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-GUI::ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &name, const char *desc, const char *tooltip, const char *image, uint32 cmd) {
+ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &name, const char *desc, const char *tooltip, const char *image, uint32 cmd) {
 	ButtonWidget *button;
 
 #ifndef DISABLE_FANCY_THEMES
@@ -175,28 +175,28 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &
 	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
 
 	// Add choice list
-	_list = new GUI::ListWidget(this, "SaveLoadChooser.List");
-	_list->setNumberingMode(GUI::kListNumberingZero);
+	_list = new ListWidget(this, "SaveLoadChooser.List");
+	_list->setNumberingMode(kListNumberingZero);
 	_list->setEditable(saveMode);
 
-	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
+	_gfxWidget = new GraphicsWidget(this, 0, 0, 10, 10);
 
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, _("No date saved"), Graphics::kTextAlignCenter);
 	_time = new StaticTextWidget(this, 0, 0, 10, 10, _("No time saved"), Graphics::kTextAlignCenter);
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, _("No playtime saved"), Graphics::kTextAlignCenter);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), 0, kCloseCmd);
-	_chooseButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, 0, kChooseCmd);
+	new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), 0, kCloseCmd);
+	_chooseButton = new ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, 0, kChooseCmd);
 	_chooseButton->setEnabled(false);
 
-	_deleteButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), 0, kDelCmd);
+	_deleteButton = new ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), 0, kDelCmd);
 	_deleteButton->setEnabled(false);
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
 
-	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-//	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
+	_container = new ContainerWidget(this, 0, 0, 10, 10);
+//	_container->setHints(THEME_HINT_USE_SHADOW);
 }
 
 int SaveLoadChooserSimple::runIntern() {
@@ -219,8 +219,8 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 	int selItem = _list->getSelected();
 
 	switch (cmd) {
-	case GUI::kListItemActivatedCmd:
-	case GUI::kListItemDoubleClickedCmd:
+	case kListItemActivatedCmd:
+	case kListItemDoubleClickedCmd:
 		if (selItem >= 0 && _chooseButton->isEnabled()) {
 			if (_list->isEditable() || !_list->getSelectedString().empty()) {
 				_list->endEditMode();
@@ -240,14 +240,14 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 		}
 		close();
 		break;
-	case GUI::kListSelectionChangedCmd:
+	case kListSelectionChangedCmd:
 		updateSelection(true);
 		break;
 	case kDelCmd:
 		if (selItem >= 0 && _delSupport) {
 			MessageDialog alert(_("Do you really want to delete this savegame?"),
 								_("Delete"), _("Cancel"));
-			if (alert.runModal() == GUI::kMessageOK) {
+			if (alert.runModal() == kMessageOK) {
 				_metaEngine->removeSaveState(_target.c_str(), _saveList[selItem].getSaveSlot());
 
 				setResult(-1);
@@ -494,15 +494,15 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "SaveLoadChooser.Delete", _("Cancel"), 0, kCloseCmd);
-	_nextButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Choose", _("Next"), 0, kNextCmd);
+	new ButtonWidget(this, "SaveLoadChooser.Delete", _("Cancel"), 0, kCloseCmd);
+	_nextButton = new ButtonWidget(this, "SaveLoadChooser.Choose", _("Next"), 0, kNextCmd);
 	_nextButton->setEnabled(false);
 
-	_prevButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", _("Prev"), 0, kPrevCmd);
+	_prevButton = new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Prev"), 0, kPrevCmd);
 	_prevButton->setEnabled(false);
 
 	// Page display
-	_pageDisplay = new GUI::StaticTextWidget(this, "SaveLoadChooser.PageDisplay", Common::String());
+	_pageDisplay = new StaticTextWidget(this, "SaveLoadChooser.PageDisplay", Common::String());
 	_pageDisplay->setAlign(Graphics::kTextAlignRight);
 }
 
@@ -515,7 +515,7 @@ const Common::String &SaveLoadChooserGrid::getResultString() const {
 	return _resultString;
 }
 
-void SaveLoadChooserGrid::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd <= _entriesPerPage) {
 		const SaveStateDescriptor &desc = _saveList[cmd - 1 + _curPage * _entriesPerPage];
 
@@ -842,7 +842,7 @@ void SavenameDialog::open() {
 	_title->setLabel(Common::String::format(_("Enter a description for slot %d:"), _targetSlot));
 }
 
-void SavenameDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+void SavenameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kOKCmd:
 		setResult(0);

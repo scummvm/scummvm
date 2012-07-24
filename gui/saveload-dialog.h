@@ -47,7 +47,7 @@ public:
 
 	virtual void reflowLayout();
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual SaveLoadChooserType getType() const = 0;
 
@@ -66,11 +66,11 @@ protected:
 	bool					_playTimeSupport;
 	Common::String			_target;
 
-	GUI::ButtonWidget *_listButton;
-	GUI::ButtonWidget *_gridButton;
+	ButtonWidget *_listButton;
+	ButtonWidget *_gridButton;
 
 	void addChooserButtons();
-	GUI::ButtonWidget *createSwitchButton(const Common::String &name, const char *desc, const char *tooltip, const char *image, uint32 cmd = 0);
+	ButtonWidget *createSwitchButton(const Common::String &name, const char *desc, const char *tooltip, const char *image, uint32 cmd = 0);
 };
 
 class SaveLoadChooserSimple : public SaveLoadChooserDialog {
@@ -79,7 +79,7 @@ class SaveLoadChooserSimple : public SaveLoadChooserDialog {
 public:
 	SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode);
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual const Common::String &getResultString() const;
 
@@ -91,14 +91,14 @@ public:
 private:
 	virtual int runIntern();
 
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::ButtonWidget	*_deleteButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::ContainerWidget	*_container;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
+	ListWidget		*_list;
+	ButtonWidget	*_chooseButton;
+	ButtonWidget	*_deleteButton;
+	GraphicsWidget	*_gfxWidget;
+	ContainerWidget	*_container;
+	StaticTextWidget	*_date;
+	StaticTextWidget	*_time;
+	StaticTextWidget	*_playtime;
 
 	SaveStateList			_saveList;
 	String					_resultString;
@@ -123,7 +123,7 @@ public:
 
 	virtual void open();
 protected:
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 private:
 	int _targetSlot;
 	StaticTextWidget *_title;
@@ -145,7 +145,7 @@ public:
 
 	virtual void close();
 protected:
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleMouseWheel(int x, int y, int direction);
 private:
 	virtual int runIntern();
@@ -155,10 +155,10 @@ private:
 	uint _curPage;
 	SaveStateList _saveList;
 
-	GUI::ButtonWidget *_nextButton;
-	GUI::ButtonWidget *_prevButton;
+	ButtonWidget *_nextButton;
+	ButtonWidget *_prevButton;
 
-	GUI::StaticTextWidget *_pageDisplay;
+	StaticTextWidget *_pageDisplay;
 
 	ContainerWidget *_newSaveContainer;
 	int _nextFreeSaveSlot;
