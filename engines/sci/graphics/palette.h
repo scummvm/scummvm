@@ -129,7 +129,6 @@ private:
 	uint16 _totalScreenColors;
 
 	bool _remapOn;
-	uint16 _remappingBaseR, _remappingBaseG, _remappingBaseB;
 	uint16 _remappingPercent;
 
 	void loadMacIconBarPalette();
