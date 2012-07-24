@@ -31,12 +31,22 @@ namespace GUI {
 
 #define kSwitchSaveLoadDialog -2
 
+// TODO: We might want to disable the grid based save/load chooser for more
+// platforms, than those which define DISABLE_FANCY_THEMES. But those are
+// probably not able to handle the grid chooser anyway, so disabling it
+// for them is a good start.
+#ifdef DISABLE_FANCY_THEMES
+#define DISABLE_SAVELOADCHOOSER_GRID
+#endif // DISABLE_FANCY_THEMES
+
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 enum SaveLoadChooserType {
 	kSaveLoadDialogList = 0,
 	kSaveLoadDialogGrid = 1
 };
 
 SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine);
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 class SaveLoadChooserDialog : protected Dialog {
 public:
@@ -49,7 +59,9 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 	virtual SaveLoadChooserType getType() const = 0;
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 	int run(const Common::String &target, const MetaEngine *metaEngine);
 	virtual const Common::String &getResultString() const = 0;
@@ -66,11 +78,13 @@ protected:
 	bool					_playTimeSupport;
 	Common::String			_target;
 
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 	ButtonWidget *_listButton;
 	ButtonWidget *_gridButton;
 
 	void addChooserButtons();
 	ButtonWidget *createSwitchButton(const Common::String &name, const char *desc, const char *tooltip, const char *image, uint32 cmd = 0);
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 };
 
 class SaveLoadChooserSimple : public SaveLoadChooserDialog {
@@ -85,7 +99,9 @@ public:
 
 	virtual void reflowLayout();
 
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 	virtual SaveLoadChooserType getType() const { return kSaveLoadDialogList; }
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 	virtual void close();
 private:
@@ -109,6 +125,7 @@ private:
 	void updateSelection(bool redraw);
 };
 
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 
 class EditTextWidget;
 
@@ -185,6 +202,8 @@ private:
 	void hideButtons();
 	void updateSaves();
 };
+
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 } // End of namespace GUI
 

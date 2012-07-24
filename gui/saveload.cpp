@@ -40,6 +40,7 @@ SaveLoadChooser::~SaveLoadChooser() {
 }
 
 void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(engine);
 	if (!_impl || _impl->getType() != requestedType) {
 		delete _impl;
@@ -51,10 +52,13 @@ void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
 			break;
 
 		case kSaveLoadDialogList:
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 			_impl = new SaveLoadChooserSimple(_title, _buttonLabel, _saveMode);
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 			break;
 		}
 	}
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 }
 
 Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
@@ -91,10 +95,11 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 	int ret;
 	do {
 		ret = _impl->run(target, &(**plugin));
-
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 		if (ret == kSwitchSaveLoadDialog) {
 			selectChooser(**plugin);
 		}
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 	} while (ret < -1);
 
 	// Revert to the old active domain

@@ -32,6 +32,7 @@
 
 namespace GUI {
 
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
 	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
 	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
@@ -52,19 +53,30 @@ enum {
 	kListSwitchCmd = 'LIST',
 	kGridSwitchCmd = 'GRID'
 };
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName, const bool saveMode)
 	: Dialog(dialogName), _metaEngine(0), _delSupport(false), _metaInfoSupport(false),
-	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode),
-	_listButton(0), _gridButton(0) {
+	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode)
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
+	, _listButton(0), _gridButton(0)
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
+	{
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 	addChooserButtons();
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 }
 
 SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const bool saveMode)
 	: Dialog(x, y, w, h), _metaEngine(0), _delSupport(false), _metaInfoSupport(false),
-	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode),
-	_listButton(0), _gridButton(0) {
+	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode)
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
+	, _listButton(0), _gridButton(0)
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
+	{
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 	addChooserButtons();
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 }
 
 void SaveLoadChooserDialog::open() {
@@ -88,6 +100,7 @@ int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngine *m
 }
 
 void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 	switch (cmd) {
 	case kListSwitchCmd:
 		setResult(kSwitchSaveLoadDialog);
@@ -108,10 +121,29 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 	default:
 		break;
 	}
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 	return Dialog::handleCommand(sender, cmd, data);
 }
 
+void SaveLoadChooserDialog::reflowLayout() {
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
+	addChooserButtons();
+
+	const SaveLoadChooserType currentType = getType();
+	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(*_metaEngine);
+
+	// Change the dialog type if there is any need for it.
+	if (requestedType != currentType) {
+		setResult(kSwitchSaveLoadDialog);
+		close();
+	}
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
+
+	Dialog::reflowLayout();
+}
+
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 void SaveLoadChooserDialog::addChooserButtons() {
 	if (_listButton) {
 		removeWidget(_listButton);
@@ -131,21 +163,6 @@ void SaveLoadChooserDialog::addChooserButtons() {
 	}
 }
 
-void SaveLoadChooserDialog::reflowLayout() {
-	addChooserButtons();
-
-	const SaveLoadChooserType currentType = getType();
-	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(*_metaEngine);
-
-	// Change the dialog type if there is any need for it.
-	if (requestedType != currentType) {
-		setResult(kSwitchSaveLoadDialog);
-		close();
-	}
-
-	Dialog::reflowLayout();
-}
-
 ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &name, const char *desc, const char *tooltip, const char *image, uint32 cmd) {
 	ButtonWidget *button;
 
@@ -160,6 +177,7 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 
 	return button;
 }
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 // SaveLoadChooserSimple implementation
 
@@ -479,6 +497,8 @@ void SaveLoadChooserSimple::updateSaveList() {
 }
 
 // SaveLoadChooserGrid implementation
+
+#ifndef DISABLE_SAVELOADCHOOSER_GRID
 
 enum {
 	kNextCmd = 'NEXT',
@@ -853,5 +873,7 @@ void SavenameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }
+
+#endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 } // End of namespace GUI
