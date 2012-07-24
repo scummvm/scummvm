@@ -130,10 +130,10 @@ private:
 	EditTextWidget *_description;
 };
 
-class LoadChooserThumbnailed : public SaveLoadChooserDialog {
+class SaveLoadChooserGrid : public SaveLoadChooserDialog {
 public:
-	LoadChooserThumbnailed(const Common::String &title, bool saveMode);
-	~LoadChooserThumbnailed();
+	SaveLoadChooserGrid(const Common::String &title, bool saveMode);
+	~SaveLoadChooserGrid();
 
 	virtual const Common::String &getResultString() const;
 

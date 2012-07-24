@@ -476,7 +476,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 	_list->setList(saveNames, &colors);
 }
 
-// LoadChooserThumbnailed implementation
+// SaveLoadChooserGrid implementation
 
 enum {
 	kNextCmd = 'NEXT',
@@ -484,7 +484,7 @@ enum {
 	kNewSaveCmd = 'SAVE'
 };
 
-LoadChooserThumbnailed::LoadChooserThumbnailed(const Common::String &title, bool saveMode)
+SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveMode)
 	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _lines(0), _columns(0), _entriesPerPage(0),
 	_curPage(0), _newSaveContainer(0), _nextFreeSaveSlot(0), _buttons() {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
@@ -504,16 +504,16 @@ LoadChooserThumbnailed::LoadChooserThumbnailed(const Common::String &title, bool
 	_pageDisplay->setAlign(Graphics::kTextAlignRight);
 }
 
-LoadChooserThumbnailed::~LoadChooserThumbnailed() {
+SaveLoadChooserGrid::~SaveLoadChooserGrid() {
 	removeWidget(_pageDisplay);
 	delete _pageDisplay;
 }
 
-const Common::String &LoadChooserThumbnailed::getResultString() const {
+const Common::String &SaveLoadChooserGrid::getResultString() const {
 	return _resultString;
 }
 
-void LoadChooserThumbnailed::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+void SaveLoadChooserGrid::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd <= _entriesPerPage) {
 		const SaveStateDescriptor &desc = _saveList[cmd - 1 + _curPage * _entriesPerPage];
 
@@ -550,7 +550,7 @@ void LoadChooserThumbnailed::handleCommand(GUI::CommandSender *sender, uint32 cm
 	}
 }
 
-void LoadChooserThumbnailed::handleMouseWheel(int x, int y, int direction) {
+void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 	if (direction > 0) {
 		if (_nextButton->isEnabled()) {
 			++_curPage;
@@ -566,7 +566,7 @@ void LoadChooserThumbnailed::handleMouseWheel(int x, int y, int direction) {
 	}
 }
 
-void LoadChooserThumbnailed::open() {
+void SaveLoadChooserGrid::open() {
 	SaveLoadChooserDialog::open();
 
 	_curPage = 0;
@@ -598,7 +598,7 @@ void LoadChooserThumbnailed::open() {
 	updateSaves();
 }
 
-void LoadChooserThumbnailed::reflowLayout() {
+void SaveLoadChooserGrid::reflowLayout() {
 	removeWidget(_pageDisplay);
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPageDisplay") == 1) {
 		_pageDisplay->init();
@@ -692,12 +692,12 @@ void LoadChooserThumbnailed::reflowLayout() {
 		updateSaves();
 }
 
-void LoadChooserThumbnailed::close() {
+void SaveLoadChooserGrid::close() {
 	SaveLoadChooserDialog::close();
 	hideButtons();
 }
 
-int LoadChooserThumbnailed::runIntern() {
+int SaveLoadChooserGrid::runIntern() {
 	int slot;
 	do {
 		const SaveLoadChooserType currentType = getType();
@@ -715,7 +715,7 @@ int LoadChooserThumbnailed::runIntern() {
 	return slot;
 }
 
-bool LoadChooserThumbnailed::selectDescription() {
+bool SaveLoadChooserGrid::selectDescription() {
 	_savenameDialog.setDescription(_resultString);
 	_savenameDialog.setTargetSlot(getResult());
 	if (_savenameDialog.runModal() == 0) {
@@ -726,7 +726,7 @@ bool LoadChooserThumbnailed::selectDescription() {
 	}
 }
 
-void LoadChooserThumbnailed::destroyButtons() {
+void SaveLoadChooserGrid::destroyButtons() {
 	if (_newSaveContainer) {
 		removeWidget(_newSaveContainer);
 		delete _newSaveContainer;
@@ -741,7 +741,7 @@ void LoadChooserThumbnailed::destroyButtons() {
 	_buttons.clear();
 }
 
-void LoadChooserThumbnailed::hideButtons() {
+void SaveLoadChooserGrid::hideButtons() {
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
 		i->button->setGfx(0);
 		i->setVisible(false);
@@ -749,7 +749,7 @@ void LoadChooserThumbnailed::hideButtons() {
 
 }
 
-void LoadChooserThumbnailed::updateSaves() {
+void SaveLoadChooserGrid::updateSaves() {
 	hideButtons();
 
 	for (uint i = _curPage * _entriesPerPage, curNum = 0; i < _saveList.size() && curNum < _entriesPerPage; ++i, ++curNum) {

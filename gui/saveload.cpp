@@ -47,7 +47,7 @@ void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
 
 		switch (requestedType) {
 		case kSaveLoadDialogGrid:
-			_impl = new LoadChooserThumbnailed(_title, _saveMode);
+			_impl = new SaveLoadChooserGrid(_title, _saveMode);
 			break;
 
 		case kSaveLoadDialogList:
