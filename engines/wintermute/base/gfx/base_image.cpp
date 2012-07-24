@@ -82,14 +82,14 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	}
 	_filename = filename;
 	Common::SeekableReadStream *file = _fileManager->openFile(filename.c_str());
-	if (!file) return STATUS_FAILED;
+	if (!file) return false;
 
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
 	_palette = _decoder->getPalette();
 	_fileManager->closeFile(file);
 
-	return STATUS_OK;
+	return true;
 }
 
 byte BaseImage::getAlphaAt(int x, int y) {
@@ -113,7 +113,7 @@ bool BaseImage::saveBMPFile(const char *filename) {
 	if (FreeImage_Save(FIF_BMP, _bitmap, filename)) return STATUS_OK;
 	else return STATUS_FAILED;
 #endif
-	return STATUS_FAILED;
+	return false;
 }
 
 
@@ -133,7 +133,7 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 		return STATUS_OK;
 	} else return STATUS_FAILED;
 #endif
-	return STATUS_FAILED;
+	return false;
 }
 
 
@@ -258,7 +258,7 @@ bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 		_deletableSurface = NULL;
 	}
 	_surface = _deletableSurface = temp.scale(newWidth, newHeight);
-	return STATUS_OK;
+	return true;
 }
 
 } // end of namespace WinterMute

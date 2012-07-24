@@ -57,10 +57,10 @@ BasePackage::~BasePackage() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePackage::open() {
-	if (_file) return STATUS_OK;
+	if (_file) return true;
 	else {
 		_file = getFilePointer();
-		return _file ? STATUS_OK : STATUS_FAILED;
+		return _file ? true : false;
 	}
 }
 
@@ -69,18 +69,18 @@ bool BasePackage::open() {
 bool BasePackage::close() {
 	delete _file;
 	_file = NULL;
-	return STATUS_OK;
+	return true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePackage::read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size) {
 	bool ret;
-	if (DID_FAIL(ret = open())) return ret;
+	if (!(ret = open())) return ret;
 	else {
-		if (file->seek(offset, SEEK_SET)) return STATUS_FAILED;
-		if (file->read(buffer, size) != 1) return STATUS_FAILED;
-		else return STATUS_OK;
+		if (file->seek(offset, SEEK_SET)) return false;
+		if (file->read(buffer, size) != 1) return false;
+		else return true;
 	}
 }
 

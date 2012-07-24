@@ -27,8 +27,6 @@
  */
 
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/utils/string_util.h"
-#include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/base/file/base_file_entry.h"
@@ -37,9 +35,8 @@
 #include "engines/wintermute/base/file/base_resources.h"
 #include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/dcpackage.h"
+#include "engines/wintermute/base/file/dcpackage.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/str.h"
 #include "common/textconsole.h"
@@ -58,11 +55,10 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
-BaseFileManager::BaseFileManager(BaseGame *inGame): BaseClass(inGame) {
+BaseFileManager::BaseFileManager(BaseGame *inGame) : _gameRef(inGame) {
 	initPaths();
 	registerPackages();
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseFileManager::~BaseFileManager() {
@@ -207,6 +203,9 @@ bool BaseFileManager::reloadPaths() {
 #define TEMP_BUFFER_SIZE 32768
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::initPaths() {
+	if (!_gameRef) // This function only works when the game-registry is loaded
+		return STATUS_FAILED;
+
 	AnsiString pathList;
 	int numPaths;
 
@@ -506,6 +505,8 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 	Common::SeekableReadStream *ret = NULL;
 
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
+		if (!_gameRef)
+			error("Attempt to load filename: %s without BaseGame-object, this is unsupported", filename.c_str());
 		BaseSaveThumbFile *SaveThumbFile = new BaseSaveThumbFile(_gameRef);
 		if (DID_SUCCEED(SaveThumbFile->open(filename))) {
 			ret = SaveThumbFile->getMemStream();

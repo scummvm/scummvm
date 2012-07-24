@@ -29,20 +29,17 @@
 #ifndef WINTERMUTE_BFILEMANAGER_H
 #define WINTERMUTE_BFILEMANAGER_H
 
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/base/file/base_package.h"
 #include "common/archive.h"
 #include "common/str.h"
 #include "common/fs.h"
-
-namespace Common {
-class File;
-}
+#include "common/file.h"
 
 namespace WinterMute {
 class BaseFile;
 class BaseFileEntry;
-class BaseFileManager: BaseClass {
+class BaseGame;
+class BasePackage;
+class BaseFileManager {
 public:
 	bool cleanup();
 
@@ -77,6 +74,7 @@ private:
 	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
 	bool registerPackage(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
 //	bool registerPackage(const Common::String &filename, bool searchSignature = false);
+	BaseGame *_gameRef;
 	Common::Array<BasePackage *> _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
 	Common::HashMap<Common::String, BaseFileEntry *> _files;
