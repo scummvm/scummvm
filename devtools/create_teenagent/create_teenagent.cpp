@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
 
 	uint dsegFinalSize = 0xe790;
 
-	printf("const static uint8 dsegFinalBlock[%d] = {\n", dsegFinalSize - dsegMessageSize - dsegFBSize);
+	printf("const static uint8 dsegFinalBlock[%d] = {\n", dsegFinalSize - dsegMessageSize);
 	uint j = 0;
 	for (uint i = dsegMessageSize; i < dsegFinalSize; i++, j++) {
 		if ((j % 8) == 0)
