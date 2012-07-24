@@ -742,8 +742,11 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		if (base != 0)	// 0 is the default behavior when changing rooms in GK1, thus silencing the warning
 			warning("kRemapColors: Set remapping to base %d", base);
 		}
+		// TODO: Don't turn remapping off always
+		g_sci->_gfxPalette->toggleRemap(false);
+		g_sci->_gfxPalette->setRemappingPercent(0);
 		break;
-	case 1:	{ // unknown
+	case 1:	{ // set remapping base
 		//int16 unk1 = argv[1].toSint16();
 		//int16 unk2 = argv[2].toSint16();
 		//int16 unk3 = argv[3].toSint16();
@@ -753,21 +756,15 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	case 2:	{ // remap by percent
-		// This adjusts the alpha value of a specific color, and it operates on
-		// an RGBA palette. Since we're operating on an RGB palette, we just
-		// modify the color intensity instead
-		// TODO: From what I understand, palette remapping should be placed
-		// separately, so that it can be reset by case 0 above. Thus, we
-		// should adjust the functionality of the Palette class accordingly.
-		int16 color = argv[1].toSint16();
+		// TODO: Use the color index. The -10 offset is wrong.
+		/*int16 color = argv[1].toSint16();
 		if (color >= 10)
-			color -= 10;
+			color -= 10;*/
 		uint16 percent = argv[2].toUint16(); // 0 - 100
 		if (argc >= 4)
 			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		warning("kRemapColors: RemapByPercent color %d by %d percent", color, percent);
-		// TODO: It's not correct to set intensity here
-		//g_sci->_gfxPalette->kernelSetIntensity(color, 255, percent, false);
+		g_sci->_gfxPalette->toggleRemap(true);
+		g_sci->_gfxPalette->setRemappingPercent(percent);
 		}
 		break;
 	case 3:	{ // remap to gray

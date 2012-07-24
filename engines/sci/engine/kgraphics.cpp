@@ -1221,17 +1221,18 @@ reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// Early variant of the SCI32 remapcolors kernel function, used in the demo of QFG4
+// Early variant of the SCI32 kRemapColors kernel function, used in the demo of QFG4
 reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
 	case 0: { // remap by percent
 		uint16 percent = argv[1].toUint16();
-		warning("RemapColors(RemapByPercent) %d", percent);
+		g_sci->_gfxPalette->toggleRemap(true);
+		g_sci->_gfxPalette->setRemappingPercent(percent);
 		}
 		break;
-	case 1:	{ // unknown
+	case 1:	{ // set remapping base
 		//int16 unk1 = argv[1].toSint16();
 		//int16 unk2 = argv[2].toSint16();
 		//int16 unk3 = argv[3].toSint16();

@@ -741,8 +741,14 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 					const int x2 = clipRectTranslated.left + x;
 					const int y2 = clipRectTranslated.top + y;
 					if (!upscaledHires) {
-						if (priority >= _screen->getPriority(x2, y2))
-							_screen->putPixel(x2, y2, drawMask, palette->mapping[color], priority, 0);
+						if (priority >= _screen->getPriority(x2, y2)) {
+							if (!_palette->isRemapColor(palette->mapping[color])) {
+								_screen->putPixel(x2, y2, drawMask, palette->mapping[color], priority, 0);
+							} else {
+								byte remappedColor = _palette->remapColor(_screen->getVisual(x2, y2));
+								_screen->putPixel(x2, y2, drawMask, remappedColor, priority, 0);
+							}
+						}
 					} else {
 						// UpscaledHires means view is hires and is supposed to
 						// get drawn onto lowres screen.

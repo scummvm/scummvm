@@ -100,6 +100,9 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	default:
 		error("GfxPalette: Unknown view type");
 	}
+
+	_remapOn = false;
+	_remappingPercent = 0;
 }
 
 GfxPalette::~GfxPalette() {
@@ -326,6 +329,26 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 			setOnScreen();
 			_sysPaletteChanged = false;
 		}
+	}
+}
+
+bool GfxPalette::isRemapColor(byte color) {
+	// TODO: Expand this for SCI32 (more than one remap color can be set).
+	// Now, it is assumed that colors 253 and 254 are the remap colors.
+	return _remapOn && (color == 253 || color == 254);
+}
+
+byte GfxPalette::remapColor(byte color) {
+	assert(_remapOn);
+
+	// TODO: Change this to use a table instead, like the original.
+	if (_remappingPercent) {
+		byte r = _sysPalette.colors[color].r * _remappingPercent / 100;
+		byte g = _sysPalette.colors[color].g * _remappingPercent / 100;
+		byte b = _sysPalette.colors[color].b * _remappingPercent / 100;
+		return kernelFindColor(r, g, b);
+	} else {
+		return color;
 	}
 }
 
