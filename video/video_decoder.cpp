@@ -263,6 +263,7 @@ bool AdvancedVideoDecoder::rewind() {
 			return false;
 
 	_audioStartOffset = 0;
+	_startTime = g_system->getMillis();
 	return true;
 }
 
@@ -290,6 +291,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 			return false;
 
 	_audioStartOffset = time;
+	_startTime = g_system->getMillis() - time.msecs();
 	return true;
 }
 
