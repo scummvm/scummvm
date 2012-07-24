@@ -604,7 +604,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 	removeWidget(_pageDisplay);
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPageDisplay") == 1) {
 		_pageDisplay->init();
-	} 
+	}
 
 	SaveLoadChooserDialog::reflowLayout();
 	destroyButtons();
