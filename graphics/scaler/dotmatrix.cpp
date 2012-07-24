@@ -27,7 +27,7 @@ DotMatrixPlugin::DotMatrixPlugin() {
 	_factors.push_back(2);
 }
 
-void DotMatrixPlugin::initialize(Graphics::PixelFormat format) {
+void DotMatrixPlugin::initialize(const Graphics::PixelFormat &format) {
 	if (format.bytesPerPixel == 2) {
 		uint16 *lookup16 = (uint16 *)lookup;
 		lookup16[0] = lookup16[10] = format.RGBToColor(0, 63, 0);

@@ -44,7 +44,7 @@ void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_
 class AdvMamePlugin : public ScalerPluginObject {
 public:
 	AdvMamePlugin();
-	virtual void initialize(Graphics::PixelFormat format);
+	virtual void initialize(const Graphics::PixelFormat &format);
 	virtual void deinitialize();
 	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);

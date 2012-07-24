@@ -391,7 +391,7 @@ SAIPlugin::SAIPlugin() {
 	_factors.push_back(2);
 }
 
-void SAIPlugin::initialize(Graphics::PixelFormat format) {
+void SAIPlugin::initialize(const Graphics::PixelFormat &format) {
 	_format = format;
 }
 
@@ -438,7 +438,7 @@ SuperSAIPlugin::SuperSAIPlugin() {
 	_factors.push_back(2);
 }
 
-void SuperSAIPlugin::initialize(Graphics::PixelFormat format) {
+void SuperSAIPlugin::initialize(const Graphics::PixelFormat &format) {
 	_format = format;
 }
 
@@ -485,7 +485,7 @@ SuperEaglePlugin::SuperEaglePlugin() {
 	_factors.push_back(2);
 }
 
-void SuperEaglePlugin::initialize(Graphics::PixelFormat format) {
+void SuperEaglePlugin::initialize(const Graphics::PixelFormat &format) {
 	_format = format;
 }
 

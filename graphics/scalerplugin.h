@@ -25,15 +25,6 @@
 #include "base/plugins.h"
 #include "graphics/pixelformat.h"
 
-enum SourceType {
-	SRC_SCREEN = 0,
-	SRC_CURSOR,
-	SRC_OTHER,
-
-	SRC_MAX
-};
-
-
 class ScalerPluginObject : public PluginObject {
 public:
 
@@ -44,7 +35,7 @@ public:
 	 * Precomputed data should be generated here.
 	 * @param format The pixel format to scale.
 	 */
-	virtual void initialize(Graphics::PixelFormat format) = 0;
+	virtual void initialize(const Graphics::PixelFormat &format) = 0;
 
 	/**
 	 * This is called when the plugin is not needed. It should clean
@@ -102,12 +93,12 @@ public:
 	 * Computationally intense scalers can benefit from comparing new and old
 	 * source images and updating only the pixels necessary. If the function
 	 * returns true, this scaler prefers this method and the backend can
-	 * optionally call it.
+	 * optionally use it.
 	 *
-	 * @see oldSourceScale
+	 * @see enableSource
 	 * @see setSource
 	 */
-	virtual bool useOldSrc() const { return false; }
+	virtual bool useOldSource() const { return false; }
 
 	/**
 	 * Set the source to be used when scaling and copying to the old buffer.
@@ -115,19 +106,18 @@ public:
 	 * @param padding The number of pixels on the border (Used to prevent memory access crashes)
 	 * @param type    The surface type. This source will only be used when calling oldSrcScale with the same type.
 	 */
-	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding, SourceType type) {
+	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding) {
 		// Should not be called unless overriden
 		assert(0);
 	}
 
 	/**
-	 * Scale using the source from setSource called with the same value as type.
-	 * The source will be compared against previous frames to avoid computations
-	 * on unchanged pixels.
+	 * Enable or disable the old Source functionality. It is initially
+	 * disabled. When disabled, the old source data is preserved until re-enabled.
 	 *
-	 * @param type    The surface type set previously with setSource
+	 * Useful for scaling a different surface (e.g. the cursor).
 	 */
-	virtual void oldSrcScale(byte *dst, uint dstPitch, SourceType type) {
+	virtual void enableSource(bool enable) {
 		// Should not be called unless overriden
 		assert(0);
 	}
@@ -147,9 +137,14 @@ class SourceScaler : public ScalerPluginObject {
 public:
 
 	SourceScaler();
+	virtual ~SourceScaler();
 
-	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding, SourceType type);
-	virtual void oldSrcScale(byte *dst, uint dstPitch, SourceType type);
+	virtual void scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	                   uint32 dstPitch, int width, int height, int x, int y);
+
+	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding);
+
+	virtual void enableSource(bool enable) { _enable = enable; }
 
 protected:
 
@@ -157,19 +152,20 @@ protected:
 	 * Scalers must implement this function. It will be called by oldSrcScale.
 	 * If by comparing the src and oldsrc images it is discovered that no change
 	 * is necessary, do not write a pixel.
+	 *
+	 * If oldSrcPtr is NULL, do not read from it. Scale every pixel.
 	 */
 	virtual void internScale(const uint8 *srcPtr, uint32 srcPitch,
 	                         uint8 *dstPtr, uint32 dstPitch,
 	                         const uint8 *oldSrcPtr, uint32 oldSrcPitch,
 	                         int width, int height) = 0;
 
-	int widths[SRC_MAX];
-	int heights[SRC_MAX];
-	uint paddings[SRC_MAX];
-	uint pitches[SRC_MAX];
 
-	const byte *newSrcs[SRC_MAX];
-	byte *oldSrcs[SRC_MAX];
+private:
+
+	int _padding;
+	bool _enable;
+	byte *_oldSrc;
 };
 
 typedef PluginSubclass<ScalerPluginObject> ScalerPlugin;

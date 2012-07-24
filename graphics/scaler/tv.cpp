@@ -28,7 +28,7 @@ TVPlugin::TVPlugin() {
 	_factors.push_back(2);
 }
 
-void TVPlugin::initialize(Graphics::PixelFormat format) {
+void TVPlugin::initialize(const Graphics::PixelFormat &format) {
 	_format = format;
 }
 
