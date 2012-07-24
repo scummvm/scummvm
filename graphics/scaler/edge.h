@@ -70,7 +70,7 @@ private:
 	 * bitplanes.  The increase in image quality is well worth the speed hit.
 	 */
 	template<typename ColorMask, typename Pixel>
-	int16* chooseGreyscale(Pixel *pixels);
+	int16 *chooseGreyscale(Pixel *pixels);
 
 	/**
 	 * Calculate the distance between pixels in RGB space.  Greyscale isn't
@@ -131,7 +131,7 @@ private:
 	 * Fill pixel grid with or without interpolation, using the detected edge
 	 */
 	template<typename ColorMask, typename Pixel>
-	void anti_alias_grid_2x(uint8 *dptr, int dstPitch,
+	void antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		Pixel *pixels, int sub_type, int16 *bptr,
 		int8 *sim,
 		int interpolate_2x);
@@ -140,7 +140,7 @@ private:
 	 * Fill pixel grid without interpolation, using the detected edge
 	 */
 	template<typename ColorMask, typename Pixel>
-	void anti_alias_grid_clean_3x(uint8 *dptr, int dstPitch,
+	void antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		Pixel *pixels, int sub_type, int16 *bptr);
 
 	/**

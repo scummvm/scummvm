@@ -29,7 +29,7 @@ class ScalerPluginObject : public PluginObject {
 public:
 
 	virtual ~ScalerPluginObject() {}
-	
+
 	/**
 	 * This function will be called before any scaler is used.
 	 * Precomputed data should be generated here.
@@ -61,7 +61,7 @@ public:
 
 	virtual uint getFactor() const = 0;
 
-	virtual const Common::Array<uint>& getFactors() const { return _factors; }
+	virtual const Common::Array<uint> &getFactors() const { return _factors; }
 
 	/**
 	 * Set the scaling factor.

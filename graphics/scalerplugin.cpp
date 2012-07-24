@@ -45,17 +45,17 @@ void SourceScaler::scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 	if (!_enable) {
 		// Do not pass _oldSrc, do not update _oldSrc
 		internScale(srcPtr, srcPitch,
-					dstPtr, dstPitch,
-					NULL, 0,
-					width, height);
+		            dstPtr, dstPitch,
+		            NULL, 0,
+		            width, height);
 		return;
 	}
 	int offset = (_padding + x) * _format.bytesPerPixel + (_padding + y) * srcPitch;
 	// Call user defined scale function
 	internScale(srcPtr, srcPitch,
-				dstPtr, dstPitch,
-				_oldSrc + offset, srcPitch,
-				width, height);
+	            dstPtr, dstPitch,
+	            _oldSrc + offset, srcPitch,
+	            width, height);
 	// Update old src
 	byte *oldSrc = _oldSrc + offset;
 	while (height--) {
