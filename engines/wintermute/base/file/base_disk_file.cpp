@@ -27,7 +27,6 @@
  */
 
 #include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/base/file/BPkgFile.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "common/stream.h"
