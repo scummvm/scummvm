@@ -54,7 +54,7 @@ GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *scr
 }
 
 GfxFontFromResource::~GfxFontFromResource() {
-	delete []_chars;
+	delete[] _chars;
 	_resMan->unlockResource(_resource);
 }
 
