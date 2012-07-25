@@ -49,8 +49,55 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	if (fwrite(dseg, DSEG_SIZE, 1, fout) != 1) {
-		perror("Writing data segment");
+	if (fwrite(dsegStartBlock, DSEG_STARTBLK_SIZE, 1, fout) != 1) {
+		perror("Writing data segment start block");
+		exit(1);
+	}
+
+	// Write out message string block
+	for (uint i = 0; i < (sizeof(messages)/sizeof(char*)); i++) {
+		if (i == 0) {
+			// Write out reject message pointer block
+			uint16 off = DSEG_STARTBLK_SIZE + (4 * 2);
+			writeUint16LE(fout, off);
+			off += strlen(messages[0]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[1]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[2]) + 2;
+			writeUint16LE(fout, off);
+		}
+
+		if (i == 327) {
+			// Write out book color pointer block
+			uint16 off = DSEG_STARTBLK_SIZE + (4 * 2);
+			for (uint k = 0; k < 327; k++)
+				off += strlen(messages[k]) + 2;
+			off += (6 * 2);
+			writeUint16LE(fout, off);
+			off += strlen(messages[327]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[328]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[329]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[330]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[331]) + 2;
+			writeUint16LE(fout, off);
+		}
+		for (uint j = 0; j < strlen(messages[i]); j++) {
+			if (messages[i][j] == '\n')
+				writeByte(fout, '\0');
+			else
+				writeByte(fout, messages[i][j]);
+		}
+		writeByte(fout, '\0');
+		writeByte(fout, '\0');
+	}
+
+	if (fwrite(dsegEndBlock, DSEG_ENDBLK_SIZE, 1, fout) != 1) {
+		perror("Writing data segment end block");
 		exit(1);
 	}
 
@@ -90,76 +137,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	fclose(fout);
-
-	// Generate dseg static tables for newer version
-	uint dsegFBSize = 0x339e;
-	
-	printf("const static uint8 dsegFirstBlock[%d] = {\n", dsegFBSize);
-	for (uint i = 0; i < dsegFBSize; i++) {
-		if ((i % 8) == 0)
-			printf("\t");
-		else
-			printf(" ");
-
-		printf("0x%02x", dseg[i]);
-
-		if (i != dsegFBSize - 1)
-			printf(",");
-
-		if (((i+1) % 8) == 0 || i == dsegFBSize - 1)
-			printf("\n");
-	}
-	printf("};\n\n");
-
-	uint dsegMessageSize = 0x6034;
-	printf("const static char* messages[335] = {\n\t\"");
-	uint messageCount = 0;
-	char last = '\0';
-	// (4 * 2) skips Reject Message Pointer Table
-	for (uint i = dsegFBSize + (4 * 2); i < dsegMessageSize; i++) {
-		// Skip Book Color Pointer Table
-		if (i == 0x5f3c) {
-			i += (6 * 2);
-			continue;
-		}
-
-		if (dseg[i] != '\0') {
-			if (dseg[i] == 0xff)
-				printf("\\n");
-			else if (dseg[i] == '\"')
-				printf("\\\"");
-			else
-				printf("%c", dseg[i]);
-		} else { // dseg[i] == '\0'
-			if (last == '\0')
-				printf("\", // %d\n\t\"", messageCount++);
-			else if (dseg[i+1] != '\0')
-				printf("\\n");
-		}
-
-		last = dseg[i];
-	}
-	printf("\" // %d\n};\n\n", messageCount++);
-
-	uint dsegFinalSize = 0xe790;
-
-	printf("const static uint8 dsegFinalBlock[%d] = {\n", dsegFinalSize - dsegMessageSize - 1);
-	uint j = 0;
-	for (uint i = dsegMessageSize + 1; i < dsegFinalSize; i++, j++) {
-		if ((j % 8) == 0)
-			printf("\t");
-		else
-			printf(" ");
-
-		printf("0x%02x", dseg[i]);
-
-		if (i != dsegFinalSize - 1)
-			printf(",");
-
-		if (((j+1) % 8) == 0 || i == dsegFinalSize - 1)
-			printf("\n");
-	}
-	printf("};\n\n");
 
 	return 0;
 }
