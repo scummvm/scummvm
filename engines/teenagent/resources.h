@@ -34,12 +34,55 @@ namespace TeenAgent {
 // Code Segment Addresses (Read Only)
 // Intro function : 0x024c
 const uint16 csAddr_intro = 0x024c;
+// Pole Climb Fail function : 0x4173
+const uint16 csAddr_poleClimbFail = 0x4173;
+// Move Ego (Mark) To Suspicious Position function : 0x505c
+const uint16 csAddr_egoSuspiciousPosition = 0x505c;
+
+// FIXME - Find and replace Unknown callback functions with symbols: 0x50c5, 0x61fe
+
 // Guard Drinking function : 0x5189
 const uint16 csAddr_guardDrinking = 0x5189;
+// Move Ego (Mark) To Default Position function : 0x557e
+const uint16 csAddr_egoDefaultPosition = 0x557e;
+// Cave NOP function : 0x599b
+const uint16 csAddr_caveNOP = 0x599b;
+// Enter Cave function : 0x5a21
+const uint16 csAddr_enterCave = 0x5a21;
+// Ego (Mark) Scared By Spider function : 0x60b5
+const uint16 csAddr_egoScaredBySpider = 0x60b5;
+// Move to Ladder and Leave Cellar function : 0x60d9
+const uint16 csAddr_moveToLadderAndLeaveCellar = 0x60d9;
+// Leave Cellar function : 0x612b
+const uint16 csAddr_leaveCellar = 0x612b;
+// Move Ego (Mark) To Bottom-Right or Turn function : 0x6849
+const uint16 csAddr_egoBottomRightTurn = 0x6849;
+// Checking Drawers function : 0x68e6
+const uint16 csAddr_checkingDrawers = 0x68e6;
+// Drawer Open Message function : 0x6b86
+const uint16 csAddr_DrawerOpenMessage = 0x6b86;
+// Is Cook Present function : 0x70e0
+const uint16 csAddr_isCookPresent = 0x70e0;
+// Giving Flower to Old Lady function : 0x88de
+const uint16 csAddr_givingFlowerToOldLady = 0x88de;
+// Give Another Flower to Old Lady function : 0x890b
+const uint16 csAddr_giveAnotherFlowerToOldLady = 0x890b;
+// Giving Flower to Anne function : 0x8942
+const uint16 csAddr_givingFlowerToAnne = 0x8942;
+// Give Another Flower to Anne function : 0x89aa
+const uint16 csAddr_giveAnotherFlowerToAnne = 0x89aa;
 // Putting Rock in Hole function : 0x8d57
 const uint16 csAddr_putRockInHole = 0x8d57;
+// Robot Safe (Mike) Already Unlocked Check function : 0x9166
+const uint16 csAddr_robotSafeAlreadyUnlockedCheck = 0x9166;
+// Robot Safe (Mike) Unlock Check function : 0x9175
+const uint16 csAddr_robotSafeUnlockCheck = 0x9175;
 // Successfully Got Anchor function : 0x99e0
 const uint16 csAddr_gotAnchor = 0x99e0;
+// Get Out of Lake function : 0x9a7a
+const uint16 csAddr_getOutOfLake = 0x9a7a;
+// Mansion Intrusion Attempt function : 0x9d45
+const uint16 csAddr_mansionIntrusionAttempt = 0x9d45;
 // Display Message function : 0xa055
 const uint16 csAddr_displayMsg = 0xa055;
 // Reject Message function : 0xa4d6
@@ -572,6 +615,9 @@ const uint16 dsAddr_bookColorMsg3 = 0x5fb6; // ""Greenhorn, or my adventures in 
 const uint16 dsAddr_bookColorMsg4 = 0x5fe7; // ""Charlie Brown and his company""
 // Book Color Message #5 : 0x6009 to 0x6034
 const uint16 dsAddr_bookColorMsg5 = 0x6009; // ""Pink Panther: an unauthorised biography""
+
+// Mansion Intrusion Function Pointers : (5 * 2-byte) = 0x6035 to 0x603e
+const uint16 dsAddr_MansionIntrusionFnPtr = 0x6035;
 
 // Save State Region : 0x6478 to 0xdbf1
 const uint16 dsAddr_saveState = 0x6478;
