@@ -449,7 +449,8 @@ label_enter_chalons:
 
 label_exit_chalons:
 		// Exiting Chalons station
-		TIME_CHECK_CALLBACK_1(kTimeExitChalons, CURRENT_PARAM(1, 4), 6, setup_exitStation, "Chalons");
+		if (timeCheckExitStation(kTimeExitChalons, CURRENT_PARAM(1, 4), 6, "Chalons"))
+			break;
 
 label_enter_barleduc:
 		// Entering Bar-Le-Duc station
@@ -458,7 +459,8 @@ label_enter_barleduc:
 
 label_exit_barleduc:
 		// Exiting Bar-Le-Duc station
-		TIME_CHECK_CALLBACK_1(kTimeExitBarLeDuc, CURRENT_PARAM(1, 6), 8, setup_exitStation, "BarLeDuc");
+		if (timeCheckExitStation(kTimeExitBarLeDuc, CURRENT_PARAM(1, 6), 8, "BarLeDuc"))
+			break;
 
 label_enter_nancy:
 		if (getState()->time > kTime1260000 && !CURRENT_PARAM(1, 7)) {
@@ -472,7 +474,8 @@ label_enter_nancy:
 
 label_exit_nancy:
 		// Exiting Nancy station
-		TIME_CHECK_CALLBACK_1(kTimeExitNancy, CURRENT_PARAM(2, 1), 10, setup_exitStation, "Nancy");
+		if (timeCheckExitStation(kTimeExitNancy, CURRENT_PARAM(2, 1), 10, "Nancy"))
+			break;
 
 label_enter_luneville:
 		// Entering Luneville station
@@ -481,7 +484,8 @@ label_enter_luneville:
 
 label_exit_luneville:
 		// Exiting Luneville station
-		TIME_CHECK_CALLBACK_1(kTimeExitLuneville, CURRENT_PARAM(2, 3), 12, setup_exitStation, "Luneville");
+		if (timeCheckExitStation(kTimeExitLuneville, CURRENT_PARAM(2, 3), 12, "Luneville"))
+			break;
 
 label_enter_avricourt:
 		// Entering Avricourt station
@@ -490,7 +494,8 @@ label_enter_avricourt:
 
 label_exit_avricourt:
 		// Exiting Avricourt station
-		TIME_CHECK_CALLBACK_1(kTimeExitAvricourt, CURRENT_PARAM(2, 5), 14, setup_exitStation, "Avricourt");
+		if (timeCheckExitStation(kTimeExitAvricourt, CURRENT_PARAM(2, 5), 14, "Avricourt"))
+			break;
 
 label_enter_deutschavricourt:
 		// Entering Deutsch-Avricourt station
@@ -499,7 +504,8 @@ label_enter_deutschavricourt:
 
 label_exit_deutschavricourt:
 		// Exiting Avricourt station
-		TIME_CHECK_CALLBACK_1(kTimeExitDeutschAvricourt, CURRENT_PARAM(2, 7), 16, setup_exitStation, "DeutschA");
+		if (timeCheckExitStation(kTimeExitDeutschAvricourt, CURRENT_PARAM(2, 7), 16, "DeutschA"))
+			break;
 
 label_enter_strasbourg:
 		if (getState()->time > kTimeCityStrasbourg && !CURRENT_PARAM(2, 8)) {
@@ -512,7 +518,8 @@ label_enter_strasbourg:
 
 label_exit_strasbourg:
 		// Exiting Strasbourg station
-		TIME_CHECK_CALLBACK_1(kTimeExitStrasbourg, CURRENT_PARAM(3, 1), 19, setup_exitStation, "Strasbou");
+		if (timeCheckExitStation(kTimeExitStrasbourg, CURRENT_PARAM(3, 1), 19, "Strasbou"))
+			break;
 
 label_enter_badenoos:
 		// Entering Baden Oos station
@@ -521,7 +528,8 @@ label_enter_badenoos:
 
 label_exit_badenoos:
 		// Exiting Baden Oos station
-		TIME_CHECK_CALLBACK_1(kTimeExitBadenOos, CURRENT_PARAM(3, 3), 21, setup_exitStation, "BadenOos");
+		if (timeCheckExitStation(kTimeExitBadenOos, CURRENT_PARAM(3, 3), 21, "BadenOos"))
+			break;
 
 label_chapter1_next:
 		if (getState()->time > kTimeChapter1End3 && ! CURRENT_PARAM(3, 4)) {
@@ -946,28 +954,32 @@ IMPLEMENT_FUNCTION(15, Chapters, chapter3Handler)
 			break;
 
 label_callback_1:
-		TIME_CHECK_CALLBACK_1(kTimeExitSalzbourg, params->param7, 2, setup_exitStation, "Salzburg");
+		if (timeCheckExitStation(kTimeExitSalzbourg, params->param7, 2, "Salzburg"))
+			break;
 
 label_callback_2:
 		if (timeCheckEnterStation(kTimeEnterAttnangPuchheim, params->param8, 3, "Attnang", kCityAttnangPuchheim))
 			break;
 
 label_callback_3:
-		TIME_CHECK_CALLBACK_1(kTimeExitAttnangPuchheim, CURRENT_PARAM(1, 1), 4, setup_exitStation, "Attnang");
+		if (timeCheckExitStation(kTimeExitAttnangPuchheim, CURRENT_PARAM(1, 1), 4, "Attnang"))
+			break;
 
 label_callback_4:
 		if (timeCheckEnterStation(kTimeEnterWels, CURRENT_PARAM(1, 2), 5, "Wels", kCityWels))
 			break;
 
 label_callback_5:
-		TIME_CHECK_CALLBACK_1(kTimeEnterWels, CURRENT_PARAM(1, 3), 6, setup_exitStation, "Wels");
+		if (timeCheckExitStation(kTimeEnterWels, CURRENT_PARAM(1, 3), 6, "Wels"))
+			break;
 
 label_callback_6:
 		if (timeCheckEnterStation(kTimeEnterLinz, CURRENT_PARAM(1, 4), 7, "Linz", kCityLinz))
 			break;
 
 label_callback_7:
-		TIME_CHECK_CALLBACK_1(kTimeCityLinz, CURRENT_PARAM(1, 5), 8, setup_exitStation, "Linz");
+		if (timeCheckExitStation(kTimeCityLinz, CURRENT_PARAM(1, 5), 8, "Linz"))
+			break;
 
 label_callback_8:
 		if (getState()->time > kTime2187000 && !CURRENT_PARAM(1, 6)) {
@@ -1249,7 +1261,8 @@ IMPLEMENT_FUNCTION(19, Chapters, chapter4Handler)
 			break;
 
 label_exitPozsony:
-		TIME_CHECK_CALLBACK_1(kTimeExitPoszony, CURRENT_PARAM(1, 1), 2, setup_exitStation, "Pozsony");
+		if (timeCheckExitStation(kTimeExitPoszony, CURRENT_PARAM(1, 1), 2, "Pozsony"))
+			break;
 
 label_enterGalanta:
 		if (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) {
@@ -1266,7 +1279,8 @@ label_enterGalanta:
 			break;
 
 label_exitGalanta:
-		TIME_CHECK_CALLBACK_1(kTimeExitGalanta, CURRENT_PARAM(1, 4), 4, setup_exitStation, "Galanta");
+		if (timeCheckExitStation(kTimeExitGalanta, CURRENT_PARAM(1, 4), 4, "Galanta"))
+			break;
 
 label_callback_4:
 		if (getState()->time > kTime2470500 && !CURRENT_PARAM(1, 5)) {
@@ -1848,6 +1862,18 @@ bool Chapters::timeCheckEnterStation(TimeValue timeValue, uint &parameter, byte 
 		parameter = 1;
 		setCallback(callback);
 		setup_enterStation(sequence, cityIndex);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Chapters::timeCheckExitStation(TimeValue timeValue, uint &parameter, byte callback, const char *sequence) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		setCallback(callback);
+		setup_exitStation(sequence);
 
 		return true;
 	}

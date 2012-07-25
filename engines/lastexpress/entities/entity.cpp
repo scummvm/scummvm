@@ -660,6 +660,30 @@ bool Entity::timeCheckCallback(TimeValue timeValue, uint &parameter, byte callba
 	return false;
 }
 
+bool Entity::timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, const char *str, Common::Functor1<const char *, void> *function) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		setCallback(callback);
+		(*function)(str);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Entity::timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, bool check, Common::Functor1<bool, void> *function) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		setCallback(callback);
+		(*function)(check);
+
+		return true;
+	}
+
+	return false;
+}
+
 bool Entity::timeCheckCallbackInventory(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function) {
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;

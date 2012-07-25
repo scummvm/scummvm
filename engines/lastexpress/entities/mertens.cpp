@@ -3532,14 +3532,16 @@ label_callback_5:
 		}
 
 label_callback_6:
-		TIME_CHECK_CALLBACK_1(kTime1971000, params->param1, 7, setup_function28, "CON3012");
+		if (Entity::timeCheckCallback(kTime1971000, params->param1, 7, "CON3012", WRAP_SETUP_FUNCTION_S(Mertens, setup_function28)))
+			break;
 
 label_callback_7:
 		if (Entity::timeCheckCallback(kTime2117700, params->param2, 8, WRAP_SETUP_FUNCTION(Mertens, setup_function32)))
 			break;
 
 label_callback_8:
-		TIME_CHECK_CALLBACK_1(kTime2124000, params->param3, 9, setup_function28, "CON2010");
+		if (Entity::timeCheckCallback(kTime2124000, params->param3, 9, "CON2010", WRAP_SETUP_FUNCTION_S(Mertens, setup_function28)))
+			break;
 
 label_callback_9:
 		if (Entity::timeCheckCallback(kTime2146500, params->param4, 10, WRAP_SETUP_FUNCTION(Mertens, setup_function32)))

@@ -683,7 +683,8 @@ IMPLEMENT_FUNCTION(22, Rebecca, chapter1Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_1(kTime1084500, params->param3, 1, setup_playSound, "REB1015");
+		if (Entity::timeCheckCallback(kTime1084500, params->param3, 1, "REB1015", WRAP_SETUP_FUNCTION_S(Rebecca, setup_playSound)))
+			break;
 
 		if (params->param4 == kTimeInvalid)
 			goto label_callback_4;

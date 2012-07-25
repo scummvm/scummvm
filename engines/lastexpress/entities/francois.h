@@ -163,6 +163,7 @@ public:
 
 private:
 	bool timeCheckCallbackCompartment(TimeValue timeValue, uint &parameter, byte callback, ObjectIndex compartment, EntityPosition position, const char* sequenceSuffix);
+	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, TimeValue timeValue2);
 };
 
 } // End of namespace LastExpress

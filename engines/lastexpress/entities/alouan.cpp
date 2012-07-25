@@ -292,7 +292,8 @@ label_callback1:
 		}
 
 label_callback2:
-		TIME_CHECK_CALLBACK_1(kTime2052000, params->param3, 3, setup_playSound, "Har1005");
+		if (Entity::timeCheckCallback(kTime2052000, params->param3, 3, "Har1005", WRAP_SETUP_FUNCTION_S(Alouan, setup_playSound)))
+			break;
 
 label_callback3:
 		if (Entity::timeCheckCallback(kTime2133000, params->param4, 4, WRAP_SETUP_FUNCTION(Alouan, setup_compartment6to8)))

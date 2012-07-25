@@ -155,6 +155,7 @@ public:
 
 private:
 	bool timeCheckEnterStation(TimeValue timeValue, uint &parameter, byte callback, const char *sequence, CityIndex cityIndex);
+	bool timeCheckExitStation(TimeValue timeValue, uint &parameter, byte callback, const char *sequence);
 	void enterExitStation(const SavePoint &savepoint, bool isEnteringStation);
 	void enterExitHelper(bool isEnteringStation);
 	void playSteam();

@@ -1906,7 +1906,7 @@ IMPLEMENT_FUNCTION(37, August, function37)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_1(kTime1791000, params->param2, 5, setup_function20, true);
+		Entity::timeCheckCallback(kTime1791000, params->param2, 5, true, WRAP_SETUP_FUNCTION_B(August, setup_function20));
 		break;
 
 	case kActionDefault:

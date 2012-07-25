@@ -211,9 +211,11 @@ IMPLEMENT_FUNCTION(9, Yasmin, chapter1Handler)
 		if (Entity::timeCheckPlaySoundUpdatePosition(kTime1162800, params->param3, 4, "Har1102", kPosition_4070))
 			break;
 
-		TIME_CHECK_CALLBACK_1(kTime1165500, params->param4, 5, setup_playSound, "Har1104");
+		if (Entity::timeCheckCallback(kTime1165500, params->param4, 5, "Har1104", WRAP_SETUP_FUNCTION_S(Yasmin, setup_playSound)))
+			break;
 
-		TIME_CHECK_CALLBACK_1(kTime1174500, params->param5, 6, setup_playSound, "Har1106");
+		if (Entity::timeCheckCallback(kTime1174500, params->param5, 6, "Har1106", WRAP_SETUP_FUNCTION_S(Yasmin, setup_playSound)))
+			break;
 
 		Entity::timeCheckCallback(kTime1183500, params->param6, 7, WRAP_SETUP_FUNCTION(Yasmin, setup_function6));
 		break;
@@ -240,11 +242,13 @@ IMPLEMENT_FUNCTION(9, Yasmin, chapter1Handler)
 			// Fallback to case 4
 
 		case 4:
-			TIME_CHECK_CALLBACK_1(kTime1165500, params->param4, 5, setup_playSound, "Har1104");
+			if (Entity::timeCheckCallback(kTime1165500, params->param4, 5, "Har1104", WRAP_SETUP_FUNCTION_S(Yasmin, setup_playSound)))
+				break;
 			// Fallback to case 5
 
 		case 5:
-			TIME_CHECK_CALLBACK_1(kTime1174500, params->param5, 6, setup_playSound, "Har1106");
+			if (Entity::timeCheckCallback(kTime1174500, params->param5, 6, "Har1106", WRAP_SETUP_FUNCTION_S(Yasmin, setup_playSound)))
+				break;
 			// Fallback to case 6
 
 		case 6:

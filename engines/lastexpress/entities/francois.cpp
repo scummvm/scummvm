@@ -866,7 +866,7 @@ IMPLEMENT_FUNCTION(18, Francois, chapter1Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_1(kTimeParisEpernay, params->param1, 1, setup_function11, kTime1093500);
+		timeCheckCallback(kTimeParisEpernay, params->param1, 1, kTime1093500);
 		break;
 
 	case kActionCallback:
@@ -978,7 +978,8 @@ IMPLEMENT_FUNCTION(23, Francois, function23)
 		}
 
 label_callback_1:
-		TIME_CHECK_CALLBACK_1(kTime1764000, params->param1, 2, setup_playSound, "Fra2011");
+		if (Entity::timeCheckCallback(kTime1764000, params->param1, 2, "Fra2011", WRAP_SETUP_FUNCTION_S(Francois, setup_playSound)))
+			break;
 
 label_callback_2:
 		if (Entity::timeCheckCallback(kTime1800000, params->param2, 3, WRAP_SETUP_FUNCTION(Francois, setup_function13)))
@@ -986,10 +987,12 @@ label_callback_2:
 
 label_callback_3:
 		if (!getInventory()->hasItem(kItemWhistle) && getInventory()->get(kItemWhistle)->location != kObjectLocation3) {
-			TIME_CHECK_CALLBACK_1(kTime1768500, params->param3, 4, setup_function11, kTime1773000);
+			if (timeCheckCallback(kTime1768500, params->param3, 4, kTime1773000))
+				break;
 
 label_callback_4:
-			TIME_CHECK_CALLBACK_1(kTime1827000, params->param4, 5, setup_function11, kTime1831500);
+			if (timeCheckCallback(kTime1827000, params->param4, 5, kTime1831500))
+				break;
 		}
 
 label_callback_5:
@@ -1116,10 +1119,12 @@ label_callback_8:
 
 label_callback_9:
 			if (!getInventory()->hasItem(kItemWhistle) && getInventory()->get(kItemWhistle)->location != kObjectLocation3) {
-				TIME_CHECK_CALLBACK_1(kTime2011500, CURRENT_PARAM(1, 2), 10, setup_function11, kTime2016000);
+				if (timeCheckCallback(kTime2011500, CURRENT_PARAM(1, 2), 10, kTime2016000))
+					break;
 
 label_callback_10:
-				TIME_CHECK_CALLBACK_1(kTime2115000, CURRENT_PARAM(1, 3), 11, setup_function11, kTime2119500);
+				if (timeCheckCallback(kTime2115000, CURRENT_PARAM(1, 3), 11, kTime2119500))
+					break;
 			}
 
 label_callback_11:
@@ -1310,6 +1315,18 @@ bool Francois::timeCheckCallbackCompartment(TimeValue timeValue, uint &parameter
 		parameter = 1;
 		setCallback(callback);
 		setup_function14(compartment, position, sequenceSuffix);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Francois::timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, TimeValue timeValue2) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		setCallback(callback);
+		setup_function11(timeValue2);
 
 		return true;
 	}

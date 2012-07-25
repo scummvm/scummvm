@@ -85,6 +85,12 @@ struct SavePoint;
 #define WRAP_SETUP_FUNCTION(className, method) \
 	new Common::Functor0Mem<void, className>(this, &className::method)
 
+#define WRAP_SETUP_FUNCTION_S(className, method) \
+	new Common::Functor1Mem<const char *, void, className>(this, &className::method)
+
+#define WRAP_SETUP_FUNCTION_B(className, method) \
+	new Common::Functor1Mem<bool, void, className>(this, &className::method)
+
 //////////////////////////////////////////////////////////////////////////
 // Parameters macros
 //////////////////////////////////////////////////////////////////////////
@@ -916,6 +922,8 @@ protected:
 
 	bool timeCheck(TimeValue timeValue, uint &parameter, Common::Functor0<void> *function);
 	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
+	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, const char *str, Common::Functor1<const char *, void> *function);
+	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, bool check, Common::Functor1<bool, void> *function);
 	bool timeCheckCallbackInventory(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
 	bool timeCheckCar(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
 	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action);

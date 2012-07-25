@@ -258,18 +258,6 @@ void class::setup_##name() { \
 	EXPOSE_PARAMS(EntityData::EntityParametersIISS) \
 	debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%d, %d, %s, %s) - action: %s", params->param1, params->param2, (char *)&params->seq1, (char *)&params->seq2, ACTION_NAME(savepoint.action));
 
-
-//////////////////////////////////////////////////////////////////////////
-// Time check macros
-//////////////////////////////////////////////////////////////////////////
-#define TIME_CHECK_CALLBACK_1(timeValue, parameter, callback, function, param1) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		setCallback(callback); \
-		function(param1); \
-		break; \
-	}
-
 } // End of namespace LastExpress
 
 #endif // LASTEXPRESS_ENTITY_INTERN_H

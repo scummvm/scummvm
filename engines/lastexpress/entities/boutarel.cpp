@@ -653,7 +653,7 @@ IMPLEMENT_FUNCTION(20, Boutarel, function20)
 			}
 		}
 
-		TIME_CHECK_CALLBACK_1(kTime1138500, params->param4, 4, setup_function14, false);
+		Entity::timeCheckCallback(kTime1138500, params->param4, 4, false, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
@@ -678,7 +678,7 @@ IMPLEMENT_FUNCTION(20, Boutarel, function20)
 			break;
 
 		case 3:
-			TIME_CHECK_CALLBACK_1(kTime1138500, params->param4, 4, setup_function14, false);
+			Entity::timeCheckCallback(kTime1138500, params->param4, 4, false, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 			break;
 
 		case 4:
@@ -836,7 +836,7 @@ IMPLEMENT_FUNCTION(24, Boutarel, chapter2Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_1(kTime1759500, params->param2, 1, setup_function14, false);
+		Entity::timeCheckCallback(kTime1759500, params->param2, 1, false, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
@@ -961,7 +961,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 			}
 		}
 
-		TIME_CHECK_CALLBACK_1(kTime2002500, params->param4, 1, setup_function14, true);
+		Entity::timeCheckCallback(kTime2002500, params->param4, 1, true, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
@@ -974,7 +974,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 			break;
 
 		case 1:
-			TIME_CHECK_CALLBACK_1(kTime2002500, params->param4, 1, setup_function14, true);
+			Entity::timeCheckCallback(kTime2002500, params->param4, 1, true, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 			break;
 
 		case 2:
@@ -1065,7 +1065,7 @@ IMPLEMENT_FUNCTION(33, Boutarel, function33)
 
 	case kActionNone:
 		if (params->param1)
-			TIME_CHECK_CALLBACK_1(kTime2389500, params->param2, 3, setup_function14, false);
+			Entity::timeCheckCallback(kTime2389500, params->param2, 3, false, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
