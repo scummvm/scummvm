@@ -369,7 +369,8 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 	case 10: // Where, called by ScrollableWindow::where
 		// TODO
 		// argv[2] is an unknown integer
-		kStub(s, argc, argv);
+		// Silenced the warnings because of the high amount of console spam
+		//kStub(s, argc, argv);
 		break;
 	case 11: // Go, called by ScrollableWindow::scrollTo
 		// 2 extra parameters here
@@ -770,7 +771,8 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	case 3:	{ // remap to gray
-		int16 color = argv[1].toSint16();	// this is subtracted from a maximum color value, and can be offset by 10
+		// Example call: QFG4 room 490 (Baba Yaga's hut) - params are color 253, 75% and 0
+		int16 color = argv[1].toSint16();
 		int16 percent = argv[2].toSint16(); // 0 - 100
 		uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
 		warning("kRemapColors: RemapToGray color %d by %d percent (unk3 = %d)", color, percent, unk3);
