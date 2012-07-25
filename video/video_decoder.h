@@ -27,6 +27,7 @@
 #include "audio/timestamp.h"	// TODO: Move this to common/ ?
 #include "common/array.h"
 #include "common/str.h"
+#include "graphics/pixelformat.h"
 
 namespace Audio {
 class AudioStream;
@@ -40,7 +41,6 @@ class SeekableReadStream;
 }
 
 namespace Graphics {
-struct PixelFormat;
 struct Surface;
 }
 
@@ -370,6 +370,16 @@ public:
 	 */
 	bool addStreamFileTrack(const Common::String &baseName);
 
+	/**
+	 * Set the default high color format for videos that convert from YUV.
+	 *
+	 * By default, AdvancedVideoDecoder will attempt to use the screen format
+	 * if it's >8bpp and use a 32bpp format when not.
+	 *
+	 * This must be set before calling loadStream().
+	 */
+	void setDefaultHighColorFormat(const Graphics::PixelFormat &format) { _defaultHighColorFormat = format; }
+
 	// Future API
 	//void setRate(const Common::Rational &rate);
 	//Common::Rational getRate() const;
@@ -664,6 +674,11 @@ protected:
 	 */
 	bool endOfVideoTracks() const;
 
+	/**
+	 * Get the default high color format
+	 */
+	Graphics::PixelFormat getDefaultHighColorFormat() const { return _defaultHighColorFormat; }
+
 private:
 	// Tracks owned by this AdvancedVideoDecoder
 	typedef Common::Array<Track *> TrackList;
@@ -678,6 +693,9 @@ private:
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;
 	const byte *_palette;
+
+	// Default PixelFormat settings
+	Graphics::PixelFormat _defaultHighColorFormat;
 
 	// Internal helper functions
 	void stopAllTracks();

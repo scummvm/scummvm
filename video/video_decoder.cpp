@@ -101,6 +101,12 @@ AdvancedVideoDecoder::AdvancedVideoDecoder() {
 	_audioVolume = Audio::Mixer::kMaxChannelVolume;
 	_audioBalance = 0;
 	_pauseLevel = 0;
+
+	// Find the best format for output
+	_defaultHighColorFormat = g_system->getScreenFormat();
+
+	if (_defaultHighColorFormat.bytesPerPixel == 1)
+		_defaultHighColorFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 }
 
 void AdvancedVideoDecoder::close() {
