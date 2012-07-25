@@ -255,7 +255,7 @@ int WinterMuteEngine::init() {
 		_game = NULL;
 		return false;
 	}
-	_game->setWindowTitle();
+	//_game->setWindowTitle();
 	_game->_renderer->_ready = true;
 	_game->_miniUpdateEnabled = true;
 	

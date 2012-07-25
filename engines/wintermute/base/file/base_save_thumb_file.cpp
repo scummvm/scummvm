@@ -68,18 +68,14 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 	int slot = atoi(tempFilename);
 	delete [] tempFilename;
 
-	char slotFilename[MAX_PATH_LENGTH + 1];
-	_gameRef->getSaveSlotFilename(slot, slotFilename);
 	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
+	Common::String slotFilename = pm->getFilenameForSlot(slot);
 	if (!pm) return STATUS_FAILED;
 
-	_gameRef->_debugAbsolutePathWarning = false;
 	if (DID_FAIL(pm->initLoad(slotFilename))) {
-		_gameRef->_debugAbsolutePathWarning = true;
 		delete pm;
 		return STATUS_FAILED;
 	}
-	_gameRef->_debugAbsolutePathWarning = true;
 
 	bool res;
 

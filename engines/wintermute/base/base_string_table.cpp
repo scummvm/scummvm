@@ -102,9 +102,7 @@ char *BaseStringTable::getKey(const char *str) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseStringTable::expand(char **str, bool forceExpand) {
-	if (_gameRef->_doNotExpandStrings && !forceExpand) return;
-
+void BaseStringTable::expand(char **str) {
 	if (str == NULL || *str == NULL || *str[0] != '/') return;
 
 	char *value = strchr(*str + 1, '/');
@@ -132,14 +130,12 @@ void BaseStringTable::expand(char **str, bool forceExpand) {
 	delete [] *str;
 	*str = new_str;
 
-	if (strlen(*str) > 0 && *str[0] == '/') expand(str, forceExpand);
+	if (strlen(*str) > 0 && *str[0] == '/') expand(str);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseStringTable::expandStatic(const char *string, bool forceExpand) {
-	if (_gameRef->_doNotExpandStrings && !forceExpand) return string;
-
+const char *BaseStringTable::expandStatic(const char *string) {
 	if (string == NULL || string[0] == '\0' || string[0] != '/') return string;
 
 	const char *value = strchr(string + 1, '/');
@@ -163,7 +159,7 @@ const char *BaseStringTable::expandStatic(const char *string, bool forceExpand) 
 
 	delete [] key;
 
-	if (strlen(new_str) > 0 && new_str[0] == '/') return expandStatic(new_str, forceExpand);
+	if (strlen(new_str) > 0 && new_str[0] == '/') return expandStatic(new_str);
 	else return new_str;
 }
 

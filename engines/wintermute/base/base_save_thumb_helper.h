@@ -42,6 +42,7 @@ public:
 	bool storeThumbnail(bool doFlip = false);
 
 	BaseImage *_thumbnail;
+private:
 	BaseImage *_richThumbnail;
 };
 

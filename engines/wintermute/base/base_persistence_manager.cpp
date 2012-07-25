@@ -309,7 +309,7 @@ bool BasePersistenceManager::readHeader(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePersistenceManager::initLoad(const char *filename) {
+bool BasePersistenceManager::initLoad(const Common::String &filename) {
 	if (DID_FAIL(readHeader(filename))) {
 		cleanup();
 		return STATUS_FAILED;

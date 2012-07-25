@@ -46,6 +46,7 @@ public:
 	DECLARE_PERSISTENT(BaseFader, BaseObject)
 	BaseFader(BaseGame *inGame);
 	virtual ~BaseFader();
+private:
 	bool _active;
 	byte _red;
 	byte _green;

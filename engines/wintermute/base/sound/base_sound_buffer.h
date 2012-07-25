@@ -48,7 +48,6 @@ public:
 	BaseSoundBuffer(BaseGame *inGame);
 	virtual ~BaseSoundBuffer();
 
-
 	bool pause();
 	bool play(bool looping = false, uint32 startSample = 0);
 	bool resume();
@@ -86,12 +85,12 @@ public:
 	uint32 _loopStart;
 	Audio::Mixer::SoundType _type;
 	bool _looping;
-	Common::SeekableReadStream *_file;
-	char *_filename;
-	bool _streamed;
 
 	int _privateVolume;
 private:
+	char *_filename;
+	bool _streamed;
+	Common::SeekableReadStream *_file;
 	int _volume;
 };
 

@@ -39,7 +39,6 @@ public:
 	DECLARE_PERSISTENT(SXObject, BaseObject)
 	SXObject(BaseGame *inGame, ScStack *Stack);
 	virtual ~SXObject();
-
 };
 
 } // end of namespace WinterMute

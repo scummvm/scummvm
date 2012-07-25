@@ -39,15 +39,9 @@ class BaseSurface: public BaseClass {
 public:
 	virtual bool invalidate();
 	virtual bool prepareToDraw();
-	bool _ckDefault;
-	byte _ckRed;
-	byte _ckGreen;
-	byte _ckBlue;
-
 	uint32 _lastUsedTime;
 	bool _valid;
 	int _lifeTime;
-	bool _keepLoaded;
 
 	bool _pixelOpReady;
 	BaseSurface(BaseGame *inGame);
@@ -88,6 +82,12 @@ public:
 	//void SetWidth(int Width){ _width = Width;    }
 	//void SetHeight(int Height){ _height = Height; }
 protected:
+	bool _ckDefault;
+	byte _ckRed;
+	byte _ckGreen;
+	byte _ckBlue;
+	
+	bool _keepLoaded;
 	Common::String _filename;
 	int _height;
 	int _width;

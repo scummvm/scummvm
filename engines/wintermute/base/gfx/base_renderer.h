@@ -104,21 +104,23 @@ public:
 		return STATUS_OK;
 	};
 	bool pointInViewport(Point32 *P);
-	uint32 _forceAlphaColor;
-	uint32 _window;
-	uint32 _clipperWindow;
 	bool _active;
 	bool _ready;
 	bool _windowed;
+	int _bPP;
+	int _height;
+	int _width;
+	uint32 _window;
+	uint32 _forceAlphaColor;
+
+	void addRectToList(BaseActiveRect *rect);
+protected:
+	uint32 _clipperWindow;
+
 	Rect32 _windowRect;
 	Rect32 _viewportRect;
 	Rect32 _screenRect;
 	Rect32 _monitorRect;
-	int _bPP;
-	int _height;
-	int _width;
-	
-	void addRectToList(BaseActiveRect *rect);
 private:
 	Common::Array<BaseActiveRect *> _rectList;
 };

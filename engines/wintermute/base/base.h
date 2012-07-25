@@ -49,10 +49,10 @@ public:
 	bool parseEditorProperty(byte *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
 	BaseClass();
-	BaseGame *_gameRef;
 	BaseClass(BaseGame *GameOwner);
 	virtual ~BaseClass();
-
+	BaseGame *_gameRef;
+protected:
 	Common::HashMap<Common::String, Common::String> _editorProps;
 	Common::HashMap<Common::String, Common::String>::iterator _editorPropsIter;
 	/*  std::map<std::string, std::string> _editorProps;

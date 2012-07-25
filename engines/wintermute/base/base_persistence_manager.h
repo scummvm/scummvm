@@ -62,7 +62,7 @@ public:
 	void deleteSaveSlot(int slot);
 	uint32 getMaxUsedSlot();
 	bool getSaveExists(int slot);
-	bool initLoad(const char *filename);
+	bool initLoad(const Common::String &filename);
 	bool initSave(const char *desc);
 	bool getBytes(byte *buffer, uint32 size);
 	bool putBytes(byte *buffer, uint32 size);

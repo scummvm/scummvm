@@ -55,9 +55,10 @@ public:
 	bool copyParameters(ScStack *stack);
 
 	void afterLoad();
-
+private:
 	ScValue *_operand;
 	ScValue *_reg1;
+public:
 	bool _freezable;
 	bool resume();
 	bool pause();
@@ -145,6 +146,13 @@ public:
 	ScScript(BaseGame *inGame, ScEngine *Engine);
 	virtual ~ScScript();
 	char *_filename;
+	bool _thread;
+	bool _methodThread;
+	char *_threadEvent;
+	BaseScriptHolder *_owner;
+	ScScript::TExternalFunction *getExternal(char *name);
+	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
+private:
 	char **_symbols;
 	uint32 _numSymbols;
 	TFunctionPos *_functions;
@@ -155,13 +163,7 @@ public:
 	uint32 _numFunctions;
 	uint32 _numMethods;
 	uint32 _numEvents;
-	bool _thread;
-	bool _methodThread;
-	char *_threadEvent;
-	BaseScriptHolder *_owner;
-	ScScript::TExternalFunction *getExternal(char *name);
-	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
-private:
+
 	bool initScript();
 	bool initTables();
 

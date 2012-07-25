@@ -44,27 +44,9 @@ class ScValue;
 class ScStack;
 class ScScript;
 class BaseObject : public BaseScriptHolder {
-public:
-	TSpriteBlendMode _blendMode;
-	virtual bool afterMove();
-	float _relativeRotate;
-	bool _rotateValid;
-	float _rotate;
-	void setSoundEvent(const char *eventName);
-	bool _rotatable;
-	uint32 _alphaColor;
-	float _scale;
-	float _scaleX;
-	float _scaleY;
-	float _relativeScale;
-	virtual bool isReady();
-	virtual bool getExtendedFlag(const char *flagName);
-	virtual bool resetSoundPan();
-	virtual bool updateSounds();
-	bool updateOneSound(BaseSound *sound);
+protected:
 	bool _autoSoundPanning;
 	uint32 _sFXStart;
-	int _sFXVolume;
 	bool setSFXTime(uint32 time);
 	bool setSFXVolume(int volume);
 	bool resumeSFX();
@@ -72,12 +54,37 @@ public:
 	bool stopSFX(bool deleteSound = true);
 	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = NULL, uint32 loopStart = 0);
 	BaseSound *_sFX;
-
 	TSFXType _sFXType;
 	float _sFXParam1;
 	float _sFXParam2;
 	float _sFXParam3;
 	float _sFXParam4;
+	float _relativeRotate;
+	bool _rotateValid;
+	float _rotate;
+	void setSoundEvent(const char *eventName);
+	bool _rotatable;
+	float _scaleX;
+	float _scaleY;
+	float _relativeScale;
+	bool _editorSelected;
+	bool _editorAlwaysRegister;
+	bool _ready;
+	Rect32 _rect;
+	bool _rectSet;
+	int _iD;
+	char *_soundEvent;
+public:
+	TSpriteBlendMode _blendMode;
+	virtual bool afterMove();
+	float _scale;
+	uint32 _alphaColor;
+	virtual bool isReady();
+	virtual bool getExtendedFlag(const char *flagName);
+	virtual bool resetSoundPan();
+	virtual bool updateSounds();
+	bool updateOneSound(BaseSound *sound);
+	int _sFXVolume;
 
 	virtual bool handleMouseWheel(int delta);
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
@@ -88,10 +95,10 @@ public:
 	bool cleanup();
 	const char *getCaption(int caseVal = 1);
 	void setCaption(const char *caption, int caseVal = 1);
-	bool _editorSelected;
-	bool _editorAlwaysRegister;
+
 	bool _editorOnly;
 	bool _is3D;
+
 	DECLARE_PERSISTENT(BaseObject, BaseScriptHolder)
 	virtual bool showCursor();
 	BaseSprite *_cursor;
@@ -99,22 +106,18 @@ public:
 	BaseSprite *_activeCursor;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
-	bool _ready;
-	bool _registrable;
+
+	bool _movable;
 	bool _zoomable;
 	bool _shadowable;
-	Rect32 _rect;
-	bool _rectSet;
-	int _iD;
-	bool _movable;
-	BaseObject(BaseGame *inGame);
-	virtual ~BaseObject();
-	char *_caption[7];
-	char *_soundEvent;
 	int _posY;
 	int _posX;
+	bool _registrable;
+	char *_caption[7];
 	bool _saveState;
 
+	BaseObject(BaseGame *inGame);
+	virtual ~BaseObject();
 	// base
 	virtual bool update()  {
 		return STATUS_FAILED;

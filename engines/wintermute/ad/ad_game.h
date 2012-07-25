@@ -54,13 +54,9 @@ public:
 
 	virtual bool displayDebugInfo();
 
-
 	virtual bool initAfterLoad();
 	static void afterLoadScene(void *scene, void *data);
 
-	bool _smartItemCursor;
-
-	BaseArray<char *, char *> _speechDirs;
 	bool addSpeechDir(const char *dir);
 	bool removeSpeechDir(const char *dir);
 	char *findSpeechFile(char *StringID);
@@ -71,18 +67,13 @@ public:
 	virtual bool resetContent();
 	bool addItem(AdItem *item);
 	AdItem *getItemByName(const char *name);
-	BaseArray<AdItem *, AdItem *> _items;
+
 	AdObject *_inventoryOwner;
 	bool isItemTaken(char *itemName);
 	bool registerInventory(AdInventory *inv);
 	bool unregisterInventory(AdInventory *inv);
-
-	AdObject *_invObject;
-	BaseArray<AdInventory *, AdInventory *> _inventories;
 	virtual bool displayContent(bool update = true, bool displayAll = false);
-	char *_debugStartupScene;
-	char *_startupScene;
-	bool _initialScene;
+
 	bool gameResponseUsed(int ID);
 	bool addGameResponse(int ID);
 	bool resetResponse(int ID);
@@ -97,6 +88,7 @@ public:
 
 	AdSceneState *getSceneState(const char *filename, bool saving);
 	BaseViewport *_sceneViewport;
+
 	int _texItemLifeTime;
 	int _texWalkLifeTime;
 	int _texStandLifeTime;
@@ -106,12 +98,9 @@ public:
 
 	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
 	bool scheduleChangeScene(const char *filename, bool fadeIn);
-	char *_scheduledScene;
-	bool _scheduledFadeIn;
 	void setPrevSceneName(const char *name);
 	void setPrevSceneFilename(const char *name);
-	char *_prevSceneName;
-	char *_prevSceneFilename;
+
 	virtual bool loadGame(const char *filename);
 	AdItem *_selectedItem;
 	bool cleanup();
@@ -119,9 +108,9 @@ public:
 
 	void finishSentences();
 	bool showCursor();
+
 	TGameStateEx _stateEx;
-	AdResponseBox *_responseBox;
-	AdInventoryBox *_inventoryBox;
+
 	bool displaySentences(bool frozen);
 	void addSentence(AdSentence *sentence);
 	bool changeScene(const char *filename, bool fadeIn);
@@ -131,14 +120,8 @@ public:
 	bool initLoop();
 	AdGame();
 	virtual ~AdGame();
+
 	BaseArray<AdObject *, AdObject *> _objects;
-	BaseArray<AdSentence *, AdSentence *> _sentences;
-
-	BaseArray<AdSceneState *, AdSceneState *> _sceneStates;
-	BaseArray<char *, char *> _dlgPendingBranches;
-
-	BaseArray<AdResponseContext *, AdResponseContext *> _responsesBranch;
-	BaseArray<AdResponseContext *, AdResponseContext *> _responsesGame;
 
 	virtual bool loadFile(const char *filename);
 	virtual bool loadBuffer(byte *buffer, bool complete = true);
@@ -146,14 +129,37 @@ public:
 	bool loadItemsFile(const char *filename, bool merge = false);
 	bool loadItemsBuffer(byte *buffer, bool merge = false);
 
-
-	virtual bool ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
-
 	// scripting interface
 	virtual ScValue *scGetProperty(const char *name);
 	virtual bool scSetProperty(const char *name, ScValue *value);
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	bool validMouse();
+private:
+	virtual bool ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
+
+	AdObject *_invObject;
+	BaseArray<AdInventory *, AdInventory *> _inventories;
+	char *_scheduledScene;
+	bool _scheduledFadeIn;
+	char *_prevSceneName;
+	char *_prevSceneFilename;
+	char *_debugStartupScene;
+	char *_startupScene;
+	bool _initialScene;
+	bool _smartItemCursor;
+	BaseArray<char *, char *> _speechDirs;
+	BaseArray<AdItem *, AdItem *> _items;
+
+	BaseArray<AdSentence *, AdSentence *> _sentences;
+	
+	BaseArray<AdSceneState *, AdSceneState *> _sceneStates;
+	BaseArray<char *, char *> _dlgPendingBranches;
+	
+	BaseArray<AdResponseContext *, AdResponseContext *> _responsesBranch;
+	BaseArray<AdResponseContext *, AdResponseContext *> _responsesGame;
+
+	AdResponseBox *_responseBox;
+	AdInventoryBox *_inventoryBox;
 };
 
 } // end of namespace WinterMute

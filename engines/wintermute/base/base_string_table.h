@@ -37,9 +37,9 @@ namespace WinterMute {
 
 class BaseStringTable : public BaseClass {
 public:
-	const char *expandStatic(const char *string, bool forceExpand = false);
+	const char *expandStatic(const char *string);
 	bool loadFile(const char *filename, bool deleteAll = true);
-	void expand(char **str, bool forceExpand = false);
+	void expand(char **str);
 	bool addString(const char *key, const char *val, bool reportDuplicities = true);
 	BaseStringTable(BaseGame *inGame);
 	virtual ~BaseStringTable();

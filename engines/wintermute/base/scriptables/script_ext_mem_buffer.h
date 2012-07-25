@@ -46,8 +46,9 @@ public:
 	SXMemBuffer(BaseGame *inGame, void *buffer);
 	virtual ~SXMemBuffer();
 	virtual void *scToMemBuffer();
-	int _size;
 private:
+	int _size;
+
 	bool resize(int newSize);
 	void *_buffer;
 	void cleanup();

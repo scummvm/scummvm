@@ -105,54 +105,21 @@ public:
 	TTextEncoding _textEncoding;
 	bool _textRTL;
 
-	BaseSprite *_loadingIcon;
-	int _loadingIconX;
-	int _loadingIconY;
-	int _loadingIconPersistent;
-
 	virtual bool resetContent();
 
 	void DEBUG_DumpClassRegistry();
 	bool setWaitCursor(const char *filename);
-	char *_localSaveDir;
-	bool _saveDirChecked;
 
-	int _indicatorProgress;
-protected:
-	bool _indicatorDisplay;
-	uint32 _indicatorColor;
-	int _indicatorX;
-	int _indicatorY;
-	int _indicatorWidth;
-	int _indicatorHeight;
+	int _indicatorProgress; // TODO: Hide
 
-	bool _richSavedGames;
-	char *_savedGameExt;
-
-	char *_loadImageName;
-	char *_saveImageName;
-	int _saveImageX;
-	int _saveImageY;
-	int _loadImageX;
-	int _loadImageY;
-
-	BaseSurface *_saveLoadImage;
-	bool displayIndicator();
-
-	bool _reportTextureFormat;
-public:
 	int _thumbnailWidth;
 	int _thumbnailHeight;
 
-	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = NULL, void *data = NULL);
-	ENGINE_LOG_CALLBACK _engineLogCallback;
-	void *_engineLogCallbackData;
 	bool _editorMode;
-
-	bool _doNotExpandStrings;
 	void getOffset(int *offsetX, int *offsetY);
 	void setOffset(int offsetX, int offsetY);
 	int getSequence();
+
 	int _offsetY;
 	int _offsetX;
 	float _offsetPercentX;
@@ -181,20 +148,16 @@ public:
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;
 	BaseGame();
-
 	virtual ~BaseGame();
+
 	void DEBUG_DebugDisable();
 	void DEBUG_DebugEnable(const char *filename = NULL);
 	bool _debugDebugMode;
-	bool _debugAbsolutePathWarning;
 
 	void *_debugLogFile;
 	int _sequence;
 	virtual bool loadFile(const char *filename);
 	virtual bool loadBuffer(byte *buffer, bool complete = true);
-	BaseArray<BaseQuickMsg *, BaseQuickMsg *> _quickMessages;
-	BaseArray<UIWindow *, UIWindow *> _windows;
-	BaseArray<BaseViewport *, BaseViewport *> _viewportStack;
 
 	int _viewportSP;
 
@@ -203,22 +166,8 @@ public:
 	int _settingsResHeight;
 	char *_settingsGameFile;
 	bool _suppressScriptErrors;
-	bool _mouseLeftDown;
-protected:
-	bool _mouseRightDown;
-	bool _mouseMidlleDown;
-	bool _settingsRequireAcceleration;
-	bool _settingsAllowWindowed;
-	bool _settingsAllowAdvanced;
-	bool _settingsAllowAccessTab;
-	bool _settingsAllowAboutTab;
-	bool _settingsRequireSound;
-	bool _settingsAllowDesktopRes;
-	int _settingsTLMode;
-	BaseFader *_fader;
-	virtual bool invalidateDeviceObjects();
-	virtual bool restoreDeviceObjects();
-public:
+	bool _mouseLeftDown; // TODO: Hide
+
 	virtual bool ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
 	// scripting interface
 	virtual ScValue *scGetProperty(const char *name);
@@ -228,68 +177,33 @@ public:
 	// compatibility bits
 	bool _compatKillMethodThreads;
 
-private:
-	// FPS stuff
-	uint32 _lastTime;
-	uint32 _fpsTime;
-	uint32 _framesRendered;
-	Common::String _gameId;
-public:
 	const char* getGameId() { return _gameId.c_str(); }
 	void setGameId(const Common::String& gameId) { _gameId = gameId; }
 	uint32 _surfaceGCCycleTime;
-	bool _smartCache;
-	bool _videoSubtitles;
-	bool _subtitles;
-	uint32 _musicStartTime[NUM_MUSIC_CHANNELS];
-	bool _compressedSavegames;
+	bool _smartCache; // RO
+	bool _subtitles; // RO
+
 	int _scheduledLoadSlot;
 	bool _loading;
-	bool _personalizedSave;
-	bool emptySaveSlot(int slot);
-	bool isSaveSlotUsed(int slot);
-	bool getSaveSlotDescription(int slot, char *buffer);
-	bool getSaveSlotFilename(int slot, char *buffer);
-	void setWindowTitle();
+
 	virtual bool handleMouseWheel(int delta);
 	bool _quitting;
 	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
 
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual void handleKeyRelease(Common::Event *event);
-protected:
-	int _freezeLevel;
-public:
+
 	bool unfreeze();
 	bool freeze(bool includingMusic = true);
 	bool focusWindow(UIWindow *window);
-	VideoPlayer *_videoPlayer;
-	VideoTheoraPlayer *_theoraPlayer;
 	bool _loadInProgress;
 	UIWindow *_focusedWindow;
 	bool _editorForceScripts;
-protected:
-	static void afterLoadRegion(void *region, void *data);
-	static void afterLoadSubFrame(void *subframe, void *data);
-	static void afterLoadSound(void *sound, void *data);
-	static void afterLoadFont(void *font, void *data);
-	static void afterLoadScript(void *script, void *data);
-public:
+
 	static void invalidateValues(void *value, void *data);
 
 	bool loadSettings(const char *filename);
-	bool resumeMusic(int channel);
-	bool setMusicStartTime(int channel, uint32 time);
-	bool pauseMusic(int channel);
-	bool stopMusic(int channel);
-	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
-	BaseSound *_music[NUM_MUSIC_CHANNELS];
-	bool _musicCrossfadeRunning;
-	bool _musicCrossfadeSwap;
-	uint32 _musicCrossfadeStartTime;
-	uint32 _musicCrossfadeLength;
-	int _musicCrossfadeChannel1;
-	int _musicCrossfadeChannel2;
+
 	bool displayWindows(bool inGame = false);
 	BaseRegistry *_registry;
 	bool _useD3D;
@@ -298,10 +212,9 @@ public:
 	virtual bool loadGame(const char *filename);
 	virtual bool saveGame(int slot, const char *desc, bool quickSave = false);
 	virtual bool showCursor();
-
-	BaseSprite *_cursorNoninteractive;
+	
 	BaseObject *_activeObject;
-	BaseKeyboardState *_keyboardState;
+
 	bool _interactive;
 	TGameState _state;
 	TGameState _origState;
@@ -322,14 +235,7 @@ public:
 	void quickMessage(const char *text);
 	void quickMessageForm(char *fmt, ...);
 	bool displayQuickMsg();
-	uint32 _fps;
-	bool updateMusicCrossfade();
 
-	bool isVideoPlaying();
-	bool stopVideo();
-
-	BaseArray<BaseObject *, BaseObject *> _regObjects;
-public:
 	virtual bool displayContent(bool update = true, bool displayAll = false);
 	virtual bool displayContentSimple();
 	bool _forceNonStreamedSounds;
@@ -350,13 +256,114 @@ public:
 	BaseSaveThumbHelper *_cachedThumbnail;
 	AnsiString getDataDir();
 	void addMem(int bytes);
-
 	bool _touchInterface;
 	bool _constrainedMemory;
-	AnsiString getDeviceType() const;
+protected:
+	BaseSprite *_loadingIcon;
+	int _loadingIconX;
+	int _loadingIconY;
+	int _loadingIconPersistent;
 
+	BaseFader *_fader;
+
+	bool _indicatorDisplay;
+	bool displayIndicator();
+
+	int _freezeLevel;
+	VideoPlayer *_videoPlayer;
+	VideoTheoraPlayer *_theoraPlayer;
+	static void afterLoadRegion(void *region, void *data);
 private:
+	static void afterLoadSubFrame(void *subframe, void *data);
+	static void afterLoadSound(void *sound, void *data);
+	static void afterLoadFont(void *font, void *data);
+	static void afterLoadScript(void *script, void *data);
+	bool _mouseRightDown;
+	bool _mouseMidlleDown;
+	bool _settingsRequireAcceleration;
+	bool _settingsAllowWindowed;
+	bool _settingsAllowAdvanced;
+	bool _settingsAllowAccessTab;
+	bool _settingsAllowAboutTab;
+	bool _settingsRequireSound;
+	bool _settingsAllowDesktopRes;
+	int _settingsTLMode;
+	virtual bool invalidateDeviceObjects();
+	virtual bool restoreDeviceObjects();
+
+	uint32 _indicatorColor;
+	int _indicatorX;
+	int _indicatorY;
+	int _indicatorWidth;
+	int _indicatorHeight;
+	
+	char *_localSaveDir;
+	bool _saveDirChecked;
+	bool _richSavedGames;
+	char *_savedGameExt;
+	
+	char *_loadImageName;
+	char *_saveImageName;
+	int _saveImageX;
+	int _saveImageY;
+	int _loadImageX;
+	int _loadImageY;
+	
+	BaseSurface *_saveLoadImage;
+	
+	bool _reportTextureFormat;
+
+	// FPS stuff
+	uint32 _lastTime;
+	uint32 _fpsTime;
+	uint32 _framesRendered;
+	Common::String _gameId;
+
+	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = NULL, void *data = NULL);
+	ENGINE_LOG_CALLBACK _engineLogCallback;
+	void *_engineLogCallbackData;
+
+	bool _videoSubtitles;
+	uint32 _musicStartTime[NUM_MUSIC_CHANNELS];
+	bool _compressedSavegames;
+
+	bool _personalizedSave;
+	
+	bool emptySaveSlot(int slot);
+	bool isSaveSlotUsed(int slot);
+	bool getSaveSlotDescription(int slot, char *buffer);
+	bool getSaveSlotFilename(int slot, char *buffer);
+	void setWindowTitle();
+
+	bool resumeMusic(int channel);
+	bool setMusicStartTime(int channel, uint32 time);
+	bool pauseMusic(int channel);
+	bool stopMusic(int channel);
+	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
+	BaseSound *_music[NUM_MUSIC_CHANNELS];
+	bool _musicCrossfadeRunning;
+	bool _musicCrossfadeSwap;
+	uint32 _musicCrossfadeStartTime;
+	uint32 _musicCrossfadeLength;
+	int _musicCrossfadeChannel1;
+	int _musicCrossfadeChannel2;
+
+	BaseSprite *_cursorNoninteractive;
+	BaseKeyboardState *_keyboardState;
+
+	uint32 _fps;
+	bool updateMusicCrossfade();
+	
+	bool isVideoPlaying();
+	bool stopVideo();
+
 	BaseDebugger *_debugMgr;
+	BaseArray<BaseQuickMsg *, BaseQuickMsg *> _quickMessages;
+	BaseArray<UIWindow *, UIWindow *> _windows;
+	BaseArray<BaseViewport *, BaseViewport *> _viewportStack;
+	BaseArray<BaseObject *, BaseObject *> _regObjects;
+
+	AnsiString getDeviceType() const;
 
 	struct LastClickInfo {
 		LastClickInfo() {

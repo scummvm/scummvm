@@ -131,7 +131,7 @@ char *AdNodeState::getCaption(int caseVal) {
 bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool saving) {
 	if (!entity) return STATUS_FAILED;
 
-	// hack!
+	// HACK!
 	if (this->_gameRef != entity->_gameRef) this->_gameRef = entity->_gameRef;
 
 	if (saving) {

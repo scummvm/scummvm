@@ -88,7 +88,7 @@ public:
 	ScValue *getProp(const char *name);
 	BaseScriptable *_valNative;
 	ScValue *_valRef;
-protected:
+private:
 	bool _valBool;
 	int _valInt;
 	double _valFloat;

@@ -104,7 +104,6 @@ BaseGame::BaseGame(): BaseObject(this) {
 
 	_debugLogFile = NULL;
 	_debugDebugMode = false;
-	_debugAbsolutePathWarning = true;
 	_debugShowFPS = false;
 
 	_systemFont = NULL;
@@ -180,7 +179,7 @@ BaseGame::BaseGame(): BaseObject(this) {
 	_compressedSavegames = true;
 
 	_editorMode = false;
-	_doNotExpandStrings = false;
+	//_doNotExpandStrings = false;
 
 	_engineLogCallback = NULL;
 	_engineLogCallbackData = NULL;
@@ -3241,7 +3240,6 @@ bool BaseGame::loadGame(const char *filename) {
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
 	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
-	_debugAbsolutePathWarning = false;
 	if (DID_FAIL(ret = pm->initLoad(filename))) goto load_finish;
 
 	//if(DID_FAIL(ret = cleanup())) goto load_finish;
@@ -3259,7 +3257,6 @@ bool BaseGame::loadGame(const char *filename) {
 	getDebugMgr()->onGameInit();
 
 load_finish:
-	_debugAbsolutePathWarning = true;
 
 	_indicatorDisplay = false;
 	delete pm;
@@ -3555,7 +3552,6 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_activeObject));
 	persistMgr->transfer(TMEMBER(_capturedObject));
 	persistMgr->transfer(TMEMBER(_cursorNoninteractive));
-	persistMgr->transfer(TMEMBER(_doNotExpandStrings));
 	persistMgr->transfer(TMEMBER(_editorMode));
 	persistMgr->transfer(TMEMBER(_fader));
 	persistMgr->transfer(TMEMBER(_freezeLevel));
@@ -3838,14 +3834,11 @@ bool BaseGame::getSaveSlotDescription(int slot, char *buffer) {
 	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	if (!pm) return STATUS_FAILED;
 
-	_debugAbsolutePathWarning = false;
 	if (DID_FAIL(pm->initLoad(filename))) {
-		_debugAbsolutePathWarning = true;
 		delete pm;
 		return STATUS_FAILED;
 	}
 
-	_debugAbsolutePathWarning = true;
 	strcpy(buffer, pm->_savedDescription);
 	delete pm;
 
