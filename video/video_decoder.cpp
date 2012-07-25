@@ -556,6 +556,14 @@ const AdvancedVideoDecoder::Track *AdvancedVideoDecoder::getTrack(uint track) co
 	return _tracks[track];
 }
 
+bool AdvancedVideoDecoder::endOfVideoTracks() const {
+	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo && !(*it)->endOfTrack())
+			return false;
+
+	return true;
+}
+
 AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack() {
 	VideoTrack *bestTrack = 0;
 	uint32 bestTime = 0xFFFFFFFF;

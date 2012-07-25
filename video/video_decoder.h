@@ -656,6 +656,14 @@ protected:
 	 */
 	const Track *getTrack(uint track) const;
 
+	/**
+	 * Find out if all video tracks have finished
+	 *
+	 * This is useful if one wants to figure out if they need to buffer all
+	 * remaining audio in a file.
+	 */
+	bool endOfVideoTracks() const;
+
 private:
 	// Tracks owned by this AdvancedVideoDecoder
 	typedef Common::Array<Track *> TrackList;
