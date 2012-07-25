@@ -138,8 +138,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 
 		if (!hdr._masterIndex) pkg->_cd = 0; // override CD to fixed disk
 		_packages.push_back(pkg);
-		
-		
+
 		// read file entries
 		uint32 numFiles = stream->readUint32LE();
 		
@@ -158,10 +157,6 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 				}
 			}
 			debugC(kWinterMuteDebugFileAccess, "Package contains %s", name);
-			warning( "Package contains %s", name);
-			// some old version of ProjectMan writes invalid directory entries
-			// so at least prevent strupr from corrupting memory
-			name[nameLength - 1] = '\0';
 			
 			Common::String upcName = name;
 			upcName.toUppercase();
@@ -178,7 +173,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 				timeDate1 = stream->readUint32LE();
 				timeDate2 = stream->readUint32LE();
 			}
-			_filesIter = _files.find(upcName.c_str());
+			_filesIter = _files.find(upcName);
 			if (_filesIter == _files.end()) {
 				BaseFileEntry *fileEntry = new BaseFileEntry();
 				fileEntry->_package = pkg;
@@ -187,7 +182,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 				fileEntry->_compressedLength = compLength;
 				fileEntry->_flags = flags;
 				
-				_files[upcName.c_str()] = Common::ArchiveMemberPtr(fileEntry);
+				_files[upcName] = Common::ArchiveMemberPtr(fileEntry);
 			} else {
 				// current package has higher priority than the registered
 				// TODO: This cast might be a bit ugly.
