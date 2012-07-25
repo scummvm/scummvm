@@ -160,6 +160,9 @@ public:
 	DECLARE_FUNCTION(function30)
 
 	DECLARE_NULL_FUNCTION()
+
+private:
+	bool timeCheckCallbackCompartment(TimeValue timeValue, uint &parameter, byte callback, ObjectIndex compartment, EntityPosition position, const char* sequenceSuffix);
 };
 
 } // End of namespace LastExpress

@@ -972,7 +972,12 @@ IMPLEMENT_FUNCTION(26, Rebecca, function26)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_3(kTime1224000, params->param2, 1, setup_updatePosition, "118H", kCarRestaurant, 52);
+		if (getState()->time > kTime1224000 && !params->param2) {
+			params->param2 = 1;
+			setCallback(1);
+			setup_updatePosition("118H", kCarRestaurant, 52);
+			break;
+		}
 
 		if (params->param1) {
 			if (!Entity::updateParameter(params->param3, getState()->timeTicks, 90))

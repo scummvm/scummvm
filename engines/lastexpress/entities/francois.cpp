@@ -1007,10 +1007,11 @@ label_callback_5:
 		}
 
 label_callback_6:
-		TIME_CHECK_CALLBACK_3(kTime1782000, params->param6, 7, setup_function14, kObjectCompartmentC, kPosition_6470, "c");
+		if (timeCheckCallbackCompartment(kTime1782000, params->param6, 7, kObjectCompartmentC, kPosition_6470, "c"))
+			break;
 
 label_callback_7:
-		TIME_CHECK_CALLBACK_3(kTime1813500, params->param7, 8, setup_function14, kObjectCompartmentF, kPosition_4070, "f");
+		timeCheckCallbackCompartment(kTime1813500, params->param7, 8, kObjectCompartmentF, kPosition_4070, "f");
 		break;
 
 	case kActionCallback:
@@ -1136,13 +1137,15 @@ label_callback_11:
 				}
 
 label_callback_12:
-				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAM(1, 5), 13, setup_function14, kObjectCompartmentE, kPosition_4840, "e");
+				if (timeCheckCallbackCompartment(kTime2040300, CURRENT_PARAM(1, 5), 13, kObjectCompartmentE, kPosition_4840, "e"))
+					break;
 
 label_callback_13:
-				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAM(1, 6), 14, setup_function14, kObjectCompartmentF, kPosition_4070, "f");
+				if (timeCheckCallbackCompartment(kTime2040300, CURRENT_PARAM(1, 6), 14, kObjectCompartmentF, kPosition_4070, "f"))
+					break;
 
 label_callback_14:
-				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAM(1, 7), 15, setup_function14, kObjectCompartmentB, kPosition_7500, "b");
+				timeCheckCallbackCompartment(kTime2040300, CURRENT_PARAM(1, 7), 15, kObjectCompartmentB, kPosition_7500, "b");
 			}
 		}
 		break;
@@ -1297,5 +1300,22 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(31, Francois)
+
+
+//////////////////////////////////////////////////////////////////////////
+// Helper functions
+//////////////////////////////////////////////////////////////////////////
+bool Francois::timeCheckCallbackCompartment(TimeValue timeValue, uint &parameter, byte callback, ObjectIndex compartment, EntityPosition position, const char* sequenceSuffix) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		setCallback(callback);
+		setup_function14(compartment, position, sequenceSuffix);
+
+		return true;
+	}
+
+	return false;
+}
+
 
 } // End of namespace LastExpress

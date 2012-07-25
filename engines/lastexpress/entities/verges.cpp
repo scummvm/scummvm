@@ -1280,7 +1280,12 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_3(kTime2263500, params->param1, 5, setup_function10, kCarRedSleeping, kPosition_9460, "TRA3006");
+		if (getState()->time > kTime2263500 && !params->param1) {
+			params->param1 = 1;
+			setCallback(5);
+			setup_function10(kCarRedSleeping, kPosition_9460, "TRA3006");
+			break;
+		}
 		break;
 
 	case kActionDefault:
