@@ -94,6 +94,14 @@ struct SavePoint;
 #define ENTITY_PARAM(index, id) \
 	((EntityData::EntityParametersIIII*)_data->getParameters(8, index))->param##id
 
+//////////////////////////////////////////////////////////////////////////
+// Misc
+//////////////////////////////////////////////////////////////////////////
+#define RESET_ENTITY_STATE(entity, class, function) \
+	getEntities()->resetState(entity); \
+	((class *)getEntities()->get(entity))->function();
+
+
 
 //////////////////////////////////////////////////////////////////////////
 class EntityData : Common::Serializable {
