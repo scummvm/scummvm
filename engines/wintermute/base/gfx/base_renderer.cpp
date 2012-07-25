@@ -112,12 +112,6 @@ void BaseRenderer::deleteRectList() {
 }
 
 //////////////////////////////////////////////////////////////////////
-bool BaseRenderer::flip() {
-	return STATUS_FAILED;
-}
-
-
-//////////////////////////////////////////////////////////////////////
 bool BaseRenderer::initRenderer(int width, int height, bool windowed) {
 	return STATUS_FAILED;
 }
@@ -125,12 +119,6 @@ bool BaseRenderer::initRenderer(int width, int height, bool windowed) {
 
 //////////////////////////////////////////////////////////////////////
 void BaseRenderer::onWindowChange() {
-}
-
-
-//////////////////////////////////////////////////////////////////////
-bool BaseRenderer::fill(byte r, byte g, byte b, Common::Rect *rect) {
-	return STATUS_FAILED;
 }
 
 
@@ -171,18 +159,6 @@ bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int wi
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::fade(uint16 alpha) {
-	return STATUS_FAILED;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::fadeToColor(uint32 color, Common::Rect *rect) {
-	return STATUS_FAILED;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setViewport(int left, int top, int right, int bottom) {
 	return STATUS_FAILED;
 }
@@ -200,12 +176,6 @@ bool BaseRenderer::setViewport(Rect32 *rect) {
 	                   rect->top + _drawOffsetY,
 	                   rect->right + _drawOffsetX,
 	                   rect->bottom + _drawOffsetY);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-BaseImage *BaseRenderer::takeScreenshot() {
-	return NULL;
 }
 
 

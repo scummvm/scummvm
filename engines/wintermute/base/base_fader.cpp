@@ -85,8 +85,9 @@ bool BaseFader::update() {
 bool BaseFader::display() {
 	if (!_active) return STATUS_OK;
 
-	if (_currentAlpha > 0x00) return _gameRef->_renderer->fadeToColor(BYTETORGBA(_red, _green, _blue, _currentAlpha));
-	else return STATUS_OK;
+	if (_currentAlpha > 0x00)
+		_gameRef->_renderer->fadeToColor(_red, _green, _blue, _currentAlpha);
+	return STATUS_OK;
 }
 
 

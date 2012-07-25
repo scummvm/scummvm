@@ -142,7 +142,15 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	if (!_visible)
 		return STATUS_OK;
 
-	if (_fadeBackground) _gameRef->_renderer->fadeToColor(_fadeColor);
+	if (_fadeBackground) {
+		Graphics::PixelFormat format = _gameRef->_renderer->getPixelFormat();
+		byte fadeR, fadeG, fadeB, fadeA;
+		// First convert from the internal format to the screen-format
+		uint32 fadeColor = format.ARGBToColor(RGBCOLGetA(_fadeColor), RGBCOLGetR(_fadeColor), RGBCOLGetG(_fadeColor), RGBCOLGetB(_fadeColor));
+		// Then get components
+		format.colorToARGB(fadeColor, fadeA, fadeR, fadeG, fadeB);
+		_gameRef->_renderer->fadeToColor(fadeR, fadeG, fadeB, fadeA);
+	}
 
 	if (_dragging) {
 		_posX += (_gameRef->_mousePos.x - _dragFrom.x);

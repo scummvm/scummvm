@@ -62,14 +62,14 @@ public:
 	BaseRenderOSystem(BaseGame *inGame);
 	~BaseRenderOSystem();
 
-	const char *getName();
+	Common::String getName() const;
 
 	bool initRenderer(int width, int height, bool windowed);
 	bool flip();
 	bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL);
-
-	bool fade(uint16 alpha);
-	bool fadeToColor(uint32 color, Common::Rect *rect = NULL);
+	Graphics::PixelFormat getPixelFormat() const;
+	void fade(uint16 alpha);
+	void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = NULL);
 
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
 
@@ -109,7 +109,6 @@ private:
 	uint32 _drawNum;
 	Common::Rect _renderRect;
 	Graphics::Surface *_renderSurface;
-	AnsiString _name;
 
 	int _borderLeft;
 	int _borderTop;

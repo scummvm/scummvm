@@ -40,6 +40,12 @@ class BaseImage;
 class BaseActiveRect;
 class BaseObject;
 class BaseSurface;
+
+/**
+ * @class BaseRenderer a common interface for the rendering portion of WME
+ * this interface is mainly intended to wrap away any differencies between
+ * software-rendering/hardware-rendering.
+ */
 class BaseRenderer: public BaseClass {
 public:
 	int _realWidth;
@@ -48,12 +54,34 @@ public:
 	int _drawOffsetY;
 
 	virtual void dumpData(const char *filename) {};
-	virtual BaseImage *takeScreenshot();
+	/**
+	 * Take a screenshot of the current screenstate
+	 *
+	 * @return a BaseImage containing the current screen-buffer.
+	 */
+	virtual BaseImage *takeScreenshot() = 0;
 	virtual bool setViewport(int left, int top, int right, int bottom);
-	virtual bool setViewport(Rect32 *Rect);
+	virtual bool setViewport(Rect32 *rect);
 	virtual bool setScreenViewport();
-	virtual bool fade(uint16 Alpha);
-	virtual bool fadeToColor(uint32 Color, Common::Rect *rect = NULL);
+
+	virtual Graphics::PixelFormat getPixelFormat() const = 0;
+	/**
+	 * Fade the screen to black
+	 *
+	 * @param alpha amount to fade by (alpha value of black)
+	 * @return
+	 */
+	virtual void fade(uint16 alpha) = 0;
+	/**
+	 * Fade a portion of the screen to a specific color
+	 * 
+	 * @param r the red component to fade too.
+	 * @param g the green component to fade too.
+	 * @param b the blue component to fade too.
+	 * @param a the alpha component to fade too.
+	 * @param rect the portion of the screen to fade (if NULL, the entire screen will be faded).
+	 */
+	virtual void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = NULL) = 0;
 	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
 	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1);
 	BaseRenderer(BaseGame *inGame = NULL);
@@ -63,17 +91,33 @@ public:
 	};
 
 	virtual bool windowedBlt();
-	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL);
+	/**
+	 * Fill a portion of the screen with a specified color
+	 * 
+	 * @param r the red component to fill with.
+	 * @param g the green component to fill with.
+	 * @param b the blue component to fill with.
+	 */
+	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL) = 0;
 	virtual void onWindowChange();
 	virtual bool initRenderer(int width, int height, bool windowed);
-	virtual bool flip();
+	/**
+	 * Flip the backbuffer onto the screen-buffer
+	 * The screen will NOT be updated before calling this function.
+	 *
+	 * @return true if successfull, false on error.
+	 */
+	virtual bool flip() = 0;
 	virtual void initLoop();
 	virtual bool setup2D(bool force = false);
 	virtual bool setupLines();
 
-	virtual const char *getName() {
-		return "";
-	};
+	/**
+	 * Get the name of the current renderer
+	 *
+	 * @return the name of the renderer.
+	 */
+	virtual Common::String getName() const = 0;
 	virtual bool displayDebugInfo() {
 		return STATUS_FAILED;
 	};
@@ -88,6 +132,14 @@ public:
 		return 1.0f;
 	}
 
+	/**
+	 * Create a Surface fit for use with the renderer.
+	 * As diverse implementations of BaseRenderer might have different solutions for storing surfaces
+	 * this allows for a common interface for creating surface-handles. (Mostly usefull to ease future
+	 * implementation of hw-accelerated rendering, or readding 3D-support at some point).
+	 *
+	 * @return a surface that can be used with this renderer
+	 */
 	virtual BaseSurface *createSurface() = 0;
 
 	bool clipCursor();

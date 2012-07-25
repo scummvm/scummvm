@@ -284,14 +284,14 @@ bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderOSystem::fade(uint16 Alpha) {
-	uint32 dwAlpha = 255 - Alpha;
-	return fadeToColor(dwAlpha << 24);
+void BaseRenderOSystem::fade(uint16 alpha) {
+	byte dwAlpha = (byte)(255 - alpha);
+	return fadeToColor(0, 0, 0, dwAlpha);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderOSystem::fadeToColor(uint32 Color, Common::Rect *rect) {
+void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect) {
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
@@ -318,11 +318,6 @@ bool BaseRenderOSystem::fadeToColor(uint32 Color, Common::Rect *rect) {
 	}
 	modTargetRect(&fillRect);
 
-	byte r = RGBCOLGetR(Color);
-	byte g = RGBCOLGetG(Color);
-	byte b = RGBCOLGetB(Color);
-	byte a = RGBCOLGetA(Color);
-
 	//TODO: This is only here until I'm sure about the final pixelformat
 	uint32 col = _renderSurface->format.ARGBToColor(a, r, g, b);
 	if (_disableDirtyRects)
@@ -342,8 +337,10 @@ bool BaseRenderOSystem::fadeToColor(uint32 Color, Common::Rect *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 	//SDL_RenderFillRect(_renderer, &fillRect);
+}
 
-	return STATUS_OK;
+Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
+	return _renderSurface->format;
 }
 
 void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
@@ -589,17 +586,8 @@ BaseImage *BaseRenderOSystem::takeScreenshot() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseRenderOSystem::getName() {
-	if (_name.empty()) {
-#if 0
-		if (_renderer) {
-			SDL_RendererInfo info;
-			SDL_GetRendererInfo(_renderer, &info);
-			_name = AnsiString(info.name);
-		}
-#endif
-	}
-	return _name.c_str();
+Common::String BaseRenderOSystem::getName() const {
+	return "ScummVM-OSystem-renderer";
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -611,10 +599,6 @@ bool BaseRenderOSystem::setViewport(int left, int top, int right, int bottom) {
 	rect.right = (int16)((right - left) * _ratioX);
 	rect.bottom = (int16)((bottom - top) * _ratioY);
 
-	// TODO fix this once viewports work correctly in SDL/landscape
-#ifndef __IPHONEOS__
-	//SDL_RenderSetViewport(GetSdlRenderer(), &rect);
-#endif
 	return STATUS_OK;
 }
 

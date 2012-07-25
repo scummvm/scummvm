@@ -52,12 +52,12 @@ public:
 	const byte *getPalette() const {
 		return _palette;
 	}
-	byte getAlphaAt(int x, int y);
-	bool writeBMPToStream(Common::WriteStream *stream);
+	byte getAlphaAt(int x, int y) const;
+	bool writeBMPToStream(Common::WriteStream *stream) const;
 	bool resize(int newWidth, int newHeight);
-	bool saveBMPFile(const char *filename);
+	bool saveBMPFile(const char *filename) const;
 	bool copyFrom(BaseImage *origImage, int newWidth = 0, int newHeight = 0);
-	void copyFrom(Graphics::Surface *surface);
+	void copyFrom(const Graphics::Surface *surface);
 private:
 	Common::String _filename;
 	Graphics::ImageDecoder *_decoder;

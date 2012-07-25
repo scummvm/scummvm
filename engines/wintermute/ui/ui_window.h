@@ -38,6 +38,7 @@ namespace WinterMute {
 class UIButton;
 class BaseViewport;
 class UIWindow : public UIObject {
+	uint32 _fadeColor;
 public:
 	bool getWindowObjects(BaseArray<UIObject *, UIObject *> &Objects, bool InteractiveOnly);
 
@@ -49,7 +50,7 @@ public:
 	bool _inGame;
 	bool _isMenu;
 	bool _fadeBackground;
-	uint32 _fadeColor;
+
 	virtual bool handleMouseWheel(int delta);
 	UIWindow *_shieldWindow;
 	UIButton *_shieldButton;

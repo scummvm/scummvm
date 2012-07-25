@@ -92,7 +92,7 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	return true;
 }
 
-byte BaseImage::getAlphaAt(int x, int y) {
+byte BaseImage::getAlphaAt(int x, int y) const {
 	if (!_surface) return 0xFF;
 	uint32 color = *(uint32 *)_surface->getBasePtr(x, y);
 	byte r, g, b, a;
@@ -100,19 +100,20 @@ byte BaseImage::getAlphaAt(int x, int y) {
 	return a;
 }
 
-void BaseImage::copyFrom(Graphics::Surface *surface) {
+void BaseImage::copyFrom(const Graphics::Surface *surface) {
 	_surface = _deletableSurface = new Graphics::Surface();
 	_deletableSurface->copyFrom(*surface);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseImage::saveBMPFile(const char *filename) {
+bool BaseImage::saveBMPFile(const char *filename) const {
 #if 0
 	if (!_bitmap) return STATUS_FAILED;
 
 	if (FreeImage_Save(FIF_BMP, _bitmap, filename)) return STATUS_OK;
 	else return STATUS_FAILED;
 #endif
+	warning("BaseImage::saveBMPFile - stubbed"); // TODO
 	return false;
 }
 
@@ -138,7 +139,7 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseImage::writeBMPToStream(Common::WriteStream *stream) {
+bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 	if (!_surface) return false;
 
 	/* The following is just copied over and inverted to write-ops from the BMP-decoder */

@@ -4318,7 +4318,7 @@ bool BaseGame::displayDebugInfo() {
 			sprintf(str, "Mode: %dx%d windowed", _renderer->_width, _renderer->_height);
 
 		strcat(str, " (");
-		strcat(str, _renderer->getName());
+		strcat(str, _renderer->getName().c_str());
 		strcat(str, ")");
 		_systemFont->drawText((byte *)str, 0, 0, _renderer->_width, TAL_RIGHT);
 
