@@ -144,7 +144,7 @@ public:
 
 	~Cnv() {
 		if (_freeData)
-			delete []_data;
+			delete[] _data;
 	}
 
 	byte* getFramePtr(uint16 index) {
