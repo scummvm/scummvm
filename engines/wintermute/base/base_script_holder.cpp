@@ -72,7 +72,7 @@ bool BaseScriptHolder::cleanup() {
 //////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::setFilename(const char *filename) {
 	if (_filename != NULL) {
-		delete [] _filename;
+		delete[] _filename;
 		_filename = NULL;
 	}
 	if (filename == NULL)

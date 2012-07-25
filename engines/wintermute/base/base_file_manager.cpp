@@ -101,7 +101,7 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 	if (file->read(buffer, (uint32)file->size()) != (uint32)file->size()) {
 		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Error reading file '%s'", filename.c_str());
 		closeFile(file);
-		delete [] buffer;
+		delete[] buffer;
 		return NULL;
 	};
 

@@ -66,7 +66,7 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 
 	// get slot number from name
 	int slot = atoi(tempFilename);
-	delete [] tempFilename;
+	delete[] tempFilename;
 
 	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	Common::String slotFilename = pm->getFilenameForSlot(slot);

@@ -127,7 +127,7 @@ byte *ScEngine::loadFile(void *data, char *filename, uint32 *size) {
 
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::closeFile(void *data, byte *buffer) {
-	delete [] buffer;
+	delete[] buffer;
 }
 
 
@@ -201,7 +201,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 	} else {
 		if (!_compilerAvailable) {
 			_gameRef->LOG(0, "ScEngine::GetCompiledScript - script '%s' needs to be compiled but compiler is not available", filename);
-			delete [] buffer;
+			delete[] buffer;
 			return NULL;
 		}
 		// This code will never be called, since _compilerAvailable is const false.
@@ -235,7 +235,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 
 
 	// cleanup
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }

@@ -255,7 +255,7 @@ bool BaseFontBitmap::loadFile(const char *filename) {
 
 	if (DID_FAIL(ret = loadBuffer(buffer))) _gameRef->LOG(0, "Error parsing FONT file '%s'", filename);
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }

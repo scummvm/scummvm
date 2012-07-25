@@ -122,7 +122,7 @@ ScValue::ScValue(BaseGame *inGame, const char *val): BaseClass(inGame) {
 void ScValue::cleanup(bool ignoreNatives) {
 	deleteProps();
 
-	if (_valString) delete [] _valString;
+	if (_valString) delete[] _valString;
 
 	if (!ignoreNatives) {
 		if (_valNative && !_persistent) {
@@ -425,7 +425,7 @@ void ScValue::setString(const Common::String &val) {
 //////////////////////////////////////////////////////////////////////////
 void ScValue::setStringVal(const char *val) {
 	if (_valString) {
-		delete [] _valString;
+		delete[] _valString;
 		_valString = NULL;
 	}
 
@@ -767,7 +767,7 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 			persistMgr->transfer("", &val);
 
 			_valObject[str] = val;
-			delete [] str;
+			delete[] str;
 		}
 	}
 

@@ -64,7 +64,7 @@ bool AdScaleLevel::loadFile(const char *filename) {
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing SCALE_LEVEL file '%s'", filename);
 
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }

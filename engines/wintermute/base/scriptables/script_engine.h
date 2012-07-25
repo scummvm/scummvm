@@ -54,7 +54,7 @@ public:
 		};
 
 		~CScCachedScript() {
-			if (_buffer) delete [] _buffer;
+			if (_buffer) delete[] _buffer;
 		};
 
 		uint32 _timestamp;

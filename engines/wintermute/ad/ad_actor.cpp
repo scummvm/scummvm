@@ -132,7 +132,7 @@ bool AdActor::loadFile(const char *filename) {
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ACTOR file '%s'", filename);
 
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }
@@ -1287,7 +1287,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 		break;
 		}
 	}
-	delete [] fileBuffer;
+	delete[] fileBuffer;
 	return Ret;
 }
 

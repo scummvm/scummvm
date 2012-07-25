@@ -514,7 +514,7 @@ bool AdScene::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }

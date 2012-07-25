@@ -106,7 +106,7 @@ bool UIButton::loadFile(const char *filename) {
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing BUTTON file '%s'", filename);
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }

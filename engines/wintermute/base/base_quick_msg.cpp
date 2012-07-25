@@ -41,7 +41,7 @@ BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text): BaseClass(inGame
 
 //////////////////////////////////////////////////////////////////////////
 BaseQuickMsg::~BaseQuickMsg() {
-	if (_text) delete [] _text;
+	if (_text) delete[] _text;
 }
 
 

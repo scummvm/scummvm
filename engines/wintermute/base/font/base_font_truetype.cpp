@@ -419,7 +419,7 @@ bool BaseFontTT::loadFile(const char *filename) {
 
 	if (DID_FAIL(ret = loadBuffer(buffer))) _gameRef->LOG(0, "Error parsing TTFONT file '%s'", filename);
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }

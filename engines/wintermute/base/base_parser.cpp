@@ -50,7 +50,7 @@ BaseParser::BaseParser(BaseGame *inGame): BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 BaseParser::~BaseParser() {
-	if (_whiteSpace != NULL) delete [] _whiteSpace;
+	if (_whiteSpace != NULL) delete[] _whiteSpace;
 }
 
 

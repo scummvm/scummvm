@@ -552,7 +552,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		const char *event = stack->pop()->getString();
 		for (int i = 0; i < _applyEvent.getSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], event) == 0) {
-				delete [] _applyEvent[i];
+				delete[] _applyEvent[i];
 				_applyEvent.removeAt(i);
 				break;
 			}

@@ -682,7 +682,7 @@ bool BaseGame::loadFile(const char *filename) {
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing GAME file '%s'", filename);
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }
@@ -1088,7 +1088,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		strcpy(str, val->getString());
 		_stringTable->expand(&str);
 		stack->pushString(str);
-		delete [] str;
+		delete[] str;
 		return STATUS_OK;
 	}
 
@@ -1518,7 +1518,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			stack->pop();
 			stack->pushBool(false);
 		}
-		delete [] desc;
+		delete[] desc;
 		return STATUS_OK;
 	}
 
@@ -3098,7 +3098,7 @@ bool BaseGame::ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 		char *str2 = new char[strlen(str) + 1];
 		strcpy(str2, str);
 		stack->pushString(str2);
-		delete [] str2;
+		delete[] str2;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -3536,7 +3536,7 @@ bool BaseGame::loadSettings(const char *filename) {
 	_compressedSavegames = _registry->readBool("Debug", "CompressedSavegames", _compressedSavegames);
 	//_compressedSavegames = false;
 
-	delete [] origBuffer;
+	delete[] origBuffer;
 
 	return ret;
 }

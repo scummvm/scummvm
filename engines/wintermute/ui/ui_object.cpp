@@ -78,7 +78,7 @@ UIObject::~UIObject() {
 
 	if (_image && !_sharedImages) delete _image;
 
-	if (_text) delete [] _text;
+	if (_text) delete[] _text;
 
 	_focusedWidget = NULL; // ref only
 }
@@ -86,7 +86,7 @@ UIObject::~UIObject() {
 
 //////////////////////////////////////////////////////////////////////////
 void UIObject::setText(const char *text) {
-	if (_text) delete [] _text;
+	if (_text) delete[] _text;
 	_text = new char [strlen(text) + 1];
 	if (_text) {
 		strcpy(_text, text);

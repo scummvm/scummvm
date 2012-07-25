@@ -155,7 +155,7 @@ bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType c
 		byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) _gameRef->LOG(0, "Error parsing SPRITE file '%s'", filename);
-			delete [] buffer;
+			delete[] buffer;
 		}
 	}
 

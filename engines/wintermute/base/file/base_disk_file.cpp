@@ -150,7 +150,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 			byte *data = new byte[uncompSize];
 			if (!data) {
 				error("Error allocating buffer for file '%s'", filename.c_str());
-				delete [] compBuffer;
+				delete[] compBuffer;
 				delete file;
 				return NULL;
 			}
@@ -159,12 +159,12 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 
 			if (Common::uncompress(data, (unsigned long *)&uncompSize, compBuffer, compSize) != true) {
 				error("Error uncompressing file '%s'", filename.c_str());
-				delete [] compBuffer;
+				delete[] compBuffer;
 				delete file;
 				return NULL;
 			}
 
-			delete [] compBuffer;
+			delete[] compBuffer;
 
 			return new Common::MemoryReadStream(data, uncompSize, DisposeAfterUse::YES);
 			delete file;

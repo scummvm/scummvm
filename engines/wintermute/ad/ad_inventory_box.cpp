@@ -169,7 +169,7 @@ bool AdInventoryBox::loadFile(const char *filename) {
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
 
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }

@@ -85,7 +85,7 @@ bool BaseFont::loadFile(const char * Filename)
 
     if(DID_FAIL(ret = loadBuffer(Buffer))) _gameRef->LOG(0, "Error parsing FONT file '%s'", filename);
 
-    delete [] Buffer;
+    delete[] Buffer;
 
     return ret;
 }
@@ -198,7 +198,7 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const char *filename) {
 	if (parser.getCommand((char **)&WorkBuffer, commands, (char **)&params) == TOKEN_TTFONT)
 		ret = true;
 
-	delete [] buffer;
+	delete[] buffer;
 	return ret;
 }
 

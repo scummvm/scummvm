@@ -91,7 +91,7 @@ AdSentence::~AdSentence() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setText(const char *text) {
-	if (_text) delete [] _text;
+	if (_text) delete[] _text;
 	_text = new char[strlen(text) + 1];
 	if (_text) strcpy(_text, text);
 }
@@ -99,7 +99,7 @@ void AdSentence::setText(const char *text) {
 
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setStances(const char *stances) {
-	if (_stances) delete [] _stances;
+	if (_stances) delete[] _stances;
 	if (stances) {
 		_stances = new char[strlen(stances) + 1];
 		if (_stances) strcpy(_stances, stances);
@@ -124,7 +124,7 @@ char *AdSentence::getNextStance() {
 char *AdSentence::getStance(int stance) {
 	if (_stances == NULL) return NULL;
 
-	if (_tempStance) delete [] _tempStance;
+	if (_tempStance) delete[] _tempStance;
 	_tempStance = NULL;
 
 	char *start;

@@ -457,7 +457,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 					str[size] = '\0';
 					stack->pushString((char *)str);
 				}
-				delete [] str;
+				delete[] str;
 			} else stack->pushNULL();
 		} else stack->pushNULL();
 

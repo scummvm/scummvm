@@ -64,12 +64,12 @@ WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
 
 	        ConversionResult res = ConvertUTF8toUTF16(&SourceStart, SourceEnd, &TargetStart, TargetEnd, strictConversion);
 	        if (res != conversionOK) {
-	            delete [] WideStringNative;
+	            delete[] WideStringNative;
 	            return L"";
 	        }
 	        *TargetStart = 0;
 	        WideString ResultString(WideStringNative);
-	        delete [] WideStringNative;
+	        delete[] WideStringNative;
 
 	        return ResultString;
 	    } else if (sizeof(wchar_t) == 4) {
@@ -83,12 +83,12 @@ WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
 
 	        ConversionResult res = ConvertUTF8toUTF32(&SourceStart, SourceEnd, &TargetStart, TargetEnd, strictConversion);
 	        if (res != conversionOK) {
-	            delete [] WideStringNative;
+	            delete[] WideStringNative;
 	            return L"";
 	        }
 	        *TargetStart = 0;
 	        WideString ResultString(WideStringNative);
-	        delete [] WideStringNative;
+	        delete[] WideStringNative;
 
 	        return ResultString;
 	    } else {
@@ -114,12 +114,12 @@ Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
 
 	        ConversionResult res = ConvertUTF16toUTF8(&SourceStart, SourceEnd, &TargetStart, TargetEnd, strictConversion);
 	        if (res != conversionOK) {
-	            delete [] Utf8StringNative;
+	            delete[] Utf8StringNative;
 	            return (Utf8String)"";
 	        }
 	        *TargetStart = 0;
 	        Utf8String ResultString(Utf8StringNative);
-	        delete [] Utf8StringNative;
+	        delete[] Utf8StringNative;
 	        return ResultString;
 	    } else if (sizeof(wchar_t) == 4) {
 	        size_t Utf8Size = 4 * WideSize + 1;
@@ -133,12 +133,12 @@ Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
 
 	        ConversionResult res = ConvertUTF32toUTF8(&SourceStart, SourceEnd, &TargetStart, TargetEnd, strictConversion);
 	        if (res != conversionOK) {
-	            delete [] Utf8StringNative;
+	            delete[] Utf8StringNative;
 	            return (Utf8String)"";
 	        }
 	        *TargetStart = 0;
 	        Utf8String ResultString(Utf8StringNative);
-	        delete [] Utf8StringNative;
+	        delete[] Utf8StringNative;
 	        return ResultString;
 	    } else {
 	        return (Utf8String)"";
@@ -179,7 +179,7 @@ WideString StringUtil::ansiToWide(const AnsiString &str) {
 	    wchar_t *wstr = new wchar_t[WideSize];
 	    mbstowcs(wstr, str.c_str(), WideSize);
 	    WideString ResultString(wstr);
-	    delete [] wstr;
+	    delete[] wstr;
 	    return ResultString;*/
 	return WideString(str);
 }
@@ -198,7 +198,7 @@ AnsiString StringUtil::wideToAnsi(const WideString &wstr) {
 	    char *str = new char[WideSize];
 	    wcstombs(str, wstr.c_str(), WideSize);
 	    AnsiString ResultString(str);
-	    delete [] str;
+	    delete[] str;
 	    return ResultString;*/
 	return AnsiString(wstr);
 }

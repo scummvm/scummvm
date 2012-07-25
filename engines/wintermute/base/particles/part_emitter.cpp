@@ -106,7 +106,7 @@ PartEmitter::~PartEmitter(void) {
 
 
 	for (int i = 0; i < _sprites.getSize(); i++) {
-		delete [] _sprites[i];
+		delete[] _sprites[i];
 	}
 	_sprites.removeAll();
 
@@ -141,7 +141,7 @@ bool PartEmitter::addSprite(const char *filename) {
 bool PartEmitter::removeSprite(const char *filename) {
 	for (int i = 0; i < _sprites.getSize(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
-			delete [] _sprites[i];
+			delete[] _sprites[i];
 			_sprites.removeAt(i);
 			return STATUS_OK;
 		}

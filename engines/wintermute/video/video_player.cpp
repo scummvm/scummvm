@@ -104,9 +104,9 @@ bool VideoPlayer::cleanup() {
 	if (_audioStream) AVIStreamRelease(m_AudioStream);
 	if (_videoStream) AVIStreamRelease(m_VideoStream);
 
-	if (_audioFormat)  delete [](byte *)m_AudioFormat;
-	if (_videoFormat)  delete [](byte *)m_VideoFormat;
-	if (_targetFormat) delete [](byte *)m_TargetFormat;
+	if (_audioFormat)  delete[](byte *)m_AudioFormat;
+	if (_videoFormat)  delete[](byte *)m_VideoFormat;
+	if (_targetFormat) delete[](byte *)m_TargetFormat;
 
 	SAFE_DELETE(_sound);
 	SAFE_DELETE(_vidRenderer);
@@ -437,7 +437,7 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) 
 					if (TokenPos == 0) Start = atoi(Token);
 					else if (TokenPos == 1) End = atoi(Token);
 
-					delete [] Token;
+					delete[] Token;
 				} else {
 					Text[TextLength] = line[i];
 					TextLength++;
@@ -456,12 +456,12 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) 
 
 		if (Start != -1 && TextLength > 0) _subtitles.add(new CVidSubtitle(_gameRef,  Text, Start, End));
 
-		delete [] Text;
+		delete[] Text;
 
 		Pos += LineLength + 1;
 	}
 
-	delete [] Buffer;
+	delete[] Buffer;
 #endif
 	return STATUS_OK;
 }

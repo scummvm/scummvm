@@ -69,7 +69,7 @@ bool AdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType 
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing SPRITESET file '%s'", filename);
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }

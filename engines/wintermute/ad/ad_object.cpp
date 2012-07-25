@@ -853,7 +853,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 		char *key = _gameRef->_stringTable->getKey(text);
 		if (key) {
 			sound = ((AdGame *)_gameRef)->findSpeechFile(key);
-			delete [] key;
+			delete[] key;
 
 			if (sound) deleteSound = true;
 		}
@@ -931,7 +931,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 
 	_state = STATE_TALKING;
 
-	if (deleteSound) delete [] sound;
+	if (deleteSound) delete[] sound;
 }
 
 

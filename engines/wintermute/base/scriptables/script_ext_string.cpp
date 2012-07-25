@@ -67,7 +67,7 @@ SXString::SXString(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 SXString::~SXString() {
-	if (_string) delete [] _string;
+	if (_string) delete[] _string;
 }
 
 

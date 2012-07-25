@@ -185,8 +185,8 @@ int WinterMuteEngine::init() {
 				sprintf(param, "./%s", IniName);
 				_game->_registry->SetIniName(param);
 				
-				delete [] IniDir;
-				delete [] IniName;
+				delete[] IniDir;
+				delete[] IniName;
 			}
 		} else if (scumm_stricmp(param, "-windowed") == 0) windowedMode = true;
 	}*/
@@ -270,7 +270,7 @@ int WinterMuteEngine::init() {
 	
 	if (SaveGame) {
 		_game->loadGame(SaveGame);
-		delete [] SaveGame;
+		delete[] SaveGame;
 	}
 	
 	// all set, ready to go

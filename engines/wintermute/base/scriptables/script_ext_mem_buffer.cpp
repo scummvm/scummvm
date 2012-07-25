@@ -249,7 +249,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			strncpy(str, (const char *)_buffer + start, length);
 			str[length] = '\0';
 			stack->pushString(str);
-			delete [] str;
+			delete[] str;
 		}
 		return STATUS_OK;
 	}

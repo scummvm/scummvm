@@ -67,7 +67,7 @@ bool AdRegion::loadFile(const char *filename) {
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing REGION file '%s'", filename);
 
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }

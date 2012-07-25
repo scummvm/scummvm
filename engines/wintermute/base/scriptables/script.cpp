@@ -360,13 +360,13 @@ bool ScScript::createMethodThread(ScScript *original, const char *methodName) {
 
 //////////////////////////////////////////////////////////////////////////
 void ScScript::cleanup() {
-	if (_buffer) delete [] _buffer;
+	if (_buffer) delete[] _buffer;
 	_buffer = NULL;
 
-	if (_filename) delete [] _filename;
+	if (_filename) delete[] _filename;
 	_filename = NULL;
 
-	if (_symbols) delete [] _symbols;
+	if (_symbols) delete[] _symbols;
 	_symbols = NULL;
 	_numSymbols = 0;
 
@@ -385,24 +385,24 @@ void ScScript::cleanup() {
 	delete _stack;
 	_stack = NULL;
 
-	if (_functions) delete [] _functions;
+	if (_functions) delete[] _functions;
 	_functions = NULL;
 	_numFunctions = 0;
 
-	if (_methods) delete [] _methods;
+	if (_methods) delete[] _methods;
 	_methods = NULL;
 	_numMethods = 0;
 
-	if (_events) delete [] _events;
+	if (_events) delete[] _events;
 	_events = NULL;
 	_numEvents = 0;
 
 
 	if (_externals) {
 		for (uint32 i = 0; i < _numExternals; i++) {
-			if (_externals[i].nu_params > 0) delete [] _externals[i].params;
+			if (_externals[i].nu_params > 0) delete[] _externals[i].params;
 		}
-		delete [] _externals;
+		delete[] _externals;
 	}
 	_externals = NULL;
 	_numExternals = 0;
@@ -586,7 +586,7 @@ bool ScScript::executeInstruction() {
 					runtimeError("Cannot call method '%s'. Ignored.", MethodName);
 					_stack->pushNULL();
 				}
-				delete [] MethodName;
+				delete[] MethodName;
 				break;
 			}
 			/*
@@ -621,7 +621,7 @@ bool ScScript::executeInstruction() {
 				}
 			}
 		}
-		delete [] MethodName;
+		delete[] MethodName;
 	}
 	break;
 
@@ -797,7 +797,7 @@ bool ScScript::executeInstruction() {
 			strcpy(tempStr, op1->getString());
 			strcat(tempStr, op2->getString());
 			_operand->setString(tempStr);
-			delete [] tempStr;
+			delete[] tempStr;
 		} else if (op1->getType() == VAL_INT && op2->getType() == VAL_INT)
 			_operand->setInt(op1->getInt() + op2->getInt());
 		else _operand->setFloat(op1->getFloat() + op2->getFloat());

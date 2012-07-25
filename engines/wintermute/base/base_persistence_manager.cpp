@@ -91,7 +91,7 @@ BasePersistenceManager::~BasePersistenceManager() {
 void BasePersistenceManager::cleanup() {
 	/*  if (_buffer) {
 	        if (_saving) free(_buffer);
-	        else delete [] _buffer; // allocated by file manager
+	        else delete[] _buffer; // allocated by file manager
 	    }
 	    _buffer = NULL;
 
@@ -110,7 +110,7 @@ void BasePersistenceManager::cleanup() {
 
 	_thumbnailDataSize = 0;
 	if (_thumbnailData) {
-		delete [] _thumbnailData;
+		delete[] _thumbnailData;
 		_thumbnailData = NULL;
 	}
 

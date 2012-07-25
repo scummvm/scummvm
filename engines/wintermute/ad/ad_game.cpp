@@ -128,12 +128,12 @@ bool AdGame::cleanup() {
 
 
 	for (i = 0; i < _dlgPendingBranches.getSize(); i++) {
-		delete [] _dlgPendingBranches[i];
+		delete[] _dlgPendingBranches[i];
 	}
 	_dlgPendingBranches.removeAll();
 
 	for (i = 0; i < _speechDirs.getSize(); i++) {
-		delete [] _speechDirs[i];
+		delete[] _speechDirs[i];
 	}
 	_speechDirs.removeAll();
 
@@ -1117,7 +1117,7 @@ bool AdGame::loadFile(const char *filename) {
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing GAME file '%s'", filename);
 
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }
@@ -1387,7 +1387,7 @@ bool AdGame::loadItemsFile(const char *filename, bool merge) {
 	if (DID_FAIL(ret = loadItemsBuffer(buffer, merge))) _gameRef->LOG(0, "Error parsing ITEMS file '%s'", filename);
 
 
-	delete [] buffer;
+	delete[] buffer;
 
 	return ret;
 }
@@ -1451,7 +1451,7 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 
 	for (int i = 0; i < _sceneStates.getSize(); i++) {
 		if (scumm_stricmp(_sceneStates[i]->_filename, filenameCor) == 0) {
-			delete [] filenameCor;
+			delete[] filenameCor;
 			return _sceneStates[i];
 		}
 	}
@@ -1462,10 +1462,10 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 
 		_sceneStates.add(ret);
 
-		delete [] filenameCor;
+		delete[] filenameCor;
 		return ret;
 	} else {
-		delete [] filenameCor;
+		delete[] filenameCor;
 		return NULL;
 	}
 }
@@ -1563,7 +1563,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 	if (startIndex >= 0) {
 		for (int i = startIndex; i < _dlgPendingBranches.getSize(); i++) {
 			//ClearBranchResponses(_dlgPendingBranches[i]);
-			delete [] _dlgPendingBranches[i];
+			delete[] _dlgPendingBranches[i];
 			_dlgPendingBranches[i] = NULL;
 		}
 		_dlgPendingBranches.removeAt(startIndex, _dlgPendingBranches.getSize() - startIndex);
@@ -1575,7 +1575,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 		_responsesBranch.removeAll();
 	}
 
-	if (deleteName) delete [] name;
+	if (deleteName) delete[] name;
 
 	return STATUS_OK;
 }
@@ -1795,7 +1795,7 @@ bool AdGame::addItem(AdItem *item) {
 bool AdGame::resetContent() {
 	// clear pending dialogs
 	for (int i = 0; i < _dlgPendingBranches.getSize(); i++) {
-		delete [] _dlgPendingBranches[i];
+		delete[] _dlgPendingBranches[i];
 	}
 	_dlgPendingBranches.removeAll();
 
@@ -1862,7 +1862,7 @@ bool AdGame::addSpeechDir(const char *dir) {
 
 	for (int i = 0; i < _speechDirs.getSize(); i++) {
 		if (scumm_stricmp(_speechDirs[i], temp) == 0) {
-			delete [] temp;
+			delete[] temp;
 			return STATUS_OK;
 		}
 	}
@@ -1884,13 +1884,13 @@ bool AdGame::removeSpeechDir(const char *dir) {
 	bool Found = false;
 	for (int i = 0; i < _speechDirs.getSize(); i++) {
 		if (scumm_stricmp(_speechDirs[i], temp) == 0) {
-			delete [] _speechDirs[i];
+			delete[] _speechDirs[i];
 			_speechDirs.removeAt(i);
 			Found = true;
 			break;
 		}
 	}
-	delete [] temp;
+	delete[] temp;
 
 	if (Found) return STATUS_OK;
 	else return STATUS_FAILED;
@@ -1910,7 +1910,7 @@ char *AdGame::findSpeechFile(char *stringID) {
 		if (_fileManager->hasFile(ret))
 			return ret;
 	}
-	delete [] ret;
+	delete[] ret;
 	return NULL;
 }
 
