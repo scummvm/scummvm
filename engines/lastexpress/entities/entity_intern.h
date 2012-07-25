@@ -270,14 +270,6 @@ void class::setup_##name() { \
 		break; \
 	}
 
-#define TIME_CHECK_CALLBACK_2(timeValue, parameter, callback, function, param1, param2) \
-	if (getState()->time > timeValue && !parameter) { \
-		parameter = 1; \
-		setCallback(callback); \
-		function(param1, param2); \
-		break; \
-	}
-
 #define TIME_CHECK_CALLBACK_3(timeValue, parameter, callback, function, param1, param2, param3) \
 	if (getState()->time > timeValue && !parameter) { \
 		parameter = 1; \

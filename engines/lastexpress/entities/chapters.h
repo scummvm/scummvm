@@ -154,6 +154,7 @@ public:
 	DECLARE_FUNCTION(chapter5Handler)
 
 private:
+	bool timeCheckEnterStation(TimeValue timeValue, uint &parameter, byte callback, const char *sequence, CityIndex cityIndex);
 	void enterExitStation(const SavePoint &savepoint, bool isEnteringStation);
 	void enterExitHelper(bool isEnteringStation);
 	void playSteam();

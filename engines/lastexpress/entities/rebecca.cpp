@@ -774,7 +774,13 @@ IMPLEMENT_FUNCTION(23, Rebecca, function23)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_2(kTime1111500, params->param2, 3, setup_enterExitCompartment, "623De", kObjectCompartmentE);
+		if (getState()->time > kTime1111500 && !params->param2) {
+			params->param2 = 1;
+			setCallback(3);
+			setup_enterExitCompartment("623De", kObjectCompartmentE);
+
+			break;
+		}
 		break;
 
 	case kActionDefault:

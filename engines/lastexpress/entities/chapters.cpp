@@ -403,11 +403,18 @@ IMPLEMENT_FUNCTION(8, Chapters, chapter1Handler)
 
 label_processStations:
 		// Process stations
-		TIME_CHECK_CALLBACK_2(kTime1039500, params->param7, 1, setup_savegame, kSavegameTypeTime, kTimeNone);
+		if (getState()->time > kTime1039500 && !params->param7) {
+			params->param7 = 1;
+			setCallback(1);
+			setup_savegame(kSavegameTypeTime, kTimeNone);
+
+			break;
+		}
 
 label_enter_epernay:
 		// Entering Epernay station
-		TIME_CHECK_CALLBACK_2(kTimeEnterEpernay, params->param8, 1, setup_enterStation, "Epernay", kCityEpernay);
+		if (timeCheckEnterStation(kTimeEnterEpernay, params->param8, 1, "Epernay", kCityEpernay))
+			break;
 
 label_exit_epernay:
 		// Exiting Epernay station
@@ -437,7 +444,8 @@ label_enter_chalons:
 			goto label_exit_strasbourg;
 
 		// Entering Chalons station
-		TIME_CHECK_CALLBACK_2(kTimeEnterChalons, CURRENT_PARAM(1, 3), 5, setup_enterStation, "Chalons", kCityChalons);
+		if (timeCheckEnterStation(kTimeEnterChalons, CURRENT_PARAM(1, 3), 5, "Chalons", kCityChalons))
+			break;
 
 label_exit_chalons:
 		// Exiting Chalons station
@@ -445,7 +453,8 @@ label_exit_chalons:
 
 label_enter_barleduc:
 		// Entering Bar-Le-Duc station
-		TIME_CHECK_CALLBACK_2(kTimeCityBarLeDuc, CURRENT_PARAM(1, 5), 7, setup_enterStation, "BarLeDuc", kCityBarleduc);
+		if (timeCheckEnterStation(kTimeCityBarLeDuc, CURRENT_PARAM(1, 5), 7, "BarLeDuc", kCityBarleduc))
+			break;
 
 label_exit_barleduc:
 		// Exiting Bar-Le-Duc station
@@ -458,7 +467,8 @@ label_enter_nancy:
 		}
 
 		// Entering Nancy station
-		TIME_CHECK_CALLBACK_2(kTimeCityNancy, CURRENT_PARAM(1, 8), 9, setup_enterStation, "Nancy", kCityNancy);
+		if (timeCheckEnterStation(kTimeCityNancy, CURRENT_PARAM(1, 8), 9, "Nancy", kCityNancy))
+			break;
 
 label_exit_nancy:
 		// Exiting Nancy station
@@ -466,7 +476,8 @@ label_exit_nancy:
 
 label_enter_luneville:
 		// Entering Luneville station
-		TIME_CHECK_CALLBACK_2(kTimeCityLuneville, CURRENT_PARAM(2, 2), 11, setup_enterStation, "Luneville", kCityLuneville);
+		if (timeCheckEnterStation(kTimeCityLuneville, CURRENT_PARAM(2, 2), 11, "Luneville", kCityLuneville))
+			break;
 
 label_exit_luneville:
 		// Exiting Luneville station
@@ -474,7 +485,8 @@ label_exit_luneville:
 
 label_enter_avricourt:
 		// Entering Avricourt station
-		TIME_CHECK_CALLBACK_2(kTimeCityAvricourt, CURRENT_PARAM(2, 4), 13, setup_enterStation, "Avricourt", kCityAvricourt);
+		if (timeCheckEnterStation(kTimeCityAvricourt, CURRENT_PARAM(2, 4), 13, "Avricourt", kCityAvricourt))
+			break;
 
 label_exit_avricourt:
 		// Exiting Avricourt station
@@ -482,14 +494,21 @@ label_exit_avricourt:
 
 label_enter_deutschavricourt:
 		// Entering Deutsch-Avricourt station
-		TIME_CHECK_CALLBACK_2(kTimeCityDeutschAvricourt, CURRENT_PARAM(2, 6), 15, setup_enterStation, "DeutschA", kCityDeutschAvricourt);
+		if (timeCheckEnterStation(kTimeCityDeutschAvricourt, CURRENT_PARAM(2, 6), 15, "DeutschA", kCityDeutschAvricourt))
+			break;
 
 label_exit_deutschavricourt:
 		// Exiting Avricourt station
 		TIME_CHECK_CALLBACK_1(kTimeExitDeutschAvricourt, CURRENT_PARAM(2, 7), 16, setup_exitStation, "DeutschA");
 
 label_enter_strasbourg:
-		TIME_CHECK_CALLBACK_2(kTimeCityStrasbourg, CURRENT_PARAM(2, 8), 17, setup_savegame, kSavegameTypeTime, kTimeNone);
+		if (getState()->time > kTimeCityStrasbourg && !CURRENT_PARAM(2, 8)) {
+			CURRENT_PARAM(2, 8) = 1;
+			setCallback(17);
+			setup_savegame(kSavegameTypeTime, kTimeNone);
+
+			break;
+		}
 
 label_exit_strasbourg:
 		// Exiting Strasbourg station
@@ -497,7 +516,8 @@ label_exit_strasbourg:
 
 label_enter_badenoos:
 		// Entering Baden Oos station
-		TIME_CHECK_CALLBACK_2(kTimeCityBadenOos, CURRENT_PARAM(3, 2), 20, setup_enterStation, "BadenOos", kCityBadenOos);
+		if (timeCheckEnterStation(kTimeCityBadenOos, CURRENT_PARAM(3, 2), 20, "BadenOos", kCityBadenOos))
+			break;
 
 label_exit_badenoos:
 		// Exiting Baden Oos station
@@ -922,25 +942,29 @@ IMPLEMENT_FUNCTION(15, Chapters, chapter3Handler)
 			params->param5 = 0;
 		}
 
-		TIME_CHECK_CALLBACK_2(kTimeEnterSalzbourg, params->param6, 1, setup_enterStation, "Salzburg", kCitySalzbourg);
+		if (timeCheckEnterStation(kTimeEnterSalzbourg, params->param6, 1, "Salzburg", kCitySalzbourg))
+			break;
 
 label_callback_1:
 		TIME_CHECK_CALLBACK_1(kTimeExitSalzbourg, params->param7, 2, setup_exitStation, "Salzburg");
 
 label_callback_2:
-		TIME_CHECK_CALLBACK_2(kTimeEnterAttnangPuchheim, params->param8, 3, setup_enterStation, "Attnang", kCityAttnangPuchheim);
+		if (timeCheckEnterStation(kTimeEnterAttnangPuchheim, params->param8, 3, "Attnang", kCityAttnangPuchheim))
+			break;
 
 label_callback_3:
 		TIME_CHECK_CALLBACK_1(kTimeExitAttnangPuchheim, CURRENT_PARAM(1, 1), 4, setup_exitStation, "Attnang");
 
 label_callback_4:
-		TIME_CHECK_CALLBACK_2(kTimeEnterWels, CURRENT_PARAM(1, 2), 5, setup_enterStation, "Wels", kCityWels);
+		if (timeCheckEnterStation(kTimeEnterWels, CURRENT_PARAM(1, 2), 5, "Wels", kCityWels))
+			break;
 
 label_callback_5:
 		TIME_CHECK_CALLBACK_1(kTimeEnterWels, CURRENT_PARAM(1, 3), 6, setup_exitStation, "Wels");
 
 label_callback_6:
-		TIME_CHECK_CALLBACK_2(kTimeEnterLinz, CURRENT_PARAM(1, 4), 7, setup_enterStation, "Linz", kCityLinz);
+		if (timeCheckEnterStation(kTimeEnterLinz, CURRENT_PARAM(1, 4), 7, "Linz", kCityLinz))
+			break;
 
 label_callback_7:
 		TIME_CHECK_CALLBACK_1(kTimeCityLinz, CURRENT_PARAM(1, 5), 8, setup_exitStation, "Linz");
@@ -951,7 +975,7 @@ label_callback_8:
 			getState()->timeDelta = 5;
 		}
 
-		TIME_CHECK_CALLBACK_2(kTimeCityVienna, CURRENT_PARAM(1, 7), 9, setup_enterStation, "Vienna", kCityVienna);
+		timeCheckEnterStation(kTimeCityVienna, CURRENT_PARAM(1, 7), 9, "Vienna", kCityVienna);
 		break;
 
 	case kActionEndSound:
@@ -1221,7 +1245,8 @@ IMPLEMENT_FUNCTION(19, Chapters, chapter4Handler)
 			params->param7 = 0;
 		}
 
-		TIME_CHECK_CALLBACK_2(kTimeEnterPoszony, params->param8, 1, setup_enterStation, "Pozsony", kCityPoszony);
+		if (timeCheckEnterStation(kTimeEnterPoszony, params->param8, 1, "Pozsony", kCityPoszony))
+			break;
 
 label_exitPozsony:
 		TIME_CHECK_CALLBACK_1(kTimeExitPoszony, CURRENT_PARAM(1, 1), 2, setup_exitStation, "Pozsony");
@@ -1237,7 +1262,8 @@ label_enterGalanta:
 		if (params->param1)
 			goto label_callback_4;
 
-		TIME_CHECK_CALLBACK_2(kTimeEnterGalanta, CURRENT_PARAM(1, 3), 3, setup_enterStation, "Galanta", kCityGalanta);
+		if (timeCheckEnterStation(kTimeEnterGalanta, CURRENT_PARAM(1, 3), 3, "Galanta", kCityGalanta))
+			break;
 
 label_exitGalanta:
 		TIME_CHECK_CALLBACK_1(kTimeExitGalanta, CURRENT_PARAM(1, 4), 4, setup_exitStation, "Galanta");
@@ -1815,6 +1841,18 @@ void Chapters::playSteam() {
 	getSoundQueue()->resetState();
 	getSound()->playSteam((CityIndex)ENTITY_PARAM(0, 4));
 	ENTITY_PARAM(0, 2) = 0;
+}
+
+bool Chapters::timeCheckEnterStation(TimeValue timeValue, uint &parameter, byte callback, const char *sequence, CityIndex cityIndex) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		setCallback(callback);
+		setup_enterStation(sequence, cityIndex);
+
+		return true;
+	}
+
+	return false;
 }
 
 } // End of namespace LastExpress
