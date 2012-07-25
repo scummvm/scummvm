@@ -40,10 +40,7 @@ MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer) : _vm(vm) {
 		_video = new Video::BinkDecoder();
 	else
 #endif
-	{
 		_video = new Video::SmackerDecoder();
-		((Video::AdvancedVideoDecoder *)_video)->start();
-	}
 
 	_flags = 0;
 	_wizResNum = 0;
@@ -64,10 +61,15 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 	if (_video->isVideoLoaded())
 		_video->close();
 
+	// Ensure that Bink will use our PixelFormat
+	((Video::AdvancedVideoDecoder *)_video)->setDefaultHighColorFormat(g_system->getScreenFormat());
+
 	if (!_video->loadFile(filename)) {
 		warning("Failed to load video file %s", filename);
 		return -1;
 	}
+
+	((Video::AdvancedVideoDecoder *)_video)->start();
 
 	debug(1, "Playing video %s", filename);
 
