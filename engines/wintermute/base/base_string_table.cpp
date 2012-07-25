@@ -51,7 +51,8 @@ BaseStringTable::~BaseStringTable() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
-	if (key == NULL || val == NULL) return STATUS_FAILED;
+	if (key == NULL || val == NULL)
+		return STATUS_FAILED;
 
 	if (scumm_stricmp(key, "@right-to-left") == 0) {
 		_gameRef->_textRTL = true;
@@ -61,8 +62,9 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 	Common::String finalKey = key;
 	finalKey.toLowercase();
 
-	_stringsIter = _strings.find(finalKey);
-	if (_stringsIter != _strings.end() && reportDuplicities) _gameRef->LOG(0, "  Warning: Duplicate definition of string '%s'.", finalKey.c_str());
+	StringsIter it = _strings.find(finalKey);
+	if (it != _strings.end() && reportDuplicities)
+		_gameRef->LOG(0, "  Warning: Duplicate definition of string '%s'.", finalKey.c_str());
 
 	_strings[finalKey] = val;
 
@@ -70,30 +72,32 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *BaseStringTable::getKey(const char *str) {
-	if (str == NULL || str[0] != '/') return NULL;
+char *BaseStringTable::getKey(const char *str) const {
+	if (str == NULL || str[0] != '/')
+		return NULL;
 
 	const char *value = strchr(str + 1, '/');
-	if (value == NULL) return NULL;
+	if (value == NULL)
+		return NULL;
 
 	char *key = new char[value - str];
-	strncpy(key, str + 1, value - str - 1);
-	key[value - str - 1] = '\0';
+	Common::strlcpy(key, str + 1, (size_t)(value - str));
+
 	BasePlatform::strlwr(key);
 
-	char *new_str;
+	char *newStr;
 
-	_stringsIter = _strings.find(key);
-	if (_stringsIter != _strings.end()) {
-		new_str = new char[_stringsIter->_value.size() + 1];
-		strcpy(new_str, _stringsIter->_value.c_str());
-		if (strlen(new_str) > 0 && new_str[0] == '/' && strchr(new_str + 1, '/')) {
-			delete [] key;
-			char *Ret = getKey(new_str);
-			delete [] new_str;
-			return Ret;
+	StringsIter it = _strings.find(key);
+	if (it != _strings.end()) {
+		newStr = new char[it->_value.size() + 1];
+		strcpy(newStr, it->_value.c_str());
+		if (strlen(newStr) > 0 && newStr[0] == '/' && strchr(newStr + 1, '/')) {
+			delete[] key;
+			char *ret = getKey(newStr);
+			delete[] newStr;
+			return ret;
 		} else {
-			delete [] new_str;
+			delete[] newStr;
 			return key;
 		}
 	} else {
@@ -102,65 +106,71 @@ char *BaseStringTable::getKey(const char *str) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseStringTable::expand(char **str) {
-	if (str == NULL || *str == NULL || *str[0] != '/') return;
+void BaseStringTable::expand(char **str) const {
+	if (str == NULL || *str == NULL || *str[0] != '/')
+		return;
 
 	char *value = strchr(*str + 1, '/');
-	if (value == NULL) return;
+	if (value == NULL)
+		return;
 
 	char *key = new char[value - *str];
-	strncpy(key, *str + 1, value - *str - 1);
-	key[value - *str - 1] = '\0';
+	Common::strlcpy(key, *str + 1, (size_t)(value - *str));
+
 	BasePlatform::strlwr(key);
 
 	value++;
 
-	char *new_str;
+	char *newStr;
 
-	_stringsIter = _strings.find(key);
-	if (_stringsIter != _strings.end()) {
-		new_str = new char[_stringsIter->_value.size() + 1];
-		strcpy(new_str, _stringsIter->_value.c_str());
+	StringsIter it = _strings.find(key);
+	if (it != _strings.end()) {
+		newStr = new char[it->_value.size() + 1];
+		strcpy(newStr, it->_value.c_str());
 	} else {
-		new_str = new char[strlen(value) + 1];
-		strcpy(new_str, value);
+		newStr = new char[strlen(value) + 1];
+		strcpy(newStr, value);
 	}
 
-	delete [] key;
-	delete [] *str;
-	*str = new_str;
+	delete[] key;
+	delete[] *str;
+	*str = newStr;
 
-	if (strlen(*str) > 0 && *str[0] == '/') expand(str);
+	if (strlen(*str) > 0 && *str[0] == '/')
+		expand(str);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseStringTable::expandStatic(const char *string) {
-	if (string == NULL || string[0] == '\0' || string[0] != '/') return string;
+const char *BaseStringTable::expandStatic(const char *string) const {
+	if (string == NULL || string[0] == '\0' || string[0] != '/')
+		return string;
 
 	const char *value = strchr(string + 1, '/');
-	if (value == NULL) return string;
+	if (value == NULL)
+		return string;
 
 	char *key = new char[value - string];
-	strncpy(key, string + 1, value - string - 1);
-	key[value - string - 1] = '\0';
+	Common::strlcpy(key, string + 1, (size_t)(value - string - 1));
 	BasePlatform::strlwr(key);
 
 	value++;
 
-	const char *new_str;
+	const char *newStr;
 
-	_stringsIter = _strings.find(key);
-	if (_stringsIter != _strings.end()) {
-		new_str = _stringsIter->_value.c_str();
+	StringsIter it = _strings.find(key);
+	if (it != _strings.end()) {
+		newStr = it->_value.c_str();
 	} else {
-		new_str = value;
+		newStr = value;
 	}
 
-	delete [] key;
+	delete[] key;
 
-	if (strlen(new_str) > 0 && new_str[0] == '/') return expandStatic(new_str);
-	else return new_str;
+	if (strlen(newStr) > 0 && newStr[0] == '/')
+		return expandStatic(newStr);
+	else
+		return newStr;
 }
 
 
@@ -168,7 +178,8 @@ const char *BaseStringTable::expandStatic(const char *string) {
 bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	_gameRef->LOG(0, "Loading string table...");
 
-	if (clearOld) _strings.clear();
+	if (clearOld)
+		_strings.clear();
 
 	uint32 size;
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename, &size);
@@ -191,12 +202,12 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	uint32 lineLength = 0;
 	while (pos < size) {
 		lineLength = 0;
-		while (pos + lineLength < size && buffer[pos + lineLength] != '\n' && buffer[pos + lineLength] != '\0') lineLength++;
+		while (pos + lineLength < size && buffer[pos + lineLength] != '\n' && buffer[pos + lineLength] != '\0')
+			lineLength++;
 
 		uint32 realLength = lineLength - (pos + lineLength >= size ? 0 : 1);
 		char *line = new char[realLength + 1];
-		strncpy(line, (char *)&buffer[pos], realLength);
-		line[realLength] = '\0';
+		Common::strlcpy(line, (char *)&buffer[pos], realLength + 1);
 		char *value = strchr(line, '\t');
 		if (value == NULL) value = strchr(line, ' ');
 
@@ -205,17 +216,20 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 				value[0] = '\0';
 				value++;
 				for (uint32 i = 0; i < strlen(value); i++) {
-					if (value[i] == '|') value[i] = '\n';
+					if (value[i] == '|')
+						value[i] = '\n';
 				}
 				addString(line, value, clearOld);
-			} else if (line[0] != '\0') addString(line, "", clearOld);
+			} else if (line[0] != '\0') {
+				addString(line, "", clearOld);
+			}
 		}
 
-		delete [] line;
+		delete[] line;
 		pos += lineLength + 1;
 	}
 
-	delete [] buffer;
+	delete[] buffer;
 
 	_gameRef->LOG(0, "  %d strings loaded", _strings.size());
 

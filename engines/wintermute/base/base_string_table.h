@@ -37,16 +37,16 @@ namespace WinterMute {
 
 class BaseStringTable : public BaseClass {
 public:
-	const char *expandStatic(const char *string);
 	bool loadFile(const char *filename, bool deleteAll = true);
-	void expand(char **str);
+	void expand(char **str) const;
+	const char *expandStatic(const char *string) const;
 	bool addString(const char *key, const char *val, bool reportDuplicities = true);
 	BaseStringTable(BaseGame *inGame);
 	virtual ~BaseStringTable();
-	Common::HashMap<Common::String, Common::String> _strings;
-	char *getKey(const char *str);
+	char *getKey(const char *str) const;
 private:
-	Common::HashMap<Common::String, Common::String>::iterator _stringsIter;
+	Common::HashMap<Common::String, Common::String> _strings;
+	typedef Common::HashMap<Common::String, Common::String>::const_iterator StringsIter;
 
 };
 
