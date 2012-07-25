@@ -27,8 +27,61 @@
  */
 
 #include "engines/wintermute/base/file/base_file_entry.h"
+#include "engines/wintermute/base/file/base_package.h"
+#include "common/stream.h"
+#include "common/substream.h"
+#include "common/zlib.h"
 
 namespace WinterMute {
+// HACK: wrapCompressedStream might set the size to 0, so we need a way to override it.
+class CBPkgFile : public Common::SeekableReadStream {
+	uint32 _size;
+	Common::SeekableReadStream *_stream;
+public:
+	CBPkgFile(Common::SeekableReadStream *stream, uint32 knownLength) : _size(knownLength), _stream(stream) {}
+	virtual ~CBPkgFile() {
+		delete _stream;
+	}
+	virtual uint32 read(void *dataPtr, uint32 dataSize) {
+		return _stream->read(dataPtr, dataSize);
+	}
+	virtual bool eos() const {
+		return _stream->eos();
+	}
+	virtual int32 pos() const {
+		return _stream->pos();
+	}
+	virtual int32 size() const {
+		return _size;
+	}
+	virtual bool seek(int32 offset, int whence = SEEK_SET) {
+		return _stream->seek(offset, whence);
+	}
+};
+
+Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
+	Common::SeekableReadStream *file = _package->getFilePointer();
+	if (!file) return NULL;
+	
+	// TODO: Cleanup
+	bool compressed = (_compressedLength != 0);
+	/* _size = fileEntry->_length; */
+	
+	if (compressed) {
+		// TODO: Really, most of this logic might be doable directly in the fileEntry?
+		// But for now, this should get us rolling atleast.
+		file = Common::wrapCompressedReadStream(new Common::SeekableSubReadStream(file, _offset, _offset + _length, DisposeAfterUse::YES));
+	} else {
+		file = new Common::SeekableSubReadStream(file, _offset, _offset + _length, DisposeAfterUse::YES);
+	}
+	if (file->size() == 0) {
+		file = new CBPkgFile(file, _length);
+	}
+	
+	file->seek(0);
+	
+	return file;
+}
 
 //////////////////////////////////////////////////////////////////////////
 BaseFileEntry::BaseFileEntry(){

@@ -44,7 +44,6 @@ MODULE_OBJS := \
 	base/file/base_package.o \
 	base/file/base_resources.o \
 	base/file/base_save_thumb_file.o \
-	base/file/BPkgFile.o \
 	base/font/base_font_bitmap.o \
 	base/font/base_font_truetype.o \
 	base/font/base_font.o \

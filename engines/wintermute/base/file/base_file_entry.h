@@ -29,14 +29,18 @@
 #ifndef WINTERMUTE_BFILEENTRY_H
 #define WINTERMUTE_BFILEENTRY_H
 
+#include "common/archive.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 namespace WinterMute {
 
 class BasePackage;
 
-class BaseFileEntry {
+class BaseFileEntry : public Common::ArchiveMember {
 public:
+	virtual Common::SeekableReadStream *createReadStream() const;
+	virtual Common::String getName() const { return _filename; }
 	uint32 _timeDate2;
 	uint32 _timeDate1;
 	uint32 _flags;

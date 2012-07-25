@@ -35,10 +35,7 @@
 #include "common/file.h"
 
 namespace WinterMute {
-class BaseFile;
-class BaseFileEntry;
 class BaseGame;
-class BasePackage;
 class BaseFileManager {
 public:
 	bool cleanup();
@@ -55,10 +52,6 @@ public:
 	bool saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
 	// Used only for detection
 	bool registerPackages(const Common::FSList &fslist);
-	// Used by BasePackage only
-	BaseFileEntry *getPackageEntry(const Common::String &filename);
-	Common::File *openPackage(const Common::String &name);
-	bool requestCD(int cd, char *packageFile, const char *filename);
 private:
 	typedef enum {
 	    PATH_PACKAGE,
@@ -69,13 +62,12 @@ private:
 	bool addPath(TPathType type, const Common::FSNode &path);
 	bool registerPackages();
 	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
+	Common::SeekableReadStream *openPkgFile(const Common::String &filename);
 	Common::FSList _packagePaths;
 	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
 	bool registerPackage(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
-	Common::Array<BasePackage *> _packages;
+	Common::SearchSet _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
-	Common::HashMap<Common::String, BaseFileEntry *> _files;
-	Common::HashMap<Common::String, BaseFileEntry *>::iterator _filesIter;
 	// This class is intentionally not a subclass of Base, as it needs to be used by
 	// the detector too, without launching the entire engine:
 	BaseGame *_gameRef;

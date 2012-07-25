@@ -29,32 +29,60 @@
 #ifndef WINTERMUTE_BPACKAGE_H
 #define WINTERMUTE_BPACKAGE_H
 
+#include "common/archive.h"
 #include "common/stream.h"
 #include "common/fs.h"
 
-namespace Common {
-class SeekableReadStream;
-}
-
 namespace WinterMute {
-class BaseFileManager;
 class BasePackage {
-	BaseFileManager *_fileManager;
 public:
 	Common::SeekableReadStream *getFilePointer();
-	void closeFilePointer(Common::SeekableReadStream *&file);
-
 	Common::FSNode _fsnode;
 	bool _boundToExe;
 	byte _priority;
-	bool read(Common::SeekableReadStream *file, uint32 offset, byte *buffer, uint32 size);
-	bool close();
-	bool open();
-	char *_name;
+	Common::String _name;
 	int _cd;
-	Common::SeekableReadStream *_file;
-	BasePackage(BaseFileManager *fileMan);
-	~BasePackage();
+	BasePackage();
+};
+
+class PackageSet : public Common::Archive {
+public:
+	virtual ~PackageSet();
+	
+	PackageSet(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
+	/**
+	 * Check if a member with the given name is present in the Archive.
+	 * Patterns are not allowed, as this is meant to be a quick File::exists()
+	 * replacement.
+	 */
+	virtual bool hasFile(const Common::String &name) const;
+
+	/**
+	 * Add all members of the Archive to list.
+	 * Must only append to list, and not remove elements from it.
+	 *
+	 * @return the number of names added to list
+	 */
+	virtual int listMembers(Common::ArchiveMemberList &list) const;
+	
+	/**
+	 * Returns a ArchiveMember representation of the given file.
+	 */
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+	
+	/**
+	 * Create a stream bound to a member with the specified name in the
+	 * archive. If no member with this name exists, 0 is returned.
+	 * @return the newly created input stream
+	 */
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+
+	int getPriority() const { return _priority; }
+private:
+	byte _priority;
+	Common::Array<BasePackage *> _packages;
+	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _files;
+	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::iterator _filesIter;
 };
 
 } // end of namespace WinterMute

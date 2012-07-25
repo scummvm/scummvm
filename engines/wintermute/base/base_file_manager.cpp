@@ -29,13 +29,10 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
-#include "engines/wintermute/base/file/base_file_entry.h"
 #include "engines/wintermute/base/file/base_package.h"
 #include "engines/wintermute/base/file/base_resources.h"
-#include "engines/wintermute/base/file/BPkgFile.h"
 #include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/file/dcpackage.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/str.h"
 #include "common/tokenizer.h"
@@ -71,30 +68,17 @@ bool BaseFileManager::cleanup() {
 	// delete registered paths
 	_packagePaths.clear();
 
-	// delete file entries
-	_filesIter = _files.begin();
-	while (_filesIter != _files.end()) {
-		delete _filesIter->_value;
-		_filesIter++;
-	}
-	_files.clear();
-
 	// close open files
 	for (uint32 i = 0; i < _openFiles.size(); i++) {
 		delete _openFiles[i];
 	}
 	_openFiles.clear();
 
-
 	// delete packages
-	for (uint32 i = 0; i < _packages.size(); i++)
-		delete _packages[i];
 	_packages.clear();
 
 	return STATUS_OK;
 }
-
-
 
 //////////////////////////////////////////////////////////////////////
 byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *size, bool mustExist) {
@@ -149,19 +133,6 @@ bool BaseFileManager::saveFile(const Common::String &filename, byte *buffer, uin
 	return STATUS_OK;
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseFileManager::requestCD(int cd, char *packageFile, const char *filename) {
-	// unmount all non-local packages
-	for (uint32 i = 0; i < _packages.size(); i++) {
-		if (_packages[i]->_cd > 0) _packages[i]->close();
-	}
-
-
-	return STATUS_FAILED;
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::addPath(TPathType type, const Common::FSNode &path) {
 	if (!path.exists())
@@ -189,8 +160,6 @@ bool BaseFileManager::reloadPaths() {
 	return initPaths();
 }
 
-
-#define TEMP_BUFFER_SIZE 32768
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::initPaths() {
 	if (!_gameRef) // This function only works when the game-registry is loaded
@@ -248,7 +217,6 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 			}
 		}
 	}
-	debugC(kWinterMuteDebugFileAccess, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
 	return true;
 }
 
@@ -278,177 +246,44 @@ bool BaseFileManager::registerPackages() {
 		}
 	}
 
-	debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
+//	debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
 
 	return STATUS_OK;
 }
 
 bool BaseFileManager::registerPackage(Common::FSNode file, const Common::String &filename, bool searchSignature) {
-	uint32 absoluteOffset = 0;
-	bool boundToExe = false;
-	Common::SeekableReadStream * package = file.createReadStream();
-	if (!package)
-		return STATUS_FAILED;
-	if (searchSignature) {
-		uint32 offset;
-		if (!findPackageSignature(package, &offset)) {
-			delete package;
-			return STATUS_OK;
-		} else {
-			package->seek(offset, SEEK_SET);
-			absoluteOffset = offset;
-			boundToExe = true;
-		}
-	}
+	PackageSet *pack = new PackageSet(file, filename, searchSignature);
+	_packages.add(file.getName(), pack, pack->getPriority() , true);
 
-	TPackageHeader hdr;
-	hdr.readFromStream(package);
-	if (hdr._magic1 != PACKAGE_MAGIC_1 || hdr._magic2 != PACKAGE_MAGIC_2 || hdr._packageVersion > PACKAGE_VERSION) {
-		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Invalid header in package file '%s'. Ignoring.", filename.c_str());
-		delete package;
-		return STATUS_OK;
-	}
-
-	if (hdr._packageVersion != PACKAGE_VERSION) {
-		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Warning: package file '%s' is outdated.", filename.c_str());
-	}
-
-	// new in v2
-	if (hdr._packageVersion == PACKAGE_VERSION) {
-		uint32 dirOffset;
-		dirOffset = package->readUint32LE();
-		dirOffset += absoluteOffset;
-		package->seek(dirOffset, SEEK_SET);
-	}
-
-	for (uint32 i = 0; i < hdr._numDirs; i++) {
-		BasePackage *pkg = new BasePackage(this);
-		pkg->_fsnode = file;
-		if (!pkg) return STATUS_FAILED;
-
-		pkg->_boundToExe = boundToExe;
-
-		// read package info
-		byte nameLength = package->readByte();
-		pkg->_name = new char[nameLength];
-		package->read(pkg->_name, nameLength);
-		pkg->_cd = package->readByte();
-		pkg->_priority = hdr._priority;
-
-		if (!hdr._masterIndex) pkg->_cd = 0; // override CD to fixed disk
-		_packages.push_back(pkg);
-
-
-		// read file entries
-		uint32 numFiles = package->readUint32LE();
-
-		for (uint32 j = 0; j < numFiles; j++) {
-			char *name;
-			uint32 offset, length, compLength, flags, timeDate1, timeDate2;
-
-			nameLength = package->readByte();
-			name = new char[nameLength];
-			package->read(name, nameLength);
-
-			// v2 - xor name
-			if (hdr._packageVersion == PACKAGE_VERSION) {
-				for (int k = 0; k < nameLength; k++) {
-					((byte *)name)[k] ^= 'D';
-				}
-			}
-			debugC(kWinterMuteDebugFileAccess, "Package contains %s", name);
-			// some old version of ProjectMan writes invalid directory entries
-			// so at least prevent strupr from corrupting memory
-			name[nameLength - 1] = '\0';
-			
-			Common::String upcName = name;
-			upcName.toUppercase();
-			delete[] name;
-			name = NULL;
-
-			offset = package->readUint32LE();
-			offset += absoluteOffset;
-			length = package->readUint32LE();
-			compLength = package->readUint32LE();
-			flags = package->readUint32LE();
-
-			if (hdr._packageVersion == PACKAGE_VERSION) {
-				timeDate1 = package->readUint32LE();
-				timeDate2 = package->readUint32LE();
-			}
-			_filesIter = _files.find(upcName.c_str());
-			if (_filesIter == _files.end()) {
-				BaseFileEntry *file = new BaseFileEntry();
-				file->_package = pkg;
-				file->_offset = offset;
-				file->_length = length;
-				file->_compressedLength = compLength;
-				file->_flags = flags;
-
-				_files[upcName.c_str()] = file;
-			} else {
-				// current package has lower CD number or higher priority, than the registered
-				if (pkg->_cd < _filesIter->_value->_package->_cd || pkg->_priority > _filesIter->_value->_package->_priority) {
-					_filesIter->_value->_package = pkg;
-					_filesIter->_value->_offset = offset;
-					_filesIter->_value->_length = length;
-					_filesIter->_value->_compressedLength = compLength;
-					_filesIter->_value->_flags = flags;
-				}
-			}
-		}
-	}
-
-
-	delete package;
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-Common::File *BaseFileManager::openPackage(const Common::String &name) {
-	//TODO: Is it really necessary to do this when we have the ScummVM-system?
-	Common::File *ret = new Common::File();
-	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); it++) {
-		Common::String packageName = (*it).getName();
-		if (packageName == (name + ".dcp"))
-			ret->open((*it));
-		if (ret->isOpen()) {
-			return ret;
-		}
+Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &filename) {
+	Common::String upcName = filename;
+	upcName.toUppercase();
+	Common::SeekableReadStream *file = NULL;
+	char fileName[MAX_PATH_LENGTH];
+	strcpy(fileName, upcName.c_str());
+	
+	// correct slashes
+	for (int32 i = 0; i < upcName.size(); i++) {
+		if (upcName[i] == '/')
+			upcName.setChar('\\', (uint32)i);
 	}
-	Common::String filename = Common::String::format("%s.%s", name.c_str(), PACKAGE_EXTENSION);
-	ret->open(filename);
-	if (ret->isOpen()) {
-		return ret;
-	}
-	warning("BaseFileManager::OpenPackage - Couldn't load file %s", name.c_str());
-	delete ret;
-	return NULL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-BaseFileEntry *BaseFileManager::getPackageEntry(const Common::String &filename) {
-	Common::String upc_name = filename;
-	upc_name.toUppercase();
-
-	BaseFileEntry *ret = NULL;
-	_filesIter = _files.find(upc_name.c_str());
-	if (_filesIter != _files.end()) ret = _filesIter->_value;
-
-	return ret;
+	Common::ArchiveMemberPtr entry = _packages.getMember(upcName);
+	file = entry->createReadStream();
+	return file;
 }
 
 bool BaseFileManager::hasFile(const Common::String &filename) {
 	if (diskFileExists(filename))
 		return true;
-	if (getPackageEntry(filename))
+	if (_packages.hasFile(filename))
 		return true; // We don't bother checking if the file can actually be opened, something bigger is wrong if that is the case.
 	if (BaseResources::hasFile(filename))
 		return true;
 	return false;
-	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -495,7 +330,7 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 	if (ret)
 		return ret;
 
-	ret = openPkgFile(filename, this);
+	ret = openPkgFile(filename);
 	if (ret)
 		return ret;
 
@@ -505,39 +340,6 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 
 	warning("BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
 	return NULL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseFileManager::findPackageSignature(Common::SeekableReadStream *f, uint32 *offset) {
-	byte buf[32768];
-
-	byte signature[8];
-	((uint32 *)signature)[0] = PACKAGE_MAGIC_1;
-	((uint32 *)signature)[1] = PACKAGE_MAGIC_2;
-
-	uint32 fileSize = (uint32)f->size();
-	uint32 startPos = 1024 * 1024;
-	uint32 bytesRead = startPos;
-
-	while (bytesRead < fileSize - 16) {
-		uint32 toRead = MIN((unsigned int)32768, fileSize - bytesRead);
-		f->seek((int32)startPos, SEEK_SET);
-		uint32 actuallyRead = f->read(buf, toRead);
-		if (actuallyRead != toRead) return false;
-
-		for (uint32 i = 0; i < toRead - 8; i++)
-			if (!memcmp(buf + i, signature, 8)) {
-				*offset =  startPos + i;
-				return true;
-			}
-
-		bytesRead = bytesRead + toRead - 16;
-		startPos = startPos + toRead - 16;
-
-	}
-	return false;
-
 }
 
 } // end of namespace WinterMute
