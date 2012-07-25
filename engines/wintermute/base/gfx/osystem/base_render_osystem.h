@@ -71,8 +71,6 @@ public:
 	bool fade(uint16 alpha);
 	bool fadeToColor(uint32 color, Common::Rect *rect = NULL);
 
-	bool switchFullscreen();
-
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
 
 	BaseImage *takeScreenshot();

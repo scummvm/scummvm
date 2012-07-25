@@ -68,7 +68,6 @@ public:
 	virtual bool initRenderer(int width, int height, bool windowed);
 	virtual bool flip();
 	virtual void initLoop();
-	virtual bool switchFullscreen();
 	virtual bool setup2D(bool force = false);
 	virtual bool setupLines();
 

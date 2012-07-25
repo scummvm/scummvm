@@ -3701,13 +3701,6 @@ bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 		return true;
 	}
 
-	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_RETURN && (event->kbd.flags == Common::KBD_ALT)) {
-		// TODO: Handle alt-enter as well as alt-return.
-		_renderer->switchFullscreen();
-		return true;
-	}
-
-
 	_keyboardState->handleKeyPress(event);
 	_keyboardState->readKey(event);
 // TODO

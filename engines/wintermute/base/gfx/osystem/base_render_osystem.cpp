@@ -589,18 +589,6 @@ BaseImage *BaseRenderOSystem::takeScreenshot() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderOSystem::switchFullscreen() {
-	/*if (_windowed) SDL_SetWindowFullscreen(_win, SDL_TRUE);
-	else SDL_SetWindowFullscreen(_win, SDL_FALSE);
-
-	_windowed = !_windowed;
-	*/
-	_gameRef->_registry->writeBool("Video", "Windowed", _windowed);
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
 const char *BaseRenderOSystem::getName() {
 	if (_name.empty()) {
 #if 0
