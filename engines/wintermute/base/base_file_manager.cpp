@@ -112,27 +112,6 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 	return buffer;
 }
 
-Common::SeekableReadStream *BaseFileManager::loadSaveGame(const Common::String &filename) {
-	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
-	Common::InSaveFile *file = saveMan->openForLoading(filename);
-	return file;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseFileManager::saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed, byte *prefixBuffer, uint32 prefixSize) {
-	// TODO
-	warning("Implement SaveFile");
-
-	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
-	Common::OutSaveFile *file = saveMan->openForSaving(filename);
-	file->write(prefixBuffer, prefixSize);
-	file->write(buffer, bufferSize);
-	file->finalize();
-	delete file;
-
-	return STATUS_OK;
-}
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::addPath(TPathType type, const Common::FSNode &path) {
 	if (!path.exists())

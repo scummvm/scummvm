@@ -43,13 +43,10 @@ public:
 	bool closeFile(Common::SeekableReadStream *File);
 	bool hasFile(const Common::String &filename);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
-	Common::SeekableReadStream *loadSaveGame(const Common::String &filename);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
 
 	BaseFileManager(BaseGame *inGame = NULL);
 	virtual ~BaseFileManager();
-	// Used only by BasePersistenceManager
-	bool saveFile(const Common::String &filename, byte *buffer, uint32 bufferSize, bool compressed = false, byte *prefixBuffer = NULL, uint32 prefixSize = 0);
 	// Used only for detection
 	bool registerPackages(const Common::FSList &fslist);
 private:

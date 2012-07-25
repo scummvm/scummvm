@@ -359,8 +359,20 @@ bool BasePersistenceManager::initLoad(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePersistenceManager::saveFile(const char *filename) {
-	return _gameRef->_fileManager->saveFile(filename, ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData(), ((Common::MemoryWriteStreamDynamic *)_saveStream)->size(), _gameRef->_compressedSavegames, _richBuffer, _richBufferSize);
+bool BasePersistenceManager::saveFile(const Common::String &filename) {
+	byte *prefixBuffer = _richBuffer;
+	uint32 prefixSize = _richBufferSize;
+	byte *buffer = ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData();
+	uint32 bufferSize = ((Common::MemoryWriteStreamDynamic *)_saveStream)->size();
+
+	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
+	Common::OutSaveFile *file = saveMan->openForSaving(filename);
+	file->write(prefixBuffer, prefixSize);
+	file->write(buffer, bufferSize);
+	bool retVal = !file->err();
+	file->finalize();
+	delete file;
+	return retVal;
 }
 
 

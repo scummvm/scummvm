@@ -47,7 +47,7 @@ public:
 	char *_savedDescription;
 	Common::String _savePrefix;
 	Common::String _savedName;
-	bool saveFile(const char *filename);
+	bool saveFile(const Common::String &filename);
 	uint32 getDWORD();
 	void putDWORD(uint32 val);
 	char *getString();
