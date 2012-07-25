@@ -627,7 +627,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	}
 
 	if (back) back->display(offsetX + _posX, offsetY + _posY, _width, _height);
-	//if(image) image->Draw(ImageX +((_press||_oneTimePress)&&back?1:0), ImageY +((_press||_oneTimePress)&&back?1:0), NULL);
+	//if (image) image->Draw(ImageX +((_press||_oneTimePress)&&back?1:0), ImageY +((_press||_oneTimePress)&&back?1:0), NULL);
 	if (image) image->draw(imageX + ((_press || _oneTimePress) && back ? 1 : 0), imageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : NULL);
 
 	if (font && _text) {

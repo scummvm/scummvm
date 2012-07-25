@@ -217,11 +217,11 @@ bool VideoPlayer::update() {
 
 	DWORD CurrentTime; // current playing time (in ms)
 	/*
-	 if(m_SoundAvailable && m_Sound){
+	 if (m_SoundAvailable && m_Sound){
 	 CurrentTime = m_Sound->GetPosition(); // in samples
 	 CurrentTime /= (m_Sound->m_Format.wf.nSamplesPerSec / 1000);
 
-	 if(!m_Sound->IsPlaying()) CurrentTime = m_TotalVideoTime;
+	 if (!m_Sound->IsPlaying()) CurrentTime = m_TotalVideoTime;
 	 }
 	 else
 	 CurrentTime = timeGetTime() - m_StartTime;

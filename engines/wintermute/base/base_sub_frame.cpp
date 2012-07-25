@@ -189,7 +189,7 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	if (custoTrans) _transparent = BYTETORGBA(r, g, b, 0xFF);
 
 	/*
-	if(_surface == NULL)
+	if (_surface == NULL)
 	{
 	    _gameRef->LOG(0, "Error parsing sub-frame. Image not set.");
 	    return STATUS_FAILED;
@@ -217,7 +217,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 
 	bool res;
 
-	//if(Alpha==0xFFFFFFFF) Alpha = _alpha; // TODO: better (combine owner's and self alpha)
+	//if (Alpha==0xFFFFFFFF) Alpha = _alpha; // TODO: better (combine owner's and self alpha)
 	if (_alpha != 0xFFFFFFFF) alpha = _alpha;
 
 	if (rotate != 0.0f) {

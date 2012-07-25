@@ -650,7 +650,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (_theora && DID_SUCCEED(_theora->initialize(filename))) {
 			if (!valAlpha->isNULL())    _theora->setAlphaImage(valAlpha->getString());
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
-			//if(m_Scale>=0) m_Theora->m_PlayZoom = m_Scale;
+			//if (_scale>=0) _theora->_playZoom = _scale;
 			stack->pushBool(true);
 		} else {
 			script->runtimeError("Entity.PlayTheora - error playing video '%s'", filename);

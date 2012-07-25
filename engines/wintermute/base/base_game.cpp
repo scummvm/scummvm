@@ -3242,7 +3242,7 @@ bool BaseGame::loadGame(const char *filename) {
 	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	if (DID_FAIL(ret = pm->initLoad(filename))) goto load_finish;
 
-	//if(DID_FAIL(ret = cleanup())) goto load_finish;
+	//if (DID_FAIL(ret = cleanup())) goto load_finish;
 	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->loadTable(_gameRef,  pm))) goto load_finish;
 	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->loadInstances(_gameRef,  pm))) goto load_finish;
 
@@ -3873,7 +3873,7 @@ bool BaseGame::setActiveObject(BaseObject *obj) {
 	if (obj == _activeObject) return STATUS_OK;
 
 	if (_activeObject) _activeObject->applyEvent("MouseLeave");
-	//if(ValidObject(_activeObject)) _activeObject->applyEvent("MouseLeave");
+	//if (ValidObject(_activeObject)) _activeObject->applyEvent("MouseLeave");
 	_activeObject = obj;
 	if (_activeObject) {
 		_activeObject->applyEvent("MouseEntry");

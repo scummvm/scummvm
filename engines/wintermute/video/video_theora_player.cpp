@@ -547,7 +547,7 @@ bool VideoTheoraPlayer::update() {
 
 
 	// If playback has begun, top audio buffer off immediately.
-	//if(m_Sound) WriteAudio();
+	//if (m_Sound) WriteAudio();
 
 	// are we at or past time for this video frame?
 	if (m_PlaybackStarted && m_VideoFrameReady && (!m_FrameRendered || m_VideobufTime <= GetMovieTime())) {

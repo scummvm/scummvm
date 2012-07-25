@@ -48,11 +48,4 @@
 
 #define COMPRESSED_FILE_MAGIC 0x504D435A // ZCMP
 
-#ifdef GetClassName
-#undef GetClassName
-#endif
-
-// macros
-#define RELEASE(obj) if(obj) { obj->Release(); obj = NULL; } else 0
-
 #endif // _DCGF_H_

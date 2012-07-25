@@ -2491,7 +2491,7 @@ bool AdScene::persistState(bool saving) {
 				nodeState = state->getNodeState(node->_entity->getName(), saving);
 				if (nodeState) {
 					nodeState->transferEntity(node->_entity, _persistentStateSprites, saving);
-					//if(Saving) NodeState->_active = node->_entity->_active;
+					//if (Saving) NodeState->_active = node->_entity->_active;
 					//else node->_entity->_active = NodeState->_active;
 				}
 				break;
@@ -2517,7 +2517,7 @@ bool AdScene::persistState(bool saving) {
 			nodeState = state->getNodeState(_objects[i]->getName(), saving);
 			if (nodeState) {
 				nodeState->transferEntity((AdEntity *)_objects[i], _persistentStateSprites, saving);
-				//if(Saving) NodeState->_active = _objects[i]->_active;
+				//if (Saving) NodeState->_active = _objects[i]->_active;
 				//else _objects[i]->_active = NodeState->_active;
 			}
 		}
@@ -2684,7 +2684,7 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *, AdObject *> &objects, bool i
 					}
 					if (!found) objects.add(regionObj[newIndex]);
 				}
-				//if(RegionObj.getSize() > 0) Objects.Append(RegionObj);
+				//if (RegionObj.getSize() > 0) Objects.Append(RegionObj);
 			}
 			break;
 			default:

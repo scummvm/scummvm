@@ -73,7 +73,7 @@ int BaseFont::getTextWidth(byte *text, int maxLength) {
 bool BaseFont::loadFile(const char * Filename)
 {
     BYTE* Buffer = _gameRef->_fileManager->readWholeFile(filename);
-    if(Buffer==NULL){
+    if (Buffer==NULL){
         _gameRef->LOG(0, "BaseFont::LoadFile failed for file '%s'", filename);
         return STATUS_FAILED;
     }
@@ -83,7 +83,7 @@ bool BaseFont::loadFile(const char * Filename)
     _filename = new char [strlen(filename)+1];
     strcpy(_filename, filename);
 
-    if(DID_FAIL(ret = loadBuffer(Buffer))) _gameRef->LOG(0, "Error parsing FONT file '%s'", filename);
+    if (DID_FAIL(ret = loadBuffer(Buffer))) _gameRef->LOG(0, "Error parsing FONT file '%s'", filename);
 
     delete[] Buffer;
 
@@ -105,7 +105,7 @@ bool BaseFont::loadBuffer(byte * Buffer)
     int cmd;
     BaseParser parser(_gameRef);
 
-    if(parser.GetCommand ((char**)&Buffer, commands, (char**)&params)!=TOKEN_FONT){
+    if (parser.GetCommand ((char**)&Buffer, commands, (char**)&params)!=TOKEN_FONT){
         _gameRef->LOG(0, "'FONT' keyword expected.");
         return STATUS_FAILED;
     }

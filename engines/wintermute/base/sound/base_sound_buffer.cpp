@@ -148,22 +148,22 @@ bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	bool res;
 	bool NewlyCreated = false;
 
-	if(!_soundBuffer || ForceReload || _streamed){
-	    if(!_file) _file = _gameRef->_fileManager->openFile(filename);
-	    if(!_file){
+	if (!_soundBuffer || ForceReload || _streamed){
+	    if (!_file) _file = _gameRef->_fileManager->openFile(filename);
+	    if (!_file){
 	        _gameRef->LOG(0, "Error opening sound file '%s'", filename);
 	        return STATUS_FAILED;
 	    }
 	    // switch to streamed for big files
-	    if(!_streamed && (_file->GetSize() > MAX_NONSTREAMED_FILE_SIZE && !_gameRef->_forceNonStreamedSounds)) SetStreaming(true);
+	    if (!_streamed && (_file->GetSize() > MAX_NONSTREAMED_FILE_SIZE && !_gameRef->_forceNonStreamedSounds)) SetStreaming(true);
 	}
 
 	// create buffer
-	if(!_soundBuffer){
+	if (!_soundBuffer){
 	    NewlyCreated = true;
 
 	    res = InitializeBuffer(_file);
-	    if(DID_FAIL(res)){
+	    if (DID_FAIL(res)){
 	        _gameRef->LOG(res, "Error creating sound buffer for file '%s'", filename);
 	        return res;
 	    }
@@ -172,13 +172,13 @@ bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 
 
 	// store filename
-	if(!_filename){
+	if (!_filename){
 	    _filename = new char[strlen(filename)+1];
 	    strcpy(_filename, filename);
 	}
 
 	// close file (if not streaming)
-	if(!_streamed && _file){
+	if (!_streamed && _file){
 	    _gameRef->_fileManager->closeFile(_file);
 	    _file = NULL;
 	}

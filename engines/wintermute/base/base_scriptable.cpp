@@ -49,7 +49,7 @@ BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable)
 
 //////////////////////////////////////////////////////////////////////////
 BaseScriptable::~BaseScriptable() {
-	//if(_refCount>0) _gameRef->LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
+	//if (_refCount>0) _gameRef->LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
 	delete _scValue;
 	delete _scProp;
 	_scValue = NULL;

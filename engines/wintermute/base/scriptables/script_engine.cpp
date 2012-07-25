@@ -257,14 +257,14 @@ bool ScEngine::tick() {
 			bool obj_found=false;
 			for(int j=0; j<_gameRef->_regObjects.getSize(); j++)
 			{
-			    if(_gameRef->_regObjects[j] == _scripts[i]->_waitObject)
+			    if (_gameRef->_regObjects[j] == _scripts[i]->_waitObject)
 			    {
-			        if(_gameRef->_regObjects[j]->IsReady()) _scripts[i]->Run();
+			        if (_gameRef->_regObjects[j]->IsReady()) _scripts[i]->Run();
 			        obj_found = true;
 			        break;
 			    }
 			}
-			if(!obj_found) _scripts[i]->finish(); // _waitObject no longer exists
+			if (!obj_found) _scripts[i]->finish(); // _waitObject no longer exists
 			*/
 			if (_gameRef->validObject(_scripts[i]->_waitObject)) {
 				if (_scripts[i]->_waitObject->isReady()) _scripts[i]->run();

@@ -329,7 +329,7 @@ void BaseSprite::reset() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::GetCurrentFrame(float zoomX, float zoomY) {
-	//if(_owner && _owner->_freezable && _gameRef->_state == GAME_FROZEN) return true;
+	//if (_owner && _owner->_freezable && _gameRef->_state == GAME_FROZEN) return true;
 
 	if (_currentFrame == -1) return false;
 

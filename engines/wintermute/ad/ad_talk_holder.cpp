@@ -320,7 +320,7 @@ bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
-	if(strcmp(name, "Item")==0){
+	if (strcmp(name, "Item")==0){
 	    SetItem(value->getString());
 	    return STATUS_OK;
 	}

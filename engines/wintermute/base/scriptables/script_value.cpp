@@ -240,7 +240,7 @@ bool ScValue::setProp(const char *name, ScValue *val, bool copyWhole, bool setAs
 		val->_isConstVar = SetAsConst;
 		_valObject[Name] = val;
 
-		if(_type!=VAL_NATIVE) _type = VAL_OBJECT;
+		if (_type!=VAL_NATIVE) _type = VAL_OBJECT;
 		*/
 	}
 

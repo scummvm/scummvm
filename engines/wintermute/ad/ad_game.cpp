@@ -335,7 +335,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 		//bool ret = ChangeScene(stack->pop()->getString());
-		//if(DID_FAIL(ret)) stack->pushBool(false);
+		//if (DID_FAIL(ret)) stack->pushBool(false);
 		//else stack->pushBool(true);
 
 		return STATUS_OK;
@@ -821,7 +821,7 @@ ScValue *AdGame::scGetProperty(const char *name) {
 	// SelectedItem
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SelectedItem") == 0) {
-		//if(_selectedItem) _scValue->setString(_selectedItem->_name);
+		//if (_selectedItem) _scValue->setString(_selectedItem->_name);
 		if (_selectedItem) _scValue->setNative(_selectedItem, true);
 		else _scValue->setNULL();
 

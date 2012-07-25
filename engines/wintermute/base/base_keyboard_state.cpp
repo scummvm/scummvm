@@ -215,7 +215,7 @@ bool BaseKeyboardState::readKey(Common::Event *event) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
-	//if(!persistMgr->getIsSaving()) cleanup();
+	//if (!persistMgr->getIsSaving()) cleanup();
 	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_currentAlt));

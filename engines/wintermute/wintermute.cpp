@@ -165,7 +165,7 @@ int WinterMuteEngine::init() {
 	bool windowedMode = !ConfMan.getBool("fullscreen");
 	
 	// parse command line
-	char *SaveGame = NULL;
+	char *saveGame = NULL;
 /*	for (int i = 0; i < argc; i++) {
 		strcpy(param, argv[i]);
 		
@@ -268,9 +268,9 @@ int WinterMuteEngine::init() {
 		_game->loadGame(str.c_str());
 	}
 	
-	if (SaveGame) {
-		_game->loadGame(SaveGame);
-		delete[] SaveGame;
+	if (saveGame) {
+		_game->loadGame(saveGame);
+		delete[] saveGame;
 	}
 	
 	// all set, ready to go
@@ -314,9 +314,9 @@ int WinterMuteEngine::messageLoop() {
 	if (_game) {
 		// remember previous window position
 		/*
-		 if(_game->_renderer && _game->_renderer->_windowed)
+		 if (_game->_renderer && _game->_renderer->_windowed)
 		 {
-		 if(!::IsIconic(_game->_renderer->_window))
+		 if (!::IsIconic(_game->_renderer->_window))
 		 {
 		 int PosX = _game->_renderer->_windowRect.left;
 		 int PosY = _game->_renderer->_windowRect.top;

@@ -663,12 +663,12 @@ bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
-	if(strcmp(name, "Length")==0){
+	if (strcmp(name, "Length")==0){
 	    int OrigLength = _length;
 	    _length = max(value->getInt(0), 0);
 
 	    char PropName[20];
-	    if(_length < OrigLength){
+	    if (_length < OrigLength){
 	        for(int i=_length; i<OrigLength; i++){
 	            sprintf(PropName, "%d", i);
 	            _values->DeleteProp(PropName);

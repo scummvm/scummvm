@@ -591,11 +591,11 @@ bool ScScript::executeInstruction() {
 			}
 			/*
 			ScValue* val = var->getProp(MethodName);
-			if(val){
+			if (val){
 			    dw = GetFuncPos(val->getString());
-			    if(dw==0){
+			    if (dw==0){
 			        TExternalFunction* f = GetExternal(val->getString());
-			        if(f){
+			        if (f){
 			            ExternalCall(_stack, _thisStack, f);
 			        }
 			        else{
@@ -776,7 +776,7 @@ bool ScScript::executeInstruction() {
 
 	case II_JMP_FALSE: {
 		dw = getDWORD();
-		//if(!_stack->pop()->getBool()) _iP = dw;
+		//if (!_stack->pop()->getBool()) _iP = dw;
 		ScValue *val = _stack->pop();
 		if (!val) {
 			runtimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
@@ -864,7 +864,7 @@ bool ScScript::executeInstruction() {
 
 	case II_NOT:
 		op1 = _stack->pop();
-		//if(op1->isNULL()) _operand->setNULL();
+		//if (op1->isNULL()) _operand->setNULL();
 		if (op1->isNULL()) _operand->setBool(true);
 		else _operand->setBool(!op1->getBool());
 		_stack->push(_operand);
@@ -900,14 +900,14 @@ bool ScScript::executeInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if((op1->isNULL() && !op2->isNULL()) || (!op1->isNULL() && op2->isNULL())) _operand->setBool(false);
-		else if(op1->isNative() && op2->isNative()){
+		if ((op1->isNULL() && !op2->isNULL()) || (!op1->isNULL() && op2->isNULL())) _operand->setBool(false);
+		else if (op1->isNative() && op2->isNative()){
 		    _operand->setBool(op1->getNative() == op2->getNative());
 		}
-		else if(op1->getType()==VAL_STRING || op2->getType()==VAL_STRING){
+		else if (op1->getType()==VAL_STRING || op2->getType()==VAL_STRING){
 		    _operand->setBool(scumm_stricmp(op1->getString(), op2->getString())==0);
 		}
-		else if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		else if (op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
 		    _operand->setBool(op1->getFloat() == op2->getFloat());
 		}
 		else{
@@ -924,14 +924,14 @@ bool ScScript::executeInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if((op1->isNULL() && !op2->isNULL()) || (!op1->isNULL() && op2->isNULL())) _operand->setBool(true);
-		else if(op1->isNative() && op2->isNative()){
+		if ((op1->isNULL() && !op2->isNULL()) || (!op1->isNULL() && op2->isNULL())) _operand->setBool(true);
+		else if (op1->isNative() && op2->isNative()){
 		    _operand->setBool(op1->getNative() != op2->getNative());
 		}
-		else if(op1->getType()==VAL_STRING || op2->getType()==VAL_STRING){
+		else if (op1->getType()==VAL_STRING || op2->getType()==VAL_STRING){
 		    _operand->setBool(scumm_stricmp(op1->getString(), op2->getString())!=0);
 		}
-		else if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		else if (op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
 		    _operand->setBool(op1->getFloat() != op2->getFloat());
 		}
 		else{
@@ -948,7 +948,7 @@ bool ScScript::executeInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		if (op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
 		    _operand->setBool(op1->getFloat() < op2->getFloat());
 		}
 		else _operand->setBool(op1->getInt() < op2->getInt());
@@ -963,7 +963,7 @@ bool ScScript::executeInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		if (op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
 		    _operand->setBool(op1->getFloat() > op2->getFloat());
 		}
 		else _operand->setBool(op1->getInt() > op2->getInt());
@@ -978,7 +978,7 @@ bool ScScript::executeInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		if (op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
 		    _operand->setBool(op1->getFloat() <= op2->getFloat());
 		}
 		else _operand->setBool(op1->getInt() <= op2->getInt());
@@ -993,7 +993,7 @@ bool ScScript::executeInstruction() {
 		op1 = _stack->pop();
 
 		/*
-		if(op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
+		if (op1->getType()==VAL_FLOAT && op2->getType()==VAL_FLOAT){
 		    _operand->setBool(op1->getFloat() >= op2->getFloat());
 		}
 		else _operand->setBool(op1->getInt() >= op2->getInt());
@@ -1257,7 +1257,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 ScScript *ScScript::invokeEventHandler(const char *eventName, bool unbreakable) {
-	//if(_state!=SCRIPT_PERSISTENT) return NULL;
+	//if (_state!=SCRIPT_PERSISTENT) return NULL;
 
 	uint32 pos = getEventPos(eventName);
 	if (!pos) return NULL;
