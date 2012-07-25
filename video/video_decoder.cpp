@@ -256,11 +256,17 @@ bool AdvancedVideoDecoder::rewind() {
 
 	_needsRewind = false;
 
-	// TODO: Pause status
+	// Stop all tracks so they can be rewound
+	if (_isPlaying)
+		stopAllTracks();
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if (!(*it)->rewind())
 			return false;
+
+	// Now that we've rewound, start all tracks again
+	if (_isPlaying)
+		startAllTracks();
 
 	_audioStartOffset = 0;
 	_startTime = g_system->getMillis();
@@ -284,11 +290,17 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 
 	_needsRewind = false;
 
-	// TODO: Pause status
+	// Stop all tracks so they can be seeked
+	if (_isPlaying)
+		stopAllTracks();
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if (!(*it)->seek(time))
 			return false;
+
+	// Now that we've seeked, start all tracks again
+	if (_isPlaying)
+		startAllTracks();
 
 	_audioStartOffset = time;
 	_startTime = g_system->getMillis() - time.msecs();
@@ -307,8 +319,7 @@ void AdvancedVideoDecoder::start() {
 	if (_needsRewind)
 		rewind();
 
-	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		(*it)->start();
+	startAllTracks();
 }
 
 void AdvancedVideoDecoder::stop() {
@@ -321,8 +332,7 @@ void AdvancedVideoDecoder::stop() {
 	_palette = 0;
 	_dirtyPalette = false;
 
-	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		(*it)->stop();
+	stopAllTracks();
 
 	// Also reset the pause state.
 	_pauseLevel = 0;
@@ -582,6 +592,16 @@ const AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack
 	}
 
 	return bestTrack;
+}
+
+void AdvancedVideoDecoder::startAllTracks() {
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		(*it)->start();
+}
+
+void AdvancedVideoDecoder::stopAllTracks() {
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		(*it)->stop();
 }
 
 //////////////////////////////////////////////

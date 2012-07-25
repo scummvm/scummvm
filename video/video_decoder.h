@@ -670,6 +670,10 @@ private:
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;
 	const byte *_palette;
+
+	// Internal helper functions
+	void stopAllTracks();
+	void startAllTracks();
 };
 
 /**
