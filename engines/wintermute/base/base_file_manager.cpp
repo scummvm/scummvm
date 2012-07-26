@@ -259,6 +259,9 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 		}
 	}
 	Common::ArchiveMemberPtr entry = _packages.getMember(upcName);
+	if (!entry) {
+		return NULL;
+	}
 	file = entry->createReadStream();
 	return file;
 }
