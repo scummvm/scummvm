@@ -28,6 +28,7 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
+#include "common/EventRecorder.h"
 #include "common/mutex.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -765,9 +766,16 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	}
 
-	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
-		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
-	);
+	_displayDisabled = ConfMan.getBool("disable_display");
+
+	if (_displayDisabled) {
+		_hwscreen = g_eventRec.getSurface(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	} else {
+		_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
+			_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+			);
+	}
+
 #ifdef USE_RGB_COLOR
 	detectSupportedFormats();
 #endif
@@ -865,7 +873,12 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 	}
 
 	if (_hwscreen) {
-		SDL_FreeSurface(_hwscreen);
+		if (_displayDisabled) {
+			delete _hwscreen;
+		} else {
+			SDL_FreeSurface(_hwscreen);
+		}
+
 		_hwscreen = NULL;
 	}
 
@@ -1188,7 +1201,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 #endif
 
 		// Finally, blit all our changes to the screen
-		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
+		if (!_displayDisabled) {
+			SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
+		}
 	}
 
 	_numDirtyRects = 0;

@@ -125,6 +125,7 @@ public:
 	Common::String generateRecordFileName(const String &target);
 	SaveFileManager *getSaveManager(SaveFileManager *realSaveManager);
 	void togglePause();
+	SDL_Surface *getSurface(int width, int height);
 private:
 	Common::String _author;
 	Common::String _desc;

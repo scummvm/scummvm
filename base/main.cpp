@@ -408,7 +408,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			settings["gfx-mode"] = "default";
 		}
 	}
-
+	if (settings.contains("disable-display")) {
+		ConfMan.setInt("disable-display", 1);
+	}
 	setupGraphics(system);
 
 	// Init the different managers that are used by the engines.
@@ -450,6 +452,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 			Common::String recordMode = ConfMan.get("record_mode");
 			Common::String recordFileName = ConfMan.get("record_file_name");
+
 
 			if (recordMode == "record") {
 				g_eventRec.init(g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName()), Common::EventRecorder::kRecorderRecord);

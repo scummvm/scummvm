@@ -232,6 +232,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
+	ConfMan.registerDefault("disable_display", false);
 	ConfMan.registerDefault("record_mode", "none");
 	ConfMan.registerDefault("record_file_name", "record.bin");
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
@@ -395,6 +396,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION_BOOL('f', "fullscreen")
 			END_OPTION
 
+			DO_LONG_OPTION_INT("disable-display")
+			END_OPTION
+
 			DO_LONG_OPTION("opl-driver")
 			END_OPTION
 
@@ -544,12 +548,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("record-file-name")
-			END_OPTION
-
-			DO_LONG_OPTION("record-temp-file-name")
-			END_OPTION
-
-			DO_LONG_OPTION("record-time-file-name")
 			END_OPTION
 
 #ifdef IPHONE
