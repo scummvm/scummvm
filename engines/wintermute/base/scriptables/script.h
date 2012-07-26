@@ -46,7 +46,7 @@ public:
 	bool dbgSendScript(IWmeDebugClient *client);
 	bool dbgSendVariables(IWmeDebugClient *client);
 
-	BaseArray<int, int> _breakpoints;
+	BaseArray<int> _breakpoints;
 	bool _tracingMode;
 
 	ScScript *_parentScript;

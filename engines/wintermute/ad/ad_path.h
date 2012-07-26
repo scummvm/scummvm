@@ -46,7 +46,7 @@ public:
 	void reset();
 	AdPath(BaseGame *inGame);
 	virtual ~AdPath();
-	BaseArray <BasePoint *, BasePoint *> _points;
+	BaseArray <BasePoint *> _points;
 	int _currIndex;
 	bool _ready;
 };

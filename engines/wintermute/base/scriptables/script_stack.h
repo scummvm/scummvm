@@ -56,7 +56,7 @@ public:
 	ScValue *pop();
 	ScStack(BaseGame *inGame);
 	virtual ~ScStack();
-	BaseArray<ScValue *, ScValue *> _values;
+	BaseArray<ScValue *> _values;
 	int _sP;
 
 };

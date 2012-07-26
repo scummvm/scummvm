@@ -55,12 +55,12 @@ AdTalkHolder::~AdTalkHolder() {
 	for (int i = 0; i < _talkSprites.getSize(); i++) {
 		delete _talkSprites[i];
 	}
-	_talkSprites.removeAll();
+	_talkSprites.clear();
 
 	for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
 		delete _talkSpritesEx[i];
 	}
-	_talkSpritesEx.removeAll();
+	_talkSpritesEx.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -237,7 +237,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 						setTemp2 = true;
 					}
 					delete _talkSpritesEx[i];
-					_talkSpritesEx.removeAt(i);
+					_talkSpritesEx.remove_at(i);
 					break;
 				}
 			}
@@ -251,7 +251,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 						setTemp2 = true;
 					}
 					delete _talkSprites[i];
-					_talkSprites.removeAt(i);
+					_talkSprites.remove_at(i);
 					break;
 				}
 			}
@@ -297,7 +297,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 					}
 					delete _talkSpritesEx[i];
 				}
-				_talkSpritesEx.removeAll();
+				_talkSpritesEx.clear();
 			} else {
 				for (int i = 0; i < _talkSprites.getSize(); i++) {
 					if (_talkSprites[i] == _currentSprite) {
@@ -308,7 +308,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 					}
 					delete _talkSprites[i];
 				}
-				_talkSprites.removeAll();
+				_talkSprites.clear();
 			}
 
 			// set new

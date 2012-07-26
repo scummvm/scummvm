@@ -132,7 +132,7 @@ bool VideoPlayer::cleanup() {
 	for (int i = 0; i < _subtitles.getSize(); i++) {
 		delete _subtitles[i];
 	}
-	_subtitles.removeAll();
+	_subtitles.clear();
 
 	return SetDefaults();
 #endif

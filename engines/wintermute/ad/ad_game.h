@@ -121,7 +121,7 @@ public:
 	AdGame();
 	virtual ~AdGame();
 
-	BaseArray<AdObject *, AdObject *> _objects;
+	BaseArray<AdObject *> _objects;
 
 	virtual bool loadFile(const char *filename);
 	virtual bool loadBuffer(byte *buffer, bool complete = true);
@@ -138,7 +138,7 @@ private:
 	virtual bool ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
 
 	AdObject *_invObject;
-	BaseArray<AdInventory *, AdInventory *> _inventories;
+	BaseArray<AdInventory *> _inventories;
 	char *_scheduledScene;
 	bool _scheduledFadeIn;
 	char *_prevSceneName;
@@ -147,16 +147,16 @@ private:
 	char *_startupScene;
 	bool _initialScene;
 	bool _smartItemCursor;
-	BaseArray<char *, char *> _speechDirs;
-	BaseArray<AdItem *, AdItem *> _items;
+	BaseArray<char *> _speechDirs;
+	BaseArray<AdItem *> _items;
 
-	BaseArray<AdSentence *, AdSentence *> _sentences;
+	BaseArray<AdSentence *> _sentences;
 
-	BaseArray<AdSceneState *, AdSceneState *> _sceneStates;
-	BaseArray<char *, char *> _dlgPendingBranches;
+	BaseArray<AdSceneState *> _sceneStates;
+	BaseArray<char *> _dlgPendingBranches;
 
-	BaseArray<AdResponseContext *, AdResponseContext *> _responsesBranch;
-	BaseArray<AdResponseContext *, AdResponseContext *> _responsesGame;
+	BaseArray<AdResponseContext *> _responsesBranch;
+	BaseArray<AdResponseContext *> _responsesGame;
 
 	AdResponseBox *_responseBox;
 	AdInventoryBox *_inventoryBox;

@@ -55,7 +55,7 @@ AdTalkDef::~AdTalkDef() {
 	for (int i = 0; i < _nodes.getSize(); i++) {
 		delete _nodes[i];
 	}
-	_nodes.removeAll();
+	_nodes.clear();
 
 	delete[] _defaultSpriteFilename;
 	delete _defaultSprite;

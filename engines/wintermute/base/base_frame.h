@@ -51,14 +51,14 @@ public:
 	int _moveY;
 	int _moveX;
 	uint32 _delay;
-	BaseArray<BaseSubFrame *, BaseSubFrame *> _subframes;
+	BaseArray<BaseSubFrame *> _subframes;
 	bool draw(int x, int y, BaseObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 Alpha = 0xFFFFFFFF, bool allFrames = false, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
 	bool loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
 
 	BaseFrame(BaseGame *inGame);
 	virtual ~BaseFrame();
 
-	BaseArray<const char *, const char *> _applyEvent;
+	BaseArray<const char *> _applyEvent;
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const char *name);

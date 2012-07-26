@@ -72,7 +72,7 @@ BaseFontTT::~BaseFontTT(void) {
 	for (int i = 0; i < _layers.getSize(); i++) {
 		delete _layers[i];
 	}
-	_layers.removeAll();
+	_layers.clear();
 
 	delete[] _fontFile;
 	_fontFile = NULL;

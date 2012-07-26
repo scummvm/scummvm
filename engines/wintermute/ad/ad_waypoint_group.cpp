@@ -59,7 +59,7 @@ void AdWaypointGroup::cleanup() {
 	for (int i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.removeAll();
+	_points.clear();
 	_editorSelectedPoint = -1;
 }
 

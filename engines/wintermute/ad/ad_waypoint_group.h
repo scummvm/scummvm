@@ -47,7 +47,7 @@ public:
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 	virtual ~AdWaypointGroup();
-	BaseArray<BasePoint *, BasePoint *> _points;
+	BaseArray<BasePoint *> _points;
 	int _editorSelectedPoint;
 	virtual ScValue *scGetProperty(const char *name);
 	virtual bool scSetProperty(const char *name, ScValue *value);

@@ -105,8 +105,8 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
-	BaseArray<AdObject *, AdObject *> _attachmentsPre;
-	BaseArray<AdObject *, AdObject *> _attachmentsPost;
+	BaseArray<AdObject *> _attachmentsPre;
+	BaseArray<AdObject *> _attachmentsPost;
 
 	bool updateSpriteAttachments();
 	bool displaySpriteAttachments(bool preDisplay);

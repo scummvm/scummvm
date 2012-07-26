@@ -131,7 +131,7 @@ bool AdRegion::loadBuffer(byte *buffer, bool complete) {
 	for (int i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.removeAll();
+	_points.clear();
 
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 

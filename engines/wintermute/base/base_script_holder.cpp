@@ -64,7 +64,7 @@ bool BaseScriptHolder::cleanup() {
 		_scripts[i]->finish(true);
 		_scripts[i]->_owner = NULL;
 	}
-	_scripts.removeAll();
+	_scripts.clear();
 
 	return STATUS_OK;
 }
@@ -336,7 +336,7 @@ bool BaseScriptHolder::addScript(const char *filename) {
 bool BaseScriptHolder::removeScript(ScScript *script) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i] == script) {
-			_scripts.removeAt(i);
+			_scripts.remove_at(i);
 			break;
 		}
 	}

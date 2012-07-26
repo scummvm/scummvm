@@ -53,7 +53,7 @@ public:
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 	Rect32 _rect;
-	BaseArray<BasePoint *, BasePoint *> _points;
+	BaseArray<BasePoint *> _points;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride = NULL);
 
 	// scripting interface

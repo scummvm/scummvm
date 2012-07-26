@@ -92,7 +92,7 @@ void BaseSprite::cleanup() {
 	for (int i = 0; i < _frames.getSize(); i++) {
 		delete _frames[i];
 	}
-	_frames.removeAll();
+	_frames.clear();
 
 	delete[] _editorBgFile;
 	_editorBgFile = NULL;
@@ -578,7 +578,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 						_lastFrameTime = 0;
 					}
 					delete _frames[i];
-					_frames.removeAt(i);
+					_frames.remove_at(i);
 					break;
 				}
 			}
@@ -653,7 +653,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		if (index >= _frames.getSize()) {
 			_frames.add(frame);
 		} else {
-			_frames.insertAt(index, frame);
+			_frames.insert_at(index, frame);
 		}
 
 		stack->pushNative(frame, true);

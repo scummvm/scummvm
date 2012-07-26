@@ -46,7 +46,7 @@ public:
 	BaseFont *addFont(const char *filename);
 	BaseFontStorage(BaseGame *inGame);
 	virtual ~BaseFontStorage();
-	BaseArray<BaseFont *, BaseFont *> _fonts;
+	BaseArray<BaseFont *> _fonts;
 	bool initLoop();
 };
 

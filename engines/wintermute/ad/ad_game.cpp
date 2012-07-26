@@ -124,18 +124,18 @@ bool AdGame::cleanup() {
 		unregisterObject(_objects[i]);
 		_objects[i] = NULL;
 	}
-	_objects.removeAll();
+	_objects.clear();
 
 
 	for (i = 0; i < _dlgPendingBranches.getSize(); i++) {
 		delete[] _dlgPendingBranches[i];
 	}
-	_dlgPendingBranches.removeAll();
+	_dlgPendingBranches.clear();
 
 	for (i = 0; i < _speechDirs.getSize(); i++) {
 		delete[] _speechDirs[i];
 	}
-	_speechDirs.removeAll();
+	_speechDirs.clear();
 
 
 	unregisterObject(_scene);
@@ -145,7 +145,7 @@ bool AdGame::cleanup() {
 	for (i = 0; i < _items.getSize(); i++) {
 		_gameRef->unregisterObject(_items[i]);
 	}
-	_items.removeAll();
+	_items.clear();
 
 
 	// clear remaining inventories
@@ -155,7 +155,7 @@ bool AdGame::cleanup() {
 	for (i = 0; i < _inventories.getSize(); i++) {
 		delete _inventories[i];
 	}
-	_inventories.removeAll();
+	_inventories.clear();
 
 
 	if (_responseBox) {
@@ -186,17 +186,17 @@ bool AdGame::cleanup() {
 	for (i = 0; i < _sceneStates.getSize(); i++) {
 		delete _sceneStates[i];
 	}
-	_sceneStates.removeAll();
+	_sceneStates.clear();
 
 	for (i = 0; i < _responsesBranch.getSize(); i++) {
 		delete _responsesBranch[i];
 	}
-	_responsesBranch.removeAll();
+	_responsesBranch.clear();
 
 	for (i = 0; i < _responsesGame.getSize(); i++) {
 		delete _responsesGame[i];
 	}
-	_responsesGame.removeAll();
+	_responsesGame.clear();
 
 	return BaseGame::cleanup();
 }
@@ -223,7 +223,7 @@ bool AdGame::initLoop() {
 		res = _scene->initLoop();
 	}
 
-	_sentences.removeAll();
+	_sentences.clear();
 
 	return res;
 }
@@ -248,7 +248,7 @@ bool AdGame::removeObject(AdObject *object) {
 
 	for (int i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i] == object) {
-			_objects.removeAt(i);
+			_objects.remove_at(i);
 			break;
 		}
 	}
@@ -1744,7 +1744,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 			delete[] _dlgPendingBranches[i];
 			_dlgPendingBranches[i] = NULL;
 		}
-		_dlgPendingBranches.removeAt(startIndex, _dlgPendingBranches.getSize() - startIndex);
+		_dlgPendingBranches.remove_at(startIndex, _dlgPendingBranches.getSize() - startIndex);
 	}
 
 	// dialogue is over, forget selected responses
@@ -1752,7 +1752,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 		for (int i = 0; i < _responsesBranch.getSize(); i++) {
 			delete _responsesBranch[i];
 		}
-		_responsesBranch.removeAll();
+		_responsesBranch.clear();
 	}
 
 	if (deleteName) {
@@ -1768,7 +1768,7 @@ bool AdGame::clearBranchResponses(char *name) {
 	for (int i = 0; i < _responsesBranch.getSize(); i++) {
 		if (scumm_stricmp(name, _responsesBranch[i]->_context) == 0) {
 			delete _responsesBranch[i];
-			_responsesBranch.removeAt(i);
+			_responsesBranch.remove_at(i);
 			i--;
 		}
 	}
@@ -1839,7 +1839,7 @@ bool AdGame::resetResponse(int id) {
 		if (_responsesGame[i]->_id == id) {
 			if ((context == NULL && _responsesGame[i]->_context == NULL) || scumm_stricmp(context, _responsesGame[i]->_context) == 0) {
 				delete _responsesGame[i];
-				_responsesGame.removeAt(i);
+				_responsesGame.remove_at(i);
 				break;
 			}
 		}
@@ -1849,7 +1849,7 @@ bool AdGame::resetResponse(int id) {
 		if (_responsesBranch[i]->_id == id) {
 			if ((context == NULL && _responsesBranch[i]->_context == NULL) || scumm_stricmp(context, _responsesBranch[i]->_context) == 0) {
 				delete _responsesBranch[i];
-				_responsesBranch.removeAt(i);
+				_responsesBranch.remove_at(i);
 				break;
 			}
 		}
@@ -1962,7 +1962,7 @@ bool AdGame::unregisterInventory(AdInventory *inv) {
 	for (int i = 0; i < _inventories.getSize(); i++) {
 		if (_inventories[i] == inv) {
 			unregisterObject(_inventories[i]);
-			_inventories.removeAt(i);
+			_inventories.remove_at(i);
 			return STATUS_OK;
 		}
 	}
@@ -2007,31 +2007,31 @@ bool AdGame::resetContent() {
 	for (int i = 0; i < _dlgPendingBranches.getSize(); i++) {
 		delete[] _dlgPendingBranches[i];
 	}
-	_dlgPendingBranches.removeAll();
+	_dlgPendingBranches.clear();
 
 
 	// clear inventories
 	for (int i = 0; i < _inventories.getSize(); i++) {
-		_inventories[i]->_takenItems.removeAll();
+		_inventories[i]->_takenItems.clear();
 	}
 
 	// clear scene states
 	for (int i = 0; i < _sceneStates.getSize(); i++) {
 		delete _sceneStates[i];
 	}
-	_sceneStates.removeAll();
+	_sceneStates.clear();
 
 	// clear once responses
 	for (int i = 0; i < _responsesBranch.getSize(); i++) {
 		delete _responsesBranch[i];
 	}
-	_responsesBranch.removeAll();
+	_responsesBranch.clear();
 
 	// clear once game responses
 	for (int i = 0; i < _responsesGame.getSize(); i++) {
 		delete _responsesGame[i];
 	}
-	_responsesGame.removeAll();
+	_responsesGame.clear();
 
 	// reload inventory items
 	if (_itemsFile) {
@@ -2064,7 +2064,7 @@ bool AdGame::deleteItem(AdItem *item) {
 	for (int i = 0; i < _items.getSize(); i++) {
 		if (_items[i] == item) {
 			unregisterObject(_items[i]);
-			_items.removeAt(i);
+			_items.remove_at(i);
 			break;
 		}
 	}
@@ -2113,7 +2113,7 @@ bool AdGame::removeSpeechDir(const char *dir) {
 	for (int i = 0; i < _speechDirs.getSize(); i++) {
 		if (scumm_stricmp(_speechDirs[i], temp) == 0) {
 			delete[] _speechDirs[i];
-			_speechDirs.removeAt(i);
+			_speechDirs.remove_at(i);
 			found = true;
 			break;
 		}

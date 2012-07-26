@@ -57,7 +57,7 @@ public:
 	bool _freezable;
 	bool _ready;
 
-	BaseArray<ScScript *, ScScript *> _scripts;
+	BaseArray<ScScript *> _scripts;
 	// scripting interface
 	virtual ScValue *scGetProperty(const char *name);
 	virtual bool scSetProperty(const char *name, ScValue *value);

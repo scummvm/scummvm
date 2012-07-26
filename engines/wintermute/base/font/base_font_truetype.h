@@ -142,7 +142,7 @@ public:
 	int _fontHeight;
 	char *_fontFile;
 
-	BaseArray<BaseTTFontLayer *, BaseTTFontLayer *> _layers;
+	BaseArray<BaseTTFontLayer *> _layers;
 	void clearCache();
 
 };

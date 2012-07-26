@@ -74,11 +74,11 @@ public:
 		}
 
 		~CScBreakpoint() {
-			_lines.removeAll();
+			_lines.clear();
 		}
 
 		Common::String _filename;
-		BaseArray<int, int> _lines;
+		BaseArray<int> _lines;
 	};
 
 
@@ -87,7 +87,7 @@ public:
 public:
 	bool dbgSendScripts(IWmeDebugClient *client);
 
-	BaseArray<CScBreakpoint *, CScBreakpoint *> _breakpoints;
+	BaseArray<CScBreakpoint *> _breakpoints;
 	bool addBreakpoint(const char *scriptFilename, int line);
 	bool removeBreakpoint(const char *scriptFilename, int line);
 	bool refreshScriptBreakpoints();
@@ -122,7 +122,7 @@ public:
 	static void closeFile(void *data, byte *buffer);
 	static void parseElement(void *data, int line, int type, void *elementData);
 
-	BaseArray<ScScript *, ScScript *> _scripts;
+	BaseArray<ScScript *> _scripts;
 
 	void enableProfiling();
 	void disableProfiling();

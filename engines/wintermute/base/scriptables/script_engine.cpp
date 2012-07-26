@@ -97,7 +97,7 @@ ScEngine::~ScEngine() {
 		delete _breakpoints[i];
 		_breakpoints[i] = NULL;
 	}
-	_breakpoints.removeAll();
+	_breakpoints.clear();
 }
 
 
@@ -108,11 +108,11 @@ bool ScEngine::cleanup() {
 			_scripts[i]->_owner->removeScript(_scripts[i]);
 		}
 		delete _scripts[i];
-		_scripts.removeAt(i);
+		_scripts.remove_at(i);
 		i--;
 	}
 
-	_scripts.removeAll();
+	_scripts.clear();
 
 	delete _globals;
 	_globals = NULL;
@@ -404,7 +404,7 @@ bool ScEngine::removeFinishedScripts() {
 			}
 			_gameRef->getDebugMgr()->onScriptShutdown(_scripts[i]);
 			delete _scripts[i];
-			_scripts.removeAt(i);
+			_scripts.remove_at(i);
 			i--;
 		}
 	}
@@ -511,7 +511,7 @@ void ScEngine::editorCleanup() {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_owner == NULL && (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR)) {
 			delete _scripts[i];
-			_scripts.removeAt(i);
+			_scripts.remove_at(i);
 			i--;
 		}
 	}
@@ -620,10 +620,10 @@ bool ScEngine::removeBreakpoint(const char *scriptFilename, int line) {
 		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), scriptFilename) == 0) {
 			for (int j = 0; j < _breakpoints[i]->_lines.getSize(); j++) {
 				if (_breakpoints[i]->_lines[j] == line) {
-					_breakpoints[i]->_lines.removeAt(j);
+					_breakpoints[i]->_lines.remove_at(j);
 					if (_breakpoints[i]->_lines.getSize() == 0) {
 						delete _breakpoints[i];
-						_breakpoints.removeAt(i);
+						_breakpoints.remove_at(i);
 					}
 					// refresh changes
 					refreshScriptBreakpoints();
@@ -666,7 +666,7 @@ bool ScEngine::refreshScriptBreakpoints(ScScript *script) {
 		}
 	}
 	if (script->_breakpoints.getSize() > 0) {
-		script->_breakpoints.removeAll();
+		script->_breakpoints.clear();
 	}
 
 	return STATUS_OK;

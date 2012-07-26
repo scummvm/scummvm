@@ -60,7 +60,7 @@ public:
 	bool addForce(const char *name, PartForce::TForceType type, int posX, int posY, float angle, float strength);
 	bool removeForce(const char *name);
 
-	BaseArray<PartForce *, PartForce *> _forces;
+	BaseArray<PartForce *> _forces;
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const char *name);
@@ -131,8 +131,8 @@ private:
 	bool initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta);
 	bool updateInternal(uint32 currentTime, uint32 timerDelta);
 	uint32 _lastGenTime;
-	BaseArray<PartParticle *, PartParticle *> _particles;
-	BaseArray<char *, char *> _sprites;
+	BaseArray<PartParticle *> _particles;
+	BaseArray<char *> _sprites;
 };
 
 } // end of namespace WinterMute

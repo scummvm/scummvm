@@ -56,7 +56,7 @@ AdLayer::~AdLayer() {
 	for (int i = 0; i < _nodes.getSize(); i++) {
 		delete _nodes[i];
 	}
-	_nodes.removeAll();
+	_nodes.clear();
 }
 
 
@@ -324,7 +324,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			index = 0;
 		}
 		if (index <= _nodes.getSize() - 1) {
-			_nodes.insertAt(index, node);
+			_nodes.insert_at(index, node);
 		} else {
 			_nodes.add(node);
 		}
@@ -363,7 +363,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			if (_nodes[i] == toDelete) {
 				delete _nodes[i];
 				_nodes[i] = NULL;
-				_nodes.removeAt(i);
+				_nodes.remove_at(i);
 				break;
 			}
 		}

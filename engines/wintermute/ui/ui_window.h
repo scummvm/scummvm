@@ -40,7 +40,7 @@ class BaseViewport;
 class UIWindow : public UIObject {
 	uint32 _fadeColor;
 public:
-	bool getWindowObjects(BaseArray<UIObject *, UIObject *> &Objects, bool InteractiveOnly);
+	bool getWindowObjects(BaseArray<UIObject *> &Objects, bool InteractiveOnly);
 
 	bool _pauseMusic;
 	void cleanup();
@@ -72,7 +72,7 @@ public:
 	UIWindow(BaseGame *inGame);
 	virtual ~UIWindow();
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
-	BaseArray<UIObject *, UIObject *> _widgets;
+	BaseArray<UIObject *> _widgets;
 	TTextAlign _titleAlign;
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);

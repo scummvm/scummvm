@@ -42,7 +42,7 @@ class AdResponseBox : public BaseObject {
 public:
 	BaseObject *getNextAccessObject(BaseObject *CurrObject);
 	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
-	bool getObjects(BaseArray<UIObject *, UIObject *> &objects, bool interactiveOnly);
+	bool getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
 	bool handleResponse(AdResponse *response);
 	void setLastResponseText(const char *text, const char *textOrig);
@@ -69,8 +69,8 @@ public:
 	void clearResponses();
 	AdResponseBox(BaseGame *inGame);
 	virtual ~AdResponseBox();
-	BaseArray<AdResponse *, AdResponse *> _responses;
-	BaseArray<UIButton *, UIButton *> _respButtons;
+	BaseArray<AdResponse *> _responses;
+	BaseArray<UIButton *> _respButtons;
 	UIWindow *_window;
 	UIWindow *_shieldWindow;
 	bool _horizontal;

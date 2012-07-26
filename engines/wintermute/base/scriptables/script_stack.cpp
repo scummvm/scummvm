@@ -50,7 +50,7 @@ ScStack::~ScStack() {
 	for (int i = 0; i < _values.getSize(); i++) {
 		delete _values[i];
 	}
-	_values.removeAll();
+	_values.clear();
 }
 
 
@@ -123,7 +123,7 @@ void ScStack::correctParams(uint32 expectedParams) {
 		while (expectedParams < nuParams) {
 			//Pop();
 			delete _values[_sP - expectedParams];
-			_values.removeAt(_sP - expectedParams);
+			_values.remove_at(_sP - expectedParams);
 			nuParams--;
 			_sP--;
 		}
@@ -132,13 +132,13 @@ void ScStack::correctParams(uint32 expectedParams) {
 			//Push(null_val);
 			ScValue *nullVal = new ScValue(_gameRef);
 			nullVal->setNULL();
-			_values.insertAt(_sP - nuParams + 1, nullVal);
+			_values.insert_at(_sP - nuParams + 1, nullVal);
 			nuParams++;
 			_sP++;
 
 			if (_values.getSize() > _sP + 1) {
 				delete _values[_values.getSize() - 1];
-				_values.removeAt(_values.getSize() - 1);
+				_values.remove_at(_values.getSize() - 1);
 			}
 		}
 	}

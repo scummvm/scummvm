@@ -151,35 +151,35 @@ void AdScene::cleanup() {
 	for (i = 0; i < _layers.getSize(); i++) {
 		_gameRef->unregisterObject(_layers[i]);
 	}
-	_layers.removeAll();
+	_layers.clear();
 
 
 	for (i = 0; i < _waypointGroups.getSize(); i++) {
 		_gameRef->unregisterObject(_waypointGroups[i]);
 	}
-	_waypointGroups.removeAll();
+	_waypointGroups.clear();
 
 	for (i = 0; i < _scaleLevels.getSize(); i++) {
 		_gameRef->unregisterObject(_scaleLevels[i]);
 	}
-	_scaleLevels.removeAll();
+	_scaleLevels.clear();
 
 	for (i = 0; i < _rotLevels.getSize(); i++) {
 		_gameRef->unregisterObject(_rotLevels[i]);
 	}
-	_rotLevels.removeAll();
+	_rotLevels.clear();
 
 
 	for (i = 0; i < _pfPath.getSize(); i++) {
 		delete _pfPath[i];
 	}
-	_pfPath.removeAll();
+	_pfPath.clear();
 	_pfPointsNum = 0;
 
 	for (i = 0; i < _objects.getSize(); i++) {
 		_gameRef->unregisterObject(_objects[i]);
 	}
-	_objects.removeAll();
+	_objects.clear();
 
 	delete _viewport;
 	_viewport = NULL;
@@ -494,7 +494,7 @@ void AdScene::pathFinderStep() {
 	// target point marked, generate path and terminate
 	if (lowestPt->x == _pfTarget->x && lowestPt->y == _pfTarget->y) {
 		while (lowestPt != NULL) {
-			_pfTargetPath->_points.insertAt(0, new BasePoint(lowestPt->x, lowestPt->y));
+			_pfTargetPath->_points.insert_at(0, new BasePoint(lowestPt->x, lowestPt->y));
 			lowestPt = lowestPt->_origin;
 		}
 
@@ -1142,7 +1142,7 @@ bool AdScene::updateFreeObjects() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 	AdGame *adGame = (AdGame *)_gameRef;
-	BaseArray<AdObject *, AdObject *> objects;
+	BaseArray<AdObject *> objects;
 	AdObject *obj;
 
 	// global objects
@@ -1751,7 +1751,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			index = 0;
 		}
 		if (index <= _layers.getSize() - 1) {
-			_layers.insertAt(index, layer);
+			_layers.insert_at(index, layer);
 		} else {
 			_layers.add(layer);
 		}
@@ -1797,7 +1797,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 		for (int i = 0; i < _layers.getSize(); i++) {
 			if (_layers[i] == toDelete) {
-				_layers.removeAt(i);
+				_layers.remove_at(i);
 				_gameRef->unregisterObject(toDelete);
 				break;
 			}
@@ -2101,7 +2101,7 @@ bool AdScene::addObject(AdObject *object) {
 bool AdScene::removeObject(AdObject *object) {
 	for (int i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i] == object) {
-			_objects.removeAt(i);
+			_objects.remove_at(i);
 			return _gameRef->unregisterObject(object);
 		}
 	}
@@ -2849,7 +2849,7 @@ bool AdScene::restoreDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 BaseObject *AdScene::getNextAccessObject(BaseObject *currObject) {
-	BaseArray<AdObject *, AdObject *> objects;
+	BaseArray<AdObject *> objects;
 	getSceneObjects(objects, true);
 
 	if (objects.getSize() == 0) {
@@ -2873,7 +2873,7 @@ BaseObject *AdScene::getNextAccessObject(BaseObject *currObject) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseObject *AdScene::getPrevAccessObject(BaseObject *currObject) {
-	BaseArray<AdObject *, AdObject *> objects;
+	BaseArray<AdObject *> objects;
 	getSceneObjects(objects, true);
 
 	if (objects.getSize() == 0) {
@@ -2897,11 +2897,11 @@ BaseObject *AdScene::getPrevAccessObject(BaseObject *currObject) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::getSceneObjects(BaseArray<AdObject *, AdObject *> &objects, bool interactiveOnly) {
+bool AdScene::getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _layers.getSize(); i++) {
 		// close-up layer -> remove everything below it
 		if (interactiveOnly && _layers[i]->_closeUp) {
-			objects.removeAll();
+			objects.clear();
 		}
 
 
@@ -2917,7 +2917,7 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *, AdObject *> &objects, bool i
 			break;
 
 			case OBJECT_REGION: {
-				BaseArray<AdObject *, AdObject *> regionObj;
+				BaseArray<AdObject *> regionObj;
 				getRegionObjects(node->_region, regionObj, interactiveOnly);
 				for (int newIndex = 0; newIndex < regionObj.getSize(); newIndex++) {
 					bool found = false;
@@ -2942,7 +2942,7 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *, AdObject *> &objects, bool i
 	}
 
 	// objects outside any region
-	BaseArray<AdObject *, AdObject *> regionObj;
+	BaseArray<AdObject *> regionObj;
 	getRegionObjects(NULL, regionObj, interactiveOnly);
 	for (int newIndex = 0; newIndex < regionObj.getSize(); newIndex++) {
 		bool found = false;
@@ -2963,7 +2963,7 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *, AdObject *> &objects, bool i
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *, AdObject *> &objects, bool interactiveOnly) {
+bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly) {
 	AdGame *adGame = (AdGame *)_gameRef;
 	AdObject *obj;
 

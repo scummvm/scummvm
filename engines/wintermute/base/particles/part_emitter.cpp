@@ -97,18 +97,18 @@ PartEmitter::~PartEmitter(void) {
 	for (int i = 0; i < _particles.getSize(); i++) {
 		delete _particles[i];
 	}
-	_particles.removeAll();
+	_particles.clear();
 
 	for (int i = 0; i < _forces.getSize(); i++) {
 		delete _forces[i];
 	}
-	_forces.removeAll();
+	_forces.clear();
 
 
 	for (int i = 0; i < _sprites.getSize(); i++) {
 		delete[] _sprites[i];
 	}
-	_sprites.removeAll();
+	_sprites.clear();
 
 	delete[] _emitEvent;
 	_emitEvent = NULL;
@@ -148,7 +148,7 @@ bool PartEmitter::removeSprite(const char *filename) {
 	for (int i = 0; i < _sprites.getSize(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			delete[] _sprites[i];
-			_sprites.removeAt(i);
+			_sprites.remove_at(i);
 			return STATUS_OK;
 		}
 	}
@@ -446,7 +446,7 @@ bool PartEmitter::removeForce(const char *name) {
 	for (int i = 0; i < _forces.getSize(); i++) {
 		if (scumm_stricmp(name, _forces[i]->getName()) == 0) {
 			delete _forces[i];
-			_forces.removeAt(i);
+			_forces.remove_at(i);
 			return STATUS_OK;
 		}
 	}
@@ -527,7 +527,7 @@ bool PartEmitter::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		for (int i = 0; i < _particles.getSize(); i++) {
 			delete _particles[i];
 		}
-		_particles.removeAll();
+		_particles.clear();
 
 		_running = false;
 		stack->pushBool(true);

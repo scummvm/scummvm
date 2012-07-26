@@ -75,7 +75,7 @@ public:
 	bool addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = NULL);
 	BaseSprite(BaseGame *inGame, BaseObject *owner = NULL);
 	virtual ~BaseSprite();
-	BaseArray<BaseFrame *, BaseFrame *> _frames;
+	BaseArray<BaseFrame *> _frames;
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface

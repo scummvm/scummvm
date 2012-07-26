@@ -43,7 +43,7 @@ public:
 	AdSceneState(BaseGame *inGame);
 	virtual ~AdSceneState();
 	char *_filename;
-	BaseArray<AdNodeState *, AdNodeState *> _nodeStates;
+	BaseArray<AdNodeState *> _nodeStates;
 };
 
 } // end of namespace WinterMute

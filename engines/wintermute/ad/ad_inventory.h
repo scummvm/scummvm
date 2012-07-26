@@ -43,7 +43,7 @@ public:
 	bool insertItem(const char *name, const char *insertAfter = NULL);
 	AdInventory(BaseGame *inGame);
 	virtual ~AdInventory();
-	BaseArray<AdItem *, AdItem *> _takenItems;
+	BaseArray<AdItem *> _takenItems;
 	int _scrollOffset;
 };
 

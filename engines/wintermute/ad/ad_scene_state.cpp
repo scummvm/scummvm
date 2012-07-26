@@ -50,7 +50,7 @@ AdSceneState::~AdSceneState() {
 	for (int i = 0; i < _nodeStates.getSize(); i++) {
 		delete _nodeStates[i];
 	}
-	_nodeStates.removeAll();
+	_nodeStates.clear();
 }
 
 

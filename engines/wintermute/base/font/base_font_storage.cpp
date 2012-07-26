@@ -57,7 +57,7 @@ bool BaseFontStorage::cleanup(bool warn) {
 		}
 		delete _fonts[i];
 	}
-	_fonts.removeAll();
+	_fonts.clear();
 
 	return STATUS_OK;
 }
@@ -117,7 +117,7 @@ bool BaseFontStorage::removeFont(BaseFont *font) {
 			_fonts[i]->_refCount--;
 			if (_fonts[i]->_refCount <= 0) {
 				delete _fonts[i];
-				_fonts.removeAt(i);
+				_fonts.remove_at(i);
 			}
 			break;
 		}

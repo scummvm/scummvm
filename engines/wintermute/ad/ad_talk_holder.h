@@ -39,8 +39,8 @@ public:
 	virtual BaseSprite *getTalkStance(const char *stance);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	BaseSprite *_sprite;
-	BaseArray<BaseSprite *, BaseSprite *> _talkSprites;
-	BaseArray<BaseSprite *, BaseSprite *> _talkSpritesEx;
+	BaseArray<BaseSprite *> _talkSprites;
+	BaseArray<BaseSprite *> _talkSpritesEx;
 	AdTalkHolder(BaseGame *inGame);
 	virtual ~AdTalkHolder();
 

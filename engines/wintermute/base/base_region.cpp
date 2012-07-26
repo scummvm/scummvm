@@ -63,7 +63,7 @@ void BaseRegion::cleanup() {
 	for (int i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.removeAll();
+	_points.clear();
 
 	BasePlatform::setRectEmpty(&_rect);
 	_editorSelectedPoint = -1;
@@ -165,7 +165,7 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 	for (i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.removeAll();
+	_points.clear();
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -249,7 +249,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		int y = stack->pop()->getInt();
 
 		if (Index >= 0 && Index < _points.getSize()) {
-			_points.insertAt(Index, new BasePoint(x, y));
+			_points.insert_at(Index, new BasePoint(x, y));
 			createRegion();
 
 			stack->pushBool(true);
@@ -293,7 +293,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			delete _points[index];
 			_points[index] = NULL;
 
-			_points.removeAt(index);
+			_points.remove_at(index);
 			createRegion();
 
 			stack->pushBool(true);

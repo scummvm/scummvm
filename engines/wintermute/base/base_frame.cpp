@@ -64,13 +64,13 @@ BaseFrame::~BaseFrame() {
 	for (int i = 0; i < _subframes.getSize(); i++) {
 		delete _subframes[i];
 	}
-	_subframes.removeAll();
+	_subframes.clear();
 
 	for (int i = 0; i < _applyEvent.getSize(); i++) {
 		delete[] _applyEvent[i];
 		_applyEvent[i] = NULL;
 	}
-	_applyEvent.removeAll();
+	_applyEvent.clear();
 }
 
 
@@ -334,7 +334,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 
 	sub->_editorSelected = editorSelected;
-	_subframes.insertAt(0, sub);
+	_subframes.insert_at(0, sub);
 
 	return STATUS_OK;
 }
@@ -495,7 +495,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 			for (int i = 0; i < _subframes.getSize(); i++) {
 				if (_subframes[i] == sub) {
 					delete _subframes[i];
-					_subframes.removeAt(i);
+					_subframes.remove_at(i);
 					break;
 				}
 			}
@@ -550,7 +550,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		if (index >= _subframes.getSize()) {
 			_subframes.add(sub);
 		} else {
-			_subframes.insertAt(index, sub);
+			_subframes.insert_at(index, sub);
 		}
 
 		stack->pushNative(sub, true);
@@ -598,7 +598,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		for (int i = 0; i < _applyEvent.getSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				delete[] _applyEvent[i];
-				_applyEvent.removeAt(i);
+				_applyEvent.remove_at(i);
 				break;
 			}
 		}

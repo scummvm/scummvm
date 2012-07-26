@@ -113,7 +113,7 @@ void UIWindow::cleanup() {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		delete _widgets[i];
 	}
-	_widgets.removeAll();
+	_widgets.clear();
 }
 
 
@@ -994,7 +994,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		for (int i = 0; i < _widgets.getSize(); i++) {
 			if (_widgets[i] == obj) {
 				delete _widgets[i];
-				_widgets.removeAt(i);
+				_widgets.remove_at(i);
 				if (val->getType() == VAL_VARIABLE_REF) {
 					val->setNULL();
 				}
@@ -1415,7 +1415,7 @@ void UIWindow::makeFreezable(bool freezable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool UIWindow::getWindowObjects(BaseArray<UIObject *, UIObject *> &objects, bool interactiveOnly) {
+bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		UIObject *control = _widgets[i];
 		if (control->_disable && interactiveOnly) {

@@ -146,12 +146,12 @@ AdObject::~AdObject() {
 	for (int i = 0; i < _attachmentsPre.getSize(); i++) {
 		_gameRef->unregisterObject(_attachmentsPre[i]);
 	}
-	_attachmentsPre.removeAll();
+	_attachmentsPre.clear();
 
 	for (int i = 0; i < _attachmentsPost.getSize(); i++) {
 		_gameRef->unregisterObject(_attachmentsPost[i]);
 	}
-	_attachmentsPost.removeAll();
+	_attachmentsPost.clear();
 }
 
 
@@ -567,7 +567,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				if (_attachmentsPre[i] == obj) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPre[i]);
-					_attachmentsPre.removeAt(i);
+					_attachmentsPre.remove_at(i);
 					i--;
 				}
 			}
@@ -575,7 +575,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				if (_attachmentsPost[i] == obj) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPost[i]);
-					_attachmentsPost.removeAt(i);
+					_attachmentsPost.remove_at(i);
 					i--;
 				}
 			}
@@ -585,7 +585,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				if (_attachmentsPre[i]->getName() && scumm_stricmp(_attachmentsPre[i]->getName(), attachmentName) == 0) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPre[i]);
-					_attachmentsPre.removeAt(i);
+					_attachmentsPre.remove_at(i);
 					i--;
 				}
 			}
@@ -593,7 +593,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				if (_attachmentsPost[i]->getName() && scumm_stricmp(_attachmentsPost[i]->getName(), attachmentName) == 0) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPost[i]);
-					_attachmentsPost.removeAt(i);
+					_attachmentsPost.remove_at(i);
 					i--;
 				}
 			}

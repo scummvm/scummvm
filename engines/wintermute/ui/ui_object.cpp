@@ -286,8 +286,8 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 							j++;
 						}
 
-						win->_widgets.insertAt(i, this);
-						win->_widgets.removeAt(j);
+						win->_widgets.insert_at(i, this);
+						win->_widgets.remove_at(j);
 
 						done = true;
 						stack->pushBool(true);
@@ -318,8 +318,8 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			UIWindow *win = (UIWindow *)_parent;
 			for (int i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
-					win->_widgets.removeAt(i);
-					win->_widgets.insertAt(0, this);
+					win->_widgets.remove_at(i);
+					win->_widgets.insert_at(0, this);
 					break;
 				}
 			}
@@ -341,7 +341,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			UIWindow *win = (UIWindow *)_parent;
 			for (int i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
-					win->_widgets.removeAt(i);
+					win->_widgets.remove_at(i);
 					win->_widgets.add(this);
 					break;
 				}

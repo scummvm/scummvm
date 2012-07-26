@@ -69,8 +69,8 @@ private:
 	AdSpriteSet *_standSprite;
 	AdSpriteSet *_turnLeftSprite;
 	AdSpriteSet *_turnRightSprite;
-	BaseArray<AdSpriteSet *, AdSpriteSet *> _talkSprites;
-	BaseArray<AdSpriteSet *, AdSpriteSet *> _talkSpritesEx;
+	BaseArray<AdSpriteSet *> _talkSprites;
+	BaseArray<AdSpriteSet *> _talkSpritesEx;
 	TDirection _dir;
 	// new anim system
 	Common::String _talkAnimName;
@@ -78,7 +78,7 @@ private:
 	Common::String _walkAnimName;
 	Common::String _turnLeftAnimName;
 	Common::String _turnRightAnimName;
-	BaseArray<AdSpriteSet *, AdSpriteSet *> _anims;
+	BaseArray<AdSpriteSet *> _anims;
 	virtual bool playAnim(const char *filename);
 	AdSpriteSet *getAnimByName(const Common::String &animName);
 

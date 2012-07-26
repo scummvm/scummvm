@@ -41,7 +41,7 @@ public:
 	bool _main;
 	AdLayer(BaseGame *inGame);
 	virtual ~AdLayer();
-	BaseArray<AdSceneNode *, AdSceneNode *> _nodes;
+	BaseArray<AdSceneNode *> _nodes;
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);

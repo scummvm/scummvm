@@ -101,18 +101,18 @@ AdActor::~AdActor() {
 	for (int i = 0; i < _talkSprites.getSize(); i++) {
 		delete _talkSprites[i];
 	}
-	_talkSprites.removeAll();
+	_talkSprites.clear();
 
 	for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
 		delete _talkSpritesEx[i];
 	}
-	_talkSpritesEx.removeAll();
+	_talkSpritesEx.clear();
 
 	for (int i = 0; i < _anims.getSize(); i++) {
 		delete _anims[i];
 		_anims[i] = NULL;
 	}
-	_anims.removeAll();
+	_anims.clear();
 
 }
 
@@ -1051,7 +1051,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 				delete _anims[i];
 				_anims[i] = NULL;
-				_anims.removeAt(i);
+				_anims.remove_at(i);
 				i--;
 				Found = true;
 			}
@@ -1254,7 +1254,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 
 	// not - get a random talk
 	if (!ret) {
-		BaseArray<AdSpriteSet *, AdSpriteSet *> talkAnims;
+		BaseArray<AdSpriteSet *> talkAnims;
 		for (int i = 0; i < _anims.getSize(); i++) {
 			if (_talkAnimName.compareToIgnoreCase(_anims[i]->getName()) == 0) {
 				talkAnims.add(_anims[i]);

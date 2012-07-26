@@ -358,10 +358,10 @@ private:
 	bool stopVideo();
 
 	BaseDebugger *_debugMgr;
-	BaseArray<BaseQuickMsg *, BaseQuickMsg *> _quickMessages;
-	BaseArray<UIWindow *, UIWindow *> _windows;
-	BaseArray<BaseViewport *, BaseViewport *> _viewportStack;
-	BaseArray<BaseObject *, BaseObject *> _regObjects;
+	BaseArray<BaseQuickMsg *> _quickMessages;
+	BaseArray<UIWindow *> _windows;
+	BaseArray<BaseViewport *> _viewportStack;
+	BaseArray<BaseObject *> _regObjects;
 
 	AnsiString getDeviceType() const;
 

@@ -49,8 +49,8 @@ public:
 
 	BaseObject *getNextAccessObject(BaseObject *CurrObject);
 	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
-	bool getSceneObjects(BaseArray<AdObject *, AdObject *> &Objects, bool InteractiveOnly);
-	bool getRegionObjects(AdRegion *Region, BaseArray<AdObject *, AdObject *> &Objects, bool InteractiveOnly);
+	bool getSceneObjects(BaseArray<AdObject *> &Objects, bool InteractiveOnly);
+	bool getRegionObjects(AdRegion *Region, BaseArray<AdObject *> &Objects, bool InteractiveOnly);
 
 	bool afterLoad();
 
@@ -120,9 +120,9 @@ public:
 	bool getPath(BasePoint source, BasePoint target, AdPath *path, BaseObject *requester = NULL);
 	AdScene(BaseGame *inGame);
 	virtual ~AdScene();
-	BaseArray<AdLayer *, AdLayer *> _layers;
-	BaseArray<AdObject *, AdObject *> _objects;
-	BaseArray<AdWaypointGroup *, AdWaypointGroup *> _waypointGroups;
+	BaseArray<AdLayer *> _layers;
+	BaseArray<AdObject *> _objects;
+	BaseArray<AdWaypointGroup *> _waypointGroups;
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 	int _width;
@@ -149,8 +149,8 @@ public:
 	bool _editorShowDecor;
 	bool _editorShowEntities;
 	bool _editorShowScale;
-	BaseArray<AdScaleLevel *, AdScaleLevel *> _scaleLevels;
-	BaseArray<AdRotLevel *, AdRotLevel *> _rotLevels;
+	BaseArray<AdScaleLevel *> _scaleLevels;
+	BaseArray<AdRotLevel *> _rotLevels;
 
 	virtual bool restoreDeviceObjects();
 	int getPointsDist(BasePoint p1, BasePoint p2, BaseObject *requester = NULL);
@@ -169,7 +169,7 @@ private:
 	BasePoint *_pfTarget;
 	AdPath *_pfTargetPath;
 	BaseObject *_pfRequester;
-	BaseArray<AdPathPoint *, AdPathPoint *> _pfPath;
+	BaseArray<AdPathPoint *> _pfPath;
 
 	int _offsetTop;
 	int _offsetLeft;

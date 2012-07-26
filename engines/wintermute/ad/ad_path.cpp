@@ -52,7 +52,7 @@ void AdPath::reset() {
 		delete _points[i];
 	}
 
-	_points.removeAll();
+	_points.clear();
 	_currIndex = -1;
 	_ready = false;
 }

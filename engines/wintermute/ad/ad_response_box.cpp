@@ -100,7 +100,7 @@ void AdResponseBox::clearResponses() {
 	for (int i = 0; i < _responses.getSize(); i++) {
 		delete _responses[i];
 	}
-	_responses.removeAll();
+	_responses.clear();
 }
 
 
@@ -109,7 +109,7 @@ void AdResponseBox::clearButtons() {
 	for (int i = 0; i < _respButtons.getSize(); i++) {
 		delete _respButtons[i];
 	}
-	_respButtons.removeAll();
+	_respButtons.clear();
 }
 
 
@@ -597,7 +597,7 @@ bool AdResponseBox::weedResponses() {
 		case RESPONSE_ONCE:
 			if (adGame->branchResponseUsed(_responses[i]->_iD)) {
 				delete _responses[i];
-				_responses.removeAt(i);
+				_responses.remove_at(i);
 				i--;
 			}
 			break;
@@ -605,7 +605,7 @@ bool AdResponseBox::weedResponses() {
 		case RESPONSE_ONCE_GAME:
 			if (adGame->gameResponseUsed(_responses[i]->_iD)) {
 				delete _responses[i];
-				_responses.removeAt(i);
+				_responses.remove_at(i);
 				i--;
 			}
 			break;
@@ -649,7 +649,7 @@ bool AdResponseBox::handleResponse(AdResponse *response) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {
-	BaseArray<UIObject *, UIObject *> objects;
+	BaseArray<UIObject *> objects;
 	getObjects(objects, true);
 
 	if (objects.getSize() == 0) {
@@ -673,7 +673,7 @@ BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
-	BaseArray<UIObject *, UIObject *> objects;
+	BaseArray<UIObject *> objects;
 	getObjects(objects, true);
 
 	if (objects.getSize() == 0) {
@@ -696,7 +696,7 @@ BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdResponseBox::getObjects(BaseArray<UIObject *, UIObject *> &objects, bool interactiveOnly) {
+bool AdResponseBox::getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _respButtons.getSize(); i++) {
 		objects.add(_respButtons[i]);
 	}

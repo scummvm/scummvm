@@ -356,9 +356,9 @@ bool BaseGame::cleanup() {
 		delete _regObjects[i];
 		_regObjects[i] = NULL;
 	}
-	_regObjects.removeAll();
+	_regObjects.clear();
 
-	_windows.removeAll(); // refs only
+	_windows.clear(); // refs only
 	_focusedWindow = NULL; // ref only
 
 	delete[] _saveImageName;
@@ -382,7 +382,7 @@ bool BaseGame::cleanup() {
 		_scripts[i]->_owner = NULL;
 		_scripts[i]->finish();
 	}
-	_scripts.removeAll();
+	_scripts.clear();
 
 	_fontStorage->removeFont(_systemFont);
 	_systemFont = NULL;
@@ -393,9 +393,9 @@ bool BaseGame::cleanup() {
 	for (int i = 0; i < _quickMessages.getSize(); i++) {
 		delete _quickMessages[i];
 	}
-	_quickMessages.removeAll();
+	_quickMessages.clear();
 
-	_viewportStack.removeAll();
+	_viewportStack.clear();
 	_viewportSP = -1;
 
 	setName(NULL);
@@ -2906,7 +2906,7 @@ bool BaseGame::displayQuickMsg() {
 	for (int i = 0; i < _quickMessages.getSize(); i++) {
 		if (_currentTime - _quickMessages[i]->_startTime >= QUICK_MSG_DURATION) {
 			delete _quickMessages[i];
-			_quickMessages.removeAt(i);
+			_quickMessages.remove_at(i);
 			i--;
 		}
 	}
@@ -2927,7 +2927,7 @@ bool BaseGame::displayQuickMsg() {
 void BaseGame::quickMessage(const char *text) {
 	if (_quickMessages.getSize() >= MAX_QUICK_MSG) {
 		delete _quickMessages[0];
-		_quickMessages.removeAt(0);
+		_quickMessages.remove_at(0);
 	}
 	_quickMessages.add(new BaseQuickMsg(_gameRef,  text));
 }
@@ -2962,7 +2962,7 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 	// is it a window?
 	for (int i = 0; i < _windows.getSize(); i++) {
 		if ((BaseObject *)_windows[i] == object) {
-			_windows.removeAt(i);
+			_windows.remove_at(i);
 
 			// get new focused window
 			if (_focusedWindow == object) {
@@ -2986,7 +2986,7 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 	// destroy object
 	for (int i = 0; i < _regObjects.getSize(); i++) {
 		if (_regObjects[i] == object) {
-			_regObjects.removeAt(i);
+			_regObjects.remove_at(i);
 			if (!_loadInProgress) {
 				SystemClassRegistry::getInstance()->enumInstances(invalidateValues, "ScValue", (void *)object);
 			}
@@ -3864,7 +3864,7 @@ bool BaseGame::focusWindow(UIWindow *window) {
 	for (int i = 0; i < _windows.getSize(); i++) {
 		if (_windows[i] == window) {
 			if (i < _windows.getSize() - 1) {
-				_windows.removeAt(i);
+				_windows.remove_at(i);
 				_windows.add(window);
 
 				_gameRef->_focusedWindow = window;
