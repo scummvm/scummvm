@@ -715,13 +715,13 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		ScValue *val = stack->pop();
 		if (!val->isNULL()) {
 			for (int i = 0; i < _inventories.getSize(); i++) {
-				AdInventory *Inv = _inventories[i];
+				AdInventory *inv = _inventories[i];
 
-				for (int j = 0; j < Inv->_takenItems.getSize(); j++) {
-					if (val->getNative() == Inv->_takenItems[j]) {
+				for (int j = 0; j < inv->_takenItems.getSize(); j++) {
+					if (val->getNative() == inv->_takenItems[j]) {
 						stack->pushBool(true);
 						return STATUS_OK;
-					} else if (scumm_stricmp(val->getString(), Inv->_takenItems[j]->getName()) == 0) {
+					} else if (scumm_stricmp(val->getString(), inv->_takenItems[j]->getName()) == 0) {
 						stack->pushBool(true);
 						return STATUS_OK;
 					}
@@ -1176,16 +1176,16 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) {
-	ScValue *this_obj;
+	ScValue *thisObj;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Actor
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Actor") == 0) {
 		stack->correctParams(0);
-		this_obj = thisStack->getTop();
+		thisObj = thisStack->getTop();
 
-		this_obj->setNative(new AdActor(_gameRef));
+		thisObj->setNative(new AdActor(_gameRef));
 		stack->pushNULL();
 	}
 
@@ -1194,9 +1194,9 @@ bool AdGame::ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Entity") == 0) {
 		stack->correctParams(0);
-		this_obj = thisStack->getTop();
+		thisObj = thisStack->getTop();
 
-		this_obj->setNative(new AdEntity(_gameRef));
+		thisObj->setNative(new AdEntity(_gameRef));
 		stack->pushNULL();
 	}
 

@@ -88,12 +88,12 @@ public:
 	typedef struct {
 		uint32 magic;
 		uint32 version;
-		uint32 code_start;
-		uint32 func_table;
-		uint32 symbol_table;
-		uint32 event_table;
-		uint32 externals_table;
-		uint32 method_table;
+		uint32 codeStart;
+		uint32 funcTable;
+		uint32 symbolTable;
+		uint32 eventTable;
+		uint32 externalsTable;
+		uint32 methodTable;
 	} TScriptHeader;
 
 	TScriptHeader _header;

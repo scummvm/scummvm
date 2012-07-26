@@ -65,7 +65,7 @@ namespace WinterMute {
 
 class SystemClass {
 public:
-	SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class);
+	SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistentClass);
 	~SystemClass();
 
 	int getNumInstances();

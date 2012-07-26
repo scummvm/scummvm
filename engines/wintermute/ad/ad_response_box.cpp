@@ -453,22 +453,22 @@ bool AdResponseBox::display() {
 
 	// shift down if needed
 	if (!_horizontal) {
-		int total_height = 0;
+		int totalHeight = 0;
 		for (i = 0; i < _respButtons.getSize(); i++) {
-			total_height += (_respButtons[i]->_height + _spacing);
+			totalHeight += (_respButtons[i]->_height + _spacing);
 		}
-		total_height -= _spacing;
+		totalHeight -= _spacing;
 
 		switch (_verticalAlign) {
 		case VAL_BOTTOM:
-			if (yyy + total_height < rect.bottom) {
-				yyy = rect.bottom - total_height;
+			if (yyy + totalHeight < rect.bottom) {
+				yyy = rect.bottom - totalHeight;
 			}
 			break;
 
 		case VAL_CENTER:
-			if (yyy + total_height < rect.bottom) {
-				yyy += ((rect.bottom - rect.top) - total_height) / 2;
+			if (yyy + totalHeight < rect.bottom) {
+				yyy += ((rect.bottom - rect.top) - totalHeight) / 2;
 			}
 			break;
 

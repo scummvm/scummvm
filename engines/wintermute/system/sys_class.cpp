@@ -36,14 +36,14 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-SystemClass::SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistent_class) {
+SystemClass::SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistentClass) {
 	_name = name;
 
 	_build = build;
 	_load = load;
 	_next = NULL;
 	_savedID = -1;
-	_persistent = persistent_class;
+	_persistent = persistentClass;
 	_numInst = 0;
 
 	SystemClassRegistry::getInstance()->registerClass(this);

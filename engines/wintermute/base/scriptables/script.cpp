@@ -106,12 +106,12 @@ void ScScript::readHeader() {
 	_scriptStream->seek(0);
 	_header.magic = _scriptStream->readUint32LE();
 	_header.version = _scriptStream->readUint32LE();
-	_header.code_start = _scriptStream->readUint32LE();
-	_header.func_table = _scriptStream->readUint32LE();
-	_header.symbol_table = _scriptStream->readUint32LE();
-	_header.event_table = _scriptStream->readUint32LE();
-	_header.externals_table = _scriptStream->readUint32LE();
-	_header.method_table = _scriptStream->readUint32LE();
+	_header.codeStart = _scriptStream->readUint32LE();
+	_header.funcTable = _scriptStream->readUint32LE();
+	_header.symbolTable = _scriptStream->readUint32LE();
+	_header.eventTable = _scriptStream->readUint32LE();
+	_header.externalsTable = _scriptStream->readUint32LE();
+	_header.methodTable = _scriptStream->readUint32LE();
 	_scriptStream->seek(oldPos);
 }
 
@@ -148,7 +148,7 @@ bool ScScript::initScript() {
 
 
 	// skip to the beginning
-	_iP = _header.code_start;
+	_iP = _header.codeStart;
 	_scriptStream->seek(_iP);
 	_currentLine = 0;
 
@@ -169,7 +169,7 @@ bool ScScript::initTables() {
 
 	readHeader();
 	// load symbol table
-	_iP = _header.symbol_table;
+	_iP = _header.symbolTable;
 
 	_numSymbols = getDWORD();
 	_symbols = new char*[_numSymbols];
@@ -179,7 +179,7 @@ bool ScScript::initTables() {
 	}
 
 	// load functions table
-	_iP = _header.func_table;
+	_iP = _header.funcTable;
 
 	_numFunctions = getDWORD();
 	_functions = new TFunctionPos[_numFunctions];
@@ -190,7 +190,7 @@ bool ScScript::initTables() {
 
 
 	// load events table
-	_iP = _header.event_table;
+	_iP = _header.eventTable;
 
 	_numEvents = getDWORD();
 	_events = new TEventPos[_numEvents];
@@ -202,7 +202,7 @@ bool ScScript::initTables() {
 
 	// load externals
 	if (_header.version >= 0x0101) {
-		_iP = _header.externals_table;
+		_iP = _header.externalsTable;
 
 		_numExternals = getDWORD();
 		_externals = new TExternalFunction[_numExternals];
@@ -222,7 +222,7 @@ bool ScScript::initTables() {
 	}
 
 	// load method table
-	_iP = _header.method_table;
+	_iP = _header.methodTable;
 
 	_numMethods = getDWORD();
 	_methods = new TMethodPos[_numMethods];

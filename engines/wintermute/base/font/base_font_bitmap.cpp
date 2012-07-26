@@ -341,7 +341,7 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 	buffer = (byte *)params;
 
 	int widths[300];
-	int num = 0, default_width = 8;
+	int num = 0, defaultWidth = 8;
 	int lastWidth = 0;
 	int i;
 	int r = 255, g = 255, b = 255;
@@ -377,7 +377,7 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 			break;
 
 		case TOKEN_DEFAULT_WIDTH:
-			parser.scanStr(params, "%d", &default_width);
+			parser.scanStr(params, "%d", &defaultWidth);
 			break;
 
 		case TOKEN_WIDTHS_FRAME:
@@ -482,7 +482,7 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 		}
 	} else {
 		for (i = lastWidth; i < NUM_CHARACTERS; i++) {
-			_widths[i] = default_width;
+			_widths[i] = defaultWidth;
 		}
 	}
 

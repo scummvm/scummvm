@@ -72,12 +72,12 @@ void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, in
 		in = ino;
 		for (uint32 j = 0; j < width; j++) {
 			uint32 pix = *(uint32 *)in;
-			uint32 o_pix = *(uint32 *) out;
+			uint32 oPix = *(uint32 *) out;
 			int b = (pix >> bShift) & 0xff;
 			int g = (pix >> gShift) & 0xff;
 			int r = (pix >> rShift) & 0xff;
 			int a = (pix >> aShift) & 0xff;
-			int o_b, o_g, o_r, o_a;
+			int outb, outg, outr, outa;
 			in += inStep;
 
 	/*		if (ca != 255) {
@@ -89,31 +89,31 @@ void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, in
 					out += 4;
 					break;
 				case 255: // Full opacity
-					o_b = b;
-					o_g = g;
-					o_r = r;
-					o_a = a;
+					outb = b;
+					outg = g;
+					outr = r;
+					outa = a;
 					//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-					out[aIndex] = o_a;
-					out[bIndex] = o_b;
-					out[gIndex] = o_g;
-					out[rIndex] = o_r;
+					out[aIndex] = outa;
+					out[bIndex] = outb;
+					out[gIndex] = outg;
+					out[rIndex] = outr;
 					out += 4;
 					break;
 
 				default: // alpha blending
-					o_a = 255;
-					o_b = (o_pix >> bShiftTarget) & 0xff;
-					o_g = (o_pix >> gShiftTarget) & 0xff;
-					o_r = (o_pix >> rShiftTarget) & 0xff;
-					o_b += ((b - o_b) * a) >> 8;
-					o_g += ((g - o_g) * a) >> 8;
-					o_r += ((r - o_r) * a) >> 8;
+					outa = 255;
+					outb = (oPix >> bShiftTarget) & 0xff;
+					outg = (oPix >> gShiftTarget) & 0xff;
+					outr = (oPix >> rShiftTarget) & 0xff;
+					outb += ((b - outb) * a) >> 8;
+					outg += ((g - outg) * a) >> 8;
+					outr += ((r - outr) * a) >> 8;
 					//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-					out[aIndex] = o_a;
-					out[bIndex] = o_b;
-					out[gIndex] = o_g;
-					out[rIndex] = o_r;
+					out[aIndex] = outa;
+					out[bIndex] = outb;
+					out[gIndex] = outg;
+					out[rIndex] = outr;
 					out += 4;
 			}
 		}
@@ -259,7 +259,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 					int g = (pix >> gShift) & 0xff;
 					int r = (pix >> rShift) & 0xff;
 					int a = (pix >> aShift) & 0xff;
-					int o_b, o_g, o_r, o_a;
+					int outb, outg, outr, outa;
 					in += inStep;
 
 					if (ca != 255) {
@@ -272,56 +272,56 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 						break;
 					case 255: // Full opacity
 						if (cb != 255)
-							o_b = (b * cb) >> 8;
+							outb = (b * cb) >> 8;
 						else
-							o_b = b;
+							outb = b;
 
 						if (cg != 255)
-							o_g = (g * cg) >> 8;
+							outg = (g * cg) >> 8;
 						else
-							o_g = g;
+							outg = g;
 
 						if (cr != 255)
-							o_r = (r * cr) >> 8;
+							outr = (r * cr) >> 8;
 						else
-							o_r = r;
-						o_a = a;
+							outr = r;
+						outa = a;
 						//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-						out[aIndex] = o_a;
-						out[bIndex] = o_b;
-						out[gIndex] = o_g;
-						out[rIndex] = o_r;
+						out[aIndex] = outa;
+						out[bIndex] = outb;
+						out[gIndex] = outg;
+						out[rIndex] = outr;
 						out += 4;
 						break;
 
 					default: // alpha blending
-						o_a = 255;
-						o_b = (o_pix >> bShiftTarget) & 0xff;
-						o_g = (o_pix >> gShiftTarget) & 0xff;
-						o_r = (o_pix >> rShiftTarget) & 0xff;
+						outa = 255;
+						outb = (o_pix >> bShiftTarget) & 0xff;
+						outg = (o_pix >> gShiftTarget) & 0xff;
+						outr = (o_pix >> rShiftTarget) & 0xff;
 						if (cb == 0)
-							o_b = 0;
+							outb = 0;
 						else if (cb != 255)
-							o_b += ((b - o_b) * a * cb) >> 16;
+							outb += ((b - outb) * a * cb) >> 16;
 						else
-							o_b += ((b - o_b) * a) >> 8;
+							outb += ((b - outb) * a) >> 8;
 						if (cg == 0)
-							o_g = 0;
+							outg = 0;
 						else if (cg != 255)
-							o_g += ((g - o_g) * a * cg) >> 16;
+							outg += ((g - outg) * a * cg) >> 16;
 						else
-							o_g += ((g - o_g) * a) >> 8;
+							outg += ((g - outg) * a) >> 8;
 						if (cr == 0)
-							o_r = 0;
+							outr = 0;
 						else if (cr != 255)
-							o_r += ((r - o_r) * a * cr) >> 16;
+							outr += ((r - outr) * a * cr) >> 16;
 						else
-							o_r += ((r - o_r) * a) >> 8;
+							outr += ((r - outr) * a) >> 8;
 						//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-						out[aIndex] = o_a;
-						out[bIndex] = o_b;
-						out[gIndex] = o_g;
-						out[rIndex] = o_r;
+						out[aIndex] = outa;
+						out[bIndex] = outb;
+						out[gIndex] = outg;
+						out[rIndex] = outr;
 						out += 4;
 					}
 				}

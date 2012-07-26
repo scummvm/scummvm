@@ -223,7 +223,7 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	byte *params;
 	int cmd = 2;
 	BaseParser parser(_gameRef);
-	bool always_visible = false;
+	bool alwaysVisible = false;
 
 	_exclusive = false;
 	if (complete) {
@@ -275,7 +275,7 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ALWAYS_VISIBLE:
-			parser.scanStr((char *)params, "%b", &always_visible);
+			parser.scanStr((char *)params, "%b", &alwaysVisible);
 			break;
 
 		case TOKEN_SPACING:
@@ -318,7 +318,7 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 
-	_visible = always_visible;
+	_visible = alwaysVisible;
 
 	if (_window) {
 		for (int i = 0; i < _window->_widgets.getSize(); i++) {

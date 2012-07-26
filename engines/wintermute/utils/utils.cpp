@@ -290,19 +290,19 @@ uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 		G = (byte)(L * 255);
 		B = (byte)(L * 255);
 	} else {
-		float var_1, var_2;
+		float var1, var2;
 
 		if (L < 0.5) {
-			var_2 = L * (1.0 + S);
+			var2 = L * (1.0 + S);
 		} else {
-			var_2 = (L + S) - (S * L);
+			var2 = (L + S) - (S * L);
 		}
 
-		var_1 = 2.0f * L - var_2;
+		var1 = 2.0f * L - var2;
 
-		R = (byte)(255 * Hue2RGB(var_1, var_2, H + (1.0f / 3.0f)));
-		G = (byte)(255 * Hue2RGB(var_1, var_2, H));
-		B = (byte)(255 * Hue2RGB(var_1, var_2, H - (1.0f / 3.0f)));
+		R = (byte)(255 * Hue2RGB(var1, var2, H + (1.0f / 3.0f)));
+		G = (byte)(255 * Hue2RGB(var1, var2, H));
+		B = (byte)(255 * Hue2RGB(var1, var2, H - (1.0f / 3.0f)));
 	}
 	return BYTETORGBA(255, R, G, B);
 }
