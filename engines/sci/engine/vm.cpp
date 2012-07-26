@@ -1173,6 +1173,7 @@ void run_vm(EngineState *s) {
 
 		case op_line: // 0x3f (63)
 			// Debug opcode (line number)
+			//debug("Script %d, line %d", scr->getScriptNumber(), opparams[0]);
 			break;
 
 		case op_lag: // 0x40 (64)
