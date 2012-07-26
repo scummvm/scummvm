@@ -3359,36 +3359,29 @@ bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
 	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
-	if (DID_FAIL(ret = pm->initSave(desc))) {
-		goto save_finish;
-	}
+	if (DID_SUCCEED(ret = pm->initSave(desc))) {
+		if (!quickSave) {
+			delete _saveLoadImage;
+			_saveLoadImage = NULL;
+			if (_saveImageName) {
+				_saveLoadImage = _renderer->createSurface();
 
-	if (!quickSave) {
-		delete _saveLoadImage;
-		_saveLoadImage = NULL;
-		if (_saveImageName) {
-			_saveLoadImage = _renderer->createSurface();
+				if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
+					delete _saveLoadImage;
+					_saveLoadImage = NULL;
+				}
+			}
+		}
 
-			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
-				delete _saveLoadImage;
-				_saveLoadImage = NULL;
+		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveTable(_gameRef,  pm, quickSave))) {
+			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveInstances(_gameRef,  pm, quickSave))) {
+				if (DID_SUCCEED(ret = pm->saveFile(filename))) {
+					_registry->writeInt("System", "MostRecentSaveSlot", slot);
+				}
 			}
 		}
 	}
 
-	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->saveTable(_gameRef,  pm, quickSave))) {
-		goto save_finish;
-	}
-	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->saveInstances(_gameRef,  pm, quickSave))) {
-		goto save_finish;
-	}
-	if (DID_FAIL(ret = pm->saveFile(filename))) {
-		goto save_finish;
-	}
-
-	_registry->writeInt("System", "MostRecentSaveSlot", slot);
-
-save_finish: // TODO: Remove gotos
 	delete pm;
 	_indicatorDisplay = false;
 
@@ -3436,29 +3429,22 @@ bool BaseGame::loadGame(const char *filename) {
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
 	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
-	if (DID_FAIL(ret = pm->initLoad(filename))) {
-		goto load_finish;
+	if (DID_SUCCEED(ret = pm->initLoad(filename))) {
+		//if (DID_SUCCEED(ret = cleanup())) {
+		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadTable(_gameRef,  pm))) {
+			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadInstances(_gameRef,  pm))) {
+				// data initialization after load
+				initAfterLoad();
+				
+				_gameRef->applyEvent("AfterLoad", true);
+				
+				displayContent(true, false);
+				//_renderer->flip();
+				
+				getDebugMgr()->onGameInit();
+			}
+		}
 	}
-
-	//if (DID_FAIL(ret = cleanup())) goto load_finish;
-	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->loadTable(_gameRef,  pm))) {
-		goto load_finish;
-	}
-	if (DID_FAIL(ret = SystemClassRegistry::getInstance()->loadInstances(_gameRef,  pm))) {
-		goto load_finish;
-	}
-
-	// data initialization after load
-	initAfterLoad();
-
-	_gameRef->applyEvent("AfterLoad", true);
-
-	displayContent(true, false);
-	//_renderer->flip();
-
-	getDebugMgr()->onGameInit();
-
-load_finish:
 
 	_indicatorDisplay = false;
 	delete pm;

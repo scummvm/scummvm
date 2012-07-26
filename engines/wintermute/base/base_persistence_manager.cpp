@@ -354,14 +354,6 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 
 	}
 
-	/*
-	 if ( _savedVerMajor != DCGF_VER_MAJOR || _savedVerMinor != DCGF_VER_MINOR)
-	 {
-	 _gameRef->LOG(0, "ERROR: Saved game is created by other WME version");
-	 goto init_fail;
-	 }
-	 */
-
 	return STATUS_OK;
 }
 
