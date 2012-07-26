@@ -318,19 +318,19 @@ bool TeenAgentEngine::fnMansionIntrusionAttempt() {
 		displayCutsceneMessage(dsAddr_cutsceneMsg2, 84, 95); // "Meanwhile in the mansion"
 		switch (attempts) {
 		case 2:
-			processCallback(0x9d90);
+			processCallback(csAddr_secondMansionIntrusion);
 			break;
 		case 3:
-			processCallback(0x9de5);
+			processCallback(csAddr_thirdMansionIntrusion);
 			break;
 		case 4:
-			processCallback(0x9e54);
+			processCallback(csAddr_fourthMansionIntrusion);
 			break;
 		case 5:
-			processCallback(0x9ec3);
+			processCallback(csAddr_fifthMansionIntrusion);
 			break;
 		case 6:
-			processCallback(0x9f3e);
+			processCallback(csAddr_sixthMansionIntrusion);
 			break;
 		default:
 			error("mansion intrusion attempts out of range!");
@@ -4195,7 +4195,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		retVal = fnMansionIntrusionAttempt();
 		break;
 
-	case 0x9d90:
+	case csAddr_secondMansionIntrusion:
 		hideActor();
 		loadScene(34, scene->getPosition());
 		playAnimation(986, 0, true);
@@ -4208,7 +4208,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		showActor();
 		break;
 
-	case 0x9de5:
+	case csAddr_thirdMansionIntrusion:
 		hideActor();
 		loadScene(30, scene->getPosition());
 		playAnimation(887, 1);
@@ -4223,7 +4223,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		showActor();
 		break;
 
-	case 0x9e54:
+	case csAddr_fourthMansionIntrusion:
 		hideActor();
 		loadScene(32, scene->getPosition());
 		playAnimation(894, 1, true, true, true);
@@ -4237,7 +4237,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		showActor();
 		break;
 
-	case 0x9ec3:
+	case csAddr_fifthMansionIntrusion:
 		hideActor();
 		loadScene(29, scene->getPosition());
 		playActorAnimation(901, true);
@@ -4253,7 +4253,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		showActor();
 		break;
 
-	case 0x9f3e:
+	case csAddr_sixthMansionIntrusion:
 		hideActor();
 		loadScene(35, scene->getPosition());
 		playAnimation(907, 2, true);

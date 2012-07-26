@@ -82,6 +82,16 @@ const uint16 csAddr_gotAnchor = 0x99e0;
 const uint16 csAddr_getOutOfLake = 0x9a7a;
 // Mansion Intrusion Attempt function : 0x9d45
 const uint16 csAddr_mansionIntrusionAttempt = 0x9d45;
+// Second Mansion Intrusion function : 0x9d90
+const uint16 csAddr_secondMansionIntrusion = 0x9d90;
+// Third Mansion Intrusion function : 0x9de5
+const uint16 csAddr_thirdMansionIntrusion = 0x9de5;
+// Fourth Mansion Intrusion function : 0x9e54
+const uint16 csAddr_fourthMansionIntrusion = 0x9e54;
+// Fifth Mansion Intrusion function : 0x9ec3
+const uint16 csAddr_fifthMansionIntrusion = 0x9ec3;
+// Sixth Mansion Intrusion function : 0x9f3e
+const uint16 csAddr_sixthMansionIntrusion = 0x9f3e;
 // Display Message function : 0xa055
 const uint16 csAddr_displayMsg = 0xa055;
 // Reject Message function : 0xa4d6
