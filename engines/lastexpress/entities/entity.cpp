@@ -596,6 +596,46 @@ void Entity::callbackAction() {
 }
 
 //////////////////////////////////////////////////////////////////////////
+// Setup functions
+//////////////////////////////////////////////////////////////////////////
+void Entity::setup(const char *name, uint index) {
+	debugC(6, kLastExpressDebugLogic, "Entity: %s()", name);
+
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
+	_data->setCurrentCallback(index);
+	_data->resetCurrentParameters<EntityData::EntityParametersIIII>();
+
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+}
+
+void Entity::setupS(const char *name, uint index, const char *seq1) {
+	debugC(6, kLastExpressDebugLogic, "Entity: %s(%s)", name, seq1);
+
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
+	_data->setCurrentCallback(index);
+	_data->resetCurrentParameters<EntityData::EntityParametersSIIS>();
+
+	EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS*)_data->getCurrentParameters();
+	strncpy((char *)&params->seq1, seq1, 12);
+
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+}
+
+void Entity::setupSS(const char *name, uint index, const char *seq1, const char *seq2) {
+	debugC(6, kLastExpressDebugLogic, "Entity: %s(%s, %s)", name, seq1, seq2);
+
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
+	_data->setCurrentCallback(index);
+	_data->resetCurrentParameters<EntityData::EntityParametersSSII>();
+
+	EntityData::EntityParametersSSII *params = (EntityData::EntityParametersSSII*)_data->getCurrentParameters();
+	strncpy((char *)&params->seq1, seq1, 12);
+	strncpy((char *)&params->seq2, seq2, 12);
+
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Helper functions
 //////////////////////////////////////////////////////////////////////////
 
