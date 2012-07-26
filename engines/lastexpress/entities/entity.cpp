@@ -22,8 +22,6 @@
 
 #include "lastexpress/entities/entity.h"
 
-#include "lastexpress/entities/entity_intern.h"
-
 #include "lastexpress/data/sequence.h"
 
 #include "lastexpress/game/action.h"
