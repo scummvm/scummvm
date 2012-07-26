@@ -222,7 +222,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		} else {
 			for (int i = 0; i < _talkSprites.getSize(); i++) {
 				if (scumm_stricmp(_talkSprites[i]->getFilename(), filename) == 0) {
-					if (_currentSprite == _talkSprites[i]) 
+					if (_currentSprite == _talkSprites[i])
 						setCurrent = true;
 					if (_tempSprite2 == _talkSprites[i])
 						setTemp2 = true;
@@ -282,7 +282,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 			// set new
 			if (ex)
 				_talkSpritesEx.add(spr);
-			else 
+			else
 				_talkSprites.add(spr);
 			stack->pushBool(true);
 

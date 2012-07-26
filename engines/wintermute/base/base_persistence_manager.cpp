@@ -420,12 +420,12 @@ Common::String BasePersistenceManager::getStringObj() {
 	_loadStream->read(ret, len);
 	ret[len] = '\0';
 
-	Common::String retString = ret; 
+	Common::String retString = ret;
 	delete[] ret;
 
 	if (retString == "(null)") {
 		retString = "";
-	} 
+	}
 
 	return retString;
 }

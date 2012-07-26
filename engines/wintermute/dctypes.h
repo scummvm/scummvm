@@ -52,44 +52,44 @@ typedef Common::Array<AnsiString> AnsiStringArray;
 
 enum TGameState {
     GAME_RUNNING,
-	GAME_FROZEN,
-	GAME_SEMI_FROZEN
+    GAME_FROZEN,
+    GAME_SEMI_FROZEN
 };
 
 
-enum TImageType { 
-	IMG_PALETTED8,
-	IMG_TRUECOLOR 
+enum TImageType {
+    IMG_PALETTED8,
+    IMG_TRUECOLOR
 };
 
 
 enum TTextAlign {
     TAL_LEFT = 0,
-	TAL_RIGHT,
-	TAL_CENTER,
-	NUM_TEXT_ALIGN
+    TAL_RIGHT,
+    TAL_CENTER,
+    NUM_TEXT_ALIGN
 };
 
 
 enum TVerticalAlign {
     VAL_TOP = 0,
-	VAL_CENTER,
-	VAL_BOTTOM,
-	NUM_VERTICAL_ALIGN
+    VAL_CENTER,
+    VAL_BOTTOM,
+    NUM_VERTICAL_ALIGN
 };
 
 
 enum TDirection {
-    DI_UP			= 0,
-	DI_UPRIGHT		= 1,
-	DI_RIGHT		= 2,
-	DI_DOWNRIGHT	= 3,
-	DI_DOWN			= 4,
-	DI_DOWNLEFT		= 5,
-	DI_LEFT			= 6,
-	DI_UPLEFT		= 7,
-	NUM_DIRECTIONS	= 8,
-	DI_NONE			= 9
+    DI_UP           = 0,
+    DI_UPRIGHT      = 1,
+    DI_RIGHT        = 2,
+    DI_DOWNRIGHT    = 3,
+    DI_DOWN         = 4,
+    DI_DOWNLEFT     = 5,
+    DI_LEFT         = 6,
+    DI_UPLEFT       = 7,
+    NUM_DIRECTIONS  = 8,
+    DI_NONE         = 9
 };
 
 
@@ -113,20 +113,20 @@ enum TEventType {
 
 enum TUIObjectType {
     UI_UNKNOWN,
-	UI_BUTTON,
-	UI_WINDOW,
-	UI_STATIC,
-	UI_EDIT,
-	UI_HTML,
-	UI_CUSTOM
+    UI_BUTTON,
+    UI_WINDOW,
+    UI_STATIC,
+    UI_EDIT,
+    UI_HTML,
+    UI_CUSTOM
 };
 
 
 enum TRendererState {
     RSTATE_3D,
-	RSTATE_2D,
-	RSTATE_LINES,
-	RSTATE_NONE
+    RSTATE_2D,
+    RSTATE_LINES,
+    RSTATE_NONE
 };
 
 
@@ -137,29 +137,29 @@ enum TDynamicConstructor {
 
 enum TVideoMode {
     VIDEO_WINDOW,
-	VIDEO_FULLSCREEN,
-	VIDEO_ANY
+    VIDEO_FULLSCREEN,
+    VIDEO_ANY
 };
 
 
 enum TVideoPlayback {
-    VID_PLAY_POS		= 0,
-    VID_PLAY_STRETCH	= 1,
-    VID_PLAY_CENTER		= 2
+    VID_PLAY_POS        = 0,
+    VID_PLAY_STRETCH    = 1,
+    VID_PLAY_CENTER     = 2
 };
 
 
 enum TMouseEvent {
     MOUSE_CLICK,
-	MOUSE_RELEASE,
-	MOUSE_DBLCLICK
+    MOUSE_RELEASE,
+    MOUSE_DBLCLICK
 };
 
 
 enum TMouseButton {
     MOUSE_BUTTON_LEFT,
-	MOUSE_BUTTON_RIGHT,
-	MOUSE_BUTTON_MIDDLE
+    MOUSE_BUTTON_RIGHT,
+    MOUSE_BUTTON_MIDDLE
 };
 
 
@@ -169,56 +169,56 @@ enum TTransMgrState {
 
 
 enum TTransitionType {
-    TRANSITION_NONE		= 0,
+    TRANSITION_NONE     = 0,
     TRANSITION_FADE_OUT = 1,
-    TRANSITION_FADE_IN	= 2,
+    TRANSITION_FADE_IN  = 2,
     NUM_TRANSITION_TYPES
 };
 
 
 enum TWindowMode {
     WINDOW_NORMAL,
-	WINDOW_EXCLUSIVE,
-	WINDOW_SYSTEM_EXCLUSIVE
+    WINDOW_EXCLUSIVE,
+    WINDOW_SYSTEM_EXCLUSIVE
 };
 
 enum TSFXType {
     SFX_NONE,
-	SFX_ECHO,
-	SFX_REVERB
+    SFX_ECHO,
+    SFX_REVERB
 };
 
 
 enum TSpriteCacheType {
     CACHE_ALL,
-	CACHE_HALF
+    CACHE_HALF
 };
 
 enum TTextEncoding {
     TEXT_ANSI = 0,
-	TEXT_UTF8 = 1,
-	NUM_TEXT_ENCODINGS
+    TEXT_UTF8 = 1,
+    NUM_TEXT_ENCODINGS
 };
 
 enum TSpriteBlendMode {
-    BLEND_UNKNOWN		= -1,
-	BLEND_NORMAL		= 0,
-	BLEND_ADDITIVE		= 1,
-	BLEND_SUBTRACTIVE	= 2,
-	NUM_BLEND_MODES
+    BLEND_UNKNOWN       = -1,
+    BLEND_NORMAL        = 0,
+    BLEND_ADDITIVE      = 1,
+    BLEND_SUBTRACTIVE   = 2,
+    NUM_BLEND_MODES
 };
 
 enum TTTSType {
     TTS_CAPTION = 0,
-	TTS_TALK,
-	TTS_KEYPRESS
+    TTS_TALK,
+    TTS_KEYPRESS
 };
 
 enum TShadowType {
-    SHADOW_NONE		= 0,
-	SHADOW_SIMPLE	= 1,
-	SHADOW_FLAT		= 2,
-	SHADOW_STENCIL	= 3
+    SHADOW_NONE     = 0,
+    SHADOW_SIMPLE   = 1,
+    SHADOW_FLAT     = 2,
+    SHADOW_STENCIL  = 3
 };
 
 } // end of namespace WinterMute

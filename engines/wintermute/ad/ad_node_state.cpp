@@ -44,7 +44,8 @@ IMPLEMENT_PERSISTENT(AdNodeState, false)
 AdNodeState::AdNodeState(BaseGame *inGame): BaseClass(inGame) {
 	_name = NULL;
 	_active = false;
-	for (int i = 0; i < 7; i++) _caption[i] = NULL;
+	for (int i = 0; i < 7; i++)
+		_caption[i] = NULL;
 	_alphaColor = 0;
 	_filename = NULL;
 	_cursor = NULL;
@@ -99,7 +100,8 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_cursor));
 	persistMgr->transfer(TMEMBER(_alphaColor));
-	for (int i = 0; i < 7; i++) persistMgr->transfer(TMEMBER(_caption[i]));
+	for (int i = 0; i < 7; i++)
+		persistMgr->transfer(TMEMBER(_caption[i]));
 
 	return STATUS_OK;
 }
@@ -107,23 +109,27 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCaption(const char *caption, int caseVal) {
-	if (caseVal== 0) caseVal= 1;
-	if (caseVal< 1 || caseVal> 7) return;
+	if (caseVal == 0)
+		caseVal = 1;
+	if (caseVal < 1 || caseVal > 7)
+		return;
 
-	delete[] _caption[caseVal- 1];
-	_caption[caseVal- 1] = new char[strlen(caption) + 1];
-	if (_caption[caseVal- 1]) {
-		strcpy(_caption[caseVal- 1], caption);
-		_gameRef->_stringTable->expand(&_caption[caseVal- 1]);
+	delete[] _caption[caseVal - 1];
+	_caption[caseVal - 1] = new char[strlen(caption) + 1];
+	if (_caption[caseVal - 1]) {
+		strcpy(_caption[caseVal - 1], caption);
+		_gameRef->_stringTable->expand(&_caption[caseVal - 1]);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 char *AdNodeState::getCaption(int caseVal) {
-	if (caseVal== 0) caseVal= 1;
-	if (caseVal< 1 || caseVal> 7 || _caption[caseVal- 1] == NULL) return "";
-	else return _caption[caseVal- 1];
+	if (caseVal == 0) caseVal = 1;
+	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL)
+		return "";
+	else
+		return _caption[caseVal - 1];
 }
 
 
@@ -132,7 +138,8 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 	if (!entity) return STATUS_FAILED;
 
 	// HACK!
-	if (this->_gameRef != entity->_gameRef) this->_gameRef = entity->_gameRef;
+	if (this->_gameRef != entity->_gameRef)
+		this->_gameRef = entity->_gameRef;
 
 	if (saving) {
 		for (int i = 0; i < 7; i++) {

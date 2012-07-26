@@ -74,7 +74,7 @@ public:
 	virtual void fade(uint16 alpha) = 0;
 	/**
 	 * Fade a portion of the screen to a specific color
-	 * 
+	 *
 	 * @param r the red component to fade too.
 	 * @param g the green component to fade too.
 	 * @param b the blue component to fade too.
@@ -93,7 +93,7 @@ public:
 	virtual bool windowedBlt();
 	/**
 	 * Fill a portion of the screen with a specified color
-	 * 
+	 *
 	 * @param r the red component to fill with.
 	 * @param g the green component to fill with.
 	 * @param b the blue component to fill with.

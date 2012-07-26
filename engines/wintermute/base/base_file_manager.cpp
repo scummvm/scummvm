@@ -119,7 +119,7 @@ bool BaseFileManager::addPath(TPathType type, const Common::FSNode &path) {
 
 	switch (type) {
 	case PATH_SINGLE:
-	//	_singlePaths.push_back(path);
+		//  _singlePaths.push_back(path);
 		error("TODO: Allow adding single-paths");
 		break;
 	case PATH_PACKAGE:
@@ -154,7 +154,7 @@ bool BaseFileManager::initPaths() {
 		Common::String path = entries->nextToken();
 		if (path.size() > 0) {
 			error("BaseFileManager::initPaths - Game wants to add customPath: %s", path.c_str()); // TODO
-			//			addPath(PATH_SINGLE, path);
+			//          addPath(PATH_SINGLE, path);
 		}
 	}
 	delete entries;
@@ -170,7 +170,7 @@ bool BaseFileManager::initPaths() {
 		Common::String path = entries->nextToken();
 		if (path.size() > 0) {
 			error("BaseFileManager::initPaths - Game wants to add packagePath: %s", path.c_str()); // TODO
-			//			addPath(PATH_SINGLE, path);
+			//          addPath(PATH_SINGLE, path);
 		}
 	}
 	delete entries;
@@ -244,7 +244,7 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 	Common::SeekableReadStream *file = NULL;
 	char fileName[MAX_PATH_LENGTH];
 	strcpy(fileName, upcName.c_str());
-	
+
 	// correct slashes
 	for (int32 i = 0; i < upcName.size(); i++) {
 		if (upcName[i] == '/')
@@ -300,7 +300,7 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 		BaseSaveThumbFile *SaveThumbFile = new BaseSaveThumbFile(_gameRef);
 		if (DID_SUCCEED(SaveThumbFile->open(filename))) {
 			ret = SaveThumbFile->getMemStream();
-		} 
+		}
 		delete SaveThumbFile;
 		return ret;
 	}

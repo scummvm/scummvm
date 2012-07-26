@@ -51,7 +51,7 @@ WinterMuteEngine::WinterMuteEngine() : Engine(g_system) {
 	g_wintermute = this;
 	_classReg = new SystemClassRegistry();
 	_classReg->registerClasses();
-	
+
 	_game = new AdGame();
 	_rnd = NULL;
 }
@@ -79,7 +79,7 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 
 	debug("WinterMuteEngine::WinterMuteEngine");
 	_game = NULL;
-	
+
 	g_wintermute = this;
 	_classReg = NULL;
 }
@@ -97,12 +97,12 @@ WinterMuteEngine::~WinterMuteEngine() {
 	DebugMan.clearAllDebugChannels();
 }
 
-bool WinterMuteEngine::hasFeature(EngineFeature f) const { 
+bool WinterMuteEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
-		case kSupportsRTL:
-			return true;
-		default:
-			return false;
+	case kSupportsRTL:
+		return true;
+	default:
+		return false;
 	}
 	return false;
 }
@@ -144,7 +144,7 @@ Common::Error WinterMuteEngine::run() {
 	debugC(2, kWinterMuteDebugSaveGame , "Savegame debugging-enabled");
 
 	int ret = 1;
-	
+
 	ret = init();
 
 	if (ret == 0) {
@@ -163,92 +163,90 @@ int WinterMuteEngine::init() {
 	BasePlatform::initialize(_game, 0, NULL);
 
 	bool windowedMode = !ConfMan.getBool("fullscreen");
-	
+
 	// parse command line
 	char *saveGame = NULL;
-/*	for (int i = 0; i < argc; i++) {
-		strcpy(param, argv[i]);
-		
-		if (scumm_stricmp(param, "-project") == 0) {
-			if (argc > i) strcpy(param, argv[i + 1]);
-			else param[0] = '\0';
-			
-			if (strcmp(param, "") != 0) {
-				char *IniDir = BaseUtils::GetPath(param);
-				char *IniName = BaseUtils::GetFilename(param);
-				
-				// switch to ini's dir
-				warning("TODO: Place ini-files somewhere");
-				//				chdir(IniDir);
-				
-				// set ini name
-				sprintf(param, "./%s", IniName);
-				_game->_registry->SetIniName(param);
-				
-				delete[] IniDir;
-				delete[] IniName;
-			}
-		} else if (scumm_stricmp(param, "-windowed") == 0) windowedMode = true;
-	}*/
-	
-	
+	/*  for (int i = 0; i < argc; i++) {
+	        strcpy(param, argv[i]);
+
+	        if (scumm_stricmp(param, "-project") == 0) {
+	            if (argc > i) strcpy(param, argv[i + 1]);
+	            else param[0] = '\0';
+
+	            if (strcmp(param, "") != 0) {
+	                char *IniDir = BaseUtils::GetPath(param);
+	                char *IniName = BaseUtils::GetFilename(param);
+
+	                // switch to ini's dir
+	                warning("TODO: Place ini-files somewhere");
+	                //              chdir(IniDir);
+
+	                // set ini name
+	                sprintf(param, "./%s", IniName);
+	                _game->_registry->SetIniName(param);
+
+	                delete[] IniDir;
+	                delete[] IniName;
+	            }
+	        } else if (scumm_stricmp(param, "-windowed") == 0) windowedMode = true;
+	    }*/
+
+
 	if (_game->_registry->readBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
-	
+
 	_game->_debugShowFPS = _game->_registry->readBool("Debug", "ShowFPS");
-	
+
 	if (_game->_registry->readBool("Debug", "DisableSmartCache")) {
 		_game->LOG(0, "Smart cache is DISABLED");
 		_game->_smartCache = false;
 	}
-	
-	/*	bool AllowDirectDraw = _game->_registry->readBool("Debug", "AllowDirectDraw", false);*/
-	
+
+	/*  bool AllowDirectDraw = _game->_registry->readBool("Debug", "AllowDirectDraw", false);*/
+
 	// load general game settings
 	_game->initialize1();
-	
+
 	// set gameId, for savegame-naming:
 	_game->setGameId(_targetName);
-	
+
 	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");
 		delete _game;
 		_game = NULL;
-		
+
 		warning("Some of the essential files are missing. Please reinstall.");
 		return 2;
 	}
-	
+
 	_game->initialize2();
-	
+
 	_game->getDebugMgr()->onGameInit();
 	_game->_scEngine->loadBreakpoints();
-	
-	
-	
+
 	bool ret;
-	
+
 	// initialize the renderer
 	ret = _game->_renderer->initRenderer(_game->_settingsResWidth, _game->_settingsResHeight, windowedMode);
 	if (DID_FAIL(ret)) {
 		_game->LOG(ret, "Error initializing renderer. Exiting.");
-		
+
 		delete _game;
 		_game = NULL;
 		return 3;
 	}
-	
+
 	_game->initialize3();
-	
+
 	// initialize sound manager (non-fatal if we fail)
 	ret = _game->_soundMgr->initialize();
 	if (DID_FAIL(ret)) {
 		_game->LOG(ret, "Sound is NOT available.");
 	}
-	
-	
+
+
 	// load game
 	uint32 DataInitStart = g_system->getMillis();
-	
+
 	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
 		delete _game;
@@ -258,21 +256,21 @@ int WinterMuteEngine::init() {
 	//_game->setWindowTitle();
 	_game->_renderer->_ready = true;
 	_game->_miniUpdateEnabled = true;
-	
+
 	_game->LOG(0, "Engine initialized in %d ms", g_system->getMillis() - DataInitStart);
 	_game->LOG(0, "");
-	
+
 	if (ConfMan.hasKey("save_slot")) {
 		int slot = ConfMan.getInt("save_slot");
 		Common::String str = Common::String::format("save00%d.DirtySplitSav", slot);
 		_game->loadGame(str.c_str());
 	}
-	
+
 	if (saveGame) {
 		_game->loadGame(saveGame);
 		delete[] saveGame;
 	}
-	
+
 	// all set, ready to go
 	return 0;
 }
@@ -285,13 +283,13 @@ int WinterMuteEngine::messageLoop() {
 	uint32 diff = 0;
 
 	const uint32 maxFPS = 60;
-	const uint32 frameTime = (uint32)((1.0/maxFPS) * 1000);
+	const uint32 frameTime = (uint32)((1.0 / maxFPS) * 1000);
 	while (!done) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			BasePlatform::handleEvent(&event);
 		}
-		
+
 		if (_game && _game->_renderer->_active && _game->_renderer->_ready) {
 			_game->displayContent();
 			_game->displayQuickMsg();
@@ -310,7 +308,7 @@ int WinterMuteEngine::messageLoop() {
 		}
 		if (_game->_quitting) break;
 	}
-	
+
 	if (_game) {
 		// remember previous window position
 		/*
@@ -322,13 +320,13 @@ int WinterMuteEngine::messageLoop() {
 		 int PosY = _game->_renderer->_windowRect.top;
 		 PosX -= _game->_renderer->_monitorRect.left;
 		 PosY -= _game->_renderer->_monitorRect.top;
-		 
+
 		 _game->_registry->writeInt("Video", "WindowPosX", PosX);
 		 _game->_registry->writeInt("Video", "WindowPosY", PosY);
 		 }
 		 }
 		 */
-		
+
 		delete _game;
 		_game = NULL;
 	}

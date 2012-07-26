@@ -62,11 +62,11 @@ public:
 Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 	Common::SeekableReadStream *file = _package->getFilePointer();
 	if (!file) return NULL;
-	
+
 	// TODO: Cleanup
 	bool compressed = (_compressedLength != 0);
 	/* _size = fileEntry->_length; */
-	
+
 	if (compressed) {
 		// TODO: Really, most of this logic might be doable directly in the fileEntry?
 		// But for now, this should get us rolling atleast.
@@ -77,14 +77,14 @@ Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 	if (file->size() == 0) {
 		file = new CBPkgFile(file, _length);
 	}
-	
+
 	file->seek(0);
-	
+
 	return file;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseFileEntry::BaseFileEntry(){
+BaseFileEntry::BaseFileEntry() {
 	_package = NULL;
 	_length = _compressedLength = _offset = _flags = 0;
 	_filename = "";

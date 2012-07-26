@@ -102,9 +102,9 @@ private:
 	void addDirtyRect(const Common::Rect &rect);
 	void drawTickets();
 	void drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror);
-	typedef Common::List<RenderTicket*>::iterator RenderQueueIterator;
+	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
 	Common::Rect *_dirtyRect;
-	Common::List<RenderTicket*> _renderQueue;
+	Common::List<RenderTicket *> _renderQueue;
 	bool _needsFlip;
 	uint32 _drawNum;
 	Common::Rect _renderRect;

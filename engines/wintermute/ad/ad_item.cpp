@@ -375,7 +375,7 @@ bool AdItem::update() {
 		}
 	}
 	default:
-	break;
+		break;
 	}
 	_ready = (_state == STATE_READY);
 

@@ -583,7 +583,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "InsertFrame") == 0) {
 		stack->correctParams(2);
 		int index = stack->pop()->getInt();
-		if (index < 0) 
+		if (index < 0)
 			index = 0;
 
 		ScValue *val = stack->pop();

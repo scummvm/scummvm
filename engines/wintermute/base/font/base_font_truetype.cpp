@@ -646,8 +646,8 @@ bool BaseFontTT::initFont() {
 		AnsiString fontFileName = PathUtil::combine(BasePlatform::getSystemFontPath(), PathUtil::getFileName(_fontFile));
 		file = _gameRef->_fileManager->openFile(fontFileName.c_str(), false);
 		if (!file) {
-			_gameRef->LOG(0, "Error loading TrueType font '%s'", _fontFile);
-			//return STATUS_FAILED;
+		    _gameRef->LOG(0, "Error loading TrueType font '%s'", _fontFile);
+		    //return STATUS_FAILED;
 		}*/
 	}
 

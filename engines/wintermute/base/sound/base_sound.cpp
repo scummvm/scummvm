@@ -229,7 +229,7 @@ bool BaseSound::setVolume(int volume) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPrivateVolume(int volume) {
-	if (!_sound) 
+	if (!_sound)
 		return STATUS_FAILED;
 	else return _sound->_privateVolume = volume;
 }

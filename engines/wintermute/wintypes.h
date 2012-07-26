@@ -43,8 +43,8 @@ namespace WinterMute {
 #define DID_SUCCEED(hr) ((bool)(hr))
 #define DID_FAIL(hr) (!((bool)(hr)))
 
-#define STATUS_OK		(true)
-#define STATUS_FAILED	(false)
+#define STATUS_OK       (true)
+#define STATUS_FAILED   (false)
 
 #define MAX_PATH_LENGTH 512
 

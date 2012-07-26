@@ -103,7 +103,7 @@ int BaseRegistry::readInt(const AnsiString &subKey, const AnsiString &key, int i
 				return init;
 			}
 		}
-	} 
+	}
 	AnsiString val = readString(subKey, key, "");
 	if (val.empty()) return init;
 	else return atoi(val.c_str());
@@ -126,7 +126,7 @@ bool BaseRegistry::writeInt(const AnsiString &subKey, const AnsiString &key, int
 			error("This key shouldn't be read by the scripts");
 			return true;
 		}
-	} 
+	}
 	writeString(subKey, key, StringUtil::toString(value));
 	return true;
 }

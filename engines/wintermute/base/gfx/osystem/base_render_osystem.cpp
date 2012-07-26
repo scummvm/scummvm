@@ -43,11 +43,11 @@ namespace WinterMute {
 RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) : _owner(owner),
 	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(true) {
 	_colorMod = 0;
-		_mirror = TransparentSurface::FLIP_NONE;
-		if (mirrorX)
-			_mirror |= TransparentSurface::FLIP_V;
-		if (mirrorY)
-			_mirror |= TransparentSurface::FLIP_H;
+	_mirror = TransparentSurface::FLIP_NONE;
+	if (mirrorX)
+		_mirror |= TransparentSurface::FLIP_V;
+	if (mirrorY)
+		_mirror |= TransparentSurface::FLIP_H;
 	if (surf) {
 		_surface = new Graphics::Surface();
 		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
@@ -78,13 +78,13 @@ RenderTicket::~RenderTicket() {
 
 bool RenderTicket::operator==(RenderTicket &t) {
 	if ((t._srcRect != _srcRect) ||
-		(t._dstRect != _dstRect) ||
-		(t._mirror != _mirror) ||
-		(t._owner != _owner) ||
-		(t._hasAlpha != _hasAlpha) ||
-		(t._colorMod != _colorMod)) {
-			return false;
-		}
+	        (t._dstRect != _dstRect) ||
+	        (t._mirror != _mirror) ||
+	        (t._owner != _owner) ||
+	        (t._hasAlpha != _hasAlpha) ||
+	        (t._colorMod != _colorMod)) {
+		return false;
+	}
 	return true;
 }
 
@@ -137,22 +137,22 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 
 	// find suitable resolution
-/*#ifdef __IPHONEOS__
-	_realWidth = 480;
-	_realHeight = 320;
+	/*#ifdef __IPHONEOS__
+	    _realWidth = 480;
+	    _realHeight = 320;
 
-	int numModes = SDL_GetNumDisplayModes(0);
-	for (int i = 0; i < numModes; i++) {
-		SDL_DisplayMode mode;
-		SDL_GetDisplayMode(0, i, &mode);
+	    int numModes = SDL_GetNumDisplayModes(0);
+	    for (int i = 0; i < numModes; i++) {
+	        SDL_DisplayMode mode;
+	        SDL_GetDisplayMode(0, i, &mode);
 
-		if (mode.w > mode.h) {
-			_realWidth = mode.w;
-			_realHeight = mode.h;
-			break;
-		}
-	}
-#else*/
+	        if (mode.w > mode.h) {
+	            _realWidth = mode.w;
+	            _realHeight = mode.h;
+	            break;
+	        }
+	    }
+	#else*/
 	_realWidth = _gameRef->_registry->readInt("Debug", "ForceResWidth", _width);
 	_realHeight = _gameRef->_registry->readInt("Debug", "ForceResHeight", _height);
 //#endif
@@ -257,7 +257,7 @@ bool BaseRenderOSystem::flip() {
 		if (_disableDirtyRects) {
 			g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
-	//	g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+		//  g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 		delete _dirtyRect;
 		_dirtyRect = NULL;
 		g_system->updateScreen();
@@ -347,7 +347,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	if (_disableDirtyRects) {
 		RenderTicket renderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY);
 		// HINT: The surface-data contains other info than it should.
-	//	drawFromSurface(renderTicket._surface, srcRect, dstRect, NULL, mirrorX, mirrorY);
+		//  drawFromSurface(renderTicket._surface, srcRect, dstRect, NULL, mirrorX, mirrorY);
 		drawFromSurface(renderTicket.getSurface(), &renderTicket._srcRect, &renderTicket._dstRect, NULL, renderTicket._mirror);
 		return;
 	}
@@ -355,8 +355,8 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	if ((dstRect->left < 0 && dstRect->right < 0) || (dstRect->top < 0 && dstRect->bottom < 0)) {
 		return;
 	}
-	
-	RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY); 
+
+	RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY);
 	compare._colorMod = _colorMod;
 	RenderQueueIterator it;
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
@@ -397,14 +397,14 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 			addDirtyRect(renderTicket->_dstRect);
 		} else {
 			// Before something
-			Common::List<RenderTicket*>::iterator pos;
+			Common::List<RenderTicket *>::iterator pos;
 			for (pos = _renderQueue.begin(); pos != _renderQueue.end(); pos++) {
 				if ((*pos)->_drawNum >= _drawNum) {
 					break;
 				}
 			}
 			_renderQueue.insert(pos, renderTicket);
-			Common::List<RenderTicket*>::iterator it;
+			Common::List<RenderTicket *>::iterator it;
 			renderTicket->_drawNum = _drawNum++;
 			// Increment the following tickets, so they still are in line
 			for (it = pos; it != _renderQueue.end(); it++) {
@@ -432,7 +432,7 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 				// Decreement the following tickets.
 				for (; it != _renderQueue.end(); it++) {
 					(*it)->_drawNum--;
-				} 
+				}
 			}
 			// Is not in order, so readd it as if it was a new ticket
 			renderTicket->_drawNum = 0;
@@ -457,7 +457,7 @@ void BaseRenderOSystem::drawTickets() {
 	int decrement = 0;
 	while (it != _renderQueue.end()) {
 		if ((*it)->_wantsDraw == false || (*it)->_isValid == false) {
-			RenderTicket* ticket = *it;
+			RenderTicket *ticket = *it;
 			addDirtyRect((*it)->_dstRect);
 			//warning("Discarding Rect: %d %d %d %d Width: %d Height: %d", (*it)->_dstRect.left, (*it)->_dstRect.top, (*it)->_dstRect.right, (*it)->_dstRect.bottom, (*it)->_dstRect.width() , (*it)->_dstRect.height());
 			it = _renderQueue.erase(it);
@@ -474,7 +474,7 @@ void BaseRenderOSystem::drawTickets() {
 	// draw, we need to keep track of what it was prior to draw.
 	uint32 oldColorMod = _colorMod;
 //	warning("DirtyRect: %d %d %d %d Width: %d Height: %d", _dirtyRect->left, _dirtyRect->top, _dirtyRect->right, _dirtyRect->bottom, _dirtyRect->width(), _dirtyRect->height());
-	
+
 	// Apply the clear-color to the dirty rect.
 	_renderSurface->fillRect(*_dirtyRect, _clearColor);
 	_drawNum = 1;

@@ -170,7 +170,7 @@ WideString StringUtil::ansiToWide(const AnsiString &str) {
 	/*Common::String converted = "";
 	uint32 index = 0;
 	while (index != str.size()) {
-		converted += simpleAnsiToWide(str, index);
+	    converted += simpleAnsiToWide(str, index);
 	}*/
 	// using default os locale!
 

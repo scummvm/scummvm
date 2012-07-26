@@ -180,7 +180,7 @@ char *BaseParser::getAssignmentText(char **buf) {
 				break;
 			++*buf;
 		}
-		**buf = 0;                 // null terminate it
+		**buf = 0;               // null terminate it
 		if (theChar)                  // skip the terminator
 			++*buf;
 	}

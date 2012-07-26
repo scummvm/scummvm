@@ -64,55 +64,55 @@ public:
 		return "Copyright (c) 2011 Jan Nedoma";
 	}
 
-/*	virtual GameList getSupportedGames() const {
-		GameList games;
-		const PlainGameDescriptor *g = wintermuteGames;
-		while (g->gameid) {
-			games.push_back(*g);
-			g++;
-		}
+	/*  virtual GameList getSupportedGames() const {
+	        GameList games;
+	        const PlainGameDescriptor *g = wintermuteGames;
+	        while (g->gameid) {
+	            games.push_back(*g);
+	            g++;
+	        }
 
-		return games;
-	}
+	        return games;
+	    }
 
-	virtual GameDescriptor findGame(const char *gameid) const {
-		const PlainGameDescriptor *g = wintermuteGames;
-		while (g->gameid) {
-			if (0 == scumm_stricmp(gameid, g->gameid))
-				break;
-			g++;
-		}
-		return GameDescriptor(g->gameid, g->description);
-	}*/
+	    virtual GameDescriptor findGame(const char *gameid) const {
+	        const PlainGameDescriptor *g = wintermuteGames;
+	        while (g->gameid) {
+	            if (0 == scumm_stricmp(gameid, g->gameid))
+	                break;
+	            g++;
+	        }
+	        return GameDescriptor(g->gameid, g->description);
+	    }*/
 
-/*	virtual GameList detectGames(const Common::FSList &fslist) const {
-		GameList detectedGames;
+	/*  virtual GameList detectGames(const Common::FSList &fslist) const {
+	        GameList detectedGames;
 
-		// Iterate over all files in the given directory
-		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			if (!file->isDirectory()) {
-				const char *gameName = file->getName().c_str();
+	        // Iterate over all files in the given directory
+	        for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+	            if (!file->isDirectory()) {
+	                const char *gameName = file->getName().c_str();
 
-				if (0 == scumm_stricmp("data.dcp", gameName)) {
-					// You could check the contents of the file now if you need to.
-					detectedGames.push_back(WinterMute_setting[0]);
-					break;
-				}
-			}
-		}
-		return detectedGames;
-	}*/
-	
-	
+	                if (0 == scumm_stricmp("data.dcp", gameName)) {
+	                    // You could check the contents of the file now if you need to.
+	                    detectedGames.push_back(WinterMute_setting[0]);
+	                    break;
+	                }
+	            }
+	        }
+	        return detectedGames;
+	    }*/
+
+
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 		// Set some defaults
 		s_fallbackDesc.extra = "";
 		s_fallbackDesc.language = Common::UNK_LANG;
 		s_fallbackDesc.flags = ADGF_UNSTABLE;
-		s_fallbackDesc.platform = Common::kPlatformWindows;	// default to Windows
+		s_fallbackDesc.platform = Common::kPlatformWindows; // default to Windows
 		s_fallbackDesc.gameid = "wintermute";
 		s_fallbackDesc.guioptions = GUIO0();
-		
+
 		if (allFiles.contains("data.dcp")) {
 			Common::String name, caption;
 			if (WinterMuteEngine::getGameInfo(fslist, name, caption)) {
@@ -139,7 +139,7 @@ public:
 		}
 		return 0;
 	}
-	
+
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		assert(syst);
 		assert(engine);
@@ -150,20 +150,20 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const {
 		switch (f) {
-			case MetaEngine::kSupportsListSaves:
-				return true;
-			case MetaEngine::kSupportsLoadingDuringStartup:
-				return true;
-			case MetaEngine::kSupportsDeleteSave:
-				return true;
-			case MetaEngine::kSavesSupportCreationDate:
-				return true;
-			case MetaEngine::kSavesSupportMetaInfo:			
-				return true;
-			case MetaEngine::kSavesSupportThumbnail:			
-				return true;
-			default:
-				return false;
+		case MetaEngine::kSupportsListSaves:
+			return true;
+		case MetaEngine::kSupportsLoadingDuringStartup:
+			return true;
+		case MetaEngine::kSupportsDeleteSave:
+			return true;
+		case MetaEngine::kSavesSupportCreationDate:
+			return true;
+		case MetaEngine::kSavesSupportMetaInfo:
+			return true;
+		case MetaEngine::kSavesSupportThumbnail:
+			return true;
+		default:
+			return false;
 		}
 	}
 
@@ -179,16 +179,16 @@ public:
 		}
 		return saves;
 	}
-	
+
 	int getMaximumSaveSlot() const {
 		return 100;
 	}
-	
+
 	void removeSaveState(const char *target, int slot) const {
 		WinterMute::BasePersistenceManager pm(NULL, target);
 		pm.deleteSaveSlot(slot);
 	}
-	
+
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
 		WinterMute::BasePersistenceManager pm(NULL, target);
 		SaveStateDescriptor retVal;

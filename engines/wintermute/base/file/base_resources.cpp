@@ -2816,7 +2816,7 @@ Common::SeekableReadStream *BaseResources::getFile(const Common::String &filenam
 	return NULL;
 }
 
-bool BaseResources::hasFile(const Common::String& filename) {
+bool BaseResources::hasFile(const Common::String &filename) {
 	if (scumm_stricmp(filename.c_str(), "invalid.bmp") == 0) {
 		return true;
 	} else if (scumm_stricmp(filename.c_str(), "invalid_debug.bmp") == 0) {

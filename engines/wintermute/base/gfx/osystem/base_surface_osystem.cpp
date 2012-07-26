@@ -190,7 +190,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	delete image;
 
 	_loaded = true;
-	
+
 	return true;
 }
 
@@ -529,7 +529,7 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 	_hasAlpha = hasAlpha;
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
-		
+
 	return STATUS_OK;
 }
 

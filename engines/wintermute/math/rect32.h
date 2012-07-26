@@ -8,18 +8,18 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
- 
+
 #ifndef WINTERMUTE_RECT32_H
 #define WINTERMUTE_RECT32_H
 
@@ -33,24 +33,32 @@ struct Point32 {
 };
 
 struct Rect32 {
-	int32 top, left;		///< The point at the top left of the rectangle (part of the rect).
-	int32 bottom, right;	///< The point at the bottom right of the rectangle (not part of the rect).
-	
+	int32 top, left;        ///< The point at the top left of the rectangle (part of the rect).
+	int32 bottom, right;    ///< The point at the bottom right of the rectangle (not part of the rect).
+
 	Rect32() : top(0), left(0), bottom(0), right(0) {}
 	Rect32(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
 	Rect32(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
-	bool operator==(const Rect32 &rhs) const { return equals(rhs); }
-	bool operator!=(const Rect32 &rhs) const { return !equals(rhs); }
-	
-	int16 width() const { return right - left; }
-	int16 height() const { return bottom - top; }
-	
+	bool operator==(const Rect32 &rhs) const {
+		return equals(rhs);
+	}
+	bool operator!=(const Rect32 &rhs) const {
+		return !equals(rhs);
+	}
+
+	int16 width() const {
+		return right - left;
+	}
+	int16 height() const {
+		return bottom - top;
+	}
+
 	void setWidth(int16 aWidth) {
 		right = left + aWidth;
 	}
-	
+
 	void setHeight(int16 aHeight) {
 		bottom = top + aHeight;
 	}
@@ -75,7 +83,7 @@ struct Rect32 {
 	bool equals(const Rect32 &r) const {
 		return (left == r.left) && (right == r.right) && (top == r.top) && (bottom == r.bottom);
 	}
-	
+
 	bool isValidRect() const {
 		return (left <= right && top <= bottom);
 	}

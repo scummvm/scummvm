@@ -259,10 +259,10 @@ BaseGame::BaseGame(): BaseObject(this) {
 	_autoSaveSlot = 999;
 	_cursorHidden = false;
 
-/*#ifdef __IPHONEOS__
-	_touchInterface = true;
-	_constrainedMemory = true; // TODO differentiate old and new iOS devices
-#else*/
+	/*#ifdef __IPHONEOS__
+	    _touchInterface = true;
+	    _constrainedMemory = true; // TODO differentiate old and new iOS devices
+	#else*/
 	_touchInterface = false;
 	_constrainedMemory = false;
 //#endif
@@ -460,7 +460,7 @@ bool BaseGame::initialize1() {
 		if (_fader == NULL)
 			break;
 		registerObject(_fader);
-		
+
 		loaded = true;
 	}
 	if (loaded == true) {
@@ -2120,9 +2120,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ShowStatusLine") == 0) {
 		stack->correctParams(0);
-/*#ifdef __IPHONEOS__
-		IOS_ShowStatusLine(TRUE);
-#endif*/
+		/*#ifdef __IPHONEOS__
+		        IOS_ShowStatusLine(TRUE);
+		#endif*/
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -2133,9 +2133,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HideStatusLine") == 0) {
 		stack->correctParams(0);
-/*#ifdef __IPHONEOS__
-		IOS_ShowStatusLine(FALSE);
-#endif*/
+		/*#ifdef __IPHONEOS__
+		        IOS_ShowStatusLine(FALSE);
+		#endif*/
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -3919,9 +3919,9 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
 			if (custom) *custom = true;
 		} else {
 			BasePlatform::setRect(rect,   _renderer->_drawOffsetX,
-			                    _renderer->_drawOffsetY,
-			                    _renderer->_width + _renderer->_drawOffsetX,
-			                    _renderer->_height + _renderer->_drawOffsetY);
+			                      _renderer->_drawOffsetY,
+			                      _renderer->_width + _renderer->_drawOffsetX,
+			                      _renderer->_height + _renderer->_drawOffsetY);
 			if (custom) *custom = false;
 		}
 

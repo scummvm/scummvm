@@ -57,11 +57,11 @@ float BaseUtils::normalizeAngle(float angle) {
 
 ////////////////////////////////////////////////////////////////////////////////
 void BaseUtils::createPath(const char *path, bool pathOnly) {
-/*	AnsiString pathStr;
+	/*  AnsiString pathStr;
 
-	if (!pathOnly) pathStr = PathUtil::getDirectoryName(path);
-	else pathStr = path;
-*/
+	    if (!pathOnly) pathStr = PathUtil::getDirectoryName(path);
+	    else pathStr = path;
+	*/
 //	try {
 	warning("BaseUtils::CreatePath - not implemented: %s", path);
 //		boost::filesystem::create_directories(path);

@@ -52,9 +52,9 @@ public:
 	ScScript *_waitingScript;
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	typedef enum {
-	    EVENT_PREV, 
-		EVENT_NEXT, 
-		EVENT_RESPONSE
+	    EVENT_PREV,
+	    EVENT_NEXT,
+	    EVENT_RESPONSE
 	} TResponseEvent;
 
 	bool weedResponses();

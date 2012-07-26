@@ -118,15 +118,15 @@ AnsiString PathUtil::getExtension(const AnsiString &path) {
 AnsiString PathUtil::getSafeLogFileName() {
 	AnsiString logFileName = getUserDirectory();
 
-/*#ifdef __WIN32__
-	char moduleName[MAX_PATH_LENGTH];
-	::GetModuleFileName(NULL, moduleName, MAX_PATH_LENGTH);
+	/*#ifdef __WIN32__
+	    char moduleName[MAX_PATH_LENGTH];
+	    ::GetModuleFileName(NULL, moduleName, MAX_PATH_LENGTH);
 
-	AnsiString fileName = GetFileNameWithoutExtension(moduleName) + ".log";
-	fileName = Combine("/Wintermute Engine/Logs/", fileName);
-	logFileName = Combine(logFileName, fileName);
+	    AnsiString fileName = GetFileNameWithoutExtension(moduleName) + ".log";
+	    fileName = Combine("/Wintermute Engine/Logs/", fileName);
+	    logFileName = Combine(logFileName, fileName);
 
-#else*/
+	#else*/
 	// !PORTME
 	logFileName = combine(logFileName, "/Wintermute Engine/wme.log");
 //#endif

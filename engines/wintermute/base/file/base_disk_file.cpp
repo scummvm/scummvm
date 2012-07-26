@@ -46,7 +46,7 @@ void correctSlashes(char *fileName) {
 }
 
 // Parse a relative path in the game-folder, and if it exists, return a FSNode to it.
-static Common::FSNode getNodeForRelativePath(const Common::String& filename) {
+static Common::FSNode getNodeForRelativePath(const Common::String &filename) {
 	// The filename can be an explicit path, thus we need to chop it up, expecting the path the game
 	// specifies to follow the Windows-convention of folder\subfolder\file (absolute paths should not happen)
 
@@ -88,11 +88,11 @@ static Common::FSNode getNodeForRelativePath(const Common::String& filename) {
 	return Common::FSNode();
 }
 
-bool diskFileExists(const Common::String& filename) {
+bool diskFileExists(const Common::String &filename) {
 	// Try directly from SearchMan first
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, filename);
-	
+
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
 		if ((*it)->getName() == filename) {
 			return true;
@@ -112,7 +112,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	// Try directly from SearchMan first
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, filename);
-	
+
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
 		if ((*it)->getName() == filename) {
 			file = (*it)->createReadStream();

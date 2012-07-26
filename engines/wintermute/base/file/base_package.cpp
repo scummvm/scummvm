@@ -51,33 +51,33 @@ Common::SeekableReadStream *BasePackage::getFilePointer() {
 
 static bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset) {
 	byte buf[32768];
-	
+
 	byte signature[8];
 	((uint32 *)signature)[0] = PACKAGE_MAGIC_1;
 	((uint32 *)signature)[1] = PACKAGE_MAGIC_2;
-	
+
 	uint32 fileSize = (uint32)f->size();
 	uint32 startPos = 1024 * 1024;
 	uint32 bytesRead = startPos;
-	
+
 	while (bytesRead < fileSize - 16) {
 		uint32 toRead = MIN((unsigned int)32768, fileSize - bytesRead);
 		f->seek((int32)startPos, SEEK_SET);
 		uint32 actuallyRead = f->read(buf, toRead);
 		if (actuallyRead != toRead) return false;
-		
+
 		for (uint32 i = 0; i < toRead - 8; i++)
 			if (!memcmp(buf + i, signature, 8)) {
 				*offset =  startPos + i;
 				return true;
 			}
-		
+
 		bytesRead = bytesRead + toRead - 16;
 		startPos = startPos + toRead - 16;
-		
+
 	}
 	return false;
-	
+
 }
 
 PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool searchSignature) {
@@ -98,7 +98,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			boundToExe = true;
 		}
 	}
-	
+
 	TPackageHeader hdr;
 	hdr.readFromStream(stream);
 	if (hdr._magic1 != PACKAGE_MAGIC_1 || hdr._magic2 != PACKAGE_MAGIC_2 || hdr._packageVersion > PACKAGE_VERSION) {
@@ -106,7 +106,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 		delete stream;
 		return;
 	}
-	
+
 	if (hdr._packageVersion != PACKAGE_VERSION) {
 		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Warning: package file '%s' is outdated.", filename.c_str());
 	}
@@ -125,7 +125,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 		pkg->_fsnode = file;
 
 		pkg->_boundToExe = boundToExe;
-		
+
 		// read package info
 		byte nameLength = stream->readByte();
 		char *pkgName = new char[nameLength];
@@ -141,15 +141,15 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 
 		// read file entries
 		uint32 numFiles = stream->readUint32LE();
-		
+
 		for (uint32 j = 0; j < numFiles; j++) {
 			char *name;
 			uint32 offset, length, compLength, flags, timeDate1, timeDate2;
-			
+
 			nameLength = stream->readByte();
 			name = new char[nameLength];
 			stream->read(name, nameLength);
-			
+
 			// v2 - xor name
 			if (hdr._packageVersion == PACKAGE_VERSION) {
 				for (int k = 0; k < nameLength; k++) {
@@ -157,18 +157,18 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 				}
 			}
 			debugC(kWinterMuteDebugFileAccess, "Package contains %s", name);
-			
+
 			Common::String upcName = name;
 			upcName.toUppercase();
 			delete[] name;
 			name = NULL;
-			
+
 			offset = stream->readUint32LE();
 			offset += absoluteOffset;
 			length = stream->readUint32LE();
 			compLength = stream->readUint32LE();
 			flags = stream->readUint32LE();
-			
+
 			if (hdr._packageVersion == PACKAGE_VERSION) {
 				timeDate1 = stream->readUint32LE();
 				timeDate2 = stream->readUint32LE();
@@ -181,12 +181,12 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 				fileEntry->_length = length;
 				fileEntry->_compressedLength = compLength;
 				fileEntry->_flags = flags;
-				
+
 				_files[upcName] = Common::ArchiveMemberPtr(fileEntry);
 			} else {
 				// current package has higher priority than the registered
 				// TODO: This cast might be a bit ugly.
-				BaseFileEntry *filePtr = (BaseFileEntry*) &*(_filesIter->_value);
+				BaseFileEntry *filePtr = (BaseFileEntry *) &*(_filesIter->_value);
 				if (pkg->_priority > filePtr->_package->_priority) {
 					filePtr->_package = pkg;
 					filePtr->_offset = offset;
@@ -198,12 +198,12 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 		}
 	}
 	debugC(kWinterMuteDebugFileAccess, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
-	
+
 	delete stream;
 }
 
 PackageSet::~PackageSet() {
-	for (Common::Array<BasePackage*>::iterator it = _packages.begin(); it != _packages.end(); it++) {
+	for (Common::Array<BasePackage *>::iterator it = _packages.begin(); it != _packages.end(); it++) {
 		delete *it;
 	}
 	_packages.clear();

@@ -61,7 +61,7 @@ BaseFrame::~BaseFrame() {
 	delete _sound;
 	_sound = NULL;
 
-	for (int i = 0; i < _subframes.getSize(); i++) 
+	for (int i = 0; i < _subframes.getSize(); i++)
 		delete _subframes[i];
 	_subframes.removeAll();
 

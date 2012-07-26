@@ -151,10 +151,10 @@ private:
 	BaseArray<AdItem *, AdItem *> _items;
 
 	BaseArray<AdSentence *, AdSentence *> _sentences;
-	
+
 	BaseArray<AdSceneState *, AdSceneState *> _sceneStates;
 	BaseArray<char *, char *> _dlgPendingBranches;
-	
+
 	BaseArray<AdResponseContext *, AdResponseContext *> _responsesBranch;
 	BaseArray<AdResponseContext *, AdResponseContext *> _responsesGame;
 

@@ -212,7 +212,7 @@ public:
 	virtual bool loadGame(const char *filename);
 	virtual bool saveGame(int slot, const char *desc, bool quickSave = false);
 	virtual bool showCursor();
-	
+
 	BaseObject *_activeObject;
 
 	bool _interactive;
@@ -296,21 +296,21 @@ private:
 	int _indicatorY;
 	int _indicatorWidth;
 	int _indicatorHeight;
-	
+
 	char *_localSaveDir;
 	bool _saveDirChecked;
 	bool _richSavedGames;
 	char *_savedGameExt;
-	
+
 	char *_loadImageName;
 	char *_saveImageName;
 	int _saveImageX;
 	int _saveImageY;
 	int _loadImageX;
 	int _loadImageY;
-	
+
 	BaseSurface *_saveLoadImage;
-	
+
 	bool _reportTextureFormat;
 
 	// FPS stuff
@@ -328,7 +328,7 @@ private:
 	bool _compressedSavegames;
 
 	bool _personalizedSave;
-	
+
 	bool emptySaveSlot(int slot);
 	bool isSaveSlotUsed(int slot);
 	bool getSaveSlotDescription(int slot, char *buffer);
@@ -353,7 +353,7 @@ private:
 
 	uint32 _fps;
 	bool updateMusicCrossfade();
-	
+
 	bool isVideoPlaying();
 	bool stopVideo();
 

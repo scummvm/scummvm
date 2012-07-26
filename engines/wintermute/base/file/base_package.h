@@ -48,7 +48,7 @@ public:
 class PackageSet : public Common::Archive {
 public:
 	virtual ~PackageSet();
-	
+
 	PackageSet(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
 	/**
 	 * Check if a member with the given name is present in the Archive.
@@ -64,12 +64,12 @@ public:
 	 * @return the number of names added to list
 	 */
 	virtual int listMembers(Common::ArchiveMemberList &list) const;
-	
+
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
 	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	
+
 	/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.

@@ -110,7 +110,7 @@ bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 		int waveSize, waveRate;
 		byte waveFlags;
 		uint16 waveType;
-		
+
 		if (Audio::loadWAVFromStream(*_file, waveSize, waveRate, waveFlags, &waveType)) {
 			if (waveType == 1) {
 				// We need to wrap the file in a substream to make sure the size is right.
@@ -208,7 +208,7 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 		} else {
 			g_system->getMixer()->playStream(_type, _handle, _stream, -1, _volume, 0, DisposeAfterUse::NO);
 		}
-	} 
+	}
 
 	return STATUS_OK;
 }

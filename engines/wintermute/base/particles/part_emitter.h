@@ -72,57 +72,57 @@ public:
 private:
 	int _width;
 	int _height;
-	
+
 	int _angle1;
 	int _angle2;
-	
+
 	float _rotation1;
 	float _rotation2;
-	
+
 	float _angVelocity1;
 	float _angVelocity2;
-	
+
 	float _growthRate1;
 	float _growthRate2;
 	bool _exponentialGrowth;
-	
+
 	float _velocity1;
 	float _velocity2;
 	bool _velocityZBased;
-	
+
 	float _scale1;
 	float _scale2;
 	bool _scaleZBased;
-	
+
 	int _maxParticles;
-	
+
 	int _lifeTime1;
 	int _lifeTime2;
 	bool _lifeTimeZBased;
-	
+
 	int _genInterval;
 	int _genAmount;
-	
+
 	bool _running;
 	int _overheadTime;
-	
+
 	int _maxBatches;
 	int _batchesGenerated;
-	
+
 	Rect32 _border;
 	int _borderThicknessLeft;
 	int _borderThicknessRight;
 	int _borderThicknessTop;
 	int _borderThicknessBottom;
-	
+
 	int _fadeInTime;
-	
+
 	int _alpha1;
 	int _alpha2;
 	bool _alphaTimeBased;
-	
+
 	bool _useRegion;
-	
+
 	char *_emitEvent;
 	BaseScriptHolder *_owner;
 

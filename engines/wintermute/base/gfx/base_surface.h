@@ -86,7 +86,7 @@ protected:
 	byte _ckRed;
 	byte _ckGreen;
 	byte _ckBlue;
-	
+
 	bool _keepLoaded;
 	Common::String _filename;
 	int _height;

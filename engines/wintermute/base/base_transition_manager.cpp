@@ -69,7 +69,7 @@ bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 		_origInteractive = _gameRef->_interactive;
 		_gameRef->_interactive = false;
 	} /*else _preserveInteractive */;
-	
+
 
 	_type = type;
 	_state = TRANS_MGR_RUNNING;

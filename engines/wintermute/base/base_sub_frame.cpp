@@ -239,10 +239,10 @@ bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, flo
 	float ratioY = scaleY / 100.0f;
 
 	BasePlatform::setRect(rect,
-	                    (int)(x - _hotspotX * ratioX),
-	                    (int)(y - _hotspotY * ratioY),
-	                    (int)(x - _hotspotX * ratioX + (_rect.right - _rect.left) * ratioX),
-	                    (int)(y - _hotspotY * ratioY + (_rect.bottom - _rect.top) * ratioY));
+	                      (int)(x - _hotspotX * ratioX),
+	                      (int)(y - _hotspotY * ratioY),
+	                      (int)(x - _hotspotX * ratioX + (_rect.right - _rect.left) * ratioX),
+	                      (int)(y - _hotspotY * ratioY + (_rect.bottom - _rect.top) * ratioY));
 	return true;
 }
 

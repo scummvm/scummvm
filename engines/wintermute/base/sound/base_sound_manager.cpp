@@ -80,7 +80,7 @@ void BaseSoundMgr::saveSettings() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::initialize() {
 	_soundAvailable = false;
-	
+
 	if (!g_system->getMixer()->isReady()) {
 		return STATUS_FAILED;
 	}

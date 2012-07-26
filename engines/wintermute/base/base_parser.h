@@ -60,7 +60,7 @@ namespace WinterMute {
 class BaseParser : public BaseClass {
 public:
 	struct TokenDesc {
-		int32	id;
+		int32   id;
 		const char *token;
 	};
 
