@@ -68,7 +68,7 @@ EventRecorder::EventRecorder() {
 	_recorderMutex = g_system->createMutex();
 	_recordMode = kPassthrough;
 	_timerManager = NULL;
-	_screenshotsFile = NULL;
+	_fakeMixerManager = NULL;
 	_enableDrag = false;
 	_initialized = false;
 }
@@ -87,6 +87,7 @@ void EventRecorder::init() {
 
 void EventRecorder::deinit() {
 	delete _fakeMixerManager;
+	_fakeMixerManager = NULL;
 	_initialized = false;
 	_recordMode = kPassthrough;
 	g_gui.theme()->disable();
@@ -100,10 +101,7 @@ void EventRecorder::deinit() {
 	_recordMode = kPassthrough;
 	_playbackFile->close();
 	delete _playbackFile;
-	if (_screenshotsFile != NULL) {
-		_screenshotsFile->finalize();
-		delete _screenshotsFile;
-	}
+
 	g_system->unlockMutex(_timeMutex);
 	g_system->unlockMutex(_recorderMutex);
 	switchMixer();
@@ -245,7 +243,6 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_lastMillis = g_system->getMillis();
 	_playbackFile = new PlaybackFile();
 	_lastScreenshotTime = 0;
-	_screenshotsFile = NULL;
 	_recordMode = mode;
 
 	controlPanel = new GUI::OnScreenDialog(10,10,200,32);
@@ -380,35 +377,6 @@ void EventRecorder::removeDifferentEntriesInDomain(ConfigManager::Domain *domain
 	}
 }
 
-
-
-bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]) {
-	if (!createScreenShot(screen)) {
-		warning("Can't save screenshot");
-		return false;
-	}	
-	MemoryReadStream bitmapStream((const byte*)screen.pixels, screen.w * screen.h * screen.format.bytesPerPixel);
-	computeStreamMD5(bitmapStream, md5);
-	return true;
-}
-
-
-/*
-void EventRecorder::checkRecordedMD5() {
-	uint8 currentMD5[16];
-	uint8 savedMD5[16];
-	Graphics::Surface screen;
-	if (!grabScreenAndComputeMD5(screen, currentMD5)) {
-		return;
-	}
-	_playbackFile->read(savedMD5, 16);
-	if (memcmp(savedMD5, currentMD5, 16) != 0) {
-		warning("Recorded and current screenshots are different");
-	}
-	Graphics::saveThumbnail(*_screenshotsFile, screen);
-	screen.free();
-}*/
-
 DefaultTimerManager *EventRecorder::getTimerManager() {
 	return _timerManager;
 }
@@ -526,6 +494,16 @@ void EventRecorder::takeScreenshot() {
 			screen.free();
 		}
 	}
+}
+
+bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]) {
+	if (!createScreenShot(screen)) {
+		warning("Can't save screenshot");
+		return false;
+	}
+	MemoryReadStream bitmapStream((const byte*)screen.pixels, screen.w * screen.h * screen.format.bytesPerPixel);
+	computeStreamMD5(bitmapStream, md5);
+	return true;
 }
 
 Common::SeekableReadStream * EventRecorder::processSaveStream(const Common::String &fileName) {

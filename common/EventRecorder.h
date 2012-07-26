@@ -125,6 +125,7 @@ public:
 	Common::String generateRecordFileName(const String &target);
 	SaveFileManager *getSaveManager(SaveFileManager *realSaveManager);
 	void togglePause();
+	bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
 	SDL_Surface *getSurface(int width, int height);
 private:
 	Common::String _author;
@@ -150,7 +151,6 @@ private:
 	void switchFastMode();
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
 	void switchTimerManagers();
-	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
 	bool openRecordFile(const String &fileName);
 	bool checkGameHash(const ADGameDescription *desc);
 	String findMD5ByFileName(const ADGameDescription *gameDesc, const String &fileName);
@@ -160,7 +160,6 @@ private:
 	void checkForKeyCode(const Event &event);
 	void writeGameSettings();
 	RecorderEvent _nextEvent;
-	WriteStream *_screenshotsFile;
 	MutexRef _timeMutex;
 	volatile uint32 _lastMillis;
 	volatile uint32 _fakeTimer;

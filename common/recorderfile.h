@@ -120,6 +120,7 @@ public:
 	void updateHeader();
 	void addSaveFile(const Common::String &fileName, Common::InSaveFile *saveStream);
 private:
+	WriteStream *_screenshotsFile;
 	PlaybackFileHeader _header;
 	int _recordCount;
 	int _headerDumped;
@@ -153,6 +154,8 @@ private:
 	bool processSettingsRecord();
 	void readEvent(RecorderEvent& event);
 	void readEventsToBuffer(uint32 size);
+	void checkRecordedMD5();
+	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
 };
 
 } // End of namespace Common
