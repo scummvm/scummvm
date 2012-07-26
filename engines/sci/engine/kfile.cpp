@@ -197,8 +197,15 @@ reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 	// TODO: Stub
 	switch (argv[0].toUint16()) {
 	case 0:
-		// Return whether the contents of disc argv[1] is available.
-		return TRUE_REG;
+		if (argc == 1) {
+			// Check if a disc is in the drive
+			return TRUE_REG;
+		} else {
+			// Check if the specified disc is in the drive
+			// and return the current disc number. We just
+			// return the requested disc number.
+			return argv[1];
+		}
 	case 1:
 		// Return the current CD number
 		return make_reg(0, 1);
