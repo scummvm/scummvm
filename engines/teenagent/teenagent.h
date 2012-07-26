@@ -180,6 +180,11 @@ private:
 	bool fnRobotSafeAlreadyUnlockedCheck();
 	void fnRobotSafeUnlockCheck();
 	bool fnMansionIntrusionAttempt();
+	void fnSecondMansionIntrusion();
+	void fnThirdMansionIntrusion();
+	void fnFourthMansionIntrusion();
+	void fnFifthMansionIntrusion();
+	void fnSixthMansionIntrusion();
 	void fnTooDark();
 	bool fnIsCookGone();
 	void fnEgoSuspiciousPosition();

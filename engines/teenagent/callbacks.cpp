@@ -318,19 +318,19 @@ bool TeenAgentEngine::fnMansionIntrusionAttempt() {
 		displayCutsceneMessage(dsAddr_cutsceneMsg2, 84, 95); // "Meanwhile in the mansion"
 		switch (attempts) {
 		case 2:
-			processCallback(csAddr_secondMansionIntrusion);
+			fnSecondMansionIntrusion();
 			break;
 		case 3:
-			processCallback(csAddr_thirdMansionIntrusion);
+			fnThirdMansionIntrusion();
 			break;
 		case 4:
-			processCallback(csAddr_fourthMansionIntrusion);
+			fnFourthMansionIntrusion();
 			break;
 		case 5:
-			processCallback(csAddr_fifthMansionIntrusion);
+			fnFifthMansionIntrusion();
 			break;
 		case 6:
-			processCallback(csAddr_sixthMansionIntrusion);
+			fnSixthMansionIntrusion();
 			break;
 		default:
 			error("mansion intrusion attempts out of range!");
@@ -341,6 +341,84 @@ bool TeenAgentEngine::fnMansionIntrusionAttempt() {
 			loadScene(id, scene->getPosition());
 		return true;
 	}
+}
+
+void TeenAgentEngine::fnSecondMansionIntrusion() {
+	hideActor();
+	loadScene(34, scene->getPosition());
+	playAnimation(986, 0, true);
+	playAnimation(987, 1, true);
+	waitAnimation();
+	dialog->show(178, scene, 988, 989, 0xd9, 0xd0, 1, 2);
+	playAnimation(990, 0, true);
+	playAnimation(991, 1, true);
+	waitAnimation();
+	showActor();
+}
+
+void TeenAgentEngine::fnThirdMansionIntrusion() {
+	hideActor();
+	loadScene(30, scene->getPosition());
+	playAnimation(887, 1);
+	playAnimation(888, 2, true, true, true);
+	//waitAnimation();
+	dialog->showMono(179, scene, 889, 0xd9, 2);
+	playSound(26, 3);
+	playAnimation(891, 1, true, true, true);
+	playAnimation(892, 2);
+	waitAnimation();
+	dialog->show(180, scene, 890, 889, 0xd0, 0xd9, 3, 2);
+	showActor();
+}
+
+void TeenAgentEngine::fnFourthMansionIntrusion() {
+	hideActor();
+	loadScene(32, scene->getPosition());
+	playAnimation(894, 1, true, true, true);
+	playAnimation(893, 2, true);
+	waitAnimation();
+	dialog->showMono(181, scene, 895, 0xd9, 3);
+	playSound(75, 9);
+	playAnimation(898, 1, true);
+	playAnimation(897, 2, true);
+	dialog->show(182, scene, 896, 895, 0xd0, 0xd9, 2, 3);
+	showActor();
+}
+
+void TeenAgentEngine::fnFifthMansionIntrusion() {
+	hideActor();
+	loadScene(29, scene->getPosition());
+	playActorAnimation(901, true);
+	playAnimation(900, 1, true);
+	waitAnimation();
+	dialog->show(183, scene, 903, 902, 0xd0, 0xd9, 2, 3);
+	for (byte i = 3; i <= 9; i += 2)
+		playSound(56, i);
+
+	playActorAnimation(905, true);
+	playAnimation(904, 1, true);
+	dialog->show(184, scene, 903, 902, 0xd0, 0xd9, 2, 3);
+	showActor();
+}
+
+void TeenAgentEngine::fnSixthMansionIntrusion() {
+	hideActor();
+	loadScene(35, scene->getPosition());
+	playAnimation(907, 2, true);
+	playAnimation(906, 3, true);
+	waitAnimation();
+	dialog->show(185, scene, 908, 909, 0xd9, 0xd0, 2, 3);
+	dialog->show(186, scene, 910, 908, 0xd0, 0xd9, 3, 2);
+	loadScene(11, scene->getPosition());
+	showActor();
+	setOns(3, 51);
+	playAnimation(911, 1);
+	playAnimation(899, 1);
+	setFlag(0xdbec, 1);
+	reloadLan();
+	wait(200);
+	enableObject(8);
+	setLan(2, 8);
 }
 
 void TeenAgentEngine::fnTooDark() {
@@ -4196,81 +4274,23 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case csAddr_secondMansionIntrusion:
-		hideActor();
-		loadScene(34, scene->getPosition());
-		playAnimation(986, 0, true);
-		playAnimation(987, 1, true);
-		waitAnimation();
-		dialog->show(178, scene, 988, 989, 0xd9, 0xd0, 1, 2);
-		playAnimation(990, 0, true);
-		playAnimation(991, 1, true);
-		waitAnimation();
-		showActor();
+		fnSecondMansionIntrusion();
 		break;
 
 	case csAddr_thirdMansionIntrusion:
-		hideActor();
-		loadScene(30, scene->getPosition());
-		playAnimation(887, 1);
-		playAnimation(888, 2, true, true, true);
-		//waitAnimation();
-		dialog->showMono(179, scene, 889, 0xd9, 2);
-		playSound(26, 3);
-		playAnimation(891, 1, true, true, true);
-		playAnimation(892, 2);
-		waitAnimation();
-		dialog->show(180, scene, 890, 889, 0xd0, 0xd9, 3, 2);
-		showActor();
+		fnThirdMansionIntrusion();
 		break;
 
 	case csAddr_fourthMansionIntrusion:
-		hideActor();
-		loadScene(32, scene->getPosition());
-		playAnimation(894, 1, true, true, true);
-		playAnimation(893, 2, true);
-		waitAnimation();
-		dialog->showMono(181, scene, 895, 0xd9, 3);
-		playSound(75, 9);
-		playAnimation(898, 1, true);
-		playAnimation(897, 2, true);
-		dialog->show(182, scene, 896, 895, 0xd0, 0xd9, 2, 3);
-		showActor();
+		fnFourthMansionIntrusion();
 		break;
 
 	case csAddr_fifthMansionIntrusion:
-		hideActor();
-		loadScene(29, scene->getPosition());
-		playActorAnimation(901, true);
-		playAnimation(900, 1, true);
-		waitAnimation();
-		dialog->show(183, scene, 903, 902, 0xd0, 0xd9, 2, 3);
-		for (byte i = 3; i <= 9; i += 2)
-			playSound(56, i);
-
-		playActorAnimation(905, true);
-		playAnimation(904, 1, true);
-		dialog->show(184, scene, 903, 902, 0xd0, 0xd9, 2, 3);
-		showActor();
+		fnFifthMansionIntrusion();
 		break;
 
 	case csAddr_sixthMansionIntrusion:
-		hideActor();
-		loadScene(35, scene->getPosition());
-		playAnimation(907, 2, true);
-		playAnimation(906, 3, true);
-		waitAnimation();
-		dialog->show(185, scene, 908, 909, 0xd9, 0xd0, 2, 3);
-		dialog->show(186, scene, 910, 908, 0xd0, 0xd9, 3, 2);
-		loadScene(11, scene->getPosition());
-		showActor();
-		setOns(3, 51);
-		playAnimation(911, 1);
-		playAnimation(899, 1);
-		setFlag(0xdbec, 1);
-		reloadLan();
-		wait(200);
-		enableObject(8);
-		setLan(2, 8);
+		fnSixthMansionIntrusion();
 		break;
 
 	default:
