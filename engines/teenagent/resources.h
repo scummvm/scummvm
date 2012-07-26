@@ -60,8 +60,8 @@ const uint16 csAddr_egoBottomRightTurn = 0x6849;
 const uint16 csAddr_checkingDrawers = 0x68e6;
 // Drawer Open Message function : 0x6b86
 const uint16 csAddr_DrawerOpenMessage = 0x6b86;
-// Is Cook Present function : 0x70e0
-const uint16 csAddr_isCookPresent = 0x70e0;
+// Is Cook Gone function : 0x70e0
+const uint16 csAddr_isCookGone = 0x70e0;
 // Giving Flower to Old Lady function : 0x88de
 const uint16 csAddr_givingFlowerToOldLady = 0x88de;
 // Give Another Flower to Old Lady function : 0x890b

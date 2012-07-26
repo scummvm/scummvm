@@ -165,9 +165,29 @@ private:
 	Common::Array<Common::Array<UseHotspot> > use_hotspots;
 
 	void fnIntro();
+	void fnPoleClimbFail();
 	void fnGotAnchor();
+	void fnGetOutOfLake();
 	void fnGuardDrinking();
+	void fnEgoDefaultPosition();
+	void fnEnterCave();
+	void fnEgoScaredBySpider();
+	void fnMoveToLadderAndLeaveCellar();
+	void fnLeaveCellar();
 	void fnPutRockInHole();
+	void fnEgoBottomRightTurn();
+	bool fnCheckingDrawers();
+	void fnDrawerOpenMessage();
+	bool fnRobotSafeAlreadyUnlockedCheck();
+	void fnRobotSafeUnlockCheck();
+	bool fnMansionIntrusionAttempt();
+	void fnTooDark();
+	bool fnIsCookGone();
+	void fnEgoSuspiciousPosition();
+	void fnGivingFlowerToOldLady();
+	void fnGiveAnotherFlowerToOldLady();
+	void fnGivingFlowerToAnne();
+	void fnGiveAnotherFlowerToAnne();
 };
 
 } // End of namespace TeenAgent
