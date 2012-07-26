@@ -312,15 +312,32 @@ bool TeenAgentEngine::fnMansionIntrusionAttempt() {
 	if (attempts >= 7)
 		return false;
 	else {
-		uint16 ptr = res->dseg.get_word((attempts - 2) * 2 + dsAddr_MansionIntrusionFnPtr);
-		debugC(0, kDebugCallbacks, "mansion callback = %04x", ptr);
 		byte id = scene->getId();
 
 		playMusic(11);
 		displayCutsceneMessage(dsAddr_cutsceneMsg2, 84, 95); // "Meanwhile in the mansion"
-		processCallback(ptr);
+		switch (attempts) {
+		case 2:
+			processCallback(0x9d90);
+			break;
+		case 3:
+			processCallback(0x9de5);
+			break;
+		case 4:
+			processCallback(0x9e54);
+			break;
+		case 5:
+			processCallback(0x9ec3);
+			break;
+		case 6:
+			processCallback(0x9f3e);
+			break;
+		default:
+			error("mansion intrusion attempts out of range!");
+			break;
+		}
 		playMusic(6);
-		if (getFlag(0xdbec) != 1 || ptr != 0x9f3e) // ptr check eq. scene_id == 11 || attempt == 6
+		if (getFlag(0xdbec) != 1 || attempts != 6)
 			loadScene(id, scene->getPosition());
 		return true;
 	}
