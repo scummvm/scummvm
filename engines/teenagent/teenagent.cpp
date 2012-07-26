@@ -73,10 +73,20 @@ TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
 }
 
 TeenAgentEngine::~TeenAgentEngine() {
-	delete music;
 	delete dialog;
-	res->deinit();
+	dialog = 0;
+	delete scene;
+	scene = 0;
+	delete inventory;
+	inventory = 0;
+	delete music;
+	music = 0;
+	_mixer->stopAll();
+	use_hotspots.clear();
 	delete res;
+	res = 0;
+
+	CursorMan.popCursor();
 
 	delete console;
 	DebugMan.clearAllDebugChannels();
@@ -204,19 +214,6 @@ void TeenAgentEngine::init() {
 			hotspots.push_back(h);
 		}
 	}
-}
-
-void TeenAgentEngine::deinit() {
-	_mixer->stopAll();
-	delete scene;
-	scene = NULL;
-	delete inventory;
-	inventory = NULL;
-	//delete music;
-	//music = NULL;
-	use_hotspots.clear();
-	res->deinit();
-	CursorMan.popCursor();
 }
 
 Common::Error TeenAgentEngine::loadGameState(int slot) {
@@ -579,10 +576,8 @@ Common::Error TeenAgentEngine::run() {
 		Object *current_object = scene->findObject(mouse);
 
 		while (_event->pollEvent(event)) {
-			if (event.type == Common::EVENT_RTL) {
-				deinit();
+			if (event.type == Common::EVENT_RTL)
 				return Common::kNoError;
-			}
 
 			if ((!scene_busy && inventory->processEvent(event)) || scene->processEvent(event))
 				continue;
@@ -702,7 +697,6 @@ Common::Error TeenAgentEngine::run() {
 		}
 	} while (!shouldQuit());
 
-	deinit();
 	return Common::kNoError;
 }
 

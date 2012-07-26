@@ -27,7 +27,10 @@
 
 namespace TeenAgent {
 
-void Resources::deinit() {
+Resources::Resources() {
+}
+
+Resources::~Resources() {
 	off.close();
 	on.close();
 	ons.close();

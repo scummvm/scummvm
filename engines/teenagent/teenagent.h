@@ -82,7 +82,6 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 
 	void init();
-	void deinit();
 
 	void examine(const Common::Point &point, Object *object);
 	void use(Object *object);

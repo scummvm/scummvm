@@ -658,7 +658,8 @@ const uint16 dsAddr_finalCredits7 = 0xe488; // "programming..."
 
 class Resources {
 public:
-	void deinit();
+	Resources();
+	~Resources();
 	bool loadArchives(const ADGameDescription *gd);
 
 	void loadOff(Graphics::Surface &surface, byte *palette, int id);
