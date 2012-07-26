@@ -1145,6 +1145,19 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 	internUpdateScreen();
 }
 
+/**
+ * Simple blit function. Copies a rectangle from one surface to another.
+ *
+ * @param byteWidth   The width of the region to copy in bytes.
+ */
+static void blitSurface(byte * srcPtr, int srcPitch, byte * dstPtr, int dstPitch, int byteWidth, int height) {
+	while (height--) {
+		memcpy(dstPtr, srcPtr, byteWidth);
+		dstPtr += dstPitch;
+		srcPtr += srcPitch;
+	}
+}
+
 void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
@@ -1287,13 +1300,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 					dst_y = real2Aspect(dst_y);
 
 				if (_overlayVisible) {
-					// Use the Normal plugin so the overlay is not scaled/filtered
-					uint tmpFactor = (*_normalPlugin)->getFactor();
-					(*_normalPlugin)->setFactor(1);
-					(*_normalPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-						(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
-					// Revert state in case the normal plugin is used elsewhere
-					(*_normalPlugin)->setFactor(tmpFactor);
+					blitSurface((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+					            (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w * 2, dst_h);
 				} else {
 					if (_useOldSrc) {
 						// scale into _destbuffer instead of _hwscreen to avoid AR problems
@@ -2177,13 +2185,10 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 			(*_normalPlugin)->setFactor(tmpFactor);
 		}
 	} else {
-        int tmpFactor = (*_normalPlugin)->getFactor();
-        (*_normalPlugin)->setFactor(1);
-        (*_normalPlugin)->scale(
+        blitSurface(
                 (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
                 _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-                _mouseCurState.w, _mouseCurState.h, 0, 0);
-        (*_normalPlugin)->setFactor(tmpFactor);
+			_mouseCurState.w * 2, _mouseCurState.h);
 	}
 #endif
 
