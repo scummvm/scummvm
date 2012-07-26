@@ -284,20 +284,17 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect
 
 	//TODO: This is only here until I'm sure about the final pixelformat
 	uint32 col = _renderSurface->format.ARGBToColor(a, r, g, b);
-	if (_disableDirtyRects) {
-		_renderSurface->fillRect(fillRect, col);
-	} else {
-		setAlphaMod(a);
-		setColorMod(r, g, b);
-		Graphics::Surface surf;
-		surf.create((uint16)fillRect.width(), (uint16)fillRect.height(), _renderSurface->format);
-		Common::Rect sizeRect(fillRect);
-		sizeRect.translate(-fillRect.top, -fillRect.left);
-		surf.fillRect(fillRect, col);
-		drawSurface(NULL, &surf, &sizeRect, &fillRect, false, false);
-		surf.free();
-		_clearColor = col;
-	}
+
+	setAlphaMod(255);
+	setColorMod(255, 255, 255);
+	Graphics::Surface surf;
+	surf.create((uint16)fillRect.width(), (uint16)fillRect.height(), _renderSurface->format);
+	Common::Rect sizeRect(fillRect);
+	sizeRect.translate(-fillRect.top, -fillRect.left);
+	surf.fillRect(fillRect, col);
+	drawSurface(NULL, &surf, &sizeRect, &fillRect, false, false);
+	surf.free();
+
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
 	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 	//SDL_RenderFillRect(_renderer, &fillRect);
@@ -320,14 +317,16 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		return;
 	}
 
-	RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY);
-	compare._colorMod = _colorMod;
-	RenderQueueIterator it;
-	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
-		if ((*it)->_owner == owner && *(*it) == compare && (*it)->_isValid) {
-			(*it)->_colorMod = _colorMod;
-			drawFromTicket(*it);
-			return;
+	if (owner) { // Fade-tickets are owner-less
+		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY);
+		compare._colorMod = _colorMod;
+		RenderQueueIterator it;
+		for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
+			if ((*it)->_owner == owner && *(*it) == compare && (*it)->_isValid) {
+				(*it)->_colorMod = _colorMod;
+				drawFromTicket(*it);
+				return;
+			}
 		}
 	}
 	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY);
