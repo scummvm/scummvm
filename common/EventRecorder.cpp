@@ -409,17 +409,18 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
 	checkForKeyCode(ev);
+	Event evt = ev;
+	evt.mouse.x = evt.mouse.x * 2;
+	evt.mouse.y = evt.mouse.y * 2;
+	g_gui.processEvent(evt, controlPanel);
 	if (_recordMode == kRecorderRecord) {
 		if (ev.kbd.keycode != KEYCODE_ESCAPE) {
-			Event evt = ev;
-			evt.mouse.x *= 2;
-			evt.mouse.y *= 2;
-			if (evt.mouse.x > controlPanel->_x && evt.mouse.x < controlPanel->_x + controlPanel->_w && evt.mouse.y > controlPanel->_y && evt.mouse.y < controlPanel->_y + controlPanel->_h) {
-				g_gui.processEvent(evt, controlPanel);
+			if (ev.mouse.x > controlPanel->_x && ev.mouse.x < controlPanel->_x + controlPanel->_w && ev.mouse.y > controlPanel->_y && ev.mouse.y < controlPanel->_y + controlPanel->_h) {
 				if (ev.type != EVENT_MOUSEMOVE) {
+
 					if (ev.type == EVENT_LBUTTONDOWN) {
-						dragPoint.x = evt.mouse.x - controlPanel->_x;
-						dragPoint.y = evt.mouse.y - controlPanel->_y;
+						dragPoint.x = ev.mouse.x - controlPanel->_x;
+						dragPoint.y = ev.mouse.y - controlPanel->_y;
 						_enableDrag = true;
 					}
 					if (ev.type == EVENT_LBUTTONUP) {
@@ -429,8 +430,8 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 				return List<Event>();
 			}
 			if ((ev.type == EVENT_MOUSEMOVE) && (_enableDrag)) {
-				controlPanel->_x = evt.mouse.x - dragPoint.x;
-				controlPanel->_y = evt.mouse.y - dragPoint.y;
+				controlPanel->_x = ev.mouse.x - dragPoint.x;
+				controlPanel->_y = ev.mouse.y - dragPoint.y;
 				g_system->updateScreen();
 				return List<Event>();
 			} else if (_enableDrag) {
