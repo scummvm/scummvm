@@ -38,9 +38,6 @@ const uint16 csAddr_intro = 0x024c;
 const uint16 csAddr_poleClimbFail = 0x4173;
 // Move Ego (Mark) To Suspicious Position function : 0x505c
 const uint16 csAddr_egoSuspiciousPosition = 0x505c;
-
-// FIXME - Find and replace Unknown callback functions with symbols: 0x50c5, 0x61fe
-
 // Guard Drinking function : 0x5189
 const uint16 csAddr_guardDrinking = 0x5189;
 // Move Ego (Mark) To Default Position function : 0x557e
@@ -55,6 +52,8 @@ const uint16 csAddr_egoScaredBySpider = 0x60b5;
 const uint16 csAddr_moveToLadderAndLeaveCellar = 0x60d9;
 // Leave Cellar function : 0x612b
 const uint16 csAddr_leaveCellar = 0x612b;
+// Too Dark function : 0x61fe
+const uint16 csAddr_TooDark = 0x61fe;
 // Move Ego (Mark) To Bottom-Right or Turn function : 0x6849
 const uint16 csAddr_egoBottomRightTurn = 0x6849;
 // Checking Drawers function : 0x68e6
@@ -316,9 +315,10 @@ const uint16 dsAddr_getMeOutJamMsg = 0x459f; // "Get me out of this jam!"
 const uint16 dsAddr_rosemaryJamMsg = 0x45b8; // "Oh, and there is Rosemary jam"
 // Know Rosemary Message : 0x45da to 0x4602
 const uint16 dsAddr_knowRosemaryMsg = 0x45da; // "I used to know someone called Rosemary"
-// Umwanted Jams Message : 0x4603 to 0x461c
+// Unwanted Jams Message : 0x4603 to 0x461c
 const uint16 dsAddr_unwantedJamsMsg = 0x4603; // "I don't want those jams"
-
+// Too Dark Message : 0x461d to 0x463b
+const uint16 dsAddr_TooDarkMsg = 0x461d; // "It's too dark to see clearly"
 // Yeow Message : 0x463c to 0x4649
 const uint16 dsAddr_yeowMsg = 0x463c; // "YEEEOOOWWWW!"
 // Yawn Message : 0x464a to 0x4651

@@ -216,7 +216,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		// call display_message, r
 		uint16 msg = READ_LE_UINT16(code + 1);
 		uint16 func = 6 + addr + READ_LE_UINT16(code + 4);
-		debugC(0, kDebugCallbacks, "call %04x", func);
+		debugC(0, kDebugCallbacks, "call %04x msg:0x%04x", func, msg);
 		debugC(0, kDebugCallbacks, "trivial callback, showing message %s", (const char *)res->dseg.ptr(addr));
 		if (func == csAddr_displayMsg) {
 			displayMessage(msg);
@@ -236,6 +236,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	if (code[0] == 0xc7 && code[1] == 0x06 && code[2] == 0xf3 && code[3] == 0xb4 &&
 	        code[6] == 0xb8 && code[9] == 0xbb && code[12] == 0xbf &&
 	        code[22] == 0xe8 && code[25] == 0xc3) {
+		debugC(0, kDebugCallbacks, "loadScene(%d) callback", code[4]);
 		loadScene(code[4], Common::Point(
 		              (READ_LE_UINT16(code + 7) + READ_LE_UINT16(code + 13) + 1) / 2 ,
 		              READ_LE_UINT16(code + 10)));
@@ -1039,21 +1040,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xdba4, 1))
 			displayMessage(dsAddr_tooHeavyMsg); // "It's too heavy. Not that I'm wimp"
 		else
-			processCallback(0x61fe);
+			processCallback(csAddr_TooDark);
 		break;
 
 	case 0x6217:
 		if (CHECK_FLAG(0xdba4, 1))
 			displayMessage(dsAddr_noDentistsMsg); // "I don't want to have anything in common with dentists"
 		else
-			processCallback(0x61fe);
+			processCallback(csAddr_TooDark);
 		break;
 
 	case 0x62c1:
 		if (CHECK_FLAG(0xdba4, 1))
 			retVal = false;
 		else
-			processCallback(0x61fe);
+			processCallback(csAddr_TooDark);
 		break;
 
 	case 0x63bc:
@@ -1169,7 +1170,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xdba4, 1))
 			retVal = false;
 		else
-			processCallback(0x61fe);
+			processCallback(csAddr_TooDark);
 		break;
 
 	case 0x7b26: // cutting the fence
@@ -1791,7 +1792,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xdba4, 1))
 			dialog->popMark(scene, 0xdb1e);
 		else
-			processCallback(0x61fe);
+			processCallback(csAddr_TooDark);
+		break;
+
+	case csAddr_TooDark:
+		displayMessage(dsAddr_TooDarkMsg); // "It's too dark to see clearly"
 		break;
 
 	case 0x6229: // shelves in cellar
@@ -1824,7 +1829,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				break;
 			}
 		} else
-			processCallback(0x61fe);
+			processCallback(csAddr_TooDark);
 		break;
 
 	case 0x6480: // dive mask
@@ -2322,7 +2327,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x78e0:
-		processCallback(0x50c5);
+		processCallback(csAddr_egoSuspiciousPosition);
 		retVal = false;
 		break;
 
@@ -2371,7 +2376,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xdba4, 1))
 			retVal = false;
 		else
-			retVal = processCallback(0x61fe);
+			retVal = processCallback(csAddr_TooDark);
 		break;
 
 	case 0x79d2:
