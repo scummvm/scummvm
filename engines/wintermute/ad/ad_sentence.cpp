@@ -91,19 +91,29 @@ AdSentence::~AdSentence() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setText(const char *text) {
-	if (_text) delete[] _text;
+	if (_text) {
+		delete[] _text;
+	}
 	_text = new char[strlen(text) + 1];
-	if (_text) strcpy(_text, text);
+	if (_text) {
+		strcpy(_text, text);
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setStances(const char *stances) {
-	if (_stances) delete[] _stances;
+	if (_stances) {
+		delete[] _stances;
+	}
 	if (stances) {
 		_stances = new char[strlen(stances) + 1];
-		if (_stances) strcpy(_stances, stances);
-	} else _stances = NULL;
+		if (_stances) {
+			strcpy(_stances, stances);
+		}
+	} else {
+		_stances = NULL;
+	}
 }
 
 
@@ -122,36 +132,55 @@ char *AdSentence::getNextStance() {
 
 //////////////////////////////////////////////////////////////////////////
 char *AdSentence::getStance(int stance) {
-	if (_stances == NULL) return NULL;
+	if (_stances == NULL) {
+		return NULL;
+	}
 
-	if (_tempStance) delete[] _tempStance;
+	if (_tempStance) {
+		delete[] _tempStance;
+	}
 	_tempStance = NULL;
 
 	char *start;
 	char *curr;
 	int pos;
 
-	if (stance == 0) start = _stances;
-	else {
+	if (stance == 0) {
+		start = _stances;
+	} else {
 		pos = 0;
 		start = NULL;
 		curr = _stances;
 		while (pos < stance) {
-			if (*curr == '\0') break;
-			if (*curr == ',') pos++;
+			if (*curr == '\0') {
+				break;
+			}
+			if (*curr == ',') {
+				pos++;
+			}
 			curr++;
 		}
-		if (pos == stance) start = curr;
+		if (pos == stance) {
+			start = curr;
+		}
 	}
 
-	if (start == NULL) return NULL;
+	if (start == NULL) {
+		return NULL;
+	}
 
-	while (*start == ' ' && *start != ',' && *start != '\0') start++;
+	while (*start == ' ' && *start != ',' && *start != '\0') {
+		start++;
+	}
 
 	curr = start;
-	while (*curr != '\0' && *curr != ',') curr++;
+	while (*curr != '\0' && *curr != ',') {
+		curr++;
+	}
 
-	while (curr > start && *(curr - 1) == ' ') curr--;
+	while (curr > start && *(curr - 1) == ' ') {
+		curr--;
+	}
 
 	_tempStance = new char [curr - start + 1];
 	if (_tempStance) {
@@ -165,7 +194,9 @@ char *AdSentence::getStance(int stance) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::display() {
-	if (!_font || !_text) return STATUS_FAILED;
+	if (!_font || !_text) {
+		return STATUS_FAILED;
+	}
 
 	if (_sound && !_soundStarted) {
 		_sound->play();
@@ -195,7 +226,9 @@ bool AdSentence::display() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setSound(BaseSound *sound) {
-	if (!sound) return;
+	if (!sound) {
+		return;
+	}
 	delete _sound;
 	_sound = sound;
 	_soundStarted = false;
@@ -204,7 +237,9 @@ void AdSentence::setSound(BaseSound *sound) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::finish() {
-	if (_sound) _sound->stop();
+	if (_sound) {
+		_sound->stop();
+	}
 	return STATUS_OK;
 }
 
@@ -242,7 +277,9 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 	_talkDef = NULL;
 	_currentSprite = NULL;
 
-	if (!soundFilename) return STATUS_OK;
+	if (!soundFilename) {
+		return STATUS_OK;
+	}
 
 
 	AnsiString path = PathUtil::getDirectoryName(soundFilename);
@@ -250,8 +287,9 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 
 	AnsiString talkDefFileName = PathUtil::combine(path, name + ".talk");
 
-	if (!_gameRef->_fileManager->hasFile(talkDefFileName))
-		return STATUS_OK; // no talk def file found
+	if (!_gameRef->_fileManager->hasFile(talkDefFileName)) {
+		return STATUS_OK;    // no talk def file found
+	}
 
 	_talkDef = new AdTalkDef(_gameRef);
 	if (!_talkDef || DID_FAIL(_talkDef->loadFile(talkDefFileName.c_str()))) {
@@ -267,7 +305,9 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::update(TDirection dir) {
-	if (!_talkDef) return STATUS_OK;
+	if (!_talkDef) {
+		return STATUS_OK;
+	}
 
 	uint32 currentTime;
 	// if sound is available, synchronize with sound, otherwise use timer
@@ -284,10 +324,14 @@ bool AdSentence::update(TDirection dir) {
 			talkNodeFound = true;
 
 			BaseSprite *newSprite = _talkDef->_nodes[i]->getSprite(dir);
-			if (newSprite != _currentSprite) newSprite->reset();
+			if (newSprite != _currentSprite) {
+				newSprite->reset();
+			}
 			_currentSprite = newSprite;
 
-			if (!_talkDef->_nodes[i]->_playToEnd) break;
+			if (!_talkDef->_nodes[i]->_playToEnd) {
+				break;
+			}
 		}
 	}
 
@@ -296,9 +340,13 @@ bool AdSentence::update(TDirection dir) {
 	if (!talkNodeFound) {
 		BaseSprite *newSprite = _talkDef->getDefaultSprite(dir);
 		if (newSprite) {
-			if (newSprite != _currentSprite) newSprite->reset();
+			if (newSprite != _currentSprite) {
+				newSprite->reset();
+			}
 			_currentSprite = newSprite;
-		} else _currentSprite = NULL;
+		} else {
+			_currentSprite = NULL;
+		}
 	}
 
 	return STATUS_OK;

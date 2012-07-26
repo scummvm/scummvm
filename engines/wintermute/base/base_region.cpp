@@ -60,7 +60,9 @@ BaseRegion::~BaseRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegion::cleanup() {
-	for (int i = 0; i < _points.getSize(); i++) delete _points[i];
+	for (int i = 0; i < _points.getSize(); i++) {
+		delete _points[i];
+	}
 	_points.removeAll();
 
 	BasePlatform::setRectEmpty(&_rect);
@@ -76,7 +78,9 @@ bool BaseRegion::createRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::pointInRegion(int x, int y) {
-	if (_points.getSize() < 3) return false;
+	if (_points.getSize() < 3) {
+		return false;
+	}
 
 	Point32 pt;
 	pt.x = x;
@@ -88,8 +92,11 @@ bool BaseRegion::pointInRegion(int x, int y) {
 	rect.top = y - 1;
 	rect.bottom = y + 2;
 
-	if (BasePlatform::ptInRect(&_rect, pt)) return ptInPolygon(x, y);
-	else return false;
+	if (BasePlatform::ptInRect(&_rect, pt)) {
+		return ptInPolygon(x, y);
+	} else {
+		return false;
+	}
 }
 
 
@@ -105,7 +112,9 @@ bool BaseRegion::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing REGION file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing REGION file '%s'", filename);
+	}
 
 
 	delete[] buffer;
@@ -153,13 +162,17 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 
 	int i;
 
-	for (i = 0; i < _points.getSize(); i++) delete _points[i];
+	for (i = 0; i < _points.getSize(); i++) {
+		delete _points[i];
+	}
 	_points.removeAll();
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -240,7 +253,9 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			createRegion();
 
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -260,7 +275,9 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			createRegion();
 
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -280,7 +297,9 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			createRegion();
 
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -298,12 +317,14 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 				val->setProperty("X", _points[index]->x);
 				val->setProperty("Y", _points[index]->y);
 			}
-		} else stack->pushNULL();
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
+	} else {
+		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -341,9 +362,9 @@ ScValue *BaseRegion::scGetProperty(const char *name) {
 	else if (strcmp(name, "NumPoints") == 0) {
 		_scValue->setInt(_points.getSize());
 		return _scValue;
+	} else {
+		return BaseObject::scGetProperty(name);
 	}
-
-	else return BaseObject::scGetProperty(name);
 }
 
 
@@ -363,9 +384,9 @@ bool BaseRegion::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "Active") == 0) {
 		_active = value->getBool();
 		return STATUS_OK;
+	} else {
+		return BaseObject::scSetProperty(name, value);
 	}
-
-	else return BaseObject::scSetProperty(name, value);
 }
 
 
@@ -377,8 +398,11 @@ const char *BaseRegion::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride) {
-	if (!nameOverride) buffer->putTextIndent(indent, "REGION {\n");
-	else buffer->putTextIndent(indent, "%s {\n", nameOverride);
+	if (!nameOverride) {
+		buffer->putTextIndent(indent, "REGION {\n");
+	} else {
+		buffer->putTextIndent(indent, "%s {\n", nameOverride);
+	}
 
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
@@ -395,7 +419,9 @@ bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *n
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
-	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
+	if (_scProp) {
+		_scProp->saveAsText(buffer, indent + 2);
+	}
 
 	buffer->putTextIndent(indent, "}\n\n");
 
@@ -425,7 +451,9 @@ typedef struct {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::ptInPolygon(int x, int y) {
-	if (_points.getSize() < 3) return false;
+	if (_points.getSize() < 3) {
+		return false;
+	}
 
 	int counter = 0;
 	double xinters;
@@ -446,8 +474,9 @@ bool BaseRegion::ptInPolygon(int x, int y) {
 				if (p.x <= MAX(p1.x, p2.x)) {
 					if (p1.y != p2.y) {
 						xinters = (p.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
-						if (p1.x == p2.x || p.x <= xinters)
+						if (p1.x == p2.x || p.x <= xinters) {
 							counter++;
+						}
 					}
 				}
 			}
@@ -455,17 +484,19 @@ bool BaseRegion::ptInPolygon(int x, int y) {
 		p1 = p2;
 	}
 
-	if (counter % 2 == 0)
+	if (counter % 2 == 0) {
 		return false;
-	else
+	} else {
 		return true;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::getBoundingRect(Rect32 *rect) {
-	if (_points.getSize() == 0) BasePlatform::setRectEmpty(rect);
-	else {
+	if (_points.getSize() == 0) {
+		BasePlatform::setRectEmpty(rect);
+	} else {
 		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;
 
 		for (int i = 0; i < _points.getSize(); i++) {
@@ -483,7 +514,9 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
-	if (scale == _lastMimicScale && x == _lastMimicX && y == _lastMimicY) return STATUS_OK;
+	if (scale == _lastMimicScale && x == _lastMimicX && y == _lastMimicY) {
+		return STATUS_OK;
+	}
 
 	cleanup();
 

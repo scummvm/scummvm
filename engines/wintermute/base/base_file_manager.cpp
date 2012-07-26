@@ -86,8 +86,9 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 
 	Common::SeekableReadStream *file = openFile(filename);
 	if (!file) {
-		if (mustExist)
+		if (mustExist) {
 			debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Error opening file '%s'", filename.c_str());
+		}
 		return NULL;
 	}
 
@@ -106,7 +107,9 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 	};
 
 	buffer[file->size()] = '\0';
-	if (size != NULL) *size = file->size();
+	if (size != NULL) {
+		*size = file->size();
+	}
 	closeFile(file);
 
 	return buffer;
@@ -114,8 +117,9 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::addPath(TPathType type, const Common::FSNode &path) {
-	if (!path.exists())
+	if (!path.exists()) {
 		return STATUS_FAILED;
+	}
 
 	switch (type) {
 	case PATH_SINGLE:
@@ -141,8 +145,9 @@ bool BaseFileManager::reloadPaths() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::initPaths() {
-	if (!_gameRef) // This function only works when the game-registry is loaded
+	if (!_gameRef) { // This function only works when the game-registry is loaded
 		return STATUS_FAILED;
+	}
 
 	AnsiString pathList;
 
@@ -210,15 +215,17 @@ bool BaseFileManager::registerPackages() {
 		warning("Should register %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
 		(*it).getChildren(files, Common::FSNode::kListFilesOnly);
 		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
-			if (!fileIt->getName().hasSuffix(".dcp"))
+			if (!fileIt->getName().hasSuffix(".dcp")) {
 				continue;
+			}
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.
 			if (fileIt->getParent().getName() == "language") {
 				Common::String parentName = fileIt->getParent().getName();
 				Common::String dcpName = fileIt->getName();
-				if (fileIt->getName() != "english.dcp")
+				if (fileIt->getName() != "english.dcp") {
 					continue;
+				}
 			}
 			warning("Registering %s %s", (*fileIt).getPath().c_str(), (*fileIt).getName().c_str());
 			registerPackage((*fileIt));
@@ -247,8 +254,9 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 
 	// correct slashes
 	for (int32 i = 0; i < upcName.size(); i++) {
-		if (upcName[i] == '/')
+		if (upcName[i] == '/') {
 			upcName.setChar('\\', (uint32)i);
+		}
 	}
 	Common::ArchiveMemberPtr entry = _packages.getMember(upcName);
 	file = entry->createReadStream();
@@ -256,23 +264,29 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 }
 
 bool BaseFileManager::hasFile(const Common::String &filename) {
-	if (diskFileExists(filename))
+	if (diskFileExists(filename)) {
 		return true;
-	if (_packages.hasFile(filename))
-		return true; // We don't bother checking if the file can actually be opened, something bigger is wrong if that is the case.
-	if (BaseResources::hasFile(filename))
+	}
+	if (_packages.hasFile(filename)) {
+		return true;    // We don't bother checking if the file can actually be opened, something bigger is wrong if that is the case.
+	}
+	if (BaseResources::hasFile(filename)) {
 		return true;
+	}
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &filename, bool absPathWarning, bool keepTrackOf) {
-	if (strcmp(filename.c_str(), "") == 0)
+	if (strcmp(filename.c_str(), "") == 0) {
 		return NULL;
+	}
 	debugC(kWinterMuteDebugFileAccess, "Open file %s", filename.c_str());
 
 	Common::SeekableReadStream *file = openFileRaw(filename);
-	if (file && keepTrackOf) _openFiles.push_back(file);
+	if (file && keepTrackOf) {
+		_openFiles.push_back(file);
+	}
 	return file;
 }
 
@@ -295,8 +309,9 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 	Common::SeekableReadStream *ret = NULL;
 
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
-		if (!_gameRef)
+		if (!_gameRef) {
 			error("Attempt to load filename: %s without BaseGame-object, this is unsupported", filename.c_str());
+		}
 		BaseSaveThumbFile *SaveThumbFile = new BaseSaveThumbFile(_gameRef);
 		if (DID_SUCCEED(SaveThumbFile->open(filename))) {
 			ret = SaveThumbFile->getMemStream();
@@ -306,16 +321,19 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 	}
 
 	ret = openDiskFile(filename);
-	if (ret)
+	if (ret) {
 		return ret;
+	}
 
 	ret = openPkgFile(filename);
-	if (ret)
+	if (ret) {
 		return ret;
+	}
 
 	ret = BaseResources::getFile(filename);
-	if (ret)
+	if (ret) {
 		return ret;
+	}
 
 	warning("BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
 	return NULL;

@@ -94,7 +94,9 @@ AdObject::AdObject(BaseGame *inGame): BaseObject(inGame) {
 
 	_inventory = NULL;
 
-	for (int i = 0; i < MAX_NUM_REGIONS; i++) _currentRegions[i] = NULL;
+	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
+		_currentRegions[i] = NULL;
+	}
 
 	_partEmitter = NULL;
 	_partFollowParent = false;
@@ -127,15 +129,18 @@ AdObject::~AdObject() {
 	_tempSprite2 = NULL; // reference only
 	_stickRegion = NULL;
 
-	if (_font) _gameRef->_fontStorage->removeFont(_font);
+	if (_font) {
+		_gameRef->_fontStorage->removeFont(_font);
+	}
 
 	if (_inventory) {
 		((AdGame *)_gameRef)->unregisterInventory(_inventory);
 		_inventory = NULL;
 	}
 
-	if (_partEmitter)
+	if (_partEmitter) {
 		_gameRef->unregisterObject(_partEmitter);
+	}
 
 
 	for (int i = 0; i < _attachmentsPre.getSize(); i++) {
@@ -194,9 +199,12 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "PlayAnim") == 0 || strcmp(name, "PlayAnimAsync") == 0) {
 		stack->correctParams(1);
-		if (DID_FAIL(playAnim(stack->pop()->getString()))) stack->pushBool(false);
-		else {
-			if (strcmp(name, "PlayAnimAsync") != 0) script->waitFor(this);
+		if (DID_FAIL(playAnim(stack->pop()->getString()))) {
+			stack->pushBool(false);
+		} else {
+			if (strcmp(name, "PlayAnimAsync") != 0) {
+				script->waitFor(this);
+			}
 			stack->pushBool(true);
 		}
 		return STATUS_OK;
@@ -226,12 +234,16 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StopTalk") == 0 || strcmp(name, "StopTalking") == 0) {
 		stack->correctParams(0);
-		if (_sentence) _sentence->finish();
+		if (_sentence) {
+			_sentence->finish();
+		}
 		if (_state == STATE_TALKING) {
 			_state = _nextState;
 			_nextState = STATE_READY;
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 		return STATUS_OK;
 	}
 
@@ -265,15 +277,20 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		int align = 0;
 		ScValue *val = stack->pop();
-		if (val->isNULL()) align = TAL_CENTER;
-		else align = val->getInt();
+		if (val->isNULL()) {
+			align = TAL_CENTER;
+		} else {
+			align = val->getInt();
+		}
 
 		align = MIN(MAX(0, align), NUM_TEXT_ALIGN - 1);
 
 		const char *sound = soundVal->isNULL() ? NULL : soundVal->getString();
 
 		talk(text, sound, duration, stances, (TTextAlign)align);
-		if (strcmp(name, "TalkAsync") != 0) script->waitForExclusive(this);
+		if (strcmp(name, "TalkAsync") != 0) {
+			script->waitForExclusive(this);
+		}
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -315,7 +332,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		}
 
-		if (!regFound) _stickRegion = NULL;
+		if (!regFound) {
+			_stickRegion = NULL;
+		}
 		stack->pushBool(regFound);
 		return STATUS_OK;
 	}
@@ -327,8 +346,11 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		if (val->isNULL()) SetFont(NULL);
-		else SetFont(val->getString());
+		if (val->isNULL()) {
+			setFont(NULL);
+		} else {
+			setFont(val->getString());
+		}
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -339,8 +361,11 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFont") == 0) {
 		stack->correctParams(0);
-		if (_font && _font->getFilename()) stack->pushString(_font->getFilename());
-		else stack->pushNULL();
+		if (_font && _font->getFilename()) {
+			stack->pushString(_font->getFilename());
+		} else {
+			stack->pushNULL();
+		}
 		return STATUS_OK;
 	}
 
@@ -360,13 +385,16 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			const char *itemName = val->getString();
 			val = stack->pop();
 			const char *insertAfter = val->isNULL() ? NULL : val->getString();
-			if (DID_FAIL(_inventory->insertItem(itemName, insertAfter))) script->runtimeError("Cannot add item '%s' to inventory", itemName);
-			else {
+			if (DID_FAIL(_inventory->insertItem(itemName, insertAfter))) {
+				script->runtimeError("Cannot add item '%s' to inventory", itemName);
+			} else {
 				// hide associated entities
 				((AdGame *)_gameRef)->_scene->handleItemAssociations(itemName, false);
 			}
 
-		} else script->runtimeError("TakeItem: item name expected");
+		} else {
+			script->runtimeError("TakeItem: item name expected");
+		}
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -385,12 +413,15 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		ScValue *val = stack->pop();
 		if (!val->isNULL()) {
-			if (DID_FAIL(_inventory->removeItem(val->getString()))) script->runtimeError("Cannot remove item '%s' from inventory", val->getString());
-			else {
+			if (DID_FAIL(_inventory->removeItem(val->getString()))) {
+				script->runtimeError("Cannot remove item '%s' from inventory", val->getString());
+			} else {
 				// show associated entities
 				((AdGame *)_gameRef)->_scene->handleItemAssociations(val->getString(), true);
 			}
-		} else script->runtimeError("DropItem: item name expected");
+		} else {
+			script->runtimeError("DropItem: item name expected");
+		}
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -410,12 +441,16 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 		if (val->_type == VAL_STRING) {
 			AdItem *item = ((AdGame *)_gameRef)->getItemByName(val->getString());
-			if (item) stack->pushNative(item, true);
-			else stack->pushNULL();
-		} else if (val->isNULL() || val->getInt() < 0 || val->getInt() >= _inventory->_takenItems.getSize())
+			if (item) {
+				stack->pushNative(item, true);
+			} else {
+				stack->pushNULL();
+			}
+		} else if (val->isNULL() || val->getInt() < 0 || val->getInt() >= _inventory->_takenItems.getSize()) {
 			stack->pushNULL();
-		else
+		} else {
 			stack->pushNative(_inventory->_takenItems[val->getInt()], true);
+		}
 
 		return STATUS_OK;
 	}
@@ -442,7 +477,9 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 					return STATUS_OK;
 				}
 			}
-		} else script->runtimeError("HasItem: item name expected");
+		} else {
+			script->runtimeError("HasItem: item name expected");
+		}
 
 		stack->pushBool(false);
 		return STATUS_OK;
@@ -458,8 +495,11 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int offsetY = stack->pop()->getInt();
 
 		PartEmitter *emitter = createParticleEmitter(followParent, offsetX, offsetY);
-		if (emitter) stack->pushNative(_partEmitter, true);
-		else stack->pushNULL();
+		if (emitter) {
+			stack->pushNative(_partEmitter, true);
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
 	}
@@ -502,8 +542,11 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			ent->_posY = offsetY;
 			ent->_active = true;
 
-			if (preDisplay) _attachmentsPre.add(ent);
-			else _attachmentsPost.add(ent);
+			if (preDisplay) {
+				_attachmentsPre.add(ent);
+			} else {
+				_attachmentsPost.add(ent);
+			}
 
 			stack->pushBool(true);
 		}
@@ -572,11 +615,15 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			int index = val->getInt();
 			int currIndex = 0;
 			for (int i = 0; i < _attachmentsPre.getSize(); i++) {
-				if (currIndex == index) ret = _attachmentsPre[i];
+				if (currIndex == index) {
+					ret = _attachmentsPre[i];
+				}
 				currIndex++;
 			}
 			for (int i = 0; i < _attachmentsPost.getSize(); i++) {
-				if (currIndex == index) ret = _attachmentsPost[i];
+				if (currIndex == index) {
+					ret = _attachmentsPost[i];
+				}
 				currIndex++;
 			}
 		} else {
@@ -597,13 +644,16 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			}
 		}
 
-		if (ret != NULL) stack->pushNative(ret, true);
-		else stack->pushNULL();
+		if (ret != NULL) {
+			stack->pushNative(ret, true);
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
+	} else {
+		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -695,8 +745,11 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	// ParticleEmitter (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ParticleEmitter") == 0) {
-		if (_partEmitter) _scValue->setNative(_partEmitter, true);
-		else _scValue->setNULL();
+		if (_partEmitter) {
+			_scValue->setNative(_partEmitter, true);
+		} else {
+			_scValue->setNULL();
+		}
 
 		return _scValue;
 	}
@@ -707,10 +760,9 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	else if (strcmp(name, "NumAttachments") == 0) {
 		_scValue->setInt(_attachmentsPre.getSize() + _attachmentsPost.getSize());
 		return _scValue;
+	} else {
+		return BaseObject::scGetProperty(name);
 	}
-
-
-	else return BaseObject::scGetProperty(name);
 }
 
 
@@ -779,9 +831,9 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "SubtitlesPosXCenter") == 0) {
 		_subtitlesModXCenter = value->getBool();
 		return STATUS_OK;
+	} else {
+		return BaseObject::scSetProperty(name, value);
 	}
-
-	else return BaseObject::scSetProperty(name, value);
 }
 
 
@@ -792,8 +844,10 @@ const char *AdObject::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject::SetFont(const char *filename) {
-	if (_font) _gameRef->_fontStorage->removeFont(_font);
+bool AdObject::setFont(const char *filename) {
+	if (_font) {
+		_gameRef->_fontStorage->removeFont(_font);
+	}
 	if (filename) {
 		_font = _gameRef->_fontStorage->addFont(filename);
 		return _font == NULL ? STATUS_FAILED : STATUS_OK;
@@ -806,8 +860,9 @@ bool AdObject::SetFont(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 int AdObject::getHeight() {
-	if (!_currentSprite) return 0;
-	else {
+	if (!_currentSprite) {
+		return 0;
+	} else {
 		BaseFrame *frame = _currentSprite->_frames[_currentSprite->_currentFrame];
 		int ret = 0;
 		for (int i = 0; i < frame->_subframes.getSize(); i++) {
@@ -825,8 +880,12 @@ int AdObject::getHeight() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdObject::talk(const char *text, const char *sound, uint32 duration, const char *stances, TTextAlign Align) {
-	if (!_sentence) _sentence = new AdSentence(_gameRef);
-	if (!_sentence) return;
+	if (!_sentence) {
+		_sentence = new AdSentence(_gameRef);
+	}
+	if (!_sentence) {
+		return;
+	}
 
 	if (_forcedTalkAnimName && _forcedTalkAnimUsed) {
 		delete[] _forcedTalkAnimName;
@@ -855,7 +914,9 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 			sound = ((AdGame *)_gameRef)->findSpeechFile(key);
 			delete[] key;
 
-			if (sound) deleteSound = true;
+			if (sound) {
+				deleteSound = true;
+			}
 		}
 	}
 
@@ -865,10 +926,14 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 		if (snd && DID_SUCCEED(snd->setSound(sound, Audio::Mixer::kSpeechSoundType, true))) {
 			_sentence->setSound(snd);
 			if (_sentence->_duration <= 0) {
-				uint32 Length = snd->getLength();
-				if (Length != 0) _sentence->_duration = Length;
+				uint32 length = snd->getLength();
+				if (length != 0) {
+					_sentence->_duration = length;
+				}
 			}
-		} else delete snd;
+		} else {
+			delete snd;
+		}
 	}
 
 	// set duration by text length
@@ -888,11 +953,14 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	}
 
 
-	if (_subtitlesWidth > 0) width = _subtitlesWidth;
-	else {
+	if (_subtitlesWidth > 0) {
+		width = _subtitlesWidth;
+	} else {
 		if ((x < _gameRef->_renderer->_width / 4 || x > _gameRef->_renderer->_width * 0.75) && !_gameRef->_touchInterface) {
 			width = MAX(_gameRef->_renderer->_width / 4, MIN(x * 2, (_gameRef->_renderer->_width - x) * 2));
-		} else width = _gameRef->_renderer->_width / 2;
+		} else {
+			width = _gameRef->_renderer->_width / 2;
+		}
 	}
 
 	height = _sentence->_font->getTextHeight((byte *)_sentence->_text, width);
@@ -905,8 +973,9 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 		x = _subtitlesModX;
 		y = _subtitlesModY;
 	}
-	if (_subtitlesModXCenter)
+	if (_subtitlesModXCenter) {
 		x = x - width / 2;
+	}
 
 
 	x = MIN(MAX(0, x), _gameRef->_renderer->_width - width);
@@ -931,7 +1000,9 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 
 	_state = STATE_TALKING;
 
-	if (deleteSound) delete[] sound;
+	if (deleteSound) {
+		delete[] sound;
+	}
 }
 
 
@@ -983,7 +1054,9 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_inventory));
 	persistMgr->transfer(TMEMBER(_partEmitter));
 
-	for (int i = 0; i < MAX_NUM_REGIONS; i++) persistMgr->transfer(TMEMBER(_currentRegions[i]));
+	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
+		persistMgr->transfer(TMEMBER(_currentRegions[i]));
+	}
 
 	_attachmentsPre.persist(persistMgr);
 	_attachmentsPost.persist(persistMgr);
@@ -999,8 +1072,9 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::updateSounds() {
-	if (_sentence && _sentence->_sound)
+	if (_sentence && _sentence->_sound) {
 		updateOneSound(_sentence->_sound);
+	}
 
 	return BaseObject::updateSounds();
 }
@@ -1017,17 +1091,24 @@ bool AdObject::resetSoundPan() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::getExtendedFlag(const char *flagName) {
-	if (!flagName) return false;
-	else if (strcmp(flagName, "usable") == 0) return true;
-
-	else return BaseObject::getExtendedFlag(flagName);
+	if (!flagName) {
+		return false;
+	} else if (strcmp(flagName, "usable") == 0) {
+		return true;
+	} else {
+		return BaseObject::getExtendedFlag(flagName);
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
-	if (_blockRegion) _blockRegion->saveAsText(buffer, indent + 2, "BLOCKED_REGION");
-	if (_wptGroup) _wptGroup->saveAsText(buffer, indent + 2);
+	if (_blockRegion) {
+		_blockRegion->saveAsText(buffer, indent + 2, "BLOCKED_REGION");
+	}
+	if (_wptGroup) {
+		_wptGroup->saveAsText(buffer, indent + 2);
+	}
 
 	BaseClass::saveAsText(buffer, indent + 2);
 
@@ -1039,11 +1120,13 @@ bool AdObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool AdObject::updateBlockRegion() {
 	AdGame *adGame = (AdGame *)_gameRef;
 	if (adGame->_scene) {
-		if (_blockRegion && _currentBlockRegion)
+		if (_blockRegion && _currentBlockRegion) {
 			_currentBlockRegion->mimic(_blockRegion, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
+		}
 
-		if (_wptGroup && _currentWptGroup)
+		if (_wptGroup && _currentWptGroup) {
 			_currentWptGroup->mimic(_wptGroup, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
+		}
 	}
 	return STATUS_OK;
 }
@@ -1064,7 +1147,9 @@ bool AdObject::afterMove() {
 
 	((AdGame *)_gameRef)->_scene->getRegionsAt(_posX, _posY, newRegions, MAX_NUM_REGIONS);
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
-		if (!newRegions[i]) break;
+		if (!newRegions[i]) {
+			break;
+		}
 		bool regFound = false;
 		for (int j = 0; j < MAX_NUM_REGIONS; j++) {
 			if (_currentRegions[j] == newRegions[i]) {
@@ -1073,7 +1158,9 @@ bool AdObject::afterMove() {
 				break;
 			}
 		}
-		if (!regFound) newRegions[i]->applyEvent("ActorEntry");
+		if (!regFound) {
+			newRegions[i]->applyEvent("ActorEntry");
+		}
 	}
 
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
@@ -1088,7 +1175,9 @@ bool AdObject::afterMove() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::invalidateCurrRegions() {
-	for (int i = 0; i < MAX_NUM_REGIONS; i++) _currentRegions[i] = NULL;
+	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
+		_currentRegions[i] = NULL;
+	}
 	return STATUS_OK;
 }
 
@@ -1099,8 +1188,11 @@ bool AdObject::getScale(float *scaleX, float *scaleY) {
 		if (_scaleX >= 0 || _scaleY >= 0) {
 			*scaleX = _scaleX < 0 ? 100 : _scaleX;
 			*scaleY = _scaleY < 0 ? 100 : _scaleY;
-		} else if (_scale >= 0) *scaleX = *scaleY = _scale;
-		else *scaleX = *scaleY = ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) + _relativeScale;
+		} else if (_scale >= 0) {
+			*scaleX = *scaleY = _scale;
+		} else {
+			*scaleX = *scaleY = ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) + _relativeScale;
+		}
 	} else {
 		*scaleX = *scaleY = 100;
 	}
@@ -1134,7 +1226,9 @@ bool AdObject::displaySpriteAttachments(bool preDisplay) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::displaySpriteAttachment(AdObject *attachment) {
-	if (!attachment->_active) return STATUS_OK;
+	if (!attachment->_active) {
+		return STATUS_OK;
+	}
 
 	float scaleX, scaleY;
 	getScale(&scaleX, &scaleY);
@@ -1188,7 +1282,9 @@ PartEmitter *AdObject::createParticleEmitter(bool followParent, int offsetX, int
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::updatePartEmitter() {
-	if (!_partEmitter) return STATUS_FAILED;
+	if (!_partEmitter) {
+		return STATUS_FAILED;
+	}
 
 	if (_partFollowParent) {
 		float scaleX, scaleY;

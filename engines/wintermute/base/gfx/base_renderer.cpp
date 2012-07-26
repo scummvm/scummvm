@@ -89,13 +89,19 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 						yy = height - yy;
 					}
 
-					if (!_rectList[i]->_frame->_surface->isTransparentAt(xx, yy)) return _rectList[i]->_owner;
+					if (!_rectList[i]->_frame->_surface->isTransparentAt(xx, yy)) {
+						return _rectList[i]->_owner;
+					}
 				}
 				// region
 				else if (_rectList[i]->_region) {
-					if (_rectList[i]->_region->pointInRegion(x + _rectList[i]->_offsetX, y + _rectList[i]->_offsetY)) return _rectList[i]->_owner;
+					if (_rectList[i]->_region->pointInRegion(x + _rectList[i]->_offsetX, y + _rectList[i]->_offsetY)) {
+						return _rectList[i]->_owner;
+					}
 				}
-			} else return _rectList[i]->_owner;
+			} else {
+				return _rectList[i]->_owner;
+			}
 		}
 	}
 
@@ -208,10 +214,18 @@ bool BaseRenderer::unclipCursor() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::pointInViewport(Point32 *p) {
-	if (p->x < _drawOffsetX) return false;
-	if (p->y < _drawOffsetY) return false;
-	if (p->x > _drawOffsetX + _width) return false;
-	if (p->y > _drawOffsetY + _height) return false;
+	if (p->x < _drawOffsetX) {
+		return false;
+	}
+	if (p->y < _drawOffsetY) {
+		return false;
+	}
+	if (p->x > _drawOffsetX + _width) {
+		return false;
+	}
+	if (p->y > _drawOffsetY + _height) {
+		return false;
+	}
 
 	return true;
 }

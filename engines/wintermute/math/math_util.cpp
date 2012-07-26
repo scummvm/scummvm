@@ -34,14 +34,18 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////////
 float MathUtil::round(float val) {
 	float result = floor(val);
-	if (val - result >= 0.5) result += 1.0;
+	if (val - result >= 0.5) {
+		result += 1.0;
+	}
 	return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
 float MathUtil::roundUp(float val) {
 	float result = floor(val);
-	if (val - result > 0) result += 1.0;
+	if (val - result > 0) {
+		result += 1.0;
+	}
 	return result;
 }
 

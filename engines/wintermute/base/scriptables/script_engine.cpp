@@ -47,8 +47,11 @@ IMPLEMENT_PERSISTENT(ScEngine, true)
 ScEngine::ScEngine(BaseGame *inGame): BaseClass(inGame) {
 	_gameRef->LOG(0, "Initializing scripting engine...");
 
-	if (_compilerAvailable) _gameRef->LOG(0, "  Script compiler bound successfuly");
-	else _gameRef->LOG(0, "  Script compiler is NOT available");
+	if (_compilerAvailable) {
+		_gameRef->LOG(0, "  Script compiler bound successfuly");
+	} else {
+		_gameRef->LOG(0, "  Script compiler is NOT available");
+	}
 
 	_globals = new ScValue(_gameRef);
 
@@ -68,7 +71,9 @@ ScEngine::ScEngine(BaseGame *inGame): BaseClass(inGame) {
 	}
 
 	// prepare script cache
-	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) _cachedScripts[i] = NULL;
+	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
+		_cachedScripts[i] = NULL;
+	}
 
 	_currentScript = NULL;
 
@@ -99,7 +104,9 @@ ScEngine::~ScEngine() {
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::cleanup() {
 	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
+		if (!_scripts[i]->_thread && _scripts[i]->_owner) {
+			_scripts[i]->_owner->removeScript(_scripts[i]);
+		}
 		delete _scripts[i];
 		_scripts.removeAt(i);
 		i--;
@@ -143,7 +150,9 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 
 	// get script from cache
 	compBuffer = getCompiledScript(filename, &compSize);
-	if (!compBuffer) return NULL;
+	if (!compBuffer) {
+		return NULL;
+	}
 
 	// add new script
 	ScScript *script = new ScScript(_gameRef, this);
@@ -155,8 +164,11 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 	} else {
 		// publish the "self" pseudo-variable
 		ScValue val(_gameRef);
-		if (owner)val.setNative(owner, true);
-		else val.setNULL();
+		if (owner) {
+			val.setNative(owner, true);
+		} else {
+			val.setNULL();
+		}
 
 		script->_globals->setProp("self", &val);
 		script->_globals->setProp("this", &val);
@@ -226,7 +238,9 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 			}
 		}
 
-		if (_cachedScripts[index] != NULL) delete _cachedScripts[index];
+		if (_cachedScripts[index] != NULL) {
+			delete _cachedScripts[index];
+		}
 		_cachedScripts[index] = cachedScript;
 
 		ret = cachedScript->_buffer;
@@ -244,8 +258,9 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::tick() {
-	if (_scripts.getSize() == 0)
+	if (_scripts.getSize() == 0) {
 		return STATUS_OK;
+	}
 
 
 	// resolve waiting scripts
@@ -267,16 +282,24 @@ bool ScEngine::tick() {
 			if (!obj_found) _scripts[i]->finish(); // _waitObject no longer exists
 			*/
 			if (_gameRef->validObject(_scripts[i]->_waitObject)) {
-				if (_scripts[i]->_waitObject->isReady()) _scripts[i]->run();
-			} else _scripts[i]->finish();
+				if (_scripts[i]->_waitObject->isReady()) {
+					_scripts[i]->run();
+				}
+			} else {
+				_scripts[i]->finish();
+			}
 			break;
 		}
 
 		case SCRIPT_SLEEPING: {
 			if (_scripts[i]->_waitFrozen) {
-				if (_scripts[i]->_waitTime <= g_system->getMillis()) _scripts[i]->run();
+				if (_scripts[i]->_waitTime <= g_system->getMillis()) {
+					_scripts[i]->run();
+				}
 			} else {
-				if (_scripts[i]->_waitTime <= _gameRef->_timer) _scripts[i]->run();
+				if (_scripts[i]->_waitTime <= _gameRef->_timer) {
+					_scripts[i]->run();
+				}
 			}
 			break;
 		}
@@ -309,7 +332,9 @@ bool ScEngine::tick() {
 	for (int i = 0; i < _scripts.getSize(); i++) {
 
 		// skip paused scripts
-		if (_scripts[i]->_state == SCRIPT_PAUSED) continue;
+		if (_scripts[i]->_state == SCRIPT_PAUSED) {
+			continue;
+		}
 
 		// time sliced script
 		if (_scripts[i]->_timeSlice > 0) {
@@ -318,20 +343,26 @@ bool ScEngine::tick() {
 				_currentScript = _scripts[i];
 				_scripts[i]->executeInstruction();
 			}
-			if (_isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, g_system->getMillis() - StartTime);
+			if (_isProfiling && _scripts[i]->_filename) {
+				addScriptTime(_scripts[i]->_filename, g_system->getMillis() - StartTime);
+			}
 		}
 
 		// normal script
 		else {
 			uint32 startTime = 0;
 			bool isProfiling = _isProfiling;
-			if (isProfiling) startTime = g_system->getMillis();
+			if (isProfiling) {
+				startTime = g_system->getMillis();
+			}
 
 			while (_scripts[i]->_state == SCRIPT_RUNNING) {
 				_currentScript = _scripts[i];
 				_scripts[i]->executeInstruction();
 			}
-			if (isProfiling && _scripts[i]->_filename) addScriptTime(_scripts[i]->_filename, g_system->getMillis() - startTime);
+			if (isProfiling && _scripts[i]->_filename) {
+				addScriptTime(_scripts[i]->_filename, g_system->getMillis() - startTime);
+			}
 		}
 		_currentScript = NULL;
 	}
@@ -346,7 +377,9 @@ bool ScEngine::tick() {
 bool ScEngine::tickUnbreakable() {
 	// execute unbreakable scripts
 	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (!_scripts[i]->_unbreakable) continue;
+		if (!_scripts[i]->_unbreakable) {
+			continue;
+		}
 
 		while (_scripts[i]->_state == SCRIPT_RUNNING) {
 			_currentScript = _scripts[i];
@@ -366,7 +399,9 @@ bool ScEngine::removeFinishedScripts() {
 	// remove finished scripts
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
-			if (!_scripts[i]->_thread && _scripts[i]->_owner) _scripts[i]->_owner->removeScript(_scripts[i]);
+			if (!_scripts[i]->_thread && _scripts[i]->_owner) {
+				_scripts[i]->_owner->removeScript(_scripts[i]);
+			}
 			_gameRef->getDebugMgr()->onScriptShutdown(_scripts[i]);
 			delete _scripts[i];
 			_scripts.removeAt(i);
@@ -382,7 +417,9 @@ int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 	int numRunning = 0, numWaiting = 0, numPersistent = 0, numTotal = 0;
 
 	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (_scripts[i]->_state == SCRIPT_FINISHED) continue;
+		if (_scripts[i]->_state == SCRIPT_FINISHED) {
+			continue;
+		}
 		switch (_scripts[i]->_state) {
 		case SCRIPT_RUNNING:
 		case SCRIPT_SLEEPING:
@@ -401,9 +438,15 @@ int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 		}
 		numTotal++;
 	}
-	if (running) *running = numRunning;
-	if (waiting) *waiting = numWaiting;
-	if (persistent)  *persistent = numPersistent;
+	if (running) {
+		*running = numRunning;
+	}
+	if (waiting) {
+		*waiting = numWaiting;
+	}
+	if (persistent) {
+		*persistent = numPersistent;
+	}
 
 	return numTotal;
 }
@@ -426,7 +469,9 @@ bool ScEngine::resetObject(BaseObject *Object) {
 	// terminate all scripts waiting for this object
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING && _scripts[i]->_waitObject == Object) {
-			if (!_gameRef->_compatKillMethodThreads) resetScript(_scripts[i]);
+			if (!_gameRef->_compatKillMethodThreads) {
+				resetScript(_scripts[i]);
+			}
 
 			bool IsThread = _scripts[i]->_methodThread || _scripts[i]->_thread;
 			_scripts[i]->finish(!IsThread); // 1.9b1 - top-level script kills its threads as well
@@ -448,7 +493,9 @@ bool ScEngine::resetScript(ScScript *script) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::persist(BasePersistenceManager *persistMgr) {
-	if (!persistMgr->getIsSaving()) cleanup();
+	if (!persistMgr->getIsSaving()) {
+		cleanup();
+	}
 
 	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_currentScript));
@@ -474,7 +521,9 @@ void ScEngine::editorCleanup() {
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::pauseAll() {
 	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (_scripts[i] != _currentScript) _scripts[i]->pause();
+		if (_scripts[i] != _currentScript) {
+			_scripts[i]->pause();
+		}
 	}
 
 	return STATUS_OK;
@@ -483,8 +532,9 @@ bool ScEngine::pauseAll() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::resumeAll() {
-	for (int i = 0; i < _scripts.getSize(); i++)
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		_scripts[i]->resume();
+	}
 
 	return STATUS_OK;
 }
@@ -493,7 +543,9 @@ bool ScEngine::resumeAll() {
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::isValidScript(ScScript *script) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (_scripts[i] == script) return true;
+		if (_scripts[i] == script) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -511,14 +563,17 @@ bool ScEngine::dbgSendScripts(IWmeDebugClient *client) {
 
 	// process normal scripts first
 	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (_scripts[i]->_thread || _scripts[i]->_methodThread) continue;
+		if (_scripts[i]->_thread || _scripts[i]->_methodThread) {
+			continue;
+		}
 		_scripts[i]->dbgSendScript(client);
 	}
 
 	// and threads later
 	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (_scripts[i]->_thread || _scripts[i]->_methodThread)
+		if (_scripts[i]->_thread || _scripts[i]->_methodThread) {
 			_scripts[i]->dbgSendScript(client);
+		}
 	}
 
 	return STATUS_OK;
@@ -526,7 +581,9 @@ bool ScEngine::dbgSendScripts(IWmeDebugClient *client) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::addBreakpoint(const char *scriptFilename, int line) {
-	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) {
+		return STATUS_OK;
+	}
 
 	CScBreakpoint *bp = NULL;
 	for (int i = 0; i < _breakpoints.getSize(); i++) {
@@ -541,7 +598,9 @@ bool ScEngine::addBreakpoint(const char *scriptFilename, int line) {
 	}
 
 	for (int i = 0; i < bp->_lines.getSize(); i++) {
-		if (bp->_lines[i] == line) return STATUS_OK;
+		if (bp->_lines[i] == line) {
+			return STATUS_OK;
+		}
 	}
 	bp->_lines.add(line);
 
@@ -553,7 +612,9 @@ bool ScEngine::addBreakpoint(const char *scriptFilename, int line) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::removeBreakpoint(const char *scriptFilename, int line) {
-	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) {
+		return STATUS_OK;
+	}
 
 	for (int i = 0; i < _breakpoints.getSize(); i++) {
 		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), scriptFilename) == 0) {
@@ -578,7 +639,9 @@ bool ScEngine::removeBreakpoint(const char *scriptFilename, int line) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::refreshScriptBreakpoints() {
-	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) {
+		return STATUS_OK;
+	}
 
 	for (int i = 0; i < _scripts.getSize(); i++) {
 		refreshScriptBreakpoints(_scripts[i]);
@@ -588,9 +651,13 @@ bool ScEngine::refreshScriptBreakpoints() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::refreshScriptBreakpoints(ScScript *script) {
-	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) {
+		return STATUS_OK;
+	}
 
-	if (!script || !script->_filename) return STATUS_FAILED;
+	if (!script || !script->_filename) {
+		return STATUS_FAILED;
+	}
 
 	for (int i = 0; i < _breakpoints.getSize(); i++) {
 		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), script->_filename) == 0) {
@@ -598,14 +665,18 @@ bool ScEngine::refreshScriptBreakpoints(ScScript *script) {
 			return STATUS_OK;
 		}
 	}
-	if (script->_breakpoints.getSize() > 0) script->_breakpoints.removeAll();
+	if (script->_breakpoints.getSize() > 0) {
+		script->_breakpoints.removeAll();
+	}
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::saveBreakpoints() {
-	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) {
+		return STATUS_OK;
+	}
 
 
 	char text[512];
@@ -628,7 +699,9 @@ bool ScEngine::saveBreakpoints() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::loadBreakpoints() {
-	if (!_gameRef->getDebugMgr()->_enabled) return STATUS_OK;
+	if (!_gameRef->getDebugMgr()->_enabled) {
+		return STATUS_OK;
+	}
 
 	char key[100];
 
@@ -641,7 +714,9 @@ bool ScEngine::loadBreakpoints() {
 		char *path = BaseUtils::strEntry(0, breakpoint.c_str(), ':');
 		char *line = BaseUtils::strEntry(1, breakpoint.c_str(), ':');
 
-		if (path != NULL && line != NULL) addBreakpoint(path, atoi(line));
+		if (path != NULL && line != NULL) {
+			addBreakpoint(path, atoi(line));
+		}
 		delete[] path;
 		delete[] line;
 		path = NULL;
@@ -654,7 +729,9 @@ bool ScEngine::loadBreakpoints() {
 
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::addScriptTime(const char *filename, uint32 time) {
-	if (!_isProfiling) return;
+	if (!_isProfiling) {
+		return;
+	}
 
 	AnsiString fileName = filename;
 	fileName.toLowercase();
@@ -664,7 +741,9 @@ void ScEngine::addScriptTime(const char *filename, uint32 time) {
 
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::enableProfiling() {
-	if (_isProfiling) return;
+	if (_isProfiling) {
+		return;
+	}
 
 	// destroy old data, if any
 	_scriptTimes.clear();
@@ -676,7 +755,9 @@ void ScEngine::enableProfiling() {
 
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::disableProfiling() {
-	if (!_isProfiling) return;
+	if (!_isProfiling) {
+		return;
+	}
 
 	dumpStats();
 	_isProfiling = false;

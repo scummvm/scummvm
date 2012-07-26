@@ -61,7 +61,9 @@ public:
 
 Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 	Common::SeekableReadStream *file = _package->getFilePointer();
-	if (!file) return NULL;
+	if (!file) {
+		return NULL;
+	}
 
 	// TODO: Cleanup
 	bool compressed = (_compressedLength != 0);

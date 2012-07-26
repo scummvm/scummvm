@@ -59,23 +59,31 @@ BaseFader::~BaseFader() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::update() {
-	if (!_active) return STATUS_OK;
+	if (!_active) {
+		return STATUS_OK;
+	}
 
 	int alphaDelta = _targetAlpha - _sourceAlpha;
 
 	uint32 time;
 
-	if (_system) time = g_system->getMillis() - _startTime;
-	else time = _gameRef->_timer - _startTime;
+	if (_system) {
+		time = g_system->getMillis() - _startTime;
+	} else {
+		time = _gameRef->_timer - _startTime;
+	}
 
-	if (time >= _duration) _currentAlpha = _targetAlpha;
-	else {
+	if (time >= _duration) {
+		_currentAlpha = _targetAlpha;
+	} else {
 		_currentAlpha = (byte)(_sourceAlpha + (float)time / (float)_duration * alphaDelta);
 	}
 	_currentAlpha = MIN((unsigned char)255, MAX(_currentAlpha, (byte)0));  // TODO: clean
 
 	_ready = time >= _duration;
-	if (_ready && _currentAlpha == 0x00) _active = false;
+	if (_ready && _currentAlpha == 0x00) {
+		_active = false;
+	}
 
 	return STATUS_OK;
 }
@@ -83,10 +91,13 @@ bool BaseFader::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::display() {
-	if (!_active) return STATUS_OK;
+	if (!_active) {
+		return STATUS_OK;
+	}
 
-	if (_currentAlpha > 0x00)
+	if (_currentAlpha > 0x00) {
 		_gameRef->_renderer->fadeToColor(_red, _green, _blue, _currentAlpha);
+	}
 	return STATUS_OK;
 }
 
@@ -114,8 +125,11 @@ bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_duration = duration;
 	_system = system;
 
-	if (_system) _startTime = g_system->getMillis();
-	else _startTime = _gameRef->_timer;
+	if (_system) {
+		_startTime = g_system->getMillis();
+	} else {
+		_startTime = _gameRef->_timer;
+	}
 
 	return STATUS_OK;
 }
@@ -137,8 +151,11 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_duration = duration;
 	_system = system;
 
-	if (_system) _startTime = g_system->getMillis();
-	else _startTime = _gameRef->_timer;
+	if (_system) {
+		_startTime = g_system->getMillis();
+	} else {
+		_startTime = _gameRef->_timer;
+	}
 
 
 	return STATUS_OK;
@@ -167,7 +184,9 @@ bool BaseFader::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_targetAlpha));
 	persistMgr->transfer(TMEMBER(_system));
 
-	if (_system && !persistMgr->getIsSaving()) _startTime = 0;
+	if (_system && !persistMgr->getIsSaving()) {
+		_startTime = 0;
+	}
 
 	return STATUS_OK;
 }

@@ -97,8 +97,12 @@ void BaseActiveRect::clipRect() {
 		rc.bottom -= Rend->_drawOffsetY;
 	}
 
-	if (rc.left > _rect.left) _offsetX = rc.left - _rect.left;
-	if (rc.top  > _rect.top)  _offsetY = rc.top  - _rect.top;
+	if (rc.left > _rect.left) {
+		_offsetX = rc.left - _rect.left;
+	}
+	if (rc.top  > _rect.top) {
+		_offsetY = rc.top  - _rect.top;
+	}
 
 	BasePlatform::intersectRect(&_rect, &_rect, &rc);
 }

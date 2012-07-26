@@ -47,7 +47,9 @@ AdSceneState::~AdSceneState() {
 	delete[] _filename;
 	_filename = NULL;
 
-	for (int i = 0; i < _nodeStates.getSize(); i++) delete _nodeStates[i];
+	for (int i = 0; i < _nodeStates.getSize(); i++) {
+		delete _nodeStates[i];
+	}
 	_nodeStates.removeAll();
 }
 
@@ -65,14 +67,18 @@ bool AdSceneState::persist(BasePersistenceManager *persistMgr) {
 void AdSceneState::setFilename(const char *filename) {
 	delete[] _filename;
 	_filename = new char [strlen(filename) + 1];
-	if (_filename) strcpy(_filename, filename);
+	if (_filename) {
+		strcpy(_filename, filename);
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
 	for (int i = 0; i < _nodeStates.getSize(); i++) {
-		if (scumm_stricmp(_nodeStates[i]->_name, name) == 0) return _nodeStates[i];
+		if (scumm_stricmp(_nodeStates[i]->_name, name) == 0) {
+			return _nodeStates[i];
+		}
 	}
 
 	if (saving) {
@@ -81,7 +87,9 @@ AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
 		_nodeStates.add(ret);
 
 		return ret;
-	} else return NULL;
+	} else {
+		return NULL;
+	}
 }
 
 } // end of namespace WinterMute

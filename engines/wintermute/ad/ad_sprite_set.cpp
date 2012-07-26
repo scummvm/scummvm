@@ -41,8 +41,9 @@ IMPLEMENT_PERSISTENT(AdSpriteSet, false)
 AdSpriteSet::AdSpriteSet(BaseGame *inGame, BaseObject *owner): BaseObject(inGame) {
 	_owner = owner;
 
-	for (int i = 0; i < NUM_DIRECTIONS; i++)
+	for (int i = 0; i < NUM_DIRECTIONS; i++) {
 		_sprites[i] = NULL;
+	}
 }
 
 
@@ -67,7 +68,9 @@ bool AdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType 
 
 	bool ret;
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing SPRITESET file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing SPRITESET file '%s'", filename);
+	}
 
 	delete[] buffer;
 
@@ -90,7 +93,7 @@ TOKEN_DEF(TEMPLATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType CacheType) {
+bool AdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SPRITESET)
 	TOKEN_TABLE(NAME)
@@ -122,7 +125,9 @@ bool AdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params, lifeTime, cacheType))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -133,64 +138,88 @@ bool AdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 			delete _sprites[DI_LEFT];
 			_sprites[DI_LEFT] = NULL;
 			spr = new BaseSprite(_gameRef,  _owner);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
-			else _sprites[DI_LEFT] = spr;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, cacheType))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_sprites[DI_LEFT] = spr;
+			}
 			break;
 
 		case TOKEN_RIGHT:
 			delete _sprites[DI_RIGHT];
 			_sprites[DI_RIGHT] = NULL;
 			spr = new BaseSprite(_gameRef,  _owner);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
-			else _sprites[DI_RIGHT] = spr;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, cacheType))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_sprites[DI_RIGHT] = spr;
+			}
 			break;
 
 		case TOKEN_UP:
 			delete _sprites[DI_UP];
 			_sprites[DI_UP] = NULL;
 			spr = new BaseSprite(_gameRef,  _owner);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
-			else _sprites[DI_UP] = spr;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, cacheType))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_sprites[DI_UP] = spr;
+			}
 			break;
 
 		case TOKEN_DOWN:
 			delete _sprites[DI_DOWN];
 			_sprites[DI_DOWN] = NULL;
 			spr = new BaseSprite(_gameRef,  _owner);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
-			else _sprites[DI_DOWN] = spr;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, cacheType))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_sprites[DI_DOWN] = spr;
+			}
 			break;
 
 		case TOKEN_UP_LEFT:
 			delete _sprites[DI_UPLEFT];
 			_sprites[DI_UPLEFT] = NULL;
 			spr = new BaseSprite(_gameRef,  _owner);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
-			else _sprites[DI_UPLEFT] = spr;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, cacheType))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_sprites[DI_UPLEFT] = spr;
+			}
 			break;
 
 		case TOKEN_UP_RIGHT:
 			delete _sprites[DI_UPRIGHT];
 			_sprites[DI_UPRIGHT] = NULL;
 			spr = new BaseSprite(_gameRef,  _owner);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
-			else _sprites[DI_UPRIGHT] = spr;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, cacheType))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_sprites[DI_UPRIGHT] = spr;
+			}
 			break;
 
 		case TOKEN_DOWN_LEFT:
 			delete _sprites[DI_DOWNLEFT];
 			_sprites[DI_DOWNLEFT] = NULL;
 			spr = new BaseSprite(_gameRef,  _owner);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
-			else _sprites[DI_DOWNLEFT] = spr;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, cacheType))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_sprites[DI_DOWNLEFT] = spr;
+			}
 			break;
 
 		case TOKEN_DOWN_RIGHT:
 			delete _sprites[DI_DOWNRIGHT];
 			_sprites[DI_DOWNRIGHT] = NULL;
 			spr = new BaseSprite(_gameRef,  _owner);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, CacheType))) cmd = PARSERR_GENERIC;
-			else _sprites[DI_DOWNRIGHT] = spr;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, lifeTime, cacheType))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_sprites[DI_DOWNRIGHT] = spr;
+			}
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -205,7 +234,9 @@ bool AdSpriteSet::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteC
 
 	if (cmd == PARSERR_GENERIC) {
 		_gameRef->LOG(0, "Error loading SPRITESET definition");
-		if (spr) delete spr;
+		if (spr) {
+			delete spr;
+		}
 		return STATUS_FAILED;
 	}
 
@@ -230,8 +261,12 @@ bool AdSpriteSet::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdSpriteSet::getSprite(TDirection direction) {
 	int dir = (int)direction;
-	if (dir < 0) dir = 0;
-	if (dir >= NUM_DIRECTIONS) dir = NUM_DIRECTIONS - 1;
+	if (dir < 0) {
+		dir = 0;
+	}
+	if (dir >= NUM_DIRECTIONS) {
+		dir = NUM_DIRECTIONS - 1;
+	}
 
 	BaseSprite *ret = NULL;
 
@@ -247,8 +282,11 @@ BaseSprite *AdSpriteSet::getSprite(TDirection direction) {
 
 	for (int i = dir; i < NUM_DIRECTIONS; i++) {
 		if (_sprites[i] != NULL) {
-			if (ret == NULL || numSteps > i - dir) return _sprites[i];
-			else return ret;
+			if (ret == NULL || numSteps > i - dir) {
+				return _sprites[i];
+			} else {
+				return ret;
+			}
 		}
 	}
 
@@ -260,7 +298,9 @@ BaseSprite *AdSpriteSet::getSprite(TDirection direction) {
 //////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITESET {\n");
-	if (getName()) buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	if (getName()) {
+		buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	}
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
 		if (_sprites[i]) {
 			switch (i) {
@@ -301,10 +341,14 @@ bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::containsSprite(BaseSprite *sprite) {
-	if (!sprite) return false;
+	if (!sprite) {
+		return false;
+	}
 
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
-		if (_sprites[i] == sprite) return true;
+		if (_sprites[i] == sprite) {
+			return true;
+		}
 	}
 	return false;
 }

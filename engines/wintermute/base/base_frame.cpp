@@ -61,8 +61,9 @@ BaseFrame::~BaseFrame() {
 	delete _sound;
 	_sound = NULL;
 
-	for (int i = 0; i < _subframes.getSize(); i++)
+	for (int i = 0; i < _subframes.getSize(); i++) {
 		delete _subframes[i];
+	}
 	_subframes.removeAll();
 
 	for (int i = 0; i < _applyEvent.getSize(); i++) {
@@ -79,7 +80,9 @@ bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float
 
 	for (int i = 0; i < _subframes.getSize(); i++) {
 		res = _subframes[i]->draw(x, y, registerOwner, zoomX, zoomY, precise, alpha, rotate, blendMode);
-		if (DID_FAIL(res)) return res;
+		if (DID_FAIL(res)) {
+			return res;
+		}
 	}
 	return STATUS_OK;
 }
@@ -88,7 +91,9 @@ bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 	if (_sound && !muted) {
-		if (owner) owner->updateOneSound(_sound);
+		if (owner) {
+			owner->updateOneSound(_sound);
+		}
 		_sound->play();
 		/*
 		if (_gameRef->_state == GAME_FROZEN) {
@@ -240,7 +245,9 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			if (!subframe || DID_FAIL(subframe->loadBuffer((byte *)params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
-			} else _subframes.add(subframe);
+			} else {
+				_subframes.add(subframe);
+			}
 		}
 		break;
 
@@ -251,7 +258,9 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			}
 			_sound = new BaseSound(_gameRef);
 			if (!_sound || DID_FAIL(_sound->setSound(params, Audio::Mixer::kSFXSoundType, false))) {
-				if (_gameRef->_soundMgr->_soundAvailable) _gameRef->LOG(0, "Error loading sound '%s'.", params);
+				if (_gameRef->_soundMgr->_soundAvailable) {
+					_gameRef->LOG(0, "Error loading sound '%s'.", params);
+				}
 				delete _sound;
 				_sound = NULL;
 			}
@@ -291,8 +300,11 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 	BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 	if (surface_file != NULL) {
-		if (custoTrans) sub->setSurface(surface_file, false, r, g, b, lifeTime, keepLoaded);
-		else sub->setSurface(surface_file, true, 0, 0, 0, lifeTime, keepLoaded);
+		if (custoTrans) {
+			sub->setSurface(surface_file, false, r, g, b, lifeTime, keepLoaded);
+		} else {
+			sub->setSurface(surface_file, true, 0, 0, 0, lifeTime, keepLoaded);
+		}
 
 		if (!sub->_surface) {
 			delete sub;
@@ -301,11 +313,16 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		}
 
 		sub->_alpha = BYTETORGBA(ar, ag, ab, alpha);
-		if (custoTrans) sub->_transparent = BYTETORGBA(r, g, b, 0xFF);
+		if (custoTrans) {
+			sub->_transparent = BYTETORGBA(r, g, b, 0xFF);
+		}
 	}
 
-	if (BasePlatform::isRectEmpty(&rect)) sub->setDefaultRect();
-	else sub->_rect = rect;
+	if (BasePlatform::isRectEmpty(&rect)) {
+		sub->setDefaultRect();
+	} else {
+		sub->_rect = rect;
+	}
 
 	sub->_hotspotX = hotspotX;
 	sub->_hotspotY = hotspotY;
@@ -325,7 +342,9 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
-	if (!rect) return false;
+	if (!rect) {
+		return false;
+	}
 	BasePlatform::setRectEmpty(rect);
 
 	Rect32 subRect;
@@ -344,21 +363,27 @@ bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "FRAME {\n");
 	buffer->putTextIndent(indent + 2, "DELAY = %d\n", _delay);
 
-	if (_moveX != 0 || _moveY != 0)
+	if (_moveX != 0 || _moveY != 0) {
 		buffer->putTextIndent(indent + 2, "MOVE {%d, %d}\n", _moveX, _moveY);
+	}
 
-	if (_sound && _sound->_soundFilename)
+	if (_sound && _sound->_soundFilename) {
 		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sound->_soundFilename);
+	}
 
 	buffer->putTextIndent(indent + 2, "KEYFRAME=%s\n", _keyframe ? "TRUE" : "FALSE");
 
-	if (_killSound)
+	if (_killSound) {
 		buffer->putTextIndent(indent + 2, "KILL_SOUND=%s\n", _killSound ? "TRUE" : "FALSE");
+	}
 
-	if (_editorExpanded)
+	if (_editorExpanded) {
 		buffer->putTextIndent(indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
+	}
 
-	if (_subframes.getSize() > 0) _subframes[0]->saveAsText(buffer, indent, false);
+	if (_subframes.getSize() > 0) {
+		_subframes[0]->saveAsText(buffer, indent, false);
+	}
 
 	for (int i = 1; i < _subframes.getSize(); i++) {
 		_subframes[i]->saveAsText(buffer, indent + 2);
@@ -406,8 +431,11 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	if (strcmp(name, "GetSound") == 0) {
 		stack->correctParams(0);
 
-		if (_sound && _sound->_soundFilename) stack->pushString(_sound->_soundFilename);
-		else stack->pushNULL();
+		if (_sound && _sound->_soundFilename) {
+			stack->pushString(_sound->_soundFilename);
+		} else {
+			stack->pushNULL();
+		}
 		return STATUS_OK;
 	}
 
@@ -426,8 +454,12 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 				stack->pushBool(false);
 				delete _sound;
 				_sound = NULL;
-			} else stack->pushBool(true);
-		} else stack->pushBool(true);
+			} else {
+				stack->pushBool(true);
+			}
+		} else {
+			stack->pushBool(true);
+		}
 		return STATUS_OK;
 	}
 
@@ -440,7 +472,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		if (index < 0 || index >= _subframes.getSize()) {
 			script->runtimeError("Frame.GetSubframe: Subframe index %d is out of range.", index);
 			stack->pushNULL();
-		} else stack->pushNative(_subframes[index], true);
+		} else {
+			stack->pushNative(_subframes[index], true);
+		}
 
 		return STATUS_OK;
 	}
@@ -477,7 +511,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		const char *filename = NULL;
-		if (!val->isNULL()) filename = val->getString();
+		if (!val->isNULL()) {
+			filename = val->getString();
+		}
 
 		BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 		if (filename != NULL) {
@@ -496,19 +532,26 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	else if (strcmp(name, "InsertSubframe") == 0) {
 		stack->correctParams(2);
 		int index = stack->pop()->getInt();
-		if (index < 0) index = 0;
+		if (index < 0) {
+			index = 0;
+		}
 
 		ScValue *val = stack->pop();
 		const char *filename = NULL;
-		if (!val->isNULL()) filename = val->getString();
+		if (!val->isNULL()) {
+			filename = val->getString();
+		}
 
 		BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 		if (filename != NULL) {
 			sub->setSurface(filename);
 		}
 
-		if (index >= _subframes.getSize()) _subframes.add(sub);
-		else _subframes.insertAt(index, sub);
+		if (index >= _subframes.getSize()) {
+			_subframes.add(sub);
+		} else {
+			_subframes.insertAt(index, sub);
+		}
 
 		stack->pushNative(sub, true);
 		return STATUS_OK;
@@ -523,7 +566,9 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		if (index < 0 || index >= _applyEvent.getSize()) {
 			script->runtimeError("Frame.GetEvent: Event index %d is out of range.", index);
 			stack->pushNULL();
-		} else stack->pushString(_applyEvent[index]);
+		} else {
+			stack->pushString(_applyEvent[index]);
+		}
 		return STATUS_OK;
 	}
 
@@ -563,15 +608,20 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.getSize() == 1) return _subframes[0]->scCallMethod(script, stack, thisStack, name);
-		else return BaseScriptable::scCallMethod(script, stack, thisStack, name);
+		if (_subframes.getSize() == 1) {
+			return _subframes[0]->scCallMethod(script, stack, thisStack, name);
+		} else {
+			return BaseScriptable::scCallMethod(script, stack, thisStack, name);
+		}
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseFrame::scGetProperty(const char *name) {
-	if (!_scValue) _scValue = new ScValue(_gameRef);
+	if (!_scValue) {
+		_scValue = new ScValue(_gameRef);
+	}
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -640,8 +690,11 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.getSize() == 1) return _subframes[0]->scGetProperty(name);
-		else return BaseScriptable::scGetProperty(name);
+		if (_subframes.getSize() == 1) {
+			return _subframes[0]->scGetProperty(name);
+		} else {
+			return BaseScriptable::scGetProperty(name);
+		}
 	}
 }
 
@@ -690,8 +743,11 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.getSize() == 1) return _subframes[0]->scSetProperty(name, value);
-		else return BaseScriptable::scSetProperty(name, value);
+		if (_subframes.getSize() == 1) {
+			return _subframes[0]->scSetProperty(name, value);
+		} else {
+			return BaseScriptable::scSetProperty(name, value);
+		}
 	}
 }
 

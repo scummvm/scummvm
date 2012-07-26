@@ -52,7 +52,9 @@ BaseSurfaceStorage::~BaseSurfaceStorage() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::cleanup(bool warn) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
-		if (warn) _gameRef->LOG(0, "BaseSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
+		if (warn) {
+			_gameRef->LOG(0, "BaseSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
+		}
 		delete _surfaces[i];
 	}
 	_surfaces.clear();
@@ -67,7 +69,9 @@ bool BaseSurfaceStorage::initLoop() {
 		_lastCleanupTime = _gameRef->_liveTimer;
 		sortSurfaces();
 		for (uint32 i = 0; i < _surfaces.size(); i++) {
-			if (_surfaces[i]->_lifeTime <= 0) break;
+			if (_surfaces[i]->_lifeTime <= 0) {
+				break;
+			}
 
 			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && _gameRef->_liveTimer - _surfaces[i]->_lastUsedTime >= _surfaces[i]->_lifeTime) {
 				//_gameRef->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
@@ -105,17 +109,22 @@ BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool defaultCK
 	}
 
 	if (!_gameRef->_fileManager->hasFile(filename)) {
-		if (filename) _gameRef->LOG(0, "Missing image: '%s'", filename);
-		if (_gameRef->_debugDebugMode)
+		if (filename) {
+			_gameRef->LOG(0, "Missing image: '%s'", filename);
+		}
+		if (_gameRef->_debugDebugMode) {
 			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
-		else
+		} else {
 			return addSurface("invalid.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
+		}
 	}
 
 	BaseSurface *surface;
 	surface = _gameRef->_renderer->createSurface();
 
-	if (!surface) return NULL;
+	if (!surface) {
+		return NULL;
+	}
 
 	if (DID_FAIL(surface->create(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded))) {
 		delete surface;
@@ -171,18 +180,28 @@ int BaseSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
 	BaseSurface *s2 = *((BaseSurface **)arg2);
 
 	// sort by life time
-	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0) return 1;
-	else if (s1->_lifeTime > 0 && s2->_lifeTime <= 0) return -1;
+	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0) {
+		return 1;
+	} else if (s1->_lifeTime > 0 && s2->_lifeTime <= 0) {
+		return -1;
+	}
 
 
 	// sort by validity
-	if (s1->_valid && !s2->_valid) return -1;
-	else if (!s1->_valid && s2->_valid) return 1;
+	if (s1->_valid && !s2->_valid) {
+		return -1;
+	} else if (!s1->_valid && s2->_valid) {
+		return 1;
+	}
 
 	// sort by time
-	else if (s1->_lastUsedTime > s2->_lastUsedTime) return 1;
-	else if (s1->_lastUsedTime < s2->_lastUsedTime) return -1;
-	else return 0;
+	else if (s1->_lastUsedTime > s2->_lastUsedTime) {
+		return 1;
+	} else if (s1->_lastUsedTime < s2->_lastUsedTime) {
+		return -1;
+	} else {
+		return 0;
+	}
 }
 
 } // end of namespace WinterMute

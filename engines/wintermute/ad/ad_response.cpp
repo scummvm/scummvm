@@ -59,7 +59,9 @@ AdResponse::~AdResponse() {
 	_icon = NULL;
 	_iconHover = NULL;
 	_iconPressed = NULL;
-	if (_font) _gameRef->_fontStorage->removeFont(_font);
+	if (_font) {
+		_gameRef->_fontStorage->removeFont(_font);
+	}
 }
 
 
@@ -85,7 +87,9 @@ bool AdResponse::setIcon(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setFont(const char *filename) {
-	if (_font) _gameRef->_fontStorage->removeFont(_font);
+	if (_font) {
+		_gameRef->_fontStorage->removeFont(_font);
+	}
 	_font = _gameRef->_fontStorage->addFont(filename);
 	if (!_font) {
 		_gameRef->LOG(0, "AdResponse::setFont failed for file '%s'", filename);

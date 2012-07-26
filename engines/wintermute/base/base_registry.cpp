@@ -61,8 +61,12 @@ AnsiString BaseRegistry::readString(const AnsiString &subKey, const AnsiString &
 
 	bool found = false;
 	ret = getValue(_localValues, subKey, key, found);
-	if (!found) ret = getValue(_values, subKey, key, found);
-	if (!found) ret = init;
+	if (!found) {
+		ret = getValue(_values, subKey, key, found);
+	}
+	if (!found) {
+		ret = init;
+	}
 
 	return ret;
 }
@@ -105,8 +109,11 @@ int BaseRegistry::readInt(const AnsiString &subKey, const AnsiString &key, int i
 		}
 	}
 	AnsiString val = readString(subKey, key, "");
-	if (val.empty()) return init;
-	else return atoi(val.c_str());
+	if (val.empty()) {
+		return init;
+	} else {
+		return atoi(val.c_str());
+	}
 }
 
 
@@ -166,8 +173,11 @@ char *BaseRegistry::getIniName() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegistry::loadValues(bool local) {
-	if (local) loadXml("settings.xml", _localValues);
-	else loadXml(PathUtil::combine(_gameRef->getDataDir(), "settings.xml"), _values);
+	if (local) {
+		loadXml("settings.xml", _localValues);
+	} else {
+		loadXml(PathUtil::combine(_gameRef->getDataDir(), "settings.xml"), _values);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -186,12 +196,15 @@ void BaseRegistry::setBasePath(const char *basePath) {
 AnsiString BaseRegistry::getValue(PathValueMap &values, const AnsiString path, const AnsiString &key, bool &found) {
 	found = false;
 	PathValueMap::iterator it = values.find(path);
-	if (it == values.end()) return "";
+	if (it == values.end()) {
+		return "";
+	}
 
 	KeyValuePair pairs = (*it)._value;
 	KeyValuePair::iterator keyIt = pairs.find(key);
-	if (keyIt == pairs.end()) return "";
-	else {
+	if (keyIt == pairs.end()) {
+		return "";
+	} else {
 		found = true;
 		return (*keyIt)._value;
 	}
@@ -200,11 +213,14 @@ AnsiString BaseRegistry::getValue(PathValueMap &values, const AnsiString path, c
 //////////////////////////////////////////////////////////////////////////
 void BaseRegistry::loadXml(const AnsiString fileName, PathValueMap &values) {
 	TiXmlDocument doc(fileName.c_str());
-	if (!doc.LoadFile()) return;
+	if (!doc.LoadFile()) {
+		return;
+	}
 
 	TiXmlElement *rootElem = doc.RootElement();
-	if (!rootElem || Common::String(rootElem->Value()) != "Settings") // TODO: Avoid this strcmp-use. (Hack for now, since we might drop TinyXML all together)
+	if (!rootElem || Common::String(rootElem->Value()) != "Settings") { // TODO: Avoid this strcmp-use. (Hack for now, since we might drop TinyXML all together)
 		return;
+	}
 
 	for (TiXmlElement *pathElem = rootElem->FirstChildElement(); pathElem != NULL; pathElem = pathElem->NextSiblingElement()) {
 		for (TiXmlElement *keyElem = pathElem->FirstChildElement(); keyElem != NULL; keyElem = keyElem->NextSiblingElement()) {
@@ -247,8 +263,9 @@ void BaseRegistry::saveXml(const AnsiString fileName, PathValueMap &values) {
 	Common::DumpFile stream;
 	stream.open(fileName.c_str());
 
-	if (!stream.isOpen()) return;
-	else {
+	if (!stream.isOpen()) {
+		return;
+	} else {
 		stream.write(printer.CStr(), printer.Size());
 		stream.close();
 	}

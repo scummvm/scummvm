@@ -37,7 +37,7 @@ namespace WinterMute {
 class AdResponseContext : public BaseClass {
 public:
 	void setContext(const char *context);
-	int _iD;
+	int _id;
 	char *_context;
 	DECLARE_PERSISTENT(AdResponseContext, BaseClass)
 	AdResponseContext(BaseGame *inGame);

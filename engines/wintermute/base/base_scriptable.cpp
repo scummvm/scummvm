@@ -38,8 +38,11 @@ IMPLEMENT_PERSISTENT(BaseScriptable, false)
 BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable): BaseNamedObject(inGame) {
 	_refCount = 0;
 
-	if (noValue) _scValue = NULL;
-	else _scValue = new ScValue(_gameRef);
+	if (noValue) {
+		_scValue = NULL;
+	} else {
+		_scValue = new ScValue(_gameRef);
+	}
 
 	_persistable = persistable;
 
@@ -74,17 +77,27 @@ bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseScriptable::scGetProperty(const char *name) {
-	if (!_scProp) _scProp = new ScValue(_gameRef);
-	if (_scProp) return _scProp->getProp(name);
-	else return NULL;
+	if (!_scProp) {
+		_scProp = new ScValue(_gameRef);
+	}
+	if (_scProp) {
+		return _scProp->getProp(name);
+	} else {
+		return NULL;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
-	if (!_scProp) _scProp = new ScValue(_gameRef);
-	if (_scProp) return _scProp->setProp(name, value);
-	else return STATUS_FAILED;
+	if (!_scProp) {
+		_scProp = new ScValue(_gameRef);
+	}
+	if (_scProp) {
+		return _scProp->setProp(name, value);
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
@@ -150,9 +163,13 @@ bool BaseScriptable::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 int BaseScriptable::scCompare(BaseScriptable *val) {
-	if (this < val) return -1;
-	else if (this > val) return 1;
-	else return 0;
+	if (this < val) {
+		return -1;
+	} else if (this > val) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

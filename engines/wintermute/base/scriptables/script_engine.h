@@ -48,13 +48,17 @@ public:
 		CScCachedScript(const char *filename, byte *buffer, uint32 size) {
 			_timestamp = g_system->getMillis();
 			_buffer = new byte[size];
-			if (_buffer) memcpy(_buffer, buffer, size);
+			if (_buffer) {
+				memcpy(_buffer, buffer, size);
+			}
 			_size = size;
 			_filename = filename;
 		};
 
 		~CScCachedScript() {
-			if (_buffer) delete[] _buffer;
+			if (_buffer) {
+				delete[] _buffer;
+			}
 		};
 
 		uint32 _timestamp;

@@ -44,10 +44,12 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(true) {
 	_colorMod = 0;
 	_mirror = TransparentSurface::FLIP_NONE;
-	if (mirrorX)
+	if (mirrorX) {
 		_mirror |= TransparentSurface::FLIP_V;
-	if (mirrorY)
+	}
+	if (mirrorY) {
 		_mirror |= TransparentSurface::FLIP_H;
+	}
 	if (surf) {
 		_surface = new Graphics::Surface();
 		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
@@ -113,8 +115,12 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 	_renderSurface->free();
 	delete _renderSurface;
 #if 0
-	if (_renderer) SDL_DestroyRenderer(_renderer);
-	if (_win) SDL_DestroyWindow(_win);
+	if (_renderer) {
+		SDL_DestroyRenderer(_renderer);
+	}
+	if (_win) {
+		SDL_DestroyWindow(_win);
+	}
 	SDL_Quit();
 #endif
 }
@@ -212,7 +218,9 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	                        _realWidth, _realHeight,
 	                        flags);
 
-	if (!_win) return STATUS_FAILED;
+	if (!_win) {
+		return STATUS_FAILED;
+	}
 #endif
 
 	g_system->showMouse(false);
@@ -226,7 +234,9 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 #if 0
 	_renderer = SDL_CreateRenderer(_win, -1, 0);
 
-	if (!_renderer) return STATUS_FAILED;
+	if (!_renderer) {
+		return STATUS_FAILED;
+	}
 #endif
 	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	_active = true;
@@ -273,8 +283,9 @@ bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, 0xFF);
 	//SDL_RenderClear(_renderer);
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
-	if (!_disableDirtyRects)
+	if (!_disableDirtyRects) {
 		return STATUS_OK;
+	}
 	if (!rect) {
 		rect = &_renderRect;
 	}
@@ -320,9 +331,9 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect
 
 	//TODO: This is only here until I'm sure about the final pixelformat
 	uint32 col = _renderSurface->format.ARGBToColor(a, r, g, b);
-	if (_disableDirtyRects)
+	if (_disableDirtyRects) {
 		_renderSurface->fillRect(fillRect, col);
-	else {
+	} else {
 		setAlphaMod(a);
 		setColorMod(r, g, b);
 		Graphics::Surface surf;
@@ -468,8 +479,9 @@ void BaseRenderOSystem::drawTickets() {
 			it++;
 		}
 	}
-	if (!_dirtyRect || _dirtyRect->width() == 0 || _dirtyRect->height() == 0)
+	if (!_dirtyRect || _dirtyRect->width() == 0 || _dirtyRect->height() == 0) {
 		return;
+	}
 	// The color-mods are stored in the RenderTickets on add, since we set that state again during
 	// draw, we need to keep track of what it was prior to draw.
 	uint32 oldColorMod = _colorMod;
@@ -518,8 +530,9 @@ void BaseRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::R
 	}
 
 	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
-	if (doDelete)
+	if (doDelete) {
 		delete clipRect;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -566,9 +579,13 @@ BaseImage *BaseRenderOSystem::takeScreenshot() {
 	SDL_RenderGetViewport(_renderer, &viewport);
 
 	SDL_Surface *surface = SDL_CreateRGBSurface(0, viewport.w, viewport.h, 24, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, 0x00000000);
-	if (!surface) return NULL;
+	if (!surface) {
+		return NULL;
+	}
 
-	if (SDL_RenderReadPixels(_renderer, NULL, surface->format->format, surface->pixels, surface->pitch) < 0) return NULL;
+	if (SDL_RenderReadPixels(_renderer, NULL, surface->format->format, surface->pixels, surface->pitch) < 0) {
+		return NULL;
+	}
 
 	FIBITMAP *dib = FreeImage_Allocate(viewport.w, viewport.h, 24, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
 
@@ -643,7 +660,9 @@ void BaseRenderOSystem::dumpData(const char *filename) {
 	warning("BaseRenderOSystem::DumpData(%s) - not reimplemented yet", filename); // TODO
 #if 0
 	FILE *f = fopen(filename, "wt");
-	if (!f) return;
+	if (!f) {
+		return;
+	}
 
 	BaseSurfaceStorage *Mgr = _gameRef->_surfaceStorage;
 
@@ -652,8 +671,12 @@ void BaseRenderOSystem::dumpData(const char *filename) {
 	fprintf(f, "Filename;Usage;Size;KBytes\n");
 	for (int i = 0; i < Mgr->_surfaces.getSize(); i++) {
 		BaseSurfaceOSystem *Surf = (BaseSurfaceOSystem *)Mgr->_surfaces[i];
-		if (!Surf->_filename) continue;
-		if (!Surf->_valid) continue;
+		if (!Surf->_filename) {
+			continue;
+		}
+		if (!Surf->_valid) {
+			continue;
+		}
 
 		fprintf(f, "%s;%d;", Surf->_filename, Surf->_referenceCount);
 		fprintf(f, "%dx%d;", Surf->getWidth(), Surf->getHeight());

@@ -94,7 +94,9 @@ bool AdEntity::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ENTITY file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing ENTITY file '%s'", filename);
+	}
 
 
 	delete[] buffer;
@@ -212,7 +214,9 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_X:
@@ -227,22 +231,31 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 			delete _sprite;
 			_sprite = NULL;
 			spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params))) cmd = PARSERR_GENERIC;
-			else _sprite = spr;
+			if (!spr || DID_FAIL(spr->loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_sprite = spr;
+			}
 		}
 		break;
 
 		case TOKEN_TALK: {
 			spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSprites.add(spr);
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_talkSprites.add(spr);
+			}
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSpritesEx.add(spr);
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_talkSpritesEx.add(spr);
+			}
 		}
 		break;
 
@@ -259,7 +272,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			SetFont((char *)params);
+			setFont((char *)params);
 			break;
 
 		case TOKEN_SCALABLE:
@@ -316,11 +329,14 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_REGION: {
-			if (_region) _gameRef->unregisterObject(_region);
+			if (_region) {
+				_gameRef->unregisterObject(_region);
+			}
 			_region = NULL;
 			BaseRegion *rgn = new BaseRegion(_gameRef);
-			if (!rgn || DID_FAIL(rgn->loadBuffer(params, false))) cmd = PARSERR_GENERIC;
-			else {
+			if (!rgn || DID_FAIL(rgn->loadBuffer(params, false))) {
+				cmd = PARSERR_GENERIC;
+			} else {
 				_region = rgn;
 				_gameRef->registerObject(_region);
 			}
@@ -379,10 +395,15 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 				_sprite = NULL;
 				if (_gameRef->_editorMode) {
 					spr = new BaseSprite(_gameRef, this);
-					if (!spr || DID_FAIL(spr->loadFile("entity_sound.sprite"))) cmd = PARSERR_GENERIC;
-					else _sprite = spr;
+					if (!spr || DID_FAIL(spr->loadFile("entity_sound.sprite"))) {
+						cmd = PARSERR_GENERIC;
+					} else {
+						_sprite = spr;
+					}
 				}
-				if (_gameRef->_editorMode) _editorOnly = true;
+				if (_gameRef->_editorMode) {
+					_editorOnly = true;
+				}
 				_zoomable = false;
 				_rotatable = false;
 				_registrable = _gameRef->_editorMode;
@@ -443,8 +464,12 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_WALK_TO_DIR: {
 			int i;
 			parser.scanStr((char *)params, "%d", &i);
-			if (i < 0) i = 0;
-			if (i >= NUM_DIRECTIONS) i = DI_NONE;
+			if (i < 0) {
+				i = 0;
+			}
+			if (i >= NUM_DIRECTIONS) {
+				i = DI_NONE;
+			}
 			_walkToDir = (TDirection)i;
 		}
 		break;
@@ -456,7 +481,9 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	}
 	if (cmd == PARSERR_GENERIC) {
 		_gameRef->LOG(0, "Error loading ENTITY definition");
-		if (spr) delete spr;
+		if (spr) {
+			delete spr;
+		}
 		return STATUS_FAILED;
 	}
 
@@ -472,7 +499,9 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 	_state = STATE_READY;
 
-	if (_item && ((AdGame *)_gameRef)->isItemTaken(_item)) _active = false;
+	if (_item && ((AdGame *)_gameRef)->isItemTaken(_item)) {
+		_active = false;
+	}
 
 	return STATUS_OK;
 }
@@ -483,43 +512,55 @@ bool AdEntity::display() {
 	if (_active) {
 		updateSounds();
 
-		uint32 Alpha;
-		if (_alphaColor != 0) Alpha = _alphaColor;
-		else Alpha = _shadowable ? ((AdGame *)_gameRef)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
+		uint32 alpha;
+		if (_alphaColor != 0) {
+			alpha = _alphaColor;
+		} else {
+			alpha = _shadowable ? ((AdGame *)_gameRef)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
+		}
 
-		float ScaleX, ScaleY;
-		getScale(&ScaleX, &ScaleY);
+		float scaleX, scaleY;
+		getScale(&scaleX, &scaleY);
 
-		float Rotate;
+		float rotate;
 		if (_rotatable) {
-			if (_rotateValid) Rotate = _rotate;
-			else Rotate = ((AdGame *)_gameRef)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
-		} else Rotate = 0.0f;
+			if (_rotateValid) {
+				rotate = _rotate;
+			} else {
+				rotate = ((AdGame *)_gameRef)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
+			}
+		} else {
+			rotate = 0.0f;
+		}
 
 
-		bool Reg = _registrable;
-		if (_ignoreItems && ((AdGame *)_gameRef)->_selectedItem) Reg = false;
+		bool reg = _registrable;
+		if (_ignoreItems && ((AdGame *)_gameRef)->_selectedItem) {
+			reg = false;
+		}
 
-		if (_region && (Reg || _editorAlwaysRegister)) {
+		if (_region && (reg || _editorAlwaysRegister)) {
 			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
 		}
 
 		displaySpriteAttachments(true);
 		if (_theora && (_theora->isPlaying() || _theora->isPaused())) {
-			_theora->display(Alpha);
+			_theora->display(alpha);
 		} else if (_currentSprite) {
 			_currentSprite->display(_posX,
 			                        _posY,
-			                        (Reg || _editorAlwaysRegister) ? _registerAlias : NULL,
-			                        ScaleX,
-			                        ScaleY,
-			                        Alpha,
-			                        Rotate,
+			                        (reg || _editorAlwaysRegister) ? _registerAlias : NULL,
+			                        scaleX,
+			                        scaleY,
+			                        alpha,
+			                        rotate,
 			                        _blendMode);
 		}
 		displaySpriteAttachments(false);
 
-		if (_partEmitter) _partEmitter->display(_region);
+		if (_partEmitter) {
+			_partEmitter->display(_region);
+		}
 
 	}
 	return STATUS_OK;
@@ -541,10 +582,14 @@ bool AdEntity::update() {
 		_currentSprite = _animSprite;
 	}
 
-	if (_sentence && _state != STATE_TALKING) _sentence->finish();
+	if (_sentence && _state != STATE_TALKING) {
+		_sentence->finish();
+	}
 
 	// default: stand animation
-	if (!_currentSprite) _currentSprite = _sprite;
+	if (!_currentSprite) {
+		_currentSprite = _sprite;
+	}
 
 	switch (_state) {
 		//////////////////////////////////////////////////////////////////////////
@@ -554,14 +599,17 @@ bool AdEntity::update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_READY:
-		if (!_animSprite)
+		if (!_animSprite) {
 			_currentSprite = _sprite;
+		}
 		break;
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TALKING: {
 		_sentence->update();
-		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
+		if (_sentence->_currentSprite) {
+			_tempSprite2 = _sentence->_currentSprite;
+		}
 
 		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
 		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
@@ -630,8 +678,11 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	if (strcmp(name, "StopSound") == 0 && _subtype == ENTITY_SOUND) {
 		stack->correctParams(0);
 
-		if (DID_FAIL(stopSFX(false))) stack->pushBool(false);
-		else stack->pushBool(true);
+		if (DID_FAIL(stopSFX(false))) {
+			stack->pushBool(false);
+		} else {
+			stack->pushBool(true);
+		}
 		return STATUS_OK;
 	}
 
@@ -648,7 +699,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		delete _theora;
 		_theora = new VideoTheoraPlayer(_gameRef);
 		if (_theora && DID_SUCCEED(_theora->initialize(filename))) {
-			if (!valAlpha->isNULL())    _theora->setAlphaImage(valAlpha->getString());
+			if (!valAlpha->isNULL()) {
+				_theora->setAlphaImage(valAlpha->getString());
+			}
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if (_scale>=0) _theora->_playZoom = _scale;
 			stack->pushBool(true);
@@ -670,7 +723,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			delete _theora;
 			_theora = NULL;
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -680,8 +735,11 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsTheoraPlaying") == 0) {
 		stack->correctParams(0);
-		if (_theora && _theora->isPlaying()) stack->pushBool(true);
-		else stack->pushBool(false);
+		if (_theora && _theora->isPlaying()) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -694,7 +752,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (_theora && _theora->isPlaying()) {
 			_theora->pause();
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -707,7 +767,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (_theora && _theora->isPaused()) {
 			_theora->resume();
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -717,8 +779,11 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsTheoraPaused") == 0) {
 		stack->correctParams(0);
-		if (_theora && _theora->isPaused()) stack->pushBool(true);
-		else stack->pushBool(false);
+		if (_theora && _theora->isPaused()) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -733,8 +798,11 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			_region = new BaseRegion(_gameRef);
 			_gameRef->registerObject(_region);
 		}
-		if (_region) stack->pushNative(_region, true);
-		else stack->pushNULL();
+		if (_region) {
+			stack->pushNative(_region, true);
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
 	}
@@ -748,12 +816,14 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			_gameRef->unregisterObject(_region);
 			_region = NULL;
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
+	} else {
+		return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -773,8 +843,11 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Item") == 0) {
-		if (_item) _scValue->setString(_item);
-		else _scValue->setNULL();
+		if (_item) {
+			_scValue->setString(_item);
+		} else {
+			_scValue->setNULL();
+		}
 
 		return _scValue;
 	}
@@ -783,10 +856,11 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	// Subtype (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Subtype") == 0) {
-		if (_subtype == ENTITY_SOUND)
+		if (_subtype == ENTITY_SOUND) {
 			_scValue->setString("sound");
-		else
+		} else {
 			_scValue->setString("normal");
+		}
 
 		return _scValue;
 	}
@@ -819,12 +893,15 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	// Region (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Region") == 0) {
-		if (_region) _scValue->setNative(_region, true);
-		else _scValue->setNULL();
+		if (_region) {
+			_scValue->setNative(_region, true);
+		} else {
+			_scValue->setNULL();
+		}
 		return _scValue;
+	} else {
+		return AdTalkHolder::scGetProperty(name);
 	}
-
-	else return AdTalkHolder::scGetProperty(name);
 }
 
 
@@ -860,11 +937,13 @@ bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkToDirection") == 0) {
 		int dir = value->getInt();
-		if (dir >= 0 && dir < NUM_DIRECTIONS) _walkToDir = (TDirection)dir;
+		if (dir >= 0 && dir < NUM_DIRECTIONS) {
+			_walkToDir = (TDirection)dir;
+		}
 		return STATUS_OK;
+	} else {
+		return AdTalkHolder::scSetProperty(name, value);
 	}
-
-	else return AdTalkHolder::scSetProperty(name, value);
 }
 
 
@@ -878,8 +957,9 @@ const char *AdEntity::scToString() {
 bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
-	if (_subtype == ENTITY_SOUND)
+	if (_subtype == ENTITY_SOUND) {
 		buffer->putTextIndent(indent + 2, "SUBTYPE=\"SOUND\"\n");
+	}
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "X=%d\n", _posX);
@@ -888,23 +968,30 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "INTERACTIVE=%s\n", _registrable ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "COLORABLE=%s\n", _shadowable ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
-	if (_ignoreItems)
+	if (_ignoreItems) {
 		buffer->putTextIndent(indent + 2, "IGNORE_ITEMS=%s\n", _ignoreItems ? "TRUE" : "FALSE");
-	if (_rotatable)
+	}
+	if (_rotatable) {
 		buffer->putTextIndent(indent + 2, "ROTATABLE=%s\n", _rotatable ? "TRUE" : "FALSE");
+	}
 
-	if (!_autoSoundPanning)
+	if (!_autoSoundPanning) {
 		buffer->putTextIndent(indent + 2, "SOUND_PANNING=%s\n", _autoSoundPanning ? "TRUE" : "FALSE");
+	}
 
-	if (!_saveState)
+	if (!_saveState) {
 		buffer->putTextIndent(indent + 2, "SAVE_STATE=%s\n", _saveState ? "TRUE" : "FALSE");
+	}
 
-	if (_item && _item[0] != '\0') buffer->putTextIndent(indent + 2, "ITEM=\"%s\"\n", _item);
+	if (_item && _item[0] != '\0') {
+		buffer->putTextIndent(indent + 2, "ITEM=\"%s\"\n", _item);
+	}
 
 	buffer->putTextIndent(indent + 2, "WALK_TO_X=%d\n", _walkToX);
 	buffer->putTextIndent(indent + 2, "WALK_TO_Y=%d\n", _walkToY);
-	if (_walkToDir != DI_NONE)
+	if (_walkToDir != DI_NONE) {
 		buffer->putTextIndent(indent + 2, "WALK_TO_DIR=%d\n", (int)_walkToDir);
+	}
 
 	int i;
 
@@ -912,8 +999,9 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (_subtype == ENTITY_NORMAL && _sprite && _sprite->getFilename())
+	if (_subtype == ENTITY_NORMAL && _sprite && _sprite->getFilename()) {
 		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _sprite->getFilename());
+	}
 
 	if (_subtype == ENTITY_SOUND && _sFX && _sFX->_soundFilename) {
 		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename);
@@ -922,29 +1010,39 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	}
 
 
-	if (RGBCOLGetR(_alphaColor) != 0 || RGBCOLGetG(_alphaColor) != 0 ||  RGBCOLGetB(_alphaColor) != 0)
+	if (RGBCOLGetR(_alphaColor) != 0 || RGBCOLGetG(_alphaColor) != 0 ||  RGBCOLGetB(_alphaColor) != 0) {
 		buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", RGBCOLGetR(_alphaColor), RGBCOLGetG(_alphaColor), RGBCOLGetB(_alphaColor));
+	}
 
-	if (RGBCOLGetA(_alphaColor) != 0)
+	if (RGBCOLGetA(_alphaColor) != 0) {
 		buffer->putTextIndent(indent + 2, "ALPHA = %d\n", RGBCOLGetA(_alphaColor));
+	}
 
-	if (_scale >= 0)
+	if (_scale >= 0) {
 		buffer->putTextIndent(indent + 2, "SCALE = %d\n", (int)_scale);
+	}
 
-	if (_relativeScale != 0)
+	if (_relativeScale != 0) {
 		buffer->putTextIndent(indent + 2, "RELATIVE_SCALE = %d\n", (int)_relativeScale);
+	}
 
-	if (_font && _font->getFilename())
+	if (_font && _font->getFilename()) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
+	}
 
-	if (_cursor && _cursor->getFilename())
+	if (_cursor && _cursor->getFilename()) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	}
 
 	AdTalkHolder::saveAsText(buffer, indent + 2);
 
-	if (_region) _region->saveAsText(buffer, indent + 2);
+	if (_region) {
+		_region->saveAsText(buffer, indent + 2);
+	}
 
-	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
+	if (_scProp) {
+		_scProp->saveAsText(buffer, indent + 2);
+	}
 
 	AdObject::saveAsText(buffer, indent + 2);
 
@@ -959,7 +1057,9 @@ int AdEntity::getHeight() {
 	if (_region && !_sprite) {
 		return _region->_rect.bottom - _region->_rect.top;
 	} else {
-		if (_currentSprite == NULL) _currentSprite = _sprite;
+		if (_currentSprite == NULL) {
+			_currentSprite = _sprite;
+		}
 		return AdObject::getHeight();
 	}
 }

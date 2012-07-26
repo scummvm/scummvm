@@ -44,8 +44,9 @@ IMPLEMENT_PERSISTENT(AdNodeState, false)
 AdNodeState::AdNodeState(BaseGame *inGame): BaseClass(inGame) {
 	_name = NULL;
 	_active = false;
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 7; i++) {
 		_caption[i] = NULL;
+	}
 	_alphaColor = 0;
 	_filename = NULL;
 	_cursor = NULL;
@@ -100,8 +101,9 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_cursor));
 	persistMgr->transfer(TMEMBER(_alphaColor));
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 7; i++) {
 		persistMgr->transfer(TMEMBER(_caption[i]));
+	}
 
 	return STATUS_OK;
 }
@@ -109,10 +111,12 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCaption(const char *caption, int caseVal) {
-	if (caseVal == 0)
+	if (caseVal == 0) {
 		caseVal = 1;
-	if (caseVal < 1 || caseVal > 7)
+	}
+	if (caseVal < 1 || caseVal > 7) {
 		return;
+	}
 
 	delete[] _caption[caseVal - 1];
 	_caption[caseVal - 1] = new char[strlen(caption) + 1];
@@ -125,44 +129,61 @@ void AdNodeState::setCaption(const char *caption, int caseVal) {
 
 //////////////////////////////////////////////////////////////////////////
 char *AdNodeState::getCaption(int caseVal) {
-	if (caseVal == 0) caseVal = 1;
-	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL)
+	if (caseVal == 0) {
+		caseVal = 1;
+	}
+	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL) {
 		return "";
-	else
+	} else {
 		return _caption[caseVal - 1];
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool saving) {
-	if (!entity) return STATUS_FAILED;
+	if (!entity) {
+		return STATUS_FAILED;
+	}
 
 	// HACK!
-	if (this->_gameRef != entity->_gameRef)
+	if (this->_gameRef != entity->_gameRef) {
 		this->_gameRef = entity->_gameRef;
+	}
 
 	if (saving) {
 		for (int i = 0; i < 7; i++) {
-			if (entity->_caption[i]) setCaption(entity->_caption[i], i);
+			if (entity->_caption[i]) {
+				setCaption(entity->_caption[i], i);
+			}
 		}
 		if (!entity->_region && entity->_sprite && entity->_sprite->getFilename()) {
-			if (includingSprites) setFilename(entity->_sprite->getFilename());
-			else setFilename("");
+			if (includingSprites) {
+				setFilename(entity->_sprite->getFilename());
+			} else {
+				setFilename("");
+			}
 		}
-		if (entity->_cursor && entity->_cursor->getFilename()) setCursor(entity->_cursor->getFilename());
+		if (entity->_cursor && entity->_cursor->getFilename()) {
+			setCursor(entity->_cursor->getFilename());
+		}
 		_alphaColor = entity->_alphaColor;
 		_active = entity->_active;
 	} else {
 		for (int i = 0; i < 7; i++) {
-			if (_caption[i]) entity->setCaption(_caption[i], i);
+			if (_caption[i]) {
+				entity->setCaption(_caption[i], i);
+			}
 		}
 		if (_filename && !entity->_region && includingSprites && strcmp(_filename, "") != 0) {
-			if (!entity->_sprite || !entity->_sprite->getFilename() || scumm_stricmp(entity->_sprite->getFilename(), _filename) != 0)
+			if (!entity->_sprite || !entity->_sprite->getFilename() || scumm_stricmp(entity->_sprite->getFilename(), _filename) != 0) {
 				entity->setSprite(_filename);
+			}
 		}
 		if (_cursor) {
-			if (!entity->_cursor || !entity->_cursor->getFilename() || scumm_stricmp(entity->_cursor->getFilename(), _cursor) != 0)
+			if (!entity->_cursor || !entity->_cursor->getFilename() || scumm_stricmp(entity->_cursor->getFilename(), _cursor) != 0) {
 				entity->setCursor(_cursor);
+			}
 		}
 
 		entity->_active = _active;

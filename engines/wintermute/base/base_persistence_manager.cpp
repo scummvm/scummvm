@@ -181,7 +181,9 @@ bool BasePersistenceManager::getSaveExists(int slot) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePersistenceManager::initSave(const char *desc) {
-	if (!desc) return STATUS_FAILED;
+	if (!desc) {
+		return STATUS_FAILED;
+	}
 
 	cleanup();
 	_saving = true;
@@ -232,7 +234,9 @@ bool BasePersistenceManager::initSave(const char *desc) {
 				thumbnailOK = true;
 			}
 		}
-		if (!thumbnailOK) putDWORD(0);
+		if (!thumbnailOK) {
+			putDWORD(0);
+		}
 
 		// in any case, destroy the cached thumbnail once used
 		delete _gameRef->_cachedThumbnail;
@@ -288,9 +292,13 @@ bool BasePersistenceManager::readHeader(const Common::String &filename) {
 					_thumbnailData = new byte[_thumbnailDataSize];
 					if (_thumbnailData) {
 						getBytes(_thumbnailData, _thumbnailDataSize);
-					} else _thumbnailDataSize = 0;
+					} else {
+						_thumbnailDataSize = 0;
+					}
 				}
-			} else _savedVerBuild = 35; // last build with ver1 savegames
+			} else {
+				_savedVerBuild = 35;    // last build with ver1 savegames
+			}
 
 			uint32 dataOffset = getDWORD();
 
@@ -379,16 +387,18 @@ bool BasePersistenceManager::saveFile(const Common::String &filename) {
 //////////////////////////////////////////////////////////////////////////
 bool BasePersistenceManager::putBytes(byte *buffer, uint32 size) {
 	_saveStream->write(buffer, size);
-	if (_saveStream->err())
+	if (_saveStream->err()) {
 		return STATUS_FAILED;
+	}
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePersistenceManager::getBytes(byte *buffer, uint32 size) {
 	_loadStream->read(buffer, size);
-	if (_loadStream->err())
+	if (_loadStream->err()) {
 		return STATUS_FAILED;
+	}
 	return STATUS_OK;
 }
 
@@ -407,8 +417,9 @@ uint32 BasePersistenceManager::getDWORD() {
 
 //////////////////////////////////////////////////////////////////////////
 void BasePersistenceManager::putString(const Common::String &val) {
-	if (!val.size()) putString("(null)");
-	else {
+	if (!val.size()) {
+		putString("(null)");
+	} else {
 		_saveStream->writeUint32LE(val.size());
 		_saveStream->writeString(val);
 	}
@@ -440,7 +451,9 @@ char *BasePersistenceManager::getString() {
 	if (!strcmp(ret, "(null)")) {
 		delete[] ret;
 		return NULL;
-	} else return ret;
+	} else {
+		return ret;
+	}
 }
 
 bool BasePersistenceManager::putTimeDate(const TimeDate &t) {
@@ -510,13 +523,15 @@ double BasePersistenceManager::getDouble() {
 bool BasePersistenceManager::transfer(const char *name, bool *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
-		if (_saveStream->err())
+		if (_saveStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	} else {
 		*val = _loadStream->readByte();
-		if (_loadStream->err())
+		if (_loadStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	}
 }
@@ -527,13 +542,15 @@ bool BasePersistenceManager::transfer(const char *name, bool *val) {
 bool BasePersistenceManager::transfer(const char *name, int *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(*val);
-		if (_saveStream->err())
+		if (_saveStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	} else {
 		*val = _loadStream->readSint32LE();
-		if (_loadStream->err())
+		if (_loadStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	}
 }
@@ -544,13 +561,15 @@ bool BasePersistenceManager::transfer(const char *name, int *val) {
 bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
 	if (_saving) {
 		_saveStream->writeUint32LE(*val);
-		if (_saveStream->err())
+		if (_saveStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	} else {
 		*val = _loadStream->readUint32LE();
-		if (_loadStream->err())
+		if (_loadStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	}
 }
@@ -561,13 +580,15 @@ bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
 bool BasePersistenceManager::transfer(const char *name, float *val) {
 	if (_saving) {
 		putFloat(*val);
-		if (_saveStream->err())
+		if (_saveStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	} else {
 		*val = getFloat();
-		if (_loadStream->err())
+		if (_loadStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	}
 }
@@ -578,13 +599,15 @@ bool BasePersistenceManager::transfer(const char *name, float *val) {
 bool BasePersistenceManager::transfer(const char *name, double *val) {
 	if (_saving) {
 		putDouble(*val);
-		if (_saveStream->err())
+		if (_saveStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	} else {
 		*val = getDouble();
-		if (_loadStream->err())
+		if (_loadStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	}
 }
@@ -667,7 +690,9 @@ bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
 				delete[] str;
 				return STATUS_FAILED;
 			}
-			if (str) val.push_back(str);
+			if (str) {
+				val.push_back(str);
+			}
 			delete[] str;
 		}
 	}
@@ -680,13 +705,15 @@ bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
 bool BasePersistenceManager::transfer(const char *name, byte *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
-		if (_saveStream->err())
+		if (_saveStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	} else {
 		*val = _loadStream->readByte();
-		if (_loadStream->err())
+		if (_loadStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	}
 }
@@ -700,16 +727,18 @@ bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
 		_saveStream->writeSint32LE(val->top);
 		_saveStream->writeSint32LE(val->right);
 		_saveStream->writeSint32LE(val->bottom);
-		if (_saveStream->err())
+		if (_saveStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	} else {
 		val->left = _loadStream->readSint32LE();
 		val->top = _loadStream->readSint32LE();
 		val->right = _loadStream->readSint32LE();
 		val->bottom = _loadStream->readSint32LE();
-		if (_loadStream->err())
+		if (_loadStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	}
 }
@@ -721,14 +750,16 @@ bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);
-		if (_saveStream->err())
+		if (_saveStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	} else {
 		val->x = _loadStream->readSint32LE();
 		val->y = _loadStream->readSint32LE();
-		if (_loadStream->err())
+		if (_loadStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	}
 }
@@ -740,14 +771,16 @@ bool BasePersistenceManager::transfer(const char *name, Vector2 *val) {
 	if (_saving) {
 		putFloat(val->x);
 		putFloat(val->y);
-		if (_saveStream->err())
+		if (_saveStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	} else {
 		val->x = getFloat();
 		val->y = getFloat();
-		if (_loadStream->err())
+		if (_loadStream->err()) {
 			return STATUS_FAILED;
+		}
 		return STATUS_OK;
 	}
 }
@@ -779,13 +812,17 @@ bool BasePersistenceManager::transfer(const char *name, void *val) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePersistenceManager::checkVersion(byte verMajor, byte verMinor, byte verBuild) {
-	if (_saving) return true;
+	if (_saving) {
+		return true;
+	}
 
 	// it's ok if we are same or newer than the saved game
 	if (verMajor >  _savedVerMajor ||
 	        (verMajor == _savedVerMajor && verMinor >  _savedVerMinor) ||
 	        (verMajor == _savedVerMajor && verMinor == _savedVerMinor && verBuild > _savedVerBuild)
-	   ) return false;
+	   ) {
+		return false;
+	}
 
 	return true;
 }

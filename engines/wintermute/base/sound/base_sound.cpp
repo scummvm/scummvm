@@ -57,7 +57,9 @@ BaseSound::BaseSound(BaseGame *inGame): BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSound::~BaseSound() {
-	if (_sound) _gameRef->_soundMgr->removeSound(_sound);
+	if (_sound) {
+		_gameRef->_soundMgr->removeSound(_sound);
+	}
 	_sound = NULL;
 
 	delete[] _soundFilename;
@@ -83,7 +85,9 @@ bool BaseSound::setSound(const char *filename, Audio::Mixer::SoundType type, boo
 		_soundStreamed = streamed;
 
 		return STATUS_OK;
-	} else return STATUS_FAILED;
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
@@ -91,22 +95,32 @@ bool BaseSound::setSound(const char *filename, Audio::Mixer::SoundType type, boo
 bool BaseSound::setSoundSimple() {
 	_sound = _gameRef->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
 	if (_sound) {
-		if (_soundPosition) _sound->setPosition(_soundPosition);
+		if (_soundPosition) {
+			_sound->setPosition(_soundPosition);
+		}
 		_sound->setLooping(_soundLooping);
 		_sound->setPrivateVolume(_soundPrivateVolume);
 		_sound->setLoopStart(_soundLoopStart);
 		_sound->_freezePaused = _soundFreezePaused;
-		if (_soundPlaying) return _sound->resume();
-		else return STATUS_OK;
-	} else return STATUS_FAILED;
+		if (_soundPlaying) {
+			return _sound->resume();
+		} else {
+			return STATUS_OK;
+		}
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseSound::getLength() {
-	if (_sound) return _sound->getLength();
-	else return 0;
+	if (_sound) {
+		return _sound->getLength();
+	} else {
+		return 0;
+	}
 }
 
 
@@ -115,7 +129,9 @@ bool BaseSound::play(bool looping) {
 	if (_sound) {
 		_soundPaused = false;
 		return _sound->play(looping, _soundPosition);
-	} else return STATUS_FAILED;
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
@@ -124,7 +140,9 @@ bool BaseSound::stop() {
 	if (_sound) {
 		_soundPaused = false;
 		return _sound->stop();
-	} else return STATUS_FAILED;
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
@@ -132,9 +150,13 @@ bool BaseSound::stop() {
 bool BaseSound::pause(bool freezePaused) {
 	if (_sound) {
 		_soundPaused = true;
-		if (freezePaused) _sound->_freezePaused = true;
+		if (freezePaused) {
+			_sound->_freezePaused = true;
+		}
 		return _sound->pause();
-	} else return STATUS_FAILED;
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
@@ -143,7 +165,9 @@ bool BaseSound::resume() {
 	if (_sound && _soundPaused) {
 		_soundPaused = false;
 		return _sound->resume();
-	} else return STATUS_FAILED;
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
@@ -153,8 +177,9 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 		_soundPlaying = _sound->isPlaying();
 		_soundLooping = _sound->_looping;
 		_soundPrivateVolume = _sound->_privateVolume;
-		if (_soundPlaying)
+		if (_soundPlaying) {
 			_soundPosition = _sound->getPosition();
+		}
 		_soundLoopStart = _sound->_loopStart;
 		_soundFreezePaused = _sound->_freezePaused;
 	}
@@ -195,64 +220,81 @@ bool BaseSound::isPaused() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPositionTime(uint32 time) {
-	if (!_sound) return STATUS_FAILED;
+	if (!_sound) {
+		return STATUS_FAILED;
+	}
 	_soundPosition = time;
 	bool ret = _sound->setPosition(_soundPosition);
-	if (_sound->isPlaying())
+	if (_sound->isPlaying()) {
 		_soundPosition = 0;
+	}
 	return ret;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseSound::getPositionTime() {
-	if (!_sound) return 0;
-
-	if (!_sound->isPlaying())
+	if (!_sound) {
 		return 0;
-	else return _sound->getPosition();
+	}
+
+	if (!_sound->isPlaying()) {
+		return 0;
+	} else {
+		return _sound->getPosition();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::setVolumePercent(int percent) {
-	if (!_sound)
+	if (!_sound) {
 		return STATUS_FAILED;
-	else return _sound->setPrivateVolume(percent * 255 / 100);
+	} else {
+		return _sound->setPrivateVolume(percent * 255 / 100);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::setVolume(int volume) {
-	if (!_sound)
+	if (!_sound) {
 		return STATUS_FAILED;
-	else return _sound->setPrivateVolume(volume);
+	} else {
+		return _sound->setPrivateVolume(volume);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPrivateVolume(int volume) {
-	if (!_sound)
+	if (!_sound) {
 		return STATUS_FAILED;
-	else return _sound->_privateVolume = volume;
+	} else {
+		return _sound->_privateVolume = volume;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 int BaseSound::getVolumePercent() {
-	if (!_sound)
+	if (!_sound) {
 		return 0;
-	else return _sound->_privateVolume * 100 / 255;
+	} else {
+		return _sound->_privateVolume * 100 / 255;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 int BaseSound::getVolume() {
-	if (!_sound)
+	if (!_sound) {
 		return 0;
-	else return _sound->_privateVolume;
+	} else {
+		return _sound->_privateVolume;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::setLoopStart(uint32 pos) {
-	if (!_sound)
+	if (!_sound) {
 		return STATUS_FAILED;
-	else {
+	} else {
 		_sound->setLoopStart(pos);
 		return STATUS_OK;
 	}
@@ -260,16 +302,19 @@ bool BaseSound::setLoopStart(uint32 pos) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPan(float pan) {
-	if (_sound)
+	if (_sound) {
 		return _sound->setPan(pan);
-	else return STATUS_FAILED;
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::ApplyFX(TSFXType type, float param1, float param2, float param3, float param4) {
-	if (!_sound)
+	if (!_sound) {
 		return STATUS_OK;
+	}
 
 	if (type != _sFXType || param1 != _sFXParam1 || param2 != _sFXParam2 || param3 != _sFXParam3 || param4 != _sFXParam4) {
 		bool ret = _sound->applyFX(type, param1, param2, param3, param4);

@@ -61,8 +61,9 @@ BaseSoundMgr::~BaseSoundMgr() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::cleanup() {
-	for (uint32 i = 0; i < _sounds.size(); i++)
+	for (uint32 i = 0; i < _sounds.size(); i++) {
 		delete _sounds[i];
+	}
 	_sounds.clear();
 #if 0
 	BASS_Free();
@@ -93,8 +94,9 @@ bool BaseSoundMgr::initialize() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::initLoop() {
-	if (!_soundAvailable)
+	if (!_soundAvailable) {
 		return STATUS_OK;
+	}
 #if 0
 
 	BASS_Update(500);
@@ -105,8 +107,9 @@ bool BaseSoundMgr::initLoop() {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
-	if (!_soundAvailable)
+	if (!_soundAvailable) {
 		return NULL;
+	}
 
 	BaseSoundBuffer *sound;
 
@@ -123,7 +126,9 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, Audio::Mixer::Soun
 	}
 
 	sound = new BaseSoundBuffer(_gameRef);
-	if (!sound) return NULL;
+	if (!sound) {
+		return NULL;
+	}
 
 	sound->setStreaming(streamed);
 	sound->setType(type);
@@ -149,8 +154,9 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, Audio::Mixer::Soun
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type) {
-	if (!sound)
+	if (!sound) {
 		return STATUS_FAILED;
+	}
 
 	// Make sure the master-volume is applied to the sound.
 	sound->updateVolume();
@@ -177,8 +183,9 @@ bool BaseSoundMgr::removeSound(BaseSoundBuffer *sound) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
-	if (!_soundAvailable)
+	if (!_soundAvailable) {
 		return STATUS_OK;
+	}
 
 	switch (type) {
 	case Audio::Mixer::kSFXSoundType:

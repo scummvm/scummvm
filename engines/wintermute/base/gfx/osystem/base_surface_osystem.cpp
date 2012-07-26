@@ -107,11 +107,14 @@ bool BaseSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed
 	_ckGreen = ckGreen;
 	_ckBlue = ckBlue;
 
-	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime)
+	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
 		_lifeTime = lifeTime;
+	}
 
 	_keepLoaded = keepLoaded;
-	if (_keepLoaded) _lifeTime = -1;
+	if (_keepLoaded) {
+		_lifeTime = -1;
+	}
 
 	return STATUS_OK;
 }
@@ -201,7 +204,9 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 
 	delete[] _alphaMask;
 	_alphaMask = NULL;
-	if (!surface) return;
+	if (!surface) {
+		return;
+	}
 #if 0
 	SDL_LockSurface(surface);
 #endif
@@ -224,11 +229,14 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 			surface->format.colorToARGB(pixel, a, r, g, b);
 			//SDL_GetRGBA(pixel, surface->format, &r, &g, &b, &a);
 
-			if (hasColorKey && r == ckRed && g == ckGreen && b == ckBlue)
+			if (hasColorKey && r == ckRed && g == ckGreen && b == ckBlue) {
 				a = 0;
+			}
 
 			_alphaMask[y * surface->w + x] = a;
-			if (a < 255) hasTransparency = true;
+			if (a < 255) {
+				hasTransparency = true;
+			}
 		}
 	}
 #if 0
@@ -331,7 +339,9 @@ bool BaseSurfaceOSystem::isTransparentAt(int x, int y) {
 	int width, height;
 	//SDL_QueryTexture(_texture, NULL, &access, &width, &height); //TODO
 	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
-	if (X < 0 || X >= width || Y < 0 || Y >= height) return true;
+	if (X < 0 || X >= width || Y < 0 || Y >= height) {
+		return true;
+	}
 
 
 	StartPixelOp();
@@ -371,10 +381,15 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 
 	//SDL_QueryTexture(_texture, &format, &access, &width, &height);
 	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
-	if (X < 0 || X >= width || Y < 0 || Y >= height) return true;
+	if (X < 0 || X >= width || Y < 0 || Y >= height) {
+		return true;
+	}
 
-	if (!_alphaMask) return false;
-	else return _alphaMask[Y * width + X] <= 128;
+	if (!_alphaMask) {
+		return false;
+	} else {
+		return _alphaMask[Y * width + X] <= 128;
+	}
 #endif
 	return false;
 	/*
@@ -447,8 +462,9 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 		finishLoad();
 	}
 
-	if (renderer->_forceAlphaColor != 0)
+	if (renderer->_forceAlphaColor != 0) {
 		alpha = renderer->_forceAlphaColor;
+	}
 
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
@@ -469,10 +485,11 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	SDL_SetTextureColorMod(_texture, r, g, b);
 	SDL_SetTextureAlphaMod(_texture, a);
 
-	if (AlphaDisable)
+	if (alphaDisable) {
 		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_NONE);
-	else
+	} else {
 		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
+	}
 #endif
 	// TODO: This _might_ miss the intended behaviour by 1 in each direction
 	// But I think it fits the model used in Wintermute.

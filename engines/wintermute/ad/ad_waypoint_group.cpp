@@ -56,8 +56,9 @@ AdWaypointGroup::~AdWaypointGroup() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdWaypointGroup::cleanup() {
-	for (int i = 0; i < _points.getSize(); i++)
+	for (int i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
+	}
 	_points.removeAll();
 	_editorSelectedPoint = -1;
 }
@@ -75,7 +76,9 @@ bool AdWaypointGroup::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
+	}
 
 
 	delete[] buffer;
@@ -122,7 +125,9 @@ bool AdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -169,8 +174,9 @@ bool AdWaypointGroup::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
-	if (_scProp)
+	if (_scProp) {
 		_scProp->saveAsText(buffer, indent + 2);
+	}
 	BaseClass::saveAsText(buffer, indent + 2);
 
 	for (int i = 0; i < _points.getSize(); i++) {
@@ -217,9 +223,9 @@ ScValue *AdWaypointGroup::scGetProperty(const char *name) {
 	else if (strcmp(name, "Active") == 0) {
 		_scValue->setBool(_active);
 		return _scValue;
+	} else {
+		return BaseObject::scGetProperty(name);
 	}
-
-	else return BaseObject::scGetProperty(name);
 }
 
 
@@ -233,13 +239,17 @@ bool AdWaypointGroup::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-	else return BaseObject::scSetProperty(name, value);
+	else {
+		return BaseObject::scSetProperty(name, value);
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::mimic(AdWaypointGroup *wpt, float scale, int argX, int argY) {
-	if (scale == _lastMimicScale && argX == _lastMimicX && argY == _lastMimicY) return STATUS_OK;
+	if (scale == _lastMimicScale && argX == _lastMimicX && argY == _lastMimicY) {
+		return STATUS_OK;
+	}
 
 	cleanup();
 

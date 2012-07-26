@@ -64,7 +64,9 @@ bool AdRegion::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing REGION file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing REGION file '%s'", filename);
+	}
 
 
 	delete[] buffer;
@@ -126,7 +128,9 @@ bool AdRegion::loadBuffer(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	for (int i = 0; i < _points.getSize(); i++) delete _points[i];
+	for (int i = 0; i < _points.getSize(); i++) {
+		delete _points[i];
+	}
 	_points.removeAll();
 
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
@@ -134,7 +138,9 @@ bool AdRegion::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -285,9 +291,9 @@ ScValue *AdRegion::scGetProperty(const char *name) {
 	else if (strcmp(name, "AlphaColor") == 0) {
 		_scValue->setInt((int)_alpha);
 		return _scValue;
+	} else {
+		return BaseRegion::scGetProperty(name);
 	}
-
-	else return BaseRegion::scGetProperty(name);
 }
 
 
@@ -331,9 +337,9 @@ bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "AlphaColor") == 0) {
 		_alpha = (uint32)value->getInt();
 		return STATUS_OK;
+	} else {
+		return BaseRegion::scSetProperty(name, value);
 	}
-
-	else return BaseRegion::scSetProperty(name, value);
 }
 
 
@@ -361,7 +367,9 @@ bool AdRegion::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
+	if (_scProp) {
+		_scProp->saveAsText(buffer, indent + 2);
+	}
 
 	for (i = 0; i < _points.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);

@@ -62,14 +62,22 @@ UIText::~UIText() {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIText::display(int offsetX, int offsetY) {
-	if (!_visible) return STATUS_OK;
+	if (!_visible) {
+		return STATUS_OK;
+	}
 
 
 	BaseFont *font = _font;
-	if (!font) font = _gameRef->_systemFont;
+	if (!font) {
+		font = _gameRef->_systemFont;
+	}
 
-	if (_back) _back->display(offsetX + _posX, offsetY + _posY, _width, _height);
-	if (_image) _image->draw(offsetX + _posX, offsetY + _posY, NULL);
+	if (_back) {
+		_back->display(offsetX + _posX, offsetY + _posY, _width, _height);
+	}
+	if (_image) {
+		_image->draw(offsetX + _posX, offsetY + _posY, NULL);
+	}
 
 	if (font && _text) {
 		int textOffset;
@@ -105,7 +113,9 @@ bool UIText::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing STATIC file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing STATIC file '%s'", filename);
+	}
 
 	delete[] buffer;
 
@@ -175,7 +185,9 @@ bool UIText::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -207,9 +219,13 @@ bool UIText::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) _gameRef->_fontStorage->removeFont(_font);
+			if (_font) {
+				_gameRef->_fontStorage->removeFont(_font);
+			}
 			_font = _gameRef->_fontStorage->addFont((char *)params);
-			if (!_font) cmd = PARSERR_GENERIC;
+			if (!_font) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_TEXT:
@@ -218,15 +234,23 @@ bool UIText::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_TEXT_ALIGN:
-			if (scumm_stricmp((char *)params, "left") == 0) _textAlign = TAL_LEFT;
-			else if (scumm_stricmp((char *)params, "right") == 0) _textAlign = TAL_RIGHT;
-			else _textAlign = TAL_CENTER;
+			if (scumm_stricmp((char *)params, "left") == 0) {
+				_textAlign = TAL_LEFT;
+			} else if (scumm_stricmp((char *)params, "right") == 0) {
+				_textAlign = TAL_RIGHT;
+			} else {
+				_textAlign = TAL_CENTER;
+			}
 			break;
 
 		case TOKEN_VERTICAL_ALIGN:
-			if (scumm_stricmp((char *)params, "top") == 0) _verticalAlign = VAL_TOP;
-			else if (scumm_stricmp((char *)params, "bottom") == 0) _verticalAlign = VAL_BOTTOM;
-			else _verticalAlign = VAL_CENTER;
+			if (scumm_stricmp((char *)params, "top") == 0) {
+				_verticalAlign = VAL_TOP;
+			} else if (scumm_stricmp((char *)params, "bottom") == 0) {
+				_verticalAlign = VAL_BOTTOM;
+			} else {
+				_verticalAlign = VAL_CENTER;
+			}
 			break;
 
 		case TOKEN_X:
@@ -300,20 +324,25 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->getFilename())
+	if (_back && _back->getFilename()) {
 		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->getFilename());
+	}
 
-	if (_image && _image->getFilename())
+	if (_image && _image->getFilename()) {
 		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getFilename());
+	}
 
-	if (_font && _font->getFilename())
+	if (_font && _font->getFilename()) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
+	}
 
-	if (_cursor && _cursor->getFilename())
+	if (_cursor && _cursor->getFilename()) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	}
 
-	if (_text)
+	if (_text) {
 		buffer->putTextIndent(indent + 2, "TEXT=\"%s\"\n", _text);
+	}
 
 	switch (_textAlign) {
 	case TAL_LEFT:
@@ -390,12 +419,14 @@ bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HeightToFit") == 0) {
 		stack->correctParams(0);
-		if (_font && _text) _height = _font->getTextHeight((byte *)_text, _width);
+		if (_font && _text) {
+			_height = _font->getTextHeight((byte *)_text, _width);
+		}
 		stack->pushNULL();
 		return STATUS_OK;
+	} else {
+		return UIObject::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return UIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -425,9 +456,9 @@ ScValue *UIText::scGetProperty(const char *name) {
 	else if (strcmp(name, "VerticalAlign") == 0) {
 		_scValue->setInt(_verticalAlign);
 		return _scValue;
+	} else {
+		return UIObject::scGetProperty(name);
 	}
-
-	else return UIObject::scGetProperty(name);
 }
 
 
@@ -438,7 +469,9 @@ bool UIText::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "TextAlign") == 0) {
 		int i = value->getInt();
-		if (i < 0 || i >= NUM_TEXT_ALIGN) i = 0;
+		if (i < 0 || i >= NUM_TEXT_ALIGN) {
+			i = 0;
+		}
 		_textAlign = (TTextAlign)i;
 		return STATUS_OK;
 	}
@@ -448,12 +481,14 @@ bool UIText::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "VerticalAlign") == 0) {
 		int i = value->getInt();
-		if (i < 0 || i >= NUM_VERTICAL_ALIGN) i = 0;
+		if (i < 0 || i >= NUM_VERTICAL_ALIGN) {
+			i = 0;
+		}
 		_verticalAlign = (TVerticalAlign)i;
 		return STATUS_OK;
+	} else {
+		return UIObject::scSetProperty(name, value);
 	}
-
-	else return UIObject::scSetProperty(name, value);
 }
 
 

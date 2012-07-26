@@ -64,7 +64,9 @@ static bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset) 
 		uint32 toRead = MIN((unsigned int)32768, fileSize - bytesRead);
 		f->seek((int32)startPos, SEEK_SET);
 		uint32 actuallyRead = f->read(buf, toRead);
-		if (actuallyRead != toRead) return false;
+		if (actuallyRead != toRead) {
+			return false;
+		}
 
 		for (uint32 i = 0; i < toRead - 8; i++)
 			if (!memcmp(buf + i, signature, 8)) {
@@ -85,8 +87,9 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 	_priority = 0;
 	bool boundToExe = false;
 	Common::SeekableReadStream *stream = file.createReadStream();
-	if (!stream)
+	if (!stream) {
 		return;
+	}
 	if (searchSignature) {
 		uint32 offset;
 		if (!findPackageSignature(stream, &offset)) {
@@ -121,7 +124,9 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 	assert(hdr._numDirs == 1);
 	for (uint32 i = 0; i < hdr._numDirs; i++) {
 		BasePackage *pkg = new BasePackage();
-		if (!pkg) return;
+		if (!pkg) {
+			return;
+		}
 		pkg->_fsnode = file;
 
 		pkg->_boundToExe = boundToExe;
@@ -136,7 +141,9 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 		delete[] pkgName;
 		pkgName = NULL;
 
-		if (!hdr._masterIndex) pkg->_cd = 0; // override CD to fixed disk
+		if (!hdr._masterIndex) {
+			pkg->_cd = 0;    // override CD to fixed disk
+		}
 		_packages.push_back(pkg);
 
 		// read file entries
@@ -242,8 +249,9 @@ Common::SeekableReadStream *PackageSet::createReadStreamForMember(const Common::
 	upcName.toUppercase();
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator it;
 	it = _files.find(upcName.c_str());
-	if (it != _files.end())
+	if (it != _files.end()) {
 		return it->_value->createReadStream();
+	}
 	return NULL;
 }
 

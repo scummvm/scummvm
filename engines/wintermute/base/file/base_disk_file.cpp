@@ -41,7 +41,9 @@ namespace WinterMute {
 
 void correctSlashes(char *fileName) {
 	for (size_t i = 0; i < strlen(fileName); i++) {
-		if (fileName[i] == '\\') fileName[i] = '/';
+		if (fileName[i] == '\\') {
+			fileName[i] = '/';
+		}
 	}
 }
 
@@ -51,8 +53,9 @@ static Common::FSNode getNodeForRelativePath(const Common::String &filename) {
 	// specifies to follow the Windows-convention of folder\subfolder\file (absolute paths should not happen)
 
 	// Absolute path: TODO: Add specific fallbacks here.
-	if (filename.contains(':'))
+	if (filename.contains(':')) {
 		error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
+	}
 
 	// Relative path:
 	if (filename.contains('\\')) {
@@ -132,7 +135,9 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 		magic2 = file->readUint32LE();
 
 		bool compressed = false;
-		if (magic1 == DCGF_MAGIC && magic2 == COMPRESSED_FILE_MAGIC) compressed = true;
+		if (magic1 == DCGF_MAGIC && magic2 == COMPRESSED_FILE_MAGIC) {
+			compressed = true;
+		}
 
 		if (compressed) {
 			uint32 dataOffset, compSize, uncompSize;

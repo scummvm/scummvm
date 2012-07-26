@@ -86,7 +86,9 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 			_scrollOffset = MAX(_scrollOffset, 0);
 		} else if (scumm_stricmp(obj->getName(), "next") == 0) {
 			_scrollOffset += _scrollBy;
-		} else return BaseObject::listen(param1, param2);
+		} else {
+			return BaseObject::listen(param1, param2);
+		}
 		break;
 	default:
 		error("AdInventoryBox::Listen - Unhandled enum");
@@ -101,7 +103,9 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 bool AdInventoryBox::display() {
 	AdGame *adGame = (AdGame *)_gameRef;
 
-	if (!_visible) return STATUS_OK;
+	if (!_visible) {
+		return STATUS_OK;
+	}
 
 	int itemsX, itemsY;
 	itemsX = (int)floor((float)((_itemsArea.right - _itemsArea.left + _spacing) / (_itemWidth + _spacing)));
@@ -130,7 +134,9 @@ bool AdInventoryBox::display() {
 	}
 
 	// display items
-	if (_window && _window->_alphaColor != 0) _gameRef->_renderer->_forceAlphaColor = _window->_alphaColor;
+	if (_window && _window->_alphaColor != 0) {
+		_gameRef->_renderer->_forceAlphaColor = _window->_alphaColor;
+	}
 	int yyy = rect.top;
 	for (int j = 0; j < itemsY; j++) {
 		int xxx = rect.left;
@@ -148,7 +154,9 @@ bool AdInventoryBox::display() {
 		}
 		yyy += (_itemHeight + _spacing);
 	}
-	if (_window && _window->_alphaColor != 0) _gameRef->_renderer->_forceAlphaColor = 0;
+	if (_window && _window->_alphaColor != 0) {
+		_gameRef->_renderer->_forceAlphaColor = 0;
+	}
 
 	return STATUS_OK;
 }
@@ -166,7 +174,9 @@ bool AdInventoryBox::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
+	}
 
 
 	delete[] buffer;
@@ -227,7 +237,9 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -245,7 +257,9 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 				delete _window;
 				_window = NULL;
 				cmd = PARSERR_GENERIC;
-			} else _gameRef->registerObject(_window);
+			} else {
+				_gameRef->registerObject(_window);
+			}
 			break;
 
 		case TOKEN_AREA:
@@ -308,8 +322,9 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 
 	if (_window) {
 		for (int i = 0; i < _window->_widgets.getSize(); i++) {
-			if (!_window->_widgets[i]->_listenerObject)
+			if (!_window->_widgets[i]->_listenerObject) {
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
+			}
 		}
 	}
 
@@ -337,7 +352,9 @@ bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// window
-	if (_window) _window->saveAsText(buffer, indent + 2);
+	if (_window) {
+		_window->saveAsText(buffer, indent + 2);
+	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 

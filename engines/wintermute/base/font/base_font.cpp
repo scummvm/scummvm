@@ -187,7 +187,9 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const char *filename) {
 
 
 	byte *buffer = gameRef->_fileManager->readWholeFile(filename);
-	if (buffer == NULL) return false;
+	if (buffer == NULL) {
+		return false;
+	}
 
 	byte *WorkBuffer = buffer;
 
@@ -195,8 +197,9 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const char *filename) {
 	BaseParser parser(gameRef);
 
 	bool ret = false;
-	if (parser.getCommand((char **)&WorkBuffer, commands, (char **)&params) == TOKEN_TTFONT)
+	if (parser.getCommand((char **)&WorkBuffer, commands, (char **)&params) == TOKEN_TTFONT) {
 		ret = true;
+	}
 
 	delete[] buffer;
 	return ret;

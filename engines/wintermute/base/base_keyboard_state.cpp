@@ -84,9 +84,13 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 		if (val->_type == VAL_STRING && strlen(val->getString()) > 0) {
 			const char *str = val->getString();
 			char temp = str[0];
-			if (temp >= 'A' && temp <= 'Z') temp += ('a' - 'A');
+			if (temp >= 'A' && temp <= 'Z') {
+				temp += ('a' - 'A');
+			}
 			vKey = (int)temp;
-		} else vKey = val->getInt();
+		} else {
+			vKey = val->getInt();
+		}
 
 		warning("BKeyboardState doesnt yet have state-support %d", vKey); //TODO;
 //		Uint8 *state = SDL_GetKeyboardState(NULL);
@@ -95,9 +99,9 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 
 		stack->pushBool(isDown);
 		return STATUS_OK;
+	} else {
+		return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -122,7 +126,9 @@ ScValue *BaseKeyboardState::scGetProperty(const char *name) {
 			key[0] = (char)_currentCharCode;
 			key[1] = '\0';
 			_scValue->setString(key);
-		} else _scValue->setString("");
+		} else {
+			_scValue->setString("");
+		}
 
 		return _scValue;
 	}
@@ -165,9 +171,9 @@ ScValue *BaseKeyboardState::scGetProperty(const char *name) {
 	else if (strcmp(name, "IsControl") == 0) {
 		_scValue->setBool(_currentControl);
 		return _scValue;
+	} else {
+		return BaseScriptable::scGetProperty(name);
 	}
-
-	else return BaseScriptable::scGetProperty(name);
 }
 
 
@@ -255,7 +261,9 @@ bool BaseKeyboardState::isAltDown() {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
-	if (event->type != Common::EVENT_KEYDOWN) return 0;
+	if (event->type != Common::EVENT_KEYDOWN) {
+		return 0;
+	}
 
 	switch (event->kbd.keycode) {
 	case Common::KEYCODE_KP_ENTER:

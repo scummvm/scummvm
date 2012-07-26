@@ -52,7 +52,9 @@ AdTalkDef::AdTalkDef(BaseGame *inGame): BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkDef::~AdTalkDef() {
-	for (int i = 0; i < _nodes.getSize(); i++) delete _nodes[i];
+	for (int i = 0; i < _nodes.getSize(); i++) {
+		delete _nodes[i];
+	}
 	_nodes.removeAll();
 
 	delete[] _defaultSpriteFilename;
@@ -79,7 +81,9 @@ bool AdTalkDef::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing TALK file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing TALK file '%s'", filename);
+	}
 
 	delete[] buffer;
 
@@ -123,15 +127,18 @@ bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_ACTION: {
-			AdTalkNode *Node = new AdTalkNode(_gameRef);
-			if (Node && DID_SUCCEED(Node->loadBuffer(params, false))) _nodes.add(Node);
-			else {
-				delete Node;
-				Node = NULL;
+			AdTalkNode *node = new AdTalkNode(_gameRef);
+			if (node && DID_SUCCEED(node->loadBuffer(params, false))) {
+				_nodes.add(node);
+			} else {
+				delete node;
+				node = NULL;
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -179,12 +186,16 @@ bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 
 	if (_defaultSpriteFilename) {
 		_defaultSprite = new BaseSprite(_gameRef);
-		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) return STATUS_FAILED;
+		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {
+			return STATUS_FAILED;
+		}
 	}
 
 	if (_defaultSpriteSetFilename) {
 		_defaultSpriteSet = new AdSpriteSet(_gameRef);
-		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) return STATUS_FAILED;
+		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
+			return STATUS_FAILED;
+		}
 	}
 
 
@@ -211,10 +222,15 @@ bool AdTalkDef::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TALK {\n");
-	if (_defaultSpriteFilename) buffer->putTextIndent(indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
+	if (_defaultSpriteFilename) {
+		buffer->putTextIndent(indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
+	}
 
-	if (_defaultSpriteSetFilename) buffer->putTextIndent(indent + 2, "DEFAULT_SPRITESET_FILE=\"%s\"\n", _defaultSpriteSetFilename);
-	else if (_defaultSpriteSet) _defaultSpriteSet->saveAsText(buffer, indent + 2);
+	if (_defaultSpriteSetFilename) {
+		buffer->putTextIndent(indent + 2, "DEFAULT_SPRITESET_FILE=\"%s\"\n", _defaultSpriteSetFilename);
+	} else if (_defaultSpriteSet) {
+		_defaultSpriteSet->saveAsText(buffer, indent + 2);
+	}
 
 	for (int i = 0; i < _nodes.getSize(); i++) {
 		_nodes[i]->saveAsText(buffer, indent + 2);
@@ -236,24 +252,34 @@ bool AdTalkDef::loadDefaultSprite() {
 			delete _defaultSprite;
 			_defaultSprite = NULL;
 			return STATUS_FAILED;
-		} else return STATUS_OK;
+		} else {
+			return STATUS_OK;
+		}
 	} else if (_defaultSpriteSetFilename && !_defaultSpriteSet) {
 		_defaultSpriteSet = new AdSpriteSet(_gameRef);
 		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
 			delete _defaultSpriteSet;
 			_defaultSpriteSet = NULL;
 			return STATUS_FAILED;
-		} else return STATUS_OK;
-	} else return STATUS_OK;
+		} else {
+			return STATUS_OK;
+		}
+	} else {
+		return STATUS_OK;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdTalkDef::getDefaultSprite(TDirection dir) {
 	loadDefaultSprite();
-	if (_defaultSprite) return _defaultSprite;
-	else if (_defaultSpriteSet) return _defaultSpriteSet->getSprite(dir);
-	else return NULL;
+	if (_defaultSprite) {
+		return _defaultSprite;
+	} else if (_defaultSpriteSet) {
+		return _defaultSpriteSet->getSprite(dir);
+	} else {
+		return NULL;
+	}
 }
 
 } // end of namespace WinterMute

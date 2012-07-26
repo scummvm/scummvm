@@ -49,7 +49,9 @@ UIEntity::UIEntity(BaseGame *inGame): UIObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 UIEntity::~UIEntity() {
-	if (_entity) _gameRef->unregisterObject(_entity);
+	if (_entity) {
+		_gameRef->unregisterObject(_entity);
+	}
 	_entity = NULL;
 }
 
@@ -66,7 +68,9 @@ bool UIEntity::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ENTITY container file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing ENTITY container file '%s'", filename);
+	}
 
 
 	delete[] buffer;
@@ -117,7 +121,9 @@ bool UIEntity::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -141,7 +147,9 @@ bool UIEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ENTITY:
-			if (DID_FAIL(setEntity((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(setEntity((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_SCRIPT:
@@ -187,8 +195,9 @@ bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
 
-	if (_entity && _entity->getFilename())
+	if (_entity && _entity->getFilename()) {
 		buffer->putTextIndent(indent + 2, "ENTITY=\"%s\"\n", _entity->getFilename());
+	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 
@@ -208,7 +217,9 @@ bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::setEntity(const char *filename) {
-	if (_entity) _gameRef->unregisterObject(_entity);
+	if (_entity) {
+		_gameRef->unregisterObject(_entity);
+	}
 	_entity = new AdEntity(_gameRef);
 	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
 		delete _entity;
@@ -225,19 +236,25 @@ bool UIEntity::setEntity(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::display(int offsetX, int offsetY) {
-	if (!_visible) return STATUS_OK;
+	if (!_visible) {
+		return STATUS_OK;
+	}
 
 	if (_entity) {
 		_entity->_posX = offsetX + _posX;
 		_entity->_posY = offsetY + _posY;
-		if (_entity->_scale < 0) _entity->_zoomable = false;
+		if (_entity->_scale < 0) {
+			_entity->_zoomable = false;
+		}
 		_entity->_shadowable = false;
 
 		_entity->update();
 
 		bool origReg = _entity->_registrable;
 
-		if (_entity->_registrable && _disable) _entity->_registrable = false;
+		if (_entity->_registrable && _disable) {
+			_entity->_registrable = false;
+		}
 
 		_entity->display();
 		_entity->_registrable = origReg;
@@ -257,8 +274,11 @@ bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	if (strcmp(name, "GetEntity") == 0) {
 		stack->correctParams(0);
 
-		if (_entity) stack->pushNative(_entity, true);
-		else stack->pushNULL();
+		if (_entity) {
+			stack->pushNative(_entity, true);
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
 	}
@@ -271,15 +291,16 @@ bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		const char *filename = stack->pop()->getString();
 
-		if (DID_SUCCEED(setEntity(filename)))
+		if (DID_SUCCEED(setEntity(filename))) {
 			stack->pushBool(true);
-		else
+		} else {
 			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
+	} else {
+		return UIObject::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return UIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -299,12 +320,15 @@ ScValue *UIEntity::scGetProperty(const char *name) {
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Freezable") == 0) {
-		if (_entity) _scValue->setBool(_entity->_freezable);
-		else _scValue->setBool(false);
+		if (_entity) {
+			_scValue->setBool(_entity->_freezable);
+		} else {
+			_scValue->setBool(false);
+		}
 		return _scValue;
+	} else {
+		return UIObject::scGetProperty(name);
 	}
-
-	else return UIObject::scGetProperty(name);
 }
 
 
@@ -314,9 +338,13 @@ bool UIEntity::scSetProperty(const char *name, ScValue *value) {
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Freezable") == 0) {
-		if (_entity) _entity->makeFreezable(value->getBool());
+		if (_entity) {
+			_entity->makeFreezable(value->getBool());
+		}
 		return STATUS_OK;
-	} else return UIObject::scSetProperty(name, value);
+	} else {
+		return UIObject::scSetProperty(name, value);
+	}
 }
 
 

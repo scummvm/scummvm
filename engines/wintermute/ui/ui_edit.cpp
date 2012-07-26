@@ -81,7 +81,9 @@ UIEdit::UIEdit(BaseGame *inGame): UIObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 UIEdit::~UIEdit() {
 	if (!_sharedFonts) {
-		if (_fontSelected)   _gameRef->_fontStorage->removeFont(_fontSelected);
+		if (_fontSelected) {
+			_gameRef->_fontStorage->removeFont(_fontSelected);
+		}
 	}
 
 	delete[] _cursorChar;
@@ -101,7 +103,9 @@ bool UIEdit::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing EDIT file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing EDIT file '%s'", filename);
+	}
 
 	delete[] buffer;
 
@@ -175,7 +179,9 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -203,15 +209,23 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) _gameRef->_fontStorage->removeFont(_font);
+			if (_font) {
+				_gameRef->_fontStorage->removeFont(_font);
+			}
 			_font = _gameRef->_fontStorage->addFont((char *)params);
-			if (!_font) cmd = PARSERR_GENERIC;
+			if (!_font) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_FONT_SELECTED:
-			if (_fontSelected) _gameRef->_fontStorage->removeFont(_fontSelected);
+			if (_fontSelected) {
+				_gameRef->_fontStorage->removeFont(_fontSelected);
+			}
 			_fontSelected = _gameRef->_fontStorage->addFont((char *)params);
-			if (!_fontSelected) cmd = PARSERR_GENERIC;
+			if (!_fontSelected) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_TEXT:
@@ -306,24 +320,30 @@ bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->getFilename())
+	if (_back && _back->getFilename()) {
 		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->getFilename());
+	}
 
-	if (_image && _image->getFilename())
+	if (_image && _image->getFilename()) {
 		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getFilename());
+	}
 
-	if (_font && _font->getFilename())
+	if (_font && _font->getFilename()) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
-	if (_fontSelected && _fontSelected->getFilename())
+	}
+	if (_fontSelected && _fontSelected->getFilename()) {
 		buffer->putTextIndent(indent + 2, "FONT_SELECTED=\"%s\"\n", _fontSelected->getFilename());
+	}
 
-	if (_cursor && _cursor->getFilename())
+	if (_cursor && _cursor->getFilename()) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_text)
+	if (_text) {
 		buffer->putTextIndent(indent + 2, "TEXT=\"%s\"\n", _text);
+	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 
@@ -363,14 +383,16 @@ bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	if (strcmp(name, "SetSelectedFont") == 0) {
 		stack->correctParams(1);
 
-		if (_fontSelected) _gameRef->_fontStorage->removeFont(_fontSelected);
+		if (_fontSelected) {
+			_gameRef->_fontStorage->removeFont(_fontSelected);
+		}
 		_fontSelected = _gameRef->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontSelected != NULL);
 
 		return STATUS_OK;
+	} else {
+		return UIObject::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return UIObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -445,9 +467,9 @@ ScValue *UIEdit::scGetProperty(const char *name) {
 			_scValue->setString(_text);
 		}
 		return _scValue;
+	} else {
+		return UIObject::scGetProperty(name);
 	}
-
-	else return UIObject::scGetProperty(name);
 }
 
 
@@ -459,7 +481,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	if (strcmp(name, "SelStart") == 0) {
 		_selStart = value->getInt();
 		_selStart = MAX(_selStart, 0);
-		_selStart = MIN((size_t)_selStart, strlen(_text));
+		_selStart = (int)MIN((size_t)_selStart, strlen(_text));
 		return STATUS_OK;
 	}
 
@@ -469,7 +491,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "SelEnd") == 0) {
 		_selEnd = value->getInt();
 		_selEnd = MAX(_selEnd, 0);
-		_selEnd = MIN((size_t)_selEnd, strlen(_text));
+		_selEnd = (int)MIN((size_t)_selEnd, strlen(_text));
 		return STATUS_OK;
 	}
 
@@ -477,7 +499,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "CursorBlinkRate") == 0) {
-		_cursorBlinkRate = value->getInt();
+		_cursorBlinkRate = (uint32)value->getInt();
 		return STATUS_OK;
 	}
 
@@ -516,9 +538,9 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 			setText(value->getString());
 		}
 		return STATUS_OK;
+	} else {
+		return UIObject::scSetProperty(name, value);
 	}
-
-	else return UIObject::scSetProperty(name, value);
 }
 
 
@@ -530,42 +552,58 @@ const char *UIEdit::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 void UIEdit::setCursorChar(const char *character) {
-	if (!character) return;
+	if (!character) {
+		return;
+	}
 	delete[] _cursorChar;
 	_cursorChar = new char [strlen(character) + 1];
-	if (_cursorChar) strcpy(_cursorChar, character);
+	if (_cursorChar) {
+		strcpy(_cursorChar, character);
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::display(int offsetX, int offsetY) {
-	if (!_visible) return STATUS_OK;
+	if (!_visible) {
+		return STATUS_OK;
+	}
 
 
 	// hack!
 	TTextEncoding OrigEncoding = _gameRef->_textEncoding;
 	_gameRef->_textEncoding = TEXT_ANSI;
 
-	if (_back) _back->display(offsetX + _posX, offsetY + _posY, _width, _height);
-	if (_image) _image->draw(offsetX + _posX, offsetY + _posY, NULL);
+	if (_back) {
+		_back->display(offsetX + _posX, offsetY + _posY, _width, _height);
+	}
+	if (_image) {
+		_image->draw(offsetX + _posX, offsetY + _posY, NULL);
+	}
 
 	// prepare fonts
 	BaseFont *font;
 	BaseFont *sfont;
 
-	if (_font) font = _font;
-	else font = _gameRef->_systemFont;
+	if (_font) {
+		font = _font;
+	} else {
+		font = _gameRef->_systemFont;
+	}
 
-	if (_fontSelected) sfont = _fontSelected;
-	else sfont = font;
+	if (_fontSelected) {
+		sfont = _fontSelected;
+	} else {
+		sfont = font;
+	}
 
 	bool focused = isFocused();
 
 	_selStart = MAX(_selStart, 0);
 	_selEnd   = MAX(_selEnd, 0);
 
-	_selStart = MIN((size_t)_selStart, strlen(_text));
-	_selEnd   = MIN((size_t)_selEnd,   strlen(_text));
+	_selStart = (int)MIN((size_t)_selStart, strlen(_text));
+	_selEnd   = (int)MIN((size_t)_selEnd,   strlen(_text));
 
 	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
 	int cursorWidth = font->getTextWidth((byte *)_cursorChar);
@@ -576,7 +614,9 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	if (_selStart >= _selEnd) {
 		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selEnd - _scrollOffset)) > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
-			if (_scrollOffset >= (int)strlen(_text)) break;
+			if (_scrollOffset >= (int)strlen(_text)) {
+				break;
+			}
 		}
 
 		_scrollOffset = MIN(_scrollOffset, _selEnd);
@@ -590,7 +630,9 @@ bool UIEdit::display(int offsetX, int offsetY) {
 
 		        > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
-			if (_scrollOffset >= (int)strlen(_text)) break;
+			if (_scrollOffset >= (int)strlen(_text)) {
+				break;
+			}
 		}
 
 		_scrollOffset = MIN(_scrollOffset, _selEnd);
@@ -601,9 +643,9 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	int AlignOffset = 0;
+	int alignOffset = 0;
 
-	for (int Count = 0; Count < 2; Count++) {
+	for (int count = 0; count < 2; count++) {
 		// draw text
 		int xxx, yyy, width, height;
 
@@ -613,61 +655,73 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		width = _posX + _width + offsetX - _frameWidth;
 		height = MAX(font->getLetterHeight(), sfont->getLetterHeight());
 
-		if (_gameRef->_textRTL) xxx += AlignOffset;
+		if (_gameRef->_textRTL) {
+			xxx += alignOffset;
+		}
 
-		TTextAlign Align = TAL_LEFT;
+		TTextAlign align = TAL_LEFT;
 
 
 		// unselected 1
 		if (s1 > _scrollOffset) {
-			if (Count) font->drawText((byte *)_text + _scrollOffset, xxx, yyy, width - xxx, Align, height, s1 - _scrollOffset);
+			if (count) {
+				font->drawText((byte *)_text + _scrollOffset, xxx, yyy, width - xxx, align, height, s1 - _scrollOffset);
+			}
 			xxx += font->getTextWidth((byte *)_text + _scrollOffset, s1 - _scrollOffset);
-			AlignOffset += font->getTextWidth((byte *)_text + _scrollOffset, s1 - _scrollOffset);
+			alignOffset += font->getTextWidth((byte *)_text + _scrollOffset, s1 - _scrollOffset);
 		}
 
 		// cursor
 		if (focused && curFirst) {
-			if (Count) {
+			if (count) {
 				if (g_system->getMillis() - _lastBlinkTime >= _cursorBlinkRate) {
 					_lastBlinkTime = g_system->getMillis();
 					_cursorVisible = !_cursorVisible;
 				}
-				if (_cursorVisible)
-					font->drawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
+				if (_cursorVisible) {
+					font->drawText((byte *)_cursorChar, xxx, yyy, width - xxx, align, height, 1);
+				}
 			}
 			xxx += cursorWidth;
-			AlignOffset += cursorWidth;
+			alignOffset += cursorWidth;
 		}
 
 		// selected
 		int s3 = MAX(s1, _scrollOffset);
 
 		if (s2 - s3 > 0) {
-			if (Count) sfont->drawText((byte *)_text + s3, xxx, yyy, width - xxx, Align, height, s2 - s3);
+			if (count) {
+				sfont->drawText((byte *)_text + s3, xxx, yyy, width - xxx, align, height, s2 - s3);
+			}
 			xxx += sfont->getTextWidth((byte *)_text + s3, s2 - s3);
-			AlignOffset += sfont->getTextWidth((byte *)_text + s3, s2 - s3);
+			alignOffset += sfont->getTextWidth((byte *)_text + s3, s2 - s3);
 		}
 
 		// cursor
 		if (focused && !curFirst) {
-			if (Count) {
+			if (count) {
 				if (g_system->getMillis() - _lastBlinkTime >= _cursorBlinkRate) {
 					_lastBlinkTime = g_system->getMillis();
 					_cursorVisible = !_cursorVisible;
 				}
-				if (_cursorVisible)
-					font->drawText((byte *)_cursorChar, xxx, yyy, width - xxx, Align, height, 1);
+				if (_cursorVisible) {
+					font->drawText((byte *)_cursorChar, xxx, yyy, width - xxx, align, height, 1);
+				}
 			}
 			xxx += cursorWidth;
-			AlignOffset += cursorWidth;
+			alignOffset += cursorWidth;
 		}
 
 		// unselected 2
-		if (Count) font->drawText((byte *)_text + s2, xxx, yyy, width - xxx, Align, height);
-		AlignOffset += font->getTextWidth((byte *)_text + s2);
+		if (count) {
+			font->drawText((byte *)_text + s2, xxx, yyy, width - xxx, align, height);
+		}
+		alignOffset += font->getTextWidth((byte *)_text + s2);
 
-		AlignOffset = (_width - 2 * _frameWidth) - AlignOffset;
-		if (AlignOffset < 0) AlignOffset = 0;
+		alignOffset = (_width - 2 * _frameWidth) - alignOffset;
+		if (alignOffset < 0) {
+			alignOffset = 0;
+		}
 	}
 
 
@@ -702,10 +756,17 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 		case Common::KEYCODE_BACKSPACE:
 			if (_selStart == _selEnd) {
-				if (_gameRef->_textRTL) deleteChars(_selStart, _selStart + 1);
-				else deleteChars(_selStart - 1, _selStart);
-			} else deleteChars(_selStart, _selEnd);
-			if (_selEnd >= _selStart) _selEnd -= MAX(1, _selEnd - _selStart);
+				if (_gameRef->_textRTL) {
+					deleteChars(_selStart, _selStart + 1);
+				} else {
+					deleteChars(_selStart - 1, _selStart);
+				}
+			} else {
+				deleteChars(_selStart, _selEnd);
+			}
+			if (_selEnd >= _selStart) {
+				_selEnd -= MAX(1, _selEnd - _selStart);
+			}
 			_selStart = _selEnd;
 
 			handled = true;
@@ -714,24 +775,32 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_UP:
 			_selEnd--;
-			if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
+			if (!BaseKeyboardState::isShiftDown()) {
+				_selStart = _selEnd;
+			}
 			handled = true;
 			break;
 
 		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_DOWN:
 			_selEnd++;
-			if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
+			if (!BaseKeyboardState::isShiftDown()) {
+				_selStart = _selEnd;
+			}
 			handled = true;
 			break;
 
 		case Common::KEYCODE_HOME:
 			if (_gameRef->_textRTL) {
 				_selEnd = strlen(_text);
-				if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
+				if (!BaseKeyboardState::isShiftDown()) {
+					_selStart = _selEnd;
+				}
 			} else {
 				_selEnd = 0;
-				if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
+				if (!BaseKeyboardState::isShiftDown()) {
+					_selStart = _selEnd;
+				}
 			}
 			handled = true;
 			break;
@@ -739,10 +808,14 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 		case Common::KEYCODE_END:
 			if (_gameRef->_textRTL) {
 				_selEnd = 0;
-				if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
+				if (!BaseKeyboardState::isShiftDown()) {
+					_selStart = _selEnd;
+				}
 			} else {
 				_selEnd = strlen(_text);
-				if (!BaseKeyboardState::isShiftDown()) _selStart = _selEnd;
+				if (!BaseKeyboardState::isShiftDown()) {
+					_selStart = _selEnd;
+				}
 			}
 			handled = true;
 			break;
@@ -752,10 +825,18 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 				if (_gameRef->_textRTL) {
 					deleteChars(_selStart - 1, _selStart);
 					_selEnd--;
-					if (_selEnd < 0) _selEnd = 0;
-				} else deleteChars(_selStart, _selStart + 1);
-			} else deleteChars(_selStart, _selEnd);
-			if (_selEnd > _selStart) _selEnd -= (_selEnd - _selStart);
+					if (_selEnd < 0) {
+						_selEnd = 0;
+					}
+				} else {
+					deleteChars(_selStart, _selStart + 1);
+				}
+			} else {
+				deleteChars(_selStart, _selEnd);
+			}
+			if (_selEnd > _selStart) {
+				_selEnd -= (_selEnd - _selStart);
+			}
 
 			_selStart = _selEnd;
 			handled = true;
@@ -765,15 +846,20 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 		}
 		return handled;
 	} else if (event->type == Common::EVENT_KEYDOWN && printable) {
-		if (_selStart != _selEnd) deleteChars(_selStart, _selEnd);
+		if (_selStart != _selEnd) {
+			deleteChars(_selStart, _selEnd);
+		}
 
 		//WideString wstr = StringUtil::Utf8ToWide(event->kbd.ascii);
 		WideString wstr;
 		wstr += (char)event->kbd.ascii;
 		_selEnd += insertChars(_selEnd, (byte *)StringUtil::wideToAnsi(wstr).c_str(), 1);
 
-		if (_gameRef->_textRTL) _selEnd = _selStart;
-		else _selStart = _selEnd;
+		if (_gameRef->_textRTL) {
+			_selEnd = _selStart;
+		} else {
+			_selStart = _selEnd;
+		}
 
 		return true;
 	}
@@ -785,20 +871,26 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 
 //////////////////////////////////////////////////////////////////////////
 int UIEdit::deleteChars(int start, int end) {
-	if (start > end) BaseUtils::swap(&start, &end);
+	if (start > end) {
+		BaseUtils::swap(&start, &end);
+	}
 
 	start = MAX(start, (int)0);
 	end = MIN((size_t)end, strlen(_text));
 
 	char *str = new char[strlen(_text) - (end - start) + 1];
 	if (str) {
-		if (start > 0) memcpy(str, _text, start);
+		if (start > 0) {
+			memcpy(str, _text, start);
+		}
 		memcpy(str + MAX(0, start), _text + end, strlen(_text) - end + 1);
 
 		delete[] _text;
 		_text = str;
 	}
-	if (_parentNotify && _parent) _parent->applyEvent(getName());
+	if (_parentNotify && _parent) {
+		_parent->applyEvent(getName());
+	}
 
 	return end - start;
 }
@@ -815,7 +907,9 @@ int UIEdit::insertChars(int pos, byte *chars, int num) {
 
 	char *str = new char[strlen(_text) + num + 1];
 	if (str) {
-		if (pos > 0) memcpy(str, _text, pos);
+		if (pos > 0) {
+			memcpy(str, _text, pos);
+		}
 		memcpy(str + pos + num, _text + pos, strlen(_text) - pos + 1);
 
 		memcpy(str + pos, chars, num);
@@ -823,7 +917,9 @@ int UIEdit::insertChars(int pos, byte *chars, int num) {
 		delete[] _text;
 		_text = str;
 	}
-	if (_parentNotify && _parent) _parent->applyEvent(getName());
+	if (_parentNotify && _parent) {
+		_parent->applyEvent(getName());
+	}
 
 	return num;
 }

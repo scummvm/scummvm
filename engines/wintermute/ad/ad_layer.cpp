@@ -53,8 +53,9 @@ AdLayer::AdLayer(BaseGame *inGame): BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdLayer::~AdLayer() {
-	for (int i = 0; i < _nodes.getSize(); i++)
+	for (int i = 0; i < _nodes.getSize(); i++) {
 		delete _nodes[i];
+	}
 	_nodes.removeAll();
 }
 
@@ -71,7 +72,9 @@ bool AdLayer::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing LAYER file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing LAYER file '%s'", filename);
+	}
 
 	delete[] buffer;
 
@@ -131,7 +134,9 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -181,7 +186,9 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_ENTITY: {
 			AdEntity *entity = new AdEntity(_gameRef);
 			AdSceneNode *node = new AdSceneNode(_gameRef);
-			if (entity) entity->_zoomable = false; // scene entites default to NOT zoom
+			if (entity) {
+				entity->_zoomable = false;    // scene entites default to NOT zoom
+			}
 			if (!entity || !node || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
@@ -233,8 +240,9 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		ScValue *val = stack->pop();
 		int node = -1;
 
-		if (val->_type == VAL_INT) node = val->getInt();
-		else { // get by name
+		if (val->_type == VAL_INT) {
+			node = val->getInt();
+		} else { // get by name
 			for (int i = 0; i < _nodes.getSize(); i++) {
 				if ((_nodes[i]->_type == OBJECT_ENTITY && scumm_stricmp(_nodes[i]->_entity->getName(), val->getString()) == 0) ||
 				        (_nodes[i]->_type == OBJECT_REGION && scumm_stricmp(_nodes[i]->_region->getName(), val->getString()) == 0)) {
@@ -244,8 +252,9 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			}
 		}
 
-		if (node < 0 || node >= _nodes.getSize()) stack->pushNULL();
-		else {
+		if (node < 0 || node >= _nodes.getSize()) {
+			stack->pushNULL();
+		} else {
 			switch (_nodes[node]->_type) {
 			case OBJECT_ENTITY:
 				stack->pushNative(_nodes[node]->_entity, true);
@@ -270,12 +279,16 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		AdSceneNode *node = new AdSceneNode(_gameRef);
 		if (strcmp(name, "AddRegion") == 0) {
 			AdRegion *region = new AdRegion(_gameRef);
-			if (!val->isNULL()) region->setName(val->getString());
+			if (!val->isNULL()) {
+				region->setName(val->getString());
+			}
 			node->setRegion(region);
 			stack->pushNative(region, true);
 		} else {
 			AdEntity *entity = new AdEntity(_gameRef);
-			if (!val->isNULL()) entity->setName(val->getString());
+			if (!val->isNULL()) {
+				entity->setName(val->getString());
+			}
 			node->setEntity(entity);
 			stack->pushNative(entity, true);
 		}
@@ -294,18 +307,27 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		AdSceneNode *node = new AdSceneNode(_gameRef);
 		if (strcmp(name, "InsertRegion") == 0) {
 			AdRegion *region = new AdRegion(_gameRef);
-			if (!val->isNULL()) region->setName(val->getString());
+			if (!val->isNULL()) {
+				region->setName(val->getString());
+			}
 			node->setRegion(region);
 			stack->pushNative(region, true);
 		} else {
 			AdEntity *entity = new AdEntity(_gameRef);
-			if (!val->isNULL()) entity->setName(val->getString());
+			if (!val->isNULL()) {
+				entity->setName(val->getString());
+			}
 			node->setEntity(entity);
 			stack->pushNative(entity, true);
 		}
-		if (index < 0) index = 0;
-		if (index <= _nodes.getSize() - 1) _nodes.insertAt(index, node);
-		else _nodes.add(node);
+		if (index < 0) {
+			index = 0;
+		}
+		if (index <= _nodes.getSize() - 1) {
+			_nodes.insertAt(index, node);
+		} else {
+			_nodes.add(node);
+		}
 
 		return STATUS_OK;
 	}
@@ -347,9 +369,9 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		}
 		stack->pushBool(true);
 		return STATUS_OK;
+	} else {
+		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -411,9 +433,9 @@ ScValue *AdLayer::scGetProperty(const char *name) {
 	else if (strcmp(name, "Active") == 0) {
 		_scValue->setBool(_active);
 		return _scValue;
+	} else {
+		return BaseObject::scGetProperty(name);
 	}
-
-	else return BaseObject::scGetProperty(name);
 }
 
 
@@ -440,7 +462,9 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Width") == 0) {
 		_width = value->getInt();
-		if (_width < 0) _width = 0;
+		if (_width < 0) {
+			_width = 0;
+		}
 		return STATUS_OK;
 	}
 
@@ -449,7 +473,9 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Height") == 0) {
 		_height = value->getInt();
-		if (_height < 0) _height = 0;
+		if (_height < 0) {
+			_height = 0;
+		}
 		return STATUS_OK;
 	}
 
@@ -460,11 +486,13 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 		bool b = value->getBool();
 		if (b == false && _main) {
 			_gameRef->LOG(0, "Warning: cannot deactivate scene's main layer");
-		} else _active = b;
+		} else {
+			_active = b;
+		}
 		return STATUS_OK;
+	} else {
+		return BaseObject::scSetProperty(name, value);
 	}
-
-	else return BaseObject::scSetProperty(name, value);
 }
 
 
@@ -484,8 +512,9 @@ bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "HEIGHT=%d\n", _height);
 	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
-	if (_closeUp)
+	if (_closeUp) {
 		buffer->putTextIndent(indent + 2, "CLOSE_UP=%s\n", _closeUp ? "TRUE" : "FALSE");
+	}
 
 	int i;
 
@@ -493,7 +522,9 @@ bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (_scProp) _scProp->saveAsText(buffer, indent + 2);
+	if (_scProp) {
+		_scProp->saveAsText(buffer, indent + 2);
+	}
 
 	for (i = 0; i < _nodes.getSize(); i++) {
 		switch (_nodes[i]->_type) {

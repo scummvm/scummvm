@@ -50,10 +50,14 @@ AdInventory::~AdInventory() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventory::insertItem(const char *name, const char *insertAfter) {
-	if (name == NULL) return STATUS_FAILED;
+	if (name == NULL) {
+		return STATUS_FAILED;
+	}
 
 	AdItem *item = ((AdGame *)_gameRef)->getItemByName(name);
-	if (item == NULL) return STATUS_FAILED;
+	if (item == NULL) {
+		return STATUS_FAILED;
+	}
 
 	int insertIndex = -1;
 	for (int i = 0; i < _takenItems.getSize(); i++) {
@@ -62,12 +66,17 @@ bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 			i--;
 			continue;
 		}
-		if (insertAfter && scumm_stricmp(_takenItems[i]->getName(), insertAfter) == 0) insertIndex = i + 1;
+		if (insertAfter && scumm_stricmp(_takenItems[i]->getName(), insertAfter) == 0) {
+			insertIndex = i + 1;
+		}
 	}
 
 
-	if (insertIndex == -1) _takenItems.add(item);
-	else _takenItems.insertAt(insertIndex, item);
+	if (insertIndex == -1) {
+		_takenItems.add(item);
+	} else {
+		_takenItems.insertAt(insertIndex, item);
+	}
 
 	return STATUS_OK;
 }
@@ -75,11 +84,15 @@ bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventory::removeItem(const char *name) {
-	if (name == NULL) return STATUS_FAILED;
+	if (name == NULL) {
+		return STATUS_FAILED;
+	}
 
 	for (int i = 0; i < _takenItems.getSize(); i++) {
 		if (scumm_stricmp(_takenItems[i]->getName(), name) == 0) {
-			if (((AdGame *)_gameRef)->_selectedItem == _takenItems[i])((AdGame *)_gameRef)->_selectedItem = NULL;
+			if (((AdGame *)_gameRef)->_selectedItem == _takenItems[i]) {
+				((AdGame *)_gameRef)->_selectedItem = NULL;
+			}
 			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}
@@ -92,11 +105,15 @@ bool AdInventory::removeItem(const char *name) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventory::removeItem(AdItem *item) {
-	if (item == NULL) return STATUS_FAILED;
+	if (item == NULL) {
+		return STATUS_FAILED;
+	}
 
 	for (int i = 0; i < _takenItems.getSize(); i++) {
 		if (_takenItems[i] == item) {
-			if (((AdGame *)_gameRef)->_selectedItem == _takenItems[i])((AdGame *)_gameRef)->_selectedItem = NULL;
+			if (((AdGame *)_gameRef)->_selectedItem == _takenItems[i]) {
+				((AdGame *)_gameRef)->_selectedItem = NULL;
+			}
 			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}

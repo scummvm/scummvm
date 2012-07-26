@@ -142,7 +142,9 @@ bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_COMMENT:
-			if (_gameRef->_editorMode) BaseUtils::setString(&_comment, (char *)params);
+			if (_gameRef->_editorMode) {
+				BaseUtils::setString(&_comment, (char *)params);
+			}
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -160,23 +162,26 @@ bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 		return STATUS_FAILED;
 	}
 
-	if (_endTime == 0)
+	if (_endTime == 0) {
 		_playToEnd = true;
-	else
+	} else {
 		_playToEnd = false;
+	}
 
 	if (_preCache && _spriteFilename) {
 		delete _sprite;
 		_sprite = new BaseSprite(_gameRef);
-		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename)))
+		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
 			return STATUS_FAILED;
+		}
 	}
 
 	if (_preCache && _spriteSetFilename) {
 		delete _spriteSet;
 		_spriteSet = new AdSpriteSet(_gameRef);
-		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename)))
+		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			return STATUS_FAILED;
+		}
 	}
 
 	return STATUS_OK;
@@ -202,13 +207,24 @@ bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ACTION {\n");
-	if (_comment) buffer->putTextIndent(indent + 2, "COMMENT=\"%s\"\n", _comment);
+	if (_comment) {
+		buffer->putTextIndent(indent + 2, "COMMENT=\"%s\"\n", _comment);
+	}
 	buffer->putTextIndent(indent + 2, "START_TIME=%d\n", _startTime);
-	if (!_playToEnd) buffer->putTextIndent(indent + 2, "END_TIME=%d\n", _endTime);
-	if (_spriteFilename) buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
-	if (_spriteSetFilename) buffer->putTextIndent(indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
-	else if (_spriteSet) _spriteSet->saveAsText(buffer, indent + 2);
-	if (_preCache) buffer->putTextIndent(indent + 2, "PRECACHE=\"%s\"\n", _preCache ? "TRUE" : "FALSE");
+	if (!_playToEnd) {
+		buffer->putTextIndent(indent + 2, "END_TIME=%d\n", _endTime);
+	}
+	if (_spriteFilename) {
+		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
+	}
+	if (_spriteSetFilename) {
+		buffer->putTextIndent(indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
+	} else if (_spriteSet) {
+		_spriteSet->saveAsText(buffer, indent + 2);
+	}
+	if (_preCache) {
+		buffer->putTextIndent(indent + 2, "PRECACHE=\"%s\"\n", _preCache ? "TRUE" : "FALSE");
+	}
 
 	BaseClass::saveAsText(buffer, indent + 2);
 
@@ -226,19 +242,21 @@ bool AdTalkNode::loadSprite() {
 			delete _sprite;
 			_sprite = NULL;
 			return STATUS_FAILED;
-		} else return STATUS_OK;
-	}
-
-	else if (_spriteSetFilename && !_spriteSet) {
+		} else {
+			return STATUS_OK;
+		}
+	} else if (_spriteSetFilename && !_spriteSet) {
 		_spriteSet = new AdSpriteSet(_gameRef);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			delete _spriteSet;
 			_spriteSet = NULL;
 			return STATUS_FAILED;
-		} else return STATUS_OK;
+		} else {
+			return STATUS_OK;
+		}
+	} else {
+		return STATUS_OK;
 	}
-
-	else return STATUS_OK;
 }
 
 
@@ -246,20 +264,32 @@ bool AdTalkNode::loadSprite() {
 bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 	if (time >= _startTime) {
 		if (_playToEnd) {
-			if ((_spriteFilename && _sprite == NULL) || (_sprite && _sprite->_finished == false)) return true;
-			else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->_finished == false)) return true;
-			else return false;
-		} else return _endTime >= time;
-	} else return false;
+			if ((_spriteFilename && _sprite == NULL) || (_sprite && _sprite->_finished == false)) {
+				return true;
+			} else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->_finished == false)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return _endTime >= time;
+		}
+	} else {
+		return false;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdTalkNode::getSprite(TDirection dir) {
 	loadSprite();
-	if (_sprite) return _sprite;
-	else if (_spriteSet) return _spriteSet->getSprite(dir);
-	else return NULL;
+	if (_sprite) {
+		return _sprite;
+	} else if (_spriteSet) {
+		return _spriteSet->getSprite(dir);
+	} else {
+		return NULL;
+	}
 }
 
 } // end of namespace WinterMute

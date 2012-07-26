@@ -215,14 +215,15 @@ bool StringUtil::startsWith(const AnsiString &str, const AnsiString &pattern, bo
 
 	    if (ignoreCase) return CompareNoCase(startPart, pattern);
 	    else return (startPart == pattern);*/
-	if (!ignoreCase)
+	if (!ignoreCase) {
 		return str.hasPrefix(pattern);
-	else {
+	} else {
 		size_t strLength = str.size();
 		size_t patternLength = pattern.size();
 
-		if (strLength < patternLength || patternLength == 0)
+		if (strLength < patternLength || patternLength == 0) {
 			return false;
+		}
 
 		AnsiString startPart(str.c_str(), patternLength);
 		uint32 likeness = startPart.compareToIgnoreCase(pattern.c_str());
@@ -248,8 +249,9 @@ bool StringUtil::endsWith(const AnsiString &str, const AnsiString &pattern, bool
 		size_t strLength = str.size();
 		size_t patternLength = pattern.size();
 
-		if (strLength < patternLength || patternLength == 0)
+		if (strLength < patternLength || patternLength == 0) {
 			return false;
+		}
 
 		Common::String endPart(str.c_str() + (strLength - patternLength), patternLength);
 		uint32 likeness = str.compareToIgnoreCase(pattern.c_str());
@@ -259,8 +261,11 @@ bool StringUtil::endsWith(const AnsiString &str, const AnsiString &pattern, bool
 
 //////////////////////////////////////////////////////////////////////////
 bool StringUtil::isUtf8BOM(const byte *Buffer, uint32 BufferSize) {
-	if (BufferSize > 3 && Buffer[0] == 0xEF && Buffer[1] == 0xBB && Buffer[2] == 0xBF) return true;
-	else return false;
+	if (BufferSize > 3 && Buffer[0] == 0xEF && Buffer[1] == 0xBB && Buffer[2] == 0xBF) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -269,10 +274,11 @@ int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t 
 	if (pos == str.npos) return -1;
 	else return pos;*/
 	const char *index = strstr(str.c_str(), toFind.c_str());
-	if (index == NULL)
+	if (index == NULL) {
 		return -1;
-	else
+	} else {
 		return index - str.c_str();
+	}
 }
 
 

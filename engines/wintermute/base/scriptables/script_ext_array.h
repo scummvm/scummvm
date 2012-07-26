@@ -35,7 +35,7 @@ namespace WinterMute {
 
 class SXArray : public BaseScriptable {
 public:
-	bool push(ScValue *Val);
+	bool push(ScValue *val);
 	bool validNumber(const char *origStr, char *outStr);
 	DECLARE_PERSISTENT(SXArray, BaseScriptable)
 	SXArray(BaseGame *inGame, ScStack *stack);

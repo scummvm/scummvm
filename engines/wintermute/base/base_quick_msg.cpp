@@ -34,14 +34,18 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////////
 BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text): BaseClass(inGame) {
 	_text = new char [strlen(text) + 1];
-	if (_text) strcpy(_text, text);
+	if (_text) {
+		strcpy(_text, text);
+	}
 	_startTime = _gameRef->_currentTime;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 BaseQuickMsg::~BaseQuickMsg() {
-	if (_text) delete[] _text;
+	if (_text) {
+		delete[] _text;
+	}
 }
 
 

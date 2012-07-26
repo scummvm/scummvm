@@ -57,7 +57,9 @@ bool BaseTransitionMgr::isReady() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
-	if (_state != TRANS_MGR_READY) return STATUS_OK;
+	if (_state != TRANS_MGR_READY) {
+		return STATUS_OK;
+	}
 
 	if (type == TRANSITION_NONE || type >= NUM_TRANSITION_TYPES) {
 		_state = TRANS_MGR_READY;
@@ -82,7 +84,9 @@ bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseTransitionMgr::update() {
-	if (isReady()) return STATUS_OK;
+	if (isReady()) {
+		return STATUS_OK;
+	}
 
 	if (!_started) {
 		_started = true;
@@ -100,8 +104,9 @@ bool BaseTransitionMgr::update() {
 		alpha = MIN(255, MAX(alpha, 0));
 		_gameRef->_renderer->fade((uint16)alpha);
 
-		if (time > FADE_DURATION)
+		if (time > FADE_DURATION) {
 			_state = TRANS_MGR_READY;
+		}
 	}
 	break;
 
@@ -111,8 +116,9 @@ bool BaseTransitionMgr::update() {
 		alpha = MIN(255, MAX(alpha, 0));
 		_gameRef->_renderer->fade((uint16)alpha);
 
-		if (time > FADE_DURATION)
+		if (time > FADE_DURATION) {
 			_state = TRANS_MGR_READY;
+		}
 	}
 	break;
 	default:
@@ -120,8 +126,9 @@ bool BaseTransitionMgr::update() {
 	}
 
 	if (isReady()) {
-		if (_preserveInteractive)
+		if (_preserveInteractive) {
 			_gameRef->_interactive = _origInteractive;
+		}
 	}
 	return STATUS_OK;
 }

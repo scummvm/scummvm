@@ -85,7 +85,9 @@ SystemInstance *SystemClass::addInstance(void *instance, int id, int savedId) {
 //////////////////////////////////////////////////////////////////////////
 bool SystemClass::removeInstance(void *instance) {
 	InstanceMap::iterator mapIt = _instanceMap.find(instance);
-	if (mapIt == _instanceMap.end()) return false;
+	if (mapIt == _instanceMap.end()) {
+		return false;
+	}
 
 	Instances::iterator it = _instances.find((mapIt->_value));
 	if (it != _instances.end()) {
@@ -101,8 +103,11 @@ bool SystemClass::removeInstance(void *instance) {
 //////////////////////////////////////////////////////////////////////////
 int SystemClass::getInstanceID(void *pointer) {
 	InstanceMap::iterator mapIt = _instanceMap.find(pointer);
-	if (mapIt == _instanceMap.end()) return -1;
-	else return (mapIt->_value)->getID();
+	if (mapIt == _instanceMap.end()) {
+		return -1;
+	} else {
+		return (mapIt->_value)->getID();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -110,7 +115,9 @@ void *SystemClass::idToPointer(int savedID) {
 	//slow
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
-		if ((it->_value)->getSavedID() == savedID) return (it->_value)->getInstance();
+		if ((it->_value)->getSavedID() == savedID) {
+			return (it->_value)->getInstance();
+		}
 	}
 	return NULL;
 }
@@ -157,7 +164,9 @@ void SystemClass::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMg
 			if (it != _instances.end()) {
 				(it->_value)->setSavedID(instID);
 				SystemClassRegistry::getInstance()->addInstanceToTable((it->_value), (it->_value)->getInstance());
-			} else gameRef->LOG(0, "Warning: instance %d of persistent class %s not found", i, _name.c_str());
+			} else {
+				gameRef->LOG(0, "Warning: instance %d of persistent class %s not found", i, _name.c_str());
+			}
 		}
 		// normal instances, create empty objects
 		else {

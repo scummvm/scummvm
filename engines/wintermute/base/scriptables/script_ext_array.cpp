@@ -47,8 +47,9 @@ SXArray::SXArray(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 
 	int numParams = stack->pop()->getInt(0);
 
-	if (numParams == 1) _length = stack->pop()->getInt(0);
-	else if (numParams > 1) {
+	if (numParams == 1) {
+		_length = stack->pop()->getInt(0);
+	} else if (numParams > 1) {
 		_length = numParams;
 		char paramName[20];
 		for (int i = 0; i < numParams; i++) {
@@ -86,7 +87,9 @@ const char *SXArray::scToString() {
 			}
 		}
 
-		if (i < _length - 1 && strlen(dummy) + 1 < 32768) strcat(dummy, ",");
+		if (i < _length - 1 && strlen(dummy) + 1 < 32768) {
+			strcat(dummy, ",");
+		}
 	}
 	return dummy;
 }
@@ -124,12 +127,14 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			stack->push(_values->getProp(paramName));
 			_values->deleteProp(paramName);
 			_length--;
-		} else stack->pushNULL();
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
+	} else {
+		return STATUS_FAILED;
 	}
-
-	else return STATUS_FAILED;
 }
 
 
@@ -160,7 +165,9 @@ ScValue *SXArray::scGetProperty(const char *name) {
 		char ParamName[20];
 		if (validNumber(name, ParamName)) {
 			return _values->getProp(ParamName);
-		} else return _scValue;
+		} else {
+			return _scValue;
+		}
 	}
 }
 
@@ -190,10 +197,14 @@ bool SXArray::scSetProperty(const char *name, ScValue *value) {
 	else {
 		char paramName[20];
 		if (validNumber(name, paramName)) {
-			int Index = atoi(paramName);
-			if (Index >= _length) _length = Index + 1;
+			int index = atoi(paramName);
+			if (index >= _length) {
+				_length = index + 1;
+			}
 			return _values->setProp(paramName, value);
-		} else return STATUS_FAILED;
+		} else {
+			return STATUS_FAILED;
+		}
 	}
 }
 
@@ -223,7 +234,9 @@ bool SXArray::validNumber(const char *origStr, char *outStr) {
 		int index = atoi(origStr);
 		sprintf(outStr, "%d", index);
 		return true;
-	} else return false;
+	} else {
+		return false;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

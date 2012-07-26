@@ -50,7 +50,9 @@ BaseParser::BaseParser(BaseGame *inGame): BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 BaseParser::~BaseParser() {
-	if (_whiteSpace != NULL) delete[] _whiteSpace;
+	if (_whiteSpace != NULL) {
+		delete[] _whiteSpace;
+	}
 }
 
 
@@ -71,8 +73,9 @@ int32 BaseParser::getObject(char **buf, TokenDesc *tokens, char **name, char **d
 		skipCharacters(buf, _whiteSpace);
 	}
 
-	if (! **buf)                  // at end of file
+	if (! **buf) {                // at end of file
 		return PARSERR_EOF;
+	}
 
 	// find the token.
 	// for now just use brute force.  Improve later.
@@ -89,7 +92,9 @@ int32 BaseParser::getObject(char **buf, TokenDesc *tokens, char **name, char **d
 		char *p = strchr(*buf, '\n');
 		if (p && p > *buf) {
 			strncpy(_lastOffender, *buf, MIN((uint32)255, (uint32)(p - *buf))); // TODO, clean
-		} else strcpy(_lastOffender, "");
+		} else {
+			strcpy(_lastOffender, "");
+		}
 
 		return PARSERR_TOKENNOTFOUND;
 	}
@@ -102,10 +107,11 @@ int32 BaseParser::getObject(char **buf, TokenDesc *tokens, char **name, char **d
 	skipCharacters(buf, _whiteSpace);
 
 	// get optional data
-	if (**buf == '=') // An assignment rather than a command/object.
+	if (**buf == '=') { // An assignment rather than a command/object.
 		*data = getAssignmentText(buf);
-	else
+	} else {
 		*data = getSubText(buf, '{', '}');
+	}
 
 	return tokens->id;
 }
@@ -113,7 +119,9 @@ int32 BaseParser::getObject(char **buf, TokenDesc *tokens, char **name, char **d
 
 //////////////////////////////////////////////////////////////////////
 int32 BaseParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
-	if (!*buf) return PARSERR_TOKENNOTFOUND;
+	if (!*buf) {
+		return PARSERR_TOKENNOTFOUND;
+	}
 	_gameRef->miniUpdate();
 	char *name;
 	return getObject(buf, tokens, &name, params);
@@ -124,9 +132,12 @@ int32 BaseParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
 void BaseParser::skipCharacters(char **buf, const char *toSkip) {
 	char ch;
 	while ((ch = **buf) != 0) {
-		if (ch == '\n') _parserLine++;
-		if (strchr(toSkip, ch) == NULL)
+		if (ch == '\n') {
+			_parserLine++;
+		}
+		if (strchr(toSkip, ch) == NULL) {
 			return;
+		}
 		++*buf;                     // skip this character
 	}
 	// we must be at the end of the buffer if we get here
@@ -135,8 +146,9 @@ void BaseParser::skipCharacters(char **buf, const char *toSkip) {
 
 //////////////////////////////////////////////////////////////////////
 char *BaseParser::getSubText(char **buf, char open, char close) {
-	if (**buf == 0 || **buf != open)
+	if (**buf == 0 || **buf != open) {
 		return 0;
+	}
 	++*buf;                       // skip opening delimiter
 	char *result = *buf;
 
@@ -144,11 +156,13 @@ char *BaseParser::getSubText(char **buf, char open, char close) {
 	char theChar;
 	long skip = 1;
 
-	if (open == close)            // we cant nest identical delimiters
+	if (open == close) {          // we cant nest identical delimiters
 		open = 0;
+	}
 	while ((theChar = **buf) != 0) {
-		if (theChar == open)
+		if (theChar == open) {
 			++skip;
+		}
 		if (theChar == close) {
 			if (--skip == 0) {
 				**buf = 0;              // null terminate the result string
@@ -176,13 +190,15 @@ char *BaseParser::getAssignmentText(char **buf) {
 		char theChar;
 
 		while ((theChar = **buf) != 0) {
-			if (theChar <= 0x20)        // space and control chars
+			if (theChar <= 0x20) {      // space and control chars
 				break;
+			}
 			++*buf;
 		}
-		**buf = 0;               // null terminate it
-		if (theChar)                  // skip the terminator
+		**buf = 0;              // null terminate it
+		if (theChar) {                // skip the terminator
 			++*buf;
+		}
 	}
 
 	return result;
@@ -195,10 +211,16 @@ char *BaseParser::getToken(char **buf) {
 	static char token[100];
 	char *b = *buf, * t = token;
 	while (true) {
-		while (*b && (*b == ' ' || *b == '\n' || *b == 13 || *b == 10 || *b == '\t')) b++;
+		while (*b && (*b == ' ' || *b == '\n' || *b == 13 || *b == 10 || *b == '\t')) {
+			b++;
+		}
 		if (*b == ';')
-			while (*b && *b != '\n' && *b != 13 && *b != 10) b++;
-		else break;
+			while (*b && *b != '\n' && *b != 13 && *b != 10) {
+				b++;
+			}
+		else {
+			break;
+		}
 	}
 
 	if (*b == '\'') {
@@ -207,7 +229,9 @@ char *BaseParser::getToken(char **buf) {
 			*t++ = *b++;
 		}
 		*t++ = 0;
-		if (*b == '\'') b++;
+		if (*b == '\'') {
+			b++;
+		}
 	} else if (*b == '(' || *b == ')' || *b == '=' || *b == ',' || *b == '[' || *b == ']' ||
 	           *b == '%' || *b == ':' || *b == '{' || *b == '}') {
 		*t++ = *b++;
@@ -265,7 +289,9 @@ int BaseParser::getTokenInt(char **buf) {
 //////////////////////////////////////////////////////////////////////
 void BaseParser::skipToken(char **buf, char *tok, char * /*msg*/) {
 	char *t = getToken(buf);
-	if (strcmp(t, tok)) return;  // Error
+	if (strcmp(t, tok)) {
+		return;    // Error
+	}
 }
 
 
@@ -299,7 +325,9 @@ int BaseParser::scanStr(const char *in, const char *format, ...) {
 					list[i++] = atoi(in);
 					in += strspn(in, "0123456789+-");
 					in += strspn(in, " \t\n\f");
-					if (*in != ',') break;
+					if (*in != ',') {
+						break;
+					}
 					in++;
 					in += strspn(in, " \t\n\f");
 				}
@@ -339,7 +367,9 @@ int BaseParser::scanStr(const char *in, const char *format, ...) {
 					list[i++] = (float)atof(in);
 					in += strspn(in, "0123456789.eE+-");
 					in += strspn(in, " \t\n\f");
-					if (*in != ',') break;
+					if (*in != ',') {
+						break;
+					}
 					in++;
 					in += strspn(in, " \t\n\f");
 				}
@@ -414,7 +444,9 @@ int BaseParser::scanStr(const char *in, const char *format, ...) {
 				break;
 			}
 			}
-			if (*format) format++;
+			if (*format) {
+				format++;
+			}
 		} else if (*format == ' ') {
 			format++;
 			in += strspn(in, " \t\n\f");

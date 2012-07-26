@@ -71,14 +71,24 @@ UIObject::UIObject(BaseGame *inGame): BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 UIObject::~UIObject() {
-	if (!_gameRef->_loadInProgress) SystemClassRegistry::getInstance()->enumInstances(BaseGame::invalidateValues, "ScValue", (void *)this);
+	if (!_gameRef->_loadInProgress) {
+		SystemClassRegistry::getInstance()->enumInstances(BaseGame::invalidateValues, "ScValue", (void *)this);
+	}
 
-	if (_back) delete _back;
-	if (_font && !_sharedFonts) _gameRef->_fontStorage->removeFont(_font);
+	if (_back) {
+		delete _back;
+	}
+	if (_font && !_sharedFonts) {
+		_gameRef->_fontStorage->removeFont(_font);
+	}
 
-	if (_image && !_sharedImages) delete _image;
+	if (_image && !_sharedImages) {
+		delete _image;
+	}
 
-	if (_text) delete[] _text;
+	if (_text) {
+		delete[] _text;
+	}
 
 	_focusedWidget = NULL; // ref only
 }
@@ -86,12 +96,16 @@ UIObject::~UIObject() {
 
 //////////////////////////////////////////////////////////////////////////
 void UIObject::setText(const char *text) {
-	if (_text) delete[] _text;
+	if (_text) {
+		delete[] _text;
+	}
 	_text = new char [strlen(text) + 1];
 	if (_text) {
 		strcpy(_text, text);
 		for (int i = 0; i < strlen(_text); i++) {
-			if (_text[i] == '|') _text[i] = '\n';
+			if (_text[i] == '|') {
+				_text[i] = '\n';
+			}
 		}
 	}
 }
@@ -119,7 +133,9 @@ void UIObject::correctSize() {
 		if (_image) {
 			_image->getBoundingRect(&rect, 0, 0);
 			_width = rect.right - rect.left;
-		} else _width = 100;
+		} else {
+			_width = 100;
+		}
 	}
 
 	if (_height <= 0) {
@@ -129,7 +145,9 @@ void UIObject::correctSize() {
 		}
 	}
 
-	if (_back) _back->correctSize(&_width, &_height);
+	if (_back) {
+		_back->correctSize(&_width, &_height);
+	}
 }
 
 
@@ -143,14 +161,16 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetFont") == 0) {
 		stack->correctParams(1);
-		ScValue *Val = stack->pop();
+		ScValue *val = stack->pop();
 
-		if (_font) _gameRef->_fontStorage->removeFont(_font);
-		if (Val->isNULL()) {
+		if (_font) {
+			_gameRef->_fontStorage->removeFont(_font);
+		}
+		if (val->isNULL()) {
 			_font = NULL;
 			stack->pushBool(true);
 		} else {
-			_font = _gameRef->_fontStorage->addFont(Val->getString());
+			_font = _gameRef->_fontStorage->addFont(val->getString());
 			stack->pushBool(_font != NULL);
 		}
 		return STATUS_OK;
@@ -177,7 +197,9 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			delete _image;
 			_image = NULL;
 			stack->pushBool(false);
-		} else stack->pushBool(true);
+		} else {
+			stack->pushBool(true);
+		}
 
 		return STATUS_OK;
 	}
@@ -187,8 +209,11 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetImage") == 0) {
 		stack->correctParams(0);
-		if (!_image || !_image->getFilename()) stack->pushNULL();
-		else stack->pushString(_image->getFilename());
+		if (!_image || !_image->getFilename()) {
+			stack->pushNULL();
+		} else {
+			stack->pushString(_image->getFilename());
+		}
 
 		return STATUS_OK;
 	}
@@ -198,8 +223,11 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetImageObject") == 0) {
 		stack->correctParams(0);
-		if (!_image) stack->pushNULL();
-		else stack->pushNative(_image, true);
+		if (!_image) {
+			stack->pushNULL();
+		} else {
+			stack->pushNative(_image, true);
+		}
 
 		return STATUS_OK;
 	}
@@ -251,8 +279,12 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				bool done = false;
 				for (int j = 0; j < win->_widgets.getSize(); j++) {
 					if (win->_widgets[j] == this) {
-						if (strcmp(name, "MoveAfter") == 0) i++;
-						if (j >= i) j++;
+						if (strcmp(name, "MoveAfter") == 0) {
+							i++;
+						}
+						if (j >= i) {
+							j++;
+						}
 
 						win->_widgets.insertAt(i, this);
 						win->_widgets.removeAt(j);
@@ -262,10 +294,16 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 						break;
 					}
 				}
-				if (!done) stack->pushBool(false);
-			} else stack->pushBool(false);
+				if (!done) {
+					stack->pushBool(false);
+				}
+			} else {
+				stack->pushBool(false);
+			}
 
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -286,7 +324,9 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				}
 			}
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -307,12 +347,14 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				}
 			}
 			stack->pushBool(true);
-		} else stack->pushBool(false);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
+	} else {
+		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -402,18 +444,22 @@ ScValue *UIObject::scGetProperty(const char *name) {
 			for (int i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
 					if (strcmp(name, "NextSibling") == 0) {
-						if (i < win->_widgets.getSize() - 1) _scValue->setNative(win->_widgets[i + 1], true);
+						if (i < win->_widgets.getSize() - 1) {
+							_scValue->setNative(win->_widgets[i + 1], true);
+						}
 					} else {
-						if (i > 0) _scValue->setNative(win->_widgets[i - 1], true);
+						if (i > 0) {
+							_scValue->setNative(win->_widgets[i - 1], true);
+						}
 					}
 					break;
 				}
 			}
 		}
 		return _scValue;
+	} else {
+		return BaseObject::scGetProperty(name);
 	}
-
-	else return BaseObject::scGetProperty(name);
 }
 
 
@@ -473,9 +519,9 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "Text") == 0) {
 		setText(value->getString());
 		return STATUS_OK;
+	} else {
+		return BaseObject::scSetProperty(name, value);
 	}
-
-	else return BaseObject::scSetProperty(name, value);
 }
 
 
@@ -487,13 +533,20 @@ const char *UIObject::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIObject::isFocused() {
-	if (!_gameRef->_focusedWindow) return false;
-	if (_gameRef->_focusedWindow == this) return true;
+	if (!_gameRef->_focusedWindow) {
+		return false;
+	}
+	if (_gameRef->_focusedWindow == this) {
+		return true;
+	}
 
 	UIObject *obj = _gameRef->_focusedWindow;
 	while (obj) {
-		if (obj == this) return true;
-		else obj = obj->_focusedWidget;
+		if (obj == this) {
+			return true;
+		} else {
+			obj = obj->_focusedWidget;
+		}
 	}
 	return false;
 }
@@ -524,9 +577,13 @@ bool UIObject::focus() {
 		obj = this;
 		while (obj) {
 			if (obj->_parent) {
-				if (!obj->_disable && obj->_canFocus) obj->_parent->_focusedWidget = obj;
+				if (!obj->_disable && obj->_canFocus) {
+					obj->_parent->_focusedWidget = obj;
+				}
 			} else {
-				if (obj->_type == UI_WINDOW) _gameRef->focusWindow((UIWindow *)obj);
+				if (obj->_type == UI_WINDOW) {
+					_gameRef->focusWindow((UIWindow *)obj);
+				}
 			}
 
 			obj = obj->_parent;
@@ -547,8 +604,12 @@ bool UIObject::getTotalOffset(int *offsetX, int *offsetY) {
 
 		obj = obj->_parent;
 	}
-	if (offsetX) *offsetX = offX;
-	if (offsetY) *offsetY = offY;
+	if (offsetX) {
+		*offsetX = offX;
+	}
+	if (offsetY) {
+		*offsetY = offY;
+	}
 
 	return STATUS_OK;
 }

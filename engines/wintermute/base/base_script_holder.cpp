@@ -75,10 +75,13 @@ void BaseScriptHolder::setFilename(const char *filename) {
 		delete[] _filename;
 		_filename = NULL;
 	}
-	if (filename == NULL)
+	if (filename == NULL) {
 		return;
+	}
 	_filename = new char [strlen(filename) + 1];
-	if (_filename != NULL) strcpy(_filename, filename);
+	if (_filename != NULL) {
+		strcpy(_filename, filename);
+	}
 }
 
 
@@ -97,7 +100,9 @@ bool BaseScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 			}
 		}
 	}
-	if (numHandlers > 0 && unbreakable) _gameRef->_scEngine->tickUnbreakable();
+	if (numHandlers > 0 && unbreakable) {
+		_gameRef->_scEngine->tickUnbreakable();
+	}
 
 	return ret;
 }
@@ -134,8 +139,11 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		bool ret;
 		ret = applyEvent(val->getString());
 
-		if (DID_SUCCEED(ret)) stack->pushBool(true);
-		else stack->pushBool(false);
+		if (DID_SUCCEED(ret)) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -206,7 +214,9 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		stack->pushBool(ret);
 
 		return STATUS_OK;
-	} else return BaseScriptable::scCallMethod(script, stack, thisStack, name);
+	} else {
+		return BaseScriptable::scCallMethod(script, stack, thisStack, name);
+	}
 }
 
 
@@ -236,9 +246,9 @@ ScValue *BaseScriptHolder::scGetProperty(const char *name) {
 	else if (strcmp(name, "Filename") == 0) {
 		_scValue->setString(_filename);
 		return _scValue;
+	} else {
+		return BaseScriptable::scGetProperty(name);
 	}
-
-	else return BaseScriptable::scGetProperty(name);
 }
 
 
@@ -250,7 +260,9 @@ bool BaseScriptHolder::scSetProperty(const char *name, ScValue *value) {
 	if (strcmp(name, "Name") == 0) {
 		setName(value->getString());
 		return STATUS_OK;
-	} else return BaseScriptable::scSetProperty(name, value);
+	} else {
+		return BaseScriptable::scSetProperty(name, value);
+	}
 }
 
 
@@ -334,7 +346,9 @@ bool BaseScriptHolder::removeScript(ScScript *script) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::canHandleEvent(const char *EventName) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) return true;
+		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -343,7 +357,9 @@ bool BaseScriptHolder::canHandleEvent(const char *EventName) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::canHandleMethod(const char *MethodName) {
 	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) return true;
+		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -382,15 +398,21 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 		case TOKEN_NAME:
 			delete[] propName;
 			propName = new char[strlen((char *)params) + 1];
-			if (propName) strcpy(propName, (char *)params);
-			else cmd = PARSERR_GENERIC;
+			if (propName) {
+				strcpy(propName, (char *)params);
+			} else {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_VALUE:
 			delete[] propValue;
 			propValue = new char[strlen((char *)params) + 1];
-			if (propValue) strcpy(propValue, (char *)params);
-			else cmd = PARSERR_GENERIC;
+			if (propValue) {
+				strcpy(propValue, (char *)params);
+			} else {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 		}
 
@@ -430,8 +452,9 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::makeFreezable(bool freezable) {
 	_freezable = freezable;
-	for (int i = 0; i < _scripts.getSize(); i++)
+	for (int i = 0; i < _scripts.getSize(); i++) {
 		_scripts[i]->_freezable = freezable;
+	}
 
 }
 

@@ -37,8 +37,9 @@ AnsiString PathUtil::unifySeparators(const AnsiString &path) {
 	AnsiString newPath = path;
 
 	for (uint32 i = 0; i < newPath.size(); i++) {
-		if (newPath[i] == '\\')
+		if (newPath[i] == '\\') {
 			newPath.setChar('/', i);
+		}
 	}
 
 	return newPath;
@@ -56,8 +57,9 @@ AnsiString PathUtil::combine(const AnsiString &path1, const AnsiString &path2) {
 	AnsiString newPath1 = unifySeparators(path1);
 	AnsiString newPath2 = unifySeparators(path2);
 
-	if (!StringUtil::endsWith(newPath1, "/", true) && !StringUtil::startsWith(newPath2, "/", true))
+	if (!StringUtil::endsWith(newPath1, "/", true) && !StringUtil::startsWith(newPath2, "/", true)) {
 		newPath1 += "/";
+	}
 
 	return newPath1 + newPath2;
 }
@@ -79,10 +81,11 @@ AnsiString PathUtil::getFileName(const AnsiString &path) {
 
 	//size_t pos = newPath.find_last_of(L'/'); TODO REMOVE.
 	Common::String lastPart = Common::lastPathComponent(newPath, '/');
-	if (lastPart[lastPart.size() - 1 ] != '/')
+	if (lastPart[lastPart.size() - 1 ] != '/') {
 		return lastPart;
-	else
+	} else {
 		return path;
+	}
 	//if (pos == AnsiString::npos) return path;
 	//else return newPath.substr(pos + 1);
 }
@@ -183,8 +186,9 @@ AnsiString PathUtil::getUserDirectory() {
 	if (error == noErr) {
 		char buffer[MAX_PATH_LENGTH];
 		error = FSRefMakePath(&fileRef, (UInt8 *)buffer, sizeof(buffer));
-		if (error == noErr)
+		if (error == noErr) {
 			userDir = buffer;
+		}
 
 	}
 #elif __IPHONEOS__

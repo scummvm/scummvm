@@ -53,7 +53,9 @@ BaseSaveThumbFile::~BaseSaveThumbFile() {
 bool BaseSaveThumbFile::open(const Common::String &filename) {
 	close();
 
-	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) != 0) return STATUS_FAILED;
+	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) != 0) {
+		return STATUS_FAILED;
+	}
 
 	char *tempFilename = new char[strlen(filename.c_str()) - 8];
 	strcpy(tempFilename, filename.c_str() + 9);
@@ -70,7 +72,9 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 
 	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	Common::String slotFilename = pm->getFilenameForSlot(slot);
-	if (!pm) return STATUS_FAILED;
+	if (!pm) {
+		return STATUS_FAILED;
+	}
 
 	if (DID_FAIL(pm->initLoad(slotFilename))) {
 		delete pm;
@@ -84,7 +88,9 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 		memcpy(_data, pm->_thumbnailData, pm->_thumbnailDataSize);
 		_size = pm->_thumbnailDataSize;
 		res = STATUS_OK;
-	} else res = STATUS_FAILED;
+	} else {
+		res = STATUS_FAILED;
+	}
 	delete pm;
 
 	return res;
@@ -105,7 +111,9 @@ bool BaseSaveThumbFile::close() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbFile::read(void *buffer, uint32 size) {
-	if (!_data || _pos + size > _size) return STATUS_FAILED;
+	if (!_data || _pos + size > _size) {
+		return STATUS_FAILED;
+	}
 
 	memcpy(buffer, (byte *)_data + _pos, size);
 	_pos += size;
@@ -116,7 +124,9 @@ bool BaseSaveThumbFile::read(void *buffer, uint32 size) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbFile::seek(uint32 pos, int whence) {
-	if (!_data) return STATUS_FAILED;
+	if (!_data) {
+		return STATUS_FAILED;
+	}
 
 	uint32 newPos = 0;
 
@@ -132,8 +142,11 @@ bool BaseSaveThumbFile::seek(uint32 pos, int whence) {
 		break;
 	}
 
-	if (newPos > _size) return STATUS_FAILED;
-	else _pos = newPos;
+	if (newPos > _size) {
+		return STATUS_FAILED;
+	} else {
+		_pos = newPos;
+	}
 
 	return STATUS_OK;
 }

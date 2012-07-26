@@ -51,10 +51,12 @@ BaseScriptable *makeSXFile(BaseGame *inGame, ScStack *stack) {
 //////////////////////////////////////////////////////////////////////////
 SXFile::SXFile(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 	stack->correctParams(1);
-	ScValue *Val = stack->pop();
+	ScValue *val = stack->pop();
 
 	_filename = NULL;
-	if (!Val->isNULL()) BaseUtils::setString(&_filename, Val->getString());
+	if (!val->isNULL()) {
+		BaseUtils::setString(&_filename, val->getString());
+	}
 
 	_readFile = NULL;
 	_writeFile = NULL;
@@ -94,8 +96,11 @@ void SXFile::close() {
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXFile::scToString() {
-	if (_filename) return _filename;
-	else return "[file object]";
+	if (_filename) {
+		return _filename;
+	} else {
+		return "[file object]";
+	}
 }
 
 #define FILE_BUFFER_SIZE 32768
@@ -129,24 +134,37 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			if (!_readFile) {
 				//script->runtimeError("File.%s: Error opening file '%s' for reading.", Name, _filename);
 				close();
-			} else _textMode = strcmp(name, "OpenAsText") == 0;
+			} else {
+				_textMode = strcmp(name, "OpenAsText") == 0;
+			}
 		} else {
 			if (strcmp(name, "OpenAsText") == 0) {
-				if (_mode == 2) _writeFile = openForWrite(_filename, false);
-				else _writeFile = openForAppend(_filename, false);
+				if (_mode == 2) {
+					_writeFile = openForWrite(_filename, false);
+				} else {
+					_writeFile = openForAppend(_filename, false);
+				}
 			} else {
-				if (_mode == 2) _writeFile = openForWrite(_filename, true);
-				else _writeFile = openForAppend(_filename, true);
+				if (_mode == 2) {
+					_writeFile = openForWrite(_filename, true);
+				} else {
+					_writeFile = openForAppend(_filename, true);
+				}
 			}
 
 			if (!_writeFile) {
 				//script->runtimeError("File.%s: Error opening file '%s' for writing.", Name, _filename);
 				close();
-			} else _textMode = strcmp(name, "OpenAsText") == 0;
+			} else {
+				_textMode = strcmp(name, "OpenAsText") == 0;
+			}
 		}
 
-		if (_readFile || _writeFile) stack->pushBool(true);
-		else stack->pushBool(false);
+		if (_readFile || _writeFile) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -221,7 +239,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		bool ret = STATUS_FAILED;
 		do {
 			ret = _readFile->read(&b, 1);
-			if (ret != 1) break;
+			if (ret != 1) {
+				break;
+			}
 
 			if (counter > bufSize) {
 				buf = (byte *)realloc(buf, bufSize + FILE_BUFFER_SIZE);
@@ -231,8 +251,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 				buf[counter] = '\0';
 				foundNewLine = true;
 				break;
-			} else if (b == 0x0D) continue;
-			else {
+			} else if (b == 0x0D) {
+				continue;
+			} else {
 				buf[counter] = b;
 				counter++;
 			}
@@ -244,8 +265,11 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 		buf[counter] = '\0';
 
-		if (!foundNewLine && counter == 0) stack->pushNULL();
-		else stack->pushString((char *)buf);
+		if (!foundNewLine && counter == 0) {
+			stack->pushNULL();
+		} else {
+			stack->pushString((char *)buf);
+		}
 
 		free(buf);
 
@@ -272,14 +296,17 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		bool ret = STATUS_FAILED;
 		while (counter < (uint32)textLen) {
 			ret = _readFile->read(&b, 1);
-			if (ret != 1) break;
+			if (ret != 1) {
+				break;
+			}
 
 			if (counter > bufSize) {
 				buf = (byte *)realloc(buf, bufSize + FILE_BUFFER_SIZE);
 				bufSize += FILE_BUFFER_SIZE;
 			}
-			if (b == 0x0D) continue;
-			else {
+			if (b == 0x0D) {
+				continue;
+			} else {
 				buf[counter] = b;
 				counter++;
 			}
@@ -291,8 +318,11 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 		buf[counter] = '\0';
 
-		if (textLen > 0 && counter == 0) stack->pushNULL();
-		else stack->pushString((char *)buf);
+		if (textLen > 0 && counter == 0) {
+			stack->pushNULL();
+		} else {
+			stack->pushString((char *)buf);
+		}
 
 		free(buf);
 
@@ -335,8 +365,11 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			return STATUS_OK;
 		}
 		bool val;
-		if (_readFile->read(&val, sizeof(bool)) == sizeof(bool)) stack->pushBool(val);
-		else stack->pushNULL();
+		if (_readFile->read(&val, sizeof(bool)) == sizeof(bool)) {
+			stack->pushBool(val);
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
 	}
@@ -355,8 +388,8 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (!_readFile->err()) {
 			stack->pushInt(val);
 		} else {
-			stack->pushNULL();	
-		} 
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
 	}
@@ -375,7 +408,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (!_readFile->err()) {
 			stack->pushInt(65536 + val);
 		} else {
-			stack->pushNULL();	
+			stack->pushNULL();
 		}
 		return STATUS_OK;
 	}
@@ -411,7 +444,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			return STATUS_OK;
 		}
 		float val;
-		(*(uint32*)&val) = _readFile->readUint32LE();
+		(*(uint32 *)&val) = _readFile->readUint32LE();
 		if (!_readFile->err()) {
 			stack->pushFloat(val);
 		} else {
@@ -433,8 +466,11 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			return STATUS_OK;
 		}
 		double val;
-		if (_readFile->read(&val, sizeof(double)) == sizeof(double)) stack->pushFloat(val);
-		else stack->pushNULL();
+		if (_readFile->read(&val, sizeof(double)) == sizeof(double)) {
+			stack->pushFloat(val);
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
 	}
@@ -458,8 +494,12 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 					stack->pushString((char *)str);
 				}
 				delete[] str;
-			} else stack->pushNULL();
-		} else stack->pushNULL();
+			} else {
+				stack->pushNULL();
+			}
+		} else {
+			stack->pushNULL();
+		}
 
 		return STATUS_OK;
 	}
@@ -548,7 +588,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
-		uint32 *ptr = (uint32*)&val;
+		uint32 *ptr = (uint32 *)&val;
 		_writeFile->writeUint32LE(*ptr);
 		stack->pushBool(true);
 
@@ -594,10 +634,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->pushBool(true);
 
 		return STATUS_OK;
+	} else {
+		return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 	}
-
-
-	else return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -651,9 +690,9 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	else if (strcmp(name, "AccessMode") == 0) {
 		_scValue->setInt(_mode);
 		return _scValue;
+	} else {
+		return BaseScriptable::scGetProperty(name);
 	}
-
-	else return BaseScriptable::scGetProperty(name);
 }
 
 
@@ -681,43 +720,46 @@ bool SXFile::scSetProperty(const char *name, ScValue *value) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 SXFile::getPos() {
-	if (_mode == 1 && _readFile)
+	if (_mode == 1 && _readFile) {
 		return _readFile->pos();
-	else if ((_mode == 2 || _mode == 3) && _writeFile) {
+	} else if ((_mode == 2 || _mode == 3) && _writeFile) {
 		error("SXFile - getPos for WriteFile not supported");
 		return 0;
 //		return ftell((FILE *)_writeFile);
-	} else { 
+	} else {
 		return 0;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool SXFile::setPos(uint32 pos, int whence) {
-	if (_mode == 1 && _readFile)
+	if (_mode == 1 && _readFile) {
 		return _readFile->seek(pos, whence);
-	else if ((_mode == 2 || _mode == 3) && _writeFile) {
+	} else if ((_mode == 2 || _mode == 3) && _writeFile) {
 		error("SXFile - seeking in WriteFile not supported");
 		return false;
 //		return fseek((FILE *)_writeFile, pos, (int)origin) == 0;
+	} else {
+		return false;
 	}
-	else return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 uint32 SXFile::getLength() {
-	if (_mode == 1 && _readFile)
+	if (_mode == 1 && _readFile) {
 		return _readFile->size();
-	else if ((_mode == 2 || _mode == 3) && _writeFile) {
+	} else if ((_mode == 2 || _mode == 3) && _writeFile) {
 		error("SXFile - reading length for WriteFile not supported");
 		return 0;
-/*
-		uint32 currentPos = ftell((FILE *)_writeFile);
-		fseek((FILE *)_writeFile, 0, SEEK_END);
-		int ret = ftell((FILE *)_writeFile);
-		fseek((FILE *)_writeFile, CurrentPos, SEEK_SET);
-		return Ret;*/
-	} else return 0;
+		/*
+		        uint32 currentPos = ftell((FILE *)_writeFile);
+		        fseek((FILE *)_writeFile, 0, SEEK_END);
+		        int ret = ftell((FILE *)_writeFile);
+		        fseek((FILE *)_writeFile, CurrentPos, SEEK_SET);
+		        return Ret;*/
+	} else {
+		return 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -744,24 +786,28 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 			// open for reading
 			if (_mode == 1) {
 				_readFile = _gameRef->_fileManager->openFile(_filename);
-				if (!_readFile)
+				if (!_readFile) {
 					close();
+				}
 			}
 			// open for writing / appending
 			else {
 				if (_textMode) {
-					if (_mode == 2)
+					if (_mode == 2) {
 						_writeFile = openForWrite(_filename, false);
-					else
+					} else {
 						_writeFile = openForAppend(_filename, false);
+					}
 				} else {
-					if (_mode == 2)
+					if (_mode == 2) {
 						_writeFile = openForWrite(_filename, true);
-					else
+					} else {
 						_writeFile = openForAppend(_filename, true);
+					}
 				}
-				if (_writeFile)
+				if (_writeFile) {
 					close();
+				}
 			}
 			setPos(pos);
 		}
@@ -777,7 +823,7 @@ Common::WriteStream *SXFile::openForWrite(const Common::String &filename, bool b
 
 // Should replace fopen(..., "ab+") and fopen(..., "a+")
 Common::WriteStream *SXFile::openForAppend(const Common::String &filename, bool binary) {
-	error("SXFile::openForAppend - WriteFiles not supported");	
+	error("SXFile::openForAppend - WriteFiles not supported");
 }
 
 } // end of namespace WinterMute

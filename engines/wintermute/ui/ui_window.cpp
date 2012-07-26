@@ -103,10 +103,16 @@ void UIWindow::cleanup() {
 	_viewport = NULL;
 
 	delete _backInactive;
-	if (!_sharedFonts && _fontInactive) _gameRef->_fontStorage->removeFont(_fontInactive);
-	if (!_sharedImages && _imageInactive) delete _imageInactive;
+	if (!_sharedFonts && _fontInactive) {
+		_gameRef->_fontStorage->removeFont(_fontInactive);
+	}
+	if (!_sharedImages && _imageInactive) {
+		delete _imageInactive;
+	}
 
-	for (int i = 0; i < _widgets.getSize(); i++) delete _widgets[i];
+	for (int i = 0; i < _widgets.getSize(); i++) {
+		delete _widgets[i];
+	}
 	_widgets.removeAll();
 }
 
@@ -115,7 +121,9 @@ void UIWindow::cleanup() {
 bool UIWindow::display(int offsetX, int offsetY) {
 	// go exclusive
 	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
-		if (!_shieldWindow) _shieldWindow = new UIWindow(_gameRef);
+		if (!_shieldWindow) {
+			_shieldWindow = new UIWindow(_gameRef);
+		}
 		if (_shieldWindow) {
 			_shieldWindow->_posX = _shieldWindow->_posY = 0;
 			_shieldWindow->_width = _gameRef->_renderer->_width;
@@ -139,8 +147,9 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		}
 	}
 
-	if (!_visible)
+	if (!_visible) {
 		return STATUS_OK;
+	}
 
 	if (_fadeBackground) {
 		Graphics::PixelFormat format = _gameRef->_renderer->getPixelFormat();
@@ -166,7 +175,9 @@ bool UIWindow::display(int offsetX, int offsetY) {
 
 	bool popViewport = false;
 	if (_clipContents) {
-		if (!_viewport) _viewport = new BaseViewport(_gameRef);
+		if (!_viewport) {
+			_viewport = new BaseViewport(_gameRef);
+		}
 		if (_viewport) {
 			_viewport->setRect(_posX + offsetX, _posY + offsetY, _posX + _width + offsetX, _posY + _height + offsetY);
 			_gameRef->pushViewport(_viewport);
@@ -180,34 +191,46 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	BaseFont *font = _font;
 
 	if (!isFocused()) {
-		if (_backInactive) back = _backInactive;
-		if (_imageInactive) image = _imageInactive;
-		if (_fontInactive) font = _fontInactive;
+		if (_backInactive) {
+			back = _backInactive;
+		}
+		if (_imageInactive) {
+			image = _imageInactive;
+		}
+		if (_fontInactive) {
+			font = _fontInactive;
+		}
 	}
 
-	if (_alphaColor != 0)
+	if (_alphaColor != 0) {
 		_gameRef->_renderer->_forceAlphaColor = _alphaColor;
-	if (back)
+	}
+	if (back) {
 		back->display(_posX + offsetX, _posY + offsetY, _width, _height);
-	if (image)
+	}
+	if (image) {
 		image->draw(_posX + offsetX, _posY + offsetY, _transparent ? NULL : this);
+	}
 
 	if (!BasePlatform::isRectEmpty(&_titleRect) && font && _text) {
 		font->drawText((byte *)_text, _posX + offsetX + _titleRect.left, _posY + offsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
-	if (!_transparent && !image)
+	if (!_transparent && !image) {
 		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+	}
 
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		_widgets[i]->display(_posX + offsetX, _posY + offsetY);
 	}
 
-	if (_alphaColor != 0)
+	if (_alphaColor != 0) {
 		_gameRef->_renderer->_forceAlphaColor = 0;
+	}
 
-	if (popViewport)
+	if (popViewport) {
 		_gameRef->popViewport();
+	}
 
 	return STATUS_OK;
 }
@@ -225,7 +248,9 @@ bool UIWindow::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing WINDOW file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing WINDOW file '%s'", filename);
+	}
 
 	delete[] buffer;
 
@@ -330,7 +355,9 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 	while (cmd >= PARSERR_TOKENNOTFOUND && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) >= PARSERR_TOKENNOTFOUND) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -382,15 +409,23 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			if (_font) _gameRef->_fontStorage->removeFont(_font);
+			if (_font) {
+				_gameRef->_fontStorage->removeFont(_font);
+			}
 			_font = _gameRef->_fontStorage->addFont((char *)params);
-			if (!_font) cmd = PARSERR_GENERIC;
+			if (!_font) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_FONT_INACTIVE:
-			if (_fontInactive) _gameRef->_fontStorage->removeFont(_fontInactive);
+			if (_fontInactive) {
+				_gameRef->_fontStorage->removeFont(_fontInactive);
+			}
 			_fontInactive = _gameRef->_fontStorage->addFont((char *)params);
-			if (!_fontInactive) cmd = PARSERR_GENERIC;
+			if (!_fontInactive) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_TITLE:
@@ -399,9 +434,13 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_TITLE_ALIGN:
-			if (scumm_stricmp((char *)params, "left") == 0) _titleAlign = TAL_LEFT;
-			else if (scumm_stricmp((char *)params, "right") == 0) _titleAlign = TAL_RIGHT;
-			else _titleAlign = TAL_CENTER;
+			if (scumm_stricmp((char *)params, "left") == 0) {
+				_titleAlign = TAL_LEFT;
+			} else if (scumm_stricmp((char *)params, "right") == 0) {
+				_titleAlign = TAL_RIGHT;
+			} else {
+				_titleAlign = TAL_CENTER;
+			}
 			break;
 
 		case TOKEN_TITLE_RECT:
@@ -572,8 +611,9 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 	}
 	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 
-	if (_fadeBackground)
+	if (_fadeBackground) {
 		_fadeColor = BYTETORGBA(fadeR, fadeG, fadeB, fadeA);
+	}
 
 	_focusedWidget = NULL;
 
@@ -590,28 +630,36 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->getFilename())
+	if (_back && _back->getFilename()) {
 		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->getFilename());
-	if (_backInactive && _backInactive->getFilename())
+	}
+	if (_backInactive && _backInactive->getFilename()) {
 		buffer->putTextIndent(indent + 2, "BACK_INACTIVE=\"%s\"\n", _backInactive->getFilename());
+	}
 
-	if (_image && _image->getFilename())
+	if (_image && _image->getFilename()) {
 		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getFilename());
-	if (_imageInactive && _imageInactive->getFilename())
+	}
+	if (_imageInactive && _imageInactive->getFilename()) {
 		buffer->putTextIndent(indent + 2, "IMAGE_INACTIVE=\"%s\"\n", _imageInactive->getFilename());
+	}
 
-	if (_font && _font->getFilename())
+	if (_font && _font->getFilename()) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
-	if (_fontInactive && _fontInactive->getFilename())
+	}
+	if (_fontInactive && _fontInactive->getFilename()) {
 		buffer->putTextIndent(indent + 2, "FONT_INACTIVE=\"%s\"\n", _fontInactive->getFilename());
+	}
 
-	if (_cursor && _cursor->getFilename())
+	if (_cursor && _cursor->getFilename()) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_text)
+	if (_text) {
 		buffer->putTextIndent(indent + 2, "TITLE=\"%s\"\n", _text);
+	}
 
 	switch (_titleAlign) {
 	case TAL_LEFT:
@@ -675,8 +723,9 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	BaseClass::saveAsText(buffer, indent + 2);
 
 	// controls
-	for (int i = 0; i < _widgets.getSize(); i++)
+	for (int i = 0; i < _widgets.getSize(); i++) {
 		_widgets[i]->saveAsText(buffer, indent + 2);
+	}
 
 
 	buffer->putTextIndent(indent, "}\n");
@@ -686,7 +735,9 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::enableWidget(const char *name, bool Enable) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
-		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) _widgets[i]->_disable = !Enable;
+		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
+			_widgets[i]->_disable = !Enable;
+		}
 	}
 	return STATUS_OK;
 }
@@ -695,7 +746,9 @@ bool UIWindow::enableWidget(const char *name, bool Enable) {
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::showWidget(const char *name, bool Visible) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
-		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) _widgets[i]->_visible = Visible;
+		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
+			_widgets[i]->_visible = Visible;
+		}
 	}
 	return STATUS_OK;
 }
@@ -713,8 +766,11 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 		if (val->getType() == VAL_INT) {
 			int widget = val->getInt();
-			if (widget < 0 || widget >= _widgets.getSize()) stack->pushNULL();
-			else stack->pushNative(_widgets[widget], true);
+			if (widget < 0 || widget >= _widgets.getSize()) {
+				stack->pushNULL();
+			} else {
+				stack->pushNative(_widgets[widget], true);
+			}
 		} else {
 			for (int i = 0; i < _widgets.getSize(); i++) {
 				if (scumm_stricmp(_widgets[i]->getName(), val->getString()) == 0) {
@@ -734,7 +790,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "SetInactiveFont") == 0) {
 		stack->correctParams(1);
 
-		if (_fontInactive) _gameRef->_fontStorage->removeFont(_fontInactive);
+		if (_fontInactive) {
+			_gameRef->_fontStorage->removeFont(_fontInactive);
+		}
 		_fontInactive = _gameRef->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontInactive != NULL);
 
@@ -754,7 +812,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			delete _imageInactive;
 			_imageInactive = NULL;
 			stack->pushBool(false);
-		} else stack->pushBool(true);
+		} else {
+			stack->pushBool(true);
+		}
 
 		return STATUS_OK;
 	}
@@ -764,8 +824,11 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetInactiveImage") == 0) {
 		stack->correctParams(0);
-		if (!_imageInactive || !_imageInactive->getFilename()) stack->pushNULL();
-		else stack->pushString(_imageInactive->getFilename());
+		if (!_imageInactive || !_imageInactive->getFilename()) {
+			stack->pushNULL();
+		} else {
+			stack->pushString(_imageInactive->getFilename());
+		}
 
 		return STATUS_OK;
 	}
@@ -775,8 +838,11 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetInactiveImageObject") == 0) {
 		stack->correctParams(0);
-		if (!_imageInactive) stack->pushNULL();
-		else stack->pushNative(_imageInactive, true);
+		if (!_imageInactive) {
+			stack->pushNULL();
+		} else {
+			stack->pushNative(_imageInactive, true);
+		}
 
 		return STATUS_OK;
 	}
@@ -834,7 +900,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		cleanup();
 		if (!val->isNULL()) {
 			stack->pushBool(DID_SUCCEED(loadFile(val->getString())));
-		} else stack->pushBool(true);
+		} else {
+			stack->pushBool(true);
+		}
 
 		return STATUS_OK;
 	}
@@ -847,7 +915,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		UIButton *btn = new UIButton(_gameRef);
-		if (!val->isNULL()) btn->setName(val->getString());
+		if (!val->isNULL()) {
+			btn->setName(val->getString());
+		}
 		stack->pushNative(btn, true);
 
 		btn->_parent = this;
@@ -864,7 +934,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		UIText *sta = new UIText(_gameRef);
-		if (!val->isNULL()) sta->setName(val->getString());
+		if (!val->isNULL()) {
+			sta->setName(val->getString());
+		}
 		stack->pushNative(sta, true);
 
 		sta->_parent = this;
@@ -881,7 +953,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		UIEdit *edi = new UIEdit(_gameRef);
-		if (!val->isNULL()) edi->setName(val->getString());
+		if (!val->isNULL()) {
+			edi->setName(val->getString());
+		}
 		stack->pushNative(edi, true);
 
 		edi->_parent = this;
@@ -898,7 +972,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		UIWindow *win = new UIWindow(_gameRef);
-		if (!val->isNULL()) win->setName(val->getString());
+		if (!val->isNULL()) {
+			win->setName(val->getString());
+		}
 		stack->pushNative(win, true);
 
 		win->_parent = this;
@@ -919,14 +995,20 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			if (_widgets[i] == obj) {
 				delete _widgets[i];
 				_widgets.removeAt(i);
-				if (val->getType() == VAL_VARIABLE_REF) val->setNULL();
+				if (val->getType() == VAL_VARIABLE_REF) {
+					val->setNULL();
+				}
 			}
 		}
 		stack->pushNULL();
 		return STATUS_OK;
-	} else if DID_SUCCEED(_gameRef->windowScriptMethodHook(this, script, stack, name)) return STATUS_OK;
+	} else if DID_SUCCEED(_gameRef->windowScriptMethodHook(this, script, stack, name)) {
+		return STATUS_OK;
+	}
 
-	else return UIObject::scCallMethod(script, stack, thisStack, name);
+	else {
+		return UIObject::scCallMethod(script, stack, thisStack, name);
+	}
 }
 
 
@@ -1012,9 +1094,9 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	else if (strcmp(name, "FadeColor") == 0) {
 		_scValue->setInt((int)_fadeColor);
 		return _scValue;
+	} else {
+		return UIObject::scGetProperty(name);
 	}
-
-	else return UIObject::scGetProperty(name);
 }
 
 
@@ -1081,9 +1163,9 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	// Exclusive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Exclusive") == 0) {
-		if (value->getBool())
+		if (value->getBool()) {
 			goExclusive();
-		else {
+		} else {
 			close();
 			_visible = true;
 		}
@@ -1094,16 +1176,16 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	// SystemExclusive
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SystemExclusive") == 0) {
-		if (value->getBool())
+		if (value->getBool()) {
 			goSystemExclusive();
-		else {
+		} else {
 			close();
 			_visible = true;
 		}
 		return STATUS_OK;
+	} else {
+		return UIObject::scSetProperty(name, value);
 	}
-
-	else return UIObject::scSetProperty(name, value);
 }
 
 
@@ -1119,8 +1201,11 @@ bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
 		return DID_SUCCEED(moveFocus(!BaseKeyboardState::isShiftDown()));
 	} else {
-		if (_focusedWidget) return _focusedWidget->handleKeypress(event, printable);
-		else return false;
+		if (_focusedWidget) {
+			return _focusedWidget->handleKeypress(event, printable);
+		} else {
+			return false;
+		}
 	}
 	return false;
 }
@@ -1128,8 +1213,11 @@ bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::handleMouseWheel(int Delta) {
-	if (_focusedWidget) return _focusedWidget->handleMouseWheel(Delta);
-	else return false;
+	if (_focusedWidget) {
+		return _focusedWidget->handleMouseWheel(Delta);
+	} else {
+		return false;
+	}
 }
 
 
@@ -1204,11 +1292,16 @@ bool UIWindow::moveFocus(bool forward) {
 			break;
 		}
 	}
-	if (!found) _focusedWidget = NULL;
+	if (!found) {
+		_focusedWidget = NULL;
+	}
 
 	if (!_focusedWidget) {
-		if (_widgets.getSize() > 0) i = 0;
-		else return STATUS_OK;
+		if (_widgets.getSize() > 0) {
+			i = 0;
+		} else {
+			return STATUS_OK;
+		}
 	}
 
 	int numTries = 0;
@@ -1223,10 +1316,14 @@ bool UIWindow::moveFocus(bool forward) {
 
 		if (forward) {
 			i++;
-			if (i >= _widgets.getSize()) i = 0;
+			if (i >= _widgets.getSize()) {
+				i = 0;
+			}
 		} else {
 			i--;
-			if (i < 0) i = _widgets.getSize() - 1;
+			if (i < 0) {
+				i = _widgets.getSize() - 1;
+			}
 		}
 		numTries++;
 	}
@@ -1237,7 +1334,9 @@ bool UIWindow::moveFocus(bool forward) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::goExclusive() {
-	if (_mode == WINDOW_EXCLUSIVE) return STATUS_OK;
+	if (_mode == WINDOW_EXCLUSIVE) {
+		return STATUS_OK;
+	}
 
 	if (_mode == WINDOW_NORMAL) {
 		_ready = false;
@@ -1246,13 +1345,17 @@ bool UIWindow::goExclusive() {
 		_disable = false;
 		_gameRef->focusWindow(this);
 		return STATUS_OK;
-	} else return STATUS_FAILED;
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::goSystemExclusive() {
-	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) return STATUS_OK;
+	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
+		return STATUS_OK;
+	}
 
 	makeFreezable(false);
 
@@ -1287,8 +1390,11 @@ bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
 
 	switch (obj->_type) {
 	case UI_BUTTON:
-		if (scumm_stricmp(obj->getName(), "close") == 0) close();
-		else return BaseObject::listen(param1, param2);
+		if (scumm_stricmp(obj->getName(), "close") == 0) {
+			close();
+		} else {
+			return BaseObject::listen(param1, param2);
+		}
 		break;
 	default:
 		return BaseObject::listen(param1, param2);
@@ -1300,8 +1406,9 @@ bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
 
 //////////////////////////////////////////////////////////////////////////
 void UIWindow::makeFreezable(bool freezable) {
-	for (int i = 0; i < _widgets.getSize(); i++)
+	for (int i = 0; i < _widgets.getSize(); i++) {
 		_widgets[i]->makeFreezable(freezable);
+	}
 
 	BaseObject::makeFreezable(freezable);
 }
@@ -1311,7 +1418,9 @@ void UIWindow::makeFreezable(bool freezable) {
 bool UIWindow::getWindowObjects(BaseArray<UIObject *, UIObject *> &objects, bool interactiveOnly) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		UIObject *control = _widgets[i];
-		if (control->_disable && interactiveOnly) continue;
+		if (control->_disable && interactiveOnly) {
+			continue;
+		}
 
 		switch (control->_type) {
 		case UI_WINDOW:
@@ -1324,7 +1433,9 @@ bool UIWindow::getWindowObjects(BaseArray<UIObject *, UIObject *> &objects, bool
 			break;
 
 		default:
-			if (!interactiveOnly) objects.add(control);
+			if (!interactiveOnly) {
+				objects.add(control);
+			}
 		}
 	}
 	return STATUS_OK;

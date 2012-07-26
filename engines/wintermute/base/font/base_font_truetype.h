@@ -67,7 +67,9 @@ private:
 		}
 
 		virtual ~BaseCachedTTFontText() {
-			if (_surface) delete _surface;
+			if (_surface) {
+				delete _surface;
+			}
 		}
 	};
 

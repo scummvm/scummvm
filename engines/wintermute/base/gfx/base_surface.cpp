@@ -54,7 +54,9 @@ BaseSurface::BaseSurface(BaseGame *inGame): BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 BaseSurface::~BaseSurface() {
-	if (_pixelOpReady) endPixelOp();
+	if (_pixelOpReady) {
+		endPixelOp();
+	}
 }
 
 
@@ -139,7 +141,9 @@ bool BaseSurface::prepareToDraw() {
 	if (!_valid) {
 		//_gameRef->LOG(0, "Reviving: %s", _filename);
 		return create(_filename.c_str(), _ckDefault, _ckRed, _ckGreen, _ckBlue, _lifeTime, _keepLoaded);
-	} else return STATUS_OK;
+	} else {
+		return STATUS_OK;
+	}
 }
 
 

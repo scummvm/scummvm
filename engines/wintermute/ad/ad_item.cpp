@@ -94,7 +94,9 @@ bool AdItem::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing ITEM file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing ITEM file '%s'", filename);
+	}
 
 
 	delete[] buffer;
@@ -178,7 +180,9 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_NAME:
@@ -186,7 +190,7 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_FONT:
-			SetFont((char *)params);
+			setFont((char *)params);
 			break;
 
 		case TOKEN_CAPTION:
@@ -230,9 +234,13 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_AMOUNT_ALIGN:
-			if (scumm_stricmp((char *)params, "left") == 0) _amountAlign = TAL_LEFT;
-			else if (scumm_stricmp((char *)params, "right") == 0) _amountAlign = TAL_RIGHT;
-			else _amountAlign = TAL_CENTER;
+			if (scumm_stricmp((char *)params, "left") == 0) {
+				_amountAlign = TAL_LEFT;
+			} else if (scumm_stricmp((char *)params, "right") == 0) {
+				_amountAlign = TAL_RIGHT;
+			} else {
+				_amountAlign = TAL_CENTER;
+			}
 			break;
 
 		case TOKEN_AMOUNT_STRING:
@@ -241,15 +249,21 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TALK: {
 			BaseSprite *spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((AdGame *)_gameRef)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSprites.add(spr);
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((AdGame *)_gameRef)->_texTalkLifeTime))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_talkSprites.add(spr);
+			}
 		}
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
 			BaseSprite *spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((AdGame *)_gameRef)->_texTalkLifeTime))) cmd = PARSERR_GENERIC;
-			else _talkSpritesEx.add(spr);
+			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((AdGame *)_gameRef)->_texTalkLifeTime))) {
+				cmd = PARSERR_GENERIC;
+			} else {
+				_talkSpritesEx.add(spr);
+			}
 		}
 		break;
 
@@ -331,10 +345,14 @@ bool AdItem::update() {
 		_currentSprite = _animSprite;
 	}
 
-	if (_sentence && _state != STATE_TALKING) _sentence->finish();
+	if (_sentence && _state != STATE_TALKING) {
+		_sentence->finish();
+	}
 
 	// default: stand animation
-	if (!_currentSprite) _currentSprite = _sprite;
+	if (!_currentSprite) {
+		_currentSprite = _sprite;
+	}
 
 	switch (_state) {
 		//////////////////////////////////////////////////////////////////////////
@@ -345,15 +363,20 @@ bool AdItem::update() {
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_READY:
 		if (!_animSprite) {
-			if (_gameRef->_activeObject == this && _spriteHover) _currentSprite = _spriteHover;
-			else _currentSprite = _sprite;
+			if (_gameRef->_activeObject == this && _spriteHover) {
+				_currentSprite = _spriteHover;
+			} else {
+				_currentSprite = _sprite;
+			}
 		}
 		break;
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TALKING: {
 		_sentence->update();
-		if (_sentence->_currentSprite) _tempSprite2 = _sentence->_currentSprite;
+		if (_sentence->_currentSprite) {
+			_tempSprite2 = _sentence->_currentSprite;
+		}
 
 		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
 		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
@@ -396,9 +419,11 @@ bool AdItem::display(int x, int y) {
 	_posY = y;
 
 	bool ret;
-	if (_currentSprite)
+	if (_currentSprite) {
 		ret = _currentSprite->draw(x, y, this, 100, 100, _alphaColor);
-	else ret = STATUS_OK;
+	} else {
+		ret = STATUS_OK;
+	}
 
 	if (_displayAmount) {
 		int amountX = x;
@@ -412,8 +437,9 @@ bool AdItem::display(int x, int y) {
 
 		BaseFont *font = _font ? _font : _gameRef->_systemFont;
 		if (font) {
-			if (_amountString) font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
-			else {
+			if (_amountString) {
+				font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
+			} else {
 				char Str[256];
 				sprintf(Str, "%d", _amount);
 				font->drawText((byte *)Str, amountX, amountY, width, _amountAlign);
@@ -436,7 +462,9 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(1);
 
 		bool setCurrent = false;
-		if (_currentSprite && _currentSprite == _spriteHover) setCurrent = true;
+		if (_currentSprite && _currentSprite == _spriteHover) {
+			setCurrent = true;
+		}
 
 		const char *filename = stack->pop()->getString();
 
@@ -448,7 +476,9 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			script->runtimeError("Item.SetHoverSprite failed for file '%s'", filename);
 		} else {
 			_spriteHover = spr;
-			if (setCurrent) _currentSprite = _spriteHover;
+			if (setCurrent) {
+				_currentSprite = _spriteHover;
+			}
 			stack->pushBool(true);
 		}
 		return STATUS_OK;
@@ -460,8 +490,11 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetHoverSprite") == 0) {
 		stack->correctParams(0);
 
-		if (!_spriteHover || !_spriteHover->getFilename()) stack->pushNULL();
-		else stack->pushString(_spriteHover->getFilename());
+		if (!_spriteHover || !_spriteHover->getFilename()) {
+			stack->pushNULL();
+		} else {
+			stack->pushString(_spriteHover->getFilename());
+		}
 		return STATUS_OK;
 	}
 
@@ -470,8 +503,11 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetHoverSpriteObject") == 0) {
 		stack->correctParams(0);
-		if (!_spriteHover) stack->pushNULL();
-		else stack->pushNative(_spriteHover, true);
+		if (!_spriteHover) {
+			stack->pushNULL();
+		} else {
+			stack->pushNative(_spriteHover, true);
+		}
 		return STATUS_OK;
 	}
 
@@ -502,8 +538,11 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetNormalCursor") == 0) {
 		stack->correctParams(0);
 
-		if (!_cursorNormal || !_cursorNormal->getFilename()) stack->pushNULL();
-		else stack->pushString(_cursorNormal->getFilename());
+		if (!_cursorNormal || !_cursorNormal->getFilename()) {
+			stack->pushNULL();
+		} else {
+			stack->pushString(_cursorNormal->getFilename());
+		}
 		return STATUS_OK;
 	}
 
@@ -513,8 +552,11 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetNormalCursorObject") == 0) {
 		stack->correctParams(0);
 
-		if (!_cursorNormal) stack->pushNULL();
-		else stack->pushNative(_cursorNormal, true);
+		if (!_cursorNormal) {
+			stack->pushNULL();
+		} else {
+			stack->pushNative(_cursorNormal, true);
+		}
 		return STATUS_OK;
 	}
 
@@ -545,8 +587,11 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetHoverCursor") == 0) {
 		stack->correctParams(0);
 
-		if (!_cursorHover || !_cursorHover->getFilename()) stack->pushNULL();
-		else stack->pushString(_cursorHover->getFilename());
+		if (!_cursorHover || !_cursorHover->getFilename()) {
+			stack->pushNULL();
+		} else {
+			stack->pushString(_cursorHover->getFilename());
+		}
 		return STATUS_OK;
 	}
 
@@ -556,12 +601,15 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetHoverCursorObject") == 0) {
 		stack->correctParams(0);
 
-		if (!_cursorHover) stack->pushNULL();
-		else stack->pushNative(_cursorHover, true);
+		if (!_cursorHover) {
+			stack->pushNULL();
+		} else {
+			stack->pushNative(_cursorHover, true);
+		}
 		return STATUS_OK;
+	} else {
+		return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -629,8 +677,11 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountString") == 0) {
-		if (!_amountString) _scValue->setNULL();
-		else _scValue->setString(_amountString);
+		if (!_amountString) {
+			_scValue->setNULL();
+		} else {
+			_scValue->setString(_amountString);
+		}
 		return _scValue;
 	}
 
@@ -640,9 +691,9 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	else if (strcmp(name, "CursorCombined") == 0) {
 		_scValue->setBool(_cursorCombined);
 		return _scValue;
+	} else {
+		return AdTalkHolder::scGetProperty(name);
 	}
-
-	else return AdTalkHolder::scGetProperty(name);
 }
 
 
@@ -715,9 +766,9 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "CursorCombined") == 0) {
 		_cursorCombined = value->getBool();
 		return STATUS_OK;
+	} else {
+		return AdTalkHolder::scSetProperty(name, value);
 	}
-
-	else return AdTalkHolder::scSetProperty(name, value);
 }
 
 
@@ -750,9 +801,13 @@ bool AdItem::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::getExtendedFlag(const char *flagName) {
-	if (!flagName) return false;
-	else if (strcmp(flagName, "usable") == 0) return true;
-	else return AdObject::getExtendedFlag(flagName);
+	if (!flagName) {
+		return false;
+	} else if (strcmp(flagName, "usable") == 0) {
+		return true;
+	} else {
+		return AdObject::getExtendedFlag(flagName);
+	}
 }
 
 } // end of namespace WinterMute

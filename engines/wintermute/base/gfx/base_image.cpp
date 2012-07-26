@@ -53,15 +53,11 @@ BaseImage::BaseImage(BaseFileManager *fileManager) {
 
 //////////////////////////////////////////////////////////////////////
 BaseImage::~BaseImage() {
-	/*  delete _bitmap; */
 	delete _decoder;
 	if (_deletableSurface) {
 		_deletableSurface->free();
 	}
 	delete _deletableSurface;
-#if 0
-	if (_bitmap) FreeImage_Unload(_bitmap);
-#endif
 }
 
 bool BaseImage::loadFile(const Common::String &filename) {
@@ -82,7 +78,9 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	}
 	_filename = filename;
 	Common::SeekableReadStream *file = _fileManager->openFile(filename.c_str());
-	if (!file) return false;
+	if (!file) {
+		return false;
+	}
 
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
@@ -93,7 +91,9 @@ bool BaseImage::loadFile(const Common::String &filename) {
 }
 
 byte BaseImage::getAlphaAt(int x, int y) const {
-	if (!_surface) return 0xFF;
+	if (!_surface) {
+		return 0xFF;
+	}
 	uint32 color = *(uint32 *)_surface->getBasePtr(x, y);
 	byte r, g, b, a;
 	_surface->format.colorToARGB(color, a, r, g, b);
@@ -107,12 +107,6 @@ void BaseImage::copyFrom(const Graphics::Surface *surface) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::saveBMPFile(const char *filename) const {
-#if 0
-	if (!_bitmap) return STATUS_FAILED;
-
-	if (FreeImage_Save(FIF_BMP, _bitmap, filename)) return STATUS_OK;
-	else return STATUS_FAILED;
-#endif
 	warning("BaseImage::saveBMPFile - stubbed"); // TODO
 	return false;
 }
@@ -121,10 +115,16 @@ bool BaseImage::saveBMPFile(const char *filename) const {
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::resize(int newWidth, int newHeight) {
 #if 0
-	if (!_bitmap) return STATUS_FAILED;
+	if (!_bitmap) {
+		return STATUS_FAILED;
+	}
 
-	if (newWidth == 0) NewWidth = FreeImage_GetWidth(_bitmap);
-	if (newHeight == 0) NewHeight = FreeImage_GetHeight(_bitmap);
+	if (newWidth == 0) {
+		NewWidth = FreeImage_GetWidth(_bitmap);
+	}
+	if (newHeight == 0) {
+		NewHeight = FreeImage_GetHeight(_bitmap);
+	}
 
 
 	FIBITMAP *newImg = FreeImage_Rescale(_bitmap, NewWidth, NewHeight, FILTER_BILINEAR);
@@ -132,7 +132,9 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 		FreeImage_Unload(_bitmap);
 		_bitmap = newImg;
 		return STATUS_OK;
-	} else return STATUS_FAILED;
+	} else {
+		return STATUS_FAILED;
+	}
 #endif
 	return false;
 }
@@ -140,7 +142,9 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
-	if (!_surface) return false;
+	if (!_surface) {
+		return false;
+	}
 
 	/* The following is just copied over and inverted to write-ops from the BMP-decoder */
 	stream->writeByte('B');
@@ -164,8 +168,9 @@ bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 	stream->writeUint32LE(width);
 	stream->writeUint32LE((uint32)height);
 
-	if (width == 0 || height == 0)
+	if (width == 0 || height == 0) {
 		return false;
+	}
 
 	if (height < 0) {
 		warning("Right-side up bitmaps not supported");
@@ -194,8 +199,9 @@ bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 
 	// BGRA for 24bpp
-	if (bitsPerPixel == 24)
+	if (bitsPerPixel == 24) {
 		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	}
 
 	Graphics::Surface *surface = _surface->convertTo(format);
 
@@ -219,36 +225,22 @@ bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 	surface->free();
 	delete surface;
 	return true;
-
-	//*BufferSize = 0;
-#if 0
-	FIMEMORY *fiMem = FreeImage_OpenMemory();
-	FreeImage_SaveToMemory(FIF_PNG, _bitmap, fiMem);
-	uint32 size;
-	byte *data;
-	FreeImage_AcquireMemory(fiMem, &data, &size);
-
-
-	byte *Buffer = new byte[size];
-	memcpy(Buffer, data, size);
-
-	FreeImage_CloseMemory(fiMem);
-
-	if (BufferSize) *BufferSize = size;
-
-	return Buffer;
-#endif
-	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 #if 0
-	if (_bitmap) FreeImage_Unload(_bitmap);
+	if (_bitmap) {
+		FreeImage_Unload(_bitmap);
+	}
 
-	if (NewWidth == 0) NewWidth = FreeImage_GetWidth(OrigImage->GetBitmap());
-	if (NewHeight == 0) NewHeight = FreeImage_GetHeight(OrigImage->GetBitmap());
+	if (NewWidth == 0) {
+		NewWidth = FreeImage_GetWidth(OrigImage->GetBitmap());
+	}
+	if (NewHeight == 0) {
+		NewHeight = FreeImage_GetHeight(OrigImage->GetBitmap());
+	}
 
 	_bitmap = FreeImage_Rescale(OrigImage->GetBitmap(), NewWidth, NewHeight, FILTER_BILINEAR);
 #endif

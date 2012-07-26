@@ -73,7 +73,7 @@ public:
 	virtual void talk(const char *text, const char *sound = NULL, uint32 duration = 0, const char *stances = NULL, TTextAlign align = TAL_CENTER);
 	virtual int getHeight();
 	AdSentence *_sentence;
-	bool SetFont(const char *filename);
+	bool setFont(const char *filename);
 	virtual bool update();
 	virtual bool display();
 	bool _drawn;

@@ -199,10 +199,9 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		g_system->getTimeAndDate(_tm);
 		stack->pushNULL();
 		return STATUS_OK;
-	}
-
-	else
+	} else {
 		return STATUS_FAILED;
+	}
 }
 
 
@@ -216,9 +215,9 @@ ScValue *SXDate::scGetProperty(const char *name) {
 	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("date");
 		return _scValue;
+	} else {
+		return _scValue;
 	}
-
-	else return _scValue;
 }
 
 

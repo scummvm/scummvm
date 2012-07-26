@@ -96,16 +96,22 @@ ScValue *ScStack::getPushValue() {
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::getTop() {
-	if (_sP < 0 || _sP >= _values.getSize()) return NULL;
-	else return _values[_sP];
+	if (_sP < 0 || _sP >= _values.getSize()) {
+		return NULL;
+	} else {
+		return _values[_sP];
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::getAt(int index) {
 	index = _sP - index;
-	if (index < 0 || index >= _values.getSize()) return NULL;
-	else return _values[index];
+	if (index < 0 || index >= _values.getSize()) {
+		return NULL;
+	} else {
+		return _values[index];
+	}
 }
 
 

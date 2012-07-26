@@ -35,7 +35,7 @@ IMPLEMENT_PERSISTENT(AdResponseContext, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdResponseContext::AdResponseContext(BaseGame *inGame): BaseClass(inGame) {
-	_iD = 0;
+	_id = 0;
 	_context = NULL;
 }
 
@@ -51,7 +51,7 @@ AdResponseContext::~AdResponseContext() {
 bool AdResponseContext::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_gameRef));
 	persistMgr->transfer(TMEMBER(_context));
-	persistMgr->transfer(TMEMBER(_iD));
+	persistMgr->transfer(TMEMBER(_id));
 
 	return STATUS_OK;
 }
@@ -62,7 +62,9 @@ void AdResponseContext::setContext(const char *context) {
 	_context = NULL;
 	if (context) {
 		_context = new char [strlen(context) + 1];
-		if (_context) strcpy(_context, context);
+		if (_context) {
+			strcpy(_context, context);
+		}
 	}
 }
 

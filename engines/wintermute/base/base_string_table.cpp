@@ -51,8 +51,9 @@ BaseStringTable::~BaseStringTable() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
-	if (key == NULL || val == NULL)
+	if (key == NULL || val == NULL) {
 		return STATUS_FAILED;
+	}
 
 	if (scumm_stricmp(key, "@right-to-left") == 0) {
 		_gameRef->_textRTL = true;
@@ -63,8 +64,9 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 	finalKey.toLowercase();
 
 	StringsIter it = _strings.find(finalKey);
-	if (it != _strings.end() && reportDuplicities)
+	if (it != _strings.end() && reportDuplicities) {
 		_gameRef->LOG(0, "  Warning: Duplicate definition of string '%s'.", finalKey.c_str());
+	}
 
 	_strings[finalKey] = val;
 
@@ -73,12 +75,14 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 
 //////////////////////////////////////////////////////////////////////////
 char *BaseStringTable::getKey(const char *str) const {
-	if (str == NULL || str[0] != '/')
+	if (str == NULL || str[0] != '/') {
 		return NULL;
+	}
 
 	const char *value = strchr(str + 1, '/');
-	if (value == NULL)
+	if (value == NULL) {
 		return NULL;
+	}
 
 	char *key = new char[value - str];
 	Common::strlcpy(key, str + 1, (size_t)(value - str));
@@ -107,12 +111,14 @@ char *BaseStringTable::getKey(const char *str) const {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseStringTable::expand(char **str) const {
-	if (str == NULL || *str == NULL || *str[0] != '/')
+	if (str == NULL || *str == NULL || *str[0] != '/') {
 		return;
+	}
 
 	char *value = strchr(*str + 1, '/');
-	if (value == NULL)
+	if (value == NULL) {
 		return;
+	}
 
 	char *key = new char[value - *str];
 	Common::strlcpy(key, *str + 1, (size_t)(value - *str));
@@ -136,19 +142,22 @@ void BaseStringTable::expand(char **str) const {
 	delete[] *str;
 	*str = newStr;
 
-	if (strlen(*str) > 0 && *str[0] == '/')
+	if (strlen(*str) > 0 && *str[0] == '/') {
 		expand(str);
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseStringTable::expandStatic(const char *string) const {
-	if (string == NULL || string[0] == '\0' || string[0] != '/')
+	if (string == NULL || string[0] == '\0' || string[0] != '/') {
 		return string;
+	}
 
 	const char *value = strchr(string + 1, '/');
-	if (value == NULL)
+	if (value == NULL) {
 		return string;
+	}
 
 	char *key = new char[value - string];
 	Common::strlcpy(key, string + 1, (size_t)(value - string - 1));
@@ -167,10 +176,11 @@ const char *BaseStringTable::expandStatic(const char *string) const {
 
 	delete[] key;
 
-	if (strlen(newStr) > 0 && newStr[0] == '/')
+	if (strlen(newStr) > 0 && newStr[0] == '/') {
 		return expandStatic(newStr);
-	else
+	} else {
 		return newStr;
+	}
 }
 
 
@@ -178,8 +188,9 @@ const char *BaseStringTable::expandStatic(const char *string) const {
 bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	_gameRef->LOG(0, "Loading string table...");
 
-	if (clearOld)
+	if (clearOld) {
 		_strings.clear();
+	}
 
 	uint32 size;
 	byte *buffer = _gameRef->_fileManager->readWholeFile(filename, &size);
@@ -197,27 +208,33 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 			//_gameRef->_textEncoding = TEXT_ANSI;
 			_gameRef->LOG(0, "  UTF8 file detected, switching to UTF8 text encoding");
 		}
-	} else _gameRef->_textEncoding = TEXT_ANSI;
+	} else {
+		_gameRef->_textEncoding = TEXT_ANSI;
+	}
 
 	uint32 lineLength = 0;
 	while (pos < size) {
 		lineLength = 0;
-		while (pos + lineLength < size && buffer[pos + lineLength] != '\n' && buffer[pos + lineLength] != '\0')
+		while (pos + lineLength < size && buffer[pos + lineLength] != '\n' && buffer[pos + lineLength] != '\0') {
 			lineLength++;
+		}
 
 		uint32 realLength = lineLength - (pos + lineLength >= size ? 0 : 1);
 		char *line = new char[realLength + 1];
 		Common::strlcpy(line, (char *)&buffer[pos], realLength + 1);
 		char *value = strchr(line, '\t');
-		if (value == NULL) value = strchr(line, ' ');
+		if (value == NULL) {
+			value = strchr(line, ' ');
+		}
 
 		if (line[0] != ';') {
 			if (value != NULL) {
 				value[0] = '\0';
 				value++;
 				for (uint32 i = 0; i < strlen(value); i++) {
-					if (value[i] == '|')
+					if (value[i] == '|') {
 						value[i] = '\n';
+					}
 				}
 				addString(line, value, clearOld);
 			} else if (line[0] != '\0') {

@@ -81,8 +81,12 @@ AdResponseBox::~AdResponseBox() {
 	delete[] _lastResponseTextOrig;
 	_lastResponseTextOrig = NULL;
 
-	if (_font) _gameRef->_fontStorage->removeFont(_font);
-	if (_fontHover) _gameRef->_fontStorage->removeFont(_fontHover);
+	if (_font) {
+		_gameRef->_fontStorage->removeFont(_font);
+	}
+	if (_fontHover) {
+		_gameRef->_fontStorage->removeFont(_fontHover);
+	}
 
 	clearResponses();
 	clearButtons();
@@ -137,12 +141,19 @@ bool AdResponseBox::createButtons() {
 			// iconic
 			if (_responses[i]->_icon) {
 				btn->_image = _responses[i]->_icon;
-				if (_responses[i]->_iconHover)   btn->_imageHover = _responses[i]->_iconHover;
-				if (_responses[i]->_iconPressed) btn->_imagePress = _responses[i]->_iconPressed;
+				if (_responses[i]->_iconHover) {
+					btn->_imageHover = _responses[i]->_iconHover;
+				}
+				if (_responses[i]->_iconPressed) {
+					btn->_imagePress = _responses[i]->_iconPressed;
+				}
 
 				btn->setCaption(_responses[i]->_text);
-				if (_cursor) btn->_cursor = _cursor;
-				else if (_gameRef->_activeCursor) btn->_cursor = _gameRef->_activeCursor;
+				if (_cursor) {
+					btn->_cursor = _cursor;
+				} else if (_gameRef->_activeCursor) {
+					btn->_cursor = _gameRef->_activeCursor;
+				}
 			}
 			// textual
 			else {
@@ -152,21 +163,27 @@ bool AdResponseBox::createButtons() {
 				btn->_fontPress = btn->_fontHover;
 				btn->_align = _align;
 
-				if (_gameRef->_touchInterface)
+				if (_gameRef->_touchInterface) {
 					btn->_fontHover = btn->_font;
+				}
 
 
-				if (_responses[i]->_font) btn->_font = _responses[i]->_font;
+				if (_responses[i]->_font) {
+					btn->_font = _responses[i]->_font;
+				}
 
 				btn->_width = _responseArea.right - _responseArea.left;
-				if (btn->_width <= 0) btn->_width = _gameRef->_renderer->_width;
+				if (btn->_width <= 0) {
+					btn->_width = _gameRef->_renderer->_width;
+				}
 			}
 			btn->setName("response");
 			btn->correctSize();
 
 			// make the responses touchable
-			if (_gameRef->_touchInterface)
+			if (_gameRef->_touchInterface) {
 				btn->_height = MAX(btn->_height, 50);
+			}
 
 			//btn->SetListener(this, btn, _responses[i]->_iD);
 			btn->setListener(this, btn, i);
@@ -197,7 +214,9 @@ bool AdResponseBox::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
+	}
 
 
 	delete[] buffer;
@@ -253,7 +272,9 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_WINDOW:
@@ -263,19 +284,29 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 				delete _window;
 				_window = NULL;
 				cmd = PARSERR_GENERIC;
-			} else if (_shieldWindow) _shieldWindow->_parent = _window;
+			} else if (_shieldWindow) {
+				_shieldWindow->_parent = _window;
+			}
 			break;
 
 		case TOKEN_FONT:
-			if (_font) _gameRef->_fontStorage->removeFont(_font);
+			if (_font) {
+				_gameRef->_fontStorage->removeFont(_font);
+			}
 			_font = _gameRef->_fontStorage->addFont((char *)params);
-			if (!_font) cmd = PARSERR_GENERIC;
+			if (!_font) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_FONT_HOVER:
-			if (_fontHover) _gameRef->_fontStorage->removeFont(_fontHover);
+			if (_fontHover) {
+				_gameRef->_fontStorage->removeFont(_fontHover);
+			}
 			_fontHover = _gameRef->_fontStorage->addFont((char *)params);
-			if (!_fontHover) cmd = PARSERR_GENERIC;
+			if (!_fontHover) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_AREA:
@@ -287,15 +318,23 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_TEXT_ALIGN:
-			if (scumm_stricmp((char *)params, "center") == 0) _align = TAL_CENTER;
-			else if (scumm_stricmp((char *)params, "right") == 0) _align = TAL_RIGHT;
-			else _align = TAL_LEFT;
+			if (scumm_stricmp((char *)params, "center") == 0) {
+				_align = TAL_CENTER;
+			} else if (scumm_stricmp((char *)params, "right") == 0) {
+				_align = TAL_RIGHT;
+			} else {
+				_align = TAL_LEFT;
+			}
 			break;
 
 		case TOKEN_VERTICAL_ALIGN:
-			if (scumm_stricmp((char *)params, "top") == 0) _verticalAlign = VAL_TOP;
-			else if (scumm_stricmp((char *)params, "center") == 0) _verticalAlign = VAL_CENTER;
-			else _verticalAlign = VAL_BOTTOM;
+			if (scumm_stricmp((char *)params, "top") == 0) {
+				_verticalAlign = VAL_TOP;
+			} else if (scumm_stricmp((char *)params, "center") == 0) {
+				_verticalAlign = VAL_CENTER;
+			} else {
+				_verticalAlign = VAL_BOTTOM;
+			}
 			break;
 
 		case TOKEN_SPACING:
@@ -324,8 +363,9 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 
 	if (_window) {
 		for (int i = 0; i < _window->_widgets.getSize(); i++) {
-			if (!_window->_widgets[i]->_listenerObject)
+			if (!_window->_widgets[i]->_listenerObject) {
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
+			}
 		}
 	}
 
@@ -339,13 +379,16 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "AREA { %d, %d, %d, %d }\n", _responseArea.left, _responseArea.top, _responseArea.right, _responseArea.bottom);
 
-	if (_font && _font->getFilename())
+	if (_font && _font->getFilename()) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
-	if (_fontHover && _fontHover->getFilename())
+	}
+	if (_fontHover && _fontHover->getFilename()) {
 		buffer->putTextIndent(indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->getFilename());
+	}
 
-	if (_cursor && _cursor->getFilename())
+	if (_cursor && _cursor->getFilename()) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	}
 
 	buffer->putTextIndent(indent + 2, "HORIZONTAL=%s\n", _horizontal ? "TRUE" : "FALSE");
 
@@ -381,7 +424,9 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// window
-	if (_window) _window->saveAsText(buffer, indent + 2);
+	if (_window) {
+		_window->saveAsText(buffer, indent + 2);
+	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 
@@ -409,18 +454,22 @@ bool AdResponseBox::display() {
 	// shift down if needed
 	if (!_horizontal) {
 		int total_height = 0;
-		for (i = 0; i < _respButtons.getSize(); i++) total_height += (_respButtons[i]->_height + _spacing);
+		for (i = 0; i < _respButtons.getSize(); i++) {
+			total_height += (_respButtons[i]->_height + _spacing);
+		}
 		total_height -= _spacing;
 
 		switch (_verticalAlign) {
 		case VAL_BOTTOM:
-			if (yyy + total_height < rect.bottom)
+			if (yyy + total_height < rect.bottom) {
 				yyy = rect.bottom - total_height;
+			}
 			break;
 
 		case VAL_CENTER:
-			if (yyy + total_height < rect.bottom)
+			if (yyy + total_height < rect.bottom) {
 				yyy += ((rect.bottom - rect.top) - total_height) / 2;
+			}
 			break;
 
 		case VAL_TOP:
@@ -467,7 +516,9 @@ bool AdResponseBox::display() {
 	}
 
 	// display window
-	if (_window) _window->display();
+	if (_window) {
+		_window->display();
+	}
 
 
 	// display response buttons
@@ -490,7 +541,9 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 		} else if (scumm_stricmp(obj->getName(), "next") == 0) {
 			_scrollOffset++;
 		} else if (scumm_stricmp(obj->getName(), "response") == 0) {
-			if (_waitingScript) _waitingScript->_stack->pushInt(_responses[param2]->_iD);
+			if (_waitingScript) {
+				_waitingScript->_stack->pushInt(_responses[param2]->_iD);
+			}
 			handleResponse(_responses[param2]);
 			_waitingScript = NULL;
 			_gameRef->_state = GAME_RUNNING;
@@ -498,7 +551,9 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 			_ready = true;
 			invalidateButtons();
 			clearResponses();
-		} else return BaseObject::listen(param1, param2);
+		} else {
+			return BaseObject::listen(param1, param2);
+		}
 		break;
 	default:
 		error("AdResponseBox::Listen - Unhandled enum");
@@ -597,13 +652,17 @@ BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {
 	BaseArray<UIObject *, UIObject *> objects;
 	getObjects(objects, true);
 
-	if (objects.getSize() == 0) return NULL;
-	else {
+	if (objects.getSize() == 0) {
+		return NULL;
+	} else {
 		if (currObject != NULL) {
 			for (int i = 0; i < objects.getSize(); i++) {
 				if (objects[i] == currObject) {
-					if (i < objects.getSize() - 1) return objects[i + 1];
-					else break;
+					if (i < objects.getSize() - 1) {
+						return objects[i + 1];
+					} else {
+						break;
+					}
 				}
 			}
 		}
@@ -617,13 +676,17 @@ BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
 	BaseArray<UIObject *, UIObject *> objects;
 	getObjects(objects, true);
 
-	if (objects.getSize() == 0) return NULL;
-	else {
+	if (objects.getSize() == 0) {
+		return NULL;
+	} else {
 		if (currObject != NULL) {
 			for (int i = objects.getSize() - 1; i >= 0; i--) {
 				if (objects[i] == currObject) {
-					if (i > 0) return objects[i - 1];
-					else break;
+					if (i > 0) {
+						return objects[i - 1];
+					} else {
+						break;
+					}
 				}
 			}
 		}
@@ -637,7 +700,9 @@ bool AdResponseBox::getObjects(BaseArray<UIObject *, UIObject *> &objects, bool 
 	for (int i = 0; i < _respButtons.getSize(); i++) {
 		objects.add(_respButtons[i]);
 	}
-	if (_window) _window->getWindowObjects(objects, interactiveOnly);
+	if (_window) {
+		_window->getWindowObjects(objects, interactiveOnly);
+	}
 
 	return STATUS_OK;
 }

@@ -61,13 +61,17 @@ SXString::SXString(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 		setStringVal(val->getString());
 	}
 
-	if (_capacity == 0) setStringVal("");
+	if (_capacity == 0) {
+		setStringVal("");
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 SXString::~SXString() {
-	if (_string) delete[] _string;
+	if (_string) {
+		delete[] _string;
+	}
 }
 
 
@@ -87,8 +91,11 @@ void SXString::setStringVal(const char *val) {
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXString::scToString() {
-	if (_string) return _string;
-	else return "[null string]";
+	if (_string) {
+		return _string;
+	} else {
+		return "[null string]";
+	}
 }
 
 
@@ -108,22 +115,26 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int start = stack->pop()->getInt();
 		int end   = stack->pop()->getInt();
 
-		if (end < start) BaseUtils::swap(&start, &end);
+		if (end < start) {
+			BaseUtils::swap(&start, &end);
+		}
 
 		//try {
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
-		else
+		} else {
 			str = StringUtil::ansiToWide(_string);
+		}
 
 		//WideString subStr = str.substr(start, end - start + 1);
 		WideString subStr(str.c_str() + start, end - start + 1);
 
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(subStr).c_str());
-		else
+		} else {
 			stack->pushString(StringUtil::wideToAnsi(subStr).c_str());
+		}
 		//  } catch (std::exception &) {
 		//      stack->pushNULL();
 		//  }
@@ -146,22 +157,26 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			return STATUS_OK;
 		}
 
-		if (val->isNULL()) len = strlen(_string) - start;
+		if (val->isNULL()) {
+			len = strlen(_string) - start;
+		}
 
 //		try {
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
-		else
+		} else {
 			str = StringUtil::ansiToWide(_string);
+		}
 
 //			WideString subStr = str.substr(start, len);
 		WideString subStr(str.c_str() + start, len);
 
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(subStr).c_str());
-		else
+		} else {
 			stack->pushString(StringUtil::wideToAnsi(subStr).c_str());
+		}
 //		} catch (std::exception &) {
 //			stack->pushNULL();
 //		}
@@ -176,17 +191,19 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(0);
 
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
-		else
+		} else {
 			str = StringUtil::ansiToWide(_string);
+		}
 
 		str.toUppercase();
 
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(str).c_str());
-		else
+		} else {
 			stack->pushString(StringUtil::wideToAnsi(str).c_str());
+		}
 
 		return STATUS_OK;
 	}
@@ -198,17 +215,19 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(0);
 
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
-		else
+		} else {
 			str = StringUtil::ansiToWide(_string);
+		}
 
 		str.toLowercase();
 
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(str).c_str());
-		else
+		} else {
 			stack->pushString(StringUtil::wideToAnsi(str).c_str());
+		}
 
 		return STATUS_OK;
 	}
@@ -223,16 +242,18 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int index = stack->pop()->getInt();
 
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
-		else
+		} else {
 			str = StringUtil::ansiToWide(_string);
+		}
 
 		WideString toFind;
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			toFind = StringUtil::utf8ToWide(strToFind);
-		else
+		} else {
 			toFind = StringUtil::ansiToWide(strToFind);
+		}
 
 		int indexOf = StringUtil::indexOf(str, toFind, index);
 		stack->pushInt(indexOf);
@@ -247,7 +268,9 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		char separators[MAX_PATH_LENGTH] = ",";
-		if (!val->isNULL()) strcpy(separators, val->getString());
+		if (!val->isNULL()) {
+			strcpy(separators, val->getString());
+		}
 
 		SXArray *array = new SXArray(_gameRef);
 		if (!array) {
@@ -257,16 +280,18 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
-		else
+		} else {
 			str = StringUtil::ansiToWide(_string);
+		}
 
 		WideString delims;
-		if (_gameRef->_textEncoding == TEXT_UTF8)
+		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			delims = StringUtil::utf8ToWide(separators);
-		else
+		} else {
 			delims = StringUtil::ansiToWide(separators);
+		}
 
 		Common::Array<WideString> parts;
 
@@ -298,10 +323,11 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		for (Common::Array<WideString>::iterator it = parts.begin(); it != parts.end(); ++it) {
 			WideString &part = (*it);
 
-			if (_gameRef->_textEncoding == TEXT_UTF8)
+			if (_gameRef->_textEncoding == TEXT_UTF8) {
 				val = new ScValue(_gameRef,  StringUtil::wideToUtf8(part).c_str());
-			else
+			} else {
 				val = new ScValue(_gameRef,  StringUtil::wideToAnsi(part).c_str());
+			}
 
 			array->push(val);
 			delete val;
@@ -310,9 +336,9 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		stack->pushNative(array, false);
 		return STATUS_OK;
+	} else {
+		return STATUS_FAILED;
 	}
-
-	else return STATUS_FAILED;
 }
 
 
@@ -334,8 +360,9 @@ ScValue *SXString::scGetProperty(const char *name) {
 		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::utf8ToWide(_string);
 			_scValue->setInt(wstr.size());
-		} else
+		} else {
 			_scValue->setInt(strlen(_string));
+		}
 
 		return _scValue;
 	}
@@ -345,9 +372,9 @@ ScValue *SXString::scGetProperty(const char *name) {
 	else if (strcmp(name, "Capacity") == 0) {
 		_scValue->setInt(_capacity);
 		return _scValue;
+	} else {
+		return _scValue;
 	}
-
-	else return _scValue;
 }
 
 
@@ -358,8 +385,9 @@ bool SXString::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Capacity") == 0) {
 		int32 newCap = (uint32)value->getInt();
-		if (newCap < (int32)(strlen(_string) + 1)) _gameRef->LOG(0, "Warning: cannot lower string capacity");
-		else if (newCap != _capacity) {
+		if (newCap < (int32)(strlen(_string) + 1)) {
+			_gameRef->LOG(0, "Warning: cannot lower string capacity");
+		} else if (newCap != _capacity) {
 			char *newStr = new char[newCap];
 			if (newStr) {
 				memset(newStr, 0, newCap);
@@ -370,9 +398,9 @@ bool SXString::scSetProperty(const char *name, ScValue *value) {
 			}
 		}
 		return STATUS_OK;
+	} else {
+		return STATUS_FAILED;
 	}
-
-	else return STATUS_FAILED;
 }
 
 
@@ -384,12 +412,16 @@ bool SXString::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_capacity));
 
 	if (persistMgr->getIsSaving()) {
-		if (_capacity > 0) persistMgr->putBytes((byte *)_string, _capacity);
+		if (_capacity > 0) {
+			persistMgr->putBytes((byte *)_string, _capacity);
+		}
 	} else {
 		if (_capacity > 0) {
 			_string = new char[_capacity];
 			persistMgr->getBytes((byte *)_string, _capacity);
-		} else _string = NULL;
+		} else {
+			_string = NULL;
+		}
 	}
 
 	return STATUS_OK;

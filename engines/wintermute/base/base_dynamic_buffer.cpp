@@ -53,7 +53,9 @@ BaseDynamicBuffer::~BaseDynamicBuffer() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::cleanup() {
-	if (_buffer) free(_buffer);
+	if (_buffer) {
+		free(_buffer);
+	}
 	_buffer = NULL;
 	_size = 0;
 	_realSize = 0;
@@ -72,7 +74,9 @@ uint32 BaseDynamicBuffer::getSize() {
 bool BaseDynamicBuffer::init(uint32 initSize) {
 	cleanup();
 
-	if (initSize == 0) initSize = _initSize;
+	if (initSize == 0) {
+		initSize = _initSize;
+	}
 
 	_buffer = (byte *)malloc(initSize);
 	if (!_buffer) {
@@ -89,7 +93,9 @@ bool BaseDynamicBuffer::init(uint32 initSize) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseDynamicBuffer::putBytes(byte *buffer, uint32 size) {
-	if (!_initialized) init();
+	if (!_initialized) {
+		init();
+	}
 
 	while (_offset + size > _realSize) {
 		_realSize += _growBy;
@@ -110,7 +116,9 @@ bool BaseDynamicBuffer::putBytes(byte *buffer, uint32 size) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseDynamicBuffer::getBytes(byte *buffer, uint32 size) {
-	if (!_initialized) init();
+	if (!_initialized) {
+		init();
+	}
 
 	if (_offset + size > _size) {
 		_gameRef->LOG(0, "BaseDynamicBuffer::GetBytes - Buffer underflow");
@@ -140,8 +148,9 @@ uint32 BaseDynamicBuffer::getDWORD() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putString(const char *val) {
-	if (!val) putString("(null)");
-	else {
+	if (!val) {
+		putString("(null)");
+	} else {
 		putDWORD(strlen(val) + 1);
 		putBytes((byte *)val, strlen(val) + 1);
 	}
@@ -154,8 +163,11 @@ char *BaseDynamicBuffer::getString() {
 	char *ret = (char *)(_buffer + _offset);
 	_offset += len;
 
-	if (!strcmp(ret, "(null)")) return NULL;
-	else return ret;
+	if (!strcmp(ret, "(null)")) {
+		return NULL;
+	} else {
+		return ret;
+	}
 }
 
 

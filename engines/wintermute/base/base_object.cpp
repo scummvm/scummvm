@@ -85,8 +85,9 @@ BaseObject::BaseObject(BaseGame *inGame): BaseScriptHolder(inGame) {
 	_rotateValid = false;
 	_relativeRotate = 0.0f;
 
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 7; i++) {
 		_caption[i] = NULL;
+	}
 	_saveState = true;
 
 	_nonIntMouseEvents = false;
@@ -107,8 +108,9 @@ BaseObject::~BaseObject() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::cleanup() {
-	if (_gameRef && _gameRef->_activeObject == this)
+	if (_gameRef && _gameRef->_activeObject == this) {
 		_gameRef->_activeObject = NULL;
+	}
 
 	BaseScriptHolder::cleanup();
 	delete[] _soundEvent;
@@ -137,9 +139,12 @@ bool BaseObject::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseObject::setCaption(const char *caption, int caseVal) { // TODO: rename Case to something usefull
-	if (caseVal == 0) caseVal = 1;
-	if (caseVal < 1 || caseVal > 7)
+	if (caseVal == 0) {
+		caseVal = 1;
+	}
+	if (caseVal < 1 || caseVal > 7) {
 		return;
+	}
 
 	delete[] _caption[caseVal - 1];
 	_caption[caseVal - 1] = new char[strlen(caption) + 1];
@@ -152,10 +157,14 @@ void BaseObject::setCaption(const char *caption, int caseVal) { // TODO: rename 
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseObject::getCaption(int caseVal) {
-	if (caseVal == 0) caseVal = 1;
-	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL)
+	if (caseVal == 0) {
+		caseVal = 1;
+	}
+	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL) {
 		return "";
-	else return _caption[caseVal - 1];
+	} else {
+		return _caption[caseVal - 1];
+	}
 }
 
 
@@ -198,8 +207,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetCursor") == 0) {
 		stack->correctParams(1);
-		if (DID_SUCCEED(setCursor(stack->pop()->getString()))) stack->pushBool(true);
-		else stack->pushBool(false);
+		if (DID_SUCCEED(setCursor(stack->pop()->getString()))) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -226,8 +238,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetCursor") == 0) {
 		stack->correctParams(0);
-		if (!_cursor || !_cursor->getFilename()) stack->pushNULL();
-		else stack->pushString(_cursor->getFilename());
+		if (!_cursor || !_cursor->getFilename()) {
+			stack->pushNULL();
+		} else {
+			stack->pushString(_cursor->getFilename());
+		}
 
 		return STATUS_OK;
 	}
@@ -237,8 +252,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetCursorObject") == 0) {
 		stack->correctParams(0);
-		if (!_cursor) stack->pushNULL();
-		else stack->pushNative(_cursor, true);
+		if (!_cursor) {
+			stack->pushNULL();
+		} else {
+			stack->pushNative(_cursor, true);
+		}
 
 		return STATUS_OK;
 	}
@@ -249,8 +267,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "HasCursor") == 0) {
 		stack->correctParams(0);
 
-		if (_cursor) stack->pushBool(true);
-		else stack->pushBool(false);
+		if (_cursor) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -272,10 +293,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "LoadSound") == 0) {
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
-		if (DID_SUCCEED(playSFX(filename, false, false)))
+		if (DID_SUCCEED(playSFX(filename, false, false))) {
 			stack->pushBool(true);
-		else
+		} else {
 			stack->pushBool(false);
+		}
 
 		return STATUS_OK;
 	}
@@ -299,15 +321,20 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			looping = val1->getBool();
 			loopStart = val2->getInt();
 		} else {
-			if (val1->isNULL()) filename = NULL;
-			else filename = val1->getString();
+			if (val1->isNULL()) {
+				filename = NULL;
+			} else {
+				filename = val1->getString();
+			}
 			looping = val2->isNULL() ? false : val2->getBool();
 			loopStart = val3->getInt();
 		}
 
-		if (DID_FAIL(playSFX(filename, looping, true, NULL, loopStart)))
+		if (DID_FAIL(playSFX(filename, looping, true, NULL, loopStart))) {
 			stack->pushBool(false);
-		else stack->pushBool(true);
+		} else {
+			stack->pushBool(true);
+		}
 		return STATUS_OK;
 	}
 
@@ -331,8 +358,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			eventName = val2->getString();
 		}
 
-		if (DID_FAIL(playSFX(filename, false, true, eventName))) stack->pushBool(false);
-		else stack->pushBool(true);
+		if (DID_FAIL(playSFX(filename, false, true, eventName))) {
+			stack->pushBool(false);
+		} else {
+			stack->pushBool(true);
+		}
 		return STATUS_OK;
 	}
 
@@ -342,8 +372,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "StopSound") == 0) {
 		stack->correctParams(0);
 
-		if (DID_FAIL(stopSFX())) stack->pushBool(false);
-		else stack->pushBool(true);
+		if (DID_FAIL(stopSFX())) {
+			stack->pushBool(false);
+		} else {
+			stack->pushBool(true);
+		}
 		return STATUS_OK;
 	}
 
@@ -353,8 +386,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "PauseSound") == 0) {
 		stack->correctParams(0);
 
-		if (DID_FAIL(pauseSFX())) stack->pushBool(false);
-		else stack->pushBool(true);
+		if (DID_FAIL(pauseSFX())) {
+			stack->pushBool(false);
+		} else {
+			stack->pushBool(true);
+		}
 		return STATUS_OK;
 	}
 
@@ -364,8 +400,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "ResumeSound") == 0) {
 		stack->correctParams(0);
 
-		if (DID_FAIL(resumeSFX())) stack->pushBool(false);
-		else stack->pushBool(true);
+		if (DID_FAIL(resumeSFX())) {
+			stack->pushBool(false);
+		} else {
+			stack->pushBool(true);
+		}
 		return STATUS_OK;
 	}
 
@@ -375,8 +414,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "IsSoundPlaying") == 0) {
 		stack->correctParams(0);
 
-		if (_sFX && _sFX->isPlaying()) stack->pushBool(true);
-		else stack->pushBool(false);
+		if (_sFX && _sFX->isPlaying()) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 		return STATUS_OK;
 	}
 
@@ -387,8 +429,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 
 		uint32 Time = stack->pop()->getInt();
-		if (DID_FAIL(setSFXTime(Time))) stack->pushBool(false);
-		else stack->pushBool(true);
+		if (DID_FAIL(setSFXTime(Time))) {
+			stack->pushBool(false);
+		} else {
+			stack->pushBool(true);
+		}
 		return STATUS_OK;
 	}
 
@@ -398,8 +443,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "GetSoundPosition") == 0) {
 		stack->correctParams(0);
 
-		if (!_sFX) stack->pushInt(0);
-		else stack->pushInt(_sFX->getPositionTime());
+		if (!_sFX) {
+			stack->pushInt(0);
+		} else {
+			stack->pushInt(_sFX->getPositionTime());
+		}
 		return STATUS_OK;
 	}
 
@@ -410,8 +458,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 
 		int volume = stack->pop()->getInt();
-		if (DID_FAIL(setSFXVolume(volume))) stack->pushBool(false);
-		else stack->pushBool(true);
+		if (DID_FAIL(setSFXVolume(volume))) {
+			stack->pushBool(false);
+		} else {
+			stack->pushBool(true);
+		}
 		return STATUS_OK;
 	}
 
@@ -421,8 +472,11 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "GetSoundVolume") == 0) {
 		stack->correctParams(0);
 
-		if (!_sFX) stack->pushInt(_sFXVolume);
-		else stack->pushInt(_sFX->getVolumePercent());
+		if (!_sFX) {
+			stack->pushInt(_sFXVolume);
+		} else {
+			stack->pushInt(_sFX->getVolumePercent());
+		}
 		return STATUS_OK;
 	}
 
@@ -470,9 +524,9 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->pushNULL();
 
 		return STATUS_OK;
+	} else {
+		return BaseScriptHolder::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return BaseScriptHolder::scCallMethod(script, stack, thisStack, name);
 }
 
 
@@ -578,8 +632,11 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Scale") == 0) {
-		if (_scale < 0) _scValue->setNULL();
-		else _scValue->setFloat((double)_scale);
+		if (_scale < 0) {
+			_scValue->setNULL();
+		} else {
+			_scValue->setFloat((double)_scale);
+		}
 		return _scValue;
 	}
 
@@ -587,8 +644,11 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	// ScaleX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScaleX") == 0) {
-		if (_scaleX < 0) _scValue->setNULL();
-		else _scValue->setFloat((double)_scaleX);
+		if (_scaleX < 0) {
+			_scValue->setNULL();
+		} else {
+			_scValue->setFloat((double)_scaleX);
+		}
 		return _scValue;
 	}
 
@@ -596,8 +656,11 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	// ScaleY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScaleY") == 0) {
-		if (_scaleY < 0) _scValue->setNULL();
-		else _scValue->setFloat((double)_scaleY);
+		if (_scaleY < 0) {
+			_scValue->setNULL();
+		} else {
+			_scValue->setFloat((double)_scaleY);
+		}
 		return _scValue;
 	}
 
@@ -613,8 +676,11 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	// Rotate
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Rotate") == 0) {
-		if (!_rotateValid) _scValue->setNULL();
-		else _scValue->setFloat((double)_rotate);
+		if (!_rotateValid) {
+			_scValue->setNULL();
+		} else {
+			_scValue->setFloat((double)_rotate);
+		}
 		return _scValue;
 	}
 
@@ -663,9 +729,9 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	else if (strcmp(name, "AccCaption") == 0) {
 		_scValue->setNULL();
 		return _scValue;
+	} else {
+		return BaseScriptHolder::scGetProperty(name);
 	}
-
-	else return BaseScriptHolder::scGetProperty(name);
 }
 
 
@@ -742,7 +808,9 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "BlendMode") == 0) {
 		int i = value->getInt();
-		if (i < BLEND_NORMAL || i >= NUM_BLEND_MODES) i = BLEND_NORMAL;
+		if (i < BLEND_NORMAL || i >= NUM_BLEND_MODES) {
+			i = BLEND_NORMAL;
+		}
 		_blendMode = (TSpriteBlendMode)i;
 		return STATUS_OK;
 	}
@@ -751,8 +819,11 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Scale") == 0) {
-		if (value->isNULL()) _scale = -1;
-		else _scale = (float)value->getFloat();
+		if (value->isNULL()) {
+			_scale = -1;
+		} else {
+			_scale = (float)value->getFloat();
+		}
 		return STATUS_OK;
 	}
 
@@ -760,8 +831,11 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	// ScaleX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScaleX") == 0) {
-		if (value->isNULL()) _scaleX = -1;
-		else _scaleX = (float)value->getFloat();
+		if (value->isNULL()) {
+			_scaleX = -1;
+		} else {
+			_scaleX = (float)value->getFloat();
+		}
 		return STATUS_OK;
 	}
 
@@ -769,8 +843,11 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	// ScaleY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScaleY") == 0) {
-		if (value->isNULL()) _scaleY = -1;
-		else _scaleY = (float)value->getFloat();
+		if (value->isNULL()) {
+			_scaleY = -1;
+		} else {
+			_scaleY = (float)value->getFloat();
+		}
 		return STATUS_OK;
 	}
 
@@ -817,7 +894,9 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SoundPanning") == 0) {
 		_autoSoundPanning = value->getBool();
-		if (!_autoSoundPanning) resetSoundPan();
+		if (!_autoSoundPanning) {
+			resetSoundPan();
+		}
 		return STATUS_OK;
 	}
 
@@ -842,9 +921,9 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccCaption") == 0) {
 		return STATUS_OK;
+	} else {
+		return BaseScriptHolder::scSetProperty(name, value);
 	}
-
-	else return BaseScriptHolder::scSetProperty(name, value);
 }
 
 
@@ -856,8 +935,11 @@ const char *BaseObject::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::showCursor() {
-	if (_cursor) return _gameRef->drawCursor(_cursor);
-	else return STATUS_FAILED;
+	if (_cursor) {
+		return _gameRef->drawCursor(_cursor);
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
@@ -871,8 +953,9 @@ bool BaseObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptHolder::persist(persistMgr);
 
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 7; i++) {
 		persistMgr->transfer(TMEMBER(_caption[i]));
+	}
 	persistMgr->transfer(TMEMBER(_activeCursor));
 	persistMgr->transfer(TMEMBER(_alphaColor));
 	persistMgr->transfer(TMEMBER(_autoSoundPanning));
@@ -936,7 +1019,9 @@ bool BaseObject::setCursor(const char *filename) {
 		delete _cursor;
 		_cursor = NULL;
 		return STATUS_FAILED;
-	} else return STATUS_OK;
+	} else {
+		return STATUS_OK;
+	}
 }
 
 
@@ -948,7 +1033,9 @@ bool BaseObject::setActiveCursor(const char *filename) {
 		delete _activeCursor;
 		_activeCursor = NULL;
 		return STATUS_FAILED;
-	} else return STATUS_OK;
+	} else {
+		return STATUS_OK;
+	}
 }
 
 
@@ -983,16 +1070,24 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 		if (_gameRef->_editorMode || _sFXStart) {
 			_sFX->setVolumePercent(_sFXVolume);
 			_sFX->setPositionTime(_sFXStart);
-			if (!_gameRef->_editorMode) _sFXStart = 0;
+			if (!_gameRef->_editorMode) {
+				_sFXStart = 0;
+			}
 		}
 		if (playNow) {
 			setSoundEvent(eventName);
-			if (loopStart) _sFX->setLoopStart(loopStart);
+			if (loopStart) {
+				_sFX->setLoopStart(loopStart);
+			}
 			return _sFX->play(looping);
-		} else return STATUS_OK;
+		} else {
+			return STATUS_OK;
+		}
 	}
 
-	if (filename == NULL) return STATUS_FAILED;
+	if (filename == NULL) {
+		return STATUS_FAILED;
+	}
 
 	// create new sound
 	delete _sFX;
@@ -1007,9 +1102,13 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 		_sFX->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 		if (playNow) {
 			setSoundEvent(eventName);
-			if (loopStart) _sFX->setLoopStart(loopStart);
+			if (loopStart) {
+				_sFX->setLoopStart(loopStart);
+			}
 			return _sFX->play(looping);
-		} else return STATUS_OK;
+		} else {
+			return STATUS_OK;
+		}
 	} else {
 		delete _sFX;
 		_sFX = NULL;
@@ -1027,37 +1126,51 @@ bool BaseObject::stopSFX(bool deleteSound) {
 			_sFX = NULL;
 		}
 		return STATUS_OK;
-	} else return STATUS_FAILED;
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::pauseSFX() {
-	if (_sFX) return _sFX->pause();
-	else return STATUS_FAILED;
+	if (_sFX) {
+		return _sFX->pause();
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::resumeSFX() {
-	if (_sFX) return _sFX->resume();
-	else return STATUS_FAILED;
+	if (_sFX) {
+		return _sFX->resume();
+	} else {
+		return STATUS_FAILED;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::setSFXTime(uint32 time) {
 	_sFXStart = time;
-	if (_sFX && _sFX->isPlaying()) return _sFX->setPositionTime(time);
-	else return STATUS_OK;
+	if (_sFX && _sFX->isPlaying()) {
+		return _sFX->setPositionTime(time);
+	} else {
+		return STATUS_OK;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::setSFXVolume(int volume) {
 	_sFXVolume = volume;
-	if (_sFX) return _sFX->setVolumePercent(volume);
-	else return STATUS_OK;
+	if (_sFX) {
+		return _sFX->setVolumePercent(volume);
+	} else {
+		return STATUS_OK;
+	}
 }
 
 
@@ -1070,7 +1183,9 @@ bool BaseObject::updateSounds() {
 		}
 	}
 
-	if (_sFX) updateOneSound(_sFX);
+	if (_sFX) {
+		updateOneSound(_sFX);
+	}
 
 	return STATUS_OK;
 }
@@ -1080,8 +1195,9 @@ bool BaseObject::updateOneSound(BaseSound *sound) {
 	bool Ret = STATUS_OK;
 
 	if (sound) {
-		if (_autoSoundPanning)
+		if (_autoSoundPanning) {
 			Ret = sound->setPan(_gameRef->_soundMgr->posToPan(_posX  - _gameRef->_offsetX, _posY - _gameRef->_offsetY));
+		}
 
 		Ret = sound->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 	}
@@ -1090,8 +1206,9 @@ bool BaseObject::updateOneSound(BaseSound *sound) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::resetSoundPan() {
-	if (!_sFX) return STATUS_OK;
-	else {
+	if (!_sFX) {
+		return STATUS_OK;
+	} else {
 		return _sFX->setPan(0.0f);
 	}
 }
@@ -1115,7 +1232,9 @@ void BaseObject::setSoundEvent(const char *eventName) {
 	_soundEvent = NULL;
 	if (eventName) {
 		_soundEvent = new char[strlen(eventName) + 1];
-		if (_soundEvent) strcpy(_soundEvent, eventName);
+		if (_soundEvent) {
+			strcpy(_soundEvent, eventName);
+		}
 	}
 }
 

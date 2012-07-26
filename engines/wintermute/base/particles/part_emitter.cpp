@@ -116,11 +116,15 @@ PartEmitter::~PartEmitter(void) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::addSprite(const char *filename) {
-	if (!filename) return STATUS_FAILED;
+	if (!filename) {
+		return STATUS_FAILED;
+	}
 
 	// do we already have the file?
 	for (int i = 0; i < _sprites.getSize(); i++) {
-		if (scumm_stricmp(filename, _sprites[i]) == 0) return STATUS_OK;
+		if (scumm_stricmp(filename, _sprites[i]) == 0) {
+			return STATUS_OK;
+		}
 	}
 
 	// check if file exists
@@ -128,7 +132,9 @@ bool PartEmitter::addSprite(const char *filename) {
 	if (!File) {
 		_gameRef->LOG(0, "Sprite '%s' not found", filename);
 		return STATUS_FAILED;
-	} else _gameRef->_fileManager->closeFile(File);
+	} else {
+		_gameRef->_fileManager->closeFile(File);
+	}
 
 	char *Str = new char[strlen(filename) + 1];
 	strcpy(Str, filename);
@@ -151,24 +157,37 @@ bool PartEmitter::removeSprite(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta) {
-	if (!particle) return STATUS_FAILED;
-	if (_sprites.getSize() == 0) return STATUS_FAILED;
+	if (!particle) {
+		return STATUS_FAILED;
+	}
+	if (_sprites.getSize() == 0) {
+		return STATUS_FAILED;
+	}
 
 	int posX = BaseUtils::randomInt(_posX, _posX + _width);
 	int posY = BaseUtils::randomInt(_posY, _posY + _height);
 	float posZ = BaseUtils::randomFloat(0.0f, 100.0f);
 
 	float velocity;
-	if (_velocityZBased) velocity = _velocity1 + posZ * (_velocity2 - _velocity1) / 100;
-	else velocity = BaseUtils::randomFloat(_velocity1, _velocity2);
+	if (_velocityZBased) {
+		velocity = _velocity1 + posZ * (_velocity2 - _velocity1) / 100;
+	} else {
+		velocity = BaseUtils::randomFloat(_velocity1, _velocity2);
+	}
 
 	float scale;
-	if (_scaleZBased) scale = _scale1 + posZ * (_scale2 - _scale1) / 100;
-	else scale = BaseUtils::randomFloat(_scale1, _scale2);
+	if (_scaleZBased) {
+		scale = _scale1 + posZ * (_scale2 - _scale1) / 100;
+	} else {
+		scale = BaseUtils::randomFloat(_scale1, _scale2);
+	}
 
 	int lifeTime;
-	if (_lifeTimeZBased) lifeTime = (int)(_lifeTime2 - posZ * (_lifeTime2 - _lifeTime1) / 100);
-	else lifeTime = BaseUtils::randomInt(_lifeTime1, _lifeTime2);
+	if (_lifeTimeZBased) {
+		lifeTime = (int)(_lifeTime2 - posZ * (_lifeTime2 - _lifeTime1) / 100);
+	} else {
+		lifeTime = BaseUtils::randomInt(_lifeTime1, _lifeTime2);
+	}
 
 	float angle = BaseUtils::randomAngle(_angle1, _angle2);
 	int spriteIndex = BaseUtils::randomInt(0, _sprites.getSize() - 1);
@@ -220,14 +239,20 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	particle->fadeIn(currentTime, _fadeInTime);
 
 
-	if (particle->_isDead) return STATUS_FAILED;
-	else return STATUS_OK;
+	if (particle->_isDead) {
+		return STATUS_FAILED;
+	} else {
+		return STATUS_OK;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::update() {
-	if (!_running) return STATUS_OK;
-	else return updateInternal(_gameRef->_timer, _gameRef->_timerDelta);
+	if (!_running) {
+		return STATUS_OK;
+	} else {
+		return updateInternal(_gameRef->_timer, _gameRef->_timerDelta);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -237,7 +262,9 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	for (int i = 0; i < _particles.getSize(); i++) {
 		_particles[i]->update(this, currentTime, timerDelta);
 
-		if (!_particles[i]->_isDead) numLive++;
+		if (!_particles[i]->_isDead) {
+			numLive++;
+		}
 	}
 
 
@@ -263,8 +290,9 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 				}
 
 				PartParticle *particle;
-				if (firstDeadIndex >= 0) particle = _particles[firstDeadIndex];
-				else {
+				if (firstDeadIndex >= 0) {
+					particle = _particles[firstDeadIndex];
+				} else {
 					particle = new PartParticle(_gameRef);
 					_particles.add(particle);
 				}
@@ -274,12 +302,15 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 				toGen--;
 			}
 		}
-		if (needsSort && (_scaleZBased || _velocityZBased || _lifeTimeZBased))
+		if (needsSort && (_scaleZBased || _velocityZBased || _lifeTimeZBased)) {
 			sortParticlesByZ();
+		}
 
 		// we actually generated some particles and we're not in fast-forward mode
 		if (needsSort && _overheadTime == 0) {
-			if (_owner && _emitEvent) _owner->applyEvent(_emitEvent);
+			if (_owner && _emitEvent) {
+				_owner->applyEvent(_emitEvent);
+			}
 		}
 	}
 
@@ -288,17 +319,23 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::display(BaseRegion *region) {
-	if (_sprites.getSize() <= 1) _gameRef->_renderer->startSpriteBatch();
+	if (_sprites.getSize() <= 1) {
+		_gameRef->_renderer->startSpriteBatch();
+	}
 
 	for (int i = 0; i < _particles.getSize(); i++) {
 		if (region != NULL && _useRegion) {
-			if (!region->pointInRegion((int)_particles[i]->_pos.x, (int)_particles[i]->_pos.y)) continue;
+			if (!region->pointInRegion((int)_particles[i]->_pos.x, (int)_particles[i]->_pos.y)) {
+				continue;
+			}
 		}
 
 		_particles[i]->display(this);
 	}
 
-	if (_sprites.getSize() <= 1) _gameRef->_renderer->endSpriteBatch();
+	if (_sprites.getSize() <= 1) {
+		_gameRef->_renderer->endSpriteBatch();
+	}
 
 	return STATUS_OK;
 }
@@ -339,9 +376,13 @@ int PartEmitter::compareZ(const void *obj1, const void *obj2) {
 	PartParticle *p1 = *(PartParticle **)obj1;
 	PartParticle *p2 = *(PartParticle **)obj2;
 
-	if (p1->_posZ < p2->_posZ) return -1;
-	else if (p1->_posZ > p2->_posZ) return 1;
-	else return 0;
+	if (p1->_posZ < p2->_posZ) {
+		return -1;
+	} else if (p1->_posZ > p2->_posZ) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -385,7 +426,9 @@ PartForce *PartEmitter::addForceByName(const char *name) {
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::addForce(const char *name, PartForce::TForceType type, int posX, int posY, float angle, float strength) {
 	PartForce *force = addForceByName(name);
-	if (!force) return STATUS_FAILED;
+	if (!force) {
+		return STATUS_FAILED;
+	}
 
 	force->_type = type;
 	force->_pos = Vector2(posX, posY);
@@ -554,9 +597,9 @@ bool PartEmitter::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		stack->pushBool(DID_SUCCEED(removeForce(forceName)));
 
 		return STATUS_OK;
+	} else {
+		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
-
-	else return BaseObject::scCallMethod(script, stack, thisStack, name);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -745,7 +788,9 @@ ScValue *PartEmitter::scGetProperty(const char *name) {
 	else if (strcmp(name, "NumLiveParticles") == 0) {
 		int numAlive = 0;
 		for (int i = 0; i < _particles.getSize(); i++) {
-			if (_particles[i] && !_particles[i]->_isDead) numAlive++;
+			if (_particles[i] && !_particles[i]->_isDead) {
+				numAlive++;
+			}
 		}
 		_scValue->setInt(numAlive);
 		return _scValue;
@@ -822,12 +867,15 @@ ScValue *PartEmitter::scGetProperty(const char *name) {
 	// EmitEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EmitEvent") == 0) {
-		if (!_emitEvent) _scValue->setNULL();
-		else _scValue->setString(_emitEvent);
+		if (!_emitEvent) {
+			_scValue->setNULL();
+		} else {
+			_scValue->setString(_emitEvent);
+		}
 		return _scValue;
+	} else {
+		return BaseObject::scGetProperty(name);
 	}
-
-	else return BaseObject::scGetProperty(name);
 }
 
 
@@ -978,8 +1026,12 @@ bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Alpha1") == 0) {
 		_alpha1 = value->getInt();
-		if (_alpha1 < 0) _alpha1 = 0;
-		if (_alpha1 > 255) _alpha1 = 255;
+		if (_alpha1 < 0) {
+			_alpha1 = 0;
+		}
+		if (_alpha1 > 255) {
+			_alpha1 = 255;
+		}
 		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -987,8 +1039,12 @@ bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Alpha2") == 0) {
 		_alpha2 = value->getInt();
-		if (_alpha2 < 0) _alpha2 = 0;
-		if (_alpha2 > 255) _alpha2 = 255;
+		if (_alpha2 < 0) {
+			_alpha2 = 0;
+		}
+		if (_alpha2 > 255) {
+			_alpha2 = 255;
+		}
 		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -1080,11 +1136,13 @@ bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "EmitEvent") == 0) {
 		delete[] _emitEvent;
 		_emitEvent = NULL;
-		if (!value->isNULL()) BaseUtils::setString(&_emitEvent, value->getString());
+		if (!value->isNULL()) {
+			BaseUtils::setString(&_emitEvent, value->getString());
+		}
 		return STATUS_OK;
+	} else {
+		return BaseObject::scSetProperty(name, value);
 	}
-
-	else return BaseObject::scSetProperty(name, value);
 }
 
 

@@ -92,28 +92,46 @@ VideoPlayer::~VideoPlayer() {
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::cleanup() {
 #if 0
-	if (_sound) _sound->Stop();
-	if (_videoPGF) AVIStreamGetFrameClose(_videoPGF);
+	if (_sound) {
+		_sound->Stop();
+	}
+	if (_videoPGF) {
+		AVIStreamGetFrameClose(_videoPGF);
+	}
 	_videoPGF = NULL;
 
 	_playing = false;
 
 
-	if (_aviFile) AVIFileRelease(m_AviFile);
+	if (_aviFile) {
+		AVIFileRelease(m_AviFile);
+	}
 
-	if (_audioStream) AVIStreamRelease(m_AudioStream);
-	if (_videoStream) AVIStreamRelease(m_VideoStream);
+	if (_audioStream) {
+		AVIStreamRelease(m_AudioStream);
+	}
+	if (_videoStream) {
+		AVIStreamRelease(m_VideoStream);
+	}
 
-	if (_audioFormat)  delete[](byte *)m_AudioFormat;
-	if (_videoFormat)  delete[](byte *)m_VideoFormat;
-	if (_targetFormat) delete[](byte *)m_TargetFormat;
+	if (_audioFormat) {
+		delete[](byte *)m_AudioFormat;
+	}
+	if (_videoFormat) {
+		delete[](byte *)m_VideoFormat;
+	}
+	if (_targetFormat) {
+		delete[](byte *)m_TargetFormat;
+	}
 
 	SAFE_DELETE(_sound);
 	SAFE_DELETE(_vidRenderer);
 
 	SAFE_DELETE_ARRAY(_filename);
 
-	for (int i = 0; i < _subtitles.getSize(); i++) delete _subtitles[i];
+	for (int i = 0; i < _subtitles.getSize(); i++) {
+		delete _subtitles[i];
+	}
 	_subtitles.removeAll();
 
 	return SetDefaults();
@@ -144,10 +162,11 @@ bool VideoPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 	_totalVideoTime = AVIStreamEndTime(_videoStream);
 
 	// get audio stream
-	if (_gameRef->m_SoundMgr->_soundAvailable && AVIFileGetStream(_aviFile, &_audioStream, streamtypeAUDIO, 0) == 0)
+	if (_gameRef->m_SoundMgr->_soundAvailable && AVIFileGetStream(_aviFile, &_audioStream, streamtypeAUDIO, 0) == 0) {
 		_soundAvailable = true;
-	else
+	} else {
 		_soundAvailable = false;
+	}
 
 
 	LONG Size;
@@ -169,10 +188,11 @@ bool VideoPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 	m_TargetFormat->bV4BitCount = 24;
 	m_TargetFormat->bV4V4Compression = BI_RGB;
 
-	if (_gameRef->m_UseD3D)
+	if (_gameRef->m_UseD3D) {
 		m_VidRenderer = new CVidRendererD3D(_gameRef);
-	else
+	} else {
 		m_VidRenderer = new CVidRendererDD(_gameRef);
+	}
 
 	if (!m_VidRenderer || DID_FAIL(m_VidRenderer->Initialize(m_VideoFormat, m_TargetFormat))) {
 		_gameRef->LOG(0, "Error initializing video renderer for AVI file '%s'", filename);
@@ -193,10 +213,14 @@ bool VideoPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 		}
 	}
 
-	if (_gameRef->_videoSubtitles) LoadSubtitles(inFilename, SubtitleFile);
+	if (_gameRef->_videoSubtitles) {
+		LoadSubtitles(inFilename, SubtitleFile);
+	}
 
 	_filename = new char[strlen(filename) + 1];
-	if (_filename) strcpy(_filename, filename);
+	if (_filename) {
+		strcpy(_filename, filename);
+	}
 #endif
 	return STATUS_OK;
 }
@@ -205,13 +229,17 @@ bool VideoPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::update() {
 #if 0
-	if (!m_Playing) return STATUS_OK;
+	if (!m_Playing) {
+		return STATUS_OK;
+	}
 
 	bool res;
 
 	if (_soundAvailable && m_Sound) {
 		res = _sound->update();
-		if (DID_FAIL(res)) return res;
+		if (DID_FAIL(res)) {
+			return res;
+		}
 	}
 
 
@@ -263,10 +291,17 @@ bool VideoPlayer::update() {
 		// render frame
 		LPBITMAPINFOHEADER FrameData = (LPBITMAPINFOHEADER)AVIStreamGetFrame(m_VideoPGF, sample);
 		if (FrameData) {
-			if (_slowRendering) return _vidRenderer->ProcessFrameSlow(FrameData);
-			else return _vidRenderer->ProcessFrame(FrameData);
-		} else return STATUS_FAILED;
-	} else return STATUS_OK;
+			if (_slowRendering) {
+				return _vidRenderer->ProcessFrameSlow(FrameData);
+			} else {
+				return _vidRenderer->ProcessFrame(FrameData);
+			}
+		} else {
+			return STATUS_FAILED;
+		}
+	} else {
+		return STATUS_OK;
+	}
 #endif
 	return 0;
 }
@@ -275,11 +310,16 @@ bool VideoPlayer::update() {
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::display() {
 #if 0
-	if (!m_Playing) return STATUS_OK;
+	if (!m_Playing) {
+		return STATUS_OK;
+	}
 
 	bool res;
-	if (_vidRenderer) res = _vidRenderer->display(m_PlayPosX, m_PlayPosY, m_PlayZoom);
-	else res = STATUS_FAILED;
+	if (_vidRenderer) {
+		res = _vidRenderer->display(m_PlayPosX, m_PlayPosY, m_PlayZoom);
+	} else {
+		res = STATUS_FAILED;
+	}
 
 	// display subtitle
 	if (m_ShowSubtitle) {
@@ -299,7 +339,9 @@ bool VideoPlayer::display() {
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 #if 0
-	if (!_videoStream || !_vidRenderer) return STATUS_FAILED;
+	if (!_videoStream || !_vidRenderer) {
+		return STATUS_FAILED;
+	}
 
 	switch (Type) {
 	case VID_PLAY_POS:
@@ -339,7 +381,9 @@ bool VideoPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 			_gameRef->LOG(0, "Performance warning: non-optimal AVI format, using generic (i.e. slow) rendering routines (file '%s')", m_Filename);
 			_slowRendering = true;
 		}
-	} else _slowRendering = false;
+	} else {
+		_slowRendering = false;
+	}
 
 	// HACK!!!
 	_slowRendering = true;
@@ -350,7 +394,9 @@ bool VideoPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 	_gameRef->Freeze(FreezeMusic);
 
 	_playing = true;
-	if (_sound) _sound->Play();
+	if (_sound) {
+		_sound->Play();
+	}
 	_startTime = timeGetTime();
 #endif
 	return STATUS_OK;
@@ -360,7 +406,9 @@ bool VideoPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::stop() {
 #if 0
-	if (!_playing) return STATUS_OK;
+	if (!_playing) {
+		return STATUS_OK;
+	}
 
 	cleanup();
 
@@ -379,7 +427,9 @@ bool VideoPlayer::isPlaying() {
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) {
 #if 0
-	if (!Filename) return STATUS_OK;
+	if (!Filename) {
+		return STATUS_OK;
+	}
 
 	char NewFile[MAX_PATH_LENGTH];
 	char drive[_MAX_DRIVE];
@@ -395,7 +445,9 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) 
 
 	DWORD Size;
 	BYTE *Buffer = _gameRef->m_FileManager->readWholeFile(NewFile, &Size, false);
-	if (Buffer == NULL) return STATUS_OK; // no subtitles
+	if (Buffer == NULL) {
+		return STATUS_OK;    // no subtitles
+	}
 
 
 	LONG Start, End;
@@ -414,7 +466,9 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) 
 		TextLength = 0;
 
 		LineLength = 0;
-		while (Pos + LineLength < Size && Buffer[Pos + LineLength] != '\n' && Buffer[Pos + LineLength] != '\0') LineLength++;
+		while (Pos + LineLength < Size && Buffer[Pos + LineLength] != '\n' && Buffer[Pos + LineLength] != '\0') {
+			LineLength++;
+		}
 
 		int RealLength = LineLength - (Pos + LineLength >= Size ? 0 : 1);
 		char *Text = new char[RealLength + 1];
@@ -427,15 +481,20 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) 
 					TokenStart = line + i + 1;
 					TokenLength = 0;
 					TokenPos++;
-				} else TokenLength++;
+				} else {
+					TokenLength++;
+				}
 			} else if (line[i] == '}') {
 				if (InToken) {
 					InToken = false;
 					char *Token = new char[TokenLength + 1];
 					strncpy(Token, TokenStart, TokenLength);
 					Token[TokenLength] = '\0';
-					if (TokenPos == 0) Start = atoi(Token);
-					else if (TokenPos == 1) End = atoi(Token);
+					if (TokenPos == 0) {
+						Start = atoi(Token);
+					} else if (TokenPos == 1) {
+						End = atoi(Token);
+					}
 
 					delete[] Token;
 				} else {
@@ -447,14 +506,18 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) 
 					TokenLength++;
 				} else {
 					Text[TextLength] = line[i];
-					if (Text[TextLength] == '|') Text[TextLength] = '\n';
+					if (Text[TextLength] == '|') {
+						Text[TextLength] = '\n';
+					}
 					TextLength++;
 				}
 			}
 		}
 		Text[TextLength] = '\0';
 
-		if (Start != -1 && TextLength > 0) _subtitles.add(new CVidSubtitle(_gameRef,  Text, Start, End));
+		if (Start != -1 && TextLength > 0) {
+			_subtitles.add(new CVidSubtitle(_gameRef,  Text, Start, End));
+		}
 
 		delete[] Text;
 

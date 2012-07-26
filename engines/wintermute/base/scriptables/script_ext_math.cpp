@@ -243,9 +243,9 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(1);
 		stack->pushFloat(radianToDegree(stack->pop()->getFloat()));
 		return STATUS_OK;
+	} else {
+		return STATUS_FAILED;
 	}
-
-	else return STATUS_FAILED;
 }
 
 
@@ -267,9 +267,9 @@ ScValue *SXMath::scGetProperty(const char *name) {
 	else if (strcmp(name, "PI") == 0) {
 		_scValue->setFloat(M_PI);
 		return _scValue;
+	} else {
+		return _scValue;
 	}
-
-	else return _scValue;
 }
 
 

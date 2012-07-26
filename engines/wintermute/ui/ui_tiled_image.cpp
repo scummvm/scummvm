@@ -64,7 +64,9 @@ UITiledImage::~UITiledImage() {
 
 //////////////////////////////////////////////////////////////////////////
 bool UITiledImage::display(int x, int y, int width, int height) {
-	if (!_image) return STATUS_FAILED;
+	if (!_image) {
+		return STATUS_FAILED;
+	}
 
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
@@ -129,7 +131,9 @@ bool UITiledImage::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer, true))) _gameRef->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
+		_gameRef->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
+	}
 
 
 	delete[] buffer;
@@ -193,7 +197,9 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) cmd = PARSERR_GENERIC;
+			if (DID_FAIL(loadFile((char *)params))) {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_IMAGE:
@@ -288,17 +294,35 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 		int width = _image->_surface->getWidth() / 3;
 		int height = _image->_surface->getHeight() / 3;
 
-		if (BasePlatform::isRectEmpty(&_upLeft))   BasePlatform::setRect(&_upLeft,   0,       0, width,   height);
-		if (BasePlatform::isRectEmpty(&_upMiddle)) BasePlatform::setRect(&_upMiddle, width,   0, 2 * width, height);
-		if (BasePlatform::isRectEmpty(&_upRight))  BasePlatform::setRect(&_upRight,  2 * width, 0, 3 * width, height);
+		if (BasePlatform::isRectEmpty(&_upLeft)) {
+			BasePlatform::setRect(&_upLeft,   0,       0, width,   height);
+		}
+		if (BasePlatform::isRectEmpty(&_upMiddle)) {
+			BasePlatform::setRect(&_upMiddle, width,   0, 2 * width, height);
+		}
+		if (BasePlatform::isRectEmpty(&_upRight)) {
+			BasePlatform::setRect(&_upRight,  2 * width, 0, 3 * width, height);
+		}
 
-		if (BasePlatform::isRectEmpty(&_middleLeft))   BasePlatform::setRect(&_middleLeft,   0,       height, width,   2 * height);
-		if (BasePlatform::isRectEmpty(&_middleMiddle)) BasePlatform::setRect(&_middleMiddle, width,   height, 2 * width, 2 * height);
-		if (BasePlatform::isRectEmpty(&_middleRight))  BasePlatform::setRect(&_middleRight,  2 * width, height, 3 * width, 2 * height);
+		if (BasePlatform::isRectEmpty(&_middleLeft)) {
+			BasePlatform::setRect(&_middleLeft,   0,       height, width,   2 * height);
+		}
+		if (BasePlatform::isRectEmpty(&_middleMiddle)) {
+			BasePlatform::setRect(&_middleMiddle, width,   height, 2 * width, 2 * height);
+		}
+		if (BasePlatform::isRectEmpty(&_middleRight)) {
+			BasePlatform::setRect(&_middleRight,  2 * width, height, 3 * width, 2 * height);
+		}
 
-		if (BasePlatform::isRectEmpty(&_downLeft))   BasePlatform::setRect(&_downLeft,   0,       2 * height, width,   3 * height);
-		if (BasePlatform::isRectEmpty(&_downMiddle)) BasePlatform::setRect(&_downMiddle, width,   2 * height, 2 * width, 3 * height);
-		if (BasePlatform::isRectEmpty(&_downRight))  BasePlatform::setRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
+		if (BasePlatform::isRectEmpty(&_downLeft)) {
+			BasePlatform::setRect(&_downLeft,   0,       2 * height, width,   3 * height);
+		}
+		if (BasePlatform::isRectEmpty(&_downMiddle)) {
+			BasePlatform::setRect(&_downMiddle, width,   2 * height, 2 * width, 3 * height);
+		}
+		if (BasePlatform::isRectEmpty(&_downRight)) {
+			BasePlatform::setRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
+		}
 	}
 
 	return STATUS_OK;
@@ -309,8 +333,9 @@ bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TILED_IMAGE\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	if (_image && _image->_surfaceFilename)
+	if (_image && _image->_surfaceFilename) {
 		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
+	}
 
 	int h1, h2, h3;
 	int v1, v2, v3;

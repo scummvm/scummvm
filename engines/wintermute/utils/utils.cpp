@@ -48,8 +48,12 @@ void BaseUtils::swap(int *a, int *b) {
 
 //////////////////////////////////////////////////////////////////////////
 float BaseUtils::normalizeAngle(float angle) {
-	while (angle > 360) angle -= 360;
-	while (angle < 0) angle += 360;
+	while (angle > 360) {
+		angle -= 360;
+	}
+	while (angle < 0) {
+		angle += 360;
+	}
 
 	return angle;
 }
@@ -81,7 +85,9 @@ void BaseUtils::debugMessage(const char *text) {
 char *BaseUtils::setString(char **string, const char *value) {
 	delete[] *string;
 	*string = new char[strlen(value) + 1];
-	if (*string) strcpy(*string, value);
+	if (*string) {
+		strcpy(*string, value);
+	}
 	return *string;
 }
 
@@ -89,7 +95,9 @@ char *BaseUtils::setString(char **string, const char *value) {
 int BaseUtils::strNumEntries(const char *str, const char delim) {
 	int numEntries = 1;
 	for (uint32 i = 0; i < strlen(str); i++) {
-		if (str[i] == delim) numEntries++;
+		if (str[i] == delim) {
+			numEntries++;
+		}
 	}
 	return numEntries;
 }
@@ -104,8 +112,11 @@ char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 
 	for (uint32 i = 0; i <= strlen(str); i++) {
 		if (numEntries == entry) {
-			if (!start) start = str + i;
-			else len++;
+			if (!start) {
+				start = str + i;
+			} else {
+				len++;
+			}
 		}
 		if (str[i] == delim || str[i] == '\0') {
 			numEntries++;
@@ -159,35 +170,46 @@ bool BaseUtils::matchesPattern(const char *pattern, const char *string) {
 			return (stringc == 0);
 
 		case '?':
-			if (stringc == 0) return false;
+			if (stringc == 0) {
+				return false;
+			}
 			break;
 
 		case '*':
-			if (!*pattern) return true;
+			if (!*pattern) {
+				return true;
+			}
 
 			if (*pattern == '.') {
 				char *dot;
-				if (pattern[1] == '*' && pattern[2] == 0) return true;
+				if (pattern[1] == '*' && pattern[2] == 0) {
+					return true;
+				}
 				dot = (char *)strchr(string, '.');
-				if (pattern[1] == 0) return (dot == NULL || dot[1] == 0);
+				if (pattern[1] == 0) {
+					return (dot == NULL || dot[1] == 0);
+				}
 				if (dot != NULL) {
 					string = dot;
-					if (strpbrk(pattern, "*?[") == NULL && strchr(string + 1, '.') == NULL)
+					if (strpbrk(pattern, "*?[") == NULL && strchr(string + 1, '.') == NULL) {
 						return(scumm_stricmp(pattern + 1, string + 1) == 0);
+					}
 				}
 			}
 
 			while (*string)
-				if (BaseUtils::matchesPattern(pattern, string++))
+				if (BaseUtils::matchesPattern(pattern, string++)) {
 					return true;
+				}
 			return false;
 
 		default:
 			if (patternc != stringc)
-				if (patternc == '.' && stringc == 0)
+				if (patternc == '.' && stringc == 0) {
 					return(BaseUtils::matchesPattern(pattern, string));
-				else
+				} else {
 					return false;
+				}
 			break;
 		}
 	}
@@ -222,19 +244,30 @@ void BaseUtils::RGBtoHSL(uint32 RGBColor, byte *outH, byte *outS, byte *outL) {
 	}
 	//Chromatic data...
 	else {
-		if (L < 0.5f) S = delMax / (varMax + varMin);
-		else S = delMax / (2.0f - varMax - varMin);
+		if (L < 0.5f) {
+			S = delMax / (varMax + varMin);
+		} else {
+			S = delMax / (2.0f - varMax - varMin);
+		}
 
 		float delR = (((varMax - varR) / 6.0f) + (delMax / 2.0f)) / delMax;
 		float delG = (((varMax - varG) / 6.0f) + (delMax / 2.0f)) / delMax;
 		float delB = (((varMax - varB) / 6.0f) + (delMax / 2.0f)) / delMax;
 
-		if (varR == varMax) H = delB - delG;
-		else if (varG == varMax) H = (1.0f / 3.0f) + delR - delB;
-		else if (varB == varMax) H = (2.0f / 3.0f) + delG - delR;
+		if (varR == varMax) {
+			H = delB - delG;
+		} else if (varG == varMax) {
+			H = (1.0f / 3.0f) + delR - delB;
+		} else if (varB == varMax) {
+			H = (2.0f / 3.0f) + delG - delR;
+		}
 
-		if (H < 0) H += 1;
-		if (H > 1) H -= 1;
+		if (H < 0) {
+			H += 1;
+		}
+		if (H > 1) {
+			H -= 1;
+		}
 	}
 
 	*outH = (byte)(H * 255);
@@ -259,8 +292,11 @@ uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 	} else {
 		float var_1, var_2;
 
-		if (L < 0.5) var_2 = L * (1.0 + S);
-		else var_2 = (L + S) - (S * L);
+		if (L < 0.5) {
+			var_2 = L * (1.0 + S);
+		} else {
+			var_2 = (L + S) - (S * L);
+		}
 
 		var_1 = 2.0f * L - var_2;
 
@@ -274,11 +310,21 @@ uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 
 //////////////////////////////////////////////////////////////////////////
 float BaseUtils::Hue2RGB(float v1, float v2, float vH) {
-	if (vH < 0.0f) vH += 1.0f;
-	if (vH > 1.0f) vH -= 1.0f;
-	if ((6.0f * vH) < 1.0f) return (v1 + (v2 - v1) * 6.0f * vH);
-	if ((2.0f * vH) < 1.0f) return (v2);
-	if ((3.0f * vH) < 2.0f) return (v1 + (v2 - v1) * ((2.0f / 3.0f) - vH) * 6.0f);
+	if (vH < 0.0f) {
+		vH += 1.0f;
+	}
+	if (vH > 1.0f) {
+		vH -= 1.0f;
+	}
+	if ((6.0f * vH) < 1.0f) {
+		return (v1 + (v2 - v1) * 6.0f * vH);
+	}
+	if ((2.0f * vH) < 1.0f) {
+		return (v2);
+	}
+	if ((3.0f * vH) < 2.0f) {
+		return (v1 + (v2 - v1) * ((2.0f / 3.0f) - vH) * 6.0f);
+	}
 	return (v1);
 }
 

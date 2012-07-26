@@ -91,8 +91,9 @@ int BaseFontBitmap::getTextWidth(byte *text, int maxLength) {
 		str = AnsiString((char *)text);
 	}
 
-	if (maxLength >= 0 && str.size() > (uint32)maxLength)
+	if (maxLength >= 0 && str.size() > (uint32)maxLength) {
 		str = Common::String(str.c_str(), (uint32)maxLength);
+	}
 	//str.substr(0, maxLength); // TODO: Remove
 
 	int textWidth = 0;
@@ -106,9 +107,13 @@ int BaseFontBitmap::getTextWidth(byte *text, int maxLength) {
 
 //////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign align, bool draw, int maxHeight, int maxLength) {
-	if (maxLength == 0) return 0;
+	if (maxLength == 0) {
+		return 0;
+	}
 
-	if (text == NULL || text[0] == '\0') return _tileHeight;
+	if (text == NULL || text[0] == '\0') {
+		return _tileHeight;
+	}
 
 	AnsiString str;
 
@@ -118,7 +123,9 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 	} else {
 		str = AnsiString((char *)text);
 	}
-	if (str.empty()) return 0;
+	if (str.empty()) {
+		return 0;
+	}
 
 	int LineLength = 0;
 	int RealLength = 0;
@@ -135,11 +142,15 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 	bool new_line = false;
 	bool long_line = false;
 
-	if (draw) _gameRef->_renderer->startSpriteBatch();
+	if (draw) {
+		_gameRef->_renderer->startSpriteBatch();
+	}
 
 	while (!done) {
 		if (maxHeight > 0 && (NumLines + 1)*_tileHeight > maxHeight) {
-			if (draw) _gameRef->_renderer->endSpriteBatch();
+			if (draw) {
+				_gameRef->_renderer->endSpriteBatch();
+			}
 			return NumLines * _tileHeight;
 		}
 
@@ -170,10 +181,14 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 				LineLength += getCharWidth(str[index]);
 				RealLength = LineLength;
 			}
-		} else LineLength += getCharWidth(str[index]);
+		} else {
+			LineLength += getCharWidth(str[index]);
+		}
 
 		if ((LineLength > width) || done || new_line) {
-			if (end < 0) done = true;
+			if (end < 0) {
+				done = true;
+			}
 			int StartX;
 			switch (align) {
 			case TAL_CENTER:
@@ -190,12 +205,16 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 				break;
 			}
 			for (i = start; i < end + 1; i++) {
-				if (draw) drawChar(str[i], StartX, y);
+				if (draw) {
+					drawChar(str[i], StartX, y);
+				}
 				StartX += getCharWidth(str[i]);
 			}
 			y += _tileHeight;
 			last_end = end;
-			if (long_line) end--;
+			if (long_line) {
+				end--;
+			}
 			start = end + 2;
 			index = end + 1;
 			LineLength = 0;
@@ -205,7 +224,9 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 		}
 	}
 
-	if (draw) _gameRef->_renderer->endSpriteBatch();
+	if (draw) {
+		_gameRef->_renderer->endSpriteBatch();
+	}
 
 	return NumLines * _tileHeight;
 }
@@ -213,7 +234,9 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 
 //////////////////////////////////////////////////////////////////////
 void BaseFontBitmap::drawChar(byte c, int x, int y) {
-	if (_fontextFix) c--;
+	if (_fontextFix) {
+		c--;
+	}
 
 	int row, col;
 
@@ -223,8 +246,11 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 	Rect32 rect;
 	/* l t r b */
 	int tileWidth;
-	if (_wholeCell) tileWidth = _tileWidth;
-	else tileWidth = _widths[c];
+	if (_wholeCell) {
+		tileWidth = _tileWidth;
+	} else {
+		tileWidth = _widths[c];
+	}
 
 	BasePlatform::setRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1)*_tileHeight);
 	bool handled = false;
@@ -237,7 +263,9 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 			handled = true;
 		}
 	}
-	if (!handled && _subframe) _subframe->_surface->displayTrans(x, y, rect);
+	if (!handled && _subframe) {
+		_subframe->_surface->displayTrans(x, y, rect);
+	}
 }
 
 
@@ -253,7 +281,9 @@ bool BaseFontBitmap::loadFile(const char *filename) {
 
 	setFilename(filename);
 
-	if (DID_FAIL(ret = loadBuffer(buffer))) _gameRef->LOG(0, "Error parsing FONT file '%s'", filename);
+	if (DID_FAIL(ret = loadBuffer(buffer))) {
+		_gameRef->LOG(0, "Error parsing FONT file '%s'", filename);
+	}
 
 	delete[] buffer;
 
@@ -408,8 +438,11 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 
 	if (surfaceFile != NULL && !_sprite) {
 		_subframe = new BaseSubFrame(_gameRef);
-		if (custoTrans) _subframe->setSurface(surfaceFile, false, r, g, b);
-		else _subframe->setSurface(surfaceFile);
+		if (custoTrans) {
+			_subframe->setSurface(surfaceFile, false, r, g, b);
+		} else {
+			_subframe->setSurface(surfaceFile);
+		}
 	}
 
 
@@ -425,25 +458,32 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 		// do we need to modify widths?
 		if (expandWidth != 0) {
 			for (i = 0; i < NUM_CHARACTERS; i++) {
-				int NewWidth = (int)_widths[i] + expandWidth;
-				if (NewWidth < 0) NewWidth = 0;
+				int newWidth = (int)_widths[i] + expandWidth;
+				if (newWidth < 0) {
+					newWidth = 0;
+				}
 
-				_widths[i] = (byte)NewWidth;
+				_widths[i] = (byte)newWidth;
 			}
 		}
 
 		// handle space character
 		uint32 spaceChar = ' ';
-		if (_fontextFix) spaceChar--;
+		if (_fontextFix) {
+			spaceChar--;
+		}
 
-		if (spaceWidth != 0) _widths[spaceChar] = spaceWidth;
-		else {
+		if (spaceWidth != 0) {
+			_widths[spaceChar] = spaceWidth;
+		} else {
 			if (_widths[spaceChar] == expandWidth || _widths[spaceChar] == 0) {
 				_widths[spaceChar] = (_widths['m'] + _widths['i']) / 2;
 			}
 		}
 	} else {
-		for (i = lastWidth; i < NUM_CHARACTERS; i++) _widths[i] = default_width;
+		for (i = lastWidth; i < NUM_CHARACTERS; i++) {
+			_widths[i] = default_width;
+		}
 	}
 
 
@@ -463,10 +503,11 @@ bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_sprite));
 	persistMgr->transfer(TMEMBER(_widthsFrame));
 
-	if (persistMgr->getIsSaving())
+	if (persistMgr->getIsSaving()) {
 		persistMgr->putBytes(_widths, sizeof(_widths));
-	else
+	} else {
 		persistMgr->getBytes(_widths, sizeof(_widths));
+	}
 
 
 	persistMgr->transfer(TMEMBER(_fontextFix));
@@ -479,7 +520,9 @@ bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::getCharWidth(byte index) {
-	if (_fontextFix) index--;
+	if (_fontextFix) {
+		index--;
+	}
 	return _widths[index];
 }
 
@@ -495,8 +538,12 @@ bool BaseFontBitmap::getWidths() {
 			}
 		}
 	}
-	if (surf == NULL && _subframe) surf = _subframe->_surface;
-	if (!surf || DID_FAIL(surf->startPixelOp())) return STATUS_FAILED;
+	if (surf == NULL && _subframe) {
+		surf = _subframe->_surface;
+	}
+	if (!surf || DID_FAIL(surf->startPixelOp())) {
+		return STATUS_FAILED;
+	}
 
 
 	for (int i = 0; i < NUM_CHARACTERS; i++) {
@@ -507,14 +554,18 @@ bool BaseFontBitmap::getWidths() {
 		int minCol = -1;
 		for (int row = 0; row < _tileHeight; row++) {
 			for (int col = _tileWidth - 1; col >= minCol + 1; col--) {
-				if (xxx + col < 0 || xxx + col >= surf->getWidth() || yyy + row < 0 || yyy + row >= surf->getHeight()) continue;
+				if (xxx + col < 0 || xxx + col >= surf->getWidth() || yyy + row < 0 || yyy + row >= surf->getHeight()) {
+					continue;
+				}
 				if (!surf->isTransparentAtLite(xxx + col, yyy + row)) {
 					//min_col = col;
 					minCol = MAX(col, minCol);
 					break;
 				}
 			}
-			if (minCol == _tileWidth - 1) break;
+			if (minCol == _tileWidth - 1) {
+				break;
+			}
 		}
 
 		_widths[i] = minCol + 1;

@@ -56,16 +56,19 @@ BaseClass::~BaseClass() {
 //////////////////////////////////////////////////////////////////////////
 const char *BaseClass::getEditorProp(const char *propName, const char *initVal) {
 	_editorPropsIter = _editorProps.find(propName);
-	if (_editorPropsIter != _editorProps.end())
+	if (_editorPropsIter != _editorProps.end()) {
 		return _editorPropsIter->_value.c_str();
-	//return _editorPropsIter->second.c_str(); // <- TODO Clean
-	else return initVal;
+	} else {
+		return initVal;
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseClass::setEditorProp(const char *propName, const char *propValue) {
-	if (propName == NULL) return STATUS_FAILED;
+	if (propName == NULL) {
+		return STATUS_FAILED;
+	}
 
 	if (propValue == NULL) {
 		_editorProps.erase(propName);
@@ -91,8 +94,9 @@ bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 	TOKEN_TABLE_END
 
 
-	if (!_gameRef->_editorMode)
+	if (!_gameRef->_editorMode) {
 		return STATUS_OK;
+	}
 
 
 	byte *params;
@@ -115,15 +119,21 @@ bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 		case TOKEN_NAME:
 			delete[] propName;
 			propName = new char[strlen((char *)params) + 1];
-			if (propName) strcpy(propName, (char *)params);
-			else cmd = PARSERR_GENERIC;
+			if (propName) {
+				strcpy(propName, (char *)params);
+			} else {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 
 		case TOKEN_VALUE:
 			delete[] propValue;
 			propValue = new char[strlen((char *)params) + 1];
-			if (propValue) strcpy(propValue, (char *)params);
-			else cmd = PARSERR_GENERIC;
+			if (propValue) {
+				strcpy(propValue, (char *)params);
+			} else {
+				cmd = PARSERR_GENERIC;
+			}
 			break;
 		}
 
