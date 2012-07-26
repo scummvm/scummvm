@@ -739,24 +739,31 @@ void SceneManager::resetQueue() {
 	_queue.clear();
 }
 
+void SceneManager::setCoordinates(Common::Rect rect) {
+	_flagCoordinates = true;
+
+	if (_coords.right > rect.right)
+		_coords.right = rect.right;
+
+	if (_coords.bottom > rect.bottom)
+		_coords.bottom = rect.bottom;
+
+	if (_coords.left < rect.left)
+		_coords.left = rect.left;
+
+	if (_coords.top < rect.top)
+		_coords.top = rect.top;
+}
+
 void SceneManager::setCoordinates(SequenceFrame *frame) {
 
 	if (!frame || frame->getInfo()->subType == 3)
 		return;
 
-	_flagCoordinates = true;
-
-	if (_coords.right > (int)frame->getInfo()->xPos1)
-		_coords.right = (int16)frame->getInfo()->xPos1;
-
-	if (_coords.bottom > (int)frame->getInfo()->yPos1)
-		_coords.bottom = (int16)frame->getInfo()->yPos1;
-
-	if (_coords.left < (int)frame->getInfo()->xPos2)
-		_coords.left = (int16)frame->getInfo()->xPos2;
-
-	if (_coords.top < (int)frame->getInfo()->yPos2)
-		_coords.top = (int16)frame->getInfo()->yPos2;
+	setCoordinates(Common::Rect((int16)frame->getInfo()->xPos1,
+								(int16)frame->getInfo()->yPos1,
+								(int16)frame->getInfo()->xPos2,
+								(int16)frame->getInfo()->yPos2));
 }
 
 void SceneManager::resetCoordinates() {

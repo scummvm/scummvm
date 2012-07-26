@@ -408,9 +408,12 @@ void Logic::eventTick(const Common::Event &) {
  * Resets the game state.
  */
 void Logic::resetState() {
-	getState()->scene = kSceneDefault;
+	getScenes()->setCoordinates(Common::Rect(80, 0, 559, 479));
 
-	warning("[Logic::resetState] Not implemented! You need to restart the engine until this is implemented.");
+	SAFE_DELETE(_entities);
+	SAFE_DELETE(_state);
+	_entities = new Entities(_engine);
+	_state    = new State(_engine);
 }
 
 /**
