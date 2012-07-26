@@ -61,13 +61,7 @@ BaseFontTT::BaseFontTT(BaseGame *inGame): BaseFont(inGame) {
 		_cachedTexts[i] = NULL;
 	}
 
-#if 0
-	_fTFace = NULL;
-	_fTStream = NULL;
-#endif
-
-	_ascender = _descender = _lineHeight = _pointSize = _underlinePos = 0;
-	_horDpi = _vertDpi = 0;
+	_lineHeight = 0;
 	_maxCharWidth = _maxCharHeight = 0;
 }
 
@@ -85,15 +79,6 @@ BaseFontTT::~BaseFontTT(void) {
 
 	delete _deletableFont;
 	_font = NULL;
-
-#if 0
-	if (_fTFace) {
-		FT_Done_Face(_fTFace);
-		_fTFace = NULL;
-	}
-	delete[] _fTStream;
-	_fTStream = NULL;
-#endif
 }
 
 
@@ -258,7 +243,7 @@ void BaseFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align,
 //////////////////////////////////////////////////////////////////////////
 BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset) {
 	//TextLineList lines;
-	// TODO
+	// TODO: Use WideString-conversion here.
 	//WrapText(text, width, maxHeight, lines);
 	Common::Array<Common::String> lines;
 	_font->wordWrapText(text, width, lines);
@@ -402,33 +387,6 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	return NULL;
 }
 
-//////////////////////////////////////////////////////////////////////////
-void BaseFontTT::blitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect) {
-	//SDL_BlitSurface(src, NULL, target, targetRect);
-	warning("BaseFontTT::BlitSurface - not ported yet");
-#if 0
-	for (int y = 0; y < src->h; y++) {
-		if (targetRect->y + y < 0 || targetRect->y + y >= target->h) {
-			continue;
-		}
-
-
-		uint8 *srcBuf = (uint8 *)src->pixels + y * src->pitch;
-		uint8 *tgtBuf = (uint8 *)target->pixels + (y + targetRect->y) * target->pitch;
-
-		uint32 *srcBuf32 = (uint32 *)srcBuf;
-		uint32 *tgtBuf32 = (uint32 *)tgtBuf;
-
-		for (int x = 0; x < src->w; x++) {
-			if (targetRect->x + x < 0 || targetRect->x + x >= target->w) {
-				continue;
-			}
-
-			tgtBuf32[x + targetRect->x] = srcBuf32[x];
-		}
-	}
-#endif
-}
 
 //////////////////////////////////////////////////////////////////////////
 int BaseFontTT::getLetterHeight() {

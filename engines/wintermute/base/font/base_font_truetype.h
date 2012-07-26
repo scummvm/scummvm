@@ -94,27 +94,6 @@ public:
 		uint32 _color;
 	};
 
-	//////////////////////////////////////////////////////////////////////////
-	class TextLine {
-	public:
-		TextLine(const WideString &text, int width) {
-			_text = text;
-			_width = width;
-		}
-
-		const WideString getText() const {
-			return _text;
-		}
-		int getWidth() const {
-			return _width;
-		}
-	private:
-		WideString _text;
-		int _width;
-	};
-	typedef Common::List<TextLine *> TextLineList;
-
-
 public:
 	DECLARE_PERSISTENT(BaseFontTT, BaseFont)
 	BaseFontTT(BaseGame *inGame);
@@ -138,12 +117,9 @@ public:
 private:
 	bool parseLayer(BaseTTFontLayer *layer, byte *buffer);
 
-	void wrapText(const WideString &text, int maxWidth, int maxHeight, TextLineList &lines);
 	void measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight);
 
 	BaseSurface *renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset);
-	void blitSurface(Graphics::Surface *src, Graphics::Surface *target, Common::Rect *targetRect);
-
 
 	BaseCachedTTFontText *_cachedTexts[NUM_CACHED_TEXTS];
 
@@ -153,13 +129,7 @@ private:
 	const Graphics::Font *_font;
 	const Graphics::Font *_fallbackFont;
 
-	float _ascender;
-	float _descender;
 	float _lineHeight;
-	float _underlinePos;
-	float _pointSize;
-	float _vertDpi;
-	float _horDpi;
 
 	size_t _maxCharWidth;
 	size_t _maxCharHeight;
