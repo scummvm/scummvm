@@ -2252,7 +2252,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x78e0:
-		processCallback(0x50c5);
+		processCallback(0x505c);
 		return false;
 
 	case 0x78e7:
