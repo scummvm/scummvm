@@ -2018,9 +2018,6 @@ void RMGfxBox::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 	uint16 *buf = bigBuf;
 	RMRect rcDst;
 
-	// Specify the drawn area
-	bigBuf.addDirtyRect(rcDst);
-
 	// It takes the destination rectangle
 	rcDst = prim->getDst();
 	buf += rcDst._y1 * bigBuf.getDimx() + rcDst._x1;
@@ -2032,6 +2029,9 @@ void RMGfxBox::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 
 		buf += bigBuf.getDimx() - rcDst.width();
 	}
+
+	// Specify the drawn area
+	bigBuf.addDirtyRect(rcDst);
 }
 
 
