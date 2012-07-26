@@ -353,7 +353,7 @@ bool AdSentence::update(TDirection dir) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSentence::CanSkip() {
+bool AdSentence::canSkip() {
 	// prevent accidental sentence skipping (TODO make configurable)
 	return (_gameRef->_timer - _startTime) > 300;
 }

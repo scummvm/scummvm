@@ -191,13 +191,13 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const char *filename) {
 		return false;
 	}
 
-	byte *WorkBuffer = buffer;
+	byte *workBuffer = buffer;
 
 	char *params;
 	BaseParser parser(gameRef);
 
 	bool ret = false;
-	if (parser.getCommand((char **)&WorkBuffer, commands, (char **)&params) == TOKEN_TTFONT) {
+	if (parser.getCommand((char **)&workBuffer, commands, (char **)&params) == TOKEN_TTFONT) {
 		ret = true;
 	}
 

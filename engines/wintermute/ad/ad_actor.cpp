@@ -752,9 +752,9 @@ bool AdActor::update() {
 			_tempSprite2 = _sentence->_currentSprite;
 		}
 
-		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
-		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
-			if (TimeIsUp) {
+		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
+		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = NULL;
 				_state = _nextState;
@@ -797,7 +797,7 @@ bool AdActor::update() {
 
 
 	if (_currentSprite && !already_moved) {
-		_currentSprite->GetCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
+		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
@@ -857,7 +857,7 @@ void AdActor::getNextStep() {
 		return;
 	}
 
-	_currentSprite->GetCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
+	_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
 	if (!_currentSprite->_changed) {
 		return;
 	}
@@ -941,9 +941,9 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GoTo") == 0 || strcmp(name, "GoToAsync") == 0) {
 		stack->correctParams(2);
-		int X = stack->pop()->getInt();
-		int Y = stack->pop()->getInt();
-		goTo(X, Y);
+		int x = stack->pop()->getInt();
+		int y = stack->pop()->getInt();
+		goTo(x, y);
 		if (strcmp(name, "GoToAsync") != 0) {
 			script->waitForExclusive(this);
 		}
@@ -1033,11 +1033,11 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "UnloadAnim") == 0) {
 		stack->correctParams(1);
-		const char *AnimName = stack->pop()->getString();
+		const char *animName = stack->pop()->getString();
 
-		bool Found = false;
+		bool found = false;
 		for (int i = 0; i < _anims.getSize(); i++) {
-			if (scumm_stricmp(_anims[i]->getName(), AnimName) == 0) {
+			if (scumm_stricmp(_anims[i]->getName(), animName) == 0) {
 				// invalidate sprites in use
 				if (_anims[i]->containsSprite(_tempSprite2)) {
 					_tempSprite2 = NULL;
@@ -1053,10 +1053,10 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 				_anims[i] = NULL;
 				_anims.remove_at(i);
 				i--;
-				Found = true;
+				found = true;
 			}
 		}
-		stack->pushBool(Found);
+		stack->pushBool(found);
 		return STATUS_OK;
 	}
 
@@ -1065,8 +1065,8 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HasAnim") == 0) {
 		stack->correctParams(1);
-		const char *AnimName = stack->pop()->getString();
-		stack->pushBool(getAnimByName(AnimName) != NULL);
+		const char *animName = stack->pop()->getString();
+		stack->pushBool(getAnimByName(animName) != NULL);
 		return STATUS_OK;
 	} else {
 		return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
@@ -1421,7 +1421,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 	int cmd;
 	BaseParser parser(_gameRef);
 
-	bool Ret = STATUS_OK;
+	bool ret = STATUS_OK;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -1429,7 +1429,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 			AdSpriteSet *anim = new AdSpriteSet(_gameRef, this);
 			if (!anim || DID_FAIL(anim->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
-				Ret = STATUS_FAILED;
+				ret = STATUS_FAILED;
 			} else {
 				_anims.add(anim);
 			}
@@ -1438,7 +1438,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 		}
 	}
 	delete[] fileBuffer;
-	return Ret;
+	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////

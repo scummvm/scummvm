@@ -39,7 +39,7 @@
 
 namespace WinterMute {
 
-typedef void (*ENGINE_LOG_CALLBACK)(char *Text, bool Result, void *Data);
+typedef void (*ENGINE_LOG_CALLBACK)(char *text, bool result, void *data);
 
 class BaseSoundMgr;
 class BaseFader;
@@ -168,7 +168,7 @@ public:
 	bool _suppressScriptErrors;
 	bool _mouseLeftDown; // TODO: Hide
 
-	virtual bool ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
+	virtual bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
 	// scripting interface
 	virtual ScValue *scGetProperty(const char *name);
 	virtual bool scSetProperty(const char *name, ScValue *value);

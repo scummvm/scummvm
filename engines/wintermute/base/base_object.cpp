@@ -428,8 +428,8 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "SetSoundPosition") == 0) {
 		stack->correctParams(1);
 
-		uint32 Time = stack->pop()->getInt();
-		if (DID_FAIL(setSFXTime(Time))) {
+		uint32 time = stack->pop()->getInt();
+		if (DID_FAIL(setSFXTime(time))) {
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -1099,7 +1099,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 			_sFX->setPositionTime(_sFXStart);
 			_sFXStart = 0;
 		}
-		_sFX->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
+		_sFX->applyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 		if (playNow) {
 			setSoundEvent(eventName);
 			if (loopStart) {
@@ -1192,16 +1192,16 @@ bool BaseObject::updateSounds() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::updateOneSound(BaseSound *sound) {
-	bool Ret = STATUS_OK;
+	bool ret = STATUS_OK;
 
 	if (sound) {
 		if (_autoSoundPanning) {
-			Ret = sound->setPan(_gameRef->_soundMgr->posToPan(_posX  - _gameRef->_offsetX, _posY - _gameRef->_offsetY));
+			ret = sound->setPan(_gameRef->_soundMgr->posToPan(_posX  - _gameRef->_offsetX, _posY - _gameRef->_offsetY));
 		}
 
-		Ret = sound->ApplyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
+		ret = sound->applyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
 	}
-	return Ret;
+	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////

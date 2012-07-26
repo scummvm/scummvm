@@ -212,9 +212,9 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		break;
 
 	case VID_PLAY_STRETCH: {
-		float ZoomX = (float)((float)_gameRef->_renderer->_width / width * 100);
-		float ZoomY = (float)((float)_gameRef->_renderer->_height / height * 100);
-		_playZoom = MIN(ZoomX, ZoomY);
+		float zoomX = (float)((float)_gameRef->_renderer->_width / width * 100);
+		float zoomY = (float)((float)_gameRef->_renderer->_height / height * 100);
+		_playZoom = MIN(zoomX, zoomY);
 		_posX = (int)((_gameRef->_renderer->_width - width * (_playZoom / 100)) / 2);
 		_posY = (int)((_gameRef->_renderer->_height - height * (_playZoom / 100)) / 2);
 	}
@@ -278,7 +278,7 @@ bool VideoTheoraPlayer::update() {
 			if (_theoraDecoder->getTimeToNextFrame() == 0) {
 				_surface.copyFrom(*_theoraDecoder->decodeNextFrame());
 				if (_texture) {
-					WriteVideo();
+					writeVideo();
 				}
 			}
 			return STATUS_OK;
@@ -308,7 +308,7 @@ bool VideoTheoraPlayer::update() {
 
 	if (m_PlaybackStarted && !m_FreezeGame && _gameRef->m_State == GAME_FROZEN) return STATUS_OK;
 
-	int Counter = 0;
+	int counter = 0;
 	while (true) {
 		if (m_Sound) DecodeVorbis();
 		else m_AudioFrameReady = true;
@@ -354,7 +354,7 @@ bool VideoTheoraPlayer::update() {
 
 	// if our buffers either don't exist or are ready to go,
 	// we can begin playback
-	bool StartNow = false;
+	bool startNow = false;
 	if ((!m_TheoraStreams || m_VideoFrameReady) &&
 	        (!m_VorbisStreams || m_AudioFrameReady)) StartNow = true;
 	// same if we've run out of input
@@ -389,7 +389,7 @@ uint32 VideoTheoraPlayer::getMovieTime() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool VideoTheoraPlayer::WriteVideo() {
+bool VideoTheoraPlayer::writeVideo() {
 	if (!_texture) {
 		return STATUS_FAILED;
 	}
@@ -492,13 +492,13 @@ inline int intlog(int num) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool VideoTheoraPlayer::SeekToTime(uint32 time) {
+bool VideoTheoraPlayer::seekToTime(uint32 time) {
 	warning("VideoTheoraPlayer::SeekToTime(%d) - not supported", time);
 #if 0
 	if (!m_TheoraStreams) return STATUS_FAILED;
 
 
-	float TargetTime = Time / 1000.0f;
+	float targetTime = Time / 1000.0f;
 
 
 	ogg_page page;

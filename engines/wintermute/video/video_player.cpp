@@ -39,12 +39,12 @@ namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
 VideoPlayer::VideoPlayer(BaseGame *inGame): BaseClass(inGame) {
-	SetDefaults();
+	setDefaults();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool VideoPlayer::SetDefaults() {
+bool VideoPlayer::setDefaults() {
 	_playing = false;
 
 	/*  _aviFile = NULL;
@@ -145,7 +145,7 @@ bool VideoPlayer::initialize(const char *inFilename, const char *SubtitleFile) {
 #if 0
 	cleanup();
 
-	char Filename[MAX_PATH_LENGTH];
+	char filename[MAX_PATH_LENGTH];
 	_gameRef->_fileManager->GetFullPath(inFilename, filename);
 
 	// open file
@@ -270,9 +270,9 @@ bool VideoPlayer::update() {
 		// process subtitles
 		_showSubtitle = false;
 		while (_currentSubtitle < _subtitles.getSize()) {
-			int End = _subtitles[_currentSubtitle]->m_EndFrame;
+			int end = _subtitles[_currentSubtitle]->m_EndFrame;
 
-			bool NextFrameOK = (_currentSubtitle < _subtitles.getSize() - 1 && _subtitles[_currentSubtitle + 1]->_startFrame <= sample);
+			bool nextFrameOK = (_currentSubtitle < _subtitles.getSize() - 1 && _subtitles[_currentSubtitle + 1]->_startFrame <= sample);
 
 			if (sample > End) {
 				if (NextFrameOK) {
@@ -324,7 +324,7 @@ bool VideoPlayer::display() {
 	// display subtitle
 	if (m_ShowSubtitle) {
 		BaseFont *font = _gameRef->_videoFont ? _gameRef->_videoFont : _gameRef->_systemFont;
-		int Height = font->GetTextHeight((BYTE *)m_Subtitles[_currentSubtitle]->_text, _gameRef->_renderer->_width);
+		int height = font->GetTextHeight((BYTE *)m_Subtitles[_currentSubtitle]->_text, _gameRef->_renderer->_width);
 		font->drawText((byte *)_subtitles[m_CurrentSubtitle]->_text, 0, _gameRef->_renderer->_height - Height - 5, _gameRef->_renderer->_width, TAL_CENTER);
 	}
 
@@ -337,7 +337,7 @@ bool VideoPlayer::display() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool VideoPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
+bool VideoPlayer::play(TVideoPlayback type, int x, int y, bool FreezeMusic) {
 #if 0
 	if (!_videoStream || !_vidRenderer) {
 		return STATUS_FAILED;
@@ -351,8 +351,8 @@ bool VideoPlayer::play(TVideoPlayback Type, int X, int Y, bool FreezeMusic) {
 		break;
 
 	case VID_PLAY_STRETCH: {
-		float ZoomX = (float)((float)_gameRef->_renderer->m_Width / (float)_videoFormat->bmiHeader.biWidth * 100);
-		float ZoomY = (float)((float)_gameRef->_renderer->m_Height / (float)_videoFormat->bmiHeader.biHeight * 100);
+		float zoomX = (float)((float)_gameRef->_renderer->m_Width / (float)_videoFormat->bmiHeader.biWidth * 100);
+		float zoomY = (float)((float)_gameRef->_renderer->m_Height / (float)_videoFormat->bmiHeader.biHeight * 100);
 		_playZoom = min(ZoomX, ZoomY);
 		_playPosX = (_gameRef->_renderer->_width - _videoFormat->bmiHeader.biWidth * (_playZoom / 100)) / 2;
 		_playPosY = (_gameRef->_renderer->_height - _videoFormat->bmiHeader.biHeight * (_playZoom / 100)) / 2;
@@ -431,7 +431,7 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) 
 		return STATUS_OK;
 	}
 
-	char NewFile[MAX_PATH_LENGTH];
+	char newFile[MAX_PATH_LENGTH];
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
@@ -443,35 +443,35 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) 
 		_makepath(NewFile, drive, dir, fname, ".SUB");
 	}
 
-	DWORD Size;
-	BYTE *Buffer = _gameRef->m_FileManager->readWholeFile(NewFile, &Size, false);
+	DWORD size;
+	BYTE *buffer = _gameRef->m_FileManager->readWholeFile(NewFile, &Size, false);
 	if (Buffer == NULL) {
 		return STATUS_OK;    // no subtitles
 	}
 
 
 	LONG Start, End;
-	bool InToken;
-	char *TokenStart;
-	int TokenLength;
-	int TokenPos;
-	int TextLength;
+	bool inToken;
+	char *tokenStart;
+	int tokenLength;
+	int tokenPos;
+	int textLength;
 
-	int Pos = 0;
-	int LineLength = 0;
+	int pos = 0;
+	int lineLength = 0;
 	while (Pos < Size) {
-		Start = End = -1;
-		InToken = false;
-		TokenPos = -1;
-		TextLength = 0;
+		start = End = -1;
+		inToken = false;
+		tokenPos = -1;
+		textLength = 0;
 
-		LineLength = 0;
+		lineLength = 0;
 		while (Pos + LineLength < Size && Buffer[Pos + LineLength] != '\n' && Buffer[Pos + LineLength] != '\0') {
-			LineLength++;
+			lineLength++;
 		}
 
-		int RealLength = LineLength - (Pos + LineLength >= Size ? 0 : 1);
-		char *Text = new char[RealLength + 1];
+		int realLength = LineLength - (Pos + LineLength >= Size ? 0 : 1);
+		char *text = new char[RealLength + 1];
 		char *line = (char *)&Buffer[Pos];
 
 		for (int i = 0; i < RealLength; i++) {
@@ -487,7 +487,7 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *SubtitleFile) 
 			} else if (line[i] == '}') {
 				if (InToken) {
 					InToken = false;
-					char *Token = new char[TokenLength + 1];
+					char *token = new char[TokenLength + 1];
 					strncpy(Token, TokenStart, TokenLength);
 					Token[TokenLength] = '\0';
 					if (TokenPos == 0) {

@@ -162,9 +162,9 @@ ScValue *SXArray::scGetProperty(const char *name) {
 	// [number]
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		char ParamName[20];
-		if (validNumber(name, ParamName)) {
-			return _values->getProp(ParamName);
+		char paramName[20];
+		if (validNumber(name, paramName)) {
+			return _values->getProp(paramName);
 		} else {
 			return _scValue;
 		}
@@ -178,14 +178,14 @@ bool SXArray::scSetProperty(const char *name, ScValue *value) {
 	// Length
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Length") == 0) {
-		int OrigLength = _length;
+		int origLength = _length;
 		_length = MAX(value->getInt(0), 0);
 
-		char PropName[20];
-		if (_length < OrigLength) {
-			for (int i = _length; i < OrigLength; i++) {
-				sprintf(PropName, "%d", i);
-				_values->deleteProp(PropName);
+		char propName[20];
+		if (_length < origLength) {
+			for (int i = _length; i < origLength; i++) {
+				sprintf(propName, "%d", i);
+				_values->deleteProp(propName);
 			}
 		}
 		return STATUS_OK;

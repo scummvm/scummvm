@@ -659,7 +659,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 
 	int ar, ag, ab, aa;
 	char camera[MAX_PATH_LENGTH] = "";
-	/* float WaypointHeight = -1.0f; */
+	/* float waypointHeight = -1.0f; */
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -991,8 +991,8 @@ bool AdScene::traverseNodes(bool doUpdate) {
 	_gameRef->_renderer->setup2D();
 
 	// for each layer
-	/* int MainOffsetX = 0; */
-	/* int MainOffsetY = 0; */
+	/* int mainOffsetX = 0; */
+	/* int mainOffsetY = 0; */
 
 	for (j = 0; j < _layers.getSize(); j++) {
 		if (!_layers[j]->_active) {

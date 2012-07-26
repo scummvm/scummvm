@@ -40,10 +40,6 @@ class AdInventoryBox : public BaseObject {
 public:
 	bool _hideSelected;
 	DECLARE_PERSISTENT(AdInventoryBox, BaseObject)
-	bool _exclusive;
-	int _scrollBy;
-	int _itemHeight;
-	int _itemWidth;
 	bool _visible;
 	virtual bool display();
 	UIButton *_closeButton;
@@ -57,6 +53,11 @@ public:
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+private:
+	bool _exclusive;
+	int _scrollBy;
+	int _itemHeight;
+	int _itemWidth;
 };
 
 } // end of namespace WinterMute

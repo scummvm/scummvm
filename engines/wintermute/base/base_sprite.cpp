@@ -103,7 +103,7 @@ void BaseSprite::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
-	GetCurrentFrame(zoomX, zoomY);
+	getCurrentFrame(zoomX, zoomY);
 	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) {
 		return STATUS_OK;
 	}
@@ -291,14 +291,14 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 			break;
 
 		case TOKEN_FRAME: {
-			int FrameLifeTime = lifeTime;
+			int frameLifeTime = lifeTime;
 			if (cacheType == CACHE_HALF && frameCount % 2 != 1) {
-				FrameLifeTime = -1;
+				frameLifeTime = -1;
 			}
 
 			frame = new BaseFrame(_gameRef);
 
-			if (DID_FAIL(frame->loadBuffer(params, FrameLifeTime, _streamedKeepLoaded))) {
+			if (DID_FAIL(frame->loadBuffer(params, frameLifeTime, _streamedKeepLoaded))) {
 				delete frame;
 				_gameRef->LOG(0, "Error parsing frame %d", frameCount);
 				return STATUS_FAILED;
@@ -345,7 +345,7 @@ void BaseSprite::reset() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool BaseSprite::GetCurrentFrame(float zoomX, float zoomY) {
+bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 	//if (_owner && _owner->_freezable && _gameRef->_state == GAME_FROZEN) return true;
 
 	if (_currentFrame == -1) {
@@ -406,7 +406,7 @@ bool BaseSprite::GetCurrentFrame(float zoomX, float zoomY) {
 
 
 //////////////////////////////////////////////////////////////////////
-bool BaseSprite::display(int X, int Y, BaseObject *Register, float ZoomX, float ZoomY, uint32 Alpha, float Rotate, TSpriteBlendMode BlendMode) {
+bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
 	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) {
 		return STATUS_OK;
 	}
@@ -421,7 +421,7 @@ bool BaseSprite::display(int X, int Y, BaseObject *Register, float ZoomX, float 
 	}
 
 	// draw frame
-	return _frames[_currentFrame]->draw(X - _gameRef->_offsetX, Y - _gameRef->_offsetY, Register, ZoomX, ZoomY, _precise, Alpha, _editorAllFrames, Rotate, BlendMode);
+	return _frames[_currentFrame]->draw(x - _gameRef->_offsetX, y - _gameRef->_offsetY, registerVal, zoomX, zoomY, _precise, alpha, _editorAllFrames, rotate, blendMode);
 }
 
 
@@ -549,12 +549,12 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "GetFrame") == 0) {
 		stack->correctParams(1);
-		int Index = stack->pop()->getInt(-1);
-		if (Index < 0 || Index >= _frames.getSize()) {
-			script->runtimeError("Sprite.GetFrame: Frame index %d is out of range.", Index);
+		int index = stack->pop()->getInt(-1);
+		if (index < 0 || index >= _frames.getSize()) {
+			script->runtimeError("Sprite.GetFrame: Frame index %d is out of range.", index);
 			stack->pushNULL();
 		} else {
-			stack->pushNative(_frames[Index], true);
+			stack->pushNative(_frames[index], true);
 		}
 		return STATUS_OK;
 	}

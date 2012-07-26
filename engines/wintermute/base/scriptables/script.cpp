@@ -165,7 +165,7 @@ bool ScScript::initScript() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::initTables() {
-	uint32 OrigIP = _iP;
+	uint32 origIP = _iP;
 
 	readHeader();
 	// load symbol table
@@ -232,7 +232,7 @@ bool ScScript::initTables() {
 	}
 
 
-	_iP = OrigIP;
+	_iP = origIP;
 
 	return STATUS_OK;
 }
@@ -546,7 +546,7 @@ bool ScScript::executeInstruction() {
 	case II_DEF_GLOB_VAR:
 	case II_DEF_CONST_VAR: {
 		dw = getDWORD();
-		/*      char *Temp = _symbols[dw]; // TODO delete */
+		/*      char *temp = _symbols[dw]; // TODO delete */
 		// only create global var if it doesn't exist
 		if (!_engine->_globals->propExists(_symbols[dw])) {
 			_operand->setNULL();
@@ -604,8 +604,8 @@ bool ScScript::executeInstruction() {
 		// push var
 		// push string
 		str = _stack->pop()->getString();
-		char *MethodName = new char[strlen(str) + 1];
-		strcpy(MethodName, str);
+		char *methodName = new char[strlen(str) + 1];
+		strcpy(methodName, str);
 
 		ScValue *var = _stack->pop();
 		if (var->_type == VAL_VARIABLE_REF) {
@@ -613,21 +613,21 @@ bool ScScript::executeInstruction() {
 		}
 
 		bool res = STATUS_FAILED;
-		bool TriedNative = false;
+		bool triedNative = false;
 
 		// we are already calling this method, try native
-		if (_thread && _methodThread && strcmp(MethodName, _threadEvent) == 0 && var->_type == VAL_NATIVE && _owner == var->getNative()) {
-			TriedNative = true;
-			res = var->_valNative->scCallMethod(this, _stack, _thisStack, MethodName);
+		if (_thread && _methodThread && strcmp(methodName, _threadEvent) == 0 && var->_type == VAL_NATIVE && _owner == var->getNative()) {
+			triedNative = true;
+			res = var->_valNative->scCallMethod(this, _stack, _thisStack, methodName);
 		}
 
 		if (DID_FAIL(res)) {
-			if (var->isNative() && var->getNative()->canHandleMethod(MethodName)) {
+			if (var->isNative() && var->getNative()->canHandleMethod(methodName)) {
 				if (!_unbreakable) {
-					_waitScript = var->getNative()->invokeMethodThread(MethodName);
+					_waitScript = var->getNative()->invokeMethodThread(methodName);
 					if (!_waitScript) {
 						_stack->correctParams(0);
-						runtimeError("Error invoking method '%s'.", MethodName);
+						runtimeError("Error invoking method '%s'.", methodName);
 						_stack->pushNULL();
 					} else {
 						_state = SCRIPT_WAITING_SCRIPT;
@@ -636,10 +636,10 @@ bool ScScript::executeInstruction() {
 				} else {
 					// can call methods in unbreakable mode
 					_stack->correctParams(0);
-					runtimeError("Cannot call method '%s'. Ignored.", MethodName);
+					runtimeError("Cannot call method '%s'. Ignored.", methodName);
 					_stack->pushNULL();
 				}
-				delete[] MethodName;
+				delete[] methodName;
 				break;
 			}
 			/*
@@ -665,29 +665,29 @@ bool ScScript::executeInstruction() {
 			*/
 			else {
 				res = STATUS_FAILED;
-				if (var->_type == VAL_NATIVE && !TriedNative) {
-					res = var->_valNative->scCallMethod(this, _stack, _thisStack, MethodName);
+				if (var->_type == VAL_NATIVE && !triedNative) {
+					res = var->_valNative->scCallMethod(this, _stack, _thisStack, methodName);
 				}
 
 				if (DID_FAIL(res)) {
 					_stack->correctParams(0);
-					runtimeError("Call to undefined method '%s'. Ignored.", MethodName);
+					runtimeError("Call to undefined method '%s'. Ignored.", methodName);
 					_stack->pushNULL();
 				}
 			}
 		}
-		delete[] MethodName;
+		delete[] methodName;
 	}
 	break;
 
 	case II_EXTERNAL_CALL: {
-		uint32 SymbolIndex = getDWORD();
+		uint32 symbolIndex = getDWORD();
 
-		TExternalFunction *f = getExternal(_symbols[SymbolIndex]);
+		TExternalFunction *f = getExternal(_symbols[symbolIndex]);
 		if (f) {
 			externalCall(_stack, _thisStack, f);
 		} else {
-			_gameRef->ExternalCall(this, _stack, _thisStack, _symbols[SymbolIndex]);
+			_gameRef->externalCall(this, _stack, _thisStack, _symbols[symbolIndex]);
 		}
 
 		break;
@@ -737,8 +737,8 @@ bool ScScript::executeInstruction() {
 	}
 
 	case II_POP_VAR: {
-		char *VarName = _symbols[getDWORD()];
-		ScValue *var = getVar(VarName);
+		char *varName = _symbols[getDWORD()];
+		ScValue *var = getVar(varName);
 		if (var) {
 			ScValue *val = _stack->pop();
 			if (!val) {
@@ -1460,13 +1460,13 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::copyParameters(ScStack *stack) {
 	int i;
-	int NumParams = stack->pop()->getInt();
-	for (i = NumParams - 1; i >= 0; i--) {
+	int numParams = stack->pop()->getInt();
+	for (i = numParams - 1; i >= 0; i--) {
 		_stack->push(stack->getAt(i));
 	}
-	_stack->pushInt(NumParams);
+	_stack->pushInt(numParams);
 
-	for (i = 0; i < NumParams; i++) {
+	for (i = 0; i < numParams; i++) {
 		stack->pop();
 	}
 

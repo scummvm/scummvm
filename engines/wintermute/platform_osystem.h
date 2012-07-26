@@ -48,7 +48,7 @@ public:
 	static void outputDebugString(const char *lpOutputString);
 	//static uint32 getTime();
 	static bool getCursorPos(Point32 *lpPoint);
-	static bool setCursorPos(int X, int Y);
+	static bool setCursorPos(int x, int y);
 	static bool showWindow(int nCmdShow);
 
 	static void setCapture();

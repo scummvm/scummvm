@@ -733,10 +733,10 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool UIWindow::enableWidget(const char *name, bool Enable) {
+bool UIWindow::enableWidget(const char *name, bool enable) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
-			_widgets[i]->_disable = !Enable;
+			_widgets[i]->_disable = !enable;
 		}
 	}
 	return STATUS_OK;
@@ -744,10 +744,10 @@ bool UIWindow::enableWidget(const char *name, bool Enable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool UIWindow::showWidget(const char *name, bool Visible) {
+bool UIWindow::showWidget(const char *name, bool visible) {
 	for (int i = 0; i < _widgets.getSize(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
-			_widgets[i]->_visible = Visible;
+			_widgets[i]->_visible = visible;
 		}
 	}
 	return STATUS_OK;

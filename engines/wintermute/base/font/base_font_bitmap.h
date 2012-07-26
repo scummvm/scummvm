@@ -62,7 +62,7 @@ private:
 	int getCharWidth(byte index);
 	void drawChar(byte c, int x, int y);
 
-	int textHeightDraw(byte *text, int x, int y, int width, TTextAlign align, bool draw, int max_height = -1, int MaxLength = -1);
+	int textHeightDraw(byte *text, int x, int y, int width, TTextAlign align, bool draw, int max_height = -1, int maxLength = -1);
 
 };
 

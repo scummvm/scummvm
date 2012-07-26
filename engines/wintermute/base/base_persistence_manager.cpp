@@ -206,13 +206,13 @@ bool BasePersistenceManager::initSave(const char *desc) {
 		magic = SAVE_MAGIC_2;
 		putDWORD(magic);
 
-		byte VerMajor, VerMinor, ExtMajor, ExtMinor;
-		_gameRef->getVersion(&VerMajor, &VerMinor, &ExtMajor, &ExtMinor);
-		//uint32 Version = MAKELONG(MAKEWORD(VerMajor, VerMinor), MAKEWORD(ExtMajor, ExtMinor));
-		_saveStream->writeByte(VerMajor);
-		_saveStream->writeByte(VerMinor);
-		_saveStream->writeByte(ExtMajor);
-		_saveStream->writeByte(ExtMinor);
+		byte verMajor, verMinor, extMajor, extMinor;
+		_gameRef->getVersion(&verMajor, &verMinor, &extMajor, &extMinor);
+		//uint32 version = MAKELONG(MAKEWORD(VerMajor, VerMinor), MAKEWORD(ExtMajor, ExtMinor));
+		_saveStream->writeByte(verMajor);
+		_saveStream->writeByte(verMinor);
+		_saveStream->writeByte(extMajor);
+		_saveStream->writeByte(extMinor);
 
 		// new in ver 2
 		putDWORD((uint32)DCGF_VER_BUILD);

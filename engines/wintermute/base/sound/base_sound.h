@@ -71,7 +71,7 @@ public:
 	BaseSound(BaseGame *inGame);
 	virtual ~BaseSound();
 
-	bool ApplyFX(TSFXType type = SFX_NONE, float param1 = 0, float param2 = 0, float param3 = 0, float param4 = 0);
+	bool applyFX(TSFXType type = SFX_NONE, float param1 = 0, float param2 = 0, float param3 = 0, float param4 = 0);
 
 private:
 	TSFXType _sFXType;

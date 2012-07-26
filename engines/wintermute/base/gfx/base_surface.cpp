@@ -87,7 +87,7 @@ bool BaseSurface::displayTransform(int x, int y, int hotX, int hotY, Rect32 rect
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurface::create(int Width, int Height) {
+bool BaseSurface::create(int width, int height) {
 	return STATUS_FAILED;
 }
 

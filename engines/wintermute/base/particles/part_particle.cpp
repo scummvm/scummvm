@@ -198,7 +198,7 @@ bool PartParticle::display(PartEmitter *emitter) {
 		return STATUS_OK;
 	}
 
-	_sprite->GetCurrentFrame();
+	_sprite->getCurrentFrame();
 	return _sprite->display(_pos.x, _pos.y,
 	                        NULL,
 	                        _scale, _scale,

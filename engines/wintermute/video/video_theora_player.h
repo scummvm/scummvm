@@ -65,10 +65,10 @@ public:
 	bool initialize(const Common::String &filename, const Common::String &subtitleFile = NULL);
 	bool initializeSimple();
 	bool update();
-	bool play(TVideoPlayback type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeGame = false, bool freezeMusic = true, bool Looping = false, uint32 startTime = 0, float forceZoom = -1.0f, int volume = -1);
+	bool play(TVideoPlayback type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeGame = false, bool freezeMusic = true, bool looping = false, uint32 startTime = 0, float forceZoom = -1.0f, int volume = -1);
 	bool stop();
 	bool display(uint32 alpha = 0xFFFFFFFF);
-	//bool RenderFrame(BaseSurface *Texture, yuv_buffer *yuv);
+	//bool renderFrame(BaseSurface *texture, yuv_buffer *yuv);
 
 	bool pause();
 	bool resume();
@@ -101,7 +101,7 @@ public:
 	__inline byte getAlphaAt(int x, int y);
 	void writeAlpha();
 
-	bool SeekToTime(uint32 Time);
+	bool seekToTime(uint32 Time);
 
 
 	void cleanup();
@@ -135,7 +135,7 @@ private:
 	bool _videoFrameReady;
 	float _videobufTime;
 
-	bool WriteVideo();
+	bool writeVideo();
 
 	bool _playbackStarted;
 

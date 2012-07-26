@@ -88,8 +88,8 @@ BaseSoundBuffer::~BaseSoundBuffer() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseSoundBuffer::setStreaming(bool Streamed, uint32 NumBlocks, uint32 BlockSize) {
-	_streamed = Streamed;
+void BaseSoundBuffer::setStreaming(bool streamed, uint32 numBlocks, uint32 blockSize) {
+	_streamed = streamed;
 }
 
 

@@ -47,14 +47,14 @@ SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack): BaseScriptable(inGam
 	_buffer = NULL;
 	_size = 0;
 
-	int NewSize = stack->pop()->getInt();
-	resize(MAX(0, NewSize));
+	int newSize = stack->pop()->getInt();
+	resize(MAX(0, newSize));
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXMemBuffer::SXMemBuffer(BaseGame *inGame, void *Buffer): BaseScriptable(inGame) {
+SXMemBuffer::SXMemBuffer(BaseGame *inGame, void *buffer): BaseScriptable(inGame) {
 	_size = 0;
-	_buffer = Buffer;
+	_buffer = buffer;
 }
 
 
@@ -184,11 +184,11 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetShort") == 0) {
 		stack->correctParams(1);
-		int Start = stack->pop()->getInt();
-		if (!checkBounds(script, Start, sizeof(short))) {
+		int start = stack->pop()->getInt();
+		if (!checkBounds(script, start, sizeof(short))) {
 			stack->pushNULL();
 		} else {
-			stack->pushInt(65536 + * (short *)((byte *)_buffer + Start));
+			stack->pushInt(65536 + * (short *)((byte *)_buffer + start));
 		}
 
 		return STATUS_OK;
@@ -416,7 +416,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			stack->pushBool(false);
 		} else {
 			/*
-			int Pointer = (int)Val->getMemBuffer();
+			int pointer = (int)Val->getMemBuffer();
 			memcpy((byte *)_buffer+Start, &Pointer, sizeof(void*));
 			stack->pushBool(true);
 			*/
@@ -478,10 +478,10 @@ bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 	// Length
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Length")==0){
-	    int OrigLength = _length;
+	    int origLength = _length;
 	    _length = max(value->getInt(0), 0);
 
-	    char PropName[20];
+	    char propName[20];
 	    if (_length < OrigLength){
 	        for(int i=_length; i<OrigLength; i++){
 	            sprintf(PropName, "%d", i);

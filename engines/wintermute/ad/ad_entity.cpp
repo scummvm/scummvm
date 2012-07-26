@@ -611,9 +611,9 @@ bool AdEntity::update() {
 			_tempSprite2 = _sentence->_currentSprite;
 		}
 
-		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
-		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
-			if (TimeIsUp) {
+		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
+		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = NULL;
 				_state = STATE_READY;
@@ -637,7 +637,7 @@ bool AdEntity::update() {
 
 
 	if (_currentSprite) {
-		_currentSprite->GetCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
+		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
@@ -648,10 +648,10 @@ bool AdEntity::update() {
 	_ready = (_state == STATE_READY);
 
 	if (_theora) {
-		int OffsetX, OffsetY;
-		_gameRef->getOffset(&OffsetX, &OffsetY);
-		_theora->_posX = _posX - OffsetX;
-		_theora->_posY = _posY - OffsetY;
+		int offsetX, offsetY;
+		_gameRef->getOffset(&offsetX, &offsetY);
+		_theora->_posX = _posX - offsetX;
+		_theora->_posY = _posY - offsetY;
 
 		_theora->update();
 		if (_theora->isFinished()) {

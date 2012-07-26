@@ -1051,14 +1051,14 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		const char *filename = stack->pop()->getString();
 		ScValue *val = stack->pop();
 
-		bool ClearOld;
+		bool clearOld;
 		if (val->isNULL()) {
-			ClearOld = true;
+			clearOld = true;
 		} else {
-			ClearOld = val->getBool();
+			clearOld = val->getBool();
 		}
 
-		if (DID_FAIL(_stringTable->loadFile(filename, ClearOld))) {
+		if (DID_FAIL(_stringTable->loadFile(filename, clearOld))) {
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -1530,7 +1530,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool dropFrames = stack->pop()->getBool(true);
 
 		ScValue *valSub = stack->pop();
-		const char *SubtitleFile = valSub->isNULL() ? NULL : valSub->getString();
+		const char *subtitleFile = valSub->isNULL() ? NULL : valSub->getString();
 
 		if (type < (int)VID_PLAY_POS || type > (int)VID_PLAY_CENTER) {
 			type = (int)VID_PLAY_STRETCH;
@@ -1538,7 +1538,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		delete _theoraPlayer;
 		_theoraPlayer = new VideoTheoraPlayer(this);
-		if (_theoraPlayer && DID_SUCCEED(_theoraPlayer->initialize(filename, SubtitleFile))) {
+		if (_theoraPlayer && DID_SUCCEED(_theoraPlayer->initialize(filename, subtitleFile))) {
 			_theoraPlayer->_dontDropFrames = !dropFrames;
 			if (DID_SUCCEED(_theoraPlayer->play((TVideoPlayback)type, xVal, yVal, true, freezeMusic))) {
 				stack->pushBool(true);
@@ -1649,8 +1649,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsSaveSlotUsed") == 0) {
 		stack->correctParams(1);
-		int Slot = stack->pop()->getInt();
-		stack->pushBool(isSaveSlotUsed(Slot));
+		int slot = stack->pop()->getInt();
+		stack->pushBool(isSaveSlotUsed(slot));
 		return STATUS_OK;
 	}
 
@@ -2162,7 +2162,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccOutputText") == 0) {
 		stack->correctParams(2);
-		/* const char *Str = */	stack->pop()->getString();
+		/* const char *str = */	stack->pop()->getString();
 		/* int type = */ stack->pop()->getInt();
 		// do nothing
 		stack->pushNULL();
@@ -2225,9 +2225,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			crc checksum = crc_finalize(remainder);
 
 			if (asHex) {
-				char Hex[100];
-				sprintf(Hex, "%x", checksum);
-				stack->pushString(Hex);
+				char hex[100];
+				sprintf(hex, "%x", checksum);
+				stack->pushString(hex);
 			} else {
 				stack->pushInt(checksum);
 			}
@@ -3032,7 +3032,7 @@ bool BaseGame::validObject(BaseObject *object) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) {
+bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) {
 	ScValue *thisObj;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -4266,7 +4266,7 @@ bool BaseGame::displayIndicator() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::updateMusicCrossfade() {
-	/* byte GlobMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC); */
+	/* byte globMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC); */
 
 	if (!_musicCrossfadeRunning) {
 		return STATUS_OK;

@@ -244,12 +244,12 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertPoint") == 0) {
 		stack->correctParams(3);
-		int Index = stack->pop()->getInt();
+		int index = stack->pop()->getInt();
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		if (Index >= 0 && Index < _points.getSize()) {
-			_points.insert_at(Index, new BasePoint(x, y));
+		if (index >= 0 && index < _points.getSize()) {
+			_points.insert_at(index, new BasePoint(x, y));
 			createRegion();
 
 			stack->pushBool(true);
@@ -265,13 +265,13 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetPoint") == 0) {
 		stack->correctParams(3);
-		int Index = stack->pop()->getInt();
+		int index = stack->pop()->getInt();
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		if (Index >= 0 && Index < _points.getSize()) {
-			_points[Index]->x = x;
-			_points[Index]->y = y;
+		if (index >= 0 && index < _points.getSize()) {
+			_points[index]->x = x;
+			_points[index]->y = y;
 			createRegion();
 
 			stack->pushBool(true);
@@ -497,16 +497,16 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.getSize() == 0) {
 		BasePlatform::setRectEmpty(rect);
 	} else {
-		int MinX = INT_MAX, MinY = INT_MAX, MaxX = INT_MIN, MaxY = INT_MIN;
+		int minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 
 		for (int i = 0; i < _points.getSize(); i++) {
-			MinX = MIN(MinX, _points[i]->x);
-			MinY = MIN(MinY, _points[i]->y);
+			minX = MIN(minX, _points[i]->x);
+			minY = MIN(minY, _points[i]->y);
 
-			MaxX = MAX(MaxX, _points[i]->x);
-			MaxY = MAX(MaxY, _points[i]->y);
+			maxX = MAX(maxX, _points[i]->x);
+			maxY = MAX(maxY, _points[i]->y);
 		}
-		BasePlatform::setRect(rect, MinX, MinY, MaxX, MaxY);
+		BasePlatform::setRect(rect, minX, minY, maxX, maxY);
 	}
 	return STATUS_OK;
 }

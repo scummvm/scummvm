@@ -378,9 +378,9 @@ bool AdItem::update() {
 			_tempSprite2 = _sentence->_currentSprite;
 		}
 
-		bool TimeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
-		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ TimeIsUp)) {
-			if (TimeIsUp) {
+		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
+		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = NULL;
 				_state = STATE_READY;
@@ -440,9 +440,9 @@ bool AdItem::display(int x, int y) {
 			if (_amountString) {
 				font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
 			} else {
-				char Str[256];
-				sprintf(Str, "%d", _amount);
-				font->drawText((byte *)Str, amountX, amountY, width, _amountAlign);
+				char str[256];
+				sprintf(str, "%d", _amount);
+				font->drawText((byte *)str, amountX, amountY, width, _amountAlign);
 			}
 		}
 	}

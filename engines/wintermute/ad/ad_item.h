@@ -36,14 +36,6 @@ namespace WinterMute {
 
 class AdItem : public AdTalkHolder {
 public:
-	bool _displayAmount;
-	int _amount;
-	int _amountOffsetX;
-	int _amountOffsetY;
-	TTextAlign _amountAlign;
-	char *_amountString;
-
-
 	bool update();
 	DECLARE_PERSISTENT(AdItem, AdTalkHolder)
 	bool display(int x, int y);
@@ -63,6 +55,13 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value);
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
+private:
+	bool _displayAmount;
+	int _amount;
+	int _amountOffsetX;
+	int _amountOffsetY;
+	TTextAlign _amountAlign;
+	char *_amountString;
 };
 
 } // end of namespace WinterMute

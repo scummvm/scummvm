@@ -47,55 +47,55 @@ class AdPathPoint;
 class AdScene : public BaseObject {
 public:
 
-	BaseObject *getNextAccessObject(BaseObject *CurrObject);
-	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
-	bool getSceneObjects(BaseArray<AdObject *> &Objects, bool InteractiveOnly);
-	bool getRegionObjects(AdRegion *Region, BaseArray<AdObject *> &Objects, bool InteractiveOnly);
+	BaseObject *getNextAccessObject(BaseObject *currObject);
+	BaseObject *getPrevAccessObject(BaseObject *currObject);
+	bool getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly);
+	bool getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
 
 	bool afterLoad();
 
-	bool getRegionsAt(int X, int Y, AdRegion **RegionList, int NumRegions);
-	bool handleItemAssociations(const char *ItemName, bool Show);
+	bool getRegionsAt(int x, int y, AdRegion **regionList, int numRegions);
+	bool handleItemAssociations(const char *itemName, bool show);
 	UIWindow *_shieldWindow;
-	float getRotationAt(int X, int Y);
+	float getRotationAt(int x, int y);
 	bool loadState();
 	bool saveState();
 	bool _persistentState;
 	bool _persistentStateSprites;
 	BaseObject *getNodeByName(const char *name);
-	void setOffset(int OffsetLeft, int OffsetTop);
-	bool pointInViewport(int X, int Y);
+	void setOffset(int offsetLeft, int offsetTop);
+	bool pointInViewport(int x, int y);
 	int getOffsetTop();
 	int getOffsetLeft();
-	bool getViewportSize(int *Width = NULL, int *Height = NULL);
-	bool getViewportOffset(int *OffsetX = NULL, int *OffsetY = NULL);
+	bool getViewportSize(int *width = NULL, int *height = NULL);
+	bool getViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
 	BaseViewport *_viewport;
 	BaseFader *_fader;
 	int _pfPointsNum;
-	void pfPointsAdd(int X, int Y, int Distance);
+	void pfPointsAdd(int x, int y, int distance);
 	void pfPointsStart();
 	bool _initialized;
-	bool correctTargetPoint(int StartX, int StartY, int *X, int *Y, bool CheckFreeObjects = false, BaseObject *Requester = NULL);
-	bool correctTargetPoint2(int StartX, int StartY, int *TargetX, int *TargetY, bool CheckFreeObjects, BaseObject *Requester);
+	bool correctTargetPoint(int startX, int startY, int *x, int *y, bool checkFreeObjects = false, BaseObject *requester = NULL);
+	bool correctTargetPoint2(int startX, int startY, int *targetX, int *targetY, bool checkFreeObjects, BaseObject *requester);
 	DECLARE_PERSISTENT(AdScene, BaseObject)
-	bool displayRegionContent(AdRegion *Region = NULL, bool Display3DOnly = false);
-	bool displayRegionContentOld(AdRegion *Region = NULL);
-	static int compareObjs(const void *Obj1, const void *Obj2);
+	bool displayRegionContent(AdRegion *region = NULL, bool display3DOnly = false);
+	bool displayRegionContentOld(AdRegion *region = NULL);
+	static int compareObjs(const void *obj1, const void *obj2);
 
 	bool updateFreeObjects();
-	bool traverseNodes(bool Update = false);
-	float getScaleAt(int Y);
+	bool traverseNodes(bool update = false);
+	float getScaleAt(int y);
 	bool sortScaleLevels();
 	bool sortRotLevels();
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
-	uint32 getAlphaAt(int X, int Y, bool ColorCheck = false);
+	uint32 getAlphaAt(int x, int y, bool colorCheck = false);
 	bool _paralaxScrolling;
-	void skipTo(int OffsetX, int OffsetY);
+	void skipTo(int offsetX, int offsetY);
 	void setDefaults();
 	void cleanup();
-	void skipToObject(BaseObject *Object);
-	void scrollToObject(BaseObject *Object);
-	void scrollTo(int OffsetX, int OffsetY);
+	void skipToObject(BaseObject *object);
+	void scrollToObject(BaseObject *object);
+	void scrollTo(int offsetX, int offsetY);
 	virtual bool update();
 	bool _autoScroll;
 	int _targetOffsetTop;
@@ -113,10 +113,10 @@ public:
 	uint32 _pfMaxTime;
 	bool initLoop();
 	void pathFinderStep();
-	bool isBlockedAt(int X, int Y, bool CheckFreeObjects = false, BaseObject *Requester = NULL);
-	bool isWalkableAt(int X, int Y, bool CheckFreeObjects = false, BaseObject *Requester = NULL);
+	bool isBlockedAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = NULL);
+	bool isWalkableAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = NULL);
 	AdLayer *_mainLayer;
-	float getZoomAt(int X, int Y);
+	float getZoomAt(int x, int y);
 	bool getPath(BasePoint source, BasePoint target, AdPath *path, BaseObject *requester = NULL);
 	AdScene(BaseGame *inGame);
 	virtual ~AdScene();
@@ -163,8 +163,8 @@ public:
 
 
 private:
-	bool persistState(bool Saving = true);
-	void pfAddWaypointGroup(AdWaypointGroup *Wpt, BaseObject *Requester = NULL);
+	bool persistState(bool saving = true);
+	void pfAddWaypointGroup(AdWaypointGroup *Wpt, BaseObject *requester = NULL);
 	bool _pfReady;
 	BasePoint *_pfTarget;
 	AdPath *_pfTargetPath;

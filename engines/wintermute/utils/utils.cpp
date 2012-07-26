@@ -40,9 +40,9 @@ static inline unsigned Sqr(int x) {
 // Swap - swaps two integers
 //////////////////////////////////////////////////////////////////////////////////
 void BaseUtils::swap(int *a, int *b) {
-	int Temp = *a;
+	int temp = *a;
 	*a = *b;
-	*b = Temp;
+	*b = temp;
 }
 
 
@@ -150,11 +150,11 @@ float BaseUtils::randomFloat(float from, float to) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-float BaseUtils::randomAngle(float From, float To) {
-	while (To < From) {
-		To += 360;
+float BaseUtils::randomAngle(float from, float to) {
+	while (to < from) {
+		to += 360;
 	}
-	return normalizeAngle(randomFloat(From, To));
+	return normalizeAngle(randomFloat(from, to));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -217,10 +217,10 @@ bool BaseUtils::matchesPattern(const char *pattern, const char *string) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseUtils::RGBtoHSL(uint32 RGBColor, byte *outH, byte *outS, byte *outL) {
-	float varR = (RGBCOLGetR(RGBColor) / 255.0f);
-	float varG = (RGBCOLGetG(RGBColor) / 255.0f);
-	float varB = (RGBCOLGetB(RGBColor) / 255.0f);
+void BaseUtils::RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL) {
+	float varR = (RGBCOLGetR(rgbColor) / 255.0f);
+	float varG = (RGBCOLGetG(rgbColor) / 255.0f);
+	float varB = (RGBCOLGetB(rgbColor) / 255.0f);
 
 	//Min. value of RGB
 	float varMin = MIN(varR, varG);

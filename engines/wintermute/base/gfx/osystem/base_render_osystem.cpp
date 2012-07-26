@@ -619,8 +619,8 @@ void BaseRenderOSystem::dumpData(const char *filename) {
 
 	BaseSurfaceStorage *Mgr = _gameRef->_surfaceStorage;
 
-	int TotalKB = 0;
-	int TotalLoss = 0;
+	int totalKB = 0;
+	int totalLoss = 0;
 	fprintf(f, "Filename;Usage;Size;KBytes\n");
 	for (int i = 0; i < Mgr->_surfaces.getSize(); i++) {
 		BaseSurfaceOSystem *Surf = (BaseSurfaceOSystem *)Mgr->_surfaces[i];

@@ -72,7 +72,7 @@ public:
 	virtual ~AdSentence();
 	AdTalkDef *_talkDef;
 
-	bool CanSkip();
+	bool canSkip();
 
 private:
 	char *_tempStance;

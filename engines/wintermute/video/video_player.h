@@ -42,22 +42,22 @@ class VideoPlayer : public BaseClass {
 public:
 	bool _showSubtitle;
 	int _currentSubtitle;
-	bool loadSubtitles(const char *filename, const char *SubtitleFile);
+	bool loadSubtitles(const char *filename, const char *subtitleFile);
 	bool _slowRendering;
 	bool isPlaying();
 	char *_filename;
 	bool stop();
-	bool play(TVideoPlayback Type = VID_PLAY_CENTER, int X = 0, int Y = 0, bool FreezeMusic = true);
+	bool play(TVideoPlayback Type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeMusic = true);
 	uint32 _totalVideoTime;
 	uint32 _startTime;
 	//CVidRenderer *_vidRenderer;
 	//BaseSoundAVI *_sound;
 	bool _soundAvailable;
-	bool SetDefaults();
+	bool setDefaults();
 	bool _playing;
 	bool display();
 	bool update();
-	bool initialize(const char *inFilename, const char *SubtitleFile = NULL);
+	bool initialize(const char *inFilename, const char *subtitleFile = NULL);
 	bool cleanup();
 	VideoPlayer(BaseGame *inGame);
 	virtual ~VideoPlayer();

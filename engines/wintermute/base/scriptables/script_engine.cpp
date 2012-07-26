@@ -227,13 +227,13 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 	CScCachedScript *cachedScript = new CScCachedScript(filename, compBuffer, compSize);
 	if (cachedScript) {
 		int index = 0;
-		uint32 MinTime = g_system->getMillis();
+		uint32 minTime = g_system->getMillis();
 		for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 			if (_cachedScripts[i] == NULL) {
 				index = i;
 				break;
-			} else if (_cachedScripts[i]->_timestamp <= MinTime) {
-				MinTime = _cachedScripts[i]->_timestamp;
+			} else if (_cachedScripts[i]->_timestamp <= minTime) {
+				minTime = _cachedScripts[i]->_timestamp;
 				index = i;
 			}
 		}
@@ -338,13 +338,13 @@ bool ScEngine::tick() {
 
 		// time sliced script
 		if (_scripts[i]->_timeSlice > 0) {
-			uint32 StartTime = g_system->getMillis();
-			while (_scripts[i]->_state == SCRIPT_RUNNING && g_system->getMillis() - StartTime < _scripts[i]->_timeSlice) {
+			uint32 startTime = g_system->getMillis();
+			while (_scripts[i]->_state == SCRIPT_RUNNING && g_system->getMillis() - startTime < _scripts[i]->_timeSlice) {
 				_currentScript = _scripts[i];
 				_scripts[i]->executeInstruction();
 			}
 			if (_isProfiling && _scripts[i]->_filename) {
-				addScriptTime(_scripts[i]->_filename, g_system->getMillis() - StartTime);
+				addScriptTime(_scripts[i]->_filename, g_system->getMillis() - startTime);
 			}
 		}
 
@@ -473,8 +473,8 @@ bool ScEngine::resetObject(BaseObject *Object) {
 				resetScript(_scripts[i]);
 			}
 
-			bool IsThread = _scripts[i]->_methodThread || _scripts[i]->_thread;
-			_scripts[i]->finish(!IsThread); // 1.9b1 - top-level script kills its threads as well
+			bool isThread = _scripts[i]->_methodThread || _scripts[i]->_thread;
+			_scripts[i]->finish(!isThread); // 1.9b1 - top-level script kills its threads as well
 		}
 	}
 	return STATUS_OK;
@@ -707,7 +707,7 @@ bool ScEngine::loadBreakpoints() {
 
 	int count = _gameRef->_registry->readInt("Debug", "NumBreakpoints", 0);
 	for (int i = 1; i <= count; i++) {
-		/*  uint32 BufSize = 512; */
+		/*  uint32 bufSize = 512; */
 		sprintf(key, "Breakpoint%d", i);
 		AnsiString breakpoint = _gameRef->_registry->readString("Debug", key, "");
 

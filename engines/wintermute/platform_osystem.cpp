@@ -172,12 +172,12 @@ bool BasePlatform::getCursorPos(Point32 *lpPoint) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePlatform::setCursorPos(int X, int Y) {
+bool BasePlatform::setCursorPos(int x, int y) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
 	Point32 p;
-	p.x = X;
-	p.y = Y;
+	p.x = x;
+	p.y = y;
 	renderer->pointToScreen(&p);
 // TODO
 	//SDL_WarpMouseInWindow(renderer->GetSdlWindow(), p.x, p.y);

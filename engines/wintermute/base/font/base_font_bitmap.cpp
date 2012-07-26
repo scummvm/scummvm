@@ -127,9 +127,9 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 		return 0;
 	}
 
-	int LineLength = 0;
-	int RealLength = 0;
-	int NumLines = 0;
+	int lineLength = 0;
+	int realLength = 0;
+	int numLines = 0;
 
 	int i;
 
@@ -139,66 +139,66 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 	int last_end = 0;
 
 	bool done = false;
-	bool new_line = false;
-	bool long_line = false;
+	bool newLine = false;
+	bool longLine = false;
 
 	if (draw) {
 		_gameRef->_renderer->startSpriteBatch();
 	}
 
 	while (!done) {
-		if (maxHeight > 0 && (NumLines + 1)*_tileHeight > maxHeight) {
+		if (maxHeight > 0 && (numLines + 1)*_tileHeight > maxHeight) {
 			if (draw) {
 				_gameRef->_renderer->endSpriteBatch();
 			}
-			return NumLines * _tileHeight;
+			return numLines * _tileHeight;
 		}
 
 		index++;
 
 		if (str[index] == ' ' && (maxHeight < 0 || maxHeight / _tileHeight > 1)) {
 			end = index - 1;
-			RealLength = LineLength;
+			realLength = lineLength;
 		}
 
 		if (str[index] == '\n') {
 			end = index - 1;
-			RealLength = LineLength;
-			new_line = true;
+			realLength = lineLength;
+			newLine = true;
 		}
 
-		if (LineLength + getCharWidth(str[index]) > width && last_end == end) {
+		if (lineLength + getCharWidth(str[index]) > width && last_end == end) {
 			end = index - 1;
-			RealLength = LineLength;
-			new_line = true;
-			long_line = true;
+			realLength = lineLength;
+			newLine = true;
+			longLine = true;
 		}
 
 		if (str.size() == (index + 1) || (maxLength >= 0 && index == maxLength - 1)) {
 			done = true;
-			if (!new_line) {
+			if (!newLine) {
 				end = index;
-				LineLength += getCharWidth(str[index]);
-				RealLength = LineLength;
+				lineLength += getCharWidth(str[index]);
+				realLength = lineLength;
 			}
 		} else {
-			LineLength += getCharWidth(str[index]);
+			lineLength += getCharWidth(str[index]);
 		}
 
-		if ((LineLength > width) || done || new_line) {
+		if ((lineLength > width) || done || newLine) {
 			if (end < 0) {
 				done = true;
 			}
-			int StartX;
+			int startX;
 			switch (align) {
 			case TAL_CENTER:
-				StartX = x + (width - RealLength) / 2;
+				startX = x + (width - realLength) / 2;
 				break;
 			case TAL_RIGHT:
-				StartX = x + width - RealLength;
+				startX = x + width - realLength;
 				break;
 			case TAL_LEFT:
-				StartX = x;
+				startX = x;
 				break;
 			default:
 				error("BaseFontBitmap::TextHeightDraw - Unhandled enum");
@@ -206,21 +206,21 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 			}
 			for (i = start; i < end + 1; i++) {
 				if (draw) {
-					drawChar(str[i], StartX, y);
+					drawChar(str[i], startX, y);
 				}
-				StartX += getCharWidth(str[i]);
+				startX += getCharWidth(str[i]);
 			}
 			y += _tileHeight;
 			last_end = end;
-			if (long_line) {
+			if (longLine) {
 				end--;
 			}
 			start = end + 2;
 			index = end + 1;
-			LineLength = 0;
-			new_line = false;
-			long_line = false;
-			NumLines++;
+			lineLength = 0;
+			newLine = false;
+			longLine = false;
+			numLines++;
 		}
 	}
 
@@ -228,7 +228,7 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 		_gameRef->_renderer->endSpriteBatch();
 	}
 
-	return NumLines * _tileHeight;
+	return numLines * _tileHeight;
 }
 
 
@@ -255,7 +255,7 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 	BasePlatform::setRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1)*_tileHeight);
 	bool handled = false;
 	if (_sprite) {
-		_sprite->GetCurrentFrame();
+		_sprite->getCurrentFrame();
 		if (_sprite->_currentFrame >= 0 && _sprite->_currentFrame < _sprite->_frames.getSize() && _sprite->_frames[_sprite->_currentFrame]) {
 			if (_sprite->_frames[_sprite->_currentFrame]->_subframes.getSize() > 0) {
 				_sprite->_frames[_sprite->_currentFrame]->_subframes[0]->_surface->displayTrans(x, y, rect);

@@ -57,7 +57,7 @@ public:
 	int _moveY;
 	int _moveX;
 	bool display(int x, int y, BaseObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
-	bool GetCurrentFrame(float zoomX = 100, float zoomY = 100);
+	bool getCurrentFrame(float zoomX = 100, float zoomY = 100);
 	bool _canBreak;
 	bool _editorMuted;
 	bool _continuous;

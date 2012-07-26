@@ -701,7 +701,7 @@ bool BaseFontTT::initFont() {
 
 	// http://en.wikipedia.org/wiki/E_(typography)
 	float pixelsPerEm = (_fontHeight / 72.f) * vertDpi; // Size in inches * dpi
-	float EmsPerUnit = 1.0f / _fTFace->units_per_EM;
+	float emsPerUnit = 1.0f / _fTFace->units_per_EM;
 	float pixelsPerUnit = pixelsPerEm * EmsPerUnit;
 
 	// bounding box in pixels

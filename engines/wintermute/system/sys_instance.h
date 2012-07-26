@@ -35,7 +35,7 @@ class SystemClass;
 
 class SystemInstance {
 public:
-	SystemInstance(void *Instance, int ID, SystemClass *sysClass);
+	SystemInstance(void *instance, int id, SystemClass *sysClass);
 	virtual ~SystemInstance();
 
 	int getID() const {

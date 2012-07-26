@@ -174,8 +174,8 @@ int WinterMuteEngine::init() {
 	            else param[0] = '\0';
 
 	            if (strcmp(param, "") != 0) {
-	                char *IniDir = BaseUtils::GetPath(param);
-	                char *IniName = BaseUtils::GetFilename(param);
+	                char *iniDir = BaseUtils::GetPath(param);
+	                char *iniName = BaseUtils::GetFilename(param);
 
 	                // switch to ini's dir
 	                warning("TODO: Place ini-files somewhere");
@@ -201,7 +201,7 @@ int WinterMuteEngine::init() {
 		_game->_smartCache = false;
 	}
 
-	/*  bool AllowDirectDraw = _game->_registry->readBool("Debug", "AllowDirectDraw", false);*/
+	/*  bool allowDirectDraw = _game->_registry->readBool("Debug", "AllowDirectDraw", false);*/
 
 	// load general game settings
 	_game->initialize1();
@@ -245,7 +245,7 @@ int WinterMuteEngine::init() {
 
 
 	// load game
-	uint32 DataInitStart = g_system->getMillis();
+	uint32 dataInitStart = g_system->getMillis();
 
 	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
@@ -257,7 +257,7 @@ int WinterMuteEngine::init() {
 	_game->_renderer->_ready = true;
 	_game->_miniUpdateEnabled = true;
 
-	_game->LOG(0, "Engine initialized in %d ms", g_system->getMillis() - DataInitStart);
+	_game->LOG(0, "Engine initialized in %d ms", g_system->getMillis() - dataInitStart);
 	_game->LOG(0, "");
 
 	if (ConfMan.hasKey("save_slot")) {
@@ -316,8 +316,8 @@ int WinterMuteEngine::messageLoop() {
 		 {
 		 if (!::IsIconic(_game->_renderer->_window))
 		 {
-		 int PosX = _game->_renderer->_windowRect.left;
-		 int PosY = _game->_renderer->_windowRect.top;
+		 int posX = _game->_renderer->_windowRect.left;
+		 int posY = _game->_renderer->_windowRect.top;
 		 PosX -= _game->_renderer->_monitorRect.left;
 		 PosY -= _game->_renderer->_monitorRect.top;
 

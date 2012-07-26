@@ -334,7 +334,7 @@ bool AdGame::displaySentences(bool frozen) {
 //////////////////////////////////////////////////////////////////////////
 void AdGame::finishSentences() {
 	for (int i = 0; i < _sentences.getSize(); i++) {
-		if (_sentences[i]->CanSkip()) {
+		if (_sentences[i]->canSkip()) {
 			_sentences[i]->_duration = 0;
 			if (_sentences[i]->_sound) {
 				_sentences[i]->_sound->stop();
@@ -557,8 +557,8 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ResetResponse") == 0) {
 		stack->correctParams(1);
-		int ID = stack->pop()->getInt(-1);
-		resetResponse(ID);
+		int id = stack->pop()->getInt(-1);
+		resetResponse(id);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1175,7 +1175,7 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) {
+bool AdGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) {
 	ScValue *thisObj;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1204,7 +1204,7 @@ bool AdGame::ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// call parent
 	else {
-		return BaseGame::ExternalCall(script, stack, thisStack, name);
+		return BaseGame::externalCall(script, stack, thisStack, name);
 	}
 
 

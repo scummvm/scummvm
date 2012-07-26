@@ -45,7 +45,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(PartEmitter, false)
 
 //////////////////////////////////////////////////////////////////////////
-PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner) : BaseObject(inGame) {
+PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject(inGame) {
 	_width = _height = 0;
 
 	BasePlatform::setRectEmpty(&_border);
@@ -88,7 +88,7 @@ PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner) : BaseObject
 	_useRegion = false;
 
 	_emitEvent = NULL;
-	_owner = Owner;
+	_owner = owner;
 }
 
 
@@ -136,9 +136,9 @@ bool PartEmitter::addSprite(const char *filename) {
 		_gameRef->_fileManager->closeFile(File);
 	}
 
-	char *Str = new char[strlen(filename) + 1];
-	strcpy(Str, filename);
-	_sprites.add(Str);
+	char *str = new char[strlen(filename) + 1];
+	strcpy(str, filename);
+	_sprites.add(str);
 
 	return STATUS_OK;
 }

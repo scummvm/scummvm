@@ -103,8 +103,8 @@ Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
 	/*  size_t WideSize = WideStr.length();
 
 	    if (sizeof(wchar_t) == 2) {
-	        size_t Utf8Size = 3 * WideSize + 1;
-	        char *Utf8StringNative = new char[Utf8Size];
+	        size_t utf8Size = 3 * WideSize + 1;
+	        char *utf8StringNative = new char[Utf8Size];
 
 	        const UTF16 *SourceStart = reinterpret_cast<const UTF16 *>(WideStr.c_str());
 	        const UTF16 *SourceEnd = SourceStart + WideSize;
@@ -122,8 +122,8 @@ Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
 	        delete[] Utf8StringNative;
 	        return ResultString;
 	    } else if (sizeof(wchar_t) == 4) {
-	        size_t Utf8Size = 4 * WideSize + 1;
-	        char *Utf8StringNative = new char[Utf8Size];
+	        size_t utf8Size = 4 * WideSize + 1;
+	        char *utf8StringNative = new char[Utf8Size];
 
 	        const UTF32 *SourceStart = reinterpret_cast<const UTF32 *>(WideStr.c_str());
 	        const UTF32 *SourceEnd = SourceStart + WideSize;
@@ -175,7 +175,7 @@ WideString StringUtil::ansiToWide(const AnsiString &str) {
 	// using default os locale!
 
 	/*  setlocale(LC_CTYPE, "");
-	    size_t WideSize = mbstowcs(NULL, str.c_str(), 0) + 1;
+	    size_t wideSize = mbstowcs(NULL, str.c_str(), 0) + 1;
 	    wchar_t *wstr = new wchar_t[WideSize];
 	    mbstowcs(wstr, str.c_str(), WideSize);
 	    WideString ResultString(wstr);
@@ -194,7 +194,7 @@ AnsiString StringUtil::wideToAnsi(const WideString &wstr) {
 		warning("StringUtil::WideToAnsi - WideString not supported yet");
 	}
 	/*  setlocale(LC_CTYPE, "");
-	    size_t WideSize = wcstombs(NULL, wstr.c_str(), 0) + 1;
+	    size_t wideSize = wcstombs(NULL, wstr.c_str(), 0) + 1;
 	    char *str = new char[WideSize];
 	    wcstombs(str, wstr.c_str(), WideSize);
 	    AnsiString ResultString(str);
@@ -260,8 +260,8 @@ bool StringUtil::endsWith(const AnsiString &str, const AnsiString &pattern, bool
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool StringUtil::isUtf8BOM(const byte *Buffer, uint32 BufferSize) {
-	if (BufferSize > 3 && Buffer[0] == 0xEF && Buffer[1] == 0xBB && Buffer[2] == 0xBF) {
+bool StringUtil::isUtf8BOM(const byte *buffer, uint32 bufferSize) {
+	if (bufferSize > 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF) {
 		return true;
 	} else {
 		return false;

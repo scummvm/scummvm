@@ -135,7 +135,7 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	bool validMouse();
 private:
-	virtual bool ExternalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
+	virtual bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
 
 	AdObject *_invObject;
 	BaseArray<AdInventory *> _inventories;

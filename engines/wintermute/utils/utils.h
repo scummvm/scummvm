@@ -55,7 +55,7 @@ public:
 
 	static bool matchesPattern(const char *pattern, const char *string);
 
-	static void RGBtoHSL(uint32 RGBColor, byte *OutH, byte *OutS, byte *OutL);
+	static void RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL);
 	static uint32 HSLtoRGB(byte H, byte S, byte L);
 
 private:

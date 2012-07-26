@@ -40,7 +40,7 @@ public:
 	bool initLoop();
 	bool sortSurfaces();
 	static int surfaceSortCB(const void *arg1, const void *arg2);
-	bool cleanup(bool Warn = false);
+	bool cleanup(bool warn = false);
 	//DECLARE_PERSISTENT(BaseSurfaceStorage, BaseClass);
 
 	bool restoreAll();

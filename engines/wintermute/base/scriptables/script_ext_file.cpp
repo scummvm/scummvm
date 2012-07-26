@@ -188,8 +188,8 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			script->runtimeError("File.%s: File is not open", name);
 			stack->pushBool(false);
 		} else {
-			int Pos = stack->pop()->getInt();
-			stack->pushBool(setPos(Pos));
+			int pos = stack->pop()->getInt();
+			stack->pushBool(setPos(pos));
 		}
 		return STATUS_OK;
 	}
@@ -703,10 +703,10 @@ bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	// Length
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Length")==0){
-	    int OrigLength = _length;
+	    int origLength = _length;
 	    _length = max(value->getInt(0), 0);
 
-	    char PropName[20];
+	    char propName[20];
 	    if (_length < OrigLength){
 	        for(int i=_length; i<OrigLength; i++){
 	            sprintf(PropName, "%d", i);

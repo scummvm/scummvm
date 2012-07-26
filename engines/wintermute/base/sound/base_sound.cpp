@@ -311,7 +311,7 @@ bool BaseSound::setPan(float pan) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSound::ApplyFX(TSFXType type, float param1, float param2, float param3, float param4) {
+bool BaseSound::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	if (!_sound) {
 		return STATUS_OK;
 	}
