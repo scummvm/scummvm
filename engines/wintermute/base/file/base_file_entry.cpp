@@ -65,18 +65,16 @@ Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 		return NULL;
 	}
 
-	// TODO: Cleanup
+
 	bool compressed = (_compressedLength != 0);
-	/* _size = fileEntry->_length; */
 
 	if (compressed) {
-		// TODO: Really, most of this logic might be doable directly in the fileEntry?
-		// But for now, this should get us rolling atleast.
 		file = Common::wrapCompressedReadStream(new Common::SeekableSubReadStream(file, _offset, _offset + _length, DisposeAfterUse::YES));
+		// file = Common::wrapCompressedReadStream(new Common::SeekableSubReadStream(file, _offset, _offset + _length, DisposeAfterUse::YES), _length); // TODO: Uncomment on merge
 	} else {
 		file = new Common::SeekableSubReadStream(file, _offset, _offset + _length, DisposeAfterUse::YES);
 	}
-	if (file->size() == 0) {
+	if (file->size() == 0) {	// TODO: Cleanup on next merge (CBPkgFile is just a placeholder for the commented out wrap above.
 		file = new CBPkgFile(file, _length);
 	}
 

@@ -1459,13 +1459,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	// PlayVideo
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PlayVideo") == 0) {
-		/*      stack->correctParams(0);
-		        stack->pushBool(false);
-
-		        return STATUS_OK;
-		        // TODO: ADDVIDEO
-		        */
-
 		_gameRef->LOG(0, "Warning: Game.PlayVideo() is now deprecated. Use Game.PlayTheora() instead.");
 
 		stack->correctParams(6);
@@ -1508,12 +1501,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	// PlayTheora
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PlayTheora") == 0) {
-		/*      stack->correctParams(0);
-		        stack->pushBool(false);
-
-		        return STATUS_OK;*/
-		// TODO: ADDVIDEO
-
 		stack->correctParams(7);
 		const char *filename = stack->pop()->getString();
 		ScValue *valType = stack->pop();
@@ -1830,14 +1817,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 
-		// TODO: Replace with fileExists
-		Common::SeekableReadStream *file = _fileManager->openFile(filename, false);
-		if (!file) {
-			stack->pushBool(false);
-		} else {
-			_fileManager->closeFile(file);
-			stack->pushBool(true);
-		}
+		bool exists = _fileManager->hasFile(filename); // Had absPathWarning = false
+		stack->pushBool(exists);
 		return STATUS_OK;
 	}
 
@@ -3933,7 +3914,7 @@ bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 	} else { /*if (event->type != SDL_TEXTINPUT)*/
 		applyEvent("Keypress");
 		return true;
-	} //else return true;
+	}
 
 	return false;
 }

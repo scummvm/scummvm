@@ -124,7 +124,7 @@ public:
 				}
 				// Prefix to avoid collisions with actually known games
 				name = "wmefan-" + name;
-				strncpy(s_fallbackGameIdBuf, name.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
+				strncpy(s_fallbackGameIdBuf, name.c_str(), sizeof(s_fallbackGameIdBuf) - 1); 
 				s_fallbackDesc.gameid = s_fallbackGameIdBuf;
 				if (caption != name) {
 					caption += " (fangame) ";

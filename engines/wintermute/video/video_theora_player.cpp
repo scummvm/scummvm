@@ -410,7 +410,7 @@ bool VideoTheoraPlayer::writeVideo() {
 	return STATUS_OK;
 }
 
-void VideoTheoraPlayer::writeAlpha() {
+void VideoTheoraPlayer::writeAlpha() { // TODO: Endian-fix.
 	if (_alphaImage && _surface.w == _alphaImage->getSurface()->w && _surface.h == _alphaImage->getSurface()->h) {
 		assert(_alphaImage->getSurface()->format.bytesPerPixel == 4);
 		assert(_surface.format.bytesPerPixel == 4);

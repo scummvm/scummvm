@@ -94,8 +94,6 @@ BaseRenderer *makeOSystemRenderer(BaseGame *inGame) {
 	return new BaseRenderOSystem(inGame);
 }
 
-// TODO: Redo everything here.
-
 //////////////////////////////////////////////////////////////////////////
 BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_renderSurface = new Graphics::Surface();

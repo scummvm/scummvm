@@ -50,24 +50,8 @@ struct TPackageHeader {
 	uint32 _creationTime;
 	char _desc[100];
 	uint32 _numDirs;
-	// TODO: Move this out of the header.
-	void readFromStream(Common::ReadStream *stream) {
-		_magic1 = stream->readUint32LE();
-		_magic2 = stream->readUint32LE();
-		_packageVersion = stream->readUint32LE();
-
-		_gameVersion = stream->readUint32LE();
-
-		_priority = stream->readByte();
-		_cd = stream->readByte();
-		_masterIndex = stream->readByte();
-		stream->readByte(); // To align the next byte...
-
-		_creationTime = stream->readUint32LE();
-
-		stream->read(_desc, 100);
-		_numDirs = stream->readUint32LE();
-	}
+	// base_package.cpp:
+	void readFromStream(Common::ReadStream *stream);
 };
 
 /*

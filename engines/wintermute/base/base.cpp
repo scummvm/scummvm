@@ -175,8 +175,6 @@ bool BaseClass::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent, "{\n");
 		buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _editorPropsIter->_key.c_str());
 		buffer->putTextIndent(indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->_value.c_str());
-		//buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", (char *)_editorPropsIter->first.c_str()); // <- TODO, remove
-		//buffer->putTextIndent(indent + 2, "VALUE=\"%s\"\n", _editorPropsIter->second.c_str()); // <- TODO, remove
 		buffer->putTextIndent(indent, "}\n\n");
 
 		_editorPropsIter++;

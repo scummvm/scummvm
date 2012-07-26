@@ -138,7 +138,7 @@ bool BaseObject::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseObject::setCaption(const char *caption, int caseVal) { // TODO: rename Case to something usefull
+void BaseObject::setCaption(const char *caption, int caseVal) {
 	if (caseVal == 0) {
 		caseVal = 1;
 	}

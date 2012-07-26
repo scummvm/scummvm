@@ -57,7 +57,6 @@ BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSurfaceOSystem::~BaseSurfaceOSystem() {
-	//TODO
 	if (_surface) {
 		_surface->free();
 		delete _surface;
@@ -385,8 +384,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	Common::Rect position;
 	position.left = x + offsetX;
 	position.top = y + offsetY;
-	// TODO: Scaling...
 
+	// Crop off-by-ones:
 	if (position.left == -1) {
 		position.left = 0; // TODO: Something is wrong
 	}
