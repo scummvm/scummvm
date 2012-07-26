@@ -616,7 +616,6 @@ bool BaseGame::initLoop() {
 
 	getDebugMgr()->onGameTick();
 	_renderer->initLoop();
-	_soundMgr->initLoop();
 	updateMusicCrossfade();
 
 	_surfaceStorage->initLoop();
@@ -4023,17 +4022,12 @@ void BaseGame::setWindowTitle() {
 		if (_textEncoding == TEXT_UTF8) {
 			utf8Title = Utf8String(title);
 		} else {
-			warning("BaseGame::SetWindowTitle -Ignoring textencoding");
+			warning("BaseGame::SetWindowTitle - Ignoring textencoding");
 			utf8Title = Utf8String(title);
 			/*          WideString wstr = StringUtil::AnsiToWide(Title);
 			            title = StringUtil::WideToUtf8(wstr);*/
 		}
-#if 0
-		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_renderer);
-		// TODO
-
-		SDL_SetWindowTitle(renderer->GetSdlWindow(), title.c_str());
-#endif
+		warning("BaseGame::SetWindowTitle: Ignoring value: %s", utf8Title.c_str());
 	}
 }
 
@@ -4722,18 +4716,14 @@ void BaseGame::getMousePos(Point32 *pos) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::miniUpdate() {
+void BaseGame::miniUpdate() { // TODO: Is this really necessary, it used to update sound, but the mixer does that now.
 	if (!_miniUpdateEnabled) {
-		return STATUS_OK;
+		return;
 	}
 
 	if (g_system->getMillis() - _lastMiniUpdate > 200) {
-		if (_soundMgr) {
-			_soundMgr->initLoop();
-		}
 		_lastMiniUpdate = g_system->getMillis();
 	}
-	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -84,7 +84,6 @@ public:
 	};
 
 	uint32 getMovieTime();
-	uint32 getMovieFrame();
 
 	BaseSurface *getTexture();
 

@@ -44,8 +44,6 @@ public:
 	bool create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false);
 	bool create(int width, int height);
 
-	bool createFromSDLSurface(Graphics::Surface *surface); //TODO: Rename function
-
 	bool isTransparentAt(int x, int y);
 	bool isTransparentAtLite(int x, int y);
 

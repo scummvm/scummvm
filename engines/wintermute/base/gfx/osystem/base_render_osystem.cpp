@@ -114,25 +114,10 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 BaseRenderOSystem::~BaseRenderOSystem() {
 	_renderSurface->free();
 	delete _renderSurface;
-#if 0
-	if (_renderer) {
-		SDL_DestroyRenderer(_renderer);
-	}
-	if (_win) {
-		SDL_DestroyWindow(_win);
-	}
-	SDL_Quit();
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
-	//if (SDL_Init(SDL_INIT_VIDEO) < 0) return STATUS_FAILED;
-
-#if 0
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
-	SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 1);
-#endif
 	_width = width;
 	_height = height;
 	_renderRect.setWidth(_width);
@@ -192,15 +177,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	_ratioX = (float)(_realWidth - _borderLeft - _borderRight) / (float)_width;
 	_ratioY = (float)(_realHeight - _borderTop - _borderBottom) / (float)_height;
 
-#if 0
-	Uint32 flags = SDL_WINDOW_SHOWN;
-#endif
-#ifdef __IPHONEOS__
-	//flags |= SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS;
-#endif
-
-	//_windowed = _gameRef->_registry->readBool("Video", "Windowed", true);
-//	if (!windowed) flags |= SDL_WINDOW_FULLSCREEN;
+	//_windowed = _gameRef->_registry->readBool("Video", "Windowed", true); TODO
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->beginGFXTransaction();
@@ -211,33 +188,9 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 		warning("Couldn't setup GFX-backend for %dx%dx%d", _width, _height, format.bytesPerPixel * 8);
 		return STATUS_FAILED;
 	}
-#if 0
-	_win = SDL_CreateWindow("WME Lite",
-	                        SDL_WINDOWPOS_UNDEFINED,
-	                        SDL_WINDOWPOS_UNDEFINED,
-	                        _realWidth, _realHeight,
-	                        flags);
-
-	if (!_win) {
-		return STATUS_FAILED;
-	}
-#endif
 
 	g_system->showMouse(false);
 
-#ifdef __IPHONEOS__
-	// SDL defaults to OGL ES2, which doesn't work on old devices
-	//SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles");
-#else
-	//SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-#endif
-#if 0
-	_renderer = SDL_CreateRenderer(_win, -1, 0);
-
-	if (!_renderer) {
-		return STATUS_FAILED;
-	}
-#endif
 	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	_active = true;
 

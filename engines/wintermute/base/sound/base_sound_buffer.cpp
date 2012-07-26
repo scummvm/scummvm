@@ -129,63 +129,6 @@ bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 	BaseUtils::setString(&_filename, filename);
 
 	return STATUS_OK;
-#if 0
-	BASS_FILEPROCS fileProc;
-	fileProc.close = BaseSoundBuffer::FileCloseProc;
-	fileProc.read = BaseSoundBuffer::FileReadProc;
-	fileProc.seek = BaseSoundBuffer::FileSeekProc;
-	fileProc.length = BaseSoundBuffer::FileLenProc;
-
-	_stream = BASS_StreamCreateFileUser(STREAMFILE_NOBUFFER, 0, &fileProc, (void *)_file);
-	if (!_stream) {
-		_gameRef->LOG(0, "BASS error: %d while loading '%s'", BASS_ErrorGetCode(), filename);
-		return STATUS_FAILED;
-	}
-
-	BaseUtils::setString(&_filename, filename);
-
-	/*
-	bool res;
-	bool NewlyCreated = false;
-
-	if (!_soundBuffer || ForceReload || _streamed){
-	    if (!_file) _file = _gameRef->_fileManager->openFile(filename);
-	    if (!_file){
-	        _gameRef->LOG(0, "Error opening sound file '%s'", filename);
-	        return STATUS_FAILED;
-	    }
-	    // switch to streamed for big files
-	    if (!_streamed && (_file->GetSize() > MAX_NONSTREAMED_FILE_SIZE && !_gameRef->_forceNonStreamedSounds)) SetStreaming(true);
-	}
-
-	// create buffer
-	if (!_soundBuffer){
-	    NewlyCreated = true;
-
-	    res = InitializeBuffer(_file);
-	    if (DID_FAIL(res)){
-	        _gameRef->LOG(res, "Error creating sound buffer for file '%s'", filename);
-	        return res;
-	    }
-	}
-
-
-
-	// store filename
-	if (!_filename){
-	    _filename = new char[strlen(filename)+1];
-	    strcpy(_filename, filename);
-	}
-
-	// close file (if not streaming)
-	if (!_streamed && _file){
-	    _gameRef->_fileManager->closeFile(_file);
-	    _file = NULL;
-	}
-	*/
-
-	return STATUS_OK;
-#endif
 }
 
 
@@ -215,15 +158,8 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundBuffer::setLooping(bool looping) {
-	warning("BSoundBuffer::SetLooping(%d) - won't change a playing sound", looping);
+	warning("BSoundBuffer::SetLooping(%d) - won't change a playing sound", looping); // TODO
 	_looping = looping;
-#if 0
-
-
-	if (_stream) {
-		BASS_ChannelFlags(_stream, looping ? BASS_SAMPLE_LOOP : 0, BASS_SAMPLE_LOOP);
-	}
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -314,42 +250,15 @@ uint32 BaseSoundBuffer::getPosition() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setPosition(uint32 pos) {
 	warning("BaseSoundBuffer::SetPosition - not implemented yet");
-#if 0
-	if (_stream) {
-		QWORD pos = BASS_ChannelSeconds2Bytes(_stream, (float)Pos / 1000.0f);
-		BASS_ChannelSetPosition(_stream, pos, BASS_POS_BYTE);
-	}
-#endif
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setLoopStart(uint32 pos) {
 	_loopStart = pos;
-#if 0
-	if (_stream) {
-		if (_sync) {
-			BASS_ChannelRemoveSync(_stream, _sync);
-			_sync = NULL;
-		}
-		if (_loopStart > 0) {
-			QWORD len = BASS_ChannelGetLength(_stream, BASS_POS_BYTE);
-			_sync = BASS_ChannelSetSync(_stream, BASS_SYNC_POS | BASS_SYNC_MIXTIME, len, BaseSoundBuffer::LoopSyncProc, (void *)this);
-		}
-	}
-#endif
 	return STATUS_OK;
 }
-#if 0
-//////////////////////////////////////////////////////////////////////////
-void BaseSoundBuffer::LoopSyncProc(HSYNC handle, uint32 channel, uint32 data, void *user) {
-	BaseSoundBuffer *soundBuf = static_cast<BaseSoundBuffer *>(user);
-	QWORD pos = BASS_ChannelSeconds2Bytes(channel, (float)soundBuf->GetLoopStart() / 1000.0f);
 
-	if (!BASS_ChannelSetPosition(channel, pos, BASS_POS_BYTE))
-		BASS_ChannelSetPosition(channel, 0, BASS_POS_BYTE);
-}
-#endif
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setPan(float pan) {
 	if (_handle) {

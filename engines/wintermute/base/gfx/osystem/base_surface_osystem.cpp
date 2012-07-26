@@ -131,11 +131,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	bool isSaveGameGrayscale = scumm_strnicmp(_filename.c_str(), "savegame:", 9) == 0 && (_filename.c_str()[_filename.size() - 1] == 'g' || _filename.c_str()[_filename.size() - 1] == 'G');
 	if (isSaveGameGrayscale) {
 		warning("grayscaleConversion not yet implemented");
-		/*      FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img);
-		        if (newImg) {
-		            FreeImage_Unload(img);
-		            img = newImg;
-		        }*/
+		// FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img); TODO
 	}
 
 	// no alpha, set color key
@@ -161,31 +157,6 @@ bool BaseSurfaceOSystem::finishLoad() {
 	}
 
 	_hasAlpha = hasTransparency(_surface);
-	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best"); //TODO
-	//_texture = SdlUtil::CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
-
-	// This particular warning is rather messy, as this function is called a ton,
-	// thus we avoid printing it more than once.
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		warning("Surface-textures not fully ported yet");
-		hasWarned = true;
-	}
-	//delete imgDecoder;
-#if 0
-	_texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surf);
-	if (!_texture) {
-		SDL_FreeSurface(surf);
-		delete imgDecoder;
-		return STATUS_FAILED;
-	}
-
-	GenAlphaMask(surf);
-
-	SDL_FreeSurface(surf);
-	delete imgDecoder; // TODO: Update this if ImageDecoder doesn't end up owning the surface.
-#endif
-
 	_valid = true;
 
 	_gameRef->addMem(_width * _height * 4);
@@ -207,9 +178,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 	if (!surface) {
 		return;
 	}
-#if 0
-	SDL_LockSurface(surface);
-#endif
+
 	bool hasColorKey;
 	/* uint32 colorKey; */
 	uint8 ckRed, ckGreen, ckBlue;
@@ -239,9 +208,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 			}
 		}
 	}
-#if 0
-	SDL_UnlockSurface(surface);
-#endif
+
 	if (!hasTransparency) {
 		delete[] _alphaMask;
 		_alphaMask = NULL;
@@ -286,11 +253,6 @@ uint32 BaseSurfaceOSystem::getPixel(Graphics::Surface *surface, int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::create(int width, int height) {
-	warning("BaseSurfaceOSystem::Create not ported yet"); //TODO
-#if 0
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-	_texture = SDL_CreateTexture(renderer->GetSdlRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, Width, Height);
-#endif
 	_width = width;
 	_height = height;
 
@@ -302,68 +264,16 @@ bool BaseSurfaceOSystem::create(int width, int height) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::createFromSDLSurface(Graphics::Surface *surface) {
-	warning("BaseSurfaceOSystem::CreateFromSDLSurface not ported yet"); //TODO
-#if 0
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-	_texture = SDL_CreateTextureFromSurface(renderer->GetSdlRenderer(), surface);
-#endif
-	if (_surface) {
-		_surface->free();
-		delete _surface;
-		_surface = NULL;
-	}
-	_surface = new Graphics::Surface();
-	_surface->copyFrom(*surface);
-	_width = surface->w;
-	_height = surface->h;
-#if 0
-	_gameRef->AddMem(_width * _height * 4);
-#endif
-	_valid = true;
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::isTransparentAt(int x, int y) {
-	// This particular warning is rather messy, as this function is called a ton,
-	// thus we avoid printing it more than once.
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		warning("BaseSurfaceOSystem::IsTransparentAt not ported yet");
-		hasWarned = true;
-	}
-#if 0
-	int access;
-	int width, height;
-	//SDL_QueryTexture(_texture, NULL, &access, &width, &height); //TODO
-	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
-	if (X < 0 || X >= width || Y < 0 || Y >= height) {
-		return true;
-	}
-
-
-	StartPixelOp();
-	bool ret = isTransparentAtLite(X, Y);
-	EndPixelOp();
-
-	return ret;
-#endif
-	return 0;
+	return isTransparentAtLite(x, y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
-	//if (!_lockPixels) return false;
-
-	// This particular warning is rather messy, as this function is called a ton,
-	// thus we avoid printing it more than once.
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		warning("BaseSurfaceOSystem::IsTransparentAtLite not ported yet");
-		hasWarned = true;
+	if (x < 0 || x >= _surface->w || y < 0 || y >= _surface->h) {
+		return true;
 	}
+
 	if (_surface->format.bytesPerPixel == 4) {
 		uint32 pixel = *(uint32 *)_surface->getBasePtr(x, y);
 		uint8 r, g, b, a;
@@ -374,35 +284,8 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 			return false;
 		}
 	}
-#if 0
-	uint32 format;
-	int access;
-	int width, height;
 
-	//SDL_QueryTexture(_texture, &format, &access, &width, &height);
-	//if (access != SDL_TEXTUREACCESS_STREAMING) return false;
-	if (X < 0 || X >= width || Y < 0 || Y >= height) {
-		return true;
-	}
-
-	if (!_alphaMask) {
-		return false;
-	} else {
-		return _alphaMask[Y * width + X] <= 128;
-	}
-#endif
 	return false;
-	/*
-	Uint32* dst = (Uint32*)((Uint8*)_lockPixels + Y * _lockPitch);
-	Uint32 pixel = dst[X];
-
-	SDL_PixelFormat* pixelFormat = SDL_AllocFormat(format);
-	Uint8 r, g, b, a;
-	SDL_GetRGBA(pixel, pixelFormat, &r, &g, &b, &a);
-	SDL_FreeFormat(pixelFormat);
-
-	return a <= 128;
-	*/
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -533,9 +416,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	}
 
 	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY);
-#if 0
-	SDL_RenderCopy(renderer->GetSdlRenderer(), _texture, &srcRect, &position);
-#endif
 
 	return STATUS_OK;
 }

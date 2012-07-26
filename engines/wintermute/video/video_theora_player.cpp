@@ -28,7 +28,6 @@
 
 
 #include "engines/wintermute/video/video_theora_player.h"
-#include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
@@ -38,7 +37,6 @@
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/video/decoders/theora_decoder.h"
 #include "common/system.h"
-//#pragma comment(lib, "libtheora.lib")
 
 namespace WinterMute {
 
@@ -87,10 +85,6 @@ void VideoTheoraPlayer::SetDefaults() {
 	_volume = 100;
 	_theoraDecoder = NULL;
 #if 0
-	_vorbisStreams = _theoraStreams = 0;
-
-	GenLookupTables();
-
 	_subtitler = NULL;
 #endif
 }
@@ -120,16 +114,6 @@ void VideoTheoraPlayer::cleanup() {
 	_alphaImage = NULL;
 	delete _texture;
 	_texture = NULL;
-#if 0
-	if (m_Sound) {
-		_gameRef->m_SoundMgr->RemoveSound(m_Sound);
-		m_Sound = NULL;
-	}
-
-	SAFE_DELETE_ARRAY(m_AudioBuf);
-	m_AudioBufFill = 0;
-	m_AudioBufSize = 0;
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,182 +148,6 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 	_playZoom = 100;
 
 	return STATUS_OK;
-#if 0
-	cleanup();
-
-	_file = _gameRef->_fileManager->openFile(filename);
-	if (!_file) {
-		return STATUS_FAILED;
-	}
-
-	if (filename != _filename) {
-		BaseUtils::setString(&_filename, filename);
-	}
-
-	// start up Ogg stream synchronization layer
-	ogg_sync_init(&m_OggSyncState);
-
-	// init supporting Vorbis structures needed in header parsing
-	vorbis_comment_init(&m_VorbisComment);
-	vorbis_info_init(&m_VorbisInfo);
-
-	// init supporting Theora structures needed in header parsing
-	theora_comment_init(&m_TheoraComment);
-	theora_info_init(&m_TheoraInfo);
-
-
-
-	// Ogg file open; parse the headers
-	// Only interested in Vorbis/Theora streams
-	ogg_packet TempOggPacket;
-	bool IsDone = false;
-	while (!IsDone) {
-		int bytesRead = BufferData(&m_OggSyncState);
-		if (bytesRead == 0) {
-			break;
-		}
-
-		while (ogg_sync_pageout(&m_OggSyncState, &m_OggPage) > 0) {
-			ogg_stream_state OggStateTest;
-
-			// is this a mandated initial header? If not, stop parsing
-			if (!ogg_page_bos(&m_OggPage)) {
-				// don't leak the page; get it into the appropriate stream
-				if (m_TheoraStreams)
-					ogg_stream_pagein(&m_TheoraStreamState, &m_OggPage);
-				if (m_VorbisStreams)
-					ogg_stream_pagein(&m_VorbisStreamState, &m_OggPage);
-
-				IsDone = true;
-				break;
-			}
-
-			ogg_stream_init(&OggStateTest, ogg_page_serialno(&m_OggPage));
-			ogg_stream_pagein(&OggStateTest, &m_OggPage);
-			ogg_stream_packetout(&OggStateTest, &TempOggPacket);
-
-			// identify the codec: try theora
-			if (!m_TheoraStreams && theora_decode_header(&m_TheoraInfo, &m_TheoraComment, &TempOggPacket) >= 0) {
-				// it is theora
-				memcpy(&m_TheoraStreamState, &OggStateTest, sizeof(OggStateTest));
-				m_TheoraStreams = 1;
-			} else if (!m_VorbisStreams && vorbis_synthesis_headerin(&m_VorbisInfo, &m_VorbisComment, &TempOggPacket) >= 0) {
-				// it is vorbis
-				memcpy(&m_VorbisStreamState, &OggStateTest, sizeof(OggStateTest));
-				m_VorbisStreams = 1;
-			} else {
-				// whatever it is, we don't care about it
-				ogg_stream_clear(&OggStateTest);
-			}
-		}
-	}
-
-	// we're expecting more header packets
-	while ((m_TheoraStreams && m_TheoraStreams < 3) || (m_VorbisStreams && m_VorbisStreams < 3)) {
-		int Ret;
-
-		// look for further theora headers
-		while (m_TheoraStreams && (m_TheoraStreams < 3) && (Ret = ogg_stream_packetout(&m_TheoraStreamState, &TempOggPacket))) {
-			if (Ret < 0) {
-				_gameRef->LOG(0, "Error parsing Theora stream headers; corrupt stream?");
-				return STATUS_FAILED;
-			}
-			if (theora_decode_header(&m_TheoraInfo, &m_TheoraComment, &TempOggPacket)) {
-				_gameRef->LOG(0, "Error parsing Theora stream headers; corrupt stream?");
-				return STATUS_FAILED;
-			}
-			m_TheoraStreams++;
-			if (m_TheoraStreams == 3) break;
-		}
-
-		/* look for more vorbis header packets */
-		while (m_VorbisStreams && (m_VorbisStreams < 3) && (Ret = ogg_stream_packetout(&m_VorbisStreamState, &TempOggPacket))) {
-			if (Ret < 0) {
-				_gameRef->LOG(0, "Error parsing Vorbis stream headers; corrupt stream?");
-				return STATUS_FAILED;
-			}
-			if (vorbis_synthesis_headerin(&m_VorbisInfo, &m_VorbisComment, &TempOggPacket)) {
-				_gameRef->LOG(0, "Error parsing Vorbis stream headers; corrupt stream?");
-				return STATUS_FAILED;
-			}
-			m_VorbisStreams++;
-			if (m_VorbisStreams == 3) break;
-		}
-
-		// The header pages/packets will arrive before anything else we
-		// care about, or the stream is not obeying spec
-		if (ogg_sync_pageout(&m_OggSyncState, &m_OggPage) > 0) {
-			if (m_TheoraStreams)
-				ogg_stream_pagein(&m_TheoraStreamState, &m_OggPage);
-			if (m_VorbisStreams)
-				ogg_stream_pagein(&m_VorbisStreamState, &m_OggPage);
-		} else {
-			int Ret = BufferData(&m_OggSyncState); // someone needs more data
-			if (Ret == 0) {
-				_gameRef->LOG(0, "End of file while searching for codec headers");
-				return STATUS_FAILED;
-			}
-		}
-	}
-
-
-
-	// and now we have it all.  initialize decoders
-	if (m_TheoraStreams) {
-		theora_decode_init(&m_TheoraState, &m_TheoraInfo);
-	} else {
-		// tear down the partial theora setup
-		theora_info_clear(&m_TheoraInfo);
-		theora_comment_clear(&m_TheoraComment);
-	}
-
-	if (m_VorbisStreams) {
-		vorbis_synthesis_init(&m_VorbisDSPState, &m_VorbisInfo);
-		vorbis_block_init(&m_VorbisDSPState, &m_VorbisBlock);
-
-	} else {
-		// tear down the partial vorbis setup
-		vorbis_info_clear(&m_VorbisInfo);
-		vorbis_comment_clear(&m_VorbisComment);
-	}
-
-	bool Res = STATUS_OK;
-
-	// create sound buffer
-	if (m_VorbisStreams && _gameRef->m_SoundMgr->m_SoundAvailable) {
-		m_Sound = new BaseSoundTheora(_gameRef);
-		_gameRef->m_SoundMgr->AddSound(m_Sound);
-		if (DID_FAIL(Res = m_Sound->InitializeBuffer(this))) {
-			_gameRef->m_SoundMgr->RemoveSound(m_Sound);
-			m_Sound = NULL;
-			_gameRef->LOG(Res, "Error initializing sound buffer for Theora file '%s'", filename);
-		} else {
-			SAFE_DELETE_ARRAY(m_AudioBuf);
-			m_AudioBufSize = m_Sound->m_StreamBlockSize;
-			m_AudioBuf = new ogg_int16_t[m_AudioBufSize];
-		}
-	}
-
-	// create texture
-	if (m_TheoraStreams && !m_Texture) {
-		if (_gameRef->m_UseD3D) {
-			m_Texture = new BaseSurfaceD3D(_gameRef);
-		} else {
-			m_Texture = new BaseSurfaceDD(_gameRef);
-		}
-
-		if (!m_Texture || DID_FAIL(Res = m_Texture->Create(m_TheoraInfo.width, m_TheoraInfo.height))) {
-			SAFE_DELETE(m_Texture);
-		}
-	}
-
-
-	if (!m_Subtitler) m_Subtitler = new CVidSubtitler(_gameRef);
-	if (m_Subtitler && _gameRef->m_VideoSubtitles) m_Subtitler->LoadSubtitles(filename, SubtitleFile);
-
-	return Res;
-#endif
-	return STATUS_FAILED;
 }
 
 
@@ -420,45 +228,6 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 	}
 	return STATUS_OK;
 #if 0
-
-	m_State = THEORA_STATE_PLAYING;
-
-	m_Looping = Looping;
-	m_PlaybackType = Type;
-
-	float Width, Height;
-	if (m_TheoraStreams) {
-		Width = (float)m_TheoraInfo.width;
-		Height = (float)m_TheoraInfo.height;
-	} else {
-		Width = (float)_gameRef->m_Renderer->m_Width;
-		Height = (float)_gameRef->m_Renderer->m_Height;
-	}
-
-	switch (Type) {
-	case VID_PLAY_POS:
-		m_PlayZoom = ForceZoom;
-		m_PosX = X;
-		m_PosY = Y;
-		break;
-
-	case VID_PLAY_STRETCH: {
-		float ZoomX = (float)((float)_gameRef->m_Renderer->m_Width / Width * 100);
-		float ZoomY = (float)((float)_gameRef->m_Renderer->m_Height / Height * 100);
-		m_PlayZoom = min(ZoomX, ZoomY);
-		m_PosX = (_gameRef->m_Renderer->m_Width - Width * (m_PlayZoom / 100)) / 2;
-		m_PosY = (_gameRef->m_Renderer->m_Height - Height * (m_PlayZoom / 100)) / 2;
-	}
-	break;
-
-	case VID_PLAY_CENTER:
-		m_PlayZoom = 100.0f;
-		m_PosX = (_gameRef->m_Renderer->m_Width - Width) / 2;
-		m_PosY = (_gameRef->m_Renderer->m_Height - Height) / 2;
-		break;
-	}
-
-
 	if (StartTime) SeekToTime(StartTime);
 
 	Update();
@@ -473,11 +242,7 @@ bool VideoTheoraPlayer::stop() {
 	if (_freezeGame) {
 		_gameRef->unfreeze();
 	}
-#if 0
-	if (m_Sound) m_Sound->Stop();
-	m_State = THEORA_STATE_FINISHED;
-	if (m_FreezeGame) _gameRef->Unfreeze();
-#endif
+
 	return STATUS_OK;
 }
 
@@ -623,22 +388,6 @@ uint32 VideoTheoraPlayer::getMovieTime() {
 	}
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-uint32 VideoTheoraPlayer::getMovieFrame() {
-#if 0
-	if (!m_TheoraStreams) return 0;
-	float Time = GetMovieTime();
-
-	return Time / ((double)m_TheoraInfo.fps_denominator / m_TheoraInfo.fps_numerator);
-#endif
-	if (_theoraDecoder) {
-		return _theoraDecoder->getTime();
-	} else {
-		return 0;
-	}
-}
-
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::WriteVideo() {
 	if (!_texture) {
@@ -718,17 +467,6 @@ bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 		_alphaFilename = filename;
 	}
 	//TODO: Conversion.
-#if 0
-	SAFE_DELETE(m_AlphaImage);
-	m_AlphaImage = new BaseImage(_gameRef);
-	if (!m_AlphaImage || DID_FAIL(m_AlphaImage->loadFile(filename))) {
-		SAFE_DELETE(m_AlphaImage);
-		SAFE_DELETE_ARRAY(m_AlphaFilename);
-		return STATUS_FAILED;
-	}
-	if (m_AlphaFilename != Filename) BaseUtils::setString(&m_AlphaFilename, filename);
-	m_AlphaImage->Convert(IMG_TRUECOLOR);
-#endif
 	return STATUS_OK;
 }
 

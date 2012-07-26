@@ -65,9 +65,6 @@ bool BaseSoundMgr::cleanup() {
 		delete _sounds[i];
 	}
 	_sounds.clear();
-#if 0
-	BASS_Free();
-#endif
 	return STATUS_OK;
 }
 
@@ -90,20 +87,6 @@ bool BaseSoundMgr::initialize() {
 
 	return STATUS_OK;
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSoundMgr::initLoop() {
-	if (!_soundAvailable) {
-		return STATUS_OK;
-	}
-#if 0
-
-	BASS_Update(500);
-#endif
-	return STATUS_OK;
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {

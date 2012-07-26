@@ -89,7 +89,7 @@ public:
 	uint32 _lastMiniUpdate;
 	bool _miniUpdateEnabled;
 
-	virtual bool miniUpdate();
+	virtual void miniUpdate();
 
 	void getMousePos(Point32 *Pos);
 	Rect32 _mouseLockRect;

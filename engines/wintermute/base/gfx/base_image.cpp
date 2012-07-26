@@ -114,6 +114,7 @@ bool BaseImage::saveBMPFile(const char *filename) const {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::resize(int newWidth, int newHeight) {
+	warning("BaseImage::resize(%d, %d), stubbed", newWidth, newHeight);
 #if 0
 	if (!_bitmap) {
 		return STATUS_FAILED;
@@ -128,13 +129,6 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 
 
 	FIBITMAP *newImg = FreeImage_Rescale(_bitmap, NewWidth, NewHeight, FILTER_BILINEAR);
-	if (newImg) {
-		FreeImage_Unload(_bitmap);
-		_bitmap = newImg;
-		return STATUS_OK;
-	} else {
-		return STATUS_FAILED;
-	}
 #endif
 	return false;
 }
