@@ -53,9 +53,17 @@ public:
 	BasePoint *_targetPoint;
 	virtual bool update();
 	virtual bool display();
+	virtual void turnTo(TDirection dir);
+	AdActor(BaseGame *inGame/*=NULL*/);
+	virtual ~AdActor();
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
+
+
+private:
 	TDirection _targetDir;
 	TDirection _afterWalkDir;
-	virtual void turnTo(TDirection dir);
+
 	AdPath *_path;
 	AdSpriteSet *_walkSprite;
 	AdSpriteSet *_standSprite;
@@ -64,11 +72,6 @@ public:
 	BaseArray<AdSpriteSet *, AdSpriteSet *> _talkSprites;
 	BaseArray<AdSpriteSet *, AdSpriteSet *> _talkSpritesEx;
 	TDirection _dir;
-	AdActor(BaseGame *inGame/*=NULL*/);
-	virtual ~AdActor();
-	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
-
 	// new anim system
 	Common::String _talkAnimName;
 	Common::String _idleAnimName;
@@ -85,7 +88,6 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 
-private:
 	bool setDefaultAnimNames();
 	BaseSprite *getTalkStanceOld(const char *stance);
 	bool mergeAnims(const char *animsFilename);
