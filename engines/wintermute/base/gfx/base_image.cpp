@@ -224,27 +224,15 @@ bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
-#if 0
-	if (_bitmap) {
-		FreeImage_Unload(_bitmap);
-	}
+	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
 
-	if (NewWidth == 0) {
-		NewWidth = FreeImage_GetWidth(OrigImage->GetBitmap());
-	}
-	if (NewHeight == 0) {
-		NewHeight = FreeImage_GetHeight(OrigImage->GetBitmap());
-	}
-
-	_bitmap = FreeImage_Rescale(OrigImage->GetBitmap(), NewWidth, NewHeight, FILTER_BILINEAR);
-#endif
 	TransparentSurface temp(*origImage->_surface, false);
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
 		_deletableSurface = NULL;
 	}
-	_surface = _deletableSurface = temp.scale(newWidth, newHeight);
+	_surface = _deletableSurface = temp.scaleSafe((uint16)newWidth, (uint16)newHeight);
 	return true;
 }
 

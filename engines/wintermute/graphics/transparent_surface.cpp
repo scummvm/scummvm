@@ -342,10 +342,39 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	return retSize;
 }
 
+TransparentSurface *TransparentSurface::scaleSafe(uint16 newWidth, uint16 newHeight) const {
+	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
+	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
+	return scaleSafe(srcRect, dstRect);
+}
+
+// Copied from clone2727's https://github.com/clone2727/scummvm/blob/pegasus/engines/pegasus/surface.cpp#L247
+TransparentSurface *TransparentSurface::scaleSafe(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
+	// I'm doing simple linear scaling here
+	// dstRect(x, y) = srcRect(x * srcW / dstW, y * srcH / dstH);
+	TransparentSurface *target = new TransparentSurface();
+
+	int srcW = srcRect.width();
+	int srcH = srcRect.height();
+	int dstW = dstRect.width();
+	int dstH = dstRect.height();
+
+	target->create((uint16)dstW, (uint16)dstH, this->format);
+
+	for (int y = 0; y < dstH; y++) {
+		for (int x = 0; x < dstW; x++) {
+			uint32 color = READ_UINT32((byte *)getBasePtr(x * srcW / dstW + srcRect.left,
+														  y * srcH / dstH + srcRect.top));
+			WRITE_UINT32((byte *)target->getBasePtr(x + dstRect.left, y + dstRect.top), color);
+		}
+	}
+	return target;
+
+}
 /**
  * Scales a passed surface, creating a new surface with the result
- * @param srcImage      Source image to scale
- * @param scaleFactor   Scale amount. Must be between 0 and 1.0 (but not zero)
+ * @param xSize		target width.
+ * @param ySize		target height.
  * @remarks Caller is responsible for freeing the returned surface
  */
 TransparentSurface *TransparentSurface::scale(int xSize, int ySize) const {
