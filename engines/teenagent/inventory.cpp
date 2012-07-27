@@ -58,15 +58,14 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	}
 	_offset[92] = items_size;
 
-	for (byte i = 0; i <= 92; ++i) {
+	for (byte i = 0; i < 92; ++i) {
 		InventoryObject io;
-		uint16 obj_addr = vm->res->dseg.get_word(0xc4a4 + i * 2);
-		if (obj_addr != 0)
-			io.load(vm->res->dseg.ptr(obj_addr));
+		uint16 obj_addr = vm->res->dseg.get_word(dsAddr_inventoryItemDataPtrTable + i * 2);
+		io.load(vm->res->dseg.ptr(obj_addr));
 		_objects.push_back(io);
 	}
 
-	_inventory = vm->res->dseg.ptr(0xc48d);
+	_inventory = vm->res->dseg.ptr(dsAddr_inventory);
 
 	for (int y = 0; y < 4; ++y)
 		for (int x = 0; x < 6; ++x) {

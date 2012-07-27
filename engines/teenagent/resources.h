@@ -645,6 +645,12 @@ const uint16 dsAddr_currentScene = 0xb4f3; // 1 byte
 // Object Combine Error Message : 0xc3e2 to 0xc41e
 const uint16 dsAddr_objCombineErrorMsg = 0xc3e2; // "Using these two objects ..."
 
+// Inventory (item ids held by Ego) (1 byte * 24) : 0xc48d to 0xc4a4
+const uint16 dsAddr_inventory = 0xc48d;
+// 0xc4a5 is null word alignment byte
+// Inventory item data address table (2 bytes * 92) : 0xc4a6 to 0xc55d
+const uint16 dsAddr_inventoryItemDataPtrTable = 0xc4a6;
+
 // Current Music Id Playing : 0xdb90
 const uint16 dsAddr_currentMusic = 0xdb90; // 1 byte
 // Counter for Mansion Intrusion Attempts : 0xdbea
