@@ -33,6 +33,11 @@ namespace TeenAgent {
 struct InventoryObject;
 class TeenAgentEngine;
 
+// Maximum number of items found within game
+const uint8 numInventoryItems = 92;
+// Maximum number of inventory items held by Ego (Mark)
+const uint8 inventorySize = 24;
+
 class Inventory {
 public:
 	Inventory(TeenAgentEngine *vm);
@@ -58,7 +63,7 @@ private:
 	TeenAgentEngine *_vm;
 	Surface _background;
 	byte *_items;
-	uint _offset[93];
+	uint _offset[numInventoryItems+1];
 
 	Common::Array<InventoryObject> _objects;
 	byte *_inventory;
@@ -76,7 +81,7 @@ private:
 		void render(Inventory *inventory, uint item_id, Graphics::Surface *surface, int delta);
 	};
 
-	Item _graphics[24];
+	Item _graphics[inventorySize];
 
 	bool _active;
 	Common::Point _mouse;

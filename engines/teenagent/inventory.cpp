@@ -52,13 +52,13 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	varia.read(4, _items, items_size);
 
 	byte offsets = _items[0];
-	assert(offsets == 92);
+	assert(offsets == numInventoryItems);
 	for (byte i = 0; i < offsets; ++i) {
 		_offset[i] = READ_LE_UINT16(_items + i * 2 + 1);
 	}
-	_offset[92] = items_size;
+	_offset[numInventoryItems] = items_size;
 
-	for (byte i = 0; i < 92; ++i) {
+	for (byte i = 0; i < numInventoryItems; ++i) {
 		InventoryObject io;
 		uint16 obj_addr = vm->res->dseg.get_word(dsAddr_inventoryItemDataPtrTable + i * 2);
 		io.load(vm->res->dseg.ptr(obj_addr));
@@ -67,7 +67,7 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 
 	_inventory = vm->res->dseg.ptr(dsAddr_inventory);
 
-	for (int y = 0; y < 4; ++y)
+	for (int y = 0; y < 4; ++y) {
 		for (int x = 0; x < 6; ++x) {
 			int i = y * 6 + x;
 			_graphics[i]._rect.left = 28 + 45 * x - 1;
@@ -75,6 +75,7 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 			_graphics[i]._rect.right = _graphics[i]._rect.left + 40;
 			_graphics[i]._rect.bottom = _graphics[i]._rect.top + 26;
 		}
+	}
 
 	varia.close();
 	_hoveredObj = _selectedObj = NULL;
@@ -85,7 +86,7 @@ Inventory::~Inventory() {
 }
 
 bool Inventory::has(byte item) const {
-	for (int i = 0; i < 24; ++i) {
+	for (int i = 0; i < inventorySize; ++i) {
 		if (_inventory[i] == item)
 			return true;
 	}
@@ -95,29 +96,29 @@ bool Inventory::has(byte item) const {
 void Inventory::remove(byte item) {
 	debugC(0, kDebugInventory, "removing %u from inventory", item);
 	int i;
-	for (i = 0; i < 24; ++i) {
+	for (i = 0; i < inventorySize; ++i) {
 		if (_inventory[i] == item) {
 			break;
 		}
 	}
-	for (; i < 23; ++i) {
+	for (; i < (inventorySize - 1); ++i) {
 		_inventory[i] = _inventory[i + 1];
 		_graphics[i].free();
 	}
-	_inventory[23] = 0;
-	_graphics[23].free();
+	_inventory[inventorySize - 1] = 0;
+	_graphics[inventorySize - 1].free();
 }
 
 void Inventory::clear() {
 	debugC(0, kDebugInventory, "clearing inventory");
-	for (int i = 0; i < 24; ++i) {
+	for (int i = 0; i < inventorySize; ++i) {
 		_inventory[i] = 0;
 		_graphics[i].free();
 	}
 }
 
 void Inventory::reload() {
-	for (int i = 0; i < 24; ++i) {
+	for (int i = 0; i < inventorySize; ++i) {
 		_graphics[i].free();
 		uint item = _inventory[i];
 		if (item != 0)
@@ -129,7 +130,7 @@ void Inventory::add(byte item) {
 	if (has(item))
 		return;
 	debugC(0, kDebugInventory, "adding %u to inventory", item);
-	for (int i = 0; i < 24; ++i) {
+	for (int i = 0; i < inventorySize; ++i) {
 		if (_inventory[i] == 0) {
 			_inventory[i] = item;
 			return;
@@ -172,7 +173,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 		_mouse = event.mouse;
 		_hoveredObj = NULL;
 
-		for (int i = 0; i < 24; ++i) {
+		for (int i = 0; i < inventorySize; ++i) {
 			byte item = _inventory[i];
 			if (item == 0)
 				continue;
