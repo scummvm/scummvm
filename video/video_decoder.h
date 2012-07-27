@@ -809,45 +809,6 @@ private:
 	uint32 getFrameBeginTime(uint32 frame) const;
 };
 
-/**
- * A VideoDecoder that can be rewound back to the beginning.
- * @note This class is now deprecated. Use AdvancedVideoDecoder instead.
- */
-class RewindableVideoDecoder : public virtual VideoDecoder {
-public:
-	/**
-	 * Rewind to the beginning of the video.
-	 */
-	virtual void rewind() = 0;
-};
-
-/**
- * A VideoDecoder that can seek to a frame or point in time.
- * @note This class is now deprecated. Use AdvancedVideoDecoder instead.
- */
-class SeekableVideoDecoder : public virtual RewindableVideoDecoder {
-public:
-	/**
-	 * Seek to the specified time.
-	 */
-	virtual void seekToTime(const Audio::Timestamp &time) = 0;
-
-	/**
-	 * Seek to the specified time (in ms).
-	 */
-	void seekToTime(uint32 msecs) { seekToTime(Audio::Timestamp(msecs, 1000)); }
-
-	/**
-	 * Implementation of RewindableVideoDecoder::rewind().
-	 */
-	virtual void rewind() { seekToTime(0); }
-
-	/**
-	 * Get the total duration of the video (in ms).
-	 */
-	virtual uint32 getDuration() const = 0;
-};
-
 } // End of namespace Video
 
 #endif
