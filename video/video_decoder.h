@@ -265,7 +265,7 @@ protected:
 	 */
 	virtual void updateBalance() {}
 
-	int32 _curFrame;
+	int32 _curFrame; // This variable is now deprecated.
 	int32 _startTime;
 
 // FIXME: These are protected until the new API takes over this one
@@ -500,15 +500,56 @@ protected:
 
 		TrackType getTrackType() const  { return kTrackTypeVideo; }
 
-		// TODO: Document
+		/**
+		 * Get the width of this track
+		 */
 		virtual uint16 getWidth() const = 0;
+
+		/**
+		 * Get the height of this track
+		 */
 		virtual uint16 getHeight() const = 0;
+
+		/**
+		 * Get the pixel format of this track
+		 */
 		virtual Graphics::PixelFormat getPixelFormat() const = 0;
+
+		/**
+		 * Get the current frame of this track
+		 *
+		 * @see VideoDecoder::getCurFrame()
+		 */
 		virtual int getCurFrame() const = 0;
+
+		/**
+		 * Get the frame count of this track
+		 *
+		 * @note If the frame count is unknown, return 0 (which is also
+		 * the default implementation of the function). However, one must
+		 * also implement endOfTrack() in that case.
+		 */
 		virtual int getFrameCount() const { return 0; }
+
+		/**
+		 * Get the start time of the next frame in milliseconds since
+		 * the start of the video
+		 */
 		virtual uint32 getNextFrameStartTime() const = 0;
+
+		/**
+		 * Decode the next frame
+		 */
 		virtual const Graphics::Surface *decodeNextFrame() = 0;
+
+		/**
+		 * Get the palette currently in use by this track
+		 */
 		virtual const byte *getPalette() const { return 0; }
+
+		/**
+		 * Does the palette currently in use by this track need to be updated?
+		 */
 		virtual bool hasDirtyPalette() const { return false; }
 	};
 
@@ -547,19 +588,43 @@ protected:
 		void start();
 		void stop();
 
-		// TODO: Document
+		/**
+		 * Get the volume for this track
+		 */
 		byte getVolume() const { return _volume; }
+
+		/**
+		 * Set the volume for this track
+		 */
 		void setVolume(byte volume);
+
+		/**
+		 * Get the balance for this track
+		 */
 		int8 getBalance() const { return _balance; }
+
+		/**
+		 * Set the balance for this track
+		 */
 		void setBalance(int8 balance);
+
+		/**
+		 * Get the time the AudioStream behind this track has been
+		 * running
+		 */
 		uint32 getRunningTime() const;
 
+		/**
+		 * Get the sound type to be used when playing this audio track
+		 */
 		virtual Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kPlainSoundType; }
 
 	protected:
 		void pauseIntern(bool pause);
 
-		// TODO: Document
+		/**
+		 * Get the AudioStream that is the representation of this AudioTrack
+		 */
 		virtual Audio::AudioStream *getAudioStream() const = 0;
 
 	private:
@@ -583,7 +648,10 @@ protected:
 	protected:
 		Audio::AudioStream *getAudioStream() const;
 
-		// TODO: Document
+		/**
+		 * Get the RewindableAudioStream pointer to be used by this class
+		 * for rewind() and getAudioStream()
+		 */
 		virtual Audio::RewindableAudioStream *getRewindableAudioStream() const = 0;
 	};
 
@@ -604,7 +672,10 @@ protected:
 	protected:
 		Audio::AudioStream *getAudioStream() const;
 
-		// TODO: Document
+		/**
+		 * Get the SeekableAudioStream pointer to be used by this class
+		 * for seek(), getDuration(), and getAudioStream()
+		 */
 		virtual Audio::SeekableAudioStream *getSeekableAudioStream() const = 0;
 	};
 
