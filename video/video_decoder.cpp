@@ -575,7 +575,7 @@ AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack() {
 	uint32 bestTime = 0xFFFFFFFF;
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++) {
-		if ((*it)->getTrackType() == Track::kTrackTypeVideo) {
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo && !(*it)->endOfTrack()) {
 			VideoTrack *track = (VideoTrack *)*it;
 			uint32 time = track->getNextFrameStartTime();
 
@@ -594,7 +594,7 @@ const AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack
 	uint32 bestTime = 0xFFFFFFFF;
 
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
-		if ((*it)->getTrackType() == Track::kTrackTypeVideo) {
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo && !(*it)->endOfTrack()) {
 			const VideoTrack *track = (const VideoTrack *)*it;
 			uint32 time = track->getNextFrameStartTime();
 
