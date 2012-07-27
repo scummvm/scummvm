@@ -2278,7 +2278,7 @@ label_process_entity:
 
 							if (getScenes()->checkPosition(kSceneNone, SceneManager::kCheckPositionLookingUp)) {
 								 getSavePoints()->push(kEntityPlayer, entity, kActionExcuseMeCath);
-							} else if (getScenes()->checkPosition(kSceneNone, SceneManager::kCheckPositionLookingDown) || getScenes()->checkCurrentPosition(false)){
+							} else if (getScenes()->checkPosition(kSceneNone, SceneManager::kCheckPositionLookingDown) || getScenes()->checkCurrentPosition(false)) {
 								 getSavePoints()->push(kEntityPlayer, entity, kActionExcuseMe);
 
 								 if (getScenes()->checkCurrentPosition(false))

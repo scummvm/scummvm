@@ -275,7 +275,7 @@ struct SavePoint;
 class EntityData : Common::Serializable {
 public:
 
-	struct EntityParameters : Common::Serializable{
+	struct EntityParameters : Common::Serializable {
 		virtual ~EntityParameters() {}
 		virtual Common::String toString() = 0;
 
@@ -1079,7 +1079,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersIIII);
 
-		EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII*)_data->getCurrentParameters();
+		EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII *)_data->getCurrentParameters();
 		params->param1 = (unsigned int)param1;
 
 		_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
@@ -1093,7 +1093,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersIIII);
 
-		EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII*)_data->getCurrentParameters();
+		EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII *)_data->getCurrentParameters();
 		params->param1 = param1;
 		params->param2 = param2;
 
@@ -1108,7 +1108,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersIIII);
 
-		EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII*)_data->getCurrentParameters();
+		EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII *)_data->getCurrentParameters();
 		params->param1 = param1;
 		params->param2 = param2;
 		params->param3 = param3;
@@ -1124,7 +1124,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersSIIS);
 
-		EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS*)_data->getCurrentParameters();
+		EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS *)_data->getCurrentParameters();
 		strncpy((char *)&params->seq1, seq1, 12);
 		params->param4 = param4;
 
@@ -1139,7 +1139,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersSIIS);
 
-		EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS*)_data->getCurrentParameters();
+		EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS *)_data->getCurrentParameters();
 		strncpy((char *)&params->seq1, seq1, 12);
 		params->param4 = param4;
 		params->param5 = param5;
@@ -1155,7 +1155,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersSIII);
 
-		EntityData::EntityParametersSIII *params = (EntityData::EntityParametersSIII*)_data->getCurrentParameters();
+		EntityData::EntityParametersSIII *params = (EntityData::EntityParametersSIII *)_data->getCurrentParameters();
 		strncpy((char *)&params->seq, seq, 12);
 		params->param4 = param4;
 		params->param5 = param5;
@@ -1172,7 +1172,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersSIIS);
 
-		EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS*)_data->getCurrentParameters();
+		EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS *)_data->getCurrentParameters();
 		strncpy((char *)&params->seq1, seq1, 12);
 		params->param4 = param4;
 		params->param5 = param5;
@@ -1189,7 +1189,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersSSII);
 
-		EntityData::EntityParametersSSII *params = (EntityData::EntityParametersSSII*)_data->getCurrentParameters();
+		EntityData::EntityParametersSSII *params = (EntityData::EntityParametersSSII *)_data->getCurrentParameters();
 		strncpy((char *)&params->seq1, seq1, 12);
 		strncpy((char *)&params->seq2, seq2, 12);
 		params->param7 = param7;
@@ -1205,7 +1205,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersISII);
 
-		EntityData::EntityParametersISII *params = (EntityData::EntityParametersISII*)_data->getCurrentParameters();
+		EntityData::EntityParametersISII *params = (EntityData::EntityParametersISII *)_data->getCurrentParameters();
 		params->param1 = (unsigned int)param1;
 		strncpy((char *)&params->seq, seq, 12);
 
@@ -1220,7 +1220,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersISSI);
 
-		EntityData::EntityParametersISSI *params = (EntityData::EntityParametersISSI*)_data->getCurrentParameters();
+		EntityData::EntityParametersISSI *params = (EntityData::EntityParametersISSI *)_data->getCurrentParameters();
 		params->param1 = param1;
 		strncpy((char *)&params->seq1, seq1, 12);
 		strncpy((char *)&params->seq2, seq2, 12);
@@ -1236,7 +1236,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersIISI);
 
-		EntityData::EntityParametersIISI *params = (EntityData::EntityParametersIISI*)_data->getCurrentParameters();
+		EntityData::EntityParametersIISI *params = (EntityData::EntityParametersIISI *)_data->getCurrentParameters();
 		params->param1 = param1;
 		params->param2 = param2;
 		strncpy((char *)&params->seq, seq, 12);
@@ -1252,7 +1252,7 @@ protected:
 		_data->setCurrentCallback(index);
 		RESET_PARAMS(_data, EntityData::EntityParametersIISS);
 
-		EntityData::EntityParametersIISS *params = (EntityData::EntityParametersIISS*)_data->getCurrentParameters();
+		EntityData::EntityParametersIISS *params = (EntityData::EntityParametersIISS *)_data->getCurrentParameters();
 		params->param1 = param1;
 		params->param2 = param2;
 		strncpy((char *)&params->seq1, seq1, 12);

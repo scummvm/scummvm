@@ -489,7 +489,7 @@ bool SceneManager::checkCurrentPosition(bool doCheckOtherCars) const {
 	if (position == 99)
 		return true;
 
-	switch (car){
+	switch (car) {
 	default:
 		break;
 

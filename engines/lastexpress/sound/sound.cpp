@@ -674,7 +674,7 @@ const char *SoundManager::getDialogName(EntityIndex entity) const {
 //////////////////////////////////////////////////////////////////////////
 // Letters & Messages
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::readText(int id){
+void SoundManager::readText(int id) {
 	if (!_queue->isBuffered(kEntityTables4))
 		return;
 
