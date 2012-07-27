@@ -52,9 +52,10 @@ static Common::FSNode getNodeForRelativePath(const Common::String &filename) {
 	// The filename can be an explicit path, thus we need to chop it up, expecting the path the game
 	// specifies to follow the Windows-convention of folder\subfolder\file (absolute paths should not happen)
 
-	// Absolute path: TODO: Add specific fallbacks here.
+	// Absolute path: These should have been handled in openDiskFile.
 	if (filename.contains(':')) {
-		error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
+		// So just return an invalid node.
+		return Common::FSNode();
 	}
 
 	// Relative path:
@@ -112,9 +113,19 @@ bool diskFileExists(const Common::String &filename) {
 Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = NULL;
+	Common::String fixedFilename = filename;
+
+	// Absolute path: TODO: Add specific fallbacks here.
+	if (filename.contains(':')) {
+		if (filename.hasPrefix("c:\\windows\\fonts\\")) { // East Side Story refers to "c:\windows\fonts\framd.ttf"
+			fixedFilename = filename.c_str() + 17;
+		} else {
+			error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
+		}
+	}
 	// Try directly from SearchMan first
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, filename);
+	SearchMan.listMatchingMembers(files, fixedFilename);
 
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
 		if ((*it)->getName() == filename) {
