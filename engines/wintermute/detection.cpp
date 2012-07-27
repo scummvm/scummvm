@@ -116,9 +116,9 @@ public:
 		if (allFiles.contains("data.dcp")) {
 			Common::String name, caption;
 			if (WinterMuteEngine::getGameInfo(fslist, name, caption)) {
-				for (int32 i = 0; i < name.size(); i++) {
+				for (uint32 i = 0; i < name.size(); i++) {
 					// Replace spaces (and other non-alphanumerics) with underscores
-					if (!Common::isAlnum(name[i])) {
+					if (!Common::isAlnum(name[(int32)i])) {
 						name.setChar('_', (uint32)i);
 					}
 				}

@@ -17,6 +17,7 @@
 
 #include "engines/wintermute/utils/crc.h"
 
+namespace WinterMute {
 
 /*
  * Derive parameters from the standard-specific parameters in crc.h.
@@ -232,3 +233,5 @@ crc crc_process_byte(unsigned char byteVal, crc remainder) {
 crc crc_finalize(crc remainder) {
 	return (REFLECT_REMAINDER(remainder) ^ FINAL_XOR_VALUE);
 }
+
+} // end of namespace WinterMute

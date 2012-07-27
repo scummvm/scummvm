@@ -73,7 +73,7 @@ bool BaseSurfaceStorage::initLoop() {
 				break;
 			}
 
-			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && _gameRef->_liveTimer - _surfaces[i]->_lastUsedTime >= _surfaces[i]->_lifeTime) {
+			if (_surfaces[i]->_lifeTime > 0 && (int)(_surfaces[i]->_valid && _gameRef->_liveTimer - _surfaces[i]->_lastUsedTime) >= _surfaces[i]->_lifeTime) {
 				//_gameRef->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
 				_surfaces[i]->invalidate();
 			}

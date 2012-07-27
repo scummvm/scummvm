@@ -174,7 +174,7 @@ int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAli
 			longLine = true;
 		}
 
-		if (str.size() == (index + 1) || (maxLength >= 0 && index == maxLength - 1)) {
+		if ((int)str.size() == (index + 1) || (maxLength >= 0 && index == maxLength - 1)) {
 			done = true;
 			if (!newLine) {
 				end = index;

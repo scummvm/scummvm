@@ -97,7 +97,7 @@ AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
 	//size_t pos = fileName.find_last_of('.'); //TODO REMOVE!
 	// TODO: Prettify this.
 	AnsiString extension = Common::lastPathComponent(fileName, '.');
-	for (int i = 0; i < extension.size() + 1; i++) {
+	for (uint32 i = 0; i < extension.size() + 1; i++) {
 		fileName.deleteLastChar();
 	}
 //	Common::String filename = Common::String(fileName.c_str(), fileName.size() - extension.size() + 1);

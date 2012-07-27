@@ -128,7 +128,7 @@ void AdNodeState::setCaption(const char *caption, int caseVal) {
 
 
 //////////////////////////////////////////////////////////////////////////
-char *AdNodeState::getCaption(int caseVal) {
+const char *AdNodeState::getCaption(int caseVal) {
 	if (caseVal == 0) {
 		caseVal = 1;
 	}

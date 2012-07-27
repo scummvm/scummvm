@@ -253,8 +253,8 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 	strcpy(fileName, upcName.c_str());
 
 	// correct slashes
-	for (int32 i = 0; i < upcName.size(); i++) {
-		if (upcName[i] == '/') {
+	for (uint32 i = 0; i < upcName.size(); i++) {
+		if (upcName[(int32)i] == '/') {
 			upcName.setChar('\\', (uint32)i);
 		}
 	}

@@ -492,7 +492,7 @@ float BasePersistenceManager::getFloat() {
 }
 
 void BasePersistenceManager::putDouble(double val) {
-	Common::String str = Common::String::format("F%f", val);
+	Common::String str = Common::String::format("D%f", val);
 	str.format("D%f", val);
 	_saveStream->writeUint32LE(str.size());
 	_saveStream->writeString(str);
@@ -500,10 +500,10 @@ void BasePersistenceManager::putDouble(double val) {
 
 double BasePersistenceManager::getDouble() {
 	char *str = getString();
-	double value = 0.0f;
-	int ret = sscanf(str, "F%f", &value);
+	float value = 0.0f; // TODO: Do we ever really need to carry a full double-precision number?
+	int ret = sscanf(str, "D%f", &value);
 	if (ret != 1) {
-		warning("%s not parsed as float", str);
+		warning("%s not parsed as double", str);
 	}
 	delete[] str;
 	return value;

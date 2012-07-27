@@ -48,7 +48,7 @@ private:
 	char *_name;
 	char *_caption[7];
 	void setCaption(const char *caption, int caseVal);
-	char *getCaption(int caseVal);
+	const char *getCaption(int caseVal);
 	uint32 _alphaColor;
 	char *_filename;
 	char *_cursor;

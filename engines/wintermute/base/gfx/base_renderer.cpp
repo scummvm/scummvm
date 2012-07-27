@@ -111,7 +111,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderer::deleteRectList() {
-	for (int i = 0; i < _rectList.size(); i++) {
+	for (uint32 i = 0; i < _rectList.size(); i++) {
 		delete _rectList[i];
 	}
 	_rectList.clear();

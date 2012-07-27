@@ -211,8 +211,8 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Copy") == 0) {
 		stack->correctParams(2);
-		const char *dest = stack->pop()->getString();
-		bool overwrite = stack->pop()->getBool(true);
+		/* const char *dest = */ stack->pop()->getString();
+		/* bool overwrite = */ stack->pop()->getBool(true);
 
 		close();
 		error("SXFile-Method: Copy not supported");
@@ -601,7 +601,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "WriteDouble") == 0) {
 		error("SXFile::WriteDouble - Not endian safe yet");
 		stack->correctParams(1);
-		double val = stack->pop()->getFloat();
+		/* double val = */ stack->pop()->getFloat();
 
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);

@@ -16,6 +16,10 @@
 #ifndef _crc_h
 #define _crc_h
 
+#include "common/system.h" // For types.
+
+namespace WinterMute {
+
 #ifndef TRUE
 #define FALSE   0
 #define TRUE    !FALSE
@@ -26,10 +30,9 @@
  */
 #define CRC32
 
-
 #if defined(CRC_CCITT)
 
-typedef unsigned short  crc;
+typedef uint16  crc;
 
 #define CRC_NAME            "CRC-CCITT"
 #define POLYNOMIAL          0x1021
@@ -41,7 +44,7 @@ typedef unsigned short  crc;
 
 #elif defined(CRC16)
 
-typedef unsigned short  crc;
+typedef uint16  crc;
 
 #define CRC_NAME            "CRC-16"
 #define POLYNOMIAL          0x8005
@@ -53,7 +56,7 @@ typedef unsigned short  crc;
 
 #elif defined(CRC32)
 
-typedef unsigned long  crc;
+typedef uint32  crc;
 
 #define CRC_NAME            "CRC-32"
 #define POLYNOMIAL          0x04C11DB7
@@ -77,5 +80,6 @@ extern "C" crc crc_initialize(void);
 extern "C" crc crc_process_byte(unsigned char byteVal, crc remainder);
 extern "C" crc crc_finalize(crc remainder);
 
+} // End of namespace WinterMute
 
 #endif /* _crc_h */
