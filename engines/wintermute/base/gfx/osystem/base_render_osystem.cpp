@@ -124,33 +124,10 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	_realWidth = width;
 	_realHeight = height;
 
+	//TODO: Tiny resolution-displays might want to do some resolution-selection logic here
 
-	// find suitable resolution
-	/*#ifdef __IPHONEOS__
-	    _realWidth = 480;
-	    _realHeight = 320;
-
-	    int numModes = SDL_GetNumDisplayModes(0);
-	    for (int i = 0; i < numModes; i++) {
-	        SDL_DisplayMode mode;
-	        SDL_GetDisplayMode(0, i, &mode);
-
-	        if (mode.w > mode.h) {
-	            _realWidth = mode.w;
-	            _realHeight = mode.h;
-	            break;
-	        }
-	    }
-	#else*/
 	_realWidth = _gameRef->_registry->readInt("Debug", "ForceResWidth", _width);
 	_realHeight = _gameRef->_registry->readInt("Debug", "ForceResHeight", _height);
-//#endif
-
-	/*
-	_realWidth = 480;
-	_realHeight = 320;
-	*/
-
 
 	float origAspect = (float)_width / (float)_height;
 	float realAspect = (float)_realWidth / (float)_realHeight;

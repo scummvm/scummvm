@@ -118,7 +118,7 @@ public:
 	bool addObject(AdObject *object);
 	AdScene *_scene;
 	bool initLoop();
-	AdGame();
+	AdGame(const Common::String &gameId);
 	virtual ~AdGame();
 
 	BaseArray<AdObject *> _objects;

@@ -52,7 +52,7 @@ WinterMuteEngine::WinterMuteEngine() : Engine(g_system) {
 	_classReg = new SystemClassRegistry();
 	_classReg->registerClasses();
 
-	_game = new AdGame();
+	_game = new AdGame("");
 	_rnd = NULL;
 }
 
@@ -158,7 +158,7 @@ int WinterMuteEngine::init() {
 	_classReg = new SystemClassRegistry();
 	_classReg->registerClasses();
 
-	_game = new AdGame;
+	_game = new AdGame(_targetName);
 	if (!_game) return 1;
 	BasePlatform::initialize(_game, 0, NULL);
 

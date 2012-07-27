@@ -82,9 +82,7 @@ bool SystemClassRegistry::unregisterClass(SystemClass *classObj) {
 	}
 
 	if (classObj->getNumInstances() != 0) {
-		char str[MAX_PATH_LENGTH];
-		sprintf(str, "Memory leak@class %-20s: %d instance(s) left\n", classObj->getName().c_str(), classObj->getNumInstances());
-		BasePlatform::outputDebugString(str);
+		debugC(WinterMute::kWinterMuteDebugSaveGame, "Memory leak@class %-20s: %d instance(s) left\n", classObj->getName().c_str(), classObj->getNumInstances());
 	}
 	_classes.erase(it);
 

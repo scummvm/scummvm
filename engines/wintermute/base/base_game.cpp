@@ -80,7 +80,7 @@ IMPLEMENT_PERSISTENT(BaseGame, true)
 
 
 //////////////////////////////////////////////////////////////////////
-BaseGame::BaseGame(): BaseObject(this) {
+BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gameId) {
 	_shuttingDown = false;
 
 	_state = GAME_RUNNING;
@@ -259,6 +259,7 @@ BaseGame::BaseGame(): BaseObject(this) {
 	_autoSaveSlot = 999;
 	_cursorHidden = false;
 
+	// Block kept as a reminder that the engine CAN run in constrained/touch-mode
 	/*#ifdef __IPHONEOS__
 	    _touchInterface = true;
 	    _constrainedMemory = true; // TODO differentiate old and new iOS devices
@@ -331,7 +332,7 @@ BaseGame::~BaseGame() {
 	_stringTable = NULL;
 
 	DEBUG_DebugDisable();
-	BasePlatform::outputDebugString("--- shutting down normally ---\n");
+	debugC(kWinterMuteDebugLog, "--- shutting down normally ---\n");
 }
 
 
@@ -2249,6 +2250,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ShowStatusLine") == 0) {
 		stack->correctParams(0);
+		// Block kept to show intention of opcode.
 		/*#ifdef __IPHONEOS__
 		        IOS_ShowStatusLine(TRUE);
 		#endif*/
@@ -2262,6 +2264,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HideStatusLine") == 0) {
 		stack->correctParams(0);
+		// Block kept to show intention of opcode.
 		/*#ifdef __IPHONEOS__
 		        IOS_ShowStatusLine(FALSE);
 		#endif*/

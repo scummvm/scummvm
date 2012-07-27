@@ -32,6 +32,8 @@
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/wintermute.h"
+#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 
@@ -173,16 +175,14 @@ char *BaseRegistry::getIniName() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegistry::loadValues(bool local) {
-	if (local) {
-		loadXml("settings.xml", _localValues);
-	} else {
-		loadXml(PathUtil::combine(_gameRef->getDataDir(), "settings.xml"), _values);
-	}
+	Common::String filename = Common::String(_gameRef->getGameId()) + "-settings.xml";
+	loadXml(filename, _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegistry::saveValues() {
-	saveXml(PathUtil::combine(_gameRef->getDataDir(), "settings.xml"), _values);
+	Common::String filename = Common::String(_gameRef->getGameId()) + "-settings.xml";
+	saveXml(filename, _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -212,10 +212,15 @@ AnsiString BaseRegistry::getValue(PathValueMap &values, const AnsiString path, c
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegistry::loadXml(const AnsiString fileName, PathValueMap &values) {
-	TiXmlDocument doc(fileName.c_str());
-	if (!doc.LoadFile()) {
+	Common::SeekableReadStream *stream = g_wintermute->getSaveFileMan()->openForLoading(fileName);
+	if (!stream) {
 		return;
 	}
+	char *data = new char[stream->size()];
+	stream->read(data, stream->size());
+	TiXmlDocument doc;
+	doc.Parse(data);
+	delete data;
 
 	TiXmlElement *rootElem = doc.RootElement();
 	if (!rootElem || Common::String(rootElem->Value()) != "Settings") { // TODO: Avoid this strcmp-use. (Hack for now, since we might drop TinyXML all together)
@@ -260,14 +265,14 @@ void BaseRegistry::saveXml(const AnsiString fileName, PathValueMap &values) {
 	TiXmlPrinter printer;
 	doc.Accept(&printer);
 
-	Common::DumpFile stream;
-	stream.open(fileName.c_str());
+	Common::WriteStream *stream = g_wintermute->getSaveFileMan()->openForSaving(fileName);
 
-	if (!stream.isOpen()) {
+	if (!stream) {
 		return;
 	} else {
-		stream.write(printer.CStr(), printer.Size());
-		stream.close();
+		stream->write(printer.CStr(), printer.Size());
+		stream->finalize();
+		delete stream;
 	}
 }
 

@@ -81,21 +81,7 @@ void BasePlatform::handleEvent(Common::Event *event) {
 	case Common::EVENT_WHEELDOWN:
 		if (_gameRef) _gameRef->handleMouseWheel(event->mouse.y);
 		break;
-		/*#ifdef __IPHONEOS__
-		        {
-		            BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-		            POINT p;
-		            GetCursorPos(&p);
-		            _gameRef->SetActiveObject(renderer->GetObjectAt(p.x, p.y));
-
-		            if (_gameRef->_activeObject != NULL && strcmp(_gameRef->_activeObject->getClassName(), "UIButton") == 0) {
-		                UIButton *btn = static_cast<UIButton *>(_gameRef->_activeObject);
-		                if (btn->_visible && !btn->_disable) btn->_press = true;
-		            }
-		        }
-		#endif*/
-
-//TODO
+//TODO: Handle MouseWheel
 		/*  case SDL_MOUSEWHEEL:
 		        if (_gameRef) _gameRef->handleMouseWheel(event->wheel.y);
 		        break;
@@ -114,10 +100,8 @@ void BasePlatform::handleEvent(Common::Event *event) {
 		            break;
 		        case SDL_WINDOWEVENT_FOCUS_LOST:
 		        case SDL_WINDOWEVENT_MINIMIZED:
-		#ifndef __IPHONEOS__
 		            if (_gameRef) _gameRef->OnActivate(false, false);
 		            SDL_ShowCursor(SDL_ENABLE);
-		#endif
 		            break;
 
 		        case SDL_WINDOWEVENT_CLOSE:
@@ -128,15 +112,15 @@ void BasePlatform::handleEvent(Common::Event *event) {
 		*/
 	case Common::EVENT_QUIT:
 	case Common::EVENT_RTL:
-/*#ifdef __IPHONEOS__
-		if (_gameRef) {
-			_gameRef->AutoSaveOnExit();
-			_gameRef->_quitting = true;
-		}
-#else*/
+// Block kept in case we want to support autoSaveOnExit.
+//#ifdef __IPHONEOS__
+//		if (_gameRef) {
+//			_gameRef->AutoSaveOnExit();
+//			_gameRef->_quitting = true;
+//		}
+//#else*/
 		if (_gameRef) _gameRef->onWindowClose();
 //#endif
-
 		break;
 	default:
 		// TODO: Do we care about any other events?
@@ -148,16 +132,6 @@ void BasePlatform::handleEvent(Common::Event *event) {
 
 //////////////////////////////////////////////////////////////////////////
 // Win32 API bindings
-//////////////////////////////////////////////////////////////////////////
-void BasePlatform::outputDebugString(const char *lpOutputString) {
-/*
-#ifdef __WIN32__
-	::OutputDebugString(lpOutputString);
-#endif
-*/
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::getCursorPos(Point32 *lpPoint) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);

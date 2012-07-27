@@ -67,100 +67,37 @@ AnsiString PathUtil::combine(const AnsiString &path1, const AnsiString &path2) {
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getDirectoryName(const AnsiString &path) {
 	AnsiString newPath = unifySeparators(path);
-
-	//size_t pos = newPath.find_last_of(L'/');
 	Common::String filename = getFileName(path);
 	return Common::String(path.c_str(), path.size() - filename.size());
-	//if (pos == AnsiString::npos) return "";
-	//else return newPath.substr(0, pos + 1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getFileName(const AnsiString &path) {
 	AnsiString newPath = unifySeparators(path);
-
-	//size_t pos = newPath.find_last_of(L'/'); TODO REMOVE.
 	Common::String lastPart = Common::lastPathComponent(newPath, '/');
 	if (lastPart[lastPart.size() - 1 ] != '/') {
 		return lastPart;
 	} else {
 		return path;
 	}
-	//if (pos == AnsiString::npos) return path;
-	//else return newPath.substr(pos + 1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
 	AnsiString fileName = getFileName(path);
-
-	//size_t pos = fileName.find_last_of('.'); //TODO REMOVE!
 	// TODO: Prettify this.
 	AnsiString extension = Common::lastPathComponent(fileName, '.');
 	for (uint32 i = 0; i < extension.size() + 1; i++) {
 		fileName.deleteLastChar();
 	}
-//	Common::String filename = Common::String(fileName.c_str(), fileName.size() - extension.size() + 1);
 	return fileName;
-	//if (pos == AnsiString::npos) return fileName;
-	//else return fileName.substr(0, pos);
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getExtension(const AnsiString &path) {
 	AnsiString fileName = getFileName(path);
-
-	//size_t pos = fileName.find_last_of('.');
 	return Common::lastPathComponent(path, '.');
-	//if (pos == AnsiString::npos) return "";
-	//else return fileName.substr(pos);
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::getSafeLogFileName() {
-	AnsiString logFileName = getUserDirectory();
-
-	/*#ifdef __WIN32__
-	    char moduleName[MAX_PATH_LENGTH];
-	    ::GetModuleFileName(NULL, moduleName, MAX_PATH_LENGTH);
-
-	    AnsiString fileName = GetFileNameWithoutExtension(moduleName) + ".log";
-	    fileName = Combine("/Wintermute Engine/Logs/", fileName);
-	    logFileName = Combine(logFileName, fileName);
-
-	#else*/
-	// !PORTME
-	logFileName = combine(logFileName, "/Wintermute Engine/wme.log");
-//#endif
-
-	createDirectory(getDirectoryName(logFileName));
-	return logFileName;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool PathUtil::createDirectory(const AnsiString &path) {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool PathUtil::matchesMask(const AnsiString &fileName, const AnsiString &mask) {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool PathUtil::fileExists(const AnsiString &fileName) {
-	warning("PathUtil::FileExists(%s)", fileName.c_str());
-
-	Common::File stream;
-
-	stream.open(fileName.c_str());
-	bool ret = stream.isOpen();
-	stream.close();
-
-	return ret;
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getUserDirectory() { // TODO: Get rid of

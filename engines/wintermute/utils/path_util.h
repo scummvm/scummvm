@@ -42,12 +42,7 @@ public:
 	static AnsiString getFileName(const AnsiString &path);
 	static AnsiString getFileNameWithoutExtension(const AnsiString &path);
 	static AnsiString getExtension(const AnsiString &path);
-	static bool createDirectory(const AnsiString &path);
-	static bool matchesMask(const AnsiString &fileName, const AnsiString &mask);
 
-	static bool fileExists(const AnsiString &fileName);
-
-	static AnsiString getSafeLogFileName();
 	static AnsiString getUserDirectory();
 };
 

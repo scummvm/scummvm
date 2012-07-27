@@ -66,7 +66,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdGame, true)
 
 //////////////////////////////////////////////////////////////////////////
-AdGame::AdGame(): BaseGame() {
+AdGame::AdGame(const Common::String &gameId): BaseGame(gameId) {
 	_responseBox = NULL;
 	_inventoryBox = NULL;
 

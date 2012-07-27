@@ -147,7 +147,7 @@ public:
 	SXMath *_mathClass;
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;
-	BaseGame();
+	BaseGame(const Common::String &gameId);
 	virtual ~BaseGame();
 
 	void DEBUG_DebugDisable();
