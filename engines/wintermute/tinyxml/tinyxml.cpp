@@ -22,6 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+// Modified for use in ScummVM (namespace added)
+
 #include <ctype.h>
 
 #ifdef TIXML_USE_STL
@@ -31,6 +33,7 @@ distribution.
 
 #include "engines/wintermute/tinyxml/tinyxml.h"
 
+namespace WinterMute {
 
 bool TiXmlBase::condenseWhiteSpace = true;
 
@@ -1886,3 +1889,4 @@ bool TiXmlPrinter::Visit( const TiXmlUnknown& unknown )
 	return true;
 }
 
+} // end of namespace WinterMute

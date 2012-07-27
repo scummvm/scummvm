@@ -22,6 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+// Modified for use in ScummVM (namespace added)
+
 #include "tinyxml.h"
 
 // The goal of the seperate error file is to make the first
@@ -30,6 +32,8 @@ distribution.
 //
 // It also cleans up the code a bit.
 //
+
+namespace WinterMute {
 
 const char* TiXmlBase::errorString[ TIXML_ERROR_STRING_COUNT ] =
 {
@@ -51,3 +55,5 @@ const char* TiXmlBase::errorString[ TIXML_ERROR_STRING_COUNT ] =
 	"Error parsing CDATA.",
 	"Error when TiXmlDocument added to document, because TiXmlDocument can only be at the root.",
 };
+
+} // end of namespace WinterMute

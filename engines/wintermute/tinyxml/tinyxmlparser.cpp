@@ -22,6 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+// Modified for use in ScummVM (namespace added)
+
 #include <ctype.h>
 #include <stddef.h>
 
@@ -36,6 +38,8 @@ distribution.
 #		define TIXML_LOG printf
 #	endif
 #endif
+
+namespace WinterMute {
 
 // Note tha "PutString" hardcodes the same list. This
 // is less flexible than it appears. Changing the entries
@@ -1636,3 +1640,4 @@ bool TiXmlText::Blank() const
 	return true;
 }
 
+} // end of namespace WinterMute

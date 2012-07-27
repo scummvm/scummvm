@@ -21,10 +21,13 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+// Modified for use in ScummVM (namespace added)
 
 #ifndef TIXML_USE_STL
 
 #include "tinystr.h"
+
+namespace WinterMute {
 
 // Error value for find primitive
 const TiXmlString::size_type TiXmlString::npos = static_cast< TiXmlString::size_type >(-1);
@@ -107,5 +110,6 @@ TiXmlString operator + (const char* a, const TiXmlString & b)
 	return tmp;
 }
 
+} // end of namespace WinterMute
 
 #endif	// TIXML_USE_STL

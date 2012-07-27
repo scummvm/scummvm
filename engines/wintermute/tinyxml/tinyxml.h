@@ -22,6 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+// Modified for ScummVM (namespace added)
+
 #undef TIXML_USE_STL
 
 #ifndef TINYXML_INCLUDED
@@ -82,6 +84,8 @@ distribution.
 		#define TIXML_SSCANF   sscanf
 	#endif
 #endif	
+
+namespace WinterMute {
 
 class TiXmlDocument;
 class TiXmlElement;
@@ -1798,6 +1802,8 @@ private:
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+} // end of namespace WinterMute
 
 #endif
 

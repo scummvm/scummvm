@@ -21,6 +21,7 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+// Modified for use in ScummVM (namespace added)
 
 #ifndef TIXML_USE_STL
 
@@ -44,6 +45,7 @@ distribution.
 	#define TIXML_EXPLICIT
 #endif
 
+namespace WinterMute {
 
 /*
    TiXmlString is an emulation of a subset of the std::string template.
@@ -300,6 +302,8 @@ public :
 	}
 
 } ;
+
+} // end of namespace WinterMute
 
 #endif	// TIXML_STRING_INCLUDED
 #endif	// TIXML_USE_STL
