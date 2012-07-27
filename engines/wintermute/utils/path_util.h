@@ -42,8 +42,6 @@ public:
 	static AnsiString getFileName(const AnsiString &path);
 	static AnsiString getFileNameWithoutExtension(const AnsiString &path);
 	static AnsiString getExtension(const AnsiString &path);
-
-	static AnsiString getUserDirectory();
 };
 
 } // end of namespace WinterMute

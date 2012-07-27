@@ -254,7 +254,6 @@ public:
 
 	virtual bool initAfterLoad();
 	BaseSaveThumbHelper *_cachedThumbnail;
-	AnsiString getDataDir();
 	void addMem(int bytes);
 	bool _touchInterface;
 	bool _constrainedMemory;

@@ -2604,7 +2604,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// SaveDirectory (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SaveDirectory") == 0) {
-		AnsiString dataDir = getDataDir();
+		AnsiString dataDir = "saves/";	// TODO: This is just to avoid telling the engine actual paths.
 		_scValue->setString(dataDir.c_str());
 		return _scValue;
 	}
@@ -4011,14 +4011,6 @@ bool BaseGame::getSaveSlotFilename(int slot, char *buffer) {
 	debugC(kWinterMuteDebugSaveGame, "getSaveSlotFileName(%d) = %s", slot, buffer);
 	return STATUS_OK;
 }
-
-//////////////////////////////////////////////////////////////////////////
-AnsiString BaseGame::getDataDir() {
-	AnsiString userDir = PathUtil::getUserDirectory();
-	AnsiString baseDir = _registry->getBasePath();
-	return PathUtil::combine(userDir, baseDir);
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getSaveSlotDescription(int slot, char *buffer) {

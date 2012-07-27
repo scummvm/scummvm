@@ -99,11 +99,4 @@ AnsiString PathUtil::getExtension(const AnsiString &path) {
 	return Common::lastPathComponent(path, '.');
 }
 
-//////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::getUserDirectory() { // TODO: Get rid of
-	warning("PathUtil::GetUserDirectory - stubbed");
-	AnsiString userDir = "./";
-	return userDir;
-}
-
 } // end of namespace WinterMute
