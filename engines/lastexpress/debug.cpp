@@ -34,6 +34,7 @@
 
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/beetle.h"
+#include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"

@@ -25,8 +25,6 @@
 
 #include "lastexpress/shared.h"
 
-#include "lastexpress/game/entities.h"
-
 #include "lastexpress/eventhandler.h"
 
 #include "common/events.h"

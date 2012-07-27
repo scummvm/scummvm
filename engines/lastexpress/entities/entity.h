@@ -25,8 +25,11 @@
 
 #include "lastexpress/shared.h"
 
-#include "lastexpress/sound/sound.h"
+#include "lastexpress/game/logic.h"
+#include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -864,9 +867,6 @@ private:
 
 class Entity : Common::Serializable {
 public:
-
-	typedef Common::Functor1<const SavePoint&, void> Callback;
-
 	Entity(LastExpressEngine *engine, EntityIndex index);
 	virtual ~Entity();
 
@@ -900,6 +900,7 @@ public:
 
 protected:
 	LastExpressEngine *_engine;
+	typedef Common::Functor1<const SavePoint&, void> Callback;
 
 	EntityIndex                _entityIndex;
 	EntityData                *_data;

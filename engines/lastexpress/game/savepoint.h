@@ -74,10 +74,9 @@ struct SavePoint {
 	}
 };
 
-class SavePoints : Common::Serializable {
-private:
-	typedef Common::Functor1<const SavePoint&, void> Callback;
+typedef Common::Functor1<const SavePoint&, void> Callback;
 
+class SavePoints : Common::Serializable {
 public:
 
 	struct SavePointData {
@@ -112,7 +111,7 @@ public:
 	void addData(EntityIndex entity, ActionIndex action, uint32 param);
 
 	// Callbacks
-	void setCallback(EntityIndex index, Entity::Callback *callback);
+	void setCallback(EntityIndex index, Callback *callback);
 	Callback *getCallback(EntityIndex entity) const;
 	void call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, uint32 param = 0) const;
 	void call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const char *param) const;

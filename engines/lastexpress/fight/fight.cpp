@@ -31,6 +31,7 @@
 #include "lastexpress/data/cursor.h"
 #include "lastexpress/data/sequence.h"
 
+#include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
@@ -38,8 +39,10 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
+#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 

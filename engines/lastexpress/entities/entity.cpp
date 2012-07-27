@@ -26,10 +26,8 @@
 
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
-#include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savegame.h"
-#include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
 
 namespace LastExpress {
