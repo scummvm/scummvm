@@ -63,6 +63,7 @@ BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame): BaseClass(inGame) {
 
 	_looping = false;
 	_loopStart = 0;
+	_startPos = 0;
 
 	_type = Audio::Mixer::kSFXSoundType;
 
@@ -155,14 +156,21 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundBuffer::setLooping(bool looping) {
-	warning("BSoundBuffer::SetLooping(%d) - won't change a playing sound", looping); // TODO
+	if (isPlaying()) {
+		warning("BSoundBuffer::SetLooping(%d) - won't change a playing sound", looping); // TODO
+	}
 	_looping = looping;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::resume() {
+	// If the sound was paused while active:
 	if (_stream && _handle) {
 		g_system->getMixer()->pauseHandle(*_handle, false);
+	} else if (_stream) { // Otherwise we come from a savegame, and thus have no handle
+		play(_looping, _startPos);
+	} else {
+		warning("BaseSoundBuffer::resume - Called without a handle or a stream");
 	}
 	return STATUS_OK;
 }
@@ -246,7 +254,10 @@ uint32 BaseSoundBuffer::getPosition() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setPosition(uint32 pos) {
-	warning("BaseSoundBuffer::SetPosition - not implemented yet");
+	if (isPlaying()) {
+		warning("BaseSoundBuffer::SetPosition - not implemented for playing sounds yet.");
+	}
+	_startPos = pos;
 	return STATUS_OK;
 }
 

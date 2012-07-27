@@ -88,6 +88,7 @@ public:
 
 	int _privateVolume;
 private:
+	uint32 _startPos;
 	char *_filename;
 	bool _streamed;
 	Common::SeekableReadStream *_file;
