@@ -467,12 +467,6 @@ protected:
 		bool isPaused() const { return _paused; }
 
 		/**
-		 * Get the start time of the track (starting from the beginning of the
-		 * movie).
-		 */
-		virtual Audio::Timestamp getStartTime() const;
-
-		/**
 		 * Get the duration of the track (starting from this track's start time).
 		 *
 		 * By default, this returns 0 for unknown.

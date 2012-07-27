@@ -210,7 +210,7 @@ uint32 AdvancedVideoDecoder::getTime() const {
 				uint32 time = ((const AudioTrack *)*it)->getRunningTime();
 
 				if (time != 0)
-					return time + (*it)->getStartTime().msecs() + _audioStartOffset.msecs();
+					return time + _audioStartOffset.msecs();
 			}
 		}
 	}
@@ -364,15 +364,10 @@ Audio::Timestamp AdvancedVideoDecoder::getDuration() const {
 	Audio::Timestamp maxDuration(0, 1000);
 
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
-		Audio::Timestamp startTime = (*it)->getStartTime();
 		Audio::Timestamp duration = (*it)->getDuration();
 
-		if (duration.totalNumberOfFrames() != 0) {
-			// HACK: Timestamp's + operator doesn't do framerate conversion :(
-			duration = duration + startTime.convertToFramerate(duration.framerate());
-			if (duration > maxDuration)
-				maxDuration = duration;
-		}
+		if (duration > maxDuration)
+			maxDuration = duration;
 	}
 
 	return maxDuration;
@@ -406,11 +401,7 @@ bool AdvancedVideoDecoder::Track::isRewindable() const {
 }
 
 bool AdvancedVideoDecoder::Track::rewind() {
-	return seek(getStartTime());
-}
-
-Audio::Timestamp AdvancedVideoDecoder::Track::getStartTime() const {
-	return Audio::Timestamp(0, 1000);
+	return seek(Audio::Timestamp(0, 1000));
 }
 
 Audio::Timestamp AdvancedVideoDecoder::Track::getDuration() const {
