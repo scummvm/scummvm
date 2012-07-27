@@ -766,7 +766,7 @@ private:
 	TrackList _tracks;
 
 	// Current playback status
-	bool _isPlaying, _needsRewind;
+	bool _isPlaying, _needsRewind, _needsUpdate;
 	Audio::Timestamp _audioStartOffset;
 
 	// Palette settings from individual tracks

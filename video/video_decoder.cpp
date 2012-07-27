@@ -101,6 +101,7 @@ AdvancedVideoDecoder::AdvancedVideoDecoder() {
 	_audioVolume = Audio::Mixer::kMaxChannelVolume;
 	_audioBalance = 0;
 	_pauseLevel = 0;
+	_needsUpdate = false;
 
 	// Find the best format for output
 	_defaultHighColorFormat = g_system->getScreenFormat();
@@ -124,6 +125,7 @@ void AdvancedVideoDecoder::close() {
 	_audioVolume = Audio::Mixer::kMaxChannelVolume;
 	_audioBalance = 0;
 	_pauseLevel = 0;
+	_needsUpdate = false;
 }
 
 bool AdvancedVideoDecoder::isVideoLoaded() const {
@@ -155,6 +157,8 @@ Graphics::PixelFormat AdvancedVideoDecoder::getPixelFormat() const {
 }
 
 const Graphics::Surface *AdvancedVideoDecoder::decodeNextFrame() {
+	_needsUpdate = false;
+
 	readNextPacket();
 	VideoTrack *track = findNextVideoTrack();
 
@@ -215,7 +219,7 @@ uint32 AdvancedVideoDecoder::getTime() const {
 }
 
 uint32 AdvancedVideoDecoder::getTimeToNextFrame() const {
-	if (endOfVideo())
+	if (endOfVideo() || _needsUpdate)
 		return 0;
 
 	const VideoTrack *track = findNextVideoTrack();
@@ -310,6 +314,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 
 	_audioStartOffset = time;
 	_startTime = g_system->getMillis() - time.msecs();
+	_needsUpdate = true;
 	return true;
 }
 
@@ -337,6 +342,7 @@ void AdvancedVideoDecoder::stop() {
 	_audioStartOffset = 0;
 	_palette = 0;
 	_dirtyPalette = false;
+	_needsUpdate = false;
 
 	stopAllTracks();
 
