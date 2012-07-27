@@ -249,7 +249,6 @@ protected:
 
 	/**
 	 * Reset the pause start time (which should be called when seeking)
-	 * @note This function is now deprecated. There is no replacement.
 	 */
 	void resetPauseStartTime();
 

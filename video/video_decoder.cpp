@@ -280,6 +280,7 @@ bool AdvancedVideoDecoder::rewind() {
 
 	_audioStartOffset = 0;
 	_startTime = g_system->getMillis();
+	resetPauseStartTime();
 	return true;
 }
 
@@ -314,6 +315,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 
 	_audioStartOffset = time;
 	_startTime = g_system->getMillis() - time.msecs();
+	resetPauseStartTime();
 	_needsUpdate = true;
 	return true;
 }
