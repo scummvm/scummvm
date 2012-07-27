@@ -642,6 +642,13 @@ const uint16 dsAddr_egoY = 0x64b1; // 2 bytes
 // Current Scene Id : 0xb4f3
 const uint16 dsAddr_currentScene = 0xb4f3; // 1 byte
 
+// Inventory Object Callback Table (3 byte (id, callbackAddr) * 7) : 0xbb72 to 0xbb86
+const uint16 dsAddr_objCallbackTablePtr = 0xbb72;
+
+// Inventory Object Combining Table (5 byte (id, id, new object id, msgAddr) * 34) : 0xc335 to 0xc3de
+const uint16 dsAddr_objCombiningTablePtr = 0xc335;
+// 3 byte null terminator for Combining table 0xc3df to 0xc3e1
+
 // Object Combine Error Message : 0xc3e2 to 0xc41e
 const uint16 dsAddr_objCombineErrorMsg = 0xc3e2; // "Using these two objects ..."
 

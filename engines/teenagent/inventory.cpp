@@ -140,13 +140,14 @@ void Inventory::add(byte item) {
 }
 
 bool Inventory::tryObjectCallback(InventoryObject *obj) {
-	byte id = obj->id;
-	uint i = 0;
-	for (byte *table = _vm->res->dseg.ptr(0xbb6f + 3); table[0] != 0 && i < 7; table += 3, ++i) {
-		if (table[0] == id) {
+	byte objId = obj->id;
+	for (uint i = 0; i < 7; ++i) {
+		byte tableId = _vm->res->dseg.get_byte(dsAddr_objCallbackTablePtr + (3 * i));
+		uint16 callbackAddr = _vm->res->dseg.get_word(dsAddr_objCallbackTablePtr + (3 * i) + 1);
+		if (tableId == objId) {
 			resetSelectedObject();
 			activate(false);
-			if (_vm->processCallback(READ_LE_UINT16(table + 1)))
+			if (_vm->processCallback(callbackAddr))
 				return true;
 		}
 	}
@@ -209,7 +210,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 			return true;
 
 		debugC(0, kDebugInventory, "combine(%u, %u)!", id1, id2);
-		byte *table = _vm->res->dseg.ptr(0xc335);
+		byte *table = _vm->res->dseg.ptr(dsAddr_objCombiningTablePtr);
 		while (table[0] != 0 && table[1] != 0) {
 			if ((id1 == table[0] && id2 == table[1]) || (id2 == table[0] && id1 == table[1])) {
 				byte new_obj = table[2];
