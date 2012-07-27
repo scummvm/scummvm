@@ -679,12 +679,20 @@ protected:
 	 */
 	Graphics::PixelFormat getDefaultHighColorFormat() const { return _defaultHighColorFormat; }
 
+	/**
+	 * Find the video track with the lowest start time for the next frame
+	 */
+	VideoTrack *findNextVideoTrack();
+
+	/**
+	 * Find the video track with the lowest start time for the next frame
+	 */
+	const VideoTrack *findNextVideoTrack() const;
+
 private:
 	// Tracks owned by this AdvancedVideoDecoder
 	typedef Common::Array<Track *> TrackList;
 	TrackList _tracks;
-	VideoTrack *findNextVideoTrack();
-	const VideoTrack *findNextVideoTrack() const;
 
 	// Current playback status
 	bool _isPlaying, _needsRewind;
