@@ -262,8 +262,7 @@ int WinterMuteEngine::init() {
 
 	if (ConfMan.hasKey("save_slot")) {
 		int slot = ConfMan.getInt("save_slot");
-		Common::String str = Common::String::format("save00%d.DirtySplitSav", slot);
-		_game->loadGame(str.c_str());
+		_game->loadGame(slot);
 	}
 
 	if (saveGame) {
