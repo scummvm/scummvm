@@ -58,6 +58,8 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	}
 	_offset[numInventoryItems] = items_size;
 
+	InventoryObject io_blank;
+	_objects.push_back(io_blank);
 	for (byte i = 0; i < numInventoryItems; ++i) {
 		InventoryObject io;
 		uint16 obj_addr = vm->res->dseg.get_word(dsAddr_inventoryItemDataPtrTable + i * 2);
