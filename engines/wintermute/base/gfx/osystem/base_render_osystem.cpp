@@ -258,8 +258,9 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect
 	// thus we avoid printing it more than once.
 	static bool hasWarned = false;
 	if (!hasWarned) {
-		warning("BaseRenderOSystem::FadeToColor - Breaks when using dirty rects");
-		warning("Implement BaseRenderOSystem::FadeToColor"); // TODO.
+		if (!_disableDirtyRects) {
+			warning("BaseRenderOSystem::FadeToColor - Breaks when using dirty rects");
+		}
 		hasWarned = true;
 	}
 
@@ -489,7 +490,9 @@ void BaseRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::R
 bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	static bool hasWarned = false;
 	if (!hasWarned) {
-		warning("BaseRenderOSystem::DrawLine - not fully ported yet");
+		if (!_disableDirtyRects) {
+			warning("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
+		}
 		hasWarned = true;
 	}
 	byte r = RGBCOLGetR(color);

@@ -348,14 +348,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 		alpha = renderer->_forceAlphaColor;
 	}
 
-	// This particular warning is rather messy, as this function is called a ton,
-	// thus we avoid printing it more than once.
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		warning("BaseSurfaceOSystem::DrawSprite not fully ported yet"); // TODO.
-		hasWarned = true;
-	}
-
 	byte r = RGBCOLGetR(alpha);
 	byte g = RGBCOLGetG(alpha);
 	byte b = RGBCOLGetB(alpha);
@@ -363,10 +355,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 
 	renderer->setAlphaMod(a);
 	renderer->setColorMod(r, g, b);
-#if 0
-	SDL_SetTextureColorMod(_texture, r, g, b);
-	SDL_SetTextureAlphaMod(_texture, a);
 
+#if 0 // These are kept for reference if BlendMode is reimplemented at some point.
 	if (alphaDisable) {
 		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_NONE);
 	} else {

@@ -127,7 +127,7 @@ Common::String BasePersistenceManager::getFilenameForSlot(int slot) const {
 
 void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &desc) {
 	Common::String filename = getFilenameForSlot(slot);
-	warning("Trying to list savegame %s in slot %d", filename.c_str(), slot);
+	debugC(kWinterMuteDebugSaveGame, "Trying to list savegame %s in slot %d", filename.c_str(), slot);
 	if (DID_FAIL(readHeader(filename))) {
 		warning("getSavedDesc(%d) - Failed for %s", slot, filename.c_str());
 		return;
@@ -172,7 +172,6 @@ uint32 BasePersistenceManager::getMaxUsedSlot() {
 
 bool BasePersistenceManager::getSaveExists(int slot) {
 	Common::String filename = getFilenameForSlot(slot);
-	warning("Trying to list savegame %s in slot %d", filename.c_str(), slot);
 	if (DID_FAIL(readHeader(filename))) {
 		return false;
 	}

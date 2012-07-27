@@ -212,7 +212,7 @@ bool BaseFileManager::registerPackages() {
 	// and that has to be like that to support the detection-scheme.
 	Common::FSList files;
 	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); it++) {
-		warning("Should register %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
+		debugC(kWinterMuteDebugFileAccess, "Should register folder: %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
 		(*it).getChildren(files, Common::FSNode::kListFilesOnly);
 		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
 			if (!fileIt->getName().hasSuffix(".dcp")) {
@@ -227,7 +227,7 @@ bool BaseFileManager::registerPackages() {
 					continue;
 				}
 			}
-			warning("Registering %s %s", (*fileIt).getPath().c_str(), (*fileIt).getName().c_str());
+			debugC(kWinterMuteDebugFileAccess, "Registering %s %s", (*fileIt).getPath().c_str(), (*fileIt).getName().c_str());
 			registerPackage((*fileIt));
 		}
 	}

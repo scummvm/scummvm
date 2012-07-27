@@ -80,7 +80,6 @@ private:
 	float _sFXParam3;
 	float _sFXParam4;
 	BaseSoundBuffer *_sound;
-
 };
 
 } // end of namespace WinterMute

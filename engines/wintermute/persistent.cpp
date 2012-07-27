@@ -163,7 +163,6 @@ void SystemClassRegistry::registerClasses() {
 	REGISTER_CLASS(UITiledImage, false)
 	REGISTER_CLASS(UIWindow, false)
 	REGISTER_CLASS(VideoTheoraPlayer, false)
-	warning("TODO: Clean this up at some proper time");
 }
 
 }
