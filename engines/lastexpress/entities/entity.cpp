@@ -598,7 +598,7 @@ void Entity::setup(const char *name, uint index) {
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersIIII>();
+	RESET_PARAMS(_data, EntityData::EntityParametersIIII);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
@@ -608,7 +608,7 @@ void Entity::setupS(const char *name, uint index, const char *seq1) {
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersSIIS>();
+	RESET_PARAMS(_data, EntityData::EntityParametersSIIS);
 
 	EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS*)_data->getCurrentParameters();
 	strncpy((char *)&params->seq1, seq1, 12);
@@ -621,7 +621,7 @@ void Entity::setupSS(const char *name, uint index, const char *seq1, const char 
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersSSII>();
+	RESET_PARAMS(_data, EntityData::EntityParametersSSII);
 
 	EntityData::EntityParametersSSII *params = (EntityData::EntityParametersSSII*)_data->getCurrentParameters();
 	strncpy((char *)&params->seq1, seq1, 12);
