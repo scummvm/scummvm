@@ -45,7 +45,7 @@ struct MLSTRecord {
 
 struct VideoEntry {
 	// Playback variables
-	Video::SeekableVideoDecoder *video;
+	Video::AdvancedVideoDecoder *video;
 	uint16 x;
 	uint16 y;
 	bool loop;
@@ -57,7 +57,7 @@ struct VideoEntry {
 	int id;                  // Internal Mohawk files
 
 	// Helper functions
-	Video::SeekableVideoDecoder *operator->() const { assert(video); return video; } // TODO: Remove this eventually
+	Video::AdvancedVideoDecoder *operator->() const { assert(video); return video; } // TODO: Remove this eventually
 	void clear();
 	bool endOfVideo();
 };

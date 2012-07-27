@@ -170,8 +170,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 				delete videoDecoder;
 				videoDecoder = 0;
 			}
-
-			((Video::AdvancedVideoDecoder *)videoDecoder)->start(); // TODO: Remove after new API is complete
 		}
 	} else {
 		// Windows AVI
@@ -212,7 +210,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 				videoDecoder = 0;
 			} else {
 				s->_videoState.fileName = filename;
-				((Video::AdvancedVideoDecoder *)videoDecoder)->start();
 			}
 			break;
 		}
@@ -222,6 +219,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (videoDecoder) {
+		((Video::AdvancedVideoDecoder *)videoDecoder)->start(); // TODO: Remove after new API is complete
 		playVideo(videoDecoder, s->_videoState);
 
 		// HACK: Switch back to 8bpp if we played a true color video.
