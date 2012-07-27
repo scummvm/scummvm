@@ -52,7 +52,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(UIEdit, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIEdit::UIEdit(BaseGame *inGame): UIObject(inGame) {
+UIEdit::UIEdit(BaseGame *inGame) : UIObject(inGame) {
 	_type = UI_EDIT;
 
 	_fontSelected = NULL;

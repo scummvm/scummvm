@@ -46,7 +46,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(UIButton, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIButton::UIButton(BaseGame *inGame): UIObject(inGame) {
+UIButton::UIButton(BaseGame *inGame) : UIObject(inGame) {
 	_backPress = _backHover = _backDisable = _backFocus = NULL;
 
 	_fontHover = _fontPress = _fontDisable = _fontFocus = NULL;

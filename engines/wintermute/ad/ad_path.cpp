@@ -34,7 +34,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdPath, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdPath::AdPath(BaseGame *inGame): BaseClass(inGame) {
+AdPath::AdPath(BaseGame *inGame) : BaseClass(inGame) {
 	_currIndex = -1;
 	_ready = false;
 }

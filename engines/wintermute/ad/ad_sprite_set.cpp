@@ -38,7 +38,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdSpriteSet, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdSpriteSet::AdSpriteSet(BaseGame *inGame, BaseObject *owner): BaseObject(inGame) {
+AdSpriteSet::AdSpriteSet(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
 	_owner = owner;
 
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {

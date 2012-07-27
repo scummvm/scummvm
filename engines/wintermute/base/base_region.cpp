@@ -42,7 +42,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseRegion, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseRegion::BaseRegion(BaseGame *inGame): BaseObject(inGame) {
+BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
 	_lastMimicScale = -1;

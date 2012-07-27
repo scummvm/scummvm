@@ -33,7 +33,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseSaveThumbHelper::BaseSaveThumbHelper(BaseGame *inGame): BaseClass(inGame) {
+BaseSaveThumbHelper::BaseSaveThumbHelper(BaseGame *inGame) : BaseClass(inGame) {
 	_thumbnail = NULL;
 }
 

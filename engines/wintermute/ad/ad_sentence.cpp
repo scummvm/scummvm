@@ -43,7 +43,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdSentence, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdSentence::AdSentence(BaseGame *inGame): BaseClass(inGame) {
+AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 	_text = NULL;
 	_stances = NULL;
 	_tempStance = NULL;

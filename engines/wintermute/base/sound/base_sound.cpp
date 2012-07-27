@@ -36,7 +36,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseSound, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseSound::BaseSound(BaseGame *inGame): BaseClass(inGame) {
+BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
 	_sound = NULL;
 	_soundFilename = NULL;
 

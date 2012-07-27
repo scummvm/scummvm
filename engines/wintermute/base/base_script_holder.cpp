@@ -39,7 +39,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseScriptHolder, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseScriptHolder::BaseScriptHolder(BaseGame *inGame): BaseScriptable(inGame) {
+BaseScriptHolder::BaseScriptHolder(BaseGame *inGame) : BaseScriptable(inGame) {
 	setName("<unnamed>");
 
 	_freezable = true;

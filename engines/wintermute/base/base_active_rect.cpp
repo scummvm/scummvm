@@ -34,7 +34,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-BaseActiveRect::BaseActiveRect(BaseGame *inGame): BaseClass(inGame) {
+BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
 	BasePlatform::setRectEmpty(&_rect);
 	_owner = NULL;
 	_frame = NULL;
@@ -47,7 +47,7 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame): BaseClass(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////
-BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX, float zoomY, bool precise): BaseClass(inGame) {
+BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX, float zoomY, bool precise) : BaseClass(inGame) {
 	_owner = owner;
 	_frame = frame;
 	BasePlatform::setRect(&_rect, x, y, x + width, y + height);
@@ -60,7 +60,7 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame
 }
 
 //////////////////////////////////////////////////////////////////////
-BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY): BaseClass(inGame) {
+BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY) : BaseClass(inGame) {
 	_owner = owner;
 	_region = region;
 	BasePlatform::copyRect(&_rect, &region->_rect);

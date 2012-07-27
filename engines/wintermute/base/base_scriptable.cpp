@@ -35,7 +35,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseScriptable, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable): BaseNamedObject(inGame) {
+BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable) : BaseNamedObject(inGame) {
 	_refCount = 0;
 
 	if (noValue) {

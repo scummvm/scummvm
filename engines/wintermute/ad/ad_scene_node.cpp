@@ -34,7 +34,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdSceneNode, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdSceneNode::AdSceneNode(BaseGame *inGame): BaseObject(inGame) {
+AdSceneNode::AdSceneNode(BaseGame *inGame) : BaseObject(inGame) {
 	_type = OBJECT_NONE;
 	_region = NULL;
 	_entity = NULL;

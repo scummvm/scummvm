@@ -38,7 +38,7 @@ namespace WinterMute {
 //IMPLEMENT_PERSISTENT(BaseSurfaceStorage, true);
 
 //////////////////////////////////////////////////////////////////////
-BaseSurfaceStorage::BaseSurfaceStorage(BaseGame *inGame): BaseClass(inGame) {
+BaseSurfaceStorage::BaseSurfaceStorage(BaseGame *inGame) : BaseClass(inGame) {
 	_lastCleanupTime = 0;
 }
 

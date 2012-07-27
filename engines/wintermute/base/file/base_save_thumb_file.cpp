@@ -38,7 +38,7 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////////
-BaseSaveThumbFile::BaseSaveThumbFile(BaseGame *inGame): BaseFile(inGame) {
+BaseSaveThumbFile::BaseSaveThumbFile(BaseGame *inGame) : BaseFile(inGame) {
 	_data = NULL;
 }
 

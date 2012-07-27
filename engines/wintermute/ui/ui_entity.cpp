@@ -41,7 +41,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(UIEntity, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIEntity::UIEntity(BaseGame *inGame): UIObject(inGame) {
+UIEntity::UIEntity(BaseGame *inGame) : UIObject(inGame) {
 	_type = UI_CUSTOM;
 	_entity = NULL;
 }

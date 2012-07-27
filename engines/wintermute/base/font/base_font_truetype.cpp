@@ -48,7 +48,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseFontTT, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseFontTT::BaseFontTT(BaseGame *inGame): BaseFont(inGame) {
+BaseFontTT::BaseFontTT(BaseGame *inGame) : BaseFont(inGame) {
 	_fontHeight = 12;
 	_isBold = _isItalic = _isUnderline = _isStriked = false;
 

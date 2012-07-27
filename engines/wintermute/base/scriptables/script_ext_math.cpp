@@ -47,7 +47,7 @@ BaseScriptable *makeSXMath(BaseGame *inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXMath::SXMath(BaseGame *inGame): BaseScriptable(inGame) {
+SXMath::SXMath(BaseGame *inGame) : BaseScriptable(inGame) {
 
 }
 

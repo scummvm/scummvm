@@ -32,7 +32,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseTransitionMgr::BaseTransitionMgr(BaseGame *inGame): BaseClass(inGame) {
+BaseTransitionMgr::BaseTransitionMgr(BaseGame *inGame) : BaseClass(inGame) {
 	_state = TRANS_MGR_READY;
 	_type = TRANSITION_NONE;
 	_origInteractive = false;

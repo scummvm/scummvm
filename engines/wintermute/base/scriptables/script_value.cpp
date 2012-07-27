@@ -43,7 +43,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(ScValue, false)
 
 //////////////////////////////////////////////////////////////////////////
-ScValue::ScValue(BaseGame *inGame): BaseClass(inGame) {
+ScValue::ScValue(BaseGame *inGame) : BaseClass(inGame) {
 	_type = VAL_NULL;
 
 	_valBool = false;
@@ -58,7 +58,7 @@ ScValue::ScValue(BaseGame *inGame): BaseClass(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue::ScValue(BaseGame *inGame, bool val): BaseClass(inGame) {
+ScValue::ScValue(BaseGame *inGame, bool val) : BaseClass(inGame) {
 	_type = VAL_BOOL;
 	_valBool = val;
 
@@ -73,7 +73,7 @@ ScValue::ScValue(BaseGame *inGame, bool val): BaseClass(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue::ScValue(BaseGame *inGame, int val): BaseClass(inGame) {
+ScValue::ScValue(BaseGame *inGame, int val) : BaseClass(inGame) {
 	_type = VAL_INT;
 	_valInt = val;
 
@@ -88,7 +88,7 @@ ScValue::ScValue(BaseGame *inGame, int val): BaseClass(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue::ScValue(BaseGame *inGame, double val): BaseClass(inGame) {
+ScValue::ScValue(BaseGame *inGame, double val) : BaseClass(inGame) {
 	_type = VAL_FLOAT;
 	_valFloat = val;
 
@@ -103,7 +103,7 @@ ScValue::ScValue(BaseGame *inGame, double val): BaseClass(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue::ScValue(BaseGame *inGame, const char *val): BaseClass(inGame) {
+ScValue::ScValue(BaseGame *inGame, const char *val) : BaseClass(inGame) {
 	_type = VAL_STRING;
 	_valString = NULL;
 	setStringVal(val);

@@ -40,7 +40,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdWaypointGroup, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdWaypointGroup::AdWaypointGroup(BaseGame *inGame): BaseObject(inGame) {
+AdWaypointGroup::AdWaypointGroup(BaseGame *inGame) : BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
 	_lastMimicScale = -1;

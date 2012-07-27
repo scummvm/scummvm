@@ -57,7 +57,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdEntity, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdEntity::AdEntity(BaseGame *inGame): AdTalkHolder(inGame) {
+AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_type = OBJECT_ENTITY;
 	_subtype = ENTITY_NORMAL;
 	_region = NULL;

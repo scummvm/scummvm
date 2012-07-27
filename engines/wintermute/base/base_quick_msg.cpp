@@ -32,7 +32,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text): BaseClass(inGame) {
+BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text) : BaseClass(inGame) {
 	_text = new char [strlen(text) + 1];
 	if (_text) {
 		strcpy(_text, text);

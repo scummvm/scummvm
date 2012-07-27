@@ -37,7 +37,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdInventory, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdInventory::AdInventory(BaseGame *inGame): BaseObject(inGame) {
+AdInventory::AdInventory(BaseGame *inGame) : BaseObject(inGame) {
 	_scrollOffset = 0;
 }
 

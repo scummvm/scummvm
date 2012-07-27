@@ -49,7 +49,7 @@ BaseScriptable *makeSXFile(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXFile::SXFile(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
+SXFile::SXFile(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(1);
 	ScValue *val = stack->pop();
 

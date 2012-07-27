@@ -39,7 +39,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdRegion, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdRegion::AdRegion(BaseGame *inGame): BaseRegion(inGame) {
+AdRegion::AdRegion(BaseGame *inGame) : BaseRegion(inGame) {
 	_blocked = false;
 	_decoration = false;
 	_zoom = 0;

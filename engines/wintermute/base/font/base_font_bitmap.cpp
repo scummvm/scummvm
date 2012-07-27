@@ -47,7 +47,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseFontBitmap, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseFontBitmap::BaseFontBitmap(BaseGame *inGame): BaseFont(inGame) {
+BaseFontBitmap::BaseFontBitmap(BaseGame *inGame) : BaseFont(inGame) {
 	_subframe = NULL;
 	_sprite = NULL;
 	_widthsFrame = 0;

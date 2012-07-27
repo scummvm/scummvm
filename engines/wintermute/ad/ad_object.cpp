@@ -57,7 +57,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdObject, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdObject::AdObject(BaseGame *inGame): BaseObject(inGame) {
+AdObject::AdObject(BaseGame *inGame) : BaseObject(inGame) {
 	_type = OBJECT_NONE;
 	_state = _nextState = STATE_NONE;
 

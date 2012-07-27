@@ -48,7 +48,7 @@ namespace WinterMute {
 	static void* persistBuild(void);\
 	virtual const char* getClassName();\
 	static bool persistLoad(void* Instance, BasePersistenceManager* PersistMgr);\
-	class_name(TDynamicConstructor p1, TDynamicConstructor p2):parent_class(p1, p2){ /*memset(this, 0, sizeof(class_name));*/ };\
+	class_name(TDynamicConstructor p1, TDynamicConstructor p2) :parent_class(p1, p2){ /*memset(this, 0, sizeof(class_name));*/ };\
 	virtual bool persist(BasePersistenceManager* PersistMgr);\
 	void* operator new (size_t size);\
 	void operator delete(void* p);\

@@ -41,7 +41,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdTalkDef, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdTalkDef::AdTalkDef(BaseGame *inGame): BaseObject(inGame) {
+AdTalkDef::AdTalkDef(BaseGame *inGame) : BaseObject(inGame) {
 	_defaultSpriteFilename = NULL;
 	_defaultSprite = NULL;
 

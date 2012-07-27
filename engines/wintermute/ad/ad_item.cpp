@@ -48,7 +48,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdItem, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdItem::AdItem(BaseGame *inGame): AdTalkHolder(inGame) {
+AdItem::AdItem(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_spriteHover = NULL;
 	_cursorNormal = _cursorHover = NULL;
 

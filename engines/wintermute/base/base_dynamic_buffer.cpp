@@ -32,7 +32,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 growBy): BaseClass(inGame) {
+BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 growBy) : BaseClass(inGame) {
 	_buffer = NULL;
 	_size = 0;
 	_realSize = 0;

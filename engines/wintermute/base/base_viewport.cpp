@@ -35,7 +35,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseViewport, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseViewport::BaseViewport(BaseGame *inGame): BaseClass(inGame) {
+BaseViewport::BaseViewport(BaseGame *inGame) : BaseClass(inGame) {
 	BasePlatform::setRectEmpty(&_rect);
 	_mainObject = NULL;
 	_offsetX = _offsetY = 0;

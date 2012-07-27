@@ -41,7 +41,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseFontStorage, true)
 
 //////////////////////////////////////////////////////////////////////////
-BaseFontStorage::BaseFontStorage(BaseGame *inGame): BaseClass(inGame) {
+BaseFontStorage::BaseFontStorage(BaseGame *inGame) : BaseClass(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////

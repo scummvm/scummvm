@@ -43,7 +43,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(VideoTheoraPlayer, false)
 
 //////////////////////////////////////////////////////////////////////////
-VideoTheoraPlayer::VideoTheoraPlayer(BaseGame *inGame): BaseClass(inGame) {
+VideoTheoraPlayer::VideoTheoraPlayer(BaseGame *inGame) : BaseClass(inGame) {
 	SetDefaults();
 }
 

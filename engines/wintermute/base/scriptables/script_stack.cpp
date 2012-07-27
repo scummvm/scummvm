@@ -35,7 +35,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(ScStack, false)
 
 //////////////////////////////////////////////////////////////////////////
-ScStack::ScStack(BaseGame *inGame): BaseClass(inGame) {
+ScStack::ScStack(BaseGame *inGame) : BaseClass(inGame) {
 	_sP = -1;
 }
 

@@ -47,7 +47,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseSprite, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner): BaseScriptHolder(inGame) {
+BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner) : BaseScriptHolder(inGame) {
 	_editorAllFrames = false;
 	_owner = Owner;
 	setDefaults();

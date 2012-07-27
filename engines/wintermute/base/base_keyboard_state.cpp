@@ -37,7 +37,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseKeyboardState, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseKeyboardState::BaseKeyboardState(BaseGame *inGame): BaseScriptable(inGame) {
+BaseKeyboardState::BaseKeyboardState(BaseGame *inGame) : BaseScriptable(inGame) {
 	_currentPrintable = false;
 	_currentCharCode = 0;
 	_currentKeyData = 0;

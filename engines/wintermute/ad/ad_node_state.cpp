@@ -41,7 +41,7 @@ IMPLEMENT_PERSISTENT(AdNodeState, false)
 
 
 //////////////////////////////////////////////////////////////////////////
-AdNodeState::AdNodeState(BaseGame *inGame): BaseClass(inGame) {
+AdNodeState::AdNodeState(BaseGame *inGame) : BaseClass(inGame) {
 	_name = NULL;
 	_active = false;
 	for (int i = 0; i < 7; i++) {

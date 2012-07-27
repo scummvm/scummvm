@@ -40,7 +40,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseRegistry::BaseRegistry(BaseGame *inGame): BaseClass(inGame) {
+BaseRegistry::BaseRegistry(BaseGame *inGame) : BaseClass(inGame) {
 	_iniName = NULL;
 
 	setIniName("./wme.ini");

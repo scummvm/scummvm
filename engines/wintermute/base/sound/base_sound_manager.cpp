@@ -46,7 +46,7 @@ namespace WinterMute {
 //IMPLEMENT_PERSISTENT(BaseSoundMgr, true);
 
 //////////////////////////////////////////////////////////////////////////
-BaseSoundMgr::BaseSoundMgr(BaseGame *inGame): BaseClass(inGame) {
+BaseSoundMgr::BaseSoundMgr(BaseGame *inGame) : BaseClass(inGame) {
 	_soundAvailable = false;
 	_volumeMaster = 255;
 }

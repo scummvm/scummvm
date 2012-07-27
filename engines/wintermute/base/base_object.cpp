@@ -42,7 +42,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseObject, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseObject::BaseObject(BaseGame *inGame): BaseScriptHolder(inGame) {
+BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_posX = _posY = 0;
 	_movable = true;
 	_zoomable = true;

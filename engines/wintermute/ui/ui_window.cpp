@@ -52,7 +52,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(UIWindow, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIWindow::UIWindow(BaseGame *inGame): UIObject(inGame) {
+UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
 	BasePlatform::setRectEmpty(&_titleRect);
 	BasePlatform::setRectEmpty(&_dragRect);
 	_titleAlign = TAL_LEFT;

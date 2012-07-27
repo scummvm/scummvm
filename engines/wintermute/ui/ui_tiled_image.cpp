@@ -40,7 +40,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(UITiledImage, false)
 
 //////////////////////////////////////////////////////////////////////////
-UITiledImage::UITiledImage(BaseGame *inGame): BaseObject(inGame) {
+UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 	_image = NULL;
 
 	BasePlatform::setRectEmpty(&_upLeft);

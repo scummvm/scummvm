@@ -39,7 +39,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseFader, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseFader::BaseFader(BaseGame *inGame): BaseObject(inGame) {
+BaseFader::BaseFader(BaseGame *inGame) : BaseObject(inGame) {
 	_active = false;
 	_red = _green = _blue = 0;
 	_currentAlpha = 0x00;

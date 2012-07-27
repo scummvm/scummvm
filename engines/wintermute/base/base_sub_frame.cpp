@@ -42,7 +42,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseSubFrame::BaseSubFrame(BaseGame *inGame): BaseScriptable(inGame, true) {
+BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_surface = NULL;
 	_hotspotX = _hotspotY = 0;
 	_alpha = 0xFFFFFFFF;

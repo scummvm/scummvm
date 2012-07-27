@@ -41,7 +41,7 @@ BaseScriptable *makeSXArray(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXArray::SXArray(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
+SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	_length = 0;
 	_values = new ScValue(_gameRef);
 
@@ -60,7 +60,7 @@ SXArray::SXArray(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXArray::SXArray(BaseGame *inGame): BaseScriptable(inGame) {
+SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 	_length = 0;
 	_values = new ScValue(_gameRef);
 }

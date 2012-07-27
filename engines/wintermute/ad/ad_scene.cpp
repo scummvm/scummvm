@@ -64,7 +64,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdScene, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdScene::AdScene(BaseGame *inGame): BaseObject(inGame) {
+AdScene::AdScene(BaseGame *inGame) : BaseObject(inGame) {
 	_pfTarget = new BasePoint;
 	setDefaults();
 }

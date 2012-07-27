@@ -42,7 +42,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseFont, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseFont::BaseFont(BaseGame *inGame): BaseObject(inGame) {
+BaseFont::BaseFont(BaseGame *inGame) : BaseObject(inGame) {
 
 }
 

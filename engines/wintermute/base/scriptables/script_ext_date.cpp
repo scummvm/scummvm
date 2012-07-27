@@ -39,7 +39,7 @@ BaseScriptable *makeSXDate(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXDate::SXDate(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
+SXDate::SXDate(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(6);
 
 	memset(&_tm, 0, sizeof(_tm));

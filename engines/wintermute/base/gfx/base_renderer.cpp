@@ -36,7 +36,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-BaseRenderer::BaseRenderer(BaseGame *inGame): BaseClass(inGame) {
+BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_window = 0;
 	_clipperWindow = 0;
 	_active = false;

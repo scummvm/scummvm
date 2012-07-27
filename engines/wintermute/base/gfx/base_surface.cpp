@@ -33,7 +33,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-BaseSurface::BaseSurface(BaseGame *inGame): BaseClass(inGame) {
+BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 	_referenceCount = 0;
 
 	_width = _height = 0;

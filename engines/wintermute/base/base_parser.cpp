@@ -42,7 +42,7 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////
-BaseParser::BaseParser(BaseGame *inGame): BaseClass(inGame) {
+BaseParser::BaseParser(BaseGame *inGame) : BaseClass(inGame) {
 	_whiteSpace = new char [strlen(WHITESPACE) + 1];
 	strcpy(_whiteSpace, WHITESPACE);
 }

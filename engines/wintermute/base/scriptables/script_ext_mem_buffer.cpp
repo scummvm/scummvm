@@ -42,7 +42,7 @@ BaseScriptable *makeSXMemBuffer(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
+SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(1);
 	_buffer = NULL;
 	_size = 0;
@@ -52,7 +52,7 @@ SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack): BaseScriptable(inGam
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXMemBuffer::SXMemBuffer(BaseGame *inGame, void *buffer): BaseScriptable(inGame) {
+SXMemBuffer::SXMemBuffer(BaseGame *inGame, void *buffer) : BaseScriptable(inGame) {
 	_size = 0;
 	_buffer = buffer;
 }

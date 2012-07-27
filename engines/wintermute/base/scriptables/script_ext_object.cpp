@@ -43,7 +43,7 @@ BaseScriptable *makeSXObject(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXObject::SXObject(BaseGame *inGame, ScStack *stack): BaseObject(inGame) {
+SXObject::SXObject(BaseGame *inGame, ScStack *stack) : BaseObject(inGame) {
 	int numParams = stack->pop()->getInt(0);
 	for (int i = 0; i < numParams; i++) {
 		addScript(stack->pop()->getString());

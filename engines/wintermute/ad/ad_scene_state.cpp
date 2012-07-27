@@ -37,7 +37,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdSceneState, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdSceneState::AdSceneState(BaseGame *inGame): BaseClass(inGame) {
+AdSceneState::AdSceneState(BaseGame *inGame) : BaseClass(inGame) {
 	_filename = NULL;
 }
 

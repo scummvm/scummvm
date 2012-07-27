@@ -44,7 +44,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(BaseFrame, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseFrame::BaseFrame(BaseGame *inGame): BaseScriptable(inGame, true) {
+BaseFrame::BaseFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_delay = 0;
 	_moveX = _moveY = 0;
 

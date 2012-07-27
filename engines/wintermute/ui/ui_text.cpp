@@ -46,7 +46,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(UIText, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIText::UIText(BaseGame *inGame): UIObject(inGame) {
+UIText::UIText(BaseGame *inGame) : UIObject(inGame) {
 	_textAlign = TAL_LEFT;
 	_verticalAlign = VAL_CENTER;
 	_type = UI_STATIC;

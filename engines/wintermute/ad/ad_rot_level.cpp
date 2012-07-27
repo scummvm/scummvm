@@ -39,7 +39,7 @@ IMPLEMENT_PERSISTENT(AdRotLevel, false)
 
 
 //////////////////////////////////////////////////////////////////////////
-AdRotLevel::AdRotLevel(BaseGame *inGame): BaseObject(inGame) {
+AdRotLevel::AdRotLevel(BaseGame *inGame) : BaseObject(inGame) {
 	_posX = 0;
 	_rotation = 0.0f;
 }

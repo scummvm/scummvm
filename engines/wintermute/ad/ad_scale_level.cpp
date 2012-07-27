@@ -37,7 +37,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdScaleLevel, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdScaleLevel::AdScaleLevel(BaseGame *inGame): BaseObject(inGame) {
+AdScaleLevel::AdScaleLevel(BaseGame *inGame) : BaseObject(inGame) {
 	_posY = 0;
 	_scale = 100;
 }

@@ -38,7 +38,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdTalkNode, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdTalkNode::AdTalkNode(BaseGame *inGame): BaseClass(inGame) {
+AdTalkNode::AdTalkNode(BaseGame *inGame) : BaseClass(inGame) {
 	_sprite = NULL;
 	_spriteFilename = NULL;
 	_spriteSet = NULL;

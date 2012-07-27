@@ -50,7 +50,7 @@ namespace WinterMute {
 #define MAX_NONSTREAMED_FILE_SIZE 1024*1024
 
 //////////////////////////////////////////////////////////////////////////
-BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame): BaseClass(inGame) {
+BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
 	_stream = NULL;
 	_handle = NULL;
 //	_sync = NULL;

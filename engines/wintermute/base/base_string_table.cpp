@@ -36,7 +36,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseStringTable::BaseStringTable(BaseGame *inGame): BaseClass(inGame) {
+BaseStringTable::BaseStringTable(BaseGame *inGame) : BaseClass(inGame) {
 
 }
 

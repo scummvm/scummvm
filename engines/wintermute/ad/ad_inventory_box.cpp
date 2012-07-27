@@ -46,7 +46,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdInventoryBox, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdInventoryBox::AdInventoryBox(BaseGame *inGame): BaseObject(inGame) {
+AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 	_itemsArea.setEmpty();
 	_scrollOffset = 0;
 	_spacing = 0;

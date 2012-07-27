@@ -37,7 +37,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdResponse, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdResponse::AdResponse(BaseGame *inGame): BaseObject(inGame) {
+AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 	_text = NULL;
 	_textOrig = NULL;
 	_icon = _iconHover = _iconPressed = NULL;

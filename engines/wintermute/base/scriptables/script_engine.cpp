@@ -44,7 +44,7 @@ IMPLEMENT_PERSISTENT(ScEngine, true)
 
 #define COMPILER_DLL "dcscomp.dll"
 //////////////////////////////////////////////////////////////////////////
-ScEngine::ScEngine(BaseGame *inGame): BaseClass(inGame) {
+ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 	_gameRef->LOG(0, "Initializing scripting engine...");
 
 	if (_compilerAvailable) {

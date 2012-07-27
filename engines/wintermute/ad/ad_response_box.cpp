@@ -49,7 +49,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdResponseBox, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdResponseBox::AdResponseBox(BaseGame *inGame): BaseObject(inGame) {
+AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 	_font = _fontHover = NULL;
 
 	_window = NULL;

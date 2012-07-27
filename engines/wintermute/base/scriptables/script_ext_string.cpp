@@ -44,7 +44,7 @@ BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXString::SXString(BaseGame *inGame, ScStack *stack): BaseScriptable(inGame) {
+SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	_string = NULL;
 	_capacity = 0;
 

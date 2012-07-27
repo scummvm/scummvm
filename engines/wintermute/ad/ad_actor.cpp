@@ -51,7 +51,7 @@ IMPLEMENT_PERSISTENT(AdActor, false)
 
 
 //////////////////////////////////////////////////////////////////////////
-AdActor::AdActor(BaseGame *inGame): AdTalkHolder(inGame) {
+AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_path = new AdPath(_gameRef);
 
 	_type = OBJECT_ACTOR;

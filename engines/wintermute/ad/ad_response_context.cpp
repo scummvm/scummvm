@@ -34,7 +34,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdResponseContext, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdResponseContext::AdResponseContext(BaseGame *inGame): BaseClass(inGame) {
+AdResponseContext::AdResponseContext(BaseGame *inGame) : BaseClass(inGame) {
 	_id = 0;
 	_context = NULL;
 }

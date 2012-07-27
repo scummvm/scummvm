@@ -41,7 +41,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(UIObject, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIObject::UIObject(BaseGame *inGame): BaseObject(inGame) {
+UIObject::UIObject(BaseGame *inGame) : BaseObject(inGame) {
 	_back = NULL;
 	_image = NULL;
 	_font = NULL;

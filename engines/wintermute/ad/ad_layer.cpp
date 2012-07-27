@@ -43,7 +43,7 @@ namespace WinterMute {
 IMPLEMENT_PERSISTENT(AdLayer, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdLayer::AdLayer(BaseGame *inGame): BaseObject(inGame) {
+AdLayer::AdLayer(BaseGame *inGame) : BaseObject(inGame) {
 	_main = false;
 	_width = _height = 0;
 	_active = true;
