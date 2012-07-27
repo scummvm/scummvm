@@ -639,6 +639,9 @@ const uint16 saveStateSize = 0x777a;
 const uint16 dsAddr_egoX = 0x64af; // 2 bytes
 const uint16 dsAddr_egoY = 0x64b1; // 2 bytes
 
+// Idle Animation List Table : 0x6540 to 0x????
+const uint16 dsAddr_idleAnimationListPtr = 0x6540;
+
 // Current Scene Id : 0xb4f3
 const uint16 dsAddr_currentScene = 0xb4f3; // 1 byte
 

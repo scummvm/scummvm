@@ -31,7 +31,6 @@ namespace TeenAgent {
 
 Actor::Actor(TeenAgentEngine *vm) : _vm(vm), head_index(0), idle_type(0) {}
 
-//idle animation lists at dseg: 0x6540
 Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom, Common::RandomSource &rnd) {
 	if (index == 0) {
 		idle_type = rnd.getRandomNumber(2);
@@ -40,7 +39,7 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 
 	byte *frames_idle;
 	do {
-		frames_idle = _vm->res->dseg.ptr(_vm->res->dseg.get_word(0x6540 + idle_type * 2)) + index;
+		frames_idle = _vm->res->dseg.ptr(_vm->res->dseg.get_word(dsAddr_idleAnimationListPtr + idle_type * 2)) + index;
 		index += delta_frame;
 		if (*frames_idle == 0) {
 			idle_type = rnd.getRandomNumber(2);
