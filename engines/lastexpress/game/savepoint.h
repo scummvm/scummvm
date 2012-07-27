@@ -23,9 +23,8 @@
 #ifndef LASTEXPRESS_SAVEPOINT_H
 #define LASTEXPRESS_SAVEPOINT_H
 
-#include "lastexpress/entities/entity.h"
-
 #include "lastexpress/helpers.h"
+#include "lastexpress/shared.h"
 
 #include "common/array.h"
 #include "common/list.h"
