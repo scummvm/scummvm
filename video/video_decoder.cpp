@@ -111,7 +111,7 @@ AdvancedVideoDecoder::AdvancedVideoDecoder() {
 }
 
 void AdvancedVideoDecoder::close() {
-	if (_isPlaying)
+	if (isPlaying())
 		stop();
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
@@ -250,7 +250,7 @@ bool AdvancedVideoDecoder::endOfVideo() const {
 }
 
 bool AdvancedVideoDecoder::isRewindable() const {
-	if (_tracks.empty())
+	if (!isVideoLoaded())
 		return false;
 
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
@@ -267,7 +267,7 @@ bool AdvancedVideoDecoder::rewind() {
 	_needsRewind = false;
 
 	// Stop all tracks so they can be rewound
-	if (_isPlaying)
+	if (isPlaying())
 		stopAllTracks();
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
@@ -275,7 +275,7 @@ bool AdvancedVideoDecoder::rewind() {
 			return false;
 
 	// Now that we've rewound, start all tracks again
-	if (_isPlaying)
+	if (isPlaying())
 		startAllTracks();
 
 	_audioStartOffset = 0;
@@ -285,7 +285,7 @@ bool AdvancedVideoDecoder::rewind() {
 }
 
 bool AdvancedVideoDecoder::isSeekable() const {
-	if (_tracks.empty())
+	if (!isVideoLoaded())
 		return false;
 
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
@@ -302,7 +302,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 	_needsRewind = false;
 
 	// Stop all tracks so they can be seeked
-	if (_isPlaying)
+	if (isPlaying())
 		stopAllTracks();
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
@@ -310,7 +310,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 			return false;
 
 	// Now that we've seeked, start all tracks again
-	if (_isPlaying)
+	if (isPlaying())
 		startAllTracks();
 
 	_audioStartOffset = time;
@@ -321,7 +321,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 }
 
 void AdvancedVideoDecoder::start() {
-	if (_isPlaying || !isVideoLoaded())
+	if (isPlaying() || !isVideoLoaded())
 		return;
 
 	_isPlaying = true;
@@ -336,7 +336,7 @@ void AdvancedVideoDecoder::start() {
 }
 
 void AdvancedVideoDecoder::stop() {
-	if (!_isPlaying)
+	if (!isPlaying())
 		return;
 
 	_isPlaying = false;
