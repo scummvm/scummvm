@@ -117,7 +117,7 @@ void SoundEntry::close() {
 
 void SoundEntry::play() {
 	if (!_stream) {
-		warning("[SoundEntry::play] stream has been disposed");
+		error("[SoundEntry::play] stream has been disposed");
 		return;
 	}
 

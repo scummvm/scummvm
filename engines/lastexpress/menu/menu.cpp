@@ -864,7 +864,7 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 
 		doSavegame = false;
 	} else {
-		// TODO rename saves?
+		warning("[Menu::initGame] Renaming saves not implemented");
 	}
 
 	// Create a new savegame if needed
@@ -875,7 +875,7 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 		getSaveLoad()->saveGame(kSavegameTypeEvent2, kEntityPlayer, kEventNone);
 
 	if (!getGlobalTimer()) {
-		// TODO: remove existing savegame temp file
+		warning("[Menu::initGame] Removing temporary saves not implemented");
 	}
 
 	// Init savegame & menu values
