@@ -69,8 +69,8 @@ BaseFontBitmap::~BaseFontBitmap() {
 
 
 //////////////////////////////////////////////////////////////////////
-void BaseFontBitmap::drawText(byte *text, int x, int y, int width, TTextAlign align, int max_height, int maxLength) {
-	textHeightDraw(text, x, y, width, align, true, max_height, maxLength);
+void BaseFontBitmap::drawText(byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
+	textHeightDraw(text, x, y, width, align, true, maxHeight, maxLength);
 }
 
 
