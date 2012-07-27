@@ -4001,8 +4001,6 @@ void BaseGame::setWindowTitle() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getSaveSlotFilename(int slot, char *buffer) {
-	AnsiString dataDir = getDataDir();
-	//sprintf(Buffer, "%s/save%03d.%s", dataDir.c_str(), Slot, _savedGameExt);
 	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
 	Common::String filename = pm->getFilenameForSlot(slot);
 	delete pm;
@@ -4046,14 +4044,10 @@ bool BaseGame::getSaveSlotDescription(int slot, char *buffer) {
 bool BaseGame::isSaveSlotUsed(int slot) {
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
-
-	warning("BaseGame::IsSaveSlotUsed(%d) - FIXME, ugly solution", slot);
-	Common::SeekableReadStream *file = g_wintermute->getSaveFileMan()->openForLoading(filename);
-	if (!file) {
-		return false;
-	}
-	delete file;
-	return true;
+	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
+	bool ret = pm->getSaveExists(slot);
+	delete pm;
+	return ret;
 }
 
 

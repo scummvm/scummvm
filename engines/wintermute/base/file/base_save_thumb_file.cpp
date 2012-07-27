@@ -52,8 +52,6 @@ BaseSaveThumbFile::~BaseSaveThumbFile() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbFile::open(const Common::String &filename) {
 	close();
-	warning("SaveGame-thumbs disabled for now");
-	return STATUS_FAILED;
 
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) != 0) {
 		return STATUS_FAILED;
