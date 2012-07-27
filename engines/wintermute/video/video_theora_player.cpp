@@ -84,9 +84,9 @@ void VideoTheoraPlayer::SetDefaults() {
 	_savedPos = 0;
 	_volume = 100;
 	_theoraDecoder = NULL;
-#if 0
-	_subtitler = NULL;
-#endif
+
+	// TODO: Add subtitles-support
+	//_subtitler = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::resetStream() {
 	warning("VidTheoraPlayer::resetStream - stubbed");
-#if 0
+#if 0 // Stubbed for now, as theora isn't seekable
 	if (_sound) {
 		_sound->Stop();
 	}
@@ -227,7 +227,7 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		break;
 	}
 	return STATUS_OK;
-#if 0
+#if 0 // Stubbed for now as theora isn't seekable
 	if (StartTime) SeekToTime(StartTime);
 
 	Update();
@@ -299,83 +299,6 @@ bool VideoTheoraPlayer::update() {
 		}
 	}
 
-#if 0
-	m_CurrentTime = m_FreezeGame ? _gameRef->m_LiveTimer : _gameRef->m_Timer;
-
-	if (!IsPlaying()) return STATUS_OK;
-
-	if (m_PlaybackStarted && m_Sound && !m_Sound->IsPlaying()) return STATUS_OK;
-
-	if (m_PlaybackStarted && !m_FreezeGame && _gameRef->m_State == GAME_FROZEN) return STATUS_OK;
-
-	int counter = 0;
-	while (true) {
-		if (m_Sound) DecodeVorbis();
-		else m_AudioFrameReady = true;
-
-		if (m_Texture) DecodeTheora();
-		else m_VideoFrameReady = true;
-
-		if ((!m_Sound || !m_AudioFrameReady) && (!m_Texture || !m_VideoFrameReady) && m_File->IsEOF()) {
-			// end playback
-			if (!m_Looping) {
-				m_State = THEORA_STATE_FINISHED;
-				if (m_Sound) m_Sound->Stop();
-				if (m_FreezeGame) _gameRef->Unfreeze();
-				break;
-			} else {
-				ResetStream();
-				return STATUS_OK;
-			}
-		}
-
-
-		if (!m_VideoFrameReady || !m_AudioFrameReady) {
-			Counter++;
-			if (StreamInData() == 0) break;
-		} else break;
-	}
-
-
-	// If playback has begun, top audio buffer off immediately.
-	//if (m_Sound) WriteAudio();
-
-	// are we at or past time for this video frame?
-	if (m_PlaybackStarted && m_VideoFrameReady && (!m_FrameRendered || m_VideobufTime <= GetMovieTime())) {
-		//_gameRef->LOG(0, "%f %f", m_VideobufTime, GetMovieTime());
-		if (m_Texture) WriteVideo();
-		m_VideoFrameReady = false;
-
-		if (m_SavedState == THEORA_STATE_PAUSED) {
-			Pause();
-			m_SavedState = THEORA_STATE_NONE;
-		}
-	}
-
-	// if our buffers either don't exist or are ready to go,
-	// we can begin playback
-	bool startNow = false;
-	if ((!m_TheoraStreams || m_VideoFrameReady) &&
-	        (!m_VorbisStreams || m_AudioFrameReady)) StartNow = true;
-	// same if we've run out of input
-	if (m_File->IsEOF()) StartNow = true;
-
-
-	if (m_Sound) WriteAudio();
-
-
-	if (!m_PlaybackStarted && StartNow && !m_SeekingKeyframe) {
-		//m_StartTime = timeGetTime();
-		m_StartTime = m_CurrentTime;
-		if (m_Sound) {
-			m_Sound->SetPrivateVolume(m_Volume);
-			m_Sound->Play();
-		}
-		m_PlaybackStarted = true;
-	}
-
-	if (m_Subtitler && _gameRef->m_VideoSubtitles) m_Subtitler->update(GetMovieFrame());
-#endif
 	return STATUS_OK;
 }
 
@@ -442,11 +365,11 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 	} else {
 		res = STATUS_FAILED;
 	}
-#if 0
-	if (m_Subtitler && _gameRef->m_VideoSubtitles) {
+	// TODO: Add subtitles-support
+/*	if (m_Subtitler && _gameRef->m_VideoSubtitles) {
 		m_Subtitler->display();
-	}
-#endif
+	}*/
+
 	return res;
 }
 
@@ -494,64 +417,6 @@ inline int intlog(int num) {
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::seekToTime(uint32 time) {
 	warning("VideoTheoraPlayer::SeekToTime(%d) - not supported", time);
-#if 0
-	if (!m_TheoraStreams) return STATUS_FAILED;
-
-
-	float targetTime = Time / 1000.0f;
-
-
-	ogg_page page;
-	int read = 1;
-	ogg_int64_t gran;
-	float movieLength = 0;
-	DWORD LastPos = 0;
-
-	int keyframe_granule_shift = intlog(m_TheoraInfo.keyframe_frequency_force - 1);
-
-	while (!m_File->IsEOF() && read != 0) {
-		read = BufferData(&m_OggSyncState);
-
-		while (ogg_sync_pageout(&m_OggSyncState, &page) > 0) {
-			int serno = ogg_page_serialno(&page);
-			//This is theora stream we were searching for
-			if (m_TheoraStreamState.serialno == serno) {
-				//Calculate a rough time estimate
-				gran = ogg_page_granulepos(&page);
-				if (gran >= 0) {
-					ogg_int64_t iframe = gran >> keyframe_granule_shift;
-					ogg_int64_t pframe = gran   - (iframe << keyframe_granule_shift);
-					movieLength = (iframe + pframe) *
-					              ((double)m_TheoraInfo.fps_denominator / m_TheoraInfo.fps_numerator);
-
-					if (movieLength >= TargetTime) {
-						m_TimeOffset = movieLength;
-						//m_TimeOffset = TargetTime;
-						//m_File->Seek(LastPos);
-
-						goto finish;
-					}
-					LastPos = m_File->GetPos();
-				}
-			}
-		}
-	}
-
-finish:
-	ogg_sync_reset(&m_OggSyncState);
-
-	ogg_stream_reset(&m_TheoraStreamState);
-	ogg_stream_reset(&m_VorbisStreamState);
-
-	theora_clear(&m_TheoraState);
-	theora_decode_init(&m_TheoraState, &m_TheoraInfo);
-	vorbis_synthesis_restart(&m_VorbisDSPState);
-
-	m_SeekingKeyframe = true;
-
-	//theora_packet_iskeyframe
-
-#endif
 	return STATUS_OK;
 }
 

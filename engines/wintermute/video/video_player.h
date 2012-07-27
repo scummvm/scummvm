@@ -38,6 +38,7 @@
 
 namespace WinterMute {
 
+// AVI-Video-player, currently fully stubbed
 class VideoPlayer : public BaseClass {
 public:
 	bool _showSubtitle;

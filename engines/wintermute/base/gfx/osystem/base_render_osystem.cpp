@@ -231,8 +231,6 @@ bool BaseRenderOSystem::flip() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
-	//SDL_SetRenderDrawColor(_renderer, r, g, b, 0xFF);
-	//SDL_RenderClear(_renderer);
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
 	if (!_disableDirtyRects) {
 		return STATUS_OK;
@@ -240,6 +238,7 @@ bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	if (!rect) {
 		rect = &_renderRect;
 	}
+	// TODO: This doesn't work with dirty rects
 	_renderSurface->fillRect(*rect, _clearColor);
 
 	return STATUS_OK;
@@ -410,7 +409,6 @@ void BaseRenderOSystem::addDirtyRect(const Common::Rect &rect) {
 		_dirtyRect->extend(rect);
 	}
 	_dirtyRect->clip(_renderRect);
-//	warning("AddDirtyRect: %d %d %d %d", rect.left, rect.top, rect.right, rect.bottom);
 }
 
 void BaseRenderOSystem::drawTickets() {
@@ -421,7 +419,6 @@ void BaseRenderOSystem::drawTickets() {
 		if ((*it)->_wantsDraw == false || (*it)->_isValid == false) {
 			RenderTicket *ticket = *it;
 			addDirtyRect((*it)->_dstRect);
-			//warning("Discarding Rect: %d %d %d %d Width: %d Height: %d", (*it)->_dstRect.left, (*it)->_dstRect.top, (*it)->_dstRect.right, (*it)->_dstRect.bottom, (*it)->_dstRect.width() , (*it)->_dstRect.height());
 			it = _renderQueue.erase(it);
 			delete ticket;
 			decrement++;
@@ -436,7 +433,6 @@ void BaseRenderOSystem::drawTickets() {
 	// The color-mods are stored in the RenderTickets on add, since we set that state again during
 	// draw, we need to keep track of what it was prior to draw.
 	uint32 oldColorMod = _colorMod;
-//	warning("DirtyRect: %d %d %d %d Width: %d Height: %d", _dirtyRect->left, _dirtyRect->top, _dirtyRect->right, _dirtyRect->bottom, _dirtyRect->width(), _dirtyRect->height());
 
 	// Apply the clear-color to the dirty rect.
 	_renderSurface->fillRect(*_dirtyRect, _clearColor);
@@ -521,38 +517,11 @@ bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseImage *BaseRenderOSystem::takeScreenshot() {
-// TODO: Fix this
+// TODO: Clip by viewport.
 	warning("BaseRenderOSystem::TakeScreenshot() - not ported yet");
 	BaseImage *screenshot = new BaseImage(_gameRef->_fileManager);
 	screenshot->copyFrom(_renderSurface);
 	return screenshot;
-#if 0
-	SDL_Rect viewport;
-
-	SDL_RenderGetViewport(_renderer, &viewport);
-
-	SDL_Surface *surface = SDL_CreateRGBSurface(0, viewport.w, viewport.h, 24, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, 0x00000000);
-	if (!surface) {
-		return NULL;
-	}
-
-	if (SDL_RenderReadPixels(_renderer, NULL, surface->format->format, surface->pixels, surface->pitch) < 0) {
-		return NULL;
-	}
-
-	FIBITMAP *dib = FreeImage_Allocate(viewport.w, viewport.h, 24, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
-
-	int bytespp = FreeImage_GetLine(dib) / FreeImage_GetWidth(dib);
-
-	for (unsigned y = 0; y < FreeImage_GetHeight(dib); y++) {
-		byte *bits = FreeImage_GetScanLine(dib, y);
-		byte *src = (byte *)surface->pixels + (viewport.h - y - 1) * surface->pitch;
-		memcpy(bits, src, bytespp * viewport.w);
-	}
-
-	return new BaseImage(_gameRef,  dib);
-#endif
-	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -569,84 +538,43 @@ bool BaseRenderOSystem::setViewport(int left, int top, int right, int bottom) {
 	rect.right = (int16)((right - left) * _ratioX);
 	rect.bottom = (int16)((bottom - top) * _ratioY);
 
+	_renderRect = rect;
 	return STATUS_OK;
+}
+
+Rect32 BaseRenderOSystem::getViewPort() {
+	Rect32 ret;
+	ret.top = _renderRect.top;
+	ret.bottom = _renderRect.bottom;
+	ret.left = _renderRect.left;
+	ret.right = _renderRect.right;
+	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
-#if 0
-	SDL_Rect viewportRect;
-	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
-
-	rect->x = MathUtil::Round(rect->x * _ratioX + _borderLeft - viewportRect.x);
-	rect->y = MathUtil::Round(rect->y * _ratioY + _borderTop - viewportRect.y);
-	rect->w = MathUtil::RoundUp(rect->w * _ratioX);
-	rect->h = MathUtil::RoundUp(rect->h * _ratioY);
-#endif
+	rect->left = MathUtil::round(rect->left * _ratioX + _borderLeft - _renderRect.left);
+	rect->top = MathUtil::round(rect->top * _ratioY + _borderTop - _renderRect.top);
+	rect->setWidth(MathUtil::roundUp(rect->width() * _ratioX));
+	rect->setHeight(MathUtil::roundUp(rect->height() * _ratioY));
 }
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::pointFromScreen(Point32 *point) {
-#if 0
-	SDL_Rect viewportRect;
-	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
-
-	point->x = point->x / _ratioX - _borderLeft / _ratioX + viewportRect.x;
-	point->y = point->y / _ratioY - _borderTop / _ratioY + viewportRect.y;
-#endif
+	point->x = point->x / _ratioX - _borderLeft / _ratioX + _renderRect.left;
+	point->y = point->y / _ratioY - _borderTop / _ratioY + _renderRect.top;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::pointToScreen(Point32 *point) {
-#if 0
-	SDL_Rect viewportRect;
-	SDL_RenderGetViewport(GetSdlRenderer(), &viewportRect);
-
-	point->x = MathUtil::RoundUp(point->x * _ratioX) + _borderLeft - viewportRect.x;
-	point->y = MathUtil::RoundUp(point->y * _ratioY) + _borderTop - viewportRect.y;
-#endif
+	point->x = MathUtil::roundUp(point->x * _ratioX) + _borderLeft - _renderRect.left;
+	point->y = MathUtil::roundUp(point->y * _ratioY) + _borderTop - _renderRect.top;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::dumpData(const char *filename) {
-	warning("BaseRenderOSystem::DumpData(%s) - not reimplemented yet", filename); // TODO
-#if 0
-	FILE *f = fopen(filename, "wt");
-	if (!f) {
-		return;
-	}
-
-	BaseSurfaceStorage *Mgr = _gameRef->_surfaceStorage;
-
-	int totalKB = 0;
-	int totalLoss = 0;
-	fprintf(f, "Filename;Usage;Size;KBytes\n");
-	for (int i = 0; i < Mgr->_surfaces.getSize(); i++) {
-		BaseSurfaceOSystem *Surf = (BaseSurfaceOSystem *)Mgr->_surfaces[i];
-		if (!Surf->_filename) {
-			continue;
-		}
-		if (!Surf->_valid) {
-			continue;
-		}
-
-		fprintf(f, "%s;%d;", Surf->_filename, Surf->_referenceCount);
-		fprintf(f, "%dx%d;", Surf->getWidth(), Surf->getHeight());
-
-		int kb = Surf->getWidth() * Surf->getHeight() * 4 / 1024;
-
-		TotalKB += kb;
-		fprintf(f, "%d;", kb);
-		fprintf(f, "\n");
-	}
-	fprintf(f, "Total %d;;;%d\n", Mgr->_surfaces.getSize(), TotalKB);
-
-
-	fclose(f);
-	_gameRef->LOG(0, "Texture Stats Dump completed.");
-	_gameRef->QuickMessage("Texture Stats Dump completed.");
-#endif
+	warning("BaseRenderOSystem::DumpData(%s) - stubbed", filename); // TODO
 }
 
 BaseSurface *BaseRenderOSystem::createSurface() {

@@ -62,6 +62,7 @@ public:
 	virtual BaseImage *takeScreenshot() = 0;
 	virtual bool setViewport(int left, int top, int right, int bottom);
 	virtual bool setViewport(Rect32 *rect);
+	virtual Rect32 getViewPort() = 0;
 	virtual bool setScreenViewport();
 
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;

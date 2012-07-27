@@ -179,8 +179,8 @@ bool BasePlatform::setCursorPos(int x, int y) {
 	p.x = x;
 	p.y = y;
 	renderer->pointToScreen(&p);
-// TODO
-	//SDL_WarpMouseInWindow(renderer->GetSdlWindow(), p.x, p.y);
+
+	g_system->warpMouse(x, y);
 	return true;
 }
 

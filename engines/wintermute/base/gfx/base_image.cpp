@@ -114,23 +114,16 @@ bool BaseImage::saveBMPFile(const char *filename) const {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::resize(int newWidth, int newHeight) {
-	warning("BaseImage::resize(%d, %d), stubbed", newWidth, newHeight);
-#if 0
-	if (!_bitmap) {
-		return STATUS_FAILED;
+	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
+	TransparentSurface temp(*_surface, true);
+	if (_deletableSurface) {
+		_deletableSurface->free();
+		delete _deletableSurface;
+		_deletableSurface = NULL;
 	}
-
-	if (newWidth == 0) {
-		NewWidth = FreeImage_GetWidth(_bitmap);
-	}
-	if (newHeight == 0) {
-		NewHeight = FreeImage_GetHeight(_bitmap);
-	}
-
-
-	FIBITMAP *newImg = FreeImage_Rescale(_bitmap, NewWidth, NewHeight, FILTER_BILINEAR);
-#endif
-	return false;
+	_surface = _deletableSurface = temp.scaleSafe((uint16)newWidth, (uint16)newHeight);
+	temp.free();
+	return true;
 }
 
 

@@ -68,9 +68,7 @@ const char *SXDate::scToString() {
 	// TODO: Make this more stringy, and less ISO 8601-like
 	_strRep.format("%04d-%02d-%02d - %02d:%02d:%02d", _tm.tm_year, _tm.tm_mon, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec);
 	return _strRep.c_str();
-#if 0
-	return asctime(&_tm);
-#endif
+	//return asctime(&_tm);
 }
 
 

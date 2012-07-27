@@ -166,11 +166,7 @@ ScValue *ScValue::getProp(const char *name) {
 	if (_type == VAL_STRING && strcmp(name, "Length") == 0) {
 		_gameRef->_scValue->_type = VAL_INT;
 
-#if 0 // TODO: Remove FreeType-dependency
 		if (_gameRef->_textEncoding == TEXT_ANSI) {
-#else
-		if (true) {
-#endif
 			_gameRef->_scValue->setInt(strlen(_valString));
 		} else {
 			WideString wstr = StringUtil::utf8ToWide(_valString);

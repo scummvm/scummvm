@@ -163,40 +163,9 @@ bool PathUtil::fileExists(const AnsiString &fileName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::getUserDirectory() {
+AnsiString PathUtil::getUserDirectory() { // TODO: Get rid of
 	warning("PathUtil::GetUserDirectory - stubbed");
 	AnsiString userDir = "./";
-#if 0
-#ifdef __WIN32__
-	char buffer[MAX_PATH_LENGTH];
-	buffer[0] = '\0';
-	LPITEMIDLIST pidl = NULL;
-	LPMALLOC pMalloc;
-	if (DID_SUCCEED(SHGetMalloc(&pMalloc))) {
-		SHGetSpecialFolderLocation(NULL, CSIDL_APPDATA, &pidl);
-		if (pidl) {
-			SHGetPathFromIDList(pidl, buffer);
-		}
-		pMalloc->Free(pidl);
-		userDir = AnsiString(buffer);
-	}
-#elif __MACOSX__
-	FSRef fileRef;
-	OSStatus error = FSFindFolder(kUserDomain, kApplicationSupportFolderType, true, &fileRef);
-	if (error == noErr) {
-		char buffer[MAX_PATH_LENGTH];
-		error = FSRefMakePath(&fileRef, (UInt8 *)buffer, sizeof(buffer));
-		if (error == noErr) {
-			userDir = buffer;
-		}
-
-	}
-#elif __IPHONEOS__
-	char path[MAX_PATH_LENGTH];
-	IOS_GetDataDir(path);
-	userDir = AnsiString(path);
-#endif
-#endif // 0
 	return userDir;
 }
 

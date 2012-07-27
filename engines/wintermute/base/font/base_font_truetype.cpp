@@ -256,12 +256,6 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	} else if (align == TAL_RIGHT) {
 		alignment = Graphics::kTextAlignRight;
 	}
-	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		hasWarned = true;
-		warning("BaseFontTT::RenderTextToTexture - Not fully ported yet");
-	}
 
 	debugC(kWinterMuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
@@ -287,104 +281,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	delete surface;
 	delete convertedSurface;
 	return retSurface;
-#if 0 //TODO
-	int textHeight = lines.size() * (_maxCharHeight + _ascender);
-	SDL_Surface *surface = SDL_CreateRGBSurface(0, width, textHeight, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-
-	SDL_LockSurface(surface);
-
-	int posY = (int)GetLineHeight() - (int)_descender;
-
-	for (it = lines.begin(); it != lines.end(); ++it) {
-		TextLine *line = (*it);
-		int posX = 0;
-
-		switch (align) {
-		case TAL_CENTER:
-			posX += (width - line->GetWidth()) / 2;
-			break;
-
-		case TAL_RIGHT:
-			posX += width - line->GetWidth();
-			break;
-		}
-
-
-		textOffset = 0;
-		for (size_t i = 0; i < line->GetText().size(); i++) {
-			wchar_t ch = line->GetText()[i];
-
-			GlyphInfo *glyph = _glyphCache->GetGlyph(ch);
-			if (!glyph) {
-				continue;
-			}
-
-			textOffset = MAX(textOffset, glyph->GetBearingY());
-		}
-
-
-		int origPosX = posX;
-
-		wchar_t prevChar = L'\0';
-		for (size_t i = 0; i < line->GetText().size(); i++) {
-			wchar_t ch = line->GetText()[i];
-
-			GlyphInfo *glyph = _glyphCache->GetGlyph(ch);
-			if (!glyph) {
-				continue;
-			}
-
-			float kerning = 0;
-			if (prevChar != L'\0') {
-				kerning = GetKerning(prevChar, ch);
-			}
-			posX += (int)kerning;
-
-
-			if (glyph->GetBearingY() > 0) {
-				int i = 10;
-			}
-
-			SDL_Rect rect;
-			rect.x = posX + glyph->GetBearingX();
-			rect.y = posY - glyph->GetBearingY() + textOffset;
-			rect.w = glyph->GetImage()->w;
-			rect.h = glyph->GetImage()->h;
-
-			BlitSurface(glyph->GetImage(), surface, &rect);
-
-			prevChar = ch;
-			posX += (int)(glyph->GetAdvanceX());
-			posY += (int)(glyph->GetAdvanceY());
-		}
-
-		if (_isUnderline) {
-			for (int i = origPosX; i < origPosX + line->GetWidth(); i++) {
-				Uint8 *buf = (Uint8 *)surface->pixels + (int)(_underlinePos + _ascender) * surface->pitch;
-				Uint32 *buf32 = (Uint32 *)buf;
-
-				buf32[i] = SDL_MapRGBA(surface->format, 255, 255, 255, 255);
-			}
-		}
-
-		SDL_UnlockSurface(surface);
-
-		delete line;
-		line = NULL;
-		posY += GetLineHeight();
-	}
-
-	BaseSurfaceOSystem *wmeSurface = new BaseSurfaceOSystem(_gameRef);
-	if (DID_SUCCEED(wmeSurface->CreateFromSDLSurface(surface))) {
-		SDL_FreeSurface(surface);
-		return wmeSurface;
-	} else {
-		SDL_FreeSurface(surface);
-		delete wmeSurface;
-		return NULL;
-	}
-#endif
-	return NULL;
+	// TODO: _isUnderline, _isBold, _isItalic, _isStriked
 }
 
 
@@ -665,65 +562,6 @@ bool BaseFontTT::initFont() {
 		warning("BaseFontTT::InitFont - Couldn't load %s", _fontFile);
 	}
 	_lineHeight = _font->getFontHeight();
-	return STATUS_OK;
-#if 0
-	FT_Error error;
-
-	float vertDpi = 96.0;
-	float horDpi = 96.0;
-
-
-	_fTStream = (FT_Stream)new byte[sizeof(*_fTStream)];
-	memset(_fTStream, 0, sizeof(*_fTStream));
-
-	_fTStream->read = BaseFontTT::FTReadSeekProc;
-	_fTStream->close = BaseFontTT::FTCloseProc;
-	_fTStream->descriptor.pointer = file;
-	_fTStream->size = file->GetSize();
-
-	FT_Open_Args args;
-	args.flags = FT_OPEN_STREAM;
-	args.stream = _fTStream;
-
-	error = FT_Open_Face(_gameRef->_fontStorage->GetFTLibrary(), &args, 0, &_fTFace);
-	if (error) {
-		SAFE_DELETE_ARRAY(_fTStream);
-		_gameRef->_fileManager->closeFile(file);
-		return STATUS_FAILED;
-	}
-
-	error = FT_Set_Char_Size(_fTFace, 0, (FT_F26Dot6)(_fontHeight * 64), (FT_UInt)horDpi, (FT_UInt)vertDpi);
-	if (error) {
-		FT_Done_Face(_fTFace);
-		_fTFace = NULL;
-		return STATUS_FAILED;
-	}
-
-	// http://en.wikipedia.org/wiki/E_(typography)
-	float pixelsPerEm = (_fontHeight / 72.f) * vertDpi; // Size in inches * dpi
-	float emsPerUnit = 1.0f / _fTFace->units_per_EM;
-	float pixelsPerUnit = pixelsPerEm * EmsPerUnit;
-
-	// bounding box in pixels
-	float xMin = _fTFace->bbox.xMin * pixelsPerUnit;
-	float xMax = _fTFace->bbox.xMax * pixelsPerUnit;
-	float yMin = _fTFace->bbox.yMin * pixelsPerUnit;
-	float yMax = _fTFace->bbox.yMax * pixelsPerUnit;
-
-	// metrics in pixels
-	_ascender = _fTFace->ascender * pixelsPerUnit;
-	_descender = - _fTFace->descender * pixelsPerUnit;
-	_lineHeight = MathUtil::RoundUp(_fTFace->height * pixelsPerUnit) + 2;
-	_underlinePos = - _fTFace->underline_position * pixelsPerUnit;
-
-	// max character size (used for texture grid)
-	_maxCharWidth  = (size_t)MathUtil::RoundUp(xMax - xMin);
-	_maxCharHeight = (size_t)MathUtil::RoundUp(yMax - yMin);
-
-	_glyphCache = new FontGlyphCache();
-	_glyphCache->Initialize();
-
-#endif
 	return STATUS_OK;
 }
 
