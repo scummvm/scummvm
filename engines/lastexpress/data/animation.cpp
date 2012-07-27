@@ -230,7 +230,7 @@ AnimFrame *Animation::processChunkFrame(Common::SeekableReadStream *in, const Ch
 	i.read(str, false);
 
 	// Decode the frame
-	AnimFrame *f = new AnimFrame(str, i);
+	AnimFrame *f = new AnimFrame(str, i, true);
 
 	// Delete the temporary chunk buffer
 	delete str;
