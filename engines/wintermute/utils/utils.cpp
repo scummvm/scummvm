@@ -204,12 +204,13 @@ bool BaseUtils::matchesPattern(const char *pattern, const char *string) {
 			return false;
 
 		default:
-			if (patternc != stringc)
+			if (patternc != stringc) {
 				if (patternc == '.' && stringc == 0) {
 					return(BaseUtils::matchesPattern(pattern, string));
 				} else {
 					return false;
 				}
+			}
 			break;
 		}
 	}
