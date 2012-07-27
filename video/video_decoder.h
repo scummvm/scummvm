@@ -753,9 +753,24 @@ protected:
 	 */
 	const VideoTrack *findNextVideoTrack() const;
 
+	/**
+	 * Typedef helpers for accessing tracks
+	 */
+	typedef Common::Array<Track *> TrackList;
+	typedef TrackList::iterator TrackListIterator;
+
+	/**
+	 * Get the begin iterator of the tracks
+	 */
+	TrackListIterator getTrackListBegin() { return _tracks.begin(); }
+
+	/**
+	 * Get the end iterator of the tracks
+	 */
+	TrackListIterator getTrackListEnd() { return _tracks.end(); }
+
 private:
 	// Tracks owned by this AdvancedVideoDecoder
-	typedef Common::Array<Track *> TrackList;
 	TrackList _tracks;
 
 	// Current playback status
