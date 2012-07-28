@@ -183,7 +183,7 @@ void TeenAgentEngine::fnEnterCave() {
 	playSound(52, 25);
 	playActorAnimation(601);
 	moveTo(230, 179, 3);
-	if (!CHECK_FLAG(0xdba4, 1))
+	if (!CHECK_FLAG(dsAddr_lightOnFlag, 1))
 		displayMessage(dsAddr_kindaDarkMsg); // "It's kinda dark here"
 }
 
@@ -844,8 +844,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4893: // taking pills
-		if (CHECK_FLAG(0xdbe6, 1)) {
-			SET_FLAG(0xdbe6, 2);
+		if (CHECK_FLAG(dsAddr_captainDrawerState, 1)) {
+			SET_FLAG(dsAddr_captainDrawerState, 2);
 			setOns(1, 0x67);
 			playSound(5, 9);
 			playActorAnimation(872);
@@ -1329,21 +1329,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6205:
-		if (CHECK_FLAG(0xdba4, 1))
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			displayMessage(dsAddr_tooHeavyMsg); // "It's too heavy. Not that I'm wimp"
 		else
 			fnTooDark();
 		break;
 
 	case 0x6217:
-		if (CHECK_FLAG(0xdba4, 1))
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			displayMessage(dsAddr_noDentistsMsg); // "I don't want to have anything in common with dentists"
 		else
 			fnTooDark();
 		break;
 
 	case 0x62c1:
-		if (CHECK_FLAG(0xdba4, 1))
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			retVal = false;
 		else
 			fnTooDark();
@@ -1429,7 +1429,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x78a9:
-		if (CHECK_FLAG(0xdbe6, 1))
+		if (CHECK_FLAG(dsAddr_captainDrawerState, 1))
 			displayMessage(dsAddr_nowOpenMsg); // "Now it's open"
 		else
 			retVal = false;
@@ -1459,7 +1459,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x79c3:
-		if (CHECK_FLAG(0xdba4, 1))
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			retVal = false;
 		else
 			fnTooDark();
@@ -2006,7 +2006,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6083:
-		if (CHECK_FLAG(0xdba4, 1)) {
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1)) {
 			setOns(0, 0);
 			playSound(56, 10);
 			playActorAnimation(599);
@@ -2029,7 +2029,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6176:
-		if (CHECK_FLAG(0xdba4, 1)) {
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1)) {
 			displayMessage(dsAddr_notInDarkMsg); // "I'm not going to wander here in the dark again"
 		} else {
 			playSound(71, 6);
@@ -2039,13 +2039,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setLan(1, 0);
 			playAnimation(660, 0);
 			disableObject(1);
-			SET_FLAG(0xdba4, 1);
+			SET_FLAG(dsAddr_lightOnFlag, 1);
 			loadScene(24, scene->getPosition());
 		}
 		break;
 
 	case 0x61e9:
-		if (CHECK_FLAG(0xdba4, 1))
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			dialog->popMark(scene, 0xdb1e);
 		else
 			fnTooDark();
@@ -2056,7 +2056,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6229: // shelves in cellar
-		if (CHECK_FLAG(0xdba4, 1)) {
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1)) {
 			Common::Point p = scene->getPosition();
 			byte v = GET_FLAG(0xdbb4);
 			switch (v) {
@@ -2281,7 +2281,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(89, 4);
 				playActorAnimation(719);
 				setOns(4, 67);
-				++ *res->dseg.ptr(READ_LE_UINT16(res->dseg.ptr(0x6746 + (scene->getId() - 1) * 2)));
+				++ *res->dseg.ptr(READ_LE_UINT16(res->dseg.ptr(dsAddr_sceneWalkboxTablePtr + (scene->getId() - 1) * 2)));
 				disableObject(5);
 				enableObject(12);
 			} else {
@@ -2497,7 +2497,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7966:
-		if (CHECK_FLAG(0xdba4, 1))
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			retVal = false;
 		else
 			fnEgoScaredBySpider();
@@ -2535,7 +2535,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(870);
 			playSound(54, 15);
 			playActorAnimation(871);
-			SET_FLAG(0xdbe6, 1);
+			SET_FLAG(dsAddr_captainDrawerState, 1);
 			setOns(1, 0x66);
 			moveTo(224, 194, 0, true);
 			displayCutsceneMessage(dsAddr_cutsceneMsg1, 23, 95); // "sixty seven rude words later"
@@ -2605,7 +2605,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7975:
-		if (CHECK_FLAG(0xdba4, 1))
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			retVal = false;
 		else
 			displayMessage(dsAddr_shutValveMsg); // "Shutting the valve shook the dirt from the wall..."
@@ -2615,7 +2615,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x7996:
 	case 0x79a5:
 	case 0x79b4:
-		if (CHECK_FLAG(0xdba4, 1))
+		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			retVal = false;
 		else
 			fnTooDark();
