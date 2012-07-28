@@ -75,7 +75,7 @@ SXArray::~SXArray() {
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXArray::scToString() {
-	static char dummy[32768]; // TODO: Get rid of static.
+	char dummy[32768];
 	strcpy(dummy, "");
 	char propName[20];
 	for (int i = 0; i < _length; i++) {
@@ -91,7 +91,8 @@ const char *SXArray::scToString() {
 			strcat(dummy, ",");
 		}
 	}
-	return dummy;
+	_strRep = dummy;
+	return _strRep.c_str();
 }
 
 

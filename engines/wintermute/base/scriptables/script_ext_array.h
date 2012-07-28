@@ -48,6 +48,7 @@ public:
 private:
 	int _length;
 	ScValue *_values;
+	Common::String _strRep;
 };
 
 } // end of namespace WinterMute
