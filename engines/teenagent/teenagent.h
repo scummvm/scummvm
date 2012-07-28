@@ -67,10 +67,11 @@ enum {
 	kDebugSurface   = (1 << 10)
 };
 
+const uint16 screenWidth = 320;
+const uint16 screenHeight = 200;
+
 class TeenAgentEngine : public Engine {
 public:
-	enum Action { kActionNone, kActionExamine, kActionUse };
-
 	TeenAgentEngine(OSystem *system, const ADGameDescription *gd);
 	~TeenAgentEngine();
 
@@ -82,6 +83,8 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 
 	void init();
+
+	enum Action { kActionNone, kActionExamine, kActionUse };
 
 	void examine(const Common::Point &point, Object *object);
 	void use(Object *object);

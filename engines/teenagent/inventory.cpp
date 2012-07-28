@@ -202,7 +202,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 				return true;
 			//activate(false);
 			int w = _vm->res->font7.render(NULL, 0, 0, _hoveredObj->description, 0xd1);
-			_vm->scene->displayMessage(_hoveredObj->description, 0xd1, Common::Point((320 - w) / 2, 162));
+			_vm->scene->displayMessage(_hoveredObj->description, 0xd1, Common::Point((screenWidth - w) / 2, 162));
 			return true;
 		}
 
@@ -337,7 +337,7 @@ void Inventory::Item::render(Inventory *inventory, uint item_id, Graphics::Surfa
 
 	if (_hovered && inventory->_vm->scene->getMessage().empty()) {
 		int w = inventory->_vm->res->font7.render(NULL, 0, 0, name, 0xd1, true);
-		inventory->_vm->res->font7.render(dst, (320 - w) / 2, 180, name, 0xd1, true);
+		inventory->_vm->res->font7.render(dst, (screenWidth - w) / 2, 180, name, 0xd1, true);
 	}
 }
 

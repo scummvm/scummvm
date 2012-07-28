@@ -48,7 +48,7 @@ struct Rect {
 	}
 
 	inline bool valid() const {
-		return left >= 0 && left < 320 && right >= 0 && right < 320 && top >= 0 && top < 200 && bottom >= 0 && bottom < 200;
+		return left >= 0 && left < screenWidth && right >= 0 && right < screenWidth && top >= 0 && top < screenHeight && bottom >= 0 && bottom < screenHeight;
 	}
 
 	void render(Graphics::Surface *surface, uint8 color) const;

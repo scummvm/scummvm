@@ -91,7 +91,7 @@ void Scene::warp(const Common::Point &_point, byte o) {
 
 bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Point &dst) const {
 	const Common::Array<Walkbox> &scene_walkboxes = walkboxes[_id - 1];
-	if (dst.x < 0 || dst.x > 319 || dst.y < 0 || dst.y > 199)
+	if (dst.x < 0 || dst.x >= screenWidth || dst.y < 0 || dst.y >= screenHeight)
 		return false;
 
 	debugC(1, kDebugScene, "findPath %d,%d -> %d,%d", src.x, src.y, dst.x, dst.y);
@@ -373,7 +373,7 @@ void Scene::init(int id, const Common::Point &pos) {
 		custom_animation[i].free();
 
 	if (background.pixels == NULL)
-		background.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+		background.create(screenWidth, screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
 	warp(pos);
 
@@ -1201,12 +1201,12 @@ Common::Point Scene::messagePosition(const Common::String &str, Common::Point me
 	message_position.x -= w / 2;
 	message_position.y -= h;
 
-	if (message_position.x + w > 320)
-		message_position.x = 320 - w;
+	if (message_position.x + w > screenWidth)
+		message_position.x = screenWidth - w;
 	if (message_position.x < 0)
 		message_position.x = 0;
-	if (message_position.y + h > 320)
-		message_position.y = 200 - h;
+	if (message_position.y + h > screenWidth) // FIXME - Error? Should be screenHeight?
+		message_position.y = screenHeight - h;
 	if (message_position.y < 0)
 		message_position.y = 0;
 

@@ -58,7 +58,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 	byte *glyph = data + READ_LE_UINT16(data + idx * 2);
 
 	int h = glyph[0], w = glyph[1];
-	if (surface == NULL || surface->pixels == NULL || y + h <= 0 || y >= 200 || x + w <= 0 || x >= 320)
+	if (surface == NULL || surface->pixels == NULL || y + h <= 0 || y >= screenHeight || x + w <= 0 || x >= screenWidth)
 		return w - width_pack;
 
 	int i0 = 0, j0 = 0;
@@ -119,7 +119,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 				for (uint k = 0; k < line.size(); ++k) {
 					xp += render(surface, xp, y, line[k], color);
 				}
-			} else if (y >= 200)
+			} else if (y >= screenHeight)
 				break;
 
 			y += height;

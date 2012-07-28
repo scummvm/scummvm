@@ -37,8 +37,8 @@ Surface *Animation::firstFrame() {
 	Surface *r = frames;
 	uint16 pos = READ_LE_UINT16(data + 1);
 	if (pos != 0) {
-		r->x = pos % 320;
-		r->y = pos / 320;
+		r->x = pos % screenWidth;
+		r->y = pos / screenWidth;
 	}
 	return r;
 }
@@ -71,8 +71,8 @@ Surface *Animation::currentFrame(int dt) {
 		index %= (data_size / 3);
 
 		if (pos != 0) {
-			x = r->x = pos % 320;
-			y = r->y = pos / 320;
+			x = r->x = pos % screenWidth;
+			y = r->y = pos / screenWidth;
 		}
 	} else {
 		debugC(2, kDebugAnimation, "index %u", index);

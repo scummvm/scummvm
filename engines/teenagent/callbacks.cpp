@@ -4246,7 +4246,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			{
 				Walkbox *w = scene->getWalkbox(0);
 				w->rect.left = 0;
-				w->rect.bottom = 199;
+				w->rect.bottom = screenHeight-1;
 				w->save();
 			}
 			setLan(1, 0xff);

@@ -46,8 +46,8 @@ void Surface::load(Common::SeekableReadStream &stream, Type type) {
 
 	if (type != kTypeLan) {
 		uint16 pos = stream.readUint16LE();
-		x = pos % 320;
-		y = pos / 320;
+		x = pos % screenWidth;
+		y = pos / screenWidth;
 	}
 
 	debugC(0, kDebugSurface, "declared info: %ux%u (%04xx%04x) -> %u,%u", w_, h_, w_, h_, x, y);

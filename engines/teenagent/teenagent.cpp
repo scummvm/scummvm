@@ -305,7 +305,7 @@ bool TeenAgentEngine::showCDLogo() {
 	if (!cdlogo.exists("cdlogo.res") || !cdlogo.open("cdlogo.res"))
 		return true;
 
-	const uint bgSize = 320 * 200;
+	const uint bgSize = screenWidth * screenHeight;
 	const uint paletteSize = 3 * 256;
 
 	byte *bg = (byte *)malloc(bgSize);
@@ -325,7 +325,7 @@ bool TeenAgentEngine::showCDLogo() {
 		palette[c] *= 4;
 
 	_system->getPaletteManager()->setPalette(palette, 0, 256);
-	_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
+	_system->copyRectToScreen(bg, screenWidth, 0, 0, screenWidth, screenHeight);
 	_system->updateScreen();
 
 	free(bg);
@@ -351,7 +351,7 @@ bool TeenAgentEngine::showLogo() {
 	if (!frame)
 		return true;
 
-	const uint bgSize = 320 * 200;
+	const uint bgSize = screenWidth * screenHeight;
 	const uint paletteSize = 3 * 256;
 
 	byte *bg = (byte *)malloc(bgSize);
@@ -384,7 +384,7 @@ bool TeenAgentEngine::showLogo() {
 					return r > 0 ? true : false;
 				}
 			}
-			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
+			_system->copyRectToScreen(bg, screenWidth, 0, 0, screenWidth, screenHeight);
 
 			frame.reset(logo.getStream(i));
 			if (!frame) {
@@ -468,7 +468,7 @@ bool TeenAgentEngine::showMetropolis() {
 
 		Graphics::Surface *surface = _system->lockScreen();
 		if (logo_y > 0) {
-			surface->fillRect(Common::Rect(0, 0, 320, logo_y), 0);
+			surface->fillRect(Common::Rect(0, 0, screenWidth, logo_y), 0);
 		}
 
 		{
@@ -532,7 +532,7 @@ Common::Error TeenAgentEngine::run() {
 
 	Common::EventManager *_event = _system->getEventManager();
 
-	initGraphics(320, 200, false);
+	initGraphics(screenWidth, screenHeight, false);
 	console = new Console(this);
 
 	scene = new Scene(this);
@@ -673,7 +673,7 @@ Common::Error TeenAgentEngine::run() {
 					name += current_object->name;
 
 				uint w = res->font7.render(NULL, 0, 0, name, 0xd1);
-				res->font7.render(surface, (320 - w) / 2, 180, name, 0xd1, true);
+				res->font7.render(surface, (screenWidth - w) / 2, 180, name, 0xd1, true);
 #if 0
 				if (current_object) {
 					current_object->rect.render(surface, 0x80);
@@ -792,7 +792,7 @@ void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 		event.message += "\n";
 	}
 	int w = res->font8.render(NULL, 0, 0, event.message, 0xd1);
-	event.dst.x = (320 - w) / 2;
+	event.dst.x = (screenWidth - w) / 2;
 	event.timer = timer;
 	scene->push(event);
 }
@@ -800,13 +800,13 @@ void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 void TeenAgentEngine::displayCredits() {
 	SceneEvent event(SceneEvent::kCredits);
 	event.message = parseMessage(dsAddr_finalCredits7);
-	event.dst.y = 200;
+	event.dst.y = screenHeight;
 
 	int lines = 1;
 	for (uint i = 0; i < event.message.size(); ++i)
 		if (event.message[i] == '\n')
 			++lines;
-	event.dst.x = (320 - res->font7.render(NULL, 0, 0, event.message, 0xd1)) / 2;
+	event.dst.x = (screenWidth - res->font7.render(NULL, 0, 0, event.message, 0xd1)) / 2;
 	event.timer = 11 * lines - event.dst.y + 22;
 	debug(2, "credits = %s", event.message.c_str());
 	scene->push(event);
