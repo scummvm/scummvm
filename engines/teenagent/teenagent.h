@@ -79,7 +79,7 @@ public:
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canLoadGameStateCurrently() { return true; }
-	virtual bool canSaveGameStateCurrently() { return !scene_busy; }
+	virtual bool canSaveGameStateCurrently() { return !_sceneBusy; }
 	virtual bool hasFeature(EngineFeature f) const;
 
 	void init();
@@ -88,7 +88,7 @@ public:
 
 	void examine(const Common::Point &point, Object *object);
 	void use(Object *object);
-	inline void cancel() { action = kActionNone; }
+	inline void cancel() { _action = kActionNone; }
 
 	bool processCallback(uint16 addr);
 	inline Scene *getScene() { return scene; }
@@ -103,8 +103,8 @@ public:
 	//event driven:
 	void displayMessage(uint16 addr, byte color = 0xd1, uint16 x = 0, uint16 y = 0);
 	void displayMessage(const Common::String &str, byte color = 0xd1, uint16 x = 0, uint16 y = 0);
-	void displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 first_frame, uint16 last_frame, byte color = 0xd1);
-	void displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 first_frame, uint16 last_frame, byte color = 0xd1);
+	void displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, byte color = 0xd1);
+	void displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color = 0xd1);
 	void displayCredits(uint16 addr, uint16 timer = 0);
 	void displayCutsceneMessage(uint16 addr, uint16 x, uint16 y);
 	void moveTo(const Common::Point &dst, byte o, bool warp = false);
@@ -116,18 +116,18 @@ public:
 	void loadScene(byte id, const Common::Point &pos, byte o = 0);
 	void loadScene(byte id, uint16 x, uint16 y, byte o = 0);
 	void enableOn(bool enable = true);
-	void setOns(byte id, byte value, byte scene_id = 0);
-	void setLan(byte id, byte value, byte scene_id = 0);
+	void setOns(byte id, byte value, byte sceneId = 0);
+	void setLan(byte id, byte value, byte sceneId = 0);
 	void setFlag(uint16 addr, byte value);
 	byte getFlag(uint16 addr);
 	void reloadLan();
 	void rejectMessage();
 
 	void playMusic(byte id); //schedules play
-	void playSound(byte id, byte skip_frames);
+	void playSound(byte id, byte skipFrames);
 	void playSoundNow(byte id);
-	void enableObject(byte id, byte scene_id = 0);
-	void disableObject(byte id, byte scene_id = 0);
+	void enableObject(byte id, byte sceneId = 0);
+	void disableObject(byte id, byte sceneId = 0);
 	void hideActor();
 	void showActor();
 	void waitAnimation();
@@ -154,17 +154,17 @@ private:
 	void processObject();
 	bool trySelectedObject();
 
-	bool scene_busy;
-	Action action;
-	Object *dst_object;
+	bool _sceneBusy;
+	Action _action;
+	Object *_dstObject;
 
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle _musicHandle, _soundHandle;
 	const ADGameDescription *_gameDescription;
 
-	uint _mark_delay, _game_delay;
+	uint _markDelay, _gameDelay;
 
-	Common::Array<Common::Array<UseHotspot> > use_hotspots;
+	Common::Array<Common::Array<UseHotspot> > _useHotspots;
 
 	void fnIntro();
 	void fnPoleClimbFail();

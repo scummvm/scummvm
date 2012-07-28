@@ -52,7 +52,7 @@
 namespace TeenAgent {
 
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
-	: Engine(system), action(kActionNone), _gameDescription(gd), _rnd("teenagent") {
+	: Engine(system), _action(kActionNone), _gameDescription(gd), _rnd("teenagent") {
 	DebugMan.addDebugChannel(kDebugActor, "Actor", "Enable Actor Debug");
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Enable Animation Debug");
 	DebugMan.addDebugChannel(kDebugCallbacks, "Callbacks", "Enable Callbacks Debug");
@@ -82,7 +82,7 @@ TeenAgentEngine::~TeenAgentEngine() {
 	delete music;
 	music = 0;
 	_mixer->stopAll();
-	use_hotspots.clear();
+	_useHotspots.clear();
 	delete res;
 	res = 0;
 
@@ -97,20 +97,20 @@ bool TeenAgentEngine::trySelectedObject() {
 	if (inv == NULL)
 		return false;
 
-	debugC(0, kDebugObject, "checking active object %u on %u", inv->id, dst_object->id);
+	debugC(0, kDebugObject, "checking active object %u on %u", inv->id, _dstObject->id);
 
 	//mouse time challenge hack:
-	if ((res->dseg.get_byte(0) == 1 && inv->id == 49 && dst_object->id == 5) ||
-	    (res->dseg.get_byte(0) == 2 && inv->id == 29 && dst_object->id == 5)) {
+	if ((res->dseg.get_byte(0) == 1 && inv->id == 49 && _dstObject->id == 5) ||
+	    (res->dseg.get_byte(0) == 2 && inv->id == 29 && _dstObject->id == 5)) {
 		//putting rock into hole or superglue on rock
 		fnPutRockInHole();
 		return true;
 	}
 
-	const Common::Array<UseHotspot> &hotspots = use_hotspots[scene->getId() - 1];
+	const Common::Array<UseHotspot> &hotspots = _useHotspots[scene->getId() - 1];
 	for (uint i = 0; i < hotspots.size(); ++i) {
 		const UseHotspot &spot = hotspots[i];
-		if (spot.inventory_id == inv->id && dst_object->id == spot.object_id) {
+		if (spot.inventory_id == inv->id && _dstObject->id == spot.object_id) {
 			debugC(0, kDebugObject, "use object on hotspot!");
 			spot.dump();
 			if (spot.actor_x != 0xffff && spot.actor_y != 0xffff)
@@ -129,20 +129,20 @@ bool TeenAgentEngine::trySelectedObject() {
 }
 
 void TeenAgentEngine::processObject() {
-	if (dst_object == NULL)
+	if (_dstObject == NULL)
 		return;
 
-	switch (action) {
+	switch (_action) {
 	case kActionExamine: {
 		if (trySelectedObject())
 			break;
 
 		byte *dcall = res->dseg.ptr(0xb5ce);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
-		dcall += 2 * dst_object->id - 2;
+		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (callback == 0 || !processCallback(callback))
-			displayMessage(dst_object->description);
+			displayMessage(_dstObject->description);
 	}
 	break;
 	case kActionUse: {
@@ -151,10 +151,10 @@ void TeenAgentEngine::processObject() {
 
 		byte *dcall = res->dseg.ptr(0xb89c);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
-		dcall += 2 * dst_object->id - 2;
+		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (!processCallback(callback))
-			displayMessage(dst_object->description);
+			displayMessage(_dstObject->description);
 	}
 	break;
 
@@ -167,11 +167,11 @@ void TeenAgentEngine::use(Object *object) {
 	if (object == NULL || scene->eventRunning())
 		return;
 
-	dst_object = object;
+	_dstObject = object;
 	object->rect.dump();
 	object->actor_rect.dump();
 
-	action = kActionUse;
+	_action = kActionUse;
 	if (object->actor_rect.valid())
 		scene->moveTo(Common::Point(object->actor_rect.right, object->actor_rect.bottom), object->actor_orientation);
 	else if (object->actor_orientation > 0)
@@ -185,27 +185,27 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 	if (object != NULL) {
 		Common::Point dst = object->actor_rect.center();
 		debugC(0, kDebugObject, "click %d, %d, object %d, %d", point.x, point.y, dst.x, dst.y);
-		action = kActionExamine;
+		_action = kActionExamine;
 		if (object->actor_rect.valid())
 			scene->moveTo(dst, object->actor_orientation, true); // validate examine message. Original engine does not let you into walkboxes
-		dst_object = object;
-	} else if (!scene_busy) {
+		_dstObject = object;
+	} else if (!_sceneBusy) {
 		// do not reset anything while scene is busy, but allow interrupts while walking.
 		debugC(0, kDebugObject, "click %d, %d", point.x, point.y);
-		action = kActionNone;
+		_action = kActionNone;
 		scene->moveTo(point, 0, true);
-		dst_object = NULL;
+		_dstObject = NULL;
 	}
 }
 
 void TeenAgentEngine::init() {
-	_mark_delay = 80;
-	_game_delay = 110;
+	_markDelay = 80;
+	_gameDelay = 110;
 
-	use_hotspots.resize(42);
+	_useHotspots.resize(42);
 	byte *scene_hotspots = res->dseg.ptr(0xbb87);
 	for (byte i = 0; i < 42; ++i) {
-		Common::Array<UseHotspot> & hotspots = use_hotspots[i];
+		Common::Array<UseHotspot> & hotspots = _useHotspots[i];
 		byte *hotspots_ptr = res->dseg.ptr(READ_LE_UINT16(scene_hotspots + i * 2));
 		while (*hotspots_ptr) {
 			UseHotspot h;
@@ -559,7 +559,7 @@ Common::Error TeenAgentEngine::run() {
 		if (!showMetropolis())
 			return Common::kNoError;
 		scene->intro = true;
-		scene_busy = true;
+		_sceneBusy = true;
 		fnIntro();
 	}
 
@@ -579,7 +579,7 @@ Common::Error TeenAgentEngine::run() {
 			if (event.type == Common::EVENT_RTL)
 				return Common::kNoError;
 
-			if ((!scene_busy && inventory->processEvent(event)) || scene->processEvent(event))
+			if ((!_sceneBusy && inventory->processEvent(event)) || scene->processEvent(event))
 				continue;
 
 			debug(5, "event");
@@ -591,8 +591,8 @@ Common::Error TeenAgentEngine::run() {
 				} else if (event.kbd.hasFlags(0) && event.kbd.keycode == Common::KEYCODE_F5) {
 					openMainMenuDialog();
 				} if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
-					_mark_delay = _mark_delay == 80 ? 40 : 80;
-					debug(5, "mark_delay = %u", _mark_delay);
+					_markDelay = _markDelay == 80 ? 40 : 80;
+					debug(5, "markDelay = %u", _markDelay);
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -636,28 +636,28 @@ Common::Error TeenAgentEngine::run() {
 
 		bool tick_game = game_timer <= delta;
 		if (tick_game)
-			game_timer = _game_delay - ((delta - game_timer) % _game_delay);
+			game_timer = _gameDelay - ((delta - game_timer) % _gameDelay);
 		else
 			game_timer -= delta;
 
 		bool tick_mark = mark_timer <= delta;
 		if (tick_mark)
-			mark_timer = _mark_delay - ((delta - mark_timer) % _mark_delay);
+			mark_timer = _markDelay - ((delta - mark_timer) % _markDelay);
 		else
 			mark_timer -= delta;
 
 		if (tick_game || tick_mark) {
 			bool b = scene->render(tick_game, tick_mark, delta);
-			if (!inventory->active() && !b && action != kActionNone) {
+			if (!inventory->active() && !b && _action != kActionNone) {
 				processObject();
-				action = kActionNone;
-				dst_object = NULL;
+				_action = kActionNone;
+				_dstObject = NULL;
 			}
-			scene_busy = b;
+			_sceneBusy = b;
 		}
-		_system->showMouse(scene->getMessage().empty() && !scene_busy);
+		_system->showMouse(scene->getMessage().empty() && !_sceneBusy);
 
-		bool busy = inventory->active() || scene_busy;
+		bool busy = inventory->active() || _sceneBusy;
 
 		Graphics::Surface *surface = _system->lockScreen();
 
@@ -749,26 +749,26 @@ void TeenAgentEngine::displayMessage(uint16 addr, byte color, uint16 x, uint16 y
 	displayMessage(parseMessage(addr), color, x, y);
 }
 
-void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 first_frame, uint16 last_frame, byte color) {
+void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, byte color) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
 	event.slot = 0;
 	event.color = color;
 	event.dst.x = x;
 	event.dst.y = y;
-	event.first_frame = first_frame;
-	event.last_frame = last_frame;
+	event.first_frame = firstFrame;
+	event.last_frame = lastFrame;
 
 	scene->push(event);
 }
 
-void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 first_frame, uint16 last_frame, byte color) {
+void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
 	event.slot = slot + 1;
 	event.color = color;
-	event.first_frame = first_frame;
-	event.last_frame = last_frame;
+	event.first_frame = firstFrame;
+	event.last_frame = lastFrame;
 
 	scene->push(event);
 }
@@ -895,21 +895,21 @@ void TeenAgentEngine::enableOn(bool enable) {
 	scene->push(event);
 }
 
-void TeenAgentEngine::setOns(byte id, byte value, byte scene_id) {
+void TeenAgentEngine::setOns(byte id, byte value, byte sceneId) {
 	SceneEvent event(SceneEvent::kSetOn);
 	event.ons = id + 1;
 	event.color = value;
-	event.scene = scene_id;
+	event.scene = sceneId;
 	scene->push(event);
 }
 
-void TeenAgentEngine::setLan(byte id, byte value, byte scene_id) {
+void TeenAgentEngine::setLan(byte id, byte value, byte sceneId) {
 	if (id == 0)
 		error("setting lan 0 is invalid");
 	SceneEvent event(SceneEvent::kSetLan);
 	event.lan = id;
 	event.color = value;
-	event.scene = scene_id;
+	event.scene = sceneId;
 	scene->push(event);
 }
 
@@ -936,28 +936,28 @@ void TeenAgentEngine::playMusic(byte id) {
 	scene->push(event);
 }
 
-void TeenAgentEngine::playSound(byte id, byte skip_frames) {
-	if (skip_frames > 0)
-		--skip_frames;
+void TeenAgentEngine::playSound(byte id, byte skipFrames) {
+	if (skipFrames > 0)
+		--skipFrames;
 	SceneEvent event(SceneEvent::kPlaySound);
 	event.sound = id;
-	event.color = skip_frames;
+	event.color = skipFrames;
 	scene->push(event);
 }
 
-void TeenAgentEngine::enableObject(byte id, byte scene_id) {
+void TeenAgentEngine::enableObject(byte id, byte sceneId) {
 	SceneEvent event(SceneEvent::kEnableObject);
 	event.object = id + 1;
 	event.color = 1;
-	event.scene = scene_id;
+	event.scene = sceneId;
 	scene->push(event);
 }
 
-void TeenAgentEngine::disableObject(byte id, byte scene_id) {
+void TeenAgentEngine::disableObject(byte id, byte sceneId) {
 	SceneEvent event(SceneEvent::kEnableObject);
 	event.object = id + 1;
 	event.color = 0;
-	event.scene = scene_id;
+	event.scene = sceneId;
 	scene->push(event);
 }
 
