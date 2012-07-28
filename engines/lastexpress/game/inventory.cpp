@@ -28,6 +28,7 @@
 
 #include "lastexpress/game/entities.h"
 #include "lastexpress/game/logic.h"
+#include "lastexpress/game/savegame.h"
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 
@@ -45,7 +46,7 @@
 namespace LastExpress {
 
 Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItemIndex(0), _itemsShown(0),
-	_showingHourGlass(false), _blinkingEgg(false), _blinkingTime(0), _blinkingInterval(_defaultBlinkingInterval), _blinkingBrightness(1),
+	_showingHourGlass(false), _blinkingDirection(1), _blinkingBrightness(0),
 	_useMagnifier(false), _portraitHighlighted(false), _isOpened(false), _eggHightlighted(false), _itemScene(NULL) {
 
 	//_inventoryRect = Common::Rect(0, 0, 32, 32);
@@ -163,13 +164,11 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 			getMenu()->show(true, kSavegameTypeIndex, 0);
 
-		} else if (ev.type == Common::EVENT_RBUTTONDOWN) {
-			if (getGlobalTimer()) {
-				if (getSoundQueue()->isBuffered("TIMER"))
-					getSoundQueue()->removeFromQueue("TIMER");
+		} else if (ev.type == Common::EVENT_RBUTTONDOWN && getGlobalTimer()) {
+			if (getSoundQueue()->isBuffered("TIMER"))
+				getSoundQueue()->removeFromQueue("TIMER");
 
-				setGlobalTimer(900);
-			}
+			setGlobalTimer(900);
 		}
 	}
 
@@ -181,7 +180,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 				if (_highlightedItemIndex)
 					drawHighlight(_highlightedItemIndex, true);
 			} else {
-				// The user released the mouse button, we need to update the inventory state (clear hightlight and items)
+				// The user released the mouse button, we need to update the inventory state (clear highlight and items)
 				drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
 				_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(40 * _itemsShown + 40)));
 				_isOpened = false;
@@ -227,12 +226,11 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 				if (getFlags()->mouseLeftPressed) {
 					if (getState()->sceneUseBackup) {
-						if (getState()->sceneBackup2
-						 && getFirstExaminableItem() == _selectedItem) {
-							 SceneIndex sceneIndex = getState()->sceneBackup2;
-							 getState()->sceneBackup2 = kSceneNone;
+						if (getState()->sceneBackup2 && getFirstExaminableItem() == _selectedItem) {
+							SceneIndex sceneIndex = getState()->sceneBackup2;
+							getState()->sceneBackup2 = kSceneNone;
 
-							 getScenes()->loadScene(sceneIndex);
+							getScenes()->loadScene(sceneIndex);
 						}
 					} else {
 						getState()->sceneBackup = getState()->scene;
@@ -622,37 +620,48 @@ void Inventory::drawEgg() const {
 }
 
 // Blinking egg: we need to blink the egg for delta time, with the blinking getting faster until it's always lit.
-void Inventory::drawBlinkingEgg() {
+void Inventory::drawBlinkingEgg(uint ticks) {
+	uint globalTimer = getGlobalTimer();
+	uint timerValue = (getProgress().jacket == kJacketGreen) ? 450 : 225;
 
-	warning("[Inventory::drawBlinkingEgg] Blinking not implemented");
+	if (globalTimer == timerValue || globalTimer == 900) {
+		_blinkingBrightness = 0;
+		_blinkingDirection = 1;
+	}
 
-	//// TODO show egg (with or without mouseover)
+	globalTimer = globalTimer <= ticks ? 0 : globalTimer - ticks;
+	setGlobalTimer(globalTimer);
 
-	//// Play timer sound
-	//if (getGlobalTimer() < 90) {
-	//	if (getGlobalTimer() + ticks >= 90)
-	//		getSound()->playSoundWithSubtitles("TIMER.SND", 50331664, kEntityPlayer);
+	if (getFlags()->flag_0
+	|| (globalTimer % 5) == 0
+	|| (globalTimer <= 500 && (globalTimer % ((globalTimer + 100) / 100)) == 0))
+		blinkEgg();
 
-	//	if (getSoundQueue()->isBuffered("TIMER"))
-	//		setGlobalTimer(0);
-	//}
+	if (globalTimer < 90) {
+		if ((globalTimer + ticks) >= 90)
+			getSound()->playSoundWithSubtitles("TIMER", (SoundFlag)(kFlagType13|kFlagDefault), kEntityPlayer);
 
-	//// Restore egg to standard brightness
-	//if (!getGlobalTimer()) {
-	//
-	//}
+		if (!getSoundQueue()->isBuffered("TIMER"))
+			setGlobalTimer(0);
+	}
 
+	if (globalTimer == 0) {
+		drawItem((CursorStyle)(getMenu()->getGameId() + 39), 608, 448, _menuEggRect.contains(getCoords()) ? 1 : -1);
 
-	//drawItem(608, 448, getMenu()->getGameId() + 39, _blinkingBrightness)
+		askForRedraw();
 
-	//// TODO if delta time > _blinkingInterval, update egg & ask for redraw then adjust blinking time and remaining time
-	//
+		getSaveLoad()->saveGame(kSavegameTypeAuto, kEntityChapters, 0);
+	}
+}
 
-	//// Reset values and stop blinking
-	//if (_blinkingTime == 0)
-	//	blinkEgg(false);
+void Inventory::blinkEgg() {
+	drawItem((CursorStyle)(getMenu()->getGameId() + 39), 608, 448, (_blinkingBrightness == 0) ? -1 : _blinkingBrightness);
 
 	askForRedraw();
+
+	_blinkingBrightness += _blinkingDirection;
+	if (_blinkingBrightness == 0 || _blinkingBrightness == 3)
+		_blinkingDirection = -_blinkingDirection;
 }
 
 void Inventory::drawItem(CursorStyle id, uint16 x, uint16 y, int16 brightnessIndex) const {

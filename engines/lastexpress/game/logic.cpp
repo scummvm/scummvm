@@ -313,7 +313,7 @@ void Logic::eventTick(const Common::Event &) {
 	//////////////////////////////////////////////////////////////////////////
 	// Draw the blinking egg if needed
 	if (getGlobalTimer() && !getFlags()->shouldDrawEggOrHourGlass)
-		getInventory()->drawBlinkingEgg();
+		getInventory()->drawBlinkingEgg(ticks);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Adjust time and save game if needed
