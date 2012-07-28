@@ -663,8 +663,17 @@ const uint16 dsAddr_currentScene = 0xb4f3; // 1 byte
 // Ons Animation Table (2 byte address * ??) : 0xb4f5 to 0x????
 const uint16 dsAddr_onsAnimationTablePtr = 0xb4f5;
 
+// Examine Object Callback Table (2 byte LE address * ??) : 0xb5ce to 0x????
+const uint16 dsAddr_objExamineCallbackTablePtr = 0xb5ce;
+
+// Use Object Callback Table (2 byte LE address * ??) : 0xb89c to 0x????
+const uint16 dsAddr_objUseCallbackTablePtr = 0xb89c;
+
 // Inventory Object Callback Table (3 byte (id, callbackAddr) * 7) : 0xbb72 to 0xbb86
 const uint16 dsAddr_objCallbackTablePtr = 0xbb72;
+
+// Scene Hotspots Table (2 byte LE address * ??) : 0xbb87 to 0x????
+const uint16 dsAddr_sceneHotspotsPtr = 0xbb87;
 
 // Inventory Object Combining Table (5 byte (id, id, new object id, msgAddr) * 34) : 0xc335 to 0xc3de
 const uint16 dsAddr_objCombiningTablePtr = 0xc335;

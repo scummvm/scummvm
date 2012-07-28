@@ -100,8 +100,8 @@ bool TeenAgentEngine::trySelectedObject() {
 	debugC(0, kDebugObject, "checking active object %u on %u", inv->id, _dstObject->id);
 
 	//mouse time challenge hack:
-	if ((res->dseg.get_byte(0) == 1 && inv->id == 49 && _dstObject->id == 5) ||
-	    (res->dseg.get_byte(0) == 2 && inv->id == 29 && _dstObject->id == 5)) {
+	if ((res->dseg.get_byte(0x0000) == 1 && inv->id == 49 && _dstObject->id == 5) ||
+	    (res->dseg.get_byte(0x0000) == 2 && inv->id == 29 && _dstObject->id == 5)) {
 		//putting rock into hole or superglue on rock
 		fnPutRockInHole();
 		return true;
@@ -137,7 +137,7 @@ void TeenAgentEngine::processObject() {
 		if (trySelectedObject())
 			break;
 
-		byte *dcall = res->dseg.ptr(0xb5ce);
+		byte *dcall = res->dseg.ptr(dsAddr_objExamineCallbackTablePtr);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
@@ -149,7 +149,7 @@ void TeenAgentEngine::processObject() {
 		if (trySelectedObject())
 			break;
 
-		byte *dcall = res->dseg.ptr(0xb89c);
+		byte *dcall = res->dseg.ptr(dsAddr_objUseCallbackTablePtr);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
@@ -203,14 +203,14 @@ void TeenAgentEngine::init() {
 	_gameDelay = 110;
 
 	_useHotspots.resize(42);
-	byte *scene_hotspots = res->dseg.ptr(0xbb87);
+	byte *sceneHotspots = res->dseg.ptr(dsAddr_sceneHotspotsPtr);
 	for (byte i = 0; i < 42; ++i) {
 		Common::Array<UseHotspot> & hotspots = _useHotspots[i];
-		byte *hotspots_ptr = res->dseg.ptr(READ_LE_UINT16(scene_hotspots + i * 2));
-		while (*hotspots_ptr) {
+		byte *hotspotsPtr = res->dseg.ptr(READ_LE_UINT16(sceneHotspots + i * 2));
+		while (*hotspotsPtr) {
 			UseHotspot h;
-			h.load(hotspots_ptr);
-			hotspots_ptr += 9;
+			h.load(hotspotsPtr);
+			hotspotsPtr += 9;
 			hotspots.push_back(h);
 		}
 	}
@@ -609,11 +609,11 @@ Common::Error TeenAgentEngine::run() {
 				if (current_object == NULL)
 					break;
 
-				if (res->dseg.get_byte(0) == 3 && current_object->id == 1) {
+				if (res->dseg.get_byte(0x0000) == 3 && current_object->id == 1) {
 					fnGuardDrinking();
 					break;
 				}
-				if (res->dseg.get_byte(0) == 4 && current_object->id == 5) {
+				if (res->dseg.get_byte(0x0000) == 4 && current_object->id == 5) {
 					fnGotAnchor();
 					break;
 				}

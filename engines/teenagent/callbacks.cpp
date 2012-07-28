@@ -124,7 +124,7 @@ void TeenAgentEngine::fnPoleClimbFail() {
 }
 
 void TeenAgentEngine::fnGotAnchor() {
-	SET_FLAG(0, 0);
+	SET_FLAG(0x0000, 0);
 	setTimerCallback(0, 0);
 	scene->getActorAnimation()->free();
 	playSound(64, 7);
@@ -148,7 +148,7 @@ void TeenAgentEngine::fnGetOutOfLake() {
 }
 
 void TeenAgentEngine::fnGuardDrinking() {
-	SET_FLAG(0, 0);
+	SET_FLAG(0x0000, 0);
 	setTimerCallback(0, 0);
 	scene->getAnimation(0)->free();
 	SET_FLAG(0xdb9c, 1);
@@ -225,7 +225,7 @@ void TeenAgentEngine::fnPutRockInHole() {
 		playActorAnimation(638);
 		inventory->remove(48);
 		setTimerCallback(0x8d79, 100);
-		SET_FLAG(0, 1);
+		SET_FLAG(0x0000, 1);
 	} else if (CHECK_FLAG(0, 1)) {
 		playSound(5, 2);
 		playSound(52, 13);
@@ -233,7 +233,7 @@ void TeenAgentEngine::fnPutRockInHole() {
 		setOns(1, 46);
 		inventory->remove(49);
 		setTimerCallback(0x8d79, 100);
-		SET_FLAG(0, 2);
+		SET_FLAG(0x0000, 2);
 	} else if (CHECK_FLAG(0, 2)) {
 		playActorAnimation(649);
 		setOns(1, 47);
@@ -245,7 +245,7 @@ void TeenAgentEngine::fnPutRockInHole() {
 		enableObject(6);
 		disableObject(5);
 		SET_FLAG(0xdbab, 1);
-		SET_FLAG(0, 0);
+		SET_FLAG(0x0000, 0);
 		setTimerCallback(0, 0);
 	}
 }
@@ -1144,14 +1144,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		loadScene(11, 319, 198, 4);
 		if (!CHECK_FLAG(0xdb9c, 1)) {
 			// guard is drinking
-			SET_FLAG(0, 3);
+			SET_FLAG(0x0000, 3);
 			setTimerCallback(0x516d, 40);
 			playAnimation(544, 0, true, true); // ignore busy flag for this animation
 		}
 		break;
 
 	case 0x516d: // too late to scare guard, resetting
-		SET_FLAG(0, 0);
+		SET_FLAG(0x0000, 0);
 		break;
 
 	case csAddr_guardDrinking:
@@ -3140,7 +3140,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			enableObject(4, 27);
 			SET_FLAG(0xdba9, 0);
 		}
-		SET_FLAG(0, 0);
+		SET_FLAG(0x0000, 0);
 		break;
 
 	case csAddr_putRockInHole:
@@ -4133,7 +4133,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(20, 26);
 				playActorAnimation(615);
 				loadScene(17, 156, 180, 3);
-				SET_FLAG(0, 4);
+				SET_FLAG(0x0000, 4);
 				playSound(64, 7);
 				playSound(64, 21);
 				playSound(64, 42);
@@ -4145,7 +4145,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x9a1d: // no anchor, timeout
-		SET_FLAG(0, 0);
+		SET_FLAG(0x0000, 0);
 		fnGetOutOfLake();
 		INC_FLAG(0xdba6);
 		switch (GET_FLAG(0xdba6)) {
