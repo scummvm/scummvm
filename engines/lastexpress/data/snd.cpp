@@ -378,7 +378,7 @@ public:
 
 				// Get current filter
 				_currentFilterId = _nextFilterId;
-				_nextFilterId = -1;
+				//_nextFilterId = -1; // FIXME: the filter id should be recomputed based on the sound entry status for each block
 
 				// No filter: skip decoding
 				if (_currentFilterId == -1)
