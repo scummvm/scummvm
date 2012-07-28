@@ -224,7 +224,7 @@ void TeenAgentEngine::fnPutRockInHole() {
 		playSound(15, 12);
 		playActorAnimation(638);
 		inventory->remove(48);
-		setTimerCallback(0x8d79, 100);
+		setTimerCallback(csAddr_mouseOutOfHoleTimeout, 100);
 		SET_FLAG(0x0000, 1);
 	} else if (CHECK_FLAG(0, 1)) {
 		playSound(5, 2);
@@ -232,7 +232,7 @@ void TeenAgentEngine::fnPutRockInHole() {
 		playActorAnimation(648);
 		setOns(1, 46);
 		inventory->remove(49);
-		setTimerCallback(0x8d79, 100);
+		setTimerCallback(csAddr_mouseOutOfHoleTimeout, 100);
 		SET_FLAG(0x0000, 2);
 	} else if (CHECK_FLAG(0, 2)) {
 		playActorAnimation(649);
@@ -1145,12 +1145,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (!CHECK_FLAG(0xdb9c, 1)) {
 			// guard is drinking
 			SET_FLAG(0x0000, 3);
-			setTimerCallback(0x516d, 40);
+			setTimerCallback(csAddr_guardScareTimeout, 40);
 			playAnimation(544, 0, true, true); // ignore busy flag for this animation
 		}
 		break;
 
-	case 0x516d: // too late to scare guard, resetting
+	case csAddr_guardScareTimeout: // too late to scare guard, resetting
 		SET_FLAG(0x0000, 0);
 		break;
 
@@ -3116,7 +3116,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		scene->getObject(3)->save();
 		break;
 
-	case 0x8d79: // mouse falls back from the hole (cave)
+	case csAddr_mouseOutOfHoleTimeout: // mouse falls back from the hole (cave)
 		if (CHECK_FLAG(0, 1)) {
 			inventory->add(48);
 			playSound(24, 26);
@@ -4138,13 +4138,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(64, 21);
 				playSound(64, 42);
 				playSound(64, 63);
-				setTimerCallback(0x9a1d, 30);
+				setTimerCallback(csAddr_noAnchorTimeout, 30);
 				playActorAnimation(617, false, true);
 			}
 		}
 		break;
 
-	case 0x9a1d: // no anchor, timeout
+	case csAddr_noAnchorTimeout: // no anchor, timeout
 		SET_FLAG(0x0000, 0);
 		fnGetOutOfLake();
 		INC_FLAG(0xdba6);

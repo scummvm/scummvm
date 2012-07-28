@@ -38,6 +38,8 @@ const uint16 csAddr_intro = 0x024c;
 const uint16 csAddr_poleClimbFail = 0x4173;
 // Move Ego (Mark) To Suspicious Position function : 0x505c
 const uint16 csAddr_egoSuspiciousPosition = 0x505c;
+// Guard Scare Timeout function : 0x516d
+const uint16 csAddr_guardScareTimeout = 0x516d;
 // Guard Drinking function : 0x5189
 const uint16 csAddr_guardDrinking = 0x5189;
 // Move Ego (Mark) To Default Position function : 0x557e
@@ -72,12 +74,16 @@ const uint16 csAddr_givingFlowerToAnne = 0x8942;
 const uint16 csAddr_giveAnotherFlowerToAnne = 0x89aa;
 // Putting Rock in Hole function : 0x8d57
 const uint16 csAddr_putRockInHole = 0x8d57;
+// Mouse Out Of Hole Timeout function : 0x8d79
+const uint16 csAddr_mouseOutOfHoleTimeout = 0x8d79;
 // Robot Safe (Mike) Already Unlocked Check function : 0x9166
 const uint16 csAddr_robotSafeAlreadyUnlockedCheck = 0x9166;
 // Robot Safe (Mike) Unlock Check function : 0x9175
 const uint16 csAddr_robotSafeUnlockCheck = 0x9175;
 // Successfully Got Anchor function : 0x99e0
 const uint16 csAddr_gotAnchor = 0x99e0;
+// No Anchor Timeout function : 0x9a1d
+const uint16 csAddr_noAnchorTimeout = 0x9a1d;
 // Get Out of Lake function : 0x9a7a
 const uint16 csAddr_getOutOfLake = 0x9a7a;
 // Mansion Intrusion Attempt function : 0x9d45
