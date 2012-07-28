@@ -220,7 +220,7 @@ void BaseRegistry::loadXml(const AnsiString fileName, PathValueMap &values) {
 	stream->read(data, stream->size());
 	TiXmlDocument doc;
 	doc.Parse(data);
-	delete data;
+	delete[] data;
 
 	TiXmlElement *rootElem = doc.RootElement();
 	if (!rootElem || Common::String(rootElem->Value()) != "Settings") { // TODO: Avoid this strcmp-use. (Hack for now, since we might drop TinyXML all together)

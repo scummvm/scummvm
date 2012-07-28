@@ -1102,10 +1102,8 @@ void AdEntity::setItem(const char *itemName) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::setSprite(const char *filename) {
-	bool setCurrent = false;
 	if (_currentSprite == _sprite) {
 		_currentSprite = NULL;
-		setCurrent = true;
 	}
 
 	delete _sprite;

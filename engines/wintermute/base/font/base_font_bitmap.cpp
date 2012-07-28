@@ -371,7 +371,7 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 
 		case TOKEN_WIDTHS:
 			parser.scanStr(params, "%D", widths, &num);
-			for (i = 0; lastWidth < NUM_CHARACTERS, num > 0; lastWidth++, num--, i++) {
+			for (i = 0; lastWidth < NUM_CHARACTERS && num > 0; lastWidth++, num--, i++) {
 				_widths[lastWidth] = (byte)widths[i];
 			}
 			break;

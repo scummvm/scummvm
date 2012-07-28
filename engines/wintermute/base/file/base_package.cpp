@@ -169,7 +169,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 
 		for (uint32 j = 0; j < numFiles; j++) {
 			char *name;
-			uint32 offset, length, compLength, flags, timeDate1, timeDate2;
+			uint32 offset, length, compLength, flags;/*, timeDate1, timeDate2;*/
 
 			nameLength = stream->readByte();
 			name = new char[nameLength];
@@ -195,8 +195,8 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			flags = stream->readUint32LE();
 
 			if (hdr._packageVersion == PACKAGE_VERSION) {
-				timeDate1 = stream->readUint32LE();
-				timeDate2 = stream->readUint32LE();
+				/* timeDate1 = */ stream->readUint32LE();
+				/* timeDate2 = */ stream->readUint32LE();
 			}
 			_filesIter = _files.find(upcName);
 			if (_filesIter == _files.end()) {

@@ -394,12 +394,13 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	// TODO: This actually requires us to have the SAME source-offsets every time,
 	// But no checking is in place for that yet.
 
-	bool hasAlpha;
+	// TODO: Optimize by not doing alpha-blits if we lack or disable alpha
+/*	bool hasAlpha;
 	if (_hasAlpha && !alphaDisable) {
 		hasAlpha = true;
 	} else {
 		hasAlpha = false;
-	}
+	}*/
 	if (alphaDisable) {
 		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
 	}

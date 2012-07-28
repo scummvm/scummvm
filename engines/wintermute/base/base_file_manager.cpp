@@ -269,8 +269,9 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 bool BaseFileManager::hasFile(const Common::String &filename) {
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
 		BasePersistenceManager pm(_gameRef);
-		if (filename.size() < 9)
+		if (filename.size() <= 9) {
 			return false;
+		}
 		int slot = atoi(filename.c_str() + 9);
 		return pm.getSaveExists(slot);
 	}
