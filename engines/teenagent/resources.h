@@ -703,6 +703,17 @@ const uint16 dsAddr_currentMusic = 0xdb90; // 1 byte
 // Light On Flag : 0xdba4
 const uint16 dsAddr_lightOnFlag = 0xdba4; // 1 byte
 
+
+// Mouse Hole State : 0xdba9, 0 = Mouse Gone, 1 = Mouse Trapped, 2 = Mouse Success(?)
+const uint16 dsAddr_mouseHoleState = 0xdba9; // 1 byte
+// Mouse Nerve Message Said Flag : 0xdbaa
+const uint16 dsAddr_mouseNerveMsgSaidFlag = 0xdbaa; // 1 byte
+// Mouse Already Got Gold Nugget Flag : 0xdbab
+const uint16 dsAddr_mouseGotGoldNuggetFlag = 0xdbab; // 1 byte
+
+// Graffiti Message Id : 0xdbdb, 0 to 6
+const uint16 dsAddr_graffitiMsgId = 0xdbdb; // 1 byte
+
 // Captain Drawer State : 0xdbe6
 const uint16 dsAddr_captainDrawerState = 0xdbe6; // 1 byte
 

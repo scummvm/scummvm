@@ -219,14 +219,14 @@ void TeenAgentEngine::fnLeaveCellar() {
 }
 
 void TeenAgentEngine::fnPutRockInHole() {
-	if (CHECK_FLAG(0, 0)) {
+	if (CHECK_FLAG(0x0000, 0)) {
 		playSound(5, 2);
 		playSound(15, 12);
 		playActorAnimation(638);
 		inventory->remove(48);
 		setTimerCallback(csAddr_mouseOutOfHoleTimeout, 100);
 		SET_FLAG(0x0000, 1);
-	} else if (CHECK_FLAG(0, 1)) {
+	} else if (CHECK_FLAG(0x0000, 1)) {
 		playSound(5, 2);
 		playSound(52, 13);
 		playActorAnimation(648);
@@ -234,7 +234,7 @@ void TeenAgentEngine::fnPutRockInHole() {
 		inventory->remove(49);
 		setTimerCallback(csAddr_mouseOutOfHoleTimeout, 100);
 		SET_FLAG(0x0000, 2);
-	} else if (CHECK_FLAG(0, 2)) {
+	} else if (CHECK_FLAG(0x0000, 2)) {
 		playActorAnimation(649);
 		setOns(1, 47);
 		wait(300);
@@ -244,7 +244,7 @@ void TeenAgentEngine::fnPutRockInHole() {
 		setOns(0, 42);
 		enableObject(6);
 		disableObject(5);
-		SET_FLAG(0xdbab, 1);
+		SET_FLAG(dsAddr_mouseGotGoldNuggetFlag, 1);
 		SET_FLAG(0x0000, 0);
 		setTimerCallback(0, 0);
 	}
@@ -1375,7 +1375,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x65c3:
-		if (CHECK_FLAG(0xdba9, 1)) {
+		if (CHECK_FLAG(dsAddr_mouseHoleState, 1)) {
 			playActorAnimation(635);
 			setOns(5, 0);
 			playSound(63, 11);
@@ -1386,7 +1386,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			inventory->add(48);
 			moveTo(scene->getPosition().x - 1, 139, 1, true);
 			displayMessage(dsAddr_yikesMsg); // "Yikes!"
-			SET_FLAG(0xdba9, 2);
+			SET_FLAG(dsAddr_mouseHoleState, 2);
 			SET_FLAG(0xdba8, 0);
 		} else
 			displayMessage(dsAddr_noSearchWarrantMsg); // "I don't have a search-warrant"
@@ -1401,9 +1401,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x7878:
 		{
-			byte v = res->dseg.get_byte(0xdbdb) + 1;
+			byte v = res->dseg.get_byte(dsAddr_graffitiMsgId) + 1;
 			if (v <= 6)
-				SET_FLAG(0xdbdb, v);
+				SET_FLAG(dsAddr_graffitiMsgId, v);
 
 			switch (v) {
 			case 1:
@@ -3117,7 +3117,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case csAddr_mouseOutOfHoleTimeout: // mouse falls back from the hole (cave)
-		if (CHECK_FLAG(0, 1)) {
+		if (CHECK_FLAG(0x0000, 1)) {
 			inventory->add(48);
 			playSound(24, 26);
 			playActorAnimation(650, true);
@@ -3138,7 +3138,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			inventory->add(49);
 			setLan(2, 4, 27);
 			enableObject(4, 27);
-			SET_FLAG(0xdba9, 0);
+			SET_FLAG(dsAddr_mouseHoleState, 0);
 		}
 		SET_FLAG(0x0000, 0);
 		break;
@@ -3183,7 +3183,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			waitAnimation();
 			disableObject(4);
 			displayMessage(dsAddr_trappedMouseMsg); // "The mouse is trapped!"
-			SET_FLAG(0xdba9, 1);
+			SET_FLAG(dsAddr_mouseHoleState, 1);
 		} else {
 			playActorAnimation(628, true);
 			playAnimation(630, 1, true);
@@ -3193,7 +3193,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x9054: // mouse hole
-		if (CHECK_FLAG(0xdbab, 1)) {
+		if (CHECK_FLAG(dsAddr_mouseGotGoldNuggetFlag, 1)) {
 			displayMessage(dsAddr_nonsenseMsg); // "Nonsense"
 		} else {
 			playSound(5, 11);
@@ -3204,8 +3204,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(633);
 			SET_FLAG(0xdba8, 1);
 			inventory->remove(47);
-			if (!CHECK_FLAG(0xdbaa, 1)) {
-				SET_FLAG(0xdbaa, 1);
+			if (!CHECK_FLAG(dsAddr_mouseNerveMsgSaidFlag, 1)) {
+				SET_FLAG(dsAddr_mouseNerveMsgSaidFlag, 1);
 				displayMessage(dsAddr_mouseNerveMsg); // "Boy, this mouse has some nerve!"
 			}
 		}
