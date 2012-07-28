@@ -62,11 +62,11 @@ public:
 	bool _freezable;
 	bool resume();
 	bool pause();
-	bool canHandleEvent(const char *eventName);
-	bool canHandleMethod(const char *methodName);
-	bool createThread(ScScript *original, uint32 initIP, const char *eventName);
-	bool createMethodThread(ScScript *original, const char *methodName);
-	ScScript *invokeEventHandler(const char *eventName, bool unbreakable = false);
+	bool canHandleEvent(const Common::String &eventName);
+	bool canHandleMethod(const Common::String &methodName);
+	bool createThread(ScScript *original, uint32 initIP, const Common::String &eventName);
+	bool createMethodThread(ScScript *original, const Common::String &methodName);
+	ScScript *invokeEventHandler(const Common::String &eventName, bool unbreakable = false);
 	uint32 _timeSlice;
 	DECLARE_PERSISTENT(ScScript, BaseClass)
 	void runtimeError(const char *fmt, ...);
@@ -82,9 +82,9 @@ public:
 	TScriptState _state;
 	TScriptState _origState;
 	ScValue *getVar(char *name);
-	uint32 getFuncPos(const char *name);
-	uint32 getEventPos(const char *name);
-	uint32 getMethodPos(const char *name);
+	uint32 getFuncPos(const Common::String &name);
+	uint32 getEventPos(const Common::String &name);
+	uint32 getMethodPos(const Common::String &name);
 	typedef struct {
 		uint32 magic;
 		uint32 version;

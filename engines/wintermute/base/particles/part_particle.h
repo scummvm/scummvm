@@ -72,7 +72,7 @@ public:
 	bool update(PartEmitter *emitter, uint32 currentTime, uint32 timerDelta);
 	bool display(PartEmitter *emitter);
 
-	bool setSprite(const char *filename);
+	bool setSprite(const Common::String &filename);
 
 	bool fadeIn(uint32 currentTime, int fadeTime);
 	bool fadeOut(uint32 currentTime, int fadeTime);

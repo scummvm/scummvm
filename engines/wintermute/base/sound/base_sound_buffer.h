@@ -72,7 +72,7 @@ public:
 
 	void setType(Audio::Mixer::SoundType Type);
 
-	bool loadFromFile(const char *filename, bool forceReload = false);
+	bool loadFromFile(const Common::String &filename, bool forceReload = false);
 	void setStreaming(bool streamed, uint32 numBlocks = 0, uint32 blockSize = 0);
 	bool applyFX(TSFXType type, float param1, float param2, float param3, float param4);
 
@@ -89,7 +89,7 @@ public:
 	int _privateVolume;
 private:
 	uint32 _startPos;
-	char *_filename;
+	Common::String _filename;
 	bool _streamed;
 	Common::SeekableReadStream *_file;
 	int _volume;

@@ -53,7 +53,7 @@ public:
 	uint32 _volumeOriginal;
 	int _volumeMaster;
 	bool removeSound(BaseSoundBuffer *sound);
-	BaseSoundBuffer *addSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
+	BaseSoundBuffer *addSound(const Common::String &filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
 	bool addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
 	bool initialize();
 	bool _soundAvailable;

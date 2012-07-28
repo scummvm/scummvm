@@ -1247,10 +1247,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS) {
 			stack->pushNULL();
 		} else {
-			if (!_music[channel] || !_music[channel]->_soundFilename) {
+			if (!_music[channel] || !_music[channel]->getFilename()) {
 				stack->pushNULL();
 			} else {
-				stack->pushString(_music[channel]->_soundFilename);
+				stack->pushString(_music[channel]->getFilename());
 			}
 		}
 		return STATUS_OK;

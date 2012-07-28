@@ -124,10 +124,10 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 
 
 //////////////////////////////////////////////////////////////////////
-bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
+bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
 	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(filename);
 	if (!file) {
-		_gameRef->LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename);
+		_gameRef->LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename.c_str());
 		if (_gameRef->_debugDebugMode) {
 			return loadFile("invalid_debug.bmp", lifeTime, cacheType);
 		} else {
@@ -146,7 +146,7 @@ bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType c
 		BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
 		if (subframe->_surface == NULL) {
-			_gameRef->LOG(0, "Error loading simple sprite '%s'", filename);
+			_gameRef->LOG(0, "Error loading simple sprite '%s'", filename.c_str());
 			ret = STATUS_FAILED;
 			delete frame;
 			delete subframe;
@@ -161,13 +161,13 @@ bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType c
 		byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
-				_gameRef->LOG(0, "Error parsing SPRITE file '%s'", filename);
+				_gameRef->LOG(0, "Error parsing SPRITE file '%s'", filename.c_str());
 			}
 			delete[] buffer;
 		}
 	}
 
-	setFilename(filename);
+	setFilename(filename.c_str());
 
 	return ret;
 }

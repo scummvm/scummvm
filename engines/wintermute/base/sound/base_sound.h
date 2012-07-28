@@ -40,7 +40,6 @@ class BaseSoundBuffer;
 class BaseSound : public BaseClass {
 public:
 	bool setPan(float pan);
-	int _soundPrivateVolume;
 	int getVolume();
 	int getVolumePercent();
 	bool setVolumePercent(int percent);
@@ -49,31 +48,32 @@ public:
 	bool setLoopStart(uint32 pos);
 	uint32 getPositionTime();
 	bool setPositionTime(uint32 time);
-	bool _soundPaused;
-	bool _soundFreezePaused;
 	bool isPlaying();
 	bool isPaused();
-	bool _soundPlaying;
-	bool _soundLooping;
-	uint32 _soundLoopStart;
-	uint32 _soundPosition;
 	DECLARE_PERSISTENT(BaseSound, BaseClass)
 	bool resume();
 	bool pause(bool freezePaused = false);
 	bool stop();
 	bool play(bool looping = false);
 	uint32 getLength();
-	bool _soundStreamed;
-	Audio::Mixer::SoundType _soundType;
-	char *_soundFilename;
+	const char *getFilename() { return _soundFilename.c_str(); }
 	bool setSoundSimple();
-	bool setSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
+	bool setSound(const Common::String &filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
 	BaseSound(BaseGame *inGame);
 	virtual ~BaseSound();
 
 	bool applyFX(TSFXType type = SFX_NONE, float param1 = 0, float param2 = 0, float param3 = 0, float param4 = 0);
-
 private:
+	Common::String _soundFilename;
+	bool _soundStreamed;
+	Audio::Mixer::SoundType _soundType;
+	int _soundPrivateVolume;
+	uint32 _soundLoopStart;
+	uint32 _soundPosition;
+	bool _soundPlaying;
+	bool _soundLooping;
+	bool _soundPaused;
+	bool _soundFreezePaused;
 	TSFXType _sFXType;
 	float _sFXParam1;
 	float _sFXParam2;

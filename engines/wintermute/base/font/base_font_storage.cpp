@@ -71,13 +71,13 @@ bool BaseFontStorage::initLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseFont *BaseFontStorage::addFont(const char *filename) {
-	if (!filename) {
+BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
+	if (!filename.size()) {
 		return NULL;
 	}
 
 	for (int i = 0; i < _fonts.getSize(); i++) {
-		if (scumm_stricmp(_fonts[i]->getFilename(), filename) == 0) {
+		if (scumm_stricmp(_fonts[i]->getFilename(), filename.c_str()) == 0) {
 			_fonts[i]->_refCount++;
 			return _fonts[i];
 		}

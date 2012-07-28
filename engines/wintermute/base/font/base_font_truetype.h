@@ -105,7 +105,7 @@ public:
 	virtual int getLetterHeight();
 
 	bool loadBuffer(byte *buffer);
-	bool loadFile(const char *filename);
+	bool loadFile(const Common::String &filename);
 
 	float getLineHeight() const {
 		return _lineHeight;

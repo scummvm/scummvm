@@ -41,7 +41,7 @@ public:
 	bool _mirrorX;
 	bool _mirrorY;
 	bool _decoration;
-	bool setSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
+	bool setSurface(const Common::String &filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
 	bool setSurfaceSimple();
 	DECLARE_PERSISTENT(BaseSubFrame, BaseScriptable)
 	void setDefaultRect();

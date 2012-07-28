@@ -56,7 +56,7 @@ BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
 //	_sync = NULL;
 
 	_streamed = false;
-	_filename = NULL;
+	_filename = "";
 	_file = NULL;
 	_privateVolume = 255;
 	_volume = 255;
@@ -82,9 +82,6 @@ BaseSoundBuffer::~BaseSoundBuffer() {
 	}
 	delete _stream;
 	_stream = NULL;
-
-	delete[] _filename;
-	_filename = NULL;
 }
 
 
@@ -95,13 +92,13 @@ void BaseSoundBuffer::setStreaming(bool streamed, uint32 numBlocks, uint32 block
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
-	debugC(kWinterMuteDebugAudio, "BSoundBuffer::LoadFromFile(%s,%d)", filename, forceReload);
+bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceReload) {
+	debugC(kWinterMuteDebugAudio, "BSoundBuffer::LoadFromFile(%s,%d)", filename.c_str(), forceReload);
 
 	// Load a file, but avoid having the File-manager handle the disposal of it.
 	_file = _gameRef->_fileManager->openFile(filename, true, false);
 	if (!_file) {
-		_gameRef->LOG(0, "Error opening sound file '%s'", filename);
+		_gameRef->LOG(0, "Error opening sound file '%s'", filename.c_str());
 		return STATUS_FAILED;
 	}
 	Common::String strFilename(filename);
@@ -118,16 +115,16 @@ bool BaseSoundBuffer::loadFromFile(const char *filename, bool forceReload) {
 				_file = new Common::SeekableSubReadStream(_file, 0, waveSize);
 				_stream = Audio::makeRawStream(_file, waveRate, waveFlags, DisposeAfterUse::YES);
 			} else {
-				error("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s with type %d", filename, waveType);
+				error("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s with type %d", filename.c_str(), waveType);
 			}
 		}
 	} else {
-		error("BSoundBuffer::LoadFromFile - Unknown filetype for %s", filename);
+		error("BSoundBuffer::LoadFromFile - Unknown filetype for %s", filename.c_str());
 	}
 	if (!_stream) {
 		return STATUS_FAILED;
 	}
-	BaseUtils::setString(&_filename, filename);
+	_filename = filename;
 
 	return STATUS_OK;
 }

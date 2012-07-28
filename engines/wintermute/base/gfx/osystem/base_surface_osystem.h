@@ -41,7 +41,7 @@ public:
 	BaseSurfaceOSystem(BaseGame *inGame);
 	~BaseSurfaceOSystem();
 
-	bool create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false);
+	bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false);
 	bool create(int width, int height);
 
 	bool isTransparentAt(int x, int y);

@@ -594,7 +594,7 @@ const char *BaseSubFrame::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (_surface) {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
 		_surface = NULL;
@@ -605,8 +605,8 @@ bool BaseSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, 
 
 	_surface = _gameRef->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	if (_surface) {
-		_surfaceFilename = new char[strlen(filename) + 1];
-		strcpy(_surfaceFilename, filename);
+		_surfaceFilename = new char[filename.size() + 1];
+		strcpy(_surfaceFilename, filename.c_str());
 
 		_cKDefault = defaultCK;
 		_cKRed = ckRed;

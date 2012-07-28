@@ -151,7 +151,7 @@ bool BaseFont::persist(BasePersistenceManager *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const char *filename) {
+BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const Common::String &filename) {
 	if (isTrueType(gameRef,  filename)) {
 		BaseFontTT *font = new BaseFontTT(gameRef);
 		if (font) {
@@ -179,7 +179,7 @@ TOKEN_DEF(FONT)
 TOKEN_DEF(TTFONT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool BaseFont::isTrueType(BaseGame *gameRef, const char *filename) {
+bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONT)
 	TOKEN_TABLE(TTFONT)

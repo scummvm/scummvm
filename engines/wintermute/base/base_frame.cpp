@@ -367,8 +367,8 @@ bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "MOVE {%d, %d}\n", _moveX, _moveY);
 	}
 
-	if (_sound && _sound->_soundFilename) {
-		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sound->_soundFilename);
+	if (_sound && _sound->getFilename()) {
+		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sound->getFilename());
 	}
 
 	buffer->putTextIndent(indent + 2, "KEYFRAME=%s\n", _keyframe ? "TRUE" : "FALSE");
@@ -431,8 +431,8 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	if (strcmp(name, "GetSound") == 0) {
 		stack->correctParams(0);
 
-		if (_sound && _sound->_soundFilename) {
-			stack->pushString(_sound->_soundFilename);
+		if (_sound && _sound->getFilename()) {
+			stack->pushString(_sound->getFilename());
 		} else {
 			stack->pushNULL();
 		}

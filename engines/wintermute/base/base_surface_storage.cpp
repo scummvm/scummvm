@@ -100,17 +100,17 @@ bool BaseSurfaceStorage::removeSurface(BaseSurface *surface) {
 
 
 //////////////////////////////////////////////////////////////////////
-BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
-		if (scumm_stricmp(_surfaces[i]->getFileName(), filename) == 0) {
+		if (scumm_stricmp(_surfaces[i]->getFileName(), filename.c_str()) == 0) {
 			_surfaces[i]->_referenceCount++;
 			return _surfaces[i];
 		}
 	}
 
 	if (!_gameRef->_fileManager->hasFile(filename)) {
-		if (filename) {
-			_gameRef->LOG(0, "Missing image: '%s'", filename);
+		if (filename.size()) {
+			_gameRef->LOG(0, "Missing image: '%s'", filename.c_str());
 		}
 		if (_gameRef->_debugDebugMode) {
 			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);

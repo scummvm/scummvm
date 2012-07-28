@@ -277,14 +277,14 @@ bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScrip
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScScript::createThread(ScScript *original, uint32 initIP, const char *eventName) {
+bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::String &eventName) {
 	cleanup();
 
 	_thread = true;
 	_methodThread = false;
-	_threadEvent = new char[strlen(eventName) + 1];
+	_threadEvent = new char[eventName.size() + 1];
 	if (_threadEvent) {
-		strcpy(_threadEvent, eventName);
+		strcpy(_threadEvent, eventName.c_str());
 	}
 
 	// copy filename
@@ -329,7 +329,7 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const char *event
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScScript::createMethodThread(ScScript *original, const char *methodName) {
+bool ScScript::createMethodThread(ScScript *original, const Common::String &methodName) {
 	uint32 ip = original->getMethodPos(methodName);
 	if (ip == 0) {
 		return STATUS_FAILED;
@@ -339,9 +339,9 @@ bool ScScript::createMethodThread(ScScript *original, const char *methodName) {
 
 	_thread = true;
 	_methodThread = true;
-	_threadEvent = new char[strlen(methodName) + 1];
+	_threadEvent = new char[methodName.size() + 1];
 	if (_threadEvent) {
-		strcpy(_threadEvent, methodName);
+		strcpy(_threadEvent, methodName.c_str());
 	}
 
 	// copy filename
@@ -1149,9 +1149,9 @@ bool ScScript::executeInstruction() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 ScScript::getFuncPos(const char *name) {
+uint32 ScScript::getFuncPos(const Common::String &name) {
 	for (uint32 i = 0; i < _numFunctions; i++) {
-		if (strcmp(name, _functions[i].name) == 0) {
+		if (name == _functions[i].name) {
 			return _functions[i].pos;
 		}
 	}
@@ -1160,9 +1160,9 @@ uint32 ScScript::getFuncPos(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 ScScript::getMethodPos(const char *name) {
+uint32 ScScript::getMethodPos(const Common::String &name) {
 	for (uint32 i = 0; i < _numMethods; i++) {
-		if (strcmp(name, _methods[i].name) == 0) {
+		if (name == _methods[i].name) {
 			return _methods[i].pos;
 		}
 	}
@@ -1357,7 +1357,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScScript *ScScript::invokeEventHandler(const char *eventName, bool unbreakable) {
+ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unbreakable) {
 	//if (_state!=SCRIPT_PERSISTENT) return NULL;
 
 	uint32 pos = getEventPos(eventName);
@@ -1371,7 +1371,7 @@ ScScript *ScScript::invokeEventHandler(const char *eventName, bool unbreakable) 
 		if (DID_SUCCEED(ret)) {
 			thread->_unbreakable = unbreakable;
 			_engine->_scripts.add(thread);
-			_gameRef->getDebugMgr()->onScriptEventThreadInit(thread, this, eventName);
+			_gameRef->getDebugMgr()->onScriptEventThreadInit(thread, this, eventName.c_str());
 			return thread;
 		} else {
 			delete thread;
@@ -1385,9 +1385,9 @@ ScScript *ScScript::invokeEventHandler(const char *eventName, bool unbreakable) 
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 ScScript::getEventPos(const char *name) {
+uint32 ScScript::getEventPos(const Common::String &name) {
 	for (int i = _numEvents - 1; i >= 0; i--) {
-		if (scumm_stricmp(name, _events[i].name) == 0) {
+		if (scumm_stricmp(name.c_str(), _events[i].name) == 0) {
 			return _events[i].pos;
 		}
 	}
@@ -1396,13 +1396,13 @@ uint32 ScScript::getEventPos(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScScript::canHandleEvent(const char *eventName) {
+bool ScScript::canHandleEvent(const Common::String &eventName) {
 	return getEventPos(eventName) != 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScScript::canHandleMethod(const char *methodName) {
+bool ScScript::canHandleMethod(const Common::String &methodName) {
 	return getMethodPos(methodName) != 0;
 }
 

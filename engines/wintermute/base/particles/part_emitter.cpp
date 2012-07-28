@@ -403,11 +403,11 @@ bool PartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int 
 }
 
 //////////////////////////////////////////////////////////////////////////
-PartForce *PartEmitter::addForceByName(const char *name) {
+PartForce *PartEmitter::addForceByName(const Common::String &name) {
 	PartForce *force = NULL;
 
 	for (int i = 0; i < _forces.getSize(); i++) {
-		if (scumm_stricmp(name, _forces[i]->getName()) == 0) {
+		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
 			force = _forces[i];
 			break;
 		}
@@ -415,7 +415,7 @@ PartForce *PartEmitter::addForceByName(const char *name) {
 	if (!force) {
 		force = new PartForce(_gameRef);
 		if (force) {
-			force->setName(name);
+			force->setName(name.c_str());
 			_forces.add(force);
 		}
 	}
@@ -424,7 +424,7 @@ PartForce *PartEmitter::addForceByName(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool PartEmitter::addForce(const char *name, PartForce::TForceType type, int posX, int posY, float angle, float strength) {
+bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType type, int posX, int posY, float angle, float strength) {
 	PartForce *force = addForceByName(name);
 	if (!force) {
 		return STATUS_FAILED;
@@ -442,9 +442,9 @@ bool PartEmitter::addForce(const char *name, PartForce::TForceType type, int pos
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool PartEmitter::removeForce(const char *name) {
+bool PartEmitter::removeForce(const Common::String &name) {
 	for (int i = 0; i < _forces.getSize(); i++) {
-		if (scumm_stricmp(name, _forces[i]->getName()) == 0) {
+		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
 			delete _forces[i];
 			_forces.remove_at(i);
 			return STATUS_OK;

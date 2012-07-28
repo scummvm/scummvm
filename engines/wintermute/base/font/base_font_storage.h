@@ -43,7 +43,7 @@ public:
 	DECLARE_PERSISTENT(BaseFontStorage, BaseClass)
 	bool cleanup(bool warn = false);
 	bool removeFont(BaseFont *font);
-	BaseFont *addFont(const char *filename);
+	BaseFont *addFont(const Common::String &filename);
 	BaseFontStorage(BaseGame *inGame);
 	virtual ~BaseFontStorage();
 	BaseArray<BaseFont *> _fonts;

@@ -54,7 +54,7 @@ BaseClass::~BaseClass() {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseClass::getEditorProp(const char *propName, const char *initVal) {
+Common::String BaseClass::getEditorProp(const Common::String &propName, const Common::String &initVal) {
 	_editorPropsIter = _editorProps.find(propName);
 	if (_editorPropsIter != _editorProps.end()) {
 		return _editorPropsIter->_value.c_str();
@@ -65,12 +65,12 @@ const char *BaseClass::getEditorProp(const char *propName, const char *initVal) 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseClass::setEditorProp(const char *propName, const char *propValue) {
-	if (propName == NULL) {
+bool BaseClass::setEditorProp(const Common::String &propName, const Common::String &propValue) {
+	if (propName.size() == 0) {
 		return STATUS_FAILED;
 	}
 
-	if (propValue == NULL) {
+	if (propValue.size() == 0) {
 		_editorProps.erase(propName);
 	} else {
 		_editorProps[propName] = propValue;

@@ -89,13 +89,14 @@ bool BaseSoundMgr::initialize() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
+BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (!_soundAvailable) {
 		return NULL;
 	}
 
 	BaseSoundBuffer *sound;
 
+	Common::String useFilename = filename;
 	// try to switch WAV to OGG file (if available)
 	AnsiString ext = PathUtil::getExtension(filename);
 	if (StringUtil::compareNoCase(ext, "wav")) {
@@ -104,7 +105,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, Audio::Mixer::Soun
 
 		AnsiString newFile = PathUtil::combine(path, name + "ogg");
 		if (_gameRef->_fileManager->hasFile(newFile)) {
-			filename = newFile.c_str();
+			useFilename = newFile;
 		}
 	}
 
@@ -117,9 +118,9 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, Audio::Mixer::Soun
 	sound->setType(type);
 
 
-	bool res = sound->loadFromFile(filename);
+	bool res = sound->loadFromFile(useFilename);
 	if (DID_FAIL(res)) {
-		_gameRef->LOG(res, "Error loading sound '%s'", filename);
+		_gameRef->LOG(res, "Error loading sound '%s'", useFilename.c_str());
 		delete sound;
 		return NULL;
 	}

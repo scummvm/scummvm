@@ -67,7 +67,7 @@ public:
 	bool _paused;
 	bool _finished;
 	bool loadBuffer(byte *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
-	bool loadFile(const char *filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	bool loadFile(const Common::String &filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	uint32 _lastFrameTime;
 	bool draw(int x, int y, BaseObject *Register = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
 	bool _looping;

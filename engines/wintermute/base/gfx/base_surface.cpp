@@ -59,13 +59,6 @@ BaseSurface::~BaseSurface() {
 	}
 }
 
-
-//////////////////////////////////////////////////////////////////////
-bool BaseSurface::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	return STATUS_FAILED;
-}
-
-
 //////////////////////////////////////////////////////////////////////
 bool BaseSurface::restore() {
 	return STATUS_FAILED;

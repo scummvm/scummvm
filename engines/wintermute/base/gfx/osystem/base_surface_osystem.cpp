@@ -90,7 +90,7 @@ bool hasTransparency(Graphics::Surface *surf) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	/*  BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer); */
 	_filename = filename;
 //	const Graphics::Surface *surface = image->getSurface();

@@ -48,12 +48,12 @@ public:
 	BaseFont(BaseGame *inGame);
 	virtual ~BaseFont();
 
-	static BaseFont *createFromFile(BaseGame *game, const char *filename);
+	static BaseFont *createFromFile(BaseGame *game, const Common::String &filename);
 
 private:
 	//bool loadBuffer(byte * Buffer);
 	//bool loadFile(const char* Filename);
-	static bool isTrueType(BaseGame *game, const char *filename);
+	static bool isTrueType(BaseGame *game, const Common::String &filename);
 };
 
 } // end of namespace WinterMute
