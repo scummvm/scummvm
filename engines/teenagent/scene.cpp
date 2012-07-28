@@ -246,7 +246,7 @@ void Scene::loadObjectData() {
 		Common::Array<Object> &scene_objects = objects[i];
 		scene_objects.clear();
 
-		uint16 scene_table = _vm->res->dseg.get_word(0x7254 + i * 2);
+		uint16 scene_table = _vm->res->dseg.get_word(dsAddr_sceneObjectTablePtr + (i * 2));
 		uint16 object_addr;
 		while ((object_addr = _vm->res->dseg.get_word(scene_table)) != 0) {
 			Object obj;
@@ -257,7 +257,7 @@ void Scene::loadObjectData() {
 		}
 		debugC(0, kDebugScene, "scene[%u] has %u object(s)", i + 1, scene_objects.size());
 
-		byte *walkboxes_base = _vm->res->dseg.ptr(READ_LE_UINT16(_vm->res->dseg.ptr(0x6746 + i * 2)));
+		byte *walkboxes_base = _vm->res->dseg.ptr(READ_LE_UINT16(_vm->res->dseg.ptr(dsAddr_sceneWalkboxTablePtr + i * 2)));
 		byte walkboxes_n = *walkboxes_base++;
 		debugC(0, kDebugScene, "scene[%u] has %u walkboxes", i + 1, walkboxes_n);
 
@@ -275,7 +275,7 @@ void Scene::loadObjectData() {
 			scene_walkboxes.push_back(w);
 		}
 
-		byte *fade_table = _vm->res->dseg.ptr(_vm->res->dseg.get_word(0x663e + i * 2));
+		byte *fade_table = _vm->res->dseg.ptr(_vm->res->dseg.get_word(dsAddr_sceneFadeTablePtr + i * 2));
 		Common::Array<FadeType> &scene_fades = fades[i];
 		while (READ_LE_UINT16(fade_table) != 0xffff) {
 			FadeType fade;
@@ -302,17 +302,17 @@ Object *Scene::findObject(const Common::Point &point) {
 }
 
 byte *Scene::getOns(int id) {
-	return _vm->res->dseg.ptr(_vm->res->dseg.get_word(0xb4f5 + (id - 1) * 2));
+	return _vm->res->dseg.ptr(_vm->res->dseg.get_word(dsAddr_onsAnimationTablePtr + (id - 1) * 2));
 }
 
 byte *Scene::getLans(int id) {
-	return _vm->res->dseg.ptr(0xd89e + (id - 1) * 4);
+	return _vm->res->dseg.ptr(dsAddr_lansAnimationTablePtr + (id - 1) * 4);
 }
 
 void Scene::loadOns() {
 	debugC(0, kDebugScene, "loading ons animation");
 
-	uint16 addr = _vm->res->dseg.get_word(0xb4f5 + (_id - 1) * 2);
+	uint16 addr = _vm->res->dseg.get_word(dsAddr_onsAnimationTablePtr + (_id - 1) * 2);
 	debugC(0, kDebugScene, "ons index: %04x", addr);
 
 	ons_count = 0;
@@ -348,7 +348,7 @@ void Scene::loadLans() {
 	for (byte i = 0; i < 4; ++i) {
 		animation[i].free();
 
-		uint16 bx = 0xd89e + (_id - 1) * 4 + i;
+		uint16 bx = dsAddr_lansAnimationTablePtr + (_id - 1) * 4 + i;
 		byte bxv = _vm->res->dseg.get_byte(bx);
 		uint16 res_id = 4 * (_id - 1) + i + 1;
 		debugC(0, kDebugScene, "lan[%u]@%04x = %02x, resource id: %u", i, bx, bxv, res_id);
@@ -379,8 +379,8 @@ void Scene::init(int id, const Common::Point &pos) {
 
 	_vm->res->loadOff(background, palette, id);
 	if (id == 24) {
-		// ark scene
-		if (_vm->res->dseg.get_byte(0xdba4) != 1) {
+		// dark scene
+		if (_vm->res->dseg.get_byte(dsAddr_lightOnFlag) != 1) {
 			// dim down palette
 			uint i;
 			for (i = 0; i < 624; ++i) {
@@ -395,7 +395,7 @@ void Scene::init(int id, const Common::Point &pos) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->res->on.getStream(id));
 	int sub_hack = 0;
 	if (id == 7) { // something patched in the captains room
-		switch (_vm->res->dseg.get_byte(0xdbe6)) {
+		switch (_vm->res->dseg.get_byte(dsAddr_captainDrawerState)) {
 		case 2:
 			break;
 		case 1:
@@ -550,7 +550,7 @@ struct ZOrderCmp {
 
 int Scene::lookupZoom(uint y) const {
 	debugC(2, kDebugScene, "lookupZoom(%d)", y);
-	for (byte *zoom_table = _vm->res->dseg.ptr(_vm->res->dseg.get_word(0x70f4 + (_id - 1) * 2));
+	for (byte *zoom_table = _vm->res->dseg.ptr(_vm->res->dseg.get_word(dsAddr_sceneZoomTablePtr + (_id - 1) * 2));
 	        zoom_table[0] != 0xff && zoom_table[1] != 0xff;
 	        zoom_table += 2) {
 		debugC(2, kDebugScene, "\t%d %d->%d", y, zoom_table[0], zoom_table[1]);
@@ -562,9 +562,9 @@ int Scene::lookupZoom(uint y) const {
 }
 
 void Scene::paletteEffect(byte step) {
-	byte *src = _vm->res->dseg.ptr(0x6609);
-	byte *dst = palette + 3 * 0xf2;
-	for (byte i = 0; i < 0xd; ++i) {
+	byte *src = _vm->res->dseg.ptr(dsAddr_paletteEffectData);
+	byte *dst = palette + (3 * 242);
+	for (byte i = 0; i < 13; ++i) {
 		for (byte c = 0; c < 3; ++c, ++src)
 			*dst++ = *src > step ? *src - step : 0;
 	}

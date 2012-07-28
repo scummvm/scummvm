@@ -642,8 +642,26 @@ const uint16 dsAddr_egoY = 0x64b1; // 2 bytes
 // Idle Animation List Table : 0x6540 to 0x????
 const uint16 dsAddr_idleAnimationListPtr = 0x6540;
 
+// Palette Effect Data : 0x6609 to 0x????
+const uint16 dsAddr_paletteEffectData = 0x6609;
+
+// Scene Fade Table (2 byte address * 42): 0x663e to 0x6691
+const uint16 dsAddr_sceneFadeTablePtr = 0x663e;
+
+// Scene Walkbox Table (2 byte LE address * 42) : 0x6746 to 0x6799
+const uint16 dsAddr_sceneWalkboxTablePtr = 0x6746;
+
+// Scene Zoom Table (2 byte address * 42) : 0x70f4 to 0x7147
+const uint16 dsAddr_sceneZoomTablePtr = 0x70f4;
+
+// Scene Object Table (2 byte address * 42) : 0x7254 to 0x72a7
+const uint16 dsAddr_sceneObjectTablePtr = 0x7254;
+
 // Current Scene Id : 0xb4f3
 const uint16 dsAddr_currentScene = 0xb4f3; // 1 byte
+
+// Ons Animation Table (2 byte address * ??) : 0xb4f5 to 0x????
+const uint16 dsAddr_onsAnimationTablePtr = 0xb4f5;
 
 // Inventory Object Callback Table (3 byte (id, callbackAddr) * 7) : 0xbb72 to 0xbb86
 const uint16 dsAddr_objCallbackTablePtr = 0xbb72;
@@ -661,8 +679,18 @@ const uint16 dsAddr_inventory = 0xc48d;
 // Inventory item data address table (2 bytes * 92) : 0xc4a6 to 0xc55d
 const uint16 dsAddr_inventoryItemDataPtrTable = 0xc4a6;
 
+// Lans Animation Table (4 byte * ??) : 0xd89e to 0x????
+const uint16 dsAddr_lansAnimationTablePtr = 0xd89e;
+
 // Current Music Id Playing : 0xdb90
 const uint16 dsAddr_currentMusic = 0xdb90; // 1 byte
+
+// Light On Flag : 0xdba4
+const uint16 dsAddr_lightOnFlag = 0xdba4; // 1 byte
+
+// Captain Drawer State : 0xdbe6
+const uint16 dsAddr_captainDrawerState = 0xdbe6; // 1 byte
+
 // Counter for Mansion Intrusion Attempts : 0xdbea
 const uint16 dsAddr_mansionEntryCount = 0xdbea;// 1 byte
 
