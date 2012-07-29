@@ -967,6 +967,34 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x4d7d:
+	case 0x4d81:
+		rejectMessage();
+		break;
+
+	case 0x4d89:
+		displayMessage(dsAddr_getRidOfGuardFirstMsg); // "If I want to get inside I must get rid of this guard first..."
+		break;
+
+	case 0x4d90:
+		rejectMessage();
+		break;
+
+	case 0x4e47:
+		loadScene(13, Common::Point(9, 172));
+		scene->setOrientation(2);
+		break;
+
+	case 0x4e85:
+		loadScene(15, Common::Point(291, 162));
+		scene->setOrientation(4);
+		break;
+
+	case 0x4e9f:
+		loadScene(12, Common::Point(310, 152));
+		scene->setOrientation(4);
+		break;
+
 	case 0x4f14: // use the hollow
 		if (CHECK_FLAG(0xdba1, 1))
 			displayMessage(dsAddr_totalEmptyMsg); // "I can see it's totally empty"
@@ -1241,6 +1269,19 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x505f:
+		displayMessage(dsAddr_wallTooSmoothMsg); // "The wall surface is too smooth to climb"
+		break;
+
+	case 0x5080:
+		loadScene(13, Common::Point(290, 181));
+		scene->setOrientation(4);
+		break;
+
+	case 0x50f6:
+		displayMessage(dsAddr_tooMuchResinToClimbMsg); // "I could climb it if there wasn't so much resin"
+		break;
+
 	case 0x5104:
 		loadScene(11, 319, 198, 4);
 		if (!CHECK_FLAG(0xdb9c, 1)) {
@@ -1259,6 +1300,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		fnGuardDrinking();
 		break;
 
+	case 0x51cf:
+		loadScene(12, Common::Point(15, 189));
+		scene->setOrientation(2);
+		break;
+
+	case 0x51e9:
+		displayMessage(dsAddr_dontWannaTouchHedgehogMsg); // "I don't wanna touch it. Its spines could hurt my delicate hands"
+		break;
+
 	case 0x51f0:
 		setOns(0, 0);
 		playSound(5, 11);
@@ -1272,6 +1322,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_notHungryMsg); // "Thanks, I'm not hungry"
 		else
 			displayMessage(dsAddr_avoidBeesMsg); // "I'm going to stay at least five meters away from these bees!"
+		break;
+
+	case 0x522c:
+		displayMessage(dsAddr_avoidBeesMsg); // "I'm going to stay at least five meters away from these bees!"
+		break;
+
+	case 0x5233:
+		rejectMessage();
 		break;
 
 	case 0x5237:
@@ -1299,6 +1357,26 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			SET_FLAG(0xdba0, 1);
 			fnMansionIntrusionAttempt();
 		}
+		break;
+
+
+	case 0x5320:
+		loadScene(11, Common::Point(30, 124));
+		scene->setOrientation(2);
+		break;
+
+	case 0x5341:
+		displayMessage(dsAddr_tooFarToSwimMsg); // "It's too far to swim there"
+		break;
+
+	case 0x540a:
+		loadScene(20, Common::Point(10, 185));
+		scene->setOrientation(2);
+		break;
+
+	case 0x5424:
+		loadScene(11, Common::Point(30, 170));
+		scene->setOrientation(2);
 		break;
 
 	case 0x55a8:
@@ -1368,6 +1446,29 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			moveTo(168, 179, 2);
 			inventory->add(3);
 		}
+		break;
+
+	case 0x584d:
+		displayMessage(dsAddr_pullObjMsg2);
+		break;
+
+	case 0x586e:
+		loadScene(21, Common::Point(24, 187));
+		scene->setOrientation(2);
+		break;
+
+	case 0x5888:
+		loadScene(27, Common::Point(108, 199));
+		scene->setOrientation(2);
+		break;
+
+	case 0x5924:
+		loadScene(25, Common::Point(298, 146));
+		scene->setOrientation(4);
+		break;
+
+	case 0x5978:
+		displayMessage(dsAddr_notTakingSocksMsg); // "I really don't want to walk around with someone else's socks"
 		break;
 
 	case 0x5d88:
@@ -1450,6 +1551,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			fnTooDark();
 		break;
 
+	case 0x634a:
+		displayMessage(dsAddr_noHandsSharpThornsMsg); // "I can't remove it with my hands. these thorns look really sharp"
+		break;
+
 	case 0x63bc:
 		playMusic(6);
 		loadScene(25, 151, 156, 2);
@@ -1473,6 +1578,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			rejectMessage();
 		else
 			displayMessage(dsAddr_birdAttackMsg); // "Hey You! Wake up! Bird attack!"
+		break;
+
+	case 0x6541:
+		loadScene(20, Common::Point(10, 131));
+		scene->setOrientation(3);
 		break;
 
 	case 0x65c3:

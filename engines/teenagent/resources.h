@@ -270,10 +270,20 @@ const uint16 dsAddr_bootEmptyMsg = 0x3e75; // "There's nothing else in the boot"
 const uint16 dsAddr_clothesDryMsg = 0x3e98; // "The clothes are dry now."
 // Crow Kill Message : 0x3eb2 to 0x3ed5
 const uint16 dsAddr_crowKillMsg = 0x3eb2; // "I'm sure these crows will kill me"
+// Get Rid Of Guard First Message : 0x3ed6 to 0x3f29
+const uint16 dsAddr_getRidOfGuardFirstMsg = 0x3ed6; // "If I want to get inside I must get rid of this guard first..."
+// Wall Too Smooth Message : 0x3f2a to 0x3f53
+const uint16 dsAddr_wallTooSmoothMsg = 0x3f2a; // "The wall surface is too smooth to climb"
+// Too Much Resin To Climb Message : 0x3f54 to 0x3f84
+const uint16 dsAddr_tooMuchResinToClimbMsg = 0x3f54; // "I could climb it if there wasn't so much resin"
 
+// Don't Wanna Touch Hedgehog Message : 0x3fec to 0x402d
+const uint16 dsAddr_dontWannaTouchHedgehogMsg = 0x3fec; // "I don't wanna touch it. Its spines could hurt my delicate hands"
 // Not Hungry Message : 0x402e to 0x4046
 const uint16 dsAddr_notHungryMsg = 0x402e; // "Thanks, I'm not hungry"
 
+// Too Far To Swim Message : 0x406d to 0x4089
+const uint16 dsAddr_tooFarToSwimMsg = 0x406d; // "It's too far to swim there"
 // Echo Message : 0x408a to 0x4090
 const uint16 dsAddr_echoMsg = 0x408a; // "Echo!"
 // Loud Echo Message : 0x4091 to 0x4097
@@ -297,6 +307,9 @@ const uint16 dsAddr_stillThereMsg = 0x411d; // "Are you still there?"
 const uint16 dsAddr_hmmGrassMsg = 0x417e; // "Hmmm. Grass..."
 // Find Nut Message : 0x41b1 to 0x41ee
 const uint16 dsAddr_findNutMsg = 0x41b1; // "I won't find the nut just like that. The grass is too dense"
+
+// Not Taking Socks Message : 0x42c7 to 0x4305
+const uint16 dsAddr_notTakingSocksMsg = 0x42c7; // "I really don't want to walk around with someone else's socks"
 
 // Too Big Message : 0x431e to 0x434d
 const uint16 dsAddr_tooBigMsg = 0x431e; // "It's too big and I doubt if I'll ever need it"
@@ -344,6 +357,8 @@ const uint16 dsAddr_yeowMsg = 0x463c; // "YEEEOOOWWWW!"
 const uint16 dsAddr_yawnMsg = 0x464a; // "(yawn)"
 // Laughter Message : 0x4652 to 0x465d
 const uint16 dsAddr_laughterMsg = 0x4652; // "(laughter)"
+// No Hands Sharp Thorns Message : 0x465e to 0x46a0
+const uint16 dsAddr_noHandsSharpThornsMsg = 0x465e; // "I can't remove it with my hands. these thorns look really sharp"
 
 // Bird Attack Message : 0x47e7 to 0x4807
 const uint16 dsAddr_birdAttackMsg = 0x47e7; // "Hey You! Wake up! Bird attack!"
