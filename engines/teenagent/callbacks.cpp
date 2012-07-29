@@ -1359,14 +1359,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
-
 	case 0x5320:
 		loadScene(11, Common::Point(30, 124));
 		scene->setOrientation(2);
 		break;
 
+	case 0x533a:
+		displayMessage(dsAddr_noLongHandsMsg); // "I really don't have such long hands"
+		break;
+
 	case 0x5341:
 		displayMessage(dsAddr_tooFarToSwimMsg); // "It's too far to swim there"
+		break;
+
+	case 0x5403:
+		displayMessage(dsAddr_noBucketMsg); // "It's not a barrel-organ. And there's no bucket."
 		break;
 
 	case 0x540a:
@@ -1376,6 +1383,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5424:
 		loadScene(11, Common::Point(30, 170));
+		scene->setOrientation(2);
+		break;
+
+	case 0x543e:
+		loadScene(18, Common::Point(224, 199));
+		scene->setOrientation(4);
+		break;
+
+	case 0x5547:
+		loadScene(15, Common::Point(15, 172));
 		scene->setOrientation(2);
 		break;
 
@@ -1411,6 +1428,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_hmmGrassMsg); // "Hmmm. Grass..."
 		break;
 
+
+	case 0x5674:
+		loadScene(18, Common::Point(94, 115));
+		scene->setOrientation(3);
+		break;
+
+	case 0x5695:
+		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
+		break;
+
 	case 0x569c:
 		playSound(67, 5);
 		playActorAnimation(983);
@@ -1424,12 +1451,40 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_emptyMsg); // "It's Empty"
 		break;
 
+	case 0x56d6:
+		displayMessage(dsAddr_CantJumpMsg); // "No way I can jump so high, cause, err, white men can't jump"
+		break;
+
+	case 0x56dd:
+		displayMessage(dsAddr_dontNeedItMsg); // "I don't need it"
+		break;
+
+	case 0x56e4:
+		displayMessage(dsAddr_notSantaClausMsg); // "I'm not Santa Claus"
+		break;
+
+	case 0x56eb:
+		displayMessage(dsAddr_noPlasticImitationsMsg); // "I don't need plastic imitations"
+		break;
+
+	case 0x56f2:
+		rejectMessage();
+		break;
+
+	case 0x5721:
+		displayMessage(dsAddr_dontNeedItMsg); // "I don't need it"
+		break;
+
 	case 0x5728:
 		inventory->add(0x0d);
 		disableObject(14);
 		setOns(0, 0);
 		playSound(5, 10);
 		playActorAnimation(566);
+		break;
+
+	case 0x574f:
+		displayMessage(dsAddr_tooFragileMsg); // "It's too fragile to carry around"
 		break;
 
 	case 0x5793:
@@ -1446,6 +1501,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			moveTo(168, 179, 2);
 			inventory->add(3);
 		}
+		break;
+
+	case 0x57fa:
+		displayMessage(dsAddr_dontNeedItMsg); // "I don't need it"
 		break;
 
 	case 0x584d:
@@ -1469,6 +1528,31 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5978:
 		displayMessage(dsAddr_notTakingSocksMsg); // "I really don't want to walk around with someone else's socks"
+		break;
+
+	case 0x5c72:
+		displayMessage(dsAddr_notTiredMsg); // "Thanks, I'm not tired"
+		break;
+
+	case 0x5c79:
+		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
+		break;
+
+	case 0x5c80:
+		rejectMessage();
+		break;
+
+	case 0x5cdb:
+	case 0x5ce2:
+		displayMessage(dsAddr_dontNeedItMsg); // "I don't need it"
+		break;
+
+	case 0x5ce9:
+		displayMessage(dsAddr_tooBigMsg); // "It's too big and I doubt if I'll ever need it"
+		break;
+
+	case 0x5d1d:
+		displayMessage(dsAddr_CantJumpMsg); // "No way I can jump so high, cause, err, white men can't jump"
 		break;
 
 	case 0x5d88:
@@ -1500,6 +1584,22 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x5fa1:
+		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
+		break;
+
+	case 0x5fa8:
+		displayMessage(dsAddr_CantJumpMsg); // "No way I can jump so high, cause, err, white men can't jump"
+		break;
+
+	case 0x5fe5:
+		displayMessage(dsAddr_jugMeMsg); // "They can jug me if I steal this"
+		break;
+
+	case 0x5fec:
+		displayMessage(dsAddr_leaveFlowersAloneMsg); // "I'd better leave it. Women are really oversensitive about flowers."
+		break;
+
 	case 0x5ff3: // get duster
 		if (CHECK_FLAG(0xdb9a, 0)) {
 			dialog->pop(scene, 0xdaf6, 0, 523, 0xd1, 0xe5, 0, 1);
@@ -1512,6 +1612,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 6);
 			playActorAnimation(541);
 		}
+		break;
+
+	case 0x603a:
+		rejectMessage();
 		break;
 
 	case 0x603e:
@@ -1528,6 +1632,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			wait(150);
 			SET_FLAG(0xdbb3, 1);
 		}
+		break;
+
+	case 0x6078:
+		displayMessage(dsAddr_tooBigMsg); // "It's too big and I doubt if I'll ever need it"
 		break;
 
 	case 0x6205:
@@ -1553,6 +1661,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x634a:
 		displayMessage(dsAddr_noHandsSharpThornsMsg); // "I can't remove it with my hands. these thorns look really sharp"
+		break;
+
+	case 0x637f:
+		loadScene(21, Common::Point(201, 199));
+		scene->setOrientation(1);
+		break;
+
+	case 0x6399:
+		displayMessage(dsAddr_rockWalkingGeeMsg); // "Yeah, great idea. Let's take this rock and walk around a bit. Gee..."
 		break;
 
 	case 0x63bc:
@@ -3005,6 +3122,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveTo(236, 179, 3);
 		inventory->remove(0x2c);
 		inventory->add(0x2e);
+		break;
+
+	case 0x85d6:
+		displayMessage(dsAddr_paddleBrokenMsg); // "The paddle is BROKEN"
 		break;
 
 	case 0x85eb:
@@ -4510,6 +4631,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	default:
 		warning("unknown callback %04x called", addr);
+
+		// FIXME - unknown non-trivial callback 0x5b44 called! Need to analyse cseg data to work out what this is.
 
 		// try decoding trivial callbacks by cseg if not in switch
 		byte *code = res->cseg.ptr(addr);

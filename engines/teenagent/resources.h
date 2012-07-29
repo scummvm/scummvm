@@ -281,7 +281,8 @@ const uint16 dsAddr_tooMuchResinToClimbMsg = 0x3f54; // "I could climb it if the
 const uint16 dsAddr_dontWannaTouchHedgehogMsg = 0x3fec; // "I don't wanna touch it. Its spines could hurt my delicate hands"
 // Not Hungry Message : 0x402e to 0x4046
 const uint16 dsAddr_notHungryMsg = 0x402e; // "Thanks, I'm not hungry"
-
+// No Long Hands Message : 0x4047 to 0x406c
+const uint16 dsAddr_noLongHandsMsg = 0x4047; // "I really don't have such long hands"
 // Too Far To Swim Message : 0x406d to 0x4089
 const uint16 dsAddr_tooFarToSwimMsg = 0x406d; // "It's too far to swim there"
 // Echo Message : 0x408a to 0x4090
@@ -302,21 +303,39 @@ const uint16 dsAddr_throwRockMsg = 0x40e8; // "OR I WILL THROW A ROCK DOWN THERE
 const uint16 dsAddr_orIWillMsg = 0x410f; // "OR I WILL"
 // Still There Message : 0x411d to 0x4132
 const uint16 dsAddr_stillThereMsg = 0x411d; // "Are you still there?"
-
+// No Bucket Message : 0x4133 to 0x4163
+const uint16 dsAddr_noBucketMsg = 0x4133; // "It's not a barrel-organ. And there's no bucket."
+// Dont Need To Open Message : 0x4164 to 0x417d
+const uint16 dsAddr_dontNeedToOpenMsg = 0x4164; // "I don't need to open it"
 // Hmm Grass Message : 0x417e to 41b0
 const uint16 dsAddr_hmmGrassMsg = 0x417e; // "Hmmm. Grass..."
 // Find Nut Message : 0x41b1 to 0x41ee
 const uint16 dsAddr_findNutMsg = 0x41b1; // "I won't find the nut just like that. The grass is too dense"
 
+// Can't Jump So High Message : 0x41ff to 0x423e
+const uint16 dsAddr_CantJumpMsg = 0x41ff; // "No way I can jump so high, cause, err, white men can't jump"
+// Don't Need It Message : 0x423f to 0x4250
+const uint16 dsAddr_dontNeedItMsg = 0x423f; // "I don't need it"
+// Not Santa Claus Message : 0x4251 to 0x4266
+const uint16 dsAddr_notSantaClausMsg = 0x4251; // "I'm not Santa Claus"
+// No Plastic Imitations Message : 0x4267 to 0x4288
+const uint16 dsAddr_noPlasticImitationsMsg = 0x4267; // "I don't need plastic imitations"
+// Too Fragile Message : 0x4289 to 0x42ab
+const uint16 dsAddr_tooFragileMsg = 0x4289; // "It's too fragile to carry around"
+
 // Not Taking Socks Message : 0x42c7 to 0x4305
 const uint16 dsAddr_notTakingSocksMsg = 0x42c7; // "I really don't want to walk around with someone else's socks"
-
+// Not Tired Message : 0x4306 to 0x431d
+const uint16 dsAddr_notTiredMsg = 0x4306; // "Thanks, I'm not tired"
 // Too Big Message : 0x431e to 0x434d
 const uint16 dsAddr_tooBigMsg = 0x431e; // "It's too big and I doubt if I'll ever need it"
 
 // No Fruit Message : 0x4380 to 0x43ab
 const uint16 dsAddr_noFruitMsg = 0x4380; // "There are no more interesting fruits here"
-
+// Jug Me Message : 0x43ac to 0x43cd
+const uint16 dsAddr_jugMeMsg = 0x43ac; // "They can jug me if I steal this"
+// Leave Flowers Alone Message : 0x43ce to 0x4411
+const uint16 dsAddr_leaveFlowersAloneMsg = 0x43ce; // "I'd better leave it. Women are really oversensitive about flowers."
 // Mirror Mirror Message : 0x4412 to 0x444e
 const uint16 dsAddr_mirrorMirrorMsg = 0x4412; // "Mirror, Mirror on the wall...."
 // Think Too Long Message : 0x444f to 0x446a
@@ -360,6 +379,9 @@ const uint16 dsAddr_laughterMsg = 0x4652; // "(laughter)"
 // No Hands Sharp Thorns Message : 0x465e to 0x46a0
 const uint16 dsAddr_noHandsSharpThornsMsg = 0x465e; // "I can't remove it with my hands. these thorns look really sharp"
 
+// Rock Walking Gee Message : 0x46f7 to 0x473c
+const uint16 dsAddr_rockWalkingGeeMsg = 0x46f7; // "Yeah, great idea. Let's take this rock and walk around a bit. Gee..."
+
 // Bird Attack Message : 0x47e7 to 0x4807
 const uint16 dsAddr_birdAttackMsg = 0x47e7; // "Hey You! Wake up! Bird attack!"
 // No Search Warrant Message : 0x4808 to 0x4827
@@ -367,6 +389,8 @@ const uint16 dsAddr_noSearchWarrantMsg = 0x4808; // "I don't have a search-warra
 
 // Nut Rake Message : 0x4882 to 0x48be
 const uint16 dsAddr_nutRakeMsg = 0x4882; // "It's pointless, the nut will slip between the rake's teeth"
+// Paddle Broken Message : 0x48bf to 0x48d5
+const uint16 dsAddr_paddleBrokenMsg = 0x48bf; // "The paddle is BROKEN"
 
 // Bribe Message : 0x49ae to 0x49d0
 const uint16 dsAddr_BribeMsg = 0x49ae; // "Here, let's make your pocket fat."
