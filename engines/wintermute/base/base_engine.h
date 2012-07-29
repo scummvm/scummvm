@@ -26,6 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
  
+#ifndef WINTERMUTE_BASE_ENGINE_H
+#define WINTERMUTE_BASE_ENGINE_H
+
  #include "common/str.h"
  #include "common/singleton.h"
 
@@ -52,3 +55,5 @@ public:
 };
 
 } // end of namespace WinterMute
+
+#endif
