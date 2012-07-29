@@ -204,62 +204,6 @@ AnsiString StringUtil::wideToAnsi(const WideString &wstr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool StringUtil::startsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase) {
-	/*  size_t strLength = str.size();
-	    size_t patternLength = pattern.size();
-
-	    if (strLength < patternLength || patternLength == 0)
-	        return false;
-
-	    AnsiString startPart = str.substr(0, patternLength);
-
-	    if (ignoreCase) return CompareNoCase(startPart, pattern);
-	    else return (startPart == pattern);*/
-	if (!ignoreCase) {
-		return str.hasPrefix(pattern);
-	} else {
-		size_t strLength = str.size();
-		size_t patternLength = pattern.size();
-
-		if (strLength < patternLength || patternLength == 0) {
-			return false;
-		}
-
-		AnsiString startPart(str.c_str(), patternLength);
-		uint32 likeness = startPart.compareToIgnoreCase(pattern.c_str());
-		return (likeness == 0);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool StringUtil::endsWith(const AnsiString &str, const AnsiString &pattern, bool ignoreCase) {
-	/*  size_t strLength = str.size(); // TODO: Remove
-	    size_t patternLength = pattern.size();
-
-	    if (strLength < patternLength || patternLength == 0)
-	        return false;
-
-	    AnsiString endPart = str.substr(strLength - patternLength, patternLength);
-
-	    if (ignoreCase) return CompareNoCase(endPart, pattern);
-	    else return (endPart == pattern);*/
-	if (!ignoreCase) {
-		return str.hasSuffix(pattern);
-	} else {
-		size_t strLength = str.size();
-		size_t patternLength = pattern.size();
-
-		if (strLength < patternLength || patternLength == 0) {
-			return false;
-		}
-
-		Common::String endPart(str.c_str() + (strLength - patternLength), patternLength);
-		uint32 likeness = str.compareToIgnoreCase(pattern.c_str());
-		return (likeness != 0);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool StringUtil::isUtf8BOM(const byte *buffer, uint32 bufferSize) {
 	if (bufferSize > 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF) {
 		return true;
@@ -270,9 +214,6 @@ bool StringUtil::isUtf8BOM(const byte *buffer, uint32 bufferSize) {
 
 //////////////////////////////////////////////////////////////////////////
 int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
-	/*size_t pos = str.find(toFind, startFrom);
-	if (pos == str.npos) return -1;
-	else return pos;*/
 	const char *index = strstr(str.c_str(), toFind.c_str());
 	if (index == NULL) {
 		return -1;

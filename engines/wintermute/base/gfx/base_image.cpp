@@ -29,7 +29,6 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
-#include "engines/wintermute/utils/string_util.h"
 #include "graphics/decoders/png.h"
 #include "graphics/decoders/jpeg.h"
 #include "graphics/decoders/bmp.h"
@@ -63,7 +62,7 @@ BaseImage::~BaseImage() {
 bool BaseImage::loadFile(const Common::String &filename) {
 	_filename = filename;
 	_filename.toLowercase();
-	if (StringUtil::startsWith(filename, "savegame:", true)) {
+	if (filename.hasPrefix("savegame:")) {
 		_decoder = new Graphics::BitmapDecoder();
 	} else if (_filename.hasSuffix(".png")) {
 		_decoder = new Graphics::PNGDecoder();

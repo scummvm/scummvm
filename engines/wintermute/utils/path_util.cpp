@@ -28,7 +28,6 @@
 
 #include "common/file.h"
 #include "engines/wintermute/utils/path_util.h"
-#include "engines/wintermute/utils/string_util.h"
 
 namespace WinterMute {
 
@@ -57,7 +56,7 @@ AnsiString PathUtil::combine(const AnsiString &path1, const AnsiString &path2) {
 	AnsiString newPath1 = unifySeparators(path1);
 	AnsiString newPath2 = unifySeparators(path2);
 
-	if (!StringUtil::endsWith(newPath1, "/", true) && !StringUtil::startsWith(newPath2, "/", true)) {
+	if (!newPath1.hasSuffix("/") && !newPath2.hasPrefix("/")) {
 		newPath1 += "/";
 	}
 

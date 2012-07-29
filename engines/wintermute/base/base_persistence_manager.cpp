@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/base_save_thumb_helper.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/math/vector2.h"
-#include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/wintermute.h"

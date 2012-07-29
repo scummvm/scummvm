@@ -27,7 +27,6 @@
  */
 
 #include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
@@ -140,8 +139,11 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 
 	bool ret;
 
+	AnsiString filePrefix = filename;
 	AnsiString ext = PathUtil::getExtension(filename);
-	if (StringUtil::startsWith(filename, "savegame:", true) || StringUtil::compareNoCase(ext, "bmp") || StringUtil::compareNoCase(ext, "tga") || StringUtil::compareNoCase(ext, "png") || StringUtil::compareNoCase(ext, "jpg")) {
+	ext.toLowercase();
+	filePrefix.toLowercase();
+	if (filePrefix.hasPrefix("savegame:") || (ext == "bmp") || (ext == "tga") || (ext == "png") || (ext == "jpg")) {
 		BaseFrame *frame = new BaseFrame(_gameRef);
 		BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);

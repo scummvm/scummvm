@@ -27,7 +27,6 @@
  */
 
 #include "engines/wintermute/base/scriptables/script_engine.h"
-#include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
