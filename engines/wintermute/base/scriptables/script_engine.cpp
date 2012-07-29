@@ -88,17 +88,10 @@ ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 ScEngine::~ScEngine() {
 	_gameRef->LOG(0, "Shutting down scripting engine");
-	saveBreakpoints();
 
 	disableProfiling();
 
 	cleanup();
-
-	for (int i = 0; i < _breakpoints.getSize(); i++) {
-		delete _breakpoints[i];
-		_breakpoints[i] = NULL;
-	}
-	_breakpoints.clear();
 }
 
 
@@ -174,7 +167,6 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 		script->_globals->setProp("this", &val);
 
 		_scripts.add(script);
-		_gameRef->getDebugMgr()->onScriptInit(script);
 
 		return script;
 	}
@@ -402,7 +394,7 @@ bool ScEngine::removeFinishedScripts() {
 			if (!_scripts[i]->_thread && _scripts[i]->_owner) {
 				_scripts[i]->_owner->removeScript(_scripts[i]);
 			}
-			_gameRef->getDebugMgr()->onScriptShutdown(_scripts[i]);
+
 			delete _scripts[i];
 			_scripts.remove_at(i);
 			i--;
@@ -555,177 +547,6 @@ bool ScEngine::clearGlobals(bool includingNatives) {
 	_globals->CleanProps(includingNatives);
 	return STATUS_OK;
 }
-
-//////////////////////////////////////////////////////////////////////////
-bool ScEngine::dbgSendScripts(IWmeDebugClient *client) {
-	// send global variables
-	_globals->dbgSendVariables(client, WME_DBGVAR_GLOBAL, NULL, 0);
-
-	// process normal scripts first
-	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (_scripts[i]->_thread || _scripts[i]->_methodThread) {
-			continue;
-		}
-		_scripts[i]->dbgSendScript(client);
-	}
-
-	// and threads later
-	for (int i = 0; i < _scripts.getSize(); i++) {
-		if (_scripts[i]->_thread || _scripts[i]->_methodThread) {
-			_scripts[i]->dbgSendScript(client);
-		}
-	}
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool ScEngine::addBreakpoint(const char *scriptFilename, int line) {
-	if (!_gameRef->getDebugMgr()->_enabled) {
-		return STATUS_OK;
-	}
-
-	CScBreakpoint *bp = NULL;
-	for (int i = 0; i < _breakpoints.getSize(); i++) {
-		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), scriptFilename) == 0) {
-			bp = _breakpoints[i];
-			break;
-		}
-	}
-	if (bp == NULL) {
-		bp = new CScBreakpoint(scriptFilename);
-		_breakpoints.add(bp);
-	}
-
-	for (int i = 0; i < bp->_lines.getSize(); i++) {
-		if (bp->_lines[i] == line) {
-			return STATUS_OK;
-		}
-	}
-	bp->_lines.add(line);
-
-	// refresh changes
-	refreshScriptBreakpoints();
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool ScEngine::removeBreakpoint(const char *scriptFilename, int line) {
-	if (!_gameRef->getDebugMgr()->_enabled) {
-		return STATUS_OK;
-	}
-
-	for (int i = 0; i < _breakpoints.getSize(); i++) {
-		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), scriptFilename) == 0) {
-			for (int j = 0; j < _breakpoints[i]->_lines.getSize(); j++) {
-				if (_breakpoints[i]->_lines[j] == line) {
-					_breakpoints[i]->_lines.remove_at(j);
-					if (_breakpoints[i]->_lines.getSize() == 0) {
-						delete _breakpoints[i];
-						_breakpoints.remove_at(i);
-					}
-					// refresh changes
-					refreshScriptBreakpoints();
-
-					return STATUS_OK;
-				}
-			}
-			break;
-		}
-	}
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool ScEngine::refreshScriptBreakpoints() {
-	if (!_gameRef->getDebugMgr()->_enabled) {
-		return STATUS_OK;
-	}
-
-	for (int i = 0; i < _scripts.getSize(); i++) {
-		refreshScriptBreakpoints(_scripts[i]);
-	}
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool ScEngine::refreshScriptBreakpoints(ScScript *script) {
-	if (!_gameRef->getDebugMgr()->_enabled) {
-		return STATUS_OK;
-	}
-
-	if (!script || !script->_filename) {
-		return STATUS_FAILED;
-	}
-
-	for (int i = 0; i < _breakpoints.getSize(); i++) {
-		if (scumm_stricmp(_breakpoints[i]->_filename.c_str(), script->_filename) == 0) {
-			script->_breakpoints.copy(_breakpoints[i]->_lines);
-			return STATUS_OK;
-		}
-	}
-	if (script->_breakpoints.getSize() > 0) {
-		script->_breakpoints.clear();
-	}
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool ScEngine::saveBreakpoints() {
-	if (!_gameRef->getDebugMgr()->_enabled) {
-		return STATUS_OK;
-	}
-
-
-	char text[512];
-	char key[100];
-
-	int count = 0;
-	for (int i = 0; i < _breakpoints.getSize(); i++) {
-		for (int j = 0; j < _breakpoints[i]->_lines.getSize(); j++) {
-			count++;
-			sprintf(key, "Breakpoint%d", count);
-			sprintf(text, "%s:%d", _breakpoints[i]->_filename.c_str(), _breakpoints[i]->_lines[j]);
-
-			BaseEngine::instance().getRegistry()->writeString("Debug", key, text);
-		}
-	}
-	BaseEngine::instance().getRegistry()->writeInt("Debug", "NumBreakpoints", count);
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool ScEngine::loadBreakpoints() {
-	if (!_gameRef->getDebugMgr()->_enabled) {
-		return STATUS_OK;
-	}
-
-	char key[100];
-
-	int count = BaseEngine::instance().getRegistry()->readInt("Debug", "NumBreakpoints", 0);
-	for (int i = 1; i <= count; i++) {
-		/*  uint32 bufSize = 512; */
-		sprintf(key, "Breakpoint%d", i);
-		AnsiString breakpoint = BaseEngine::instance().getRegistry()->readString("Debug", key, "");
-
-		char *path = BaseUtils::strEntry(0, breakpoint.c_str(), ':');
-		char *line = BaseUtils::strEntry(1, breakpoint.c_str(), ':');
-
-		if (path != NULL && line != NULL) {
-			addBreakpoint(path, atoi(line));
-		}
-		delete[] path;
-		delete[] line;
-		path = NULL;
-		line = NULL;
-	}
-
-	return STATUS_OK;
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::addScriptTime(const char *filename, uint32 time) {

@@ -31,7 +31,6 @@
 
 
 #include "engines/wintermute/base/base_named_object.h"
-#include "engines/wintermute/wme_debugger.h"
 #include "engines/wintermute/persistent.h"
 
 namespace WinterMute {
@@ -40,7 +39,7 @@ class ScValue;
 class ScStack;
 class ScScript;
 
-class BaseScriptable : public BaseNamedObject, public IWmeDebugObject {
+class BaseScriptable : public BaseNamedObject {
 public:
 	virtual ScScript *invokeMethodThread(const char *methodName);
 	DECLARE_PERSISTENT(BaseScriptable, BaseNamedObject)
@@ -67,12 +66,6 @@ public:
 	int _refCount;
 	ScValue *_scValue;
 	ScValue *_scProp;
-
-public:
-	// IWmeDebugObject
-	const char *dbgGetNativeClass();
-	IWmeDebugProp *dbgGetProperty(const char *name);
-
 };
 
 // Implemented in their respective .cpp-files

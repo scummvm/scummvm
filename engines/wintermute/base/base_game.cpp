@@ -96,7 +96,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_renderer = NULL;
 	_soundMgr = NULL;
 	_transMgr = NULL;
-	_debugMgr = NULL;
 	_scEngine = NULL;
 	_keyboardState = NULL;
 
@@ -277,8 +276,6 @@ BaseGame::~BaseGame() {
 	LOG(0, "");
 	LOG(0, "Shutting down...");
 
-	getDebugMgr()->onGameShutdown();
-
 	BaseEngine::instance().getRegistry()->writeBool("System", "LastRun", true);
 
 	cleanup();
@@ -299,7 +296,6 @@ BaseGame::~BaseGame() {
 	delete _videoPlayer;
 	delete _theoraPlayer;
 	delete _soundMgr;
-	delete _debugMgr;
 	//SAFE_DELETE(_keyboardState);
 
 	delete _renderer;
@@ -321,7 +317,6 @@ BaseGame::~BaseGame() {
 	_videoPlayer = NULL;
 	_theoraPlayer = NULL;
 	_soundMgr = NULL;
-	_debugMgr = NULL;
 
 	_renderer = NULL;
 	_stringTable = NULL;
@@ -429,11 +424,6 @@ bool BaseGame::initialize1() {
 			break;
 		}
 
-		_debugMgr = new BaseDebugger(this);
-		if (_debugMgr == NULL) {
-			break;
-		}
-
 		_mathClass = new SXMath(this);
 		if (_mathClass == NULL) {
 			break;
@@ -473,7 +463,6 @@ bool BaseGame::initialize1() {
 		delete _mathClass;
 		delete _keyboardState;
 		delete _transMgr;
-		delete _debugMgr;
 		delete _surfaceStorage;
 		delete _fontStorage;
 		delete _soundMgr;
@@ -578,9 +567,6 @@ void BaseGame::LOG(bool res, const char *fmt, ...) {
 	if (_engineLogCallback) {
 		_engineLogCallback(buff, res, _engineLogCallbackData);
 	}
-	if (_debugMgr) {
-		_debugMgr->onLog(res, buff);
-	}
 
 	debugCN(kWinterMuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
 
@@ -604,7 +590,6 @@ bool BaseGame::initLoop() {
 
 	_currentTime = g_system->getMillis();
 
-	getDebugMgr()->onGameTick();
 	_renderer->initLoop();
 	updateMusicCrossfade();
 
@@ -3234,11 +3219,6 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Debug") == 0) {
 		stack->correctParams(0);
-
-		if (_gameRef->getDebugMgr()->_enabled) {
-			_gameRef->getDebugMgr()->onScriptHitBreakpoint(script);
-			script->sleep(0);
-		}
 		stack->pushNULL();
 	}
 
@@ -3382,7 +3362,6 @@ bool BaseGame::loadGame(int slot) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadGame(const char *filename) {
 	LOG(0, "Loading game '%s'...", filename);
-	getDebugMgr()->onGameShutdown();
 
 	bool ret;
 
@@ -3413,8 +3392,6 @@ bool BaseGame::loadGame(const char *filename) {
 				
 				displayContent(true, false);
 				//_renderer->flip();
-				
-				getDebugMgr()->onGameInit();
 			}
 		}
 	}
@@ -3439,8 +3416,6 @@ bool BaseGame::initAfterLoad() {
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadSound,    "BaseSound",    NULL);
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadFont,     "BaseFontTT",   NULL);
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript,   "ScScript",  NULL);
-
-	_scEngine->refreshScriptBreakpoints();
 
 	return STATUS_OK;
 }
@@ -4612,15 +4587,6 @@ bool BaseGame::displayDebugInfo() {
 
 	return STATUS_OK;
 }
-
-//////////////////////////////////////////////////////////////////////////
-BaseDebugger *BaseGame::getDebugMgr() {
-	if (!_debugMgr) {
-		_debugMgr = new BaseDebugger(this);
-	}
-	return _debugMgr;
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::getMousePos(Point32 *pos) {

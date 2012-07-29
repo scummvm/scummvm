@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BGAME_H
 #define WINTERMUTE_BGAME_H
 
-#include "engines/wintermute/base/base_debugger.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/persistent.h"
@@ -136,7 +135,6 @@ public:
 	bool initialize2();
 	bool initialize3();
 	BaseTransitionMgr *_transMgr;
-	BaseDebugger *getDebugMgr();
 
 	void LOG(bool res, const char *fmt, ...);
 
@@ -354,7 +352,6 @@ private:
 	bool isVideoPlaying();
 	bool stopVideo();
 
-	BaseDebugger *_debugMgr;
 	BaseArray<BaseQuickMsg *> _quickMessages;
 	BaseArray<UIWindow *> _windows;
 	BaseArray<BaseViewport *> _viewportStack;

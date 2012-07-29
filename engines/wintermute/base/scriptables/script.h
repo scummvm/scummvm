@@ -34,18 +34,13 @@
 #include "engines/wintermute/dcscript.h"   // Added by ClassView
 #include "engines/wintermute/coll_templ.h"
 
-#include "engines/wintermute/wme_debugger.h"
-
 namespace WinterMute {
 class BaseScriptHolder;
 class BaseObject;
 class ScEngine;
 class ScStack;
-class ScScript : public BaseClass, public IWmeDebugScript {
+class ScScript : public BaseClass {
 public:
-	bool dbgSendScript(IWmeDebugClient *client);
-	bool dbgSendVariables(IWmeDebugClient *client);
-
 	BaseArray<int> _breakpoints;
 	bool _tracingMode;
 
@@ -172,12 +167,6 @@ private:
 public:
 	virtual int dbgGetLine();
 	virtual const char *dbgGetFilename();
-	virtual TScriptState dbgGetState();
-	virtual int dbgGetNumBreakpoints();
-	virtual int dbgGetBreakpoint(int Index);
-
-	virtual bool dbgSetTracingMode(bool IsTracing);
-	virtual bool dbgGetTracingMode();
 };
 
 } // end of namespace WinterMute

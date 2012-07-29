@@ -319,7 +319,6 @@ bool BaseScriptHolder::addScript(const char *filename) {
 			scr->_owner = this;
 			_scripts.add(scr);
 			_gameRef->_scEngine->_scripts.add(scr);
-			_gameRef->getDebugMgr()->onScriptInit(scr);
 
 			return STATUS_OK;
 		}
@@ -469,8 +468,6 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 				bool ret = thread->createMethodThread(_scripts[i], methodName);
 				if (DID_SUCCEED(ret)) {
 					_scripts[i]->_engine->_scripts.add(thread);
-					_gameRef->getDebugMgr()->onScriptMethodThreadInit(thread, _scripts[i], methodName);
-
 					return thread;
 				} else {
 					delete thread;

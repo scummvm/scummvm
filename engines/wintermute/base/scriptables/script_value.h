@@ -33,7 +33,6 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/dcscript.h"   // Added by ClassView
-#include "engines/wintermute/wme_debugger.h"
 #include "common/str.h"
 
 namespace WinterMute {
@@ -41,10 +40,8 @@ namespace WinterMute {
 class ScScript;
 class BaseScriptable;
 
-class ScValue : public BaseClass, public IWmeDebugProp {
+class ScValue : public BaseClass {
 public:
-	bool dbgSendVariables(IWmeDebugClient *client, EWmeDebuggerVariableType type, ScScript *script, unsigned int scopeID);
-
 	static int compare(ScValue *val1, ScValue *val2);
 	static int compareStrict(ScValue *val1, ScValue *val2);
 	TValType getTypeTolerant();
@@ -109,31 +106,6 @@ public:
 	bool setProperty(const char *propName, double value);
 	bool setProperty(const char *propName, bool value);
 	bool setProperty(const char *propName);
-
-
-// IWmeDebugProp interface implementation
-public:
-	virtual EWmeDebuggerPropType dbgGetType();
-
-	// getters
-	virtual int dbgGetValInt();
-	virtual double dbgGetValFloat();
-	virtual bool dbgGetValBool();
-	virtual const char *dbgGetValString();
-	virtual IWmeDebugObject *dbgGetValNative();
-
-	// setters
-	virtual bool dbgSetVal(int value);
-	virtual bool dbgSetVal(double value);
-	virtual bool dbgSetVal(bool value);
-	virtual bool dbgSetVal(const char *value);
-	virtual bool dbgSetVal();
-
-	// properties
-	virtual int dbgGetNumProperties();
-	virtual bool dbgGetProperty(int index, const char **mame, IWmeDebugProp **value);
-
-	virtual bool dbgGetDescription(char *buf, int bufSize);
 };
 
 } // end of namespace WinterMute

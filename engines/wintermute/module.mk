@@ -61,7 +61,6 @@ MODULE_OBJS := \
 	base/sound/base_sound_manager.o \
 	base/base_active_rect.o \
 	base/base.o \
-	base/base_debugger.o \
 	base/base_dynamic_buffer.o \
 	base/base_engine.o \
 	base/base_fader.o \

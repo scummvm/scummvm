@@ -32,7 +32,6 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/wme_debugger.h"
 
 namespace WinterMute {
 
@@ -81,20 +80,7 @@ public:
 		BaseArray<int> _lines;
 	};
 
-
-
-
 public:
-	bool dbgSendScripts(IWmeDebugClient *client);
-
-	BaseArray<CScBreakpoint *> _breakpoints;
-	bool addBreakpoint(const char *scriptFilename, int line);
-	bool removeBreakpoint(const char *scriptFilename, int line);
-	bool refreshScriptBreakpoints();
-	bool refreshScriptBreakpoints(ScScript *script);
-	bool saveBreakpoints();
-	bool loadBreakpoints();
-
 	bool clearGlobals(bool includingNatives = false);
 	bool tickUnbreakable();
 	bool removeFinishedScripts();

@@ -188,17 +188,4 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return NULL;
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-// IWmeDebugObject
-//////////////////////////////////////////////////////////////////////////
-const char *BaseScriptable::dbgGetNativeClass() {
-	return getClassName();
-}
-
-//////////////////////////////////////////////////////////////////////////
-IWmeDebugProp *BaseScriptable::dbgGetProperty(const char *name) {
-	return scGetProperty(name);
-}
-
 } // end of namespace WinterMute

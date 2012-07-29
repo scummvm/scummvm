@@ -152,10 +152,6 @@ bool ScScript::initScript() {
 	_scriptStream->seek(_iP);
 	_currentLine = 0;
 
-	// init breakpoints
-	_engine->refreshScriptBreakpoints(this);
-
-
 	// ready to rumble...
 	_state = SCRIPT_RUNNING;
 
@@ -531,14 +527,8 @@ bool ScScript::executeInstruction() {
 		dw = getDWORD();
 		if (_scopeStack->_sP < 0) {
 			_globals->setProp(_symbols[dw], _operand);
-			if (_gameRef->getDebugMgr()->_enabled) {
-				_gameRef->getDebugMgr()->onVariableInit(WME_DBGVAR_SCRIPT, this, NULL, _globals->getProp(_symbols[dw]), _symbols[dw]);
-			}
 		} else {
 			_scopeStack->getTop()->setProp(_symbols[dw], _operand);
-			if (_gameRef->getDebugMgr()->_enabled) {
-				_gameRef->getDebugMgr()->onVariableInit(WME_DBGVAR_SCOPE, this, _scopeStack->getTop(), _scopeStack->getTop()->getProp(_symbols[dw]), _symbols[dw]);
-			}
 		}
 
 		break;
@@ -551,26 +541,14 @@ bool ScScript::executeInstruction() {
 		if (!_engine->_globals->propExists(_symbols[dw])) {
 			_operand->setNULL();
 			_engine->_globals->setProp(_symbols[dw], _operand, false, inst == II_DEF_CONST_VAR);
-
-			if (_gameRef->getDebugMgr()->_enabled) {
-				_gameRef->getDebugMgr()->onVariableInit(WME_DBGVAR_GLOBAL, this, NULL, _engine->_globals->getProp(_symbols[dw]), _symbols[dw]);
-			}
 		}
 		break;
 	}
 
 	case II_RET:
 		if (_scopeStack->_sP >= 0 && _callStack->_sP >= 0) {
-			_gameRef->getDebugMgr()->onScriptShutdownScope(this, _scopeStack->getTop());
-
 			_scopeStack->pop();
 			_iP = (uint32)_callStack->pop()->getInt();
-
-			if (_scopeStack->_sP < 0) {
-				_gameRef->getDebugMgr()->onScriptChangeScope(this, NULL);
-			} else {
-				_gameRef->getDebugMgr()->onScriptChangeScope(this, _scopeStack->getTop());
-			}
 		} else {
 			if (_thread) {
 				_state = SCRIPT_THREAD_FINISHED;
@@ -695,13 +673,6 @@ bool ScScript::executeInstruction() {
 	case II_SCOPE:
 		_operand->setNULL();
 		_scopeStack->push(_operand);
-
-		if (_scopeStack->_sP < 0) {
-			_gameRef->getDebugMgr()->onScriptChangeScope(this, NULL);
-		} else {
-			_gameRef->getDebugMgr()->onScriptChangeScope(this, _scopeStack->getTop());
-		}
-
 		break;
 
 	case II_CORRECT_STACK:
@@ -753,10 +724,6 @@ bool ScScript::executeInstruction() {
 				} else {
 					var->copy(val);
 				}
-			}
-
-			if (_gameRef->getDebugMgr()->_enabled) {
-				_gameRef->getDebugMgr()->onVariableChangeValue(var, val);
 			}
 		}
 
@@ -825,10 +792,6 @@ bool ScScript::executeInstruction() {
 			var->setNULL();
 		} else {
 			var->setProp(str, val);
-		}
-
-		if (_gameRef->getDebugMgr()->_enabled) {
-			_gameRef->getDebugMgr()->onVariableChangeValue(var, NULL);
 		}
 
 		break;
@@ -1117,21 +1080,6 @@ bool ScScript::executeInstruction() {
 		int newLine = getDWORD();
 		if (newLine != _currentLine) {
 			_currentLine = newLine;
-			if (_gameRef->getDebugMgr()->_enabled) {
-				_gameRef->getDebugMgr()->onScriptChangeLine(this, _currentLine);
-				for (int i = 0; i < _breakpoints.getSize(); i++) {
-					if (_breakpoints[i] == _currentLine) {
-						_gameRef->getDebugMgr()->onScriptHitBreakpoint(this);
-						sleep(0);
-						break;
-					}
-				}
-				if (_tracingMode) {
-					_gameRef->getDebugMgr()->onScriptHitBreakpoint(this);
-					sleep(0);
-					break;
-				}
-			}
 		}
 		break;
 
@@ -1371,7 +1319,6 @@ ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unb
 		if (DID_SUCCEED(ret)) {
 			thread->_unbreakable = unbreakable;
 			_engine->_scripts.add(thread);
-			_gameRef->getDebugMgr()->onScriptEventThreadInit(thread, this, eventName.c_str());
 			return thread;
 		} else {
 			delete thread;
@@ -1496,68 +1443,6 @@ int ScScript::dbgGetLine() {
 const char *ScScript::dbgGetFilename() {
 	return _filename;
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-bool ScScript::dbgSendScript(IWmeDebugClient *client) {
-	if (_methodThread) {
-		client->onScriptMethodThreadInit(this, _parentScript, _threadEvent);
-	} else if (_thread) {
-		client->onScriptEventThreadInit(this, _parentScript, _threadEvent);
-	} else {
-		client->onScriptInit(this);
-	}
-
-	return dbgSendVariables(client);
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool ScScript::dbgSendVariables(IWmeDebugClient *client) {
-	// send script globals
-	_globals->dbgSendVariables(client, WME_DBGVAR_SCRIPT, this, 0);
-
-	// send scope variables
-	if (_scopeStack->_sP >= 0) {
-		for (int i = 0; i <= _scopeStack->_sP; i++) {
-			//  ScValue *Scope = _scopeStack->GetAt(i);
-			//Scope->DbgSendVariables(Client, WME_DBGVAR_SCOPE, this, (unsigned int)Scope);
-		}
-	}
-	return STATUS_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-TScriptState ScScript::dbgGetState() {
-	return _state;
-}
-
-//////////////////////////////////////////////////////////////////////////
-int ScScript::dbgGetNumBreakpoints() {
-	return _breakpoints.getSize();
-}
-
-//////////////////////////////////////////////////////////////////////////
-int ScScript::dbgGetBreakpoint(int index) {
-	if (index >= 0 && index < _breakpoints.getSize()) {
-		return _breakpoints[index];
-	} else {
-		return -1;
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool ScScript::dbgSetTracingMode(bool isTracing) {
-	_tracingMode = isTracing;
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool ScScript::dbgGetTracingMode() {
-	return _tracingMode;
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 void ScScript::afterLoad() {
