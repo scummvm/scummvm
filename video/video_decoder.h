@@ -447,16 +447,6 @@ protected:
 		virtual bool seek(const Audio::Timestamp &time) { return false; }
 
 		/**
-		 * Start playback of the track.
-		 */
-		virtual void start() {}
-
-		/**
-		 * Stop playback of the track.
-		 */
-		virtual void stop() {}
-
-		/**
 		 * Set the pause status of the track.
 		 */
 		void pause(bool shouldPause) {}
@@ -578,7 +568,15 @@ protected:
 		TrackType getTrackType() const { return kTrackTypeAudio; }
 
 		virtual bool endOfTrack() const;
+
+		/**
+		 * Start playing this track
+		 */
 		void start();
+
+		/**
+		 * Stop playing this track
+		 */
 		void stop();
 
 		/**
@@ -785,8 +783,8 @@ private:
 	Graphics::PixelFormat _defaultHighColorFormat;
 
 	// Internal helper functions
-	void stopAllTracks();
-	void startAllTracks();
+	void stopAudio();
+	void startAudio();
 };
 
 /**

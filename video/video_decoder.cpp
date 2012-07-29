@@ -268,7 +268,7 @@ bool AdvancedVideoDecoder::rewind() {
 
 	// Stop all tracks so they can be rewound
 	if (isPlaying())
-		stopAllTracks();
+		stopAudio();
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if (!(*it)->rewind())
@@ -276,7 +276,7 @@ bool AdvancedVideoDecoder::rewind() {
 
 	// Now that we've rewound, start all tracks again
 	if (isPlaying())
-		startAllTracks();
+		startAudio();
 
 	_audioStartOffset = 0;
 	_startTime = g_system->getMillis();
@@ -303,7 +303,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 
 	// Stop all tracks so they can be seeked
 	if (isPlaying())
-		stopAllTracks();
+		stopAudio();
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if (!(*it)->seek(time))
@@ -311,7 +311,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 
 	// Now that we've seeked, start all tracks again
 	if (isPlaying())
-		startAllTracks();
+		startAudio();
 
 	_audioStartOffset = time;
 	_startTime = g_system->getMillis() - time.msecs();
@@ -332,7 +332,7 @@ void AdvancedVideoDecoder::start() {
 	if (_needsRewind)
 		rewind();
 
-	startAllTracks();
+	startAudio();
 }
 
 void AdvancedVideoDecoder::stop() {
@@ -346,7 +346,7 @@ void AdvancedVideoDecoder::stop() {
 	_dirtyPalette = false;
 	_needsUpdate = false;
 
-	stopAllTracks();
+	stopAudio();
 
 	// Also reset the pause state.
 	_pauseLevel = 0;
@@ -532,8 +532,8 @@ void AdvancedVideoDecoder::addTrack(Track *track) {
 		track->pause(true);
 
 	// Start the track if we're playing
-	if (isPlaying())
-		track->start();
+	if (isPlaying() && track->getTrackType() == Track::kTrackTypeAudio)
+		((AudioTrack *)track)->start();
 }
 
 bool AdvancedVideoDecoder::addStreamFileTrack(const Common::String &baseName) {
@@ -607,14 +607,16 @@ const AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack
 	return bestTrack;
 }
 
-void AdvancedVideoDecoder::startAllTracks() {
+void AdvancedVideoDecoder::startAudio() {
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		(*it)->start();
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
+			((AudioTrack *)*it)->start();
 }
 
-void AdvancedVideoDecoder::stopAllTracks() {
+void AdvancedVideoDecoder::stopAudio() {
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		(*it)->stop();
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
+			((AudioTrack *)*it)->stop();
 }
 
 //////////////////////////////////////////////
