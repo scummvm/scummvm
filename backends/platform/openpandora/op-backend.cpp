@@ -63,15 +63,6 @@ void OSystem_OP::initBackend() {
 
 	assert(!_inited);
 
-	// Create the events manager
-	if (_eventSource == 0)
-		_eventSource = new OPEventSource();
-
-	// Create the graphics manager
-	if (_graphicsManager == 0) {
-		_graphicsManager = new OPGraphicsManager(_eventSource);
-	}
-
 	/* Setup default save path to be workingdir/saves */
 
 	char savePath[PATH_MAX+1];
@@ -149,6 +140,15 @@ void OSystem_OP::initBackend() {
 
 	/* Make sure SDL knows that we have a joystick we want to use. */
 	ConfMan.setInt("joystick_num", 0);
+
+	// Create the events manager
+	if (_eventSource == 0)
+		_eventSource = new OPEventSource();
+
+	// Create the graphics manager
+	if (_graphicsManager == 0) {
+		_graphicsManager = new OPGraphicsManager(_eventSource);
+	}
 
 	/* Pass to POSIX method to do the heavy lifting */
 	OSystem_POSIX::initBackend();
