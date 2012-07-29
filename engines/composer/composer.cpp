@@ -119,6 +119,8 @@ Common::Error ComposerEngine::run() {
 	uint frameTime = 1000 / fps;
 	uint32 lastDrawTime = 0;
 	_lastSaveTime = _system->getMillis();
+	
+	bool loadFromLauncher = ConfMan.hasKey("save_slot");
 
 	while (!shouldQuit()) {
 		for (uint i = 0; i < _pendingPageChanges.size(); i++) {
@@ -167,9 +169,9 @@ Common::Error ComposerEngine::run() {
 		} else if (_needsUpdate) {
 			redraw();
 		}
-		if (ConfMan.hasKey("save_slot")) {
+		if (loadFromLauncher) {
 			loadGameState(ConfMan.getInt("save_slot"));
-			ConfMan.removeKey("save_slot", Common::ConfigManager::kTransientDomain);
+			loadFromLauncher = false;
 		}
 		if (shouldPerformAutoSave(_lastSaveTime))
 			saveGameState(0, "Autosave");
