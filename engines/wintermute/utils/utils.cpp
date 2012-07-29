@@ -92,18 +92,6 @@ char *BaseUtils::setString(char **string, const char *value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int BaseUtils::strNumEntries(const char *str, const char delim) {
-	int numEntries = 1;
-	for (uint32 i = 0; i < strlen(str); i++) {
-		if (str[i] == delim) {
-			numEntries++;
-		}
-	}
-	return numEntries;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 	int numEntries = 0;
 
@@ -156,66 +144,6 @@ float BaseUtils::randomAngle(float from, float to) {
 	}
 	return normalizeAngle(randomFloat(from, to));
 }
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseUtils::matchesPattern(const char *pattern, const char *string) {
-	char stringc, patternc;
-
-	for (;; ++string) {
-		stringc = toupper(*string);
-		patternc = toupper(*pattern++);
-
-		switch (patternc) {
-		case 0:
-			return (stringc == 0);
-
-		case '?':
-			if (stringc == 0) {
-				return false;
-			}
-			break;
-
-		case '*':
-			if (!*pattern) {
-				return true;
-			}
-
-			if (*pattern == '.') {
-				char *dot;
-				if (pattern[1] == '*' && pattern[2] == 0) {
-					return true;
-				}
-				dot = (char *)strchr(string, '.');
-				if (pattern[1] == 0) {
-					return (dot == NULL || dot[1] == 0);
-				}
-				if (dot != NULL) {
-					string = dot;
-					if (strpbrk(pattern, "*?[") == NULL && strchr(string + 1, '.') == NULL) {
-						return(scumm_stricmp(pattern + 1, string + 1) == 0);
-					}
-				}
-			}
-
-			while (*string)
-				if (BaseUtils::matchesPattern(pattern, string++)) {
-					return true;
-				}
-			return false;
-
-		default:
-			if (patternc != stringc) {
-				if (patternc == '.' && stringc == 0) {
-					return(BaseUtils::matchesPattern(pattern, string));
-				} else {
-					return false;
-				}
-			}
-			break;
-		}
-	}
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseUtils::RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL) {

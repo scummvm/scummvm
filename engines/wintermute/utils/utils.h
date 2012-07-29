@@ -46,14 +46,11 @@ public:
 	static void debugMessage(const char *text);
 	static char *setString(char **string, const char *value);
 
-	static int strNumEntries(const char *str, const char delim = ',');
 	static char *strEntry(int entry, const char *str, const char delim = ',');
 
 	static int randomInt(int from, int to);
 	static float randomFloat(float from, float to);
 	static float randomAngle(float from, float to);
-
-	static bool matchesPattern(const char *pattern, const char *string);
 
 	static void RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL);
 	static uint32 HSLtoRGB(byte H, byte S, byte L);
