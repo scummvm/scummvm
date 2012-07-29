@@ -1444,6 +1444,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_emptyMsg); // "It's Empty"
 		break;
 
+	case 0x56b3:
+		rejectMessage();
+		break;
+
 	case 0x56b7:
 		playSound(66, 5);
 		playSound(67, 11);
@@ -1511,6 +1515,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_pullObjMsg2);
 		break;
 
+	case 0x5854:
+		loadScene(15, Common::Point(157, 199));
+		scene->setOrientation(1);
+		break;
+
 	case 0x586e:
 		loadScene(21, Common::Point(24, 187));
 		scene->setOrientation(2);
@@ -1519,6 +1528,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x5888:
 		loadScene(27, Common::Point(108, 199));
 		scene->setOrientation(2);
+		break;
+
+	case 0x590a:
+		loadScene(20, Common::Point(304, 190));
+		scene->setOrientation(4);
 		break;
 
 	case 0x5924:
@@ -1592,6 +1606,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_CantJumpMsg); // "No way I can jump so high, cause, err, white men can't jump"
 		break;
 
+	case 0x5faf:
+		displayMessage(dsAddr_noSecretPassageMsg); // "I don't think there's any secret passage inside"
+		break;
+
 	case 0x5fe5:
 		displayMessage(dsAddr_jugMeMsg); // "They can jug me if I steal this"
 		break;
@@ -1634,6 +1652,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x6074:
+		rejectMessage();
+		break;
+
 	case 0x6078:
 		displayMessage(dsAddr_tooBigMsg); // "It's too big and I doubt if I'll ever need it"
 		break;
@@ -1672,6 +1694,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_rockWalkingGeeMsg); // "Yeah, great idea. Let's take this rock and walk around a bit. Gee..."
 		break;
 
+	case 0x63ae:
+		displayMessage(dsAddr_notSureIfAliveMsg); // "I'm not sure if it's alive"
+		break;
+
 	case 0x63bc:
 		playMusic(6);
 		loadScene(25, 151, 156, 2);
@@ -1679,6 +1705,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x63dc:
 		dialog->showMono(86, scene, 0, 0xd1, 0);
+		break;
+
+	case 0x63e3:
+		displayMessage(dsAddr_holeTooNarrowMsg); // "The hole is too narrow to fit my hand"
 		break;
 
 	case 0x646e:
@@ -4632,7 +4662,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	default:
 		warning("unknown callback %04x called", addr);
 
-		// FIXME - unknown non-trivial callback 0x5b44 called! Need to analyse cseg data to work out what this is.
+		// FIXME - unknown non-trivial callback 0x5b44 called!
+		//         This is the doorbell use callback on House #2 i.e.
+		//         Granny and Anne's House. Need to analyse cseg data.
 
 		// try decoding trivial callbacks by cseg if not in switch
 		byte *code = res->cseg.ptr(addr);

@@ -329,7 +329,8 @@ const uint16 dsAddr_notTakingSocksMsg = 0x42c7; // "I really don't want to walk 
 const uint16 dsAddr_notTiredMsg = 0x4306; // "Thanks, I'm not tired"
 // Too Big Message : 0x431e to 0x434d
 const uint16 dsAddr_tooBigMsg = 0x431e; // "It's too big and I doubt if I'll ever need it"
-
+// No Secret Passage Message : 0x434e to 0x437f
+const uint16 dsAddr_noSecretPassageMsg = 0x434e; // "I don't think there's any secret passage inside"
 // No Fruit Message : 0x4380 to 0x43ab
 const uint16 dsAddr_noFruitMsg = 0x4380; // "There are no more interesting fruits here"
 // Jug Me Message : 0x43ac to 0x43cd
@@ -382,6 +383,11 @@ const uint16 dsAddr_noHandsSharpThornsMsg = 0x465e; // "I can't remove it with m
 // Rock Walking Gee Message : 0x46f7 to 0x473c
 const uint16 dsAddr_rockWalkingGeeMsg = 0x46f7; // "Yeah, great idea. Let's take this rock and walk around a bit. Gee..."
 
+// Not Sure If Alive Message : 0x477b to 0x4797
+const uint16 dsAddr_notSureIfAliveMsg = 0x477b; // "I'm not sure if it's alive"
+
+// Hole Too Narrow Message : 0x47bf to 0x47e6
+const uint16 dsAddr_holeTooNarrowMsg = 0x47bf; // "The hole is too narrow to fit my hand"
 // Bird Attack Message : 0x47e7 to 0x4807
 const uint16 dsAddr_birdAttackMsg = 0x47e7; // "Hey You! Wake up! Bird attack!"
 // No Search Warrant Message : 0x4808 to 0x4827
