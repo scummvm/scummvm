@@ -568,12 +568,7 @@ bool BaseFontTT::initFont() {
 //////////////////////////////////////////////////////////////////////////
 void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight) {
 	//TextLineList lines;
-	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		hasWarned = true;
-		warning("Todo: Test Mesuretext");
-	}
+
 	if (maxWidth >= 0) {
 		Common::Array<Common::String> lines;
 		_font->wordWrapText(text, maxWidth, lines);

@@ -64,7 +64,7 @@ char *BaseParser::getLastOffender() {
 
 
 //////////////////////////////////////////////////////////////////////
-int32 BaseParser::getObject(char **buf, TokenDesc *tokens, char **name, char **data) {
+int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, char **data) {
 	skipCharacters(buf, _whiteSpace);
 
 	// skip comment lines.
@@ -119,7 +119,7 @@ int32 BaseParser::getObject(char **buf, TokenDesc *tokens, char **name, char **d
 
 
 //////////////////////////////////////////////////////////////////////
-int32 BaseParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
+int32 BaseParser::getCommand(char **buf, const TokenDesc *tokens, char **params) {
 	if (!*buf) {
 		return PARSERR_TOKENNOTFOUND;
 	}
@@ -205,12 +205,10 @@ char *BaseParser::getAssignmentText(char **buf) {
 	return result;
 }
 
-
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-char *BaseParser::getToken(char **buf) {
-	static char token[100];
-	char *b = *buf, * t = token;
+Common::String BaseParser::getToken(char **buf) {
+	char token[100]; // TODO: Remove static
+	char *b = *buf, *t = token;
 	while (true) {
 		while (*b && (*b == ' ' || *b == '\n' || *b == 13 || *b == 10 || *b == '\t')) {
 			b++;
@@ -265,7 +263,8 @@ char *BaseParser::getToken(char **buf) {
 
 //////////////////////////////////////////////////////////////////////
 float BaseParser::getTokenFloat(char **buf) {
-	char *t = getToken(buf);
+	Common::String token = getToken(buf);
+	const char *t = token.c_str();
 	if (!((*t >= '0' && *t <= '9') || *t == '-' || *t == '.')) {
 		// Error situation. We handle this by return 0.
 		return 0.;
@@ -277,7 +276,8 @@ float BaseParser::getTokenFloat(char **buf) {
 
 //////////////////////////////////////////////////////////////////////
 int BaseParser::getTokenInt(char **buf) {
-	char *t = getToken(buf);
+	Common::String token = getToken(buf);
+	const char *t = token.c_str();
 	if (!((*t >= '0' && *t <= '9') || *t == '-')) {
 		// Error situation. We handle this by return 0.
 		return 0;
@@ -289,7 +289,8 @@ int BaseParser::getTokenInt(char **buf) {
 
 //////////////////////////////////////////////////////////////////////
 void BaseParser::skipToken(char **buf, char *tok, char * /*msg*/) {
-	char *t = getToken(buf);
+	Common::String token = getToken(buf);
+	const char *t = token.c_str();
 	if (strcmp(t, tok)) {
 		return;    // Error
 	}

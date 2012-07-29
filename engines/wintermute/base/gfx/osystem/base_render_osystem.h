@@ -115,7 +115,7 @@ private:
 	int _borderRight;
 	int _borderBottom;
 
-	bool _disableDirtyRects;
+	static const bool _disableDirtyRects = true;
 	float _ratioX;
 	float _ratioY;
 	uint32 _colorMod;

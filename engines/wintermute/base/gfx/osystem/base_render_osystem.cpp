@@ -105,7 +105,6 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	setAlphaMod(255);
 	setColorMod(255, 255, 255);
 	_dirtyRect = NULL;
-	_disableDirtyRects = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -232,12 +231,10 @@ void BaseRenderOSystem::fade(uint16 alpha) {
 void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect) {
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		if (!_disableDirtyRects) {
-			warning("BaseRenderOSystem::FadeToColor - Breaks when using dirty rects");
-		}
-		hasWarned = true;
+	
+	// TODO: Add fading with dirty rects.
+	if (!_disableDirtyRects) {
+		warning("BaseRenderOSystem::FadeToColor - Breaks when using dirty rects");
 	}
 
 	Common::Rect fillRect;
@@ -461,13 +458,11 @@ void BaseRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::R
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		if (!_disableDirtyRects) {
-			warning("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
-		}
-		hasWarned = true;
+
+	if (!_disableDirtyRects) {
+		warning("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
 	}
+
 	byte r = RGBCOLGetR(color);
 	byte g = RGBCOLGetG(color);
 	byte b = RGBCOLGetB(color);

@@ -36,6 +36,7 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/video/decoders/theora_decoder.h"
+#include "engines/wintermute/wintermute.h"
 #include "common/system.h"
 
 namespace WinterMute {
@@ -264,10 +265,10 @@ bool VideoTheoraPlayer::update() {
 
 	if (_theoraDecoder) {
 		if (_theoraDecoder->endOfVideo() && _looping) {
-			warning("Should loop movie");
+			warning("Should loop movie %s", _filename.c_str());
 			_theoraDecoder->rewind();
 		} else if (_theoraDecoder->endOfVideo() && !_looping) {
-			warning("Finished movie");
+			debugC(kWinterMuteDebugLog, "Finished movie %s", _filename.c_str());
 			_state = THEORA_STATE_FINISHED;
 			_playbackStarted = false;
 			if (_freezeGame) {

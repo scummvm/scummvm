@@ -77,7 +77,6 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("WinterMute");
 
-	debug("WinterMuteEngine::WinterMuteEngine");
 	_game = NULL;
 
 	g_wintermute = this;
@@ -85,8 +84,6 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 }
 
 WinterMuteEngine::~WinterMuteEngine() {
-	debug("WinterMuteEngine::~WinterMuteEngine");
-
 	// Dispose your resources here
 	deinit();
 	delete _rnd;
@@ -114,39 +111,21 @@ Common::Error WinterMuteEngine::run() {
 	if (g_system->getScreenFormat() != format) {
 		error("Wintermute currently REQUIRES 32bpp");
 	}
-	// You could use backend transactions directly as an alternative,
-	// but it isn't recommended, until you want to handle the error values
-	// from OSystem::endGFXTransaction yourself.
-	// This is just an example template:
-	//_system->beginGFXTransaction();
-	//  // This setup the graphics mode according to users seetings
-	//  initCommonGFX(false);
-	//
-	//  // Specify dimensions of game graphics window.
-	//  // In this example: 320x200
-	//  _system->initSize(320, 200);
-	//FIXME: You really want to handle
-	//OSystem::kTransactionSizeChangeFailed here
-	//_system->endGFXTransaction();
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
 
-	// Additional setup.
-	debug("WinterMuteEngine::init");
-
-	// Your main even loop should be (invoked from) here.
-	debug("WinterMuteEngine::go: Hello, World!");
-
-	DebugMan.enableDebugChannel("enginelog");
-	// This test will show up if -d1 and --debugflags=example are specified on the commandline
+//	DebugMan.enableDebugChannel("enginelog");
 	debugC(1, kWinterMuteDebugLog, "Engine Debug-LOG enabled");
 	debugC(2, kWinterMuteDebugSaveGame , "Savegame debugging-enabled");
 
 	int ret = 1;
 
+	// Additional setup.
+	debugC(kWinterMuteDebugLog, "WinterMuteEngine::init");
 	ret = init();
-
+	
+	debugC(kWinterMuteDebugLog, "WinterMuteEngine::messageLoop");
 	if (ret == 0) {
 		ret = messageLoop();
 	}

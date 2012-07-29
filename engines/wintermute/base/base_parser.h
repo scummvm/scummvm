@@ -40,7 +40,7 @@
 	TOKEN_TOTAL_COUNT           \
 	};
 #define TOKEN_TABLE_START(name)     \
-	static BaseParser::TokenDesc name [] =      \
+	static const BaseParser::TokenDesc name [] =      \
 	        {
 #define TOKEN_TABLE(name)       \
 	{ TOKEN_ ## name, #name },
@@ -65,7 +65,7 @@ public:
 
 public:
 	int scanStr(const char *in, const char *format, ...);
-	int32 getCommand(char **buf, TokenDesc *tokens, char **params);
+	int32 getCommand(char **buf, const TokenDesc *tokens, char **params);
 	BaseParser();
 	virtual ~BaseParser();
 private:
@@ -73,11 +73,11 @@ private:
 	void skipToken(char **buf, char *tok, char *msg = NULL);
 	int getTokenInt(char **buf);
 	float getTokenFloat(char **buf);
-	char *getToken(char **buf);
+	Common::String getToken(char **buf);
 	char *getAssignmentText(char **buf);
 	char *getSubText(char **buf, char open, char close);
 	void skipCharacters(char **buf, const char *toSkip);
-	int32 getObject(char **buf, TokenDesc *tokens, char **name, char **data);
+	int32 getObject(char **buf, const TokenDesc *tokens, char **name, char **data);
 	int _parserLine;
 	char _lastOffender[255];
 	char *_whiteSpace;

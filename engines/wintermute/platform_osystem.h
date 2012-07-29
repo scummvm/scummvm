@@ -64,6 +64,7 @@ public:
 	static char *strlwr(char *string);
 
 private:
+	// Set by initialize on game-startup, the object referred to is also deleted by deinit in WinterMuteEngine
 	static BaseGame *_gameRef;
 };
 

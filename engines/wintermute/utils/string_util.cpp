@@ -162,11 +162,6 @@ char simpleAnsiToWide(const AnsiString &str, uint32 &offset) {
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::ansiToWide(const AnsiString &str) {
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		hasWarned = true;
-		warning("StringUtil::AnsiToWide - WideString not supported yet");
-	}
 	/*Common::String converted = "";
 	uint32 index = 0;
 	while (index != str.size()) {
@@ -188,11 +183,6 @@ WideString StringUtil::ansiToWide(const AnsiString &str) {
 AnsiString StringUtil::wideToAnsi(const WideString &wstr) {
 	// using default os locale!
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
-	static bool hasWarned = false;
-	if (!hasWarned) {
-		hasWarned = true;
-		warning("StringUtil::WideToAnsi - WideString not supported yet");
-	}
 	/*  setlocale(LC_CTYPE, "");
 	    size_t wideSize = wcstombs(NULL, wstr.c_str(), 0) + 1;
 	    char *str = new char[WideSize];
