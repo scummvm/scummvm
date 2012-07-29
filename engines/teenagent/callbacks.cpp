@@ -503,45 +503,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return false;
 
 	debugC(0, kDebugCallbacks, "processCallback(%04x)", addr);
-	byte *code = res->cseg.ptr(addr);
-
-	// try trivial callbacks first
-	if (code[0] == 0xbb && code[3] == 0xe8 && code[6] == 0xc3) {
-		// call display_message, r
-		uint16 msg = READ_LE_UINT16(code + 1);
-		uint16 func = 6 + addr + READ_LE_UINT16(code + 4);
-		debugC(0, kDebugCallbacks, "call %04x msg:0x%04x", func, msg);
-		debugC(0, kDebugCallbacks, "trivial callback, showing message %s", (const char *)res->dseg.ptr(addr));
-		if (func == csAddr_displayMsg) {
-			displayMessage(msg);
-			return true;
-		}
-	}
-
-	if (code[0] == 0xe8 && code[3] == 0xc3) {
-		uint func = 3 + addr + READ_LE_UINT16(code + 1);
-		debugC(0, kDebugCallbacks, "call %04x and return", func);
-		if (func == csAddr_rejectMsg) {
-			rejectMessage();
-			return true;
-		}
-	}
-
-	if (code[0] == 0xc7 && code[1] == 0x06 && code[2] == 0xf3 && code[3] == 0xb4 &&
-	        code[6] == 0xb8 && code[9] == 0xbb && code[12] == 0xbf &&
-	        code[22] == 0xe8 && code[25] == 0xc3) {
-		debugC(0, kDebugCallbacks, "loadScene(%d) callback", code[4]);
-		loadScene(code[4], Common::Point(
-		              (READ_LE_UINT16(code + 7) + READ_LE_UINT16(code + 13) + 1) / 2 ,
-		              READ_LE_UINT16(code + 10)));
-		scene->setOrientation(code[21]);
-		return true;
-	}
 
 	bool retVal = true;
 	switch (addr) {
 	case csAddr_intro: // intro
 		fnIntro();
+		break;
+
+	case 0x3fed:
+		loadScene(3, Common::Point(305, 104));
+		scene->setOrientation(4);
+		break;
+
+	case 0x4007:
+		loadScene(5, Common::Point(300, 131));
+		scene->setOrientation(3);
 		break;
 
 	case 0x4021:
@@ -554,6 +530,20 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else {
 			displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
 		}
+		break;
+
+	case 0x404f:
+		displayMessage(dsAddr_notWantToSleepMsg); // "I don't want to sleep"
+		break;
+
+	case 0x4060:
+		loadScene(2, Common::Point(28, 180));
+		scene->setOrientation(2);
+		break;
+
+	case 0x407a:
+		loadScene(4, Common::Point(297, 128));
+		scene->setOrientation(4);
 		break;
 
 	case 0x4094: // climbing to the pole near mudpool
@@ -593,12 +583,20 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		fnPoleClimbFail();
 		break;
 
+	case 0x4195:
+		displayMessage(dsAddr_preferWaterMsg); // "I prefer water"
+		break;
+
 	case 0x419c: // getting the bird
 		setOns(0, 0);
 		playSound(56, 10);
 		playActorAnimation(875);
 		disableObject(6);
 		inventory->add(0x5c);
+		break;
+
+	case 0x41ca:
+		rejectMessage();
 		break;
 
 	case 0x41ce:
@@ -609,6 +607,20 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveTo(225, 159, 4);
 		inventory->add(0x4e);
 		disableObject(3);
+		break;
+
+	case 0x422c:
+		displayMessage(dsAddr_tooWeakToClimbMsg); // "I'm too weak to climb it"
+		break;
+
+	case 0x4233:
+		loadScene(3, Common::Point(216, 199));
+		scene->setOrientation(1);
+		break;
+
+	case 0x424d:
+		loadScene(5, Common::Point(18, 174));
+		scene->setOrientation(2);
 		break;
 
 	case 0x4267:
@@ -637,6 +649,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		disableObject(1);
 		inventory->add(0x51);
 		displayMessage(dsAddr_fnMsg1); // "Piece of cake"
+		break;
+
+	case 0x433a:
+		loadScene(10, Common::Point(294, 183));
+		scene->setOrientation(4);
+		break;
+
+	case 0x4354:
+		loadScene(4, Common::Point(300, 185));
+		scene->setOrientation(4);
+		break;
+
+	case 0x436e:
+		loadScene(2, Common::Point(219, 199));
+		scene->setOrientation(1);
 		break;
 
 	case 0x4388:
@@ -703,6 +730,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			inventory->add(0x58);
 			SET_FLAG(0xdbe5, 1);
 		}
+		break;
+
+	case 0x4532:
+		displayMessage(dsAddr_springPrickMsg); // "The springs would prick my back"
 		break;
 
 	case 0x4539: // prison cell: use crates
@@ -838,9 +869,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x4836:
+		rejectMessage();
+		break;
+
 	case 0x4871:
 		playActorAnimation(965);
 		displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+		break;
+
+	case 0x487e:
+		displayMessage(dsAddr_geographyClassMsg); // "I should have paid more attention in geography classes."
 		break;
 
 	case 0x4893: // taking pills
@@ -855,6 +894,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(964);
 			displayMessage(dsAddr_lockedMsg); // "It's Locked!"
 		}
+		break;
+
+	case 0x48db:
+		displayMessage(dsAddr_uselessModelsMsg); // "What's the use of the models?"
+		break;
+
+	case 0x48e2:
+	case 0x48e6:
+		rejectMessage();
 		break;
 
 	case 0x4918: // talking with barmen
@@ -948,6 +996,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x4aed:
+		displayMessage(dsAddr_tooBigMsg); // "It's too big and I doubt if I'll ever need it"
+		break;
+
 	case 0x4af4: // taking the crumbs
 		setOns(0, 0);
 		playSound(49, 6);
@@ -955,6 +1007,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(861);
 		inventory->add(0x57);
 		disableObject(6);
+		break;
+
+	case 0x4b23:
+		rejectMessage();
+		break;
+
+	case 0x4b27:
+		displayMessage(dsAddr_tooMuchToDrinkMsg); // "It'd take too much time to drink it..."
+		break;
+
+	case 0x4b2e:
+		displayMessage(dsAddr_notThiefMsg); // "I'm not a thief. And it's empty, by the way."
 		break;
 
 	case 0x4b35:
@@ -1006,6 +1070,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x4c1c:
 		playActorAnimation(960);
 		displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+		break;
+
+	case 0x4ca5:
+		displayMessage(dsAddr_chickenNeverMsg); // "Chickening? Me? Never!"
 		break;
 
 	case 0x4cac:
@@ -4294,7 +4362,43 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	default:
-		warning("invalid callback %04x called", addr);
+		warning("unknown callback %04x called", addr);
+
+		// try decoding trivial callbacks by cseg if not in switch
+		byte *code = res->cseg.ptr(addr);
+		if (code[0] == 0xbb && code[3] == 0xe8 && code[6] == 0xc3) {
+			// call display_message, r
+			uint16 msg = READ_LE_UINT16(code + 1);
+			uint16 func = 6 + addr + READ_LE_UINT16(code + 4);
+			warning("call %04x and return (csAddr_displayMsg = 0x%04x) msg:0x%04x", func, csAddr_displayMsg, msg);
+			if (func == csAddr_displayMsg) {
+				warning("trivial callback, showing message \"%s\"", (const char *)res->dseg.ptr(msg));
+				displayMessage(msg);
+				return true;
+			}
+		}
+
+		if (code[0] == 0xe8 && code[3] == 0xc3) {
+			uint func = 3 + addr + READ_LE_UINT16(code + 1);
+			warning("call %04x and return (csAddr_rejectMsg = 0x%04x)", func, csAddr_rejectMsg);
+			if (func == csAddr_rejectMsg) {
+				rejectMessage();
+				return true;
+			}
+		}
+
+		if (code[0] == 0xc7 && code[1] == 0x06 && code[2] == 0xf3 && code[3] == 0xb4 &&
+		        code[6] == 0xb8 && code[9] == 0xbb && code[12] == 0xbf &&
+		        code[22] == 0xe8 && code[25] == 0xc3) {
+			warning("callback -> loadScene(%d, Common::Point(%d, %d)); scene->setOrientation(%d)", code[4], 
+			              (READ_LE_UINT16(code + 7) + READ_LE_UINT16(code + 13) + 1) / 2,
+			               READ_LE_UINT16(code + 10), code[21]);
+			loadScene(code[4], Common::Point(
+			              (READ_LE_UINT16(code + 7) + READ_LE_UINT16(code + 13) + 1) / 2 ,
+			              READ_LE_UINT16(code + 10)));
+			scene->setOrientation(code[21]);
+			return true;
+		}
 		break;
 	}
 

@@ -298,6 +298,9 @@ const uint16 dsAddr_hmmGrassMsg = 0x417e; // "Hmmm. Grass..."
 // Find Nut Message : 0x41b1 to 0x41ee
 const uint16 dsAddr_findNutMsg = 0x41b1; // "I won't find the nut just like that. The grass is too dense"
 
+// Too Big Message : 0x431e to 0x434d
+const uint16 dsAddr_tooBigMsg = 0x431e; // "It's too big and I doubt if I'll ever need it"
+
 // No Fruit Message : 0x4380 to 0x43ab
 const uint16 dsAddr_noFruitMsg = 0x4380; // "There are no more interesting fruits here"
 
@@ -555,7 +558,8 @@ const uint16 dsAddr_pullObjMsg1 = 0x5696; // "I can't pull it out"
 
 // Fence Blocks Message : 0x56da to 0x56f6
 const uint16 dsAddr_fenceBlocksMsg = 0x56da; // "The fence blocks the way"
-
+// Not Want To Sleep Message : 0x56f7 to 0x570e
+const uint16 dsAddr_notWantToSleepMsg = 0x56f7; // "I don't want to sleep"
 // Pull Object Message #2 : 0x570f to 0x5721
 const uint16 dsAddr_pullObjMsg2 = 0x570f; // "I can't reach it"
 // Hello Question Message : 0x5722 to 0x5729
@@ -592,13 +596,32 @@ const uint16 dsAddr_yeahRightMsg = 0x5883; // "Yeah right!"
 const uint16 dsAddr_barmanTooCloseMsg = 0x5894; // "The barman is too close"
 // Yuck Message : 0x58b0 to 0x58b6
 const uint16 dsAddr_yuckMsg = 0x58b0; // "Yuck!"
-
+// Prefer Water Message : 0x58b7 to 0x58c7
+const uint16 dsAddr_preferWaterMsg = 0x58b7; // "I prefer water"
+// Too Weak To Climb Message : 0x58c8 to 0x58e2
+const uint16 dsAddr_tooWeakToClimbMsg = 0x58c8; // "I'm too weak to climb it"
+// Spring Prick Message : 0x58e3 to 0x5904
+const uint16 dsAddr_springPrickMsg = 0x58e3; // "The springs would prick my back"
 // Food Alive Message : 0x5905 to 0x592e
 const uint16 dsAddr_foodAliveMsg = 0x5905; // "No, thanks. This food seems still alive"
 // Door Closed Message : 0x592f to 0x5954
 const uint16 dsAddr_doorClosedMsg = 0x592f; // "The door is closed. What a surprise."
 // Empty Message : 0x5955 to 0x5961
 const uint16 dsAddr_emptyMsg = 0x5955; // "It's Empty"
+// Geography Class Message : 0x5962 to 0x599c
+const uint16 dsAddr_geographyClassMsg = 0x5962; // "I should have paid more attention in geography classes."
+
+// Useless Models Message : 0x5a01 to 0x5a1f
+const uint16 dsAddr_uselessModelsMsg = 0x5a01; // "What's the use of the models?"
+
+// Too Much To Drink Message : 0x5a51 to 0x5a95
+const uint16 dsAddr_tooMuchToDrinkMsg = 0x5a51; // "It'd take too much time to drink it..."
+// 0x5a96 to 0x5a97 : 2 extra null bytes (padding?)
+// Not Thief Message : 0x5a98 to 0x5ac5
+const uint16 dsAddr_notThiefMsg = 0x5a98; // "I'm not a thief. And it's empty, by the way."
+
+// Chickening Never Message : 0x5b27 to 0x5b3e
+const uint16 dsAddr_chickenNeverMsg = 0x5b27; // "Chickening? Me? Never!"
 
 // Never Learnt Message : 0x5c60 to 0x5c81
 const uint16 dsAddr_neverLearntMsg = 0x5c60; // "I never learnt to how use one"
