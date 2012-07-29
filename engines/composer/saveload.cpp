@@ -35,7 +35,7 @@
 
 namespace Composer {
 
-template <class T>
+template<class T>
 void ComposerEngine::syncArray(Common::Serializer &ser, Common::Array<T> &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	if (ser.isSaving()) {
 		uint32 size = data.size();
@@ -54,7 +54,7 @@ void ComposerEngine::syncArray(Common::Serializer &ser, Common::Array<T> &data, 
 		}
 	}
 }
-template <class T>
+template<class T>
 void ComposerEngine::syncList(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	if (ser.isSaving()) {
 		uint32 size = data.size();
@@ -73,7 +73,7 @@ void ComposerEngine::syncList(Common::Serializer &ser, Common::List<T> &data, Co
 		}
 	}
 }
-template <class T>
+template<class T>
 void ComposerEngine::syncListReverse(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	if (ser.isSaving()) {
 		uint32 size = data.size();
@@ -93,15 +93,15 @@ void ComposerEngine::syncListReverse(Common::Serializer &ser, Common::List<T> &d
 	}
 }
 template<>
-void ComposerEngine::sync<uint16> (Common::Serializer &ser, uint16 &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<uint16>(Common::Serializer &ser, uint16 &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	ser.syncAsUint16LE(data, minVersion, maxVersion);
 }
 template<>
-void ComposerEngine::sync<uint32> (Common::Serializer &ser, uint32 &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<uint32>(Common::Serializer &ser, uint32 &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	ser.syncAsUint32LE(data, minVersion, maxVersion);
 }
 template<>
-void ComposerEngine::sync<Library> (Common::Serializer &ser, Library &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<Library>(Common::Serializer &ser, Library &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	if (ser.isSaving()) {
 		ser.syncAsUint16LE(data._id, minVersion, maxVersion);
 		ser.syncString(data._group, minVersion, maxVersion);
@@ -112,8 +112,8 @@ void ComposerEngine::sync<Library> (Common::Serializer &ser, Library &data, Comm
 		loadLibrary(id);
 	}
 }
-template <>
-void ComposerEngine::syncListReverse<Library> (Common::Serializer &ser, Common::List<Library> &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+template<>
+void ComposerEngine::syncListReverse<Library>(Common::Serializer &ser, Common::List<Library> &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	if (ser.isSaving()) {
 		uint32 size = data.size();
 		ser.syncAsUint32LE(size, minVersion, maxVersion);
@@ -130,12 +130,12 @@ void ComposerEngine::syncListReverse<Library> (Common::Serializer &ser, Common::
 	}
 }
 template<>
-void ComposerEngine::sync<PendingPageChange> (Common::Serializer &ser, PendingPageChange &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<PendingPageChange>(Common::Serializer &ser, PendingPageChange &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	ser.syncAsUint16LE(data._pageId, minVersion, maxVersion);
 	ser.syncAsByte(data._remove, minVersion, maxVersion);
 }
 template<>
-void ComposerEngine::sync<OldScript *> (Common::Serializer &ser, OldScript *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<OldScript *>(Common::Serializer &ser, OldScript *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	uint16 id;
 	uint32 pos, delay;
 	if (ser.isSaving()) {
@@ -153,7 +153,7 @@ void ComposerEngine::sync<OldScript *> (Common::Serializer &ser, OldScript *&dat
 	}
 }
 template<>
-void ComposerEngine::sync<QueuedScript> (Common::Serializer &ser, QueuedScript &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<QueuedScript>(Common::Serializer &ser, QueuedScript &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	ser.syncAsUint32LE(data._baseTime);
 	ser.syncAsUint32LE(data._duration);	
 	ser.syncAsUint32LE(data._count);
@@ -161,7 +161,7 @@ void ComposerEngine::sync<QueuedScript> (Common::Serializer &ser, QueuedScript &
 	if (ser.isLoading()) data._baseTime += _timeDelta;
 }
 template<>
-void ComposerEngine::sync<Pipe *> (Common::Serializer &ser, Pipe *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<Pipe *>(Common::Serializer &ser, Pipe *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	uint16 id;
 	uint32 offset, tmp;
 	if (ser.isSaving()) {
@@ -200,18 +200,18 @@ void ComposerEngine::sync<Pipe *> (Common::Serializer &ser, Pipe *&data, Common:
 		for (Pipe::DelMap::iterator i = data->_bufferedResources.begin(); i != data->_bufferedResources.end(); i++) {
 			uint32 key = (*i)._key;
 			ser.syncAsUint32LE(key);
-			syncList<uint16> (ser, (*i)._value, minVersion, maxVersion);
+			syncList<uint16>(ser, (*i)._value, minVersion, maxVersion);
 		}
 	}
 }
 template<>
-void ComposerEngine::sync<AnimationEntry> (Common::Serializer &ser, AnimationEntry &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<AnimationEntry>(Common::Serializer &ser, AnimationEntry &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	ser.syncAsUint32LE(data.state);
 	ser.syncAsUint16LE(data.counter);
 	ser.syncAsUint16LE(data.prevValue);
 }
 template<>
-void ComposerEngine::sync<Animation *> (Common::Serializer &ser, Animation *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<Animation *>(Common::Serializer &ser, Animation *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	uint16 animId, x, y;
 	uint32 offset, state, param;
 	int32 size;
@@ -239,14 +239,14 @@ void ComposerEngine::sync<Animation *> (Common::Serializer &ser, Animation *&dat
 		uint32 tmp;
 		ser.syncAsUint32LE(tmp);
 		for (uint32 i = 0; i < tmp; i++) {
-			sync<AnimationEntry> (ser, data->_entries[i], minVersion, maxVersion);
+			sync<AnimationEntry>(ser, data->_entries[i], minVersion, maxVersion);
 		}
 	} else {
-		syncArray<AnimationEntry> (ser, data->_entries, minVersion, maxVersion);
+		syncArray<AnimationEntry>(ser, data->_entries, minVersion, maxVersion);
 	}
 }
 template<>
-void ComposerEngine::sync<Sprite> (Common::Serializer &ser, Sprite &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void ComposerEngine::sync<Sprite>(Common::Serializer &ser, Sprite &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 		ser.syncAsUint16LE(data._id);
 		ser.syncAsUint16LE(data._animId);
 		ser.syncAsSint16LE(data._pos.x);
@@ -301,20 +301,20 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	for (uint32 i = 0; i < libIds.size(); i++) 
 		unloadLibrary(libIds[i]);
 
-	syncListReverse<Library> (ser, _libraries);
+	syncListReverse<Library>(ser, _libraries);
 	ser.syncString(_bookGroup);
 
-	syncArray<PendingPageChange> (ser, _pendingPageChanges);
-	syncArray<uint16> (ser, _stack);
-	syncArray<uint16> (ser, _vars);
+	syncArray<PendingPageChange>(ser, _pendingPageChanges);
+	syncArray<uint16>(ser, _stack);
+	syncArray<uint16>(ser, _vars);
 
 	// Free outdated pointers
 	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++) {
 		delete *i;
 	}
 
-	syncList<OldScript *> (ser, _oldScripts);
-	syncArray<QueuedScript> (ser, _queuedScripts);
+	syncList<OldScript *>(ser, _oldScripts);
+	syncArray<QueuedScript>(ser, _queuedScripts);
 
 	ser.syncAsSint16LE(_lastMousePos.x);
 	ser.syncAsSint16LE(_lastMousePos.y);
@@ -332,15 +332,15 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	}
 
 	_pipeStreams.clear();
-	syncListReverse<Pipe *> (ser, _pipes);
+	syncListReverse<Pipe *>(ser, _pipes);
 
 	// Free outdated pointers
 	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
 		delete *i;
 	}
 
-	syncList<Animation *> (ser, _anims);
-	syncList<Sprite> (ser, _sprites);
+	syncList<Animation *>(ser, _anims);
+	syncList<Sprite>(ser, _sprites);
 
 	_dirtyRects.clear();
 
@@ -386,14 +386,14 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	ser.syncAsUint32LE(_currentTime);
 	ser.syncAsUint32LE(_lastTime);
 
-	syncListReverse<Library> (ser, _libraries);
+	syncListReverse<Library>(ser, _libraries);
 	ser.syncString(_bookGroup);
 
-	syncArray<PendingPageChange> (ser, _pendingPageChanges);
-	syncArray<uint16> (ser, _stack);
-	syncArray<uint16> (ser, _vars);
-	syncList<OldScript *> (ser, _oldScripts);
-	syncArray<QueuedScript> (ser, _queuedScripts);
+	syncArray<PendingPageChange>(ser, _pendingPageChanges);
+	syncArray<uint16>(ser, _stack);
+	syncArray<uint16>(ser, _vars);
+	syncList<OldScript *>(ser, _oldScripts);
+	syncArray<QueuedScript>(ser, _queuedScripts);
 
 	ser.syncAsSint16LE(_lastMousePos.x);
 	ser.syncAsSint16LE(_lastMousePos.y);
@@ -401,9 +401,9 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	ser.syncAsByte(_mouseVisible);
 	ser.syncAsUint16LE(_mouseSpriteId);
 
-	syncListReverse<Pipe *> (ser, _pipes);
-	syncList<Animation *> (ser, _anims);
-	syncList<Sprite> (ser, _sprites);
+	syncListReverse<Pipe *>(ser, _pipes);
+	syncList<Animation *>(ser, _anims);
+	syncList<Sprite>(ser, _sprites);
 
 	byte paletteBuffer[256 * 3];
 	_system->getPaletteManager()->grabPalette(paletteBuffer, 0, 256);
