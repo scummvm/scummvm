@@ -31,8 +31,6 @@
 #include "backends/events/openpandora/op-events.h"
 #include "backends/graphics/openpandora/op-graphics.h"
 
-//#define MIXER_DOUBLE_BUFFERING 1
-
 #ifndef PATH_MAX
 #define PATH_MAX 255
 #endif
