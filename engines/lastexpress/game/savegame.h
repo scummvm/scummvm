@@ -80,10 +80,50 @@
 namespace LastExpress {
 
 // Savegame signatures
-#define SAVEGAME_SIGNATURE       0x12001200
-#define SAVEGAME_ENTRY_SIGNATURE 0xE660E660
+#define SAVEGAME_SIGNATURE       0x12001200    // 301994496
+#define SAVEGAME_ENTRY_SIGNATURE 0xE660E660    // 3865110112
+
+#define WRAP_SYNC_FUNCTION(instance, className, method) \
+	new Common::Functor1Mem<Common::Serializer &, void, className>(instance, &className::method)
 
 class LastExpressEngine;
+
+class SavegameStream : public Common::MemoryWriteStreamDynamic, public Common::SeekableReadStream {
+public:
+	SavegameStream() : MemoryWriteStreamDynamic(DisposeAfterUse::YES), _eos(false) {
+		_bufferOffset = -1;
+		_valueCount = 0;
+		_previousValue = 0;
+		_field_15F = 0;
+		_offset = 0;
+		_status = 0;
+
+		memset(_buffer, 0, 256);
+	}
+
+	int32 pos() const { return MemoryWriteStreamDynamic::pos(); }
+	int32 size() const { return MemoryWriteStreamDynamic::size(); }
+	bool seek(int32 offset, int whence = SEEK_SET) { return MemoryWriteStreamDynamic::seek(offset, whence); }
+	bool eos() const { return _eos; }
+	uint32 read(void *dataPtr, uint32 dataSize);
+
+	// Compressed data
+	uint32 writeValue(const void *dataPtr, uint32 dataSize);
+	uint32 readValue(void *dataPtr, uint32 dataSize);
+
+private:
+	bool _eos;
+
+	// Compression handling
+	int  _bufferOffset;
+	int  _valueCount;
+	byte _previousValue;
+	byte _field_15F;
+	int  _offset;
+	int  _status;
+
+	byte _buffer[256];
+};
 
 class SaveLoad {
 public:
@@ -116,30 +156,6 @@ public:
 	uint32       getLastSavegameTicks() const { return _gameTicksLastSavegame; }
 
 private:
-	class SavegameStream : public Common::MemoryWriteStreamDynamic, public Common::SeekableReadStream {
-	public:
-		SavegameStream() : MemoryWriteStreamDynamic(DisposeAfterUse::YES),
-		 _eos(false) {}
-
-		int32 pos() const { return MemoryWriteStreamDynamic::pos(); }
-		int32 size() const { return MemoryWriteStreamDynamic::size(); }
-		bool seek(int32 offset, int whence = SEEK_SET) { return MemoryWriteStreamDynamic::seek(offset, whence); }
-		bool eos() const { return _eos; }
-		uint32 read(void *dataPtr, uint32 dataSize) {
-			if ((int32)dataSize > size() - pos()) {
-				dataSize = size() - pos();
-				_eos = true;
-			}
-			memcpy(dataPtr, getData() + pos(), dataSize);
-
-			seek(dataSize, SEEK_CUR);
-
-			return dataSize;
-		}
-	private:
-		bool _eos;
-	};
-
 	LastExpressEngine *_engine;
 
 	struct SavegameMainHeader : Common::Serializable {
@@ -268,6 +284,9 @@ private:
 	void writeEntry(SavegameType type, EntityIndex entity, uint32 val);
 	void readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, bool keepIndex);
 
+	uint32 writeValue(const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size);
+	uint32 readValue(const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size);
+
 	SavegameEntryHeader *getEntry(uint32 index);
 
 	// Opening save files
@@ -279,6 +298,10 @@ private:
 	void initStream();
 	void loadStream(GameId id);
 	void flushStream(GameId id);
+
+	// Misc
+	EntityIndex _entity;
+	void syncEntity(Common::Serializer &ser);
 };
 
 } // End of namespace LastExpress

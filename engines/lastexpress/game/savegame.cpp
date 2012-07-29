@@ -53,6 +53,32 @@ static const struct {
 };
 
 //////////////////////////////////////////////////////////////////////////
+// SavegameStream
+//////////////////////////////////////////////////////////////////////////
+
+uint32 SavegameStream::read(void *dataPtr, uint32 dataSize) {
+	if ((int32)dataSize > size() - pos()) {
+		dataSize = size() - pos();
+		_eos = true;
+	}
+	memcpy(dataPtr, getData() + pos(), dataSize);
+
+	seek(dataSize, SEEK_CUR);
+
+	return dataSize;
+}
+
+uint32 SavegameStream::writeValue(const void *dataPtr, uint32 dataSize) {
+	// FIXME: Implement compression
+	return write(dataPtr, dataSize);
+}
+
+uint32 SavegameStream::readValue(void *dataPtr, uint32 dataSize) {
+	// FIXME: Implement compression
+	return read(dataPtr, dataSize);
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Constructors
 //////////////////////////////////////////////////////////////////////////
 
@@ -340,16 +366,28 @@ bool SaveLoad::loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *he
 //////////////////////////////////////////////////////////////////////////
 // Entries
 //////////////////////////////////////////////////////////////////////////
-void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
-#define WRITE_ENTRY(name, func, val) { \
-	uint32 _prevPosition = (uint32)_savegame->pos(); \
-	func; \
-	uint32 _count = (uint32)_savegame->pos() - _prevPosition; \
-	debugC(kLastExpressDebugSavegame, "Savegame: Writing " #name ": %d bytes", _count); \
-	if (_count != val)\
-		error("[SaveLoad::writeEntry] Number of bytes written (%d) differ from expected count (%d)", _count, val); \
+uint32 SaveLoad::writeValue(const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size) {
+	debugC(kLastExpressDebugSavegame, "Savegame: Writing %s: %u bytes", name, size);
+
+	// Create buffer to hold the data
+	byte *buffer = (byte *)malloc(size);
+	if (!buffer)
+		error("[SaveLoad::writeValue] Cannot allocate buffer to hold data");
+
+	// Serialize data into our buffer
+	Common::MemoryWriteStream *stream = new Common::MemoryWriteStream(buffer, size);
+	Common::Serializer ser(NULL, stream);
+	(*function)(ser);
+	delete stream;
+
+	return _savegame->writeValue(buffer, size);
 }
 
+void SaveLoad::syncEntity(Common::Serializer &ser) {
+	ser.syncAsUint32LE(_entity);
+}
+
+void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	if (!_savegame)
 		error("[SaveLoad::writeEntry] Savegame stream is invalid");
 
@@ -368,18 +406,20 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	header.saveLoadWithSerializer(ser);
 
 	// Write game data
-	WRITE_ENTRY("entity index", ser.syncAsUint32LE(entity), 4);
-	WRITE_ENTRY("state", getState()->saveLoadWithSerializer(ser), 4 + 4 + 4 + 4 + 1 + 4 + 4);
-	WRITE_ENTRY("selected item", getInventory()->saveSelectedItem(ser), 4);
-	WRITE_ENTRY("positions", getEntities()->savePositions(ser), 4 * 1000);
-	WRITE_ENTRY("compartments", getEntities()->saveCompartments(ser), 4 * 16 * 2);
-	WRITE_ENTRY("progress", getProgress().saveLoadWithSerializer(ser), 4 * 128);
-	WRITE_ENTRY("events", getState()->syncEvents(ser), 512);
-	WRITE_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
-	WRITE_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
-	WRITE_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
-	WRITE_ENTRY("sound", getSoundQueue()->saveLoadWithSerializer(ser), 3 * 4 + getSoundQueue()->count() * 64);
-	WRITE_ENTRY("savepoints", getSavePoints()->saveLoadWithSerializer(ser), 128 * 16 + 4 + getSavePoints()->count() * 16);
+	_entity = entity;
+
+	writeValue("entity index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
+	writeValue("state", WRAP_SYNC_FUNCTION(getState(), State::GameState, saveLoadWithSerializer), 4 + 4 + 4 + 4 + 1 + 4 + 4);
+	writeValue("selected item", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveSelectedItem), 4);
+	writeValue("positions", WRAP_SYNC_FUNCTION(getEntities(), Entities, savePositions), 4 * 1000);
+	writeValue("compartments", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveCompartments), 4 * 16 * 2);
+	writeValue("progress", WRAP_SYNC_FUNCTION(&getProgress(), State::GameProgress, saveLoadWithSerializer), 4 * 128);
+	writeValue("events", WRAP_SYNC_FUNCTION(getState(), State::GameState, syncEvents), 512);
+	writeValue("inventory", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveLoadWithSerializer), 7 * 32);
+	writeValue("objects", WRAP_SYNC_FUNCTION(getObjects(), Objects, saveLoadWithSerializer), 5 * 128);
+	writeValue("entities", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveLoadWithSerializer), 1262 * 40);
+	writeValue("sound", WRAP_SYNC_FUNCTION(getSoundQueue(), SoundQueue, saveLoadWithSerializer), 3 * 4 + getSoundQueue()->count() * 64);
+	writeValue("savepoints", WRAP_SYNC_FUNCTION(getSavePoints(), SavePoints, saveLoadWithSerializer), 128 * 16 + 4 + getSavePoints()->count() * 16);
 
 	header.offset = (uint32)_savegame->pos() - (originalPosition + 32);
 
