@@ -2125,7 +2125,7 @@ Lands of Lore: The Throne of Chaos adds the following non-standard keywords:
 Space Quest IV CD adds the following non-standard keyword:
 
      silver_cursors    bool     If true, an alternate set of silver mouse cursors
-	                            is used instead of the original golden ones
+                                is used instead of the original golden ones
 
 Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
