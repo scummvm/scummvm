@@ -532,6 +532,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x4048:
+		displayMessage(dsAddr_dontWantToTouchMsg); // "I don't want to touch it - I might get hurt"
+		break;
+
 	case 0x404f:
 		displayMessage(dsAddr_notWantToSleepMsg); // "I don't want to sleep"
 		break;
@@ -882,6 +886,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_geographyClassMsg); // "I should have paid more attention in geography classes."
 		break;
 
+	case 0x4885:
+		displayMessage(dsAddr_dontNeedMessMsg); // "I don't need this mess"
+		break;
+
+	case 0x488c:
+		displayMessage(dsAddr_seenSofterRocksMsg); // "Thanks, but I've seen softer rocks"
+		break;
+
 	case 0x4893: // taking pills
 		if (CHECK_FLAG(dsAddr_captainDrawerState, 1)) {
 			SET_FLAG(dsAddr_captainDrawerState, 2);
@@ -896,6 +908,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x48d4:
+		displayMessage(dsAddr_tooBluntMsg); // "They are too blunt to be of any use"
+		break;
+
 	case 0x48db:
 		displayMessage(dsAddr_uselessModelsMsg); // "What's the use of the models?"
 		break;
@@ -903,6 +919,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x48e2:
 	case 0x48e6:
 		rejectMessage();
+		break;
+
+	case 0x4911:
+		displayMessage(dsAddr_barmanWillNoticeMsg); // "The barman will surely notice its disappearing"
 		break;
 
 	case 0x4918: // talking with barmen
@@ -964,6 +984,19 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x4bf5:
 		playActorAnimation(959);
 		loadScene(8, 40, 152, 3);
+		break;
+
+	case 0x4c18:
+		rejectMessage();
+		break;
+
+	case 0x4c29:
+		displayMessage(dsAddr_tooManyToSearchMsg); // "There are too many of them to search"
+		break;
+
+	case 0x4c30:
+	case 0x4c37:
+		displayMessage(dsAddr_captainWouldNotFitMsg); // "Captain surely wouldn't fit them. I must look elsewhere"
 		break;
 
 	case 0x483a:
@@ -1599,6 +1632,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->remove(0x5b);
 		enableObject(6);
 		disableObject(1);
+		break;
+
+	case 0x7cc9:
+		displayMessage(dsAddr_throwCrumbsToBirdQMsg); // "Should I throw the crumbs to the bird?"
 		break;
 
 	case 0x7ce5: // put spring on the solid ground

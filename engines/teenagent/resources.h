@@ -555,7 +555,8 @@ const uint16 dsAddr_fnMsg3 = 0x567a; // "Great"
 const uint16 dsAddr_fnMsg4 = 0x5682; // "Oh, yeah, right"
 // Pull Object Message #1 : 0x5696 to 0x56ab
 const uint16 dsAddr_pullObjMsg1 = 0x5696; // "I can't pull it out"
-
+// Dont Want To Touch Message : 0x56ac to 0x56d9
+const uint16 dsAddr_dontWantToTouchMsg = 0x56ac; // "I don't want to touch it - I might get hurt"
 // Fence Blocks Message : 0x56da to 0x56f6
 const uint16 dsAddr_fenceBlocksMsg = 0x56da; // "The fence blocks the way"
 // Not Want To Sleep Message : 0x56f7 to 0x570e
@@ -610,16 +611,25 @@ const uint16 dsAddr_doorClosedMsg = 0x592f; // "The door is closed. What a surpr
 const uint16 dsAddr_emptyMsg = 0x5955; // "It's Empty"
 // Geography Class Message : 0x5962 to 0x599c
 const uint16 dsAddr_geographyClassMsg = 0x5962; // "I should have paid more attention in geography classes."
-
+// Don't Need Mess Message : 0x599d to 0x59b5
+const uint16 dsAddr_dontNeedMessMsg = 0x599d; // "I don't need this mess"
+// Seen Softer Rocks Message : 0x59b6 to 0x59da
+const uint16 dsAddr_seenSofterRocksMsg = 0x59b6; // "Thanks, but I've seen softer rocks"
+// Too Blunt Message : 0x59db to 0x5a00
+const uint16 dsAddr_tooBluntMsg = 0x59db; // "They are too blunt to be of any use"
 // Useless Models Message : 0x5a01 to 0x5a1f
 const uint16 dsAddr_uselessModelsMsg = 0x5a01; // "What's the use of the models?"
-
+// Barman Will Notice Message : 0x5a20 to 0x5a50
+const uint16 dsAddr_barmanWillNoticeMsg = 0x5a20; // "The barman will surely notice its disappearing"
 // Too Much To Drink Message : 0x5a51 to 0x5a95
 const uint16 dsAddr_tooMuchToDrinkMsg = 0x5a51; // "It'd take too much time to drink it..."
 // 0x5a96 to 0x5a97 : 2 extra null bytes (padding?)
 // Not Thief Message : 0x5a98 to 0x5ac5
 const uint16 dsAddr_notThiefMsg = 0x5a98; // "I'm not a thief. And it's empty, by the way."
-
+// Too Many To Search Message : 0x5ac6 to 0x5aec
+const uint16 dsAddr_tooManyToSearchMsg = 0x5ac6; // "There are too many of them to search"
+// Captain Would Not Fit Message : 0x5aed to 0x5b26
+const uint16 dsAddr_captainWouldNotFitMsg = 0x5aed; // "Captain surely wouldn't fit them. I must look elsewhere"
 // Chickening Never Message : 0x5b27 to 0x5b3e
 const uint16 dsAddr_chickenNeverMsg = 0x5b27; // "Chickening? Me? Never!"
 
@@ -639,6 +649,9 @@ const uint16 dsAddr_captainWatchingMsg = 0x5de2; // "with captain watching? Bett
 
 // First Business Message : 0x5e25 to 0x5e53
 const uint16 dsAddr_firstBusinessMsg = 0x5e25; // "First I've got some business to take care of"
+
+// Throw Crumbs To Bird Question Message : 0x5ebe to 0x5ee5
+const uint16 dsAddr_throwCrumbsToBirdQMsg = 0x5ebe; // "Should I throw the crumbs to the bird?"
 
 // Book Color Message Address Pointers : (6 * 2-byte) = 0x5f3c to 0x5f47
 const uint16 dsAddr_bookColorMsgPtr = 0x5f3c;
