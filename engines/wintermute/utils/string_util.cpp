@@ -281,6 +281,16 @@ int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t 
 	}
 }
 
+Common::String StringUtil::encodeSetting(const Common::String &str) {
+	if (str.contains('=')) {
+		error("Setting contains '='");
+	}
+	return str;
+}
+
+Common::String StringUtil::decodeSetting(const Common::String &str) {
+	return str;
+}
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString StringUtil::toString(int val) {

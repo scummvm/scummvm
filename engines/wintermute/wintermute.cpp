@@ -36,7 +36,6 @@
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/base_registry.h"
 
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -193,17 +192,27 @@ int WinterMuteEngine::init() {
 	        } else if (scumm_stricmp(param, "-windowed") == 0) windowedMode = true;
 	    }*/
 
-
-	if (BaseEngine::instance().getRegistry()->readBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
-
-	_game->_debugShowFPS = BaseEngine::instance().getRegistry()->readBool("Debug", "ShowFPS");
-
-	if (BaseEngine::instance().getRegistry()->readBool("Debug", "DisableSmartCache")) {
-		_game->LOG(0, "Smart cache is DISABLED");
-		_game->_smartCache = false;
+	if (ConfMan.hasKey("debug_mode")) {
+		if (ConfMan.getBool("debug_mode")) {
+			_game->DEBUG_DebugEnable("./wme.log");
+		}
 	}
 
-	/*  bool allowDirectDraw = _game->_registry->readBool("Debug", "AllowDirectDraw", false);*/
+	if (ConfMan.hasKey("show_fps")) {
+		_game->_debugShowFPS = ConfMan.getBool("show_fps");
+	} else {
+		_game->_debugShowFPS = false;
+	}
+
+	if (ConfMan.hasKey("disable_smartcache")) {
+		_game->_smartCache = ConfMan.getBool("disable_smartcache");
+	} else {
+		_game->_smartCache = true;
+	}
+
+	if (!_game->_smartCache) {
+		_game->LOG(0, "Smart cache is DISABLED");
+	}
 
 	// load general game settings
 	_game->initialize1();

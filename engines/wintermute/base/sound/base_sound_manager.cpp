@@ -27,7 +27,6 @@
  */
 
 #include "engines/wintermute/base/sound/base_sound_manager.h"
-#include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/string_util.h"

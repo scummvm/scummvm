@@ -32,7 +32,6 @@
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/base/file/base_package.h"
 #include "engines/wintermute/base/file/base_resources.h"
-#include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/debug.h"
@@ -147,41 +146,11 @@ bool BaseFileManager::reloadPaths() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::initPaths() {
-	if (!BaseEngine::instance().getRegistry()) { // This function only works when the game-registry is loaded
-		return STATUS_FAILED;
-	}
-
-	AnsiString pathList;
-
-	// single files paths
-	pathList = BaseEngine::instance().getRegistry()->readString("Resource", "CustomPaths", "");
-	Common::StringTokenizer *entries = new Common::StringTokenizer(pathList, ";");
-//	numPaths = BaseUtils::strNumEntries(pathList.c_str(), ';');
-	while (!entries->empty()) {
-		Common::String path = entries->nextToken();
-		if (path.size() > 0) {
-			error("BaseFileManager::initPaths - Game wants to add customPath: %s", path.c_str()); // TODO
-			//          addPath(PATH_SINGLE, path);
-		}
-	}
-	delete entries;
-	entries = NULL;
+	// Removed: Config-based file-path choice.
 
 	// package files paths
 	const Common::FSNode gameData(ConfMan.get("path"));
 	addPath(PATH_PACKAGE, gameData);
-
-	pathList = BaseEngine::instance().getRegistry()->readString("Resource", "PackagePaths", "");
-	entries = new Common::StringTokenizer(pathList, ";");
-	while (!entries->empty()) {
-		Common::String path = entries->nextToken();
-		if (path.size() > 0) {
-			error("BaseFileManager::initPaths - Game wants to add packagePath: %s", path.c_str()); // TODO
-			//          addPath(PATH_SINGLE, path);
-		}
-	}
-	delete entries;
-	entries = NULL;
 
 	Common::FSNode dataSubFolder = gameData.getChild("data");
 	if (dataSubFolder.exists()) {

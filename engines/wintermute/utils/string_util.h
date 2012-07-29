@@ -48,6 +48,9 @@ public:
 	static bool isUtf8BOM(const byte *buffer, uint32 bufferSize);
 	static int indexOf(const WideString &str, const WideString &toFind, size_t startFrom);
 
+	static Common::String encodeSetting(const Common::String &str);
+	static Common::String decodeSetting(const Common::String &str);
+
 	static AnsiString toString(int val);
 };
 

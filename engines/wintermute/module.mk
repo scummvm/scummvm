@@ -75,7 +75,6 @@ MODULE_OBJS := \
 	base/base_point.o \
 	base/base_quick_msg.o \
 	base/base_region.o \
-	base/base_registry.o \
 	base/base_save_thumb_helper.o \
 	base/base_scriptable.o \
 	base/base_script_holder.o \
@@ -95,10 +94,6 @@ MODULE_OBJS := \
 	system/sys_class.o \
 	system/sys_class_registry.o \
 	system/sys_instance.o \
-	tinyxml/tinyxml.o \
-	tinyxml/tinystr.o \
-	tinyxml/tinyxmlparser.o \
-	tinyxml/tinyxmlerror.o \
 	ui/ui_button.o \
 	ui/ui_edit.o \
 	ui/ui_entity.o \

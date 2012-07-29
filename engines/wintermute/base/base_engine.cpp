@@ -28,7 +28,6 @@
  
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/system.h"
@@ -40,20 +39,16 @@ namespace WinterMute {
 
 BaseEngine::BaseEngine() {
 	_fileManager = NULL;
-	_registry = NULL;
 	_gameRef = NULL;
 	_gameId = "";
 }
 
 void BaseEngine::init() {
-	_registry = new BaseRegistry();
-	// File-manager depends on registry.
 	_fileManager = new BaseFileManager();
 }
 
 BaseEngine::~BaseEngine() {
 	delete _fileManager;
-	delete _registry;
 }
 
 void BaseEngine::createInstance(const Common::String &gameid) {

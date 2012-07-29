@@ -37,7 +37,6 @@ class BaseGame;
 class BaseEngine : public Common::Singleton<WinterMute::BaseEngine> {
 	void init();
 	BaseFileManager *_fileManager;
-	BaseRegistry *_registry;
 	Common::String _gameId;
 	BaseGame *_gameRef;
 public:
@@ -48,7 +47,6 @@ public:
 
 	BaseGame *getGameRef() { return _gameRef; }
 	BaseFileManager *getFileManager() { return _fileManager; }
-	BaseRegistry *getRegistry() { return _registry; }
 	static void LOG(bool res, const char *fmt, ...);
 	const char *getGameId() { return _gameId.c_str(); }
 };

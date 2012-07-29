@@ -39,7 +39,6 @@
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_quick_msg.h"
-#include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/base_sprite.h"
@@ -64,6 +63,7 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -276,7 +276,7 @@ BaseGame::~BaseGame() {
 	LOG(0, "");
 	LOG(0, "Shutting down...");
 
-	BaseEngine::instance().getRegistry()->writeBool("System", "LastRun", true);
+	ConfMan.setBool("last_run", true);
 
 	cleanup();
 
@@ -1534,7 +1534,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		int val = stack->pop()->getInt();
-		BaseEngine::instance().getRegistry()->writeInt("PrivateSettings", key, val);
+		Common::String privKey = "priv_" + StringUtil::encodeSetting(key);
+		ConfMan.setInt(privKey, val);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1546,7 +1547,12 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		int initVal = stack->pop()->getInt();
-		stack->pushInt(BaseEngine::instance().getRegistry()->readInt("PrivateSettings", key, initVal));
+		Common::String privKey = "priv_" + StringUtil::encodeSetting(key);
+		int result = initVal;
+		if (ConfMan.hasKey(privKey)) {
+			result = ConfMan.getInt(privKey);
+		}
+		stack->pushInt(result);
 		return STATUS_OK;
 	}
 
@@ -1557,7 +1563,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *val = stack->pop()->getString();
-		BaseEngine::instance().getRegistry()->writeString("PrivateSettings", key, val);
+		Common::String privKey = "priv_" + StringUtil::encodeSetting(key);
+		Common::String privVal = StringUtil::encodeSetting(val);
+		ConfMan.set(privKey, privVal);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1569,8 +1577,12 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *initVal = stack->pop()->getString();
-		AnsiString val = BaseEngine::instance().getRegistry()->readString("PrivateSettings", key, initVal);
-		stack->pushString(val.c_str());
+		Common::String privKey = "priv_" + StringUtil::encodeSetting(key);
+		Common::String result = initVal;
+		if (ConfMan.hasKey(privKey)) {
+			result = StringUtil::decodeSetting(ConfMan.get(key));
+		}
+		stack->pushString(result.c_str());
 		return STATUS_OK;
 	}
 
@@ -2627,7 +2639,11 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// MostRecentSaveSlot (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MostRecentSaveSlot") == 0) {
-		_scValue->setInt(BaseEngine::instance().getRegistry()->readInt("System", "MostRecentSaveSlot", -1));
+		if (!ConfMan.hasKey("most_recent_saveslot")) {
+			_scValue->setInt(-1);
+		} else {
+			_scValue->setInt(ConfMan.getInt("most_recent_saveslot"));
+		}
 		return _scValue;
 	}
 
@@ -3329,7 +3345,7 @@ bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
 		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveTable(_gameRef,  pm, quickSave))) {
 			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveInstances(_gameRef,  pm, quickSave))) {
 				if (DID_SUCCEED(ret = pm->saveFile(filename))) {
-					BaseEngine::instance().getRegistry()->writeInt("System", "MostRecentSaveSlot", slot);
+					ConfMan.setInt("most_recent_saveslot", slot);
 				}
 			}
 		}
@@ -3663,7 +3679,7 @@ bool BaseGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_REGISTRY_PATH:
-			BaseEngine::instance().getRegistry()->setBasePath((char *)params);
+			//BaseEngine::instance().getRegistry()->setBasePath((char *)params);
 			break;
 
 		case TOKEN_RICH_SAVED_GAMES:
@@ -3687,9 +3703,8 @@ bool BaseGame::loadSettings(const char *filename) {
 		ret = STATUS_FAILED;
 	}
 
-	_settingsAllowWindowed = BaseEngine::instance().getRegistry()->readBool("Debug", "AllowWindowed", _settingsAllowWindowed);
-	_compressedSavegames = BaseEngine::instance().getRegistry()->readBool("Debug", "CompressedSavegames", _compressedSavegames);
-	//_compressedSavegames = false;
+	_settingsAllowWindowed = true; // TODO: These two settings should probably be cleaned out altogether.
+	_compressedSavegames = true;
 
 	delete[] origBuffer;
 
@@ -4679,7 +4694,7 @@ bool BaseGame::isDoubleClick(int buttonIndex) {
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::autoSaveOnExit() {
 	_soundMgr->saveSettings();
-	BaseEngine::instance().getRegistry()->saveValues();
+	ConfMan.flushToDisk();
 
 	if (!_autoSaveOnExit) {
 		return;

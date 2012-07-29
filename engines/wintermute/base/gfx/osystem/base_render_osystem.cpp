@@ -27,8 +27,6 @@
  */
 
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
-#include "engines/wintermute/base/base_registry.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_image.h"
@@ -128,8 +126,8 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 	//TODO: Tiny resolution-displays might want to do some resolution-selection logic here
 
-	_realWidth = BaseEngine::instance().getRegistry()->readInt("Debug", "ForceResWidth", _width);
-	_realHeight = BaseEngine::instance().getRegistry()->readInt("Debug", "ForceResHeight", _height);
+	//_realWidth = BaseEngine::instance().getRegistry()->readInt("Debug", "ForceResWidth", _width);
+	//_realHeight = BaseEngine::instance().getRegistry()->readInt("Debug", "ForceResHeight", _height);
 
 	float origAspect = (float)_width / (float)_height;
 	float realAspect = (float)_realWidth / (float)_realHeight;
