@@ -48,6 +48,7 @@ BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_alpha = 0xFFFFFFFF;
 	_transparent = 0xFFFF00FF;
 
+	_wantsDefaultRect = false;
 	BasePlatform::setRectEmpty(&_rect);
 
 	_editorSelected = false;
@@ -205,10 +206,23 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	if (BasePlatform::isRectEmpty(&rect)) {
 		setDefaultRect();
 	} else {
-		_rect = rect;
+		setRect(rect);
 	}
 
 	return STATUS_OK;
+}
+
+Rect32 BaseSubFrame::getRect() {
+	if (_wantsDefaultRect && _surface) {
+		BasePlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+		_wantsDefaultRect = false;
+	}
+	return _rect;
+}
+
+void BaseSubFrame::setRect(Rect32 rect) {
+	_wantsDefaultRect = false;
+	_rect = rect;
 }
 
 
@@ -220,9 +234,9 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 
 	if (registerOwner != NULL && !_decoration) {
 		if (zoomX == 100 && zoomY == 100) {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + _rect.left, y  - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
+			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
 		} else {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
+			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
 	if (_gameRef->_suspendedRendering) {
@@ -237,12 +251,12 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	}
 
 	if (rotate != 0.0f) {
-		res = _surface->displayTransform((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _hotspotX, _hotspotY, _rect, zoomX, zoomY, alpha, rotate, blendMode, _mirrorX, _mirrorY);
+		res = _surface->displayTransform((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, rotate, blendMode, _mirrorX, _mirrorY);
 	} else {
 		if (zoomX == 100 && zoomY == 100) {
-			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, _rect, alpha, blendMode, _mirrorX, _mirrorY);
+			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);
 		} else {
-			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _rect, zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
+			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 		}
 	}
 
@@ -262,8 +276,8 @@ bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, flo
 	BasePlatform::setRect(rect,
 	                      (int)(x - _hotspotX * ratioX),
 	                      (int)(y - _hotspotY * ratioY),
-	                      (int)(x - _hotspotX * ratioX + (_rect.right - _rect.left) * ratioX),
-	                      (int)(y - _hotspotY * ratioY + (_rect.bottom - _rect.top) * ratioY));
+	                      (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
+	                      (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
 	return true;
 }
 
@@ -287,8 +301,8 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 	if (_surface) {
 		BasePlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 	}
-	if (!(rect == _rect)) {
-		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", _rect.left, _rect.top, _rect.right, _rect.bottom);
+	if (!(rect == getRect())) {
+		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", getRect().left, getRect().top, getRect().right, getRect().bottom);
 	}
 
 	if (_hotspotX != 0 || _hotspotY != 0) {
@@ -338,8 +352,9 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 //////////////////////////////////////////////////////////////////////////
 void BaseSubFrame::setDefaultRect() {
 	if (_surface) {
-		BasePlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+		_wantsDefaultRect = true;
 	} else {
+		_wantsDefaultRect = false;
 		BasePlatform::setRectEmpty(&_rect);
 	}
 }
@@ -349,6 +364,12 @@ void BaseSubFrame::setDefaultRect() {
 bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
+
+	if (persistMgr->getIsSaving()) {
+		getRect(); // To make sure it gets updated if it was never loaded.
+	} else {
+		_wantsDefaultRect = false;
+	}
 
 	persistMgr->transfer(TMEMBER(_2DOnly));
 	persistMgr->transfer(TMEMBER(_3DOnly));

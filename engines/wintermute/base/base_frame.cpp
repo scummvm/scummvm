@@ -321,7 +321,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	if (BasePlatform::isRectEmpty(&rect)) {
 		sub->setDefaultRect();
 	} else {
-		sub->_rect = rect;
+		sub->setRect(rect);
 	}
 
 	sub->_hotspotX = hotspotX;

@@ -76,16 +76,16 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 			if (_rectList[i]->_precise) {
 				// frame
 				if (_rectList[i]->_frame) {
-					int xx = (int)((_rectList[i]->_frame->_rect.left + x - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
-					int yy = (int)((_rectList[i]->_frame->_rect.top  + y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
+					int xx = (int)((_rectList[i]->_frame->getRect().left + x - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
+					int yy = (int)((_rectList[i]->_frame->getRect().top  + y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
 
 					if (_rectList[i]->_frame->_mirrorX) {
-						int width = _rectList[i]->_frame->_rect.right - _rectList[i]->_frame->_rect.left;
+						int width = _rectList[i]->_frame->getRect().right - _rectList[i]->_frame->getRect().left;
 						xx = width - xx;
 					}
 
 					if (_rectList[i]->_frame->_mirrorY) {
-						int height = _rectList[i]->_frame->_rect.bottom - _rectList[i]->_frame->_rect.top;
+						int height = _rectList[i]->_frame->getRect().bottom - _rectList[i]->_frame->getRect().top;
 						yy = height - yy;
 					}
 
