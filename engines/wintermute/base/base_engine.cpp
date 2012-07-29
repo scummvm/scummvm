@@ -32,24 +32,17 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/system.h"
+namespace Common {
+DECLARE_SINGLETON(WinterMute::BaseEngine);
+}
 
 namespace WinterMute {
 
-BaseEngine *BaseEngine::_instance = 0;
-	/*
-class BaseEngine {
-	static BaseEngine *_instance;
-	BaseEngine();
-	BaseFileManager *_fileManager;
-	BaseRegistry *_registry;
-public:
-	~BaseEngine();
-	BaseEngine *getInstance();
-	BaseFileManager *getFileMan() { return _fileManager; }
-	BaseRegistry *getRegistry() { return _registry; }
-};*/
 BaseEngine::BaseEngine() {
-
+	_fileManager = NULL;
+	_registry = NULL;
+	_gameRef = NULL;
+	_gameId = "";
 }
 
 void BaseEngine::init() {
@@ -63,25 +56,9 @@ BaseEngine::~BaseEngine() {
 	delete _registry;
 }
 
-BaseEngine *BaseEngine::getInstance() {
-	if (!_instance)
-		assert(0);
-	return _instance;
-}
-
 void BaseEngine::createInstance(const Common::String &gameid) {
-	if (_instance) {
-		delete _instance;
-		_instance = NULL;
-	}
-	_instance = new BaseEngine();
-	_instance->_gameId = gameid;
-	_instance->init();
-}
-
-void BaseEngine::destroyInstance() {
-	delete _instance;
-	_instance = NULL;
+	instance()._gameId = gameid;
+	instance().init();
 }
 
 void BaseEngine::LOG(bool res, const char *fmt, ...) {
@@ -98,8 +75,8 @@ void BaseEngine::LOG(bool res, const char *fmt, ...) {
 	vsprintf(buff, fmt, va);
 	va_end(va);
 
-	if (_instance && _instance->_gameRef) {
-		_instance->_gameRef->LOG("%s", buff);
+	if (instance()._gameRef) {
+		instance()._gameRef->LOG("%s", buff);
 	} else {
 		debugCN(kWinterMuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);		
 	}

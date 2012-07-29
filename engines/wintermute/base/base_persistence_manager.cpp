@@ -53,15 +53,16 @@ namespace WinterMute {
 #define SAVE_MAGIC_2    0x32564153
 
 //////////////////////////////////////////////////////////////////////////
-BasePersistenceManager::BasePersistenceManager(const char *savePrefix) {
+BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool deleteSingleton) {
 	_saving = false;
 //	_buffer = NULL;
 //	_bufferSize = 0;
 	_offset = 0;
 	_saveStream = NULL;
 	_loadStream = NULL;
-	if (BaseEngine::getInstance()) {
-		_gameRef = BaseEngine::getInstance()->getGameRef();
+	_deleteSingleton = deleteSingleton;
+	if (BaseEngine::instance().getGameRef()) {
+		_gameRef = BaseEngine::instance().getGameRef();
 	} else {
 		_gameRef = NULL;
 	}
@@ -89,6 +90,8 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix) {
 //////////////////////////////////////////////////////////////////////////
 BasePersistenceManager::~BasePersistenceManager() {
 	cleanup();
+	if (_deleteSingleton)
+		BaseEngine::destroy();
 }
 
 

@@ -175,13 +175,13 @@ char *BaseRegistry::getIniName() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegistry::loadValues(bool local) {
-	Common::String filename = Common::String(BaseEngine::getInstance()->getGameId()) + "-settings.xml";
+	Common::String filename = Common::String(BaseEngine::instance().getGameId()) + "-settings.xml";
 	loadXml(filename, _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegistry::saveValues() {
-	Common::String filename = Common::String(BaseEngine::getInstance()->getGameId()) + "-settings.xml";
+	Common::String filename = Common::String(BaseEngine::instance().getGameId()) + "-settings.xml";
 	saveXml(filename, _values);
 }
 

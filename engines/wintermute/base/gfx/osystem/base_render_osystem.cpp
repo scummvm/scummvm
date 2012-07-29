@@ -127,8 +127,8 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 	//TODO: Tiny resolution-displays might want to do some resolution-selection logic here
 
-	_realWidth = BaseEngine::getInstance()->getRegistry()->readInt("Debug", "ForceResWidth", _width);
-	_realHeight = BaseEngine::getInstance()->getRegistry()->readInt("Debug", "ForceResHeight", _height);
+	_realWidth = BaseEngine::instance().getRegistry()->readInt("Debug", "ForceResWidth", _width);
+	_realHeight = BaseEngine::instance().getRegistry()->readInt("Debug", "ForceResHeight", _height);
 
 	float origAspect = (float)_width / (float)_height;
 	float realAspect = (float)_realWidth / (float)_realHeight;
@@ -153,7 +153,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	_ratioX = (float)(_realWidth - _borderLeft - _borderRight) / (float)_width;
 	_ratioY = (float)(_realHeight - _borderTop - _borderBottom) / (float)_height;
 
-	//_windowed = BaseEngine::getInstance()->getRegistry()->readBool("Video", "Windowed", true); TODO
+	//_windowed = BaseEngine::instance().getRegistry()->readBool("Video", "Windowed", true); TODO
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->beginGFXTransaction();

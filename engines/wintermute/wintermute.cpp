@@ -161,7 +161,7 @@ int WinterMuteEngine::init() {
 	BaseEngine::createInstance(_targetName);
 	_game = new AdGame(_targetName);
 	if (!_game) return 1;
-	BaseEngine::getInstance()->setGameRef(_game);
+	BaseEngine::instance().setGameRef(_game);
 	BasePlatform::initialize(_game, 0, NULL);
 
 	bool windowedMode = !ConfMan.getBool("fullscreen");
@@ -194,11 +194,11 @@ int WinterMuteEngine::init() {
 	    }*/
 
 
-	if (BaseEngine::getInstance()->getRegistry()->readBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
+	if (BaseEngine::instance().getRegistry()->readBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
 
-	_game->_debugShowFPS = BaseEngine::getInstance()->getRegistry()->readBool("Debug", "ShowFPS");
+	_game->_debugShowFPS = BaseEngine::instance().getRegistry()->readBool("Debug", "ShowFPS");
 
-	if (BaseEngine::getInstance()->getRegistry()->readBool("Debug", "DisableSmartCache")) {
+	if (BaseEngine::instance().getRegistry()->readBool("Debug", "DisableSmartCache")) {
 		_game->LOG(0, "Smart cache is DISABLED");
 		_game->_smartCache = false;
 	}
@@ -337,7 +337,7 @@ int WinterMuteEngine::messageLoop() {
 void WinterMuteEngine::deinit() {
 	delete _classReg;
 	_classReg = NULL;
-	BaseEngine::destroyInstance();
+	BaseEngine::destroy();
 }
 
 bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {
@@ -418,6 +418,7 @@ bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 		delete stream;
 	}
 	delete fileMan;
+	BaseEngine::destroy();
 	return retVal;
 }
 

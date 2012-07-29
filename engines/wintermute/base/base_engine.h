@@ -27,26 +27,23 @@
  */
  
  #include "common/str.h"
+ #include "common/singleton.h"
 
 namespace WinterMute {
 
 class BaseFileManager;
 class BaseRegistry;
 class BaseGame;
-class BaseEngine {
-	static BaseEngine *_instance;
-	BaseEngine();
+class BaseEngine : public Common::Singleton<WinterMute::BaseEngine> {
 	void init();
 	BaseFileManager *_fileManager;
 	BaseRegistry *_registry;
 	Common::String _gameId;
 	BaseGame *_gameRef;
 public:
+	BaseEngine();
 	~BaseEngine();
 	static void createInstance(const Common::String &gameid);
-	static BaseEngine *getInstance();
-	static void destroyInstance();
-
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
 	BaseGame *getGameRef() { return _gameRef; }

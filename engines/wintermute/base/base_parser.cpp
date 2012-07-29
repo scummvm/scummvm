@@ -123,7 +123,7 @@ int32 BaseParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
 	if (!*buf) {
 		return PARSERR_TOKENNOTFOUND;
 	}
-	BaseEngine::getInstance()->getGameRef()->miniUpdate();
+	BaseEngine::instance().getGameRef()->miniUpdate();
 	char *name;
 	return getObject(buf, tokens, &name, params);
 }

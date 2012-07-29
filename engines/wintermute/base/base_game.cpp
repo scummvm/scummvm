@@ -279,7 +279,7 @@ BaseGame::~BaseGame() {
 
 	getDebugMgr()->onGameShutdown();
 
-	BaseEngine::getInstance()->getRegistry()->writeBool("System", "LastRun", true);
+	BaseEngine::instance().getRegistry()->writeBool("System", "LastRun", true);
 
 	cleanup();
 
@@ -1549,7 +1549,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		int val = stack->pop()->getInt();
-		BaseEngine::getInstance()->getRegistry()->writeInt("PrivateSettings", key, val);
+		BaseEngine::instance().getRegistry()->writeInt("PrivateSettings", key, val);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1561,7 +1561,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		int initVal = stack->pop()->getInt();
-		stack->pushInt(BaseEngine::getInstance()->getRegistry()->readInt("PrivateSettings", key, initVal));
+		stack->pushInt(BaseEngine::instance().getRegistry()->readInt("PrivateSettings", key, initVal));
 		return STATUS_OK;
 	}
 
@@ -1572,7 +1572,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *val = stack->pop()->getString();
-		BaseEngine::getInstance()->getRegistry()->writeString("PrivateSettings", key, val);
+		BaseEngine::instance().getRegistry()->writeString("PrivateSettings", key, val);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1584,7 +1584,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *initVal = stack->pop()->getString();
-		AnsiString val = BaseEngine::getInstance()->getRegistry()->readString("PrivateSettings", key, initVal);
+		AnsiString val = BaseEngine::instance().getRegistry()->readString("PrivateSettings", key, initVal);
 		stack->pushString(val.c_str());
 		return STATUS_OK;
 	}
@@ -2642,7 +2642,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// MostRecentSaveSlot (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MostRecentSaveSlot") == 0) {
-		_scValue->setInt(BaseEngine::getInstance()->getRegistry()->readInt("System", "MostRecentSaveSlot", -1));
+		_scValue->setInt(BaseEngine::instance().getRegistry()->readInt("System", "MostRecentSaveSlot", -1));
 		return _scValue;
 	}
 
@@ -3349,7 +3349,7 @@ bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
 		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveTable(_gameRef,  pm, quickSave))) {
 			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveInstances(_gameRef,  pm, quickSave))) {
 				if (DID_SUCCEED(ret = pm->saveFile(filename))) {
-					BaseEngine::getInstance()->getRegistry()->writeInt("System", "MostRecentSaveSlot", slot);
+					BaseEngine::instance().getRegistry()->writeInt("System", "MostRecentSaveSlot", slot);
 				}
 			}
 		}
@@ -3688,7 +3688,7 @@ bool BaseGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_REGISTRY_PATH:
-			BaseEngine::getInstance()->getRegistry()->setBasePath((char *)params);
+			BaseEngine::instance().getRegistry()->setBasePath((char *)params);
 			break;
 
 		case TOKEN_RICH_SAVED_GAMES:
@@ -3712,8 +3712,8 @@ bool BaseGame::loadSettings(const char *filename) {
 		ret = STATUS_FAILED;
 	}
 
-	_settingsAllowWindowed = BaseEngine::getInstance()->getRegistry()->readBool("Debug", "AllowWindowed", _settingsAllowWindowed);
-	_compressedSavegames = BaseEngine::getInstance()->getRegistry()->readBool("Debug", "CompressedSavegames", _compressedSavegames);
+	_settingsAllowWindowed = BaseEngine::instance().getRegistry()->readBool("Debug", "AllowWindowed", _settingsAllowWindowed);
+	_compressedSavegames = BaseEngine::instance().getRegistry()->readBool("Debug", "CompressedSavegames", _compressedSavegames);
 	//_compressedSavegames = false;
 
 	delete[] origBuffer;
@@ -4713,7 +4713,7 @@ bool BaseGame::isDoubleClick(int buttonIndex) {
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::autoSaveOnExit() {
 	_soundMgr->saveSettings();
-	BaseEngine::getInstance()->getRegistry()->saveValues();
+	BaseEngine::instance().getRegistry()->saveValues();
 
 	if (!_autoSaveOnExit) {
 		return;

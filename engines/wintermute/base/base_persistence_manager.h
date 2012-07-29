@@ -87,7 +87,7 @@ public:
 	bool transfer(const char *name, Common::String *val);
 	bool transfer(const char *name, Vector2 *val);
 	bool transfer(const char *name, AnsiStringArray &Val);
-	BasePersistenceManager(const char *savePrefix = NULL);
+	BasePersistenceManager(const char *savePrefix = NULL, bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
 
@@ -95,6 +95,7 @@ public:
 	byte *_thumbnailData;
 	Common::String getFilenameForSlot(int slot) const;
 private:
+	bool _deleteSingleton;
 	bool readHeader(const Common::String &filename);
 	TimeDate getTimeDate();
 	bool putTimeDate(const TimeDate &t);

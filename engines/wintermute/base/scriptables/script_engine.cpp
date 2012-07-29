@@ -128,7 +128,6 @@ bool ScEngine::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 byte *ScEngine::loadFile(void *data, char *filename, uint32 *size) {
-	BaseGame *gameRef = (BaseGame *)data;
 	return BaseFileManager::getEngineInstance()->readWholeFile(filename, size);
 }
 
@@ -201,7 +200,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 
 	uint32 size;
 
-	byte *buffer = BaseEngine::getInstance()->getFileManager()->readWholeFile(filename, &size);
+	byte *buffer = BaseEngine::instance().getFileManager()->readWholeFile(filename, &size);
 	if (!buffer) {
 		_gameRef->LOG(0, "ScEngine::GetCompiledScript - error opening script '%s'", filename);
 		return NULL;
@@ -690,10 +689,10 @@ bool ScEngine::saveBreakpoints() {
 			sprintf(key, "Breakpoint%d", count);
 			sprintf(text, "%s:%d", _breakpoints[i]->_filename.c_str(), _breakpoints[i]->_lines[j]);
 
-			BaseEngine::getInstance()->getRegistry()->writeString("Debug", key, text);
+			BaseEngine::instance().getRegistry()->writeString("Debug", key, text);
 		}
 	}
-	BaseEngine::getInstance()->getRegistry()->writeInt("Debug", "NumBreakpoints", count);
+	BaseEngine::instance().getRegistry()->writeInt("Debug", "NumBreakpoints", count);
 
 	return STATUS_OK;
 }
@@ -706,11 +705,11 @@ bool ScEngine::loadBreakpoints() {
 
 	char key[100];
 
-	int count = BaseEngine::getInstance()->getRegistry()->readInt("Debug", "NumBreakpoints", 0);
+	int count = BaseEngine::instance().getRegistry()->readInt("Debug", "NumBreakpoints", 0);
 	for (int i = 1; i <= count; i++) {
 		/*  uint32 bufSize = 512; */
 		sprintf(key, "Breakpoint%d", i);
-		AnsiString breakpoint = BaseEngine::getInstance()->getRegistry()->readString("Debug", key, "");
+		AnsiString breakpoint = BaseEngine::instance().getRegistry()->readString("Debug", key, "");
 
 		char *path = BaseUtils::strEntry(0, breakpoint.c_str(), ':');
 		char *line = BaseUtils::strEntry(1, breakpoint.c_str(), ':');

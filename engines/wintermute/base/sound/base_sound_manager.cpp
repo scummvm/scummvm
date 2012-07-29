@@ -72,7 +72,7 @@ bool BaseSoundMgr::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundMgr::saveSettings() {
 	if (_soundAvailable) {
-		BaseEngine::getInstance()->getRegistry()->writeInt("Audio", "MasterVolume", _volumeMaster);
+		BaseEngine::instance().getRegistry()->writeInt("Audio", "MasterVolume", _volumeMaster);
 	}
 }
 
@@ -83,7 +83,7 @@ bool BaseSoundMgr::initialize() {
 	if (!g_system->getMixer()->isReady()) {
 		return STATUS_FAILED;
 	}
-	_volumeMaster = BaseEngine::getInstance()->getRegistry()->readInt("Audio", "MasterVolume", 255);
+	_volumeMaster = BaseEngine::instance().getRegistry()->readInt("Audio", "MasterVolume", 255);
 	_soundAvailable = true;
 
 	return STATUS_OK;

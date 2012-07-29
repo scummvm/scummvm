@@ -147,15 +147,14 @@ bool BaseFileManager::reloadPaths() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::initPaths() {
-	BaseEngine *enginePtr = BaseEngine::getInstance();
-	if (!enginePtr) { // This function only works when the game-registry is loaded
+	if (!BaseEngine::instance().getRegistry()) { // This function only works when the game-registry is loaded
 		return STATUS_FAILED;
 	}
 
 	AnsiString pathList;
 
 	// single files paths
-	pathList = enginePtr->getRegistry()->readString("Resource", "CustomPaths", "");
+	pathList = BaseEngine::instance().getRegistry()->readString("Resource", "CustomPaths", "");
 	Common::StringTokenizer *entries = new Common::StringTokenizer(pathList, ";");
 //	numPaths = BaseUtils::strNumEntries(pathList.c_str(), ';');
 	while (!entries->empty()) {
@@ -172,7 +171,7 @@ bool BaseFileManager::initPaths() {
 	const Common::FSNode gameData(ConfMan.get("path"));
 	addPath(PATH_PACKAGE, gameData);
 
-	pathList = enginePtr->getRegistry()->readString("Resource", "PackagePaths", "");
+	pathList = BaseEngine::instance().getRegistry()->readString("Resource", "PackagePaths", "");
 	entries = new Common::StringTokenizer(pathList, ";");
 	while (!entries->empty()) {
 		Common::String path = entries->nextToken();
@@ -271,7 +270,7 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 
 bool BaseFileManager::hasFile(const Common::String &filename) {
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
-		BasePersistenceManager pm(BaseEngine::getInstance()->getGameId());
+		BasePersistenceManager pm(BaseEngine::instance().getGameId());
 		if (filename.size() <= 9) {
 			return false;
 		}
@@ -323,7 +322,7 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 	Common::SeekableReadStream *ret = NULL;
 
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
-		if (!BaseEngine::getInstance()) {
+		if (!BaseEngine::instance().getGameRef()) {
 			error("Attempt to load filename: %s without BaseEngine-object, this is unsupported", filename.c_str());
 		}
 		BaseSaveThumbFile *saveThumbFile = new BaseSaveThumbFile();
@@ -354,8 +353,8 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 }
 
 BaseFileManager *BaseFileManager::getEngineInstance() {
-	if (BaseEngine::getInstance()) {
-		return BaseEngine::getInstance()->getFileManager();
+	if (BaseEngine::instance().getFileManager()) {
+		return BaseEngine::instance().getFileManager();
 	}
 	return NULL;
 }
