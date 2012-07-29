@@ -128,12 +128,12 @@ bool PartEmitter::addSprite(const char *filename) {
 	}
 
 	// check if file exists
-	Common::SeekableReadStream *File = _gameRef->_fileManager->openFile(filename);
+	Common::SeekableReadStream *File = BaseFileManager::getEngineInstance()->openFile(filename);
 	if (!File) {
 		_gameRef->LOG(0, "Sprite '%s' not found", filename);
 		return STATUS_FAILED;
 	} else {
-		_gameRef->_fileManager->closeFile(File);
+		BaseFileManager::getEngineInstance()->closeFile(File);
 	}
 
 	char *str = new char[strlen(filename) + 1];

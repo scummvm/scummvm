@@ -169,7 +169,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const {
 		SaveStateList saves;
-		WinterMute::BasePersistenceManager pm(NULL, target);
+		WinterMute::BasePersistenceManager pm(target);
 		for (int i = 0; i < getMaximumSaveSlot(); i++) {
 			if (pm.getSaveExists(i)) {
 				SaveStateDescriptor desc;
@@ -185,12 +185,12 @@ public:
 	}
 
 	void removeSaveState(const char *target, int slot) const {
-		WinterMute::BasePersistenceManager pm(NULL, target);
+		WinterMute::BasePersistenceManager pm(target);
 		pm.deleteSaveSlot(slot);
 	}
 
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
-		WinterMute::BasePersistenceManager pm(NULL, target);
+		WinterMute::BasePersistenceManager pm(target);
 		SaveStateDescriptor retVal;
 		retVal.setDescription("Invalid savegame");
 		pm.getSaveStateDesc(slot, retVal);

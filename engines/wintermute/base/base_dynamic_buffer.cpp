@@ -26,13 +26,13 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 growBy) : BaseClass(inGame) {
+BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 growBy) {
 	_buffer = NULL;
 	_size = 0;
 	_realSize = 0;
@@ -80,7 +80,7 @@ bool BaseDynamicBuffer::init(uint32 initSize) {
 
 	_buffer = (byte *)malloc(initSize);
 	if (!_buffer) {
-		_gameRef->LOG(0, "BaseDynamicBuffer::Init - Error allocating %d bytes", initSize);
+		BaseEngine::LOG(0, "BaseDynamicBuffer::Init - Error allocating %d bytes", initSize);
 		return STATUS_FAILED;
 	}
 
@@ -101,7 +101,7 @@ bool BaseDynamicBuffer::putBytes(byte *buffer, uint32 size) {
 		_realSize += _growBy;
 		_buffer = (byte *)realloc(_buffer, _realSize);
 		if (!_buffer) {
-			_gameRef->LOG(0, "BaseDynamicBuffer::PutBytes - Error reallocating buffer to %d bytes", _realSize);
+			BaseEngine::LOG(0, "BaseDynamicBuffer::PutBytes - Error reallocating buffer to %d bytes", _realSize);
 			return STATUS_FAILED;
 		}
 	}
@@ -121,7 +121,7 @@ bool BaseDynamicBuffer::getBytes(byte *buffer, uint32 size) {
 	}
 
 	if (_offset + size > _size) {
-		_gameRef->LOG(0, "BaseDynamicBuffer::GetBytes - Buffer underflow");
+		BaseEngine::LOG(0, "BaseDynamicBuffer::GetBytes - Buffer underflow");
 		return STATUS_FAILED;
 	}
 

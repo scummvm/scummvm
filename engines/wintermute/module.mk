@@ -63,10 +63,11 @@ MODULE_OBJS := \
 	base/base.o \
 	base/base_debugger.o \
 	base/base_dynamic_buffer.o \
+	base/base_engine.o \
 	base/base_fader.o \
 	base/base_file_manager.o \
-	base/base_game.o \
 	base/base_frame.o \
+	base/base_game.o \
 	base/base_keyboard_state.o \
 	base/base_named_object.o \
 	base/base_object.o \

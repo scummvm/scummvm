@@ -108,7 +108,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 		}
 	}
 
-	if (!_gameRef->_fileManager->hasFile(filename)) {
+	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
 		if (filename.size()) {
 			_gameRef->LOG(0, "Missing image: '%s'", filename.c_str());
 		}

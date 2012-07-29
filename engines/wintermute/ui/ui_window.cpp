@@ -238,7 +238,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::loadFile(const char *filename) {
-	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "UIWindow::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -339,7 +339,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	int fadeR = 0, fadeG = 0, fadeB = 0, fadeA = 0;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;

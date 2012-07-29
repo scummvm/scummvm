@@ -164,7 +164,7 @@ bool AdInventoryBox::display() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::loadFile(const char *filename) {
-	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "AdInventoryBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -222,7 +222,7 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd = 2;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 	bool alwaysVisible = false;
 
 	_exclusive = false;

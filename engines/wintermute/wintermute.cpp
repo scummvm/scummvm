@@ -35,6 +35,7 @@
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_registry.h"
 
 #include "engines/wintermute/base/sound/base_sound_manager.h"
@@ -88,7 +89,7 @@ WinterMuteEngine::~WinterMuteEngine() {
 	debug("WinterMuteEngine::~WinterMuteEngine");
 
 	// Dispose your resources here
-	delete _classReg;
+	deinit();
 	delete _rnd;
 	delete _game;
 	g_wintermute = NULL;
@@ -157,9 +158,10 @@ Common::Error WinterMuteEngine::run() {
 int WinterMuteEngine::init() {
 	_classReg = new SystemClassRegistry();
 	_classReg->registerClasses();
-
+	BaseEngine::createInstance(_targetName);
 	_game = new AdGame(_targetName);
 	if (!_game) return 1;
+	BaseEngine::getInstance()->setGameRef(_game);
 	BasePlatform::initialize(_game, 0, NULL);
 
 	bool windowedMode = !ConfMan.getBool("fullscreen");
@@ -192,11 +194,11 @@ int WinterMuteEngine::init() {
 	    }*/
 
 
-	if (_game->_registry->readBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
+	if (BaseEngine::getInstance()->getRegistry()->readBool("Debug", "DebugMode")) _game->DEBUG_DebugEnable("./wme.log");
 
-	_game->_debugShowFPS = _game->_registry->readBool("Debug", "ShowFPS");
+	_game->_debugShowFPS = BaseEngine::getInstance()->getRegistry()->readBool("Debug", "ShowFPS");
 
-	if (_game->_registry->readBool("Debug", "DisableSmartCache")) {
+	if (BaseEngine::getInstance()->getRegistry()->readBool("Debug", "DisableSmartCache")) {
 		_game->LOG(0, "Smart cache is DISABLED");
 		_game->_smartCache = false;
 	}
@@ -335,6 +337,7 @@ int WinterMuteEngine::messageLoop() {
 void WinterMuteEngine::deinit() {
 	delete _classReg;
 	_classReg = NULL;
+	BaseEngine::destroyInstance();
 }
 
 bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {

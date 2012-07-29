@@ -87,7 +87,7 @@ public:
 	bool transfer(const char *name, Common::String *val);
 	bool transfer(const char *name, Vector2 *val);
 	bool transfer(const char *name, AnsiStringArray &Val);
-	BasePersistenceManager(BaseGame *inGame = NULL, const char *savePrefix = NULL);
+	BasePersistenceManager(const char *savePrefix = NULL);
 	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
 

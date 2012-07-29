@@ -37,7 +37,7 @@ namespace WinterMute {
 //TODO: Get rid of this
 class BaseSaveThumbFile : public BaseFile {
 public:
-	BaseSaveThumbFile(BaseGame *Game);
+	BaseSaveThumbFile();
 	virtual ~BaseSaveThumbFile();
 	virtual bool seek(uint32 pos, int whence = SEEK_SET);
 	virtual bool read(void *buffer, uint32 size);

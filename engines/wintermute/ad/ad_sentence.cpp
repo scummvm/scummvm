@@ -287,7 +287,7 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 
 	AnsiString talkDefFileName = PathUtil::combine(path, name + ".talk");
 
-	if (!_gameRef->_fileManager->hasFile(talkDefFileName)) {
+	if (!BaseFileManager::getEngineInstance()->hasFile(talkDefFileName)) {
 		return STATUS_OK;    // no talk def file found
 	}
 

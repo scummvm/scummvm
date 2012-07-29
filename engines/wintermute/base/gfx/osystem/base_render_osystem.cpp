@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/base_registry.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_image.h"
@@ -126,8 +127,8 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 	//TODO: Tiny resolution-displays might want to do some resolution-selection logic here
 
-	_realWidth = _gameRef->_registry->readInt("Debug", "ForceResWidth", _width);
-	_realHeight = _gameRef->_registry->readInt("Debug", "ForceResHeight", _height);
+	_realWidth = BaseEngine::getInstance()->getRegistry()->readInt("Debug", "ForceResWidth", _width);
+	_realHeight = BaseEngine::getInstance()->getRegistry()->readInt("Debug", "ForceResHeight", _height);
 
 	float origAspect = (float)_width / (float)_height;
 	float realAspect = (float)_realWidth / (float)_realHeight;
@@ -152,7 +153,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	_ratioX = (float)(_realWidth - _borderLeft - _borderRight) / (float)_width;
 	_ratioY = (float)(_realHeight - _borderTop - _borderBottom) / (float)_height;
 
-	//_windowed = _gameRef->_registry->readBool("Video", "Windowed", true); TODO
+	//_windowed = BaseEngine::getInstance()->getRegistry()->readBool("Video", "Windowed", true); TODO
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->beginGFXTransaction();
@@ -496,7 +497,7 @@ bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 BaseImage *BaseRenderOSystem::takeScreenshot() {
 // TODO: Clip by viewport.
 	warning("BaseRenderOSystem::TakeScreenshot() - not ported yet");
-	BaseImage *screenshot = new BaseImage(_gameRef->_fileManager);
+	BaseImage *screenshot = new BaseImage();
 	screenshot->copyFrom(_renderSurface);
 	return screenshot;
 }

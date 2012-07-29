@@ -293,7 +293,7 @@ int BaseFontTT::getLetterHeight() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseFontTT::loadFile(const Common::String &filename) {
-	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "BaseFontTT::LoadFile failed for file '%s'", filename.c_str());
 		return STATUS_FAILED;
@@ -348,7 +348,7 @@ bool BaseFontTT::loadBuffer(byte *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TTFONT) {
 		_gameRef->LOG(0, "'TTFONT' keyword expected.");
@@ -451,7 +451,7 @@ bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, byte *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -538,13 +538,13 @@ bool BaseFontTT::initFont() {
 		return STATUS_FAILED;
 	}
 
-	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(_fontFile);
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(_fontFile);
 	if (!file) {
 		//TODO: Try to fallback from Arial to FreeSans
 		/*
 		// the requested font file is not in wme file space; try loading a system font
 		AnsiString fontFileName = PathUtil::combine(BasePlatform::getSystemFontPath(), PathUtil::getFileName(_fontFile));
-		file = _gameRef->_fileManager->openFile(fontFileName.c_str(), false);
+		file = BaseFileManager::getEngineInstance()->openFile(fontFileName.c_str(), false);
 		if (!file) {
 		    _gameRef->LOG(0, "Error loading TrueType font '%s'", _fontFile);
 		    //return STATUS_FAILED;

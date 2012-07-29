@@ -37,7 +37,7 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////////
-BaseFile::BaseFile(BaseGame *inGame) : BaseClass(inGame) {
+BaseFile::BaseFile() {
 	_pos = 0;
 	_size = 0;
 }

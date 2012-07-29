@@ -121,7 +121,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UITiledImage::loadFile(const char *filename) {
-	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "UITiledImage::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -181,7 +181,7 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 	bool hTiles = false, vTiles = false;
 	int h1 = 0, h2 = 0, h3 = 0;
 	int v1 = 0, v2 = 0, v3 = 0;

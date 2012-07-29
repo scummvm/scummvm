@@ -35,7 +35,6 @@
 #include "common/file.h"
 
 namespace WinterMute {
-class BaseGame;
 class BaseFileManager {
 public:
 	bool cleanup();
@@ -45,10 +44,11 @@ public:
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
 
-	BaseFileManager(BaseGame *inGame = NULL);
+	BaseFileManager();
 	virtual ~BaseFileManager();
 	// Used only for detection
 	bool registerPackages(const Common::FSList &fslist);
+	static BaseFileManager *getEngineInstance();
 private:
 	typedef enum {
 	    PATH_PACKAGE,
@@ -67,7 +67,6 @@ private:
 	Common::Array<Common::SeekableReadStream *> _openFiles;
 	// This class is intentionally not a subclass of Base, as it needs to be used by
 	// the detector too, without launching the entire engine:
-	BaseGame *_gameRef;
 };
 
 } // end of namespace WinterMute

@@ -125,7 +125,7 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
-	Common::SeekableReadStream *file = _gameRef->_fileManager->openFile(filename);
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename);
 	if (!file) {
 		_gameRef->LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename.c_str());
 		if (_gameRef->_debugDebugMode) {
@@ -134,7 +134,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 			return loadFile("invalid.bmp", lifeTime, cacheType);
 		}
 	} else {
-		_gameRef->_fileManager->closeFile(file);
+		BaseFileManager::getEngineInstance()->closeFile(file);
 		file = NULL;
 	}
 
@@ -158,7 +158,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 			ret = STATUS_OK;
 		}
 	} else {
-		byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
+		byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
 				_gameRef->LOG(0, "Error parsing SPRITE file '%s'", filename.c_str());
@@ -213,7 +213,7 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 	byte *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	cleanup();
 

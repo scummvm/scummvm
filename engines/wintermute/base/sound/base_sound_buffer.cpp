@@ -96,7 +96,7 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 	debugC(kWinterMuteDebugAudio, "BSoundBuffer::LoadFromFile(%s,%d)", filename.c_str(), forceReload);
 
 	// Load a file, but avoid having the File-manager handle the disposal of it.
-	_file = _gameRef->_fileManager->openFile(filename, true, false);
+	_file = BaseFileManager::getEngineInstance()->openFile(filename, true, false);
 	if (!_file) {
 		_gameRef->LOG(0, "Error opening sound file '%s'", filename.c_str());
 		return STATUS_FAILED;

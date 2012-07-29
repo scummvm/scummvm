@@ -29,11 +29,14 @@
 #ifndef WINTERMUTE_BREGISTRY_H
 #define WINTERMUTE_BREGISTRY_H
 
-#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/dctypes.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "common/str.h"
 
 namespace WinterMute {
 
-class BaseRegistry : public BaseClass {
+class BaseRegistry {
 public:
 	void setIniName(const char *name);
 	char *getIniName();
@@ -43,7 +46,7 @@ public:
 	int readInt(const AnsiString &subKey, const AnsiString &key, int init = 0);
 	bool writeString(const AnsiString &subKey, const AnsiString &key, const AnsiString &value);
 	AnsiString readString(const AnsiString &subKey, const AnsiString &key, const AnsiString &init = "");
-	BaseRegistry(BaseGame *inGame);
+	BaseRegistry();
 	virtual ~BaseRegistry();
 
 	void setBasePath(const char *basePath);

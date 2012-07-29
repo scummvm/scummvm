@@ -29,6 +29,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/base_save_thumb_helper.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -52,14 +53,18 @@ namespace WinterMute {
 #define SAVE_MAGIC_2    0x32564153
 
 //////////////////////////////////////////////////////////////////////////
-BasePersistenceManager::BasePersistenceManager(BaseGame *inGame, const char *savePrefix) {
+BasePersistenceManager::BasePersistenceManager(const char *savePrefix) {
 	_saving = false;
 //	_buffer = NULL;
 //	_bufferSize = 0;
 	_offset = 0;
 	_saveStream = NULL;
 	_loadStream = NULL;
-	_gameRef = inGame;
+	if (BaseEngine::getInstance()) {
+		_gameRef = BaseEngine::getInstance()->getGameRef();
+	} else {
+		_gameRef = NULL;
+	}
 
 	_richBuffer = NULL;
 	_richBufferSize = 0;
@@ -263,7 +268,7 @@ bool BasePersistenceManager::readHeader(const Common::String &filename) {
 	_saving = false;
 
 	_loadStream = g_system->getSavefileManager()->openForLoading(filename);
-	//_buffer = _gameRef->_fileManager->readWholeFile(filename, &_bufferSize);
+	//_buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &_bufferSize);
 	if (_loadStream) {
 		uint32 magic;
 		magic = getDWORD();

@@ -1241,7 +1241,7 @@ bool AdGame::showCursor() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::loadFile(const char *filename) {
-	byte *buffer = _fileManager->readWholeFile(filename);
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "AdGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -1294,7 +1294,7 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 	byte *params;
 	byte *params2;
 	int cmd = 1;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	bool itemFound = false, itemsFound = false;
 
@@ -1537,7 +1537,7 @@ bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *ex
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::loadItemsFile(const char *filename, bool merge) {
-	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "AdGame::LoadItemsFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -1567,7 +1567,7 @@ bool AdGame::loadItemsBuffer(byte *buffer, bool merge) {
 
 	byte *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	if (!merge) {
 		while (_items.getSize() > 0) {
@@ -1650,7 +1650,7 @@ bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {
 	TOKEN_TABLE_END
 
 	int cmd = PARSERR_GENERIC;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	cmd = parser.getCommand(buffer, commands, params);
 	switch (cmd) {
@@ -2130,12 +2130,12 @@ char *AdGame::findSpeechFile(char *stringID) {
 
 	for (int i = 0; i < _speechDirs.getSize(); i++) {
 		sprintf(ret, "%s%s.ogg", _speechDirs[i], stringID);
-		if (_fileManager->hasFile(ret)) {
+		if (BaseFileManager::getEngineInstance()->hasFile(ret)) {
 			return ret;
 		}
 
 		sprintf(ret, "%s%s.wav", _speechDirs[i], stringID);
-		if (_fileManager->hasFile(ret)) {
+		if (BaseFileManager::getEngineInstance()->hasFile(ret)) {
 			return ret;
 		}
 	}

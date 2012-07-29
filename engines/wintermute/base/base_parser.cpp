@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 #include "common/util.h"
@@ -42,7 +43,7 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////
-BaseParser::BaseParser(BaseGame *inGame) : BaseClass(inGame) {
+BaseParser::BaseParser() {
 	_whiteSpace = new char [strlen(WHITESPACE) + 1];
 	strcpy(_whiteSpace, WHITESPACE);
 }
@@ -122,7 +123,7 @@ int32 BaseParser::getCommand(char **buf, TokenDesc *tokens, char **params) {
 	if (!*buf) {
 		return PARSERR_TOKENNOTFOUND;
 	}
-	_gameRef->miniUpdate();
+	BaseEngine::getInstance()->getGameRef()->miniUpdate();
 	char *name;
 	return getObject(buf, tokens, &name, params);
 }

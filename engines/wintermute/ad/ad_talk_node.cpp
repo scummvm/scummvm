@@ -94,7 +94,7 @@ bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTION) {

@@ -119,7 +119,7 @@ bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, 
 }
 
 bool BaseSurfaceOSystem::finishLoad() {
-	BaseImage *image = new BaseImage(_gameRef->_fileManager);
+	BaseImage *image = new BaseImage();
 	if (!image->loadFile(_filename)) {
 		return false;
 	}

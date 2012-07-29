@@ -102,7 +102,7 @@ bool BaseRegion::pointInRegion(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::loadFile(const char *filename) {
-	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "BaseRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -150,7 +150,7 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {

@@ -27,6 +27,7 @@
  */
 
 #include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_fader.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -94,7 +95,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_fontStorage = NULL;
 	_renderer = NULL;
 	_soundMgr = NULL;
-	_fileManager = NULL;
 	_transMgr = NULL;
 	_debugMgr = NULL;
 	_scEngine = NULL;
@@ -144,7 +144,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_useD3D = false;
 
-	_registry = new BaseRegistry(this);
 	_stringTable = new BaseStringTable(this);
 
 	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
@@ -280,7 +279,7 @@ BaseGame::~BaseGame() {
 
 	getDebugMgr()->onGameShutdown();
 
-	_registry->writeBool("System", "LastRun", true);
+	BaseEngine::getInstance()->getRegistry()->writeBool("System", "LastRun", true);
 
 	cleanup();
 
@@ -304,8 +303,6 @@ BaseGame::~BaseGame() {
 	//SAFE_DELETE(_keyboardState);
 
 	delete _renderer;
-	delete _fileManager;
-	delete _registry;
 	delete _stringTable;
 
 	_localSaveDir = NULL;
@@ -327,8 +324,6 @@ BaseGame::~BaseGame() {
 	_debugMgr = NULL;
 
 	_renderer = NULL;
-	_fileManager = NULL;
-	_registry = NULL;
 	_stringTable = NULL;
 
 	DEBUG_DebugDisable();
@@ -429,11 +424,6 @@ bool BaseGame::initialize1() {
 			break;
 		}
 
-		_fileManager = new BaseFileManager(this);
-		if (_fileManager == NULL) {
-			break;
-		}
-
 		_soundMgr = new BaseSoundMgr(this);
 		if (_soundMgr == NULL) {
 			break;
@@ -487,7 +477,6 @@ bool BaseGame::initialize1() {
 		delete _surfaceStorage;
 		delete _fontStorage;
 		delete _soundMgr;
-		delete _fileManager;
 		delete _scEngine;
 		delete _videoPlayer;
 		return STATUS_FAILED;
@@ -701,7 +690,7 @@ void BaseGame::getOffset(int *offsetX, int *offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadFile(const char *filename) {
-	byte *buffer = _gameRef->_fileManager->readWholeFile(filename);
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == NULL) {
 		_gameRef->LOG(0, "BaseGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -809,7 +798,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 
 	byte *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_GAME) {
@@ -1560,7 +1549,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		int val = stack->pop()->getInt();
-		_registry->writeInt("PrivateSettings", key, val);
+		BaseEngine::getInstance()->getRegistry()->writeInt("PrivateSettings", key, val);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1572,7 +1561,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		int initVal = stack->pop()->getInt();
-		stack->pushInt(_registry->readInt("PrivateSettings", key, initVal));
+		stack->pushInt(BaseEngine::getInstance()->getRegistry()->readInt("PrivateSettings", key, initVal));
 		return STATUS_OK;
 	}
 
@@ -1583,7 +1572,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *val = stack->pop()->getString();
-		_registry->writeString("PrivateSettings", key, val);
+		BaseEngine::getInstance()->getRegistry()->writeString("PrivateSettings", key, val);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1595,7 +1584,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *initVal = stack->pop()->getString();
-		AnsiString val = _registry->readString("PrivateSettings", key, initVal);
+		AnsiString val = BaseEngine::getInstance()->getRegistry()->readString("PrivateSettings", key, initVal);
 		stack->pushString(val.c_str());
 		return STATUS_OK;
 	}
@@ -1818,7 +1807,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 
-		bool exists = _fileManager->hasFile(filename); // Had absPathWarning = false
+		bool exists = BaseFileManager::getEngineInstance()->hasFile(filename); // Had absPathWarning = false
 		stack->pushBool(exists);
 		return STATUS_OK;
 	}
@@ -2190,7 +2179,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		const char *filename = stack->pop()->getString();
 		bool asHex = stack->pop()->getBool(false);
 
-		Common::SeekableReadStream *file = _fileManager->openFile(filename, false);
+		Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename, false);
 		if (file) {
 			crc remainder = crc_initialize();
 			byte buf[1024];
@@ -2214,7 +2203,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				stack->pushInt(checksum);
 			}
 
-			_fileManager->closeFile(file);
+			BaseFileManager::getEngineInstance()->closeFile(file);
 			file = NULL;
 		} else {
 			stack->pushNULL();
@@ -2653,7 +2642,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// MostRecentSaveSlot (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MostRecentSaveSlot") == 0) {
-		_scValue->setInt(_registry->readInt("System", "MostRecentSaveSlot", -1));
+		_scValue->setInt(BaseEngine::getInstance()->getRegistry()->readInt("System", "MostRecentSaveSlot", -1));
 		return _scValue;
 	}
 
@@ -3342,7 +3331,7 @@ bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
 
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
-	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (DID_SUCCEED(ret = pm->initSave(desc))) {
 		if (!quickSave) {
 			delete _saveLoadImage;
@@ -3360,7 +3349,7 @@ bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
 		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveTable(_gameRef,  pm, quickSave))) {
 			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveInstances(_gameRef,  pm, quickSave))) {
 				if (DID_SUCCEED(ret = pm->saveFile(filename))) {
-					_registry->writeInt("System", "MostRecentSaveSlot", slot);
+					BaseEngine::getInstance()->getRegistry()->writeInt("System", "MostRecentSaveSlot", slot);
 				}
 			}
 		}
@@ -3412,7 +3401,7 @@ bool BaseGame::loadGame(const char *filename) {
 	_loadInProgress = true;
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
-	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (DID_SUCCEED(ret = pm->initLoad(filename))) {
 		//if (DID_SUCCEED(ret = cleanup())) {
 		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadTable(_gameRef,  pm))) {
@@ -3628,7 +3617,7 @@ bool BaseGame::loadSettings(const char *filename) {
 	TOKEN_TABLE_END
 
 
-	byte *origBuffer = _gameRef->_fileManager->readWholeFile(filename);
+	byte *origBuffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (origBuffer == NULL) {
 		_gameRef->LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -3639,7 +3628,7 @@ bool BaseGame::loadSettings(const char *filename) {
 	byte *buffer = origBuffer;
 	byte *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 
 	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
 		_gameRef->LOG(0, "'SETTINGS' keyword expected in game settings file.");
@@ -3699,7 +3688,7 @@ bool BaseGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_REGISTRY_PATH:
-			_registry->setBasePath((char *)params);
+			BaseEngine::getInstance()->getRegistry()->setBasePath((char *)params);
 			break;
 
 		case TOKEN_RICH_SAVED_GAMES:
@@ -3723,8 +3712,8 @@ bool BaseGame::loadSettings(const char *filename) {
 		ret = STATUS_FAILED;
 	}
 
-	_settingsAllowWindowed = _registry->readBool("Debug", "AllowWindowed", _settingsAllowWindowed);
-	_compressedSavegames = _registry->readBool("Debug", "CompressedSavegames", _compressedSavegames);
+	_settingsAllowWindowed = BaseEngine::getInstance()->getRegistry()->readBool("Debug", "AllowWindowed", _settingsAllowWindowed);
+	_compressedSavegames = BaseEngine::getInstance()->getRegistry()->readBool("Debug", "CompressedSavegames", _compressedSavegames);
 	//_compressedSavegames = false;
 
 	delete[] origBuffer;
@@ -4004,7 +3993,7 @@ void BaseGame::setWindowTitle() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getSaveSlotFilename(int slot, char *buffer) {
-	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager();
 	Common::String filename = pm->getFilenameForSlot(slot);
 	delete pm;
 	strcpy(buffer, filename.c_str());
@@ -4018,7 +4007,7 @@ bool BaseGame::getSaveSlotDescription(int slot, char *buffer) {
 
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
-	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (!pm) {
 		return STATUS_FAILED;
 	}
@@ -4039,7 +4028,7 @@ bool BaseGame::getSaveSlotDescription(int slot, char *buffer) {
 bool BaseGame::isSaveSlotUsed(int slot) {
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
-	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager();
 	bool ret = pm->getSaveExists(slot);
 	delete pm;
 	return ret;
@@ -4050,7 +4039,7 @@ bool BaseGame::isSaveSlotUsed(int slot) {
 bool BaseGame::emptySaveSlot(int slot) {
 	char filename[MAX_PATH_LENGTH + 1];
 	getSaveSlotFilename(slot, filename);
-	BasePersistenceManager *pm = new BasePersistenceManager(this);
+	BasePersistenceManager *pm = new BasePersistenceManager();
 	g_wintermute->getSaveFileMan()->removeSavefile(pm->getFilenameForSlot(slot));
 	delete pm;
 	return STATUS_OK;
@@ -4724,7 +4713,7 @@ bool BaseGame::isDoubleClick(int buttonIndex) {
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::autoSaveOnExit() {
 	_soundMgr->saveSettings();
-	_registry->saveValues();
+	BaseEngine::getInstance()->getRegistry()->saveValues();
 
 	if (!_autoSaveOnExit) {
 		return;

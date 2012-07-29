@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_ext_math.h"
 #include "engines/wintermute/base/base_registry.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -128,7 +129,7 @@ bool ScEngine::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 byte *ScEngine::loadFile(void *data, char *filename, uint32 *size) {
 	BaseGame *gameRef = (BaseGame *)data;
-	return gameRef->_fileManager->readWholeFile(filename, size);
+	return BaseFileManager::getEngineInstance()->readWholeFile(filename, size);
 }
 
 
@@ -200,7 +201,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 
 	uint32 size;
 
-	byte *buffer = _gameRef->_fileManager->readWholeFile(filename, &size);
+	byte *buffer = BaseEngine::getInstance()->getFileManager()->readWholeFile(filename, &size);
 	if (!buffer) {
 		_gameRef->LOG(0, "ScEngine::GetCompiledScript - error opening script '%s'", filename);
 		return NULL;
@@ -689,10 +690,10 @@ bool ScEngine::saveBreakpoints() {
 			sprintf(key, "Breakpoint%d", count);
 			sprintf(text, "%s:%d", _breakpoints[i]->_filename.c_str(), _breakpoints[i]->_lines[j]);
 
-			_gameRef->_registry->writeString("Debug", key, text);
+			BaseEngine::getInstance()->getRegistry()->writeString("Debug", key, text);
 		}
 	}
-	_gameRef->_registry->writeInt("Debug", "NumBreakpoints", count);
+	BaseEngine::getInstance()->getRegistry()->writeInt("Debug", "NumBreakpoints", count);
 
 	return STATUS_OK;
 }
@@ -705,11 +706,11 @@ bool ScEngine::loadBreakpoints() {
 
 	char key[100];
 
-	int count = _gameRef->_registry->readInt("Debug", "NumBreakpoints", 0);
+	int count = BaseEngine::getInstance()->getRegistry()->readInt("Debug", "NumBreakpoints", 0);
 	for (int i = 1; i <= count; i++) {
 		/*  uint32 bufSize = 512; */
 		sprintf(key, "Breakpoint%d", i);
-		AnsiString breakpoint = _gameRef->_registry->readString("Debug", key, "");
+		AnsiString breakpoint = BaseEngine::getInstance()->getRegistry()->readString("Debug", key, "");
 
 		char *path = BaseUtils::strEntry(0, breakpoint.c_str(), ':');
 		char *line = BaseUtils::strEntry(1, breakpoint.c_str(), ':');

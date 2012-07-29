@@ -135,7 +135,6 @@ public:
 	bool initialize1();
 	bool initialize2();
 	bool initialize3();
-	BaseFileManager *_fileManager;
 	BaseTransitionMgr *_transMgr;
 	BaseDebugger *getDebugMgr();
 
@@ -205,7 +204,6 @@ public:
 	bool loadSettings(const char *filename);
 
 	bool displayWindows(bool inGame = false);
-	BaseRegistry *_registry;
 	bool _useD3D;
 	virtual bool cleanup();
 	virtual bool loadGame(int slot);

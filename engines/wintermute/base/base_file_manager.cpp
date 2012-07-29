@@ -27,13 +27,15 @@
  */
 
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/base/file/base_package.h"
 #include "engines/wintermute/base/file/base_resources.h"
 #include "engines/wintermute/base/base_registry.h"
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
+#include "common/debug.h"
 #include "common/str.h"
 #include "common/tokenizer.h"
 #include "common/textconsole.h"
@@ -52,7 +54,7 @@ namespace WinterMute {
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
-BaseFileManager::BaseFileManager(BaseGame *inGame) : _gameRef(inGame) {
+BaseFileManager::BaseFileManager() {
 	initPaths();
 	registerPackages();
 }
@@ -145,14 +147,15 @@ bool BaseFileManager::reloadPaths() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::initPaths() {
-	if (!_gameRef) { // This function only works when the game-registry is loaded
+	BaseEngine *enginePtr = BaseEngine::getInstance();
+	if (!enginePtr) { // This function only works when the game-registry is loaded
 		return STATUS_FAILED;
 	}
 
 	AnsiString pathList;
 
 	// single files paths
-	pathList = _gameRef->_registry->readString("Resource", "CustomPaths", "");
+	pathList = enginePtr->getRegistry()->readString("Resource", "CustomPaths", "");
 	Common::StringTokenizer *entries = new Common::StringTokenizer(pathList, ";");
 //	numPaths = BaseUtils::strNumEntries(pathList.c_str(), ';');
 	while (!entries->empty()) {
@@ -169,7 +172,7 @@ bool BaseFileManager::initPaths() {
 	const Common::FSNode gameData(ConfMan.get("path"));
 	addPath(PATH_PACKAGE, gameData);
 
-	pathList = _gameRef->_registry->readString("Resource", "PackagePaths", "");
+	pathList = enginePtr->getRegistry()->readString("Resource", "PackagePaths", "");
 	entries = new Common::StringTokenizer(pathList, ";");
 	while (!entries->empty()) {
 		Common::String path = entries->nextToken();
@@ -268,7 +271,7 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 
 bool BaseFileManager::hasFile(const Common::String &filename) {
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
-		BasePersistenceManager pm(_gameRef);
+		BasePersistenceManager pm(BaseEngine::getInstance()->getGameId());
 		if (filename.size() <= 9) {
 			return false;
 		}
@@ -320,10 +323,10 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 	Common::SeekableReadStream *ret = NULL;
 
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
-		if (!_gameRef) {
-			error("Attempt to load filename: %s without BaseGame-object, this is unsupported", filename.c_str());
+		if (!BaseEngine::getInstance()) {
+			error("Attempt to load filename: %s without BaseEngine-object, this is unsupported", filename.c_str());
 		}
-		BaseSaveThumbFile *saveThumbFile = new BaseSaveThumbFile(_gameRef);
+		BaseSaveThumbFile *saveThumbFile = new BaseSaveThumbFile();
 		if (DID_SUCCEED(saveThumbFile->open(filename))) {
 			ret = saveThumbFile->getMemStream();
 		}
@@ -347,6 +350,13 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 	}
 
 	warning("BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
+	return NULL;
+}
+
+BaseFileManager *BaseFileManager::getEngineInstance() {
+	if (BaseEngine::getInstance()) {
+		return BaseEngine::getInstance()->getFileManager();
+	}
 	return NULL;
 }
 

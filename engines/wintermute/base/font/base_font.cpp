@@ -31,7 +31,6 @@
 #include "engines/wintermute/base/font/base_font_truetype.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/base_game.h"
 
 namespace WinterMute {
 
@@ -72,7 +71,7 @@ int BaseFont::getTextWidth(byte *text, int maxLength) {
 //////////////////////////////////////////////////////////////////////
 bool BaseFont::loadFile(const char * Filename)
 {
-    BYTE* Buffer = _gameRef->_fileManager->readWholeFile(filename);
+    BYTE* Buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
     if (Buffer==NULL){
         _gameRef->LOG(0, "BaseFont::LoadFile failed for file '%s'", filename);
         return STATUS_FAILED;
@@ -103,7 +102,7 @@ bool BaseFont::loadBuffer(byte * Buffer)
 
     char* params;
     int cmd;
-    BaseParser parser(_gameRef);
+    BaseParser parser;
 
     if (parser.GetCommand ((char**)&Buffer, commands, (char**)&params)!=TOKEN_FONT){
         _gameRef->LOG(0, "'FONT' keyword expected.");
@@ -186,7 +185,7 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 	TOKEN_TABLE_END
 
 
-	byte *buffer = gameRef->_fileManager->readWholeFile(filename);
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == NULL) {
 		return false;
 	}
@@ -194,7 +193,7 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 	byte *workBuffer = buffer;
 
 	char *params;
-	BaseParser parser(gameRef);
+	BaseParser parser;
 
 	bool ret = false;
 	if (parser.getCommand((char **)&workBuffer, commands, (char **)&params) == TOKEN_TTFONT) {

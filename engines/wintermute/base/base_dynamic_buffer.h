@@ -34,7 +34,7 @@
 
 namespace WinterMute {
 
-class BaseDynamicBuffer : public BaseClass {
+class BaseDynamicBuffer {
 public:
 	bool _initialized;
 	void putText(const char *fmt, ...);

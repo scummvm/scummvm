@@ -52,12 +52,11 @@
 #define PARSERR_EOF             -2
 #define PARSERR_TOKENNOTFOUND   -1
 
-#include "engines/wintermute/base/base.h"
 #include "engines/wintermute/coll_templ.h"
 
 namespace WinterMute {
 
-class BaseParser : public BaseClass {
+class BaseParser {
 public:
 	struct TokenDesc {
 		int32   id;
@@ -67,7 +66,7 @@ public:
 public:
 	int scanStr(const char *in, const char *format, ...);
 	int32 getCommand(char **buf, TokenDesc *tokens, char **params);
-	BaseParser(BaseGame *inGame = NULL);
+	BaseParser();
 	virtual ~BaseParser();
 private:
 	char *getLastOffender();

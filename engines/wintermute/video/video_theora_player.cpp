@@ -103,7 +103,7 @@ VideoTheoraPlayer::~VideoTheoraPlayer(void) {
 //////////////////////////////////////////////////////////////////////////
 void VideoTheoraPlayer::cleanup() {
 	if (_file) {
-		_gameRef->_fileManager->closeFile(_file);
+		BaseFileManager::getEngineInstance()->closeFile(_file);
 		_file = NULL;
 	}
 
@@ -121,7 +121,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 	cleanup();
 
 	_filename = filename;
-	_file = _gameRef->_fileManager->openFile(filename, true, false);
+	_file = BaseFileManager::getEngineInstance()->openFile(filename, true, false);
 	if (!_file) {
 		return STATUS_FAILED;
 	}
@@ -378,7 +378,7 @@ bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	warning("VideoTheoraPlayer::SetAlphaImage(%s) - Not implemented", filename.c_str());
 
 	delete _alphaImage;
-	_alphaImage = new BaseImage(_gameRef->_fileManager);
+	_alphaImage = new BaseImage();
 	if (!_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
 		delete _alphaImage;
 		_alphaImage = NULL;

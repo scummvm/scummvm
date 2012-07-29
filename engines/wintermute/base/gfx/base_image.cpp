@@ -42,8 +42,8 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////
-BaseImage::BaseImage(BaseFileManager *fileManager) {
-	_fileManager = fileManager;
+BaseImage::BaseImage() {
+	_fileManager = BaseFileManager::getEngineInstance();
 	_palette = NULL;
 	_surface = NULL;
 	_decoder = NULL;

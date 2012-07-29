@@ -82,7 +82,7 @@ void SXFile::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 void SXFile::close() {
 	if (_readFile) {
-		_gameRef->_fileManager->closeFile(_readFile);
+		BaseFileManager::getEngineInstance()->closeFile(_readFile);
 		_readFile = NULL;
 	}
 	if (_writeFile) {
@@ -130,7 +130,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			_mode = 1;
 		}
 		if (_mode == 1) {
-			_readFile = _gameRef->_fileManager->openFile(_filename);
+			_readFile = BaseFileManager::getEngineInstance()->openFile(_filename);
 			if (!_readFile) {
 				//script->runtimeError("File.%s: Error opening file '%s' for reading.", Name, _filename);
 				close();
@@ -785,7 +785,7 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 		if (_mode != 0) {
 			// open for reading
 			if (_mode == 1) {
-				_readFile = _gameRef->_fileManager->openFile(_filename);
+				_readFile = BaseFileManager::getEngineInstance()->openFile(_filename);
 				if (!_readFile) {
 					close();
 				}

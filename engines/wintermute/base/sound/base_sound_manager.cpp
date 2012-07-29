@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/base_registry.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/base/base_game.h"
@@ -71,7 +72,7 @@ bool BaseSoundMgr::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundMgr::saveSettings() {
 	if (_soundAvailable) {
-		_gameRef->_registry->writeInt("Audio", "MasterVolume", _volumeMaster);
+		BaseEngine::getInstance()->getRegistry()->writeInt("Audio", "MasterVolume", _volumeMaster);
 	}
 }
 
@@ -82,7 +83,7 @@ bool BaseSoundMgr::initialize() {
 	if (!g_system->getMixer()->isReady()) {
 		return STATUS_FAILED;
 	}
-	_volumeMaster = _gameRef->_registry->readInt("Audio", "MasterVolume", 255);
+	_volumeMaster = BaseEngine::getInstance()->getRegistry()->readInt("Audio", "MasterVolume", 255);
 	_soundAvailable = true;
 
 	return STATUS_OK;
@@ -104,7 +105,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 		AnsiString name = PathUtil::getFileNameWithoutExtension(filename);
 
 		AnsiString newFile = PathUtil::combine(path, name + "ogg");
-		if (_gameRef->_fileManager->hasFile(newFile)) {
+		if (BaseFileManager::getEngineInstance()->hasFile(newFile)) {
 			useFilename = newFile;
 		}
 	}

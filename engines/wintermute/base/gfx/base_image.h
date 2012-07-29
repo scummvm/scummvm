@@ -42,7 +42,7 @@ class BaseFileManager;
 class BaseImage {
 
 public:
-	BaseImage(BaseFileManager *fileManager);
+	BaseImage();
 	~BaseImage();
 
 	bool loadFile(const Common::String &filename);

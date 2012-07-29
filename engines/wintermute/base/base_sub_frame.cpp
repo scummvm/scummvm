@@ -110,7 +110,7 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 	char *params;
 	int cmd;
-	BaseParser parser(_gameRef);
+	BaseParser parser;
 	Rect32 rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;

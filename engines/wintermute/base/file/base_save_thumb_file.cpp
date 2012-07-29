@@ -26,7 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/platform_osystem.h"
 
@@ -38,7 +38,7 @@ namespace WinterMute {
 
 
 //////////////////////////////////////////////////////////////////////////
-BaseSaveThumbFile::BaseSaveThumbFile(BaseGame *inGame) : BaseFile(inGame) {
+BaseSaveThumbFile::BaseSaveThumbFile() {
 	_data = NULL;
 }
 
@@ -70,7 +70,7 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 	int slot = atoi(tempFilename);
 	delete[] tempFilename;
 
-	BasePersistenceManager *pm = new BasePersistenceManager(_gameRef);
+	BasePersistenceManager *pm = new BasePersistenceManager();
 	Common::String slotFilename = pm->getFilenameForSlot(slot);
 	if (!pm) {
 		return STATUS_FAILED;

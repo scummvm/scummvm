@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/tinyxml/tinyxml.h"
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_registry.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/string_util.h"
@@ -40,7 +40,7 @@
 namespace WinterMute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseRegistry::BaseRegistry(BaseGame *inGame) : BaseClass(inGame) {
+BaseRegistry::BaseRegistry() {
 	_iniName = NULL;
 
 	setIniName("./wme.ini");
@@ -175,13 +175,13 @@ char *BaseRegistry::getIniName() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegistry::loadValues(bool local) {
-	Common::String filename = Common::String(_gameRef->getGameId()) + "-settings.xml";
+	Common::String filename = Common::String(BaseEngine::getInstance()->getGameId()) + "-settings.xml";
 	loadXml(filename, _values);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegistry::saveValues() {
-	Common::String filename = Common::String(_gameRef->getGameId()) + "-settings.xml";
+	Common::String filename = Common::String(BaseEngine::getInstance()->getGameId()) + "-settings.xml";
 	saveXml(filename, _values);
 }
 
