@@ -49,6 +49,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_viewport.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
+#include "engines/wintermute/base/saveload.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -1453,29 +1454,6 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-bool AdGame::loadGame(const char *filename) {
-	bool ret = BaseGame::loadGame(filename);
-	if (DID_SUCCEED(ret)) {
-		SystemClassRegistry::getInstance()->enumInstances(afterLoadRegion, "AdRegion", NULL);
-	}
-	return ret;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool AdGame::initAfterLoad() {
-	BaseGame::initAfterLoad();
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadScene,   "AdScene",   NULL);
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-void AdGame::afterLoadScene(void *scene, void *data) {
-	((AdScene *)scene)->afterLoad();
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 void AdGame::setPrevSceneName(const char *name) {
 	delete[] _prevSceneName;
@@ -1910,9 +1888,7 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 		if (_stateEx == GAME_WAITING_RESPONSE) {
 			_responseBox->display();
 		}
-		if (_indicatorDisplay) {
-			displayIndicator();
-		}
+		_renderer->displayIndicator();
 
 
 		if (doUpdate || displayAll) {

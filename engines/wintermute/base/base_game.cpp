@@ -49,10 +49,7 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_save_thumb_helper.h"
 #include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/utils/crc.h"
-#include "engines/wintermute/utils/path_util.h"
-#include "engines/wintermute/utils/string_util.h"
-#include "engines/wintermute/ui/ui_window.h"
+#include "engines/wintermute/base/saveload.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -61,6 +58,10 @@
 #include "engines/wintermute/video/video_player.h"
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/utils/crc.h"
+#include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/utils/string_util.h"
+#include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/config-manager.h"
@@ -195,13 +196,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_thumbnailWidth = _thumbnailHeight = 0;
 
-	_indicatorDisplay = false;
-	_indicatorColor = BYTETORGBA(255, 0, 0, 128);
-	_indicatorProgress = 0;
-	_indicatorX = -1;
-	_indicatorY = -1;
-	_indicatorWidth = -1;
-	_indicatorHeight = 8;
 	_richSavedGames = false;
 	_savedGameExt = NULL;
 	BaseUtils::setString(&_savedGameExt, "dsv");
@@ -212,13 +206,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_musicCrossfadeChannel1 = -1;
 	_musicCrossfadeChannel2 = -1;
 	_musicCrossfadeSwap = false;
-
-	_loadImageName = NULL;
-	_saveImageName = NULL;
-	_saveLoadImage = NULL;
-
-	_saveImageX = _saveImageY = 0;
-	_loadImageX = _loadImageY = 0;
 
 	_localSaveDir = NULL;
 	BaseUtils::setString(&_localSaveDir, "saves");
@@ -286,7 +273,6 @@ BaseGame::~BaseGame() {
 
 	delete _cachedThumbnail;
 
-	delete _saveLoadImage;
 	delete _mathClass;
 
 	delete _transMgr;
@@ -307,7 +293,6 @@ BaseGame::~BaseGame() {
 
 	_cachedThumbnail = NULL;
 
-	_saveLoadImage = NULL;
 	_mathClass = NULL;
 
 	_transMgr = NULL;
@@ -351,11 +336,6 @@ bool BaseGame::cleanup() {
 
 	_windows.clear(); // refs only
 	_focusedWindow = NULL; // ref only
-
-	delete[] _saveImageName;
-	delete[] _loadImageName;
-	_saveImageName = NULL;
-	_loadImageName = NULL;
 
 	delete _cursorNoninteractive;
 	delete _cursor;
@@ -488,17 +468,7 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 bool BaseGame::initialize3() { // renderer is initialized
 	_posX = _renderer->_width / 2;
 	_posY = _renderer->_height / 2;
-
-	if (_indicatorY == -1) {
-		_indicatorY = _renderer->_height - _indicatorHeight;
-	}
-	if (_indicatorX == -1) {
-		_indicatorX = 0;
-	}
-	if (_indicatorWidth == -1) {
-		_indicatorWidth = _renderer->_width;
-	}
-
+	_renderer->initIndicator();
 	return STATUS_OK;
 }
 
@@ -780,6 +750,20 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(LOCAL_SAVE_DIR)
 	TOKEN_TABLE(COMPAT_KILL_METHOD_THREADS)
 	TOKEN_TABLE_END
+	
+	// Declare a few variables necessary for moving data from these settings over to the renderer:
+	// The values are the same as the defaults set in BaseRenderer.
+	int loadImageX = 0;
+	int loadImageY = 0;
+	int saveImageX = 0;
+	int saveImageY = 0;
+	int indicatorX = -1;
+	int indicatorY = -1;
+	int indicatorWidth = -1;
+	int indicatorHeight = 8;
+	uint32 indicatorColor = BYTETORGBA(255, 0, 0, 128);
+	Common::String loadImageName = "";
+	Common::String saveImageName = "";
 
 	byte *params;
 	int cmd;
@@ -896,50 +880,50 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_INDICATOR_X:
-			parser.scanStr((char *)params, "%d", &_indicatorX);
+			parser.scanStr((char *)params, "%d", &indicatorX);
 			break;
 
 		case TOKEN_INDICATOR_Y:
-			parser.scanStr((char *)params, "%d", &_indicatorY);
+			parser.scanStr((char *)params, "%d", &indicatorY);
 			break;
 
 		case TOKEN_INDICATOR_COLOR: {
 			int r, g, b, a;
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &r, &g, &b, &a);
-			_indicatorColor = BYTETORGBA(r, g, b, a);
+			indicatorColor = BYTETORGBA(r, g, b, a);
 		}
 		break;
 
 		case TOKEN_INDICATOR_WIDTH:
-			parser.scanStr((char *)params, "%d", &_indicatorWidth);
+			parser.scanStr((char *)params, "%d", &indicatorWidth);
 			break;
 
 		case TOKEN_INDICATOR_HEIGHT:
-			parser.scanStr((char *)params, "%d", &_indicatorHeight);
+			parser.scanStr((char *)params, "%d", &indicatorHeight);
 			break;
 
 		case TOKEN_SAVE_IMAGE:
-			BaseUtils::setString(&_saveImageName, (char *)params);
+			saveImageName = (char *) params;
 			break;
 
 		case TOKEN_SAVE_IMAGE_X:
-			parser.scanStr((char *)params, "%d", &_saveImageX);
+			parser.scanStr((char *)params, "%d", &saveImageX);
 			break;
 
 		case TOKEN_SAVE_IMAGE_Y:
-			parser.scanStr((char *)params, "%d", &_saveImageY);
+			parser.scanStr((char *)params, "%d", &saveImageY);
 			break;
 
 		case TOKEN_LOAD_IMAGE:
-			BaseUtils::setString(&_loadImageName, (char *)params);
+			loadImageName = (char *) params;
 			break;
 
 		case TOKEN_LOAD_IMAGE_X:
-			parser.scanStr((char *)params, "%d", &_loadImageX);
+			parser.scanStr((char *)params, "%d", &loadImageX);
 			break;
 
 		case TOKEN_LOAD_IMAGE_Y:
-			parser.scanStr((char *)params, "%d", &_loadImageY);
+			parser.scanStr((char *)params, "%d", &loadImageY);
 			break;
 
 		case TOKEN_LOCAL_SAVE_DIR:
@@ -951,6 +935,11 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 		}
 	}
+
+	_renderer->setIndicator(indicatorWidth, indicatorHeight, indicatorX, indicatorY, indicatorColor);
+	_renderer->initIndicator(); // In case we just reset the values.
+	_renderer->setSaveImage(saveImageName.c_str(), saveImageX, saveImageY);
+	_renderer->setLoadingScreen(loadImageName.c_str(), loadImageX, loadImageY);
 
 	if (!_systemFont) {
 		_systemFont = _gameRef->_fontStorage->addFont("system_font.fnt");
@@ -1624,7 +1613,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "IsSaveSlotUsed") == 0) {
 		stack->correctParams(1);
 		int slot = stack->pop()->getInt();
-		stack->pushBool(isSaveSlotUsed(slot));
+		stack->pushBool(SaveLoad::isSaveSlotUsed(slot));
 		return STATUS_OK;
 	}
 
@@ -1636,7 +1625,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int slot = stack->pop()->getInt();
 		char desc[512];
 		desc[0] = '\0';
-		getSaveSlotDescription(slot, desc);
+		SaveLoad::getSaveSlotDescription(slot, desc);
 		stack->pushString(desc);
 		return STATUS_OK;
 	}
@@ -1647,7 +1636,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "EmptySaveSlot") == 0) {
 		stack->correctParams(1);
 		int slot = stack->pop()->getInt();
-		emptySaveSlot(slot);
+		SaveLoad::emptySaveSlot(slot);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1979,14 +1968,13 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "SetLoadingScreen") == 0) {
 		stack->correctParams(3);
 		ScValue *val = stack->pop();
-		_loadImageX = stack->pop()->getInt();
-		_loadImageY = stack->pop()->getInt();
+		int loadImageX = stack->pop()->getInt();
+		int loadImageY = stack->pop()->getInt();
 
 		if (val->isNULL()) {
-			delete[] _loadImageName;
-			_loadImageName = NULL;
+			_renderer->setLoadingScreen(NULL, loadImageX, loadImageY);
 		} else {
-			BaseUtils::setString(&_loadImageName, val->getString());
+			_renderer->setLoadingScreen(val->getString(), loadImageX, loadImageY);
 		}
 		stack->pushNULL();
 		return STATUS_OK;
@@ -1998,14 +1986,13 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "SetSavingScreen") == 0) {
 		stack->correctParams(3);
 		ScValue *val = stack->pop();
-		_saveImageX = stack->pop()->getInt();
-		_saveImageY = stack->pop()->getInt();
+		int saveImageX = stack->pop()->getInt();
+		int saveImageY = stack->pop()->getInt();
 
 		if (val->isNULL()) {
-			delete[] _saveImageName;
-			_saveImageName = NULL;
+			_renderer->setSaveImage(NULL, saveImageX, saveImageY);
 		} else {
-			BaseUtils::setString(&_saveImageName, val->getString());
+			_renderer->setSaveImage(NULL, saveImageX, saveImageY);
 		}
 		stack->pushNULL();
 		return STATUS_OK;
@@ -3316,48 +3303,7 @@ bool BaseGame::showCursor() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
-	char filename[MAX_PATH_LENGTH + 1];
-	getSaveSlotFilename(slot, filename);
-
-	LOG(0, "Saving game '%s'...", filename);
-
-	_gameRef->applyEvent("BeforeSave", true);
-
-	bool ret;
-
-	_indicatorDisplay = true;
-	_indicatorProgress = 0;
-	BasePersistenceManager *pm = new BasePersistenceManager();
-	if (DID_SUCCEED(ret = pm->initSave(desc))) {
-		if (!quickSave) {
-			delete _saveLoadImage;
-			_saveLoadImage = NULL;
-			if (_saveImageName) {
-				_saveLoadImage = _renderer->createSurface();
-
-				if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
-					delete _saveLoadImage;
-					_saveLoadImage = NULL;
-				}
-			}
-		}
-
-		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveTable(_gameRef,  pm, quickSave))) {
-			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveInstances(_gameRef,  pm, quickSave))) {
-				if (DID_SUCCEED(ret = pm->saveFile(filename))) {
-					ConfMan.setInt("most_recent_saveslot", slot);
-				}
-			}
-		}
-	}
-
-	delete pm;
-	_indicatorDisplay = false;
-
-	delete _saveLoadImage;
-	_saveLoadImage = NULL;
-
-	return ret;
+	return SaveLoad::saveGame(slot, desc, quickSave, _gameRef);
 }
 
 
@@ -3368,101 +3314,16 @@ bool BaseGame::loadGame(int slot) {
 	_loading = false;
 	_scheduledLoadSlot = -1;
 
-	char filename[MAX_PATH_LENGTH + 1];
-	getSaveSlotFilename(slot, filename);
+	Common::String filename = SaveLoad::getSaveSlotFilename(slot);
 
-	return loadGame(filename);
+	return loadGame(filename.c_str());
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadGame(const char *filename) {
-	LOG(0, "Loading game '%s'...", filename);
-
-	bool ret;
-
-	delete _saveLoadImage;
-	_saveLoadImage = NULL;
-	if (_loadImageName) {
-		_saveLoadImage = _renderer->createSurface();
-
-		if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
-			delete _saveLoadImage;
-			_saveLoadImage = NULL;
-		}
-	}
-
-
-	_loadInProgress = true;
-	_indicatorDisplay = true;
-	_indicatorProgress = 0;
-	BasePersistenceManager *pm = new BasePersistenceManager();
-	if (DID_SUCCEED(ret = pm->initLoad(filename))) {
-		//if (DID_SUCCEED(ret = cleanup())) {
-		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadTable(_gameRef,  pm))) {
-			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadInstances(_gameRef,  pm))) {
-				// data initialization after load
-				initAfterLoad();
-				
-				_gameRef->applyEvent("AfterLoad", true);
-				
-				displayContent(true, false);
-				//_renderer->flip();
-			}
-		}
-	}
-
-	_indicatorDisplay = false;
-	delete pm;
-	_loadInProgress = false;
-
-	delete _saveLoadImage;
-	_saveLoadImage = NULL;
-
-	//_gameRef->LOG(0, "Load end %d", BaseUtils::GetUsedMemMB());
-
-	return ret;
+	return SaveLoad::loadGame(filename, _gameRef);
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::initAfterLoad() {
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadRegion,   "BaseRegion",   NULL);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadSubFrame, "BaseSubFrame", NULL);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadSound,    "BaseSound",    NULL);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadFont,     "BaseFontTT",   NULL);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript,   "ScScript",  NULL);
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-void BaseGame::afterLoadRegion(void *region, void *data) {
-	((BaseRegion *)region)->createRegion();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-void BaseGame::afterLoadSubFrame(void *subframe, void *data) {
-	((BaseSubFrame *)subframe)->setSurfaceSimple();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-void BaseGame::afterLoadSound(void *sound, void *data) {
-	((BaseSound *)sound)->setSoundSimple();
-}
-
-//////////////////////////////////////////////////////////////////////////
-void BaseGame::afterLoadFont(void *font, void *data) {
-	((BaseFont *)font)->afterLoad();
-}
-
-//////////////////////////////////////////////////////////////////////////
-void BaseGame::afterLoadScript(void *script, void *data) {
-	((ScScript *)script)->afterLoad();
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayWindows(bool inGame) {
@@ -3773,13 +3634,8 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel1));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel2));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeSwap));
-
-	persistMgr->transfer(TMEMBER(_loadImageName));
-	persistMgr->transfer(TMEMBER(_saveImageName));
-	persistMgr->transfer(TMEMBER(_saveImageX));
-	persistMgr->transfer(TMEMBER(_saveImageY));
-	persistMgr->transfer(TMEMBER(_loadImageX));
-	persistMgr->transfer(TMEMBER(_loadImageY));
+	
+	_renderer->persistSaveLoadImages(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_textEncoding));
 	persistMgr->transfer(TMEMBER(_textRTL));
@@ -3907,13 +3763,13 @@ void BaseGame::handleKeyRelease(Common::Event *event) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::handleMouseWheel(int Delta) {
+bool BaseGame::handleMouseWheel(int delta) {
 	bool handled = false;
 	if (_focusedWindow) {
-		handled = _gameRef->_focusedWindow->handleMouseWheel(Delta);
+		handled = _gameRef->_focusedWindow->handleMouseWheel(delta);
 
 		if (!handled) {
-			if (Delta < 0 && _gameRef->_focusedWindow->canHandleEvent("MouseWheelDown")) {
+			if (delta < 0 && _gameRef->_focusedWindow->canHandleEvent("MouseWheelDown")) {
 				_gameRef->_focusedWindow->applyEvent("MouseWheelDown");
 				handled = true;
 			} else if (_gameRef->_focusedWindow->canHandleEvent("MouseWheelUp")) {
@@ -3925,7 +3781,7 @@ bool BaseGame::handleMouseWheel(int Delta) {
 	}
 
 	if (!handled) {
-		if (Delta < 0) {
+		if (delta < 0) {
 			applyEvent("MouseWheelDown");
 		} else {
 			applyEvent("MouseWheelUp");
@@ -3978,61 +3834,6 @@ void BaseGame::setWindowTitle() {
 		}
 		warning("BaseGame::SetWindowTitle: Ignoring value: %s", utf8Title.c_str());
 	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::getSaveSlotFilename(int slot, char *buffer) {
-	BasePersistenceManager *pm = new BasePersistenceManager();
-	Common::String filename = pm->getFilenameForSlot(slot);
-	delete pm;
-	strcpy(buffer, filename.c_str());
-	debugC(kWinterMuteDebugSaveGame, "getSaveSlotFileName(%d) = %s", slot, buffer);
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::getSaveSlotDescription(int slot, char *buffer) {
-	buffer[0] = '\0';
-
-	char filename[MAX_PATH_LENGTH + 1];
-	getSaveSlotFilename(slot, filename);
-	BasePersistenceManager *pm = new BasePersistenceManager();
-	if (!pm) {
-		return STATUS_FAILED;
-	}
-
-	if (DID_FAIL(pm->initLoad(filename))) {
-		delete pm;
-		return STATUS_FAILED;
-	}
-
-	strcpy(buffer, pm->_savedDescription);
-	delete pm;
-
-	return STATUS_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::isSaveSlotUsed(int slot) {
-	char filename[MAX_PATH_LENGTH + 1];
-	getSaveSlotFilename(slot, filename);
-	BasePersistenceManager *pm = new BasePersistenceManager();
-	bool ret = pm->getSaveExists(slot);
-	delete pm;
-	return ret;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::emptySaveSlot(int slot) {
-	char filename[MAX_PATH_LENGTH + 1];
-	getSaveSlotFilename(slot, filename);
-	BasePersistenceManager *pm = new BasePersistenceManager();
-	g_wintermute->getSaveFileMan()->removeSavefile(pm->getFilenameForSlot(slot));
-	delete pm;
-	return STATUS_OK;
 }
 
 
@@ -4181,35 +3982,8 @@ bool BaseGame::displayContent(bool doUpdate, bool displayAll) {
 bool BaseGame::displayContentSimple() {
 	// fill black
 	_renderer->fill(0, 0, 0);
-	if (_indicatorDisplay) {
-		displayIndicator();
-	}
+	_renderer->displayIndicator();
 
-	return STATUS_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::displayIndicator() {
-	if (_saveLoadImage) {
-		Rect32 rc;
-		BasePlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
-		if (_loadInProgress) {
-			_saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
-		} else {
-			_saveLoadImage->displayTrans(_saveImageX, _saveImageY, rc);
-		}
-	}
-
-	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) {
-		return STATUS_OK;
-	}
-	_renderer->setupLines();
-	for (int i = 0; i < _indicatorHeight; i++) {
-		_renderer->drawLine(_indicatorX, _indicatorY + i, _indicatorX + (int)(_indicatorWidth * (float)((float)_indicatorProgress / 100.0f)), _indicatorY + i, _indicatorColor);
-	}
-
-	_renderer->setup2D();
 	return STATUS_OK;
 }
 

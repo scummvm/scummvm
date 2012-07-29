@@ -84,6 +84,7 @@ MODULE_OBJS := \
 	base/base_surface_storage.o \
 	base/base_transition_manager.o \
 	base/base_viewport.o \
+	base/saveload.o \
 	detection.o \
 	graphics/transparent_surface.o \
 	graphics/tga.o \

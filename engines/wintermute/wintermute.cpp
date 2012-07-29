@@ -144,33 +144,6 @@ int WinterMuteEngine::init() {
 
 	bool windowedMode = !ConfMan.getBool("fullscreen");
 
-	// parse command line
-	char *saveGame = NULL;
-	/*  for (int i = 0; i < argc; i++) {
-	        strcpy(param, argv[i]);
-
-	        if (scumm_stricmp(param, "-project") == 0) {
-	            if (argc > i) strcpy(param, argv[i + 1]);
-	            else param[0] = '\0';
-
-	            if (strcmp(param, "") != 0) {
-	                char *iniDir = BaseUtils::GetPath(param);
-	                char *iniName = BaseUtils::GetFilename(param);
-
-	                // switch to ini's dir
-	                warning("TODO: Place ini-files somewhere");
-	                //              chdir(IniDir);
-
-	                // set ini name
-	                sprintf(param, "./%s", IniName);
-	                _game->_registry->SetIniName(param);
-
-	                delete[] IniDir;
-	                delete[] IniName;
-	            }
-	        } else if (scumm_stricmp(param, "-windowed") == 0) windowedMode = true;
-	    }*/
-
 	if (ConfMan.hasKey("debug_mode")) {
 		if (ConfMan.getBool("debug_mode")) {
 			_game->DEBUG_DebugEnable("./wme.log");
@@ -240,7 +213,7 @@ int WinterMuteEngine::init() {
 		_game = NULL;
 		return false;
 	}
-	//_game->setWindowTitle();
+
 	_game->_renderer->_ready = true;
 	_game->_miniUpdateEnabled = true;
 
@@ -250,11 +223,6 @@ int WinterMuteEngine::init() {
 	if (ConfMan.hasKey("save_slot")) {
 		int slot = ConfMan.getInt("save_slot");
 		_game->loadGame(slot);
-	}
-
-	if (saveGame) {
-		_game->loadGame(saveGame);
-		delete[] saveGame;
 	}
 
 	// all set, ready to go

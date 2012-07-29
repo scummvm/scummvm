@@ -54,9 +54,6 @@ public:
 
 	virtual bool displayDebugInfo();
 
-	virtual bool initAfterLoad();
-	static void afterLoadScene(void *scene, void *data);
-
 	bool addSpeechDir(const char *dir);
 	bool removeSpeechDir(const char *dir);
 	char *findSpeechFile(char *StringID);
@@ -101,7 +98,6 @@ public:
 	void setPrevSceneName(const char *name);
 	void setPrevSceneFilename(const char *name);
 
-	virtual bool loadGame(const char *filename);
 	AdItem *_selectedItem;
 	bool cleanup();
 	DECLARE_PERSISTENT(AdGame, BaseGame)

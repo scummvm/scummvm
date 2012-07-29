@@ -40,6 +40,7 @@ class BaseImage;
 class BaseActiveRect;
 class BaseObject;
 class BaseSurface;
+class BasePersistenceManager;
 
 /**
  * @class BaseRenderer a common interface for the rendering portion of WME
@@ -166,6 +167,35 @@ public:
 	uint32 _forceAlphaColor;
 
 	void addRectToList(BaseActiveRect *rect);
+
+	// Indicator & Save/Load-related functions
+	void initIndicator();
+	void setIndicatorVal(int value);
+	void setIndicator(int width, int height, int x, int y, uint32 color);
+	void persistSaveLoadImages(BasePersistenceManager *persistMgr);
+	void initSaveLoad(bool isSaving, bool quickSave = false);
+	void endSaveLoad();
+	void setLoadingScreen(const char *filename, int x, int y);
+	void setSaveImage(const char *filename, int x, int y);
+
+	bool displayIndicator();
+private:
+	Common::String _loadImageName;
+	Common::String _saveImageName;
+	int _saveImageX;
+	int _saveImageY;
+	int _loadImageX;
+	int _loadImageY;
+	BaseSurface *_saveLoadImage;
+
+	uint32 _indicatorColor;
+	int _indicatorX;
+	int _indicatorY;
+	int _indicatorWidth;
+	int _indicatorHeight;
+	bool _loadInProgress;
+	bool _indicatorDisplay;
+	int _indicatorProgress;
 protected:
 	uint32 _clipperWindow;
 

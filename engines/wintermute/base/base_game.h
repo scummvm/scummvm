@@ -109,8 +109,6 @@ public:
 	void DEBUG_DumpClassRegistry();
 	bool setWaitCursor(const char *filename);
 
-	int _indicatorProgress; // TODO: Hide
-
 	int _thumbnailWidth;
 	int _thumbnailHeight;
 
@@ -204,9 +202,9 @@ public:
 	bool displayWindows(bool inGame = false);
 	bool _useD3D;
 	virtual bool cleanup();
-	virtual bool loadGame(int slot);
-	virtual bool loadGame(const char *filename);
-	virtual bool saveGame(int slot, const char *desc, bool quickSave = false);
+	bool loadGame(int slot);
+	bool loadGame(const char *filename);
+	bool saveGame(int slot, const char *desc, bool quickSave = false);
 	virtual bool showCursor();
 
 	BaseObject *_activeObject;
@@ -248,7 +246,6 @@ public:
 	BaseSprite *_lastCursor;
 	bool drawCursor(BaseSprite *Cursor);
 
-	virtual bool initAfterLoad();
 	BaseSaveThumbHelper *_cachedThumbnail;
 	void addMem(int bytes);
 	bool _touchInterface;
@@ -261,18 +258,10 @@ protected:
 
 	BaseFader *_fader;
 
-	bool _indicatorDisplay;
-	bool displayIndicator();
-
 	int _freezeLevel;
 	VideoPlayer *_videoPlayer;
 	VideoTheoraPlayer *_theoraPlayer;
-	static void afterLoadRegion(void *region, void *data);
 private:
-	static void afterLoadSubFrame(void *subframe, void *data);
-	static void afterLoadSound(void *sound, void *data);
-	static void afterLoadFont(void *font, void *data);
-	static void afterLoadScript(void *script, void *data);
 	bool _mouseRightDown;
 	bool _mouseMidlleDown;
 	bool _settingsRequireAcceleration;
@@ -286,25 +275,10 @@ private:
 	virtual bool invalidateDeviceObjects();
 	virtual bool restoreDeviceObjects();
 
-	uint32 _indicatorColor;
-	int _indicatorX;
-	int _indicatorY;
-	int _indicatorWidth;
-	int _indicatorHeight;
-
 	char *_localSaveDir;
 	bool _saveDirChecked;
 	bool _richSavedGames;
 	char *_savedGameExt;
-
-	char *_loadImageName;
-	char *_saveImageName;
-	int _saveImageX;
-	int _saveImageY;
-	int _loadImageX;
-	int _loadImageY;
-
-	BaseSurface *_saveLoadImage;
 
 	bool _reportTextureFormat;
 
@@ -324,10 +298,6 @@ private:
 
 	bool _personalizedSave;
 
-	bool emptySaveSlot(int slot);
-	bool isSaveSlotUsed(int slot);
-	bool getSaveSlotDescription(int slot, char *buffer);
-	bool getSaveSlotFilename(int slot, char *buffer);
 	void setWindowTitle();
 
 	bool resumeMusic(int channel);

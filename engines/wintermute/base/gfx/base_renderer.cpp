@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
 
 namespace WinterMute {
 
@@ -43,6 +44,22 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_ready = false;
 	_windowed = true;
 	_forceAlphaColor = 0x00;
+
+	_indicatorDisplay = false;
+	_indicatorColor = BYTETORGBA(255, 0, 0, 128);
+	_indicatorProgress = 0;
+	_indicatorX = -1;
+	_indicatorY = -1;
+	_indicatorWidth = -1;
+	_indicatorHeight = 8;
+
+	_loadImageName = "";
+	_saveImageName = "";
+	_saveLoadImage = NULL;
+	_loadInProgress = false;
+
+	_saveImageX = _saveImageY = 0;
+	_loadImageX = _loadImageY = 0;
 
 	_width = _height = _bPP = 0;
 	BasePlatform::setRectEmpty(&_monitorRect);
@@ -56,6 +73,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 BaseRenderer::~BaseRenderer() {
 	deleteRectList();
 	unclipCursor();
+	delete _saveLoadImage;
 }
 
 
@@ -64,6 +82,90 @@ void BaseRenderer::initLoop() {
 	deleteRectList();
 }
 
+void BaseRenderer::initIndicator() {
+	if (_indicatorY == -1) {
+		_indicatorY = _height - _indicatorHeight;
+	}
+	if (_indicatorX == -1) {
+		_indicatorX = 0;
+	}
+	if (_indicatorWidth == -1) {
+		_indicatorWidth = _width;
+	}
+}
+
+void BaseRenderer::setIndicator(int width, int height, int x, int y, uint32 color) {
+	_indicatorWidth = width;
+	_indicatorHeight = height;
+	_indicatorX = x;
+	_indicatorY = y;
+	_indicatorColor = color;
+}
+
+void BaseRenderer::setIndicatorVal(int value) {
+	_indicatorProgress = value;
+}
+
+void BaseRenderer::setLoadingScreen(const char *filename, int x, int y) {
+	// TODO: Handle NULL
+	_loadImageName = filename;
+	_loadImageX = x;
+	_loadImageY = y;
+}
+
+void BaseRenderer::setSaveImage(const char *filename, int x, int y) {
+	// TODO: Handle NULL
+	_saveImageName = filename;
+	_saveImageX = x;
+	_saveImageY = y;
+}
+
+void BaseRenderer::initSaveLoad(bool isSaving, bool quickSave) {
+	_indicatorDisplay = true;
+	_indicatorProgress = 0;
+	
+	if (isSaving && !quickSave) {
+		delete _saveLoadImage;
+		_saveLoadImage = NULL;
+		if (_saveImageName.size()) {
+			_saveLoadImage = createSurface();
+			
+			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
+				delete _saveLoadImage;
+				_saveLoadImage = NULL;
+			}
+		}
+	} else {
+		delete _saveLoadImage;
+		_saveLoadImage = NULL;
+		if (_loadImageName.size()) {
+			_saveLoadImage = createSurface();
+			
+			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
+				delete _saveLoadImage;
+				_saveLoadImage = NULL;
+			}
+		}
+		_loadInProgress = true;
+	}
+}
+
+void BaseRenderer::endSaveLoad() {
+	_loadInProgress = false;
+	_indicatorDisplay = false;
+
+	delete _saveLoadImage;
+	_saveLoadImage = NULL;
+}
+
+void BaseRenderer::persistSaveLoadImages(BasePersistenceManager *persistMgr) {
+	persistMgr->transfer(TMEMBER(_loadImageName));
+	persistMgr->transfer(TMEMBER(_saveImageName));
+	persistMgr->transfer(TMEMBER(_saveImageX));
+	persistMgr->transfer(TMEMBER(_saveImageY));
+	persistMgr->transfer(TMEMBER(_loadImageX));
+	persistMgr->transfer(TMEMBER(_loadImageY));
+}
 
 //////////////////////////////////////////////////////////////////////
 BaseObject *BaseRenderer::getObjectAt(int x, int y) {
@@ -232,6 +334,33 @@ bool BaseRenderer::pointInViewport(Point32 *p) {
 
 void BaseRenderer::addRectToList(BaseActiveRect *rect) {
 	_rectList.push_back(rect);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::displayIndicator() {
+	if (!_indicatorDisplay) {
+		return STATUS_OK;
+	}
+	if (_saveLoadImage) {
+		Rect32 rc;
+		BasePlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
+		if (_loadInProgress) {
+			_saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
+		} else {
+			_saveLoadImage->displayTrans(_saveImageX, _saveImageY, rc);
+		}
+	}
+	
+	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) {
+		return STATUS_OK;
+	}
+	setupLines();
+	for (int i = 0; i < _indicatorHeight; i++) {
+		drawLine(_indicatorX, _indicatorY + i, _indicatorX + (int)(_indicatorWidth * (float)((float)_indicatorProgress / 100.0f)), _indicatorY + i, _indicatorColor);
+	}
+	
+	setup2D();
+	return STATUS_OK;
 }
 
 } // end of namespace WinterMute

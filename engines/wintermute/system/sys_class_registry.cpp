@@ -200,7 +200,7 @@ bool SystemClassRegistry::saveTable(BaseGame *gameRef, BasePersistenceManager *p
 		counter++;
 
 		if (!quickSave) {
-			gameRef->_indicatorProgress = (int)(50.0f / (float)((float)_classes.size() / (float)counter));
+			gameRef->_renderer->setIndicatorVal((int)(50.0f / (float)((float)_classes.size() / (float)counter)));
 			gameRef->displayContent(false);
 			gameRef->_renderer->flip();
 		}
@@ -234,7 +234,7 @@ bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *p
 	uint32 numClasses = persistMgr->getDWORD();
 
 	for (uint32 i = 0; i < numClasses; i++) {
-		gameRef->_indicatorProgress = (int)(50.0f / (float)((float)numClasses / (float)i));
+		gameRef->_renderer->setIndicatorVal((int)(50.0f / (float)((float)numClasses / (float)i)));
 		gameRef->displayContentSimple();
 		gameRef->_renderer->flip();
 
@@ -270,7 +270,7 @@ bool SystemClassRegistry::saveInstances(BaseGame *gameRef, BasePersistenceManage
 
 		if (!quickSave) {
 			if (counter % 20 == 0) {
-				gameRef->_indicatorProgress = (int)(50.0f + 50.0f / (float)((float)_classes.size() / (float)counter));
+				gameRef->_renderer->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)_classes.size() / (float)counter)));
 				gameRef->displayContent(false);
 				gameRef->_renderer->flip();
 			}
@@ -290,7 +290,7 @@ bool SystemClassRegistry::loadInstances(BaseGame *gameRef, BasePersistenceManage
 
 	for (int i = 0; i < numInstances; i++) {
 		if (i % 20 == 0) {
-			gameRef->_indicatorProgress = (int)(50.0f + 50.0f / (float)((float)numInstances / (float)i));
+			gameRef->_renderer->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)numInstances / (float)i)));
 			gameRef->displayContentSimple();
 			gameRef->_renderer->flip();
 		}
