@@ -38,6 +38,7 @@
 #include "common/system.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
 #include "common/queue.h"
+#include "common/config-manager.h"
 
 namespace WinterMute {
 
@@ -153,7 +154,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	_ratioX = (float)(_realWidth - _borderLeft - _borderRight) / (float)_width;
 	_ratioY = (float)(_realHeight - _borderTop - _borderBottom) / (float)_height;
 
-	//_windowed = BaseEngine::instance().getRegistry()->readBool("Video", "Windowed", true); TODO
+	_windowed = !ConfMan.getBool("fullscreen");
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->beginGFXTransaction();
