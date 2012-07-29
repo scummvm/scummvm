@@ -109,7 +109,7 @@ int Sound::sampleGetNextFreeSlot() const {
 	return -1;
 }
 
-bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName, bool tryExist) {
+bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName) {
 	if (!sndDesc)
 		return false;
 
@@ -117,12 +117,15 @@ bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName,
 
 	int32 size;
 	byte *data = _vm->_dataIO->getFile(fileName, size);
-	if (!data) {
-		warning("Can't open sample file \"%s\"", fileName);
+
+	if (!data || !sndDesc->load(type, data, size)) {
+		delete data;
+
+		warning("Sound::sampleLoad(): Failed to load sound \"%s\"", fileName);
 		return false;
 	}
 
-	return sndDesc->load(type, data, size);
+	return true;
 }
 
 void Sound::sampleFree(SoundDesc *sndDesc, bool noteAdLib, int index) {
@@ -458,7 +461,7 @@ void Sound::blasterStop(int16 fadeLength, SoundDesc *sndDesc) {
 	_blaster->stopSound(fadeLength, sndDesc);
 }
 
-void Sound::blasterPlayComposition(int16 *composition, int16 freqVal,
+void Sound::blasterPlayComposition(const int16 *composition, int16 freqVal,
 		SoundDesc *sndDescs, int8 sndCount) {
 	if (!_blaster)
 		return;

@@ -28,6 +28,7 @@
 
 namespace Common {
 	class SeekableReadStream;
+	class SeekableSubReadStreamEndian;
 }
 
 namespace Gob {
@@ -46,6 +47,7 @@ public:
 	};
 
 	RXYFile(Common::SeekableReadStream &rxy);
+	RXYFile(Common::SeekableSubReadStreamEndian &rxy);
 	RXYFile(uint16 width, uint16 height);
 	~RXYFile();
 
@@ -71,7 +73,7 @@ private:
 	uint16 _height;
 
 
-	void load(Common::SeekableReadStream &rxy);
+	void load(Common::SeekableSubReadStreamEndian &rxy);
 };
 
 } // End of namespace Gob

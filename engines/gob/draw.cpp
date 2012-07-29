@@ -256,7 +256,7 @@ void Draw::blitInvalidated() {
 	if (_cursorIndex == 4)
 		blitCursor();
 
-	if (_vm->_inter->_terminate)
+	if (_vm->_inter && _vm->_inter->_terminate)
 		return;
 
 	if (_noInvalidated && !_applyPal)
@@ -271,7 +271,9 @@ void Draw::blitInvalidated() {
 		return;
 	}
 
-	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
+	if (_cursorSprites)
+		_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
+
 	if (_applyPal) {
 		clearPalette();
 		forceBlit();
@@ -425,28 +427,13 @@ int Draw::stringLength(const char *str, uint16 fontIndex) {
 	return len;
 }
 
-void Draw::drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-		int16 transp, Surface &dest, const Font &font) {
-
-	while (*str != '\0') {
-		const int16 charRight  = x + font.getCharWidth(*str);
-		const int16 charBottom = y + font.getCharHeight();
-
-		if ((charRight <= dest.getWidth()) && (charBottom <= dest.getHeight()))
-			font.drawLetter(dest, *str, x, y, color1, color2, transp);
-
-		x += font.getCharWidth(*str);
-		str++;
-	}
-}
-
 void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 		int16 bottom, const char *str, int16 fontIndex, int16 color) {
 
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right, &bottom);
 
-	uint16 centerOffset = _vm->_game->_script->getFunctionOffset(TOTFile::kFunctionCenter);
+	uint16 centerOffset = _vm->_game->_script ? _vm->_game->_script->getFunctionOffset(TOTFile::kFunctionCenter) : 0;
 	if (centerOffset != 0) {
 		_vm->_game->_script->call(centerOffset);
 
@@ -505,7 +492,7 @@ void Draw::oPlaytoons_sub_F_1B(uint16 id, int16 left, int16 top, int16 right, in
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right,  &bottom);
 
-	uint16 centerOffset = _vm->_game->_script->getFunctionOffset(TOTFile::kFunctionCenter);
+	uint16 centerOffset = _vm->_game->_script ? _vm->_game->_script->getFunctionOffset(TOTFile::kFunctionCenter) : 0;
 	if (centerOffset != 0) {
 		_vm->_game->_script->call(centerOffset);
 

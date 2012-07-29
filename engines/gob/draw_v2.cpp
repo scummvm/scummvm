@@ -74,13 +74,16 @@ void Draw_v2::closeScreen() {
 }
 
 void Draw_v2::blitCursor() {
-	if (_cursorIndex == -1)
+	if (!_cursorSprites || (_cursorIndex == -1))
 		return;
 
 	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
 }
 
 void Draw_v2::animateCursor(int16 cursor) {
+	if (!_cursorSprites)
+		return;
+
 	int16 cursorIndex = cursor;
 	int16 newX = 0, newY = 0;
 	uint16 hotspotX, hotspotY;
@@ -831,8 +834,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 								getColor(_backColor), _transparency);
 					}
 				} else {
-					drawString(_textToPrint, _destSpriteX, _destSpriteY, getColor(_frontColor),
-							getColor(_backColor), _transparency, *_spritesArray[_destSurface], *font);
+					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, getColor(_frontColor),
+							getColor(_backColor), _transparency, *_spritesArray[_destSurface]);
 					_destSpriteX += len * font->getCharWidth();
 				}
 			} else {
