@@ -406,9 +406,9 @@ void Logic::resetState() {
 	getScenes()->setCoordinates(Common::Rect(80, 0, 559, 479));
 
 	SAFE_DELETE(_entities);
-	SAFE_DELETE(_state);
 	_entities = new Entities(_engine);
-	_state    = new State(_engine);
+
+	_state->reset();
 }
 
 /**
