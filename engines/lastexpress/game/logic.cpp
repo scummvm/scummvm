@@ -86,16 +86,6 @@ Logic::~Logic() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-#define REDRAW_CURSOR() { \
-	if (getInventory()->isMagnifierInUse()) \
-		_engine->getCursor()->setStyle(kCursorMagnifier); \
-	if (getInventory()->isPortraitHighlighted() \
-	|| getInventory()->isOpened() \
-	|| getInventory()->isEggHighlighted()) \
-		_engine->getCursor()->setStyle(kCursorNormal); \
-	return; \
-}
-
 void Logic::eventMouse(const Common::Event &ev) {
 	bool hotspotHandled = false;
 
@@ -166,7 +156,9 @@ void Logic::eventMouse(const Common::Event &ev) {
 				getInventory()->unselectItem();
 		}
 
-		REDRAW_CURSOR()
+		redrawCursor();
+
+		return;
 	}
 
 	// Handle match case
@@ -192,7 +184,9 @@ void Logic::eventMouse(const Common::Event &ev) {
 			getScenes()->processScene();
 		}
 
-		REDRAW_CURSOR()
+		redrawCursor();
+
+		return;
 	}
 
 	// Handle entity item case
@@ -594,6 +588,16 @@ void Logic::updateCursor(bool) const { /* the cursor is always updated, even whe
 		style = kCursorNormal;
 
 	_engine->getCursor()->setStyle(style);
+}
+
+void Logic::redrawCursor() const {
+	if (getInventory()->isMagnifierInUse())
+		_engine->getCursor()->setStyle(kCursorMagnifier);
+
+	if (getInventory()->isPortraitHighlighted()
+	 || getInventory()->isOpened()
+	 || getInventory()->isEggHighlighted())
+		_engine->getCursor()->setStyle(kCursorNormal);
 }
 
 } // End of namespace LastExpress
