@@ -52,6 +52,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_indicatorY = -1;
 	_indicatorWidth = -1;
 	_indicatorHeight = 8;
+	_indicatorWidthDrawn = 0;
 
 	_loadImageName = "";
 	_saveImageName = "";
@@ -103,7 +104,10 @@ void BaseRenderer::setIndicator(int width, int height, int x, int y, uint32 colo
 }
 
 void BaseRenderer::setIndicatorVal(int value) {
+	bool redisplay = (_indicatorProgress != value);
 	_indicatorProgress = value;
+	if (redisplay)
+		displayIndicator();
 }
 
 void BaseRenderer::setLoadingScreen(const char *filename, int x, int y) {
@@ -153,6 +157,7 @@ void BaseRenderer::initSaveLoad(bool isSaving, bool quickSave) {
 void BaseRenderer::endSaveLoad() {
 	_loadInProgress = false;
 	_indicatorDisplay = false;
+	_indicatorWidthDrawn = 0;
 
 	delete _saveLoadImage;
 	_saveLoadImage = NULL;
@@ -338,7 +343,7 @@ void BaseRenderer::addRectToList(BaseActiveRect *rect) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::displayIndicator() {
-	if (!_indicatorDisplay) {
+	if (!_indicatorDisplay || !_indicatorProgress) {
 		return STATUS_OK;
 	}
 	if (_saveLoadImage) {
@@ -355,11 +360,16 @@ bool BaseRenderer::displayIndicator() {
 		return STATUS_OK;
 	}
 	setupLines();
+	int curWidth = (int)(_indicatorWidth * (float)((float)_indicatorProgress / 100.0f));
 	for (int i = 0; i < _indicatorHeight; i++) {
-		drawLine(_indicatorX, _indicatorY + i, _indicatorX + (int)(_indicatorWidth * (float)((float)_indicatorProgress / 100.0f)), _indicatorY + i, _indicatorColor);
+		drawLine(_indicatorX, _indicatorY + i, _indicatorX + curWidth, _indicatorY + i, _indicatorColor);
 	}
 	
 	setup2D();
+	_indicatorWidthDrawn = curWidth;
+	if (_indicatorWidthDrawn) {
+		indicatorFlip();
+	}
 	return STATUS_OK;
 }
 

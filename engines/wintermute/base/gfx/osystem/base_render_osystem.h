@@ -66,6 +66,7 @@ public:
 
 	bool initRenderer(int width, int height, bool windowed);
 	bool flip();
+	virtual bool indicatorFlip();
 	bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL);
 	Graphics::PixelFormat getPixelFormat() const;
 	void fade(uint16 alpha);

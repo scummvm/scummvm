@@ -365,12 +365,6 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
 
-	if (persistMgr->getIsSaving()) {
-		getRect(); // To make sure it gets updated if it was never loaded.
-	} else {
-		_wantsDefaultRect = false;
-	}
-
 	persistMgr->transfer(TMEMBER(_2DOnly));
 	persistMgr->transfer(TMEMBER(_3DOnly));
 	persistMgr->transfer(TMEMBER(_alpha));
@@ -379,6 +373,7 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_hotspotX));
 	persistMgr->transfer(TMEMBER(_hotspotY));
 	persistMgr->transfer(TMEMBER(_rect));
+	persistMgr->transfer(TMEMBER(_wantsDefaultRect));
 
 	persistMgr->transfer(TMEMBER(_surfaceFilename));
 	persistMgr->transfer(TMEMBER(_cKDefault));

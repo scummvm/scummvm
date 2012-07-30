@@ -110,6 +110,11 @@ public:
 	 * @return true if successfull, false on error.
 	 */
 	virtual bool flip() = 0;
+	/**
+	 * Special flip for the indicator drawn during save/load
+	 * essentially, just copies the region defined by the _indicator-variables.
+	 */
+	virtual bool indicatorFlip() = 0;
 	virtual void initLoop();
 	virtual bool setup2D(bool force = false);
 	virtual bool setupLines();
@@ -179,7 +184,7 @@ public:
 	void setSaveImage(const char *filename, int x, int y);
 
 	bool displayIndicator();
-private:
+protected:
 	Common::String _loadImageName;
 	Common::String _saveImageName;
 	int _saveImageX;
@@ -188,6 +193,7 @@ private:
 	int _loadImageY;
 	BaseSurface *_saveLoadImage;
 
+	int _indicatorWidthDrawn;
 	uint32 _indicatorColor;
 	int _indicatorX;
 	int _indicatorY;

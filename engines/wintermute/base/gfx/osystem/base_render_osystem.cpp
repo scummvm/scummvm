@@ -185,7 +185,12 @@ void BaseRenderOSystem::setColorMod(byte r, byte g, byte b) {
 	_colorMod = BS_ARGB(alpha, r, g, b);
 }
 
-//////////////////////////////////////////////////////////////////////////
+bool BaseRenderOSystem::indicatorFlip() {
+	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_indicatorX, _indicatorY), _renderSurface->pitch, _indicatorX, _indicatorY, _indicatorWidthDrawn, _indicatorHeight);
+	g_system->updateScreen();
+	return STATUS_OK;
+}
+
 bool BaseRenderOSystem::flip() {
 	if (!_disableDirtyRects) {
 		drawTickets();
