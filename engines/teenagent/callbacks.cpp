@@ -1282,6 +1282,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_tooMuchResinToClimbMsg); // "I could climb it if there wasn't so much resin"
 		break;
 
+	case 0x50fd:
+		displayMessage(dsAddr_onlyGreenRectMsg); // "The only green stuff that I like is that rectangular piece of paper with..."
+		break;
+
 	case 0x5104:
 		loadScene(11, 319, 198, 4);
 		if (!CHECK_FLAG(0xdb9c, 1)) {
@@ -1750,6 +1754,82 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_noSearchWarrantMsg); // "I don't have a search-warrant"
 		break;
 
+	case 0x6671:
+		displayMessage(dsAddr_cantOpenItMsg); // "I can't open it"
+		break;
+
+	case 0x6678:
+		rejectMessage();
+		break;
+
+	case 0x670f:
+		displayMessage(dsAddr_dontNeedThemMsg); // "I don't need them"
+		break;
+
+	case 0x6716:
+		displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
+		break;
+
+	case 0x6772:
+		loadScene(31, Common::Point(20, 188));
+		scene->setOrientation(2);
+		break;
+
+	case 0x6c1c:
+	case 0x6c20:
+		rejectMessage();
+		break;
+
+	case 0x6c24:
+		displayMessage(dsAddr_dontNeedThemMsg); // "I don't need them"
+		break;
+
+	case 0x6c2b:
+		loadScene(29, Common::Point(300, 188));
+		scene->setOrientation(4);
+		break;
+
+	case 0x6c7c:
+		displayMessage(dsAddr_bigPocketsMsg); // "I have big pockets, but there are limits"
+		break;
+
+	case 0x724e:
+		displayMessage(dsAddr_soSharpMsg); // "They're so sharp they'd rip my trousers!"
+		break;
+
+	case 0x72be:
+		rejectMessage();
+		break;
+
+	case 0x7305:
+		rejectMessage();
+		break;
+
+	case 0x7328:
+		displayMessage(dsAddr_noTimeForPleasuresMsg); // "I don't have time for pleasures"
+		break;
+
+	case 0x732f:
+		displayMessage(dsAddr_notSocksWithBareHandsMsg); // "I won't touch these socks with my bare hands!"
+		break;
+
+	case 0x739c:
+		displayMessage(dsAddr_notHalloweenMsg); // "It's not Halloween"
+		break;
+
+	case 0x746f:
+		displayMessage(dsAddr_nothingToPlayMsg); // "I have nothing to play"
+		break;
+
+	case 0x74b3:
+		loadScene(29, Common::Point(256, 171));
+		scene->setOrientation(3);
+		break;
+
+	case 0x74cd:
+		rejectMessage();
+		break;
+
 	case 0x7866:
 		if (CHECK_FLAG(0xdbdd, 3))
 			displayMessage(dsAddr_gotchaMsg); // "Gotcha"
@@ -2038,6 +2118,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->remove(0x52);
 		enableObject(1);
 		SET_FLAG(0xdbe2, 1);
+		break;
+
+	case 0x8398:
+		displayMessage(dsAddr_trySomewhereElseMsg); // "I'd better try somewhere else - I suppose this side is heavily guarded"
 		break;
 
 	// Shore

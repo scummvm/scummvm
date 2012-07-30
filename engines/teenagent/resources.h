@@ -276,7 +276,8 @@ const uint16 dsAddr_getRidOfGuardFirstMsg = 0x3ed6; // "If I want to get inside 
 const uint16 dsAddr_wallTooSmoothMsg = 0x3f2a; // "The wall surface is too smooth to climb"
 // Too Much Resin To Climb Message : 0x3f54 to 0x3f84
 const uint16 dsAddr_tooMuchResinToClimbMsg = 0x3f54; // "I could climb it if there wasn't so much resin"
-
+// Only Green Rect Message : 0x3f85 to 0x3feb
+const uint16 dsAddr_onlyGreenRectMsg = 0x3f85; // "The only green stuff that I like is that rectangular piece of paper with..."
 // Don't Wanna Touch Hedgehog Message : 0x3fec to 0x402d
 const uint16 dsAddr_dontWannaTouchHedgehogMsg = 0x3fec; // "I don't wanna touch it. Its spines could hurt my delicate hands"
 // Not Hungry Message : 0x402e to 0x4046
@@ -397,6 +398,9 @@ const uint16 dsAddr_noSearchWarrantMsg = 0x4808; // "I don't have a search-warra
 const uint16 dsAddr_nutRakeMsg = 0x4882; // "It's pointless, the nut will slip between the rake's teeth"
 // Paddle Broken Message : 0x48bf to 0x48d5
 const uint16 dsAddr_paddleBrokenMsg = 0x48bf; // "The paddle is BROKEN"
+
+// Try Somewhere Else Message : 0x4913 to 0x495b
+const uint16 dsAddr_trySomewhereElseMsg = 0x4913; // "I'd better try somewhere else - I suppose this side is heavily guarded"
 
 // Bribe Message : 0x49ae to 0x49d0
 const uint16 dsAddr_BribeMsg = 0x49ae; // "Here, let's make your pocket fat."
@@ -677,12 +681,29 @@ const uint16 dsAddr_tooManyToSearchMsg = 0x5ac6; // "There are too many of them 
 const uint16 dsAddr_captainWouldNotFitMsg = 0x5aed; // "Captain surely wouldn't fit them. I must look elsewhere"
 // Chickening Never Message : 0x5b27 to 0x5b3e
 const uint16 dsAddr_chickenNeverMsg = 0x5b27; // "Chickening? Me? Never!"
+// Can't Open It Message : 0x5b3f to 0x5b50
+const uint16 dsAddr_cantOpenItMsg = 0x5b3f; // "I can't open it"
+// Don't Need Them Message : 0x5b51 to 0x5b64
+const uint16 dsAddr_dontNeedThemMsg = 0x5b51; // "I don't need them"
+
+// Big Pockets Message : 0x5b80 to 0x5baa
+const uint16 dsAddr_bigPocketsMsg = 0x5b80; // "I have big pockets, but there are limits"
 
 // Never Learnt Message : 0x5c60 to 0x5c81
 const uint16 dsAddr_neverLearntMsg = 0x5c60; // "I never learnt to how use one"
-
+// So Sharp Message : 0x5c82 to 0x5cab
+const uint16 dsAddr_soSharpMsg = 0x5c82; // "They're so sharp they'd rip my trousers!"
 // Cognac Message : 0x5cac to 0x5cda
 const uint16 dsAddr_cognacMsg = 0x5cac; // "Pfui! The cognac really didn't do any good"
+// No Time For Pleasures Message : 0x5cdb to 0x5cfc
+const uint16 dsAddr_noTimeForPleasuresMsg = 0x5cdb; // "I don't have time for pleasures"
+// Not Socks With Bare Hands Message : 0x5cfd to 0x5d2b
+const uint16 dsAddr_notSocksWithBareHandsMsg = 0x5cfd; // "I won't touch these socks with my bare hands!"
+// Not Halloween Message : 0x5d2c to 0x5d40
+const uint16 dsAddr_notHalloweenMsg = 0x5d2c; // "It's not Halloween"
+
+// Nothing To Play Message : 0x5d6e to 0x5d86
+const uint16 dsAddr_nothingToPlayMsg = 0x5d6e; // "I have nothing to play"
 
 // Hey What's The Matter Message : 0x5da8 to 0x5dc1
 const uint16 dsAddr_HeyWtmQMsg = 0x5da8; // "Hey! What's the matter?!"
