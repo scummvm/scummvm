@@ -287,9 +287,10 @@ bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
 		const char *name = getName();
 		persistMgr->transfer(TMEMBER(name));
 	} else {
-		const char *name;
+		char *name;
 		persistMgr->transfer(TMEMBER(name));
 		setName(name);
+		delete[] name;
 	}
 	_scripts.persist(persistMgr);
 
