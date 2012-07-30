@@ -101,6 +101,8 @@ bool WinterMuteEngine::hasFeature(EngineFeature f) const {
 		return true;
 	case kSupportsLoadingDuringRuntime:
 		return true;
+	case kSupportsSavingDuringRuntime:
+		return true;
 	default:
 		return false;
 	}
@@ -299,6 +301,15 @@ void WinterMuteEngine::deinit() {
 Common::Error WinterMuteEngine::loadGameState(int slot) {
 	BaseEngine::instance().getGameRef()->loadGame(slot);
 	return Common::kNoError;
+}
+
+Common::Error WinterMuteEngine::saveGameState(int slot, const Common::String &desc) {
+	BaseEngine::instance().getGameRef()->saveGame(slot, desc.c_str(), false);
+	return Common::kNoError;
+}
+
+bool WinterMuteEngine::canSaveGameStateCurrently() {
+	return true;
 }
 
 bool WinterMuteEngine::canLoadGameStateCurrently() {

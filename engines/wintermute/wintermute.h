@@ -55,6 +55,8 @@ public:
 	uint32 randInt(int from, int to);
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canSaveGameStateCurrently();
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
 private:
