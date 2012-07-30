@@ -139,6 +139,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 
 	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
 	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
+	_surface->free();
 	delete _surface;
 	if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
@@ -412,6 +413,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 
 bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_loaded = true;
+	_surface->free();
 	_surface->copyFrom(surface);
 	_hasAlpha = hasAlpha;
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);

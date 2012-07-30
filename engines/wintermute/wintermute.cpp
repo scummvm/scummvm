@@ -88,6 +88,7 @@ WinterMuteEngine::~WinterMuteEngine() {
 	deinit();
 	delete _rnd;
 	delete _game;
+	delete _console;
 	g_wintermute = NULL;
 
 	// Remove all of our debug levels here

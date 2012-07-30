@@ -109,6 +109,9 @@ void VideoTheoraPlayer::cleanup() {
 	}
 
 	_surface.free();
+	if (_theoraDecoder) {
+		_theoraDecoder->close();
+	}
 	delete _theoraDecoder;
 	_theoraDecoder = NULL;
 	delete _alphaImage;
@@ -187,6 +190,7 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 	_playbackStarted = false;
 	float width, height;
 	if (_theoraDecoder) {
+		_surface.free();
 		_surface.copyFrom(*_theoraDecoder->decodeNextFrame());
 		_state = THEORA_STATE_PLAYING;
 		_looping = looping;
@@ -277,6 +281,7 @@ bool VideoTheoraPlayer::update() {
 		}
 		if (_state == THEORA_STATE_PLAYING) {
 			if (_theoraDecoder->getTimeToNextFrame() == 0) {
+				_surface.free();
 				_surface.copyFrom(*_theoraDecoder->decodeNextFrame());
 				if (_texture) {
 					writeVideo();
