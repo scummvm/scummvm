@@ -91,6 +91,7 @@ class LastExpressEngine;
 class SavegameStream : public Common::MemoryWriteStreamDynamic, public Common::SeekableReadStream {
 public:
 	SavegameStream() : MemoryWriteStreamDynamic(DisposeAfterUse::YES), _eos(false) {
+		_enableCompression = false;
 		_bufferOffset = -1;
 		_valueCount = 0;
 		_previousValue = 0;
@@ -106,15 +107,20 @@ public:
 	bool seek(int32 offset, int whence = SEEK_SET) { return MemoryWriteStreamDynamic::seek(offset, whence); }
 	bool eos() const { return _eos; }
 	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 write(const void *dataPtr, uint32 dataSize);
 
+	void process();
+
+private:
 	// Compressed data
-	uint32 writeValue(const void *dataPtr, uint32 dataSize);
-	uint32 readValue(void *dataPtr, uint32 dataSize);
+	uint32 writeCompressed(const void *dataPtr, uint32 dataSize);
+	uint32 readCompressed(void *dataPtr, uint32 dataSize);
 
 private:
 	bool _eos;
 
 	// Compression handling
+	bool _enableCompression;
 	int  _bufferOffset;
 	int  _valueCount;
 	byte _previousValue;
@@ -284,8 +290,8 @@ private:
 	void writeEntry(SavegameType type, EntityIndex entity, uint32 val);
 	void readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, bool keepIndex);
 
-	uint32 writeValue(const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size);
-	uint32 readValue(const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size);
+	uint32 writeValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size);
+	uint32 readValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size = 0);
 
 	SavegameEntryHeader *getEntry(uint32 index);
 

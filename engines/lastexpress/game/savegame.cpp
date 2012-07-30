@@ -40,6 +40,8 @@
 
 namespace LastExpress {
 
+#define DISABLE_COMPRESSION 1
+
 // Names of savegames
 static const struct {
 	const char *saveFile;
@@ -56,7 +58,21 @@ static const struct {
 // SavegameStream
 //////////////////////////////////////////////////////////////////////////
 
+uint32 SavegameStream::write(const void *dataPtr, uint32 dataSize) {
+#if !DISABLE_COMPRESSION
+	if (_enableCompression)
+		return writeCompressed(dataPtr, dataSize);
+#endif
+
+	return Common::MemoryWriteStreamDynamic::write(dataPtr, dataSize);
+}
+
 uint32 SavegameStream::read(void *dataPtr, uint32 dataSize) {
+#if !DISABLE_COMPRESSION
+	if (_enableCompression)
+		return readCompressed(dataPtr, dataSize);
+#endif
+
 	if ((int32)dataSize > size() - pos()) {
 		dataSize = size() - pos();
 		_eos = true;
@@ -68,14 +84,19 @@ uint32 SavegameStream::read(void *dataPtr, uint32 dataSize) {
 	return dataSize;
 }
 
-uint32 SavegameStream::writeValue(const void *dataPtr, uint32 dataSize) {
-	// FIXME: Implement compression
-	return write(dataPtr, dataSize);
+void SavegameStream::process() {
+	_enableCompression = !_enableCompression;
+
+	// TODO Flush compression buffer
+
 }
 
-uint32 SavegameStream::readValue(void *dataPtr, uint32 dataSize) {
-	// FIXME: Implement compression
-	return read(dataPtr, dataSize);
+uint32 SavegameStream::writeCompressed(const void *dataPtr, uint32 dataSize) {
+	error("[SavegameStream::writeCompressed] Compression not implemented!");
+}
+
+uint32 SavegameStream::readCompressed(void *dataPtr, uint32 dataSize) {
+	error("[SavegameStream::readCompressed] Compression not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,6 +127,7 @@ void SaveLoad::flushStream(GameId id) {
 		error("[SaveLoad::flushStream] Savegame stream is invalid");
 
 	save->write(_savegame->getData(), (uint32)_savegame->size());
+	save->finalize();
 
 	delete save;
 }
@@ -366,21 +388,39 @@ bool SaveLoad::loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *he
 //////////////////////////////////////////////////////////////////////////
 // Entries
 //////////////////////////////////////////////////////////////////////////
-uint32 SaveLoad::writeValue(const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size) {
+uint32 SaveLoad::writeValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size) {
 	debugC(kLastExpressDebugSavegame, "Savegame: Writing %s: %u bytes", name, size);
 
-	// Create buffer to hold the data
-	byte *buffer = (byte *)malloc(size);
-	if (!buffer)
-		error("[SaveLoad::writeValue] Cannot allocate buffer to hold data");
+	uint32 prevPosition = (uint32)_savegame->pos();
 
 	// Serialize data into our buffer
-	Common::MemoryWriteStream *stream = new Common::MemoryWriteStream(buffer, size);
-	Common::Serializer ser(NULL, stream);
 	(*function)(ser);
-	delete stream;
 
-	return _savegame->writeValue(buffer, size);
+	uint32 count = (uint32)_savegame->pos() - prevPosition;
+
+#if DISABLE_COMPRESSION
+	if (count != size)
+		error("[SaveLoad::writeValue] %s - Number of bytes written (%d) differ from expected count (%d)", name, count, size);
+#endif
+
+	return count;
+}
+
+uint32 SaveLoad::readValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size) {
+	debugC(kLastExpressDebugSavegame, "Savegame: Reading %s: %u bytes", name, size);
+
+	uint32 prevPosition = (uint32)_savegame->pos();
+
+	(*function)(ser);
+
+	uint32 count = (uint32)_savegame->pos() - prevPosition;
+
+#if DISABLE_COMPRESSION
+	if (size != 0 && count != size)
+		error("[SaveLoad::readValue] %s - Number of bytes read (%d) differ from expected count (%d)", name, count, size);
+#endif
+
+	return count;
 }
 
 void SaveLoad::syncEntity(Common::Serializer &ser) {
@@ -408,18 +448,20 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	// Write game data
 	_entity = entity;
 
-	writeValue("entity index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
-	writeValue("state", WRAP_SYNC_FUNCTION(getState(), State::GameState, saveLoadWithSerializer), 4 + 4 + 4 + 4 + 1 + 4 + 4);
-	writeValue("selected item", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveSelectedItem), 4);
-	writeValue("positions", WRAP_SYNC_FUNCTION(getEntities(), Entities, savePositions), 4 * 1000);
-	writeValue("compartments", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveCompartments), 4 * 16 * 2);
-	writeValue("progress", WRAP_SYNC_FUNCTION(&getProgress(), State::GameProgress, saveLoadWithSerializer), 4 * 128);
-	writeValue("events", WRAP_SYNC_FUNCTION(getState(), State::GameState, syncEvents), 512);
-	writeValue("inventory", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveLoadWithSerializer), 7 * 32);
-	writeValue("objects", WRAP_SYNC_FUNCTION(getObjects(), Objects, saveLoadWithSerializer), 5 * 128);
-	writeValue("entities", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveLoadWithSerializer), 1262 * 40);
-	writeValue("sound", WRAP_SYNC_FUNCTION(getSoundQueue(), SoundQueue, saveLoadWithSerializer), 3 * 4 + getSoundQueue()->count() * 64);
-	writeValue("savepoints", WRAP_SYNC_FUNCTION(getSavePoints(), SavePoints, saveLoadWithSerializer), 128 * 16 + 4 + getSavePoints()->count() * 16);
+	_savegame->process();
+	writeValue(ser, "entity index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
+	writeValue(ser, "state", WRAP_SYNC_FUNCTION(getState(), State::GameState, saveLoadWithSerializer), 4 + 4 + 4 + 4 + 1 + 4 + 4);
+	writeValue(ser, "selected item", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveSelectedItem), 4);
+	writeValue(ser, "positions", WRAP_SYNC_FUNCTION(getEntities(), Entities, savePositions), 4 * 1000);
+	writeValue(ser, "compartments", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveCompartments), 4 * 16 * 2);
+	writeValue(ser, "progress", WRAP_SYNC_FUNCTION(&getProgress(), State::GameProgress, saveLoadWithSerializer), 4 * 128);
+	writeValue(ser, "events", WRAP_SYNC_FUNCTION(getState(), State::GameState, syncEvents), 512);
+	writeValue(ser, "inventory", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveLoadWithSerializer), 7 * 32);
+	writeValue(ser, "objects", WRAP_SYNC_FUNCTION(getObjects(), Objects, saveLoadWithSerializer), 5 * 128);
+	writeValue(ser, "entities", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveLoadWithSerializer), 1262 * 40);
+	writeValue(ser, "sound", WRAP_SYNC_FUNCTION(getSoundQueue(), SoundQueue, saveLoadWithSerializer), 3 * 4 + getSoundQueue()->count() * 64);
+	writeValue(ser, "savepoints", WRAP_SYNC_FUNCTION(getSavePoints(), SavePoints, saveLoadWithSerializer), 128 * 16 + 4 + getSavePoints()->count() * 16);
+	_savegame->process();
 
 	header.offset = (uint32)_savegame->pos() - (originalPosition + 32);
 
@@ -445,22 +487,6 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 }
 
 void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, bool keepIndex) {
-#define LOAD_ENTRY(name, func, val) { \
-	uint32 _prevPosition = (uint32)_savegame->pos(); \
-	func; \
-	uint32 _count = (uint32)_savegame->pos() - _prevPosition; \
-	debugC(kLastExpressDebugSavegame, "Savegame: Reading " #name ": %d bytes", _count); \
-	if (_count != val) \
-		error("[SaveLoad::readEntry] Number of bytes read (%d) differ from expected count (%d)", _count, val); \
-}
-
-#define LOAD_ENTRY_ONLY(name, func) { \
-	uint32 _prevPosition = (uint32)_savegame->pos(); \
-	func; \
-	uint32 _count = (uint32)_savegame->pos() - _prevPosition; \
-	debugC(kLastExpressDebugSavegame, "Savegame: Reading " #name ": %d bytes", _count); \
-}
-
 	if (!type || !entity || !val)
 		error("[SaveLoad::readEntry] Invalid parameters passed");
 
@@ -483,20 +509,23 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 	uint32 originalPosition = (uint32)_savegame->pos();
 
 	// Load game data
-	LOAD_ENTRY("entity index", ser.syncAsUint32LE(*entity), 4);
-	LOAD_ENTRY("state", getState()->saveLoadWithSerializer(ser), 4 + 4 + 4 + 4 + 1 + 4 + 4);
-	LOAD_ENTRY("selected item", getInventory()->saveSelectedItem(ser), 4);
-	LOAD_ENTRY("positions", getEntities()->savePositions(ser), 4 * 1000);
-	LOAD_ENTRY("compartments", getEntities()->saveCompartments(ser), 4 * 16 * 2);
-	LOAD_ENTRY("progress", getProgress().saveLoadWithSerializer(ser), 4 * 128);
-	LOAD_ENTRY("events", getState()->syncEvents(ser), 512);
-	LOAD_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
-	LOAD_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
-	LOAD_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
-	LOAD_ENTRY_ONLY("sound", getSoundQueue()->saveLoadWithSerializer(ser));
-	LOAD_ENTRY_ONLY("savepoints", getSavePoints()->saveLoadWithSerializer(ser));
+	_savegame->process();
+	readValue(ser, "entity index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
+	readValue(ser, "state", WRAP_SYNC_FUNCTION(getState(), State::GameState, saveLoadWithSerializer), 4 + 4 + 4 + 4 + 1 + 4 + 4);
+	readValue(ser, "selected item", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveSelectedItem), 4);
+	readValue(ser, "positions", WRAP_SYNC_FUNCTION(getEntities(), Entities, savePositions), 4 * 1000);
+	readValue(ser, "compartments", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveCompartments), 4 * 16 * 2);
+	readValue(ser, "progress", WRAP_SYNC_FUNCTION(&getProgress(), State::GameProgress, saveLoadWithSerializer), 4 * 128);
+	readValue(ser, "events", WRAP_SYNC_FUNCTION(getState(), State::GameState, syncEvents), 512);
+	readValue(ser, "inventory", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveLoadWithSerializer), 7 * 32);
+	readValue(ser, "objects", WRAP_SYNC_FUNCTION(getObjects(), Objects, saveLoadWithSerializer), 5 * 128);
+	readValue(ser, "entities", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveLoadWithSerializer), 1262 * 40);
+	readValue(ser, "sound", WRAP_SYNC_FUNCTION(getSoundQueue(), SoundQueue, saveLoadWithSerializer));
+	readValue(ser, "savepoints", WRAP_SYNC_FUNCTION(getSavePoints(), SavePoints, saveLoadWithSerializer));
+	_savegame->process();
 
 	// Update chapter
+	*entity = _entity;
 	getProgress().chapter = entry.chapter;
 
 	// Skip padding
@@ -606,7 +635,7 @@ Common::InSaveFile *SaveLoad::openForLoading(GameId id) {
 }
 
 Common::OutSaveFile *SaveLoad::openForSaving(GameId id) {
-	Common::OutSaveFile *save = g_system->getSavefileManager()->openForSaving(getFilename(id));
+	Common::OutSaveFile *save = g_system->getSavefileManager()->openForSaving(getFilename(id), false); // TODO Enable compression again
 
 	if (!save)
 		debugC(2, kLastExpressDebugSavegame, "Cannot open savegame for writing: %s", getFilename(id).c_str());
