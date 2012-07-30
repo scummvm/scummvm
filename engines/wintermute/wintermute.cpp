@@ -269,23 +269,6 @@ int WinterMuteEngine::messageLoop() {
 	}
 
 	if (_game) {
-		// remember previous window position
-		/*
-		 if (_game->_renderer && _game->_renderer->_windowed)
-		 {
-		 if (!::IsIconic(_game->_renderer->_window))
-		 {
-		 int posX = _game->_renderer->_windowRect.left;
-		 int posY = _game->_renderer->_windowRect.top;
-		 PosX -= _game->_renderer->_monitorRect.left;
-		 PosY -= _game->_renderer->_monitorRect.top;
-
-		 _game->_registry->writeInt("Video", "WindowPosX", PosX);
-		 _game->_registry->writeInt("Video", "WindowPosY", PosY);
-		 }
-		 }
-		 */
-
 		delete _game;
 		_game = NULL;
 	}
