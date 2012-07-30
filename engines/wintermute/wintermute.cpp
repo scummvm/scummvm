@@ -99,6 +99,8 @@ bool WinterMuteEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsRTL:
 		return true;
+	case kSupportsLoadingDuringRuntime:
+		return true;
 	default:
 		return false;
 	}
@@ -292,6 +294,15 @@ void WinterMuteEngine::deinit() {
 	delete _classReg;
 	_classReg = NULL;
 	BaseEngine::destroy();
+}
+
+Common::Error WinterMuteEngine::loadGameState(int slot) {
+	BaseEngine::instance().getGameRef()->loadGame(slot);
+	return Common::kNoError;
+}
+
+bool WinterMuteEngine::canLoadGameStateCurrently() {
+	return true;
 }
 
 bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {

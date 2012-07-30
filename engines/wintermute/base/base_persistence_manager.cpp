@@ -89,7 +89,7 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 //////////////////////////////////////////////////////////////////////////
 BasePersistenceManager::~BasePersistenceManager() {
 	cleanup();
-	if (_deleteSingleton)
+	if (_deleteSingleton && BaseEngine::instance().getGameRef() == NULL)
 		BaseEngine::destroy();
 }
 

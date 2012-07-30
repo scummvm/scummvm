@@ -53,6 +53,8 @@ public:
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	SystemClassRegistry *getClassRegistry(){ return _classReg; }
 	uint32 randInt(int from, int to);
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
 private:
