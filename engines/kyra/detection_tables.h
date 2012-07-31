@@ -1332,6 +1332,22 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"lol",
+			0,
+			{
+				{ "WESTWOOD.1", 0, "43857e24d1fc6731f3b13d9ed6db8c3a", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"lol",
 			"Extracted",
 			{
 				{ "GENERAL.PAK", 0, "2aaa30e120c08af87196820e9dd4bf73", -1 },
@@ -1390,6 +1406,23 @@ const KYRAGameDescription adGameDescs[] = {
 				{ 0, 0, 0, 0 }
 			},
 			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "f4fd14f244bd7c7fa08d026fafe44cc5", -1 },
+				{ "CHAPTER7.PAK", 0, "733e33c8444c93843dac3b683c283eaa", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
