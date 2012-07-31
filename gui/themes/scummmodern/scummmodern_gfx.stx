@@ -104,6 +104,7 @@
 		<bitmap filename = 'delbtn.bmp'/>
 		<bitmap filename = 'list.bmp'/>
 		<bitmap filename = 'grid.bmp'/>
+		<bitmap filename = 'editbtn.bmp'/>
 	</bitmaps>
 
 	<fonts>

@@ -924,6 +924,23 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'OnScreenDialog' overlays = 'screen_center'>
+		<layout type = 'horizontal'  spacing = '5' padding = '0, 3, 0, 3' center = 'true'>
+			<widget name = 'StopButton'
+				width = '32'
+				height = '32'
+			/>
+			<widget name = 'EditButton'
+				width = '32'
+				height = '32'
+			/>
+			<widget name = 'TimeLabel'
+				width = '50'
+				height = '30'
+			/>
+		</layout>
+	</dialog>
+
 	<dialog name = 'EditRecordDialog' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
 			<widget name = 'Title'

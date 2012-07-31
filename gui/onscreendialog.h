@@ -33,7 +33,8 @@ private:
 	uint32 lastTime;
 	GUI::StaticTextWidget *text;
 public:
-	OnScreenDialog(int x, int y, int w, int h);
+	OnScreenDialog();
+	~OnScreenDialog();
 	virtual bool isVisible() const;
 	virtual void reflowLayout();
 	void setReplayedTime(uint32 newTime);

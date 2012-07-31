@@ -44,17 +44,14 @@ void OnScreenDialog::reflowLayout() {
 void OnScreenDialog::releaseFocus() {
 }
 
-OnScreenDialog::OnScreenDialog(int x, int y, int w, int h) : Dialog(x, y, w, h) {
-	GUI::PicButtonWidget *btn = new PicButtonWidget(this, "", "|>", kStopCmd);
+OnScreenDialog::OnScreenDialog() : Dialog(0, 0, 200, 40) {
+	GUI::PicButtonWidget *btn = new PicButtonWidget(this, "OnScreenDialog.StopButton", "|>", kStopCmd);
 	btn->useThemeTransparency(true);
-	btn->resize(0,0,32,32);
 	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopbtn));
-	btn = new PicButtonWidget(this, "", "|>", kEditCmd);
+	btn = new PicButtonWidget(this, "OnScreenDialog.EditButton", "|>", kEditCmd);
 	btn->useThemeTransparency(true);
-	btn->resize(40,0,32,32);
 	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditbtn));
-	text = new GUI::StaticTextWidget(this, "", "00:00:00");
-	text->resize(80,5,50,30);
+	text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", "00:00:00");
 }
 
 void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -85,6 +82,8 @@ void OnScreenDialog::setReplayedTime(uint32 newTime) {
 	}
 }
 
+OnScreenDialog::~OnScreenDialog() {
+}
 
 
 }

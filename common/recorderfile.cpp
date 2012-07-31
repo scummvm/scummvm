@@ -597,7 +597,7 @@ Graphics::Surface *PlaybackFile::getScreenShot(int number) {
 }
 
 void PlaybackFile::updateHeader() {
-	if (_mode = kWrite) {
+	if (_mode == kWrite) {
 		_readStream = g_system->getSavefileManager()->openForLoading(_header.fileName);
 	}
 	_readStream->seek(0);
@@ -616,7 +616,7 @@ void PlaybackFile::updateHeader() {
 	_readStream = NULL;
 	g_system->getSavefileManager()->removeSavefile(_header.fileName);
 	g_system->getSavefileManager()->renameSavefile(tmpFilename, _header.fileName);
-	if (_mode = kRead) {
+	if (_mode == kRead) {
 		openRead(_header.fileName);
 	}
 }
