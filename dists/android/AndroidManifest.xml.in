@@ -48,6 +48,8 @@
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+	<uses-feature android:name="android.hardware.screen.landscape" android:required="false"/>
+
 	<!-- Always needs some sort of qwerty keyboard.
 			Can work with a D-pad / trackball -->
 	<!-- <uses-configuration android:reqFiveWayNav="true"
