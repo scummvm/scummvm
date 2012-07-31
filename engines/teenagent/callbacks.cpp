@@ -1775,6 +1775,39 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		scene->setOrientation(2);
 		break;
 
+	case 0x678c:
+		loadScene(28, Common::Point(189, 153));
+		scene->setOrientation(4);
+		break;
+
+	case 0x67fa:
+		rejectMessage();
+		break;
+
+	case 0x67fe:
+		displayMessage(dsAddr_troubleWithStairsMsg); // "If I put it on I might have trouble walking up the stairs"
+		break;
+
+	case 0x6911:
+		displayMessage(dsAddr_9LivesToReadMsg); // "I'd need 9 lives to read them all"
+		break;
+
+	case 0x6954:
+		displayMessage(dsAddr_thanksNotTiredMsg); // "Thanks, I'm not so tired"
+		break;
+
+	case 0x695b:
+		displayMessage(dsAddr_noNeedToTurnOnMsg); // "There's no need to turn it on"
+		break;
+
+	case 0x6ba6:
+		displayMessage(dsAddr_wontBearWeightMsg); // "It won't bear my weight"
+		break;
+
+	case 0x6bda:
+		displayMessage(dsAddr_peepingTomMsg); // "What am I? A Peeping Tom?"
+		break;
+
 	case 0x6c1c:
 	case 0x6c20:
 		rejectMessage();
@@ -1817,6 +1850,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_notHalloweenMsg); // "It's not Halloween"
 		break;
 
+	case 0x7401:
+		displayMessage(dsAddr_NotManualMsg); // "It can't be controlled manually! I hate it!"
+		break;
+
 	case 0x746f:
 		displayMessage(dsAddr_nothingToPlayMsg); // "I have nothing to play"
 		break;
@@ -1828,6 +1865,19 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x74cd:
 		rejectMessage();
+		break;
+
+	case 0x74f9:
+		loadScene(38, Common::Point(160, 199));
+		scene->setOrientation(1);
+		break;
+
+	case 0x784a:
+		displayMessage(dsAddr_notMineMsg); // "I can't take it. It's not mine."
+		break;
+
+	case 0x7858:
+		displayMessage(dsAddr_lockedMsg); // "It's Locked!"
 		break;
 
 	case 0x7866:

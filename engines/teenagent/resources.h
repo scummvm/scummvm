@@ -685,10 +685,20 @@ const uint16 dsAddr_chickenNeverMsg = 0x5b27; // "Chickening? Me? Never!"
 const uint16 dsAddr_cantOpenItMsg = 0x5b3f; // "I can't open it"
 // Don't Need Them Message : 0x5b51 to 0x5b64
 const uint16 dsAddr_dontNeedThemMsg = 0x5b51; // "I don't need them"
-
+// Peeping Tom Message : 0x5b65 to 0x5b7f
+const uint16 dsAddr_peepingTomMsg = 0x5b65; // "What am I? A Peeping Tom?"
 // Big Pockets Message : 0x5b80 to 0x5baa
 const uint16 dsAddr_bigPocketsMsg = 0x5b80; // "I have big pockets, but there are limits"
-
+// Trouble With Stairs Message : 0x5bab to 0x5be6
+const uint16 dsAddr_troubleWithStairsMsg = 0x5bab; // "If I put it on I might have trouble walking up the stairs"
+// 9 Lives To Read Message : 0x5be7 to 0x5c0a
+const uint16 dsAddr_9LivesToReadMsg = 0x5be7; // "I'd need 9 lives to read them all"
+// Thanks Not Tired Message : 0x5c0b to 0x5c25
+const uint16 dsAddr_thanksNotTiredMsg = 0x5c0b; // "Thanks, I'm not so tired"
+// No Need To Turn On Message : 0x5c26 to 0x5c45
+const uint16 dsAddr_noNeedToTurnOnMsg = 0x5c26; // "There's no need to turn it on"
+// Won't Bear Weight Message : 0x5c46 to 0x5c5f
+const uint16 dsAddr_wontBearWeightMsg = 0x5c46; // "It won't bear my weight"
 // Never Learnt Message : 0x5c60 to 0x5c81
 const uint16 dsAddr_neverLearntMsg = 0x5c60; // "I never learnt to how use one"
 // So Sharp Message : 0x5c82 to 0x5cab
@@ -701,10 +711,12 @@ const uint16 dsAddr_noTimeForPleasuresMsg = 0x5cdb; // "I don't have time for pl
 const uint16 dsAddr_notSocksWithBareHandsMsg = 0x5cfd; // "I won't touch these socks with my bare hands!"
 // Not Halloween Message : 0x5d2c to 0x5d40
 const uint16 dsAddr_notHalloweenMsg = 0x5d2c; // "It's not Halloween"
-
+// Not Manual Message : 0x5d41 to 0x5d6d
+const uint16 dsAddr_NotManualMsg = 0x5d41; // "It can't be controlled manually! I hate it!"
 // Nothing To Play Message : 0x5d6e to 0x5d86
 const uint16 dsAddr_nothingToPlayMsg = 0x5d6e; // "I have nothing to play"
-
+// Not Mine Message : 0x5d87 to 0x5da7
+const uint16 dsAddr_notMineMsg = 0x5d87; // "I can't take it. It's not mine."
 // Hey What's The Matter Message : 0x5da8 to 0x5dc1
 const uint16 dsAddr_HeyWtmQMsg = 0x5da8; // "Hey! What's the matter?!"
 
