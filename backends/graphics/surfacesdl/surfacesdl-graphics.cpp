@@ -49,6 +49,8 @@ struct GraphicsModeData {
 static Common::Array<OSystem::GraphicsMode> *s_supportedGraphicsModes = NULL;
 static Common::Array<GraphicsModeData> *s_supportedGraphicsModesData = NULL;
 
+static void initGraphicsModes();
+
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
 
 #ifdef USE_SCALERS
@@ -160,6 +162,9 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #else
 	_videoMode.fullscreen = true;
 #endif
+
+	if (!s_supportedGraphicsModes)
+		initGraphicsModes();
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -179,6 +184,16 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	free(_currentPalette);
 	free(_cursorPalette);
 	free(_mouseData);
+
+	for (uint i = 0; i < s_supportedGraphicsModes->size() - 1; ++i) {
+		OSystem::GraphicsMode &gm = (*s_supportedGraphicsModes)[i];
+		free(const_cast<char *>(gm.name));
+		free(const_cast<char *>(gm.description));
+	}
+	delete s_supportedGraphicsModes;
+	delete s_supportedGraphicsModesData;
+	s_supportedGraphicsModes = NULL;
+	s_supportedGraphicsModesData = NULL;
 }
 
 void SurfaceSdlGraphicsManager::initEventObserver() {
@@ -247,12 +262,8 @@ void static initGraphicsModes () {
 		for (uint j = 0; j < factors.size(); ++j) {
 			Common::String n1 = Common::String::format("%s%dx", name, factors[j]);
 			Common::String n2 = Common::String::format("%s%dx", prettyName, factors[j]);
-			char *s1 = new char[n1.size()+1];
-			char *s2 = new char[n2.size()+1];
-			strcpy(s1, n1.c_str());
-			strcpy(s2, n2.c_str());
-			gm.name = s1;
-			gm.description = s2;
+			gm.name = strdup(n1.c_str());
+			gm.description = strdup(n2.c_str());
 			gm.id = s_supportedGraphicsModes->size();
 			s_supportedGraphicsModes->push_back(gm);
 			gmd.scaleFactor = factors[j];
@@ -268,7 +279,20 @@ void static initGraphicsModes () {
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() {
 	if (!s_supportedGraphicsModes)
 		initGraphicsModes();
-	return &(*s_supportedGraphicsModes)[0];
+
+	int size = s_supportedGraphicsModes->size();
+	OSystem::GraphicsMode *modes = new OSystem::GraphicsMode[size];
+	memcpy(modes, &(*s_supportedGraphicsModes)[0], size * sizeof(OSystem::GraphicsMode));
+
+	// Do deep copy. Each can be freed independently of the other.
+	OSystem::GraphicsMode *gm = modes;
+	while (gm->name) {
+		gm->name = strdup(gm->name);
+		gm->description = strdup(gm->description);
+		++gm;
+	}
+
+	return modes;
 }
 
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsModes() const {
