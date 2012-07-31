@@ -71,6 +71,8 @@ private:
 	uint32 _flags, _newSize;
 
 	uint8 *diffBuffer;
+
+	Common::String _patchName;
 };
 
 const uint16 PatchedFile::_kVersionMajor = 2;
@@ -104,21 +106,23 @@ bool PatchedFile::load(Common::SeekableReadStream *file, Common::String patchNam
 	uint32 zctrllen, zdatalen, zextralen;
 	Common::File patch;
 
+	_patchName = patchName;
+
 	// Open the patch
-	if (!patch.open(patchName)) {
-		error("Unable to open patchfile %s", patchName.c_str());
+	if (!patch.open(_patchName)) {
+		error("Unable to open patchfile %s", _patchName.c_str());
 		return false;
 	}
 
 	// Check for appropriate signature
 	if (patch.readUint32BE() != MKTAG('P','A','T','R')) {
-		error("%s patchfile is corrupted ", patchName.c_str());
+		error("%s patchfile is corrupted ", _patchName.c_str());
 		return false;
 	}
 
 	// Check the version number
 	if (patch.readUint16LE() != _kVersionMajor || patch.readUint16LE() > _kVersionMinor) {
-		error("%s has a wrong version number (must be major = %d, minor <= %d)", patchName.c_str(), _kVersionMajor, _kVersionMinor);
+		error("%s has a wrong version number (must be major = %d, minor <= %d)", _patchName.c_str(), _kVersionMajor, _kVersionMinor);
 		return false;
 	}
 
@@ -129,7 +133,7 @@ bool PatchedFile::load(Common::SeekableReadStream *file, Common::String patchNam
 	file->seek(0, SEEK_SET);
 	patch.read(md5_p, 16);
 	if (memcmp(md5_p, md5_f, 16) != 0 || (uint32)file->size() != patch.readUint32LE()) {
-		Debug::debug(Debug::Patchr,"%s targets a different file", patchName.c_str());
+		Debug::debug(Debug::Patchr,"%s targets a different file", _patchName.c_str());
 		return false;
 	}
 
@@ -144,13 +148,13 @@ bool PatchedFile::load(Common::SeekableReadStream *file, Common::String patchNam
 	// Opens ctrl, diff and extra substreams
 	Common::File *tmp;
 	tmp = new Common::File;
-	tmp->open(patchName);
+	tmp->open(_patchName);
 	_ctrl = new Common::SeekableSubReadStream(tmp, _kHeaderSize, _kHeaderSize + zctrllen, DisposeAfterUse::YES);
 	if (_flags & FLAG_COMPRESS_CTRL)
 		_ctrl = Common::wrapCompressedReadStream(_ctrl);
 
 	tmp = new Common::File;
-	tmp->open(patchName);
+	tmp->open(_patchName);
 	_diff = new Common::SeekableSubReadStream(tmp, _kHeaderSize + zctrllen, _kHeaderSize + zctrllen + zdatalen, DisposeAfterUse::YES);
 	_diff = Common::wrapCompressedReadStream(_diff);
 
@@ -158,7 +162,7 @@ bool PatchedFile::load(Common::SeekableReadStream *file, Common::String patchNam
 		_extra = _diff;
 	else {
 		tmp = new Common::File;
-		tmp->open(patchName);
+		tmp->open(_patchName);
 		_extra = new Common::SeekableSubReadStream(tmp, _kHeaderSize + zctrllen + zdatalen, _kHeaderSize + zctrllen + zdatalen + zextralen, DisposeAfterUse::YES);
 		_extra = Common::wrapCompressedReadStream(_extra);
 	}
@@ -181,7 +185,7 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 			readSize = MIN(toRead, diffCopy);
 			rd = _file->read(data, readSize);
 			if (_file->err() || rd != readSize)
-				error("Corrupted patchfile");
+				error("%s: Corrupted patchfile", _patchName.c_str());
 
 			toRead -= readSize;
 			diffCopy -= readSize;
@@ -193,7 +197,7 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 				diffRead = MIN(readSize, _kDiffBufferSize);
 				rd = _diff->read(diffBuffer, diffRead);
 				if (_diff->err() || rd != diffRead)
-					error("Corrupted patchfile");
+					error("%s: Corrupted patchfile", _patchName.c_str());
 
 				#ifdef SCUMM_64BITS
 				for (uint32 i = 0; i < diffRead/8; ++i)
@@ -220,7 +224,7 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 			readSize = MIN(toRead, extraCopy);
 			rd = _extra->read(data, readSize);
 			if (_extra->err() || rd != readSize)
-				error("Corrupted patchfile");
+				error("%s: Corrupted patchfile", _patchName.c_str());
 
 			data += readSize;
 			toRead -= readSize;
@@ -250,7 +254,7 @@ void PatchedFile::readNextInst() {
 		(int32(diffCopy) > _diff->size() - _diff->pos()) ||
 		(int32(extraCopy) > _extra->size() - _extra->pos()) ||
 		(jump > _file->size() - _file->pos()))
-		error("Corrupted patchfile");
+		error("%s: Corrupted patchfile", _patchName.c_str());
 }
 
 bool PatchedFile::eos() const {
@@ -286,13 +290,13 @@ bool PatchedFile::seek(int32 offset, int whence) {
 		case SEEK_END:
 			relOffset = (size() + offset) - pos();
 		default:
-			error("Invalid seek instruction!");
+			error("%s: Invalid seek instruction", _patchName.c_str());
 	}
 
 	if (relOffset == 0)
 		return true;
 	if (relOffset < 0)
-		error("Backward seeking isn't supported in PatchedFile");
+		error("%s: Backward seeking isn't supported in PatchedFile", _patchName.c_str());
 
 	while (relOffset > 0) {
 		if (diffCopy > 0) {
