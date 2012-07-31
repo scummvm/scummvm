@@ -144,7 +144,7 @@ private:
 	void dumpHeaderToFile();
 	bool readSaveRecord();
 	bool skipToNextScreenshot();
-	ChunkHeader readChunkHeader();
+	bool readChunkHeader(ChunkHeader &nextChunk);
 	Common::String readString(int len);
 	bool processChunk(ChunkHeader &nextChunk);
 	void returnToChunkHeader();

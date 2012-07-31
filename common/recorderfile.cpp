@@ -100,10 +100,16 @@ bool PlaybackFile::parseHeader() {
 	PlaybackFileHeader result;
 	ChunkHeader nextChunk;
 	_playbackParseState = kFileStateCheckFormat;
-	nextChunk = readChunkHeader();
+	if (!readChunkHeader(nextChunk)) {
+		_playbackParseState = kFileStateError;
+		return false;
+	}
 	while ((_playbackParseState != kFileStateDone) && (_playbackParseState != kFileStateError)) {
 		if (processChunk(nextChunk)) {
-			nextChunk = readChunkHeader();
+			if (!readChunkHeader(nextChunk)) {
+				warning("Error in header parsing");
+				_playbackParseState = kFileStateError;
+			}
 		}
 	}
 	return _playbackParseState == kFileStateDone;
@@ -136,11 +142,10 @@ Common::String PlaybackFile::readString(int len) {
 	return result;
 }
 
-PlaybackFile::ChunkHeader PlaybackFile::readChunkHeader() {
-	ChunkHeader result;
-	result.id = (FileTag)_readStream->readUint32LE();
-	result.len = _readStream->readUint32LE();
-	return result;
+bool PlaybackFile::readChunkHeader(PlaybackFile::ChunkHeader &nextChunk) {
+	nextChunk.id = (FileTag)_readStream->readUint32LE();
+	nextChunk.len = _readStream->readUint32LE();
+	return !_readStream->err() && !_readStream->eos();
 }
 
 bool PlaybackFile::processChunk(ChunkHeader &nextChunk) {
@@ -262,14 +267,14 @@ void PlaybackFile::processRndSeedRecord(ChunkHeader chunk) {
 }
 
 bool PlaybackFile::processSettingsRecord() {
-	ChunkHeader keyChunk = readChunkHeader();
-	if (keyChunk.id != kSettingsRecordKeyTag) {
+	ChunkHeader keyChunk;
+	if (!readChunkHeader(keyChunk) || (keyChunk.id != kSettingsRecordKeyTag)) {
 		warning("Invalid format of settings section");
 		return false;
 	}
 	String key = readString(keyChunk.len);
-	ChunkHeader valueChunk = readChunkHeader();
-	if (valueChunk.id != kSettingsRecordValueTag) {
+	ChunkHeader valueChunk;
+	if (!readChunkHeader(valueChunk) || (valueChunk.id != kSettingsRecordValueTag)) {
 		warning("Invalid format of settings section");
 		return false;
 	}
@@ -280,14 +285,14 @@ bool PlaybackFile::processSettingsRecord() {
 
 
 bool PlaybackFile::readSaveRecord() {
-	ChunkHeader fileNameChunk = readChunkHeader();
-	if (fileNameChunk.id != kSaveRecordNameTag) {
+	ChunkHeader fileNameChunk;
+	if (!readChunkHeader(fileNameChunk) || (fileNameChunk.id != kSaveRecordNameTag)) {
 		warning("Invalid format of save section");
 		return false;
 	}
 	String fileName = readString(fileNameChunk.len);
-	ChunkHeader saveBufferChunk = readChunkHeader();
-	if (saveBufferChunk.id != kSaveRecordBufferTag) {
+	ChunkHeader saveBufferChunk;
+	if (!readChunkHeader(saveBufferChunk) || (saveBufferChunk.id != kSaveRecordBufferTag)) {
 		warning("Invalid format of save section");
 		return false;
 	}
@@ -308,8 +313,7 @@ Common::RecorderEvent PlaybackFile::getNextEvent() {
 		PlaybackFile::ChunkHeader header;
 		header.id = kFormatIdTag;
 		while (header.id != kEventTag) {
-			header = readChunkHeader();
-			if (_readStream->eos()) {
+			if (!readChunkHeader(header) || _readStream->eos()) {
 				break;
 			}
 			switch (header.id) {
