@@ -153,6 +153,15 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _mutexManager;
 	_mutexManager = 0;
 
+#ifdef USE_OPENGL
+	for (int i = 0; i < _sdlModesCount; ++i) {
+		// SurfaceSDL needs us to free these
+		free(const_cast<char *>(_graphicsModes[i].name));
+		free(const_cast<char *>(_graphicsModes[i].description));
+	}
+	delete[] _graphicsModes;
+#endif
+
 	delete _logger;
 	_logger = 0;
 
@@ -939,6 +948,9 @@ void OSystem_SDL::setupGraphicsModes() {
 		mode->id = i++;
 		mode++;
 	}
+
+	// SurfaceSDLGraphicsManager expects us to delete[] this
+	delete[] sdlGraphicsModes;
 }
 #endif
 
