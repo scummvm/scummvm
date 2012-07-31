@@ -1606,8 +1606,16 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
+
+	// The plugin won't write anything if _useOldSrc
+	if (_useOldSrc)
+		(*_scalerPlugin)->enableSource(false);
+
 	(*_scalerPlugin)->scale((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, 0, 0);
+
+	if (_useOldSrc)
+		(*_scalerPlugin)->enableSource(true);
 
 #ifdef USE_SCALERS
 	if (_videoMode.aspectRatioCorrection)
