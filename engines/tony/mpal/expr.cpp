@@ -141,41 +141,41 @@ static int Compute(int a, int b, byte symbol) {
 	switch (symbol) {
 	case OP_MUL:
 		return a * b;
-    case OP_DIV:
+	case OP_DIV:
 		return a / b;
-    case OP_MODULE:
+	case OP_MODULE:
 		return a % b;
-    case OP_ADD:
+	case OP_ADD:
 		return a + b;
-    case OP_SUB:
+	case OP_SUB:
 		return a - b;
-    case OP_SHL:
+	case OP_SHL:
 		return a << b;
-    case OP_SHR:
+	case OP_SHR:
 		return a >> b;
-    case OP_MINOR:
+	case OP_MINOR:
 		return a < b;
-    case OP_MAJOR:
+	case OP_MAJOR:
 		return a > b;
-    case OP_MINEQ:
+	case OP_MINEQ:
 		return a <= b;
-    case OP_MAJEQ:
+	case OP_MAJEQ:
 		return a >= b;
-    case OP_EQUAL:
+	case OP_EQUAL:
 		return a == b;
-    case OP_NOEQUAL:
+	case OP_NOEQUAL:
 		return a != b;
-    case OP_BITAND:
+	case OP_BITAND:
 		return a & b;
-    case OP_BITXOR:
+	case OP_BITXOR:
 		return a ^ b;
-    case OP_BITOR:
+	case OP_BITOR:
 		return a | b;
-    case OP_AND:
+	case OP_AND:
 		return a && b;
-    case OP_OR:
+	case OP_OR:
 		return a || b;
-    default:
+	default:
 		GLOBALS._mpalError = 1;
 		break;
 	}
