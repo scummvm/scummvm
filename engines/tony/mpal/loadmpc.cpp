@@ -529,7 +529,7 @@ static const byte *ParseLocation(const byte *lpBuf, LPMPALLOCATION lpmlLocation)
 bool ParseMpc(const byte *lpBuf) {
 	uint16 i, j;
 	uint16 wLen;
-	byte *lpTemp, *lpTemp2;
+	byte *lpTemp;
 
 	/* 1. Variables */
 	if (lpBuf[0] != 'V' || lpBuf[1] != 'A' || lpBuf[2] != 'R' || lpBuf[3] != 'S')
@@ -587,7 +587,7 @@ bool ParseMpc(const byte *lpBuf) {
 			j += lpBuf[j] + 1;
 
 		GLOBALS._lpmmMsgs->_hText = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, j + 1);
-		lpTemp2 = lpTemp = (byte *)globalLock(GLOBALS._lpmmMsgs->_hText);
+		lpTemp = (byte *)globalLock(GLOBALS._lpmmMsgs->_hText);
 
 		for (j = 0; lpBuf[j] != 0;) {
 			copyMemory(lpTemp, &lpBuf[j + 1], lpBuf[j]);
