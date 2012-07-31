@@ -95,9 +95,9 @@ public:
 		_bufferOffset = -1;
 		_valueCount = 0;
 		_previousValue = 0;
-		_field_15F = 0;
+		_repeatCount = 0;
 		_offset = 0;
-		_status = 0;
+		_status = kStatusReady;
 
 		memset(_buffer, 0, 256);
 	}
@@ -109,24 +109,34 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize);
 	uint32 write(const void *dataPtr, uint32 dataSize);
 
-	void process();
+	uint32 process();
 
 private:
+	enum CompressedStreamStatus {
+		kStatusReady,
+		kStatusReading,
+		kStatusWriting
+	};
+
+	uint32 readUncompressed(void *dataPtr, uint32 dataSize);
+
 	// Compressed data
 	uint32 writeCompressed(const void *dataPtr, uint32 dataSize);
 	uint32 readCompressed(void *dataPtr, uint32 dataSize);
+
+	void writeBuffer(uint8 value, bool onlyValue);
 
 private:
 	bool _eos;
 
 	// Compression handling
-	bool _enableCompression;
-	int  _bufferOffset;
-	int  _valueCount;
-	byte _previousValue;
-	byte _field_15F;
-	int  _offset;
-	int  _status;
+	bool                   _enableCompression;
+	int16                  _bufferOffset;
+	byte                   _valueCount;
+	byte                   _previousValue;
+	int16                  _repeatCount;
+	uint32                 _offset;
+	CompressedStreamStatus _status;
 
 	byte _buffer[256];
 };

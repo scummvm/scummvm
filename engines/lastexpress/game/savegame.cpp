@@ -73,6 +73,10 @@ uint32 SavegameStream::read(void *dataPtr, uint32 dataSize) {
 		return readCompressed(dataPtr, dataSize);
 #endif
 
+	return readUncompressed(dataPtr, dataSize);
+}
+
+uint32 SavegameStream::readUncompressed(void *dataPtr, uint32 dataSize) {
 	if ((int32)dataSize > size() - pos()) {
 		dataSize = size() - pos();
 		_eos = true;
@@ -84,18 +88,182 @@ uint32 SavegameStream::read(void *dataPtr, uint32 dataSize) {
 	return dataSize;
 }
 
-void SavegameStream::process() {
+void SavegameStream::writeBuffer(uint8 value, bool onlyValue) {
+	if (_bufferOffset == -1)
+		_bufferOffset = 0;
+
+	if (_bufferOffset == 256) {
+		_bufferOffset = 0;
+		Common::MemoryWriteStreamDynamic::write(_buffer, 256);
+	}
+
+	if (onlyValue || value < 0xFB)
+		_buffer[_bufferOffset] = value;
+	else
+		_buffer[_bufferOffset] = 0xFE;
+
+	_offset++;
+	_bufferOffset++;
+
+	if (!onlyValue && value >= 0xFB)
+	{
+		if (_bufferOffset == 256) {
+			_bufferOffset = 0;
+			Common::MemoryWriteStreamDynamic::write(_buffer, 256);
+		}
+
+		_buffer[_bufferOffset] = value;
+
+		_bufferOffset++;
+		_offset++;
+	}
+}
+
+uint32 SavegameStream::process() {
 	_enableCompression = !_enableCompression;
 
-	// TODO Flush compression buffer
+#if DISABLE_COMPRESSION
+	return 0;
+#else
+	switch (_status) {
+	default:
+		break;
 
+	case kStatusReading:
+		_status = kStatusReady;
+		if (_bufferOffset != -1 && _bufferOffset != 256) {
+			seek(_bufferOffset - 256, SEEK_CUR);
+			_bufferOffset = -1;
+		}
+		break;
+
+	case kStatusWriting:
+		switch (_valueCount) {
+		default:
+			break;
+
+		case 1:
+			writeBuffer(_previousValue, false);
+			break;
+
+		case 2:
+			if (_previousValue) {
+				writeBuffer(0xFF, true);
+				writeBuffer(_repeatCount, true);
+				writeBuffer(_previousValue, true);
+				break;
+			}
+
+			if (_repeatCount == 3) {
+				writeBuffer(0xFB, true);
+				break;
+			}
+
+			if (_repeatCount == -1) {
+				writeBuffer(0xFC, true);
+				break;
+			}
+
+			writeBuffer(0xFD, true);
+			writeBuffer(_repeatCount, true);
+			break;
+		}
+
+		if (_bufferOffset != -1 && _bufferOffset != 0) {
+			Common::MemoryWriteStreamDynamic::write(_buffer, _bufferOffset);
+			_bufferOffset = -1;
+		}
+		break;
+	}
+
+	_status = kStatusReady;
+	_valueCount = 0;
+	uint32 offset = _offset;
+	_offset = 0;
+
+	return offset;
+#endif
 }
 
 uint32 SavegameStream::writeCompressed(const void *dataPtr, uint32 dataSize) {
-	error("[SavegameStream::writeCompressed] Compression not implemented!");
+	if (_status == kStatusReading)
+		error("[SavegameStream::writeCompressed] Error: Compression buffer is in read mode.");
+
+	_status = kStatusWriting;
+	byte *data = (byte *)dataPtr;
+
+	while (dataSize) {
+		switch (_valueCount) {
+		default:
+			error("[SavegameStream::writeCompressed] Invalid value count (%d)", _valueCount);
+
+		case 0:
+			_previousValue = *data++;
+			_valueCount = 1;
+			break;
+
+		case 1:
+			if (*data != _previousValue) {
+				writeBuffer(_previousValue, false);
+				_previousValue = *data;
+			} else {
+				_valueCount = 2;
+				_repeatCount = 2;
+			}
+
+			++data;
+			break;
+
+		case 2:
+			if (*data != _previousValue || _repeatCount >= 255) {
+				if (_previousValue) {
+					writeBuffer(0xFF, true);
+					writeBuffer(_repeatCount, true);
+					writeBuffer(_previousValue, true);
+
+					_previousValue = *data++;
+					_valueCount = 1;
+					break;
+				}
+
+				if (_repeatCount == 3) {
+					writeBuffer(0xFB, true);
+
+					_previousValue = *data++;
+					_valueCount = 1;
+					break;
+				}
+
+				if (_repeatCount == -1) {
+					writeBuffer(0xFC, true);
+
+					_previousValue = *data++;
+					_valueCount = 1;
+					break;
+				}
+
+				writeBuffer(0xFD, true);
+				writeBuffer(_repeatCount, true);
+
+				_previousValue = *data++;
+				_valueCount = 1;
+			}
+
+			++data;
+			++_repeatCount;
+			break;
+		}
+
+		--dataSize;
+	}
+
+	return _offset;
 }
 
 uint32 SavegameStream::readCompressed(void *dataPtr, uint32 dataSize) {
+	if (_status == kStatusWriting)
+		error("[SavegameStream::writeCompressed] Error: Compression buffer is in write mode.");
+
 	error("[SavegameStream::readCompressed] Compression not implemented!");
 }
 
