@@ -599,6 +599,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->add(0x5c);
 		break;
 
+	case 0x41c3:
+		displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
+		break;
+
 	case 0x41ca:
 		rejectMessage();
 		break;
@@ -2076,6 +2080,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x7cc9:
 	case 0x7cd0:
 		displayMessage(dsAddr_throwCrumbsToBirdQMsg); // "Should I throw the crumbs to the bird?"
+		break;
+
+	case 0x7cd7:
+		displayMessage(dsAddr_dontWasteCrumbs); // "I don't want to waste these tasty crumbs"
+		break;
+
+	case 0x7cde:
+		displayMessage(dsAddr_mightSlipFallInMsg); // "Better not... I might slip and fall in..."
 		break;
 
 	case 0x7ce5: // put spring on the solid ground

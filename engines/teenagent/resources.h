@@ -769,21 +769,16 @@ const uint16 dsAddr_firstBusinessMsg = 0x5e25; // "First I've got some business 
 // No Digging Knife Message : 0x5e54 to 0x5e8e
 const uint16 dsAddr_noDiggingKnifeMsg = 0x5e54; // "Digging it out with the knife could take a hundred years"
 
-// FIXME - Where is this message used?!
+// FIXME - Where is this message used?! Unused?
 // No Mess On Table Message : 0x5e8f to 0x5ebd
 const uint16 dsAddr_noMessOnTableMsg = 0x5e8f; // "I don't want to make more mess on this table"
 
 // Throw Crumbs To Bird Question Message : 0x5ebe to 0x5ee5
 const uint16 dsAddr_throwCrumbsToBirdQMsg = 0x5ebe; // "Should I throw the crumbs to the bird?"
-
-// FIXME - Where is this message used?!
 // Don't Waste Crumbs Message : 0x5ee6 to 0x5f10
 const uint16 dsAddr_dontWasteCrumbs = 0x5ee6; // "I don't want to waste these tasty crumbs"
-
-// FIXME - Where is this message used?!
 // Might Slip Fall In Message : 0x5f11 to 0x5f3b
 const uint16 dsAddr_mightSlipFallInMsg = 0x5f11; // "Better not... I might slip and fall in..."
-
 // Book Color Message Address Pointers : (6 * 2-byte) = 0x5f3c to 0x5f47
 const uint16 dsAddr_bookColorMsgPtr = 0x5f3c;
 // Book Color Message #0 : 0x5f48 to 0x5f60
