@@ -1205,7 +1205,7 @@ Common::Point Scene::messagePosition(const Common::String &str, Common::Point me
 		message_position.x = screenWidth - w;
 	if (message_position.x < 0)
 		message_position.x = 0;
-	if (message_position.y + h > screenWidth) // FIXME - Error? Should be screenHeight?
+	if (message_position.y + h > screenHeight)
 		message_position.y = screenHeight - h;
 	if (message_position.y < 0)
 		message_position.y = 0;
