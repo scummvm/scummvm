@@ -117,7 +117,7 @@ Common::String Object::parse_description(const char *name) {
 	if (!result.empty())
 		result.deleteLastChar();
 	else
-		result = "Cool.";
+		result = "Cool."; // FIXME - Use dsAddr_coolMsg ?
 	return result;
 }
 

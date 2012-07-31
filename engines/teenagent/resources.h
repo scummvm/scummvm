@@ -117,7 +117,8 @@ const uint16 dsAddr_rejectMsg1 = 0x33ca; // "I can't imagine what I could do wit
 const uint16 dsAddr_rejectMsg2 = 0x33f6; // "I can't figure out what I should do with this"
 // Reject Message #3 : 0x3426 to 0x344f
 const uint16 dsAddr_rejectMsg3 = 0x3426; // "I can't find any reason to mess with it"
-
+// Cool Message : 0x3450 to 0x3456
+const uint16 dsAddr_coolMsg = 0x3450; // "Cool."
 // Object Usage Error Message : 0x3457 to 0x3467
 const uint16 dsAddr_objErrorMsg = 0x3457; // "That's no good"
 // Car Jack Message : 0x3468 to 0x348f
@@ -180,7 +181,12 @@ const uint16 dsAddr_needSunglassesMsg = 0x387c; // "Sorry buddy, but I need your
 const uint16 dsAddr_notBestPlaceMsg = 0x38a7; // "It's not the best place for diving"
 // Not Here Message : 0x38ce to 0x38da
 const uint16 dsAddr_notHereMsg = 0x38ce; // "Not here"
-
+// Can't Talk Underwater Message : 0x38db to 0x38fe
+const uint16 dsAddr_cantTalkUnderwaterMsg = 0x38db; // "I really can't talk underwater!"
+// Not Swimming There Message : 0x38ff to 0x3931
+const uint16 dsAddr_notSwimmingThereMsg = 0x38ff; // "I don't think swimming there is worth the effort"
+// Too Little Air Message : 0x3932 to 0x3988
+const uint16 dsAddr_tooLittleAirMsg = 0x3932; // "If I want to get this anchor I have to swim there when I have more air in my lungs"
 // Hooked Anchor Message : 0x3989 to 0x39ad
 const uint16 dsAddr_hookedAnchorMsg = 0x3989; // "I was really hooked on this anchor!"
 // Seaweed Message : 0x39ae to 0x39f5
@@ -189,7 +195,8 @@ const uint16 dsAddr_seaweedMsg = 0x39ae; // "This seaweed is just like the flowe
 const uint16 dsAddr_fishBoatMsg = 0x39f6; // "I wonder what fish do inside this boat at night"
 // Fish Something Message : 0x3a28 to 0x3a59
 const uint16 dsAddr_fishSomethingMsg = 0x3a28; // "I think I have to fish out something down there"
-
+// Fish Don't Worry Message : 0x3a5a to 0x3a84
+const uint16 dsAddr_fishDontWorryMsg = 0x3a5a; // "At least fish don't worry about the rain"
 // Not Red Herring Message : 0x3a85 to 0x3ab6
 const uint16 dsAddr_notRedHerringMsg = 0x3a85; // "I hope all this fish stuff is not a red herring"
 // Nice Down Message : 0x3ab7 to 0x3acd
@@ -312,7 +319,8 @@ const uint16 dsAddr_dontNeedToOpenMsg = 0x4164; // "I don't need to open it"
 const uint16 dsAddr_hmmGrassMsg = 0x417e; // "Hmmm. Grass..."
 // Find Nut Message : 0x41b1 to 0x41ee
 const uint16 dsAddr_findNutMsg = 0x41b1; // "I won't find the nut just like that. The grass is too dense"
-
+// Not Horny Message : 0x41ef to 0x41fe
+const uint16 dsAddr_notHornyMsg = 0x41ef; // "I'm not horny"
 // Can't Jump So High Message : 0x41ff to 0x423e
 const uint16 dsAddr_CantJumpMsg = 0x41ff; // "No way I can jump so high, cause, err, white men can't jump"
 // Don't Need It Message : 0x423f to 0x4250
@@ -323,7 +331,8 @@ const uint16 dsAddr_notSantaClausMsg = 0x4251; // "I'm not Santa Claus"
 const uint16 dsAddr_noPlasticImitationsMsg = 0x4267; // "I don't need plastic imitations"
 // Too Fragile Message : 0x4289 to 0x42ab
 const uint16 dsAddr_tooFragileMsg = 0x4289; // "It's too fragile to carry around"
-
+// Keep It Open Message : 0x42ac to 0x42c6
+const uint16 dsAddr_keepItOpenMsg = 0x42ac; // "I'd like to keep it open"
 // Not Taking Socks Message : 0x42c7 to 0x4305
 const uint16 dsAddr_notTakingSocksMsg = 0x42c7; // "I really don't want to walk around with someone else's socks"
 // Not Tired Message : 0x4306 to 0x431d
@@ -380,12 +389,20 @@ const uint16 dsAddr_yawnMsg = 0x464a; // "(yawn)"
 const uint16 dsAddr_laughterMsg = 0x4652; // "(laughter)"
 // No Hands Sharp Thorns Message : 0x465e to 0x46a0
 const uint16 dsAddr_noHandsSharpThornsMsg = 0x465e; // "I can't remove it with my hands. these thorns look really sharp"
-
+// No Chainsaw Fuel Message : 0x46a1 to 0x46c2
+const uint16 dsAddr_noChainsawFuelMsg = 0x46a1; // "There's no fuel in the chainsaw"
+// Thorns Too Thin Message : 0x46c3 to 0x46f6
+const uint16 dsAddr_thornsTooThinMsg = 0x46c3; // "Thorns are too thin, the chainsaw is useless here"
 // Rock Walking Gee Message : 0x46f7 to 0x473c
 const uint16 dsAddr_rockWalkingGeeMsg = 0x46f7; // "Yeah, great idea. Let's take this rock and walk around a bit. Gee..."
-
+// Butterfly Message : 0x473d to 0x477a
+const uint16 dsAddr_butterflyMsg = 0x473d; // "I'd better leave them alone, they make this place beautiful"
 // Not Sure If Alive Message : 0x477b to 0x4797
 const uint16 dsAddr_notSureIfAliveMsg = 0x477b; // "I'm not sure if it's alive"
+
+// FIXME - Unknown where this is used.. Talking to SOMETHING...
+// Unknown Language Message : 0x4798 to 0x47be
+const uint16 dsAddr_unknownLanguageMsg = 0x4798; // "I don't know what language it speaks"
 
 // Hole Too Narrow Message : 0x47bf to 0x47e6
 const uint16 dsAddr_holeTooNarrowMsg = 0x47bf; // "The hole is too narrow to fit my hand"
@@ -393,14 +410,24 @@ const uint16 dsAddr_holeTooNarrowMsg = 0x47bf; // "The hole is too narrow to fit
 const uint16 dsAddr_birdAttackMsg = 0x47e7; // "Hey You! Wake up! Bird attack!"
 // No Search Warrant Message : 0x4808 to 0x4827
 const uint16 dsAddr_noSearchWarrantMsg = 0x4808; // "I don't have a search-warrant"
-
+// Uninteresting Haystack Message : 0x4828 to 0x485f
+const uint16 dsAddr_uninterestingHaystackMsg = 0x4828; // "I don't see anything interesting about this haystack"
+// More Complicated Message : 0x4860 to 0x4881
+const uint16 dsAddr_moreComplicatedMsg = 0x4860; // "It's more complicated than that"
 // Nut Rake Message : 0x4882 to 0x48be
 const uint16 dsAddr_nutRakeMsg = 0x4882; // "It's pointless, the nut will slip between the rake's teeth"
 // Paddle Broken Message : 0x48bf to 0x48d5
 const uint16 dsAddr_paddleBrokenMsg = 0x48bf; // "The paddle is BROKEN"
-
+// Branch Not Paddle Message : 0x48d6 to 0x4912
+const uint16 dsAddr_branchNotPaddleMsg = 0x48d6; // "This branch is not a paddle. It doesn't even look like one"
 // Try Somewhere Else Message : 0x4913 to 0x495b
 const uint16 dsAddr_trySomewhereElseMsg = 0x4913; // "I'd better try somewhere else - I suppose this side is heavily guarded"
+// Sharpen Not Pulverize Message : 0x495c to 0x4983
+const uint16 dsAddr_sharpenNotPulverizeMsg = 0x495c; // "I needed to sharpen it, not pulverize"
+
+// FIXME - Can't find where this is used. Cellar?
+// Can't Do Anything Too Dark Message : 0x4984 to 0x49ad
+const uint16 dsAddr_cantDoTooDarkMsg = 0x4984; // "I can't do anything here, it's too dark"
 
 // Bribe Message : 0x49ae to 0x49d0
 const uint16 dsAddr_BribeMsg = 0x49ae; // "Here, let's make your pocket fat."
@@ -470,12 +497,19 @@ const uint16 dsAddr_enoughPhotosMsg = 0x4de6; // "I don't need any more photos"
 const uint16 dsAddr_recordScareMsg = 0x4e05; // "Yeah, I can record this and scare the cats"
 // Already Recorded Message : 0x4e32 to 0x4e57
 const uint16 dsAddr_alreadyRecordedMsg = 0x4e32; // "I already recorded what I wanted to"
+// Can't Record No Batteries Message : 0x4e58 to 0x4e8d
+const uint16 dsAddr_cantRecordNoBatteriesMsg = 0x4e58; // "I can't record anything until I find some batteries"
+
+// FIXME - Not sure how to get this message. Dictaphone with no batteries somewhere? Radio?
+// No Batteries No Fun Message : 0x4e8e to 0x4ea4
+const uint16 dsAddr_NoBatteriesNoFunMsg = 0x4e8e; // "No batteries, no fun"
 
 // Not Right Moment Message : 0x4ea5 to 0x4ecd
 const uint16 dsAddr_notRightMomentMsg = 0x4ea5; // "I don't think this is the right moment"
 // Cook Around Message : 0x4ece to 0x4ef9
 const uint16 dsAddr_cookAroundMsg = 0x4ece; // "I can't do anything with this cook around"
-
+// Same Bottle Message : 0x4efa to 0x4f3c
+const uint16 dsAddr_sameBottleMsg = 0x4efa; // "The bottle's the same, but I doubt if it's enough to fool anyone"
 // Break Flatten Message : 0x4f3d to 0x4f68
 const uint16 dsAddr_breakFlattenMsg = 0x4f3d; // "I wanted to break it, not to flatten it!"
 // What Inside Message : 0x4f69 to 0x4f9a
@@ -720,16 +754,35 @@ const uint16 dsAddr_notMineMsg = 0x5d87; // "I can't take it. It's not mine."
 // Hey What's The Matter Message : 0x5da8 to 0x5dc1
 const uint16 dsAddr_HeyWtmQMsg = 0x5da8; // "Hey! What's the matter?!"
 
+// FIXME - Where is this used?!
+// Its Open Message : 0x5dc2 to 0x5dcd
+const uint16 dsAddr_ItsOpenMsg = 0x5dc2; // "It's Open!"
+
 // Out Of Order Message : 0x5dce to 0x5de1
 const uint16 dsAddr_outOfOrderMsg = 0x5dce; // "It's out of order"
 // Captain Watching Message : 0x5de2 to 0x5e0a
 const uint16 dsAddr_captainWatchingMsg = 0x5de2; // "with captain watching? Better not"
-
+// Blunt Sickle Message : 0x5e0b to 0x5e24
+const uint16 dsAddr_bluntSickleMsg = 0x5e0b; // "The sickle is too blunt"
 // First Business Message : 0x5e25 to 0x5e53
 const uint16 dsAddr_firstBusinessMsg = 0x5e25; // "First I've got some business to take care of"
+// No Digging Knife Message : 0x5e54 to 0x5e8e
+const uint16 dsAddr_noDiggingKnifeMsg = 0x5e54; // "Digging it out with the knife could take a hundred years"
+
+// FIXME - Where is this message used?!
+// No Mess On Table Message : 0x5e8f to 0x5ebd
+const uint16 dsAddr_noMessOnTableMsg = 0x5e8f; // "I don't want to make more mess on this table"
 
 // Throw Crumbs To Bird Question Message : 0x5ebe to 0x5ee5
 const uint16 dsAddr_throwCrumbsToBirdQMsg = 0x5ebe; // "Should I throw the crumbs to the bird?"
+
+// FIXME - Where is this message used?!
+// Don't Waste Crumbs Message : 0x5ee6 to 0x5f10
+const uint16 dsAddr_dontWasteCrumbs = 0x5ee6; // "I don't want to waste these tasty crumbs"
+
+// FIXME - Where is this message used?!
+// Might Slip Fall In Message : 0x5f11 to 0x5f3b
+const uint16 dsAddr_mightSlipFallInMsg = 0x5f11; // "Better not... I might slip and fall in..."
 
 // Book Color Message Address Pointers : (6 * 2-byte) = 0x5f3c to 0x5f47
 const uint16 dsAddr_bookColorMsgPtr = 0x5f3c;

@@ -1273,6 +1273,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_wallTooSmoothMsg); // "The wall surface is too smooth to climb"
 		break;
 
+	case 0x5066:
+		loadScene(11, Common::Point(183, 109));
+		scene->setOrientation(3);
+		break;
+
 	case 0x5080:
 		loadScene(13, Common::Point(290, 181));
 		scene->setOrientation(4);
@@ -1432,10 +1437,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_hmmGrassMsg); // "Hmmm. Grass..."
 		break;
 
-
 	case 0x5674:
 		loadScene(18, Common::Point(94, 115));
 		scene->setOrientation(3);
+		break;
+
+	case 0x568e:
+		displayMessage(dsAddr_notHornyMsg); // "I'm not horny"
 		break;
 
 	case 0x5695:
@@ -1515,6 +1523,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_dontNeedItMsg); // "I don't need it"
 		break;
 
+	case 0x5801:
+		rejectMessage();
+		break;
+
+	case 0x583f:
+	case 0x5846:
+		displayMessage(dsAddr_dontNeedToOpenMsg);
+		break;
+
 	case 0x584d:
 		displayMessage(dsAddr_pullObjMsg2);
 		break;
@@ -1534,6 +1551,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		scene->setOrientation(2);
 		break;
 
+	case 0x5903:
+		displayMessage(dsAddr_keepItOpenMsg); // "I'd like to keep it open"
+		break;
+
 	case 0x590a:
 		loadScene(20, Common::Point(304, 190));
 		scene->setOrientation(4);
@@ -1546,6 +1567,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5978:
 		displayMessage(dsAddr_notTakingSocksMsg); // "I really don't want to walk around with someone else's socks"
+		break;
+
+	case 0x597f:
+	case 0x5986:
+	case 0x598d:
+		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
 		break;
 
 	case 0x5c72:
@@ -1698,6 +1725,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_rockWalkingGeeMsg); // "Yeah, great idea. Let's take this rock and walk around a bit. Gee..."
 		break;
 
+	case 0x63a0:
+	case 0x63a7:
+		displayMessage(dsAddr_butterflyMsg); // "I'd better leave them alone, they make this place beautiful"
+		break;
+
 	case 0x63ae:
 		displayMessage(dsAddr_notSureIfAliveMsg); // "I'm not sure if it's alive"
 		break;
@@ -1734,6 +1766,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x6541:
 		loadScene(20, Common::Point(10, 131));
 		scene->setOrientation(3);
+		break;
+
+	case 0x6635:
+		displayMessage(dsAddr_uninterestingHaystackMsg); // "I don't see anything interesting about this haystack"
+		break;
+
+	case 0x666a:
+		displayMessage(dsAddr_moreComplicatedMsg); // "It's more complicated than that"
 		break;
 
 	case 0x65c3:
@@ -1876,8 +1916,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_notMineMsg); // "I can't take it. It's not mine."
 		break;
 
+	case 0x7851:
+		displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+		break;
+
 	case 0x7858:
 		displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+		break;
+
+	case 0x785f:
+		displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
 		break;
 
 	case 0x7866:
@@ -1988,6 +2036,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_fenceBlocksMsg); // "The fence blocks the way"
 		break;
 
+	case 0x7bf6:
+		displayMessage(dsAddr_noDiggingKnifeMsg); // "Digging it out with the knife could take a hundred years"
+		break;
+
 	case 0x7bfd:
 		playSound(76, 18);
 		playSound(76, 22);
@@ -2022,6 +2074,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7cc9:
+	case 0x7cd0:
 		displayMessage(dsAddr_throwCrumbsToBirdQMsg); // "Should I throw the crumbs to the bird?"
 		break;
 
@@ -2172,6 +2225,26 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x8398:
 		displayMessage(dsAddr_trySomewhereElseMsg); // "I'd better try somewhere else - I suppose this side is heavily guarded"
+		break;
+
+	case 0x85dd:
+		displayMessage(dsAddr_branchNotPaddleMsg); // "This branch is not a paddle. It doesn't even look like one"
+		break;
+
+	case 0x85e4:
+		displayMessage(dsAddr_sharpenNotPulverizeMsg); // "I needed to sharpen it, not pulverize"
+		break;
+
+	case 0x8d42:
+		displayMessage(dsAddr_bluntSickleMsg); // "The sickle is too blunt"
+		break;
+
+	case 0x8d49:
+		displayMessage(dsAddr_noChainsawFuelMsg); // "There's no fuel in the chainsaw"
+		break;
+
+	case 0x8d50:
+		displayMessage(dsAddr_thornsTooThinMsg); // "Thorns are too thin, the chainsaw is useless here"
 		break;
 
 	// Shore
@@ -4133,6 +4206,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		disableObject(8);
 		break;
 
+	case 0x7218:
+		rejectMessage();
+		break;
+
 	case 0x7291:
 		playSound(89, 3);
 		playActorAnimation(975);
@@ -4346,6 +4423,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x9247:
+		displayMessage(dsAddr_sameBottleMsg); // "The bottle's the same, but I doubt if it's enough to fool anyone"
+		break;
+
 	case 0x924e:
 		setOns(2, 64);
 		playSound(5, 3);
@@ -4536,6 +4617,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(0xdbc8, 1);
 		break;
 
+	case 0x966c:
+		displayMessage(dsAddr_cantRecordNoBatteriesMsg); // "I can't record anything until I find some batteries"
+		break;
+
 	case 0x9673: // hit fatso - final scene
 		playSound(5, 3);
 		playSound(24, 10);
@@ -4616,6 +4701,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x9921: // using diving eq
+		// FIXME - Some code is missing here as displayMessage(dsAddr_cantTalkUnderwaterMsg),
+		//         displayMessage(dsAddr_notSwimmingThereMsg), displayMessage(dsAddr_tooLittleAirMsg)
+		//         displayMessage(dsAddr_fishDontWorryMsg) are never called.
 		{
 			int id = scene->getId();
 			if (id != 15) {
@@ -4799,6 +4887,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		// FIXME - unknown non-trivial callback 0x5b44 called!
 		//         This is the doorbell use callback on House #2 i.e.
 		//         Granny and Anne's House. Need to analyse cseg data.
+
+		// FIXME - unknown non-trivial callback 0x4056 called!
+		//         This is the bird use callback in the first act at 
+		//         the mudpool. Need to analyse cseg data.
 
 		// try decoding trivial callbacks by cseg if not in switch
 		byte *code = res->cseg.ptr(addr);
