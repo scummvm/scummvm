@@ -1209,6 +1209,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(547);
 		break;
 
+	case 0x4d85:
+		rejectMessage();
+		break;
+
 	case 0x4eb9: // Pick up wrapper
 		playSound(5, 12);
 		playSound(5, 18);
@@ -1216,6 +1220,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(1, 0);
 		playActorAnimation(549);
 		disableObject(13);
+		break;
+
+	case 0x4ee1:
+		rejectMessage();
 		break;
 
 	case 0x4f25:
@@ -1311,6 +1319,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case csAddr_guardDrinking:
 		fnGuardDrinking();
+		break;
+
+	case 0x51c8:
+		displayMessage(dsAddr_wallTooSmoothMsg); // "The wall surface is too smooth to climb"
 		break;
 
 	case 0x51cf:
