@@ -24,6 +24,7 @@
 #include "gui/gui-manager.h"
 #include "common/rect.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "gui/editrecorddialog.h"
 
 namespace GUI {
@@ -52,6 +53,8 @@ OnScreenDialog::OnScreenDialog() : Dialog(0, 0, 200, 40) {
 	btn->useThemeTransparency(true);
 	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditbtn));
 	text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", "00:00:00");
+	_enableDrag = false;
+	_mouseOver = false;
 }
 
 void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -85,5 +88,60 @@ void OnScreenDialog::setReplayedTime(uint32 newTime) {
 OnScreenDialog::~OnScreenDialog() {
 }
 
+void OnScreenDialog::handleMouseMoved(int x, int y, int button) {
+
+	if (_enableDrag) {
+		_x = _x + x - _dragPoint.x;
+		_y = _y + y - _dragPoint.y;
+	}
+	Dialog::handleMouseMoved(x, y, button);
+	if (isMouseOver(x, y)) {
+		debug("Mouse over");
+		if (_mouseOver == false) {
+			g_gui.theme()->showCursor();
+		}
+		_mouseOver = true;
+	} else {
+		debug("Not over");
+		if (_mouseOver == true) {
+			g_gui.theme()->hideCursor();
+		}
+		_mouseOver = false;
+	}
+}
+
+void OnScreenDialog::handleMouseDown(int x, int y, int button, int clickCount) {
+	if (isMouseOver(x, y)) {
+		_dragPoint.x = x;
+		_dragPoint.y = y;
+		_enableDrag = true;
+	}
+	Dialog::handleMouseMoved(x, y, button);
+}
+
+void OnScreenDialog::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (isMouseOver(x, y)) {
+
+	}
+	_enableDrag = false;
+	Dialog::handleMouseMoved(x, y, button);
+}
+
+bool OnScreenDialog::isMouseOver(int x, int y) {
+	return (x >= 0 && x < _w && y >= 0 && y < _h);
+}
+
 
 }
+/*
+
+
+
+
+
+g_system->updateScreen();
+
+evt.mouse.x = evt.mouse.x * (g_system->getOverlayWidth() / g_system->getWidth());
+evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
+
+*/

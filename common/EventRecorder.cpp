@@ -253,8 +253,6 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_recordMode = mode;
 	_needcontinueGame = false;
 
-	controlPanel = new GUI::OnScreenDialog();
-	controlPanel->open();
 
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
@@ -266,6 +264,8 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 		return;
 	}
 	if (_recordMode != kPassthrough) {
+		controlPanel = new GUI::OnScreenDialog();
+		controlPanel->open();
 		g_gui.theme()->enable();
 	}
 	if (_recordMode == kRecorderPlayback) {
@@ -420,34 +420,14 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 	if (!_initialized) {
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
+
 	Event evt = ev;
 	evt.mouse.x = evt.mouse.x * (g_system->getOverlayWidth() / g_system->getWidth());
 	evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
 	g_gui.processEvent(evt, controlPanel);
 	if (_recordMode == kRecorderRecord) {
-		if (ev.kbd.keycode != KEYCODE_ESCAPE) {
-			if (evt.mouse.x > controlPanel->_x && evt.mouse.x < controlPanel->_x + controlPanel->_w && evt.mouse.y > controlPanel->_y && evt.mouse.y < controlPanel->_y + controlPanel->_h) {
-				if (evt.type != EVENT_MOUSEMOVE) {
-
-					if (evt.type == EVENT_LBUTTONDOWN) {
-						dragPoint.x = evt.mouse.x - controlPanel->_x;
-						dragPoint.y = evt.mouse.y - controlPanel->_y;
-						_enableDrag = true;
-					}
-					if (evt.type == EVENT_LBUTTONUP) {
-						_enableDrag = false;
-					}
-				}
-				return List<Event>();
-			}
-			if ((ev.type == EVENT_MOUSEMOVE) && (_enableDrag)) {
-				controlPanel->_x = evt.mouse.x - dragPoint.x;
-				controlPanel->_y = evt.mouse.y - dragPoint.y;
-				g_system->updateScreen();
-				return List<Event>();
-			} else if (_enableDrag) {
-				return List<Event>();
-			}
+		if (evt.mouse.x > controlPanel->_x && evt.mouse.x < controlPanel->_x + controlPanel->_w && evt.mouse.y > controlPanel->_y && evt.mouse.y < controlPanel->_y + controlPanel->_h) {
+			return List<Event>();
 		}
 	}
 	if ((_recordMode == kRecorderPlayback) && (ev.synthetic != true)) {
