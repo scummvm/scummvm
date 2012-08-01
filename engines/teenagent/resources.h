@@ -104,6 +104,9 @@ const uint16 csAddr_displayMsg = 0xa055;
 const uint16 csAddr_rejectMsg = 0xa4d6;
 
 // Data Segment Addresses
+// Timed Callback State Variable : 0x0000
+const uint16 dsAddr_timedCallbackState = 0x0000; // 1 byte
+
 // Cursor Graphic 8*12px : 0x00da to 0x0139 (Read Only)
 const uint16 dsAddr_cursor = 0x00da;
 
@@ -825,6 +828,15 @@ const uint16 dsAddr_sceneZoomTablePtr = 0x70f4;
 // Scene Object Table (2 byte address * 42) : 0x7254 to 0x72a7
 const uint16 dsAddr_sceneObjectTablePtr = 0x7254;
 
+// Scene Object Name : Sonny or whatever : 0x92e5 to 0x92f6
+const uint16 dsAddr_scnObjNameSonny = 0x92e5; // "Sonny or whatever"
+
+// Scene Object Name - Anne : 0x9820 to 0x9824
+const uint16 dsAddr_scnObjNameAnne = 0x9820; // "Anne"
+
+// Scene Object Name - Mike : 0xaa94 to 0xaa98
+const uint16 dsAddr_scnObjNameMike = 0xaa94; // "Mike"
+
 // Current Scene Id : 0xb4f3
 const uint16 dsAddr_currentScene = 0xb4f3; // 1 byte
 
@@ -859,23 +871,82 @@ const uint16 dsAddr_inventoryItemDataPtrTable = 0xc4a6;
 // Lans Animation Table (4 byte * ??) : 0xd89e to 0x????
 const uint16 dsAddr_lansAnimationTablePtr = 0xd89e;
 
+// Spoken With Mansion Guard Flag : 0xda96
+// FIXME - This is probably unecessary as although this location is set, it
+//         doesn't now appear to be read.
+const uint16 dsAddr_spokenWithMansionGuardFlag = 0xda96; // 1 byte
+// Have Not Spoken With Mansion Guard Flag : 0xda97
+// FIXME - This is probably unecessary as although this location is set, it
+//         doesn't now appear to be read.
+const uint16 dsAddr_haveNotSpokenWithMansionGuardFlag = 0xda97; // 1 byte
+
+// Cave Thorns Cut Down Flag : 0xdaca
+const uint16 dsAddr_caveThornsCutDownFlag = 0xdaca; // 1 byte
+
 // Current Music Id Playing : 0xdb90
 const uint16 dsAddr_currentMusic = 0xdb90; // 1 byte
-
-// Light On Flag : 0xdba4
+// Unused Byte : 0xdb91
+// Already Adjusted Hoop Pole Flag : 0xdb92
+const uint16 dsAddr_alreadyAdjustedHoopPoleFlag = 0xdb92; // 1 byte
+// Already Kicked Hen Flag : 0xdb93
+const uint16 dsAddr_alreadyKickedHenFlag = 0xdb93; // 1 byte
+// Already Pulled Trunk Release Lever Flag : 0xdb94
+const uint16 dsAddr_alreadyPulledTrunkReleaseLeverFlag = 0xdb94; // 1 byte
+// Car Trunk Empty Flag : 0xdb95
+const uint16 dsAddr_carTrunkEmptyFlag = 0xdb95; // 1 byte
+// Birds Gone From Scarecrow Flag : 0xdb96
+const uint16 dsAddr_birdsGoneFromScarecrowFlag = 0xdb96; // 1 byte
+// Already Spoken To Anne Flag : 0xdb97
+const uint16 dsAddr_alreadySpokenToAnneFlag = 0xdb97; // 1 byte
+// Flower Isle in Lake State (0 = Both Flowers Present, 1 = One Flower Taken, 2+ = Both Flowers Taken): 0xdb98
+const uint16 dsAddr_flowerIsleState = 0xdb98; // 1 byte
+// Already Got Broken Paddle Flag : 0xdb99
+const uint16 dsAddr_alreadyGotBrokenPaddleFlag = 0xdb99; // 1 byte
+// Given Flower To OldLady Already Flag : 0xdb9a
+const uint16 dsAddr_givenFlowerToOldLadyAlreadyFlag = 0xdb9a; // 1 byte
+// Given Flower To Anne Already Flag : 0xdb9b
+const uint16 dsAddr_givenFlowerToAnneAlreadyFlag = 0xdb9b; // 1 byte
+// Scared Guard Already Flag : 0xdb9c
+const uint16 dsAddr_scaredGuardAlreadyFlag = 0xdb9c; // 1 byte
+// Got Needle Already Flag : 0xdb9d
+const uint16 dsAddr_gotNeedleAlreadyFlag = 0xdb9d; // 1 byte
+// Got Potato Already Flag : 0xdb9e
+const uint16 dsAddr_gotPotatoAlreadyFlag = 0xdb9e; // 1 byte
+// Bees Gone Flag : 0xdb9f
+const uint16 dsAddr_beesGoneFlag = 0xdb9f; // 1 byte
+// Mansion Already Been Through Tunnel Flag : 0xdba0
+const uint16 dsAddr_mansionTunnelDoneFlag = 0xdba0; // 1 byte
+// Mansion Tree Hollow Empty Flag : 0xdba1
+const uint16 dsAddr_mansionTreeHollowEmptyFlag = 0xdba1; // 1 byte
+// Climbed Mansion Tree Already Flag : 0xdba2
+const uint16 dsAddr_climbedMansionTreeAlreadyFlag = 0xdba2; // 1 byte
+// Cellar Door Open Flag : 0xdba3
+const uint16 dsAddr_cellarDoorOpenFlag = 0xdba3; // 1 byte
+// Cellar Light On Flag : 0xdba4
 const uint16 dsAddr_lightOnFlag = 0xdba4; // 1 byte
-
-
+// Laundry State (0 = Wet on Line, 1 = Dry on Line, 2 = Not Present): 0xdba5
+const uint16 dsAddr_laundryState = 0xdba5; // 1 byte
+// Lake Diving Exit Message (0 to 5+) : 0xdba6
+const uint16 dsAddr_lakeDivingExitMessage = 0xdba6; // 1 byte
+// Searched Grandpa Drawers Flag : 0xdba7
+const uint16 dsAddr_SearchedGrandpaDrawersFlag = 0xdba7; // 1 byte
+// Hankerchief in Mousehole Flag : 0xdba8
+const uint16 dsAddr_HankerchiefInMouseholeFlag = 0xdba8; // 1 byte
 // Mouse Hole State : 0xdba9, 0 = Mouse Gone, 1 = Mouse Trapped, 2 = Mouse Success(?)
 const uint16 dsAddr_mouseHoleState = 0xdba9; // 1 byte
 // Mouse Nerve Message Said Flag : 0xdbaa
 const uint16 dsAddr_mouseNerveMsgSaidFlag = 0xdbaa; // 1 byte
 // Mouse Already Got Gold Nugget Flag : 0xdbab
 const uint16 dsAddr_mouseGotGoldNuggetFlag = 0xdbab; // 1 byte
-
+// Unused Byte : 0xdbac
 // Dog Has Bone Flag : 0xdbad
 const uint16 dsAddr_dogHasBoneFlag = 0xdbad; // 1 byte
-
+// Ego Already Scared By Spider Flag : 0xdbae
+const uint16 dsAddr_egoAlreadyScaredBySpiderFlag = 0xdbae; // 1 byte
+// Already Said That Anne is Beautiful Flag : 0xdbaf
+const uint16 dsAddr_alreadySaidAnneBeautifulFlag = 0xdbaf; // 1 byte
+// Squirrel's Nut State (0 = Nut in Tree, 1 = Nut in Grass, 2 = Nut Found with Rake) : 0xdbb0
+const uint16 dsAddr_squirrelNutState = 0xdbb0; // 1 byte
 // Nut Swapped For Apple in Fruit Bowl Flag : 0xdbb1
 const uint16 dsAddr_nutSwappedForAppleFlag = 0xdbb1; // 1 byte
 // Spoken To Man In Well Flag : 0xdbb2

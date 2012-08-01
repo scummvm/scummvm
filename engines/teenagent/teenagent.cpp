@@ -100,8 +100,8 @@ bool TeenAgentEngine::trySelectedObject() {
 	debugC(0, kDebugObject, "checking active object %u on %u", inv->id, _dstObject->id);
 
 	//mouse time challenge hack:
-	if ((res->dseg.get_byte(0x0000) == 1 && inv->id == invItemRock && _dstObject->id == 5) ||
-	    (res->dseg.get_byte(0x0000) == 2 && inv->id == invItemSuperGlue && _dstObject->id == 5)) {
+	if ((res->dseg.get_byte(dsAddr_timedCallbackState) == 1 && inv->id == invItemRock && _dstObject->id == 5) ||
+	    (res->dseg.get_byte(dsAddr_timedCallbackState) == 2 && inv->id == invItemSuperGlue && _dstObject->id == 5)) {
 		//putting rock into hole or superglue on rock
 		fnPutRockInHole();
 		return true;
@@ -609,11 +609,11 @@ Common::Error TeenAgentEngine::run() {
 				if (current_object == NULL)
 					break;
 
-				if (res->dseg.get_byte(0x0000) == 3 && current_object->id == 1) {
+				if (res->dseg.get_byte(dsAddr_timedCallbackState) == 3 && current_object->id == 1) {
 					fnGuardDrinking();
 					break;
 				}
-				if (res->dseg.get_byte(0x0000) == 4 && current_object->id == 5) {
+				if (res->dseg.get_byte(dsAddr_timedCallbackState) == 4 && current_object->id == 5) {
 					fnGotAnchor();
 					break;
 				}
