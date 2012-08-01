@@ -467,11 +467,7 @@ void ThemeEngine::enable() {
 	if (_enabled)
 		return;
 
-	if (_useCursor) {
-		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
-		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
-		CursorMan.showMouse(true);
-	}
+	showCursor();
 
 	_system->showOverlay();
 	clearAll();
@@ -484,10 +480,8 @@ void ThemeEngine::disable() {
 
 	_system->hideOverlay();
 
-	if (_useCursor) {
-		CursorMan.popCursorPalette();
-		CursorMan.popCursor();
-	}
+	hideCursor();
+
 
 	_enabled = false;
 }
@@ -1786,6 +1780,21 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 		return id;
 	} else {
 		return node.getName();
+	}
+}
+
+void ThemeEngine::showCursor() {
+	if (_useCursor) {
+		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
+		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
+		CursorMan.showMouse(true);
+	}
+}
+
+void ThemeEngine::hideCursor() {
+	if (_useCursor) {
+		CursorMan.popCursorPalette();
+		CursorMan.popCursor();
 	}
 }
 

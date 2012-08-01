@@ -277,7 +277,12 @@ public:
 
 	void refresh();
 	void enable();
+
+	void showCursor();
+	void hideCursor();
+
 	void disable();
+
 
 	/**
 	 * Query the set up pixel format.
