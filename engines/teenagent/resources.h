@@ -893,6 +893,50 @@ const uint16 dsAddr_drawerPuzzleBookMessageFlag = 0xdbc0; // 1 byte
 const uint16 dsAddr_drawerPuzzleBookValue = 0xdbc1; // 1 byte
 // Mansion Colored Drawer Puzzle Solved Flag : 0xdbc2
 const uint16 dsAddr_drawerPuzzleSolvedFlag = 0xdbc2; // 1 byte
+// Mansion Trashcan Searched Flag : 0xdbc3
+const uint16 dsAddr_mansionTrashcanSearchedFlag = 0xdbc3; // 1 byte
+// Mansion Read Newspaper Flag : 0xdbc4
+const uint16 dsAddr_mansionReadNewspaperFlag = 0xdbc4; // 1 byte
+// Mansion TV On Flag : 0xdbc5
+const uint16 dsAddr_mansionTVOnFlag = 0xdbc5; // 1 byte
+// Mansion VCR Playing Tape Flag : 0xdbc6
+const uint16 dsAddr_mansionVCRPlayingTapeFlag = 0xdbc6; // 1 byte
+// Mansion VCR Played Tape Before Flag : 0xdbc7
+const uint16 dsAddr_mansionVCRPlayedTapeBeforeFlag = 0xdbc7; // 1 byte
+// Mansion VCR Tape Loaded Flag : 0xdbc8
+const uint16 dsAddr_mansionVCRTapeLoadedFlag = 0xdbc8; // 1 byte
+// Mansion Examined Couch Before Flag : 0xdbc9
+const uint16 dsAddr_mansionExaminedCouchBeforeFlag = 0xdbc9; // 1 byte
+// Mansion Used Polaroid on TV Flag : 0xdbca
+const uint16 dsAddr_usedPolaroidOnTVFlag = 0xdbca; // 1 byte
+// Mansion Used Dictaphone on TV Flag : 0xdbcb
+const uint16 dsAddr_usedDictaphoneOnTVFlag = 0xdbcb; // 1 byte
+// Mansion Cook Gone Flag : 0xdbcc
+const uint16 dsAddr_MansionCookGoneFlag = 0xdbcc; // 1 byte
+// Mansion Radio Broken Flag : 0xdbcd
+const uint16 dsAddr_MansionRadioBrokenFlag = 0xdbcd; // 1 byte
+// Mansion Got Radio Batteries Flag : 0xdbce
+const uint16 dsAddr_MansionGotRadioBatteriesFlag = 0xdbce; // 1 byte
+// Mansion Have Opened Fridge Before Flag : 0xdbcf
+const uint16 dsAddr_MansionHaveOpenedFridgeBeforeFlag = 0xdbcf; // 1 byte
+// Mansion Put Burning Paper In Fridge Flag : 0xdbd0
+const uint16 dsAddr_MansionPutBurningPaperInFridgeFlag = 0xdbd0; // 1 byte
+// Mansion Robot Safe Unlocked Flag : 0xdbd1
+const uint16 dsAddr_MansionRobotSafeUnlockedFlag = 0xdbd1; // 1 byte
+// Mansion Robot Safe Voice Test Passed Flag : 0xdbd2
+const uint16 dsAddr_MansionRobotSafeVoiceTestPassedFlag = 0xdbd2; // 1 byte
+// Mansion Robot Safe Scent Test Passed Flag : 0xdbd3
+const uint16 dsAddr_MansionRobotSafeScentTestPassedFlag = 0xdbd3; // 1 byte
+// Mansion Robot Safe View Test Passed Flag : 0xdbd4
+const uint16 dsAddr_MansionRobotSafeViewTestPassedFlag = 0xdbd4; // 1 byte
+// Mansion John Noty Outside Bathroom Flag : 0xdbd5
+const uint16 dsAddr_MansionJohnNotyOutsideBathroomFlag = 0xdbd5; // 1 byte
+// Mansion Sink State (0 - No Plug, Sink Empty, 1 - Plug, Sink Empty, 2 - Plug, Sink Full) : 0xdbd6
+const uint16 dsAddr_MansionSinkState = 0xdbd6; // 1 byte
+// Mansion Through Fan By Time Pill Flag : 0xdbd7
+const uint16 dsAddr_MansionThruFanByTimePillFlag = 0xdbd7; // 1 byte
+// Mansion Ventilator Fan Stopped Flag : 0xdbd8
+const uint16 dsAddr_MansionVentFanStoppedFlag = 0xdbd8; // 1 byte
 
 // Graffiti Message Id : 0xdbdb, 0 to 6
 const uint16 dsAddr_graffitiMsgId = 0xdbdb; // 1 byte
