@@ -886,10 +886,26 @@ const uint16 dsAddr_spokenToMirrorFlag = 0xdbb3; // 1 byte
 const uint16 dsAddr_cellarShelfExamineCount = 0xdbb4; // 1 byte
 // Examined Bank Note Flag : 0xdbb5
 const uint16 dsAddr_examinedBanknoteFlag = 0xdbb5; // 1 byte
-
+// VGA Artist Quip Already Said Flag : 0xdbb6
+const uint16 dsAddr_vgaArtistQuipAlreadySaidFlag = 0xdbb6; // 1 byte
+// Mansion Desk Blue Drawer Open Flag : 0xdbb7
+const uint16 dsAddr_blueDrawerOpenFlag = 0xdbb7; // 1 byte
+// Mansion Desk Red Drawer Open Flag : 0xdbb8
+const uint16 dsAddr_redDrawerOpenFlag = 0xdbb8; // 1 byte
+// Mansion Desk Grey Drawer Open Flag : 0xdbb9
+const uint16 dsAddr_greyDrawerOpenFlag = 0xdbb9; // 1 byte
+// Mansion Desk Green Drawer Open Flag : 0xdbba
+const uint16 dsAddr_greenDrawerOpenFlag = 0xdbba; // 1 byte
+// Mansion Desk Brown Drawer Open Flag : 0xdbbb
+const uint16 dsAddr_brownDrawerOpenFlag = 0xdbbb; // 1 byte
+// Mansion Desk Pink Drawer Open Flag : 0xdbbc
+const uint16 dsAddr_pinkDrawerOpenFlag = 0xdbbc; // 1 byte
 // Mansion Colored Drawer Puzzle Hint Message Given Flag : 0xdbbd
 const uint16 dsAddr_drawerPuzzleHintGivenFlag = 0xdbbd; // 1 byte
-
+// Mansion Colored Drawer Got Dictaphone Flag : 0xdbbe
+const uint16 dsAddr_drawerGotDictaphoneFlag = 0xdbbe; // 1 byte
+// Mansion Colored Drawer Got Polaroid Flag : 0xdbbf
+const uint16 dsAddr_drawerGotPolaroidFlag = 0xdbbf; // 1 byte
 // Mansion Colored Drawer Puzzle Book Message Flag : 0xdbc0
 const uint16 dsAddr_drawerPuzzleBookMessageFlag = 0xdbc0; // 1 byte
 // Mansion Colored Drawer Puzzle - Random Book Color Value (0 = No Book, 1 to 6 = Books) : 0xdbc1
@@ -979,9 +995,15 @@ const uint16 dsAddr_mansionEntryCount = 0xdbea;// 1 byte
 // Unused Byte : 0xdbeb
 // John Noty Outside Mansion Door Flag : 0xdbec
 const uint16 dsAddr_johnNotyOutsideMansionDoorFlag = 0xdbec; // 1 byte
-
+// Unused Byte : 0xdbed
+// Lovestruck By Anne Flag : 0xdbee
+const uint16 dsAddr_lovestruckByAnneFlag = 0xdbee;// 1 byte
+// Mansion Handle in Door Hole Flag : 0xdbef
+const uint16 dsAddr_mansionHandleInDoorHoleFlag = 0xdbef;// 1 byte
 // Got Password Need to Speak To Barman Flag : 0xdbf0
 const uint16 dsAddr_gotPasswordNeedSpeakBarmanFlag = 0xdbf0; // 1 byte
+// Mansion Already Used Time Pills Flag : 0xdbf1
+const uint16 dsAddr_mansionAlreadyUsedTimePillsFlag = 0xdbf1; // 1 byte
 
 // Intro Credits #1 : 0xe3c2 to 0xe3e5 (Read Only)
 const uint16 dsAddr_introCredits1 = 0xe3c2; // "backgrounds ..."

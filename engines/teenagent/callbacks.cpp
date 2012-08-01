@@ -260,12 +260,12 @@ void TeenAgentEngine::fnEgoBottomRightTurn() {
 
 bool TeenAgentEngine::fnCheckingDrawers() {
 	uint16 v = GET_FLAG(dsAddr_drawerPuzzleBookValue) - 1;
-	if (GET_FLAG(0xdbb7 + v) != 1)
+	if (GET_FLAG(dsAddr_blueDrawerOpenFlag + v) != 1)
 		return false;
 	else {
 		uint16 sum = 0;
 		for (uint i = 0; i < 6; ++i)
-			sum += GET_FLAG(0xdbb7 + i);
+			sum += GET_FLAG(dsAddr_blueDrawerOpenFlag + i);
 		if (sum != 1)
 			return false;
 		else
@@ -2430,7 +2430,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(89, 4);
 		playActorAnimation(980);
 		loadScene(23, 76, 199, 1);
-		if (CHECK_FLAG(0xdbee, 1))
+		if (CHECK_FLAG(dsAddr_lovestruckByAnneFlag, 1))
 			playMusic(7);
 		break;
 
@@ -2564,7 +2564,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(528, 1);
 			wait(50);
 			playMusic(7);
-			SET_FLAG(0xdbee, 1);
+			SET_FLAG(dsAddr_lovestruckByAnneFlag, 1);
 			for (byte i = 3; i <= 17; i += 2)
 				playSound(56, i);
 			playActorAnimation(525);
@@ -2584,7 +2584,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5f73: // exiting ann's house
-		if (CHECK_FLAG(0xdbee, 1))
+		if (CHECK_FLAG(dsAddr_lovestruckByAnneFlag, 1))
 			playMusic(6);
 		loadScene(21, 99, 180, 3);
 		break;
@@ -3105,11 +3105,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7ab9:
-		if (CHECK_FLAG(0xdbb6, 1))
+		if (CHECK_FLAG(dsAddr_vgaArtistQuipAlreadySaidFlag, 1))
 			retVal = false;
 		else {
 			dialog->showMono(90, scene, 0, 0xd1, 0);
-			SET_FLAG(0xdbb6, 1);
+			SET_FLAG(dsAddr_vgaArtistQuipAlreadySaidFlag, 1);
 		}
 		break;
 
@@ -3953,101 +3953,101 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6962:
-		if (CHECK_FLAG(0xdbb7, 1)) {
+		if (CHECK_FLAG(dsAddr_blueDrawerOpenFlag, 1)) {
 			setOns(0, 0);
 			playSound(67, 4);
 			playActorAnimation(678);
-			SET_FLAG(0xdbb7, 0);
-		} else if (CHECK_FLAG(0xdbb8, 1)) {
+			SET_FLAG(dsAddr_blueDrawerOpenFlag, 0);
+		} else if (CHECK_FLAG(dsAddr_redDrawerOpenFlag, 1)) {
 			fnDrawerOpenMessage();
 		} else {
 			playSound(66, 4);
 			playActorAnimation(677);
 			setOns(0, 53);
-			SET_FLAG(0xdbb7, 1);
+			SET_FLAG(dsAddr_blueDrawerOpenFlag, 1);
 		}
 		break;
 
 	case 0x69b8:
-		if (CHECK_FLAG(0xdbb8, 1)) {
+		if (CHECK_FLAG(dsAddr_redDrawerOpenFlag, 1)) {
 			setOns(1, 0);
 			playSound(67, 4);
 			playActorAnimation(680);
-			SET_FLAG(0xdbb8, 0);
-		} else if (CHECK_FLAG(0xdbb7, 1)) {
+			SET_FLAG(dsAddr_redDrawerOpenFlag, 0);
+		} else if (CHECK_FLAG(dsAddr_blueDrawerOpenFlag, 1)) {
 			fnDrawerOpenMessage();
-		} else if (CHECK_FLAG(0xdbb9, 1)) {
+		} else if (CHECK_FLAG(dsAddr_greyDrawerOpenFlag, 1)) {
 			fnDrawerOpenMessage();
 		} else {
 			playSound(66, 5);
 			playActorAnimation(679);
 			setOns(1, 54);
-			SET_FLAG(0xdbb8, 1);
+			SET_FLAG(dsAddr_redDrawerOpenFlag, 1);
 		}
 		break;
 
 	case 0x6a1b:
-		if (CHECK_FLAG(0xdbb9, 1)) {
+		if (CHECK_FLAG(dsAddr_greyDrawerOpenFlag, 1)) {
 			setOns(2, 0);
 			playSound(67, 5);
 			playActorAnimation(682);
-			SET_FLAG(0xdbb9, 0);
-		} else if (CHECK_FLAG(0xdbb8, 1)) {
+			SET_FLAG(dsAddr_greyDrawerOpenFlag, 0);
+		} else if (CHECK_FLAG(dsAddr_redDrawerOpenFlag, 1)) {
 			fnDrawerOpenMessage();
 		} else {
 			playSound(67, 5);
 			playActorAnimation(681);
 			setOns(2, 55);
-			SET_FLAG(0xdbb9, 1);
+			SET_FLAG(dsAddr_greyDrawerOpenFlag, 1);
 		}
 		break;
 
 	case 0x6a73:
-		if (CHECK_FLAG(0xdbba, 1)) {
+		if (CHECK_FLAG(dsAddr_greenDrawerOpenFlag, 1)) {
 			setOns(3, 0);
 			playSound(67, 4);
 			playActorAnimation(684);
-			SET_FLAG(0xdbba, 0);
-		} else if (!CHECK_FLAG(0xdbbb, 1)) {
+			SET_FLAG(dsAddr_greenDrawerOpenFlag, 0);
+		} else if (!CHECK_FLAG(dsAddr_brownDrawerOpenFlag, 1)) {
 			playSound(66, 4);
 			playActorAnimation(683);
 			setOns(3, 56);
-			SET_FLAG(0xdbba, 1);
+			SET_FLAG(dsAddr_greenDrawerOpenFlag, 1);
 		} else
 			fnDrawerOpenMessage();
 		break;
 
 	case 0x6acb:
-		if (CHECK_FLAG(0xdbbb, 1)) {
+		if (CHECK_FLAG(dsAddr_brownDrawerOpenFlag, 1)) {
 			setOns(4, 0);
 			playSound(67, 4);
 			playActorAnimation(686);
-			SET_FLAG(0xdbbb, 0);
-		} else if (CHECK_FLAG(0xdbba, 1)) {
+			SET_FLAG(dsAddr_brownDrawerOpenFlag, 0);
+		} else if (CHECK_FLAG(dsAddr_greenDrawerOpenFlag, 1)) {
 			fnDrawerOpenMessage();
-		} else if (CHECK_FLAG(0xdbbc, 1)) {
+		} else if (CHECK_FLAG(dsAddr_pinkDrawerOpenFlag, 1)) {
 			fnDrawerOpenMessage();
 		} else {
 			playSound(66, 5);
 			playActorAnimation(685);
 			setOns(4, 57);
-			SET_FLAG(0xdbbb, 1);
+			SET_FLAG(dsAddr_brownDrawerOpenFlag, 1);
 		}
 		break;
 
 	case 0x6b2e:
-		if (CHECK_FLAG(0xdbbc, 1)) {
+		if (CHECK_FLAG(dsAddr_pinkDrawerOpenFlag, 1)) {
 			setOns(5, 0);
 			playSound(67, 5);
 			playActorAnimation(688);
-			SET_FLAG(0xdbbc, 0);
-		} else if (CHECK_FLAG(0xdbbb, 1)) {
+			SET_FLAG(dsAddr_pinkDrawerOpenFlag, 0);
+		} else if (CHECK_FLAG(dsAddr_brownDrawerOpenFlag, 1)) {
 			fnDrawerOpenMessage();
 		} else {
 			playSound(66, 6);
 			playActorAnimation(687);
 			setOns(5, 58);
-			SET_FLAG(0xdbbc, 1);
+			SET_FLAG(dsAddr_pinkDrawerOpenFlag, 1);
 		}
 		break;
 
@@ -4073,7 +4073,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6c45:
 		playSound(89, 6);
-		playActorAnimation(CHECK_FLAG(0xdbef, 1) ? 985 : 806);
+		playActorAnimation(CHECK_FLAG(dsAddr_mansionHandleInDoorHoleFlag, 1) ? 985 : 806);
 		loadScene(34, 40, 133, 2);
 		break;
 
@@ -4287,20 +4287,20 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x79fd:
-		if (CHECK_FLAG(0xdbb7, 1))
+		if (CHECK_FLAG(dsAddr_blueDrawerOpenFlag, 1))
 			displayMessage(dsAddr_blueInteriorMsg); // "It's got a blue interior"
 		else
 			retVal = false;
 		break;
 
 	case 0x7a0f:
-		if (CHECK_FLAG(0xdbb8, 1)) {
-			if (!CHECK_FLAG(0xdbbf, 1)) {
+		if (CHECK_FLAG(dsAddr_redDrawerOpenFlag, 1)) {
+			if (!CHECK_FLAG(dsAddr_drawerGotPolaroidFlag, 1)) {
 				displayMessage(dsAddr_foundPolaroidMsg); // "There's a polaroid inside! I might need that"
 				playSound(5, 11);
 				playActorAnimation(690);
 				inventory->add(invItemPolaroidCamera);
-				SET_FLAG(0xdbbf, 1);
+				SET_FLAG(dsAddr_drawerGotPolaroidFlag, 1);
 			}
 			displayMessage(dsAddr_redInteriorMsg); // "It's got a red interior"
 		} else
@@ -4308,34 +4308,34 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7a49:
-		if (CHECK_FLAG(0xdbb9, 1))
+		if (CHECK_FLAG(dsAddr_greyDrawerOpenFlag, 1))
 			displayMessage(dsAddr_greyInteriorMsg); // "It's got a grey interior"
 		else
 			retVal = false;
 		break;
 
 	case 0x7a5b:
-		if (CHECK_FLAG(0xdbba, 1))
+		if (CHECK_FLAG(dsAddr_greenDrawerOpenFlag, 1))
 			displayMessage(dsAddr_greenInteriorMsg); // "It's got a green interior"
 		else
 			retVal = false;
 		break;
 
 	case 0x7a6d:
-		if (CHECK_FLAG(0xdbbb, 1))
+		if (CHECK_FLAG(dsAddr_brownDrawerOpenFlag, 1))
 			displayMessage(dsAddr_brownInteriorMsg); // "It's got a brown interior"
 		else
 			retVal = false;
 		break;
 
 	case 0x7a7f:
-		if (CHECK_FLAG(0xdbbc, 1)) {
-			if (!CHECK_FLAG(0xdbbe, 1)) {
+		if (CHECK_FLAG(dsAddr_pinkDrawerOpenFlag, 1)) {
+			if (!CHECK_FLAG(dsAddr_drawerGotDictaphoneFlag, 1)) {
 				displayMessage(dsAddr_dictaphoneInsideMsg); // "Wow! There's a dictaphone inside!"
 				playSound(5, 12);
 				playActorAnimation(689);
 				inventory->add(invItemDictaphoneNoBatteries);
-				SET_FLAG(0xdbbe, 1);
+				SET_FLAG(dsAddr_drawerGotDictaphoneFlag, 1);
 			}
 			displayMessage(dsAddr_pinkInteriorMsg); // "It's got a pink interior"
 		} else
@@ -4382,7 +4382,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->remove(invItemHandle);
 		disableObject(2);
 		enableObject(3);
-		SET_FLAG(0xdbef, 1);
+		SET_FLAG(dsAddr_mansionHandleInDoorHoleFlag, 1);
 		break;
 
 	case 0x90fc: // dictaphone on robot
@@ -4844,10 +4844,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x9c79: // use pills
 		if (scene->getId() != 36) {
 			displayMessage(dsAddr_notTryNowMsg); // "There's no need to try them now"
-		} else if (CHECK_FLAG(0xdbf1, 1)) {
+		} else if (CHECK_FLAG(dsAddr_mansionAlreadyUsedTimePillsFlag, 1)) {
 			displayMessage(dsAddr_nahMsg); // "Nah"
 		} else {
-			SET_FLAG(0xdbf1, 1);
+			SET_FLAG(dsAddr_mansionAlreadyUsedTimePillsFlag, 1);
 			moveTo(102, 195, 2);
 			playSound(5, 3);
 			playSound(75, 12);
