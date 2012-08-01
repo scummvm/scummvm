@@ -134,7 +134,7 @@ void TeenAgentEngine::fnGotAnchor() {
 	playSound(31, 1);
 	playActorAnimation(619);
 	fnGetOutOfLake();
-	inventory->add(42);
+	inventory->add(invItemAnchor);
 	displayMessage(dsAddr_hookedAnchorMsg); // "I was really hooked on this anchor!"
 }
 
@@ -223,7 +223,7 @@ void TeenAgentEngine::fnPutRockInHole() {
 		playSound(5, 2);
 		playSound(15, 12);
 		playActorAnimation(638);
-		inventory->remove(48);
+		inventory->remove(invItemMouse);
 		setTimerCallback(csAddr_mouseOutOfHoleTimeout, 100);
 		SET_FLAG(0x0000, 1);
 	} else if (CHECK_FLAG(0x0000, 1)) {
@@ -231,7 +231,7 @@ void TeenAgentEngine::fnPutRockInHole() {
 		playSound(52, 13);
 		playActorAnimation(648);
 		setOns(1, 46);
-		inventory->remove(49);
+		inventory->remove(invItemRock);
 		setTimerCallback(csAddr_mouseOutOfHoleTimeout, 100);
 		SET_FLAG(0x0000, 2);
 	} else if (CHECK_FLAG(0x0000, 2)) {
@@ -563,16 +563,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(865, 1);
 			playActorAnimation(866);
 			//InventoryObject *obj = inventory->selectedObject();
-			//if (obj != NULL && obj->id == 0x55) {
+			//if (obj != NULL && obj->id == invItemMug) {
 
 			// implement pause and using real object:
-			if (inventory->has(0x55)) {
+			if (inventory->has(invItemMug)) {
 				playSound(5, 4);
 				playSound(5, 19);
 				playSound(64, 11);
 				playActorAnimation(867);
-				inventory->remove(0x55);
-				inventory->add(0x56);
+				inventory->remove(invItemMug);
+				inventory->add(invItemMugOfMud);
 				moveTo(86, 195, 1, true);
 				playActorAnimation(868);
 				SET_FLAG(0xdbe4, 1);
@@ -596,7 +596,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(56, 10);
 		playActorAnimation(875);
 		disableObject(6);
-		inventory->add(0x5c);
+		inventory->add(invItemBird);
 		break;
 
 	case 0x41c3:
@@ -613,7 +613,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(71, 8);
 		playActorAnimation(833);
 		moveTo(225, 159, 4);
-		inventory->add(0x4e);
+		inventory->add(invItemDelicatePlant);
 		disableObject(3);
 		break;
 
@@ -655,7 +655,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveTo(223, 149, 0, true);
 		disableObject(7);
 		disableObject(1);
-		inventory->add(0x51);
+		inventory->add(invItemShovelAct1);
 		displayMessage(dsAddr_fnMsg1); // "Piece of cake"
 		break;
 
@@ -724,7 +724,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 36);
 		playActorAnimation(839);
 		moveTo(278, scene->getPosition().y, 0, true);
-		inventory->add(0x50);
+		inventory->add(invItemSpring);
 		disableObject(1);
 		break;
 
@@ -735,7 +735,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(49, 14);
 			playSound(5, 21);
 			playActorAnimation(869);
-			inventory->add(0x58);
+			inventory->add(invItemRopeAct1);
 			SET_FLAG(0xdbe5, 1);
 		}
 		break;
@@ -795,7 +795,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(49, 7);
 				playSound(5, 17);
 				playActorAnimation(827);
-				inventory->add(0x4d);
+				inventory->add(invItemJailKey);
 				SET_FLAG(0xdbde, 1);
 			}
 		} else
@@ -839,7 +839,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		disableObject(6);
 		enableObject(5);
-		inventory->add(0x4c);
+		inventory->add(invItemBulb);
 		break;
 
 	case 0x4794: // prison cell door
@@ -904,7 +904,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(1, 0x67);
 			playSound(5, 9);
 			playActorAnimation(872);
-			inventory->add(0x5a);
+			inventory->add(invItemMedicine);
 			disableObject(7);
 		} else {
 			playActorAnimation(964);
@@ -961,7 +961,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 					playSound(75, 6);
 					playActorAnimation(860);
 					dialog->show(167, scene, 0, 857, 0xd1, 0xef, 0, 1);
-					inventory->add(0x55);
+					inventory->add(invItemMug);
 					SET_FLAG(0xdbe3, 1);
 					SET_FLAG(0xdbf0, 0);
 				}
@@ -1045,7 +1045,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(0, 0);
 		playSound(5, 9);
 		playActorAnimation(836);
-		inventory->add(0x4f);
+		inventory->add(invItemSwissArmyKnife);
 		disableObject(12);
 		break;
 
@@ -1070,7 +1070,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(49, 6);
 		playSound(5, 13);
 		playActorAnimation(861);
-		inventory->add(0x57);
+		inventory->add(invItemCrumbs);
 		disableObject(6);
 		break;
 
@@ -1097,7 +1097,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		loadScene(40, 198, 186, 1);
 		dialog->show(202, scene, 0, 920, 0xd1, 0xe7, 0, 1);
 		inventory->clear();
-		inventory->add(0x1d);
+		inventory->add(invItemSuperGlue);
 		displayCredits(dsAddr_credits5);
 		loadScene(1, 198, 186);
 		hideActor();
@@ -1113,7 +1113,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(862);
 		reloadLan();
 		playAnimation(863, 1);
-		inventory->add(0x54);
+		inventory->add(invItemGrenade);
 		disableObject(1);
 		SET_FLAG(0xdbe2, 2);
 		break;
@@ -1165,7 +1165,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			waitAnimation();
 
 			moveTo(p, 2);
-			inventory->add(0x13);
+			inventory->add(invItemChocCandy);
 			dialog->pop(scene, 0xdaa6, 0, 529, 0xd1, 0xd9, 0, 1);
 		}
 		break;
@@ -1198,11 +1198,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(676);
 		displayMessage(dsAddr_WimpMsg); // "I'm a pathetic little wimp"
 		disableObject(15);
-		inventory->add(51);
+		inventory->add(invItemBanknote);
 		break;
 
 	case 0x4d56:
-		inventory->add(16);
+		inventory->add(invItemWhisky);
 		disableObject(2);
 		setOns(0, 0);
 		playSound(5, 12);
@@ -1216,7 +1216,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x4eb9: // Pick up wrapper
 		playSound(5, 12);
 		playSound(5, 18);
-		inventory->add(0x12);
+		inventory->add(invItemWrapper);
 		setOns(1, 0);
 		playActorAnimation(549);
 		disableObject(13);
@@ -1277,7 +1277,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(26, 30);
 			playActorAnimation(552);
 			setOns(2, 0x12);
-			inventory->add(0x14);
+			inventory->add(invItemPotato);
 		}
 		break;
 
@@ -1339,7 +1339,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 11);
 		playActorAnimation(637);
 		disableObject(7);
-		inventory->add(49);
+		inventory->add(invItemRock);
 		break;
 
 	case 0x5217:
@@ -1508,7 +1508,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5728:
-		inventory->add(0x0d);
+		inventory->add(invItemChainsaw);
 		disableObject(14);
 		setOns(0, 0);
 		playSound(5, 10);
@@ -1531,7 +1531,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(519);
 			wait(150);
 			moveTo(168, 179, 2);
-			inventory->add(3);
+			inventory->add(invItemToolboxFull);
 		}
 		break;
 
@@ -1671,7 +1671,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else {
 			dialog->show(43, scene, 0, 523, 0xd1, 0xe5, 0, 1);
 			wait(50);
-			inventory->add(12);
+			inventory->add(invItemFeatherDusterClean);
 			disableObject(12);
 			setOns(0, 0);
 			playSound(5, 6);
@@ -1800,8 +1800,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(15, 20);
 			playSound(32, 31);
 			playActorAnimation(636);
-			inventory->add(47);
-			inventory->add(48);
+			inventory->add(invItemHandkerchief);
+			inventory->add(invItemMouse);
 			moveTo(scene->getPosition().x - 1, 139, 1, true);
 			displayMessage(dsAddr_yikesMsg); // "Yikes!"
 			SET_FLAG(dsAddr_mouseHoleState, 2);
@@ -2046,8 +2046,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(1, 0x64);
 			playActorAnimation(845);
 			disableObject(3);
-			inventory->add(0x52);
-			inventory->remove(0x51);
+			inventory->add(invItemKaleidoscope);
+			inventory->remove(invItemShovelAct1);
 		} else
 			displayMessage(dsAddr_fenceBlocksMsg); // "The fence blocks the way"
 		break;
@@ -2084,7 +2084,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setLan(1, 0);
 		playAnimation(874, 1);
 		setOns(0, 0x68);
-		inventory->remove(0x5b);
+		inventory->remove(invItemDruggedFood);
 		enableObject(6);
 		disableObject(1);
 		break;
@@ -2107,7 +2107,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(19, 11);
 		playActorAnimation(840);
 		setOns(1, 0x61);
-		inventory->remove(0x50);
+		inventory->remove(invItemSpring);
 		disableObject(2);
 		enableObject(7);
 		break;
@@ -2201,7 +2201,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		reloadLan();
 		playAnimation(878, 0);
 		//playAnimation(879, 0); // background bartender animation
-		inventory->remove(0x5c);
+		inventory->remove(invItemBird);
 		enableObject(1);
 		SET_FLAG(0xdbe7, 1);
 		break;
@@ -2212,8 +2212,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(52, 23);
 		playActorAnimation(881);
 		setOns(2, 0x6b);
-		inventory->remove(0x56);
-		inventory->add(0x55);
+		inventory->remove(invItemMugOfMud);
+		inventory->add(invItemMug);
 		SET_FLAG(0xdbe8, 1);
 		break;
 
@@ -2241,8 +2241,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(851, 0);
 		playAnimation(850, 0);
 		reloadLan();
-		inventory->add(0x53);
-		inventory->remove(0x52);
+		inventory->add(invItemSoldierNews);
+		inventory->remove(invItemKaleidoscope);
 		enableObject(1);
 		SET_FLAG(0xdbe2, 1);
 		break;
@@ -2281,7 +2281,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(57, 6);
 			playActorAnimation(536);
 			dialog->showMono(77, scene, 0, 0xd1, 0);
-			inventory->add(0x8);
+			inventory->add(invItemBrokenPaddle);
 		}
 		break;
 
@@ -2308,7 +2308,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(2, 0);
 			playSound(34, 7);
 			playActorAnimation(535);
-			inventory->add(11);
+			inventory->add(invItemSecondFlower);
 			disableObject(1);
 
 			byte *scene_15_ons = scene->getOns(15);  // patch ons for the scene 15
@@ -2329,7 +2329,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(3, 0);
 			playSound(33, 6);
 			playActorAnimation(534);
-			inventory->add(10);
+			inventory->add(invItemFirstFlower);
 			disableObject(2);
 			setOns(1, 10);
 			setOns(1, 0, 15);
@@ -2367,7 +2367,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 10);
 		setOns(1, 0);
 		playActorAnimation(561);
-		inventory->add(26);
+		inventory->add(invItemNut);
 		disableObject(6);
 		break;
 
@@ -2376,7 +2376,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(1, 0);
 		playActorAnimation(626);
 		disableObject(12);
-		inventory->add(45);
+		inventory->add(invItemCheese);
 		displayMessage(dsAddr_foundFoodMsg); // "People leave food in unbelievable places"
 		break;
 
@@ -2413,7 +2413,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 7);
 		playActorAnimation(521);
 		setOns(4, 0);
-		inventory->add(0x6);
+		inventory->add(invItemComb);
 		break;
 
 	case 0x58df: // Pull trunk lever in car
@@ -2487,7 +2487,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 25);
 		playActorAnimation(611);
 		moveTo(16, scene->getPosition().y, 4, true);
-		inventory->add(38);
+		inventory->add(invItemRopeAct2);
 		disableObject(12);
 		break;
 
@@ -2513,14 +2513,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(67, 20);
 			playSound(5, 23);
 			playActorAnimation(631);
-			inventory->add(47);
+			inventory->add(invItemHandkerchief);
 			SET_FLAG(0xdba7, 1);
 		}
 		break;
 
 	case 0x5c84:
 		if (CHECK_FLAG(0xdb92, 1)) {
-			inventory->add(2);
+			inventory->add(invItemShotgun);
 			disableObject(7);
 			playSound(32, 7);
 			setOns(0, 0);
@@ -2542,7 +2542,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(32, 7);
 			playActorAnimation(508);
 			disableObject(13);
-			inventory->add(7);
+			inventory->add(invItemFan);
 		} else {
 			dialog->pop(scene, 0xdad4, 0, 522, 0xd1, 0xd8, 0, 1);
 		}
@@ -2603,7 +2603,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(0, 0);
 			playSound(56, 10);
 			playActorAnimation(599);
-			inventory->add(37);
+			inventory->add(invItemShovelAct2);
 			disableObject(2);
 		} else
 			fnEgoScaredBySpider();
@@ -2687,7 +2687,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 15);
 			playActorAnimation(613);
 			setOns(3, 36);
-			inventory->add(39);
+			inventory->add(invItemMask);
 			disableObject(5);
 			displayMessage(dsAddr_needSunglassesMsg); // "Sorry buddy, but I need your sunglasses"
 		} else
@@ -2700,7 +2700,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(63, 8);
 			playSound(24, 10);
 			playActorAnimation(612);
-			inventory->add(40);
+			inventory->add(invItemFins);
 			disableObject(6);
 		} else
 			displayMessage(dsAddr_crowKillMsg); // "I'm sure these crows will kill me"
@@ -2723,7 +2723,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(594);
 		setOns(0, 29);
 		disableObject(1);
-		inventory->add(36);
+		inventory->add(invItemBone);
 		playSound(5, 2);
 		playActorAnimation(595);
 		displayMessage(dsAddr_dinoBoneMsg); // "I really hope this is DINOSAUR bone"
@@ -2741,7 +2741,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 10);
 		setOns(0, 0);
 		playActorAnimation(640);
-		inventory->add(50);
+		inventory->add(invItemNugget);
 		disableObject(6);
 		break;
 
@@ -2767,7 +2767,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(1, 0);
 		playSound(18, 10);
 		playActorAnimation(553);
-		inventory->add(0x15);
+		inventory->add(invItemRakeBroken);
 		wait(50);
 		displayMessage(dsAddr_trousersMsg); // "Good I always asked mum for trousers with BIG pockets"
 		disableObject(11);
@@ -2783,7 +2783,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(4, 0);
 		playSound(5, 11);
 		playActorAnimation(625);
-		inventory->add(0x2c);
+		inventory->add(invItemSickleBlunt);
 		disableObject(8);
 		break;
 
@@ -2794,7 +2794,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			SET_FLAG(0xdb9d, 1);
 			playSound(49, 3);
 			playActorAnimation(548);
-			inventory->add(0x11);
+			inventory->add(invItemNeedle);
 			displayMessage(dsAddr_needleHaystackMsg); // "And they say you can't find a needle in a haystack"
 		}
 		break;
@@ -2803,7 +2803,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(0, 0);
 		playSound(5, 9);
 		playActorAnimation(511);
-		inventory->add(1);
+		inventory->add(invItemFeather);
 		disableObject(15);
 		break;
 
@@ -2836,7 +2836,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				displayMessage(dsAddr_twoBatteriesMsg); // "Wow! Two 1.5V batteries!"
 				playSound(32, 6);
 				playActorAnimation(717);
-				inventory->add(66);
+				inventory->add(invItemBatteries);
 				SET_FLAG(0xdbce, 1);
 			}
 		} else
@@ -2860,8 +2860,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x70f9:
-		if (inventory->has(68)) {
-			inventory->remove(68);
+		if (inventory->has(invItemBurningPaper)) {
+			inventory->remove(invItemBurningPaper);
 			loadScene(29, 40, 176, 2);
 			displayMessage(dsAddr_paperBurntMsg); // "The paper burnt out completely!"
 		} else
@@ -2894,7 +2894,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(2, 0);
 		playSound(32, 7);
 		playActorAnimation(710);
-		inventory->add(62);
+		inventory->add(invItemChilliWithLabel);
 		disableObject(7);
 		enableObject(8);
 		break;
@@ -2910,7 +2910,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(32, 5);
 			playActorAnimation(725);
 			disableObject(12);
-			inventory->add(69);
+			inventory->add(invItemMeat);
 		} else {
 			playActorAnimation(721);
 			displayMessage(dsAddr_frozenShelfMsg); // "It has frozen hard onto the shelf!"
@@ -2921,7 +2921,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(3, 0);
 		playSound(32, 7);
 		playActorAnimation(715);
-		inventory->add(63);
+		inventory->add(invItemPastryRoller);
 		disableObject(9);
 		break;
 
@@ -2930,7 +2930,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 42);
 		displayAsyncMessage(dsAddr_noDepraveMsg, 2, 102, 20, 38); // "Nah, I don't want to deprave the kids"
 		playActorAnimation(697);
-		inventory->add(56);
+		inventory->add(invItemCognac);
 		disableObject(1);
 		break;
 
@@ -2938,7 +2938,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 12);
 		playActorAnimation(704);
 		disableObject(2);
-		inventory->add(58);
+		inventory->add(invItemIceTongs);
 		break;
 
 	case 0x7408:
@@ -2971,7 +2971,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 14);
 			playActorAnimation(705);
 			displayMessage(dsAddr_justCorkMsg); // "It's just a cork"
-			inventory->add(59);
+			inventory->add(invItemCork);
 		}
 		break;
 
@@ -2979,7 +2979,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(2, 0);
 		playSound(5, 12);
 		playActorAnimation(699);
-		inventory->add(57);
+		inventory->add(invItemRemoteControl);
 		disableObject(11);
 		break;
 
@@ -3132,7 +3132,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(1, 0x66);
 			moveTo(224, 194, 0, true);
 			displayCutsceneMessage(dsAddr_cutsceneMsg1, 23, 95); // "sixty seven rude words later"
-			inventory->remove(0x59);
+			inventory->remove(invItemRopeAndGrenade);
 			enableOn(true);
 		} else
 			displayMessage(dsAddr_captainWatchingMsg); // "with captain watching? Better not"
@@ -3147,7 +3147,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(1, 0);
 		playSound(5, 10);
 		playActorAnimation(543);
-		inventory->add(15);
+		inventory->add(invItemBranch);
 		disableObject(9);
 		break;
 
@@ -3239,7 +3239,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveRel(0, 1, 0);
 		wait(100);
 		dialog->show(12, scene, 0, 529, 0xd1, 0xd9, 0, 1);
-		inventory->remove(50);
+		inventory->remove(invItemNugget);
 		fnMansionIntrusionAttempt();
 		break;
 
@@ -3272,7 +3272,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		waitAnimation();
 		wait(50);
 		displayMessage(dsAddr_itsGoneMsg); // "At least it's gone"
-		inventory->remove(34);
+		inventory->remove(invItemPaintedPotato);
 		SET_FLAG(0xdba1, 1);
 		break;
 
@@ -3299,7 +3299,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		wait(150);
 		displayMessage(dsAddr_oopsMsg); // "Oops"
 
-		inventory->remove(43);
+		inventory->remove(invItemGrapplingHook);
 		fnMansionIntrusionAttempt();
 		break;
 
@@ -3323,12 +3323,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		disableObject(6);
 		displayMessage(dsAddr_lifeIsBrutalMsg); // "Life is brutal"
-		inventory->remove(27);
-		inventory->add(28);
+		inventory->remove(invItemPlasticApple);
+		inventory->add(invItemCone);
 		break;
 
 	case 0x839f:
-		inventory->remove(32);
+		inventory->remove(invItemDart);
 		playSound(37, 14);
 		playSound(16, 17);
 		playActorAnimation(564, true);
@@ -3381,8 +3381,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(643);
 		setOns(2, 43);
 		moveTo(236, 179, 3);
-		inventory->remove(0x2c);
-		inventory->add(0x2e);
+		inventory->remove(invItemSickleBlunt);
+		inventory->add(invItemSickleSharp);
 		break;
 
 	case 0x85d6:
@@ -3407,8 +3407,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(50, 20);
 		playSound(50, 29);
 		playActorAnimation(554);
-		inventory->remove(19);
-		inventory->add(22);
+		inventory->remove(invItemChocCandy);
+		inventory->add(invItemHeartShapedCandy);
 		break;
 
 	case 0x8665:
@@ -3416,8 +3416,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		for (byte i = 12; i <= 24; i += 2)
 			playSound(56, i);
 		playActorAnimation(567);
-		inventory->remove(12);
-		inventory->add(33);
+		inventory->remove(invItemFeatherDusterClean);
+		inventory->add(invItemFeatherDusterDirty);
 		break;
 
 	case 0x862c:
@@ -3515,7 +3515,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xdb9a, 1))
 			fnGiveAnotherFlowerToOldLady();
 		else {
-			inventory->remove(10);
+			inventory->remove(invItemFirstFlower);
 			SET_FLAG(0xdb9a, 1);
 			fnGivingFlowerToOldLady();
 		}
@@ -3533,7 +3533,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xdb9a, 1))
 			fnGiveAnotherFlowerToOldLady();
 		else {
-			inventory->remove(11);
+			inventory->remove(invItemSecondFlower);
 			SET_FLAG(0xdb9a, 1);
 			fnGivingFlowerToOldLady();
 		}
@@ -3544,7 +3544,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			fnGiveAnotherFlowerToAnne();
 		else {
 			fnGivingFlowerToAnne();
-			inventory->remove(10);
+			inventory->remove(invItemFirstFlower);
 			SET_FLAG(0xdb9b, 1);
 		}
 		break;
@@ -3562,13 +3562,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			fnGiveAnotherFlowerToAnne();
 		else {
 			fnGivingFlowerToAnne();
-			inventory->remove(11);
+			inventory->remove(invItemSecondFlower);
 			SET_FLAG(0xdb9b, 1);
 		}
 		break;
 
 	case 0x89cc:
-		inventory->remove(23);
+		inventory->remove(invItemWrappedCandy);
 		playSound(5, 6);
 		dialog->show(60, scene, 0, 524, 0xd1, 0xe5, 0, 2);
 		playActorAnimation(555, true);
@@ -3578,14 +3578,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(558, 1, true);
 		waitAnimation();
 		dialog->show(62, scene, 0, 524, 0xd1, 0xe5, 0, 2);
-		inventory->add(24);
+		inventory->add(invItemRibbon);
 		break;
 
 	case 0x8a22:
 		playSound(45, 16);
 		playActorAnimation(560);
-		inventory->remove(26);
-		inventory->add(27);
+		inventory->remove(invItemNut);
+		inventory->add(invItemPlasticApple);
 		wait(50);
 		dialog->show(44, scene, 0, 523, 0xd1, 0xe5, 0, 1);
 		dialog->show(45, scene, 0, 523, 0xd1, 0xe5, 0, 1);
@@ -3619,7 +3619,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			moveTo(66, 167, 2);
 			displayMessage(dsAddr_wantBloodMsg); // "I want Blood!"
 			inventory->clear();
-			inventory->add(29);
+			inventory->add(invItemSuperGlue);
 		} else
 			displayMessage(dsAddr_showHerMoneyMsg); // "If I just show her the money, she might take it"
 		break;
@@ -3651,7 +3651,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		reloadLan();
 		playAnimation(659, 0);
 
-		inventory->remove(36);
+		inventory->remove(invItemBone);
 		SET_FLAG(0xdbad, 1);
 		{
 			Object *o = scene->getObject(7);
@@ -3689,7 +3689,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(593);
 		setOns(0, 28);
 		enableObject(1);
-		inventory->remove(35);
+		inventory->remove(invItemCarJack);
 		break;
 
 	case 0x8cc8: // Cut bush with sickle
@@ -3707,7 +3707,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 21);
 		playActorAnimation(647);
 		SET_FLAG(0xdaca, 1);
-		inventory->remove(0x2e);
+		inventory->remove(invItemSickleSharp);
 		disableObject(2);
 		scene->getObject(3)->actor_rect.right = 156;
 		scene->getObject(3)->save();
@@ -3715,7 +3715,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case csAddr_mouseOutOfHoleTimeout: // mouse falls back from the hole (cave)
 		if (CHECK_FLAG(0x0000, 1)) {
-			inventory->add(48);
+			inventory->add(invItemMouse);
 			playSound(24, 26);
 			playActorAnimation(650, true);
 			playAnimation(651, 2, true);
@@ -3732,7 +3732,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(655, 2, true);
 			waitAnimation();
 			displayMessage(dsAddr_mouseGoneMsg); // "The mouse has gone!"
-			inventory->add(49);
+			inventory->add(invItemRock);
 			setLan(2, 4, 27);
 			enableObject(4, 27);
 			SET_FLAG(dsAddr_mouseHoleState, 0);
@@ -3759,7 +3759,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setLan(4, 0);
 		disableObject(2);
 		disableObject(3);
-		inventory->remove(2);
+		inventory->remove(invItemShotgun);
 		SET_FLAG(0xdb96, 1);
 		break;
 
@@ -3800,7 +3800,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			moveTo(239, 139, 0, true);
 			playActorAnimation(633);
 			SET_FLAG(0xdba8, 1);
-			inventory->remove(47);
+			inventory->remove(invItemHandkerchief);
 			if (!CHECK_FLAG(dsAddr_mouseNerveMsgSaidFlag, 1)) {
 				SET_FLAG(dsAddr_mouseNerveMsgSaidFlag, 1);
 				displayMessage(dsAddr_mouseNerveMsg); // "Boy, this mouse has some nerve!"
@@ -3835,8 +3835,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 3);
 			playSound(86, 11);
 			playActorAnimation(720);
-			inventory->add(68);
-			inventory->remove(55);
+			inventory->add(invItemBurningPaper);
+			inventory->remove(invItemSheetOfPaper);
 		}
 		break;
 
@@ -3854,22 +3854,22 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(724);
 		setOns(4, 68);
 		displayMessage(dsAddr_voilaMsg); // "Voila"
-		inventory->remove(68);
+		inventory->remove(invItemBurningPaper);
 		SET_FLAG(0xdbd0, 1);
 		break;
 
 	case 0x98fa: // Right click to open toolbox
-		inventory->remove(3);
-		inventory->add(4);
-		inventory->add(35);
+		inventory->remove(invItemToolboxFull);
+		inventory->add(invItemToolboxHalfEmpty);
+		inventory->add(invItemCarJack);
 		inventory->activate(false);
 		inventory->resetSelectedObject();
 		displayMessage(dsAddr_carJackMsg); // "Wow! There's a car jack inside! Great!"
 		break;
 
 	case 0x9910:
-		inventory->remove(4);
-		inventory->add(5);
+		inventory->remove(invItemToolboxHalfEmpty);
+		inventory->add(invItemSpanner);
 		inventory->activate(false);
 		inventory->resetSelectedObject();
 		displayMessage(dsAddr_spannerMsg); // "There's something else inside the toolbox! A spanner!"
@@ -3898,7 +3898,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(693, 0);
 		setOns(6, 0);
 		displayMessage(dsAddr_fullAutomaticMsg); // "Fully Automatic"
-		inventory->add(54);
+		inventory->add(invItemVideoTape);
 		disableObject(4);
 		break;
 
@@ -3934,7 +3934,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6918:
-		if (inventory->has(55))
+		if (inventory->has(invItemSheetOfPaper))
 			displayMessage(dsAddr_noMoreSheetsMsg); // "Right now I don't need any more sheets"
 		else {
 			if (!CHECK_FLAG(0xdbc3, 1)) {
@@ -3945,7 +3945,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 			playSound(5, 11);
 			playActorAnimation(696);
-			inventory->add(55);
+			inventory->add(invItemSheetOfPaper);
 		}
 		break;
 
@@ -4086,7 +4086,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(32, 5);
 		playActorAnimation(732);
 		disableObject(2);
-		inventory->add(72);
+		inventory->add(invItemTimePills);
 		break;
 
 	case 0x6cc4: // secret diary
@@ -4226,7 +4226,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(32, 5);
 		playActorAnimation(767);
 		setOns(1, 0);
-		inventory->add(73);
+		inventory->add(invItemHandle);
 		disableObject(8);
 		break;
 
@@ -4296,7 +4296,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				displayMessage(dsAddr_foundPolaroidMsg); // "There's a polaroid inside! I might need that"
 				playSound(5, 11);
 				playActorAnimation(690);
-				inventory->add(53);
+				inventory->add(invItemPolaroidCamera);
 				SET_FLAG(0xdbbf, 1);
 			}
 			displayMessage(dsAddr_redInteriorMsg); // "It's got a red interior"
@@ -4331,7 +4331,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				displayMessage(dsAddr_dictaphoneInsideMsg); // "Wow! There's a dictaphone inside!"
 				playSound(5, 12);
 				playActorAnimation(689);
-				inventory->add(52);
+				inventory->add(invItemDictaphoneNoBatteries);
 				SET_FLAG(0xdbbe, 1);
 			}
 			displayMessage(dsAddr_pinkInteriorMsg); // "It's got a pink interior"
@@ -4376,7 +4376,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(6, 9);
 		playActorAnimation(807);
 		setOns(0, 83);
-		inventory->remove(73);
+		inventory->remove(invItemHandle);
 		disableObject(2);
 		enableObject(3);
 		SET_FLAG(0xdbef, 1);
@@ -4459,7 +4459,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveRel(0, 0, 4);
 		dialog->show(95, scene, 0, 709, 0xd1, 0xef, 0, 1);
 		moveTo(300, 190, 4);
-		inventory->remove(64);
+		inventory->remove(invItemFakeChilli);
 		disableObject(8);
 		playAnimation(712, 0);
 		setOns(2, 0);
@@ -4501,7 +4501,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(19, 14);
 		playActorAnimation(793);
 		displayMessage(dsAddr_fitsPerfectMsg); // "It fits perfectly!"
-		inventory->remove(60);
+		inventory->remove(invItemWrappedCork);
 		SET_FLAG(0xdbd6, 1);
 		break;
 
@@ -4510,8 +4510,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(63, 12);
 		playActorAnimation(726);
 		displayMessage(dsAddr_dislikeVealMsg); // "I never liked veal anyway"
-		inventory->remove(69);
-		inventory->add(70);
+		inventory->remove(invItemMeat);
+		inventory->add(invItemPlasticBag);
 		break;
 
 	case 0x949b:
@@ -4520,23 +4520,23 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 25);
 			playActorAnimation(802);
 			displayMessage(dsAddr_labelOffMsg); // "The label has come off!"
-			inventory->remove(62);
-			inventory->add(74);
-			inventory->add(65);
+			inventory->remove(invItemChilliWithLabel);
+			inventory->add(invItemChilliNoLabel);
+			inventory->add(invItemLabel);
 		} else
 			displayMessage(dsAddr_noHotWaterMsg); // "There's no hot water in the sink"
 		break;
 
 	case 0x94d4:
-		if (inventory->has(70)) {
+		if (inventory->has(invItemPlasticBag)) {
 			setOns(0, 0);
 			playSound(5, 3);
 			playSound(5, 18);
 			playSound(13, 12);
 			playActorAnimation(803);
 			disableObject(7);
-			inventory->remove(70);
-			inventory->add(71);
+			inventory->remove(invItemPlasticBag);
+			inventory->add(invItemSocks);
 		} else
 			displayMessage(dsAddr_noSockStoreMsg); // "I don't have anything to store these socks in"
 		break;
@@ -4611,7 +4611,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(5, 24);
 				playSound(90, 18);
 				playActorAnimation(707);
-				inventory->add(61);
+				inventory->add(invItemPhoto);
 				SET_FLAG(0xdbca, 1);
 			}
 		} else
@@ -4637,7 +4637,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 3);
 		playSound(91, 12);
 		playActorAnimation(706);
-		inventory->remove(54);
+		inventory->remove(invItemVideoTape);
 		SET_FLAG(0xdbc8, 1);
 		break;
 
@@ -4826,7 +4826,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_foundCrudeOilMsg); // "At least I found crude oil and I'll be rich"
 			wait(100);
 			displayMessage(dsAddr_myLifeMsg); // "That's my life"
-			inventory->remove(37);
+			inventory->remove(invItemShovelAct2);
 			fnMansionIntrusionAttempt();
 		} else
 			displayMessage(dsAddr_notThinkRightPlaceMsg); // "I don't think this is the right place"

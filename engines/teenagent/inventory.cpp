@@ -107,14 +107,14 @@ void Inventory::remove(byte item) {
 		_inventory[i] = _inventory[i + 1];
 		_graphics[i].free();
 	}
-	_inventory[inventorySize - 1] = 0;
+	_inventory[inventorySize - 1] = invItemNoItem;
 	_graphics[inventorySize - 1].free();
 }
 
 void Inventory::clear() {
 	debugC(0, kDebugInventory, "clearing inventory");
 	for (int i = 0; i < inventorySize; ++i) {
-		_inventory[i] = 0;
+		_inventory[i] = invItemNoItem;
 		_graphics[i].free();
 	}
 }
@@ -123,7 +123,7 @@ void Inventory::reload() {
 	for (int i = 0; i < inventorySize; ++i) {
 		_graphics[i].free();
 		uint item = _inventory[i];
-		if (item != 0)
+		if (item != invItemNoItem)
 			_graphics[i].load(this, item);
 	}
 }
@@ -133,7 +133,7 @@ void Inventory::add(byte item) {
 		return;
 	debugC(0, kDebugInventory, "adding %u to inventory", item);
 	for (int i = 0; i < inventorySize; ++i) {
-		if (_inventory[i] == 0) {
+		if (_inventory[i] == invItemNoItem) {
 			_inventory[i] = item;
 			return;
 		}
@@ -178,7 +178,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		for (int i = 0; i < inventorySize; ++i) {
 			byte item = _inventory[i];
-			if (item == 0)
+			if (item == invItemNoItem)
 				continue;
 
 			_graphics[i]._hovered = _graphics[i]._rect.in(_mouse);
@@ -243,7 +243,8 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		if (_hoveredObj != NULL) {
 			debugC(0, kDebugInventory, "rclick object %u:%s", _hoveredObj->id, _hoveredObj->name.c_str());
-			if (_hoveredObj->id != 51 && tryObjectCallback(_hoveredObj)) // do not process callback for banknote on r-click
+			// do not process callback for banknote on r-click
+			if (_hoveredObj->id != invItemBanknote && tryObjectCallback(_hoveredObj))
 				return true;
 		}
 
@@ -257,7 +258,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 			activate(false);
 			return true;
 		}
-		if (event.kbd.keycode == Common::KEYCODE_RETURN) { // triangle button on psp
+		if (event.kbd.keycode == Common::KEYCODE_RETURN) {
 			activate(!_active);
 			return true;
 		}
