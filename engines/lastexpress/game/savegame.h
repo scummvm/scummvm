@@ -124,7 +124,8 @@ private:
 	uint32 writeCompressed(const void *dataPtr, uint32 dataSize);
 	uint32 readCompressed(void *dataPtr, uint32 dataSize);
 
-	void writeBuffer(uint8 value, bool onlyValue);
+	void writeBuffer(uint8 value, bool onlyValue = true);
+	uint8 readBuffer();
 
 private:
 	bool _eos;

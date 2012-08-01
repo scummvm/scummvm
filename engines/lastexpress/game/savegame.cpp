@@ -119,6 +119,18 @@ void SavegameStream::writeBuffer(uint8 value, bool onlyValue) {
 	}
 }
 
+uint8 SavegameStream::readBuffer() {
+	if (_bufferOffset == -1 || _bufferOffset >= 256) {
+		readUncompressed(_buffer, 256);
+		_bufferOffset = 0;
+	}
+
+	byte val = _buffer[_bufferOffset];
+	_bufferOffset++;
+
+	return val;
+}
+
 uint32 SavegameStream::process() {
 	_enableCompression = !_enableCompression;
 
@@ -148,24 +160,24 @@ uint32 SavegameStream::process() {
 
 		case 2:
 			if (_previousValue) {
-				writeBuffer(0xFF, true);
-				writeBuffer(_repeatCount, true);
-				writeBuffer(_previousValue, true);
+				writeBuffer(0xFF);
+				writeBuffer(_repeatCount);
+				writeBuffer(_previousValue);
 				break;
 			}
 
 			if (_repeatCount == 3) {
-				writeBuffer(0xFB, true);
+				writeBuffer(0xFB);
 				break;
 			}
 
-			if (_repeatCount == -1) {
-				writeBuffer(0xFC, true);
+			if (_repeatCount == 255) {
+				writeBuffer(0xFC);
 				break;
 			}
 
-			writeBuffer(0xFD, true);
-			writeBuffer(_repeatCount, true);
+			writeBuffer(0xFD);
+			writeBuffer(_repeatCount);
 			break;
 		}
 
@@ -190,7 +202,7 @@ uint32 SavegameStream::writeCompressed(const void *dataPtr, uint32 dataSize) {
 		error("[SavegameStream::writeCompressed] Error: Compression buffer is in read mode.");
 
 	_status = kStatusWriting;
-	byte *data = (byte *)dataPtr;
+	const byte *data = (const byte *)dataPtr;
 
 	while (dataSize) {
 		switch (_valueCount) {
@@ -264,7 +276,72 @@ uint32 SavegameStream::readCompressed(void *dataPtr, uint32 dataSize) {
 	if (_status == kStatusWriting)
 		error("[SavegameStream::writeCompressed] Error: Compression buffer is in write mode.");
 
-	error("[SavegameStream::readCompressed] Compression not implemented!");
+	_status = kStatusReady;
+	byte *data = (byte *)dataPtr;
+
+	while (dataSize) {
+		switch (_valueCount) {
+		default:
+			error("[SavegameStream::readCompressed] Invalid value count (%d)", _valueCount);
+
+		case 0:
+		case 1: {
+			// Read control code
+			byte control = readBuffer();
+
+			switch (control) {
+			default:
+				// Data value
+				*data++ = control;
+				break;
+
+			case 0xFB:
+				_repeatCount = 2;
+				_previousValue = 0;
+				*data++ = 0;
+				_valueCount = 2;
+				break;
+
+			case 0xFC:
+				_repeatCount = 254;
+				_previousValue = 0;
+				*data++ = 0;
+				_valueCount = 2;
+				break;
+
+			case 0xFD:
+				_repeatCount = readBuffer() - 1;
+				_previousValue = 0;
+				*data++ = 0;
+				_valueCount = 2;
+				break;
+
+			case 0xFE:
+				*data++ = readBuffer();
+				break;
+
+			case 0xFF:
+				_repeatCount = readBuffer() - 1;
+				_previousValue = readBuffer();
+				*data++ = _previousValue;
+				_valueCount = 2;
+				break;
+			}
+			}
+			break;
+
+		case 2:
+			*data++ = _previousValue;
+			_repeatCount--;
+			if (!_repeatCount)
+				_valueCount = 1;
+			break;
+		}
+
+		--dataSize;
+	}
+
+	return _offset;
 }
 
 //////////////////////////////////////////////////////////////////////////
