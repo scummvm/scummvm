@@ -100,8 +100,8 @@ bool TeenAgentEngine::trySelectedObject() {
 	debugC(0, kDebugObject, "checking active object %u on %u", inv->id, _dstObject->id);
 
 	//mouse time challenge hack:
-	if ((res->dseg.get_byte(0x0000) == 1 && inv->id == 49 && _dstObject->id == 5) ||
-	    (res->dseg.get_byte(0x0000) == 2 && inv->id == 29 && _dstObject->id == 5)) {
+	if ((res->dseg.get_byte(0x0000) == 1 && inv->id == invItemRock && _dstObject->id == 5) ||
+	    (res->dseg.get_byte(0x0000) == 2 && inv->id == invItemSuperGlue && _dstObject->id == 5)) {
 		//putting rock into hole or superglue on rock
 		fnPutRockInHole();
 		return true;
