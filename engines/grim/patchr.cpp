@@ -65,7 +65,8 @@ private:
 	// Current instruction
 	uint32 diffCopy, extraCopy;
 	int32 jump;
-	void readNextInst();
+	int32 instrLeft;
+	bool readNextInst();
 
 	int32 _pos;
 	uint32 _flags, _newSize;
@@ -116,7 +117,7 @@ bool PatchedFile::load(Common::SeekableReadStream *file, Common::String patchNam
 
 	// Check for appropriate signature
 	if (patch.readUint32BE() != MKTAG('P','A','T','R')) {
-		error("%s patchfile is corrupted ", _patchName.c_str());
+		error("%s patchfile is corrupted", _patchName.c_str());
 		return false;
 	}
 
@@ -153,6 +154,14 @@ bool PatchedFile::load(Common::SeekableReadStream *file, Common::String patchNam
 	if (_flags & FLAG_COMPRESS_CTRL)
 		_ctrl = Common::wrapCompressedReadStream(_ctrl);
 
+	//ctrl stream sanity checks
+	if (_ctrl->size() % (3 * sizeof(uint32)) != 0) {
+		error("%s patchfile is corrupted", _patchName.c_str());
+		return false;
+	}
+
+	instrLeft = _ctrl->size() / (3 * sizeof(uint32));
+
 	tmp = new Common::File;
 	tmp->open(_patchName);
 	_diff = new Common::SeekableSubReadStream(tmp, _kHeaderSize + zctrllen, _kHeaderSize + zctrllen + zdatalen, DisposeAfterUse::YES);
@@ -179,7 +188,7 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 	byte *data = (byte*)dataPtr;
 
 	toRead = dataSize;
-	while (toRead > 0 || _ctrl->eos()) {
+	while (toRead > 0) {
 		// Read data from original file and apply the differences
 		if (diffCopy > 0) {
 			readSize = MIN(toRead, diffCopy);
@@ -235,7 +244,10 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 		if (diffCopy == 0 && extraCopy == 0) {
 			if (jump != 0)
 				_file->seek(jump, SEEK_CUR);
-			readNextInst();
+
+			//If there aren't new instructions, breaks here
+			if (!readNextInst())
+				break;
 		}
 	}
 
@@ -243,7 +255,14 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 	return (dataSize - toRead);
 }
 
-void PatchedFile::readNextInst() {
+bool PatchedFile::readNextInst() {
+	if (instrLeft == 0) {
+		diffCopy = 0;
+		extraCopy = 0;
+		jump = 0;
+		return false;
+	}
+
 	diffCopy = _ctrl->readUint32LE();
 	extraCopy = _ctrl->readUint32LE();
 	jump = _ctrl->readSint32LE();
@@ -254,11 +273,14 @@ void PatchedFile::readNextInst() {
 		(int32(diffCopy) > _diff->size() - _diff->pos()) ||
 		(int32(extraCopy) > _extra->size() - _extra->pos()) ||
 		(jump > _file->size() - _file->pos()))
-		error("%s: Corrupted patchfile", _patchName.c_str());
+		error("%s: Corrupted patchfile. istrleft = %d", _patchName.c_str(), instrLeft);
+
+	--instrLeft;
+	return true;
 }
 
 bool PatchedFile::eos() const {
-	if ( _pos >= (int32)_newSize)
+	if (_pos >= (int32)_newSize)
 		return true;
 	else
 		return false;
