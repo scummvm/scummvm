@@ -88,7 +88,13 @@ void EntityData::EntityCallData::saveLoadWithSerializer(Common::Serializer &s) {
 	syncString(s, sequenceNameCopy, 13);
 
 	// Skip pointers to frame & sequences
-	s.skip(5 * 4);
+	// (we are using a compressed stream, so we cannot seek on load)
+	if (s.isLoading()) {
+		byte empty[5 * 4];
+		s.syncBytes(empty, 5 * 4);
+	} else {
+		s.skip(5 * 4);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

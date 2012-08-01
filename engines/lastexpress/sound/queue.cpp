@@ -372,7 +372,15 @@ void SoundQueue::saveLoadWithSerializer(Common::Serializer &s) {
 			(*i)->saveLoadWithSerializer(s);
 	} else {
 		warning("[Sound::saveLoadWithSerializer] Loading not implemented");
-		s.skip(numEntries * 64);
+
+		uint32 unusedDataSize = numEntries * 64;
+		if (s.isLoading()) {
+			byte *empty = (byte *)malloc(unusedDataSize);
+			s.syncBytes(empty, unusedDataSize);
+			free(empty);
+		} else {
+			s.skip(unusedDataSize);
+		}
 	}
 }
 

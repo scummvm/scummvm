@@ -242,7 +242,15 @@ void SavePoints::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 
 	// Skip uninitialized data if any
-	s.skip((_savePointsMaxSize - dataSize) * 16);
+	// (we are using a compressed stream, so we cannot seek on load)
+	uint32 unusedDataSize = (_savePointsMaxSize - dataSize) * 16;
+	if (s.isLoading()) {
+		byte *empty = (byte *)malloc(unusedDataSize);
+		s.syncBytes(empty, unusedDataSize);
+		free(empty);
+	} else {
+		s.skip(unusedDataSize);
+	}
 
 	// Number of savepoints
 	uint32 numSavepoints = _savepoints.size();
