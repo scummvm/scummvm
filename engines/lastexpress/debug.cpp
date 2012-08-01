@@ -609,7 +609,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 			loadArchive((ArchiveIndex)getNumber(argv[2]));
 
 		// If we got a nis filename, check that the file exists
-		if (name.contains('.') && _engine->getResourceManager()->hasFile(name)) {
+		if (name.contains('.') && !_engine->getResourceManager()->hasFile(name)) {
 			DebugPrintf("Cannot find file: %s\n", name.c_str());
 			return true;
 		}
