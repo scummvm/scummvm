@@ -259,7 +259,7 @@ void TeenAgentEngine::fnEgoBottomRightTurn() {
 }
 
 bool TeenAgentEngine::fnCheckingDrawers() {
-	uint16 v = GET_FLAG(0xdbc1) - 1;
+	uint16 v = GET_FLAG(dsAddr_drawerPuzzleBookValue) - 1;
 	if (GET_FLAG(0xdbb7 + v) != 1)
 		return false;
 	else {
@@ -274,12 +274,12 @@ bool TeenAgentEngine::fnCheckingDrawers() {
 }
 
 void TeenAgentEngine::fnDrawerOpenMessage() {
-	if (CHECK_FLAG(0xdbbd, 1))
+	if (CHECK_FLAG(dsAddr_drawerPuzzleHintGivenFlag, 1))
 		displayMessage(dsAddr_drawerOpenMsg); // "I cannot open the drawer if the next one is open!"
 	else {
 		displayMessage(dsAddr_strangeDrawerMsg); // "Strange, but the drawer is stuck if the next drawer is open"
 		displayMessage(dsAddr_notOrdinaryDrawersMsg); // "Maybe these are not just ordinary drawers!"
-		SET_FLAG(0xdbbd, 1);
+		SET_FLAG(dsAddr_drawerPuzzleHintGivenFlag, 1);
 	}
 }
 
@@ -1684,7 +1684,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x603e:
-		if (CHECK_FLAG(0xdbb3, 1)) {
+		if (CHECK_FLAG(dsAddr_spokenToMirrorFlag, 1)) {
 			displayMessage(dsAddr_busyThinkingMsg); // "I'd better not interrupt it's thought process"
 		} else {
 			displayMessage(dsAddr_mirrorMirrorMsg); // "Mirror, Mirror on the wall...."
@@ -1695,7 +1695,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			wait(150);
 			displayMessage(dsAddr_okWaitMsg); // "OK, take your time"
 			wait(150);
-			SET_FLAG(0xdbb3, 1);
+			SET_FLAG(dsAddr_spokenToMirrorFlag, 1);
 		}
 		break;
 
@@ -2286,7 +2286,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x53a1:
-		if (CHECK_FLAG(0xdbb2, 1)) { // spoken to man in well
+		if (CHECK_FLAG(dsAddr_spokenToManInWellFlag, 1)) { // spoken to man in well
 			displayMessage(dsAddr_stillThereMsg); // "Are you still there?"
 		} else {
 			displayMessage(dsAddr_echoMsg); // "Echo!"
@@ -2299,7 +2299,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_orIWillMsg, 0xe5, 232, 164); // "OR I WILL"
 			wait(100);
 			displayMessage(dsAddr_loudEchoMsg, 0xe5, 248, 164);
-			SET_FLAG(0xdbb2, 1);
+			SET_FLAG(dsAddr_spokenToManInWellFlag, 1);
 		}
 		break;
 
@@ -2587,7 +2587,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5fba:
-		if (CHECK_FLAG(0xdbb1, 1)) {
+		if (CHECK_FLAG(dsAddr_nutSwappedForAppleFlag, 1)) {
 			displayMessage(dsAddr_noFruitMsg); // "There are no more interesting fruits here"
 		} else {
 			dialog->pop(scene, 0xdafc, 0, 523, 0xd1, 0xe5, 0, 1);
@@ -2651,7 +2651,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x6229: // shelves in cellar
 		if (CHECK_FLAG(dsAddr_lightOnFlag, 1)) {
 			Common::Point p = scene->getPosition();
-			byte v = GET_FLAG(0xdbb4);
+			byte v = GET_FLAG(dsAddr_cellarShelfExamineCount);
 			switch (v) {
 			case 0:
 				displayMessage(dsAddr_whatGotMsg); // "Let's look what we've got here"
@@ -2665,13 +2665,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				displayMessage(dsAddr_bilberryJamMsg); // "Bilberry jam"
 				moveTo(p, 3);
 				displayMessage(dsAddr_getMeOutJamMsg); // "Get me out of this jam!"
-				SET_FLAG(0xdbb4, 1);
+				SET_FLAG(dsAddr_cellarShelfExamineCount, 1);
 				break;
 			case 1:
 				displayMessage(dsAddr_rosemaryJamMsg); // "Oh, and there is Rosemary jam"
 				wait(100);
 				displayMessage(dsAddr_knowRosemaryMsg); // "I used to know someone called Rosemary"
-				SET_FLAG(0xdbb4, 2);
+				SET_FLAG(dsAddr_cellarShelfExamineCount, 2);
 				break;
 			default:
 				displayMessage(dsAddr_unwantedJamsMsg); // "I don't want those jams"
@@ -3191,10 +3191,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7950:
-		if (!CHECK_FLAG(0xdbb1, 1))
-			retVal = false;
-		else
+		if (CHECK_FLAG(dsAddr_nutSwappedForAppleFlag, 1))
 			displayMessage(dsAddr_nutRealMsg); // "Only the nut is real"
+		else
+			retVal = false;
 		break;
 
 	case 0x7975:
@@ -3373,7 +3373,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x8538: // Sharpen sickle on well
 		moveTo(236, 190, 0);
 		setOns(2, 0);
-		// TODO: Remove handle sprite
+		// FIXME: Add code to Remove handle sprite (visible GFX glitch)
 		playSound(5, 4);
 		playSound(14, 14);
 		playSound(14, 33);
@@ -3589,11 +3589,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		wait(50);
 		dialog->show(44, scene, 0, 523, 0xd1, 0xe5, 0, 1);
 		dialog->show(45, scene, 0, 523, 0xd1, 0xe5, 0, 1);
-		SET_FLAG(0xdbb1, 1);
+		SET_FLAG(dsAddr_nutSwappedForAppleFlag, 1);
 		break;
 
 	case 0x8a6f: // banknote + ann
-		if (CHECK_FLAG(0xdbb5, 1)) {
+		if (CHECK_FLAG(dsAddr_examinedBanknoteFlag, 1)) {
 			dialog->show(63, scene, 0, 524, 0xd1, 0xe5, 0, 2);
 			playSound(5, 3);
 			playSound(5, 20);
@@ -3878,8 +3878,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x671d: // very last part of the game
 		moveTo(153, 163, 4);
 		playActorAnimation(973);
-		if (CHECK_FLAG(0xdbc1, 0)) {
-			SET_FLAG(0xdbc1, _rnd.getRandomNumber(5) + 1);
+		if (CHECK_FLAG(dsAddr_drawerPuzzleBookValue, 0)) {
+			SET_FLAG(dsAddr_drawerPuzzleBookValue, _rnd.getRandomNumber(5) + 1);
 		}
 		loadScene(30, 18, 159, 2);
 		break;
@@ -3907,16 +3907,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x687a: // using the book
-		if (CHECK_FLAG(0xdbc2, 1)) {
+		if (CHECK_FLAG(dsAddr_drawerPuzzleSolvedFlag, 1)) {
 			displayMessage(dsAddr_dontMessMsg); // "I don't need to mess with it anymore"
 		} else {
 			playSound(49, 5);
 			playSound(49, 17);
 			playActorAnimation(691);
 			if (!fnCheckingDrawers()) {
-				if (!CHECK_FLAG(0xdbc0, 1)) {
+				if (!CHECK_FLAG(dsAddr_drawerPuzzleBookMessageFlag, 1)) {
 					displayMessage(dsAddr_bookHeldMsg); // "Something's got hold of the book!"
-					SET_FLAG(0xdbc0, 1);
+					SET_FLAG(dsAddr_drawerPuzzleBookMessageFlag, 1);
 				}
 			} else {
 				playSound(15, 8); // secret compartment
@@ -3924,7 +3924,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				setOns(6, 59);
 				enableObject(4);
 				displayMessage(dsAddr_secretCompartmentMsg); // "Wow! A secret compartment!"
-				SET_FLAG(0xdbc2, 1);
+				SET_FLAG(dsAddr_drawerPuzzleSolvedFlag, 1);
 			}
 		}
 		break;
@@ -4280,7 +4280,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x79eb: // color of the book
 		// FIXME - Replace with internal lookup and switch
-		displayMessage(res->dseg.get_word(dsAddr_bookColorMsgPtr + GET_FLAG(0xdbc1) * 2 - 2));
+		displayMessage(res->dseg.get_word(dsAddr_bookColorMsgPtr + GET_FLAG(dsAddr_drawerPuzzleBookValue) * 2 - 2));
 		break;
 
 	case 0x79fd:
@@ -4834,7 +4834,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x9c6d:
 		displayMessage(dsAddr_bankNoteMsg); // "It's a note from some bank..."
-		SET_FLAG(0xdbb5, 1);
+		SET_FLAG(dsAddr_examinedBanknoteFlag, 1);
 		retVal = false;
 		break;
 

@@ -873,6 +873,27 @@ const uint16 dsAddr_mouseNerveMsgSaidFlag = 0xdbaa; // 1 byte
 // Mouse Already Got Gold Nugget Flag : 0xdbab
 const uint16 dsAddr_mouseGotGoldNuggetFlag = 0xdbab; // 1 byte
 
+// Nut Swapped For Apple in Fruit Bowl Flag : 0xdbb1
+const uint16 dsAddr_nutSwappedForAppleFlag = 0xdbb1; // 1 byte
+// Spoken To Man In Well Flag : 0xdbb2
+const uint16 dsAddr_spokenToManInWellFlag = 0xdbb2; // 1 byte
+// Spoken To Mirror Flag : 0xdbb3
+const uint16 dsAddr_spokenToMirrorFlag = 0xdbb3; // 1 byte
+// Cellar Shelves Examine Count (0 to 2(clamped))) : 0xdbb4
+const uint16 dsAddr_cellarShelfExamineCount = 0xdbb4; // 1 byte
+// Examined Bank Note Flag : 0xdbb5
+const uint16 dsAddr_examinedBanknoteFlag = 0xdbb5; // 1 byte
+
+// Mansion Colored Drawer Puzzle Hint Message Given Flag : 0xdbbd
+const uint16 dsAddr_drawerPuzzleHintGivenFlag = 0xdbbd; // 1 byte
+
+// Mansion Colored Drawer Puzzle Book Message Flag : 0xdbc0
+const uint16 dsAddr_drawerPuzzleBookMessageFlag = 0xdbc0; // 1 byte
+// Mansion Colored Drawer Puzzle - Random Book Color Value (0 = No Book, 1 to 6 = Books) : 0xdbc1
+const uint16 dsAddr_drawerPuzzleBookValue = 0xdbc1; // 1 byte
+// Mansion Colored Drawer Puzzle Solved Flag : 0xdbc2
+const uint16 dsAddr_drawerPuzzleSolvedFlag = 0xdbc2; // 1 byte
+
 // Graffiti Message Id : 0xdbdb, 0 to 6
 const uint16 dsAddr_graffitiMsgId = 0xdbdb; // 1 byte
 
