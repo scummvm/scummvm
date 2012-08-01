@@ -178,13 +178,13 @@ Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
 	switch (id) {
 
 	case 81:
-		if (dseg.get_byte(0xdbad))
+		if (dseg.get_byte(dsAddr_dogHasBoneFlag))
 			return lan500.getStream(160);
 		break;
 
 	case 137:
-		if (dseg.get_byte(0xdbc5) == 1) {
-			if (dseg.get_byte(0xdbc6) == 1)
+		if (dseg.get_byte(dsAddr_mansionTVOnFlag) == 1) {
+			if (dseg.get_byte(dsAddr_mansionVCRPlayingTapeFlag) == 1)
 				return lan500.getStream(203);
 			else
 				return lan500.getStream(202);
@@ -192,31 +192,31 @@ Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
 		break;
 
 	case 25:
-		if (dseg.get_byte(0xdbdf) == 2) {
+		if (dseg.get_byte(dsAddr_FirstActTrialState) == 2) {
 			return lan500.getStream(332);
 		}
 		break;
 
 	case 37:
-		if (dseg.get_byte(0xdbe2) == 1) {
+		if (dseg.get_byte(dsAddr_act1GuardState) == 1) {
 			return lan500.getStream(351);
-		} else if (dseg.get_byte(0xdbe2) == 2) {
+		} else if (dseg.get_byte(dsAddr_act1GuardState) == 2) {
 			return lan500.getStream(364);
 		}
 		break;
 
 	case 29:
-		if (dseg.get_byte(0xdbe7) == 1) {
+		if (dseg.get_byte(dsAddr_birdOnBarRadioAntennaFlag) == 1) {
 			return lan500.getStream(380);
 		}
 
 	case 30:
-		if (dseg.get_byte(0xdbe7) == 1) {
+		if (dseg.get_byte(dsAddr_birdOnBarRadioAntennaFlag) == 1) {
 			return lan500.getStream(381);
 		}
 
 	case 42:
-		if (dseg.get_byte(0xdbec) == 1) {
+		if (dseg.get_byte(dsAddr_johnNotyOutsideMansionDoorFlag) == 1) {
 			return lan500.getStream(400);
 		}
 	}

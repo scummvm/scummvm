@@ -873,6 +873,9 @@ const uint16 dsAddr_mouseNerveMsgSaidFlag = 0xdbaa; // 1 byte
 // Mouse Already Got Gold Nugget Flag : 0xdbab
 const uint16 dsAddr_mouseGotGoldNuggetFlag = 0xdbab; // 1 byte
 
+// Dog Has Bone Flag : 0xdbad
+const uint16 dsAddr_dogHasBoneFlag = 0xdbad; // 1 byte
+
 // Nut Swapped For Apple in Fruit Bowl Flag : 0xdbb1
 const uint16 dsAddr_nutSwappedForAppleFlag = 0xdbb1; // 1 byte
 // Spoken To Man In Well Flag : 0xdbb2
@@ -937,15 +940,48 @@ const uint16 dsAddr_MansionSinkState = 0xdbd6; // 1 byte
 const uint16 dsAddr_MansionThruFanByTimePillFlag = 0xdbd7; // 1 byte
 // Mansion Ventilator Fan Stopped Flag : 0xdbd8
 const uint16 dsAddr_MansionVentFanStoppedFlag = 0xdbd8; // 1 byte
-
-// Graffiti Message Id : 0xdbdb, 0 to 6
+// Mansion John Noty Escaping Flag : 0xdbd9
+const uint16 dsAddr_MansionJohnNotyEscapingFlag = 0xdbd9; // 1 byte
+// Shown Pass To Guard Flag : 0xdbda
+const uint16 dsAddr_ShownPassToGuardFlag = 0xdbda; // 1 byte
+// Graffiti Message Id (0 to 6) : 0xdbdb
 const uint16 dsAddr_graffitiMsgId = 0xdbdb; // 1 byte
-
+// Got Food Bowl in Jail Flag : 0xdbdc
+const uint16 dsAddr_GotFoodBowlInJailFlag = 0xdbdc; // 1 byte
+// Jail Cable and Bowl State (0 = Cable not in Bowl, 1 = Cable in Bowl, 2 = Bowl Electrified 3 = Captain Shocked) : 0xdbdd
+const uint16 dsAddr_JailCableAndBowlState = 0xdbdd; // 1 byte
+// Got Jail Key Flag : 0xdbde
+const uint16 dsAddr_GotJailKeyFlag = 0xdbde; // 1 byte
+// First Act Trial State (0 = Before First Trial, 1 to 3 = Trial 1st to 3rd) : 0xdbdf
+const uint16 dsAddr_FirstActTrialState = 0xdbdf; // 1 byte
+// Already Tickled Captain Flag : 0xdbe0
+const uint16 dsAddr_AlreadyTickledCaptainFlag = 0xdbe0; // 1 byte
+// Cut Fence Flag : 0xdbe1
+const uint16 dsAddr_cutFenceFlag = 0xdbe1; // 1 byte
+// Act 1 Guard State (0 = Normal, 1 = With Kaleidoscope & Grenade, 2 = Kaleidoscope & No Grenade) : 0xdbe2
+const uint16 dsAddr_act1GuardState = 0xdbe2; // 1 byte
+// Spoken to Barman About Third Trial Flag : 0xdbe3
+const uint16 dsAddr_spokeToBarmanAboutThirdTrialFlag = 0xdbe3; // 1 byte
+// Got Mug Of Mud Flag : 0xdbe4
+const uint16 dsAddr_gotMugOfMudFlag = 0xdbe4; // 1 byte
+// Got Rope In Act 1 Flag : 0xdbe5
+const uint16 dsAddr_gotRopeAct1Flag = 0xdbe5; // 1 byte
 // Captain Drawer State : 0xdbe6
 const uint16 dsAddr_captainDrawerState = 0xdbe6; // 1 byte
-
+// Bird on Bar Radio Antenna Flag : 0xdbe7
+const uint16 dsAddr_birdOnBarRadioAntennaFlag = 0xdbe7; // 1 byte
+// Swapped Barman Mug Flag : 0xdbe8
+const uint16 dsAddr_swappedBarmanMugFlag = 0xdbe8; // 1 byte
+// Barman Passed Out Flag : 0xdbe9
+const uint16 dsAddr_barmanPassedOutFlag = 0xdbe9; // 1 byte
 // Counter for Mansion Intrusion Attempts : 0xdbea
 const uint16 dsAddr_mansionEntryCount = 0xdbea;// 1 byte
+// Unused Byte : 0xdbeb
+// John Noty Outside Mansion Door Flag : 0xdbec
+const uint16 dsAddr_johnNotyOutsideMansionDoorFlag = 0xdbec; // 1 byte
+
+// Got Password Need to Speak To Barman Flag : 0xdbf0
+const uint16 dsAddr_gotPasswordNeedSpeakBarmanFlag = 0xdbf0; // 1 byte
 
 // Intro Credits #1 : 0xe3c2 to 0xe3e5 (Read Only)
 const uint16 dsAddr_introCredits1 = 0xe3c2; // "backgrounds ..."

@@ -340,7 +340,7 @@ bool TeenAgentEngine::fnMansionIntrusionAttempt() {
 			break;
 		}
 		playMusic(6);
-		if (getFlag(0xdbec) != 1 || attempts != 6)
+		if (getFlag(dsAddr_johnNotyOutsideMansionDoorFlag) != 1 || attempts != 6)
 			loadScene(id, scene->getPosition());
 		return true;
 	}
@@ -417,7 +417,7 @@ void TeenAgentEngine::fnSixthMansionIntrusion() {
 	setOns(3, 51);
 	playAnimation(911, 1);
 	playAnimation(899, 1);
-	setFlag(0xdbec, 1);
+	setFlag(dsAddr_johnNotyOutsideMansionDoorFlag, 1);
 	reloadLan();
 	wait(200);
 	enableObject(8);
@@ -526,7 +526,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x4021:
 		// pulling out mysterious object
-		if (CHECK_FLAG(0xdbe1, 1)) {
+		if (CHECK_FLAG(dsAddr_cutFenceFlag, 1)) {
 			playActorAnimation(844);
 			playActorAnimation(846);
 			playActorAnimation(845);
@@ -555,7 +555,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4094: // climbing to the pole near mudpool
-		if (CHECK_FLAG(0xdbe4, 1)) {
+		if (CHECK_FLAG(dsAddr_gotMugOfMudFlag, 1)) {
 			displayMessage(dsAddr_poleClimbDoneMsg); // "Never Again!"
 		} else {
 			for (byte i = 11; i <= 27; i += 4)
@@ -579,7 +579,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				inventory->add(invItemMugOfMud);
 				moveTo(86, 195, 1, true);
 				playActorAnimation(868);
-				SET_FLAG(0xdbe4, 1);
+				SET_FLAG(dsAddr_gotMugOfMudFlag, 1);
 			} else {
 				fnPoleClimbFail();
 				dialog->pop(scene, 0xdb72, 0, 0, 0xd1, 0xd1, 0, 0);
@@ -688,7 +688,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(70, 6);
 		playActorAnimation(962);
 		loadScene(7, 30, 184, 2);
-		if (res->dseg.get_byte(0xdbdf) < 2) {
+		if (res->dseg.get_byte(dsAddr_FirstActTrialState) < 2) {
 			wait(150);
 			moveTo(134, 167, 2);
 			displayMessage(dsAddr_firstTrialMsg); // "Sir, I'm Mark. A rookie"
@@ -706,12 +706,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 			dialog->showMono(150, scene, 0, 0xd1, 0);
 
-			SET_FLAG(0xdbdf, 1);
+			SET_FLAG(dsAddr_FirstActTrialState, 1);
 		}
 		break;
 
 	case 0x4482:
-		if (CHECK_FLAG(0xdbdf, 0)) {
+		if (CHECK_FLAG(dsAddr_FirstActTrialState, 0)) {
 			playActorAnimation(968);
 			displayMessage(dsAddr_lockedMsg); // "It's Locked!"
 		} else {
@@ -733,14 +733,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x44cb:
-		if (CHECK_FLAG(0xdbe5, 1)) {
+		if (CHECK_FLAG(dsAddr_gotRopeAct1Flag, 1)) {
 			displayMessage(dsAddr_vacMsg); // "What am I? A vacuum cleaner?!"
 		} else {
 			playSound(49, 14);
 			playSound(5, 21);
 			playActorAnimation(869);
 			inventory->add(invItemRopeAct1);
-			SET_FLAG(0xdbe5, 1);
+			SET_FLAG(dsAddr_gotRopeAct1Flag, 1);
 		}
 		break;
 
@@ -749,7 +749,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4539: // prison cell: use crates
-		if (CHECK_FLAG(0xdbdd, 2)) {
+		if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 2)) {
 			// finished the meal - trap
 			displayMessage(dsAddr_mealFinishedMsg); // "Hey! I finished my meal."
 			moveTo(306, 196, 2);
@@ -769,7 +769,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(3, 0x5b);
 			wait(50);
 			displayMessage(dsAddr_bowlWeldedMsg); // "Wow. He got welded to the bowl"
-			SET_FLAG(0xdbdd, 3);
+			SET_FLAG(dsAddr_JailCableAndBowlState, 3);
 			scene->getObject(4)->setName("body");
 		} else {
 			if (dialog->pop(scene, 0xdb5c, 0, 0, 0xd1, 0xd1, 0, 0) == 0x636b) { // 'im getting hungry'
@@ -785,14 +785,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				wait(100);
 				displayMessage(dsAddr_ThanksMsg); // "Thanks."
 				enableObject(4);
-				SET_FLAG(0xdbdc, 1);
+				SET_FLAG(dsAddr_GotFoodBowlInJailFlag, 1);
 			}
 		}
 		break;
 
 	case 0x4662:
-		if (CHECK_FLAG(0xdbdd, 3)) {
-			if (CHECK_FLAG(0xdbde, 1)) {
+		if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 3)) {
+			if (CHECK_FLAG(dsAddr_GotJailKeyFlag, 1)) {
 				displayMessage(dsAddr_noPocketMsg); // "I don't want to touch his pockets again."
 			} else {
 				moveTo(280, 179, 2);
@@ -800,14 +800,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(5, 17);
 				playActorAnimation(827);
 				inventory->add(invItemJailKey);
-				SET_FLAG(0xdbde, 1);
+				SET_FLAG(dsAddr_GotJailKeyFlag, 1);
 			}
 		} else
 			displayMessage(dsAddr_foodAliveMsg); // "No, thanks. This food seems still alive"
 		break;
 
 	case 0x46af: // prison cell: use live cable
-		if (CHECK_FLAG(0xdbdc, 1)) {
+		if (CHECK_FLAG(dsAddr_GotFoodBowlInJailFlag, 1)) {
 			displayMessage(dsAddr_ideaMsg); // "That gives me an idea"
 			setOns(2, 0);
 			playActorAnimation(821);
@@ -817,7 +817,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(822);
 			displayMessage(dsAddr_checkWorksMsg); // "Now I got to check if it works"
 			disableObject(5);
-			SET_FLAG(0xdbdd, 1);
+			SET_FLAG(dsAddr_JailCableAndBowlState, 1);
 		} else
 			displayMessage(dsAddr_unkUsageMsg); // "I don't have any idea what to do with it right now"
 		break;
@@ -847,7 +847,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4794: // prison cell door
-		if (res->dseg.get_byte(0xdbdf) >= 2) {
+		if (res->dseg.get_byte(dsAddr_FirstActTrialState) >= 2) {
 			loadScene(5, 287, 143);
 		} else {
 			displayMessage(dsAddr_doorClosedMsg); // "The door is closed. What a surprise."
@@ -862,18 +862,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x47db: // prison: use switch
-		if (CHECK_FLAG(0xdbdf, 1)) {
+		if (CHECK_FLAG(dsAddr_FirstActTrialState, 1)) {
 			playSound(71, 4);
 			playActorAnimation(823);
-			if (CHECK_FLAG(0xdbdd, 0)) {
+			if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 0)) {
 				displayMessage(dsAddr_NotHappenMsg); // "Nothing happened"
 			} else {
 				playSound(74, 1);
 				playAnimation(824, 1);
-				if (CHECK_FLAG(0xdbdd, 1)) {
+				if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 1)) {
 					wait(100);
 					displayMessage(dsAddr_timeToCallMsg); // "I think it is time to call captain"
-					SET_FLAG(0xdbdd, 2);
+					SET_FLAG(dsAddr_JailCableAndBowlState, 2);
 				}
 			}
 		} else {
@@ -934,9 +934,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4918: // talking with barmen
-		if (CHECK_FLAG(0xdbe7, 1)) {
+		if (CHECK_FLAG(dsAddr_birdOnBarRadioAntennaFlag, 1)) {
 			moveTo(140, 152, 1);
-			if (CHECK_FLAG(0xdbe8, 1)) {
+			if (CHECK_FLAG(dsAddr_swappedBarmanMugFlag, 1)) {
 				dialog->showMono(177, scene, 0, 0xd1, 0);
 				displayMessage(dsAddr_yeahRightMsg, 0xef, 32, 67); // "Yeah right!"
 				//reloadLan();
@@ -950,12 +950,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				shakeScreen();
 				disableObject(1);
 				disableObject(2);
-				SET_FLAG(0xdbe9, 1);
+				SET_FLAG(dsAddr_barmanPassedOutFlag, 1);
 			} else
 				displayMessage(dsAddr_talkNotNowMsg); // "I've got no reason to talk to him right now."
 		} else {
-			if (CHECK_FLAG(0xdbdf, 3)) {
-				if (CHECK_FLAG(0xdbe3, 1)) {
+			if (CHECK_FLAG(dsAddr_FirstActTrialState, 3)) {
+				if (CHECK_FLAG(dsAddr_spokeToBarmanAboutThirdTrialFlag, 1)) {
 					dialog->show(168, scene, 0, 857, 0xd1, 0xef, 0, 1);
 				} else {
 					dialog->show(166, scene, 0, 857, 0xd1, 0xef, 0, 1); // taking mug
@@ -966,8 +966,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 					playActorAnimation(860);
 					dialog->show(167, scene, 0, 857, 0xd1, 0xef, 0, 1);
 					inventory->add(invItemMug);
-					SET_FLAG(0xdbe3, 1);
-					SET_FLAG(0xdbf0, 0);
+					SET_FLAG(dsAddr_spokeToBarmanAboutThirdTrialFlag, 1);
+					SET_FLAG(dsAddr_gotPasswordNeedSpeakBarmanFlag, 0);
 				}
 			} else {
 				dialog->pop(scene, 0xdb68, 0, 857, 0xd1, 0xef, 0, 1);
@@ -1011,7 +1011,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4a64:
-		if (CHECK_FLAG(0xdbf0, 1))
+		if (CHECK_FLAG(dsAddr_gotPasswordNeedSpeakBarmanFlag, 1))
 			displayMessage(dsAddr_firstBusinessMsg); // "First I've got some business to take care of"
 		else
 			loadScene(5, 35, 162);
@@ -1054,11 +1054,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4a8c:
-		if (CHECK_FLAG(0xdbe9, 1)) {
+		if (CHECK_FLAG(dsAddr_barmanPassedOutFlag, 1)) {
 			playSound(89, 5);
 			playActorAnimation(958);
 			loadScene(9, 240, 182, 4);
-		} else if (CHECK_FLAG(0xdbe7, 1)) {
+		} else if (CHECK_FLAG(dsAddr_birdOnBarRadioAntennaFlag, 1)) {
 			displayMessage(dsAddr_barmanTooCloseMsg); // "The barman is too close"
 		} else {
 			dialog->pop(scene, 0xdb8a, 0, 857, 0xd1, 0xef, 0, 1);
@@ -1119,12 +1119,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(863, 1);
 		inventory->add(invItemGrenade);
 		disableObject(1);
-		SET_FLAG(0xdbe2, 2);
+		SET_FLAG(dsAddr_act1GuardState, 2);
 		break;
 
 	case 0x4c70:
-		if (CHECK_FLAG(0xdbe2, 0)) {
-			if (CHECK_FLAG(0xdbda, 1)) { // papers are shown
+		if (CHECK_FLAG(dsAddr_act1GuardState, 0)) {
+			if (CHECK_FLAG(dsAddr_ShownPassToGuardFlag, 1)) { // papers are shown
 				dialog->pop(scene, 0xdb4c, 0, 809, 0xd1, 0xd0, 0, 1);
 			} else {
 				dialog->pop(scene, 0xdb40, 0, 809, 0xd1, 0xd0, 0, 1);
@@ -1146,7 +1146,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4cac:
-		if (CHECK_FLAG(0xdbda, 1)) { // papers are shown
+		if (CHECK_FLAG(dsAddr_ShownPassToGuardFlag, 1)) { // papers are shown
 			loadScene(5, 124, 199);
 		} else {
 			dialog->show(144, scene, 0, 809, 0xd1, 0xd0, 0, 1);
@@ -1183,7 +1183,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(2, 50);
 		dialog->show(88, scene, 0, 666, 0xd1, 0xd0, 0, 2);
 		setOns(3, 0);
-		setFlag(0xdbec, 0);
+		setFlag(dsAddr_johnNotyOutsideMansionDoorFlag, 0);
 		reloadLan();
 		playSound(82, 19);
 		playAnimation(669, 1);
@@ -1949,7 +1949,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7866:
-		if (CHECK_FLAG(0xdbdd, 3))
+		if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 3))
 			displayMessage(dsAddr_gotchaMsg); // "Gotcha"
 		else
 			retVal = false;
@@ -1992,7 +1992,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x78bb:
-		if (CHECK_FLAG(0xdbe8, 1))
+		if (CHECK_FLAG(dsAddr_swappedBarmanMugFlag, 1))
 			displayMessage(dsAddr_yuckMsg); // "Yuck!"
 		else
 			retVal = false;
@@ -2034,11 +2034,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(0, 0x60);
 		moveTo(281, scene->getPosition().y, 0, true);
 		disableObject(4);
-		SET_FLAG(0xdbe1, 1);
+		SET_FLAG(dsAddr_cutFenceFlag, 1);
 		break;
 
 	case 0x7b89: // digging mysterious object
-		if (CHECK_FLAG(0xdbe1, 1)) {
+		if (CHECK_FLAG(dsAddr_cutFenceFlag, 1)) {
 			playActorAnimation(844);
 			setOns(1, 0);
 			playSound(5, 5);
@@ -2117,7 +2117,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7d1a: // captain's key + door
-		if (res->dseg.get_byte(0xdbdf) <= 1) {
+		if (res->dseg.get_byte(dsAddr_FirstActTrialState) <= 1) {
 			playSound(5, 2);
 			playSound(57, 12);
 			playSound(70, 19);
@@ -2144,14 +2144,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 			//playAnimation(831, 1);
 
-			SET_FLAG(0xdbdf, 2);
-
+			SET_FLAG(dsAddr_FirstActTrialState, 2);
 		} else
 			displayMessage(dsAddr_nahMsg); // "Nah"
 		break;
 
 	case 0x7e02: // tickling the captain
-		if (CHECK_FLAG(0xdbe0, 1)) {
+		if (CHECK_FLAG(dsAddr_AlreadyTickledCaptainFlag, 1)) {
 			displayMessage(dsAddr_doesNotWorkMsg); // "That doesn't work"
 		} else {
 			playSound(5, 6);
@@ -2163,7 +2162,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(0, 94);
 			dialog->show(161, scene, 0, 832, 0xd1, 0xec, 0, 1);
 			enableObject(12);
-			SET_FLAG(0xdbe0, 1);
+			SET_FLAG(dsAddr_AlreadyTickledCaptainFlag, 1);
 		}
 		break;
 
@@ -2186,8 +2185,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveTo(30, 181, 0);
 		disableObject(1);
 		setLan(1, 0);
-		SET_FLAG(0xdbdf, 3);
-		SET_FLAG(0xdbf0, 1);
+		SET_FLAG(dsAddr_FirstActTrialState, 3);
+		SET_FLAG(dsAddr_gotPasswordNeedSpeakBarmanFlag, 1);
 		loadScene(8, 155, 199);
 		break;
 
@@ -2207,7 +2206,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		//playAnimation(879, 0); // background bartender animation
 		inventory->remove(invItemBird);
 		enableObject(1);
-		SET_FLAG(0xdbe7, 1);
+		SET_FLAG(dsAddr_birdOnBarRadioAntennaFlag, 1);
 		break;
 
 	case 0x8047:
@@ -2218,11 +2217,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(2, 0x6b);
 		inventory->remove(invItemMugOfMud);
 		inventory->add(invItemMug);
-		SET_FLAG(0xdbe8, 1);
+		SET_FLAG(dsAddr_swappedBarmanMugFlag, 1);
 		break;
 
 	case 0x808b:
-		if (CHECK_FLAG(0xdbda, 1)) {
+		if (CHECK_FLAG(dsAddr_ShownPassToGuardFlag, 1)) {
 			displayMessage(dsAddr_gotPermissionMsg); // "I already got the permission"
 		} else {
 			displayMessage(dsAddr_showPapersMsg); // "Here are my papers"
@@ -2230,7 +2229,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 18);
 			playActorAnimation(810);
 			dialog->show(147, scene, 0, 809, 0xd1, 0xd0, 0, 1);
-			SET_FLAG(0xdbda, 1);
+			SET_FLAG(dsAddr_ShownPassToGuardFlag, 1);
 		}
 		break;
 
@@ -2248,7 +2247,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->add(invItemSoldierNews);
 		inventory->remove(invItemKaleidoscope);
 		enableObject(1);
-		SET_FLAG(0xdbe2, 1);
+		SET_FLAG(dsAddr_act1GuardState, 1);
 		break;
 
 	case 0x8398:
@@ -2447,7 +2446,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5a8b:
-		if (!CHECK_FLAG(0xdbad, 1)) {
+		if (!CHECK_FLAG(dsAddr_dogHasBoneFlag, 1)) {
 			playSound(43, 4); // grrrrrr
 			playSound(42, 15);
 			playSound(42, 17);
@@ -3082,7 +3081,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playAnimation(0, 3);
 
 				loadScene(31, 298, 177, 4);
-				SET_FLAG(0xdbd9, 1);
+				SET_FLAG(dsAddr_MansionJohnNotyEscapingFlag, 1);
 			} else
 				displayMessage(dsAddr_ventFirstMsg); // "I'd better stop this ventilator first"
 		} else
@@ -3122,7 +3121,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7f23: // Use grenade on captains drawer
-		if (CHECK_FLAG(0xdbdf, 3)) {
+		if (CHECK_FLAG(dsAddr_FirstActTrialState, 3)) {
 			enableOn(false);
 			playSound(5, 3);
 			playSound(58, 11);
@@ -3656,7 +3655,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(659, 0);
 
 		inventory->remove(invItemBone);
-		SET_FLAG(0xdbad, 1);
+		SET_FLAG(dsAddr_dogHasBoneFlag, 1);
 		{
 			Object *o = scene->getObject(7);
 			o->actor_rect.left = o->actor_rect.right = 297;
@@ -4057,7 +4056,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6be1: // handle to the bathroom
-		if (CHECK_FLAG(0xdbd9, 1))
+		if (CHECK_FLAG(dsAddr_MansionJohnNotyEscapingFlag, 1))
 			displayMessage(dsAddr_catchJohnFirstMsg); // "I'd better catch John Noty first"
 		else {
 			playSound(88, 4);
