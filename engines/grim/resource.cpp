@@ -92,7 +92,6 @@ ResourceLoader::ResourceLoader() {
 				error("residualvm-grim-patch.lab not found");
 
 			SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
-			SearchMan.listMatchingMembers(files, "datausr.lab");
 			SearchMan.listMatchingMembers(files, "data005.lab");
 			SearchMan.listMatchingMembers(files, "data004.lab");
 			SearchMan.listMatchingMembers(files, "data003.lab");
@@ -110,13 +109,10 @@ ResourceLoader::ResourceLoader() {
 
 			//Check the presence of datausr.lab and if the user wants to load it.
 			//In this case put it in the top of the list
-			Common::ArchiveMemberList::iterator datausr_it = Common::find_if(files.begin(), files.end(), LabListComperator("datausr.lab"));
-			if (datausr_it != files.end()) {
-				if (ConfMan.getBool("datausr_load")) {
-					warning("Loading datausr.lab. Please note that the ResidualVM-team doesn't provide support for using such patches");
-					files.push_front(*datausr_it);
-				}
-				files.erase(datausr_it);
+			const char *datausr_name = "datausr.lab";
+			if (SearchMan.hasFile(datausr_name) && ConfMan.getBool("datausr_load")) {
+				warning("Loading datausr.lab. Please note that the ResidualVM-team doesn't provide support for using such patches");
+				files.push_front(SearchMan.getMember(datausr_name));
 			}
 		}
 	} else if (g_grim->getGameType() == GType_MONKEY4) {
