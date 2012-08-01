@@ -248,7 +248,7 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-void static initGraphicsModes () {
+static void initGraphicsModes () {
 	s_supportedGraphicsModes = new Common::Array<OSystem::GraphicsMode>;
 	s_supportedGraphicsModesData = new Common::Array<GraphicsModeData>;
 	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
