@@ -927,6 +927,9 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 		u = _dimx - (width + u);
 		x1 = (prim->getDst()._x1 + _dimx - 1) - u;
 
+		if (width > x1)
+			width = x1;
+
 		// Specify the drawn area
 		bigBuf.addDirtyRect(Common::Rect(x1 - width, y1, x1, y1 + height));
 
