@@ -329,6 +329,22 @@ static const struct {
 	{"8042A",   600}
 };
 
+template<class Arg, class Res, class T>
+class Functor1MemConst : public Common::Functor1<Arg, Res> {
+public:
+	typedef Res (T::*FuncType)(Arg) const;
+
+	Functor1MemConst(T *t, const FuncType &func) : _t(t), _func(func) {}
+
+	bool isValid() const { return _func != 0 && _t != 0; }
+	Res operator()(Arg v1) const {
+		return (_t->*_func)(v1);
+	}
+private:
+	mutable T *_t;
+	const FuncType _func;
+};
+
 Action::Action(LastExpressEngine *engine) : _engine(engine) {
 	ADD_ACTION(dummy);
 	ADD_ACTION(inventory);
