@@ -545,6 +545,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_notWantToSleepMsg); // "I don't want to sleep"
 		break;
 
+	case 0x4056:
+		// FIXME - This is the bird use callback in the first act at 
+		//         the mudpool. Current Code based on behaviour. Need to analyse cseg data.
+		dialog->popMark(scene, 0xdb7a);
+		break;
+
 	case 0x4060:
 		loadScene(2, Common::Point(28, 180));
 		scene->setOrientation(2);
@@ -4919,10 +4925,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	default:
 		warning("unknown callback %04x called", addr);
-
-		// FIXME - unknown non-trivial callback 0x4056 called!
-		//         This is the bird use callback in the first act at 
-		//         the mudpool. Need to analyse cseg data.
 
 		// try decoding trivial callbacks by cseg if not in switch
 		byte *code = res->cseg.ptr(addr);
