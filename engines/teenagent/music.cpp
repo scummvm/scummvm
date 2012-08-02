@@ -40,6 +40,7 @@ MusicPlayer::MusicPlayer(TeenAgentEngine *vm) : Paula(false, 44100, 5000), _vm(v
 }
 
 MusicPlayer::~MusicPlayer() {
+	stop();
 }
 
 bool MusicPlayer::load(int id) {
