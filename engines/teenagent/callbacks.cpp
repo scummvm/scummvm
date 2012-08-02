@@ -1596,6 +1596,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
 		break;
 
+	case 0x5b44:
+		// FIXME - This is the doorbell use callback on House #2 
+		// i.e. Granny and Anne's House. Need to analyse cseg data properly.
+		// Current code inferred from behaviour.
+		// FIXME - Add animation call for Ego pushing doorbell.
+		displayMessage(dsAddr_ItsOpenMsg);
+		break;
+
 	case 0x5c72:
 		displayMessage(dsAddr_notTiredMsg); // "Thanks, I'm not tired"
 		break;
@@ -4911,10 +4919,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	default:
 		warning("unknown callback %04x called", addr);
-
-		// FIXME - unknown non-trivial callback 0x5b44 called!
-		//         This is the doorbell use callback on House #2 i.e.
-		//         Granny and Anne's House. Need to analyse cseg data.
 
 		// FIXME - unknown non-trivial callback 0x4056 called!
 		//         This is the bird use callback in the first act at 

@@ -756,11 +756,8 @@ const uint16 dsAddr_nothingToPlayMsg = 0x5d6e; // "I have nothing to play"
 const uint16 dsAddr_notMineMsg = 0x5d87; // "I can't take it. It's not mine."
 // Hey What's The Matter Message : 0x5da8 to 0x5dc1
 const uint16 dsAddr_HeyWtmQMsg = 0x5da8; // "Hey! What's the matter?!"
-
-// FIXME - Where is this used?!
 // Its Open Message : 0x5dc2 to 0x5dcd
 const uint16 dsAddr_ItsOpenMsg = 0x5dc2; // "It's Open!"
-
 // Out Of Order Message : 0x5dce to 0x5de1
 const uint16 dsAddr_outOfOrderMsg = 0x5dce; // "It's out of order"
 // Captain Watching Message : 0x5de2 to 0x5e0a
