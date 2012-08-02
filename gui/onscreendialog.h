@@ -35,10 +35,10 @@ private:
 	bool _mouseOver;
 	Common::Point _dragPoint;
 	GUI::StaticTextWidget *text;
-	bool isMouseOver(int x, int y);
 public:
 	OnScreenDialog();
 	~OnScreenDialog();
+	bool isMouseOver(int x, int y);
 	virtual bool isVisible() const;
 	virtual void reflowLayout();
 	void setReplayedTime(uint32 newTime);

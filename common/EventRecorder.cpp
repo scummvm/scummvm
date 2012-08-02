@@ -426,7 +426,7 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 	evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
 	g_gui.processEvent(evt, controlPanel);
 	if (_recordMode == kRecorderRecord) {
-		if (evt.mouse.x > controlPanel->_x && evt.mouse.x < controlPanel->_x + controlPanel->_w && evt.mouse.y > controlPanel->_y && evt.mouse.y < controlPanel->_y + controlPanel->_h) {
+		if (((evt.type == EVENT_LBUTTONDOWN) || (evt.type == EVENT_LBUTTONUP) || (evt.type == EVENT_MOUSEMOVE)) && controlPanel->isMouseOver()) {
 			return List<Event>();
 		}
 	}

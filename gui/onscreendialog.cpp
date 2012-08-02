@@ -89,20 +89,18 @@ OnScreenDialog::~OnScreenDialog() {
 }
 
 void OnScreenDialog::handleMouseMoved(int x, int y, int button) {
-
 	if (_enableDrag) {
 		_x = _x + x - _dragPoint.x;
 		_y = _y + y - _dragPoint.y;
 	}
 	Dialog::handleMouseMoved(x, y, button);
 	if (isMouseOver(x, y)) {
-		debug("Mouse over");
+		g_system->updateScreen();
 		if (_mouseOver == false) {
 			g_gui.theme()->showCursor();
 		}
 		_mouseOver = true;
 	} else {
-		debug("Not over");
 		if (_mouseOver == true) {
 			g_gui.theme()->hideCursor();
 		}
@@ -116,7 +114,7 @@ void OnScreenDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 		_dragPoint.y = y;
 		_enableDrag = true;
 	}
-	Dialog::handleMouseMoved(x, y, button);
+	Dialog::handleMouseDown(x, y, button, clickCount);
 }
 
 void OnScreenDialog::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -124,11 +122,15 @@ void OnScreenDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 
 	}
 	_enableDrag = false;
-	Dialog::handleMouseMoved(x, y, button);
+	Dialog::handleMouseUp(x, y, button, clickCount);
 }
 
 bool OnScreenDialog::isMouseOver(int x, int y) {
 	return (x >= 0 && x < _w && y >= 0 && y < _h);
+}
+
+bool OnScreenDialog::isMouseOver() {
+	return _mouseOver;
 }
 
 
