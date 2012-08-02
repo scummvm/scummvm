@@ -196,7 +196,7 @@ void TeenAgentEngine::fnEgoScaredBySpider() {
 		fnMoveToLadderAndLeaveCellar();
 		wait(100);
 		dialog->showMark(74, scene);
-		// FIXME : Missing code here? SET_FLAG(dsAddr_egoAlreadyScaredBySpiderFlag, 1); ?
+		SET_FLAG(dsAddr_egoAlreadyScaredBySpiderFlag, 1);
 	}
 }
 
