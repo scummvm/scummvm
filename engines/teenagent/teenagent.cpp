@@ -671,8 +671,8 @@ Common::Error TeenAgentEngine::run() {
 				if (current_object)
 					name += current_object->name;
 
-				uint w = res->font7.render(NULL, 0, 0, name, 0xd1);
-				res->font7.render(surface, (screenWidth - w) / 2, 180, name, 0xd1, true);
+				uint w = res->font7.render(NULL, 0, 0, name, textColorMark);
+				res->font7.render(surface, (screenWidth - w) / 2, 180, name, textColorMark, true);
 #if 0
 				if (current_object) {
 					current_object->rect.render(surface, 0x80);
@@ -719,7 +719,7 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint
 		return;
 	}
 
-	if (color == 0xd1) { // mark's
+	if (color == textColorMark) { // mark's
 		SceneEvent e(SceneEvent::kPlayAnimation);
 		e.animation = 0;
 		e.slot = 0x80;
@@ -790,7 +790,7 @@ void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 			break;
 		event.message += "\n";
 	}
-	int w = res->font8.render(NULL, 0, 0, event.message, 0xd1);
+	int w = res->font8.render(NULL, 0, 0, event.message, textColorCredits);
 	event.dst.x = (screenWidth - w) / 2;
 	event.timer = timer;
 	scene->push(event);
@@ -805,7 +805,7 @@ void TeenAgentEngine::displayCredits() {
 	for (uint i = 0; i < event.message.size(); ++i)
 		if (event.message[i] == '\n')
 			++lines;
-	event.dst.x = (screenWidth - res->font7.render(NULL, 0, 0, event.message, 0xd1)) / 2;
+	event.dst.x = (screenWidth - res->font7.render(NULL, 0, 0, event.message, textColorCredits)) / 2;
 	event.timer = 11 * lines - event.dst.y + 22;
 	debug(2, "credits = %s", event.message.c_str());
 	scene->push(event);

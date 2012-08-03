@@ -92,13 +92,13 @@ struct SceneEvent {
 	byte object;
 
 	SceneEvent(Type type_) :
-		type(type_), message(), color(0xd1), slot(0), animation(0), timer(0), orientation(0), dst(),
+		type(type_), message(), color(textColorMark), slot(0), animation(0), timer(0), orientation(0), dst(),
 		scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
 
 	void clear() {
 		type = kNone;
 		message.clear();
-		color = 0xd1;
+		color = textColorMark;
 		slot = 0;
 		orientation = 0;
 		animation = 0;
@@ -139,7 +139,7 @@ public:
 	void moveTo(const Common::Point &point, byte orientation = 0, bool validate = false);
 	Common::Point getPosition() const { return position; }
 
-	void displayMessage(const Common::String &str, byte color = 0xd1, const Common::Point &pos = Common::Point());
+	void displayMessage(const Common::String &str, byte color = textColorMark, const Common::Point &pos = Common::Point());
 	void setOrientation(uint8 o) { orientation = o; }
 	void push(const SceneEvent &event);
 	byte peekFlagEvent(uint16 addr) const;

@@ -499,7 +499,7 @@ bool Scene::processEvent(const Common::Event &event) {
 				events.clear();
 				sounds.clear();
 				current_event.clear();
-				message_color = 0xd1;
+				message_color = textColorMark;
 				for (int i = 0; i < 4; ++i)
 					custom_animation[i].free();
 				_vm->playMusic(4);
@@ -636,7 +636,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 				_vm->res->font8.shadow_color = current_event.orientation;
 				_vm->res->font8.render(surface, current_event.dst.x, current_event.dst.y, message, current_event.color);
 			} else {
-				_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, 0xd1);
+				_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, textColorCredits);
 			}
 			_vm->_system->unlockScreen();
 			return true;
@@ -1154,7 +1154,7 @@ bool Scene::processEventQueue() {
 	}
 
 	if (events.empty()) {
-		message_color = 0xd1;
+		message_color = textColorMark;
 		hide_actor = false;
 	}
 
@@ -1252,7 +1252,7 @@ void Scene::clear() {
 void Scene::clearMessage() {
 	message.clear();
 	message_timer = 0;
-	message_color = 0xd1;
+	message_color = textColorMark;
 	message_first_frame = 0;
 	message_last_frame = 0;
 	message_animation = NULL;
