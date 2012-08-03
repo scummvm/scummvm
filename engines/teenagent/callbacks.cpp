@@ -3450,7 +3450,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_noNeedMsg); // "No need to do it again"
 		} else {
 			SET_FLAG(dsAddr_alreadyAdjustedHoopPoleFlag, 1);
-			dialog->show(17, scene, 0, 502, textColorJohnNoty, textColorSonny, 0, 1); // FIXME - First character color should be Mark?
+			dialog->show(17, scene, 0, 502, textColorMark, textColorSonny, 0, 1);
 			waitLanAnimationFrame(1, 7);
 			playSound(5, 16);
 			playSound(1, 25);
