@@ -108,9 +108,13 @@ public:
 class DVI_ADPCMStream : public Ima_ADPCMStream {
 public:
 	DVI_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
+		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
+
+private:
+	uint8 _decodedSampleCount;
+	int16 _decodedSamples[2];
 };
 
 class Apple_ADPCMStream : public Ima_ADPCMStream {
