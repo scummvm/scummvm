@@ -71,7 +71,7 @@ int Oki_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
 
-	for (samples = 0; samples < numSamples && !_stream->eos() && (_stream->pos() < _endpos); samples++) {
+	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
 		if (_decodedSampleCount == 0) {
 			data = _stream->readByte();
 			_decodedSamples[0] = decodeOKI((data >> 4) & 0x0f);
@@ -123,7 +123,7 @@ int DVI_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
 
-	for (samples = 0; samples < numSamples && !_stream->eos() && (_stream->pos() < _endpos); samples++) {
+	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
 		if (_decodedSampleCount == 0) {
 			data = _stream->readByte();
 			_decodedSamples[0] = decodeIMA((data >> 4) & 0x0f, 0);
