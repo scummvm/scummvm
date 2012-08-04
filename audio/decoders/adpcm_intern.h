@@ -89,6 +89,10 @@ public:
 
 protected:
 	int16 decodeOKI(byte);
+
+private:
+	uint8 _decodedSampleCount;
+	int16 _decodedSamples[2];
 };
 
 class Ima_ADPCMStream : public ADPCMStream {
