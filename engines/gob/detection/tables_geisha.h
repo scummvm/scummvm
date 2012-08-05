@@ -69,6 +69,34 @@
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
+{ // Supplied by einstein95 in bug report #3544449
+	{
+		"geisha",
+		"",
+		AD_ENTRY1s("disk1.stk", "49107ac897e7c00af6c4ecd78a74a710", 212169),
+		ES_ESP,
+		kPlatformPC,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGeisha,
+	kFeaturesEGA | kFeaturesAdLib,
+	"disk1.stk", "intro.tot", 0
+},
+{ // Supplied by einstein95 in bug report #3544449
+	{
+		"geisha",
+		"",
+		AD_ENTRY1s("disk1.stk", "49107ac897e7c00af6c4ecd78a74a710", 212169),
+		IT_ITA,
+		kPlatformPC,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGeisha,
+	kFeaturesEGA | kFeaturesAdLib,
+	"disk1.stk", "intro.tot", 0
+},
 {
 	{
 		"geisha",
