@@ -1329,7 +1329,7 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_CMP_FLAGS
 	},
 
-	{
+	{ // French floppy version 1.20, bug #3552534 "KYRA: LOL Floppy FR version unknown"
 		{
 			"lol",
 			0,
@@ -1413,7 +1413,7 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
-	{
+	{ // French floppy version 1.23, bug #3552534 "KYRA: LOL Floppy FR version unknown"
 		{
 			"lol",
 			"Extracted",
