@@ -32,6 +32,8 @@ void Dialog::show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 anim
 	// starting offset used is two bytes early, thus implicitly changing the first command of this dialog
 	// from NEW_LINE to CHANGE_CHARACTER.
 	// FIXME: Unsure if this is correct behaviour or if this is a regression from the original. Check this.
+	// Similar issue occurs with Dialog 190 which is used from dialogue stack at 0x7403, rather than start of 0x7405
+	// Similar issue occurs with Dialog 0 which is used from dialogue stack at 0x0001, rather than start of 0x0000
 	if (dialogNum == 163)
 		addr -= 2;
 	show(scene, addr, animation1, animation2, color1, color2, slot1, slot2);

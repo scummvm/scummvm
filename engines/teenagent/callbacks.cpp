@@ -457,7 +457,7 @@ void TeenAgentEngine::fnGivingFlowerToOldLady() {
 }
 
 void TeenAgentEngine::fnGiveAnotherFlowerToOldLady() {
-		dialog->pop(scene, 0xdaf0, 0, 523, textColorMark, textColorOldLady, 0, 1);
+		dialog->pop(scene, dsAddr_dialogStackOldLady, 0, 523, textColorMark, textColorOldLady, 0, 1);
 }
 
 void TeenAgentEngine::fnGivingFlowerToAnne() {
@@ -479,7 +479,7 @@ void TeenAgentEngine::fnGivingFlowerToAnne() {
 }
 
 void TeenAgentEngine::fnGiveAnotherFlowerToAnne() {
-	dialog->pop(scene, 0xdb02, 0, 524, textColorMark, textColorAnne, 0, 2);
+	dialog->pop(scene, dsAddr_dialogStackAnotherFlowerToAnne, 0, 524, textColorMark, textColorAnne, 0, 2);
 }
 
 void TeenAgentEngine::rejectMessage() {
@@ -548,7 +548,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x4056:
 		// FIXME - This is the bird use callback in the first act at 
 		//         the mudpool. Current Code based on behaviour. Need to analyse cseg data.
-		dialog->popMark(scene, 0xdb7a);
+		dialog->popMark(scene, dsAddr_dialogStackMudpoolBird);
 		break;
 
 	case 0x4060:
@@ -589,7 +589,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				SET_FLAG(dsAddr_gotMugOfMudFlag, 1);
 			} else {
 				fnPoleClimbFail();
-				dialog->popMark(scene, 0xdb72);
+				dialog->popMark(scene, dsAddr_dialogStackFallIntoMudpool);
 			}
 		}
 		break;
@@ -779,7 +779,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			SET_FLAG(dsAddr_JailCableAndBowlState, 3);
 			scene->getObject(4)->setName("body");
 		} else {
-			if (dialog->pop(scene, 0xdb5c, 0, 0, textColorMark, textColorMark, 0, 0) == 0x636b) { // 'im getting hungry'
+			if (dialog->pop(scene, dsAddr_dialogStackJailDoorGrates, 0, 0, textColorMark, textColorMark, 0, 0) == 0x636b) { // 'im getting hungry'
 				wait(100);
 				playSound(52, 8);
 				playSound(52, 13);
@@ -977,7 +977,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 					SET_FLAG(dsAddr_gotPasswordNeedSpeakBarmanFlag, 0);
 				}
 			} else {
-				dialog->pop(scene, 0xdb68, 0, 857, textColorMark, textColorBarman, 0, 1);
+				dialog->pop(scene, dsAddr_dialogStackBarman, 0, 857, textColorMark, textColorBarman, 0, 1);
 			}
 		}
 		break;
@@ -1043,7 +1043,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x483a:
-		dialog->popMark(scene, 0xdb82);
+		dialog->popMark(scene, dsAddr_dialogStackInterrogateCaptain);
 		break;
 
 	case 0x4844:
@@ -1068,7 +1068,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else if (CHECK_FLAG(dsAddr_birdOnBarRadioAntennaFlag, 1)) {
 			displayMessage(dsAddr_barmanTooCloseMsg); // "The barman is too close"
 		} else {
-			dialog->pop(scene, 0xdb8a, 0, 857, textColorMark, textColorBarman, 0, 1);
+			dialog->pop(scene, dsAddr_dialogStackBarCellarDoor, 0, 857, textColorMark, textColorBarman, 0, 1);
 		}
 		break;
 
@@ -1132,9 +1132,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x4c70:
 		if (CHECK_FLAG(dsAddr_act1GuardState, 0)) {
 			if (CHECK_FLAG(dsAddr_ShownPassToGuardFlag, 1)) { // papers are shown
-				dialog->pop(scene, 0xdb4c, 0, 809, textColorMark, textColorCampGuard, 0, 1);
+				dialog->pop(scene, dsAddr_dialogStackCampGuardReadingNews, 0, 809, textColorMark, textColorCampGuard, 0, 1);
 			} else {
-				dialog->pop(scene, 0xdb40, 0, 809, textColorMark, textColorCampGuard, 0, 1);
+				dialog->pop(scene, dsAddr_dialogStackCampGuardWantsDocuments, 0, 809, textColorMark, textColorCampGuard, 0, 1);
 			}
 		} else {
 			displayMessage(dsAddr_helloQMsg); // "Hello?"
@@ -1158,13 +1158,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else {
 			dialog->show(144, scene, 0, 809, textColorMark, textColorCampGuard, 0, 1);
 			moveTo(269, 175, 4);
-			dialog->pop(scene, 0xdb56, 0, 809, textColorMark, textColorCampGuard, 0, 1);
+			dialog->pop(scene, dsAddr_dialogStackCampGuardShowPass, 0, 809, textColorMark, textColorCampGuard, 0, 1);
 		}
 		break;
 
 	case 0x4cf1: // talking with mansion guard
 		SET_FLAG(dsAddr_spokenWithMansionGuardFlag, 1);
-		if (dialog->pop(scene, 0xdaa6, 0, 529, textColorMark, textColorMansionGuard, 0, 1) == 0x1b4) {
+		if (dialog->pop(scene, dsAddr_dialogStackPleadingToMansionGuard, 0, 529, textColorMark, textColorMansionGuard, 0, 1) == 0x01b4) { // 2nd try
 			Common::Point p = scene->getPosition();
 			moveTo(189, 159, 0);
 			//waitLanAnimationFrame(1, 1);
@@ -1177,7 +1177,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 			moveTo(p, 2);
 			inventory->add(invItemChocCandy);
-			dialog->pop(scene, 0xdaa6, 0, 529, textColorMark, textColorMansionGuard, 0, 1);
+			dialog->pop(scene, dsAddr_dialogStackPleadingToMansionGuard, 0, 529, textColorMark, textColorMansionGuard, 0, 1);
 		}
 		break;
 
@@ -1434,8 +1434,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x55a8:
 		{
-			uint16 d = dialog->popMark(scene, 0xdb08);
-			if (d == 0x2c5d) {
+			uint16 d = dialog->popMark(scene, dsAddr_dialogStackSquirrel);
+			if (d == 0x2c5d) { // 4th try - Throw Nut
 				waitLanAnimationFrame(1, 0x23);
 				setOns(0, 0);
 				playSound(52, 9);
@@ -1447,7 +1447,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				displayMessage(dsAddr_ThanksMsg); // "Thanks."
 				disableObject(5);
 				SET_FLAG(dsAddr_squirrelNutState, 1);
-			} else if (d != 0x2c9b) {
+			} else if (d != 0x2c9b) { // 5th (last) try
 				waitLanAnimationFrame(1, 0x23);
 				playSound(52, 9);
 				playSound(52, 11);
@@ -1653,8 +1653,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(605, 0);
 			dialog->show(47, scene, 0, 523, textColorMark, textColorOldLady, 0, 1);
 		} else {
-			uint16 d = dialog->pop(scene, 0xdada, 0, 523, textColorMark, textColorOldLady, 0, 1);
-			if (d == 0x1913) {
+			uint16 d = dialog->pop(scene, dsAddr_dialogStackAskOldLadyOK, 0, 523, textColorMark, textColorOldLady, 0, 1);
+			if (d == 0x1913) { // 3rd time
 				wait(100);
 				moveRel(0, 0, 3);
 				wait(50);
@@ -1686,7 +1686,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5ff3: // get duster
 		if (CHECK_FLAG(dsAddr_givenFlowerToOldLadyAlreadyFlag, 0)) {
-			dialog->pop(scene, 0xdaf6, 0, 523, textColorMark, textColorOldLady, 0, 1);
+			dialog->pop(scene, dsAddr_dialogStackBorrowDusterFromOldLady, 0, 523, textColorMark, textColorOldLady, 0, 1);
 		} else {
 			dialog->show(43, scene, 0, 523, textColorMark, textColorOldLady, 0, 1);
 			wait(50);
@@ -2421,7 +2421,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x58a2:
-		dialog->pop(scene, 0xdaba, 0, 502, textColorMark, textColorSonny, 0, 1);
+		dialog->pop(scene, dsAddr_dialogStackSonny, 0, 502, textColorMark, textColorSonny, 0, 1);
 		scene->getObject(13)->setName((const char *)res->dseg.ptr(dsAddr_scnObjNameSonny));
 		break;
 
@@ -2488,7 +2488,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5b3a: // Click on dog
-		dialog->popMark(scene, 0xdb14);
+		dialog->popMark(scene, dsAddr_dialogStackDog);
 		break;
 
 	case 0x5b59: // picking up the rope
@@ -2510,7 +2510,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5be1: // Talk to grandpa
-		dialog->pop(scene, 0xdac4, 0, 522, textColorMark, textColorGrandpa, 0, 1);
+		dialog->pop(scene, dsAddr_dialogStackGrandpa, 0, 522, textColorMark, textColorGrandpa, 0, 1);
 		break;
 
 	case 0x5bee:
@@ -2544,7 +2544,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(0, 0);
 			playActorAnimation(520);
 		} else {
-			dialog->pop(scene, 0xdace, 0, 522, textColorMark, textColorGrandpa, 0, 1);
+			dialog->pop(scene, dsAddr_dialogStackGrandpaShotgun, 0, 522, textColorMark, textColorGrandpa, 0, 1);
 		}
 		break;
 
@@ -2562,7 +2562,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			disableObject(13);
 			inventory->add(invItemFan);
 		} else {
-			dialog->pop(scene, 0xdad4, 0, 522, textColorMark, textColorGrandpa, 0, 1);
+			dialog->pop(scene, dsAddr_dialogStackGrandpaFan, 0, 522, textColorMark, textColorGrandpa, 0, 1);
 		}
 		break;
 
@@ -2608,7 +2608,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(dsAddr_nutSwappedForAppleFlag, 1)) {
 			displayMessage(dsAddr_noFruitMsg); // "There are no more interesting fruits here"
 		} else {
-			dialog->pop(scene, 0xdafc, 0, 523, textColorMark, textColorOldLady, 0, 1);
+			dialog->pop(scene, dsAddr_dialogStackGetAppleOldLady, 0, 523, textColorMark, textColorOldLady, 0, 1);
 		}
 		break;
 
@@ -2657,7 +2657,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x61e9:
 		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
-			dialog->popMark(scene, 0xdb1e);
+			dialog->popMark(scene, dsAddr_dialogStackTakeAxe);
 		else
 			fnTooDark();
 		break;
@@ -2843,7 +2843,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x70bb:
-		dialog->pop(scene, 0xdb24, 0, 709, textColorMark, textColorCook, 0, 1);
+		dialog->pop(scene, dsAddr_dialogStackBusyCook, 0, 709, textColorMark, textColorCook, 0, 1);
 		break;
 
 	case 0x71ae:
@@ -3104,7 +3104,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x783d:
-		dialog->pop(scene, 0xdb36, 0, 797, textColorMark, textColorJohnNoty, 0, 1);
+		dialog->pop(scene, dsAddr_dialogStackJohnNotyEndgame, 0, 797, textColorMark, textColorJohnNoty, 0, 1);
 		break;
 
 	case 0x7966:
@@ -3589,6 +3589,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->remove(invItemWrappedCandy);
 		playSound(5, 6);
 		dialog->show(60, scene, 0, 524, textColorMark, textColorAnne, 0, 2);
+		// FIXME - Dialog #61 not explicitly called. Does Dialog #60 run on somehow?
 		playActorAnimation(555, true);
 		playAnimation(556, 1, true);
 		waitAnimation();
@@ -4094,7 +4095,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6c83:
 		waitLanAnimationFrame(1, 1);
-		dialog->pop(scene, 0xdb2e, 0, 727, textColorMark, textColorMike, 0, 1);
+		dialog->pop(scene, dsAddr_dialogStackRobotSafe, 0, 727, textColorMark, textColorMike, 0, 1);
 		scene->getObject(1)->setName((const char *)res->dseg.ptr(dsAddr_scnObjNameMike));
 		SET_FLAG(dsAddr_MansionRobotSafeUnlockedFlag, 1);
 		break;

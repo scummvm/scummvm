@@ -877,9 +877,62 @@ const uint16 dsAddr_spokenWithMansionGuardFlag = 0xda96; // 1 byte
 //         doesn't now appear to be read.
 const uint16 dsAddr_haveNotSpokenWithMansionGuardFlag = 0xda97; // 1 byte
 
+// Dialog Stack - Pleading with Mansion Guard : 0xdaa6 to 0xdab1
+const uint16 dsAddr_dialogStackPleadingToMansionGuard = 0xdaa6;
+// Dialog Stack - Mansion Guard Drinking : 0xdab2 to 0xdab9
+// FIXME - Can't find where this is used...
+const uint16 dsAddr_dialogStackMansionGuardDrinking = 0xdab2;
+// Dialog Stack - Talking To Sonny : 0xdaba to 0xdac3
+const uint16 dsAddr_dialogStackSonny = 0xdaba;
+// Dialog Stack - Talking To Grandpa : 0xdac4 to 0xdacd
+const uint16 dsAddr_dialogStackGrandpa = 0xdac4;
 // Cave Thorns Cut Down Flag : 0xdaca
+// FIXME - Cave Thorns Flag overlap with dsAddr_dialogStackGrandpa. Bug or typo?
 const uint16 dsAddr_caveThornsCutDownFlag = 0xdaca; // 1 byte
-
+// Dialog Stack - Trying To Borrow Shotgun From Grandpa : 0xdace to 0xdad3
+const uint16 dsAddr_dialogStackGrandpaShotgun = 0xdace;
+// Dialog Stack - Trying To Borrow Fan From Grandpa : 0xdad4 to 0xdad9
+const uint16 dsAddr_dialogStackGrandpaFan = 0xdad4;
+// Dialog Stack - Ask Old Lady if OK : 0xdada to 0xdaef
+const uint16 dsAddr_dialogStackAskOldLadyOK = 0xdada;
+// Dialog Stack - Talking To Old Lady : 0xdaf0 to 0xdaf5
+const uint16 dsAddr_dialogStackOldLady = 0xdaf0;
+// Dialog Stack - Borrow Duster From Old Lady : 0xdaf6 to 0xdafb
+const uint16 dsAddr_dialogStackBorrowDusterFromOldLady = 0xdaf6;
+// Dialog Stack - Get Old Lady's Apple : 0xdafc to 0xdb01
+const uint16 dsAddr_dialogStackGetAppleOldLady = 0xdafc;
+// Dialog Stack - Giving Another Flower To Anne : 0xdb02 to 0xdb07
+const uint16 dsAddr_dialogStackAnotherFlowerToAnne = 0xdb02;
+// Dialog Stack - Talking To Squirrel : 0xdb08 to 0xdb13
+const uint16 dsAddr_dialogStackSquirrel = 0xdb08;
+// Dialog Stack - Talking To Dog : 0xdb14 to 0xdb1d
+const uint16 dsAddr_dialogStackDog = 0xdb14;
+// Dialog Stack - Take Axe : 0xdb1e to 0xdb23
+const uint16 dsAddr_dialogStackTakeAxe = 0xdb1e;
+// Dialog Stack - Talking To Busy Cook : 0xdb24 to 0xdb2d
+const uint16 dsAddr_dialogStackBusyCook = 0xdb24;
+// Dialog Stack - Talking To Mike the Robot Safe : 0xdb2e to 0xdb35
+const uint16 dsAddr_dialogStackRobotSafe = 0xdb2e;
+// Dialog Stack - Talking To John Noty At Endgame : 0xdb36 to 0xdb3f
+const uint16 dsAddr_dialogStackJohnNotyEndgame = 0xdb36;
+// Dialog Stack - Camp Guard Waiting For Documents : 0xdb40 to 0xdb4b
+const uint16 dsAddr_dialogStackCampGuardWantsDocuments = 0xdb40;
+// Dialog Stack - Camp Guard Reading Soldier News : 0xdb4c to 0xdb55
+const uint16 dsAddr_dialogStackCampGuardReadingNews = 0xdb4c;
+// Dialog Stack - Camp Guard Show Pass : 0xdb56 to 0xdb5b
+const uint16 dsAddr_dialogStackCampGuardShowPass = 0xdb56;
+// Dialog Stack - Jail Door Grates : 0xdb5c to 0xdb67
+const uint16 dsAddr_dialogStackJailDoorGrates = 0xdb5c;
+// Dialog Stack - Talking to Barman : 0xdb68 to 0xdb71
+const uint16 dsAddr_dialogStackBarman = 0xdb68;
+// Dialog Stack - Fall Into Mudpool : 0xdb72 to 0xdb79
+const uint16 dsAddr_dialogStackFallIntoMudpool = 0xdb72;
+// Dialog Stack - Talking To Mudpool Bird : 0xdb7a to 0xdb81
+const uint16 dsAddr_dialogStackMudpoolBird = 0xdb7a;
+// Dialog Stack - Interrogate Captain : 0xdb82 to 0xdb89
+const uint16 dsAddr_dialogStackInterrogateCaptain = 0xdb82;
+// Dialog Stack - Bar Cellar Door : 0xdb8a to 0xdb8f
+const uint16 dsAddr_dialogStackBarCellarDoor = 0xdb8a;
 // Current Music Id Playing : 0xdb90
 const uint16 dsAddr_currentMusic = 0xdb90; // 1 byte
 // Unused Byte : 0xdb91
