@@ -305,12 +305,20 @@ Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 	_hero->park();
 	_oldLev = _lev;
 
+	int x = _hero->_x;
+	int y = _hero->_y;
+	int z = _hero->_z;
+
 	// Write out the user's progress
 	saveGame(slot, desc);
 	_commandHandler->addCommand(kCmdLevel, -1, _oldLev, &_sceneLight);
 
 	// Reload the scene
 	sceneUp();
+
+	_hero->_x = x;
+	_hero->_y = y;
+	_hero->_z = z;
 
 	return Common::kNoError;
 }
