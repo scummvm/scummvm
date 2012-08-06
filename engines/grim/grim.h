@@ -162,6 +162,7 @@ public:
 	 */
 	void addTalkingActor(Actor *actor);
 	bool areActorsTalking() const;
+	void immediatelyRemoveActor(Actor *actor);
 
 	void setMovieSubtitle(TextObject *to);
 
