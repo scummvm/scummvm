@@ -1664,6 +1664,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		break;
 
+	case 0x5f9a:
 	case 0x5fa1:
 		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
 		break;
