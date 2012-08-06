@@ -1263,6 +1263,20 @@ static INV_OBJECT *GetInvObject(int id) {
 }
 
 /**
+ * Returns true if the given id represents a valid inventory object
+ */
+bool GetIsInvObject(int id) {
+	INV_OBJECT *pObject = g_invObjects;
+
+	for (int i = 0; i < g_numObjects; i++, pObject++) {
+		if (pObject->id == id)
+			return true;
+	}
+
+	return false;
+}
+
+/**
  * Convert item ID number to index.
  */
 static int GetObjectIndex(int id) {
