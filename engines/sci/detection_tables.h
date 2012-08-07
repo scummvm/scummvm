@@ -2798,7 +2798,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
-	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy v1.102 (suppled by digitoxin1 in bug report #3554611)
+	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy v1.102 Int#0.000.629 (suppled by digitoxin1 in bug report #3554611)
 	// Note: Identical detection entry to English Amiga versions, so will trigger version choice dialog.
 	{"qfg1", "", {
 		{"resource.map", 0, "b162dbd4632250d4d83bed46d0783c10", 6396},
@@ -2810,7 +2810,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// Quest for Glory 1 / Hero's Quest - English DOS 5.25" Floppy v1.102 (suppled by digitoxin1 in bug report #3554611)
+	// Quest for Glory 1 / Hero's Quest - English DOS 5.25" Floppy v1.102 Int#0.000.629 (suppled by digitoxin1 in bug report #3554611)
 	{"qfg1", "", {
 		{"resource.map", 0, "5772a2c1bfae46f26582582c9901121e", 6858},
 		{"resource.000", 0, "40332d3ebfc70a4b6a6a0443c2763287", 78800},
@@ -3029,7 +3029,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Quest for Glory 2 - English DOS (supplied by digitoxin1 in bug report #3554614)
-	// 1.102 9x3.5"
+	// v1.102 9x3.5" (label: Int#11.20.90)
 	{"qfg2", "", {
 		{"resource.map", 0, "367023314ea33e3156297402f6c1da49", 8166},
 		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212119},
