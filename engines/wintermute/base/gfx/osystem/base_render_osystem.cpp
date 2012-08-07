@@ -199,6 +199,20 @@ bool BaseRenderOSystem::indicatorFlip() {
 bool BaseRenderOSystem::flip() {
 	if (!_disableDirtyRects) {
 		drawTickets();
+	} else {
+		// Clear the scale-buffered tickets that wasn't reused.
+		RenderQueueIterator it = _renderQueue.begin();
+		while (it != _renderQueue.end()) {
+			if ((*it)->_wantsDraw == false) {
+				RenderTicket *ticket = *it;
+				addDirtyRect((*it)->_dstRect);
+				it = _renderQueue.erase(it);
+				delete ticket;
+			} else {
+				(*it)->_wantsDraw = false;
+				it++;
+			}
+		}
 	}
 	if (_needsFlip || _disableDirtyRects) {
 		if (_disableDirtyRects) {
@@ -292,13 +306,6 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 }
 
 void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) {
-	if (_disableDirtyRects) {
-		RenderTicket renderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
-		// HINT: The surface-data contains other info than it should.
-		//  drawFromSurface(renderTicket._surface, srcRect, dstRect, NULL, mirrorX, mirrorY);
-		drawFromSurface(&renderTicket, NULL);
-		return;
-	}
 	// Skip rects that are completely outside the screen:
 	if ((dstRect->left < 0 && dstRect->right < 0) || (dstRect->top < 0 && dstRect->bottom < 0)) {
 		return;
@@ -311,14 +318,24 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
 			if ((*it)->_owner == owner && *(*it) == compare && (*it)->_isValid) {
 				(*it)->_colorMod = _colorMod;
-				drawFromTicket(*it);
+				if (_disableDirtyRects) {
+					drawFromSurface(*it, NULL);
+				} else {
+					drawFromTicket(*it);
+				}
 				return;
 			}
 		}
 	}
 	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
 	ticket->_colorMod = _colorMod;
-	drawFromTicket(ticket);
+	if (!_disableDirtyRects) {
+		drawFromTicket(ticket);
+	} else {
+		ticket->_wantsDraw = true;
+		_renderQueue.push_back(ticket);
+		drawFromSurface(ticket, NULL);
+	}
 }
 
 void BaseRenderOSystem::invalidateTicket(RenderTicket *renderTicket) {
