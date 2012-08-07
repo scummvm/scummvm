@@ -66,6 +66,8 @@ struct TransparentSurface : public Graphics::Surface {
 	    FLIP_VH = FLIP_H | FLIP_V
 	};
 
+	bool _enableAlphaBlit;
+
 	/**
 	 @brief renders the surface to another surface
 	 @param pDest a pointer to the target image. In most cases this is the framebuffer.

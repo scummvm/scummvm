@@ -29,9 +29,9 @@
 
 namespace WinterMute {
 
-TransparentSurface::TransparentSurface() : Surface() {}
+TransparentSurface::TransparentSurface() : Surface(), _enableAlphaBlit(true) {}
 
-TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface() {
+TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _enableAlphaBlit(true) {
 	if (copyData) {
 		copyFrom(surf);
 	} else {
@@ -43,7 +43,31 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
-void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void doBlitOpaque(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+	byte *in, *out;
+	
+#ifdef SCUMM_LITTLE_ENDIAN
+	const int aIndex = 3;
+#else
+	const int aIndex = 0;
+#endif
+	
+	for (uint32 i = 0; i < height; i++) {
+		out = outo;
+		in = ino;
+		for (uint32 j = 0; j < width; j++) {
+			uint32 pix = *(uint32 *)in;
+			in += inStep;
+			*(uint32*)out = pix;
+			out[aIndex] = 0xFF;
+			out += 4;
+		}
+		outo += pitch;
+		ino += inoStep;
+	}
+}
+
+void doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in, *out;
 
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -246,7 +270,11 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		const int rShiftTarget = 16;//target.format.rShift;
 
 		if (ca == 255 && cb == 255 && cg == 255 && cr == 255) {
-			doBlit(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+			if (_enableAlphaBlit) {
+				doBlitAlpha(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+			} else {
+				doBlitOpaque(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+			}
 		} else {
 			for (int i = 0; i < img->h; i++) {
 				out = outo;

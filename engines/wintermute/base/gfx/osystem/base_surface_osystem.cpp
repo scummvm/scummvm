@@ -396,17 +396,17 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	// But no checking is in place for that yet.
 
 	// TODO: Optimize by not doing alpha-blits if we lack or disable alpha
-/*	bool hasAlpha;
+	bool hasAlpha;
 	if (_hasAlpha && !alphaDisable) {
 		hasAlpha = true;
 	} else {
 		hasAlpha = false;
-	}*/
+	}
 	if (alphaDisable) {
 		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
 	}
 
-	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY);
+	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY, !hasAlpha);
 
 	return STATUS_OK;
 }

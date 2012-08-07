@@ -39,7 +39,7 @@ class BaseSurfaceOSystem;
 class RenderTicket {
 	Graphics::Surface *_surface;
 public:
-	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false);
+	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false, bool disableAlpha = false);
 	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0) {}
 	~RenderTicket();
 	const Graphics::Surface *getSurface() { return _surface; }
@@ -97,11 +97,12 @@ public:
 		return _ratioY;
 	}
 
-	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY);
+	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false);
 	BaseSurface *createSurface();
 private:
 	void addDirtyRect(const Common::Rect &rect);
 	void drawTickets();
+	void drawFromSurface(RenderTicket *ticket, Common::Rect *clipRect);
 	void drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror);
 	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
 	Common::Rect *_dirtyRect;
@@ -110,6 +111,7 @@ private:
 	uint32 _drawNum;
 	Common::Rect _renderRect;
 	Graphics::Surface *_renderSurface;
+	Graphics::Surface *_blankSurface;
 
 	int _borderLeft;
 	int _borderTop;

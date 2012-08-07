@@ -40,8 +40,8 @@
 
 namespace WinterMute {
 
-RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) : _owner(owner),
-	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(true) {
+RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) : _owner(owner),
+	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(!disableAlpha) {
 	_colorMod = 0;
 	_mirror = TransparentSurface::FLIP_NONE;
 	if (mirrorX) {
@@ -97,6 +97,7 @@ BaseRenderer *makeOSystemRenderer(BaseGame *inGame) {
 //////////////////////////////////////////////////////////////////////////
 BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_renderSurface = new Graphics::Surface();
+	_blankSurface = new Graphics::Surface();
 	_drawNum = 1;
 	_needsFlip = true;
 
@@ -111,6 +112,8 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 BaseRenderOSystem::~BaseRenderOSystem() {
 	_renderSurface->free();
 	delete _renderSurface;
+	_blankSurface->free();
+	delete _blankSurface;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -166,6 +169,8 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	g_system->showMouse(false);
 
 	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
+	_blankSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
+	_blankSurface->fillRect(Common::Rect(0, 0, g_system->getHeight(), g_system->getWidth()), _blankSurface->format.ARGBToColor(255, 0, 0, 0));
 	_active = true;
 
 	_clearColor = _renderSurface->format.ARGBToColor(255, 0, 0, 0);
@@ -217,6 +222,11 @@ bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 		return STATUS_OK;
 	}
 	if (!rect) {
+		if (r == 0 && g == 0 && b == 0) {
+			// Simply memcpy from the buffered black-surface, way faster than Surface::fillRect.
+			memcpy(_renderSurface->pixels, _blankSurface->pixels, _renderSurface->pitch * _renderSurface->h);
+			return STATUS_OK;
+		}
 		rect = &_renderRect;
 	}
 	// TODO: This doesn't work with dirty rects
@@ -281,12 +291,12 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 	return _renderSurface->format;
 }
 
-void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY) {
+void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) {
 	if (_disableDirtyRects) {
-		RenderTicket renderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY);
+		RenderTicket renderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
 		// HINT: The surface-data contains other info than it should.
 		//  drawFromSurface(renderTicket._surface, srcRect, dstRect, NULL, mirrorX, mirrorY);
-		drawFromSurface(renderTicket.getSurface(), &renderTicket._srcRect, &renderTicket._dstRect, NULL, renderTicket._mirror);
+		drawFromSurface(&renderTicket, NULL);
 		return;
 	}
 	// Skip rects that are completely outside the screen:
@@ -295,7 +305,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	}
 
 	if (owner) { // Fade-tickets are owner-less
-		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY);
+		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
 		compare._colorMod = _colorMod;
 		RenderQueueIterator it;
 		for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
@@ -306,7 +316,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 			}
 		}
 	}
-	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY);
+	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
 	ticket->_colorMod = _colorMod;
 	drawFromTicket(ticket);
 }
@@ -445,6 +455,22 @@ void BaseRenderOSystem::drawTickets() {
 }
 
 // Replacement for SDL2's SDL_RenderCopy
+void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *clipRect) {
+	TransparentSurface src(*ticket->getSurface(), false);
+	bool doDelete = false;
+	if (!clipRect) {
+		doDelete = true;
+		clipRect = new Common::Rect();
+		clipRect->setWidth(ticket->getSurface()->w);
+		clipRect->setHeight(ticket->getSurface()->h);
+	}
+
+	src._enableAlphaBlit = ticket->_hasAlpha;
+	src.blit(*_renderSurface, ticket->_dstRect.left, ticket->_dstRect.top, ticket->_mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
+	if (doDelete) {
+		delete clipRect;
+	}
+}
 void BaseRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror) {
 	TransparentSurface src(*surf, false);
 	bool doDelete = false;
