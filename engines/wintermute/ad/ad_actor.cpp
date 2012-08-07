@@ -43,7 +43,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
-#include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/base/base_engine.h"
 
 namespace WinterMute {
 
@@ -1262,7 +1262,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 		}
 
 		if (talkAnims.getSize() > 0) {
-			int rnd = g_wintermute->randInt(0, talkAnims.getSize() - 1);
+			int rnd = BaseEngine::instance().randInt(0, talkAnims.getSize() - 1);
 			ret = talkAnims[rnd]->getSprite(_dir);
 		} else {
 			if (_standSprite) {
@@ -1307,7 +1307,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 			ret = _standSprite->getSprite(_dir);
 		} else {
 			// TODO: remember last
-			int rnd = g_wintermute->randInt(0, _talkSprites.getSize() - 1);
+			int rnd = BaseEngine::instance().randInt(0, _talkSprites.getSize() - 1);
 			ret = _talkSprites[rnd]->getSprite(_dir);
 		}
 	}

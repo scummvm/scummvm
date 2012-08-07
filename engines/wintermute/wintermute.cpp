@@ -53,7 +53,6 @@ WinterMuteEngine::WinterMuteEngine() : Engine(g_system) {
 	_classReg->registerClasses();
 
 	_game = new AdGame("");
-	_rnd = NULL;
 }
 
 WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
@@ -74,8 +73,6 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kWinterMuteDebugFont, "font", "Text-drawing-related messages");
 	DebugMan.addDebugChannel(kWinterMuteDebugFileAccess, "file-access", "Non-critical problems like missing files");
 	DebugMan.addDebugChannel(kWinterMuteDebugAudio, "audio", "audio-playback-related issues");
-	// Don't forget to register your random source
-	_rnd = new Common::RandomSource("WinterMute");
 
 	_game = NULL;
 
@@ -86,7 +83,6 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 WinterMuteEngine::~WinterMuteEngine() {
 	// Dispose your resources here
 	deinit();
-	delete _rnd;
 	delete _game;
 	delete _console;
 	g_wintermute = NULL;
@@ -379,10 +375,6 @@ bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 	delete fileMan;
 	BaseEngine::destroy();
 	return retVal;
-}
-
-uint32 WinterMuteEngine::randInt(int from, int to) {
-	return _rnd->getRandomNumberRng(from, to);
 }
 
 } // End of namespace WinterMute

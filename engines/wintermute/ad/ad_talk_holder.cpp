@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "common/str.h"
 
 namespace WinterMute {
@@ -111,7 +111,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 			ret = _sprite;
 		} else {
 			// TODO: remember last
-			int rnd = g_wintermute->randInt(0, _talkSprites.getSize() - 1);
+			int rnd = BaseEngine::instance().randInt(0, _talkSprites.getSize() - 1);
 			ret = _talkSprites[rnd];
 		}
 	}

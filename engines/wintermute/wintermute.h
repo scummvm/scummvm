@@ -23,7 +23,6 @@
 #ifndef WINTERMUTE_H
 #define WINTERMUTE_H
 
-#include "common/random.h"
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 #include "gui/debugger.h"
@@ -52,7 +51,6 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	SystemClassRegistry *getClassRegistry(){ return _classReg; }
-	uint32 randInt(int from, int to);
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
@@ -66,8 +64,6 @@ private:
 	Console *_console;
 	BaseGame *_game;
 	SystemClassRegistry *_classReg;
-	// We need random numbers
-	Common::RandomSource *_rnd;
 	const ADGameDescription *_gameDescription;
 };
 

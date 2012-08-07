@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/base/base_engine.h"
 
 namespace WinterMute {
 
@@ -126,14 +127,14 @@ int BaseUtils::randomInt(int from, int to) {
 		to = from;
 		from = i;
 	}
-	return g_wintermute->randInt(from, to);
+	return BaseEngine::instance().randInt(from, to);
 //	return (rand() % (to - from + 1)) + from;
 }
 
 //////////////////////////////////////////////////////////////////////////
 float BaseUtils::randomFloat(float from, float to) {
 	const uint32 randMax = RAND_MAX;
-	float randNum = (float)g_wintermute->randInt(0, randMax) / (float)randMax;
+	float randNum = (float)BaseEngine::instance().randInt(0, randMax) / (float)randMax;
 	return from + (to - from) * randNum;
 }
 

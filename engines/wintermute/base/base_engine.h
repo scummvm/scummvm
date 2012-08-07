@@ -29,8 +29,9 @@
 #ifndef WINTERMUTE_BASE_ENGINE_H
 #define WINTERMUTE_BASE_ENGINE_H
 
- #include "common/str.h"
- #include "common/singleton.h"
+#include "common/str.h"
+#include "common/singleton.h"
+#include "common/random.h"
 
 namespace WinterMute {
 
@@ -42,12 +43,16 @@ class BaseEngine : public Common::Singleton<WinterMute::BaseEngine> {
 	BaseFileManager *_fileManager;
 	Common::String _gameId;
 	BaseGame *_gameRef;
+	// We need random numbers
+	Common::RandomSource *_rnd;
 public:
 	BaseEngine();
 	~BaseEngine();
 	static void createInstance(const Common::String &gameid);
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
+	Common::RandomSource *getRandomSource() { return _rnd; }
+	uint32 randInt(int from, int to);
 	BaseGame *getGameRef() { return _gameRef; }
 	BaseFileManager *getFileManager() { return _fileManager; }
 	static void LOG(bool res, const char *fmt, ...);

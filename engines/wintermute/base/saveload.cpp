@@ -30,6 +30,7 @@
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/saveload.h"
 #include "engines/wintermute/ad/ad_scene.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h" // Temporary
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_sub_frame.h"
@@ -54,6 +55,9 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 		//if (DID_SUCCEED(ret = cleanup())) {
 		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadTable(gameRef,  pm))) {
 			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadInstances(gameRef,  pm))) {
+				// Restore random-seed:
+				BaseEngine::instance().getRandomSource()->setSeed(pm->getDWORD());
+
 				// data initialization after load
 				SaveLoad::initAfterLoad();
 				
@@ -92,6 +96,7 @@ bool SaveLoad::saveGame(int slot, const char *desc, bool quickSave, BaseGame *ga
 		gameRef->_renderer->initSaveLoad(true, quickSave); // TODO: The original code inited the indicator before the conditionals
 		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveTable(gameRef,  pm, quickSave))) {
 			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveInstances(gameRef,  pm, quickSave))) {
+				pm->putDWORD(BaseEngine::instance().getRandomSource()->getSeed());
 				if (DID_SUCCEED(ret = pm->saveFile(filename))) {
 					ConfMan.setInt("most_recent_saveslot", slot);
 				}

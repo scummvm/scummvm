@@ -40,11 +40,14 @@ namespace WinterMute {
 BaseEngine::BaseEngine() {
 	_fileManager = NULL;
 	_gameRef = NULL;
+	_rnd = NULL;
 	_gameId = "";
 }
 
 void BaseEngine::init() {
 	_fileManager = new BaseFileManager();
+	// Don't forget to register your random source
+	_rnd = new Common::RandomSource("WinterMute");
 }
 
 BaseEngine::~BaseEngine() {
@@ -75,6 +78,10 @@ void BaseEngine::LOG(bool res, const char *fmt, ...) {
 	} else {
 		debugCN(kWinterMuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);		
 	}
+}
+
+uint32 BaseEngine::randInt(int from, int to) {
+	return _rnd->getRandomNumberRng(from, to);
 }
 
 } // end of namespace WinterMute
