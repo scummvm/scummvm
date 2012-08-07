@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/persistent.h"
-#include "engines/wintermute/dcscript.h"   // Added by ClassView
+#include "engines/wintermute/base/scriptables/dcscript.h"   // Added by ClassView
 #include "common/str.h"
 
 namespace WinterMute {
