@@ -2798,6 +2798,32 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
+	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy v1.102 (suppled by digitoxin1 in bug report #3554611)
+	// Note: Identical detection entry to English Amiga versions, so will trigger version choice dialog.
+	{"qfg1", "", {
+		{"resource.map", 0, "b162dbd4632250d4d83bed46d0783c10", 6396},
+		{"resource.000", 0, "40332d3ebfc70a4b6a6a0443c2763287", 78800},
+		{"resource.001", 0, "a270012fa74445d74c044d1b65a9ff8c", 459835},
+		{"resource.002", 0, "e64004e020fdf1813be52b639b08be89", 635561},
+		{"resource.003", 0, "f0af87c60ec869946da442833aa5afa8", 640502},
+		{"resource.004", 0, "f0af87c60ec869946da442833aa5afa8", 644575},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Quest for Glory 1 / Hero's Quest - English DOS 5.25" Floppy v1.102 (suppled by digitoxin1 in bug report #3554611)
+	{"qfg1", "", {
+		{"resource.map", 0, "5772a2c1bfae46f26582582c9901121e", 6858},
+		{"resource.000", 0, "40332d3ebfc70a4b6a6a0443c2763287", 78800},
+		{"resource.001", 0, "a270012fa74445d74c044d1b65a9ff8c", 75090},
+		{"resource.002", 0, "d22695c53835dfdece056d86f26c251e", 271354},
+		{"resource.003", 0, "3cd085e27078f269b3ece5838812ff41", 258084},
+		{"resource.004", 0, "8927c7a04a78f1e76f342db3ccc9d879", 267835},
+		{"resource.005", 0, "13d16cc9b90b51e2c8643cdf52a62957", 268807},
+		{"resource.006", 0, "48b2b3c964dcbeccb68e984e6d4e97db", 278473},
+		{"resource.007", 0, "f0af87c60ec869946da442833aa5afa8", 269237},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
+
 	// Quest for Glory 1 / Hero's Quest - English DOS 5.25" Floppy (supplied by markcoolio in bug report #2723843)
 	// Executable scanning reports "0.000.566"
 	{"qfg1", "", {
