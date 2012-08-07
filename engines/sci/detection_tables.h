@@ -3002,6 +3002,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Quest for Glory 2 - English DOS (supplied by digitoxin1 in bug report #3554614)
+	// 1.102 9x3.5"
+	{"qfg2", "", {
+		{"resource.map", 0, "367023314ea33e3156297402f6c1da49", 8166},
+		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212119},
+		{"resource.001", 0, "e08d7887e30b12008c40f9570447711a", 331995},
+		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 467461},
+		{"resource.003", 0, "df137dc7869cab07e1149ba2333c815c", 502560},
+		{"resource.004", 0, "df137dc7869cab07e1149ba2333c815c", 488532},
+		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478574},
+		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
+		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Quest for Glory 2 - English DOS Non-Interactive Demo
 	// Executable scanning reports "1.000.046"
 	{"qfg2", "Demo", {
