@@ -97,7 +97,7 @@ bool WinterMuteEngine::hasFeature(EngineFeature f) const {
 
 Common::Error WinterMuteEngine::run() {
 	// Initialize graphics using following:
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 16, 8, 0, 24);
 	initGraphics(800, 600, true, &format);
 	if (g_system->getScreenFormat() != format) {
 		error("Wintermute currently REQUIRES 32bpp");

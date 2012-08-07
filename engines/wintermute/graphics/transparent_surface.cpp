@@ -47,25 +47,25 @@ void doBlit(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, in
 	byte *in, *out;
 
 #ifdef SCUMM_LITTLE_ENDIAN
-	const int aIndex = 0;
-	const int bIndex = 1;
-	const int gIndex = 2;
-	const int rIndex = 3;
-#else
 	const int aIndex = 3;
-	const int bIndex = 2;
+	const int bIndex = 0;
 	const int gIndex = 1;
-	const int rIndex = 0;
+	const int rIndex = 2;
+#else
+	const int aIndex = 0;
+	const int bIndex = 3;
+	const int gIndex = 2;
+	const int rIndex = 1;
 #endif
 
-	const int bShift = 8;//img->format.bShift;
-	const int gShift = 16;//img->format.gShift;
-	const int rShift = 24;//img->format.rShift;
-	const int aShift = 0;//img->format.aShift;
+	const int bShift = 0;//img->format.bShift;
+	const int gShift = 8;//img->format.gShift;
+	const int rShift = 16;//img->format.rShift;
+	const int aShift = 24;//img->format.aShift;
 
-	const int bShiftTarget = 8;//target.format.bShift;
-	const int gShiftTarget = 16;//target.format.gShift;
-	const int rShiftTarget = 24;//target.format.rShift;
+	const int bShiftTarget = 0;//target.format.bShift;
+	const int gShiftTarget = 8;//target.format.gShift;
+	const int rShiftTarget = 16;//target.format.rShift;
 
 	for (uint32 i = 0; i < height; i++) {
 		out = outo;
@@ -226,25 +226,24 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *in, *out;
 
 #ifdef SCUMM_LITTLE_ENDIAN
-		const int aIndex = 0;
-		const int bIndex = 1;
-		const int gIndex = 2;
-		const int rIndex = 3;
-#else
 		const int aIndex = 3;
-		const int bIndex = 2;
+		const int bIndex = 0;
 		const int gIndex = 1;
-		const int rIndex = 0;
+		const int rIndex = 2;
+#else
+		const int aIndex = 0;
+		const int bIndex = 3;
+		const int gIndex = 2;
+		const int rIndex = 1;
 #endif
+		const int bShift = 0;//img->format.bShift;
+		const int gShift = 8;//img->format.gShift;
+		const int rShift = 16;//img->format.rShift;
+		const int aShift = 24;//img->format.aShift;
 
-		const int bShift = 8;//img->format.bShift;
-		const int gShift = 16;//img->format.gShift;
-		const int rShift = 24;//img->format.rShift;
-		const int aShift = 0;//img->format.aShift;
-
-		const int bShiftTarget = 8;//target.format.bShift;
-		const int gShiftTarget = 16;//target.format.gShift;
-		const int rShiftTarget = 24;//target.format.rShift;
+		const int bShiftTarget = 0;//target.format.bShift;
+		const int gShiftTarget = 8;//target.format.gShift;
+		const int rShiftTarget = 16;//target.format.rShift;
 
 		if (ca == 255 && cb == 255 && cg == 255 && cr == 255) {
 			doBlit(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
