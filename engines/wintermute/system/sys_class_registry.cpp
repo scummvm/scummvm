@@ -28,10 +28,11 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/system/sys_instance.h"
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/system/sys_class.h"
+#include "engines/wintermute/wintermute.h"
 #include "common/stream.h"
 
 namespace WinterMute {
@@ -50,7 +51,7 @@ SystemClassRegistry::~SystemClassRegistry() {
 
 //////////////////////////////////////////////////////////////////////////
 SystemClassRegistry *SystemClassRegistry::getInstance() {
-	return g_wintermute->getClassRegistry();
+	return BaseEngine::instance().getClassRegistry();
 }
 
 void SystemClassRegistry::unregisterClasses() {

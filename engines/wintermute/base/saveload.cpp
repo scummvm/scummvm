@@ -194,7 +194,7 @@ bool SaveLoad::isSaveSlotUsed(int slot) {
 bool SaveLoad::emptySaveSlot(int slot) {
 	Common::String filename = getSaveSlotFilename(slot);
 	BasePersistenceManager *pm = new BasePersistenceManager();
-	g_wintermute->getSaveFileMan()->removeSavefile(pm->getFilenameForSlot(slot));
+	((WinterMuteEngine *)g_engine)->getSaveFileMan()->removeSavefile(pm->getFilenameForSlot(slot));
 	delete pm;
 	return true;
 }

@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/system/sys_class_registry.h"
 #include "common/system.h"
 namespace Common {
 DECLARE_SINGLETON(WinterMute::BaseEngine);
@@ -40,6 +41,7 @@ namespace WinterMute {
 BaseEngine::BaseEngine() {
 	_fileManager = NULL;
 	_gameRef = NULL;
+	_classReg = NULL;
 	_rnd = NULL;
 	_gameId = "";
 }
@@ -48,10 +50,14 @@ void BaseEngine::init() {
 	_fileManager = new BaseFileManager();
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("WinterMute");
+	_classReg = new SystemClassRegistry();
+	_classReg->registerClasses();
 }
 
 BaseEngine::~BaseEngine() {
 	delete _fileManager;
+	delete _rnd;
+	delete _classReg;
 }
 
 void BaseEngine::createInstance(const Common::String &gameid) {

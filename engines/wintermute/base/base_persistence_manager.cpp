@@ -371,7 +371,7 @@ bool BasePersistenceManager::saveFile(const Common::String &filename) {
 	byte *buffer = ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData();
 	uint32 bufferSize = ((Common::MemoryWriteStreamDynamic *)_saveStream)->size();
 
-	Common::SaveFileManager *saveMan = g_wintermute->getSaveFileMan();
+	Common::SaveFileManager *saveMan = ((WinterMuteEngine *)g_engine)->getSaveFileMan();
 	Common::OutSaveFile *file = saveMan->openForSaving(filename);
 	file->write(prefixBuffer, prefixSize);
 	file->write(buffer, bufferSize);

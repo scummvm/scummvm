@@ -43,15 +43,9 @@
 
 namespace WinterMute {
 
-WinterMuteEngine *g_wintermute;
-
 // Simple constructor for detection - we need to setup the persistence to avoid special-casing in-engine
 // This might not be the prettiest solution
 WinterMuteEngine::WinterMuteEngine() : Engine(g_system) {
-	g_wintermute = this;
-	_classReg = new SystemClassRegistry();
-	_classReg->registerClasses();
-
 	_game = new AdGame("");
 }
 
@@ -75,9 +69,6 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kWinterMuteDebugAudio, "audio", "audio-playback-related issues");
 
 	_game = NULL;
-
-	g_wintermute = this;
-	_classReg = NULL;
 }
 
 WinterMuteEngine::~WinterMuteEngine() {
@@ -85,7 +76,6 @@ WinterMuteEngine::~WinterMuteEngine() {
 	deinit();
 	delete _game;
 	delete _console;
-	g_wintermute = NULL;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -135,8 +125,6 @@ Common::Error WinterMuteEngine::run() {
 }
 
 int WinterMuteEngine::init() {
-	_classReg = new SystemClassRegistry();
-	_classReg->registerClasses();
 	BaseEngine::createInstance(_targetName);
 	_game = new AdGame(_targetName);
 	if (!_game) return 1;
@@ -272,8 +260,6 @@ int WinterMuteEngine::messageLoop() {
 }
 
 void WinterMuteEngine::deinit() {
-	delete _classReg;
-	_classReg = NULL;
 	BaseEngine::destroy();
 }
 

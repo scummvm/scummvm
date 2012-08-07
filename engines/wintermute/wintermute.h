@@ -50,7 +50,6 @@ public:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
-	SystemClassRegistry *getClassRegistry(){ return _classReg; }
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
@@ -63,7 +62,6 @@ private:
 	int messageLoop();
 	Console *_console;
 	BaseGame *_game;
-	SystemClassRegistry *_classReg;
 	const ADGameDescription *_gameDescription;
 };
 
@@ -73,9 +71,6 @@ public:
 	Console(WinterMuteEngine *vm) {}
 	virtual ~Console(void) {}
 };
-
-// Mainly used for randInt()
-extern WinterMuteEngine *g_wintermute;
 
 } // End of namespace Wintermute
 

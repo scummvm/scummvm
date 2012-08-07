@@ -38,6 +38,7 @@ namespace WinterMute {
 class BaseFileManager;
 class BaseRegistry;
 class BaseGame;
+class SystemClassRegistry;
 class BaseEngine : public Common::Singleton<WinterMute::BaseEngine> {
 	void init();
 	BaseFileManager *_fileManager;
@@ -45,6 +46,7 @@ class BaseEngine : public Common::Singleton<WinterMute::BaseEngine> {
 	BaseGame *_gameRef;
 	// We need random numbers
 	Common::RandomSource *_rnd;
+	SystemClassRegistry *_classReg;
 public:
 	BaseEngine();
 	~BaseEngine();
@@ -53,6 +55,8 @@ public:
 
 	Common::RandomSource *getRandomSource() { return _rnd; }
 	uint32 randInt(int from, int to);
+
+	SystemClassRegistry *getClassRegistry(){ return _classReg; }
 	BaseGame *getGameRef() { return _gameRef; }
 	BaseFileManager *getFileManager() { return _fileManager; }
 	static void LOG(bool res, const char *fmt, ...);
