@@ -369,14 +369,14 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	return retSize;
 }
 
-TransparentSurface *TransparentSurface::scaleSafe(uint16 newWidth, uint16 newHeight) const {
+TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
 	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
-	return scaleSafe(srcRect, dstRect);
+	return scale(srcRect, dstRect);
 }
 
 // Copied from clone2727's https://github.com/clone2727/scummvm/blob/pegasus/engines/pegasus/surface.cpp#L247
-TransparentSurface *TransparentSurface::scaleSafe(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
+TransparentSurface *TransparentSurface::scale(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
 	// I'm doing simple linear scaling here
 	// dstRect(x, y) = srcRect(x * srcW / dstW, y * srcH / dstH);
 	TransparentSurface *target = new TransparentSurface();
@@ -397,37 +397,6 @@ TransparentSurface *TransparentSurface::scaleSafe(const Common::Rect &srcRect, c
 	}
 	return target;
 
-}
-/**
- * Scales a passed surface, creating a new surface with the result
- * @param xSize		target width.
- * @param ySize		target height.
- * @remarks Caller is responsible for freeing the returned surface
- */
-TransparentSurface *TransparentSurface::scale(int xSize, int ySize) const {
-	TransparentSurface *s = new TransparentSurface();
-	s->create(xSize, ySize, this->format);
-
-	int *horizUsage = scaleLine(xSize, this->w);
-	int *vertUsage = scaleLine(ySize, this->h);
-
-	// Loop to create scaled version
-	for (int yp = 0; yp < ySize; ++yp) {
-		const byte *srcP = (const byte *)this->getBasePtr(0, vertUsage[yp]);
-		byte *destP = (byte *)s->getBasePtr(0, yp);
-
-		for (int xp = 0; xp < xSize; ++xp) {
-			const byte *tempSrcP = srcP + (horizUsage[xp] * this->format.bytesPerPixel);
-			for (int byteCtr = 0; byteCtr < this->format.bytesPerPixel; ++byteCtr) {
-				*destP++ = *tempSrcP++;
-			}
-		}
-	}
-
-	// Delete arrays and return surface
-	delete[] horizUsage;
-	delete[] vertUsage;
-	return s;
 }
 
 /**
@@ -454,30 +423,5 @@ void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool 
 		}
 	}
 }
-
-/**
- * Returns an array indicating which pixels of a source image horizontally or vertically get
- * included in a scaled image
- */
-int *TransparentSurface::scaleLine(int size, int srcSize) {
-	int scale = 100 * size / srcSize;
-	assert(scale > 0);
-	int *v = new int[size];
-	Common::fill(v, &v[size], 0);
-
-	int distCtr = 0;
-	int *destP = v;
-	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
-		distCtr += scale;
-		while (distCtr >= 100) {
-			assert(destP < &v[size]);
-			*destP++ = distIndex;
-			distCtr -= 100;
-		}
-	}
-
-	return v;
-}
-
 
 } // End of namespace Graphics

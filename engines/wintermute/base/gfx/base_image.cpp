@@ -120,7 +120,7 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 		delete _deletableSurface;
 		_deletableSurface = NULL;
 	}
-	_surface = _deletableSurface = temp.scaleSafe((uint16)newWidth, (uint16)newHeight);
+	_surface = _deletableSurface = temp.scale((uint16)newWidth, (uint16)newHeight);
 	temp.free();
 	return true;
 }
@@ -224,7 +224,7 @@ bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 		delete _deletableSurface;
 		_deletableSurface = NULL;
 	}
-	_surface = _deletableSurface = temp.scaleSafe((uint16)newWidth, (uint16)newHeight);
+	_surface = _deletableSurface = temp.scale((uint16)newWidth, (uint16)newHeight);
 	return true;
 }
 
