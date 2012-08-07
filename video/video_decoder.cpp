@@ -102,6 +102,7 @@ AdvancedVideoDecoder::AdvancedVideoDecoder() {
 	_audioBalance = 0;
 	_pauseLevel = 0;
 	_needsUpdate = false;
+	_lastTimeChange = 0;
 
 	// Find the best format for output
 	_defaultHighColorFormat = g_system->getScreenFormat();
@@ -126,6 +127,7 @@ void AdvancedVideoDecoder::close() {
 	_audioBalance = 0;
 	_pauseLevel = 0;
 	_needsUpdate = false;
+	_lastTimeChange = 0;
 }
 
 bool AdvancedVideoDecoder::isVideoLoaded() const {
@@ -201,6 +203,9 @@ uint32 AdvancedVideoDecoder::getFrameCount() const {
 }
 
 uint32 AdvancedVideoDecoder::getTime() const {
+	if (!isPlaying())
+		return _lastTimeChange.msecs();
+
 	if (isPaused())
 		return _pauseStartTime - _startTime;
 
@@ -210,7 +215,7 @@ uint32 AdvancedVideoDecoder::getTime() const {
 				uint32 time = ((const AudioTrack *)*it)->getRunningTime();
 
 				if (time != 0)
-					return time + _audioStartOffset.msecs();
+					return time + _lastTimeChange.msecs();
 			}
 		}
 	}
@@ -278,7 +283,7 @@ bool AdvancedVideoDecoder::rewind() {
 	if (isPlaying())
 		startAudio();
 
-	_audioStartOffset = 0;
+	_lastTimeChange = 0;
 	_startTime = g_system->getMillis();
 	resetPauseStartTime();
 	return true;
@@ -313,7 +318,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 	if (isPlaying())
 		startAudio();
 
-	_audioStartOffset = time;
+	_lastTimeChange = time;
 	_startTime = g_system->getMillis() - time.msecs();
 	resetPauseStartTime();
 	_needsUpdate = true;
@@ -326,7 +331,7 @@ void AdvancedVideoDecoder::start() {
 
 	_isPlaying = true;
 	_startTime = g_system->getMillis();
-	_audioStartOffset = 0;
+	_lastTimeChange = 0;
 
 	// If someone previously called stop(), we'll rewind it.
 	if (_needsRewind)
@@ -341,7 +346,6 @@ void AdvancedVideoDecoder::stop() {
 
 	_isPlaying = false;
 	_startTime = 0;
-	_audioStartOffset = 0;
 	_palette = 0;
 	_dirtyPalette = false;
 	_needsUpdate = false;
@@ -354,10 +358,12 @@ void AdvancedVideoDecoder::stop() {
 	// If this is a rewindable video, don't close it too. We'll just rewind() the video
 	// the next time someone calls start(). Otherwise, since it can't be rewound, we
 	// just close it.
-	if (isRewindable())
+	if (isRewindable()) {
+		_lastTimeChange = getTime();
 		_needsRewind = true;
-	else
+	} else {
 		close();
+	}
 }
 
 Audio::Timestamp AdvancedVideoDecoder::getDuration() const {

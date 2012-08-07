@@ -773,7 +773,7 @@ private:
 
 	// Current playback status
 	bool _isPlaying, _needsRewind, _needsUpdate;
-	Audio::Timestamp _audioStartOffset;
+	Audio::Timestamp _lastTimeChange;
 
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;
