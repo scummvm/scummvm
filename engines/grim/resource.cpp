@@ -161,7 +161,7 @@ ResourceLoader::ResourceLoader() {
 			errorMessage = 	"Unsupported version of Grim Fandango.\n"
 							"Please download the original patch from\n"
 							"http://www.residualvm.org/downloads/\n"
-							"and put it the game data files directory";
+							"and put it in the game data files directory";
 			GUI::displayErrorDialog(errorMessage);
 			error("gfupd101.exe not found");
 		}
@@ -171,7 +171,7 @@ ResourceLoader::ResourceLoader() {
 			errorMessage = 	"Unsupported version of Escape from Monkey Island.\n"
 							"Please download the original patch from\n"
 							"http://www.residualvm.org/downloads/\n"
-							"and put it the game data files directory.\n"
+							"and put it in the game data files directory.\n"
 							"Pay attention to download the correct version according to the game's language";
 		*/
 	}
