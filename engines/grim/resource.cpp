@@ -116,7 +116,7 @@ ResourceLoader::ResourceLoader() {
 			}
 		}
 	} else if (g_grim->getGameType() == GType_MONKEY4) {
-		if (g_grim->getGameFlags() == ADGF_DEMO) {
+		if (g_grim->getGameFlags() & ADGF_DEMO) {
 			SearchMan.listMatchingMembers(files, "i9n.lab");
 			SearchMan.listMatchingMembers(files, "lip.lab");
 			SearchMan.listMatchingMembers(files, "MagDemo.lab");
