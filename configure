@@ -3501,6 +3501,21 @@ define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 # Check for OpenGL (ES)
 #
 echocheck "OpenGL"
+
+case $_backend in
+	openpandora)
+		# Only enable OpenGL ES on the OpanPandora if --enable-opengl is passed in explicitly.
+		if test "$_opengl" = yes ; then
+			_opengl=yes
+			_opengles=yes
+			OPENGL_LIBS="-lGLES_CM -lEGL -lX11"
+			OPENGL_CFLAGS="$OPENGL_LIBS"
+			LIBS="$LIBS $OPENGL_LIBS"
+			INCLUDES="$INCLUDES $OPENGL_CFLAGS"
+		fi
+		;;
+esac
+
 if test "$_opengl" = auto ; then
 	_opengl=no
 	if test "$_backend" = "sdl" ; then
