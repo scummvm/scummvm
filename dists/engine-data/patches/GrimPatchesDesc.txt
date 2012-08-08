@@ -54,10 +54,6 @@ List of fixed bugs in GF scripts:
 	See http://forums.residualvm.org/viewtopic.php?t=108
 
 +Others modifications:
-	-Blacklist of v1.00
-	Version 1.00 of Grim Fandango is not completable on modern machines, so we blacklist
-	it by setting game_needs_update to TRUE in _system.lua
-
 	-The function si.set_up_actors (si.lua), calls "start_script(si.naranja_drinking)",
 	which doesn't exist. The problem with that is that lua_error ends the function that
 	was going on, breaking si.set really badly. The bad call is replaced with NOPs.

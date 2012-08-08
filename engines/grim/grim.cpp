@@ -273,24 +273,6 @@ Common::Error GrimEngine::run() {
 	lua->registerLua();
 
 	lua->loadSystemScript();
-	if (!lua->supportedVersion()) {
-		const char *errorMessage = 0;
-		if (g_grim->getGameType() == GType_GRIM)
-			errorMessage = 	"Unsupported version of Grim Fandango.\n"
-							"Please download the original patch from\n"
-							"http://www.residualvm.org/downloads/\n"
-							"and put it the game data files directory.";
-		else if (g_grim->getGameType() == GType_MONKEY4)
-			errorMessage = 	"Unsupported version of Escape from Monkey Island.\n"
-							"Please download the original patch from\n"
-							"http://www.residualvm.org/downloads/\n"
-							"and put it the game data files directory.\n"
-							"Pay attention to download the correct version according to the game's language.";
-
-		GUI::displayErrorDialog(errorMessage);
-		return Common::kNoError;
-	}
-	//Make sure that the localizer is initialized after the version is checked
 	g_localizer = new Localizer();
 	lua->boot();
 

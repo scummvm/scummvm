@@ -121,7 +121,6 @@ public:
 	virtual void registerLua();
 	virtual void registerOpcodes();
 	virtual void loadSystemScript();
-	virtual bool supportedVersion();
 	virtual void boot();
 	virtual void postRestoreHandle() { }
 
