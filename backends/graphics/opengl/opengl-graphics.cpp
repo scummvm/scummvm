@@ -902,7 +902,7 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 		bpp = 4;
 		intFormat = GL_RGBA;
 		glFormat = GL_RGBA;
-		gltype = GL_UNSIGNED_BYTE;
+		gltype = GL_UNSIGNED_INT_8_8_8_8;
 	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) { // RGB888
 		bpp = 3;
 		intFormat = GL_RGB;
