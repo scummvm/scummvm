@@ -917,7 +917,7 @@ std::string XCodeProvider::writeSetting(const std::string &variable, const Setti
 		for (unsigned int i = 0, count = 0; i < setting.entries.size(); ++i) {
 
 			std::string value = setting.entries.at(i).value;
-			if(!value.empty()) {
+			if (!value.empty()) {
 				if (count++ > 0)
 					output += "," + newline;
 
