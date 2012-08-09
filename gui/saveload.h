@@ -19,53 +19,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef GUI_SAVELOAD_DIALOG_H
-#define GUI_SAVELOAD_DIALOG_H
+#ifndef GUI_SAVELOAD_H
+#define GUI_SAVELOAD_H
 
 #include "gui/dialog.h"
 #include "engines/metaengine.h"
 
 namespace GUI {
 
-class ListWidget;
-class GraphicsWidget;
-class ButtonWidget;
-class CommandSender;
-class ContainerWidget;
-class StaticTextWidget;
+class SaveLoadChooserDialog;
 
-class SaveLoadChooser : GUI::Dialog {
+class SaveLoadChooser {
 	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
 protected:
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::ButtonWidget	*_deleteButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::ContainerWidget	*_container;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
+	SaveLoadChooserDialog *_impl;
 
-	const EnginePlugin		*_plugin;
-	bool					_delSupport;
-	bool					_metaInfoSupport;
-	bool					_thumbnailSupport;
-	bool					_saveDateSupport;
-	bool					_playTimeSupport;
-	String					_target;
-	SaveStateList			_saveList;
-	String					_resultString;
+	const String _title;
+	const String _buttonLabel;
+	const bool _saveMode;
 
-	uint8 _fillR, _fillG, _fillB;
-
-	void updateSaveList();
-	void updateSelection(bool redraw);
+	void selectChooser(const MetaEngine &engine);
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 	/**
 	 * Runs the save/load chooser with the currently active config manager
@@ -75,7 +51,6 @@ public:
 	 */
 	int runModalWithCurrentTarget();
 	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
-	void open();
 
 	const Common::String &getResultString() const;
 
@@ -93,10 +68,6 @@ public:
 	 * @return The slot description.
 	 */
 	Common::String createDefaultSaveDescription(const int slot) const;
-
-	virtual void reflowLayout();
-
-	virtual void close();
 };
 
 } // End of namespace GUI
