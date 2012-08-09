@@ -163,6 +163,7 @@ void TextResource::load(Common::MemoryReadStream &stream) {
 		TextItem textItem;
 		int32 offset;
 		stream.read(identifier, 7);
+		identifier[7] = 0;
 		offset = stream.readUint32LE() - 1;
 		debug(8, "[%s] -> %08X", identifier, offset);
 		textItem.identifier = identifier;
