@@ -93,12 +93,6 @@ void Screen_HoF::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int
 	}
 }
 
-void Screen_HoF::copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes) {
-	const uint8 *src = getPagePtr(srcPage) + srcPos;
-	uint8 *dst = getPagePtr(dstPage) + dstPos;
-	memcpy(dst, src, numBytes);
-}
-
 void Screen_HoF::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX, int dstY, int dstW, int dstH, const ScreenDim *dim, bool flag) {
 	int x0 = dim->sx << 3;
 	int y0 = dim->sy;

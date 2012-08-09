@@ -270,8 +270,12 @@ public:
 
 	virtual void initKeymap();
 
+	void pauseEngineIntern(bool pause);
+
 	Screen *screen();
 	GUI *gui() const;
+
+	const AudioDataStruct *soundData(int index) { return &_soundData[index]; }
 
 private:
 	Screen_LoL *_screen;
@@ -399,6 +403,10 @@ private:
 
 	static const int _outroMonsterScaleTableX[];
 	static const int _outroMonsterScaleTableY[];
+
+	// Non-interactive demo
+	int playDemo();
+	void pauseDemoPlayer(bool toggle);
 
 	// timers
 	void setupTimers();

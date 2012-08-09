@@ -172,19 +172,6 @@ Common::Error KyraEngine_v1::init() {
 	assert(_res);
 	_res->reset();
 
-	if (_flags.isDemo) {
-		// HACK: check whether this is the HOF demo or the LOL demo.
-		// The LOL demo needs to be detected and run as KyraEngine_HoF,
-		// but the static resource loader and the sequence player will
-		// need correct IDs.
-		if (_res->exists("scene1.cps"))
-#ifdef ENABLE_LOL
-			_flags.gameID = GI_LOL;
-#else
-			error("Lands of Lore demo is not supported in this build");
-#endif // !ENABLE_LOL
-	}
-
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())

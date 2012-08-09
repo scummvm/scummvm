@@ -808,34 +808,6 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 	return res;
 }
 
-bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime) {
-	Palette &p1 = getPalette(1);
-
-	bool res = false;
-	for (int i = 0; i < p1.getNumColors() * 3; i++) {
-		uint8 out = 0;
-
-		if (elapsedTime < targetTime) {
-			int32 d = ((pal2[i] & 0x3f) - (pal1[i] & 0x3f));
-			if (d)
-				res = true;
-
-			int32 val = ((((d << 8) / (int32)targetTime) * (int32)elapsedTime) >> 8);
-			out = ((pal1[i] & 0x3f) + (int8)val);
-		} else {
-			out = p1[i] = (pal2[i] & 0x3f);
-			res = false;
-		}
-
-		(*_internFadePalette)[i] = out;
-	}
-
-	setScreenPalette(*_internFadePalette);
-	updateScreen();
-
-	return res;
-}
-
 Palette **Screen_LoL::generateFadeTable(Palette **dst, Palette *src1, Palette *src2, int numTabs) {
 	int len = _use16ColorMode ? 48 : 768;
 	if (!src1)

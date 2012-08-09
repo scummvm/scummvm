@@ -134,6 +134,8 @@ public:
 	const uint8 * const *palTable1() { return &_specialPalettes[0]; }
 	const uint8 * const *palTable2() { return &_specialPalettes[29]; }
 
+	const AudioDataStruct *soundData(int index) { return &_soundData[index]; }
+
 protected:
 	virtual Common::Error go();
 	virtual Common::Error init();

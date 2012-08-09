@@ -242,6 +242,8 @@ public:
 	virtual bool snd_voiceIsPlaying();
 	virtual void snd_stopVoice();
 
+	virtual const AudioDataStruct *soundData(int index) { return 0; }
+
 	// delay functionallity
 	virtual void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);
 	virtual void delay(uint32 millis, bool update = false, bool isMainLoop = false);

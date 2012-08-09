@@ -1183,11 +1183,11 @@ void LoLEngine::processGasExplosion(int soundId) {
 			p2[i * 3] = 0x3f;
 
 		uint32 ctime = _system->getMillis();
-		while (_screen->fadePaletteStep(_screen->getPalette(0).getData(), p2, _system->getMillis() - ctime, 10))
+		while (_screen->timedPaletteFadeStep(_screen->getPalette(0).getData(), p2, _system->getMillis() - ctime, 10))
 			updateInput();
 
 		ctime = _system->getMillis();
-		while (_screen->fadePaletteStep(p2, _screen->getPalette(0).getData(), _system->getMillis() - ctime, 50))
+		while (_screen->timedPaletteFadeStep(p2, _screen->getPalette(0).getData(), _system->getMillis() - ctime, 50))
 			updateInput();
 	}
 

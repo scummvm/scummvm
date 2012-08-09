@@ -35,157 +35,12 @@
 
 namespace Kyra {
 
-enum Sequences {
-	kSequenceVirgin = 0,
-	kSequenceWestwood,
-	kSequenceTitle,
-	kSequenceOverview,
-	kSequenceLibrary,
-	kSequenceHand,
-	kSequencePoint,
-	kSequenceZanfaun,
-
-	kSequenceFunters,
-	kSequenceFerb,
-	kSequenceFish,
-	kSequenceFheep,
-	kSequenceFarmer,
-	kSequenceFuards,
-	kSequenceFirates,
-	kSequenceFrash,
-
-	kSequenceArraySize
-};
-
-enum NestedSequences {
-	kSequenceFiggle = 0,
-	kSequenceOver1,
-	kSequenceOver2,
-	kSequenceForest,
-	kSequenceDragon,
-	kSequenceDarm,
-	kSequenceLibrary2,
-	kSequenceLibrary3,
-	kSequenceMarco,
-	kSequenceHand1a,
-	kSequenceHand1b,
-	kSequenceHand1c,
-	kSequenceHand2,
-	kSequenceHand3,
-	kSequenceHand4
-};
-
-enum SequencesDemo {
-	kSequenceDemoVirgin = 0,
-	kSequenceDemoWestwood,
-	kSequenceDemoTitle,
-	kSequenceDemoHill,
-	kSequenceDemoOuthome,
-	kSequenceDemoWharf,
-	kSequenceDemoDinob,
-	kSequenceDemoFisher
-};
-
-enum NestedSequencesDemo {
-	kSequenceDemoWharf2 = 0,
-	kSequenceDemoDinob2,
-	kSequenceDemoWater,
-	kSequenceDemoBail,
-	kSequenceDemoDig
-};
-
-#ifdef ENABLE_LOL
-enum SequencesLoLDemo {
-	kSequenceLoLDemoScene1 = 0,
-	kSequenceLoLDemoText1,
-	kSequenceLoLDemoScene2,
-	kSequenceLoLDemoText2,
-	kSequenceLoLDemoScene3,
-	kSequenceLoLDemoText3,
-	kSequenceLoLDemoScene4,
-	kSequenceLoLDemoText4,
-	kSequenceLoLDemoScene5,
-	kSequenceLoLDemoText5,
-	kSequenceLoLDemoScene6
-};
-#endif // ENABLE_LOL
-
-class WSAMovie_v2;
-class KyraEngine_HoF;
+//class WSAMovie_v2;
+//class KyraEngine_HoF;
 class TextDisplayer_HoF;
+class SeqPlayer_HOF;
 
 struct TIM;
-
-typedef int (KyraEngine_HoF::*SeqProc)(WSAMovie_v2 *, int, int, int);
-
-struct ActiveWSA {
-	SeqProc callback;
-	WSAMovie_v2 *movie;
-	const FrameControl *control;
-	int16 flags;
-	uint16 startFrame;
-	uint16 endFrame;
-	uint16 frameDelay;
-	uint32 nextFrame;
-	uint16 currentFrame;
-	uint16 lastFrame;
-	uint16 x;
-	uint16 y;
-	uint16 startupCommand;
-	uint16 finalCommand;
-};
-
-struct ActiveText {
-	uint16 strIndex;
-	uint16 x;
-	uint16 y;
-	uint16 width;
-	int32 duration;
-	uint32 startTime;
-	int16 textcolor;
-};
-
-struct Sequence {
-	const char *wsaFile;
-	const char *cpsFile;
-	uint16 flags;
-	uint8 startupCommand;
-	uint8 finalCommand;
-	int16 stringIndex1;
-	int16 stringIndex2;
-	uint16 startFrame;
-	uint16 numFrames;
-	uint16 frameDelay;
-	uint16 xPos;
-	uint16 yPos;
-	uint16 duration;
-};
-
-struct NestedSequence {
-	const char *wsaFile;
-	const FrameControl *wsaControl;
-	uint16 flags;
-	uint16 startframe;
-	uint16 endFrame;
-	uint16 frameDelay;
-	uint16 x;
-	uint16 y;
-	uint16 startupCommand;
-	uint16 finalCommand;
-};
-
-struct HofSeqData {
-	const Sequence *seq;
-	int numSeq;
-	const NestedSequence *seqn;
-	int numSeqn;
-};
-
-struct ItemAnimData_v1 {
-	int16 itemIndex;
-	uint16 y;
-	const uint16 *frames;
-};
 
 class KyraEngine_HoF : public KyraEngine_v2 {
 friend class Debugger_HoF;
@@ -202,98 +57,19 @@ public:
 	GUI *gui() const { return _gui; }
 	virtual TextDisplayer *text() { return _text; }
 	int language() const { return _lang; }
+	const AudioDataStruct *soundData(int index) { return &_soundData[index]; }
+
 protected:
 	static const EngineDesc _hofEngineDesc;
 
 	// intro/outro
-	void seq_playSequences(int startSeq, int endSeq = -1);
-
-	int seq_introWestwood(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introTitle(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introOverview(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introLibrary(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introHand(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introPoint(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introZanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-
-	int seq_introOver1(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introOver2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introForest(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introDragon(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introDarm(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introLibrary2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introMarco(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introHand1a(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introHand1b(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introHand1c(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introHand2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_introHand3(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-
-	int seq_finaleFunters(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFerb(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFish(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFheep(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFarmer(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFirates(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_finaleFrash(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-
-	int seq_finaleFiggle(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-
-	int seq_demoVirgin(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoWestwood(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoTitle(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoHill(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoOuthome(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoWharf(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoDinob(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoFisher(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-
-	int seq_demoWharf2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoDinob2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoWater(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoBail(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_demoDig(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-
-#ifdef ENABLE_LOL
-	int seq_lolDemoScene1(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_lolDemoScene2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_lolDemoScene3(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_lolDemoScene4(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_lolDemoScene5(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_lolDemoText5(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-	int seq_lolDemoScene6(WSAMovie_v2 *wsaObj, int x, int y, int frm);
-#endif // ENABLE_LOL
-
-	void seq_sequenceCommand(int command);
-	void seq_loadNestedSequence(int wsaNum, int seqNum);
-	void seq_nestedSequenceFrame(int command, int wsaNum);
-	void seq_animatedSubFrame(int srcPage, int dstPage, int delaytime,
-	    int steps, int x, int y, int w, int h, int openClose, int directionFlags);
-	bool seq_processNextSubFrame(int wsaNum);
-	void seq_resetActiveWSA(int wsaNum);
-	void seq_unloadWSA(int wsaNum);
-	void seq_processWSAs();
-	void seq_cmpFadeFrame(const char *cmpFile);
-	void seq_playTalkText(uint8 chatNum);
-	void seq_resetAllTextEntries();
-	uint32 seq_activeTextsTimeLeft();
-	void seq_waitForTextsTimeout();
-	int seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width);
-	void seq_processText();
-	char *seq_preprocessString(const char *str, int width);
-	void seq_printCreditsString(uint16 strIndex, int x, int y, const uint8 *colorMap, uint8 textcolor);
-	void seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width,
-	    WSAMovie_v2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
-	void seq_finaleActorScreen();
-	void seq_displayScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed, int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData = 0, const char *const *specialData = 0);
-	void seq_scrollPage(int bottom, int top);
 	void seq_showStarcraftLogo();
 
-	MainMenu *_menu;
+	int seq_playIntro();
+	int seq_playOutro();
+	int seq_playDemo();
 
-	void seq_init();
-	void seq_uninit();
+	void seq_pausePlayer(bool toggle);
 
 	Common::Error init();
 	Common::Error go();
@@ -312,6 +88,7 @@ protected:
 	static const int _pcSpkSfxMapSize;
 
 	AudioDataStruct _soundData[3];
+
 protected:
 	// game initialization
 	void startup();
@@ -841,11 +618,11 @@ protected:
 	bool _chatAltFlag;
 
 	// sequence player
-	ActiveWSA *_activeWSA;
+/*	ActiveWSA *_activeWSA;
 	ActiveText *_activeText;
-
-	const char * const *_sequencePakList;
-	int _sequencePakListSize;
+	*/
+	/*const char * const *_sequencePakList;
+	int _sequencePakListSize;*/
 	const char * const *_ingamePakList;
 	int _ingamePakListSize;
 
@@ -861,34 +638,33 @@ protected:
 	int _cdaTrackTableIngameSize;
 	const uint8 *_cdaTrackTableFinale;
 	int _cdaTrackTableFinaleSize;
-	const char * const *_sequenceSoundList;
-	int _sequenceSoundListSize;
 	const char * const *_ingameSoundList;
 	int _ingameSoundListSize;
 	const uint16 *_ingameSoundIndex;
 	int _ingameSoundIndexSize;
-	const char * const *_sequenceStrings;
-	int _sequenceStringsSize;
 	const uint16 *_ingameTalkObjIndex;
 	int _ingameTalkObjIndexSize;
 	const char * const *_ingameTimJpStr;
 	int _ingameTimJpStrSize;
-	const HofSeqData *_sequences;
+
 	const ItemAnimDefinition *_itemAnimDefinition;
 	int _itemAnimDefinitionSize;
+
+	/*const HofSeqData *_sequences;
+
 	const ItemAnimData_v1 *_demoAnimData;
 	int _demoAnimSize;
 
-	int _sequenceStringsDuration[33];
+	int _sequenceStringsDuration[33];*/
 
-	static const uint8 _seqTextColorPresets[];
+/*	static const uint8 _seqTextColorPresets[];
 	char *_seqProcessedString;
 	WSAMovie_v2 *_seqWsa;
 
 	bool _abortIntroFlag;
-	int _menuChoice;
+	int _menuChoice;*/
 
-	uint32 _seqFrameDelay;
+	/*uint32 _seqFrameDelay;
 	uint32 _seqStartTime;
 	uint32 _seqSubFrameStartTime;
 	uint32 _seqEndTime;
@@ -902,10 +678,7 @@ protected:
 	bool _seqSpecialFlag;
 	bool _seqSubframePlaying;
 	uint8 _seqTextColor[2];
-	uint8 _seqTextColorMap[16];
-
-	const SeqProc *_callbackS;
-	const SeqProc *_callbackN;
+	uint8 _seqTextColorMap[16];*/
 
 	static const uint8 _rainbowRoomData[];
 

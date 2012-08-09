@@ -52,13 +52,6 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_screen = 0;
 	_text = 0;
 
-	_seqProcessedString = 0;
-	_activeWSA = 0;
-	_activeText = 0;
-	_seqWsa = 0;
-	_sequences = 0;
-	_sequenceSoundList = 0;
-
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;
 
@@ -89,7 +82,6 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 
 	memset(&_invWsa, 0, sizeof(_invWsa));
 	_itemAnimDefinition = 0;
-	_demoAnimData = 0;
 	_nextAnimItem = 0;
 
 	for (int i = 0; i < 15; i++)
@@ -136,7 +128,6 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	memset(_cauldronStateTables, 0, sizeof(_cauldronStateTables));
 
 	_menuDirectlyToLoad = false;
-	_menu = 0;
 	_chatIsNote = false;
 	memset(&_npcScriptData, 0, sizeof(_npcScriptData));
 
@@ -148,7 +139,6 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 
 KyraEngine_HoF::~KyraEngine_HoF() {
 	cleanup();
-	seq_uninit();
 
 	delete _screen;
 	delete _text;
@@ -156,15 +146,6 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 	delete _tim;
 	_text = 0;
 	delete _invWsa.wsa;
-
-	if (_sequenceSoundList) {
-		for (int i = 0; i < _sequenceSoundListSize; i++) {
-			if (_sequenceSoundList[i])
-				delete[] _sequenceSoundList[i];
-		}
-		delete[] _sequenceSoundList;
-		_sequenceSoundList = NULL;
-	}
 
 	delete[] _dlgBuffer;
 	for (int i = 0; i < 19; i++)
@@ -179,41 +160,13 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 	KyraEngine_v2::pauseEngineIntern(pause);
 
+	seq_pausePlayer(pause);
+
 	if (!pause) {
 		uint32 pausedTime = _system->getMillis() - _pauseStart;
 		_pauseStart = 0;
 
-		// sequence player
-		//
-		// Timers in KyraEngine_HoF::seq_cmpFadeFrame() and KyraEngine_HoF::seq_animatedSubFrame()
-		// have been left out for now. I think we don't need them here.
-
-		_seqStartTime += pausedTime;
-		_seqSubFrameStartTime += pausedTime;
-		_seqEndTime += pausedTime;
-		_seqSubFrameEndTimeInternal += pausedTime;
-		_seqWsaChatTimeout += pausedTime;
-		_seqWsaChatFrameTimeout += pausedTime;
-
-		if (_activeText) {
-			for (int x = 0; x < 10; x++) {
-				if (_activeText[x].duration != -1)
-					_activeText[x].startTime += pausedTime;
-			}
-		}
-
-		if (_activeWSA) {
-			for (int x = 0; x < 8; x++) {
-				if (_activeWSA[x].flags != -1)
-					_activeWSA[x].nextFrame += pausedTime;
-			}
-		}
-
 		_nextIdleAnim += pausedTime;
-
-		for (int x = 0; x < _itemAnimDefinitionSize; x++)
-			_activeItemAnim[x].nextFrameTime += pausedTime;
-
 		_tim->refreshTimersAfterPause(pausedTime);
 	}
 }
@@ -254,13 +207,6 @@ Common::Error KyraEngine_HoF::init() {
 	if (!_sound->init())
 		error("Couldn't init sound");
 
-	_abortIntroFlag = false;
-
-	if (_sequenceStrings) {
-		for (int i = 0; i < MIN(33, _sequenceStringsSize); i++)
-			_sequenceStringsDuration[i] = (int) strlen(_sequenceStrings[i]) * 8;
-	}
-
 	// No mouse display in demo
 	if (_flags.isDemo && !_flags.isTalkie)
 		return Common::kNoError;
@@ -279,28 +225,24 @@ Common::Error KyraEngine_HoF::init() {
 }
 
 Common::Error KyraEngine_HoF::go() {
+	int menuChoice = 0;
+
 	if (_gameToLoad == -1) {
 		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 			seq_showStarcraftLogo();
 
 		if (_flags.isDemo && !_flags.isTalkie) {
-#ifdef ENABLE_LOL
-			if (_flags.gameID == GI_LOL)
-				seq_playSequences(kSequenceLoLDemoScene1, kSequenceLoLDemoScene6);
-			else
-#endif // ENABLE_LOL
-				seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
-			_menuChoice = 4;
+			menuChoice = seq_playDemo();
 		} else {
-			seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
+			menuChoice = seq_playIntro();
 		}
 	} else {
-		_menuChoice = 1;
+		menuChoice = 1;
 	}
 
 	_res->unloadAllPakFiles();
 
-	if (_menuChoice != 4) {
+	if (menuChoice != 4) {
 		// load just the pak files needed for ingame
 		_staticres->loadStaticResourceFile();
 
@@ -317,17 +259,17 @@ Common::Error KyraEngine_HoF::go() {
 		}
 	}
 
-	_menuDirectlyToLoad = (_menuChoice == 3) ? true : false;
+	_menuDirectlyToLoad = (menuChoice == 3) ? true : false;
 	_menuDirectlyToLoad &= saveFileLoadable(0);
 
-	if (_menuChoice & 1) {
+	if (menuChoice & 1) {
 		startup();
 		if (!shouldQuit())
 			runLoop();
 		cleanup();
 
 		if (_showOutro)
-			seq_playSequences(kSequenceFunters, kSequenceFrash);
+			seq_playOutro();
 	}
 
 	return Common::kNoError;
