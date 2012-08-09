@@ -37,50 +37,50 @@ const int16 kMaxPathEdges = 450;
 const int16 kMaxPathPolygons = 50;
 
 struct PathNodeConnection {
-	byte used;
+	bool used;
 	int16 nodeIndex;
 	int16 edgeIndex;
 	uint16 distance;
-	byte enabled;
-	bool isEmpty() const { return used == 0; }
-	void clear() { used = 0; }
+	bool enabled;
+	bool isEmpty() const { return !used; }
+	void clear() { used = false; }
 };
 
 struct PathNode {
-	byte used;
+	bool used;
 	byte temporary;
 	int16 x, y, scale;
 	uint16 connectionsCount;
 	ObjectStorage<PathNodeConnection, kMaxPathNodeConnections> connections;
-	bool isEmpty() const { return used == 0; }
-	void clear() { used = 0; }
+	bool isEmpty() const { return !used; }
+	void clear() { used = false; }
 };
 
 struct PathEdge {
-	byte used;
-	int16 enabled;
+	bool used;
+	bool enabled;
 	int16 unk2;
 	int16 polyCount; // number of polygons this edge is connected to
 	int16 nodeIndex1, nodeIndex2;
 	uint16 distance;
-	bool isEmpty() const { return used == 0; }
-	void clear() { used = 0; }
+	bool isEmpty() const { return !used; }
+	void clear() { used = false; }
 	bool hasNode(int16 nodeIndex) const {
 		return nodeIndex1 == nodeIndex || nodeIndex2 == nodeIndex;
 	}
 };
 
 struct PathPolygon {
-	byte used;
-	byte enabled;
+	bool used;
+	bool enabled;
 	int16 nodeIndex1;
 	int16 nodeIndex2;
 	int16 nodeIndex3;
 	int16 edgeIndex1;
 	int16 edgeIndex2;
 	int16 edgeIndex3;
-	bool isEmpty() const { return used == 0; }
-	void clear() { used = 0; }
+	bool isEmpty() const { return !used; }
+	void clear() { used = false; }
 	bool hasEdge(int16 edgeIndex) const {
 		return edgeIndex1 == edgeIndex || edgeIndex2 == edgeIndex || edgeIndex3 == edgeIndex;
 	}
@@ -135,8 +135,8 @@ protected:
 	PathResult *_pathCurrResult;
 public:
 	void addPathNode(int16 nodeIndex, int16 x, int16 y, int16 scale);
-	void addPathEdge(int16 edgeIndex, int16 nodeIndex1, int16 nodeIndex2, int16 enabled);
-	bool addPathPolygon(int16 polyIndex, int16 nodeIndex1, int16 nodeIndex2, int16 nodeIndex3, int16 flag);
+	void addPathEdge(int16 edgeIndex, int16 nodeIndex1, int16 nodeIndex2, bool enabled);
+	bool addPathPolygon(int16 polyIndex, int16 nodeIndex1, int16 nodeIndex2, int16 nodeIndex3, bool enabled);
 	uint16 calcPathNodesDistance(int16 nodeIndex1, int16 nodeIndex2);
 	uint16 calcDistance(int16 x1, int16 y1, int16 x2, int16 y2);
 	uint16 adjustToClosestPointOnLine(int16 &x, int16 &y, int16 nodeIndex1, int16 nodeIndex2);
@@ -158,7 +158,7 @@ public:
  	void deletePathResultItem(int16 resultIndex);
 	int16 calcPathEdgeScale(int16 y, int16 edgeIndex);
  	int16 calcPathPolygonScale(int16 y, int16 polygonIndex);
-	bool path260BA(int16 sourceNodeIndex, int16 edgeIndex, int16 sourcePolyIndex, int16 destX, int16 destY);
+	bool findPathCore(int16 sourceNodeIndex, int16 edgeIndex, int16 sourcePolyIndex, int16 destX, int16 destY);
 	void removePathNode(int16 nodeIndex);
 	void removePathEdgeByPathNodeIndex(int16 nodeIndex);
 	void removePathEdge(int16 edgeIndex);
@@ -167,8 +167,8 @@ public:
 	void clearPathWalker();
 	void buildPathSystem();
 	void clearPathSystem();
-	void setPathEdgeOrPolygonEnabled(int16 type, int16 index, int16 enabled);
-	void setPathEdgeEnabled(int16 edgeIndex, int16 enabled);
+	void setPathEdgeOrPolygonEnabled(int16 type, int16 index, bool enabled);
+	void setPathEdgeEnabled(int16 edgeIndex, bool enabled);
 	void togglePathSystem(int16 flag);
 
 	PathNode *getNode(int16 nodeIndex) { return &_pathNodes[nodeIndex]; }

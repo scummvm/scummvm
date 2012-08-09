@@ -530,8 +530,8 @@ int16 ScriptOpcodes::op_addPathPolygon(Script *script) {
 	ARG_INT16(nodeIndex1);
 	ARG_INT16(nodeIndex2);
 	ARG_INT16(nodeIndex3);
-	ARG_INT16(flag);
-	_vm->_pathSystem->addPathPolygon(polyIndex, nodeIndex1, nodeIndex2, nodeIndex3, flag);
+	ARG_INT16(enabled);
+	_vm->_pathSystem->addPathPolygon(polyIndex, nodeIndex1, nodeIndex2, nodeIndex3, enabled);
 	return polyIndex;
 }
 

@@ -37,7 +37,7 @@ PathSystem::~PathSystem() {
 
 void PathSystem::addPathNode(int16 nodeIndex, int16 x, int16 y, int16 scale) {
 	PathNode *pathNode = &_pathNodes[nodeIndex];
-	pathNode->used = 1;
+	pathNode->used = true;
 	pathNode->temporary = 0;
 	pathNode->x = x;
 	pathNode->y = y;
@@ -46,7 +46,7 @@ void PathSystem::addPathNode(int16 nodeIndex, int16 x, int16 y, int16 scale) {
 	pathNode->connections.clear();
 }
 
-void PathSystem::addPathEdge(int16 edgeIndex, int16 nodeIndex1, int16 nodeIndex2, int16 enabled) {
+void PathSystem::addPathEdge(int16 edgeIndex, int16 nodeIndex1, int16 nodeIndex2, bool enabled) {
 
 	debug(8, "addPathEdge(%d, %d, %d, %d)", edgeIndex, nodeIndex1, nodeIndex2, enabled);
 
@@ -56,7 +56,7 @@ void PathSystem::addPathEdge(int16 edgeIndex, int16 nodeIndex1, int16 nodeIndex2
 	PathNodeConnection *pathNodeConnection;
 	int16 connectionIndex;
 
-	pathEdge->used = 1;
+	pathEdge->used = true;
 	pathEdge->enabled = enabled;
 	pathEdge->unk2 = 0;
 	pathEdge->polyCount = 0;
@@ -69,7 +69,7 @@ void PathSystem::addPathEdge(int16 edgeIndex, int16 nodeIndex1, int16 nodeIndex2
 	pathNodeConnection = &pathNode1->connections[connectionIndex];
 	pathNodeConnection->nodeIndex = nodeIndex2;
 	pathNodeConnection->edgeIndex = edgeIndex;
-	pathNodeConnection->used = 1;
+	pathNodeConnection->used = true;
 	pathNodeConnection->distance = pathEdge->distance;
 	pathNodeConnection->enabled = enabled;
 	pathNode1->connectionsCount++;
@@ -78,14 +78,14 @@ void PathSystem::addPathEdge(int16 edgeIndex, int16 nodeIndex1, int16 nodeIndex2
 	pathNodeConnection = &pathNode2->connections[connectionIndex];
 	pathNodeConnection->nodeIndex = nodeIndex1;
 	pathNodeConnection->edgeIndex = edgeIndex;
-	pathNodeConnection->used = 1;
+	pathNodeConnection->used = true;
 	pathNodeConnection->distance = pathEdge->distance;
 	pathNodeConnection->enabled = enabled;
 	pathNode2->connectionsCount++;
 
 }
 
-bool PathSystem::addPathPolygon(int16 polyIndex, int16 nodeIndex1, int16 nodeIndex2, int16 nodeIndex3, int16 flag) {
+bool PathSystem::addPathPolygon(int16 polyIndex, int16 nodeIndex1, int16 nodeIndex2, int16 nodeIndex3, bool enabled) {
 
 	PathPolygon *pathPolygon = &_pathPolygons[polyIndex];
 
@@ -101,8 +101,8 @@ bool PathSystem::addPathPolygon(int16 polyIndex, int16 nodeIndex1, int16 nodeInd
 	if (edgeIndex3 == -1)
 		return false;
 
-	pathPolygon->used = 1;
-	pathPolygon->enabled = flag;
+	pathPolygon->used = true;
+	pathPolygon->enabled = enabled;
 	pathPolygon->nodeIndex1 = nodeIndex1;
 	pathPolygon->nodeIndex2 = nodeIndex2;
 	pathPolygon->nodeIndex3 = nodeIndex3;
@@ -110,7 +110,7 @@ bool PathSystem::addPathPolygon(int16 polyIndex, int16 nodeIndex1, int16 nodeInd
 	pathPolygon->edgeIndex2 = edgeIndex2;
 	pathPolygon->edgeIndex3 = edgeIndex3;
 
-	if (flag) {
+	if (enabled) {
 		_pathEdges[edgeIndex1].polyCount++;
 		_pathEdges[edgeIndex2].polyCount++;
 		_pathEdges[edgeIndex3].polyCount++;
@@ -211,7 +211,7 @@ int16 PathSystem::findPathPolygonAtPos(int16 x, int16 y) {
 	int16 result = -1;
 	for (int16 i = 0; i < _pathPolygons.count(); i++) {
 		PathPolygon *pathPolygon = &_pathPolygons[i];
-		if (pathPolygon->used == 1) {
+		if (pathPolygon->used) {
 			// Test if the given point is inside the current polygon
 			int distance1, xdelta1, ydelta1;
 			int distance2, xdelta2, ydelta2;
@@ -239,7 +239,7 @@ int16 PathSystem::findPathNodeAtPos(int16 x, int16 y, bool fuzzy) {
 	int16 result = -1;
 	for (int16 nodeIndex = 0; nodeIndex < _pathNodes.count(); nodeIndex++) {
 		PathNode *node = &_pathNodes[nodeIndex];
-		if (node->used == 1) {
+		if (node->used) {
 			if (fuzzy) {
 				// Not used in POI, remove this and parameter if neccessary
 			} else {
@@ -269,7 +269,7 @@ void PathSystem::findClosestPointOnEdge(int16 x, int16 y, bool flag1, bool flag2
 	for (int16 edgeIndex = 0; edgeIndex < kMaxPathEdges; edgeIndex++) {
 		PathEdge *edge = &_pathEdges[edgeIndex];
 
-		if (edge->used == 1 && (edge->enabled == 1 || flag1 || flag2) && edge->unk2 == 0 &&
+		if (edge->used && (edge->enabled || flag1 || flag2) && edge->unk2 == 0 &&
 			edge->nodeIndex1 != nodeIndex && edge->nodeIndex2 != nodeIndex) {
 
 			PathNode *node1 = &_pathNodes[edge->nodeIndex1];
@@ -281,7 +281,7 @@ void PathSystem::findClosestPointOnEdge(int16 x, int16 y, bool flag1, bool flag2
 			pathHelper->distance1 = calcDistance(pathHelper->x, pathHelper->y, node1->x, node1->y);
 			pathHelper->distance2 = calcDistance(pathHelper->x, pathHelper->y, node2->x, node2->y);
 
-			if (pathHelper->distance1 > 0 && pathHelper->distance2 > 0 && (edge->enabled == 1 || flag2)) {
+			if (pathHelper->distance1 > 0 && pathHelper->distance2 > 0 && (edge->enabled || flag2)) {
 				pathHelper->edgeIndex = edgeIndex;
 				pathHelper->nodeIndex = -1;
 				calcPathHelperEdge(node1->x, node1->y, pathHelper->x, pathHelper->y, node2->x, node2->y);
@@ -348,7 +348,7 @@ int16 PathSystem::findPathConnectionEdge(int16 nodeIndex1, int16 nodeIndex2) {
 	int16 result = -1;
 	PathNode *node = &_pathNodes[nodeIndex1];
 	for (int16 i = 0; i < kMaxPathNodeConnections; i++) {
-		if (node->connections[i].used == 1 && node->connections[i].nodeIndex == nodeIndex2) {
+		if (node->connections[i].used && node->connections[i].nodeIndex == nodeIndex2) {
 			result = node->connections[i].edgeIndex;
 			break;
 		}
@@ -369,7 +369,7 @@ bool PathSystem::addWorkPathEdge(int16 nodeIndex1, int16 nodeIndex2, int16 value
 	for (int16 edgeIndex = 0; edgeIndex < _pathEdges.count(); edgeIndex++) {
 		PathEdge *edge = &_pathEdges[edgeIndex];
 
-		if (edge->used == 1 && edge->unk2 == 0 && edgeIndex != edgeIndex1 && edgeIndex != edgeIndex2) {
+		if (edge->used && edge->unk2 == 0 && edgeIndex != edgeIndex1 && edgeIndex != edgeIndex2) {
 
 			if (edge->nodeIndex1 != nodeIndex1 && edge->nodeIndex2 != nodeIndex1 &&
 				edge->nodeIndex1 != nodeIndex2 && edge->nodeIndex2 != nodeIndex2) {
@@ -422,7 +422,7 @@ int16 PathSystem::findPathPolygonByEdges(int16 edgeIndex1, int16 edgeIndex2) {
 	if (edgeIndex1 != -1 && edgeIndex2 != -1) {
 		for (int16 i = 0; i < _pathPolygons.count(); i++) {
 			PathPolygon *polygon = &_pathPolygons[i];
-			if (polygon->used == 1 && polygon->enabled == 1 &&
+			if (polygon->used && polygon->enabled &&
 				((edgeIndex1 == polygon->edgeIndex1 && edgeIndex2 == polygon->edgeIndex2) ||
 				(edgeIndex1 == polygon->edgeIndex1 && edgeIndex2 == polygon->edgeIndex3) ||
 				(edgeIndex1 == polygon->edgeIndex2 && edgeIndex2 == polygon->edgeIndex1) ||
@@ -439,7 +439,7 @@ int16 PathSystem::findPathPolygonByNodes(int16 nodeIndex1, int16 nodeIndex2) {
 	if (nodeIndex1 != -1 && nodeIndex2 != -1) {
 		for (int16 i = 0; i < _pathPolygons.count(); i++) {
 			PathPolygon *polygon = &_pathPolygons[i];
-			if (polygon->used == 1 && polygon->enabled == 1 &&
+			if (polygon->used && polygon->enabled &&
 				((nodeIndex1 == polygon->nodeIndex1 && nodeIndex2 == polygon->nodeIndex2) ||
 				(nodeIndex1 == polygon->nodeIndex1 && nodeIndex2 == polygon->nodeIndex3) ||
 				(nodeIndex2 == polygon->nodeIndex1 && nodeIndex1 == polygon->nodeIndex2) ||
@@ -459,7 +459,7 @@ int16 PathSystem::findPathPolygonByNodeAndEdge(int16 nodeIndex, int16 edgeIndex)
 			return edgeIndex;
 		for (int16 i = 0; i < _pathPolygons.count(); i++) {
 			PathPolygon *polygon = &_pathPolygons[i];
-			if (polygon->used == 1 && polygon->enabled == 1 &&
+			if (polygon->used && polygon->enabled &&
 				((nodeIndex == polygon->nodeIndex1 && edgeIndex == polygon->edgeIndex1) ||
 				(nodeIndex == polygon->nodeIndex1 && edgeIndex == polygon->edgeIndex2) ||
 				(nodeIndex == polygon->nodeIndex1 && edgeIndex == polygon->edgeIndex3) ||
@@ -495,7 +495,7 @@ void PathSystem::calcPathSegment(int16 nodeIndex1, uint16 distance, int16 nodeIn
 				_pathNodeHelpersCount--;
 				for (int16 connIndex = 0; connIndex < kMaxPathNodeConnections; connIndex++) {
 					PathNodeConnection *nodeConnection = &node->connections[connIndex];
-					if (nodeConnection->used == 1 && nodeConnection->enabled == 1 &&
+					if (nodeConnection->used && nodeConnection->enabled &&
 						nodeConnection->nodeIndex != nodeHelper->nodeIndex &&
 						nodeConnection->nodeIndex != nodeIndex2 &&
 						nodeConnection->nodeIndex != nodeIndex3) {
@@ -561,29 +561,29 @@ bool PathSystem::insertPathEdge(int16 nodeIndex1, int16 nodeIndex2) {
 		return false;
 
 	PathEdge *edge = &_pathEdges[edgeIndex];
-	edge->enabled = 1;
+	edge->enabled = true;
 	edge->unk2 = 1;
 	edge->polyCount = 0;
 	edge->nodeIndex1 = nodeIndex1;
 	edge->nodeIndex2 = nodeIndex2;
 	edge->distance = calcPathNodesDistance(nodeIndex1, nodeIndex2);
-	edge->used = 1;
+	edge->used = true;
 	_pathEdgesCount++;
 
 	PathNodeConnection *nodeConnection1 = &_pathNodes[nodeIndex1].connections[connIndex1];
 	nodeConnection1->nodeIndex = nodeIndex2;
 	nodeConnection1->edgeIndex = edgeIndex;
 	nodeConnection1->distance = edge->distance;
-	nodeConnection1->enabled = 1;
-	nodeConnection1->used = 1;
+	nodeConnection1->enabled = true;
+	nodeConnection1->used = true;
 	_pathNodes[nodeIndex1].connectionsCount++;
 
 	PathNodeConnection *nodeConnection2 = &_pathNodes[nodeIndex2].connections[connIndex2];
 	nodeConnection2->nodeIndex = nodeIndex1;
 	nodeConnection2->edgeIndex = edgeIndex;
 	nodeConnection2->distance = edge->distance;
-	nodeConnection2->enabled = 1;
-	nodeConnection2->used = 1;
+	nodeConnection2->enabled = true;
+	nodeConnection2->used = true;
 	_pathNodes[nodeIndex2].connectionsCount++;
 
 	return true;
@@ -625,7 +625,8 @@ void PathSystem::cleanupPathResult() {
 }
 
 void PathSystem::deletePathResultItem(int16 resultIndex) {
-	memcpy(&_pathResults[resultIndex], &_pathResults[resultIndex + 1], (_pathResultsCount - resultIndex - 1) * sizeof(PathResult));
+	memcpy(&_pathResults[resultIndex], &_pathResults[resultIndex + 1],
+		(_pathResultsCount - resultIndex - 1) * sizeof(PathResult));
 	_pathResultsCount--;
 }
 
@@ -676,7 +677,7 @@ int16 PathSystem::calcPathPolygonScale(int16 y, int16 polygonIndex) {
 
 }
 
-bool PathSystem::path260BA(int16 sourceNodeIndex, int16 edgeIndex, int16 sourcePolyIndex, int16 destX, int16 destY) {
+bool PathSystem::findPathCore(int16 sourceNodeIndex, int16 edgeIndex, int16 sourcePolyIndex, int16 destX, int16 destY) {
 
 	bool doLoopFlag = false;
 	int16 destPolyIndex, destNodeIndex, destEdgeIndex, nodeIndex2 = -1;
@@ -686,7 +687,7 @@ bool PathSystem::path260BA(int16 sourceNodeIndex, int16 edgeIndex, int16 sourceP
 	sourcePolygon = &_pathPolygons[sourcePolyIndex];
 
 	destPolyIndex = findPathPolygonAtPos(destX, destY);
-	if (destPolyIndex != -1 && _pathPolygons[destPolyIndex].enabled == 0)
+	if (destPolyIndex != -1 && !_pathPolygons[destPolyIndex].enabled)
 		destPolyIndex = -1;
 
 	if (destPolyIndex != -1)
@@ -778,7 +779,7 @@ bool PathSystem::path260BA(int16 sourceNodeIndex, int16 edgeIndex, int16 sourceP
 			destNodeIndex = _pathNodes.getFreeSlot();
 			pathNode = &_pathNodes[destNodeIndex];
 			destNodeIsTemporary = true;
-			pathNode->used = 1;
+			pathNode->used = true;
 			pathNode->temporary = 1;
 			pathNode->x = pathHelper->x;
 			pathNode->y = pathHelper->y;
@@ -803,7 +804,7 @@ bool PathSystem::path260BA(int16 sourceNodeIndex, int16 edgeIndex, int16 sourceP
 				if (pathEdge->polyCount > 0) {
 					for (int16 polyIndex = 0; polyIndex < _pathPolygons.count(); polyIndex++) {
 						PathPolygon *poly = &_pathPolygons[polyIndex];
-						if (poly->used == 1 && poly->enabled == 1 && poly->hasEdge(destEdgeIndex)) {
+						if (poly->used && poly->enabled && poly->hasEdge(destEdgeIndex)) {
 							insertPathEdge(destNodeIndex, poly->nodeIndex1);
 							insertPathEdge(destNodeIndex, poly->nodeIndex2);
 							insertPathEdge(destNodeIndex, poly->nodeIndex3);
@@ -895,7 +896,7 @@ bool PathSystem::path260BA(int16 sourceNodeIndex, int16 edgeIndex, int16 sourceP
 			if (!doLoopFlag) {
 				for (int16 polyIndex = 0; polyIndex < _pathPolygons.count() && _pathEdgesCount < kMaxPathEdges; polyIndex++) {
 					PathPolygon *poly = &_pathPolygons[polyIndex];
-					if (poly->used == 1 && poly->enabled == 1) {
+					if (poly->used && poly->enabled) {
 						if (polyIndex != sourcePolyIndex) {
 							addWorkPathEdge(poly->nodeIndex1, sourceNodeIndex, 1, edgeIndex, -1);
 							addWorkPathEdge(poly->nodeIndex2, sourceNodeIndex, 1, edgeIndex, -1);
@@ -963,14 +964,14 @@ void PathSystem::removePathNode(int16 nodeIndex) {
 		_pathNodesCount--;
 		if (_pathNodes[nodeIndex].connectionsCount > 0)
 			removePathEdgeByPathNodeIndex(nodeIndex);
-		_pathNodes[nodeIndex].used = 0;
+		_pathNodes[nodeIndex].used = false;
 	}
 }
 
 void PathSystem::removePathEdgeByPathNodeIndex(int16 nodeIndex) {
 	for (int16 edgeIndex = 0; edgeIndex < _pathEdges.count(); edgeIndex++) {
 		PathEdge *edge = &_pathEdges[edgeIndex];
-		if (edge->used == 1 && edge->hasNode(nodeIndex))
+		if (edge->used && edge->hasNode(nodeIndex))
 			removePathEdge(edgeIndex);
 	}
 }
@@ -979,7 +980,7 @@ void PathSystem::removePathEdge(int16 edgeIndex) {
 	if (edgeIndex != -1) {
 		_pathEdgesCount--;
 		unlinkPathNodeConnection(_pathEdges[edgeIndex].nodeIndex1, _pathEdges[edgeIndex].nodeIndex2);
-		_pathEdges[edgeIndex].used = 0;
+		_pathEdges[edgeIndex].used = false;
 	}
 }
 
@@ -987,12 +988,12 @@ void PathSystem::unlinkPathNodeConnection(int16 nodeIndex1, int16 nodeIndex2) {
 	for (int16 i = 0; i < kMaxPathNodeConnections; i++) {
 		PathNodeConnection *conn1 = &_pathNodes[nodeIndex1].connections[i];
 		PathNodeConnection *conn2 = &_pathNodes[nodeIndex2].connections[i];
-		if (conn1->used == 1 && conn1->nodeIndex == nodeIndex2) {
-			conn1->used = 0;
+		if (conn1->used && conn1->nodeIndex == nodeIndex2) {
+			conn1->used = false;
 			_pathNodes[nodeIndex1].connectionsCount--;
 		}
-		if (conn2->used == 1 && conn2->nodeIndex == nodeIndex1) {
-			conn2->used = 0;
+		if (conn2->used && conn2->nodeIndex == nodeIndex1) {
+			conn2->used = false;
 			_pathNodes[nodeIndex2].connectionsCount--;
 		}
 	}
@@ -1046,7 +1047,7 @@ bool PathSystem::findPath(int16 sourceX, int16 sourceY, int16 destX, int16 destY
 			PathNode *pathNode = &_pathNodes[sourceNodeIndex];
 			sourceNodeIsTemporary = true;
 			pathNode->temporary = 1;
-			pathNode->used = 1;
+			pathNode->used = true;
 			pathNode->x = sourceX;
 			pathNode->y = sourceY;
 			if (edgeIndex != -1) {
@@ -1067,7 +1068,7 @@ bool PathSystem::findPath(int16 sourceX, int16 sourceY, int16 destX, int16 destY
 				if (_pathEdges[edgeIndex].polyCount > 0) {
 					for (int16 polyIndex = 0; polyIndex < _pathPolygons.count(); polyIndex++) {
 						PathPolygon *poly = &_pathPolygons[polyIndex];
-						if (poly->used == 1 && poly->enabled == 1 && poly->hasEdge(edgeIndex)) {
+						if (poly->used && poly->enabled && poly->hasEdge(edgeIndex)) {
 							insertPathEdge(sourceNodeIndex, poly->nodeIndex1);
 							insertPathEdge(sourceNodeIndex, poly->nodeIndex2);
 							insertPathEdge(sourceNodeIndex, poly->nodeIndex3);
@@ -1086,7 +1087,7 @@ bool PathSystem::findPath(int16 sourceX, int16 sourceY, int16 destX, int16 destY
 	if (sourceNodeIndex == -1 && edgeIndex == -1 && sourcePolyIndex == -1)
 		return false;
 
-	result = path260BA(sourceNodeIndex, edgeIndex, sourcePolyIndex, destX, destY);
+	result = findPathCore(sourceNodeIndex, edgeIndex, sourcePolyIndex, destX, destY);
 
 	if (sourceNodeIsTemporary) {
 		if (_pathResultsCount > 0) {
@@ -1120,10 +1121,10 @@ void PathSystem::buildPathSystem() {
 	if (_pathEdgesCount > 0) {
 		for (int16 outerPolyIndex = 0; outerPolyIndex < kMaxPathPolygons && _pathEdgesCount < kMaxPathEdges; outerPolyIndex++) {
 			PathPolygon *outerPoly = &_pathPolygons[outerPolyIndex];
-			if (outerPoly->used == 1 && outerPoly->enabled == 1) {
+			if (outerPoly->used && outerPoly->enabled) {
 				for (int16 innerPolyIndex = outerPolyIndex + 1; innerPolyIndex < kMaxPathPolygons && _pathEdgesCount < kMaxPathEdges; innerPolyIndex++) {
 					PathPolygon *innerPoly = &_pathPolygons[innerPolyIndex];
-					if (innerPoly->used == 1 && innerPoly->enabled == 1) {
+					if (innerPoly->used && innerPoly->enabled) {
 						addWorkPathEdge(outerPoly->nodeIndex1, innerPoly->nodeIndex1, 1, -1, -1);
 						addWorkPathEdge(outerPoly->nodeIndex1, innerPoly->nodeIndex2, 1, -1, -1);
 						addWorkPathEdge(outerPoly->nodeIndex1, innerPoly->nodeIndex3, 1, -1, -1);
@@ -1144,7 +1145,7 @@ void PathSystem::clearPathSystem() {
 
 	if (_pathNodesCount > 0) {
 		for (int16 nodeIndex = 0; nodeIndex < kMaxPathNodes; nodeIndex++) {
-			if (_pathNodes[nodeIndex].used == 1 && _pathNodes[nodeIndex].temporary == 1) {
+			if (_pathNodes[nodeIndex].used && _pathNodes[nodeIndex].temporary == 1) {
 				removePathNode(nodeIndex);
 			}
 		}
@@ -1152,7 +1153,7 @@ void PathSystem::clearPathSystem() {
 
 	if (_pathEdgesCount > 0) {
 		for (int16 edgeIndex = 0; edgeIndex < kMaxPathEdges; edgeIndex++) {
-			if (_pathEdges[edgeIndex].used == 1 && _pathEdges[edgeIndex].unk2 == 1) {
+			if (_pathEdges[edgeIndex].used && _pathEdges[edgeIndex].unk2 == 1) {
 				removePathEdge(edgeIndex);
 			}
 		}
@@ -1160,7 +1161,7 @@ void PathSystem::clearPathSystem() {
 
 }
 
-void PathSystem::setPathEdgeOrPolygonEnabled(int16 type, int16 index, int16 enabled) {
+void PathSystem::setPathEdgeOrPolygonEnabled(int16 type, int16 index, bool enabled) {
 	if (type == 0) {
 		if (_pathEdges[index].enabled != enabled) {
 			if (_pathSystemBuilt)
@@ -1180,7 +1181,7 @@ void PathSystem::setPathEdgeOrPolygonEnabled(int16 type, int16 index, int16 enab
 	}
 }
 
-void PathSystem::setPathEdgeEnabled(int16 edgeIndex, int16 enabled) {
+void PathSystem::setPathEdgeEnabled(int16 edgeIndex, bool enabled) {
 
 	PathNode *node;
 	PathEdge *edge = &_pathEdges[edgeIndex];
@@ -1189,7 +1190,7 @@ void PathSystem::setPathEdgeEnabled(int16 edgeIndex, int16 enabled) {
 	node = &_pathNodes[edge->nodeIndex1];
 	for (int16 connIndex = 0; connIndex < kMaxPathNodeConnections; connIndex++) {
 		PathNodeConnection *nodeConnection = &_pathNodes[edge->nodeIndex1].connections[connIndex];
-		if (nodeConnection->used == 1 && nodeConnection->nodeIndex == edge->nodeIndex2) {
+		if (nodeConnection->used && nodeConnection->nodeIndex == edge->nodeIndex2) {
 			nodeConnection->enabled = enabled;
 			break;
 		}
@@ -1197,7 +1198,7 @@ void PathSystem::setPathEdgeEnabled(int16 edgeIndex, int16 enabled) {
 
 	for (int16 connIndex = 0; connIndex < kMaxPathNodeConnections; connIndex++) {
 		PathNodeConnection *nodeConnection = &_pathNodes[edge->nodeIndex2].connections[connIndex];
-		if (nodeConnection->used == 1 && nodeConnection->nodeIndex == edge->nodeIndex1) {
+		if (nodeConnection->used && nodeConnection->nodeIndex == edge->nodeIndex1) {
 			nodeConnection->enabled = enabled;
 			break;
 		}
@@ -1225,7 +1226,7 @@ void PathSystem::saveState(Common::WriteStream *out) {
 	out->writeUint16LE(_pathNodesCount);
 	for (int i = 0; i < kMaxPathNodes; i++) {
 		PathNode *node = &_pathNodes[i];
-		out->writeByte(node->used);
+		out->writeByte(node->used ? 1 : 0);
 		if (node->used) {
 			out->writeByte(node->temporary);
 			out->writeUint16LE(node->x);
@@ -1234,12 +1235,12 @@ void PathSystem::saveState(Common::WriteStream *out) {
 			out->writeUint16LE(node->connectionsCount);
 			for (int j = 0; j < kMaxPathNodeConnections; j++) {
 				PathNodeConnection *conn = &node->connections[j];
-				out->writeByte(conn->used);
+				out->writeByte(conn->used ? 1 : 0);
 				if (conn->used) {
 					out->writeUint16LE(conn->nodeIndex);
 					out->writeUint16LE(conn->edgeIndex);
 					out->writeUint16LE(conn->distance);
-					out->writeByte(conn->enabled);
+					out->writeByte(conn->enabled ? 1 : 0);
 				}
 			}
 		}
@@ -1248,9 +1249,9 @@ void PathSystem::saveState(Common::WriteStream *out) {
 	out->writeUint16LE(_pathEdgesCount);
 	for (int i = 0; i < kMaxPathEdges; i++) {
 		PathEdge *edge = &_pathEdges[i];
-		out->writeByte(edge->used);
+		out->writeByte(edge->used ? 1 : 0);
 		if (edge->used) {
-			out->writeUint16LE(edge->enabled);
+			out->writeUint16LE(edge->enabled ? 1 : 0);
 			out->writeUint16LE(edge->unk2);
 			out->writeUint16LE(edge->polyCount);
 			out->writeUint16LE(edge->nodeIndex1);
@@ -1262,9 +1263,9 @@ void PathSystem::saveState(Common::WriteStream *out) {
 	out->writeUint16LE(_pathPolygonsCount);
 	for (int i = 0; i < kMaxPathPolygons; i++) {
 		PathPolygon *poly = &_pathPolygons[i];
-		out->writeByte(poly->used);
+		out->writeByte(poly->used ? 1 : 0);
 		if (poly->used) {
-			out->writeByte(poly->enabled);
+			out->writeByte(poly->enabled ? 1 : 0);
 			out->writeUint16LE(poly->nodeIndex1);
 			out->writeUint16LE(poly->nodeIndex2);
 			out->writeUint16LE(poly->nodeIndex3);
@@ -1282,7 +1283,7 @@ void PathSystem::loadState(Common::ReadStream *in) {
 	_pathNodesCount = in->readUint16LE();
 	for (int i = 0; i < kMaxPathNodes; i++) {
 		PathNode *node = &_pathNodes[i];
-		node->used = in->readByte();
+		node->used = in->readByte() != 0;
 		if (node->used) {
 			node->temporary = in->readByte();
 			node->x = in->readUint16LE();
@@ -1291,12 +1292,12 @@ void PathSystem::loadState(Common::ReadStream *in) {
 			node->connectionsCount = in->readUint16LE();
 			for (int j = 0; j < kMaxPathNodeConnections; j++) {
 				PathNodeConnection *conn = &node->connections[j];
-				conn->used = in->readByte();
+				conn->used = in->readByte() != 0;
 				if (conn->used) {
 					conn->nodeIndex = in->readUint16LE();
 					conn->edgeIndex = in->readUint16LE();
 					conn->distance = in->readUint16LE();
-					conn->enabled = in->readByte();
+					conn->enabled = in->readByte() != 0;
 				}
 			}
 		}
@@ -1306,9 +1307,9 @@ void PathSystem::loadState(Common::ReadStream *in) {
 	_pathEdgesCount = in->readUint16LE();
 	for (int i = 0; i < kMaxPathEdges; i++) {
 		PathEdge *edge = &_pathEdges[i];
-		edge->used = in->readByte();
+		edge->used = in->readByte() != 0;
 		if (edge->used) {
-			edge->enabled = in->readUint16LE();
+			edge->enabled = in->readUint16LE() != 0;
 			edge->unk2 = in->readUint16LE();
 			edge->polyCount = in->readUint16LE();
 			edge->nodeIndex1 = in->readUint16LE();
@@ -1321,9 +1322,9 @@ void PathSystem::loadState(Common::ReadStream *in) {
 	_pathPolygonsCount = in->readUint16LE();
 	for (int i = 0; i < kMaxPathPolygons; i++) {
 		PathPolygon *poly = &_pathPolygons[i];
-		poly->used = in->readByte();
+		poly->used = in->readByte() != 0;
 		if (poly->used) {
-			poly->enabled = in->readByte();
+			poly->enabled = in->readByte() != 0;
 			poly->nodeIndex1 = in->readUint16LE();
 			poly->nodeIndex2 = in->readUint16LE();
 			poly->nodeIndex3 = in->readUint16LE();
