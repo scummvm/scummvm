@@ -1235,14 +1235,8 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 			break;
 		}
 		sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
-		len = sprite->_realWidth * sprite->_height;
-		mask = new byte[len];
-		generateMask(sprite->data(), mask, len, g_cine->_objectTable[it->objIdx].part);
-		remaskSprite(mask, it);
-		drawMaskedSprite(g_cine->_objectTable[it->objIdx], mask);
-		delete[] mask;
+		drawSprite(&(*it), sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, g_cine->_objectTable[it->objIdx].x, g_cine->_objectTable[it->objIdx].y, g_cine->_objectTable[it->objIdx].part, sprite->_bpp);
 		break;
-
 	// game message
 	case 2:
 		if (it->objIdx >= g_cine->_messageTable.size()) {
@@ -1290,14 +1284,6 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
 		break;
 
-	// FIXME: Implement correct drawing of type 21 overlays.
-	// Type 21 overlays aren't just filled rectangles, I found their drawing routine
-	// from Operation Stealth's drawSprite routine. So they're likely some kind of sprites
-	// and it's just a coincidence that the oxygen meter during the first arcade sequence
-	// works even somehow currently. I tried the original under DOSBox and the oxygen gauge
-	// is a long red bar that gets shorter as the air runs out.
-	case 21:
-	// A filled rectangle:
 	case 22:
 		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
 		assert(it->objIdx < NUM_MAX_OBJECT);
@@ -1751,6 +1737,89 @@ void drawSpriteRaw(const byte *spritePtr, const byte *maskPtr, int16 width, int1
 		}
 	}
 }
+
+void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp)
+{
+	byte* pMask = NULL;
+
+	// draw the mask based on next objects in the list
+	Common::List<overlay>::iterator it;
+	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it)
+	{
+		if(&(*it) == overlayPtr)
+		{
+			break;
+		}
+	}
+
+	while(it != g_cine->_overlayList.end())
+	{
+		overlay* pCurrentOverlay = &(*it);
+		if((pCurrentOverlay->type==5) || ((pCurrentOverlay->type==21) && (pCurrentOverlay->x==overlayPtr->objIdx)))
+		{
+			AnimData* sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
+
+			if(pMask == NULL)
+			{
+				pMask = new byte[width*height];
+
+				for (int i = 0; i < height; i++) {
+					for (int j = 0; j < width; j++) {
+						byte spriteColor= spritePtr[width*i+j];
+						pMask[width*i+j] = spriteColor;
+					}
+				}
+			}
+
+			for (int i = 0; i < sprite->_realWidth; i++) {
+				for (int j = 0; j < sprite->_height; j++) {
+					int inMaskX = (g_cine->_objectTable[it->objIdx].x+i) - x;
+					int inMaskY = (g_cine->_objectTable[it->objIdx].y+j) - y;
+
+					if(inMaskX >=0 && inMaskX < width)
+					{
+						if(inMaskY >=0 && inMaskY < height)
+						{
+							if(sprite->_bpp == 1)
+							{
+								if(!sprite->getColor(i, j))
+								{
+									pMask[inMaskY*width+inMaskX] = page[x + y * 320 + inMaskX + inMaskY * 320];
+								}
+							}
+						}
+					}
+				}
+			}
+
+
+		}
+		it++;
+	}
+
+	// now, draw with the mask we created
+	if(pMask)
+	{
+		spritePtr = pMask;
+	}
+	{
+		for (int i = 0; i < height; i++) {
+			byte *destPtr = page + x + y * 320;
+			destPtr += i * 320;
+
+			for (int j = 0; j < width; j++) {
+				byte color= *(spritePtr++);
+				if ((transparentColor != color) && x + j >= 0 && x + j < 320 && i + y >= 0 && i + y < 200) {
+					*(destPtr++) = color;
+				} else {
+					destPtr++;
+				}
+			}
+		}
+	}
+
+	delete[] pMask;
+};
 
 void drawSpriteRaw2(const byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y) {
 	int16 i, j;
