@@ -1326,6 +1326,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 5 DOS Spanish Floppy 0.000.062 VGA (5 x 3.5" disks)
+	// Supplied by dianiu in bug report #3555646
+	{"kq5", "", {
+		{"resource.map", 0, "c09896a2a30c9b002c5cbbc62f5a5c3a", 8169},
+		{"resource.000", 0, "1f1d03aead44da46362ff40c0074a3ec", 335871},
+		{"resource.001", 0, "d1803ad904127ae091edb274ee8c047f", 1180637},
+		{"resource.002", 0, "d9cd5972016f650cc31fb7c2a2b0953a", 1102207},
+		{"resource.003", 0, "829c8caeff793f3cfcea2cb01aaa4150", 965586},
+		{"resource.004", 0, "0bd9e570ee04b025e43d3075998fae5b", 1117965},
+		{"resource.005", 0, "4aaa2e9a69089b9afbaaccbbf2c4e647", 1202936},
+		{"resource.006", 0, "65b520e60c4217e6a6572d9edf77193b", 1141985},
+		{"resource.007", 0, "f42b0100f0a1c30806814f8648b6bc28", 1145583},
+		AD_LISTEND},
+	 	Common::ES_ESP, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest 5 - German DOS Floppy (supplied by markcoolio in bug report #2727101, also includes english language)
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
