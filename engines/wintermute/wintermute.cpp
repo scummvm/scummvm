@@ -115,7 +115,7 @@ Common::Error WinterMuteEngine::run() {
 	// Additional setup.
 	debugC(kWinterMuteDebugLog, "WinterMuteEngine::init");
 	ret = init();
-	
+
 	debugC(kWinterMuteDebugLog, "WinterMuteEngine::messageLoop");
 	if (ret == 0) {
 		ret = messageLoop();
@@ -127,7 +127,9 @@ Common::Error WinterMuteEngine::run() {
 int WinterMuteEngine::init() {
 	BaseEngine::createInstance(_targetName);
 	_game = new AdGame(_targetName);
-	if (!_game) return 1;
+	if (!_game) {
+		return 1;
+	}
 	BaseEngine::instance().setGameRef(_game);
 	BasePlatform::initialize(_game, 0, NULL);
 
@@ -241,15 +243,22 @@ int WinterMuteEngine::messageLoop() {
 
 			time = _system->getMillis();
 			diff = time - prevTime;
-			if (frameTime > diff) // Avoid overflows
+			if (frameTime > diff) { // Avoid overflows
 				_system->delayMillis(frameTime - diff);
+			}
 
 			// ***** flip
-			if (!_game->_suspendedRendering) _game->_renderer->flip();
-			if (_game->_loading) _game->loadGame(_game->_scheduledLoadSlot);
+			if (!_game->_suspendedRendering) {
+				_game->_renderer->flip();
+			}
+			if (_game->_loading) {
+				_game->loadGame(_game->_scheduledLoadSlot);
+			}
 			prevTime = time;
 		}
-		if (_game->_quitting) break;
+		if (_game->_quitting) {
+			break;
+		}
 	}
 
 	if (_game) {
@@ -302,21 +311,24 @@ bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 			Common::String line = stream->readLine();
 			line.trim(); // Get rid of indentation
 			// Expect "SETTINGS {" or comment, or empty line
-			if (line.size() == 0 || line[0] == ';' || (line.contains("{")))
+			if (line.size() == 0 || line[0] == ';' || (line.contains("{"))) {
 				continue;
-			else {
+			} else {
 				// We are looking for "GAME ="
 				Common::StringTokenizer token(line, "=");
 				Common::String key = token.nextToken();
 				Common::String value = token.nextToken();
-				if (value.size() == 0)
+				if (value.size() == 0) {
 					continue;
-				if (value[0] == '\"')
+				}
+				if (value[0] == '\"') {
 					value.deleteChar(0);
-				else
+				} else {
 					continue;
-				if (value.lastChar() == '\"')
+				}
+				if (value.lastChar() == '\"') {
 					value.deleteLastChar();
+				}
 				if (key == "GAME") {
 					settingsGameFile = value;
 					break;
@@ -333,20 +345,23 @@ bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 			Common::String line = stream->readLine();
 			line.trim(); // Get rid of indentation
 			// Expect "GAME {" or comment, or empty line
-			if (line.size() == 0 || line[0] == ';' || (line.contains("{")))
+			if (line.size() == 0 || line[0] == ';' || (line.contains("{"))) {
 				continue;
-			else {
+			} else {
 				Common::StringTokenizer token(line, "=");
 				Common::String key = token.nextToken();
 				Common::String value = token.nextToken();
-				if (value.size() == 0)
+				if (value.size() == 0) {
 					continue;
-				if (value[0] == '\"')
+				}
+				if (value[0] == '\"') {
 					value.deleteChar(0);
-				else
-					continue; // not a string
-				if (value.lastChar() == '\"')
+				} else {
+					continue;    // not a string
+				}
+				if (value.lastChar() == '\"') {
 					value.deleteLastChar();
+				}
 				if (key == "NAME") {
 					retVal = true;
 					name = value;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -23,23 +23,23 @@
 namespace WinterMute {
 
 static const PlainGameDescriptor wintermuteGames[] = {
-	{"5ld",				"Five Lethal Demons"},
-	{"5ma",				"Five Magical Amulets"},
-	{"actualdest",		"Actual Destination"},
-	{"chivalry",		"Chivalry is Not Dead"},
-	{"deadcity",		"Dead City"},
-	{"dirtysplit",		"Dirty Split"},
-	{"eastside",		"East Side Story"},
-	{"ghostsheet",		"Ghost in the Sheet"},
-	{"hamlet",			"Hamlet or the last game without MMORPS features, shaders and product placement"},
-	{"julia",			"J.U.L.I.A."},
-	{"mirage",			"Mirage"},
-	{"pigeons",			"Pigeons in the Park"},
-	{"reversion",		"Reversion"},
-	{"rosemary",		"Rosemary"},
-	{"thebox",			"The Box"},
-	{"twc",				"the white chamber"},
-	{"wintermute",		"Wintermute engine game"},
+	{"5ld",             "Five Lethal Demons"},
+	{"5ma",             "Five Magical Amulets"},
+	{"actualdest",      "Actual Destination"},
+	{"chivalry",        "Chivalry is Not Dead"},
+	{"deadcity",        "Dead City"},
+	{"dirtysplit",      "Dirty Split"},
+	{"eastside",        "East Side Story"},
+	{"ghostsheet",      "Ghost in the Sheet"},
+	{"hamlet",          "Hamlet or the last game without MMORPS features, shaders and product placement"},
+	{"julia",           "J.U.L.I.A."},
+	{"mirage",          "Mirage"},
+	{"pigeons",         "Pigeons in the Park"},
+	{"reversion",       "Reversion"},
+	{"rosemary",        "Rosemary"},
+	{"thebox",          "The Box"},
+	{"twc",             "the white chamber"},
+	{"wintermute",      "Wintermute engine game"},
 	{0, 0}
 };
 
@@ -229,5 +229,5 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	AD_TABLE_END_MARKER
 };
-	
+
 } // End of namespace WinterMute

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -51,37 +51,55 @@ void BasePlatform::handleEvent(Common::Event *event) {
 		if (_gameRef) {
 			if (_gameRef->isLeftDoubleClick()) {
 				_gameRef->onMouseLeftDblClick();
+			} else {
+				_gameRef->onMouseLeftDown();
 			}
-			else _gameRef->onMouseLeftDown();
 		}
 		break;
 	case Common::EVENT_RBUTTONDOWN:
 		if (_gameRef) {
-			if (_gameRef->isRightDoubleClick()) _gameRef->onMouseRightDblClick();
-			else _gameRef->onMouseRightDown();
+			if (_gameRef->isRightDoubleClick()) {
+				_gameRef->onMouseRightDblClick();
+			} else {
+				_gameRef->onMouseRightDown();
+			}
 		}
 		break;
 	case Common::EVENT_MBUTTONDOWN:
-		if (_gameRef) _gameRef->onMouseMiddleDown();
+		if (_gameRef) {
+			_gameRef->onMouseMiddleDown();
+		}
 		break;
 	case Common::EVENT_LBUTTONUP:
-		if (_gameRef) _gameRef->onMouseLeftUp();
+		if (_gameRef) {
+			_gameRef->onMouseLeftUp();
+		}
 		break;
 	case Common::EVENT_RBUTTONUP:
-		if (_gameRef) _gameRef->onMouseRightUp();
+		if (_gameRef) {
+			_gameRef->onMouseRightUp();
+		}
 		break;
 	case Common::EVENT_MBUTTONUP:
-		if (_gameRef) _gameRef->onMouseMiddleUp();
+		if (_gameRef) {
+			_gameRef->onMouseMiddleUp();
+		}
 		break;
 	case Common::EVENT_KEYDOWN:
-		if (_gameRef) _gameRef->handleKeypress(event);
+		if (_gameRef) {
+			_gameRef->handleKeypress(event);
+		}
 		break;
 	case Common::EVENT_KEYUP:
-		if (_gameRef) _gameRef->handleKeyRelease(event);
+		if (_gameRef) {
+			_gameRef->handleKeyRelease(event);
+		}
 		break;
 	case Common::EVENT_WHEELUP:
 	case Common::EVENT_WHEELDOWN:
-		if (_gameRef) _gameRef->handleMouseWheel(event->mouse.y);
+		if (_gameRef) {
+			_gameRef->handleMouseWheel(event->mouse.y);
+		}
 		break;
 // Focus-events have been removed (_gameRef->onActivate originally)
 	case Common::EVENT_RTL:
@@ -216,7 +234,9 @@ bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
-	if (lprcDst == NULL || lprcSrc == NULL) return false;
+	if (lprcDst == NULL || lprcSrc == NULL) {
+		return false;
+	}
 
 	*lprcDst = *lprcSrc;
 	return true;
