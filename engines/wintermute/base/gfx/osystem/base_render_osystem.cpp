@@ -573,23 +573,23 @@ Rect32 BaseRenderOSystem::getViewPort() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
-	rect->left = MathUtil::round(rect->left * _ratioX + _borderLeft - _renderRect.left);
-	rect->top = MathUtil::round(rect->top * _ratioY + _borderTop - _renderRect.top);
-	rect->setWidth(MathUtil::roundUp(rect->width() * _ratioX));
-	rect->setHeight(MathUtil::roundUp(rect->height() * _ratioY));
+	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderLeft - _renderRect.left);
+	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderTop - _renderRect.top);
+	rect->setWidth((int16)MathUtil::roundUp(rect->width() * _ratioX));
+	rect->setHeight((int16)MathUtil::roundUp(rect->height() * _ratioY));
 }
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::pointFromScreen(Point32 *point) {
-	point->x = point->x / _ratioX - _borderLeft / _ratioX + _renderRect.left;
-	point->y = point->y / _ratioY - _borderTop / _ratioY + _renderRect.top;
+	point->x = (int16)(point->x / _ratioX - _borderLeft / _ratioX + _renderRect.left);
+	point->y = (int16)(point->y / _ratioY - _borderTop / _ratioY + _renderRect.top);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::pointToScreen(Point32 *point) {
-	point->x = MathUtil::roundUp(point->x * _ratioX) + _borderLeft - _renderRect.left;
-	point->y = MathUtil::roundUp(point->y * _ratioY) + _borderTop - _renderRect.top;
+	point->x = (int16)MathUtil::roundUp(point->x * _ratioX) + _borderLeft - _renderRect.left;
+	point->y = (int16)MathUtil::roundUp(point->y * _ratioY) + _borderTop - _renderRect.top;
 }
 
 //////////////////////////////////////////////////////////////////////////
