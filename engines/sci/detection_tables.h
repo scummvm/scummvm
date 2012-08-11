@@ -2696,6 +2696,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::DE_DEU, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Police Quest 3 - Spanish DOS v1.000 - Supplied by dianiu in bug report #3555647
+	{"pq3", "", {
+		{"resource.map", 0, "ffa0b4631c4e36d69631256d19ba29e7", 5421},
+		{"resource.000", 0, "5ee460af3d70c06a745cc482b6c783ba", 5410263},
+		AD_LISTEND},
+	 	Common::ES_ESP, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Police Quest 3 EGA
 	// Reported by musiclyinspired in bug report #3046573
 	{"pq3", "", {
