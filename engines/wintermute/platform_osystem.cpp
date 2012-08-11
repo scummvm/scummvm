@@ -49,7 +49,9 @@ void BasePlatform::handleEvent(Common::Event *event) {
 
 	case Common::EVENT_LBUTTONDOWN:
 		if (_gameRef) {
-			if (_gameRef->isLeftDoubleClick()) _gameRef->onMouseLeftDblClick();
+			if (_gameRef->isLeftDoubleClick()) {
+				_gameRef->onMouseLeftDblClick();
+			}
 			else _gameRef->onMouseLeftDown();
 		}
 		break;
@@ -81,46 +83,20 @@ void BasePlatform::handleEvent(Common::Event *event) {
 	case Common::EVENT_WHEELDOWN:
 		if (_gameRef) _gameRef->handleMouseWheel(event->mouse.y);
 		break;
-//TODO: Handle MouseWheel
-		/*  case SDL_MOUSEWHEEL:
-		        if (_gameRef) _gameRef->handleMouseWheel(event->wheel.y);
-		        break;
-
-		    case SDL_KEYDOWN:
-		    case SDL_TEXTINPUT:
-		        if (_gameRef) _gameRef->handleKeypress(event);
-		        break;
-
-		    case SDL_WINDOWEVENT:
-		        switch (event->window.event) {
-		        case SDL_WINDOWEVENT_FOCUS_GAINED:
-		        case SDL_WINDOWEVENT_RESTORED:
-		            if (_gameRef) _gameRef->OnActivate(true, true);
-		            SDL_ShowCursor(SDL_DISABLE);
-		            break;
-		        case SDL_WINDOWEVENT_FOCUS_LOST:
-		        case SDL_WINDOWEVENT_MINIMIZED:
-		            if (_gameRef) _gameRef->OnActivate(false, false);
-		            SDL_ShowCursor(SDL_ENABLE);
-		            break;
-
-		        case SDL_WINDOWEVENT_CLOSE:
-		            break;
-
-		        }
-		        break;
-		*/
-	case Common::EVENT_QUIT:
+// Focus-events have been removed (_gameRef->onActivate originally)
 	case Common::EVENT_RTL:
+		_gameRef->_quitting = true;
+		break;
+	case Common::EVENT_QUIT:
 // Block kept in case we want to support autoSaveOnExit.
-//#ifdef __IPHONEOS__
+// Originally this was the behaviour for WME Lite on iOS:
 //		if (_gameRef) {
 //			_gameRef->AutoSaveOnExit();
 //			_gameRef->_quitting = true;
 //		}
-//#else*/
-		if (_gameRef) _gameRef->onWindowClose();
-//#endif
+		if (_gameRef) {
+			_gameRef->onWindowClose();
+		}
 		break;
 	default:
 		// TODO: Do we care about any other events?
