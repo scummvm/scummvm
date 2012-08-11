@@ -317,7 +317,7 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 		return ret;
 	}
 
-	warning("BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
+	debugC(kWinterMuteDebugFileAccess ,"BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
 	return NULL;
 }
 
