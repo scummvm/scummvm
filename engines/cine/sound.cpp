@@ -785,13 +785,14 @@ PCSoundFxPlayer::~PCSoundFxPlayer() {
 
 bool PCSoundFxPlayer::load(const char *song) {
 	debug(9, "PCSoundFxPlayer::load('%s')", song);
-	Common::StackLock lock(_mutex);
 
 	/* stop (w/ fade out) the previous song */
 	while (_fadeOutCounter != 0 && _fadeOutCounter < 100) {
 		g_system->delayMillis(50);
 	}
 	_fadeOutCounter = 0;
+
+	Common::StackLock lock(_mutex);
 
 	stop();
 
