@@ -124,13 +124,13 @@ public:
 				}
 				// Prefix to avoid collisions with actually known games
 				name = "wmefan-" + name;
-				strncpy(s_fallbackGameIdBuf, name.c_str(), sizeof(s_fallbackGameIdBuf) - 1); 
+				Common::strlcpy(s_fallbackGameIdBuf, name.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
 				s_fallbackDesc.gameid = s_fallbackGameIdBuf;
 				if (caption != name) {
 					caption += " (fangame) ";
 					char *offset = s_fallbackGameIdBuf + name.size() + 1;
 					uint32 remainingLength = (sizeof(s_fallbackGameIdBuf) - 1) - (name.size() + 1);
-					strncpy(offset, caption.c_str(), remainingLength);
+					Common::strlcpy(offset, caption.c_str(), remainingLength);
 					s_fallbackDesc.extra = offset;
 					s_fallbackDesc.flags |= ADGF_USEEXTRAASTITLE;
 				}

@@ -112,7 +112,7 @@ char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 			if (start) {
 				char *ret = new char[len + 1];
 				memset(ret, 0, len + 1);
-				strncpy(ret, start, len);
+				Common::strlcpy(ret, start, len + 1);
 				return ret;
 			}
 		}

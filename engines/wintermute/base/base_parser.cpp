@@ -386,8 +386,7 @@ int BaseParser::scanStr(const char *in, const char *format, ...) {
 					in++;
 					const char *in2 = strchr(in, '\'');
 					if (in2) {
-						strncpy(a, in, (int)(in2 - in));
-						a[(int)(in2 - in)] = 0;
+						Common::strlcpy(a, in, (int)(in2 - in) + 1);
 						in = in2 + 1;
 					} else {
 						strcpy(a, in);
@@ -395,8 +394,7 @@ int BaseParser::scanStr(const char *in, const char *format, ...) {
 					}
 				} else {
 					const char *in2 = in + strspn(in, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789.");
-					strncpy(a, in, (int)(in2 - in));
-					a[(int)(in2 - in)] = 0;
+					Common::strlcpy(a, in, (int)(in2 - in) + 1);
 					in = in2;
 				}
 				in += strspn(in, " \t\n\f");

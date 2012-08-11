@@ -261,8 +261,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			stack->pushNULL();
 		} else {
 			char *str = new char[length + 1];
-			strncpy(str, (const char *)_buffer + start, length);
-			str[length] = '\0';
+			Common::strlcpy(str, (const char *)_buffer + start, length + 1);
 			stack->pushString(str);
 			delete[] str;
 		}
