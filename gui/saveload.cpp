@@ -44,6 +44,7 @@ enum {
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
 	: Dialog("SaveLoadChooser"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
+	_fillR = _fillG = _fillB = 0;
 
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
