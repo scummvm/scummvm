@@ -839,7 +839,7 @@ void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle, int version
 
 	fHandle.read(buf, kHighPalNumBytes);
 
-	if (colorCount == kHighPalNumBytes) {
+	if (colorCount == kHighPalNumColors) {
 		// Load the active 256 color palette from file
 		_activePal.load(buf, sizeof(buf), kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
 	} else {
