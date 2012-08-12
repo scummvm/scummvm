@@ -575,6 +575,10 @@ void AdvancedVideoDecoder::addTrack(Track *track) {
 }
 
 bool AdvancedVideoDecoder::addStreamFileTrack(const Common::String &baseName) {
+	// Only allow adding external tracks if a video is already loaded
+	if (!isVideoLoaded())
+		return false;
+
 	StreamFileAudioTrack *track = new StreamFileAudioTrack();
 
 	bool result = track->loadFromFile(baseName);
