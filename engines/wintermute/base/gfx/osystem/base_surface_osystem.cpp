@@ -149,8 +149,12 @@ bool BaseSurfaceOSystem::finishLoad() {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		TransparentSurface trans(*_surface);
 		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, true);
-	} else if (image->getSurface()->format.bytesPerPixel == 4 && image->getSurface()->format != g_system->getScreenFormat()) {
+	} else if (image->getSurface()->format.bytesPerPixel >= 3 && image->getSurface()->format != g_system->getScreenFormat()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
+		if (image->getSurface()->format.bytesPerPixel == 3) {
+			TransparentSurface trans(*_surface);
+			trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, true);
+		}
 	} else {
 		_surface = new Graphics::Surface();
 		_surface->copyFrom(*image->getSurface());
