@@ -97,16 +97,17 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 	data->seek(9, SEEK_CUR);
 	t->_width = data->readUint16LE();
 	t->_height = data->readUint16LE();
-	t->_hasAlpha = false;
 	t->_texture = NULL;
 	
 	int bpp = data->readByte();
 	if (bpp == 32) {
 		t->_colorFormat = BM_RGBA;
 		t->_bpp = 4;
+		t->_hasAlpha = true;
 	} else {
 		t->_colorFormat = BM_BGR888;
 		t->_bpp = 3;
+		t->_hasAlpha = false;
 	}
 	
 	uint8 desc = data->readByte();
