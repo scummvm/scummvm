@@ -103,6 +103,8 @@ AdvancedVideoDecoder::AdvancedVideoDecoder() {
 	_pauseLevel = 0;
 	_needsUpdate = false;
 	_lastTimeChange = 0;
+	_stopTime = 0;
+	_stopTimeSet = false;
 
 	// Find the best format for output
 	_defaultHighColorFormat = g_system->getScreenFormat();
@@ -128,6 +130,8 @@ void AdvancedVideoDecoder::close() {
 	_pauseLevel = 0;
 	_needsUpdate = false;
 	_lastTimeChange = 0;
+	_stopTime = 0;
+	_stopTimeSet = false;
 }
 
 bool AdvancedVideoDecoder::isVideoLoaded() const {
@@ -247,6 +251,13 @@ bool AdvancedVideoDecoder::endOfVideo() const {
 	if (!isVideoLoaded())
 		return true;
 
+	if (_stopTimeSet) {
+		const VideoTrack *track = findNextVideoTrack();
+
+		if (track && track->getNextFrameStartTime() >= (uint)_stopTime.msecs())
+			return true;
+	}
+
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if (!(*it)->endOfTrack())
 			return false;
@@ -314,12 +325,15 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 		if (!(*it)->seek(time))
 			return false;
 
-	// Now that we've seeked, start all tracks again
-	if (isPlaying())
-		startAudio();
-
 	_lastTimeChange = time;
-	_startTime = g_system->getMillis() - time.msecs();
+
+	// Now that we've seeked, start all tracks again
+	// Also reset our start time
+	if (isPlaying()) {
+		startAudio();
+		_startTime = g_system->getMillis() - time.msecs();
+	}
+
 	resetPauseStartTime();
 	_needsUpdate = true;
 	return true;
@@ -331,7 +345,10 @@ void AdvancedVideoDecoder::start() {
 
 	_isPlaying = true;
 	_startTime = g_system->getMillis();
-	_lastTimeChange = 0;
+
+	// Adjust start time if we've seeked to something besides zero time
+	if (_lastTimeChange.totalNumberOfFrames() != 0)
+		_startTime -= _lastTimeChange.msecs();
 
 	// If someone previously called stop(), we'll rewind it.
 	if (_needsRewind)
@@ -471,6 +488,21 @@ void AdvancedVideoDecoder::AudioTrack::stop() {
 	g_system->getMixer()->stopHandle(_handle);
 }
 
+void AdvancedVideoDecoder::AudioTrack::start(const Audio::Timestamp &limit) {
+	stop();
+
+	Audio::AudioStream *stream = getAudioStream();
+	assert(stream);
+
+	stream = Audio::makeLimitingAudioStream(stream, limit, DisposeAfterUse::NO);
+
+	g_system->getMixer()->playStream(getSoundType(), &_handle, stream, -1, getVolume(), getBalance(), DisposeAfterUse::YES);
+
+	// Pause the audio again if we're still paused
+	if (isPaused())
+		g_system->getMixer()->pauseHandle(_handle, true);
+}
+
 uint32 AdvancedVideoDecoder::AudioTrack::getRunningTime() const {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
 		return g_system->getMixer()->getSoundElapsedTime(_handle);
@@ -553,6 +585,29 @@ bool AdvancedVideoDecoder::addStreamFileTrack(const Common::String &baseName) {
 	return result;
 }
 
+void AdvancedVideoDecoder::setStopTime(const Audio::Timestamp &stopTime) {
+	Audio::Timestamp startTime = 0;
+
+	if (isPlaying()) {
+		startTime = getTime();
+		stopAudio();
+	}
+
+	_stopTime = stopTime;
+	_stopTimeSet = true;
+
+	if (startTime > stopTime)
+		return;
+
+	if (isPlaying()) {
+		// We'll assume the audio track is going to start up at the same time it just was
+		// and therefore not do any seeking.
+		// Might want to set it anyway if we're seekable.
+		startAudioLimit(_stopTime.msecs() - startTime.msecs());
+		_lastTimeChange = startTime;
+	}
+}
+
 AdvancedVideoDecoder::Track *AdvancedVideoDecoder::getTrack(uint track) {
 	if (track > _tracks.size())
 		return 0;
@@ -614,6 +669,13 @@ const AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack
 }
 
 void AdvancedVideoDecoder::startAudio() {
+	if (_stopTimeSet) {
+		// HACK: Timestamp's subtraction asserts out when subtracting two times
+		// with different rates.
+		startAudioLimit(_stopTime - _lastTimeChange.convertToFramerate(_stopTime.framerate()));
+		return;
+	}
+
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
 			((AudioTrack *)*it)->start();
@@ -623,6 +685,12 @@ void AdvancedVideoDecoder::stopAudio() {
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
 			((AudioTrack *)*it)->stop();
+}
+
+void AdvancedVideoDecoder::startAudioLimit(const Audio::Timestamp &limit) {
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
+			((AudioTrack *)*it)->start(limit);
 }
 
 //////////////////////////////////////////////

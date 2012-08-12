@@ -379,14 +379,20 @@ public:
 	 */
 	void setDefaultHighColorFormat(const Graphics::PixelFormat &format) { _defaultHighColorFormat = format; }
 
+	/**
+	 * Set the time for this video to stop at. At this time in the video,
+	 * all audio will stop and endOfVideo() will return true.
+	 */
+	void setStopTime(const Audio::Timestamp &stopTime);
+
+	/**
+	 * Get the stop time of the video (if not set, zero)
+	 */
+	Audio::Timestamp getStopTime() const { return _stopTime; }
+
 	// Future API
 	//void setRate(const Common::Rational &rate);
 	//Common::Rational getRate() const;
-	//void setStartTime(const Audio::Timestamp &startTime);
-	//Audio::Timestamp getStartTime() const;
-	//void setStopTime(const Audio::Timestamp &stopTime);
-	//Audio::Timestamp getStopTime() const;
-	//void setSegment(const Audio::Timestamp &startTime, const Audio::Timestamp &stopTime);
 
 protected:
 	// Old API
@@ -578,6 +584,8 @@ protected:
 		 * Stop playing this track
 		 */
 		void stop();
+
+		void start(const Audio::Timestamp &limit);
 
 		/**
 		 * Get the volume for this track
@@ -773,7 +781,8 @@ private:
 
 	// Current playback status
 	bool _isPlaying, _needsRewind, _needsUpdate;
-	Audio::Timestamp _lastTimeChange;
+	Audio::Timestamp _lastTimeChange, _stopTime;
+	bool _stopTimeSet;
 
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;
@@ -785,6 +794,7 @@ private:
 	// Internal helper functions
 	void stopAudio();
 	void startAudio();
+	void startAudioLimit(const Audio::Timestamp &limit);
 };
 
 /**
