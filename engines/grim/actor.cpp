@@ -1310,10 +1310,12 @@ void Actor::draw() {
 			g_driver->setShadow(NULL);
 		}
 
-		// normal draw actor
-		g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
-		costume->draw();
-		g_driver->finishActorDraw();
+		if (!isAttached() || !costume->getFilename().equals("fx/dumbshadow.cos")) {
+			// normal draw actor
+			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
+			costume->draw();
+			g_driver->finishActorDraw();
+		}
 	}
 
 	if (_mustPlaceText) {
