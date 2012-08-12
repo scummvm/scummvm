@@ -6,12 +6,13 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.5.0git\n"
+"Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-07-08 12:25+0100\n"
+"POT-Creation-Date: 2012-08-12 14:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -44,10 +45,11 @@ msgstr ""
 
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:345 gui/massadd.cpp:94 gui/options.cpp:1228
-#: gui/saveload.cpp:64 gui/saveload.cpp:173 gui/themebrowser.cpp:54
-#: engines/engine.cpp:442 engines/scumm/dialogs.cpp:190
-#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:274
-#: backends/platform/wii/options.cpp:48
+#: gui/saveload-dialog.cpp:207 gui/saveload-dialog.cpp:267
+#: gui/saveload-dialog.cpp:516 gui/saveload-dialog.cpp:843
+#: gui/themebrowser.cpp:54 engines/engine.cpp:442
+#: engines/scumm/dialogs.cpp:190 engines/sword1/control.cpp:865
+#: engines/parallaction/saveload.cpp:274 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:191
 #: backends/events/default/default-events.cpp:213
 msgid "Cancel"
@@ -90,16 +92,16 @@ msgstr ""
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:346 gui/launcher.cpp:1001
 #: gui/launcher.cpp:1005 gui/massadd.cpp:91 gui/options.cpp:1229
-#: engines/engine.cpp:361 engines/engine.cpp:372 engines/scumm/dialogs.cpp:192
-#: engines/scumm/scumm.cpp:1775 engines/agos/animation.cpp:561
-#: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:539
-#: engines/sword1/animation.cpp:560 engines/sword1/animation.cpp:570
-#: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:865
-#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:435
-#: engines/sword2/animation.cpp:455 engines/sword2/animation.cpp:465
-#: engines/sword2/animation.cpp:474 engines/parallaction/saveload.cpp:274
-#: backends/platform/wii/options.cpp:47
+#: gui/saveload-dialog.cpp:844 engines/engine.cpp:361 engines/engine.cpp:372
+#: engines/scumm/dialogs.cpp:192 engines/scumm/scumm.cpp:1775
+#: engines/agos/animation.cpp:561 engines/groovie/script.cpp:420
+#: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:539 engines/sword1/animation.cpp:560
+#: engines/sword1/animation.cpp:570 engines/sword1/animation.cpp:577
+#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword2/animation.cpp:435 engines/sword2/animation.cpp:455
+#: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:474
+#: engines/parallaction/saveload.cpp:274 backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 msgid "OK"
 msgstr ""
@@ -433,13 +435,13 @@ msgstr ""
 msgid "Search:"
 msgstr ""
 
-#: gui/launcher.cpp:680 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
+#: gui/launcher.cpp:680 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:245
 #: engines/mohawk/riven.cpp:716 engines/cruise/menu.cpp:214
 msgid "Load game:"
 msgstr ""
 
 #: gui/launcher.cpp:680 engines/dialogs.cpp:114 engines/scumm/dialogs.cpp:188
-#: engines/mohawk/myst.cpp:255 engines/mohawk/riven.cpp:716
+#: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:716
 #: engines/cruise/menu.cpp:214 backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Load"
@@ -903,68 +905,101 @@ msgid ""
 "to use this theme you need to switch to another language first."
 msgstr ""
 
-#: gui/saveload.cpp:59 gui/saveload.cpp:257
+#: gui/saveload-dialog.cpp:158
+msgid "List view"
+msgstr ""
+
+#: gui/saveload-dialog.cpp:159
+msgid "Grid view"
+msgstr ""
+
+#: gui/saveload-dialog.cpp:202 gui/saveload-dialog.cpp:350
 msgid "No date saved"
 msgstr ""
 
-#: gui/saveload.cpp:60 gui/saveload.cpp:258
+#: gui/saveload-dialog.cpp:203 gui/saveload-dialog.cpp:351
 msgid "No time saved"
 msgstr ""
 
-#: gui/saveload.cpp:61 gui/saveload.cpp:259
+#: gui/saveload-dialog.cpp:204 gui/saveload-dialog.cpp:352
 msgid "No playtime saved"
 msgstr ""
 
-#: gui/saveload.cpp:68 gui/saveload.cpp:173
+#: gui/saveload-dialog.cpp:211 gui/saveload-dialog.cpp:267
 msgid "Delete"
 msgstr ""
 
-#: gui/saveload.cpp:172
+#: gui/saveload-dialog.cpp:266
 msgid "Do you really want to delete this savegame?"
 msgstr ""
 
-#: gui/saveload.cpp:282
+#: gui/saveload-dialog.cpp:375 gui/saveload-dialog.cpp:796
 msgid "Date: "
 msgstr ""
 
-#: gui/saveload.cpp:286
+#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:802
 msgid "Time: "
 msgstr ""
 
-#: gui/saveload.cpp:292
+#: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:810
 msgid "Playtime: "
 msgstr ""
 
-#: gui/saveload.cpp:305 gui/saveload.cpp:372
+#: gui/saveload-dialog.cpp:398 gui/saveload-dialog.cpp:465
 msgid "Untitled savestate"
+msgstr ""
+
+#: gui/saveload-dialog.cpp:517
+msgid "Next"
+msgstr ""
+
+#: gui/saveload-dialog.cpp:520
+msgid "Prev"
+msgstr ""
+
+#: gui/saveload-dialog.cpp:684
+msgid "New Save"
+msgstr ""
+
+#: gui/saveload-dialog.cpp:684
+msgid "Create a new save game"
+msgstr ""
+
+#: gui/saveload-dialog.cpp:789
+msgid "Name: "
+msgstr ""
+
+#: gui/saveload-dialog.cpp:861
+#, c-format
+msgid "Enter a description for slot %d:"
 msgstr ""
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:337
 msgid "Disabled GFX"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:337
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:336
+#: gui/ThemeEngine.cpp:338
 msgid "Standard Renderer (16bpp)"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:336
+#: gui/ThemeEngine.cpp:338
 msgid "Standard (16bpp)"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:338
+#: gui/ThemeEngine.cpp:340
 msgid "Antialiased Renderer (16bpp)"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:338
+#: gui/ThemeEngine.cpp:340
 msgid "Antialiased (16bpp)"
 msgstr ""
 
@@ -1068,16 +1103,16 @@ msgstr ""
 msgid "Unknown error"
 msgstr ""
 
-#: engines/advancedDetector.cpp:324
+#: engines/advancedDetector.cpp:316
 #, c-format
 msgid "The game in '%s' seems to be unknown."
 msgstr ""
 
-#: engines/advancedDetector.cpp:325
+#: engines/advancedDetector.cpp:317
 msgid "Please, report the following data to the ScummVM team along with name"
 msgstr ""
 
-#: engines/advancedDetector.cpp:327
+#: engines/advancedDetector.cpp:319
 msgid "of the game you tried to add and its version/language/etc.:"
 msgstr ""
 
@@ -1115,13 +1150,13 @@ msgid "~R~eturn to Launcher"
 msgstr ""
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
-#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:735
+#: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:742
 msgid "Save game:"
 msgstr ""
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/scumm/dialogs.cpp:187 engines/cruise/menu.cpp:212
-#: engines/sci/engine/kfile.cpp:735
+#: engines/sci/engine/kfile.cpp:742
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1220,11 +1255,11 @@ msgstr ""
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:838
 msgid "Restore game:"
 msgstr ""
 
-#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:831
+#: engines/agi/saveload.cpp:816 engines/sci/engine/kfile.cpp:838
 msgid "Restore"
 msgstr ""
 
@@ -1942,7 +1977,7 @@ msgid ""
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2278 engines/agos/saveload.cpp:202
+#: engines/scumm/scumm.cpp:2278 engines/agos/saveload.cpp:220
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1950,7 +1985,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2285 engines/agos/saveload.cpp:167
+#: engines/scumm/scumm.cpp:2285 engines/agos/saveload.cpp:185
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1958,7 +1993,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2297 engines/agos/saveload.cpp:210
+#: engines/scumm/scumm.cpp:2297 engines/agos/saveload.cpp:228
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2005,11 +2040,11 @@ msgid "Cutscene file '%s' not found!"
 msgstr ""
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1287
-#: engines/tinsel/saveload.cpp:502
+#: engines/tinsel/saveload.cpp:532
 msgid "Failed to load game state from file."
 msgstr ""
 
-#: engines/gob/inter_v2.cpp:1357 engines/tinsel/saveload.cpp:515
+#: engines/gob/inter_v2.cpp:1357 engines/tinsel/saveload.cpp:545
 msgid "Failed to save game state to file."
 msgstr ""
 
@@ -2136,12 +2171,12 @@ msgid ""
 "some tracks sound incorrect."
 msgstr ""
 
-#: engines/queen/queen.cpp:59 engines/sky/detection.cpp:44
-msgid "Floppy intro"
+#: engines/queen/queen.cpp:59
+msgid "Alternative intro"
 msgstr ""
 
-#: engines/queen/queen.cpp:60 engines/sky/detection.cpp:45
-msgid "Use the floppy version's intro (CD version only)"
+#: engines/queen/queen.cpp:60
+msgid "Use an alternative game intro (CD version only)"
 msgstr ""
 
 #: engines/sky/compact.cpp:130
@@ -2154,6 +2189,14 @@ msgstr ""
 msgid ""
 "The \"sky.cpt\" file has an incorrect size.\n"
 "Please (re)download it from www.scummvm.org"
+msgstr ""
+
+#: engines/sky/detection.cpp:44
+msgid "Floppy intro"
+msgstr ""
+
+#: engines/sky/detection.cpp:45
+msgid "Use the floppy version's intro (CD version only)"
 msgstr ""
 
 #: engines/sword1/animation.cpp:539
@@ -2215,6 +2258,17 @@ msgstr ""
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
+msgstr ""
+
+#: engines/teenagent/resources.cpp:68
+msgid ""
+"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+msgstr ""
+
+#: engines/teenagent/resources.cpp:89
+msgid ""
+"The teenagent.dat file is compressed and zlib hasn't been included in this "
+"executable. Please decompress it"
 msgstr ""
 
 #: engines/parallaction/saveload.cpp:133
@@ -2447,11 +2501,11 @@ msgstr ""
 msgid "Touchpad mode disabled."
 msgstr ""
 
-#: backends/platform/maemo/maemo.cpp:205
+#: backends/platform/maemo/maemo.cpp:209
 msgid "Click Mode"
 msgstr ""
 
-#: backends/platform/maemo/maemo.cpp:211
+#: backends/platform/maemo/maemo.cpp:215
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
@@ -2459,11 +2513,11 @@ msgstr ""
 msgid "Left Click"
 msgstr ""
 
-#: backends/platform/maemo/maemo.cpp:214
+#: backends/platform/maemo/maemo.cpp:218
 msgid "Middle Click"
 msgstr ""
 
-#: backends/platform/maemo/maemo.cpp:217
+#: backends/platform/maemo/maemo.cpp:221
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
 #: backends/platform/bada/form.cpp:273
@@ -2863,37 +2917,37 @@ msgstr ""
 msgid "Do you really want to quit?"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:338
-#: backends/events/gph/gph-events.cpp:381
+#: backends/events/gph/gph-events.cpp:386
+#: backends/events/gph/gph-events.cpp:429
 #: backends/events/openpandora/op-events.cpp:139
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:340
-#: backends/events/gph/gph-events.cpp:383
+#: backends/events/gph/gph-events.cpp:388
+#: backends/events/gph/gph-events.cpp:431
 #: backends/events/openpandora/op-events.cpp:141
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:342
-#: backends/events/gph/gph-events.cpp:385
+#: backends/events/gph/gph-events.cpp:390
+#: backends/events/gph/gph-events.cpp:433
 #: backends/events/openpandora/op-events.cpp:143
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:362
+#: backends/events/gph/gph-events.cpp:410
 msgid "Maximum Volume"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:364
+#: backends/events/gph/gph-events.cpp:412
 msgid "Increasing Volume"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:370
+#: backends/events/gph/gph-events.cpp:418
 msgid "Minimal Volume"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:372
+#: backends/events/gph/gph-events.cpp:420
 msgid "Decreasing Volume"
 msgstr ""
 

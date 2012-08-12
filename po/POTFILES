@@ -10,7 +10,7 @@ gui/KeysDialog.cpp
 gui/launcher.cpp
 gui/massadd.cpp
 gui/options.cpp
-gui/saveload.cpp
+gui/saveload-dialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
 gui/widget.cpp
