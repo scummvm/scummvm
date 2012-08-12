@@ -105,7 +105,11 @@ struct TransparentSurface : public Graphics::Surface {
 	// The following scale-code supports arbitrary scaling (i.e. no repeats of column 0 at the end of lines)
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 	TransparentSurface *scale(const Common::Rect &srcRect, const Common::Rect &dstRect) const;
+	static byte *_lookup;
+	static void destroyLookup();
 private:
+	static void doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
+	static void generateLookup();
 	static int *scaleLine(int size, int srcSize);
 };
 

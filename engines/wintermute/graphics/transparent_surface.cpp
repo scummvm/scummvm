@@ -29,6 +29,13 @@
 
 namespace WinterMute {
 
+byte *TransparentSurface::_lookup = NULL;
+
+void TransparentSurface::destroyLookup() {
+	delete _lookup;
+	_lookup = NULL;
+}
+
 TransparentSurface::TransparentSurface() : Surface(), _enableAlphaBlit(true) {}
 
 TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _enableAlphaBlit(true) {
@@ -67,8 +74,21 @@ void doBlitOpaque(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pit
 	}
 }
 
-void doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void TransparentSurface::generateLookup() {
+	_lookup = new byte[256 * 256];
+	for (int i = 0; i < 256; i++) {
+		for (int j = 0; j < 256; j++) {
+			_lookup[(i << 8) + j] = (i * j) >> 8;
+		}
+	}
+}
+
+void TransparentSurface::doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in, *out;
+
+	if (!_lookup) {
+		generateLookup();
+	}
 
 #ifdef SCUMM_LITTLE_ENDIAN
 	const int aIndex = 3;
@@ -103,10 +123,6 @@ void doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitc
 			int a = (pix >> aShift) & 0xff;
 			int outb, outg, outr, outa;
 			in += inStep;
-
-	/*		if (ca != 255) {
-				a = a * ca >> 8;
-			}*/
 			
 			switch (a) {
 				case 0: // Full transparency
@@ -127,12 +143,22 @@ void doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitc
 
 				default: // alpha blending
 					outa = 255;
+//#define USE_LOOKUP_TABLE_FOR_ALPHA
+#ifndef USE_LOOKUP_TABLE_FOR_ALPHA
 					outb = (oPix >> bShiftTarget) & 0xff;
 					outg = (oPix >> gShiftTarget) & 0xff;
 					outr = (oPix >> rShiftTarget) & 0xff;
 					outb += ((b - outb) * a) >> 8;
 					outg += ((g - outg) * a) >> 8;
 					outr += ((r - outr) * a) >> 8;
+#else
+					outb = _lookup[(((oPix >> bShiftTarget) & 0xff)) + ((255 - a) << 8)];
+					outg = _lookup[(((oPix >> gShiftTarget) & 0xff)) + ((255 - a) << 8)];
+					outr = _lookup[(((oPix >> rShiftTarget) & 0xff)) + ((255 - a) << 8)];
+					outb += _lookup[b + (a << 8)];
+					outg += _lookup[g + (a << 8)];
+					outr += _lookup[r + (a << 8)];
+#endif
 					//*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
 					out[aIndex] = outa;
 					out[bIndex] = outb;
