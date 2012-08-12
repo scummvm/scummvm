@@ -26,6 +26,7 @@
 #include "common/str.h"
 
 #include "engines/grim/object.h"
+#include "engines/grim/grim.h"
 
 namespace Common {
 class SeekableReadStream;
