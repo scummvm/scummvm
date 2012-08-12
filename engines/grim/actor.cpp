@@ -669,6 +669,14 @@ void Actor::walkForward() {
 			// Check for an adjacent sector which can continue
 			// the path
 			currSector = g_grim->getCurrSet()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
+
+			// EMI: some sectors are significantly higher/lower than others.
+			if (currSector && g_grim->getGameType() == GType_MONKEY4) {
+				float planeDist = currSector->distanceToPoint(_pos);
+				if (fabs(planeDist) < 1.f)
+					_pos -= planeDist * currSector->getNormal();
+			}
+
 			if (currSector == prevSector || currSector == startSector)
 				break;
 		}
