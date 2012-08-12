@@ -50,7 +50,7 @@ struct VideoEntry {
 	uint16 y;
 	bool loop;
 	bool enabled;
-	Audio::Timestamp start, end;
+	Audio::Timestamp start;
 
 	// Identification
 	Common::String filename; // External video files
