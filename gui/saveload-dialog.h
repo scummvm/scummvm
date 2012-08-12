@@ -119,8 +119,6 @@ private:
 	SaveStateList			_saveList;
 	String					_resultString;
 
-	uint8 _fillR, _fillG, _fillB;
-
 	void updateSaveList();
 	void updateSelection(bool redraw);
 };

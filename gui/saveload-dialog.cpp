@@ -188,8 +188,6 @@ enum {
 
 SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode)
 	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
-	_fillR = _fillG = _fillB = 0;
-
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
@@ -327,9 +325,6 @@ void SaveLoadChooserSimple::reflowLayout() {
 
 		_playtime->setVisible(_playTimeSupport);
 
-		_fillR = 0;
-		_fillG = 0;
-		_fillB = 0;
 		updateSelection(false);
 	} else {
 		_container->setVisible(false);
@@ -349,7 +344,9 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 	bool isWriteProtected = false;
 	bool startEditMode = _list->isEditable();
 
-	_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	// We used to support letting the themes specify the fill color with our
+	// initial theme based GUI. But this support was dropped.
+	_gfxWidget->setGfx(-1, -1, 0, 0, 0);
 	_date->setLabel(_("No date saved"));
 	_time->setLabel(_("No time saved"));
 	_playtime->setLabel(_("No playtime saved"));
