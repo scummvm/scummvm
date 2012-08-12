@@ -1729,11 +1729,16 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 
 	_attachedActor = other;
 	_attachedJoint = jointStr;
+	setPos(Math::Vector3d(0,0,0));
+	setRot(0,0,0);
 }
 
 void Actor::detach() {
 	if (_attachedActor != NULL) {
 		_attachedJoint = "";
+		// FIXME: Use last known position of attached joint
+		setPos(_attachedActor->_pos);
+		setRot(0,0,0);
 		_attachedActor = NULL;
 	}
 }
