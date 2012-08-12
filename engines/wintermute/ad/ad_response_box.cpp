@@ -42,6 +42,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/wintermute.h"
 #include "common/str.h"
 
 namespace WinterMute {
@@ -610,7 +611,7 @@ bool AdResponseBox::weedResponses() {
 			}
 			break;
 		default:
-			warning("AdResponseBox::WeedResponses - Unhandled enum");
+			debugC(kWinterMuteDebugGeneral, "AdResponseBox::WeedResponses - Unhandled enum");
 			break;
 		}
 	}
@@ -640,7 +641,7 @@ bool AdResponseBox::handleResponse(AdResponse *response) {
 		adGame->addGameResponse(response->_iD);
 		break;
 	default:
-		warning("AdResponseBox::HandleResponse - Unhandled enum");
+		debugC(kWinterMuteDebugGeneral, "AdResponseBox::HandleResponse - Unhandled enum");
 	}
 
 	return STATUS_OK;

@@ -57,6 +57,7 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/wintermute.h"
 #include <limits.h>
 
 namespace WinterMute {
@@ -2936,7 +2937,7 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOn
 			}
 			break;
 			default:
-				warning("AdScene::GetSceneObjects - Unhandled enum");
+				debugC(kWinterMuteDebugGeneral, "AdScene::GetSceneObjects - Unhandled enum");
 				break;
 			}
 		}

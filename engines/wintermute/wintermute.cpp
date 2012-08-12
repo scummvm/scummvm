@@ -67,6 +67,7 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kWinterMuteDebugFont, "font", "Text-drawing-related messages");
 	DebugMan.addDebugChannel(kWinterMuteDebugFileAccess, "file-access", "Non-critical problems like missing files");
 	DebugMan.addDebugChannel(kWinterMuteDebugAudio, "audio", "audio-playback-related issues");
+	DebugMan.addDebugChannel(kWinterMuteDebugGeneral, "general", "various issues not covered by any of the above");
 
 	_game = NULL;
 }
