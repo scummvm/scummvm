@@ -620,6 +620,8 @@ void SaveLoadChooserGrid::open() {
 }
 
 void SaveLoadChooserGrid::reflowLayout() {
+	// HACK: The page display is not available in low resolution layout. We
+	// remove and readd the widget here to avoid our GUI from erroring out.
 	removeWidget(_pageDisplay);
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPageDisplay") == 1) {
 		_pageDisplay->init();
@@ -628,6 +630,8 @@ void SaveLoadChooserGrid::reflowLayout() {
 	SaveLoadChooserDialog::reflowLayout();
 	destroyButtons();
 
+	// HACK: The whole code below really works around the fact, that we have
+	// no easy way to dynamically layout widgets.
 	const uint16 availableWidth = getWidth() - 20;
 	uint16 availableHeight;
 
