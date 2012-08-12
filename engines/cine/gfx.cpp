@@ -113,7 +113,7 @@ FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 	assert(_backBuffer);
 
 	memset(_backBuffer, 0, _screenSize);
-	memset(_bgName, 0, sizeof (_bgName));
+	memset(_bgName, 0, sizeof(_bgName));
 }
 
 
@@ -301,7 +301,7 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 			while (str[i] == ' ') i++;
 			line = fitLine(str + i, tw, words, cw);
 
-			if ( str[i + line] != '\0' && str[i + line] != 0x7C && words) {
+			if (str[i + line] != '\0' && str[i + line] != 0x7C && words) {
 				space = (tw - cw) / words;
 				extraSpace = (tw - cw) % words;
 			} else {
@@ -1416,7 +1416,7 @@ void OSRenderer::selectBg(unsigned int idx) {
 
 	if (_bgTable[idx].bg) {
 		assert(_bgTable[idx].pal.isValid() && !(_bgTable[idx].pal.empty()));
-	_currentBg = idx;
+		_currentBg = idx;
 	} else
 		warning("OSRenderer::selectBg(%d) - attempt to select null background", idx);
 	reloadPalette();
@@ -1737,53 +1737,43 @@ void drawSpriteRaw(const byte *spritePtr, const byte *maskPtr, int16 width, int1
 	}
 }
 
-void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp)
-{
-	byte* pMask = NULL;
+void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp) {
+	byte *pMask = NULL;
 
 	// draw the mask based on next objects in the list
 	Common::List<overlay>::iterator it;
-	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it)
-	{
-		if(&(*it) == overlayPtr)
-		{
+	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it) {
+		if (&(*it) == overlayPtr) {
 			break;
 		}
 	}
 
-	while(it != g_cine->_overlayList.end())
-	{
-		overlay* pCurrentOverlay = &(*it);
-		if((pCurrentOverlay->type==5) || ((pCurrentOverlay->type==21) && (pCurrentOverlay->x==overlayPtr->objIdx)))
-		{
-			AnimData* sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
+	while (it != g_cine->_overlayList.end()) {
+		overlay *pCurrentOverlay = &(*it);
+		if ((pCurrentOverlay->type == 5) || ((pCurrentOverlay->type == 21) && (pCurrentOverlay->x == overlayPtr->objIdx))) {
+			AnimData *sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
 
-			if(pMask == NULL)
-			{
-				pMask = new byte[width*height];
+			if (pMask == NULL) {
+				pMask = new byte[width * height];
 
 				for (int i = 0; i < height; i++) {
 					for (int j = 0; j < width; j++) {
-						byte spriteColor= spritePtr[width*i+j];
-						pMask[width*i+j] = spriteColor;
+						byte spriteColor = spritePtr[width * i + j];
+						pMask[width * i + j] = spriteColor;
 					}
 				}
 			}
 
 			for (int i = 0; i < sprite->_realWidth; i++) {
 				for (int j = 0; j < sprite->_height; j++) {
-					int inMaskX = (g_cine->_objectTable[it->objIdx].x+i) - x;
-					int inMaskY = (g_cine->_objectTable[it->objIdx].y+j) - y;
+					int inMaskX = (g_cine->_objectTable[it->objIdx].x + i) - x;
+					int inMaskY = (g_cine->_objectTable[it->objIdx].y + j) - y;
 
-					if(inMaskX >=0 && inMaskX < width)
-					{
-						if(inMaskY >=0 && inMaskY < height)
-						{
-							if(sprite->_bpp == 1)
-							{
-								if(!sprite->getColor(i, j))
-								{
-									pMask[inMaskY*width+inMaskX] = page[x + y * 320 + inMaskX + inMaskY * 320];
+					if (inMaskX >= 0 && inMaskX < width) {
+						if (inMaskY >= 0 && inMaskY < height) {
+							if (sprite->_bpp == 1) {
+								if (!sprite->getColor(i, j)) {
+									pMask[inMaskY * width + inMaskX] = page[x + y * 320 + inMaskX + inMaskY * 320];
 								}
 							}
 						}
@@ -1797,8 +1787,7 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 	}
 
 	// now, draw with the mask we created
-	if(pMask)
-	{
+	if (pMask) {
 		spritePtr = pMask;
 	}
 	{
@@ -1807,7 +1796,7 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 			destPtr += i * 320;
 
 			for (int j = 0; j < width; j++) {
-				byte color= *(spritePtr++);
+				byte color = *(spritePtr++);
 				if ((transparentColor != color) && x + j >= 0 && x + j < 320 && i + y >= 0 && i + y < 200) {
 					*(destPtr++) = color;
 				} else {
