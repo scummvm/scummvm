@@ -308,7 +308,7 @@ CMap *ResourceLoader::loadColormap(const Common::String &filename) {
 	return result;
 }
 
-static Common::String fixFilename(const Common::String filename, bool append = true) {
+Common::String ResourceLoader::fixFilename(const Common::String &filename, bool append) {
 	Common::String fname(filename);
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		int len = fname.size();

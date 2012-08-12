@@ -1053,6 +1053,11 @@ void GrimEngine::invalidateActiveActorsList() {
 	_buildActiveActorsList = true;
 }
 
+void GrimEngine::immediatelyRemoveActor(Actor *actor) {
+	_activeActors.remove(actor);
+	_talkingActors.remove(actor);
+}
+
 void GrimEngine::buildActiveActorsList() {
 	if (!_buildActiveActorsList) {
 		return;

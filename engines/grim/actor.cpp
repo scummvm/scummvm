@@ -1260,7 +1260,7 @@ bool Actor::updateTalk(uint frameTime) {
 		if (m == GrimEngine::TextOnly && !textObject) {
 			shutUp();
 			return false;
-		} else if (m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_sound->getSoundStatus(_talkSoundName.c_str()))) {
+		} else if (m != GrimEngine::TextOnly && (_talkSoundName.empty() || !g_sound->getSoundStatus(_talkSoundName.c_str()))) {
 			_talkDelay -= frameTime;
 			if (_talkDelay <= 0) {
 				_talkDelay = 0;

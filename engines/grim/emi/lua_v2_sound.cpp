@@ -269,13 +269,18 @@ void Lua_V2::PlaySound() {
 		}
 	}
 
+	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
+	if (!stream) {
+		warning("Lua_V2::PlaySound: Could not find sound '%s'", filename.c_str());
+		return;
+	}
+
 	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
 		track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
 	} else {
 		track = new SCXTrack(Audio::Mixer::kSFXSoundType);
 	}
 
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
 	track->openSound(filename, stream);
 	track->play();
 }

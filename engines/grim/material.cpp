@@ -163,12 +163,11 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 		while(!ts->checkString("END_OF_SECTION")) {
 			ts->scanString("tex:%s", 1, readFileName);
 			Common::String mFileName(readFileName);
-			texFileNames.push_back(mFileName);
+			texFileNames.push_back(ResourceLoader::fixFilename(mFileName, false));
 		}
 		Common::SeekableReadStream *texData;
 		_textures = new Texture[texFileNames.size()];
 		for (uint i = 0; i < texFileNames.size(); i++) {
-			warning("SUR-file texture: %s", texFileNames[i].c_str());
 			texData = g_resourceloader->openNewStreamFile(texFileNames[i].c_str(), true);
 			if (!texData) {
 				warning("Couldn't find tex-file: %s", texFileNames[i].c_str());
