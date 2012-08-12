@@ -274,20 +274,26 @@ void Sector::unshrink() {
 	}
 }
 
+float Sector::distanceToPoint(const Math::Vector3d &point) const {
+	// The plane has equation ax + by + cz + d = 0
+	float a = _normal.x();
+	float b = _normal.y();
+	float c = _normal.z();
+	float d = -_vertices[0].x() * a - _vertices[0].y() * b - _vertices[0].z() * c;
+
+	// dist is positive if it is above the plain, negative if it is
+	// below and 0 if it is on the plane.
+	float dist = (a * point.x() + b * point.y() + c * point.z() + d);
+	dist /= sqrt(a * a + b * b + c * c);
+	return dist;
+}
+
 bool Sector::isPointInSector(const Math::Vector3d &point) const {
 	// Calculate the distance of the point from the plane of the sector.
 	// Return false if it isn't within a margin.
 	if (_height < 9000.f) { // No need to check when height is 9999.
-		// The plane has equation ax + by + cz + d = 0
-		float a = _normal.x();
-		float b = _normal.y();
-		float c = _normal.z();
-		float d = -_vertices[0].x() * a - _vertices[0].y() * b - _vertices[0].z() * c;
 
-		float dist = (a * point.x() + b * point.y() + c * point.z() + d) /
-					sqrt(a * a + b * b + c * c);
-		// dist is positive if it is above the plain, negative if it is
-		// below and 0 if it is on the plane.
+		float dist = distanceToPoint(point);
 
 		if (fabsf(dist) > _height + 0.01) // Add an error margin
 			return false;

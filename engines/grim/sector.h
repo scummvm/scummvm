@@ -67,6 +67,7 @@ public:
 	SectorType getType() const { return _type; } // FIXME: Implement type de-masking
 	bool isVisible() const { return _visible && !_invalid; }
 	bool isPointInSector(const Math::Vector3d &point) const;
+	float distanceToPoint(const Math::Vector3d &point) const;
 	Common::List<Math::Line3d> getBridgesTo(Sector *sector) const;
 
 	Math::Vector3d getProjectionToPlane(const Math::Vector3d &point) const;
