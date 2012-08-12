@@ -163,7 +163,7 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 		while(!ts->checkString("END_OF_SECTION")) {
 			ts->scanString("tex:%s", 1, readFileName);
 			Common::String mFileName(readFileName);
-			texFileNames.push_back(fixFilename(mFileName, false));
+			texFileNames.push_back(ResourceLoader::fixFilename(mFileName, false));
 		}
 		Common::SeekableReadStream *texData;
 		_textures = new Texture[texFileNames.size()];

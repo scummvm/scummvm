@@ -83,6 +83,8 @@ public:
 		uint32 len;
 	};
 
+	static Common::String fixFilename(const Common::String &filename, bool append = true);
+
 private:
 	Common::SeekableReadStream *loadFile(const Common::String &filename) const;
 	Common::SeekableReadStream *getFileFromCache(const Common::String &filename) const;
@@ -102,8 +104,6 @@ private:
 };
 
 extern ResourceLoader *g_resourceloader;
-
-Common::String fixFilename(const Common::String filename, bool append = true);
 
 } // end of namespace Grim
 
