@@ -20,6 +20,8 @@
  *
  */
 
+#include "gui/error.h"
+
 #include "engines/grim/resource.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/costume.h"
@@ -150,6 +152,28 @@ ResourceLoader::ResourceLoader() {
 				SearchMan.listMatchingMembers(files, "???.m4b");
 			}
 		}
+	}
+
+	// Check if the update has correctly loaded
+	if (!(g_grim->getGameFlags() & ADGF_DEMO || SearchMan.hasArchive("update"))) {
+		const char *errorMessage = 0;
+		if (g_grim->getGameType() == GType_GRIM) {
+			errorMessage = 	"Unsupported version of Grim Fandango.\n"
+							"Please download the original patch from\n"
+							"http://www.residualvm.org/downloads/\n"
+							"and put it in the game data files directory";
+			GUI::displayErrorDialog(errorMessage);
+			error("gfupd101.exe not found");
+		}
+
+		//Don't force the update for MI4 for now
+		/*else if (g_grim->getGameType() == GType_MONKEY4)
+			errorMessage = 	"Unsupported version of Escape from Monkey Island.\n"
+							"Please download the original patch from\n"
+							"http://www.residualvm.org/downloads/\n"
+							"and put it in the game data files directory.\n"
+							"Pay attention to download the correct version according to the game's language";
+		*/
 	}
 
 	if (files.empty())
