@@ -34,17 +34,17 @@
  *
  */
 
-#include "sword25/fmv/theora_decoder.h"
+#include "video/theora_decoder.h"
 
-#ifdef USE_THEORADEC
+#include "common/debug.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "graphics/yuv_to_rgb.h"
 #include "audio/decoders/raw.h"
-#include "sword25/kernel/common.h"
 
-namespace Sword25 {
+namespace Video {
 
 #define AUDIOFD_FRAGSIZE 10240
 
@@ -560,6 +560,4 @@ void TheoraDecoder::updateBalance() {
 		g_system->getMixer()->setChannelBalance(*_audHandle, getBalance());
 }
 
-} // End of namespace Sword25
-
-#endif
+} // End of namespace Video

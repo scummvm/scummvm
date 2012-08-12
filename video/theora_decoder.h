@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef SWORD25_THEORADECODER_H
-#define SWORD25_THEORADECODER_H
-
 #include "common/scummsys.h"	// for USE_THEORADEC
 
 #ifdef USE_THEORADEC
+
+#ifndef VIDEO_THEORA_DECODER_H
+#define VIDEO_THEORA_DECODER_H
 
 #include "common/rational.h"
 #include "video/video_decoder.h"
@@ -41,7 +41,7 @@ namespace Common {
 class SeekableReadStream;
 }
 
-namespace Sword25 {
+namespace Video {
 
 /**
  *
@@ -49,7 +49,7 @@ namespace Sword25 {
  * Video decoder used in engines:
  *  - sword25
  */
-class TheoraDecoder : public Video::VideoDecoder {
+class TheoraDecoder : public VideoDecoder {
 public:
 	TheoraDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual ~TheoraDecoder();
@@ -137,7 +137,7 @@ private:
 	ogg_int16_t *_audiobuf;
 };
 
-} // End of namespace Sword25
+} // End of namespace Video
 
 #endif
 
