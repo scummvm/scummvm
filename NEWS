@@ -2,7 +2,11 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.6.0 (????-??-??)
-
+ General:
+   - Added a new save/load chooser based on a grid of thumbnails. This is only
+     supported for resolutions bigger than 640x400. The old chooser is still
+     available and used for games without thumbnail support. It is possible to
+     select the old one as default too.
 
 1.5.0 (2012-07-27)
  New Games:
