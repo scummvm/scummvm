@@ -58,6 +58,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_saveImageName = "";
 	_saveLoadImage = NULL;
 	_loadInProgress = false;
+	_hasDrawnSaveLoadImage = false;
 
 	_saveImageX = _saveImageY = 0;
 	_loadImageX = _loadImageY = 0;
@@ -127,6 +128,7 @@ void BaseRenderer::setSaveImage(const char *filename, int x, int y) {
 void BaseRenderer::initSaveLoad(bool isSaving, bool quickSave) {
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
+	_hasDrawnSaveLoadImage = false;
 	
 	if (isSaving && !quickSave) {
 		delete _saveLoadImage;
@@ -346,7 +348,7 @@ bool BaseRenderer::displayIndicator() {
 	if (!_indicatorDisplay || !_indicatorProgress) {
 		return STATUS_OK;
 	}
-	if (_saveLoadImage) {
+	if (_saveLoadImage && !_hasDrawnSaveLoadImage) {
 		Rect32 rc;
 		BasePlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
 		if (_loadInProgress) {
@@ -354,6 +356,8 @@ bool BaseRenderer::displayIndicator() {
 		} else {
 			_saveLoadImage->displayTrans(_saveImageX, _saveImageY, rc);
 		}
+		flip();
+		_hasDrawnSaveLoadImage = true;
 	}
 	
 	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) {

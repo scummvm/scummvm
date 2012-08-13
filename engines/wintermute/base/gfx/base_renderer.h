@@ -192,6 +192,7 @@ protected:
 	int _loadImageX;
 	int _loadImageY;
 	BaseSurface *_saveLoadImage;
+	bool _hasDrawnSaveLoadImage;
 
 	int _indicatorWidthDrawn;
 	uint32 _indicatorColor;
