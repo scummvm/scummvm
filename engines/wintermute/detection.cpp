@@ -51,10 +51,17 @@ static ADGameDescription s_fallbackDesc = {
 };
 static char s_fallbackGameIdBuf[256];
 
+static const char *directoryGlobs[] = {
+	"language", // To detect the various languages
+	0
+};
+
 class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
 	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(ADGameDescription), Wintermute::wintermuteGames) {
 		_singleid = "wintermute";
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 	virtual const char *getName() const {
 		return "Wintermute";

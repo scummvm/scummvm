@@ -84,12 +84,44 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	// Dead City
+	// Dead City (English)
 	{
 		"deadcity",
 		"",
-		AD_ENTRY1s("data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205),
+		{
+			{"english.dcp", 0, "c591046d6de7e381d76f70e0787b2b1f", 415935},
+			{"data.dcp", 0, "7ebfd50d1a22370ed7b079bcaa631d62", 9070205},
+			AD_LISTEND
+		},
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Dead City (Italian)
+	{
+		"deadcity",
+		"",
+		{
+			{"italian.dcp", 0, "92d8efb94436bec7bd1b7fe0b548192e", 454037},
+			{"data.dcp", 0, "7ebfd50d1a22370ed7b079bcaa631d62", 9070205},
+			AD_LISTEND
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Dead City (Russian)
+	{
+		"deadcity",
+		"",
+		{
+			{"russian.dcp", 0, "a0ae71e9e1185596fffb07ad2c951eb9", 653317},
+			{"data.dcp", 0, "7ebfd50d1a22370ed7b079bcaa631d62", 9070205},
+			AD_LISTEND
+		},
+		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
