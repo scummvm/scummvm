@@ -291,6 +291,76 @@ int PNGDecoder::getBytesPerPixel() const {
 	return (getNumColorChannels() * _header.bitDepth + 7) / 8;
 }
 
+// Modified from LodePNG version 20120623 http://lpi.googlecode.com/svn/trunk/lodepng.cpp
+void PNGDecoder::adam7Deinterlace(byte *out) {
+	/*Note: this function originally worked on image buffers WITHOUT padding bits at end of scanlines
+	 with non-multiple-of-8 bit amounts, only between reduced images is padding
+	 out must be big enough AND must be 0 everywhere if bpp < 8 in the current implementation
+	 (because that's likely a little bit faster)*/
+
+	/* This version of the function only works on multiple of 8 bit amounts */
+	uint32 passW[7], passH[7];
+	/*the passstart values have 8 values: the 8th one indicates the byte after the end of the 7th (= last) pass*/
+	uint32 filterPassStart[8], paddedPassStart[8], passStart[8];
+	int bytesPerPixel = getBytesPerPixel();
+
+	const uint8 ADAM7_IX[7] = { 0, 4, 0, 2, 0, 1, 0 }; /*x start values*/
+	const uint8 ADAM7_IY[7] = { 0, 0, 4, 0, 2, 0, 1 }; /*y start values*/
+	const uint8 ADAM7_DX[7] = { 8, 8, 4, 4, 2, 2, 1 }; /*x delta values*/
+	const uint8 ADAM7_DY[7] = { 8, 8, 8, 4, 4, 2, 2 }; /*y delta values*/
+
+	/*calculate width and height in pixels of each pass*/
+	for (uint32 i = 0; i < 7; i++) {
+		passW[i] = (_header.width + ADAM7_DX[i] - ADAM7_IX[i] - 1) / ADAM7_DX[i];
+		passH[i] = (_header.height + ADAM7_DY[i] - ADAM7_IY[i] - 1) / ADAM7_DY[i];
+		if (passW[i] == 0) passH[i] = 0;
+		if (passH[i] == 0) passW[i] = 0;
+	}
+
+	filterPassStart[0] = paddedPassStart[0] = passStart[0] = 0;
+	for (uint32 i = 0; i < 7; i++) {
+		/*if passw[i] is 0, it's 0 bytes, not 1 (no filtertype-byte)*/
+		filterPassStart[i + 1] = filterPassStart[i]
+		                         + ((passW[i] && passH[i]) ? passH[i] * (1 + (passW[i] * bytesPerPixel)) : 0);
+		/*bits padded if needed to fill full byte at end of each scanline*/
+		paddedPassStart[i + 1] = paddedPassStart[i] + passH[i] * ((passW[i] * bytesPerPixel));
+		/*only padded at end of reduced image*/
+		passStart[i + 1] = passStart[i] + (passH[i] * passW[i] * bytesPerPixel);
+	}
+
+	int pitch = bytesPerPixel * _header.width;
+	byte *unfilteredSurface = new byte[_header.height * pitch];
+	byte *dest = unfilteredSurface;
+	byte *prevLine = 0;
+	for (uint32 i = 0; i < 7; i++) {
+		assert(passW[i] != 0);
+		for (uint32 j = 0; j < passH[i]; j++) {
+			byte filterType = _imageData->readByte();
+			uint16 lineBytes = (passW[i] * bytesPerPixel);// + 7) / 8;
+			_imageData->read(dest, lineBytes);
+			unfilterScanLine(dest, dest, prevLine, bytesPerPixel, filterType, lineBytes);
+			prevLine = &(unfilteredSurface[paddedPassStart[i] + j * lineBytes]);
+			dest += lineBytes;
+		}
+	}
+	if (_header.bitDepth * getNumColorChannels() >= 8) {
+		for (uint32 i = 0; i < 7; i++) {
+			uint32 bytewidth = getNumColorChannels() * _header.bitDepth / 8;
+			for (uint32 y = 0; y < passH[i]; y++) {
+				for (uint32 x = 0; x < passW[i]; x++) {
+					uint32 pixelinstart = passStart[i] + (y * passW[i] + x) * bytewidth;
+					uint32 pixeloutstart = ((ADAM7_IY[i] + y * ADAM7_DY[i]) * _header.width + ADAM7_IX[i] + x * ADAM7_DX[i]) * bytewidth;
+					for (uint32 b = 0; b < bytewidth; b++) {
+						out[pixeloutstart + b] = unfilteredSurface[pixelinstart + b];
+					}
+				}
+			}
+		}
+	} else { /*bpp < 8: Adam7 with pixels < 8 bit is a bit trickier: with bit pointers*/
+		error("TODO: Support for interlaced PNG images with < 8 bits per pixel");
+	}
+}
+
 void PNGDecoder::constructImage() {
 	assert (_header.bitDepth != 0);
 
@@ -313,11 +383,10 @@ void PNGDecoder::constructImage() {
 		}
 		break;
 	case kInterlaced:
-		// Theoretically, this shouldn't be needed, as interlacing is only
-		// useful for web images. Interlaced PNG images require more complex
-		// handling, so unless having support for such images is needed, there
-		// is no reason to add support for them.
-		error("TODO: Support for interlaced PNG images");
+		if (_header.bitDepth < 8) {
+			error("TODO: Support for interlaced PNG images with < 8 bits per pixel");
+		}
+		adam7Deinterlace(unfilteredSurface);
 		break;
 	}
 
