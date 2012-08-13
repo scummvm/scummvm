@@ -33,6 +33,7 @@
 #include "common/str.h"
 #include "common/fs.h"
 #include "common/file.h"
+#include "common/language.h"
 
 namespace Wintermute {
 class BaseFileManager {
@@ -44,7 +45,7 @@ public:
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
 
-	BaseFileManager();
+	BaseFileManager(Common::Language lang);
 	virtual ~BaseFileManager();
 	// Used only for detection
 	bool registerPackages(const Common::FSList &fslist);
@@ -65,6 +66,7 @@ private:
 	bool registerPackage(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
 	Common::SearchSet _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
+	Common::Language _language;
 	// This class is intentionally not a subclass of Base, as it needs to be used by
 	// the detector too, without launching the entire engine:
 };

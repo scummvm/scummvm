@@ -126,7 +126,7 @@ Common::Error WintermuteEngine::run() {
 }
 
 int WintermuteEngine::init() {
-	BaseEngine::createInstance(_targetName);
+	BaseEngine::createInstance(_targetName, _gameDescription->language);
 	_game = new AdGame(_targetName);
 	if (!_game) {
 		return 1;
@@ -296,7 +296,7 @@ bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 	caption = name = "(invalid)";
 	Common::SeekableReadStream *stream = NULL;
 	// Quick-fix, instead of possibly breaking the persistence-system, let's just roll with it
-	BaseFileManager *fileMan = new BaseFileManager();
+	BaseFileManager *fileMan = new BaseFileManager(Common::UNK_LANG);
 	fileMan->registerPackages(fslist);
 	stream = fileMan->openFile("startup.settings", false, false);
 

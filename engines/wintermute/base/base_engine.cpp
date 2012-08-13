@@ -46,8 +46,8 @@ BaseEngine::BaseEngine() {
 	_gameId = "";
 }
 
-void BaseEngine::init() {
-	_fileManager = new BaseFileManager();
+void BaseEngine::init(Common::Language lang) {
+	_fileManager = new BaseFileManager(lang);
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("Wintermute");
 	_classReg = new SystemClassRegistry();
@@ -60,9 +60,9 @@ BaseEngine::~BaseEngine() {
 	delete _classReg;
 }
 
-void BaseEngine::createInstance(const Common::String &gameid) {
+void BaseEngine::createInstance(const Common::String &gameid, Common::Language lang) {
 	instance()._gameId = gameid;
-	instance().init();
+	instance().init(lang);
 }
 
 void BaseEngine::LOG(bool res, const char *fmt, ...) {

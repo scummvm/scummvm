@@ -32,6 +32,7 @@
 #include "common/str.h"
 #include "common/singleton.h"
 #include "common/random.h"
+#include "common/language.h"
 
 namespace Wintermute {
 
@@ -40,7 +41,7 @@ class BaseRegistry;
 class BaseGame;
 class SystemClassRegistry;
 class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
-	void init();
+	void init(Common::Language lang);
 	BaseFileManager *_fileManager;
 	Common::String _gameId;
 	BaseGame *_gameRef;
@@ -50,7 +51,7 @@ class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 public:
 	BaseEngine();
 	~BaseEngine();
-	static void createInstance(const Common::String &gameid);
+	static void createInstance(const Common::String &gameid, Common::Language lang);
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
 	Common::RandomSource *getRandomSource() { return _rnd; }

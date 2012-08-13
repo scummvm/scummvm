@@ -53,7 +53,8 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
-BaseFileManager::BaseFileManager() {
+BaseFileManager::BaseFileManager(Common::Language lang) {
+	_language = lang;
 	initPaths();
 	registerPackages();
 }
@@ -191,10 +192,18 @@ bool BaseFileManager::registerPackages() {
 			}
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.
-			if (fileIt->getParent().getName() == "language") {
+			if (_language != Common::UNK_LANG && fileIt->getParent().getName() == "language") {
 				Common::String parentName = fileIt->getParent().getName();
 				Common::String dcpName = fileIt->getName();
-				if (fileIt->getName() != "english.dcp") {
+				if (_language == Common::EN_ANY && fileIt->getName() != "english.dcp") {
+					continue;
+				} else if (_language == Common::CZ_CZE && fileIt->getName() != "czech.dcp") {
+					continue;
+				} else if (_language == Common::IT_ITA && fileIt->getName() != "italian.dcp") {
+					continue;
+				} else if (_language == Common::PL_POL && fileIt->getName() != "polish.dcp") {
+					continue;
+				} else if (_language == Common::RU_RUS && fileIt->getName() != "russian.dcp") {
 					continue;
 				}
 			}
