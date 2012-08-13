@@ -60,7 +60,7 @@
 #include "engines/wintermute/wintermute.h"
 #include <limits.h>
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdScene, false)
 
@@ -2937,7 +2937,7 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOn
 			}
 			break;
 			default:
-				debugC(kWinterMuteDebugGeneral, "AdScene::GetSceneObjects - Unhandled enum");
+				debugC(kWintermuteDebugGeneral, "AdScene::GetSceneObjects - Unhandled enum");
 				break;
 			}
 		}
@@ -2999,4 +2999,4 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

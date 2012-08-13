@@ -36,7 +36,7 @@
 #include "engines/wintermute/math/rect32.h"
 #include "common/events.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 typedef void (*ENGINE_LOG_CALLBACK)(char *text, bool result, void *data);
 
@@ -357,6 +357,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

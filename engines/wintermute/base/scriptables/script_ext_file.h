@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base_scriptable.h"
 #include "common/stream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseFile;
 
@@ -61,6 +61,6 @@ private:
 	Common::WriteStream *openForAppend(const Common::String &filename, bool binary);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

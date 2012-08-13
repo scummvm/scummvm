@@ -43,7 +43,7 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 #define SAVE_BUFFER_INIT_SIZE 100000
 #define SAVE_BUFFER_GROW_BY   50000
@@ -134,7 +134,7 @@ Common::String BasePersistenceManager::getFilenameForSlot(int slot) const {
 
 void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &desc) {
 	Common::String filename = getFilenameForSlot(slot);
-	debugC(kWinterMuteDebugSaveGame, "Trying to list savegame %s in slot %d", filename.c_str(), slot);
+	debugC(kWintermuteDebugSaveGame, "Trying to list savegame %s in slot %d", filename.c_str(), slot);
 	if (DID_FAIL(readHeader(filename))) {
 		warning("getSavedDesc(%d) - Failed for %s", slot, filename.c_str());
 		return;
@@ -331,7 +331,7 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 	_saving = false;
 
 	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), _gameRef->getName()) != 0) {
-		debugC(kWinterMuteDebugSaveGame, "ERROR: Saved game name doesn't match current game");
+		debugC(kWintermuteDebugSaveGame, "ERROR: Saved game name doesn't match current game");
 		cleanup();
 		return STATUS_FAILED;
 	}
@@ -342,8 +342,8 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)
 	   ) {
 
-		debugC(kWinterMuteDebugSaveGame, "ERROR: Saved game version is newer than current game");
-		debugC(kWinterMuteDebugSaveGame, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
+		debugC(kWintermuteDebugSaveGame, "ERROR: Saved game version is newer than current game");
+		debugC(kWintermuteDebugSaveGame, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
 		return STATUS_FAILED;
 	}
@@ -353,8 +353,8 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor <  SAVEGAME_VER_MINOR) ||
 	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)
 	   ) {
-		debugC(kWinterMuteDebugSaveGame, "ERROR: Saved game is too old and cannot be used by this version of game engine");
-		debugC(kWinterMuteDebugSaveGame, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
+		debugC(kWintermuteDebugSaveGame, "ERROR: Saved game is too old and cannot be used by this version of game engine");
+		debugC(kWintermuteDebugSaveGame, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
 		return STATUS_FAILED;
 
@@ -371,7 +371,7 @@ bool BasePersistenceManager::saveFile(const Common::String &filename) {
 	byte *buffer = ((Common::MemoryWriteStreamDynamic *)_saveStream)->getData();
 	uint32 bufferSize = ((Common::MemoryWriteStreamDynamic *)_saveStream)->size();
 
-	Common::SaveFileManager *saveMan = ((WinterMuteEngine *)g_engine)->getSaveFileMan();
+	Common::SaveFileManager *saveMan = ((WintermuteEngine *)g_engine)->getSaveFileMan();
 	Common::OutSaveFile *file = saveMan->openForSaving(filename);
 	file->write(prefixBuffer, prefixSize);
 	file->write(buffer, bufferSize);
@@ -792,7 +792,7 @@ bool BasePersistenceManager::transfer(const char *name, void *val) {
 	if (_saving) {
 		SystemClassRegistry::getInstance()->getPointerID(*(void **)val, &classID, &instanceID);
 		if (*(void **)val != NULL && (classID == -1 || instanceID == -1)) {
-			debugC(kWinterMuteDebugSaveGame, "Warning: invalid instance '%s'", name);
+			debugC(kWintermuteDebugSaveGame, "Warning: invalid instance '%s'", name);
 		}
 
 		_saveStream->writeUint32LE(classID);
@@ -825,4 +825,4 @@ bool BasePersistenceManager::checkVersion(byte verMajor, byte verMinor, byte ver
 	return true;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

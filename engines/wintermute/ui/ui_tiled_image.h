@@ -33,7 +33,7 @@
 #include "engines/wintermute/ui/ui_object.h"
 #include "common/rect.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseSubFrame;
 class UITiledImage : public BaseObject {
 public:
@@ -58,6 +58,6 @@ public:
 	Rect32 _downRight;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

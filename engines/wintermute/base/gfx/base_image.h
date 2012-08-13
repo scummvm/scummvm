@@ -36,7 +36,7 @@
 #include "common/str.h"
 #include "common/stream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseSurface;
 class BaseFileManager;
 class BaseImage {
@@ -67,6 +67,6 @@ private:
 	BaseFileManager *_fileManager;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

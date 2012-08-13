@@ -30,7 +30,7 @@
 #include "engines/wintermute/math/vector2.h"
 #include <math.h>
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 Matrix4::Matrix4() {
@@ -83,4 +83,4 @@ void Matrix4::transformVector2(Vector2 &vec) {
 	vec.y = y;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

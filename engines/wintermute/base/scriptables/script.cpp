@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "common/memstream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(ScScript, false)
 
@@ -1464,4 +1464,4 @@ void ScScript::afterLoad() {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

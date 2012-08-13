@@ -40,7 +40,7 @@
 #include "common/str.h"
 #include "common/math.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(PartEmitter, false)
 
@@ -1253,4 +1253,4 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

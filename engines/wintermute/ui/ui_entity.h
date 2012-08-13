@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/ui/ui_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class AdEntity;
 class UIEntity : public UIObject {
 public:
@@ -53,6 +53,6 @@ public:
 	virtual const char *scToString();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

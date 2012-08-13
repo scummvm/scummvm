@@ -32,7 +32,7 @@
 #include "engines/wintermute/system/sys_instance.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(SXArray, false)
 
@@ -249,4 +249,4 @@ bool SXArray::push(ScValue *val) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

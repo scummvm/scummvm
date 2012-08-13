@@ -33,7 +33,7 @@
 #include "common/stream.h"
 #include "common/fs.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BasePackage {
 public:
 	Common::SeekableReadStream *getFilePointer();
@@ -85,6 +85,6 @@ private:
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::iterator _filesIter;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

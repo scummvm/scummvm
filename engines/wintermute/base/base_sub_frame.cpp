@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 
@@ -652,4 +652,4 @@ bool BaseSubFrame::setSurfaceSimple() {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

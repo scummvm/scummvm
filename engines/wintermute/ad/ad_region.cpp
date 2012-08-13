@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdRegion, false)
 
@@ -395,4 +395,4 @@ bool AdRegion::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

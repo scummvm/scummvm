@@ -35,7 +35,7 @@
 #include "common/keyboard.h"
 #include "common/events.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseKeyboardState : public BaseScriptable {
 public:
@@ -70,6 +70,6 @@ private:
 	Common::KeyCode vKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -32,7 +32,7 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class AdSpriteSet;
 class BaseSprite;
 class AdTalkNode : public BaseClass {
@@ -58,6 +58,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

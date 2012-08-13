@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_ADLAYER_H
 #define WINTERMUTE_ADLAYER_H
 
-namespace WinterMute {
+namespace Wintermute {
 class AdSceneNode;
 class AdLayer : public BaseObject {
 public:
@@ -53,6 +53,6 @@ public:
 	virtual const char *scToString();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

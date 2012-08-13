@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/base/base_region.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdRegion : public BaseRegion {
 public:
@@ -53,6 +53,6 @@ public:
 	virtual const char *scToString();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -29,7 +29,7 @@
 #include "engines/wintermute/math/math_util.h"
 #include <cmath>
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 float MathUtil::round(float val) {
@@ -49,4 +49,4 @@ float MathUtil::roundUp(float val) {
 	return result;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

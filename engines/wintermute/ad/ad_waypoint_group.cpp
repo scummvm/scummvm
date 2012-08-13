@@ -35,7 +35,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include <limits.h>
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdWaypointGroup, false)
 
@@ -267,4 +267,4 @@ bool AdWaypointGroup::mimic(AdWaypointGroup *wpt, float scale, int argX, int arg
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

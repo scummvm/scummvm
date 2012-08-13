@@ -33,7 +33,7 @@
 #include "common/hashmap.h"
 #include "engines/wintermute/base/base.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseStringTable : public BaseClass {
 public:
@@ -50,6 +50,6 @@ private:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -34,7 +34,7 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/persistent.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class ScValue;
 class BaseScriptable;
@@ -61,6 +61,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

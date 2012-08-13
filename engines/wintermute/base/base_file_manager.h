@@ -34,7 +34,7 @@
 #include "common/fs.h"
 #include "common/file.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseFileManager {
 public:
 	bool cleanup();
@@ -69,6 +69,6 @@ private:
 	// the detector too, without launching the entire engine:
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseSprite;
 class AdSpriteSet : public BaseObject {
 public:
@@ -48,6 +48,6 @@ public:
 	BaseSprite *_sprites[NUM_DIRECTIONS];
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -33,13 +33,13 @@
 #include "common/singleton.h"
 #include "common/random.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseFileManager;
 class BaseRegistry;
 class BaseGame;
 class SystemClassRegistry;
-class BaseEngine : public Common::Singleton<WinterMute::BaseEngine> {
+class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 	void init();
 	BaseFileManager *_fileManager;
 	Common::String _gameId;
@@ -63,6 +63,6 @@ public:
 	const char *getGameId() { return _gameId.c_str(); }
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

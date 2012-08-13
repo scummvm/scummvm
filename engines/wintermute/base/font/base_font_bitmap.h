@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/font/base_font.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseSubFrame;
 class BaseFontBitmap : public BaseFont {
 public:
@@ -66,6 +66,6 @@ private:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

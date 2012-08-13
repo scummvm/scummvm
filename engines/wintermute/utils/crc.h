@@ -18,7 +18,7 @@
 
 #include "common/system.h" // For types.
 
-namespace WinterMute {
+namespace Wintermute {
 
 #ifndef TRUE
 #define FALSE   0
@@ -80,6 +80,6 @@ extern "C" crc crc_initialize(void);
 extern "C" crc crc_process_byte(unsigned char byteVal, crc remainder);
 extern "C" crc crc_finalize(crc remainder);
 
-} // End of namespace WinterMute
+} // End of namespace Wintermute
 
 #endif /* _crc_h */

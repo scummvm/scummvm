@@ -37,7 +37,7 @@
 
 #include "common/stream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 struct TPackageHeader {
 	uint32 _magic1;
@@ -75,6 +75,6 @@ v2:    uint32 TimeDate1
 
 */
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // _DCPACKAGE_H_

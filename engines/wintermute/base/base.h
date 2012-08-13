@@ -35,7 +35,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseGame;
 class BaseDynamicBuffer;
@@ -59,6 +59,6 @@ protected:
 	    std::map<std::string, std::string>::iterator _editorPropsIter;*/
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

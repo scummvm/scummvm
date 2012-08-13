@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_SYSINSTANCE_H
 #define WINTERMUTE_SYSINSTANCE_H
 
-namespace WinterMute {
+namespace Wintermute {
 
 class SystemClass;
 
@@ -63,6 +63,6 @@ private:
 	SystemClass *_class;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

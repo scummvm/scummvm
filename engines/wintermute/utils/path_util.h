@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/dctypes.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class PathUtil {
 public:
@@ -44,6 +44,6 @@ public:
 	static AnsiString getExtension(const AnsiString &path);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_PATHUTILS_H

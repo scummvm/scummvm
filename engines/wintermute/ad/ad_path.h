@@ -33,7 +33,7 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BasePoint;
 class AdPath : public BaseClass {
 public:
@@ -51,6 +51,6 @@ public:
 	bool _ready;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

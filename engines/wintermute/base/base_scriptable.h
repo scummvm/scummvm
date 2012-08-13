@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base_named_object.h"
 #include "engines/wintermute/persistent.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class ScValue;
 class ScStack;
@@ -78,6 +78,6 @@ BaseScriptable *makeSXObject(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXStore(BaseGame *inGame);
 BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack);
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

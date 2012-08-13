@@ -32,7 +32,7 @@
 #include "common/substream.h"
 #include "common/zlib.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 	Common::SeekableReadStream *file = _package->getFilePointer();
@@ -70,4 +70,4 @@ BaseFileEntry::~BaseFileEntry() {
 	_package = NULL; // ref only
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

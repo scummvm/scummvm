@@ -27,26 +27,26 @@
 #include "engines/advancedDetector.h"
 #include "gui/debugger.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class Console;
 class BaseGame;
 class SystemClassRegistry;
 // our engine debug channels
 enum {
-    kWinterMuteDebugLog = 1 << 0, // The debug-logs from the original engine
-    kWinterMuteDebugSaveGame = 1 << 1,
-    kWinterMuteDebugFont = 1 << 2, // next new channel must be 1 << 2 (4)
-    kWinterMuteDebugFileAccess = 1 << 3, // the current limitation is 32 debug channels (1 << 31 is the last one)
-    kWinterMuteDebugAudio = 1 << 4,
-	kWinterMuteDebugGeneral = 1 << 5
+    kWintermuteDebugLog = 1 << 0, // The debug-logs from the original engine
+    kWintermuteDebugSaveGame = 1 << 1,
+    kWintermuteDebugFont = 1 << 2, // next new channel must be 1 << 2 (4)
+    kWintermuteDebugFileAccess = 1 << 3, // the current limitation is 32 debug channels (1 << 31 is the last one)
+    kWintermuteDebugAudio = 1 << 4,
+	kWintermuteDebugGeneral = 1 << 5
 };
 
-class WinterMuteEngine : public Engine {
+class WintermuteEngine : public Engine {
 public:
-	WinterMuteEngine(OSystem *syst, const ADGameDescription *desc);
-	WinterMuteEngine();
-	~WinterMuteEngine();
+	WintermuteEngine(OSystem *syst, const ADGameDescription *desc);
+	WintermuteEngine();
+	~WintermuteEngine();
 
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
@@ -69,7 +69,7 @@ private:
 // Example console class
 class Console : public GUI::Debugger {
 public:
-	Console(WinterMuteEngine *vm) {}
+	Console(WintermuteEngine *vm) {}
 	virtual ~Console(void) {}
 };
 

@@ -29,7 +29,7 @@
 #include "common/file.h"
 #include "engines/wintermute/utils/path_util.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::unifySeparators(const AnsiString &path) {
@@ -98,4 +98,4 @@ AnsiString PathUtil::getExtension(const AnsiString &path) {
 	return Common::lastPathComponent(path, '.');
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

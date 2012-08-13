@@ -33,7 +33,7 @@
 
 #define NUM_CHARACTERS 256
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseFont: public BaseObject {
 public:
@@ -56,6 +56,6 @@ private:
 	static bool isTrueType(BaseGame *game, const Common::String &filename);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

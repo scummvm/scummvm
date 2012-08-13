@@ -36,7 +36,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/utils.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdTalkDef, false)
 
@@ -282,4 +282,4 @@ BaseSprite *AdTalkDef::getDefaultSprite(TDirection dir) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

@@ -33,7 +33,7 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base_script_holder.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseFrame;
 class BaseSurface;
 class BaseObject;
@@ -85,6 +85,6 @@ public:
 	virtual const char *scToString();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

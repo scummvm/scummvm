@@ -38,7 +38,7 @@ namespace Common {
 class SeekableReadStream;
 }
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseFile {
 protected:
@@ -62,6 +62,6 @@ public:
 	virtual Common::SeekableReadStream *getMemStream();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

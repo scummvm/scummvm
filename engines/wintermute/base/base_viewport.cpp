@@ -30,7 +30,7 @@
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_viewport.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseViewport, false)
 
@@ -95,4 +95,4 @@ int BaseViewport::getHeight() {
 	return _rect.bottom - _rect.top;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

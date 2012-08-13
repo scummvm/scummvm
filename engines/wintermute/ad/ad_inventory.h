@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdItem;
 
@@ -47,6 +47,6 @@ public:
 	int _scrollOffset;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

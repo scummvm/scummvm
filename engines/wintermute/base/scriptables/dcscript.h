@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_DCSCRIPT_H
 #define WINTERMUTE_DCSCRIPT_H
 
-namespace WinterMute {
+namespace Wintermute {
 
 #define SCRIPT_MAGIC   0xDEC0ADDE
 #define SCRIPT_VERSION 0x0102
@@ -136,6 +136,6 @@ typedef enum {
     ELEMENT_STRING = 0
 } TElementType;
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

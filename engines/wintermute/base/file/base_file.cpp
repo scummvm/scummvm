@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/file/base_file.h"
 #include "common/memstream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -65,4 +65,4 @@ Common::SeekableReadStream *BaseFile::getMemStream() {
 }
 
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

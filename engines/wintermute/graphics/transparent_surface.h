@@ -37,7 +37,7 @@
 #define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
 #define BS_ARGB(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
 
-namespace WinterMute {
+namespace Wintermute {
 
 /**
  * A transparent graphics surface, which implements alpha blitting.

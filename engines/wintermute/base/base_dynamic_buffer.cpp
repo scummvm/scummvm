@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 growBy) {
@@ -201,4 +201,4 @@ void BaseDynamicBuffer::putTextForm(const char *format, va_list argptr) {
 	putBytes((byte *)buff, strlen(buff));
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

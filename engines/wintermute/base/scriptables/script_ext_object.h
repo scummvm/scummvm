@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class SXObject : public BaseObject {
 public:
@@ -41,6 +41,6 @@ public:
 	virtual ~SXObject();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

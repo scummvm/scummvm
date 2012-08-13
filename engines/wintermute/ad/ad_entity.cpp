@@ -52,7 +52,7 @@
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdEntity, false)
 
@@ -1120,4 +1120,4 @@ bool AdEntity::setSprite(const char *filename) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

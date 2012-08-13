@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base_scriptable.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class SXMemBuffer : public BaseScriptable {
 public:
@@ -55,6 +55,6 @@ private:
 	bool checkBounds(ScScript *script, int start, int length);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

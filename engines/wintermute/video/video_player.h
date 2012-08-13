@@ -36,7 +36,7 @@
 #define MAX_VIDEO_STREAMS 5
 
 
-namespace WinterMute {
+namespace Wintermute {
 
 // AVI-Video-player, currently fully stubbed
 class VideoPlayer : public BaseClass {
@@ -85,6 +85,6 @@ public:
 	    BaseArray<CVidSubtitle *, CVidSubtitle *> _subtitles;*/
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

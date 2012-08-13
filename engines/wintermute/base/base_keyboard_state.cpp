@@ -32,7 +32,7 @@
 #include "common/system.h"
 #include "common/keyboard.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseKeyboardState, false)
 
@@ -309,4 +309,4 @@ Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

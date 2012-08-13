@@ -30,7 +30,7 @@
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/system/sys_class.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 SystemInstance::SystemInstance(void *instance, int id, SystemClass *sysClass) {
@@ -46,4 +46,4 @@ SystemInstance::SystemInstance(void *instance, int id, SystemClass *sysClass) {
 SystemInstance::~SystemInstance() {
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

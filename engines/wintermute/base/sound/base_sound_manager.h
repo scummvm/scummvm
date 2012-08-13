@@ -34,7 +34,7 @@
 #include "audio/mixer.h"
 #include "common/array.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseSoundBuffer;
 class BaseSoundMgr : public BaseClass {
 public:
@@ -63,6 +63,6 @@ public:
 	void saveSettings();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

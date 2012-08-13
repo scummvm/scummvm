@@ -34,7 +34,7 @@
 #include "engines/wintermute/persistent.h"
 #include "audio/mixer.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseSoundBuffer;
 class BaseSound : public BaseClass {
@@ -82,6 +82,6 @@ private:
 	BaseSoundBuffer *_sound;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

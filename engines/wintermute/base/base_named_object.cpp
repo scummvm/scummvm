@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/base/base_named_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseNamedObject::BaseNamedObject(BaseGame *inGame) : BaseClass(inGame) {
@@ -68,4 +68,4 @@ void BaseNamedObject::setName(const char *name) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

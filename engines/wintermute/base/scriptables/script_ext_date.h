@@ -32,7 +32,7 @@
 #include "common/system.h"
 #include "engines/wintermute/base/base_scriptable.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class SXDate : public BaseScriptable {
 public:
@@ -50,6 +50,6 @@ private:
 	Common::String _strRep;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

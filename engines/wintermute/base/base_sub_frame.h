@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_scriptable.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseObject;
 class BaseSurface;
 class BaseSubFrame : public BaseScriptable {
@@ -87,6 +87,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

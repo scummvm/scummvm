@@ -33,7 +33,7 @@
 #include "engines/wintermute/ui/ui_object.h"
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 
-namespace WinterMute {
+namespace Wintermute {
 
 class UIButton : public UIObject {
 public:
@@ -74,6 +74,6 @@ public:
 	virtual const char *scToString();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

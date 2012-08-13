@@ -33,7 +33,7 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 BaseGame *BasePlatform::_gameRef = NULL;
 
@@ -259,4 +259,4 @@ char *BasePlatform::strlwr(char *string) {
 	return string;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

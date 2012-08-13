@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/base.h"
 #include "common/array.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseSurface;
 class BaseSurfaceStorage : public BaseClass {
 public:
@@ -52,6 +52,6 @@ public:
 	Common::Array<BaseSurface *> _surfaces;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

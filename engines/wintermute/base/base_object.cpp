@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/platform_osystem.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseObject, false)
 
@@ -1243,4 +1243,4 @@ bool BaseObject::afterMove() {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

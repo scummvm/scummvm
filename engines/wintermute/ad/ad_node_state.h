@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_ADNODESTATE_H
 #define WINTERMUTE_ADNODESTATE_H
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdEntity;
 
@@ -55,6 +55,6 @@ private:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

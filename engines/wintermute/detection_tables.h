@@ -20,7 +20,7 @@
  *
  */
 
-namespace WinterMute {
+namespace Wintermute {
 
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
@@ -230,4 +230,4 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-} // End of namespace WinterMute
+} // End of namespace Wintermute

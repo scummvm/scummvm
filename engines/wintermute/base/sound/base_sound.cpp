@@ -31,7 +31,7 @@
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSound, false)
 
@@ -289,4 +289,4 @@ bool BaseSound::applyFX(TSFXType type, float param1, float param2, float param3,
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

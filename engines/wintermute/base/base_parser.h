@@ -54,7 +54,7 @@
 
 #include "engines/wintermute/coll_templ.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseParser {
 public:
@@ -83,6 +83,6 @@ private:
 	char *_whiteSpace;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

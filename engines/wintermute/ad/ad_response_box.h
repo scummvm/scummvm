@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class UIButton;
 class UIWindow;
@@ -82,6 +82,6 @@ public:
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

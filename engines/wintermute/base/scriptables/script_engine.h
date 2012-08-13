@@ -33,7 +33,7 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 #define MAX_CACHED_SCRIPTS 20
 class ScScript;
@@ -130,6 +130,6 @@ private:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

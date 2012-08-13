@@ -34,7 +34,7 @@
 #include "common/rect.h"
 #include "common/array.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseImage;
 class BaseActiveRect;
@@ -215,6 +215,6 @@ private:
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

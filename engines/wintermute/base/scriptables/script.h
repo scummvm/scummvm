@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/scriptables/dcscript.h"   // Added by ClassView
 #include "engines/wintermute/coll_templ.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseScriptHolder;
 class BaseObject;
 class ScEngine;
@@ -169,6 +169,6 @@ public:
 	virtual const char *dbgGetFilename();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

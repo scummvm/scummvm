@@ -39,7 +39,7 @@
 #include "engines/wintermute/wintermute.h"
 #include "common/system.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(VideoTheoraPlayer, false)
 
@@ -272,7 +272,7 @@ bool VideoTheoraPlayer::update() {
 			warning("Should loop movie %s", _filename.c_str());
 			_theoraDecoder->rewind();
 		} else if (_theoraDecoder->endOfVideo() && !_looping) {
-			debugC(kWinterMuteDebugLog, "Finished movie %s", _filename.c_str());
+			debugC(kWintermuteDebugLog, "Finished movie %s", _filename.c_str());
 			_state = THEORA_STATE_FINISHED;
 			_playbackStarted = false;
 			if (_freezeGame) {
@@ -497,4 +497,4 @@ BaseSurface *VideoTheoraPlayer::getTexture() {
 	return _texture;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

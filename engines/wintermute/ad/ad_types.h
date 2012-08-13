@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_ADTYPES_H
 #define WINTERMUTE_ADTYPES_H
 
-namespace WinterMute {
+namespace Wintermute {
 
 typedef enum {
     GAME_NORMAL,
@@ -102,6 +102,6 @@ typedef enum {
     GEOM_GENERIC
 } TGeomNodeType;
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_ADTYPES_H

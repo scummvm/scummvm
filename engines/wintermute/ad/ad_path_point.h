@@ -32,7 +32,7 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base_point.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdPathPoint : public BasePoint {
 public:
@@ -45,6 +45,6 @@ public:
 	int _distance;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

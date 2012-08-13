@@ -29,7 +29,7 @@
 #include "engines/wintermute/ad/ad_path_point.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdPathPoint, false)
 
@@ -72,4 +72,4 @@ bool AdPathPoint::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/base_object.h"
 #include "common/rect.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class UIButton;
 class UIWindow;
 
@@ -60,6 +60,6 @@ private:
 	int _itemWidth;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

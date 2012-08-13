@@ -25,7 +25,7 @@
 
 #include "common/system.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 struct Point32 {
 	int32 x;
@@ -89,6 +89,6 @@ struct Rect32 {
 	}
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_RECT32_H

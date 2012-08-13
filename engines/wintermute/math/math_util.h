@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_MATHUTIL_H
 #define WINTERMUTE_MATHUTIL_H
 
-namespace WinterMute {
+namespace Wintermute {
 
 class MathUtil {
 public:
@@ -37,6 +37,6 @@ public:
 	static float roundUp(float val);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_MATHUTIL_H

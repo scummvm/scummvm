@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/particles/part_force.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 PartForce::PartForce(BaseGame *inGame) : BaseNamedObject(inGame) {
@@ -62,4 +62,4 @@ bool PartForce::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

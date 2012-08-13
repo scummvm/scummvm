@@ -32,7 +32,7 @@
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseRegion;
 class BaseSubFrame;
 class BaseObject;
@@ -55,6 +55,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

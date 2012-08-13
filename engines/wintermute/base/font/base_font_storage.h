@@ -34,7 +34,7 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseFont;
 
@@ -50,6 +50,6 @@ public:
 	bool initLoop();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

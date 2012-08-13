@@ -32,7 +32,7 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdResponseContext : public BaseClass {
 public:
@@ -45,6 +45,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

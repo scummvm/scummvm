@@ -45,7 +45,7 @@
 #include "common/stream.h"
 #include "common/debug.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 #define AUDIOFD_FRAGSIZE 10240
 

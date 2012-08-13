@@ -33,7 +33,7 @@
 #include "engines/wintermute/math/rect32.h"
 #include "graphics/surface.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseSurface: public BaseClass {
 public:
@@ -94,6 +94,6 @@ protected:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

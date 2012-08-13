@@ -41,7 +41,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIText, false)
 
@@ -519,4 +519,4 @@ bool UIText::sizeToFit() {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_game.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseTransitionMgr::BaseTransitionMgr(BaseGame *inGame) : BaseClass(inGame) {
@@ -133,4 +133,4 @@ bool BaseTransitionMgr::update() {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

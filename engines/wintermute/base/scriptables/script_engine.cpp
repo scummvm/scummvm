@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/utils.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(ScEngine, true)
 
@@ -608,4 +608,4 @@ void ScEngine::dumpStats() {
 	    }*/
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

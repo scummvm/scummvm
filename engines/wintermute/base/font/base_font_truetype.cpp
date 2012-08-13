@@ -43,7 +43,7 @@
 #include "graphics/fontman.h"
 #include <limits.h>
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseFontTT, false)
 
@@ -198,7 +198,7 @@ void BaseFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align,
 
 	// not found, create one
 	if (!surface) {
-		debugC(kWinterMuteDebugFont, "Draw text: %s", text);
+		debugC(kWintermuteDebugFont, "Draw text: %s", text);
 		surface = renderTextToTexture(textStr, width, align, maxHeight, textOffset);
 		if (surface) {
 			// write surface to cache
@@ -264,7 +264,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		alignment = Graphics::kTextAlignRight;
 	}
 
-	debugC(kWinterMuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
+	debugC(kWintermuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
 	if (_deletableFont) { // We actually have a TTF
@@ -602,4 +602,4 @@ void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight
 	    }*/
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

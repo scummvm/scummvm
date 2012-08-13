@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 
-namespace WinterMute {
+namespace Wintermute {
 
 class UITiledImage;
 class BaseFont;
@@ -79,6 +79,6 @@ public:
 	virtual const char *scToString();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

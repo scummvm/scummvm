@@ -37,7 +37,7 @@
 #include "engines/wintermute/platform_osystem.h"
 #include <limits.h>
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseRegion, false)
 
@@ -536,4 +536,4 @@ bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 	return createRegion() ? STATUS_OK : STATUS_FAILED;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

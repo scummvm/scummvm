@@ -31,7 +31,7 @@
 
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseGame;
 class SaveLoad {
 public:
@@ -52,6 +52,6 @@ private:
 	static void afterLoadScript(void *script, void *data);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

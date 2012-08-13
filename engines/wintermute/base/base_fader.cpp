@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "common/util.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -191,4 +191,4 @@ bool BaseFader::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

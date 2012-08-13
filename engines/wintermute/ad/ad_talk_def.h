@@ -32,7 +32,7 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class AdTalkNode;
 class AdSpriteSet;
 class AdTalkDef : public BaseObject {
@@ -53,6 +53,6 @@ public:
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

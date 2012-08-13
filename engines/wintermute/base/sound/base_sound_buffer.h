@@ -39,7 +39,7 @@ class SeekableAudioStream;
 class SoundHandle;
 }
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseFile;
 class BaseSoundBuffer : public BaseClass {
@@ -95,6 +95,6 @@ private:
 	int _volume;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

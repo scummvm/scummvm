@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/ad/ad_sprite_set.h"
 #include "engines/wintermute/utils/utils.h"
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdTalkNode, false)
 
@@ -292,4 +292,4 @@ BaseSprite *AdTalkNode::getSprite(TDirection dir) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

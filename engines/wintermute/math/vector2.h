@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_VECTOR2_H
 #define WINTERMUTE_VECTOR2_H
 
-namespace WinterMute {
+namespace Wintermute {
 
 class Vector2 {
 public:
@@ -70,6 +70,6 @@ public:
 	float y;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_VECTOR2_H

@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseFader : public BaseObject {
 public:
@@ -58,6 +58,6 @@ private:
 	uint32 _startTime;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

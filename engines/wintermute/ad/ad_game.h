@@ -31,7 +31,7 @@
 #include "engines/wintermute/ad/ad_types.h"
 #include "engines/wintermute/base/base_game.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class AdItem;
 class AdInventory;
 class AdSceneState;
@@ -158,6 +158,6 @@ private:
 	AdInventoryBox *_inventoryBox;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

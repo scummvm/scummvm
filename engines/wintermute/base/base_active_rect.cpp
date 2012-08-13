@@ -31,7 +31,7 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/platform_osystem.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
@@ -107,4 +107,4 @@ void BaseActiveRect::clipRect() {
 	BasePlatform::intersectRect(&_rect, &_rect, &rc);
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

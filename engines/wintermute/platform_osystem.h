@@ -33,7 +33,7 @@
 #include "engines/wintermute/math/rect32.h"
 #include "common/events.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseGame;
 
@@ -64,10 +64,10 @@ public:
 	static char *strlwr(char *string);
 
 private:
-	// Set by initialize on game-startup, the object referred to is also deleted by deinit in WinterMuteEngine
+	// Set by initialize on game-startup, the object referred to is also deleted by deinit in WintermuteEngine
 	static BaseGame *_gameRef;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

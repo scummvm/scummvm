@@ -40,7 +40,7 @@
 #include "common/savefile.h"
 #include "common/config-manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 	gameRef->LOG(0, "Loading game '%s'...", filename.c_str());
@@ -159,7 +159,7 @@ Common::String SaveLoad::getSaveSlotFilename(int slot) {
 	BasePersistenceManager *pm = new BasePersistenceManager();
 	Common::String filename = pm->getFilenameForSlot(slot);
 	delete pm;
-	debugC(kWinterMuteDebugSaveGame, "getSaveSlotFileName(%d) = %s", slot, filename.c_str());
+	debugC(kWintermuteDebugSaveGame, "getSaveSlotFileName(%d) = %s", slot, filename.c_str());
 	return filename;
 }
 
@@ -194,10 +194,10 @@ bool SaveLoad::isSaveSlotUsed(int slot) {
 bool SaveLoad::emptySaveSlot(int slot) {
 	Common::String filename = getSaveSlotFilename(slot);
 	BasePersistenceManager *pm = new BasePersistenceManager();
-	((WinterMuteEngine *)g_engine)->getSaveFileMan()->removeSavefile(pm->getFilenameForSlot(slot));
+	((WintermuteEngine *)g_engine)->getSaveFileMan()->removeSavefile(pm->getFilenameForSlot(slot));
 	delete pm;
 	return true;
 }
 	
 	
-} // end of namespace WinterMute
+} // end of namespace Wintermute

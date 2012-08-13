@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/particles/part_force.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseRegion;
 class PartParticle;
 class PartEmitter : public BaseObject {
@@ -135,6 +135,6 @@ private:
 	BaseArray<char *> _sprites;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -38,7 +38,7 @@
 #include "engines/wintermute/persistent.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdSpriteSet;
 class AdPath;
@@ -103,6 +103,6 @@ private:
 	int _pFCount;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_ADACTOR_H

@@ -32,7 +32,7 @@
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -139,4 +139,4 @@ bool BaseFontStorage::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

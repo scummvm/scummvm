@@ -35,7 +35,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UITiledImage, false)
 
@@ -390,4 +390,4 @@ bool UITiledImage::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

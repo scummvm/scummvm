@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/ad/ad_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdTalkHolder : public AdObject {
 public:
@@ -52,6 +52,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

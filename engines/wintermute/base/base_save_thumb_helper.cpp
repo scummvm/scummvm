@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_game.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSaveThumbHelper::BaseSaveThumbHelper(BaseGame *inGame) : BaseClass(inGame) {
@@ -77,4 +77,4 @@ bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

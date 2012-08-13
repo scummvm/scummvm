@@ -34,7 +34,7 @@
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class PartEmitter;
 class BaseSprite;
@@ -85,6 +85,6 @@ private:
 	int _fadeStartAlpha;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

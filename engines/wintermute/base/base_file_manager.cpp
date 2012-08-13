@@ -46,7 +46,7 @@
 #include "common/savefile.h"
 #include "common/fs.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -88,20 +88,20 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 	Common::SeekableReadStream *file = openFile(filename);
 	if (!file) {
 		if (mustExist) {
-			debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Error opening file '%s'", filename.c_str());
+			debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Error opening file '%s'", filename.c_str());
 		}
 		return NULL;
 	}
 
 	buffer = new byte[file->size() + 1];
 	if (buffer == NULL) {
-		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), file->size() + 1);
+		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), file->size() + 1);
 		closeFile(file);
 		return NULL;
 	}
 
 	if (file->read(buffer, (uint32)file->size()) != (uint32)file->size()) {
-		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Error reading file '%s'", filename.c_str());
+		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Error reading file '%s'", filename.c_str());
 		closeFile(file);
 		delete[] buffer;
 		return NULL;
@@ -165,7 +165,7 @@ bool BaseFileManager::initPaths() {
 
 bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 	for (Common::FSList::const_iterator it = fslist.begin(); it != fslist.end(); it++) {
-		debugC(kWinterMuteDebugFileAccess, "Adding %s", (*it).getName().c_str());
+		debugC(kWintermuteDebugFileAccess, "Adding %s", (*it).getName().c_str());
 		if ((*it).getName().contains(".dcp")) {
 			if (registerPackage((*it))) {
 				addPath(PATH_PACKAGE, (*it));
@@ -177,13 +177,13 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::registerPackages() {
-	debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "Scanning packages");
+	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Scanning packages");
 
 	// Register without using SearchMan, as otherwise the FSNode-based lookup in openPackage will fail
 	// and that has to be like that to support the detection-scheme.
 	Common::FSList files;
 	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); it++) {
-		debugC(kWinterMuteDebugFileAccess, "Should register folder: %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
+		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
 		(*it).getChildren(files, Common::FSNode::kListFilesOnly);
 		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
 			if (!fileIt->getName().hasSuffix(".dcp")) {
@@ -198,12 +198,12 @@ bool BaseFileManager::registerPackages() {
 					continue;
 				}
 			}
-			debugC(kWinterMuteDebugFileAccess, "Registering %s %s", (*fileIt).getPath().c_str(), (*fileIt).getName().c_str());
+			debugC(kWintermuteDebugFileAccess, "Registering %s %s", (*fileIt).getPath().c_str(), (*fileIt).getName().c_str());
 			registerPackage((*fileIt));
 		}
 	}
 
-//	debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
+//	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
 
 	return STATUS_OK;
 }
@@ -263,7 +263,7 @@ Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &file
 	if (strcmp(filename.c_str(), "") == 0) {
 		return NULL;
 	}
-	debugC(kWinterMuteDebugFileAccess, "Open file %s", filename.c_str());
+	debugC(kWintermuteDebugFileAccess, "Open file %s", filename.c_str());
 
 	Common::SeekableReadStream *file = openFileRaw(filename);
 	if (file && keepTrackOf) {
@@ -317,7 +317,7 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 		return ret;
 	}
 
-	debugC(kWinterMuteDebugFileAccess ,"BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
+	debugC(kWintermuteDebugFileAccess ,"BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
 	return NULL;
 }
 
@@ -328,4 +328,4 @@ BaseFileManager *BaseFileManager::getEngineInstance() {
 	return NULL;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

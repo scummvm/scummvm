@@ -33,7 +33,7 @@
 #include "engines/wintermute/ui/ui_object.h"
 #include "common/events.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class UIButton;
 class BaseViewport;
@@ -89,6 +89,6 @@ public:
 	virtual const char *scToString();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

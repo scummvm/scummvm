@@ -35,7 +35,7 @@
 #include "engines/wintermute/base/scriptables/dcscript.h"   // Added by ClassView
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class ScScript;
 class BaseScriptable;
@@ -108,6 +108,6 @@ public:
 	bool setProperty(const char *propName);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

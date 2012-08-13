@@ -34,7 +34,7 @@
 #include "graphics/surface.h"
 #include "common/list.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseSurfaceOSystem;
 class RenderTicket {
 	Graphics::Surface *_surface;
@@ -125,6 +125,6 @@ private:
 	uint32 _clearColor;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_BRENDERER_SDL_H

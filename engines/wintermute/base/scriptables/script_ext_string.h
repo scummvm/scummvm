@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base_scriptable.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class SXString : public BaseScriptable {
 public:
@@ -53,6 +53,6 @@ private:
 	int _capacity;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

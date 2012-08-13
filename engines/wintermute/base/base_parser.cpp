@@ -35,7 +35,7 @@
 
 #define WHITESPACE " \t\n\r"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -464,4 +464,4 @@ int BaseParser::scanStr(const char *in, const char *format, ...) {
 	return num;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

@@ -32,7 +32,7 @@
 #include "engines/wintermute/ad/ad_types.h"
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdWaypointGroup;
 class AdRegion;
@@ -119,6 +119,6 @@ protected:
 	bool getScale(float *scaleX, float *scaleY);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

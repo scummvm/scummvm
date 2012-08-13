@@ -41,7 +41,7 @@ namespace Common {
 class SeekableReadStream;
 }
 
-namespace WinterMute {
+namespace Wintermute {
 
 /**
  *

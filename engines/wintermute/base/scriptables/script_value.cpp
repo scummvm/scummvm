@@ -34,7 +34,7 @@
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/base/base_scriptable.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -992,4 +992,4 @@ bool ScValue::setProperty(const char *propName) {
 	return ret;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

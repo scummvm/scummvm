@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/dctypes.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class StringUtil {
 public:
@@ -51,6 +51,6 @@ public:
 	static AnsiString toString(int val);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_STRINGUTIL_H

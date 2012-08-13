@@ -37,7 +37,7 @@
 #include "common/tokenizer.h"
 #include "common/config-manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 void correctSlashes(char *fileName) {
 	for (size_t i = 0; i < strlen(fileName); i++) {
@@ -196,4 +196,4 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	return NULL;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

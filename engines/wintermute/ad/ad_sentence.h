@@ -36,7 +36,7 @@
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 #include "common/rect.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class AdTalkDef;
 class BaseFont;
 class BaseSprite;
@@ -80,6 +80,6 @@ private:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

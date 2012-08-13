@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
@@ -146,4 +146,4 @@ void BaseSurface::setSize(int width, int height) {
 	_height = height;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

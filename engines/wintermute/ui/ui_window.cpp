@@ -47,7 +47,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIWindow, false)
 
@@ -1441,4 +1441,4 @@ bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactive
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

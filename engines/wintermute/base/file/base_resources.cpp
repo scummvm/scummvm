@@ -30,7 +30,7 @@
 #include "common/str.h"
 #include "common/memstream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 unsigned char invalid[] = {
 	0x42, 0x4d, 0x36, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x36, 0x04, 0x00, 0x00, 0x28, 0x00,
@@ -2827,4 +2827,4 @@ bool BaseResources::hasFile(const Common::String &filename) {
 	return false;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

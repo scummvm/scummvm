@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_PERSISTENT_H
 #define WINTERMUTE_PERSISTENT_H
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BasePersistenceManager;
 
@@ -37,10 +37,10 @@ class BasePersistenceManager;
 typedef void *(*PERSISTBUILD)(void);
 typedef bool(*PERSISTLOAD)(void *, BasePersistenceManager *);
 typedef void (*SYS_INSTANCE_CALLBACK)(void *Instance, void *Data);
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #include "engines/wintermute/system/sys_class_registry.h"
-namespace WinterMute {
+namespace Wintermute {
 
 
 #define DECLARE_PERSISTENT(class_name, parent_class)\
@@ -84,6 +84,6 @@ namespace WinterMute {
 #define TMEMBER(member_name) #member_name, &member_name
 #define TMEMBER_INT(member_name) #member_name, (int*)&member_name
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_PERSISTENT_H

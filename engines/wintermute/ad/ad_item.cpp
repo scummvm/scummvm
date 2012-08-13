@@ -43,7 +43,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdItem, false)
 
@@ -810,4 +810,4 @@ bool AdItem::getExtendedFlag(const char *flagName) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

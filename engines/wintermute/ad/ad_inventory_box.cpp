@@ -41,7 +41,7 @@
 #include "common/str.h"
 #include "common/rect.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdInventoryBox, false)
 
@@ -385,4 +385,4 @@ bool AdInventoryBox::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

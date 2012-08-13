@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/base_named_object.h"
 #include "engines/wintermute/math/vector2.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class PartForce : public BaseNamedObject {
 public:
@@ -52,6 +52,6 @@ public:
 	bool persist(BasePersistenceManager *PersistMgr);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -27,7 +27,7 @@
 #include "graphics/primitives.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 byte *TransparentSurface::_lookup = NULL;
 

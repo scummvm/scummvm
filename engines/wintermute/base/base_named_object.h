@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseNamedObject : public BaseClass {
 	char *_name;
@@ -46,6 +46,6 @@ public:
 	void setName(const char *name);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

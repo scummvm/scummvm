@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base_scriptable.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class SXMath : public BaseScriptable {
 public:
@@ -48,6 +48,6 @@ private:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

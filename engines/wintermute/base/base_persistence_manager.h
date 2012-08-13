@@ -38,7 +38,7 @@
 #include "common/system.h"
 #include "common/rect.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class Vector2;
 class BaseGame;
@@ -113,6 +113,6 @@ private:
 	BaseGame *_gameRef;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

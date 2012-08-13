@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/file/base_file.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //TODO: Get rid of this
 class BaseSaveThumbFile : public BaseFile {
@@ -47,6 +47,6 @@ private:
 	byte *_data;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

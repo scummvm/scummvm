@@ -35,7 +35,7 @@
 #include "engines/wintermute/wintermute.h"
 #include "common/stream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 SystemClassRegistry::SystemClassRegistry() {
@@ -83,7 +83,7 @@ bool SystemClassRegistry::unregisterClass(SystemClass *classObj) {
 	}
 
 	if (classObj->getNumInstances() != 0) {
-		debugC(WinterMute::kWinterMuteDebugSaveGame, "Memory leak@class %-20s: %d instance(s) left\n", classObj->getName().c_str(), classObj->getNumInstances());
+		debugC(Wintermute::kWintermuteDebugSaveGame, "Memory leak@class %-20s: %d instance(s) left\n", classObj->getName().c_str(), classObj->getNumInstances());
 	}
 	_classes.erase(it);
 
@@ -332,4 +332,4 @@ void SystemClassRegistry::dumpClasses(Common::WriteStream *stream) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

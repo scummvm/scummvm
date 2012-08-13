@@ -36,7 +36,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIObject, false)
 
@@ -647,4 +647,4 @@ bool UIObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

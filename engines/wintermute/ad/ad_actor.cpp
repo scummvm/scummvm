@@ -45,7 +45,7 @@
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/base_engine.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdActor, false)
 
@@ -1457,4 +1457,4 @@ bool AdActor::playAnim(const char *filename) {
 	return AdTalkHolder::playAnim(filename);
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

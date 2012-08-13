@@ -72,7 +72,7 @@
 #include "common/system.h"
 #include "common/file.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -307,7 +307,7 @@ BaseGame::~BaseGame() {
 	_stringTable = NULL;
 
 	DEBUG_DebugDisable();
-	debugC(kWinterMuteDebugLog, "--- shutting down normally ---\n");
+	debugC(kWintermuteDebugLog, "--- shutting down normally ---\n");
 }
 
 
@@ -538,7 +538,7 @@ void BaseGame::LOG(bool res, const char *fmt, ...) {
 		_engineLogCallback(buff, res, _engineLogCallbackData);
 	}
 
-	debugCN(kWinterMuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
+	debugCN(kWintermuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
 
 	//fprintf((FILE *)_debugLogFile, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
 	//fflush((FILE *)_debugLogFile);
@@ -4490,4 +4490,4 @@ AnsiString BaseGame::getDeviceType() const {
 	return "computer";
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

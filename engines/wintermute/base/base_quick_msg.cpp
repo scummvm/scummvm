@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/base_quick_msg.h"
 #include "engines/wintermute/base/base_game.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text) : BaseClass(inGame) {
@@ -54,4 +54,4 @@ char *BaseQuickMsg::getText() {
 	return _text;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

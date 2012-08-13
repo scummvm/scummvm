@@ -34,7 +34,7 @@
 #include "common/stream.h"
 #include "common/debug.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 BasePackage::BasePackage() {
 	_name = "";
@@ -123,13 +123,13 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 	TPackageHeader hdr;
 	hdr.readFromStream(stream);
 	if (hdr._magic1 != PACKAGE_MAGIC_1 || hdr._magic2 != PACKAGE_MAGIC_2 || hdr._packageVersion > PACKAGE_VERSION) {
-		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Invalid header in package file '%s'. Ignoring.", filename.c_str());
+		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "  Invalid header in package file '%s'. Ignoring.", filename.c_str());
 		delete stream;
 		return;
 	}
 
 	if (hdr._packageVersion != PACKAGE_VERSION) {
-		debugC(kWinterMuteDebugFileAccess | kWinterMuteDebugLog, "  Warning: package file '%s' is outdated.", filename.c_str());
+		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "  Warning: package file '%s' is outdated.", filename.c_str());
 	}
 	_priority = hdr._priority;
 	// new in v2
@@ -181,7 +181,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 					((byte *)name)[k] ^= 'D';
 				}
 			}
-			debugC(kWinterMuteDebugFileAccess, "Package contains %s", name);
+			debugC(kWintermuteDebugFileAccess, "Package contains %s", name);
 
 			Common::String upcName = name;
 			upcName.toUppercase();
@@ -222,7 +222,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			}
 		}
 	}
-	debugC(kWinterMuteDebugFileAccess, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
+	debugC(kWintermuteDebugFileAccess, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
 
 	delete stream;
 }
@@ -273,4 +273,4 @@ Common::SeekableReadStream *PackageSet::createReadStreamForMember(const Common::
 	return NULL;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

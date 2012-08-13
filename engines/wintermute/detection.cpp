@@ -33,10 +33,10 @@
 
 #include "engines/wintermute/detection_tables.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 /**
- * The fallback game descriptor used by the WinterMute engine's fallbackDetector.
+ * The fallback game descriptor used by the Wintermute engine's fallbackDetector.
  * Contents of this struct are overwritten by the fallbackDetector. (logic copied partially
  * from the SCI-engine).
  */
@@ -51,9 +51,9 @@ static ADGameDescription s_fallbackDesc = {
 };
 static char s_fallbackGameIdBuf[256];
 
-class WinterMuteMetaEngine : public AdvancedMetaEngine {
+class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
-	WinterMuteMetaEngine() : AdvancedMetaEngine(WinterMute::gameDescriptions, sizeof(ADGameDescription), WinterMute::wintermuteGames) {
+	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(ADGameDescription), Wintermute::wintermuteGames) {
 		_singleid = "wintermute";
 	}
 	virtual const char *getName() const {
@@ -95,7 +95,7 @@ public:
 
 	                if (0 == scumm_stricmp("data.dcp", gameName)) {
 	                    // You could check the contents of the file now if you need to.
-	                    detectedGames.push_back(WinterMute_setting[0]);
+	                    detectedGames.push_back(Wintermute_setting[0]);
 	                    break;
 	                }
 	            }
@@ -115,7 +115,7 @@ public:
 
 		if (allFiles.contains("data.dcp")) {
 			Common::String name, caption;
-			if (WinterMuteEngine::getGameInfo(fslist, name, caption)) {
+			if (WintermuteEngine::getGameInfo(fslist, name, caption)) {
 				for (uint32 i = 0; i < name.size(); i++) {
 					// Replace spaces (and other non-alphanumerics) with underscores
 					if (!Common::isAlnum(name[(int32)i])) {
@@ -144,7 +144,7 @@ public:
 		assert(syst);
 		assert(engine);
 
-		*engine = new WinterMute::WinterMuteEngine(syst, desc);
+		*engine = new Wintermute::WintermuteEngine(syst, desc);
 		return true;
 	}
 
@@ -169,7 +169,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const {
 		SaveStateList saves;
-		WinterMute::BasePersistenceManager pm(target, true);
+		Wintermute::BasePersistenceManager pm(target, true);
 		for (int i = 0; i < getMaximumSaveSlot(); i++) {
 			if (pm.getSaveExists(i)) {
 				SaveStateDescriptor desc;
@@ -185,12 +185,12 @@ public:
 	}
 
 	void removeSaveState(const char *target, int slot) const {
-		WinterMute::BasePersistenceManager pm(target, true);
+		Wintermute::BasePersistenceManager pm(target, true);
 		pm.deleteSaveSlot(slot);
 	}
 
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
-		WinterMute::BasePersistenceManager pm(target, true);
+		Wintermute::BasePersistenceManager pm(target, true);
 		SaveStateDescriptor retVal;
 		retVal.setDescription("Invalid savegame");
 		pm.getSaveStateDesc(slot, retVal);
@@ -198,10 +198,10 @@ public:
 	}
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #if PLUGIN_ENABLED_DYNAMIC(WINTERMUTE)
-REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, WinterMute::WinterMuteMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, WinterMute::WinterMuteMetaEngine);
+REGISTER_PLUGIN_STATIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);
 #endif

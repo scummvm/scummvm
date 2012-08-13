@@ -41,7 +41,7 @@
 #include "common/system.h"
 #include "common/substream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -93,7 +93,7 @@ void BaseSoundBuffer::setStreaming(bool streamed, uint32 numBlocks, uint32 block
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceReload) {
-	debugC(kWinterMuteDebugAudio, "BSoundBuffer::LoadFromFile(%s,%d)", filename.c_str(), forceReload);
+	debugC(kWintermuteDebugAudio, "BSoundBuffer::LoadFromFile(%s,%d)", filename.c_str(), forceReload);
 
 	// Load a file, but avoid having the File-manager handle the disposal of it.
 	_file = BaseFileManager::getEngineInstance()->openFile(filename, true, false);
@@ -290,4 +290,4 @@ bool BaseSoundBuffer::applyFX(TSFXType type, float param1, float param2, float p
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

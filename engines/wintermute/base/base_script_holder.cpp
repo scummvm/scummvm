@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseScriptHolder, false)
 
@@ -501,4 +501,4 @@ bool BaseScriptHolder::sendEvent(const char *eventName) {
 	return DID_SUCCEED(applyEvent(eventName));
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

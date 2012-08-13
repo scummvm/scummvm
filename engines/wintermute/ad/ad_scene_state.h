@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/coll_templ.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class AdNodeState;
 class AdSceneState : public BaseClass {
 public:
@@ -46,6 +46,6 @@ public:
 	BaseArray<AdNodeState *> _nodeStates;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

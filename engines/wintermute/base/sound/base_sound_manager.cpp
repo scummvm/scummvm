@@ -37,7 +37,7 @@
 #include "common/config-manager.h"
 #include "audio/mixer.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -279,4 +279,4 @@ float BaseSoundMgr::posToPan(int x, int y) {
 	return minPan + relPos * (maxPan - minPan);
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

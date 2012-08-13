@@ -35,7 +35,7 @@
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdNodeState, false)
 
@@ -193,4 +193,4 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

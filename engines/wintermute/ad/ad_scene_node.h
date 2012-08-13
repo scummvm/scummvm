@@ -34,7 +34,7 @@
 #include "engines/wintermute/ad/ad_region.h"   // Added by ClassView
 #include "engines/wintermute/ad/ad_entity.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdSceneNode : public BaseObject {
 public:

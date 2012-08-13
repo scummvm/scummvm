@@ -38,7 +38,7 @@
 
 #define NUM_CACHED_TEXTS 30
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseFontTT : public BaseFont {
 private:
@@ -147,6 +147,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/scriptables/script_ext_mem_buffer.h"
 #include "common/file.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(SXMemBuffer, false)
 
@@ -526,4 +526,4 @@ int SXMemBuffer::scCompare(BaseScriptable *val) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

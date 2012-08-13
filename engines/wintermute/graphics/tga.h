@@ -33,7 +33,7 @@ namespace Common {
 class SeekableReadStream;
 }
 
-namespace WinterMute {
+namespace Wintermute {
 
 /** TarGa image. */
 class TGA : public Graphics::ImageDecoder {

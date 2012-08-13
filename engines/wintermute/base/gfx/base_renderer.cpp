@@ -34,7 +34,7 @@
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
@@ -373,4 +373,4 @@ bool BaseRenderer::displayIndicator() {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

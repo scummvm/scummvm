@@ -41,15 +41,15 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 // Simple constructor for detection - we need to setup the persistence to avoid special-casing in-engine
 // This might not be the prettiest solution
-WinterMuteEngine::WinterMuteEngine() : Engine(g_system) {
+WintermuteEngine::WintermuteEngine() : Engine(g_system) {
 	_game = new AdGame("");
 }
 
-WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
+WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst), _gameDescription(desc) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
@@ -62,17 +62,17 @@ WinterMuteEngine::WinterMuteEngine(OSystem *syst, const ADGameDescription *desc)
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
 	// Here is the right place to set up the engine specific debug channels
-	DebugMan.addDebugChannel(kWinterMuteDebugLog, "enginelog", "Covers the same output as the log-file in WME");
-	DebugMan.addDebugChannel(kWinterMuteDebugSaveGame, "savegame", "Savegames");
-	DebugMan.addDebugChannel(kWinterMuteDebugFont, "font", "Text-drawing-related messages");
-	DebugMan.addDebugChannel(kWinterMuteDebugFileAccess, "file-access", "Non-critical problems like missing files");
-	DebugMan.addDebugChannel(kWinterMuteDebugAudio, "audio", "audio-playback-related issues");
-	DebugMan.addDebugChannel(kWinterMuteDebugGeneral, "general", "various issues not covered by any of the above");
+	DebugMan.addDebugChannel(kWintermuteDebugLog, "enginelog", "Covers the same output as the log-file in WME");
+	DebugMan.addDebugChannel(kWintermuteDebugSaveGame, "savegame", "Savegames");
+	DebugMan.addDebugChannel(kWintermuteDebugFont, "font", "Text-drawing-related messages");
+	DebugMan.addDebugChannel(kWintermuteDebugFileAccess, "file-access", "Non-critical problems like missing files");
+	DebugMan.addDebugChannel(kWintermuteDebugAudio, "audio", "audio-playback-related issues");
+	DebugMan.addDebugChannel(kWintermuteDebugGeneral, "general", "various issues not covered by any of the above");
 
 	_game = NULL;
 }
 
-WinterMuteEngine::~WinterMuteEngine() {
+WintermuteEngine::~WintermuteEngine() {
 	// Dispose your resources here
 	deinit();
 	delete _game;
@@ -82,7 +82,7 @@ WinterMuteEngine::~WinterMuteEngine() {
 	DebugMan.clearAllDebugChannels();
 }
 
-bool WinterMuteEngine::hasFeature(EngineFeature f) const {
+bool WintermuteEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsRTL:
 		return true;
@@ -96,7 +96,7 @@ bool WinterMuteEngine::hasFeature(EngineFeature f) const {
 	return false;
 }
 
-Common::Error WinterMuteEngine::run() {
+Common::Error WintermuteEngine::run() {
 	// Initialize graphics using following:
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 16, 8, 0, 24);
 	initGraphics(800, 600, true, &format);
@@ -108,16 +108,16 @@ Common::Error WinterMuteEngine::run() {
 	_console = new Console(this);
 
 //	DebugMan.enableDebugChannel("enginelog");
-	debugC(1, kWinterMuteDebugLog, "Engine Debug-LOG enabled");
-	debugC(2, kWinterMuteDebugSaveGame , "Savegame debugging-enabled");
+	debugC(1, kWintermuteDebugLog, "Engine Debug-LOG enabled");
+	debugC(2, kWintermuteDebugSaveGame , "Savegame debugging-enabled");
 
 	int ret = 1;
 
 	// Additional setup.
-	debugC(kWinterMuteDebugLog, "WinterMuteEngine::init");
+	debugC(kWintermuteDebugLog, "WintermuteEngine::init");
 	ret = init();
 
-	debugC(kWinterMuteDebugLog, "WinterMuteEngine::messageLoop");
+	debugC(kWintermuteDebugLog, "WintermuteEngine::messageLoop");
 	if (ret == 0) {
 		ret = messageLoop();
 	}
@@ -125,7 +125,7 @@ Common::Error WinterMuteEngine::run() {
 	return Common::kNoError;
 }
 
-int WinterMuteEngine::init() {
+int WintermuteEngine::init() {
 	BaseEngine::createInstance(_targetName);
 	_game = new AdGame(_targetName);
 	if (!_game) {
@@ -221,7 +221,7 @@ int WinterMuteEngine::init() {
 	return 0;
 }
 
-int WinterMuteEngine::messageLoop() {
+int WintermuteEngine::messageLoop() {
 	bool done = false;
 
 	uint32 prevTime = _system->getMillis();
@@ -269,29 +269,29 @@ int WinterMuteEngine::messageLoop() {
 	return 0;
 }
 
-void WinterMuteEngine::deinit() {
+void WintermuteEngine::deinit() {
 	BaseEngine::destroy();
 }
 
-Common::Error WinterMuteEngine::loadGameState(int slot) {
+Common::Error WintermuteEngine::loadGameState(int slot) {
 	BaseEngine::instance().getGameRef()->loadGame(slot);
 	return Common::kNoError;
 }
 
-Common::Error WinterMuteEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error WintermuteEngine::saveGameState(int slot, const Common::String &desc) {
 	BaseEngine::instance().getGameRef()->saveGame(slot, desc.c_str(), false);
 	return Common::kNoError;
 }
 
-bool WinterMuteEngine::canSaveGameStateCurrently() {
+bool WintermuteEngine::canSaveGameStateCurrently() {
 	return true;
 }
 
-bool WinterMuteEngine::canLoadGameStateCurrently() {
+bool WintermuteEngine::canLoadGameStateCurrently() {
 	return true;
 }
 
-bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {
+bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {
 	bool retVal = false;
 	caption = name = "(invalid)";
 	Common::SeekableReadStream *stream = NULL;
@@ -379,4 +379,4 @@ bool WinterMuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 	return retVal;
 }
 
-} // End of namespace WinterMute
+} // End of namespace Wintermute

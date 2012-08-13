@@ -29,7 +29,7 @@
 
 #include "engines/wintermute/video/video_player.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -106,4 +106,4 @@ bool VideoPlayer::loadSubtitles(const char *filename, const char *subtitleFile) 
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

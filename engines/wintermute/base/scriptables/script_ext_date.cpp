@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_ext_date.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(SXDate, false)
 
@@ -291,4 +291,4 @@ int SXDate::scCompare(BaseScriptable *Value) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

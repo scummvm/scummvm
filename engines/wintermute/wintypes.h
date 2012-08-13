@@ -31,7 +31,7 @@
 
 #include "common/scummsys.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 #define BYTETORGBA(r,g,b,a) ((uint32)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
@@ -48,6 +48,6 @@ namespace WinterMute {
 
 #define MAX_PATH_LENGTH 512
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_WINTYPES_H

@@ -33,7 +33,7 @@
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //IMPLEMENT_PERSISTENT(BaseSurfaceStorage, true);
 
@@ -204,4 +204,4 @@ int BaseSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

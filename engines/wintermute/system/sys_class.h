@@ -35,7 +35,7 @@
 #include "common/func.h"
 #include "common/stream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class SystemInstance;
 class BaseGame;
 class BasePersistenceManager;
@@ -52,8 +52,8 @@ template<> struct Hash<void *> : public UnaryFunction<void *, uint> {
 	}
 };
 
-template<> struct Hash<WinterMute::SystemInstance *> : public UnaryFunction<WinterMute::SystemInstance *, uint> {
-	uint operator()(WinterMute::SystemInstance *val) const {
+template<> struct Hash<Wintermute::SystemInstance *> : public UnaryFunction<Wintermute::SystemInstance *, uint> {
+	uint operator()(Wintermute::SystemInstance *val) const {
 		return (uint)((size_t)val);
 	}
 };
@@ -61,7 +61,7 @@ template<> struct Hash<WinterMute::SystemInstance *> : public UnaryFunction<Wint
 
 }
 
-namespace WinterMute {
+namespace Wintermute {
 
 class SystemClass {
 public:
@@ -125,6 +125,6 @@ private:
 	InstanceMap _instanceMap;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

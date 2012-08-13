@@ -40,7 +40,7 @@
 
 // Note: This code is completely untested, as I have yet to find a game that uses SXFile.
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(SXFile, false)
 
@@ -826,4 +826,4 @@ Common::WriteStream *SXFile::openForAppend(const Common::String &filename, bool 
 	error("SXFile::openForAppend - WriteFiles not supported");
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

@@ -38,7 +38,7 @@
 #include "common/queue.h"
 #include "common/config-manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) : _owner(owner),
 	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(!disableAlpha) {
@@ -602,4 +602,4 @@ BaseSurface *BaseRenderOSystem::createSurface() {
 	return new BaseSurfaceOSystem(_gameRef);
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

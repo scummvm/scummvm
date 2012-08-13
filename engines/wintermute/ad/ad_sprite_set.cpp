@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_sprite.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSpriteSet, false)
 
@@ -353,4 +353,4 @@ bool AdSpriteSet::containsSprite(BaseSprite *sprite) {
 	return false;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

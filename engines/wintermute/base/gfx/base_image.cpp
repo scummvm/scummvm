@@ -38,7 +38,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 BaseImage::BaseImage() {
@@ -69,7 +69,7 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	} else if (_filename.hasSuffix(".bmp")) {
 		_decoder = new Graphics::BitmapDecoder();
 	} else if (_filename.hasSuffix(".tga")) {
-		_decoder = new WinterMute::TGA();
+		_decoder = new Wintermute::TGA();
 	} else if (_filename.hasSuffix(".jpg")) {
 		_decoder = new Graphics::JPEGDecoder();
 	} else {
@@ -228,4 +228,4 @@ bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 	return true;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

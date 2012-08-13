@@ -32,7 +32,7 @@
 #include "common/stream.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseResources {
 public:
@@ -40,6 +40,6 @@ public:
 	static bool hasFile(const Common::String &filename);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

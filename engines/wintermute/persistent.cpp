@@ -91,9 +91,9 @@
 
 // SystemClass adds these objects to the registry, thus they aren't as leaked as they look
 #define REGISTER_CLASS(class_name, persistent_class)\
-	new WinterMute::SystemClass(class_name::_className, class_name::persistBuild, class_name::persistLoad, persistent_class);
+	new Wintermute::SystemClass(class_name::_className, class_name::persistBuild, class_name::persistLoad, persistent_class);
 
-namespace WinterMute {
+namespace Wintermute {
 
 // This is done in a separate file, to avoid including the kitchensink in SystemClassRegistry.
 void SystemClassRegistry::registerClasses() {

@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/utils.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdResponse, false)
 
@@ -143,4 +143,4 @@ bool AdResponse::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

@@ -29,7 +29,7 @@
 #include "engines/wintermute/ad/ad_response_context.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdResponseContext, false)
 
@@ -68,4 +68,4 @@ void AdResponseContext::setContext(const char *context) {
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

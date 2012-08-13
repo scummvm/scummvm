@@ -35,7 +35,7 @@
 #include "engines/wintermute/utils/string_util.h"
 #include "common/tokenizer.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(SXString, false)
 
@@ -433,4 +433,4 @@ int SXString::scCompare(BaseScriptable *val) {
 	return strcmp(_string, ((SXString *)val)->_string);
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

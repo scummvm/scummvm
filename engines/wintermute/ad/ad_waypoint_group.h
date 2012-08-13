@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BasePoint;
 class AdWaypointGroup : public BaseObject {
 public:
@@ -53,6 +53,6 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -33,7 +33,7 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base_scriptable.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseScriptHolder : public BaseScriptable {
 public:
@@ -71,6 +71,6 @@ public:
 	virtual bool sendEvent(const char *eventName);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

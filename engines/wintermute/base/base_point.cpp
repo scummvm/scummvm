@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/base_point.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BasePoint, false)
 
@@ -60,4 +60,4 @@ bool BasePoint::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

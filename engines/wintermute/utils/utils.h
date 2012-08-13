@@ -32,7 +32,7 @@
 #include "engines/wintermute/wintypes.h"
 #include "engines/wintermute/math/rect32.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseGame;
 
@@ -59,6 +59,6 @@ private:
 	static float Hue2RGB(float v1, float v2, float vH);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

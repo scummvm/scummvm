@@ -35,7 +35,7 @@
 #include "common/stream.h"
 #include "graphics/surface.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseSurface;
 class BaseImage;
 class VideoTheoraPlayer : public BaseClass {
@@ -144,6 +144,6 @@ private:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

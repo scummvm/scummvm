@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 SystemClass::SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD load, bool persistentClass) {
@@ -217,4 +217,4 @@ void SystemClass::instanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpDat
 	}
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

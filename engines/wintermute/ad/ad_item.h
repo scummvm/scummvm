@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/ad/ad_talk_holder.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdItem : public AdTalkHolder {
 public:
@@ -64,6 +64,6 @@ private:
 	char *_amountString;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

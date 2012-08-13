@@ -52,7 +52,7 @@
 #include "common/str.h"
 #include "common/util.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdObject, false)
 
@@ -1296,4 +1296,4 @@ bool AdObject::updatePartEmitter() {
 	return _partEmitter->update();
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

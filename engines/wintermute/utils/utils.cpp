@@ -30,7 +30,7 @@
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/base_engine.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 static inline unsigned Sqr(int x) {
@@ -258,4 +258,4 @@ float BaseUtils::Hue2RGB(float v1, float v2, float vH) {
 	return (v1);
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

@@ -47,7 +47,7 @@
 #include "common/util.h"
 #include "common/keyboard.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIEdit, false)
 
@@ -948,4 +948,4 @@ bool UIEdit::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

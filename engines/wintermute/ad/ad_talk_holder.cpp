@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdTalkHolder, false)
 
@@ -399,4 +399,4 @@ bool AdTalkHolder::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

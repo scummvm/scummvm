@@ -31,11 +31,11 @@
 
 #include "common/stream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 Common::SeekableReadStream *openDiskFile(const Common::String &filename);
 bool diskFileExists(const Common::String &filename);
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_MATRIX4_H
 #define WINTERMUTE_MATRIX4_H
 
-namespace WinterMute {
+namespace Wintermute {
 
 class Vector2;
 
@@ -54,6 +54,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_MATRIX4_H

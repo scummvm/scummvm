@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseDynamicBuffer {
 public:
@@ -61,6 +61,6 @@ private:
 	void putTextForm(const char *format, va_list argptr);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseScriptable, false)
 
@@ -188,4 +188,4 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return NULL;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

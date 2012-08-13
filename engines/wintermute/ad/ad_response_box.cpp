@@ -45,7 +45,7 @@
 #include "engines/wintermute/wintermute.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdResponseBox, false)
 
@@ -611,7 +611,7 @@ bool AdResponseBox::weedResponses() {
 			}
 			break;
 		default:
-			debugC(kWinterMuteDebugGeneral, "AdResponseBox::WeedResponses - Unhandled enum");
+			debugC(kWintermuteDebugGeneral, "AdResponseBox::WeedResponses - Unhandled enum");
 			break;
 		}
 	}
@@ -641,7 +641,7 @@ bool AdResponseBox::handleResponse(AdResponse *response) {
 		adGame->addGameResponse(response->_iD);
 		break;
 	default:
-		debugC(kWinterMuteDebugGeneral, "AdResponseBox::HandleResponse - Unhandled enum");
+		debugC(kWintermuteDebugGeneral, "AdResponseBox::HandleResponse - Unhandled enum");
 	}
 
 	return STATUS_OK;
@@ -708,4 +708,4 @@ bool AdResponseBox::getObjects(BaseArray<UIObject *> &objects, bool interactiveO
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

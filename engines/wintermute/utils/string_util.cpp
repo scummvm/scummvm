@@ -30,7 +30,7 @@
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/utils/convert_utf.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
@@ -229,4 +229,4 @@ AnsiString StringUtil::toString(int val) {
 }
 
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

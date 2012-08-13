@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/coll_templ.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseSound;
 class BaseSubFrame;
 class BaseObject;
@@ -68,6 +68,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

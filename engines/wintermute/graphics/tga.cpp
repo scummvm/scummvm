@@ -30,7 +30,7 @@
 
 #include "engines/wintermute/graphics/tga.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 TGA::TGA() {
 

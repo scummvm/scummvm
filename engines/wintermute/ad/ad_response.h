@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/ad/ad_types.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class BaseFont;
 class AdResponse : public BaseObject {
 public:
@@ -56,6 +56,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

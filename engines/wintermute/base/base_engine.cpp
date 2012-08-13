@@ -33,10 +33,10 @@
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "common/system.h"
 namespace Common {
-DECLARE_SINGLETON(WinterMute::BaseEngine);
+DECLARE_SINGLETON(Wintermute::BaseEngine);
 }
 
-namespace WinterMute {
+namespace Wintermute {
 
 BaseEngine::BaseEngine() {
 	_fileManager = NULL;
@@ -49,7 +49,7 @@ BaseEngine::BaseEngine() {
 void BaseEngine::init() {
 	_fileManager = new BaseFileManager();
 	// Don't forget to register your random source
-	_rnd = new Common::RandomSource("WinterMute");
+	_rnd = new Common::RandomSource("Wintermute");
 	_classReg = new SystemClassRegistry();
 	_classReg->registerClasses();
 }
@@ -82,7 +82,7 @@ void BaseEngine::LOG(bool res, const char *fmt, ...) {
 	if (instance()._gameRef) {
 		instance()._gameRef->LOG("%s", buff);
 	} else {
-		debugCN(kWinterMuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);		
+		debugCN(kWintermuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);		
 	}
 }
 
@@ -90,4 +90,4 @@ uint32 BaseEngine::randInt(int from, int to) {
 	return _rnd->getRandomNumberRng(from, to);
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

@@ -31,7 +31,7 @@
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 BaseClass::BaseClass(BaseGame *gameOwner) {
@@ -182,4 +182,4 @@ bool BaseClass::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

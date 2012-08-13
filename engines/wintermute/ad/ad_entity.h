@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/ad/ad_talk_holder.h"
 
-namespace WinterMute {
+namespace Wintermute {
 class VideoTheoraPlayer;
 class AdEntity : public AdTalkHolder {
 public:
@@ -63,6 +63,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

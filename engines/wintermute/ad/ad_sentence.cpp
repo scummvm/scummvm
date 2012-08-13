@@ -38,7 +38,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSentence, false)
 
@@ -357,4 +357,4 @@ bool AdSentence::canSkip() {
 	return (_gameRef->_timer - _startTime) > 300;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

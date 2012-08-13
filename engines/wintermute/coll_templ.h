@@ -32,7 +32,7 @@
 #include "common/array.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 // Basically Common::Array with peristence-support.
 template<typename TYPE>
@@ -88,6 +88,6 @@ public:
 	}
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // COLL_TEMPL_H

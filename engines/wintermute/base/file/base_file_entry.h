@@ -33,7 +33,7 @@
 #include "common/str.h"
 #include "common/stream.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BasePackage;
 
@@ -55,6 +55,6 @@ public:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

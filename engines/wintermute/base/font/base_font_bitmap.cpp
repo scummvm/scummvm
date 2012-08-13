@@ -38,7 +38,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -586,4 +586,4 @@ int BaseFontBitmap::getLetterHeight() {
 	return _tileHeight;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

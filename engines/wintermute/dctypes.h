@@ -34,7 +34,7 @@
 #include "common/list.h"
 #include "common/array.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //typedef std::string AnsiString;
 //typedef std::string Utf8String;
@@ -221,6 +221,6 @@ enum TShadowType {
     SHADOW_STENCIL  = 3
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // DCTYPES_H

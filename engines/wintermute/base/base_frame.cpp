@@ -39,7 +39,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseFrame, false)
 
@@ -757,4 +757,4 @@ const char *BaseFrame::scToString() {
 	return "[frame]";
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

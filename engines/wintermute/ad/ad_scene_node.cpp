@@ -29,7 +29,7 @@
 #include "engines/wintermute/ad/ad_scene_node.h"
 #include "engines/wintermute/base/base_game.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSceneNode, false)
 
@@ -79,4 +79,4 @@ bool AdSceneNode::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

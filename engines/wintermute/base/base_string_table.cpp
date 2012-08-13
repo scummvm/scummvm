@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/base_string_table.h"
 #include "common/str.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseStringTable::BaseStringTable(BaseGame *inGame) : BaseClass(inGame) {
@@ -252,4 +252,4 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

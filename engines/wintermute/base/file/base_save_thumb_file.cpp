@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/platform_osystem.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -151,4 +151,4 @@ bool BaseSaveThumbFile::seek(uint32 pos, int whence) {
 	return STATUS_OK;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

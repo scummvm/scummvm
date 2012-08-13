@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/base_point.h"
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseRegion : public BaseObject {
 public:
@@ -64,6 +64,6 @@ public:
 	virtual const char *scToString();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

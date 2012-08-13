@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/base/base_fader.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class UIWindow;
 class AdObject;
@@ -176,6 +176,6 @@ private:
 
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

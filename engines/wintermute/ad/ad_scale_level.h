@@ -32,7 +32,7 @@
 
 #include "engines/wintermute/base/base_object.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class AdScaleLevel : public BaseObject {
 public:
@@ -45,6 +45,6 @@ public:
 	bool loadBuffer(byte *buffer, bool complete = true);
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

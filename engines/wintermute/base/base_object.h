@@ -34,7 +34,7 @@
 #include "engines/wintermute/persistent.h"
 #include "common/events.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 class BaseSprite;
 class BaseSound;
@@ -142,6 +142,6 @@ public:
 	virtual const char *scToString();
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif

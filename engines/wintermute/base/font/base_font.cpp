@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_file_manager.h"
 
-namespace WinterMute {
+namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -204,4 +204,4 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 	return ret;
 }
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute

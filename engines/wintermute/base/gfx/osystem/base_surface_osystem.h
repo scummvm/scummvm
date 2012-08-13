@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "common/list.h"
 
-namespace WinterMute {
+namespace Wintermute {
 struct TransparentSurface;
 class BaseImage;
 class BaseSurfaceOSystem : public BaseSurface {
@@ -94,6 +94,6 @@ private:
 	byte *_alphaMask;
 };
 
-} // end of namespace WinterMute
+} // end of namespace Wintermute
 
 #endif // WINTERMUTE_BSURFACESDL_H
