@@ -26,8 +26,12 @@
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
+#if defined(ARRAYSIZE)
+#undef ARRAYSIZE
+#endif
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
 #include "common/config-manager.h"
 #include "common/savefile.h"

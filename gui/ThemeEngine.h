@@ -35,7 +35,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.12"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.16"
 
 class OSystem;
 
@@ -232,6 +232,8 @@ public:
 	static const char *const kImageSearch;    ///< Search tool image used in the launcher
 	static const char *const kImageEraser;     ///< Clear input image used in the launcher
 	static const char *const kImageDelbtn; ///< Delete characters in the predictive dialog
+	static const char *const kImageList;      ///< List image used in save/load chooser selection
+	static const char *const kImageGrid;      ///< Grid image used in save/load chooser selection
 
 	/**
 	 * Graphics mode enumeration.
@@ -274,6 +276,11 @@ public:
 	void refresh();
 	void enable();
 	void disable();
+
+	/**
+	 * Query the set up pixel format.
+	 */
+	const Graphics::PixelFormat getPixelFormat() const { return _overlayFormat; }
 
 	/**
 	 * Implementation of the GUI::Theme API. Called when a
@@ -495,9 +502,8 @@ public:
 	 * @param filename File name of the bitmap to load.
 	 * @param hotspotX X Coordinate of the bitmap which does the cursor click.
 	 * @param hotspotY Y Coordinate of the bitmap which does the cursor click.
-	 * @param scale    Scale at which the bitmap is supposed to be used.
 	 */
-	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale);
+	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY);
 
 	/**
 	 * Wrapper for restoring data from the Back Buffer to the screen.
@@ -669,7 +675,6 @@ protected:
 
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
-	int _cursorTargetScale;
 	enum {
 		MAX_CURS_COLORS = 255
 	};

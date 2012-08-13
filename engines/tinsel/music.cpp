@@ -131,16 +131,13 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	g_currentMidi = dwFileOffset;
 	g_currentLoop = bLoop;
 
-	if (_vm->_config->_musicVolume != 0) {
-		bool mute = false;
-		if (ConfMan.hasKey("mute"))
-			mute = ConfMan.getBool("mute");
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
 
-		SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
-	}
+	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 
 	// the index and length of the last tune loaded
-	static uint32 dwLastMidiIndex = 0;	// FIXME: Avoid non-const global vars
 	uint32 dwSeqLen = 0;	// length of the sequence
 
 	// Support for external music from the music enhancement project
@@ -181,60 +178,52 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	if (dwFileOffset == 0)
 		return true;
 
-	if (dwFileOffset != dwLastMidiIndex) {
-		Common::File midiStream;
+	Common::File midiStream;
 
-		// open MIDI sequence file in binary mode
-		if (!midiStream.open(MIDI_FILE))
-			error(CANNOT_FIND_FILE, MIDI_FILE);
+	// open MIDI sequence file in binary mode
+	if (!midiStream.open(MIDI_FILE))
+		error(CANNOT_FIND_FILE, MIDI_FILE);
 
-		// update index of last tune loaded
-		dwLastMidiIndex = dwFileOffset;
+	// move to correct position in the file
+	midiStream.seek(dwFileOffset, SEEK_SET);
 
-		// move to correct position in the file
-		midiStream.seek(dwFileOffset, SEEK_SET);
+	// read the length of the sequence
+	dwSeqLen = midiStream.readUint32LE();
 
-		// read the length of the sequence
-		dwSeqLen = midiStream.readUint32LE();
+	// make sure buffer is large enough for this sequence
+	assert(dwSeqLen > 0 && dwSeqLen <= g_midiBuffer.size);
 
-		// make sure buffer is large enough for this sequence
-		assert(dwSeqLen > 0 && dwSeqLen <= g_midiBuffer.size);
+	// stop any currently playing tune
+	_vm->_midiMusic->stop();
 
-		// stop any currently playing tune
-		_vm->_midiMusic->stop();
+	// read the sequence. This needs to be read again before playSEQ() is
+	// called even if the music is restarting, as playSEQ() reads the file
+	// name off the buffer itself. However, that function adds SMF headers
+	// to the buffer, thus if it's read again, the SMF headers will be read
+	// and the filename will always be 'MThd'.
+	if (midiStream.read(g_midiBuffer.pDat, dwSeqLen) != dwSeqLen)
+		error(FILE_IS_CORRUPT, MIDI_FILE);
 
-		// read the sequence
-		if (midiStream.read(g_midiBuffer.pDat, dwSeqLen) != dwSeqLen)
-			error(FILE_IS_CORRUPT, MIDI_FILE);
+	midiStream.close();
 
-		midiStream.close();
-
-		// WORKAROUND for bug #2820054 "DW1: No intro music at first start on Wii",
-		// which actually affects all ports, since it's specific to the GRA version.
-		//
-		// The GRA version does not seem to set the channel volume at all for the first
-		// intro track, thus we need to do that here. We only initialize the channels
-		// used in that sequence. And we are using 127 as default channel volume.
-		//
-		// Only in the GRA version dwFileOffset can be "38888", just to be sure, we
-		// check for the SCN files feature flag not being set though.
-		if (_vm->getGameID() == GID_DW1 && dwFileOffset == 38888 && !(_vm->getFeatures() & GF_SCNFILES)) {
-			_vm->_midiMusic->send(0x7F07B0 |  3);
-			_vm->_midiMusic->send(0x7F07B0 |  5);
-			_vm->_midiMusic->send(0x7F07B0 |  8);
-			_vm->_midiMusic->send(0x7F07B0 | 10);
-			_vm->_midiMusic->send(0x7F07B0 | 13);
-		}
-
-		_vm->_midiMusic->playMIDI(dwSeqLen, bLoop);
-
-		// Store the length
-		//dwLastSeqLen = dwSeqLen;
-	} else {
-	 	// dwFileOffset == dwLastMidiIndex
-		_vm->_midiMusic->stop();
-		_vm->_midiMusic->playMIDI(dwSeqLen, bLoop);
+	// WORKAROUND for bug #2820054 "DW1: No intro music at first start on Wii",
+	// which actually affects all ports, since it's specific to the GRA version.
+	//
+	// The GRA version does not seem to set the channel volume at all for the first
+	// intro track, thus we need to do that here. We only initialize the channels
+	// used in that sequence. And we are using 127 as default channel volume.
+	//
+	// Only in the GRA version dwFileOffset can be "38888", just to be sure, we
+	// check for the SCN files feature flag not being set though.
+	if (_vm->getGameID() == GID_DW1 && dwFileOffset == 38888 && !(_vm->getFeatures() & GF_SCNFILES)) {
+		_vm->_midiMusic->send(0x7F07B0 |  3);
+		_vm->_midiMusic->send(0x7F07B0 |  5);
+		_vm->_midiMusic->send(0x7F07B0 |  8);
+		_vm->_midiMusic->send(0x7F07B0 | 10);
+		_vm->_midiMusic->send(0x7F07B0 | 13);
 	}
+
+	_vm->_midiMusic->playMIDI(dwSeqLen, bLoop);
 
 	return true;
 }
@@ -279,27 +268,7 @@ int GetMidiVolume() {
  */
 void SetMidiVolume(int vol) {
 	assert(vol >= 0 && vol <= Audio::Mixer::kMaxChannelVolume);
-
-	static int priorVolMusic = 0;	// FIXME: Avoid non-const global vars
-
-	if (vol == 0 && priorVolMusic == 0)	{
-		// Nothing to do
-	} else if (vol == 0 && priorVolMusic != 0) {
-		// Stop current midi sequence
-		StopMidi();
-		_vm->_midiMusic->setVolume(vol);
-	} else if (vol != 0 && priorVolMusic == 0) {
-		// Perhaps restart last midi sequence
-		if (g_currentLoop)
-			PlayMidiSequence(g_currentMidi, true);
-
-		_vm->_midiMusic->setVolume(vol);
-	} else if (vol != 0 && priorVolMusic != 0) {
-		// Alter current volume
-		_vm->_midiMusic->setVolume(vol);
-	}
-
-	priorVolMusic = vol;
+	_vm->_midiMusic->setVolume(vol);
 }
 
 /**
@@ -309,7 +278,7 @@ void OpenMidiFiles() {
 	Common::File midiStream;
 
 	// Demo version has no midi file
-	if ((_vm->getFeatures() & GF_DEMO) || (TinselVersion == TINSEL_V2))
+	if (TinselV0 || TinselV2)
 		return;
 
 	if (g_midiBuffer.pDat)
@@ -942,14 +911,12 @@ void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
 	g_currentMidi = Midi;
 	g_currentLoop = Loop;
 
-	if (_vm->_config->_musicVolume != 0 && Loop) {
-		bool mute = false;
-		if (ConfMan.hasKey("mute"))
-			mute = ConfMan.getBool("mute");
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
 
-		PlayMidiSequence(g_currentMidi, true);
-		SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
-	}
+	PlayMidiSequence(g_currentMidi, true);
+	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 }
 
 #if 0

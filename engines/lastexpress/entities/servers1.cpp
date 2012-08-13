@@ -28,10 +28,7 @@
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -143,7 +140,7 @@ IMPLEMENT_FUNCTION(7, Servers1, function7)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(1, 2) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -219,7 +216,7 @@ IMPLEMENT_FUNCTION(9, Servers1, function9)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 1) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -265,7 +262,7 @@ IMPLEMENT_FUNCTION(10, Servers1, function10)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 2) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -469,7 +466,7 @@ IMPLEMENT_FUNCTION(20, Servers1, function20)
 			getEntities()->drawSequenceLeft(kEntityServers1, "BLANK");
 			ENTITY_PARAM(0, 7) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -566,10 +563,10 @@ IMPLEMENT_FUNCTION(26, Servers1, chapter4Handler)
 
 	case kActionNone:
 		if (params->param2) {
-			UPDATE_PARAM_PROC(params->param2, getState()->time, 900)
+			if (Entity::updateParameter(params->param2, getState()->time, 900)) {
 				ENTITY_PARAM(1, 5) = 1;
 				params->param1 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!getEntities()->isInKitchen(kEntityServers1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
@@ -705,7 +702,7 @@ void Servers1::serveTable(const SavePoint &savepoint, const char *seq1, EntityIn
 			if (parameter2 != NULL)
 				*parameter2 = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -775,7 +772,7 @@ void Servers1::serveSalon(const SavePoint &savepoint, const char *seq1, const ch
 			getData()->entityPosition = kPosition_5900;
 			*parameter = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

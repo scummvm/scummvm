@@ -85,7 +85,6 @@ protected:
 			XML_KEY(cursor)
 				XML_PROP(file, true)
 				XML_PROP(hotspot, true)
-				XML_PROP(scale, true)
 				XML_PROP(resolution, false)
 			KEY_END()
 

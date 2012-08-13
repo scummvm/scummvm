@@ -105,7 +105,7 @@ void Scene::playMovie(const char *filename) {
 		if (smkDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
 			if (frame) {
-				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+				_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 
 				if (smkDecoder->hasDirtyPalette())
 					smkDecoder->setSystemPalette();

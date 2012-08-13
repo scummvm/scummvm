@@ -57,7 +57,7 @@ private:
 	int _lockers; /**< Number of classes and objects that require this script */
 	size_t _scriptSize;
 	size_t _heapSize;
-	uint16 _bufSize;
+	size_t _bufSize;
 
 	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
 	uint16 _numExports; /**< Number of entries in the exports table */
@@ -89,14 +89,14 @@ public:
 	void syncLocalsBlock(SegManager *segMan);
 	ObjMap &getObjectMap() { return _objects; }
 	const ObjMap &getObjectMap() const { return _objects; }
+	bool offsetIsObject(uint16 offset) const;
 
 public:
 	Script();
 	~Script();
 
 	void freeScript();
-	void init(int script_nr, ResourceManager *resMan);
-	void load(ResourceManager *resMan);
+	void load(int script_nr, ResourceManager *resMan);
 
 	void matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
 	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize);
@@ -197,11 +197,11 @@ public:
 	 * Validate whether the specified public function is exported by
 	 * the script in the specified segment.
 	 * @param pubfunct		Index of the function to validate
-	 * @param relocate              Decide whether to relocate this public function or not
+	 * @param relocSci3     Decide whether to relocate this SCI3 public function or not
 	 * @return				NULL if the public function is invalid, its
 	 * 						offset into the script's segment otherwise
 	 */
-	uint16 validateExportFunc(int pubfunct, bool relocate);
+	uint32 validateExportFunc(int pubfunct, bool relocSci3);
 
 	/**
 	 * Marks the script as deleted.
@@ -249,7 +249,7 @@ public:
 	/**
 	 * Gets an offset to the beginning of the code block in a SCI3 script
 	 */
-	int getCodeBlockOffset() { return READ_SCI11ENDIAN_UINT32(_buf); }
+	int getCodeBlockOffsetSci3() { return READ_SCI11ENDIAN_UINT32(_buf); }
 
 private:
 	/**

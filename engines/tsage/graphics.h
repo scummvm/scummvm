@@ -339,7 +339,7 @@ public:
 	static void setPalette();
 };
 
-GfxSurface *Surface_getArea(GfxSurface &src, const Rect &bounds);
+GfxSurface *surfaceGetArea(GfxSurface &src, const Rect &bounds);
 
 GfxSurface surfaceFromRes(const byte *imgData);
 GfxSurface surfaceFromRes(int resNum, int rlbNum, int subNum);

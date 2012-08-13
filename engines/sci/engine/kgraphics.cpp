@@ -337,7 +337,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 
 	Common::String sep_str;
 	const char *sep = NULL;
-	if ((argc > 4) && (argv[4].segment)) {
+	if ((argc > 4) && (argv[4].getSegment())) {
 		sep_str = s->_segMan->getString(argv[4]);
 		sep = sep_str.c_str();
 	}
@@ -645,6 +645,20 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	if (paletteChanged)
 		g_sci->_gfxPalette->kernelAnimateSet();
 
+	// WORKAROUND: The game scripts in SQ4 floppy count the number of elapsed
+	// cycles in the intro from the number of successive kAnimate calls during
+	// the palette cycling effect, while showing the SQ4 logo. This worked in
+	// older computers because each animate call took awhile to complete.
+	// Normally, such scripts are handled automatically by our speed throttler,
+	// however in this case there are no calls to kGameIsRestarting (where the
+	// speed throttler gets called) between the different palette animation calls.
+	// Thus, we add a small delay between each animate call to make the whole
+	// palette animation effect slower and visible, and not have the logo screen
+	// get skipped because the scripts don't wait between animation steps. Fixes
+	// bug #3537232.
+	if (g_sci->getGameId() == GID_SQ4 && !g_sci->isCD() && s->currentRoomNumber() == 1)
+		g_sci->sleep(10);
+
 	return s->r_acc;
 }
 
@@ -789,7 +803,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	Common::Rect rect;
 	TextAlignment alignment;
 	int16 mode, maxChars, cursorPos, upperPos, listCount, i;
-	int16 upperOffset, cursorOffset;
+	uint16 upperOffset, cursorOffset;
 	GuiResourceId viewId;
 	int16 loopNo;
 	int16 celNo;
@@ -871,7 +885,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		listCount = 0; listSeeker = textReference;
 		while (s->_segMan->strlen(listSeeker) > 0) {
 			listCount++;
-			listSeeker.offset += maxChars;
+			listSeeker.incOffset(maxChars);
 		}
 
 		// TODO: This is rather convoluted... It would be a lot cleaner
@@ -885,11 +899,11 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			for (i = 0; i < listCount; i++) {
 				listStrings[i] = s->_segMan->getString(listSeeker);
 				listEntries[i] = listStrings[i].c_str();
-				if (listSeeker.offset == upperOffset)
+				if (listSeeker.getOffset() == upperOffset)
 					upperPos = i;
-				if (listSeeker.offset == cursorOffset)
+				if (listSeeker.getOffset() == cursorOffset)
 					cursorPos = i;
-				listSeeker.offset += maxChars;
+				listSeeker.incOffset(maxChars);
 			}
 		}
 
@@ -936,8 +950,9 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 		}
 	}
 	if (objName == "savedHeros") {
-		// Import of QfG character files dialog is shown
-		// display additional popup information before letting user use it
+		// Import of QfG character files dialog is shown.
+		// Display additional popup information before letting user use it.
+		// For the SCI32 version of this, check kernelAddPlane().
 		reg_t changeDirButton = s->_segMan->findObjectByName("changeDirItem");
 		if (!changeDirButton.isNull()) {
 			// check if checkDirButton is still enabled, in that case we are called the first time during that room
@@ -950,6 +965,8 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.");
 			}
 		}
+
+		// For the SCI32 version of this, check kListAt().
 		s->_chosenQfGImportItem = readSelectorValue(s->_segMan, controlObject, SELECTOR(mark));
 	}
 
@@ -1104,7 +1121,7 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
 
 	Common::String title;
-	if (argv[4 + argextra].segment) {
+	if (argv[4 + argextra].getSegment()) {
 		title = s->_segMan->getString(argv[4 + argextra]);
 		title = g_sci->strSplit(title.c_str(), NULL);
 	}
@@ -1143,7 +1160,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 
 	Common::String text;
 
-	if (textp.segment) {
+	if (textp.getSegment()) {
 		argc--; argv++;
 		text = s->_segMan->getString(textp);
 	} else {
@@ -1204,64 +1221,27 @@ reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// Early variant of the SCI32 kRemapColors kernel function, used in the demo of QFG4
 reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
-	case 0:	{ // Set remapping to base. 0 turns remapping off.
-		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
-		if (base != 0)	// 0 is the default behavior when changing rooms in GK1, thus silencing the warning
-			warning("kRemapColors: Set remapping to base %d", base);
+	case 0: { // remap by percent
+		uint16 percent = argv[1].toUint16();
+		g_sci->_gfxPalette->resetRemapping();
+		g_sci->_gfxPalette->setRemappingPercent(254, percent);
 		}
 		break;
-	case 1:	{ // unknown
-		// The demo of QFG4 calls this with 1+3 parameters, thus there are differences here
-		//int16 unk1 = argv[1].toSint16();
-		//int16 unk2 = argv[2].toSint16();
-		//int16 unk3 = argv[3].toSint16();
-		//uint16 unk4 = argv[4].toUint16();
-		//uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
-		kStub(s, argc, argv);
+	case 1:	{ // remap by range
+		uint16 from = argv[1].toUint16();
+		uint16 to = argv[2].toUint16();
+		uint16 base = argv[3].toUint16();
+		g_sci->_gfxPalette->resetRemapping();
+		g_sci->_gfxPalette->setRemappingRange(254, from, to, base);
 		}
 		break;
-	case 2:	{ // remap by percent
-		// This adjusts the alpha value of a specific color, and it operates on
-		// an RGBA palette. Since we're operating on an RGB palette, we just
-		// modify the color intensity instead
-		// TODO: From what I understand, palette remapping should be placed
-		// separately, so that it can be reset by case 0 above. Thus, we
-		// should adjust the functionality of the Palette class accordingly.
-		int16 color = argv[1].toSint16();
-		if (color >= 10)
-			color -= 10;
-		uint16 percent = argv[2].toUint16(); // 0 - 100
-		if (argc >= 4)
-			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		g_sci->_gfxPalette->kernelSetIntensity(color, 255, percent, false);
-		}
-		break;
-	case 3:	{ // remap to gray
-		// NOTE: This adjusts the alpha value of a specific color, and it operates on
-		// an RGBA palette
-		int16 color = argv[1].toSint16();	// this is subtracted from a maximum color value, and can be offset by 10
-		int16 percent = argv[2].toSint16(); // 0 - 100
-		uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
-		warning("kRemapColors: RemapToGray color %d by %d percent (unk3 = %d)", color, percent, unk3);
-		}
-		break;
-	case 4:	{ // unknown
-		//int16 unk1 = argv[1].toSint16();
-		//uint16 unk2 = argv[2].toUint16();
-		//uint16 unk3 = argv[3].toUint16();
-		//uint16 unk4 = (argc >= 5) ? argv[4].toUint16() : 0;
-		kStub(s, argc, argv);
-		}
-		break;
-	case 5:	{ // increment color
-		//int16 unk1 = argv[1].toSint16();
-		//uint16 unk2 = argv[2].toUint16();
-		kStub(s, argc, argv);
-		}
+	case 2:	// turn remapping off (unused)
+		error("Unused subop kRemapColors(2) has been called");
 		break;
 	default:
 		break;

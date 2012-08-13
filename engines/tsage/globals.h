@@ -200,7 +200,7 @@ public:
 	int _v4CECC;
 	int8 _breakerBoxStatusArr[18];
 	int _hiddenDoorStatus;
-	int _v4CEE2;
+	int _nico910State;
 	int _v4CEE4;
 	int _v4CEE6;
 	int _v4CEE8;

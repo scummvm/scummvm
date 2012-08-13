@@ -212,7 +212,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 			break;
 
 		case 2: // display background
-			_vm->_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
+			_vm->_system->copyRectToScreen(backBufferSurface->pixels, backBufferSurface->w, 0, 0,
 							  backBufferSurface->w, backBufferSurface->h);
 			phase++;
 			startTime = curTime;
@@ -247,7 +247,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 
 					frameTime = curTime;
 
-					_vm->_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
+					_vm->_system->copyRectToScreen(backBufferSurface->pixels, backBufferSurface->w, 0, 0,
 							  backBufferSurface->w, backBufferSurface->h);
 				}
 
@@ -274,7 +274,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 	_vm->_anim->endVideo();
 
 	memset((byte *)backBufferSurface->pixels, 0,  backBufferSurface->w *  backBufferSurface->h);
-	_vm->_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
+	_vm->_system->copyRectToScreen(backBufferSurface->pixels, backBufferSurface->w, 0, 0,
 							  backBufferSurface->w, backBufferSurface->h);
 
 	return interrupted;

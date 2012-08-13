@@ -37,30 +37,38 @@ ANIFile::ANIFile(GobEngine *vm, const Common::String &fileName,
                  uint16 width, uint8 bpp) : _vm(vm),
 	_width(width), _bpp(bpp), _hasPadding(false) {
 
-	Common::SeekableReadStream *ani = _vm->_dataIO->getFile(fileName);
+	bool bigEndian = false;
+	Common::String endianFileName = fileName;
+
+	if ((_vm->getEndiannessMethod() == kEndiannessMethodAltFile) &&
+	    !_vm->_dataIO->hasFile(fileName)) {
+		// If the game has alternate big-endian files, look if one exist
+
+		Common::String alternateFileName = fileName;
+		alternateFileName.setChar('_', 0);
+
+		if (_vm->_dataIO->hasFile(alternateFileName)) {
+			bigEndian      = true;
+			endianFileName = alternateFileName;
+		}
+	} else if ((_vm->getEndiannessMethod() == kEndiannessMethodBE) ||
+	           ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) &&
+	            (_vm->getEndianness() == kEndiannessBE)))
+		// Game always little endian or it follows the system and it is big endian
+		bigEndian = true;
+
+	Common::SeekableReadStream *ani = _vm->_dataIO->getFile(endianFileName);
 	if (ani) {
-		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), false, DisposeAfterUse::YES);
-
-		load(sub, fileName);
-		return;
-	}
-
-	// File doesn't exist, try to open the big-endian'd alternate file
-	Common::String alternateFileName = fileName;
-	alternateFileName.setChar('_', 0);
-
-	ani = _vm->_dataIO->getFile(alternateFileName);
-	if (ani) {
-		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), true, DisposeAfterUse::YES);
+		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), bigEndian, DisposeAfterUse::YES);
 
 		// The big endian version pads a few fields to even size
-		_hasPadding = true;
+		_hasPadding = bigEndian;
 
 		load(sub, fileName);
 		return;
 	}
 
-	warning("ANIFile::ANIFile(): No such file \"%s\"", fileName.c_str());
+	warning("ANIFile::ANIFile(): No such file \"%s\" (\"%s\")", endianFileName.c_str(), fileName.c_str());
 }
 
 ANIFile::~ANIFile() {
@@ -279,6 +287,11 @@ void ANIFile::drawLayer(Surface &dest, uint16 layer, uint16 part,
 		return;
 
 	_layers[layer]->draw(dest, part, x, y, transp);
+}
+
+void ANIFile::recolor(uint8 from, uint8 to) {
+	for (LayerArray::iterator l = _layers.begin(); l != _layers.end(); ++l)
+		(*l)->recolor(from, to);
 }
 
 } // End of namespace Gob

@@ -43,17 +43,17 @@ reg_t reg_t::lookForWorkaround(const reg_t right) const {
 reg_t reg_t::operator+(const reg_t right) const {
 	if (isPointer() && right.isNumber()) {
 		// Pointer arithmetics. Only some pointer types make sense here
-		SegmentObj *mobj = g_sci->getEngineState()->_segMan->getSegmentObj(segment);
+		SegmentObj *mobj = g_sci->getEngineState()->_segMan->getSegmentObj(getSegment());
 
 		if (!mobj)
-			error("[VM]: Attempt to add %d to invalid pointer %04x:%04x", right.offset, PRINT_REG(*this));
+			error("[VM]: Attempt to add %d to invalid pointer %04x:%04x", right.getOffset(), PRINT_REG(*this));
 
 		switch (mobj->getType()) {
 		case SEG_TYPE_LOCALS:
 		case SEG_TYPE_SCRIPT:
 		case SEG_TYPE_STACK:
 		case SEG_TYPE_DYNMEM:
-			return make_reg(segment, offset + right.toSint16());
+			return make_reg(getSegment(), getOffset() + right.toSint16());
 		default:
 			return lookForWorkaround(right);
 		}
@@ -69,12 +69,12 @@ reg_t reg_t::operator+(const reg_t right) const {
 }
 
 reg_t reg_t::operator-(const reg_t right) const {
-	if (segment == right.segment) {
+	if (getSegment() == right.getSegment()) {
 		// We can subtract numbers, or pointers with the same segment,
 		// an operation which will yield a number like in C
 		return make_reg(0, toSint16() - right.toSint16());
 	} else {
-		return *this + make_reg(right.segment, -right.offset);
+		return *this + make_reg(right.getSegment(), -right.toSint16());
 	}
 }
 
@@ -174,7 +174,7 @@ reg_t reg_t::operator^(const reg_t right) const {
 }
 
 int reg_t::cmp(const reg_t right, bool treatAsUnsigned) const {
-	if (segment == right.segment) { // can compare things in the same segment
+	if (getSegment() == right.getSegment()) { // can compare things in the same segment
 		if (treatAsUnsigned || !isNumber())
 			return toUint16() - right.toUint16();
 		else
@@ -218,7 +218,7 @@ bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
 	// SQ1, room 28, when throwing water at the Orat
 	// SQ1, room 58, when giving the ID card to the robot
 	// SQ4 CD, at the first game screen, when the narrator is about to speak
-	return (isPointer() && right.isNumber() && right.offset <= 2000 && getSciVersion() <= SCI_VERSION_1_1);
+	return (isPointer() && right.isNumber() && right.getOffset() <= 2000 && getSciVersion() <= SCI_VERSION_1_1);
 }
 
 } // End of namespace Sci

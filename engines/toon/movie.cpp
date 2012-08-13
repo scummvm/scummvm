@@ -109,40 +109,40 @@ bool Movie::playVideo(bool isFirstIntroVideo) {
 			if (frame) {
 				if (_decoder->isLowRes()) {
 					// handle manually 2x scaling here
-					Graphics::Surface* surf = _vm->getSystem()->lockScreen();
+					Graphics::Surface* surf = _vm->_system->lockScreen();
 					for (int y = 0; y < frame->h / 2; y++) {
 						memcpy(surf->getBasePtr(0, y * 2 + 0), frame->getBasePtr(0, y), frame->pitch);
 						memcpy(surf->getBasePtr(0, y * 2 + 1), frame->getBasePtr(0, y), frame->pitch);
 					}
-					_vm->getSystem()->unlockScreen();
+					_vm->_system->unlockScreen();
 				} else {
-					_vm->getSystem()->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
+					_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
 
 					// WORKAROUND: There is an encoding glitch in the first intro video. This hides this using the adjacent pixels.
 					if (isFirstIntroVideo) {
 						int32 currentFrame = _decoder->getCurFrame();
 						if (currentFrame >= 956 && currentFrame <= 1038) {
 							debugC(1, kDebugMovie, "Triggered workaround for glitch in first intro video...");
-							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(frame->w-188, 123), frame->pitch, frame->w-188, 124, 188, 1);
-							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(frame->w-188, 126), frame->pitch, frame->w-188, 125, 188, 1);
-							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(0, 125), frame->pitch, 0, 126, 64, 1);
-							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(0, 128), frame->pitch, 0, 127, 64, 1);
+							_vm->_system->copyRectToScreen(frame->getBasePtr(frame->w-188, 123), frame->pitch, frame->w-188, 124, 188, 1);
+							_vm->_system->copyRectToScreen(frame->getBasePtr(frame->w-188, 126), frame->pitch, frame->w-188, 125, 188, 1);
+							_vm->_system->copyRectToScreen(frame->getBasePtr(0, 125), frame->pitch, 0, 126, 64, 1);
+							_vm->_system->copyRectToScreen(frame->getBasePtr(0, 128), frame->pitch, 0, 127, 64, 1);
 						}
 					}
 				}
 			}
 			_decoder->setSystemPalette();
-			_vm->getSystem()->updateScreen();
+			_vm->_system->updateScreen();
 		}
 
 		Common::Event event;
-		while (_vm->getSystem()->getEventManager()->pollEvent(event))
+		while (_vm->_system->getEventManager()->pollEvent(event))
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 				_vm->dirtyAllScreen();
 				return false;
 			}
 
-		_vm->getSystem()->delayMillis(10);
+		_vm->_system->delayMillis(10);
 	}
 	_vm->dirtyAllScreen();
 	return !_vm->shouldQuit();

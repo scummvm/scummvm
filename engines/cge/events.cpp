@@ -55,7 +55,7 @@ Sprite *Keyboard::setClient(Sprite *spr) {
 bool Keyboard::getKey(Common::Event &event) {
 	Common::KeyCode keycode = event.kbd.keycode;
 
-	if ((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT))
+	if (((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT)) && event.type == Common::EVENT_KEYDOWN)
 		_keyAlt = true;
 	else
 		_keyAlt = false;
@@ -70,12 +70,8 @@ bool Keyboard::getKey(Common::Event &event) {
 		return false;
 	case Common::KEYCODE_F5:
 		if (_vm->canSaveGameStateCurrently()) {
-			const EnginePlugin *plugin = NULL;
-			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
-
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
-			dialog->setSaveMode(true);
-			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+			int16 savegameId = dialog->runModalWithCurrentTarget();
 			Common::String savegameDescription = dialog->getResultString();
 			delete dialog;
 
@@ -85,12 +81,8 @@ bool Keyboard::getKey(Common::Event &event) {
 		return false;
 	case Common::KEYCODE_F7:
 		if (_vm->canLoadGameStateCurrently()) {
-			const EnginePlugin *plugin = NULL;
-			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
-
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
-			dialog->setSaveMode(false);
-			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+			int16 savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
 			if (savegameId != -1)
@@ -117,9 +109,19 @@ bool Keyboard::getKey(Common::Event &event) {
 	case Common::KEYCODE_3:
 	case Common::KEYCODE_4:
 		if (event.kbd.flags & Common::KBD_ALT) {
-			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - '0', NULL);
+			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - Common::KEYCODE_0, NULL);
 			return false;
 		}
+		// Fallthrough intended
+	case Common::KEYCODE_5:
+	case Common::KEYCODE_6:
+	case Common::KEYCODE_7:
+	case Common::KEYCODE_8:
+		if (event.type == Common::EVENT_KEYDOWN && !(event.kbd.flags & Common::KBD_ALT) && keycode != Common::KEYCODE_0) {
+			_vm->selectPocket(keycode - Common::KEYCODE_1);
+			return false;
+		}
+		break;
 	default:
 		break;
 	}
@@ -133,9 +135,11 @@ void Keyboard::newKeyboard(Common::Event &event) {
 
 	if ((event.type == Common::EVENT_KEYDOWN) && (_client)) {
 		CGEEvent &evt = _vm->_eventManager->getNextEvent();
-		evt._x = event.kbd.keycode;	// Keycode
-		evt._mask = kEventKeyb;	// Event mask
-		evt._spritePtr = _client;	// Sprite pointer
+		evt._x = 0;
+		evt._y = 0;
+		evt._keyCode = event.kbd.keycode;   // Keycode
+		evt._mask = kEventKeyb;             // Event mask
+		evt._spritePtr = _client;           // Sprite pointer
 	}
 }
 
@@ -202,6 +206,7 @@ void Mouse::newMouse(Common::Event &event) {
 	CGEEvent &evt = _vm->_eventManager->getNextEvent();
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
+	evt._keyCode = Common::KEYCODE_INVALID;
 	evt._spritePtr = _vm->spriteAt(evt._x, evt._y);
 
 	switch (event.type) {
@@ -267,7 +272,7 @@ void EventManager::handleEvents() {
 		CGEEvent e = _eventQueue[_eventQueueTail];
 		if (e._mask) {
 			if (_vm->_mouse->_hold && e._spritePtr != _vm->_mouse->_hold)
-				_vm->_mouse->_hold->touch(e._mask | kEventAttn, e._x - _vm->_mouse->_hold->_x, e._y - _vm->_mouse->_hold->_y);
+				_vm->_mouse->_hold->touch(e._mask | kEventAttn, e._x - _vm->_mouse->_hold->_x, e._y - _vm->_mouse->_hold->_y, e._keyCode);
 
 			// update mouse cursor position
 			if (e._mask & kMouseRoll)
@@ -276,11 +281,11 @@ void EventManager::handleEvents() {
 			// activate current touched SPRITE
 			if (e._spritePtr) {
 				if (e._mask & kEventKeyb)
-					e._spritePtr->touch(e._mask, e._x, e._y);
+					e._spritePtr->touch(e._mask, e._x, e._y, e._keyCode);
 				else
-					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y);
+					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y, e._keyCode);
 			} else if (_vm->_sys)
-					_vm->_sys->touch(e._mask, e._x, e._y);
+				_vm->_sys->touch(e._mask, e._x, e._y, e._keyCode);
 
 			if (e._mask & kMouseLeftDown) {
 				_vm->_mouse->_hold = e._spritePtr;

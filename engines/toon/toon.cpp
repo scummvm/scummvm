@@ -100,7 +100,7 @@ void ToonEngine::init() {
 
 	syncSoundSettings();
 
-	_pathFinding = new PathFinding(this);
+	_pathFinding = new PathFinding();
 
 	resources()->openPackage("LOCAL.PAK");
 	resources()->openPackage("ONETIME.PAK");
@@ -168,7 +168,7 @@ void ToonEngine::waitForScriptStep() {
 	// Wait after a specified number of script steps when executing a script
 	// to lower CPU usage
 	if (++_scriptStep >= 40) {
-		g_system->delayMillis(1);
+		_system->delayMillis(1);
 		_scriptStep = 0;
 	}
 }
@@ -820,7 +820,6 @@ Common::Error ToonEngine::run() {
 ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription),
 	_language(gameDescription->language), _rnd("toon") {
-	_system = syst;
 	_tickLength = 16;
 	_currentPicture = NULL;
 	_inventoryPicture = NULL;
@@ -1224,7 +1223,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 		_script->init(&_sceneAnimationScripts[i]._state, _sceneAnimationScripts[i]._data);
 		if (!forGameLoad) {
 			_script->start(&_sceneAnimationScripts[i]._state, 9 + i);
-			_sceneAnimationScripts[i]._lastTimer = getSystem()->getMillis();
+			_sceneAnimationScripts[i]._lastTimer = _system->getMillis();
 			_sceneAnimationScripts[i]._frozen = false;
 			_sceneAnimationScripts[i]._frozenForConversation = false;
 		}
@@ -1488,7 +1487,7 @@ void ToonEngine::clickEvent() {
 	}
 
 	if (!currentHot) {
-		int32 xx, yy;
+		int16 xx, yy;
 
 		if (_gameState->_inCutaway || _gameState->_inInventory || _gameState->_inCloseUp)
 			return;
@@ -1588,12 +1587,12 @@ void ToonEngine::clickEvent() {
 }
 
 void ToonEngine::selectHotspot() {
-	int32 x1 = 0;
-	int32 x2 = 0;
-	int32 y1 = 0;
-	int32 y2 = 0;
+	int16 x1 = 0;
+	int16 x2 = 0;
+	int16 y1 = 0;
+	int16 y2 = 0;
 
-	int32 mouseX = _mouseX;
+	int16 mouseX = _mouseX;
 
 	if (_gameState->_inCutaway)
 		mouseX += TOON_BACKBUFFER_WIDTH;
@@ -1693,7 +1692,6 @@ void ToonEngine::selectHotspot() {
 }
 
 void ToonEngine::exitScene() {
-
 	fadeOut(5);
 
 	// disable all scene animation
@@ -2831,7 +2829,6 @@ void ToonEngine::playSoundWrong() {
 }
 
 void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
-
 	if (characterId < 0)
 		characterId = 0;
 
@@ -2852,8 +2849,8 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 		}
 	} else if (characterId == 1) {
 		// flux
-		int32 x = _flux->getX();
-		int32 y = _flux->getY();
+		int16 x = _flux->getX();
+		int16 y = _flux->getY();
 		if (x >= _gameState->_currentScrollValue && x <= _gameState->_currentScrollValue + TOON_SCREEN_WIDTH) {
 			if (!_gameState->_inCutaway) {
 				*retX = x;
@@ -2885,7 +2882,7 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 		if (character && !_gameState->_inCutaway) {
 			if (character->getAnimationInstance()) {
 				if (character->getX() >= _gameState->_currentScrollValue && character->getX() <= _gameState->_currentScrollValue + TOON_SCREEN_WIDTH) {
-					int32 x1, y1, x2, y2;
+					int16 x1, y1, x2, y2;
 					character->getAnimationInstance()->getRect(&x1, &y1, &x2, &y2);
 					*retX = (x1 + x2) / 2;
 					*retY = y1;
@@ -2896,7 +2893,6 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 }
 
 Character *ToonEngine::getCharacterById(int32 charId) {
-
 	for (int32 i = 0; i < 8; i++) {
 		if (_characters[i] && _characters[i]->getId() == charId)
 			return _characters[i];
@@ -2955,15 +2951,12 @@ Common::String ToonEngine::getSavegameName(int nr) {
 }
 
 bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
-	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
 	Common::String savegameDescription;
-	EngineMan.findGame(_gameDescription->gameid, &plugin);
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
-		dialog->setSaveMode(true);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+		savegameId = dialog->runModalWithCurrentTarget();
 		savegameDescription = dialog->getResultString();
 		delete dialog;
 	} else {
@@ -2979,8 +2972,7 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 		return false; // dialog aborted
 
 	Common::String savegameFile = getSavegameName(savegameId);
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::OutSaveFile *saveFile = saveMan->openForSaving(savegameFile);
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(savegameFile);
 	if (!saveFile)
 		return false;
 
@@ -3052,14 +3044,11 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 }
 
 bool ToonEngine::loadGame(int32 slot) {
-	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
-	EngineMan.findGame(_gameDescription->gameid, &plugin);
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
-		dialog->setSaveMode(false);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+		savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 	} else {
 		savegameId = slot;
@@ -3068,8 +3057,7 @@ bool ToonEngine::loadGame(int32 slot) {
 		return false; // dialog aborted
 
 	Common::String savegameFile = getSavegameName(savegameId);
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::InSaveFile *loadFile = saveMan->openForLoading(savegameFile);
+	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(savegameFile);
 	if (!loadFile)
 		return false;
 

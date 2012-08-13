@@ -19,63 +19,55 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef GUI_SAVELOAD_DIALOG_H
-#define GUI_SAVELOAD_DIALOG_H
+#ifndef GUI_SAVELOAD_H
+#define GUI_SAVELOAD_H
 
 #include "gui/dialog.h"
 #include "engines/metaengine.h"
 
 namespace GUI {
 
-class ListWidget;
-class GraphicsWidget;
-class ButtonWidget;
-class CommandSender;
-class ContainerWidget;
-class StaticTextWidget;
+class SaveLoadChooserDialog;
 
-class SaveLoadChooser : GUI::Dialog {
+class SaveLoadChooser {
 	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
 protected:
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::ButtonWidget	*_deleteButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::ContainerWidget	*_container;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
+	SaveLoadChooserDialog *_impl;
 
-	const EnginePlugin		*_plugin;
-	bool					_delSupport;
-	bool					_metaInfoSupport;
-	bool					_thumbnailSupport;
-	bool					_saveDateSupport;
-	bool					_playTimeSupport;
-	String					_target;
-	SaveStateList			_saveList;
-	String					_resultString;
+	const String _title;
+	const String _buttonLabel;
+	const bool _saveMode;
 
-	uint8 _fillR, _fillG, _fillB;
-
-	void updateSaveList();
-	void updateSelection(bool redraw);
+	void selectChooser(const MetaEngine &engine);
 public:
-	SaveLoadChooser(const String &title, const String &buttonLabel);
+	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	void setList(const StringArray& list);
+	/**
+	 * Runs the save/load chooser with the currently active config manager
+	 * domain as target.
+	 *
+	 * @return The selcted save slot. -1 in case none is selected.
+	 */
+	int runModalWithCurrentTarget();
 	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
-	void open();
 
 	const Common::String &getResultString() const;
-	void setSaveMode(bool saveMode);
 
-	virtual void reflowLayout();
-
-	virtual void close();
+	/**
+	 * Creates a default save description for the specified slot. Depending
+	 * on the ScummVM configuration this might be a simple "Slot #" description
+	 * or the current date and time.
+	 *
+	 * TODO: This might not be the best place to put this, since engines not
+	 * using this class might want to mimic the same behavior. Check whether
+	 * moving this to a better place makes sense and find what this place would
+	 * be.
+	 *
+	 * @param slot The slot number (must be >= 0).
+	 * @return The slot description.
+	 */
+	Common::String createDefaultSaveDescription(const int slot) const;
 };
 
 } // End of namespace GUI

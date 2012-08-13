@@ -684,6 +684,12 @@ void Surface::shadeRect(uint16 left, uint16 top, uint16 right, uint16 bottom,
 
 }
 
+void Surface::recolor(uint8 from, uint8 to) {
+	for (Pixel p = get(); p.isValid(); ++p)
+		if (p.get() == from)
+			p.set(to);
+}
+
 void Surface::putPixel(uint16 x, uint16 y, uint32 color) {
 	if ((x >= _width) || (y >= _height))
 		return;
@@ -693,6 +699,34 @@ void Surface::putPixel(uint16 x, uint16 y, uint32 color) {
 
 void Surface::drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 color) {
 	Graphics::drawLine(x0, y0, x1, y1, color, &plotPixel, this);
+}
+
+void Surface::drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint32 color) {
+	// Just in case those are swapped
+	if (left > right)
+		SWAP(left, right);
+	if (top  > bottom)
+		SWAP(top, bottom);
+
+	if ((left >= _width) || (top >= _height))
+		// Nothing to do
+		return;
+
+	// Area to actually draw
+	const uint16 width  = CLIP<int32>(right  - left + 1, 0, _width  - left);
+	const uint16 height = CLIP<int32>(bottom - top  + 1, 0, _height - top);
+
+	if ((width == 0) || (height == 0))
+		// Nothing to do
+		return;
+
+	right  = left + width  - 1;
+	bottom = top  + height - 1;
+
+	drawLine(left , top   , left , bottom, color);
+	drawLine(right, top   , right, bottom, color);
+	drawLine(left , top   , right, top   , color);
+	drawLine(left , bottom, right, bottom, color);
 }
 
 /*

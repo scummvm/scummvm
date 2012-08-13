@@ -29,9 +29,7 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -96,7 +94,7 @@ IMPLEMENT_FUNCTION(3, Cooks, function3)
 	case kActionDrawScene:
 		if (!getEntities()->isInKitchen(kEntityPlayer)) {
 			getEntities()->clearSequences(kEntityCooks);
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -108,7 +106,7 @@ IMPLEMENT_FUNCTION(3, Cooks, function3)
 					if (!getEntities()->hasValidFrame(kEntityCooks)) {
 						getSound()->playSound(kEntityCooks, "LIB015");
 						getEntities()->clearSequences(kEntityCooks);
-						CALLBACK_ACTION();
+						callbackAction();
 					}
 					break;
 				}
@@ -122,7 +120,7 @@ IMPLEMENT_FUNCTION(3, Cooks, function3)
 		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks)) {
 			getSound()->playSound(kEntityCooks, "LIB015");
 			getEntities()->clearSequences(kEntityCooks);
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -182,7 +180,7 @@ IMPLEMENT_FUNCTION(4, Cooks, function4)
 	case kActionDrawScene:
 		if (!getEntities()->isInKitchen(kEntityPlayer)) {
 			getEntities()->clearSequences(kEntityCooks);
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -194,7 +192,7 @@ IMPLEMENT_FUNCTION(4, Cooks, function4)
 					if (!getEntities()->hasValidFrame(kEntityCooks)) {
 						getSound()->playSound(kEntityCooks, "LIB015");
 						getEntities()->clearSequences(kEntityCooks);
-						CALLBACK_ACTION();
+						callbackAction();
 					}
 					break;
 				}
@@ -208,7 +206,7 @@ IMPLEMENT_FUNCTION(4, Cooks, function4)
 		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks)) {
 			getSound()->playSound(kEntityCooks, "LIB015");
 			getEntities()->clearSequences(kEntityCooks);
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -241,7 +239,7 @@ IMPLEMENT_FUNCTION(5, Cooks, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Cooks, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -262,7 +260,8 @@ IMPLEMENT_FUNCTION(6, Cooks, chapter1Handler)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param4, getState()->time, params->param2);
+		if (!Entity::updateParameter(params->param4, getState()->time, params->param2))
+			break;
 
 		// Broken plate sound
 		getSound()->playSound(kEntityPlayer, "LIB122",  getSound()->getSoundFlag(kEntityCooks));
@@ -375,7 +374,8 @@ IMPLEMENT_FUNCTION(9, Cooks, chapter2Handler)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param3, getState()->time, params->param1);
+		if (!Entity::updateParameter(params->param3, getState()->time, params->param1))
+			break;
 
 		// Broken plate sound
 		getSound()->playSound(kEntityPlayer, "LIB122",  getSound()->getSoundFlag(kEntityCooks));
@@ -434,12 +434,12 @@ IMPLEMENT_FUNCTION(11, Cooks, chapter3Handler)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(params->param4, getState()->time, params->param2)
+		if (Entity::updateParameter(params->param4, getState()->time, params->param2)) {
 			// Broken plate sound
 			getSound()->playSound(kEntityPlayer, "LIB122",  getSound()->getSoundFlag(kEntityCooks));
 			params->param2 = 225 * (4 * rnd(30) + 120);
 			params->param4 = 0;
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (getState()->time > kTime2079000 && !params->param5) {
 			params->param1 = 0;
@@ -526,7 +526,8 @@ IMPLEMENT_FUNCTION(13, Cooks, chapter4Handler)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param3, getState()->time, params->param1)
+		if (!Entity::updateParameter(params->param3, getState()->time, params->param1))
+			break;
 
 		// Broken plate sound
 		getSound()->playSound(kEntityPlayer, "LIB122",  getSound()->getSoundFlag(kEntityCooks));

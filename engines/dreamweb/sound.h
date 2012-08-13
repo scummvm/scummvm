@@ -68,12 +68,12 @@ private:
 
 	Audio::SoundHandle _channelHandle[2];
 
-	uint8 _channel0, _channel1;
-
 	uint8 _currentSample;
 	uint8 _channel0Playing;
 	uint8 _channel0Repeat;
+	bool _channel0NewSound;
 	uint8 _channel1Playing;
+	bool _channel1NewSound;
 
 	uint8 _volume;
 	uint8 _volumeTo;

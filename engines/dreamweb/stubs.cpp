@@ -2920,9 +2920,7 @@ void DreamWebEngine::setupInitialVars() {
 	_vars._progressPoints = 0;
 	_vars._watchOn = 0;
 	_vars._shadesOn = 0;
-	_vars._secondCount = 0;
-	_vars._minuteCount = 30;
-	_vars._hourCount = 19;
+	getTime();
 	_vars._zoomOn = 1;
 	_vars._location = 0;
 	_vars._exPos = 0;

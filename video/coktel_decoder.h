@@ -79,6 +79,9 @@ public:
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~CoktelDecoder();
 
+	/** Replace the current video stream with this identical one. */
+	virtual bool reloadStream(Common::SeekableReadStream *stream) = 0;
+
 	virtual bool seek(int32 frame, int whence = SEEK_SET, bool restart = false) = 0;
 
 	/** Draw directly onto the specified video memory. */
@@ -237,6 +240,8 @@ public:
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~PreIMDDecoder();
 
+	bool reloadStream(Common::SeekableReadStream *stream);
+
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 
 
@@ -267,6 +272,8 @@ class IMDDecoder : public CoktelDecoder {
 public:
 	IMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~IMDDecoder();
+
+	bool reloadStream(Common::SeekableReadStream *stream);
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 
@@ -363,6 +370,8 @@ class VMDDecoder : public CoktelDecoder {
 public:
 	VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~VMDDecoder();
+
+	bool reloadStream(Common::SeekableReadStream *stream);
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
 

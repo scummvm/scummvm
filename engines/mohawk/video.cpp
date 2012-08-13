@@ -227,23 +227,25 @@ bool VideoManager::updateMovies() {
 			Graphics::Surface *convertedFrame = 0;
 
 			if (frame && _videoStreams[i].enabled) {
-				// Convert from 8bpp to the current screen format if necessary
 				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
 
-				if (frame->format.bytesPerPixel == 1) {
-					if (pixelFormat.bytesPerPixel == 1) {
-						if (_videoStreams[i]->hasDirtyPalette())
-							_videoStreams[i]->setSystemPalette();
-					} else {
-						convertedFrame = frame->convertTo(pixelFormat, _videoStreams[i]->getPalette());
-						frame = convertedFrame;
-					}
+				if (frame->format != pixelFormat) {
+					// We don't support downconverting to 8bpp
+					if (pixelFormat.bytesPerPixel == 1)
+						error("Cannot convert high color video frame to 8bpp");
+
+					// Convert to the current screen format
+					convertedFrame = frame->convertTo(pixelFormat, _videoStreams[i]->getPalette());
+					frame = convertedFrame;
+				} else if (pixelFormat.bytesPerPixel == 1 && _videoStreams[i]->hasDirtyPalette()) {
+					// Set the palette when running in 8bpp mode only
+					_videoStreams[i]->setSystemPalette();
 				}
 
 				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
 				uint16 width = MIN<int32>(_videoStreams[i]->getWidth(), _vm->_system->getWidth() - _videoStreams[i].x);
 				uint16 height = MIN<int32>(_videoStreams[i]->getHeight(), _vm->_system->getHeight() - _videoStreams[i].y);
-				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
+				_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
 
 				// We've drawn something to the screen, make sure we update it
 				updateScreen = true;

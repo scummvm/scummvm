@@ -1,5 +1,4 @@
 ScummVM LÄS MIG
-Senast uppdaterad:    $Date$
 ------------------------------------------------------------------------
 
 För ytterligare information, kompatibilitetslistor, donationsdetaljer, den senaste programversionen, utvecklingsrapporter med mera, var god besök ScummVM:s hemsida på http://www.scummvm.org/
@@ -55,6 +54,8 @@ Innehåll:
  * 7.8 Att använda komprimerade ljudfiler (MP3, Ogg Vorbis, Flac)
  * 7.9 Uppspelningsfrekvens
 8.0) Konfigurationsfilen
+ * 8.1 Igenkända nyckelord
+ * 8.2 Spelinställningar som kan aktiveras via användargränssnittet
 9.0) Kompilering
 
 
@@ -184,13 +185,18 @@ AGOS-spel från Adventuresoft/Horrorsoft:
      The Feeble Files                            [feeble]
 
 GOB-spel från Coktel Vision:
+     Bambou le sauveur de la jungle              [bambou]
      Bargon Attack                               [bargon]
+     Fascination                                 [fascination]
+     Geisha                                      [geisha]
      Gobliiins                                   [gob1]
      Gobliins 2                                  [gob2]
      Goblins 3                                   [gob3]
      Lost in Time                                [lostintime]
+     Once Upon A Time: Little Red Riding Hood    [littlered]
      The Bizarre Adventures of Woodruff
          and the Schnibble                       [woodruff]
+     Urban Runner                                [urban]
      Ween: The Prophecy                          [ween]
 
 MADE-spel från Activision:
@@ -221,6 +227,7 @@ MADE-spel från Activision:
 SCUMM-spel från Humongous Entertainment:
      Backyard Baseball                           [baseball]
      Backyard Baseball 2001                      [baseball2001]
+     Backyard Baseball 2003                      [baseball2003]
      Backyard Football                           [football]
      Big Thinkers First Grade                    [thinker1]
      Big Thinkers Kindergarten                   [thinkerk]
@@ -288,7 +295,6 @@ Living Books-spel:
 
 De följande spelen borde starta, men är ännu ej helt spelbara. Spela dem på egen risk och var god skicka inga buggrapporter angående dem. För senaste nytt angående spelkompatibilitet kan du besöka vår hemsida och läsa kompatibilitetslistan.
 
-     Backyard Baseball 2003                      [baseball2003]
      Backyard Football 2002                      [football2002]
      Backyard Soccer                             [soccer]
      Backyard Soccer MLS                         [soccermls]
@@ -387,6 +393,11 @@ Instruktionerna för Broken Sword-spelen är för Sold-Out Software-versionerna 
 ------ ---------------------------------
 Filmscenerna i Broken Sword-spelen har varit med om en hel del (se nästa avdelning om du är intresserad) men i regel behöver du bara kopiera .SMK-filerna från ”SMACKS” eller ”SMACKSHI”-katalogerna på CD-skivorna till samma katalog där de andra datafilerna ligger. (Broken Sword har även en ”SMACKSLO” katalog med samma filmscener, men dessa har lägre kvalitet.) Du kan även lägga dem i en underkatalog med namnet ”video”, om du vill.
 
+För PlayStation-versionerna kan du dumpa originalfilmerna från CD:n. Dumpa varje fil med ändelsen ”STR” som råa sektorer från CD:n (samtliga 2352 bitar per sektor). DU kan även använde de omkodade filmscenerna nedan istället, men detta fungerar inte för alla filmer i Broken Sword II. För ytterligare information, se:
+
+  http://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos
+
+
 Vissa nyutgåvor av spelen, tillika PlayStation-versionen, har inga Smacker videos. Revolution Software har varit goda nog att skapa nykodade filmscener som kan laddas hem från våran hemsida:
 
   http://www.scummvm.org/downloads.php
@@ -395,7 +406,7 @@ Dessa filmscener är tillgängliga i DXA-format med FLAC-ljud. Kvaliteten är de
 
 För de system som är för långsamma för att hantera FLAC-ljud finns ljudet för dessa filmscener att ladda hem separat som OGG Vorbis-ljud. För att se dessa filmscener med OGG Vorbis-ljud krävs en version av ScummVM som kompilerats med stöd för både libVorbis och zlib.
 
-Vi erbjuder även ett tillägg för undertexter i Broken Sword. Packa upp tillägget och följ instruktionerna i readme.txt-filen. (Broken Sword II har redan undertexter; inga modifikationer krävs för dem).
+Vi erbjuder även ett tillägg för undertexter i Broken Sword. Packa upp tillägget och följ instruktionerna i readme.txt-filen. Undertextpaketet fungerar för tillfället inte med PlayStation-filmer (Broken Sword II har redan undertexter; inga modifikationer krävs för dem).
 
 
 3.7.2) Broken Sword-spelens filmscener – en återblick:
@@ -475,7 +486,7 @@ Döp om voices.wav på CD4 till voices4.wav
 
 3.14) Notiser om The Legend of Kyrandia:
 ----- ----------------------------------
-För att spela The Legend of Kyrandia i ScummVM behöver du “kyra.dat”-filen som är tillgänglig från ”Downloads”-avdelningen på ScummVM:s hemsida.
+För att spela The Legend of Kyrandia i ScummVM behöver du “kyra.dat”-filen. Filen borde alltid inkluderas med officiella ScummVM-paket. Om ScummVM klagar över att filen saknas kan du finna den på “Downloads”-avdelningen av ScummVM:s hemsida. Märk att den nuvarande Windows-versionen av ScummVM borde ha filen inbyggd i programfilen, och sålunda behöver du bara ladda hem den om ScummVM klagar över att filen saknas.
 
 
 3.15) Notiser om Sierra AGI-spel med textinmatningshjälp:
@@ -537,10 +548,6 @@ Den här versionen har följande kända problem. Du behöver inte rapportera dem
 
   FM-TOWNS-versioner av spel:
     - Kanji-versioner kräver en FM-TOWNS Font ROM
-    - ScummVM krashar slumpmässigt när FM-TOWNS Font Rom används för
-      kanji-versionerna av de följande spelen:
-      The Secret of Monkey Island, Monkey Island 2: LeChuck's Revenge
-      och Indiana Jones and the Fate of Atlantis
 
   Loom:
     - Att stänga av undertexterna via konfigurationsfilen är inte pålitligt då
@@ -590,7 +597,6 @@ Den här versionen har följande kända problem. Du behöver inte rapportera dem
   The Legend of Kyrandia:
     - Varken musik eller ljudeffekter i Macintosh diskett-versioner.
     - Macintosh-CD använder DOS-musik och ljudeffekter.
-    - PC-9821-versionen saknar stöd för ljudeffekter.
 
   Humongous Entertainment-spel:
     - Endast originalgränssnittet för att ladda och spara kan användas.
@@ -668,6 +674,7 @@ Ordning: scummvm [INSTÄLLNINGAR]... [SPEL]
   --themepath=PATH         Sökväg dit GUI-teman lagras
   --list-themes            Visa full lista med alla användbara GUI-teman
   -e, --music-driver=MODE  Välj musik-driver (se även avdelning 7.0)
+  --list-audio-devices     Visar tillgängliga ljudenheter 
   -q, --language=LANG      Välj spelets språk (se även avdelning 5.2)
   -m, --music-volume=NUM   Ställ in musikvolym, 0-255 (standard: 192)
   -s, --sfx-volume=NUM     Ställ in ljudeffektsvolym, 0-255 (standard: 192)
@@ -822,19 +829,28 @@ Motorer som för närvarande stöder återvändo till launchern:
     AGI
     AGOS
     CINE
+    COMPOSER
+    CRUISE
     DRACI
+    DRASCULA
     GOB
     GROOVIE
+    HUGO
     KYRA
     LURE
+    MADE
+    MOHAWK
     PARALLACTION
     QUEEN
     SAGA
+    SCI
     SCUMM
     SKY
     SWORD1
     SWORD2
+    TEENAGENT
     TOUCHE
+    TSAGE
     TUCKER
 
 
@@ -1006,8 +1022,24 @@ Notis för WinCE-användare: På grund av de begränsade tangentborden på de fl
 Spardata lagras som standard i den aktiva katalogen på vissa plattformar och i förbestämda kataloger på andra plattformar. Du kan ställa in katalogen i konfigurationsfilen genom att ändra savepath-parametern. Se exempel för konfigurationsfilen senare i detta dokument.
 
 Plattformar som för närvarande har annorlunda standardkataloger:
-    Mac OS X:           $HOME/Documents/ScummVM Savegames/
-    Övriga unix-system: $HOME/.scummvm/
+    Mac OS X:
+    $HOME/Documents/ScummVM Savegames/
+
+    Övriga unix-system:
+    $HOME/.scummvm/
+    
+    Windows Vista/7:
+    \Users\username\AppData\Roaming\ScummVM\Saved games\
+
+    Windows 2000/XP:
+    \Documents and Settings\username\Application Data\ScummVM\Saved games\
+
+    Windows NT4:
+    <windir>\Profiles\username\Application Data\ScummVM\Saved games\
+
+Spardata lagras i en gömd map I Windows NT4/2000/XP/Vista/7, som kan kommas åt genom att köra "%APPDATA%%\ScummVM\Saved Games\" eller genom att visa dolda filer i Windows Explorer.
+
+Notis för användare av NT4/2000/XP/Vista/7: Den förutbestämda platsen för spardata har ändrats i ScummVM 1.5.0. Migrationsfilen kan användas för att kopiera spardata från den förra platsen till den nya.
 
 
 6.1) Autosparning:
@@ -1059,20 +1091,28 @@ Där “xxx” står för positionsnumret (t.ex. 001) i ScummVM.
 
        AGI
        AGOS
+       CGE
        CINE
+       CRUISE
        DRACI
        GROOVIE
+       HUGO
        KYRA
        LURE
+       MOHAWK
        PARALLACTION
        QUEEN
        SAGA
+       SCI
        SCUMM
        SKY
        SWORD1
        SWORD2
+       TEENAGENT
        TINSEL
+       TOON
        TOUCHE
+       TSAGE
        TUCKER
 
 --save-slot/-x:
@@ -1086,20 +1126,28 @@ Där “xxx” står för positionsnumret (t.ex. 001) i ScummVM.
    Motorer som för tillfället stöder --save-slot/-x:
 
        AGI
+       CGE
        CINE
+       CRUISE
        DRACI
        GROOVIE
+       HUGO
        KYRA
        LURE
-       PARALLACTION
+       MOHAWK
        QUEEN
        SAGA
+       SCI
        SCUMM
        SKY
        SWORD1
        SWORD2
+       TEENAGENT
        TINSEL
+       TOON
        TOUCHE
+       TSAGE
+       TUCKER
 
 
 7.0) Musik och ljud:
@@ -1396,7 +1444,7 @@ Att använda frekvenser mellan de ovansagda rekommenderas ej. Till att börja me
 ---- --------------------
 Som standard sparas och laddas konfigrationsfilen i:
 
-    Windows Vista:
+    Windows Vista/7:
     \Users\username\AppData\Roaming\ScummVM\scummvm.ini,
 
     Windows 2000/XP:
@@ -1458,6 +1506,9 @@ Ett exempel på en konfigurationsfil ser ut så här:
     path=C:\amiga_mi2\
     music_driver=windows
 
+
+8.1) Igenkända nyckelord
+---- -------------------
 Följande nyckelord kan användas:
 
     path               string   Sökvägen dit spelets datafiler ligger
@@ -1483,7 +1534,6 @@ Följande nyckelord kan användas:
 
     fullscreen         bool     Fullskärmsläge
     aspect_ratio       bool     Aktivera korrektion av bildförhållande
-    disable_dithering  bool     Anti-gitter för EGA-spel
     gfx_mode           string   Grafikläge (normalt, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
                                 hq2x, hq3x, tv2x, dotmatrix)
@@ -1529,6 +1579,29 @@ Följande nyckelord kan användas:
 
     boot_param         number   Skicka det här numret till boot script
 
+Sierra-spel som använder AGI-motorn använder även följande nyckelord:
+
+    originalsaveload   bool     Ställ in till “true” för att använda
+                                originalskärmarna för ladda/spara
+                                istället för ScummVM:s förbättrade
+                                skärmar
+
+Sierra-spel som använder SCI-motorn använder även följande nyckelord:
+
+    disable_dithering  bool     Tar bort gitter artefakter från EGA-spel
+    prefer_digitalsfx  bool     Ställ in till “true” för att föredra
+                                digitala ljudeffekter istället för
+                                syntetiserade ljudeffekter
+    originalsaveload   bool     Ställ in till “true” för att använda
+                                originalskärmarna för ladda/spara
+                                istället för ScummVM:s förbättrade
+                                skärmar
+    native_fb01        bool     Ställ in till “true” för att använda
+                                ett IBM Music Feature-kort eller en
+                                Yamaha FB-01 FM synthmodul för
+                                MIDI-uppspelning
+
+
 Broken Sword II lägger till följande nyckelord:
 
     gfx_details        number   Grafisk detalj (0-3)
@@ -1546,6 +1619,13 @@ Flight of the Amazon Queen lägger till följande nyckelord:
     sfx_mute           bool     Ställ in till “true” för att deaktivera      
                                 ljudeffekter
 
+
+Jones in the Fast Lane använder även följande nyckelord:
+    music_mute         bool     Ställ in till “true” för att använda
+                                CD-ljud, om tillgängligt, istället
+                                spelets vanliga ljud.
+      
+
 King's Quest VI Windows lägger till följande nyckelord:
 
     windows_cursors    bool     Ställ in till “true” för att använda de svartvita
@@ -1553,6 +1633,25 @@ King's Quest VI Windows lägger till följande nyckelord:
                                 Ställ in till ”false” för att använda de uppskalade
                                 muspekarna som matchar resten av grafiken.
     
+
+Lands of Lore: The Throne of Chaos använder även följande nyckelord:
+
+    smooth_scrolling   bool     Ställ in till “true” för mjukare
+                                skärmrullning när du går från en
+                                skärm till en annan.
+    floating_cursors   bool     Ställ in till “true” för att ändra
+                                pekaren till en riktningspil när den
+                                närmar sig kanten av skärmen. Spelaren
+                                kan sedan klicka för att gå mot
+                                den riktningen.
+
+
+Space Quest IV CD använder även följande nyckelord:
+
+     silver_cursors    bool     Ställ in till “true” för att använda
+                                silverpekare istället för gulpekarna
+
+
 Simon the Sorcerer 1 och 2 lägger till följande nyckelord:
 
     music_mute         bool     Ställ in till “true” för att deaktivera musik
@@ -1563,6 +1662,28 @@ Simon the Sorcerer 1 och 2 lägger till följande nyckelord:
 The Legend of Kyrandia lägger till följande nyckelord:
 
     walkspeed          int      Gånghastighet (0-4)
+
+
+The Legend of Kyrandia: Malcolm's Revenge använder även följande nyckelord:
+
+    studio_audience    bool     Ställ in till “true” för att höra
+                                skratt och applåder när Malcolm
+                                berättar ett skämt
+    skip_support       bool     Ställ in till “true” för att kunna
+                                skippa text och filmscener
+    helium_mode        bool     Ställ in till “true” så låter folk
+                                som att dom inandats helium
+
+The 7th Guest använder även följande nyckelord:
+
+    t7g_speed          string   Hastighet på videouppspelning
+                                (normal, tweaked, im_an_ios)
+
+
+8.2) Spelinställningar som kan aktiveras via användargränssnittet
+---- ------------------------------------------------------------
+Många av inställningarna i den föregående avdelningen kan aktiveras via användargränssnittet. Om en inställning finns tillgänglig för ett specifikt spel visas en ny tabb med namnet ”Motor” när du lägger till eller ändrar inställningarna för spelet.
+Om specialinställningarna inte visas måste spelet köras en gång eller läggas till igen i spellistan i ScummVM:s launcher. Detta uppdaterar inställningarna för varje spel, vilket låter specialinställningarna visas.
 
 
 9.0) Kompilering:
@@ -1598,15 +1719,6 @@ På Win9x/NT/XP kan du definiera USE_WINDBG och lägga till WinDbg för att visa
   Windows Mobile:
     * Var god se:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
-
-  Debian GNU/Linux:
-    * Installera paketen 'build-essential', 'fakeroot', 'debhelper',
-      och 'libsdl1.2-dev' på ditt system.
-    * Installera de här paketen (valfria): 'libvorbis-dev' (för Ogg
-      Vorbis stöd), 'libasound2-dev' (för ALSA sequencer stöd),
-      'libmad0-dev' (för MAD MP3 stöd), 'zlib1g-dev' (för stöd av kompresserad spardata).
-    * Kör 'make deb'.
-    * Kör sedan 'dpkg -i ../scummvm-cvs*deb', så är du klar.
 
   Mac OS X:
     * Se till att du har utvecklingsverktygen istallerade.

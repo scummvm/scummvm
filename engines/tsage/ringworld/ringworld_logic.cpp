@@ -295,7 +295,7 @@ void SceneArea::display() {
 	_bounds.setWidth(_surface.getBounds().width());
 	_bounds.setHeight(_surface.getBounds().height());
 
-	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
+	_savedArea = surfaceGetArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
 	draw2();
 }
 

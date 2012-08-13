@@ -248,12 +248,11 @@ void Inter_Fascination::oFascin_playTira(OpGobParams &params) {
 void Inter_Fascination::oFascin_loadExtasy(OpGobParams &params) {
 	_vm->_sound->adlibLoadTBR("extasy.tbr");
 	_vm->_sound->adlibLoadMDY("extasy.mdy");
+	_vm->_sound->adlibSetRepeating(-1);
 }
 
 void Inter_Fascination::oFascin_adlibPlay(OpGobParams &params) {
-#ifdef ENABLE_FASCIN_ADLIB
 	_vm->_sound->adlibPlay();
-#endif
 }
 
 void Inter_Fascination::oFascin_adlibStop(OpGobParams &params) {

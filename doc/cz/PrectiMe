@@ -53,7 +53,9 @@ Obsah:
  * 7.7 Podpora MIDI serveru TiMidity++
  * 7.8 Použití komprimovaných zvukových souborů (MP3, Ogg Vorbis, Flac)
  * 7.9 Výstupní vzorkovací kmitočet
-8.0) Soubor s nastavením
+8.0) Soubor s nastavením
+ * 8.1 Rozpoznávaná klíčová slova nastavení
+ * 8.2 Vlastní herní volby, které mohou být přepínány pomoci grafického rozhraní
 9.0) Sestavení
 
 
@@ -179,13 +181,18 @@ Hry AGOS od Adventuresoft/Horrorsoft:
      The Feeble Files                            [feeble]
 
 Hry GOB od Coktel Vision:
+     Bambou le sauveur de la jungle              [bambou]
      Bargon Attack                               [bargon]
+     Fascination                                 [fascination]
+     Geisha                                      [geisha]
      Gobliiins                                   [gob1]
      Gobliins 2                                  [gob2]
      Goblins 3                                   [gob3]
      Lost in Time                                [lostintime]
+     Once Upon A Time: Little Red Riding Hood    [littlered]
      The Bizarre Adventures of Woodruff
          and the Schnibble                       [woodruff]
+     Urban Runner                                [urban]
      Ween: The Prophecy                          [ween]
 
 Hry MADE od Activision:
@@ -216,6 +223,7 @@ Další hry:
 Hry SCUMM od Humongous Entertainment:
      Backyard Baseball                           [baseball]
      Backyard Baseball 2001                      [baseball2001]
+     Backyard Baseball 2003                      [baseball2003]
      Backyard Football                           [football]
      Big Thinkers First Grade                    [thinker1]
      Big Thinkers Kindergarten                   [thinkerk]
@@ -284,7 +292,6 @@ Hry Living Books:
 Následující hry by měly jít spustit, ale zatím nejsou úplně hratelné. Hrajte je pouze na vlastní riziko a prosíme, abyste pro tyto hry nenahlašovali chyby.
 Pokud chcete mít nejnovější zprávy o kompatibilitách her, navštivte naší stránku a prohlédněte si tabulku kompatibilit.
 
-     Backyard Baseball 2003                      [baseball2003]
      Backyard Football 2002                      [football2002]
      Backyard Soccer                             [soccer]
      Backyard Soccer MLS                         [soccermls]
@@ -1478,6 +1485,8 @@ Vzorový soubor s nastavením vypadá takto:
     path=C:\amiga_mi2\
     music_driver=windows
 
+8.1) Rozpoznávaná klíčová slova nastavení
+---- ------------------------------------ 
 Jsou rozpoznávána následující klíčová slova:
 
     path              řetězec Cesta, kde jsou umístěny datové soubory hry
@@ -1494,7 +1503,6 @@ Jsou rozpoznávána následující klíčová slova:
     talkspeed          číslo    Zpoždění textu v hrách SCUMM, nebo rychlost textu v jiných hrách.
     fullscreen         boolean  Režim celé obrazovky
     aspect_ratio       boolean  Povolit korekci poměru stran
-    disable_dithering  boolean  Odstranit artefakty chvění v některých hrách EGA
     gfx_mode           řetězec  Grafický režim (normální, 2x, 3x, 2xsai, super2xsai, supereagle, advmame2x, advmame3x,hq2x, hq3x, tv2x, dotmatrix)
     confirm_exit       boolean  Zeptat se uživatele na potvrzení před ukončením (pouze jádro SDL).
     console            boolean  Povolit okno konzole (výchozí: zapnuto) (pouze Windows).
@@ -1518,6 +1526,16 @@ Jsou rozpoznávána následující klíčová slova:
     alt_intro          boolean  Použít alternativní úvod pro CD verze Beneath a Steel Sky a Flight of the Amazon Queen
     boot_param         číslo    Předá toto číslo zaváděcímu skriptu
 
+Hry Sierra používající jádro AGI přidávají následující nestandardní klíčové slovo:
+
+originalsaveload       boolean  Pokud true, jsou použity původní obrazovky nahrávání/uložení místo vylepšených ze ScummVM
+
+Hry Sierra používající jádro SCI přidávají následující nestandardní klíčová slova:
+
+    disable_dithering  boolean  Odstranit artefakty chvění v některých hrách EGA
+    prefer_digitalsfx  boolean  Pokud true, jsou upřednostňovány digitální zvukové efekty před syntetizovanými
+    originalsaveload   boolean  Pokud true, jsou použity původní obrazovky nahrávání/uložení místo vylepšených ze ScummVM
+    native_fb01        bool     Pokud true, je ovladač hudby pro kartu IBM Music Feature nebo modul syntetizátoru Yahama FB-01 FM použit jako výstup MIDI
 Broken Sword II přidává následující nestandardní klíčová slova:
 
     gfx_details        číslo    Nastavení grafických detailů (0-3)
@@ -1526,16 +1544,25 @@ Broken Sword II přidává následující nestandardní klíčová slova:
     reverse_stereo     boolean  Pokud true, kanály stereo jsou obráceny
     sfx_mute           boolean  Pokud true, zvukové efekty jsou ztlumeny
 
-Flight of the Amazon Queen přidává následující nestandardní klíčová slova
+Flight of the Amazon Queen přidává následující nestandardní klíčová slova:
 
     music_mute         boolean  Pokud true, hudba je ztlumena
     sfx_mute           boolean  Pokud true, zvukové efekty jsou ztlumeny
 
-King's Quest VI Windows přidává následující nestandardní klíčová slova:
+Jones in the Fast Lane přidává následující nestandardní klíčové slovo:
+
+    music_mute         boolean  Pokud true, je použito CD audio místo zvuků ve hře 
+
+King's Quest VI Windows přidává následující nestandardní klíčové slovo:
 
     windows_cursors    boolean  Pokud true, jsou použity původní černobílé kurzory místo kurzorů z DOS. Pokud false, jsou ve verzi Windows použity kurzory DOS, zvětšené, aby se shodovaly se zbytkem zvětšené grafiky
 
-Space Qust IV CD přidává následující nestandardní klíčové slovo:
+Lands of Lore: The Throne of Chaos přidává následující nestandardní klíčová slova:
+
+    smooth_scrolling   boolean  Pokud true, je posunování při změně z jedné obrazovky na druhou plynulejší
+    floating_cursors   boolean  Pokud true, je kurzor změněn na směrovou šipku při najetí na okraj obrazovky. Hráč pak může kliknout pro pohyb v tomto směru.
+
+Space Quest IV CD přidává následující nestandardní klíčové slovo:
     
     silver_cursors     boolean  Pokud true, je místo původních zlatých kurzorů použita alternativní sada stříbrných
         
@@ -1548,9 +1575,22 @@ The Legend of Kyrandia přidává následující nestandardní klíčové slovo:
 
     walkspeed          celé číslo      Rychlost chůze (0-4)
     
+The Legend of Kyrandia: Malcolm's Revenge přidává následující nestandardní klíčová slova:
+
+    studio_audience    boolean  Pokud true, je slyšet potlesk a smích kdykoliv Malcolm provede něco vtipného
+    skip_support       boolean  Pokud true, hráč může přeskakovat text a scény hry
+    helium_mode        boolean  Pokud true, lidé znějí tak, jakoby se nadýchali hélia
+
 The 7th Guest přidává následující nestandardní klíčové slovo:
 
     t7g_speed          řetězec   Rychlost přehrávání videa (normal - normální, tweaked - upravená, im_an_ios - jsem na ios)
+
+8.2) Vlastní herní volby, které mohou být přepínány pomoci grafického 
+---- ----------------------------------------------------------------
+rozhraní
+--------
+Mnoho vlastních herních voleb v předchozí části může být přepnuto přes grafické rozhraní. Pokud je takováto volba pro určitou hru dostupná, objeví se karta "Jádro" při přidávání nebo úpravě nastavení této hry.
+Pokud vlastní možnosti nejsou zobrazeny, musí být konkrétní hry spuštěny jednou nebo znovu přidány do seznamu her spouštěče ScummVM. Toto aktualizuje nastavení každé položky, čímž umožní zobrazení vlastních voleb.
 
 9.0) Sestavení:
 ---- ----------
@@ -1622,5 +1662,6 @@ Hodně Štěstí a Šťastné Adventurování!
 Tým ScummVM.
 http://www.scummvm.org/
 ------------------------------------------------------------------------
+
 
 

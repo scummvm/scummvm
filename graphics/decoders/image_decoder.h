@@ -75,6 +75,9 @@ public:
 	 * until destroy() or loadStream() is called, or until this ImageDecoder's
 	 * destructor is called.
 	 *
+	 * The palette's format is the same as PaletteManager's palette
+	 * (interleaved RGB values).
+	 *
 	 * @return the decoded palette, or 0 if no palette is present
 	 */
 	virtual const byte *getPalette() const { return 0; }

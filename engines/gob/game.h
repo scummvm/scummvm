@@ -52,6 +52,8 @@ public:
 	bool has(Script    *script   , uint8 startEnv = 0, int16 except = -1) const;
 	bool has(Resources *resources, uint8 startEnv = 0, int16 except = -1) const;
 
+	void deleted(Variables *variables);
+
 	void clear();
 
 	bool setMedia(uint8 env);
@@ -168,6 +170,8 @@ public:
 
 	void totSub(int8 flags, const Common::String &totFile);
 	void switchTotSub(int16 index, int16 function);
+
+	void deletedVars(Variables *variables);
 
 	bool loadFunctions(const Common::String &tot, uint16 flags);
 	bool callFunction(const Common::String &tot, const Common::String &function, int16 param);

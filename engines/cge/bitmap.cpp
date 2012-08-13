@@ -123,12 +123,15 @@ Bitmap::~Bitmap() {
 
 Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 	debugC(1, kCGEDebugBitmap, "&Bitmap::operator =");
+	if (this == &bmp)
+		return *this;
 
 	uint8 *v0 = bmp._v;
 	_w = bmp._w;
 	_h = bmp._h;
 	_m = NULL;
 	_map = 0;
+	_vm = bmp._vm;
 	delete[] _v;
 
 	if (v0 == NULL) {

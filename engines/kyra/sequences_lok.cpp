@@ -838,9 +838,7 @@ void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	if (newItem == -1)
 		return;
 
-	_screen->hideMouse();
 	setMouseItem(newItem);
-	_screen->showMouse();
 	_itemInHand = newItem;
 
 	assert(_fullFlask);

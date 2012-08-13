@@ -127,7 +127,7 @@ public:
 
   // Draw a bitmap to screen.
   // The screen will not be updated to reflect the new bitmap
-  void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+  void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
@@ -142,7 +142,7 @@ public:
   void warpMouse(int x, int y);
 
   // Set the bitmap that's used when drawing the cursor.
-  void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
+  void setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format);
 
   // Replace the specified range of cursor the palette with new colors.
   void setCursorPalette(const byte *colors, uint start, uint num);
@@ -172,8 +172,8 @@ public:
   void showOverlay();
   void hideOverlay();
   void clearOverlay();
-  void grabOverlay(OverlayColor *buf, int pitch);
-  void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+  void grabOverlay(void *buf, int pitch);
+  void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
   virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
 
   // Mutex handling

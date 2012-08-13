@@ -223,6 +223,7 @@ private:
 protected:
 
 	void drawSprite(const ObjectStruct &obj);
+	void drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp);
 	int drawChar(char character, int x, int y);
 	void drawBackground();
 	void renderOverlay(const Common::List<overlay>::iterator &it);

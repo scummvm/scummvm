@@ -32,10 +32,7 @@
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -134,7 +131,7 @@ IMPLEMENT_FUNCTION_II(7, Vesna, updateEntity2, CarIndex, EntityPosition)
 		break;
 
 	case kAction123668192:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -165,7 +162,8 @@ IMPLEMENT_FUNCTION(11, Vesna, function11)
 
 	case kActionNone:
 		if (parameters->param3) {
-			UPDATE_PARAM(parameters->param7, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(parameters->param7, getState()->timeTicks, 75))
+				break;
 
 			parameters->param2 = 1;
 			parameters->param3 = 0;
@@ -245,7 +243,7 @@ IMPLEMENT_FUNCTION(11, Vesna, function11)
 
 	case kAction55996766:
 	case kAction101687594:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -257,7 +255,7 @@ IMPLEMENT_FUNCTION(12, Vesna, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Vesna, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -458,7 +456,7 @@ IMPLEMENT_FUNCTION(18, Vesna, function18)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityVesna);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -514,7 +512,8 @@ IMPLEMENT_FUNCTION(20, Vesna, chapter3Handler)
 		}
 
 		if (parameters->param2) {
-			UPDATE_PARAM(parameters->param8, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(parameters->param8, getState()->timeTicks, 75))
+				break;
 
 			parameters->param1 = 1;
 			parameters->param2 = 0;
@@ -711,7 +710,7 @@ IMPLEMENT_FUNCTION(21, Vesna, function21)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityVesna);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1083,13 +1082,14 @@ IMPLEMENT_FUNCTION(30, Vesna, function30)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM_PROC(params->param3, getState()->timeTicks, 120)
+			if (Entity::updateParameter(params->param3, getState()->timeTicks, 120)) {
 				getSound()->playSound(kEntityVesna, "Ves50001", kFlagDefault);
 				params->param1 = 1;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
-		UPDATE_PARAM(params->param4, getState()->timeTicks, 180);
+		if (!Entity::updateParameter(params->param4, getState()->timeTicks, 180))
+			break;
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopKilled);

@@ -32,10 +32,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -102,11 +100,11 @@ IMPLEMENT_FUNCTION(3, Verges, callbackActionOnDirection)
 
 	case kActionNone:
 		if (getData()->direction != kDirectionRight)
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
  		break;
 
 	case kActionExcuseMeCath:
@@ -219,7 +217,7 @@ switch (savepoint.action) {
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -241,12 +239,13 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 		}
 
 		if (getEntities()->updateEntity(kEntityVerges, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
 		if (params->param6) {
-			UPDATE_PARAM(params->param8, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 75))
+				break;
 
 			getSound()->playSound(kEntityVerges, (char *)&params->seq);
 
@@ -266,7 +265,7 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 		}
 
 		if (getEntities()->updateEntity(kEntityVerges, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -337,7 +336,7 @@ IMPLEMENT_FUNCTION(11, Verges, function11)
 			getObjects()->update(kObject104, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
 			getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 			}
 		}
@@ -397,7 +396,7 @@ IMPLEMENT_FUNCTION(12, Verges, function12)
 			getData()->entityPosition = kPosition_850;
 			getEntities()->clearSequences(kEntityVerges);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -438,7 +437,7 @@ IMPLEMENT_FUNCTION_I(13, Verges, function13, bool)
 			getEntities()->clearSequences(kEntityVerges);
 			getScenes()->loadSceneFromPosition(kCarBaggage, 91);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -462,7 +461,7 @@ IMPLEMENT_FUNCTION_IS(15, Verges, function15, EntityIndex)
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -499,7 +498,7 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -559,7 +558,7 @@ IMPLEMENT_FUNCTION(17, Verges, function17)
 
 		case 4:
 			ENTITY_PARAM(0, 3) = 0;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -573,7 +572,7 @@ IMPLEMENT_FUNCTION(18, Verges, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Verges, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -651,7 +650,7 @@ IMPLEMENT_FUNCTION(22, Verges, function22)
 			break;
 
 		case 5:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -697,7 +696,7 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 		break;
 
 	case kActionEndSound:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -818,7 +817,7 @@ IMPLEMENT_FUNCTION(25, Verges, function25)
 		case 11:
 			ENTITY_PARAM(0, 7) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 6:
@@ -908,10 +907,12 @@ label_callback3:
 		if (params->param6)
 			goto label_callback12;
 
-		TIME_CHECK_CALLBACK_1(kTimeChapter1, params->param7, 4, setup_function9, "TRA1001");
+		if (Entity::timeCheckCallback(kTimeChapter1, params->param7, 4, "TRA1001", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback4:
-		TIME_CHECK_CALLBACK(kTime1089000, params->param8, 5, setup_function12);
+		if (Entity::timeCheckCallback(kTime1089000, params->param8, 5, WRAP_SETUP_FUNCTION(Verges, setup_function12)))
+			break;
 
 		params->param8 = 1;
 
@@ -922,16 +923,20 @@ label_callback4:
 		}
 
 label_callback8:
-		TIME_CHECK_CALLBACK_1(kTime1107000, CURRENT_PARAM(1, 1), 9, setup_function9, "TRA1001A");
+		if (Entity::timeCheckCallback(kTime1107000, CURRENT_PARAM(1, 1), 9, "TRA1001A", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback9:
-		TIME_CHECK_CALLBACK_1(kTime1134000, CURRENT_PARAM(1, 2), 10, setup_function9, "TRA1002");
+		if (Entity::timeCheckCallback(kTime1134000, CURRENT_PARAM(1, 2), 10, "TRA1002", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback10:
-		TIME_CHECK_CALLBACK_1(kTime1165500, CURRENT_PARAM(1, 3), 11, setup_function9, "TRA1003");
+		if (Entity::timeCheckCallback(kTime1165500, CURRENT_PARAM(1, 3), 11, "TRA1003", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback11:
-		TIME_CHECK_CALLBACK_1(kTime1225800, CURRENT_PARAM(1, 4), 12, setup_function9, "TRA1004");
+		if (Entity::timeCheckCallback(kTime1225800, CURRENT_PARAM(1, 4), 12, "TRA1004", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback12:
 		if (ENTITY_PARAM(0, 5) && !params->param2) {
@@ -1083,7 +1088,8 @@ IMPLEMENT_FUNCTION(28, Verges, chapter2Handler)
 		}
 
 label_callback_1:
-		TIME_CHECK_CALLBACK_1(kTime1818900, params->param1, 2, setup_function9, "Tra2177");
+		if (Entity::timeCheckCallback(kTime1818900, params->param1, 2, "Tra2177", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback_2:
 		if (params->param2 == kTimeInvalid || !getState()->time)
@@ -1224,7 +1230,7 @@ IMPLEMENT_FUNCTION_S(30, Verges, function30)
 			break;
 
 		case 4:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1266,7 +1272,7 @@ IMPLEMENT_FUNCTION(31, Verges, function31)
 			getProgress().field_48 = 1;
 			ENTITY_PARAM(0, 4) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1280,7 +1286,12 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_3(kTime2263500, params->param1, 5, setup_function10, kCarRedSleeping, kPosition_9460, "TRA3006");
+		if (getState()->time > kTime2263500 && !params->param1) {
+			params->param1 = 1;
+			setCallback(5);
+			setup_function10(kCarRedSleeping, kPosition_9460, "TRA3006");
+			break;
+		}
 		break;
 
 	case kActionDefault:
@@ -1343,7 +1354,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1440,25 +1451,31 @@ label_callback_2:
 		}
 
 label_callback_3:
-		TIME_CHECK_CALLBACK_1(kTime1971000, params->param1, 4, setup_function9, "Tra3001");
+		if (Entity::timeCheckCallback(kTime1971000, params->param1, 4, "Tra3001", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback_4:
-		TIME_CHECK_CALLBACK_1(kTime1998000, params->param2, 5, setup_function9, "Tra3010a");
+		if (Entity::timeCheckCallback(kTime1998000, params->param2, 5, "Tra3010a", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback_5:
-		TIME_CHECK_CALLBACK(kTime2016000, params->param3, 6, setup_function35);
+		if (Entity::timeCheckCallback(kTime2016000, params->param3, 6, WRAP_SETUP_FUNCTION(Verges, setup_function35)))
+			break;
 
 label_callback_6:
-		TIME_CHECK_CALLBACK_1(kTime2070000, params->param4, 7, setup_function9, "Tra3002");
+		if (Entity::timeCheckCallback(kTime2070000, params->param4, 7, "Tra3002", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback_7:
-		TIME_CHECK_CALLBACK_1(kTime2142000, params->param5, 8, setup_function9, "Tra3003");
+		if (Entity::timeCheckCallback(kTime2142000, params->param5, 8, "Tra3003", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+			break;
 
 label_callback_8:
-		TIME_CHECK_CALLBACK_1(kTime2173500, params->param6, 9, setup_function30, "Tra3012");
+		if (Entity::timeCheckCallback(kTime2173500, params->param6, 9, "Tra3012", WRAP_SETUP_FUNCTION_S(Verges, setup_function30)))
+			break;
 
 label_callback_9:
-		TIME_CHECK_CALLBACK(kTime2218500, params->param7, 10, setup_function32);
+		Entity::timeCheckCallback(kTime2218500, params->param7, 10, WRAP_SETUP_FUNCTION(Verges, setup_function32));
 		break;
 
 	case kActionOpenDoor:
@@ -1548,7 +1565,7 @@ IMPLEMENT_FUNCTION(35, Verges, function35)
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1605,27 +1622,32 @@ label_callback_1:
 			}
 
 label_callback_2:
-			TIME_CHECK_CALLBACK_1(kTime2349000, params->param1, 3, setup_function9, "Tra1001");
+			if (Entity::timeCheckCallback(kTime2349000, params->param1, 3, "Tra1001", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+				break;
 
 label_callback_3:
-			TIME_CHECK_CALLBACK_1(kTime2378700, params->param2, 4, setup_function9, "Tra4001");
+			if (Entity::timeCheckCallback(kTime2378700, params->param2, 4, "Tra4001", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+				break;
 
 label_callback_4:
-			TIME_CHECK_CALLBACK_1(kTime2403000, params->param3, 5, setup_function9, "Tra1001A");
+			if (Entity::timeCheckCallback(kTime2403000, params->param3, 5, "Tra1001A", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+				break;
 
 label_callback_5:
-			TIME_CHECK_CALLBACK_1(kTime2414700, params->param4, 6, setup_function9, "Tra4002");
+			if (Entity::timeCheckCallback(kTime2414700, params->param4, 6, "Tra4002", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+				break;
 
 label_callback_6:
-			TIME_CHECK_CALLBACK_1(kTime2484000, params->param5, 7, setup_function9, "Tra4003");
+			if (Entity::timeCheckCallback(kTime2484000, params->param5, 7, "Tra4003", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+				break;
 
 label_callback_7:
-			TIME_CHECK_CALLBACK_1(kTime2511000, params->param6, 8, setup_function9, "Tra4004");
+			if (Entity::timeCheckCallback(kTime2511000, params->param6, 8, "Tra4004", WRAP_SETUP_FUNCTION_S(Verges, setup_function9)))
+				break;
 		}
 
 label_callback_8:
-		TIME_CHECK_CALLBACK_1(kTime2538000, params->param7, 9, setup_function9, "Tra4005");
-
+		Entity::timeCheckCallback(kTime2538000, params->param7, 9, "Tra4005", WRAP_SETUP_FUNCTION_S(Verges, setup_function9));
 		break;
 
 	case kActionOpenDoor:
@@ -1887,7 +1909,7 @@ void Verges::talk(const SavePoint &savepoint, const char *sound1, const char *so
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

@@ -164,8 +164,6 @@ public:
 
 			// Create the return descriptor
 			SaveStateDescriptor desc(slot, header.saveName);
-			desc.setDeletableFlag(true);
-			desc.setWriteProtectedFlag(false);
 			desc.setThumbnail(header.thumbnail);
 			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
 			desc.setSaveTime(header.saveHour, header.saveMinutes);

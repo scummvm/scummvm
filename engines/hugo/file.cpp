@@ -53,8 +53,8 @@ static const int s_bootCypherLen = sizeof(s_bootCypher) - 1;
 
 
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
-	has_read_header = false;
-	firstUIFFl = true;
+	_hasReadHeader = false;
+	_firstUIFFl = true;
 }
 
 FileManager::~FileManager() {
@@ -91,8 +91,8 @@ const char *FileManager::getUifFilename() const {
  * Convert 4 planes (RGBI) data to 8-bit DIB format
  * Return original plane data ptr
  */
-byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const {
-	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, image_pt data_p)", y, bpl);
+byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, ImagePtr dataPtr) const {
+	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, ImagePtr dataPtr)", y, bpl);
 
 	dataPtr += y * bpl * 8;                         // Point to correct DIB line
 	for (int16 r = 0, g = bpl, b = g + bpl, i = b + bpl; r < bpl; r++, g++, b++, i++) { // Each byte in all planes
@@ -107,47 +107,47 @@ byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_p
 }
 
 /**
- * Read a pcx file of length len.  Use supplied seq_p and image_p or
- * allocate space if NULL.  Name used for errors.  Returns address of seq_p
+ * Read a pcx file of length len.  Use supplied seqPtr and image_p or
+ * allocate space if NULL.  Name used for errors.  Returns address of seqPtr
  * Set first TRUE to initialize b_index (i.e. not reading a sequential image in file).
  */
-seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
+Seq *FileManager::readPCX(Common::ReadStream &f, Seq *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
 
 	// Read in the PCC header and check consistency
-	PCC_header.mfctr = f.readByte();
-	PCC_header.vers = f.readByte();
-	PCC_header.enc = f.readByte();
-	PCC_header.bpx = f.readByte();
-	PCC_header.x1 = f.readUint16LE();
-	PCC_header.y1 = f.readUint16LE();
-	PCC_header.x2 = f.readUint16LE();
-	PCC_header.y2 = f.readUint16LE();
-	PCC_header.xres = f.readUint16LE();
-	PCC_header.yres = f.readUint16LE();
-	f.read(PCC_header.palette, sizeof(PCC_header.palette));
-	PCC_header.vmode = f.readByte();
-	PCC_header.planes = f.readByte();
-	PCC_header.bytesPerLine = f.readUint16LE();
-	f.read(PCC_header.fill2, sizeof(PCC_header.fill2));
+	_PCCHeader._mfctr = f.readByte();
+	_PCCHeader._vers = f.readByte();
+	_PCCHeader._enc = f.readByte();
+	_PCCHeader._bpx = f.readByte();
+	_PCCHeader._x1 = f.readUint16LE();
+	_PCCHeader._y1 = f.readUint16LE();
+	_PCCHeader._x2 = f.readUint16LE();
+	_PCCHeader._y2 = f.readUint16LE();
+	_PCCHeader._xres = f.readUint16LE();
+	_PCCHeader._yres = f.readUint16LE();
+	f.read(_PCCHeader._palette, sizeof(_PCCHeader._palette));
+	_PCCHeader._vmode = f.readByte();
+	_PCCHeader._planes = f.readByte();
+	_PCCHeader._bytesPerLine = f.readUint16LE();
+	f.read(_PCCHeader._fill2, sizeof(_PCCHeader._fill2));
 
-	if (PCC_header.mfctr != 10)
+	if (_PCCHeader._mfctr != 10)
 		error("Bad data file format: %s", name);
 
-	// Allocate memory for seq_t if 0
+	// Allocate memory for Seq if 0
 	if (seqPtr == 0) {
-		if ((seqPtr = (seq_t *)malloc(sizeof(seq_t))) == 0)
+		if ((seqPtr = (Seq *)malloc(sizeof(Seq))) == 0)
 			error("Insufficient memory to run game.");
 	}
 
 	// Find size of image data in 8-bit DIB format
 	// Note save of x2 - marks end of valid data before garbage
-	uint16 bytesPerLine4 = PCC_header.bytesPerLine * 4; // 4-bit bpl
-	seqPtr->bytesPerLine8 = bytesPerLine4 * 2;      // 8-bit bpl
-	seqPtr->lines = PCC_header.y2 - PCC_header.y1 + 1;
-	seqPtr->x2 = PCC_header.x2 - PCC_header.x1 + 1;
+	uint16 bytesPerLine4 = _PCCHeader._bytesPerLine * 4; // 4-bit bpl
+	seqPtr->_bytesPerLine8 = bytesPerLine4 * 2;      // 8-bit bpl
+	seqPtr->_lines = _PCCHeader._y2 - _PCCHeader._y1 + 1;
+	seqPtr->_x2 = _PCCHeader._x2 - _PCCHeader._x1 + 1;
 	// Size of the image
-	uint16 size = seqPtr->lines * seqPtr->bytesPerLine8;
+	uint16 size = seqPtr->_lines * seqPtr->_bytesPerLine8;
 
 	// Allocate memory for image data if NULL
 	if (imagePtr == 0)
@@ -155,25 +155,25 @@ seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr
 
 	assert(imagePtr);
 
-	seqPtr->imagePtr = imagePtr;
+	seqPtr->_imagePtr = imagePtr;
 
 	// Process the image data, converting to 8-bit DIB format
 	uint16 y = 0;                                   // Current line index
 	byte  pline[kXPix];                             // Hold 4 planes of data
 	byte  *p = pline;                               // Ptr to above
-	while (y < seqPtr->lines) {
+	while (y < seqPtr->_lines) {
 		byte c = f.readByte();
 		if ((c & kRepeatMask) == kRepeatMask) {
 			byte d = f.readByte();                  // Read data byte
 			for (int i = 0; i < (c & kLengthMask); i++) {
 				*p++ = d;
 				if ((uint16)(p - pline) == bytesPerLine4)
-					p = convertPCC(pline, y++, PCC_header.bytesPerLine, imagePtr);
+					p = convertPCC(pline, y++, _PCCHeader._bytesPerLine, imagePtr);
 			}
 		} else {
 			*p++ = c;
 			if ((uint16)(p - pline) == bytesPerLine4)
-				p = convertPCC(pline, y++, PCC_header.bytesPerLine, imagePtr);
+				p = convertPCC(pline, y++, _PCCHeader._bytesPerLine, imagePtr);
 		}
 	}
 	return seqPtr;
@@ -182,8 +182,8 @@ seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr
 /**
  * Read object file of PCC images into object supplied
  */
-void FileManager::readImage(const int objNum, object_t *objPtr) {
-	debugC(1, kDebugFile, "readImage(%d, object_t *objPtr)", objNum);
+void FileManager::readImage(const int objNum, Object *objPtr) {
+	debugC(1, kDebugFile, "readImage(%d, Object *objPtr)", objNum);
 
 	/**
 	 * Structure of object file lookup entry
@@ -193,7 +193,7 @@ void FileManager::readImage(const int objNum, object_t *objPtr) {
 		uint32 objLength;
 	};
 
-	if (!objPtr->seqNumb)                           // This object has no images
+	if (!objPtr->_seqNumb)                           // This object has no images
 		return;
 
 	if (_vm->isPacked()) {
@@ -206,72 +206,72 @@ void FileManager::readImage(const int objNum, object_t *objPtr) {
 		_objectsArchive.seek(objBlock.objOffset, SEEK_SET);
 	} else {
 		Common::String buf;
-		buf = _vm->_picDir + Common::String(_vm->_text->getNoun(objPtr->nounIndex, 0)) + ".PIX";
+		buf = _vm->_picDir + Common::String(_vm->_text->getNoun(objPtr->_nounIndex, 0)) + ".PIX";
 		if (!_objectsArchive.open(buf)) {
-			buf = Common::String(_vm->_text->getNoun(objPtr->nounIndex, 0)) + ".PIX";
+			buf = Common::String(_vm->_text->getNoun(objPtr->_nounIndex, 0)) + ".PIX";
 			if (!_objectsArchive.open(buf))
 				error("File not found: %s", buf.c_str());
 		}
 	}
 
 	bool  firstImgFl = true;                        // Initializes pcx read function
-	seq_t *seqPtr = 0;                              // Ptr to sequence structure
+	Seq *seqPtr = 0;                              // Ptr to sequence structure
 
 	// Now read the images into an images list
-	for (int j = 0; j < objPtr->seqNumb; j++) {     // for each sequence
-		for (int k = 0; k < objPtr->seqList[j].imageNbr; k++) { // each image
+	for (int j = 0; j < objPtr->_seqNumb; j++) {     // for each sequence
+		for (int k = 0; k < objPtr->_seqList[j]._imageNbr; k++) { // each image
 			if (k == 0) {                           // First image
 				// Read this image - allocate both seq and image memory
-				seqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->nounIndex, 0));
-				objPtr->seqList[j].seqPtr = seqPtr;
+				seqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->_nounIndex, 0));
+				objPtr->_seqList[j]._seqPtr = seqPtr;
 				firstImgFl = false;
 			} else {                                // Subsequent image
 				// Read this image - allocate both seq and image memory
-				seqPtr->nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->nounIndex, 0));
-				seqPtr = seqPtr->nextSeqPtr;
+				seqPtr->_nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->_nounIndex, 0));
+				seqPtr = seqPtr->_nextSeqPtr;
 			}
 
 			// Compute the bounding box - x1, x2, y1, y2
 			// Note use of x2 - marks end of valid data in row
-			uint16 x2 = seqPtr->x2;
-			seqPtr->x1 = seqPtr->x2;
-			seqPtr->x2 = 0;
-			seqPtr->y1 = seqPtr->lines;
-			seqPtr->y2 = 0;
+			uint16 x2 = seqPtr->_x2;
+			seqPtr->_x1 = seqPtr->_x2;
+			seqPtr->_x2 = 0;
+			seqPtr->_y1 = seqPtr->_lines;
+			seqPtr->_y2 = 0;
 
-			image_pt dibPtr = seqPtr->imagePtr;
-			for (int y = 0; y < seqPtr->lines; y++, dibPtr += seqPtr->bytesPerLine8 - x2) {
+			ImagePtr dibPtr = seqPtr->_imagePtr;
+			for (int y = 0; y < seqPtr->_lines; y++, dibPtr += seqPtr->_bytesPerLine8 - x2) {
 				for (int x = 0; x < x2; x++) {
 					if (*dibPtr++) {                // Some data found
-						if (x < seqPtr->x1)
-							seqPtr->x1 = x;
-						if (x > seqPtr->x2)
-							seqPtr->x2 = x;
-						if (y < seqPtr->y1)
-							seqPtr->y1 = y;
-						if (y > seqPtr->y2)
-							seqPtr->y2 = y;
+						if (x < seqPtr->_x1)
+							seqPtr->_x1 = x;
+						if (x > seqPtr->_x2)
+							seqPtr->_x2 = x;
+						if (y < seqPtr->_y1)
+							seqPtr->_y1 = y;
+						if (y > seqPtr->_y2)
+							seqPtr->_y2 = y;
 					}
 				}
 			}
 		}
 		assert(seqPtr);
-		seqPtr->nextSeqPtr = objPtr->seqList[j].seqPtr; // loop linked list to head
+		seqPtr->_nextSeqPtr = objPtr->_seqList[j]._seqPtr; // loop linked list to head
 	}
 
 	// Set the current image sequence to first or last
-	switch (objPtr->cycling) {
+	switch (objPtr->_cycling) {
 	case kCycleInvisible:                           // (May become visible later)
 	case kCycleAlmostInvisible:
 	case kCycleNotCycling:
 	case kCycleForward:
-		objPtr->currImagePtr = objPtr->seqList[0].seqPtr;
+		objPtr->_currImagePtr = objPtr->_seqList[0]._seqPtr;
 		break;
 	case kCycleBackward:
-		objPtr->currImagePtr = seqPtr;
+		objPtr->_currImagePtr = seqPtr;
 		break;
 	default:
-		warning("Unexpected cycling: %d", objPtr->cycling);
+		warning("Unexpected cycling: %d", objPtr->_cycling);
 	}
 
 	if (!_vm->isPacked())
@@ -282,7 +282,7 @@ void FileManager::readImage(const int objNum, object_t *objPtr) {
  * Read sound (or music) file data.  Call with SILENCE to free-up
  * any allocated memory.  Also returns size of data
  */
-sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
+SoundPtr FileManager::getSound(const int16 sound, uint16 *size) {
 	debugC(1, kDebugFile, "getSound(%d)", sound);
 
 	// No more to do if SILENCE (called for cleanup purposes)
@@ -296,27 +296,27 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 		return 0;
 	}
 
-	if (!has_read_header) {
+	if (!_hasReadHeader) {
 		for (int i = 0; i < kMaxSounds; i++) {
-			s_hdr[i].size = fp.readUint16LE();
-			s_hdr[i].offset = fp.readUint32LE();
+			_soundHdr[i]._size = fp.readUint16LE();
+			_soundHdr[i]._offset = fp.readUint32LE();
 		}
 		if (fp.err())
 			error("Wrong sound file format");
-		has_read_header = true;
+		_hasReadHeader = true;
 	}
 
-	*size = s_hdr[sound].size;
+	*size = _soundHdr[sound]._size;
 	if (*size == 0)
 		error("Wrong sound file format or missing sound %d", sound);
 
 	// Allocate memory for sound or music, if possible
-	sound_pt soundPtr = (byte *)malloc(s_hdr[sound].size); // Ptr to sound data
+	SoundPtr soundPtr = (byte *)malloc(_soundHdr[sound]._size); // Ptr to sound data
 	assert(soundPtr);
 
 	// Seek to data and read it
-	fp.seek(s_hdr[sound].offset, SEEK_SET);
-	if (fp.read(soundPtr, s_hdr[sound].size) != s_hdr[sound].size)
+	fp.seek(_soundHdr[sound]._offset, SEEK_SET);
+	if (fp.read(soundPtr, _soundHdr[sound]._size) != _soundHdr[sound]._size)
 		error("Wrong sound file format");
 
 	fp.close();
@@ -330,15 +330,12 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip.c_str());
 
-	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
 	Common::String savegameDescription;
-	EngineMan.findGame(_vm->getGameId(), &plugin);
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
-		dialog->setSaveMode(true);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+		savegameId = dialog->runModalWithCurrentTarget();
 		savegameDescription = dialog->getResultString();
 		delete dialog;
 	} else {
@@ -385,7 +382,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 
 	_vm->_object->saveObjects(out);
 
-	const status_t &gameStatus = _vm->getGameStatus();
+	const Status &gameStatus = _vm->getGameStatus();
 
 	// Save whether hero image is swapped
 	out->writeByte(_vm->_heroImage);
@@ -394,13 +391,13 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	out->writeSint16BE(_vm->getScore());
 
 	// Save story mode
-	out->writeByte((gameStatus.storyModeFl) ? 1 : 0);
+	out->writeByte((gameStatus._storyModeFl) ? 1 : 0);
 
 	// Save jumpexit mode
 	out->writeByte((_vm->_mouse->getJumpExitFl()) ? 1 : 0);
 
 	// Save gameover status
-	out->writeByte((gameStatus.gameOverFl) ? 1 : 0);
+	out->writeByte((gameStatus._gameOverFl) ? 1 : 0);
 
 	// Save screen states
 	for (int i = 0; i < _vm->_numStates; i++)
@@ -411,17 +408,17 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	_vm->_screen->savePal(out);
 
 	// Save maze status
-	out->writeByte((_vm->_maze.enabledFl) ? 1 : 0);
-	out->writeByte(_vm->_maze.size);
-	out->writeSint16BE(_vm->_maze.x1);
-	out->writeSint16BE(_vm->_maze.y1);
-	out->writeSint16BE(_vm->_maze.x2);
-	out->writeSint16BE(_vm->_maze.y2);
-	out->writeSint16BE(_vm->_maze.x3);
-	out->writeSint16BE(_vm->_maze.x4);
-	out->writeByte(_vm->_maze.firstScreenIndex);
+	out->writeByte((_vm->_maze._enabledFl) ? 1 : 0);
+	out->writeByte(_vm->_maze._size);
+	out->writeSint16BE(_vm->_maze._x1);
+	out->writeSint16BE(_vm->_maze._y1);
+	out->writeSint16BE(_vm->_maze._x2);
+	out->writeSint16BE(_vm->_maze._y2);
+	out->writeSint16BE(_vm->_maze._x3);
+	out->writeSint16BE(_vm->_maze._x4);
+	out->writeByte(_vm->_maze._firstScreenIndex);
 
-	out->writeByte((byte)_vm->getGameStatus().viewState);
+	out->writeByte((byte)_vm->getGameStatus()._viewState);
 
 	out->finalize();
 
@@ -436,14 +433,11 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 bool FileManager::restoreGame(const int16 slot) {
 	debugC(1, kDebugFile, "restoreGame(%d)", slot);
 
-	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
-	EngineMan.findGame(_vm->getGameId(), &plugin);
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
-		dialog->setSaveMode(false);
-		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+		savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 	} else {
 		savegameId = slot;
@@ -492,14 +486,14 @@ bool FileManager::restoreGame(const int16 slot) {
 		_vm->_object->swapImages(kHeroIndex, _vm->_heroImage);
 	_vm->_heroImage = heroImg;
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	int score = in->readSint16BE();
 	_vm->setScore(score);
 
-	gameStatus.storyModeFl = (in->readByte() == 1);
+	gameStatus._storyModeFl = (in->readByte() == 1);
 	_vm->_mouse->setJumpExitFl(in->readByte() == 1);
-	gameStatus.gameOverFl = (in->readByte() == 1);
+	gameStatus._gameOverFl = (in->readByte() == 1);
 	for (int i = 0; i < _vm->_numStates; i++)
 		_vm->_screenStates[i] = in->readByte();
 
@@ -509,66 +503,23 @@ bool FileManager::restoreGame(const int16 slot) {
 	_vm->_screen->restorePal(in);
 
 	// Restore maze status
-	_vm->_maze.enabledFl = (in->readByte() == 1);
-	_vm->_maze.size = in->readByte();
-	_vm->_maze.x1 = in->readSint16BE();
-	_vm->_maze.y1 = in->readSint16BE();
-	_vm->_maze.x2 = in->readSint16BE();
-	_vm->_maze.y2 = in->readSint16BE();
-	_vm->_maze.x3 = in->readSint16BE();
-	_vm->_maze.x4 = in->readSint16BE();
-	_vm->_maze.firstScreenIndex = in->readByte();
+	_vm->_maze._enabledFl = (in->readByte() == 1);
+	_vm->_maze._size = in->readByte();
+	_vm->_maze._x1 = in->readSint16BE();
+	_vm->_maze._y1 = in->readSint16BE();
+	_vm->_maze._x2 = in->readSint16BE();
+	_vm->_maze._y2 = in->readSint16BE();
+	_vm->_maze._x3 = in->readSint16BE();
+	_vm->_maze._x4 = in->readSint16BE();
+	_vm->_maze._firstScreenIndex = in->readByte();
 
-	_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-	if ((_vm->getGameStatus().viewState = (vstate_t) in->readByte()) != kViewPlay)
+	_vm->_scheduler->restoreScreen(*_vm->_screenPtr);
+	if ((_vm->getGameStatus()._viewState = (Vstate) in->readByte()) != kViewPlay)
 		_vm->_screen->hideCursor();
 
 
 	delete in;
 	return true;
-}
-
-/**
- * Read the encrypted text from the boot file and print it
- */
-void FileManager::printBootText() {
-	debugC(1, kDebugFile, "printBootText()");
-
-	Common::File ofp;
-	if (!ofp.open(getBootFilename())) {
-		if (_vm->getPlatform() == Common::kPlatformPC) {
-			//TODO initialize properly _boot structure
-			warning("printBootText - Skipping as Dos versions may be a freeware or shareware");
-			return;
-		} else {
-			Utils::notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
-			_vm->getGameStatus().doQuitFl = true;
-			return;
-		}
-	}
-
-	// Allocate space for the text and print it
-	char *buf = (char *)malloc(_vm->_boot.exit_len + 1);
-	if (buf) {
-		// Skip over the boot structure (already read) and read exit text
-		ofp.seek((long)sizeof(_vm->_boot), SEEK_SET);
-		if (ofp.read(buf, _vm->_boot.exit_len) != (size_t)_vm->_boot.exit_len) {
-			Utils::notifyBox(Common::String::format("Error while reading startup file '%s'", getBootFilename()));
-			_vm->getGameStatus().doQuitFl = true;
-			return;
-		}
-
-		// Decrypt the exit text, using CRYPT substring
-		int i;
-		for (i = 0; i < _vm->_boot.exit_len; i++)
-			buf[i] ^= s_bootCypher[i % s_bootCypherLen];
-
-		buf[i] = '\0';
-		Utils::notifyBox(buf);
-	}
-
-	free(buf);
-	ofp.close();
 }
 
 /**
@@ -583,32 +534,32 @@ void FileManager::readBootFile() {
 		if (_vm->_gameVariant == kGameVariantH1Dos) {
 			//TODO initialize properly _boot structure
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
-			memset(_vm->_boot.distrib, '\0', sizeof(_vm->_boot.distrib));
-			_vm->_boot.registered = kRegFreeware;
+			memset(_vm->_boot._distrib, '\0', sizeof(_vm->_boot._distrib));
+			_vm->_boot._registered = kRegFreeware;
 			return;
 		} else if (_vm->getPlatform() == Common::kPlatformPC) {
 			warning("readBootFile - Skipping as H2 and H3 Dos may be shareware");
-			memset(_vm->_boot.distrib, '\0', sizeof(_vm->_boot.distrib));
-			_vm->_boot.registered = kRegShareware;
+			memset(_vm->_boot._distrib, '\0', sizeof(_vm->_boot._distrib));
+			_vm->_boot._registered = kRegShareware;
 			return;
 		} else {
 			Utils::notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
-			_vm->getGameStatus().doQuitFl = true;
+			_vm->getGameStatus()._doQuitFl = true;
 			return;
 		}
 	}
 
 	if (ofp.size() < (int32)sizeof(_vm->_boot)) {
 		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
-		_vm->getGameStatus().doQuitFl = true;
+		_vm->getGameStatus()._doQuitFl = true;
 		return;
 	}
 
-	_vm->_boot.checksum = ofp.readByte();
-	_vm->_boot.registered = ofp.readByte();
-	ofp.read(_vm->_boot.pbswitch, sizeof(_vm->_boot.pbswitch));
-	ofp.read(_vm->_boot.distrib, sizeof(_vm->_boot.distrib));
-	_vm->_boot.exit_len = ofp.readUint16LE();
+	_vm->_boot._checksum = ofp.readByte();
+	_vm->_boot._registered = ofp.readByte();
+	ofp.read(_vm->_boot._pbswitch, sizeof(_vm->_boot._pbswitch));
+	ofp.read(_vm->_boot._distrib, sizeof(_vm->_boot._distrib));
+	_vm->_boot._exitLen = ofp.readUint16LE();
 
 	byte *p = (byte *)&_vm->_boot;
 
@@ -621,7 +572,7 @@ void FileManager::readBootFile() {
 
 	if (checksum) {
 		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
-		_vm->getGameStatus().doQuitFl = true;
+		_vm->getGameStatus()._doQuitFl = true;
 	}
 }
 
@@ -630,28 +581,28 @@ void FileManager::readBootFile() {
  * This file contains, between others, the bitmaps of the fonts used in the application
  * UIF means User interface database (Windows Only)
  */
-uif_hdr_t *FileManager::getUIFHeader(const uif_t id) {
+UifHdr *FileManager::getUIFHeader(const Uif id) {
 	debugC(1, kDebugFile, "getUIFHeader(%d)", id);
 
 	// Initialize offset lookup if not read yet
-	if (firstUIFFl) {
-		firstUIFFl = false;
+	if (_firstUIFFl) {
+		_firstUIFFl = false;
 		// Open unbuffered to do far read
 		Common::File ip;                            // Image data file
 		if (!ip.open(getUifFilename()))
 			error("File not found: %s", getUifFilename());
 
-		if (ip.size() < (int32)sizeof(UIFHeader))
+		if (ip.size() < (int32)sizeof(_UIFHeader))
 			error("Wrong UIF file format");
 
 		for (int i = 0; i < kMaxUifs; ++i) {
-			UIFHeader[i].size = ip.readUint16LE();
-			UIFHeader[i].offset = ip.readUint32LE();
+			_UIFHeader[i]._size = ip.readUint16LE();
+			_UIFHeader[i]._offset = ip.readUint32LE();
 		}
 
 		ip.close();
 	}
-	return &UIFHeader[id];
+	return &_UIFHeader[id];
 }
 
 /**
@@ -666,18 +617,18 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 		error("File not found: %s", getUifFilename());
 
 	// Seek to data
-	uif_hdr_t *UIFHeaderPtr = getUIFHeader((uif_t)id);
-	ip.seek(UIFHeaderPtr->offset, SEEK_SET);
+	UifHdr *_UIFHeaderPtr = getUIFHeader((Uif)id);
+	ip.seek(_UIFHeaderPtr->_offset, SEEK_SET);
 
 	// We support pcx images and straight data
-	seq_t *dummySeq;                                // Dummy seq_t for image data
+	Seq *dummySeq;                                // Dummy Seq for image data
 	switch (id) {
 	case UIF_IMAGES:                                // Read uif images file
 		dummySeq = readPCX(ip, 0, buf, true, getUifFilename());
 		free(dummySeq);
 		break;
 	default:                                        // Read file data into supplied array
-		if (ip.read(buf, UIFHeaderPtr->size) != UIFHeaderPtr->size)
+		if (ip.read(buf, _UIFHeaderPtr->_size) != _UIFHeaderPtr->_size)
 			error("Wrong UIF file format");
 		break;
 	}

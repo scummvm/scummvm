@@ -432,7 +432,7 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 	// Forcefully disable aspect ratio correction for games
 	// which starts with a native 240px height resolution.
 	// This fixes games with weird resolutions, like MM Nes (256x240)
-	if(_videoMode.screenHeight == 240) {
+	if (_videoMode.screenHeight == 240) {
 		_videoMode.aspectRatioCorrection = false;
 	}
 

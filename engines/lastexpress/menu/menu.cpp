@@ -30,6 +30,7 @@
 
 #include "lastexpress/fight/fight.h"
 
+#include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/savegame.h"
@@ -41,10 +42,8 @@
 #include "lastexpress/menu/trainline.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
@@ -865,7 +864,7 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 
 		doSavegame = false;
 	} else {
-		// TODO rename saves?
+		warning("[Menu::initGame] Renaming saves not implemented");
 	}
 
 	// Create a new savegame if needed
@@ -876,7 +875,7 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 		getSaveLoad()->saveGame(kSavegameTypeEvent2, kEntityPlayer, kEventNone);
 
 	if (!getGlobalTimer()) {
-		// TODO: remove existing savegame temp file
+		warning("[Menu::initGame] Removing temporary saves not implemented");
 	}
 
 	// Init savegame & menu values

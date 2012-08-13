@@ -24,7 +24,6 @@
 #define LASTEXPRESS_ENTITY39_H
 
 #include "lastexpress/entities/entity.h"
-#include "lastexpress/entities/entity_intern.h"
 
 namespace LastExpress {
 
@@ -72,4 +71,4 @@ private:
 
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_##define##_H
+#endif // LASTEXPRESS_ENTITY39_H

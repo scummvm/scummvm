@@ -35,13 +35,12 @@ DreamWebSound::DreamWebSound(DreamWebEngine *vm) : _vm(vm) {
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
-	_channel0 = 0;
-	_channel1 = 0;
-
 	_currentSample = 0xff;
-	_channel0Playing = 0;
+	_channel0Playing = 255;
 	_channel0Repeat = 0;
+	_channel0NewSound = false;
 	_channel1Playing = 255;
+	_channel1NewSound = false;
 
 	_volume = 0;
 	_volumeTo = 0;
@@ -80,8 +79,10 @@ void DreamWebSound::volumeAdjust() {
 
 void DreamWebSound::playChannel0(uint8 index, uint8 repeat) {
 	debug(1, "playChannel0(index:%d, repeat:%d)", index, repeat);
+
 	_channel0Playing = index;
 	_channel0Repeat = repeat;
+	_channel0NewSound = true;
 }
 
 void DreamWebSound::playChannel1(uint8 index) {
@@ -90,6 +91,7 @@ void DreamWebSound::playChannel1(uint8 index) {
 		return;
 
 	_channel1Playing = index;
+	_channel1NewSound = true;
 }
 
 void DreamWebSound::cancelCh0() {
@@ -179,10 +181,6 @@ void DreamWebSound::stopSound(uint8 channel) {
 	debug(1, "stopSound(%u)", channel);
 	assert(channel == 0 || channel == 1);
 	_vm->_mixer->stopHandle(_channelHandle[channel]);
-	if (channel == 0)
-		_channel0 = 0;
-	else
-		_channel1 = 0;
 }
 
 bool DreamWebSound::loadSpeech(const Common::String &filename) {
@@ -222,34 +220,24 @@ void DreamWebSound::soundHandler() {
 	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
 	_vm->_mixer->setChannelVolume(_channelHandle[0], volume);
 
-	uint8 ch0 = _channel0Playing;
-	if (ch0 == 255)
-		ch0 = 0;
-	uint8 ch1 = _channel1Playing;
-	if (ch1 == 255)
-		ch1 = 0;
-	uint8 ch0loop = _channel0Repeat;
-
-	if (_channel0 != ch0) {
-		_channel0 = ch0;
-		if (ch0) {
-			playSound(0, ch0, ch0loop);
+	if (_channel0NewSound) {
+		_channel0NewSound = false;
+		if (_channel0Playing != 255) {
+			playSound(0, _channel0Playing, _channel0Repeat);
 		}
 	}
-	if (_channel1 != ch1) {
-		_channel1 = ch1;
-		if (ch1) {
-			playSound(1, ch1, 1);
+	if (_channel1NewSound) {
+		_channel1NewSound = false;
+		if (_channel1Playing != 255) {
+			playSound(1, _channel1Playing, 1);
 		}
 	}
 
 	if (!_vm->_mixer->isSoundHandleActive(_channelHandle[0])) {
 		_channel0Playing = 255;
-		_channel0 = 0;
 	}
 	if (!_vm->_mixer->isSoundHandleActive(_channelHandle[1])) {
 		_channel1Playing = 255;
-		_channel1 = 0;
 	}
 }
 

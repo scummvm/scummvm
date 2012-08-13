@@ -175,7 +175,7 @@ public:
 	}
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t addr) const {
-		return make_reg(addr.segment, 0);
+		return make_reg(addr.getSegment(), 0);
 	}
 	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
@@ -291,7 +291,7 @@ struct NodeTable : public SegmentObjTable<Node> {
 	NodeTable() : SegmentObjTable<Node>(SEG_TYPE_NODES) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-		freeEntry(sub_addr.offset);
+		freeEntry(sub_addr.getOffset());
 	}
 	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
@@ -304,7 +304,7 @@ struct ListTable : public SegmentObjTable<List> {
 	ListTable() : SegmentObjTable<List>(SEG_TYPE_LISTS) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-		freeEntry(sub_addr.offset);
+		freeEntry(sub_addr.getOffset());
 	}
 	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
@@ -333,7 +333,7 @@ struct HunkTable : public SegmentObjTable<Hunk> {
 	}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-		freeEntry(sub_addr.offset);
+		freeEntry(sub_addr.getOffset());
 	}
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -358,7 +358,7 @@ public:
 	}
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t addr) const {
-		return make_reg(addr.segment, 0);
+		return make_reg(addr.getSegment(), 0);
 	}
 	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const {
 		const reg_t r = make_reg(segId, 0);
@@ -502,8 +502,8 @@ struct StringTable : public SegmentObjTable<SciString> {
 	StringTable() : SegmentObjTable<SciString>(SEG_TYPE_STRING) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-		_table[sub_addr.offset].destroy();
-		freeEntry(sub_addr.offset);
+		_table[sub_addr.getOffset()].destroy();
+		freeEntry(sub_addr.getOffset());
 	}
 
 	void saveLoadWithSerializer(Common::Serializer &ser);

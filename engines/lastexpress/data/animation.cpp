@@ -32,10 +32,8 @@
 
 #include "common/events.h"
 #include "common/rational.h"
-#include "common/rect.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "common/textconsole.h"
 
 #include "engines/engine.h"
 
@@ -232,7 +230,7 @@ AnimFrame *Animation::processChunkFrame(Common::SeekableReadStream *in, const Ch
 	i.read(str, false);
 
 	// Decode the frame
-	AnimFrame *f = new AnimFrame(str, i);
+	AnimFrame *f = new AnimFrame(str, i, true);
 
 	// Delete the temporary chunk buffer
 	delete str;
@@ -250,7 +248,7 @@ void Animation::processChunkAudio(Common::SeekableReadStream *in, const Chunk &c
 		// Read Snd header
 		uint32 header1 = in->readUint32LE();
 		uint16 header2 = in->readUint16LE();
-		warning("Start ADPCM: %d, %d", header1, header2);
+		debugC(4, kLastExpressDebugSound, "Start ADPCM: %d, %d", header1, header2);
 		size -= 6;
 	}
 
@@ -272,7 +270,7 @@ void Animation::play() {
 			draw(s);
 
 			// XXX: Update the screen
-			g_system->copyRectToScreen((byte *)s->pixels, s->pitch, 0, 0, s->w, s->h);
+			g_system->copyRectToScreen(s->pixels, s->pitch, 0, 0, s->w, s->h);
 
 			// Free the temporary surface
 			s->free();

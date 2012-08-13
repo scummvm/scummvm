@@ -107,7 +107,7 @@ protected:
 
 public:
 
-	GZipReadStream(SeekableReadStream *w) : _wrapped(w), _stream() {
+	GZipReadStream(SeekableReadStream *w, uint32 knownSize = 0) : _wrapped(w), _stream() {
 		assert(w != 0);
 
 		// Verify file header is correct
@@ -122,7 +122,8 @@ public:
 			_origSize = w->readUint32LE();
 		} else {
 			// Original size not available in zlib format
-			_origSize = 0;
+			// use an otherwise known size if supplied.
+			_origSize = knownSize;
 		}
 		_pos = 0;
 		w->seek(0, SEEK_SET);
@@ -336,7 +337,7 @@ public:
 
 #endif	// USE_ZLIB
 
-SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped) {
+SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint32 knownSize) {
 #if defined(USE_ZLIB)
 	if (toBeWrapped) {
 		uint16 header = toBeWrapped->readUint16BE();
@@ -345,7 +346,7 @@ SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped) {
 				      header % 31 == 0));
 		toBeWrapped->seek(-2, SEEK_CUR);
 		if (isCompressed)
-			return new GZipReadStream(toBeWrapped);
+			return new GZipReadStream(toBeWrapped, knownSize);
 	}
 #endif
 	return toBeWrapped;

@@ -128,7 +128,7 @@ reg_t kMemoryInfo(EngineState *s, int argc, reg_t *argv) {
 	// fragmented
 	const uint16 size = 0x7fea;
 
-	switch (argv[0].offset) {
+	switch (argv[0].getOffset()) {
 	case K_MEMORYINFO_LARGEST_HEAP_BLOCK:
 		// In order to prevent "Memory fragmented" dialogs from
 		// popping up in some games, we must return FREE_HEAP - 2 here.
@@ -140,7 +140,7 @@ reg_t kMemoryInfo(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, size);
 
 	default:
-		error("Unknown MemoryInfo operation: %04x", argv[0].offset);
+		error("Unknown MemoryInfo operation: %04x", argv[0].getOffset());
 	}
 
 	return NULL_REG;
@@ -304,7 +304,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_MEMORY_PEEK : {
-		if (!argv[1].segment) {
+		if (!argv[1].getSegment()) {
 			// This occurs in KQ5CD when interacting with certain objects
 			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
@@ -334,11 +334,11 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (ref.isRaw) {
-			if (argv[2].segment) {
+			if (argv[2].getSegment()) {
 				error("Attempt to poke memory reference %04x:%04x to %04x:%04x", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
 			}
-			WRITE_SCIENDIAN_UINT16(ref.raw, argv[2].offset);		// Amiga versions are BE
+			WRITE_SCIENDIAN_UINT16(ref.raw, argv[2].getOffset());		// Amiga versions are BE
 		} else {
 			if (ref.skipByte)
 				error("Attempt to poke memory at odd offset %04X:%04X", PRINT_REG(argv[1]));
@@ -381,6 +381,19 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->strcpy(data, "586");
 	} else if (setting == "cpuspeed") {
 		s->_segMan->strcpy(data, "500");
+	} else if (setting == "language") {
+		Common::String languageId = Common::String::format("%d", g_sci->getSciLanguage());
+		s->_segMan->strcpy(data, languageId.c_str());
+	} else if (setting == "torindebug") {
+		// Used to enable the debug mode in Torin's Passage (French).
+		// If true, the debug mode is enabled.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "leakdump") {
+		// An unknown setting in LSL7. Likely used for debugging.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "startroom") {
+		// Debug setting in LSL7, specifies the room to start from.
+		s->_segMan->strcpy(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}
@@ -388,22 +401,34 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	return argv[1];
 }
 
+// Likely modelled after the Windows 3.1 function GetPrivateProfileInt:
+// http://msdn.microsoft.com/en-us/library/windows/desktop/ms724345%28v=vs.85%29.aspx
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
 	Common::String category = s->_segMan->getString(argv[0]);	// always "config"
 	category.toLowercase();
-	if (category != "config")
-		error("GetSierraProfileInt: category isn't 'config', it's '%s'", category.c_str());
-
 	Common::String setting = s->_segMan->getString(argv[1]);
 	setting.toLowercase();
-	if (setting != "videospeed")
-		error("GetSierraProfileInt: setting isn't 'videospeed', it's '%s'", setting.c_str());
+	// The third parameter is the default value returned if the configuration key is missing
 
-	// The game scripts pass 425 as the third parameter for some unknown reason,
-	// as after the call they compare the result to 425 anyway...
+	if (category == "config" && setting == "videospeed") {
+		// We return the same fake value for videospeed as with kGetConfig
+		return make_reg(0, 500);
+	}
 
-	// We return the same fake value for videospeed as with kGetConfig
-	return make_reg(0, 500);
+	warning("kGetSierraProfileInt: Returning default value %d for unknown setting %s.%s", argv[2].toSint16(), category.c_str(), setting.c_str());
+	return argv[2];
+}
+
+reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
+	uint16 windowsOption = argv[0].toUint16();
+	switch (windowsOption) {
+	case 0:
+		// Title bar on/off in Phantasmagoria, we return 0 (off)
+		return NULL_REG;
+	default:
+		warning("GetWindowsOption: Unknown option %d", windowsOption);
+		return NULL_REG;
+	}
 }
 
 #endif

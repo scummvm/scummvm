@@ -218,15 +218,12 @@ bool ThemeParser::parserCallback_cursor(ParserNode *node) {
 		return true;
 	}
 
-	int spotx, spoty, scale;
+	int spotx, spoty;
 
 	if (!parseIntegerKey(node->values["hotspot"], 2, &spotx, &spoty))
 		return parserError("Error parsing cursor Hot Spot coordinates.");
 
-	if (!parseIntegerKey(node->values["scale"], 1, &scale))
-		return parserError("Error parsing cursor scale.");
-
-	if (!_theme->createCursor(node->values["file"], spotx, spoty, scale))
+	if (!_theme->createCursor(node->values["file"], spotx, spoty))
 		return parserError("Error creating Bitmap Cursor.");
 
 	return true;

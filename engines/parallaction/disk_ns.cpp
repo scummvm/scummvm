@@ -832,7 +832,7 @@ void AmigaDisk_ns::decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 
 	assert(buf);
 	stream->read(buf, rawsize);
 	unpackBitmap(data, buf, numFrames, bytesPerPlane, height);
-	delete []buf;
+	delete[] buf;
 }
 
 #undef NUM_PLANES

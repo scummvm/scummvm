@@ -87,6 +87,9 @@ LogicHE *LogicHE::makeLogicHE(ScummEngine_v90he *vm) {
 	case GID_FOOTBALL:
 		return makeLogicHEfootball(vm);
 
+	case GID_FOOTBALL2002:
+		return makeLogicHEfootball2002(vm);
+
 	case GID_SOCCER:
 	case GID_SOCCERMLS:
 	case GID_SOCCER2004:

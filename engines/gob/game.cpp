@@ -64,7 +64,7 @@ void Environments::clear() {
 	// Deleting unique variables, script and resources
 
 	for (uint i = 0; i < kEnvironmentCount; i++) {
-		if (_environments[i].variables == _vm->_inter->_variables)
+		if (_vm->_inter && (_environments[i].variables == _vm->_inter->_variables))
 			continue;
 
 		if (!has(_environments[i].variables, i + 1))
@@ -165,6 +165,13 @@ bool Environments::has(Resources *resources, uint8 startEnv, int16 except) const
 	}
 
 	return false;
+}
+
+void Environments::deleted(Variables *variables) {
+	for (uint i = 0; i < kEnvironmentCount; i++) {
+		if (_environments[i].variables == variables)
+			_environments[i].variables = 0;
+	}
 }
 
 bool Environments::clearMedia(uint8 env) {
@@ -945,6 +952,10 @@ void Game::switchTotSub(int16 index, int16 function) {
 	_curEnvironment = curBackupPos;
 	_numEnvironments = backupedCount;
 	_environments.get(_curEnvironment);
+}
+
+void Game::deletedVars(Variables *variables) {
+	_environments.deleted(variables);
 }
 
 void Game::clearUnusedEnvironment() {

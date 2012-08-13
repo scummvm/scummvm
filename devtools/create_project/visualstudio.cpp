@@ -110,7 +110,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 
 		std::string toolConfig;
 		toolConfig  = (!warnings.empty() ? "DisableSpecificWarnings=\"" + warnings + "\"" : "");
-		toolConfig += (name == "scummvm" ? "DebugInformationFormat=\"3\" " : "");
+		toolConfig += (name == setup.projectName ? "DebugInformationFormat=\"3\" " : "");
 		toolConfig += (name == "sword25" ? "DisableLanguageExtensions=\"false\" " : "");
 		toolConfig += (name == "grim" ? "DisableLanguageExtensions=\"false\" " : "");
 

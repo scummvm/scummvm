@@ -132,7 +132,7 @@ void MoviePlayer::update() {
 				const byte *frameData = (const byte *)s->getBasePtr(0, 0);
 				_outputBitmap->setContent(frameData, s->pitch * s->h, 0, s->pitch);
 #else
-				g_system->copyRectToScreen((byte *)s->getBasePtr(0, 0), s->pitch, _outX, _outY, MIN(s->w, _backSurface->w), MIN(s->h, _backSurface->h));
+				g_system->copyRectToScreen(s->getBasePtr(0, 0), s->pitch, _outX, _outY, MIN(s->w, _backSurface->w), MIN(s->h, _backSurface->h));
 				g_system->updateScreen();
 #endif
 			}

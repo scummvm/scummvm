@@ -145,7 +145,7 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const Common::String &fil
 	return Common::wrapCompressedReadStream(sf);
 }
 
-Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &filename) {
+Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &filename, bool compress) {
 	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
 	Common::WriteStream *sf;
 
@@ -193,7 +193,7 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &fil
 	}
 
 	_screen->wantAnim(false);
-	return Common::wrapCompressedWriteStream(sf);
+	return compress ? Common::wrapCompressedWriteStream(sf) : sf;
 }
 
 bool Ps2SaveFileManager::removeSavefile(const Common::String &filename) {

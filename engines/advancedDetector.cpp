@@ -22,7 +22,6 @@
 
 #include "common/debug.h"
 #include "common/util.h"
-#include "common/hash-str.h"
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/md5.h"
@@ -308,14 +307,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		return Common::kNoError;
 }
 
-struct SizeMD5 {
-	int size;
-	Common::String md5;
-};
-
-typedef Common::HashMap<Common::String, SizeMD5, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeMD5Map;
-
-static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSizeMD5) {
+void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const {
 	// TODO: This message should be cleaned up / made more specific.
 	// For example, we should specify at least which engine triggered this.
 	//
@@ -327,7 +319,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	report += _("of the game you tried to add and its version/language/etc.:");
 	report += "\n";
 
-	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
+	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file)
 		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
 
 	report += "\n";
@@ -375,8 +367,36 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 	}
 }
 
+bool AdvancedMetaEngine::getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, ADFileProperties &fileProps) const {
+	// FIXME/TODO: We don't handle the case that a file is listed as a regular
+	// file and as one with resource fork.
+
+	if (game.flags & ADGF_MACRESFORK) {
+		Common::MacResManager macResMan;
+
+		if (!macResMan.open(parent, fname))
+			return false;
+
+		fileProps.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
+		fileProps.size = macResMan.getResForkDataSize();
+		return true;
+	}
+
+	if (!allFiles.contains(fname))
+		return false;
+
+	Common::File testFile;
+
+	if (!testFile.open(allFiles[fname]))
+		return false;
+
+	fileProps.size = (int32)testFile.size();
+	fileProps.md5 = Common::computeStreamMD5AsString(testFile, _md5Bytes);
+	return true;
+}
+
 ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
-	SizeMD5Map filesSizeMD5;
+	ADFilePropertiesMap filesProps;
 
 	const ADGameFileDescription *fileDesc;
 	const ADGameDescription *g;
@@ -391,39 +411,14 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = fileDesc->fileName;
-			SizeMD5 tmp;
+			ADFileProperties tmp;
 
-			if (filesSizeMD5.contains(fname))
+			if (filesProps.contains(fname))
 				continue;
 
-			// FIXME/TODO: We don't handle the case that a file is listed as a regular
-			// file and as one with resource fork.
-
-			if (g->flags & ADGF_MACRESFORK) {
-				Common::MacResManager macResMan;
-
-				if (macResMan.open(parent, fname)) {
-					tmp.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
-					tmp.size = macResMan.getResForkDataSize();
-					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
-					filesSizeMD5[fname] = tmp;
-				}
-			} else {
-				if (allFiles.contains(fname)) {
-					debug(3, "+ %s", fname.c_str());
-
-					Common::File testFile;
-
-					if (testFile.open(allFiles[fname])) {
-						tmp.size = (int32)testFile.size();
-						tmp.md5 = Common::computeStreamMD5AsString(testFile, _md5Bytes);
-					} else {
-						tmp.size = -1;
-					}
-
-					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
-					filesSizeMD5[fname] = tmp;
-				}
+			if (getFileProperties(parent, allFiles, *g, fname, tmp)) {
+				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
+				filesProps[fname] = tmp;
 			}
 		}
 	}
@@ -456,19 +451,19 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String tstr = fileDesc->fileName;
 
-			if (!filesSizeMD5.contains(tstr)) {
+			if (!filesProps.contains(tstr)) {
 				fileMissing = true;
 				allFilesPresent = false;
 				break;
 			}
 
-			if (fileDesc->md5 != NULL && fileDesc->md5 != filesSizeMD5[tstr].md5) {
-				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesSizeMD5[tstr].md5.c_str());
+			if (fileDesc->md5 != NULL && fileDesc->md5 != filesProps[tstr].md5) {
+				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[tstr].md5.c_str());
 				fileMissing = true;
 				break;
 			}
 
-			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesSizeMD5[tstr].size) {
+			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[tstr].size) {
 				debug(3, "Size Mismatch. Skipping");
 				fileMissing = true;
 				break;
@@ -514,8 +509,8 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 	// We didn't find a match
 	if (matched.empty()) {
-		if (!filesSizeMD5.empty() && gotAnyMatchesWithAllFiles) {
-			reportUnknown(parent, filesSizeMD5);
+		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
+			reportUnknown(parent, filesProps);
 		}
 
 		// Filename based fallback
@@ -524,7 +519,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 	return matched;
 }
 
-const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const {
+const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback, ADFilePropertiesMap *filesProps) const {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
 
@@ -554,6 +549,16 @@ const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &
 				maxNumMatchedFiles = numMatchedFiles;
 
 				debug(4, "and overridden");
+
+				if (filesProps) {
+					for (filenames = ptr->filenames; *filenames; ++filenames) {
+						ADFileProperties tmp;
+
+						if (getFileProperties(fslist.begin()->getParent(), allFiles, *agdesc, *filenames, tmp))
+							(*filesProps)[*filenames] = tmp;
+					}
+				}
+
 			}
 		}
 	}

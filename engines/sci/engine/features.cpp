@@ -74,11 +74,11 @@ bool GameFeatures::autoDetectSoundType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Sound", SELECTOR(play));
 
-	if (!addr.segment)
+	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.offset;
-	Script *script = _segMan->getScript(addr.segment);
+	uint16 offset = addr.getOffset();
+	Script *script = _segMan->getScript(addr.getSegment());
 	uint16 intParam = 0xFFFF;
 	bool foundTarget = false;
 
@@ -221,11 +221,11 @@ bool GameFeatures::autoDetectLofsType(Common::String gameSuperClassName, int met
 	// Look up the script address
 	reg_t addr = getDetectionAddr(gameSuperClassName.c_str(), -1, methodNum);
 
-	if (!addr.segment)
+	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.offset;
-	Script *script = _segMan->getScript(addr.segment);
+	uint16 offset = addr.getOffset();
+	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
 		int16 opparams[4];
@@ -320,11 +320,11 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Rm", SELECTOR(overlay), methodNum);
 
-	if (!addr.segment)
+	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.offset;
-	Script *script = _segMan->getScript(addr.segment);
+	uint16 offset = addr.getOffset();
+	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
 		int16 opparams[4];
@@ -474,11 +474,11 @@ bool GameFeatures::autoDetectSci21KernelType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Sound", SELECTOR(play));
 
-	if (!addr.segment)
+	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.offset;
-	Script *script = _segMan->getScript(addr.segment);
+	uint16 offset = addr.getOffset();
+	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
 		int16 opparams[4];
@@ -550,11 +550,11 @@ bool GameFeatures::autoDetectSci21StringFunctionType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Str", SELECTOR(size));
 
-	if (!addr.segment)
+	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.offset;
-	Script *script = _segMan->getScript(addr.segment);
+	uint16 offset = addr.getOffset();
+	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
 		int16 opparams[4];
@@ -587,11 +587,11 @@ bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Motion", SELECTOR(doit));
 
-	if (!addr.segment)
+	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.offset;
-	Script *script = _segMan->getScript(addr.segment);
+	uint16 offset = addr.getOffset();
+	Script *script = _segMan->getScript(addr.getSegment());
 	bool foundTarget = false;
 
 	while (true) {

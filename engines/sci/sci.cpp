@@ -453,8 +453,8 @@ static byte patchGameRestoreSaveSci21[] = {
 };
 
 static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, byte id) {
-	Script *script = segMan->getScript(methodAddress.segment);
-	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.offset));
+	Script *script = segMan->getScript(methodAddress.getSegment());
+	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
 	if (getSciVersion() <= SCI_VERSION_1_1)
 		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
 	else	// SCI2+
@@ -463,8 +463,8 @@ static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, by
 }
 
 static void patchGameSaveRestoreCodeSci21(SegManager *segMan, reg_t methodAddress, byte id, bool doRestore) {
-	Script *script = segMan->getScript(methodAddress.segment);
-	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.offset));
+	Script *script = segMan->getScript(methodAddress.getSegment());
+	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
 	memcpy(patchPtr, patchGameRestoreSaveSci21, sizeof(patchGameRestoreSaveSci21));
 	if (doRestore)
 		patchPtr[2] = 0x78;	// push1
@@ -740,7 +740,7 @@ GUI::Debugger *SciEngine::getDebugger() {
 	if (_gamestate) {
 		ExecStack *xs = &(_gamestate->_executionStack.back());
 		if (xs) {
-			xs->addr.pc.offset = _debugState.old_pc_offset;
+			xs->addr.pc.setOffset(_debugState.old_pc_offset);
 			xs->sp = _debugState.old_sp;
 		}
 	}

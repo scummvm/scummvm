@@ -607,7 +607,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 			srcLineStart += SCREEN_W;
 			src = srcLineStart;
 		}
-		delete [] colorMap;
+		delete[] colorMap;
 	}
 
 	return shp;
