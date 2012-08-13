@@ -399,8 +399,11 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 	Common::SeekableReadStream *stream;
 
 	stream = openNewStreamFile(fname.c_str(), true);
-	if(!stream)
-		error("Could not find material %s", filename.c_str());
+	if(!stream) {
+		const Common::String replacement("fx/candle.sprb");
+		warning("Could not find material %s, using %s instead", filename.c_str(), replacement.c_str());
+		return loadMaterial(replacement, NULL);
+	}
 
 	Material *result = new Material(fname, stream, c);
 	delete stream;
