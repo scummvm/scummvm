@@ -248,6 +248,13 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	Common::Array<Common::String> lines;
 	_font->wordWrapText(text, width, lines);
 
+	while (maxHeight > 0 && lines.size() * _lineHeight > maxHeight) {
+		lines.pop_back();
+	}
+	if (lines.size() == 0) {
+		return NULL;
+	}
+
 	Graphics::TextAlign alignment = Graphics::kTextAlignInvalid;
 	if (align == TAL_LEFT) {
 		alignment = Graphics::kTextAlignLeft;
@@ -553,7 +560,7 @@ bool BaseFontTT::initFont() {
 
 	if (file) {
 #ifdef USE_FREETYPE2
-		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight * 4 / 3); // Compensate for the difference in dpi (96 vs 72).
+		_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
 #endif
 	}
