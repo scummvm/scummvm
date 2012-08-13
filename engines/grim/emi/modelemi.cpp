@@ -88,7 +88,7 @@ EMIMeshFace::~EMIMeshFace() {
 }
 
 void EMIModel::setTex(int index) {
-	if (_mats[index])
+	if (index < _numTextures && _mats[index])
 		_mats[index]->select();
 }
 
