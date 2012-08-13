@@ -344,10 +344,18 @@ void VideoTheoraPlayer::writeAlpha() { // TODO: Endian-fix.
 		assert(_alphaImage->getSurface()->format.bytesPerPixel == 4);
 		assert(_surface.format.bytesPerPixel == 4);
 		const byte *alphaData = (byte *)_alphaImage->getSurface()->getBasePtr(0, 0);
+#ifdef SCUMM_LITTLE_ENDIAN
 		int alphaPlace = (_alphaImage->getSurface()->format.aShift / 8);
+#else
+		int alphaPlace = 3 - (_alphaImage->getSurface()->format.aShift / 8);
+#endif
 		alphaData += alphaPlace;
 		byte *imgData = (byte *)_surface.getBasePtr(0, 0);
+#ifdef SCUMM_LITTLE_ENDIAN
 		imgData += (_surface.format.aShift / 8);
+#else
+		imgData += 3 - (_surface.format.aShift / 8);
+#endif
 		for (int i = 0; i < _surface.w * _surface.h; i++) {
 			*imgData = *alphaData;
 			alphaData += 4;
@@ -381,8 +389,6 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
-	warning("VideoTheoraPlayer::SetAlphaImage(%s) - Not implemented", filename.c_str());
-
 	delete _alphaImage;
 	_alphaImage = new BaseImage();
 	if (!_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
