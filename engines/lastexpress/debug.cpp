@@ -139,6 +139,9 @@ void Debugger::copyCommand(int argc, const char **argv) {
 
 	for (int i = 0; i < _numParams; i++) {
 		_commandParams[i] = (char *)malloc(strlen(argv[i]) + 1);
+		if (_commandParams[i] == NULL)
+			error("[Debugger::copyCommand] Cannot allocate memory for command parameters");
+
 		memset(_commandParams[i], 0, strlen(argv[i]) + 1);
 		strcpy(_commandParams[i], argv[i]);
 	}
