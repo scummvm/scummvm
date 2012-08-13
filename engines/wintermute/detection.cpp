@@ -64,46 +64,6 @@ public:
 		return "Copyright (c) 2011 Jan Nedoma";
 	}
 
-	/*  virtual GameList getSupportedGames() const {
-	        GameList games;
-	        const PlainGameDescriptor *g = wintermuteGames;
-	        while (g->gameid) {
-	            games.push_back(*g);
-	            g++;
-	        }
-
-	        return games;
-	    }
-
-	    virtual GameDescriptor findGame(const char *gameid) const {
-	        const PlainGameDescriptor *g = wintermuteGames;
-	        while (g->gameid) {
-	            if (0 == scumm_stricmp(gameid, g->gameid))
-	                break;
-	            g++;
-	        }
-	        return GameDescriptor(g->gameid, g->description);
-	    }*/
-
-	/*  virtual GameList detectGames(const Common::FSList &fslist) const {
-	        GameList detectedGames;
-
-	        // Iterate over all files in the given directory
-	        for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-	            if (!file->isDirectory()) {
-	                const char *gameName = file->getName().c_str();
-
-	                if (0 == scumm_stricmp("data.dcp", gameName)) {
-	                    // You could check the contents of the file now if you need to.
-	                    detectedGames.push_back(Wintermute_setting[0]);
-	                    break;
-	                }
-	            }
-	        }
-	        return detectedGames;
-	    }*/
-
-
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 		// Set some defaults
 		s_fallbackDesc.extra = "";
