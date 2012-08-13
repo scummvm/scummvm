@@ -29,9 +29,7 @@
 
 #include "common/rational.h"
 #include "video/video_decoder.h"
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
 #include <theora/theoradec.h>
@@ -39,6 +37,11 @@
 
 namespace Common {
 class SeekableReadStream;
+}
+
+namespace Audio {
+class AudioStream;
+class QueuingAudioStream;
 }
 
 namespace Video {
@@ -49,7 +52,7 @@ namespace Video {
  * Video decoder used in engines:
  *  - sword25
  */
-class TheoraDecoder : public VideoDecoder {
+class TheoraDecoder : public AdvancedVideoDecoder {
 public:
 	TheoraDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual ~TheoraDecoder();
@@ -60,81 +63,91 @@ public:
 	 */
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
-	void reset();
-
-	/**
-	 * Decode the next frame and return the frame's surface
-	 * @note the return surface should *not* be freed
-	 * @note this may return 0, in which case the last frame should be kept on screen
-	 */
-	const Graphics::Surface *decodeNextFrame();
-
-	bool isVideoLoaded() const { return _fileStream != 0; }
-	uint16 getWidth() const { return _displaySurface.w; }
-	uint16 getHeight() const { return _displaySurface.h; }
-
-	uint32 getFrameCount() const {
-		// It is not possible to get frame count easily
-		// I.e. seeking is required
-		assert(0);
-		return 0;
-	}
-
-	Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
-	uint32 getTime() const;
-	uint32 getTimeToNextFrame() const;
-
-	bool endOfVideo() const;
 
 protected:
-	// VideoDecoder API
-	void updateVolume();
-	void updateBalance();
-	void pauseVideoIntern(bool pause);
+	void readNextPacket();
 
 private:
+	class TheoraVideoTrack : public VideoTrack {
+	public:
+		TheoraVideoTrack(const Graphics::PixelFormat &format, th_info &theoraInfo, th_setup_info *theoraSetup);
+		~TheoraVideoTrack();
+
+		bool endOfTrack() const { return _endOfVideo; }
+		uint16 getWidth() const { return _displaySurface.w; }
+		uint16 getHeight() const { return _displaySurface.h; }
+		Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
+		int getCurFrame() const { return _curFrame; }
+		uint32 getNextFrameStartTime() const { return (uint32)(_nextFrameStartTime * 1000); }
+		const Graphics::Surface *decodeNextFrame() { return &_displaySurface; }
+
+		bool decodePacket(ogg_packet &oggPacket);
+		void setEndOfVideo() { _endOfVideo = true; }
+
+	private:
+		int _curFrame;
+		bool _endOfVideo;
+		Common::Rational _frameRate;
+		double _nextFrameStartTime;
+
+		Graphics::Surface _surface;
+		Graphics::Surface _displaySurface;
+
+		th_dec_ctx *_theoraDecode;
+
+		void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
+	};
+
+	class VorbisAudioTrack : public AudioTrack {
+	public:
+		VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo);
+		~VorbisAudioTrack();
+
+		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
+
+		bool decodeSamples();
+		bool hasAudio() const;
+		bool needsAudio() const;
+		void synthesizePacket(ogg_packet &oggPacket);
+		void setEndOfAudio() { _endOfAudio = true; }
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+	private:
+		// single audio fragment audio buffering
+		int _audioBufferFill;
+		ogg_int16_t *_audioBuffer;
+
+		Audio::Mixer::SoundType _soundType;
+		Audio::QueuingAudioStream *_audStream;
+
+		vorbis_block _vorbisBlock;
+		vorbis_dsp_state _vorbisDSP;
+
+		bool _endOfAudio;
+	};
+
 	void queuePage(ogg_page *page);
-	bool queueAudio();
 	int bufferData();
-	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
+	bool queueAudio();
+	void ensureAudioBufferSize();
 
 	Common::SeekableReadStream *_fileStream;
-	Graphics::Surface _surface;
-	Graphics::Surface _displaySurface;
-	Common::Rational _frameRate;
-	double _nextFrameStartTime;
-	bool _endOfVideo;
-	bool _endOfAudio;
 
 	Audio::Mixer::SoundType _soundType;
-	Audio::SoundHandle *_audHandle;
-	Audio::QueuingAudioStream *_audStream;
 
 	ogg_sync_state _oggSync;
 	ogg_page _oggPage;
 	ogg_packet _oggPacket;
-	ogg_stream_state _vorbisOut;
-	ogg_stream_state _theoraOut;
-	th_info _theoraInfo;
-	th_comment _theoraComment;
-	th_dec_ctx *_theoraDecode;
-	th_setup_info *_theoraSetup;
+
+	ogg_stream_state _theoraOut, _vorbisOut;
+	bool _hasVideo, _hasAudio;
+
 	vorbis_info _vorbisInfo;
-	vorbis_dsp_state _vorbisDSP;
-	vorbis_block _vorbisBlock;
-	vorbis_comment _vorbisComment;
 
-	int _theoraPacket;
-	int _vorbisPacket;
-
-	int _ppLevelMax;
-	int _ppLevel;
-	int _ppInc;
-
-	// single audio fragment audio buffering
-	int _audiobufFill;
-	bool _audiobufReady;
-	ogg_int16_t *_audiobuf;
+	TheoraVideoTrack *_videoTrack;
+	VorbisAudioTrack *_audioTrack;
 };
 
 } // End of namespace Video
