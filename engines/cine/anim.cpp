@@ -709,13 +709,17 @@ int loadSet(const char *resourceName, int16 idx, int16 frameIndex =-1 ) {
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
 
+	int16 startFrame = 0;
+	int16 endFrame = numSpriteInAnim;
+
 	if(frameIndex>=0)
 	{
-		numSpriteInAnim = 1;
+		startFrame = frameIndex;
+		endFrame = frameIndex+1;
 		ptr += 0x10 * frameIndex;
 	}
 
-	for (int16 i = 0; i < numSpriteInAnim; i++, entry++) {
+	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		Common::MemoryReadStream readS(ptr, 0x10);
 
 		header2.field_0 = readS.readUint32BE();
