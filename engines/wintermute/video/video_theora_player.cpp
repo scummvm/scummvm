@@ -93,11 +93,6 @@ void VideoTheoraPlayer::SetDefaults() {
 //////////////////////////////////////////////////////////////////////////
 VideoTheoraPlayer::~VideoTheoraPlayer(void) {
 	cleanup();
-
-	/*  SAFE_DELETE_ARRAY(_filename);
-	    SAFE_DELETE_ARRAY(_alphaFilename);
-	    SAFE_DELETE(_texture);
-	    SAFE_DELETE(_alphaImage);*/
 //	SAFE_DELETE(_subtitler);
 }
 
@@ -130,7 +125,6 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 		return STATUS_FAILED;
 	}
 
-	//if (Filename != _filename) BaseUtils::setString(&_filename, filename);
 #if defined (USE_THEORADEC)
 	_theoraDecoder = new TheoraDecoder();
 #else
