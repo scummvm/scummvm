@@ -121,7 +121,7 @@ static void processEvent(Common::Event &event) {
 			}
 			break;
 		case Common::KEYCODE_F10:
-			if (!disableSystemMenu && !inMenu) {
+			if (!inMenu) {
 				g_cine->makeSystemMenu();
 			}
 			break;
@@ -384,8 +384,8 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			playerAction = false;
 
 			_messageLen <<= 3;
-			if (_messageLen < 0x800)
-				_messageLen = 0x800;
+			if (_messageLen < 800)
+				_messageLen = 800;
 
 			do {
 				manageEvents();

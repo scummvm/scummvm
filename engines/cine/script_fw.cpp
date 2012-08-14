@@ -1861,7 +1861,7 @@ int FWScript::o1_disableSystemMenu() {
 	byte param = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: disableSystemMenu(%d)", _line, param);
-	disableSystemMenu = (param != 0);
+	disableSystemMenu = param;
 	return 0;
 }
 
