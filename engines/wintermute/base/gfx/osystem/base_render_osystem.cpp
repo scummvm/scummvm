@@ -171,7 +171,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	_blankSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
-	_blankSurface->fillRect(Common::Rect(0, 0, g_system->getHeight(), g_system->getWidth()), _blankSurface->format.ARGBToColor(255, 0, 0, 0));
+	_blankSurface->fillRect(Common::Rect(0, 0, _blankSurface->h, _blankSurface->w), _blankSurface->format.ARGBToColor(255, 0, 0, 0));
 	_active = true;
 
 	_clearColor = _renderSurface->format.ARGBToColor(255, 0, 0, 0);
@@ -206,7 +206,6 @@ bool BaseRenderOSystem::flip() {
 		while (it != _renderQueue.end()) {
 			if ((*it)->_wantsDraw == false) {
 				RenderTicket *ticket = *it;
-				addDirtyRect((*it)->_dstRect);
 				it = _renderQueue.erase(it);
 				delete ticket;
 			} else {
@@ -237,11 +236,12 @@ bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 		return STATUS_OK;
 	}
 	if (!rect) {
-		if (r == 0 && g == 0 && b == 0) {
+// TODO: This should speed things up, but for some reason it misses the size by quite a bit.
+/*		if (r == 0 && g == 0 && b == 0) {
 			// Simply memcpy from the buffered black-surface, way faster than Surface::fillRect.
 			memcpy(_renderSurface->pixels, _blankSurface->pixels, _renderSurface->pitch * _renderSurface->h);
 			return STATUS_OK;
-		}
+		}*/
 		rect = &_renderRect;
 	}
 	// TODO: This doesn't work with dirty rects
