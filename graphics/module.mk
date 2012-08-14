@@ -62,8 +62,7 @@ endif
 
 ifdef USE_HQ_SCALERS
 MODULE_OBJS += \
-	scaler/edge.o \
-	scaler/hq.o \
+	scaler/hq.o
 
 ifdef USE_NASM
 MODULE_OBJS += \
@@ -71,6 +70,11 @@ MODULE_OBJS += \
 	scaler/hq3x_i386.o
 endif
 
+endif
+
+ifdef USE_EDGE_SCALERS
+MODULE_OBJS += \
+	scaler/edge.o
 endif
 
 endif

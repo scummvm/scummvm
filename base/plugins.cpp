@@ -148,6 +148,8 @@ public:
 #ifdef USE_SCALERS
 #ifdef USE_HQ_SCALERS
 		LINK_PLUGIN(HQ)
+#endif
+#ifdef USE_EDGE_SCALERS
 		LINK_PLUGIN(EDGE)
 #endif
 		LINK_PLUGIN(ADVMAME)
