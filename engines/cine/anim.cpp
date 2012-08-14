@@ -682,9 +682,10 @@ void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
  * Load image set
  * @param resourceName Image set filename
  * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @param frameIndex frame of animation to load (-1 for all frames)
  * @return The number of the animDataTable entry after the loaded image set (-1 if error)
  */
-int loadSet(const char *resourceName, int16 idx) {
+int loadSet(const char *resourceName, int16 idx, int16 frameIndex =-1 ) {
 	AnimHeader2Struct header2;
 	uint16 numSpriteInAnim;
 	int16 foundFileIdx = findFileInBundle(resourceName);
@@ -708,7 +709,17 @@ int loadSet(const char *resourceName, int16 idx) {
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
 
-	for (int16 i = 0; i < numSpriteInAnim; i++, entry++) {
+	int16 startFrame = 0;
+	int16 endFrame = numSpriteInAnim;
+
+	if(frameIndex>=0)
+	{
+		startFrame = frameIndex;
+		endFrame = frameIndex+1;
+		ptr += 0x10 * frameIndex;
+	}
+
+	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		Common::MemoryReadStream readS(ptr, 0x10);
 
 		header2.field_0 = readS.readUint32BE();
@@ -767,7 +778,7 @@ int loadSeq(const char *resourceName, int16 idx) {
  * @return The number of the animDataTable entry after the loaded resource (-1 if error)
  * @todo Implement loading of all resource types
  */
-int loadResource(const char *resourceName, int16 idx) {
+int loadResource(const char *resourceName, int16 idx, int16 frameIndex) {
 	int result = -1; // Return an error by default
 	if (strstr(resourceName, ".SPL")) {
 		result = loadSpl(resourceName, idx);
@@ -778,7 +789,7 @@ int loadResource(const char *resourceName, int16 idx) {
 	} else if (strstr(resourceName, ".ANM")) {
 		result = loadAni(resourceName, idx);
 	} else if (strstr(resourceName, ".SET")) {
-		result = loadSet(resourceName, idx);
+		result = loadSet(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".SEQ")) {
 		result = loadSeq(resourceName, idx);
 	} else if (strstr(resourceName, ".H32")) {
