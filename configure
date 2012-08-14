@@ -117,6 +117,7 @@ _text_console=no
 _mt32emu=yes
 _build_scalers=yes
 _build_hq_scalers=yes
+_build_edge_scalers=yes
 _enable_prof=no
 _global_constructors=no
 _bink=yes
@@ -790,7 +791,8 @@ Optional Features:
   --disable-16bit          don't enable 16bit color support
   --disable-savegame-timestamp don't use timestamps for blank savegame descriptions
   --disable-scalers        exclude scalers
-  --disable-hq-scalers     exclude HQ2x and HQ3x scalers
+  --disable-hq-scalers     exclude HQ2x and HQ3x scalers (disables Edge scalers as well)
+  --disable-edge-scalers   exclude Edge2x and Edge3x scalers
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
   --enable-updates         build support for updates
@@ -877,6 +879,7 @@ for ac_option in $@; do
 	--disable-savegame-timestamp) _savegame_timestamp=no ;;
 	--disable-scalers)        _build_scalers=no ;;
 	--disable-hq-scalers)     _build_hq_scalers=no ;;
+	--disable-edge-scalers)   _build_edge_scalers=no ;;
 	--enable-alsa)            _alsa=yes       ;;
 	--disable-alsa)           _alsa=no        ;;
 	--enable-seq-midi)        _seq_midi=yes   ;;
@@ -2449,6 +2452,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_backend="openpandora"
 			_build_hq_scalers=yes
+			_build_edge_scalers=no
 			_vkeybd=no
 			_mt32emu=no
 			_seq_midi=no
@@ -3045,14 +3049,20 @@ define_in_config_if_yes "$_16bit" 'USE_RGB_COLOR'
 define_in_config_if_yes "$_savegame_timestamp" 'USE_SAVEGAME_TIMESTAMP'
 
 #
-# Check whether to enable the (hq) scalers
+# Check whether to enable the (hq (and edge)) scalers
 #
 if test "$_build_scalers" = no ; then
 	_build_hq_scalers=no
+	_build_edge_scalers=no
+elif test "$_build_hq_scalers" = no ; then
+	_build_edge_scalers=no
 fi
+
 define_in_config_if_yes "$_build_scalers" 'USE_SCALERS'
 
 define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
+
+define_in_config_if_yes "$_build_edge_scalers" 'USE_EDGE_SCALERS'
 
 #
 # Check for math lib
@@ -3776,7 +3786,11 @@ fi
 
 if test "$_build_scalers" = yes ; then
 	if test "$_build_hq_scalers" = yes ; then
-		echo_n ", HQ scalers"
+		if test "$_build_edge_scalers" = yes ; then
+			echo_n ", HQ and Edge scalers"
+		else
+			echo_n ", HQ scalers"
+		fi
 	else
 		echo_n ", scalers"
 	fi
