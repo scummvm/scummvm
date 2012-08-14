@@ -1823,7 +1823,7 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 	}
 
 	delete[] pMask;
-};
+}
 
 void drawSpriteRaw2(const byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y) {
 	int16 i, j;
