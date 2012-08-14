@@ -312,7 +312,7 @@ const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsMode
 }
 
 int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
-	for (uint i = 0; i < s_supportedGraphicsModes->size(); ++i) {
+	for (uint i = 0; i < s_supportedGraphicsModes->size() - 1; ++i) {
 		// if normal2x exists, it is the default
 		if (strcmp((*s_supportedGraphicsModes)[i].name, "normal2x") == 0)
 			return (*s_supportedGraphicsModes)[i].id;
