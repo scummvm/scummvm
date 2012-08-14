@@ -539,7 +539,6 @@ bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 //////////////////////////////////////////////////////////////////////////
 BaseImage *BaseRenderOSystem::takeScreenshot() {
 // TODO: Clip by viewport.
-	warning("BaseRenderOSystem::TakeScreenshot() - not ported yet");
 	BaseImage *screenshot = new BaseImage();
 	screenshot->copyFrom(_renderSurface);
 	return screenshot;

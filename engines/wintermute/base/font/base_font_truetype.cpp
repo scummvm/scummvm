@@ -566,7 +566,7 @@ bool BaseFontTT::initFont() {
 	}
 	if (!_font) {
 		_font = _fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		warning("BaseFontTT::InitFont - Couldn't load %s", _fontFile);
+		warning("BaseFontTT::InitFont - Couldn't load font: %s", _fontFile);
 	}
 	_lineHeight = _font->getFontHeight();
 	return STATUS_OK;
