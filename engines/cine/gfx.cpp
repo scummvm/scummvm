@@ -249,14 +249,17 @@ void FWRenderer::drawCommand() {
 	unsigned int i;
 	int x = 10, y = _cmdY;
 
-	drawPlainBox(x, y, 301, 11, 0);
-	drawBorder(x - 1, y - 1, 302, 12, 2);
+	if(disableSystemMenu == 0)
+	{
+		drawPlainBox(x, y, 301, 11, 0);
+		drawBorder(x - 1, y - 1, 302, 12, 2);
 
-	x += 2;
-	y += 2;
+		x += 2;
+		y += 2;
 
-	for (i = 0; i < _cmd.size(); i++) {
-		x = drawChar(_cmd[i], x, y);
+		for (i = 0; i < _cmd.size(); i++) {
+			x = drawChar(_cmd[i], x, y);
+		}
 	}
 }
 
