@@ -535,7 +535,7 @@ const Common::String &SaveLoadChooserGrid::getResultString() const {
 }
 
 void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	if (cmd <= _entriesPerPage) {
+	if (cmd <= _entriesPerPage && cmd + _curPage * _entriesPerPage <= _saveList.size()) {
 		const SaveStateDescriptor &desc = _saveList[cmd - 1 + _curPage * _entriesPerPage];
 
 		if (_saveMode) {
