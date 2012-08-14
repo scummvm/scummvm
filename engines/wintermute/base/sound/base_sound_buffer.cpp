@@ -137,10 +137,12 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 		delete _handle;
 		_handle = NULL;
 	}
+	// Store the loop-value for save-games.
+	setLooping(looping);
 	if (_stream) {
 		_stream->seek(startSample);
 		_handle = new Audio::SoundHandle;
-		if (looping) {
+		if (_looping) {
 			Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
 			g_system->getMixer()->playStream(_type, _handle, loopStream, -1, _volume, 0, DisposeAfterUse::YES);
 		} else {
