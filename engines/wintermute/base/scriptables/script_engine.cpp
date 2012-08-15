@@ -312,7 +312,6 @@ bool ScEngine::tick() {
 			break;
 		}
 		default:
-			//warning("ScEngine::Tick - Unhandled enum");
 			break;
 		} // switch
 	} // for each script

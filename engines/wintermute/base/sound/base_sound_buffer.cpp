@@ -156,6 +156,7 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundBuffer::setLooping(bool looping) {
 	if (isPlaying()) {
+		// This warning is here, to see if this is ever the case.
 		warning("BSoundBuffer::SetLooping(%d) - won't change a playing sound", looping); // TODO
 	}
 	_looping = looping;

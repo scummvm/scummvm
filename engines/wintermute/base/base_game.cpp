@@ -477,15 +477,6 @@ bool BaseGame::initialize3() { // renderer is initialized
 void BaseGame::DEBUG_DebugEnable(const char *filename) {
 	_debugDebugMode = true;
 
-	/*  time_t timeNow;
-	    time(&timeNow);
-	    struct tm *tm = localtime(&timeNow);
-
-	#ifdef _DEBUG
-	    LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%04d (Debug Build) *******************", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
-	#else
-	    LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%04d (Release Build) *****************", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
-	#endif*/
 	int secs = g_system->getMillis() / 1000;
 	int hours = secs / 3600;
 	secs = secs % 3600;
@@ -499,7 +490,6 @@ void BaseGame::DEBUG_DebugEnable(const char *filename) {
 #endif
 
 	LOG(0, "%s ver %d.%d.%d%s, Compiled on " __DATE__ ", " __TIME__, DCGF_NAME, DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, DCGF_VER_SUFFIX);
-	//LOG(0, "Extensions: %s ver %d.%02d", EXT_NAME, EXT_VER_MAJOR, EXT_VER_MINOR);
 
 	AnsiString platform = BasePlatform::getPlatformName();
 	LOG(0, "Platform: %s", platform.c_str());

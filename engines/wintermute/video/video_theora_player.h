@@ -68,7 +68,6 @@ public:
 	bool play(TVideoPlayback type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeGame = false, bool freezeMusic = true, bool looping = false, uint32 startTime = 0, float forceZoom = -1.0f, int volume = -1);
 	bool stop();
 	bool display(uint32 alpha = 0xFFFFFFFF);
-	//bool renderFrame(BaseSurface *texture, yuv_buffer *yuv);
 
 	bool pause();
 	bool resume();
