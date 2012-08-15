@@ -27,7 +27,7 @@ ResidualVM
        Thomas Allen          - Various engine code fixes and improvements
        Torbjorn Andersson    - Various code fixes
        Ori Avtalion          - Lipsync, LAF support, various code fixes
-       Robert Biro           - Fixes to antiliasing
+       Robert Biro           - Antialiasing support
        Bastien Bouclet       - Various fixes to engine
        Marcus Comstedt       - Initial Dreamcast port
        Andrea Corna          - Patcher module, various engine improvements
@@ -53,7 +53,7 @@ ResidualVM
        Julien Templier       - create_project tool
        Pino Toscano          - Debian GNU/Linux package files
        Lionel Ulmer          - OpenGL optimisations
-       Joni Vahamaki         - A lot engine improvements and fixes
+       Joni Vahamaki         - A lot of engine improvements and fixes
        JenniBee              - Compilation fixes
 
     Myst 3:
@@ -61,7 +61,7 @@ ResidualVM
 
 ScummVM code
 ************
-   ResidualVM use a lot of ScummVM code. For a list of authors look into
+   ResidualVM uses a lot of ScummVM code. For a list of authors look into
    COPYRIGHT file. 
 
 Website code
