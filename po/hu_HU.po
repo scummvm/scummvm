@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-08-12 14:57+0200\n"
-"PO-Revision-Date: 2012-07-09 05:58+0100\n"
+"PO-Revision-Date: 2012-08-14 07:29+0100\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "Language: Magyar\n"
@@ -921,11 +921,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:158
 msgid "List view"
-msgstr ""
+msgstr "Lista nézet"
 
 #: gui/saveload-dialog.cpp:159
 msgid "Grid view"
-msgstr ""
+msgstr "Rács nézet"
 
 #: gui/saveload-dialog.cpp:202 gui/saveload-dialog.cpp:350
 msgid "No date saved"
@@ -965,31 +965,28 @@ msgstr "Névtelen játékállás"
 
 #: gui/saveload-dialog.cpp:517
 msgid "Next"
-msgstr ""
+msgstr "Következõ"
 
 #: gui/saveload-dialog.cpp:520
 msgid "Prev"
-msgstr ""
+msgstr "Elõzõ"
 
 #: gui/saveload-dialog.cpp:684
-#, fuzzy
 msgid "New Save"
-msgstr "Mentés"
+msgstr "Új Mentés"
 
 #: gui/saveload-dialog.cpp:684
-#, fuzzy
 msgid "Create a new save game"
-msgstr "Játék mentés nem sikerült"
+msgstr "Új játékmentés készítése"
 
 #: gui/saveload-dialog.cpp:789
-#, fuzzy
 msgid "Name: "
 msgstr "Név:"
 
 #: gui/saveload-dialog.cpp:861
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "Adj meg egy leírást a %d slothoz:"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -2230,12 +2227,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59
 msgid "Alternative intro"
-msgstr ""
+msgstr "Alternatív intro"
 
 #: engines/queen/queen.cpp:60
-#, fuzzy
 msgid "Use an alternative game intro (CD version only)"
-msgstr "A floppy verzió intro használata (csak CD verziónál)"
+msgstr "Alternatív játékintro használata (csak CD verziónál)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2336,13 +2332,15 @@ msgstr "Tárgycimke látható ha az egér felette van"
 #: engines/teenagent/resources.cpp:68
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr ""
+msgstr "Hiányzik a 'teenagent.dat' fájl. Szerezd be a ScummVM website-ról"
 
 #: engines/teenagent/resources.cpp:89
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"A teenagent.dat fájl tömörített és a zlib nem része ennek a futtatható "
+"állománynak. Kérlek tömörítsd ki"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
