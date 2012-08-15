@@ -127,8 +127,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetWeekday") == 0) {
 		stack->correctParams(0);
-		warning("GetWeekday returns a wrong value on purpose");
-		stack->pushInt(_tm.tm_mday % 7);
+		stack->pushInt(_tm.tm_wday);
 		return STATUS_OK;
 	}
 
