@@ -114,13 +114,6 @@ public:
 	virtual bool hasDirtyPalette() const { return false; }
 
 	/**
-	 * Set the system palette to the palette returned by getPalette.
-	 * @see getPalette
-	 * @note This function is now deprecated. There is no replacement.
-	 */
-	void setSystemPalette();
-
-	/**
 	 * Returns the current frame number of the video.
 	 * @return the last frame decoded by the video
 	 */

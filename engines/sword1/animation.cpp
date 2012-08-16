@@ -312,7 +312,7 @@ bool MoviePlayer::playVideo() {
 			}
 
 			if (_decoder->hasDirtyPalette()) {
-				_decoder->setSystemPalette();
+				_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);
 
 				if (!_movieTexts.empty()) {
 					// Look for the best color indexes to use to display the subtitles

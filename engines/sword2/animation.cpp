@@ -38,6 +38,8 @@
 #include "sword2/screen.h"
 #include "sword2/animation.h"
 
+#include "graphics/palette.h"
+
 #include "gui/message.h"
 
 #include "video/dxa_decoder.h"
@@ -330,7 +332,7 @@ bool MoviePlayer::playVideo() {
 			}
 
 			if (_decoder->hasDirtyPalette()) {
-				_decoder->setSystemPalette();
+				_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);
 
 				uint32 maxWeight = 0;
 				uint32 minWeight = 0xFFFFFFFF;

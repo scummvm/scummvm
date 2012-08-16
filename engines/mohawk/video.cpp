@@ -29,6 +29,7 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "video/qt_decoder.h"
@@ -238,7 +239,7 @@ bool VideoManager::updateMovies() {
 					frame = convertedFrame;
 				} else if (pixelFormat.bytesPerPixel == 1 && _videoStreams[i]->hasDirtyPalette()) {
 					// Set the palette when running in 8bpp mode only
-					_videoStreams[i]->setSystemPalette();
+					_vm->_system->getPaletteManager()->setPalette(_videoStreams[i]->getPalette(), 0, 256);
 				}
 
 				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)

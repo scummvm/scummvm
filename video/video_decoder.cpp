@@ -700,12 +700,4 @@ void AdvancedVideoDecoder::startAudioLimit(const Audio::Timestamp &limit) {
 			((AudioTrack *)*it)->start(limit);
 }
 
-//////////////////////////////////////////////
-///////////////// DEPRECATED /////////////////
-//////////////////////////////////////////////
-
-void VideoDecoder::setSystemPalette() {
-	g_system->getPaletteManager()->setPalette(getPalette(), 0, 256);
-}
-
 } // End of namespace Video

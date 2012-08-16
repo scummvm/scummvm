@@ -25,6 +25,7 @@
 #include "common/keyboard.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "toon/audio.h"
@@ -126,7 +127,7 @@ bool Movie::playVideo(bool isFirstIntroVideo) {
 					}
 				}
 			}
-			_decoder->setSystemPalette();
+			_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);
 			_vm->_system->updateScreen();
 		}
 

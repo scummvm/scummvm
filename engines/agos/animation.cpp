@@ -278,7 +278,7 @@ void MoviePlayerDXA::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	} while (--h);
 
 	if (hasDirtyPalette())
-		setSystemPalette();
+		g_system->getPaletteManager()->setPalette(getPalette(), 0, 256);
 }
 
 void MoviePlayerDXA::playVideo() {
@@ -445,7 +445,7 @@ void MoviePlayerSMK::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	} while (--h);
 
 	if (hasDirtyPalette())
-		setSystemPalette();
+		g_system->getPaletteManager()->setPalette(getPalette(), 0, 256);
 }
 
 void MoviePlayerSMK::playVideo() {

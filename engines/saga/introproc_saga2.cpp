@@ -32,6 +32,7 @@
 #include "common/keyboard.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 
@@ -110,7 +111,7 @@ void Scene::playMovie(const char *filename) {
 				_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 
 				if (smkDecoder->hasDirtyPalette())
-					smkDecoder->setSystemPalette();
+					_vm->_system->getPaletteManager()->setPalette(smkDecoder->getPalette(), 0, 256);
 
 				_vm->_system->updateScreen();
 			}
