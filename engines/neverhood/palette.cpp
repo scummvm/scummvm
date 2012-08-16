@@ -143,9 +143,8 @@ void Palette::update() {
 	debug(2, "Palette::update() _status = %d", _status);
 	if (_status == 1) {
 		if (_palCounter > 1) {
-			for (int i = 0; i < 256; i++) {
+			for (int i = 0; i < 256; i++)
 				fadeColor(_palette + i * 4, _fadeToR, _fadeToG, _fadeToB);
-			}
 			_vm->_screen->testPalette(_palette);
 			_palCounter--;
 		} else {
@@ -154,9 +153,8 @@ void Palette::update() {
 		}
 	} else if (_status == 2) {
 		if (_palCounter > 1) {
-			for (int i = 0; i < 256; i++) {
+			for (int i = 0; i < 256; i++)
 				fadeColor(_palette + i * 4, _basePalette[i * 4 + 0], _basePalette[i * 4 + 1], _basePalette[i * 4 + 2]);
-			}
 			_vm->_screen->testPalette(_palette);
 			_palCounter--;
 		} else {

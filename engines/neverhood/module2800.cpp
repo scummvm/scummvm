@@ -123,6 +123,8 @@ void Module2800::updateScene() {
 Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
+	// TODO Weird palette glitches in the mouse cursor and sprite, check this later
+
 	// TODO _vm->gameModule()->initScene2801Vars();
 
 	_surfaceFlag = true;
@@ -143,11 +145,10 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (getGlobalVar(0xC0418A02)) {
 			insertKlayman<KmScene2801>(312, 432);
 			_klayman->setDoDeltaX(1);
-			setMessageList(0x004B6C10);
 		} else {
 			insertKlayman<KmScene2801>(194, 432);
-			setMessageList(0x004B6C10);
 		}
+		setMessageList(0x004B6C10);
 	} else {
 		insertKlayman<KmScene2801>(0, 432);
 		setMessageList(0x004B6BB0);
@@ -188,6 +189,8 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
 		_vm->_collisionMan->addSprite(_asTape); 
 	}
+	
+	addEntity(_palette);
 
 	if (which == 1) {
 		_palette->addPalette(0xB103B604, 0, 65, 0);
@@ -196,7 +199,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_palette->addPalette(_paletteHash, 0, 65, 0);
 		_palette->addBasePalette(_paletteHash, 0, 65, 0);
 	}
-
+	
 }
 
 Scene2801::~Scene2801() {

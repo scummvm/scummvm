@@ -119,7 +119,7 @@ bool PaletteResource::load(uint32 fileHash) {
 		case 3:
 			// _palette already points to the correct data
 			break;
-		default:						
+		default:
 			_vm->_res->unuseResource(_resourceHandle);
 			_resourceHandle = -1;
 			break;
