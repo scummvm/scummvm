@@ -50,6 +50,8 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	if (!videoDecoder)
 		return;
 
+	((Video::AdvancedVideoDecoder *)videoDecoder)->start();
+
 	byte *scaleBuffer = 0;
 	byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;
 	uint16 width = videoDecoder->getWidth();
@@ -219,7 +221,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (videoDecoder) {
-		((Video::AdvancedVideoDecoder *)videoDecoder)->start(); // TODO: Remove after new API is complete
 		playVideo(videoDecoder, s->_videoState);
 
 		// HACK: Switch back to 8bpp if we played a true color video.
@@ -349,7 +350,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case 6:	// Play
-		videoDecoder = new Video::VMDDecoder(g_system->getMixer());
+		videoDecoder = new Video::AdvancedVMDDecoder();
 
 		if (s->_videoState.fileName.empty()) {
 			// Happens in Lighthouse
@@ -413,8 +414,6 @@ reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
 			warning("Could not open Duck %s", s->_videoState.fileName.c_str());
 			break;
 		}
-
-		((Video::AdvancedVideoDecoder *)videoDecoder)->start();
 
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelHide();

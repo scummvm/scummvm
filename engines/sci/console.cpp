@@ -253,7 +253,7 @@ void Console::postEnter() {
 			videoDecoder = new SEQDecoder(_videoFrameDelay);
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
-			videoDecoder = new Video::VMDDecoder(g_system->getMixer());
+			videoDecoder = new Video::AdvancedVMDDecoder();
 		} else if (_videoFile.hasSuffix(".rbt")) {
 			videoDecoder = new RobotDecoder(_engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
@@ -267,8 +267,7 @@ void Console::postEnter() {
 		}
 
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
-			if (!_videoFile.hasSuffix(".vmd")) // TODO: Remove after new API is complete
-				((Video::AdvancedVideoDecoder *)videoDecoder)->start();
+			((Video::AdvancedVideoDecoder *)videoDecoder)->start();
 
 			_engine->_gfxCursor->kernelHide();
 
