@@ -514,7 +514,7 @@ bool VideoManager::isVideoPlaying() {
 void VideoManager::setVideoBounds(VideoHandle handle, Audio::Timestamp start, Audio::Timestamp end) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle].start = start;
-	_videoStreams[handle]->setStopTime(end);
+	_videoStreams[handle]->setEndTime(end);
 	_videoStreams[handle]->seek(start);
 }
 

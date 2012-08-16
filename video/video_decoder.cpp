@@ -106,8 +106,8 @@ AdvancedVideoDecoder::AdvancedVideoDecoder() {
 	_pauseLevel = 0;
 	_needsUpdate = false;
 	_lastTimeChange = 0;
-	_stopTime = 0;
-	_stopTimeSet = false;
+	_endTime = 0;
+	_endTimeSet = false;
 
 	// Find the best format for output
 	_defaultHighColorFormat = g_system->getScreenFormat();
@@ -133,8 +133,8 @@ void AdvancedVideoDecoder::close() {
 	_pauseLevel = 0;
 	_needsUpdate = false;
 	_lastTimeChange = 0;
-	_stopTime = 0;
-	_stopTimeSet = false;
+	_endTime = 0;
+	_endTimeSet = false;
 }
 
 bool AdvancedVideoDecoder::isVideoLoaded() const {
@@ -254,10 +254,10 @@ bool AdvancedVideoDecoder::endOfVideo() const {
 	if (!isVideoLoaded())
 		return true;
 
-	if (_stopTimeSet) {
+	if (_endTimeSet) {
 		const VideoTrack *track = findNextVideoTrack();
 
-		if (track && track->getNextFrameStartTime() >= (uint)_stopTime.msecs())
+		if (track && track->getNextFrameStartTime() >= (uint)_endTime.msecs())
 			return true;
 	}
 
@@ -592,7 +592,7 @@ bool AdvancedVideoDecoder::addStreamFileTrack(const Common::String &baseName) {
 	return result;
 }
 
-void AdvancedVideoDecoder::setStopTime(const Audio::Timestamp &stopTime) {
+void AdvancedVideoDecoder::setEndTime(const Audio::Timestamp &endTime) {
 	Audio::Timestamp startTime = 0;
 
 	if (isPlaying()) {
@@ -600,17 +600,17 @@ void AdvancedVideoDecoder::setStopTime(const Audio::Timestamp &stopTime) {
 		stopAudio();
 	}
 
-	_stopTime = stopTime;
-	_stopTimeSet = true;
+	_endTime = endTime;
+	_endTimeSet = true;
 
-	if (startTime > stopTime)
+	if (startTime > endTime)
 		return;
 
 	if (isPlaying()) {
 		// We'll assume the audio track is going to start up at the same time it just was
 		// and therefore not do any seeking.
 		// Might want to set it anyway if we're seekable.
-		startAudioLimit(_stopTime.msecs() - startTime.msecs());
+		startAudioLimit(_endTime.msecs() - startTime.msecs());
 		_lastTimeChange = startTime;
 	}
 }
@@ -676,10 +676,10 @@ const AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack
 }
 
 void AdvancedVideoDecoder::startAudio() {
-	if (_stopTimeSet) {
+	if (_endTimeSet) {
 		// HACK: Timestamp's subtraction asserts out when subtracting two times
 		// with different rates.
-		startAudioLimit(_stopTime - _lastTimeChange.convertToFramerate(_stopTime.framerate()));
+		startAudioLimit(_endTime - _lastTimeChange.convertToFramerate(_endTime.framerate()));
 		return;
 	}
 
