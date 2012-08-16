@@ -4916,4 +4916,90 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
+KmScene2805::KmScene2805(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
+	// Empty
+}
+
+uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x2000:
+		_isSittingInTeleporter = param.asInteger() != 0;
+		break;
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		if (_isSittingInTeleporter)
+			GotoState(&Klayman::sub421350);
+		else
+			GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;		
+	case 0x481D:
+		if (_isSittingInTeleporter)
+			GotoState(&Klayman::stTurnToUseInTeleporter);
+		break;
+	case 0x481E:
+		if (_isSittingInTeleporter)
+			GotoState(&Klayman::stReturnFromUseInTeleporter);
+		break;
+	case 0x4834:
+		GotoState(&Klayman::stStepOver);
+		break;
+	case 0x4835:
+		sendMessage(_parentScene, 0x2000, 1);
+		_isSittingInTeleporter = true;
+		GotoState(&Klayman::stSitInTeleporter);
+		break;																		
+	case 0x4836:
+		sendMessage(_parentScene, 0x2000, 0);
+		_isSittingInTeleporter = false;
+		GotoState(&Klayman::stGetUpFromTeleporter);
+		break;
+	case 0x483D:
+		sub404890();
+		break;
+	case 0x483E:
+		sub4048D0();
+		break;
+	}
+	return 0;
+}
+
+uint32 KmScene2805::handleMessage404800(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4E0A2C24)
+			_soundResource1.play(0x85B10BB8);
+		else if (param.asInteger() == 0x4E6A0CA0)
+			_soundResource1.play(0xC5B709B0);
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2805::sub404890() {
+	_status2 = 0;
+	_acceptInput = false;
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteUpdate(NULL);
+	SetMessageHandler(&KmScene2805::handleMessage404800);
+	startAnimation(0xDE284B74, 0, -1);
+}
+
+void KmScene2805::sub4048D0() {
+	_status2 = 0;
+	_acceptInput = false;
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteUpdate(NULL);
+	SetMessageHandler(&KmScene2805::handleMessage404800);
+	startAnimation(0xD82A4094, 0, -1);
+}
+
 } // End of namespace Neverhood

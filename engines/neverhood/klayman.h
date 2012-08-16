@@ -549,6 +549,17 @@ protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
+class KmScene2805 : public Klayman {
+public:
+	KmScene2805(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	bool _isSittingInTeleporter;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 handleMessage404800(int messageNum, const MessageParam &param, Entity *sender);
+	void sub404890();
+	void sub4048D0();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_KLAYMAN_H */

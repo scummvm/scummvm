@@ -73,6 +73,10 @@ void Module2800::createScene(int sceneNum, int which) {
 		}
 #endif		
 		break;
+	case 4:
+		// TODO Music18hList_stop(0xD2FA4D14, 0, 2);
+		_childObject = new Scene2805(_vm, this, which);
+		break;
 	//		
 	case 1001:
 		break;
@@ -102,6 +106,13 @@ void Module2800::updateScene() {
 				createScene(0, 2);
 			} else {
 				createScene(1001, -1);
+			}
+			break;
+		case 4:
+			if (_moduleResult == 1) {
+				leaveModule(1);
+			} else {
+				createScene(11, 1);
 			}
 			break;
 		//		
@@ -226,6 +237,65 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return messageResult;
+}
+
+Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2805::handleMessage);
+
+	setBackground(0x08021E04);
+	setPalette(0x08021E04);
+	_palette->addPalette(0x8A6B1F91, 0, 65, 0);
+	insertMouse433(0x21E00088);
+
+	_sprite1 = insertStaticSprite(0x008261E7, 1100);
+	_sprite2 = insertStaticSprite(0x020CE421, 1100);
+
+	if (which < 0) {
+		insertKlayman<KmScene2805>(380, 338);
+		setMessageList(0x004AE1C8);
+		sendMessage(this, 0x2000, 0);
+	} else if (which == 1) {
+		insertKlayman<KmScene2805>(493, 338);
+		sendMessage(_klayman, 0x2000, 1);
+		setMessageList(0x004AE1D0);
+		sendMessage(this, 0x2000, 1);
+	} else if (which == 2) {
+		insertKlayman<KmScene2805>(493, 338);
+		sendMessage(_klayman, 0x2000, 1);
+		setMessageList(0x004AE288);
+		sendMessage(this, 0x2000, 1);
+	} else if (which == 3) {
+		insertKlayman<KmScene2805>(493, 338);
+		sendMessage(_klayman, 0x2000, 1);
+		setMessageList(0x004AE1E0);
+		sendMessage(this, 0x2000, 1);
+	} else {
+		insertKlayman<KmScene2805>(340, 338);
+		setMessageList(0x004AE1C0);
+		sendMessage(this, 0x2000, 0);
+	}
+
+	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite2->getDrawRect().x2(), 480);
+
+}
+
+uint32 Scene2805::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		if (param.asInteger()) {
+			setRectList(0x004AE318);
+			_klayman->setKlaymanIdleTable3();
+		} else {
+			setRectList(0x004AE308);
+			_klayman->setKlaymanIdleTable1();
+		}
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood
