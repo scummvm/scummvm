@@ -37,7 +37,7 @@ class SeekableSubReadStreamEndian;
 
 namespace Sci {
 
-class RobotDecoder : public Video::AdvancedVideoDecoder {
+class RobotDecoder : public Video::VideoDecoder {
 public:
 	RobotDecoder(bool isBigEndian);
 	virtual ~RobotDecoder();

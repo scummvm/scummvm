@@ -342,7 +342,7 @@ bool MoviePlayerDXA::processFrame() {
 	_vm->_system->unlockScreen();
 
 	uint32 soundTime = _mixer->getSoundElapsedTime(_bgSound);
-	uint32 nextFrameStartTime = ((Video::AdvancedVideoDecoder::VideoTrack *)getTrack(0))->getNextFrameStartTime();
+	uint32 nextFrameStartTime = ((Video::VideoDecoder::VideoTrack *)getTrack(0))->getNextFrameStartTime();
 
 	if ((_bgSoundStream == NULL) || soundTime < nextFrameStartTime) {
 

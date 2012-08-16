@@ -79,7 +79,7 @@ bool QuickTimeDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void QuickTimeDecoder::close() {
-	AdvancedVideoDecoder::close();
+	VideoDecoder::close();
 	Common::QuickTimeParser::close();
 
 	if (_scaledSurface) {
@@ -90,7 +90,7 @@ void QuickTimeDecoder::close() {
 }
 
 const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
-	const Graphics::Surface *frame = AdvancedVideoDecoder::decodeNextFrame();
+	const Graphics::Surface *frame = VideoDecoder::decodeNextFrame();
 
 	// Update audio buffers too
 	// (needs to be done after we find the next track)
@@ -244,7 +244,7 @@ void QuickTimeDecoder::init() {
 void QuickTimeDecoder::updateAudioBuffer() {
 	// Updates the audio buffers for all audio tracks
 	for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
-		if ((*it)->getTrackType() == AdvancedVideoDecoder::Track::kTrackTypeAudio)
+		if ((*it)->getTrackType() == VideoDecoder::Track::kTrackTypeAudio)
 			((AudioTrackHandler *)*it)->updateBuffer();
 }
 

@@ -41,7 +41,7 @@ namespace Video {
  *  - sword1
  *  - sword2
  */
-class DXADecoder : public AdvancedVideoDecoder {
+class DXADecoder : public VideoDecoder {
 public:
 	DXADecoder();
 	virtual ~DXADecoder();

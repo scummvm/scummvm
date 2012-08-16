@@ -198,7 +198,7 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void TheoraDecoder::close() {
-	AdvancedVideoDecoder::close();
+	VideoDecoder::close();
 
 	if (!_fileStream)
 		return;

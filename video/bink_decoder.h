@@ -62,7 +62,7 @@ namespace Video {
  * Video decoder used in engines:
  *  - scumm (he)
  */
-class BinkDecoder : public AdvancedVideoDecoder {
+class BinkDecoder : public VideoDecoder {
 public:
 	BinkDecoder();
 	~BinkDecoder();

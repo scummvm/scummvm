@@ -289,7 +289,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void AVIDecoder::close() {
-	AdvancedVideoDecoder::close();
+	VideoDecoder::close();
 
 	delete _fileStream;
 	_fileStream = 0;

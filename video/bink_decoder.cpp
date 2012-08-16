@@ -147,7 +147,7 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void BinkDecoder::close() {
-	AdvancedVideoDecoder::close();
+	VideoDecoder::close();
 
 	delete _bink;
 	_bink = 0;

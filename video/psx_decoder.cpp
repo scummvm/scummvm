@@ -174,7 +174,7 @@ bool PSXStreamDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void PSXStreamDecoder::close() {
-	AdvancedVideoDecoder::close();
+	VideoDecoder::close();
 	_audioTrack = 0;
 	_videoTrack = 0;
 	_frameCount = 0;

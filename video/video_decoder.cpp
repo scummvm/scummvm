@@ -35,9 +35,44 @@ namespace Video {
 
 VideoDecoder::VideoDecoder() {
 	_startTime = 0;
-	_pauseLevel = 0;
+	_needsRewind = false;
+	_dirtyPalette = false;
+	_palette = 0;
+	_isPlaying = false;
 	_audioVolume = Audio::Mixer::kMaxChannelVolume;
 	_audioBalance = 0;
+	_pauseLevel = 0;
+	_needsUpdate = false;
+	_lastTimeChange = 0;
+	_endTime = 0;
+	_endTimeSet = false;
+
+	// Find the best format for output
+	_defaultHighColorFormat = g_system->getScreenFormat();
+
+	if (_defaultHighColorFormat.bytesPerPixel == 1)
+		_defaultHighColorFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+}
+
+void VideoDecoder::close() {
+	if (isPlaying())
+		stop();
+
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		delete *it;
+
+	_tracks.clear();
+	_needsRewind = false;
+	_dirtyPalette = false;
+	_palette = 0;
+	_startTime = 0;
+	_audioVolume = Audio::Mixer::kMaxChannelVolume;
+	_audioBalance = 0;
+	_pauseLevel = 0;
+	_needsUpdate = false;
+	_lastTimeChange = 0;
+	_endTime = 0;
+	_endTimeSet = false;
 }
 
 bool VideoDecoder::loadFile(const Common::String &filename) {
@@ -49,10 +84,6 @@ bool VideoDecoder::loadFile(const Common::String &filename) {
 	}
 
 	return loadStream(file);
-}
-
-uint32 VideoDecoder::getTime() const {
-	return g_system->getMillis() - _startTime;
 }
 
 bool VideoDecoder::needsUpdate() const {
@@ -74,9 +105,13 @@ void VideoDecoder::pauseVideo(bool pause) {
 
 	if (_pauseLevel == 1 && pause) {
 		_pauseStartTime = g_system->getMillis(); // Store the starting time from pausing to keep it for later
-		pauseVideoIntern(true);
+
+		for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+			(*it)->pause(true);
 	} else if (_pauseLevel == 0) {
-		pauseVideoIntern(false);
+		for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+			(*it)->pause(false);
+
 		_startTime += (g_system->getMillis() - _pauseStartTime);
 	}
 }
@@ -88,60 +123,25 @@ void VideoDecoder::resetPauseStartTime() {
 
 void VideoDecoder::setVolume(byte volume) {
 	_audioVolume = volume;
-	updateVolume();
+
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
+			((AudioTrack *)*it)->setVolume(_audioVolume);
 }
 
 void VideoDecoder::setBalance(int8 balance) {
 	_audioBalance = balance;
-	updateBalance();
-}
-
-AdvancedVideoDecoder::AdvancedVideoDecoder() {
-	_needsRewind = false;
-	_dirtyPalette = false;
-	_palette = 0;
-	_isPlaying = false;
-	_audioVolume = Audio::Mixer::kMaxChannelVolume;
-	_audioBalance = 0;
-	_pauseLevel = 0;
-	_needsUpdate = false;
-	_lastTimeChange = 0;
-	_endTime = 0;
-	_endTimeSet = false;
-
-	// Find the best format for output
-	_defaultHighColorFormat = g_system->getScreenFormat();
-
-	if (_defaultHighColorFormat.bytesPerPixel == 1)
-		_defaultHighColorFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
-}
-
-void AdvancedVideoDecoder::close() {
-	if (isPlaying())
-		stop();
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		delete *it;
-
-	_tracks.clear();
-	_needsRewind = false;
-	_dirtyPalette = false;
-	_palette = 0;
-	_startTime = 0;
-	_audioVolume = Audio::Mixer::kMaxChannelVolume;
-	_audioBalance = 0;
-	_pauseLevel = 0;
-	_needsUpdate = false;
-	_lastTimeChange = 0;
-	_endTime = 0;
-	_endTimeSet = false;
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
+			((AudioTrack *)*it)->setBalance(_audioBalance);
 }
 
-bool AdvancedVideoDecoder::isVideoLoaded() const {
+bool VideoDecoder::isVideoLoaded() const {
 	return !_tracks.empty();
 }
 
-uint16 AdvancedVideoDecoder::getWidth() const {
+uint16 VideoDecoder::getWidth() const {
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
 			return ((VideoTrack *)*it)->getWidth();
@@ -149,7 +149,7 @@ uint16 AdvancedVideoDecoder::getWidth() const {
 	return 0;
 }
 
-uint16 AdvancedVideoDecoder::getHeight() const {
+uint16 VideoDecoder::getHeight() const {
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
 			return ((VideoTrack *)*it)->getHeight();
@@ -157,7 +157,7 @@ uint16 AdvancedVideoDecoder::getHeight() const {
 	return 0;
 }
 
-Graphics::PixelFormat AdvancedVideoDecoder::getPixelFormat() const {
+Graphics::PixelFormat VideoDecoder::getPixelFormat() const {
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
 			return ((VideoTrack *)*it)->getPixelFormat();
@@ -165,7 +165,7 @@ Graphics::PixelFormat AdvancedVideoDecoder::getPixelFormat() const {
 	return Graphics::PixelFormat();
 }
 
-const Graphics::Surface *AdvancedVideoDecoder::decodeNextFrame() {
+const Graphics::Surface *VideoDecoder::decodeNextFrame() {
 	_needsUpdate = false;
 
 	readNextPacket();
@@ -184,12 +184,12 @@ const Graphics::Surface *AdvancedVideoDecoder::decodeNextFrame() {
 	return frame;
 }
 
-const byte *AdvancedVideoDecoder::getPalette() {
+const byte *VideoDecoder::getPalette() {
 	_dirtyPalette = false;
 	return _palette;
 }
 
-int AdvancedVideoDecoder::getCurFrame() const {
+int VideoDecoder::getCurFrame() const {
 	int32 frame = -1;
 
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
@@ -199,7 +199,7 @@ int AdvancedVideoDecoder::getCurFrame() const {
 	return frame;
 }
 
-uint32 AdvancedVideoDecoder::getFrameCount() const {
+uint32 VideoDecoder::getFrameCount() const {
 	int count = 0;
 
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
@@ -209,7 +209,7 @@ uint32 AdvancedVideoDecoder::getFrameCount() const {
 	return count;
 }
 
-uint32 AdvancedVideoDecoder::getTime() const {
+uint32 VideoDecoder::getTime() const {
 	if (!isPlaying())
 		return _lastTimeChange.msecs();
 
@@ -230,7 +230,7 @@ uint32 AdvancedVideoDecoder::getTime() const {
 	return g_system->getMillis() - _startTime;
 }
 
-uint32 AdvancedVideoDecoder::getTimeToNextFrame() const {
+uint32 VideoDecoder::getTimeToNextFrame() const {
 	if (endOfVideo() || _needsUpdate)
 		return 0;
 
@@ -248,9 +248,7 @@ uint32 AdvancedVideoDecoder::getTimeToNextFrame() const {
 	return nextFrameStartTime - elapsedTime;
 }
 
-bool AdvancedVideoDecoder::endOfVideo() const {
-	// TODO: Bring _isPlaying into account?
-
+bool VideoDecoder::endOfVideo() const {
 	if (!isVideoLoaded())
 		return true;
 
@@ -268,7 +266,7 @@ bool AdvancedVideoDecoder::endOfVideo() const {
 	return true;
 }
 
-bool AdvancedVideoDecoder::isRewindable() const {
+bool VideoDecoder::isRewindable() const {
 	if (!isVideoLoaded())
 		return false;
 
@@ -279,7 +277,7 @@ bool AdvancedVideoDecoder::isRewindable() const {
 	return true;
 }
 
-bool AdvancedVideoDecoder::rewind() {
+bool VideoDecoder::rewind() {
 	if (!isRewindable())
 		return false;
 
@@ -303,7 +301,7 @@ bool AdvancedVideoDecoder::rewind() {
 	return true;
 }
 
-bool AdvancedVideoDecoder::isSeekable() const {
+bool VideoDecoder::isSeekable() const {
 	if (!isVideoLoaded())
 		return false;
 
@@ -314,7 +312,7 @@ bool AdvancedVideoDecoder::isSeekable() const {
 	return true;
 }
 
-bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
+bool VideoDecoder::seek(const Audio::Timestamp &time) {
 	if (!isSeekable())
 		return false;
 
@@ -342,7 +340,7 @@ bool AdvancedVideoDecoder::seek(const Audio::Timestamp &time) {
 	return true;
 }
 
-void AdvancedVideoDecoder::start() {
+void VideoDecoder::start() {
 	if (isPlaying() || !isVideoLoaded())
 		return;
 
@@ -360,7 +358,7 @@ void AdvancedVideoDecoder::start() {
 	startAudio();
 }
 
-void AdvancedVideoDecoder::stop() {
+void VideoDecoder::stop() {
 	if (!isPlaying())
 		return;
 
@@ -386,7 +384,7 @@ void AdvancedVideoDecoder::stop() {
 	}
 }
 
-Audio::Timestamp AdvancedVideoDecoder::getDuration() const {
+Audio::Timestamp VideoDecoder::getDuration() const {
 	Audio::Timestamp maxDuration(0, 1000);
 
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
@@ -399,42 +397,23 @@ Audio::Timestamp AdvancedVideoDecoder::getDuration() const {
 	return maxDuration;
 }
 
-void AdvancedVideoDecoder::pauseVideoIntern(bool pause) {
-	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		(*it)->pause(pause);
-}
-
-void AdvancedVideoDecoder::updateVolume() {
-	// For API compatibility only
-	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
-			((AudioTrack *)*it)->setVolume(_audioVolume);
-}
-
-void AdvancedVideoDecoder::updateBalance() {
-	// For API compatibility only
-	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
-			((AudioTrack *)*it)->setBalance(_audioBalance);
-}
-
-AdvancedVideoDecoder::Track::Track() {
+VideoDecoder::Track::Track() {
 	_paused = false;
 }
 
-bool AdvancedVideoDecoder::Track::isRewindable() const {
+bool VideoDecoder::Track::isRewindable() const {
 	return isSeekable();
 }
 
-bool AdvancedVideoDecoder::Track::rewind() {
+bool VideoDecoder::Track::rewind() {
 	return seek(Audio::Timestamp(0, 1000));
 }
 
-Audio::Timestamp AdvancedVideoDecoder::Track::getDuration() const {
+Audio::Timestamp VideoDecoder::Track::getDuration() const {
 	return Audio::Timestamp(0, 1000);
 }
 
-uint32 AdvancedVideoDecoder::FixedRateVideoTrack::getNextFrameStartTime() const {
+uint32 VideoDecoder::FixedRateVideoTrack::getNextFrameStartTime() const {
 	if (endOfTrack() || getCurFrame() < 0)
 		return 0;
 
@@ -443,11 +422,11 @@ uint32 AdvancedVideoDecoder::FixedRateVideoTrack::getNextFrameStartTime() const 
 	return time.toInt();
 }
 
-bool AdvancedVideoDecoder::FixedRateVideoTrack::endOfTrack() const {
+bool VideoDecoder::FixedRateVideoTrack::endOfTrack() const {
 	return getCurFrame() >= (getFrameCount() - 1);
 }
 
-Audio::Timestamp AdvancedVideoDecoder::FixedRateVideoTrack::getDuration() const {
+Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getDuration() const {
 	// Since Audio::Timestamp doesn't support a fractional frame rate, we're currently
 	// just converting to milliseconds.
 	Common::Rational time = getFrameCount() * 1000;
@@ -455,26 +434,26 @@ Audio::Timestamp AdvancedVideoDecoder::FixedRateVideoTrack::getDuration() const 
 	return time.toInt();
 }
 
-bool AdvancedVideoDecoder::AudioTrack::endOfTrack() const {
+bool VideoDecoder::AudioTrack::endOfTrack() const {
 	Audio::AudioStream *stream = getAudioStream();
 	return !stream || !g_system->getMixer()->isSoundHandleActive(_handle) || stream->endOfData();
 }
 
-void AdvancedVideoDecoder::AudioTrack::setVolume(byte volume) {
+void VideoDecoder::AudioTrack::setVolume(byte volume) {
 	_volume = volume;
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
 		g_system->getMixer()->setChannelVolume(_handle, _volume);
 }
 
-void AdvancedVideoDecoder::AudioTrack::setBalance(int8 balance) {
+void VideoDecoder::AudioTrack::setBalance(int8 balance) {
 	_balance = balance;
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
 		g_system->getMixer()->setChannelBalance(_handle, _balance);
 }
 
-void AdvancedVideoDecoder::AudioTrack::start() {
+void VideoDecoder::AudioTrack::start() {
 	stop();
 
 	Audio::AudioStream *stream = getAudioStream();
@@ -487,11 +466,11 @@ void AdvancedVideoDecoder::AudioTrack::start() {
 		g_system->getMixer()->pauseHandle(_handle, true);
 }
 
-void AdvancedVideoDecoder::AudioTrack::stop() {
+void VideoDecoder::AudioTrack::stop() {
 	g_system->getMixer()->stopHandle(_handle);
 }
 
-void AdvancedVideoDecoder::AudioTrack::start(const Audio::Timestamp &limit) {
+void VideoDecoder::AudioTrack::start(const Audio::Timestamp &limit) {
 	stop();
 
 	Audio::AudioStream *stream = getAudioStream();
@@ -506,60 +485,60 @@ void AdvancedVideoDecoder::AudioTrack::start(const Audio::Timestamp &limit) {
 		g_system->getMixer()->pauseHandle(_handle, true);
 }
 
-uint32 AdvancedVideoDecoder::AudioTrack::getRunningTime() const {
+uint32 VideoDecoder::AudioTrack::getRunningTime() const {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
 		return g_system->getMixer()->getSoundElapsedTime(_handle);
 
 	return 0;
 }
 
-void AdvancedVideoDecoder::AudioTrack::pauseIntern(bool shouldPause) {
+void VideoDecoder::AudioTrack::pauseIntern(bool shouldPause) {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
 		g_system->getMixer()->pauseHandle(_handle, shouldPause);
 }
 
-Audio::AudioStream *AdvancedVideoDecoder::RewindableAudioTrack::getAudioStream() const {
+Audio::AudioStream *VideoDecoder::RewindableAudioTrack::getAudioStream() const {
 	return getRewindableAudioStream();
 }
 
-bool AdvancedVideoDecoder::RewindableAudioTrack::rewind() {
+bool VideoDecoder::RewindableAudioTrack::rewind() {
 	Audio::RewindableAudioStream *stream = getRewindableAudioStream();
 	assert(stream);
 	return stream->rewind();
 }
 
-Audio::Timestamp AdvancedVideoDecoder::SeekableAudioTrack::getDuration() const {
+Audio::Timestamp VideoDecoder::SeekableAudioTrack::getDuration() const {
 	Audio::SeekableAudioStream *stream = getSeekableAudioStream();
 	assert(stream);
 	return stream->getLength();
 }
 
-Audio::AudioStream *AdvancedVideoDecoder::SeekableAudioTrack::getAudioStream() const {
+Audio::AudioStream *VideoDecoder::SeekableAudioTrack::getAudioStream() const {
 	return getSeekableAudioStream();
 }
 
-bool AdvancedVideoDecoder::SeekableAudioTrack::seek(const Audio::Timestamp &time) {
+bool VideoDecoder::SeekableAudioTrack::seek(const Audio::Timestamp &time) {
 	Audio::SeekableAudioStream *stream = getSeekableAudioStream();
 	assert(stream);
 	return stream->seek(time);
 }
 
-AdvancedVideoDecoder::StreamFileAudioTrack::StreamFileAudioTrack() {
+VideoDecoder::StreamFileAudioTrack::StreamFileAudioTrack() {
 	_stream = 0;
 }
 
-AdvancedVideoDecoder::StreamFileAudioTrack::~StreamFileAudioTrack() {
+VideoDecoder::StreamFileAudioTrack::~StreamFileAudioTrack() {
 	delete _stream;
 }
 
-bool AdvancedVideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::String &baseName) {
+bool VideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::String &baseName) {
 	// TODO: Make sure the stream isn't being played
 	delete _stream;
 	_stream = Audio::SeekableAudioStream::openStreamFile(baseName);
 	return _stream != 0;
 }
 
-void AdvancedVideoDecoder::addTrack(Track *track) {
+void VideoDecoder::addTrack(Track *track) {
 	_tracks.push_back(track);
 
 	// Update volume settings if it's an audio track
@@ -577,7 +556,7 @@ void AdvancedVideoDecoder::addTrack(Track *track) {
 		((AudioTrack *)track)->start();
 }
 
-bool AdvancedVideoDecoder::addStreamFileTrack(const Common::String &baseName) {
+bool VideoDecoder::addStreamFileTrack(const Common::String &baseName) {
 	// Only allow adding external tracks if a video is already loaded
 	if (!isVideoLoaded())
 		return false;
@@ -592,7 +571,7 @@ bool AdvancedVideoDecoder::addStreamFileTrack(const Common::String &baseName) {
 	return result;
 }
 
-void AdvancedVideoDecoder::setEndTime(const Audio::Timestamp &endTime) {
+void VideoDecoder::setEndTime(const Audio::Timestamp &endTime) {
 	Audio::Timestamp startTime = 0;
 
 	if (isPlaying()) {
@@ -615,21 +594,21 @@ void AdvancedVideoDecoder::setEndTime(const Audio::Timestamp &endTime) {
 	}
 }
 
-AdvancedVideoDecoder::Track *AdvancedVideoDecoder::getTrack(uint track) {
+VideoDecoder::Track *VideoDecoder::getTrack(uint track) {
 	if (track > _tracks.size())
 		return 0;
 
 	return _tracks[track];
 }
 
-const AdvancedVideoDecoder::Track *AdvancedVideoDecoder::getTrack(uint track) const {
+const VideoDecoder::Track *VideoDecoder::getTrack(uint track) const {
 	if (track > _tracks.size())
 		return 0;
 
 	return _tracks[track];
 }
 
-bool AdvancedVideoDecoder::endOfVideoTracks() const {
+bool VideoDecoder::endOfVideoTracks() const {
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo && !(*it)->endOfTrack())
 			return false;
@@ -637,7 +616,7 @@ bool AdvancedVideoDecoder::endOfVideoTracks() const {
 	return true;
 }
 
-AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack() {
+VideoDecoder::VideoTrack *VideoDecoder::findNextVideoTrack() {
 	VideoTrack *bestTrack = 0;
 	uint32 bestTime = 0xFFFFFFFF;
 
@@ -656,7 +635,7 @@ AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack() {
 	return bestTrack;
 }
 
-const AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack() const {
+const VideoDecoder::VideoTrack *VideoDecoder::findNextVideoTrack() const {
 	const VideoTrack *bestTrack = 0;
 	uint32 bestTime = 0xFFFFFFFF;
 
@@ -675,7 +654,7 @@ const AdvancedVideoDecoder::VideoTrack *AdvancedVideoDecoder::findNextVideoTrack
 	return bestTrack;
 }
 
-void AdvancedVideoDecoder::startAudio() {
+void VideoDecoder::startAudio() {
 	if (_endTimeSet) {
 		// HACK: Timestamp's subtraction asserts out when subtracting two times
 		// with different rates.
@@ -688,13 +667,13 @@ void AdvancedVideoDecoder::startAudio() {
 			((AudioTrack *)*it)->start();
 }
 
-void AdvancedVideoDecoder::stopAudio() {
+void VideoDecoder::stopAudio() {
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
 			((AudioTrack *)*it)->stop();
 }
 
-void AdvancedVideoDecoder::startAudioLimit(const Audio::Timestamp &limit) {
+void VideoDecoder::startAudioLimit(const Audio::Timestamp &limit) {
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
 			((AudioTrack *)*it)->start(limit);

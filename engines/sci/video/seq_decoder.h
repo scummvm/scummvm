@@ -40,7 +40,7 @@ namespace Sci {
 /**
  * Implementation of the Sierra SEQ decoder, used in KQ6 DOS floppy/CD and GK1 DOS
  */
-class SEQDecoder : public Video::AdvancedVideoDecoder {
+class SEQDecoder : public Video::VideoDecoder {
 public:
 	SEQDecoder(uint frameDelay);
 	virtual ~SEQDecoder();

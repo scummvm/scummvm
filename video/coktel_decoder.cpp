@@ -2800,7 +2800,7 @@ bool AdvancedVMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void AdvancedVMDDecoder::close() {
-	AdvancedVideoDecoder::close();
+	VideoDecoder::close();
 	_decoder->close();
 }
 

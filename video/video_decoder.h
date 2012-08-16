@@ -48,7 +48,6 @@ namespace Video {
 
 /**
  * Generic interface for video decoder classes.
- * @note This class is now deprecated in favor of AdvancedVideoDecoder.
  */
 class VideoDecoder {
 public:
@@ -77,53 +76,51 @@ public:
 	/**
 	 * Close the active video stream and free any associated resources.
 	 */
-	virtual void close() = 0;
+	virtual void close();
 
 	/**
 	 * Returns if a video stream is currently loaded or not.
 	 */
-	virtual bool isVideoLoaded() const = 0;
-
-
+	bool isVideoLoaded() const;
 
 	/**
 	 * Returns the width of the video's frames.
 	 * @return the width of the video's frames
 	 */
-	virtual uint16 getWidth() const = 0;
+	virtual uint16 getWidth() const;
 
 	/**
 	 * Returns the height of the video's frames.
 	 * @return the height of the video's frames
 	 */
-	virtual uint16 getHeight() const = 0;
+	virtual uint16 getHeight() const;
 
 	/**
 	 * Get the pixel format of the currently loaded video.
 	 */
-	virtual Graphics::PixelFormat getPixelFormat() const = 0;
+	virtual Graphics::PixelFormat getPixelFormat() const;
 
 	/**
 	 * Get the palette for the video in RGB format (if 8bpp or less).
 	 */
-	virtual const byte *getPalette() { return 0; }
+	const byte *getPalette();
 
 	/**
 	 * Returns if the palette is dirty or not.
 	 */
-	virtual bool hasDirtyPalette() const { return false; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 	/**
 	 * Returns the current frame number of the video.
 	 * @return the last frame decoded by the video
 	 */
-	virtual int32 getCurFrame() const = 0;
+	int32 getCurFrame() const;
 
 	/**
 	 * Returns the number of frames in the video.
 	 * @return the number of frames in the video
 	 */
-	virtual uint32 getFrameCount() const = 0;
+	uint32 getFrameCount() const;
 
 	/**
 	 * Returns the time position (in ms) of the current video.
@@ -139,12 +136,12 @@ public:
 	 * completely accurate (since our mixer does not have precise
 	 * timing).
 	 */
-	virtual uint32 getTime() const;
+	uint32 getTime() const;
 
 	/**
 	 * Return the time (in ms) until the next frame should be displayed.
 	 */
-	virtual uint32 getTimeToNextFrame() const = 0;
+	uint32 getTimeToNextFrame() const;
 
 	/**
 	 * Check whether a new frame should be decoded, i.e. because enough
@@ -160,13 +157,13 @@ public:
 	 *       hence the caller must *not* free it.
 	 * @note this may return 0, in which case the last frame should be kept on screen
 	 */
-	virtual const Graphics::Surface *decodeNextFrame() = 0;
+	virtual const Graphics::Surface *decodeNextFrame();
 
 	/**
 	 * Returns if the video has finished playing or not.
 	 * @return true if the video has finished playing or if none is loaded, false otherwise
 	 */
-	virtual bool endOfVideo() const = 0;
+	bool endOfVideo() const;
 
 	/**
 	 * Pause or resume the video. This should stop/resume any audio playback
@@ -190,7 +187,7 @@ public:
 	 * Get the current volume at which the audio in the video is being played
 	 * @return the current volume at which the audio in the video is being played
 	 */
-	virtual byte getVolume() const { return _audioVolume; }
+	byte getVolume() const { return _audioVolume; }
 
 	/**
 	 * Set the volume at which the audio in the video should be played.
@@ -201,13 +198,13 @@ public:
 	 *
 	 * @param volume The volume at which to play the audio in the video
 	 */
-	virtual void setVolume(byte volume);
+	void setVolume(byte volume);
 
 	/**
 	 * Get the current balance at which the audio in the video is being played
 	 * @return the current balance at which the audio in the video is being played
 	 */
-	virtual int8 getBalance() const { return _audioBalance; }
+	int8 getBalance() const { return _audioBalance; }
 
 	/**
 	 * Set the balance at which the audio in the video should be played.
@@ -218,72 +215,8 @@ public:
 	 *
 	 * @param balance The balance at which to play the audio in the video
 	 */
-	virtual void setBalance(int8 balance);
+	void setBalance(int8 balance);
 
-protected:
-	/**
-	 * Actual implementation of pause by subclasses. See pause()
-	 * for details.
-	 * @note This function is now deprecated. There is no replacement.
-	 */
-	virtual void pauseVideoIntern(bool pause) {}
-
-	/**
-	 * Reset the pause start time (which should be called when seeking)
-	 */
-	void resetPauseStartTime();
-
-	/**
-	 * Update currently playing audio tracks with the new volume setting
-	 * @note This function is now deprecated. There is no replacement.
-	 */
-	virtual void updateVolume() {}
-
-	/**
-	 * Update currently playing audio tracks with the new balance setting
-	 * @note This function is now deprecated. There is no replacement.
-	 */
-	virtual void updateBalance() {}
-
-	int32 _startTime;
-
-// FIXME: These are protected until the new API takes over this one
-//private:
-	uint32 _pauseLevel;
-	uint32 _pauseStartTime;
-	byte _audioVolume;
-	int8 _audioBalance;
-};
-
-/**
- * Improved interface for video decoder classes.
- */
-class AdvancedVideoDecoder : public VideoDecoder {
-public:
-	AdvancedVideoDecoder();
-	virtual ~AdvancedVideoDecoder() {}
-
-	// Old API Non-changing
-	// loadFile()
-	// loadStream()
-	// needsUpdate()
-
-	// Old API Changing
-	virtual void close();
-	bool isVideoLoaded() const;
-	virtual uint16 getWidth() const;
-	virtual uint16 getHeight() const;
-	virtual Graphics::PixelFormat getPixelFormat() const;
-	virtual const Graphics::Surface *decodeNextFrame();
-	const byte *getPalette();
-	bool hasDirtyPalette() const { return _dirtyPalette; }
-	int getCurFrame() const;
-	uint32 getFrameCount() const;
-	uint32 getTime() const;
-	uint32 getTimeToNextFrame() const;
-	bool endOfVideo() const;
-
-	// New API
 	/**
 	 * Returns if a video is rewindable or not. The default implementation
 	 * polls each track for rewindability.
@@ -352,7 +285,7 @@ public:
 	/**
 	 * Set the default high color format for videos that convert from YUV.
 	 *
-	 * By default, AdvancedVideoDecoder will attempt to use the screen format
+	 * By default, VideoDecoder will attempt to use the screen format
 	 * if it's >8bpp and use a 32bpp format when not.
 	 *
 	 * This must be set before calling loadStream().
@@ -375,13 +308,6 @@ public:
 	//Common::Rational getRate() const;
 
 protected:
-	// Old API
-	void pauseVideoIntern(bool pause);
-	void updateVolume();
-	void updateBalance();
-
-	// New API
-
 	/**
 	 * An abstract representation of a track in a movie.
 	 */
@@ -680,6 +606,11 @@ protected:
 	};
 
 	/**
+	 * Reset the pause start time (which should be called when seeking)
+	 */
+	void resetPauseStartTime();
+
+	/**
 	 * Decode enough data for the next frame and enough audio to last that long.
 	 *
 	 * This function is used by the default decodeNextFrame() function. A subclass
@@ -756,7 +687,7 @@ protected:
 	TrackListIterator getTrackListEnd() { return _tracks.end(); }
 
 private:
-	// Tracks owned by this AdvancedVideoDecoder
+	// Tracks owned by this VideoDecoder
 	TrackList _tracks;
 
 	// Current playback status
@@ -775,6 +706,12 @@ private:
 	void stopAudio();
 	void startAudio();
 	void startAudioLimit(const Audio::Timestamp &limit);
+
+	int32 _startTime;
+	uint32 _pauseLevel;
+	uint32 _pauseStartTime;
+	byte _audioVolume;
+	int8 _audioBalance;
 };
 
 } // End of namespace Video

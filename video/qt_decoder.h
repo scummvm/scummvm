@@ -55,7 +55,7 @@ class Codec;
  *  - mohawk
  *  - sci
  */
-class QuickTimeDecoder : public AdvancedVideoDecoder, public Audio::QuickTimeAudioDecoder {
+class QuickTimeDecoder : public VideoDecoder, public Audio::QuickTimeAudioDecoder {
 public:
 	QuickTimeDecoder();
 	virtual ~QuickTimeDecoder();

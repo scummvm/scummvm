@@ -132,7 +132,7 @@ bool RobotDecoder::load(GuiResourceId id) {
 }
 
 void RobotDecoder::close() {
-	AdvancedVideoDecoder::close();
+	VideoDecoder::close();
 
 	delete _fileStream;
 	_fileStream = 0;

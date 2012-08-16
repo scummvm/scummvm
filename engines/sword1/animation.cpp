@@ -183,7 +183,7 @@ bool MoviePlayer::load(uint32 id) {
 		// Need to load here in case it fails in which case we'd need
 		// to go back to paletted mode
 		if (_decoder->loadFile(filename)) {
-			((Video::AdvancedVideoDecoder *)_decoder)->start(); // TODO: Remove after new API is complete
+			_decoder->start();
 			return true;
 		} else {
 			initGraphics(g_system->getWidth(), g_system->getHeight(), true);
@@ -197,9 +197,9 @@ bool MoviePlayer::load(uint32 id) {
 
 	// For DXA, also add the external sound file
 	if (_decoderType == kVideoDecoderDXA)
-		((Video::AdvancedVideoDecoder *)_decoder)->addStreamFileTrack(sequenceList[id]);
+		_decoder->addStreamFileTrack(sequenceList[id]);
 
-	((Video::AdvancedVideoDecoder *)_decoder)->start(); // TODO: Remove after new API is complete
+	_decoder->start();
 	return true;
 }
 

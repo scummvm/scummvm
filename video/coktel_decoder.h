@@ -550,10 +550,10 @@ private:
 };
 
 /**
- * A wrapper around the VMD code that implements the AdvancedVideoDecoder
+ * A wrapper around the VMD code that implements the VideoDecoder
  * API.
  */
-class AdvancedVMDDecoder : public AdvancedVideoDecoder {
+class AdvancedVMDDecoder : public VideoDecoder {
 public:
 	AdvancedVMDDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~AdvancedVMDDecoder();

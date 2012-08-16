@@ -52,7 +52,7 @@ namespace Video {
  * Video decoder used in engines:
  *  - sword25
  */
-class TheoraDecoder : public AdvancedVideoDecoder {
+class TheoraDecoder : public VideoDecoder {
 public:
 	TheoraDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual ~TheoraDecoder();

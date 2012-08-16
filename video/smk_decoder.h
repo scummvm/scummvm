@@ -57,7 +57,7 @@ class BigHuffmanTree;
  *  - sword2
  *  - toon
  */
-class SmackerDecoder : public AdvancedVideoDecoder {
+class SmackerDecoder : public VideoDecoder {
 public:
 	SmackerDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
 	virtual ~SmackerDecoder();

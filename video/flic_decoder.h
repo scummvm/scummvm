@@ -44,7 +44,7 @@ namespace Video {
  * Video decoder used in engines:
  *  - tucker
  */
-class FlicDecoder : public AdvancedVideoDecoder {
+class FlicDecoder : public VideoDecoder {
 public:
 	FlicDecoder();
 	virtual ~FlicDecoder();

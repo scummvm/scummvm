@@ -95,7 +95,7 @@ bool MoviePlayer::load(const char *name) {
 		// Need to load here in case it fails in which case we'd need
 		// to go back to paletted mode
 		if (_decoder->loadFile(filename)) {
-			((Video::AdvancedVideoDecoder *)_decoder)->start(); // TODO: Remove after new API is complete
+			_decoder->start();
 			return true;
 		} else {
 			initGraphics(640, 480, true);
@@ -108,9 +108,9 @@ bool MoviePlayer::load(const char *name) {
 
 	// For DXA, also add the external sound file
 	if (_decoderType == kVideoDecoderDXA)
-		((Video::AdvancedVideoDecoder *)_decoder)->addStreamFileTrack(name);
+		_decoder->addStreamFileTrack(name);
 
-	((Video::AdvancedVideoDecoder *)_decoder)->start(); // TODO: Remove after new API is complete
+	_decoder->start();
 	return true;
 }
 

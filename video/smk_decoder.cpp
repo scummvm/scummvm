@@ -396,7 +396,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void SmackerDecoder::close() {
-	AdvancedVideoDecoder::close();
+	VideoDecoder::close();
 
 	delete _fileStream;
 	_fileStream = 0;
@@ -411,7 +411,7 @@ void SmackerDecoder::close() {
 bool SmackerDecoder::rewind() {
 	// Call the parent method to rewind the tracks first
 	// In particular, only videos without sound can be rewound
-	if (!AdvancedVideoDecoder::rewind())
+	if (!VideoDecoder::rewind())
 		return false;
 
 	// And seek back to where the first frame begins

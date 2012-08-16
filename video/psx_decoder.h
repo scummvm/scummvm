@@ -56,7 +56,7 @@ namespace Video {
  *  - sword1 (psx)
  *  - sword2 (psx)
  */
-class PSXStreamDecoder : public AdvancedVideoDecoder {
+class PSXStreamDecoder : public VideoDecoder {
 public:
 	// CD speed in sectors/second
 	// Calling code should use these enum values instead of the constants

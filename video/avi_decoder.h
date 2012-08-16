@@ -53,7 +53,7 @@ class Codec;
  * Video decoder used in engines:
  *  - sci
  */
-class AVIDecoder : public AdvancedVideoDecoder {
+class AVIDecoder : public VideoDecoder {
 public:
 	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~AVIDecoder();

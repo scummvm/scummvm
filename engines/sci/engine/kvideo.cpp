@@ -50,7 +50,7 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	if (!videoDecoder)
 		return;
 
-	((Video::AdvancedVideoDecoder *)videoDecoder)->start();
+	videoDecoder->start();
 
 	byte *scaleBuffer = 0;
 	byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;

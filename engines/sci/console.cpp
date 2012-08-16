@@ -267,8 +267,6 @@ void Console::postEnter() {
 		}
 
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
-			((Video::AdvancedVideoDecoder *)videoDecoder)->start();
-
 			_engine->_gfxCursor->kernelHide();
 
 #ifdef ENABLE_SCI32
