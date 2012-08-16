@@ -124,7 +124,7 @@ public:
 	 * Returns the current frame number of the video.
 	 * @return the last frame decoded by the video
 	 */
-	virtual int32 getCurFrame() const { return _curFrame; }
+	virtual int32 getCurFrame() const = 0;
 
 	/**
 	 * Returns the number of frames in the video.
@@ -173,7 +173,7 @@ public:
 	 * Returns if the video has finished playing or not.
 	 * @return true if the video has finished playing or if none is loaded, false otherwise
 	 */
-	virtual bool endOfVideo() const;
+	virtual bool endOfVideo() const = 0;
 
 	/**
 	 * Pause or resume the video. This should stop/resume any audio playback
@@ -229,23 +229,11 @@ public:
 
 protected:
 	/**
-	 * Resets _curFrame and _startTime. Should be called from every close() function.
-	 * @note This function is now deprecated. There is no replacement.
-	 */
-	void reset();
-
-	/**
 	 * Actual implementation of pause by subclasses. See pause()
 	 * for details.
 	 * @note This function is now deprecated. There is no replacement.
 	 */
 	virtual void pauseVideoIntern(bool pause) {}
-
-	/**
-	 * Add the time the video has been paused to maintain sync
-	 * @note This function is now deprecated. There is no replacement.
-	 */
-	virtual void addPauseTime(uint32 ms) { _startTime += ms; }
 
 	/**
 	 * Reset the pause start time (which should be called when seeking)
@@ -264,7 +252,6 @@ protected:
 	 */
 	virtual void updateBalance() {}
 
-	int32 _curFrame; // This variable is now deprecated.
 	int32 _startTime;
 
 // FIXME: These are protected until the new API takes over this one
@@ -795,26 +782,6 @@ private:
 	void stopAudio();
 	void startAudio();
 	void startAudioLimit(const Audio::Timestamp &limit);
-};
-
-/**
- * A VideoDecoder wrapper that implements getTimeToNextFrame() based on getFrameRate().
- * @note This class is now deprecated. Use AdvancedVideoDecoder instead.
- */
-class FixedRateVideoDecoder : public virtual VideoDecoder {
-public:
-	uint32 getTimeToNextFrame() const;
-
-protected:
-	/**
-	 * Return the frame rate in frames per second.
-	 * This returns a Rational because videos can have rates that are not integers and
-	 * there are some videos with frame rates < 1.
-	 */
-	virtual Common::Rational getFrameRate() const = 0;
-
-private:
-	uint32 getFrameBeginTime(uint32 frame) const;
 };
 
 } // End of namespace Video

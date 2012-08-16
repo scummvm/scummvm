@@ -34,7 +34,10 @@
 namespace Video {
 
 VideoDecoder::VideoDecoder() {
-	reset();
+	_startTime = 0;
+	_pauseLevel = 0;
+	_audioVolume = Audio::Mixer::kMaxChannelVolume;
+	_audioBalance = 0;
 }
 
 bool VideoDecoder::loadFile(const Common::String &filename) {
@@ -74,7 +77,7 @@ void VideoDecoder::pauseVideo(bool pause) {
 		pauseVideoIntern(true);
 	} else if (_pauseLevel == 0) {
 		pauseVideoIntern(false);
-		addPauseTime(g_system->getMillis() - _pauseStartTime);
+		_startTime += (g_system->getMillis() - _pauseStartTime);
 	}
 }
 
@@ -701,41 +704,8 @@ void AdvancedVideoDecoder::startAudioLimit(const Audio::Timestamp &limit) {
 ///////////////// DEPRECATED /////////////////
 //////////////////////////////////////////////
 
-void VideoDecoder::reset() {
-	_curFrame = -1;
-	_startTime = 0;
-	_pauseLevel = 0;
-	_audioVolume = Audio::Mixer::kMaxChannelVolume;
-	_audioBalance = 0;
-}
-
-bool VideoDecoder::endOfVideo() const {
-	return !isVideoLoaded() || (getCurFrame() >= (int32)getFrameCount() - 1);
-}
-
 void VideoDecoder::setSystemPalette() {
 	g_system->getPaletteManager()->setPalette(getPalette(), 0, 256);
-}
-
-uint32 FixedRateVideoDecoder::getTimeToNextFrame() const {
-	if (endOfVideo() || _curFrame < 0)
-		return 0;
-
-	uint32 elapsedTime = getTime();
-	uint32 nextFrameStartTime = getFrameBeginTime(_curFrame + 1);
-
-	// If the time that the next frame should be shown has past
-	// the frame should be shown ASAP.
-	if (nextFrameStartTime <= elapsedTime)
-		return 0;
-
-	return nextFrameStartTime - elapsedTime;
-}
-
-uint32 FixedRateVideoDecoder::getFrameBeginTime(uint32 frame) const {
-	Common::Rational beginTime = frame * 1000;
-	beginTime /= getFrameRate();
-	return beginTime.toInt();
 }
 
 } // End of namespace Video
