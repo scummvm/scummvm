@@ -106,6 +106,7 @@
 		<bitmap filename = 'grid.bmp'/>
 		<bitmap filename = 'editbtn.bmp'/>
 		<bitmap filename = 'switchbtn.bmp'/>
+		<bitmap filename = 'fastreplay.bmp'/>
 	</bitmaps>
 
 	<fonts>

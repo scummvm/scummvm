@@ -33,11 +33,13 @@ private:
 	uint32 lastTime;
 	bool _enableDrag;
 	bool _mouseOver;
+	bool _editDlgShown;
 	Common::Point _dragPoint;
 	GUI::StaticTextWidget *text;
+	Dialog *dlg;
 	bool isMouseOver(int x, int y);
 public:
-	OnScreenDialog();
+	OnScreenDialog(bool recordingMode);
 	~OnScreenDialog();
 	virtual void close();
 	virtual bool isVisible() const;
@@ -48,6 +50,8 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	bool editDlgVisible();
+	Dialog *getActiveDlg();
 protected:
 	virtual void	releaseFocus();
 };

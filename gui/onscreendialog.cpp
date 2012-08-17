@@ -36,7 +36,8 @@ bool OnScreenDialog::isVisible() const {
 enum {
 	kStopCmd = 'STOP',
 	kEditCmd = 'EDIT',
-	kSwitchModeCmd = 'MODE'
+	kSwitchModeCmd = 'MODE',
+	kFastModeCmd = 'FAST'
 };
 
 void OnScreenDialog::reflowLayout() {
@@ -46,25 +47,41 @@ void OnScreenDialog::reflowLayout() {
 void OnScreenDialog::releaseFocus() {
 }
 
-OnScreenDialog::OnScreenDialog() : Dialog(0, 0, 200, 40) {
+OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog(0, 0, 210, 40) {
 	GUI::PicButtonWidget *btn;
-	btn = new PicButtonWidget(this, "OnScreenDialog.StopButton", "", kStopCmd);
+	int textWidth = 50;
+	int buttonWidth = 32;
+	int buttonHeight = 32;
+	int buttonX = 5;
+	int buttonY = 5;
+	int buttonDistance = 5;
+	btn = new PicButtonWidget(this, buttonX, buttonY, buttonWidth, buttonHeight, 0, kStopCmd, 0);
 	btn->useThemeTransparency(true);
 	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopbtn));
-	btn = new PicButtonWidget(this, "OnScreenDialog.EditButton", "", kEditCmd);
-	btn->useThemeTransparency(true);
-	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditbtn));
-	btn = new PicButtonWidget(this, "OnScreenDialog.SwitchModeButton", "", kSwitchModeCmd);
-	btn->useThemeTransparency(true);
-	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModebtn));
-	text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", "00:00:00");
+	buttonX += buttonHeight + buttonDistance;
+	if (isRecord) {
+		btn = new PicButtonWidget(this, buttonX, buttonY, buttonWidth, buttonHeight, 0, kEditCmd, 0);
+		btn->useThemeTransparency(true);
+		btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditbtn));
+		buttonX += buttonHeight + buttonDistance;
+	} else {
+		btn = new PicButtonWidget(this, buttonX, buttonY, buttonWidth, buttonHeight, 0, kSwitchModeCmd, 0);
+		btn->useThemeTransparency(true);
+		btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModebtn));
+		buttonX += buttonHeight + buttonDistance;
+		btn = new PicButtonWidget(this, buttonX, buttonY, buttonWidth, buttonHeight, 0, kFastModeCmd, 0);
+		btn->useThemeTransparency(true);
+		btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageFastReplaybtn));
+		buttonX += buttonHeight + buttonDistance;
+	}
+	text = new GUI::StaticTextWidget(this, buttonX, buttonY, textWidth, buttonHeight, "00:00:00", Graphics::TextAlign::kTextAlignLeft);
 	_enableDrag = false;
 	_mouseOver = false;
+	_editDlgShown = false;
 }
 
 void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	Common::Event eventRTL;
-	EditRecordDialog dlg(g_eventRec.getAuthor(), g_eventRec.getName(), g_eventRec.getNotes());
 	switch (cmd) {
 	case kStopCmd:
 		eventRTL.type = Common::EVENT_RTL;
@@ -72,18 +89,28 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kEditCmd:
-		close();
+		dlg = new EditRecordDialog(g_eventRec.getAuthor(), g_eventRec.getName(), g_eventRec.getNotes());
 		CursorMan.lock(false);
-		dlg.runModal();
+		g_eventRec.setRedraw(false);
+		g_system->showOverlay();
+		_editDlgShown = true;
+		dlg->runModal();
+		_editDlgShown = false;
+		g_system->hideOverlay();
+		g_eventRec.setRedraw(true);
 		CursorMan.lock(true);
-		g_eventRec.setAuthor(dlg.getAuthor());
-		g_eventRec.setName(dlg.getName());
-		g_eventRec.setNotes(dlg.getNotes());
-		open();
+		g_eventRec.setAuthor(((EditRecordDialog *) dlg)->getAuthor());
+		g_eventRec.setName(((EditRecordDialog *) dlg)->getName());
+		g_eventRec.setNotes(((EditRecordDialog *) dlg)->getNotes());
+		delete dlg;
 		break;
 	case kSwitchModeCmd:
-		g_eventRec.switchMode();
-		close();
+		if (g_eventRec.switchMode()) {
+			close();
+		}
+		break;
+	case kFastModeCmd:
+		g_eventRec.switchFastMode();
 		break;
 	}
 }
@@ -151,17 +178,16 @@ void OnScreenDialog::close() {
 	Dialog::close();
 }
 
+Dialog *OnScreenDialog::getActiveDlg() {
+	if (_editDlgShown) {
+		return dlg;
+	} else {
+		return this;
+	}
+}
+
+bool OnScreenDialog::editDlgVisible() {
+	return _editDlgShown;
+}
 
 }
-/*
-
-
-
-
-
-g_system->updateScreen();
-
-evt.mouse.x = evt.mouse.x * (g_system->getOverlayWidth() / g_system->getWidth());
-evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
-
-*/
