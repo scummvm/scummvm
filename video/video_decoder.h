@@ -54,10 +54,14 @@ public:
 	VideoDecoder();
 	virtual ~VideoDecoder() {}
 
+	/////////////////////////////////////////
+	// Opening/Closing a Video
+	/////////////////////////////////////////
+
 	/**
 	 * Load a video from a file with the given name.
 	 *
-	 * A default implementation using loadStream is provided.
+	 * A default implementation using Common::File and loadStream is provided.
 	 *
 	 * @param filename	the filename to load
 	 * @return whether loading the file succeeded
@@ -68,6 +72,10 @@ public:
 	 * Load a video from a generic read stream. The ownership of the
 	 * stream object transfers to this VideoDecoder instance, which is
 	 * hence also responsible for eventually deleting it.
+	 *
+	 * Implementations of this function are required to call addTrack()
+	 * for each track in the video upon success.
+	 *
 	 * @param stream  the stream to load
 	 * @return whether loading the stream succeeded
 	 */
@@ -75,6 +83,9 @@ public:
 
 	/**
 	 * Close the active video stream and free any associated resources.
+	 *
+	 * All subclasses that need to close their own resources should still
+	 * call the base class' close() function at the start of their function.
 	 */
 	virtual void close();
 
@@ -83,32 +94,106 @@ public:
 	 */
 	bool isVideoLoaded() const;
 
-	/**
-	 * Returns the width of the video's frames.
-	 * @return the width of the video's frames
-	 */
-	virtual uint16 getWidth() const;
+
+	/////////////////////////////////////////
+	// Playback Control
+	/////////////////////////////////////////
 
 	/**
-	 * Returns the height of the video's frames.
-	 * @return the height of the video's frames
+	 * Begin playback of the video.
+	 *
+	 * @note This has no effect is the video is already playing.
 	 */
-	virtual uint16 getHeight() const;
+	void start();
 
 	/**
-	 * Get the pixel format of the currently loaded video.
+	 * Stop playback of the video.
+	 *
+	 * @note This will close() the video if it is not rewindable.
+	 * @note If the video is rewindable, the video will be rewound on the
+	 * next start() call unless rewind() or seek() is called before then.
 	 */
-	virtual Graphics::PixelFormat getPixelFormat() const;
+	void stop();
 
 	/**
-	 * Get the palette for the video in RGB format (if 8bpp or less).
+	 * Returns if the video is currently playing or not.
+	 * @todo Differentiate this function from endOfVideo()
 	 */
-	const byte *getPalette();
+	bool isPlaying() const { return _isPlaying; }
 
 	/**
-	 * Returns if the palette is dirty or not.
+	 * Returns if a video is rewindable or not. The default implementation
+	 * polls each track for rewindability.
 	 */
-	bool hasDirtyPalette() const { return _dirtyPalette; }
+	virtual bool isRewindable() const;
+
+	/**
+	 * Rewind a video to its beginning.
+	 *
+	 * If the video is playing, it will continue to play. The default
+	 * implementation will rewind each track.
+	 *
+	 * @return true on success, false otherwise
+	 */
+	virtual bool rewind();
+
+	/**
+	 * Returns if a video is seekable or not. The default implementation
+	 * polls each track for seekability.
+	 */
+	virtual bool isSeekable() const;
+
+	/**
+	 * Seek to a given time in the video.
+	 *
+	 * If the video is playing, it will continue to play. The default
+	 * implementation will seek each track and must still be called
+	 * from any other implementation.
+	 *
+	 * @param time The time to seek to
+	 * @return true on success, false otherwise
+	 */
+	virtual bool seek(const Audio::Timestamp &time);
+
+	/**
+	 * Pause or resume the video. This should stop/resume any audio playback
+	 * and other stuff. The initial pause time is kept so that any timing
+	 * variables can be updated appropriately.
+	 *
+	 * This is a convenience method which automatically keeps track on how
+	 * often the video has been paused, ensuring that after pausing an video
+	 * e.g. twice, it has to be unpaused twice before actuallying resuming.
+	 *
+	 * @param pause		true to pause the video, false to resume it
+	 */
+	void pauseVideo(bool pause);
+
+	/**
+	 * Return whether the video is currently paused or not.
+	 */
+	bool isPaused() const { return _pauseLevel != 0; }
+
+	/**
+	 * Set the time for this video to end at. At this time in the video,
+	 * all audio will stop and endOfVideo() will return true.
+	 */
+	void setEndTime(const Audio::Timestamp &endTime);
+
+	/**
+	 * Get the stop time of the video (if not set, zero)
+	 */
+	Audio::Timestamp getEndTime() const { return _endTime; }
+
+
+	/////////////////////////////////////////
+	// Playback Status
+	/////////////////////////////////////////
+
+	/**
+	 * Returns if the video has reached the end or not.
+	 * @return true if the video has finished playing or if none is loaded, false otherwise
+	 */
+	bool endOfVideo() const;
 
 	/**
 	 * Returns the current frame number of the video.
@@ -138,6 +223,64 @@ public:
 	 */
 	uint32 getTime() const;
 
+
+	/////////////////////////////////////////
+	// Video Info
+	/////////////////////////////////////////
+
+	/**
+	 * Returns the width of the video's frames.
+	 *
+	 * By default, this finds the largest width between all of the loaded
+	 * tracks. However, a subclass may override this if it does any kind
+	 * of post-processing on it.
+	 *
+	 * @return the width of the video's frames
+	 */
+	virtual uint16 getWidth() const;
+
+	/**
+	 * Returns the height of the video's frames.
+	 *
+	 * By default, this finds the largest height between all of the loaded
+	 * tracks. However, a subclass may override this if it does any kind
+	 * of post-processing on it.
+	 *
+	 * @return the height of the video's frames
+	 */
+	virtual uint16 getHeight() const;
+
+	/**
+	 * Get the pixel format of the currently loaded video.
+	 */
+	Graphics::PixelFormat getPixelFormat() const;
+
+	/**
+	 * Get the duration of the video.
+	 *
+	 * If the duration is unknown, this will return 0. If this is not
+	 * overriden, it will take the length of the longest track.
+	 */
+	virtual Audio::Timestamp getDuration() const;
+
+
+	/////////////////////////////////////////
+	// Frame Decoding
+	/////////////////////////////////////////
+
+	/**
+	 * Get the palette for the video in RGB format (if 8bpp or less).
+	 *
+	 * The palette's format is the same as PaletteManager's palette
+	 * (interleaved RGB values).
+	 */
+	const byte *getPalette();
+
+	/**
+	 * Returns if the palette is dirty or not.
+	 */
+	bool hasDirtyPalette() const { return _dirtyPalette; }
+
 	/**
 	 * Return the time (in ms) until the next frame should be displayed.
 	 */
@@ -148,10 +291,18 @@ public:
 	 * time has elapsed since the last frame was decoded.
 	 * @return whether a new frame should be decoded or not
 	 */
-	virtual bool needsUpdate() const;
+	bool needsUpdate() const;
 
 	/**
 	 * Decode the next frame into a surface and return the latter.
+	 *
+	 * A subclass may override this, but must still call this function. As an
+	 * example, a subclass may do this to apply some global video scale to
+	 * individual track's frame.
+	 *
+	 * Note that this will call readNextPacket() internally first before calling
+	 * the next video track's decodeNextFrame() function.
+	 *
 	 * @return a surface containing the decoded frame, or 0
 	 * @note Ownership of the returned surface stays with the VideoDecoder,
 	 *       hence the caller must *not* free it.
@@ -160,28 +311,19 @@ public:
 	virtual const Graphics::Surface *decodeNextFrame();
 
 	/**
-	 * Returns if the video has finished playing or not.
-	 * @return true if the video has finished playing or if none is loaded, false otherwise
-	 */
-	bool endOfVideo() const;
-
-	/**
-	 * Pause or resume the video. This should stop/resume any audio playback
-	 * and other stuff. The initial pause time is kept so that any timing
-	 * variables can be updated appropriately.
+	 * Set the default high color format for videos that convert from YUV.
 	 *
-	 * This is a convenience method which automatically keeps track on how
-	 * often the video has been paused, ensuring that after pausing an video
-	 * e.g. twice, it has to be unpaused twice before actuallying resuming.
+	 * By default, VideoDecoder will attempt to use the screen format
+	 * if it's >8bpp and use a 32bpp format when not.
 	 *
-	 * @param pause		true to pause the video, false to resume it
+	 * This must be set before calling loadStream().
 	 */
-	void pauseVideo(bool pause);
+	void setDefaultHighColorFormat(const Graphics::PixelFormat &format) { _defaultHighColorFormat = format; }
 
-	/**
-	 * Return whether the video is currently paused or not.
-	 */
-	bool isPaused() const { return _pauseLevel != 0; }
+
+	/////////////////////////////////////////
+	// Audio Control
+	/////////////////////////////////////////
 
 	/**
 	 * Get the current volume at which the audio in the video is being played
@@ -191,10 +333,8 @@ public:
 
 	/**
 	 * Set the volume at which the audio in the video should be played.
-	 * This setting remains until reset() is called (which may be called
-	 * from loadStream() or close()). The default volume is the maximum.
-	 *
-	 * @note This function calls updateVolume() by default.
+	 * This setting remains until close() is called (which may be called
+	 * from loadStream()). The default volume is the maximum.
 	 *
 	 * @param volume The volume at which to play the audio in the video
 	 */
@@ -208,100 +348,20 @@ public:
 
 	/**
 	 * Set the balance at which the audio in the video should be played.
-	 * This setting remains until reset() is called (which may be called
-	 * from loadStream() or close()). The default balance is 0.
-	 *
-	 * @note This function calls updateBalance() by default.
+	 * This setting remains until close() is called (which may be called
+	 * from loadStream()). The default balance is 0.
 	 *
 	 * @param balance The balance at which to play the audio in the video
 	 */
 	void setBalance(int8 balance);
 
 	/**
-	 * Returns if a video is rewindable or not. The default implementation
-	 * polls each track for rewindability.
-	 */
-	virtual bool isRewindable() const;
-
-	/**
-	 * Rewind a video to its beginning.
-	 *
-	 * If the video is playing, it will continue to play. The default
-	 * implementation will rewind each track.
-	 *
-	 * @return true on success, false otherwise
-	 */
-	virtual bool rewind();
-
-	/**
-	 * Returns if a video is seekable or not. The default implementation
-	 * polls each track for seekability.
-	 */
-	virtual bool isSeekable() const;
-
-	/**
-	 * Seek to a given time in the video.
-	 *
-	 * If the video is playing, it will continue to play. The default
-	 * implementation will seek each track.
-	 *
-	 * @param time The time to seek to
-	 * @return true on success, false otherwise
-	 */
-	virtual bool seek(const Audio::Timestamp &time);
-
-	/**
-	 * Begin playback of the video.
-	 *
-	 * @note This has no effect is the video is already playing.
-	 */
-	void start();
-
-	/**
-	 * Stop playback of the video.
-	 *
-	 * @note This will close() the video if it is not rewindable.
-	 */
-	void stop();
-
-	/**
-	 * Returns if the video is currently playing or not.
-	 * @todo Differentiate this function from endOfVideo()
-	 */
-	bool isPlaying() const { return _isPlaying; }
-
-	/**
-	 * Get the duration of the video.
-	 *
-	 * If the duration is unknown, this will return 0.
-	 */
-	virtual Audio::Timestamp getDuration() const;
-
-	/**
 	 * Add an audio track from a stream file.
+	 *
+	 * This calls SeekableAudioStream::openStreamFile() internally
 	 */
 	bool addStreamFileTrack(const Common::String &baseName);
 
-	/**
-	 * Set the default high color format for videos that convert from YUV.
-	 *
-	 * By default, VideoDecoder will attempt to use the screen format
-	 * if it's >8bpp and use a 32bpp format when not.
-	 *
-	 * This must be set before calling loadStream().
-	 */
-	void setDefaultHighColorFormat(const Graphics::PixelFormat &format) { _defaultHighColorFormat = format; }
-
-	/**
-	 * Set the time for this video to end at. At this time in the video,
-	 * all audio will stop and endOfVideo() will return true.
-	 */
-	void setEndTime(const Audio::Timestamp &endTime);
-
-	/**
-	 * Get the stop time of the video (if not set, zero)
-	 */
-	Audio::Timestamp getEndTime() const { return _endTime; }
 
 	// Future API
 	//void setRate(const Common::Rational &rate);
@@ -337,11 +397,18 @@ protected:
 
 		/**
 		 * Return if the track is rewindable.
+		 *
+		 * If a video is seekable, it does not need to implement this
+		 * for it to also be rewindable.
 		 */
 		virtual bool isRewindable() const;
 
 		/**
 		 * Rewind the video to the beginning.
+		 *
+		 * If a video is seekable, it does not need to implement this
+		 * for it to also be rewindable.
+		 *
 		 * @return true on success, false otherwise.
 		 */
 		virtual bool rewind();
@@ -394,6 +461,7 @@ protected:
 		virtual ~VideoTrack() {}
 
 		TrackType getTrackType() const  { return kTrackTypeVideo; }
+		virtual bool endOfTrack() const;
 
 		/**
 		 * Get the width of this track
@@ -458,7 +526,6 @@ protected:
 		FixedRateVideoTrack() {}
 		virtual ~FixedRateVideoTrack() {}
 
-		virtual bool endOfTrack() const;
 		uint32 getNextFrameStartTime() const;
 		virtual Audio::Timestamp getDuration() const;
 
@@ -540,7 +607,7 @@ protected:
 
 	/**
 	 * An AudioTrack that implements isRewindable() and rewind() using
-	 * the RewindableAudioStream API.
+	 * RewindableAudioStream.
 	 */
 	class RewindableAudioTrack : public AudioTrack {
 	public:
@@ -562,7 +629,7 @@ protected:
 
 	/**
 	 * An AudioTrack that implements isSeekable() and seek() using
-	 * the SeekableAudioStream API.
+	 * SeekableAudioStream.
 	 */
 	class SeekableAudioTrack : public AudioTrack {
 	public:
@@ -613,7 +680,7 @@ protected:
 	/**
 	 * Decode enough data for the next frame and enough audio to last that long.
 	 *
-	 * This function is used by the default decodeNextFrame() function. A subclass
+	 * This function is used by the decodeNextFrame() function. A subclass
 	 * of a Track may decide to just have its decodeNextFrame() function read
 	 * and decode the frame.
 	 */
@@ -629,7 +696,7 @@ protected:
 	/**
 	 * Whether or not getTime() will sync with a playing audio track.
 	 *
-	 * A subclass should override this to disable this feature.
+	 * A subclass can override this to disable this feature.
 	 */
 	virtual bool useAudioSync() const { return true; }
 

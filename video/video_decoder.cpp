@@ -413,6 +413,10 @@ Audio::Timestamp VideoDecoder::Track::getDuration() const {
 	return Audio::Timestamp(0, 1000);
 }
 
+bool VideoDecoder::VideoTrack::endOfTrack() const {
+	return getCurFrame() >= (getFrameCount() - 1);
+}
+
 uint32 VideoDecoder::FixedRateVideoTrack::getNextFrameStartTime() const {
 	if (endOfTrack() || getCurFrame() < 0)
 		return 0;
@@ -420,10 +424,6 @@ uint32 VideoDecoder::FixedRateVideoTrack::getNextFrameStartTime() const {
 	Common::Rational time = (getCurFrame() + 1) * 1000;
 	time /= getFrameRate();
 	return time.toInt();
-}
-
-bool VideoDecoder::FixedRateVideoTrack::endOfTrack() const {
-	return getCurFrame() >= (getFrameCount() - 1);
 }
 
 Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getDuration() const {
