@@ -73,6 +73,15 @@ void Module2800::createScene(int sceneNum, int which) {
 		}
 #endif		
 		break;
+	case 2:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		setGlobalVar(0x1860C990,1);//DEBUG
+		if (getGlobalVar(0x1860C990))
+			_childObject = new Scene2803b(_vm, this, which);
+		else {
+			// TODO _childObject = new Scene2803(_vm, this, which);
+		}
+		break;
 	case 4:
 		// TODO Music18hList_stop(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2805(_vm, this, which);
@@ -107,6 +116,20 @@ void Module2800::updateScene() {
 			} else {
 				createScene(1001, -1);
 			}
+			break;
+		case 2:
+			if (_moduleResult == 1)
+				createScene(3, 0);
+			else if (_moduleResult == 2)
+				createScene(5, 0);
+			else if (_moduleResult == 3)
+				createScene(6, 0);
+			else if (_moduleResult == 4)
+				createScene(9, 0);
+			else if (_moduleResult == 5)
+				createScene(25, 0);
+			else 
+				createScene(0, 1);
 			break;
 		case 4:
 			if (_moduleResult == 1) {
@@ -237,6 +260,270 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return messageResult;
+}
+
+Scene2803b::Scene2803b(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _palStatus(0) {
+
+	static const uint32 kScene2803bFileHashes1[] = {
+		0, 0x081000F1, 0x08100171, 0x08100271
+	};
+
+	static const uint32 kScene2803bFileHashes2[] = {
+		0, 0x286800D4, 0x286806D4, 0x28680AD4
+	};
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2803b::handleMessage);
+
+	loadDataResource(0x81120132);
+	insertMouse433(0x00A05290);
+
+	// TODO insertSprite<Class488>(this, 0xAFAD591A, 0x276E321D, 578, 200);
+
+	if (getGlobalVar(0x190A1D18)) {
+		setBackground(0x412A423E);
+		setPalette(0x412A423E);
+		_palette->addBasePalette(0x412A423E, 0, 256, 0);
+		addEntity(_palette);
+		_sprite1 = insertStaticSprite(0x0C03AA23, 1100);
+		_sprite2 = insertStaticSprite(0x24320220, 1100);
+		_sprite3 = insertStaticSprite(0x1A032204, 1100);
+		_sprite4 = insertStaticSprite(0x18032204, 1100);
+		_sprite5 = insertStaticSprite(0x34422912, 1100);
+		_sprite6 = insertStaticSprite(0x3C42022F, 1100);
+		_sprite7 = insertStaticSprite(0x341A0237, 1100);
+
+		if (getSubVar(0x0C601058, 0) == 0)
+			insertStaticSprite(0x66121222, 100);
+		else
+			insertSprite<AnimatedSprite>(kScene2803bFileHashes1[getSubVar(0x0C601058, 0)], 100, 529, 326);
+
+		if (getSubVar(0x0C601058, 1) == 3)
+			insertStaticSprite(0x64330236, 100);
+
+		if (getSubVar(0x0C601058, 2) == 3)
+			insertStaticSprite(0x2E4A22A2, 100);
+
+	} else {
+		setBackground(0x29800A01);
+		setPalette(0x29800A01);
+		_palette->addBasePalette(0x29800A01, 0, 256, 0);
+		addEntity(_palette);
+		_sprite1 = insertStaticSprite(0x16202200, 1100);
+		_sprite2 = insertStaticSprite(0xD0802EA0, 1100);
+		_sprite3 = insertStaticSprite(0x780C2E30, 1100);
+		_sprite4 = insertStaticSprite(0x700C2E30, 1100);
+		_sprite5 = insertStaticSprite(0x102CE6E1, 900);
+		_sprite6 = insertStaticSprite(0x108012C1, 1100);
+		_sprite7 = insertStaticSprite(0x708072E0, 1100);
+		insertStaticSprite(0x90582EA4, 100);
+
+		setSubVar(0x0C601058, 0, 1);//DEBUG, FIXME crashes when not done?!
+		if (getSubVar(0x0C601058, 0) == 0)
+			insertStaticSprite(0x50C027A8, 100);
+		else
+			insertSprite<AnimatedSprite>(kScene2803bFileHashes2[getSubVar(0x0C601058, 0)], 100, 529, 326);
+
+		if (getSubVar(0x0C601058, 1) == 3)
+			insertStaticSprite(0xD48077A0, 100);
+
+		if (getSubVar(0x0C601058, 2) == 3)
+			insertStaticSprite(0x30022689, 100);
+
+	}
+	
+	_sprite6->setVisible(false);
+	_sprite7->setVisible(false);
+
+	if (which < 0) {
+		insertKlayman<KmScene2803b>(479, 435);
+		sub460110();
+		setMessageList(0x004B60D8);
+	} else if (which == 3) {
+		NPoint pt = _dataResource.getPoint(0x096520ED);
+		insertKlayman<KmScene2803b>(pt.x, pt.y);
+		sub460090();
+		setMessageList(0x004B6100);
+		_klayman->setRepl(64, 0);
+	} else if (which == 4) {
+		NPoint pt = _dataResource.getPoint(0x20C6238D);
+		insertKlayman<KmScene2803b>(pt.x, pt.y);
+		sub460090();
+		setMessageList(0x004B60F8);
+		_klayman->setRepl(64, 0);
+	} else if (which == 5) {
+		NPoint pt = _dataResource.getPoint(0x2146690D);
+		insertKlayman<KmScene2803b>(pt.x, pt.y);
+		sub460090();
+		setMessageList(0x004B6100);
+		_klayman->setRepl(64, 0);
+	} else if (which == 2) {
+		NPoint pt = _dataResource.getPoint(0x104C03ED);
+		insertKlayman<KmScene2803b>(pt.x, pt.y);
+		sub460110();
+		setMessageList(0x004B6138);
+	} else {
+		insertKlayman<KmScene2803b>(135, 444);
+		sub460110();
+		setMessageList(0x004B60E0);
+		_sprite6->setVisible(true);
+		_sprite7->setVisible(true);
+	}
+
+}
+
+uint32 Scene2803b::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0xB4E4884C) {
+			setMessageList(0x004B6180);
+		} else if (param.asInteger() == 0xB1FDAB2E) {
+			NPoint pt = _dataResource.getPoint(0x0D84A1AD);
+			_klayman->setX(pt.x);
+			_klayman->setY(pt.y);
+			_klayman->processDelta();
+			sub460110();
+			_klayman->setClipRect(517, 401, 536, 480);
+			setMessageList(0x004B6198);
+		} else if (param.asInteger() == 0xB00C7C48) {
+			setMessageList(0x004B6108);
+		} else if (param.asInteger() == 0x61F64346) {
+			setMessageList(0x004B6150);
+		} else if (param.asInteger() == 0xAC69A28D) {
+			setMessageList(0x004B6168);
+		} else if (param.asInteger() == 0x00086212) {
+			_klayman->setClipRect(0, 0, 560, 315);
+			_klayman->setX(560);
+			_klayman->setY(315);
+			_klayman->processDelta();
+			sub460090();
+			setMessageList(0x004B61A0);
+		} else if (param.asInteger() == 0x002CAA68) {
+			setMessageList(0x004B61A8);
+		}
+		break;
+	case 0x482A:
+		if (_klayman->getX() < 200) {
+			sub4601D0();
+		} else if (_klayman->getX() < 500) {
+			setSurfacePriority(_sprite5->getSurface(), 1100);
+			sendMessage(_klayman, 0x482C, 0);
+			sub4601B0();
+		} else {
+			_klayman->setClipRect(517, 401, 536, 480);
+			sub4601B0();
+		}
+		break;
+	case 0x482B:
+		_sprite6->setVisible(false);
+		_sprite7->setVisible(false);
+		_klayman->setClipRect(0, 0, 640, 480);
+		setSurfacePriority(_sprite5->getSurface(), 900);
+		sendMessage(_klayman, 0x482C, 0x2086222D);
+		break;
+	}
+	return 0;
+}
+
+void Scene2803b::update45FCB0() {
+	if (_klayman->getX() < 388) {
+		_klayman->setClipRect(_sprite3->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+		sub460170();
+	} else if (_klayman->getX() < 500) {
+		_klayman->setClipRect(0, 0, _sprite1->getDrawRect().x2(), _sprite1->getDrawRect().y2());
+		sub460190();
+	}
+	Scene::update();
+}
+
+void Scene2803b::update45FD50() {
+	if (_klayman->getX() > 194 && _klayman->getX() < 273)
+		sub4601B0();
+	else if (_klayman->getX() > 155 && _klayman->getX() < 300)
+		sub460170();
+	Scene::update();
+}
+
+void Scene2803b::sub460090() {
+	SetUpdateHandler(&Scene2803b::update45FCB0);
+	sendMessage(_klayman, 0x482C, 0x23C630D9);
+	_klayman->setClipRect(0, 0, _sprite1->getDrawRect().x2(), _sprite1->getDrawRect().y2());
+	_klayman->setRepl(64, 0);
+	_sprite1->setVisible(true);
+}
+
+void Scene2803b::sub460110() {
+	SetUpdateHandler(&Scene2803b::update45FD50);
+	sendMessage(_klayman, 0x482C, 0x2086222D);
+	_klayman->setClipRect(0, 0, 640, 480);
+	_klayman->clearRepl();
+	_sprite1->setVisible(false);
+}
+
+void Scene2803b::sub460170() {
+	if (_palStatus != 0) {
+		_palStatus = 0;
+		sub4601F0(false);
+	}
+}
+
+void Scene2803b::sub460190() {
+	if (_palStatus != 1) {
+		_palStatus = 1;
+		sub4601F0(false);
+	}
+}
+
+void Scene2803b::sub4601B0() {
+	if (_palStatus != 2) {
+		_palStatus = 2;
+		sub4601F0(false);
+	}
+}
+
+void Scene2803b::sub4601D0() {
+	if (_palStatus != 3) {
+		_palStatus = 3;
+		sub4601F0(true);
+	}
+}
+
+void Scene2803b::sub4601F0(bool flag) {
+	if (getGlobalVar(0x190A1D18)) {
+		switch (_palStatus) {
+		case 1:
+			_palette->addBasePalette(0x0A938204, 0, 64, 0);
+			break;
+		case 2:
+			_palette->addBasePalette(0xB103B604, 0, 64, 0);
+			break;
+		case 3:
+			// TODO _palette->sub_47BFB0(0, 64);
+			break;
+		default:
+			_palette->addBasePalette(0x412A423E, 0, 64, 0);
+			break;
+		}
+	} else {
+		switch (_palStatus) {
+		case 2:
+			_palette->addBasePalette(0x0263D144, 0, 64, 0);
+			break;
+		case 3:
+			// TODO _palette->sub_47BFB0(0, 64);
+			break;
+		default:
+			_palette->addBasePalette(0x29800A01, 0, 64, 0);
+			break;
+		}
+	}
+	if (flag) {
+		_palette->startFadeToPalette(0);
+	} else {
+		_palette->startFadeToPalette(12);
+	}
 }
 
 Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)

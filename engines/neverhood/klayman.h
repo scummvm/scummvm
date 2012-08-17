@@ -140,6 +140,17 @@ public:
 	
 	void setSoundFlag(bool value) { _soundFlag = value; }
 
+	void sub421640();
+	void sub421740();
+	void sub421780();
+	void sub421700();
+	void sub421840();
+	void sub421800();
+	void sub4217C0();
+	void sub421900();
+	void sub4218C0();
+	void sub421880();
+
 protected:
 	Entity *_parentScene;
 	Sprite *_attachedSprite;
@@ -165,10 +176,7 @@ protected:
 	const KlaymanIdleTableItem *_idleTable;
 	int _idleTableCount;
 	int _idleTableMaxValue;
-	uint32 _field114;
-	/*
-	00000118 field118		dw ?
-	*/
+	NPointArray *_pathPoints;
 	bool _soundFlag;
 	int _resourceHandle;
 	virtual void xUpdate();
@@ -248,6 +256,13 @@ protected:
 	void update41D1C0();
 	
 	uint32 hmInsertDisk(int messageNum, const MessageParam &param, Entity *sender);
+	
+	void sub41CDE0(int16 x);
+	void sub421680();
+	uint32 handleMessage41ED70(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41EE00(int messageNum, const MessageParam &param, Entity *sender);
+	
+	void walkAlongPathPoints();
 	
 };
 
@@ -547,6 +562,16 @@ public:
 	KmScene2801(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2803b : public Klayman {
+public:
+	KmScene2803b(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	SoundResource _soundResource;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 handleMessage460600(int messageNum, const MessageParam &param, Entity *sender);
+	void sub460670();
 };
 
 class KmScene2805 : public Klayman {

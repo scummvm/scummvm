@@ -62,7 +62,7 @@ Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int
 	_counterMax(0), _counter(0), _isMoveObjectRequested(false), _counter3Max(0), _isWalkingOpenDoorNotified(false), _counter1(0),
 	_counter2(0), /*_field118(0), */_status2(0), _acceptInput(true), _attachedSprite(NULL), _isWalking(false),
 	_status3(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false), _flagF6(false), _isLeverDown(false),
-	_flagFA(false), _ladderStatus(0), _field114(0), _resourceHandle(-1), _soundFlag(false) {
+	_flagFA(false), _ladderStatus(0), _pathPoints(NULL), _resourceHandle(-1), _soundFlag(false) {
 	
 	// TODO DirtySurface
 	createSurface(surfacePriority, 320, 200);
@@ -574,11 +574,9 @@ uint32 Klayman::handleMessage41D360(int messageNum, const MessageParam &param, E
 		break;
 	case 0x482C:
 		if (param.asInteger() != 0) {
-		debug("#################################################");
-			// TODO _rectResource.getRectangle2(param.asInteger(), &_field118, &_field114,);
+			_pathPoints = _dataResource.getPointArray(param.asInteger());
 		} else {
-		debug("#################################################");
-			// TODO _field114 = 0;
+			_pathPoints = NULL;
 		}
 		break;
 	}
@@ -757,9 +755,8 @@ void Klayman::suWalking() {
 	if (_destX != _x) {
 		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
 		_x += xdiff;
-		if (_field114) {
-			error("// TODO Klayman_sub_41CF70");
-			// TODO Klayman_sub_41CF70
+		if (_pathPoints) {
+			walkAlongPathPoints();
 		} else {
 			HitRect *hitRectNext = _vm->_collisionMan->findHitRectAtPos(_x, _y);
 			if (hitRectNext->type == 0x5002) {
@@ -939,9 +936,8 @@ void Klayman::suWalkingTestExit() {
 	} else {
 		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
 		_x += xdelta;
-		if (_field114) {
-			error("_field114");
-			// TODO Klayman_sub_41CF70
+		if (_pathPoints) {
+			walkAlongPathPoints();
 		} else {
 			HitRect *hitRectNext = _vm->_collisionMan->findHitRectAtPos(_x, _y);
 			if (hitRectNext->type == 0x5002) {
@@ -1096,6 +1092,153 @@ void Klayman::startSpecialWalkLeft(int16 x) {
 	}
 }
 
+void Klayman::sub41CDE0(int16 x) {
+	_status3 = 2;
+	if (_x == x) {
+		_destX = x;
+		if (_isWalking) {
+			GotoState(NULL);
+			gotoNextStateExt();
+		}
+	} else if (_isWalking && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0))) {
+		_destX = x;
+	} else {
+		_destX = x;
+		GotoState(&Klayman::sub421680);
+	}
+}
+
+void Klayman::sub421680() {
+	_isWalking = true;
+	_acceptInput = true;
+	_status3 = 2;
+	setDoDeltaX(_destX < _x ? 1 : 0);
+	startAnimation(0x3A4CD934, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41ED70);
+	SetSpriteUpdate(&Klayman::suWalkingTestExit);
+	FinalizeState(&Klayman::stStartWalkingDone);
+}
+
+uint32 Klayman::handleMessage41ED70(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x32180101)
+			_soundResource1.play(0x4924AAC4);
+		else if (param.asInteger() == 0x0A2A9098)
+			_soundResource1.play(0x0A2AA8E0);
+	}
+	return messageResult;
+}
+
+void Klayman::sub421640() {
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0x90D0D1D0, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D360);
+	SetSpriteUpdate(NULL);
+}
+
+void Klayman::sub421740() {
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0x11C8D156, 30, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetSpriteUpdate(NULL);
+}
+
+void Klayman::sub421780() {
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0x11C8D156, 0, 10);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetSpriteUpdate(NULL);
+}
+
+void Klayman::sub421700() {
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0x11C8D156, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetSpriteUpdate(NULL);
+}
+
+void Klayman::sub421840() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimationByHash(0x3F9CC394, 0x14884392, 0);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EE00);
+	SetSpriteUpdate(&Klayman::spriteUpdate41F230);
+}
+
+uint32 Klayman::handleMessage41EE00(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x80C110B5)
+			sendMessage(_parentScene, 0x482A, 0);
+		else if (param.asInteger() == 0x110010D1)
+			sendMessage(_parentScene, 0x482B, 0);
+		else if (param.asInteger() == 0x32180101)
+			_soundResource1.play(0x4924AAC4);
+		else if (param.asInteger() == 0x0A2A9098)
+			_soundResource1.play(0x0A2AA8E0);
+		break;
+	}
+	return messageResult;
+}
+
+void Klayman::sub421800() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(0x2F1C4694, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EE00);
+	SetSpriteUpdate(&Klayman::spriteUpdate41F230);
+}
+
+void Klayman::sub4217C0() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(0x3F9CC394, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EE00);
+	SetSpriteUpdate(&Klayman::spriteUpdate41F230);
+}
+
+void Klayman::sub421900() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimationByHash(0x37ECD436, 0, 0x8520108C);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EE00);
+	SetSpriteUpdate(&Klayman::spriteUpdate41F230);
+}
+
+void Klayman::sub4218C0() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(0x16EDDE36, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EE00);
+	SetSpriteUpdate(&Klayman::spriteUpdate41F230);
+}
+
+void Klayman::sub421880() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(0x37ECD436, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EE00);
+	SetSpriteUpdate(&Klayman::spriteUpdate41F230);
+}
+
 void Klayman::sub41CC40(int16 x1, int16 x2) {
 	if (_x > x1) {
 		if (_x == x1 + x2) {
@@ -1182,9 +1325,8 @@ void Klayman::suLargeStep() {
 	if (_x != _destX) {
 		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
 		_x += xdiff;
-		if (_field114) {
-			error("// TODO Klayman_sub_41CF70();");
-			// TODO Klayman_sub_41CF70();
+		if (_pathPoints) {
+			walkAlongPathPoints();
 		} else {
 			HitRect *hitRectNext = _vm->_collisionMan->findHitRectAtPos(_x, _y);
 			if (hitRectNext->type == 0x5002) {
@@ -1926,6 +2068,39 @@ uint32 Klayman::hmInsertDisk(int messageNum, const MessageParam &param, Entity *
 		}
 	}
 	return handleMessage41D480(messageNum, param, sender);
+}
+
+void Klayman::walkAlongPathPoints() {
+	if (_x <= (*_pathPoints)[0].x)
+		_y = (*_pathPoints)[0].y;
+	else if (_x >= (*_pathPoints)[_pathPoints->size() - 1].x)
+		_y = (*_pathPoints)[_pathPoints->size() - 1].y;
+	else {
+		int16 deltaX = _x - (*_pathPoints)[0].x, deltaXIncr = 0;
+		uint index = 0;
+		while (deltaX > 0) {
+			NPoint pt2 = (*_pathPoints)[index];
+			NPoint pt1 = index + 1 >= _pathPoints->size() ? (*_pathPoints)[0] : (*_pathPoints)[index + 1];
+			int16 xd = ABS(pt1.x - pt2.x);
+			int16 yd = ABS(pt1.y - pt2.y);
+			if (deltaX + deltaXIncr >= xd) {
+				deltaX -= xd;
+				deltaX += deltaXIncr;
+				++index;
+				if (index >= _pathPoints->size())
+					index = 0;
+				_y = (*_pathPoints)[index].y;
+			} else {
+				deltaXIncr += deltaX;
+				if (pt1.y >= pt2.y) {
+					_y = pt2.y + (yd * deltaXIncr) / xd;
+				} else {
+					_y = pt2.y - (yd * deltaXIncr) / xd;
+				}
+				deltaX = 0;
+			}
+		}
+	}
 }
 
 //##############################################################################
@@ -4914,6 +5089,83 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return 0;
+}
+
+KmScene2803b::KmScene2803b(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _soundResource(vm) {
+	
+	_dataResource.load(0x81120132);
+	_soundResource.load(0x10688664);
+}
+
+uint32 KmScene2803b::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41CDE0(param.asPoint().x);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::sub421640);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		sub41CDE0(_dataResource.getPoint(param.asInteger()).x);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1)
+			GotoState(&Klayman::sub421740);
+		else if (param.asInteger() == 0)
+			GotoState(&Klayman::sub421780);
+		else
+			GotoState(&Klayman::sub421700);
+		break;
+	case 0x482E:
+		if (param.asInteger() == 1)
+			GotoState(&Klayman::sub421840);
+		else if (param.asInteger() == 2)
+			GotoState(&Klayman::sub421800);
+		else
+			GotoState(&Klayman::sub4217C0);
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1)
+			GotoState(&Klayman::sub421900);
+		else if (param.asInteger() == 2)
+			GotoState(&Klayman::sub4218C0);
+		else
+			GotoState(&Klayman::sub421880);
+		break;
+	case 0x4830:
+		GotoState(&KmScene2803b::sub460670);
+		break;
+	}
+	return 0;
+}
+
+uint32 KmScene2803b::handleMessage460600(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x80C110B5)
+			sendMessage(_parentScene, 0x482A, 0);
+		else if (param.asInteger() == 0x33288344)
+			_soundResource.play();
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2803b::sub460670() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(0x1AE88904, 0, -1);
+	_soundResource1.play(0x4C69EA53);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	SetMessageHandler(&KmScene2803b::handleMessage460600);
 }
 
 KmScene2805::KmScene2805(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)

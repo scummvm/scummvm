@@ -54,6 +54,30 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class Scene2803b : public Scene {
+public:
+	Scene2803b(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	int _palStatus;
+	Sprite *_sprite1;
+	Sprite *_sprite2;
+	Sprite *_sprite3;
+	Sprite *_sprite4;
+	Sprite *_sprite5;
+	Sprite *_sprite6;
+	Sprite *_sprite7;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void update45FCB0();
+	void update45FD50();
+	void sub460090();
+	void sub460110();
+	void sub460170();
+	void sub460190();
+	void sub4601B0();
+	void sub4601D0();
+	void sub4601F0(bool flag);
+};
+
 class Scene2805 : public Scene {
 public:
 	Scene2805(NeverhoodEngine *vm, Module *parentModule, int which);
