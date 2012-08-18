@@ -136,7 +136,10 @@ void EMISound::setMusicState(int stateId) {
 		delete _music;
 		_music = NULL;
 	}
-	if (stateId == 0 || (_musicTable != NULL && _musicTable[stateId]._id != stateId)) {
+	if (stateId == 0)
+		return;
+	if (_musicTable != NULL && _musicTable[stateId]._id != stateId) {
+		warning("Attempted to play track #%d, not found in music table!", stateId);
 		return;
 	}
 	Common::String filename;
@@ -165,6 +168,8 @@ MusicEntry *initMusicTableDemo(Common::String filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 	// FIXME, for now we use a fixed-size table, as I haven't looked at the retail-data yet.
 	MusicEntry *musicTable = new MusicEntry[15];
+	for (unsigned int i = 0; i < 15; i++)
+		musicTable[i]._id = -1;
 	
 	TextSplitter *ts = new TextSplitter(data);
 	int id, x, y, sync;
@@ -197,6 +202,8 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 	if (!data)
 		error("Couldn't open %s", filename.c_str());
 	MusicEntry *musicTable = new MusicEntry[126];
+	for (unsigned int i = 0; i < 126; i++)
+		musicTable[i]._id = -1;
 	
 	TextSplitter *ts = new TextSplitter(data);
 	int id, x, y, sync, trim;
