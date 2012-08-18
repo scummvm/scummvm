@@ -268,6 +268,10 @@ void MoviePlayerDXA::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	uint w = getWidth();
 
 	const Graphics::Surface *surface = decodeNextFrame();
+
+	if (!surface)
+		return;
+
 	byte *src = (byte *)surface->pixels;
 	dst += y * pitch + x;
 
@@ -288,6 +292,8 @@ void MoviePlayerDXA::playVideo() {
 	if (getWidth() == 384 && getHeight() == 280) {
 		_vm->clearSurfaces();
 	}
+
+	start();
 
 	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit())
 		handleNextFrame();
@@ -421,8 +427,6 @@ bool MoviePlayerSMK::load() {
 	if (!loadStream(videoStream))
 		error("Failed to load video stream from file %s", videoName.c_str());
 
-	start();
-
 	debug(0, "Playing video %s", videoName.c_str());
 
 	CursorMan.showMouse(false);
@@ -435,6 +439,10 @@ void MoviePlayerSMK::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	uint w = getWidth();
 
 	const Graphics::Surface *surface = decodeNextFrame();
+
+	if (!surface)
+		return;
+
 	byte *src = (byte *)surface->pixels;
 	dst += y * pitch + x;
 
@@ -449,6 +457,8 @@ void MoviePlayerSMK::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 }
 
 void MoviePlayerSMK::playVideo() {
+	start();
+
 	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit())
 		handleNextFrame();
 }
@@ -491,7 +501,7 @@ bool MoviePlayerSMK::processFrame() {
 
 	uint32 waitTime = getTimeToNextFrame();
 
-	if (!waitTime) {
+	if (!waitTime && !endOfVideoTracks()) {
 		warning("dropped frame %i", getCurFrame());
 		return false;
 	}
