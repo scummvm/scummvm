@@ -1796,6 +1796,13 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 	if(pMask) {
 		spritePtr = pMask;
 	}
+
+	// ignore transparent color in 1bpp
+	if(bpp == 1)
+	{
+		transparentColor = 1;
+	}
+
 	{
 		for (int i = 0; i < height; i++) {
 			byte *destPtr = page + x + y * 320;
