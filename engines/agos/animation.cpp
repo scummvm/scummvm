@@ -293,8 +293,6 @@ void MoviePlayerDXA::playVideo() {
 		_vm->clearSurfaces();
 	}
 
-	start();
-
 	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit())
 		handleNextFrame();
 }
@@ -305,6 +303,8 @@ void MoviePlayerDXA::stopVideo() {
 }
 
 void MoviePlayerDXA::startSound() {
+	start();
+
 	if (_bgSoundStream != NULL) {
 		_vm->_mixer->stopHandle(_bgSound);
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream, -1, getVolume(), getBalance());
@@ -457,8 +457,6 @@ void MoviePlayerSMK::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 }
 
 void MoviePlayerSMK::playVideo() {
-	start();
-
 	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit())
 		handleNextFrame();
 }
@@ -468,6 +466,7 @@ void MoviePlayerSMK::stopVideo() {
 }
 
 void MoviePlayerSMK::startSound() {
+	start();
 }
 
 void MoviePlayerSMK::handleNextFrame() {
