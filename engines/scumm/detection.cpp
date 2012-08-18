@@ -20,9 +20,6 @@
  *
  */
 
-// FIXME: Avoid using printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-
 #include "base/plugins.h"
 
 #include "common/archive.h"
@@ -1066,15 +1063,19 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// unknown MD5, or with a medium debug level in case of a known MD5 (for
 	// debugging purposes).
 	if (!findInMD5Table(res.md5.c_str())) {
-		printf("Your game version appears to be unknown. If this is *NOT* a fan-modified\n");
-		printf("version (in particular, not a fan-made translation), please, report the\n");
-		printf("following data to the ScummVM team along with name of the game you tried\n");
-		printf("to add and its version/language/etc.:\n");
+		Common::String md5Warning;
 
-		printf("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
+		md5Warning = "Your game version appears to be unknown. If this is *NOT* a fan-modified\n";
+		md5Warning += "version (in particular, not a fan-made translation), please, report the\n";
+		md5Warning += "following data to the ScummVM team along with name of the game you tried\n";
+		md5Warning += "to add and its version/language/etc.:\n";
+
+		md5Warning += Common::String::format("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
 				res.game.gameid,
 				generateFilenameForDetection(res.fp.pattern, res.fp.genMethod).c_str(),
 				res.md5.c_str());
+
+		g_system->logMessage(LogMessageType::kWarning, md5Warning.c_str());
 	} else {
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
