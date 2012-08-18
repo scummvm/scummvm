@@ -116,6 +116,9 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			_playbackFile.getHeader().notes = editDlg.getNotes();
 			_playbackFile.updateHeader();
 			_fileHeaders[_list->getSelected()] = _playbackFile.getHeader();
+			int oldselection = _list->getSelected();
+			updateList();
+			_list->setSelected(oldselection);
 			updateSelection(true);
 			_playbackFile.close();
 		}

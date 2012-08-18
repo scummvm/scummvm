@@ -160,19 +160,14 @@ bool EventRecorder::processDelayMillis() {
 }
 
 void EventRecorder::checkForKeyCode(const Event &event) {
-	if (event.type == EVENT_KEYDOWN) {
-		if ((event.kbd.flags&KBD_CTRL) && event.kbd.keycode == KEYCODE_p) {
-			togglePause();
-		}
+	if ((event.type == EVENT_KEYDOWN) && (event.kbd.flags&KBD_CTRL) && (event.kbd.keycode == KEYCODE_p) && (!event.synthetic)) {
+		togglePause();
 	}
 }
 
 bool EventRecorder::pollEvent(Event &ev) {
-	if (_recordMode != kRecorderPlayback)
+	if ((_recordMode != kRecorderPlayback) || !_initialized)
 		return false;
-	if (!_initialized) {
-		return false;
-	}
 	StackLock lock(_recorderMutex);
 	
 	if ((_nextEvent.type ==  EVENT_INVALID) || (_nextEvent.type == EVENT_TIMER)) {
