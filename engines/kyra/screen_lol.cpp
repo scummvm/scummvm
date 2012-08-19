@@ -233,8 +233,6 @@ void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
 				*(p + tmp) = col;
 				p += 2;
 			}
-		} else {
-			w = 1;
 		}
 
 		if (s == 1) {
