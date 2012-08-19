@@ -87,7 +87,7 @@ private:
 	void copyCommand(int argc, const char **argv);
 	int getNumber(const char *arg) const;
 
-	void loadArchive(ArchiveIndex index) const;
+	bool loadArchive(ArchiveIndex index);
 	void restoreArchive() const;
 
 	Debuglet *_command;

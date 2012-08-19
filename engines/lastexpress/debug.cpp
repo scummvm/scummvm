@@ -155,9 +155,18 @@ void Debugger::callCommand() {
 		(*_command)(_numParams, const_cast<const char **>(_commandParams));
 }
 
-void Debugger::loadArchive(ArchiveIndex index) const {
-	_engine->getResourceManager()->loadArchive(index);
+bool Debugger::loadArchive(ArchiveIndex index) {
+	if (index < 1 || index > 3) {
+		DebugPrintf("Invalid cd number (was: %d, valid: [1-3])\n", index);
+		return false;
+	}
+
+	if (!_engine->getResourceManager()->loadArchive(index))
+		return false;
+
 	getScenes()->loadSceneDataFile(index);
+
+	return true;
 }
 
 // Restore loaded archive
@@ -236,8 +245,10 @@ bool Debugger::cmdListFiles(int argc, const char **argv) {
 		Common::String filter(const_cast<char *>(argv[1]));
 
 		// Load the proper archive
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+				return true;
+		}
 
 		Common::ArchiveMemberList list;
 		int count = _engine->getResourceManager()->listMatchingMembers(list, filter);
@@ -320,8 +331,10 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 		Common::String filename(const_cast<char *>(argv[1]));
 		filename += ".seq";
 
-		if (argc == 4)
-			loadArchive((ArchiveIndex)getNumber(argv[3]));
+		if (argc == 4) {
+			if (!loadArchive((ArchiveIndex)getNumber(argv[3])))
+				return true;
+		}
 
 		if (!_engine->getResourceManager()->hasFile(filename)) {
 			DebugPrintf("Cannot find file: %s\n", filename.c_str());
@@ -380,8 +393,10 @@ bool Debugger::cmdShowBg(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 		Common::String filename(const_cast<char *>(argv[1]));
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+				return true;
+		}
 
 		if (!_engine->getResourceManager()->hasFile(filename + ".BG")) {
 			DebugPrintf("Cannot find file: %s\n", (filename + ".BG").c_str());
@@ -433,8 +448,10 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 		Common::String filename(const_cast<char *>(argv[1]));
 		filename += ".seq";
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+				return true;
+		}
 
 		if (!_engine->getResourceManager()->hasFile(filename)) {
 			DebugPrintf("Cannot find file: %s\n", filename.c_str());
@@ -508,8 +525,10 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+				return true;
+		}
 
 		// Add .SND at the end of the filename if needed
 		Common::String name(const_cast<char *>(argv[1]));
@@ -545,8 +564,10 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 		Common::String filename(const_cast<char *>(argv[1]));
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+				return true;
+		}
 
 		filename += ".sbe";
 
@@ -608,8 +629,10 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 		Common::String name(const_cast<char *>(argv[1]));
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+				return true;
+		}
 
 		// If we got a nis filename, check that the file exists
 		if (name.contains('.') && !_engine->getResourceManager()->hasFile(name)) {
@@ -665,8 +688,10 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 		SceneIndex index = (SceneIndex)getNumber(argv[1]);
 
 		// Check args
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+				return true;
+		}
 
 		if (index > 2500) {
 			DebugPrintf("Error: invalid index value (0-2500)");
