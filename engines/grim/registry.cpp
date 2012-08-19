@@ -101,7 +101,7 @@ Registry::Registry() : _dirty(true) {
 	ConfMan.registerDefault("subtitles", true);
 	ConfMan.registerDefault("talkspeed", 179);
 	ConfMan.registerDefault("soft_renderer", false);
-	ConfMan.registerDefault("engine_speed", 30);
+	ConfMan.registerDefault("engine_speed", 60);
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("game_devel_mode", false);
 

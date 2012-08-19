@@ -111,7 +111,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_flipEnable = true;
 	int speed = g_registry->getInt("engine_speed");
 	if (speed <= 0 || speed > 100)
-		_speedLimitMs = 30;
+		_speedLimitMs = 1000 / 60;
 	else
 		_speedLimitMs = 1000 / speed;
 	char buf[20];
