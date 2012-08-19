@@ -102,6 +102,7 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 		return STATUS_FAILED;
 	}
 	Common::String strFilename(filename);
+	strFilename.toLowercase();
 	if (strFilename.hasSuffix(".ogg")) {
 		_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::YES);
 	} else if (strFilename.hasSuffix(".wav")) {
