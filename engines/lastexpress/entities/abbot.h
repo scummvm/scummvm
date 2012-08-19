@@ -156,10 +156,10 @@ public:
 	 * Handle Chapter 3 events
 	 */
 	DECLARE_FUNCTION(chapter3Handler)
-	DECLARE_FUNCTION(function19)
-	DECLARE_FUNCTION(function20)
-	DECLARE_FUNCTION(function21)
-	DECLARE_FUNCTION(function22)
+	DECLARE_FUNCTION(conversationWithBoutarel)
+	DECLARE_FUNCTION(readPaper)
+	DECLARE_FUNCTION(goToLunch)
+	DECLARE_FUNCTION(haveLunch)
 	DECLARE_FUNCTION(function23)
 	DECLARE_FUNCTION(function24)
 	DECLARE_FUNCTION(function25)
