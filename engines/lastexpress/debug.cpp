@@ -523,7 +523,7 @@ bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 
 		_engine->_system->getMixer()->stopAll();
 
-		_soundStream->load(getArchive(name));
+		_soundStream->load(getArchive(name), 16);
 
 		if (argc == 3)
 			restoreArchive();
