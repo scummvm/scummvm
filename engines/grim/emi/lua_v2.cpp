@@ -255,6 +255,11 @@ void Lua_V2::GetCameraYaw() {
 	lua_pushnumber(0);
 }
 
+void Lua_V2::GetCameraRoll() {
+	warning("Lua_V2::GetCameraRoll: implement opcode, just returns 0");
+	lua_pushnumber(0);
+}
+
 // I suspect that pushtext and poptext stack the current text objects.
 void Lua_V2::PushText() {
 	warning("Lua_V2::PushText: implement opcode");

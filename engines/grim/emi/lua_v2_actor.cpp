@@ -784,4 +784,36 @@ void Lua_V2::DetachActor() {
 	attached->detach();
 }
 
+void Lua_V2::WalkActorToAvoiding() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object actor2Obj = lua_getparam(2);
+	lua_Object xObj = lua_getparam(3);
+	lua_Object yObj = lua_getparam(4);
+	lua_Object zObj = lua_getparam(5);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	if (!lua_isuserdata(actor2Obj) || lua_tag(actor2Obj) != MKTAG('A','C','T','R'))
+		return;
+
+	Math::Vector3d destVec;
+	Actor *actor = getactor(actorObj);
+	if (!lua_isnumber(xObj)) {
+		if (!lua_isuserdata(xObj) || lua_tag(xObj) != MKTAG('A','C','T','R'))
+			return;
+		Actor *destActor = getactor(xObj);
+		destVec = destActor->getPos();
+	} else {
+		float x = lua_getnumber(xObj);
+		float y = lua_getnumber(yObj);
+		float z = lua_getnumber(zObj);
+		destVec.set(x, y, z);
+	}
+
+	// TODO: Make this actually avoid the second actor
+
+	actor->walkTo(destVec);
+}
+
 } // end of namespace Grim
