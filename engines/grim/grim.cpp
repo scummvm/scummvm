@@ -483,9 +483,6 @@ void GrimEngine::updateDisplayScene() {
 		// There are a bunch of these, especially in the tube-switcher room
 		_currSet->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
 
-		// Underlay objects are just above the background
-		_currSet->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
-
 		// State objects are drawn on top of other things, such as the flag
 		// on Manny's message tube
 		_currSet->drawBitmaps(ObjectState::OBJSTATE_STATE);
@@ -507,6 +504,11 @@ void GrimEngine::updateDisplayScene() {
 			else
 				g_driver->releaseMovieFrame();
 		}
+
+		// Underlay objects must be drawn on top of movies
+		// Otherwise the lighthouse door will always be open as the underlay for
+		// the closed door will be overdrawn by a movie used as background image.
+		_currSet->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
 
 		// Draw Primitives
 		foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
