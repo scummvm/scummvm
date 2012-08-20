@@ -519,9 +519,6 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 	if (maxLPC > 0)
 		free(lpc);
 
-	if (size > 0)
-		free(unpackedBuffer);
-
 	delete gReader;
 	return unpackedBuffer;
 }
