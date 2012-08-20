@@ -82,7 +82,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	/* uint16 planes = */ stream.readUint16LE();
 	uint16 bitsPerPixel = stream.readUint16LE();
 
-	if (bitsPerPixel != 8 && bitsPerPixel != 24) {
+	if (bitsPerPixel != 8 && bitsPerPixel != 24 && bitsPerPixel != 32) {
 		warning("%dbpp bitmaps not supported", bitsPerPixel);
 		return false;
 	}
@@ -119,8 +119,8 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 
-	// BGRA for 24bpp
-	if (bitsPerPixel == 24)
+	// BGRA for 24bpp and 32 bpp
+	if (bitsPerPixel == 24 || bitsPerPixel == 32)
 		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
 	_surface = new Graphics::Surface();
@@ -136,7 +136,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 			stream.read(dst + (height - i - 1) * width, width);
 			stream.skip(extraDataLength);
 		}
-	} else {
+	} else if (bitsPerPixel == 24) {
 		byte *dst = (byte *)_surface->pixels + (height - 1) * _surface->pitch;
 
 		for (int32 i = 0; i < height; i++) {
@@ -150,6 +150,27 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 				dst += format.bytesPerPixel;
 			}
 
+			stream.skip(extraDataLength);
+			dst -= _surface->pitch * 2;
+		}
+	} else { // 32 bpp
+		byte *dst = (byte *)_surface->pixels + (height - 1) * _surface->pitch;
+		
+		for (int32 i = 0; i < height; i++) {
+			for (uint32 j = 0; j < width; j++) {
+				byte b = stream.readByte();
+				byte g = stream.readByte();
+				byte r = stream.readByte();
+				// Ignore the last byte, as in v3 it is unused
+				// and should thus NOT be used as alpha.
+				// ref: http://msdn.microsoft.com/en-us/library/windows/desktop/dd183376%28v=vs.85%29.aspx
+				stream.readByte();
+				uint32 color = format.RGBToColor(r, g, b);
+				
+				*((uint32 *)dst) = color;
+				dst += format.bytesPerPixel;
+			}
+			
 			stream.skip(extraDataLength);
 			dst -= _surface->pitch * 2;
 		}
