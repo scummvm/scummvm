@@ -156,6 +156,9 @@ private:
 		SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType);
 		~SmackerAudioTrack();
 
+		bool isRewindable() const { return true; }
+		bool rewind();
+
 		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 
 		void queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize);

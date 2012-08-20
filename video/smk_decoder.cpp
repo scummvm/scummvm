@@ -410,7 +410,6 @@ void SmackerDecoder::close() {
 
 bool SmackerDecoder::rewind() {
 	// Call the parent method to rewind the tracks first
-	// In particular, only videos without sound can be rewound
 	if (!VideoDecoder::rewind())
 		return false;
 
@@ -753,6 +752,12 @@ SmackerDecoder::SmackerAudioTrack::SmackerAudioTrack(const AudioInfo &audioInfo,
 
 SmackerDecoder::SmackerAudioTrack::~SmackerAudioTrack() {
 	delete _audioStream;
+}
+
+bool SmackerDecoder::SmackerAudioTrack::rewind() {
+	delete _audioStream;
+	_audioStream = Audio::makeQueuingAudioStream(_audioInfo.sampleRate, _audioInfo.isStereo);
+	return true;
 }
 
 Audio::AudioStream *SmackerDecoder::SmackerAudioTrack::getAudioStream() const {
