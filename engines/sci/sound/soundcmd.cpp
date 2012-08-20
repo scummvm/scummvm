@@ -96,7 +96,7 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 		if (_useDigitalSFX || !newSound->soundRes) {
 			int sampleLen;
 			newSound->pStreamAud = _audio->getAudioStream(newSound->resourceId, 65535, &sampleLen);
-			newSound->soundType = Audio::Mixer::kSpeechSoundType;
+			newSound->soundType = Audio::Mixer::kSFXSoundType;
 		}
 	}
 
