@@ -96,6 +96,12 @@ ifdef USE_FLAC
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libFLAC.a
 endif
 
+ifdef USE_FLUIDSYNTH
+OSX_STATIC_LIBS += \
+                -framework CoreAudio \
+                $(STATICLIBPATH)/lib/libfluidsynth.a
+endif
+
 ifdef USE_MAD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmad.a
 endif

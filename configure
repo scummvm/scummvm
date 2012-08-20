@@ -3363,7 +3363,7 @@ if test "$_fluidsynth" = yes ; then
 	esac
 	INCLUDES="$INCLUDES $FLUIDSYNTH_CFLAGS"
 fi
-define_in_config_h_if_yes "$_fluidsynth" 'USE_FLUIDSYNTH'
+define_in_config_if_yes "$_fluidsynth" 'USE_FLUIDSYNTH'
 echo "$_fluidsynth"
 
 #
