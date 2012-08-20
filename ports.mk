@@ -102,6 +102,12 @@ ifdef USE_FLAC
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libFLAC.a
 endif
 
+ifdef USE_FLUIDSYNTH
+OSX_STATIC_LIBS += \
+                -framework CoreAudio \
+                $(STATICLIBPATH)/lib/libfluidsynth.a
+endif
+
 ifdef USE_MAD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmad.a
 endif
@@ -163,6 +169,7 @@ osxsnap: bundle
 	cp $(srcdir)/COPYING.BSD ./ResidualVM-snapshot/License\ \(BSD\)
 	cp $(srcdir)/COPYING.LGPL ./ResidualVM-snapshot/License\ \(LGPL\)
 	cp $(srcdir)/COPYING.FREEFONT ./ResidualVM-snapshot/License\ \(FREEFONT\)
+	cp $(srcdir)/COPYING.ISC ./ResidualVM-snapshot/License\ \(ISC\)
 	cp $(srcdir)/COPYRIGHT ./ResidualVM-snapshot/Copyright\ Holders
 	cp $(srcdir)/NEWS ./ResidualVM-snapshot/News
 	cp $(srcdir)/README ./ResidualVM-snapshot/Residual\ ReadMe
@@ -246,6 +253,8 @@ endif
 	@cd $(srcdir)/dists/msvc9 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 9 >/dev/null && git add -f *.sln *.vcproj *.vsprops
 	@echo Creating MSVC10 project files...
 	@cd $(srcdir)/dists/msvc10 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 10 >/dev/null && git add -f *.sln *.vcxproj *.vcxproj.filters *.props
+	@echo Creating MSVC11 project files...
+	@cd $(srcdir)/dists/msvc11 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 11 >/dev/null && git add -f *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo
 	@echo All is done.
 	@echo Now run
@@ -265,6 +274,7 @@ endif
 	cp $(srcdir)/COPYING.BSD ResidualVMWin32/COPYING.BSD.txt
 	cp $(srcdir)/COPYING.LGPL ResidualVMWin32/COPYING.LGPL.txt
 	cp $(srcdir)/COPYING.FREEFONT ResidualVMWin32/COPYING.FREEFONT.txt
+	cp $(srcdir)/COPYING.ISC ResidualVMWin32/COPYING.ISC.txt
 	cp $(srcdir)/COPYRIGHT ResidualVMWin32/COPYRIGHT.txt
 	cp $(srcdir)/NEWS ResidualVMWin32/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVMWin32/doc/QuickStart.txt
@@ -304,6 +314,7 @@ endif
 	cp $(srcdir)/COPYING.BSD ResidualVM/COPYING.BSD.txt
 	cp $(srcdir)/COPYING.LGPL ResidualVM/COPYING.LGPL.txt
 	cp $(srcdir)/COPYING.FREEFONT ResidualVM/COPYING.FREEFONT.txt
+	cp $(srcdir)/COPYING.ISC ResidualVM/COPYING.ISC.txt
 	cp $(srcdir)/COPYRIGHT ResidualVM/COPYRIGHT.txt
 	cp $(srcdir)/NEWS ResidualVM/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVM/QuickStart.txt

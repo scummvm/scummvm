@@ -69,6 +69,7 @@ sub html_entities_to_ascii {
 	# &aring;   -> aa
 	# &amp;     -> &
 	# &#322;    -> l
+	# &#347;    -> s
 	# &Scaron;  -> S
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
@@ -76,6 +77,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&oacute;/o/g;
 	$text =~ s/&oslash;/o/g;
 	$text =~ s/&#322;/l/g;
+	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/aa/g;
 
@@ -101,6 +103,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&oacute;/\\363/g;
 	$text =~ s/&oslash;/\\370/g;
 	$text =~ s/&#322;/l/g;
+	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/\\345/g;
 
