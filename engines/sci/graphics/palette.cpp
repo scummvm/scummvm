@@ -375,6 +375,27 @@ void GfxPalette::setRemappingPercent(byte color, byte percent) {
 	_remappingType[color] = kRemappingByPercent;
 }
 
+void GfxPalette::setRemappingPercentGray(byte color, byte percent) {
+	_remapOn = true;
+
+	// We need to defer the setup of the remapping table every time the screen
+	// palette is changed, so that kernelFindColor() can find the correct
+	// colors. Set it once here, in case the palette stays the same and update
+	// it on each palette change by copySysPaletteToScreen().
+	_remappingPercentToSet = percent;
+
+	// Note: This is not what the original does, but the results are the same visually
+	for (int i = 0; i < 256; i++) {
+		byte rComponent = _sysPalette.colors[i].r * _remappingPercentToSet * 0.30 / 100;
+		byte gComponent = _sysPalette.colors[i].g * _remappingPercentToSet * 0.59 / 100;
+		byte bComponent = _sysPalette.colors[i].b * _remappingPercentToSet * 0.11 / 100;
+		byte luminosity = rComponent + gComponent + bComponent;
+		_remappingByPercent[i] = kernelFindColor(luminosity, luminosity, luminosity);
+	}
+
+	_remappingType[color] = kRemappingByPercent;
+}
+
 void GfxPalette::setRemappingRange(byte color, byte from, byte to, byte base) {
 	_remapOn = true;
 
