@@ -699,13 +699,13 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 
 
 	// If the _scalerIndex has changed, change scaler plugins
-	if (_scalerPlugins[_scalerIndex] != _scalerPlugin) {
+	if (_scalerPlugins[_scalerIndex] != _scalerPlugin || _transactionDetails.formatChanged) {
 		Graphics::PixelFormat format;
 		convertSDLPixelFormat(_hwscreen->format, &format);
-		if (_scalerPlugin) {
+		if (_scalerPlugin)
 			(*_scalerPlugin)->deinitialize();
-		} else if (_scalerPlugins[_scalerIndex] != _normalPlugin) {
-			// This is the first time plugins have been initialized
+
+		if (_scalerPlugins[_scalerIndex] != _normalPlugin) {
 			// _normalPlugin might be needed and needs to be initialized
 			(*_normalPlugin)->initialize(format);
 		}
