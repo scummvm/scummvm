@@ -1802,7 +1802,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, 
 		if (_mouseOrigSurface)
 			SDL_FreeSurface(_mouseOrigSurface);
 
-		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
+		// Allocate bigger surface because scalers will read past the boudaries.
 		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
 						_mouseCurState.w + _maxExtraPixels * 2,
 						_mouseCurState.h + _maxExtraPixels * 2,
@@ -1860,7 +1860,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		}
 	}
 
-	// Draw from [1,1] since AdvMame2x adds artefact at 0,0
+	// Draw from [_maxExtraPixels,_maxExtraPixels] since scalers will read past boudaries
 	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel;
 
 	SDL_Color *palette;
