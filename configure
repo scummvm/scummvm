@@ -3201,6 +3201,11 @@ fi
 define_in_config_if_yes "$_png" 'USE_PNG'
 echo "$_png"
 
+if test `get_engine_build sword25` = yes && test ! "$_png" = yes ; then
+	echo "...disabling Broken Sword 2.5 engine. PNG is required"
+	engine_disable sword25
+fi
+
 #
 # Check for Theora Decoder
 #
