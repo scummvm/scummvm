@@ -58,6 +58,7 @@ struct GraphicsModeData {
 
 static Common::Array<OSystem::GraphicsMode> *s_supportedGraphicsModes = NULL;
 static Common::Array<GraphicsModeData> *s_supportedGraphicsModesData = NULL;
+static int s_defaultGraphicsMode;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 const OSystem::GraphicsMode s_supportedStretchModes[] = {
@@ -303,6 +304,8 @@ static void initGraphicsModes() {
 	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
 	OSystem::GraphicsMode gm;
 	GraphicsModeData gmd;
+	// 0 should be the normal1x mode
+	s_defaultGraphicsMode = 0;
 	for (uint i = 0; i < plugins.size(); ++i) {
 		const Common::Array<uint> &factors = (*plugins[i])->getFactors();
 		const char *name = (*plugins[i])->getName();
@@ -314,6 +317,11 @@ static void initGraphicsModes() {
 			gm.name = strdup(n1.c_str());
 			gm.description = strdup(n2.c_str());
 			gm.id = s_supportedGraphicsModes->size();
+
+			// if normal2x exists, it is the default
+			if (strcmp(gm.name, "normal2x") == 0)
+				s_defaultGraphicsMode = gm.id;
+
 			s_supportedGraphicsModes->push_back(gm);
 			gmd.scaleFactor = factors[j];
 			s_supportedGraphicsModesData->push_back(gmd);
@@ -349,13 +357,7 @@ const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsMode
 }
 
 int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
-	for (uint i = 0; i < s_supportedGraphicsModes->size() - 1; ++i) {
-		// if normal2x exists, it is the default
-		if (strcmp((*s_supportedGraphicsModes)[i].name, "normal2x") == 0)
-			return (*s_supportedGraphicsModes)[i].id;
-	}
-	// 0 should be the normal1x mode
-	return 0;
+	return s_defaultGraphicsMode;
 }
 
 void SurfaceSdlGraphicsManager::resetGraphicsScale() {
