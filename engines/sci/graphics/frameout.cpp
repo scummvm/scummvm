@@ -728,7 +728,9 @@ void GfxFrameout::kernelFrameout() {
 					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
 
-				// FIXME: When does this happen, and why?
+				// Don't attempt to draw sprites that are outside the visible
+				// screen area. An example is the random people walking in
+				// Jackson Square in GK1.
 				if (itemEntry->celRect.bottom < 0 || itemEntry->celRect.top  >= _screen->getDisplayHeight() ||
 				    itemEntry->celRect.right  < 0 || itemEntry->celRect.left >= _screen->getDisplayWidth())
 					continue;
