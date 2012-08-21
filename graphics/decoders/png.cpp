@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
+// Since we need to work with libpng here, we need to allow all symbols
+// to avoid compilation issues.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 
@@ -84,7 +87,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
 	_stream = &stream;
-	
+
 	// First, check the PNG signature
 	if (_stream->readUint32BE() != MKTAG(0x89, 'P', 'N', 'G')) {
 		delete _stream;
@@ -155,7 +158,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_palette[(i * 3)] = palette[i].red;
 			_palette[(i * 3) + 1] = palette[i].green;
 			_palette[(i * 3) + 2] = palette[i].blue;
-			
+
 		}
 		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		png_set_packing(pngPtr);
@@ -173,7 +176,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		if (colorType == PNG_COLOR_TYPE_GRAY ||
 			colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 			png_set_gray_to_rgb(pngPtr);
-		
+
 		// PNGs are Big-Endian:
 #ifdef SCUMM_LITTLE_ENDIAN
 		png_set_bgr(pngPtr);
@@ -186,7 +189,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #endif
 
 	}
-	
+
 	// After the transformations have been registered, the image data is read again.
 	png_read_update_info(pngPtr, infoPtr);
 	png_get_IHDR(pngPtr, infoPtr, &w, &h, &bitDepth, &colorType, NULL, NULL, NULL);
@@ -201,24 +204,24 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	} else {
 		// PNGs with interlacing require us to allocate an auxillary
 		// buffer with pointers to all row starts.
-		
+
 		// Allocate row pointer buffer
 		png_bytep *rowPtr = new png_bytep[height];
 		if (!rowPtr) {
 			error("Could not allocate memory for row pointers.");
 		}
-		
+
 		// Initialize row pointers
 		for (int i = 0; i < height; i++)
 			rowPtr[i] = (png_bytep)_outputSurface->getBasePtr(0, i);
-		
+
 		// Read image data
 		png_read_image(pngPtr, rowPtr);
-		
+
 		// Free row pointer buffer
 		delete[] rowPtr;
 	}
-	
+
 	// Read additional data at the end.
 	png_read_end(pngPtr, NULL);
 
