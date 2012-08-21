@@ -964,7 +964,7 @@ void SurfaceSdlGraphicsManager::updateScreen() {
  *
  * @param byteWidth   The width of the region to copy in bytes.
  */
-static void blitSurface(byte * srcPtr, int srcPitch, byte * dstPtr, int dstPitch, int byteWidth, int height) {
+static void blitSurface(byte *srcPtr, int srcPitch, byte *dstPtr, int dstPitch, int byteWidth, int height) {
 	while (height--) {
 		memcpy(dstPtr, srcPtr, byteWidth);
 		dstPtr += dstPitch;
