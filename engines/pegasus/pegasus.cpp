@@ -2106,31 +2106,40 @@ void PegasusEngine::doSubChase() {
 	delete video;
 }
 
+template<typename PixelInt>
+static void scaleFrame(const PixelInt *src, PixelInt *dst, int w, int h, int srcPitch) {
+	assert((srcPitch % sizeof(PixelInt)) == 0); // sanity check; allows some simpler code
+
+	PixelInt *dst1 = dst;
+	PixelInt *dst2 = dst + w * 2;
+
+	int srcInc = (srcPitch / sizeof(PixelInt)) - w;
+	int dstInc = w * 2;
+
+	while (h--) {
+		for (int x = 0; x < w; x++) {
+			PixelInt pixel = *src++;
+			*dst1++ = pixel;
+			*dst1++ = pixel;
+			*dst2++ = pixel;
+			*dst2++ = pixel;
+		}
+
+		src += srcInc;
+		dst1 += dstInc;
+		dst2 += dstInc;
+	}
+}
+
 void PegasusEngine::drawScaledFrame(const Graphics::Surface *frame, uint16 x, uint16 y) {
 	// Scale up the frame doing some simple scaling
 	Graphics::Surface scaledFrame;
 	scaledFrame.create(frame->w * 2, frame->h * 2, frame->format);
-	const byte *src = (const byte *)frame->pixels;
-	byte *dst1 = (byte *)scaledFrame.pixels;
-	byte *dst2 = (byte *)scaledFrame.pixels + scaledFrame.pitch;
 
-	for (int i = 0; i < frame->h; i++) {
-		for (int j = 0; j < frame->w; j++) {
-			memcpy(dst1, src, frame->format.bytesPerPixel);
-			dst1 += frame->format.bytesPerPixel;
-			memcpy(dst1, src, frame->format.bytesPerPixel);
-			dst1 += frame->format.bytesPerPixel;
-			memcpy(dst2, src, frame->format.bytesPerPixel);
-			dst2 += frame->format.bytesPerPixel;
-			memcpy(dst2, src, frame->format.bytesPerPixel);
-			dst2 += frame->format.bytesPerPixel;
-			src += frame->format.bytesPerPixel;
-		}
-
-		src += frame->pitch - frame->format.bytesPerPixel * frame->w;
-		dst1 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
-		dst2 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
-	}
+	if (frame->format.bytesPerPixel == 2)
+		scaleFrame<uint16>((uint16 *)frame->pixels, (uint16 *)scaledFrame.pixels, frame->w, frame->h, frame->pitch);
+	else
+		scaleFrame<uint32>((uint32 *)frame->pixels, (uint32 *)scaledFrame.pixels, frame->w, frame->h, frame->pitch);
 
 	_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
 	_system->updateScreen();
