@@ -2079,8 +2079,9 @@ case $_host_os in
 		DEFINES="$DEFINES -D__PLAYSTATION2__"
 		;;
 	ps3)
-		# Force use of SDL from the ps3 toolchain
+		# Force use of SDL and freetype from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
+		_freetypepath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
 		DEFINES="$DEFINES -DPLAYSTATION3"
 		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
