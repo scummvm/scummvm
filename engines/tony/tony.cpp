@@ -355,15 +355,15 @@ FPSfx *TonyEngine::createSFX(Common::SeekableReadStream *stream) {
 }
 
 void TonyEngine::preloadUtilSFX(int nChannel, const char *fn) {
-	warning("TonyEngine::preloadUtilSFX");
+	// No preloading is needed in ScummVM
 }
 
 void TonyEngine::unloadAllSFX() {
-	warning("TonyEngine::unloadAllSFX");
+	// No preloading is needed in ScummVM
 }
 
 void TonyEngine::unloadAllUtilSFX() {
-	warning("TonyEngine::unloadAllUtilSFX");
+	// No preloading is needed in ScummVM
 }
 
 void TonyEngine::initMusic() {
