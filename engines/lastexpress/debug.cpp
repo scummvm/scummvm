@@ -155,16 +155,16 @@ void Debugger::callCommand() {
 		(*_command)(_numParams, const_cast<const char **>(_commandParams));
 }
 
-bool Debugger::loadArchive(ArchiveIndex index) {
+bool Debugger::loadArchive(int index) {
 	if (index < 1 || index > 3) {
 		DebugPrintf("Invalid cd number (was: %d, valid: [1-3])\n", index);
 		return false;
 	}
 
-	if (!_engine->getResourceManager()->loadArchive(index))
+	if (!_engine->getResourceManager()->loadArchive((ArchiveIndex)index))
 		return false;
 
-	getScenes()->loadSceneDataFile(index);
+	getScenes()->loadSceneDataFile((ArchiveIndex)index);
 
 	return true;
 }
@@ -246,7 +246,7 @@ bool Debugger::cmdListFiles(int argc, const char **argv) {
 
 		// Load the proper archive
 		if (argc == 3) {
-			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+			if (!loadArchive(getNumber(argv[2])))
 				return true;
 		}
 
@@ -332,7 +332,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 		filename += ".seq";
 
 		if (argc == 4) {
-			if (!loadArchive((ArchiveIndex)getNumber(argv[3])))
+			if (!loadArchive(getNumber(argv[3])))
 				return true;
 		}
 
@@ -394,7 +394,7 @@ bool Debugger::cmdShowBg(int argc, const char **argv) {
 		Common::String filename(const_cast<char *>(argv[1]));
 
 		if (argc == 3) {
-			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+			if (!loadArchive(getNumber(argv[2])))
 				return true;
 		}
 
@@ -449,7 +449,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 		filename += ".seq";
 
 		if (argc == 3) {
-			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+			if (!loadArchive(getNumber(argv[2])))
 				return true;
 		}
 
@@ -526,7 +526,7 @@ bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 
 		if (argc == 3) {
-			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+			if (!loadArchive(getNumber(argv[2])))
 				return true;
 		}
 
@@ -565,7 +565,7 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 		Common::String filename(const_cast<char *>(argv[1]));
 
 		if (argc == 3) {
-			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+			if (!loadArchive(getNumber(argv[2])))
 				return true;
 		}
 
@@ -630,7 +630,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 		Common::String name(const_cast<char *>(argv[1]));
 
 		if (argc == 3) {
-			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+			if (!loadArchive(getNumber(argv[2])))
 				return true;
 		}
 
@@ -689,7 +689,7 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 
 		// Check args
 		if (argc == 3) {
-			if (!loadArchive((ArchiveIndex)getNumber(argv[2])))
+			if (!loadArchive(getNumber(argv[2])))
 				return true;
 		}
 
