@@ -25,13 +25,8 @@
 
 #include "lastexpress/shared.h"
 
-#include "lastexpress/game/logic.h"
-#include "lastexpress/game/savepoint.h"
-#include "lastexpress/game/state.h"
-
 #include "lastexpress/sound/sound.h"
 
-#include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
 
 #include "common/array.h"

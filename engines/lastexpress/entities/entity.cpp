@@ -26,9 +26,14 @@
 
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
+#include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savegame.h"
+#include "lastexpress/game/savepoint.h"
+#include "lastexpress/game/state.h"
 #include "lastexpress/game/scenes.h"
+
+#include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
 
@@ -49,8 +54,10 @@ void EntityData::EntityCallData::syncString(Common::Serializer &s, Common::Strin
 	char seqName[13];
 	memset(&seqName, 0, length);
 
-	if (s.isSaving()) strcpy((char *)&seqName, string.c_str());
-		s.syncBytes((byte *)&seqName, length);
+	if (s.isSaving())
+		strcpy((char *)&seqName, string.c_str());
+
+	s.syncBytes((byte *)&seqName, length);
 
 	if (s.isLoading())
 		string = seqName;
