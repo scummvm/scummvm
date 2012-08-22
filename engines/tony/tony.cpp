@@ -667,7 +667,7 @@ void TonyEngine::saveSoundSettings() {
 	ConfMan.setInt("music_volume", GLOBALS._nCfgMusicVolume * 256 / 10);
 
 	ConfMan.setBool("subtitles", GLOBALS._bShowSubtitles);
-	ConfMan.setBool("talkspeed", GLOBALS._nCfgTextSpeed);
+	ConfMan.setInt("talkspeed", GLOBALS._nCfgTextSpeed * 256 / 10);
 }
 
 } // End of namespace Tony
