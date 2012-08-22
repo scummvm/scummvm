@@ -218,11 +218,13 @@ inline uint32 interpolate32_2_7_7(uint32 p1, uint32 p2, uint32 p3) {
 template<>
 inline uint32 interpolate32_2_7_7<Graphics::ColorMasks<555> >(uint32 p1, uint32 p2, uint32 p3) {
 	assert(0);
+	return 0;
 }
 
 template<>
 inline uint32 interpolate32_2_7_7<Graphics::ColorMasks<565> >(uint32 p1, uint32 p2, uint32 p3) {
 	assert(0);
+	return 0;
 }
 
 /**
@@ -248,11 +250,13 @@ inline uint32 interpolate32_14_1_1(uint32 p1, uint32 p2, uint32 p3) {
 template<>
 inline uint32 interpolate32_14_1_1<Graphics::ColorMasks<555> >(uint32 p1, uint32 p2, uint32 p3) {
 	assert(0);
+	return 0;
 }
 
 template<>
 inline uint32 interpolate32_14_1_1<Graphics::ColorMasks<565> >(uint32 p1, uint32 p2, uint32 p3) {
 	assert(0);
+	return 0;
 }
 
 /**
