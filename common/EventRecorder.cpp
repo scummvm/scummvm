@@ -90,13 +90,14 @@ void EventRecorder::deinit() {
 	_fakeMixerManager = NULL;
 	controlPanel->close();
 	delete controlPanel;
-	debugC(3, kDebugLevelEventRec, "EventRecorder: deinit");
+	debugC(1, kDebugLevelEventRec, "playback:action=stopplayback");
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
 	_recordMode = kPassthrough;
 	_playbackFile->close();
 	delete _playbackFile;
 	switchMixer();
 	switchTimerManagers();
+	DebugMan.disableDebugChannel("EventRec");
 }
 
 
@@ -128,6 +129,14 @@ void EventRecorder::processMillis(uint32 &millis) {
 			_fakeTimer = _nextEvent.time;
 			_nextEvent = _playbackFile->getNextEvent();
 			_timerManager->handler();
+		} else {
+			if (_nextEvent.type == EVENT_RTL) {
+				error("playback:action=stopplayback");
+			} else {
+				uint32 seconds = _fakeTimer / 1000;
+				String screenTime = String::format("%.2d:%.2d:%.2d", seconds / 3600 % 24, seconds / 60 % 60, seconds % 60);
+				error("playback:action=error reason=\"synchronization error\" time = %s", screenTime.c_str());
+			}
 		}
 		millis = _fakeTimer;
 		controlPanel->setReplayedTime(_fakeTimer);
@@ -241,7 +250,13 @@ void EventRecorder::init(String recordFileName, RecordMode mode) {
 	_recordMode = mode;
 	_needcontinueGame = false;
 	_fastPlayback = false;
-
+	if (ConfMan.hasKey("disable_display")) {
+		DebugMan.enableDebugChannel("EventRec");
+		gDebugLevel = 1;
+	}
+	if (_recordMode == kRecorderPlayback) {
+		debugC(1, kDebugLevelEventRec, "playback:action=\"Load file\" filename=%s", recordFileName.c_str());
+	}
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
 	if (_screenshotPeriod == 0) {
@@ -249,6 +264,7 @@ void EventRecorder::init(String recordFileName, RecordMode mode) {
 	}
 	if (!openRecordFile(recordFileName)) {
 		deinit();
+		error("playback:action=error reason=\"Record file loading error\"");
 		return;
 	}
 	if (_recordMode != kPassthrough) {
@@ -301,12 +317,15 @@ bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
 	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 		if (_playbackFile->getHeader().hashRecords.find(fileDesc->fileName) == _playbackFile->getHeader().hashRecords.end()) {
 			warning("MD5 hash for file %s not found in record file", fileDesc->fileName);
+			debugC(1, kDebugLevelEventRec, "playback:action=\"Check game hash\" filename=%s filehash=%s storedhash=\"\" result=different", fileDesc->fileName, fileDesc->md5);
 			return false;
 		}
 		if (_playbackFile->getHeader().hashRecords[fileDesc->fileName] != fileDesc->md5) {
 			warning("Incorrect version of game file %s. Stored MD5 is %s. MD5 of loaded game is %s", fileDesc->fileName, _playbackFile->getHeader().hashRecords[fileDesc->fileName].c_str(), fileDesc->md5);
+			debugC(1, kDebugLevelEventRec, "playback:action=\"Check game hash\" filename=%s filehash=%s storedhash=%s result=different", fileDesc->fileName, fileDesc->md5, _playbackFile->getHeader().hashRecords[fileDesc->fileName].c_str());
 			return false;
 		}
+		debugC(1, kDebugLevelEventRec, "playback:action=\"Check game hash\" filename=%s filehash=%s storedhash=%s result=equal", fileDesc->fileName, fileDesc->md5, _playbackFile->getHeader().hashRecords[fileDesc->fileName].c_str());
 	}
 	return true;
 }
@@ -349,8 +368,10 @@ void EventRecorder::applyPlaybackSettings() {
 	for (StringMap::iterator i = _playbackFile->getHeader().settingsRecords.begin(); i != _playbackFile->getHeader().settingsRecords.end(); ++i) {
 		String currentValue = ConfMan.get(i->_key);
 		if (currentValue != i->_value) {
-			warning("Config value <%s>: %s -> %s", i->_key.c_str(), i->_value.c_str(), currentValue.c_str());
 			ConfMan.set(i->_key, i->_value, ConfMan.kTransientDomain);
+			debugC(1, kDebugLevelEventRec, "playback:action=\"Apply settings\" key=%s storedvalue=%s currentvalue=%s result=different", i->_key.c_str(), i->_value.c_str(), currentValue.c_str());
+		} else {
+			debugC(1, kDebugLevelEventRec, "playback:action=\"Apply settings\" key=%s storedvalue=%s currentvalue=%s result=equal", i->_key.c_str(), i->_value.c_str(), currentValue.c_str());
 		}
 	}
 	removeDifferentEntriesInDomain(ConfMan.getDomain(ConfMan.kApplicationDomain));
@@ -360,7 +381,7 @@ void EventRecorder::applyPlaybackSettings() {
 void EventRecorder::removeDifferentEntriesInDomain(ConfigManager::Domain *domain) {
 	for (ConfigManager::Domain::iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
 		if (_playbackFile->getHeader().settingsRecords.find(entry->_key) == _playbackFile->getHeader().settingsRecords.end()) {
-			warning("Config value <%s>: %s -> (null)", entry->_key.c_str(), entry->_value.c_str());
+			debugC(1, kDebugLevelEventRec, "playback:action=\"Apply settings\" checksettings:key=%s storedvalue=%s currentvalue="" result=different", entry->_key.c_str(), entry->_value.c_str());
 			domain->erase(entry->_key);
 		}
 	}
@@ -456,6 +477,7 @@ void EventRecorder::processGameDescription(const ADGameDescription *desc) {
 	}
 	if ((_recordMode == kRecorderPlayback) && !checkGameHash(desc)) {
 		deinit();
+		error("playback:action=error reason=\"\"");
 	}
 }
 
@@ -501,9 +523,7 @@ SeekableReadStream *EventRecorder::processSaveStream(const String &fileName) {
 	InSaveFile *saveFile;
 	switch (_recordMode) {
 	case kRecorderPlayback:
-		for (HashMap<String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
-			debug("%s %d ", i->_key.c_str(), i->_value.size);
-		}
+		debugC(1, kDebugLevelEventRec, "playback:action=\"Process save file\" filename=%s len=%d", fileName.c_str(), _playbackFile->getHeader().saveFiles[fileName].size);
 		return new MemoryReadStream(_playbackFile->getHeader().saveFiles[fileName].buffer, _playbackFile->getHeader().saveFiles[fileName].size);
 	case kRecorderRecord:
 		saveFile = _realSaveManager->openForLoading(fileName);

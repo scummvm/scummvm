@@ -64,12 +64,15 @@ bool PlaybackFile::openRead(const String &fileName) {
 	_tmpPlaybackFile.seek(0);
 	_readStream = wrapBufferedSeekableReadStream(g_system->getSavefileManager()->openForLoading(fileName), 128 * 1024, DisposeAfterUse::YES);
 	if (_readStream == NULL) {
+		debugC(1, kDebugLevelEventRec, "playback:action=\"Load File\" result=fail reason=\"file %s not found\"", fileName.c_str());
 		return false;
 	}
 	if (!parseHeader()) {
+		debugC(1, kDebugLevelEventRec, "playback:action=\"Load File\" result=fail reason=\"header parsing failed\"");
 		return false;
 	}
 	_screenshotsFile = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving("screenshots.bin"), 128 * 1024);
+	debugC(1, kDebugLevelEventRec, "playback:action=\"Load File\" result=success");
 	_mode = kRead;
 	return true;
 }
@@ -296,12 +299,12 @@ bool PlaybackFile::readSaveRecord() {
 		warning("Invalid format of save section");
 		return false;
 	}
-	debug("%s", fileName.c_str());
 	SaveFileBuffer buf;
 	buf.size = saveBufferChunk.len;
 	buf.buffer = (byte *)malloc(saveBufferChunk.len);
 	_readStream->read(buf.buffer, buf.size);
 	_header.saveFiles[fileName] = buf;
+	debugC(1, kDebugLevelEventRec, "playback:action=\"Load save file\" filename=%s len=%d", fileName.c_str(), buf.size);
 	return true;
 }
 
@@ -678,7 +681,13 @@ void PlaybackFile::checkRecordedMD5() {
 	if (!g_eventRec.grabScreenAndComputeMD5(screen, currentMD5)) {
 		return;
 	}
+	uint32 seconds = g_eventRec.getTimer() / 1000;
+	String screenTime = String::format("%.2d:%.2d:%.2d", seconds / 3600 % 24, seconds / 60 % 60, seconds % 60);
 	if (memcmp(savedMD5, currentMD5, 16) != 0) {
+//		warning("Recorded and current screenshots are different");
+		debugC(1, kDebugLevelEventRec, "playback:action=\"Check screenshot\" time=%s result = fail", screenTime.c_str());
+	} else {
+		debugC(1, kDebugLevelEventRec, "playback:action=\"Check screenshot\" time=%s result = success", screenTime.c_str());
 		warning("Recorded and current screenshots are different");
 	}
 	Graphics::saveThumbnail(*_screenshotsFile, screen);
