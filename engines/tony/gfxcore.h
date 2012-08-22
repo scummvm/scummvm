@@ -189,7 +189,7 @@ public:
 	void setDst(const RMPoint &dst)       {
 		_dst.topLeft() = dst;
 	}
-	void setStrecth(bool bStretch)  {
+	void setStretch(bool bStretch)  {
 		_bStretch = bStretch;
 	}
 

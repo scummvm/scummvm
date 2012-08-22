@@ -690,7 +690,7 @@ void RMItem::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	prim->getDst().offset(calculatePos());
 
 	// No stretching, please
-	prim->setStrecth(false);
+	prim->setStretch(false);
 
 	// Now we turn to the generic surface drawing routines
 	CORO_INVOKE_2(_sprites[_nCurSprite].draw, bigBuf, prim);
