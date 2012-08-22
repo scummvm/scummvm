@@ -110,7 +110,7 @@ void RMGfxEngine::openOptionScreen(CORO_PARAM, int type) {
 		CORO_INVOKE_3(_opt.initSaveMenuOnly, _bigBuf, false, _ctx->bRes);
 
 	if (_ctx->bRes) {
-		_vm->pauseSound(true);
+		g_vm->pauseSound(true);
 
 		disableInput();
 		_inv.endCombine();
@@ -120,7 +120,7 @@ void RMGfxEngine::openOptionScreen(CORO_PARAM, int type) {
 		_point.setSpecialPointer(RMPointer::PTR_NONE);
 		_point.setCustomPointer(NULL);
 		enableMouse();
-		_vm->grabThumbnail();
+		g_vm->grabThumbnail();
 
 		// Exists the IDLE to avoid premature death in loading
 		_bMustEnterMenu = true;
@@ -162,7 +162,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 			disableMouse();
 			enableInput();
 			mpalStartIdlePoll(_nCurLoc);
-			_vm->pauseSound(false);
+			g_vm->pauseSound(false);
 		}
 	}
 
@@ -214,7 +214,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 							goto SKIPCLICKSINISTRO;
 						} else if (_input.getAsyncKeyState(Common::KEYCODE_ESCAPE))
 							CORO_INVOKE_1(openOptionScreen, 0);
-						else if (!_vm->getIsDemo()) {
+						else if (!g_vm->getIsDemo()) {
 							if (_input.getAsyncKeyState(Common::KEYCODE_F3) || _input.getAsyncKeyState(Common::KEYCODE_F5))
 								// Save game screen
 								CORO_INVOKE_1(openOptionScreen, 4);
@@ -355,7 +355,7 @@ SKIPCLICKSINISTRO:
 }
 
 void RMGfxEngine::initCustomDll() {
-	setupGlobalVars(&_tony, &_point, &_vm->_theBoxes, &_loc, &_inv, &_input);
+	setupGlobalVars(&_tony, &_point, &g_vm->_theBoxes, &_loc, &_inv, &_input);
 }
 
 void RMGfxEngine::itemIrq(uint32 dwItem, int nPattern, int nStatus) {
@@ -475,8 +475,8 @@ void RMGfxEngine::init() {
 
 	// Display 'Loading' screen
 	_bigBuf.addDirtyRect(Common::Rect(0, 0, RM_SX, RM_SY));
-	_vm->_window.getNewFrame(*this, NULL);
-	_vm->_window.repaint();
+	g_vm->_window.getNewFrame(*this, NULL);
+	g_vm->_window.repaint();
 
 	GLOBALS._bPatIrqFreeze = true;
 
@@ -507,7 +507,7 @@ void RMGfxEngine::init() {
 
 	// Initialize Tony
 	_tony.init();
-	_tony.linkToBoxes(&_vm->_theBoxes);
+	_tony.linkToBoxes(&g_vm->_theBoxes);
 
 	// Initialize the inventory and the interface
 	_inv.init();
@@ -631,9 +631,9 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	delete[] state;
 
 	// boxes
-	size = _vm->_theBoxes.getSaveStateSize();
+	size = g_vm->_theBoxes.getSaveStateSize();
 	state = new byte[size];
-	_vm->_theBoxes.saveState(state);
+	g_vm->_theBoxes.saveState(state);
 	f->writeUint32LE(size);
 	f->write(state, size);
 	delete[] state;
@@ -769,7 +769,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 		_ctx->size = _ctx->f->readUint32LE();
 		_ctx->state = new byte[_ctx->size];
 		_ctx->f->read(_ctx->state, _ctx->size);
-		_vm->_theBoxes.loadState(_ctx->state);
+		g_vm->_theBoxes.loadState(_ctx->state);
 		delete[] _ctx->state;
 	}
 
@@ -865,7 +865,7 @@ void RMGfxEngine::waitWipeEnd(CORO_PARAM) {
 }
 
 bool RMGfxEngine::canLoadSave() {
-	return _bInput && !_tony.inAction() && !_vm->getIsDemo();
+	return _bInput && !_tony.inAction() && !g_vm->getIsDemo();
 }
 
 } // End of namespace Tony

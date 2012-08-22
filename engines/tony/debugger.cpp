@@ -88,7 +88,7 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	}
 
 	int sceneNumber = strToInt(argv[1]);
-	if (sceneNumber >= _vm->_theBoxes.getLocBoxesCount()) {
+	if (sceneNumber >= g_vm->_theBoxes.getLocBoxesCount()) {
 		DebugPrintf("Invalid scene\n");
 		return true;
 	}
@@ -100,7 +100,7 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	} else {
 		// Get the box areas for the scene, and choose one so as to have a default
 		// position for Tony that will be in the walkable areas
-		RMBoxLoc *box = _vm->_theBoxes.getBoxes(sceneNumber);
+		RMBoxLoc *box = g_vm->_theBoxes.getBoxes(sceneNumber);
 		scenePos.set(box->_boxes[0]._hotspot[0]._hotx, box->_boxes[0]._hotspot[0]._hoty);
 	}
 
@@ -122,7 +122,7 @@ bool Debugger::Cmd_DirtyRects(int argc, const char **argv) {
 		DebugPrintf("Usage; %s [on | off]\n", argv[0]);
 		return true;
 	} else {
-		_vm->_window.showDirtyRects(strcmp(argv[1], "on") == 0);
+		g_vm->_window.showDirtyRects(strcmp(argv[1], "on") == 0);
 		return false;
 	}
 }

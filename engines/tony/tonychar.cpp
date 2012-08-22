@@ -115,7 +115,7 @@ void RMTony::init() {
 	ds.close();
 	_body.setPattern(0);
 
-	_nTimeLastStep = _vm->getTime();
+	_nTimeLastStep = g_vm->getTime();
 }
 
 
@@ -137,7 +137,7 @@ void RMTony::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
 	setSpeed(GLOBALS._nCfgTonySpeed);
 
 	// Runs the normal character movement
-	_ctx->time = _vm->getTime();
+	_ctx->time = g_vm->getTime();
 
 	do {
 		_nTimeLastStep += (1000 / 40);

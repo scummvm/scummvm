@@ -138,7 +138,7 @@ FPSfx::FPSfx(bool bSoundOn) {
 	_rewindableStream = 0;
 	_bPaused = false;
 
-	_vm->_activeSfx.push_back(this);
+	g_vm->_activeSfx.push_back(this);
 }
 
 /**
@@ -154,7 +154,7 @@ FPSfx::~FPSfx() {
 		return;
 
 	g_system->getMixer()->stopHandle(_handle);
-	_vm->_activeSfx.remove(this);
+	g_vm->_activeSfx.remove(this);
 
 	if (_loopStream)
 		delete _loopStream; // _rewindableStream is deleted by deleting _loopStream
@@ -403,7 +403,7 @@ void FPSfx::soundCheckProcess(CORO_PARAM, const void *param) {
 
 	for (;;) {
 		// Check each active sound
-		for (_ctx->i = _vm->_activeSfx.begin(); _ctx->i != _vm->_activeSfx.end(); ++_ctx->i) {
+		for (_ctx->i = g_vm->_activeSfx.begin(); _ctx->i != g_vm->_activeSfx.end(); ++_ctx->i) {
 			FPSfx *sfx = *_ctx->i;
 			if (sfx->endOfBuffer())
 				CoroScheduler.setEvent(sfx->_hEndOfBuffer);

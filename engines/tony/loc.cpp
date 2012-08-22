@@ -157,7 +157,7 @@ int RMPattern::init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 	int i;
 
 	// Read the current time
-	_nStartTime = _vm->getTime();
+	_nStartTime = g_vm->getTime();
 	_nCurSlot = 0;
 
 	// Find the first frame of the pattern
@@ -210,7 +210,7 @@ int RMPattern::init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 }
 
 int RMPattern::update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
-	int CurTime = _vm->getTime();
+	int CurTime = g_vm->getTime();
 
 	// If the speed is 0, then the pattern never advances
 	if (_speed == 0) {
@@ -408,7 +408,7 @@ void RMSfx::readFromStream(RMDataStream &ds, bool bLOX) {
 	Common::SeekableReadStream *stream = new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 
 	// Create the sound effect
-	_fx = _vm->createSFX(stream);
+	_fx = g_vm->createSFX(stream);
 	_fx->setLoop(false);
 }
 
@@ -2083,10 +2083,10 @@ bool RMLocation::load(RMDataStream &ds) {
 		_items = new RMItem[_nItems];
 
 
-	_vm->freezeTime();
+	g_vm->freezeTime();
 	for (i = 0; i < _nItems && !ds.isError(); i++)
 		ds >> _items[i];
-	_vm->unfreezeTime();
+	g_vm->unfreezeTime();
 
 	return ds.isError();
 }

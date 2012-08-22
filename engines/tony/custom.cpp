@@ -234,12 +234,12 @@ DECLARE_CUSTOM_FUNCTION(SetPointer)(CORO_PARAM, uint32 dwPointer, uint32, uint32
 VoiceHeader *SearchVoiceHeader(uint32 codehi, uint32 codelo) {
 	int code = (codehi << 16) | codelo;
 
-	if (_vm->_voices.size() == 0)
+	if (g_vm->_voices.size() == 0)
 		return NULL;
 
-	for (uint i = 0; i < _vm->_voices.size(); i++)
-		if (_vm->_voices[i]._code == code)
-			return &_vm->_voices[i];
+	for (uint i = 0; i < g_vm->_voices.size(); i++)
+		if (g_vm->_voices[i]._code == code)
+			return &g_vm->_voices[i];
 
 	return NULL;
 }
@@ -273,11 +273,11 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 		_ctx->curOffset = _ctx->curVoc->_offset;
 
 		// First time allocation
-		_vm->_vdbFP.seek(_ctx->curOffset);
-		_vm->_theSound.createSfx(&_ctx->voice);
+		g_vm->_vdbFP.seek(_ctx->curOffset);
+		g_vm->_theSound.createSfx(&_ctx->voice);
 
-		_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
-		_ctx->curOffset = _vm->_vdbFP.pos();
+		_ctx->voice->loadVoiceFromVDB(g_vm->_vdbFP);
+		_ctx->curOffset = g_vm->_vdbFP.pos();
 
 		_ctx->voice->setLoop(false);
 	}
@@ -331,11 +331,11 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 				_ctx->voice->play();
 				_ctx->text.setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
 			} else {
-				_vm->_vdbFP.seek(_ctx->curOffset);
-				_vm->_theSound.createSfx(&_ctx->voice);
-				_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
+				g_vm->_vdbFP.seek(_ctx->curOffset);
+				g_vm->_theSound.createSfx(&_ctx->voice);
+				_ctx->voice->loadVoiceFromVDB(g_vm->_vdbFP);
 
-				_ctx->curOffset = _vm->_vdbFP.pos();
+				_ctx->curOffset = g_vm->_vdbFP.pos();
 				_ctx->voice->setLoop(false);
 				_ctx->voice->play();
 				_ctx->text.setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
@@ -512,7 +512,7 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
 	}
 
-	_vm->stopMusic(4);
+	g_vm->stopMusic(4);
 
 	// On exit, unload and unfreeze
 	CORO_INVOKE_2(GLOBALS.UnloadLocation, true, NULL);
@@ -535,7 +535,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	}
 
 	if (GLOBALS._lastTappeto != GLOBALS._ambiance[nLoc]) {
-		_vm->stopMusic(4);
+		g_vm->stopMusic(4);
 	}
 
 	// On exit, unfreeze
@@ -550,7 +550,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	if (GLOBALS._lastTappeto != GLOBALS._ambiance[nLoc]) {
 		GLOBALS._lastTappeto = GLOBALS._ambiance[nLoc];
 		if (GLOBALS._lastTappeto != 0)
-			_vm->playMusic(4, ambianceFile[GLOBALS._lastTappeto], 0, true, 2000);
+			g_vm->playMusic(4, ambianceFile[GLOBALS._lastTappeto], 0, true, 2000);
 	}
 
 	if (!GLOBALS._bNoBullsEye) {
@@ -1286,7 +1286,7 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 
 	_ctx->startpt = GLOBALS._loc->scrollPosition();
 
-	_ctx->dwStartTime = _vm->getTime();
+	_ctx->dwStartTime = g_vm->getTime();
 
 	if (sX)
 		_ctx->dwTotalTime = _ctx->dimx * (1000 / 35) / sX;
@@ -1294,7 +1294,7 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 		_ctx->dwTotalTime = _ctx->dimy * (1000 / 35) / sY;
 
 	while ((_ctx->lx != 0 || _ctx->ly != 0) && !GLOBALS._bSkipIdle) {
-		_ctx->dwCurTime = _vm->getTime() - _ctx->dwStartTime;
+		_ctx->dwCurTime = g_vm->getTime() - _ctx->dwStartTime;
 		if (_ctx->dwCurTime > _ctx->dwTotalTime)
 			break;
 
@@ -1368,11 +1368,11 @@ DECLARE_CUSTOM_FUNCTION(ChangeHotspot)(CORO_PARAM, uint32 dwCode, uint32 nX, uin
 
 
 DECLARE_CUSTOM_FUNCTION(AutoSave)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->autoSave(coroParam);
+	g_vm->autoSave(coroParam);
 }
 
 DECLARE_CUSTOM_FUNCTION(AbortGame)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->abortGame();
+	g_vm->abortGame();
 }
 
 DECLARE_CUSTOM_FUNCTION(ShakeScreen)(CORO_PARAM, uint32 nScosse, uint32, uint32, uint32) {
@@ -1384,12 +1384,12 @@ DECLARE_CUSTOM_FUNCTION(ShakeScreen)(CORO_PARAM, uint32 nScosse, uint32, uint32,
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->curTime = _vm->getTime();
+	_ctx->curTime = g_vm->getTime();
 
 	_ctx->dirx = 1;
 	_ctx->diry = 1;
 
-	while (_vm->getTime() < _ctx->curTime + nScosse) {
+	while (g_vm->getTime() < _ctx->curTime + nScosse) {
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 
 		GLOBALS.Freeze();
@@ -1397,7 +1397,7 @@ DECLARE_CUSTOM_FUNCTION(ShakeScreen)(CORO_PARAM, uint32 nScosse, uint32, uint32,
 		GLOBALS._tony->setFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
 		GLOBALS.Unfreeze();
 
-		_ctx->i = _vm->_randomSource.getRandomNumber(2);
+		_ctx->i = g_vm->_randomSource.getRandomNumber(2);
 
 		if (_ctx->i == 0 || _ctx->i == 2)
 			_ctx->dirx = -_ctx->dirx;
@@ -1486,7 +1486,7 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 	_ctx->voice = NULL;
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
-		_vm->_vdbFP.seek(_ctx->curVoc->_offset);
+		g_vm->_vdbFP.seek(_ctx->curVoc->_offset);
 		_ctx->curOffset = _ctx->curVoc->_offset;
 	}
 
@@ -1525,14 +1525,14 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 		GLOBALS.LinkGraphicTask(_ctx->text);
 
 		if (_ctx->curVoc) {
-			_vm->_theSound.createSfx(&_ctx->voice);
-			_vm->_vdbFP.seek(_ctx->curOffset);
-			_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
+			g_vm->_theSound.createSfx(&_ctx->voice);
+			g_vm->_vdbFP.seek(_ctx->curOffset);
+			_ctx->voice->loadVoiceFromVDB(g_vm->_vdbFP);
 			_ctx->voice->setLoop(false);
 			if (bIsBack) _ctx->voice->setVolume(55);
 			_ctx->voice->play();
 			_ctx->text->setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
-			_ctx->curOffset = _vm->_vdbFP.pos();
+			_ctx->curOffset = g_vm->_vdbFP.pos();
 		}
 
 		// Wait for the end of display
@@ -1682,7 +1682,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 		_ctx->pt = RMPoint(GLOBALS._mCharacter[nChar]._x, GLOBALS._mCharacter[nChar]._y);
 
 	// Parameter for special actions: random between the spoken
-	_ctx->parm = (GLOBALS._mCharacter[nChar]._curGroup * 10) + _vm->_randomSource.getRandomNumber(
+	_ctx->parm = (GLOBALS._mCharacter[nChar]._curGroup * 10) + g_vm->_randomSource.getRandomNumber(
 	                 GLOBALS._mCharacter[nChar]._numTalks[GLOBALS._mCharacter[nChar]._curGroup] - 1) + 1;
 
 	// Try to run the custom function to initialize the speech
@@ -1697,8 +1697,8 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 	_ctx->voice = NULL;
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
-		// fseek(_vm->m_vdbFP, curVoc->offset, SEEK_SET);
-		_vm->_vdbFP.seek(_ctx->curVoc->_offset);
+		// fseek(g_vm->m_vdbFP, curVoc->offset, SEEK_SET);
+		g_vm->_vdbFP.seek(_ctx->curVoc->_offset);
 		_ctx->curOffset = _ctx->curVoc->_offset;
 	}
 
@@ -1738,15 +1738,15 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 		GLOBALS.LinkGraphicTask(_ctx->text);
 
 		if (_ctx->curVoc) {
-			_vm->_theSound.createSfx(&_ctx->voice);
-			_vm->_vdbFP.seek(_ctx->curOffset);
-			_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
+			g_vm->_theSound.createSfx(&_ctx->voice);
+			g_vm->_vdbFP.seek(_ctx->curOffset);
+			_ctx->voice->loadVoiceFromVDB(g_vm->_vdbFP);
 			_ctx->voice->setLoop(false);
 			if (bIsBack)
 				_ctx->voice->setVolume(55);
 			_ctx->voice->play();
 			_ctx->text->setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
-			_ctx->curOffset = _vm->_vdbFP.pos();
+			_ctx->curOffset = g_vm->_vdbFP.pos();
 		}
 
 		// Wait for the end of display
@@ -1806,9 +1806,9 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
-		_vm->_vdbFP.seek(_ctx->curVoc->_offset);
-		_vm->_theSound.createSfx(&_ctx->voice);
-		_ctx->voice->loadVoiceFromVDB(_vm->_vdbFP);
+		g_vm->_vdbFP.seek(_ctx->curVoc->_offset);
+		g_vm->_theSound.createSfx(&_ctx->voice);
+		_ctx->voice->loadVoiceFromVDB(g_vm->_vdbFP);
 		_ctx->voice->setLoop(false);
 		if (_ctx->bIsBack)
 			_ctx->voice->setVolume(55);
@@ -1863,7 +1863,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 			_ctx->pt = RMPoint(GLOBALS._mCharacter[nPers]._x, GLOBALS._mCharacter[nPers]._y);
 
 		// Parameter for special actions. Random between the spoken.
-		_ctx->parm = (GLOBALS._mCharacter[nPers]._curGroup * 10) + _vm->_randomSource.getRandomNumber(
+		_ctx->parm = (GLOBALS._mCharacter[nPers]._curGroup * 10) + g_vm->_randomSource.getRandomNumber(
 		                 GLOBALS._mCharacter[nPers]._numTalks[GLOBALS._mCharacter[nPers]._curGroup] - 1) + 1;
 
 		if (GLOBALS._mCharacter[nPers]._numTexts != 0 && GLOBALS._mCharacter[nPers]._bInTexts) {
@@ -2097,11 +2097,11 @@ void ThreadFadeInMusic(CORO_PARAM, const void *nMusic) {
 	debug("Start FadeIn Music");
 
 	for (_ctx->i = 0; _ctx->i < 16; _ctx->i++) {
-		_vm->setMusicVolume(nChannel, _ctx->i * 4);
+		g_vm->setMusicVolume(nChannel, _ctx->i * 4);
 
 		CORO_INVOKE_1(CoroScheduler.sleep, 100);
 	}
-	_vm->setMusicVolume(nChannel, 64);
+	g_vm->setMusicVolume(nChannel, 64);
 
 	debug("End FadeIn Music");
 
@@ -2120,23 +2120,23 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->startVolume = _vm->getMusicVolume(nChannel);
+	_ctx->startVolume = g_vm->getMusicVolume(nChannel);
 
 	debug("Start FadeOut Music");
 
 	for (_ctx->i = 16; _ctx->i > 0 && !GLOBALS._bFadeOutStop; _ctx->i--) {
 		if (_ctx->i * 4 < _ctx->startVolume)
-			_vm->setMusicVolume(nChannel, _ctx->i * 4);
+			g_vm->setMusicVolume(nChannel, _ctx->i * 4);
 
 		CORO_INVOKE_1(CoroScheduler.sleep, 100);
 	}
 
 	if (!GLOBALS._bFadeOutStop)
-		_vm->setMusicVolume(nChannel, 0);
+		g_vm->setMusicVolume(nChannel, 0);
 
 	// If a jingle is played, stop it
 	if (nChannel == 2)
-		_vm->stopMusic(2);
+		g_vm->stopMusic(2);
 
 	debug("End FadeOut Music");
 
@@ -2166,28 +2166,28 @@ DECLARE_CUSTOM_FUNCTION(FadeInJingle)(CORO_PARAM, uint32, uint32, uint32, uint32
 }
 
 DECLARE_CUSTOM_FUNCTION(StopSoundEffect)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->stopMusic(GLOBALS._curSoundEffect);
+	g_vm->stopMusic(GLOBALS._curSoundEffect);
 }
 
 DECLARE_CUSTOM_FUNCTION(StopJingle)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->stopMusic(2);
+	g_vm->stopMusic(2);
 }
 
 DECLARE_CUSTOM_FUNCTION(MuteSoundEffect)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->setMusicVolume(GLOBALS._curSoundEffect, 0);
+	g_vm->setMusicVolume(GLOBALS._curSoundEffect, 0);
 }
 
 DECLARE_CUSTOM_FUNCTION(DemuteSoundEffect)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS._bFadeOutStop = true;
-	_vm->setMusicVolume(GLOBALS._curSoundEffect, 64);
+	g_vm->setMusicVolume(GLOBALS._curSoundEffect, 64);
 }
 
 DECLARE_CUSTOM_FUNCTION(MuteJingle)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->setMusicVolume(2, 0);
+	g_vm->setMusicVolume(2, 0);
 }
 
 DECLARE_CUSTOM_FUNCTION(DemuteJingle)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	_vm->setMusicVolume(2, 64);
+	g_vm->setMusicVolume(2, 64);
 }
 
 void CustPlayMusic(uint32 nChannel, const char *mFN, uint32 nFX, bool bLoop, int nSync = 0) {
@@ -2298,7 +2298,7 @@ DECLARE_CUSTOM_FUNCTION(OpenInitLoadMenu)(CORO_PARAM, uint32, uint32, uint32, ui
 	CORO_BEGIN_CODE(_ctx);
 
 	GLOBALS.Freeze();
-	CORO_INVOKE_0(_vm->openInitLoadMenu);
+	CORO_INVOKE_0(g_vm->openInitLoadMenu);
 	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
@@ -2311,7 +2311,7 @@ DECLARE_CUSTOM_FUNCTION(OpenInitOptions)(CORO_PARAM, uint32, uint32, uint32, uin
 	CORO_BEGIN_CODE(_ctx);
 
 	GLOBALS.Freeze();
-	CORO_INVOKE_0(_vm->openInitOptions);
+	CORO_INVOKE_0(g_vm->openInitOptions);
 	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
@@ -2367,13 +2367,13 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 		GLOBALS.LinkGraphicTask(&_ctx->text[_ctx->i]);
 	}
 
-	_ctx->startTime = _vm->getTime();
+	_ctx->startTime = g_vm->getTime();
 
-	while (_ctx->startTime + dwTime * 1000 > _vm->getTime()) {
+	while (_ctx->startTime + dwTime * 1000 > g_vm->getTime()) {
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 		if (GLOBALS._input->mouseLeftClicked() || GLOBALS._input->mouseRightClicked())
 			break;
-		if (_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_TAB))
+		if (g_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_TAB))
 			break;
 	}
 

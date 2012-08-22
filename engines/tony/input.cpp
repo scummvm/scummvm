@@ -52,7 +52,7 @@ void RMInput::poll() {
 	_leftClickMouse = _leftReleaseMouse = _rightClickMouse = _rightReleaseMouse = false;
 
 	// Get pending events
-	while (g_system->getEventManager()->pollEvent(_event) && !_vm->shouldQuit()) {
+	while (g_system->getEventManager()->pollEvent(_event) && !g_vm->shouldQuit()) {
 		switch (_event.type) {
 		case Common::EVENT_MOUSEMOVE:
 		case Common::EVENT_LBUTTONDOWN:
@@ -83,8 +83,8 @@ void RMInput::poll() {
 			// Check for debugger
 			if ((_event.kbd.keycode == Common::KEYCODE_d) && (_event.kbd.flags & Common::KBD_CTRL)) {
 				// Attach to the debugger
-				_vm->_debugger->attach();
-				_vm->_debugger->onFrame();
+				g_vm->_debugger->attach();
+				g_vm->_debugger->onFrame();
 			} else {
 				// Flag the given key as being down
 				_keyDown[(int)_event.kbd.keycode] = true;

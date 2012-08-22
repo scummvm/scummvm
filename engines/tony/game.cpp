@@ -48,75 +48,75 @@ using namespace MPAL;
 /****************************************/
 
 uint32 mainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
-	return _vm->getEngine()->loadLocation(nLoc, pt, start);
+	return g_vm->getEngine()->loadLocation(nLoc, pt, start);
 }
 
 void mainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
-	_vm->getEngine()->unloadLocation(coroParam, bDoOnExit, result);
+	g_vm->getEngine()->unloadLocation(coroParam, bDoOnExit, result);
 }
 
 void mainLinkGraphicTask(RMGfxTask *task) {
-	_vm->getEngine()->linkGraphicTask(task);
+	g_vm->getEngine()->linkGraphicTask(task);
 }
 
 void mainFreeze() {
-	_vm->getEngine()->freeze();
+	g_vm->getEngine()->freeze();
 }
 
 void mainUnfreeze() {
-	_vm->getEngine()->unfreeze();
+	g_vm->getEngine()->unfreeze();
 }
 
 void mainWaitFrame(CORO_PARAM) {
-	CoroScheduler.waitForSingleObject(coroParam, _vm->_hEndOfFrame, CORO_INFINITE);
+	CoroScheduler.waitForSingleObject(coroParam, g_vm->_hEndOfFrame, CORO_INFINITE);
 }
 
 void mainShowMouse() {
-	_vm->getEngine()->enableMouse();
+	g_vm->getEngine()->enableMouse();
 }
 
 void mainHideMouse() {
-	_vm->getEngine()->disableMouse();
+	g_vm->getEngine()->disableMouse();
 }
 
 void mainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync) {
-	_vm->playMusic(nChannel, filename, nFX, bLoop, nSync);
+	g_vm->playMusic(nChannel, filename, nFX, bLoop, nSync);
 }
 
 void mainDisableInput() {
-	_vm->getEngine()->disableInput();
+	g_vm->getEngine()->disableInput();
 }
 
 void mainEnableInput() {
-	_vm->getEngine()->enableInput();
+	g_vm->getEngine()->enableInput();
 }
 
 void mainInitWipe(int type) {
-	_vm->getEngine()->initWipe(type);
+	g_vm->getEngine()->initWipe(type);
 }
 
 void mainCloseWipe() {
-	_vm->getEngine()->closeWipe();
+	g_vm->getEngine()->closeWipe();
 }
 
 void mainWaitWipeEnd(CORO_PARAM) {
-	_vm->getEngine()->waitWipeEnd(coroParam);
+	g_vm->getEngine()->waitWipeEnd(coroParam);
 }
 
 void mainEnableGUI() {
-	_vm->getEngine()->_bGUIInterface = true;
-	_vm->getEngine()->_bGUIInventory = true;
-	_vm->getEngine()->_bGUIOption = true;
+	g_vm->getEngine()->_bGUIInterface = true;
+	g_vm->getEngine()->_bGUIInventory = true;
+	g_vm->getEngine()->_bGUIOption = true;
 }
 
 void mainDisableGUI() {
-	_vm->getEngine()->_bGUIInterface = false;
-	_vm->getEngine()->_bGUIInventory = false;
-	_vm->getEngine()->_bGUIOption = false;
+	g_vm->getEngine()->_bGUIInterface = false;
+	g_vm->getEngine()->_bGUIInventory = false;
+	g_vm->getEngine()->_bGUIOption = false;
 }
 
 void mainSetPerorate(bool bPerorate) {
-	_vm->getEngine()->setPerorate(bPerorate);
+	g_vm->getEngine()->setPerorate(bPerorate);
 }
 
 /****************************************************************************\
@@ -489,7 +489,7 @@ void RMOptionScreen::refreshAll(CORO_PARAM) {
 
 		if (_bEditSaveName) {
 			_ctx->thumb = new RMGfxSourceBuffer16;
-			_ctx->thumb->init((byte *)_vm->getThumbnail(), 640 / 4, 480 / 4);
+			_ctx->thumb->init((byte *)g_vm->getThumbnail(), 640 / 4, 480 / 4);
 
 			if (_nEditPos == 0)
 				addPrim(new RMGfxPrimitive(_ctx->thumb, RMPoint(48, 57)));
@@ -856,7 +856,7 @@ void RMOptionScreen::closeState() {
 		}
 
 		// Save the new settings to ScummVM
-		_vm->saveSoundSettings();
+		g_vm->saveSoundSettings();
 	}
 
 	_nState = MENUNONE;
@@ -989,7 +989,7 @@ bool RMOptionScreen::close() {
 
 	// Start fade out
 	_fadeStep++;
-	_fadeTime = _vm->getTime();
+	_fadeTime = g_vm->getTime();
 	return true;
 }
 
@@ -1053,7 +1053,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 
 			// Buttons with graphics
 			if (!_bNoLoadSave) {
-				if (!_vm->getIsDemo()) {
+				if (!g_vm->getIsDemo()) {
 					_ctx->bRefresh |= _buttonLoad->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 					_ctx->bRefresh |= _buttonSave->doFrame(_ctx->mousePos, _ctx->bLeftClick, _ctx->bRightClick);
 				}
@@ -1096,7 +1096,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 		}
 	}
 
-#define KEYPRESS(c)     (_vm->getEngine()->getInput().getAsyncKeyState(c))
+#define KEYPRESS(c)     (g_vm->getEngine()->getInput().getAsyncKeyState(c))
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
 		_editName[strlen(_editName) + 1] = '\0'; _editName[strlen(_editName)] = c; _ctx->bRefresh = true; }
 
@@ -1153,7 +1153,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 		// OK
 		if (KEYPRESS(Common::KEYCODE_RETURN)) {
 			_bEditSaveName = false;
-			_vm->saveState(_statePos + _nEditPos, _editName);
+			g_vm->saveState(_statePos + _nEditPos, _editName);
 			close();
 		}
 
@@ -1191,7 +1191,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 						// There by saving or loading!!!
 						if (_nState == MENULOAD && _curThumb[_ctx->i] != NULL) {
 							// Loading
-							CORO_INVOKE_1(_vm->loadState, _statePos + _ctx->i);
+							CORO_INVOKE_1(g_vm->loadState, _statePos + _ctx->i);
 							close();
 						} else if (_nState == MENUSAVE && (_statePos != 0 || _ctx->i != 0)) {
 							// Turn on edit mode
@@ -1215,7 +1215,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 					_bQuitConfirm = false;
 					_ctx->bRefresh = true;
 
-					_vm->quitGame();
+					g_vm->quitGame();
 				}
 			} else {
 				if (_buttonQuit->isActive()) {
@@ -1281,7 +1281,7 @@ void RMOptionScreen::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->curTime = _vm->getTime();
+	_ctx->curTime = g_vm->getTime();
 
 #define FADE_SPEED 20
 #define SYNC    (_ctx->curTime - _fadeTime) / 25
@@ -1337,7 +1337,7 @@ void RMOptionScreen::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 		if (_fadeY > 480) {
 			_fadeY = 480;
 			_fadeStep++;
-			_vm->hideLocation();
+			g_vm->hideLocation();
 		}
 
 		prim->setSrc(RMRect(0, 480 - _fadeY, 640, 480));
@@ -1347,7 +1347,7 @@ void RMOptionScreen::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 
 	} else if (_fadeStep == 7) {
 		// Menu OFF
-		_vm->showLocation();
+		g_vm->showLocation();
 		_fadeStep++;
 
 	} else if (_fadeStep == 8) {
@@ -1399,7 +1399,7 @@ bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMS
 	diff = 10;
 
 	// Get the savegame filename for the given slot
-	buf = _vm->getSaveStateFileName(nState);
+	buf = g_vm->getSaveStateFileName(nState);
 
 	// Try and open the savegame
 	f = g_system->getSavefileManager()->openForLoading(buf);

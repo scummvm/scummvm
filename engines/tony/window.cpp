@@ -70,7 +70,7 @@ void RMWindow::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w,
 	if (GLOBALS._bCfgAnni30) {
 		if (!RMGfxTargetBuffer::_precalcTable) {
 			RMGfxTargetBuffer::createBWPrecalcTable();
-			_vm->getEngine()->getPointer().updateCursor();
+			g_vm->getEngine()->getPointer().updateCursor();
 		}
 		Graphics::Surface *screen = g_system->lockScreen();
 		const uint16 *src = (const uint16 *)buf;
@@ -85,7 +85,7 @@ void RMWindow::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w,
 	} else {
 		if (RMGfxTargetBuffer::_precalcTable) {
 			RMGfxTargetBuffer::freeBWPrecalcTable();
-			_vm->getEngine()->getPointer().updateCursor();
+			g_vm->getEngine()->getPointer().updateCursor();
 		}
 		g_system->copyRectToScreen(buf, pitch, x, y, w, h);
 	}
@@ -143,7 +143,7 @@ void RMWindow::getNewFrame(RMGfxTargetBuffer &bigBuf, Common::Rect *rcBoundEllip
 	// FIXME: The current dirty rect handling code has a minor issue with screen refresh in one 
 	// scene in the introduction sequence as the scene changes. For now, we're working around the 
 	// problem by explicitly having full screen refreshes on that scene
-	bool fullRefresh = _vm->getEngine()->getCurrentLocation() == 98;
+	bool fullRefresh = g_vm->getEngine()->getCurrentLocation() == 98;
 
 	if (rcBoundEllipse != NULL) {
 		// Circular wipe effect

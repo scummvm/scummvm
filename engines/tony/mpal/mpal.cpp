@@ -607,7 +607,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->dwStartTime = _vm->getTime();
+	_ctx->dwStartTime = g_vm->getTime();
 	_ctx->numHandles = 0;
 
 // debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Moments: %u\n",s->nMoments);
@@ -615,9 +615,9 @@ void ScriptThread(CORO_PARAM, const void *param) {
 		// Sleep for the required time
 		if (s->Moment[_ctx->i].dwTime == -1) {
 			CORO_INVOKE_4(CoroScheduler.waitForMultipleObjects, _ctx->numHandles, cfHandles, true, CORO_INFINITE);
-			_ctx->dwStartTime = _vm->getTime();
+			_ctx->dwStartTime = g_vm->getTime();
 		} else {
-			_ctx->dwCurTime = _vm->getTime();
+			_ctx->dwCurTime = g_vm->getTime();
 			if (_ctx->dwCurTime < _ctx->dwStartTime + (s->Moment[_ctx->i].dwTime * 100)) {
   //     debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Sleeping %lums\n",_ctx->dwStartTime+(s->Moment[_ctx->i].dwTime*100)-_ctx->dwCurTime);
 				CORO_INVOKE_1(CoroScheduler.sleep, _ctx->dwStartTime+(s->Moment[_ctx->i].dwTime * 100) - _ctx->dwCurTime);
@@ -761,11 +761,11 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
 
 	GLOBALS._bExecutingAction = false;
 
-	if (_vm->_initialLoadSlotNumber != -1) {
-		_ctx->slotNumber = _vm->_initialLoadSlotNumber;
-		_vm->_initialLoadSlotNumber = -1;
+	if (g_vm->_initialLoadSlotNumber != -1) {
+		_ctx->slotNumber = g_vm->_initialLoadSlotNumber;
+		g_vm->_initialLoadSlotNumber = -1;
 
-		CORO_INVOKE_1(_vm->loadState, _ctx->slotNumber);
+		CORO_INVOKE_1(g_vm->loadState, _ctx->slotNumber);
 	}
 
 
@@ -909,7 +909,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 				copyMemory(_ctx->MyActions[_ctx->k].CmdNum, _ctx->curItem->Action[_ctx->j].CmdNum,
 				MAX_COMMANDS_PER_ACTION * sizeof(uint16));
 
-				_ctx->MyActions[_ctx->k].dwLastTime = _vm->getTime();
+				_ctx->MyActions[_ctx->k].dwLastTime = g_vm->getTime();
 				_ctx->k++;
 			}
 		}
@@ -925,7 +925,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	while (1) {
 		/* Cerchiamo tra tutte le idle actions quella a cui manca meno tempo per
 			l'esecuzione */
-		_ctx->curTime = _vm->getTime();
+		_ctx->curTime = g_vm->getTime();
 		_ctx->dwSleepTime = (uint32)-1L;
 
 		for (_ctx->k = 0;_ctx->k<_ctx->nIdleActions;_ctx->k++)
@@ -951,7 +951,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					_ctx->MyThreads[_ctx->i].nItem = 0;
 			}
 
-		_ctx->curTime = _vm->getTime();
+		_ctx->curTime = g_vm->getTime();
 
 		/* Loop through all the necessary idle actions */
 		for (_ctx->k = 0; _ctx->k < _ctx->nIdleActions; _ctx->k++)
@@ -959,7 +959,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 				_ctx->MyActions[_ctx->k].dwLastTime += _ctx->MyActions[_ctx->k].wTime;
 
 			   /* It's time to check to see if fortune is on the side of the idle action */
-				byte randomVal = (byte)_vm->_randomSource.getRandomNumber(99);
+				byte randomVal = (byte)g_vm->_randomSource.getRandomNumber(99);
 				if (randomVal < _ctx->MyActions[_ctx->k].perc) {
 					/* Check if there is an action running on the item */
 					if ((GLOBALS._bExecutingAction) && (GLOBALS._nExecutingAction == _ctx->MyActions[_ctx->k].nItem))

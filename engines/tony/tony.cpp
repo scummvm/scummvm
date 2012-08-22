@@ -35,11 +35,11 @@
 
 namespace Tony {
 
-TonyEngine *_vm;
+TonyEngine *g_vm;
 
 TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("tony") {
-	_vm = this;
+	g_vm = this;
 	_loadSlotNumber = -1;
 
 	// Set the up the debugger
@@ -229,7 +229,7 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 
 		if (!getIsDemo()) {
 			if (!_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
-				_vm->abortGame();
+				g_vm->abortGame();
 		} else {
 			_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
 		}
@@ -241,7 +241,7 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 	} else {
 		if (!getIsDemo()) {
 			if (!_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
-				_vm->abortGame();
+				g_vm->abortGame();
 		} else {
 			_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
 		}
@@ -256,13 +256,13 @@ void TonyEngine::doNextMusic(CORO_PARAM, const void *param) {
 	Common::String fn;
 	CORO_END_CONTEXT(_ctx);
 
-	FPStream **streams = _vm->_stream;
+	FPStream **streams = g_vm->_stream;
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (!_vm->getIsDemo()) {
+	if (!g_vm->getIsDemo()) {
 		if (!streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync))
-			_vm->abortGame();
+			g_vm->abortGame();
 	} else {
 		streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync);
 	}
@@ -532,34 +532,34 @@ void TonyEngine::playProcess(CORO_PARAM, const void *param) {
 	// and kill the scheudler and all the processes, including this one
 	for (;;) {
 		// If a savegame needs to be loaded, then do so
-		if (_vm->_loadSlotNumber != -1 && GLOBALS._gfxEngine != NULL) {
-			_ctx->fn = getSaveStateFileName(_vm->_loadSlotNumber);
+		if (g_vm->_loadSlotNumber != -1 && GLOBALS._gfxEngine != NULL) {
+			_ctx->fn = getSaveStateFileName(g_vm->_loadSlotNumber);
 			CORO_INVOKE_1(GLOBALS._gfxEngine->loadState, _ctx->fn);
-			_vm->_loadSlotNumber = -1;
+			g_vm->_loadSlotNumber = -1;
 		}
 
 		// Wait for the next frame
 		CORO_INVOKE_1(CoroScheduler.sleep, 50);
 
 		// Call the engine to handle the next frame
-		CORO_INVOKE_1(_vm->_theEngine.doFrame, _vm->_bDrawLocation);
+		CORO_INVOKE_1(g_vm->_theEngine.doFrame, g_vm->_bDrawLocation);
 
 		// Warns that a frame is finished
-		CoroScheduler.pulseEvent(_vm->_hEndOfFrame);
+		CoroScheduler.pulseEvent(g_vm->_hEndOfFrame);
 
 		// Handle drawing the frame
-		if (!_vm->_bPaused) {
-			if (!_vm->_theEngine._bWiping)
-				_vm->_window.getNewFrame(_vm->_theEngine, NULL);
+		if (!g_vm->_bPaused) {
+			if (!g_vm->_theEngine._bWiping)
+				g_vm->_window.getNewFrame(g_vm->_theEngine, NULL);
 			else
-				_vm->_window.getNewFrame(_vm->_theEngine, &_vm->_theEngine._rcWipeEllipse);
+				g_vm->_window.getNewFrame(g_vm->_theEngine, &g_vm->_theEngine._rcWipeEllipse);
 		}
 
 		// Paint the frame onto the screen
-		_vm->_window.repaint();
+		g_vm->_window.repaint();
 
 		// Signal the ScummVM debugger
-		_vm->_debugger->onFrame();
+		g_vm->_debugger->onFrame();
 	}
 
 	CORO_END_CODE;

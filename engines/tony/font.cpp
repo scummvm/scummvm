@@ -322,7 +322,7 @@ void RMFontDialog::init() {
 	_lTable['E'] = 10;
 	_lTable['F'] = 11;
 
-	if (_vm->getLanguage() == Common::PL_POL) {
+	if (g_vm->getLanguage() == Common::PL_POL) {
 		// Polish characters
 		//AaCcEeLlNnOoSsZzZz
 		//¥¹ÆæÊê£³ÑñÓóŒœ¯¿Ÿ
@@ -365,7 +365,7 @@ void RMFontDialog::init() {
 		_lTable[(byte)''] = 14;
 		_lTable[(byte)'Ÿ'] = 13;
 
-	} else if (_vm->getLanguage() == Common::RU_RUS) {
+	} else if (g_vm->getLanguage() == Common::RU_RUS) {
 
 		// Russian Characters
 		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
@@ -508,7 +508,7 @@ void RMFontDialog::init() {
 		_lTable[(byte)'þ'] = 15;
 		_lTable[(byte)'ÿ'] = 14;
 
-	} else if (_vm->getLanguage() == Common::CZ_CZE) {
+	} else if (g_vm->getLanguage() == Common::CZ_CZE) {
 		// Czech
 		_cTable[(byte)'Ì'] = 196;
 		_cTable[(byte)'Š'] = 197;
@@ -574,7 +574,7 @@ void RMFontDialog::init() {
 		_lTable[(byte)'ù'] = 13;
 		_lTable[(byte)'ú'] = 13;
 
-	} else if (_vm->getLanguage() == Common::FR_FRA) {
+	} else if (g_vm->getLanguage() == Common::FR_FRA) {
 		// French
 
 		_cTable[(byte)'â'] = 226;
@@ -595,7 +595,7 @@ void RMFontDialog::init() {
 		_lTable[(byte)'ô'] = 11;
 		_lTable[(byte)'ö'] = 11;
 
-	} else if (_vm->getLanguage() == Common::DE_DEU) {
+	} else if (g_vm->getLanguage() == Common::DE_DEU) {
 		_cTable[(byte)'ß'] = 234;
 		// 'SS' = 235
 		_cTable[(byte)'Ä'] = 236;
@@ -686,7 +686,7 @@ void RMFontMacc::init() {
 	//_cTable[(byte)''] = 100;         // u with ball
 	_cTable[(byte)'ç'] = 101;
 
-	if (_vm->getLanguage() == Common::PL_POL) {
+	if (g_vm->getLanguage() == Common::PL_POL) {
 		// Polish characters
 		//AaCcEeLlNnOoSsZzZz
 		//¥¹ÆæÊê£³ÑñÓóŒœ¯¿Ÿ
@@ -729,7 +729,7 @@ void RMFontMacc::init() {
 		_lTable[(byte)''] = 14;
 		_lTable[(byte)'Ÿ'] = 13;
 
-	} else if (_vm->getLanguage() == Common::RU_RUS) {
+	} else if (g_vm->getLanguage() == Common::RU_RUS) {
 		// Russian Characters
 		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
 		// allowing for further translations. To support Tonyin other langauges,
@@ -870,7 +870,7 @@ void RMFontMacc::init() {
 		_lTable[(byte)'þ'] = 11;
 		_lTable[(byte)'ÿ'] = 11;
 
-	} else if (_vm->getLanguage() == Common::CZ_CZE) {
+	} else if (g_vm->getLanguage() == Common::CZ_CZE) {
 		// Czech
 
 		_cTable[(byte)'Ì'] = 186;
@@ -937,7 +937,7 @@ void RMFontMacc::init() {
 		_lTable[(byte)'ù'] = 11;
 		_lTable[(byte)'ú'] = 11;
 
-	} else if (_vm->getLanguage() == Common::FR_FRA) {
+	} else if (g_vm->getLanguage() == Common::FR_FRA) {
 		// French
 
 		_cTable[(byte)'â'] = 226;
@@ -958,7 +958,7 @@ void RMFontMacc::init() {
 		_lTable[(byte)'ô'] = 10;
 		_lTable[(byte)'ö'] = 10;
 
-	} else if (_vm->getLanguage() == Common::DE_DEU) {
+	} else if (g_vm->getLanguage() == Common::DE_DEU) {
 		// German
 
 		_cTable[(byte)'ß'] = 234;
@@ -1136,7 +1136,7 @@ void RMFontCredits::init() {
 	_lTable[':'] = 5;
 	_lTable['\''] = 5;
 
-	if (_vm->getLanguage() == Common::PL_POL) {
+	if (g_vm->getLanguage() == Common::PL_POL) {
 		// Polish characters
 		//AaCcEeLlNnOoSsZzZz
 		//¥¹ÆæÊê£³ÑñÓóŒœ¯¿Ÿ
@@ -1179,7 +1179,7 @@ void RMFontCredits::init() {
 		_lTable[(byte)''] = 15;
 		_lTable[(byte)'Ÿ'] = 10;
 
-	} else if (_vm->getLanguage() == Common::RU_RUS) {
+	} else if (g_vm->getLanguage() == Common::RU_RUS) {
 		// Russian Characters
 		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
 		// allowing for further translations. To support Tonyin other langauges,
@@ -1320,7 +1320,7 @@ void RMFontCredits::init() {
 		_lTable[(byte)'þ'] = 13;
 		_lTable[(byte)'ÿ'] = 11;
 
-	} else if (_vm->getLanguage() == Common::CZ_CZE) {
+	} else if (g_vm->getLanguage() == Common::CZ_CZE) {
 		// CZECH Language
 
 		_cTable[(byte)'Ì'] = 196;
@@ -1387,7 +1387,7 @@ void RMFontCredits::init() {
 		_lTable[(byte)'ù'] = 10;
 		_lTable[(byte)'ú'] = 10;
 
-	} else if (_vm->getLanguage() == Common::FR_FRA) {
+	} else if (g_vm->getLanguage() == Common::FR_FRA) {
 		// French
 
 		_cTable[(byte)'â'] = 226;
@@ -1408,7 +1408,7 @@ void RMFontCredits::init() {
 		_lTable[(byte)'ô'] = 11;
 		_lTable[(byte)'ö'] = 11;
 
-	} else if (_vm->getLanguage() == Common::DE_DEU) {
+	} else if (g_vm->getLanguage() == Common::DE_DEU) {
 		// German
 
 		_cTable[(byte)'ß'] = 234;
@@ -1580,7 +1580,7 @@ void RMFontObj::init() {
 	setBothCase('R', 'R', 1);
 	setBothCase('R', 'U', 3);
 
-	if (_vm->getLanguage() == Common::PL_POL) {
+	if (g_vm->getLanguage() == Common::PL_POL) {
 		// Polish characters
 		//¥¹ÆæÊê£³ÑñÓóŒœ¯¿Ÿ
 		//AaCcEeLlNnOoSsZzZz
@@ -1611,7 +1611,7 @@ void RMFontObj::init() {
 		_cTable[(byte)''] = _cTable[(byte)'Ÿ'] = 93;
 		_lTable[(byte)''] = _lTable[(byte)'Ÿ'] = 21;
 
-	} else if (_vm->getLanguage() == Common::RU_RUS) {
+	} else if (g_vm->getLanguage() == Common::RU_RUS) {
 		// Russian Characters
 		// WARNING: The Russian font uses many of the ISO-Latin-1 font,
 		// allowing for further translations. To support Tonyin other langauges,
@@ -1689,7 +1689,7 @@ void RMFontObj::init() {
 		_lTable[(byte)'Þ'] = _lTable[(byte)'þ'] = 18;
 		_lTable[(byte)'ß'] = _lTable[(byte)'ÿ'] = 18;
 
-	} else if (_vm->getLanguage() == Common::CZ_CZE) {
+	} else if (g_vm->getLanguage() == Common::CZ_CZE) {
 		// Czech
 
 		_cTable[(byte)'Ì'] = _cTable[(byte)'ì'] = 127;
@@ -1724,7 +1724,7 @@ void RMFontObj::init() {
 		_lTable[(byte)'Ù'] = _lTable[(byte)'ù'] = 16;
 		_lTable[(byte)'Ú'] = _lTable[(byte)'ú'] = 16;
 
-	} else if (_vm->getLanguage() == Common::FR_FRA) {
+	} else if (g_vm->getLanguage() == Common::FR_FRA) {
 		// French
 
 		// Translate accented characters as normal letters
@@ -1744,7 +1744,7 @@ void RMFontObj::init() {
 		_cTable[(byte)'ù'] = _cTable[(byte)'û'] = 20; // u
 		_lTable[(byte)'ù'] = _lTable[(byte)'û'] = 15;
 
-	} else if (_vm->getLanguage() == Common::DE_DEU) {
+	} else if (g_vm->getLanguage() == Common::DE_DEU) {
 		// German
 
 		_cTable['ß'] = 142;
@@ -2074,14 +2074,14 @@ void RMTextDialog::removeThis(CORO_PARAM, bool &result) {
 		if (!(GLOBALS._bCfgDubbing && _hCustomSkip2 != CORO_INVALID_PID_VALUE)) {
 			if (GLOBALS._bCfgTimerizedText) {
 				if (!_bForceNoTime) {
-					if (_vm->getTime() > (uint32)_time + _startTime)
+					if (g_vm->getTime() > (uint32)_time + _startTime)
 						return;
 				}
 			}
 		}
 
 		if (!_bNoTab) {
-			if (_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_TAB))
+			if (g_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_TAB))
 				return;
 		}
 
@@ -2095,14 +2095,14 @@ void RMTextDialog::removeThis(CORO_PARAM, bool &result) {
 	// Erase the background
 	else if (!(GLOBALS._bCfgDubbing && _hCustomSkip2 != CORO_INVALID_PID_VALUE)) {
 		if (!_bForceNoTime) {
-			if (_vm->getTime() > (uint32)_time + _startTime)
+			if (g_vm->getTime() > (uint32)_time + _startTime)
 				return;
 		}
 	}
 
 	// If time is forced
 	if (_bForceTime) {
-		if (_vm->getTime() > (uint32)_time + _startTime)
+		if (g_vm->getTime() > (uint32)_time + _startTime)
 			return;
 	}
 
@@ -2138,7 +2138,7 @@ void RMTextDialog::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *p
 	CORO_BEGIN_CODE(_ctx);
 
 	if (_startTime == 0)
-		_startTime = _vm->getTime();
+		_startTime = g_vm->getTime();
 
 	if (_bShowed) {
 		if (GLOBALS._bShowSubtitles || _bAlwaysDisplay) {
@@ -2481,7 +2481,7 @@ void RMDialogChoice::show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 	if (0) {
 		_bShow = true;
 	} else {
-		_ctx->starttime = _vm->getTime();
+		_ctx->starttime = g_vm->getTime();
 		_ctx->deltay = 480 - _ptDrawPos._y;
 		_ctx->destpt = _ptDrawPos;
 		_ptDrawPos.set(0, 480);
@@ -2494,7 +2494,7 @@ void RMDialogChoice::show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(mainWaitFrame);
 			mainFreeze();
-			_ctx->elaps = _vm->getTime() - _ctx->starttime;
+			_ctx->elaps = g_vm->getTime() - _ctx->starttime;
 			_ptDrawPos._y = 480 - ((_ctx->deltay * 100) / 700 * _ctx->elaps) / 100;
 			mainUnfreeze();
 		}
@@ -2531,14 +2531,14 @@ void RMDialogChoice::hide(CORO_PARAM) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (1) {
-		_ctx->starttime = _vm->getTime();
+		_ctx->starttime = g_vm->getTime();
 
 		_ctx->deltay = 480 - _ptDrawPos._y;
 		_ctx->elaps = 0;
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(mainWaitFrame);
 			mainFreeze();
-			_ctx->elaps = _vm->getTime() - _ctx->starttime;
+			_ctx->elaps = g_vm->getTime() - _ctx->starttime;
 			_ptDrawPos._y = 480 - ((_ctx->deltay * 100) / 700 * (700 - _ctx->elaps)) / 100;
 			mainUnfreeze();
 		}

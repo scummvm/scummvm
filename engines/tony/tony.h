@@ -238,9 +238,9 @@ public:
 };
 
 // Global reference to the TonyEngine object
-extern TonyEngine *_vm;
+extern TonyEngine *g_vm;
 
-#define GLOBALS _vm->_globals
+#define GLOBALS g_vm->_globals
 
 } // End of namespace Tony
 
