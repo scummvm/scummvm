@@ -669,7 +669,7 @@ void Entities::executeCallbacks() {
 //////////////////////////////////////////////////////////////////////////
 // Processing
 //////////////////////////////////////////////////////////////////////////
-void Entities::incrementDirectionCounter(EntityData::EntityCallData *data) {
+void Entities::incrementDirectionCounter(EntityData::EntityCallData *data) const {
 	data->doProcessEntity = false;
 
 	if (data->direction == kDirectionRight || (data->direction == kDirectionSwitch && data->directionSwitch == kDirectionRight))

@@ -79,7 +79,7 @@ public:
 	void removeAndRedraw(SequenceFrame **frame, bool doRedraw);
 	void resetQueue();
 	void setCoordinates(SequenceFrame *frame);
-	void setCoordinates(Common::Rect rect);
+	void setCoordinates(const Common::Rect &rect);
 
 	// Helpers
 	SceneIndex getSceneIndexFromPosition(CarIndex car, Position position, int param3 = -1);

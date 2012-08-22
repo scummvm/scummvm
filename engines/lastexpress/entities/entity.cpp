@@ -50,7 +50,7 @@ EntityData::EntityCallData::~EntityCallData() {
 	SAFE_DELETE(sequence3);
 }
 
-void EntityData::EntityCallData::syncString(Common::Serializer &s, Common::String &string, int length) {
+void EntityData::EntityCallData::syncString(Common::Serializer &s, Common::String &string, int length) const {
 	char seqName[13];
 	memset(&seqName, 0, length);
 
@@ -825,7 +825,7 @@ void Entity::setupIISS(const char *name, uint index, uint param1, uint param2, c
 // Helper functions
 //////////////////////////////////////////////////////////////////////////
 
-bool Entity::updateParameter(uint &parameter, uint timeType, uint delta) {
+bool Entity::updateParameter(uint &parameter, uint timeType, uint delta) const {
 	if (!parameter)
 		parameter = (uint)(timeType + delta);
 
@@ -837,7 +837,7 @@ bool Entity::updateParameter(uint &parameter, uint timeType, uint delta) {
 	return true;
 }
 
-bool Entity::updateParameterTime(TimeValue timeValue, bool check, uint &parameter, uint delta) {
+bool Entity::updateParameterTime(TimeValue timeValue, bool check, uint &parameter, uint delta) const {
 	if (getState()->time <= timeValue) {
 		if (check || !parameter)
 			parameter = (uint)(getState()->time + delta);
@@ -851,7 +851,7 @@ bool Entity::updateParameterTime(TimeValue timeValue, bool check, uint &paramete
 	return true;
 }
 
-bool Entity::updateParameterCheck(uint &parameter, uint timeType, uint delta) {
+bool Entity::updateParameterCheck(uint &parameter, uint timeType, uint delta) const {
 	if (parameter && parameter >= timeType)
 		return false;
 
@@ -861,7 +861,7 @@ bool Entity::updateParameterCheck(uint &parameter, uint timeType, uint delta) {
 	return true;
 }
 
-bool Entity::timeCheck(TimeValue timeValue, uint &parameter, Common::Functor0<void> *function) {
+bool Entity::timeCheck(TimeValue timeValue, uint &parameter, Common::Functor0<void> *function) const {
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;
 		(*function)();
@@ -936,14 +936,14 @@ bool Entity::timeCheckCar(TimeValue timeValue, uint &parameter, byte callback, C
 	return false;
 }
 
-void Entity::timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) {
+void Entity::timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) const {
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;
 		getSavePoints()->push(entity1, entity2, action);
 	}
 }
 
-void Entity::timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex object, ObjectLocation location) {
+void Entity::timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex object, ObjectLocation location) const {
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;
 		getObjects()->updateLocation2(object, location);

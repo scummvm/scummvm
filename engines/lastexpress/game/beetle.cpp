@@ -94,7 +94,7 @@ void Beetle::load() {
 
 	// Check that all sequences are loaded properly
 	_data->isLoaded = true;
-	for (int i = 0; i < (int)_data->sequences.size(); i++) {
+	for (uint i = 0; i < _data->sequences.size(); i++) {
 		if (!_data->sequences[i]->isLoaded()) {
 			_data->isLoaded = false;
 			break;

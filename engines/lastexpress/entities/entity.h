@@ -822,7 +822,7 @@ public:
 		 * @param	string	The string.
 		 * @param	length	Length of the string.
 		 */
-		void syncString(Common::Serializer &s, Common::String &string, int length);
+		void syncString(Common::Serializer &s, Common::String &string, int length) const;
 
 		// Serializable
 		void saveLoadWithSerializer(Common::Serializer &s);
@@ -1084,18 +1084,18 @@ protected:
 	// Helper functions
 	//////////////////////////////////////////////////////////////////////////
 
-	bool updateParameter(uint &parameter, uint timeType, uint delta);
-	bool updateParameterCheck(uint &parameter, uint timeType, uint delta);
-	bool updateParameterTime(TimeValue timeValue, bool check, uint &parameter, uint delta);
+	bool updateParameter(uint &parameter, uint timeType, uint delta) const;
+	bool updateParameterCheck(uint &parameter, uint timeType, uint delta) const;
+	bool updateParameterTime(TimeValue timeValue, bool check, uint &parameter, uint delta) const;
 
-	bool timeCheck(TimeValue timeValue, uint &parameter, Common::Functor0<void> *function);
+	bool timeCheck(TimeValue timeValue, uint &parameter, Common::Functor0<void> *function) const;
 	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
 	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, const char *str, Common::Functor1<const char *, void> *function);
 	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, bool check, Common::Functor1<bool, void> *function);
 	bool timeCheckCallbackInventory(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
 	bool timeCheckCar(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
-	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action);
-	void timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex index, ObjectLocation location);
+	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) const;
+	void timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex index, ObjectLocation location) const;
 	bool timeCheckCallbackAction(TimeValue timeValue, uint &parameter);
 	bool timeCheckPlaySoundUpdatePosition(TimeValue timeValue, uint &parameter, byte callback, const char* sound, EntityPosition position);
 
