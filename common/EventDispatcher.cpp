@@ -38,7 +38,9 @@ EventDispatcher::~EventDispatcher() {
 			delete i->observer;
 	}
 
-	delete _mapper;
+	if (_autoFreeMapper) {
+		delete _mapper;
+	}
 	_mapper = 0;
 }
 
@@ -68,10 +70,14 @@ void EventDispatcher::dispatch() {
 	}
 }
 
-void EventDispatcher::registerMapper(EventMapper *mapper) {
-	delete _mapper;
+void EventDispatcher::registerMapper(EventMapper *mapper, bool autoFree) {
+	if (_autoFreeMapper) {
+		delete _mapper;
+	}
 	_mapper = mapper;
+	_autoFreeMapper = autoFree;
 }
+
 
 void EventDispatcher::registerSource(EventSource *source, bool autoFree) {
 	SourceEntry newEntry;

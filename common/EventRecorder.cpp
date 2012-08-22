@@ -203,7 +203,7 @@ void EventRecorder::togglePause() {
 }
 
 void EventRecorder::RegisterEventSource() {
-	g_system->getEventManager()->getEventDispatcher()->registerMapper(this);
+	g_system->getEventManager()->getEventDispatcher()->registerMapper(this, false);
 }
 
 uint32 EventRecorder::getRandomSeed(const String &name) {

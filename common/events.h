@@ -294,7 +294,7 @@ public:
 	 * possible, thus when this method is called twice,
 	 * the former mapper will be destroied.
 	 */
-	void registerMapper(EventMapper *mapper);
+	void registerMapper(EventMapper *mapper, bool autoFree);
 
 	/**
 	 * Queries the setup event mapper.
@@ -328,6 +328,7 @@ public:
 	 */
 	void unregisterObserver(EventObserver *obs);
 private:
+	bool _autoFreeMapper;
 	EventMapper *_mapper;
 
 	struct Entry {
