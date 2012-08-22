@@ -351,6 +351,9 @@ void Beetle::drawUpdate() {
 }
 
 void Beetle::invertDirection() {
+	if (!_data)
+		error("[Beetle::invertDirection] Sequences have not been loaded");
+
 	switch (_data->indexes[_data->offset]) {
 	default:
 		break;
