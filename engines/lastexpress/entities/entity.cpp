@@ -50,7 +50,7 @@ EntityData::EntityCallData::~EntityCallData() {
 	SAFE_DELETE(sequence3);
 }
 
-void EntityData::EntityCallData::syncString(Common::Serializer &s, Common::String &string, int length) const {
+void EntityData::EntityCallData::syncString(Common::Serializer &s, Common::String &string, uint length) const {
 	char seqName[13];
 	memset(&seqName, 0, length);
 
@@ -117,7 +117,7 @@ EntityData::EntityParameters *EntityData::getParameters(uint callback, byte inde
 	return _parameters[callback].parameters[index];
 }
 
-int EntityData::getCallback(uint callback) const {
+byte EntityData::getCallback(uint callback) const {
 	if (callback >= 16)
 		error("[EntityData::getCallback] Invalid callback value (was: %d, max: 16)", callback);
 

@@ -822,7 +822,7 @@ public:
 		 * @param	string	The string.
 		 * @param	length	Length of the string.
 		 */
-		void syncString(Common::Serializer &s, Common::String &string, int length) const;
+		void syncString(Common::Serializer &s, Common::String &string, uint length) const;
 
 		// Serializable
 		void saveLoadWithSerializer(Common::Serializer &s);
@@ -845,8 +845,8 @@ public:
 	EntityParameters     *getCurrentParameters(byte index = 0) { return getParameters(_data.currentCall, index); }
 	EntityCallParameters *getCurrentCallParameters() { return &_parameters[_data.currentCall]; }
 
-	int                   getCallback(uint callback) const;
-	int                   getCurrentCallback() { return getCallback(_data.currentCall); }
+	byte                  getCallback(uint callback) const;
+	byte                  getCurrentCallback() { return getCallback(_data.currentCall); }
 	void                  setCallback(uint callback, byte index);
 	void                  setCurrentCallback(uint index) { setCallback(_data.currentCall, index); }
 
