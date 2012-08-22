@@ -550,7 +550,7 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 		entry.saveLoadWithSerializer(ser);
 
 		if (!entry.isValid()) {
-			error("[SaveLoad::saveGame] Invalid entry. This savegame might be corrupted");
+			warning("[SaveLoad::saveGame] Invalid entry. This savegame might be corrupted");
 			_savegame->seek(header.offset);
 		} else if (getState()->time < entry.time || (type == kSavegameTypeTickInterval && getState()->time == entry.time)) {
 			// Not ready to save a game, skipping!

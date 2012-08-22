@@ -116,10 +116,8 @@ void SoundEntry::close() {
 }
 
 void SoundEntry::play() {
-	if (!_stream) {
+	if (!_stream)
 		error("[SoundEntry::play] stream has been disposed");
-		return;
-	}
 
 	// Prepare sound stream
 	if (!_soundStream)
