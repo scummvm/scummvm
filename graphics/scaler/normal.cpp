@@ -230,7 +230,11 @@ void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 		}
 	}
 #else
-	Normal1x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	if (_format.bytesPerPixel == 2) {
+		Normal1x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	} else {
+		Normal1x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	}
 #endif
 }
 
