@@ -2122,8 +2122,6 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 
 	_ctx->startVolume = g_vm->getMusicVolume(nChannel);
 
-	debug("Start FadeOut Music");
-
 	for (_ctx->i = 16; _ctx->i > 0 && !GLOBALS._bFadeOutStop; _ctx->i--) {
 		if (_ctx->i * 4 < _ctx->startVolume)
 			g_vm->setMusicVolume(nChannel, _ctx->i * 4);
@@ -2137,8 +2135,6 @@ void ThreadFadeOutMusic(CORO_PARAM, const void *nMusic) {
 	// If a jingle is played, stop it
 	if (nChannel == 2)
 		g_vm->stopMusic(2);
-
-	debug("End FadeOut Music");
 
 	CORO_KILL_SELF();
 
