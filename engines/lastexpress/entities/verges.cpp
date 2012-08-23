@@ -1177,7 +1177,7 @@ IMPLEMENT_FUNCTION(29, Verges, chapter3)
 		break;
 
 	case kActionNone:
-		setup_function23();
+		setup_function33();
 		break;
 
 	case kActionDefault:
