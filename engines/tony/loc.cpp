@@ -1945,9 +1945,6 @@ RMLocation::RMLocation() {
 	_buf = NULL;
 	TEMPNumLoc = 0;
 	_cmode = CM_256;
-
-	_prevScroll.set(-1, -1);
-	_prevFixedScroll.set(-1, -1);
 }
 
 
@@ -2019,6 +2016,10 @@ bool RMLocation::load(RMDataStream &ds) {
 	byte ver;
 	byte cm;
 	int i;
+
+	// Reset dirty rectangling
+	_prevScroll.set(-1, -1);
+	_prevFixedScroll.set(-1, -1);
 
 	// Check the ID
 	ds >> id[0] >> id[1] >> id[2];

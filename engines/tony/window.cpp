@@ -140,16 +140,11 @@ void RMWindow::getNewFrame(RMGfxTargetBuffer &bigBuf, Common::Rect *rcBoundEllip
 	// Get a pointer to the bytes of the source buffer
 	byte *lpBuf = bigBuf;
 
-	// FIXME: The current dirty rect handling code has a minor issue with screen refresh in one 
-	// scene in the introduction sequence as the scene changes. For now, we're working around the 
-	// problem by explicitly having full screen refreshes on that scene
-	bool fullRefresh = g_vm->getEngine()->getCurrentLocation() == 98;
-
 	if (rcBoundEllipse != NULL) {
 		// Circular wipe effect
 		getNewFrameWipe(lpBuf, *rcBoundEllipse);
 		_wiping = true;
-	} else if (_wiping || fullRefresh) {
+	} else if (_wiping) {
 		// Just finished a wiping effect, so copy the full screen
 		copyRectToScreen(lpBuf, RM_SX * 2, 0, 0, RM_SX, RM_SY);
 		_wiping = false;
