@@ -684,11 +684,10 @@ void PlaybackFile::checkRecordedMD5() {
 	uint32 seconds = g_eventRec.getTimer() / 1000;
 	String screenTime = String::format("%.2d:%.2d:%.2d", seconds / 3600 % 24, seconds / 60 % 60, seconds % 60);
 	if (memcmp(savedMD5, currentMD5, 16) != 0) {
-//		warning("Recorded and current screenshots are different");
 		debugC(1, kDebugLevelEventRec, "playback:action=\"Check screenshot\" time=%s result = fail", screenTime.c_str());
+		warning("Recorded and current screenshots are different");
 	} else {
 		debugC(1, kDebugLevelEventRec, "playback:action=\"Check screenshot\" time=%s result = success", screenTime.c_str());
-		warning("Recorded and current screenshots are different");
 	}
 	Graphics::saveThumbnail(*_screenshotsFile, screen);
 	screen.free();
