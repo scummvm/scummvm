@@ -1720,7 +1720,17 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 	if (prim->isFlipped()) {
 		u = _dimx - (width + u);
 		x1 = (prim->getDst()._x1 + _dimx - 1) - u;
+
+		if (width > x1)
+			width = x1;
+
+		// Specify the drawn area
+		bigBuf.addDirtyRect(Common::Rect(x1 - width, y1, x1, y1 + height));
+	} else {
+		// Specify the drawn area
+		bigBuf.addDirtyRect(Common::Rect(x1, y1, x1 + width, y1 + height));
 	}
+
 //	width = _dimx;
 //	x1 = prim->Dst().x1;
 
@@ -1807,9 +1817,6 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 		// Skip to the next line
 		buf += bigBuf.getDimx();
 	}
-
-	// Specify the drawn area
-	bigBuf.addDirtyRect(Common::Rect(x1, y1, x1 + width, y1 + height));
 }
 
 
