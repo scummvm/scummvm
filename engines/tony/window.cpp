@@ -165,14 +165,16 @@ void RMWindow::getNewFrame(RMGfxTargetBuffer &bigBuf, Common::Rect *rcBoundEllip
 			Common::Rect &r = *i;
 			const byte *lpSrc = lpBuf + (RM_SX * 2) * r.top + (r.left * 2);
 			copyRectToScreen(lpSrc, RM_SX * 2, r.left, r.top, r.width(), r.height());
-
-			if (_showDirtyRects)
-				// Frame the copied area with a rectangle
-				s->frameRect(r, 0xffffff);
 		}
 
-		if (_showDirtyRects)
+		if (_showDirtyRects) {
+			for (i = dirtyRects.begin(); i != dirtyRects.end(); ++i) {
+				// Frame the copied area with a rectangle
+				s->frameRect(*i, 0xffffff);
+			}
+
 			g_system->unlockScreen();
+		}
 	}
 
 	if (_bGrabThumbnail) {
