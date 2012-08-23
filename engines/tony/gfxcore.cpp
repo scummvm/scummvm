@@ -198,7 +198,7 @@ bool RMGfxSourceBuffer::clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 	if (y1 + height - 1 > desth - 1)
 		height = desth - y1;
 
-	return true;
+	return (width > 1 && height > 1);
 }
 
 
