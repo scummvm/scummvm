@@ -44,6 +44,7 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/fs.h"
+#include "common/recorderfile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
@@ -457,6 +458,11 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				g_eventRec.init(g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName()), Common::EventRecorder::kRecorderRecord);
 			} else if (recordMode == "playback") {
 				g_eventRec.init(recordFileName, Common::EventRecorder::kRecorderPlayback);
+			} else if ((recordMode == "info") && (!recordFileName.empty())) {
+				Common::PlaybackFile record;
+				record.openRead(recordFileName);
+				debug("info:author=%s name=%s description=%s", record.getHeader().author.c_str(), record.getHeader().name.c_str(), record.getHeader().description.c_str());
+				break;
 			}
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
