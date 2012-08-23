@@ -222,7 +222,7 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 	int width;
 
 	// reverse_iterator would be nice
-	for (it = g_cine->_overlayList.reverse_begin(); it != g_cine->_overlayList.end(); --it) {
+	for (it = g_cine->_overlayList.legacy_reverse_begin(); it != g_cine->_overlayList.end(); --it) {
 		if (it->type >= 2 || !g_cine->_objectTable[it->objIdx].name[0]) {
 			continue;
 		}
@@ -1474,7 +1474,7 @@ void resetGfxEntityEntry(uint16 objIdx) {
 			}
 
 			if (g_cine->_objectTable[objIdx].mask > objectMask) { // Check for B objects' cut point
-				bObjsCutPoint = bObjs.reverse_begin();
+				bObjsCutPoint = bObjs.legacy_reverse_begin();
 				foundCutPoint = true;
 			}
 		}

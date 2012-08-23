@@ -33,14 +33,14 @@ namespace Common {
 template<typename t_T>
 class List {
 protected:
-	typedef ListInternal::NodeBase		NodeBase;
-	typedef ListInternal::Node<t_T>		Node;
+	typedef ListInternal::NodeBase      NodeBase;
+	typedef ListInternal::Node<t_T>     Node;
 
 	NodeBase _anchor;
 
 public:
-	typedef ListInternal::Iterator<t_T>		iterator;
-	typedef ListInternal::ConstIterator<t_T>	const_iterator;
+	typedef ListInternal::Iterator<t_T>     iterator;
+	typedef ListInternal::ConstIterator<t_T>    const_iterator;
 
 	typedef t_T value_type;
 	typedef uint size_type;
@@ -65,7 +65,10 @@ public:
 	 * Inserts element before pos.
 	 */
 	void insert(iterator pos, const t_T &element) {
-		insert(pos._node, element);
+		if (pos._forward)
+			insert(pos._node, element); //pos is forward iterator.
+		else
+			insertAfter(pos._node, element); //pos is reverse iterator.
 	}
 
 	/**
@@ -80,31 +83,43 @@ public:
 	/**
 	 * Deletes the element at location pos and returns an iterator pointing
 	 * to the element after the one which was deleted.
+	 * @return  Iterator of the same type (forward/reverse) as pos
 	 */
 	iterator erase(iterator pos) {
 		assert(pos != end());
-		return iterator(erase(pos._node)._next);
+		if (pos._forward)
+			return pos.iteratorOfSameType(erase(pos._node)._next); //pos is forward iterator.
+		else
+			return pos.iteratorOfSameType(erase(pos._node)._prev); //pos is reverse iterator.
 	}
 
 	/**
 	 * Deletes the element at location pos and returns an iterator pointing
 	 * to the element before the one which was deleted.
+	 * @return  Iterator of the same type (forward/reverse) as pos
 	 */
 	iterator reverse_erase(iterator pos) {
 		assert(pos != end());
-		return iterator(erase(pos._node)._prev);
+		if (pos._forward)
+			return pos.iteratorOfSameType(erase(pos._node)._prev); //pos is forward iterator.
+		else
+			return pos.iteratorOfSameType(erase(pos._node)._next); //pos is reverse iterator.
 	}
 
 	/**
 	 * Deletes the elements between first and last (including first but not
 	 * last) and returns an iterator pointing to the element after the one
-	 * which was deleted (i.e., last).
+	 * which was deleted.
+	 * @return  last
 	 */
 	iterator erase(iterator first, iterator last) {
 		NodeBase *f = first._node;
 		NodeBase *l = last._node;
 		while (f != l)
-			f = erase(f)._next;
+			if (first._forward)
+				f = erase(f)._next; //first is forward iterator.
+			else
+				f = erase(f)._prev; //first is reverse iterator.
 		return last;
 	}
 
@@ -120,7 +135,9 @@ public:
 				i = i->_next;
 	}
 
-	/** Inserts element at the start of the list. */
+	/**
+	 * Inserts element at the start of the list.
+	 */
 	void push_front(const t_T &element) {
 		insert(_anchor._next, element);
 	}
@@ -169,7 +186,7 @@ public:
 			const_iterator i2;
 			const_iterator e2 = list.end();
 
-			for (i = begin(), i2 = list.begin();  (i != e) && (i2 != e2) ; ++i, ++i2) {
+			for (i = begin(), i2 = list.begin(); (i != e) && (i2 != e2) ; ++i, ++i2) {
 				static_cast<Node *>(i._node)->_data = static_cast<const Node *>(i2._node)->_data;
 			}
 
@@ -206,28 +223,50 @@ public:
 	}
 
 
-	iterator		begin() {
+	iterator        begin() {
 		return iterator(_anchor._next);
 	}
 
-	iterator		reverse_begin() {
+	iterator        reverse_begin() {
+		return iterator(_anchor._prev, false);
+	}
+	iterator        reverse_end() {
+		return iterator(&_anchor, false);
+	}
+
+	/**
+	 * FIXME DEPRECATED Old version of reverse_begin(), use reverse_begin() instead, witch gets an actual reverse iterator.
+	 * @see reverse_begin()
+	 */
+	iterator legacy_reverse_begin() {
 		return iterator(_anchor._prev);
 	}
 
-	iterator		end() {
+	iterator        end() {
 		return iterator(&_anchor);
 	}
 
-	const_iterator	begin() const {
+	const_iterator  begin() const {
 		return const_iterator(_anchor._next);
 	}
 
-	const_iterator	reverse_begin() const {
+	/**
+	 * FIXME DEPRECATED Old version of reverse_begin(), use reverse_begin() instead!
+	 * @see reverse_begin()
+	 */
+	const_iterator  legacy_reverse_begin() const {
 		return const_iterator(_anchor._prev);
 	}
 
-	const_iterator	end() const {
+	const_iterator  reverse_begin() const {
+		return const_iterator(_anchor._prev, false);
+	}
+
+	const_iterator  end() const {
 		return const_iterator(const_cast<NodeBase *>(&_anchor));
+	}
+	const_iterator  reverse_end() const {
+		return const_iterator(const_cast<NodeBase *>(&_anchor), false);
 	}
 
 protected:
@@ -249,6 +288,19 @@ protected:
 
 		newNode->_next = pos;
 		newNode->_prev = pos->_prev;
+		newNode->_prev->_next = newNode;
+		newNode->_next->_prev = newNode;
+	}
+
+	/**
+	 * Inserts element after pos.
+	 */
+	void insertAfter(NodeBase *pos, const t_T &element) {
+		ListInternal::NodeBase *newNode = new Node(element);
+		assert(newNode);
+
+		newNode->_prev = pos;
+		newNode->_next = pos->_next;
 		newNode->_prev->_next = newNode;
 		newNode->_next->_prev = newNode;
 	}

@@ -493,7 +493,7 @@ void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 }
 
 const Sprite *ComposerEngine::getSpriteAtPos(const Common::Point &pos) {
-	for (Common::List<Sprite>::iterator i = _sprites.reverse_begin(); i != _sprites.end(); --i) {
+	for (Common::List<Sprite>::iterator i = _sprites.legacy_reverse_begin(); i != _sprites.end(); --i) {
 		// avoid highest-level objects (e.g. the cursor)
 		if (!i->_zorder)
 			continue;

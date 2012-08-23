@@ -458,7 +458,7 @@ Animation *Scene::getAnimation(byte slot) {
 }
 
 byte Scene::peekFlagEvent(uint16 addr) const {
-	for (EventList::const_iterator i = events.reverse_begin(); i != events.end(); --i) {
+	for (EventList::const_iterator i = events.legacy_reverse_begin(); i != events.end(); --i) {
 		const SceneEvent &e = *i;
 		if (e.type == SceneEvent::kSetFlag && e.callback == addr)
 			return e.color;

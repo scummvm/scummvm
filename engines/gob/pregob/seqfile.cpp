@@ -306,7 +306,7 @@ void SEQFile::clearAnims() {
 	Objects objects = getOrderedObjects();
 
 	// Remove the animation frames, in reverse drawing order
-	for (Objects::iterator o = objects.reverse_begin(); o != objects.end(); --o) {
+	for (Objects::iterator o = objects.legacy_reverse_begin(); o != objects.end(); --o) {
 		int16 left, top, right, bottom;
 
 		if (o->object->clear(*_vm->_draw->_backSurface, left, top, right, bottom))

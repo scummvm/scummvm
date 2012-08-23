@@ -375,7 +375,7 @@ void SpritesMgr::buildNonupdBlitlist() {
  */
 void SpritesMgr::freeList(SpriteList &l) {
 	SpriteList::iterator iter;
-	for (iter = l.reverse_begin(); iter != l.end(); ) {
+	for (iter = l.legacy_reverse_begin(); iter != l.end(); ) {
 		Sprite* s = *iter;
 
 		poolRelease(s->buffer);
@@ -422,7 +422,7 @@ void SpritesMgr::commitSprites(SpriteList &l, bool immediate) {
  */
 void SpritesMgr::eraseSprites(SpriteList &l) {
 	SpriteList::iterator iter;
-	for (iter = l.reverse_begin(); iter != l.end(); --iter) {
+	for (iter = l.legacy_reverse_begin(); iter != l.end(); --iter) {
 		Sprite *s = *iter;
 		objsRestoreArea(s);
 	}

@@ -1314,7 +1314,7 @@ void Scene160::Action1::signal() {
 		breakFlag = true;
 		do {
 			if (!scene->_lineNum || ((scene->_lineNum != -1) &&
-					(((*scene->_creditsList.reverse_begin())->_position.y < 164) || !breakFlag))) {
+					(((*scene->_creditsList.legacy_reverse_begin())->_position.y < 164) || !breakFlag))) {
 				breakFlag = true;
 				Common::String msg = g_resourceManager->getMessage(160, scene->_lineNum++);
 
