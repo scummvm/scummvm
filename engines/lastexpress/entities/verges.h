@@ -87,11 +87,11 @@ public:
 	 */
 	DECLARE_FUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
-	DECLARE_FUNCTION_1(function9, const char *soundName)
-	DECLARE_FUNCTION_3(function10, CarIndex car, EntityPosition entityPosition, const char *soundName)
+	DECLARE_FUNCTION_1(walkBetweenCars, const char *soundName)
+	DECLARE_FUNCTION_3(makeAnnouncement, CarIndex car, EntityPosition entityPosition, const char *soundName)
 	DECLARE_FUNCTION(function11)
 	DECLARE_FUNCTION(function12)
-	DECLARE_FUNCTION_1(function13, bool)
+	DECLARE_FUNCTION_1(baggageCar, bool)
 
 	/**
 	 * Updates parameter 2 using time value
@@ -100,7 +100,7 @@ public:
 	 */
 	DECLARE_FUNCTION_1(updateFromTime, uint32 time)
 
-	DECLARE_FUNCTION_2(function15, EntityIndex entity, const char *soundName)
+	DECLARE_FUNCTION_2(dialog, EntityIndex entity, const char *soundName)
 	DECLARE_FUNCTION_3(function16, EntityIndex entityIndex, const char *soundName1, const char *soundName2)
 	DECLARE_FUNCTION(function17)
 
