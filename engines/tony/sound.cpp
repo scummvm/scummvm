@@ -132,7 +132,7 @@ FPSfx::FPSfx(bool bSoundOn) {
 	_bSoundSupported = bSoundOn;
 	_bFileLoaded = false;
 	_lastVolume = 63;
-	_hEndOfBuffer = CORO_INVALID_PID_VALUE;
+	_hEndOfBuffer = CoroScheduler.createEvent(true, false);
 	_bIsVoice = false;
 	_loopStream = 0;
 	_rewindableStream = 0;
@@ -161,9 +161,8 @@ FPSfx::~FPSfx() {
 	else
 		delete _rewindableStream;
 
-	// FIXME
-	//if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
-	//	CloseHandle(hEndOfBuffer);
+	// Free the buffer end event
+	CoroScheduler.closeEvent(_hEndOfBuffer);
 }
 
 /**
