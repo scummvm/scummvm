@@ -506,15 +506,15 @@ void RMOptionScreen::refreshAll(CORO_PARAM) {
 		}
 
 		for (_ctx->i = 0; _ctx->i < 6; _ctx->i++) {
-			RMString s;
+			Common::String s;
 
 			if (_bEditSaveName && _nEditPos == _ctx->i)
-				s.format("%02d)%s*", _statePos + _ctx->i, _editName);
+				s = Common::String::format("%02d)%s*", _statePos + _ctx->i, _editName);
 			else {
 				if (_statePos == 0 && _ctx->i == 0)
-					s.format("Autosave");
+					s = "Autosave";
 				else
-					s.format("%02d)%s", _statePos + _ctx->i, (const char *)_curThumbName[_ctx->i]);
+					s = Common::String::format("%02d)%s", _statePos + _ctx->i, (const char *)_curThumbName[_ctx->i]);
 			}
 
 			_ctx->num[_ctx->i] = new RMText;

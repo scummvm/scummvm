@@ -215,8 +215,8 @@ public:
 	void setMaxLineLength(int max);
 
 	// Write the text
-	void writeText(const RMString &text, int font, int *time = NULL);
-	void writeText(const RMString &text, RMFontColor *font, int *time = NULL);
+	void writeText(const Common::String &text, int font, int *time = NULL);
+	void writeText(Common::String text, RMFontColor *font, int *time = NULL);
 
 	// Overloaded function to decide when you delete the object from the OT list
 	virtual void removeThis(CORO_PARAM, bool &result);

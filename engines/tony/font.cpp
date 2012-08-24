@@ -1801,7 +1801,7 @@ void RMText::removeThis(CORO_PARAM, bool &result) {
 	result = true;
 }
 
-void RMText::writeText(const RMString &text, int nFont, int *time) {
+void RMText::writeText(const Common::String &text, int nFont, int *time) {
 	// Initializes the font (only once)
 	if (_fonts[0] == NULL) {
 		_fonts[0] = new RMFontDialog;
@@ -1817,15 +1817,13 @@ void RMText::writeText(const RMString &text, int nFont, int *time) {
 	writeText(text, _fonts[nFont], time);
 }
 
-void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
+void RMText::writeText(Common::String text, RMFontColor *font, int *time) {
 	RMGfxPrimitive *prim;
-	char *p, *old_p;
-	int i, j, x, y;
+	uint p, old_p;
+	int j, x, y;
 	int len;
 	int numchar;
 	int width, height;
-	char *string;
-	int numlines;
 
 	// Set the base color
 	font->setBaseColor(_textR, _textG, _textB);
@@ -1834,17 +1832,18 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 	destroy();
 
 	// If the string is empty, do nothing
-	if (text == NULL || text[0] == '\0')
+	if (text.empty())
 		return;
 
 	// Divide the words into lines. In this cycle, X contains the maximum length reached by a line,
 	// and the number of lines
-	string = p = text;
-	i = j = x = 0;
-	while (*p != '\0') {
-		j += font->stringLen(*p);
-		if (j > (((_aHorType == HLEFTPAR) && (i > 0)) ? _maxLineLength - 25 : _maxLineLength)) {
-			j -= font->stringLen(*p, p[1]);
+	Common::Array<Common::String> lines;
+	p = 0;
+	j = x = 0;
+	while (p < text.size()) {
+		j += font->stringLen(text[p]);
+		if (j > (((_aHorType == HLEFTPAR) && (lines.size() > 0)) ? _maxLineLength - 25 : _maxLineLength)) {
+			j -= font->stringLen(text[p], (p + 1 == text.size()) ? '\0' : text[p + 1]);
 			if (j > x)
 				x = j;
 
@@ -1855,21 +1854,24 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 			// This workaround has the partial word broken up so it will still display
 			//
 			old_p = p;
-			while (*p != ' ' && *p != '-' && p > string)
+			while (text[p] != ' ' && text[p] != '-' && p > 0)
 				p--;
 
-			if (p == string)
+			if (p == 0)
 				p = old_p;
 
 			// Check if there are any blanks to end
-			while (*p == ' ' && *p != '\0')
+			while ((text[p] == ' ' || text[p] == '-') && p + 1 < text.size())
 				p++;
-			if (*p == '\0')
+			if (p == text.size())
 				break;
-			p--;
-			i++;
-			*p = '\0';
+			lines.push_back(Common::String(text.c_str(), p));
+			if (text[p] == ' ')
+				p++;
+			text = text.c_str() + p;
+			p = 0;
 			j = 0;
+			continue;
 		}
 		p++;
 	}
@@ -1877,27 +1879,29 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 	if (j > x)
 		x = j;
 
-	i++;
-	numlines = i;
+	// Add the last line of text.
+	lines.push_back(text);
 
 	x += 8;
 
 	// Starting position for the surface: X1, Y
 	width = x;
-	height = (numlines - 1) * font->letterHeight() + font->_fontDimy;
+	height = (lines.size() - 1) * font->letterHeight() + font->_fontDimy;
 
 	// Create the surface
 	create(width, height);
 	Common::fill(_buf, _buf + width * height * 2, 0);
 
-	p = string;
+	p = 0;
 
 	y = 0;
 	numchar = 0;
-	for (; i > 0; i--) {
+	for (uint i = 0; i < lines.size(); ++i) {
+		const Common::String &line = lines[i];
+
 		// Measure the length of the line
 		x = 0;
-		j = font->stringLen(RMString(p));
+		j = font->stringLen(RMString(line.c_str()));
 
 		switch (_aHorType) {
 		case HLEFT:
@@ -1905,7 +1909,7 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 			break;
 
 		case HLEFTPAR:
-			if (i == numlines)
+			if (i == 0)
 				x = 0;
 			else
 				x = 25;
@@ -1920,21 +1924,22 @@ void RMText::writeText(const RMString &text, RMFontColor *font, int *time) {
 			break;
 		}
 
-		while (*p != '\0') {
-			if (*p == ' ') {
-				x += font->stringLen(*p);
+		p = 0;
+		while (p < line.size()) {
+			if (line[p] == ' ') {
+				x += font->stringLen(line[p]);
 				p++;
 				continue;
 			}
 
-			prim = font->makeLetterPrimitive(*p, len);
+			prim = font->makeLetterPrimitive(line[p], len);
 			prim->getDst()._x1 = x;
 			prim->getDst()._y1 = y;
 			addPrim(prim);
 
 			numchar++;
 
-			x += font->stringLen(*p, p[1]);
+			x += font->stringLen(line[p], (p + 1 == line.size()) ? '\0' : line[p + 1]);
 			p++;
 		}
 		p++;
@@ -2021,14 +2026,14 @@ void RMTextDialog::hide(CORO_PARAM) {
 }
 
 void RMTextDialog::writeText(const RMString &text, int font, int *time) {
-	RMText::writeText(text, font, &_time);
+	RMText::writeText(Common::String(text), font, &_time);
 
 	if (time != NULL)
 		*time = _time;
 }
 
 void RMTextDialog::writeText(const RMString &text, RMFontColor *font, int *time) {
-	RMText::writeText(text, font, &_time);
+	RMText::writeText(Common::String(text), font, &_time);
 
 	if (time != NULL)
 		*time = _time;
@@ -2251,7 +2256,7 @@ void RMTextItemName::doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 		_item->getName(itemName);
 
 	// Write it
-	writeText(itemName, 1);
+	writeText(Common::String(itemName), 1);
 
 	// Handle the change If the selected item is different from the previous one
 	if (_ctx->lastItem != _item) {
@@ -2389,7 +2394,7 @@ void RMDialogChoice::setNumChoices(int num) {
 void RMDialogChoice::addChoice(const RMString &string) {
 	// Draw the string
 	assert(_curAdded < _numChoices);
-	_drawedStrings[_curAdded++].writeText(string, 0);
+	_drawedStrings[_curAdded++].writeText(Common::String(string), 0);
 }
 
 void RMDialogChoice::prepare(CORO_PARAM) {
