@@ -315,7 +315,6 @@ protected:
 	RMPoint _mpos;
 	RMPoint _curscroll;
 	RMItem *_item;
-	RMString _itemName;
 
 public:
 	RMTextItemName();
@@ -331,7 +330,6 @@ public:
 	RMPoint getHotspot();
 	RMItem *getSelectedItem();
 	bool isItemSelected();
-	bool isNormalItemSelected();
 
 	virtual void removeThis(CORO_PARAM, bool &result) {
 		result = true;

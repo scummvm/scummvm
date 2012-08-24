@@ -2308,10 +2308,6 @@ bool RMTextItemName::isItemSelected() {
 	return _item != NULL;
 }
 
-bool RMTextItemName::isNormalItemSelected() {
-	return _item != NULL && _itemName.length() > 0;
-}
-
 
 /****************************************************************************\
 *       RMDialogChoice Methods
