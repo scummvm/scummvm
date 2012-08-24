@@ -2057,6 +2057,7 @@ int RMGfxClearTask::priority() {
 void RMGfxClearTask::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *) {
 	// Clean the target buffer
 	Common::fill((byte *)bigBuf, (byte *)bigBuf + (bigBuf.getDimx() * bigBuf.getDimy() * 2), 0x0);
+	bigBuf.addDirtyRect(Common::Rect(bigBuf.getDimx(), bigBuf.getDimy()));
 }
 
 void RMGfxClearTask::removeThis(CORO_PARAM, bool &result) {
