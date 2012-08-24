@@ -94,6 +94,7 @@ void EventRecorder::readEvent(RecorderEvent &event) {
 		event.time = _tmpPlaybackFile.readUint32LE();
 		break;
 	}
+	event.synthetic = true;
 }
 
 void EventRecorder::writeEvent(const RecorderEvent &event) {
@@ -929,6 +930,14 @@ void EventRecorder::updateSubsystems() {
 	_recordMode = kPassthrough;
 	_fakeMixerManager->update();
 	_recordMode = oldRecordMode;
+}
+
+List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
+	if ((_recordMode == kRecorderPlayback) && (ev.synthetic != true)) {
+		return List<Event>();
+	} else {
+		return DefaultEventMapper::mapEvent(ev, source);
+	}
 }
 
 } // End of namespace Common

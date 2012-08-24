@@ -29,6 +29,7 @@
 #include "common/mutex.h"
 #include "common/array.h"
 #include "common/memstream.h"
+#include "backends/keymapper/keymapper.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "backends/mixer/nullmixer/nullsdl-mixer.h"
 #include "common/hashmap.h"
@@ -66,7 +67,7 @@ struct ChunkHeader {
  *
  * TODO: Add more documentation.
  */
-class EventRecorder : private EventSource, private EventObserver, public Singleton<EventRecorder> {
+class EventRecorder : private EventSource, private EventObserver, public Singleton<EventRecorder>, private DefaultEventMapper {
 	friend class Singleton<SingletonBaseType>;
 	EventRecorder();
 	~EventRecorder();
@@ -105,6 +106,7 @@ private:
 		kFileStateDone,
 		kFileStateError
 	};
+	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
 	bool initialized;
 	bool parsePlaybackFile();
 	ChunkHeader readChunkHeader();
