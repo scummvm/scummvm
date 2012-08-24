@@ -134,11 +134,11 @@ void RMFont::close() {
 	unload();
 }
 
-int RMFont::stringLen(const RMString &text) {
-	int len, i;
+int RMFont::stringLen(const Common::String &text) {
+	uint len, i;
 
 	len = 0;
-	for (i = 0; i < text.length() - 1; i++)
+	for (i = 0; i < text.size() - 1; i++)
 		len += letterLength(text[i], text[i + 1]);
 	len += letterLength(text[i]);
 
@@ -1901,7 +1901,7 @@ void RMText::writeText(Common::String text, RMFontColor *font, int *time) {
 
 		// Measure the length of the line
 		x = 0;
-		j = font->stringLen(RMString(line.c_str()));
+		j = font->stringLen(line);
 
 		switch (_aHorType) {
 		case HLEFT:
@@ -2025,15 +2025,15 @@ void RMTextDialog::hide(CORO_PARAM) {
 	_bShowed = false;
 }
 
-void RMTextDialog::writeText(const RMString &text, int font, int *time) {
-	RMText::writeText(Common::String(text), font, &_time);
+void RMTextDialog::writeText(const Common::String &text, int font, int *time) {
+	RMText::writeText(text, font, &_time);
 
 	if (time != NULL)
 		*time = _time;
 }
 
-void RMTextDialog::writeText(const RMString &text, RMFontColor *font, int *time) {
-	RMText::writeText(Common::String(text), font, &_time);
+void RMTextDialog::writeText(const Common::String &text, RMFontColor *font, int *time) {
+	RMText::writeText(text, font, &_time);
 
 	if (time != NULL)
 		*time = _time;
@@ -2230,7 +2230,7 @@ void RMTextItemName::doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 	uint32 hThread;
 	CORO_END_CONTEXT(_ctx);
 
-	RMString itemName;
+	Common::String itemName;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -2249,14 +2249,12 @@ void RMTextItemName::doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 	else
 		_item = loc.whichItemIsIn(_mpos);
 
-	itemName = "";
-
 	// If there an item, get its name
 	if (_item != NULL)
 		_item->getName(itemName);
 
 	// Write it
-	writeText(Common::String(itemName), 1);
+	writeText(itemName, 1);
 
 	// Handle the change If the selected item is different from the previous one
 	if (_ctx->lastItem != _item) {
@@ -2387,10 +2385,10 @@ void RMDialogChoice::setNumChoices(int num) {
 	}
 }
 
-void RMDialogChoice::addChoice(const RMString &string) {
+void RMDialogChoice::addChoice(const Common::String &string) {
 	// Draw the string
 	assert(_curAdded < _numChoices);
-	_drawedStrings[_curAdded++].writeText(Common::String(string), 0);
+	_drawedStrings[_curAdded++].writeText(string, 0);
 }
 
 void RMDialogChoice::prepare(CORO_PARAM) {

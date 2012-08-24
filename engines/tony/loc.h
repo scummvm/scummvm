@@ -276,7 +276,7 @@ public:
 	RMPoint hotspot() {
 		return _hot;
 	}
-	bool getName(RMString &name);
+	bool getName(Common::String &name);
 	int mpalCode() {
 		return _mpalCode;
 	}

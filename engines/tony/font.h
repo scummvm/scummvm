@@ -100,7 +100,7 @@ public:
 	RMGfxPrimitive *makeLetterPrimitive(byte bChar, int &nLength);
 
 	// Length in pixels of a string with the current font
-	int stringLen(const RMString &text);
+	int stringLen(const Common::String &text);
 	int stringLen(char bChar, char bNext = 0);
 };
 
@@ -256,8 +256,8 @@ public:
 	virtual ~RMTextDialog();
 
 	// Write the text
-	void writeText(const RMString &text, int font, int *time = NULL);
-	void writeText(const RMString &text, RMFontColor *font, int *time = NULL);
+	void writeText(const Common::String &text, int font, int *time = NULL);
+	void writeText(const Common::String &text, RMFontColor *font, int *time = NULL);
 
 	// Overloaded function to decide when you delete the object from the OT list
 	virtual void removeThis(CORO_PARAM, bool &result);
@@ -376,7 +376,7 @@ public:
 	void setNumChoices(int num);
 
 	// Adds a string with the choice
-	void addChoice(const RMString &string);
+	void addChoice(const Common::String &string);
 
 	// Show and hide the selection, with possible animations.
 	// NOTE: If no parameter is passed to Show(), it is the obligation of

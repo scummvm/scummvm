@@ -736,7 +736,7 @@ void RMItem::setPattern(int nPattern, bool bPlayP0) {
 	}
 }
 
-bool RMItem::getName(RMString &name) {
+bool RMItem::getName(Common::String &name) {
 	char buf[256];
 
 	mpalQueryItemName(_mpalCode, buf);
@@ -1818,7 +1818,6 @@ RMGameBoxes::~RMGameBoxes() {
 
 void RMGameBoxes::init() {
 	int i;
-	RMString fn;
 	RMDataStream ds;
 
 	// Load boxes from disk
