@@ -1547,7 +1547,7 @@ IMPLEMENT_FUNCTION(45, Abbot, function45)
 		getData()->car = kCarRedSleeping;
 		getData()->location = kLocationOutsideCompartment;
 
-		RESET_ENTITY_STATE(kEntityVerges, Verges, setup_function38);
+		RESET_ENTITY_STATE(kEntityVerges, Verges, setup_resetState);
 
 		getEntities()->drawSequenceLeft(kEntityAbbot, "617Ec");
 		getEntities()->enterCompartment(kEntityAbbot, kObjectCompartmentC, true);

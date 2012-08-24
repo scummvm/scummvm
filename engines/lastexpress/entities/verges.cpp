@@ -53,33 +53,33 @@ Verges::Verges(LastExpressEngine *engine) : Entity(engine, kEntityVerges) {
 	ADD_CALLBACK_FUNCTION(Verges, baggageCar);
 	ADD_CALLBACK_FUNCTION(Verges, updateFromTime);
 	ADD_CALLBACK_FUNCTION(Verges, dialog);
-	ADD_CALLBACK_FUNCTION(Verges, function16);
-	ADD_CALLBACK_FUNCTION(Verges, function17);
+	ADD_CALLBACK_FUNCTION(Verges, dialog2);
+	ADD_CALLBACK_FUNCTION(Verges, talkAboutPassengerList);
 	ADD_CALLBACK_FUNCTION(Verges, chapter1);
 	ADD_CALLBACK_FUNCTION(Verges, talkHarem);
 	ADD_CALLBACK_FUNCTION(Verges, talkPassengerList);
 	ADD_CALLBACK_FUNCTION(Verges, talkGendarmes);
-	ADD_CALLBACK_FUNCTION(Verges, function22);
+	ADD_CALLBACK_FUNCTION(Verges, askMertensToRelayAugustInvitation);
 	ADD_CALLBACK_FUNCTION(Verges, function23);
 	ADD_CALLBACK_FUNCTION(Verges, policeGettingOffTrain);
-	ADD_CALLBACK_FUNCTION(Verges, function25);
+	ADD_CALLBACK_FUNCTION(Verges, policeSearch);
 	ADD_CALLBACK_FUNCTION(Verges, chapter1Handler);
 	ADD_CALLBACK_FUNCTION(Verges, chapter2);
 	ADD_CALLBACK_FUNCTION(Verges, chapter2Handler);
 	ADD_CALLBACK_FUNCTION(Verges, chapter3);
 	ADD_CALLBACK_FUNCTION(Verges, function30);
-	ADD_CALLBACK_FUNCTION(Verges, function31);
+	ADD_CALLBACK_FUNCTION(Verges, talkAboutMax);
 	ADD_CALLBACK_FUNCTION(Verges, function32);
 	ADD_CALLBACK_FUNCTION(Verges, function33);
 	ADD_CALLBACK_FUNCTION(Verges, function34);
-	ADD_CALLBACK_FUNCTION(Verges, function35);
+	ADD_CALLBACK_FUNCTION(Verges, organizeConcertInvitations);
 	ADD_CALLBACK_FUNCTION(Verges, chapter4);
 	ADD_CALLBACK_FUNCTION(Verges, chapter4Handler);
-	ADD_CALLBACK_FUNCTION(Verges, function38);
+	ADD_CALLBACK_FUNCTION(Verges, resetState);
 	ADD_CALLBACK_FUNCTION(Verges, chapter5);
 	ADD_CALLBACK_FUNCTION(Verges, chapter5Handler);
-	ADD_CALLBACK_FUNCTION(Verges, function41);
-	ADD_CALLBACK_FUNCTION(Verges, function42);
+	ADD_CALLBACK_FUNCTION(Verges, askPassengersToStayInCompartments);
+	ADD_CALLBACK_FUNCTION(Verges, end);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -486,7 +486,7 @@ IMPLEMENT_FUNCTION_IS(15, Verges, dialog, EntityIndex)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
+IMPLEMENT_FUNCTION_ISS(16, Verges, dialog2, EntityIndex)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -526,7 +526,7 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(17, Verges, function17)
+IMPLEMENT_FUNCTION(17, Verges, talkAboutPassengerList)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -611,7 +611,7 @@ IMPLEMENT_FUNCTION(21, Verges, talkGendarmes)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(22, Verges, function22)
+IMPLEMENT_FUNCTION(22, Verges, askMertensToRelayAugustInvitation)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -634,10 +634,10 @@ IMPLEMENT_FUNCTION(22, Verges, function22)
 		case 2:
 			if (getEvent(kEventMertensAskTylerCompartment) || getEvent(kEventMertensAskTylerCompartmentD) || getEvent(kEventMertensAugustWaiting)) {
 				setCallback(3);
-				setup_function16(kEntityMertens, "TRA1200", "TRA1201");
+				setup_dialog2(kEntityMertens, "TRA1200", "TRA1201");
 			} else {
 				setCallback(4);
-				setup_function16(kEntityMertens, "TRA1200A", "TRA1201");
+				setup_dialog2(kEntityMertens, "TRA1200A", "TRA1201");
 			}
 			break;
 
@@ -714,7 +714,7 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(25, Verges, function25)
+IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -899,7 +899,7 @@ label_callback1:
 label_callback2:
 		if (ENTITY_PARAM(0, 7)) {
 			setCallback(3);
-			setup_function25();
+			setup_policeSearch();
 			break;
 		}
 
@@ -955,7 +955,7 @@ label_callback13:
 label_callback14:
 		if (ENTITY_PARAM(0, 3) && !params->param4 && (getState()->time < kTime1134000 || getState()->time > kTime1156500)) {
 			setCallback(15);
-			setup_function17();
+			setup_talkAboutPassengerList();
 			break;
 		}
 
@@ -963,7 +963,7 @@ label_callback15:
 		if (ENTITY_PARAM(0, 1) && !params->param5) {
 			if (getState()->time < kTime1134000 || getState()->time > kTime1156500) {
 				setCallback(16);
-				setup_function22();
+				setup_askMertensToRelayAugustInvitation();
 			}
 		}
 		break;
@@ -1117,7 +1117,7 @@ label_callback_6:
 
 			if (ENTITY_PARAM(0, 3)) {
 				setCallback(7);
-				setup_function17();
+				setup_talkAboutPassengerList();
 			}
 
 			break;
@@ -1238,7 +1238,7 @@ IMPLEMENT_FUNCTION_S(30, Verges, function30)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(31, Verges, function31)
+IMPLEMENT_FUNCTION(31, Verges, talkAboutMax)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1439,14 +1439,14 @@ IMPLEMENT_FUNCTION(34, Verges, function34)
 label_callback_1:
 		if (ENTITY_PARAM(0, 4)) {
 			setCallback(2);
-			setup_function31();
+			setup_talkAboutMax();
 			break;
 		}
 
 label_callback_2:
 		if (ENTITY_PARAM(0, 3)) {
 			setCallback(3);
-			setup_function17();
+			setup_talkAboutPassengerList();
 			break;
 		}
 
@@ -1459,7 +1459,7 @@ label_callback_4:
 			break;
 
 label_callback_5:
-		if (Entity::timeCheckCallback(kTime2016000, params->param3, 6, WRAP_SETUP_FUNCTION(Verges, setup_function35)))
+		if (Entity::timeCheckCallback(kTime2016000, params->param3, 6, WRAP_SETUP_FUNCTION(Verges, setup_organizeConcertInvitations)))
 			break;
 
 label_callback_6:
@@ -1520,7 +1520,7 @@ label_callback_9:
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(35, Verges, function35)
+IMPLEMENT_FUNCTION(35, Verges, organizeConcertInvitations)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1617,7 +1617,7 @@ label_callback_1:
 		if (ENTITY_PARAM(0, 6)) {
 			if (ENTITY_PARAM(0, 3)) {
 				setCallback(2);
-				setup_function17();
+				setup_talkAboutPassengerList();
 				break;
 			}
 
@@ -1697,7 +1697,7 @@ label_callback_8:
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(38, Verges, function38)
+IMPLEMENT_FUNCTION(38, Verges, resetState)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1803,14 +1803,14 @@ IMPLEMENT_FUNCTION(40, Verges, chapter5Handler)
 			getAction()->playAnimation(kEventCathFreePassengers);
 			getSavePoints()->pushAll(kEntityVerges, kActionProceedChapter5);
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 40);
-			setup_function41();
+			setup_askPassengersToStayInCompartments();
 		}
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(41, Verges, function41)
+IMPLEMENT_FUNCTION(41, Verges, askPassengersToStayInCompartments)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1852,7 +1852,7 @@ IMPLEMENT_FUNCTION(41, Verges, function41)
 			break;
 
 		case 4:
-			setup_function42();
+			setup_end();
 			break;
 		}
 		break;
@@ -1860,7 +1860,7 @@ IMPLEMENT_FUNCTION(41, Verges, function41)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(42, Verges, function42)
+IMPLEMENT_FUNCTION(42, Verges, end)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityVerges);
 IMPLEMENT_FUNCTION_END

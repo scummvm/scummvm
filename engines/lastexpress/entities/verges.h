@@ -101,8 +101,8 @@ public:
 	DECLARE_FUNCTION_1(updateFromTime, uint32 time)
 
 	DECLARE_FUNCTION_2(dialog, EntityIndex entity, const char *soundName)
-	DECLARE_FUNCTION_3(function16, EntityIndex entityIndex, const char *soundName1, const char *soundName2)
-	DECLARE_FUNCTION(function17)
+	DECLARE_FUNCTION_3(dialog2, EntityIndex entityIndex, const char *soundName1, const char *soundName2)
+	DECLARE_FUNCTION(talkAboutPassengerList)
 
 	/**
 	 * Setup Chapter 1
@@ -112,10 +112,10 @@ public:
 	DECLARE_FUNCTION_NOSETUP(talkHarem)
 	DECLARE_FUNCTION(talkPassengerList)
 	DECLARE_FUNCTION(talkGendarmes)
-	DECLARE_FUNCTION(function22)
+	DECLARE_FUNCTION(askMertensToRelayAugustInvitation)
 	DECLARE_FUNCTION(function23)
 	DECLARE_FUNCTION(policeGettingOffTrain)
-	DECLARE_FUNCTION(function25)
+	DECLARE_FUNCTION(policeSearch)
 
 	/**
 	 * Handle Chapter 1 events
@@ -138,11 +138,11 @@ public:
 	DECLARE_FUNCTION(chapter3)
 
 	DECLARE_FUNCTION_1(function30, const char *soundName)
-	DECLARE_FUNCTION(function31)
+	DECLARE_FUNCTION(talkAboutMax)
 	DECLARE_FUNCTION(function32)
 	DECLARE_FUNCTION(function33)
 	DECLARE_FUNCTION(function34)
-	DECLARE_FUNCTION(function35)
+	DECLARE_FUNCTION(organizeConcertInvitations)
 
 	/**
 	 * Setup Chapter 4
@@ -154,7 +154,7 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter4Handler)
 
-	DECLARE_FUNCTION(function38)
+	DECLARE_FUNCTION(resetState)
 
 	/**
 	 * Setup Chapter 5
@@ -166,8 +166,8 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter5Handler)
 
-	DECLARE_FUNCTION(function41)
-	DECLARE_FUNCTION(function42)
+	DECLARE_FUNCTION(askPassengersToStayInCompartments)
+	DECLARE_FUNCTION(end)
 
 private:
 	void talk(const SavePoint &savepoint, const char *sound1, const char *sound2);
