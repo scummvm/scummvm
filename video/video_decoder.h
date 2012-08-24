@@ -117,7 +117,11 @@ public:
 
 	/**
 	 * Returns if the video is currently playing or not.
-	 * @todo Differentiate this function from endOfVideo()
+	 *
+	 * This is not equivalent to the inverse of endOfVideo(). A video keeps
+	 * its playing status even after reaching the end of the video. This will
+	 * return true after calling start() and will continue to return true
+	 * until stop() (or close()) is called.
 	 */
 	bool isPlaying() const { return _isPlaying; }
 
