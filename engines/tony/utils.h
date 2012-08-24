@@ -145,65 +145,7 @@ public:
 	friend RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint32 &var);
 };
 
-/**
- * String class
- */
-class RMString {
-private:
-	char *_string;
-	int _length;
-	int _realLength;
-
-public:
-	RMString();
-	~RMString();
-
-	// Assignment constructors
-	RMString(const RMString &str);
-	RMString(const char *str);
-	RMString(const int ch);
-
-	// General methods
-	int length() const;
-	void compact();
-
-	// Access characters within string
-	char getAt(int nIndex);
-	void setAt(int nIndex, char c);
-	char &operator[](int nIndex);
-
-	// String cast
-	operator char *() const;
-
-	// String assignments
-	const RMString &operator=(const RMString &str);
-	const RMString &operator=(const char *str);
-	const RMString &operator=(const int ch);
-
-	// String concatenation
-	const RMString &operator+=(RMString &str);
-	const RMString &operator+=(const char *str);
-	const RMString &operator+=(const int ch);
-
-	// Concatentation of string or character
-	friend RMString operator+(const RMString &str1, const RMString &str2);
-
-	friend RMString operator+(RMString &str, const int ch);
-	friend RMString operator+(const int ch, RMString &str);
-
-	friend RMString operator+(RMString &str, const char *s);
-	friend RMString operator+(const char *s, RMString &str);
-
-	// Extraction from data streams
-	friend RMDataStream &operator>>(RMDataStream &df, RMString &var);
-
-	// String formatting
-	void format(const char *str, ...);
-
-private:
-	void resize(int size, bool bMantain = false);
-	void connect(const char *str, int size);
-};
+RMDataStream &operator>>(RMDataStream &df, Common::String &var);
 
 /**
  * Point class

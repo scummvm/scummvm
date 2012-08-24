@@ -71,7 +71,7 @@ public:
  */
 class RMSfx {
 public:
-	RMString _name;
+	Common::String _name;
 	FPSfx *_fx;
 	bool _bPlayingLoop;
 
@@ -126,7 +126,7 @@ public:
 	};
 
 public:
-	RMString _name;
+	Common::String _name;
 
 private:
 	int _speed;
@@ -174,7 +174,7 @@ private:
  */
 class RMSprite : public RMGfxTask {
 public:
-	RMString _name;
+	Common::String _name;
 	RMRect _rcBox;
 
 protected:
@@ -200,7 +200,7 @@ public:
  */
 class RMItem : public RMGfxTask {
 public:
-	RMString _name;
+	Common::String _name;
 
 protected:
 	int _z;
@@ -527,7 +527,7 @@ public:
  */
 class RMLocation : public RMGfxTaskSetPrior {
 public:
-	RMString _name;                // Name
+	Common::String _name;                // Name
 
 private:
 	RMColorMode _cmode;            // Color mode

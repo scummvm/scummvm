@@ -145,7 +145,7 @@ void RMPattern::updateCoord() {
 void RMPattern::stopSfx(RMSfx *sfx) {
 	for (int i = 0; i < _nSlots; i++) {
 		if (_slots[i]._type == SOUND) {
-			if (sfx[_slots[i]._data]._name[0] == '_')
+			if (!sfx[_slots[i]._data]._name.empty() && sfx[_slots[i]._data]._name[0] == '_')
 				sfx[_slots[i]._data].stop();
 			else if (GLOBALS._bSkipSfxNoLoop)
 				sfx[_slots[i]._data].stop();
@@ -182,7 +182,7 @@ int RMPattern::init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 	for (i = 0; i < _nSlots; i++) {
 		if (_slots[i]._type == SOUND) {
 			if (i == 0) {
-				if (sfx[_slots[i]._data]._name[0] == '_') {
+				if (!sfx[_slots[i]._data]._name.empty() && sfx[_slots[i]._data]._name[0] == '_') {
 					sfx[_slots[i]._data].setVolume(_slots[i].pos()._x);
 					sfx[_slots[i]._data].play(true);
 				} else {
@@ -193,12 +193,12 @@ int RMPattern::init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 				if (bPlayP0) {
 					sfx[_slots[i]._data].setVolume(_slots[i].pos()._x);
 					sfx[_slots[i]._data].play();
-				} else if (sfx[_slots[i]._data]._name[0] == '_') {
+				} else if (!sfx[_slots[i]._data]._name.empty() && sfx[_slots[i]._data]._name[0] == '_') {
 					sfx[_slots[i]._data].setVolume(_slots[i].pos()._x);
 					sfx[_slots[i]._data].play(true);
 				}
 			} else {
-				if (_bLoop && sfx[_slots[i]._data]._name[0] == '_') {
+				if (_bLoop && !sfx[_slots[i]._data]._name.empty() && sfx[_slots[i]._data]._name[0] == '_') {
 					sfx[_slots[i]._data].setVolume(_slots[i].pos()._x);
 					sfx[_slots[i]._data].play(true);
 				}
@@ -253,7 +253,7 @@ int RMPattern::update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 				if (sfx != NULL) {
 					sfx[_slots[_nCurSlot]._data].setVolume(_slots[_nCurSlot].pos()._x);
 
-					if (sfx[_slots[_nCurSlot]._data]._name[0] != '_')
+					if (sfx[_slots[_nCurSlot]._data]._name.empty() || sfx[_slots[_nCurSlot]._data]._name[0] != '_')
 						sfx[_slots[_nCurSlot]._data].play(false);
 					else
 						sfx[_slots[_nCurSlot]._data].play(true);
@@ -729,7 +729,7 @@ void RMItem::setPattern(int nPattern, bool bPlayP0) {
 		// Look for the sound effect for pattern 0
 		if (bPlayP0) {
 			for (int i = 0; i < _nSfx; i++) {
-				if (strcmp(_sfx[i]._name, "p0") == 0)
+				if (_sfx[i]._name == "p0")
 					_sfx[i].play();
 			}
 		}
