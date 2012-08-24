@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 
 #include "gui/object.h"
@@ -47,6 +48,7 @@ enum {
 
 class Dialog : public GuiObject {
 	friend class GuiManager;
+	friend class Common::EventRecorder;
 	friend class Tooltip;
 protected:
 	Widget	*_mouseWidget;

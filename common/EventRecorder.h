@@ -46,10 +46,11 @@
 
 #define g_eventRec (Common::EventRecorder::instance())
 
-
+namespace GUI {
+	class Dialog;
+}
 
 namespace Common {
-
 class RandomSource;
 class SeekableReadStream;
 class WriteStream;
@@ -76,11 +77,14 @@ public:
 	void init(const ADGameDescription *desc, RecordMode mode);
 	void deinit();
 	bool processDelayMillis();
+	void takeScreenshot();
+	void preDrawOverlayGui();
+	void postDrawOverlayGui();
+
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
 
-	void takeScreenshot();
-
+	GUI::Dialog *controlPanel;
 	SdlMixerManager *getMixerManager();
 	DefaultTimerManager *getTimerManager();
 	void setAuthor(const Common::String &author);
@@ -110,6 +114,11 @@ public:
 	void RegisterEventSource();
 	Common::String generateRecordFileName(const String &target);
 	SaveFileManager *getSaveManager(SaveFileManager *realSaveManager);
+	void togglePause();
+	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
+	SDL_Surface *getSurface(int width, int height);
+	bool checkForContinueGame();
+	void deleteTemporarySave();
 private:
 	SaveFileManager *_realSaveManager;
 	RecorderSaveFileManager _fakeSaveManager;

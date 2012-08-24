@@ -27,6 +27,9 @@
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "common/config-manager.h"
 #include "common/md5.h"
+#include "gui/gui-manager.h"
+#include "gui/widget.h"
+#include "gui/dialog.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
@@ -87,6 +90,7 @@ void EventRecorder::init() {
 void EventRecorder::deinit() {
 	_initialized = false;
 	_recordMode = kPassthrough;
+	delete controlPanel;
 	debugC(3, kDebugLevelEventRec, "EventRecorder: deinit");
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
 	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
@@ -249,6 +253,11 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_lastScreenshotTime = g_system->getMillis();
 	_screenshotsFile = NULL;
 	_recordMode = mode;
+	controlPanel = new GUI::Dialog(10,10,200,30);
+	GUI::ButtonWidget *btn = new GUI::ButtonWidget(controlPanel, "", "|>");
+	btn->resize(0,0,30,30);
+	controlPanel->open();
+
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, EventManager::kEventRecorderPriority, false, true);
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
@@ -435,6 +444,14 @@ void EventRecorder::updateSubsystems() {
 
 List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 	checkForKeyCode(ev);
+	if (_recordMode != kPassthrough) {
+		if (ev.kbd.keycode != KEYCODE_ESCAPE) {
+			Event evt = ev;
+			evt.mouse.x *= 2;
+			evt.mouse.y *= 2;
+			g_gui.processEvent(evt, controlPanel);
+		}
+	}
 	if ((_recordMode == kRecorderPlayback) && (ev.synthetic != true)) {
 		return List<Event>();
 	} else {
@@ -508,7 +525,7 @@ Common::SeekableReadStream * EventRecorder::processSaveStream(const Common::Stri
 	}
 }
 
-SaveFileManager * EventRecorder::getSaveManager(SaveFileManager *realSaveManager) {
+SaveFileManager *EventRecorder::getSaveManager(SaveFileManager *realSaveManager) {
 	_realSaveManager = realSaveManager;
 	if (_recordMode != kPassthrough) {
 		return &_fakeSaveManager;
@@ -516,5 +533,23 @@ SaveFileManager * EventRecorder::getSaveManager(SaveFileManager *realSaveManager
 		return realSaveManager;
 	}
 }
+
+void EventRecorder::preDrawOverlayGui() {
+    if (_recordMode != kPassthrough) {
+		g_system->showOverlay();
+        g_gui.theme()->openDialog(true, GUI::ThemeEngine::kShadingNone);
+        controlPanel->drawDialog();
+        g_gui.theme()->finishBuffering();
+        g_gui.theme()->updateScreen();
+   }
+}
+
+void EventRecorder::postDrawOverlayGui() {
+    if (_recordMode != kPassthrough) {
+	    g_system->hideOverlay();
+	}
+}
+
+
 
 } // End of namespace Common
