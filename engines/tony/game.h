@@ -229,7 +229,7 @@ private:
 	RMGfxSourceBuffer8 *_saveEasy;
 	RMGfxSourceBuffer8 *_saveHard;
 	RMGfxSourceBuffer16 *_curThumb[6];
-	RMString _curThumbName[6];
+	Common::String _curThumbName[6];
 	byte _curThumbDiff[6];
 	RMOptionButton *_buttonSave_States[6];
 	RMOptionButton *_buttonSave_ArrowLeft;
@@ -315,7 +315,7 @@ public:
 	/**
 	 * Retrieves a savegame's thumbnail, description, and difficulty level
 	 */
-	static bool loadThumbnailFromSaveState(int numState, byte *lpDestBuf, RMString &name, byte &diff);
+	static bool loadThumbnailFromSaveState(int numState, byte *lpDestBuf, Common::String &name, byte &diff);
 
 protected:
 

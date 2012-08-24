@@ -514,7 +514,7 @@ void RMOptionScreen::refreshAll(CORO_PARAM) {
 				if (_statePos == 0 && _ctx->i == 0)
 					s = "Autosave";
 				else
-					s = Common::String::format("%02d)%s", _statePos + _ctx->i, (const char *)_curThumbName[_ctx->i]);
+					s = Common::String::format("%02d)%s", _statePos + _ctx->i, _curThumbName[_ctx->i].c_str());
 			}
 
 			_ctx->num[_ctx->i] = new RMText;
@@ -558,7 +558,7 @@ void RMOptionScreen::refreshThumbnails() {
 		if (!loadThumbnailFromSaveState(_statePos + i, *_curThumb[i], _curThumbName[i], _curThumbDiff[i])) {
 			delete _curThumb[i];
 			_curThumb[i] = NULL;
-			_curThumbName[i] = "";
+			_curThumbName[i].clear();
 			_curThumbDiff[i] = 11;
 		}
 	}
@@ -1197,7 +1197,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 							// Turn on edit mode
 							_bEditSaveName = true;
 							_nEditPos = _ctx->i;
-							strcpy(_editName, _curThumbName[_ctx->i]);
+							strcpy(_editName, _curThumbName[_ctx->i].c_str());
 							_ctx->bRefresh = true;
 						}
 
@@ -1386,7 +1386,7 @@ void RMOptionScreen::removeThis(CORO_PARAM, bool &result) {
 }
 
 
-bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, RMString &name, byte &diff) {
+bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, Common::String &name, byte &diff) {
 	Common::String buf;
 	char namebuf[256];
 	int i;

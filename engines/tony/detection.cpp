@@ -128,12 +128,12 @@ SaveStateList TonyMetaEngine::listSaves(const char *target) const {
 
 		if (slotNum >= 0 && slotNum <= 999) {
 			byte thumbnailData[160 * 120 * 2];
-			Tony::RMString saveName;
+			Common::String saveName;
 			byte difficulty;
 
 			if (Tony::RMOptionScreen::loadThumbnailFromSaveState(slotNum, thumbnailData, saveName, difficulty)) {
 				// Add the save name to the savegame list
-				saveList.push_back(SaveStateDescriptor(slotNum, (const char *)saveName));
+				saveList.push_back(SaveStateDescriptor(slotNum, saveName));
 			}
 		}
 	}
@@ -152,7 +152,7 @@ void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Tony::RMString saveName;
+	Common::String saveName;
 	byte difficulty;
 	byte thumbData[160 * 120 * 2];
 
@@ -175,7 +175,7 @@ SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int s
 		}
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, (const char *)saveName);
+		SaveStateDescriptor desc(slot, saveName);
 		desc.setDeletableFlag(true);
 		desc.setWriteProtectedFlag(false);
 		desc.setThumbnail(to);
