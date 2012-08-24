@@ -347,13 +347,13 @@ void VideoDecoder::start() {
 	_isPlaying = true;
 	_startTime = g_system->getMillis();
 
-	// Adjust start time if we've seeked to something besides zero time
-	if (_lastTimeChange.totalNumberOfFrames() != 0)
-		_startTime -= _lastTimeChange.msecs();
-
 	// If someone previously called stop(), we'll rewind it.
 	if (_needsRewind)
 		rewind();
+
+	// Adjust start time if we've seeked to something besides zero time
+	if (_lastTimeChange.totalNumberOfFrames() != 0)
+		_startTime -= _lastTimeChange.msecs();
 
 	startAudio();
 }
