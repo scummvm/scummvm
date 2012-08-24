@@ -1587,13 +1587,22 @@ void RMPointer::hideCursor() {
 	}
 }
 
+void RMPointer::doFrame() {
+	// Update the cursor animation if needed.
+	if (_nCurSpecialPointer == 0 || _nCurSpecialPointer == PTR_CUSTOM)
+		return;
+
+	RMGfxTargetBuffer buf;
+	if (_specialPointer[_nCurSpecialPointer - 1]->doFrame(&buf, false))
+		updateCursor();
+}
 
 void RMPointer::updateCursor() {
 	// Create an intermediate buffer and draw the cursor onto it
 	RMGfxTargetBuffer buf;
 	buf.create(64, 64, 16);
 	RMGfxPrimitive prim;
-	
+
 	draw(Common::nullContext, buf, &prim);
 
 	// Get a pointer to the cursor data

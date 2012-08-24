@@ -98,7 +98,7 @@ public:
 	/**
 	 * Process a frame
 	 */
-	void doFrame(RMGfxTargetBuffer *bigBuf);
+	void doFrame();
 
 	/**
 	 * Overloading of priorities

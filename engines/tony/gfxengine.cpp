@@ -310,6 +310,7 @@ SKIPCLICKSINISTRO:
 	} else {
 		_point.hideCursor();
 	}
+	_point.doFrame();
 
 	// **********************
 	// Draw the list in the OT
