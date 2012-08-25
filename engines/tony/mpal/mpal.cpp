@@ -313,7 +313,7 @@ static char *DuplicateMessage(uint32 nMsgOrd) {
 	if (clonemsg == NULL)
 		return NULL;
 
-	copyMemory(clonemsg, origmsg, j);
+	memcpy(clonemsg, origmsg, j);
 	globalUnlock(GLOBALS._lpmmMsgs[nMsgOrd]._hText);
 
 	return clonemsg;
@@ -346,7 +346,7 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
 			if (clonemsg == NULL)
 				return NULL;
 
-			copyMemory(clonemsg, origmsg, i);
+			memcpy(clonemsg, origmsg, i);
 
 			globalUnlock(dialog->_periods[j]);
 
@@ -546,7 +546,7 @@ static LPITEM getItemData(uint32 nOrdItem) {
    
 		if (ret->_frames[i] == NULL)
 			return NULL;
-		copyMemory(ret->_frames[i], dat, dim);
+		memcpy(ret->_frames[i], dat, dim);
 		dat += dim;
 	}
 
@@ -906,7 +906,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 				_ctx->MyActions[_ctx->k].perc = _ctx->curItem->Action[_ctx->j].perc;
 				_ctx->MyActions[_ctx->k].when = _ctx->curItem->Action[_ctx->j].when;
 				_ctx->MyActions[_ctx->k].nCmds = _ctx->curItem->Action[_ctx->j].nCmds;
-				copyMemory(_ctx->MyActions[_ctx->k].CmdNum, _ctx->curItem->Action[_ctx->j].CmdNum,
+				memcpy(_ctx->MyActions[_ctx->k].CmdNum, _ctx->curItem->Action[_ctx->j].CmdNum,
 				MAX_COMMANDS_PER_ACTION * sizeof(uint16));
 
 				_ctx->MyActions[_ctx->k].dwLastTime = g_vm->getTime();
@@ -995,12 +995,12 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 						return;
 					}
 
-					copyMemory(_ctx->newItem,_ctx->curItem, sizeof(MPALITEM));
+					memcpy(_ctx->newItem,_ctx->curItem, sizeof(MPALITEM));
 					unlockItems();
 
 					/* We copy the action in #0 */
 //					_ctx->newItem->Action[0].nCmds = _ctx->curItem->Action[_ctx->j].nCmds;
-//					copyMemory(_ctx->newItem->Action[0].CmdNum,_ctx->curItem->Action[_ctx->j].CmdNum,_ctx->newItem->Action[0].nCmds*sizeof(_ctx->newItem->Action[0].CmdNum[0]));
+//					memcpy(_ctx->newItem->Action[0].CmdNum,_ctx->curItem->Action[_ctx->j].CmdNum,_ctx->newItem->Action[0].nCmds*sizeof(_ctx->newItem->Action[0].CmdNum[0]));
 					_ctx->newItem->dwRes=_ctx->j;
 
 					/* We will create an action, and will provide the necessary details */
@@ -1298,7 +1298,7 @@ static uint32 doAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		// In the new version number of the action in writing dwRes
 		Common::copy((byte *)item, (byte *)item + sizeof(MPALITEM), (byte *)newitem);
 /*   newitem->Action[0].nCmds=item->Action[i].nCmds;
-   copyMemory(newitem->Action[0].CmdNum,item->Action[i].CmdNum,newitem->Action[0].nCmds*sizeof(newitem->Action[0].CmdNum[0]));
+   memcpy(newitem->Action[0].CmdNum,item->Action[i].CmdNum,newitem->Action[0].nCmds*sizeof(newitem->Action[0].CmdNum[0]));
 */
 		newitem->dwRes = i;
 
@@ -1679,7 +1679,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		else {
 			lockItems();
 			y = itemGetOrderFromNum(x);
-			copyMemory(n, (char *)(GLOBALS._lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
+			memcpy(n, (char *)(GLOBALS._lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
 			unlockItems();
 		}
 
@@ -1857,7 +1857,7 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 		else {
 			lockItems();
 			y = itemGetOrderFromNum(x);
-			copyMemory(n, (char *)(GLOBALS._lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
+			memcpy(n, (char *)(GLOBALS._lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
 			unlockItems();
 		}
 
@@ -1986,7 +1986,7 @@ bool mpalExecuteScript(int nScript) {
 	if (s == NULL)
 		return false;
 
-	copyMemory(s, GLOBALS._lpmsScripts + n, sizeof(MPALSCRIPT));
+	memcpy(s, GLOBALS._lpmsScripts + n, sizeof(MPALSCRIPT));
 	unlockScripts();
 
 	// !!! New process management
@@ -2095,7 +2095,7 @@ int mpalGetSaveStateSize() {
 void mpalSaveState(byte *buf) {
 	lockVar();
 	WRITE_LE_UINT32(buf, GLOBALS._nVars);
-	copyMemory(buf + 4, (byte *)GLOBALS._lpmvVars, GLOBALS._nVars * sizeof(MPALVAR));
+	memcpy(buf + 4, (byte *)GLOBALS._lpmvVars, GLOBALS._nVars * sizeof(MPALVAR));
 	unlockVar();	
 }
 
@@ -2114,7 +2114,7 @@ int mpalLoadState(byte *buf) {
 	
 	GLOBALS._hVars = globalAllocate(GMEM_ZEROINIT | GMEM_MOVEABLE, GLOBALS._nVars * sizeof(MPALVAR));
 	lockVar();
-	copyMemory((byte *)GLOBALS._lpmvVars, buf + 4, GLOBALS._nVars * sizeof(MPALVAR));
+	memcpy((byte *)GLOBALS._lpmvVars, buf + 4, GLOBALS._nVars * sizeof(MPALVAR));
 	unlockVar();
 
 	return GLOBALS._nVars * sizeof(MPALVAR) + 4;

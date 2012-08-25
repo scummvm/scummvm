@@ -124,15 +124,6 @@ void MemoryManager::unlockItem(HANDLE handle) {
 }
 
 
-/****************************************************************************\
-*       Stand-alone methods
-\****************************************************************************/
-
-void copyMemory(void *dst, const void *first, int size) {
-	Common::copy((const byte *)first, (const byte *)first + size, (byte *)dst);
-}
-
-
 } // end of namespace MPAL
 
 } // end of namespace Tony

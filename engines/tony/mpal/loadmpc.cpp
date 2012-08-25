@@ -102,7 +102,7 @@ static const byte *ParseScript(const byte *lpBuf, LPMPALSCRIPT lpmsScript) {
 				lpmsScript->_command[curCmd].lpszVarName = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
 				if (lpmsScript->_command[curCmd].lpszVarName == NULL)
 					return NULL;
-				copyMemory(lpmsScript->_command[curCmd].lpszVarName, lpBuf, len);
+				memcpy(lpmsScript->_command[curCmd].lpszVarName, lpBuf, len);
 				lpBuf += len;
 
 				lpBuf = parseExpression(lpBuf, &lpmsScript->_command[curCmd].expr);
@@ -346,7 +346,7 @@ static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 
 	len = *lpBuf;
 	lpBuf++;
-	copyMemory(lpmiItem->lpszDescribe, lpBuf, MIN((byte)127, len));
+	memcpy(lpmiItem->lpszDescribe, lpBuf, MIN((byte)127, len));
 	lpBuf += len;
 
 	if (len >= MAX_DESCRIBE_SIZE)
@@ -416,7 +416,7 @@ static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 				lpmiItem->_command[curCmd].lpszVarName = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
 				if (lpmiItem->_command[curCmd].lpszVarName == NULL)
 					return NULL;
-				copyMemory(lpmiItem->_command[curCmd].lpszVarName, lpBuf, len);
+				memcpy(lpmiItem->_command[curCmd].lpszVarName, lpBuf, len);
 				lpBuf += len;
 
 				lpBuf = parseExpression(lpBuf, &lpmiItem->_command[curCmd].expr);
@@ -548,7 +548,7 @@ bool ParseMpc(const byte *lpBuf) {
 	for (i = 0; i < GLOBALS._nVars; i++) {
 		wLen = *(const byte *)lpBuf;
 		lpBuf++;
-		copyMemory(GLOBALS._lpmvVars->lpszVarName, lpBuf, MIN(wLen, (uint16)32));
+		memcpy(GLOBALS._lpmvVars->lpszVarName, lpBuf, MIN(wLen, (uint16)32));
 		lpBuf += wLen;
 		GLOBALS._lpmvVars->dwVal = READ_LE_UINT32(lpBuf);
 		lpBuf += 4;
@@ -590,7 +590,7 @@ bool ParseMpc(const byte *lpBuf) {
 		lpTemp = (byte *)globalLock(GLOBALS._lpmmMsgs->_hText);
 
 		for (j = 0; lpBuf[j] != 0;) {
-			copyMemory(lpTemp, &lpBuf[j + 1], lpBuf[j]);
+			memcpy(lpTemp, &lpBuf[j + 1], lpBuf[j]);
 			lpTemp += lpBuf[j];
 			*lpTemp ++= '\0';
 			j += lpBuf[j] + 1;

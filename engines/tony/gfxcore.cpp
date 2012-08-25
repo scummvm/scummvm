@@ -135,7 +135,7 @@ RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp, bool bUseDDraw) {
 
 int RMGfxSourceBuffer::init(const byte *buf, int dimx, int dimy, bool bLoadPalette) {
 	create(dimx, dimy, getBpp());
-	copyMemory(_buf, buf, dimx * dimy * getBpp() / 8);
+	memcpy(_buf, buf, dimx * dimy * getBpp() / 8);
 
 	// Invokes the method for preparing the surface (inherited)
 	prepareImage();
@@ -484,7 +484,7 @@ int RMGfxSourceBufferPal::loadPaletteWA(const byte *buf, bool bSwapped) {
 			_pal[i * 3 + 2] = buf[i * 3 + 0];
 		}
 	} else {
-		copyMemory(_pal, buf, (1 << getBpp()) * 3);
+		memcpy(_pal, buf, (1 << getBpp()) * 3);
 	}
 
 	preparePalette();
@@ -496,7 +496,7 @@ int RMGfxSourceBufferPal::loadPalette(const byte *buf) {
 	int i;
 
 	for (i = 0; i < 256; i++)
-		copyMemory(_pal + i * 3, buf + i * 4, 3);
+		memcpy(_pal + i * 3, buf + i * 4, 3);
 
 	preparePalette();
 
@@ -984,7 +984,7 @@ void RMGfxSourceBuffer8RLEByte::RLEWriteData(byte *&cur, int rep, byte *src) {
 
 	*cur ++ = rep;
 	if (rep > 0) {
-		copyMemory(cur, src, rep);
+		memcpy(cur, src, rep);
 		cur += rep;
 		src += rep;
 	}
@@ -1232,7 +1232,7 @@ void RMGfxSourceBuffer8RLEWord::RLEWriteData(byte *&cur, int rep, byte *src) {
 	cur += 2;
 
 	if (rep > 0) {
-		copyMemory(cur, src, rep);
+		memcpy(cur, src, rep);
 		cur += rep;
 		src += rep;
 	}
@@ -1683,7 +1683,7 @@ void RMGfxSourceBuffer8AA::calculateAA() {
 		delete[] _aabuf;
 
 	_aabuf = new byte[_dimx * _dimy];
-	copyMemory(_aabuf, _megaAABuf, _dimx * _dimy);
+	memcpy(_aabuf, _megaAABuf, _dimx * _dimy);
 }
 
 RMGfxSourceBuffer8AA::RMGfxSourceBuffer8AA() : RMGfxSourceBuffer8() {

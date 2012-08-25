@@ -121,7 +121,7 @@ static byte *duplicateExpression(HGLOBAL h) {
 	clone = (byte *)globalAlloc(GMEM_FIXED, sizeof(EXPRESSION) * num + 1);
 	two = (LPEXPRESSION)(clone + 1);
 
-	copyMemory(clone, orig, sizeof(EXPRESSION) * num + 1);
+	memcpy(clone, orig, sizeof(EXPRESSION) * num + 1);
 
 	for (i = 0; i < num; i++) {
 		if (one->type == ELT_PARENTH) {
@@ -191,7 +191,7 @@ static void solve(LPEXPRESSION one, int num) {
 		two = one + 1;
 		if ((two->symbol == 0) || (one->symbol & 0xF0) <= (two->symbol & 0xF0)) {
 			two->val.num = Compute(one->val.num, two->val.num, one->symbol);
-			copyMemory(one, two, (num - 1) * sizeof(EXPRESSION));
+			memcpy(one, two, (num - 1) * sizeof(EXPRESSION));
 			--num;
 		} else {
 			j = 1;
@@ -203,7 +203,7 @@ static void solve(LPEXPRESSION one, int num) {
 			}
 
 			three->val.num = Compute(two->val.num, three->val.num, two->symbol);
-			copyMemory(two, three, (num - j - 1) * sizeof(EXPRESSION));
+			memcpy(two, three, (num - j - 1) * sizeof(EXPRESSION));
 			--num;
 		}
 	}
@@ -291,7 +291,7 @@ const byte *parseExpression(const byte *lpBuf, HGLOBAL *h) {
 			cur->val.name = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, (*lpBuf) + 1);
 			if (cur->val.name == NULL)
 				return NULL;
-			copyMemory(cur->val.name, lpBuf + 1, *lpBuf);
+			memcpy(cur->val.name, lpBuf + 1, *lpBuf);
 			lpBuf += *lpBuf + 1;
 			break;
 

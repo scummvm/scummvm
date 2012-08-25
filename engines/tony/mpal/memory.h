@@ -70,9 +70,6 @@ public:
 #define GMEM_MOVEABLE 2
 #define GMEM_ZEROINIT 4
 
-// Stand-alone methods
-extern void copyMemory(void *dst, const void *first, int size);
-
 } // end of namespace MPAL
 
 } // end of namespace Tony
