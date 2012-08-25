@@ -164,9 +164,6 @@ const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
 	switch (frameType) {
 	case FRAME_TYPE:
 		{
-			// FIXME: FLIC should be switched over to a variable frame rate VideoDecoder to handle
-			// this properly.
-
 			chunkCount = _fileStream->readUint16LE();
 			// Note: The overridden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
 			// the frame delay is the FLIC "speed", in milliseconds.
