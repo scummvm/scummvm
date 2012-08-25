@@ -188,6 +188,7 @@ _lua=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _build_edge_scalers=yes
+_build_aspect=yes
 _enable_prof=no
 _enable_asan=no
 _enable_tsan=no
@@ -1060,6 +1061,7 @@ Optional Features:
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers (disables Edge scalers as well)
   --disable-edge-scalers   exclude Edge2x and Edge3x scalers
+  --disable-aspect         exclude aspect ratio correction
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
   --disable-cloud          don't build cloud support
@@ -1255,6 +1257,7 @@ for ac_option in $@; do
 	--disable-scalers)            _build_scalers=no      ;;
 	--disable-hq-scalers)         _build_hq_scalers=no   ;;
 	--disable-edge-scalers)       _build_edge_scalers=no ;;
+	--disable-aspect)             _build_aspect=no       ;;
 	--enable-alsa)                _alsa=yes              ;;
 	--disable-alsa)               _alsa=no               ;;
 	--enable-seq-midi)            _seq_midi=yes          ;;
@@ -3282,12 +3285,14 @@ if test -n "$_host"; then
 			fi
 			_port_mk="backends/platform/$_backend/android.mk"
 			_build_scalers=no
+			_build_aspect=no
 			_seq_midi=no
 			_timidity=no
 			;;
 		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a | androidsdl-x86_64)
 			DEFINES="$DEFINES -DANDROIDSDL"
 			_unix=yes
+			_build_aspect=no
 			_seq_midi=no
 			_timidity=no
 			_backend="androidsdl"
@@ -3409,6 +3414,7 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-fdelete-null-pointer-checks"
 			_backend="dc"
 			_build_scalers=no
+			_build_aspect=no
 			# These two are needed due to shortcomings of the
 			# detection systems.  Do not remove until auto-
 			# detection works correctly.
@@ -3436,6 +3442,7 @@ if test -n "$_host"; then
 			append_var DEFINES "-DVECTOR_RENDERER_FORMAT=1555"
 			_backend="ds"
 			_build_scalers=no
+			_build_aspect=no
 			_mt32emu=no
 			_nuked_opl=no
 			_tinygl=no
@@ -3448,6 +3455,7 @@ if test -n "$_host"; then
 		gamecube)
 			_backend="wii"
 			_build_scalers=no
+			_build_aspect=no
 			_vkeybd=yes
 			_mt32emu=no
 			_port_mk="backends/platform/wii/wii.mk"
@@ -3510,6 +3518,7 @@ if test -n "$_host"; then
 			append_var ASFLAGS "-arch armv6"
 			_backend="iphone"
 			_build_scalers=no
+			_build_aspect=no
 			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
@@ -3569,6 +3578,7 @@ if test -n "$_host"; then
 			_backend="n64"
 			_mt32emu=no
 			_build_scalers=no
+			_build_aspect=no
 			_savegame_timestamp=no
 			_translation=no
 			_text_console=no
@@ -3647,6 +3657,7 @@ if test -n "$_host"; then
 		psp)
 			_backend="psp"
 			_build_scalers=no
+			_build_aspect=no
 			_mt32emu=no
 			_port_mk="backends/platform/psp/psp.mk"
 			;;
@@ -3673,6 +3684,7 @@ if test -n "$_host"; then
 		wii)
 			_backend="wii"
 			_build_scalers=no
+			_build_aspect=no
 			_vkeybd=yes
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
@@ -4359,6 +4371,8 @@ define_in_config_if_yes "$_build_scalers" 'USE_SCALERS'
 define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
 
 define_in_config_if_yes "$_build_edge_scalers" 'USE_EDGE_SCALERS'
+
+define_in_config_if_yes "$_build_aspect" 'USE_ASPECT'
 
 #
 # Check for math lib
@@ -6003,6 +6017,10 @@ if test "$_build_scalers" = yes ; then
 	else
 		echo_n ", scalers"
 	fi
+fi
+
+if test "$_build_aspect" = yes; then
+	echo_n ", aspect ratio correction"
 fi
 
 if test "$_mt32emu" = yes ; then
