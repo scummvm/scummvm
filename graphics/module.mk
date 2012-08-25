@@ -83,12 +83,16 @@ MODULE_OBJS += \
 	tinygl/zdirtyrect.o
 endif
 
+ifdef USE_ASPECT
+MODULE_OBJS += \
+	scaler/aspect.o
+endif
+
 ifdef USE_SCALERS
 MODULE_OBJS += \
 	scaler/dotmatrix.o \
 	scaler/sai.o \
 	scaler/pm.o \
-	scaler/aspect.o \
 	scaler/downscaler.o \
 	scaler/scale2x.o \
 	scaler/scale3x.o \
