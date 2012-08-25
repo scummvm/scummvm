@@ -118,6 +118,7 @@ _mt32emu=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _build_edge_scalers=yes
+_build_aspect=yes
 _enable_prof=no
 _global_constructors=no
 _bink=yes
@@ -793,6 +794,7 @@ Optional Features:
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers (disables Edge scalers as well)
   --disable-edge-scalers   exclude Edge2x and Edge3x scalers
+  --disable-aspect         exclude aspect ratio correction
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
   --enable-updates         build support for updates
@@ -880,6 +882,7 @@ for ac_option in $@; do
 	--disable-scalers)        _build_scalers=no ;;
 	--disable-hq-scalers)     _build_hq_scalers=no ;;
 	--disable-edge-scalers)   _build_edge_scalers=no ;;
+	--disable-aspect)         _build_aspect=no ;;
 	--enable-alsa)            _alsa=yes       ;;
 	--disable-alsa)           _alsa=no        ;;
 	--enable-seq-midi)        _seq_midi=yes   ;;
@@ -2177,6 +2180,7 @@ if test -n "$_host"; then
 			_backend="android"
 			_port_mk="backends/platform/android/android.mk"
 			_build_scalers=no
+			_build_aspect=no
 			_seq_midi=no
 			_mt32emu=no
 			_timidity=no
@@ -2197,6 +2201,7 @@ if test -n "$_host"; then
 			fi
 			_taskbar=no
 			_build_scalers=no
+			_build_aspect=no
 			_seq_midi=no
 			_mt32emu=no
 			_timidity=no
@@ -2263,6 +2268,7 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -fdelete-null-pointer-checks"
 			_backend="dc"
 			_build_scalers=no
+			_build_aspect=no
 			_mad=yes
 			_zlib=yes
 			add_line_to_config_mk 'ronindir = /usr/local/ronin'
@@ -2281,12 +2287,14 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DVECTOR_RENDERER_FORMAT=1555"
 			_backend="ds"
 			_build_scalers=no
+			_build_aspect=no
 			_mt32emu=no
 			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
 			_backend="wii"
 			_build_scalers=no
+			_build_aspect=no
 			_vkeybd=yes
 			_mt32emu=no
 			_port_mk="backends/platform/wii/wii.mk"
@@ -2342,6 +2350,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DIPHONE"
 			_backend="iphone"
 			_build_scalers=no
+			_build_aspect=no
 			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
@@ -2418,6 +2427,7 @@ if test -n "$_host"; then
 			_backend="n64"
 			_mt32emu=no
 			_build_scalers=no
+			_build_aspect=no
 			_savegame_timestamp=no
 			_translation=no
 			_keymapper=no
@@ -2468,6 +2478,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_NES_APU"
 			_backend="ps2"
 			_build_scalers=no
+			_build_aspect=no
 			_mt32emu=no
 			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
 			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
@@ -2501,6 +2512,7 @@ if test -n "$_host"; then
 		psp)
 			_backend="psp"
 			_build_scalers=no
+			_build_aspect=no
 			_mt32emu=no
 			_port_mk="backends/platform/psp/psp.mk"
 			;;
@@ -2518,6 +2530,7 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/webos/webos.mk"
 			_build_scalers=yes
 			_build_hq_scalers=no
+			_build_aspect=yes
 			_timidity=no
 			_mt32emu=no
 			_seq_midi=no
@@ -2528,6 +2541,7 @@ if test -n "$_host"; then
 		wii)
 			_backend="wii"
 			_build_scalers=no
+			_build_aspect=no
 			_vkeybd=yes
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
@@ -3063,6 +3077,8 @@ define_in_config_if_yes "$_build_scalers" 'USE_SCALERS'
 define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
 
 define_in_config_if_yes "$_build_edge_scalers" 'USE_EDGE_SCALERS'
+
+define_in_config_if_yes "$_build_aspect" 'USE_ASPECT'
 
 #
 # Check for math lib
@@ -3794,6 +3810,10 @@ if test "$_build_scalers" = yes ; then
 	else
 		echo_n ", scalers"
 	fi
+fi
+
+if test "$_build_aspect" = yes; then
+	echo_n ", aspect ratio correction"
 fi
 
 if test "$_mt32emu" = yes ; then
