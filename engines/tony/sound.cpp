@@ -261,9 +261,7 @@ bool FPSfx::play() {
 	stop(); // sanity check
 
 	if (_bFileLoaded) {
-		// FIXME
-		//if (hEndOfBuffer != CORO_INVALID_PID_VALUE)
-		//	ResetEvent(hEndOfBuffer);
+		CoroScheduler.resetEvent(_hEndOfBuffer);
 
 		_rewindableStream->rewind();
 
