@@ -1008,8 +1008,8 @@ void RMOptionScreen::changeState(CORO_PARAM, OptionScreenState newState) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	closeState();
 	_nLastState = _nState;
+	closeState();
 	_nState = newState;
 	CORO_INVOKE_0(initState);
 
