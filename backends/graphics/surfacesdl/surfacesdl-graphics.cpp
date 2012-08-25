@@ -74,7 +74,7 @@ static void initGraphicsModes();
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
 
-#ifdef USE_SCALERS
+#ifdef USE_ASPECT
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 #endif
 
@@ -85,7 +85,7 @@ AspectRatio::AspectRatio(int w, int h) {
 	_kh = h;
 }
 
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_ASPECT)
 static AspectRatio getDesiredAspectRatio() {
 	const size_t AR_COUNT = 4;
 	const char *desiredAspectRatioAsStrings[AR_COUNT] = {	"auto",				"4/3",				"16/9",				"16/10" };
@@ -157,15 +157,22 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	memset(&_videoMode, 0, sizeof(_videoMode));
 	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) 
+
+#if defined(USE_SCALERS)
 	_videoMode.mode = GFX_DOUBLESIZE;
 	_videoMode.scaleFactor = 2;
-	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
-	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
+#endif
+#if defined(USE_ASPECT)
+	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
+	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
+#else // for small screen platforms
 	_videoMode.aspectRatioCorrection = false;
+#endif
+
 #endif
 	// HACK: just pick first scaler plugin
 	_normalPlugin = _scalerPlugins.front();
@@ -285,6 +292,7 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 		return _videoMode.fullscreen;
+#ifdef USE_ASPECT
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -1414,6 +1422,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 					src += _destbuffer->pitch;
 				}
 			}
+#endif
+
+#ifdef USE_ASPECT
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible) {
 				if (_useOldSrc)
 					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
@@ -1758,7 +1769,7 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 		h = height - y;
 	}
 
-#ifdef USE_SCALERS
+#ifdef USE_ASPECT
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible && !realCoordinates) {
 		makeRectStretchable(x, y, w, h);
 	}
@@ -1926,7 +1937,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	if (_useOldSrc)
 		(*_scalerPlugin)->enableSource(true);
 
-#ifdef USE_SCALERS
+#ifdef USE_ASPECT
 	if (_videoMode.aspectRatioCorrection)
 		stretch200To240((uint8 *)_overlayscreen->pixels, _overlayscreen->pitch,
 						_videoMode.overlayWidth, _videoMode.screenHeight * _videoMode.scaleFactor, 0, 0, 0);
@@ -2313,7 +2324,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	}
 #endif
 
-#ifdef USE_SCALERS
+#ifdef USE_ASPECT
 	if (!_cursorDontScale && _videoMode.aspectRatioCorrection)
 		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0);
 #endif
@@ -2322,7 +2333,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	SDL_UnlockSurface(_mouseOrigSurface);
 }
 
-#ifdef USE_SCALERS
+#ifdef USE_ASPECT
 // Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from
 // common/scale/aspect.cpp
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
@@ -2644,6 +2655,7 @@ int findGraphicsMode(uint factor, ScalerPlugin *plugin) {
 }
 
 bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
+#ifdef USE_ASPECT
 	// Ctrl-Alt-a toggles aspect ratio correction
 	if (key == 'a') {
 		beginGFXTransaction();
