@@ -2052,25 +2052,12 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
  */
 
 DECLARE_CUSTOM_FUNCTION(TakeOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
-	CORO_BEGIN_CONTEXT;
-		bool expired;
-	CORO_END_CONTEXT(_ctx);	
-
-	CORO_BEGIN_CODE(_ctx);
-
 	// The event is operating as a mutex, so if the event is already set, wait until it's reset
-	do {
-		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, GLOBALS._mut[num], 0, &_ctx->expired);
-	} while (!_ctx->expired);
-
-	// Set the event to flag ownership
-	CoroScheduler.setEvent(GLOBALS._mut[num]);
-
-	CORO_END_CODE;
+	CoroScheduler.waitForSingleObject(coroParam, GLOBALS._mut[num], CORO_INFINITE);
 }
 
 DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
-	CoroScheduler.resetEvent(GLOBALS._mut[num]);
+	CoroScheduler.setEvent(GLOBALS._mut[num]);
 }
 
 /*
@@ -2563,7 +2550,7 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	int i;
 
 	for (i = 0; i < 10; i++)
-		GLOBALS._mut[i] = CoroScheduler.createEvent(false, false);
+		GLOBALS._mut[i] = CoroScheduler.createEvent(false, true);
 
 	for (i = 0; i < 200; i++)
 		GLOBALS._ambiance[i] = 0;
