@@ -40,44 +40,49 @@ namespace Sci {
 /**
  * Implementation of the Sierra SEQ decoder, used in KQ6 DOS floppy/CD and GK1 DOS
  */
-class SeqDecoder : public Video::FixedRateVideoDecoder {
+class SEQDecoder : public Video::VideoDecoder {
 public:
-	SeqDecoder();
-	virtual ~SeqDecoder();
+	SEQDecoder(uint frameDelay);
+	virtual ~SEQDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
-
-	void setFrameDelay(int frameDelay) { _frameDelay = frameDelay; }
-
-	bool isVideoLoaded() const { return _fileStream != 0; }
-	uint16 getWidth() const { return SEQ_SCREEN_WIDTH; }
-	uint16 getHeight() const { return SEQ_SCREEN_HEIGHT; }
-	uint32 getFrameCount() const { return _frameCount; }
-	const Graphics::Surface *decodeNextFrame();
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
-	const byte *getPalette() { _dirtyPalette = false; return _palette; }
-	bool hasDirtyPalette() const { return _dirtyPalette; }
-
-protected:
-	Common::Rational getFrameRate() const { assert(_frameDelay); return Common::Rational(60, _frameDelay); }
 
 private:
-	enum {
-		SEQ_SCREEN_WIDTH = 320,
-		SEQ_SCREEN_HEIGHT = 200
+	class SEQVideoTrack : public FixedRateVideoTrack {
+	public:
+		SEQVideoTrack(Common::SeekableReadStream *stream, uint frameDelay);
+		~SEQVideoTrack();
+
+		uint16 getWidth() const { return SEQ_SCREEN_WIDTH; }
+		uint16 getHeight() const { return SEQ_SCREEN_HEIGHT; }
+		Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
+		int getCurFrame() const { return _curFrame; }
+		int getFrameCount() const { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame();
+		const byte *getPalette() const;
+		bool hasDirtyPalette() const { return _dirtyPalette; }
+
+	protected:
+		Common::Rational getFrameRate() const { return Common::Rational(60, _frameDelay); }
+
+	private:
+		enum {
+			SEQ_SCREEN_WIDTH = 320,
+			SEQ_SCREEN_HEIGHT = 200
+		};
+
+		void readPaletteChunk(uint16 chunkSize);
+		bool decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey);
+
+		Common::SeekableReadStream *_fileStream;
+		int _curFrame, _frameCount;
+		byte _palette[256 * 3];
+		mutable bool _dirtyPalette;
+		Graphics::Surface *_surface;
+		uint _frameDelay;
 	};
 
-	void readPaletteChunk(uint16 chunkSize);
-	bool decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey);
-
-	uint16 _width, _height;
-	uint16 _frameDelay;
-	Common::SeekableReadStream *_fileStream;
-	byte _palette[256 * 3];
-	bool _dirtyPalette;
-	uint32 _frameCount;
-	Graphics::Surface *_surface;
+	uint _frameDelay;
 };
 
 } // End of namespace Sci

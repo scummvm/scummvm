@@ -25,13 +25,15 @@
 
 #include "video/video_decoder.h"
 #include "common/list.h"
-#include "common/rational.h"
 #include "common/rect.h"
-#include "graphics/pixelformat.h"
-#include "graphics/surface.h"
 
 namespace Common {
 class SeekableReadStream;
+}
+
+namespace Graphics {
+struct PixelFormat;
+struct Surface;
 }
 
 namespace Video {
@@ -42,58 +44,63 @@ namespace Video {
  * Video decoder used in engines:
  *  - tucker
  */
-class FlicDecoder : public FixedRateVideoDecoder {
+class FlicDecoder : public VideoDecoder {
 public:
 	FlicDecoder();
 	virtual ~FlicDecoder();
 
-	/**
-	 * Load a video file
-	 * @param stream  the stream to load
-	 */
 	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
 
-	/**
-	 * Decode the next frame and return the frame's surface
-	 * @note the return surface should *not* be freed
-	 * @note this may return 0, in which case the last frame should be kept on screen
-	 */
-	const Graphics::Surface *decodeNextFrame();
-
-	bool isVideoLoaded() const { return _fileStream != 0; }
-	uint16 getWidth() const { return _surface->w; }
-	uint16 getHeight() const { return _surface->h; }
-	uint32 getFrameCount() const { return _frameCount; }
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
-
-	const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
-	void clearDirtyRects() { _dirtyRects.clear(); }
+	const Common::List<Common::Rect> *getDirtyRects() const;
+	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
-	const byte *getPalette() { _paletteChanged = false; return _palette; }
-	bool hasDirtyPalette() const { return _paletteChanged; }
-	void reset();
-
-protected:
-	Common::Rational getFrameRate() const { return _frameRate; }
-
 private:
-	uint16 _offsetFrame1;
-	uint16 _offsetFrame2;
-	byte *_palette;
-	bool _paletteChanged;
+	class FlicVideoTrack : public VideoTrack {
+	public:
+		FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height);
+		~FlicVideoTrack();
 
-	void decodeByteRun(uint8 *data);
-	void decodeDeltaFLC(uint8 *data);
-	void unpackPalette(uint8 *mem);
+		bool endOfTrack() const;
+		bool isRewindable() const { return true; }
+		bool rewind();
 
-	Common::SeekableReadStream *_fileStream;
-	Graphics::Surface *_surface;
-	uint32 _frameCount;
-	Common::Rational _frameRate;
+		uint16 getWidth() const;
+		uint16 getHeight() const;
+		Graphics::PixelFormat getPixelFormat() const;
+		int getCurFrame() const { return _curFrame; }
+		int getFrameCount() const { return _frameCount; }
+		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
+		const Graphics::Surface *decodeNextFrame();
+		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const { return _dirtyPalette; }
 
-	Common::List<Common::Rect> _dirtyRects;
+		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
+		void clearDirtyRects() { _dirtyRects.clear(); }
+		void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
+
+	private:
+		Common::SeekableReadStream *_fileStream;
+		Graphics::Surface *_surface;
+
+		int _curFrame;
+		bool _atRingFrame;
+
+		uint16 _offsetFrame1;
+		uint16 _offsetFrame2;
+		byte *_palette;
+		mutable bool _dirtyPalette;
+
+		uint32 _frameCount;
+		uint32 _frameDelay, _startFrameDelay;
+		uint32 _nextFrameStartTime;
+
+		Common::List<Common::Rect> _dirtyRects;
+
+		void decodeByteRun(uint8 *data);
+		void decodeDeltaFLC(uint8 *data);
+		void unpackPalette(uint8 *mem);
+	};
 };
 
 } // End of namespace Video

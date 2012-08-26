@@ -50,6 +50,8 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	if (!videoDecoder)
 		return;
 
+	videoDecoder->start();
+
 	byte *scaleBuffer = 0;
 	byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;
 	uint16 width = videoDecoder->getWidth();
@@ -162,9 +164,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
-			SeqDecoder *seqDecoder = new SeqDecoder();
-			seqDecoder->setFrameDelay(argv[1].toUint16()); // Time between frames in ticks
-			videoDecoder = seqDecoder;
+			// Time is specified as ticks
+			videoDecoder = new SEQDecoder(argv[1].toUint16());
 
 			if (!videoDecoder->loadFile(filename)) {
 				warning("Failed to open movie file %s", filename.c_str());
@@ -190,7 +191,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		switch (argv[0].toUint16()) {
 		case 0: {
 			Common::String filename = s->_segMan->getString(argv[1]);
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
 
 			if (filename.equalsIgnoreCase("gk2a.avi")) {
 				// HACK: Switch to 16bpp graphics for Indeo3.
@@ -252,6 +253,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 		int16 y = argv[5].toUint16();
 		warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
 		g_sci->_robotDecoder->load(id);
+		g_sci->_robotDecoder->start();
 		g_sci->_robotDecoder->setPos(x, y);
 		}
 		break;
@@ -267,13 +269,13 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 		warning("kRobot(%d)", subop);
 		break;
 	case 8: // sync
-		//if (false) {	// debug: automatically skip all robot videos
-		if ((uint32)g_sci->_robotDecoder->getCurFrame() !=  g_sci->_robotDecoder->getFrameCount() - 1) {
-			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
-		} else {
+		//if (true) {	// debug: automatically skip all robot videos
+		if (g_sci->_robotDecoder->endOfVideo()) {
 			g_sci->_robotDecoder->close();
 			// Signal the engine scripts that the video is done
 			writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
+		} else {
+			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);	
 		}
 		break;
 	default:
@@ -348,7 +350,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case 6:	// Play
-		videoDecoder = new Video::VMDDecoder(g_system->getMixer());
+		videoDecoder = new Video::AdvancedVMDDecoder();
 
 		if (s->_videoState.fileName.empty()) {
 			// Happens in Lighthouse
@@ -406,7 +408,7 @@ reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
 		s->_videoState.reset();
 		s->_videoState.fileName = Common::String::format("%d.duk", argv[1].toUint16());
 
-		videoDecoder = new Video::AviDecoder(g_system->getMixer());
+		videoDecoder = new Video::AVIDecoder();
 
 		if (!videoDecoder->loadFile(s->_videoState.fileName)) {
 			warning("Could not open Duck %s", s->_videoState.fileName.c_str());

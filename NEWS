@@ -7,6 +7,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      supported for resolutions bigger than 640x400. The old chooser is still
      available and used for games without thumbnail support. It is possible to
      select the old one as default too.
+   - Rewrote VideoDecoder subsystem.
 
 1.5.0 (2012-07-27)
  New Games:
