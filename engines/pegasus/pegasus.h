@@ -50,7 +50,7 @@ namespace Common {
 }
 
 namespace Video {
-	class SeekableVideoDecoder;
+	class VideoDecoder;
 }
 
 namespace Pegasus {
@@ -253,7 +253,7 @@ private:
 	Hotspot _returnHotspot;
 	InputHandler *_savedHandler;
 	void showTempScreen(const Common::String &fileName);
-	bool playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y);
+	bool playMovieScaled(Video::VideoDecoder *video, uint16 x, uint16 y);
 	void throwAwayEverything();
 	void shellGameInput(const Input &input, const Hotspot *cursorSpot);
 	Common::RandomSource *_rnd;

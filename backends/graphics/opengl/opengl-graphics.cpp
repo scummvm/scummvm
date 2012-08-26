@@ -902,7 +902,7 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 		bpp = 4;
 		intFormat = GL_RGBA;
 		glFormat = GL_RGBA;
-		gltype = GL_UNSIGNED_BYTE;
+		gltype = GL_UNSIGNED_INT_8_8_8_8;
 	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) { // RGB888
 		bpp = 3;
 		intFormat = GL_RGB;
@@ -918,11 +918,6 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 		intFormat = GL_RGBA;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_SHORT_5_5_5_1;
-	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) { // RGB555
-		bpp = 2;
-		intFormat = GL_RGB;
-		glFormat = GL_BGRA;
-		gltype = GL_UNSIGNED_SHORT_1_5_5_5_REV;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) { // RGBA4444
 		bpp = 2;
 		intFormat = GL_RGBA;
@@ -936,6 +931,13 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_BYTE;
 #ifndef USE_GLES
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) { // RGB555
+		// GL_BGRA does not exist in every GLES implementation so should not be configured if
+		// USE_GLES is set.
+		bpp = 2;
+		intFormat = GL_RGB;
+		glFormat = GL_BGRA;
+		gltype = GL_UNSIGNED_SHORT_1_5_5_5_REV;
 	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) { // ARGB8888
 		bpp = 4;
 		intFormat = GL_RGBA;

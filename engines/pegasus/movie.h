@@ -32,7 +32,7 @@
 #include "pegasus/surface.h"
 
 namespace Video {
-	class SeekableVideoDecoder;
+class VideoDecoder;
 }
 
 namespace Pegasus {
@@ -65,13 +65,13 @@ public:
 	virtual TimeValue getDuration(const TimeScale = 0) const;
 
 	// *** HACK ALERT
-	Video::SeekableVideoDecoder *getMovie() { return _video; }
+	Video::VideoDecoder *getMovie() { return _video; }
 	void setVolume(uint16);
 
 protected:
 	void updateTime();
 
-	Video::SeekableVideoDecoder *_video;
+	Video::VideoDecoder *_video;
 	Common::Rect _movieBox;
 };
 

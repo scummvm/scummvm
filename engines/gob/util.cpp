@@ -189,12 +189,27 @@ bool Util::getKeyFromBuffer(Common::KeyState &key) {
 	return true;
 }
 
+static const uint16 kLatin1ToCP850[] = {
+	0xFF, 0xAD, 0xBD, 0x9C, 0xCF, 0xBE, 0xDD, 0xF5, 0xF9, 0xB8, 0xA6, 0xAE, 0xAA, 0xF0, 0xA9, 0xEE,
+	0xF8, 0xF1, 0xFD, 0xFC, 0xEF, 0xE6, 0xF4, 0xFA, 0xF7, 0xFB, 0xA7, 0xAF, 0xAC, 0xAB, 0xF3, 0xA8,
+	0xB7, 0xB5, 0xB6, 0xC7, 0x8E, 0x8F, 0x92, 0x80, 0xD4, 0x90, 0xD2, 0xD3, 0xDE, 0xD6, 0xD7, 0xD8,
+	0xD1, 0xA5, 0xE3, 0xE0, 0xE2, 0xE5, 0x99, 0x9E, 0x9D, 0xEB, 0xE9, 0xEA, 0x9A, 0xED, 0xE8, 0xE1,
+	0x85, 0xA0, 0x83, 0xC6, 0x84, 0x86, 0x91, 0x87, 0x8A, 0x82, 0x88, 0x89, 0x8D, 0xA1, 0x8C, 0x8B,
+	0xD0, 0xA4, 0x95, 0xA2, 0x93, 0xE4, 0x94, 0xF6, 0x9B, 0x97, 0xA3, 0x96, 0x81, 0xEC, 0xE7, 0x98
+};
+
+int16 Util::toCP850(uint16 latin1) {
+	if ((latin1 < 0xA0) || ((latin1 - 0xA0) >= ARRAYSIZE(kLatin1ToCP850)))
+		return 0;
+
+	return kLatin1ToCP850[latin1 - 0xA0];
+}
+
 int16 Util::translateKey(const Common::KeyState &key) {
 	static struct keyS {
 		int16 from;
 		int16 to;
 	} keys[] = {
-		{Common::KEYCODE_INVALID,   kKeyNone     },
 		{Common::KEYCODE_BACKSPACE, kKeyBackspace},
 		{Common::KEYCODE_SPACE,     kKeySpace    },
 		{Common::KEYCODE_RETURN,    kKeyReturn   },
@@ -216,18 +231,86 @@ int16 Util::translateKey(const Common::KeyState &key) {
 		{Common::KEYCODE_F10,       kKeyF10      }
 	};
 
+	// Translate special keys
 	for (int i = 0; i < ARRAYSIZE(keys); i++)
 		if (key.keycode == keys[i].from)
 			return keys[i].to;
 
-	if ((key.keycode >= Common::KEYCODE_SPACE) &&
-	    (key.keycode <= Common::KEYCODE_DELETE)) {
-
-		// Used as a user input in Gobliins 2 notepad, in the save dialog, ...
+	// Return the ascii value, for text input
+	if ((key.ascii >= 32) && (key.ascii <= 127))
 		return key.ascii;
-	}
+
+	// Translate international characters into CP850 characters
+	if ((key.ascii >= 160) && (key.ascii <= 255))
+		return toCP850(key.ascii);
 
 	return 0;
+}
+
+static const uint8 kLowerToUpper[][2] = {
+	{0x81, 0x9A},
+	{0x82, 0x90},
+	{0x83, 0xB6},
+	{0x84, 0x8E},
+	{0x85, 0xB7},
+	{0x86, 0x8F},
+	{0x87, 0x80},
+	{0x88, 0xD2},
+	{0x89, 0xD3},
+	{0x8A, 0xD4},
+	{0x8B, 0xD8},
+	{0x8C, 0xD7},
+	{0x8D, 0xDE},
+	{0x91, 0x92},
+	{0x93, 0xE2},
+	{0x94, 0x99},
+	{0x95, 0xE3},
+	{0x96, 0xEA},
+	{0x97, 0xEB},
+	{0x95, 0xE3},
+	{0x96, 0xEA},
+	{0x97, 0xEB},
+	{0x9B, 0x9D},
+	{0xA0, 0xB5},
+	{0xA1, 0xD6},
+	{0xA2, 0xE0},
+	{0xA3, 0xE9},
+	{0xA4, 0xA5},
+	{0xC6, 0xC7},
+	{0xD0, 0xD1},
+	{0xE4, 0xE5},
+	{0xE7, 0xE8},
+	{0xEC, 0xED}
+};
+
+char Util::toCP850Lower(char cp850) {
+	const uint8 cp = (unsigned char)cp850;
+	if (cp <= 32)
+		return cp850;
+
+	if (cp <= 127)
+		return tolower(cp850);
+
+	for (uint i = 0; i < ARRAYSIZE(kLowerToUpper); i++)
+		if (cp == kLowerToUpper[i][1])
+			return (char)kLowerToUpper[i][0];
+
+	return cp850;
+}
+
+char Util::toCP850Upper(char cp850) {
+	const uint8 cp = (unsigned char)cp850;
+	if (cp <= 32)
+		return cp850;
+
+	if (cp <= 127)
+		return toupper(cp850);
+
+	for (uint i = 0; i < ARRAYSIZE(kLowerToUpper); i++)
+		if (cp == kLowerToUpper[i][0])
+			return (char)kLowerToUpper[i][1];
+
+	return cp850;
 }
 
 int16 Util::getKey() {
@@ -367,21 +450,29 @@ void Util::notifyNewAnim() {
 	_startFrameTime = getTimeKey();
 }
 
-void Util::waitEndFrame() {
+void Util::waitEndFrame(bool handleInput) {
 	int32 time;
-
-	_vm->_video->waitRetrace();
 
 	time = getTimeKey() - _startFrameTime;
 	if ((time > 1000) || (time < 0)) {
+		_vm->_video->retrace();
 		_startFrameTime = getTimeKey();
 		return;
 	}
 
-	int32 toWait = _frameWaitTime - time;
+	int32 toWait = 0;
+	do {
+		if (toWait > 0)
+			delay(MIN<int>(toWait, 10));
 
-	if (toWait > 0)
-		delay(toWait);
+		if (handleInput)
+			processInput();
+
+		_vm->_video->retrace();
+
+		time   = getTimeKey() - _startFrameTime;
+		toWait = _frameWaitTime - time;
+	} while (toWait > 0);
 
 	_startFrameTime = getTimeKey();
 }

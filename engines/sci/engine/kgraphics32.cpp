@@ -39,6 +39,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
@@ -171,8 +172,13 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelStrings, "kCreateTextBitmap case 0 (%04x:%04x, %04x:%04x, %04x:%04x)",
 				PRINT_REG(argv[1]), PRINT_REG(argv[2]), PRINT_REG(argv[3]));
 		debugC(kDebugLevelStrings, "%s", text.c_str());
-		uint16 maxWidth = argv[1].toUint16();	// nsRight - nsLeft + 1
-		uint16 maxHeight = argv[2].toUint16();	// nsBottom - nsTop + 1
+		int16 maxWidth = argv[1].toUint16();
+		int16 maxHeight = argv[2].toUint16();
+		g_sci->_gfxCoordAdjuster->fromScriptToDisplay(maxHeight, maxWidth);
+		// These values can be larger than the screen in the SQ6 demo, room 100
+		// TODO: Find out why. For now, don't show any text in that room.
+		if (g_sci->getGameId() == GID_SQ6 && g_sci->isDemo() && s->currentRoomNumber() == 100)
+			return NULL_REG;
 		return g_sci->_gfxText32->createTextBitmap(object, maxWidth, maxHeight);
 	}
 	case 1: {
@@ -195,18 +201,6 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 reg_t kDisposeTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxText32->disposeTextBitmap(argv[0]);
 	return s->r_acc;
-}
-
-reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
-	uint16 windowsOption = argv[0].toUint16();
-	switch (windowsOption) {
-	case 0:
-		// Title bar on/off in Phantasmagoria, we return 0 (off)
-		return NULL_REG;
-	default:
-		warning("GetWindowsOption: Unknown option %d", windowsOption);
-		return NULL_REG;
-	}
 }
 
 reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
@@ -236,12 +230,12 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// tables inside graphics/transitions.cpp
 	uint16 showStyle = argv[0].toUint16();	// 0 - 15
 	reg_t planeObj = argv[1];	// the affected plane
-	//uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
-	//uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
-	//int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
-	//uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
-	//uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
-#if 0
+	Common::String planeObjName = s->_segMan->getObjectName(planeObj);
+	uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
+	uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
+	int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
+	uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
+	uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
 	int16 divisions;
 
 	// If the game has the pFadeArray selector, another parameter is used here,
@@ -253,7 +247,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	} else {
 		divisions = (argc >= 8) ? argv[7].toSint16() : -1;	// divisions (transition steps?)
 	}
-#endif
+
 	if (showStyle > 15) {
 		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
 		return s->r_acc;
@@ -269,18 +263,29 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 
 	// TODO: Check if the plane is in the list of planes to draw
 
+	Common::String effectName = "unknown";
+
 	switch (showStyle) {
-	//case 0:	// no transition, perhaps? (like in the previous SCI versions)
+	case 0:		// no transition / show
+		effectName = "show";
+		break;
 	case 13:	// fade out
+		effectName = "fade out";
 		// TODO
+		break;
 	case 14:	// fade in
+		effectName = "fade in";
 		// TODO
+		break;
 	default:
-		// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
-		kStub(s, argc, argv);
+		// TODO
 		break;
 	}
 
+	warning("kSetShowStyle: effect %d (%s) - plane: %04x:%04x (%s), sec: %d, "
+			"back: %d, prio: %d, animate: %d, ref frame: %d, divisions: %d",
+			showStyle, effectName.c_str(), PRINT_REG(planeObj), planeObjName.c_str(),
+			seconds, backColor, priority, animate, refFrame, divisions);
 	return s->r_acc;
 }
 
@@ -364,7 +369,8 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 	case 10: // Where, called by ScrollableWindow::where
 		// TODO
 		// argv[2] is an unknown integer
-		kStub(s, argc, argv);
+		// Silenced the warnings because of the high amount of console spam
+		//kStub(s, argc, argv);
 		break;
 	case 11: // Go, called by ScrollableWindow::scrollTo
 		// 2 extra parameters here
@@ -635,6 +641,169 @@ reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv) {
 	reg_t hunkId = argv[0];
 	reg_t plane = argv[1];
 	g_sci->_gfxFrameout->deletePlaneLine(plane, hunkId);
+	return s->r_acc;
+}
+
+reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
+	// Called in the intro of LSL6 hires (room 110)
+	// The end effect of this is the same as the old screen scroll transition
+
+	// 7 parameters
+	reg_t planeObject = argv[0];
+	//int16 x = argv[1].toSint16();
+	//int16 y = argv[2].toSint16();
+	uint16 pictureId = argv[3].toUint16();
+	// param 4: int (0 in LSL6, probably scroll direction? The picture in LSL6 scrolls down)
+	// param 5: int (first call is 1, then the subsequent one is 0 in LSL6)
+	// param 6: optional int (0 in LSL6)
+
+	// Set the new picture directly for now
+	//writeSelectorValue(s->_segMan, planeObject, SELECTOR(left), x);
+	//writeSelectorValue(s->_segMan, planeObject, SELECTOR(top), y);
+	writeSelectorValue(s->_segMan, planeObject, SELECTOR(picture), pictureId);
+	// and update our draw list
+	g_sci->_gfxFrameout->kernelUpdatePlane(planeObject);
+
+	// TODO
+	return kStub(s, argc, argv);
+}
+
+reg_t kPalCycle(EngineState *s, int argc, reg_t *argv) {
+	// Examples: GK1 room 480 (Bayou ritual), LSL6 room 100 (title screen)
+
+	switch (argv[0].toUint16()) {
+	case 0: {	// Palette animation initialization
+		// 3 or 4 extra params
+		// Case 1 sends fromColor and speed again, so we don't need them here.
+		// Only toColor is stored
+		//uint16 fromColor = argv[1].toUint16();
+		s->_palCycleToColor = argv[2].toUint16();
+		//uint16 speed = argv[3].toUint16();
+
+		// Invalidate the picture, so that the palette steps calls (case 1
+		// below) can update its palette without it being overwritten by the
+		// view/picture palettes.
+		g_sci->_gfxScreen->_picNotValid = 1;
+
+		// TODO: The fourth optional parameter is an unknown integer, and is 0 by default
+		if (argc == 5) {
+			// When this variant is used, picNotValid doesn't seem to be set
+			// (e.g. GK1 room 480). In this case, the animation step calls are
+			// not made, so perhaps this signifies the palette cycling steps
+			// to make.
+			// GK1 sets this to 6 (6 palette steps?)
+			g_sci->_gfxScreen->_picNotValid = 0;
+		}
+		kStub(s, argc, argv);
+		}
+		break;
+	case 1:	{ // Palette animation step
+		// This is the same as the old kPaletteAnimate call, with 1 set of colors.
+		// The end color is set up during initialization in case 0 above.
+
+		// 1 or 2 extra params
+		uint16 fromColor = argv[1].toUint16();
+		uint16 speed = (argc == 2) ? 1 : argv[2].toUint16();
+		// TODO: For some reason, this doesn't set the color correctly
+		// (e.g. LSL6 intro, room 100, Sierra logo)
+		if (g_sci->_gfxPalette->kernelAnimate(fromColor, s->_palCycleToColor, speed))
+			g_sci->_gfxPalette->kernelAnimateSet();
+		}
+		// No kStub() call here, as this gets called loads of times, like kPaletteAnimate
+		break;
+	// case 2 hasn't been encountered
+	// case 3 hasn't been encountered
+	case 4:	// reset any palette cycling and make the picture valid again
+		// Gets called when changing rooms and after palette cycling animations finish
+		// 0 or 1 extra params
+		if (argc == 1) {
+			g_sci->_gfxScreen->_picNotValid = 0;
+			// TODO: This also seems to perform more steps
+		} else {
+			// The variant with the 1 extra param resets remapping to base
+			// TODO
+		}
+		kStub(s, argc, argv);
+		break;
+	default:
+		// TODO
+		kStub(s, argc, argv);
+		break;
+	}
+
+	return s->r_acc;
+}
+
+reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+
+	switch (operation) {
+	case 0:	{ // turn remapping off
+		// WORKAROUND: Game scripts in QFG4 erroneously turn remapping off in room
+		// 140 (the character point allocation screen) and never turn it back on,
+		// even if it's clearly used in that screen.
+		if (g_sci->getGameId() == GID_QFG4 && s->currentRoomNumber() == 140)
+			return s->r_acc;
+
+		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
+		if (base > 0)
+			warning("kRemapColors(0) called with base %d", base);
+		g_sci->_gfxPalette->resetRemapping();
+		}
+		break;
+	case 1:	{ // remap by range
+		uint16 color = argv[1].toUint16();
+		uint16 from = argv[2].toUint16();
+		uint16 to = argv[3].toUint16();
+		uint16 base = argv[4].toUint16();
+		uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
+		if (unk5 > 0)
+			warning("kRemapColors(1) called with 6 parameters, unknown parameter is %d", unk5);
+		g_sci->_gfxPalette->setRemappingRange(color, from, to, base);
+		}
+		break;
+	case 2:	{ // remap by percent
+		uint16 color = argv[1].toUint16();
+		uint16 percent = argv[2].toUint16(); // 0 - 100
+		if (argc >= 4)
+			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
+		g_sci->_gfxPalette->setRemappingPercent(color, percent);
+		}
+		break;
+	case 3:	{ // remap to gray
+		// Example call: QFG4 room 490 (Baba Yaga's hut) - params are color 253, 75% and 0.
+		// In this room, it's used for the cloud before Baba Yaga appears.
+		int16 color = argv[1].toSint16();
+		int16 percent = argv[2].toSint16(); // 0 - 100
+		if (argc >= 4)
+			warning("RemapToGray called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
+		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
+		}
+		break;
+	case 4:	{ // remap to percent gray
+		// Example call: QFG4 rooms 530/535 (swamp) - params are 253, 100%, 200
+		int16 color = argv[1].toSint16();
+		int16 percent = argv[2].toSint16(); // 0 - 100
+		// argv[3] is unknown (a number, e.g. 200) - start color, perhaps?
+		if (argc >= 5)
+			warning("RemapToGrayPercent called with 5 parameters, unknown parameter is %d", argv[4].toUint16());
+		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
+		}
+		break;
+	case 5:	{ // don't map to range
+		//int16 mapping = argv[1].toSint16();
+		uint16 intensity = argv[2].toUint16();
+		// HACK for PQ4
+		if (g_sci->getGameId() == GID_PQ4)
+			g_sci->_gfxPalette->kernelSetIntensity(0, 255, intensity, true);
+
+		kStub(s, argc, argv);
+		}
+		break;
+	default:
+		break;
+	}
+
 	return s->r_acc;
 }
 

@@ -289,8 +289,10 @@ void PegasusEngine::runIntro() {
 
 	bool skipped = false;
 
-	Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
+	Video::VideoDecoder *video = new Video::QuickTimeDecoder();
 	if (video->loadFile(_introDirectory + "/BandaiLogo.movie")) {
+		video->start();
+
 		while (!shouldQuit() && !video->endOfVideo() && !skipped) {
 			if (video->needsUpdate()) {
 				const Graphics::Surface *frame = video->decodeNextFrame();
@@ -320,7 +322,8 @@ void PegasusEngine::runIntro() {
 	if (!video->loadFile(_introDirectory + "/Big Movie.movie"))
 		error("Could not load intro movie");
 
-	video->seekToTime(Audio::Timestamp(0, 10 * 600, 600));
+	video->seek(Audio::Timestamp(0, 10 * 600, 600));
+	video->start();
 
 	playMovieScaled(video, 0, 0);
 
@@ -671,13 +674,14 @@ void PegasusEngine::introTimerExpired() {
 
 		bool skipped = false;
 
-		Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
+		Video::VideoDecoder *video = new Video::QuickTimeDecoder();
 		if (!video->loadFile(_introDirectory + "/LilMovie.movie"))
 			error("Failed to load little movie");
 
 		bool saveAllowed = swapSaveAllowed(false);
 		bool openAllowed = swapLoadAllowed(false);
 
+		video->start();
 		skipped = playMovieScaled(video, 0, 0);
 
 		delete video;
@@ -815,13 +819,14 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 				_gfx->clearScreen();
 				_gfx->updateDisplay();
 
-				Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
+				Video::VideoDecoder *video = new Video::QuickTimeDecoder();
 				if (!video->loadFile(_introDirectory + "/Closing.movie"))
 					error("Could not load closing movie");
 
 				uint16 x = (640 - video->getWidth() * 2) / 2;
 				uint16 y = (480 - video->getHeight() * 2) / 2;
 
+				video->start();
 				playMovieScaled(video, x, y);
 
 				delete video;
@@ -1261,7 +1266,7 @@ void PegasusEngine::checkFlashlight() {
 		_neighborhood->checkFlashlight();
 }
 
-bool PegasusEngine::playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y) {
+bool PegasusEngine::playMovieScaled(Video::VideoDecoder *video, uint16 x, uint16 y) {
 	bool skipped = false;
 
 	while (!shouldQuit() && !video->endOfVideo() && !skipped) {
@@ -2084,9 +2089,11 @@ void PegasusEngine::playEndMessage() {
 void PegasusEngine::doSubChase() {
 	static const uint32 endTime = 133200 * 1000 / 600;
 
-	Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
+	Video::VideoDecoder *video = new Video::QuickTimeDecoder();
 	if (!video->loadFile("Images/Norad Alpha/Sub Chase Movie"))
 		error("Failed to load sub chase");
+
+	video->start();
 
 	while (!shouldQuit() && !video->endOfVideo() && video->getTime() < endTime) {
 		if (video->needsUpdate()) {

@@ -32,7 +32,7 @@
 namespace Graphics {
 
 class Font;
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, bool monochrome = false, const uint32 *mapping = 0);
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, uint dpi = 0, bool monochrome = false, const uint32 *mapping = 0);
 
 void shutdownTTF();
 

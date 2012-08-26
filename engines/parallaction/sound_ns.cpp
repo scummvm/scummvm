@@ -237,7 +237,7 @@ AmigaSoundMan_ns::~AmigaSoundMan_ns() {
 	stopSfx(2);
 	stopSfx(3);
 
-	delete []beepSoundBuffer;
+	delete[] beepSoundBuffer;
 }
 
 Audio::AudioStream *AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch, bool looping) {

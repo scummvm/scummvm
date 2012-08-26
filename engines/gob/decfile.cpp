@@ -38,30 +38,38 @@ DECFile::DECFile(GobEngine *vm, const Common::String &fileName,
                  uint16 width, uint16 height, uint8 bpp) : _vm(vm),
 	_width(width), _height(height), _bpp(bpp), _hasPadding(false), _backdrop(0) {
 
-	Common::SeekableReadStream *dec = _vm->_dataIO->getFile(fileName);
-	if (dec) {
-		Common::SeekableSubReadStreamEndian sub(dec, 0, dec->size(), false, DisposeAfterUse::YES);
+	bool bigEndian = false;
+	Common::String endianFileName = fileName;
 
-		load(sub, fileName);
-		return;
-	}
+	if ((_vm->getEndiannessMethod() == kEndiannessMethodAltFile) &&
+	    !_vm->_dataIO->hasFile(fileName)) {
+		// If the game has alternate big-endian files, look if one exist
 
-	// File doesn't exist, try to open the big-endian'd alternate file
-	Common::String alternateFileName = fileName;
-	alternateFileName.setChar('_', 0);
+		Common::String alternateFileName = fileName;
+		alternateFileName.setChar('_', 0);
 
-	dec = _vm->_dataIO->getFile(alternateFileName);
-	if (dec) {
-		Common::SeekableSubReadStreamEndian sub(dec, 0, dec->size(), true, DisposeAfterUse::YES);
+		if (_vm->_dataIO->hasFile(alternateFileName)) {
+			bigEndian      = true;
+			endianFileName = alternateFileName;
+		}
+	} else if ((_vm->getEndiannessMethod() == kEndiannessMethodBE) ||
+	           ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) &&
+	            (_vm->getEndianness() == kEndiannessBE)))
+		// Game always little endian or it follows the system and it is big endian
+		bigEndian = true;
+
+	Common::SeekableReadStream *ani = _vm->_dataIO->getFile(endianFileName);
+	if (ani) {
+		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), bigEndian, DisposeAfterUse::YES);
 
 		// The big endian version pads a few fields to even size
-		_hasPadding = true;
+		_hasPadding = bigEndian;
 
 		load(sub, fileName);
 		return;
 	}
 
-	warning("DECFile::DECFile(): No such file \"%s\"", fileName.c_str());
+	warning("DECFile::DECFile(): No such file \"%s\" (\"%s\")", endianFileName.c_str(), fileName.c_str());
 }
 
 DECFile::~DECFile() {

@@ -2084,7 +2084,7 @@ Sierra games using the SCI engine add the following non-standard keywords:
     originalsaveload   bool     If true, the original save/load screens are
                                 used instead of the enhanced ScummVM ones
     native_fb01        bool     If true, the music driver for an IBM Music
-                                Feature card or a Yahama FB-01 FM synth module
+                                Feature card or a Yamaha FB-01 FM synth module
                                 is used for MIDI output
 
 Broken Sword II adds the following non-standard keywords:
@@ -2125,7 +2125,7 @@ Lands of Lore: The Throne of Chaos adds the following non-standard keywords:
 Space Quest IV CD adds the following non-standard keyword:
 
      silver_cursors    bool     If true, an alternate set of silver mouse cursors
-	                            is used instead of the original golden ones
+                                is used instead of the original golden ones
 
 Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 

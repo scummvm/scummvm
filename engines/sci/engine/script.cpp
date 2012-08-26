@@ -385,7 +385,7 @@ void Script::setLockers(int lockers) {
 	_lockers = lockers;
 }
 
-uint32 Script::validateExportFunc(int pubfunct, bool relocateSci3) {
+uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
 	if (_numExports <= pubfunct) {
@@ -401,7 +401,7 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocateSci3) {
 	if (getSciVersion() != SCI_VERSION_3) {
 		offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
 	} else {
-		if (!relocateSci3)
+		if (!relocSci3)
 			offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct) + getCodeBlockOffsetSci3();
 		else
 			offset = relocateOffsetSci3(pubfunct * 2 + 22);
@@ -422,16 +422,9 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocateSci3) {
 		}
 	}
 
-	if (!offset) {
-#ifdef ENABLE_SCI32
-		// WORKAROUNDS for invalid (empty) exports
-		if (g_sci->getGameId() == GID_TORIN && _nr == 64036) {
-		} else if (g_sci->getGameId() == GID_RAMA && _nr == 64908) {
-		} else
-#endif
-			error("Request for invalid exported function 0x%x of script %d", pubfunct, _nr);
-		return NULL;
-	}
+	// Note that it's perfectly normal to return a zero offset, especially in
+	// SCI1.1 and newer games. Examples include script 64036 in Torin's Passage,
+	// script 64908 in the demo of RAMA and script 1013 in KQ6 floppy.
 
 	if (offset >= _bufSize)
 		error("Invalid export function pointer");

@@ -39,10 +39,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -128,7 +126,7 @@ IMPLEMENT_FUNCTION(7, Kronos, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Kronos, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -149,7 +147,7 @@ IMPLEMENT_FUNCTION(8, Kronos, chapter1Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1489500, params->param2, setup_function11);
+		Entity::timeCheck(kTime1489500, params->param2, WRAP_SETUP_FUNCTION(Kronos, setup_function11));
 		break;
 
 	case kAction171849314:
@@ -191,7 +189,7 @@ IMPLEMENT_FUNCTION(10, Kronos, function10)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1489500, params->param1, setup_function11);
+		Entity::timeCheck(kTime1489500, params->param1, WRAP_SETUP_FUNCTION(Kronos, setup_function11));
 		break;
 
 	case kActionDefault:
@@ -295,10 +293,10 @@ IMPLEMENT_FUNCTION(15, Kronos, function15)
 
 	case kActionNone:
 		if (params->param1 && !getEntities()->isInSalon(kEntityBoutarel)) {
-			UPDATE_PARAM_PROC(params->param2, getState()->timeTicks, 75)
+			if (Entity::updateParameter(params->param2, getState()->timeTicks, 75)) {
 				setup_function16();
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (params->param3 != kTimeInvalid && getState()->time > kTime2002500) {
@@ -407,8 +405,7 @@ IMPLEMENT_FUNCTION(18, Kronos, function18)
 			params->param2 = 1;
 		}
 
-		TIME_CHECK(kTime2106000, params->param3, setup_function19)
-		else {
+		if (!Entity::timeCheck(kTime2106000, params->param3, WRAP_SETUP_FUNCTION(Kronos, setup_function19))) {
 			if (params->param1 && getEntities()->isInKronosSanctum(kEntityPlayer)) {
 				setCallback(1);
 				setup_savegame(kSavegameTypeEvent, kEventKahinaPunchSuite4);
@@ -528,9 +525,9 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 		}
 
 		if (CURRENT_PARAM(1, 2) != kTimeInvalid && params->param7 < getState()->time) {
-			UPDATE_PARAM_PROC_TIME(params->param8, !params->param1, CURRENT_PARAM(1, 2), 450)
+			if (Entity::updateParameterTime((TimeValue)params->param8, !params->param1, CURRENT_PARAM(1, 2), 450)) {
 				getSavePoints()->push(kEntityKronos, kEntityKahina, kAction237555748);
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!params->param1)

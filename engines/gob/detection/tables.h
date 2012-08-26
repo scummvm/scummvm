@@ -48,7 +48,10 @@ static const PlainGameDescriptor gobGames[] = {
 	{"gob2cd", "Gobliins 2 CD"},
 	{"ween", "Ween: The Prophecy"},
 	{"bargon", "Bargon Attack"},
+	{"babayaga", "Once Upon A Time: Baba Yaga"},
+	{"abracadabra", "Once Upon A Time: Abracadabra"},
 	{"littlered", "Once Upon A Time: Little Red Riding Hood"},
+	{"onceupon", "Once Upon A Time"},
 	{"ajworld", "A.J.'s World of Discovery"},
 	{"gob3", "Goblins Quest 3"},
 	{"gob3cd", "Goblins Quest 3 CD"},
@@ -94,6 +97,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_ween.h"      // Ween: The Prophecy
 	#include "gob/detection/tables_bargon.h"    // Bargon Attack
 	#include "gob/detection/tables_littlered.h" // Once Upon A Time: Little Red Riding Hood
+	#include "gob/detection/tables_onceupon.h"  // Once Upon A Time: Baba Yaga and Abracadabra
 	#include "gob/detection/tables_lit.h"       // Lost in Time
 	#include "gob/detection/tables_fascin.h"    // Fascination
 	#include "gob/detection/tables_geisha.h"    // Geisha

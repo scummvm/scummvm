@@ -73,8 +73,6 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 			error("Could not load video '%s'", fileName.c_str());
 	}
 
-	_video->pauseVideo(true);
-
 	Common::Rect bounds(0, 0, _video->getWidth(), _video->getHeight());
 	sizeElement(_video->getWidth(), _video->getHeight());
 	_movieBox = bounds;
@@ -83,7 +81,7 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 		allocateSurface(bounds);
 
 	setStart(0, getScale());
-	setStop(_video->getDuration() * getScale() / 1000, getScale());
+	setStop(_video->getDuration().convertToFramerate(getScale()).totalNumberOfFrames(), getScale());
 }
 
 void Movie::redrawMovieWorld() {
@@ -149,7 +147,7 @@ void Movie::setTime(const TimeValue time, const TimeScale scale) {
 		else if (timeFrac >= Common::Rational(_stopTime, _stopScale))
 			return;
 
-		_video->seekToTime(Audio::Timestamp(0, timeFrac.getNumerator(), timeFrac.getDenominator()));
+		_video->seek(Audio::Timestamp(0, timeFrac.getNumerator(), timeFrac.getDenominator()));
 		_time = timeFrac;
 		_lastMillis = 0;
 	}
@@ -166,15 +164,15 @@ void Movie::setRate(const Common::Rational rate) {
 }
 
 void Movie::start() {
-	if (_video && _video->isPaused())
-		_video->pauseVideo(false);
+	if (_video)
+		_video->start();
 
 	TimeBase::start();
 }
 
 void Movie::stop() {
-	if (_video && !_video->isPaused())
-		_video->pauseVideo(true);
+	if (_video)
+		_video->stop();
 
 	TimeBase::stop();
 }
@@ -199,7 +197,7 @@ TimeValue Movie::getDuration(const TimeScale scale) const {
 	// but the problem is that too much code requires this function to behave this way...
 
 	if (_video)
-		return _video->getDuration() * ((scale == 0) ? getScale() : scale) / 1000;
+		return _video->getDuration().convertToFramerate(((scale == 0) ? getScale() : scale)).totalNumberOfFrames();
 
 	return 0;
 }

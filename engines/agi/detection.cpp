@@ -20,9 +20,6 @@
  *
  */
 
-// FIXME: Avoid using printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
@@ -491,10 +488,14 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 		g_fallbackDesc.desc.gameid = _gameid.c_str();
 		g_fallbackDesc.desc.extra = _extra.c_str();
 
-		printf("Your game version has been detected using fallback matching as a\n");
-		printf("variant of %s (%s).\n", g_fallbackDesc.desc.gameid, g_fallbackDesc.desc.extra);
-		printf("If this is an original and unmodified version or new made Fanmade game,\n");
-		printf("please report any, information previously printed by ScummVM to the team.\n");
+		Common::String fallbackWarning;
+
+		fallbackWarning = "Your game version has been detected using fallback matching as a\n";
+		fallbackWarning += Common::String::format("variant of %s (%s).\n", g_fallbackDesc.desc.gameid, g_fallbackDesc.desc.extra);
+		fallbackWarning += "If this is an original and unmodified version or new made Fanmade game,\n";
+		fallbackWarning += "please report any, information previously printed by ScummVM to the team.\n";
+
+		g_system->logMessage(LogMessageType::kWarning, fallbackWarning.c_str());
 
 		return (const ADGameDescription *)&g_fallbackDesc;
 	}

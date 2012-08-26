@@ -150,11 +150,11 @@ void CGEEngine::sndSetVolume() {
 void CGEEngine::syncHeader(Common::Serializer &s) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::syncHeader(s)");
 
-	int i;
+	int i = kDemo;
 
 	s.syncAsUint16LE(_now);
 	s.syncAsUint16LE(_oldLev);
-	s.syncAsUint16LE(_demoText);
+	s.syncAsUint16LE(i);        // unused Demo string id
 	for (i = 0; i < 5; i++)
 		s.syncAsUint16LE(_game);
 	s.syncAsSint16LE(i);		// unused VGA::Mono variable
@@ -305,11 +305,20 @@ Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 	_hero->park();
 	_oldLev = _lev;
 
+	int x = _hero->_x;
+	int y = _hero->_y;
+	int z = _hero->_z;
+
 	// Write out the user's progress
 	saveGame(slot, desc);
+	_commandHandler->addCommand(kCmdLevel, -1, _oldLev, &_sceneLight);
 
 	// Reload the scene
 	sceneUp();
+
+	_hero->_x = x;
+	_hero->_y = y;
+	_hero->_z = z;
 
 	return Common::kNoError;
 }
@@ -518,8 +527,8 @@ Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	setShapeList(MB);
 }
 
-void Square::touch(uint16 mask, int x, int y) {
-	Sprite::touch(mask, x, y);
+void Square::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
+	Sprite::touch(mask, x, y, keyCode);
 	if (mask & kMouseLeftUp) {
 		_vm->XZ(_x + x, _y + y).cell() = 0;
 		_vm->_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, this);
@@ -706,7 +715,7 @@ void CGEEngine::qGame() {
 	saveGame(0, Common::String("Automatic Savegame"));
 
 	_vga->sunset();
-	_finis = true;
+	_endGame = true;
 }
 
 void CGEEngine::switchScene(int newScene) {
@@ -758,11 +767,11 @@ void System::funTouch() {
 		_funDel = n;
 }
 
-void System::touch(uint16 mask, int x, int y) {
+void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	funTouch();
 
 	if (mask & kEventKeyb) {
-		if (x == Common::KEYCODE_ESCAPE) {
+		if (keyCode == Common::KEYCODE_ESCAPE) {
 			// The original was calling keyClick() 
 			// The sound is uselessly annoying and noisy, so it has been removed
 			_vm->killText();
@@ -926,7 +935,7 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 }
 
 #pragma argsused
-void Sprite::touch(uint16 mask, int x, int y) {
+void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	_vm->_sys->funTouch();
 
 	if ((mask & kEventAttn) != 0)
@@ -1312,7 +1321,7 @@ void CGEEngine::runGame() {
 
 	_sceneLight->_flags._tran = true;
 	_vga->_showQ->append(_sceneLight);
-	_sceneLight->_flags._hide = true;
+	_sceneLight->_flags._hide = false;
 
 	const Seq pocSeq[] = {
 		{ 0, 0, 0, 0, 20 },
@@ -1403,14 +1412,14 @@ void CGEEngine::runGame() {
 
 	_keyboard->setClient(_sys);
 	// main loop
-	while (!_finis && !_quitFlag) {
-		if (_flag[3])
+	while (!_endGame && !_quitFlag) {
+		if (_flag[3]) // Flag FINIS
 			_commandHandler->addCallback(kCmdExec,  -1, 0, kQGame);
 		mainLoop();
 	}
 
 	// If finishing game due to closing ScummVM window, explicitly save the game
-	if (!_finis && canSaveGameStateCurrently())
+	if (!_endGame && canSaveGameStateCurrently())
 		qGame();
 
 	_keyboard->setClient(NULL);

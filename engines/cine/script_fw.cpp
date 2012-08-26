@@ -533,7 +533,6 @@ void RawScript::setData(const FWScriptInfo &info, const byte *data) {
  * @return Precalculated script labels
  */
 const ScriptVars &RawScript::labels() const {
-	assert(_data);
 	return _labels;
 }
 
@@ -687,7 +686,7 @@ const char *FWScript::getNextString() {
  * @param pos Restored script position
  */
 void FWScript::load(const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) {
-	assert(pos < _script._size);
+	assert(pos <= _script._size);
 	_labels = labels;
 	_localVars = local;
 	_compare = compare;
@@ -705,13 +704,15 @@ void FWScript::load(const ScriptVars &labels, const ScriptVars &local, uint16 co
 int FWScript::execute() {
 	int ret = 0;
 
-	while (!ret) {
-		_line = _pos;
-		byte opcode = getNextByte();
-		OpFunc handler = _info->opcodeHandler(opcode);
+	if(_script._size) {
+		while (!ret) {
+			_line = _pos;
+			byte opcode = getNextByte();
+			OpFunc handler = _info->opcodeHandler(opcode);
 
-		if (handler) {
-			ret = (this->*handler)();
+			if (handler) {
+				ret = (this->*handler)();
+			}
 		}
 	}
 
@@ -1861,7 +1862,7 @@ int FWScript::o1_disableSystemMenu() {
 	byte param = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: disableSystemMenu(%d)", _line, param);
-	disableSystemMenu = (param != 0);
+	disableSystemMenu = param;
 	return 0;
 }
 

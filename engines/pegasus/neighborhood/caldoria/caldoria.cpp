@@ -205,19 +205,19 @@ void Caldoria::start() {
 			error("Could not load pullback movie");
 
 		// Draw the first frame so we can fade to it
-		pullbackMovie->pauseVideo(true);
 		const Graphics::Surface *frame = pullbackMovie->decodeNextFrame();
 		assert(frame);
 		assert(frame->format == g_system->getScreenFormat());
 		g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 64, 112, frame->w, frame->h);
 		_vm->_gfx->doFadeInSync(kTwoSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond);
-		pullbackMovie->pauseVideo(false);
 
 		bool saveAllowed = _vm->swapSaveAllowed(false);
 		bool openAllowed = _vm->swapLoadAllowed(false);
 
 		bool skipped = false;
 		Input input;
+
+		pullbackMovie->start();
 
 		while (!_vm->shouldQuit() && !pullbackMovie->endOfVideo()) {
 			if (pullbackMovie->needsUpdate()) {

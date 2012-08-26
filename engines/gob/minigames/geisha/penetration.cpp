@@ -505,7 +505,7 @@ bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 		// Draw, fade in if necessary and wait for the end of the frame
 		_vm->_draw->blitInvalidated();
 		fadeIn();
-		_vm->_util->waitEndFrame();
+		_vm->_util->waitEndFrame(false);
 
 		// Handle the input
 		checkInput();
@@ -778,29 +778,24 @@ void Penetration::drawFloorText() {
 	else if (_floor == 2)
 		floorString = strings[kString1stBasement];
 
+	Surface &surface = *_vm->_draw->_backSurface;
+
 	if (floorString)
-		_vm->_draw->drawString(floorString, 10, 15, kColorFloorText, kColorBlack, 1,
-		                       *_vm->_draw->_backSurface, *font);
+		font->drawString(floorString, 10, 15, kColorFloorText, kColorBlack, 1, surface);
 
 	if (_exits.size() > 0) {
 		int exitCount = kString2Exits;
 		if (_exits.size() == 1)
 			exitCount = kString1Exit;
 
-		_vm->_draw->drawString(strings[kStringYouHave]    , 10, 38, kColorExitText, kColorBlack, 1,
-		                       *_vm->_draw->_backSurface, *font);
-		_vm->_draw->drawString(strings[exitCount]         , 10, 53, kColorExitText, kColorBlack, 1,
-		                       *_vm->_draw->_backSurface, *font);
-		_vm->_draw->drawString(strings[kStringToReach]    , 10, 68, kColorExitText, kColorBlack, 1,
-		                       *_vm->_draw->_backSurface, *font);
-		_vm->_draw->drawString(strings[kStringUpperLevel1], 10, 84, kColorExitText, kColorBlack, 1,
-		                       *_vm->_draw->_backSurface, *font);
-		_vm->_draw->drawString(strings[kStringUpperLevel2], 10, 98, kColorExitText, kColorBlack, 1,
-		                       *_vm->_draw->_backSurface, *font);
+		font->drawString(strings[kStringYouHave]    , 10, 38, kColorExitText, kColorBlack, 1, surface);
+		font->drawString(strings[exitCount]         , 10, 53, kColorExitText, kColorBlack, 1, surface);
+		font->drawString(strings[kStringToReach]    , 10, 68, kColorExitText, kColorBlack, 1, surface);
+		font->drawString(strings[kStringUpperLevel1], 10, 84, kColorExitText, kColorBlack, 1, surface);
+		font->drawString(strings[kStringUpperLevel2], 10, 98, kColorExitText, kColorBlack, 1, surface);
 
 	} else
-		_vm->_draw->drawString(strings[kStringNoExit], 10, 53, kColorExitText, kColorBlack, 1,
-		                       *_vm->_draw->_backSurface, *font);
+		font->drawString(strings[kStringNoExit], 10, 53, kColorExitText, kColorBlack, 1, surface);
 }
 
 void Penetration::drawEndText() {
@@ -814,21 +809,17 @@ void Penetration::drawEndText() {
 	if (!font)
 		return;
 
+	Surface &surface = *_vm->_draw->_backSurface;
+
 	const char **strings = kStrings[getLanguage()];
 
-	_vm->_draw->drawString(strings[kStringLevel0]     , 11, 21, kColorExitText, kColorBlack, 1,
-	                       *_vm->_draw->_backSurface, *font);
-	_vm->_draw->drawString(strings[kStringPenetration], 11, 42, kColorExitText, kColorBlack, 1,
-	                       *_vm->_draw->_backSurface, *font);
-	_vm->_draw->drawString(strings[kStringSuccessful] , 11, 58, kColorExitText, kColorBlack, 1,
-	                       *_vm->_draw->_backSurface, *font);
+	font->drawString(strings[kStringLevel0]     , 11, 21, kColorExitText, kColorBlack, 1, surface);
+	font->drawString(strings[kStringPenetration], 11, 42, kColorExitText, kColorBlack, 1, surface);
+	font->drawString(strings[kStringSuccessful] , 11, 58, kColorExitText, kColorBlack, 1, surface);
 
-	_vm->_draw->drawString(strings[kStringDanger]   , 11,  82, kColorFloorText, kColorBlack, 1,
-	                       *_vm->_draw->_backSurface, *font);
-	_vm->_draw->drawString(strings[kStringGynoides] , 11,  98, kColorFloorText, kColorBlack, 1,
-	                       *_vm->_draw->_backSurface, *font);
-	_vm->_draw->drawString(strings[kStringActivated], 11, 113, kColorFloorText, kColorBlack, 1,
-	                       *_vm->_draw->_backSurface, *font);
+	font->drawString(strings[kStringDanger]   , 11,  82, kColorFloorText, kColorBlack, 1, surface);
+	font->drawString(strings[kStringGynoides] , 11,  98, kColorFloorText, kColorBlack, 1, surface);
+	font->drawString(strings[kStringActivated], 11, 113, kColorFloorText, kColorBlack, 1, surface);
 
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kTextAreaLeft, kTextAreaTop, kTextAreaRight, kTextAreaBigBottom);
 	_vm->_draw->blitInvalidated();

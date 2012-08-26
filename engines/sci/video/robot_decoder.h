@@ -25,84 +25,103 @@
 
 #include "common/rational.h"
 #include "common/rect.h"
-#include "common/stream.h"
-#include "common/substream.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "graphics/pixelformat.h"
 #include "video/video_decoder.h"
+
+namespace Audio {
+class QueuingAudioStream;
+}
+
+namespace Common {
+class SeekableSubReadStreamEndian;
+}
 
 namespace Sci {
 
-#ifdef ENABLE_SCI32
-
-struct RobotHeader {
-	// 6 bytes, identifier bytes
-	uint16 version;
-	uint16 audioChunkSize;
-	uint16 audioSilenceSize;
-	// 2 bytes, unknown
-	uint16 frameCount;
-	uint16 paletteDataSize;
-	uint16 unkChunkDataSize;
-	// 5 bytes, unknown
-	byte hasSound;
-	// 34 bytes, unknown
-};
-
-class RobotDecoder : public Video::FixedRateVideoDecoder {
+class RobotDecoder : public Video::VideoDecoder {
 public:
-	RobotDecoder(Audio::Mixer *mixer, bool isBigEndian);
+	RobotDecoder(bool isBigEndian);
 	virtual ~RobotDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
 	bool load(GuiResourceId id);
 	void close();
-
-	bool isVideoLoaded() const { return _fileStream != 0; }
-	uint16 getWidth() const { return _width; }
-	uint16 getHeight() const { return _height; }
-	uint32 getFrameCount() const { return _header.frameCount; }
-	const Graphics::Surface *decodeNextFrame();
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
-	const byte *getPalette() { _dirtyPalette = false; return _palette; }
-	bool hasDirtyPalette() const { return _dirtyPalette; }
+	
 	void setPos(uint16 x, uint16 y) { _pos = Common::Point(x, y); }
 	Common::Point getPos() const { return _pos; }
 
 protected:
-	// VideoDecoder API
-	void updateVolume();
-	void updateBalance();
-
-	// FixedRateVideoDecoder API
-	Common::Rational getFrameRate() const { return Common::Rational(60, 10); }
-
+	void readNextPacket();
+	
 private:
+	class RobotVideoTrack : public FixedRateVideoTrack {
+	public:
+		RobotVideoTrack(int frameCount);
+		~RobotVideoTrack();
+
+		uint16 getWidth() const;
+		uint16 getHeight() const;
+		Graphics::PixelFormat getPixelFormat() const;
+		int getCurFrame() const { return _curFrame; }
+		int getFrameCount() const { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame() { return _surface; }
+		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const { return _dirtyPalette; }
+
+		void readPaletteChunk(Common::SeekableSubReadStreamEndian *stream, uint16 chunkSize);
+		void calculateVideoDimensions(Common::SeekableSubReadStreamEndian *stream, uint32 *frameSizes);
+		Graphics::Surface *getSurface() { return _surface; }
+		void increaseCurFrame() { _curFrame++; }
+
+	protected:
+		Common::Rational getFrameRate() const { return Common::Rational(60, 10); }
+
+	private:
+		int _frameCount;
+		int _curFrame;
+		byte _palette[256 * 3];
+		mutable bool _dirtyPalette;
+		Graphics::Surface *_surface;
+	};
+
+	class RobotAudioTrack : public AudioTrack {
+	public:
+		RobotAudioTrack();
+		~RobotAudioTrack();
+
+		Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kMusicSoundType; }
+
+		void queueBuffer(byte *buffer, int size);
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+	private:
+		Audio::QueuingAudioStream *_audioStream;
+	};
+
+	struct RobotHeader {
+		// 6 bytes, identifier bytes
+		uint16 version;
+		uint16 audioChunkSize;
+		uint16 audioSilenceSize;
+		// 2 bytes, unknown
+		uint16 frameCount;
+		uint16 paletteDataSize;
+		uint16 unkChunkDataSize;
+		// 5 bytes, unknown
+		byte hasSound;
+		// 34 bytes, unknown
+	} _header;
+
 	void readHeaderChunk();
-	void readPaletteChunk(uint16 chunkSize);
 	void readFrameSizesChunk();
-	void calculateVideoDimensions();
 
-	void freeData();
-
-	RobotHeader _header;
 	Common::Point _pos;
 	bool _isBigEndian;
+	uint32 *_frameTotalSize;
 
 	Common::SeekableSubReadStreamEndian *_fileStream;
-
-	uint16 _width;
-	uint16 _height;
-	uint32 *_frameTotalSize;
-	byte _palette[256 * 3];
-	bool _dirtyPalette;
-	Graphics::Surface *_surface;
-	Audio::QueuingAudioStream *_audioStream;
-	Audio::SoundHandle _audioHandle;
-	Audio::Mixer *_mixer;
 };
-#endif
 
 } // End of namespace Sci
 

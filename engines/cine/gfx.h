@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/stack.h"
 #include "cine/object.h"
+#include "cine/bg_list.h"
 
 namespace Cine {
 
@@ -177,8 +178,8 @@ public:
 	void drawFrame();
 	void setCommand(Common::String cmd);
 
-	virtual void incrustMask(const ObjectStruct &obj, uint8 color = 0);
-	virtual void incrustSprite(const ObjectStruct &obj);
+	virtual void incrustMask(const BGIncrust &incrust, uint8 color = 0);
+	virtual void incrustSprite(const BGIncrust &incrust);
 
 	virtual void loadBg16(const byte *bg, const char *name, unsigned int idx = 0);
 	virtual void loadCt16(const byte *ct, const char *name);
@@ -223,6 +224,7 @@ private:
 protected:
 
 	void drawSprite(const ObjectStruct &obj);
+	void drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp);
 	int drawChar(char character, int x, int y);
 	void drawBackground();
 	void renderOverlay(const Common::List<overlay>::iterator &it);
@@ -238,8 +240,8 @@ public:
 
 	void clear();
 
-	void incrustMask(const ObjectStruct &obj, uint8 color = 0);
-	void incrustSprite(const ObjectStruct &obj);
+	void incrustMask(const BGIncrust &incrust, uint8 color = 0);
+	void incrustSprite(const BGIncrust &incrust);
 
 	void loadBg16(const byte *bg, const char *name, unsigned int idx = 0);
 	void loadCt16(const byte *ct, const char *name);

@@ -68,7 +68,7 @@ void ILBMDecoder::loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stre
 		Graphics::PackBitsReadStream packStream(*stream);
 
 		// setup a buffer to hold enough data to build a line in the output
-		uint32 scanlineWidth = ((_header.width + 15)/16) << 1;
+		uint32 scanlineWidth = ((_header.width + 15) / 16) << 1;
 		byte *scanline = new byte[scanlineWidth * _header.depth];
 
 		for (uint i = 0; i < _header.height; ++i) {
@@ -82,7 +82,7 @@ void ILBMDecoder::loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stre
 			out += outPitch;
 		}
 
-		delete []scanline;
+		delete[] scanline;
 		break;
 	}
 
@@ -121,15 +121,12 @@ void ILBMDecoder::planarToChunky(byte *out, uint32 outPitch, byte *in, uint32 in
 		// then output the pixel according to the requested packing
 		if (!packPlanes) {
 			out[x] = pix;
-		} else
-		if (nPlanes == 1) {
-			out[x/8] |= (pix << (x & 7));
-		} else
-		if (nPlanes == 2) {
-			out[x/4] |= (pix << ((x & 3) << 1));
-		} else
-		if (nPlanes == 4) {
-			out[x/2] |= (pix << ((x & 1) << 2));
+		} else if (nPlanes == 1) {
+			out[x / 8] |= (pix << (x & 7));
+		} else if (nPlanes == 2) {
+			out[x / 4] |= (pix << ((x & 3) << 1));
+		} else if (nPlanes == 4) {
+			out[x / 2] |= (pix << ((x & 1) << 2));
 		}
 	}
 
@@ -187,7 +184,7 @@ struct PBMLoader {
 		_surface = &surface;
 		_colors = colors;
 		Common::IFFParser parser(&input);
-		Common::Functor1Mem< Common::IFFChunk&, bool, PBMLoader > c(this, &PBMLoader::callback);
+		Common::Functor1Mem<Common::IFFChunk &, bool, PBMLoader> c(this, &PBMLoader::callback);
 		parser.parse(c);
 	}
 
@@ -251,7 +248,7 @@ uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
 			for (uint32 j = 0; j < lenW; j++) {
 				*out++ = _input->readByte();
 			}
-			for ( ; lenR > lenW; lenR--) {
+			for (; lenR > lenW; lenR--) {
 				_input->readByte();
 			}
 		} else {  // len > 128

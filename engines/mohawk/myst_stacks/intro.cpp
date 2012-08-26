@@ -100,12 +100,8 @@ void Intro::introMovies_run() {
 
 	switch (_introStep) {
 	case 0:
-		// Play the Mattel (or UbiSoft) logo in the Myst ME Mac version
-		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh) {
-			_vm->_video->playMovie(_vm->wrapMovieFilename("mattel", kIntroStack));
-			_introStep = 1;
-		} else
-			_introStep = 2;
+		_introStep = 1;
+		_vm->_video->playMovie(_vm->wrapMovieFilename("broder", kIntroStack));
 		break;
 	case 1:
 		if (!_vm->_video->isVideoPlaying())
@@ -113,10 +109,7 @@ void Intro::introMovies_run() {
 		break;
 	case 2:
 		_introStep = 3;
-		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
-			_vm->_video->playMovie(_vm->wrapMovieFilename("presto", kIntroStack));
-		else
-			_vm->_video->playMovie(_vm->wrapMovieFilename("broder", kIntroStack));
+		_vm->_video->playMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
 		break;
 	case 3:
 		if (!_vm->_video->isVideoPlaying())
@@ -124,21 +117,13 @@ void Intro::introMovies_run() {
 		break;
 	case 4:
 		_introStep = 5;
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
-		break;
-	case 5:
-		if (!_vm->_video->isVideoPlaying())
-			_introStep = 6;
-		break;
-	case 6:
-		_introStep = 7;
 
 		if (!(_vm->getFeatures() & GF_DEMO)) // The demo doesn't have the intro video
 			_vm->_video->playMovie(_vm->wrapMovieFilename("intro", kIntroStack));
 		break;
-	case 7:
+	case 5:
 		if (!_vm->_video->isVideoPlaying())
-			_introStep = 8;
+			_introStep = 6;
 		break;
 	default:
 		if (_vm->getFeatures() & GF_DEMO)

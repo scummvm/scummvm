@@ -344,6 +344,7 @@ private:
 	uint _positions[_positionsCount];
 
 	void executeCallbacks();
+	void incrementDirectionCounter(EntityData::EntityCallData *data);
 	void processEntity(EntityIndex entity);
 
 	void drawSequence(EntityIndex entity, const char *sequence, EntityDirection direction) const;

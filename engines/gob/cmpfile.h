@@ -70,6 +70,8 @@ public:
 
 	uint16 addSprite(uint16 left, uint16 top, uint16 right, uint16 bottom);
 
+	void recolor(uint8 from, uint8 to);
+
 private:
 	GobEngine *_vm;
 

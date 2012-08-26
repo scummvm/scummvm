@@ -770,7 +770,7 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	if (_spellShapes) {
 		for (int i = 0; i < 4; i++) {
 			if (_spellShapes[i])
-				delete [] _spellShapes[i];
+				delete[] _spellShapes[i];
 		}
 		delete[] _spellShapes;
 	}
@@ -820,7 +820,7 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 			if (_firebeamShapes[i])
 				delete[] _firebeamShapes[i];
 		}
-		delete []_firebeamShapes;
+		delete[] _firebeamShapes;
 	}
 
 	delete[] _redSplatShape;

@@ -98,11 +98,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_view.soundListVolume = NULL;
 	_view.scriptResCount = 0;
 	_view.scriptResources = NULL;
-
-	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh) {
-		const Common::FSNode gameDataDir(ConfMan.get("path"));
-		SearchMan.addSubDirectoryMatching(gameDataDir, "CD Data");
-	}
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -205,11 +200,6 @@ static const char *mystFiles[] = {
 // qtw/myst/libelev.mov:	libup.mov is basically the same with sound
 
 Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieName, uint16 stack) {
-	// The Macintosh release of Myst ME stores its videos in a different folder
-	// WORKAROUND: The gear rotation videos are not in the CD Data folder. See above comments.
-	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh && !movieName.matchString("cl1wg?"))
-		return Common::String("CD Data/m/") + movieName + ".mov";
-
 	Common::String prefix;
 
 	switch (stack) {
@@ -498,52 +488,32 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	if (!_mhk[0]->openFile(mystFiles[_curStack]))
 		error("Could not open %s", mystFiles[_curStack]);
 
-	if (getPlatform() == Common::kPlatformMacintosh)
-		_gfx->loadExternalPictureFile(_curStack);
-
 	_runExitScript = false;
 
 	// Clear the resource cache and the image cache
 	_cache.clear();
 	_gfx->clearCache();
 
-	// Play Flyby Entry Movie on Masterpiece Edition. The Macintosh version is currently hooked
-	// up to the Cinepak versions of the video (the 'c' suffix) until the SVQ1 decoder is completed.
+	// Play Flyby Entry Movie on Masterpiece Edition.
 	const char *flyby = 0;
 	if (getFeatures() & GF_ME) {
 		switch (_curStack) {
 		case kSeleniticStack:
-			if (getPlatform() == Common::kPlatformMacintosh)
-				flyby = "FLY_SEc";
-			else
-				flyby = "selenitic flyby";
+			flyby = "selenitic flyby";
 			break;
 		case kStoneshipStack:
-			if (getPlatform() == Common::kPlatformMacintosh)
-				flyby = "FLY_STc";
-			else
-				flyby = "stoneship flyby";
+			flyby = "stoneship flyby";
 			break;
 		// Myst Flyby Movie not used in Original Masterpiece Edition Engine
 		case kMystStack:
-			if (_tweaksEnabled) {
-				if (getPlatform() == Common::kPlatformMacintosh)
-					flyby = "FLY_MYc";
-				else
-					flyby = "myst flyby";
-			}
+			if (_tweaksEnabled)
+				flyby = "myst flyby";
 			break;
 		case kMechanicalStack:
-			if (getPlatform() == Common::kPlatformMacintosh)
-				flyby = "FLY_MEc";
-			else
-				flyby = "mech age flyby";
+			flyby = "mech age flyby";
 			break;
 		case kChannelwoodStack:
-			if (getPlatform() == Common::kPlatformMacintosh)
-				flyby = "FLY_CHc";
-			else
-				flyby = "channelwood flyby";
+			flyby = "channelwood flyby";
 			break;
 		default:
 			break;

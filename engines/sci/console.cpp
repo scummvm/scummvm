@@ -250,20 +250,18 @@ void Console::postEnter() {
 #endif
 
 		if (_videoFile.hasSuffix(".seq")) {
-			SeqDecoder *seqDecoder = new SeqDecoder();
-			seqDecoder->setFrameDelay(_videoFrameDelay);
-			videoDecoder = seqDecoder;
+			videoDecoder = new SEQDecoder(_videoFrameDelay);
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
-			videoDecoder = new Video::VMDDecoder(g_system->getMixer());
+			videoDecoder = new Video::AdvancedVMDDecoder();
 		} else if (_videoFile.hasSuffix(".rbt")) {
-			videoDecoder = new RobotDecoder(g_system->getMixer(), _engine->getPlatform() == Common::kPlatformMacintosh);
+			videoDecoder = new RobotDecoder(_engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
 			duckMode = true;
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
 #endif
 		} else if (_videoFile.hasSuffix(".avi")) {
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
 		} else {
 			warning("Unrecognized video type");
 		}
@@ -2987,8 +2985,9 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 		// Ignore specific leftover scripts, which require other non-existing scripts
 		if ((_engine->getGameId() == GID_HOYLE3         && itr->getNumber() == 995) ||
 		    (_engine->getGameId() == GID_KQ5            && itr->getNumber() == 980) ||
-		    (_engine->getGameId() == GID_SLATER         && itr->getNumber() == 947) ||
-			(_engine->getGameId() == GID_MOTHERGOOSE256 && itr->getNumber() == 980)) {
+			(_engine->getGameId() == GID_KQ7            && itr->getNumber() == 111) ||
+			(_engine->getGameId() == GID_MOTHERGOOSE256 && itr->getNumber() == 980) ||
+		    (_engine->getGameId() == GID_SLATER         && itr->getNumber() == 947)) {
 			continue;
 		}
 

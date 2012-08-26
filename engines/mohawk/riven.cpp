@@ -646,7 +646,7 @@ Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
 	}
 
 	delete nameStream;
-	delete [] stringOffsets;
+	delete[] stringOffsets;
 	return name;
 }
 

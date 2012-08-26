@@ -150,7 +150,7 @@ void Picture::setupPalette() {
 		_vm->setPaletteEntries(_palette, 1, 128);
 }
 
-void Picture::drawMask(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32 dy) {
+void Picture::drawMask(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy) {
 	debugC(1, kDebugPicture, "drawMask(surface, %d, %d, %d, %d)", x, y, dx, dy);
 
 	for (int32 i = 0; i < 128; i++) {
@@ -161,8 +161,8 @@ void Picture::drawMask(Graphics::Surface &surface, int32 x, int32 y, int32 dx, i
 		_vm->setPaletteEntries(color, i, 1);
 	}
 
-	int32 rx = MIN(_width, surface.w - x);
-	int32 ry = MIN(_height, surface.h - y);
+	int16 rx = MIN<int16>(_width, surface.w - x);
+	int16 ry = MIN<int16>(_height, surface.h - y);
 
 	if (rx < 0 || ry < 0)
 		return;
@@ -172,10 +172,10 @@ void Picture::drawMask(Graphics::Surface &surface, int32 x, int32 y, int32 dx, i
 	uint8 *c = _data + _width * dy + dx;
 	uint8 *curRow = (uint8 *)surface.pixels + y * destPitch + x;
 
-	for (int32 yy = 0; yy < ry; yy++) {
+	for (int16 yy = 0; yy < ry; yy++) {
 		uint8 *curSrc = c;
 		uint8 *cur = curRow;
-		for (int32 xx = 0; xx < rx; xx++) {
+		for (int16 xx = 0; xx < rx; xx++) {
 			//*cur = (*curSrc >> 5) * 8; // & 0x1f;
 			*cur = (*curSrc & 0x1f) ? 127 : 0;
 
@@ -187,10 +187,9 @@ void Picture::drawMask(Graphics::Surface &surface, int32 x, int32 y, int32 dx, i
 	}
 }
 
-void Picture::drawWithRectList(Graphics::Surface& surface, int32 x, int32 y, int32 dx, int32 dy, Common::Array<Common::Rect>& rectArray) {
-
-	int32 rx = MIN(_width, surface.w - x);
-	int32 ry = MIN(_height, surface.h - y);
+void Picture::drawWithRectList(Graphics::Surface& surface, int16 x, int16 y, int16 dx, int16 dy, Common::Array<Common::Rect>& rectArray) {
+	int16 rx = MIN<int16>(_width, surface.w - x);
+	int16 ry = MIN<int16>(_height, surface.h - y);
 
 	if (rx < 0 || ry < 0)
 		return;
@@ -202,16 +201,16 @@ void Picture::drawWithRectList(Graphics::Surface& surface, int32 x, int32 y, int
 
 		Common::Rect rect = rectArray[i];
 
-		int32 fillRx = MIN<int32>(rx, rect.right - rect.left);
-		int32 fillRy = MIN<int32>(ry, rect.bottom - rect.top);
+		int16 fillRx = MIN<int32>(rx, rect.right - rect.left);
+		int16 fillRy = MIN<int32>(ry, rect.bottom - rect.top);
 
 		uint8 *c = _data + _width * (dy + rect.top) + (dx + rect.left);
 		uint8 *curRow = (uint8 *)surface.pixels + (y + rect.top) * destPitch + (x + rect.left);
 
-		for (int32 yy = 0; yy < fillRy; yy++) {
+		for (int16 yy = 0; yy < fillRy; yy++) {
 			uint8 *curSrc = c;
 			uint8 *cur = curRow;
-			for (int32 xx = 0; xx < fillRx; xx++) {
+			for (int16 xx = 0; xx < fillRx; xx++) {
 				*cur = *curSrc;
 				curSrc++;
 				cur++;
@@ -222,11 +221,11 @@ void Picture::drawWithRectList(Graphics::Surface& surface, int32 x, int32 y, int
 	}
 }
 
-void Picture::draw(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32 dy) {
+void Picture::draw(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy) {
 	debugC(6, kDebugPicture, "draw(surface, %d, %d, %d, %d)", x, y, dx, dy);
 
-	int32 rx = MIN(_width, surface.w - x);
-	int32 ry = MIN(_height, surface.h - y);
+	int16 rx = MIN<int16>(_width, surface.w - x);
+	int16 ry = MIN<int16>(_height, surface.h - y);
 
 	if (rx < 0 || ry < 0)
 		return;
@@ -236,10 +235,10 @@ void Picture::draw(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32
 	uint8 *c = _data + _width * dy + dx;
 	uint8 *curRow = (uint8 *)surface.pixels + y * destPitch + x;
 
-	for (int32 yy = 0; yy < ry; yy++) {
+	for (int16 yy = 0; yy < ry; yy++) {
 		uint8 *curSrc = c;
 		uint8 *cur = curRow;
-		for (int32 xx = 0; xx < rx; xx++) {
+		for (int16 xx = 0; xx < rx; xx++) {
 			*cur = *curSrc;
 			curSrc++;
 			cur++;
@@ -249,7 +248,7 @@ void Picture::draw(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32
 	}
 }
 
-uint8 Picture::getData(int32 x, int32 y) {
+uint8 Picture::getData(int16 x, int16 y) {
 	debugC(6, kDebugPicture, "getData(%d, %d)", x, y);
 
 	if (!_data)
@@ -259,7 +258,7 @@ uint8 Picture::getData(int32 x, int32 y) {
 }
 
 // use original work from johndoe
-void Picture::floodFillNotWalkableOnMask(int32 x, int32 y) {
+void Picture::floodFillNotWalkableOnMask(int16 x, int16 y) {
 	debugC(1, kDebugPicture, "floodFillNotWalkableOnMask(%d, %d)", x, y);
 	// Stack-based floodFill algorithm based on
 	// http://student.kuleuven.be/~m0216922/CG/files/floodfill.cpp
@@ -292,10 +291,10 @@ void Picture::floodFillNotWalkableOnMask(int32 x, int32 y) {
 	}
 }
 
-void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable) {
+void Picture::drawLineOnMask(int16 x, int16 y, int16 x2, int16 y2, bool walkable) {
 	debugC(1, kDebugPicture, "drawLineOnMask(%d, %d, %d, %d, %d)", x, y, x2, y2, (walkable) ? 1 : 0);
-	static int32 lastX = 0;
-	static int32 lastY = 0;
+	static int16 lastX = 0;
+	static int16 lastY = 0;
 
 	if (x == -1) {
 		x = lastX;
@@ -303,12 +302,12 @@ void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable
 	}
 
 	uint32 bx = x << 16;
-	int32 dx = x2 - x;
+	int16 dx = x2 - x;
 	uint32 by = y << 16;
-	int32 dy = y2 - y;
-	uint32 adx = abs(dx);
-	uint32 ady = abs(dy);
-	int32 t = 0;
+	int16 dy = y2 - y;
+	uint16 adx = abs(dx);
+	uint16 ady = abs(dy);
+	int16 t = 0;
 	if (adx <= ady)
 		t = ady;
 	else
@@ -317,9 +316,7 @@ void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable
 	int32 cdx = (dx << 16) / t;
 	int32 cdy = (dy << 16) / t;
 
-	int32 i = t;
-	while (i) {
-
+	for (int16 i = t; i > 0; i--) {
 		int32 rx = bx >> 16;
 		int32 ry = by >> 16;
 
@@ -337,7 +334,6 @@ void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable
 
 		bx += cdx;
 		by += cdy;
-		i--;
 	}
 }
 } // End of namespace Toon

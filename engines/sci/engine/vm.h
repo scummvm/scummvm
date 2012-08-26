@@ -202,6 +202,7 @@ enum SciOpcodes {
 	op_push2    = 0x3d,	// 061
 	op_pushSelf = 0x3e,	// 062
 	op_line     = 0x3f,	// 063
+	//
 	op_lag      = 0x40,	// 064
 	op_lal      = 0x41,	// 065
 	op_lat      = 0x42,	// 066
@@ -218,6 +219,7 @@ enum SciOpcodes {
 	op_lsli     = 0x4d,	// 077
 	op_lsti     = 0x4e,	// 078
 	op_lspi     = 0x4f,	// 079
+	//
 	op_sag      = 0x50,	// 080
 	op_sal      = 0x51,	// 081
 	op_sat      = 0x52,	// 082
@@ -234,6 +236,7 @@ enum SciOpcodes {
 	op_ssli     = 0x5d,	// 093
 	op_ssti     = 0x5e,	// 094
 	op_sspi     = 0x5f,	// 095
+	//
 	op_plusag   = 0x60,	// 096
 	op_plusal   = 0x61,	// 097
 	op_plusat   = 0x62,	// 098
@@ -250,6 +253,7 @@ enum SciOpcodes {
 	op_plussli  = 0x6d,	// 109
 	op_plussti  = 0x6e,	// 110
 	op_plusspi  = 0x6f,	// 111
+	//
 	op_minusag  = 0x70,	// 112
 	op_minusal  = 0x71,	// 113
 	op_minusat  = 0x72,	// 114

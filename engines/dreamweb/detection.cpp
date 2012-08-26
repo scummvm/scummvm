@@ -172,8 +172,6 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 			saveName += (char)in->readByte();
 
 		SaveStateDescriptor desc(slot, saveName);
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
 
 		// Check if there is a ScummVM data block
 		if (header.len(6) == SCUMMVM_BLOCK_MAGIC_SIZE) {

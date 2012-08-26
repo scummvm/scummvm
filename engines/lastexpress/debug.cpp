@@ -28,13 +28,13 @@
 #include "lastexpress/data/cursor.h"
 #include "lastexpress/data/scene.h"
 #include "lastexpress/data/sequence.h"
-#include "lastexpress/data/snd.h"
 #include "lastexpress/data/subtitle.h"
 
 #include "lastexpress/fight/fight.h"
 
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/beetle.h"
+#include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
@@ -44,15 +44,12 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
 #include "common/debug-channels.h"
-#include "common/events.h"
 #include "common/md5.h"
 
 namespace LastExpress {
@@ -612,7 +609,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 			loadArchive((ArchiveIndex)getNumber(argv[2]));
 
 		// If we got a nis filename, check that the file exists
-		if (name.contains('.') && _engine->getResourceManager()->hasFile(name)) {
+		if (name.contains('.') && !_engine->getResourceManager()->hasFile(name)) {
 			DebugPrintf("Cannot find file: %s\n", name.c_str());
 			return true;
 		}

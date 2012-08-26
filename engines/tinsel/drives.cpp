@@ -149,7 +149,7 @@ bool GotoCD() {
 
 bool TinselFile::_warningShown = false;
 
-TinselFile::TinselFile() : ReadStreamEndian((_vm->getFeatures() & GF_BIG_ENDIAN) != 0) {
+TinselFile::TinselFile() : ReadStreamEndian(TinselV1Mac) {
 	_stream = NULL;
 }
 

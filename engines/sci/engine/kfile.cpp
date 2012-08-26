@@ -197,8 +197,15 @@ reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 	// TODO: Stub
 	switch (argv[0].toUint16()) {
 	case 0:
-		// Return whether the contents of disc argv[1] is available.
-		return TRUE_REG;
+		if (argc == 1) {
+			// Check if a disc is in the drive
+			return TRUE_REG;
+		} else {
+			// Check if the specified disc is in the drive
+			// and return the current disc number. We just
+			// return the requested disc number.
+			return argv[1];
+		}
 	case 1:
 		// Return the current CD number
 		return make_reg(0, 1);
@@ -688,6 +695,13 @@ reg_t kFileIOCreateSaveSlot(EngineState *s, int argc, reg_t *argv) {
 	return TRUE_REG;	// slot creation was successful
 }
 
+reg_t kFileIOIsValidDirectory(EngineState *s, int argc, reg_t *argv) {
+	// Used in Torin's Passage and LSL7 to determine if the directory passed as
+	// a parameter (usually the save directory) is valid. We always return true
+	// here.
+	return TRUE_REG;
+}
+
 #endif
 
 // ---- Save operations -------------------------------------------------------
@@ -1002,7 +1016,7 @@ reg_t kAutoSave(EngineState *s, int argc, reg_t *argv) {
 	// the elapsed time from the timer object)
 
 	// This function has to return something other than 0 to proceed
-	return s->r_acc;
+	return TRUE_REG;
 }
 
 #endif

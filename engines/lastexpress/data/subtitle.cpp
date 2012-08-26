@@ -32,7 +32,6 @@
 #include "common/debug.h"
 #include "common/rect.h"
 #include "common/stream.h"
-#include "common/textconsole.h"
 
 namespace LastExpress {
 
@@ -151,7 +150,7 @@ SubtitleManager::~SubtitleManager() {
 }
 
 void SubtitleManager::reset() {
-	for (int i = 0; i < (int)_subtitles.size(); i++)
+	for (uint i = 0; i < _subtitles.size(); i++)
 		delete _subtitles[i];
 
 	_subtitles.clear();

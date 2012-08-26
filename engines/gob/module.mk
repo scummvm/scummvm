@@ -3,6 +3,7 @@ MODULE := engines/gob
 MODULE_OBJS := \
 	anifile.o \
 	aniobject.o \
+	backbuffer.o \
 	cheater.o \
 	cheater_geisha.o \
 	cmpfile.o \
@@ -77,6 +78,17 @@ MODULE_OBJS := \
 	demos/scnplayer.o \
 	demos/batplayer.o \
 	detection/detection.o \
+	pregob/pregob.o \
+	pregob/txtfile.o \
+	pregob/gctfile.o \
+	pregob/seqfile.o \
+	pregob/onceupon/onceupon.o \
+	pregob/onceupon/abracadabra.o \
+	pregob/onceupon/babayaga.o \
+	pregob/onceupon/title.o \
+	pregob/onceupon/parents.o \
+	pregob/onceupon/stork.o \
+	pregob/onceupon/chargenchild.o \
 	minigames/geisha/evilfish.o \
 	minigames/geisha/oko.o \
 	minigames/geisha/meter.o \

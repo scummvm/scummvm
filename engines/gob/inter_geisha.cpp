@@ -200,8 +200,12 @@ void Inter_Geisha::oGeisha_checkData(OpFuncParams &params) {
 	if (mode == SaveLoad::kSaveModeNone) {
 
 		exists = _vm->_dataIO->hasFile(file);
-		if (!exists)
-			warning("File \"%s\" not found", file.c_str());
+		if (!exists) {
+			// NOTE: Geisha looks if fin.tot exists to check if it needs to open disk3.stk.
+			//       This is completely normal, so don't print a warning.
+			if (file != "fin.tot")
+				warning("File \"%s\" not found", file.c_str());
+		}
 
 	} else if (mode == SaveLoad::kSaveModeSave)
 		exists = _vm->_saveLoad->getSize(file.c_str()) >= 0;

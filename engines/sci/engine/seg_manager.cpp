@@ -143,16 +143,27 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 }
 
 void SegManager::deallocate(SegmentId seg) {
-	if (!check(seg))
-		error("SegManager::deallocate(): invalid segment ID");
+	if (seg < 1 || (uint)seg >= _heap.size())
+		error("Attempt to deallocate an invalid segment ID");
 
 	SegmentObj *mobj = _heap[seg];
+	if (!mobj)
+		error("Attempt to deallocate an already freed segment");
 
 	if (mobj->getType() == SEG_TYPE_SCRIPT) {
 		Script *scr = (Script *)mobj;
 		_scriptSegMap.erase(scr->getScriptNumber());
-		if (scr->getLocalsSegment())
-			deallocate(scr->getLocalsSegment());
+		if (scr->getLocalsSegment()) {
+			// Check if the locals segment has already been deallocated.
+			// If the locals block has been stored in a segment with an ID
+			// smaller than the segment ID of the script itself, it will be
+			// already freed at this point. This can happen when scripts are
+			// uninstantiated and instantiated again: they retain their own
+			// segment ID, but are allocated a new locals segment, which can
+			// have an ID smaller than the segment of the script itself.
+			if (_heap[scr->getLocalsSegment()])
+				deallocate(scr->getLocalsSegment());
+		}
 	}
 
 	delete mobj;
@@ -305,21 +316,6 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 	else if (result.size() <= (uint)index)
 		return NULL_REG; // Not found
 	return result[index];
-}
-
-// validate the seg
-// return:
-//	false - invalid seg
-//	true  - valid seg
-bool SegManager::check(SegmentId seg) {
-	if (seg < 1 || (uint)seg >= _heap.size()) {
-		return false;
-	}
-	if (!_heap[seg]) {
-		warning("SegManager: seg %x is removed from memory, but not removed from hash_map", seg);
-		return false;
-	}
-	return true;
 }
 
 // return the seg if script_id is valid and in the map, else 0

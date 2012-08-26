@@ -109,7 +109,7 @@ void Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 		_vm->setMainCursor(kDefaultMystCursor);
 
 		// Play movie end (atrus leaving)
-		_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, 14813, 600), Audio::Timestamp(0xFFFFFFFF));
+		_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, 14813, 600), _vm->_video->getDuration(atrus));
 		_vm->_video->setVideoLooping(atrus, false);
 
 		_atrusLeft = true;

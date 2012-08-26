@@ -27,7 +27,6 @@
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
@@ -337,31 +336,33 @@ void Beetle::drawUpdate() {
 		}
 	}
 
-#define INVERT_Y() \
-	switch (_data->indexes[_data->offset]) { \
-	default: \
-		break; \
-	case 24: \
-	case 25: \
-	case 26: \
-	case 27: \
-	case 28: \
-		_data->coordY = -_data->coordY; \
-		break; \
-	}
-
 	// Invert direction
-	INVERT_Y();
+	invertDirection();
 
 	SequenceFrame *frame = new SequenceFrame(_data->currentSequence, (uint16)_data->currentFrame);
 	updateFrame(frame);
 
-	INVERT_Y();
+	invertDirection();
 
 	getScenes()->addToQueue(frame);
 
 	SAFE_DELETE(_data->frame);
 	_data->frame = frame;
+}
+
+void Beetle::invertDirection() {
+	switch (_data->indexes[_data->offset]) {
+	default:
+		break;
+
+	case 24:
+	case 25:
+	case 26:
+	case 27:
+	case 28:
+		_data->coordY = -_data->coordY;
+		break;
+	}
 }
 
 void Beetle::move() {

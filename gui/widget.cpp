@@ -296,8 +296,8 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
-		sendCommand(_cmd, 0);
 		startAnimatePressedState();
+		sendCommand(_cmd, 0);
 	}
 }
 
@@ -412,6 +412,19 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
 	}
 
 	_gfx->copyFrom(*gfx);
+}
+
+void PicButtonWidget::setGfx(int w, int h, int r, int g, int b) {
+	if (w == -1)
+		w = _w;
+	if (h == -1)
+		h = _h;
+
+	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
+
+	_gfx->free();
+	_gfx->create(w, h, requiredFormat);
+	_gfx->fillRect(Common::Rect(0, 0, w, h), _gfx->format.RGBToColor(r, g, b));
 }
 
 void PicButtonWidget::drawWidget() {
@@ -696,6 +709,26 @@ ContainerWidget::ContainerWidget(GuiObject *boss, int x, int y, int w, int h) : 
 ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name) : Widget(boss, name) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kContainerWidget;
+}
+
+ContainerWidget::~ContainerWidget() {
+	// We also remove the widget from the boss to avoid segfaults, when the
+	// deleted widget is an active widget in the boss.
+	for (Widget *w = _firstWidget; w; w = w->next()) {
+		_boss->removeWidget(w);
+	}
+}
+
+Widget *ContainerWidget::findWidget(int x, int y) {
+	return findWidgetInChain(_firstWidget, x, y);
+}
+
+void ContainerWidget::removeWidget(Widget *widget) {
+	// We also remove the widget from the boss to avoid a reference to a
+	// widget not in the widget chain anymore.
+	_boss->removeWidget(widget);
+
+	Widget::removeWidget(widget);
 }
 
 void ContainerWidget::drawWidget() {

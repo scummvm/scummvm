@@ -97,7 +97,7 @@ _sndio=auto
 _timidity=auto
 _zlib=auto
 _sparkle=auto
-_png=no
+_png=auto
 _theoradec=auto
 _faad=auto
 _fluidsynth=auto
@@ -712,7 +712,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, bada, dc, dingux, ds, gp2x, gph,
+  --backend=BACKEND       backend to build (android, bada, dc, dingux, ds, gph,
                           iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
                           psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
@@ -2079,8 +2079,9 @@ case $_host_os in
 		DEFINES="$DEFINES -D__PLAYSTATION2__"
 		;;
 	ps3)
-		# Force use of SDL from the ps3 toolchain
+		# Force use of SDL and freetype from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
+		_freetypepath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
 		DEFINES="$DEFINES -DPLAYSTATION3"
 		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
@@ -2202,13 +2203,8 @@ if test -n "$_host"; then
 		bfin*)
 			;;
 		caanoo)
-			# This uses the GPH backend.
-			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DCAANOO"
-			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
-			if test "$_debug_build" = yes; then
-				DEFINES="$DEFINES -DGPH_DEBUG"
-			else
+			if test "$_debug_build" = no; then
 				# Use -O3 on the Caanoo for non-debug builds.
 				_optimization_level=-O3
 			fi
@@ -2299,13 +2295,7 @@ if test -n "$_host"; then
 			add_line_to_config_h "#define USE_WII_DI"
 			;;
 		gp2x)
-			# This uses the GPH backend.
-			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DGP2X"
-			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
-			if test "$_debug_build" = yes; then
-				DEFINES="$DEFINES -DGPH_DEBUG"
-			fi
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
@@ -2319,13 +2309,7 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/gph/gp2x-bundle.mk"
 			;;
 		gp2xwiz)
-			# This uses the GPH backend.
-			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DGP2XWIZ"
-			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
-			if test "$_debug_build" = yes; then
-				DEFINES="$DEFINES -DGPH_DEBUG"
-			fi
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
 			CXXFLAGS="$CXXFLAGS -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
@@ -2611,9 +2595,14 @@ case $_backend in
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
 		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
 		;;
-	gp2x)
-		;;
 	gph)
+		# On the GPH devices we want fancy themes but do not want the load/save thumbnail grid.
+		DEFINES="$DEFINES -DDISABLE_SAVELOADCHOOSER_GRID"
+		DEFINES="$DEFINES -DGPH_DEVICE"
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+		if test "$_debug_build" = yes; then
+			DEFINES="$DEFINES -DGPH_DEBUG"
+		fi
 		;;
 	iphone)
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
@@ -2709,7 +2698,7 @@ MODULES="$MODULES backends/platform/$_backend"
 # Setup SDL specifics for SDL based backends
 #
 case $_backend in
-	dingux | gp2x | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
+	dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
@@ -3213,6 +3202,11 @@ fi
 define_in_config_if_yes "$_png" 'USE_PNG'
 echo "$_png"
 
+if test `get_engine_build sword25` = yes && test ! "$_png" = yes ; then
+	echo "...disabling Broken Sword 2.5 engine. PNG is required"
+	engine_disable sword25
+fi
+
 #
 # Check for Theora Decoder
 #
@@ -3375,7 +3369,7 @@ if test "$_fluidsynth" = yes ; then
 	esac
 	INCLUDES="$INCLUDES $FLUIDSYNTH_CFLAGS"
 fi
-define_in_config_h_if_yes "$_fluidsynth" 'USE_FLUIDSYNTH'
+define_in_config_if_yes "$_fluidsynth" 'USE_FLUIDSYNTH'
 echo "$_fluidsynth"
 
 #
@@ -3501,6 +3495,21 @@ define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 # Check for OpenGL (ES)
 #
 echocheck "OpenGL"
+
+case $_backend in
+	openpandora)
+		# Only enable OpenGL ES on the OpanPandora if --enable-opengl is passed in explicitly.
+		if test "$_opengl" = yes ; then
+			_opengl=yes
+			_opengles=yes
+			OPENGL_LIBS="-lGLES_CM -lEGL -lX11"
+			OPENGL_CFLAGS="$OPENGL_LIBS"
+			LIBS="$LIBS $OPENGL_LIBS"
+			INCLUDES="$INCLUDES $OPENGL_CFLAGS"
+		fi
+		;;
+esac
+
 if test "$_opengl" = auto ; then
 	_opengl=no
 	if test "$_backend" = "sdl" ; then

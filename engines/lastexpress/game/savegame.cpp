@@ -22,6 +22,7 @@
 
 #include "lastexpress/game/savegame.h"
 
+#include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
@@ -34,12 +35,12 @@
 
 #include "lastexpress/debug.h"
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 #include "common/file.h"
-#include "common/system.h"
 
 namespace LastExpress {
+
+#define DISABLE_COMPRESSION 1
 
 // Names of savegames
 static const struct {
@@ -52,6 +53,296 @@ static const struct {
 	{"lastexpress-teal.egg"},
 	{"lastexpress-gold.egg"}
 };
+
+//////////////////////////////////////////////////////////////////////////
+// SavegameStream
+//////////////////////////////////////////////////////////////////////////
+
+uint32 SavegameStream::write(const void *dataPtr, uint32 dataSize) {
+#if !DISABLE_COMPRESSION
+	if (_enableCompression)
+		return writeCompressed(dataPtr, dataSize);
+#endif
+
+	return Common::MemoryWriteStreamDynamic::write(dataPtr, dataSize);
+}
+
+uint32 SavegameStream::read(void *dataPtr, uint32 dataSize) {
+#if !DISABLE_COMPRESSION
+	if (_enableCompression)
+		return readCompressed(dataPtr, dataSize);
+#endif
+
+	return readUncompressed(dataPtr, dataSize);
+}
+
+uint32 SavegameStream::readUncompressed(void *dataPtr, uint32 dataSize) {
+	if ((int32)dataSize > size() - pos()) {
+		dataSize = size() - pos();
+		_eos = true;
+	}
+	memcpy(dataPtr, getData() + pos(), dataSize);
+
+	seek(dataSize, SEEK_CUR);
+
+	return dataSize;
+}
+
+void SavegameStream::writeBuffer(uint8 value, bool onlyValue) {
+	if (_bufferOffset == -1)
+		_bufferOffset = 0;
+
+	if (_bufferOffset == 256) {
+		_bufferOffset = 0;
+		Common::MemoryWriteStreamDynamic::write(_buffer, 256);
+	}
+
+	if (onlyValue || value < 0xFB)
+		_buffer[_bufferOffset] = value;
+	else
+		_buffer[_bufferOffset] = 0xFE;
+
+	_offset++;
+	_bufferOffset++;
+
+	if (!onlyValue && value >= 0xFB)
+	{
+		if (_bufferOffset == 256) {
+			_bufferOffset = 0;
+			Common::MemoryWriteStreamDynamic::write(_buffer, 256);
+		}
+
+		_buffer[_bufferOffset] = value;
+
+		_bufferOffset++;
+		_offset++;
+	}
+}
+
+uint8 SavegameStream::readBuffer() {
+	if (_bufferOffset == -1 || _bufferOffset >= 256) {
+		readUncompressed(_buffer, 256);
+		_bufferOffset = 0;
+	}
+
+	byte val = _buffer[_bufferOffset];
+	_bufferOffset++;
+
+	return val;
+}
+
+uint32 SavegameStream::process() {
+	_enableCompression = !_enableCompression;
+
+#if DISABLE_COMPRESSION
+	return 0;
+#else
+	switch (_status) {
+	default:
+		break;
+
+	case kStatusReading:
+		_status = kStatusReady;
+		if (_bufferOffset != -1 && _bufferOffset != 256) {
+			seek(_bufferOffset - 256, SEEK_CUR);
+			_bufferOffset = -1;
+		}
+		break;
+
+	case kStatusWriting:
+		switch (_valueCount) {
+		default:
+			break;
+
+		case 1:
+			writeBuffer(_previousValue, false);
+			break;
+
+		case 2:
+			if (_previousValue) {
+				writeBuffer(0xFF);
+				writeBuffer(_repeatCount);
+				writeBuffer(_previousValue);
+				break;
+			}
+
+			if (_repeatCount == 3) {
+				writeBuffer(0xFB);
+				break;
+			}
+
+			if (_repeatCount == 255) {
+				writeBuffer(0xFC);
+				break;
+			}
+
+			writeBuffer(0xFD);
+			writeBuffer(_repeatCount);
+			break;
+		}
+
+		if (_bufferOffset != -1 && _bufferOffset != 0) {
+			Common::MemoryWriteStreamDynamic::write(_buffer, _bufferOffset);
+			_bufferOffset = -1;
+		}
+		break;
+	}
+
+	_status = kStatusReady;
+	_valueCount = 0;
+	uint32 offset = _offset;
+	_offset = 0;
+
+	return offset;
+#endif
+}
+
+uint32 SavegameStream::writeCompressed(const void *dataPtr, uint32 dataSize) {
+	if (_status == kStatusReading)
+		error("[SavegameStream::writeCompressed] Error: Compression buffer is in read mode.");
+
+	_status = kStatusWriting;
+	const byte *data = (const byte *)dataPtr;
+
+	while (dataSize) {
+		switch (_valueCount) {
+		default:
+			error("[SavegameStream::writeCompressed] Invalid value count (%d)", _valueCount);
+
+		case 0:
+			_previousValue = *data++;
+			_valueCount = 1;
+			break;
+
+		case 1:
+			if (*data != _previousValue) {
+				writeBuffer(_previousValue, false);
+				_previousValue = *data;
+			} else {
+				_valueCount = 2;
+				_repeatCount = 2;
+			}
+
+			++data;
+			break;
+
+		case 2:
+			if (*data != _previousValue || _repeatCount >= 255) {
+				if (_previousValue) {
+					writeBuffer(0xFF, true);
+					writeBuffer(_repeatCount, true);
+					writeBuffer(_previousValue, true);
+
+					_previousValue = *data++;
+					_valueCount = 1;
+					break;
+				}
+
+				if (_repeatCount == 3) {
+					writeBuffer(0xFB, true);
+
+					_previousValue = *data++;
+					_valueCount = 1;
+					break;
+				}
+
+				if (_repeatCount == -1) {
+					writeBuffer(0xFC, true);
+
+					_previousValue = *data++;
+					_valueCount = 1;
+					break;
+				}
+
+				writeBuffer(0xFD, true);
+				writeBuffer(_repeatCount, true);
+
+				_previousValue = *data++;
+				_valueCount = 1;
+			}
+
+			++data;
+			++_repeatCount;
+			break;
+		}
+
+		--dataSize;
+	}
+
+	return _offset;
+}
+
+uint32 SavegameStream::readCompressed(void *dataPtr, uint32 dataSize) {
+	if (_status == kStatusWriting)
+		error("[SavegameStream::writeCompressed] Error: Compression buffer is in write mode.");
+
+	_status = kStatusReady;
+	byte *data = (byte *)dataPtr;
+
+	while (dataSize) {
+		switch (_valueCount) {
+		default:
+			error("[SavegameStream::readCompressed] Invalid value count (%d)", _valueCount);
+
+		case 0:
+		case 1: {
+			// Read control code
+			byte control = readBuffer();
+
+			switch (control) {
+			default:
+				// Data value
+				*data++ = control;
+				break;
+
+			case 0xFB:
+				_repeatCount = 2;
+				_previousValue = 0;
+				*data++ = 0;
+				_valueCount = 2;
+				break;
+
+			case 0xFC:
+				_repeatCount = 254;
+				_previousValue = 0;
+				*data++ = 0;
+				_valueCount = 2;
+				break;
+
+			case 0xFD:
+				_repeatCount = readBuffer() - 1;
+				_previousValue = 0;
+				*data++ = 0;
+				_valueCount = 2;
+				break;
+
+			case 0xFE:
+				*data++ = readBuffer();
+				break;
+
+			case 0xFF:
+				_repeatCount = readBuffer() - 1;
+				_previousValue = readBuffer();
+				*data++ = _previousValue;
+				_valueCount = 2;
+				break;
+			}
+			}
+			break;
+
+		case 2:
+			*data++ = _previousValue;
+			_repeatCount--;
+			if (!_repeatCount)
+				_valueCount = 1;
+			break;
+		}
+
+		--dataSize;
+	}
+
+	return _offset;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Constructors
@@ -81,6 +372,7 @@ void SaveLoad::flushStream(GameId id) {
 		error("[SaveLoad::flushStream] Savegame stream is invalid");
 
 	save->write(_savegame->getData(), (uint32)_savegame->size());
+	save->finalize();
 
 	delete save;
 }
@@ -258,7 +550,7 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 		entry.saveLoadWithSerializer(ser);
 
 		if (!entry.isValid()) {
-			warning("[SaveLoad::saveGame] Invalid entry. This savegame might be corrupted");
+			error("[SaveLoad::saveGame] Invalid entry. This savegame might be corrupted");
 			_savegame->seek(header.offset);
 		} else if (getState()->time < entry.time || (type == kSavegameTypeTickInterval && getState()->time == entry.time)) {
 			// Not ready to save a game, skipping!
@@ -341,16 +633,46 @@ bool SaveLoad::loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *he
 //////////////////////////////////////////////////////////////////////////
 // Entries
 //////////////////////////////////////////////////////////////////////////
-void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
-#define WRITE_ENTRY(name, func, val) { \
-	uint32 _prevPosition = (uint32)_savegame->pos(); \
-	func; \
-	uint32 _count = (uint32)_savegame->pos() - _prevPosition; \
-	debugC(kLastExpressDebugSavegame, "Savegame: Writing " #name ": %d bytes", _count); \
-	if (_count != val)\
-		error("[SaveLoad::writeEntry] Number of bytes written (%d) differ from expected count (%d)", _count, val); \
+uint32 SaveLoad::writeValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size) {
+	debugC(kLastExpressDebugSavegame, "Savegame: Writing %s: %u bytes", name, size);
+
+	uint32 prevPosition = (uint32)_savegame->pos();
+
+	// Serialize data into our buffer
+	(*function)(ser);
+
+	uint32 count = (uint32)_savegame->pos() - prevPosition;
+
+#if DISABLE_COMPRESSION
+	if (count != size)
+		error("[SaveLoad::writeValue] %s - Number of bytes written (%d) differ from expected count (%d)", name, count, size);
+#endif
+
+	return count;
 }
 
+uint32 SaveLoad::readValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size) {
+	debugC(kLastExpressDebugSavegame, "Savegame: Reading %s: %u bytes", name, size);
+
+	uint32 prevPosition = (uint32)_savegame->pos();
+
+	(*function)(ser);
+
+	uint32 count = (uint32)_savegame->pos() - prevPosition;
+
+#if DISABLE_COMPRESSION
+	if (size != 0 && count != size)
+		error("[SaveLoad::readValue] %s - Number of bytes read (%d) differ from expected count (%d)", name, count, size);
+#endif
+
+	return count;
+}
+
+void SaveLoad::syncEntity(Common::Serializer &ser) {
+	ser.syncAsUint32LE(_entity);
+}
+
+void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	if (!_savegame)
 		error("[SaveLoad::writeEntry] Savegame stream is invalid");
 
@@ -369,18 +691,22 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	header.saveLoadWithSerializer(ser);
 
 	// Write game data
-	WRITE_ENTRY("entity index", ser.syncAsUint32LE(entity), 4);
-	WRITE_ENTRY("state", getState()->saveLoadWithSerializer(ser), 4 + 4 + 4 + 4 + 1 + 4 + 4);
-	WRITE_ENTRY("selected item", getInventory()->saveSelectedItem(ser), 4);
-	WRITE_ENTRY("positions", getEntities()->savePositions(ser), 4 * 1000);
-	WRITE_ENTRY("compartments", getEntities()->saveCompartments(ser), 4 * 16 * 2);
-	WRITE_ENTRY("progress", getProgress().saveLoadWithSerializer(ser), 4 * 128);
-	WRITE_ENTRY("events", getState()->syncEvents(ser), 512);
-	WRITE_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
-	WRITE_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
-	WRITE_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
-	WRITE_ENTRY("sound", getSoundQueue()->saveLoadWithSerializer(ser), 3 * 4 + getSoundQueue()->count() * 64);
-	WRITE_ENTRY("savepoints", getSavePoints()->saveLoadWithSerializer(ser), 128 * 16 + 4 + getSavePoints()->count() * 16);
+	_entity = entity;
+
+	_savegame->process();
+	writeValue(ser, "entity index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
+	writeValue(ser, "state", WRAP_SYNC_FUNCTION(getState(), State::GameState, saveLoadWithSerializer), 4 + 4 + 4 + 4 + 1 + 4 + 4);
+	writeValue(ser, "selected item", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveSelectedItem), 4);
+	writeValue(ser, "positions", WRAP_SYNC_FUNCTION(getEntities(), Entities, savePositions), 4 * 1000);
+	writeValue(ser, "compartments", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveCompartments), 4 * 16 * 2);
+	writeValue(ser, "progress", WRAP_SYNC_FUNCTION(&getProgress(), State::GameProgress, saveLoadWithSerializer), 4 * 128);
+	writeValue(ser, "events", WRAP_SYNC_FUNCTION(getState(), State::GameState, syncEvents), 512);
+	writeValue(ser, "inventory", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveLoadWithSerializer), 7 * 32);
+	writeValue(ser, "objects", WRAP_SYNC_FUNCTION(getObjects(), Objects, saveLoadWithSerializer), 5 * 128);
+	writeValue(ser, "entities", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveLoadWithSerializer), 1262 * 40);
+	writeValue(ser, "sound", WRAP_SYNC_FUNCTION(getSoundQueue(), SoundQueue, saveLoadWithSerializer), 3 * 4 + getSoundQueue()->count() * 64);
+	writeValue(ser, "savepoints", WRAP_SYNC_FUNCTION(getSavePoints(), SavePoints, saveLoadWithSerializer), 128 * 16 + 4 + getSavePoints()->count() * 16);
+	_savegame->process();
 
 	header.offset = (uint32)_savegame->pos() - (originalPosition + 32);
 
@@ -406,22 +732,6 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 }
 
 void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, bool keepIndex) {
-#define LOAD_ENTRY(name, func, val) { \
-	uint32 _prevPosition = (uint32)_savegame->pos(); \
-	func; \
-	uint32 _count = (uint32)_savegame->pos() - _prevPosition; \
-	debugC(kLastExpressDebugSavegame, "Savegame: Reading " #name ": %d bytes", _count); \
-	if (_count != val) \
-		error("[SaveLoad::readEntry] Number of bytes read (%d) differ from expected count (%d)", _count, val); \
-}
-
-#define LOAD_ENTRY_ONLY(name, func) { \
-	uint32 _prevPosition = (uint32)_savegame->pos(); \
-	func; \
-	uint32 _count = (uint32)_savegame->pos() - _prevPosition; \
-	debugC(kLastExpressDebugSavegame, "Savegame: Reading " #name ": %d bytes", _count); \
-}
-
 	if (!type || !entity || !val)
 		error("[SaveLoad::readEntry] Invalid parameters passed");
 
@@ -444,20 +754,23 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 	uint32 originalPosition = (uint32)_savegame->pos();
 
 	// Load game data
-	LOAD_ENTRY("entity index", ser.syncAsUint32LE(*entity), 4);
-	LOAD_ENTRY("state", getState()->saveLoadWithSerializer(ser), 4 + 4 + 4 + 4 + 1 + 4 + 4);
-	LOAD_ENTRY("selected item", getInventory()->saveSelectedItem(ser), 4);
-	LOAD_ENTRY("positions", getEntities()->savePositions(ser), 4 * 1000);
-	LOAD_ENTRY("compartments", getEntities()->saveCompartments(ser), 4 * 16 * 2);
-	LOAD_ENTRY("progress", getProgress().saveLoadWithSerializer(ser), 4 * 128);
-	LOAD_ENTRY("events", getState()->syncEvents(ser), 512);
-	LOAD_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
-	LOAD_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
-	LOAD_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
-	LOAD_ENTRY_ONLY("sound", getSoundQueue()->saveLoadWithSerializer(ser));
-	LOAD_ENTRY_ONLY("savepoints", getSavePoints()->saveLoadWithSerializer(ser));
+	_savegame->process();
+	readValue(ser, "entity index", WRAP_SYNC_FUNCTION(this, SaveLoad, syncEntity), 4);
+	readValue(ser, "state", WRAP_SYNC_FUNCTION(getState(), State::GameState, saveLoadWithSerializer), 4 + 4 + 4 + 4 + 1 + 4 + 4);
+	readValue(ser, "selected item", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveSelectedItem), 4);
+	readValue(ser, "positions", WRAP_SYNC_FUNCTION(getEntities(), Entities, savePositions), 4 * 1000);
+	readValue(ser, "compartments", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveCompartments), 4 * 16 * 2);
+	readValue(ser, "progress", WRAP_SYNC_FUNCTION(&getProgress(), State::GameProgress, saveLoadWithSerializer), 4 * 128);
+	readValue(ser, "events", WRAP_SYNC_FUNCTION(getState(), State::GameState, syncEvents), 512);
+	readValue(ser, "inventory", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveLoadWithSerializer), 7 * 32);
+	readValue(ser, "objects", WRAP_SYNC_FUNCTION(getObjects(), Objects, saveLoadWithSerializer), 5 * 128);
+	readValue(ser, "entities", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveLoadWithSerializer), 1262 * 40);
+	readValue(ser, "sound", WRAP_SYNC_FUNCTION(getSoundQueue(), SoundQueue, saveLoadWithSerializer));
+	readValue(ser, "savepoints", WRAP_SYNC_FUNCTION(getSavePoints(), SavePoints, saveLoadWithSerializer));
+	_savegame->process();
 
 	// Update chapter
+	*entity = _entity;
 	getProgress().chapter = entry.chapter;
 
 	// Skip padding
@@ -567,7 +880,7 @@ Common::InSaveFile *SaveLoad::openForLoading(GameId id) {
 }
 
 Common::OutSaveFile *SaveLoad::openForSaving(GameId id) {
-	Common::OutSaveFile *save = g_system->getSavefileManager()->openForSaving(getFilename(id));
+	Common::OutSaveFile *save = g_system->getSavefileManager()->openForSaving(getFilename(id), false); // TODO Enable compression again
 
 	if (!save)
 		debugC(2, kLastExpressDebugSavegame, "Cannot open savegame for writing: %s", getFilename(id).c_str());

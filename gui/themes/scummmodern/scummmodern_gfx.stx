@@ -101,6 +101,8 @@
 		<bitmap filename = 'search.bmp'/>
 		<bitmap filename = 'eraser.bmp'/>
 		<bitmap filename = 'delbtn.bmp'/>
+		<bitmap filename = 'list.bmp'/>
+		<bitmap filename = 'grid.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -153,7 +155,7 @@
 		/>
 
 		<text_color	id = 'color_normal_disabled'
-				color = '192, 192, 192'
+				color = '96, 96, 96'
 		/>
 
 		<text_color	id = 'color_alternative'

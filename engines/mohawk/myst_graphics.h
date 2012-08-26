@@ -43,7 +43,6 @@ public:
 	MystGraphics(MohawkEngine_Myst*);
 	~MystGraphics();
 
-	void loadExternalPictureFile(uint16 stack);
 	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageToScreen(uint16 image, Common::Rect dest);
@@ -65,20 +64,6 @@ protected:
 private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
-
-	struct PictureFile {
-		uint32 pictureCount;
-		struct PictureEntry {
-			uint32 offset;
-			uint32 size;
-			uint16 id;
-			uint16 type;
-			uint16 width;
-			uint16 height;
-		} *entries;
-
-		Common::File picFile;
-	} _pictureFile;
 
 	Graphics::Surface *_backBuffer;
 	Graphics::PixelFormat _pixelFormat;

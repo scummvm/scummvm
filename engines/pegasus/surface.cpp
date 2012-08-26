@@ -108,8 +108,8 @@ void Surface::getImageFromPICTStream(Common::SeekableReadStream *stream) {
 	_bounds = Common::Rect(0, 0, _surface->w, _surface->h);
 }
 
-void Surface::getImageFromMovieFrame(Video::SeekableVideoDecoder *video, TimeValue time) {
-	video->seekToTime(Audio::Timestamp(0, time, 600));
+void Surface::getImageFromMovieFrame(Video::VideoDecoder *video, TimeValue time) {
+	video->seek(Audio::Timestamp(0, time, 600));
 	const Graphics::Surface *frame = video->decodeNextFrame();
 
 	if (frame) {
@@ -344,7 +344,7 @@ void Frame::initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool
 	_transparent = transparent;
 }
 
-void Frame::initFromMovieFrame(Video::SeekableVideoDecoder *video, TimeValue time, bool transparent) {
+void Frame::initFromMovieFrame(Video::VideoDecoder *video, TimeValue time, bool transparent) {
 	getImageFromMovieFrame(video, time);
 	_transparent = transparent;
 }
@@ -381,7 +381,7 @@ void Picture::initFromPICTResource(Common::MacResManager *resFork, uint16 id, bo
 	sizeElement(surfaceBounds.width(), surfaceBounds.height());
 }
 
-void Picture::initFromMovieFrame(Video::SeekableVideoDecoder *video, TimeValue time, bool transparent) {
+void Picture::initFromMovieFrame(Video::VideoDecoder *video, TimeValue time, bool transparent) {
 	Frame::initFromMovieFrame(video, time, transparent);
 
 	Common::Rect surfaceBounds;

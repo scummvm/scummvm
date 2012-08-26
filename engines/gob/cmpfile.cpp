@@ -21,6 +21,7 @@
  */
 
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/str.h"
 
 #include "gob/gob.h"
@@ -143,7 +144,13 @@ void CMPFile::loadCMP(Common::SeekableReadStream &cmp) {
 }
 
 void CMPFile::loadRXY(Common::SeekableReadStream &rxy) {
-	_coordinates = new RXYFile(rxy);
+	bool bigEndian = (_vm->getEndiannessMethod() == kEndiannessMethodBE) ||
+	                 ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) &&
+	                  (_vm->getEndianness() == kEndiannessBE));
+
+	Common::SeekableSubReadStreamEndian sub(&rxy, 0, rxy.size(), bigEndian, DisposeAfterUse::NO);
+
+	_coordinates = new RXYFile(sub);
 
 	for (uint i = 0; i < _coordinates->size(); i++) {
 		const RXYFile::Coordinates &c = (*_coordinates)[i];
@@ -241,6 +248,11 @@ uint16 CMPFile::addSprite(uint16 left, uint16 top, uint16 right, uint16 bottom) 
 	_maxHeight = MAX(_maxHeight, height);
 
 	return _coordinates->add(left, top, right, bottom);
+}
+
+void CMPFile::recolor(uint8 from, uint8 to) {
+	if (_surface)
+		_surface->recolor(from, to);
 }
 
 } // End of namespace Gob

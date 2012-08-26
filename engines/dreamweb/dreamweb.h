@@ -152,8 +152,8 @@ public:
 	uint8 modifyChar(uint8 c) const;
 	Common::String modifyFileName(const char *);
 
-	const Common::String& getDatafilePrefix() { return _datafilePrefix; };
-	const Common::String& getSpeechDirName() { return _speechDirName; };
+	const Common::String& getDatafilePrefix() { return _datafilePrefix; }
+	const Common::String& getSpeechDirName() { return _speechDirName; }
 
 private:
 	void keyPressed(uint16 ascii);

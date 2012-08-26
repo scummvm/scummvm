@@ -30,10 +30,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -171,7 +169,7 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 4) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -185,8 +183,8 @@ IMPLEMENT_FUNCTION(9, Pascale, sitSophieAndRebecca)
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
- 		break;
+		callbackAction();
+		break;
 
 	case kActionDefault:
 		getEntities()->drawSequenceLeft(kEntityPascale, "012C1");
@@ -217,7 +215,7 @@ IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 69);
 		}
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction4:
@@ -239,7 +237,7 @@ IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 69);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -283,7 +281,7 @@ IMPLEMENT_FUNCTION(11, Pascale, function11)
 			getEntities()->clearSequences(kEntityPascale);
 			getData()->entityPosition = kPosition_5900;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -298,7 +296,7 @@ IMPLEMENT_FUNCTION(12, Pascale, chapter1)
 
 	case kActionNone:
 		setup_chapter1Handler();
- 		break;
+		break;
 
 	case kActionDefault:
 		getSavePoints()->addData(kEntityPascale, kAction239072064, 0);
@@ -366,7 +364,7 @@ IMPLEMENT_FUNCTION(13, Pascale, getMessageFromAugustToTyler)
 			getSavePoints()->push(kEntityPascale, kEntityVerges, kActionDeliverMessageToTyler);
 			ENTITY_PARAM(0, 1) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -382,7 +380,7 @@ IMPLEMENT_FUNCTION(14, Pascale, sitAnna)
 	case kActionExitCompartment:
 		getEntities()->updatePositionExit(kEntityPascale, kCarRestaurant, 62);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -433,7 +431,7 @@ IMPLEMENT_FUNCTION(15, Pascale, welcomeAnna)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 2) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -486,7 +484,7 @@ IMPLEMENT_FUNCTION(16, Pascale, serveTatianaVassili)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(0, 3) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -648,7 +646,7 @@ IMPLEMENT_FUNCTION(21, Pascale, chapter3)
 
 	case kActionNone:
 		setup_chapter3Handler();
- 		break;
+		break;
 
 	case kActionDefault:
 		getEntities()->clearSequences(kEntityPascale);
@@ -685,7 +683,7 @@ label_callback:
 			setCallback(2);
 			setup_welcomeSophieAndRebecca();
 		}
- 		break;
+		break;
 
 	case kActionCallback:
 		if (getCallback() == 1)
@@ -727,7 +725,7 @@ IMPLEMENT_FUNCTION(23, Pascale, function23)
 			ENTITY_PARAM(0, 7) = 0;
 			getEntities()->clearSequences(kEntityPascale);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -748,7 +746,7 @@ IMPLEMENT_FUNCTION(24, Pascale, welcomeAbbot)
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction10:
@@ -771,7 +769,7 @@ IMPLEMENT_FUNCTION(25, Pascale, chapter4)
 
 	case kActionNone:
 		setup_chapter4Handler();
- 		break;
+		break;
 
 	case kActionDefault:
 		getEntities()->clearSequences(kEntityPascale);
@@ -953,7 +951,7 @@ IMPLEMENT_FUNCTION(27, Pascale, function27)
 			ENTITY_PARAM(1, 1) = 0;
 			ENTITY_PARAM(1, 2) = 1;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -999,7 +997,7 @@ IMPLEMENT_FUNCTION(28, Pascale, messageFromAnna)
 			getData()->entityPosition = kPosition_5900;
 			ENTITY_PARAM(1, 2) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1037,7 +1035,7 @@ IMPLEMENT_FUNCTION(29, Pascale, function29)
 		case 2:
 			getData()->entityPosition = kPosition_850;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1075,7 +1073,7 @@ IMPLEMENT_FUNCTION(30, Pascale, function30)
 		case 2:
 			getData()->entityPosition = kPosition_5900;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1090,7 +1088,7 @@ IMPLEMENT_FUNCTION(31, Pascale, chapter5)
 
 	case kActionNone:
 		setup_chapter5Handler();
- 		break;
+		break;
 
 	case kActionDefault:
 		getEntities()->clearSequences(kEntityPascale);
@@ -1117,18 +1115,19 @@ IMPLEMENT_FUNCTION(33, Pascale, function33)
 
 	case kActionNone:
 		if (params->param4) {
-			UPDATE_PARAM_PROC(params->param5, getState()->time, 4500)
+			if (Entity::updateParameter(params->param5, getState()->time, 4500)) {
 				getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 				setCallback(1);
 				setup_playSound("Wat5010");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 label_callback1:
 		if (params->param1) {
-			UPDATE_PARAM(params->param6, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param6, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 2;

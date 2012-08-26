@@ -62,7 +62,7 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 	_speed = 150;   // 150 = nominal drew speed
 	_lastWalkTime = 0;
 	_numPixelToWalk = 0;
-	_nextIdleTime = _vm->getSystem()->getMillis() + (_vm->randRange(0, 600) + 300) * _vm->getTickLength();
+	_nextIdleTime = _vm->_system->getMillis() + (_vm->randRange(0, 600) + 300) * _vm->getTickLength();
 	_lineToSayId = 0;
 }
 
@@ -101,7 +101,7 @@ void Character::setFacing(int32 facing) {
 
 		int32 dir = 0;
 
-		_lastWalkTime = _vm->getSystem()->getMillis();
+		_lastWalkTime = _vm->_system->getMillis();
 		if ((_facing - facing + 8) % 8 > (facing - _facing + 8) % 8)
 			dir = 1;
 		else
@@ -188,7 +188,7 @@ bool Character::walkTo(int16 newPosX, int16 newPosY) {
 		_currentPathNode = 0;
 		stopSpecialAnim();
 
-		_lastWalkTime = _vm->getSystem()->getMillis();
+		_lastWalkTime = _vm->_system->getMillis();
 
 		_numPixelToWalk = 0;
 
@@ -220,8 +220,8 @@ bool Character::walkTo(int16 newPosX, int16 newPosY) {
 				}
 
 				// in 1/1000 pixels
-				_numPixelToWalk += _speed * (_vm->getSystem()->getMillis() - _lastWalkTime) * _scale / 1024;
-				_lastWalkTime =  _vm->getSystem()->getMillis();
+				_numPixelToWalk += _speed * (_vm->_system->getMillis() - _lastWalkTime) * _scale / 1024;
+				_lastWalkTime = _vm->_system->getMillis();
 
 				while (_numPixelToWalk >= 1000 && _currentPathNode < _currentPath.size()) {
 					_x = _currentPath[_currentPathNode].x;
@@ -356,8 +356,8 @@ void Character::update(int32 timeIncrement) {
 			}
 
 			// in 1/1000 pixels
-			_numPixelToWalk += _speed * (_vm->getSystem()->getMillis() - _lastWalkTime) * _scale / 1024;
-			_lastWalkTime =  _vm->getSystem()->getMillis();
+			_numPixelToWalk += _speed * (_vm->_system->getMillis() - _lastWalkTime) * _scale / 1024;
+			_lastWalkTime = _vm->_system->getMillis();
 
 			while (_numPixelToWalk > 1000 && _currentPathNode < _currentPath.size()) {
 				_x = _currentPath[_currentPathNode].x;
@@ -534,35 +534,33 @@ int32 Character::getFacingFromDirection(int16 dx, int16 dy) {
 	dx = -dx;
 
 	int32 facingEntry = 0;
-	int32 ydiff = dy;
+	int16 ydiff = dy;
 	if (ydiff < 0) {
 		++facingEntry;
 		ydiff = -ydiff;
 	}
-	facingEntry <<= 1;
+	facingEntry *= 2;
 
-	int32 xdiff = dx;
+	int16 xdiff = dx;
 	if (xdiff < 0) {
 		++facingEntry;
 		xdiff = -xdiff;
 	}
 
-	facingEntry <<= 1;
+	facingEntry *= 2;
 
 	if (xdiff >= ydiff) {
-		int32 temp = ydiff;
+		// Swap xdiff and ydiff
+		int16 temp = ydiff;
 		ydiff = xdiff;
 		xdiff = temp;
-	} else {
-		facingEntry += 1;
-	}
+	} else
+		facingEntry++;
 
-	facingEntry <<= 1;
+	facingEntry *= 2;
 
-	int32 temp = (ydiff + 1) >> 1;
-
-	if (xdiff < temp)
-		facingEntry += 1;
+	if (xdiff < ((ydiff + 1) / 2))
+		facingEntry++;
 
 	return facingTable[facingEntry];
 }

@@ -194,8 +194,6 @@ public:
 		adjustCoords(adjust, (int16 *)coord1, (int16 *)coord2);
 	}
 	int stringLength(const char *str, uint16 fontIndex);
-	void drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-			int16 transp, Surface &dest, const Font &font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
 	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);

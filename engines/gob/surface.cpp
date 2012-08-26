@@ -684,6 +684,12 @@ void Surface::shadeRect(uint16 left, uint16 top, uint16 right, uint16 bottom,
 
 }
 
+void Surface::recolor(uint8 from, uint8 to) {
+	for (Pixel p = get(); p.isValid(); ++p)
+		if (p.get() == from)
+			p.set(to);
+}
+
 void Surface::putPixel(uint16 x, uint16 y, uint32 color) {
 	if ((x >= _width) || (y >= _height))
 		return;

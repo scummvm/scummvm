@@ -75,6 +75,7 @@ class Scenery;
 class Util;
 class SaveLoad;
 class GobConsole;
+class PreGob;
 
 #define WRITE_VAR_UINT32(var, val)  _vm->_inter->_variables->writeVar32(var, val)
 #define WRITE_VAR_UINT16(var, val)  _vm->_inter->_variables->writeVar16(var, val)
@@ -129,7 +130,10 @@ enum GameType {
 	kGameTypeAdi4,
 	kGameTypeAdibou2,
 	kGameTypeAdibou1,
+	kGameTypeAbracadabra,
+	kGameTypeBabaYaga,
 	kGameTypeLittleRed,
+	kGameTypeOnceUponATime, // Need more inspection to see if Baba Yaga or Abracadabra
 	kGameTypeAJWorld
 };
 
@@ -143,6 +147,13 @@ enum Features {
 	kFeatures640x480   = 1 << 5,
 	kFeatures800x600   = 1 << 6,
 	kFeaturesTrueColor = 1 << 7
+};
+
+enum EndiannessMethod {
+	kEndiannessMethodLE,     ///< Always little endian.
+	kEndiannessMethodBE,     ///< Always big endian.
+	kEndiannessMethodSystem, ///< Follows system endianness.
+	kEndiannessMethodAltFile ///< Different endianness in alternate file.
 };
 
 enum {
@@ -168,6 +179,8 @@ private:
 	int32 _features;
 	Common::Platform _platform;
 
+	EndiannessMethod _endiannessMethod;
+
 	uint32 _pauseStart;
 
 	// Engine APIs
@@ -176,10 +189,10 @@ private:
 	virtual void pauseEngineIntern(bool pause);
 	virtual void syncSoundSettings();
 
-	bool initGameParts();
-	void deinitGameParts();
+	Common::Error initGameParts();
+	Common::Error initGraphics();
 
-	bool initGraphics();
+	void deinitGameParts();
 
 public:
 	static const Common::Language _gobToScummVMLang[];
@@ -220,6 +233,7 @@ public:
 	Inter *_inter;
 	SaveLoad *_saveLoad;
 	VideoPlayer *_vidPlayer;
+	PreGob *_preGob;
 
 	const char *getLangDesc(int16 language) const;
 	void validateLanguage();
@@ -227,6 +241,7 @@ public:
 
 	void pauseGame();
 
+	EndiannessMethod getEndiannessMethod() const;
 	Endianness getEndianness() const;
 	Common::Platform getPlatform() const;
 	GameType getGameType() const;

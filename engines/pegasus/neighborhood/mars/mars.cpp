@@ -2405,6 +2405,8 @@ void Mars::doCanyonChase() {
 	if (!video->loadFile("Images/Mars/M44ESA.movie"))
 		error("Could not load interface->shuttle transition video");
 
+	video->start();
+
 	while (!_vm->shouldQuit() && !video->endOfVideo()) {
 		if (video->needsUpdate()) {
 			const Graphics::Surface *frame = video->decodeNextFrame();
@@ -3023,6 +3025,8 @@ void Mars::transportToRobotShip() {
 	Video::VideoDecoder *video = new Video::QuickTimeDecoder();
 	if (!video->loadFile("Images/Mars/M98EAE.movie"))
 		error("Could not load shuttle->interface transition video");
+
+	video->start();
 
 	while (!_vm->shouldQuit() && !video->endOfVideo()) {
 		if (video->needsUpdate()) {

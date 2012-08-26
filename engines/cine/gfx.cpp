@@ -174,7 +174,8 @@ void FWRenderer::fillSprite(const ObjectStruct &obj, uint8 color) {
  * @param obj Object info
  * @param fillColor Sprite color
  */
-void FWRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
+void FWRenderer::incrustMask(const BGIncrust &incrust, uint8 color) {
+	const ObjectStruct &obj = g_cine->_objectTable[incrust.objIdx];
 	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	int x, y, width, height;
 
@@ -218,7 +219,9 @@ void FWRenderer::drawSprite(const ObjectStruct &obj) {
  * Draw color sprite on background
  * @param obj Object info
  */
-void FWRenderer::incrustSprite(const ObjectStruct &obj) {
+void FWRenderer::incrustSprite(const BGIncrust &incrust) {
+	const ObjectStruct &obj = g_cine->_objectTable[incrust.objIdx];
+
 	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	const byte *mask = g_cine->_animDataTable[obj.frame].mask();
 	int x, y, width, height;
@@ -246,14 +249,16 @@ void FWRenderer::drawCommand() {
 	unsigned int i;
 	int x = 10, y = _cmdY;
 
-	drawPlainBox(x, y, 301, 11, 0);
-	drawBorder(x - 1, y - 1, 302, 12, 2);
+	if(disableSystemMenu == 0) {
+		drawPlainBox(x, y, 301, 11, 0);
+		drawBorder(x - 1, y - 1, 302, 12, 2);
 
-	x += 2;
-	y += 2;
+		x += 2;
+		y += 2;
 
-	for (i = 0; i < _cmd.size(); i++) {
-		x = drawChar(_cmd[i], x, y);
+		for (i = 0; i < _cmd.size(); i++) {
+			x = drawChar(_cmd[i], x, y);
+		}
 	}
 }
 
@@ -298,7 +303,8 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 	for (i = 0; str[i]; i++, line--) {
 		// Fit line of text into textbox
 		if (!line) {
-			while (str[i] == ' ') i++;
+			while (str[i] == ' ')
+				i++;
 			line = fitLine(str + i, tw, words, cw);
 
 			if ( str[i + line] != '\0' && str[i + line] != 0x7C && words) {
@@ -839,7 +845,7 @@ void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle, int version
 
 	fHandle.read(buf, kHighPalNumBytes);
 
-	if (colorCount == kHighPalNumBytes) {
+	if (colorCount == kHighPalNumColors) {
 		// Load the active 256 color palette from file
 		_activePal.load(buf, sizeof(buf), kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
 	} else {
@@ -1119,7 +1125,8 @@ void OSRenderer::clear() {
  * @param obj Object info
  * @param fillColor Sprite color
  */
-void OSRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
+void OSRenderer::incrustMask(const BGIncrust &incrust, uint8 color) {
+	const ObjectStruct &obj = g_cine->_objectTable[incrust.objIdx];
 	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	int x, y, width, height;
 
@@ -1154,15 +1161,16 @@ void OSRenderer::drawSprite(const ObjectStruct &obj) {
  * Draw color sprite
  * @param obj Object info
  */
-void OSRenderer::incrustSprite(const ObjectStruct &obj) {
-	const byte *data = g_cine->_animDataTable[obj.frame].data();
+void OSRenderer::incrustSprite(const BGIncrust &incrust) {
+	const ObjectStruct &obj = g_cine->_objectTable[incrust.objIdx];
+	const byte *data = g_cine->_animDataTable[incrust.frame].data();
 	int x, y, width, height, transColor;
 
-	x = obj.x;
-	y = obj.y;
+	x = incrust.x;
+	y = incrust.y;
 	transColor = obj.part;
-	width = g_cine->_animDataTable[obj.frame]._realWidth;
-	height = g_cine->_animDataTable[obj.frame]._height;
+	width = g_cine->_animDataTable[incrust.frame]._realWidth;
+	height = g_cine->_animDataTable[incrust.frame]._height;
 
 	if (_bgTable[_currentBg].bg) {
 		drawSpriteRaw2(data, transColor, width, height, _bgTable[_currentBg].bg, x, y);
@@ -1225,7 +1233,6 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	int len, idx, width, height;
 	ObjectStruct *obj;
 	AnimData *sprite;
-	byte *mask;
 	byte color;
 
 	switch (it->type) {
@@ -1235,14 +1242,8 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 			break;
 		}
 		sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
-		len = sprite->_realWidth * sprite->_height;
-		mask = new byte[len];
-		generateMask(sprite->data(), mask, len, g_cine->_objectTable[it->objIdx].part);
-		remaskSprite(mask, it);
-		drawMaskedSprite(g_cine->_objectTable[it->objIdx], mask);
-		delete[] mask;
+		drawSprite(&(*it), sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, g_cine->_objectTable[it->objIdx].x, g_cine->_objectTable[it->objIdx].y, g_cine->_objectTable[it->objIdx].part, sprite->_bpp);
 		break;
-
 	// game message
 	case 2:
 		if (it->objIdx >= g_cine->_messageTable.size()) {
@@ -1290,14 +1291,6 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
 		break;
 
-	// FIXME: Implement correct drawing of type 21 overlays.
-	// Type 21 overlays aren't just filled rectangles, I found their drawing routine
-	// from Operation Stealth's drawSprite routine. So they're likely some kind of sprites
-	// and it's just a coincidence that the oxygen meter during the first arcade sequence
-	// works even somehow currently. I tried the original under DOSBox and the oxygen gauge
-	// is a long red bar that gets shorter as the air runs out.
-	case 21:
-	// A filled rectangle:
 	case 22:
 		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
 		assert(it->objIdx < NUM_MAX_OBJECT);
@@ -1750,6 +1743,82 @@ void drawSpriteRaw(const byte *spritePtr, const byte *maskPtr, int16 width, int1
 				maskPtr++;
 		}
 	}
+}
+
+void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp) {
+	byte *pMask = NULL;
+
+	// draw the mask based on next objects in the list
+	Common::List<overlay>::iterator it;
+	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it)	{
+		if(&(*it) == overlayPtr) {
+			break;
+		}
+	}
+
+	while(it != g_cine->_overlayList.end())	{
+		overlay *pCurrentOverlay = &(*it);
+		if ((pCurrentOverlay->type == 5) || ((pCurrentOverlay->type == 21) && (pCurrentOverlay->x == overlayPtr->objIdx))) {
+			AnimData *sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
+
+			if (pMask == NULL) {
+				pMask = new byte[width*height];
+
+				for (int i = 0; i < height; i++) {
+					for (int j = 0; j < width; j++) {
+						byte spriteColor= spritePtr[width * i + j];
+						pMask[width * i + j] = spriteColor;
+					}
+				}
+			}
+
+			for (int i = 0; i < sprite->_realWidth; i++) {
+				for (int j = 0; j < sprite->_height; j++) {
+					int inMaskX = (g_cine->_objectTable[it->objIdx].x + i) - x;
+					int inMaskY = (g_cine->_objectTable[it->objIdx].y + j) - y;
+
+					if (inMaskX >=0 && inMaskX < width) {
+						if (inMaskY >= 0 && inMaskY < height) {
+							if (sprite->_bpp == 1) {
+								if (!sprite->getColor(i, j)) {
+									pMask[inMaskY * width + inMaskX] = page[x + y * 320 + inMaskX + inMaskY * 320];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		it++;
+	}
+
+	// now, draw with the mask we created
+	if(pMask) {
+		spritePtr = pMask;
+	}
+
+	// ignore transparent color in 1bpp
+	if (bpp == 1) {
+		transparentColor = 1;
+	}
+
+	{
+		for (int i = 0; i < height; i++) {
+			byte *destPtr = page + x + y * 320;
+			destPtr += i * 320;
+
+			for (int j = 0; j < width; j++) {
+				byte color= *(spritePtr++);
+				if ((transparentColor != color) && x + j >= 0 && x + j < 320 && i + y >= 0 && i + y < 200) {
+					*(destPtr++) = color;
+				} else {
+					destPtr++;
+				}
+			}
+		}
+	}
+
+	delete[] pMask;
 }
 
 void drawSpriteRaw2(const byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y) {

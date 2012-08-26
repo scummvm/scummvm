@@ -88,7 +88,7 @@ protected:
 	uint16		_id;
 	bool		_hasFocus;
 	ThemeEngine::WidgetStateInfo _state;
-	const char	*_tooltip;
+	Common::String _tooltip;
 
 private:
 	uint16		_flags;
@@ -142,7 +142,9 @@ public:
 	uint8 parseHotkey(const Common::String &label);
 	Common::String cleanupHotkey(const Common::String &label);
 
-	const char *getTooltip() const { return _tooltip; }
+	bool hasTooltip() const { return !_tooltip.empty(); }
+	const Common::String &getTooltip() const { return _tooltip; }
+	void setTooltip(const Common::String &tooltip) { _tooltip = tooltip; }
 
 protected:
 	void updateState(int oldFlags, int newFlags);
@@ -220,6 +222,7 @@ public:
 	~PicButtonWidget();
 
 	void setGfx(const Graphics::Surface *gfx);
+	void setGfx(int w, int h, int r, int g, int b);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
 	void useThemeTransparency(bool enable) { _transparency = enable; }
@@ -365,7 +368,10 @@ class ContainerWidget : public Widget {
 public:
 	ContainerWidget(GuiObject *boss, int x, int y, int w, int h);
 	ContainerWidget(GuiObject *boss, const Common::String &name);
+	~ContainerWidget();
 
+	virtual Widget *findWidget(int x, int y);
+	virtual void removeWidget(Widget *widget);
 protected:
 	void drawWidget();
 };

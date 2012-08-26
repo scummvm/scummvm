@@ -92,6 +92,9 @@ public:
 	/** Draw an animation frame. */
 	void draw(Surface &dest, uint16 animation, uint16 frame, int16 x, int16 y) const;
 
+	/** Recolor the animation sprites. */
+	void recolor(uint8 from, uint8 to);
+
 private:
 	typedef Common::Array<CMPFile *> LayerArray;
 	typedef Common::Array<Animation> AnimationArray;

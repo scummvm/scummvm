@@ -156,6 +156,8 @@ public:
 	void shadeRect(uint16 left, uint16 top, uint16 right, uint16 bottom,
 			uint32 color, uint8 strength);
 
+	void recolor(uint8 from, uint8 to);
+
 	void putPixel(uint16 x, uint16 y, uint32 color);
 	void drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 color);
 	void drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint32 color);

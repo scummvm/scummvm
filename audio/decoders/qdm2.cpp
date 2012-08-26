@@ -689,7 +689,7 @@ static int getVlc2(Common::BitStream *s, int16 (*table)[2], int bits, int maxDep
 		code = table[index][0];
 		n = table[index][1];
 
-		if(maxDepth > 2 && n < 0) {
+		if (maxDepth > 2 && n < 0) {
 			s->skip(nbBits);
 			index = s->getBits(-n) + code;
 			code = table[index][0];
@@ -861,9 +861,9 @@ void initVlcSparse(VLC *vlc, int nb_bits, int nb_codes,
 		const void *symbols, int symbols_wrap, int symbols_size) {
 	vlc->bits = nb_bits;
 
-	if(vlc->table_size && vlc->table_size == vlc->table_allocated) {
+	if (vlc->table_size && vlc->table_size == vlc->table_allocated) {
 		return;
-	} else if(vlc->table_size) {
+	} else if (vlc->table_size) {
 		error("called on a partially initialized table");
 	}
 
@@ -1353,7 +1353,7 @@ void QDM2Stream::fix_coding_method_array(int sb, int channels, sb_int8_array cod
 
 	for (ch = 0; ch < channels; ch++) {
 		for (j = 0; j < 64; ) {
-			if((coding_method[ch][sb][j] - 8) > 22) {
+			if ((coding_method[ch][sb][j] - 8) > 22) {
 				run = 1;
 				case_val = 8;
 			} else {

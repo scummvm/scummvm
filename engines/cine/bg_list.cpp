@@ -39,9 +39,9 @@ uint32 var8;
  * @param objIdx Sprite description
  */
 void addToBGList(int16 objIdx) {
-	renderer->incrustSprite(g_cine->_objectTable[objIdx]);
-
 	createBgIncrustListElement(objIdx, 0);
+
+	renderer->incrustSprite(g_cine->_bgIncrustList.back());
 }
 
 /**
@@ -49,9 +49,9 @@ void addToBGList(int16 objIdx) {
  * @param objIdx Sprite description
  */
 void addSpriteFilledToBGList(int16 objIdx) {
-	renderer->incrustMask(g_cine->_objectTable[objIdx]);
-
 	createBgIncrustListElement(objIdx, 1);
+
+	renderer->incrustMask(g_cine->_bgIncrustList.back());
 }
 
 /**
@@ -103,9 +103,9 @@ void loadBgIncrustFromSave(Common::SeekableReadStream &fHandle) {
 		g_cine->_bgIncrustList.push_back(tmp);
 
 		if (tmp.param == 0) {
-			renderer->incrustSprite(g_cine->_objectTable[tmp.objIdx]);
+			renderer->incrustSprite(tmp);
 		} else {
-			renderer->incrustMask(g_cine->_objectTable[tmp.objIdx]);
+			renderer->incrustMask(tmp);
 		}
 	}
 }

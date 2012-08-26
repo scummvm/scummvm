@@ -1238,6 +1238,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 5 - English DOS Floppy
+	// VERSION file reports "0.000.051"
+	// Supplied by misterhands in bug report #3536863.
+	// This is the original English version, which has been externally patched to
+	// Polish in the Polish release below.
+	{"kq5", "", {
+		{"resource.map", 0, "70010c20138541f89013bb5e1b30f16a", 7998},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276398},
+		{"resource.001", 0, "c0f48d4a7ebeaa6aa074fc98d77423e9", 1018560},
+		{"resource.002", 0, "7f188a95acdb60bbe32a8379ba299393", 1307048},
+		{"resource.003", 0, "0860785af59518b94d54718dddcd6907", 1348500},
+		{"resource.004", 0, "c4745dd1e261c22daa6477961d08bf6c", 1239887},
+		{"resource.005", 0, "6556ff8e7c4d1acf6a78aea154daa76c", 1287869},
+		{"resource.006", 0, "da82e4beb744731d0a151f1d4922fafa", 1170456},
+		{"resource.007", 0, "431def14ca29cdb5e6a5e84d3f38f679", 1240176},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest 5 - English DOS Floppy (supplied by omer_mor in bug report #3036996)
 	// VERSION file reports "0.000.051"
 	{"kq5", "", {
@@ -1308,6 +1326,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 5 DOS Spanish Floppy 0.000.062 VGA (5 x 3.5" disks)
+	// Supplied by dianiu in bug report #3555646
+	{"kq5", "", {
+		{"resource.map", 0, "c09896a2a30c9b002c5cbbc62f5a5c3a", 8169},
+		{"resource.000", 0, "1f1d03aead44da46362ff40c0074a3ec", 335871},
+		{"resource.001", 0, "d1803ad904127ae091edb274ee8c047f", 1180637},
+		{"resource.002", 0, "d9cd5972016f650cc31fb7c2a2b0953a", 1102207},
+		{"resource.003", 0, "829c8caeff793f3cfcea2cb01aaa4150", 965586},
+		{"resource.004", 0, "0bd9e570ee04b025e43d3075998fae5b", 1117965},
+		{"resource.005", 0, "4aaa2e9a69089b9afbaaccbbf2c4e647", 1202936},
+		{"resource.006", 0, "65b520e60c4217e6a6572d9edf77193b", 1141985},
+		{"resource.007", 0, "f42b0100f0a1c30806814f8648b6bc28", 1145583},
+		AD_LISTEND},
+	 	Common::ES_ESP, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest 5 - German DOS Floppy (supplied by markcoolio in bug report #2727101, also includes english language)
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
@@ -1354,8 +1387,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::IT_ITA, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// King's Quest 5 - Polish DOS Floppy (supplied by jacek909 in bug report #2725722, includes english language?!)
+	// King's Quest 5 - Polish DOS Floppy (supplied by jacek909 in bug report #2725722)
 	// SCI interpreter version 1.000.060
+	// VERSION file reports "0.000.051".
+	// This is actually an English version with external text resource patches (bug #3536863).
 	{"kq5", "", {
 		{"resource.map", 0, "70010c20138541f89013bb5e1b30f16a", 7998},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276398},
@@ -1366,6 +1401,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "6556ff8e7c4d1acf6a78aea154daa76c", 1287869},
 		{"resource.006", 0, "da82e4beb744731d0a151f1d4922fafa", 1170456},
 		{"resource.007", 0, "431def14ca29cdb5e6a5e84d3f38f679", 1240176},
+		{"text.000",     0, "601aa35a3ddeb558e1280e0963e955a2", 1517},
 		AD_LISTEND},
 	 	Common::PL_POL, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
@@ -1447,6 +1483,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::DE_DEU, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 6 - Spanish DOS Floppy (from jvprat)
+	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.000, July 5, 1994"
+	// SCI interpreter version 1.001.055
+	{"kq6", "", {
+		{"resource.map", 0, "a73a5ab04b8f60c4b75b946a4dccea5a", 8953},
+		{"resource.000", 0, "4da3ad5868a775549a7cc4f72770a58e", 8537260},
+		{"resource.msg", 0, "41eed2d3893e1ca6c3695deba4e9d2e8", 267102},
+		AD_LISTEND},
+	 	Common::ES_ESP, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest 6 - English DOS CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
 	// SCI interpreter version 1.001.054
@@ -1464,16 +1510,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_NOASPECT, GAMEOPTION_KQ6_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
-
-	// King's Quest 6 - Spanish DOS CD (from jvprat)
-	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.000, July 5, 1994"
-	// SCI interpreter version 1.001.055
-	{"kq6", "CD", {
-		{"resource.map", 0, "a73a5ab04b8f60c4b75b946a4dccea5a", 8953},
-		{"resource.000", 0, "4da3ad5868a775549a7cc4f72770a58e", 8537260},
-		{"resource.msg", 0, "41eed2d3893e1ca6c3695deba4e9d2e8", 267102},
-		AD_LISTEND},
-	 	Common::ES_ESP, Common::kPlatformPC, ADGF_CD, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"
@@ -2660,6 +2696,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::DE_DEU, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Police Quest 3 - Spanish DOS v1.000 - Supplied by dianiu in bug report #3555647
+	{"pq3", "", {
+		{"resource.map", 0, "ffa0b4631c4e36d69631256d19ba29e7", 5421},
+		{"resource.000", 0, "5ee460af3d70c06a745cc482b6c783ba", 5410263},
+		AD_LISTEND},
+	 	Common::ES_ESP, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Police Quest 3 EGA
 	// Reported by musiclyinspired in bug report #3046573
 	{"pq3", "", {
@@ -2777,6 +2820,31 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
+	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy v1.102 Int#0.000.629 (suppled by digitoxin1 in bug report #3554611)
+	{"qfg1", "", {
+		{"resource.map", 0, "b162dbd4632250d4d83bed46d0783c10", 6396},
+		{"resource.000", 0, "40332d3ebfc70a4b6a6a0443c2763287", 78800},
+		{"resource.001", 0, "a270012fa74445d74c044d1b65a9ff8c", 459835},
+		{"resource.002", 0, "e64004e020fdf1813be52b639b08be89", 635561},
+		{"resource.003", 0, "f0af87c60ec869946da442833aa5afa8", 640502},
+		{"resource.004", 0, "f0af87c60ec869946da442833aa5afa8", 644575},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Quest for Glory 1 / Hero's Quest - English DOS 5.25" Floppy v1.102 Int#0.000.629 (suppled by digitoxin1 in bug report #3554611)
+	{"qfg1", "", {
+		{"resource.map", 0, "5772a2c1bfae46f26582582c9901121e", 6858},
+		{"resource.000", 0, "40332d3ebfc70a4b6a6a0443c2763287", 78800},
+		{"resource.001", 0, "a270012fa74445d74c044d1b65a9ff8c", 75090},
+		{"resource.002", 0, "d22695c53835dfdece056d86f26c251e", 271354},
+		{"resource.003", 0, "3cd085e27078f269b3ece5838812ff41", 258084},
+		{"resource.004", 0, "8927c7a04a78f1e76f342db3ccc9d879", 267835},
+		{"resource.005", 0, "13d16cc9b90b51e2c8643cdf52a62957", 268807},
+		{"resource.006", 0, "48b2b3c964dcbeccb68e984e6d4e97db", 278473},
+		{"resource.007", 0, "f0af87c60ec869946da442833aa5afa8", 269237},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
+
 	// Quest for Glory 1 / Hero's Quest - English DOS 5.25" Floppy (supplied by markcoolio in bug report #2723843)
 	// Executable scanning reports "0.000.566"
 	{"qfg1", "", {
@@ -2861,17 +2929,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "16cd4414c37ae3bb6d6da33dce8e25e8", 654096},
 		{"resource.004", 0, "16cd4414c37ae3bb6d6da33dce8e25e8", 689124},
 		{"resource.005", 0, "5f3386ef2f2b1254e4a066f5d9027324", 609529},
-		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
-
-	// Quest for Glory 1 (from abevi, bug report #2612718)
-	{"qfg1", "", {
-		{"resource.map", 0, "b162dbd4632250d4d83bed46d0783c10", 6396},
-		{"resource.000", 0, "40332d3ebfc70a4b6a6a0443c2763287", 78800},
-		{"resource.001", 0, "a270012fa74445d74c044d1b65a9ff8c", 459835},
-		{"resource.002", 0, "e64004e020fdf1813be52b639b08be89", 635561},
-		{"resource.003", 0, "f0af87c60ec869946da442833aa5afa8", 640502},
-		{"resource.004", 0, "f0af87c60ec869946da442833aa5afa8", 644575},
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
@@ -2976,6 +3033,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "df137dc7869cab07e1149ba2333c815c", 502560},
 		{"resource.004", 0, "df137dc7869cab07e1149ba2333c815c", 488541},
 		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478688},
+		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
+		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Quest for Glory 2 - English DOS (supplied by digitoxin1 in bug report #3554614)
+	// v1.102 9x3.5" (label: Int#11.20.90)
+	{"qfg2", "", {
+		{"resource.map", 0, "367023314ea33e3156297402f6c1da49", 8166},
+		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212119},
+		{"resource.001", 0, "e08d7887e30b12008c40f9570447711a", 331995},
+		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 467461},
+		{"resource.003", 0, "df137dc7869cab07e1149ba2333c815c", 502560},
+		{"resource.004", 0, "df137dc7869cab07e1149ba2333c815c", 488532},
+		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478574},
 		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
 		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
 		AD_LISTEND},
@@ -3536,7 +3608,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
 		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO1(GAMEOPTION_SQ4_SILVER_CURSORS)	},
+	 	Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO5(GUIO_MIDIGM, GAMEOPTION_SQ4_SILVER_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Space Quest 4 - English Windows CD (from the Space Quest Collection)
 	// Executable scanning reports "1.001.064", VERSION file reports "1.0"
