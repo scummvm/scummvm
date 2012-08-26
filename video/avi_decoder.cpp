@@ -334,14 +334,14 @@ void AVIDecoder::readNextPacket() {
 	_fileStream->skip(chunkSize & 1);
 
 	if (track->getTrackType() == Track::kTrackTypeAudio) {
-		if (getStreamType(nextTag) != 'wb')
+		if (getStreamType(nextTag) != MKTAG16('w', 'b'))
 			error("Invalid audio track tag '%s'", tag2str(nextTag));
 
 		((AVIAudioTrack *)track)->queueSound(chunk);
 	} else {
 		AVIVideoTrack *videoTrack = (AVIVideoTrack *)track;
 
-		if (getStreamType(nextTag) == 'pc') {
+		if (getStreamType(nextTag) == MKTAG16('p', 'c')) {
 			// Palette Change
 			byte firstEntry = chunk->readByte();
 			uint16 numEntries = chunk->readByte();
@@ -362,7 +362,7 @@ void AVIDecoder::readNextPacket() {
 
 			delete chunk;
 			videoTrack->markPaletteDirty();
-		} else if (getStreamType(nextTag) == 'db') {
+		} else if (getStreamType(nextTag) == MKTAG16('d', 'b')) {
 			// TODO: Check if this really is uncompressed. Many videos
 			// falsely put compressed data in here.
 			error("Uncompressed AVI frame found");
