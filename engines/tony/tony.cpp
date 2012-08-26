@@ -239,11 +239,9 @@ bool TonyEngine::loadTonyDat() {
 		expectedLangVariant = 5;
 		break;
 	default:
-		msg = Common::String::format("Font variant not present in 'tony.dat'. Get it from the ScummVM website");
-		GUIErrorMessage(msg);
-		warning("%s", msg.c_str());
-
-		return false;
+		warning("Unhandled language, falling back to English/Italian fonts.");
+		expectedLangVariant = 0;
+		break;
 	}
 	
 	int numVariant = in.readUint16BE();
