@@ -220,6 +220,7 @@ bool TonyEngine::loadTonyDat() {
 	int expectedLangVariant = -1;
 	switch (g_vm->getLanguage()) {
 	case Common::IT_ITA:
+	case Common::EN_ANY:
 		expectedLangVariant = 0;
 		break;
 	case Common::PL_POL:
