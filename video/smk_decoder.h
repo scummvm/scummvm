@@ -34,6 +34,7 @@ class QueuingAudioStream;
 }
 
 namespace Common {
+class BitStream;
 class SeekableReadStream;
 }
 
@@ -56,42 +57,72 @@ class BigHuffmanTree;
  *  - sword2
  *  - toon
  */
-class SmackerDecoder : public FixedRateVideoDecoder {
+class SmackerDecoder : public VideoDecoder {
 public:
-	SmackerDecoder(Audio::Mixer *mixer,
-			Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
+	SmackerDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
 	virtual ~SmackerDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	virtual bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
-	bool isVideoLoaded() const { return _fileStream != 0; }
-	uint16 getWidth() const { return _surface->w; }
-	uint16 getHeight() const { return _surface->h; }
-	uint32 getFrameCount() const { return _frameCount; }
-	uint32 getTime() const;
-	const Graphics::Surface *decodeNextFrame();
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
-	const byte *getPalette() { _dirtyPalette = false; return _palette; }
-	bool hasDirtyPalette() const { return _dirtyPalette; }
+	bool rewind();
+
+protected:
+	void readNextPacket();
+
 	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 
-protected:
+	class SmackerVideoTrack : public FixedRateVideoTrack {
+	public:
+		SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature);
+		~SmackerVideoTrack();
+
+		bool isRewindable() const { return true; }
+		bool rewind() { _curFrame = -1; return true; }
+
+		uint16 getWidth() const;
+		uint16 getHeight() const;
+		Graphics::PixelFormat getPixelFormat() const;
+		int getCurFrame() const { return _curFrame; }
+		int getFrameCount() const { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame() { return _surface; }
+		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const { return _dirtyPalette; }
+
+		void readTrees(Common::BitStream &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
+		void increaseCurFrame() { _curFrame++; }
+		void decodeFrame(Common::BitStream &bs);
+		void unpackPalette(Common::SeekableReadStream *stream);
+
+	protected:
+		Common::Rational getFrameRate() const { return _frameRate; }
+
+		Graphics::Surface *_surface;
+
+	private:
+		Common::Rational _frameRate;
+		uint32 _flags, _signature;
+
+		byte _palette[3 * 256];
+		mutable bool _dirtyPalette;
+
+		int _curFrame;
+		uint32 _frameCount;
+
+		BigHuffmanTree *_MMapTree;
+		BigHuffmanTree *_MClrTree;
+		BigHuffmanTree *_FullTree;
+		BigHuffmanTree *_TypeTree;
+
+		// Possible runs of blocks
+		static uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
+	};
+
+	virtual SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const;
+
 	Common::SeekableReadStream *_fileStream;
 
-	// VideoDecoder API
-	void updateVolume();
-	void updateBalance();
-
-	// FixedRateVideoDecoder API
-	Common::Rational getFrameRate() const { return _frameRate; }
-
-protected:
-	void unpackPalette();
-	// Possible runs of blocks
-	uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
-	void queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize, int streamNum);
-
+private:
 	enum AudioCompression {
 		kCompressionNone,
 		kCompressionDPCM,
@@ -120,6 +151,28 @@ protected:
 		uint32 dummy;
 	} _header;
 
+	class SmackerAudioTrack : public AudioTrack {
+	public:
+		SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType);
+		~SmackerAudioTrack();
+
+		bool isRewindable() const { return true; }
+		bool rewind();
+
+		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
+
+		void queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize);
+		void queuePCM(byte *buffer, uint32 bufferSize);
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+	private:
+		Audio::Mixer::SoundType _soundType;
+		Audio::QueuingAudioStream *_audioStream;
+		AudioInfo _audioInfo;
+	};
+
 	uint32 *_frameSizes;
 	// The FrameTypes section of a Smacker file contains an array of bytes, where
 	// the 8 bits of each byte describe the contents of the corresponding frame.
@@ -127,25 +180,10 @@ protected:
 	// and so on), so there can be up to 7 different audio tracks. When the lowest bit
 	// (bit 0) is set, it denotes a frame that contains a palette record
 	byte *_frameTypes;
-	byte *_frameData;
-	// The RGB palette
-	byte _palette[3 * 256];
-	bool _dirtyPalette;
 
-	Common::Rational _frameRate;
-	uint32 _frameCount;
-	Graphics::Surface *_surface;
+	uint32 _firstFrameStart;
 
 	Audio::Mixer::SoundType _soundType;
-	Audio::Mixer *_mixer;
-	bool _audioStarted;
-	Audio::QueuingAudioStream *_audioStream;
-	Audio::SoundHandle _audioHandle;
-
-	BigHuffmanTree *_MMapTree;
-	BigHuffmanTree *_MClrTree;
-	BigHuffmanTree *_FullTree;
-	BigHuffmanTree *_TypeTree;
 };
 
 } // End of namespace Video

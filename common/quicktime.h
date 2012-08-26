@@ -35,6 +35,7 @@
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/rational.h"
+#include "common/types.h"
 
 namespace Common {
 	class MacResManager;

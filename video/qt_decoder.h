@@ -31,16 +31,17 @@
 #ifndef VIDEO_QT_DECODER_H
 #define VIDEO_QT_DECODER_H
 
-#include "audio/mixer.h"
 #include "audio/decoders/quicktime_intern.h"
 #include "common/scummsys.h"
-#include "common/rational.h"
-#include "graphics/pixelformat.h"
 
 #include "video/video_decoder.h"
 
 namespace Common {
-	class Rational;
+class Rational;
+}
+
+namespace Graphics {
+struct PixelFormat;
 }
 
 namespace Video {
@@ -54,68 +55,33 @@ class Codec;
  *  - mohawk
  *  - sci
  */
-class QuickTimeDecoder : public SeekableVideoDecoder, public Audio::QuickTimeAudioDecoder {
+class QuickTimeDecoder : public VideoDecoder, public Audio::QuickTimeAudioDecoder {
 public:
 	QuickTimeDecoder();
 	virtual ~QuickTimeDecoder();
 
-	/**
-	 * Returns the width of the video
-	 * @return the width of the video
-	 */
-	uint16 getWidth() const { return _width; }
-
-	/**
-	 * Returns the height of the video
-	 * @return the height of the video
-	 */
-	uint16 getHeight() const { return _height; }
-
-	/**
-	 * Returns the amount of frames in the video
-	 * @return the amount of frames in the video
-	 */
-	uint32 getFrameCount() const;
-
-	/**
-	 * Load a video file
-	 * @param filename	the filename to load
-	 */
 	bool loadFile(const Common::String &filename);
-
-	/**
-	 * Load a QuickTime video file from a SeekableReadStream
-	 * @param stream	the stream to load
-	 */
 	bool loadStream(Common::SeekableReadStream *stream);
-
-	/**
-	 * Close a QuickTime encoded video file
-	 */
 	void close();
-
-	/**
-	 * Returns the palette of the video
-	 * @return the palette of the video
-	 */
-	const byte *getPalette() { _dirtyPalette = false; return _palette; }
-	bool hasDirtyPalette() const { return _dirtyPalette; }
-
-	int32 getCurFrame() const;
-
-	bool isVideoLoaded() const { return isOpen(); }
+	uint16 getWidth() const { return _width; }
+	uint16 getHeight() const { return _height; }
 	const Graphics::Surface *decodeNextFrame();
-	bool endOfVideo() const;
-	uint32 getTime() const;
-	uint32 getTimeToNextFrame() const;
-	Graphics::PixelFormat getPixelFormat() const;
-
-	// SeekableVideoDecoder API
-	void seekToFrame(uint32 frame);
-	void seekToTime(const Audio::Timestamp &time);
-	uint32 getDuration() const { return _duration * 1000 / _timeScale; }
+	Audio::Timestamp getDuration() const { return Audio::Timestamp(0, _duration, _timeScale); }
 
 protected:
+	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format);
+
+private:
+	void init();
+
+	void updateAudioBuffer();
+
+	uint16 _width, _height;
+
+	Graphics::Surface *_scaledSurface;
+	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
+			const Common::Rational &scaleFactorX, const Common::Rational &scaleFactorY);
+
 	class VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
 		VideoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
@@ -131,110 +97,59 @@ protected:
 		Codec *_videoCodec;
 	};
 
-	Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format);
-
-	// VideoDecoder API
-	void updateVolume();
-	void updateBalance();
-
-private:
-	void init();
-
-	void startAudio();
-	void stopAudio();
-	void updateAudioBuffer();
-	void readNextAudioChunk();
-	Common::Array<Audio::SoundHandle> _audioHandles;
-	Audio::Timestamp _audioStartOffset;
-
-	Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
-	uint32 findKeyFrame(uint32 frame) const;
-
-	bool _dirtyPalette;
-	const byte *_palette;
-	bool _setStartTime;
-	bool _needUpdate;
-
-	uint16 _width, _height;
-
-	Graphics::Surface *_scaledSurface;
-	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
-			Common::Rational scaleFactorX, Common::Rational scaleFactorY);
-
-	void pauseVideoIntern(bool pause);
-	bool endOfVideoTracks() const;
-
-	// The TrackHandler is a class that wraps around a QuickTime Track
-	// and handles playback in this decoder class.
-	class TrackHandler {
-	public:
-		TrackHandler(QuickTimeDecoder *decoder, Track *parent);
-		virtual ~TrackHandler() {}
-
-		enum TrackType {
-			kTrackTypeAudio,
-			kTrackTypeVideo
-		};
-
-		virtual TrackType getTrackType() const = 0;
-
-		virtual void seekToTime(Audio::Timestamp time) = 0;
-
-		virtual bool endOfTrack();
-
-	protected:
-		uint32 _curEdit;
-		QuickTimeDecoder *_decoder;
-		Common::SeekableReadStream *_fd;
-		Track *_parent;
-	};
-
 	// The AudioTrackHandler is currently just a wrapper around some
 	// QuickTimeDecoder functions.
-	class AudioTrackHandler : public TrackHandler {
+	class AudioTrackHandler : public SeekableAudioTrack {
 	public:
 		AudioTrackHandler(QuickTimeDecoder *decoder, QuickTimeAudioTrack *audioTrack);
-		TrackType getTrackType() const { return kTrackTypeAudio; }
 
 		void updateBuffer();
-		void seekToTime(Audio::Timestamp time);
-		bool endOfTrack();
+
+	protected:
+		Audio::SeekableAudioStream *getSeekableAudioStream() const;
 
 	private:
+		QuickTimeDecoder *_decoder;
 		QuickTimeAudioTrack *_audioTrack;
 	};
 
 	// The VideoTrackHandler is the bridge between the time of playback
 	// and the media for the given track. It calculates when to start
 	// tracks and at what rate to play the media using the edit list.
-	class VideoTrackHandler : public TrackHandler {
+	class VideoTrackHandler : public VideoTrack {
 	public:
-		VideoTrackHandler(QuickTimeDecoder *decoder, Track *parent);
+		VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent);
 		~VideoTrackHandler();
 
-		TrackType getTrackType() const { return kTrackTypeVideo; }
+		bool endOfTrack() const;
+		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time);
+		Audio::Timestamp getDuration() const;
 
-		const Graphics::Surface *decodeNextFrame();
-
-		uint32 getNextFrameStartTime();
-
-		uint32 getFrameCount();
-
-		int32 getCurFrame() { return _curFrame; }
-
+		uint16 getWidth() const;
+		uint16 getHeight() const;
 		Graphics::PixelFormat getPixelFormat() const;
+		int getCurFrame() const { return _curFrame; }
+		int getFrameCount() const;
+		uint32 getNextFrameStartTime() const;
+		const Graphics::Surface *decodeNextFrame();
+		const byte *getPalette() const { _dirtyPalette = false; return _curPalette; }
+		bool hasDirtyPalette() const { return _curPalette; }
 
-		void seekToTime(Audio::Timestamp time);
-
-		Common::Rational getWidth() const;
-		Common::Rational getHeight() const;
+		Common::Rational getScaledWidth() const;
+		Common::Rational getScaledHeight() const;
 
 	private:
+		QuickTimeDecoder *_decoder;
+		Common::QuickTimeParser::Track *_parent;
+		uint32 _curEdit;
 		int32 _curFrame;
 		uint32 _nextFrameStartTime;
 		Graphics::Surface *_scaledSurface;
 		bool _holdNextFrameStartTime;
 		int32 _durationOverride;
+		const byte *_curPalette;
+		mutable bool _dirtyPalette;
 
 		Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
 		uint32 getFrameDuration();
@@ -245,12 +160,6 @@ private:
 		uint32 getCurEditTimeOffset() const;
 		uint32 getCurEditTrackDuration() const;
 	};
-
-	Common::Array<TrackHandler *> _handlers;
-	VideoTrackHandler *_nextVideoTrack;
-	VideoTrackHandler *findNextVideoTrack() const;
-
-	void freeAllTrackHandlers();
 };
 
 } // End of namespace Video

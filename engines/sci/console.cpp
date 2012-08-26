@@ -250,20 +250,18 @@ void Console::postEnter() {
 #endif
 
 		if (_videoFile.hasSuffix(".seq")) {
-			SeqDecoder *seqDecoder = new SeqDecoder();
-			seqDecoder->setFrameDelay(_videoFrameDelay);
-			videoDecoder = seqDecoder;
+			videoDecoder = new SEQDecoder(_videoFrameDelay);
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
-			videoDecoder = new Video::VMDDecoder(g_system->getMixer());
+			videoDecoder = new Video::AdvancedVMDDecoder();
 		} else if (_videoFile.hasSuffix(".rbt")) {
-			videoDecoder = new RobotDecoder(g_system->getMixer(), _engine->getPlatform() == Common::kPlatformMacintosh);
+			videoDecoder = new RobotDecoder(_engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
 			duckMode = true;
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
 #endif
 		} else if (_videoFile.hasSuffix(".avi")) {
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
 		} else {
 			warning("Unrecognized video type");
 		}

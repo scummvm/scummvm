@@ -22,11 +22,13 @@
 
 #include "common/archive.h"
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
 #include "graphics/surface.h"
+#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
 #include "sci/resource.h"
@@ -63,27 +65,47 @@ namespace Sci {
 // our graphics engine, it looks just like a part of the room. A RBT can move
 // around the screen and go behind other objects. (...)
 
-#ifdef ENABLE_SCI32
-
-enum robotPalTypes {
+enum RobotPalTypes {
 	kRobotPalVariable = 0,
 	kRobotPalConstant = 1
 };
 
-RobotDecoder::RobotDecoder(Audio::Mixer *mixer, bool isBigEndian) {
-	_surface = 0;
-	_width = 0;
-	_height = 0;
+RobotDecoder::RobotDecoder(bool isBigEndian) {
 	_fileStream = 0;
-	_audioStream = 0;
-	_dirtyPalette = false;
 	_pos = Common::Point(0, 0);
-	_mixer = mixer;
 	_isBigEndian = isBigEndian;
+	_frameTotalSize = 0;
 }
 
 RobotDecoder::~RobotDecoder() {
 	close();
+}
+
+bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
+	close();
+
+	_fileStream = new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), _isBigEndian, DisposeAfterUse::YES);
+
+	readHeaderChunk();
+
+	// There are several versions of robot files, ranging from 3 to 6.
+	// v3: no known examples
+	// v4: PQ:SWAT demo
+	// v5: SCI2.1 and SCI3 games
+	// v6: SCI3 games
+	if (_header.version < 4 || _header.version > 6)
+		error("Unknown robot version: %d", _header.version);
+
+	RobotVideoTrack *videoTrack = new RobotVideoTrack(_header.frameCount);
+	addTrack(videoTrack);
+
+	if (_header.hasSound)
+		addTrack(new RobotAudioTrack());
+
+	videoTrack->readPaletteChunk(_fileStream, _header.paletteDataSize);
+	readFrameSizesChunk();
+	videoTrack->calculateVideoDimensions(_fileStream, _frameTotalSize);
+	return true;
 }
 
 bool RobotDecoder::load(GuiResourceId id) {
@@ -109,33 +131,123 @@ bool RobotDecoder::load(GuiResourceId id) {
 	return loadStream(stream);
 }
 
-bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
-	close();
+void RobotDecoder::close() {
+	VideoDecoder::close();
 
-	_fileStream = new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), _isBigEndian, DisposeAfterUse::YES);
-	_surface = new Graphics::Surface();
+	delete _fileStream;
+	_fileStream = 0;
 
-	readHeaderChunk();
+	delete[] _frameTotalSize;
+	_frameTotalSize = 0;
+}
 
-	// There are several versions of robot files, ranging from 3 to 6.
-	// v3: no known examples
-	// v4: PQ:SWAT demo
-	// v5: SCI2.1 and SCI3 games
-	// v6: SCI3 games
-	if (_header.version < 4 || _header.version > 6)
-		error("Unknown robot version: %d", _header.version);
+void RobotDecoder::readNextPacket() {
+	// Get our track
+	RobotVideoTrack *videoTrack = (RobotVideoTrack *)getTrack(0);
+	videoTrack->increaseCurFrame();
+	Graphics::Surface *surface = videoTrack->getSurface();
 
-	if (_header.hasSound) {
-		_audioStream = Audio::makeQueuingAudioStream(11025, false);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_audioHandle, _audioStream, -1, getVolume(), getBalance());
+	if (videoTrack->endOfTrack())
+		return;
+
+	// Read frame image header (24 bytes)
+	_fileStream->skip(3);
+	byte frameScale = _fileStream->readByte();
+	uint16 frameWidth = _fileStream->readUint16();
+	uint16 frameHeight = _fileStream->readUint16();
+	_fileStream->skip(4); // unknown, almost always 0
+	uint16 frameX = _fileStream->readUint16();
+	uint16 frameY = _fileStream->readUint16();
+
+	// TODO: In v4 robot files, frameX and frameY have a different meaning.
+	// Set them both to 0 for v4 for now, so that robots in PQ:SWAT show up
+	// correctly.
+	if (_header.version == 4)
+		frameX = frameY = 0;
+
+	uint16 compressedSize = _fileStream->readUint16();
+	uint16 frameFragments = _fileStream->readUint16();
+	_fileStream->skip(4); // unknown
+	uint32 decompressedSize = frameWidth * frameHeight * frameScale / 100;
+
+	// FIXME: A frame's height + position can go off limits... why? With the
+	// following, we cut the contents to fit the frame
+	uint16 scaledHeight = CLIP<uint16>(decompressedSize / frameWidth, 0, surface->h - frameY);
+
+	// FIXME: Same goes for the frame's width + position. In this case, we
+	// modify the position to fit the contents on screen.
+	if (frameWidth + frameX > surface->w)
+		frameX = surface->w - frameWidth;
+
+	assert(frameWidth + frameX <= surface->w && scaledHeight + frameY <= surface->h);
+
+	DecompressorLZS lzs;
+	byte *decompressedFrame = new byte[decompressedSize];
+	byte *outPtr = decompressedFrame;
+
+	if (_header.version == 4) {
+		// v4 has just the one fragment, it seems, and ignores the fragment count
+		Common::SeekableSubReadStream fragmentStream(_fileStream, _fileStream->pos(), _fileStream->pos() + compressedSize);
+		lzs.unpack(&fragmentStream, outPtr, compressedSize, decompressedSize);
+	} else {
+		for (uint16 i = 0; i < frameFragments; ++i) {
+			uint32 compressedFragmentSize = _fileStream->readUint32();
+			uint32 decompressedFragmentSize = _fileStream->readUint32();
+			uint16 compressionType = _fileStream->readUint16();
+
+			if (compressionType == 0) {
+				Common::SeekableSubReadStream fragmentStream(_fileStream, _fileStream->pos(), _fileStream->pos() + compressedFragmentSize);
+				lzs.unpack(&fragmentStream, outPtr, compressedFragmentSize, decompressedFragmentSize);
+			} else if (compressionType == 2) {	// untested
+				_fileStream->read(outPtr, compressedFragmentSize);
+			} else {
+				error("Unknown frame compression found: %d", compressionType);
+			}
+
+			outPtr += decompressedFragmentSize;
+		}
 	}
 
-	readPaletteChunk(_header.paletteDataSize);
-	readFrameSizesChunk();
-	calculateVideoDimensions();
-	_surface->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+	// Copy over the decompressed frame
+	byte *inFrame = decompressedFrame;
+	byte *outFrame = (byte *)surface->pixels;
 
-	return true;
+	// Black out the surface
+	memset(outFrame, 0, surface->w * surface->h);
+
+	// Move to the correct y coordinate
+	outFrame += surface->w * frameY;
+
+	for (uint16 y = 0; y < scaledHeight; y++) {
+		memcpy(outFrame + frameX, inFrame, frameWidth);
+		inFrame += frameWidth;
+		outFrame += surface->w;
+	}
+
+	delete[] decompressedFrame;
+
+	uint32 audioChunkSize = _frameTotalSize[videoTrack->getCurFrame()] - (24 + compressedSize);
+
+// TODO: The audio chunk size below is usually correct, but there are some
+// exceptions (e.g. robot 4902 in Phantasmagoria, towards its end)
+#if 0
+	// Read frame audio header (14 bytes)
+	_fileStream->skip(2); // buffer position
+	_fileStream->skip(2); // unknown (usually 1)
+	_fileStream->skip(2); /*uint16 audioChunkSize = _fileStream->readUint16() + 8;*/
+	_fileStream->skip(2);
+#endif
+
+	// Queue the next audio frame
+	// FIXME: For some reason, there are audio hiccups/gaps
+	if (_header.hasSound) {
+		RobotAudioTrack *audioTrack = (RobotAudioTrack *)getTrack(1);
+		_fileStream->skip(8); // header
+		audioChunkSize -= 8;
+		audioTrack->queueBuffer(g_sci->_audio->getDecodedRobotAudioFrame(_fileStream, audioChunkSize), audioChunkSize * 2);
+	} else {
+		_fileStream->skip(audioChunkSize);
+	}	
 }
 
 void RobotDecoder::readHeaderChunk() {
@@ -159,31 +271,6 @@ void RobotDecoder::readHeaderChunk() {
 	if (_header.unkChunkDataSize)
 		_fileStream->skip(_header.unkChunkDataSize);
 }
-
-void RobotDecoder::readPaletteChunk(uint16 chunkSize) {
-	byte *paletteData = new byte[chunkSize];
-	_fileStream->read(paletteData, chunkSize);
-
-	// SCI1.1 palette
-	byte palFormat = paletteData[32];
-	uint16 palColorStart = paletteData[25];
-	uint16 palColorCount = READ_SCI11ENDIAN_UINT16(paletteData + 29);
-
-	int palOffset = 37;
-	memset(_palette, 0, 256 * 3);
-
-	for (uint16 colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
-		if (palFormat == kRobotPalVariable)
-			palOffset++;
-		_palette[colorNo * 3 + 0] = paletteData[palOffset++];
-		_palette[colorNo * 3 + 1] = paletteData[palOffset++];
-		_palette[colorNo * 3 + 2] = paletteData[palOffset++];
-	}
-
-	_dirtyPalette = true;
-	delete[] paletteData;
-}
-
 
 void RobotDecoder::readFrameSizesChunk() {
 	// The robot video file contains 2 tables, with one entry for each frame:
@@ -230,158 +317,90 @@ void RobotDecoder::readFrameSizesChunk() {
 		_fileStream->seek((curPos & ~0x7ff) + 2048);
 }
 
-void RobotDecoder::calculateVideoDimensions() {
-	// This is an O(n) operation, as each frame has a different size.
-	// We need to know the actual frame size to have a constant video size.
-	uint32 pos = _fileStream->pos();
-
-	for (uint32 curFrame = 0; curFrame < _header.frameCount; curFrame++) {
-		_fileStream->skip(4);
-		uint16 frameWidth = _fileStream->readUint16();
-		uint16 frameHeight = _fileStream->readUint16();
-		if (frameWidth > _width)
-			_width = frameWidth;
-		if (frameHeight > _height)
-			_height = frameHeight;
-		_fileStream->skip(_frameTotalSize[curFrame] - 8);
-	}
-
-	_fileStream->seek(pos);
+RobotDecoder::RobotVideoTrack::RobotVideoTrack(int frameCount) : _frameCount(frameCount) {
+	_surface = new Graphics::Surface();
+	_curFrame = -1;
+	_dirtyPalette = false;
 }
 
-const Graphics::Surface *RobotDecoder::decodeNextFrame() {
-	// Read frame image header (24 bytes)
-	_fileStream->skip(3);
-	byte frameScale = _fileStream->readByte();
-	uint16 frameWidth = _fileStream->readUint16();
-	uint16 frameHeight = _fileStream->readUint16();
-	_fileStream->skip(4); // unknown, almost always 0
-	uint16 frameX = _fileStream->readUint16();
-	uint16 frameY = _fileStream->readUint16();
-	// TODO: In v4 robot files, frameX and frameY have a different meaning.
-	// Set them both to 0 for v4 for now, so that robots in PQ:SWAT show up
-	// correctly.
-	if (_header.version == 4)
-		frameX = frameY = 0;
-	uint16 compressedSize = _fileStream->readUint16();
-	uint16 frameFragments = _fileStream->readUint16();
-	_fileStream->skip(4); // unknown
-	uint32 decompressedSize = frameWidth * frameHeight * frameScale / 100;
-	// FIXME: A frame's height + position can go off limits... why? With the
-	// following, we cut the contents to fit the frame
-	uint16 scaledHeight = CLIP<uint16>(decompressedSize / frameWidth, 0, _height - frameY);
-	// FIXME: Same goes for the frame's width + position. In this case, we
-	// modify the position to fit the contents on screen.
-	if (frameWidth + frameX > _width)
-		frameX = _width - frameWidth;
-	assert (frameWidth + frameX <= _width && scaledHeight + frameY <= _height);
-
-	DecompressorLZS lzs;
-	byte *decompressedFrame = new byte[decompressedSize];
-	byte *outPtr = decompressedFrame;
-
-	if (_header.version == 4) {
-		// v4 has just the one fragment, it seems, and ignores the fragment count
-		Common::SeekableSubReadStream fragmentStream(_fileStream, _fileStream->pos(), _fileStream->pos() + compressedSize);
-		lzs.unpack(&fragmentStream, outPtr, compressedSize, decompressedSize);
-	} else {
-		for (uint16 i = 0; i < frameFragments; ++i) {
-			uint32 compressedFragmentSize = _fileStream->readUint32();
-			uint32 decompressedFragmentSize = _fileStream->readUint32();
-			uint16 compressionType = _fileStream->readUint16();
-
-			if (compressionType == 0) {
-				Common::SeekableSubReadStream fragmentStream(_fileStream, _fileStream->pos(), _fileStream->pos() + compressedFragmentSize);
-				lzs.unpack(&fragmentStream, outPtr, compressedFragmentSize, decompressedFragmentSize);
-			} else if (compressionType == 2) {	// untested
-				_fileStream->read(outPtr, compressedFragmentSize);
-			} else {
-				error("Unknown frame compression found: %d", compressionType);
-			}
-
-			outPtr += decompressedFragmentSize;
-		}
-	}
-
-	// Copy over the decompressed frame
-	byte *inFrame = decompressedFrame;
-	byte *outFrame = (byte *)_surface->pixels;
-
-	// Black out the surface
-	memset(outFrame, 0, _width * _height);
-
-	// Move to the correct y coordinate
-	outFrame += _width * frameY;
-
-	for (uint16 y = 0; y < scaledHeight; y++) {
-		memcpy(outFrame + frameX, inFrame, frameWidth);
-		inFrame += frameWidth;
-		outFrame += _width;
-	}
-
-	delete[] decompressedFrame;
-
-	// +1 because we start with frame number -1
-	uint32 audioChunkSize = _frameTotalSize[_curFrame + 1] - (24 + compressedSize);
-
-// TODO: The audio chunk size below is usually correct, but there are some
-// exceptions (e.g. robot 4902 in Phantasmagoria, towards its end)
-#if 0
-	// Read frame audio header (14 bytes)
-	_fileStream->skip(2); // buffer position
-	_fileStream->skip(2); // unknown (usually 1)
-	_fileStream->skip(2); /*uint16 audioChunkSize = _fileStream->readUint16() + 8;*/
-	_fileStream->skip(2);
-#endif
-
-	// Queue the next audio frame
-	// FIXME: For some reason, there are audio hiccups/gaps
-	if (_header.hasSound) {
-		_fileStream->skip(8);	// header
-		_audioStream->queueBuffer(g_sci->_audio->getDecodedRobotAudioFrame(_fileStream, audioChunkSize - 8),
-									(audioChunkSize - 8) * 2, DisposeAfterUse::NO,
-									Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
-	} else {
-		_fileStream->skip(audioChunkSize);
-	}
-
-	if (_curFrame == -1)
-		_startTime = g_system->getMillis();
-
-	_curFrame++;
-
-	return _surface;
-}
-
-void RobotDecoder::close() {
-	if (!_fileStream)
-		return;
-
-	delete _fileStream;
-	_fileStream = 0;
-
+RobotDecoder::RobotVideoTrack::~RobotVideoTrack() {
 	_surface->free();
 	delete _surface;
-	_surface = 0;
+}
 
-	if (_header.hasSound) {
-		_mixer->stopHandle(_audioHandle);
-		//delete _audioStream; _audioStream = 0;
+uint16 RobotDecoder::RobotVideoTrack::getWidth() const {
+	return _surface->w;
+}
+
+uint16 RobotDecoder::RobotVideoTrack::getHeight() const {
+	return _surface->h;
+}
+
+Graphics::PixelFormat RobotDecoder::RobotVideoTrack::getPixelFormat() const {
+	return _surface->format;
+}
+
+void RobotDecoder::RobotVideoTrack::readPaletteChunk(Common::SeekableSubReadStreamEndian *stream, uint16 chunkSize) {
+	byte *paletteData = new byte[chunkSize];
+	stream->read(paletteData, chunkSize);
+
+	// SCI1.1 palette
+	byte palFormat = paletteData[32];
+	uint16 palColorStart = paletteData[25];
+	uint16 palColorCount = READ_SCI11ENDIAN_UINT16(paletteData + 29);
+
+	int palOffset = 37;
+	memset(_palette, 0, 256 * 3);
+
+	for (uint16 colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
+		if (palFormat == kRobotPalVariable)
+			palOffset++;
+		_palette[colorNo * 3 + 0] = paletteData[palOffset++];
+		_palette[colorNo * 3 + 1] = paletteData[palOffset++];
+		_palette[colorNo * 3 + 2] = paletteData[palOffset++];
 	}
 
-	reset();
+	_dirtyPalette = true;
+	delete[] paletteData;
 }
 
-void RobotDecoder::updateVolume() {
-	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
-		g_system->getMixer()->setChannelVolume(_audioHandle, getVolume());
+void RobotDecoder::RobotVideoTrack::calculateVideoDimensions(Common::SeekableSubReadStreamEndian *stream, uint32 *frameSizes) {
+	// This is an O(n) operation, as each frame has a different size.
+	// We need to know the actual frame size to have a constant video size.
+	uint32 pos = stream->pos();
+
+	uint16 width = 0, height = 0;
+
+	for (int curFrame = 0; curFrame < _frameCount; curFrame++) {
+		stream->skip(4);
+		uint16 frameWidth = stream->readUint16();
+		uint16 frameHeight = stream->readUint16();
+		if (frameWidth > width)
+			width = frameWidth;
+		if (frameHeight > height)
+			height = frameHeight;
+		stream->skip(frameSizes[curFrame] - 8);
+	}
+
+	stream->seek(pos);
+
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
-void RobotDecoder::updateBalance() {
-	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
-		g_system->getMixer()->setChannelBalance(_audioHandle, getBalance());
+RobotDecoder::RobotAudioTrack::RobotAudioTrack() {
+	_audioStream = Audio::makeQueuingAudioStream(11025, false);
 }
 
-#endif
+RobotDecoder::RobotAudioTrack::~RobotAudioTrack() {
+	delete _audioStream;
+}
+
+void RobotDecoder::RobotAudioTrack::queueBuffer(byte *buffer, int size) {
+	_audioStream->queueBuffer(buffer, size, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+}
+
+Audio::AudioStream *RobotDecoder::RobotAudioTrack::getAudioStream() const {
+	return _audioStream;
+}
 
 } // End of namespace Sci
