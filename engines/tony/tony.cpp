@@ -111,6 +111,10 @@ Common::Error TonyEngine::run() {
  * Initialize the game
  */
 Common::ErrorCode TonyEngine::init() {
+	// Load DAT file (used by font manager)
+	if (!loadTonyDat())
+		return Common::kUnknownError;
+
 	if (isCompressed()) {
 		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
 		if (!stream)
@@ -175,6 +179,94 @@ Common::ErrorCode TonyEngine::init() {
 	_bQuitNow = false;
 
 	return Common::kNoError;
+}
+
+bool TonyEngine::loadTonyDat() {
+	Common::String msg;
+	Common::File in;
+
+	in.open("tony.dat");
+
+	if (!in.isOpen()) {
+		msg = "You're missing the 'tony.dat' file. Get it from the ScummVM website";
+		GUIErrorMessage(msg);
+		warning("%s", msg.c_str());
+		return false;
+	}
+
+	// Read header
+	char buf[4+1];
+	in.read(buf, 4);
+	buf[4] = '\0';
+
+	if (strcmp(buf, "TONY")) {
+		msg = "File 'tony.dat' is corrupt. Get it from the ScummVM website";
+		GUIErrorMessage(msg);
+		warning("%s", msg.c_str());
+		return false;
+	}
+
+	int majVer = in.readByte();
+	int minVer = in.readByte();
+
+	if ((majVer != TONY_DAT_VER_MAJ) || (minVer != TONY_DAT_VER_MIN)) {
+		msg = Common::String::format("File 'tony.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
+		GUIErrorMessage(msg);
+		warning("%s", msg.c_str());
+
+		return false;
+	}
+
+	int expectedLangVariant = -1;
+	switch (g_vm->getLanguage()) {
+	case Common::IT_ITA:
+		expectedLangVariant = 0;
+		break;
+	case Common::PL_POL:
+		expectedLangVariant = 1;
+		break;
+	case Common::RU_RUS:
+		expectedLangVariant = 2;
+		break;
+	case Common::CZ_CZE:
+		expectedLangVariant = 3;
+		break;
+	case Common::FR_FRA:
+		expectedLangVariant = 4;
+		break;
+	case Common::DE_DEU:
+		expectedLangVariant = 5;
+		break;
+	default:
+		msg = Common::String::format("Font variant not present in 'tony.dat'. Get it from the ScummVM website");
+		GUIErrorMessage(msg);
+		warning("%s", msg.c_str());
+
+		return false;
+	}
+	
+	int numVariant = in.readUint16BE();
+	if (expectedLangVariant > numVariant) {
+		msg = Common::String::format("Font variant not present in 'tony.dat'. Get it from the ScummVM website");
+		GUIErrorMessage(msg);
+		warning("%s", msg.c_str());
+		
+		return false;
+	}
+	
+	in.seek(in.pos() + (2 * 256 * 8 * expectedLangVariant));
+	for (int i = 0; i < 256; i++) {
+		_cTableDialog[i] = in.readSint16BE();
+		_lTableDialog[i] = in.readSint16BE();
+		_cTableMacc[i] = in.readSint16BE();
+		_lTableMacc[i] = in.readSint16BE();
+		_cTableCred[i] = in.readSint16BE();
+		_lTableCred[i] = in.readSint16BE();
+		_cTableObj[i] = in.readSint16BE();
+		_lTableObj[i] = in.readSint16BE();
+	}
+
+	return true;
 }
 
 void TonyEngine::initCustomFunctionMap() {

@@ -70,6 +70,8 @@ enum {
 struct TonyGameDescription;
 
 #define MAX_SFX_CHANNELS    32
+#define TONY_DAT_VER_MAJ 0
+#define TONY_DAT_VER_MIN 1
 
 struct VoiceHeader {
 	int _offset;
@@ -81,6 +83,7 @@ struct VoiceHeader {
 class TonyEngine : public Engine {
 private:
 	Common::ErrorCode init();
+	bool loadTonyDat();
 	void initMusic();
 	void closeMusic();
 	bool openVoiceDatabase();
@@ -105,6 +108,15 @@ public:
 	Common::List<FPSfx *> _activeSfx;
 	Globals _globals;
 	Debugger *_debugger;
+
+	int16 _cTableDialog[256];
+	int16 _lTableDialog[256];
+	int16 _cTableMacc[256];
+	int16 _lTableMacc[256];
+	int16 _cTableCred[256];
+	int16 _lTableCred[256];
+	int16 _cTableObj[256];
+	int16 _lTableObj[256];
 
 	enum DataDir {
 		DD_BASE = 1,
