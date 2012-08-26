@@ -21,6 +21,7 @@
  */
 
 #include "common/EventRecorder.h"
+#include "common/debug-channels.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "common/bufferedstream.h"
@@ -148,17 +149,17 @@ EventRecorder::~EventRecorder() {
 
 void EventRecorder::init() {
 	String recordModeString = ConfMan.get("record_mode");
+	DebugMan.addDebugChannel(kDebugLevelEventRec, "EventRec", "Event recorder debug level");
 	if (recordModeString.compareToIgnoreCase("record") == 0) {
 		_recordMode = kRecorderRecord;
-
-		debug(3, "EventRecorder: record");
+		debugC(3, kDebugLevelEventRec, "EventRecorder: record");
 	} else {
 		if (recordModeString.compareToIgnoreCase("playback") == 0) {
 			_recordMode = kRecorderPlayback;
-			debug(3, "EventRecorder: playback");
+			debugC(3, kDebugLevelEventRec, "EventRecorder: playback");
 		} else {
 			_recordMode = kPassthrough;
-			debug(3, "EventRecorder: passthrough");
+			debugC(3, kDebugLevelEventRec, "EventRecorder: passthrough");
 		}
 	}
 
@@ -208,7 +209,7 @@ void EventRecorder::init() {
 }
 
 void EventRecorder::deinit() {
-	debug(3, "EventRecorder: deinit");
+	debugC(3, kDebugLevelEventRec, "EventRecorder: deinit");
 
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
 	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
