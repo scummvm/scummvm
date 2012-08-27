@@ -35,7 +35,8 @@ bool OnScreenDialog::isVisible() const {
 
 enum {
 	kStopCmd = 'STOP',
-	kEditCmd = 'EDIT'
+	kEditCmd = 'EDIT',
+	kSwitchModeCmd = 'MODE'
 };
 
 void OnScreenDialog::reflowLayout() {
@@ -46,12 +47,16 @@ void OnScreenDialog::releaseFocus() {
 }
 
 OnScreenDialog::OnScreenDialog() : Dialog(0, 0, 200, 40) {
-	GUI::PicButtonWidget *btn = new PicButtonWidget(this, "OnScreenDialog.StopButton", "|>", kStopCmd);
+	GUI::PicButtonWidget *btn;
+	btn = new PicButtonWidget(this, "OnScreenDialog.StopButton", "", kStopCmd);
 	btn->useThemeTransparency(true);
 	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopbtn));
-	btn = new PicButtonWidget(this, "OnScreenDialog.EditButton", "|>", kEditCmd);
+	btn = new PicButtonWidget(this, "OnScreenDialog.EditButton", "", kEditCmd);
 	btn->useThemeTransparency(true);
 	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditbtn));
+	btn = new PicButtonWidget(this, "OnScreenDialog.SwitchModeButton", "", kSwitchModeCmd);
+	btn->useThemeTransparency(true);
+	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModebtn));
 	text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", "00:00:00");
 	_enableDrag = false;
 	_mouseOver = false;
@@ -73,6 +78,9 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		g_eventRec.setName(dlg.getName());
 		g_eventRec.setNotes(dlg.getNotes());
 		open();
+		break;
+	case kSwitchModeCmd:
+		g_eventRec.switchMode();
 		break;
 	}
 }

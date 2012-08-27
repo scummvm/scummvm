@@ -934,6 +934,10 @@
 				width = '32'
 				height = '32'
 			/>
+			<widget name = 'SwitchModeButton'
+				width = '32'
+				height = '32'
+			/>
 			<widget name = 'TimeLabel'
 				width = '50'
 				height = '30'

@@ -157,9 +157,6 @@ void EventRecorder::checkForKeyCode(const Event &event) {
 		if ((event.kbd.ascii == '/')) {
 			togglePause();
 		}
-		if ((event.kbd.ascii == '/')) {
-			switchMode();
-		}
 	}
 }
 

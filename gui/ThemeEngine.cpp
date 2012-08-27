@@ -52,6 +52,7 @@ const char * const ThemeEngine::kImageList = "list.bmp";
 const char * const ThemeEngine::kImageGrid = "grid.bmp";
 const char * const ThemeEngine::kImageStopbtn = "stopbtn.bmp";
 const char * const ThemeEngine::kImageEditbtn = "editbtn.bmp";
+const char * const ThemeEngine::kImageSwitchModebtn = "switchbtn.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
