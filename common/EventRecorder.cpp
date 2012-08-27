@@ -167,9 +167,6 @@ EventRecorder::EventRecorder() : _tmpRecordFile(_recordBuffer, kRecordBuffSize),
 	_recordMode = kPassthrough;
 	_timerManager = NULL;
 	_bitmapBuff = NULL;
-	_playbackFile = NULL;
-	_recordFile = NULL;
-	_screenshotsFile = NULL;
 	initialized = false;
 }
 
@@ -189,11 +186,11 @@ void EventRecorder::init() {
 }
 
 void EventRecorder::deinit() {
+	initialized = false;
+	_recordMode = kPassthrough;
 	debugC(3, kDebugLevelEventRec, "EventRecorder: deinit");
-
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
 	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
-
 	g_system->lockMutex(_timeMutex);
 	g_system->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
@@ -211,6 +208,8 @@ void EventRecorder::deinit() {
 	}
 	g_system->unlockMutex(_timeMutex);
 	g_system->unlockMutex(_recorderMutex);
+	switchMixer();
+	switchTimerManagers();
 }
 
 
@@ -352,8 +351,6 @@ void EventRecorder::togglePause() {
 
 void EventRecorder::RegisterEventSource() {
 	g_system->getEventManager()->getEventDispatcher()->registerMapper(this);
-	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, EventManager::kEventRecorderPriority, false, true);
 }
 
 uint32 EventRecorder::getRandomSeed(const String &name) {
@@ -366,11 +363,19 @@ uint32 EventRecorder::getRandomSeed(const String &name) {
 	return result;
 }
 
-void EventRecorder::init(Common::String gameId, const ADGameDescription *gameDesc) {
+void EventRecorder::init(Common::String recordFileName) {
+	_fakeTimer = 0;
+	_lastMillis = 0;
+	_headerDumped = false;
 	_recordCount = 0;
 	_lastScreenshotTime = 0;
 	_bitmapBuffSize = 0;
 	_eventsSize = 0;
+	_playbackFile = NULL;
+	_recordFile = NULL;
+	_screenshotsFile = NULL;
+	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, EventManager::kEventRecorderPriority, false, true);
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
 	if (_screenshotPeriod == 0) {
 		_screenshotPeriod = kDefaultScreenshotPeriod;
@@ -388,40 +393,28 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription *gameDes
 			debugC(3, kDebugLevelEventRec, "EventRecorder: passthrough");
 		}
 	}	
-	switchTimerManagers();
-	if (!openRecordFile(gameId)) {
-		_recordMode = kPassthrough;
+	if (!openRecordFile(recordFileName)) {
+		deinit();
 		return;
 	}
-
-	if ((_recordMode == kRecorderRecord) && (gameDesc != NULL)) {
-		for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			_hashRecords[fileDesc->fileName] = fileDesc->md5;
-		}
-		_tmpRecordFile.seek(0);
-	}
-
 	if (_recordMode == kRecorderPlayback) {
 		if (!parsePlaybackFile()) {
-			_recordMode = kPassthrough;
-			return;
-		}
-		if ((gameDesc != NULL) && !checkGameHash(gameDesc)) {
-			_recordMode = kPassthrough;
+			deinit();
 			return;
 		}
 		applyPlaybackSettings();
 		getNextEvent();
 	}
 	switchMixer();
-	_fakeTimer = 0;
-	_lastMillis = 0;
-	_headerDumped = false;
+	switchTimerManagers();
 	initialized = true;
 }
 
 void EventRecorder::init(const ADGameDescription *desc) {
-	init(desc->gameid, desc);
+	if (desc == NULL) {
+		return;
+	}
+	init(desc->gameid);
 }
 
 /**
@@ -940,4 +933,21 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 	}
 }
 
+void EventRecorder::setGameMd5(const ADGameDescription *gameDesc) {
+	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (fileDesc->md5 != NULL) {
+			_hashRecords[fileDesc->fileName] = fileDesc->md5;
+		}
+	}
+	_tmpRecordFile.seek(0);
+}
+
+void EventRecorder::processGameDescription(const ADGameDescription *desc) {
+	if (_recordMode == kRecorderRecord) {
+		setGameMd5(desc);
+	}
+	if ((_recordMode == kRecorderPlayback) && !checkGameHash(desc)) {
+		deinit();
+	}
+}
 } // End of namespace Common

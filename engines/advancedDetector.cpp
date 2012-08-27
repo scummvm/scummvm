@@ -611,6 +611,7 @@ AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, con
 
 void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const {
 	if (gameDesc) {
-		g_eventRec.init(gameDesc);
+		g_eventRec.init(gameDesc->gameid);
+		g_eventRec.processGameDescription(gameDesc);
 	}
 }
