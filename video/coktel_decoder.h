@@ -98,6 +98,8 @@ public:
 
 	/** Override the video's frame rate. */
 	void setFrameRate(Common::Rational frameRate);
+	/** Get the video's frame rate. */
+	Common::Rational getFrameRate() const;
 
 	/** Get the video's default X position. */
 	uint16 getDefaultX() const;
@@ -164,6 +166,11 @@ public:
 
 	/** Close the video. */
 	void close();
+
+	/** Get the Mixer SoundType audio is being played with. */
+	Audio::Mixer::SoundType getSoundType() const;
+	/** Get the AudioStream for the audio. */
+	Audio::AudioStream *getAudioStream() const;
 
 	uint16 getWidth()  const;
 	uint16 getHeight() const;
@@ -236,8 +243,6 @@ protected:
 	Audio::SoundHandle _audioHandle;
 
 	bool evaluateSeekFrame(int32 &frame, int whence) const;
-
-	Common::Rational getFrameRate() const;
 
 	// Surface management
 	bool hasSurface();

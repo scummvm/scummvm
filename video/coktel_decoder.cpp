@@ -288,6 +288,14 @@ void CoktelDecoder::close() {
 	_isPaused = false;
 }
 
+Audio::Mixer::SoundType CoktelDecoder::getSoundType() const {
+	return _soundType;
+}
+
+Audio::AudioStream *CoktelDecoder::getAudioStream() const {
+	return _audioStream;
+}
+
 uint16 CoktelDecoder::getWidth() const {
 	return _width;
 }
@@ -2847,11 +2855,11 @@ AdvancedVMDDecoder::VMDAudioTrack::VMDAudioTrack(VMDDecoder *decoder) : _decoder
 }
 
 Audio::Mixer::SoundType AdvancedVMDDecoder::VMDAudioTrack::getSoundType() const {
-	return _decoder->_soundType;
+	return _decoder->getSoundType();
 }
 
 Audio::AudioStream *AdvancedVMDDecoder::VMDAudioTrack::getAudioStream() const {
-	return _decoder->_audioStream;
+	return _decoder->getAudioStream();
 }
 
 } // End of namespace Video
