@@ -39,7 +39,7 @@ namespace Tony {
 namespace MPAL {
 
 /****************************************************************************\
-*       Funzioni statiche
+*       Static functions
 \****************************************************************************/
 
 static bool compareCommands(struct command *cmd1, struct command *cmd2) {
