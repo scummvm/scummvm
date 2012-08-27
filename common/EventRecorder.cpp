@@ -312,7 +312,7 @@ void EventRecorder::switchFastMode() {
 }
 
 void EventRecorder::getNextEvent() {
-	if (_tmpPlaybackFile.pos() == _eventsSize) {
+	if ((uint32)_tmpPlaybackFile.pos() == _eventsSize) {
 		ChunkHeader header;
 		header.id = 0;
 		while (header.id != MKTAG('E','V','N','T')) {
@@ -351,6 +351,7 @@ void EventRecorder::togglePause() {
 }
 
 void EventRecorder::RegisterEventSource() {
+	g_system->getEventManager()->getEventDispatcher()->registerMapper(this);
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, EventManager::kEventRecorderPriority, false, true);
 }
@@ -760,8 +761,8 @@ void EventRecorder::writeScreenSettings() {
 }
 
 void EventRecorder::processScreenSettings() {
-	uint16 width = _playbackFile->readUint16LE();
-	uint16 height = _playbackFile->readUint16LE();
+	//skip screen settings chunk
+	_playbackFile->skip(4);
 }
 
 
@@ -822,7 +823,7 @@ void EventRecorder::applyPlaybackSettings() {
 		String currentValue = ConfMan.get(i->_key);
 		if (currentValue != i->_value) {
 			warning("Config value <%s>: %s -> %s", i->_key.c_str(), i->_value.c_str(), currentValue.c_str());
-			ConfMan.set(i->_key, i->_value);
+			ConfMan.set(i->_key, i->_value, ConfMan.kApplicationDomain);
 		}
 	}
 	removeDifferentEntriesInDomain(ConfMan.getDomain(ConfMan.kApplicationDomain));
@@ -873,7 +874,6 @@ bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5
 }
 
 void EventRecorder::skipScreenshot() {
-	uint32 screenShotSize;
 	uint16 screenShotWidth;
 	uint16 screenShotHeight;
 	byte screenShotBpp;

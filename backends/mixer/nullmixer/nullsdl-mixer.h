@@ -46,7 +46,7 @@ protected:
 	virtual void callbackHandler(byte *samples, int len);
 
 private:
-	uint16 _outputRate;
+	uint32 _outputRate;
 	uint32 _callsCounter;
 	uint8  _callbackPeriod;
 	uint32 _samples;

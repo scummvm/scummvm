@@ -119,7 +119,7 @@ extern int gDebugLevel;
 
 //Global constant for EventRecorder debug channel
 enum GlobalDebugLevels {
-	kDebugLevelEventRec = (uint32) (1 << 31)
+	kDebugLevelEventRec = 1 << 30
 };
 
 #endif

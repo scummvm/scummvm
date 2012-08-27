@@ -659,7 +659,7 @@ void OSystem_SDL::setupGraphicsModes() {
 	}
 }
 
-Common::TimerManager * OSystem_SDL::getTimerManager() {
+Common::TimerManager *OSystem_SDL::getTimerManager() {
 	return g_eventRec.getTimerManager();
 }
 
