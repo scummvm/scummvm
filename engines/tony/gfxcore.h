@@ -61,11 +61,10 @@ protected:
 	int _dimx, _dimy;
 	byte *_buf;
 	byte *_origBuf;
-	bool _bUseDDraw;
 
 public:
 	RMGfxBuffer();
-	RMGfxBuffer(int dimx, int dimy, int nBpp, bool bUseDDraw = false);
+	RMGfxBuffer(int dimx, int dimy, int nBpp);
 	virtual ~RMGfxBuffer();
 
 	// Attributes
@@ -77,12 +76,8 @@ public:
 	}
 
 	// Creation
-	virtual void create(int dimx, int dimy, int nBpp, bool bUseDDraw = false);
+	virtual void create(int dimx, int dimy, int nBpp);
 	virtual void destroy();
-
-	// Buffer access
-	void lock();
-	void unlock();
 
 	// These are valid only if the buffer is locked
 	operator byte *();
@@ -321,11 +316,11 @@ protected:
 
 public:
 	RMGfxSourceBuffer16(bool bUseTrasp = false);
-	RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw = false);
+	RMGfxSourceBuffer16(int dimx, int dimy);
 	virtual ~RMGfxSourceBuffer16();
 
 	// Initialization
-	void create(int dimx, int dimy, bool bUseDDraw = false);
+	void create(int dimx, int dimy);
 
 	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -366,11 +361,11 @@ protected:
 
 public:
 	RMGfxSourceBuffer8(bool bTrasp0 = true);
-	RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw = false);
+	RMGfxSourceBuffer8(int dimx, int dimy);
 	virtual ~RMGfxSourceBuffer8();
 
 	// Initialization
-	void create(int dimx, int dimy, bool bUseDDraw = false);
+	void create(int dimx, int dimy);
 
 	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -533,10 +528,10 @@ public:
 class RMGfxSourceBuffer4 : public RMGfxSourceBufferPal {
 public:
 	RMGfxSourceBuffer4();
-	RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw = false);
+	RMGfxSourceBuffer4(int dimx, int dimy);
 
 	// Initialization
-	void create(int dimx, int dimy, bool bUseDDraw = false);
+	void create(int dimx, int dimy);
 
 	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -618,7 +613,7 @@ public:
 class RMGfxWoodyBuffer: public RMGfxSourceBuffer16, public RMGfxTargetBuffer {
 public:
 	RMGfxWoodyBuffer();
-	RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw = false);
+	RMGfxWoodyBuffer(int dimx, int dimy);
 	virtual ~RMGfxWoodyBuffer();
 
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);

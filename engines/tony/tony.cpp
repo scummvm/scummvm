@@ -610,9 +610,6 @@ void TonyEngine::grabThumbnail() {
 	_window.grabThumbnail(_curThumbnail);
 }
 
-void TonyEngine::optionScreen() {
-}
-
 void TonyEngine::openInitLoadMenu(CORO_PARAM) {
 	_theEngine.openOptionScreen(coroParam, 1);
 }
@@ -704,15 +701,6 @@ void TonyEngine::close() {
 	mpalFree();
 	FreeMpc();
 	delete[] _curThumbnail;
-}
-
-void TonyEngine::switchFullscreen(bool bFull) {
-	_window.switchFullscreen(bFull);
-	_theEngine.switchFullscreen(bFull);
-}
-
-void TonyEngine::GDIControl(bool bCon) {
-	_theEngine.GDIControl(bCon);
 }
 
 void TonyEngine::freezeTime() {

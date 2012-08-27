@@ -1527,12 +1527,6 @@ void RMPointer::close() {
 	}
 }
 
-
-int RMPointer::priority() {
-	// Pointer has minimum priority so it will be drawn last
-	return 200;
-}
-
 void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
 	int n;

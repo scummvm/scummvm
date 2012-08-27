@@ -92,12 +92,6 @@ public:
 	// Closes the graphics engine
 	void close();
 
-	// Warns when changing
-	void switchFullscreen(bool bFull);
-
-	// Warn that we are guided by the GDI
-	void GDIControl(bool bCon);
-
 	// Warns when entering or exits the options menu
 	void openOptionScreen(CORO_PARAM, int type);
 

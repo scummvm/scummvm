@@ -53,8 +53,6 @@ public:
 
 class RMWindow {
 private:
-	bool lock();
-	void unlock();
 	void plotSplices(const byte *lpBuf, const Common::Point &center, int x, int y);
 	void plotLines(const byte *lpBuf, const Common::Point &center, int x, int y);
 
@@ -83,18 +81,12 @@ public:
 	 * Initialization
 	 */
 	void init(/*HINSTANCE hInst*/);
-	void initDirectDraw();
 	void close();
 
 	/**
 	 * Drawing
 	 */
 	void repaint();
-
-	/**
-	 * Switch between windowed and fullscreen
-	 */
-	void switchFullscreen(bool bFull) {}
 
 	/**
 	 * Reads the next frame

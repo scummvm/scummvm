@@ -109,13 +109,6 @@ void RMWindow::repaint() {
 	g_system->updateScreen();
 }
 
-bool RMWindow::lock() {
-	return true;
-}
-
-void RMWindow::unlock() {
-}
-
 /**
  * Wipes an area of the screen
  */

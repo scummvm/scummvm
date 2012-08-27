@@ -49,21 +49,6 @@ RMFont::~RMFont() {
 	unload();
 }
 
-
-/**
- * Dumps a font to a buffer
- * @param buf                   Buffer for font contents
- * @param nChars                Number of characters (max 256)
- * @param dimx                  X dimension in pixels
- * @param dimy                  Y dimension in pixels
-*
-\****************************************************************************/
-
-void DumpFontBMP(const char *filename, const byte *buf, int nChars, int charX, int charY, byte *pal) {
-	error("DumpFontBMP not supported in ScummVM");
-}
-
-
 void RMFont::load(const byte *buf, int nChars, int dimx, int dimy, uint32 palResID) {
 	_letter = new RMGfxSourceBuffer8RLEByte[nChars];
 
@@ -150,7 +135,7 @@ int RMFont::stringLen(char bChar, char bNext) {
 }
 
 /****************************************************************************\
-*       Metodi di RMFontColor
+*       RMFontColor Methods
 \****************************************************************************/
 
 RMFontColor::RMFontColor() : RMFont() {
@@ -180,7 +165,7 @@ void RMFontColor::setBaseColor(byte r1, byte g1, byte b1) {
 	_fontG = g1;
 	_fontB = b1;
 
-	// Constructs a new paletter for the font
+	// Constructs a new palette for the font
 	for (i = 1; i < 16; i++) {
 		pal[i * 3 + 0] = r >> 16;
 		pal[i * 3 + 1] = g >> 16;

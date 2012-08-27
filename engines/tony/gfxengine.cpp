@@ -500,9 +500,6 @@ void RMGfxEngine::init() {
 	GLOBALS._gfxEngine = this;
 	mpalInstallItemIrq(itemIrq);
 
-	// Initialize the input
-	_input.init();
-
 	// Initialize the mouse pointer
 	_point.init();
 
@@ -530,13 +527,6 @@ void RMGfxEngine::close() {
 	_inv.close();
 	_tony.close();
 	_point.close();
-	_input.close();
-}
-
-void RMGfxEngine::switchFullscreen(bool bFull) {
-}
-
-void RMGfxEngine::GDIControl(bool bCon) {
 }
 
 void RMGfxEngine::enableInput() {

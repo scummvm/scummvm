@@ -65,7 +65,6 @@ void RMGfxTaskSetPrior::setPriority(int nPrior) {
 
 RMGfxBuffer::RMGfxBuffer() {
 	_dimx = _dimy = 0;
-	_bUseDDraw = false;
 	_origBuf = _buf = NULL;
 }
 
@@ -73,7 +72,7 @@ RMGfxBuffer::~RMGfxBuffer() {
 	destroy();
 }
 
-void RMGfxBuffer::create(int dimx, int dimy, int nBpp, bool bUseDDraw) {
+void RMGfxBuffer::create(int dimx, int dimy, int nBpp) {
 	// Destroy the buffer it is already exists
 	if (_buf != NULL)
 		destroy();
@@ -81,34 +80,17 @@ void RMGfxBuffer::create(int dimx, int dimy, int nBpp, bool bUseDDraw) {
 	// Copy the parameters in the private members
 	_dimx = dimx;
 	_dimy = dimy;
-	_bUseDDraw = bUseDDraw;
 
-	if (!_bUseDDraw) {
-		// Allocate a buffer
-		_origBuf = _buf = new byte[_dimx * _dimy * nBpp / 8];
-		assert(_buf != NULL);
-		Common::fill(_origBuf, _origBuf + _dimx * _dimy * nBpp / 8, 0);
-	}
+	// Allocate a buffer
+	_origBuf = _buf = new byte[_dimx * _dimy * nBpp / 8];
+	assert(_buf != NULL);
+	Common::fill(_origBuf, _origBuf + _dimx * _dimy * nBpp / 8, 0);
 }
 
 void RMGfxBuffer::destroy() {
-	if (!_bUseDDraw) {
-		if (_origBuf != NULL && _origBuf == _buf) {
-			delete[] _origBuf;
-			_origBuf = _buf = NULL;
-		}
-	}
-}
-
-void RMGfxBuffer::lock() {
-	if (_bUseDDraw) {
-		// Manages acceleration
-	}
-}
-
-void RMGfxBuffer::unlock() {
-	if (_bUseDDraw) {
-		// Manages acceleration
+	if (_origBuf != NULL && _origBuf == _buf) {
+		delete[] _origBuf;
+		_origBuf = _buf = NULL;
 	}
 }
 
@@ -125,8 +107,8 @@ RMGfxBuffer::operator void *() {
 	return (void *)_buf;
 }
 
-RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp, bool bUseDDraw) {
-	create(dimx, dimy, nBpp, bUseDDraw);
+RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp) {
+	create(dimx, dimy, nBpp);
 }
 
 /****************************************************************************\
@@ -240,8 +222,8 @@ RMGfxWoodyBuffer::RMGfxWoodyBuffer() {
 
 }
 
-RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy, bool bUseDDraw)
-	: RMGfxBuffer(dimx, dimy, 16, bUseDDraw) {
+RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy)
+	: RMGfxBuffer(dimx, dimy, 16) {
 }
 
 /****************************************************************************\
@@ -252,18 +234,14 @@ RMGfxTargetBuffer::RMGfxTargetBuffer() {
 	_otlist = NULL;
 	_otSize = 0;
 	_trackDirtyRects = false;
-//	csModifyingOT = g_system->createMutex();
 }
 
 RMGfxTargetBuffer::~RMGfxTargetBuffer() {
 	clearOT();
-//	g_system->deleteMutex(csModifyingOT);
 }
 
 void RMGfxTargetBuffer::clearOT() {
 	OTList *cur, *n;
-
-//	g_system->lockMutex(csModifyingOT);
 
 	cur = _otlist;
 
@@ -276,8 +254,6 @@ void RMGfxTargetBuffer::clearOT() {
 	}
 
 	_otlist = NULL;
-
-//	g_system->unlockMutex(csModifyingOT);
 }
 
 void RMGfxTargetBuffer::drawOT(CORO_PARAM) {
@@ -293,10 +269,6 @@ void RMGfxTargetBuffer::drawOT(CORO_PARAM) {
 
 	_ctx->prev = NULL;
 	_ctx->cur = _otlist;
-
-	// Lock the buffer to access it
-	lock();
-//	g_system->lockMutex(csModifyingOT);
 
 	while (_ctx->cur != NULL) {
 		// Call the task Draw method, passing it a copy of the original
@@ -330,19 +302,12 @@ void RMGfxTargetBuffer::drawOT(CORO_PARAM) {
 		}
 	}
 
-//	g_system->unlockMutex(csModifyingOT);
-
-	//Unlock after writing
-	unlock();
-
 	CORO_END_CODE;
 }
 
 void RMGfxTargetBuffer::addPrim(RMGfxPrimitive *prim) {
 	int nPrior;
 	OTList *cur, *n;
-
-//	g_system->lockMutex(csModifyingOT);
 
 	// Warn of the OT listing
 	prim->_task->Register();
@@ -368,8 +333,6 @@ void RMGfxTargetBuffer::addPrim(RMGfxPrimitive *prim) {
 		n->_next = cur->_next;
 		cur->_next = n;
 	}
-
-//	g_system->unlockMutex(csModifyingOT);
 }
 
 void RMGfxTargetBuffer::addDirtyRect(const Common::Rect &r) {
@@ -554,8 +517,8 @@ int RMGfxSourceBufferPal::loadPaletteWA(uint32 resID, bool bSwapped) {
 void RMGfxSourceBuffer4::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 }
 
-RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy, bool bUseDDraw)
-	: RMGfxBuffer(dimx, dimy, 4, bUseDDraw) {
+RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy)
+	: RMGfxBuffer(dimx, dimy, 4) {
 	setPriority(0);
 }
 
@@ -569,8 +532,8 @@ int RMGfxSourceBuffer4::getBpp() {
 	return 4;
 }
 
-void RMGfxSourceBuffer4::create(int dimx, int dimy, bool bUseDDraw) {
-	RMGfxBuffer::create(dimx, dimy, 4, bUseDDraw);
+void RMGfxSourceBuffer4::create(int dimx, int dimy) {
+	RMGfxBuffer::create(dimx, dimy, 4);
 }
 
 /****************************************************************************\
@@ -641,8 +604,8 @@ void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 	bigBuf.addDirtyRect(Common::Rect(dst._x1, dst._y1, dst._x1 + width, dst._y1 + height));
 }
 
-RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy, bool bUseDDraw)
-	: RMGfxBuffer(dimx, dimy, 8, bUseDDraw) {
+RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy)
+	: RMGfxBuffer(dimx, dimy, 8) {
 	setPriority(0);
 	_bTrasp0 = false;
 }
@@ -661,8 +624,8 @@ int RMGfxSourceBuffer8::getBpp() {
 	return 8;
 }
 
-void RMGfxSourceBuffer8::create(int dimx, int dimy, bool bUseDDraw) {
-	RMGfxBuffer::create(dimx, dimy, 8, bUseDDraw);
+void RMGfxSourceBuffer8::create(int dimx, int dimy) {
+	RMGfxBuffer::create(dimx, dimy, 8);
 }
 
 #define GETRED(x)   (((x) >> 10) & 0x1F)
@@ -1989,8 +1952,8 @@ void RMGfxSourceBuffer16::prepareImage() {
 		WRITE_LE_UINT16(&buf[i], FROM_LE_16(buf[i]) & 0x7FFF);
 }
 
-RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy, bool bUseDDraw)
-	: RMGfxBuffer(dimx, dimy, 16, bUseDDraw) {
+RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy)
+	: RMGfxBuffer(dimx, dimy, 16) {
 	setPriority(0);
 	_bTrasp0 = false;
 }
@@ -2004,8 +1967,8 @@ int RMGfxSourceBuffer16::getBpp() {
 	return 16;
 }
 
-void RMGfxSourceBuffer16::create(int dimx, int dimy, bool bUseDDraw) {
-	RMGfxBuffer::create(dimx, dimy, 16, bUseDDraw);
+void RMGfxSourceBuffer16::create(int dimx, int dimy) {
+	RMGfxBuffer::create(dimx, dimy, 16);
 }
 
 /****************************************************************************\

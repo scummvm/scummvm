@@ -167,19 +167,11 @@ public:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 
-	/**
-	 * Warn when are being controlled by the GDI
-	 */
-	void GDIControl(bool bCon);
-
 	void play();
 	void close();
 	void abortGame();
 
 	void getDataDirectory(DataDir dir, char *path);
-
-	void switchFullscreen(bool bFull);
-	void optionScreen();
 
 	void showLocation() {
 		_bDrawLocation = true;

@@ -101,12 +101,6 @@ void RMInput::poll() {
 	}
 }
 
-void RMInput::init() {
-}
-
-void RMInput::close() {
-}
-
 bool RMInput::mouseLeft() {
 	return _leftButton;
 }

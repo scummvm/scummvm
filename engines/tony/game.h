@@ -101,11 +101,6 @@ public:
 	void doFrame();
 
 	/**
-	 * Overloading of priorities
-	 */
-	int priority();
-
-	/**
 	 * draw method
 	 */
 	void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);

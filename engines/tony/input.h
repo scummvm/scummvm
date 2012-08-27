@@ -46,25 +46,10 @@ private:
 
 	// Keyboard related fields
 	bool _keyDown[350];
-private:
-	/**
-	 * Deinitialize DirectInput
-	 */
-	void DIClose();
 
 public:
 	RMInput();
 	~RMInput();
-
-	/**
-	 * Class initialization
-	 */
-	void init(/*uint32 hInst*/);
-
-	/**
-	 * Closes the class
-	 */
-	void close();
 
 	/**
 	 * Polling (must be performed once per frame)
