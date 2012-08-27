@@ -54,10 +54,11 @@ void writeTime(WriteStream *outFile, uint32 d) {
 	}
 }
 
-void EventRecorder::readEvent(Event &event) {
+void EventRecorder::readEvent(RecorderEvent &event) {
 	if (_recordMode != kRecorderPlayback) {
 		return;
 	}
+	_recordCount++;
 
 	event.type = (EventType)_playbackFile->readUint32LE();
 
@@ -85,7 +86,7 @@ void EventRecorder::readEvent(Event &event) {
 	}
 }
 
-void EventRecorder::writeEvent(const Event &event) {
+void EventRecorder::writeEvent(const RecorderEvent &event) {
 	if (_recordMode != kRecorderRecord) {
 		return;
 	}
@@ -256,7 +257,10 @@ bool EventRecorder::notifyEvent(const Event &ev) {
 	checkForKeyCode(ev);
 	if (_recordMode != kRecorderRecord)
 		return false;
-	writeEvent(ev);
+
+	RecorderEvent e;
+	memcpy(&e, &ev, sizeof(ev));
+	writeEvent(e);
 
 	return false;
 }
@@ -265,8 +269,9 @@ bool EventRecorder::pollEvent(Event &ev) {
 	if (_recordMode != kRecorderPlayback)
 		return false;
 	StackLock lock(_recorderMutex);
-
-	readEvent(ev);
+	
+	RecorderEvent nextEvent;
+	readEvent(nextEvent);
 
 	switch (ev.type) {
 	case EVENT_MOUSEMOVE:
@@ -281,6 +286,7 @@ bool EventRecorder::pollEvent(Event &ev) {
 	default:
 		break;
 	}
+	ev = nextEvent;
 	return true;
 }
 

@@ -37,6 +37,11 @@ class RandomSource;
 class SeekableReadStream;
 class WriteStream;
 
+struct RecorderEvent :Common::Event {
+	uint32 time;
+	uint32 count;
+};
+
 /**
  * Our generic event recorder.
  *
@@ -65,8 +70,8 @@ private:
 	bool pollEvent(Event &ev);
 	bool allowMapping() const { return false; }
 
-	void readEvent(Event &event);
-	void writeEvent(const Event &event);
+	void readEvent(RecorderEvent &event);
+	void writeEvent(const RecorderEvent &event);
 	void checkForKeyCode(const Event &event);
 	void togglePause();
 	class RandomSourceRecord {
