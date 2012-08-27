@@ -86,12 +86,15 @@ void EventRecorder::init() {
 }
 
 void EventRecorder::deinit() {
-	delete _fakeMixerManager;
-	_fakeMixerManager = NULL;
+	if (!_initialized) {
+		return;
+	}
+	setFileHeader();
 	_initialized = false;
 	_recordMode = kPassthrough;
+	delete _fakeMixerManager;
+	_fakeMixerManager = NULL;
 	g_gui.theme()->disable();
-	setFileHeader();
 	controlPanel->close();
 	delete controlPanel;
 	debugC(3, kDebugLevelEventRec, "EventRecorder: deinit");
@@ -101,7 +104,6 @@ void EventRecorder::deinit() {
 	_recordMode = kPassthrough;
 	_playbackFile->close();
 	delete _playbackFile;
-
 	g_system->unlockMutex(_timeMutex);
 	g_system->unlockMutex(_recorderMutex);
 	switchMixer();
@@ -154,6 +156,9 @@ void EventRecorder::checkForKeyCode(const Event &event) {
 	if (event.type == EVENT_KEYDOWN) {
 		if ((event.kbd.ascii == '/')) {
 			togglePause();
+		}
+		if ((event.kbd.ascii == '/')) {
+			switchMode();
 		}
 	}
 }
@@ -244,6 +249,7 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_playbackFile = new PlaybackFile();
 	_lastScreenshotTime = 0;
 	_recordMode = mode;
+	_needcontinueGame = false;
 
 	controlPanel = new GUI::OnScreenDialog(10,10,200,32);
 	controlPanel->open();
@@ -409,6 +415,9 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
 	checkForKeyCode(ev);
+	if (!_initialized) {
+		return DefaultEventMapper::mapEvent(ev, source);
+	}
 	Event evt = ev;
 	evt.mouse.x = evt.mouse.x * 2;
 	evt.mouse.y = evt.mouse.y * 2;
@@ -575,6 +584,9 @@ Common::StringArray EventRecorder::listSaveFiles(const Common::String &pattern) 
 }
 
 void EventRecorder::setFileHeader() {
+	if (_recordMode != kRecorderRecord) {
+		return;
+	}
 	TimeDate t;
 	const EnginePlugin *plugin = 0;
 	GameDescriptor desc = EngineMan.findGame(ConfMan.getActiveDomainName(), &plugin);
@@ -629,6 +641,59 @@ SDL_Surface *EventRecorder::getSurface(int width, int height) {
 	return surface;
 }
 
+void EventRecorder::switchMode() {
+	const Common::String gameId = ConfMan.get("gameid");
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+	bool metaInfoSupport = (*plugin)->hasFeature(MetaEngine::kSavesSupportMetaInfo);
+	bool featuresSupport = metaInfoSupport &&
+						  g_engine->canSaveGameStateCurrently() &&
+						  (*plugin)->hasFeature(MetaEngine::kSupportsListSaves) &&
+						  (*plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
+	if (!featuresSupport) {
+		return;
+	}
 
+	int emptySlot = 1;
+	SaveStateList saveList = (*plugin)->listSaves(gameId.c_str());
+	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
+		int saveSlot = x->getSaveSlot();
+		if (saveSlot == 0) {
+			continue;
+		}
+		if (emptySlot != saveSlot) {
+			break;
+		}
+		emptySlot++;
+	}
+	Common::String saveName;
+	if (emptySlot >= 0) {
+		saveName = Common::String::format("Save %d", emptySlot + 1);
+		Common::Error status = g_engine->saveGameState(emptySlot, saveName);
+		if (status.getCode() == Common::kNoError) {
+			Event eventRTL;
+			eventRTL.type = Common::EVENT_RTL;
+			g_system->getEventManager()->pushEvent(eventRTL);
+		}
+	}
+	ConfMan.set("record_mode", "", ConfigManager::kTransientDomain);
+	ConfMan.setInt("save_slot", emptySlot, ConfigManager::kTransientDomain);
+	_needcontinueGame = true;
+}
+
+bool EventRecorder::checkForContinueGame() {
+	bool result = _needcontinueGame;
+	_needcontinueGame = false;
+	return result;
+}
+
+void EventRecorder::deleteTemporarySave() {
+	if (_temporarySlot == -1) return;
+	const Common::String gameId = ConfMan.get("gameid");
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+	 (*plugin)->removeSaveState(gameId.c_str(), _temporarySlot);
+	_temporarySlot = -1;
+}
 
 } // End of namespace Common

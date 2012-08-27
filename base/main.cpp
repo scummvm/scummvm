@@ -409,7 +409,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		}
 	}
 	if (settings.contains("disable-display")) {
-		ConfMan.setInt("disable-display", 1);
+		ConfMan.setInt("disable-display", 1, Common::ConfigManager::kTransientDomain);
 	}
 	setupGraphics(system);
 
@@ -489,6 +489,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			#ifdef FORCE_RTL
 			g_system->getEventManager()->resetQuit();
 			#endif
+			if (g_eventRec.checkForContinueGame()){
+				continue;
+			}
 
 			// Discard any command line options. It's unlikely that the user
 			// wanted to apply them to *all* games ever launched.
