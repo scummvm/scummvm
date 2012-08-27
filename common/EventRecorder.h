@@ -85,8 +85,10 @@ public:
 	void registerMixerManager(SdlMixerManager *mixerManager);
 	void registerTimerManager(DefaultTimerManager *timerManager);
 	uint32 getTimer() {return _fakeTimer;}
-	void EventRecorder::updateSubsystems();
-
+	void updateSubsystems();
+	bool isRecording() {
+		return initialized;
+	}
 private:	
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
 	enum PlaybackFileState {
@@ -102,6 +104,7 @@ private:
 		kFileStateDone,
 		kFileStateError
 	};
+	bool initialized;
 	bool parsePlaybackFile();
 	ChunkHeader readChunkHeader();
 	void getConfig();

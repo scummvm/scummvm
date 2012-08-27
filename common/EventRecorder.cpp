@@ -169,6 +169,7 @@ EventRecorder::EventRecorder() : _tmpRecordFile(_recordBuffer, kRecordBuffSize),
 	_playbackFile = NULL;
 	_recordFile = NULL;
 	_screenshotsFile = NULL;
+	initialized = false;
 }
 
 EventRecorder::~EventRecorder() {
@@ -216,6 +217,9 @@ void EventRecorder::processMillis(uint32 &millis) {
 	if (_recordMode == kPassthrough) {
 		return;
 	}
+	if (!initialized) {
+		return;
+	}
 	updateSubsystems();
 	if (_recordMode == kRecorderRecord) {
 		uint32 _millisDelay;
@@ -256,7 +260,9 @@ bool EventRecorder::notifyEvent(const Event &ev) {
 	checkForKeyCode(ev);
 	if (_recordMode != kRecorderRecord)
 		return false;
-
+	if (!initialized) {
+		return false;
+	}
 	RecorderEvent e;
 	memcpy(&e, &ev, sizeof(ev));
 	e.time = _fakeTimer;
@@ -268,6 +274,9 @@ bool EventRecorder::notifyEvent(const Event &ev) {
 bool EventRecorder::pollEvent(Event &ev) {
 	if (_recordMode != kRecorderPlayback)
 		return false;
+	if (!initialized) {
+		return false;
+	}
 	StackLock lock(_recorderMutex);
 	
 	RecorderEvent nextEvent;
@@ -406,6 +415,7 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription *gameDes
 	_fakeTimer = 0;
 	_lastMillis = 0;
 	_headerDumped = false;
+	initialized = true;
 }
 
 /**
