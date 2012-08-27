@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	quicktime.o \
 	random.o \
 	rational.o \
+	recorderfile.o \
 	rendermode.o \
 	str.o \
 	stream.o \

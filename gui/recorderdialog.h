@@ -22,6 +22,7 @@
 #ifndef GUI_RECORDER_DIALOG_H
 #define GUI_RECORDER_DIALOG_H
 #include "common/stream.h"
+#include "common/recorderfile.h"
 #include "gui/dialog.h"
 namespace GUI {
 
@@ -35,7 +36,7 @@ class StaticTextWidget;
 
 class RecorderDialog : public GUI::Dialog {
 private:
-	Common::SeekableReadStream *_playbackFile;
+	Common::PlaybackFile _playbackFile;
 	Common::String _target;
 	Common::String _filename;
 	int _currentScreenshot;
@@ -50,10 +51,6 @@ private:
 	void updateScreenshot();
 	int calculateScreenshotsCount();
 	Common::String generateRecordFileName();
-	void readHeaderInfoFromFile(Common::String& author, Common::String& name, Common::String& notes);
-	Graphics::Surface *getScreenShot(int number);
-	bool skipToNextScreenshot();
-	Common::String readString(int len);
 public:
 	Common::String _author;
 	Common::String _name;
