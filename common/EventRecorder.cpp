@@ -21,6 +21,7 @@
  */
 
 #include "common/EventRecorder.h"
+#include "backends/timer/sdl/sdl-timer.h"
 
 #include "common/bufferedstream.h"
 #include "common/config-manager.h"
@@ -61,10 +62,14 @@ void EventRecorder::readEvent(RecorderEvent &event) {
 	_recordCount++;
 
 	event.type = (EventType)_playbackFile->readUint32LE();
-
 	switch (event.type) {
+	case EVENT_TIMER:
+		event.time = _playbackFile->readUint32LE();
+		event.count = _playbackFile->readUint32LE();
+		break;
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP:
+		event.time = _playbackFile->readUint32LE();
 		event.kbd.keycode = (KeyCode)_playbackFile->readSint32LE();
 		event.kbd.ascii = _playbackFile->readUint16LE();
 		event.kbd.flags = _playbackFile->readByte();
@@ -78,10 +83,12 @@ void EventRecorder::readEvent(RecorderEvent &event) {
 	case EVENT_WHEELDOWN:
 	case EVENT_MBUTTONDOWN:
 	case EVENT_MBUTTONUP:
+		event.time = _playbackFile->readUint32LE();
 		event.mouse.x = _playbackFile->readSint16LE();
 		event.mouse.y = _playbackFile->readSint16LE();
 		break;
 	default:
+		event.time = _playbackFile->readUint32LE();
 		break;
 	}
 }
@@ -92,10 +99,16 @@ void EventRecorder::writeEvent(const RecorderEvent &event) {
 	}
 
 	_recordFile->writeUint32LE((uint32)event.type);
+	_recordCount++;
 
 	switch (event.type) {
+	case EVENT_TIMER:
+		_recordFile->writeUint32LE((uint32)_fakeTimer);
+		_recordFile->writeUint32LE((uint32)_eventCount);
+		break;
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP:
+		_recordFile->writeUint32LE((uint32)_fakeTimer);
 		_recordFile->writeSint32LE(event.kbd.keycode);
 		_recordFile->writeUint16LE(event.kbd.ascii);
 		_recordFile->writeByte(event.kbd.flags);
@@ -109,13 +122,16 @@ void EventRecorder::writeEvent(const RecorderEvent &event) {
 	case EVENT_WHEELDOWN:
 	case EVENT_MBUTTONDOWN:
 	case EVENT_MBUTTONUP:
+		_recordFile->writeUint32LE((uint32)_fakeTimer);
 		_recordFile->writeSint16LE(event.mouse.x);
 		_recordFile->writeSint16LE(event.mouse.y);
 		break;
 	default:
+		_recordFile->writeUint32LE((uint32)_fakeTimer);
 		break;
 	}
 }
+
 
 EventRecorder::EventRecorder() {
 	_recordFile = NULL;
@@ -123,7 +139,7 @@ EventRecorder::EventRecorder() {
 	_timeMutex = g_system->createMutex();
 	_recorderMutex = g_system->createMutex();
 
-	_eventCount = 0;
+	_eventCount = 1;
 	_lastEventCount = 0;
 	_lastMillis = 0;
 	_lastEventMillis = 0;
@@ -159,11 +175,13 @@ void EventRecorder::init() {
 		_recordFileName = "record.bin";
 	}
 
+	_recordCount = 0;
 	// recorder stuff
 	if (_recordMode == kRecorderRecord) {
-		_recordCount = 0;
 		_recordFile = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving(_recordFileName), 128 * 1024);
 	}
+
+	_fakeTimer = 0;
 
 	uint32 sign;
 	if (_recordMode == kRecorderPlayback) {
@@ -186,6 +204,7 @@ void EventRecorder::init() {
 			error("Unknown record file signature");
 		}
 		_playbackFile->readUint32LE(); // version
+		getNextEvent();
 	}
 
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
@@ -201,9 +220,6 @@ void EventRecorder::deinit() {
 	g_system->lockMutex(_timeMutex);
 	g_system->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
-	g_system->unlockMutex(_timeMutex);
-	g_system->unlockMutex(_recorderMutex);
-
 	if (_playbackFile != NULL) {
 		delete _playbackFile;
 	}
@@ -212,6 +228,8 @@ void EventRecorder::deinit() {
 		_recordFile->finalize();
 		delete _recordFile;
 	}
+	g_system->unlockMutex(_timeMutex);
+	g_system->unlockMutex(_recorderMutex);
 }
 
 void EventRecorder::registerRandomSource(RandomSource &rnd, const String &name) {
@@ -238,6 +256,29 @@ void EventRecorder::processMillis(uint32 &millis) {
 	if (_recordMode == kPassthrough) {
 		return;
 	}
+	g_system->lockMutex(_timeMutex);
+	if (_recordMode == kRecorderRecord) {
+		StackLock lock(_recorderMutex);
+		uint32 _millisDelay;
+		_millisDelay = millis - _lastMillis;
+		_lastMillis = millis;
+		_fakeTimer += _millisDelay;
+		RecorderEvent timerEvent;
+		timerEvent.type = EVENT_TIMER;
+		timerEvent.time = _fakeTimer;
+		writeEvent(timerEvent);
+	}
+
+	if (_recordMode == kRecorderPlayback) {
+		uint32 _millisDelay;
+		StackLock lock(_recorderMutex);
+		if (_nextEvent.type == EVENT_TIMER) {
+			_fakeTimer = _nextEvent.time;
+			getNextEvent();
+		}
+		millis = _fakeTimer;
+	}
+	g_system->unlockMutex(_timeMutex);
 }
 
 bool EventRecorder::processDelayMillis() {
@@ -252,8 +293,8 @@ void EventRecorder::checkForKeyCode(const Event &event) {
 	}
 }
 
-
 bool EventRecorder::notifyEvent(const Event &ev) {
+	StackLock lock(_recorderMutex);
 	checkForKeyCode(ev);
 	if (_recordMode != kRecorderRecord)
 		return false;
@@ -273,7 +314,11 @@ bool EventRecorder::pollEvent(Event &ev) {
 	RecorderEvent nextEvent;
 	readEvent(nextEvent);
 
-	switch (ev.type) {
+	if ((_nextEvent.type ==  EVENT_INVALID) || (_nextEvent.type == EVENT_TIMER)) {
+		return false;
+	}
+
+	switch (_nextEvent.type) {
 	case EVENT_MOUSEMOVE:
 	case EVENT_LBUTTONDOWN:
 	case EVENT_LBUTTONUP:
@@ -281,18 +326,25 @@ bool EventRecorder::pollEvent(Event &ev) {
 	case EVENT_RBUTTONUP:
 	case EVENT_WHEELUP:
 	case EVENT_WHEELDOWN:
-		g_system->warpMouse(ev.mouse.x, ev.mouse.y);
+		g_system->warpMouse(_nextEvent.mouse.x, _nextEvent.mouse.y);
 		break;
 	default:
 		break;
 	}
-	ev = nextEvent;
+	ev = _nextEvent;
+	getNextEvent();
 	return true;
 }
 
 void EventRecorder::switchFastMode() {
 	if (_recordMode == kRecorderPlaybackPause) {
 		_fastPlayback = !_fastPlayback;
+	}
+}
+
+void EventRecorder::getNextEvent() {
+	if(!_playbackFile->eos()) {
+		readEvent(_nextEvent);
 	}
 }
 

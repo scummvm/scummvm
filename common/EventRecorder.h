@@ -54,22 +54,20 @@ class EventRecorder : private EventSource, private EventObserver, public Singlet
 public:
 	void init();
 	void deinit();
-
 	/** Register random source so it can be serialized in game test purposes */
 	void registerRandomSource(RandomSource &rnd, const String &name);
-
+	bool processDelayMillis();
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
+	MutexRef _recorderMutex;
 
-	/** TODO: Add documentation, this is only used by the backend */
-	bool processDelayMillis();
-
+	uint32 getTimer() {return _fakeTimer;}
 private:
 	void switchFastMode();
 	bool notifyEvent(const Event &ev);
 	bool pollEvent(Event &ev);
 	bool allowMapping() const { return false; }
-
+	void getNextEvent();
 	void readEvent(RecorderEvent &event);
 	void writeEvent(const RecorderEvent &event);
 	void checkForKeyCode(const Event &event);
@@ -79,15 +77,17 @@ private:
 		String name;
 		uint32 seed;
 	};
+	RecorderEvent _nextEvent;
 	Array<RandomSourceRecord> _randomSourceRecords;
 
 	volatile uint32 _recordCount;
 	volatile uint32 _lastRecordEvent;
 	volatile uint32 _lastEventMillis;
+	volatile uint32 _delayMillis;
 	WriteStream *_recordFile;
 	MutexRef _timeMutex;
-	MutexRef _recorderMutex;
 	volatile uint32 _lastMillis;
+	volatile uint32 _fakeTimer;
 
 	volatile uint32 _playbackDiff;
 	volatile bool _hasPlaybackEvent;
@@ -101,7 +101,7 @@ private:
 		kPassthrough = 0,
 		kRecorderRecord = 1,
 		kRecorderPlayback = 2,
-		kRecorderPlaybackPause
+		kRecorderPlaybackPause = 3
 	};
 	volatile RecordMode _recordMode;
 	String _recordFileName;
