@@ -28,8 +28,11 @@
 #include "common/singleton.h"
 #include "common/mutex.h"
 #include "common/array.h"
+#include "common/memstream.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "backends/mixer/nullmixer/nullsdl-mixer.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 #define g_eventRec (Common::EventRecorder::instance())
 
@@ -58,7 +61,6 @@ public:
 	void deinit();
 	/** Register random source so it can be serialized in game test purposes */
 	void RegisterEventSource();
-	void registerRandomSource(RandomSource &rnd, const String &name);
 	bool processDelayMillis();
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
@@ -71,6 +73,7 @@ private:
 	NullSdlMixerManager* _fakeMixerManager;
 	void switchMixer();
 	void switchFastMode();
+	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
 	bool notifyEvent(const Event &ev);
 	bool pollEvent(Event &ev);
 	bool allowMapping() const { return false; }
@@ -85,7 +88,7 @@ private:
 		uint32 seed;
 	};
 	RecorderEvent _nextEvent;
-	Array<RandomSourceRecord> _randomSourceRecords;
+	randomSeedsDictionary _randomSourceRecords;
 
 	volatile uint32 _recordCount;
 	volatile uint32 _lastRecordEvent;
@@ -95,7 +98,7 @@ private:
 	MutexRef _timeMutex;
 	volatile uint32 _lastMillis;
 	volatile uint32 _fakeTimer;
-
+	volatile uint32 _randomNumber;
 	volatile uint32 _playbackDiff;
 	volatile bool _hasPlaybackEvent;
 	Event _playbackEvent;

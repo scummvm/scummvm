@@ -228,24 +228,6 @@ void EventRecorder::deinit() {
 	g_system->unlockMutex(_recorderMutex);
 }
 
-void EventRecorder::registerRandomSource(RandomSource &rnd, const String &name) {
-	if (_recordMode == kRecorderRecord) {
-		RandomSourceRecord rec;
-		rec.name = name;
-		rec.seed = rnd.getSeed();
-		_randomSourceRecords.push_back(rec);
-	}
-
-	if (_recordMode == kRecorderPlayback) {
-		for (uint i = 0; i < _randomSourceRecords.size(); ++i) {
-			if (_randomSourceRecords[i].name == name) {
-				rnd.setSeed(_randomSourceRecords[i].seed);
-				_randomSourceRecords.remove_at(i);
-				break;
-			}
-		}
-	}
-}
 
 
 void EventRecorder::processMillis(uint32 &millis) {
@@ -355,6 +337,16 @@ void EventRecorder::togglePause() {
 void EventRecorder::RegisterEventSource() {
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, EventManager::kEventRecorderPriority, false, true);
+}
+
+uint32 EventRecorder::getRandomSeed(const String &name) {
+	uint32 result = g_system->getMillis();
+	if (_recordMode == kRecorderRecord) {
+		_randomSourceRecords[name] = result;
+	} else if (_recordMode == kRecorderPlayback) {
+		result = _randomSourceRecords[name];
+	}
+	return result;
 }
 
 void EventRecorder::registerMixerManager(SdlMixerManager* mixerManager) {
