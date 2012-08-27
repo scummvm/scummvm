@@ -35,10 +35,6 @@
 
 namespace Tony {
 
-typedef uint32 HWND;
-struct DDSURFACEDESC {
-};
-
 class RMSnapshot {
 private:
 	// Buffer used to convert to RGB
@@ -57,10 +53,6 @@ private:
 	void plotLines(const byte *lpBuf, const Common::Point &center, int x, int y);
 
 protected:
-	int fps, fcount;
-	int lastsecond, lastfcount;
-
-	int mskRed, mskGreen, mskBlue;
 	bool _wiping;
 	bool _showDirtyRects;
 
@@ -98,9 +90,6 @@ public:
 	 */
 	void grabThumbnail(uint16 *buf);
 
-	int getFps() const {
-		return fps;
-	}
 	void showDirtyRects(bool v) { _showDirtyRects = v; }
 };
 
