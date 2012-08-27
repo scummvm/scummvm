@@ -317,7 +317,7 @@ bool SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, byte *pixels, int p
 			for (uint y = 0; y < height; y++)
 				memset(&dst[y * (pitch / 4)], mean, width);
 		} else {
-			const uint32 *codebook = s_svq1IntraCodebooks[level];
+			const uint32 *codebook = (const uint32 *)s_svq1IntraCodebooks[level];
 			uint32 bitCache = s->getBits(stages * 4);
 
 			// calculate codebook entries for this vector
@@ -336,7 +336,7 @@ bool SVQ1Decoder::svq1DecodeBlockIntra(Common::BitStream *s, byte *pixels, int p
 
 					// add codebook entries to vector
 					for (int j = 0; j < stages; j++) {
-						n3 = codebook[entries[j]] ^ 0x80808080;
+						n3 = READ_UINT32(&codebook[entries[j]]) ^ 0x80808080;
 						n1 += (n3 & 0xFF00FF00) >> 8;
 						n2 += n3 & 0x00FF00FF;
 					}
@@ -409,7 +409,7 @@ bool SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, byte *pixels, in
 		}
 
 		int mean = _interMean->getSymbol(*s) - 256;
-		const uint32 *codebook = s_svq1InterCodebooks[level];
+		const uint32 *codebook = (const uint32 *)s_svq1InterCodebooks[level];
 		uint32 bitCache = s->getBits(stages * 4);
 
 		// calculate codebook entries for this vector
@@ -430,7 +430,7 @@ bool SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream *s, byte *pixels, in
 
 				// add codebook entries to vector
 				for (int j = 0; j < stages; j++) {
-					n3 = codebook[entries[j]] ^ 0x80808080;
+					n3 = READ_UINT32(&codebook[entries[j]]) ^ 0x80808080;
 					n1 += (n3 & 0xFF00FF00) >> 8;
 					n2 += n3 & 0x00FF00FF;
 				}
