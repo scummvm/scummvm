@@ -931,7 +931,7 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 			width = x1;
 
 		// Specify the drawn area
-		bigBuf.addDirtyRect(Common::Rect(x1 - width, y1, x1, y1 + height));
+		bigBuf.addDirtyRect(Common::Rect(x1 - width, y1, x1 + 1, y1 + height));
 
 		for (y = 0; y < height; y++) {
 			// Decompression
@@ -1725,7 +1725,7 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 			width = x1;
 
 		// Specify the drawn area
-		bigBuf.addDirtyRect(Common::Rect(x1 - width, y1, x1, y1 + height));
+		bigBuf.addDirtyRect(Common::Rect(x1 - width, y1, x1 + 1, y1 + height));
 	} else {
 		// Specify the drawn area
 		bigBuf.addDirtyRect(Common::Rect(x1, y1, x1 + width, y1 + height));
