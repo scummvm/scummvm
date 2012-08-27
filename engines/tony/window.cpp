@@ -269,8 +269,6 @@ void RMWindow::plotLines(const byte *lpBuf, const Common::Point &center, int x, 
 *       RMSnapshot Methods
 \****************************************************************************/
 
-byte RMSnapshot::rgb[RM_SX *RM_SY * 3];
-
 void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 	uint16 *src = (uint16 *)lpBuf;
 
@@ -284,7 +282,7 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 		src += (RM_SY - 1) * RM_BBX;
 
 	if (dezoom == 1 && 0) {
-		byte *curOut = rgb;
+		byte *curOut = _rgb;
 
 		for (int y = 0; y < dimy; y++) {
 			for (int x = 0; x < dimx; x++) {
@@ -322,13 +320,13 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 						sommar += (cursrc[curv * RM_BBX + u] >> 10) & 0x1F;
 					}
 				}
-				rgb[k + 0] = (byte)(sommab * 8 / (dezoom * dezoom));
-				rgb[k + 1] = (byte)(sommag * 8 / (dezoom * dezoom));
-				rgb[k + 2] = (byte)(sommar * 8 / (dezoom * dezoom));
+				_rgb[k + 0] = (byte)(sommab * 8 / (dezoom * dezoom));
+				_rgb[k + 1] = (byte)(sommag * 8 / (dezoom * dezoom));
+				_rgb[k + 2] = (byte)(sommar * 8 / (dezoom * dezoom));
 
 				if (lpDestBuf != NULL)
-					lpDestBuf[k / 3] = ((int)rgb[k + 0] >> 3) | (((int)rgb[k + 1] >> 3) << 5) |
-					                   (((int)rgb[k + 2] >> 3) << 10);
+					lpDestBuf[k / 3] = ((int)_rgb[k + 0] >> 3) | (((int)_rgb[k + 1] >> 3) << 5) |
+					                   (((int)_rgb[k + 2] >> 3) << 10);
 
 				k += 3;
 			}

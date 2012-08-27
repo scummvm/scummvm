@@ -42,7 +42,7 @@ struct DDSURFACEDESC {
 class RMSnapshot {
 private:
 	// Buffer used to convert to RGB
-	static byte rgb[RM_SX *RM_SY * 3];
+	byte _rgb[RM_SX *RM_SY * 3];
 public:
 	/**
 	 * Take a screenshot
