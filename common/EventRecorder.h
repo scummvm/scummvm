@@ -61,10 +61,11 @@ public:
 
 private:
 	bool notifyEvent(const Event &ev);
-	bool notifyPoll();
 	bool pollEvent(Event &ev);
 	bool allowMapping() const { return false; }
 
+	void readEvent(Event &event);
+	void writeEvent(const Event &event);
 	class RandomSourceRecord {
 	public:
 		String name;
@@ -72,24 +73,18 @@ private:
 	};
 	Array<RandomSourceRecord> _randomSourceRecords;
 
-	bool _recordSubtitles;
 	volatile uint32 _recordCount;
 	volatile uint32 _lastRecordEvent;
-	volatile uint32 _recordTimeCount;
 	volatile uint32 _lastEventMillis;
 	WriteStream *_recordFile;
-	WriteStream *_recordTimeFile;
 	MutexRef _timeMutex;
 	MutexRef _recorderMutex;
 	volatile uint32 _lastMillis;
 
-	volatile uint32 _playbackCount;
 	volatile uint32 _playbackDiff;
 	volatile bool _hasPlaybackEvent;
-	volatile uint32 _playbackTimeCount;
 	Event _playbackEvent;
 	SeekableReadStream *_playbackFile;
-	SeekableReadStream *_playbackTimeFile;
 
 	volatile uint32 _eventCount;
 	volatile uint32 _lastEventCount;
@@ -101,8 +96,6 @@ private:
 	};
 	volatile RecordMode _recordMode;
 	String _recordFileName;
-	String _recordTempFileName;
-	String _recordTimeFileName;
 };
 
 } // End of namespace Common
