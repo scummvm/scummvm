@@ -330,19 +330,25 @@ void AVIDecoder::readNextPacket() {
 		error("Cannot get track from tag '%s'", tag2str(nextTag));
 
 	uint32 chunkSize = _fileStream->readUint32LE();
-	Common::SeekableReadStream *chunk = _fileStream->readStream(chunkSize);
-	_fileStream->skip(chunkSize & 1);
+	Common::SeekableReadStream *chunk = 0;
+
+	if (chunkSize != 0) {
+		chunk = _fileStream->readStream(chunkSize);
+		_fileStream->skip(chunkSize & 1);
+	}
 
 	if (track->getTrackType() == Track::kTrackTypeAudio) {
 		if (getStreamType(nextTag) != MKTAG16('w', 'b'))
 			error("Invalid audio track tag '%s'", tag2str(nextTag));
 
+		assert(chunk);
 		((AVIAudioTrack *)track)->queueSound(chunk);
 	} else {
 		AVIVideoTrack *videoTrack = (AVIVideoTrack *)track;
 
 		if (getStreamType(nextTag) == MKTAG16('p', 'c')) {
 			// Palette Change
+			assert(chunk);
 			byte firstEntry = chunk->readByte();
 			uint16 numEntries = chunk->readByte();
 			chunk->readUint16LE(); // Reserved
@@ -387,8 +393,13 @@ AVIDecoder::AVIVideoTrack::~AVIVideoTrack() {
 }
 
 void AVIDecoder::AVIVideoTrack::decodeFrame(Common::SeekableReadStream *stream) {
-	if (_videoCodec)
-		_lastFrame = _videoCodec->decodeImage(stream);
+	if (stream) {
+		if (_videoCodec)
+			_lastFrame = _videoCodec->decodeImage(stream);
+	} else {
+		// Empty frame
+		_lastFrame = 0;
+	}
 
 	delete stream;
 	_curFrame++;
