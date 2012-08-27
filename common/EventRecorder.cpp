@@ -216,7 +216,7 @@ void EventRecorder::processMillis(uint32 &millis) {
 	if (_recordMode == kPassthrough) {
 		return;
 	}
-	_fakeMixerManager->update();
+	updateSubsystems();
 	if (_recordMode == kRecorderRecord) {
 		uint32 _millisDelay;
 		_millisDelay = millis - _lastMillis;
@@ -377,6 +377,7 @@ void EventRecorder::init(Common::String gameId, const ADGameDescription *gameDes
 			debugC(3, kDebugLevelEventRec, "EventRecorder: passthrough");
 		}
 	}	
+	switchTimerManagers();
 	if (!openRecordFile(gameId)) {
 		_recordMode = kPassthrough;
 		return;
@@ -900,10 +901,20 @@ void EventRecorder::registerTimerManager(DefaultTimerManager *timerManager) {
 void EventRecorder::switchTimerManagers() {
 	delete _timerManager;
 	if (_recordMode == kPassthrough) {
-		_timerManager = new DefaultTimerManager();
-	} else {
 		_timerManager = new SdlTimerManager();
+	} else {
+		_timerManager = new DefaultTimerManager();
 	}
+}
+
+void EventRecorder::updateSubsystems() {
+	if (_recordMode == kPassthrough) {
+		return;
+	}
+	RecordMode oldRecordMode = _recordMode;
+	_recordMode = kPassthrough;
+	_fakeMixerManager->update();
+	_recordMode = oldRecordMode;
 }
 
 } // End of namespace Common

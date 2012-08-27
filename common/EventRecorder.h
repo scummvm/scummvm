@@ -85,7 +85,9 @@ public:
 	void registerMixerManager(SdlMixerManager *mixerManager);
 	void registerTimerManager(DefaultTimerManager *timerManager);
 	uint32 getTimer() {return _fakeTimer;}
-private:
+	void EventRecorder::updateSubsystems();
+
+private:	
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
 	enum PlaybackFileState {
 		kFileStateCheckFormat,
