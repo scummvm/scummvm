@@ -191,7 +191,7 @@ static void solve(LPEXPRESSION one, int num) {
 		two = one + 1;
 		if ((two->symbol == 0) || (one->symbol & 0xF0) <= (two->symbol & 0xF0)) {
 			two->val.num = Compute(one->val.num, two->val.num, one->symbol);
-			memcpy(one, two, (num - 1) * sizeof(EXPRESSION));
+			memmove(one, two, (num - 1) * sizeof(EXPRESSION));
 			--num;
 		} else {
 			j = 1;
@@ -203,7 +203,7 @@ static void solve(LPEXPRESSION one, int num) {
 			}
 
 			three->val.num = Compute(two->val.num, three->val.num, two->symbol);
-			memcpy(two, three, (num - j - 1) * sizeof(EXPRESSION));
+			memmove(two, three, (num - j - 1) * sizeof(EXPRESSION));
 			--num;
 		}
 	}
