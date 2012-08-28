@@ -155,6 +155,14 @@ typedef CFCALL         *LPCFCALL;
 typedef LPCFCALL       *LPLPCFCALL;
 
 
+struct CoroutineMutex {
+	CoroutineMutex() : _eventId(0), _ownerPid(0), _lockCount(0) { }
+
+	uint32 _eventId;
+	uint32 _ownerPid;
+	uint32 _lockCount;
+};
+
 /****************************************************************************\
 *       Global variables
 \****************************************************************************/
@@ -236,7 +244,7 @@ public:
 	RMTony::CharacterTalkType _nTonyNextTalkType;
 
 	RMPoint _startLocPos[256];
-	uint32 _mut[10];
+	CoroutineMutex _mut[10];
 
 	bool _bSkipIdle;
 	uint32 _hSkipIdle;

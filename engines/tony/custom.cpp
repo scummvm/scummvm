@@ -2052,12 +2052,39 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
  */
 
 DECLARE_CUSTOM_FUNCTION(TakeOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
-	// The event is operating as a mutex, so if the event is already set, wait until it's reset
-	CoroScheduler.waitForSingleObject(coroParam, GLOBALS._mut[num], CORO_INFINITE);
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (GLOBALS._mut[num]._ownerPid != (uint32)CoroScheduler.getCurrentPID()) {
+		// The mutex is currently owned by a different process.
+		// Wait for the event to be signalled, which means the mutex is free.
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, GLOBALS._mut[num]._eventId, CORO_INFINITE);
+		GLOBALS._mut[num]._ownerPid = (uint32)CoroScheduler.getCurrentPID();
+	}
+
+	GLOBALS._mut[num]._lockCount++;
+
+	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(ReleaseOwnership)(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
-	CoroScheduler.setEvent(GLOBALS._mut[num]);
+	if (!GLOBALS._mut[num]._lockCount) {
+		warning("ReleaseOwnership tried to release mutex %d, which isn't held", num);
+		return;
+	}
+
+	if (GLOBALS._mut[num]._ownerPid != (uint32)CoroScheduler.getCurrentPID())
+		error("ReleaseOwnership tried to release mutex %d, which is held by a different process", num);
+
+	GLOBALS._mut[num]._lockCount--;
+	if (!GLOBALS._mut[num]._lockCount) {
+		GLOBALS._mut[num]._ownerPid = 0;
+
+		// Signal the event, to wake up processes waiting for the lock.
+		CoroScheduler.setEvent(GLOBALS._mut[num]._eventId);
+	}
 }
 
 /*
@@ -2524,6 +2551,19 @@ ASSIGN(201, MustSkipIdleEnd);
 
 END_CUSTOM_FUNCTION_MAP()
 
+void processKilledCallback(Common::PROCESS *p) {
+	for (uint i = 0; i < 10; i++)
+		if (GLOBALS._mut[i]._ownerPid == p->pid) {
+			// Handle scripts which don't call ReleaseOwnership, such as
+			// the one in loc37's vEnter when Tony is chasing the mouse.
+			debug(DEBUG_BASIC, "Force-releasing mutex %d after process died", i);
+
+			GLOBALS._mut[i]._ownerPid = 0;
+			GLOBALS._mut[i]._lockCount = 0;
+			CoroScheduler.setEvent(GLOBALS._mut[i]._eventId);
+		}
+}
+
 void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation *loc, RMInventory *inv, RMInput *input) {
 	GLOBALS._tony = tony;
 	GLOBALS._pointer = ptr;
@@ -2549,8 +2589,9 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	GLOBALS._bAlwaysDisplay = false;
 	int i;
 
+	CoroScheduler.setResourceCallback(processKilledCallback);
 	for (i = 0; i < 10; i++)
-		GLOBALS._mut[i] = CoroScheduler.createEvent(false, true);
+		GLOBALS._mut[i]._eventId = CoroScheduler.createEvent(false, true);
 
 	for (i = 0; i < 200; i++)
 		GLOBALS._ambiance[i] = 0;

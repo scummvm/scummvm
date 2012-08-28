@@ -67,7 +67,6 @@ Globals::Globals() {
 	_curSoundEffect = 0;
 	_bFadeOutStop = false;
 
-	Common::fill(&_mut[0], &_mut[10], 0);
 	_bSkipIdle = false;
 	_hSkipIdle = 0;
 	_lastMusic = 0;

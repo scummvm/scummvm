@@ -89,6 +89,7 @@ TonyEngine::~TonyEngine() {
 
 	// Reset the coroutine scheduler
 	CoroScheduler.reset();
+	CoroScheduler.setResourceCallback(NULL);
 
 	delete _debugger;
 }
