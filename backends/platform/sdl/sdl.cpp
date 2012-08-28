@@ -473,7 +473,7 @@ uint32 OSystem_SDL::getMillis() {
 }
 
 void OSystem_SDL::delayMillis(uint msecs) {
-	if (!g_eventRec.processDelayMillis(msecs))
+	if (!g_eventRec.processDelayMillis())
 		SDL_Delay(msecs);
 }
 

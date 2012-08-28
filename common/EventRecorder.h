@@ -57,15 +57,18 @@ public:
 	void processMillis(uint32 &millis);
 
 	/** TODO: Add documentation, this is only used by the backend */
-	bool processDelayMillis(uint &msecs);
+	bool processDelayMillis();
 
 private:
+	void switchFastMode();
 	bool notifyEvent(const Event &ev);
 	bool pollEvent(Event &ev);
 	bool allowMapping() const { return false; }
 
 	void readEvent(Event &event);
 	void writeEvent(const Event &event);
+	void checkForKeyCode(const Event &event);
+	void togglePause();
 	class RandomSourceRecord {
 	public:
 		String name;
@@ -92,10 +95,12 @@ private:
 	enum RecordMode {
 		kPassthrough = 0,
 		kRecorderRecord = 1,
-		kRecorderPlayback = 2
+		kRecorderPlayback = 2,
+		kRecorderPlaybackPause
 	};
 	volatile RecordMode _recordMode;
 	String _recordFileName;
+	bool _fastPlayback;
 };
 
 } // End of namespace Common

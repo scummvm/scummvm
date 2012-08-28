@@ -174,7 +174,7 @@ void EventRecorder::init() {
 		}
 	}
 
-	if (_recordMode == kRecorderRecord)	{
+	if (_recordMode == kRecorderRecord) {
 		_recordFile->writeUint32LE(RECORD_SIGNATURE);
 		_recordFile->writeUint32LE(RECORD_VERSION);
 	}
@@ -232,33 +232,30 @@ void EventRecorder::registerRandomSource(RandomSource &rnd, const String &name) 
 	}
 }
 
+
 void EventRecorder::processMillis(uint32 &millis) {
 	if (_recordMode == kPassthrough) {
 		return;
 	}
 }
 
-bool EventRecorder::processDelayMillis(uint &msecs) {
-	if (_recordMode == kRecorderPlayback) {
-		_recordMode = kPassthrough;
-
-		uint32 millis = g_system->getMillis();
-
-		_recordMode = kRecorderPlayback;
-
-		if (_lastMillis > millis) {
-			// Skip delay if we're getting late
-			return true;
-		}
-	}
-
-	return false;
+bool EventRecorder::processDelayMillis() {
+	return _fastPlayback;
 }
 
+void EventRecorder::checkForKeyCode(const Event &event) {
+	if (event.type == EVENT_KEYDOWN) {
+		if ((event.kbd.ascii == '/')) {
+			togglePause();
+		}
+	}
+}
+
+
 bool EventRecorder::notifyEvent(const Event &ev) {
+	checkForKeyCode(ev);
 	if (_recordMode != kRecorderRecord)
 		return false;
-
 	writeEvent(ev);
 
 	return false;
@@ -285,6 +282,23 @@ bool EventRecorder::pollEvent(Event &ev) {
 		break;
 	}
 	return true;
+}
+
+void EventRecorder::switchFastMode() {
+	if (_recordMode == kRecorderPlaybackPause) {
+		_fastPlayback = !_fastPlayback;
+	}
+}
+
+void EventRecorder::togglePause() {
+	switch (_recordMode) {
+	case kRecorderPlayback:
+		_recordMode = kRecorderPlaybackPause;
+		break;
+	case kRecorderPlaybackPause:
+		_recordMode = kRecorderPlayback;
+		break;
+	}
 }
 
 } // End of namespace Common
