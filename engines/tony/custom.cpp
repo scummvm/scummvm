@@ -1779,7 +1779,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
  *  Dialogs
  */
 
-int curDialog;
+int g_curDialog;
 
 DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
@@ -1801,7 +1801,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 	if (nPers != 0 && GLOBALS._isMChar[nPers] && GLOBALS._mCharacter[nPers]._bAlwaysBack)
 		_ctx->bIsBack = true;
 
-	_ctx->curVoc = SearchVoiceHeader(curDialog, nMsg);
+	_ctx->curVoc = SearchVoiceHeader(g_curDialog, nMsg);
 	_ctx->voice = NULL;
 
 	if (_ctx->curVoc) {
@@ -1978,7 +1978,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 	CORO_BEGIN_CODE(_ctx);
 
-	curDialog = nDialog;
+	g_curDialog = nDialog;
 
 	// Call MPAL to start the dialog
 	mpalQueryDoDialog(nDialog, nStartGroup);
