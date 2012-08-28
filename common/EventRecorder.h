@@ -33,6 +33,7 @@
 #include "backends/mixer/nullmixer/nullsdl-mixer.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "engines/advancedDetector.h"
 
 #define g_eventRec (Common::EventRecorder::instance())
 
@@ -65,7 +66,9 @@ public:
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
 	SdlMixerManager *getMixerManager();
-	void registerMixerManager(SdlMixerManager* mixerManager);
+	void registerMixerManager(SdlMixerManager *mixerManager);
+	uint32 getRandomSeed(const String &name);
+	void init(Common::String gameid, const ADGameDescription* desc = NULL);
 	uint32 getTimer() {return _fakeTimer;}
 private:
 	MutexRef _recorderMutex;
@@ -74,7 +77,13 @@ private:
 	void switchMixer();
 	void switchFastMode();
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
+	void openRecordFile(Common::String gameId);
+	void checkGameHash(const ADGameDescription* desc);
+	void writeGameHash(const ADGameDescription* desc);
 	bool notifyEvent(const Event &ev);
+	String findMd5ByFileName(const ADGameDescription* gameDesc, String fileName);
+	Common::String readString();
+	bool notifyPoll();
 	bool pollEvent(Event &ev);
 	bool allowMapping() const { return false; }
 	void getNextEvent();
