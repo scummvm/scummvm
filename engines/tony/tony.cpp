@@ -518,13 +518,28 @@ void TonyEngine::closeMusic() {
 }
 
 void TonyEngine::pauseSound(bool bPause) {
+	_theEngine.pauseSound(bPause);
+
+	for (uint i = 0; i < 6; i++)
+		if (_stream[i])
+			_stream[i]->pause(bPause);
+
+	for (uint i = 0; i < MAX_SFX_CHANNELS; i++) {
+		if (_sfx[i])
+			_sfx[i]->pause(bPause);
+		if (_utilSfx[i])
+			_utilSfx[i]->pause(bPause);
+	}
 }
 
 void TonyEngine::setMusicVolume(int nChannel, int volume) {
+	_stream[nChannel + GLOBALS._flipflop]->setVolume(volume);
 }
 
 int TonyEngine::getMusicVolume(int nChannel) {
-	return 255;
+	int volume;
+	_stream[nChannel + GLOBALS._flipflop]->getVolume(&volume);
+	return volume;
 }
 
 Common::String TonyEngine::getSaveStateFileName(int n) {
