@@ -129,6 +129,7 @@ public:
 	SDL_Surface *getSurface(int width, int height);
 	bool checkForContinueGame();
 	void deleteTemporarySave();
+	void updateSubsystems();
 private:
 	Common::String _author;
 	Common::String _desc;

@@ -73,7 +73,9 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kEditCmd:
 		close();
+		CursorMan.lock(false);
 		dlg.runModal();
+		CursorMan.lock(true);
 		g_eventRec.setAuthor(dlg.getAuthor());
 		g_eventRec.setName(dlg.getName());
 		g_eventRec.setNotes(dlg.getNotes());
@@ -81,6 +83,7 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSwitchModeCmd:
 		g_eventRec.switchMode();
+		close();
 		break;
 	}
 }
@@ -106,10 +109,12 @@ void OnScreenDialog::handleMouseMoved(int x, int y, int button) {
 		g_system->updateScreen();
 		if (_mouseOver == false) {
 			g_gui.theme()->showCursor();
+			CursorMan.lock(true);
 		}
 		_mouseOver = true;
 	} else {
 		if (_mouseOver == true) {
+			CursorMan.lock(false);
 			g_gui.theme()->hideCursor();
 		}
 		_mouseOver = false;
@@ -139,6 +144,11 @@ bool OnScreenDialog::isMouseOver(int x, int y) {
 
 bool OnScreenDialog::isMouseOver() {
 	return _mouseOver;
+}
+
+void OnScreenDialog::close() {
+	CursorMan.lock(false);
+	Dialog::close();
 }
 
 
