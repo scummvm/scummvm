@@ -79,11 +79,11 @@ public:
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
 	SdlMixerManager *getMixerManager();
-	TimerManager *getTimerManager();
+	DefaultTimerManager *getTimerManager();
 	uint32 getRandomSeed(const String &name);
 	void init(Common::String gameid, const ADGameDescription *desc = NULL);
 	void registerMixerManager(SdlMixerManager *mixerManager);
-	void registerTimerManager(TimerManager *timerManager);
+	void registerTimerManager(DefaultTimerManager *timerManager);
 	uint32 getTimer() {return _fakeTimer;}
 private:
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
@@ -118,7 +118,7 @@ private:
 	MutexRef _recorderMutex;
 	SdlMixerManager *_realMixerManager;
 	NullSdlMixerManager *_fakeMixerManager;
-	TimerManager *_timerManager;
+	DefaultTimerManager *_timerManager;
 	void switchMixer();
 	void switchFastMode();
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;

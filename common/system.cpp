@@ -85,7 +85,7 @@ void OSystem::initBackend() {
 		error("Backend failed to instantiate audio CD manager");
 	if (!_eventManager)
 		error("Backend failed to instantiate event manager");
-	if (!_timerManager)
+	if (!getTimerManager())
 		error("Backend failed to instantiate timer manager");
 
 	// TODO: We currently don't check _savefileManager, because at least
@@ -155,5 +155,5 @@ Common::String OSystem::getSystemLanguage() const {
 }
 
 Common::TimerManager * OSystem::getTimerManager() {
-	return g_eventRec.getTimerManager();
+	return _timerManager;
 }

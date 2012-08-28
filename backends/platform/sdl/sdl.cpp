@@ -131,9 +131,7 @@ void OSystem_SDL::init() {
 	if (_mutexManager == 0)
 		_mutexManager = new SdlMutexManager();
 
-	if (_timerManager == 0)
-		_timerManager = new SdlTimerManager();
-	g_eventRec.registerTimerManager(_timerManager);
+	g_eventRec.registerTimerManager(new SdlTimerManager());
 
 #if defined(USE_TASKBAR)
 	if (_taskbarManager == 0)
@@ -659,6 +657,10 @@ void OSystem_SDL::setupGraphicsModes() {
 		mode->id = i++;
 		mode++;
 	}
+}
+
+Common::TimerManager * OSystem_SDL::getTimerManager() {
+	return g_eventRec.getTimerManager();
 }
 
 #endif

@@ -907,7 +907,7 @@ public:
 	 * Return the timer manager singleton. For more information, refer
 	 * to the TimerManager documentation.
 	 */
-	Common::TimerManager *getTimerManager();
+	virtual Common::TimerManager *getTimerManager();
 
 	/**
 	 * Return the event manager singleton. For more information, refer

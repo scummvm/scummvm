@@ -72,6 +72,7 @@ public:
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &td) const;
 	virtual Audio::Mixer *getMixer();
+	virtual Common::TimerManager *getTimerManager();
 
 protected:
 	bool _inited;

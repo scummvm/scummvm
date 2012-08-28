@@ -164,16 +164,19 @@ EventRecorder::EventRecorder() : _tmpRecordFile(_recordBuffer, kRecordBuffSize),
 	_timeMutex = g_system->createMutex();
 	_recorderMutex = g_system->createMutex();
 	_recordMode = kPassthrough;
+	_timerManager = NULL;
 	_bitmapBuff = NULL;
 	_playbackFile = NULL;
 	_recordFile = NULL;
 	_screenshotsFile = NULL;
-
 }
 
 EventRecorder::~EventRecorder() {
 	g_system->deleteMutex(_timeMutex);
 	g_system->deleteMutex(_recorderMutex);
+	if (_timerManager != NULL) {
+		delete _timerManager;
+	}
 }
 
 void EventRecorder::init() {
@@ -233,7 +236,7 @@ void EventRecorder::processMillis(uint32 &millis) {
 		}
 		millis = _fakeTimer;
 	}
-	g_system->unlockMutex(_timeMutex);
+	_timerManager->handler();
 }
 
 bool EventRecorder::processDelayMillis() {
@@ -886,11 +889,11 @@ void EventRecorder::checkRecordedMD5() {
 	screen.free();
 }
 
-TimerManager *EventRecorder::getTimerManager() {
+DefaultTimerManager *EventRecorder::getTimerManager() {
 	return _timerManager;
 }
 
-void EventRecorder::registerTimerManager(TimerManager *timerManager) {
+void EventRecorder::registerTimerManager(DefaultTimerManager *timerManager) {
 	_timerManager = timerManager;
 }
 
