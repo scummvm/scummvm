@@ -69,7 +69,8 @@ Actor::Actor(const Common::String &actorName) :
 		_lastTurnDir(0), _currTurnDir(0),
 		_sayLineText(0), _talkDelay(0),
 		_attachedActor(NULL), _attachedJoint(""),
-		_globalAlpha(1.f), _alphaMode(AlphaOff)  {
+		_globalAlpha(1.f), _alphaMode(AlphaOff),
+		_shadowActive(false) {
 	_lookingMode = false;
 	_constrain = false;
 	_talkSoundName = "";
@@ -112,6 +113,7 @@ Actor::Actor() {
 	_globalAlpha = 1.f;
 
 	_sortOrder = 0;
+	_shadowActive = false;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
@@ -1310,7 +1312,8 @@ void Actor::draw() {
 			g_driver->setShadow(NULL);
 		}
 
-		if (!isAttached() || !costume->getFilename().equals("fx/dumbshadow.cos")) {
+		bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
+		if (!isShadowCostume || _shadowActive) {
 			// normal draw actor
 			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
 			costume->draw();

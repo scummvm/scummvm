@@ -479,6 +479,8 @@ public:
 	int getSortOrder() const { return _sortOrder; }
 	void setSortOrder(const int order) { _sortOrder = order; }
 
+	void activateShadow(bool active) { _shadowActive = active; }
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
@@ -618,6 +620,8 @@ private:
 	bool _inOverworld;
 
 	int _sortOrder;
+
+	bool _shadowActive;
 };
 
 } // end of namespace Grim
