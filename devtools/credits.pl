@@ -69,6 +69,7 @@ sub html_entities_to_ascii {
 	# &aring;   -> aa
 	# &amp;     -> &
 	# &#322;    -> l
+	# &#347;    -> s
 	# &Scaron;  -> S
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
@@ -76,6 +77,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&oacute;/o/g;
 	$text =~ s/&oslash;/o/g;
 	$text =~ s/&#322;/l/g;
+	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/aa/g;
 
@@ -101,6 +103,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&oacute;/\\363/g;
 	$text =~ s/&oslash;/\\370/g;
 	$text =~ s/&#322;/l/g;
+	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/\\345/g;
 
@@ -550,7 +553,9 @@ begin_credits("Credits");
 			begin_section("DreamWeb");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 				add_person("Bertrand Augereau", "Tramb", "");
+				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Vladimir Menshakov", "whoozle", "(retired)");
+				add_person("Willem Jan Palenstijn", "wjp", "");
 			end_section();
 
 			begin_section("Gob");
@@ -930,6 +935,9 @@ begin_credits("Credits");
 				begin_section("French");
 					add_person("Thierry Crozat", "criezy", "");
 				end_section();
+				begin_section("Galician");
+					add_person("Santiago G. Sanz", "sgsanz", "");
+				end_section();
 				begin_section("German");
 					add_person("Simon Sawatzki", "SimSaw", "");
 					add_person("Lothar Serra Mari", "Lothar93", "");
@@ -942,10 +950,10 @@ begin_credits("Credits");
 					add_person("Matteo Angelino", "Maff", "");
 				end_section();
 				begin_section("Norwegian (Bokm&aring;l)");
-					add_person("Einar Johan T. S&oslash;m&aring;en", "", "");
+					add_person("Einar Johan S&oslash;m&aring;en", "somaen", "");
 				end_section();
 				begin_section("Norwegian (Nynorsk)");
-					add_person("Einar Johan T. S&oslash;m&aring;en", "", "");
+					add_person("Einar Johan S&oslash;m&aring;en", "somaen", "");
 				end_section();
 				begin_section("Polish");
 					add_person("GrajPoPolsku.pl Team", "", "");
@@ -1126,6 +1134,14 @@ begin_credits("Credits");
 	add_paragraph(
     "Broken Sword 2.5 team for providing sources of their engine and their great ".
     "support.");
+
+	add_paragraph(
+    "Neil Dodwell and David Dew from Creative Reality for providing the source ".
+    "of Dreamweb and for their tremendous support.");
+
+	add_paragraph(
+    "Janusz Wi&#347;niewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon ".
+    "for providing full source code for So&#322;tys and letting us to redistribute the game.");
 
 	end_section();
 

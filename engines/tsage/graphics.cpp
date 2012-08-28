@@ -38,7 +38,7 @@ namespace TsAGE {
  * @src Source surface
  * @bounds Area to backup
  */
-GfxSurface *Surface_getArea(GfxSurface &src, const Rect &bounds) {
+GfxSurface *surfaceGetArea(GfxSurface &src, const Rect &bounds) {
 	assert(bounds.isValidRect());
 	GfxSurface *dest = new GfxSurface();
 	dest->create(bounds.width(), bounds.height());
@@ -437,7 +437,7 @@ bool GfxSurface::displayText(const Common::String &msg, const Common::Point &pt)
 	// Make a backup copy of the area the text will occupy
 	Rect saveRect = textRect;
 	saveRect.collapse(-20, -8);
-	GfxSurface *savedArea = Surface_getArea(gfxManager.getSurface(), saveRect);
+	GfxSurface *savedArea = surfaceGetArea(gfxManager.getSurface(), saveRect);
 
 	// Display the text
 	gfxManager._font.writeLines(msg.c_str(), textRect, ALIGN_LEFT);
@@ -1073,7 +1073,7 @@ void GfxDialog::draw() {
 	Rect tempRect(_bounds);
 
 	// Make a backup copy of the area the dialog will occupy
-	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
+	_savedArea = surfaceGetArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
 
 	// Set the palette for use in the dialog
 	setPalette();

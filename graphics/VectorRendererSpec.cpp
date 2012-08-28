@@ -422,8 +422,8 @@ void VectorRendererSpec<PixelType>::
 copyFrame(OSystem *sys, const Common::Rect &r) {
 
 	sys->copyRectToOverlay(
-		(const OverlayColor *)_activeSurface->getBasePtr(r.left, r.top),
-		_activeSurface->pitch / _activeSurface->format.bytesPerPixel,
+		_activeSurface->getBasePtr(r.left, r.top),
+		_activeSurface->pitch,
 	    r.left, r.top, r.width(), r.height()
 	);
 }

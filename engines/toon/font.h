@@ -33,9 +33,9 @@ public:
 	~FontRenderer();
 
 	void setFont(Animation *font);
-	void computeSize(const Common::String &origText, int32 *retX, int32 *retY);
-	void renderText(int32 x, int32 y, const Common::String &origText, int32 mode);
-	void renderMultiLineText(int32 x, int32 y, const Common::String &origText, int32 mode);
+	void computeSize(const Common::String &origText, int16 *retX, int16 *retY);
+	void renderText(int16 x, int16 y, const Common::String &origText, int32 mode);
+	void renderMultiLineText(int16 x, int16 y, const Common::String &origText, int32 mode);
 	void setFontColorByCharacter(int32 characterId);
 	void setFontColor(int32 fontColor1, int32 fontColor2, int32 fontColor3);
 protected:

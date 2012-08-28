@@ -56,7 +56,7 @@ class OSystem_Wii : public EventsBaseBackend, public PaletteManager {
 private:
 	s64 _startup_time;
 
-	int _cursorScale;
+	bool _cursorDontScale;
 	bool _cursorPaletteDisabled;
 	u16 *_cursorPalette;
 	bool _cursorPaletteDirty;
@@ -72,7 +72,7 @@ private:
 	bool _overlayVisible;
 	u16 _overlayWidth, _overlayHeight;
 	u32 _overlaySize;
-	OverlayColor *_overlayPixels;
+	uint16 *_overlayPixels;
 	gfx_screen_coords_t _coordsOverlay;
 	gfx_tex_t _texOverlay;
 	bool _overlayDirty;
@@ -167,7 +167,7 @@ protected:
 	virtual void grabPalette(byte *colors, uint start, uint num);
 public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y,
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
 									int w, int h);
 	virtual void updateScreen();
 	virtual Graphics::Surface *lockScreen();
@@ -177,8 +177,8 @@ public:
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch,
+	virtual void grabOverlay(void *buf, int pitch);
+	virtual void copyRectToOverlay(const void *buf, int pitch,
 									int x, int y, int w, int h);
 	virtual int16 getOverlayWidth();
 	virtual int16 getOverlayHeight();
@@ -187,9 +187,9 @@ public:
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 								int hotspotY, uint32 keycolor,
-								int cursorTargetScale,
+								bool dontScale,
 								const Graphics::PixelFormat *format);
 
 	virtual bool pollEvent(Common::Event &event);

@@ -564,9 +564,9 @@ int32 ScriptFunc::sys_Cmd_Exit_Conversation(EMCState *state) {
 
 int32 ScriptFunc::sys_Cmd_Set_Mouse_Pos(EMCState *state) {
 	if (_vm->state()->_inCloseUp) {
-		_vm->getSystem()->warpMouse(stackPos(0), stackPos(1));
+		_vm->_system->warpMouse(stackPos(0), stackPos(1));
 	} else {
-		_vm->getSystem()->warpMouse(stackPos(0) - _vm->state()->_currentScrollValue, stackPos(1));
+		_vm->_system->warpMouse(stackPos(0) - _vm->state()->_currentScrollValue, stackPos(1));
 	}
 	return 0;
 }

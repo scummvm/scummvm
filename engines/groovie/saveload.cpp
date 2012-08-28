@@ -103,8 +103,6 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 	if (descriptor) {
 		// Initialize the SaveStateDescriptor
 		descriptor->setSaveSlot(slot);
-		descriptor->setDeletableFlag(true);
-		descriptor->setWriteProtectedFlag(false);
 
 		// TODO: Add extra information
 		//setSaveDate(int year, int month, int day)

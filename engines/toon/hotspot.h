@@ -51,8 +51,8 @@ public:
 	~Hotspots();
 
 	bool LoadRif(const Common::String &rifName, const Common::String &additionalRifName);
-	int32 Find(int32 x, int32 y);
-	int32 FindBasedOnCorner(int32 x, int32 y);
+	int32 Find(int16 x, int16 y);
+	int32 FindBasedOnCorner(int16 x, int16 y);
 	HotspotData *Get(int32 id);
 	int32 getCount() const { return _numItems; }
 

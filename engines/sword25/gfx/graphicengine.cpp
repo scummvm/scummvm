@@ -216,7 +216,7 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 			}
 		}
 
-		g_system->copyRectToScreen((byte *)_backSurface.getBasePtr(rect.left, rect.top), _backSurface.pitch, rect.left, rect.top, rect.width(), rect.height());
+		g_system->copyRectToScreen(_backSurface.getBasePtr(rect.left, rect.top), _backSurface.pitch, rect.left, rect.top, rect.width(), rect.height());
 	}
 
 	return true;

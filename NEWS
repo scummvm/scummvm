@@ -1,9 +1,28 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.5.0 (????-??-??)
+1.6.0 (????-??-??)
+ General:
+   - Added a new save/load chooser based on a grid of thumbnails. This is only
+     supported for resolutions bigger than 640x400. The old chooser is still
+     available and used for games without thumbnail support. It is possible to
+     select the old one as default too.
+   - Rewrote VideoDecoder subsystem.
+   - Added Galician translation.
+
+1.5.0 (2012-07-27)
  New Games:
+   - Added support for Backyard Baseball 2003.
+   - Added support for Blue Force.
+   - Added support for Darby the Dragon.
+   - Added support for Dreamweb.
+   - Added support for Geisha.
+   - Added support for Gregory and the Hot Air Balloon.
+   - Added support for Magic Tales: Liam Finds a Story.
+   - Added support for Once Upon A Time: Little Red Riding Hood
+   - Added support for Sleeping Cub's Test of Courage.
    - Added support for Soltys.
+   - Added support for The Princess and the Crab.
 
  General:
    - Updated MT-32 emulation code to latest munt project snapshot. The emulation
@@ -17,13 +36,13 @@ For a more comprehensive changelog of the latest experimental code, see:
      Engine tab when adding or editing a configuration for a game. In most
      cases, you will have to run each game once or readd them all in ScummVM's
      launcher in order to get the custom options tab.
-
- SDL ports:
-   - Added support for OpenGL (GSoC Task).
+   - Improved predictive dialog look.
+   - Various GUI improvements.
 
  Broken Sword 1:
    - Fixed incorrect sound effects in the DOS/Windows demo.
    - Added support for PlayStation videos.
+   - Fixed missing subtitles in the demo.
 
  Broken Sword 2:
    - Added support for PlayStation videos.
@@ -31,9 +50,19 @@ For a more comprehensive changelog of the latest experimental code, see:
  Cine:
    - Implemented Roland MT-32 output driver.
 
+ Drascula:
+   - Added Spanish subtitles in the Von Braun cutscene (#3069981: no subtitles
+     in scene with "von Braun").
+
+ Gob:
+   - Fixed a crash in Lost in Time
+   - Rewrote the AdLib player. Enabled the now working MDY player in
+     Fascination and Geisha.
+
  SCUMM:
    - Added support for the Macintosh version of SPY Fox in Hold the Mustard.
    - Added a difficulty selection dialog for Loom FM-TOWNS.
+   - Fixed graphical glitches in HE98 version of Pajama Sam's Lost & Found.
 
  iPhone port:
    - Changed "F5 (menu)" gesture to open up the global main menu instead.
@@ -41,6 +70,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      the red pointer cursor for example.
    - Added aspect ratio correction feature.
    - Implemented 16 bits per pixel support for games.
+
+ Maemo port:
+   - Added support for Nokia 770 running OS2008 HE.
+   - Added configurable keymap.
 
  Windows port:
    - Changed default savegames location for Windows NT4/2000/XP/Vista/7.

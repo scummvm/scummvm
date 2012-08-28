@@ -54,17 +54,17 @@ enum ResourceStatus {
 	kResStatusLocked /**< Allocated and in use */
 };
 
-/** Initialization result types */
-enum {
+/** Resource error codes. Should be in sync with s_errorDescriptions */
+enum ResourceErrorCodes {
+	SCI_ERROR_NONE = 0,
 	SCI_ERROR_IO_ERROR = 1,
-	SCI_ERROR_INVALID_RESMAP_ENTRY = 2,	/**< Invalid resource.map entry */
-	SCI_ERROR_RESMAP_NOT_FOUND = 3,
-	SCI_ERROR_NO_RESOURCE_FILES_FOUND = 4,	/**< No resource at all was found */
-	SCI_ERROR_UNKNOWN_COMPRESSION = 5,
-	SCI_ERROR_DECOMPRESSION_ERROR = 6,	/**< sanity checks failed during decompression */
+	SCI_ERROR_EMPTY_RESOURCE = 2,
+	SCI_ERROR_RESMAP_INVALID_ENTRY = 3,	/**< Invalid resource.map entry */
+	SCI_ERROR_RESMAP_NOT_FOUND = 4,
+	SCI_ERROR_NO_RESOURCE_FILES_FOUND = 5,	/**< No resource at all was found */
+	SCI_ERROR_UNKNOWN_COMPRESSION = 6,
+	SCI_ERROR_DECOMPRESSION_ERROR = 7,	/**< sanity checks failed during decompression */
 	SCI_ERROR_RESOURCE_TOO_BIG = 8	/**< Resource size exceeds SCI_MAX_RESOURCE_SIZE */
-
-	/* the first critical error number */
 };
 
 enum {

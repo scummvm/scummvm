@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -201,13 +202,13 @@ void DreamWebEngine::edensCDPlayer() {
 }
 
 void DreamWebEngine::hotelBell() {
-	playChannel1(12);
+	_sound->playChannel1(12);
 	showFirstUse();
 	putBackObStuff();
 }
 
 void DreamWebEngine::playGuitar() {
-	playChannel1(14);
+	_sound->playChannel1(14);
 	showFirstUse();
 	putBackObStuff();
 }
@@ -273,13 +274,13 @@ void DreamWebEngine::useHatch() {
 }
 
 void DreamWebEngine::wheelSound() {
-	playChannel1(17);
+	_sound->playChannel1(17);
 	showFirstUse();
 	putBackObStuff();
 }
 
 void DreamWebEngine::callHotelLift() {
-	playChannel1(12);
+	_sound->playChannel1(12);
 	showFirstUse();
 	_vars._countToOpen = 8;
 	_getBack = 1;
@@ -382,7 +383,7 @@ void DreamWebEngine::sitDownInBar() {
 }
 
 void DreamWebEngine::useDryer() {
-	playChannel1(12);
+	_sound->playChannel1(12);
 	showFirstUse();
 	_getBack = 1;
 }
@@ -887,7 +888,7 @@ void DreamWebEngine::usePlate() {
 
 	if (compare(_withObject, _withType, "SCRW")) {
 		// Unscrew plate
-		playChannel1(20);
+		_sound->playChannel1(20);
 		showFirstUse();
 		placeSetObject(28);
 		placeSetObject(24);
@@ -992,7 +993,7 @@ void DreamWebEngine::useCart() {
 	removeSetObject(_command);
 	placeSetObject(_command + 1);
 	_vars._progressPoints++;
-	playChannel1(17);
+	_sound->playChannel1(17);
 	showFirstUse();
 	_getBack = 1;
 }
@@ -1035,7 +1036,7 @@ void DreamWebEngine::openHotelDoor() {
 	if (defaultUseHandler("KEYA"))
 		return;
 
-	playChannel1(16);
+	_sound->playChannel1(16);
 	showFirstUse();
 	_vars._lockStatus = 0;
 	_getBack = 1;
@@ -1045,7 +1046,7 @@ void DreamWebEngine::openHotelDoor2() {
 	if (defaultUseHandler("KEYA"))
 		return;
 
-	playChannel1(16);
+	_sound->playChannel1(16);
 	showFirstUse();
 	putBackObStuff();
 }
@@ -1067,7 +1068,7 @@ void DreamWebEngine::usePoolReader() {
 		showSecondUse();
 		putBackObStuff();
 	} else {
-		playChannel1(17);
+		_sound->playChannel1(17);
 		showFirstUse();
 		_vars._countToOpen = 6;
 		_getBack = 1;
@@ -1088,7 +1089,7 @@ void DreamWebEngine::useCardReader1() {
 		putBackObStuff();
 	} else {
 		// Get cash
-		playChannel1(16);
+		_sound->playChannel1(16);
 		showPuzText(18, 300);
 		_vars._progressPoints++;
 		_vars._card1Money = 12432;
@@ -1113,7 +1114,7 @@ void DreamWebEngine::useCardReader2() {
 		showPuzText(22, 300);
 		putBackObStuff();
 	} else {
-		playChannel1(18);
+		_sound->playChannel1(18);
 		showPuzText(19, 300);
 		placeSetObject(94);
 		_vars._gunPassFlag = 1;
@@ -1136,7 +1137,7 @@ void DreamWebEngine::useCardReader3() {
 		showPuzText(26, 300);
 		putBackObStuff();
 	} else {
-		playChannel1(16);
+		_sound->playChannel1(16);
 		showPuzText(25, 300);
 		_vars._progressPoints++;
 		_vars._card1Money -= 8300;
@@ -1232,7 +1233,7 @@ void DreamWebEngine::useControl() {
 	}
 
 	if (compare(_withObject, _withType, "KEYA")) {	// Right key
-		playChannel1(16);
+		_sound->playChannel1(16);
 		if (_vars._location == 21) {	// Going down
 			showPuzText(3, 300);
 			_newLocation = 30;
@@ -1257,7 +1258,7 @@ void DreamWebEngine::useControl() {
 			placeSetObject(30);
 			removeSetObject(16);
 			removeSetObject(17);
-			playChannel1(14);
+			_sound->playChannel1(14);
 			showPuzText(10, 300);
 			_vars._progressPoints++;
 			_getBack = 1;
@@ -1375,7 +1376,7 @@ void DreamWebEngine::runTap() {
 		// Fill cup from tap
 		DynObject *exObject = getExAd(_withObject);
 		exObject->objId[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
-		playChannel1(8);
+		_sound->playChannel1(8);
 		showPuzText(57, 300);
 		putBackObStuff();
 		return;

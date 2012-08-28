@@ -47,7 +47,7 @@ const char *segmentTypeNames[] = {
 #endif
 
 void WorklistManager::push(reg_t reg) {
-	if (!reg.segment) // No numbers
+	if (!reg.getSegment()) // No numbers
 		return;
 
 	debugC(kDebugLevelGC, "[GC] Adding %04x:%04x", PRINT_REG(reg));
@@ -69,7 +69,7 @@ static AddrSet *normalizeAddresses(SegManager *segMan, const AddrSet &nonnormal_
 
 	for (AddrSet::const_iterator i = nonnormal_map.begin(); i != nonnormal_map.end(); ++i) {
 		reg_t reg = i->_key;
-		SegmentObj *mobj = segMan->getSegmentObj(reg.segment);
+		SegmentObj *mobj = segMan->getSegmentObj(reg.getSegment());
 
 		if (mobj) {
 			reg = mobj->findCanonicAddress(segMan, reg);
@@ -85,11 +85,11 @@ static void processWorkList(SegManager *segMan, WorklistManager &wm, const Commo
 	while (!wm._worklist.empty()) {
 		reg_t reg = wm._worklist.back();
 		wm._worklist.pop_back();
-		if (reg.segment != stackSegment) { // No need to repeat this one
+		if (reg.getSegment() != stackSegment) { // No need to repeat this one
 			debugC(kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
-			if (reg.segment < heap.size() && heap[reg.segment]) {
+			if (reg.getSegment() < heap.size() && heap[reg.getSegment()]) {
 				// Valid heap object? Find its outgoing references!
-				wm.pushArray(heap[reg.segment]->listAllOutgoingReferences(reg));
+				wm.pushArray(heap[reg.getSegment()]->listAllOutgoingReferences(reg));
 			}
 		}
 	}

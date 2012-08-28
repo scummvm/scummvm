@@ -74,16 +74,19 @@ void Draw_v2::closeScreen() {
 }
 
 void Draw_v2::blitCursor() {
-	if (_cursorIndex == -1)
+	if (!_cursorSprites || (_cursorIndex == -1))
 		return;
 
 	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
 }
 
 void Draw_v2::animateCursor(int16 cursor) {
+	if (!_cursorSprites)
+		return;
+
 	int16 cursorIndex = cursor;
 	int16 newX = 0, newY = 0;
-	uint16 hotspotX = 0, hotspotY = 0;
+	uint16 hotspotX, hotspotY;
 
 	_showCursor |= 1;
 
@@ -133,15 +136,22 @@ void Draw_v2::animateCursor(int16 cursor) {
 		}
 		// '------
 
-		newX = _vm->_global->_inter_mouseX;
-		newY = _vm->_global->_inter_mouseY;
+		hotspotX = 0;
+		hotspotY = 0;
+
 		if (_cursorHotspotXVar != -1) {
-			newX -= hotspotX = (uint16) VAR(_cursorIndex + _cursorHotspotXVar);
-			newY -= hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
+			hotspotX = (uint16) VAR(_cursorIndex + _cursorHotspotXVar);
+			hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
 		} else if (_cursorHotspotX != -1) {
-			newX -= hotspotX = _cursorHotspotX;
-			newY -= hotspotY = _cursorHotspotY;
+			hotspotX = _cursorHotspotX;
+			hotspotY = _cursorHotspotY;
+		} else if (_cursorHotspotsX != 0) {
+			hotspotX = _cursorHotspotsX[_cursorIndex];
+			hotspotY = _cursorHotspotsY[_cursorIndex];
 		}
+
+		newX = _vm->_global->_inter_mouseX - hotspotX;
+		newY = _vm->_global->_inter_mouseY - hotspotY;
 
 		_scummvmCursor->clear();
 		_scummvmCursor->blit(*_cursorSprites,
@@ -149,11 +159,19 @@ void Draw_v2::animateCursor(int16 cursor) {
 				(cursorIndex + 1) * _cursorWidth - 1,
 				_cursorHeight - 1, 0, 0);
 
-		if ((_vm->getGameType() != kGameTypeAdibou2) &&
-		    (_vm->getGameType() != kGameTypeAdi2) &&
-		    (_vm->getGameType() != kGameTypeAdi4))
-			CursorMan.replaceCursor(_scummvmCursor->getData(),
-					_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, 1, &_vm->getPixelFormat());
+		uint32 keyColor = 0;
+		if (_doCursorPalettes && _cursorKeyColors && _doCursorPalettes[cursorIndex])
+			keyColor = _cursorKeyColors[cursorIndex];
+
+		CursorMan.replaceCursor(_scummvmCursor->getData(),
+				_cursorWidth, _cursorHeight, hotspotX, hotspotY, keyColor, false, &_vm->getPixelFormat());
+
+		if (_doCursorPalettes && _doCursorPalettes[cursorIndex]) {
+			CursorMan.replaceCursorPalette(_cursorPalettes + (cursorIndex * 256 * 3),
+					_cursorPaletteStarts[cursorIndex], _cursorPaletteCounts[cursorIndex]);
+			CursorMan.disableCursorPalette(false);
+		} else
+			CursorMan.disableCursorPalette(true);
 
 		if (_frontSurface != _backSurface) {
 			if (!_noInvalidated) {
@@ -790,6 +808,10 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_PRINTTEXT:
+		// WORKAROUND: There's mistakes in Little Red's animal names.
+		//             See this function for details.
+		fixLittleRedStrings();
+
 		len = strlen(_textToPrint);
 		left = _destSpriteX;
 
@@ -812,8 +834,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 								getColor(_backColor), _transparency);
 					}
 				} else {
-					drawString(_textToPrint, _destSpriteX, _destSpriteY, getColor(_frontColor),
-							getColor(_backColor), _transparency, *_spritesArray[_destSurface], *font);
+					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, getColor(_frontColor),
+							getColor(_backColor), _transparency, *_spritesArray[_destSurface]);
 					_destSpriteX += len * font->getCharWidth();
 				}
 			} else {
@@ -914,6 +936,41 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if (_destSurface == kBackSurface) {
 			_destSpriteX -= _backDeltaX;
 			_destSpriteY -= _backDeltaY;
+		}
+	}
+}
+
+/* WORKAROUND: Fix wrong German animal names in Once Upon A Time: Little Red Riding Hood.
+ *
+ * The DOS, Amiga and Atari version of Little Red come with a small screen, accessible
+ * through the main menu, that lets children read and listen to animal names in 5
+ * languages: French, German, English, Spanish and Italian.
+ * Unfortunately, the German names are partially wrong. This is especially tragic
+ * because this is a game for small children and they're supposed to learn something
+ * here. We fix this.
+ *
+ * However, there's also problems with the recorded spoken German names:
+ * - "Der Rabe" has a far too short "a", sounding more like "Rabbe"
+ * - The wrong article for "Schmetterling" is very audible
+ * - In general, the words are way too overpronounced
+ * These are, of course, way harder to fix.
+ */
+
+static const char *kLittleRedStrings[][2] = {
+	{"die Heule"          , "die Eule"},
+	{"das Schmetterling"  , "der Schmetterling"},
+	{"die Vespe"          , "die Wespe"},
+	{"das Eich\224rnchen" , "das Eichh\224rnchen"}
+};
+
+void Draw_v2::fixLittleRedStrings() {
+	if (!_textToPrint || (_vm->getGameType() != kGameTypeLittleRed))
+		return;
+
+	for (int i = 0; i < ARRAYSIZE(kLittleRedStrings); i++) {
+		if (!strcmp(_textToPrint, kLittleRedStrings[i][0])) {
+			_textToPrint = kLittleRedStrings[i][1];
+			return;
 		}
 	}
 }

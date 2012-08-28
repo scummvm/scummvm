@@ -89,7 +89,9 @@ ScummVM Team
     DreamWeb:
        Torbjorn Andersson
        Bertrand Augereau
+       Filippos Karapetis
        Vladimir Menshakov    - (retired)
+       Willem Jan Palenstijn
 
     Gob:
        Torbjorn Andersson
@@ -406,6 +408,9 @@ Other contributions
     French:
        Thierry Crozat
 
+    Galician:
+       Santiago G. Sanz
+
     German:
        Simon Sawatzki
        Lothar Serra Mari
@@ -418,10 +423,10 @@ Other contributions
        Matteo Angelino
 
     Norwegian (Bokmaal):
-       Einar Johan T. Somaae
+       Einar Johan Somaaen
 
     Norwegian (Nynorsk):
-       Einar Johan T. Somaae
+       Einar Johan Somaaen
 
     Polish:
        GrajPoPolsku.pl Team
@@ -596,4 +601,11 @@ Special thanks to
 
    Broken Sword 2.5 team for providing sources of their engine and their
    great support.
+
+   Neil Dodwell and David Dew from Creative Reality for providing the source
+   of Dreamweb and for their tremendous support.
+
+   Janusz Wisniewski and Miroslaw Liminowicz from Laboratorium Komputerowe
+   Avalon for providing full source code for Soltys and letting us to
+   redistribute the game.
 

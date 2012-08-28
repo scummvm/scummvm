@@ -325,7 +325,6 @@ int KyraEngine_HoF::o2_drawShape(EMCState *script) {
 	if (modeFlag) {
 		_screen->drawShape(2, shp, x, y, 2, dsFlag ? 1 : 0);
 	} else {
-		_screen->hideMouse();
 		restorePage3();
 		_screen->drawShape(2, shp, x, y, 2, dsFlag ? 1 : 0);
 		memcpy(_gamePlayBuffer, _screen->getCPagePtr(3), 46080);
@@ -334,7 +333,6 @@ int KyraEngine_HoF::o2_drawShape(EMCState *script) {
 		flagAnimObjsForRefresh();
 		flagAnimObjsSpecialRefresh();
 		refreshAnimObjectsIfNeed();
-		_screen->showMouse();
 	}
 
 	return 0;
@@ -492,7 +490,6 @@ int KyraEngine_HoF::o2_drawSceneShape(EMCState *script) {
 	int y = stackPos(2);
 	int flag = (stackPos(3) != 0) ? 1 : 0;
 
-	_screen->hideMouse();
 	restorePage3();
 
 	_screen->drawShape(2, _sceneShapeTable[shape], x, y, 2, flag);
@@ -504,7 +501,6 @@ int KyraEngine_HoF::o2_drawSceneShape(EMCState *script) {
 	flagAnimObjsSpecialRefresh();
 	flagAnimObjsForRefresh();
 	refreshAnimObjectsIfNeed();
-	_screen->showMouse();
 	return 0;
 }
 

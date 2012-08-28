@@ -99,10 +99,12 @@ enum {
 };
 
 struct DreamWebGameDescription;
+class DreamWebSound;
 
 class DreamWebEngine : public Engine {
 private:
 	DreamWebConsole			*_console;
+	DreamWebSound *_sound;
 	bool					_vSyncInterrupt;
 
 protected:
@@ -142,7 +144,6 @@ public:
 
 	void quit();
 
-	void loadSounds(uint bank, const Common::String &suffix);
 	bool loadSpeech(const Common::String &filename);
 
 	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
@@ -151,40 +152,22 @@ public:
 	uint8 modifyChar(uint8 c) const;
 	Common::String modifyFileName(const char *);
 
-	void stopSound(uint8 channel);
-
-	const Common::String& getDatafilePrefix() { return _datafilePrefix; };
+	const Common::String& getDatafilePrefix() { return _datafilePrefix; }
+	const Common::String& getSpeechDirName() { return _speechDirName; }
 
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
-	void soundHandler();
-	void playSound(uint8 channel, uint8 id, uint8 loops);
 
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
 	Common::String _datafilePrefix;
+	Common::String _speechDirName;
 
 	uint _speed;
 	bool _turbo;
 	uint _oldMouseState;
 	bool _enableSavingOrLoading;
-
-	struct Sample {
-		uint offset;
-		uint size;
-		Sample(): offset(), size() {}
-	};
-
-	struct SoundData {
-		Common::Array<Sample> samples;
-		Common::Array<uint8> data;
-	};
-	SoundData _soundData[2];
-	Common::Array<uint8> _speechData;
-
-	Audio::SoundHandle _channelHandle[2];
-	uint8 _channel0, _channel1;
 
 protected:
 	GameVars _vars; // saved variables
@@ -326,16 +309,6 @@ public:
 
 	// sound related
 	uint8 _roomsSample;
-	uint8 _currentSample;
-	uint8 _channel0Playing;
-	uint8 _channel0Repeat;
-	uint8 _channel1Playing;
-
-	uint8 _volume;
-	uint8 _volumeTo;
-	int8 _volumeDirection;
-	uint8 _volumeCount;
-
 	bool _speechLoaded;
 
 	// misc variables
@@ -713,15 +686,6 @@ public:
 	void showOpBox();
 	void showSaveOps();
 	void showLoadOps();
-
-	// from sound.cpp
-	bool loadSpeech(byte type1, int idx1, byte type2, int idx2);
-	void volumeAdjust();
-	void cancelCh0();
-	void cancelCh1();
-	void loadRoomsSample();
-	void playChannel0(uint8 index, uint8 repeat);
-	void playChannel1(uint8 index);
 
 	// from sprite.cpp
 	void printSprites();
@@ -1134,7 +1098,6 @@ public:
 	void frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void doShake();
-	void vSync();
 	void setMode();
 	void showPCX(const Common::String &suffix);
 	void showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 effectsFlag, uint8 width, uint8 height);

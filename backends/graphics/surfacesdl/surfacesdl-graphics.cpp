@@ -63,17 +63,12 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Normal (no scaling)", "lowres")
 
-// Table of relative scalers magnitudes
-// [definedScale - 1][scaleFactor - 1]
-static ScalerProc *scalersMagn[3][3] = {
+// Table of the cursor scalers [scaleFactor - 1]
+static ScalerProc *scalersMagn[3] = {
 #ifdef USE_SCALERS
-	{ Normal1x, AdvMame2x, AdvMame3x },
-	{ Normal1x, Normal1x, Normal1o5x },
-	{ Normal1x, Normal1x, Normal1x }
+	Normal1x, AdvMame2x, AdvMame3x
 #else // remove dependencies on other scalers
-	{ Normal1x, Normal1x, Normal1x },
-	{ Normal1x, Normal1x, Normal1x },
-	{ Normal1x, Normal1x, Normal1x }
+	Normal1x, Normal1x, Normal1x
 #endif
 };
 
@@ -135,7 +130,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_overlayscreen(0), _tmpscreen2(0),
 	_scalerProc(0), _screenChangeCount(0),
 	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
-	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
+	_mouseOrigSurface(0), _cursorDontScale(false), _cursorPaletteDisabled(true),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
@@ -458,7 +453,7 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 			_hwscreen->format->Rshift, _hwscreen->format->Gshift,
 			_hwscreen->format->Bshift, _hwscreen->format->Ashift);
 
-		// Workaround to MacOSX SDL not providing an accurate Aloss value.
+		// Workaround to SDL not providing an accurate Aloss value on Mac OS X.
 		if (_hwscreen->format->Amask == 0)
 			format.aLoss = 8;
 
@@ -1232,9 +1227,9 @@ void SurfaceSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 	}
 }
 
-void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
+void SurfaceSdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
-	assert(src);
+	assert(buf);
 
 	if (_screen == NULL) {
 		warning("SurfaceSdlGraphicsManager::copyRectToScreen: _screen == NULL");
@@ -1257,8 +1252,9 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int
 #ifdef USE_RGB_COLOR
 	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x * _screenFormat.bytesPerPixel;
 	if (_videoMode.screenWidth == w && pitch == _screen->pitch) {
-		memcpy(dst, src, h*pitch);
+		memcpy(dst, buf, h*pitch);
 	} else {
+		const byte *src = (const byte *)buf;
 		do {
 			memcpy(dst, src, w * _screenFormat.bytesPerPixel);
 			src += pitch;
@@ -1268,8 +1264,9 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int
 #else
 	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x;
 	if (_screen->pitch == pitch && pitch == w) {
-		memcpy(dst, src, h*w);
+		memcpy(dst, buf, h*w);
 	} else {
+		const byte *src = (const byte *)buf;
 		do {
 			memcpy(dst, src, w);
 			src += pitch;
@@ -1600,7 +1597,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	_forceFull = true;
 }
 
-void SurfaceSdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
+void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
@@ -1610,31 +1607,35 @@ void SurfaceSdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	byte *src = (byte *)_overlayscreen->pixels;
+	byte *dst = (byte *)buf;
 	int h = _videoMode.overlayHeight;
 	do {
-		memcpy(buf, src, _videoMode.overlayWidth * 2);
+		memcpy(dst, src, _videoMode.overlayWidth * 2);
 		src += _overlayscreen->pitch;
-		buf += pitch;
+		dst += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-void SurfaceSdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
 		return;
 
+	const byte *src = (const byte *)buf;
+
 	// Clip the coordinates
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x * 2;
 		x = 0;
 	}
 
 	if (y < 0) {
-		h += y; buf -= y * pitch;
+		h += y;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -1657,9 +1658,9 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int p
 
 	byte *dst = (byte *)_overlayscreen->pixels + y * _overlayscreen->pitch + x * 2;
 	do {
-		memcpy(dst, buf, w * 2);
+		memcpy(dst, src, w * 2);
 		dst += _overlayscreen->pitch;
-		buf += pitch;
+		src += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_overlayscreen);
@@ -1718,7 +1719,7 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	}
 }
 
-void SurfaceSdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
 	if (!format)
 		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -1739,7 +1740,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, 
 
 	_mouseKeyColor = keycolor;
 
-	_cursorTargetScale = cursorTargetScale;
+	_cursorDontScale = dontScale;
 
 	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
 		_mouseCurState.w = w;
@@ -1847,51 +1848,34 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	}
 
 	int rW, rH;
+	int cursorScale;
 
-	if (_cursorTargetScale >= _videoMode.scaleFactor) {
-		// The cursor target scale is greater or equal to the scale at
-		// which the rest of the screen is drawn. We do not downscale
-		// the cursor image, we draw it at its original size. It will
-		// appear too large on screen.
-
-		rW = w;
-		rH = h;
-		_mouseCurState.rHotX = _mouseCurState.hotX;
-		_mouseCurState.rHotY = _mouseCurState.hotY;
-
-		// The virtual dimensions may be larger than the original.
-
-		_mouseCurState.vW = w * _cursorTargetScale / _videoMode.scaleFactor;
-		_mouseCurState.vH = h * _cursorTargetScale / _videoMode.scaleFactor;
-		_mouseCurState.vHotX = _mouseCurState.hotX * _cursorTargetScale /
-			_videoMode.scaleFactor;
-		_mouseCurState.vHotY = _mouseCurState.hotY * _cursorTargetScale /
-			_videoMode.scaleFactor;
+	if (_cursorDontScale) {
+		// Don't scale the cursor at all if the user requests this behavior.
+		cursorScale = 1;
 	} else {
-		// The cursor target scale is smaller than the scale at which
-		// the rest of the screen is drawn. We scale up the cursor
-		// image to make it appear correct.
-
-		rW = w * _videoMode.scaleFactor / _cursorTargetScale;
-		rH = h * _videoMode.scaleFactor / _cursorTargetScale;
-		_mouseCurState.rHotX = _mouseCurState.hotX * _videoMode.scaleFactor /
-			_cursorTargetScale;
-		_mouseCurState.rHotY = _mouseCurState.hotY * _videoMode.scaleFactor /
-			_cursorTargetScale;
-
-		// The virtual dimensions will be the same as the original.
-
-		_mouseCurState.vW = w;
-		_mouseCurState.vH = h;
-		_mouseCurState.vHotX = _mouseCurState.hotX;
-		_mouseCurState.vHotY = _mouseCurState.hotY;
+		// Scale the cursor with the game screen scale factor.
+		cursorScale = _videoMode.scaleFactor;
 	}
+
+	// Adapt the real hotspot according to the scale factor.
+	rW = w * cursorScale;
+	rH = h * cursorScale;
+	_mouseCurState.rHotX = _mouseCurState.hotX * cursorScale;
+	_mouseCurState.rHotY = _mouseCurState.hotY * cursorScale;
+
+	// The virtual dimensions will be the same as the original.
+
+	_mouseCurState.vW = w;
+	_mouseCurState.vH = h;
+	_mouseCurState.vHotX = _mouseCurState.hotX;
+	_mouseCurState.vHotY = _mouseCurState.hotY;
 
 #ifdef USE_SCALERS
 	int rH1 = rH; // store original to pass to aspect-correction function later
 #endif
 
-	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1) {
+	if (!_cursorDontScale && _videoMode.aspectRatioCorrection) {
 		rH = real2Aspect(rH - 1) + 1;
 		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
 	}
@@ -1922,21 +1906,25 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 	ScalerProc *scalerProc;
 
-	// If possible, use the same scaler for the cursor as for the rest of
-	// the game. This only works well with the non-blurring scalers so we
-	// actually only use the 1x, 1.5x, 2x and AdvMame scalers.
-
-	if (_cursorTargetScale == 1 && (_videoMode.mode == GFX_DOUBLESIZE || _videoMode.mode == GFX_TRIPLESIZE))
-		scalerProc = _scalerProc;
-	else
-		scalerProc = scalersMagn[_cursorTargetScale - 1][_videoMode.scaleFactor - 1];
+	// Only apply scaling, when the user allows it.
+	if (!_cursorDontScale) {
+		// If possible, use the same scaler for the cursor as for the rest of
+		// the game. This only works well with the non-blurring scalers so we
+		// actually only use the 1x, 2x and AdvMame scalers.
+		if (_videoMode.mode == GFX_DOUBLESIZE || _videoMode.mode == GFX_TRIPLESIZE)
+			scalerProc = _scalerProc;
+		else
+			scalerProc = scalersMagn[_videoMode.scaleFactor - 1];
+	} else {
+		scalerProc = Normal1x;
+	}
 
 	scalerProc((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2,
 		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 		_mouseCurState.w, _mouseCurState.h);
 
 #ifdef USE_SCALERS
-	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1)
+	if (!_cursorDontScale && _videoMode.aspectRatioCorrection)
 		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0);
 #endif
 

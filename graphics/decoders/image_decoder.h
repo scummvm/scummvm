@@ -75,9 +75,17 @@ public:
 	 * until destroy() or loadStream() is called, or until this ImageDecoder's
 	 * destructor is called.
 	 *
+	 * The palette's format is the same as PaletteManager's palette
+	 * (interleaved RGB values).
+	 *
 	 * @return the decoded palette, or 0 if no palette is present
 	 */
 	virtual const byte *getPalette() const { return 0; }
+
+	/** Return the starting index of the palette. */
+	virtual byte getPaletteStartIndex() const { return 0; }
+	/** Return the number of colors in the palette. */
+	virtual uint16 getPaletteColorCount() const { return 0; }
 };
 
 } // End of namespace Graphics

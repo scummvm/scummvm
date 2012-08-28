@@ -260,7 +260,7 @@ void OSystem_Dreamcast::initSize(uint w, uint h, const Graphics::PixelFormat *fo
   _devpoll = Timer();
 }
 
-void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int y,
+void OSystem_Dreamcast::copyRectToScreen(const void *buf, int pitch, int x, int y,
 					 int w, int h)
 {
   if (w<1 || h<1)
@@ -269,10 +269,11 @@ void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int 
     x<<=1; w<<=1;
   }
   unsigned char *dst = screen + y*SCREEN_W*2 + x;
+  const byte *src = (const byte *)buf;
   do {
-    memcpy(dst, buf, w);
+    memcpy(dst, src, w);
     dst += SCREEN_W*2;
-    buf += pitch;
+    src += pitch;
   } while (--h);
   _screen_dirty = true;
 }
@@ -291,9 +292,9 @@ void OSystem_Dreamcast::warpMouse(int x, int y)
   _ms_cur_y = y;
 }
 
-void OSystem_Dreamcast::setMouseCursor(const byte *buf, uint w, uint h,
+void OSystem_Dreamcast::setMouseCursor(const void *buf, uint w, uint h,
 				       int hotspot_x, int hotspot_y,
-				       uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format)
+				       uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format)
 {
   _ms_cur_w = w;
   _ms_cur_h = h;
@@ -652,27 +653,29 @@ void OSystem_Dreamcast::clearOverlay()
   _overlay_dirty = true;
 }
 
-void OSystem_Dreamcast::grabOverlay(OverlayColor *buf, int pitch)
+void OSystem_Dreamcast::grabOverlay(void *buf, int pitch)
 {
   int h = OVL_H;
   unsigned short *src = overlay;
+  unsigned char *dst = (unsigned char *)buf;
   do {
-    memcpy(buf, src, OVL_W*sizeof(int16));
+    memcpy(dst, src, OVL_W*sizeof(int16));
     src += OVL_W;
-    buf += pitch;
+    dst += pitch;
   } while (--h);
 }
 
-void OSystem_Dreamcast::copyRectToOverlay(const OverlayColor *buf, int pitch,
+void OSystem_Dreamcast::copyRectToOverlay(const void *buf, int pitch,
 					  int x, int y, int w, int h)
 {
   if (w<1 || h<1)
     return;
   unsigned short *dst = overlay + y*OVL_W + x;
+  const unsigned char *src = (const unsigned char *)buf;
   do {
-    memcpy(dst, buf, w*sizeof(int16));
+    memcpy(dst, src, w*sizeof(int16));
     dst += OVL_W;
-    buf += pitch;
+    src += pitch;
   } while (--h);
   _overlay_dirty = true;
 }

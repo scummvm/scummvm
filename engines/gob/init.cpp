@@ -34,9 +34,13 @@
 #include "gob/inter.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
+
+#include "gob/sound/sound.h"
+
 #include "gob/demos/scnplayer.h"
 #include "gob/demos/batplayer.h"
-#include "gob/sound/sound.h"
+
+#include "gob/pregob/pregob.h"
 
 namespace Gob {
 
@@ -112,6 +116,14 @@ void Init::initGame() {
 
 	if (_vm->isDemo()) {
 		doDemo();
+		delete _palDesc;
+		_vm->_video->initPrimary(-1);
+		cleanup();
+		return;
+	}
+
+	if (_vm->_preGob) {
+		_vm->_preGob->run();
 		delete _palDesc;
 		_vm->_video->initPrimary(-1);
 		cleanup();

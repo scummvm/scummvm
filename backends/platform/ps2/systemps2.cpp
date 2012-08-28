@@ -554,7 +554,7 @@ void OSystem_PS2::grabPalette(byte *colors, uint start, uint num) {
 	_screen->grabPalette(colors, (uint8)start, (uint16)num);
 }
 
-void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_PS2::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	_screen->copyScreenRect((const uint8*)buf, pitch, x, y, w, h);
 }
 
@@ -618,8 +618,8 @@ void OSystem_PS2::warpMouse(int x, int y) {
 	_screen->setMouseXy(x, y);
 }
 
-void OSystem_PS2::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
-	_screen->setMouseOverlay(buf, w, h, hotspot_x, hotspot_y, keycolor);
+void OSystem_PS2::setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+	_screen->setMouseOverlay((const byte *)buf, w, h, hotspot_x, hotspot_y, keycolor);
 }
 
 void OSystem_PS2::showOverlay(void) {
@@ -634,12 +634,12 @@ void OSystem_PS2::clearOverlay(void) {
 	_screen->clearOverlay();
 }
 
-void OSystem_PS2::grabOverlay(OverlayColor *buf, int pitch) {
-	_screen->grabOverlay((uint16 *)buf, (uint16)pitch);
+void OSystem_PS2::grabOverlay(void *buf, int pitch) {
+	_screen->grabOverlay((byte *)buf, (uint16)pitch);
 }
 
-void OSystem_PS2::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	_screen->copyOverlayRect((const uint16*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
+void OSystem_PS2::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
+	_screen->copyOverlayRect((const byte *)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
 }
 
 Graphics::PixelFormat OSystem_PS2::getOverlayFormat(void) const {

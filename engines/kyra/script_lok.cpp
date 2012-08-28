@@ -157,7 +157,6 @@ int KyraEngine_LoK::o1_dropItemInScene(EMCState *script) {
 
 int KyraEngine_LoK::o1_drawAnimShapeIntoScene(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_drawAnimShapeIntoScene(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_screen->hideMouse();
 	_animator->restoreAllObjectBackgrounds();
 	int shape = stackPos(0);
 	int xpos = stackPos(1);
@@ -169,7 +168,6 @@ int KyraEngine_LoK::o1_drawAnimShapeIntoScene(EMCState *script) {
 	_animator->preserveAnyChangedBackgrounds();
 	_animator->flagAllObjectsForRefresh();
 	_animator->updateAllObjectShapes();
-	_screen->showMouse();
 	return 0;
 }
 
@@ -1298,7 +1296,6 @@ int KyraEngine_LoK::o1_drawItemShapeIntoScene(EMCState *script) {
 	if (onlyHidPage) {
 		_screen->drawShape(2, _shapes[216 + item], x, y, 0, flags);
 	} else {
-		_screen->hideMouse();
 		_animator->restoreAllObjectBackgrounds();
 		_screen->drawShape(2, _shapes[216 + item], x, y, 0, flags);
 		_screen->drawShape(0, _shapes[216 + item], x, y, 0, flags);
@@ -1306,7 +1303,6 @@ int KyraEngine_LoK::o1_drawItemShapeIntoScene(EMCState *script) {
 		_animator->preserveAnyChangedBackgrounds();
 		_animator->flagAllObjectsForRefresh();
 		_animator->updateAllObjectShapes();
-		_screen->showMouse();
 	}
 	return 0;
 }

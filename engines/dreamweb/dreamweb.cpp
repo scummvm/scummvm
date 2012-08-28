@@ -35,6 +35,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -46,31 +47,29 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_roomDesc(kNumRoomTexts), _freeDesc(kNumFreeTexts),
 	_personText(kNumPersonTexts) {
 
-	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-
 	_vSyncInterrupt = false;
 
 	_console = 0;
+	_sound = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	_speed = 1;
 	_turbo = false;
 	_oldMouseState = 0;
-	_channel0 = 0;
-	_channel1 = 0;
 
 	_datafilePrefix = "DREAMWEB.";
+	_speechDirName = "SPEECH";
 	// ES and FR CD release use a different data file prefix
+	// and speech directory naming.
 	if (isCD()) {
 		switch(getLanguage()) {
 		case Common::ES_ESP:
 			_datafilePrefix = "DREAMWSP.";
+			_speechDirName = "SPANISH";
 			break;
 		case Common::FR_FRA:
 			_datafilePrefix = "DREAMWFR.";
+			_speechDirName = "FRENCH";
 			break;
 		default:
 			// Nothing to do
@@ -80,16 +79,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 
 	_openChangeSize = kInventx+(4*kItempicsize);
 	_quitRequested = false;
-
-	_currentSample = 0xff;
-	_channel0Playing = 0;
-	_channel0Repeat = 0;
-	_channel1Playing = 0xff;
-
-	_volume = 0;
-	_volumeTo = 0;
-	_volumeDirection = 0;
-	_volumeCount = 0;
 
 	_speechLoaded = false;
 
@@ -242,6 +231,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 DreamWebEngine::~DreamWebEngine() {
 	DebugMan.clearAllDebugChannels();
 	delete _console;
+	delete _sound;
 }
 
 static void vSyncInterrupt(void *refCon) {
@@ -282,7 +272,7 @@ void DreamWebEngine::processEvents() {
 		return;
 	}
 
-	soundHandler();
+	_sound->soundHandler();
 	Common::Event event;
 	int softKey, hardKey;
 	while (_eventMan->pollEvent(event)) {
@@ -378,10 +368,11 @@ void DreamWebEngine::processEvents() {
 Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
+	_sound = new DreamWebSound(this);
 
 	ConfMan.registerDefault("originalsaveload", "false");
 	ConfMan.registerDefault("bright_palette", true);
-	_hasSpeech = Common::File::exists("speech/r01c0000.raw") && !ConfMan.getBool("speech_mute");
+	_hasSpeech = Common::File::exists(_speechDirName + "/r01c0000.raw") && !ConfMan.getBool("speech_mute");
 	_brightPalette = ConfMan.getBool("bright_palette");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
@@ -522,6 +513,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 			return c;
 		}
 	case Common::FR_FRA:
+	case Common::IT_ITA:
 		switch(c) {
 		case 133:
 			return 'Z' + 1;	

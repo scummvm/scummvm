@@ -32,23 +32,8 @@
 
 namespace Sci {
 
-Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
-	_nr = 0;
-	_buf = NULL;
-	_bufSize = 0;
-	_scriptSize = 0;
-	_heapSize = 0;
-
-	_synonyms = NULL;
-	_heapStart = NULL;
-	_exportTable = NULL;
-
-	_localsOffset = 0;
-	_localsSegment = 0;
-	_localsBlock = NULL;
-	_localsCount = 0;
-
-	_markedAsDeleted = false;
+Script::Script() : SegmentObj(SEG_TYPE_SCRIPT), _buf(NULL) {
+	freeScript();
 }
 
 Script::~Script() {
@@ -56,34 +41,39 @@ Script::~Script() {
 }
 
 void Script::freeScript() {
+	_nr = 0;
+
 	free(_buf);
 	_buf = NULL;
 	_bufSize = 0;
+	_scriptSize = 0;
+	_heapStart = NULL;
+	_heapSize = 0;
 
-	_objects.clear();
-}
-
-void Script::init(int script_nr, ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-
-	if (!script)
-		error("Script %d not found", script_nr);
+	_exportTable = NULL;
+	_numExports = 0;
+	_synonyms = NULL;
+	_numSynonyms = 0;
 
 	_localsOffset = 0;
+	_localsSegment = 0;
 	_localsBlock = NULL;
 	_localsCount = 0;
 
+	_lockers = 1;
 	_markedAsDeleted = false;
+	_objects.clear();
+}
+
+void Script::load(int script_nr, ResourceManager *resMan) {
+	freeScript();
+
+	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	if (!script)
+		error("Script %d not found", script_nr);
 
 	_nr = script_nr;
-	_buf = 0;
-	_heapStart = 0;
-
-	_scriptSize = script->size;
-	_bufSize = script->size;
-	_heapSize = 0;
-
-	_lockers = 1;
+	_bufSize = _scriptSize = script->size;
 
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
 		_bufSize += READ_LE_UINT16(script->data) * 2;
@@ -115,16 +105,18 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 		// scheme. We need an overlaying mechanism, or a mechanism to split script parts
 		// in different segments to handle these. For now, simply stop when such a script
 		// is found.
+		//
+		// Known large SCI 3 scripts are:
+		// Lighthouse: 9, 220, 270, 351, 360, 490, 760, 765, 800
+		// LSL7: 240, 511, 550
+		// Phantasmagoria 2: none (hooray!)
+		// RAMA: 70
+		//
 		// TODO: Remove this once such a mechanism is in place
 		if (script->size > 65535)
 			error("TODO: SCI script %d is over 64KB - it's %d bytes long. This can't "
 			      "be handled at the moment, thus stopping", script_nr, script->size);
 	}
-}
-
-void Script::load(ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, _nr), 0);
-	assert(script != 0);
 
 	uint extraLocalsWorkaround = 0;
 	if (g_sci->getGameId() == GID_FANMADE && _nr == 1 && script->size == 11140) {
@@ -155,11 +147,6 @@ void Script::load(ResourceManager *resMan) {
 		assert(_bufSize - _scriptSize <= heap->size);
 		memcpy(_heapStart, heap->data, heap->size);
 	}
-
-	_exportTable = 0;
-	_numExports = 0;
-	_synonyms = 0;
-	_numSynonyms = 0;
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
@@ -212,7 +199,7 @@ void Script::load(ResourceManager *resMan) {
 			_localsOffset = 0;
 
 		if (_localsOffset + _localsCount * 2 + 1 >= (int)_bufSize) {
-			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, _bufSize);
+			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, (int)_bufSize);
 			//_localsCount = (_bufSize - _localsOffset) >> 1;
 		}
 	}
@@ -252,14 +239,14 @@ const Object *Script::getObject(uint16 offset) const {
 
 Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 	if (getSciVersion() < SCI_VERSION_1_1 && fullObjectInit)
-		obj_pos.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
+		obj_pos.incOffset(8);	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
 
-	if (obj_pos.offset >= _bufSize)
+	if (obj_pos.getOffset() >= _bufSize)
 		error("Attempt to initialize object beyond end of script");
 
 	// Get the object at the specified position and init it. This will
 	// automatically "allocate" space for it in the _objects map if necessary.
-	Object *obj = &_objects[obj_pos.offset];
+	Object *obj = &_objects[obj_pos.getOffset()];
 	obj->init(_buf, obj_pos, fullObjectInit);
 
 	return obj;
@@ -282,9 +269,9 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 		error("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
 		return false;
 	}
-	block[idx].segment = segment; // Perform relocation
+	block[idx].setSegment(segment); // Perform relocation
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
-		block[idx].offset += scriptSize;
+		block[idx].incOffset(scriptSize);
 
 	return true;
 }
@@ -323,23 +310,23 @@ void Script::relocateSci0Sci21(reg_t block) {
 		heapOffset = _scriptSize;
 	}
 
-	if (block.offset >= (uint16)heapSize ||
-		READ_SCI11ENDIAN_UINT16(heap + block.offset) * 2 + block.offset >= (uint16)heapSize)
+	if (block.getOffset() >= (uint16)heapSize ||
+		READ_SCI11ENDIAN_UINT16(heap + block.getOffset()) * 2 + block.getOffset() >= (uint16)heapSize)
 	    error("Relocation block outside of script");
 
-	int count = READ_SCI11ENDIAN_UINT16(heap + block.offset);
+	int count = READ_SCI11ENDIAN_UINT16(heap + block.getOffset());
 	int exportIndex = 0;
 	int pos = 0;
 
 	for (int i = 0; i < count; i++) {
-		pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
+		pos = READ_SCI11ENDIAN_UINT16(heap + block.getOffset() + 2 + (exportIndex * 2)) + heapOffset;
 		// This occurs in SCI01/SCI1 games where usually one export value is
 		// zero. It seems that in this situation, we should skip the export and
 		// move to the next one, though the total count of valid exports remains
 		// the same
 		if (!pos) {
 			exportIndex++;
-			pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
+			pos = READ_SCI11ENDIAN_UINT16(heap + block.getOffset() + 2 + (exportIndex * 2)) + heapOffset;
 			if (!pos)
 				error("Script::relocate(): Consecutive zero exports found");
 		}
@@ -348,12 +335,12 @@ void Script::relocateSci0Sci21(reg_t block) {
 		// We only relocate locals and objects here, and ignore relocation of
 		// code blocks. In SCI1.1 and newer versions, only locals and objects
 		// are relocated.
-		if (!relocateLocal(block.segment, pos)) {
+		if (!relocateLocal(block.getSegment(), pos)) {
 			// Not a local? It's probably an object or code block. If it's an
 			// object, relocate it.
 			const ObjMap::iterator end = _objects.end();
 			for (ObjMap::iterator it = _objects.begin(); it != end; ++it)
-				if (it->_value.relocateSci0Sci21(block.segment, pos, _scriptSize))
+				if (it->_value.relocateSci0Sci21(block.getSegment(), pos, _scriptSize))
 					break;
 		}
 
@@ -370,7 +357,7 @@ void Script::relocateSci3(reg_t block) {
 		const byte *seeker = relocStart;
 		while (seeker < _buf + _bufSize) {
 			// TODO: Find out what UINT16 at (seeker + 8) means
-			it->_value.relocateSci3(block.segment,
+			it->_value.relocateSci3(block.getSegment(),
 						READ_SCI11ENDIAN_UINT32(seeker),
 						READ_SCI11ENDIAN_UINT32(seeker + 4),
 						_scriptSize);
@@ -398,7 +385,7 @@ void Script::setLockers(int lockers) {
 	_lockers = lockers;
 }
 
-uint16 Script::validateExportFunc(int pubfunct, bool relocate) {
+uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
 	if (_numExports <= pubfunct) {
@@ -409,16 +396,16 @@ uint16 Script::validateExportFunc(int pubfunct, bool relocate) {
 	if (exportsAreWide)
 		pubfunct *= 2;
 
-	uint16 offset;
+	uint32 offset;
 
-	if (getSciVersion() != SCI_VERSION_3 || !relocate) {
+	if (getSciVersion() != SCI_VERSION_3) {
 		offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
 	} else {
-		offset = relocateOffsetSci3(pubfunct * 2 + 22);
+		if (!relocSci3)
+			offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct) + getCodeBlockOffsetSci3();
+		else
+			offset = relocateOffsetSci3(pubfunct * 2 + 22);
 	}
-
-	if (offset >= _bufSize)
-		error("Invalid export function pointer");
 
 	// Check if the offset found points to a second export table (e.g. script 912
 	// in Camelot and script 306 in KQ4). Such offsets are usually small (i.e. < 10),
@@ -432,10 +419,15 @@ uint16 Script::validateExportFunc(int pubfunct, bool relocate) {
 		if (secondExportTable) {
 			secondExportTable += 3;	// skip header plus 2 bytes (secondExportTable is a uint16 pointer)
 			offset = READ_SCI11ENDIAN_UINT16(secondExportTable + pubfunct);
-			if (offset >= _bufSize)
-				error("Invalid export function pointer");
 		}
 	}
+
+	// Note that it's perfectly normal to return a zero offset, especially in
+	// SCI1.1 and newer games. Examples include script 64036 in Torin's Passage,
+	// script 64908 in the demo of RAMA and script 1013 in KQ6 floppy.
+
+	if (offset >= _bufSize)
+		error("Invalid export function pointer");
 
 	return offset;
 }
@@ -479,7 +471,7 @@ bool Script::isValidOffset(uint16 offset) const {
 }
 
 SegmentRef Script::dereference(reg_t pointer) {
-	if (pointer.offset > _bufSize) {
+	if (pointer.getOffset() > _bufSize) {
 		error("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)",
 				  PRINT_REG(pointer), (uint)_bufSize);
 		return SegmentRef();
@@ -487,8 +479,8 @@ SegmentRef Script::dereference(reg_t pointer) {
 
 	SegmentRef ret;
 	ret.isRaw = true;
-	ret.maxSize = _bufSize - pointer.offset;
-	ret.raw = _buf + pointer.offset;
+	ret.maxSize = _bufSize - pointer.getOffset();
+	ret.raw = _buf + pointer.getOffset();
 	return ret;
 }
 
@@ -553,7 +545,7 @@ void Script::initializeClasses(SegManager *segMan) {
 
 	uint16 marker;
 	bool isClass = false;
-	uint16 classpos;
+	uint32 classpos;
 	int16 species = 0;
 
 	while (true) {
@@ -564,7 +556,7 @@ void Script::initializeClasses(SegManager *segMan) {
 		if (getSciVersion() <= SCI_VERSION_1_LATE && !marker)
 			break;
 
-		if (getSciVersion() >= SCI_VERSION_1_1 && marker != 0x1234)
+		if (getSciVersion() >= SCI_VERSION_1_1 && marker != SCRIPT_OBJECT_MAGIC_NUMBER)
 			break;
 
 		if (getSciVersion() <= SCI_VERSION_1_LATE) {
@@ -666,7 +658,7 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 
 		// Copy base from species class, as we need its selector IDs
 		obj->setSuperClassSelector(
-			segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
+			segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0));
 
 		// If object is instance, get -propDict- from class and set it for this
 		// object. This is needed for ::isMemberOf() to work.
@@ -699,7 +691,7 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 		reg_t reg = make_reg(segmentId, seeker - _buf);
 		Object *obj = scriptObjInit(reg);
 
-		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
+		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0));
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
 	}
 
@@ -716,7 +708,7 @@ void Script::initializeObjects(SegManager *segMan, SegmentId segmentId) {
 }
 
 reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {
-	addr.offset = 0;
+	addr.setOffset(0);
 	return addr;
 }
 
@@ -738,8 +730,8 @@ Common::Array<reg_t> Script::listAllDeallocatable(SegmentId segId) const {
 
 Common::Array<reg_t> Script::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
-	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(_buf + addr.offset)) {
-		const Object *obj = getObject(addr.offset);
+	if (addr.getOffset() <= _bufSize && addr.getOffset() >= (uint)-SCRIPT_OBJECT_MAGIC_OFFSET && offsetIsObject(addr.getOffset())) {
+		const Object *obj = getObject(addr.getOffset());
 		if (obj) {
 			// Note all local variables, if we have a local variable environment
 			if (_localsSegment)
@@ -772,6 +764,10 @@ Common::Array<reg_t> Script::listObjectReferences() const {
 	}
 
 	return tmp;
+}
+
+bool Script::offsetIsObject(uint16 offset) const {
+	return (READ_SCI11ENDIAN_UINT16((const byte *)_buf + offset + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER);
 }
 
 } // End of namespace Sci

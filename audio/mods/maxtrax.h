@@ -20,11 +20,8 @@
  *
  */
 
-// see if all engines using this class are DISABLED
-#if !defined(ENABLE_KYRA)
-
-// normal Header Guard
-#elif !defined(AUDIO_MODS_MAXTRAX_H)
+// Only compiled if Kyra is built-in or we're building for dynamic modules
+#if !defined(AUDIO_MODS_MAXTRAX_H) && (defined(ENABLE_KYRA) || defined(DYNAMIC_MODULES))
 #define AUDIO_MODS_MAXTRAX_H
 
 // #define MAXTRAX_HAS_MODULATION

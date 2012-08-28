@@ -319,7 +319,6 @@ void KyraEngine_MR::exchangeMouseItem(int itemPos, int runScript) {
 		return;
 	}
 
-	_screen->hideMouse();
 	deleteItemAnimEntry(itemPos);
 
 	Item itemId = _itemList[itemPos].id;
@@ -335,7 +334,6 @@ void KyraEngine_MR::exchangeMouseItem(int itemPos, int runScript) {
 		str2 = getItemCommandStringPickUp(itemId);
 
 	updateItemCommand(itemId, str2, 0xFF);
-	_screen->showMouse();
 
 	if (runScript)
 		runSceneScript6();
@@ -350,7 +348,6 @@ bool KyraEngine_MR::pickUpItem(int x, int y, int runScript) {
 	if (_itemInHand >= 0) {
 		exchangeMouseItem(itemPos, runScript);
 	} else {
-		_screen->hideMouse();
 		deleteItemAnimEntry(itemPos);
 		Item itemId = _itemList[itemPos].id;
 		_itemList[itemPos].id = kItemNone;
@@ -363,7 +360,6 @@ bool KyraEngine_MR::pickUpItem(int x, int y, int runScript) {
 
 		updateItemCommand(itemId, itemString, 0xFF);
 		_itemInHand = itemId;
-		_screen->showMouse();
 
 		if (runScript)
 			runSceneScript6();
@@ -401,7 +397,6 @@ bool KyraEngine_MR::itemListMagic(Item handItem, int itemSlot) {
 
 		assert(animObjIndex != -1);
 
-		_screen->hideMouse();
 		snd_playSoundEffect(0x93, 0xC8);
 		for (int i = 109; i <= 141; ++i) {
 			_animObjects[animObjIndex].shapeIndex1 = i+248;
@@ -411,7 +406,6 @@ bool KyraEngine_MR::itemListMagic(Item handItem, int itemSlot) {
 
 		deleteItemAnimEntry(itemSlot);
 		_itemList[itemSlot].id = kItemNone;
-		_screen->showMouse();
 		return true;
 	}
 
@@ -440,7 +434,6 @@ bool KyraEngine_MR::itemListMagic(Item handItem, int itemSlot) {
 
 		_itemList[itemSlot].id = (int8)resItem;
 
-		_screen->hideMouse();
 		deleteItemAnimEntry(itemSlot);
 		addItemToAnimList(itemSlot);
 
@@ -448,7 +441,6 @@ bool KyraEngine_MR::itemListMagic(Item handItem, int itemSlot) {
 			removeHandItem();
 		else if (newItem != 0xFF)
 			setHandItem(newItem);
-		_screen->showMouse();
 
 		if (_lang != 1)
 			updateItemCommand(resItem, 3, 0xFF);
@@ -500,7 +492,6 @@ bool KyraEngine_MR::itemInventoryMagic(Item handItem, int invSlot) {
 
 		_mainCharacter.inventory[invSlot] = (int8)resItem;
 
-		_screen->hideMouse();
 		clearInventorySlot(invSlot, 0);
 		drawInventorySlot(0, resItem, invSlot);
 
@@ -508,7 +499,6 @@ bool KyraEngine_MR::itemInventoryMagic(Item handItem, int invSlot) {
 			removeHandItem();
 		else if (newItem != 0xFF)
 			setHandItem(newItem);
-		_screen->showMouse();
 
 		if (_lang != 1)
 			updateItemCommand(resItem, 3, 0xFF);

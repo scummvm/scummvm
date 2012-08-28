@@ -248,7 +248,10 @@ struct KeyState {
 	 * ASCII-value of the pressed key (if any).
 	 * This depends on modifiers, i.e. pressing the 'A' key results in
 	 * different values here depending on the status of shift, alt and
-	 * caps lock.
+	 * caps lock. This should be used rather than keycode for text input
+	 * to avoid keyboard layout issues. For example you cannot assume that
+	 * KEYCODE_0 without a modifier will be '0' (on AZERTY keyboards it is
+	*  not).
 	 */
 	uint16 ascii;
 

@@ -1047,14 +1047,14 @@ private:
 	void setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight, int moveable);
 	void removeLevelItem(Item item, int block);
 	bool launchObject(int objectType, Item item, int startX, int startY, int flyingHeight, int direction, int, int attackerId, int c);
-	void endObjectFlight(FlyingObject *t, int x, int y, int collisionObject);
+	void endObjectFlight(FlyingObject *t, int x, int y, int collisionType);
 	void processObjectFlight(FlyingObject *t, int x, int y);
 	void updateObjectFlightPosition(FlyingObject *t);
-	void objectFlightProcessHits(FlyingObject *t, int x, int y, int objectOnNextBlock);
+	void objectFlightProcessHits(FlyingObject *t, int x, int y, int collisionType);
 	void updateFlyingObject(FlyingObject *t);
 
 	void assignItemToBlock(uint16 *assignedBlockObjects, int id);
-	int checkDrawObjectSpace(int itemX, int itemY, int partyX, int partyY);
+	int checkDrawObjectSpace(int x1, int y1, int x2, int y2);
 	int checkSceneForItems(uint16 *blockDrawObjects, int color);
 
 	uint8 _moneyColumnHeight[5];
@@ -1095,7 +1095,7 @@ private:
 	void monsterDropItems(LoLMonster *monster);
 	void giveItemToMonster(LoLMonster *monster, Item item);
 	int checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 objectWidth, uint16 testFlag, uint16 wallFlag);
-	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag);
+	int testBlockPassability(int block, int x, int y, int objectWidth, int testFlag, int wallFlag);
 	int calcMonsterSkillLevel(int id, int a);
 	int checkBlockOccupiedByParty(int x, int y, int testFlag);
 	const uint16 *getCharacterOrMonsterStats(int id);
@@ -1122,7 +1122,7 @@ private:
 	int checkForPossibleDistanceAttack(uint16 monsterBlock, int direction, int distance, uint16 curBlock);
 	int walkMonsterCheckDest(int x, int y, LoLMonster *monster, int unk);
 	void getNextStepCoords(int16 monsterX, int16 monsterY, int &newX, int &newY, uint16 direction);
-	void rearrangeAttackingMonster(LoLMonster *monster);
+	void alignMonsterToParty(LoLMonster *monster);
 	void moveStrayingMonster(LoLMonster *monster);
 	void killMonster(LoLMonster *monster);
 

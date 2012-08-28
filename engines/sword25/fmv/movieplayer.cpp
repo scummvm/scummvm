@@ -61,6 +61,7 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 	// Get the file and load it into the decoder
 	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(filename);
 	_decoder.loadStream(in);
+	_decoder.start();
 
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 
@@ -132,7 +133,7 @@ void MoviePlayer::update() {
 				const byte *frameData = (const byte *)s->getBasePtr(0, 0);
 				_outputBitmap->setContent(frameData, s->pitch * s->h, 0, s->pitch);
 #else
-				g_system->copyRectToScreen((byte *)s->getBasePtr(0, 0), s->pitch, _outX, _outY, MIN(s->w, _backSurface->w), MIN(s->h, _backSurface->h));
+				g_system->copyRectToScreen(s->getBasePtr(0, 0), s->pitch, _outX, _outY, MIN(s->w, _backSurface->w), MIN(s->h, _backSurface->h));
 				g_system->updateScreen();
 #endif
 			}
@@ -167,7 +168,7 @@ void MoviePlayer::setScaleFactor(float scaleFactor) {
 }
 
 double MoviePlayer::getTime() {
-	return _decoder.getElapsedTime() / 1000.0;
+	return _decoder.getTime() / 1000.0;
 }
 
 #else // USE_THEORADEC

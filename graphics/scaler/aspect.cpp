@@ -160,14 +160,14 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 #if ASPECT_MODE == kSuperFastAndUglyAspectMode
 		if (srcPtr == dstPtr)
 			break;
-		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+		memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 #else
 		// Bilinear filter
 		switch (y % 6) {
 		case 0:
 		case 5:
 			if (srcPtr != dstPtr)
-				memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+				memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 			break;
 		case 1:
 			interpolate5Line<ColorMask, 1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
@@ -206,13 +206,13 @@ void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 #if ASPECT_MODE == kSuperFastAndUglyAspectMode
 		if ((y % 6) == 5)
 			srcPtr -= srcPitch;
-		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+		memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 #else
 		// Bilinear filter five input lines onto six output lines
 		switch (y % 6) {
 		case 0:
 			// First output line is copied from first input line
-			memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+			memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 			break;
 		case 1:
 			// Second output line is mixed from first and second input line
@@ -233,7 +233,7 @@ void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 		case 5:
 			// Sixth (and last) output line is copied from fifth (and last) input line
 			srcPtr -= srcPitch;
-			memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+			memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 			break;
 		}
 #endif

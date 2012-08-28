@@ -26,6 +26,8 @@
 #include "engines/metaengine.h"
 #include "engines/engine.h"
 
+#include "common/hash-str.h"
+
 #include "common/gui_options.h" // FIXME: Temporary hack?
 
 namespace Common {
@@ -44,6 +46,20 @@ struct ADGameFileDescription {
 	const char *md5; ///< MD5 of (the beginning of) the described file. Optional. Set to NULL to ignore.
 	int32 fileSize;  ///< Size of the described file. Set to -1 to ignore.
 };
+
+/**
+ * A record describing the properties of a file. Used on the existing
+ * files while detecting a game.
+ */
+struct ADFileProperties {
+	int32 size;
+	Common::String md5;
+};
+
+/**
+ * A map of all relevant existing files in a game directory while detecting.
+ */
+typedef Common::HashMap<Common::String, ADFileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ADFilePropertiesMap;
 
 /**
  * A shortcut to produce an empty ADGameFileDescription record. Used to mark
@@ -286,9 +302,17 @@ protected:
 	 * In case of a tie, the entry coming first in the list is chosen.
 	 *
 	 * @param allFiles	a map describing all present files
+	 * @param fslist	a list of nodes for all present files
 	 * @param fileBasedFallback	a list of ADFileBasedFallback records, zero-terminated
+	 * @param filesProps	if not 0, return a map of properties for all detected files here
 	 */
-	const ADGameDescription *detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const;
+	const ADGameDescription *detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback, ADFilePropertiesMap *filesProps = 0) const;
+
+	/**
+	 * Log and print a report that we found an unknown game variant, together with the file
+	 * names, sizes and MD5 sums.
+	 */
+	void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const;
 
 	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;
@@ -298,6 +322,9 @@ protected:
 	 * Includes nifty stuff like removing trailing dots and ignoring case.
 	 */
 	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth) const;
+
+	/** Get the properties (size and MD5) of this file. */
+	bool getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, ADFileProperties &fileProps) const;
 };
 
 #endif

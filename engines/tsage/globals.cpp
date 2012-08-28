@@ -247,7 +247,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	for (int i = 0; i < 18; i++)
 		s.syncAsByte(_breakerBoxStatusArr[i]);
 	s.syncAsSint16LE(_hiddenDoorStatus);
-	s.syncAsSint16LE(_v4CEE2);
+	s.syncAsSint16LE(_nico910State);
 	s.syncAsSint16LE(_v4CEE4);
 	s.syncAsSint16LE(_v4CEE6);
 	s.syncAsSint16LE(_v4CEE8);
@@ -320,7 +320,7 @@ void BlueForceGlobals::reset() {
 	_breakerBoxStatusArr[16] = 3;
 	_breakerBoxStatusArr[17] = 0;
 	_hiddenDoorStatus = 0;
-	_v4CEE2 = 0;
+	_nico910State = 0;
 	_v4CEE4 = 0;
 	_v4CEE6 = 0;
 	_v4CEE8 = 0;

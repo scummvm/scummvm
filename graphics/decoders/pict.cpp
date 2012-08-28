@@ -38,6 +38,7 @@ namespace Graphics {
 
 PICTDecoder::PICTDecoder() {
 	_outputSurface = 0;
+	_paletteColorCount = 0;
 }
 
 PICTDecoder::~PICTDecoder() {
@@ -50,6 +51,8 @@ void PICTDecoder::destroy() {
 		delete _outputSurface;
 		_outputSurface = 0;
 	}
+
+	_paletteColorCount = 0;
 }
 
 #define OPCODE(a, b, c) _opcodes.push_back(PICTOpcode(a, &PICTDecoder::b, c))
@@ -298,9 +301,9 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool hasPal
 		// See http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-267.html
 		stream.readUint32BE(); // seed
 		stream.readUint16BE(); // flags
-		uint16 colorCount = stream.readUint16BE() + 1;
+		_paletteColorCount = stream.readUint16BE() + 1;
 
-		for (uint32 i = 0; i < colorCount; i++) {
+		for (uint32 i = 0; i < _paletteColorCount; i++) {
 			stream.readUint16BE();
 			_palette[i * 3] = stream.readUint16BE() >> 8;
 			_palette[i * 3 + 1] = stream.readUint16BE() >> 8;
@@ -361,14 +364,14 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool hasPal
 		memcpy(_outputSurface->pixels, buffer, _outputSurface->w * _outputSurface->h);
 		break;
 	case 2:
-		// Convert from 16-bit to whatever surface we need
+		// We have a 16-bit surface
 		_outputSurface->create(width, height, PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 		for (uint16 y = 0; y < _outputSurface->h; y++)
 			for (uint16 x = 0; x < _outputSurface->w; x++)
 				WRITE_UINT16(_outputSurface->getBasePtr(x, y), READ_UINT16(buffer + (y * _outputSurface->w + x) * 2));
 		break;
 	case 3:
-		// Convert from 24-bit (planar!) to whatever surface we need
+		// We have a planar 24-bit surface
 		_outputSurface->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 		for (uint16 y = 0; y < _outputSurface->h; y++) {
 			for (uint16 x = 0; x < _outputSurface->w; x++) {
@@ -380,15 +383,18 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool hasPal
 		}
 		break;
 	case 4:
-		// Convert from 32-bit (planar!) to whatever surface we need
+		// We have a planar 32-bit surface
+		// Note that we ignore the alpha channel since it seems to not be correct
+		// Mac OS X does not ignore it, but then displays it incorrectly. Photoshop
+		// does ignore it and displays it correctly.
 		_outputSurface->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 		for (uint16 y = 0; y < _outputSurface->h; y++) {
 			for (uint16 x = 0; x < _outputSurface->w; x++) {
-				byte r = *(buffer + y * _outputSurface->w * 4 + x);
-				byte g = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w + x);
-				byte b = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 2 + x);
-				byte a = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 3 + x);
-				*((uint32 *)_outputSurface->getBasePtr(x, y)) = _outputSurface->format.ARGBToColor(r, g, b, a);
+				byte a = 0xFF;
+				byte r = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w + x);
+				byte g = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 2 + x);
+				byte b = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 3 + x);
+				*((uint32 *)_outputSurface->getBasePtr(x, y)) = _outputSurface->format.ARGBToColor(a, r, g, b);
 			}
 		}
 		break;

@@ -59,7 +59,6 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 
 
 DefaultTimerManager::DefaultTimerManager() :
-	_timerHandler(0),
 	_head(0) {
 
 	_head = new TimerSlot();

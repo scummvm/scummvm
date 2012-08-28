@@ -81,7 +81,7 @@ int MenuSystem::run() {
 	
 	// Restore original background
 	memcpy(_vm->_screen->_frontScreen, backgroundOrig.getBasePtr(0,0), 640 * 400);
-	_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
+	_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
 	_vm->_system->updateScreen();
 
 	// Cleanup
@@ -103,8 +103,8 @@ void MenuSystem::update() {
 	handleEvents();
 
 	if (_needRedraw) {
-		//_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
-		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
+		//_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
+		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
 		//debug("redraw");
 		_needRedraw = false;
 	}

@@ -617,7 +617,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 			}
 		}
 
-		delete []shadow;
+		delete[] shadow;
 		delete stream;
 	}
 

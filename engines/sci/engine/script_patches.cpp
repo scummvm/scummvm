@@ -775,7 +775,7 @@ const uint16 mothergoose256PatchReplay[] = {
 	PATCH_END
 };
 
-// when saving, it also checks if the savegame-id is below 13.
+// when saving, it also checks if the savegame ID is below 13.
 //  we change this to check if below 113 instead
 const byte mothergoose256SignatureSaveLimit[] = {
 	5,
@@ -978,7 +978,27 @@ const uint16 sq4CdPatchTextOptionsButton[] = {
 	PATCH_END
 };
 
-// Patch 2: Add the ability to toggle among the three available options,
+// Patch 2: Adjust a check in babbleIcon::init, which handles the babble icon
+// (e.g. the two guys from Andromeda) shown when dying/quitting.
+// Fixes bug #3538418.
+const byte sq4CdSignatureBabbleIcon[] = {
+	7,
+	0x89, 0x5a,      // lsg 5a
+	0x35, 0x02,      // ldi 02
+	0x1a,            // eq?
+	0x31, 0x26,      // bnt 26  [02a7]
+	0
+};
+
+const uint16 sq4CdPatchBabbleIcon[] = {
+	0x89, 0x5a,      // lsg 5a
+	0x35, 0x01,      // ldi 01
+	0x1a,            // eq?
+	0x2f, 0x26,      // bt 26  [02a7]
+	PATCH_END
+};
+
+// Patch 3: Add the ability to toggle among the three available options,
 // when the text options button is clicked: "Speech", "Text" and "Both".
 // Refer to the patch above for additional details.
 // iconTextSwitch::doit (called when the text options button is clicked)
@@ -1030,6 +1050,7 @@ const SciScriptSignature sq4Signatures[] = {
 	{    298, "Floppy: endless flight",                      1, PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x44),    -3,       sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
 	{    298, "Floppy (German): endless flight",             1, PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x4c),    -3, sq4FloppySignatureEndlessFlightGerman, sq4FloppyPatchEndlessFlight },
 	{    818, "CD: Speech and subtitles option",             1, PATCH_MAGICDWORD(0x89, 0x5a, 0x3c, 0x35),     0,             sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
+	{      0, "CD: Babble icon speech and subtitles fix",    1, PATCH_MAGICDWORD(0x89, 0x5a, 0x35, 0x02),     0,              sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
 	{    818, "CD: Speech and subtitles option button",      1, PATCH_MAGICDWORD(0x35, 0x01, 0xa1, 0x53),     0,       sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };

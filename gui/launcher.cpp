@@ -663,7 +663,6 @@ LauncherDialog::LauncherDialog()
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
-
 	// Populate the list
 	updateListing();
 
@@ -678,7 +677,7 @@ LauncherDialog::LauncherDialog()
 	_browser = new BrowserDialog(_("Select directory with game data"), true);
 
 	// Create Load dialog
-	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"));
+	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"), false);
 }
 
 void LauncherDialog::selectTarget(const String &target) {

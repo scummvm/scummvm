@@ -171,6 +171,19 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		GType_CRUISE,
 		0,
 	},
+	{ // Amiga Italian US GOLD edition.
+		{
+			"cruise",
+			0,
+			AD_ENTRY1("D1", "a0011075413b7335e003e8e3c9cf51b9"),
+			Common::IT_ITA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GType_CRUISE,
+		0,
+	},
 	{ // AtariST English KixxXL edition.
 		{
 			"cruise",
@@ -290,8 +303,6 @@ SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int
 
 		// Create the return descriptor
 		SaveStateDescriptor desc(slot, header.saveName);
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
 		desc.setThumbnail(header.thumbnail);
 
 		return desc;

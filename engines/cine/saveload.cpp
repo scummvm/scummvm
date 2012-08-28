@@ -991,7 +991,7 @@ void CineEngine::makeSave(char *saveFileName) {
  * at a time.
  */
 void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGameFormat saveGameFormat) {
-	int16 currentAnim, foundFileIdx;
+	int16 foundFileIdx;
 	char *animName, part[256], name[10];
 
 	strcpy(part, currentPartName);
@@ -1001,10 +1001,10 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 
 	const int entrySize = ((saveGameFormat == ANIMSIZE_23) ? 23 : 30);
 	const int fileStartPos = fHandle.pos();
-	currentAnim = 0;
-	while (currentAnim < NUM_MAX_ANIMDATA) {
+
+	for(int resourceIndex=0; resourceIndex<NUM_MAX_ANIMDATA; resourceIndex++) {
 		// Seek to the start of the current animation's entry
-		fHandle.seek(fileStartPos + currentAnim * entrySize);
+		fHandle.seek(fileStartPos + resourceIndex * entrySize);
 		// Read in the current animation entry
 		fHandle.readUint16BE(); // width
 		fHandle.readUint16BE();
@@ -1019,7 +1019,7 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 		}
 
 		foundFileIdx = fHandle.readSint16BE();
-		fHandle.readSint16BE(); // frame
+		int16 frameIndex = fHandle.readSint16BE(); // frame
 		fHandle.read(name, 10);
 
 		// Handle variables only present in animation entries of size 23
@@ -1029,7 +1029,7 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 
 		// Don't try to load invalid entries.
 		if (foundFileIdx < 0 || !validPtr) {
-			currentAnim++; // Jump over the invalid entry
+			//resourceIndex++; // Jump over the invalid entry
 			continue;
 		}
 
@@ -1041,9 +1041,7 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 
 		animName = g_cine->_partBuffer[foundFileIdx].partName;
 		loadRelatedPalette(animName); // Is this for Future Wars only?
-		const int16 prevAnim = currentAnim;
-		currentAnim = loadResource(animName, currentAnim);
-		assert(currentAnim > prevAnim); // Make sure we advance forward
+		loadResource(animName, resourceIndex, frameIndex);
 	}
 
 	loadPart(part);

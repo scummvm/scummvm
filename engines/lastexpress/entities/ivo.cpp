@@ -32,10 +32,7 @@
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -184,7 +181,7 @@ IMPLEMENT_FUNCTION(11, Ivo, function11)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityIvo);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 4:
@@ -193,7 +190,7 @@ IMPLEMENT_FUNCTION(11, Ivo, function11)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityIvo);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -210,7 +207,7 @@ IMPLEMENT_FUNCTION(12, Ivo, sitAtTableWithSalko)
 		getEntities()->clearSequences(kEntitySalko);
 		getSavePoints()->push(kEntityIvo, kEntityTables2, kAction136455232);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -231,7 +228,7 @@ IMPLEMENT_FUNCTION(13, Ivo, leaveTableWithSalko)
 		getSavePoints()->push(kEntityIvo, kEntityTables2, kActionDrawTablesWithChairs, "009E");
 		getEntities()->clearSequences(kEntitySalko);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -249,7 +246,7 @@ IMPLEMENT_FUNCTION(14, Ivo, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Ivo, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -374,7 +371,7 @@ IMPLEMENT_FUNCTION(18, Ivo, chapter2)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1777500, params->param1, setup_function19);
+		Entity::timeCheck(kTime1777500, params->param1, WRAP_SETUP_FUNCTION(Ivo, setup_function19));
 		break;
 
 	case kActionDefault:

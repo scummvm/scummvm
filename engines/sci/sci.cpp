@@ -385,7 +385,7 @@ bool SciEngine::gameHasFanMadePatch() {
 		{ GID_PQ3,        994,   4686,   1291,  0x78 },	// English
 		{ GID_PQ3,        994,   4734,   1283,  0x78 },	// German
 		{ GID_QFG1VGA,    994,   4388,      0,  0x00 },
-		{ GID_QFG3,       994,   4714,      0,  0x00 },
+		{ GID_QFG3,        33,    260,      0,  0x00 },
 		// TODO: Disabled, as it fixes a whole lot of bugs which can't be tested till SCI2.1 support is finished
 		//{ GID_QFG4,       710,  11477,      0,  0x00 },
 		{ GID_SQ1,        994,   4740,      0,  0x00 },
@@ -453,8 +453,8 @@ static byte patchGameRestoreSaveSci21[] = {
 };
 
 static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, byte id) {
-	Script *script = segMan->getScript(methodAddress.segment);
-	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.offset));
+	Script *script = segMan->getScript(methodAddress.getSegment());
+	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
 	if (getSciVersion() <= SCI_VERSION_1_1)
 		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
 	else	// SCI2+
@@ -463,8 +463,8 @@ static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, by
 }
 
 static void patchGameSaveRestoreCodeSci21(SegManager *segMan, reg_t methodAddress, byte id, bool doRestore) {
-	Script *script = segMan->getScript(methodAddress.segment);
-	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.offset));
+	Script *script = segMan->getScript(methodAddress.getSegment());
+	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
 	memcpy(patchPtr, patchGameRestoreSaveSci21, sizeof(patchGameRestoreSaveSci21));
 	if (doRestore)
 		patchPtr[2] = 0x78;	// push1
@@ -632,7 +632,7 @@ void SciEngine::initGraphics() {
 		_gfxPaint = _gfxPaint32;
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
 		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxText32);
-		_robotDecoder = new RobotDecoder(g_system->getMixer(), getPlatform() == Common::kPlatformMacintosh);
+		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
 	} else {
 #endif
@@ -740,7 +740,7 @@ GUI::Debugger *SciEngine::getDebugger() {
 	if (_gamestate) {
 		ExecStack *xs = &(_gamestate->_executionStack.back());
 		if (xs) {
-			xs->addr.pc.offset = _debugState.old_pc_offset;
+			xs->addr.pc.setOffset(_debugState.old_pc_offset);
 			xs->sp = _debugState.old_sp;
 		}
 	}

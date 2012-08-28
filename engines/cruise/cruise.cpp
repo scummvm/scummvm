@@ -169,6 +169,9 @@ bool CruiseEngine::loadLanguageStrings() {
 		case Common::DE_DEU:
 			p = germanLanguageStrings;
 			break;
+		case Common::IT_ITA:
+			p = italianLanguageStrings;
+			break;
 		default:
 			return false;
 		}

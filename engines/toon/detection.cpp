@@ -133,7 +133,7 @@ public:
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		return detectGameFilebased(allFiles, Toon::fileBasedFallback);
+		return detectGameFilebased(allFiles, fslist, Toon::fileBasedFallback);
 	}
 
 	virtual const char *getName() const {
@@ -233,9 +233,6 @@ SaveStateDescriptor ToonMetaEngine::querySaveMetaInfos(const char *target, int s
 
 		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
 		desc.setThumbnail(thumbnail);
-
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
 
 		uint32 saveDate = file->readUint32BE();
 		uint16 saveTime = file->readUint16BE();

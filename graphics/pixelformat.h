@@ -97,7 +97,7 @@ struct PixelFormat {
 	}
 
 	inline void colorToARGB(uint32 color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) const {
-		a = ((color >> aShift) << aLoss) & 0xFF;
+		a = (aBits() == 0) ? 0xFF : (((color >> aShift) << aLoss) & 0xFF);
 		r = ((color >> rShift) << rLoss) & 0xFF;
 		g = ((color >> gShift) << gLoss) & 0xFF;
 		b = ((color >> bShift) << bLoss) & 0xFF;

@@ -146,6 +146,12 @@
  */
 #define MKTAG(a0,a1,a2,a3) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 
+/**
+ * A wrapper macro used around two character constants, like 'wb', to
+ * ensure portability. Typical usage: MKTAG16('w','b').
+ */
+#define MKTAG16(a0,a1) ((uint16)((a1) | ((a0) << 8)))
+
 // Functions for reading/writing native integers.
 // They also transparently handle the need for alignment.
 

@@ -239,12 +239,27 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SCI32,          15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
 	{ SIG_SCI32,          16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
 	{ SIG_SCI32,          17, MAP_CALL(FileIOCreateSaveSlot),      "ir",                   NULL },
-	{ SIG_SCI32,          19, MAP_CALL(Stub),                      "r",                    NULL }, // for Torin / Torin demo
+	{ SIG_SCI32,          18, MAP_EMPTY(FileIOChangeDirectory),    "r",                    NULL }, // for SQ6, when changing the savegame directory in the save/load dialog
+	{ SIG_SCI32,          19, MAP_CALL(FileIOIsValidDirectory),    "r",                    NULL }, // for Torin / Torin demo
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
 #ifdef ENABLE_SCI32
+
+static const SciKernelMapSubEntry kSave_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(SaveGame),                  "[r0]i[r0](r0)",        NULL },
+	{ SIG_SCI32,           1, MAP_CALL(RestoreGame),               "[r0]i[r0]",            NULL },
+	{ SIG_SCI32,           2, MAP_CALL(GetSaveDir),                "(r*)",                 NULL },
+	{ SIG_SCI32,           3, MAP_CALL(CheckSaveGame),             ".*",                   NULL },
+	// Subop 4 hasn't been encountered yet
+	{ SIG_SCI32,           5, MAP_CALL(GetSaveFiles),              "rrr",                  NULL },
+	{ SIG_SCI32,           6, MAP_CALL(MakeSaveCatName),           "rr",                   NULL },
+	{ SIG_SCI32,           7, MAP_CALL(MakeSaveFileName),          "rri",                  NULL },
+	{ SIG_SCI32,           8, MAP_CALL(AutoSave),                  "[o0]",                 NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kList_subops[] = {
 	{ SIG_SCI21,           0, MAP_CALL(NewList),                   "",                     NULL },
@@ -337,10 +352,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(EditControl),       SIG_EVERYWHERE,           "[o0][o0]",              NULL,            NULL },
 	{ MAP_CALL(Empty),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(EmptyList),         SIG_EVERYWHERE,           "l",                     NULL,            NULL },
-	{ MAP_CALL(FClose),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(FGets),             SIG_EVERYWHERE,           "rii",                   NULL,            NULL },
-	{ MAP_CALL(FOpen),             SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
-	{ MAP_CALL(FPuts),             SIG_EVERYWHERE,           "ir",                    NULL,            NULL },
+	{ "FClose", kFileIOClose,      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+	{ "FGets", kFileIOReadString,  SIG_EVERYWHERE,           "rii",                   NULL,            NULL },
+	{ "FOpen", kFileIOOpen,        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
+	{ "FPuts", kFileIOWriteString, SIG_EVERYWHERE,           "ir",                    NULL,            NULL },
 	{ MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                 kFileIO_subops,  NULL },
 	{ MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                    NULL,            kFindKey_workarounds },
 	{ MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                  NULL,            NULL },
@@ -404,7 +419,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(Random),            SIG_EVERYWHERE,           "i(i)(i)",               NULL,            NULL },
 	{ MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(RemapColors),       SIG_EVERYWHERE,           "i(i)(i)(i)(i)(i)",      NULL,            NULL },
+	{ MAP_CALL(RemapColors),       SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "RemapColors", kRemapColors32, SIG_SCI32, SIGFOR_ALL,  "i(i)(i)(i)(i)(i)",      NULL,            NULL },
+#endif
 	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
 	{ MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
@@ -500,29 +518,23 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
 	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-
-	// SCI2 unmapped functions - TODO!
-
-	// SetScroll - called by script 64909, Styler::doit()
-	// PalCycle - called by Game::newRoom. Related to RemapColors.
-	// VibrateMouse - used in QFG4
+	{ MAP_CALL(MakeSaveCatName),   SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
+	{ MAP_CALL(MakeSaveFileName),  SIG_EVERYWHERE,           "rri",                   NULL,            NULL },
+	{ MAP_CALL(SetScroll),         SIG_EVERYWHERE,           "oiiiii(i)",             NULL,            NULL },
+	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 
 	// SCI2 Empty functions
 	
 	// Debug function used to track resources
 	{ MAP_EMPTY(ResourceTrack),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-	
-	// SCI2 functions that are used in the original save/load menus. Marked as dummy, so
-	// that the engine errors out on purpose. TODO: Implement once the original save/load
-	// menus are implemented.
-
-	// Creates the name of the save catalogue/directory to save into.
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(MakeSaveCatName),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-	
-	// Creates the name of the save file to save into
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(MakeSaveFileName),    SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+	// Future TODO: This call is used in the floppy version of QFG4 to add
+	// vibration to exotic mice with force feedback, such as the Logitech
+	// Cyberman and Wingman mice. Since this is only used for very exotic
+	// hardware and we have no direct and cross-platform way of communicating
+	// with them via SDL, plus we would probably need to make changes to common
+	// code, this call is mapped to an empty function for now as it's a rare
+	// feature not worth the effort.
+	{ MAP_EMPTY(VibrateMouse),      SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
 
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
 
@@ -549,6 +561,11 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	// SetScroll is called by script 64909, Styler::doit(), but it doesn't seem to
+	// be used at all (plus, it was then changed to a dummy function in SCI3).
+	// Since this is most likely unused, and we got no test case, error out when
+	// it is called in order to find an actual call to it.
+	{ MAP_DUMMY(SetScroll),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
 	{ MAP_CALL(CD),                SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -557,18 +574,22 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
 	{ MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "i(.*)",                 kSave_subops,    NULL },
 	{ MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
+	{ MAP_CALL(GetSierraProfileInt), SIG_EVERYWHERE,         "rri",                   NULL,            NULL },
 	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "io(.*)",                NULL,            NULL },
 	{ MAP_CALL(SetFontRes),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
+	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "[r0]oiiiiiiiii",        NULL,            NULL },
+	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "[r0]o",                 NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -581,11 +602,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// SetWindowsOption is used to set Windows specific options, like for example the title bar visibility of
 	// the game window in Phantasmagoria 2. We ignore these settings completely.
 	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,             "ii",                  NULL,            NULL },
-
-	// Used by the Windows version of Phantasmagoria 1 to get the video speed setting. This is called after
-	// kGetConfig and overrides the setting obtained by it. It is a dummy function in the DOS Version. We can
-	// just use GetConfig and mark this one as empty, like the DOS version does.
-	{ MAP_EMPTY(GetSierraProfileInt), SIG_EVERYWHERE,        "(.*)",                  NULL,            NULL },
 
 	// Debug function called whenever the current room changes
 	{ MAP_EMPTY(NewRoom),           SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
@@ -618,14 +634,14 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// SCI2.1 unmapped functions - TODO!
 
+	// SetHotRectangles - used by Phantasmagoria 1, script 64981 (used in the chase scene)
+	//     <lskovlun> The idea, if I understand correctly, is that the engine generates events
+	//     of a special HotRect type continuously when the mouse is on that rectangle
+
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
-	// AddLine - used by Torin's Passage to highlight the chapter buttons
-	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
-	// UpdateLine - used by LSL6
 	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
 	//   (inclusive) are set to 0
 	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
-	// SetHotRectangles - used by Phantasmagoria 1
 
 	// SCI3 Kernel Functions
 	{ MAP_CALL(PlayDuck),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -820,7 +836,7 @@ static const char *const sci2_default_knames[] = {
 	/*0x20*/ "AddMagnify",
 	/*0x21*/ "DeleteMagnify",
 	/*0x22*/ "IsHiRes",
-	/*0x23*/ "Graph",
+	/*0x23*/ "Graph",		// Robot in early SCI2.1 games with a SCI2 kernel table
 	/*0x24*/ "InvertRect",	// only in SCI2, not used in any SCI2 game
 	/*0x25*/ "TextSize",
 	/*0x26*/ "Message",
@@ -831,7 +847,7 @@ static const char *const sci2_default_knames[] = {
 	/*0x2b*/ "EditText",
 	/*0x2c*/ "InputText",			// unused function
 	/*0x2d*/ "CreateTextBitmap",
-	/*0x2e*/ "DisposeTextBitmap",
+	/*0x2e*/ "DisposeTextBitmap",	// Priority in early SCI2.1 games with a SCI2 kernel table
 	/*0x2f*/ "GetEvent",
 	/*0x30*/ "GlobalToLocal",
 	/*0x31*/ "LocalToGlobal",
@@ -1091,7 +1107,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x8a*/ "LoadChunk",
 	/*0x8b*/ "SetPalStyleRange",
 	/*0x8c*/ "AddPicAt",
-	/*0x8d*/ "MessageBox",	// SCI3, was Dummy in SCI2.1
+	/*0x8d*/ "Dummy",	// MessageBox in SCI3
 	/*0x8e*/ "NewRoom",		// debug function
 	/*0x8f*/ "Dummy",
 	/*0x90*/ "Priority",
@@ -1105,7 +1121,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x98*/ "GetWindowsOption", // Windows only
 	/*0x99*/ "WinDLL", // Windows only
 	/*0x9a*/ "Dummy",
-	/*0x9b*/ "Minimize",	// SCI3, was Dummy in SCI2.1
+	/*0x9b*/ "Dummy",	// Minimize in SCI3
 	/*0x9c*/ "DeletePic",
 	// == SCI3 only ===============
 	/*0x9d*/ "Dummy",
@@ -1119,57 +1135,73 @@ static const char *const sci21_default_knames[] = {
 // Base set of opcode formats. They're copied and adjusted slightly in
 // script_adjust_opcode_format depending on SCI version.
 static const opcode_format g_base_opcode_formats[128][4] = {
-	/*00*/
+	// 00 - 03 / bnot, add, sub, mul
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*04*/
+	// 04 - 07 / div, mod, shr, shl
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*08*/
+	// 08 - 0B / xor, and, or, neg
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*0C*/
+	// 0C - 0F / not, eq, ne, gt
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*10*/
+	// 10 - 13 / ge, lt, le, ugt
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*14*/
+	// 14 - 17 / uge, ult, ule, bt
 	{Script_None}, {Script_None}, {Script_None}, {Script_SRelative},
-	/*18*/
+	// 18 - 1B / bnt, jmp, ldi, push
 	{Script_SRelative}, {Script_SRelative}, {Script_SVariable}, {Script_None},
-	/*1C*/
+	// 1C - 1F / pushi, toss, dup, link
 	{Script_SVariable}, {Script_None}, {Script_None}, {Script_Variable},
-	/*20*/
+	// 20 - 23 / call, callk, callb, calle
 	{Script_SRelative, Script_Byte}, {Script_Variable, Script_Byte}, {Script_Variable, Script_Byte}, {Script_Variable, Script_SVariable, Script_Byte},
-	/*24 (24=ret)*/
+	// 24 - 27 / ret, send, dummy, dummy
 	{Script_End}, {Script_Byte}, {Script_Invalid}, {Script_Invalid},
-	/*28*/
+	// 28 - 2B / class, dummy, self, super
 	{Script_Variable}, {Script_Invalid}, {Script_Byte}, {Script_Variable, Script_Byte},
-	/*2C*/
+	// 2C - 2F / rest, lea, selfID, dummy
 	{Script_SVariable}, {Script_SVariable, Script_Variable}, {Script_None}, {Script_Invalid},
-	/*30*/
+	// 30 - 33 / pprev, pToa, aTop, pTos
 	{Script_None}, {Script_Property}, {Script_Property}, {Script_Property},
-	/*34*/
+	// 34 - 37 / sTop, ipToa, dpToa, ipTos
 	{Script_Property}, {Script_Property}, {Script_Property}, {Script_Property},
-	/*38*/
+	// 38 - 3B / dpTos, lofsa, lofss, push0
 	{Script_Property}, {Script_SRelative}, {Script_SRelative}, {Script_None},
-	/*3C*/
+	// 3C - 3F / push1, push2, pushSelf, line
 	{Script_None}, {Script_None}, {Script_None}, {Script_Word},
-	/*40-4F*/
+	// ------------------------------------------------------------------------
+	// 40 - 43 / lag, lal, lat, lap
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 44 - 47 / lsg, lsl, lst, lsp
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 48 - 4B / lagi, lali, lati, lapi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 4C - 4F / lsgi, lsli, lsti, lspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
-	/*50-5F*/
+	// ------------------------------------------------------------------------
+	// 50 - 53 / sag, sal, sat, sap
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 54 - 57 / ssg, ssl, sst, ssp
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 58 - 5B / sagi, sali, sati, sapi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 5C - 5F / ssgi, ssli, ssti, sspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
-	/*60-6F*/
+	// ------------------------------------------------------------------------
+	// 60 - 63 / plusag, plusal, plusat, plusap
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 64 - 67 / plussg, plussl, plusst, plussp
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 68 - 6B / plusagi, plusali, plusati, plusapi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 6C - 6F / plussgi, plussli, plussti, plusspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
-	/*70-7F*/
+	// ------------------------------------------------------------------------
+	// 70 - 73 / minusag, minusal, minusat, minusap
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 74 - 77 / minussg, minussl, minusst, minussp
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 78 - 7B / minusagi, minusali, minusati, minusapi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	// 7C - 7F / minussgi, minussli, minussti, minusspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param}
 };
 #undef END

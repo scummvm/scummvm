@@ -766,7 +766,7 @@ Gfx::~Gfx() {
 
 	freeLabels();
 
-	delete []_unpackedBitmap;
+	delete[] _unpackedBitmap;
 
 	return;
 }

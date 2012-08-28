@@ -160,7 +160,7 @@ bool ROQPlayer::playFrameInternal() {
 
 	if (_dirty) {
 		// Update the screen
-		_syst->copyRectToScreen((byte *)_bg->getBasePtr(0, 0), _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
+		_syst->copyRectToScreen(_bg->getBasePtr(0, 0), _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
 		_syst->updateScreen();
 
 		// Clear the dirty flag

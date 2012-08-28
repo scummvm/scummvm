@@ -56,6 +56,12 @@ static void processEvent(Common::Event &event) {
 	case Common::EVENT_RBUTTONDOWN:
 		mouseRight = 1;
 		break;
+	case Common::EVENT_LBUTTONUP:
+		mouseLeft = 0;
+		break;
+	case Common::EVENT_RBUTTONUP:
+		mouseRight = 0;
+		break;
 	case Common::EVENT_MOUSEMOVE:
 		break;
 	case Common::EVENT_KEYDOWN:
@@ -115,7 +121,7 @@ static void processEvent(Common::Event &event) {
 			}
 			break;
 		case Common::KEYCODE_F10:
-			if (!disableSystemMenu && !inMenu) {
+			if (!inMenu) {
 				g_cine->makeSystemMenu();
 			}
 			break;
@@ -214,8 +220,6 @@ void manageEvents() {
 	g_sound->update();
 	mouseData.left = mouseLeft;
 	mouseData.right = mouseRight;
-	mouseLeft = 0;
-	mouseRight = 0;
 }
 
 void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {
@@ -311,6 +315,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		// HACK: Force amount of oxygen left to maximum during Operation Stealth's first arcade sequence.
 		//       This makes it possible to pass the arcade sequence for now.
 		// FIXME: Remove the hack and make the first arcade sequence normally playable.
+		/*
 		if (g_cine->getGameType() == Cine::GType_OS) {
 			Common::String bgName(renderer->getBgName());
 			// Check if the background is one of the three backgrounds
@@ -320,7 +325,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 				// Force the amount of oxygen left to the maximum.
 				g_cine->_objectTable[oxygenObjNum].x = maxOxygen;
 			}
-		}
+		}*/
 
 		// HACK: In Operation Stealth after the first arcade sequence jump player's position to avoid getting stuck.
 		// After the first arcade sequence the player comes up stairs from
@@ -379,8 +384,8 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			playerAction = false;
 
 			_messageLen <<= 3;
-			if (_messageLen < 0x800)
-				_messageLen = 0x800;
+			if (_messageLen < 800)
+				_messageLen = 800;
 
 			do {
 				manageEvents();

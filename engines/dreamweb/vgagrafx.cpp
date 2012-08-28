@@ -144,10 +144,6 @@ void DreamWebEngine::doShake() {
 	setShakePos(offset >= 0 ? offset : -offset);
 }
 
-void DreamWebEngine::vSync() {
-	waitForVSync();
-}
-
 void DreamWebEngine::setMode() {
 	waitForVSync();
 	initGraphics(320, 200, false);

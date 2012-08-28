@@ -35,7 +35,7 @@ public:
 	virtual ~Ps2SaveFileManager();
 
 	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
-	virtual Common::OutSaveFile *openForSaving(const Common::String &filename);
+	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true);
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);
 	virtual bool removeSavefile(const Common::String &filename);
 

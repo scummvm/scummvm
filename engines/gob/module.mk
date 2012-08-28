@@ -3,6 +3,7 @@ MODULE := engines/gob
 MODULE_OBJS := \
 	anifile.o \
 	aniobject.o \
+	backbuffer.o \
 	cheater.o \
 	cheater_geisha.o \
 	cmpfile.o \
@@ -11,7 +12,6 @@ MODULE_OBJS := \
 	databases.o \
 	dbase.o \
 	decfile.o \
-	detection.o \
 	draw.o \
 	draw_v1.o \
 	draw_v2.o \
@@ -44,6 +44,7 @@ MODULE_OBJS := \
 	inter_v2.o \
 	inter_bargon.o \
 	inter_fascin.o \
+	inter_littlered.o \
 	inter_inca2.o \
 	inter_playtoons.o \
 	inter_v3.o \
@@ -76,10 +77,24 @@ MODULE_OBJS := \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \
+	detection/detection.o \
+	pregob/pregob.o \
+	pregob/txtfile.o \
+	pregob/gctfile.o \
+	pregob/seqfile.o \
+	pregob/onceupon/onceupon.o \
+	pregob/onceupon/abracadabra.o \
+	pregob/onceupon/babayaga.o \
+	pregob/onceupon/title.o \
+	pregob/onceupon/parents.o \
+	pregob/onceupon/stork.o \
+	pregob/onceupon/chargenchild.o \
 	minigames/geisha/evilfish.o \
 	minigames/geisha/oko.o \
 	minigames/geisha/meter.o \
 	minigames/geisha/diving.o \
+	minigames/geisha/mouth.o \
+	minigames/geisha/submarine.o \
 	minigames/geisha/penetration.o \
 	save/savefile.o \
 	save/savehandler.o \
@@ -91,6 +106,7 @@ MODULE_OBJS := \
 	save/saveload_v7.o \
 	save/saveload_geisha.o \
 	save/saveload_fascin.o \
+	save/saveload_ajworld.o \
 	save/saveload_inca2.o \
 	save/saveload_playtoons.o \
 	save/saveconverter.o \
@@ -101,6 +117,8 @@ MODULE_OBJS := \
 	sound/sounddesc.o \
 	sound/pcspeaker.o \
 	sound/adlib.o \
+	sound/musplayer.o \
+	sound/adlplayer.o \
 	sound/infogrames.o \
 	sound/protracker.o \
 	sound/soundmixer.o \
