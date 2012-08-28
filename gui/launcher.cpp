@@ -23,6 +23,7 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/fs.h"
 #include "common/gui_options.h"
 #include "common/util.h"
@@ -37,6 +38,7 @@
 #include "gui/message.h"
 #include "gui/gui-manager.h"
 #include "gui/options.h"
+#include "gui/recorderdialog.h"
 #include "gui/saveload.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
@@ -985,7 +987,22 @@ void LauncherDialog::loadGameButtonPressed(int item) {
 }
 
 void LauncherDialog::recordGame(int item) {
-
+	RecorderDialog recorderDialog;
+	switch(recorderDialog.runModal(_domains[item])) {
+	case RecorderDialog::kRecordDialogClose:
+		break;
+	case RecorderDialog::kRecordDialogPlayback:
+		ConfMan.setActiveDomain(_domains[item]);
+		close();
+		ConfMan.set("record_mode", "playback", ConfigManager::kTransientDomain);
+		ConfMan.set("record_file_name", recorderDialog.getFileName(), ConfigManager::kTransientDomain);
+		break;
+	case RecorderDialog::kRecordDialogRecord:
+		ConfMan.setActiveDomain(_domains[item]);
+		close();
+		ConfMan.set("record_mode", "record", ConfigManager::kTransientDomain);
+		break;
+	}
 }
 
 void LauncherDialog::loadGame(int item) {
@@ -1127,7 +1144,7 @@ void LauncherDialog::updateButtons() {
 }
 
 // Update the label of the button depending on whether shift is pressed or not
-void LauncherDialog::switchButtonsText(ButtonWidget *button, char *normalText, char *shiftedText) {
+void LauncherDialog::switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText) {
 	const bool shiftPressed = checkModifier(Common::KBD_SHIFT);
 	const bool lowRes = g_system->getOverlayWidth() <= 320;
 

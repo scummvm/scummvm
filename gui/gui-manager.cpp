@@ -296,10 +296,10 @@ void GuiManager::runLoop() {
 //		_theme->updateScreen();
 //		_system->updateScreen();
 
-		if (lastRedraw + waitTime < _system->getMillis()) {
+		if (lastRedraw + waitTime < _system->getMillis(true)) {
 			_theme->updateScreen();
 			_system->updateScreen();
-			lastRedraw = _system->getMillis();
+			lastRedraw = _system->getMillis(true);
 		}
 
 		Common::Event event;
@@ -329,7 +329,7 @@ void GuiManager::runLoop() {
 				if (mouse.x != _lastMousePosition.x || mouse.y != _lastMousePosition.y) {
 					_lastMousePosition.x = mouse.x;
 					_lastMousePosition.y = mouse.y;
-					_lastMousePosition.time = _system->getMillis();
+					_lastMousePosition.time = _system->getMillis(true);
 				}
 
 				tooltipCheck = true;
@@ -338,7 +338,7 @@ void GuiManager::runLoop() {
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 				button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
-				time = _system->getMillis();
+				time = _system->getMillis(true);
 				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
 							&& ABS(_lastClick.x - event.mouse.x) < 3
 							&& ABS(_lastClick.y - event.mouse.y) < 3) {
@@ -372,14 +372,14 @@ void GuiManager::runLoop() {
 				break;
 			}
 
-			if (lastRedraw + waitTime < _system->getMillis()) {
+			if (lastRedraw + waitTime < _system->getMillis(true)) {
 				_theme->updateScreen();
 				_system->updateScreen();
-				lastRedraw = _system->getMillis();
+				lastRedraw = _system->getMillis(true);
 			}
 		}
 
-		if (tooltipCheck && _lastMousePosition.time + kTooltipDelay < _system->getMillis()) {
+		if (tooltipCheck && _lastMousePosition.time + kTooltipDelay < _system->getMillis(true)) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
 			if (wdg && wdg->hasTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)) {
 				Tooltip *tooltip = new Tooltip();
@@ -492,7 +492,7 @@ void GuiManager::setupCursor() {
 // very much. We could plug in a different cursor here if we like to.
 
 void GuiManager::animateCursor() {
-	int time = _system->getMillis();
+	int time = _system->getMillis(true);
 	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
 		for (int i = 0; i < 15; i++) {
 			if ((i < 6) || (i > 8)) {

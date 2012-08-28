@@ -72,8 +72,15 @@ class EventRecorder : private EventSource, private EventObserver, public Singlet
 	EventRecorder();
 	~EventRecorder();
 public:
+	enum RecordMode {
+		kPassthrough = 0,
+		kRecorderRecord = 1,
+		kRecorderPlayback = 2,
+		kRecorderPlaybackPause = 3
+	};
 	void init();
-	void init(const ADGameDescription *desc);
+	void init(Common::String gameid, RecordMode mode);
+	void init(const ADGameDescription *desc, RecordMode mode);
 	void deinit();
 	bool processDelayMillis();
 	/** TODO: Add documentation, this is only used by the backend */
@@ -82,11 +89,11 @@ public:
 	DefaultTimerManager *getTimerManager();
 	/** Register random source so it can be serialized in game test purposes */
 	uint32 getRandomSeed(const String &name);
-	void init(Common::String gameid);
 	void processGameDescription(const ADGameDescription *desc);
 	void registerMixerManager(SdlMixerManager *mixerManager);
 	void registerTimerManager(DefaultTimerManager *timerManager);
 	uint32 getTimer() {return _fakeTimer;}
+	void deleteRecord(const String& fileName);
 	void updateSubsystems();
 	bool isRecording() {
 		return initialized;
@@ -141,7 +148,7 @@ private:
 	void skipScreenshot();
 	void writeGameHash();
 	void writeRandomRecords();
-	bool openRecordFile(const String &gameId);
+	bool openRecordFile(const String &fileName);
 	bool checkGameHash(const ADGameDescription *desc);
 	bool notifyEvent(const Event &ev);
 	String getAuthor();
@@ -189,12 +196,7 @@ private:
 	uint32 _screenshotPeriod;
 	void saveScreenShot();
 	void checkRecordedMD5();
-	enum RecordMode {
-		kPassthrough = 0,
-		kRecorderRecord = 1,
-		kRecorderPlayback = 2,
-		kRecorderPlaybackPause = 3
-	};
+
 	volatile RecordMode _recordMode;
 	String _recordFileName;
 	bool _fastPlayback;

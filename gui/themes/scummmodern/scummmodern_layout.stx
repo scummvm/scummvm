@@ -43,6 +43,7 @@
 		<def var = 'ShowChooserPageDisplay' value = '1'/>
 
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '1'/>
+		<def var = 'RecorderDialog.ExtInfo.Visible' value = '1'/>
 
 		<def var = 'KeyMapper.Spacing' value = '10'/>
 		<def var = 'KeyMapper.LabelWidth' value = '100'/>
@@ -866,6 +867,37 @@
 				/>
 				<space size = '96'/>
 				<widget name = 'Ok'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'RecorderDialog' overlays = 'screen' inset = '8' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 32' center = 'true'>
+			<widget name = 'Title'
+					height = 'Globals.Line.Height'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 16' spacing = '16'>
+				<widget name = 'List' />
+				<widget name = 'Thumbnail'
+						width = '180'
+						height = '200'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<space/>
+				<widget name = 'Delete'
+						type = 'Button'
+				/>
+				<space size = '32'/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Record'
+						type = 'Button'
+				/>
+				<widget name = 'Playback'
 						type = 'Button'
 				/>
 			</layout>

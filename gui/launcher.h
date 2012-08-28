@@ -36,6 +36,7 @@ class GraphicsWidget;
 class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
+class RecorderDialog;
 
 Common::String addGameToConf(const GameDescriptor &result);
 
@@ -80,7 +81,7 @@ protected:
 	void updateListing();
 
 	void updateButtons();
-	void switchButtonsText(ButtonWidget *button, char *normalText, char *shiftedText);
+	void switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText);
 
 	void open();
 	void close();

@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	object.o \
 	options.o \
 	predictivedialog.o \
+	recorderdialog.o \
 	saveload.o \
 	saveload-dialog.o \
 	themebrowser.o \
