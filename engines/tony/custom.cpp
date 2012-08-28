@@ -186,7 +186,7 @@ DECLARE_CUSTOM_FUNCTION(RightToMe)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 
 
 DECLARE_CUSTOM_FUNCTION(TonySetPerorate)(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
-	GLOBALS.SetPerorate(bStatus);
+	g_vm->getEngine()->setPerorate(bStatus);
 }
 
 DECLARE_CUSTOM_FUNCTION(MySleep)(CORO_PARAM, uint32 dwTime, uint32, uint32, uint32) {
@@ -324,7 +324,7 @@ DECLARE_CUSTOM_FUNCTION(SendTonyMessage)(CORO_PARAM, uint32 dwMessage, uint32 nX
 		}
 
 		// Record the text
-		GLOBALS.LinkGraphicTask(&_ctx->text);
+		g_vm->getEngine()->linkGraphicTask(&_ctx->text);
 
 		if (_ctx->curVoc) {
 			if (_ctx->i == 0) {
@@ -376,9 +376,9 @@ DECLARE_CUSTOM_FUNCTION(CustLoadLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, ui
 
 	GLOBALS._curChangedHotspot = 0;
 	if (bUseStartPos != 0)
-		GLOBALS.LoadLocation(nLoc, RMPoint(tX, tY), GLOBALS._startLocPos[nLoc]);
+		g_vm->getEngine()->loadLocation(nLoc, RMPoint(tX, tY), GLOBALS._startLocPos[nLoc]);
 	else
-		GLOBALS.LoadLocation(nLoc, RMPoint(tX, tY), RMPoint(-1, -1));
+		g_vm->getEngine()->loadLocation(nLoc, RMPoint(tX, tY), RMPoint(-1, -1));
 
 	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
@@ -408,7 +408,7 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 	if (GLOBALS._bSkipIdle)
 		return;
 
-	CORO_INVOKE_2(GLOBALS.UnloadLocation, false, NULL);
+	CORO_INVOKE_2(g_vm->getEngine()->unloadLocation, false, NULL);
 	GLOBALS._tony->hide();
 
 	for (_ctx->i = 0; _ctx->i < _ctx->msg->numPeriods() && !GLOBALS._bSkipIdle; _ctx->i++) {
@@ -436,8 +436,8 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 		_ctx->text.forceTime();
 
 		// Record the text
-		GLOBALS.LinkGraphicTask(&_ctx->clear);
-		GLOBALS.LinkGraphicTask(&_ctx->text);
+		g_vm->getEngine()->linkGraphicTask(&_ctx->clear);
+		g_vm->getEngine()->linkGraphicTask(&_ctx->text);
 
 		// Wait for the end of display
 		_ctx->text.setCustomSkipHandle(GLOBALS._hSkipIdle);
@@ -457,20 +457,20 @@ DECLARE_CUSTOM_FUNCTION(ClearScreen)(CORO_PARAM, uint32, uint32, uint32, uint32)
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.LinkGraphicTask(&_ctx->clear);
+	g_vm->getEngine()->linkGraphicTask(&_ctx->clear);
 
-	CORO_INVOKE_0(GLOBALS.WaitFrame);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 
 	// WORKAROUND: This fixes a bug in the original source where the linked clear task
 	// didn't have time to be drawn and removed from the draw list before the method
 	// ended, thus remaining in the draw list and causing a later crash
-	CORO_INVOKE_0(GLOBALS.WaitFrame);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 
 	CORO_END_CODE;
 }
 
 DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgEnd)(CORO_PARAM, uint32 bNotEnableTony, uint32, uint32, uint32) {
-	GLOBALS.LoadLocation(GLOBALS._fullScreenMessageLoc, RMPoint(GLOBALS._fullScreenMessagePt._x, GLOBALS._fullScreenMessagePt._y), RMPoint(-1, -1));
+	g_vm->getEngine()->loadLocation(GLOBALS._fullScreenMessageLoc, RMPoint(GLOBALS._fullScreenMessagePt._x, GLOBALS._fullScreenMessagePt._y), RMPoint(-1, -1));
 	if (!bNotEnableTony)
 		GLOBALS._tony->show();
 
@@ -502,14 +502,14 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 	CORO_BEGIN_CODE(_ctx);
 
 	if (!GLOBALS._bNoBullsEye) {
-		GLOBALS.InitWipe(1);
-		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
+		g_vm->getEngine()->initWipe(1);
+		CORO_INVOKE_0(g_vm->getEngine()->waitWipeEnd);
 	}
 
 	g_vm->stopMusic(4);
 
 	// On exit, unload
-	CORO_INVOKE_2(GLOBALS.UnloadLocation, true, NULL);
+	CORO_INVOKE_2(g_vm->getEngine()->unloadLocation, true, NULL);
 
 	CORO_END_CODE;
 }
@@ -523,8 +523,8 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	CORO_BEGIN_CODE(_ctx);
 
 	if (!GLOBALS._bNoBullsEye) {
-		GLOBALS.InitWipe(1);
-		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
+		g_vm->getEngine()->initWipe(1);
+		CORO_INVOKE_0(g_vm->getEngine()->waitWipeEnd);
 	}
 
 	if (GLOBALS._lastTappeto != GLOBALS._ambiance[nLoc]) {
@@ -532,13 +532,13 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	}
 
 	// On exit, unfreeze
-	CORO_INVOKE_2(GLOBALS.UnloadLocation, true, NULL);
+	CORO_INVOKE_2(g_vm->getEngine()->unloadLocation, true, NULL);
 
 	GLOBALS._curChangedHotspot = 0;
 	if (bUseStartPos != 0)
-		GLOBALS.LoadLocation(nLoc, RMPoint(tX, tY), GLOBALS._startLocPos[nLoc]);
+		g_vm->getEngine()->loadLocation(nLoc, RMPoint(tX, tY), GLOBALS._startLocPos[nLoc]);
 	else
-		GLOBALS.LoadLocation(nLoc, RMPoint(tX, tY), RMPoint(-1, -1));
+		g_vm->getEngine()->loadLocation(nLoc, RMPoint(tX, tY), RMPoint(-1, -1));
 
 	if (GLOBALS._lastTappeto != GLOBALS._ambiance[nLoc]) {
 		GLOBALS._lastTappeto = GLOBALS._ambiance[nLoc];
@@ -547,14 +547,14 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	}
 
 	if (!GLOBALS._bNoBullsEye) {
-		GLOBALS.InitWipe(2);
+		g_vm->getEngine()->initWipe(2);
 	}
 
 	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
 	if (!GLOBALS._bNoBullsEye) {
-		CORO_INVOKE_0(GLOBALS.WaitWipeEnd);
-		GLOBALS.CloseWipe();
+		CORO_INVOKE_0(g_vm->getEngine()->waitWipeEnd);
+		g_vm->getEngine()->closeWipe();
 	}
 
 	GLOBALS._bNoBullsEye = false;
@@ -589,11 +589,11 @@ DECLARE_CUSTOM_FUNCTION(RestoreTonyPosition)(CORO_PARAM, uint32, uint32, uint32,
 }
 
 DECLARE_CUSTOM_FUNCTION(DisableInput)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	mainDisableInput();
+	g_vm->getEngine()->disableInput();
 }
 
 DECLARE_CUSTOM_FUNCTION(EnableInput)(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	mainEnableInput();
+	g_vm->getEngine()->enableInput();
 }
 
 DECLARE_CUSTOM_FUNCTION(StopTony)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -1226,7 +1226,7 @@ DECLARE_CUSTOM_FUNCTION(ScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32
 			_ctx->pt.offset(0, -(int32)sY);
 		}
 
-		CORO_INVOKE_0(GLOBALS.WaitFrame);
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 
 		GLOBALS._loc->setScrollPosition(_ctx->pt);
 		GLOBALS._tony->setScrollPosition(_ctx->pt);
@@ -1289,7 +1289,7 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 
 		}
 
-		CORO_INVOKE_0(GLOBALS.WaitFrame);
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 
 		GLOBALS._loc->setScrollPosition(_ctx->pt);
 		GLOBALS._tony->setScrollPosition(_ctx->pt);
@@ -1362,7 +1362,7 @@ DECLARE_CUSTOM_FUNCTION(ShakeScreen)(CORO_PARAM, uint32 nScosse, uint32, uint32,
 	_ctx->diry = 1;
 
 	while (g_vm->getTime() < _ctx->curTime + nScosse) {
-		CORO_INVOKE_0(GLOBALS.WaitFrame);
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 
 		GLOBALS._loc->setFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
 		GLOBALS._tony->setFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
@@ -1486,7 +1486,7 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 		}
 
 		// Record the text
-		GLOBALS.LinkGraphicTask(_ctx->text);
+		g_vm->getEngine()->linkGraphicTask(_ctx->text);
 
 		if (_ctx->curVoc) {
 			g_vm->_theSound.createSfx(&_ctx->voice);
@@ -1695,7 +1695,7 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 		}
 
 		// Record the text
-		GLOBALS.LinkGraphicTask(_ctx->text);
+		g_vm->getEngine()->linkGraphicTask(_ctx->text);
 
 		if (_ctx->curVoc) {
 			g_vm->_theSound.createSfx(&_ctx->voice);
@@ -1862,7 +1862,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 			_ctx->text->forceTime();
 		}
 		_ctx->text->setAlignType(RMText::HCENTER, RMText::VBOTTOM);
-		GLOBALS.LinkGraphicTask(_ctx->text);
+		g_vm->getEngine()->linkGraphicTask(_ctx->text);
 
 		if (_ctx->curVoc) {
 			_ctx->voice->play();
@@ -1970,20 +1970,20 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 		}
 
 		// Activate the object
-		GLOBALS.LinkGraphicTask(&_ctx->dc);
+		g_vm->getEngine()->linkGraphicTask(&_ctx->dc);
 		CORO_INVOKE_0(_ctx->dc.show);
 
 		// Draw the pointer
 		GLOBALS._pointer->setSpecialPointer(GLOBALS._pointer->PTR_NONE);
-		mainShowMouse();
+		g_vm->getEngine()->enableMouse();
 
 		while (!(GLOBALS._input->mouseLeftClicked() && ((_ctx->sel = _ctx->dc.getSelection()) != -1))) {
-			CORO_INVOKE_0(GLOBALS.WaitFrame);
+			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 			CORO_INVOKE_1(_ctx->dc.doFrame, GLOBALS._input->mousePos());
 		}
 
 		// Hide the pointer
-		mainHideMouse();
+		g_vm->getEngine()->disableMouse();
 
 		CORO_INVOKE_0(_ctx->dc.hide);
 		mpalQueryDialogSelectionDWORD(_ctx->nChoice, _ctx->sl[_ctx->sel]);
@@ -2158,7 +2158,7 @@ void CustPlayMusic(uint32 nChannel, const char *mFN, uint32 nFX, bool bLoop, int
 	if (nSync == 0)
 		nSync = 2000;
 	debugC(DEBUG_INTERMEDIATE, kTonyDebugMusic, "Start CustPlayMusic");
-	GLOBALS.PlayMusic(nChannel, mFN, nFX, bLoop, nSync);
+	g_vm->playMusic(nChannel, mFN, nFX, bLoop, nSync);
 	debugC(DEBUG_INTERMEDIATE, kTonyDebugMusic, "End CustPlayMusic");
 }
 
@@ -2324,13 +2324,13 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 		_ctx->text[_ctx->i].setCustomSkipHandle(_ctx->hDisable);
 
 		// Record the text
-		GLOBALS.LinkGraphicTask(&_ctx->text[_ctx->i]);
+		g_vm->getEngine()->linkGraphicTask(&_ctx->text[_ctx->i]);
 	}
 
 	_ctx->startTime = g_vm->getTime();
 
 	while (_ctx->startTime + dwTime * 1000 > g_vm->getTime()) {
-		CORO_INVOKE_0(GLOBALS.WaitFrame);
+		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 		if (GLOBALS._input->mouseLeftClicked() || GLOBALS._input->mouseRightClicked())
 			break;
 		if (g_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_TAB))
@@ -2339,8 +2339,8 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 
 	CoroScheduler.setEvent(_ctx->hDisable);
 
-	CORO_INVOKE_0(GLOBALS.WaitFrame);
-	CORO_INVOKE_0(GLOBALS.WaitFrame);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 
 	delete[] _ctx->text;
 	delete _ctx->msg;
@@ -2522,17 +2522,8 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	GLOBALS._inventory = inv;
 	GLOBALS._input = input;
 
-	GLOBALS.LoadLocation = mainLoadLocation;
-	GLOBALS.UnloadLocation = mainUnloadLocation;
-	GLOBALS.LinkGraphicTask = mainLinkGraphicTask;
-	GLOBALS.WaitFrame = mainWaitFrame;
-	GLOBALS.PlayMusic = mainPlayMusic;
-	GLOBALS.InitWipe = mainInitWipe;
-	GLOBALS.CloseWipe = mainCloseWipe;
-	GLOBALS.WaitWipeEnd = mainWaitWipeEnd;
 	GLOBALS.DisableGUI = mainDisableGUI;
 	GLOBALS.EnableGUI = mainEnableGUI;
-	GLOBALS.SetPerorate = mainSetPerorate;
 
 	GLOBALS._bAlwaysDisplay = false;
 	int i;

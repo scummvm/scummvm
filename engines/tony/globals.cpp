@@ -41,17 +41,8 @@ Globals::Globals() {
 	_inventory = NULL;
 	_input = NULL;
 	_gfxEngine = NULL;
-	LoadLocation = NULL;
-	UnloadLocation = NULL;
-	LinkGraphicTask = NULL;
-	WaitFrame = NULL;
-	PlayMusic = NULL;
-	WaitWipeEnd = NULL;
-	CloseWipe = NULL;
-	InitWipe = NULL;
 	EnableGUI = NULL;
 	DisableGUI = NULL;
-	SetPerorate = NULL;
 
 	_dwTonyNumTexts = 0;
 	_bTonyInTexts = false;

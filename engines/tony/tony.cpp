@@ -554,8 +554,8 @@ void TonyEngine::autoSave(CORO_PARAM) {
 	CORO_BEGIN_CODE(_ctx);
 
 	grabThumbnail();
-	CORO_INVOKE_0(mainWaitFrame);
-	CORO_INVOKE_0(mainWaitFrame);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 	_ctx->buf = getSaveStateFileName(0);
 	_theEngine.saveState(_ctx->buf, (byte *)_curThumbnail, "Autosave");
 

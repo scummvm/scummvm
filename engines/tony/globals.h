@@ -223,17 +223,8 @@ public:
 	RMInput *_input;
 	RMGfxEngine *_gfxEngine;
 
-	uint32(*LoadLocation)(int, RMPoint, RMPoint start);
-	void (*UnloadLocation)(CORO_PARAM, bool bDoOnExit, uint32 *result);
-	void (*LinkGraphicTask)(RMGfxTask *task);
-	void (*WaitFrame)(CORO_PARAM);
-	void (*PlayMusic)(int nChannel, const char *fileName, int nFX, bool bLoop, int nSync);
-	void (*WaitWipeEnd)(CORO_PARAM);
-	void (*CloseWipe)();
-	void (*InitWipe)(int type);
 	void (*EnableGUI)();
 	void (*DisableGUI)();
-	void (*SetPerorate)(bool bpal);
 
 	uint32 _dwTonyNumTexts;
 	bool _bTonyInTexts;

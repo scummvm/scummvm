@@ -808,8 +808,8 @@ void RMWipe::waitForFadeEnd(CORO_PARAM) {
 	_bEndFade = true;
 	_bFading = false;
 
-	CORO_INVOKE_0(mainWaitFrame);
-	CORO_INVOKE_0(mainWaitFrame);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
+	CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 
 	CORO_END_CODE;
 }

@@ -68,9 +68,9 @@ void DebugChangeScene(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_2(GLOBALS.UnloadLocation, false, &result);
+	CORO_INVOKE_2(g_vm->getEngine()->unloadLocation, false, &result);
 
-	GLOBALS.LoadLocation(details->sceneNumber, scenePos, RMPoint(-1, -1));
+	g_vm->getEngine()->loadLocation(details->sceneNumber, scenePos, RMPoint(-1, -1));
 
 	mainEnableGUI();
 

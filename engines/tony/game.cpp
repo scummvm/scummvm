@@ -47,54 +47,6 @@ using namespace MPAL;
 /*  Global functions                    */
 /****************************************/
 
-uint32 mainLoadLocation(int nLoc, RMPoint pt, RMPoint start) {
-	return g_vm->getEngine()->loadLocation(nLoc, pt, start);
-}
-
-void mainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
-	g_vm->getEngine()->unloadLocation(coroParam, bDoOnExit, result);
-}
-
-void mainLinkGraphicTask(RMGfxTask *task) {
-	g_vm->getEngine()->linkGraphicTask(task);
-}
-
-void mainWaitFrame(CORO_PARAM) {
-	CoroScheduler.waitForSingleObject(coroParam, g_vm->_hEndOfFrame, CORO_INFINITE);
-}
-
-void mainShowMouse() {
-	g_vm->getEngine()->enableMouse();
-}
-
-void mainHideMouse() {
-	g_vm->getEngine()->disableMouse();
-}
-
-void mainPlayMusic(int nChannel, const char *filename, int nFX, bool bLoop, int nSync) {
-	g_vm->playMusic(nChannel, filename, nFX, bLoop, nSync);
-}
-
-void mainDisableInput() {
-	g_vm->getEngine()->disableInput();
-}
-
-void mainEnableInput() {
-	g_vm->getEngine()->enableInput();
-}
-
-void mainInitWipe(int type) {
-	g_vm->getEngine()->initWipe(type);
-}
-
-void mainCloseWipe() {
-	g_vm->getEngine()->closeWipe();
-}
-
-void mainWaitWipeEnd(CORO_PARAM) {
-	g_vm->getEngine()->waitWipeEnd(coroParam);
-}
-
 void mainEnableGUI() {
 	g_vm->getEngine()->_bGUIInterface = true;
 	g_vm->getEngine()->_bGUIInventory = true;
@@ -105,10 +57,6 @@ void mainDisableGUI() {
 	g_vm->getEngine()->_bGUIInterface = false;
 	g_vm->getEngine()->_bGUIInventory = false;
 	g_vm->getEngine()->_bGUIOption = false;
-}
-
-void mainSetPerorate(bool bPerorate) {
-	g_vm->getEngine()->setPerorate(bPerorate);
 }
 
 /****************************************************************************\
