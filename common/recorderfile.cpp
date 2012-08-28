@@ -44,7 +44,7 @@ PlaybackFile::~PlaybackFile() {
 	close();
 }
 
-bool PlaybackFile::openWrite(Common::String fileName) {
+bool PlaybackFile::openWrite(const String &fileName) {
 	close();
 	_header.fileName = fileName;
 	_writeStream = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving(fileName), 128 * 1024);
@@ -57,7 +57,7 @@ bool PlaybackFile::openWrite(Common::String fileName) {
 	return true;
 }
 
-bool PlaybackFile::openRead(Common::String fileName) {
+bool PlaybackFile::openRead(const String &fileName) {
 	close();
 	_header.fileName = fileName;
 	_eventsSize = 0;
@@ -89,7 +89,7 @@ void PlaybackFile::close() {
 		delete _screenshotsFile;
 		_screenshotsFile = NULL;
 	}
-	for (Common::HashMap<Common::String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
+	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
 		free(i->_value.buffer);
 	}
 	_header.saveFiles.clear();
@@ -126,7 +126,7 @@ bool PlaybackFile::checkPlaybackFileVersion() {
 }
 
 
-Common::String PlaybackFile::readString(int len) {
+String PlaybackFile::readString(int len) {
 	String result;
 	char buf[50];
 	int readSize = 49;
@@ -307,7 +307,7 @@ bool PlaybackFile::readSaveRecord() {
 
 
 
-Common::RecorderEvent PlaybackFile::getNextEvent() {
+RecorderEvent PlaybackFile::getNextEvent() {
 	assert(_mode == kRead);
 	if (isEventsBufferEmpty()) {
 		PlaybackFile::ChunkHeader header;
@@ -334,7 +334,7 @@ Common::RecorderEvent PlaybackFile::getNextEvent() {
 			}
 		}
 	}
-	Common::RecorderEvent result;
+	RecorderEvent result;
 	readEvent(result);
 	return result;
 }
@@ -602,7 +602,7 @@ void PlaybackFile::updateHeader() {
 	}
 	_readStream->seek(0);
 	skipHeader();
-	Common::String tmpFilename = "_" + _header.fileName;
+	String tmpFilename = "_" + _header.fileName;
 	_writeStream = g_system->getSavefileManager()->openForSaving(tmpFilename);
 	dumpHeaderToFile();
 	uint32 readedSize = 0;
@@ -638,7 +638,7 @@ void PlaybackFile::skipHeader() {
 	}
 }
 
-void PlaybackFile::addSaveFile(const Common::String &fileName, Common::InSaveFile *saveStream) {
+void PlaybackFile::addSaveFile(const String &fileName, InSaveFile *saveStream) {
 	uint oldPos = saveStream->pos();
 	saveStream->seek(0);
 	_header.saveFiles[fileName].buffer = (byte *)malloc(saveStream->size());
@@ -649,7 +649,7 @@ void PlaybackFile::addSaveFile(const Common::String &fileName, Common::InSaveFil
 
 void PlaybackFile::writeSaveFilesSection() {
 	uint size = 0;
-	for (Common::HashMap<Common::String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
+	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
 		size += i->_value.size + i->_key.size() + 24;
 	}
 	if (size == 0) {
@@ -657,7 +657,7 @@ void PlaybackFile::writeSaveFilesSection() {
 	}
 	_writeStream->writeSint32LE(kSaveTag);
 	_writeStream->writeSint32LE(size);
-	for (Common::HashMap<Common::String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
+	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
 		_writeStream->writeSint32LE(kSaveRecordTag);
 		_writeStream->writeSint32LE(i->_key.size() + i->_value.size + 16);
 		_writeStream->writeSint32LE(kSaveRecordNameTag);

@@ -72,45 +72,51 @@ public:
 		kRecorderPlayback = 2,
 		kRecorderPlaybackPause = 3
 	};
-	void init();
-	void init(Common::String recordFileName, RecordMode mode);
-	void init(const ADGameDescription *desc, RecordMode mode);
+
+	void init(String recordFileName, RecordMode mode);
 	void deinit();
 	bool processDelayMillis();
+	uint32 getRandomSeed(const String &name);
+	void processMillis(uint32 &millis);
+	bool processAudio(uint32 &samples, bool paused);
+	void processGameDescription(const ADGameDescription *desc);
+	SeekableReadStream *processSaveStream(const String & fileName);
+
 	void takeScreenshot();
+
 	void preDrawOverlayGui();
 	void postDrawOverlayGui();
 
-	/** TODO: Add documentation, this is only used by the backend */
-	void processMillis(uint32 &millis);
-
-	GUI::OnScreenDialog *controlPanel;
 	SdlMixerManager *getMixerManager();
 	DefaultTimerManager *getTimerManager();
-	void setAuthor(const Common::String &author);
-	void setNotes(const Common::String &desc);
-	void setName(const Common::String &name);
-	const Common::String getAuthor() {
+
+	void setAuthor(const String &author);
+	void setNotes(const String &desc);
+	void setName(const String &name);
+	const String getAuthor() {
 		return _author;
 	}
-	const Common::String getNotes() {
+	const String getNotes() {
 		return _desc;
 	}
-	const Common::String getName() {
+	const String getName() {
 		return _name;
 	}
-	/** Register random source so it can be serialized in game test purposes */
-	uint32 getRandomSeed(const String &name);
-	void processGameDescription(const ADGameDescription *desc);
+	void setRedraw(bool redraw) {
+		_needRedraw = redraw;
+	}
+
+
 	void registerMixerManager(SdlMixerManager *mixerManager);
 	void registerTimerManager(DefaultTimerManager *timerManager);
+
 	uint32 getTimer() {return _fakeTimer;}
 	void deleteRecord(const String& fileName);
-	void updateSubsystems();
+	bool checkForContinueGame();
+
 	bool isRecording() {
 		return _initialized;
 	}
-	bool _savedState;
 	void suspendRecording() {
 		_savedState = _initialized;
 		_initialized = false;
@@ -118,61 +124,66 @@ public:
 	void resumeRecording() {
 		_initialized = _savedState;
 	}
-	Common::StringArray listSaveFiles(const Common::String &pattern);
-	void saveStream(Common::OutSaveFile *saveStream);
-	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
-	void RegisterEventSource();
-	Common::String generateRecordFileName(const String &target);
+
+	StringArray listSaveFiles(const String &pattern);
+	String generateRecordFileName(const String &target);
+
 	SaveFileManager *getSaveManager(SaveFileManager *realSaveManager);
-	void togglePause();
-	bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
 	SDL_Surface *getSurface(int width, int height);
-	bool checkForContinueGame();
-	void deleteTemporarySave();
+	void RegisterEventSource();
+
+	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
+
 	void updateSubsystems();
 	bool switchMode();
+	void switchFastMode();
 private:
-	Common::String _author;
-	Common::String _desc;
-	Common::String _name;
-	void setFileHeader();
-	bool _enableDrag;
-	int _temporarySlot;
+	bool _savedState;
+	bool _initialized;
 	bool _needcontinueGame;
-	Common::Point dragPoint;
+	int _temporarySlot;
+	String _author;
+	String _desc;
+	String _name;
 	SaveFileManager *_realSaveManager;
 	RecorderSaveFileManager _fakeSaveManager;
-	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
-	bool _initialized;
-	void setGameMd5(const ADGameDescription *gameDesc);
-	void getConfig();
-	void applyPlaybackSettings();
-	void removeDifferentEntriesInDomain(ConfigManager::Domain *domain);
-	void getConfigFromDomain(ConfigManager::Domain *domain);
-	MutexRef _recorderMutex;
 	SdlMixerManager *_realMixerManager;
 	NullSdlMixerManager *_fakeMixerManager;
 	DefaultTimerManager *_timerManager;
+	GUI::OnScreenDialog *controlPanel;
+	RecorderEvent _nextEvent;
+
+	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
+	void setFileHeader();
+	void setGameMd5(const ADGameDescription *gameDesc);
+	void getConfig();
+	void getConfigFromDomain(ConfigManager::Domain *domain);
+	void removeDifferentEntriesInDomain(ConfigManager::Domain *domain);
+	void applyPlaybackSettings();
+
 	void switchMixer();
-	void switchFastMode();
 	void switchTimerManagers();
+
+	void togglePause();
+
 	bool openRecordFile(const String &fileName);
+
 	bool checkGameHash(const ADGameDescription *desc);
-	String findMD5ByFileName(const ADGameDescription *gameDesc, const String &fileName);
+
 	bool notifyPoll();
 	bool pollEvent(Event &ev);
-	bool allowMapping() const { return false; }
 	void checkForKeyCode(const Event &event);
-	void writeGameSettings();
-	RecorderEvent _nextEvent;
-	MutexRef _timeMutex;
+	bool allowMapping() const { return false; }
+
 	volatile uint32 _lastMillis;
 	volatile uint32 _fakeTimer;
 	uint32 _lastScreenshotTime;
 	uint32 _screenshotPeriod;
 	PlaybackFile *_playbackFile;
+
 	void saveScreenShot();
 	void checkRecordedMD5();
+	void deleteTemporarySave();
 	volatile RecordMode _recordMode;
 	String _recordFileName;
 	bool _fastPlayback;

@@ -36,7 +36,7 @@
 
 namespace Common {
 
-struct RecorderEvent : Common::Event {
+struct RecorderEvent : Event {
 	uint32 time;
 	uint32 count;
 };
@@ -95,66 +95,78 @@ public:
 		uint32 size;
 	};
 	struct PlaybackFileHeader {
-		Common::String fileName;
-		Common::String author;
-		Common::String name;
-		Common::String notes;
-		Common::String description;
-		Common::StringMap hashRecords;
-		Common::StringMap settingsRecords;
-		Common::HashMap<Common::String, SaveFileBuffer> saveFiles;
+		String fileName;
+		String author;
+		String name;
+		String notes;
+		String description;
+		StringMap hashRecords;
+		StringMap settingsRecords;
+		HashMap<String, SaveFileBuffer> saveFiles;
 		RandomSeedsDictionary randomSourceRecords;
 	};
 	PlaybackFile();
 	~PlaybackFile();
-	bool openWrite(Common::String fileName);
-	bool openRead(Common::String fileName);
+
+	bool openWrite(const String &fileName);
+	bool openRead(const String &fileName);
 	void close();
-	Common::RecorderEvent getNextEvent();
+
+	RecorderEvent getNextEvent();
 	void writeEvent(const RecorderEvent &event);
+
 	void saveScreenShot(Graphics::Surface &screen, byte md5[16]);
+	Graphics::Surface *getScreenShot(int number);
+	int getScreensCount();
+
 	bool isEventsBufferEmpty();
 	PlaybackFileHeader &getHeader() {return _header;}
-	int getScreensCount();
-	Graphics::Surface *getScreenShot(int number);
 	void updateHeader();
-	void addSaveFile(const Common::String &fileName, Common::InSaveFile *saveStream);
+	void addSaveFile(const String &fileName, InSaveFile *saveStream);
 private:
+	WriteStream *_recordFile;
+	WriteStream *_writeStream;
 	WriteStream *_screenshotsFile;
-	PlaybackFileHeader _header;
+	MemoryReadStream _tmpPlaybackFile;
+	SeekableReadStream *_readStream;
+	SeekableMemoryWriteStream _tmpRecordFile;
+
+	fileMode _mode;
+	bool _headerDumped;
 	int _recordCount;
-	int _headerDumped;
 	uint32 _eventsSize;
 	byte _tmpBuffer[kRecordBuffSize];
-	SeekableMemoryWriteStream _tmpRecordFile;
-	MemoryReadStream _tmpPlaybackFile;
-	WriteStream *_recordFile;
-	fileMode _mode;
-	SeekableReadStream *_readStream;
-	WriteStream *_writeStream;
+	PlaybackFileHeader _header;
 	PlaybackFileState _playbackParseState;
+
 	void skipHeader();
+	bool parseHeader();
+	bool processChunk(ChunkHeader &nextChunk);
+	void returnToChunkHeader();
+
+	bool readSaveRecord();
+	void checkRecordedMD5();
+	bool readChunkHeader(ChunkHeader &nextChunk);
+	void processRndSeedRecord(ChunkHeader chunk);
+	bool processSettingsRecord();
+
+	bool checkPlaybackFileVersion();
+
+	void dumpHeaderToFile();
 	void writeSaveFilesSection();
 	void writeGameSettings();
 	void writeHeaderSection();
 	void writeGameHash();
 	void writeRandomRecords();
-	bool parseHeader();
+
 	void dumpRecordsToFile();
-	void dumpHeaderToFile();
-	bool readSaveRecord();
-	bool skipToNextScreenshot();
-	bool readChunkHeader(ChunkHeader &nextChunk);
-	Common::String readString(int len);
-	bool processChunk(ChunkHeader &nextChunk);
-	void returnToChunkHeader();
-	bool checkPlaybackFileVersion();
+
+	String readString(int len);
 	void readHashMap(ChunkHeader chunk);
-	void processRndSeedRecord(ChunkHeader chunk);
-	bool processSettingsRecord();
+
+	bool skipToNextScreenshot();
 	void readEvent(RecorderEvent& event);
 	void readEventsToBuffer(uint32 size);
-	void checkRecordedMD5();
 	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
 };
 

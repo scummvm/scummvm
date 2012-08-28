@@ -154,10 +154,10 @@ Common::String OSystem::getSystemLanguage() const {
 	return "en_US";
 }
 
-Common::TimerManager * OSystem::getTimerManager() {
+Common::TimerManager *OSystem::getTimerManager() {
 	return _timerManager;
 }
 
-Common::SaveFileManager * OSystem::getSavefileManager() {
+Common::SaveFileManager *OSystem::getSavefileManager() {
 	return g_eventRec.getSaveManager(_savefileManager);
 }

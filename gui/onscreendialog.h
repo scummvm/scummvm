@@ -43,14 +43,17 @@ public:
 	~OnScreenDialog();
 	virtual void close();
 	virtual bool isVisible() const;
-	bool isMouseOver();
 	virtual void reflowLayout();
+
 	void setReplayedTime(uint32 newTime);
+
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	bool editDlgVisible();
+
+	bool isMouseOver();
+	bool isEditDlgVisible();
 	Dialog *getActiveDlg();
 protected:
 	virtual void	releaseFocus();

@@ -48,11 +48,11 @@ private:
 	GUI::StaticTextWidget *_currentScreenshotText;
 	GUI::StaticTextWidget *_authorText;
 	GUI::StaticTextWidget *_notesText;
+
 	void updateList();
 	void updateScreenShotsText();
 	void updateSelection(bool redraw);
 	void updateScreenshot();
-	int calculateScreenshotsCount();
 public:
 	Common::String _author;
 	Common::String _name;
@@ -64,9 +64,11 @@ public:
 	};
 	RecorderDialog();
 	~RecorderDialog();
+
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	int runModal(Common::String &target);
 	virtual void reflowLayout();
+
+	int runModal(Common::String &target);
 	const Common::String getFileName() {return _filename;}
 };
 

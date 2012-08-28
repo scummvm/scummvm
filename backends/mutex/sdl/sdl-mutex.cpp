@@ -33,15 +33,15 @@ OSystem::MutexRef SdlMutexManager::createMutex() {
 }
 
 void SdlMutexManager::lockMutex(OSystem::MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *) mutex);
+	SDL_mutexP((SDL_mutex *)mutex);
 }
 
 void SdlMutexManager::unlockMutex(OSystem::MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *) mutex);
+	SDL_mutexV((SDL_mutex *)mutex);
 }
 
 void SdlMutexManager::deleteMutex(OSystem::MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *) mutex);
+	SDL_DestroyMutex((SDL_mutex *)mutex);
 }
 
 #endif

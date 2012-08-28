@@ -206,7 +206,7 @@ bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 	return true;
 }
 
-bool createThumbnailFromScreen(Graphics::Surface* surf) {
+bool createThumbnailFromScreen(Graphics::Surface *surf) {
 	assert(surf);
 
 	Graphics::Surface screen;

@@ -496,58 +496,58 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	uint32 time;
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
 	switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			activeDialog->handleKeyDown(event.kbd);
-			break;
-		case Common::EVENT_KEYUP:
-			activeDialog->handleKeyUp(event.kbd);
-			break;
-		case Common::EVENT_MOUSEMOVE:
-			activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
+	case Common::EVENT_KEYDOWN:
+		activeDialog->handleKeyDown(event.kbd);
+		break;
+	case Common::EVENT_KEYUP:
+		activeDialog->handleKeyUp(event.kbd);
+		break;
+	case Common::EVENT_MOUSEMOVE:
+		activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
 
-			if (mouse.x != _lastMousePosition.x || mouse.y != _lastMousePosition.y) {
-				_lastMousePosition.x = mouse.x;
-				_lastMousePosition.y = mouse.y;
-				_lastMousePosition.time = _system->getMillis(true);
-			}
+		if (mouse.x != _lastMousePosition.x || mouse.y != _lastMousePosition.y) {
+			_lastMousePosition.x = mouse.x;
+			_lastMousePosition.y = mouse.y;
+			_lastMousePosition.time = _system->getMillis(true);
+		}
 
-			break;
-			// We don't distinguish between mousebuttons (for now at least)
-		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_RBUTTONDOWN:
-			button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
-			time = _system->getMillis(true);
-			if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-				&& ABS(_lastClick.x - event.mouse.x) < 3
-				&& ABS(_lastClick.y - event.mouse.y) < 3) {
-					_lastClick.count++;
-			} else {
-				_lastClick.x = event.mouse.x;
-				_lastClick.y = event.mouse.y;
-				_lastClick.count = 1;
-			}
-			_lastClick.time = time;
-			activeDialog->handleMouseDown(mouse.x, mouse.y, button, _lastClick.count);
-			break;
-		case Common::EVENT_LBUTTONUP:
-		case Common::EVENT_RBUTTONUP:
-			button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
-			activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
-			break;
-		case Common::EVENT_WHEELUP:
-			activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
-			break;
-		case Common::EVENT_WHEELDOWN:
-			activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
-			break;
-		case Common::EVENT_SCREEN_CHANGED:
-			screenChange();
-			break;
-		default:
-		#ifdef ENABLE_KEYMAPPER
-			activeDialog->handleOtherEvent(event);
-		#endif
-			break;
+		break;
+		// We don't distinguish between mousebuttons (for now at least)
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
+		button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
+		time = _system->getMillis(true);
+		if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
+			&& ABS(_lastClick.x - event.mouse.x) < 3
+			&& ABS(_lastClick.y - event.mouse.y) < 3) {
+				_lastClick.count++;
+		} else {
+			_lastClick.x = event.mouse.x;
+			_lastClick.y = event.mouse.y;
+			_lastClick.count = 1;
+		}
+		_lastClick.time = time;
+		activeDialog->handleMouseDown(mouse.x, mouse.y, button, _lastClick.count);
+		break;
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
+		button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
+		activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
+		break;
+	case Common::EVENT_WHEELUP:
+		activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
+		break;
+	case Common::EVENT_WHEELDOWN:
+		activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
+		break;
+	case Common::EVENT_SCREEN_CHANGED:
+		screenChange();
+		break;
+	default:
+	#ifdef ENABLE_KEYMAPPER
+		activeDialog->handleOtherEvent(event);
+	#endif
+		break;
 	}
 }
 

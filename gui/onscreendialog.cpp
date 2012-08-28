@@ -99,9 +99,9 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		g_system->hideOverlay();
 		g_eventRec.setRedraw(true);
 		CursorMan.lock(true);
-		g_eventRec.setAuthor(((EditRecordDialog *) dlg)->getAuthor());
-		g_eventRec.setName(((EditRecordDialog *) dlg)->getName());
-		g_eventRec.setNotes(((EditRecordDialog *) dlg)->getNotes());
+		g_eventRec.setAuthor(((EditRecordDialog *)dlg)->getAuthor());
+		g_eventRec.setName(((EditRecordDialog *)dlg)->getName());
+		g_eventRec.setNotes(((EditRecordDialog *)dlg)->getNotes());
 		delete dlg;
 		break;
 	case kSwitchModeCmd:
@@ -186,7 +186,7 @@ Dialog *OnScreenDialog::getActiveDlg() {
 	}
 }
 
-bool OnScreenDialog::editDlgVisible() {
+bool OnScreenDialog::isEditDlgVisible() {
 	return _editDlgShown;
 }
 

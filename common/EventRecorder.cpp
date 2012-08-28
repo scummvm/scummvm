@@ -40,9 +40,9 @@ namespace Common {
 
 DECLARE_SINGLETON(EventRecorder);
 
-#define MAX_RECORDS_NAMES 0x64
-#define kDefaultScreenshotPeriod 60000
-#define kDefaultBPP 2
+const int kMaxRecordsNames = 0x64;
+const int kDefaultScreenshotPeriod = 60000;
+const int kDefaultBPP = 2;
 
 uint32 readTime(ReadStream *inFile) {
 	uint32 d = inFile->readByte();
@@ -64,26 +64,18 @@ void writeTime(WriteStream *outFile, uint32 d) {
 }
 
 EventRecorder::EventRecorder() {
-	_timeMutex = g_system->createMutex();
-	_recorderMutex = g_system->createMutex();
 	_recordMode = kPassthrough;
 	_timerManager = NULL;
 	_fakeMixerManager = NULL;
-	_enableDrag = false;
 	_initialized = false;
 	_needRedraw = false;
+	DebugMan.addDebugChannel(kDebugLevelEventRec, "EventRec", "Event recorder debug level");
 }
 
 EventRecorder::~EventRecorder() {
-	g_system->deleteMutex(_timeMutex);
-	g_system->deleteMutex(_recorderMutex);
 	if (_timerManager != NULL) {
 		delete _timerManager;
 	}
-}
-
-void EventRecorder::init() {
-	DebugMan.addDebugChannel(kDebugLevelEventRec, "EventRec", "Event recorder debug level");
 }
 
 void EventRecorder::deinit() {
@@ -100,13 +92,9 @@ void EventRecorder::deinit() {
 	delete controlPanel;
 	debugC(3, kDebugLevelEventRec, "EventRecorder: deinit");
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
-	g_system->lockMutex(_timeMutex);
-	g_system->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
 	_playbackFile->close();
 	delete _playbackFile;
-	g_system->unlockMutex(_timeMutex);
-	g_system->unlockMutex(_recorderMutex);
 	switchMixer();
 	switchTimerManagers();
 }
@@ -139,11 +127,8 @@ void EventRecorder::processMillis(uint32 &millis) {
 		if (_nextEvent.type == EVENT_TIMER) {
 			_fakeTimer = _nextEvent.time;
 			_nextEvent = _playbackFile->getNextEvent();
-		} else {
-			_timerManager->handler(_fakeTimer);
-
+			_timerManager->handler();
 		}
-		_timerManager->handler();
 		millis = _fakeTimer;
 		controlPanel->setReplayedTime(_fakeTimer);
 		break;
@@ -168,7 +153,6 @@ void EventRecorder::checkForKeyCode(const Event &event) {
 bool EventRecorder::pollEvent(Event &ev) {
 	if ((_recordMode != kRecorderPlayback) || !_initialized)
 		return false;
-	StackLock lock(_recorderMutex);
 	
 	if ((_nextEvent.type ==  EVENT_INVALID) || (_nextEvent.type == EVENT_TIMER)) {
 		return false;
@@ -232,12 +216,12 @@ uint32 EventRecorder::getRandomSeed(const String &name) {
 	return result;
 }
 
-Common::String EventRecorder::generateRecordFileName(const String &target) {
-	Common::String pattern(target+".r??");
-	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
-	for (int i = 0; i < MAX_RECORDS_NAMES; ++i) {
-		Common::String recordName = Common::String::format("%s.r%02d", target.c_str(), i);
-		if (Common::find(files.begin(), files.end(), recordName) != files.end()) {
+String EventRecorder::generateRecordFileName(const String &target) {
+	String pattern(target+".r??");
+	StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
+	for (int i = 0; i < kMaxRecordsNames; ++i) {
+		String recordName = String::format("%s.r%02d", target.c_str(), i);
+		if (find(files.begin(), files.end(), recordName) != files.end()) {
 			continue;
 		}
 		return recordName;
@@ -246,11 +230,10 @@ Common::String EventRecorder::generateRecordFileName(const String &target) {
 }
 
 
-void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
+void EventRecorder::init(String recordFileName, RecordMode mode) {
 	_fakeMixerManager = new NullSdlMixerManager();
 	_fakeMixerManager->init();
 	_fakeMixerManager->suspendAudio();
-	_enableDrag = false;
 	_fakeTimer = 0;
 	_lastMillis = g_system->getMillis();
 	_playbackFile = new PlaybackFile();
@@ -295,14 +278,17 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
  */
 
 bool EventRecorder::openRecordFile(const String &fileName) {
-	if (_recordMode == kRecorderRecord) {
+	bool result;
+	switch (_recordMode) {
+	case kRecorderRecord:
 		return _playbackFile->openWrite(fileName);
-	}
-	if (_recordMode == kRecorderPlayback) {
+	case kRecorderPlayback:
 		_recordMode = kPassthrough;
-		bool result = _playbackFile->openRead(fileName);
+		result = _playbackFile->openRead(fileName);
 		_recordMode = kRecorderPlayback;
 		return result;
+	default:
+		return false;
 	}
 	return true;
 }
@@ -323,15 +309,6 @@ bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
 		}
 	}
 	return true;
-}
-
-Common::String EventRecorder::findMD5ByFileName(const ADGameDescription *gameDesc, const String &fileName) {
-	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
-		if (fileName.equals(fileDesc->fileName)) {
-			return fileDesc->md5;
-		}
-	}
-	return String();
 }
 
 void EventRecorder::registerMixerManager(SdlMixerManager *mixerManager) {
@@ -448,7 +425,7 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 		break;
 	case kRecorderPlaybackPause: {
 		Event dialogEvent;
-			if (controlPanel->editDlgVisible()) {
+			if (controlPanel->isEditDlgVisible()) {
 				dialogEvent = ev;
 			} else {
 				dialogEvent = evt;
@@ -486,15 +463,15 @@ void EventRecorder::deleteRecord(const String& fileName) {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-void EventRecorder::setAuthor(const Common::String &author) {
+void EventRecorder::setAuthor(const String &author) {
 	_author = author;
 }
 
-void EventRecorder::setNotes(const Common::String &desc) {
+void EventRecorder::setNotes(const String &desc) {
 	_desc = desc;
 }
 
-void EventRecorder::setName(const Common::String &name) {
+void EventRecorder::setName(const String &name) {
 	_name = name;
 }
 
@@ -520,24 +497,24 @@ bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5
 	return true;
 }
 
-Common::SeekableReadStream * EventRecorder::processSaveStream(const Common::String &fileName) {
-	Common::InSaveFile *saveFile;
+SeekableReadStream *EventRecorder::processSaveStream(const String &fileName) {
+	InSaveFile *saveFile;
 	switch (_recordMode) {
-		case kRecorderPlayback:
-			for (Common::HashMap<Common::String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
-				debug("%s %d ", i->_key.c_str(), i->_value.size);
-			}
-			return new MemoryReadStream(_playbackFile->getHeader().saveFiles[fileName].buffer, _playbackFile->getHeader().saveFiles[fileName].size);
-		case kRecorderRecord:
-			saveFile = _realSaveManager->openForLoading(fileName);
-			if (saveFile != NULL) {
-				_playbackFile->addSaveFile(fileName, saveFile);
-				saveFile->seek(0);
-			}
-			return saveFile;
-		default:
-			return NULL;
-			break;
+	case kRecorderPlayback:
+		for (HashMap<String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
+			debug("%s %d ", i->_key.c_str(), i->_value.size);
+		}
+		return new MemoryReadStream(_playbackFile->getHeader().saveFiles[fileName].buffer, _playbackFile->getHeader().saveFiles[fileName].size);
+	case kRecorderRecord:
+		saveFile = _realSaveManager->openForLoading(fileName);
+		if (saveFile != NULL) {
+			_playbackFile->addSaveFile(fileName, saveFile);
+			saveFile->seek(0);
+		}
+		return saveFile;
+	default:
+		return NULL;
+		break;
 	}
 }
 
@@ -573,10 +550,10 @@ void EventRecorder::postDrawOverlayGui() {
 	}
 }
 
-Common::StringArray EventRecorder::listSaveFiles(const Common::String &pattern) {
+StringArray EventRecorder::listSaveFiles(const String &pattern) {
 	if (_recordMode == kRecorderPlayback) {
-		Common::StringArray result;
-		for (Common::HashMap<Common::String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
+		StringArray result;
+		for (HashMap<String, PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
 			if (i->_key.matchString(pattern, false, true)) {
 				result.push_back(i->_key);
 			}
@@ -599,7 +576,7 @@ void EventRecorder::setFileHeader() {
 		setAuthor("Unknown Author");
 	}
 	if (_name.empty()) {
-		g_eventRec.setName(Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description());
+		g_eventRec.setName(String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description());
 	}
 	_playbackFile->getHeader().author = _author;
 	_playbackFile->getHeader().notes = _desc;
@@ -646,7 +623,7 @@ SDL_Surface *EventRecorder::getSurface(int width, int height) {
 }
 
 bool EventRecorder::switchMode() {
-	const Common::String gameId = ConfMan.get("gameid");
+	const String gameId = ConfMan.get("gameid");
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 	bool metaInfoSupport = (*plugin)->hasFeature(MetaEngine::kSavesSupportMetaInfo);
@@ -670,13 +647,13 @@ bool EventRecorder::switchMode() {
 		}
 		emptySlot++;
 	}
-	Common::String saveName;
+	String saveName;
 	if (emptySlot >= 0) {
-		saveName = Common::String::format("Save %d", emptySlot + 1);
-		Common::Error status = g_engine->saveGameState(emptySlot, saveName);
-		if (status.getCode() == Common::kNoError) {
+		saveName = String::format("Save %d", emptySlot + 1);
+		Error status = g_engine->saveGameState(emptySlot, saveName);
+		if (status.getCode() == kNoError) {
 			Event eventRTL;
-			eventRTL.type = Common::EVENT_RTL;
+			eventRTL.type = EVENT_RTL;
 			g_system->getEventManager()->pushEvent(eventRTL);
 		}
 	}
@@ -694,7 +671,7 @@ bool EventRecorder::checkForContinueGame() {
 
 void EventRecorder::deleteTemporarySave() {
 	if (_temporarySlot == -1) return;
-	const Common::String gameId = ConfMan.get("gameid");
+	const String gameId = ConfMan.get("gameid");
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 	 (*plugin)->removeSaveState(gameId.c_str(), _temporarySlot);

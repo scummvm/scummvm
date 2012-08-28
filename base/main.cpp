@@ -429,7 +429,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// TODO: This is just to match the current behavior, when we further extend
 	// our event recorder, we might do this at another place. Or even change
 	// the whole API for that ;-).
-	g_eventRec.init();
 	g_eventRec.RegisterEventSource();
 
 	// Now as the event manager is created, setup the keymapper
@@ -489,7 +488,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			#ifdef FORCE_RTL
 			g_system->getEventManager()->resetQuit();
 			#endif
-			if (g_eventRec.checkForContinueGame()){
+			if (g_eventRec.checkForContinueGame()) {
 				continue;
 			}
 
