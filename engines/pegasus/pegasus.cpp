@@ -470,14 +470,14 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	setEnergyDeathReason(stream->readByte());
 
 	// Items
-	g_allItems.readFromStream(stream);
+	_allItems.readFromStream(stream);
 
 	// Inventory
 	byte itemCount = stream->readByte();
 
 	if (itemCount > 0) {
 		for (byte i = 0; i < itemCount; i++) {
-			InventoryItem *inv = (InventoryItem *)g_allItems.findItemByID((ItemID)stream->readUint16BE());
+			InventoryItem *inv = (InventoryItem *)_allItems.findItemByID((ItemID)stream->readUint16BE());
 			addItemToInventory(inv);
 		}
 
@@ -489,7 +489,7 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 
 	if (biochipCount > 0) {
 		for (byte i = 0; i < biochipCount; i++) {
-			BiochipItem *biochip = (BiochipItem *)g_allItems.findItemByID((ItemID)stream->readUint16BE());
+			BiochipItem *biochip = (BiochipItem *)_allItems.findItemByID((ItemID)stream->readUint16BE());
 			addItemToBiochips(biochip);
 		}
 
@@ -541,7 +541,7 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 	stream->writeByte(getEnergyDeathReason());
 
 	// Items
-	g_allItems.writeToStream(stream);
+	_allItems.writeToStream(stream);
 
 	// Inventory
 	byte itemCount = _items.getNumItems();
@@ -1392,7 +1392,7 @@ bool PegasusEngine::itemInLocation(const ItemID itemID, const NeighborhoodID nei
 	RoomID itemRoom;
 	DirectionConstant itemDirection;
 	
-	Item *item = g_allItems.findItemByID(itemID);
+	Item *item = _allItems.findItemByID(itemID);
 	item->getItemRoom(itemNeighborhood, itemRoom, itemDirection);
 
 	return itemNeighborhood == neighborhood && itemRoom == room && itemDirection == direction;
@@ -1503,17 +1503,17 @@ void PegasusEngine::startNewGame() {
 	removeAllItemsFromInventory();
 	removeAllItemsFromBiochips();
 
-	BiochipItem *biochip = (BiochipItem *)g_allItems.findItemByID(kAIBiochip);
+	BiochipItem *biochip = (BiochipItem *)_allItems.findItemByID(kAIBiochip);
 	addItemToBiochips(biochip);
 
 	if (isDemo()) {
-		biochip = (BiochipItem *)g_allItems.findItemByID(kPegasusBiochip);
+		biochip = (BiochipItem *)_allItems.findItemByID(kPegasusBiochip);
 		addItemToBiochips(biochip);
-		biochip = (BiochipItem *)g_allItems.findItemByID(kMapBiochip);
+		biochip = (BiochipItem *)_allItems.findItemByID(kMapBiochip);
 		addItemToBiochips(biochip);
-		InventoryItem *item = (InventoryItem *)g_allItems.findItemByID(kKeyCard);
+		InventoryItem *item = (InventoryItem *)_allItems.findItemByID(kKeyCard);
 		addItemToInventory(item);
-		item = (InventoryItem *)g_allItems.findItemByID(kJourneymanKey);
+		item = (InventoryItem *)_allItems.findItemByID(kJourneymanKey);
 		addItemToInventory(item);
 		_currentItemID = kJourneymanKey;
 	} else {
@@ -2154,7 +2154,7 @@ void PegasusEngine::drawScaledFrame(const Graphics::Surface *frame, uint16 x, ui
 }
 
 void PegasusEngine::destroyInventoryItem(const ItemID itemID) {
-	InventoryItem *item = (InventoryItem *)g_allItems.findItemByID(itemID);
+	InventoryItem *item = (InventoryItem *)_allItems.findItemByID(itemID);
 
 	ItemExtraEntry entry;
 

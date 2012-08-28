@@ -132,6 +132,7 @@ public:
 	void setAmbienceLevel(uint16);
 
 	// Items
+	ItemList &getAllItems() { return _allItems; }
 	bool playerHasItem(const Item *);
 	bool playerHasItemID(const ItemID);
 	void checkFlashlight();
@@ -228,6 +229,7 @@ private:
 	void giveIdleTime();
 
 	// Items
+	ItemList _allItems;
 	void createItems();
 	void createItem(ItemID itemID, NeighborhoodID neighborhoodID, RoomID roomID, DirectionConstant direction);
 	Inventory _items;

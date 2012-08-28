@@ -676,7 +676,7 @@ void Neighborhood::clickInHotspot(const Input &input, const Hotspot *clickedSpot
 		}
 
 		if (itemID != kNoItemID) {
-			Item *draggingItem = g_allItems.findItemByID(itemID);
+			Item *draggingItem = _vm->getAllItems().findItemByID(itemID);
 
 			if (draggingItem) {
 				takeItemFromRoom(draggingItem);
@@ -1157,7 +1157,7 @@ void Neighborhood::activateOneHotspot(HotspotInfoTable::Entry &entry, Hotspot *h
 		break;
 	default:
 		if ((hotspot->getHotspotFlags() & kPickUpBiochipSpotFlag) != 0) {
-			Item *item = g_allItems.findItemByID(entry.hotspotItem);
+			Item *item = _vm->getAllItems().findItemByID(entry.hotspotItem);
 			if (item &&	item->getItemNeighborhood() == getObjectID())
 				hotspot->setActive();
 		} else {

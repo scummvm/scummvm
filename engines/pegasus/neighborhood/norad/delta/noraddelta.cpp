@@ -846,7 +846,7 @@ void NoradDelta::doSolve() {
 
 	if (GameState.getCurrentRoomAndView() == MakeRoomView(kNorad68, kWest)) {
 		if (!_vm->playerHasItemID(kRetinalScanBiochip))
-			_vm->addItemToBiochips((BiochipItem *)g_allItems.findItemByID(kRetinalScanBiochip));
+			_vm->addItemToBiochips((BiochipItem *)_vm->getAllItems().findItemByID(kRetinalScanBiochip));
 
 		BiochipItem *biochip = _vm->getCurrentBiochip();
 		if (biochip != 0 && biochip->getObjectID() != kRetinalScanBiochip && g_interface)

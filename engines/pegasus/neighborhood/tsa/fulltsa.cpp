@@ -1108,7 +1108,7 @@ void FullTSA::pickedUpItem(Item *item) {
 		GameState.setScoringGotJourneymanKey(true);
 		break;
 	case kPegasusBiochip:
-		biochip = (BiochipItem *)g_allItems.findItemByID(kMapBiochip);
+		biochip = (BiochipItem *)_vm->getAllItems().findItemByID(kMapBiochip);
 		_vm->addItemToBiochips(biochip);
 		GameState.setScoringGotPegasusBiochip(true);
 		break;
@@ -2373,7 +2373,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 
 		switch (lastExtra) {
 		case kTSAGTCardSwipe:
-			item = (InventoryItem *)g_allItems.findItemByID(kKeyCard);
+			item = (InventoryItem *)_vm->getAllItems().findItemByID(kKeyCard);
 			_vm->addItemToInventory(item);
 			setCurrentActivation(kActivateTSAReadyToTransport);
 			break;

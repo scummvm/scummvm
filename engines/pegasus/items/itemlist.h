@@ -52,8 +52,7 @@ public:
 
 typedef ItemList::iterator ItemIterator;
 
-// TODO: Don't use global construction!
-extern ItemList g_allItems;
+#define g_allItems (((PegasusEngine *)g_engine)->getAllItems())
 
 } // End of namespace Pegasus
 

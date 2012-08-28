@@ -26,13 +26,11 @@
 #include "common/error.h"
 #include "common/stream.h"
 
-#include "engines/pegasus/items/item.h"
-#include "engines/pegasus/items/itemlist.h"
+#include "pegasus/pegasus.h"
+#include "pegasus/items/item.h"
+#include "pegasus/items/itemlist.h"
 
 namespace Pegasus {
-
-// TODO: Don't use global construction!
-ItemList g_allItems;
 
 ItemList::ItemList() {
 }

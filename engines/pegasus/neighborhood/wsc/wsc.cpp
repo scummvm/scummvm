@@ -1098,7 +1098,7 @@ void WSC::closeDoorOffScreen(const RoomID room, const DirectionConstant) {
 	case kWSC82:
 	case kWSC92:
 	case kWSC93:
-		keyCard = g_allItems.findItemByID(kKeyCard);
+		keyCard = _vm->getAllItems().findItemByID(kKeyCard);
 		if (keyCard->getItemState() == kFlashlightOn && (GameState.getCurrentRoom() == kWSC81 ||
 				GameState.getCurrentRoom() == kWSC93)) {
 			keyCard->setItemState(kFlashlightOff);
@@ -1166,11 +1166,11 @@ void WSC::doorOpened() {
 
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kWSC42, kEast):
-		_vm->addItemToInventory((InventoryItem *)g_allItems.findItemByID(kSinclairKey));
+		_vm->addItemToInventory((InventoryItem *)_vm->getAllItems().findItemByID(kSinclairKey));
 		break;
 	case MakeRoomView(kWSC58, kSouth):
 		GameState.setScoringUsedCrowBarInWSC();
-		_vm->addItemToInventory((InventoryItem *)g_allItems.findItemByID(kCrowbar));
+		_vm->addItemToInventory((InventoryItem *)_vm->getAllItems().findItemByID(kCrowbar));
 		break;
 	case MakeRoomView(kWSC06, kNorth):
 	case MakeRoomView(kWSC79, kWest):
@@ -1663,7 +1663,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			makeContinuePoint();
 			break;
 		case kWSCDartScan2:
-			_vm->addItemToInventory((InventoryItem *)g_allItems.findItemByID(kPoisonDart));
+			_vm->addItemToInventory((InventoryItem *)_vm->getAllItems().findItemByID(kPoisonDart));
 			GameState.setScoringRemovedDart();
 			GameState.setWSCRemovedDart(true);
 			setUpPoison();
@@ -1915,7 +1915,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			//g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
 			break;
 		case kW98RobotGassed:
-			item = (Item *)g_allItems.findItemByID(kArgonCanister);
+			item = (Item *)_vm->getAllItems().findItemByID(kArgonCanister);
 			_vm->addItemToInventory((InventoryItem *)item);
 			setCurrentActivation(kActivationRobotDead);
 			GameState.setWSCRobotDead(true);
@@ -2112,7 +2112,7 @@ void WSC::activateOneHotspot(HotspotInfoTable::Entry &entry, Hotspot *hotspot) {
 			hotspot->setActive();
 		break;
 	case kW98DropArgonSpotID:
-		argonCanister = g_allItems.findItemByID(kArgonCanister);
+		argonCanister = _vm->getAllItems().findItemByID(kArgonCanister);
 		if (argonCanister->getItemState() != kArgonFull)
 			hotspot->setInactive();
 		break;
@@ -2342,9 +2342,9 @@ void WSC::pickedUpItem(Item *item) {
 		break;
 	case kArgonPickup:
 		_vm->removeItemFromInventory((InventoryItem *)item);
-		item = (Item *)g_allItems.findItemByID(kArgonCanister);
+		item = (Item *)_vm->getAllItems().findItemByID(kArgonCanister);
 		_vm->addItemToInventory((InventoryItem *)item);
-		item = (Item *)g_allItems.findItemByID(kSinclairKey);
+		item = (Item *)_vm->getAllItems().findItemByID(kSinclairKey);
 		_vm->addItemToInventory((InventoryItem *)item);
 		_vm->getAllHotspots().setHotspotRect(kWSC02SouthMorphOutSpotID,
 				Common::Rect(kNavAreaLeft, kNavAreaTop, 512 + kNavAreaLeft, 256 + kNavAreaTop));

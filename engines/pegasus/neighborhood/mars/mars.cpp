@@ -1632,7 +1632,7 @@ void Mars::activateHotspots() {
 	case MakeRoomView(kMars56, kEast):
 		switch (getCurrentActivation()) {
 		case kActivateReactorReadyForNitrogen:
-			item = (InventoryItem *)g_allItems.findItemByID(kNitrogenCanister);
+			item = (InventoryItem *)_vm->getAllItems().findItemByID(kNitrogenCanister);
 			if (item->getItemState() != kNitrogenFull)
 				_vm->getAllHotspots().deactivateOneHotspot(kMars57DropNitrogenSpotID);
 			// Fall through...
@@ -2151,7 +2151,7 @@ void Mars::receiveNotification(Notification *notification, const NotificationFla
 			}
 			break;
 		case kMarsTurnOnPod:
-			item = (InventoryItem *)g_allItems.findItemByID(kMarsCard);
+			item = (InventoryItem *)_vm->getAllItems().findItemByID(kMarsCard);
 			_vm->addItemToInventory(item);
 			GameState.setScoringTurnedOnTransport();
 			loadLoopSound1("");
@@ -2259,7 +2259,7 @@ void Mars::receiveNotification(Notification *notification, const NotificationFla
 			GameState.setMarsLockFrozen(false);
 			break;
 		case kMars57FreezeLock:
-			item = (InventoryItem *)g_allItems.findItemByID(kNitrogenCanister);
+			item = (InventoryItem *)_vm->getAllItems().findItemByID(kNitrogenCanister);
 			item->setItemState(kNitrogenEmpty);
 			_vm->addItemToInventory(item);
 			setCurrentActivation(kActivateReactorReadyForCrowBar);
@@ -2271,7 +2271,7 @@ void Mars::receiveNotification(Notification *notification, const NotificationFla
 			_utilityFuse.lightFuse();
 			break;
 		case kMars57BreakLock:
-			item = (InventoryItem *)g_allItems.findItemByID(kCrowbar);
+			item = (InventoryItem *)_vm->getAllItems().findItemByID(kCrowbar);
 			_vm->addItemToInventory(item);
 			GameState.setScoringUsedCrowBar();
 			GameState.setMarsLockBroken(true);

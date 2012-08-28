@@ -136,25 +136,25 @@ void NoradAlpha::start() {
 	RoomID itemRoom;
 	DirectionConstant itemDirection;
 
-	Item *item = (Item *)g_allItems.findItemByID(kGasCanister);
+	Item *item = (Item *)_vm->getAllItems().findItemByID(kGasCanister);
 	item->getItemRoom(itemNeighborhood, itemRoom, itemDirection);
 
 	if (itemNeighborhood == getObjectID()) {
 		_fillingStationItem = item;
 	} else {
-		item = (Item *)g_allItems.findItemByID(kAirMask);
+		item = (Item *)_vm->getAllItems().findItemByID(kAirMask);
 		item->getItemRoom(itemNeighborhood, itemRoom, itemDirection);
 
 		if (itemNeighborhood == getObjectID()) {
 			_fillingStationItem = item;
 		} else {
-			item = (Item *)g_allItems.findItemByID(kNitrogenCanister);
+			item = (Item *)_vm->getAllItems().findItemByID(kNitrogenCanister);
 			item->getItemRoom(itemNeighborhood, itemRoom, itemDirection);
 
 			if (itemNeighborhood == getObjectID()) {
 				_fillingStationItem = item;
 			} else {
-				item = (Item *)g_allItems.findItemByID(kArgonCanister);
+				item = (Item *)_vm->getAllItems().findItemByID(kArgonCanister);
 				item->getItemRoom(itemNeighborhood, itemRoom, itemDirection);
 				if (itemNeighborhood == getObjectID())
 					_fillingStationItem = item;

@@ -1175,7 +1175,7 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 			arriveAt(kCaldoria27, GameState.getCurrentDirection());
 			break;
 		case kCaGTCardSwipe:
-			item = (InventoryItem *)g_allItems.findItemByID(kKeyCard);
+			item = (InventoryItem *)_vm->getAllItems().findItemByID(kKeyCard);
 			_vm->addItemToInventory(item);
 			setCurrentActivation(kActivateReadyToTransport);
 			break;
@@ -1212,7 +1212,7 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 			}
 			break;
 		case kCa53EastShootSinclair:
-			_vm->addItemToInventory((InventoryItem *)g_allItems.findItemByID(kStunGun));
+			_vm->addItemToInventory((InventoryItem *)_vm->getAllItems().findItemByID(kStunGun));
 			startExtraSequence(kCa53EastZoomOutFromSinclair, kExtraCompletedFlag, false);
 			GameState.setScoringStunnedSinclair(true);
 			break;
@@ -1769,8 +1769,8 @@ void Caldoria::openElevatorMovie() {
 void Caldoria::emptyOJGlass() {
 	GameState.setTakenItemID(kOrangeJuiceGlassFull, false);
 	GameState.setTakenItemID(kOrangeJuiceGlassEmpty, true);
-	_vm->removeItemFromInventory((InventoryItem *)g_allItems.findItemByID(kOrangeJuiceGlassFull));
-	_vm->addItemToInventory((InventoryItem *)g_allItems.findItemByID(kOrangeJuiceGlassEmpty));
+	_vm->removeItemFromInventory((InventoryItem *)_vm->getAllItems().findItemByID(kOrangeJuiceGlassFull));
+	_vm->addItemToInventory((InventoryItem *)_vm->getAllItems().findItemByID(kOrangeJuiceGlassEmpty));
 }
 
 void Caldoria::doorBombTimerExpired() {

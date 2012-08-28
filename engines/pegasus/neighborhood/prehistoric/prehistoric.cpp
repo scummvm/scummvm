@@ -284,7 +284,7 @@ void Prehistoric::turnTo(const DirectionConstant newDirection) {
 		break;
 	case MakeRoomView(kPrehistoric16, kNorth):
 	case MakeRoomView(kPrehistoric21, kWest):
-		keyCard = g_allItems.findItemByID(kKeyCard);
+		keyCard = _vm->getAllItems().findItemByID(kKeyCard);
 		if (keyCard->getItemState() == kFlashlightOff) {
 			keyCard->setItemState(kFlashlightOn);
 			playSpotSoundSync(kPrehistoricFlashlightClickIn, kPrehistoricFlashlightClickOut);
@@ -294,7 +294,7 @@ void Prehistoric::turnTo(const DirectionConstant newDirection) {
 	case MakeRoomView(kPrehistoric16, kWest):
 	case MakeRoomView(kPrehistoric21, kNorth):
 	case MakeRoomView(kPrehistoric21, kSouth):
-		keyCard = g_allItems.findItemByID(kKeyCard);
+		keyCard = _vm->getAllItems().findItemByID(kKeyCard);
 		if (keyCard->getItemState() == kFlashlightOn) {
 			keyCard->setItemState(kFlashlightOff);
 			playSpotSoundSync(kPrehistoricFlashlightClickIn, kPrehistoricFlashlightClickOut);
@@ -356,7 +356,7 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 		zoomToVault();
 		break;
 	case MakeRoomView(kPrehistoric16, kNorth):
-		keyCard = g_allItems.findItemByID(kKeyCard);
+		keyCard = _vm->getAllItems().findItemByID(kKeyCard);
 
 		if (keyCard->getItemState() == kFlashlightOff) {
 			keyCard->setItemState(kFlashlightOn);
@@ -383,7 +383,7 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 	case MakeRoomView(kPrehistoric19, kNorth):
 	case MakeRoomView(kPrehistoric20, kNorth):
 	case MakeRoomView(kPrehistoric21, kEast):
-		keyCard = g_allItems.findItemByID(kKeyCard);
+		keyCard = _vm->getAllItems().findItemByID(kKeyCard);
 
 		if (keyCard->getItemState() == kFlashlightOn) {
 			keyCard->setItemState(kFlashlightOff);
@@ -554,7 +554,7 @@ void Prehistoric::receiveNotification(Notification *notification, const Notifica
 			break;
 		case kPre25EastUnlockingVaultNoLog:
 		case kPre25EastUnlockingVaultWithLog:
-			_vm->addItemToInventory((InventoryItem *)g_allItems.findItemByID(kJourneymanKey));
+			_vm->addItemToInventory((InventoryItem *)_vm->getAllItems().findItemByID(kJourneymanKey));
 			break;
 		}
 	}
