@@ -38,12 +38,9 @@ namespace Tony {
  */
 Common::String readString(Common::ReadStream &df) {
 	Common::String var;
-	uint8 len;
-	int i;
+	uint8 len = df.readByte();
 
-	len = df.readByte();
-
-	for (i = 0; i < len; i++) {
+	for (int i = 0; i < len; i++) {
 		char c;
 		c = df.readByte();
 		var += c;
@@ -356,16 +353,14 @@ void RMResUpdate::init(const Common::String &fileName) {
 		// It doesn't exist, so exit immediately
 		return;
 
-	uint8 version;
-	uint32 i;
+	uint8 version = _hFile.readByte();
 
-	version = _hFile.readByte();
 	_numUpd = _hFile.readUint32LE();
 
 	_infos = new ResUpdInfo[_numUpd];
 
 	// Load the index of the resources in the file
-	for (i = 0; i < _numUpd; ++i) {
+	for (uint32 i = 0; i < _numUpd; ++i) {
 		ResUpdInfo &info = _infos[i];
 
 		info._dwRes = _hFile.readUint32LE();

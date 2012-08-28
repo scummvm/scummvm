@@ -265,7 +265,6 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 	int dimx = RM_SX / dezoom;
 	int dimy = RM_SY / dezoom;
 
-	uint32 k = 0;
 	uint16 *cursrc;
 
 	if (lpDestBuf == NULL)
@@ -292,6 +291,7 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 				src += RM_BBX;
 		}
 	} else {
+		uint32 k = 0;
 		for (int y = 0; y < dimy; y++) {
 			for (int x = 0; x < dimx; x++) {
 				cursrc = &src[RM_SKIPX + x * dezoom];

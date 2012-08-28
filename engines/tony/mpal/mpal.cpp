@@ -154,10 +154,9 @@ static void unlockScripts() {
  * need to remember to call UnlockVar()
  */
 int32 varGetValue(const char *lpszVarName) {
-	int i;
 	LPMPALVAR v = GLOBALS._lpmvVars;
 
-	for (i = 0; i < GLOBALS._nVars; v++, i++)
+	for (int i = 0; i < GLOBALS._nVars; v++, i++)
 		if (strcmp(lpszVarName, v->lpszVarName) == 0)
 			return v->dwVal;
 
@@ -171,10 +170,9 @@ int32 varGetValue(const char *lpszVarName) {
  * @param val				Value to set
  */
 void varSetValue(const char *lpszVarName, int32 val) {
-	uint i;
 	LPMPALVAR v = GLOBALS._lpmvVars;
 
-	for (i = 0; i < GLOBALS._nVars; v++, i++)
+	for (uint i = 0; i < GLOBALS._nVars; v++, i++)
 		if (strcmp(lpszVarName, v->lpszVarName) == 0) {
 			v->dwVal = val;
 			if (GLOBALS._lpiifCustom != NULL && strncmp(v->lpszVarName, "Pattern.", 8) == 0) {
@@ -202,10 +200,9 @@ void varSetValue(const char *lpszVarName, int32 val) {
  * first been locked with a call to LockLoc().
  */
 static int locGetOrderFromNum(uint32 nLoc) {
-	int i;
 	LPMPALLOCATION loc = GLOBALS._lpmlLocations;
 
-	for (i = 0; i < GLOBALS._nLocations; i++, loc++)
+	for (int i = 0; i < GLOBALS._nLocations; i++, loc++)
 		if (loc->nObj == nLoc)
 			return i;
 
@@ -221,10 +218,9 @@ static int locGetOrderFromNum(uint32 nLoc) {
  * first been locked with a call to LockMsg()
  */
 static int msgGetOrderFromNum(uint32 nMsg) {
-	int i;
 	LPMPALMSG msg = GLOBALS._lpmmMsgs;
 
-	for (i = 0; i < GLOBALS._nMsgs; i++, msg++) {
+	for (int i = 0; i < GLOBALS._nMsgs; i++, msg++) {
 		if (msg->_wNum == nMsg)
 			return i;
 	}
@@ -240,10 +236,9 @@ static int msgGetOrderFromNum(uint32 nMsg) {
  * first been locked with a call to LockItems()
  */
 static int itemGetOrderFromNum(uint32 nItem) {
-	int i;
 	LPMPALITEM item = GLOBALS._lpmiItems;
 
-	for (i = 0; i < GLOBALS._nItems; i++, item++) {
+	for (int i = 0; i < GLOBALS._nItems; i++, item++) {
 		if (item->nObj == nItem)
 			return i;
 	}
@@ -260,10 +255,9 @@ static int itemGetOrderFromNum(uint32 nItem) {
  * first been locked with a call to LockScripts()
  */
 static int scriptGetOrderFromNum(uint32 nScript) {
-	int i;
 	LPMPALSCRIPT script = GLOBALS._lpmsScripts;
 
-	for (i = 0; i < GLOBALS._nScripts; i++, script++) {
+	for (int i = 0; i < GLOBALS._nScripts; i++, script++) {
 		if (script->nObj == nScript)
 			return i;
 	}
@@ -280,10 +274,9 @@ static int scriptGetOrderFromNum(uint32 nScript) {
  * first been locked with a call to LockDialogs()
  */
 static int dialogGetOrderFromNum(uint32 nDialog) {
-	int i;
 	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs;
 
-	for (i = 0; i < GLOBALS._nDialogs; i++, dialog++) {
+	for (int i = 0; i < GLOBALS._nDialogs; i++, dialog++) {
 		if (dialog->nObj == nDialog)
 			return i;
 	}
@@ -301,14 +294,13 @@ static int dialogGetOrderFromNum(uint32 nDialog) {
 static char *DuplicateMessage(uint32 nMsgOrd) {
 	const char *origmsg;
 	char *clonemsg;
-	int j;
 
 	if (nMsgOrd == (uint32)-1)
 		return NULL;
 
 	origmsg = (const char *)globalLock(GLOBALS._lpmmMsgs[nMsgOrd]._hText);
 
-	j = 0;
+	int j = 0;
 	while (origmsg[j] != '\0' || origmsg[j + 1] != '\0')
 		j++;
 	j += 2;
@@ -335,15 +327,14 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
 	const char *origmsg;
 	char *clonemsg;
 	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
-	int i, j;
 
-	for (j = 0; dialog->_periods[j] != NULL; j++) {
+	for (int j = 0; dialog->_periods[j] != NULL; j++) {
 		if (dialog->_periodNums[j] == nPeriod) {
 			/* Found the phrase, it should be duplicated */
 			origmsg = (const char *)globalLock(dialog->_periods[j]);
 
 			/* Calculate the length and allocate memory */
-			i = 0;
+			int i = 0;
 			while (origmsg[i] != '\0')
 				i++;
 
@@ -370,14 +361,13 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
  * @returns		Handle to the loaded resource
  */
 HGLOBAL resLoad(uint32 dwId) {
-	int i;
 	HGLOBAL h;
 	char head[4];
 	uint32 nBytesRead;
 	uint32 nSizeComp, nSizeDecomp;
 	byte *temp, *buf;
 
-	for (i = 0; i < GLOBALS._nResources; i++)
+	for (int i = 0; i < GLOBALS._nResources; i++)
 		if (GLOBALS._lpResources[i * 2] == dwId) {
 			GLOBALS._hMpr.seek(GLOBALS._lpResources[i * 2 + 1]);
 			nBytesRead = GLOBALS._hMpr.read(head, 4);
@@ -416,12 +406,11 @@ HGLOBAL resLoad(uint32 dwId) {
 
 static uint32 *getSelectList(uint32 i) {
 	uint32 *sl;
-	int j, k, num;
 	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 
 	/* Count how many are active selects */
-	num = 0;
-	for (j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
+	int num = 0;
+	for (int j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
 		if (dialog->_choice[i]._select[j].curActive)
 			num++;
 	}
@@ -430,13 +419,13 @@ static uint32 *getSelectList(uint32 i) {
 	if (num == 0)
 		return NULL;
 
-	sl= (uint32 *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(uint32) * (num + 1));
+	sl = (uint32 *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(uint32) * (num + 1));
 	if (sl == NULL)
 		return NULL;
 
 	/* Copy all the data inside the active select list */
-	k = 0;
-	for (j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
+	int k = 0;
+	for (int j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
 		if (dialog->_choice[i]._select[j].curActive)
 			sl[k++] = dialog->_choice[i]._select[j].dwData;
 	}
@@ -447,11 +436,10 @@ static uint32 *getSelectList(uint32 i) {
 
 static uint32 *GetItemList(uint32 nLoc) {
 	uint32 *il;
-	uint32 num,i,j;
 	LPMPALVAR v = GLOBALS._lpmvVars;
 
-	num = 0;
-	for (i = 0; i < GLOBALS._nVars; i++, v++) {
+	uint32 num = 0;
+	for (uint32 i = 0; i < GLOBALS._nVars; i++, v++) {
 		if (strncmp(v->lpszVarName,"Location",8) == 0 && v->dwVal == nLoc)
 			num++;
 	}
@@ -461,8 +449,8 @@ static uint32 *GetItemList(uint32 nLoc) {
 		return NULL;
 
 	v = GLOBALS._lpmvVars;
-	j = 0;
-	for (i = 0; i < GLOBALS._nVars; i++, v++) {
+	uint32 j = 0;
+	for (uint32 i = 0; i < GLOBALS._nVars; i++, v++) {
 		if (strncmp(v->lpszVarName, "Location", 8) == 0 && v->dwVal == nLoc) {
 			sscanf(v->lpszVarName, "Location.%u", &il[j]);
 			j++;
@@ -478,9 +466,7 @@ static LPITEM getItemData(uint32 nOrdItem) {
 	LPITEM ret;
 	HGLOBAL hDat;
 	char *dat;
-	int i, j;
 	char *patlength;
-	uint32 dim;
 
 	// Zeroing out the allocated memory is required!!!
 	ret = (LPITEM)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(ITEM));
@@ -492,7 +478,7 @@ static LPITEM getItemData(uint32 nOrdItem) {
 	dat = (char *)globalLock(hDat);
 
 	if (dat[0] == 'D' && dat[1] == 'A' && dat[2] == 'T') {
-		i = dat[3];			// For version 1.0!!
+		int i = dat[3];			// For version 1.0!!
 		dat += 4;
 
 		if (i >= 0x10) {	// From 1.0, there's a destination point for each object
@@ -513,21 +499,21 @@ static LPITEM getItemData(uint32 nOrdItem) {
 	ret->_destZ = *dat++;
 
 	// Upload the left & top co-ordinates of each frame
-	for (i = 0; i < ret->_numframe; i++) {
+	for (int i = 0; i < ret->_numframe; i++) {
 		ret->_frameslocations[i].left = (int16)READ_LE_UINT16(dat);
 		ret->_frameslocations[i].top = (int16)READ_LE_UINT16(dat + 2);
 		dat += 4;
 	}
 
 	// Upload the size of each frame and calculate the right & bottom
-	for (i = 0; i < ret->_numframe; i++) {
+	for (int i = 0; i < ret->_numframe; i++) {
 		ret->_frameslocations[i].right = (int16)READ_LE_UINT16(dat) + ret->_frameslocations[i].left;
 		ret->_frameslocations[i].bottom = (int16)READ_LE_UINT16(dat + 2) + ret->_frameslocations[i].top;
 		dat += 4;
 	}
 
 	// Upload the bounding boxes of each frame
-	for (i = 0; i < ret->_numframe; i++) {
+	for (int i = 0; i < ret->_numframe; i++) {
 		ret->_bbox[i].left = (int16)READ_LE_UINT16(dat);
 		ret->_bbox[i].top = (int16)READ_LE_UINT16(dat + 2);
 		ret->_bbox[i].right = (int16)READ_LE_UINT16(dat + 4);
@@ -539,16 +525,16 @@ static LPITEM getItemData(uint32 nOrdItem) {
 	patlength = dat;
 	dat += ret->_numpattern;
 
-	for (i = 1; i < ret->_numpattern; i++) {
-		for (j = 0; j < patlength[i]; j++)
+	for (int i = 1; i < ret->_numpattern; i++) {
+		for (int j = 0; j < patlength[i]; j++)
 			ret->_pattern[i][j] = dat[j];
 		ret->_pattern[i][(int)patlength[i]] = 255;   // Terminate pattern
 		dat += patlength[i];
 	}
 
 	// Upload the individual frames of animations
-	for (i = 1; i < ret->_numframe; i++) {
-		dim = (uint32)(ret->_frameslocations[i].right - ret->_frameslocations[i].left) *
+	for (int i = 1; i < ret->_numframe; i++) {
+		uint32 dim = (uint32)(ret->_frameslocations[i].right - ret->_frameslocations[i].left) *
 			(uint32)(ret->_frameslocations[i].bottom - ret->_frameslocations[i].top);
 		ret->_frames[i] = (char *)globalAlloc(GMEM_FIXED,dim);
 
@@ -559,7 +545,7 @@ static LPITEM getItemData(uint32 nOrdItem) {
 	}
 
 	// Check if we've got to the end of the file
-	i = READ_LE_UINT16(dat);
+	int i = READ_LE_UINT16(dat);
 	if (i != 0xABCD)
 		return NULL;
 
@@ -1288,16 +1274,14 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
  */
 static uint32 doAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 	LPMPALITEM item = GLOBALS._lpmiItems;
-	int i;
 	LPMPALITEM newitem;
-	uint32 h;
 
 	item+=ordItem;
 	Common::String buf = Common::String::format("Status.%u", item->nObj);
 	if (varGetValue(buf.c_str()) <= 0)
 		return CORO_INVALID_PID_VALUE;
 
-	for (i = 0; i < item->nActions; i++) {
+	for (int i = 0; i < item->nActions; i++) {
 		if (item->Action[i].num != nAction)
 			continue;
 
@@ -1326,6 +1310,7 @@ static uint32 doAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		// and a second process to free up the memory when the action is finished.
 
 		// !!! New process management
+		uint32 h;
 		if ((h = CoroScheduler.createProcess(ActionThread, &newitem, sizeof(LPMPALITEM))) == CORO_INVALID_PID_VALUE)
 			return CORO_INVALID_PID_VALUE;
 
@@ -1353,8 +1338,6 @@ static uint32 doAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
  * The data on the choices may be obtained through various queries.
  */
 static uint32 doDialog(uint32 nDlgOrd, uint32 nGroup) {
-	uint32 h;
-
 	// Store the running dialog in a global variable
 	GLOBALS._nExecutingDialog = nDlgOrd;
 
@@ -1367,6 +1350,7 @@ static uint32 doDialog(uint32 nDlgOrd, uint32 nGroup) {
 	// Create a thread that performs the dialogue group
 
 	// Create the process
+	uint32 h;
 	if ((h = CoroScheduler.createProcess(GroupThread, &nGroup, sizeof(uint32))) == CORO_INVALID_PID_VALUE)
 		return CORO_INVALID_PID_VALUE;
 
@@ -1589,7 +1573,6 @@ void mpalFree() {
  * method that returns numeric results.
  */
 uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
-	int x, y;
 	Common::String buf;
 	uint32 dwRet = 0;
 	char *n;
@@ -1635,8 +1618,8 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		 *  uint32 mpalQuery(MPQ_LOCATION_SIZE, uint32 nLoc, uint32 dwCoord);
 		 */
 		lockLocations();
-		x = locGetOrderFromNum(GETARG(uint32));
-		y = GETARG(uint32);
+		int x = locGetOrderFromNum(GETARG(uint32));
+		int y = GETARG(uint32);
 		if (x != -1) {
 			if (y == MPQ_X)
 				dwRet = GLOBALS._lpmlLocations[x].dwXlen;
@@ -1678,7 +1661,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		 *  bool mpalQuery(MPQ_ITEM_IS_ACTIVE, uint32 nItem);
 		 */
 		lockVar();
-		x = GETARG(uint32);
+		int x = GETARG(uint32);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
 			dwRet = (uint32)false;
@@ -1692,14 +1675,14 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		 *  uint32 mpalQuery(MPQ_ITEM_NAME, uint32 nItem, char * lpszName);
 		 */
 		lockVar();
-		x = GETARG(uint32);
+		int x = GETARG(uint32);
 		n = GETARG(char *);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
 			n[0]='\0';
 		else {
 			lockItems();
-			y = itemGetOrderFromNum(x);
+			int y = itemGetOrderFromNum(x);
 			memcpy(n, (char *)(GLOBALS._lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
 			unlockItems();
 		}
@@ -1729,8 +1712,8 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		 *  bool mpalQuery(MPQ_DIALOG_SELECTION, uint32 nChoice, uint32 dwData);
 		 */
 		lockDialogs();
-		x = GETARG(uint32);
-		y = GETARG(uint32);
+		int x = GETARG(uint32);
+		int y = GETARG(uint32);
 		dwRet = (uint32)doSelection(x, y);
 
 		unlockDialogs();
@@ -1741,9 +1724,9 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		 */
 		lockItems();
 		lockVar();
-		x = GETARG(uint32);
+		int x = GETARG(uint32);
 		int z = GETARG(uint32);
-		y = itemGetOrderFromNum(z);
+		int y = itemGetOrderFromNum(z);
 		if (y != -1) {
 			dwRet = doAction(x, y, GETARG(uint32));
 		} else {
@@ -1761,8 +1744,8 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		if (!GLOBALS._bExecutingDialog) {
 			lockDialogs();
 
-			x = dialogGetOrderFromNum(GETARG(uint32));
-			y = GETARG(uint32);
+			int x = dialogGetOrderFromNum(GETARG(uint32));
+			int y = GETARG(uint32);
 			dwRet = doDialog(x, y);
 			unlockDialogs();
 		}
@@ -1787,7 +1770,6 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
  * method that returns a pointer or handle.
  */
 HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
-	int x, y;
 	char *n;
 	Common::String buf;
 	va_list v;
@@ -1833,7 +1815,7 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 		 *  HGLOBAL mpalQuery(MPQ_LOCATION_IMAGE, uint32 nLoc);
 		 */
 		lockLocations();
-		x = locGetOrderFromNum(GETARG(uint32));
+		int x = locGetOrderFromNum(GETARG(uint32));
 		hRet = resLoad(GLOBALS._lpmlLocations[x].dwPicRes);
 		unlockLocations();
 
@@ -1870,14 +1852,14 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 		 *  uint32 mpalQuery(MPQ_ITEM_NAME, uint32 nItem, char *lpszName);
 		 */
 		lockVar();
-		x = GETARG(uint32);
+		int x = GETARG(uint32);
 		n = GETARG(char *);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
 			n[0] = '\0';
 		else {
 			lockItems();
-			y = itemGetOrderFromNum(x);
+			int y = itemGetOrderFromNum(x);
 			memcpy(n, (char *)(GLOBALS._lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
 			unlockItems();
 		}
@@ -1889,7 +1871,7 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 		 *  char * mpalQuery(MPQ_DIALOG_PERIOD, uint32 nDialog, uint32 nPeriod);
 		 */
 		lockDialogs();
-		y = GETARG(uint32);
+		int y = GETARG(uint32);
 		hRet = duplicateDialogPeriod(y);
 		unlockDialogs();
 
@@ -1998,11 +1980,10 @@ uint32 mpalGetError() {
  * @returns		TRUE if the script 'was launched, FALSE on failure
  */
 bool mpalExecuteScript(int nScript) {
-	int n;
 	LPMPALSCRIPT s;
 
 	LockScripts();
-	n = scriptGetOrderFromNum(nScript);
+	int n = scriptGetOrderFromNum(nScript);
 	s = (LPMPALSCRIPT)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALSCRIPT));
 	if (s == NULL)
 		return false;
@@ -2039,14 +2020,12 @@ void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
  * simultaneously is defined defined by MAXPOLLINGFUNCIONS
  */
 bool mpalStartIdlePoll(int nLoc) {
-	uint32 i;
-
-	for (i = 0; i < MAXPOLLINGLOCATIONS; i++) {
+	for (uint32 i = 0; i < MAXPOLLINGLOCATIONS; i++) {
 		if (GLOBALS._nPollingLocations[i] == (uint32)nLoc)
 			return false;
 	}
 
-	for (i = 0; i < MAXPOLLINGLOCATIONS; i++) {
+	for (uint32 i = 0; i < MAXPOLLINGLOCATIONS; i++) {
 		if (GLOBALS._nPollingLocations[i] == 0) {
 			GLOBALS._nPollingLocations[i] = nLoc;
 

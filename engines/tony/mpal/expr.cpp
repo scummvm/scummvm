@@ -109,13 +109,12 @@ typedef EXPRESSION *LPEXPRESSION;
  * @retruns		Pointer to the cloned expression
  */
 static byte *duplicateExpression(HGLOBAL h) {
-	int i, num;
 	byte *orig, *clone;
 	LPEXPRESSION one, two;
 
 	orig = (byte *)globalLock(h);
 
-	num = *(byte *)orig;
+	int num = *(byte *)orig;
 	one = (LPEXPRESSION)(orig+1);
 
 	clone = (byte *)globalAlloc(GMEM_FIXED, sizeof(EXPRESSION) * num + 1);
@@ -123,7 +122,7 @@ static byte *duplicateExpression(HGLOBAL h) {
 
 	memcpy(clone, orig, sizeof(EXPRESSION) * num + 1);
 
-	for (i = 0; i < num; i++) {
+	for (int i = 0; i < num; i++) {
 		if (one->type == ELT_PARENTH) {
 			two->type = ELT_PARENTH2;
 			two->val.pson = duplicateExpression(two->val.son);
@@ -218,14 +217,14 @@ static void solve(LPEXPRESSION one, int num) {
  * @returns		Value
  */
 static int evaluateAndFreeExpression(byte *expr) {
-	int i,num,val;
-	LPEXPRESSION one,cur;
+	LPEXPRESSION one, cur;
 
-	num = *expr;
+	int num = *expr;
 	one = (LPEXPRESSION)(expr + 1);
 
 	// 1) Sostituzioni delle variabili
-	for (i = 0, cur = one; i < num; i++, cur++) {
+	cur = one;
+	for (int i = 0; i < num; i++, cur++) {
 		if (cur->type == ELT_VAR) {
 			cur->type = ELT_NUMBER;
 			cur->val.num = varGetValue(cur->val.name);
@@ -233,7 +232,8 @@ static int evaluateAndFreeExpression(byte *expr) {
 	}
 
 	// 2) Sostituzioni delle parentesi (tramite ricorsione)
-	for (i = 0, cur = one; i < num; i++, cur++) {
+	cur = one;
+	for (int i = 0; i < num; i++, cur++) {
 		if (cur->type == ELT_PARENTH2) {
 			cur->type = ELT_NUMBER;
 			cur->val.num = evaluateAndFreeExpression(cur->val.pson);
@@ -242,7 +242,7 @@ static int evaluateAndFreeExpression(byte *expr) {
 
 	// 3) Risoluzione algebrica
 	solve(one, num);
-	val = one->val.num;
+	int val = one->val.num;
 	globalDestroy(expr);
 
 	return val;
@@ -260,9 +260,8 @@ static int evaluateAndFreeExpression(byte *expr) {
 const byte *parseExpression(const byte *lpBuf, HGLOBAL *h) {
 	LPEXPRESSION cur;
 	byte *start;
-	uint32 num, i;
 
-	num = *lpBuf;
+	uint32 num = *lpBuf;
 	lpBuf++;
 
 	if (num == 0)
@@ -277,7 +276,7 @@ const byte *parseExpression(const byte *lpBuf, HGLOBAL *h) {
 
 	cur = (LPEXPRESSION)(start + 1);
 
-	for (i = 0;i < num; i++) {
+	for (uint32 i = 0;i < num; i++) {
 		cur->type = *(lpBuf);
 		cur->unary = *(lpBuf + 1);
 		lpBuf += 2;
@@ -343,15 +342,14 @@ int evaluateExpression(HGLOBAL h) {
  * @param h2				Expression to be compared
  */
 bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
-	int i, num1, num2;
 	byte *e1, *e2;
 	LPEXPRESSION one, two;
 
 	e1 = (byte *)globalLock(h1);
 	e2 = (byte *)globalLock(h2);
 
-	num1 = *(byte *)e1;
-	num2 = *(byte *)e2;
+	int num1 = *(byte *)e1;
+	int num2 = *(byte *)e2;
 
 	if (num1 != num2) {
 		globalUnlock(h1);
@@ -362,7 +360,7 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 	one = (LPEXPRESSION)(e1 + 1);
 	two = (LPEXPRESSION)(e2 + 1);
 
-	for (i = 0; i < num1; i++) {
+	for (int i = 0; i < num1; i++) {
 		if (one->type != two->type || (i != num1 - 1 && one->symbol != two->symbol)) {
 			globalUnlock(h1);
 			globalUnlock(h2);
