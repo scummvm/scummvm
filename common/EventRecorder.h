@@ -130,6 +130,7 @@ public:
 	bool checkForContinueGame();
 	void deleteTemporarySave();
 	void updateSubsystems();
+	bool switchMode();
 private:
 	Common::String _author;
 	Common::String _desc;
@@ -154,7 +155,6 @@ private:
 	DefaultTimerManager *_timerManager;
 	void switchMixer();
 	void switchFastMode();
-	void switchMode();
 	void switchTimerManagers();
 	bool openRecordFile(const String &fileName);
 	bool checkGameHash(const ADGameDescription *desc);
@@ -176,6 +176,7 @@ private:
 	volatile RecordMode _recordMode;
 	String _recordFileName;
 	bool _fastPlayback;
+	bool _needRedraw;
 };
 
 } // End of namespace Common

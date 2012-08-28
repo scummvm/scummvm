@@ -71,6 +71,7 @@ EventRecorder::EventRecorder() {
 	_fakeMixerManager = NULL;
 	_enableDrag = false;
 	_initialized = false;
+	_needRedraw = false;
 }
 
 EventRecorder::~EventRecorder() {
@@ -90,6 +91,7 @@ void EventRecorder::deinit() {
 		return;
 	}
 	setFileHeader();
+	_needRedraw = false;
 	_initialized = false;
 	_recordMode = kPassthrough;
 	delete _fakeMixerManager;
@@ -159,7 +161,7 @@ bool EventRecorder::processDelayMillis() {
 
 void EventRecorder::checkForKeyCode(const Event &event) {
 	if (event.type == EVENT_KEYDOWN) {
-		if ((event.kbd.ascii == '/')) {
+		if ((event.kbd.flags&KBD_CTRL) && event.kbd.keycode == KEYCODE_p) {
 			togglePause();
 		}
 	}
@@ -260,6 +262,7 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_lastScreenshotTime = 0;
 	_recordMode = mode;
 	_needcontinueGame = false;
+	_fastPlayback = false;
 
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
@@ -271,8 +274,7 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 		return;
 	}
 	if (_recordMode != kPassthrough) {
-		controlPanel = new GUI::OnScreenDialog();
-//		controlPanel->open();
+		controlPanel = new GUI::OnScreenDialog(_recordMode == kRecorderRecord);
 	}
 	if (_recordMode == kRecorderPlayback) {
 		applyPlaybackSettings();
@@ -284,6 +286,7 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 
 	switchMixer();
 	switchTimerManagers();
+	_needRedraw = true;
 	_initialized = true;
 }
 
@@ -419,37 +422,50 @@ void EventRecorder::updateSubsystems() {
 }
 
 List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
+
 	if ((!_initialized) && (_recordMode != kRecorderPlaybackPause)) {
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
+
 	checkForKeyCode(ev);
-	if (!_initialized) {
-		return DefaultEventMapper::mapEvent(ev, source);
-	}
 
 	Event evt = ev;
 	evt.mouse.x = evt.mouse.x * (g_system->getOverlayWidth() / g_system->getWidth());
 	evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
-	if ((_recordMode == kRecorderRecord) || (_recordMode == kRecorderPlaybackPause)) {
-		g_gui.processEvent(evt, controlPanel);
-	}
-	if (_recordMode == kRecorderPlaybackPause) {
-		return List<Event>();
-	}
-	if (_recordMode == kRecorderRecord) {
-		if (((evt.type == EVENT_LBUTTONDOWN) || (evt.type == EVENT_LBUTTONUP) || (evt.type == EVENT_MOUSEMOVE)) && controlPanel->isMouseOver()) {
+	switch (_recordMode) {
+	case kRecorderPlayback:
+		if (ev.synthetic != true) {
 			return List<Event>();
 		}
-	}
-	if ((_recordMode == kRecorderPlayback) && (ev.synthetic != true)) {
-		return List<Event>();
-	} else {
-		if (_recordMode == kRecorderRecord) {
+		return DefaultEventMapper::mapEvent(ev, source);
+		break;
+	case kRecorderRecord:
+		g_gui.processEvent(evt, controlPanel);
+		if (((evt.type == EVENT_LBUTTONDOWN) || (evt.type == EVENT_LBUTTONUP) || (evt.type == EVENT_MOUSEMOVE)) && controlPanel->isMouseOver()) {
+			return List<Event>();
+		} else {
 			RecorderEvent e;
 			memcpy(&e, &ev, sizeof(ev));
 			e.time = _fakeTimer;
 			_playbackFile->writeEvent(e);
+			return DefaultEventMapper::mapEvent(ev, source);
 		}
+		break;
+	case kRecorderPlaybackPause: {
+		Event dialogEvent;
+			if (controlPanel->editDlgVisible()) {
+				dialogEvent = ev;
+			} else {
+				dialogEvent = evt;
+			}
+			g_gui.processEvent(dialogEvent, controlPanel->getActiveDlg());
+			if (((dialogEvent.type == EVENT_LBUTTONDOWN) || (dialogEvent.type == EVENT_LBUTTONUP) || (dialogEvent.type == EVENT_MOUSEMOVE)) && controlPanel->isMouseOver()) {
+				return List<Event>();
+			}
+			return DefaultEventMapper::mapEvent(dialogEvent, source);
+		}
+		break;
+	default:
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
 }
@@ -540,7 +556,7 @@ SaveFileManager *EventRecorder::getSaveManager(SaveFileManager *realSaveManager)
 }
 
 void EventRecorder::preDrawOverlayGui() {
-    if ((_recordMode != kPassthrough) && (_initialized)) {
+    if ((_initialized) || (_needRedraw)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
 		g_system->showOverlay();
@@ -554,7 +570,7 @@ void EventRecorder::preDrawOverlayGui() {
 }
 
 void EventRecorder::postDrawOverlayGui() {
-    if ((_recordMode != kPassthrough) && (_initialized)) {
+    if ((_initialized) || (_needRedraw)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
 	    g_system->hideOverlay();
@@ -634,7 +650,7 @@ SDL_Surface *EventRecorder::getSurface(int width, int height) {
 	return surface;
 }
 
-void EventRecorder::switchMode() {
+bool EventRecorder::switchMode() {
 	const Common::String gameId = ConfMan.get("gameid");
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
@@ -644,7 +660,7 @@ void EventRecorder::switchMode() {
 						  (*plugin)->hasFeature(MetaEngine::kSupportsListSaves) &&
 						  (*plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
 	if (!featuresSupport) {
-		return;
+		return false;
 	}
 
 	int emptySlot = 1;
@@ -672,6 +688,7 @@ void EventRecorder::switchMode() {
 	ConfMan.set("record_mode", "", ConfigManager::kTransientDomain);
 	ConfMan.setInt("save_slot", emptySlot, ConfigManager::kTransientDomain);
 	_needcontinueGame = true;
+	return true;
 }
 
 bool EventRecorder::checkForContinueGame() {

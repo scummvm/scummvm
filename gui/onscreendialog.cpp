@@ -74,7 +74,7 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog(0, 0, 210, 40) {
 		btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageFastReplaybtn));
 		buttonX += buttonHeight + buttonDistance;
 	}
-	text = new GUI::StaticTextWidget(this, buttonX, buttonY, textWidth, buttonHeight, "00:00:00", Graphics::TextAlign::kTextAlignLeft);
+	text = new GUI::StaticTextWidget(this, buttonX, buttonY, textWidth, buttonHeight, "00:00:00", Graphics::kTextAlignLeft);
 	_enableDrag = false;
 	_mouseOver = false;
 	_editDlgShown = false;
