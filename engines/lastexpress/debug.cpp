@@ -85,7 +85,6 @@ Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(NULL),
 	DCmd_Register("entity",    WRAP_METHOD(Debugger, cmdEntity));
 
 	// Misc
-	DCmd_Register("loadgame",  WRAP_METHOD(Debugger, cmdLoadGame));
 	DCmd_Register("chapter",   WRAP_METHOD(Debugger, cmdSwitchChapter));
 	DCmd_Register("clear",     WRAP_METHOD(Debugger, cmdClear));
 
@@ -1113,30 +1112,6 @@ label_error:
 		DebugPrintf("Syntax: entity <index>\n");
 		for (int i = 0; i < 40; i += 4)
 			DebugPrintf(" %s - %d        %s - %d        %s - %d        %s - %d\n", ENTITY_NAME(i), i, ENTITY_NAME(i+1), i+1, ENTITY_NAME(i+2), i+2, ENTITY_NAME(i+3), i+3);
-	}
-
-	return true;
-}
-
-/**
- * Command: loads a game
- *
- * @param argc The argument count.
- * @param argv The values.
- *
- * @return true if it was handled, false otherwise
- */
-bool Debugger::cmdLoadGame(int argc, const char **argv) {
-	if (argc == 2) {
-		int id = getNumber(argv[1]);
-
-		if (id == 0 || id > 6)
-			goto error;
-
-		getSaveLoad()->loadGame((GameId)(id - 1));
-	} else {
-error:
-		DebugPrintf("Syntax: loadgame <id> (id=1-6)\n");
 	}
 
 	return true;

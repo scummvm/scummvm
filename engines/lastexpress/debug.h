@@ -79,7 +79,6 @@ private:
 	bool cmdShow(int argc, const char **argv);
 	bool cmdEntity(int argc, const char **argv);
 
-	bool cmdLoadGame(int argc, const char **argv);
 	bool cmdSwitchChapter(int argc, const char **argv);
 	bool cmdClear(int argc, const char **argv);
 

@@ -482,10 +482,10 @@ void SaveLoad::clear(bool clearStream) {
 // Save & Load
 //////////////////////////////////////////////////////////////////////////
 
-// Load game
-void SaveLoad::loadGame(GameId id) {
+// Load last saved game
+void SaveLoad::loadLastGame() {
 	if (!_savegame)
-		error("[SaveLoad::loadGame] No savegame stream present");
+		error("[SaveLoad::loadLastGame] No savegame stream present");
 
 	// Rewind current savegame
 	_savegame->seek(0);
@@ -522,7 +522,29 @@ void SaveLoad::loadGame(GameId id) {
 }
 
 // Load a specific game entry
-void SaveLoad::loadGame(GameId id, uint32 index) {
+void SaveLoad::loadGame(uint32 index) {
+	if (!_savegame)
+		error("[SaveLoad::loadLastGame] No savegame stream present");
+
+	// Rewind current savegame
+	_savegame->seek(0);
+
+	// Write main header (with selected index)
+	SavegameMainHeader header;
+	header.count = index;
+	header.brightness = getState()->brightness;
+	header.volume = getState()->volume;
+
+	Common::Serializer ser(NULL, _savegame);
+	header.saveLoadWithSerializer(ser);
+
+	// TODO
+	// Go to the entry
+	// Load the entry
+	// Get offset (main and entry)
+	// Write main header again with correct entry offset
+	// Setup game and start
+
 	error("[SaveLoad::loadGame] Not implemented! (only loading the last entry is working for now)");
 }
 
