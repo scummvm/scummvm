@@ -1072,10 +1072,8 @@ void RMDialogChoice::show(CORO_PARAM, RMGfxTargetBuffer *bigBuf) {
 		_ctx->elaps = 0;
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(mainWaitFrame);
-			mainFreeze();
 			_ctx->elaps = g_vm->getTime() - _ctx->starttime;
 			_ptDrawPos._y = 480 - ((_ctx->deltay * 100) / 700 * _ctx->elaps) / 100;
-			mainUnfreeze();
 		}
 
 		_ptDrawPos._y = _ctx->destpt._y;
@@ -1116,10 +1114,8 @@ void RMDialogChoice::hide(CORO_PARAM) {
 		_ctx->elaps = 0;
 		while (_ctx->elaps < 700) {
 			CORO_INVOKE_0(mainWaitFrame);
-			mainFreeze();
 			_ctx->elaps = g_vm->getTime() - _ctx->starttime;
 			_ptDrawPos._y = 480 - ((_ctx->deltay * 100) / 700 * (700 - _ctx->elaps)) / 100;
-			mainUnfreeze();
 		}
 	}
 

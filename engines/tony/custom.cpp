@@ -374,15 +374,12 @@ DECLARE_CUSTOM_FUNCTION(CustLoadLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, ui
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Freeze();
-
 	GLOBALS._curChangedHotspot = 0;
 	if (bUseStartPos != 0)
 		GLOBALS.LoadLocation(nLoc, RMPoint(tX, tY), GLOBALS._startLocPos[nLoc]);
 	else
 		GLOBALS.LoadLocation(nLoc, RMPoint(tX, tY), RMPoint(-1, -1));
 
-	GLOBALS.Unfreeze();
 	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
 	// On Enter?
@@ -413,7 +410,6 @@ DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgStart)(CORO_PARAM, uint32 nMsg, uint32 
 
 	CORO_INVOKE_2(GLOBALS.UnloadLocation, false, NULL);
 	GLOBALS._tony->hide();
-	GLOBALS.Unfreeze();
 
 	for (_ctx->i = 0; _ctx->i < _ctx->msg->numPeriods() && !GLOBALS._bSkipIdle; _ctx->i++) {
 		_ctx->text.setInput(GLOBALS._input);
@@ -474,11 +470,9 @@ DECLARE_CUSTOM_FUNCTION(ClearScreen)(CORO_PARAM, uint32, uint32, uint32, uint32)
 }
 
 DECLARE_CUSTOM_FUNCTION(SendFullscreenMsgEnd)(CORO_PARAM, uint32 bNotEnableTony, uint32, uint32, uint32) {
-	GLOBALS.Freeze();
 	GLOBALS.LoadLocation(GLOBALS._fullScreenMessageLoc, RMPoint(GLOBALS._fullScreenMessagePt._x, GLOBALS._fullScreenMessagePt._y), RMPoint(-1, -1));
 	if (!bNotEnableTony)
 		GLOBALS._tony->show();
-	GLOBALS.Unfreeze();
 
 	MCharResetCodes();
 	ReapplyChangedHotspot();
@@ -514,9 +508,8 @@ DECLARE_CUSTOM_FUNCTION(CloseLocation)(CORO_PARAM, uint32, uint32, uint32, uint3
 
 	g_vm->stopMusic(4);
 
-	// On exit, unload and unfreeze
+	// On exit, unload
 	CORO_INVOKE_2(GLOBALS.UnloadLocation, true, NULL);
-	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
 }
@@ -556,9 +549,6 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	if (!GLOBALS._bNoBullsEye) {
 		GLOBALS.InitWipe(2);
 	}
-
-	GLOBALS.Unfreeze();
-
 
 	_ctx->h = mpalQueryDoAction(0, nLoc, 0);
 
@@ -626,9 +616,7 @@ void TonyGenericTake1(CORO_PARAM, uint32 nDirection) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Freeze();
 	GLOBALS._tony->take(nDirection, 0);
-	GLOBALS.Unfreeze();
 
 	if (!GLOBALS._bSkipIdle)
 		CORO_INVOKE_0(GLOBALS._tony->waitForEndPattern);
@@ -642,16 +630,12 @@ void TonyGenericTake2(CORO_PARAM, uint32 nDirection) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Freeze();
 	GLOBALS._tony->take(nDirection, 1);
-	GLOBALS.Unfreeze();
 
 	if (!GLOBALS._bSkipIdle)
 		CORO_INVOKE_0(GLOBALS._tony->waitForEndPattern);
 
-	GLOBALS.Freeze();
 	GLOBALS._tony->take(nDirection, 2);
-	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
 }
@@ -662,9 +646,7 @@ void TonyGenericPut1(CORO_PARAM, uint32 nDirection) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Freeze();
 	GLOBALS._tony->put(nDirection, 0);
-	GLOBALS.Unfreeze();
 
 	if (!GLOBALS._bSkipIdle)
 		CORO_INVOKE_0(GLOBALS._tony->waitForEndPattern);
@@ -678,16 +660,12 @@ void TonyGenericPut2(CORO_PARAM, uint32 nDirection) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Freeze();
 	GLOBALS._tony->put(nDirection, 1);
-	GLOBALS.Unfreeze();
 
 	if (!GLOBALS._bSkipIdle)
 		CORO_INVOKE_0(GLOBALS._tony->waitForEndPattern);
 
-	GLOBALS.Freeze();
 	GLOBALS._tony->put(nDirection, 2);
-	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
 }
@@ -1250,10 +1228,8 @@ DECLARE_CUSTOM_FUNCTION(ScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32
 
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 
-		GLOBALS.Freeze();
 		GLOBALS._loc->setScrollPosition(_ctx->pt);
 		GLOBALS._tony->setScrollPosition(_ctx->pt);
-		GLOBALS.Unfreeze();
 	}
 
 	CORO_END_CODE;
@@ -1315,10 +1291,8 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 
-		GLOBALS.Freeze();
 		GLOBALS._loc->setScrollPosition(_ctx->pt);
 		GLOBALS._tony->setScrollPosition(_ctx->pt);
-		GLOBALS.Unfreeze();
 
 	}
 
@@ -1336,10 +1310,8 @@ DECLARE_CUSTOM_FUNCTION(SyncScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, ui
 			_ctx->pt._y = _ctx->startpt._y - _ctx->dimy;
 	}
 
-	GLOBALS.Freeze();
 	GLOBALS._loc->setScrollPosition(_ctx->pt);
 	GLOBALS._tony->setScrollPosition(_ctx->pt);
-	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
 }
@@ -1392,10 +1364,8 @@ DECLARE_CUSTOM_FUNCTION(ShakeScreen)(CORO_PARAM, uint32 nScosse, uint32, uint32,
 	while (g_vm->getTime() < _ctx->curTime + nScosse) {
 		CORO_INVOKE_0(GLOBALS.WaitFrame);
 
-		GLOBALS.Freeze();
 		GLOBALS._loc->setFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
 		GLOBALS._tony->setFixedScroll(RMPoint(1 * _ctx->dirx, 1 * _ctx->diry));
-		GLOBALS.Unfreeze();
 
 		_ctx->i = g_vm->_randomSource.getRandomNumber(2);
 
@@ -1405,10 +1375,8 @@ DECLARE_CUSTOM_FUNCTION(ShakeScreen)(CORO_PARAM, uint32 nScosse, uint32, uint32,
 			_ctx->diry = -_ctx->diry;
 	}
 
-	GLOBALS.Freeze();
 	GLOBALS._loc->setFixedScroll(RMPoint(0, 0));
 	GLOBALS._tony->setFixedScroll(RMPoint(0, 0));
-	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
 }
@@ -1471,16 +1439,12 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 	_ctx->pt = GLOBALS._character[nChar]._item->calculatePos() - RMPoint(-60, 20) - GLOBALS._loc->scrollPosition();
 
 	if (GLOBALS._character[nChar]._startTalkPattern != 0) {
-		GLOBALS.Freeze();
 		GLOBALS._character[nChar]._item->setPattern(GLOBALS._character[nChar]._startTalkPattern);
-		GLOBALS.Unfreeze();
 
 		CORO_INVOKE_0(GLOBALS._character[nChar]._item->waitForEndPattern);
 	}
 
-	GLOBALS.Freeze();
 	GLOBALS._character[nChar]._item->setPattern(GLOBALS._character[nChar]._talkPattern);
-	GLOBALS.Unfreeze();
 
 	_ctx->curVoc = SearchVoiceHeader(0, dwMessage);
 	_ctx->voice = NULL;
@@ -1551,15 +1515,11 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 	}
 
 	if (GLOBALS._character[nChar]._endTalkPattern != 0) {
-		GLOBALS.Freeze();
 		GLOBALS._character[nChar]._item->setPattern(GLOBALS._character[nChar]._endTalkPattern);
-		GLOBALS.Unfreeze();
 		CORO_INVOKE_0(GLOBALS._character[nChar]._item->waitForEndPattern);
 	}
 
-	GLOBALS.Freeze();
 	GLOBALS._character[nChar]._item->setPattern(GLOBALS._character[nChar]._standPattern);
-	GLOBALS.Unfreeze();
 	delete _ctx->msg;
 
 	CORO_END_CODE;
@@ -1845,9 +1805,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 		_ctx->pt = GLOBALS._character[nPers]._item->calculatePos() - RMPoint(-60, 20) - GLOBALS._loc->scrollPosition();
 
 		if (GLOBALS._character[nPers]._startTalkPattern != 0) {
-			GLOBALS.Freeze();
 			GLOBALS._character[nPers]._item->setPattern(GLOBALS._character[nPers]._startTalkPattern);
-			GLOBALS.Unfreeze();
 			CORO_INVOKE_0(GLOBALS._character[nPers]._item->waitForEndPattern);
 		}
 
@@ -1925,9 +1883,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 	if (nPers != 0) {
 		if (!GLOBALS._isMChar[nPers]) {
 			if (GLOBALS._character[nPers]._endTalkPattern != 0) {
-				GLOBALS.Freeze();
 				GLOBALS._character[nPers]._item->setPattern(GLOBALS._character[nPers]._endTalkPattern);
-				GLOBALS.Unfreeze();
 				CORO_INVOKE_0(GLOBALS._character[nPers]._item->waitForEndPattern);
 			}
 
@@ -2023,9 +1979,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 		while (!(GLOBALS._input->mouseLeftClicked() && ((_ctx->sel = _ctx->dc.getSelection()) != -1))) {
 			CORO_INVOKE_0(GLOBALS.WaitFrame);
-			GLOBALS.Freeze();
 			CORO_INVOKE_1(_ctx->dc.doFrame, GLOBALS._input->mousePos());
-			GLOBALS.Unfreeze();
 		}
 
 		// Hide the pointer
@@ -2298,7 +2252,7 @@ DECLARE_CUSTOM_FUNCTION(MustSkipIdleEnd)(CORO_PARAM, uint32, uint32, uint32, uin
 }
 
 DECLARE_CUSTOM_FUNCTION(PatIrqFreeze)(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
-	GLOBALS._bPatIrqFreeze = bStatus;
+	// Unused in ScummVM.
 }
 
 DECLARE_CUSTOM_FUNCTION(OpenInitLoadMenu)(CORO_PARAM, uint32, uint32, uint32, uint32) {
@@ -2307,9 +2261,7 @@ DECLARE_CUSTOM_FUNCTION(OpenInitLoadMenu)(CORO_PARAM, uint32, uint32, uint32, ui
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Freeze();
 	CORO_INVOKE_0(g_vm->openInitLoadMenu);
-	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
 }
@@ -2320,9 +2272,7 @@ DECLARE_CUSTOM_FUNCTION(OpenInitOptions)(CORO_PARAM, uint32, uint32, uint32, uin
 
 	CORO_BEGIN_CODE(_ctx);
 
-	GLOBALS.Freeze();
 	CORO_INVOKE_0(g_vm->openInitOptions);
-	GLOBALS.Unfreeze();
 
 	CORO_END_CODE;
 }
@@ -2575,8 +2525,6 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	GLOBALS.LoadLocation = mainLoadLocation;
 	GLOBALS.UnloadLocation = mainUnloadLocation;
 	GLOBALS.LinkGraphicTask = mainLinkGraphicTask;
-	GLOBALS.Freeze = mainFreeze;
-	GLOBALS.Unfreeze = mainUnfreeze;
 	GLOBALS.WaitFrame = mainWaitFrame;
 	GLOBALS.PlayMusic = mainPlayMusic;
 	GLOBALS.InitWipe = mainInitWipe;

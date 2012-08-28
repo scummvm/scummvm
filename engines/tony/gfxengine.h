@@ -63,7 +63,6 @@ private:
 	int _nCurLoc;
 	RMTonyAction _curAction;
 	int _curActionObj;
-	OSystem::MutexRef _csMainLoop;
 
 	int _nWipeType;
 	uint32 _hWipeEvent;
@@ -125,10 +124,6 @@ public:
 	uint32 loadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
 	void unloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
 	int getCurrentLocation() const { return _nCurLoc; }
-
-	// Freeze and unfreeze
-	void freeze();
-	void unfreeze();
 
 	// State management
 	void saveState(const Common::String &fn, byte *curThumb, const Common::String &name);

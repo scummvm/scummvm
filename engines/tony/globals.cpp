@@ -44,8 +44,6 @@ Globals::Globals() {
 	LoadLocation = NULL;
 	UnloadLocation = NULL;
 	LinkGraphicTask = NULL;
-	Freeze = NULL;
-	Unfreeze = NULL;
 	WaitFrame = NULL;
 	PlayMusic = NULL;
 	WaitWipeEnd = NULL;
@@ -58,7 +56,6 @@ Globals::Globals() {
 	_dwTonyNumTexts = 0;
 	_bTonyInTexts = false;
 	_bStaticTalk = false;
-	_bPatIrqFreeze = false;
 	_bAlwaysDisplay = false;
 	_bIdleExited = false;
 	_bSkipSfxNoLoop = false;

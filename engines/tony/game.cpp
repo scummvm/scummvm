@@ -59,14 +59,6 @@ void mainLinkGraphicTask(RMGfxTask *task) {
 	g_vm->getEngine()->linkGraphicTask(task);
 }
 
-void mainFreeze() {
-	g_vm->getEngine()->freeze();
-}
-
-void mainUnfreeze() {
-	g_vm->getEngine()->unfreeze();
-}
-
 void mainWaitFrame(CORO_PARAM) {
 	CoroScheduler.waitForSingleObject(coroParam, g_vm->_hEndOfFrame, CORO_INFINITE);
 }

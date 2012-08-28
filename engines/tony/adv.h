@@ -67,8 +67,6 @@ enum RMTonyAction {
 uint32 mainLoadLocation(int nLoc, RMPoint pt, RMPoint start);
 void mainUnloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result);
 void mainLinkGraphicTask(RMGfxTask *task);
-void mainFreeze();
-void mainUnfreeze();
 void mainWaitFrame(CORO_PARAM);
 void mainShowMouse();
 void mainHideMouse();

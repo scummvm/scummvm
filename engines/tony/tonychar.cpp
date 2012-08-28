@@ -589,7 +589,6 @@ bool RMTony::startTalkCalculate(CharacterTalkType nTalkType, int &headStartPat, 
 
 	if (_bShepherdess) {
 		// Talking whilst a shepherdess
-		mainFreeze();
 		switch (_talkDirection) {
 		case UP:
 			setPattern(PAT_PAST_TALKUP);
@@ -607,7 +606,6 @@ bool RMTony::startTalkCalculate(CharacterTalkType nTalkType, int &headStartPat, 
 			setPattern(PAT_PAST_TALKRIGHT);
 			break;
 		}
-		mainUnfreeze();
 		return false;
 	}
 
@@ -1118,10 +1116,8 @@ void RMTony::startTalk(CORO_PARAM, CharacterTalkType nTalkType) {
 
 	// Perform the set pattern
 	if (_ctx->headStartPat != 0 || _ctx->bodyStartPat != 0) {
-		mainFreeze();
 		setPattern(_ctx->headStartPat);
 		_body.setPattern(_ctx->bodyStartPat);
-		mainUnfreeze();
 
 		if (_ctx->bodyStartPat != 0)
 			CORO_INVOKE_0(_body.waitForEndPattern);
@@ -1129,11 +1125,9 @@ void RMTony::startTalk(CORO_PARAM, CharacterTalkType nTalkType) {
 			CORO_INVOKE_0(waitForEndPattern);
 	}
 
-	mainFreeze();
 	setPattern(_ctx->headLoopPat);
 	if (_ctx->bodyLoopPat)
 		_body.setPattern(_ctx->bodyLoopPat);
-	mainUnfreeze();
 
 	CORO_END_CODE;
 }
@@ -1166,9 +1160,7 @@ bool RMTony::endTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPa
 	}
 
 	if (_bShepherdess) {
-		mainFreeze();
 		setPattern(finalPat);
-		mainUnfreeze();
 		_bIsTalking = false;
 		return false;
 	}
@@ -1437,7 +1429,6 @@ void RMTony::endTalk(CORO_PARAM) {
 	// Handles the end of an animated and static, leaving everything unchanged
 	if (_bIsStaticTalk) {
 		if (_nTalkType == TALK_WITHBEARDSTATIC) {
-			mainFreeze();
 			setPattern(0);
 			if (_talkDirection == UP || _talkDirection == LEFT) {
 				_body.setPattern(BPAT_WITHBEARDLEFT_STATIC);
@@ -1446,11 +1437,8 @@ void RMTony::endTalk(CORO_PARAM) {
 				_body.setPattern(BPAT_WITHBEARDRIGHT_STATIC);
 				_nBodyOffset.set(-26, -14);
 			}
-			mainUnfreeze();
 		} else {
-			mainFreeze();
 			setPattern(_ctx->headStandPat);
-			mainUnfreeze();
 
 			CORO_INVOKE_0(_body.waitForEndPattern);
 		}
@@ -1461,36 +1449,26 @@ void RMTony::endTalk(CORO_PARAM) {
 
 	// Set the pattern
 	if (_ctx->headEndPat != 0 && _ctx->bodyEndPat != 0) {
-		mainFreeze();
 		setPattern(_ctx->headEndPat);
-		mainUnfreeze();
 
 		CORO_INVOKE_0(_body.waitForEndPattern);
 
-		mainFreeze();
 		_body.setPattern(_ctx->bodyEndPat);
-		mainUnfreeze();
 
 		CORO_INVOKE_0(waitForEndPattern);
 		CORO_INVOKE_0(_body.waitForEndPattern);
 	} else if (_ctx->bodyEndPat != 0) {
-		mainFreeze();
 		setPattern(_ctx->headStandPat);
-		mainUnfreeze();
 
 		CORO_INVOKE_0(_body.waitForEndPattern);
 
-		mainFreeze();
 		_body.setPattern(_ctx->bodyEndPat);
-		mainUnfreeze();
 
 		CORO_INVOKE_0(_body.waitForEndPattern);
 	} else if (_ctx->headEndPat != 0) {
 		CORO_INVOKE_0(_body.waitForEndPattern);
 
-		mainFreeze();
 		setPattern(_ctx->headEndPat);
-		mainUnfreeze();
 
 		CORO_INVOKE_0(waitForEndPattern);
 	} else {
@@ -1498,10 +1476,8 @@ void RMTony::endTalk(CORO_PARAM) {
 	}
 
 	if (_ctx->finalPat != 0) {
-		mainFreeze();
 		_body.setPattern(0);
 		setPattern(_ctx->finalPat);
-		mainUnfreeze();
 	}
 
 	_bIsTalking = false;
@@ -1733,19 +1709,15 @@ void RMTony::startStatic(CORO_PARAM, CharacterTalkType nTalk) {
 	// e vai con i pattern
 	_bIsStaticTalk = true;
 
-	mainFreeze();
 	setPattern(_ctx->headPat);
 	_body.setPattern(_ctx->bodyStartPat);
-	mainUnfreeze();
 
 	CORO_INVOKE_0(_body.waitForEndPattern);
 	CORO_INVOKE_0(waitForEndPattern);
 
-	mainFreeze();
 	if (_ctx->headLoopPat != -1)
 		setPattern(_ctx->headLoopPat);
 	_body.setPattern(_ctx->bodyLoopPat);
-	mainUnfreeze();
 
 	CORO_END_CODE;
 }
@@ -1902,24 +1874,18 @@ void RMTony::endStatic(CORO_PARAM, CharacterTalkType nTalk) {
 	endStaticCalculate(nTalk, _ctx->bodyEndPat, _ctx->finalPat, _ctx->headEndPat);
 
 	if (_ctx->headEndPat != 0) {
-		mainFreeze();
 		setPattern(_ctx->headEndPat);
-		mainUnfreeze();
 
 		CORO_INVOKE_0(waitForEndPattern);
 	} else {
 		// Play please
-		mainFreeze();
 		_body.setPattern(_ctx->bodyEndPat);
-		mainUnfreeze();
 
 		CORO_INVOKE_0(_body.waitForEndPattern);
 	}
 
-	mainFreeze();
 	setPattern(_ctx->finalPat);
 	_body.setPattern(0);
-	mainUnfreeze();
 
 	_bIsStaticTalk = false;
 

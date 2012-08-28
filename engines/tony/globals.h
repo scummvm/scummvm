@@ -191,7 +191,6 @@ public:
 	RMTextDialog *_curBackText;
 	bool _bTonyIsSpeaking;
 	int _curChangedHotspot;
-	bool _bPatIrqFreeze;
 	bool _bCfgInvLocked;
 	bool _bCfgInvNoScroll;
 	bool _bCfgTimerizedText;
@@ -227,8 +226,6 @@ public:
 	uint32(*LoadLocation)(int, RMPoint, RMPoint start);
 	void (*UnloadLocation)(CORO_PARAM, bool bDoOnExit, uint32 *result);
 	void (*LinkGraphicTask)(RMGfxTask *task);
-	void (*Freeze)();
-	void (*Unfreeze)();
 	void (*WaitFrame)(CORO_PARAM);
 	void (*PlayMusic)(int nChannel, const char *fileName, int nFX, bool bLoop, int nSync);
 	void (*WaitWipeEnd)(CORO_PARAM);

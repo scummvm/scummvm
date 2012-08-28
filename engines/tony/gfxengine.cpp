@@ -65,7 +65,6 @@ RMGfxEngine::RMGfxEngine() {
 	_bigBuf.offsetY(RM_SKIPY);
 	_bigBuf.setTrackDirtyRects(true);
 
-	_csMainLoop = NULL;
 	_nCurLoc = 0;
 	_curAction = TA_GOTO;
 	_curActionObj = 0;
@@ -86,7 +85,6 @@ RMGfxEngine::RMGfxEngine() {
 RMGfxEngine::~RMGfxEngine() {
 	// Close the buffer
 	_bigBuf.destroy();
-	g_system->deleteMutex(_csMainLoop);
 }
 
 void RMGfxEngine::openOptionScreen(CORO_PARAM, int type) {
@@ -143,8 +141,6 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
-
-	g_system->lockMutex(_csMainLoop);
 
 	// Poll of input devices
 	_input.poll();
@@ -350,8 +346,6 @@ SKIPCLICKSINISTRO:
 		}
 	}
 
-	g_system->unlockMutex(_csMainLoop);
-
 	CORO_END_CODE;
 }
 
@@ -367,11 +361,7 @@ void RMGfxEngine::itemIrq(uint32 dwItem, int nPattern, int nStatus) {
 		item = GLOBALS._gfxEngine->_loc.getItemFromCode(dwItem);
 		if (item != NULL) {
 			if (nPattern != -1) {
-				if (GLOBALS._bPatIrqFreeze)
-					mainFreeze();
 				item->setPattern(nPattern, true);
-				if (GLOBALS._bPatIrqFreeze)
-					mainUnfreeze();
 			}
 			if (nStatus != -1)
 				item->setStatus(nStatus);
@@ -454,8 +444,6 @@ void RMGfxEngine::unloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->h, CORO_INFINITE);
 	}
 
-	mainFreeze();
-
 	_bLocationLoaded = false;
 
 	_bigBuf.clearOT();
@@ -482,8 +470,6 @@ void RMGfxEngine::init() {
 	g_vm->_window.getNewFrame(*this, NULL);
 	g_vm->_window.repaint();
 
-	GLOBALS._bPatIrqFreeze = true;
-
 	// Activate GUI
 	_bGUIOption = true;
 	_bGUIInterface = true;
@@ -495,9 +481,6 @@ void RMGfxEngine::init() {
 	_bOption = false;
 	_bWiping = false;
 	_hWipeEvent = CoroScheduler.createEvent(false, false);
-
-	// Create the freeze event
-	_csMainLoop = g_system->createMutex();
 
 	// Initialize the IRQ function for items for MPAL
 	GLOBALS._gfxEngine = this;
@@ -547,14 +530,6 @@ void RMGfxEngine::enableMouse() {
 
 void RMGfxEngine::disableMouse() {
 	_bAlwaysDrawMouse = false;
-}
-
-void RMGfxEngine::freeze() {
-	g_system->lockMutex(_csMainLoop);
-}
-
-void RMGfxEngine::unfreeze() {
-	g_system->unlockMutex(_csMainLoop);
 }
 
 void CharsSaveAll(Common::OutSaveFile *f);
@@ -812,7 +787,6 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 	CORO_INVOKE_2(unloadLocation, false, NULL);
 	loadLocation(_ctx->loc, _ctx->tp, RMPoint(-1, -1));
 	_tony.setPattern(RMTony::PAT_STANDRIGHT);
-	mainUnfreeze();
 
 	// On older versions, need to an enter action
 	if (_ctx->ver < 5)
