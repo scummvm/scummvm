@@ -86,6 +86,13 @@ void Module2800::createScene(int sceneNum, int which) {
 		// TODO Music18hList_stop(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2805(_vm, this, which);
 		break;
+	case 25:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		if (getGlobalVar(0x190A1D18))
+			_childObject = new Class152(_vm, this, 0x01600204, 0x0020001E);
+		else
+			_childObject = new Class152(_vm, this, 0x08611204, 0x1120008E);
+		break;
 	//		
 	case 1001:
 		break;
@@ -137,6 +144,9 @@ void Module2800::updateScene() {
 			} else {
 				createScene(11, 1);
 			}
+			break;
+		case 25:
+			createScene(2, 5);
 			break;
 		//		
 		case 1001:
