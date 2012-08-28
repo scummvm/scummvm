@@ -1374,7 +1374,8 @@ bool Actor::shouldDrawShadow(int shadowId) {
 	Math::Vector3d p = sector->getVertices()[0];
 	float d = -(n.x() * p.x() + n.y() * p.y() + n.z() * p.z());
 
-	p = getPos() + Math::Vector3d(0,0,0.01);
+	p = getPos();
+	p.z() += 0.01; // Move the tested point a bit above ground level.
 	bool actorSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
 	p = shadow->pos;
 	bool shadowSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
