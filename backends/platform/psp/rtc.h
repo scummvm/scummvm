@@ -40,7 +40,7 @@ public:
 		init();
 	}
 	void init();
-	uint32 getMillis();
+	uint32 getMillis(bool skipRecord = false);
 	uint32 getMicros();
 };
 

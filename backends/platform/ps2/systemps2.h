@@ -82,7 +82,7 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = 0);
 
-	virtual uint32 getMillis();
+	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 	virtual bool pollEvent(Common::Event &event);
 

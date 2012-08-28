@@ -891,7 +891,7 @@ public:
 	//@{
 
 	/** Get the number of milliseconds since the program was started. */
-	virtual uint32 getMillis() = 0;
+	virtual uint32 getMillis(bool skipRecord = false) = 0;
 
 	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delayMillis(uint msecs) = 0;

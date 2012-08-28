@@ -258,7 +258,6 @@ void EventRecorder::processMillis(uint32 &millis) {
 	}
 	g_system->lockMutex(_timeMutex);
 	if (_recordMode == kRecorderRecord) {
-		StackLock lock(_recorderMutex);
 		uint32 _millisDelay;
 		_millisDelay = millis - _lastMillis;
 		_lastMillis = millis;
@@ -270,8 +269,6 @@ void EventRecorder::processMillis(uint32 &millis) {
 	}
 
 	if (_recordMode == kRecorderPlayback) {
-		uint32 _millisDelay;
-		StackLock lock(_recorderMutex);
 		if (_nextEvent.type == EVENT_TIMER) {
 			_fakeTimer = _nextEvent.time;
 			getNextEvent();

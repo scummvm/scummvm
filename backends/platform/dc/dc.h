@@ -151,7 +151,7 @@ public:
   void setShakePos(int shake_pos);
 
   // Get the number of milliseconds since the program was started.
-  uint32 getMillis();
+  uint32 getMillis(bool skipRecord = false);
 
   // Delay for a specified amount of milliseconds
   void delayMillis(uint msecs);

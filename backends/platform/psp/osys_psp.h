@@ -125,7 +125,7 @@ public:
 	bool processInput(Common::Event &event);
 
 	// Time
-	uint32 getMillis();
+	uint32 getMillis(bool skipRecord = false);
 	void delayMillis(uint msecs);
 
 	// Timer

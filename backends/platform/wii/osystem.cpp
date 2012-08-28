@@ -203,7 +203,7 @@ bool OSystem_Wii::getFeatureState(Feature f) {
 	}
 }
 
-uint32 OSystem_Wii::getMillis() {
+uint32 OSystem_Wii::getMillis(bool skipRecord) {
 	return ticks_to_millisecs(diff_ticks(_startup_time, gettime()));
 }
 

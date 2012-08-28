@@ -162,7 +162,7 @@ void OSystem_IPHONE::suspendLoop() {
 	_timeSuspended += getMillis() - startTime;
 }
 
-uint32 OSystem_IPHONE::getMillis() {
+uint32 OSystem_IPHONE::getMillis(bool skipRecord) {
 	//printf("getMillis()\n");
 
 	struct timeval currentTime;

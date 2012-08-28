@@ -88,7 +88,7 @@ void	setGamma(int gamma);
 
 // Timers
 void 	setTimerCallback(OSystem_DS::TimerProc proc, int interval);		// Setup a callback function at a regular interval
-int 	getMillis();													// Return the current runtime in milliseconds
+int 	getMillis(bool skipRecord = false);								// Return the current runtime in milliseconds
 void 	doTimerCallback();												// Call callback function if required
 
 // Sound

@@ -656,7 +656,7 @@ bool OSystem_DS::pollEvent(Common::Event &event) {
 	return false;
 }
 
-uint32 OSystem_DS::getMillis() {
+uint32 OSystem_DS::getMillis(bool skipRecord) {
 	return DS::getMillis();
 }
 
