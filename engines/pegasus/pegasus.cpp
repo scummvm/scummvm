@@ -161,7 +161,7 @@ Common::Error PegasusEngine::run() {
 
 	_returnHotspot.setArea(Common::Rect(kNavAreaLeft, kNavAreaTop, 512 + kNavAreaLeft, 256 + kNavAreaTop));
 	_returnHotspot.setHotspotFlags(kInfoReturnSpotFlag);
-	g_allHotspots.push_back(&_returnHotspot);
+	_allHotspots.push_back(&_returnHotspot);
 
 	_screenDimmer.setBounds(Common::Rect(0, 0, 640, 480));
 	_screenDimmer.setDisplayOrder(kScreenDimmerOrder);
@@ -1839,15 +1839,15 @@ void PegasusEngine::shellGameInput(const Input &input, const Hotspot *cursorSpot
 
 void PegasusEngine::activateHotspots() {
 	if (_gameMode == kModeInfoScreen) {
-		g_allHotspots.activateOneHotspot(kInfoReturnSpotID);
+		_allHotspots.activateOneHotspot(kInfoReturnSpotID);
 	} else {
 		// Set up hot spots.
 		if (_dragType == kDragInventoryPickup)
-			g_allHotspots.activateOneHotspot(kInventoryDropSpotID);
+			_allHotspots.activateOneHotspot(kInventoryDropSpotID);
 		else if (_dragType == kDragBiochipPickup)
-			g_allHotspots.activateOneHotspot(kBiochipDropSpotID);
+			_allHotspots.activateOneHotspot(kBiochipDropSpotID);
 		else if (_dragType == kDragNoDrag)
-			g_allHotspots.activateMaskedHotspots(kShellSpotFlag);
+			_allHotspots.activateMaskedHotspots(kShellSpotFlag);
 	}
 }
 

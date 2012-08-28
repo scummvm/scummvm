@@ -23,6 +23,7 @@
  *
  */
 
+#include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/caldoria/caldoria4dsystem.h"

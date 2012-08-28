@@ -73,7 +73,7 @@ Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const C
 
 Neighborhood::~Neighborhood() {
 	for (HotspotIterator it = _neighborhoodHotspots.begin(); it != _neighborhoodHotspots.end(); it++)
-		g_allHotspots.remove(*it);
+		_vm->getAllHotspots().remove(*it);
 
 	_neighborhoodHotspots.deleteHotspots();
 	g_neighborhood = 0;
@@ -381,7 +381,7 @@ void Neighborhood::createNeighborhoodSpots() {
 		hotspot->setHotspotFlags(flags);
 		hotspot->setArea(region);
 
-		g_allHotspots.push_back(hotspot);
+		_vm->getAllHotspots().push_back(hotspot);
 		_neighborhoodHotspots.push_back(hotspot);
 	}
 
@@ -655,7 +655,7 @@ void Neighborhood::activateHotspots() {
 
 		if (entry.hotspotRoom == GameState.getCurrentRoom() && entry.hotspotDirection == GameState.getCurrentDirection()
 				&& (entry.hotspotActivation == _currentActivation || entry.hotspotActivation == kActivateHotSpotAlways)) {
-			Hotspot *hotspot = g_allHotspots.findHotspotByID(entry.hotspot);
+			Hotspot *hotspot = _vm->getAllHotspots().findHotspotByID(entry.hotspot);
 			if (hotspot)
 				activateOneHotspot(entry, hotspot);
 		}
@@ -1242,7 +1242,7 @@ void Neighborhood::throwAwayInterface() {
 	_turnPush.disposeAllCallBacks();
 
 	for (HotspotList::iterator it = _neighborhoodHotspots.begin(); it != _neighborhoodHotspots.end(); it++)
-		g_allHotspots.remove(*it);
+		_vm->getAllHotspots().remove(*it);
 
 	_neighborhoodHotspots.deleteHotspots();
 	_spotSounds.disposeSound();
@@ -1428,7 +1428,7 @@ void Neighborhood::bumpIntoWall() {
 void Neighborhood::zoomUpOrBump() {
 	Hotspot *zoomSpot = 0;
 
-	for (HotspotList::iterator it = g_allHotspots.begin(); it != g_allHotspots.end(); it++) {
+	for (HotspotList::iterator it = _vm->getAllHotspots().begin(); it != _vm->getAllHotspots().end(); it++) {
 		Hotspot *hotspot = *it;
 
 		if ((hotspot->getHotspotFlags() & (kNeighborhoodSpotFlag | kZoomInSpotFlag)) == (kNeighborhoodSpotFlag | kZoomInSpotFlag)) {
@@ -1652,7 +1652,7 @@ void Neighborhood::handleInput(const Input &input, const Hotspot *cursorSpot) {
 }
 
 void Neighborhood::setHotspotFlags(const HotSpotID id, const HotSpotFlags flags) {
-	Hotspot *hotspot = g_allHotspots.findHotspotByID(id);
+	Hotspot *hotspot = _vm->getAllHotspots().findHotspotByID(id);
 	hotspot->setMaskedHotspotFlags(flags, flags);
 }
 
@@ -1674,10 +1674,10 @@ void Neighborhood::rightButton(const Input &) {
 
 void Neighborhood::downButton(const Input &) {
 	if (_inputHandler->wantsCursor()) {
-		g_allHotspots.deactivateAllHotspots();
+		_vm->getAllHotspots().deactivateAllHotspots();
 		_inputHandler->activateHotspots();
 
-		for (HotspotList::iterator it = g_allHotspots.begin(); it != g_allHotspots.end(); it++) {
+		for (HotspotList::iterator it = _vm->getAllHotspots().begin(); it != _vm->getAllHotspots().end(); it++) {
 			Hotspot *hotspot = *it;
 
 			if (hotspot->isSpotActive() && (hotspot->getHotspotFlags() & (kNeighborhoodSpotFlag | kZoomOutSpotFlag)) == (kNeighborhoodSpotFlag | kZoomOutSpotFlag)) {

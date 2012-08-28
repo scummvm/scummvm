@@ -100,27 +100,27 @@ NoradAlpha::NoradAlpha(InputHandler *nextHandler, PegasusEngine *owner) : Norad(
 void NoradAlpha::init() {
 	Norad::init();
 	
-	Hotspot *hotspot = g_allHotspots.findHotspotByID(kN01GasCanisterSpotID);
+	Hotspot *hotspot = _vm->getAllHotspots().findHotspotByID(kN01GasCanisterSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpItemSpotFlag, kPickUpItemSpotFlag);
 	HotspotInfoTable::Entry *hotspotEntry = findHotspotEntry(kN01GasCanisterSpotID);
 	hotspotEntry->hotspotItem = kGasCanister;
 	
-	hotspot = g_allHotspots.findHotspotByID(kN01ArgonCanisterSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kN01ArgonCanisterSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpItemSpotFlag, kPickUpItemSpotFlag);
 	hotspotEntry = findHotspotEntry(kN01ArgonCanisterSpotID);
 	hotspotEntry->hotspotItem = kArgonCanister;
 	
-	hotspot = g_allHotspots.findHotspotByID(kN01NitrogenCanisterSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kN01NitrogenCanisterSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpItemSpotFlag, kPickUpItemSpotFlag);
 	hotspotEntry = findHotspotEntry(kN01NitrogenCanisterSpotID);
 	hotspotEntry->hotspotItem = kNitrogenCanister;
 	
-	hotspot = g_allHotspots.findHotspotByID(kN01AirMaskSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kN01AirMaskSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpItemSpotFlag, kPickUpItemSpotFlag);
 	hotspotEntry = findHotspotEntry(kN01AirMaskSpotID);
 	hotspotEntry->hotspotItem = kAirMask;
 	
-	hotspot = g_allHotspots.findHotspotByID(kN01GasOutletSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kN01GasOutletSpotID);
 	hotspot->setMaskedHotspotFlags(kDropItemSpotFlag, kDropItemSpotFlag);
 }
 
@@ -514,7 +514,7 @@ void NoradAlpha::activateHotspots() {
 				ItemID itemID = _vm->getDraggingItem()->getObjectID();
 				if (itemID == kArgonCanister || itemID == kGasCanister || itemID == kAirMask ||
 						itemID == kNitrogenCanister)
-					g_allHotspots.activateOneHotspot(kN01GasOutletSpotID);
+					_vm->getAllHotspots().activateOneHotspot(kN01GasOutletSpotID);
 			}
 		} else {
 			HotSpotID spotID;
@@ -523,35 +523,35 @@ void NoradAlpha::activateHotspots() {
 				switch (_fillingStationItem->getObjectID()) {
 				case kArgonCanister:
 					spotID = kN01ArgonCanisterSpotID;
-					g_allHotspots.deactivateOneHotspot(kNorad01GasOutSpotID);
+					_vm->getAllHotspots().deactivateOneHotspot(kNorad01GasOutSpotID);
 					break;
 				case kGasCanister:
 					spotID = kN01GasCanisterSpotID;
 					break;
 				case kAirMask:
 					spotID = kN01AirMaskSpotID;
-					g_allHotspots.deactivateOneHotspot(kNorad01GasOutSpotID);
+					_vm->getAllHotspots().deactivateOneHotspot(kNorad01GasOutSpotID);
 					break;
 				case kNitrogenCanister:
 					spotID = kN01NitrogenCanisterSpotID;
-					g_allHotspots.deactivateOneHotspot(kNorad01GasOutSpotID);
+					_vm->getAllHotspots().deactivateOneHotspot(kNorad01GasOutSpotID);
 					break;
 				default:
 					// Should never happen.
 					spotID = kNoHotSpotID;
 					break;
 				}
-				g_allHotspots.activateOneHotspot(spotID);
+				_vm->getAllHotspots().activateOneHotspot(spotID);
 			}
 		}
 		break;
 	case MakeRoomView(kNorad10, kEast):
 		if (GameState.isCurrentDoorOpen())
-			g_allHotspots.deactivateOneHotspot(kNorad10DoorSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kNorad10DoorSpotID);
 		break;
 	case MakeRoomView(kNorad21, kWest):
 		if (GameState.isCurrentDoorOpen())
-			g_allHotspots.deactivateOneHotspot(kNorad21WestSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kNorad21WestSpotID);
 		break;
 	}
 }
@@ -616,13 +616,13 @@ void NoradAlpha::getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpo
 Hotspot *NoradAlpha::getItemScreenSpot(Item *item, DisplayElement *element) {
 	switch (item->getObjectID()) {
 	case kGasCanister:
-		return g_allHotspots.findHotspotByID(kN01GasCanisterSpotID);
+		return _vm->getAllHotspots().findHotspotByID(kN01GasCanisterSpotID);
 	case kAirMask:
-		return g_allHotspots.findHotspotByID(kN01AirMaskSpotID);
+		return _vm->getAllHotspots().findHotspotByID(kN01AirMaskSpotID);
 	case kArgonCanister:
-		return g_allHotspots.findHotspotByID(kN01ArgonCanisterSpotID);
+		return _vm->getAllHotspots().findHotspotByID(kN01ArgonCanisterSpotID);
 	case kNitrogenCanister:
-		return g_allHotspots.findHotspotByID(kN01NitrogenCanisterSpotID);
+		return _vm->getAllHotspots().findHotspotByID(kN01NitrogenCanisterSpotID);
 	}
 
 	return Norad::getItemScreenSpot(item, element);

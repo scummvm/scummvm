@@ -24,6 +24,7 @@
  */
 
 #include "pegasus/hotspot.h"
+#include "pegasus/pegasus.h"
 #include "pegasus/neighborhood/norad/pressuredoor.h"
 #include "pegasus/neighborhood/norad/pressuretracker.h"
 

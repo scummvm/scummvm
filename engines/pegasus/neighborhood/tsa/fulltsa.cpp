@@ -1329,7 +1329,7 @@ void FullTSA::activateHotspots() {
 	switch (MakeRoomView(GameState.getCurrentRoom(), GameState.getCurrentDirection())) {
 	case MakeRoomView(kTSA02, kNorth):
 		if (!GameState.getTSAFrontDoorUnlockedOutside())
-			g_allHotspots.activateOneHotspot(kTSA02DoorSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kTSA02DoorSpotID);
 		break;
 	case MakeRoomView(kTSA0B, kEast):
 		if (GameState.getTSA0BZoomedIn())
@@ -1340,10 +1340,10 @@ void FullTSA::activateHotspots() {
 			case kRobotsAtFrontDoor:
 			case kRobotsAtReadyRoom:
 				if (getCurrentActivation() != kActivateTSA0BComparisonVideo) {
-					g_allHotspots.activateOneHotspot(kTSA0BEastCompareNoradSpotID);
-					g_allHotspots.activateOneHotspot(kTSA0BEastCompareMarsSpotID);
-					g_allHotspots.activateOneHotspot(kTSA0BEastCompareCaldoriaSpotID);
-					g_allHotspots.activateOneHotspot(kTSA0BEastCompareWSCSpotID);
+					_vm->getAllHotspots().activateOneHotspot(kTSA0BEastCompareNoradSpotID);
+					_vm->getAllHotspots().activateOneHotspot(kTSA0BEastCompareMarsSpotID);
+					_vm->getAllHotspots().activateOneHotspot(kTSA0BEastCompareCaldoriaSpotID);
+					_vm->getAllHotspots().activateOneHotspot(kTSA0BEastCompareWSCSpotID);
 				}
 				break;
 			}
@@ -1354,9 +1354,9 @@ void FullTSA::activateHotspots() {
 			case kRobotsAtCommandCenter:
 			case kRobotsAtFrontDoor:
 			case kRobotsAtReadyRoom:
-				g_allHotspots.activateOneHotspot(kTSA0BNorthRobotsToCommandCenterSpotID);
-				g_allHotspots.activateOneHotspot(kTSA0BNorthRobotsToReadyRoomSpotID);
-				g_allHotspots.activateOneHotspot(kTSA0BNorthRobotsToFrontDoorSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kTSA0BNorthRobotsToCommandCenterSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kTSA0BNorthRobotsToReadyRoomSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kTSA0BNorthRobotsToFrontDoorSpotID);
 				break;
 			}
 		break;
@@ -2814,10 +2814,10 @@ void FullTSA::initializePegasusButtons(bool resolved) {
 Hotspot *FullTSA::getItemScreenSpot(Item *item, DisplayElement *element) {
 	switch (item->getObjectID()) {
 	case kJourneymanKey:
-		return g_allHotspots.findHotspotByID(kTSA22EastKeySpotID);
+		return _vm->getAllHotspots().findHotspotByID(kTSA22EastKeySpotID);
 		break;
 	case kPegasusBiochip:
-		return g_allHotspots.findHotspotByID(kTSA23WestChipsSpotID);
+		return _vm->getAllHotspots().findHotspotByID(kTSA23WestChipsSpotID);
 		break;
 	}
 

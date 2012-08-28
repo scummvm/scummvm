@@ -24,6 +24,7 @@
  */
 
 #include "pegasus/gamestate.h"
+#include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/inventory/airmask.h"
 #include "pegasus/neighborhood/neighborhood.h"

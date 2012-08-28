@@ -29,8 +29,6 @@
 
 namespace Pegasus {
 
-HotspotList g_allHotspots;
-
 Region::Region(Common::ReadStream *stream) {
 	uint16 length = stream->readUint16BE();
 

@@ -1572,7 +1572,7 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 		} else {
 			if (GameState.getWSCCatwalkDark()) {
 				//	Change the gun hot spot...
-				g_allHotspots.setHotspotRect(kW98StunGunSpotID, Common::Rect(181 + kNavAreaLeft,
+				_vm->getAllHotspots().setHotspotRect(kW98StunGunSpotID, Common::Rect(181 + kNavAreaLeft,
 						99 + kNavAreaTop,372 + kNavAreaLeft, 149 + kNavAreaTop));
 			}
 			setCurrentActivation(kActivationRobotGone);
@@ -1906,7 +1906,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 		case kW98RobotShocked:
 			GameState.setWSCCatwalkDark(true);
 			// Change the gun hot spot...
-			g_allHotspots.setHotspotRect(kW98StunGunSpotID, Common::Rect(181 + kNavAreaLeft, 99 + kNavAreaTop,
+			_vm->getAllHotspots().setHotspotRect(kW98StunGunSpotID, Common::Rect(181 + kNavAreaLeft, 99 + kNavAreaTop,
 					372 + kNavAreaLeft, 149 + kNavAreaTop));
 			setCurrentActivation(kActivationRobotDead);
 			GameState.setWSCRobotDead(true);
@@ -2124,19 +2124,19 @@ void WSC::activateHotspots() {
 
 	if (GameState.getCurrentRoomAndView() == MakeRoomView(kWSC98, kWest) && _privateFlags.getFlag(kWSCPrivateRobotHeadOpenFlag)) {
 		if (_privateFlags.getFlag(kWSCPrivateGotRetScanChipFlag))
-			g_allHotspots.deactivateOneHotspot(kW98RetinalChipSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kW98RetinalChipSpotID);
 		else
-			g_allHotspots.activateOneHotspot(kW98RetinalChipSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kW98RetinalChipSpotID);
 
 		if (_privateFlags.getFlag(kWSCPrivateGotMapChipFlag))
-			g_allHotspots.deactivateOneHotspot(kW98MapChipSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kW98MapChipSpotID);
 		else
-			g_allHotspots.activateOneHotspot(kW98MapChipSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kW98MapChipSpotID);
 
 		if (_privateFlags.getFlag(kWSCPrivateGotOpticalChipFlag))
-			g_allHotspots.deactivateOneHotspot(kW98OpticalChipSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kW98OpticalChipSpotID);
 		else
-			g_allHotspots.activateOneHotspot(kW98OpticalChipSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kW98OpticalChipSpotID);
 	}
 }
 
@@ -2324,7 +2324,7 @@ Hotspot *WSC::getItemScreenSpot(Item *item, DisplayElement *element) {
 	if (destSpotID == kNoHotSpotID)
 		return Neighborhood::getItemScreenSpot(item, element);
 
-	return g_allHotspots.findHotspotByID(destSpotID);
+	return _vm->getAllHotspots().findHotspotByID(destSpotID);
 }
 
 void WSC::pickedUpItem(Item *item) {	
@@ -2346,7 +2346,7 @@ void WSC::pickedUpItem(Item *item) {
 		_vm->addItemToInventory((InventoryItem *)item);
 		item = (Item *)g_allItems.findItemByID(kSinclairKey);
 		_vm->addItemToInventory((InventoryItem *)item);
-		g_allHotspots.setHotspotRect(kWSC02SouthMorphOutSpotID,
+		_vm->getAllHotspots().setHotspotRect(kWSC02SouthMorphOutSpotID,
 				Common::Rect(kNavAreaLeft, kNavAreaTop, 512 + kNavAreaLeft, 256 + kNavAreaTop));
 		break;
 	case kArgonCanister:

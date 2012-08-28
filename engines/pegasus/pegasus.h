@@ -112,6 +112,7 @@ public:
 	uint getRandomNumber(uint max);
 	void shuffleArray(int32 *arr, int32 count);
 	void drawScaledFrame(const Graphics::Surface *frame, uint16 x, uint16 y);
+	HotspotList &getAllHotspots() { return _allHotspots; }
 
 	// Energy
 	void setLastEnergyValue(const int32 value) { _savedEnergyValue = value; }
@@ -251,6 +252,7 @@ private:
 
 	// Misc.
 	Hotspot _returnHotspot;
+	HotspotList _allHotspots;
 	InputHandler *_savedHandler;
 	void showTempScreen(const Common::String &fileName);
 	bool playMovieScaled(Video::VideoDecoder *video, uint16 x, uint16 y);

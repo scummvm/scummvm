@@ -128,17 +128,17 @@ Mars::Mars(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextH
 }
 
 Mars::~Mars() {
-	g_allHotspots.remove(&_energyChoiceSpot);
-	g_allHotspots.remove(&_gravitonChoiceSpot);
-	g_allHotspots.remove(&_tractorChoiceSpot);
-	g_allHotspots.remove(&_shuttleViewSpot);
-	g_allHotspots.remove(&_shuttleTransportSpot);
+	_vm->getAllHotspots().remove(&_energyChoiceSpot);
+	_vm->getAllHotspots().remove(&_gravitonChoiceSpot);
+	_vm->getAllHotspots().remove(&_tractorChoiceSpot);
+	_vm->getAllHotspots().remove(&_shuttleViewSpot);
+	_vm->getAllHotspots().remove(&_shuttleTransportSpot);
 }
 
 void Mars::init() {	
 	Neighborhood::init();
 	
-	Hotspot *attackSpot = g_allHotspots.findHotspotByID(kAttackRobotHotSpotID);
+	Hotspot *attackSpot = _vm->getAllHotspots().findHotspotByID(kAttackRobotHotSpotID);
 	attackSpot->setMaskedHotspotFlags(kDropItemSpotFlag, kDropItemSpotFlag);
 	_attackingItem = NULL;
 	
@@ -1627,35 +1627,35 @@ void Mars::activateHotspots() {
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kMars48, kEast):
 		if ((_navMovie.getFlags() & kLoopTimeBase) != 0 && _vm->getDragType() == kDragInventoryUse)
-			g_allHotspots.activateOneHotspot(kAttackRobotHotSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kAttackRobotHotSpotID);
 		break;
 	case MakeRoomView(kMars56, kEast):
 		switch (getCurrentActivation()) {
 		case kActivateReactorReadyForNitrogen:
 			item = (InventoryItem *)g_allItems.findItemByID(kNitrogenCanister);
 			if (item->getItemState() != kNitrogenFull)
-				g_allHotspots.deactivateOneHotspot(kMars57DropNitrogenSpotID);
+				_vm->getAllHotspots().deactivateOneHotspot(kMars57DropNitrogenSpotID);
 			// Fall through...
 		case kActivateReactorReadyForCrowBar:
-			g_allHotspots.activateOneHotspot(kMars57CantOpenPanelSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kMars57CantOpenPanelSpotID);
 			break;
 		}
 		break;
 	case MakeRoomView(kMarsRobotShuttle, kEast):
 		if (_privateFlags.getFlag(kMarsPrivateGotMapChipFlag))
-			g_allHotspots.deactivateOneHotspot(kRobotShuttleMapChipSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kRobotShuttleMapChipSpotID);
 		else
-			g_allHotspots.activateOneHotspot(kRobotShuttleMapChipSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kRobotShuttleMapChipSpotID);
 
 		if (_privateFlags.getFlag(kMarsPrivateGotOpticalChipFlag))
-			g_allHotspots.deactivateOneHotspot(kRobotShuttleOpticalChipSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kRobotShuttleOpticalChipSpotID);
 		else
-			g_allHotspots.activateOneHotspot(kRobotShuttleOpticalChipSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kRobotShuttleOpticalChipSpotID);
 
 		if (_privateFlags.getFlag(kMarsPrivateGotShieldChipFlag))
-			g_allHotspots.deactivateOneHotspot(kRobotShuttleShieldChipSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kRobotShuttleShieldChipSpotID);
 		else
-			g_allHotspots.activateOneHotspot(kRobotShuttleShieldChipSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kRobotShuttleShieldChipSpotID);
 		break;
 	default:
 		if (_privateFlags.getFlag(kMarsPrivateInSpaceChaseFlag)) {
@@ -1868,7 +1868,7 @@ Hotspot *Mars::getItemScreenSpot(Item *item, DisplayElement *element) {
 	if (destSpotID == kNoHotSpotID)
 		return Neighborhood::getItemScreenSpot(item, element);
 
-	return g_allHotspots.findHotspotByID(destSpotID);
+	return _vm->getAllHotspots().findHotspotByID(destSpotID);
 }
 
 void Mars::takeItemFromRoom(Item *item) {
@@ -2635,7 +2635,7 @@ void Mars::startUpFromFinishedSpaceChase() {
 	
 	_shuttleTransportSpot.setArea(kShuttleTransportBounds);
 	_shuttleTransportSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-	g_allHotspots.push_back(&_shuttleTransportSpot);
+	_vm->getAllHotspots().push_back(&_shuttleTransportSpot);
 
 	_privateFlags.setFlag(kMarsPrivateInSpaceChaseFlag, true);
 
@@ -2766,20 +2766,20 @@ void Mars::startUpFromSpaceChase() {
 
 	_energyChoiceSpot.setArea(kShuttleEnergyBeamBounds);
 	_energyChoiceSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-	g_allHotspots.push_back(&_energyChoiceSpot);
+	_vm->getAllHotspots().push_back(&_energyChoiceSpot);
 	_gravitonChoiceSpot.setArea(kShuttleGravitonBounds);
 	_gravitonChoiceSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-	g_allHotspots.push_back(&_gravitonChoiceSpot);
+	_vm->getAllHotspots().push_back(&_gravitonChoiceSpot);
 	_tractorChoiceSpot.setArea(kShuttleTractorBounds);
 	_tractorChoiceSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-	g_allHotspots.push_back(&_tractorChoiceSpot);
+	_vm->getAllHotspots().push_back(&_tractorChoiceSpot);
 	_shuttleViewSpot.setArea(kShuttleWindowLeft, kShuttleWindowTop,
 			kShuttleWindowLeft + kShuttleWindowWidth, kShuttleWindowTop + kShuttleWindowHeight);
 	_shuttleViewSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-	g_allHotspots.push_back(&_shuttleViewSpot);
+	_vm->getAllHotspots().push_back(&_shuttleViewSpot);
 	_shuttleTransportSpot.setArea(kShuttleTransportBounds);
 	_shuttleTransportSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-	g_allHotspots.push_back(&_shuttleTransportSpot);
+	_vm->getAllHotspots().push_back(&_shuttleTransportSpot);
 
 	_privateFlags.setFlag(kMarsPrivateInSpaceChaseFlag, true);
 
@@ -2900,20 +2900,20 @@ void Mars::marsTimerExpired(MarsTimerEvent &event) {
 
 		_energyChoiceSpot.setArea(kShuttleEnergyBeamBounds);
 		_energyChoiceSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-		g_allHotspots.push_back(&_energyChoiceSpot);
+		_vm->getAllHotspots().push_back(&_energyChoiceSpot);
 		_gravitonChoiceSpot.setArea(kShuttleGravitonBounds);
 		_gravitonChoiceSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-		g_allHotspots.push_back(&_gravitonChoiceSpot);
+		_vm->getAllHotspots().push_back(&_gravitonChoiceSpot);
 		_tractorChoiceSpot.setArea(kShuttleTractorBounds);
 		_tractorChoiceSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-		g_allHotspots.push_back(&_tractorChoiceSpot);
+		_vm->getAllHotspots().push_back(&_tractorChoiceSpot);
 		_shuttleViewSpot.setArea(kShuttleWindowLeft, kShuttleWindowTop,
 				kShuttleWindowLeft + kShuttleWindowWidth, kShuttleWindowTop + kShuttleWindowHeight);
 		_shuttleViewSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-		g_allHotspots.push_back(&_shuttleViewSpot);
+		_vm->getAllHotspots().push_back(&_shuttleViewSpot);
 		_shuttleTransportSpot.setArea(kShuttleTransportBounds);
 		_shuttleTransportSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
-		g_allHotspots.push_back(&_shuttleTransportSpot);
+		_vm->getAllHotspots().push_back(&_shuttleTransportSpot);
 
 		_privateFlags.setFlag(kMarsPrivateInSpaceChaseFlag, true);
 
@@ -3008,11 +3008,11 @@ void Mars::throwAwayMarsShuttle() {
 	_junk.stopDisplaying();
 	_energyBeam.cleanUpShuttleWeapon();
 	_gravitonCannon.cleanUpShuttleWeapon();
-	g_allHotspots.remove(&_energyChoiceSpot);
-	g_allHotspots.remove(&_gravitonChoiceSpot);
-	g_allHotspots.remove(&_tractorChoiceSpot);
-	g_allHotspots.remove(&_shuttleViewSpot);
-	g_allHotspots.remove(&_shuttleTransportSpot);
+	_vm->getAllHotspots().remove(&_energyChoiceSpot);
+	_vm->getAllHotspots().remove(&_gravitonChoiceSpot);
+	_vm->getAllHotspots().remove(&_tractorChoiceSpot);
+	_vm->getAllHotspots().remove(&_shuttleViewSpot);
+	_vm->getAllHotspots().remove(&_shuttleTransportSpot);
 	_explosions.releaseMovie();
 	_explosions.stopDisplaying();
 

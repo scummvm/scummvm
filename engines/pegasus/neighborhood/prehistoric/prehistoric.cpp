@@ -493,10 +493,10 @@ void Prehistoric::activateHotspots() {
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kPrehistoric18, kEast):
 		if (!_privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag))
-			g_allHotspots.activateOneHotspot(kPre18EastSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kPre18EastSpotID);
 		break;
 	case MakeRoomView(kPrehistoric22North, kNorth):
-		g_allHotspots.activateOneHotspot(kPre22NorthBreakerSpotID);
+		_vm->getAllHotspots().activateOneHotspot(kPre22NorthBreakerSpotID);
 		break;
 	}
 }
@@ -639,7 +639,7 @@ void Prehistoric::doSolve() {
 
 Hotspot *Prehistoric::getItemScreenSpot(Item *item, DisplayElement *element) {
 	if (item->getObjectID() == kHistoricalLog)
-		return g_allHotspots.findHotspotByID(kPrehistoricHistoricalLogSpotID);
+		return _vm->getAllHotspots().findHotspotByID(kPrehistoricHistoricalLogSpotID);
 
 	return Neighborhood::getItemScreenSpot(item, element);
 }

@@ -1292,42 +1292,42 @@ void Caldoria::activateHotspots() {
 	case kCaldoriaDrawers:
 		if (getCurrentActivation() == kActivateRightOpen) {
 			if (GameState.isTakenItemID(kKeyCard)) {
-				g_allHotspots.activateOneHotspot(kCaldoriaRightDrawerNoKeysCloseSpotID);
-				g_allHotspots.deactivateOneHotspot(kCaldoriaRightDrawerWithKeysCloseSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kCaldoriaRightDrawerNoKeysCloseSpotID);
+				_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRightDrawerWithKeysCloseSpotID);
 			} else {
-				g_allHotspots.activateOneHotspot(kCaldoriaRightDrawerWithKeysCloseSpotID);
-				g_allHotspots.deactivateOneHotspot(kCaldoriaRightDrawerNoKeysCloseSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kCaldoriaRightDrawerWithKeysCloseSpotID);
+				_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRightDrawerNoKeysCloseSpotID);
 			}
 		}
 	case kCaldoriaReplicator:
 		if (GameState.getCaldoriaMadeOJ())
-			g_allHotspots.deactivateOneHotspot(kCaldoriaMakeOJSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaMakeOJSpotID);
 		break;
 	case kCaldoria27:
 		if (GameState.isCurrentDoorOpen()) {
-			g_allHotspots.deactivateOneHotspot(kCaldoriaFourthFloorElevator1);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaFourthFloorElevator2);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaFourthFloorElevator3);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaFourthFloorElevator4);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaFourthFloorElevator5);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaFourthFloorElevator1);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaFourthFloorElevator2);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaFourthFloorElevator3);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaFourthFloorElevator4);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaFourthFloorElevator5);
 		}
 		break;
 	case kCaldoria28:
 		if (GameState.isCurrentDoorOpen()) {
-			g_allHotspots.deactivateOneHotspot(kCaldoriaGroundElevator1);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaGroundElevator2);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaGroundElevator3);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaGroundElevator4);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaGroundElevator5);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaGroundElevator1);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaGroundElevator2);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaGroundElevator3);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaGroundElevator4);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaGroundElevator5);
 		}
 		break;
 	case kCaldoria45:
 		if (GameState.isCurrentDoorOpen()) {
-			g_allHotspots.deactivateOneHotspot(kCaldoriaRoofElevator1);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaRoofElevator2);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaRoofElevator3);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaRoofElevator4);
-			g_allHotspots.deactivateOneHotspot(kCaldoriaRoofElevator5);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRoofElevator1);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRoofElevator2);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRoofElevator3);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRoofElevator4);
+			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRoofElevator5);
 		}
 		break;
 	}
@@ -1576,7 +1576,7 @@ Hotspot *Caldoria::getItemScreenSpot(Item *item, DisplayElement *element) {
 	if (destSpotID == kNoHotSpotID)
 		return Neighborhood::getItemScreenSpot(item, element);
 
-	return g_allHotspots.findHotspotByID(destSpotID);
+	return _vm->getAllHotspots().findHotspotByID(destSpotID);
 }
 
 void Caldoria::pickedUpItem(Item *item) {

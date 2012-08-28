@@ -23,6 +23,7 @@
  *
  */
 
+#include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/opticalchip.h"
 

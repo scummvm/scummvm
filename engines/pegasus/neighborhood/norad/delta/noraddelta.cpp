@@ -102,38 +102,38 @@ void NoradDelta::init() {
 	Norad::init();
 
 	// Little fix for the retinal scan zoom in spot...
-	Hotspot *hotspot = g_allHotspots.findHotspotByID(kNorad68WestSpotID);
+	Hotspot *hotspot = _vm->getAllHotspots().findHotspotByID(kNorad68WestSpotID);
 	hotspot->setMaskedHotspotFlags(kZoomInSpotFlag, kZoomInSpotFlag | kZoomOutSpotFlag);
 	
-	hotspot = g_allHotspots.findHotspotByID(kNorad79WestSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kNorad79WestSpotID);
 	hotspot->setMaskedHotspotFlags(kZoomInSpotFlag, kZoomInSpotFlag | kZoomOutSpotFlag);
 	
-	hotspot = g_allHotspots.findHotspotByID(kDelta59RobotShieldBiochipSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta59RobotShieldBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	HotspotInfoTable::Entry *hotspotEntry = findHotspotEntry(kDelta59RobotShieldBiochipSpotID);
 	hotspotEntry->hotspotItem = kShieldBiochip;
 	
-	hotspot = g_allHotspots.findHotspotByID(kDelta59RobotOpMemBiochipSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta59RobotOpMemBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta59RobotOpMemBiochipSpotID);
 	hotspotEntry->hotspotItem = kOpticalBiochip;
 	
-	hotspot = g_allHotspots.findHotspotByID(kDelta59RobotRetinalBiochipSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta59RobotRetinalBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta59RobotRetinalBiochipSpotID);
 	hotspotEntry->hotspotItem = kRetinalScanBiochip;
 	
-	hotspot = g_allHotspots.findHotspotByID(kDelta60RobotShieldBiochipSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta60RobotShieldBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta60RobotShieldBiochipSpotID);
 	hotspotEntry->hotspotItem = kShieldBiochip;
 	
-	hotspot = g_allHotspots.findHotspotByID(kDelta60RobotOpMemBiochipSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta60RobotOpMemBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta60RobotOpMemBiochipSpotID);
 	hotspotEntry->hotspotItem = kOpticalBiochip;
 	
-	hotspot = g_allHotspots.findHotspotByID(kDelta60RobotRetinalBiochipSpotID);
+	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta60RobotRetinalBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta60RobotRetinalBiochipSpotID);
 	hotspotEntry->hotspotItem = kRetinalScanBiochip;
@@ -508,7 +508,7 @@ TimeValue NoradDelta::getViewTime(const RoomID room, const DirectionConstant dir
 void NoradDelta::openDoor() {	
 	if (GameState.getCurrentRoom() == kNorad59 && GameState.getCurrentDirection() == kWest && GameState.getNoradPlayedGlobeGame()) {
 		Input scratch;
-		InputHandler::_inputHandler->clickInHotspot(scratch, g_allHotspots.findHotspotByID(kNorad59WestSpotID));
+		InputHandler::_inputHandler->clickInHotspot(scratch, _vm->getAllHotspots().findHotspotByID(kNorad59WestSpotID));
 	} else {
 		Norad::openDoor();
 	}
@@ -518,53 +518,53 @@ void NoradDelta::activateHotspots() {
 	Norad::activateHotspots();
 
 	if (GameState.getCurrentRoom() == kNorad59West && GameState.getCurrentDirection() == kWest && GameState.getNoradBeatRobotWithDoor()) {
-		g_allHotspots.deactivateOneHotspot(kNorad59WestOutSpotID);
+		_vm->getAllHotspots().deactivateOneHotspot(kNorad59WestOutSpotID);
 
 		if (_privateFlags.getFlag(kNoradPrivateRobotHeadOpenFlag)) {
 			if (!_privateFlags.getFlag(kNoradPrivateGotShieldChipFlag))
-				g_allHotspots.activateOneHotspot(kDelta59RobotShieldBiochipSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kDelta59RobotShieldBiochipSpotID);
 			else
-				g_allHotspots.deactivateOneHotspot(kDelta59RobotShieldBiochipSpotID);
+				_vm->getAllHotspots().deactivateOneHotspot(kDelta59RobotShieldBiochipSpotID);
 
 			if (!_privateFlags.getFlag(kNoradPrivateGotOpticalChipFlag))
-				g_allHotspots.activateOneHotspot(kDelta59RobotOpMemBiochipSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kDelta59RobotOpMemBiochipSpotID);
 			else
-				g_allHotspots.deactivateOneHotspot(kDelta59RobotOpMemBiochipSpotID);
+				_vm->getAllHotspots().deactivateOneHotspot(kDelta59RobotOpMemBiochipSpotID);
 
 			if (!_privateFlags.getFlag(kNoradPrivateGotRetScanChipFlag))
-				g_allHotspots.activateOneHotspot(kDelta59RobotRetinalBiochipSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kDelta59RobotRetinalBiochipSpotID);
 			else
-				g_allHotspots.deactivateOneHotspot(kDelta59RobotRetinalBiochipSpotID);
+				_vm->getAllHotspots().deactivateOneHotspot(kDelta59RobotRetinalBiochipSpotID);
 		} else
-			g_allHotspots.activateOneHotspot(kDelta59RobotHeadSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kDelta59RobotHeadSpotID);
 	} else if (GameState.getCurrentRoom() == kNorad60West && GameState.getCurrentDirection() == kWest &&
 			GameState.getNoradBeatRobotWithClaw()) {
-		g_allHotspots.deactivateOneHotspot(kNorad60MonitorOutSpotID);
+		_vm->getAllHotspots().deactivateOneHotspot(kNorad60MonitorOutSpotID);
 
 		if (_privateFlags.getFlag(kNoradPrivateRobotHeadOpenFlag)) {
 			if (!_privateFlags.getFlag(kNoradPrivateGotShieldChipFlag))
-				g_allHotspots.activateOneHotspot(kDelta60RobotShieldBiochipSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kDelta60RobotShieldBiochipSpotID);
 			else
-				g_allHotspots.deactivateOneHotspot(kDelta60RobotShieldBiochipSpotID);
+				_vm->getAllHotspots().deactivateOneHotspot(kDelta60RobotShieldBiochipSpotID);
 
 			if (!_privateFlags.getFlag(kNoradPrivateGotOpticalChipFlag))
-				g_allHotspots.activateOneHotspot(kDelta60RobotOpMemBiochipSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kDelta60RobotOpMemBiochipSpotID);
 			else
-				g_allHotspots.deactivateOneHotspot(kDelta60RobotOpMemBiochipSpotID);
+				_vm->getAllHotspots().deactivateOneHotspot(kDelta60RobotOpMemBiochipSpotID);
 
 			if (!_privateFlags.getFlag(kNoradPrivateGotRetScanChipFlag))
-				g_allHotspots.activateOneHotspot(kDelta60RobotRetinalBiochipSpotID);
+				_vm->getAllHotspots().activateOneHotspot(kDelta60RobotRetinalBiochipSpotID);
 			else
-				g_allHotspots.deactivateOneHotspot(kDelta60RobotRetinalBiochipSpotID);
+				_vm->getAllHotspots().deactivateOneHotspot(kDelta60RobotRetinalBiochipSpotID);
 		} else {
-			g_allHotspots.activateOneHotspot(kDelta60RobotHeadSpotID);
+			_vm->getAllHotspots().activateOneHotspot(kDelta60RobotHeadSpotID);
 		}
 	} else if (GameState.getCurrentRoomAndView() == MakeRoomView(kNorad50, kEast)) {
 		if (GameState.isCurrentDoorOpen())
-			g_allHotspots.deactivateOneHotspot(kNorad50DoorSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kNorad50DoorSpotID);
 	} else if (GameState.getCurrentRoomAndView() == MakeRoomView(kNorad59, kWest)) {
 		if (GameState.isCurrentDoorOpen())
-			g_allHotspots.deactivateOneHotspot(kNorad59WestSpotID);
+			_vm->getAllHotspots().deactivateOneHotspot(kNorad59WestSpotID);
 	}
 }
 
@@ -726,7 +726,7 @@ Hotspot *NoradDelta::getItemScreenSpot(Item *item, DisplayElement *element) {
 	}
 
 	if (id != kNoHotSpotID)
-		return g_allHotspots.findHotspotByID(id);
+		return _vm->getAllHotspots().findHotspotByID(id);
 
 	return Norad::getItemScreenSpot(item, element);
 }
@@ -852,7 +852,7 @@ void NoradDelta::doSolve() {
 		if (biochip != 0 && biochip->getObjectID() != kRetinalScanBiochip && g_interface)
 			g_interface->setCurrentBiochipID(kRetinalScanBiochip);
 
-		Hotspot *spot = g_allHotspots.findHotspotByID(kNorad68WestSpotID);
+		Hotspot *spot = _vm->getAllHotspots().findHotspotByID(kNorad68WestSpotID);
 		Input scratch;
 		InputHandler::_inputHandler->clickInHotspot(scratch, spot);
 	}

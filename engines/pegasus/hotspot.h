@@ -145,8 +145,7 @@ public:
 
 typedef HotspotList::iterator HotspotIterator;
 
-// FIXME: Remove global construction
-extern HotspotList g_allHotspots;
+#define g_allHotspots (((PegasusEngine *)g_engine)->getAllHotspots())
 
 } // End of namespace Pegasus
 
