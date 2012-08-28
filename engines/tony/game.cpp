@@ -1537,6 +1537,11 @@ void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 	_ctx->n = _nCurPointer;
 	if (_ctx->n == TA_COMBINE) _ctx->n = TA_USE;
 
+	// WORKAROUND: updateCursor gets called too early sometimes (for example, when
+	// the cursor is released over the TA_PERORATE option), via setAction.
+	if (_ctx->n > 4)
+		_ctx->n = 0;
+
 	_cursorHotspot = _hotspot[_ctx->n];
 
 	// Call the Draw method of the pointer
