@@ -352,7 +352,7 @@ uint32 EventRecorder::getRandomSeed(const String &name) {
 	return result;
 }
 
-void EventRecorder::init(Common::String gameId, const ADGameDescription* gameDesc) {
+void EventRecorder::init(Common::String gameId, const ADGameDescription *gameDesc) {
 	_recordCount = 0;
 	_lastScreenshotTime = 0;
 	_bitmapBuffSize = 0;
@@ -440,7 +440,7 @@ bool EventRecorder::openRecordFile(const String &gameId) {
 	return true;
 }
 
-bool EventRecorder::checkGameHash(const ADGameDescription* gameDesc) {
+bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
 	if ((gameDesc == NULL) && (_hashRecords.size() != 0)) {
 		warning("Engine doesn't contain description table");
 		return false;
@@ -458,7 +458,7 @@ bool EventRecorder::checkGameHash(const ADGameDescription* gameDesc) {
 	return true;
 }
 
-Common::String EventRecorder::findMD5ByFileName(const ADGameDescription* gameDesc, const String &fileName) {
+Common::String EventRecorder::findMD5ByFileName(const ADGameDescription *gameDesc, const String &fileName) {
 	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 		if (fileName.equals(fileDesc->fileName)) {
 			return fileDesc->md5;
@@ -467,7 +467,7 @@ Common::String EventRecorder::findMD5ByFileName(const ADGameDescription* gameDes
 	return String();
 }
 
-void EventRecorder::registerMixerManager(SdlMixerManager* mixerManager) {
+void EventRecorder::registerMixerManager(SdlMixerManager *mixerManager) {
 	_realMixerManager = mixerManager;
 }
 
@@ -481,7 +481,7 @@ void EventRecorder::switchMixer() {
 	}
 }
 
-SdlMixerManager* EventRecorder::getMixerManager() {
+SdlMixerManager *EventRecorder::getMixerManager() {
 	if (_recordMode == kPassthrough) {
 		return _realMixerManager;
 	} else {
@@ -765,7 +765,7 @@ void EventRecorder::writeGameSettings() {
 	}
 }
 
-void EventRecorder::getConfigFromDomain(ConfigManager::Domain* domain) {
+void EventRecorder::getConfigFromDomain(ConfigManager::Domain *domain) {
 	for (ConfigManager::Domain::iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
 		_settingsRecords[entry->_key] = entry->_value;
 	}
@@ -811,7 +811,7 @@ void EventRecorder::applyPlaybackSettings() {
 	removeDifferentEntriesInDomain(ConfMan.getDomain(ConfMan.kTransientDomain));
 }
 
-void EventRecorder::removeDifferentEntriesInDomain(ConfigManager::Domain* domain) {
+void EventRecorder::removeDifferentEntriesInDomain(ConfigManager::Domain *domain) {
 	for (ConfigManager::Domain::iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
 		if (_settingsRecords.find(entry->_key) == _settingsRecords.end()) {
 			warning("Config value <%s>: %s -> (null)", entry->_key.c_str(), entry->_value.c_str());
@@ -886,11 +886,11 @@ void EventRecorder::checkRecordedMD5() {
 	screen.free();
 }
 
-TimerManager* EventRecorder::getTimerManager() {
+TimerManager *EventRecorder::getTimerManager() {
 	return _timerManager;
 }
 
-void EventRecorder::registerTimerManager(TimerManager* timerManager) {
+void EventRecorder::registerTimerManager(TimerManager *timerManager) {
 	_timerManager = timerManager;
 }
 

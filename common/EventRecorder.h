@@ -79,11 +79,11 @@ public:
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
 	SdlMixerManager *getMixerManager();
-	void registerMixerManager(SdlMixerManager *mixerManager);
-	TimerManager* getTimerManager();
+	TimerManager *getTimerManager();
 	uint32 getRandomSeed(const String &name);
-	void init(Common::String gameid, const ADGameDescription* desc = NULL);
-	void registerTimerManager(TimerManager* timerManager);
+	void init(Common::String gameid, const ADGameDescription *desc = NULL);
+	void registerMixerManager(SdlMixerManager *mixerManager);
+	void registerTimerManager(TimerManager *timerManager);
 	uint32 getTimer() {return _fakeTimer;}
 private:
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
@@ -104,8 +104,8 @@ private:
 	ChunkHeader readChunkHeader();
 	void getConfig();
 	void applyPlaybackSettings();
-	void removeDifferentEntriesInDomain(ConfigManager::Domain* domain);
-	void getConfigFromDomain(ConfigManager::Domain* domain);
+	void removeDifferentEntriesInDomain(ConfigManager::Domain *domain);
+	void getConfigFromDomain(ConfigManager::Domain *domain);
 	bool processChunk(ChunkHeader &nextChunk);
 	bool checkPlaybackFileVersion();
 	void readAuthor(ChunkHeader chunk);
@@ -116,9 +116,9 @@ private:
 	bool _headerDumped;
 	PlaybackFileState _playbackParseState;
 	MutexRef _recorderMutex;
-	SdlMixerManager* _realMixerManager;
-	NullSdlMixerManager* _fakeMixerManager;
-	TimerManager* _timerManager;
+	SdlMixerManager *_realMixerManager;
+	NullSdlMixerManager *_fakeMixerManager;
+	TimerManager *_timerManager;
 	void switchMixer();
 	void switchFastMode();
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> randomSeedsDictionary;
@@ -132,11 +132,11 @@ private:
 	void writeGameHash();
 	void writeRandomRecords();
 	bool openRecordFile(const String &gameId);
-	bool checkGameHash(const ADGameDescription* desc);
+	bool checkGameHash(const ADGameDescription *desc);
 	bool notifyEvent(const Event &ev);
 	String getAuthor();
 	String getComment();
-	String findMD5ByFileName(const ADGameDescription* gameDesc, const String &fileName);
+	String findMD5ByFileName(const ADGameDescription *gameDesc, const String &fileName);
 	Common::String readString(int len);
 	bool notifyPoll();
 	bool pollEvent(Event &ev);
