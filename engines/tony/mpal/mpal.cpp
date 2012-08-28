@@ -31,7 +31,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "tony/tony.h"
-#include "tony/mpal/lzo.h"	
+#include "tony/mpal/lzo.h"
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/mpaldll.h"
 
@@ -358,7 +358,7 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
 			return clonemsg;
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -551,7 +551,7 @@ static LPITEM getItemData(uint32 nOrdItem) {
 		dim = (uint32)(ret->_frameslocations[i].right - ret->_frameslocations[i].left) *
 			(uint32)(ret->_frameslocations[i].bottom - ret->_frameslocations[i].top);
 		ret->_frames[i] = (char *)globalAlloc(GMEM_FIXED,dim);
-   
+
 		if (ret->_frames[i] == NULL)
 			return NULL;
 		memcpy(ret->_frames[i], dat, dim);
@@ -570,7 +570,7 @@ static LPITEM getItemData(uint32 nOrdItem) {
 }
 
 
-/** 
+/**
  * Thread that calls a custom function. It is used in scripts, so that each script
  * function is executed without delaying the others.
  *
@@ -685,7 +685,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 
 
 /**
- * Thread that performs an action on an item. the thread always executes the action, 
+ * Thread that performs an action on an item. the thread always executes the action,
  * so it should create a new item in which the action is the one required.
  * Furthermore, the expression is not checked, but it is always performed the action.
  *
@@ -745,7 +745,7 @@ void ActionThread(CORO_PARAM, const void *param) {
 
 	globalDestroy(_ctx->item);
 	_ctx->item = NULL;
-	
+
 	debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d ended", CoroScheduler.getCurrentPID());
 
 	CORO_END_CODE;
@@ -855,7 +855,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 		if (_ctx->ord == -1)
 			continue;
-	 
+
 		_ctx->curItem = GLOBALS._lpmiItems + _ctx->ord;
 
 		_ctx->k = 0;
@@ -1005,7 +1005,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					if (_ctx->newItem == false) {
 						globalDestroy(_ctx->MyThreads);
 						globalDestroy(_ctx->MyActions);
-						
+
 						CORO_KILL_SELF();
 						return;
 					}
@@ -1032,7 +1032,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 						globalDestroy(_ctx->newItem);
 						globalDestroy(_ctx->MyThreads);
 						globalDestroy(_ctx->MyActions);
-						
+
 						CORO_KILL_SELF();
 						return;
 					}
@@ -1068,10 +1068,10 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 
 /**
- * Wait for the end of the dialog execution thread, and then restore global 
+ * Wait for the end of the dialog execution thread, and then restore global
  * variables indicating that the dialogue has finished.
  *
- * @param param				Pointer to a handle to the dialog 
+ * @param param				Pointer to a handle to the dialog
  * @remarks		This additional process is used, instead of clearing variables
  * within the same dialog thread, because due to the recursive nature of a dialog,
  * it would be difficult to know within it when the dialog is actually ending.
@@ -1132,9 +1132,9 @@ void GroupThread(CORO_PARAM, const void *param) {
 				if (_ctx->type == 1) {
 					// Call custom function
 					CORO_INVOKE_4(GLOBALS._lplpFunctions[_ctx->dialog->_command[_ctx->k]._nCf],
-						_ctx->dialog->_command[_ctx->k]._arg1, 
+						_ctx->dialog->_command[_ctx->k]._arg1,
 						_ctx->dialog->_command[_ctx->k]._arg2,
-						_ctx->dialog->_command[_ctx->k]._arg3, 
+						_ctx->dialog->_command[_ctx->k]._arg3,
 						_ctx->dialog->_command[_ctx->k]._arg4
 					);
 
@@ -1143,22 +1143,22 @@ void GroupThread(CORO_PARAM, const void *param) {
 					lockVar();
 					varSetValue(_ctx->dialog->_command[_ctx->k].lpszVarName, evaluateExpression(_ctx->dialog->_command[_ctx->k].expr));
 					unlockVar();
-					
+
 				} else if (_ctx->type == 3) {
 					// DoChoice: call the chosen function
 					CORO_INVOKE_1(doChoice, (uint32)_ctx->dialog->_command[_ctx->k].nChoice);
-					
+
 				} else {
 					GLOBALS._mpalError = 1;
 					unlockDialogs();
-					
+
 					CORO_KILL_SELF();
 					return;
 				}
 			}
 
 			/* The gruop is finished, so we can return to the calling function.
-			 * If the group was the first called, then the process will automatically 
+			 * If the group was the first called, then the process will automatically
 			 * end. Otherwise it returns to the caller method
 			 */
 			return;
@@ -1168,7 +1168,7 @@ void GroupThread(CORO_PARAM, const void *param) {
 	/* If we are here, it means that we have not found the requested group */
 	GLOBALS._mpalError = 1;
 	unlockDialogs();
-	
+
 	CORO_KILL_SELF();
 
 	CORO_END_CODE;
@@ -1259,7 +1259,7 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 		if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].attr & (1 << 1)) {
 			/* Bit 1 set: the end of the dialog */
 			unlockDialogs();
-			
+
 			CORO_KILL_SELF();
 			return;
 		}
@@ -1348,8 +1348,8 @@ static uint32 doAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
  * @param nGroup				Number of the group to perform
  * @returns						The process Id of the process running the dialog
  *								or CORO_INVALID_PID_VALUE on error
- * @remarks						The dialogue runs in a thread created on purpose, 
- * so that must inform through an event and when 'necessary to you make a choice. 
+ * @remarks						The dialogue runs in a thread created on purpose,
+ * so that must inform through an event and when 'necessary to you make a choice.
  * The data on the choices may be obtained through various queries.
  */
 static uint32 doDialog(uint32 nDlgOrd, uint32 nGroup) {
@@ -1382,7 +1382,7 @@ static uint32 doDialog(uint32 nDlgOrd, uint32 nGroup) {
 
 
 /**
- * Takes note of the selection chosen by the user, and warns the process that was running 
+ * Takes note of the selection chosen by the user, and warns the process that was running
  * the box that it can continue.
  *
  * @param nChoice           Number of choice that was in progress
@@ -1420,7 +1420,7 @@ bool doSelection(uint32 i, uint32 dwData) {
  * @param lplpcfArray		Array of pointers to custom functions.
  * @returns		True if everything is OK, false on failure
  */
-bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName, 
+bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 			  LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings) {
 	Common::File hMpc;
 	byte buf[5];
@@ -1620,7 +1620,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		 */
 		error("mpalQuery(MPQ_MESSAGE, uint32 nMsg) used incorrect method variant");
 
-		
+
 	} else if (wQueryType == MPQ_ITEM_PATTERN) {
 		/*
 		 *  uint32 mpalQuery(MPQ_ITEM_PATTERN, uint32 nItem);
@@ -1629,7 +1629,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		buf = Common::String::format("Pattern.%u", GETARG(uint32));
 		dwRet = (uint32)varGetValue(buf.c_str());
 		unlockVar();
-		
+
 	} else if (wQueryType == MPQ_LOCATION_SIZE) {
 		/*
 		 *  uint32 mpalQuery(MPQ_LOCATION_SIZE, uint32 nLoc, uint32 dwCoord);
@@ -1648,7 +1648,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 			GLOBALS._mpalError = 1;
 
 		unlockLocations();
-		
+
 	} else if (wQueryType == MPQ_LOCATION_IMAGE) {
 		/*
 		 *  HGLOBAL mpalQuery(MPQ_LOCATION_IMAGE, uint32 nLoc);
@@ -1815,19 +1815,19 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 		LockMsg();
 		hRet = DuplicateMessage(msgGetOrderFromNum(GETARG(uint32)));
 		UnlockMsg();
-		
+
 	} else if (wQueryType == MPQ_ITEM_PATTERN) {
 		/*
 		 *  uint32 mpalQuery(MPQ_ITEM_PATTERN, uint32 nItem);
 		 */
 		error("mpalQuery(MPQ_ITEM_PATTERN, uint32 nItem) used incorrect variant");
-		
+
 	} else if (wQueryType == MPQ_LOCATION_SIZE) {
 		/*
 		 *  uint32 mpalQuery(MPQ_LOCATION_SIZE, uint32 nLoc, uint32 dwCoord);
 		 */
 		error("mpalQuery(MPQ_LOCATION_SIZE, uint32 nLoc, uint32 dwCoord) used incorrect variant");
-		
+
 	} else if (wQueryType == MPQ_LOCATION_IMAGE) {
 		/*
 		 *  HGLOBAL mpalQuery(MPQ_LOCATION_IMAGE, uint32 nLoc);
@@ -1961,9 +1961,9 @@ void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...) {
 		 */
 		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, GLOBALS._hAskChoice, CORO_INFINITE);
 
-		// WORKAROUND: Introduce a single frame delay so that if there are multiple actions running, 
+		// WORKAROUND: Introduce a single frame delay so that if there are multiple actions running,
 		// they all have time to be signalled before resetting the event. This fixes a problem where
-		// if you try to use the 'shrimp' on the parrot a second time after trying to first use it 
+		// if you try to use the 'shrimp' on the parrot a second time after trying to first use it
 		// whilst the parrot was talking, the cursor wouldn't be re-enabled afterwards
 		CORO_SLEEP(1);
 
@@ -2019,7 +2019,7 @@ bool mpalExecuteScript(int nScript) {
 
 
 /**
- * Install a custom routine That will be called by MPAL every time the pattern 
+ * Install a custom routine That will be called by MPAL every time the pattern
  * of an item has been changed.
  *
  * @param lpiifCustom		Custom function to install
@@ -2032,7 +2032,7 @@ void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
 /**
  * Process the idle actions of the items on one location.
  *
- * @param nLoc				Number of the location whose items must be processed 
+ * @param nLoc				Number of the location whose items must be processed
  * for idle actions.
  * @returns		TRUE if all OK, and FALSE if it exceeded the maximum limit.
  * @remarks		The maximum number of locations that can be polled
@@ -2118,7 +2118,7 @@ void mpalSaveState(byte *buf) {
 	lockVar();
 	WRITE_LE_UINT32(buf, GLOBALS._nVars);
 	memcpy(buf + 4, (byte *)GLOBALS._lpmvVars, GLOBALS._nVars * sizeof(MPALVAR));
-	unlockVar();	
+	unlockVar();
 }
 
 
@@ -2133,7 +2133,7 @@ int mpalLoadState(byte *buf) {
 	globalFree(GLOBALS._hVars);
 
 	GLOBALS._nVars = READ_LE_UINT32(buf);
-	
+
 	GLOBALS._hVars = globalAllocate(GMEM_ZEROINIT | GMEM_MOVEABLE, GLOBALS._nVars * sizeof(MPALVAR));
 	lockVar();
 	memcpy((byte *)GLOBALS._lpmvVars, buf + 4, GLOBALS._nVars * sizeof(MPALVAR));

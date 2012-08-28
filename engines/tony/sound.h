@@ -36,7 +36,7 @@
 #include "tony/utils.h"
 
 namespace Audio {
-class RewindableAudioStream;	
+class RewindableAudioStream;
 }
 
 namespace Tony {
@@ -253,7 +253,7 @@ private:
 	Common::File _file;                    // File handle used for the stream
 
 	bool _bSoundSupported;                 // True if the sound is active
-	bool _bFileLoaded;                     // True if the file is open 
+	bool _bFileLoaded;                     // True if the file is open
 	bool _bLoop;                           // True if the stream should loop
 	bool _bDoFadeOut;                      // True if fade out is required
 	bool _bSyncExit;
@@ -268,7 +268,7 @@ private:
 public:
 
 	/**
-	 * Default constructor. 
+	 * Default constructor.
 	 *
 	 * @remarks             Do *NOT* declare an object directly, but rather
 	 *                      create it using FPSound::CreateStream()
@@ -277,7 +277,7 @@ public:
 	FPStream(bool bSoundOn);
 
 	/**
-	 * Default destructor. 
+	 * Default destructor.
 	 *
 	 * @remarks             It calls CloseFile() if needed.
 	 */
@@ -285,9 +285,9 @@ public:
 	~FPStream();
 
 	/**
-	 * Releases the memory object. 
+	 * Releases the memory object.
 	 *
-	 * @remarks             Must be called when the object is no longer used 
+	 * @remarks             Must be called when the object is no longer used
 	 *                      and **ONLY** if the object was created by
 	 *                      FPSound::CreateStream().
 	 *                      Object pointers are no longer valid after this call.
@@ -311,8 +311,8 @@ public:
 	 *
 	 * @returns             For safety, the destructor calls unloadFile() if it has not
 	 *                      been mentioned explicitly.
-	 * 
-	 * @remarks             It is necessary to call this function to free the 
+	 *
+	 * @remarks             It is necessary to call this function to free the
 	 *                      memory used by the stream.
 	 */
 

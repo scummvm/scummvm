@@ -416,7 +416,7 @@ void FPSfx::soundCheckProcess(CORO_PARAM, const void *param) {
 }
 
 /**
- * Default constructor. 
+ * Default constructor.
  *
  * @remarks             Do *NOT* declare an object directly, but rather
  *                      create it using FPSound::CreateStream()
@@ -436,7 +436,7 @@ FPStream::FPStream(bool bSoundOn) {
 }
 
 /**
- * Default destructor. 
+ * Default destructor.
  *
  * @remarks             It calls CloseFile() if needed.
  */
@@ -455,9 +455,9 @@ FPStream::~FPStream() {
 }
 
 /**
- * Releases the memory object. 
+ * Releases the memory object.
  *
- * @remarks             Must be called when the object is no longer used 
+ * @remarks             Must be called when the object is no longer used
  *                      and **ONLY** if the object was created by
  *                      FPSound::CreateStream().
  *                      Object pointers are no longer valid after this call.
@@ -522,8 +522,8 @@ bool FPStream::loadFile(const Common::String &fileName, uint32 dwCodType, int nB
  *
  * @returns             For safety, the destructor calls unloadFile() if it has not
  *                      been mentioned explicitly.
- * 
- * @remarks             It is necessary to call this function to free the 
+ *
+ * @remarks             It is necessary to call this function to free the
  *                      memory used by the stream.
  */
 bool FPStream::unloadFile() {
@@ -580,7 +580,7 @@ bool FPStream::play() {
  * Closes the stream.
  *
  * @returns             True is everything is OK, False otherwise
- * 
+ *
  */
 
 bool FPStream::stop(bool bSync) {

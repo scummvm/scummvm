@@ -38,7 +38,7 @@ namespace MPAL {
 \****************************************************************************/
 
 /**
- * Reads and interprets the MPC file, and create structures for various directives 
+ * Reads and interprets the MPC file, and create structures for various directives
  * in the global variables
  *
  * @param lpBuf				Buffer containing the MPC file data, excluding the header.

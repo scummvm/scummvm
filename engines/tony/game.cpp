@@ -1513,8 +1513,8 @@ int RMPointer::curAction() {
 	return _nCurPointer;
 }
 
-/** 
- * Show the cursor 
+/**
+ * Show the cursor
  */
 void RMPointer::showCursor() {
 	if (!CursorMan.isVisible()) {
@@ -1524,8 +1524,8 @@ void RMPointer::showCursor() {
 	}
 }
 
-/** 
- * Hide the cursor 
+/**
+ * Hide the cursor
  */
 void RMPointer::hideCursor() {
 	if (CursorMan.isVisible()) {

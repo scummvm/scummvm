@@ -34,9 +34,9 @@
 /*
  * MPAL (MultiPurpose Adventure Language) is a high level language
  * for the definition of adventure. Through the use of MPAL you can describe
- * storyboard the adventure, and then use it with any user interface. 
- * In fact, unlike many other similar products, MPAL is not programmed through 
- * the whole adventure, but are defined only the locations, objects, as they may 
+ * storyboard the adventure, and then use it with any user interface.
+ * In fact, unlike many other similar products, MPAL is not programmed through
+ * the whole adventure, but are defined only the locations, objects, as they may
  * interact with each other, etc.. thus making MPAL useful for any type of adventure.
  */
 
@@ -64,16 +64,16 @@
 /*
  * A custom function and a function specified by the program that uses the
  * library, to perform the particular code. The custom functions are
- * retrieved from the library as specified in the source MPAL, and in particular 
+ * retrieved from the library as specified in the source MPAL, and in particular
  * in defining the behavior of an item with some action.
  *
  * To use the custom functions, you need to prepare an array of
- * pointers to functions (such as using the type casting LPCUSTOMFUNCTION, 
+ * pointers to functions (such as using the type casting LPCUSTOMFUNCTION,
  * (defined below), and pass it as second parameter to mpalInit (). Note you
- * must specify the size of the array, as elements of pointers and which do not 
- * contain the same: the library will call it only those functions specified in 
- * the source MPAL. It can be useful, for debugging reasons, do not bet 
- * the shares of arrays used to debugging function, to avoid unpleasant crash, 
+ * must specify the size of the array, as elements of pointers and which do not
+ * contain the same: the library will call it only those functions specified in
+ * the source MPAL. It can be useful, for debugging reasons, do not bet
+ * the shares of arrays used to debugging function, to avoid unpleasant crash,
  * if it has been made an error in source and / or some oversight in the code.
  *
  */
@@ -115,7 +115,7 @@ enum QueryCoordinates {
 
 
 /**
- * Query can be used with mpalQuery methods. In practice corresponds all claims 
+ * Query can be used with mpalQuery methods. In practice corresponds all claims
  * that can do at the library
  */
 enum QueryTypes {
@@ -176,7 +176,7 @@ typedef void (*LPCUSTOMFUNCTION)(CORO_PARAM, uint32, uint32, uint32, uint32);
 typedef LPCUSTOMFUNCTION *LPLPCUSTOMFUNCTION;
 
 /**
- * 
+ *
  * Define an IRQ of an item that is called when the  pattern changes or the status of an item
  */
 typedef void (*LPITEMIRQFUNCTION)(uint32, int, int);
@@ -202,8 +202,8 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  *
  * @param lpszVarName		Nome della variabile (ASCIIZ)
  * @returns		Global variable value
- * @remarks		This query was implemented for debugging. The program, 
- *				if well designed, should not need to access variables from 
+ * @remarks		This query was implemented for debugging. The program,
+ *				if well designed, should not need to access variables from
  *				within the library.
  */
 #define mpalQueryGlobalVar(lpszVarName)                 \
@@ -313,7 +313,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @param nPeriod           Number of words
  * @returns		A pointer to the string of words, or NULL on failure.
  * @remarks		The string must be freed after use using the memory manager.
- * Unlike normal messages, the sentences of dialogue are formed by a single 
+ * Unlike normal messages, the sentences of dialogue are formed by a single
  * string terminated with 0.
  */
 #define mpalQueryDialogPeriod(nPeriod)                  \
@@ -340,14 +340,14 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
         (uint32 *)mpalQueryHANDLE(MPQ_DIALOG_SELECTLIST, (uint32)(nChoice))
 
 /**
- * Warns the library that the user has selected, in a certain choice of the current dialog, 
+ * Warns the library that the user has selected, in a certain choice of the current dialog,
  * corresponding option at a certain given.
  *
  * @param nChoice			Choice number of the choice that was in progress
  * @param dwData			Option that was selected by the user.
  * @returns		TRUE if all OK, FALSE on failure.
- * @remarks		After execution of this query, MPAL continue 
- * Groups according to the execution of the dialogue. And necessary so the game 
+ * @remarks		After execution of this query, MPAL continue
+ * Groups according to the execution of the dialogue. And necessary so the game
  * remains on hold again for another chosen by mpalQueryDialogWaitForChoice ().
  */
 #define mpalQueryDialogSelection(nChoice, dwData)        \
@@ -357,15 +357,15 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
         mpalQueryDWORD(MPQ_DIALOG_SELECTION, (uint32)(nChoice), (uint32)(dwData))
 
 /**
- * Warns the library an action was performed on a Object. 
+ * Warns the library an action was performed on a Object.
  * The library will call custom functions, if necessary.
  *
  * @param nAction			Action number
  * @param nItem				Item number
  * @param dwParam			Action parameter
- * @returns		Handle to the thread that is performing the action, or CORO_INVALID_PID_VALUE 
+ * @returns		Handle to the thread that is performing the action, or CORO_INVALID_PID_VALUE
  * if the action is not defined for the item, or the item is inactive.
- * @remarks		The parameter is used primarily to implement actions 
+ * @remarks		The parameter is used primarily to implement actions
  * as "U.S." involving two objects together. The action will be executed only
  * if the item is active, ie if its status is a positive number greater than 0.
  */
@@ -452,7 +452,7 @@ bool mpalExecuteScript(int nScript);
 uint32 mpalGetError();
 
 /**
- * Install a custom routine That will be called by MPAL every time the pattern 
+ * Install a custom routine That will be called by MPAL every time the pattern
  * of an item has been changed.
  *
  * @param lpiifCustom		Custom function to install
@@ -462,7 +462,7 @@ void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCustom);
 /**
  * Process the idle actions of the items on one location.
  *
- * @param nLoc				Number of the location whose items must be processed 
+ * @param nLoc				Number of the location whose items must be processed
  * for idle actions.
  * @returns		TRUE if all OK, and FALSE if it exceeded the maximum limit.
  * @remarks		The maximum number of locations that can be polled

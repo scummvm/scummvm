@@ -43,7 +43,7 @@ namespace MPAL {
  * Parses a mathematical expression from the MPC file
  *
  * @param buf				Buffer containing the expression to evaluate
- * @param h					Pointer to a handle that, at the end of execution, 
+ * @param h					Pointer to a handle that, at the end of execution,
  * will point to the area of memory containing the parsed expression
  * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
  */

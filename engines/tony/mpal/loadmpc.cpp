@@ -157,7 +157,7 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	/* Periodi */
 	num = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
-	
+
 	if (num >= MAX_PERIODS_PER_DIALOG - 1)
 		error("Too much periods in dialog #%d", lpmdDialog->nObj);
 
@@ -252,7 +252,7 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 				}
 			}
 
-			if (kk == curCmd) {	
+			if (kk == curCmd) {
 				lpmdDialog->_group[i].CmdNum[j] = curCmd;
 				curCmd++;
 			}
@@ -445,7 +445,7 @@ static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 				}
 			}
 
-			if (kk == curCmd) {	
+			if (kk == curCmd) {
 				lpmiItem->Action[i].CmdNum[j] = curCmd;
 				curCmd++;
 
@@ -520,7 +520,7 @@ static const byte *ParseLocation(const byte *lpBuf, LPMPALLOCATION lpmlLocation)
 //@{
 
 /**
- * Reads and interprets the MPC file, and create structures for various directives 
+ * Reads and interprets the MPC file, and create structures for various directives
  * in the global variables
  *
  * @param lpBuf				Buffer containing the MPC file data, excluding the header.

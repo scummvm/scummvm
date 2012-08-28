@@ -88,7 +88,7 @@ typedef struct {
 	byte type;						// Tipo di oggetto (vedi enum ExprListTypes)
 	byte unary;						// Unary operatore (NON SUPPORTATO)
 
-	union { 
+	union {
 		int num;                    // Numero (se type==ELT_NUMBER)
 		char *name;                 // Nome variabile (se type==ELT_VAR)
 		HGLOBAL son;                // Handle a espressione (type==ELT_PARENTH)
@@ -179,7 +179,7 @@ static int Compute(int a, int b, byte symbol) {
 		GLOBALS._mpalError = 1;
 		break;
 	}
- 
+
 	return 0;
 }
 
@@ -211,7 +211,7 @@ static void solve(LPEXPRESSION one, int num) {
 
 
 /**
- * Calculates the result of a mathematical expression, replacing the current 
+ * Calculates the result of a mathematical expression, replacing the current
  * value of any variable.
  *
  * @param expr				Pointer to an expression duplicated by DuplicateExpression
@@ -253,7 +253,7 @@ static int evaluateAndFreeExpression(byte *expr) {
  * Parses a mathematical expression from the MPC file
  *
  * @param buf				Buffer containing the expression to evaluate
- * @param h					Pointer to a handle that, at the end of execution, 
+ * @param h					Pointer to a handle that, at the end of execution,
  * will point to the area of memory containing the parsed expression
  * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
  */
@@ -377,7 +377,7 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 				return false;
 			}
 			break;
-		 
+
 		case ELT_VAR:
 			if (strcmp(one->val.name, two->val.name) != 0) {
 				globalUnlock(h1);
@@ -385,7 +385,7 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 				return false;
 			}
 			break;
-	
+
 		case ELT_PARENTH:
 			if (!compareExpressions(one->val.son, two->val.son)) {
 				globalUnlock(h1);
@@ -395,13 +395,13 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 			break;
 		}
 
-		++one; 
+		++one;
 		++two;
 	}
 
 	globalUnlock(h1);
 	globalUnlock(h2);
- 
+
 	return true;
 }
 

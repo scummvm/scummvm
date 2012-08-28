@@ -177,13 +177,13 @@ void RMPoint::readFromStream(Common::ReadStream &ds) {
 *       RMPointReference methods
 \****************************************************************************/
 
-RMPointReference &RMPointReference::operator=(const RMPoint &p) { 
-	_x = p._x; _y = p._y; 
+RMPointReference &RMPointReference::operator=(const RMPoint &p) {
+	_x = p._x; _y = p._y;
 	return *this;
 }
 
 RMPointReference &RMPointReference::operator-=(const RMPoint &p) {
-	_x -= p._x; _y -= p._y; 
+	_x -= p._x; _y -= p._y;
 	return *this;
 }
 

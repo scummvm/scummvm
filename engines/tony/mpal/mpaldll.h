@@ -230,7 +230,7 @@ struct MPALSCRIPT {
 
 		byte nCmds;
 		uint32 CmdNum[MAX_COMMANDS_PER_MOMENT];
-  
+
 	} Moment[MAX_MOMENTS_PER_SCRIPT];
 
 } PACKED_STRUCT;
