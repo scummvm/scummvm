@@ -122,6 +122,9 @@ void RMFont::close() {
 int RMFont::stringLen(const Common::String &text) {
 	uint len, i;
 
+	if (text.empty())
+		return letterLength('\0');
+
 	len = 0;
 	for (i = 0; i < text.size() - 1; i++)
 		len += letterLength(text[i], text[i + 1]);
