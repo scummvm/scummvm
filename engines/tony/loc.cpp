@@ -141,7 +141,7 @@ int RMPattern::init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
 
 	// Check for sound:
 	//  If the slot is 0, play
-	//  If speed = 0, must playing unless it goes into loop '_', or if specified by the parameter
+	//  If speed == 0, must play unless it goes into loop '_', or if specified by the parameter
 	//  If speed != 0, play only the loop
 	for (i = 0; i < _nSlots; i++) {
 		if (_slots[i]._type == SOUND) {
@@ -1108,7 +1108,9 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 		}
 	}
 
-	if (minimo == 32000) trovato = punto;
+	if (minimo == 32000)
+		trovato = punto;
+
 	return trovato;
 }
 
@@ -1137,11 +1139,13 @@ short RMCharacter::scanLine(const RMPoint &punto) {
 
 	if (Ldx > Ldy) {
 		Lslope = Lfy / Lfx;
-		if (Lend._x < Lstart._x) Lspeed = -Lspeed;
+		if (Lend._x < Lstart._x)
+			Lspeed = -Lspeed;
 		Lstatus = 1;
 	} else {
 		Lslope = Lfx / Lfy;
-		if (Lend._y < Lstart._y) Lspeed = - Lspeed;
+		if (Lend._y < Lstart._y)
+			Lspeed = - Lspeed;
 		Lstatus = 0;
 	}
 
@@ -1777,11 +1781,13 @@ int RMGameBoxes::whichBox(int nLoc, const RMPoint &punto) {
 	if (!cur)
 		return -1;
 
-	for (i = 0; i < cur->_numbBox; i++)
-		if (cur->_boxes[i]._bActive)
+	for (i = 0; i < cur->_numbBox; i++) {
+		if (cur->_boxes[i]._bActive) {
 			if ((punto._x >= cur->_boxes[i]._left) && (punto._x <= cur->_boxes[i]._right) &&
 			        (punto._y >= cur->_boxes[i]._top)  && (punto._y <= cur->_boxes[i]._bottom))
 				return i;
+		}
+	}
 
 	return -1;
 }
@@ -2053,9 +2059,10 @@ void RMLocation::doFrame(RMGfxTargetBuffer *bigBuf) {
 RMItem *RMLocation::getItemFromCode(uint32 dwCode) {
 	int i;
 
-	for (i = 0; i < _nItems; i++)
+	for (i = 0; i < _nItems; i++) {
 		if (_items[i].mpalCode() == (int)dwCode)
 			return &_items[i];
+	}
 
 	return NULL;
 }
@@ -2133,9 +2140,10 @@ void RMLocation::updateScrolling(const RMPoint &ptShowThis) {
 	if (_curScroll._y + RM_SY > _buf->getDimy())
 		_curScroll._y = _buf->getDimy() - RM_SY;
 
-	if (oldScroll != _curScroll)
+	if (oldScroll != _curScroll) {
 		for (int i = 0; i < _nItems; i++)
 			_items[i].setScrollPosition(_curScroll);
+	}
 }
 
 void RMLocation::setFixedScroll(const RMPoint &scroll) {

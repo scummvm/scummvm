@@ -237,9 +237,10 @@ VoiceHeader *SearchVoiceHeader(uint32 codehi, uint32 codelo) {
 	if (g_vm->_voices.size() == 0)
 		return NULL;
 
-	for (uint i = 0; i < g_vm->_voices.size(); i++)
+	for (uint i = 0; i < g_vm->_voices.size(); i++) {
 		if (g_vm->_voices[i]._code == code)
 			return &g_vm->_voices[i];
+	}
 
 	return NULL;
 }
@@ -1208,21 +1209,25 @@ DECLARE_CUSTOM_FUNCTION(ScrollLocation)(CORO_PARAM, uint32 nX, uint32 nY, uint32
 	while ((_ctx->lx != 0 || _ctx->ly != 0) && !GLOBALS._bSkipIdle) {
 		if (_ctx->lx > 0) {
 			_ctx->lx -= (int32)sX;
-			if (_ctx->lx < 0) _ctx->lx = 0;
+			if (_ctx->lx < 0)
+				_ctx->lx = 0;
 			_ctx->pt.offset((int32)sX, 0);
 		} else if (_ctx->lx < 0) {
 			_ctx->lx += (int32)sX;
-			if (_ctx->lx > 0) _ctx->lx = 0;
+			if (_ctx->lx > 0)
+				_ctx->lx = 0;
 			_ctx->pt.offset(-(int32)sX, 0);
 		}
 
 		if (_ctx->ly > 0) {
 			_ctx->ly -= sY;
-			if (_ctx->ly < 0) _ctx->ly = 0;
+			if (_ctx->ly < 0)
+				_ctx->ly = 0;
 			_ctx->pt.offset(0, sY);
 		} else if (_ctx->ly < 0) {
 			_ctx->ly += sY;
-			if (_ctx->ly > 0) _ctx->ly = 0;
+			if (_ctx->ly > 0)
+				_ctx->ly = 0;
 			_ctx->pt.offset(0, -(int32)sY);
 		}
 
@@ -1493,7 +1498,8 @@ DECLARE_CUSTOM_FUNCTION(CharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMess
 			g_vm->_vdbFP.seek(_ctx->curOffset);
 			_ctx->voice->loadVoiceFromVDB(g_vm->_vdbFP);
 			_ctx->voice->setLoop(false);
-			if (bIsBack) _ctx->voice->setVolume(55);
+			if (bIsBack)
+				_ctx->voice->setVolume(55);
 			_ctx->voice->play();
 			_ctx->text->setCustomSkipHandle2(_ctx->voice->_hEndOfBuffer);
 			_ctx->curOffset = g_vm->_vdbFP.pos();

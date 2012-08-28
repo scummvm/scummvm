@@ -281,9 +281,10 @@ void TonyEngine::GUIError(const Common::String &msg) {
 }
 
 void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, bool bLoop, int nSync) {
-	if (nChannel < 4)
+	if (nChannel < 4) {
 		if (GLOBALS._flipflop)
 			nChannel = nChannel + 1;
+	}
 
 	switch (nFX) {
 	case 0:

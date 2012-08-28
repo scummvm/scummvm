@@ -648,9 +648,14 @@ int RMGfxSourceBuffer8AB::calcTrasp(int fore, int back) {
 	g = (GETGREEN(fore) >> 2) + (GETGREEN(back) >> 1);
 	b = (GETBLUE(fore) >> 2) + (GETBLUE(back) >> 1);
 
-	if (r > 0x1F) r = 0x1F;
-	if (g > 0x1F) g = 0x1F;
-	if (b > 0x1F) b = 0x1F;
+	if (r > 0x1F)
+		r = 0x1F;
+
+	if (g > 0x1F)
+		g = 0x1F;
+
+	if (b > 0x1F)
+		b = 0x1F;
 
 	return (r << 10) | (g << 5) | b;
 }
@@ -1717,7 +1722,7 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 		*/
 		mybuf = &buf[x1];
 
-		for (x = 0; x < width; x++, mybuf += step)
+		for (x = 0; x < width; x++, mybuf += step) {
 			if (_aabuf[(y + v) * _dimx + x + u] == 2 && x != 0 && x != width - 1) {
 				r = GETRED(mybuf[1]) + GETRED(mybuf[-1]) + GETRED(mybuf[-bigBuf.getDimx()]) + GETRED(mybuf[bigBuf.getDimx()]);
 				g = GETGREEN(mybuf[1]) + GETGREEN(mybuf[-1]) + GETGREEN(mybuf[-bigBuf.getDimx()]) + GETGREEN(mybuf[bigBuf.getDimx()]);
@@ -1737,6 +1742,7 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 
 				mybuf[0] = (r << 10) | (g << 5) | b;
 			}
+		}
 
 		// Skip to the next line
 		buf += bigBuf.getDimx();
@@ -1756,7 +1762,7 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 		*/
 		mybuf = &buf[x1];
 
-		for (x = 0; x < width; x++, mybuf += step)
+		for (x = 0; x < width; x++, mybuf += step) {
 			if (_aabuf[(y + v) * _dimx + x + u] == 1 && x != 0 && x != width - 1) {
 				r = GETRED(mybuf[1]) + GETRED(mybuf[-1]) + GETRED(mybuf[-bigBuf.getDimx()]) + GETRED(mybuf[bigBuf.getDimx()]);
 				g = GETGREEN(mybuf[1]) + GETGREEN(mybuf[-1]) + GETGREEN(mybuf[-bigBuf.getDimx()]) + GETGREEN(mybuf[bigBuf.getDimx()]);
@@ -1776,6 +1782,7 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 
 				mybuf[0] = (r << 10) | (g << 5) | b;
 			}
+		}
 
 		// Skip to the next line
 		buf += bigBuf.getDimx();

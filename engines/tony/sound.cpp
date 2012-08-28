@@ -339,6 +339,7 @@ void FPSfx::pause(bool bPause) {
 void FPSfx::setVolume(int dwVolume) {
 	if (dwVolume > 63)
 		dwVolume = 63;
+
 	if (dwVolume < 0)
 		dwVolume = 0;
 
@@ -349,7 +350,8 @@ void FPSfx::setVolume(int dwVolume) {
 			dwVolume = 0;
 		else {
 			dwVolume -= (10 - GLOBALS._nCfgDubbingVolume) * 2;
-			if (dwVolume < 0) dwVolume = 0;
+			if (dwVolume < 0)
+				dwVolume = 0;
 		}
 	} else {
 		if (!GLOBALS._bCfgSFX)
@@ -655,15 +657,20 @@ void FPStream::pause(bool bPause) {
  */
 
 void FPStream::setVolume(int dwVolume) {
-	if (dwVolume > 63) dwVolume = 63;
-	if (dwVolume < 0) dwVolume = 0;
+	if (dwVolume > 63)
+		dwVolume = 63;
+
+	if (dwVolume < 0)
+		dwVolume = 0;
 
 	_lastVolume = dwVolume;
 
-	if (!GLOBALS._bCfgMusic) dwVolume = 0;
+	if (!GLOBALS._bCfgMusic)
+		dwVolume = 0;
 	else {
 		dwVolume -= (10 - GLOBALS._nCfgMusicVolume) * 2;
-		if (dwVolume < 0) dwVolume = 0;
+		if (dwVolume < 0)
+			dwVolume = 0;
 	}
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))

@@ -763,9 +763,10 @@ int RMInterface::onWhichBox(RMPoint pt) {
 		max = 5;
 
 	// Find the verb
-	for (i = 0; i < max; i++)
+	for (i = 0; i < max; i++) {
 		if (_hotbbox[i].ptInRect(pt))
 			return i;
+	}
 
 	// Found no verb
 	return -1;

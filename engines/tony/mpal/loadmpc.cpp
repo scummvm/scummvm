@@ -628,9 +628,10 @@ bool ParseMpc(const byte *lpBuf) {
 
 		GLOBALS._lpmdDialogs = (LPMPALDIALOG)globalLock(GLOBALS._hDialogs);
 
-		for (i = 0;i < GLOBALS._nDialogs; i++)
+		for (i = 0;i < GLOBALS._nDialogs; i++) {
 			if ((lpBuf = parseDialog(lpBuf + 7, &GLOBALS._lpmdDialogs[i])) == NULL)
 				return false;
+		}
 
 		globalUnlock(GLOBALS._hDialogs);
 	}

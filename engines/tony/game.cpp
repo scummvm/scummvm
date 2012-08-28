@@ -476,11 +476,16 @@ void RMOptionScreen::refreshAll(CORO_PARAM) {
 	CORO_INVOKE_0(drawOT);
 
 	if (_nState == MENULOAD || _nState == MENUSAVE) {
-		if (_ctx->thumb) delete _ctx->thumb;
-		if (_ctx->title) delete _ctx->title;
+		if (_ctx->thumb)
+			delete _ctx->thumb;
 
-		for (_ctx->i = 0; _ctx->i < 6; _ctx->i++)
-			if (_ctx->num[_ctx->i]) delete _ctx->num[_ctx->i];
+		if (_ctx->title)
+			delete _ctx->title;
+
+		for (_ctx->i = 0; _ctx->i < 6; _ctx->i++) {
+			if (_ctx->num[_ctx->i])
+				delete _ctx->num[_ctx->i];
+		}
 	}
 
 	CORO_END_CODE;
@@ -1049,13 +1054,14 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 			}
 		}
 
-		for (_ctx->i = 0; _ctx->i < 26 && strlen(_editName) < 12; _ctx->i++)
+		for (_ctx->i = 0; _ctx->i < 26 && strlen(_editName) < 12; _ctx->i++) {
 			if (KEYPRESS(Common::KEYCODE_LSHIFT) ||
 			        KEYPRESS(Common::KEYCODE_RSHIFT)) {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'A');
 			} else {
 				PROCESS_CHAR((Common::KeyCode)((int)'a' + _ctx->i), _ctx->i + 'a');
 			}
+		}
 
 		for (_ctx->i = 0; _ctx->i < 10 && strlen(_editName) < 12; _ctx->i++)
 			PROCESS_CHAR((Common::KeyCode)((int)'0' + _ctx->i), _ctx->i + '0');
@@ -1203,9 +1209,10 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 		}
 	}
 
-	if (_nState == MENUGAME || _nState == MENUGFX || _nState == MENUSOUND)
+	if (_nState == MENUGAME || _nState == MENUGFX || _nState == MENUSOUND) {
 		if (!_bQuitConfirm && KEYPRESS(Common::KEYCODE_ESCAPE))
 			close();
+	}
 
 	if (_ctx->bRefresh)
 		CORO_INVOKE_0(refreshAll);
@@ -1475,7 +1482,8 @@ void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 
 	// Check the pointer
 	_ctx->n = _nCurPointer;
-	if (_ctx->n == TA_COMBINE) _ctx->n = TA_USE;
+	if (_ctx->n == TA_COMBINE)
+		_ctx->n = TA_USE;
 
 	// WORKAROUND: updateCursor gets called too early sometimes (for example, when
 	// the cursor is released over the TA_PERORATE option), via setAction.

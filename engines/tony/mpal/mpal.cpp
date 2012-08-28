@@ -224,9 +224,10 @@ static int msgGetOrderFromNum(uint32 nMsg) {
 	int i;
 	LPMPALMSG msg = GLOBALS._lpmmMsgs;
 
-	for (i = 0; i < GLOBALS._nMsgs; i++, msg++)
+	for (i = 0; i < GLOBALS._nMsgs; i++, msg++) {
 		if (msg->_wNum == nMsg)
 			return i;
+	}
 
 	return -1;
 }
@@ -242,9 +243,10 @@ static int itemGetOrderFromNum(uint32 nItem) {
 	int i;
 	LPMPALITEM item = GLOBALS._lpmiItems;
 
-	for (i = 0; i < GLOBALS._nItems; i++, item++)
+	for (i = 0; i < GLOBALS._nItems; i++, item++) {
 		if (item->nObj == nItem)
 			return i;
+	}
 
 	return -1;
 }
@@ -261,9 +263,10 @@ static int scriptGetOrderFromNum(uint32 nScript) {
 	int i;
 	LPMPALSCRIPT script = GLOBALS._lpmsScripts;
 
-	for (i = 0; i < GLOBALS._nScripts; i++, script++)
+	for (i = 0; i < GLOBALS._nScripts; i++, script++) {
 		if (script->nObj == nScript)
 			return i;
+	}
 
 	return -1;
 }
@@ -280,9 +283,10 @@ static int dialogGetOrderFromNum(uint32 nDialog) {
 	int i;
 	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs;
 
-	for (i = 0; i < GLOBALS._nDialogs; i++, dialog++)
+	for (i = 0; i < GLOBALS._nDialogs; i++, dialog++) {
 		if (dialog->nObj == nDialog)
 			return i;
+	}
 
 	return -1;
 }
@@ -333,14 +337,15 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
 	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 	int i, j;
 
-	for (j = 0; dialog->_periods[j] != NULL; j++)
+	for (j = 0; dialog->_periods[j] != NULL; j++) {
 		if (dialog->_periodNums[j] == nPeriod) {
 			/* Found the phrase, it should be duplicated */
 			origmsg = (const char *)globalLock(dialog->_periods[j]);
 
 			/* Calculate the length and allocate memory */
 			i = 0;
-			while (origmsg[i] != '\0') i++;
+			while (origmsg[i] != '\0')
+				i++;
 
 			clonemsg = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, i + 1);
 			if (clonemsg == NULL)
@@ -352,7 +357,8 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
 
 			return clonemsg;
 		}
-
+	}
+	
 	return NULL;
 }
 
@@ -415,9 +421,10 @@ static uint32 *getSelectList(uint32 i) {
 
 	/* Count how many are active selects */
 	num = 0;
-	for (j = 0; dialog->_choice[i]._select[j].dwData != 0; j++)
+	for (j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
 		if (dialog->_choice[i]._select[j].curActive)
 			num++;
+	}
 
 	/* If there are 0, it's a mistake */
 	if (num == 0)
@@ -429,9 +436,10 @@ static uint32 *getSelectList(uint32 i) {
 
 	/* Copy all the data inside the active select list */
 	k = 0;
-	for (j = 0; dialog->_choice[i]._select[j].dwData != 0; j++)
+	for (j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
 		if (dialog->_choice[i]._select[j].curActive)
 			sl[k++] = dialog->_choice[i]._select[j].dwData;
+	}
 
 	sl[k] = (uint32)NULL;
 	return sl;
@@ -690,7 +698,8 @@ void ActionThread(CORO_PARAM, const void *param) {
 		LPMPALITEM item;
 
 		~CoroContextTag() {
-			if (item) globalDestroy(item);
+			if (item)
+				globalDestroy(item);
 		}
 	CORO_END_CONTEXT(_ctx);
 
@@ -844,14 +853,16 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	for (_ctx->i = 0; _ctx->i < _ctx->numitems; _ctx->i++) {
 		_ctx->ord = itemGetOrderFromNum(_ctx->il[_ctx->i]);
 
-		if (_ctx->ord == -1) continue;
+		if (_ctx->ord == -1)
+			continue;
 	 
 		_ctx->curItem = GLOBALS._lpmiItems + _ctx->ord;
 
 		_ctx->k = 0;
-		for (_ctx->j = 0; _ctx->j < _ctx->curItem->nActions; _ctx->j++)
+		for (_ctx->j = 0; _ctx->j < _ctx->curItem->nActions; _ctx->j++) {
 			if (_ctx->curItem->Action[_ctx->j].num == 0xFF)
 				_ctx->k++;
+		}
 
 		_ctx->nIdleActions += _ctx->k;
 
@@ -928,12 +939,13 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		_ctx->curTime = g_vm->getTime();
 		_ctx->dwSleepTime = (uint32)-1L;
 
-		for (_ctx->k = 0;_ctx->k<_ctx->nIdleActions;_ctx->k++)
+		for (_ctx->k = 0;_ctx->k<_ctx->nIdleActions;_ctx->k++) {
 			if (_ctx->curTime >= _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime) {
 				_ctx->dwSleepTime = 0;
 				break;
-		     } else
+			} else
 				_ctx->dwSleepTime = MIN(_ctx->dwSleepTime, _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime - _ctx->curTime);
+		}
 
 		/* We fall alseep, but always checking that the event is set when prompted for closure */
 		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, GLOBALS._hEndPollingLocations[id], _ctx->dwSleepTime, &_ctx->expired);
@@ -942,7 +954,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		if (!_ctx->expired)
 			break;
 
-		for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
+		for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
 			if (_ctx->MyThreads[_ctx->i].nItem != 0) {
 				CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 0, &_ctx->delayExpired);
 
@@ -950,11 +962,12 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 				if (!_ctx->delayExpired)
 					_ctx->MyThreads[_ctx->i].nItem = 0;
 			}
+		}
 
 		_ctx->curTime = g_vm->getTime();
 
 		/* Loop through all the necessary idle actions */
-		for (_ctx->k = 0; _ctx->k < _ctx->nIdleActions; _ctx->k++)
+		for (_ctx->k = 0; _ctx->k < _ctx->nIdleActions; _ctx->k++) {
 			if (_ctx->curTime >= _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime) {
 				_ctx->MyActions[_ctx->k].dwLastTime += _ctx->MyActions[_ctx->k].wTime;
 
@@ -966,9 +979,10 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 						continue;
 
 					/* Check to see if there already another idle funning running on the item */
-					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
+					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
 						if (_ctx->MyThreads[_ctx->i].nItem == _ctx->MyActions[_ctx->k].nItem)
 							break;
+					}
 
 					if (_ctx->i < _ctx->nRealItems)
 						continue;
@@ -979,11 +993,12 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 					/* Check if there is a WhenExecute expression */
 					_ctx->j=_ctx->MyActions[_ctx->k].nAction;
-					if (_ctx->curItem->Action[_ctx->j].when != NULL)
+					if (_ctx->curItem->Action[_ctx->j].when != NULL) {
 						if (!evaluateExpression(_ctx->curItem->Action[_ctx->j].when)) {
 							unlockItems();
 							continue;
 						}
+					}
 
 					/* Ok, we can perform the action. For convenience, we do it in a new process */
 					_ctx->newItem = (LPMPALITEM)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
@@ -1004,9 +1019,10 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					_ctx->newItem->dwRes=_ctx->j;
 
 					/* We will create an action, and will provide the necessary details */
-					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
+					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
 						if (_ctx->MyThreads[_ctx->i].nItem == 0)
 							break;
+					}
 
 					_ctx->MyThreads[_ctx->i].nItem = _ctx->MyActions[_ctx->k].nItem;
 
@@ -1024,13 +1040,14 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					/* Skip all idle actions of the same item */
 				}
 			}
+		}
 	}
 
 
 	// Set idle skip on
 	CORO_INVOKE_4(GLOBALS._lplpFunctions[200], 0, 0, 0, 0);
 
-	for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++)
+	for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
 		if (_ctx->MyThreads[_ctx->i].nItem != 0) {
 			CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 5000, &_ctx->delayExpired);
 
@@ -1041,6 +1058,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 */
 			CoroScheduler.killMatchingProcess(_ctx->MyThreads[_ctx->i].hThread);
 		}
+	}
 
 	// Set idle skip off
 	CORO_INVOKE_4(GLOBALS._lplpFunctions[201], 0, 0, 0, 0);
@@ -1178,9 +1196,10 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 	_ctx->dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 
 	/* Search the choice between those required in the dialog */
-	for (_ctx->i = 0; _ctx->dialog->_choice[_ctx->i].nChoice != 0; _ctx->i++)
+	for (_ctx->i = 0; _ctx->dialog->_choice[_ctx->i].nChoice != 0; _ctx->i++) {
 		if (_ctx->dialog->_choice[_ctx->i].nChoice == nChoice)
 			break;
+	}
 
 	/* If nothing has been found, exit with an error */
 	if (_ctx->dialog->_choice[_ctx->i].nChoice == 0) {
@@ -1200,7 +1219,7 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 
 		_ctx->k = 0;
 		/* Calculate the expression of each selection, to see if they're active or inactive */
-		for (_ctx->j = 0; _ctx->dialog->_choice[_ctx->i]._select[_ctx->j].dwData != 0; _ctx->j++)
+		for (_ctx->j = 0; _ctx->dialog->_choice[_ctx->i]._select[_ctx->j].dwData != 0; _ctx->j++) {
 			if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].when == NULL) {
 				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].curActive = 1;
 				_ctx->k++;
@@ -1209,6 +1228,7 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 				_ctx->k++;
 			} else
 				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].curActive = 0;
+		}
 
 		/* If there are no choices activated, then the dialog is finished. */
 		if (_ctx->k == 0) {
@@ -1373,9 +1393,10 @@ bool doSelection(uint32 i, uint32 dwData) {
 	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 	int j;
 
-	for (j = 0; dialog->_choice[i]._select[j].dwData != 0; j++)
+	for (j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
 		if (dialog->_choice[i]._select[j].dwData == dwData && dialog->_choice[i]._select[j].curActive != 0)
 			break;
+	}
 
 	if (dialog->_choice[i]._select[j].dwData == 0)
 		return false;
@@ -2020,9 +2041,10 @@ void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
 bool mpalStartIdlePoll(int nLoc) {
 	uint32 i;
 
-	for (i = 0; i < MAXPOLLINGLOCATIONS; i++)
+	for (i = 0; i < MAXPOLLINGLOCATIONS; i++) {
 		if (GLOBALS._nPollingLocations[i] == (uint32)nLoc)
 			return false;
+	}
 
 	for (i = 0; i < MAXPOLLINGLOCATIONS; i++) {
 		if (GLOBALS._nPollingLocations[i] == 0) {
