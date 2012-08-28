@@ -1367,17 +1367,21 @@ bool Actor::shouldDrawShadow(int shadowId) {
 	if (!shadow->active)
 		return false;
 
-	// Don't draw a shadow if the actor is behind the shadow plane.
+	// Don't draw a shadow if the shadow caster and the actor are on different sides
+	// of the the shadow plane.
 	Sector *sector = shadow->planeList.front().sector;
 	Math::Vector3d n = sector->getNormal();
 	Math::Vector3d p = sector->getVertices()[0];
 	float d = -(n.x() * p.x() + n.y() * p.y() + n.z() * p.z());
 
-	p = getPos();
-	if (n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f)
+	p = getPos() + Math::Vector3d(0,0,0.01);
+	bool actorSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
+	p = shadow->pos;
+	bool shadowSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
+
+	if (actorSide == shadowSide)
 		return true;
-	else
-		return false;
+	return false;
 }
 
 void Actor::addShadowPlane(const char *n) {
