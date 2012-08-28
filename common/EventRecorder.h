@@ -90,6 +90,15 @@ public:
 	void setAuthor(const Common::String &author);
 	void setNotes(const Common::String &desc);
 	void setName(const Common::String &name);
+	const Common::String getAuthor() {
+		return _author;
+	}
+	const Common::String getNotes() {
+		return _desc;
+	}
+	const Common::String getName() {
+		return _name;
+	}
 	/** Register random source so it can be serialized in game test purposes */
 	uint32 getRandomSeed(const String &name);
 	void processGameDescription(const ADGameDescription *desc);
@@ -117,6 +126,10 @@ public:
 	SaveFileManager *getSaveManager(SaveFileManager *realSaveManager);
 	void togglePause();
 private:
+	Common::String _author;
+	Common::String _desc;
+	Common::String _name;
+	void setFileHeader();
 	bool _enableDrag;
 	Common::Point dragPoint;
 	SaveFileManager *_realSaveManager;

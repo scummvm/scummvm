@@ -90,6 +90,7 @@ void EventRecorder::deinit() {
 	_initialized = false;
 	_recordMode = kPassthrough;
 	g_gui.theme()->disable();
+	setFileHeader();
 	controlPanel->close();
 	delete controlPanel;
 	debugC(3, kDebugLevelEventRec, "EventRecorder: deinit");
@@ -436,6 +437,9 @@ void EventRecorder::updateSubsystems() {
 }
 
 List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
+	if (!_initialized) {
+		return DefaultEventMapper::mapEvent(ev, source);
+	}
 	checkForKeyCode(ev);
 	if (_recordMode == kRecorderRecord) {
 		if (ev.kbd.keycode != KEYCODE_ESCAPE) {
@@ -501,15 +505,15 @@ void EventRecorder::deleteRecord(const String& fileName) {
 }
 
 void EventRecorder::setAuthor(const Common::String &author) {
-	_playbackFile->getHeader().author = author;
+	_author = author;
 }
 
 void EventRecorder::setNotes(const Common::String &desc) {
-	_playbackFile->getHeader().notes = desc;
+	_desc = desc;
 }
 
 void EventRecorder::setName(const Common::String &name) {
-	_playbackFile->getHeader().name = name;
+	_name = name;
 }
 
 void EventRecorder::takeScreenshot() {
@@ -555,7 +559,7 @@ SaveFileManager *EventRecorder::getSaveManager(SaveFileManager *realSaveManager)
 }
 
 void EventRecorder::preDrawOverlayGui() {
-    if (_recordMode != kPassthrough) {
+    if ((_recordMode != kPassthrough) && (_initialized)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
 		g_system->showOverlay();
@@ -569,7 +573,7 @@ void EventRecorder::preDrawOverlayGui() {
 }
 
 void EventRecorder::postDrawOverlayGui() {
-    if (_recordMode != kPassthrough) {
+    if ((_recordMode != kPassthrough) && (_initialized)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
 	    g_system->hideOverlay();
@@ -589,6 +593,23 @@ Common::StringArray EventRecorder::listSaveFiles(const Common::String &pattern) 
 	} else {
 		return _realSaveManager->listSavefiles(pattern);
 	}
+}
+
+void EventRecorder::setFileHeader() {
+	TimeDate t;
+	const EnginePlugin *plugin = 0;
+	GameDescriptor desc = EngineMan.findGame(ConfMan.getActiveDomainName(), &plugin);
+	g_system->getTimeAndDate(t);
+	if (_author.empty()) {
+		setAuthor("Unknown Author");
+	}
+	if (_name.empty()) {
+		g_eventRec.setName(Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description());
+	}
+	_playbackFile->getHeader().author = _author;
+	_playbackFile->getHeader().notes = _desc;
+	_playbackFile->getHeader().name = _name;
+
 }
 
 

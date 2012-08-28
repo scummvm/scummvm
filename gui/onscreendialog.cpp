@@ -24,6 +24,7 @@
 #include "gui/gui-manager.h"
 #include "common/rect.h"
 #include "common/system.h"
+#include "gui/editrecorddialog.h"
 
 namespace GUI {
 
@@ -32,7 +33,8 @@ bool OnScreenDialog::isVisible() const {
 }
 
 enum {
-	kStopCmd = 'STOP'
+	kStopCmd = 'STOP',
+	kEditCmd = 'EDIT'
 };
 
 void OnScreenDialog::reflowLayout() {
@@ -47,17 +49,30 @@ OnScreenDialog::OnScreenDialog(int x, int y, int w, int h) : Dialog(x, y, w, h) 
 	btn->useThemeTransparency(true);
 	btn->resize(0,0,32,32);
 	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopbtn));
+	btn = new PicButtonWidget(this, "", "|>", kEditCmd);
+	btn->useThemeTransparency(true);
+	btn->resize(40,0,32,32);
+	btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditbtn));
 	text = new GUI::StaticTextWidget(this, "", "00:00:00");
-	text->resize(40,5,50,30);
+	text->resize(80,5,50,30);
 }
 
 void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	Common::Event eventRTL;
+	EditRecordDialog dlg(g_eventRec.getAuthor(), g_eventRec.getName(), g_eventRec.getNotes());
 	switch (cmd) {
 	case kStopCmd:
 		eventRTL.type = Common::EVENT_RTL;
 		g_system->getEventManager()->pushEvent(eventRTL);
 		close();
+		break;
+	case kEditCmd:
+		close();
+		dlg.runModal();
+		g_eventRec.setAuthor(dlg.getAuthor());
+		g_eventRec.setName(dlg.getName());
+		g_eventRec.setNotes(dlg.getNotes());
+		open();
 		break;
 	}
 }
