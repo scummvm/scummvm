@@ -256,7 +256,7 @@ bool createScreenShot(Graphics::Surface &surf) {
 				byte r = 0, g = 0, b = 0, a = 0;
 				uint32 col = READ_UINT32(screen->getBasePtr(x, y));
 				screenFormat.colorToARGB(col, a, r, g, b);
-				((uint32 *)surf.pixels)[y * surf.w + x] = Graphics::ARGBToColor<Graphics::ColorMasks<8888>>(a, r, g, b);
+				((uint32 *)surf.pixels)[y * surf.w + x] = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
 			}
 		}
 		g_system->unlockScreen();

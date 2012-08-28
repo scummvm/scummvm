@@ -96,16 +96,27 @@ void RecorderDialog::reflowLayout() {
 
 void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
+	case kSwitchScreenshotCmd:
+		++_currentScreenshot;
+		updateScreenshot();
+		break;
 	case kDeleteCmd:
 		if (_list->getSelected() >= 0) {
 			MessageDialog alert(_("Do you really want to delete this record?"),
 				_("Delete"), _("Cancel"));
 			if (alert.runModal() == GUI::kMessageOK) {
+				if (_playbackFile != NULL) {
+					delete _playbackFile;
+					_playbackFile = NULL;
+				}
 				g_eventRec.deleteRecord(_list->getSelectedString());
 				_list->setSelected(-1);
 				updateList();
 			}
 		}
+		break;
+	case GUI::kListSelectionChangedCmd:
+		updateSelection(true);
 		break;
 	case kRecordCmd:
 		_filename = generateRecordFileName();
@@ -149,6 +160,15 @@ RecorderDialog::~RecorderDialog() {
 
 void RecorderDialog::updateSelection(bool redraw) {
 	_gfxWidget->setGfx(-1, -1, 0, 0, 0);
+	if (_list->getSelected() >= 0) {
+		if (_playbackFile != NULL) {
+			delete _playbackFile;
+			_playbackFile = NULL;
+		}
+		_playbackFile = wrapBufferedSeekableReadStream(g_system->getSavefileManager()->openForLoading(_list->getSelectedString()), 128 * 1024, DisposeAfterUse::YES);
+		_currentScreenshot = 2;
+		updateScreenshot();
+	}
 }
 
 Common::String RecorderDialog::generateRecordFileName() {
@@ -162,6 +182,27 @@ Common::String RecorderDialog::generateRecordFileName() {
 		return recordName;
 	}
 	return "";
+}
+
+Graphics::Surface *RecorderDialog::getScreenShot(int number) {
+	uint32 id = _playbackFile->readUint32LE();
+	_playbackFile->skip(4);
+	if(id != MKTAG('P','B','C','K')) {
+		return NULL;
+	}
+	int screenCount = 0;
+	while (skipToNextScreenshot()) {
+		if (screenCount == number) {
+			screenCount++;
+			_playbackFile->seek(-4, SEEK_CUR);
+			return Graphics::loadThumbnail(*_playbackFile);
+		} else {
+			uint32 size = _playbackFile->readUint32BE();
+			_playbackFile->skip(size-8);
+			screenCount++;
+		}
+	}
+	return NULL;
 }
 
 bool RecorderDialog::skipToNextScreenshot() {
@@ -181,5 +222,17 @@ bool RecorderDialog::skipToNextScreenshot() {
 	return false;
 }
 
+void RecorderDialog::updateScreenshot() {	
+	Graphics::Surface *srcsf = getScreenShot(_currentScreenshot);
+	if (srcsf != NULL) {
+		Graphics::Surface *destsf = Graphics::scale(*srcsf, _gfxWidget->getWidth(), _gfxWidget->getHeight());
+		_gfxWidget->setGfx(destsf);
+		delete destsf;
+		delete srcsf;
+	} else {
+		_gfxWidget->setGfx(-1, -1, 0, 0, 0);
+	}
+	_gfxWidget->draw();
+}
 
 } // End of namespace GUI

@@ -103,8 +103,6 @@ public:
 		return true;
 	}
 
-	static Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize);
-
 private:
 	byte *_data;
 	int  _width;
@@ -112,8 +110,6 @@ private:
 	bool _doCleanup;
 
 	Graphics::Surface *_backSurface;
-
-	static int *scaleLine(int size, int srcSize);
 };
 
 } // End of namespace Sword25

@@ -114,7 +114,7 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	for (int y = 0; y < to->h; ++y) {
 		for (int x = 0; x < to->w; ++x) {
 			uint8 a = 0xFF;
-			uint8 r, g, b;
+			uint8 r = 0, g = 0, b = 0;
 			switch (header.bpp) {
 			case 2:
 				colorToRGB<ColorMasks<565> >(in.readUint16BE(), r, g, b);

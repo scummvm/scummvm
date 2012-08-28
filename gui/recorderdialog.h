@@ -46,6 +46,7 @@ private:
 	void updateList();
 	void updateScreenShotsText();
 	void updateSelection(bool redraw);
+	void updateScreenshot();
 	Common::String generateRecordFileName();
 public:
 	enum DialogResult {
